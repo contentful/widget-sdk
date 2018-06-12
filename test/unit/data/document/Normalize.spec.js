@@ -1,7 +1,7 @@
 import { normalize } from 'data/document/Normalize';
 import { get, set } from 'lodash';
 
-describe('data/document/Normalize#normalize', function () {
+describe('data/document/Normalize#normalize', () => {
   beforeEach(function () {
     module('contentful/test');
     this.otDoc = {

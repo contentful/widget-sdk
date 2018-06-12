@@ -6,7 +6,7 @@ angular.module('contentful')
  * @ngdoc service
  * @name states/entries
  */
-.factory('states/entries', ['require', function (require) {
+.factory('states/entries', ['require', require => {
   var $state = require('$state');
   var trackVersioning = require('analyticsEvents/versioning');
   var contextHistory = require('navigation/Breadcrumbs/History').default;
@@ -34,31 +34,27 @@ angular.module('contentful')
     resolve: {
       snapshot: [
         'require', '$stateParams', 'editorData',
-        function (require, $stateParams, editorData) {
+        (require, $stateParams, editorData) => {
           var entry = editorData.entity;
           var contentType = editorData.contentType;
           var spaceContext = require('spaceContext');
           var Entries = require('data/Entries');
 
           return spaceContext.cma.getEntrySnapshot(entry.getId(), $stateParams.snapshotId)
-          .then(function (snapshot) {
-            return _.extend(snapshot, {
-              snapshot: Entries.externalToInternal(snapshot.snapshot, contentType.data)
-            });
-          });
+          .then(snapshot => _.extend(snapshot, {
+            snapshot: Entries.externalToInternal(snapshot.snapshot, contentType.data)
+          }));
         }
       ]
     },
     template: '<cf-snapshot-comparator class="workbench" />',
     controller: [
       '$stateParams', '$scope', 'editorData', 'snapshot',
-      function ($stateParams, $scope, editorData, snapshot) {
+      ($stateParams, $scope, editorData, snapshot) => {
         var entry = editorData.entity;
         var contentType = editorData.contentType;
 
-        $scope.widgets = _.filter(editorData.fieldControls.form, function (widget) {
-          return !_.get(widget, 'field.disabled') || $scope.preferences.showDisabledFields;
-        });
+        $scope.widgets = _.filter(editorData.fieldControls.form, widget => !_.get(widget, 'field.disabled') || $scope.preferences.showDisabledFields);
         // TODO remove this and use entityInfo instead
         $scope.entry = $scope.entity = entry;
         $scope.entityInfo = editorData.entityInfo;
@@ -81,11 +77,9 @@ angular.module('contentful')
     children: [compareWithCurrent],
     loadingText: 'Loading versions…',
     resolve: {
-      editorData: ['$stateParams', 'spaceContext', function ($stateParams, spaceContext) {
-        return loadEditorData(spaceContext, $stateParams.entryId);
-      }]
+      editorData: ['$stateParams', 'spaceContext', ($stateParams, spaceContext) => loadEditorData(spaceContext, $stateParams.entryId)]
     },
-    controller: ['require', 'editorData', function (require, editorData) {
+    controller: ['require', 'editorData', (require, editorData) => {
       var spaceContext = require('spaceContext');
       var modalDialog = require('modalDialog');
       var trackVersioning = require('analyticsEvents/versioning');
@@ -93,7 +87,7 @@ angular.module('contentful')
       var entityId = editorData.entity.getId();
 
       spaceContext.cma.getEntrySnapshots(entityId, {limit: 2})
-      .then(function (res) {
+      .then(res => {
         var count = _.get(res, 'items.length', 0);
         return count > 0 ? compare(_.first(res.items), count) : back();
       }, back);
@@ -114,9 +108,7 @@ angular.module('contentful')
           message: 'It seems that this entry doesn’t have any versions yet. As you update it, ' +
                    'new versions will be created and you will be able to review and compare them.',
           cancelLabel: null
-        }).promise.finally(function () {
-          return $state.go('^');
-        });
+        }).promise.finally(() => $state.go('^'));
       }
     }]
   });

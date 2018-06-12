@@ -15,7 +15,7 @@ angular.module('cf.data')
  * items as values. The value is updated when ever one of the mutating
  * functions is called.
  */
-.factory('data/StreamHashSet', ['require', function (require) {
+.factory('data/StreamHashSet', ['require', require => {
   var K = require('utils/kefir');
 
   return {
@@ -59,7 +59,7 @@ angular.module('cf.data')
 
     function addMultiple (items) {
       var changed = false;
-      items.forEach(function (item) {
+      items.forEach(item => {
         var id = item.getId();
         if (byId[id] !== item) {
           byId[id] = item;

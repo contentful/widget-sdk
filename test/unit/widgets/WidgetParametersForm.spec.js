@@ -2,7 +2,7 @@ import React from 'react';
 import Enzyme from 'enzyme';
 import Form from 'widgets/WidgetParametersForm';
 
-describe('WidgetParametersForm', function () {
+describe('WidgetParametersForm', () => {
   const mount = (definitions = [], values = {}, missing = {}) => {
     const updateStub = sinon.stub();
     const wrapper = Enzyme.mount(<Form
@@ -15,7 +15,7 @@ describe('WidgetParametersForm', function () {
     return [wrapper, updateStub];
   };
 
-  it('updates Symbol parameters', function () {
+  it('updates Symbol parameters', () => {
     const definitions = [{id: 'string', type: 'Symbol', name: 'String param'}];
     const [wrapper, updateStub] = mount(definitions);
     const input = wrapper.find('input').first();
@@ -23,7 +23,7 @@ describe('WidgetParametersForm', function () {
     sinon.assert.calledOnce(updateStub.withArgs('string', 'test'));
   });
 
-  it('updates Enum parameters', function () {
+  it('updates Enum parameters', () => {
     const options = [{one: 'Einz'}, {two: 'Zwei'}];
     const definitions = [{id: 'enum', type: 'Enum', name: 'Enum param', options}];
     const [wrapper, updateStub] = mount(definitions);
@@ -34,7 +34,7 @@ describe('WidgetParametersForm', function () {
     sinon.assert.calledOnce(updateStub.withArgs('enum', undefined));
   });
 
-  it('updates Number parameters', function () {
+  it('updates Number parameters', () => {
     const definitions = [{id: 'num', type: 'Number', name: 'Num param'}];
     const [wrapper, updateStub] = mount(definitions);
     const input = wrapper.find('input').first();
@@ -44,7 +44,7 @@ describe('WidgetParametersForm', function () {
     sinon.assert.calledOnce(updateStub.withArgs('num', undefined));
   });
 
-  it('updates Boolean parameters', function () {
+  it('updates Boolean parameters', () => {
     const definitions = [{id: 'bool', type: 'Boolean', name: 'Bool param'}];
     const [wrapper, updateStub] = mount(definitions);
     const checkboxes = wrapper.find('input');
@@ -54,7 +54,7 @@ describe('WidgetParametersForm', function () {
     sinon.assert.calledOnce(updateStub.withArgs('bool', false));
   });
 
-  it('clearing Boolean parameter', function () {
+  it('clearing Boolean parameter', () => {
     const definitions = [{id: 'bool', type: 'Boolean', name: 'Bool param'}];
     const [wrapper, updateStub] = mount(definitions, {bool: true});
     const checkboxes = wrapper.find('input');
@@ -62,7 +62,7 @@ describe('WidgetParametersForm', function () {
     sinon.assert.calledOnce(updateStub.withArgs('bool', undefined));
   });
 
-  it('renders multiple inputs', function () {
+  it('renders multiple inputs', () => {
     const [wrapper] = mount([
       {id: 'str', type: 'Symbol', name: 'String param'},
       {id: 'bool', type: 'Boolean', name: 'Bool param'}
@@ -70,7 +70,7 @@ describe('WidgetParametersForm', function () {
     expect(wrapper.find('input').length).toBe(3); // 1 for Symbol input + 2 for Boolean checkboxes
   });
 
-  it('renders information about parameter being required', function () {
+  it('renders information about parameter being required', () => {
     const [wrapper] = mount([
       {id: 'str', type: 'Symbol', name: 'String param'},
       {id: 'bool', type: 'Boolean', name: 'Bool param', required: true}
@@ -80,7 +80,7 @@ describe('WidgetParametersForm', function () {
     expect(labels.at(1).text().includes('(required)')).toBe(true);
   });
 
-  it('renders information about required parameter being missing', function () {
+  it('renders information about required parameter being missing', () => {
     const definitions = [
       {id: 'str', type: 'Symbol', name: 'String param'},
       {id: 'bool', type: 'Boolean', name: 'Bool param', required: true}
@@ -91,7 +91,7 @@ describe('WidgetParametersForm', function () {
     expect(fields.at(1).text().includes('This value is required')).toBe(true);
   });
 
-  it('uses values for rendering', function () {
+  it('uses values for rendering', () => {
     const definitions = [
       {id: 'str', type: 'Symbol', name: 'String param'},
       {id: 'enum', type: 'Enum', name: 'Enum param', options: [{one: '1', two: '2'}]},
@@ -107,7 +107,7 @@ describe('WidgetParametersForm', function () {
     expect(wrapper.find('input[name="bool"]').props().checked).toBe(true);
   });
 
-  it('renders description', function () {
+  it('renders description', () => {
     const definitions = [{id: 'x', type: 'Symbol', name: 'X', description: 'Please gimme value'}];
     const [wrapper] = mount(definitions);
     expect(wrapper.find('p').text().includes('Please gimme value')).toBe(true);

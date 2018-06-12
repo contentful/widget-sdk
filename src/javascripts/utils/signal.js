@@ -30,7 +30,7 @@ angular.module('cf.utils')
  * // logs 'value' immediately
  * ~~~
  */
-.factory('signal', [function () {
+.factory('signal', [() => {
   return {
     create: create,
     createMemoized: createMemoized
@@ -50,7 +50,7 @@ angular.module('cf.utils')
 
       dispatch: function () {
         var args = arguments;
-        _.forEach(listeners, function (listener) {
+        _.forEach(listeners, listener => {
           listener.apply(null, args);
         });
       },

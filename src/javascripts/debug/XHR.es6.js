@@ -17,7 +17,7 @@ export default function init () {
   return assign({ show }, xhrMock);
 
   function show () {
-    scope.$applyAsync(function () {
+    scope.$applyAsync(() => {
       scope.isVisible = true;
     });
   }

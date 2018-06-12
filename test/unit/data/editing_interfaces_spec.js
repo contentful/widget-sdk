@@ -1,10 +1,10 @@
 'use strict';
 
-describe('data/editingInterfaces', function () {
+describe('data/editingInterfaces', () => {
   let editingInterfaces, spaceEndpoint, contentType;
 
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.value('widgets/default', sinon.stub());
     });
 
@@ -20,14 +20,14 @@ describe('data/editingInterfaces', function () {
     };
   });
 
-  describe('#get()', function () {
-    describe('with saved content type', function () {
-      beforeEach(function () {
+  describe('#get()', () => {
+    describe('with saved content type', () => {
+      beforeEach(() => {
         contentType.sys.version = 1;
         spaceEndpoint.resolves();
       });
 
-      it('sends GET request to the editing interface endpoint for the content type', function () {
+      it('sends GET request to the editing interface endpoint for the content type', () => {
         spaceEndpoint.resolves();
         contentType.sys.id = 'CTID';
         editingInterfaces.get(contentType);
@@ -37,8 +37,8 @@ describe('data/editingInterfaces', function () {
         });
       });
 
-      describe('with API response', function () {
-        beforeEach(function () {
+      describe('with API response', () => {
+        beforeEach(() => {
           spaceEndpoint.resolves({
             controls: [{
               fieldId: 'FIELD',
@@ -47,12 +47,10 @@ describe('data/editingInterfaces', function () {
           });
         });
 
-        it('returns editing interface with widgets', function () {
-          return editingInterfaces.get(contentType)
-          .then(function (ei) {
-            expect(ei.controls.length).toEqual(1);
-          });
-        });
+        it('returns editing interface with widgets', () => editingInterfaces.get(contentType)
+        .then(ei => {
+          expect(ei.controls.length).toEqual(1);
+        }));
       });
 
       it('resolves with the default interface if a 404 is returned', function () {
@@ -61,7 +59,7 @@ describe('data/editingInterfaces', function () {
 
         spaceEndpoint.rejects({status: 404});
         return editingInterfaces.get(contentType)
-        .then(function (ei) {
+        .then(ei => {
           expect(ei.controls[0].widgetId).toEqual('DEFAULT');
         });
       });
@@ -76,12 +74,12 @@ describe('data/editingInterfaces', function () {
       });
     });
 
-    describe('when content type is new', function () {
-      beforeEach(function () {
+    describe('when content type is new', () => {
+      beforeEach(() => {
         contentType.sys.version = 0;
       });
 
-      it('does not send GET request', function () {
+      it('does not send GET request', () => {
         editingInterfaces.get(contentType);
         sinon.assert.notCalled(spaceEndpoint);
       });
@@ -91,19 +89,19 @@ describe('data/editingInterfaces', function () {
         getDefaultWidget.returns('DEFAULT');
 
         return editingInterfaces.get(contentType)
-        .then(function (ei) {
+        .then(ei => {
           expect(ei.controls[0].widgetId).toEqual('DEFAULT');
         });
       });
     });
   });
 
-  describe('#save()', function () {
-    beforeEach(function () {
+  describe('#save()', () => {
+    beforeEach(() => {
       contentType.sys.id = 'CTID';
     });
 
-    it('sends PUT request with version', function () {
+    it('sends PUT request with version', () => {
       editingInterfaces.save(contentType, {
         sys: {version: 'V'}
       });
@@ -114,7 +112,7 @@ describe('data/editingInterfaces', function () {
       }));
     });
 
-    it('removes field property from request payload', function () {
+    it('removes field property from request payload', () => {
       editingInterfaces.save(contentType, {
         sys: {},
         controls: [
@@ -125,7 +123,7 @@ describe('data/editingInterfaces', function () {
       expect(data.controls[0].field).toBe(undefined);
     });
 
-    it('removes empty widget parameters from request payload', function () {
+    it('removes empty widget parameters from request payload', () => {
       editingInterfaces.save(contentType, {
         sys: {},
         controls: [

@@ -1,9 +1,9 @@
 'use strict';
 
-describe('cfValidateForm directive', function () {
+describe('cfValidateForm directive', () => {
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
-      $provide.constant('$timeout', function (fn) {
+    module('contentful/test', $provide => {
+      $provide.constant('$timeout', fn => {
         fn();
       });
     })

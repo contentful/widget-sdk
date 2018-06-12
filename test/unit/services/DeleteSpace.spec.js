@@ -1,6 +1,6 @@
 import * as sinon from 'helpers/sinon';
 
-describe('DeleteSpace', function () {
+describe('DeleteSpace', () => {
   beforeEach(function () {
     this.space = {sys: {id: 'SPACE_ID'}, name: 'Space name'};
     this.onSuccess = sinon.stub();

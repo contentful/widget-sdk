@@ -46,17 +46,15 @@ export function create (spaceContext, userListHandler, TokenStore) {
       extend(scope, {
         user: user,
         input: {},
-        removeUser: Command.create(function () {
-          return spaceContext.memberships.remove(user.membership)
-          .then(function () {
-            notification.info('User successfully removed from this space.');
-            if (isCurrentUser) {
-              TokenStore.refresh().then(() => go({ path: ['home'] }));
-            }
-          })
-          .catch(ReloadNotification.basicErrorHandler)
-          .finally(function () { scope.dialog.confirm(); });
-        }, {
+        removeUser: Command.create(() => spaceContext.memberships.remove(user.membership)
+        .then(() => {
+          notification.info('User successfully removed from this space.');
+          if (isCurrentUser) {
+            TokenStore.refresh().then(() => go({ path: ['home'] }));
+          }
+        })
+        .catch(ReloadNotification.basicErrorHandler)
+        .finally(() => { scope.dialog.confirm(); }), {
           disabled: isDisabled
         })
       });
@@ -79,14 +77,12 @@ export function create (spaceContext, userListHandler, TokenStore) {
         startsWithVowel: stringUtils.startsWithVowel,
         input: {},
         roleOptions: userListHandler.getRoleOptions(),
-        changeRole: Command.create(function () {
-          return spaceContext.memberships.changeRoleTo(user.membership, [scope.input.id])
-          .then(function () {
-            notification.info('User role successfully changed.');
-          })
-          .catch(ReloadNotification.basicErrorHandler)
-          .finally(function () { scope.dialog.confirm(); });
-        }, {
+        changeRole: Command.create(() => spaceContext.memberships.changeRoleTo(user.membership, [scope.input.id])
+        .then(() => {
+          notification.info('User role successfully changed.');
+        })
+        .catch(ReloadNotification.basicErrorHandler)
+        .finally(() => { scope.dialog.confirm(); }), {
           disabled: function () { return !scope.input.id; }
         })
       });
@@ -116,7 +112,7 @@ export function create (spaceContext, userListHandler, TokenStore) {
       // after we reach bottom of the page
       noPagination: true
     })
-    .then(function (result) {
+    .then(result => {
       return openDialog(UserSpaceInvitationDialog(), controller);
 
       function controller (scope) {
@@ -131,16 +127,14 @@ export function create (spaceContext, userListHandler, TokenStore) {
         });
       }
     })
-    .then(function () {
+    .then(() => {
       notification.info('Invitations successfully sent.');
     });
 
     function fetchUsers (params) {
-      return ListQuery.getForUsers(params).then(function (query) {
-        return spaceContext.organizationContext.getAllUsers(query);
-      }).then(function (organizationUsers) {
+      return ListQuery.getForUsers(params).then(query => spaceContext.organizationContext.getAllUsers(query)).then(organizationUsers => {
         const spaceUserIds = userListHandler.getUserIds();
-        const displayedUsers = organizationUsers.filter(function (item) {
+        const displayedUsers = organizationUsers.filter(item => {
           const id = get(item, 'sys.id');
           return id && !includes(spaceUserIds, id);
         });

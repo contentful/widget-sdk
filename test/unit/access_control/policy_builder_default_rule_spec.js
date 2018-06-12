@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Policy Builder, default rule', function () {
+describe('Policy Builder, default rule', () => {
 
   var getDefaultRuleFor, getDefaultRuleGetterFor, CONFIG;
 
@@ -11,7 +11,7 @@ describe('Policy Builder, default rule', function () {
     CONFIG = this.$inject('PolicyBuilder/CONFIG');
   });
 
-  it('getting default rule for entry', function () {
+  it('getting default rule for entry', () => {
     var rule = getDefaultRuleFor('entry');
     expect(_.isString(rule.id)).toBe(true);
     expect(rule.contentType).toBe(CONFIG.ALL_CTS);
@@ -21,7 +21,7 @@ describe('Policy Builder, default rule', function () {
     expect(rule.locale).toBe(null);
   });
 
-  it('getting default rule for asset', function () {
+  it('getting default rule for asset', () => {
     var rule = getDefaultRuleFor('asset');
     expect(_.isString(rule.id)).toBe(true);
     expect(rule.contentType).toBe(undefined);
@@ -31,7 +31,7 @@ describe('Policy Builder, default rule', function () {
     expect(rule.locale).toBe(null);
   });
 
-  it('creates getter for default entry rule', function () {
+  it('creates getter for default entry rule', () => {
     var getRule = getDefaultRuleGetterFor('entry');
     expect(_.isFunction(getRule)).toBe(true);
     expect(_.isObject(getRule())).toBe(true);
@@ -39,7 +39,7 @@ describe('Policy Builder, default rule', function () {
     expect(getRule().field).toBe(null);
   });
 
-  it('creates getter for default asset rule', function () {
+  it('creates getter for default asset rule', () => {
     var getRule = getDefaultRuleGetterFor('asset');
     expect(_.isFunction(getRule)).toBe(true);
     expect(_.isObject(getRule())).toBe(true);

@@ -1,21 +1,21 @@
 'use strict';
 
-describe('Webhook Health directive', function () {
+describe('Webhook Health directive', () => {
   beforeEach(function () {
     module('contentful/test');
 
     this.getStub = sinon.stub().resolves({calls: {}});
     this.$inject('WebhookRepository').getInstance = _.constant({logs: {getHealth: this.getStub}});
 
-    this.compile = function (webhookId) {
+    this.compile = webhookId => {
       const data = {webhook: {id: 'whid' || webhookId}};
       this.element = this.$compile('<cf-webhook-health webhook-id="webhook.id" />', data);
-    }.bind(this);
+    };
 
-    this.testStatus = function (expected) {
+    this.testStatus = expected => {
       this.compile();
       expect(this.element.find('.webhook-call__status-indicator').attr('data-status')).toBe(expected);
-    }.bind(this);
+    };
   });
 
   it('fetches health status when mounted', function () {

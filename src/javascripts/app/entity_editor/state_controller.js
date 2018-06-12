@@ -32,20 +32,18 @@ angular.module('contentful')
   // Is set to 'true' when the entity has been deleted by another user.
   var isDeleted = false;
 
-  K.onValueScope($scope, docStateManager.inProgress$, function (inProgress) {
+  K.onValueScope($scope, docStateManager.inProgress$, inProgress => {
     controller.inProgress = inProgress;
   });
 
   const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG = 'feature-at-05-2018-sliding-entry-editor-multi-level';
-  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, function (flagState) {
+  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, flagState => {
     $scope.slideInFeatureFlagValue = flagState === 2 ? 2 : 0;
   });
 
-  var noop = Command.create(function () {});
+  var noop = Command.create(() => {});
 
-  var archive = Command.create(function () {
-    return applyActionWithConfirmation(Action.Archive());
-  }, {
+  var archive = Command.create(() => applyActionWithConfirmation(Action.Archive()), {
     disabled: checkDisallowed(Action.Archive())
   }, {
     label: 'Archive',
@@ -53,9 +51,7 @@ angular.module('contentful')
     targetStateId: 'archived'
   });
 
-  var unarchive = Command.create(function () {
-    return applyAction(Action.Unarchive());
-  }, {
+  var unarchive = Command.create(() => applyAction(Action.Unarchive()), {
     disabled: checkDisallowed(Action.Unarchive())
   }, {
     label: 'Unarchive',
@@ -64,9 +60,7 @@ angular.module('contentful')
   });
 
 
-  var unpublish = Command.create(function () {
-    return applyActionWithConfirmation(Action.Unpublish());
-  }, {
+  var unpublish = Command.create(() => applyActionWithConfirmation(Action.Unpublish()), {
     disabled: checkDisallowed(Action.Unpublish())
   }, {
     label: 'Unpublish',
@@ -89,33 +83,33 @@ angular.module('contentful')
     targetStateId: 'published'
   });
 
-  K.onValueScope($scope, docStateManager.state$, function (state) {
+  K.onValueScope($scope, docStateManager.state$, state => {
     caseof(state, [
-      [State.Archived(), function () {
+      [State.Archived(), () => {
         controller.current = 'archived';
         controller.primary = unarchive;
         controller.secondary = [publish];
         controller.allActions = [unarchive, publish];
       }],
-      [State.Draft(), function () {
+      [State.Draft(), () => {
         controller.current = 'draft';
         controller.primary = publish;
         controller.secondary = [archive];
         controller.allActions = [publish, archive];
       }],
-      [State.Published(), function () {
+      [State.Published(), () => {
         controller.current = 'published';
         controller.primary = noop;
         controller.secondary = [archive, unpublish];
         controller.allActions = [archive, unpublish];
       }],
-      [State.Changed(), function () {
+      [State.Changed(), () => {
         controller.current = 'changes';
         controller.primary = publishChanges;
         controller.secondary = [archive, unpublish];
         controller.allActions = [publishChanges, archive, unpublish];
       }],
-      [State.Deleted(), function () {
+      [State.Deleted(), () => {
         isDeleted = true;
       }]
     ]);
@@ -125,12 +119,8 @@ angular.module('contentful')
     controller.hidePrimary = state === State.Published();
   });
 
-  $scope.$watch(function () {
-    return _.every(controller.secondary, function (cmd) {
-      // TODO this uses the private API
-      return cmd._isDisabled();
-    });
-  }, function (secondaryActionsDisabled) {
+  $scope.$watch(() => _.every(controller.secondary, cmd => // TODO this uses the private API
+  cmd._isDisabled()), secondaryActionsDisabled => {
     controller.secondaryActionsDisabled = secondaryActionsDisabled;
   });
 
@@ -139,7 +129,7 @@ angular.module('contentful')
 
   function publishEntity () {
     return publicationWarnings.show()
-    .then(function () {
+    .then(() => {
       if (validator.run()) {
         var contentType;
         var entityInfo = $scope.entityInfo;
@@ -148,7 +138,7 @@ angular.module('contentful')
         }
         var action = Action.Publish();
         return applyAction(action)
-        .then(function (entity) {
+        .then(entity => {
           if (contentType) {
             var eventOrigin = 'entry-editor';
 
@@ -167,7 +157,7 @@ angular.module('contentful')
             });
           }
           trackVersioning.publishedRestored(entity);
-        }, function (error) {
+        }, error => {
           validator.setApiResponseErrors(error);
         });
       } else {
@@ -178,19 +168,17 @@ angular.module('contentful')
   }
 
   controller.delete = Command.create(
-    function () {
-      return applyActionWithConfirmation(Action.Delete()).then(function () {
-        if ($scope.slideInFeatureFlagValue) {
-          goToPreviousSlideOrExit(
-            $scope.slideInFeatureFlagValue,
-            'delete',
-            closeState
-          );
-        } else {
-          return closeState();
-        }
-      });
-    },
+    () => applyActionWithConfirmation(Action.Delete()).then(() => {
+      if ($scope.slideInFeatureFlagValue) {
+        goToPreviousSlideOrExit(
+          $scope.slideInFeatureFlagValue,
+          'delete',
+          closeState
+        );
+      } else {
+        return closeState();
+      }
+    }),
     {
       disabled: function () {
         var canDelete = permissions.can('delete');
@@ -205,11 +193,11 @@ angular.module('contentful')
     }
   );
 
-  controller.revertToPrevious = Command.create(function () {
+  controller.revertToPrevious = Command.create(() => {
     reverter.revert()
-    .then(function () {
+    .then(() => {
       notify(Notification.Success('revert'));
-    }, function (err) {
+    }, err => {
       notify(Notification.Error('revert', err));
     });
   }, {
@@ -233,10 +221,10 @@ angular.module('contentful')
 
   function applyAction (action) {
     return docStateManager.apply(action)
-    .then(function (data) {
+    .then(data => {
       notify(Notification.Success(action));
       return data;
-    }, function (err) {
+    }, err => {
       notify(Notification.Error(action, err));
       return $q.reject(err);
     });
@@ -244,16 +232,12 @@ angular.module('contentful')
 
   function applyActionWithConfirmation (action) {
     return showConfirmationMessage({ action: action })
-      .then(function () {
-        return applyAction(action);
-      });
+      .then(() => applyAction(action));
   }
 
   // TODO Move these checks into the document resource manager
   function checkDisallowed (action) {
-    return function () {
-      return isDeleted || !permissions.can(action);
-    };
+    return () => isDeleted || !permissions.can(action);
   }
 
   function showConfirmationMessage (props) {

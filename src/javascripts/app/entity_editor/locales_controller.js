@@ -27,7 +27,7 @@ angular.module('contentful')
    * Executing this command will open a dialog that allows the user to
    * select the active locales.
    */
-  controller.changeActive = Command.create(function () {
+  controller.changeActive = Command.create(() => {
     var locales = getLocalesWithActiveFlag(availableLocales);
     modalDialog.open({
       template: 'locale_select_dialog',
@@ -35,7 +35,7 @@ angular.module('contentful')
       scopeData: {
         locales: locales
       }
-    }).promise.then(function () {
+    }).promise.then(() => {
       var active = _.filter(locales, 'active');
       localeStore.setActiveLocales(active);
       refreshActiveLocales();
@@ -49,7 +49,7 @@ angular.module('contentful')
    *
    * @param {API.Locale} locale
    */
-  controller.deactivate = function (locale) {
+  controller.deactivate = locale => {
     localeStore.deactivateLocale(locale);
     refreshActiveLocales();
   };
@@ -68,10 +68,8 @@ angular.module('contentful')
    * `active` property.
    */
   function getLocalesWithActiveFlag (locales) {
-    return _.map(locales, function (locale) {
-      return _.extend({
-        active: localeStore.isLocaleActive(locale)
-      }, locale);
-    });
+    return _.map(locales, locale => _.extend({
+      active: localeStore.isLocaleActive(locale)
+    }, locale));
   }
 }]);

@@ -1,6 +1,6 @@
 'use strict';
 
-describe('cfSingleLineEditor directive', function () {
+describe('cfSingleLineEditor directive', () => {
   beforeEach(function () {
     module('contentful/test');
 

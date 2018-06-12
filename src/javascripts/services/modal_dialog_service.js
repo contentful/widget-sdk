@@ -23,7 +23,7 @@
  *     dialog.confirm();
  *   }, 3000);
  */
-angular.module('contentful').factory('modalDialog', ['require', function (require) {
+angular.module('contentful').factory('modalDialog', ['require', require => {
   var defer = require('defer');
   var $compile = require('$compile');
   var $q = require('$q');
@@ -137,11 +137,11 @@ angular.module('contentful').factory('modalDialog', ['require', function (requir
       reposition();
       $($window).on('resize', debouncedReposition);
 
-      var repositionOff = $rootScope.$on('centerOn:reposition', function () {
+      var repositionOff = $rootScope.$on('centerOn:reposition', () => {
         if (!destroyed) { reposition(); }
       });
 
-      elem.on('$destroy', function () {
+      elem.on('$destroy', () => {
         destroyed = true;
         $($window).off('resize', debouncedReposition);
         repositionOff();
@@ -157,7 +157,7 @@ angular.module('contentful').factory('modalDialog', ['require', function (requir
 
     _handleKeys: function (ev) {
       var dialog = this;
-      dialog.scope.$apply(function () {
+      dialog.scope.$apply(() => {
         if (ev.target.tagName.toLowerCase() === 'select') return;
         if (!dialog.params.ignoreEsc && ev.keyCode === keycodes.ESC) {
           dialog.cancel();
@@ -222,7 +222,7 @@ angular.module('contentful').factory('modalDialog', ['require', function (requir
 
   // Closes all modals with persistOnNaviagation = false
   function closeAll () {
-    _.forEachRight(opened, function (dialog) {
+    _.forEachRight(opened, dialog => {
       if (!dialog.persistOnNavigation) {
         dialog.cancel();
       }
@@ -274,11 +274,13 @@ angular.module('contentful').factory('modalDialog', ['require', function (requir
     });
 
     return openDialog(params)
-      .promise.then(function () {
-        return { confirmed: true, cancelled: false };
-      }, function () {
-        return { confirmed: false, cancelled: true };
-      });
+      .promise.then(() => ({
+        confirmed: true,
+        cancelled: false
+      }), () => ({
+        confirmed: false,
+        cancelled: true
+      }));
   }
 
   function openConfirmDeleteDialog (params) {

@@ -202,7 +202,7 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
   }
 
   function makeItemSuccessHandler (item, actionData) {
-    return function (response) {
+    return response => {
       handleItem(item, actionData, response);
       itemHandlers.onItemSuccess(generateItemId(item, actionData), {
         item: item,
@@ -214,7 +214,7 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
   }
 
   function makeItemErrorHandler (item, actionData) {
-    return function (error) {
+    return error => {
       creationErrors.push(`error ${getErrorMessage(error)} during ${actionData.action} on entityType: ${actionData.entity} on entityId: ${getItemId(item)}`);
       itemHandlers.onItemError(generateItemId(item, actionData), {
         item: item,
@@ -304,7 +304,7 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
   function processAsset (asset, version) {
     let destroyDoc;
     return new Promise((resolve, reject) => {
-      const processingTimeout = setTimeout(function () {
+      const processingTimeout = setTimeout(() => {
         if (destroyDoc) {
           destroyDoc();
         }
@@ -317,18 +317,18 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
       // need to wait for assets to process in order
       // to publish them in the next step.
       spaceContext.docConnection.open(asset)
-        .then(function (info) {
+        .then(info => {
           destroyDoc = info.destroy;
           info.doc.on('remoteop', (ops) => remoteOpHandler(ops, { resolve, processingTimeout }));
           asset.process(version, selectedLocaleCode);
-        }, function (err) {
+        }, err => {
           clearTimeout(processingTimeout);
           reject(err);
         });
     });
 
     function remoteOpHandler (ops, { resolve, processingTimeout }) {
-      $rootScope.$apply(function () {
+      $rootScope.$apply(() => {
         clearTimeout(processingTimeout);
         const op = ops && ops.length > 0 ? ops[0] : null;
         if (op && op.p && op.oi) {
@@ -374,7 +374,7 @@ export function getCreator (spaceContext, itemHandlers, templateInfo, selectedLo
     // we wait until the first item is published (using Promise.race)
     // since it is the last operation before we resolve this promise
     // so other items publishing time won't be different
-    const promises = entries.filter(Boolean).map(function (entry) {
+    const promises = entries.filter(Boolean).map(entry => {
       const handlers = makeHandlers(entry, 'publish', 'Entry');
       if (handlers.itemWasHandled) {
         return Promise.resolve();

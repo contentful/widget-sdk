@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Number widgets', function () {
+describe('Number widgets', () => {
   beforeEach(function () {
     module('contentful/test');
 
@@ -18,10 +18,10 @@ describe('Number widgets', function () {
 
       return _.assign(el, {
         inputEl: inputEl,
-        setInput: function (val) {
+        setInput: val => {
           inputEl.val(val).trigger('input');
           this.$apply();
-        }.bind(this),
+        },
         isStatusVisible: function () {
           return statusEl.css('display') !== 'none';
         }
@@ -29,7 +29,7 @@ describe('Number widgets', function () {
     };
   });
 
-  describe('Number widget', function () {
+  describe('Number widget', () => {
     beforeEach(function () {
       this.fieldApi.type = 'Number';
       this.el = this.compileElement();
@@ -53,7 +53,7 @@ describe('Number widgets', function () {
     });
   });
 
-  describe('Integer widget', function () {
+  describe('Integer widget', () => {
     beforeEach(function () {
       this.fieldApi.type = 'Integer';
       this.el = this.compileElement();
@@ -68,7 +68,7 @@ describe('Number widgets', function () {
   });
 });
 
-describe('cfNumberEditor/parseNumber', function () {
+describe('cfNumberEditor/parseNumber', () => {
   let parseNumber;
 
   beforeEach(function () {
@@ -76,8 +76,8 @@ describe('cfNumberEditor/parseNumber', function () {
     parseNumber = this.$inject('cfNumberEditor/parseNumber');
   });
 
-  describe('parse numbers', function () {
-    it('should parse numbers correctly', function () {
+  describe('parse numbers', () => {
+    it('should parse numbers correctly', () => {
       const specs = [
         ['12', true],
         ['12.12', true],
@@ -98,14 +98,14 @@ describe('cfNumberEditor/parseNumber', function () {
         ['--', false]
       ];
 
-      specs.forEach(function (spec) {
+      specs.forEach(spec => {
         expect(parseNumber(spec[0].trim(), 'Number').isValid).toEqual(spec[1]);
       });
     });
   });
 
-  describe('parse integers', function () {
-    it('should parse integers correctly', function () {
+  describe('parse integers', () => {
+    it('should parse integers correctly', () => {
       const specs = [
         ['12', true],
         ['012', true],
@@ -127,7 +127,7 @@ describe('cfNumberEditor/parseNumber', function () {
         ['--', false]
       ];
 
-      specs.forEach(function (spec) {
+      specs.forEach(spec => {
         expect(parseNumber(spec[0].trim(), 'Integer').isValid).toEqual(spec[1]);
       });
     });

@@ -1,13 +1,13 @@
 import {createMVar, createMVar$q} from 'utils/Concurrent';
 
-describe('utils/Concurrent/MVar', function () {
-  beforeEach(function () {
+describe('utils/Concurrent/MVar', () => {
+  beforeEach(() => {
     module('contentful/test');
   });
 
-  [createMVar, createMVar$q].forEach(function (createMVar) {
-    describe(createMVar.name, function () {
-      describe('#take()', function () {
+  [createMVar, createMVar$q].forEach(createMVar => {
+    describe(createMVar.name, () => {
+      describe('#take()', () => {
         it('resolves immediately and empties state when MVar has value', function* () {
           const mVar = createMVar('foo');
           expect(mVar.isEmpty()).toEqual(false);
@@ -26,7 +26,7 @@ describe('utils/Concurrent/MVar', function () {
         });
       });
 
-      describe('#read()', function () {
+      describe('#read()', () => {
         it('resolves immediately and keeps value when MVar has value', function* () {
           const mVar = createMVar('foo');
           expect(mVar.isEmpty()).toEqual(false);
@@ -56,14 +56,14 @@ describe('utils/Concurrent/MVar', function () {
         expect(yield mVar.read()).toEqual('bar');
       });
 
-      it('can have null and undefined as a value', function () {
+      it('can have null and undefined as a value', () => {
         let mVar = createMVar(null);
         expect(mVar.isEmpty()).toEqual(false);
         mVar = createMVar(undefined);
         expect(mVar.isEmpty()).toEqual(false);
       });
 
-      it('sets to empty synchronously with empty()', function () {
+      it('sets to empty synchronously with empty()', () => {
         const mVar = createMVar('foo');
         mVar.empty();
         expect(mVar.isEmpty()).toEqual(true);

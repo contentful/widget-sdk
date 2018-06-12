@@ -1,6 +1,6 @@
 import * as K from 'helpers/mocks/kefir';
 
-describe('Account View directive', function () {
+describe('Account View directive', () => {
   beforeEach(function () {
     this.handleGatekeeperMessage = sinon.spy();
     module('contentful/test', ($provide) => {
@@ -13,9 +13,9 @@ describe('Account View directive', function () {
     const IframeChannel = this.mockService('account/IframeChannel');
     IframeChannel.default.returns(this.messages$);
 
-    this.compile = function () {
+    this.compile = () => {
       this.element = this.$compile('<cf-account-view context="context" />', { context: {} });
-    }.bind(this);
+    };
   });
 
   it('calls "handleGatekeeperMessage" on message', function () {

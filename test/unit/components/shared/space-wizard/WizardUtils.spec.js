@@ -2,27 +2,27 @@ import { render } from 'enzyme';
 
 import { formatPrice, unavailabilityTooltipNode } from 'components/shared/space-wizard/WizardUtils';
 
-describe('WizardUtils', function () {
-  describe('formatPrice', function () {
-    it('should return null if the given value is not finite', function () {
+describe('WizardUtils', () => {
+  describe('formatPrice', () => {
+    it('should return null if the given value is not finite', () => {
       expect(formatPrice('hello')).toBe(null);
       expect(formatPrice({})).toBe(null);
       expect(formatPrice([])).toBe(null);
     });
 
-    it('should have no decimal places if given an integer', function () {
+    it('should have no decimal places if given an integer', () => {
       expect(formatPrice(1)).toBe('$1');
       expect(formatPrice(27)).toBe('$27');
     });
 
-    it('should have a decimal place if given a float', function () {
+    it('should have a decimal place if given a float', () => {
       expect(formatPrice(1.23)).toBe('$1.23');
       expect(formatPrice(27.41)).toBe('$27.41');
       expect(formatPrice(36.516)).toBe('$36.52');
     });
   });
 
-  describe('unavailabilityTooltipNode', function () {
+  describe('unavailabilityTooltipNode', () => {
     beforeEach(function () {
       this.planAvailable = {
         name: 'Small',

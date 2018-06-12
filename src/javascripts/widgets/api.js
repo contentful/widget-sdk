@@ -9,7 +9,7 @@ angular.module('contentful')
  * Exposes constructor for the `API` class that is used to communicate
  * with widgets in iframes.
  */
-.factory('widgets/API', ['require', function (require) {
+.factory('widgets/API', ['require', require => {
   var Channel = require('widgets/channel');
   var TheLocaleStore = require('TheLocaleStore');
   var createIDMap = require('widgets/IDMap');
@@ -196,7 +196,7 @@ angular.module('contentful')
   }
 
   function buildFieldInfo (idMap, entryData, fields) {
-    return _.map(fields, function (field) {
+    return _.map(fields, field => {
       var locales = field.localized
         ? TheLocaleStore.getPrivateLocales()
         : [TheLocaleStore.getDefaultLocale()];
@@ -221,7 +221,7 @@ angular.module('contentful')
           contentType = getContentType(entryAction, args[0]);
         }
         return apiClient[methodName].apply(apiClient, args)
-        .then(function (entity) {
+        .then(entity => {
           if (_.get(entity, ['sys', 'type']) === 'Entry' && entryAction) {
             Analytics.track('entry:' + entryAction, {
               eventOrigin: 'ui-extension',
@@ -231,13 +231,11 @@ angular.module('contentful')
           }
           return entity;
         })
-        .catch(function (err) {
-          return $q.reject({
-            message: 'Request failed',
-            code: err.code,
-            data: err.body // Cyborg?
-          });
-        });
+        .catch(err => $q.reject({
+          message: 'Request failed',
+          code: err.code,
+          data: err.body // Cyborg?
+        }));
       },
 
       setHeight: function (height) {
@@ -281,12 +279,10 @@ angular.module('contentful')
           id: spaceMembership.sys.id
         },
         admin: !!spaceMembership.admin,
-        roles: spaceMembership.roles.map(function (role) {
-          return {
-            name: role.name,
-            description: role.description
-          };
-        })
+        roles: spaceMembership.roles.map(role => ({
+          name: role.name,
+          description: role.description
+        }))
       }
     };
   }

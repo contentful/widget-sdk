@@ -21,7 +21,7 @@ angular.module('cf.ui')
  * cf-loader(is-shown="isLoading")
  * cf-loader(is-shown="somePropFromParentScope" loader-msg="Loading xyz…")
  */
-.directive('cfLoader', ['require', function (require) {
+.directive('cfLoader', ['require', require => {
   var h = require('utils/hyperscript').h;
   var spinner = require('ui/Components/Spinner').default;
   var Layout = require('ui/Layout');
@@ -49,7 +49,7 @@ angular.module('cf.ui')
         ])
       ])
     ]),
-    controller: ['$scope', 'require', function ($scope, require) {
+    controller: ['$scope', 'require', ($scope, require) => {
       var $rootScope = require('$rootScope');
       var $parse = require('$parse');
 
@@ -103,7 +103,7 @@ angular.module('cf.ui')
  *   input(type="text")
  *   cf-inline-loader(is-shown="isSearching")
  */
-.directive('cfInlineLoader', ['require', function (require) {
+.directive('cfInlineLoader', ['require', require => {
   var h = require('utils/hyperscript').h;
 
   return {

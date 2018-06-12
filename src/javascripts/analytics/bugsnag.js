@@ -7,7 +7,7 @@
  * See https://bugsnag.com/docs/notifiers/js for more details
 */
 angular.module('contentful')
-.factory('bugsnag', ['require', function (require) {
+.factory('bugsnag', ['require', require => {
   var CallBuffer = require('utils/CallBuffer');
   var environment = require('environment');
 
@@ -43,14 +43,14 @@ angular.module('contentful')
 
     notify: function () {
       var args = arguments;
-      callBuffer.call(function () {
+      callBuffer.call(() => {
         if (bugsnag) bugsnag.notify.apply(bugsnag, args);
       });
     },
 
     notifyException: function () {
       var args = arguments;
-      callBuffer.call(function () {
+      callBuffer.call(() => {
         if (bugsnag) bugsnag.notifyException.apply(bugsnag, args);
       });
     },
@@ -76,7 +76,7 @@ angular.module('contentful')
      * @param {object} data
      */
     leaveBreadcrumb: function (name, data) {
-      callBuffer.call(function () {
+      callBuffer.call(() => {
         if (bugsnag) bugsnag.leaveBreadcrumb(name, data);
       });
     }
@@ -86,7 +86,7 @@ angular.module('contentful')
     // Prevent circular dependency
     var LazyLoader = require('LazyLoader');
     return LazyLoader.get('bugsnag')
-    .then(function (_bugsnag) {
+    .then(_bugsnag => {
       bugsnag = _bugsnag;
       // Do not patch `console.log`. It messes up stack traces
       bugsnag.disableAutoBreadcrumbsConsole();
@@ -97,7 +97,7 @@ angular.module('contentful')
       bugsnag.appVersion = environment.gitRevision;
       setUserInfo(user, bugsnag);
       callBuffer.resolve();
-    }, function () {
+    }, () => {
       callBuffer.disable();
     });
   }
@@ -115,9 +115,7 @@ angular.module('contentful')
 
   function getOrganizations (user) {
     var organizationMemberships = user.organizationMemberships || [];
-    return organizationMemberships.map(function (membership) {
-      return membership.organization.sys.id;
-    }).join(', ');
+    return organizationMemberships.map(membership => membership.organization.sys.id).join(', ');
   }
 
   function getAdminLink (user) {

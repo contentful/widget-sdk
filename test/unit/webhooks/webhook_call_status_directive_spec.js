@@ -1,21 +1,21 @@
 'use strict';
 
-describe('Webhook Call Status directive', function () {
+describe('Webhook Call Status directive', () => {
   beforeEach(function () {
     module('contentful/test');
 
-    this.compile = function (code, error) {
+    this.compile = (code, error) => {
       const data = {call: {errors: (error ? [error] : undefined), statusCode: code}};
       this.element = this.$compile('<cf-webhook-call-status call="call" />', data);
-    }.bind(this);
+    };
 
-    this.testStatus = function (expected) {
+    this.testStatus = expected => {
       expect(this.element.find('.webhook-call__status-indicator').attr('data-status')).toBe(expected);
-    }.bind(this);
+    };
 
-    this.testContent = function (index, expected) {
+    this.testContent = (index, expected) => {
       expect(this.element.find('span:nth-child(' + index + ')').text()).toBe(expected);
-    }.bind(this);
+    };
   });
 
   it('shows green light when code < 300', function () {

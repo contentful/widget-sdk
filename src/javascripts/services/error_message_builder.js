@@ -8,7 +8,7 @@ angular.module('contentful')
  *
  * @method {function (error:Error): string} baseErrorMessageBuilder
  */
-.factory('baseErrorMessageBuilder', [function () {
+.factory('baseErrorMessageBuilder', [() => {
   var messages = {
     size: function (error) {
       if (_.isString(error.value)) {
@@ -106,24 +106,22 @@ angular.module('contentful')
  *
  * @method {function (error:Error): string} fieldErrorMessageBuilder
  */
-.factory('fieldErrorMessageBuilder', ['baseErrorMessageBuilder', function (buildBaseMessage) {
-  return function buildMessage (error) {
-    if (error.path && error.path[0] === 'apiName') {
-      if (error.name === 'regexp' && error.value.match(/^\d/)) {
-        return 'Please use a letter as the first character';
-      }
-      if (error.name === 'regexp') {
-        return 'Please use only letters and numbers';
-      }
-      if (error.name === 'size') {
-        return 'Please shorten the text so it’s no longer than 64 characters';
-      }
-      if (error.name === 'uniqueFieldId') {
-        return 'A field with this ID already exists';
-      }
+.factory('fieldErrorMessageBuilder', ['baseErrorMessageBuilder', buildBaseMessage => function buildMessage (error) {
+  if (error.path && error.path[0] === 'apiName') {
+    if (error.name === 'regexp' && error.value.match(/^\d/)) {
+      return 'Please use a letter as the first character';
     }
-    return buildBaseMessage(error);
-  };
+    if (error.name === 'regexp') {
+      return 'Please use only letters and numbers';
+    }
+    if (error.name === 'size') {
+      return 'Please shorten the text so it’s no longer than 64 characters';
+    }
+    if (error.name === 'uniqueFieldId') {
+      return 'A field with this ID already exists';
+    }
+  }
+  return buildBaseMessage(error);
 }])
 
 /**
@@ -140,7 +138,7 @@ angular.module('contentful')
  * @method {function(error:Error): string} errorMessageBuilder.forContentType
  * @method {function(error:Error): string} errorMessageBuilder.forAsset
  */
-.factory('errorMessageBuilder', ['require', function (require) {
+.factory('errorMessageBuilder', ['require', require => {
   var moment = require('moment');
   var joinAnd = require('stringUtils').joinAnd;
   var mimetypeGroupNames = require('mimetype').getGroupNames();
@@ -148,9 +146,7 @@ angular.module('contentful')
 
   var messages = {
     linkMimetypeGroup: function (error) {
-      var labels = _.map(error.mimetypeGroupName, function (name) {
-        return '“' + mimetypeGroupNames[name] + '”';
-      });
+      var labels = _.map(error.mimetypeGroupName, name => '“' + mimetypeGroupNames[name] + '”');
       return '' + joinAnd(labels) + ' are the only acceptable file types';
     },
 
@@ -246,9 +242,7 @@ angular.module('contentful')
   }
 
   function errorMessageBuilder (ctRepo) {
-    return function (error) {
-      return buildErrorMessage(error, ctRepo);
-    };
+    return error => buildErrorMessage(error, ctRepo);
   }
 
   errorMessageBuilder.forContentType = buildContentTypeError;

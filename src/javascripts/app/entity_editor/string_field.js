@@ -9,7 +9,7 @@ angular.module('cf.app')
  * @description
  * This service handles setting value on string fields.
  */
-.factory('entityEditor/Document/StringField', ['require', function (require) {
+.factory('entityEditor/Document/StringField', ['require', require => {
   var $q = require('$q');
   var diff = require('utils/StringDiff').diff;
   var ShareJS = require('data/ShareJS/Utils');
@@ -62,7 +62,7 @@ angular.module('cf.app')
      * - patch.insert[1] is the string to be inserted
      *   at the start position
      */
-    var ops = patches.map(function (patch) {
+    var ops = patches.map(patch => {
       if (patch.delete) {
         return deleteOp(path, oldValue, patch);
       } else if (patch.insert) {
@@ -70,10 +70,8 @@ angular.module('cf.app')
       }
     });
 
-    return $q.denodeify(function (cb) {
-      // When patching - do it atomically
-      return doc.submitOp(_.filter(ops), cb);
-    });
+    return $q.denodeify(cb => // When patching - do it atomically
+    doc.submitOp(_.filter(ops), cb));
   }
 
   function deleteOp (path, value, patch) {
@@ -94,9 +92,7 @@ angular.module('cf.app')
   }
 
   function isStringField (fieldId, contentType) {
-    var field = _.find(_.get(contentType, 'data.fields', []), function (field) {
-      return field.id === fieldId;
-    });
+    var field = _.find(_.get(contentType, 'data.fields', []), field => field.id === fieldId);
 
     return _.includes(STRING_FIELD_TYPES, field && field.type);
   }

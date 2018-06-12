@@ -11,7 +11,7 @@ angular.module('cf.ui')
  *   // same API as Pikaday
  * })
  */
-.service('datepicker', ['require', function (require) {
+.service('datepicker', ['require', require => {
   var Pikaday = require('Pikaday');
 
   var I18N = {

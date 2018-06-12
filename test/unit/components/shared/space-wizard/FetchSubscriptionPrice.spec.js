@@ -1,7 +1,7 @@
 import React from 'react';
 import { mount } from 'enzyme';
 
-describe('FetchSubscriptionPrice', function () {
+describe('FetchSubscriptionPrice', () => {
   beforeEach(function () {
     this.stubs = {
       getSubscriptionPlans: sinon.stub().resolves([]),

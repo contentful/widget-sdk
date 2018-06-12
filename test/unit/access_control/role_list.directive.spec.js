@@ -1,4 +1,4 @@
-describe('Role List Directive', function () {
+describe('Role List Directive', () => {
   beforeEach(function () {
     this.getCurrentVariation = sinon.stub().resolves(false);
 
@@ -138,8 +138,8 @@ describe('Role List Directive', function () {
     this.container.remove();
   });
 
-  describe('the UX', function () {
-    describe('for a user that cannot modify roles', function () {
+  describe('the UX', () => {
+    describe('for a user that cannot modify roles', () => {
       it('should not show the Add Role button', function () {
         this.canModifyRoles.resolves(false);
 
@@ -155,7 +155,7 @@ describe('Role List Directive', function () {
       });
     });
 
-    describe('for a user that can modify roles', function () {
+    describe('for a user that can modify roles', () => {
       it('should show the Add Role button', function () {
         this.canModifyRoles.resolves(true);
 
@@ -190,7 +190,7 @@ describe('Role List Directive', function () {
         expect(text).toBe('Your space is using 1 out of 3 available roles.');
       });
 
-      describe('when hitting the limit', function () {
+      describe('when hitting the limit', () => {
         beforeEach(function () {
           this.setUsageLimits(3, 3);
         });

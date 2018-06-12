@@ -51,9 +51,7 @@ angular.module('contentful')
    * larger than 1.
    */
   function getUnitFactor(baseValue) {
-    var factor = _.findLast(unitFactors, function(factor) {
-      return baseValue / factor >= 1;
-    });
+    var factor = _.findLast(unitFactors, factor => baseValue / factor >= 1);
     return factor || unitFactors[0];
   }
 }]);

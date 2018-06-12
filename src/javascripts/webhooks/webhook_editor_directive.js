@@ -2,20 +2,19 @@
 
 angular.module('contentful')
 
-.directive('cfWebhookEditor', function () {
-  return {
-    restrict: 'E',
-    template: JST['webhook_editor'](),
-    controller: 'WebhookEditorController',
-    link: function (scope) {
-      if (!scope.context.isNew) {
-        scope.tabController.activate('activity');
-      }
-    }
-  };
-})
+.directive('cfWebhookEditor', () => ({
+  restrict: 'E',
+  template: JST['webhook_editor'](),
+  controller: 'WebhookEditorController',
 
-.controller('WebhookEditorController', ['$scope', 'require', function ($scope, require) {
+  link: function (scope) {
+    if (!scope.context.isNew) {
+      scope.tabController.activate('activity');
+    }
+  }
+}))
+
+.controller('WebhookEditorController', ['$scope', 'require', ($scope, require) => {
   var $q = require('$q');
   var $controller = require('$controller');
   var Command = require('command');
@@ -72,18 +71,18 @@ angular.module('contentful')
   this.save = save;
   this.remove = remove;
 
-  $scope.$watch('webhook', function (webhook, prev) {
+  $scope.$watch('webhook', (webhook, prev) => {
     touched += 1;
     $scope.context.title = isEmpty('name') ? 'Unnamed' : webhook.name;
     if (webhook === prev) { checkCredentials(); }
   }, true);
 
-  $scope.$watch(function () { return touched; }, function () {
+  $scope.$watch(() => touched, () => {
     $scope.context.dirty = touched > 0;
   });
 
   function save () {
-    return askAboutHeader().then(function () {
+    return askAboutHeader().then(() => {
       prepareCredentials();
       var validationError = validation.validate($scope.webhook);
       if (validationError) {
@@ -119,7 +118,7 @@ angular.module('contentful')
   }
 
   function remove () {
-    return repo.remove($scope.webhook).then(function () {
+    return repo.remove($scope.webhook).then(() => {
       $scope.context.dirty = false;
       notification.info('Webhook "' + $scope.webhook.name + '" deleted successfully.');
       return $state.go('^.list');
@@ -157,7 +156,7 @@ angular.module('contentful')
   $scope.activity = {};
   if (!$scope.context.isNew) { refreshActivity(); }
 
-  $scope.$watch('activity.page', function (page) {
+  $scope.$watch('activity.page', page => {
     if (_.isNumber(page) && _.isArray(items)) {
       $scope.activity.visible = items.slice(page * PER_PAGE, (page + 1) * PER_PAGE);
     } else {
@@ -172,7 +171,7 @@ angular.module('contentful')
   }
 
   function fetchActivity () {
-    return repo.logs.getCalls($scope.webhook.sys.id).then(function (res) {
+    return repo.logs.getCalls($scope.webhook.sys.id).then(res => {
       items = res.items;
       $scope.activity.pages = _.range(0, Math.ceil(res.items.length / PER_PAGE));
       $scope.activity.loading = false;
@@ -181,7 +180,7 @@ angular.module('contentful')
   }
 }])
 
-.factory('WebhookEditor/validationHelper', ['require', function (require) {
+.factory('WebhookEditor/validationHelper', ['require', require => {
   var $q = require('$q');
   var notification = require('notification');
   var logger = require('logger');

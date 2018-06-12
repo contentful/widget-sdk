@@ -1,9 +1,9 @@
 'use strict';
 
-describe('cfEmbedlyPreview Directive', function () {
+describe('cfEmbedlyPreview Directive', () => {
   let deferredEmbedlyResponse;
 
-  afterEach(function () {
+  afterEach(() => {
     deferredEmbedlyResponse = null;
   });
 
@@ -13,8 +13,8 @@ describe('cfEmbedlyPreview Directive', function () {
     const $q = this.$inject('$q');
     deferredEmbedlyResponse = $q.defer();
 
-    this.$inject('LazyLoader').get = function () {
-      const stubbedEmbedly = function (type, element, callback) {
+    this.$inject('LazyLoader').get = () => {
+      const stubbedEmbedly = (type, element, callback) => {
         if (type === 'card' &&
             element.localName === 'a' &&
             element.hasAttribute('href')) {
@@ -27,7 +27,7 @@ describe('cfEmbedlyPreview Directive', function () {
       return $q.resolve(stubbedEmbedly);
     };
 
-    this.compileElement = function (defaultValue) {
+    this.compileElement = defaultValue => {
       defaultValue = defaultValue || null;
       const scopeProps = {
         previewUrl: _.get(this, 'scope.previewUrl') || defaultValue,
@@ -36,10 +36,10 @@ describe('cfEmbedlyPreview Directive', function () {
       this.element = this.$compile('<cf-embedly-preview preview-url="previewUrl" url-status="urlStatus" />', scopeProps);
       this.scope = this.element.isolateScope();
       this.$apply();
-    }.bind(this);
+    };
   });
 
-  describe('watches for value change', function () {
+  describe('watches for value change', () => {
     it('is empty in the beginning', function () {
       this.compileElement();
       expect(this.element[0].children.length).toBe(0);
@@ -86,7 +86,7 @@ describe('cfEmbedlyPreview Directive', function () {
     });
   });
 
-  describe('changes state depending on value', function () {
+  describe('changes state depending on value', () => {
     it('updates state when the field changes', function () {
       // Initial state is invalid
       this.compileElement();

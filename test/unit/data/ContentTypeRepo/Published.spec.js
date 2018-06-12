@@ -1,10 +1,10 @@
 import * as sinon from 'helpers/sinon';
 import * as K from 'helpers/mocks/kefir';
 
-describe('data/ContentTypeRepo/Published', function () {
+describe('data/ContentTypeRepo/Published', () => {
   let $q;
 
-  afterEach(function () {
+  afterEach(() => {
     $q = null;
   });
 
@@ -23,7 +23,7 @@ describe('data/ContentTypeRepo/Published', function () {
   });
 
 
-  describe('#fetch()', function () {
+  describe('#fetch()', () => {
     beforeEach(function () {
       this.space.getPublishedContentTypes.resolves([
         makeCtMock('already_fetched')
@@ -57,7 +57,7 @@ describe('data/ContentTypeRepo/Published', function () {
   });
 
 
-  describe('#get()', function () {
+  describe('#get()', () => {
     beforeEach(function () {
       this.space.getPublishedContentTypes.resolves([
         makeCtMock('already_fetched')
@@ -81,7 +81,7 @@ describe('data/ContentTypeRepo/Published', function () {
   });
 
 
-  describe('#refresh()', function () {
+  describe('#refresh()', () => {
     it('requests published content types', function () {
       sinon.assert.notCalled(this.space.getPublishedContentTypes);
       this.repo.refresh();
@@ -140,7 +140,7 @@ describe('data/ContentTypeRepo/Published', function () {
     });
   });
 
-  describe('#refreshBare()', function () {
+  describe('#refreshBare()', () => {
     it('returns bare content type', function* () {
       this.space.getPublishedContentTypes.resolves([
         makeCtMock('A'),
@@ -151,7 +151,7 @@ describe('data/ContentTypeRepo/Published', function () {
     });
   });
 
-  describe('#publish()', function () {
+  describe('#publish()', () => {
     it('calls #publish() on content type', function* () {
       const ct = makeCtMock('CTID');
       yield this.repo.publish(ct);

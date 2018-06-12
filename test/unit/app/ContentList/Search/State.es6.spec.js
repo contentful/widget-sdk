@@ -5,9 +5,9 @@ import * as K from 'helpers/mocks/kefir';
 import * as State from 'app/ContentList/Search/State';
 import { buildFilterFieldByQueryKey } from 'app/ContentList/Search/Filters';
 
-describe('app/ContentList/Search/State', function () {
+describe('app/ContentList/Search/State', () => {
   let store, actions;
-  beforeEach(function () {
+  beforeEach(() => {
     const defaultState = State.initialState({
       contentTypeId: null,
       searchFilters: [],

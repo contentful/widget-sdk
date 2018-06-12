@@ -1,6 +1,6 @@
 'use strict';
 
-describe('cfFieldAlert Directive', function () {
+describe('cfFieldAlert Directive', () => {
   beforeEach(function () {
     module('contentful/test');
     this.element = this.$compile('<div cf-field-alert="message" class="cf-field-alert"></div>');

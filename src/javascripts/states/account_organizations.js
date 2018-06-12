@@ -5,7 +5,7 @@ angular.module('contentful')
  * @ngdoc service
  * @name states/account
  */
-.factory('states/account/organizations', ['require', function (require) {
+.factory('states/account/organizations', ['require', require => {
   var base = require('states/Base').default;
   var h = require('ui/Framework').h;
   var workbenchHeader = require('app/Workbench').header;
@@ -79,7 +79,7 @@ angular.module('contentful')
     name: 'new',
     title: 'Organization users',
     url: '/new',
-    controller: ['$stateParams', '$scope', function ($stateParams, $scope) {
+    controller: ['$stateParams', '$scope', ($stateParams, $scope) => {
       $scope.properties = {
         orgId: $stateParams.orgId,
         context: $scope.context
@@ -90,7 +90,7 @@ angular.module('contentful')
     ],
     // this is duplicated code, but there's no way
     // we can get around it for now
-    onEnter: ['$stateParams', function ($stateParams) {
+    onEnter: ['$stateParams', $stateParams => {
       store.set('lastUsedOrg', $stateParams.orgId);
     }]
   });
@@ -139,7 +139,7 @@ angular.module('contentful')
 
   function reactBase (definition) {
     var defaults = {
-      controller: ['$stateParams', '$scope', function ($stateParams, $scope) {
+      controller: ['$stateParams', '$scope', ($stateParams, $scope) => {
         $scope.properties = {
           orgId: $stateParams.orgId,
           context: $scope.context
@@ -153,18 +153,18 @@ angular.module('contentful')
   function organizationsBase (definition) {
     var defaults = {
       label: 'Organizations & Billing',
-      onEnter: ['$state', '$stateParams', 'require', function ($state, $stateParams, require) {
+      onEnter: ['$state', '$stateParams', 'require', ($state, $stateParams, require) => {
         var accessChecker = require('access_control/AccessChecker');
         var useLegacy = require('utils/ResourceUtils').useLegacy;
         var TokenStore = require('services/TokenStore');
         var go = require('states/Navigator').go;
 
-        TokenStore.getOrganization($stateParams.orgId).then(function (org) {
+        TokenStore.getOrganization($stateParams.orgId).then(org => {
           var migration = migratedStates.find(state => $state.is(state.v1));
           accessChecker.setOrganization(org);
           store.set('lastUsedOrg', $stateParams.orgId);
 
-          useLegacy(org).then(function (isLegacy) {
+          useLegacy(org).then(isLegacy => {
             var shouldRedirectToV2 = !isLegacy && Boolean(migration);
             // redirect old v1 state to the new v2 state
             // in case a user from a previously v1 org has

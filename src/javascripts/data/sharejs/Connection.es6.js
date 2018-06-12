@@ -55,7 +55,7 @@ export function create (baseUrl, auth, spaceId, environmentId) {
   // Set to false after we connected once
   let initialConnect = true;
 
-  const state$ = K.sampleBy(events, function () {
+  const state$ = K.sampleBy(events, () => {
     if (connection.state === 'connecting') {
       if (initialConnect) {
         initialConnect = false;
@@ -118,19 +118,18 @@ export function create (baseUrl, auth, spaceId, environmentId) {
     const loader = getDocLoader(entity, shouldOpen);
 
     return loader.doc
-      .flatten(function (docLoad) {
-        return caseof(docLoad, [
-          [DocLoad.Doc, function (d) { return [d.doc]; }],
-          [DocLoad.Error, function (e) { throw e.error; }],
-          [DocLoad.None, constant([])],
-          [DocLoad.Pending, constant([])]
-        ]);
-      })
+      .flatten(docLoad => caseof(docLoad, [
+      [DocLoad.Doc, d => [d.doc]],
+      [DocLoad.Error, e => { throw e.error; }],
+      [DocLoad.None, constant([])],
+      [DocLoad.Pending, constant([])]
+      ]))
       .take(1)
       .toPromise($q)
-      .then(function (doc) {
-        return {doc: doc, destroy: loader.destroy};
-      });
+      .then(doc => ({
+        doc: doc,
+        destroy: loader.destroy
+      }));
   }
 
   /**
@@ -264,7 +263,7 @@ function entityMetadataToKey (environmentId, sys) {
 function wrapActionWithLock (action) {
   let actionPromise = null;
 
-  return function () {
+  return () => {
     if (!actionPromise) {
       actionPromise = action().then(() => { actionPromise = null; });
     }

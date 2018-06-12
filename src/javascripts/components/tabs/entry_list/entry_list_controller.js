@@ -67,14 +67,14 @@ angular.module('contentful')
     limit: 3
   });
 
-  $scope.newContentType = function () {
+  $scope.newContentType = () => {
     // X.entries.list -> X.content_types.new
     $state.go('^.^.content_types.new');
   };
 
-  $scope.newEntry = function (contentTypeId) {
+  $scope.newEntry = contentTypeId => {
     var contentType = spaceContext.publishedCTs.get(contentTypeId);
-    entityCreator.newEntry(contentTypeId).then(function (entry) {
+    entityCreator.newEntry(contentTypeId).then(entry => {
       var eventOriginFlag = $scope.showNoEntriesAdvice() ? '--empty' : '';
       Analytics.track('entry:create', {
         eventOrigin: 'content-list' + eventOriginFlag,
@@ -86,14 +86,12 @@ angular.module('contentful')
     });
   };
 
-  $scope.getSearchContentType = function () {
-    return spaceContext.publishedCTs.get(getCurrentContentTypeId());
-  };
+  $scope.getSearchContentType = () => spaceContext.publishedCTs.get(getCurrentContentTypeId());
 
   $scope.$watch(accessChecker.getResponses, updateAccessibleCts);
   $scope.$watch(getCurrentContentTypeId, updateAccessibleCts);
 
-  K.onValueScope($scope, spaceContext.publishedCTs.items$, function (cts) {
+  K.onValueScope($scope, spaceContext.publishedCTs.items$, cts => {
     $scope.hasContentType = cts.length > 0;
     updateAccessibleCts();
   });
@@ -101,23 +99,17 @@ angular.module('contentful')
   function updateAccessibleCts () {
     $scope.accessibleCts = _.filter(
       spaceContext.publishedCTs.getAllBare(),
-      function (ct) {
-        return accessChecker.canPerformActionOnEntryOfType('create', ct.sys.id);
-      }
+      ct => accessChecker.canPerformActionOnEntryOfType('create', ct.sys.id)
     );
   }
 
-  $scope.displayFieldForFilteredContentType = function () {
-    return spaceContext.displayFieldForType(getCurrentContentTypeId());
-  };
+  $scope.displayFieldForFilteredContentType = () => spaceContext.displayFieldForType(getCurrentContentTypeId());
 
   function getCurrentContentTypeId () {
     return getViewItem('contentTypeId');
   }
 
-  $scope.hasPage = function () {
-    return !!($scope.entries && $scope.entries.length && !$scope.isEmpty);
-  };
+  $scope.hasPage = () => !!($scope.entries && $scope.entries.length && !$scope.isEmpty);
 
   /**
    * @ngdoc method
@@ -132,7 +124,7 @@ angular.module('contentful')
    *
    * @return {boolean}
    */
-  $scope.showNoEntriesAdvice = function () {
+  $scope.showNoEntriesAdvice = () => {
     var hasQuery = searchController.hasQuery();
     var hasEntries = $scope.paginator.getTotal() > 0;
 
@@ -148,7 +140,7 @@ angular.module('contentful')
    *
    * @return {boolean}
    */
-  $scope.hasNoSearchResults = function () {
+  $scope.hasNoSearchResults = () => {
     var hasQuery = searchController.hasQuery();
     var hasEntries = $scope.paginator.getTotal() > 0;
     var hasCollection = getViewItem('collection');
@@ -165,10 +157,8 @@ angular.module('contentful')
    *
    * @return {boolean}
    */
-  $scope.isEmptyCollection = function () {
-    return !$scope.paginator.getTotal() &&
-      getViewItem('collection') && !$scope.context.loading;
-  };
+  $scope.isEmptyCollection = () => !$scope.paginator.getTotal() &&
+    getViewItem('collection') && !$scope.context.loading;
 
   /**
    * @ngdoc property
@@ -181,11 +171,11 @@ angular.module('contentful')
    *
    * @type {boolean}
    */
-  $scope.$watch('showNoEntriesAdvice()', function (show) {
+  $scope.$watch('showNoEntriesAdvice()', show => {
     if (show) {
       $scope.hasArchivedEntries = false;
       return hasArchivedEntries(spaceContext.space)
-        .then(function (hasArchived) {
+        .then(hasArchived => {
           $scope.hasArchivedEntries = hasArchived;
         });
     }
@@ -196,9 +186,7 @@ angular.module('contentful')
     return space.getEntries({
       'limit': 1,
       'sys.archivedAt[exists]': true
-    }).then(function (response) {
-      return response && response.total > 0;
-    });
+    }).then(response => response && response.total > 0);
   }
 
   function getViewItem (path) {

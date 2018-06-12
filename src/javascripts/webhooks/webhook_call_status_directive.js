@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfWebhookCallStatus', [function () {
+angular.module('contentful').directive('cfWebhookCallStatus', [() => {
   var ERROR_NAMES = {
     TimeoutError: 'Timeout',
     ConnectionResetError: 'Connection reset',
@@ -14,7 +14,7 @@ angular.module('contentful').directive('cfWebhookCallStatus', [function () {
     restrict: 'E',
     template: JST['webhook_call_status'](),
     scope: {call: '='},
-    controller: ['$scope', function ($scope) {
+    controller: ['$scope', $scope => {
       var code = $scope.call.statusCode;
       var hasStatusCode = _.isNumber(code);
       var errorName = _.first($scope.call.errors || []);

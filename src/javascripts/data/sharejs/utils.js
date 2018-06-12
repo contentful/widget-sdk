@@ -7,7 +7,7 @@
  * Initializes and provides access to ShareJS
  */
 angular.module('cf.data')
-.factory('data/ShareJS/Utils', ['require', function (require) {
+.factory('data/ShareJS/Utils', ['require', require => {
   var $q = require('$q');
 
   return {
@@ -44,7 +44,7 @@ angular.module('cf.data')
    * @return {Promise<void>}
    */
   function remove (doc, path) {
-    return $q.denodeify(function (cb) {
+    return $q.denodeify(cb => {
       // We catch and ignore synchronous errors since they tell us
       // that a value along the path does not exist. I.e. it has
       // already been removed.
@@ -91,7 +91,7 @@ angular.module('cf.data')
       return remove(doc, path);
     }
 
-    return $q.denodeify(function (callback) {
+    return $q.denodeify(callback => {
       var container = getContainer(doc, path);
       var wrappedValue = makeDeepObject(container.restPath, value);
       container.doc.set(wrappedValue, callback);

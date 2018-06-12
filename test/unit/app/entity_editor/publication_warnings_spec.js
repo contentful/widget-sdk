@@ -1,12 +1,12 @@
 'use strict';
 
-describe('Publication warnings', function () {
+describe('Publication warnings', () => {
   beforeEach(function () {
     module('contentful/test');
     this.warnings = this.$inject('entityEditor/publicationWarnings').create();
   });
 
-  describe('#register', function () {
+  describe('#register', () => {
     it('registers a warning', function () {
       const warning = {shouldShow: _.noop, priority: 1, getData: _.noop};
       this.warnings.register(warning);
@@ -33,7 +33,7 @@ describe('Publication warnings', function () {
     });
   });
 
-  describe('#show', function () {
+  describe('#show', () => {
     const Y = _.constant(true);
     const N = _.constant(false);
 

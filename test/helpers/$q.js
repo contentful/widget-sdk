@@ -38,14 +38,12 @@ $q.all = wrap('all');
 
 
 function wrap (method) {
-  return function (...args) {
-    return get$q()[method](...args);
-  };
+  return (...args) => get$q()[method](...args);
 }
 
 function get$q () {
   let $q;
-  inject(function (_$q_) {
+  inject(_$q_ => {
     $q = _$q_;
   });
   return $q;

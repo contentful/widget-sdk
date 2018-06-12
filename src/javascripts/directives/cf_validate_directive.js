@@ -11,14 +11,12 @@
  * @scope.requires  schema.buildMessage
  */
 angular.module('contentful')
-.directive('cfValidate', [function () {
-  return {
-    restrict: 'A',
-    scope: true,
-    controller: 'ValidationController',
-    controllerAs: 'validator'
-  };
-}])
+.directive('cfValidate', [() => ({
+  restrict: 'A',
+  scope: true,
+  controller: 'ValidationController',
+  controllerAs: 'validator'
+})])
 
 .controller('ValidationController', ['$scope', '$attrs', 'require', function ValidationController ($scope, $attrs, require) {
   var $timeout = require('$timeout');
@@ -37,18 +35,18 @@ angular.module('contentful')
    */
   controller.errors$ = errorsBus.property;
 
-  controller.errors$.onValue(function (errors) {
+  controller.errors$.onValue(errors => {
     controller.errors = errors;
   });
 
   $scope.validationResult = {};
 
-  $scope.$on('$destroy', function (event) {
+  $scope.$on('$destroy', event => {
     var scope = event.currentScope;
     scope.validationResult = {};
   });
 
-  $scope.$on('validate', function () {
+  $scope.$on('validate', () => {
     controller.run();
   });
 
@@ -99,9 +97,9 @@ angular.module('contentful')
    * Behaves like `validator.run()` but runs the validation only after
    * the current digest cycle is completed and in a new digest cycle.
    */
-  controller.runLater = function (path, parent) {
-    $timeout(function () {
-      $scope.$apply(function () {
+  controller.runLater = (path, parent) => {
+    $timeout(() => {
+      $scope.$apply(() => {
         controller.run(path, parent);
       });
     });
@@ -134,7 +132,7 @@ angular.module('contentful')
     return _.filter(this.errors, errorPathMatcher(path, parent));
   };
 
-  controller.hasError = function (path) {
+  controller.hasError = path => {
     if (Array.isArray(path) && path.length === 0) {
       return !!errorTree;
     } else {
@@ -148,7 +146,7 @@ angular.module('contentful')
   }
 
   function makeValidationResult (errors, data, schema) {
-    errors = _.filter(errors, function (error) {
+    errors = _.filter(errors, error => {
       if (error && error.path) {
         return error.path[error.path.length - 1] !== '$$hashKey';
       } else {
@@ -157,7 +155,7 @@ angular.module('contentful')
     });
 
     if (schema.buildMessage) {
-      errors = _.forEach(errors, function (error) {
+      errors = _.forEach(errors, error => {
         error.message = schema.buildMessage(error);
       });
     }
@@ -187,10 +185,10 @@ angular.module('contentful')
    */
   function makeTree (items) {
     var root = {};
-    _.forEach(items, function (item) {
+    _.forEach(items, item => {
       var node = root;
       var path = normalizePath(item.path);
-      _.forEach(path, function (segment) {
+      _.forEach(path, segment => {
         node = node[segment] = node[segment] || {};
       });
       node['$data'] = item;
@@ -199,9 +197,7 @@ angular.module('contentful')
   }
 
   function errorPathMatcher (path, parent) {
-    return function (error) {
-      return matchesPath(path, error.path, parent);
-    };
+    return error => matchesPath(path, error.path, parent);
   }
 
   function normalizePath (path) {
@@ -211,7 +207,7 @@ angular.module('contentful')
     if (typeof path === 'string') {
       return path ? path.split('.') : [];
     } else if (Array.isArray(path)) {
-      return _.map(path, function (path) { return path.toString(); });
+      return _.map(path, path => path.toString());
     } else {
       throw new TypeError('Path is not an array or dot-separated strings');
     }

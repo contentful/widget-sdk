@@ -1,7 +1,7 @@
 import * as K from 'helpers/mocks/kefir';
 import {create as createDocument} from 'helpers/mocks/entity_editor_document';
 
-describe('Extension SDK', function () {
+describe('Extension SDK', () => {
   beforeEach(function () {
     module('contentful/test', ($provide) => {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
@@ -111,7 +111,7 @@ describe('Extension SDK', function () {
     this.container.remove();
   });
 
-  describe('#field', function () {
+  describe('#field', () => {
     beforeEach(function () {
       this.scope.widget.field.validations = ['VALIDATION'];
     });
@@ -120,7 +120,7 @@ describe('Extension SDK', function () {
       expect(api.field.validations).toEqual(['VALIDATION']);
     });
 
-    describe('#getValue()', function () {
+    describe('#getValue()', () => {
       beforeEach(function () {
         this.doc.setValueAt(['fields'], {
           'FID-internal': {'de-internal': 'INITIAL'}
@@ -138,7 +138,7 @@ describe('Extension SDK', function () {
       });
     });
 
-    describe('#onValueChanged()', function () {
+    describe('#onValueChanged()', () => {
       it('calls callback after when document changes', function* (api) {
         const valueChanged = sinon.stub();
         api.field.onValueChanged(valueChanged);
@@ -172,7 +172,7 @@ describe('Extension SDK', function () {
       });
     });
 
-    describe('#onIsDisabledChanged', function () {
+    describe('#onIsDisabledChanged', () => {
       when('initially disabled', function () {
         this.scope.fieldLocale.access.disabled = true;
       })
@@ -203,7 +203,7 @@ describe('Extension SDK', function () {
       });
     });
 
-    describe('#onSchemaErrorsChanged()', function () {
+    describe('#onSchemaErrorsChanged()', () => {
       when('there are initial errors', function () {
         this.scope.fieldLocale.errors$.set(['INITIAL']);
       })
@@ -225,15 +225,15 @@ describe('Extension SDK', function () {
       });
     });
 
-    describe('#setValue()', function () {
+    describe('#setValue()', () => {
       testValueMethods('setValue', 'VAL');
     });
 
-    describe('#removeValue()', function () {
+    describe('#removeValue()', () => {
       testValueMethods('removeValue');
     });
 
-    describe('#setInvalid', function () {
+    describe('#setInvalid', () => {
       it('proxies call to setInvalid method on scope.fieldController', function* (api) {
         api.field.setInvalid(true, this.scope.locale.code);
         yield api.nextTick();
@@ -271,7 +271,7 @@ describe('Extension SDK', function () {
     }
   });
 
-  describe('#entry', function () {
+  describe('#entry', () => {
     const SYS_0 = {type: 'Entry', version: 0};
     const SYS_1 = {type: 'Entry', version: 1};
 
@@ -279,7 +279,7 @@ describe('Extension SDK', function () {
       this.doc.setValueAt(['sys'], SYS_0);
     });
 
-    describe('#getSys()', function () {
+    describe('#getSys()', () => {
       it('returns the initial sys object', function* (api) {
         const sys = api.entry.getSys();
         expect(sys).toEqual(SYS_0);
@@ -293,7 +293,7 @@ describe('Extension SDK', function () {
       });
     });
 
-    describe('#onSysChanged()', function () {
+    describe('#onSysChanged()', () => {
       it('calls listener with initial value', function* (api) {
         const listener = sinon.stub();
         api.entry.onSysChanged(listener);
@@ -311,7 +311,7 @@ describe('Extension SDK', function () {
     });
   });
 
-  describe('#fields', function () {
+  describe('#fields', () => {
     beforeEach(function () {
       this.scope.entityInfo.contentType.fields = [
         this.scope.widget.field,
@@ -339,7 +339,7 @@ describe('Extension SDK', function () {
       expect(api.entry.fields.f3.locales).toEqual(['en']);
     });
 
-    describe('#getValue()', function () {
+    describe('#getValue()', () => {
       it('returns initial value', function* (api) {
         expect(api.entry.fields.f2.getValue()).toEqual('INITIAL en');
         expect(api.entry.fields.f2.getValue('de')).toEqual('INITIAL de');
@@ -365,7 +365,7 @@ describe('Extension SDK', function () {
       });
     });
 
-    describe('#setValue()', function () {
+    describe('#setValue()', () => {
       it('calls "otDoc.setValueAt()" with current field path', function* (api) {
         const field = api.entry.fields.f2;
         yield field.setValue('VAL');
@@ -399,7 +399,7 @@ describe('Extension SDK', function () {
     });
   });
 
-  describe('#locales', function () {
+  describe('#locales', () => {
     beforeEach(function () {
       const LocaleStore = this.$inject('TheLocaleStore');
       LocaleStore.setLocales([
@@ -417,7 +417,7 @@ describe('Extension SDK', function () {
     });
   });
 
-  describe('#space methods', function () {
+  describe('#space methods', () => {
     beforeEach(function () {
       const spaceContext = this.$inject('spaceContext');
       spaceContext.publishedCTs = {
@@ -472,7 +472,7 @@ describe('Extension SDK', function () {
     });
   });
 
-  describe('#dialogs methods', function () {
+  describe('#dialogs methods', () => {
     const methods = [
       ['selectSingleEntry', 'Entry', false],
       ['selectSingleAsset', 'Asset', false],
@@ -519,7 +519,7 @@ describe('Extension SDK', function () {
     });
   });
 
-  describe('#user', function () {
+  describe('#user', () => {
     beforeEach(function () {
       const spaceContext = this.$inject('spaceContext');
       spaceContext.space = { data: {
@@ -562,7 +562,7 @@ describe('Extension SDK', function () {
     });
   });
 
-  describe('#parameters', function () {
+  describe('#parameters', () => {
     it('both installation and instance parmeters default to empty object', function* (api) {
       expect(api.parameters).toEqual({
         installation: {},

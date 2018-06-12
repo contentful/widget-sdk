@@ -1,26 +1,23 @@
 'use strict';
 
-angular.module('contentful').directive('cfSelection', [function () {
-  return {
-    restrict: 'A',
-    link: function (scope, el, attrs) {
-      scope.$watch(function () {
-        return _.every(getEntities(), scope.selection.isSelected);
-      }, function (isSelected) {
-        el.prop('checked', isSelected);
-      });
+angular.module('contentful').directive('cfSelection', [() => ({
+  restrict: 'A',
 
-      function getEntities () {
-        var entities = scope.$eval(attrs.cfSelection);
+  link: function (scope, el, attrs) {
+    scope.$watch(() => _.every(getEntities(), scope.selection.isSelected), isSelected => {
+      el.prop('checked', isSelected);
+    });
 
-        if (_.isArray(entities)) {
-          return entities;
-        } else if (_.isObject(entities)) {
-          return [entities];
-        } else {
-          return [];
-        }
+    function getEntities () {
+      var entities = scope.$eval(attrs.cfSelection);
+
+      if (_.isArray(entities)) {
+        return entities;
+      } else if (_.isObject(entities)) {
+        return [entities];
+      } else {
+        return [];
       }
     }
-  };
-}]);
+  }
+})]);

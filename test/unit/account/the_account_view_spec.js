@@ -1,7 +1,7 @@
 import * as K from 'helpers/mocks/kefir';
 import * as sinon from 'helpers/sinon';
 
-describe('TheAccountView service', function () {
+describe('TheAccountView service', () => {
   beforeEach(function () {
     this.spaceContext = {
       publishedCTs: {
@@ -37,7 +37,7 @@ describe('TheAccountView service', function () {
     this.go = $state.go = sinon.stub();
   });
 
-  describe('#getOrganizationRef()', function () {
+  describe('#getOrganizationRef()', () => {
     const ORGS = [
       {subscriptionState: 'active', sys: {id: 'ORG_0'}},
       {subscriptionState: 'active', sys: {id: 'ORG_1'}},
@@ -53,7 +53,7 @@ describe('TheAccountView service', function () {
       expect(this.view.getOrganizationRef()).toBe(null);
     });
 
-    describe('with at least one space', function () {
+    describe('with at least one space', () => {
       beforeEach(function () {
         this.setOrganizationForCurrentSpace(ORGS[0]);
       });
@@ -69,7 +69,7 @@ describe('TheAccountView service', function () {
       });
     });
 
-    describe('without any space', function () {
+    describe('without any space', () => {
       beforeEach(function () {
         this.TokenStore.organizations$.set(ORGS);
       });
@@ -116,7 +116,7 @@ describe('TheAccountView service', function () {
   describeGoToMethod('goToUsers', 'users.gatekeeper', pricingV1Org);
 
   function describeGoToMethod (name, subpage, org, comment = '') {
-    describe(`.${name}()${comment && ', ' + comment}`, function () {
+    describe(`.${name}()${comment && ', ' + comment}`, () => {
       const RETURN_VALUE = {};
 
       beforeEach(function () {
@@ -137,7 +137,7 @@ describe('TheAccountView service', function () {
     });
   }
 
-  describe('getSubscriptionState()', function () {
+  describe('getSubscriptionState()', () => {
     it('returns state object for v1 org if user has permission', function () {
       this.setOrganizationForCurrentSpace(pricingV1Org);
       this.OrganizationRoles.isOwnerOrAdmin.returns(true);

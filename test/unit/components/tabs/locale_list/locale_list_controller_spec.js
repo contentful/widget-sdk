@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Locale List Controller', function () {
+describe('Locale List Controller', () => {
   beforeEach(function () {
     module('contentful/test');
     this.scope = this.$inject('$rootScope').$new();
@@ -66,7 +66,7 @@ describe('Locale List Controller', function () {
     };
   });
 
-  describe('refreshing locales', function () {
+  describe('refreshing locales', () => {
     beforeEach(function () {
       this.createController();
     });
@@ -80,7 +80,7 @@ describe('Locale List Controller', function () {
     });
   });
 
-  describe('refreshing locales fails', function () {
+  describe('refreshing locales fails', () => {
     beforeEach(function () {
       this.localeStore.refresh.rejects({statusCode: 500});
       this.createController();

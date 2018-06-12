@@ -20,12 +20,10 @@ const UNAUTHORIZED = 401;
  * @param {function(object): Promise} request
  */
 export default function wrapWithAuth (auth, request) {
-  return function (params) {
-    return auth.getToken()
-    .then((token) => {
-      return requestWithToken(params, token, 1);
-    });
-  };
+  return params => auth.getToken()
+  .then((token) => {
+    return requestWithToken(params, token, 1);
+  });
 
   function requestWithToken (params, token, retry) {
     params = clone(params);

@@ -55,7 +55,7 @@ function registerInIsolatedSystem (isolatedSystem, item) {
 }
 
 function createRegistrationWrapper (exports) {
-  return function (export_) {
+  return export_ => {
     // const exports = moduleObj;
     export_(Object.assign({default: exports}, exports));
     return {

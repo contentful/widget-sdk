@@ -3,7 +3,7 @@ import * as sinon from 'test/helpers/sinon';
 import { sleep } from 'utils/Concurrent';
 
 
-describe('ui/Components/CopyIconButton', function () {
+describe('ui/Components/CopyIconButton', () => {
   beforeEach(function () {
     this.copyToClipboard = sinon.stub();
     module('contentful/test', ($provide) => {

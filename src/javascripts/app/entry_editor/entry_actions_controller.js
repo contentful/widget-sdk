@@ -12,11 +12,11 @@ angular.module('contentful')
   var Notification = require('app/entity_editor/Notifications').Notification;
 
   var currentFields;
-  K.onValueScope($scope, fields$, function (fields) {
+  K.onValueScope($scope, fields$, fields => {
     currentFields = fields;
   });
 
-  controller.toggleDisabledFields = Command.create(function () {
+  controller.toggleDisabledFields = Command.create(() => {
     var show = !preferences.showDisabledFields;
     preferences.showDisabledFields = show;
     Analytics.track('entry_editor:disabled_fields_visibility_toggled', {
@@ -39,7 +39,7 @@ angular.module('contentful')
   };
 
   controller.add = Command.create(
-    function () {
+    () => {
       var contentType = getContentType(entityInfo);
       Analytics.track('entry_editor:created_with_same_ct', {
         contentTypeId: contentType.id,
@@ -47,20 +47,20 @@ angular.module('contentful')
       });
       return spaceContext.space.createEntry(contentType.id, {})
       .then(goToEntryDetailWithTracking(contentType.type))
-      .catch(function () { notify(Notification.Error('add')); });
+      .catch(() => { notify(Notification.Error('add')); });
     },
     options,
     { name: function () { return entityInfo.contentType.name; } }
   );
 
   controller.duplicate = Command.create(
-    function () {
+    () => {
       var contentType = getContentType(entityInfo);
       return spaceContext.space.createEntry(contentType.id, {
         fields: currentFields
       })
       .then(goToEntryDetailWithTracking(contentType.type, { duplicate: true }))
-      .catch(function () { notify(Notification.Error('duplicate')); });
+      .catch(() => { notify(Notification.Error('duplicate')); });
     },
     options
   );
@@ -69,7 +69,7 @@ angular.module('contentful')
     var eventOrigin = options && options.duplicate
       ? 'entry-editor__duplicate'
       : 'entry-editor';
-    return function (entry) {
+    return entry => {
       trackEntryCreation(eventOrigin, contentType, entry);
       goToEntryDetail(entry);
     };

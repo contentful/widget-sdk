@@ -10,7 +10,7 @@ angular.module('cf.data')
  * Sanitizes editing interface data and transforms between the API and
  * the internal UI format.
  */
-.factory('data/editingInterfaces/transformer', ['require', function (require) {
+.factory('data/editingInterfaces/transformer', ['require', require => {
   var eiHelpers = require('editingInterfaces/helpers');
   var migrateWidgetId = require('widgets/migrations');
   var getDefaultWidgetId = require('widgets/default');
@@ -80,7 +80,7 @@ angular.module('cf.data')
    * @pure
    */
   function alignControls (contentType, controls) {
-    return _.map(contentType.fields, function (field) {
+    return _.map(contentType.fields, field => {
       var control =
         eiHelpers.findWidget(controls, field) ||
         defaultControl(contentType, field);

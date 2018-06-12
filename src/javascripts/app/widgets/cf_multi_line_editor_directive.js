@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('cf.app')
-.directive('cfMultiLineEditor', ['require', function (require) {
+.directive('cfMultiLineEditor', ['require', require => {
   var createTextarea = require('editors').textarea;
 
   return {
@@ -14,7 +14,7 @@ angular.module('cf.app')
 
       // This is necessary to free the component for garbage collection.
       // Otherwise the component is kept in a cache somewhere.
-      $scope.$on('$destroy', function () {
+      $scope.$on('$destroy', () => {
         $el.empty();
       });
     }

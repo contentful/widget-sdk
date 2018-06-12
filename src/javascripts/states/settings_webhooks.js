@@ -7,7 +7,7 @@ angular.module('contentful')
  * @name states/settings/webhooks
  */
 
-.factory('states/settings/webhooks', ['require', function (require) {
+.factory('states/settings/webhooks', ['require', require => {
   var base = require('states/Base').default;
   var contextHistory = require('navigation/Breadcrumbs/History').default;
   var crumbFactory = require('navigation/Breadcrumbs/Factory');
@@ -23,7 +23,7 @@ angular.module('contentful')
     name: 'new',
     url: '/new',
     template: '<cf-webhook-editor cf-ui-tab class="workbench webhook-editor" />',
-    controller: ['$scope', function ($scope) {
+    controller: ['$scope', $scope => {
       $scope.context.isNew = true;
       $scope.webhook = { headers: [], topics: ['*.*'] };
 
@@ -38,12 +38,10 @@ angular.module('contentful')
     name: 'call',
     url: '/call/:callId',
     resolve: {
-      call: ['WebhookRepository', 'spaceContext', 'webhook', '$stateParams', function (WebhookRepository, spaceContext, webhook, $stateParams) {
-        return WebhookRepository.getInstance(spaceContext.space).logs.getCall(webhook.sys.id, $stateParams.callId);
-      }]
+      call: ['WebhookRepository', 'spaceContext', 'webhook', '$stateParams', (WebhookRepository, spaceContext, webhook, $stateParams) => WebhookRepository.getInstance(spaceContext.space).logs.getCall(webhook.sys.id, $stateParams.callId)]
     },
     template: JST['webhook_call'](),
-    controller: ['$scope', '$stateParams', 'webhook', 'call', function ($scope, $stateParams, webhook, call) {
+    controller: ['$scope', '$stateParams', 'webhook', 'call', ($scope, $stateParams, webhook, call) => {
       $scope.webhook = webhook;
       $scope.call = call;
 
@@ -66,12 +64,10 @@ angular.module('contentful')
     name: 'detail',
     url: '/:webhookId',
     resolve: {
-      webhook: ['WebhookRepository', 'spaceContext', '$stateParams', function (WebhookRepository, spaceContext, $stateParams) {
-        return WebhookRepository.getInstance(spaceContext.space).get($stateParams.webhookId);
-      }]
+      webhook: ['WebhookRepository', 'spaceContext', '$stateParams', (WebhookRepository, spaceContext, $stateParams) => WebhookRepository.getInstance(spaceContext.space).get($stateParams.webhookId)]
     },
     template: '<cf-webhook-editor cf-ui-tab class="workbench webhook-editor" />',
-    controller: ['$scope', '$stateParams', 'webhook', function ($scope, $stateParams, webhook) {
+    controller: ['$scope', '$stateParams', 'webhook', ($scope, $stateParams, webhook) => {
       $scope.context.isNew = false;
       $scope.webhook = webhook;
 

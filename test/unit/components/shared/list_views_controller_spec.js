@@ -1,8 +1,8 @@
 'use strict';
 
-describe('ListViewsController', function () {
+describe('ListViewsController', () => {
   let scope, resetList;
-  afterEach(function () {
+  afterEach(() => {
     scope = resetList = null;
   });
 
@@ -32,14 +32,14 @@ describe('ListViewsController', function () {
     scope.$apply();
   });
 
-  describe('initialization', function () {
-    it('reads view from the query string service', function () {
+  describe('initialization', () => {
+    it('reads view from the query string service', () => {
       expect(scope.context.view.from_qs).toBe('test');
     });
   });
 
-  describe('loading view', function () {
-    it('should assign a deep copy of the view to the tab and reset the list', function () {
+  describe('loading view', () => {
+    it('should assign a deep copy of the view to the tab and reset the list', () => {
       const view = {id: 'foo'};
       scope.loadView(view);
       expect(scope.context.view.id).toBe('foo');

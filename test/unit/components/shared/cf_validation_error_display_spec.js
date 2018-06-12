@@ -1,9 +1,9 @@
 'use strict';
 
-describe('ErrorPathController', function () {
+describe('ErrorPathController', () => {
   var controller, scope, attrs;
 
-  afterEach(function () {
+  afterEach(() => {
     controller = scope = attrs = null;
   });
 
@@ -35,7 +35,7 @@ describe('ErrorPathController', function () {
       $attrs: attrs
     });
 
-    this.processError = function (error) {
+    this.processError = error => {
       if (error)
         scope.schema.errors.returns([error]);
       scope.validate();
@@ -44,8 +44,8 @@ describe('ErrorPathController', function () {
 
   });
 
-  describe('"size" error message', function () {
-    beforeEach(function () {
+  describe('"size" error message', () => {
+    beforeEach(() => {
       attrs.cfErrorPath = '["foo", "bar"]';
     });
 
@@ -72,8 +72,8 @@ describe('ErrorPathController', function () {
     });
   });
 
-  describe('Errors in items', function () {
-    beforeEach(function () {
+  describe('Errors in items', () => {
+    beforeEach(() => {
       attrs.cfErrorPath = '["foo", "bars", "*"]';
     });
 

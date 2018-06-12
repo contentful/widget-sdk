@@ -1,8 +1,8 @@
 'use strict';
 
-describe('Search parser', function () {
+describe('Search parser', () => {
   let parser;
-  afterEach(function () {
+  afterEach(() => {
     parser = null;
   });
 
@@ -11,7 +11,7 @@ describe('Search parser', function () {
     parser = this.$inject('searchParser');
   });
 
-  it('should detect a simple search', function () {
+  it('should detect a simple search', () => {
     expect(parser.parse('Foobar')).toEqual([
       {
         'type': 'Query',
@@ -24,7 +24,7 @@ describe('Search parser', function () {
     ]);
   });
 
-  it('should detect two queries', function () {
+  it('should detect two queries', () => {
     expect(parser.parse('George Clooney ')).toEqual([{
       'type': 'Query',
       'text': 'George ',
@@ -44,7 +44,7 @@ describe('Search parser', function () {
   });
 
 
-  it('should detect a key-value search', function () {
+  it('should detect a key-value search', () => {
     expect(parser.parse('foo:bar')).toEqual([
       {
         'type': 'Pair',
@@ -82,7 +82,7 @@ describe('Search parser', function () {
     ]);
   });
 
-  it('should detect a double key-value search', function () {
+  it('should detect a double key-value search', () => {
     expect(parser.parse('foo:bar bingo:bongo')).toEqual([
       {
         'type': 'Pair',
@@ -153,7 +153,7 @@ describe('Search parser', function () {
     ]);
   });
 
-  it('should detect a key-value search with quotes', function () {
+  it('should detect a key-value search with quotes', () => {
     expect(parser.parse('foo:"Bar Baz"')).toEqual([
       {
         'type': 'Pair',
@@ -191,7 +191,7 @@ describe('Search parser', function () {
     ]);
   });
 
-  it('should detect a key-value search with a search', function () {
+  it('should detect a key-value search with a search', () => {
     expect(parser.parse('foo:bar Baz')).toEqual([
       {
         'type': 'Pair',
@@ -237,7 +237,7 @@ describe('Search parser', function () {
     ]);
   });
 
-  it('should detect a double key-value search with a quoted search', function () {
+  it('should detect a double key-value search with a quoted search', () => {
     expect(parser.parse('Merp foo:"Bar Baz" bingo:bongo "Herp Derp"')).toEqual([
       {
         'type': 'Query',

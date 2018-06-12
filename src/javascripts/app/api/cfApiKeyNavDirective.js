@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfApiKeyNav', ['require', function (require) {
+.directive('cfApiKeyNav', ['require', require => {
   var h = require('utils/hyperscript').h;
   var $state = require('$state');
 
@@ -44,7 +44,7 @@ angular.module('contentful')
           state: `${spacePrefix}.api.cma_tokens`,
           dataTestId: 'api-keys-cma-tokens-tab'
         }
-      ].map(function (tab) {
+      ].map(tab => {
         tab.selected = tab.state === controller.state;
         return tab;
       });

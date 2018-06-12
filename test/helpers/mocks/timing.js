@@ -14,7 +14,7 @@ angular.module('contentful/mocks')
 })
 
 
-.constant('delayedInvocationStub', function (originalFunction) {
+.constant('delayedInvocationStub', originalFunction => {
   let result;
   function delayedFunction () {
     delayedFunction.calls.push({
@@ -37,7 +37,7 @@ angular.module('contentful/mocks')
 })
 
 
-.constant('createQueuedDebounce', function () {
+.constant('createQueuedDebounce', () => {
   function debounce (fn) {
     return function () {
       debounce.queue.push({fn: fn, args: arguments});
@@ -45,8 +45,8 @@ angular.module('contentful/mocks')
   }
 
   debounce.queue = [];
-  debounce.flush = function () {
-    debounce.queue.forEach(function (call) {
+  debounce.flush = () => {
+    debounce.queue.forEach(call => {
       call.fn.apply(null, call.args);
     });
   };

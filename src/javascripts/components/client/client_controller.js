@@ -29,12 +29,10 @@ angular.module('contentful')
     showDisabledFields: false
   };
 
-  $scope.$watchCollection(function () {
-    return {
-      space: spaceContext.space,
-      tokenLookup: TokenStore.getTokenLookup()
-    };
-  }, spaceAndTokenWatchHandler);
+  $scope.$watchCollection(() => ({
+    space: spaceContext.space,
+    tokenLookup: TokenStore.getTokenLookup()
+  }), spaceAndTokenWatchHandler);
 
   K.onValueScope($scope, TokenStore.user$, handleUser);
 

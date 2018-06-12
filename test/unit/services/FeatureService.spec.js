@@ -2,7 +2,7 @@ import { createIsolatedSystem } from 'test/helpers/system-js';
 import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
 import { set } from 'lodash';
 
-describe('Feature Service', function () {
+describe('Feature Service', () => {
   beforeEach(async function () {
     this.flags = {
       'feature-bv-2018-01-features-api': false
@@ -115,7 +115,7 @@ describe('Feature Service', function () {
     expect(FeatureService.getAll).toBeDefined();
   });
 
-  describe('#get', function () {
+  describe('#get', () => {
     beforeEach(function () {
       this.FeatureService = this.createFeatureService('1234');
     });
@@ -173,7 +173,7 @@ describe('Feature Service', function () {
     });
   });
 
-  describe('#getAll', function () {
+  describe('#getAll', () => {
     beforeEach(function () {
       this.FeatureService = this.createFeatureService('1234');
     });

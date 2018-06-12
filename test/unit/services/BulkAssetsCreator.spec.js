@@ -10,7 +10,7 @@ const UNPUBLISHABLE = false;
 let $timeout;
 let lastId;
 
-describe('BulkAssetsCreator.tryToPublishProcessingAssets()', function () {
+describe('BulkAssetsCreator.tryToPublishProcessingAssets()', () => {
   beforeEach(function () {
     module('contentful/test');
     this.BulkAssetsCreator = this.$inject('services/BulkAssetsCreator');
@@ -18,7 +18,7 @@ describe('BulkAssetsCreator.tryToPublishProcessingAssets()', function () {
     lastId = 0;
   });
 
-  afterEach(function () {
+  afterEach(() => {
     $timeout.flush();
     $timeout = null;
   });

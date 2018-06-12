@@ -1,6 +1,6 @@
 import * as sinon from 'helpers/sinon';
 
-describe('CreateSampleSpace service', function () {
+describe('CreateSampleSpace service', () => {
   beforeEach(function () {
     this.templates = [
       {
@@ -85,7 +85,7 @@ describe('CreateSampleSpace service', function () {
     };
   });
 
-  describe('default export', function () {
+  describe('default export', () => {
     it('should throw when org is falsy', function () {
       expect(_ => this.createSampleSpace()).toThrow(new Error('Required param org not provided'));
     });

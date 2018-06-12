@@ -74,9 +74,10 @@ export function create (docWrapper, connectionState$, shouldOpen$) {
   // Property<{state, shouldOpen}>
   const requestOpenDoc = K.combine(
     [connectionState$, shouldOpen$],
-    function (connectionState, shouldOpen) {
-      return {connectionState, shouldOpen};
-    }
+    (connectionState, shouldOpen) => ({
+      connectionState,
+      shouldOpen
+    })
   ).skipDuplicates().toProperty();
 
   const dead = K.createBus();
@@ -137,29 +138,23 @@ export function create (docWrapper, connectionState$, shouldOpen$) {
 
   function openDoc () {
     return K.promiseProperty(docWrapper.open())
-    .map(function (p) {
-      return caseof(p, [
-        [K.PromiseStatus.Pending, function () {
-          return DocLoad.Pending();
-        }],
-        [K.PromiseStatus.Resolved, function (x) {
-          currentDoc = x.value;
-          // There might be multiple doc loaders for a given doc. To
-          // avoid applying pending operations twice we check if the
-          // doc already has pending operations. These pending
-          // operations can only come from the code below because any
-          // code that would create an operation executes after the
-          // code below.
-          if (!currentDoc.pendingOp) {
-            pendingOps.forEach((op) => currentDoc.submitOp(op));
-          }
-          pendingOps = [];
-          return DocLoad.Doc(currentDoc);
-        }],
-        [K.PromiseStatus.Rejected, function (x) {
-          return DocLoad.Error(x.error);
-        }]
-      ]);
-    });
+    .map(p => caseof(p, [
+      [K.PromiseStatus.Pending, () => DocLoad.Pending()],
+      [K.PromiseStatus.Resolved, x => {
+        currentDoc = x.value;
+        // There might be multiple doc loaders for a given doc. To
+        // avoid applying pending operations twice we check if the
+        // doc already has pending operations. These pending
+        // operations can only come from the code below because any
+        // code that would create an operation executes after the
+        // code below.
+        if (!currentDoc.pendingOp) {
+          pendingOps.forEach((op) => currentDoc.submitOp(op));
+        }
+        pendingOps = [];
+        return DocLoad.Doc(currentDoc);
+      }],
+      [K.PromiseStatus.Rejected, x => DocLoad.Error(x.error)]
+    ]));
   }
 }

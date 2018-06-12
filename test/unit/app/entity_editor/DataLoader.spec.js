@@ -1,8 +1,8 @@
 import * as K from 'helpers/mocks/kefir';
 
-describe('app/entity_editor/DataLoader', function () {
+describe('app/entity_editor/DataLoader', () => {
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.value('widgets', {buildRenderable: sinon.stub().returns({})});
     });
     const $q = this.$inject('$q');
@@ -10,17 +10,13 @@ describe('app/entity_editor/DataLoader', function () {
     // TODO use space context mock
     this.spaceContext = {
       space: {
-        getEntry: sinon.spy(function (id) {
-          return $q.resolve({data: makeEntity(id, 'CTID')});
-        }),
+        getEntry: sinon.spy(id => $q.resolve({data: makeEntity(id, 'CTID')})),
         getEntries: function (query) {
           const ids = query['sys.id[in]'].split(',');
           const items = ids.map((id) => ({ data: makeEntity(id, 'CTID') }));
           return $q.resolve(items);
         },
-        getAsset: sinon.spy(function (id) {
-          return $q.resolve({data: makeEntity(id)});
-        })
+        getAsset: sinon.spy(id => $q.resolve({data: makeEntity(id)}))
       },
       publishedCTs: {
         fetch: function (id) {
@@ -47,7 +43,7 @@ describe('app/entity_editor/DataLoader', function () {
     this.makePrefetchEntryLoader = _.partial(DataLoader.makePrefetchEntryLoader, this.spaceContext);
   });
 
-  describe('#loadEntry()', function () {
+  describe('#loadEntry()', () => {
     it('adds entry to context', function* () {
       const editorData = yield this.loadEntry('EID');
       sinon.assert.calledWith(this.spaceContext.space.getEntry, 'EID');
@@ -105,7 +101,7 @@ describe('app/entity_editor/DataLoader', function () {
       ]);
     });
 
-    describe('sanitization', function () {
+    describe('sanitization', () => {
       beforeEach(function () {
         this.entry = makeEntity('EID', 'CTID');
         this.spaceContext.space.getEntry = sinon.stub().resolves({data: this.entry});
@@ -155,7 +151,7 @@ describe('app/entity_editor/DataLoader', function () {
     });
   });
 
-  describe('#loadAsset()', function () {
+  describe('#loadAsset()', () => {
     it('adds asset to context', function* () {
       const editorData = yield this.loadAsset('EID');
       sinon.assert.calledWith(this.spaceContext.space.getAsset, 'EID');
@@ -183,7 +179,7 @@ describe('app/entity_editor/DataLoader', function () {
     });
   });
 
-  describe('#makePrefetchEntryLoader()', function () {
+  describe('#makePrefetchEntryLoader()', () => {
     it('returns editor data', function* () {
       const controls = {};
       this.$inject('widgets').buildRenderable = sinon.stub().returns(controls);

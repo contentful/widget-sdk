@@ -1,29 +1,27 @@
 'use strict';
 
-describe('signal', function () {
-  beforeEach(function () {
+describe('signal', () => {
+  beforeEach(() => {
     module('cf.utils');
   });
 
-  describe('#create()', function () {
+  describe('#create()', () => {
     beforeEach(function () {
       this.createSignal = this.$inject('signal').create;
     });
 
     it('calls attached listeners on dispatch', function () {
-      var listeners = _.map(_.range(1,4), function () {
-        return sinon.stub();
-      });
+      var listeners = _.map(_.range(1,4), () => sinon.stub());
 
       var signal = this.createSignal();
 
-      _.forEach(listeners, function (listener) {
+      _.forEach(listeners, listener => {
         signal.attach(listener);
       });
 
       signal.dispatch('VALUE');
 
-      _.forEach(listeners, function (l) {
+      _.forEach(listeners, l => {
         sinon.assert.calledWith(l, 'VALUE');
       });
     });
@@ -42,7 +40,7 @@ describe('signal', function () {
     });
   });
 
-  describe('#createMemoized()', function () {
+  describe('#createMemoized()', () => {
     beforeEach(function () {
       this.createSignal = this.$inject('signal').createMemoized;
     });

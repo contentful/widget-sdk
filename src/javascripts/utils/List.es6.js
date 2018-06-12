@@ -61,7 +61,7 @@
  */
 export function makeKeyed (items, getHash) {
   const hashCount = {};
-  return items.map(function (item) {
+  return items.map(item => {
     const hash = getHash(item);
     hashCount[hash] = (hashCount[hash] || 0) + 1;
     return {

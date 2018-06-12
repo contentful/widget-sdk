@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('createRoleRemover', ['require', function (require) {
+angular.module('contentful').factory('createRoleRemover', ['require', require => {
   var ReloadNotification = require('ReloadNotification');
   var $q = require('$q');
   var $rootScope = require('$rootScope');
@@ -27,7 +27,7 @@ angular.module('contentful').factory('createRoleRemover', ['require', function (
       function remove () {
         return roleRepo.remove(role)
         .then(doneFn)
-        .then(function () { notification.info('Role successfully deleted.'); })
+        .then(() => { notification.info('Role successfully deleted.'); })
         .catch(ReloadNotification.basicErrorHandler);
       }
     };
@@ -50,14 +50,10 @@ angular.module('contentful').factory('createRoleRemover', ['require', function (
         var memberships = _.map(users, 'membership');
         var moveToRoleId = scope.input.id;
 
-        var promises = _.map(memberships, function (membership) {
-          return spaceContext.memberships.changeRoleTo(membership, [moveToRoleId]);
-        });
+        var promises = _.map(memberships, membership => spaceContext.memberships.changeRoleTo(membership, [moveToRoleId]));
 
-        return $q.all(promises).then(function () {
-          return remove()
-          .finally(function () { scope.dialog.confirm(); });
-        }, ReloadNotification.basicErrorHandler);
+        return $q.all(promises).then(() => remove()
+        .finally(() => { scope.dialog.confirm(); }), ReloadNotification.basicErrorHandler);
       }
     }
 

@@ -5,7 +5,7 @@
  *
  * It also patches the Karma.start() function to load all test modules.
  */
-(function () {
+((() => {
   // Will hold a list of all module IDs that define test cases
   const testModules = [];
   const env = 'development';
@@ -32,7 +32,7 @@
    */
   const Karma = window.__karma__;
   const start = Karma.start.bind(Karma);
-  Karma.start = function (...args) {
+  Karma.start = (...args) => {
     SystemJS.import('helpers/boot')
     .then(() => {
       return Promise.all(testModules.map((name) => SystemJS.import(name)));
@@ -42,7 +42,7 @@
       // We need to call this in a new context so that Karma’s window.onerror
       // handler picks it up. If we throw it in a Promise the browser will raise
       // an `uncaughtRejection` event.
-      window.setTimeout(function () {
+      window.setTimeout(() => {
         throw err;
       });
     });
@@ -77,4 +77,4 @@
       }));
     }
   }
-})();
+}))();

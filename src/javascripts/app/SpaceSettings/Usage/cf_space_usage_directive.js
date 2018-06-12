@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfSpaceUsage', ['require', function (require) {
+.directive('cfSpaceUsage', ['require', require => {
   var React = require('react');
   var ReactDOM = require('react-dom');
   var SpaceUsage = require('app/SpaceSettings/Usage/SpaceUsage').default;
@@ -16,7 +16,7 @@ angular.module('contentful')
         orgId: spaceContext.organizationContext.organization.sys.id
       }), host);
 
-      $scope.$on('$destroy', function () {
+      $scope.$on('$destroy', () => {
         ReactDOM.unmountComponentAtNode(host);
       });
     }

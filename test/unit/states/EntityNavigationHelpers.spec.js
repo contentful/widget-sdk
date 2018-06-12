@@ -1,6 +1,6 @@
 import sinon from 'npm:sinon';
 
-describe('EntityNavigationHelpers', function () {
+describe('EntityNavigationHelpers', () => {
   beforeEach(function () {
     const params = sinon.stub();
     this.stateParams = params;
@@ -24,7 +24,7 @@ describe('EntityNavigationHelpers', function () {
     );
   });
 
-  describe('getSlideInEntities', function () {
+  describe('getSlideInEntities', () => {
     function getSlideInEntitiesTestFactory (
       message,
       { params = {}, search = {} },
@@ -90,7 +90,7 @@ describe('EntityNavigationHelpers', function () {
     );
   });
 
-  describe('goToSlideInEntity', function () {
+  describe('goToSlideInEntity', () => {
     const FeatureFlagValue = {
       Off: 0,
       OnlyOneSlideInLevel: 1,

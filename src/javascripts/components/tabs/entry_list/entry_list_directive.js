@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfEntryList', ['require', function (require) {
+.directive('cfEntryList', ['require', require => {
   var $timeout = require('$timeout');
   var spaceContext = require('spaceContext');
   var K = require('utils/kefir');
@@ -25,21 +25,19 @@ angular.module('contentful')
       var collapsedStates = {};
       var expandedField;
 
-      scope.expandColumn = function (field) {
+      scope.expandColumn = field => {
         expandedField = field.id;
         $timeout(collapseColumns);
       };
 
-      K.onValueScope(scope, publishedCTs.items$, function (cts) {
-        scope.contentTypeSelectOptions = cts.map(function (ct) {
-          return {
-            id: ct.sys.id,
-            name: ct.name
-          };
-        });
+      K.onValueScope(scope, publishedCTs.items$, cts => {
+        scope.contentTypeSelectOptions = cts.map(ct => ({
+          id: ct.sys.id,
+          name: ct.name
+        }));
       });
 
-      scope.contentTypeName = function (entry) {
+      scope.contentTypeName = entry => {
         var ctId = entry.getContentTypeId();
         var ct = publishedCTs.get(ctId);
         if (ct) {
@@ -57,9 +55,7 @@ angular.module('contentful')
       // exist.
       // The solution is to separate `entryTitle()` and similar
       // functions from the space context.
-      scope.entryTitle = function (entry) {
-        return spaceContext.entryTitle(entry);
-      };
+      scope.entryTitle = entry => spaceContext.entryTitle(entry);
 
       // Must be deferred because it depends on the rendered content
 
@@ -85,7 +81,7 @@ angular.module('contentful')
 
       function getMinWidth (elem) {
         var minWidth;
-        _.forEach(elem.className.split(' '), function (classname) {
+        _.forEach(elem.className.split(' '), classname => {
           minWidth = classToWidth[classname];
           if (minWidth) return false;
         });

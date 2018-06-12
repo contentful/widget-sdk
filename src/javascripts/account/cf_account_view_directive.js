@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfAccountView', ['require', function (require) {
+.directive('cfAccountView', ['require', require => {
   var h = require('utils/hyperscript').h;
   var $timeout = require('$timeout');
   var Authentication = require('Authentication');
@@ -31,7 +31,7 @@ angular.module('contentful')
       scope.$on('$destroy', cancelTimeout);
 
       function waitAndForceLogin () {
-        timeout = $timeout(function () {
+        timeout = $timeout(() => {
           if (!_.get(scope, 'context.ready')) { forceLogin(); }
           timeout = null;
         }, 5000);
@@ -81,7 +81,7 @@ angular.module('contentful')
       disableTopCloseButton: true,
       ignoreEsc: true,
       attachTo: 'body'
-    }).promise.then(function () {
+    }).promise.then(() => {
       Authentication.redirectToLogin();
     });
   }

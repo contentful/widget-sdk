@@ -19,7 +19,7 @@ export function observeResize (element) {
     const detector = makeDetector({strategy: 'scroll'});
     detector.listenTo(element, listen);
 
-    return function () {
+    return () => {
       detector.uninstall(element);
     };
 

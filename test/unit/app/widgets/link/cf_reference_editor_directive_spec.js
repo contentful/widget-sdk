@@ -2,7 +2,7 @@ import sinon from 'npm:sinon';
 import $q from '$q';
 import * as K from 'helpers/mocks/kefir';
 
-describe('cfReferenceEditorDirective', function () {
+describe('cfReferenceEditorDirective', () => {
   const template = '<cf-reference-editor type="{{ type }}" variant="{{ variant }}" single="single" />';
   const link1 = {sys: {type: 'Link', linkType: 'Entry', id: 'testid1'}};
   const link2 = {sys: {type: 'Link', linkType: 'Entry', id: 'testid2'}};
@@ -38,7 +38,7 @@ describe('cfReferenceEditorDirective', function () {
     };
   });
 
-  describe('widget settings', function () {
+  describe('widget settings', () => {
     it('is not draggable for single references', function () {
       const scope = this.init({single: true});
       expect(scope.config.draggable).toBe(false);
@@ -70,8 +70,8 @@ describe('cfReferenceEditorDirective', function () {
     });
   });
 
-  describe('syncing widget and field values', function () {
-    describe('on field value change', function () {
+  describe('syncing widget and field values', () => {
+    describe('on field value change', () => {
       it('defaults to an empty array for no field value', function () {
         this.scope = this.init();
         this.field.setValue(null);
@@ -124,7 +124,7 @@ describe('cfReferenceEditorDirective', function () {
       });
     });
 
-    describe('on widget state changes', function () {
+    describe('on widget state changes', () => {
       beforeEach(function () {
         this.scope = this.init();
         this.field.setValue([link1, link2]);
@@ -154,7 +154,7 @@ describe('cfReferenceEditorDirective', function () {
     });
   });
 
-  describe('cfReferenceEditor/createEntity()', function () {
+  describe('cfReferenceEditor/createEntity()', () => {
     const createdEntity = {};
 
     beforeEach(function () {
@@ -171,7 +171,7 @@ describe('cfReferenceEditorDirective', function () {
       sinon.assert.calledOnce(this.space.createAsset.withArgs({}));
     });
 
-    describe('creating an entry', function () {
+    describe('creating an entry', () => {
       const ct1 = {sys: {id: 'ctid', publishedVersion: 123}};
       const ct2 = {sys: {id: 'ctid2', publishedVersion: 666}};
 
@@ -220,7 +220,7 @@ describe('cfReferenceEditorDirective', function () {
     });
   });
 
-  describe('adding a new asset', function () {
+  describe('adding a new asset', () => {
     const ASSET = { sys: { id: 'assetid', type: 'Asset' } };
 
     beforeEach(async function () {
@@ -244,7 +244,7 @@ describe('cfReferenceEditorDirective', function () {
     });
   });
 
-  describe('adding a new entry', function () {
+  describe('adding a new entry', () => {
     const ENTRY = { sys: { id: 'entryid', type: 'Entry' } };
     const CT_ID = 'CONTENT_TYPE_ID';
     const CLIENT_CT = { data: { sys: { id: CT_ID }, fields: [{}, {localized: true}] } };
@@ -280,7 +280,7 @@ describe('cfReferenceEditorDirective', function () {
     });
   });
 
-  describe('publication warning - unpublished references', function () {
+  describe('publication warning - unpublished references', () => {
     const validWarning = {count: 1, linked: 'Entry'};
     function makeEntity (link, published) {
       return {

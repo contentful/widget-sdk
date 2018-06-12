@@ -47,7 +47,7 @@ angular.module('cf.ui')
  *   [data-arrow-direction="up"]
  *     top: -7px
 */
-.directive('cfUiHint', ['require', function (require) {
+.directive('cfUiHint', ['require', require => {
   var Hints = require('hints');
   return {
     restrict: 'E',
@@ -67,7 +67,7 @@ angular.module('cf.ui')
       '</div>',
     compile: function (_, attrs) {
       if (Hints.shouldShow(attrs.name)) {
-        return function (scope, elem) {
+        return (scope, elem) => {
           var $elem = $(elem);
 
           Hints.setAsSeen(scope.name);
@@ -77,7 +77,7 @@ angular.module('cf.ui')
           }
         };
       } else {
-        return function (_, elem) {
+        return (_, elem) => {
           elem.remove();
         };
       }

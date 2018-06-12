@@ -20,7 +20,7 @@ angular.module('contentful')
  * @scope.requires {object} sidebarControls
  *   These probably need a lot of stuff in return
  */
-.directive('cfEntitySidebar', ['require', function (require) {
+.directive('cfEntitySidebar', ['require', require => {
   var K = require('utils/kefir');
   var spaceContext = require('spaceContext');
 
@@ -28,7 +28,7 @@ angular.module('contentful')
     restrict: 'E',
     scope: true,
     template: JST.cf_entity_sidebar(),
-    controller: ['$scope', function ($scope) {
+    controller: ['$scope', $scope => {
       $scope.data = {
         isEntry: $scope.entityInfo.type === 'Entry',
         isMasterEnvironment: spaceContext.getEnvironmentId() === 'master'
@@ -46,23 +46,23 @@ angular.module('contentful')
       // debounce switching the indicator off so that it is shown for
       // at least one second.
       var setNotSavingTimeout;
-      K.onValueScope($scope, $scope.otDoc.state.isSaving$.skipDuplicates(), function (isSaving) {
+      K.onValueScope($scope, $scope.otDoc.state.isSaving$.skipDuplicates(), isSaving => {
         clearTimeout(setNotSavingTimeout);
         if (isSaving) {
           $scope.data.documentIsSaving = true;
         } else {
-          setNotSavingTimeout = setTimeout(function () {
+          setNotSavingTimeout = setTimeout(() => {
             $scope.data.documentIsSaving = false;
             $scope.$apply();
           }, 1000);
         }
       });
 
-      K.onValueScope($scope, $scope.otDoc.sysProperty, function (sys) {
+      K.onValueScope($scope, $scope.otDoc.sysProperty, sys => {
         $scope.data.documentUpdatedAt = sys.updatedAt;
       });
 
-      K.onValueScope($scope, $scope.otDoc.collaborators, function (collaborators) {
+      K.onValueScope($scope, $scope.otDoc.collaborators, collaborators => {
         $scope.data.docCollaborators = collaborators;
       });
     }]

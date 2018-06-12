@@ -1,10 +1,10 @@
 'use strict';
 
-describe('data/CMA/EntityResolver', function () {
+describe('data/CMA/EntityResolver', () => {
   beforeEach(function () {
     module('contentful/test');
     const $q = this.$inject('$q');
-    this.getEntries = sinon.spy(function (query) {
+    this.getEntries = sinon.spy(query => {
       const ids = query['sys.id[in]'].split(',');
       const existingIds = ids.filter((id) => !id.match(/missing/));
       const entities = existingIds.map((id) => {

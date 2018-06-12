@@ -88,7 +88,7 @@ export default function create (doc, fieldId, localeCode) {
   function set (value) {
     lastSetValue = value;
     return doc.setValueAt(path, value)
-    .catch(function (error) {
+    .catch(error => {
       lastSetValue = getValue();
       return $q.reject(error);
     });

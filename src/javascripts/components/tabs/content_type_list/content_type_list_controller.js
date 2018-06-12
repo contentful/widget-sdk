@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('ContentTypeListController', ['$scope', 'require', function ($scope, require) {
+angular.module('contentful').controller('ContentTypeListController', ['$scope', 'require', ($scope, require) => {
   var notification = require('notification');
   var spaceContext = require('spaceContext');
   var accessChecker = require('access_control/AccessChecker');
@@ -18,12 +18,12 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
   $scope.shouldHide = accessChecker.shouldHide;
   $scope.shouldDisable = accessChecker.shouldDisable;
 
-  $scope.newContentType = function () {
+  $scope.newContentType = () => {
     // X.list -> X.new
     $state.go('^.new');
   };
 
-  $scope.$watchGroup(['context.list', 'context.searchTerm'], function (args) {
+  $scope.$watchGroup(['context.list', 'context.searchTerm'], args => {
     if (args[0] || args[1]) {
       viewPersistor.save({list: args[0], searchTerm: args[1]});
       updateList();
@@ -43,20 +43,18 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
       path: ['content_types'],
       query: {order: 'name', limit: 1000}
     })
-      .then(function (res) {
+      .then(res => {
         var contentTypes = res.items;
 
         // Some legacy content types do not have a name. If it is
         // missing we set it to 'Untitled' so we can display
         // something in the UI. Note that the API requires new
         // Content Types to have a name.
-        _.forEach(contentTypes, function (ct) {
+        _.forEach(contentTypes, ct => {
           ctHelpers.assureName(ct);
         });
 
-        contentTypes.sort(function (a, b) {
-          return (a.name || '').localeCompare(b.name);
-        });
+        contentTypes.sort((a, b) => (a.name || '').localeCompare(b.name));
 
         var sectionVisibility = accessChecker.getSectionVisibility();
 
@@ -65,11 +63,11 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
         $scope.empty = contentTypes.length === 0;
         $scope.visibleContentTypes = contentTypes.filter(isOnSelectedList).filter(matchesSearchTerm);
       }, accessChecker.wasForbidden($scope.context))
-      .then(function (res) {
+      .then(res => {
         $scope.context.isSearching = false;
         return res;
       })
-      .catch(function (err) {
+      .catch(err => {
         if (_.isObject(err) && 'statusCode' in err && err.statusCode === -1) {
           $scope.context.isSearching = true;
         }
@@ -99,29 +97,17 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
     return searchTermRe ? searchTermRe.test(contentType.name) : true;
   }
 
-  $scope.numFields = function (contentType) {
-    return _.size(contentType.fields);
-  };
+  $scope.numFields = contentType => _.size(contentType.fields);
 
-  $scope.hasQuery = function () {
-    return _.isString($scope.context.searchTerm) && $scope.context.searchTerm.length > 0;
-  };
+  $scope.hasQuery = () => _.isString($scope.context.searchTerm) && $scope.context.searchTerm.length > 0;
 
-  $scope.statusClass = function (contentType) {
-    return getStatus(contentType, 'class');
-  };
+  $scope.statusClass = contentType => getStatus(contentType, 'class');
 
-  $scope.statusLabel = function (contentType) {
-    return getStatus(contentType, 'label');
-  };
+  $scope.statusLabel = contentType => getStatus(contentType, 'label');
 
-  $scope.hasContentTypes = function () {
-    return !$scope.empty || $scope.hasQuery();
-  };
+  $scope.hasContentTypes = () => !$scope.empty || $scope.hasQuery();
 
-  $scope.hasQueryResults = function () {
-    return !_.isEmpty($scope.visibleContentTypes);
-  };
+  $scope.hasQueryResults = () => !_.isEmpty($scope.visibleContentTypes);
 
   function getStatus (ct, statusType) {
     var status = {

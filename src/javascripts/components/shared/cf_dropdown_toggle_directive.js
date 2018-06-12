@@ -13,22 +13,21 @@
  */
 // TODO this directive is deprecated and should be removed once it is
 // not used any more
-angular.module('contentful').directive('cfDropdownToggle', ['$rootScope', function($rootScope) {
-  return {
-    restrict: 'A',
-    link: function(scope, toggleElement, attrs) {
-      var id = attrs.cfDropdownToggle;
+angular.module('contentful').directive('cfDropdownToggle', ['$rootScope', $rootScope => ({
+  restrict: 'A',
 
-      toggleElement.click(function (event) {
-        if(!toggleElement.attr('disabled')){
-          event.stopPropagation();
-          event.preventDefault();
-          scope.$apply(function () {
-            $rootScope.$broadcast('dropdownToggle', id, toggleElement);
-          });
-        }
-      });
-    }
-  };
-}]);
+  link: function(scope, toggleElement, attrs) {
+    var id = attrs.cfDropdownToggle;
+
+    toggleElement.click(event => {
+      if(!toggleElement.attr('disabled')){
+        event.stopPropagation();
+        event.preventDefault();
+        scope.$apply(() => {
+          $rootScope.$broadcast('dropdownToggle', id, toggleElement);
+        });
+      }
+    });
+  }
+})]);
 

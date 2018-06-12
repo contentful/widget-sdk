@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('cf.app')
-.directive('cfJsonEditor', ['require', function (require) {
+.directive('cfJsonEditor', ['require', require => {
   var Editor = require('app/widgets/json/code_editor');
   var LD = require('utils/LaunchDarkly');
 

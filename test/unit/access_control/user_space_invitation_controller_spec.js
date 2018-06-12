@@ -1,4 +1,4 @@
-describe('UserSpaceInvitationController', function () {
+describe('UserSpaceInvitationController', () => {
   beforeEach(function () {
     module('contentful/test');
     const $rootScope = this.$inject('$rootScope');
@@ -27,11 +27,11 @@ describe('UserSpaceInvitationController', function () {
       scope.users.push({ sys: { id: id, type: 'User' }, email: `${id}@example.com` });
     }
 
-    this.selectUserRole = function (userId, roleId) {
+    this.selectUserRole = (userId, roleId) => {
       scope.selectedRoles[userId] = roleId;
     };
 
-    this.sendInvites = function () {
+    this.sendInvites = () => {
       const promise = controller.tryInviteSelectedUsers();
       $timeout.flush();
       return promise;
@@ -42,7 +42,7 @@ describe('UserSpaceInvitationController', function () {
     addUser('bar');
   });
 
-  describe('.getInvalidRoleSelectionsCount()', function () {
+  describe('.getInvalidRoleSelectionsCount()', () => {
     it('returns number of users without selected role', function () {
       expect(this.controller.getInvalidRoleSelectionsCount()).toEqual(2);
 
@@ -57,7 +57,7 @@ describe('UserSpaceInvitationController', function () {
     });
   });
 
-  describe('.tryInviteSelectedUsers()', function () {
+  describe('.tryInviteSelectedUsers()', () => {
     it('cannot invite when some user has no role selected', function () {
       this.controller.tryInviteSelectedUsers();
       expect(this.scope.canNotInvite).toEqual(true);

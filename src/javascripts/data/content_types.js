@@ -9,7 +9,7 @@ angular.module('cf.data')
  * A collection of helper methods to query, manipulate, and sanitize
  * Content Type data.
  */
-.factory('data/ContentTypes', [function () {
+.factory('data/ContentTypes', [() => {
 
   return {
     assureDisplayField: assureDisplayField,
@@ -69,9 +69,7 @@ angular.module('cf.data')
    */
   function hasValidDisplayField (contentTypeData) {
     var displayField = contentTypeData.displayField;
-    return _.some(contentTypeData.fields, function (field) {
-      return displayField === field.id && isDisplayField(field);
-    });
+    return _.some(contentTypeData.fields, field => displayField === field.id && isDisplayField(field));
   }
 
   /**
@@ -131,7 +129,7 @@ angular.module('cf.data')
     result.name = data.name;
     result.sys = data.sys;
     result.description = data.description;
-    result.fields = _.map(data.fields, function (field) {
+    result.fields = _.map(data.fields, field => {
       var newField = _.assign({}, field);
 
       newField.id = newField.apiName || newField.id;

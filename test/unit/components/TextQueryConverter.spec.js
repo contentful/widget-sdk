@@ -1,6 +1,6 @@
 import * as sinon from 'helpers/sinon';
 
-describe('TextQueryConverter#textQueryToUISearch()', function () {
+describe('TextQueryConverter#textQueryToUISearch()', () => {
   beforeEach(function () {
     module('contentful/test');
 
@@ -74,7 +74,7 @@ describe('TextQueryConverter#textQueryToUISearch()', function () {
     }
   );
 
-  describe('for content type fields', function () {
+  describe('for content type fields', () => {
     beforeEach(function () {
       this.contentType = {
         getId: () => 'CTID',
@@ -95,7 +95,7 @@ describe('TextQueryConverter#textQueryToUISearch()', function () {
       ]
     );
 
-    describe('of type "Text"', function () {
+    describe('of type "Text"', () => {
       beforeEach(function () {
         this.contentType.data.fields[0].type = 'Text';
       });
@@ -109,7 +109,7 @@ describe('TextQueryConverter#textQueryToUISearch()', function () {
       );
     });
 
-    describe('of type "Boolean"', function () {
+    describe('of type "Boolean"', () => {
       beforeEach(function () {
         this.contentType.data.fields[0].type = 'Boolean';
       });
@@ -132,7 +132,7 @@ describe('TextQueryConverter#textQueryToUISearch()', function () {
       );
     });
 
-    describe('type "Integer"', function () {
+    describe('type "Integer"', () => {
       beforeEach(function () {
         this.contentType.data.fields[0].type = 'Integer';
       });
@@ -163,7 +163,7 @@ describe('TextQueryConverter#textQueryToUISearch()', function () {
       );
     });
 
-    describe('type "Date"', function () {
+    describe('type "Date"', () => {
       beforeEach(function () {
         this.contentType.data.fields[0].type = 'Date';
       });
@@ -172,7 +172,7 @@ describe('TextQueryConverter#textQueryToUISearch()', function () {
       testDateField('NAME_1', 'fields.API_NAME_1');
     });
 
-    describe('type "Link"', function () {
+    describe('type "Link"', () => {
       beforeEach(function () {
         this.contentType.data.fields[0].type = 'Link';
       });
@@ -186,7 +186,7 @@ describe('TextQueryConverter#textQueryToUISearch()', function () {
       );
     });
 
-    describe('type "Array" of "Link"', function () {
+    describe('type "Array" of "Link"', () => {
       beforeEach(function () {
         this.contentType.data.fields[0].type = 'Array';
         this.contentType.data.fields[0].items = {type: 'Link'};
@@ -201,7 +201,7 @@ describe('TextQueryConverter#textQueryToUISearch()', function () {
       );
     });
 
-    describe('mixed types and system field', function () {
+    describe('mixed types and system field', () => {
       itConverts('sys field "id"',
         function () {
           this.contentType.data.fields[0].type = 'Link';
@@ -236,7 +236,7 @@ describe('TextQueryConverter#textQueryToUISearch()', function () {
     });
   });
 
-  describe('for special "status" filter', function () {
+  describe('for special "status" filter', () => {
     const STATUSES = ['published', 'changed', 'draft', 'archived'];
 
     for (const status of STATUSES) {
@@ -256,7 +256,7 @@ describe('TextQueryConverter#textQueryToUISearch()', function () {
     ]
   );
 
-  describe('for user system fields', function () {
+  describe('for user system fields', () => {
     beforeEach(function () {
       this.spaceContext.users = {};
       this.spaceContext.users.getAll = sinon.stub().resolves([
@@ -296,7 +296,7 @@ describe('TextQueryConverter#textQueryToUISearch()', function () {
   const DATE_SYS_FIELDS = ['updatedAt', 'createdAt', 'publishedAt', 'firstPublishedAt'];
 
   for (const dateField of DATE_SYS_FIELDS) {
-    describe(`for "${dateField}" field`, function () {
+    describe(`for "${dateField}" field`, () => {
       testDateField(dateField, `sys.${dateField}`);
     });
   }
@@ -334,7 +334,7 @@ describe('TextQueryConverter#textQueryToUISearch()', function () {
     );
   }
 
-  describe('for assets', function () {
+  describe('for assets', () => {
     beforeEach(function () {
       this.contentType = this.$inject('assetContentType');
     });
@@ -353,7 +353,7 @@ describe('TextQueryConverter#textQueryToUISearch()', function () {
       ]
     );
 
-    describe('"size" filter', function () {
+    describe('"size" filter', () => {
       itConvertsFilters('with unit "K"',
         'size < 1K',
         [

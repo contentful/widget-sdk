@@ -23,7 +23,7 @@ angular.module('cf.app')
  *
  * @scope.requires {entityEditor/Context} editorContext
  */
-.directive('cfEntityField', ['require', function (require) {
+.directive('cfEntityField', ['require', require => {
   var INLINE_REFERENCE_FEATURE_FLAG =
     'feature-at-02-2018-inline-reference-field';
   var RTL_SUPPORT_FEATURE_FLAG =
@@ -73,7 +73,7 @@ angular.module('cf.app')
        * @param {string} localeId Public locale code
        * @param {boolean} isInvalid
        */
-      this.setInvalid = function (localeId, isInvalid) {
+      this.setInvalid = (localeId, isInvalid) => {
         invalidControls[localeId] = isInvalid;
         updateErrorStatus();
       };
@@ -86,16 +86,16 @@ angular.module('cf.app')
       K.onValueScope($scope, $scope.editorContext.validator.errors$, updateLocales);
       K.onValueScope($scope, $scope.editorContext.validator.errors$, updateErrorStatus);
 
-      K.onValueScope($scope, $scope.editorContext.focus.field$, function (focusedField) {
+      K.onValueScope($scope, $scope.editorContext.focus.field$, focusedField => {
         templateData.fieldHasFocus = focusedField === field.id;
       });
 
-      LD.onFeatureFlag($scope, INLINE_REFERENCE_FEATURE_FLAG, function (isEnabled) {
+      LD.onFeatureFlag($scope, INLINE_REFERENCE_FEATURE_FLAG, isEnabled => {
         $scope.data.canRenderInline = isEnabled && canRenderInline();
       });
 
       $scope.data.expandedStates = $scope.locales.reduce(
-        function (expandedStates, locale) {
+        (expandedStates, locale) => {
           expandedStates[locale.code] = isLocaleFieldExpanded(locale.code);
           return expandedStates;
         },
@@ -108,7 +108,7 @@ angular.module('cf.app')
         toggleLocaleFieldExpansion: toggleLocaleFieldExpansion
       };
 
-      LD.onFeatureFlag($scope, RTL_SUPPORT_FEATURE_FLAG, function (isEnabled) {
+      LD.onFeatureFlag($scope, RTL_SUPPORT_FEATURE_FLAG, isEnabled => {
         // By default, all entity fields should be displayed as LTR unless the
         // RTL support feature flag is enabled.
         if (isEnabled) {
@@ -126,7 +126,7 @@ angular.module('cf.app')
         var ctExpandedStoreKey = getLocaleFieldExpandedStoreKey(localeCode);
         var newVal = !isLocaleFieldExpanded(localeCode);
 
-        getFieldOrLinkCt(localeCode).then(function (linkContentType) {
+        getFieldOrLinkCt(localeCode).then(linkContentType => {
           trackInlineEditorToggle({
             contentType: linkContentType,
             toggleState: newVal,
@@ -164,7 +164,7 @@ angular.module('cf.app')
         }
         var linkedEntry = $scope.fields[field.apiName].getValue(localeCode);
         if (linkedEntry) {
-          return spaceContext.space.getEntry(linkedEntry.sys.id).then(function (entry) {
+          return spaceContext.space.getEntry(linkedEntry.sys.id).then(entry => {
             var contentTypeId = entry.data.sys.contentType.sys.id;
             return spaceContext.publishedCTs.get(contentTypeId);
           });
@@ -183,7 +183,7 @@ angular.module('cf.app')
       }
 
       function updateLocales () {
-        $scope.locales = _.filter(getFieldLocales(field), function (locale) {
+        $scope.locales = _.filter(getFieldLocales(field), locale => {
           var isActive = TheLocaleStore.isLocaleActive(locale);
           var hasError = $scope.editorContext.validator.hasFieldLocaleError(field.id, locale.internal_code);
           return isActive || hasError;

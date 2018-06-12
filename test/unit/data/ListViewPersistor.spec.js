@@ -1,4 +1,4 @@
-describe('ListViewPersistor', function () {
+describe('ListViewPersistor', () => {
   let store, $location, qs, createPersistor, createViewMigrator;
   const STORE_KEY = 'lastFilterQueryString.testEntity.SPACE_ID';
 
@@ -16,7 +16,7 @@ describe('ListViewPersistor', function () {
     sinon.stub($location, 'search');
   });
 
-  describe('#read', function () {
+  describe('#read', () => {
     it('reads data from query string by default', function* () {
       $location.search.returns({ fromSearch: true });
       expect((yield qs.read()).fromSearch).toBe(true);
@@ -37,8 +37,8 @@ describe('ListViewPersistor', function () {
       expect((yield qs.read()).contentTypeHidden).toBe(false);
     });
 
-    describe('does `searchTerm` migration', function () {
-      beforeEach(function () {
+    describe('does `searchTerm` migration', () => {
+      beforeEach(() => {
         const space = { getId: sinon.stub().returns('SPACE_ID') };
         const contentTypes = { get: sinon.stub() };
         const viewMigrator = createViewMigrator(space, contentTypes);
@@ -60,34 +60,34 @@ describe('ListViewPersistor', function () {
     });
   });
 
-  describe('#save', function () {
-    it('updates query string', function () {
+  describe('#save', () => {
+    it('updates query string', () => {
       qs.save({ test: true });
       sinon.assert.calledWith($location.search, 'test=true');
     });
 
-    it('removes "title" field from view settings', function () {
+    it('removes "title" field from view settings', () => {
       qs.save({ title: 'New Title', test: true });
       sinon.assert.calledWith($location.search, 'test=true');
     });
 
-    it('removes empty/null/undefined fields from view settings', function () {
+    it('removes empty/null/undefined fields from view settings', () => {
       qs.save({ empty: '', n: null, u: undefined, test: true });
       sinon.assert.calledWith($location.search, 'test=true');
     });
 
-    it('use dot notation for nested fields', function () {
+    it('use dot notation for nested fields', () => {
       qs.save({ x: { y: 3 } });
       sinon.assert.calledWith($location.search, 'x.y=3');
     });
 
-    it('use pushState to replace URL', function () {
+    it('use pushState to replace URL', () => {
       sinon.stub($location, 'replace');
       qs.save({ test: true });
       sinon.assert.called($location.replace);
     });
 
-    it('puts last QS into the store', function () {
+    it('puts last QS into the store', () => {
       qs.save({ test: true });
       expect(store.get(STORE_KEY)).toEqual({test: true});
     });

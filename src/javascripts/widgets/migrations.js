@@ -58,7 +58,7 @@ angular.module('contentful')
  * @ngdoc service
  * @name widgets/migrations
  */
-.factory('widgets/migrations', ['require', function (require) {
+.factory('widgets/migrations', ['require', require => {
   var MIGRATIONS = require('widgets/migrations/data');
 
   /**
@@ -74,7 +74,7 @@ angular.module('contentful')
   return function migrateWidgetId (control) {
     var widgetId = control.widgetId;
     var field = control.field;
-    var migration = _.find(MIGRATIONS, function (migration) {
+    var migration = _.find(MIGRATIONS, migration => {
       var appliesToFieldType = !migration.fieldTypes || _.includes(migration.fieldTypes, field.type);
       return appliesToFieldType && migration.from === widgetId;
     });

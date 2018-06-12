@@ -1,6 +1,6 @@
 'use strict';
 
-describe('uiCommand directive element', function () {
+describe('uiCommand directive element', () => {
 
   beforeEach(function () {
     module('contentful/test');
@@ -33,7 +33,7 @@ describe('uiCommand directive element', function () {
     expect(el).not.toBeNgHidden();
   });
 
-  describe('disabled', function () {
+  describe('disabled', () => {
 
     it('is not disabled by default', function () {
       var cmd = this.createCommand(sinon.stub());

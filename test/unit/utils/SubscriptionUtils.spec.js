@@ -1,6 +1,6 @@
 import * as SubscriptionUtils from 'utils/SubscriptionUtils';
 
-describe('utils/SubscriptionUtils', function () {
+describe('utils/SubscriptionUtils', () => {
   beforeEach(function () {
     function createPlan (name, price, ratePlanCharges, isBase) {
       return {
@@ -106,7 +106,7 @@ describe('utils/SubscriptionUtils', function () {
     ];
   });
 
-  describe('#calculateUsersCost', function () {
+  describe('#calculateUsersCost', () => {
     it('should calculate the cost for users depending on the tiers', function () {
       // Free tier is users 0 - 10
       const basePlan = this.basePlan;
@@ -122,7 +122,7 @@ describe('utils/SubscriptionUtils', function () {
     });
   });
 
-  describe('#calcUsersMeta', function () {
+  describe('#calcUsersMeta', () => {
     it('should calculate the meta information correctly', function () {
       const basePlan = this.basePlan;
       // 0 - 10 are free, 11+ are paid
@@ -147,7 +147,7 @@ describe('utils/SubscriptionUtils', function () {
     });
   });
 
-  describe('#calculateTotalPrice', function () {
+  describe('#calculateTotalPrice', () => {
     it('should be able to calculate the price based on just the base tier with given users', function () {
       const plansWithMemberships = {
         allPlans: [ this.basePlan ]
@@ -176,7 +176,7 @@ describe('utils/SubscriptionUtils', function () {
     });
   });
 
-  describe('#getEnabledFeatures', function () {
+  describe('#getEnabledFeatures', () => {
     it('should return an empty array if no features are present', function () {
       expect(SubscriptionUtils.getEnabledFeatures(this.microPlan).length).toBe(0);
     });
@@ -187,8 +187,8 @@ describe('utils/SubscriptionUtils', function () {
     });
   });
 
-  describe('#calculatePlansCost', function () {
-    it('should return 0 if given no plans', function () {
+  describe('#calculatePlansCost', () => {
+    it('should return 0 if given no plans', () => {
       const plans = [];
 
       expect(SubscriptionUtils.calculatePlansCost({ plans })).toBe(0);

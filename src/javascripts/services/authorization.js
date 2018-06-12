@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.factory('authorization', ['require', function (require) {
+.factory('authorization', ['require', require => {
   var worf = require('worf');
   var logger = require('logger');
   var accessChecker = require('access_control/AccessChecker');

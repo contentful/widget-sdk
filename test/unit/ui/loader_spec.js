@@ -1,6 +1,6 @@
 'use strict';
 
-describe('cfLoaders', function () {
+describe('cfLoaders', () => {
   beforeEach(function () {
     module('contentful/test');
 
@@ -64,7 +64,7 @@ describe('cfLoaders', function () {
     };
   });
 
-  describe('cfLoader', function () {
+  describe('cfLoader', () => {
     beforeEach(function () {
       this.compileLoader = this.compile('cf-loader');
     });
@@ -115,7 +115,7 @@ describe('cfLoaders', function () {
     });
   });
 
-  describe('cfInlineLoader', function () {
+  describe('cfInlineLoader', () => {
     beforeEach(function () {
       this.compileLoader = this.compile('cf-inline-loader');
     });

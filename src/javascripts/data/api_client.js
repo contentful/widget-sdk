@@ -24,7 +24,7 @@ angular.module('cf.data')
  * var client = new APIClient(createSpaceEndpoint(...));
  * client.getEntries(query).then(handleResponses);
  */
-.factory('data/ApiClient', [function () {
+.factory('data/ApiClient', [() => {
   function Client (spaceEndpoint) {
     this._endpoint = spaceEndpoint;
   }
@@ -126,9 +126,7 @@ angular.module('cf.data')
   Client.prototype.updateContentType = function (data) {
     var self = this;
     return this._updateResource('content_types', data)
-    .then(function (data) {
-      return self.publishContentType(data);
-    });
+    .then(data => self.publishContentType(data));
   };
 
   Client.prototype.updateEntry = function (data) {
@@ -214,16 +212,14 @@ angular.module('cf.data')
       path: [name, id]
     })
     // do not return anything
-    .then(function () {});
+    .then(() => {});
   };
 
   Client.prototype.deleteContentType = function (data) {
     var self = this;
     return this.unpublishContentType(data)
-    .catch(function () {})
-    .then(function () {
-      return self._deleteResource('content_types', data);
-    });
+    .catch(() => {})
+    .then(() => self._deleteResource('content_types', data));
   };
 
   Client.prototype.deleteEntry = function (data) {

@@ -1,10 +1,10 @@
 import * as sinon from 'helpers/sinon';
 import * as K from 'helpers/mocks/kefir';
 
-describe('Client Controller', function () {
+describe('Client Controller', () => {
   let scope;
 
-  afterEach(function () {
+  afterEach(() => {
     scope = null;
   });
 
@@ -35,18 +35,18 @@ describe('Client Controller', function () {
     this.$inject('$controller')('ClientController', {$scope: scope});
   });
 
-  describe('aux panel preferences', function () {
-    it('aux panel is off by default', function () {
+  describe('aux panel preferences', () => {
+    it('aux panel is off by default', () => {
       expect(scope.preferences.showAuxPanel).toBeFalsy();
     });
 
-    it('toggles aux panel', function () {
+    it('toggles aux panel', () => {
       scope.preferences.toggleAuxPanel();
       expect(scope.preferences.showAuxPanel).toBeTruthy();
     });
   });
 
-  describe('on tokenLookup update', function () {
+  describe('on tokenLookup update', () => {
     it('it calls authorization.setTokenLookup', function () {
       const TOKEN = {sys: {}};
       this.tokenStore.getTokenLookup.returns(TOKEN);
@@ -55,7 +55,7 @@ describe('Client Controller', function () {
     });
   });
 
-  describe('on spaceContext.space update', function () {
+  describe('on spaceContext.space update', () => {
     beforeEach(function () {
       this.spaceContext = this.$inject('spaceContext');
       this.hasSpace = sinon.stub().returns(false);
@@ -87,7 +87,7 @@ describe('Client Controller', function () {
     });
   });
 
-  describe('initializes client', function () {
+  describe('initializes client', () => {
     beforeEach(function () {
       this.user = {sys: {}};
       this.tokenStore.user$.set(this.user);
@@ -99,18 +99,18 @@ describe('Client Controller', function () {
     });
   });
 
-  describe('organizations on the scope', function () {
+  describe('organizations on the scope', () => {
     let logger;
 
     beforeEach(function () {
       logger = this.$inject('logger');
     });
 
-    afterEach(function () {
+    afterEach(() => {
       logger = null;
     });
 
-    describe('if user exists', function () {
+    describe('if user exists', () => {
       let user, org1, org2, org3;
       beforeEach(function () {
         org1 = {org1: true};

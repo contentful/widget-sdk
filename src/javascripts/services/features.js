@@ -4,7 +4,7 @@
  * @name features
  */
 angular.module('contentful')
-.factory('features', [function () {
+.factory('features', [() => {
   return {
     allowAnalytics: allowAnalytics
   };
@@ -22,9 +22,7 @@ angular.module('contentful')
   function allowAnalytics (user) {
     var organizations = _.map(user.organizationMemberships, 'organization');
     var disallowAnalytics = _.get(user, 'features.logAnalytics') === false;
-    disallowAnalytics = disallowAnalytics || _.some(organizations, function(org){
-      return org.disableAnalytics === true;
-    });
+    disallowAnalytics = disallowAnalytics || _.some(organizations, org => org.disableAnalytics === true);
 
     return !disallowAnalytics;
   }

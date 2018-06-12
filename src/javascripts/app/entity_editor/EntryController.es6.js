@@ -77,9 +77,7 @@ export default async function create ($scope, entryId) {
   const editorContext = $scope.editorContext = {};
   const entityInfo = editorContext.entityInfo = editorData.entityInfo;
 
-  const notify = makeNotify('Entry', function () {
-    return '“' + $scope.title + '”';
-  });
+  const notify = makeNotify('Entry', () => '“' + $scope.title + '”');
 
   $scope.entityInfo = entityInfo;
 
@@ -122,7 +120,7 @@ export default async function create ($scope, entryId) {
   editorContext.focus = Focus.create();
 
   // TODO Move this into a separate function
-  K.onValueScope($scope, doc.valuePropertyAt([]), function (data) {
+  K.onValueScope($scope, doc.valuePropertyAt([]), data => {
     const title = spaceContext.entryTitle({
       getContentTypeId: constant(entityInfo.contentTypeId),
       data: data
@@ -131,7 +129,7 @@ export default async function create ($scope, entryId) {
     $scope.title = truncate(title, 50);
   });
 
-  editorContext.editReferences = function (field, locale, index, cb) {
+  editorContext.editReferences = (field, locale, index, cb) => {
     $scope.referenceContext = createReferenceContext(field, locale, index, cb);
   };
 
@@ -139,7 +137,7 @@ export default async function create ($scope, entryId) {
 
   // This will only be available if feature-at-05-2018-sliding-entry-editor-multi-level
   // is not enabled.
-  editorContext.toggleSlideinEditor = function () {
+  editorContext.toggleSlideinEditor = () => {
     $scope.inlineEditor = !$scope.inlineEditor;
   };
 
@@ -175,7 +173,7 @@ export default async function create ($scope, entryId) {
     };
   }
 
-  $scope.$on('scroll-editor', function (_ev, scrollTop) {
+  $scope.$on('scroll-editor', (_ev, scrollTop) => {
     contextHistory.extendCurrent({scroll: scrollTop});
   });
 
@@ -191,7 +189,7 @@ export default async function create ($scope, entryId) {
     editorContext.hasInitialFocus = true;
   }
 
-  K.onValueScope($scope, $scope.otDoc.state.isDirty$, function (isDirty) {
+  K.onValueScope($scope, $scope.otDoc.state.isDirty$, isDirty => {
     $scope.context.dirty = isDirty;
   });
 

@@ -1,6 +1,6 @@
 'use strict';
 
-describe('FormWidgetsController#widgets', function () {
+describe('FormWidgetsController#widgets', () => {
   beforeEach(function () {
     module('contentful/test');
 
@@ -37,7 +37,7 @@ describe('FormWidgetsController#widgets', function () {
     expect(this.scope.widgets.length).toBe(1);
   });
 
-  describe('with disabled field', function () {
+  describe('with disabled field', () => {
     beforeEach(function () {
       this.scope.preferences = {};
       this.field.disabled = true;

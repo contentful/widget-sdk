@@ -1,11 +1,11 @@
-describe('widgets/store', function () {
+describe('widgets/store', () => {
   beforeEach(function () {
     module('contentful/test');
     this.createStore = this.$inject('widgets/store');
     this.builtins = this.$inject('widgets/builtin');
   });
 
-  describe('#refresh()', function () {
+  describe('#refresh()', () => {
     it('returns an object including the builtin widgets', function* () {
       const cma = {getExtensions: sinon.stub().resolves({items: []})};
       const store = this.createStore(cma);
@@ -74,7 +74,7 @@ describe('widgets/store', function () {
     });
   });
 
-  describe('#getAll()', function () {
+  describe('#getAll()', () => {
     it('returns an empty array if not refreshed yet', function () {
       const store = this.createStore();
       expect(store.getAll()).toEqual([]);

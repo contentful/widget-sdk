@@ -43,7 +43,7 @@ export const PromiseStatus = makeSum({
 export function createStreamBus (scope) {
   let currentEmitter;
 
-  const stream = Kefir.stream(function (emitter) {
+  const stream = Kefir.stream(emitter => {
     currentEmitter = emitter;
   });
 
@@ -141,7 +141,7 @@ export function createPropertyBus (initialValue, scope) {
  */
 export function onValueScope (scope, stream, cb) {
   const lifeline = scopeLifeline(scope);
-  const off = onValueWhile(lifeline, stream, function (value) {
+  const off = onValueWhile(lifeline, stream, value => {
     cb(value);
     scope.$applyAsync();
   });
@@ -215,7 +215,7 @@ export function onValueWhile (lifeline, stream, cb) {
  * an array value in the stream.
  */
 export function fromScopeEvent (scope, event, uncurry) {
-  return Kefir.stream(function (emitter) {
+  return Kefir.stream(emitter => {
     const offEvent = scope.$on(event, function () {
       let value;
       if (uncurry) {
@@ -226,11 +226,11 @@ export function fromScopeEvent (scope, event, uncurry) {
       emitter.emit(value);
     });
 
-    const offDestroy = scope.$on('$destroy', function () {
+    const offDestroy = scope.$on('$destroy', () => {
       emitter.end();
     });
 
-    return function () {
+    return () => {
       offEvent();
       offDestroy();
     };
@@ -306,9 +306,9 @@ export function sampleBy (obs, sampler) {
  */
 export function promiseProperty (promise, pendingValue) {
   const bus = createPropertyBus(PromiseStatus.Pending(pendingValue));
-  promise.then(function (value) {
+  promise.then(value => {
     bus.set(PromiseStatus.Resolved(value));
-  }, function (error) {
+  }, error => {
     bus.set(PromiseStatus.Rejected(error));
   });
   return bus.property;
@@ -332,7 +332,7 @@ export function promiseProperty (promise, pendingValue) {
  */
 export function combineProperties (props, combinator) {
   props.forEach(assertIsProperty);
-  return Kefir.combine(props, combinator).toProperty(function () {});
+  return Kefir.combine(props, combinator).toProperty(() => {});
 }
 
 

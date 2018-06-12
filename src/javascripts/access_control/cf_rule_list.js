@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfRuleList', ['require', function (require) {
+angular.module('contentful').directive('cfRuleList', ['require', require => {
 
   var spaceContext            = require('spaceContext');
   var TheLocaleStore          = require('TheLocaleStore');
@@ -15,20 +15,19 @@ angular.module('contentful').directive('cfRuleList', ['require', function (requi
       entity: '@',
       isDisabled: '='
     },
-    controller: ['$scope', function ($scope) {
+    controller: ['$scope', $scope => {
       $scope.spaceContext = spaceContext;
       $scope.remove = remove;
       $scope.entityName = getEntityName($scope.entity);
       $scope.getDefaultRule = getDefaultRuleGetterFor($scope.entity);
 
-      $scope.locales = _.map(TheLocaleStore.getPrivateLocales(), function (l) {
-        return { code: l.code, name: l.name + ' (' + l.code + ')' };
-      });
+      $scope.locales = _.map(TheLocaleStore.getPrivateLocales(), l => ({
+        code: l.code,
+        name: l.name + ' (' + l.code + ')'
+      }));
       $scope.locales.unshift({ code: ALL_LOCALES, name: 'All locales' });
 
-      $scope.$watch(function () {
-        return _.get($scope, 'rules.allowed', []).length;
-      }, function (current, previous) {
+      $scope.$watch(() => _.get($scope, 'rules.allowed', []).length, (current, previous) => {
         if (current === 0 && previous > 0) {
           $scope.rules.denied = [];
         }

@@ -1,7 +1,7 @@
 'use strict';
-angular.module('contentful').config(['$provide', function ($provide) {
+angular.module('contentful').config(['$provide', $provide => {
   // Decorates $q instances with the `callback` method
-  $provide.decorator('$q', ['$delegate', '$rootScope', function ($q, $rootScope) {
+  $provide.decorator('$q', ['$delegate', '$rootScope', ($q, $rootScope) => {
     // Returns a callback method that should be passed in where a node-style callback is expected.
     // The callback method has a `promise` property that can then be passed around in a promise environment:
     //
@@ -9,11 +9,11 @@ angular.module('contentful').config(['$provide', function ($provide) {
     // asyncMethod(cb);
     // cb.promise.then(...)
     //
-    $q.callbackWithApply = function () {
+    $q.callbackWithApply = () => {
       var deferred = $q.defer();
       var callbackFunction = function (err) {
         var args = _.tail(arguments);
-        $rootScope.$apply(function () {
+        $rootScope.$apply(() => {
           if (err) {
             deferred.reject(err);
           } else {
@@ -25,7 +25,7 @@ angular.module('contentful').config(['$provide', function ($provide) {
       return callbackFunction;
     };
 
-    $q.callback = function () {
+    $q.callback = () => {
       var deferred = $q.defer();
       var callbackFunction = function (err) {
         var args = _.tail(arguments);
@@ -50,23 +50,21 @@ angular.module('contentful').config(['$provide', function ($provide) {
      *   function (err) {})
      * )
      */
-    $q.denodeify = function (fn) {
-      return $q(function (resolve, reject) {
-        try {
-          fn(handler);
-        } catch (error) {
-          handler(error);
-        }
+    $q.denodeify = fn => $q((resolve, reject) => {
+      try {
+        fn(handler);
+      } catch (error) {
+        handler(error);
+      }
 
-        function handler (err, value) {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(value);
-          }
+      function handler (err, value) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(value);
         }
-      });
-    };
+      }
+    });
 
     return $q;
   }]);

@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 
-.directive('cfWebhookSegmentation', ['require', function (require) {
+.directive('cfWebhookSegmentation', ['require', require => {
   const React = require('react');
   const ReactDOM = require('react-dom');
   const WebhookSegmentation = require('app/Webhooks/WebhookSegmentation').default;
@@ -27,7 +27,7 @@ angular.module('contentful')
   }
 
   function onChange (scope) {
-    return function (values) {
+    return values => {
       scope.webhook.topics = internalState.transformMapToTopics(values);
       scope.$applyAsync();
     };

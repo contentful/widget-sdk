@@ -6,7 +6,7 @@ angular.module('contentful')
  * @ngdoc service
  * @name states/settings/locales
  */
-.factory('states/settings/locales', ['require', function (require) {
+.factory('states/settings/locales', ['require', require => {
   var base = require('states/Base').default;
   var contextHistory = require('navigation/Breadcrumbs/History').default;
   var crumbFactory = require('navigation/Breadcrumbs/Factory');
@@ -23,7 +23,7 @@ angular.module('contentful')
       template: '<cf-locale-editor class="workbench" />',
       controller: [
         '$scope', '$stateParams', 'locale', 'spaceLocales',
-        function ($scope, $stateParams, locale, spaceLocales) {
+        ($scope, $stateParams, locale, spaceLocales) => {
           $scope.context.isNew = isNew;
           $scope.locale = locale;
           $scope.spaceLocales = spaceLocales;
@@ -39,9 +39,7 @@ angular.module('contentful')
 
   // injecting `spaceContext` here to assure `TheLocaleStore.init` was called
   // TODO drop global `TheLocaleStore` in favour of a space-scoped service
-  var resolveSpaceLocales = ['TheLocaleStore', 'spaceContext', function (TheLocaleStore, _sc) {
-    return TheLocaleStore.refresh();
-  }];
+  var resolveSpaceLocales = ['TheLocaleStore', 'spaceContext', (TheLocaleStore, _sc) => TheLocaleStore.refresh()];
 
   var newLocale = localeEditorState({
     name: 'new',
@@ -65,7 +63,7 @@ angular.module('contentful')
     url: '/:localeId',
     resolve: {
       spaceLocales: resolveSpaceLocales,
-      locale: ['spaceLocales', '$stateParams', function (spaceLocales, $stateParams) {
+      locale: ['spaceLocales', '$stateParams', (spaceLocales, $stateParams) => {
         var id = $stateParams.localeId;
         var found = _.find(spaceLocales, {sys: {id: id}});
 

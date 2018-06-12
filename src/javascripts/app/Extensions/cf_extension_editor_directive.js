@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfExtensionEditor', ['require', function (require) {
+.directive('cfExtensionEditor', ['require', require => {
   var React = require('react');
   var ReactDOM = require('react-dom');
   var ExtensionEditor = require('app/Extensions/ExtensionEditor').default;
@@ -34,11 +34,11 @@ angular.module('contentful')
 
       function save () {
         return spaceContext.cma.updateExtension(entity)
-        .then(function (response) {
+        .then(response => {
           notification.info('Your extension was updated successfully.');
           entity = response;
           return entity;
-        }, function (err) {
+        }, err => {
           notification.error([
             'There was an error while saving your extension.',
             'See validation errors for more details.'

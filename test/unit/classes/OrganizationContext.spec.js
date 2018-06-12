@@ -1,4 +1,4 @@
-describe('OrganizationContext', function () {
+describe('OrganizationContext', () => {
   const API_HOST = '//SOME_API_HOST';
   const ORG = Object.freeze({
     sys: {
@@ -26,7 +26,7 @@ describe('OrganizationContext', function () {
     this.OrganizationContext = this.$inject('classes/OrganizationContext');
   });
 
-  describe('.create()', function () {
+  describe('.create()', () => {
     it('throws an error if no organization is given', function () {
       expect(() => this.OrganizationContext.create({})).toThrow();
     });
@@ -36,14 +36,14 @@ describe('OrganizationContext', function () {
     });
   });
 
-  describe('#organization', function () {
+  describe('#organization', () => {
     it('is set to the object given in .create()', function () {
       const context = this.OrganizationContext.create(ORG);
       expect(context.organization).toEqual(ORG);
     });
   });
 
-  describe('#getAllUsers', function () {
+  describe('#getAllUsers', () => {
     it('got instantiated with a suitable Endpoint and passes query to a call', function () {
       const orgContext = this.OrganizationContext.create(ORG);
       const query = {};

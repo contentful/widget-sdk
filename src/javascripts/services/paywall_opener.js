@@ -7,7 +7,7 @@
  * Opens the paywall.
  */
 angular.module('contentful')
-.factory('paywallOpener', ['require', function (require) {
+.factory('paywallOpener', ['require', require => {
   var $q = require('$q');
   var $sce = require('$sce');
   var lazyLoad = require('LazyLoader').get;
@@ -46,10 +46,10 @@ angular.module('contentful')
         persistOnNavigation: true,
         scopeData: scopeData
       }).promise
-      .catch(function () {
+      .catch(() => {
         track('closed');
       })
-      .finally(function () {
+      .finally(() => {
         paywallIsOpen = false;
       });
     }
@@ -75,9 +75,7 @@ angular.module('contentful')
         var loadPlanCard = recommendPlan(organizationId);
 
         return $q.all([loadPlanCardCss, loadPlanCard])
-        .then(function (data) {
-          return data[1];
-        })
+        .then(data => data[1])
         .then(returnScopeWithPlan, resolveWithScope);
       } else {
         return resolveWithScope();

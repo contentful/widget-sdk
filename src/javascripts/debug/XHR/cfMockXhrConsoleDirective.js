@@ -1,6 +1,6 @@
 angular.module('contentful')
 
-.directive('cfMockXhrConsole', ['require', function (require) {
+.directive('cfMockXhrConsole', ['require', require => {
   var h = require('utils/hyperscript').h;
 
   return {

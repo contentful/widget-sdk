@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfUrlEditor', ['require', function (require) {
+.directive('cfUrlEditor', ['require', require => {
   var debounce = require('debounce');
   var InputUpdater = require('ui/inputUpdater');
 
@@ -20,12 +20,12 @@ angular.module('contentful')
         helpText: widgetApi.settings.helpText
       });
 
-      scope.$watch('urlStatus', function (urlStatus) {
+      scope.$watch('urlStatus', urlStatus => {
         var isInvalid = urlStatus === 'broken' || urlStatus === 'invalid';
         field.setInvalid(isInvalid);
       });
 
-      var detachOnValueChangedHandler = field.onValueChanged(function (val) {
+      var detachOnValueChangedHandler = field.onValueChanged(val => {
         // Might be `null` or `undefined` when value is not present
         updateInput(val || '');
       });
@@ -33,7 +33,7 @@ angular.module('contentful')
       // call handler when the disabled status of the field changes
       var detachOnFieldDisabledHandler = field.onIsDisabledChanged(updateDisabledStatus);
 
-      var offSchemaErrorsChanged = field.onSchemaErrorsChanged(function (errors) {
+      var offSchemaErrorsChanged = field.onSchemaErrorsChanged(errors => {
         scope.hasErrors = errors && errors.length > 0;
       });
 
@@ -42,9 +42,7 @@ angular.module('contentful')
       scope.$on('$destroy', detachOnFieldDisabledHandler);
       scope.$on('$destroy', offSchemaErrorsChanged);
 
-      scope.$watch(function () {
-        return $inputEl.val();
-      }, function (value) {
+      scope.$watch(() => $inputEl.val(), value => {
         scope.previewUrl = value;
         field.setValue(value);
       });

@@ -1,6 +1,6 @@
 'use strict';
 
-describe('cfNullEmptyInput directive', function () {
+describe('cfNullEmptyInput directive', () => {
   beforeEach(module('contentful/test'));
 
   it('empty string sets model value to null', function () {

@@ -22,7 +22,7 @@
  */
 
 angular.module('contentful')
-.directive('cfThumbnail', ['require', function (require) {
+.directive('cfThumbnail', ['require', require => {
   var mimetype = require('mimetype');
   var h = require('utils/hyperscript').h;
   var TokenStore = require('services/TokenStore');
@@ -97,7 +97,7 @@ angular.module('contentful')
         height: options.height ? options.height + 'px' : ''
       };
 
-      scope.$watchCollection('file', function (file) {
+      scope.$watchCollection('file', file => {
         scope.thumbnailUrl = getThumbnailUrl(file, options);
         scope.iconName = getIconName(file);
       });
@@ -127,9 +127,7 @@ angular.module('contentful')
       h: options.width,
       f: options.focus,
       fit: options.fit
-    }, function (value) {
-      return !!value;
-    });
+    }, value => !!value);
 
     if (_.isEmpty(params)) {
       return imageUrl;

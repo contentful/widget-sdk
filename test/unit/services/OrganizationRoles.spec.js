@@ -1,13 +1,13 @@
 'use strict';
 
-describe('OrganizationRoles', function () {
+describe('OrganizationRoles', () => {
   let OrganizationRoles, ORG_1, ORG_2, ORG_3;
 
   function makeUser (organizations) {
     return {
-      organizationMemberships: _.map(organizations, function (org) {
-        return { organization: org };
-      })
+      organizationMemberships: _.map(organizations, org => ({
+        organization: org
+      }))
     };
   }
 
@@ -20,8 +20,8 @@ describe('OrganizationRoles', function () {
     ORG_3 = { sys: { id: 'org3' }, name: '3rd ORG' };
   });
 
-  describe('#isAdmin, #isOwner and #isOwnerOrAdmin', function () {
-    beforeEach(function () {
+  describe('#isAdmin, #isOwner and #isOwnerOrAdmin', () => {
+    beforeEach(() => {
       const user = makeUser([ ORG_1, ORG_2, ORG_3 ]);
       user.organizationMemberships[0].role = 'member';
       user.organizationMemberships[1].role = 'admin';
@@ -38,16 +38,16 @@ describe('OrganizationRoles', function () {
     it('returns `false` for an unknown organization ID',
       () => returnsFalseWithArg('unknown-id'));
 
-    it('returns `false` if user is a normal member', function () {
+    it('returns `false` if user is a normal member', () => {
       returnsFalseWithArg(ORG_1);
     });
 
-    it('returns `false`', function () {
+    it('returns `false`', () => {
       expect(OrganizationRoles.isOwner(ORG_2)).toBe(false);
       expect(OrganizationRoles.isAdmin(ORG_3)).toBe(false);
     });
 
-    it('returns `true`', function () {
+    it('returns `true`', () => {
       expect(OrganizationRoles.isAdmin(ORG_2)).toBe(true);
       expect(OrganizationRoles.isOwner(ORG_3)).toBe(true);
       expect(OrganizationRoles.isOwnerOrAdmin(ORG_2)).toBe(true);

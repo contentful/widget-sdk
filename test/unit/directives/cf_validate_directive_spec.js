@@ -1,9 +1,9 @@
 'use strict';
 
-describe('cfValidate', function () {
+describe('cfValidate', () => {
   beforeEach(module('contentful/test'));
 
-  describe('validator', function () {
+  describe('validator', () => {
     beforeEach(function () {
       this.scope = this.$inject('$rootScope').$new();
 
@@ -17,8 +17,8 @@ describe('cfValidate', function () {
       this.scope.schema = {errors: this.errors};
     });
 
-    describe('#run()', function () {
-      describe('without schema errors', function () {
+    describe('#run()', () => {
+      describe('without schema errors', () => {
         beforeEach(function () {
           this.errors.returns([]);
         });
@@ -36,7 +36,7 @@ describe('cfValidate', function () {
         });
       });
 
-      describe('with schema errors', function () {
+      describe('with schema errors', () => {
         beforeEach(function () {
           this.errors.returns([{name: 'oops'}]);
         });
@@ -63,7 +63,7 @@ describe('cfValidate', function () {
       });
     });
 
-    describe('#run(path)', function () {
+    describe('#run(path)', () => {
       beforeEach(function () {
         this.validator.setErrors([
           {name: '1', path: ['a']},
@@ -113,7 +113,7 @@ describe('cfValidate', function () {
       });
     });
 
-    describe('#getPathErrors(path)', function () {
+    describe('#getPathErrors(path)', () => {
       it('returns errors with exact path', function () {
         this.validator.errors = [
           {name: '1', path: ['a']},
@@ -149,12 +149,12 @@ describe('cfValidate', function () {
       this.$apply();
       sinon.assert.calledOnce(this.validator.run);
     });
-    describe('#hasError()', function () {
+    describe('#hasError()', () => {
       beforeEach(function () {
         this.setErrors = function (paths) {
-          this.validator.setErrors(paths.map(function (path) {
-            return {path: path};
-          }));
+          this.validator.setErrors(paths.map(path => ({
+            path: path
+          })));
         };
       });
 
@@ -175,7 +175,7 @@ describe('cfValidate', function () {
     });
   });
 
-  describe('with cfContentTypeSchema', function () {
+  describe('with cfContentTypeSchema', () => {
     const fieldFixture = {
       id: 'fieldId',
       apiName: 'fieldApiName',

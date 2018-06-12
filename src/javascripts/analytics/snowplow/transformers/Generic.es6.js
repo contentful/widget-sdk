@@ -21,9 +21,7 @@ function transformGenericData (eventName, data) {
     'space_id': data.spaceId,
     'executing_user_id': data.userId,
     'payload': mapKeys(
-      omit(data, ['organizationId', 'spaceId', 'userId', 'currentState']), function (_val, key) {
-        return snakeCase(key);
-      }
+      omit(data, ['organizationId', 'spaceId', 'userId', 'currentState']), (_val, key) => snakeCase(key)
     )
   };
 }

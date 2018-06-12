@@ -21,18 +21,17 @@ angular.module('contentful')
  * })
  * ~~~
  */
-.directive('uiOnScroll', [function () {
-  return {
-    restrict: 'A',
-    link: function ($scope, $elem, $attrs) {
-      $elem.on('scroll', listener);
-      $scope.$on('$destroy', function () {
-        $elem.off('scroll', listener);
-      });
+.directive('uiOnScroll', [() => ({
+  restrict: 'A',
 
-      function listener () {
-        $scope.$emit($attrs.uiOnScroll, $elem.get(0).scrollTop);
-      }
+  link: function ($scope, $elem, $attrs) {
+    $elem.on('scroll', listener);
+    $scope.$on('$destroy', () => {
+      $elem.off('scroll', listener);
+    });
+
+    function listener () {
+      $scope.$emit($attrs.uiOnScroll, $elem.get(0).scrollTop);
     }
-  };
-}]);
+  }
+})]);

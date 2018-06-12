@@ -1,6 +1,6 @@
 import {times} from 'lodash';
 
-describe('access_control/OrganizationMembershipRepository', function () {
+describe('access_control/OrganizationMembershipRepository', () => {
   beforeEach(function () {
     module('contentful/test');
     this.OrganizationMembershipRepository = this.$inject('access_control/OrganizationMembershipRepository');
@@ -9,7 +9,7 @@ describe('access_control/OrganizationMembershipRepository', function () {
     this.getUsersByIds = (ids) => this.OrganizationMembershipRepository.getUsersByIds(this.endpoint, ids);
   });
 
-  describe('#getUsersByIds()', function () {
+  describe('#getUsersByIds()', () => {
     it('loads users by id in batches', function* () {
       const userIds = times(100, (i) => `user${i}`);
       this.endpoint

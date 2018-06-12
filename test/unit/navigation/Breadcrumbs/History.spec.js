@@ -1,7 +1,7 @@
 import { createBreadcrumbsHistory } from 'navigation/Breadcrumbs/History';
 import * as K from 'utils/kefir';
 
-describe('navigation/Breadcrumbs/History', function () {
+describe('navigation/Breadcrumbs/History', () => {
   const e = id => { return {id: id}; };
 
   beforeEach(function () {
@@ -9,7 +9,7 @@ describe('navigation/Breadcrumbs/History', function () {
     this.assertCrumbCount = count => expect(K.getValue(this.ctx.crumbs$).length).toBe(count);
   });
 
-  describe('after init (empty state)', function () {
+  describe('after init (empty state)', () => {
     it('is empty', function () {
       expect(this.ctx.isEmpty()).toBe(true);
     });
@@ -19,7 +19,7 @@ describe('navigation/Breadcrumbs/History', function () {
     });
   });
 
-  describe('adding entities', function () {
+  describe('adding entities', () => {
     it('adds when empty and w/o addToContext flag', function () {
       this.ctx.add(e(1));
       this.assertCrumbCount(1);
@@ -46,7 +46,7 @@ describe('navigation/Breadcrumbs/History', function () {
     });
   });
 
-  describe('getters', function () {
+  describe('getters', () => {
     beforeEach(function () {
       [e(1), e(2), e(3)].forEach(this.ctx.add);
     });
@@ -64,7 +64,7 @@ describe('navigation/Breadcrumbs/History', function () {
     });
   });
 
-  describe('destructive operations', function () {
+  describe('destructive operations', () => {
     beforeEach(function () {
       [e(1), e(2), e(3)].forEach(this.ctx.add);
     });

@@ -1,6 +1,6 @@
 import * as sinon from 'helpers/sinon';
 
-describe('Segment service', function () {
+describe('Segment service', () => {
   beforeEach(function () {
     module('contentful/test');
 
@@ -25,7 +25,7 @@ describe('Segment service', function () {
     delete this.window.analytics;
   });
 
-  describe('enable()', function () {
+  describe('enable()', () => {
     it('enables the service', function () {
       this.segment.enable();
       sinon.assert.calledOnce(this.loader.get.withArgs('segment'));
@@ -33,7 +33,7 @@ describe('Segment service', function () {
     });
   });
 
-  describe('disable()', function () {
+  describe('disable()', () => {
     it('disables the service', function () {
       this.segment.disable();
       expect(this.window.analytics).toBeUndefined();
@@ -56,7 +56,7 @@ describe('Segment service', function () {
       expectedArgs.push({integrations});
     }
 
-    describe(`${fnName} method`, function () {
+    describe(`${fnName} method`, () => {
       beforeEach(function () {
         this.enable = () => {
           this.segment.enable();

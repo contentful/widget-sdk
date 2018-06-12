@@ -12,15 +12,13 @@ angular.module('cf.app')
  * between field versions and restore composed
  * version of an entry at the end of the process.
  */
-.directive('cfSnapshotComparator', [function () {
-  return {
-    template: JST.snapshot_comparator(),
-    restrict: 'E',
-    controller: 'SnapshotComparatorController'
-  };
-}])
+.directive('cfSnapshotComparator', [() => ({
+  template: JST.snapshot_comparator(),
+  restrict: 'E',
+  controller: 'SnapshotComparatorController'
+})])
 
-.controller('SnapshotComparatorController', ['require', '$scope', function (require, $scope) {
+.controller('SnapshotComparatorController', ['require', '$scope', (require, $scope) => {
   var $q = require('$q');
   var K = require('utils/kefir');
   var spaceContext = require('spaceContext');
@@ -49,9 +47,7 @@ angular.module('cf.app')
     focus: Focus.create()
   };
 
-  $scope.$watch(function () {
-    return $scope.versionPicker.getPathsToRestore().length > 0;
-  }, function (isDirty) {
+  $scope.$watch(() => $scope.versionPicker.getPathsToRestore().length > 0, isDirty => {
     $scope.context.dirty = isDirty;
   });
 
@@ -61,13 +57,11 @@ angular.module('cf.app')
   var isShowingSnapshotSelector = false;
   var showSnapshotSelectorBus = K.createPropertyBus(isShowingSnapshotSelector, $scope);
 
-  $scope.toggleSnapshotSelector = function () {
+  $scope.toggleSnapshotSelector = () => {
     isShowingSnapshotSelector = !isShowingSnapshotSelector;
     showSnapshotSelectorBus.set(isShowingSnapshotSelector);
   };
-  $scope.isShowingSnapshotSelector = function () {
-    return isShowingSnapshotSelector;
-  };
+  $scope.isShowingSnapshotSelector = () => isShowingSnapshotSelector;
   $scope.showSnapshotSelector$ = showSnapshotSelectorBus.property;
 
   $scope.showOnlyDifferences = false;
@@ -98,7 +92,7 @@ angular.module('cf.app')
 
   function save (redirect) {
     return spaceContext.cma.updateEntry(prepareRestoredEntry())
-    .then(function (entry) {
+    .then(entry => {
       trackVersioning.registerRestoredVersion(entry);
       trackVersioning.restored($scope.versionPicker, $scope.showOnlyDifferences);
       setPristine();
@@ -106,7 +100,7 @@ angular.module('cf.app')
         return $state.go('^.^', {}, {reload: true});
       }
     }, handleSaveError)
-    .then(function () {
+    .then(() => {
       notification.info('Entry successfully restored.');
     });
   }
@@ -121,7 +115,7 @@ angular.module('cf.app')
     var result = Entries.internalToExternal($scope.entry.data, ctData);
 
     $scope.versionPicker.getPathsToRestore()
-    .forEach(function (path) {
+    .forEach(path => {
       path = Entries.internalPathToExternal(ctData, path);
       _.set(result, path, _.get(snapshot, path));
     });
@@ -154,7 +148,7 @@ angular.module('cf.app')
   this.setInvalid = _.noop;
 }])
 
-.controller('SnapshotComparisonController', ['$scope', function ($scope) {
+.controller('SnapshotComparisonController', ['$scope', $scope => {
   var field = $scope.field;
   var locale = $scope.locale;
   var fieldPath = ['fields', field.id, locale.internal_code];

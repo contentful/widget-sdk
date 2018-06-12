@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 
-.directive('cfOnboardingWithTea', ['require', function (require) {
+.directive('cfOnboardingWithTea', ['require', require => {
   var React = require('react');
   var ReactDOM = require('react-dom');
   var OnboardingWithTea = require('app/home/welcome/OnboardingWithTea').default;
@@ -11,7 +11,7 @@ angular.module('contentful')
     link: function ($scope, el) {
       var root = el[0];
 
-      $scope.$on('$destroy', function () {
+      $scope.$on('$destroy', () => {
         ReactDOM.unmountComponentAtNode(root);
       });
 

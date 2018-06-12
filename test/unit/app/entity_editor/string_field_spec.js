@@ -1,6 +1,6 @@
 'use strict';
 
-describe('entityEditor/Document/StringField', function () {
+describe('entityEditor/Document/StringField', () => {
   beforeEach(function () {
     this.ShareJS = {};
     module('contentful/test', ($provide) => {
@@ -10,7 +10,7 @@ describe('entityEditor/Document/StringField', function () {
     this.StringField = this.$inject('entityEditor/Document/StringField');
   });
 
-  describe('#is', function () {
+  describe('#is', () => {
     beforeEach(function () {
       this.is = this.StringField.is;
       this.ctWithFields = (fields) => { return {data: {fields}}; };
@@ -40,7 +40,7 @@ describe('entityEditor/Document/StringField', function () {
     });
   });
 
-  describe('#setAt', function () {
+  describe('#setAt', () => {
     beforeEach(function () {
       this.path = ['some', 'path'];
       this.submitOp = sinon.stub().resolves();
@@ -66,7 +66,7 @@ describe('entityEditor/Document/StringField', function () {
       };
     });
 
-    describe('setting invalid values', function () {
+    describe('setting invalid values', () => {
       test('object', {});
       test('array', []);
       test('nan', NaN);
@@ -74,14 +74,14 @@ describe('entityEditor/Document/StringField', function () {
 
       function test (type, value) {
         it(`rejects when setting the value to: ${type}`, function () {
-          return this.setAt(value).then(_.noop, function (err) {
+          return this.setAt(value).then(_.noop, err => {
             expect(err.message).toBe('Invalid string field value.');
           });
         });
       }
     });
 
-    describe('setting an empty string', function () {
+    describe('setting an empty string', () => {
       beforeEach(function () {
         this.init = (from, to) => {
           this.peek.returns(from);
@@ -112,7 +112,7 @@ describe('entityEditor/Document/StringField', function () {
       });
     });
 
-    describe('setting undef/nil values', function () {
+    describe('setting undef/nil values', () => {
       beforeEach(function () {
         this.init = (from, to) => {
           this.peek.returns(from);
@@ -143,7 +143,7 @@ describe('entityEditor/Document/StringField', function () {
       });
     });
 
-    describe('patching', function () {
+    describe('patching', () => {
       beforeEach(function () {
         this.init = (from, to) => {
           this.peek.returns(from);

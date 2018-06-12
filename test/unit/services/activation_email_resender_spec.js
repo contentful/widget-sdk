@@ -1,11 +1,11 @@
 'use strict';
 
-describe('activationEmailResender', function () {
+describe('activationEmailResender', () => {
   let $httpBackend;
   let resend;
 
   beforeEach(function () {
-    module('contentful/test', function (environment) {
+    module('contentful/test', environment => {
       environment.settings.authUrl = '//be.contentful.com:443';
     });
 
@@ -13,28 +13,28 @@ describe('activationEmailResender', function () {
     $httpBackend = this.$inject('$httpBackend');
   });
 
-  afterEach(function () {
+  afterEach(() => {
     $httpBackend.verifyNoOutstandingExpectation();
     $httpBackend.verifyNoOutstandingRequest();
     $httpBackend = resend = null;
   });
 
-  describe('.resend() without email', function () {
-    it('throws an error since no email is given', function () {
-      expect(function () {
+  describe('.resend() without email', () => {
+    it('throws an error since no email is given', () => {
+      expect(() => {
         resend();
       }).toThrow();
     });
   });
 
-  describe('resend(email)', function () {
+  describe('resend(email)', () => {
     beforeEach(function () {
       this.promise = resend('user@example.com');
       this.respond = $httpBackend.whenPOST(
         '//be.contentful.com:443/confirmation').respond;
     });
 
-    it('sends data as expected by Gatekeeper', function () {
+    it('sends data as expected by Gatekeeper', () => {
       $httpBackend.expectPOST(
         '//be.contentful.com:443/confirmation',
         'user%5Bemail%5D=user%40example.com'
@@ -42,11 +42,11 @@ describe('activationEmailResender', function () {
       $httpBackend.flush();
     });
 
-    it('sends headers as expected by Gatekeeper', function () {
+    it('sends headers as expected by Gatekeeper', () => {
       $httpBackend.expectPOST(
         '//be.contentful.com:443/confirmation',
         undefined,
-        function (headers) {
+        headers => {
           expect(headers['Content-Type']).toBe('application/x-www-form-urlencoded');
           return true;
         }
@@ -54,7 +54,7 @@ describe('activationEmailResender', function () {
       $httpBackend.flush();
     });
 
-    describe('returned promise', function () {
+    describe('returned promise', () => {
       let rejected, resolved;
       beforeEach(function () {
         rejected = sinon.spy();
@@ -84,21 +84,21 @@ describe('activationEmailResender', function () {
       });
     });
 
-    describe('error logging on rejection via `logger.logError()`', function () {
+    describe('error logging on rejection via `logger.logError()`', () => {
       let logErrorSpy;
       beforeEach(function () {
-        this.respond(function (method, url, data, headers) {
+        this.respond((method, url, data, headers) => {
           this.request = {
             method: method, url: url, data: data, headers: headers
           };
           return [418, 'tea', {}, 'I\'m a teapot'];
-        }.bind(this));
+        });
 
         $httpBackend.flush();
         logErrorSpy = this.$inject('logger').logError;
       });
 
-      it('includes the right message and data', function () {
+      it('includes the right message and data', () => {
         sinon.assert.calledWithExactly(logErrorSpy,
           'Failed activation email resend attempt',
           sinon.match({

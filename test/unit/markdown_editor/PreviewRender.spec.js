@@ -1,6 +1,6 @@
 'use strict';
 
-describe('markdown_editor/PreviewRender', function () {
+describe('markdown_editor/PreviewRender', () => {
   let treeBuilder, buildTree;
 
   function getRoot (source, fn) {
@@ -25,7 +25,7 @@ describe('markdown_editor/PreviewRender', function () {
     buildTree = treeBuilder.default();
   });
 
-  it('Creates root div node with incremental key for builders', function () {
+  it('Creates root div node with incremental key for builders', () => {
     let root = getRoot('__test__');
     expect(root.key).toBe('root/1');
     expect(root.type).toBe('div');
@@ -36,14 +36,14 @@ describe('markdown_editor/PreviewRender', function () {
     expect(root.type).toBe('div');
   });
 
-  it('Uses hash-derived key for leaf nodes', function () {
+  it('Uses hash-derived key for leaf nodes', () => {
     const content = 'simple paragraph';
     const root = getRoot(content);
     const child = getChildren(root);
     expect(child.key).toBe('html/div/' + hash(content));
   });
 
-  it('Handle hash conflicts (for repeated fragments of text)', function () {
+  it('Handle hash conflicts (for repeated fragments of text)', () => {
     const paras = ['test', 'test2', 'test'];
     const root = getRoot(paras.join('\n\n'));
     const children = getChildren(root);
@@ -51,7 +51,7 @@ describe('markdown_editor/PreviewRender', function () {
     expect(children[2].key).toBe('html/div/' + hash(paras[0]) + '/1');
   });
 
-  it('Uses incremental key for single level blocks', function () {
+  it('Uses incremental key for single level blocks', () => {
     const root = getRoot('__para1__\n\n__para2__');
     const children = getChildren(root);
     expect(children.length).toBe(2);
@@ -59,18 +59,18 @@ describe('markdown_editor/PreviewRender', function () {
     expect(children[1].key).toBe('1');
   });
 
-  it('Counts words', function () {
+  it('Counts words', () => {
     const result = buildTree('__para1__\n\n- test\n- item2\n\n[test](http://test.com) test');
     expect(result.words).toBe(5);
   });
 
-  it('sanitizes img onlick', function () {
+  it('sanitizes img onlick', () => {
     const root = getRoot('<img src="test.jpg" onclick="alert(document.cookie)"/>');
     const html = getHTML(getChildren(root));
     expect(html).toBe('<img src="test.jpg" />');
   });
 
-  it('adds rel=noopener on target=_blank', function () {
+  it('adds rel=noopener on target=_blank', () => {
     const blankAnchor = getHTML(getChildren(getRoot('<a target=_blank></a>')));
     expect(blankAnchor).toBe('<a target="_blank" rel="noopener noreferrer"></a>');
 
@@ -78,12 +78,12 @@ describe('markdown_editor/PreviewRender', function () {
     expect(normalAnchor).toBe('<a></a>');
   });
 
-  it('extends embedly anchors with attributes', function () {
+  it('extends embedly anchors with attributes', () => {
     const embedlyAnchor = getHTML(getChildren(getRoot('<a class="embedly-card" data-card-width="100%"></a>')));
     expect(embedlyAnchor).toBe('<a class="embedly-card markdown-block" data-card-width="100%" data-card-controls="0"></a>');
   });
 
-  it('Sanitizes data: and js: URIs', function () {
+  it('Sanitizes data: and js: URIs', () => {
     const BAD_URIS = [
       'javascript:something_bad',
       'data:text/html;base64,SomEtHiGBad+',
@@ -99,7 +99,7 @@ describe('markdown_editor/PreviewRender', function () {
     });
   });
 
-  it('Handles different image srcs', function () {
+  it('Handles different image srcs', () => {
     const tests = [
       ['![img1](//images.contentful.com/x.jpg)', 'h=200'],
       ['![img2](//images.contentful.com/x.jpg?w=100)', 'w=100&h=200'],

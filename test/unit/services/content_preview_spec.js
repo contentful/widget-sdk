@@ -1,6 +1,6 @@
 'use strict';
 
-describe('contentPreview', function () {
+describe('contentPreview', () => {
   const storeStubs = {};
 
   let spaceContext;
@@ -11,7 +11,7 @@ describe('contentPreview', function () {
     storeStubs.remove = sinon.stub();
     storeStubs.forKey = sinon.stub();
 
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.value('TheLocaleStore', {
         getDefaultLocale: _.constant({internal_code: 'en'}),
         toPublicCode: sinon.stub()
@@ -48,7 +48,7 @@ describe('contentPreview', function () {
     this.store = getStore();
   });
 
-  afterEach(function () {
+  afterEach(() => {
     spaceContext = null;
   });
 
@@ -117,10 +117,10 @@ describe('contentPreview', function () {
     };
   }
 
-  describe('#getAll', function () {
+  describe('#getAll', () => {
     it('resolves preview environments', function () {
       function fetchEnvironmentsAndAssertResponse () {
-        this.contentPreview.getAll().then(function (environments) {
+        this.contentPreview.getAll().then(environments => {
           expect(environments.foo).toEqual(makeEnv('foo'));
           expect(environments.foo2).toEqual(makeEnv('foo2'));
         });
@@ -146,7 +146,7 @@ describe('contentPreview', function () {
     });
   });
 
-  describe('#get', function () {
+  describe('#get', () => {
     it('resolves preview environment', function () {
       this.contentPreview.get('foo').then(env => {
         expect(env).toEqual(makeEnv('foo'));
@@ -155,34 +155,34 @@ describe('contentPreview', function () {
     });
 
     it('rejects promise if the requested environment does not exist', function () {
-      this.contentPreview.get('bar').catch(function (err) {
+      this.contentPreview.get('bar').catch(err => {
         expect(err).toBe('Preview environment could not be found');
       });
       this.$apply();
     });
   });
 
-  describe('#getForContentType', function () {
+  describe('#getForContentType', () => {
     it('returns all of the preview environments for the provided content type', function* () {
       const envs = yield this.contentPreview.getForContentType('ct-1');
       expect(envs.length).toBe(2);
     });
   });
 
-  describe('#canCreate', function () {
+  describe('#canCreate', () => {
     it('resolves to true when limit is not reached', function () {
-      this.contentPreview.canCreate().then(function (allowed) {
+      this.contentPreview.canCreate().then(allowed => {
         expect(allowed).toBe(true);
       });
     });
 
     it('resolves to false when limit is reached', async function () {
       // Create 100 preview environments
-      _.times(100, function (idx) {
+      _.times(100, idx => {
         const internal = this.contentPreview.toInternal(makeEnv('foo' + idx), [makeCt('ct-1')]);
         spaceContext.space.post.resolves(makeEnv('foo' + idx));
         this.contentPreview.create(internal);
-      }.bind(this));
+      });
 
       this.$apply();
 
@@ -192,7 +192,7 @@ describe('contentPreview', function () {
     });
   });
 
-  describe('#create', function () {
+  describe('#create', () => {
     beforeEach(function () {
       const internal = this.contentPreview.toInternal(makeEnv('foo'), [makeCt('ct-1')]);
       this.contentPreview.create(internal).then(env => { this.env = env; });
@@ -203,18 +203,18 @@ describe('contentPreview', function () {
       expect(this.env).toEqual(makeEnv('foo'));
     });
 
-    it('calls POST method', function () {
+    it('calls POST method', () => {
       sinon.assert.calledOnce(spaceContext.space.post);
     });
 
-    it('sends environment in payload', function () {
+    it('sends environment in payload', () => {
       const payload = spaceContext.space.payload.args[0][0];
       expect(payload.name).toBe('PE - foo');
       expect(payload.configurations.length).toBe(1);
     });
   });
 
-  describe('#update', function () {
+  describe('#update', () => {
     beforeEach(function () {
       spaceContext.space.put.resolves(makeEnv('foo'));
       this.contentPreview.create(this.contentPreview.toInternal(makeEnv('bar'), [makeCt('ct-1')]))
@@ -236,23 +236,23 @@ describe('contentPreview', function () {
       sinon.assert.calledWith(spaceContext.space.endpoint, 'preview_environments', this.id);
     });
 
-    it('calls PUT method', function () {
+    it('calls PUT method', () => {
       sinon.assert.calledTwice(spaceContext.space.put);
     });
 
-    it('sends environment in payload', function () {
+    it('sends environment in payload', () => {
       const payload = spaceContext.space.payload.args[2][0];
       expect(payload.name).toBe('PE - foo');
       expect(payload.configurations.length).toBe(2);
     });
 
-    it('sends correct version number in header', function () {
+    it('sends correct version number in header', () => {
       const headers = {'X-Contentful-Version': 1};
       sinon.assert.calledWith(spaceContext.space.headers, headers);
     });
   });
 
-  describe('#remove', function () {
+  describe('#remove', () => {
     beforeEach(function () {
       spaceContext.space.delete.resolves();
       const internal = this.contentPreview.toInternal(makeEnv('foo'), [makeCt('ct-1')]);
@@ -267,12 +267,12 @@ describe('contentPreview', function () {
       sinon.assert.calledWith(spaceContext.space.endpoint, 'preview_environments', this.id);
     });
 
-    it('calls DELETE method', function () {
+    it('calls DELETE method', () => {
       sinon.assert.calledOnce(spaceContext.space.delete);
     });
   });
 
-  describe('#getInvalidFields', function () {
+  describe('#getInvalidFields', () => {
     it('returns non-existent fields', function () {
       const url = 'https://www.test.com/{entry_field.valid}/{entry_field.invalid}/{entry_field.invalid}';
       const fields = [{apiName: 'valid', type: 'Symbol'}];
@@ -297,7 +297,7 @@ describe('contentPreview', function () {
   });
 
 
-  describe('#replaceVariablesInUrl', function () {
+  describe('#replaceVariablesInUrl', () => {
     it('replaces variables in URL', function* () {
       this.compiledUrl = yield this.contentPreview.replaceVariablesInUrl(
         makeEnv('foo').configurations[0].url,
@@ -434,7 +434,7 @@ describe('contentPreview', function () {
     });
   });
 
-  describe('#urlFormatIsValid', function () {
+  describe('#urlFormatIsValid', () => {
     it('correctly validates URL templates', function () {
       const urlTests = [
         {url: 'https://www.foo.com/{entry_id}/{entry_field.id}', valid: true},
@@ -444,10 +444,10 @@ describe('contentPreview', function () {
         {url: 'test', valid: false},
         {url: '://foo.bar', valid: false}
       ];
-      urlTests.forEach(function (test) {
+      urlTests.forEach(test => {
         const isValid = this.contentPreview.urlFormatIsValid(test.url);
         expect(isValid).toBe(test.valid);
-      }.bind(this));
+      });
     });
 
     it('URL with missing protocol returns false', function () {
@@ -457,8 +457,8 @@ describe('contentPreview', function () {
     });
   });
 
-  describe('#getSelected', function () {
-    beforeEach(function () {
+  describe('#getSelected', () => {
+    beforeEach(() => {
       storeStubs.get.withArgs('selectedPreviewEnvsForSpace.space01')
       .returns('env1');
     });
@@ -475,21 +475,19 @@ describe('contentPreview', function () {
     });
   });
 
-  describe('#setSelected', function () {
+  describe('#setSelected', () => {
     const environment = {
       contentType: 'ct1',
       envId: 'env1'
     };
 
-    beforeEach(function () {
+    beforeEach(() => {
       const storage = {};
 
       // Analogous to the actual backing storage
-      storeStubs.get = function (key) {
-        return storage[key];
-      };
+      storeStubs.get = key => storage[key];
 
-      storeStubs.set = function (key, value) {
+      storeStubs.set = (key, value) => {
         storage[key] = value;
       };
     });

@@ -11,7 +11,7 @@ angular.module('cf.utils')
  *   htmlEncode('<script src="..."></script>') ==
  *   '&lt;script src=&quot;...&quot;&gt;&lt;/script&gt;');
  */
-.factory('encoder', ['raw/htmlEncoder', function (htmlEncoder) {
+.factory('encoder', ['raw/htmlEncoder', htmlEncoder => {
   var encoder = htmlEncoder.Encoder();
 
   return {

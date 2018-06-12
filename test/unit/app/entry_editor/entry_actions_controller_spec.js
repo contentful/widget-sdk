@@ -1,6 +1,6 @@
 import * as K from 'helpers/mocks/kefir';
 
-describe('Entry Actions Controller', function () {
+describe('Entry Actions Controller', () => {
   beforeEach(function () {
     module('contentful/test');
 
@@ -38,7 +38,7 @@ describe('Entry Actions Controller', function () {
     };
   });
 
-  describe('#add and #duplicate', function () {
+  describe('#add and #duplicate', () => {
     beforeEach(function () {
       this.$state.go = sinon.stub();
     });
@@ -56,7 +56,7 @@ describe('Entry Actions Controller', function () {
         };
       });
 
-      describe(`#${action}`, function () {
+      describe(`#${action}`, () => {
         if (action === 'add') {
           it('tracks the entry_editor:created_with_same_ct event', function () {
             this.createEntry.resolves(response);
@@ -70,7 +70,7 @@ describe('Entry Actions Controller', function () {
           });
         }
 
-        describe('on success', function () {
+        describe('on success', () => {
           beforeEach(function () {
             this.createEntry.resolves(response);
             executeActionAndApplyScope();
@@ -107,7 +107,7 @@ describe('Entry Actions Controller', function () {
           });
         });
 
-        describe('on error', function () {
+        describe('on error', () => {
           beforeEach(function () {
             this.createEntry.rejects();
             executeActionAndApplyScope();

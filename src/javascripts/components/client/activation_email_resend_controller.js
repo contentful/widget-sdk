@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.factory('activationEmailResendController', ['require', function (require) {
+.factory('activationEmailResendController', ['require', require => {
   var $timeout = require('$timeout');
   var $q = require('$q');
   var moment = require('moment');
@@ -55,10 +55,10 @@ angular.module('contentful')
       dialog.scope.isSending = true;
       dialog.scope.wasUnableToSend = false;
       resendActivationEmailWithDelay(email, 1300)
-      .then(function () {
+      .then(() => {
         showResentEmailConfirmation(email);
         dialog.confirm();
-      }, function () {
+      }, () => {
         dialog.scope.isSending = false;
         dialog.scope.wasUnableToSend = true;
       });
@@ -80,13 +80,7 @@ angular.module('contentful')
   function resendActivationEmailWithDelay (email, delay) {
     var delayed = $timeout(_.noop, delay);
     return resendActivationEmail(email)
-    .then(function () {
-      return delayed;
-    }, function () {
-      return delayed.then(function () {
-        return $q.reject();
-      });
-    });
+    .then(() => delayed, () => delayed.then(() => $q.reject()));
   }
 
   function getMillisecondsUntilDialogCanBeReopened () {

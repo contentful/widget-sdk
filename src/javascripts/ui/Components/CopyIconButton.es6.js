@@ -70,7 +70,7 @@ const CopyIconButton = createReactClass({
           // * There is no need to remove the event listener because the
           //   element is destroyed when it is closed.
           // * `this` refers to the DOM node that contains the tooltip
-          this.addEventListener('click', function () {
+          this.addEventListener('click', () => {
             self.setState({ showCopiedTooltip: false });
           });
         }

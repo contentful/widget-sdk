@@ -15,7 +15,7 @@
  * @todo Move this into UI module
  */
 angular.module('contentful')
-.directive('cfRelativeDatetime', ['require', function (require) {
+.directive('cfRelativeDatetime', ['require', require => {
   var $timeout = require('$timeout');
   var moment   = require('moment');
 
@@ -27,19 +27,19 @@ angular.module('contentful')
     link: function(scope, element, attrs) {
       var timeout;
 
-      scope.$watch('datetime', function(dateString) {
+      scope.$watch('datetime', dateString => {
         $timeout.cancel(timeout);
 
         var date = moment(dateString);
         if (!date || !date.isValid()) throw new Error('Invalid date');
 
-        var to = function() { return moment(attrs.to); };
+        var to = () => moment(attrs.to);
         var withoutSuffix = 'withoutSuffix' in attrs;
 
         if (!attrs.title)
           element.attr('title', date.format('LLLL'));
 
-        element.bind('$destroy', function() {
+        element.bind('$destroy', () => {
           $timeout.cancel(timeout);
         });
 
@@ -58,7 +58,7 @@ angular.module('contentful')
 
         function updateLater() {
           updateTime();
-          timeout = $timeout(function() {
+          timeout = $timeout(() => {
             updateLater();
           }, nextUpdateIn());
         }

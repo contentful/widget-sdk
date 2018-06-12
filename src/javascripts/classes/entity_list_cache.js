@@ -1,7 +1,7 @@
 'use strict';
 angular.module('contentful')
 
-.factory('EntityListCache', ['require', function (require) {
+.factory('EntityListCache', ['require', require => {
   var $q             = require('$q');
   var logger         = require('logger');
   var TheLocaleStore = require('TheLocaleStore');
@@ -48,7 +48,7 @@ angular.module('contentful')
 
       var self = this;
       this.inProgress = true;
-      this.getLinkedEntities(entities).then(function () {
+      this.getLinkedEntities(entities).then(() => {
         linkResolver.resolve();
         self.inProgress = false;
         if(self.queue.length > 0){
@@ -69,7 +69,7 @@ angular.module('contentful')
           'sys.id[in]': this.missingIds.join(','),
           limit: 250
         })
-        .then(function(linkedEntities){
+        .then(linkedEntities => {
           self.missingIds = [];
           _.forEach(linkedEntities, self.save.bind(self));
         });
@@ -84,7 +84,7 @@ angular.module('contentful')
 
     determineMissingEntityIds: function (entities) {
       var self = this;
-      _.forEach(entities, function (entity) {
+      _.forEach(entities, entity => {
         if(_.isUndefined(entity.data)){
           logger.logError('Entity data is undefined', {
             data: {
@@ -92,7 +92,7 @@ angular.module('contentful')
             }
           });
         } else {
-          _.forEach(entity.data.fields, function (field, fieldId) {
+          _.forEach(entity.data.fields, (field, fieldId) => {
             if(!self.fieldIsDisplayed(fieldId)) return;
             var locfield = field && field[self.locale];
 

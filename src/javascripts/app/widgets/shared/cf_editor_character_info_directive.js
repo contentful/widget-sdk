@@ -1,5 +1,5 @@
 angular.module('contentful')
-.directive('cfEditorCharacterInfo', [function () {
+.directive('cfEditorCharacterInfo', [() => {
   // If the character count is less than this number of charachters
   // away from the constraint we set the state to 'approaching'
   var CLOSE_TO_CONSTRAINT = 10;
@@ -13,15 +13,15 @@ angular.module('contentful')
     restrict: 'E',
     template: JST.cf_editor_character_info(),
     link: function ($scope) {
-      $scope.$watch('constraints', function (constraints) {
+      $scope.$watch('constraints', constraints => {
         $scope.constraintsType = constraintsType(constraints);
       });
 
-      $scope.$watch('wordCount', function (wordCount) {
+      $scope.$watch('wordCount', wordCount => {
         $scope.hasWordCount = _.isNumber(wordCount);
       });
 
-      $scope.$watch('charCount', function (count) {
+      $scope.$watch('charCount', count => {
         if ($scope.constraints && $scope.constraints.max) {
           $scope.charCountStatus = getCharCountStatus(count, $scope.constraints.max);
         }

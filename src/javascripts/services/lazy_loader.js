@@ -9,7 +9,7 @@
  * All the dependencies are defined in "LazyLoader/resources".
  */
 angular.module('contentful')
-.factory('LazyLoader', ['require', function (require) {
+.factory('LazyLoader', ['require', require => {
   var $q = require('$q');
   var loader = require('angularLoad');
   var resources = require('LazyLoader/resources');
@@ -65,7 +65,7 @@ angular.module('contentful')
 
     // issue HTTP request to get service value
     var load = getLoaderFor(resource);
-    var loadPromise = load(resource.url).then(function () {
+    var loadPromise = load(resource.url).then(() => {
       if (resource.globalObject) {
         store[name] = _.get(window, resource.globalObject);
       }
@@ -93,7 +93,7 @@ angular.module('contentful')
   }
 }])
 
-.factory('LazyLoader/resources', ['require', function (require) {
+.factory('LazyLoader/resources', ['require', require => {
   var environment = require('environment');
   var Config = require('Config');
 

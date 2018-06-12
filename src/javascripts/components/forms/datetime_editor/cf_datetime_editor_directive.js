@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfDatetimeEditor', ['require', function (require) {
+.directive('cfDatetimeEditor', ['require', require => {
   var _ = require('lodash');
   var zoneOffsets = require('zoneOffsets');
   var moment = require('moment');
@@ -44,17 +44,17 @@ angular.module('contentful')
       scope.ampm = 'am';
       scope.maxTime = uses24hMode() ? '23:59:59' : '12:59:59';
 
-      scope.$watch(uses24hMode, function () {
+      scope.$watch(uses24hMode, () => {
         ngModelCtrl.$render();
       });
 
-      scope.$watch('widget.settings.format', function (format) {
+      scope.$watch('widget.settings.format', format => {
         scope.hasTime = format !== 'dateonly';
         scope.hasTimezone = format === 'timeZ';
         scope.setFromISO(ngModelCtrl.$modelValue);
       });
 
-      ngModelCtrl.$render = function () {
+      ngModelCtrl.$render = () => {
         scope.setFromISO(ngModelCtrl.$modelValue);
       };
 
@@ -63,7 +63,7 @@ angular.module('contentful')
         format: DATE_FORMAT_INTERNAL,
         firstDay: 1,
         onSelect: function (date) {
-          scope.$apply(function () {
+          scope.$apply(() => {
             dateController.$setViewValue(
               moment(date).format(DATE_FORMAT_INTERNAL)
             );
@@ -71,7 +71,7 @@ angular.module('contentful')
         }
       });
 
-      var handleMouseDownOnCalendarIcon = function (e) {
+      var handleMouseDownOnCalendarIcon = e => {
         if (e.path.indexOf(elm.find('i.fa.fa-calendar').get(0)) > -1) {
           e.preventDefault();
         }
@@ -79,23 +79,23 @@ angular.module('contentful')
 
       document.addEventListener('mousedown', handleMouseDownOnCalendarIcon, true);
 
-      scope.handleCalendarIconClick = function (e) {
+      scope.handleCalendarIconClick = e => {
         e.stopPropagation();
         datepicker.isVisible() ? datepicker.hide() : datepicker.show();
       };
 
-      scope.$on('$destroy', function () {
+      scope.$on('$destroy', () => {
         datepicker.destroy();
         document.removeEventListener('mousedown', handleMouseDownOnCalendarIcon, true);
       });
 
-      dateController.$parsers.unshift(function (viewValue) {
+      dateController.$parsers.unshift(viewValue => {
         var date = moment(viewValue, moment.ISO_8601);
         scope.dateInvalid = !date.isValid();
         return date.isValid() ? date.format(DATE_FORMAT_INTERNAL) : null;
       });
 
-      dateController.$formatters.push(function (modelValue) {
+      dateController.$formatters.push(modelValue => {
         if (modelValue) {
           return moment(modelValue).format(DATE_FORMAT_INTERNAL);
         } else {
@@ -103,16 +103,16 @@ angular.module('contentful')
         }
       });
 
-      dateController.$render = function () {
+      dateController.$render = () => {
         elm.find('.date').val(dateController.$viewValue);
-        $timeout(function () {
+        $timeout(() => {
           if (dateController.$modelValue) {
             datepicker.setDate(dateController.$modelValue);
           }
         });
       };
 
-      timeController.$parsers.push(function (viewValue) {
+      timeController.$parsers.push(viewValue => {
         var time = parseTimeInput(viewValue);
         if (time) {
           timeController.$setValidity('format', true);
@@ -156,7 +156,7 @@ angular.module('contentful')
       // In fact, this should be a function that returns a object
       // containing the four components which we then can apply to the
       // scope.
-      scope.setFromISO = function (iso) {
+      scope.setFromISO = iso => {
         var tokens = parseIso(iso);
         var tzOffset = LOCAL_TIMEZONE;
 
@@ -178,15 +178,11 @@ angular.module('contentful')
         scope.tzOffset = scope.hasTimezone ? tzOffset : null;
       };
 
-      scope.$watch(function () {
-        return !ngModelCtrl.$modelValue && !_.isEmpty(timeController.$modelValue);
-      }, function (invalid) {
+      scope.$watch(() => !ngModelCtrl.$modelValue && !_.isEmpty(timeController.$modelValue), invalid => {
         scope.dateInvalid = invalid;
       });
 
-      scope.$watch(function () {
-        return timeController.$error.format;
-      }, function (invalid) {
+      scope.$watch(() => timeController.$error.format, invalid => {
         scope.timeInvalid = invalid;
       });
 

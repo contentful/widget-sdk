@@ -1,4 +1,4 @@
-describe('Generic transformer', function () {
+describe('Generic transformer', () => {
   beforeEach(function () {
     module('contentful/test');
     this.transformer = this.$inject('analytics/snowplow/transformers/Generic').default;

@@ -9,7 +9,7 @@ angular.module('contentful')
  * const PresenceHub = require('entityEditor/Document/PresenceHub')
  * const presence = PresenceHub.create(userId, docEvents, shout)
  */
-.factory('entityEditor/Document/PresenceHub', ['require', function (require) {
+.factory('entityEditor/Document/PresenceHub', ['require', require => {
   var $interval = require('$interval');
   var K = require('utils/kefir');
   var FOCUS_THROTTLE = 10e3;
@@ -40,7 +40,7 @@ angular.module('contentful')
 
     var ownFocusedPath = null;
 
-    var shoutFieldFocus = _.throttle(function (path) {
+    var shoutFieldFocus = _.throttle(path => {
       shout(['focus', ownUserId, path]);
     }, FOCUS_THROTTLE);
 
@@ -51,7 +51,7 @@ angular.module('contentful')
     var fieldCollaboratorsBus = K.createPropertyBus({});
     var collaboratorsBus = K.createPropertyBus([]);
 
-    docEvents.onValue(function (event) {
+    docEvents.onValue(event => {
       if (event.name === 'shout') {
         receiveShout(event.data);
       } else if (event.name === 'open') {
@@ -102,9 +102,7 @@ angular.module('contentful')
      */
     function collaboratorsFor (fieldId, localeCode) {
       var path = ['fields', fieldId, localeCode].join('.');
-      return fieldCollaboratorsBus.property.map(function (fields) {
-        return fields[path];
-      });
+      return fieldCollaboratorsBus.property.map(fields => fields[path]);
     }
 
     /**
@@ -137,7 +135,7 @@ angular.module('contentful')
     }
 
     function removeTimedOutUsers () {
-      presence = _.omitBy(presence, function (userPresence) {
+      presence = _.omitBy(presence, userPresence => {
         var timeSinceLastShout = new Date() - userPresence.shoutedAt;
         return timeSinceLastShout > PING_TIMEOUT;
       });
@@ -186,7 +184,7 @@ angular.module('contentful')
   }
 
   function groupPresenceByField (presence) {
-    return _.transform(presence, function (fieldPresence, userPresence, presenceUserId) {
+    return _.transform(presence, (fieldPresence, userPresence, presenceUserId) => {
       var fieldId = userPresence.focus;
       if (fieldId) {
         fieldPresence[fieldId] = fieldPresence[fieldId] || [];

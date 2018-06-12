@@ -1,6 +1,6 @@
 'use strict';
 
-describe('predefined validation regexps', function () {
+describe('predefined validation regexps', () => {
 
   beforeEach(function () {
     module('contentful/test');
@@ -8,7 +8,7 @@ describe('predefined validation regexps', function () {
     this.views = views.get('regexp');
   });
 
-  describe('Date (EU) RegExp', function () {
+  describe('Date (EU) RegExp', () => {
     beforeEach(function () {
       this.regexp = _.find(this.views, {name: 'date-eu'}).pattern;
     });
@@ -38,7 +38,7 @@ describe('predefined validation regexps', function () {
     });
   });
 
-  describe('time', function () {
+  describe('time', () => {
 
     it('validates 12h time', function () {
       var regexp = _.find(this.views, {name: '12h-time'}).pattern;
@@ -79,13 +79,13 @@ describe('predefined validation regexps', function () {
     });
 
     function expectRegexpMatch(re, values) {
-      _.forEach(values, function (value) {
+      _.forEach(values, value => {
         expect(value).toMatch(re);
       });
     }
 
     function expectRegexpFail(re, values) {
-      _.forEach(values, function (value) {
+      _.forEach(values, value => {
         expect(value).not.toMatch(re);
       });
     }

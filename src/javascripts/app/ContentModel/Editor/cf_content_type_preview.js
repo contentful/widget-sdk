@@ -7,7 +7,7 @@ angular.module('contentful')
  * @name cfContentTypePreview
  * @scope.requires {Client.ContentType} contentType
  */
-.directive('cfContentTypePreview', ['require', function (require) {
+.directive('cfContentTypePreview', ['require', require => {
   var getContentTypePreview = require('contentTypePreview');
   var template = require('app/ContentModel/Editor/ContentTypePreviewTemplate').default;
 
@@ -15,13 +15,13 @@ angular.module('contentful')
     scope: true,
     restrict: 'E',
     template: template(),
-    controller: ['$scope', function ($scope) {
-      $scope.$watch('contentType.data', function (data) {
+    controller: ['$scope', $scope => {
+      $scope.$watch('contentType.data', data => {
         var publishedVersion = _.get(data, 'sys.publishedVersion');
         $scope.isNew = !publishedVersion;
 
         loadPreview($scope.isNew)
-        .then(function (preview) {
+        .then(preview => {
           $scope.preview = preview;
         });
       }, true);
@@ -33,7 +33,7 @@ angular.module('contentful')
       function loadServerPreview () {
         $scope.isLoading = true;
         return getContentTypePreview($scope.contentType)
-        .then(function (preview) {
+        .then(preview => {
           $scope.isLoading = false;
           return preview;
         });
@@ -61,7 +61,7 @@ angular.module('contentful')
  * It does not skip transformations so that the data is the actual API
  * response.
  */
-.factory('contentTypePreview', ['$q', function ($q) {
+.factory('contentTypePreview', ['$q', $q => {
   var orderedKeys = ['name', 'description', 'displayField', 'fields', 'sys'];
 
   getContentTypePreview.fromData = fromData;
@@ -80,16 +80,14 @@ angular.module('contentful')
   // We rely on the fact the keys are displayed in the order they
   // were added.
   function orderPreviewKeys (data) {
-    var ordered = _.transform(orderedKeys, function (preview, key) {
+    var ordered = _.transform(orderedKeys, (preview, key) => {
       preview[key] = data[key];
     }, {});
     return _.defaults(ordered, data);
   }
 
   function omitApiName (data) {
-    data.fields = _.map(data.fields, function (field) {
-      return _.omit(field, 'apiName');
-    });
+    data.fields = _.map(data.fields, field => _.omit(field, 'apiName'));
     return data;
   }
 }]);

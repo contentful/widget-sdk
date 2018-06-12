@@ -1,6 +1,6 @@
 import { contentTypes } from './helpers';
 
-describe('app/ContentList/Search/Filters', function () {
+describe('app/ContentList/Search/Filters', () => {
   let Filters;
   beforeEach(function () {
     module('contentful/test');

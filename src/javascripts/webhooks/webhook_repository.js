@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('WebhookRepository', [function () {
+angular.module('contentful').factory('WebhookRepository', [() => {
   return {getInstance: getInstance};
 
   function getInstance (space) {
@@ -19,7 +19,7 @@ angular.module('contentful').factory('WebhookRepository', [function () {
     function getAll () {
       return getBaseCall()
       .payload({ limit: 100 })
-      .get().then(function (res) { return res.items; });
+      .get().then(res => res.items);
     }
 
     function get (id) {

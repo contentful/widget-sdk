@@ -1,12 +1,12 @@
 'use strict';
 
-describe('utils/Path', function () {
+describe('utils/Path', () => {
   beforeEach(function () {
     module('contentful/test');
     this.utils = this.$inject('utils/Path');
   });
 
-  describe('#isAffecting', function () {
+  describe('#isAffecting', () => {
     it('returns true if change at "changePath" affects the value of "valuePath"', function () {
       const fn = this.utils.isAffecting;
       expect(fn(['a'], [])).toBe(true);
@@ -23,7 +23,7 @@ describe('utils/Path', function () {
     });
   });
 
-  describe('#findCommonPrefix', function () {
+  describe('#findCommonPrefix', () => {
     it('returns the longest shared prefix of given paths', function () {
       const test = (paths, expected) => {
         expect(this.utils.findCommonPrefix(paths)).toEqual(expected);

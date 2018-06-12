@@ -1,8 +1,8 @@
 'use strict';
 
-describe('widgets/API', function () {
+describe('widgets/API', () => {
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
 
@@ -47,7 +47,7 @@ describe('widgets/API', function () {
     };
   });
 
-  describe('#connect()', function () {
+  describe('#connect()', () => {
     it('sends connect message through channel', function () {
       const api = this.createAPI();
       api.connect();
@@ -130,7 +130,7 @@ describe('widgets/API', function () {
     });
   });
 
-  describe('#sendFieldValueChange()', function () {
+  describe('#sendFieldValueChange()', () => {
     beforeEach(function () {
       this.setLocales([
         {code: 'LC-public', internal_code: 'LC-internal', default: true}
@@ -164,7 +164,7 @@ describe('widgets/API', function () {
     });
   });
 
-  describe('#buildDocPath()', function () {
+  describe('#buildDocPath()', () => {
     it('tranlates public to internal ids', function () {
       this.setLocales([{code: 'LC-public', internal_code: 'LC-internal'}]);
       this.fields = [{
@@ -177,8 +177,8 @@ describe('widgets/API', function () {
     });
   });
 
-  describe('default handlers', function () {
-    describe('#openDialog', function () {
+  describe('default handlers', () => {
+    describe('#openDialog', () => {
       beforeEach(function () {
         const api = this.createAPI();
         this.handler = api.channel.handlers.openDialog;

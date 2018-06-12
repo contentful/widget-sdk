@@ -1,7 +1,7 @@
 import * as sinon from 'helpers/sinon';
 import {noop} from 'lodash';
 
-describe('states/deeplink/utils', function () {
+describe('states/deeplink/utils', () => {
   beforeEach(function () {
     this.storeGet = sinon.stub();
     this.getSpaces = sinon.stub();
@@ -24,7 +24,7 @@ describe('states/deeplink/utils', function () {
     this.utils = this.$inject('states/deeplink/utils');
   });
 
-  describe('#getSpaceInfo', function () {
+  describe('#getSpaceInfo', () => {
     it('checks value in the store', function* () {
       this.storeGet.returns('some_id');
       this.getSpaces.resolves([{ sys: { id: 'some_id' } }]);
@@ -65,7 +65,7 @@ describe('states/deeplink/utils', function () {
     });
   });
 
-  describe('#getOrg', function () {
+  describe('#getOrg', () => {
     it('returns orgId from the store', function* () {
       const returnedOrg = { sys: { id: 'some_org_id' }, pricing: 'old' };
       this.storeGet.returns(returnedOrg.sys.id);

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfSearch', ['require', function (require) {
+angular.module('contentful').directive('cfSearch', ['require', require => {
   var keycodes = require('utils/keycodes').default;
   var debounce = require('debounce');
   var $timeout = require('$timeout');
@@ -48,11 +48,11 @@ angular.module('contentful').directive('cfSearch', ['require', function (require
     link: function (scope, element) {
       var debouncedUpdate = debounce(update, 300);
 
-      $timeout(function () {
+      $timeout(() => {
         element.find('input').first().focus();
       });
 
-      element.on('keyup', function (ev) {
+      element.on('keyup', ev => {
         var pressedReturn = ev.keyCode === keycodes.ENTER;
 
         if (pressedReturn) {
@@ -68,7 +68,7 @@ angular.module('contentful').directive('cfSearch', ['require', function (require
       });
 
       function update () {
-        scope.$apply(function (scope) {
+        scope.$apply(scope => {
           scope.update({
             trigger: 'keyboard'
           });
@@ -81,7 +81,7 @@ angular.module('contentful').directive('cfSearch', ['require', function (require
         term: ''
       };
 
-      $scope.updateFromButton = function () {
+      $scope.updateFromButton = () => {
         if (!$scope.inner.term) {
           $scope.inner.term = '';
         }
@@ -92,11 +92,11 @@ angular.module('contentful').directive('cfSearch', ['require', function (require
 
       $scope.update = update;
 
-      $scope.$watch('search', function (search) {
+      $scope.$watch('search', search => {
         $scope.inner.term = search;
       });
 
-      $scope.$watch('inner.term', function (term) {
+      $scope.$watch('inner.term', term => {
         if (term === '') {
           $scope.update({ trigger: 'cleared' });
         }

@@ -11,10 +11,10 @@
  * notifies the user that the app has crashed.
  */
 angular.module('contentful')
-.factory('$exceptionHandler', ['require', function (require) {
+.factory('$exceptionHandler', ['require', require => {
   var Config = require('Config');
   var logger = require('logger');
-  return function (exception) {
+  return exception => {
     var metaData = _.extend({promptedReload: true}, exception.metaData);
     logger.logException(exception, metaData);
     if (Config.env !== 'development') {

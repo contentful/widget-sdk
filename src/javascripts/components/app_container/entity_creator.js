@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.factory('entityCreator', ['require', function (require) {
+.factory('entityCreator', ['require', require => {
   var notification = require('notification');
   var logger = require('logger');
   var enforcements = require('access_control/Enforcements');
@@ -25,7 +25,7 @@ angular.module('contentful')
   }
 
   function makeEntityErrorHandler (entityType) {
-    return function (err) {
+    return err => {
       var message = 'Could not create ' + entityType;
 
       if (_.get(err, 'body.details.reasons')) {

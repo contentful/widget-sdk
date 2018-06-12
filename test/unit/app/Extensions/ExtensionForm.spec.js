@@ -5,7 +5,7 @@ import CodeMirror from 'react-codemirror';
 
 const ERR_SELECTOR = '.cfnext-form__field-error';
 
-describe('ExtensionForm', function () {
+describe('ExtensionForm', () => {
   const mount = (entity, selfHosted) => {
     const updateEntityStub = sinon.stub();
     const setSelfHostedStub = sinon.stub();
@@ -21,7 +21,7 @@ describe('ExtensionForm', function () {
 
   const basic = {name: 'test', fieldTypes: ['Text'], srcdoc: 'source'};
 
-  it('renders the extension provided', function () {
+  it('renders the extension provided', () => {
     const [wrapper] = mount({extension: basic}, false);
     const inputs = wrapper.find('input');
 
@@ -35,7 +35,7 @@ describe('ExtensionForm', function () {
     expect(wrapper.find(CodeMirror).at(0).prop('value')).toBe('source');
   });
 
-  it('updates entity values', function () {
+  it('updates entity values', () => {
     const [wrapper, updateEntityStub] = mount({extension: basic}, false);
     const inputs = wrapper.find('input');
 
@@ -47,7 +47,7 @@ describe('ExtensionForm', function () {
     sinon.assert.calledWith(updateEntityStub, {extension: {...basic, fieldTypes: ['Text', 'Symbol']}});
   });
 
-  it('renders and validates self-hosted URL', function () {
+  it('renders and validates self-hosted URL', () => {
     const extension = {name: 'test', fieldTypes: ['Text'], src: ''};
     const [wrapper] = mount({extension}, true);
     const updateSrc = src => wrapper.setProps({
@@ -69,7 +69,7 @@ describe('ExtensionForm', function () {
     assertOk();
   });
 
-  it('switches between hosted/self-hosted options', function () {
+  it('switches between hosted/self-hosted options', () => {
     const [wrapper, _, setSelfHostedStub] = mount({extension: basic}, true);
     const radios = wrapper.find('input[type="radio"]');
     radios.at(1).simulate('change', {value: {checked: true}});
@@ -78,7 +78,7 @@ describe('ExtensionForm', function () {
     sinon.assert.calledWith(setSelfHostedStub, true);
   });
 
-  it('renders installation and updates parameters form', function () {
+  it('renders installation and updates parameters form', () => {
     const installation = [{id: 'test', type: 'Symbol', name: 'TEST'}];
     const extension = {...basic, parameters: {installation}};
     const [wrapper, updateEntityStub] = mount({extension, parameters: {test: 'hello world'}}, true);
@@ -88,7 +88,7 @@ describe('ExtensionForm', function () {
     sinon.assert.calledWith(updateEntityStub, {extension, parameters: {test: 'poop'}});
   });
 
-  it('renders parameter definitions', function () {
+  it('renders parameter definitions', () => {
     const param = {id: 'test', type: 'Symbol', name: 'TEST'};
     const definitions = {instance: [param], installation: [param]};
     const extension = {...basic, parameters: definitions};

@@ -1,4 +1,4 @@
-describe('widgets/builtin', function () {
+describe('widgets/builtin', () => {
   // This asserts that we can put the builtin widget ids into the
   // editing interface payload and it is validated by the CMA.
   // https://github.com/contentful/content_api/blob/master/lib/handler/constraints/management/schemas/content-type.js#L46-L51

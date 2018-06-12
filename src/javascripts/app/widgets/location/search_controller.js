@@ -18,22 +18,22 @@ angular.module('cf.app')
 
   controller.onResultsAvailable = resultsAvailable.attach;
 
-  controller.pick = function (result) {
+  controller.pick = result => {
     $scope.location = result.location;
     controller.address = result.address;
     controller.results = null;
   };
 
-  controller.updateAddressFromLocation = function () {
+  controller.updateAddressFromLocation = () => {
     var latLng = toLatLng($scope.location);
     if (latLng) {
       controller.inProgress = true;
       geocode({location: latLng})
-      .then(function (results) {
+      .then(results => {
         if (results && results.length > 0) {
           controller.address = results[0].formatted_address;
         }
-      }).finally(function () {
+      }).finally(() => {
         controller.inProgress = false;
       });
     } else {
@@ -41,7 +41,7 @@ angular.module('cf.app')
     }
   };
 
-  var searchAddress = addressSearcher(function (results) {
+  var searchAddress = addressSearcher(results => {
     if (results === null) {
       controller.results = null;
       controller.error = null;
@@ -53,41 +53,38 @@ angular.module('cf.app')
       controller.error = null;
       resultsAvailable.dispatch();
     }
-  }, function (error) {
+  }, error => {
     controller.results = null;
     controller.error = {
       code: 'address-search-failed',
       message: error.message
     };
-  }, function (inProgress) {
+  }, inProgress => {
     controller.inProgress = inProgress;
   });
 
-  controller.search = function () {
+  controller.search = () => {
     searchAddress(controller.address);
   };
 
-  var getGeocoder = memoize(function () {
-    return LazyLoader.get('googleMaps').then(function (GMaps) {
-      return new GMaps.Geocoder();
-    });
-  });
+  var getGeocoder = memoize(() => LazyLoader.get('googleMaps').then(GMaps => new GMaps.Geocoder()));
 
   function convertResults (rawResults) {
-    return rawResults.map(function (result) {
-      return {
-        location: {
-          lat: result.geometry.location.lat(),
-          lon: result.geometry.location.lng()
-        },
-        viewport: result.geometry.viewport,
-        strippedLocation: {
-          lat: result.geometry.location.lat().toString().slice(0, 8),
-          lon: result.geometry.location.lng().toString().slice(0, 8)
-        },
-        address: result.formatted_address
-      };
-    });
+    return rawResults.map(result => ({
+      location: {
+        lat: result.geometry.location.lat(),
+        lon: result.geometry.location.lng()
+      },
+
+      viewport: result.geometry.viewport,
+
+      strippedLocation: {
+        lat: result.geometry.location.lat().toString().slice(0, 8),
+        lon: result.geometry.location.lng().toString().slice(0, 8)
+      },
+
+      address: result.formatted_address
+    }));
   }
 
   function addressSearcher (onSuccess, onError, inProgress) {
@@ -96,7 +93,7 @@ angular.module('cf.app')
 
     var throttledRun = throttle(run, 350);
 
-    return function (address) {
+    return address => {
       inProgress(true);
       throttledRun(address);
     };
@@ -105,15 +102,15 @@ angular.module('cf.app')
       var queryId = ++lastQueryId;
       pending++;
       geocodeAddress(address)
-      .then(function (result) {
+      .then(result => {
         if (queryId === lastQueryId) {
           onSuccess(result);
         }
-      }, function (error) {
+      }, error => {
         if (queryId === lastQueryId) {
           onError(error);
         }
-      }).finally(function () {
+      }).finally(() => {
         pending--;
         if (!pending) {
           inProgress(false);
@@ -124,11 +121,9 @@ angular.module('cf.app')
 
   function geocode (query) {
     return getGeocoder()
-    .then(function (geocoder) {
-      return $q(function (resolve, reject) {
-        geocoder.geocode(query, resolve, reject);
-      });
-    });
+    .then(geocoder => $q((resolve, reject) => {
+      geocoder.geocode(query, resolve, reject);
+    }));
   }
 
   function geocodeAddress (address) {

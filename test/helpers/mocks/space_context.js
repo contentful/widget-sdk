@@ -26,7 +26,7 @@ import {create as createDocument} from 'helpers/mocks/entity_editor_document';
  * spaceContext.publishedCTs.fetch.resolves(ct)
  */
 angular.module('contentful/mocks')
-.factory('mocks/spaceContext', ['require', function (require) {
+.factory('mocks/spaceContext', ['require', require => {
   const cfStub = require('cfStub');
   const createEIRepo = require('data/editingInterfaces');
   const createWidgetStore = require('widgets/store');

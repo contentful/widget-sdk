@@ -45,7 +45,7 @@ let isDisabled = false;
  * @description
  * Starts event tracking
  */
-export const enable = _.once(function (user) {
+export const enable = _.once(user => {
   if (isDisabled) {
     return;
   }
@@ -127,9 +127,7 @@ function identify (extension) {
 
   // We need to remove the list of organization memberships as this array gets
   // flattened when it is passed to Intercom and creates a lot of noise
-  const user = _.omitBy(rawUserData, function (val) {
-    return _.isArray(val) || _.isObject(val);
-  });
+  const user = _.omitBy(rawUserData, val => _.isArray(val) || _.isObject(val));
 
   const userId = getSessionData('user.sys.id');
 
@@ -193,9 +191,7 @@ function getBasicPayload () {
     spaceId: getSessionData('space.sys.id', VALUE_UNKNOWN),
     organizationId: getSessionData('organization.sys.id', VALUE_UNKNOWN),
     currentState: getSessionData('navigation.state', VALUE_UNKNOWN)
-  }, function (val) {
-    return val !== VALUE_UNKNOWN;
-  });
+  }, val => val !== VALUE_UNKNOWN);
 }
 
 function sendSessionDataToConsole () {

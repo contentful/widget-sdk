@@ -1,4 +1,4 @@
-describe('data/CMA/EntityPrefetchCache', function () {
+describe('data/CMA/EntityPrefetchCache', () => {
   beforeEach(function () {
     module('contentful/test');
     const $q = this.$inject('$q');

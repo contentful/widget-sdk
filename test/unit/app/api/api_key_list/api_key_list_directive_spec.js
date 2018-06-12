@@ -1,6 +1,6 @@
-describe('The ApiKey list directive', function () {
+describe('The ApiKey list directive', () => {
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.removeDirectives('relative', 'cfKnowledgeBase');
       $provide.value('$state', {
         href: sinon.stub(),
@@ -27,7 +27,7 @@ describe('The ApiKey list directive', function () {
       get: sinon.stub().resolves(resource)
     });
 
-    this.setUsageLimit = function (usage, limit) {
+    this.setUsageLimit = (usage, limit) => {
       resource.usage = usage;
       resource.limits.included = limit;
       resource.limits.maximum = limit;

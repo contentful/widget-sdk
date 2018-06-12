@@ -13,7 +13,7 @@ angular.module('cf.app')
  * data provided, but all mutating methods
  * are no-ops.
  */
-.factory('SnapshotComparatorController/snapshotDoc', ['require', function (require) {
+.factory('SnapshotComparatorController/snapshotDoc', ['require', require => {
   var K = require('utils/kefir');
   var $q = require('$q');
   var Permissions = require('access_control/EntityPermissions');

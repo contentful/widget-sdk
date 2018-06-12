@@ -1,6 +1,6 @@
 import { createElement as h } from 'react';
 
-describe('Welcome react component', function () {
+describe('Welcome react component', () => {
   beforeEach(function () {
     this.hourStub = sinon.stub();
 
@@ -36,7 +36,7 @@ describe('Welcome react component', function () {
     };
   });
 
-  describe('greeting', function () {
+  describe('greeting', () => {
     it('says welcome on initial login', function () {
       this.renderWelcomeElement(true);
       const welcomeElement = this.ui.find('greeting');

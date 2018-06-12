@@ -1,4 +1,4 @@
-describe('App open transformer', function () {
+describe('App open transformer', () => {
   beforeEach(function () {
     module('contentful/test');
     this.transformer = this.$inject('analytics/snowplow/transformers/AppOpen').default;

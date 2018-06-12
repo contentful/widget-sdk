@@ -1,4 +1,4 @@
-describe('search#buildQuery()', function () {
+describe('search#buildQuery()', () => {
   beforeEach(function () {
     module('contentful/test');
 

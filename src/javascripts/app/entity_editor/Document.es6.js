@@ -75,7 +75,7 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
   docSetters.error$.onValue(({error, path}) => {
     if (error === 'forbidden') {
       docConnection.refreshAuth()
-        .catch(function () { errorBus.emit(DocError.SetValueForbidden(path)); });
+        .catch(() => { errorBus.emit(DocError.SetValueForbidden(path)); });
     }
   });
   cleanupTasks.push(docSetters.destroy);

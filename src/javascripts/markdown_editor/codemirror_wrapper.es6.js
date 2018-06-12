@@ -138,7 +138,7 @@ export function create (textarea, options, CodeMirror) {
 
   function addKeyShortcuts (map) {
     const ctrlKey = userAgent.getCtrlKey();
-    cm.addKeyMap(transform(map, function (acc, value, key) {
+    cm.addKeyMap(transform(map, (acc, value, key) => {
       acc[ctrlKey + '-' + key] = value;
     }, {}));
   }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { mount } from 'enzyme';
 
-describe('FetchSpacePlans', function () {
+describe('FetchSpacePlans', () => {
   beforeEach(function () {
     this.organization = {
       sys: {

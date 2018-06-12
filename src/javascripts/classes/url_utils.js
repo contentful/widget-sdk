@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').constant('urlUtils', (function () {
+angular.module('contentful').constant('urlUtils', ((() => {
   /** @const */
   var URL_REGEX = /^(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?$/;
   /**
@@ -17,4 +17,4 @@ angular.module('contentful').constant('urlUtils', (function () {
     isValid: isValid,
     regexp:  URL_REGEX
   };
-})());
+}))());

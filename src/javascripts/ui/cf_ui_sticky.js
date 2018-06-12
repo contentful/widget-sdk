@@ -19,7 +19,7 @@
  *     div Some long content....
  */
 angular.module('cf.ui')
-.directive('cfUiSticky', ['require', function (require) {
+.directive('cfUiSticky', ['require', require => {
   var h = require('utils/hyperscript').h;
   var _ = require('lodash');
 

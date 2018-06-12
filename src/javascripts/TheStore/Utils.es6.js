@@ -75,12 +75,8 @@ export function has (storage, key) {
  */
 export function externalChanges (key) {
   return K.fromEvents(window, 'storage')
-    .filter(function (event) {
-      return event.key === key;
-    })
-    .map(function (event) {
-      return event.newValue;
-    });
+    .filter(event => event.key === key)
+    .map(event => event.newValue);
 }
 
 /**

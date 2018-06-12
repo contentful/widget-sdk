@@ -12,7 +12,7 @@ angular.module('contentful')
  *
  * [service:states]: api/contentful/app/service/states
  */
-.provider('states/config', ['$stateProvider', function ($stateProvider) {
+.provider('states/config', ['$stateProvider', $stateProvider => {
   // Is assigned the `h` export from the `ui/Framework` module.
   // This is necessary because we define a provider and not a factory.
   var renderString;
@@ -27,7 +27,7 @@ angular.module('contentful')
   };
 
   return {
-    $get: ['require', function (require) {
+    $get: ['require', require => {
       renderString = require('ui/Framework').renderString;
 
       return stateConfig;
@@ -41,7 +41,7 @@ angular.module('contentful')
    * Load all registered states into `ui.router.$stateProvider`.
    */
   function init () {
-    _.forEach(states, function (s) {
+    _.forEach(states, s => {
       $stateProvider.state(s);
     });
   }
@@ -60,10 +60,10 @@ angular.module('contentful')
   }
 
   function addChildren (parentName, children) {
-    children.forEach(function (state) {
+    children.forEach(state => {
       state = useContentView(state);
 
-      _.forEach(state.views, function (view) {
+      _.forEach(state.views, view => {
         provideScopeContext(view);
         view.template = templateToString(view.template);
       });
@@ -99,7 +99,7 @@ angular.module('contentful')
 
   function provideScopeContext (view) {
     if (!view.controller) {
-      view.controller = [function () {}];
+      view.controller = [() => {}];
     }
 
     if (typeof view.controller === 'function') {

@@ -11,63 +11,59 @@ angular.module('cf.app')
  * Entity link directives share both controller and an isolated
  * scope configuration, but differ in a template.
  */
-.value('createEntityLinkDirective', function (template) {
-  return {
-    restrict: 'E',
-    scope: {
-      // entity to be rendered:
-      entity: '<',
-      // instance of entity helpers bound to a specific locale
-      // TODO instead of passing the helpers object the 'entity' should
-      // be a special purpose object with all the properties requested
-      // from the helper. This object should be build by the user of
-      // this directive.
-      entityHelpers: '<',
-      // collection of action functions
-      // supported actions are:
-      // - `remove()` If this function is defined, the directive adds
-      //   a button with a cross icon that calls this function
-      // - `edit()` If this function is defined, the directive adds
-      //   a button with a pen icon that calls this function. Also
-      //   clicking on any part of the entity link will call this
-      //   function.
-      actions: '<?',
-      contentType: '<?',
-      // object of visual configuration options
-      // valid options are
-      // - draggable
-      // - largeImage: If true, show a 270px preview of an image asset
-      // - showDetails:  Show description and thumbnail for entries
-      // - disableTooltip
-      // - link: Provide a link to entity editor. This has no effect if
-      //   the 'edit' action is specified.
-      config: '<'
-    },
-    controller: 'EntityLinkController',
-    template: template
-  };
-})
+.value('createEntityLinkDirective', template => ({
+  restrict: 'E',
 
-.directive('cfAssetCard', ['require', 'createEntityLinkDirective', function (require, create) {
-  return create(require('app/widgets/link/AssetCardTemplate').default());
-}])
+  scope: {
+    // entity to be rendered:
+    entity: '<',
+    // instance of entity helpers bound to a specific locale
+    // TODO instead of passing the helpers object the 'entity' should
+    // be a special purpose object with all the properties requested
+    // from the helper. This object should be build by the user of
+    // this directive.
+    entityHelpers: '<',
+    // collection of action functions
+    // supported actions are:
+    // - `remove()` If this function is defined, the directive adds
+    //   a button with a cross icon that calls this function
+    // - `edit()` If this function is defined, the directive adds
+    //   a button with a pen icon that calls this function. Also
+    //   clicking on any part of the entity link will call this
+    //   function.
+    actions: '<?',
+    contentType: '<?',
+    // object of visual configuration options
+    // valid options are
+    // - draggable
+    // - largeImage: If true, show a 270px preview of an image asset
+    // - showDetails:  Show description and thumbnail for entries
+    // - disableTooltip
+    // - link: Provide a link to entity editor. This has no effect if
+    //   the 'edit' action is specified.
+    config: '<'
+  },
 
-.directive('cfEntityLink', ['require', 'createEntityLinkDirective', function (require, create) {
-  return create(require('app/widgets/link/EntityLinkTemplate').default());
-}])
+  controller: 'EntityLinkController',
+  template: template
+}))
 
-.directive('cfUserLink', ['require', function (require) {
-  return {
-    restrict: 'E',
-    scope: {
-      // user to be rendered:
-      user: '<'
-    },
-    template: require('app/widgets/link/UserLinkTemplate').default()
-  };
-}])
+.directive('cfAssetCard', ['require', 'createEntityLinkDirective', (require, create) => create(require('app/widgets/link/AssetCardTemplate').default())])
 
-.controller('EntityLinkController', ['require', '$scope', function (require, $scope) {
+.directive('cfEntityLink', ['require', 'createEntityLinkDirective', (require, create) => create(require('app/widgets/link/EntityLinkTemplate').default())])
+
+.directive('cfUserLink', ['require', require => ({
+  restrict: 'E',
+
+  scope: {
+    // user to be rendered:
+    user: '<'
+  },
+
+  template: require('app/widgets/link/UserLinkTemplate').default()
+})])
+
+.controller('EntityLinkController', ['require', '$scope', (require, $scope) => {
   var makeEntityRef = require('states/Navigator').makeEntityRef;
   var EntityState = require('data/CMA/EntityState');
   var entityStateColor = require('Styles/Colors').entityStateColor;
@@ -77,14 +73,14 @@ angular.module('cf.app')
 
   var INLINE_REFERENCE_FEATURE_FLAG = 'feature-at-02-2018-inline-reference-field';
 
-  LD.onFeatureFlag($scope, INLINE_REFERENCE_FEATURE_FLAG, function (isEnabled) {
+  LD.onFeatureFlag($scope, INLINE_REFERENCE_FEATURE_FLAG, isEnabled => {
     $scope.isInlineEditingEnabled = isEnabled;
   });
 
   var data = $scope.entity;
   $scope.config = _.assign({}, $scope.config || {});
   $scope.actions = $scope.actions || {};
-  $scope.onClick = function ($event) {
+  $scope.onClick = $event => {
     if ($scope.actions.slideinEdit) {
       // This will prevent navigating to the entry page
       // when clicking the ref link and open it inline instead.
@@ -109,17 +105,15 @@ angular.module('cf.app')
 
   // $scope.hasTooltip is true if the tooltip has not been disabled and if there
   // is content in the tooltip.
-  $scope.$watch(function () {
-    return !$scope.config.disableTooltip && (
-      $scope.file ||
-      $scope.actions.remove ||
-      $scope.downloadUrl
-    );
-  }, function (hasTooltip) {
+  $scope.$watch(() => !$scope.config.disableTooltip && (
+    $scope.file ||
+    $scope.actions.remove ||
+    $scope.downloadUrl
+  ), hasTooltip => {
     $scope.hasTooltip = hasTooltip;
   });
   if ($scope.contentType) {
-    $scope.contentType.then(function (ct) {
+    $scope.contentType.then(ct => {
       $scope.contentTypeName = _.get(ct, 'data.name');
     });
   }
@@ -170,7 +164,7 @@ angular.module('cf.app')
 
   function get (getter, scopeProperty, arg) {
     return $scope.entityHelpers[getter](arg || data)
-    .then(function (value) {
+    .then(value => {
       $scope[scopeProperty] = value;
       return value;
     });

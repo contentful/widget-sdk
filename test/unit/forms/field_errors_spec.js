@@ -1,7 +1,7 @@
 'use strict';
 
-describe('cfFieldErrorsFor', function () {
-  beforeEach(module('cf.forms', function (fieldErrorMessageProvider) {
+describe('cfFieldErrorsFor', () => {
+  beforeEach(module('cf.forms', fieldErrorMessageProvider => {
     fieldErrorMessageProvider.add('a', 'the a error');
   }));
 
@@ -46,9 +46,7 @@ describe('cfFieldErrorsFor', function () {
     this.modelController.$setValidity('a', false);
     this.modelController.$setValidity('b', false);
     this.$apply();
-    var errorMessages = this.errorList.find('li').map(function (i, e) {
-      return $(e).text();
-    }).get();
+    var errorMessages = this.errorList.find('li').map((i, e) => $(e).text()).get();
     expect(errorMessages).toEqual([
       'the a error', 'Error: b'
     ]);

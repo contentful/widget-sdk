@@ -2,7 +2,7 @@ import createFieldLocaleDoc from 'app/entity_editor/FieldLocaleDocument';
 import * as sinon from 'helpers/sinon';
 import {create as createDocument} from 'helpers/mocks/entity_editor_document';
 
-describe('entityEditor/FieldLocaleDocument', function () {
+describe('entityEditor/FieldLocaleDocument', () => {
   const path = ['fields', 'FID', 'LC'];
 
   beforeEach(function () {
@@ -12,12 +12,12 @@ describe('entityEditor/FieldLocaleDocument', function () {
     this.doc = createFieldLocaleDoc(this.rootDoc, 'FID', 'LC');
   });
 
-  describe('delegates', function () {
+  describe('delegates', () => {
     testMethodDelegate('get', 'getValueAt');
     testMethodDelegate('set', 'setValueAt', ['VAL']);
     testMethodDelegate('remove', 'removeValueAt');
 
-    describe('with array value', function () {
+    describe('with array value', () => {
       beforeEach(function () {
         this.doc.set(['A', 'B']);
       });
@@ -36,7 +36,7 @@ describe('entityEditor/FieldLocaleDocument', function () {
     }
   });
 
-  describe('#valueProperty()', function () {
+  describe('#valueProperty()', () => {
     it('has initial value', function () {
       this.rootDoc.setValueAt(path, 'VAL');
       const changed = sinon.stub();
@@ -65,7 +65,7 @@ describe('entityEditor/FieldLocaleDocument', function () {
     });
   });
 
-  describe('#fieldChanges$', function () {
+  describe('#fieldChanges$', () => {
     it('emits when root document emits "localFieldChanges$" for current field', function () {
       const emitted = sinon.spy();
       this.doc.localChanges$.onValue(emitted);

@@ -1,6 +1,6 @@
 'use strict';
 
-describe('cfOnSubmit', function () {
+describe('cfOnSubmit', () => {
   beforeEach(module('cf.forms'));
 
   beforeEach(function () {
@@ -12,7 +12,7 @@ describe('cfOnSubmit', function () {
     this.formController = this.formElement.controller('form');
   });
 
-  describe('form.submit()', function () {
+  describe('form.submit()', () => {
     it('sets showErrors to true', function () {
       expect(this.formController.showErrors).toBeUndefined();
       this.formController.submit();
@@ -29,7 +29,7 @@ describe('cfOnSubmit', function () {
 
 });
 
-describe('cfFormSubmit', function () {
+describe('cfFormSubmit', () => {
   beforeEach(module('cf.forms'));
 
   beforeEach(function () {

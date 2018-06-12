@@ -1,16 +1,16 @@
 'use strict';
 
-describe('data/editingInterfaces/transformer', function () {
+describe('data/editingInterfaces/transformer', () => {
   var getDefaultWidget;
 
-  beforeEach(function () {
+  beforeEach(() => {
     getDefaultWidget = sinon.stub();
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.value('widgets/default', getDefaultWidget);
     });
   });
 
-  describe('#fromAPI()', function () {
+  describe('#fromAPI()', () => {
 
     beforeEach(function () {
       var Transformer = this.$inject('data/editingInterfaces/transformer');
@@ -71,7 +71,7 @@ describe('data/editingInterfaces/transformer', function () {
       expect(controls[0].widgetId).toEqual('NEW');
     });
 
-    describe('field mapping', function () {
+    describe('field mapping', () => {
       it('prefers the apiName over the field id', function() {
         var contentType = {fields: [
           { id: 'id2', apiName: 'apiName' },

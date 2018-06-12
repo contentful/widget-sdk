@@ -20,7 +20,7 @@ angular.module('cf.ui')
  *   }
  * })
  */
-.factory('command', ['require', function (require) {
+.factory('command', ['require', require => {
   var createSignal = require('signal').create;
   var $q = require('$q');
 
@@ -89,7 +89,7 @@ angular.module('cf.ui')
 
     var self = this;
     this._inProgress = (this._run() || $q.reject())
-    .finally(function () {
+    .finally(() => {
       self._inProgress = null;
     });
 
@@ -154,7 +154,7 @@ angular.module('cf.ui')
  *
  * [ui/command]: api/cf.ui/service/command
  */
-.directive('uiCommand', ['require', function (require) {
+.directive('uiCommand', ['require', require => {
   var uiCommandStateDirective = require('uiCommandStateDirective')[0];
   return {
     restrict: 'A',
@@ -165,12 +165,12 @@ angular.module('cf.ui')
     link: function (scope, element) {
       uiCommandStateDirective.link(scope, element);
 
-      element.on('click', function () {
+      element.on('click', () => {
         if (element.attr('aria-disabled') === 'true' || element.prop('disabled')) {
           return;
         }
 
-        scope.$apply(function () {
+        scope.$apply(() => {
           scope.command.execute();
         });
       });
@@ -194,51 +194,52 @@ angular.module('cf.ui')
  *
  * This directive is currently only intended as a hack and only used in context menus.
  */
-.directive('uiCommandState', [function () {
-  return {
-    restrict: 'A',
-    scope: {
-      command: '=uiCommandState'
-    },
-    template: function (element) {
-      return element.html();
-    },
-    link: function (scope, element) {
-      if (!element.attr('role')) {
-        element.attr('role', 'button');
+.directive('uiCommandState', [() => ({
+  restrict: 'A',
+
+  scope: {
+    command: '=uiCommandState'
+  },
+
+  template: function (element) {
+    return element.html();
+  },
+
+  link: function (scope, element) {
+    if (!element.attr('role')) {
+      element.attr('role', 'button');
+    }
+
+    if (element.is('button') && !element.attr('type')) {
+      element.attr('type', 'button');
+    }
+
+    scope.$watch('command.isAvailable()', isAvailable => {
+      element.toggleClass('ng-hide', !isAvailable);
+      setDisabled(scope.command.isDisabled());
+    });
+
+    scope.$watch('command.isDisabled()', setDisabled);
+
+    scope.$watch('command.inProgress()', inProgress => {
+      element.toggleClass('is-loading', inProgress);
+      if (inProgress) {
+        element.attr('aria-busy', 'true');
+      } else {
+        element.removeAttr('aria-busy');
+      }
+    });
+
+    function setDisabled (isDisabled) {
+      if (element.is('button')) {
+        element.prop('disabled', isDisabled);
       }
 
-      if (element.is('button') && !element.attr('type')) {
-        element.attr('type', 'button');
-      }
-
-      scope.$watch('command.isAvailable()', function (isAvailable) {
-        element.toggleClass('ng-hide', !isAvailable);
-        setDisabled(scope.command.isDisabled());
-      });
-
-      scope.$watch('command.isDisabled()', setDisabled);
-
-      scope.$watch('command.inProgress()', function (inProgress) {
-        element.toggleClass('is-loading', inProgress);
-        if (inProgress) {
-          element.attr('aria-busy', 'true');
-        } else {
-          element.removeAttr('aria-busy');
-        }
-      });
-
-      function setDisabled (isDisabled) {
-        if (element.is('button')) {
-          element.prop('disabled', isDisabled);
-        }
-
-        if (isDisabled) {
-          element.attr('aria-disabled', 'true');
-        } else {
-          element.removeAttr('aria-disabled');
-        }
+      if (isDisabled) {
+        element.attr('aria-disabled', 'true');
+      } else {
+        element.removeAttr('aria-disabled');
       }
     }
-  };
-}]);
+  }
+})]);

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.factory('search/cachedParser', ['require', function (require) {
+.factory('search/cachedParser', ['require', require => {
   var searchParser = require('searchParser');
 
   return function createParser () {

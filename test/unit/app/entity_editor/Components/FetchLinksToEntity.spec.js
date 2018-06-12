@@ -7,7 +7,7 @@ import { EntityType } from 'app/entity_editor/Components/constants';
 
 import { flushPromises } from './helpers';
 
-describe('FetchLinksToEntity', function () {
+describe('FetchLinksToEntity', () => {
   const defaultProps = {
     id: 'entry-id',
     type: EntityType.ENTRY,

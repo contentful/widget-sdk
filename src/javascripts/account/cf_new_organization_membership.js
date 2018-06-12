@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfNewOrganizationMembership', ['require', function (require) {
+.directive('cfNewOrganizationMembership', ['require', require => {
   var controller = require('account/NewOrganizationMembership').default;
 
   return {

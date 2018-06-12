@@ -17,18 +17,16 @@ angular.module('cf.ui')
  */
 angular.module('contentful/mocks', [])
 
-.decorator('TheStore/ClientStorageWrapper', ['$delegate', 'mocks/TheStore/ClientStorageWrapper', function ($delegate, mock) {
-  return _.extend({
-    _noMock: $delegate
-  }, mock);
-}])
+.decorator('TheStore/ClientStorageWrapper', ['$delegate', 'mocks/TheStore/ClientStorageWrapper', ($delegate, mock) => _.extend({
+  _noMock: $delegate
+}, mock)])
 
-.config(['$provide', '$controllerProvider', function ($provide, $controllerProvider) {
-  $provide.value('$exceptionHandler', function (e) {
+.config(['$provide', '$controllerProvider', ($provide, $controllerProvider) => {
+  $provide.value('$exceptionHandler', e => {
     throw e;
   });
 
-  $provide.decorator('ReloadNotification', ['$delegate', function ($delegate) {
+  $provide.decorator('ReloadNotification', ['$delegate', $delegate => {
     // TODO firefox does not yet support for (const x in y)
     /* eslint prefer-const: off */
     for (let prop in $delegate) {
@@ -47,22 +45,20 @@ angular.module('contentful/mocks', [])
 
   $provide.provider('realLogger', ['loggerProvider', _.identity]);
 
-  $provide.factory('logger', function () {
-    return {
-      enable: sinon.stub(),
-      disable: sinon.stub(),
-      findActualServerError: sinon.stub(),
-      logException: sinon.stub(),
-      logError: sinon.stub(),
-      logServerError: sinon.stub(),
-      logServerWarn: sinon.stub(),
-      logSharejsError: sinon.stub(),
-      logSharejsWarn: sinon.stub(),
-      logWarn: sinon.stub(),
-      leaveBreadcrumb: sinon.stub(),
-      log: sinon.stub()
-    };
-  });
+  $provide.factory('logger', () => ({
+    enable: sinon.stub(),
+    disable: sinon.stub(),
+    findActualServerError: sinon.stub(),
+    logException: sinon.stub(),
+    logError: sinon.stub(),
+    logServerError: sinon.stub(),
+    logServerWarn: sinon.stub(),
+    logSharejsError: sinon.stub(),
+    logSharejsWarn: sinon.stub(),
+    logWarn: sinon.stub(),
+    leaveBreadcrumb: sinon.stub(),
+    log: sinon.stub()
+  }));
 
   $provide.value('services/Filestack', {
     makeDropPane: sinon.stub(),
@@ -71,52 +67,47 @@ angular.module('contentful/mocks', [])
     store: sinon.stub()
   });
 
-  $provide.decorator('utils/LaunchDarkly', ['$delegate', function ($delegate) {
+  $provide.decorator('utils/LaunchDarkly', ['$delegate', $delegate => {
+    const mock = createLaunchDarklyMock();
     return {
-      ...createLaunchDarklyMock(),
+      ...mock,
       _noMock: $delegate
     };
   }]);
 
-  $provide.stubDirective = function (name, definition) {
-    $provide.factory(name + 'Directive', function () {
-      return [_.extend({
-        name: name,
-        restrict: 'A',
-        priority: 0
-      }, definition)];
-    });
+  $provide.stubDirective = (name, definition) => {
+    $provide.factory(name + 'Directive', () => [_.extend({
+      name: name,
+      restrict: 'A',
+      priority: 0
+    }, definition)]);
   };
 
   $provide.removeDirectives = function () {
-    _.flatten(arguments).forEach(function (directive) {
+    _.flatten(arguments).forEach(directive => {
       const fullName = directive + 'Directive';
-      $provide.factory(fullName, function () {
-        return [];
-      });
+      $provide.factory(fullName, () => []);
     });
   };
 
-  $provide.removeController = function (label, fakeController) {
+  $provide.removeController = (label, fakeController) => {
     $controllerProvider.register(label, fakeController || angular.noop);
   };
 
   $provide.removeControllers = function () {
-    _.flatten(arguments).forEach(function (controller) {
+    _.flatten(arguments).forEach(controller => {
       $controllerProvider.register(controller, angular.noop);
     });
   };
 
-  $provide.stubFilter = function (filterName, returnValue) {
-    $provide.value(filterName + 'Filter', function () {
-      return returnValue || '';
-    });
+  $provide.stubFilter = (filterName, returnValue) => {
+    $provide.value(filterName + 'Filter', () => returnValue || '');
   };
 
   $provide.makeStubs = function makeStubs (stubList) {
     if (!_.isArray(stubList)) stubList = _.flatten(arguments);
     const stubs = {};
-    _.each(stubList, function (val) {
+    _.each(stubList, val => {
       stubs[val] = sinon.stub();
     });
     return stubs;

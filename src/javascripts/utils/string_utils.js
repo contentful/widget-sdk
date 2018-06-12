@@ -10,7 +10,7 @@
  * Some of them are also available as filters
  */
 angular.module('cf.utils')
-.constant('stringUtils', (function () {
+.constant('stringUtils', ((() => {
   function toIdentifier (string) {
     if (shouldFallbackToEmptyString(string)) return '';
     var words = splitIntoWords(string).map(stripInvalidChars);
@@ -40,9 +40,7 @@ angular.module('cf.utils')
   }
 
   function cleanPrefix (string) {
-    return string.replace(/^[^a-z]+/, function (prefix) {
-      return prefix.toLowerCase().replace(/[0-9]/g, '');
-    });
+    return string.replace(/^[^a-z]+/, prefix => prefix.toLowerCase().replace(/[0-9]/g, ''));
   }
 
   function splitIntoWords (string) {
@@ -264,7 +262,7 @@ angular.module('cf.utils')
     startsWithVowel: startsWithVowel,
     isValidEmail: isValidEmail
   };
-})())
+}))())
 
 /**
  * @ngcdoc filter
@@ -273,10 +271,6 @@ angular.module('cf.utils')
  * Takes an array of strings and joins it with commas and a final
  * “and”.
  */
-.filter('joinAnd', ['stringUtils', function (stringUtils) {
-  return stringUtils.joinAnd;
-}])
+.filter('joinAnd', ['stringUtils', stringUtils => stringUtils.joinAnd])
 
-.filter('joinAndTruncate', ['stringUtils', function (stringUtils) {
-  return stringUtils.joinAndTruncate;
-}]);
+.filter('joinAndTruncate', ['stringUtils', stringUtils => stringUtils.joinAndTruncate]);

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfMarkdownEditor', ['require', function (require) {
+angular.module('contentful').directive('cfMarkdownEditor', ['require', require => {
   var RTL_SUPPORT_FEATURE_FLAG =
     'feature-at-03-2018-rtl-support';
   var EDITOR_DIRECTIONS = {
@@ -65,7 +65,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', function 
       // 2. loading it even after elements are added to DOM works just fine
       LazyLoader.get('embedly');
 
-      LD.onFeatureFlag(scope, RTL_SUPPORT_FEATURE_FLAG, function (isEnabled) {
+      LD.onFeatureFlag(scope, RTL_SUPPORT_FEATURE_FLAG, isEnabled => {
         if (isEnabled && isRtlLocale(field.locale)) {
           scope.isReady = false;
           scope.direction = EDITOR_DIRECTIONS.RTL;
@@ -92,9 +92,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', function 
         var defaultLocale = LocaleStore.getDefaultLocale();
 
         var locales = LocaleStore.getLocales();
-        var locale = locales.find(function (locale) {
-          return locale.code === field.locale;
-        });
+        var locale = locales.find(locale => locale.code === field.locale);
         scope.actions = actions.create(editor, locale, defaultLocale.code);
         scope.history = editor.history;
 
@@ -113,7 +111,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', function 
       function setupDestructorJobs () {
         var detachValueHandler = field.onValueChanged(handleFieldChange);
         var detachStateHandler = field.onIsDisabledChanged(handleStateChange);
-        scope.$on('$destroy', function () {
+        scope.$on('$destroy', () => {
           detachValueHandler();
           detachStateHandler();
           editor.destroy();
@@ -198,7 +196,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', function 
         }
 
         function setAutoHeight () {
-          $timeout(function () {
+          $timeout(() => {
             areas.height('auto');
           });
         }

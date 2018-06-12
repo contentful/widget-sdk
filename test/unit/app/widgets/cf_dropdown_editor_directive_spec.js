@@ -1,6 +1,6 @@
 'use strict';
 
-describe('cfDropdownEditor Directive', function () {
+describe('cfDropdownEditor Directive', () => {
   let fieldApi;
 
   beforeEach(function () {
@@ -31,9 +31,7 @@ describe('cfDropdownEditor Directive', function () {
     const predefined = ['banana', 'orange', 'strawberry'];
     fieldApi.validations = [{ in: predefined }];
     const element = this.compile();
-    const labels = element.find('option').map(function (_, option) {
-      return $(option).text();
-    }).get();
+    const labels = element.find('option').map((_, option) => $(option).text()).get();
 
     expect(labels).toEqual(['Choose a value'].concat(predefined));
   });
@@ -82,8 +80,8 @@ describe('cfDropdownEditor Directive', function () {
   });
 
 
-  describe('selecting an option', function () {
-    beforeEach(function () {
+  describe('selecting an option', () => {
+    beforeEach(() => {
       const predefined = ['banana', 'orange', 'strawberry'];
       fieldApi.validations = [{ in: predefined }];
     });

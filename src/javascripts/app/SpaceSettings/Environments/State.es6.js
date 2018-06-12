@@ -21,7 +21,7 @@ export default {
   name: 'environments',
   url: '/environments',
   template: '<cf-component-store-bridge ng-if="environmentComponent" component="environmentComponent" />',
-  controller: ['$scope', 'spaceContext', function ($scope, spaceContext) {
+  controller: ['$scope', 'spaceContext', ($scope, spaceContext) => {
     const hasAccess = accessChecker.can('update', 'settings');
     if (!hasAccess) {
       $state.go('spaces.detail');

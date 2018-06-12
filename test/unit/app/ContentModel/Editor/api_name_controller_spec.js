@@ -1,6 +1,6 @@
 'use strict';
 
-describe('ApiNameController', function () {
+describe('ApiNameController', () => {
   beforeEach(function () {
     module('contentful/test');
 
@@ -21,7 +21,7 @@ describe('ApiNameController', function () {
   });
 
 
-  describe('isEditable()', function () {
+  describe('isEditable()', () => {
     it('is true if field not published', function () {
       this.getPublishedField.returns(undefined);
       this.$apply();

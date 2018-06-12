@@ -14,9 +14,9 @@ import {create as createDocument} from 'helpers/mocks/entity_editor_document';
  *
  * TODO Use DOM helpers
  */
-describe('entity editor field integration', function () {
+describe('entity editor field integration', () => {
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
       $provide.removeDirectives('cfWidgetApi', 'cfWidgetRenderer');
     });
@@ -74,7 +74,7 @@ describe('entity editor field integration', function () {
     };
   });
 
-  describe('labels', function () {
+  describe('labels', () => {
     it('shows field name for single locale', function () {
       this.setLocales([{code: 'EN'}]);
       const el = this.compile();
@@ -115,12 +115,10 @@ describe('entity editor field integration', function () {
     });
   });
 
-  describe('editing permissions', function () {
+  describe('editing permissions', () => {
     it('shows message if user does not have editing permissions', function () {
       this.otDoc = createDocument();
-      this.otDoc.permissions.canEditFieldLocale = function (_field, locale) {
-        return locale === 'EN';
-      };
+      this.otDoc.permissions.canEditFieldLocale = (_field, locale) => locale === 'EN';
 
       const el = this.compile();
       expect(findPermissionInfo(el, 'EN')).toBeNgHidden();
@@ -135,7 +133,7 @@ describe('entity editor field integration', function () {
     }
   });
 
-  describe('hint', function () {
+  describe('hint', () => {
     it('shows widget default helpt text', function () {
       this.widget.defaultHelpText = 'HELP TEXT';
       const hint = this.compile().find('[data-test-id=field-hint]');
@@ -159,7 +157,7 @@ describe('entity editor field integration', function () {
     });
   });
 
-  describe('visible locales', function () {
+  describe('visible locales', () => {
     it('only shows default locale when field is not localized', function () {
       this.setLocales([
         {code: 'en', default: true}, {code: 'de'}, {code: 'fr'}
@@ -212,7 +210,7 @@ describe('entity editor field integration', function () {
     }
   });
 
-  describe('errors', function () {
+  describe('errors', () => {
     it('shows field locale errors', function () {
       const el = this.compile();
       expect(hasErrorStatus(el)).toBe(false);
@@ -282,7 +280,7 @@ describe('entity editor field integration', function () {
     });
   });
 
-  describe('focus', function () {
+  describe('focus', () => {
     it('is set when widget activates this field', function () {
       const el = this.compile();
 

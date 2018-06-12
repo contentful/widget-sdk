@@ -1,6 +1,4 @@
 'use strict';
 
 angular.module('cf.utils')
-.factory('require', ['$injector', function ($injector) {
-  return $injector.get;
-}]);
+.factory('require', ['$injector', $injector => $injector.get]);

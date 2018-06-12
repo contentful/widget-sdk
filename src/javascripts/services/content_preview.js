@@ -7,7 +7,7 @@
  * This service fetches, caches and exposes data and helper functions relating to Content Preview
  */
 angular.module('contentful')
-.factory('contentPreview', ['require', function (require) {
+.factory('contentPreview', ['require', require => {
   var $q = require('$q');
   var _ = require('lodash');
   var $rootScope = require('$rootScope');
@@ -48,7 +48,7 @@ angular.module('contentful')
   // Duplicates are skipped.
   var K = require('utils/kefir');
 
-  var contentPreviewsBus$ = K.withInterval(2500, function (emitter) {
+  var contentPreviewsBus$ = K.withInterval(2500, emitter => {
     var emitValue = emitter.value.bind(emitter);
     var emitError = emitter.error.bind(emitter);
 
@@ -57,10 +57,10 @@ angular.module('contentful')
     } catch (e) {
       emitError(e);
     }
-  }).skipDuplicates(_.isEqual).toProperty(function () {});
+  }).skipDuplicates(_.isEqual).toProperty(() => {});
 
   // we need to download content previews again after finishing with space template creation
-  $rootScope.$on('spaceTemplateCreated', function () {
+  $rootScope.$on('spaceTemplateCreated', () => {
     previewEnvironmentsCache.clearAll();
   });
 
@@ -137,15 +137,13 @@ angular.module('contentful')
       return $q.resolve(previewEnvironmentsCache.getAll());
     } else {
       return spaceContext.space.endpoint('preview_environments').payload({limit: MAX_PREVIEW_ENVIRONMENTS}).get()
-      .then(function (environments) {
-        return cachePreviewEnvironments(environments.items);
-      });
+      .then(environments => cachePreviewEnvironments(environments.items));
     }
   }
 
   function cachePreviewEnvironments (environments) {
     var cacheVal = {};
-    environments.forEach(function (environment) {
+    environments.forEach(environment => {
       cacheVal[environment.sys.id] = environment;
     });
     return previewEnvironmentsCache.setAll(cacheVal);
@@ -162,9 +160,7 @@ angular.module('contentful')
    * Uses #getAll method to load environment list from server or cache.
   */
   function get (id) {
-    return getAll().then(function (environments) {
-      return environments[id] || $q.reject('Preview environment could not be found');
-    });
+    return getAll().then(environments => environments[id] || $q.reject('Preview environment could not be found'));
   }
 
   /**
@@ -177,9 +173,7 @@ angular.module('contentful')
    * and can thus still create more.
   */
   function canCreate () {
-    return getAll().then(function (environments) {
-      return Object.keys(environments).length < MAX_PREVIEW_ENVIRONMENTS;
-    });
+    return getAll().then(environments => Object.keys(environments).length < MAX_PREVIEW_ENVIRONMENTS);
   }
 
   /**
@@ -197,7 +191,7 @@ angular.module('contentful')
   }
 
   function getEnvsForContentType (environments, ctId) {
-    return _.transform(_.cloneDeep(environments), function (acc, env, envId) {
+    return _.transform(_.cloneDeep(environments), (acc, env, envId) => {
       var config = _.find(
         env.configurations,
         _.matches({'contentType': ctId})
@@ -259,7 +253,7 @@ angular.module('contentful')
     }
 
     return spaceContext.space.endpoint('preview_environments', env.id).delete()
-    .then(function () {
+    .then(() => {
       previewEnvironmentsCache.clearAll();
     });
   }
@@ -278,7 +272,7 @@ angular.module('contentful')
     return {
       name: internal.name,
       description: internal.description,
-      configurations: _.reduce(internal.configs, function (acc, config) {
+      configurations: _.reduce(internal.configs, (acc, config) => {
         if (config.url) {
           acc.push(_.pick(config, ['contentType', 'url', 'enabled', 'example']));
         }
@@ -293,9 +287,7 @@ angular.module('contentful')
       contentType: ct.sys.id,
       url: '',
       enabled: false,
-      contentTypeFields: _.map(ct.fields, function (field) {
-        return _.pick(field, ['apiName', 'type']);
-      })
+      contentTypeFields: _.map(ct.fields, field => _.pick(field, ['apiName', 'type']))
     };
   }
 
@@ -327,7 +319,7 @@ angular.module('contentful')
   */
   function toInternal (external, contentTypes) {
     function getConfigs () {
-      return contentTypes.map(function (ct) {
+      return contentTypes.map(ct => {
         var config = _.find(
           external.configurations,
           _.matches({'contentType': ct.sys.id})
@@ -358,9 +350,7 @@ angular.module('contentful')
   function getInvalidFields (url, fields) {
     var tokens = extractFieldTokensFromUrl(url);
 
-    var objectFields = _.map(_.filter(fields, function (field) {
-      return _.includes(['Array', 'Link', 'Object', 'Location'], field.type);
-    }), 'apiName');
+    var objectFields = _.map(_.filter(fields, field => _.includes(['Array', 'Link', 'Object', 'Location'], field.type)), 'apiName');
 
     var nonExistentFields = _.difference(tokens, _.map(fields, 'apiName'));
     var invalidTypeFields = _.intersection(tokens, objectFields);
@@ -402,7 +392,7 @@ angular.module('contentful')
     var defaultLocale = TheLocaleStore.getDefaultLocale().internal_code;
     var processedUrl = urlTemplate
     .replace(ENTRY_ID_PATTERN, entry.sys.id)
-    .replace(ENTRY_FIELD_PATTERN, function (match, fieldId) {
+    .replace(ENTRY_FIELD_PATTERN, (match, fieldId) => {
       var internalId = _.get(
         _.find(
           contentType.fields,

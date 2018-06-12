@@ -20,7 +20,7 @@ angular.module('contentful')
  * After being resolved or disabled, the buffer can not be
  * transitioned into another state anymore.
  */
-.factory('utils/CallBuffer', [function () {
+.factory('utils/CallBuffer', [() => {
   var OPEN = 'open';
   var RESOLVED = 'resolved';
   var DISABLED = 'disabled';
@@ -68,7 +68,7 @@ angular.module('contentful')
       if (state === OPEN) {
         state = RESOLVED;
         service = _service;
-        calls.forEach(function (fn) {
+        calls.forEach(fn => {
           fn(service);
         });
         calls = [];

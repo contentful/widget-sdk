@@ -19,7 +19,7 @@ export function withCurrent (entrySys, snapshots) {
   } else {
     const version = entrySys.version;
     if (version) {
-      snapshots.forEach(function (snapshot) {
+      snapshots.forEach(snapshot => {
         const isCurrent = getAtPath(snapshot, 'snapshot.sys.version') === version;
         snapshot.sys.isCurrent = isCurrent;
       });
@@ -38,11 +38,11 @@ export function withCurrent (entrySys, snapshots) {
  * Decorates snapshots setting snapshot.sys.createdBy.authorName value
  */
 export function withAuthorName (spaceContext, snapshots) {
-  const promises = snapshots.map(function (snapshot) {
+  const promises = snapshots.map(snapshot => {
     const userId = getAtPath(snapshot, 'sys.createdBy.sys.id');
 
     return spaceContext.users.get(userId)
-      .then(function (user) {
+      .then(user => {
         const authorName = user ? (user.firstName + ' ' + user.lastName) : '';
 
         snapshot.sys.createdBy.authorName = authorName;

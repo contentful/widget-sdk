@@ -33,7 +33,7 @@ SANITIZE_CONFIG.allowedAttributes['a'].push('rel', 'data-card-*');
 SANITIZE_CONFIG.allowedAttributes['img'].push('alt', 'title');
 
 SANITIZE_CONFIG.transformTags = {};
-SANITIZE_CONFIG.transformTags['a'] = function (tagName, attribs, text) {
+SANITIZE_CONFIG.transformTags['a'] = (tagName, attribs, text) => {
   if (attribs.target === '_blank') {
     attribs.rel = 'noopener noreferrer';
   }
@@ -52,9 +52,7 @@ SANITIZE_CONFIG.allowedClasses = {};
 SANITIZE_CONFIG.allowedClasses['a'] = ['embedly-card', 'markdown-block'];
 
 const NEWLINE_ENTITY_RE = new RegExp('&#10;', 'g');
-SANITIZE_CONFIG.textFilter = function (text) {
-  return text.replace(NEWLINE_ENTITY_RE, '\n');
-};
+SANITIZE_CONFIG.textFilter = text => text.replace(NEWLINE_ENTITY_RE, '\n');
 
 
 /**
@@ -363,7 +361,7 @@ function countWords (html, isClean) {
 }
 
 function mergeTextNodes (nodes) {
-  return nodes.reduce(function (merged, node) {
+  return nodes.reduce((merged, node) => {
     let last = merged.length - 1;
     last = last >= 0 ? last : 0;
 
@@ -380,9 +378,7 @@ function mergeTextNodes (nodes) {
 
 // DJB2 hashing algorithm
 export function getHashCode (str) {
-  return str.split('').reduce(function (a, b) {
-    return ((a << 5) + a) + b.charCodeAt(0);
-  }, 5381);
+  return str.split('').reduce((a, b) => ((a << 5) + a) + b.charCodeAt(0), 5381);
 }
 
 function notNull (x) {

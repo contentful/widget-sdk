@@ -1,6 +1,6 @@
 import * as K from 'helpers/mocks/kefir';
 
-describe('Token store service', function () {
+describe('Token store service', () => {
   beforeEach(function () {
     this.fetchWithAuth = sinon.stub().resolves({
       sys: {createdBy: this.user},
@@ -12,13 +12,11 @@ describe('Token store service', function () {
       });
     });
 
-    this.spaces = _.map(['a-space', 'b-space', 'c-space'], function (name) {
-      return {
-        name: name,
-        sys: {id: name + '-id'},
-        organization: {sys: {id: 'testorg'}}
-      };
-    });
+    this.spaces = _.map(['a-space', 'b-space', 'c-space'], name => ({
+      name: name,
+      sys: {id: name + '-id'},
+      organization: {sys: {id: 'testorg'}}
+    }));
 
     this.tokenStore = this.$inject('services/TokenStore');
     this.OrganizationRoles = this.$inject('services/OrganizationRoles');
@@ -41,7 +39,7 @@ describe('Token store service', function () {
     };
   });
 
-  describe('#refresh()', function () {
+  describe('#refresh()', () => {
     it('fetches token returns promise of token refresh', function* () {
       this.fetchWithAuth.resolves({
         sys: {createdBy: this.user},
@@ -63,7 +61,7 @@ describe('Token store service', function () {
     sinon.assert.calledOnce(notification.trigger);
   });
 
-  describe('#getSpace()', function () {
+  describe('#getSpace()', () => {
     it('returns promise resolving to requested space', function* () {
       yield this.refresh(this.spaces[0]);
       const space = yield this.tokenStore.getSpace('a-space-id');
@@ -77,7 +75,7 @@ describe('Token store service', function () {
     });
   });
 
-  describe('#getSpaces()', function () {
+  describe('#getSpaces()', () => {
     it('returns promise resolving to spaces list', function* () {
       yield this.refresh(this.spaces[0], this.spaces[1]);
       const spaces = yield this.tokenStore.getSpaces();
@@ -85,7 +83,7 @@ describe('Token store service', function () {
     });
   });
 
-  describe('#user$', function () {
+  describe('#user$', () => {
     it('is initially null', function () {
       K.assertCurrentValue(this.tokenStore.user$, null);
     });
@@ -103,7 +101,7 @@ describe('Token store service', function () {
     });
   });
 
-  describe('#spacesByOrganization$', function () {
+  describe('#spacesByOrganization$', () => {
     it('is initially empty', function () {
       K.assertCurrentValue(this.tokenStore.spacesByOrganization$, null);
     });
@@ -117,7 +115,7 @@ describe('Token store service', function () {
     });
   });
 
-  describe('#organizations$', function () {
+  describe('#organizations$', () => {
     it('is initially empty', function () {
       K.assertCurrentValue(this.tokenStore.organizations$, []);
     });

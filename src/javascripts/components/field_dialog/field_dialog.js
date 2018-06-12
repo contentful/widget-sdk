@@ -16,7 +16,7 @@ angular.module('contentful')
  * @param {API.Widget}               widget
  * @return {Promise<void>}
  */
-.factory('openFieldDialog', ['require', function (require) {
+.factory('openFieldDialog', ['require', require => {
   var modalDialog = require('modalDialog');
 
   return function openFieldDialog ($scope, field, widget) {
@@ -71,12 +71,10 @@ angular.module('contentful')
   };
 
   $scope.$watch('widgetSettings.id', reposition);
-  $scope.$watch(function () {
-    return $scope.tabController.getActiveTabName();
-  }, reposition);
+  $scope.$watch(() => $scope.tabController.getActiveTabName(), reposition);
 
   function reposition () {
-    $timeout(function () {
+    $timeout(() => {
       $scope.$emit('centerOn:reposition');
     });
   }
@@ -86,18 +84,16 @@ angular.module('contentful')
    * @name FieldDialogController#availableWidgets
    * @type {Widgets.Descriptor[]}
    */
-  spaceContext.widgets.refresh().then(function (widgets) {
+  spaceContext.widgets.refresh().then(widgets => {
     var fieldType = fieldFactory.getTypeName($scope.field);
 
-    $scope.availableWidgets = widgets.filter(function (widget) {
-      return widget.fieldTypes.includes(fieldType);
-    });
+    $scope.availableWidgets = widgets.filter(widget => widget.fieldTypes.includes(fieldType));
   });
 
   $scope.fieldTypeLabel = fieldFactory.getLabel($scope.field);
   $scope.iconId = fieldFactory.getIconId($scope.field) + '-small';
 
-  dialog.save = function () {
+  dialog.save = () => {
     $scope.$broadcast('validate');
     if (!isValid()) {
       notification.error('Please check the form for validation errors.');
@@ -116,9 +112,7 @@ angular.module('contentful')
     values = WidgetParametersUtils.filterValues(definitions, values);
 
     var missing = WidgetParametersUtils.markMissingValues(definitions, values);
-    var hasMissingParameters = Object.keys(missing).some(function (key) {
-      return missing[key] === true;
-    });
+    var hasMissingParameters = Object.keys(missing).some(key => missing[key] === true);
 
     if (hasMissingParameters) {
       notification.error('Please provide all required parameters.');
@@ -162,7 +156,7 @@ angular.module('contentful')
 }])
 
 
-.controller('FieldDialogSettingsController', ['$scope', 'require', function ($scope, require) {
+.controller('FieldDialogSettingsController', ['$scope', 'require', ($scope, require) => {
   var fieldDecorator = require('fieldDecorator');
   var buildMessage = require('fieldErrorMessageBuilder');
   var TheLocaleStore = require('TheLocaleStore');
@@ -174,7 +168,7 @@ angular.module('contentful')
     buildMessage: buildMessage
   };
   $scope.field = $scope.decoratedField;
-  $scope.$watch('fieldSettingsForm.$invalid', function (isInvalid) {
+  $scope.$watch('fieldSettingsForm.$invalid', isInvalid => {
     $scope.tab.invalid = isInvalid;
   });
 
@@ -189,10 +183,10 @@ angular.module('contentful')
  * @scope.requires {string}  widgetSettings.id
  * @scope.requires {Widgets.Descriptor[]}  availableWidgets
  */
-.controller('FieldDialogValidationsController', ['$scope', 'require', function ($scope, require) {
+.controller('FieldDialogValidationsController', ['$scope', 'require', ($scope, require) => {
   var validations = require('validationDecorator');
 
-  $scope.$watch('fieldValidationsForm.$invalid', function (isInvalid) {
+  $scope.$watch('fieldValidationsForm.$invalid', isInvalid => {
     $scope.tab.invalid = isInvalid;
   });
 
@@ -207,7 +201,7 @@ angular.module('contentful')
    * @name FieldDialogValidationsController#showPredefinedValueWidgetHint
    * @type {boolean}
    */
-  $scope.$watchGroup(['widgetSettings.id', 'availableWidgets'], function (values) {
+  $scope.$watchGroup(['widgetSettings.id', 'availableWidgets'], values => {
     var name = values[0];
     var available = values[1];
     var properWidgets = ['radio', 'dropdown', 'checkbox'];
@@ -232,13 +226,13 @@ angular.module('contentful')
  * @property {Widgets.Descriptor}    widget
  * @property {Widgets.Options[]}     widgetOptions
  */
-.controller('FieldDialogAppearanceController', ['$scope', 'require', function ($scope, require) {
+.controller('FieldDialogAppearanceController', ['$scope', 'require', ($scope, require) => {
   var getDefaultWidgetId = require('widgets/default');
 
   $scope.defaultWidgetId = getDefaultWidgetId($scope.field, $scope.contentType.data.displayField);
   $scope.selectWidget = selectWidget;
 
-  $scope.$watch('availableWidgets', function (available) {
+  $scope.$watch('availableWidgets', available => {
     if (Array.isArray(available)) {
       var selected = _.findIndex(available, {id: $scope.widgetSettings.id});
       selectWidget(selected > -1 ? selected : 0);
@@ -252,7 +246,7 @@ angular.module('contentful')
   }
 }])
 
-.directive('cfFieldAppearanceParameters', ['require', function (require) {
+.directive('cfFieldAppearanceParameters', ['require', require => {
   var ReactDOM = require('react-dom');
   var React = require('react');
   var WidgetParametersUtils = require('widgets/WidgetParametersUtils');

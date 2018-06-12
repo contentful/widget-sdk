@@ -1,12 +1,12 @@
 'use strict';
 
-describe('Contentful Client', function () {
+describe('Contentful Client', () => {
   var $httpBackend, $rootScope;
   var client, successStub, failStub;
 
-  beforeEach(function () {
+  beforeEach(() => {
     module('contentful/test');
-    inject(function ($injector) {
+    inject($injector => {
 
       $httpBackend = $injector.get('$httpBackend');
       $rootScope = $injector.get('$rootScope');
@@ -22,7 +22,7 @@ describe('Contentful Client', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
+  afterEach(inject($log => {
     $log.assertEmpty();
     $httpBackend.verifyNoOutstandingExpectation();
     $httpBackend.verifyNoOutstandingRequest();
@@ -32,8 +32,8 @@ describe('Contentful Client', function () {
     return 'https://api.contentful.com:443/spaces/spaceid'+path;
   }
 
-  it('gets a space', function() {
-    client.space().then(successStub).catch(failStub).finally(function () {
+  it('gets a space', () => {
+    client.space().then(successStub).catch(failStub).finally(() => {
       sinon.assert.called(successStub);
       sinon.assert.notCalled(failStub);
     });
@@ -41,8 +41,8 @@ describe('Contentful Client', function () {
     $httpBackend.flush();
   });
 
-  it('fails to get a space', function() {
-    client.space().then(successStub).catch(failStub).finally(function () {
+  it('fails to get a space', () => {
+    client.space().then(successStub).catch(failStub).finally(() => {
       sinon.assert.notCalled(successStub);
       sinon.assert.called(failStub);
     });
@@ -50,8 +50,8 @@ describe('Contentful Client', function () {
     $httpBackend.flush();
   });
 
-  it('gets content types', function() {
-    client.contentTypes().then(successStub).catch(failStub).finally(function () {
+  it('gets content types', () => {
+    client.contentTypes().then(successStub).catch(failStub).finally(() => {
       sinon.assert.called(successStub);
       sinon.assert.notCalled(failStub);
     });
@@ -59,8 +59,8 @@ describe('Contentful Client', function () {
     $httpBackend.flush();
   });
 
-  it('fails to get content types', function() {
-    client.contentTypes().then(successStub).catch(failStub).finally(function () {
+  it('fails to get content types', () => {
+    client.contentTypes().then(successStub).catch(failStub).finally(() => {
       sinon.assert.notCalled(successStub);
       sinon.assert.called(failStub);
     });
@@ -68,8 +68,8 @@ describe('Contentful Client', function () {
     $httpBackend.flush();
   });
 
-  it('gets a content type', function() {
-    client.contentType('123').then(successStub).catch(failStub).finally(function () {
+  it('gets a content type', () => {
+    client.contentType('123').then(successStub).catch(failStub).finally(() => {
       sinon.assert.called(successStub);
       sinon.assert.notCalled(failStub);
     });
@@ -77,8 +77,8 @@ describe('Contentful Client', function () {
     $httpBackend.flush();
   });
 
-  it('fails to get a content type', function() {
-    client.contentType('123').then(successStub).catch(failStub).finally(function () {
+  it('fails to get a content type', () => {
+    client.contentType('123').then(successStub).catch(failStub).finally(() => {
       sinon.assert.notCalled(successStub);
       sinon.assert.called(failStub);
     });
@@ -86,8 +86,8 @@ describe('Contentful Client', function () {
     $httpBackend.flush();
   });
 
-  it('gets entries', function() {
-    client.entries().then(successStub).catch(failStub).finally(function () {
+  it('gets entries', () => {
+    client.entries().then(successStub).catch(failStub).finally(() => {
       sinon.assert.called(successStub);
       sinon.assert.notCalled(failStub);
     });
@@ -95,8 +95,8 @@ describe('Contentful Client', function () {
     $httpBackend.flush();
   });
 
-  it('fails to get entries', function() {
-    client.entries().then(successStub).catch(failStub).finally(function () {
+  it('fails to get entries', () => {
+    client.entries().then(successStub).catch(failStub).finally(() => {
       sinon.assert.notCalled(successStub);
       sinon.assert.called(failStub);
     });
@@ -104,8 +104,8 @@ describe('Contentful Client', function () {
     $httpBackend.flush();
   });
 
-  it('gets an entry', function() {
-    client.entry('123').then(successStub).catch(failStub).finally(function () {
+  it('gets an entry', () => {
+    client.entry('123').then(successStub).catch(failStub).finally(() => {
       sinon.assert.called(successStub);
       sinon.assert.notCalled(failStub);
     });
@@ -113,8 +113,8 @@ describe('Contentful Client', function () {
     $httpBackend.flush();
   });
 
-  it('fails to get an entry', function() {
-    client.entry('123').then(successStub).catch(failStub).finally(function () {
+  it('fails to get an entry', () => {
+    client.entry('123').then(successStub).catch(failStub).finally(() => {
       sinon.assert.notCalled(successStub);
       sinon.assert.called(failStub);
     });
@@ -122,8 +122,8 @@ describe('Contentful Client', function () {
     $httpBackend.flush();
   });
 
-  it('gets assets', function() {
-    client.assets().then(successStub).catch(failStub).finally(function () {
+  it('gets assets', () => {
+    client.assets().then(successStub).catch(failStub).finally(() => {
       sinon.assert.called(successStub);
       sinon.assert.notCalled(failStub);
     });
@@ -131,8 +131,8 @@ describe('Contentful Client', function () {
     $httpBackend.flush();
   });
 
-  it('fails to get assets', function() {
-    client.assets().then(successStub).catch(failStub).finally(function () {
+  it('fails to get assets', () => {
+    client.assets().then(successStub).catch(failStub).finally(() => {
       sinon.assert.notCalled(successStub);
       sinon.assert.called(failStub);
     });
@@ -140,8 +140,8 @@ describe('Contentful Client', function () {
     $httpBackend.flush();
   });
 
-  it('gets an asset', function() {
-    client.asset('123').then(successStub).catch(failStub).finally(function () {
+  it('gets an asset', () => {
+    client.asset('123').then(successStub).catch(failStub).finally(() => {
       sinon.assert.called(successStub);
       sinon.assert.notCalled(failStub);
     });
@@ -149,8 +149,8 @@ describe('Contentful Client', function () {
     $httpBackend.flush();
   });
 
-  it('fails to get an asset', function() {
-    client.asset('123').then(successStub).catch(failStub).finally(function () {
+  it('fails to get an asset', () => {
+    client.asset('123').then(successStub).catch(failStub).finally(() => {
       sinon.assert.notCalled(successStub);
       sinon.assert.called(failStub);
     });

@@ -21,7 +21,7 @@ angular.module('contentful')
   $scope.publishSelected = function () {
     const contentTypes = getContentTypes();
     publish.apply(controller, arguments)
-    .then(function (results) {
+    .then(results => {
       results.succeeded.forEach(
         entryEventTracker('publish', 'content-list', contentTypes)
       );
@@ -34,15 +34,13 @@ angular.module('contentful')
 
   function duplicate () {
     const contentTypes = getContentTypes();
-    listActionsController.duplicate().then(function (results) {
+    listActionsController.duplicate().then(results => {
       var succeeded = results.succeeded;
       succeeded.forEach(
         entryEventTracker('create', 'content-list__duplicate', contentTypes)
       );
       $scope.entries.unshift.apply($scope.entries, succeeded);
-      $scope.paginator.setTotal(function (total) {
-        return total + succeeded.length;
-      });
+      $scope.paginator.setTotal(total => total + succeeded.length);
       // instead of the stuff done above, we should call updateEntries here
       // and treat the server as the source of truth.
       // Just appending entries here for e.g., will not respect what the user
@@ -54,7 +52,7 @@ angular.module('contentful')
   // Returns an object having signature { [entryId]: [contentType] }.
   function getContentTypes () {
     return $scope.selection.getSelected().reduce(
-      function (contentTypes, entry) {
+      (contentTypes, entry) => {
         const contentTypeId = entry.data.sys.contentType.sys.id;
         contentTypes[contentTypeId] = spaceContext.publishedCTs.get(
           contentTypeId
@@ -66,7 +64,7 @@ angular.module('contentful')
   }
 
   function entryEventTracker (action, origin, contentTypes) {
-    return function (entry) {
+    return entry => {
       var event = 'entry:' + action; // entry:create, entry:publish
       Analytics.track(event, {
         eventOrigin: origin,

@@ -12,10 +12,8 @@ export default function (action) {
           variation: data.experiment.variation,
           interaction_context: data.experiment.interaction_context,
           action
-        }, function (_, key) {
-          // exclude interaction_context for any actions except 'interaction'
-          return key === 'interaction_context' && action !== 'interaction';
-        })
+        }, (_, key) => // exclude interaction_context for any actions except 'interaction'
+        key === 'interaction_context' && action !== 'interaction')
       };
     })(_, data);
 

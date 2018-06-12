@@ -1,4 +1,4 @@
-describe('Snowplow service', function () {
+describe('Snowplow service', () => {
   beforeEach(function () {
     module('contentful/test');
     this.$window = this.$inject('$window');
@@ -13,7 +13,7 @@ describe('Snowplow service', function () {
     };
   });
 
-  describe('#enable', function () {
+  describe('#enable', () => {
     beforeEach(function () {
       this.Snowplow.enable();
     });
@@ -32,7 +32,7 @@ describe('Snowplow service', function () {
     });
   });
 
-  describe('#disable', function () {
+  describe('#disable', () => {
     beforeEach(function () {
       this.Snowplow.enable();
       this.Snowplow.disable();
@@ -45,7 +45,7 @@ describe('Snowplow service', function () {
     });
   });
 
-  describe('#identify', function () {
+  describe('#identify', () => {
     it('adds request to queue', function () {
       this.Snowplow.enable();
       this.Snowplow.identify('user-1');
@@ -54,7 +54,7 @@ describe('Snowplow service', function () {
     });
   });
 
-  describe('#track', function () {
+  describe('#track', () => {
     it('sends transformed data to snowplow queue', function () {
       this.Events.transform.returns({
         data: {something: 'someValue'},
@@ -79,7 +79,7 @@ describe('Snowplow service', function () {
     });
   });
 
-  describe('#buildUnstructEventData', function () {
+  describe('#buildUnstructEventData', () => {
     beforeEach(function () {
       this.Events.getSchema.returns({
         name: 'xyz',
@@ -97,7 +97,7 @@ describe('Snowplow service', function () {
     it('should return an array', function () {
       expect(Array.isArray(this.unstructData)).toBe(true);
     });
-    describe('has following data', function () {
+    describe('has following data', () => {
       it('should be an unstructured event', function () {
         expect(this.unstructData[0]).toBe('trackUnstructEvent');
       });

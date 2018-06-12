@@ -68,7 +68,7 @@ export function create (widgetApi) {
   };
 
   function updateState (editorState) {
-    $rootScope.$applyAsync(function () {
+    $rootScope.$applyAsync(() => {
       if ('value' in editorState) {
         if (editorState.value) {
           field.setValue(editorState.value);
@@ -82,7 +82,7 @@ export function create (widgetApi) {
       }
 
       const flags = pick(editorState, ['redoable', 'undoable']);
-      forEach(flags, function (val, key) {
+      forEach(flags, (val, key) => {
         state[key] = val;
       });
     });

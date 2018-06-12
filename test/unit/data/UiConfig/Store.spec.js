@@ -4,7 +4,7 @@ import * as sinon from 'helpers/sinon';
 import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
 
 
-describe('data/UiConfig/Store', function () {
+describe('data/UiConfig/Store', () => {
   beforeEach(function () {
     module('contentful/test', ($provide) => {
       this.trackMigrationSpy = sinon.spy();
@@ -38,7 +38,7 @@ describe('data/UiConfig/Store', function () {
     };
   });
 
-  describe('#entries.shared', function () {
+  describe('#entries.shared', () => {
     it('#get() gets loaded config', function* () {
       this.store.default = {_migrated: {entryListViews: 'DATA'}};
       const api = yield this.create();
@@ -66,7 +66,7 @@ describe('data/UiConfig/Store', function () {
     });
   });
 
-  describe('#addOrEditCt()', function () {
+  describe('#addOrEditCt()', () => {
     beforeEach(function () {
       this.mockCt = {sys: {id: 1}, name: 'bar'};
 
@@ -140,7 +140,7 @@ describe('data/UiConfig/Store', function () {
     });
   });
 
-  describe('unmigrated data', function () {
+  describe('unmigrated data', () => {
     const INITIAL_DATA = {
       sys: { version: 1 },
       entryListViews: 'DATA'
@@ -167,7 +167,7 @@ describe('data/UiConfig/Store', function () {
       expect(this.store.default).toEqual(INITIAL_DATA);
     });
 
-    describe('migration', function () {
+    describe('migration', () => {
       it('results in `_migrated` property in payload', function* () {
         const api = yield this.create();
         yield api.entries.shared.set('UPDATED ENTRY LIST VIEWS');

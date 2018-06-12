@@ -1,6 +1,6 @@
 'use strict';
 
-describe('utils/CallBuffer', function () {
+describe('utils/CallBuffer', () => {
   beforeEach(function () {
     module('contentful/test');
     this.create = this.$inject('utils/CallBuffer').create;
@@ -9,9 +9,9 @@ describe('utils/CallBuffer', function () {
   it('should record and playback calls', function () {
     const buffer = this.create();
     const results = [];
-    buffer.call(function () { results.push(1); });
-    buffer.call(function () { results.push(2); });
-    buffer.call(function () { results.push(3); });
+    buffer.call(() => { results.push(1); });
+    buffer.call(() => { results.push(2); });
+    buffer.call(() => { results.push(3); });
     expect(results.length).toBe(0);
     buffer.resolve();
     expect(results).toEqual([1, 2, 3]);
@@ -21,9 +21,9 @@ describe('utils/CallBuffer', function () {
     const buffer = this.create();
     const results = [];
     buffer.resolve();
-    buffer.call(function () { results.push(1); });
-    buffer.call(function () { results.push(2); });
-    buffer.call(function () { results.push(3); });
+    buffer.call(() => { results.push(1); });
+    buffer.call(() => { results.push(2); });
+    buffer.call(() => { results.push(3); });
     expect(results).toEqual([1, 2, 3]);
   });
 
@@ -31,9 +31,9 @@ describe('utils/CallBuffer', function () {
     const buffer = this.create();
     const results = [];
     buffer.disable();
-    buffer.call(function () { results.push(1); });
-    buffer.call(function () { results.push(2); });
-    buffer.call(function () { results.push(3); });
+    buffer.call(() => { results.push(1); });
+    buffer.call(() => { results.push(2); });
+    buffer.call(() => { results.push(3); });
     expect(results).toEqual([]);
   });
 

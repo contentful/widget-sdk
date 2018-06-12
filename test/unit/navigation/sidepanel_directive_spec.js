@@ -2,7 +2,7 @@ import * as sinon from 'helpers/sinon';
 import * as K from 'helpers/mocks/kefir';
 import * as DOM from 'helpers/DOM';
 
-describe('cfNavSidepanel directive', function () {
+describe('cfNavSidepanel directive', () => {
   let NavStates;
   const navState$ = K.createMockProperty();
 
@@ -29,7 +29,7 @@ describe('cfNavSidepanel directive', function () {
   };
 
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.value('services/CreateSpace', CreateSpace);
       $provide.value('states/Navigator', Navigator);
       $provide.value('access_control/AccessChecker', accessChecker);
@@ -103,7 +103,7 @@ describe('cfNavSidepanel directive', function () {
     };
   });
 
-  afterEach(function () {
+  afterEach(() => {
     // reset stubs
     accessChecker.canCreateSpaceInOrganization.reset();
     accessChecker.canCreateOrganization.reset();

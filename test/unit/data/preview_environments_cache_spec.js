@@ -1,6 +1,6 @@
 'use strict';
 
-describe('data/previewEnvironmentsCache', function () {
+describe('data/previewEnvironmentsCache', () => {
   beforeEach(function () {
     module('cf.data');
     this.previewEnvironmentsCache = this.$inject('data/previewEnvironmentsCache');
@@ -11,13 +11,13 @@ describe('data/previewEnvironmentsCache', function () {
     return {sys: {id: id}};
   }
 
-  describe('#getAll()', function () {
+  describe('#getAll()', () => {
     it('fetches all', function () {
       expect(this.previewEnvironmentsCache.getAll()).toEqual({foo: makeEnv('foo')});
     });
   });
 
-  describe('#setAll', function () {
+  describe('#setAll', () => {
     it('replaces cached object', function () {
       const newObj = {test: 'new'};
       this.previewEnvironmentsCache.setAll(newObj);
@@ -25,7 +25,7 @@ describe('data/previewEnvironmentsCache', function () {
     });
   });
 
-  describe('#set', function () {
+  describe('#set', () => {
     beforeEach(function () {
       this.env = makeEnv('bar');
       this.response = this.previewEnvironmentsCache.set(this.env);
@@ -41,7 +41,7 @@ describe('data/previewEnvironmentsCache', function () {
     });
   });
 
-  describe('#clearAll', function () {
+  describe('#clearAll', () => {
     it('sets cache object to undefined', function () {
       this.previewEnvironmentsCache.clearAll();
       expect(this.previewEnvironmentsCache.getAll()).toBeUndefined();

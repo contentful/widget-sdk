@@ -9,7 +9,7 @@ angular.module('cf.app')
  * @description
  * Helpers simplifying work with path arrays.
  */
-.factory('utils/Path', [function () {
+.factory('utils/Path', [() => {
   return {
     isPrefix: isPrefix,
     isAffecting: isAffecting,
@@ -77,9 +77,7 @@ angular.module('cf.app')
 
   function getCommon (values) {
     var common = values[0];
-    var isCommon = _.every(values.slice(1), function (value) {
-      return value === common;
-    });
+    var isCommon = _.every(values.slice(1), value => value === common);
     return isCommon ? common : null;
   }
 

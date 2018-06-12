@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Analytics', function () {
+describe('Analytics', () => {
   beforeEach(function () {
     this.validateEvent = sinon.stub();
     module('contentful/test', ($provide) => {
@@ -38,7 +38,7 @@ describe('Analytics', function () {
     this.restoreEnv();
   });
 
-  describe('#enable()', function () {
+  describe('#enable()', () => {
     it('enables Segment and Snowplow', function () {
       this.analytics.enable(this.userData);
       sinon.assert.called(this.segment.enable);
@@ -52,7 +52,7 @@ describe('Analytics', function () {
     });
   });
 
-  describe('#disable()', function () {
+  describe('#disable()', () => {
     it('disables Segment and Snowplow', function () {
       this.analytics.disable();
       sinon.assert.called(this.segment.disable);
@@ -75,7 +75,7 @@ describe('Analytics', function () {
     });
   });
 
-  describe('identifying data', function () {
+  describe('identifying data', () => {
     it('should identify when enabling the service', function () {
       sinon.assert.notCalled(this.segment.identify);
       sinon.assert.notCalled(this.Snowplow.identify);
@@ -89,7 +89,7 @@ describe('Analytics', function () {
     });
   });
 
-  describe('tracking events', function () {
+  describe('tracking events', () => {
     it('calls analytics services if event is valid', function () {
       this.validateEvent.returns(true);
       this.analytics.track('Event', {data: 'foobar'});
@@ -104,7 +104,7 @@ describe('Analytics', function () {
     });
   });
 
-  describe('stateActivated', function () {
+  describe('stateActivated', () => {
     const state = {name: 'spaces.detail.entries.detail'};
     const stateParams = {spaceId: 'spaceId', entryId: 'entryId'};
 

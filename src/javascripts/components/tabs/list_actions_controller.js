@@ -35,11 +35,9 @@ angular.module('contentful')
   $scope.unarchiveSelected = performer.unarchive;
 
   function createShowChecker (action, predicate) {
-    return function () {
+    return () => {
       var selected = $scope.selection.getSelected();
-      return _.isArray(selected) && selected.length > 0 && _.every(selected, function (entity) {
-        return accessChecker.canPerformActionOnEntity(action, entity) && entity[predicate]();
-      });
+      return _.isArray(selected) && selected.length > 0 && _.every(selected, entity => accessChecker.canPerformActionOnEntity(action, entity) && entity[predicate]());
     };
   }
 
@@ -47,9 +45,7 @@ angular.module('contentful')
     var wasRemoved = removeFromCollection(entity);
 
     if (wasRemoved && $scope.paginator) {
-      $scope.paginator.setTotal(function (total) {
-        return total > 0 ? total - 1 : 0;
-      });
+      $scope.paginator.setTotal(total => total > 0 ? total - 1 : 0);
     }
   }
 
@@ -64,7 +60,7 @@ angular.module('contentful')
   }
 
   function publishButtonName () {
-    var counts = _.transform($scope.selection.getSelected(), function (acc, entity) {
+    var counts = _.transform($scope.selection.getSelected(), (acc, entity) => {
       acc[entity.isPublished() ? 'published' : 'unpublished'] += 1;
     }, {published: 0, unpublished: 0});
 

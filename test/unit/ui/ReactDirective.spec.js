@@ -1,7 +1,7 @@
 // we don't want to use prop types in this tiny module
 /* eslint-disable react/prop-types */
 
-describe('ReactDirective', function () {
+describe('ReactDirective', () => {
   let React, createReactClass;
   beforeEach(function () {
     let provide;
@@ -25,7 +25,7 @@ describe('ReactDirective', function () {
     };
   });
 
-  afterEach(function () {
+  afterEach(() => {
     React = createReactClass = null;
   });
 

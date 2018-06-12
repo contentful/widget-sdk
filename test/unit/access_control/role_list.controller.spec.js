@@ -1,4 +1,4 @@
-describe('Role List Controller', function () {
+describe('Role List Controller', () => {
   beforeEach(function () {
     module('contentful/test');
     this.scope = this.$inject('$rootScope').$new();
@@ -109,7 +109,7 @@ describe('Role List Controller', function () {
     };
   });
 
-  describe('loading roles', function () {
+  describe('loading roles', () => {
     beforeEach(function () {
       this.createController();
     });
@@ -128,7 +128,7 @@ describe('Role List Controller', function () {
     });
   });
 
-  describe('reaching the limit', function () {
+  describe('reaching the limit', () => {
     it('flags as true if limit has been reached', function () {
       this.setLimit(5, 5);
       this.createController();
@@ -154,7 +154,7 @@ describe('Role List Controller', function () {
     });
   });
 
-  describe('duplicating role', function () {
+  describe('duplicating role', () => {
     it('should be able to successfully duplicate a role', function () {
       this.createController();
       const $state = this.$inject('$state');
@@ -165,7 +165,7 @@ describe('Role List Controller', function () {
     });
   });
 
-  describe('reset fails', function () {
+  describe('reset fails', () => {
     beforeEach(function () {
       this.reset.rejects({statusCode: 500});
       this.createController();

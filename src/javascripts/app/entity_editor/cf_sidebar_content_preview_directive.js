@@ -1,5 +1,5 @@
 angular.module('contentful')
-.directive('cfSidebarContentPreview', ['require', function (require) {
+.directive('cfSidebarContentPreview', ['require', require => {
   var K = require('utils/kefir');
   var contentPreview = require('contentPreview');
   var Analytics = require('analytics/Analytics');
@@ -10,14 +10,14 @@ angular.module('contentful')
     restrict: 'E',
     scope: true,
     template: JST.cf_sidebar_content_preview(),
-    controller: ['$scope', function ($scope) {
+    controller: ['$scope', $scope => {
       var isAdmin = spaceContext.getData('spaceMembership.admin', false);
 
       $scope.isAdmin = isAdmin;
       $scope.isPreviewSetup = false;
 
       contentPreview.getForContentType($scope.entityInfo.contentTypeId)
-        .then(function (environments) {
+        .then(environments => {
           $scope.contentPreviewEnvironments = environments;
 
           var selectedEnvironmentId = contentPreview.getSelected($scope.entityInfo.contentTypeId);
@@ -25,15 +25,15 @@ angular.module('contentful')
 
           $scope.selectedEnvironment = selectedEnvironment || environments[0];
 
-          K.onValueScope($scope, $scope.otDoc.data$, function (entry) {
-            $scope.contentPreviewEnvironments.forEach(function (environment) {
+          K.onValueScope($scope, $scope.otDoc.data$, entry => {
+            $scope.contentPreviewEnvironments.forEach(environment => {
               // this function is asynchronous only because url may contain some
               // references to other entries, where the current one is linked, and
               // their resolution will take time. if you don't have any, then this
               // function will behave in a synchronous way, just returning `Promise.resolve(url)`
               contentPreview.replaceVariablesInUrl(
                 environment.url, entry, $scope.entityInfo.contentType
-              ).then(function (url) {
+              ).then(url => {
                 environment.compiledUrl = url;
               });
             });
@@ -42,12 +42,12 @@ angular.module('contentful')
           $scope.isPreviewSetup = $scope.contentPreviewEnvironments && $scope.contentPreviewEnvironments.length;
         });
 
-      $scope.selectEnvironment = function (environment) {
+      $scope.selectEnvironment = environment => {
         $scope.selectedEnvironment = environment;
         contentPreview.setSelected(environment);
       };
 
-      $scope.trackClickedLink = function () {
+      $scope.trackClickedLink = () => {
         if ($scope.isPreviewSetup) {
           var contentTypeId = $scope.selectedEnvironment.contentType;
           var contentTypeName = _.get(

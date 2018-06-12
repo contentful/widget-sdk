@@ -5,7 +5,7 @@
  * @name widgets
  */
 angular.module('contentful')
-.factory('widgets', ['require', function (require) {
+.factory('widgets', ['require', require => {
   var fieldFactory = require('fieldFactory');
   var deepFreeze = require('utils/Freeze').deepFreeze;
   var applyDefaultValues = require('widgets/WidgetParametersUtils').applyDefaultValues;
@@ -61,7 +61,7 @@ angular.module('contentful')
    * @return {object}
    */
   function buildRenderable (controls, widgets) {
-    return controls.reduce(function (acc, control) {
+    return controls.reduce((acc, control) => {
       if (control.field) {
         var renderable = buildOneRenderable(control, widgets);
         acc[renderable.sidebar ? 'sidebar' : 'form'].push(renderable);

@@ -1,9 +1,9 @@
 import * as DOM from 'helpers/DOM';
 import attachContextMenuHandler from 'ui/ContextMenuHandler';
 
-describe('app/Extensions', function () {
+describe('app/Extensions', () => {
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.value('$state', {
         href: () => 'href',
         go: sinon.stub()
@@ -40,7 +40,7 @@ describe('app/Extensions', function () {
     this.detachContextMenuHandler();
   });
 
-  describe('no custom widgets', function () {
+  describe('no custom widgets', () => {
     it('shows empty message', function () {
       this.spaceContext.widgets.refresh.resolves([]);
       this.init();
@@ -48,7 +48,7 @@ describe('app/Extensions', function () {
     });
   });
 
-  describe('custom extensions exist', function () {
+  describe('custom extensions exist', () => {
     beforeEach(function () {
       const params = {
         parameters: [],
@@ -99,7 +99,7 @@ describe('app/Extensions', function () {
       sinon.assert.calledWith(this.$inject('$state').go, '.detail', {extensionId: 'test'});
     });
 
-    describe('delete extension', function () {
+    describe('delete extension', () => {
       beforeEach(function () {
         this.delete = function (id) {
           this.container.find(`extensions.delete.${id}`).click();
@@ -127,7 +127,7 @@ describe('app/Extensions', function () {
     });
   });
 
-  describe('create extension', function () {
+  describe('create extension', () => {
     beforeEach(function () {
       this.create = function () {
         this.container.find('extensions.add').click();

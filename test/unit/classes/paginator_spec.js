@@ -1,13 +1,13 @@
 'use strict';
 
-describe('Paginator', function () {
+describe('Paginator', () => {
   beforeEach(function () {
     module('contentful/test');
     this.create = this.$inject('Paginator').create;
     this.p = this.create();
   });
 
-  describe('#next/#prev', function () {
+  describe('#next/#prev', () => {
     it('increments/decrements page counter', function () {
       this.p.next();
       this.p.next();
@@ -21,7 +21,7 @@ describe('Paginator', function () {
     });
   });
 
-  describe('#getPerPage', function () {
+  describe('#getPerPage', () => {
     it('defaults to 40', function () {
       expect(this.p.getPerPage()).toBe(40);
     });
@@ -32,7 +32,7 @@ describe('Paginator', function () {
     });
   });
 
-  describe('#getSkipParam', function () {
+  describe('#getSkipParam', () => {
     it('returns number of items to skip in query', function () {
       expect(this.p.getSkipParam()).toBe(0);
       this.p.setPage(5);
@@ -47,7 +47,7 @@ describe('Paginator', function () {
     });
   });
 
-  describe('#getPageCount', function () {
+  describe('#getPageCount', () => {
     it('defaults to 0', function () {
       expect(this.p.getPageCount()).toBe(0);
     });
@@ -72,7 +72,7 @@ describe('Paginator', function () {
     });
   });
 
-  describe('#isAtFirst', function () {
+  describe('#isAtFirst', () => {
     it('returns true when no of page is 0', function () {
       expect(this.p.isAtLast()).toBe(true);
     });
@@ -88,7 +88,7 @@ describe('Paginator', function () {
     });
   });
 
-  describe('#isAtLast', function () {
+  describe('#isAtLast', () => {
     it('returns true by default', function () {
       expect(this.p.isAtLast()).toBe(true);
     });
@@ -122,7 +122,7 @@ describe('Paginator', function () {
     const getter = 'get' + name;
     const setter = 'set' + name;
 
-    describe(`#${name} getter/setter`, function () {
+    describe(`#${name} getter/setter`, () => {
       it('is initialized with 0', function () {
         expect(this.p[getter]()).toBe(0);
       });

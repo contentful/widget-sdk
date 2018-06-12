@@ -1,10 +1,10 @@
 'use strict';
 
-describe('cfJsonEditor directive', function () {
+describe('cfJsonEditor directive', () => {
   let cmEditor, fieldApi, element;
 
   beforeEach(function () {
-    module('contentful/test', function ($provide, createQueuedDebounce) {
+    module('contentful/test', ($provide, createQueuedDebounce) => {
       $provide.value('debounce', createQueuedDebounce());
     });
 
@@ -28,11 +28,11 @@ describe('cfJsonEditor directive', function () {
     });
   });
 
-  afterEach(function () {
+  afterEach(() => {
     element = fieldApi = cmEditor = null;
   });
 
-  it('sets editor content when value changes', function () {
+  it('sets editor content when value changes', () => {
     fieldApi.onValueChanged.yield({json: true});
     sinon.assert.calledWithExactly(cmEditor.doc.setValue, beautifyJSON({json: true}));
   });
@@ -46,7 +46,7 @@ describe('cfJsonEditor directive', function () {
     expect(JSON.parse(element.find('pre').text())).toEqual({json: true});
   });
 
-  describe('when editor content changes', function () {
+  describe('when editor content changes', () => {
     beforeEach(function () {
       fieldApi.setValue = sinon.stub();
 
@@ -56,7 +56,7 @@ describe('cfJsonEditor directive', function () {
         this.$apply();
       };
 
-      this.emitContentChange = function (content) {
+      this.emitContentChange = content => {
         cmEditor.on.withArgs('change').yield({
           getValue: _.constant(content)
         });

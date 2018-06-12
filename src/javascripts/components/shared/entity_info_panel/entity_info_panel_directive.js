@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfEntityInfoPanel', ['require', function (require) {
+.directive('cfEntityInfoPanel', ['require', require => {
   var K = require('utils/kefir');
 
   return {
@@ -15,14 +15,14 @@ angular.module('contentful')
     },
     restrict: 'E',
     template: JST.entity_info_panel(),
-    controller: ['$scope', function ($scope) {
+    controller: ['$scope', $scope => {
       if ($scope.contentType) {
         $scope.contentTypeName = $scope.contentType.name || 'Untitled';
         $scope.contentTypeDescription = $scope.contentType.description;
         $scope.contentTypeId = $scope.contentType.sys.id;
       }
 
-      K.onValueScope($scope, $scope.entitySysProperty, function (sys) {
+      K.onValueScope($scope, $scope.entitySysProperty, sys => {
         $scope.sys = sys;
       });
     }]

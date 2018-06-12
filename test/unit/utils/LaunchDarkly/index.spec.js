@@ -3,7 +3,7 @@ import * as sinon from 'helpers/sinon';
 import moment from 'npm:moment';
 import { update, push } from 'utils/Collections';
 
-describe('LaunchDarkly', function () {
+describe('LaunchDarkly', () => {
   beforeEach(function () {
     const $apply = this.$apply.bind(this);
 
@@ -114,15 +114,15 @@ describe('LaunchDarkly', function () {
     };
   });
 
-  describe('#init()', function () {
-    describe('initialize()', function () {
+  describe('#init()', () => {
+    describe('initialize()', () => {
       it('should initialize ld client only once', function () {
         sinon.assert.calledOnce(this.LD.initialize);
         this.setUserDataStream(this.altUser, this.altOrg, {});
         sinon.assert.calledOnce(this.LD.initialize);
       });
     });
-    describe('identify', function () {
+    describe('identify', () => {
       it('should identify new user if already initialized', function () {
         sinon.assert.notCalled(this.client.identify);
         this.setUserDataStream(this.altUser, this.altOrg, {});
@@ -155,7 +155,7 @@ describe('LaunchDarkly', function () {
     });
   });
 
-  describe('#getCurrentVariation', function () {
+  describe('#getCurrentVariation', () => {
     it('should return a promise which resolves with variation after LD initializes', function* () {
       this.client.variation.withArgs('FLAG').returns('true');
       const variationPromise = this.ld.getCurrentVariation('FLAG');
@@ -184,7 +184,7 @@ describe('LaunchDarkly', function () {
     });
   });
 
-  describe('#onFeatureFlag', function () {
+  describe('#onFeatureFlag', () => {
     beforeEach(function () {
       this.$scope = this.$inject('$rootScope').$new();
 

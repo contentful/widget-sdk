@@ -17,7 +17,7 @@
  * <div cf-focus-ot-input="optionalExpression"></div>
  */
 angular.module('contentful')
-.directive('cfFocusOtInput', ['require', function (require) {
+.directive('cfFocusOtInput', ['require', require => {
   var K = require('utils/kefir');
   var defer = require('defer');
 
@@ -25,10 +25,10 @@ angular.module('contentful')
     restrict: 'A',
     link: function (scope, elem, attrs) {
       if (scope.$eval(attrs.cfFocusOtInput) || _.isEmpty(attrs.cfFocusOtInput)) {
-        K.onValueScope(scope, scope.otDoc.state.loaded$, function (loaded) {
+        K.onValueScope(scope, scope.otDoc.state.loaded$, loaded => {
           if (loaded) {
             var input = elem.find('input').eq(0);
-            defer(function () { input.focus(); });
+            defer(() => { input.focus(); });
           }
         });
       }

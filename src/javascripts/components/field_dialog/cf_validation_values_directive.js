@@ -5,7 +5,7 @@
  * field to add values.
  */
 angular.module('contentful')
-.directive('cfValidationValues', ['require', function (require) {
+.directive('cfValidationValues', ['require', require => {
   var KEYCODES = require('utils/keycodes').default;
   var normalizeWhiteSpace = require('stringUtils').normalizeWhiteSpace;
 
@@ -34,13 +34,13 @@ angular.module('contentful')
 
       $scope.items = $scope.validation.settings;
 
-      $scope.$watch('inputValue', function (inputValue) {
+      $scope.$watch('inputValue', inputValue => {
         if (!inputValue) {
           $scope.errorMessages = [];
         }
       });
 
-      $scope.addItem = function (ev) {
+      $scope.addItem = ev => {
         var value = ev.target.value;
         if (ev.keyCode !== KEYCODES.ENTER || !value) {
           return;
@@ -64,7 +64,7 @@ angular.module('contentful')
         ev.target.value = '';
       };
 
-      $scope.removeItem = function (i) {
+      $scope.removeItem = i => {
         $scope.items.splice(i, 1);
         $scope.validator.run();
       };

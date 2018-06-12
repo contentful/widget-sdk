@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('cf.app')
-.factory('entityStatus', [function () {
+.factory('entityStatus', [() => {
   var PREFIX = 'entity-status--';
 
   return {

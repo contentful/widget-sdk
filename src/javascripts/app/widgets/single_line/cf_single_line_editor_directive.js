@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfSingleLineEditor', ['require', function (require) {
+.directive('cfSingleLineEditor', ['require', require => {
   var Editors = require('editors');
 
   return {
@@ -14,7 +14,7 @@ angular.module('contentful')
 
       // This is necessary to free the component for garbage collection.
       // Otherwise the component is kept in a cache somewhere.
-      $scope.$on('$destroy', function () {
+      $scope.$on('$destroy', () => {
         $el.empty();
       });
     }

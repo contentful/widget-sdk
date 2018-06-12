@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfAutocompleteResults', ['require', function (require) {
+angular.module('contentful').directive('cfAutocompleteResults', ['require', require => {
   var keycodes = require('utils/keycodes').default;
   return {
     controller: 'CfAutocompleteResultsController',
@@ -9,7 +9,7 @@ angular.module('contentful').directive('cfAutocompleteResults', ['require', func
     link: function (scope, elem) {
       var navigateResultList = function navigateResultList (event) {
         var handled;
-        scope.$apply(function () {
+        scope.$apply(() => {
           if (event.keyCode === keycodes.DOWN) {
             handled = scope.resultsController.selectNext();
           } else if (event.keyCode === keycodes.UP) {
@@ -29,7 +29,7 @@ angular.module('contentful').directive('cfAutocompleteResults', ['require', func
       };
       elem[0].addEventListener('keydown', navigateResultList, true);
 
-      scope.$on('$destroy', function () {
+      scope.$on('$destroy', () => {
         elem[0].removeEventListener('keydown', navigateResultList, true);
         navigateResultList = null;
         scope = null; // MEMLEAK FIX

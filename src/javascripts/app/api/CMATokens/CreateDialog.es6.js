@@ -30,7 +30,7 @@ function initController (tokenResourceManager, $scope, successHandler) {
   $scope.input = {};
   $scope.state = {input: true};
 
-  $scope.createToken = Command.create(function () {
+  $scope.createToken = Command.create(() => {
     const tokenName = ($scope.input.tokenName || '').trim();
     const valid = validate(tokenName);
     if (valid) {

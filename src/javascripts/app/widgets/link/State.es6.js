@@ -42,9 +42,7 @@ export function create (field, fieldValue$, space, type, single) {
 
   const entities$ =
     K.combine([idsState.ids$, refreshBus.property], (ids, _refreshed) => ids)
-    .flatMapLatest(function (ids) {
-      return K.fromPromise(store.load(ids));
-    }).toProperty(() => null);
+    .flatMapLatest(ids => K.fromPromise(store.load(ids))).toProperty(() => null);
 
   return {
     /**
@@ -129,15 +127,13 @@ function createIdsState (field, fieldValue$, single, type) {
   }
 
   function setFieldValue (ids) {
-    let links = ids.map(function (id) {
-      return {
-        sys: {
-          id: id,
-          linkType: type,
-          type: 'Link'
-        }
-      };
-    });
+    let links = ids.map(id => ({
+      sys: {
+        id: id,
+        linkType: type,
+        type: 'Link'
+      }
+    }));
 
     if (links.length < 1) {
       field.removeValue();

@@ -1,6 +1,6 @@
 'use strict';
 
-describe('cfNoForm directive', function () {
+describe('cfNoForm directive', () => {
   beforeEach(module('cf.forms'));
 
   beforeEach(function () {

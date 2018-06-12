@@ -1,40 +1,39 @@
 'use strict';
 
 angular.module('cf.app')
-.directive('cfListInputEditor', [function () {
-  return {
-    restrict: 'E',
-    scope: {},
-    template: JST.cf_list_input_editor(),
-    require: '^cfWidgetApi',
-    link: function ($scope, _$el, _attrs, widgetApi) {
-      var field = widgetApi.field;
+.directive('cfListInputEditor', [() => ({
+  restrict: 'E',
+  scope: {},
+  template: JST.cf_list_input_editor(),
+  require: '^cfWidgetApi',
 
-      var removeChangeListener = field.onValueChanged(function (items) {
-        $scope.items = items || [];
-      });
+  link: function ($scope, _$el, _attrs, widgetApi) {
+    var field = widgetApi.field;
 
-      var removeDisabledStatusListener = field.onIsDisabledChanged(function (disabled) {
-        $scope.isDisabled = disabled;
-      }, true);
+    var removeChangeListener = field.onValueChanged(items => {
+      $scope.items = items || [];
+    });
 
-      var offSchemaErrorsChanged = field.onSchemaErrorsChanged(function (errors) {
-        $scope.hasErrors = errors && errors.length > 0;
-      });
+    var removeDisabledStatusListener = field.onIsDisabledChanged(disabled => {
+      $scope.isDisabled = disabled;
+    }, true);
 
-      $scope.$on('$destroy', function () {
-        removeChangeListener();
-        removeDisabledStatusListener();
-        offSchemaErrorsChanged();
-      });
+    var offSchemaErrorsChanged = field.onSchemaErrorsChanged(errors => {
+      $scope.hasErrors = errors && errors.length > 0;
+    });
 
-      $scope.$watchCollection('items', function (items) {
-        if (items && items.length > 0) {
-          field.setValue(items);
-        } else {
-          field.removeValue();
-        }
-      });
-    }
-  };
-}]);
+    $scope.$on('$destroy', () => {
+      removeChangeListener();
+      removeDisabledStatusListener();
+      offSchemaErrorsChanged();
+    });
+
+    $scope.$watchCollection('items', items => {
+      if (items && items.length > 0) {
+        field.setValue(items);
+      } else {
+        field.removeValue();
+      }
+    });
+  }
+})]);

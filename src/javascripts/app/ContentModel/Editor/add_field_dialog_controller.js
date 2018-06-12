@@ -75,7 +75,7 @@ angular.module('contentful')
     $scope.viewState.set('fieldConfiguration');
   }
 
-  $scope.$watch('field.data.name', function (name) {
+  $scope.$watch('field.data.name', name => {
     var apiNameField = $scope.newFieldForm.apiName;
     var apiName = $scope.field.data.apiName;
     if (!apiNameField || !apiNameField.$touched || !apiName) {
@@ -105,9 +105,7 @@ angular.module('contentful')
     }
 
     return $scope.dialog.confirm(field)
-    .promise.then(function () {
-      return field;
-    });
+    .promise.then(() => field);
   }
 
   /**
@@ -122,7 +120,7 @@ angular.module('contentful')
     create()
     // We don’t care about validation errors raised by
     // `configureField`, so catch is noop.
-    .then(function (field) {
+    .then(field => {
       $scope.ctEditorController.openFieldDialog(field);
     }, _.noop);
   }

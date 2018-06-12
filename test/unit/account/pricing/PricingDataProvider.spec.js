@@ -1,12 +1,12 @@
 import {createIsolatedSystem} from 'test/helpers/system-js';
 
-describe('account/pricing/PricingDataProvider', function () {
+describe('account/pricing/PricingDataProvider', () => {
   beforeEach(function () {
     module('contentful/test');
     this.PricingDataProvider = this.$inject('account/pricing/PricingDataProvider');
   });
 
-  describe('#getPlansWithSpaces()', function () {
+  describe('#getPlansWithSpaces()', () => {
     beforeEach(function () {
       this.spacePlansData = {items: [
         {sys: {id: 'plan1'}, gatekeeperKey: 'space1'},

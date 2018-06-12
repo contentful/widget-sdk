@@ -1,7 +1,7 @@
 import * as sinon from 'helpers/sinon';
 import * as K from 'helpers/mocks/kefir';
 
-describe('AutoCreateNewSpace/index', function () {
+describe('AutoCreateNewSpace/index', () => {
   beforeEach(function () {
     this.tokenStore = {
       user$: K.createMockProperty(null),
@@ -58,7 +58,7 @@ describe('AutoCreateNewSpace/index', function () {
     this.store.get.returns(false);
   });
 
-  describe('#init', function () {
+  describe('#init', () => {
     it('should be a noop when user is falsy', function () {
       this.tokenStore.organizations$.set([{sys: {id: 'org'}}]);
       this.tokenStore.spacesByOrganization$.set({
@@ -76,7 +76,7 @@ describe('AutoCreateNewSpace/index', function () {
       sinon.assert.notCalled(this.createSampleSpace);
     });
 
-    describe('qualifyUser', function () {
+    describe('qualifyUser', () => {
       // specs
       [
         [ctx => ctx.store.get.returns(true), 'space was already auto created for the user'],

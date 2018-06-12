@@ -35,7 +35,7 @@ import {byName as Colors} from 'Styles/Colors';
  */
 export default function (listItems = []) {
   return h('nav.nav-bar', [
-    h('ul.nav-bar__list', listItems.map(function (data, index) {
+    h('ul.nav-bar__list', listItems.map((data, index) => {
       const html = data.children ? navbarDropdown(data, index) : navbarItem(data, index);
       const attrs = {};
 

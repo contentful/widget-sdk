@@ -6,7 +6,7 @@ angular.module('contentful')
  * @ngdoc service
  * @name states/settings/contentPreview
  */
-.factory('states/settings/content_preview', ['require', function (require) {
+.factory('states/settings/content_preview', ['require', require => {
   var base = require('states/Base').default;
   var contextHistory = require('navigation/Breadcrumbs/History').default;
   var crumbFactory = require('navigation/Breadcrumbs/Factory');
@@ -16,7 +16,7 @@ angular.module('contentful')
     url: '',
     loadingText: 'Loading content preview…',
     template: '<cf-content-preview-list class="workbench entity-list" />',
-    controller: ['$scope', 'require', function ($scope, require) {
+    controller: ['$scope', 'require', ($scope, require) => {
       var accessChecker = require('access_control/AccessChecker');
       $scope.context.forbidden = !accessChecker.getSectionVisibility().settings;
     }]
@@ -26,7 +26,7 @@ angular.module('contentful')
     var contentPreviewEditorState = base({
       template: '<cf-content-preview-editor class="workbench">',
       loadingText: 'Loading content preview…',
-      controller: ['$scope', '$stateParams', 'contentPreview', function ($scope, $stateParams, contentPreview) {
+      controller: ['$scope', '$stateParams', 'contentPreview', ($scope, $stateParams, contentPreview) => {
         $scope.context.isNew = isNew;
         $scope.contentPreview = contentPreview;
 

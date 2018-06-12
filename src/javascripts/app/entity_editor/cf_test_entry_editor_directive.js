@@ -1,5 +1,5 @@
 angular.module('contentful')
-.directive('cfTestEntryEditor', ['require', function (require) {
+.directive('cfTestEntryEditor', ['require', require => {
   var createEditorController = require('app/entity_editor/EntryController').default;
 
   return {

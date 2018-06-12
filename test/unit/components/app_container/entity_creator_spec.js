@@ -1,14 +1,14 @@
 'use strict';
 
-describe('entityCreator', function () {
+describe('entityCreator', () => {
   let stubs;
 
-  afterEach(function () {
+  afterEach(() => {
     stubs = null;
   });
 
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       stubs = $provide.makeStubs([
         'computeUsage',
         'enforcement',
@@ -32,7 +32,7 @@ describe('entityCreator', function () {
     this.entityCreator = this.$inject('entityCreator');
   });
 
-  describe('creates an entry', function () {
+  describe('creates an entry', () => {
     let createStub;
     let contentType;
     beforeEach(inject(function (cfStub) {
@@ -46,7 +46,7 @@ describe('entityCreator', function () {
       contentType = cfStub.contentType(this.spaceContext.space, 'thing', 'Thing');
     }));
 
-    afterEach(function () {
+    afterEach(() => {
       createStub.restore();
     });
 
@@ -55,7 +55,7 @@ describe('entityCreator', function () {
       sinon.assert.called(createStub);
     });
 
-    describe('creation fails', function () {
+    describe('creation fails', () => {
       beforeEach(function () {
         createStub.returns(this.$q.reject({
           body: {
@@ -78,13 +78,13 @@ describe('entityCreator', function () {
     });
   });
 
-  describe('creates an asset', function () {
+  describe('creates an asset', () => {
     let createStub;
     beforeEach(function () {
       createStub = sinon.stub(this.spaceContext.space, 'createAsset').returns(this.$q.defer().promise);
     });
 
-    afterEach(function () {
+    afterEach(() => {
       createStub.restore();
     });
 
@@ -93,7 +93,7 @@ describe('entityCreator', function () {
       sinon.assert.called(createStub);
     });
 
-    describe('creation fails', function () {
+    describe('creation fails', () => {
       beforeEach(function () {
         createStub.returns(this.$q.reject({
           body: {

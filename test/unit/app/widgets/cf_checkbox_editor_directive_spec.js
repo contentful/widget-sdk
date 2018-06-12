@@ -1,7 +1,7 @@
 import {setCheckbox} from 'helpers/DOM';
 import * as sinon from 'helpers/sinon';
 
-describe('cfCheckboxEditor directive', function () {
+describe('cfCheckboxEditor directive', () => {
   beforeEach(function () {
     module('contentful/test');
     const widgetApi = this.$inject('mocks/widgetApi').create({

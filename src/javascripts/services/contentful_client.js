@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('contentfulClient', ['require', function (require) {
+angular.module('contentful').factory('contentfulClient', ['require', require => {
   /*
    * This module is a fork of https://github.com/contentful/contentful.js which allows us to use Contentful
    * as if it were an external service. As such it might not reflect other patterns present throughout the app.
@@ -51,12 +51,8 @@ angular.module('contentful').factory('contentfulClient', ['require', function (r
     ].join('');
 
     return $http(options)
-    .then(function (response) {
-      return response.data;
-    })
-    .catch(function (error) {
-      return $q.reject(error.data);
-    });
+    .then(response => response.data)
+    .catch(error => $q.reject(error.data));
   };
 
   Client.prototype.asset = function (id) {
@@ -101,40 +97,32 @@ angular.module('contentful').factory('contentfulClient', ['require', function (r
 
   function Asset () {}
 
-  Asset.parse = function (object) {
-    return _.extend(new Asset(), {
-      sys: Sys.parse(object.sys),
-      fields: object.fields
-    });
-  };
+  Asset.parse = object => _.extend(new Asset(), {
+    sys: Sys.parse(object.sys),
+    fields: object.fields
+  });
 
   function Entry () {}
 
-  Entry.parse = function (object) {
-    return _.extend(new Entry(), {
-      sys: Sys.parse(object.sys),
-      fields: object.fields
-    });
-  };
+  Entry.parse = object => _.extend(new Entry(), {
+    sys: Sys.parse(object.sys),
+    fields: object.fields
+  });
 
   function ContentType () {}
 
-  ContentType.parse = function (object) {
-    return _.extend(new ContentType(), {
-      sys: Sys.parse(object.sys),
-      fields: object.fields.map(Field.parse)
-    }, _.pick(object, ['name', 'displayField']));
-  };
+  ContentType.parse = object => _.extend(new ContentType(), {
+    sys: Sys.parse(object.sys),
+    fields: object.fields.map(Field.parse)
+  }, _.pick(object, ['name', 'displayField']));
 
   function Field () {}
 
-  Field.parse = function (object) {
-    return _.extend(new Field(), object);
-  };
+  Field.parse = object => _.extend(new Field(), object);
 
   function SearchResult () {}
 
-  SearchResult.parse = function (_ItemType, object) {
+  SearchResult.parse = (_ItemType, object) => {
     walkMutate(object, isParseableResource, parseResource);
     var items = resolveResponse(object);
     defineProperty(items, 'limit', object.limit);
@@ -149,39 +137,31 @@ angular.module('contentful').factory('contentfulClient', ['require', function (r
     return qs.stringify(this);
   };
 
-  Query.parse = function (object) {
-    return _.extend(new Query(), stringifyArrayValues(object));
-  };
+  Query.parse = object => _.extend(new Query(), stringifyArrayValues(object));
 
   function Space () {}
 
-  Space.parse = function (object) {
-    return _.extend(new Space(), object);
-  };
+  Space.parse = object => _.extend(new Space(), object);
 
   function Sys () {}
 
-  Sys.parse = function (object) {
-    return _.extend(
-      new Sys(),
-      _.pick(object, ['id', 'revision', 'type', 'locale']),
-      compacto({
-        contentType: object.contentType && Link.parse(object.contentType),
-        createdAt: object.createdAt && new Date(object.createdAt),
-        linkType: object.linkType,
-        updatedAt: object.updatedAt && new Date(object.updatedAt),
-        space: object.space && Link.parse(object.space)
-      })
-    );
-  };
+  Sys.parse = object => _.extend(
+    new Sys(),
+    _.pick(object, ['id', 'revision', 'type', 'locale']),
+    compacto({
+      contentType: object.contentType && Link.parse(object.contentType),
+      createdAt: object.createdAt && new Date(object.createdAt),
+      linkType: object.linkType,
+      updatedAt: object.updatedAt && new Date(object.updatedAt),
+      space: object.space && Link.parse(object.space)
+    })
+  );
 
   function Link () {}
 
-  Link.parse = function (object) {
-    return _.extend(new Link(), {
-      sys: Sys.parse(object.sys)
-    });
-  };
+  Link.parse = object => _.extend(new Link(), {
+    sys: Sys.parse(object.sys)
+  });
 
   return {
     newClient: function (params) {
@@ -207,7 +187,7 @@ angular.module('contentful').factory('contentfulClient', ['require', function (r
   }
 
   function compacto (object) {
-    return _.reduce(object, function (compacted, value, key) {
+    return _.reduce(object, (compacted, value, key) => {
       if (truthy(value)) compacted[key] = value;
       return compacted;
     }, {});
@@ -228,7 +208,7 @@ angular.module('contentful').factory('contentfulClient', ['require', function (r
   }
 
   function stringifyArrayValues (object) {
-    return _.reduce(object, function (object, value, key) {
+    return _.reduce(object, (object, value, key) => {
       object[key] = _.isArray(value) ? value.join(',') : value;
       return object;
     }, {});
@@ -238,7 +218,7 @@ angular.module('contentful').factory('contentfulClient', ['require', function (r
     if (pred(input)) { return mutator(input); }
 
     if (_.isArray(input) || _.isObject(input)) {
-      _.each(input, function (item, key) {
+      _.each(input, (item, key) => {
         input[key] = walkMutate(item, pred, mutator);
       });
       return input;
@@ -248,9 +228,7 @@ angular.module('contentful').factory('contentfulClient', ['require', function (r
   }
 
   function resolveResponse (response) {
-    walkMutate(response, isLink, function (link) {
-      return getLink(response, link) || link;
-    });
+    walkMutate(response, isLink, link => getLink(response, link) || link);
     return response.items || [];
   }
 
@@ -261,9 +239,7 @@ angular.module('contentful').factory('contentfulClient', ['require', function (r
   function getLink (response, link) {
     var type = link.sys.linkType;
     var id = link.sys.id;
-    var pred = function (resource) {
-      return resource.sys.type === type && resource.sys.id === id;
-    };
+    var pred = resource => resource.sys.type === type && resource.sys.id === id;
     return _.find(response.items, pred) ||
       response.includes && _.find(response.includes[type], pred);
   }

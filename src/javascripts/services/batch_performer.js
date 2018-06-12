@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('batchPerformer', ['require', function (require) {
+angular.module('contentful').factory('batchPerformer', ['require', require => {
   var $q = require('$q');
   var spaceContext = require('spaceContext');
   var Analytics = require('analytics/Analytics');
@@ -23,14 +23,12 @@ angular.module('contentful').factory('batchPerformer', ['require', function (req
   return {create: createBatchPerformer};
 
   function createBatchPerformer (config) {
-    return _.transform(_.keys(ACTION_NAMES), function (acc, action) {
+    return _.transform(_.keys(ACTION_NAMES), (acc, action) => {
       acc[action] = _.partial(run, action);
     }, {});
 
     function run (method) {
-      var actions = _.map(config.getSelected(), function (entity) {
-        return performAction(entity, method);
-      });
+      var actions = _.map(config.getSelected(), entity => performAction(entity, method));
 
       return $q.all(actions)
       .then(function handleResults (results) {
@@ -90,14 +88,14 @@ angular.module('contentful').factory('batchPerformer', ['require', function (req
 
     function callDelete (entity) {
       return entity.delete()
-      .then(function () {
+      .then(() => {
         config.onDelete(entity);
         return entity;
       });
     }
 
     function groupBySuccess (results) {
-      return _.transform(results, function (acc, result) {
+      return _.transform(results, (acc, result) => {
         var key = result.err ? 'failed' : 'succeeded';
         acc[key].push(result[result.err ? 'err' : 'entity']);
       }, {failed: [], succeeded: []});

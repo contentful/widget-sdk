@@ -8,7 +8,7 @@
  * the list of locales.
  */
 angular.module('cf.data')
-.factory('data/localeList', ['require', function (require) {
+.factory('data/localeList', ['require', require => {
   var localesList = require('localesList');
 
   return {create: create};
@@ -27,7 +27,7 @@ angular.module('cf.data')
     }
 
     function getDependantLocales (code) {
-      return spaceLocales.filter(function (locale) {
+      return spaceLocales.filter(locale => {
         var fallbackCode = locale.fallbackCode;
         return fallbackCode && fallbackCode === code;
       });
@@ -39,7 +39,7 @@ angular.module('cf.data')
 
     function getAvailableFallbackLocales (code) {
       var dependantLocales = getDependantLocales(code);
-      return _.filter(spaceLocales, function (locale) {
+      return _.filter(spaceLocales, locale => {
         var isDependant = dependantLocales.indexOf(locale) > -1;
         return locale.code !== code && !isDependant;
       });
@@ -66,9 +66,7 @@ angular.module('cf.data')
   }
 
   function canBeFallbackOf (code) {
-    return function (locale) {
-      return locale.contentDeliveryApi && locale.code !== code;
-    };
+    return locale => locale.contentDeliveryApi && locale.code !== code;
   }
 
   function asListItems (fn) {

@@ -9,7 +9,7 @@
  * utility methods for checking access and redirecting to sections (top menu).
  */
 angular.module('contentful')
-.factory('sectionAccess', ['require', function (require) {
+.factory('sectionAccess', ['require', require => {
   var accessChecker = require('access_control/AccessChecker');
   var spaceContext = require('spaceContext');
 
@@ -34,9 +34,7 @@ angular.module('contentful')
    */
   function getFirstAccessibleSref () {
     var visibility = accessChecker.getSectionVisibility();
-    var section = _.find(SECTION_ACCESS_ORDER, function (section) {
-      return visibility[section[0]];
-    });
+    var section = _.find(SECTION_ACCESS_ORDER, section => visibility[section[0]]);
 
     var firstAccessible = _.isArray(section) ? section[1] : null;
     var userIsAdmin = spaceContext.getData('spaceMembership.admin', false);

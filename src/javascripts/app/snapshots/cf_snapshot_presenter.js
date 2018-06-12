@@ -11,7 +11,7 @@ angular.module('cf.app')
  * implement logic needed for specific field
  * types (if the type is complex enough).
  */
-.directive('cfSnapshotPresenter', ['require', function (require) {
+.directive('cfSnapshotPresenter', ['require', require => {
   var RTL_SUPPORT_FEATURE_FLAG =
     'feature-at-03-2018-rtl-support';
 
@@ -21,7 +21,7 @@ angular.module('cf.app')
   return {
     restrict: 'E',
     template: JST.cf_snapshot_presenter(),
-    controller: ['$scope', function ($scope) {
+    controller: ['$scope', $scope => {
       var field = $scope.widget.field;
       $scope.type = getFieldType(field);
       $scope.value = $scope.fieldLocale.doc.get();
@@ -32,7 +32,7 @@ angular.module('cf.app')
         shouldDisplayRtl: _.constant(false)
       };
 
-      LD.onFeatureFlag($scope, RTL_SUPPORT_FEATURE_FLAG, function (isEnabled) {
+      LD.onFeatureFlag($scope, RTL_SUPPORT_FEATURE_FLAG, isEnabled => {
         // By default, all entity fields should be displayed as LTR unless the
         // RTL support feature flag is enabled.
         if (isEnabled) {
@@ -60,26 +60,24 @@ angular.module('cf.app')
   }
 }])
 
-.directive('cfSnapshotPresenterMarkdown', ['require', function (require) {
+.directive('cfSnapshotPresenterMarkdown', ['require', require => {
   var generatePreview = require('markdown_editor/PreviewGenerator').default;
   var K = require('utils/kefir');
 
   return {
     restrict: 'E',
     template: '<cf-markdown-preview class="markdown-preview" preview="preview" />',
-    controller: ['$scope', function ($scope) {
-      var markdown$ = K.fromScopeValue($scope, function (scope) {
-        return scope.value;
-      });
+    controller: ['$scope', $scope => {
+      var markdown$ = K.fromScopeValue($scope, scope => scope.value);
       var preview$ = generatePreview(markdown$);
-      K.onValueScope($scope, preview$, function (preview) {
+      K.onValueScope($scope, preview$, preview => {
         $scope.preview = preview.preview;
       });
     }]
   };
 }])
 
-.directive('cfSnapshotPresenterLink', ['require', function (require) {
+.directive('cfSnapshotPresenterLink', ['require', require => {
   var spaceContext = require('spaceContext');
   var EntityResolver = require('data/CMA/EntityResolver');
   var EntityHelpers = require('EntityHelpers');
@@ -92,21 +90,17 @@ angular.module('cf.app')
       'entity-helpers="helper"',
       'config="config"'
     ].join(' ') + ' />',
-    controller: ['$scope', function ($scope) {
+    controller: ['$scope', $scope => {
       var links = Array.isArray($scope.value) ? $scope.value : [$scope.value];
-      var ids = links.map(function (link) {
-        return link.sys.id;
-      });
+      var ids = links.map(link => link.sys.id);
 
       var store = EntityResolver.forType($scope.linkType, spaceContext.cma);
 
       store.load(ids)
-      .then(function (results) {
-        $scope.models = results.map(function (result) {
-          return {
-            entity: result[1]
-          };
-        });
+      .then(results => {
+        $scope.models = results.map(result => ({
+          entity: result[1]
+        }));
       });
 
       $scope.helper = EntityHelpers.newForLocale($scope.locale.code);
@@ -115,14 +109,14 @@ angular.module('cf.app')
   };
 }])
 
-.directive('cfSnapshotPresenterDate', ['require', function (require) {
+.directive('cfSnapshotPresenterDate', ['require', require => {
   var Data = require('widgets/datetime/data');
   var moment = require('moment');
 
   return {
     restrict: 'E',
     template: '<span>{{ dtString }}</span>',
-    controller: ['$scope', function ($scope) {
+    controller: ['$scope', $scope => {
       var dt = Data.userInputFromDatetime($scope.value);
       var mode = _.get($scope, 'widget.settings.format', 'date');
       var s = moment(dt.date).format('dddd, MMMM Do YYYY');

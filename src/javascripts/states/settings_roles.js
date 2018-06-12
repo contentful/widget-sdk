@@ -6,7 +6,7 @@ angular.module('contentful')
  * @ngdoc service
  * @name states/settings/roles
  */
-.factory('states/settings/roles', ['require', function (require) {
+.factory('states/settings/roles', ['require', require => {
   var base = require('states/Base').default;
   var contextHistory = require('navigation/Breadcrumbs/History').default;
   var crumbFactory = require('navigation/Breadcrumbs/Factory');
@@ -26,15 +26,11 @@ angular.module('contentful')
       baseRoleId: null
     },
     resolve: {
-      roleRepo: ['spaceContext', function (spaceContext) {
-        return RoleRepository.getInstance(spaceContext.space);
-      }],
-      baseRole: ['roleRepo', '$stateParams', function (roleRepo, $stateParams) {
-        return $stateParams.baseRoleId ? roleRepo.get($stateParams.baseRoleId) : null;
-      }]
+      roleRepo: ['spaceContext', spaceContext => RoleRepository.getInstance(spaceContext.space)],
+      baseRole: ['roleRepo', '$stateParams', (roleRepo, $stateParams) => $stateParams.baseRoleId ? roleRepo.get($stateParams.baseRoleId) : null]
     },
     template: '<cf-role-editor class="workbench role-editor" />',
-    controller: ['$scope', 'baseRole', function ($scope, baseRole) {
+    controller: ['$scope', 'baseRole', ($scope, baseRole) => {
       $scope.context.isNew = true;
       $scope.baseRole = baseRole;
       $scope.role = RoleRepository.getEmpty();
@@ -50,12 +46,10 @@ angular.module('contentful')
     name: 'detail',
     url: '/:roleId',
     resolve: {
-      role: ['RoleRepository', 'spaceContext', '$stateParams', function (RoleRepository, spaceContext, $stateParams) {
-        return RoleRepository.getInstance(spaceContext.space).get($stateParams.roleId);
-      }]
+      role: ['RoleRepository', 'spaceContext', '$stateParams', (RoleRepository, spaceContext, $stateParams) => RoleRepository.getInstance(spaceContext.space).get($stateParams.roleId)]
     },
     template: '<cf-role-editor class="workbench role-editor" />',
-    controller: ['$scope', '$stateParams', 'spaceContext', 'role', function ($scope, $stateParams, spaceContext, role) {
+    controller: ['$scope', '$stateParams', 'spaceContext', 'role', ($scope, $stateParams, spaceContext, role) => {
       spaceContext.publishedCTs.refresh();
       $scope.context.isNew = false;
       $scope.role = role;

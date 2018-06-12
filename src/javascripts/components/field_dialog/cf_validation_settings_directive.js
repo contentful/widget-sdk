@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').directive('cfValidationSetting', ['require', function (require) {
+angular.module('contentful').directive('cfValidationSetting', ['require', require => {
   var mimetype        = require('mimetype');
   var validationViews = require('validationViews');
 
@@ -7,19 +7,19 @@ angular.module('contentful').directive('cfValidationSetting', ['require', functi
     scope: true,
     restrict: 'E',
     template: JST['cf_validation_settings'](),
-    controller: ['$scope', function($scope) {
+    controller: ['$scope', $scope => {
       $scope.mimetypeGroups = mimetype.getGroupNames();
 
-      $scope.$watch('validation.currentView', function() {
+      $scope.$watch('validation.currentView', () => {
         validationViews.updateSettings($scope.validation);
       });
 
-      $scope.setMatchingView = function() {
+      $scope.setMatchingView = () => {
         $scope.validation.currentView = validationViews.getInitial($scope.validation);
       };
       $scope.setMatchingView();
 
-      $scope.$watch('validation.enabled', function (isEnabled) {
+      $scope.$watch('validation.enabled', isEnabled => {
         if (!isEnabled)
           $scope.validate();
       });

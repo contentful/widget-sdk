@@ -18,10 +18,8 @@
  */
 angular.module('contentful')
 
-.factory('fontsDotCom', ['LazyLoader', function (LazyLoader) {
-  return {
-    enable: function () {
-      LazyLoader.get('fontsDotCom');
-    }
-  };
-}]);
+.factory('fontsDotCom', ['LazyLoader', LazyLoader => ({
+  enable: function () {
+    LazyLoader.get('fontsDotCom');
+  }
+})]);

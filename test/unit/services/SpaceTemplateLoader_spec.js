@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Space Template loading service', function () {
+describe('Space Template loading service', () => {
   const sourceContentTypes = [
     {
       'sys': {
@@ -507,7 +507,7 @@ describe('Space Template loading service', function () {
   };
 
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.value('contentfulClient', {
         newClient: sinon.stub()
       });
@@ -526,11 +526,11 @@ describe('Space Template loading service', function () {
     this.spaceTemplateLoader = this.$inject('services/SpaceTemplateLoader');
   });
 
-  afterEach(inject(function ($log) {
+  afterEach(inject($log => {
     $log.assertEmpty();
   }));
 
-  describe('gets template list from contentful', function () {
+  describe('gets template list from contentful', () => {
     beforeEach(function* () {
       this.client.entries.returns(Promise.resolve([
         {fields: {id: 3, spaceId: 3}},
@@ -552,7 +552,7 @@ describe('Space Template loading service', function () {
     });
   });
 
-  describe('gets a template from contentful', function () {
+  describe('gets a template from contentful', () => {
     let template, templateInfo;
 
     beforeEach(function* () {
@@ -569,7 +569,7 @@ describe('Space Template loading service', function () {
       this.client.space.returns(Promise.resolve(spaceData));
       this.client.editingInterface.returns(Promise.resolve(sourceEditingInterfaces[0]));
 
-      yield this.spaceTemplateLoader.getTemplate(templateInfo).then(function (_template_) {
+      yield this.spaceTemplateLoader.getTemplate(templateInfo).then(_template_ => {
         template = _template_;
       });
       this.$rootScope.$digest();
@@ -591,23 +591,23 @@ describe('Space Template loading service', function () {
       sinon.assert.called(this.client.space);
     });
 
-    it('returns a template', function () {
+    it('returns a template', () => {
       expect(template).toBeDefined();
     });
 
-    it('template has content types', function () {
+    it('template has content types', () => {
       expect(template.contentTypes).toBeDefined();
     });
 
-    it('template has entries', function () {
+    it('template has entries', () => {
       expect(template.entries).toBeDefined();
     });
 
-    it('template has assets', function () {
+    it('template has assets', () => {
       expect(template.assets).toBeDefined();
     });
 
-    it('first content type is formatted correctly', function () {
+    it('first content type is formatted correctly', () => {
       expect(template.contentTypes[0]).toEqualObj({
         'sys': {
           'id': '68VvdXqINiM0MCoqwa8CQC'
@@ -625,7 +625,7 @@ describe('Space Template loading service', function () {
       });
     });
 
-    it('second content type is formatted correctly', function () {
+    it('second content type is formatted correctly', () => {
       expect(template.contentTypes[1]).toEqualObj({
         'sys': {
           'id': '1Lkju6MyzqSIcwEaAOeM4s'
@@ -662,19 +662,19 @@ describe('Space Template loading service', function () {
       });
     });
 
-    it('3rd entry has been reordered', function () {
+    it('3rd entry has been reordered', () => {
       expect(template.entries[0].sys.id).toBe('3rdct');
     });
 
-    it('4th entry has been reordered', function () {
+    it('4th entry has been reordered', () => {
       expect(template.entries[1].sys.id).toBe('4thct');
     });
 
-    it('5th entry has been reordered', function () {
+    it('5th entry has been reordered', () => {
       expect(template.entries[2].sys.id).toBe('5thct');
     });
 
-    it('first entry is formatted correctly', function () {
+    it('first entry is formatted correctly', () => {
       expect(template.entries[4]).toEqualObj({
         'sys': {
           'id': '4Gwo3bNWc8UW2ycWiswGsM',
@@ -709,7 +709,7 @@ describe('Space Template loading service', function () {
       });
     });
 
-    it('second entry is formatted correctly', function () {
+    it('second entry is formatted correctly', () => {
       expect(template.entries[3]).toEqualObj({
         'sys': {
           'id': '6kMpB6YZz2EeEuqYMqYQaM',
@@ -780,7 +780,7 @@ describe('Space Template loading service', function () {
       });
     });
 
-    it('first asset is formatted correctly', function () {
+    it('first asset is formatted correctly', () => {
       expect(template.assets[0]).toEqualObj({
         'sys': {
           'id': '5o4iPgRgYMmaGac8SckKCc'
@@ -800,7 +800,7 @@ describe('Space Template loading service', function () {
       });
     });
 
-    it('second asset is formatted correctly', function () {
+    it('second asset is formatted correctly', () => {
       expect(template.assets[1]).toEqualObj({
         'sys': {
           'id': '367wIzFbCwmWs6mQKeM6Mu'
@@ -820,15 +820,15 @@ describe('Space Template loading service', function () {
       });
     });
 
-    it('has the first api key', function () {
+    it('has the first api key', () => {
       expect(template.apiKeys[0]).toEqualObj({name: 'first api key', description: 'first api key desc'});
     });
 
-    it('has the second api key', function () {
+    it('has the second api key', () => {
       expect(template.apiKeys[1]).toEqualObj({name: 'second api key', description: 'second api key desc'});
     });
 
-    it('template has space info', function () {
+    it('template has space info', () => {
       expect(template.space).toBeDefined();
     });
   });

@@ -97,14 +97,12 @@ function parseSpaceContents (contents) {
 }
 
 function parseContentTypes (contentTypes) {
-  return _.map(contentTypes, function (contentType) {
-    return {
-      name: contentType.name,
-      displayField: contentType.displayField,
-      sys: {id: _.get(contentType, 'sys.id')},
-      fields: contentType.fields
-    };
-  });
+  return _.map(contentTypes, contentType => ({
+    name: contentType.name,
+    displayField: contentType.displayField,
+    sys: {id: _.get(contentType, 'sys.id')},
+    fields: contentType.fields
+  }));
 }
 
 function sortEntries (entries) {
@@ -129,17 +127,15 @@ function sortEntries (entries) {
 }
 
 function getLinkedEntries (entries) {
-  return entries.map(function (entry) {
+  return entries.map(entry => {
     const entryIndex = entries.indexOf(entry);
-    const rawLinks = Object.keys(entry.fields).map(function (fieldId) {
+    const rawLinks = Object.keys(entry.fields).map(fieldId => {
       const rawField = entry.fields[fieldId];
       const field = _.values(rawField)[0];
       if (isEntryLink(field)) {
         return getFieldEntriesIndex(field, entries);
       } else if (isEntityArray(field) && isEntryLink(field[0])) {
-        return field.map(function (item) {
-          return getFieldEntriesIndex(item, entries);
-        });
+        return field.map(item => getFieldEntriesIndex(item, entries));
       }
     });
 
@@ -158,36 +154,33 @@ function getFieldEntriesIndex (field, entries) {
 }
 
 function parseEntries (entries) {
-  return entries.map(function (entry) {
-    return {
-      sys: {
-        id: _.get(entry, 'sys.id'),
-        contentType: {
-          sys: {
-            id: _.get(entry, 'sys.contentType.sys.id')
-          }
+  return entries.map(entry => ({
+    sys: {
+      id: _.get(entry, 'sys.id'),
+      contentType: {
+        sys: {
+          id: _.get(entry, 'sys.contentType.sys.id')
         }
-      },
-      fields: parseEntryFields(entry.fields)
-    };
-  });
+      }
+    },
+
+    fields: parseEntryFields(entry.fields)
+  }));
 }
 
 function parseEntryFields (fields) {
-  return _.mapValues(fields, function (field) {
-    return _.mapValues(field, function (localizedField) {
-      if (isEntryLink(localizedField)) {
-        return parseEntryLink(localizedField);
-      }
-      if (isAssetLink(localizedField)) {
-        return parseAssetLink(localizedField);
-      }
-      if (isEntityArray(localizedField)) {
-        return localizedField.map(parseEntityArray);
-      }
-      return localizedField;
-    });
-  });
+  return _.mapValues(fields, field => _.mapValues(field, localizedField => {
+    if (isEntryLink(localizedField)) {
+      return parseEntryLink(localizedField);
+    }
+    if (isAssetLink(localizedField)) {
+      return parseAssetLink(localizedField);
+    }
+    if (isEntityArray(localizedField)) {
+      return localizedField.map(parseEntityArray);
+    }
+    return localizedField;
+  }));
 }
 
 function parseEntityArray (item) {
@@ -220,48 +213,42 @@ function parseAssetLink (field) {
 }
 
 function parseAssets (assets) {
-  return assets.map(function (asset) {
-    return {
-      sys: {id: _.get(asset, 'sys.id')},
-      fields: parseAssetFields(asset.fields)
-    };
-  });
+  return assets.map(asset => ({
+    sys: {id: _.get(asset, 'sys.id')},
+    fields: parseAssetFields(asset.fields)
+  }));
 }
 
 function parseAssetFields (fields) {
-  return _.mapValues(fields, function (field, fieldName) {
-    return _.mapValues(field, function (localizedField) {
-      try {
-        if (fieldName === 'file') {
-          return {
-            fileName: localizedField.fileName,
-            contentType: localizedField.contentType,
-            upload: 'http:' + localizedField.url
-          };
-        }
-      } catch (exp) {
-        logger.logError('No localizedField available', {
-          data: {
-            exp: exp,
-            localizedField: localizedField,
-            field: field,
-            fieldName: fieldName
-          }
-        });
+  return _.mapValues(fields, (field, fieldName) => _.mapValues(field, localizedField => {
+    try {
+      if (fieldName === 'file') {
+        return {
+          fileName: localizedField.fileName,
+          contentType: localizedField.contentType,
+          upload: 'http:' + localizedField.url
+        };
       }
-      return localizedField;
-    });
-  });
+    } catch (exp) {
+      logger.logError('No localizedField available', {
+        data: {
+          exp: exp,
+          localizedField: localizedField,
+          field: field,
+          fieldName: fieldName
+        }
+      });
+    }
+    return localizedField;
+  }));
 }
 
 function createApiKeyObjects (templateInfo) {
   return function appendApiKeyObjects (contents) {
-    contents.apiKeys = (templateInfo.templateDeliveryApiKeys || []).map(function (apiKey) {
-      return {
-        name: apiKey.fields.name,
-        description: apiKey.fields.description
-      };
-    });
+    contents.apiKeys = (templateInfo.templateDeliveryApiKeys || []).map(apiKey => ({
+      name: apiKey.fields.name,
+      description: apiKey.fields.description
+    }));
     return contents;
   };
 }

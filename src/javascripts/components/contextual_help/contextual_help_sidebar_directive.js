@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfContextualHelpSidebar', ['require', function (require) {
+angular.module('contentful').directive('cfContextualHelpSidebar', ['require', require => {
   var $document = require('$document');
   var $state = require('$state');
   var SumTypes = require('sum-types');
@@ -19,7 +19,7 @@ angular.module('contentful').directive('cfContextualHelpSidebar', ['require', fu
   return {
     template: '<cf-component-bridge component="component">',
     restrict: 'E',
-    controller: ['$scope', function ($scope) {
+    controller: ['$scope', $scope => {
       // initial empty render as data is loaded asynchronously
       $scope.component = ContextualSidebarComponent(null);
 
@@ -29,7 +29,7 @@ angular.module('contentful').directive('cfContextualHelpSidebar', ['require', fu
         getFirstEntryId(),
         getFirstContentType(),
         getToken()
-      ]).then(function (values) {
+      ]).then(values => {
         var userId = K.getValue(user$).sys.id;
 
         ContextualSidebarStore.init(userId, {
@@ -46,7 +46,7 @@ angular.module('contentful').directive('cfContextualHelpSidebar', ['require', fu
         ContextualSidebarStore.checkNavigatedWhileOpen();
 
         render();
-      }).catch(function (error) {
+      }).catch(error => {
         logger.logError('Could not instantiate the contextual sidebar', error);
       });
 
@@ -54,7 +54,7 @@ angular.module('contentful').directive('cfContextualHelpSidebar', ['require', fu
 
       $document.on('keydown', handleKeydown);
 
-      $scope.$on('$destroy', function () {
+      $scope.$on('$destroy', () => {
         $document.off('keydown', handleKeydown);
         $document[0].removeEventListener('click', handleClick, true);
       });
@@ -78,9 +78,7 @@ angular.module('contentful').directive('cfContextualHelpSidebar', ['require', fu
         if (spaceContext && spaceContext.cma) {
           return spaceContext.cma
             .getEntries()
-            .then(function (entries) {
-              return entries.items[0].sys.id;
-            });
+            .then(entries => entries.items[0].sys.id);
         } else {
           return $q.reject('Could not fetch entries due to empty or uninitialized space context');
         }
@@ -88,9 +86,7 @@ angular.module('contentful').directive('cfContextualHelpSidebar', ['require', fu
 
       function getFirstContentType () {
         if (spaceContext && spaceContext.publishedCTs && spaceContext.publishedCTs.getAllBare) {
-          var ct = _.sortBy(spaceContext.publishedCTs.getAllBare(), function (ct) {
-            return ct.name.length;
-          })[0];
+          var ct = _.sortBy(spaceContext.publishedCTs.getAllBare(), ct => ct.name.length)[0];
 
           return {
             id: ct.sys.id,
@@ -109,7 +105,7 @@ angular.module('contentful').directive('cfContextualHelpSidebar', ['require', fu
         if (spaceContext && spaceContext.apiKeyRepo) {
           return spaceContext.apiKeyRepo
             .getAll()
-            .then(function (apiKeys) {
+            .then(apiKeys => {
               if (!apiKeys.length) {
                 return {
                   accessToken: '<No API key found. Please create one from the API page.>',
@@ -132,14 +128,14 @@ angular.module('contentful').directive('cfContextualHelpSidebar', ['require', fu
       function handleKeydown (evt) {
         caseof(evt.keyCode, [
           [KEYCODES.ESC, ContextualSidebarStore.minimize],
-          [KEYCODES.H, function () {
+          [KEYCODES.H, () => {
             var $target = $(evt.target);
 
             if (!$target.is('input, textarea, [contenteditable="true"]')) {
               ContextualSidebarStore.toggleVisibility();
             }
           }],
-          [KEYCODES.SPACE, function () {
+          [KEYCODES.SPACE, () => {
             var state = ContextualSidebarStore.get().state;
 
             if (state.isExpanded) {

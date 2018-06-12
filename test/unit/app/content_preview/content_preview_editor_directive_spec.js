@@ -1,7 +1,7 @@
 import {setCheckbox} from 'helpers/DOM';
 import * as sinon from 'helpers/sinon';
 
-describe('cfContentPreviewEditor directive', function () {
+describe('cfContentPreviewEditor directive', () => {
   let spaceContext, contentPreview, notification, $state;
 
   beforeEach(function () {
@@ -9,7 +9,7 @@ describe('cfContentPreviewEditor directive', function () {
       info: sinon.stub().returns(),
       warn: sinon.stub().returns()
     };
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.value('access_control/AccessChecker', {wasForbidden: sinon.stub().returns(false)});
       $provide.value('notification', notification);
     });
@@ -62,11 +62,11 @@ describe('cfContentPreviewEditor directive', function () {
     };
   });
 
-  afterEach(function () {
+  afterEach(() => {
     spaceContext = contentPreview = notification = $state = null;
   });
 
-  describe('Create new content preview environment', function () {
+  describe('Create new content preview environment', () => {
     beforeEach(function () {
       contentPreview.get.rejects();
       spaceContext.publishedCTs.refreshBare.resolves([{
@@ -171,7 +171,7 @@ describe('cfContentPreviewEditor directive', function () {
     });
   });
 
-  describe('Edit existing content preview environment', function () {
+  describe('Edit existing content preview environment', () => {
     beforeEach(function () {
       const env = {
         name: 'PE 1',

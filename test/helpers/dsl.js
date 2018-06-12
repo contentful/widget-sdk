@@ -17,7 +17,7 @@ function createDsl (jasmineDsl) {
 
 
 function createHookFactory (defineHook) {
-  return function (runner) {
+  return runner => {
     defineHook(function (done) {
       Promise.resolve()
       .then(() => {
@@ -43,7 +43,7 @@ function isThenable (obj) {
 }
 
 function createCoroutineTestFactory (testFactory) {
-  return function (desc, runner, before) {
+  return (desc, runner, before) => {
     if (!runner) {
       return testFactory(desc);
     }

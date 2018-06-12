@@ -11,15 +11,13 @@ angular.module('contentful')
   var mimetype   = require('mimetype');
   var controller = this;
 
-  controller.types = _.map(mimetype.getGroupNames(), function(label, name) {
-    return {
-      name: name,
-      label: label,
-      selected: _.includes($scope.validation.settings, name)
-    };
-  });
+  controller.types = _.map(mimetype.getGroupNames(), (label, name) => ({
+    name: name,
+    label: label,
+    selected: _.includes($scope.validation.settings, name)
+  }));
 
-  controller.update = function() {
+  controller.update = () => {
     $scope.validation.settings = getSelectedGroups();
     $scope.validate();
   };

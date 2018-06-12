@@ -1,4 +1,4 @@
-describe('Experiment transformer', function () {
+describe('Experiment transformer', () => {
   beforeEach(function () {
     module('contentful/test');
 
@@ -24,7 +24,7 @@ describe('Experiment transformer', function () {
     expect(this.transformedData.data).toEqual({});
   });
 
-  describe('contexts array', function () {
+  describe('contexts array', () => {
     it('should have one element', function () {
       expect(Array.isArray(this.transformedData.contexts)).toBe(true);
       expect(this.transformedData.contexts.length).toBe(1);

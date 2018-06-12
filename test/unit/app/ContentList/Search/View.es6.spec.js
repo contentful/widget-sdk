@@ -12,7 +12,7 @@ const Components = {
   contentFilterValue: view => view.find('contentTypeFilter', 'value')
 };
 
-describe('app/ContentList/Search/View', function () {
+describe('app/ContentList/Search/View', () => {
   let actions, render, view, system;
   beforeEach(function* () {
     system = createIsolatedSystem();
@@ -71,14 +71,14 @@ describe('app/ContentList/Search/View', function () {
     };
   });
 
-  afterEach(function () {
+  afterEach(() => {
     document.body.removeAttribute('tabindex');
 
     view.destroy();
   });
 
-  describe('without initial data', function () {
-    it('renders loader', function () {
+  describe('without initial data', () => {
+    it('renders loader', () => {
       render({
         hasLoaded: false
       });
@@ -87,19 +87,19 @@ describe('app/ContentList/Search/View', function () {
     });
   });
 
-  describe('with initial data', function () {
-    beforeEach(function () {
+  describe('with initial data', () => {
+    beforeEach(() => {
       render();
     });
 
-    it('QueryInput is focused', function () {
+    it('QueryInput is focused', () => {
       const queryInputEl = Components.queryInput(view).element;
 
       expect(queryInputEl.value).toBe('');
       expect(queryInputEl).toEqual(document.activeElement);
     });
 
-    it('Content Type filter has a selected Any', function () {
+    it('Content Type filter has a selected Any', () => {
       const contentTypeFilterValue = Components.contentFilterValue(view)
         .element;
 
@@ -107,7 +107,7 @@ describe('app/ContentList/Search/View', function () {
       expect(contentTypeFilterValue.selectedOptions[0].label).toBe('Any');
     });
 
-    it('Content Type filter has all possible content types', function () {
+    it('Content Type filter has all possible content types', () => {
       const contentTypeFilterValue = Components.contentFilterValue(view)
         .element;
 
@@ -124,11 +124,11 @@ describe('app/ContentList/Search/View', function () {
       );
     });
 
-    it('has collapsed Suggestions', function () {
+    it('has collapsed Suggestions', () => {
       view.find('suggestions').assertNonExistent();
     });
 
-    it('emits ShowSuggestions on arrow down', function () {
+    it('emits ShowSuggestions on arrow down', () => {
       const queryInput = Components.queryInput(view).element;
       ReactTestUtils.Simulate.keyDown(queryInput, {
         keyCode: keycodes.DOWN
@@ -137,7 +137,7 @@ describe('app/ContentList/Search/View', function () {
       sinon.assert.calledOnce(actions.ShowSuggestions);
     });
 
-    it('selects the last pill on backspace', function () {
+    it('selects the last pill on backspace', () => {
       const queryInput = Components.queryInput(view).element;
 
       ReactTestUtils.Simulate.keyDown(queryInput, {
@@ -147,7 +147,7 @@ describe('app/ContentList/Search/View', function () {
       sinon.assert.calledOnce(actions.SetFocusOnLast);
     });
 
-    it('emits HideSuggestions on esc', function () {
+    it('emits HideSuggestions on esc', () => {
       const queryInput = Components.queryInput(view).element;
 
       ReactTestUtils.Simulate.keyDown(queryInput, {
@@ -157,7 +157,7 @@ describe('app/ContentList/Search/View', function () {
       sinon.assert.calledOnce(actions.HideSuggestions);
     });
 
-    it('emits HideSuggestions on enter', function () {
+    it('emits HideSuggestions on enter', () => {
       const queryInput = Components.queryInput(view).element;
 
       ReactTestUtils.Simulate.keyDown(queryInput, {
@@ -169,13 +169,13 @@ describe('app/ContentList/Search/View', function () {
   });
 
   describe('with searchTerm', () => {
-    beforeEach(function () {
+    beforeEach(() => {
       render({
         input: 'xoxo'
       });
     });
 
-    it('QueryInput is not focused', function () {
+    it('QueryInput is not focused', () => {
       const queryInputEl = Components.queryInput(view).element;
 
       expect(queryInputEl.value).toBe('xoxo');
@@ -195,7 +195,7 @@ describe('app/ContentList/Search/View', function () {
       });
     });
 
-    it('QueryInput is not focused', function () {
+    it('QueryInput is not focused', () => {
       const queryInputEl = Components.queryInput(view).element;
 
       expect(queryInputEl.value).toBe('');

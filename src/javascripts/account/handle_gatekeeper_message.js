@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 
-.factory('handleGatekeeperMessage', ['require', function (require) {
+.factory('handleGatekeeperMessage', ['require', require => {
   var $location = require('$location');
   var Authentication = require('Authentication');
   var notification = require('notification');
@@ -65,7 +65,7 @@ angular.module('contentful')
       ignoreEsc: true,
       backgroundClose: false
     }).promise
-    .then(function () {
+    .then(() => {
       $state.go('home');
     });
   }

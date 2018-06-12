@@ -1,6 +1,6 @@
 import * as sinon from 'helpers/sinon';
 
-describe('Entry List Controller', function () {
+describe('Entry List Controller', () => {
   let scope, spaceContext, ListQuery;
 
   const VIEW = {
@@ -18,9 +18,10 @@ describe('Entry List Controller', function () {
   };
 
   function createEntries (n) {
-    const entries = _.map(new Array(n), function () {
-      return { isDeleted: _.constant(false), data: { fields: [] } };
-    });
+    const entries = _.map(new Array(n), () => ({
+      isDeleted: _.constant(false),
+      data: { fields: [] }
+    }));
     Object.defineProperty(entries, 'total', {value: n});
     return entries;
   }
@@ -79,13 +80,13 @@ describe('Entry List Controller', function () {
     ListQuery = this.$inject('ListQuery');
   });
 
-  describe('initially undefined view', function () {
+  describe('initially undefined view', () => {
     beforeEach(function () {
       ListQuery.getForEntries = this.getQuery = sinon.stub().resolves({});
       scope.$apply();
     });
 
-    it('is undefined', function () {
+    it('is undefined', () => {
       expect(scope.context.view).toBe(undefined);
     });
 
@@ -103,13 +104,13 @@ describe('Entry List Controller', function () {
     });
   });
 
-  describe('#loadView()', function () {
+  describe('#loadView()', () => {
     beforeEach(function () {
       ListQuery.getForEntries = this.getQuery = sinon.stub().resolves({});
       scope.loadView(VIEW);
     });
 
-    it('sets the view', function () {
+    it('sets the view', () => {
       expect(scope.context.view).toEqual(VIEW);
       expect(scope.context.view).not.toBe(VIEW);
     });
@@ -119,7 +120,7 @@ describe('Entry List Controller', function () {
       sinon.assert.calledOnce(this.getQuery);
     });
 
-    describe('with `order.fieldId` value not in `displayedFieldIds`', function () {
+    describe('with `order.fieldId` value not in `displayedFieldIds`', () => {
       const VIEW_WITH_WRONG_ORDER = Object.assign({}, VIEW, {
         displayedFieldIds: ['createdAt', 'updatedAt'],
         order: {
@@ -128,7 +129,7 @@ describe('Entry List Controller', function () {
         }
       });
 
-      it('changes `order.fieldId`', function () {
+      it('changes `order.fieldId`', () => {
         scope.loadView(VIEW_WITH_WRONG_ORDER);
         scope.$apply();
         const expected = Object.assign({}, VIEW_WITH_WRONG_ORDER, {
@@ -141,8 +142,8 @@ describe('Entry List Controller', function () {
     });
   });
 
-  describe('on search change', function () {
-    it('page is set to the first one', function () {
+  describe('on search change', () => {
+    it('page is set to the first one', () => {
       scope.context.view = {};
       scope.paginator.setPage(1);
       scope.$apply();
@@ -152,7 +153,7 @@ describe('Entry List Controller', function () {
     });
   });
 
-  describe('page parameters change', function () {
+  describe('page parameters change', () => {
     beforeEach(function () {
       ListQuery.getForEntries = this.getQuery = sinon.stub().resolves({});
     });
@@ -163,8 +164,8 @@ describe('Entry List Controller', function () {
       sinon.assert.notCalled(this.getQuery);
     });
 
-    describe('triggers query on change', function () {
-      beforeEach(function () {
+    describe('triggers query on change', () => {
+      beforeEach(() => {
         scope.context.view = {};
         scope.$apply();
       });
@@ -195,10 +196,10 @@ describe('Entry List Controller', function () {
     });
   });
 
-  describe('#updateEntries()', function () {
+  describe('#updateEntries()', () => {
     let entries;
 
-    beforeEach(function () {
+    beforeEach(() => {
       scope.context.view = {};
       entries = createEntries(30);
       scope.$apply();
@@ -206,29 +207,29 @@ describe('Entry List Controller', function () {
       spaceContext.space.getEntries.resetHistory();
     });
 
-    it('sets loading flag', function () {
+    it('sets loading flag', () => {
       scope.updateEntries();
       expect(scope.context.loading).toBe(true);
       scope.$apply();
       expect(scope.context.loading).toBe(false);
     });
 
-    it('sets entries num on the paginator', function () {
+    it('sets entries num on the paginator', () => {
       scope.updateEntries();
       spaceContext.space.getEntries.resolve(entries);
       scope.$apply();
       expect(scope.paginator.getTotal()).toEqual(30);
     });
 
-    it('sets entries on scope', function () {
+    it('sets entries on scope', () => {
       scope.updateEntries();
       scope.$apply();
-      entries.forEach(function (entry, i) {
+      entries.forEach((entry, i) => {
         expect(scope.entries[i]).toBe(entry);
       });
     });
 
-    it('filters out deleted entries', function () {
+    it('filters out deleted entries', () => {
       entries[0].isDeleted = _.constant(true);
       scope.updateEntries();
       scope.$apply();
@@ -236,21 +237,21 @@ describe('Entry List Controller', function () {
       expect(scope.entries.indexOf(entries[0])).toBe(-1);
     });
 
-    it('updates selected items with retrieved list', function () {
+    it('updates selected items with retrieved list', () => {
       scope.updateEntries();
       scope.$apply();
       sinon.assert.called(scope.selection.updateList.withArgs(scope.entries));
     });
 
-    describe('creates a query object', function () {
-      it('with a default order', function () {
+    describe('creates a query object', () => {
+      it('with a default order', () => {
         scope.updateEntries();
         scope.$apply();
         expect(spaceContext.space.getEntries.args[0][0].order).toEqual('-sys.updatedAt');
       });
 
-      describe('with a user defined order', function () {
-        beforeEach(function () {
+      describe('with a user defined order', () => {
+        beforeEach(() => {
           scope.context.view.contentTypeId = 'CT';
           spaceContext.publishedCTs.fetch.withArgs('CT').resolves({
             getId: _.constant('CT'),
@@ -262,27 +263,27 @@ describe('Entry List Controller', function () {
           });
         });
 
-        it('when the field exists', function () {
+        it('when the field exists', () => {
           scope.context.view.order = {fieldId: 'ORDER_FIELD', direction: 'descending'};
           scope.$apply();
           expect(spaceContext.space.getEntries.args[0][0].order).toEqual('-fields.ORDER_FIELD');
         });
 
-        it('when the field does not exist', function () {
+        it('when the field does not exist', () => {
           scope.context.view.order = {fieldId: 'deletedFieldId', direction: 'descending'};
           scope.$apply();
           expect(spaceContext.space.getEntries.args[0][0].order).toEqual('-sys.updatedAt');
         });
       });
 
-      it('with a defined limit', function () {
+      it('with a defined limit', () => {
         scope.updateEntries();
         scope.$apply();
         spaceContext.space.getEntries.resolve(entries);
         expect(spaceContext.space.getEntries.args[0][0].limit).toEqual(40);
       });
 
-      it('with a defined skip param', function () {
+      it('with a defined skip param', () => {
         scope.paginator.getSkipParam = sinon.stub().returns(true);
         scope.updateEntries();
         scope.$apply();
@@ -291,20 +292,20 @@ describe('Entry List Controller', function () {
     });
   });
 
-  describe('#showNoEntriesAdvice()', function () {
-    beforeEach(function () {
+  describe('#showNoEntriesAdvice()', () => {
+    beforeEach(() => {
       scope.context.view = {};
       scope.context.loading = false;
     });
 
-    it('is true when there are no entries', function () {
+    it('is true when there are no entries', () => {
       scope.entries = null;
       expect(scope.showNoEntriesAdvice()).toBe(true);
       scope.entries = [];
       expect(scope.showNoEntriesAdvice()).toBe(true);
     });
 
-    it('is false when there is a search term', function () {
+    it('is false when there is a search term', () => {
       // @todo dirty hack: need to satisfy other watch
       // search controller should be tested separately (and removed here)
       scope.context.view.order = {fieldId: 'updatedAt'};
@@ -316,13 +317,13 @@ describe('Entry List Controller', function () {
       expect(scope.showNoEntriesAdvice()).toBe(false);
     });
 
-    it('is false when there is a content type filter', function () {
+    it('is false when there is a content type filter', () => {
       scope.entries = null;
       scope.context.view.contentTypeId = 'foo';
       expect(scope.showNoEntriesAdvice()).toBe(false);
     });
 
-    it('is false when the view is loading', function () {
+    it('is false when the view is loading', () => {
       scope.entries = [{}];
       scope.context.view.searchTerm = 'foo';
       scope.context.loading = true;
@@ -330,7 +331,7 @@ describe('Entry List Controller', function () {
     });
   });
 
-  describe('Api Errors', function () {
+  describe('Api Errors', () => {
     beforeEach(function () {
       this.handler = this.$inject('ReloadNotification').apiErrorHandler;
       spaceContext.space.getEntries.rejects({statusCode: 500});
@@ -344,7 +345,7 @@ describe('Entry List Controller', function () {
     });
   });
 
-  describe('#hasArchivedEntries', function () {
+  describe('#hasArchivedEntries', () => {
     let entriesResponse;
 
     beforeEach(function () {

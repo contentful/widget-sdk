@@ -40,12 +40,10 @@ angular.module('contentful')
 
   // TODO: Get rid of duplicate code in entry_list_search_controller.js
 
-  $scope.$watch(function () {
-    return {
-      viewId: getViewItem('id'),
-      search: getViewSearchState()
-    };
-  }, function () {
+  $scope.$watch(() => ({
+    viewId: getViewItem('id'),
+    search: getViewSearchState()
+  }), () => {
     if (!isViewLoaded()) {
       return;
     }
@@ -69,17 +67,15 @@ angular.module('contentful')
 
     return prepareQuery()
       .then(setIsSearching)
-      .then(function (query) {
-        return spaceContext.space.getAssets(query);
-      })
-      .then(function (assets) {
+      .then(query => spaceContext.space.getAssets(query))
+      .then(assets => {
         $scope.context.ready = true;
         controller.paginator.setTotal(assets.total);
         Tracking.searchPerformed($scope.context.view, assets.total);
         $scope.assets = filterOutDeleted(assets);
         $scope.selection.updateList($scope.assets);
         return assets;
-      }, function (err) {
+      }, err => {
         handleAssetsError(err);
         return $q.reject(err);
       })
@@ -117,13 +113,11 @@ angular.module('contentful')
     var queryForDebug;
 
     return prepareQuery()
-      .then(function (query) {
+      .then(query => {
         queryForDebug = query;
-        return assetLoader.loadPromise(function () {
-          return spaceContext.space.getAssets(query);
-        });
+        return assetLoader.loadPromise(() => spaceContext.space.getAssets(query));
       })
-      .then(function (assets) {
+      .then(assets => {
         if (!assets) {
           logger.logError('Failed to load more assets', {
             data: {
@@ -137,7 +131,7 @@ angular.module('contentful')
         assets = _.difference(assets, $scope.assets);
         $scope.assets.push.apply($scope.assets, filterOutDeleted(assets));
         $scope.selection.updateList($scope.assets);
-      }, function (err) {
+      }, err => {
         controller.paginator.prev();
         return $q.reject(err);
       })
@@ -145,16 +139,14 @@ angular.module('contentful')
   };
 
   function makeIsSearchingSetter (flag) {
-    return function (val) {
+    return val => {
       $scope.context.isSearching = flag;
       return val;
     };
   }
 
   function filterOutDeleted (assets) {
-    return _.filter(assets, function (asset) {
-      return !asset.isDeleted();
-    });
+    return _.filter(assets, asset => !asset.isDeleted());
   }
 
   function onSearchChange (newSearchState) {
@@ -167,9 +159,7 @@ angular.module('contentful')
     $scope.loadView(newView);
   }
 
-  var isSearching$ = K.fromScopeValue($scope, function ($scope) {
-    return $scope.context.isSearching;
-  });
+  var isSearching$ = K.fromScopeValue($scope, $scope => $scope.context.isSearching);
 
   function initializeSearchUI () {
     var initialSearchState = getViewSearchState();

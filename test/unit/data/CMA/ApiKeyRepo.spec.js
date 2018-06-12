@@ -1,6 +1,6 @@
 import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
 
-describe('data/CMA/ApiKeyRepo', function () {
+describe('data/CMA/ApiKeyRepo', () => {
   beforeEach(function () {
     module('contentful/test');
     const endpoint = createMockSpaceEndpoint();
@@ -20,7 +20,7 @@ describe('data/CMA/ApiKeyRepo', function () {
     };
   });
 
-  describe('#get()', function () {
+  describe('#get()', () => {
     it('gets key with preview token for id', function* () {
       const key = yield this.repo.get('ID');
       expect(key.accessToken).toBe('DELIVERY_TOKEN');
@@ -28,7 +28,7 @@ describe('data/CMA/ApiKeyRepo', function () {
     });
   });
 
-  describe('#save()', function () {
+  describe('#save()', () => {
     it('it saves key and returns updated key', function* () {
       const key = yield this.repo.get('ID');
       key.name = 'NEW NAME';
@@ -52,7 +52,7 @@ describe('data/CMA/ApiKeyRepo', function () {
     });
   });
 
-  describe('#getAll()', function () {
+  describe('#getAll()', () => {
     beforeEach(function () {
       this.deliveryStore.ID2 = { sys: {id: 'ID2'} };
     });
@@ -77,7 +77,7 @@ describe('data/CMA/ApiKeyRepo', function () {
     });
   });
 
-  describe('#remove()', function () {
+  describe('#remove()', () => {
     it('removes key', function* () {
       const keysBefore = yield this.repo.getAll();
       expect(keysBefore.length).toBe(1);

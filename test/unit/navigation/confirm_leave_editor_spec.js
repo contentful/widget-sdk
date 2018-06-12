@@ -1,6 +1,6 @@
 'use strict';
 
-describe('navigation/confirmLeaveEditor', function () {
+describe('navigation/confirmLeaveEditor', () => {
   beforeEach(function () {
     module('contentful/test');
     const createConfirm = this.$inject('navigation/confirmLeaveEditor');
@@ -25,7 +25,7 @@ describe('navigation/confirmLeaveEditor', function () {
     this.dialog.find('button[ui-command="actions.save"]').click();
     this.$apply();
     return confirmation
-    .then(function (confirmed) {
+    .then(confirmed => {
       expect(confirmed).toEqual({saved: true});
     });
   });
@@ -47,7 +47,7 @@ describe('navigation/confirmLeaveEditor', function () {
     this.$apply();
     sinon.assert.calledOnce(this.save);
     return confirmation
-    .then(function (confirmed) {
+    .then(confirmed => {
       expect(confirmed).toEqual({saved: true});
     });
   });
@@ -59,9 +59,9 @@ describe('navigation/confirmLeaveEditor', function () {
     this.dialog.find('button[ui-command="actions.save"]').click();
     this.$apply();
     return confirmation
-    .then(function () {
+    .then(() => {
       throw new Error('should not resolve');
-    }, function (error) {
+    }, error => {
       expect(error).toEqual('ERROR');
     });
   });
@@ -72,7 +72,7 @@ describe('navigation/confirmLeaveEditor', function () {
     this.dialog.find('button[ui-command="actions.discard"]').click();
     this.$apply();
     return confirmation
-    .then(function (confirmed) {
+    .then(confirmed => {
       expect(confirmed).toEqual({discarded: true});
     });
   });
@@ -83,7 +83,7 @@ describe('navigation/confirmLeaveEditor', function () {
     this.dialog.find('button[ui-command="actions.cancel"]').click();
     this.$apply();
     return confirmation
-    .then(function (confirmed) {
+    .then(confirmed => {
       expect(confirmed).toEqual(false);
     });
   });

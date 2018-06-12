@@ -1,7 +1,7 @@
 'use strict';
 import {create as createDocument} from 'helpers/mocks/entity_editor_document';
 
-describe('cfSnapshotSidebarList', function () {
+describe('cfSnapshotSidebarList', () => {
   const PER_PAGE = 7;
   const CURRENT_VERSION = 666;
 
@@ -53,9 +53,7 @@ describe('cfSnapshotSidebarList', function () {
 
     function createSnapshots (count, hasCurrent) {
       return {
-        items: _.times(count).map(function (i) {
-          return createSnapshot(i, hasCurrent && i === 0);
-        })
+        items: _.times(count).map(i => createSnapshot(i, hasCurrent && i === 0))
       };
     }
     function createSnapshot (id, isCurrent) {
@@ -93,7 +91,7 @@ describe('cfSnapshotSidebarList', function () {
     }
   });
 
-  describe('general', function () {
+  describe('general', () => {
     it('should load snapshots', function () {
       sinon.assert.calledOnce(this.getEntrySnapshots);
       expect(this.scope.snapshots).toBeDefined();

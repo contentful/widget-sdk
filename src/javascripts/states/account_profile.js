@@ -5,7 +5,7 @@ angular.module('contentful')
  * @ngdoc service
  * @name states/account
  */
-.factory('states/account/profile', ['require', function (require) {
+.factory('states/account/profile', ['require', require => {
   var base = require('states/Base').default;
   var h = require('utils/hyperscript').h;
   var workbenchHeader = require('app/Workbench').header;

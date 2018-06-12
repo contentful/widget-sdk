@@ -90,7 +90,7 @@ export function init () {
 export function refresh () {
   if (!tokenInfoMVar.isEmpty()) {
     tokenInfoMVar.empty();
-    fetchInfo().then(function (newTokenInfo) {
+    fetchInfo().then(newTokenInfo => {
       tokenInfo = newTokenInfo;
       tokenInfoMVar.put(newTokenInfo);
       const user = newTokenInfo.sys.createdBy;
@@ -99,7 +99,7 @@ export function refresh () {
       userBus.set(user);
       organizationsBus.set(organizations);
       spacesBus.set(prepareSpaces(newTokenInfo.spaces));
-    }, function () {
+    }, () => {
       ReloadNotification.trigger('The application was unable to authenticate with the server');
     });
   }
@@ -147,7 +147,7 @@ export function getSpace (id) {
 
 export function getDomains () {
   const domains = get(tokenInfo, 'domains', []);
-  return domains.reduce(function (map, value) {
+  return domains.reduce((map, value) => {
     map[value.name] = value.domain;
     return map;
   }, {});
@@ -164,7 +164,7 @@ export function getDomains () {
  * Promise is rejected if organization with a provided ID couldn't be found.
  */
 export function getOrganization (id) {
-  return getOrganizations().then(function (orgs) {
+  return getOrganizations().then(orgs => {
     const org = find(orgs, { sys: { id: id } });
     return org || $q.reject(new Error('No organization with given ID could be found.'));
   });
@@ -180,7 +180,5 @@ export function getOrganization (id) {
  *
  */
 export function getOrganizations () {
-  return tokenInfoMVar.read().then(function () {
-    return deepFreezeClone(K.getValue(organizationsBus.property));
-  });
+  return tokenInfoMVar.read().then(() => deepFreezeClone(K.getValue(organizationsBus.property)));
 }

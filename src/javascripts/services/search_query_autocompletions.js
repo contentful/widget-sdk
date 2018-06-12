@@ -25,7 +25,7 @@
 // - A couple of helper methods
 // - The public facing API, exposing some functions to the outside
 angular.module('contentful')
-.factory('searchQueryAutocompletions', ['require', function (require) {
+.factory('searchQueryAutocompletions', ['require', require => {
   var $q = require('$q');
   var mimetype = require('mimetype');
   var assetContentType = require('assetContentType');
@@ -35,7 +35,7 @@ angular.module('contentful')
   var otherwise = require('sum-types').otherwise;
 
   // Require on demand to avoid circular dependency error in `spaceContext`.
-  var requireSpaceContext = _.once(function () { return require('spaceContext'); });
+  var requireSpaceContext = _.once(() => require('spaceContext'));
 
   var RELATIVE_DATE_REGEX = /(\d+) +days +ago/i;
 
@@ -114,30 +114,22 @@ angular.module('contentful')
       ]),
       convert: function (_operator, value) {
         return caseofEq(value, [
-          ['published', function () {
-            return {'sys.publishedAt[exists]': 'true'};
-          }],
-          ['changed', function () {
-            return {
-              'sys.archivedAt[exists]': 'false',
-              'changed': 'true'
-            };
-          }],
-          ['draft', function () {
-            return {
-              'sys.archivedAt[exists]': 'false',
-              'sys.publishedVersion[exists]': 'false',
-              'changed': 'true'
-            };
-          }],
-          ['archived', function () {
-            return {
-              'sys.archivedAt[exists]': 'true'
-            };
-          }],
-          [otherwise, function () {
-            return {};
-          }]
+          ['published', () => ({
+            'sys.publishedAt[exists]': 'true'
+          })],
+          ['changed', () => ({
+            'sys.archivedAt[exists]': 'false',
+            'changed': 'true'
+          })],
+          ['draft', () => ({
+            'sys.archivedAt[exists]': 'false',
+            'sys.publishedVersion[exists]': 'false',
+            'changed': 'true'
+          })],
+          ['archived', () => ({
+            'sys.archivedAt[exists]': 'true'
+          })],
+          [otherwise, () => ({})]
         ]);
       }
     }
@@ -147,15 +139,16 @@ angular.module('contentful')
     return {
       description: opts.description,
       complete: function () {
-        return getUserMap().then(function (userMap) {
-          var values = Object.keys(userMap).map(function (name) {
-            return {value: '"' + name + '"', description: name};
-          });
+        return getUserMap().then(userMap => {
+          var values = Object.keys(userMap).map(name => ({
+            value: '"' + name + '"',
+            description: name
+          }));
           return makeListCompletion(values);
         });
       },
       convert: function (_op, value) {
-        return getUserMap().then(function (userMap) {
+        return getUserMap().then(userMap => {
           if (userMap[value]) {
             var query = {};
             query[opts.path] = userMap[value];
@@ -172,9 +165,10 @@ angular.module('contentful')
     height: imageDimensionCompletion('height', 'Height of an image in pixels'),
     type: {
       description: 'The filetype of the item',
-      complete: makeListCompletion(_.map(mimetype.getGroupNames(), function (name, id) {
-        return {value: id, description: name};
-      })),
+      complete: makeListCompletion(_.map(mimetype.getGroupNames(), (name, id) => ({
+        value: id,
+        description: name
+      }))),
       convert: function (_operator, value) {
         return {mimetype_group: value};
       }
@@ -264,19 +258,18 @@ angular.module('contentful')
   // - by default user names are just "First Last"
   // - duplicates are differentiated with ID: "First Last (someid123)"
   function getUserMap () {
-    return requireSpaceContext().users.getAll().then(function (users) {
-      var transformed = users.map(function (user) {
-        return {
-          id: user.sys.id,
-          // remove double quotes from the name
-          // this way user names don't break search box syntax
-          name: (user.firstName + ' ' + user.lastName).replace('"', '')
-        };
-      });
+    return requireSpaceContext().users.getAll().then(users => {
+      var transformed = users.map(user => ({
+        id: user.sys.id,
+
+        // remove double quotes from the name
+        // this way user names don't break search box syntax
+        name: (user.firstName + ' ' + user.lastName).replace('"', '')
+      }));
 
       var counts = _.countBy(transformed, 'name');
 
-      return transformed.reduce(function (acc, u) {
+      return transformed.reduce((acc, u) => {
         var key = counts[u.name] > 1 ? (u.name + ' (' + u.id + ')') : u.name;
         acc[key] = u.id;
         return acc;
@@ -301,9 +294,7 @@ angular.module('contentful')
     if (keyData) {
       return {
         context: keyData,
-        build: _.wrap(keyData.convert, function (convert, operator, value) {
-          return $q.resolve(convert(operator, value, space));
-        })
+        build: _.wrap(keyData.convert, (convert, operator, value) => $q.resolve(convert(operator, value, space)))
       };
     }
     var field = findField(key, contentType);
@@ -413,25 +404,25 @@ angular.module('contentful')
   function makeListCompletion (values) {
     return {
       type: 'List',
-      items: _.map(values, function (val) {
-        return _.isPlainObject(val) ? val : {value: '"' + val + '"'};
-      })
+      items: _.map(values, val => _.isPlainObject(val) ? val : {value: '"' + val + '"'})
     };
   }
 
   // Helper for creating a list completion with operators
   // with descriptions based on the type of the key
   function makeOperatorList (operators) {
-    return _.map(operators, function (op) {
-      return {value: op, description: operatorDescription(op)};
-    });
+    return _.map(operators, op => ({
+      value: op,
+      description: operatorDescription(op)
+    }));
   }
 
   function makeDateOperatorList () {
     var operators = ['==', '<', '<=', '>=', '>'];
-    return _.map(operators, function (op) {
-      return {value: op, description: dateOperatorDescription(op)};
-    });
+    return _.map(operators, op => ({
+      value: op,
+      description: dateOperatorDescription(op)
+    }));
   }
 
   function makeDateCompletion () {

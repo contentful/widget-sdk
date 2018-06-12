@@ -1,6 +1,6 @@
 angular.module('contentful').directive('cfBackNav', [
   'require',
-  function (require) {
+  require => {
     var _ = require('lodash');
     var React = require('react');
     var ReactDOM = require('react-dom');
@@ -25,14 +25,14 @@ angular.module('contentful').directive('cfBackNav', [
           );
         }
 
-        LD.onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, function (flagValue) {
+        LD.onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, flagValue => {
           state.slideInFeatureFlagValue = flagValue === 2 ? 2 : 0;
           render(state);
         });
 
         render(state);
 
-        $scope.$on('$destroy', function () {
+        $scope.$on('$destroy', () => {
           ReactDOM.unmountComponentAtNode(elem[0]);
         });
       }

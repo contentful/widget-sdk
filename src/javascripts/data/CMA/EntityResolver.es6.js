@@ -24,16 +24,8 @@ const MAX_IN_IDS = 50;
  */
 export function forType (type, space) {
   return caseof(type, [
-    ['Entry', function () {
-      return create(function (query) {
-        return space.getEntries(query);
-      });
-    }],
-    ['Asset', function () {
-      return create(function (query) {
-        return space.getAssets(query);
-      });
-    }]
+    ['Entry', () => create(query => space.getEntries(query))],
+    ['Asset', () => create(query => space.getAssets(query))]
   ]);
 }
 
@@ -72,18 +64,14 @@ function create (fetch) {
    * @returns {Promise<[[string, API.Entity?]]>}
    */
   function load (ids) {
-    const newIDs = ids.filter(function (id) {
-      // Entities that do not exist on the server have value
-      // 'undefined'. We do not want to refetch them.
-      return !(id in entitiesById);
-    });
+    const newIDs = ids.filter(id => // Entities that do not exist on the server have value
+    // 'undefined'. We do not want to refetch them.
+    !(id in entitiesById));
 
     return getEntities(fetch, newIDs)
-    .then(function (entities) {
+    .then(entities => {
       entities.forEach(addEntity);
-      return ids.map(function (id) {
-        return [id, entitiesById[id]];
-      });
+      return ids.map(id => [id, entitiesById[id]]);
     });
   }
 
@@ -122,20 +110,18 @@ function create (fetch) {
  */
 function getEntities (fetch, ids) {
   const queries = chunk(uniq(ids), MAX_IN_IDS)
-  .map(function (ids) {
-    return fetch({
-      'sys.id[in]': ids.join(','),
-      limit: MAX_IN_IDS
-    }).then((response) => {
-      return response.items;
-    }, (errorResponse) => {
-      if (errorResponse.status === 404) {
-        return [];
-      } else {
-        return $q.reject(errorResponse);
-      }
-    });
-  });
+  .map(ids => fetch({
+    'sys.id[in]': ids.join(','),
+    limit: MAX_IN_IDS
+  }).then((response) => {
+    return response.items;
+  }, (errorResponse) => {
+    if (errorResponse.status === 404) {
+      return [];
+    } else {
+      return $q.reject(errorResponse);
+    }
+  }));
 
   return $q.all(queries).then(flatten);
 }

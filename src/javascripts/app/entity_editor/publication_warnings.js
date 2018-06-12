@@ -44,7 +44,7 @@ angular.module('contentful')
  *   // at least one warning resulted in cancellation
  * });
  */
-.factory('entityEditor/publicationWarnings', ['require', function (require) {
+.factory('entityEditor/publicationWarnings', ['require', require => {
   var $q = require('$q');
 
   var NO_GROUP = '__no_group';
@@ -71,7 +71,7 @@ angular.module('contentful')
 
       warnings.push(warning);
 
-      return function () {
+      return () => {
         _.pull(warnings, warning);
       };
     }
@@ -79,19 +79,17 @@ angular.module('contentful')
     function show () {
       var processed = orderByPriority(mergeGroups());
 
-      return _.reduce(processed, function (promise, warning) {
-        return warning.shouldShow() ? promise.then(warning.warnFn) : promise;
-      }, $q.resolve());
+      return _.reduce(processed, (promise, warning) => warning.shouldShow() ? promise.then(warning.warnFn) : promise, $q.resolve());
     }
 
     function mergeGroups () {
-      var grouped = _.transform(warnings, function (acc, warning) {
+      var grouped = _.transform(warnings, (acc, warning) => {
         var group = _.isString(warning.group) ? warning.group : NO_GROUP;
         acc[group] = acc[group] || [];
         acc[group].push(warning);
       }, {});
 
-      return _.transform(grouped, function (acc, inGroup, key) {
+      return _.transform(grouped, (acc, inGroup, key) => {
         if (key === NO_GROUP) {
           acc.push.apply(acc, inGroup);
         } else {

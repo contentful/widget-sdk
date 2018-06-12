@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('navigation/closeState', ['require', function (require) {
+angular.module('contentful').factory('navigation/closeState', ['require', require => {
   var $q = require('$q');
   var $state = require('$state');
   var $location = require('$location');

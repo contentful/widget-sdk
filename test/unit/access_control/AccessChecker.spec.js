@@ -1,6 +1,6 @@
 import * as K from 'helpers/mocks/kefir';
 
-describe('Access Checker', function () {
+describe('Access Checker', () => {
   let enforcements, OrganizationRoles, TokenStore, policyChecker, ac;
   let getResStub, reasonsDeniedStub, broadcastStub, resetEnforcements, mockSpace, mockSpaceAuthContext, mockOrgEndpoint, mockSpaceEndpoint, feature;
 
@@ -17,7 +17,7 @@ describe('Access Checker', function () {
     ac.setAuthContext({authContext, spaceAuthContext: mockSpaceAuthContext});
   }
 
-  afterEach(function () {
+  afterEach(() => {
     enforcements = OrganizationRoles = policyChecker = ac = getResStub = reasonsDeniedStub = broadcastStub = mockSpaceEndpoint = feature = null;
   });
 
@@ -69,8 +69,8 @@ describe('Access Checker', function () {
     ac = this.$inject('access_control/AccessChecker');
   });
 
-  describe('Initialization', function () {
-    it('sets isInitialized$ to false when authContext is null', function () {
+  describe('Initialization', () => {
+    it('sets isInitialized$ to false when authContext is null', () => {
       ac.setOrganization(null);
       ac.setAuthContext({authContext: null});
       expect(K.getValue(ac.isInitialized$)).toEqual(false);
@@ -81,37 +81,37 @@ describe('Access Checker', function () {
       ac.setSpace(mockSpace);
       expect(K.getValue(ac.isInitialized$)).toEqual(false);
     });
-    it('sets isInitialized$ to true when authContext is set', function () {
+    it('sets isInitialized$ to true when authContext is set', () => {
       ac.setAuthContext({authContext: {}});
       expect(K.getValue(ac.isInitialized$)).toEqual(true);
     });
-    it('sets isInitialized$ to true when authContext, spaceAuthContext and space are set', function () {
+    it('sets isInitialized$ to true when authContext, spaceAuthContext and space are set', () => {
       ac.setSpace(mockSpace);
       ac.setAuthContext({authContext: {}, spaceAuthContext: mockSpaceAuthContext});
       expect(K.getValue(ac.isInitialized$)).toEqual(true);
     });
   });
 
-  describe('Access checker methods', function () {
-    beforeEach(function () {
+  describe('Access checker methods', () => {
+    beforeEach(() => {
       init();
     });
 
-    describe('#getResponses', function () {
-      it('collects responses when auth context changes', function () {
+    describe('#getResponses', () => {
+      it('collects responses when auth context changes', () => {
         const responses = ac.getResponses();
         triggerChange();
         expect(ac.getResponses() === responses).toBe(false);
       });
 
-      it('contains keys for entity actions', function () {
+      it('contains keys for entity actions', () => {
         const responses = ac.getResponses();
         const testKeys = ['createContentType', 'readEntry', 'updateAsset', 'createApiKey', 'updateSettings'];
         const intersection = _.intersection(_.keys(responses), testKeys);
         expect(intersection.length).toBe(testKeys.length);
       });
 
-      it('should not hide or disable when operation can be performed', function () {
+      it('should not hide or disable when operation can be performed', () => {
         getResStub.withArgs('read', 'Entry').returns(true);
         triggerChange();
         const response = ac.getResponses()['readEntry'];
@@ -120,7 +120,7 @@ describe('Access Checker', function () {
         expect(response.shouldDisable).toBe(false);
       });
 
-      it('should disable, but not hide when operation cannot be performed and reasons for denial are given', function () {
+      it('should disable, but not hide when operation cannot be performed and reasons for denial are given', () => {
         reasonsDeniedStub.withArgs('read', 'Entry').returns(['DENIED!']);
         triggerChange();
         const response = ac.getResponses()['readEntry'];
@@ -130,7 +130,7 @@ describe('Access Checker', function () {
         expect(_.first(response.reasons)).toBe('DENIED!');
       });
 
-      it('should hide when operation cannot be performed and no reasons are given', function () {
+      it('should hide when operation cannot be performed and no reasons are given', () => {
         const response = ac.getResponses()['readEntry'];
         expect(response.can).toBe(false);
         expect(response.shouldHide).toBe(true);
@@ -138,11 +138,11 @@ describe('Access Checker', function () {
         expect(response.reasons).toBe(null);
       });
 
-      it('should reset the persistent notification', function () {
+      it('should reset the persistent notification', () => {
         sinon.assert.called(resetEnforcements);
       });
 
-      it('should broadcast enforcement if found', function () {
+      it('should broadcast enforcement if found', () => {
         const reasons = ['DENIED!'];
         const enforcement = {message: 'ENFORCEMENT MSG'};
         reasonsDeniedStub.withArgs('read', 'Entry').returns(reasons);
@@ -156,12 +156,12 @@ describe('Access Checker', function () {
       });
     });
 
-    describe('#getResponseByActionName', function () {
-      it('returns undefined for an unknown action', function () {
+    describe('#getResponseByActionName', () => {
+      it('returns undefined for an unknown action', () => {
         expect(ac.getResponseByActionName('unknown')).toBe(undefined);
       });
 
-      it('returns response for a known action', function () {
+      it('returns response for a known action', () => {
         const n = 'readEntry';
         const response = ac.getResponseByActionName(n);
         expect(response).toBe(ac.getResponses()[n]);
@@ -169,14 +169,14 @@ describe('Access Checker', function () {
       });
     });
 
-    describe('#getSectionVisibility', function () {
-      it('changes when auth context changes', function () {
+    describe('#getSectionVisibility', () => {
+      it('changes when auth context changes', () => {
         const visibility = ac.getSectionVisibility();
         triggerChange();
         expect(ac.getSectionVisibility() === visibility).toBe(false);
       });
 
-      it('checks if there is a "hide" flag for chosen actions', function () {
+      it('checks if there is a "hide" flag for chosen actions', () => {
         function test (action, key, val) {
           const entity = key.charAt(0).toUpperCase() + key.slice(1);
           getResStub.withArgs(action, entity).returns(val);
@@ -195,7 +195,7 @@ describe('Access Checker', function () {
         });
       });
 
-      it('shows entries/assets section when it has "hide" flag, but policy checker grants access', function () {
+      it('shows entries/assets section when it has "hide" flag, but policy checker grants access', () => {
         function test (key, val) { expect(ac.getSectionVisibility()[key]).toBe(val); }
         test('entry', false);
         test('asset', false);
@@ -209,8 +209,8 @@ describe('Access Checker', function () {
       });
     });
 
-    describe('#shouldHide and #shouldDisable', function () {
-      it('are shortcuts to response object properties', function () {
+    describe('#shouldHide and #shouldDisable', () => {
+      it('are shortcuts to response object properties', () => {
         getResStub.withArgs('read', 'Entry').returns(false);
         triggerChange();
         const response = ac.getResponseByActionName('readEntry');
@@ -220,14 +220,14 @@ describe('Access Checker', function () {
         expect(ac.shouldDisable('readEntry')).toBe(response.shouldDisable);
       });
 
-      it('returns false for unknown actions', function () {
+      it('returns false for unknown actions', () => {
         expect(ac.shouldHide('unknown')).toBe(false);
         expect(ac.shouldDisable('unknown')).toBe(false);
       });
     });
 
-    describe('#canPerformActionOnEntity', function () {
-      it('calls "can" with entity data and extracts result from response', function () {
+    describe('#canPerformActionOnEntity', () => {
+      it('calls "can" with entity data and extracts result from response', () => {
         const entity = {data: {}};
         getResStub.withArgs('update', entity.data).returns('YES WE CAN');
         const result = ac.canPerformActionOnEntity('update', entity);
@@ -235,7 +235,7 @@ describe('Access Checker', function () {
         expect(result).toBe('YES WE CAN');
       });
 
-      it('determines enforcements for entity type', function () {
+      it('determines enforcements for entity type', () => {
         const reasons = ['DENIED!'];
         const entity = {data: {sys: {type: 'Entry'}}};
         reasonsDeniedStub.withArgs('update', entity.data).returns(reasons);
@@ -249,8 +249,8 @@ describe('Access Checker', function () {
       });
     });
 
-    describe('#canPerformActionOnEntryOfType', function () {
-      it('calls "can" with fake entity of given content type and extracts result from response', function () {
+    describe('#canPerformActionOnEntryOfType', () => {
+      it('calls "can" with fake entity of given content type and extracts result from response', () => {
         getResStub.returns(true);
         const result = ac.canPerformActionOnEntryOfType('update', 'ctid');
         const args = getResStub.lastCall.args;
@@ -261,22 +261,22 @@ describe('Access Checker', function () {
       });
     });
 
-    describe('#canUpdateEntry', function () {
+    describe('#canUpdateEntry', () => {
       const entry = {data: {sys: {contentType: {sys: {id: 'ctid'}}}}};
 
-      it('returns true if "can" returns true', function () {
+      it('returns true if "can" returns true', () => {
         getResStub.withArgs('update', entry.data).returns(true);
         expect(ac.canUpdateEntry(entry)).toBe(true);
       });
 
-      it('returns false if "can" returns false and there are no allow policies', function () {
+      it('returns false if "can" returns false and there are no allow policies', () => {
         getResStub.withArgs('update', entry.data).returns(false);
         policyChecker.canUpdateEntriesOfType = sinon.stub().returns(false);
         expect(ac.canUpdateEntry(entry)).toBe(false);
         sinon.assert.calledOnce(policyChecker.canUpdateEntriesOfType.withArgs('ctid'));
       });
 
-      it('returns true if "can" returns false but there are allow policies', function () {
+      it('returns true if "can" returns false but there are allow policies', () => {
         getResStub.withArgs('update', entry.data).returns(false);
         policyChecker.canUpdateEntriesOfType = sinon.stub().returns(true);
         expect(ac.canUpdateEntry(entry)).toBe(true);
@@ -284,22 +284,22 @@ describe('Access Checker', function () {
       });
     });
 
-    describe('#canUpdateAsset', function () {
+    describe('#canUpdateAsset', () => {
       const asset = {data: {}};
 
-      it('returns true if "can" returns true', function () {
+      it('returns true if "can" returns true', () => {
         getResStub.withArgs('update', asset.data).returns(true);
         expect(ac.canUpdateAsset(asset)).toBe(true);
       });
 
-      it('returns false if "can" returns false and there are no allow policies', function () {
+      it('returns false if "can" returns false and there are no allow policies', () => {
         getResStub.withArgs('update', asset.data).returns(false);
         policyChecker.canUpdateAssets = sinon.stub().returns(false);
         expect(ac.canUpdateAsset(asset)).toBe(false);
         sinon.assert.calledOnce(policyChecker.canUpdateAssets);
       });
 
-      it('returns true if "can" returns false but there are allow policies', function () {
+      it('returns true if "can" returns false but there are allow policies', () => {
         getResStub.withArgs('update', asset.data).returns(false);
         policyChecker.canUpdateAssets = sinon.stub().returns(true);
         expect(ac.canUpdateAsset(asset)).toBe(true);
@@ -307,7 +307,7 @@ describe('Access Checker', function () {
       });
     });
 
-    describe('#canUploadMultipleAssets', function () {
+    describe('#canUploadMultipleAssets', () => {
       function setup (canCreate, canUpdate, canUpdateWithPolicy, canUpdateOwn) {
         getResStub.withArgs('create', 'Asset').returns(canCreate);
         getResStub.withArgs('update', 'Asset').returns(canUpdate);
@@ -315,39 +315,39 @@ describe('Access Checker', function () {
         policyChecker.canUpdateOwnAssets = sinon.stub().returns(canUpdateOwn);
       }
 
-      it('returns false if assets cannot be created', function () {
+      it('returns false if assets cannot be created', () => {
         setup(false, false, false, false);
         expect(ac.canUploadMultipleAssets()).toBe(false);
       });
 
-      it('returns false if assets cannot be updated', function () {
+      it('returns false if assets cannot be updated', () => {
         setup(true, false, false, false);
         expect(ac.canUploadMultipleAssets()).toBe(false);
       });
 
-      it('returns false if assets and own assets cannot be updated', function () {
+      it('returns false if assets and own assets cannot be updated', () => {
         setup(true, false, false, false);
         expect(ac.canUploadMultipleAssets()).toBe(false);
       });
 
-      it('returns true if assets can be created and updated', function () {
+      it('returns true if assets can be created and updated', () => {
         setup(true, true, false, false);
         expect(ac.canUploadMultipleAssets()).toBe(true);
       });
 
-      it('returns true if assets can be created and updated with policy', function () {
+      it('returns true if assets can be created and updated with policy', () => {
         setup(true, false, true, false);
         expect(ac.canUploadMultipleAssets()).toBe(true);
       });
 
-      it('returns true if assets can be created and own assets can be updated', function () {
+      it('returns true if assets can be created and own assets can be updated', () => {
         setup(true, false, false, true);
         expect(ac.canUploadMultipleAssets()).toBe(true);
       });
     });
 
-    describe('#canModifyApiKeys', function () {
-      it('returns related response', function () {
+    describe('#canModifyApiKeys', () => {
+      it('returns related response', () => {
         expect(ac.canModifyApiKeys()).toBe(false);
         getResStub.withArgs('create', 'ApiKey').returns(true);
         triggerChange();
@@ -355,7 +355,7 @@ describe('Access Checker', function () {
       });
     });
 
-    describe('#canModifyRoles', function () {
+    describe('#canModifyRoles', () => {
       function changeSpace (hasFeature, isSpaceAdmin) {
         ac.setSpace({
           sys: {
@@ -371,7 +371,7 @@ describe('Access Checker', function () {
         feature.enabled = hasFeature;
       }
 
-      it('returns true when has feature and is admin of space, false otherwise', async function () {
+      it('returns true when has feature and is admin of space, false otherwise', async () => {
         OrganizationRoles.setUser({organizationMemberships: []});
         changeSpace(false, true);
         expect(await ac.canModifyRoles()).toBe(false);
@@ -394,7 +394,7 @@ describe('Access Checker', function () {
         expect(yield ac.canModifyRoles()).toBe(false);
       });
 
-      it('returns true when has feature, is not admin of space but is admin or owner of organization', function () {
+      it('returns true when has feature, is not admin of space but is admin or owner of organization', () => {
         const user = {organizationMemberships: [
           {organization: {sys: {id: 'org1id'}}, role: 'admin'},
           {organization: {sys: {id: 'org2id'}}, role: 'member'},
@@ -417,13 +417,13 @@ describe('Access Checker', function () {
       });
     });
 
-    describe('#canCreateSpaceInOrganization', function () {
-      it('returns false if there is no authContext', function () {
+    describe('#canCreateSpaceInOrganization', () => {
+      it('returns false if there is no authContext', () => {
         changeAuthContext(null);
         expect(ac.canCreateSpaceInOrganization('orgid')).toBe(false);
       });
 
-      it('returns result of organization authContext "can" call', function () {
+      it('returns result of organization authContext "can" call', () => {
         const organizationCanStub = sinon.stub().returns('YES WE CAN');
         changeAuthContext(makeAuthContext({
           orgid: organizationCanStub
@@ -445,14 +445,14 @@ describe('Access Checker', function () {
       });
     });
 
-    describe('#canCreateSpaceInAnyOrganization', function () {
-      beforeEach(function () {
+    describe('#canCreateSpaceInAnyOrganization', () => {
+      beforeEach(() => {
         TokenStore.organizations$ = K.createMockProperty([
           {sys: {id: 'org1'}}, {sys: {id: 'org2'}}
         ]);
       });
 
-      it('returns true if space can be created in at least on organization', function () {
+      it('returns true if space can be created in at least on organization', () => {
         changeAuthContext(makeAuthContext({
           org1: sinon.stub().returns(false),
           org2: sinon.stub().returns(true)
@@ -461,7 +461,7 @@ describe('Access Checker', function () {
         expect(ac.canCreateSpaceInAnyOrganization()).toBe(true);
       });
 
-      it('returns false if space cannot be create in any organization', function () {
+      it('returns false if space cannot be create in any organization', () => {
         changeAuthContext(makeAuthContext({
           org1: sinon.stub().returns(false),
           org2: sinon.stub().returns(false)
@@ -471,10 +471,10 @@ describe('Access Checker', function () {
       });
     });
 
-    describe('#canCreateSpace', function () {
+    describe('#canCreateSpace', () => {
       let organizationCanStub, canStub;
 
-      beforeEach(function () {
+      beforeEach(() => {
         organizationCanStub = sinon.stub().returns(false);
         canStub = sinon.stub().returns(false);
         TokenStore.organizations$ = K.createMockProperty([{sys: {id: 'org1'}}]);
@@ -483,30 +483,30 @@ describe('Access Checker', function () {
         }, canStub));
       });
 
-      it('returns false when authContext is not defined', function () {
+      it('returns false when authContext is not defined', () => {
         changeAuthContext(null);
         expect(ac.canCreateSpace()).toBe(false);
       });
 
-      it('returns false when there are no organizations', function () {
+      it('returns false when there are no organizations', () => {
         TokenStore.organizations$.set([]);
         expect(ac.canCreateSpace()).toBe(false);
       });
 
-      it('returns false when cannot create space in some organization', function () {
+      it('returns false when cannot create space in some organization', () => {
         organizationCanStub.returns(false);
         expect(ac.canCreateSpace()).toBe(false);
         sinon.assert.calledOnce(organizationCanStub);
       });
 
-      it('returns true if can create space in some organization and can create space in general', function () {
+      it('returns true if can create space in some organization and can create space in general', () => {
         organizationCanStub.returns(true);
         canStub.returns(true);
         expect(ac.canCreateSpace()).toBe(true);
         sinon.assert.calledOnce(organizationCanStub);
       });
 
-      it('returns false if can create space in some organization but cannot create spaces in general', function () {
+      it('returns false if can create space in some organization but cannot create spaces in general', () => {
         organizationCanStub.returns(true);
         canStub.returns(false);
         expect(ac.canCreateSpace()).toBe(false);
@@ -514,7 +514,7 @@ describe('Access Checker', function () {
         sinon.assert.calledOnce(canStub);
       });
 
-      it('broadcasts enforcement if found for a general case', function () {
+      it('broadcasts enforcement if found for a general case', () => {
         const reasons = ['REASONS!'];
         const enforcement = {message: 'MESSAGE'};
         organizationCanStub.returns(true);
@@ -530,30 +530,30 @@ describe('Access Checker', function () {
       });
     });
 
-    describe('#canCreateOrganization', function () {
-      beforeEach(function () {
+    describe('#canCreateOrganization', () => {
+      beforeEach(() => {
         TokenStore.user$ = K.createMockProperty();
       });
 
-      it('maps to TokenStore.user$.canCreateOrganization', function () {
+      it('maps to TokenStore.user$.canCreateOrganization', () => {
         TokenStore.user$.set({ canCreateOrganization: true });
         expect(ac.canCreateOrganization()).toEqual(true);
         TokenStore.user$.set({ canCreateOrganization: false });
         expect(ac.canCreateOrganization()).toEqual(false);
       });
-      it('defaults to false', function () {
+      it('defaults to false', () => {
         TokenStore.user$.set(null);
         expect(ac.canCreateOrganization()).toEqual(false);
       });
     });
 
-    describe('#wasForbidden', function () {
-      it('returns callback function', function () {
+    describe('#wasForbidden', () => {
+      it('returns callback function', () => {
         expect(_.isFunction(ac.wasForbidden)).toBe(true);
       });
 
-      it('sets "forbidden" flag on provided context if response is 404/3', function () {
-        [200, 404, 403].forEach(function (status) {
+      it('sets "forbidden" flag on provided context if response is 404/3', () => {
+        [200, 404, 403].forEach(status => {
           const context = {};
           const cb1 = ac.wasForbidden(context);
           cb1({statusCode: status});
@@ -561,21 +561,21 @@ describe('Access Checker', function () {
         });
       });
 
-      it('returns resolved promise with context if was forbidden', function () {
+      it('returns resolved promise with context if was forbidden', () => {
         const ctx = {};
         const cb1 = ac.wasForbidden(ctx);
 
-        return cb1({statusCode: 404}).then(function (ctx2) {
+        return cb1({statusCode: 404}).then(ctx2 => {
           expect(ctx === ctx2).toBe(true);
           expect(ctx2.forbidden).toBe(true);
         });
       });
 
-      it('returns rejected promise with response if was not forbidden', function () {
+      it('returns rejected promise with response if was not forbidden', () => {
         const cb = ac.wasForbidden({});
         const res = {statusCode: 400};
 
-        return cb(res).then(_.noop, function (res2) {
+        return cb(res).then(_.noop, res2 => {
           expect(res === res2);
         });
       });

@@ -20,9 +20,7 @@ import {isString} from 'lodash';
  * label set in a state definition.
  */
 export function init () {
-  $rootScope.$watch(function () {
-    return $state.current.label;
-  }, setTitle);
+  $rootScope.$watch(() => $state.current.label, setTitle);
 }
 
 /**

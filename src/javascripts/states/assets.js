@@ -6,7 +6,7 @@ angular.module('contentful')
  * @ngdoc service
  * @name states/assets
  */
-.factory('states/assets', ['require', function (require) {
+.factory('states/assets', ['require', require => {
   var base = require('states/Base').default;
   var createEntityPageController = require('app/entity_editor/EntityPageController').default;
 

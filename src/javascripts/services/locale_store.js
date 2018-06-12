@@ -17,12 +17,12 @@ angular.module('contentful')
  * TODO attach it to `spaceContext` instead of being global
  * TODO figure out the balance between store and repo
  */
-.factory('TheLocaleStore', ['require', function (require) {
+.factory('TheLocaleStore', ['require', require => {
   var getStore = require('TheStore').getStore;
   var create = require('TheLocaleStore/implementation').create;
   return create(getStore);
 }])
-.factory('TheLocaleStore/implementation', [function () {
+.factory('TheLocaleStore/implementation', [() => {
   return {
     create: create
   };
@@ -88,20 +88,16 @@ angular.module('contentful')
      * @returns {Promise<API.Locale[]>}
      */
     function refresh () {
-      return localeRepo.getAll().then(function (_locales) {
+      return localeRepo.getAll().then(_locales => {
         locales = _locales;
-        privateLocales = locales.filter(function (locale) {
-          return locale.contentManagementApi;
-        });
+        privateLocales = locales.filter(locale => locale.contentManagementApi);
         defaultLocale = _.find(privateLocales, {default: true}) || privateLocales[0];
 
         var spaceId = defaultLocale.sys.space.sys.id;
         store = getStore().forKey('activeLocalesForSpace.' + spaceId);
 
         var storedLocaleCodes = store.get() || [];
-        var storedLocales = _.filter(privateLocales, function (locale) {
-          return _.includes(storedLocaleCodes, locale.code);
-        });
+        var storedLocales = _.filter(privateLocales, locale => _.includes(storedLocaleCodes, locale.code));
 
         setActiveLocales(storedLocales);
 
@@ -189,7 +185,7 @@ angular.module('contentful')
         locales = locales.concat([defaultLocale]);
       }
 
-      codeToActiveLocaleMap = _.transform(locales, function (map, locale) {
+      codeToActiveLocaleMap = _.transform(locales, (map, locale) => {
         map[locale.internal_code] = true;
       }, {});
 
@@ -244,9 +240,7 @@ angular.module('contentful')
      */
     function updateActiveLocalesList () {
       activeLocales = _.filter(privateLocales, isLocaleActive);
-      activeLocales = _.uniqBy(activeLocales, function (locale) {
-        return locale.internal_code;
-      });
+      activeLocales = _.uniqBy(activeLocales, locale => locale.internal_code);
 
       store.set(_.map(activeLocales, 'code'));
     }

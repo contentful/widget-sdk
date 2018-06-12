@@ -1,12 +1,12 @@
 'use strict';
 
-describe('data/ShareJS/Utils', function () {
+describe('data/ShareJS/Utils', () => {
   beforeEach(function () {
     module('contentful/test');
     this.ShareJS = this.$inject('data/ShareJS/Utils');
   });
 
-  describe('#peek', function () {
+  describe('#peek', () => {
     test('gets value from the doc', sinon.stub().returns('value'), 'value');
     test('returns undefined if the doc throws', sinon.stub().throws(), undefined);
 
@@ -20,7 +20,7 @@ describe('data/ShareJS/Utils', function () {
     }
   });
 
-  describe('#remove', function () {
+  describe('#remove', () => {
     test('removes value from the doc', sinon.stub().callsArg(1));
     test('ignores errors thrown by the doc', sinon.stub().throws());
 
@@ -36,7 +36,7 @@ describe('data/ShareJS/Utils', function () {
     }
   });
 
-  describe('#setDeep()', function () {
+  describe('#setDeep()', () => {
     beforeEach(function () {
       const OtDocMock = this.$inject('mocks/OtDoc');
       this.doc = new OtDocMock();
@@ -68,7 +68,7 @@ describe('data/ShareJS/Utils', function () {
       expect(this.doc.snapshot.a.b.c).toBe('VAL');
     });
 
-    describe('does not update if new value equals old one', function () {
+    describe('does not update if new value equals old one', () => {
       it('for primitives', function () {
         this.doc.snapshot.a = 'VALUE';
         sinon.spy(this.doc, 'setAt');

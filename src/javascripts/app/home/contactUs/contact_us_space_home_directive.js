@@ -1,5 +1,5 @@
 angular.module('contentful')
-.directive('cfContactUsSpaceHome', ['require', function (require) {
+.directive('cfContactUsSpaceHome', ['require', require => {
   var LD = require('utils/LaunchDarkly');
   var Intercom = require('intercom');
   var renderTemplate = require('app/home/contactUs/template').render;
@@ -16,7 +16,7 @@ angular.module('contentful')
       var controller = this;
 
       render();
-      LD.onFeatureFlag($scope, flagName, function (flag) {
+      LD.onFeatureFlag($scope, flagName, flag => {
         controller.isVisible = Intercom.isEnabled() && flag;
         render();
       });

@@ -1,8 +1,8 @@
 'use strict';
 
-describe('widgets/default', function () {
+describe('widgets/default', () => {
   let getDefault, field;
-  afterEach(function () {
+  afterEach(() => {
     getDefault = field = null;
   });
 
@@ -12,77 +12,77 @@ describe('widgets/default', function () {
     getDefault = this.$inject('widgets/default');
   });
 
-  it('with an unexistent field', function () {
+  it('with an unexistent field', () => {
     field.type = 'unsupportedtype';
     expect(getDefault(field, 'displayfieldid')).toBeUndefined();
   });
 
-  describe('if validations exist but are different', function () {
-    beforeEach(function () {
+  describe('if validations exist but are different', () => {
+    beforeEach(() => {
       field.validations = [{'size': {max: 500, min: 0}}];
     });
 
-    it('for a type with a dropdown widget', function () {
+    it('for a type with a dropdown widget', () => {
       field.type = 'Symbol';
       expect(getDefault(field, 'displayfieldid')).toBe('singleLine');
     });
 
-    it('for a type with no dropdown widget', function () {
+    it('for a type with no dropdown widget', () => {
       field.type = 'Date';
       expect(getDefault(field, 'displayfieldid')).toBe('datePicker');
     });
   });
 
-  describe('if validations exist', function () {
-    beforeEach(function () {
+  describe('if validations exist', () => {
+    beforeEach(() => {
       field.validations = [{'in': ['123']}];
     });
 
-    it('for a type with a dropdown widget', function () {
+    it('for a type with a dropdown widget', () => {
       field.type = 'Symbol';
       expect(getDefault(field, 'displayfieldid')).toBe('dropdown');
     });
 
-    it('for a type with no dropdown widget', function () {
+    it('for a type with no dropdown widget', () => {
       field.type = 'Date';
       expect(getDefault(field, 'displayfieldid')).toBe('datePicker');
     });
   });
 
-  describe('if field is Text', function () {
-    beforeEach(function () {
+  describe('if field is Text', () => {
+    beforeEach(() => {
       field.type = 'Text';
       field.id = 'textfield';
     });
 
-    it('and is display field', function () {
+    it('and is display field', () => {
       expect(getDefault(field, 'textfield')).toBe('singleLine');
     });
 
-    it('is not a display field', function () {
+    it('is not a display field', () => {
       expect(getDefault(field, 'displayfieldid')).toBe('markdown');
     });
   });
 
-  it('if field is Entry', function () {
+  it('if field is Entry', () => {
     field.type = 'Link';
     field.linkType = 'Entry';
     expect(getDefault(field, 'displayfieldid')).toBe('entryLinkEditor');
   });
 
-  it('if field is Asset', function () {
+  it('if field is Asset', () => {
     field.type = 'Link';
     field.linkType = 'Asset';
     expect(getDefault(field, 'displayfieldid')).toBe('assetLinkEditor');
   });
 
-  it('if field is a list of Assets', function () {
+  it('if field is a list of Assets', () => {
     field.type = 'Array';
     field.items = {type: 'Link', linkType: 'Asset'};
     expect(getDefault(field, 'displayfieldid')).toBe('assetLinksEditor');
   });
 
-  it('if field is a list of Entries', function () {
+  it('if field is a list of Entries', () => {
     field.type = 'Array';
     field.items = {type: 'Link', linkType: 'Entry'};
     expect(getDefault(field, 'displayfieldid')).toBe('entryLinksEditor');
@@ -92,7 +92,7 @@ describe('widgets/default', function () {
     const fieldFactory = this.$inject('fieldFactory');
     const builtins = this.$inject('widgets/builtin');
 
-    _.forEach(fieldFactory.types, function (typeDescriptor) {
+    _.forEach(fieldFactory.types, typeDescriptor => {
       let field = fieldFactory.createTypeInfo(typeDescriptor);
       let widgetId = getDefault(field, 'displayfieldid');
       expect(typeof _.find(builtins, {id: widgetId})).toBe('object');

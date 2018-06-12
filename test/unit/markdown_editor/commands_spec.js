@@ -1,6 +1,6 @@
 'use strict';
 
-describe('markdown_editor/commands', function () {
+describe('markdown_editor/commands', () => {
   let textarea, editor, commands, cm;
 
   beforeEach(function () {
@@ -19,21 +19,21 @@ describe('markdown_editor/commands', function () {
     commands = Commands.create(editor);
   });
 
-  afterEach(function () {
+  afterEach(() => {
     editor.destroy();
     textarea.remove();
     textarea = editor = commands = cm = null;
   });
 
-  describe('inline commands', function () {
+  describe('inline commands', () => {
     const inlineActions = [
       { action: 'bold', prefix: '__', hint: 'text in bold' },
       { action: 'italic', prefix: '*', hint: 'text in italic' },
       { action: 'strike', prefix: '~~', hint: 'striked out' }
     ];
 
-    inlineActions.forEach(function (item) {
-      it('for ' + item.action + ': inserts sample text and selects content', function () {
+    inlineActions.forEach(item => {
+      it('for ' + item.action + ': inserts sample text and selects content', () => {
         commands[item.action]();
         expect(cm.getValue()).toBe(item.prefix + item.hint + item.prefix);
         const selection = editor.getSelection();
@@ -42,8 +42,8 @@ describe('markdown_editor/commands', function () {
       });
     });
 
-    inlineActions.forEach(function (item) {
-      it('for ' + item.action + ': wraps selection', function () {
+    inlineActions.forEach(item => {
+      it('for ' + item.action + ': wraps selection', () => {
         const words = ['super', 'hyper', 'extra'];
         editor.setValue(words.join(' '));
         editor.select({ line: 0, ch: 6 }, { line: 0, ch: 11 });
@@ -54,8 +54,8 @@ describe('markdown_editor/commands', function () {
     });
   });
 
-  describe('indent/dedent', function () {
-    it('sums up when repeated', function () {
+  describe('indent/dedent', () => {
+    it('sums up when repeated', () => {
       commands.indent();
       expect(cm.getValue()).toBe('  ');
       commands.indent();
@@ -64,7 +64,7 @@ describe('markdown_editor/commands', function () {
       expect(cm.getValue()).toBe('  ');
     });
 
-    it('works on non-empty line, preserving cursor position', function () {
+    it('works on non-empty line, preserving cursor position', () => {
       cm.setValue('test');
       cm.setCursor({ line: 0, ch: 2 });
       commands.indent();
@@ -76,7 +76,7 @@ describe('markdown_editor/commands', function () {
     });
   });
 
-  it('history commands: undo/redo things', function () {
+  it('history commands: undo/redo things', () => {
     editor.setValue('test');
     commands.undo();
     // after initial "setContent" call, history tracking starts
@@ -90,7 +90,7 @@ describe('markdown_editor/commands', function () {
     expect(editor.getValue()).toBe('test content');
   });
 
-  it('history commands: undo/redo with initial empty string', function () {
+  it('history commands: undo/redo with initial empty string', () => {
     editor.setValue('');
     editor.insertAtCursor('test');
     expect(editor.getValue()).toBe('test');
@@ -100,11 +100,11 @@ describe('markdown_editor/commands', function () {
     expect(editor.getValue()).toBe('test');
   });
 
-  describe('headers', function () {
+  describe('headers', () => {
     const headers = { h1: '#', h2: '##', h3: '###' };
 
-    _.forEach(headers, function (prefix, header) {
-      it('for header ' + header + ': toggles marker, keeps cursor position', function () {
+    _.forEach(headers, (prefix, header) => {
+      it('for header ' + header + ': toggles marker, keeps cursor position', () => {
         cm.setValue('test');
         cm.setCursor({ line: 0, ch: 2 });
         commands[header]();
@@ -116,7 +116,7 @@ describe('markdown_editor/commands', function () {
       });
     });
 
-    it('switches from one type to another', function () {
+    it('switches from one type to another', () => {
       cm.setValue('test');
       commands.h1();
       expect(cm.getValue()).toBe('# test');
@@ -127,27 +127,27 @@ describe('markdown_editor/commands', function () {
     });
   });
 
-  describe('horizontal rule', function () {
+  describe('horizontal rule', () => {
     const hrMarkup = '\n---\n\n';
 
-    it('inserts horizontal rule after current line, if not empty', function () {
+    it('inserts horizontal rule after current line, if not empty', () => {
       cm.setValue('test');
       commands.hr();
       expect(cm.getValue()).toBe('test\n' + hrMarkup);
     });
 
-    it('inserts horizontal rule in current line, if empty', function () {
+    it('inserts horizontal rule in current line, if empty', () => {
       cm.setValue('');
       commands.hr();
       expect(cm.getValue()).toBe(hrMarkup);
     });
   });
 
-  describe('code/quote', function () {
+  describe('code/quote', () => {
     const markers = { code: '    ', quote: '> ' };
 
-    _.forEach(markers, function (prefix, marker) {
-      it('for ' + marker + ': toggles marker in current line, saves cursor position', function () {
+    _.forEach(markers, (prefix, marker) => {
+      it('for ' + marker + ': toggles marker in current line, saves cursor position', () => {
         cm.setValue('test');
         cm.setCursor({ line: 0, ch: 2 });
         commands[marker]();
@@ -158,12 +158,12 @@ describe('markdown_editor/commands', function () {
         expect(editor.getCurrentCharacter()).toBe(2);
       });
 
-      it('for ' + marker + ': toggles markers in all lines selected', function () {
+      it('for ' + marker + ': toggles markers in all lines selected', () => {
         const initialValue = 'one\ntwo\nthree';
         cm.setValue(initialValue);
         cm.setSelection({ line: 0, ch: 0 }, { line: 2, ch: 5 });
         commands[marker]();
-        cm.getValue().split('\n').forEach(function (line) {
+        cm.getValue().split('\n').forEach(line => {
           expect(line.substring(0, prefix.length)).toBe(prefix);
         });
         expect(editor.getCurrentLineNumber()).toBe(2);
@@ -175,7 +175,7 @@ describe('markdown_editor/commands', function () {
     });
   });
 
-  describe('lists', function () {
+  describe('lists', () => {
     const nl = '\n';
     const initialValue = 'one\ntwo\nthree';
     const lists = { ul: '- ', ol: '1. ' };
@@ -187,13 +187,13 @@ describe('markdown_editor/commands', function () {
 
     function selectAll () { cm.setSelection({ line: 0, ch: 0 }, { line: 2, ch: Infinity }); }
 
-    _.forEach(lists, function (prefix, list) {
-      it('for ' + list + ': inserts marker, surrounds with whitespace', function () {
+    _.forEach(lists, (prefix, list) => {
+      it('for ' + list + ': inserts marker, surrounds with whitespace', () => {
         commands[list]();
         expect(cm.getValue()).toBe(nl + prefix + nl);
       });
 
-      it('for ' + list + ': creates whitespace and starts list', function () {
+      it('for ' + list + ': creates whitespace and starts list', () => {
         cm.setValue('test');
         cm.setCursor({ line: 0, ch: 2 });
         commands[list]();
@@ -203,7 +203,7 @@ describe('markdown_editor/commands', function () {
         expect(editor.getCurrentLine()).toBe('');
       });
 
-      it('for ' + list + ': toggles in multiline selection', function () {
+      it('for ' + list + ': toggles in multiline selection', () => {
         cm.setValue(initialValue);
         selectAll();
         commands[list]();
@@ -213,7 +213,7 @@ describe('markdown_editor/commands', function () {
         expect(cm.getValue()).toBe(initialValue);
       });
 
-      it('for ' + list + ': changes to other list type', function () {
+      it('for ' + list + ': changes to other list type', () => {
         const secondType = other[list];
         cm.setValue(initialValue);
         selectAll();
@@ -225,7 +225,7 @@ describe('markdown_editor/commands', function () {
     });
   });
 
-  it('generates table markup', function () {
+  it('generates table markup', () => {
     commands.table({ rows: 2, cols: 3 });
     const expected = [
       '| Header     | Header     | Header     |',
@@ -235,36 +235,36 @@ describe('markdown_editor/commands', function () {
     expect(cm.getValue().indexOf(expected) > -1).toBe(true);
   });
 
-  describe('#link()', function () {
-    it('inserts bracketed url at current cursor', function () {
+  describe('#link()', () => {
+    it('inserts bracketed url at current cursor', () => {
       cm.setValue('AB');
       cm.setCursor({line: 0, ch: 1});
       commands.link('https://example.com');
       expect(cm.getValue()).toBe('A<https://example.com>B');
     });
 
-    it('inserts titled url at current cursor', function () {
+    it('inserts titled url at current cursor', () => {
       cm.setValue('AB');
       cm.setCursor({line: 0, ch: 1});
       commands.link('https://example.com', 'title');
       expect(cm.getValue()).toBe('A[title](https://example.com)B');
     });
 
-    it('replace selection with bracketed url', function () {
+    it('replace selection with bracketed url', () => {
       cm.setValue('AXXB');
       cm.setSelection({line: 0, ch: 1}, {line: 0, ch: 3});
       commands.link('https://example.com');
       expect(cm.getValue()).toBe('A<https://example.com>B');
     });
 
-    it('replace selection with titled url', function () {
+    it('replace selection with titled url', () => {
       cm.setValue('AXXB');
       cm.setSelection({line: 0, ch: 1}, {line: 0, ch: 3});
       commands.link('https://example.com', 'title');
       expect(cm.getValue()).toBe('A[title](https://example.com)B');
     });
 
-    it('inserts link with url, text and title at current cursor', function () {
+    it('inserts link with url, text and title at current cursor', () => {
       cm.setValue('AB');
       cm.setCursor({line: 0, ch: 1});
       commands.link('https://example.com', 'link text', 'title');

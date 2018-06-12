@@ -40,15 +40,15 @@ function forceFieldObject (otDoc) {
  * locale codes as keys.
  */
 function makeLocaleMap (locales) {
-  return transform(locales, function (map, locale) {
+  return transform(locales, (map, locale) => {
     map[locale.internal_code] = true;
   }, {});
 }
 
 
 function removeUnknownLocales (data, localeMap) {
-  forEach(data.fields, function (field) {
-    keys(field).forEach(function (internalCode) {
+  forEach(data.fields, field => {
+    keys(field).forEach(internalCode => {
       if (!localeMap[internalCode]) {
         delete field[internalCode];
       }
@@ -63,11 +63,9 @@ function removeDeletedFields (snapshot, ctFields) {
     return;
   }
 
-  const ctFieldIds = map(ctFields, function (field) {
-    return field.id;
-  });
+  const ctFieldIds = map(ctFields, field => field.id);
 
-  forEach(snapshot.fields, function (_fieldValue, fieldId) {
+  forEach(snapshot.fields, (_fieldValue, fieldId) => {
     if (ctFieldIds.indexOf(fieldId) < 0) {
       delete snapshot.fields[fieldId];
     }

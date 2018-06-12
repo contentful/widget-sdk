@@ -9,7 +9,7 @@
  * We can ask if browser is: IE, iOS or running on Apple device.
  * We also determine what key is used as keystroke action modifier ("Ctrl" or "Cmd")
  */
-angular.module('contentful').factory('userAgent', ['require', function (require) {
+angular.module('contentful').factory('userAgent', ['require', require => {
 
   var $window   = require('$window');
   var userAgent = _.get($window, 'navigator.userAgent', '');

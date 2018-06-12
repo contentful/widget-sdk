@@ -1,6 +1,6 @@
 import * as sinon from 'helpers/sinon';
 
-describe('cfZenmode', function () {
+describe('cfZenmode', () => {
   let editor;
 
   const tieSpy = sinon.spy();
@@ -29,12 +29,12 @@ describe('cfZenmode', function () {
     editor = elem.find('.CodeMirror').get(0).CodeMirror;
   });
 
-  it('Registers editor on startup', function () {
+  it('Registers editor on startup', () => {
     sinon.assert.calledOnce(apiMock.registerChild);
     sinon.assert.calledOnce(tieSpy);
   });
 
-  it('Syncs changes from editor to parent', function () {
+  it('Syncs changes from editor to parent', () => {
     editor.setValue('ZEN MODE VALUE');
     sinon.assert.calledOnce(apiMock.syncToParent);
   });

@@ -40,7 +40,7 @@ export default makeState({
       }
     }
   },
-  controller: ['$scope', function ($scope) {
+  controller: ['$scope', $scope => {
     $scope.context.ready = true;
   }]
 });

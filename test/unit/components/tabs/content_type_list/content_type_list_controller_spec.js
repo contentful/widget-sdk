@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Content Type List Controller', function () {
+describe('Content Type List Controller', () => {
   beforeEach(function () {
     module('contentful/test');
 
@@ -22,14 +22,14 @@ describe('Content Type List Controller', function () {
     expect(this.scope.numFields({fields: [{}]})).toEqual(1);
   });
 
-  describe('on search term change', function () {
+  describe('on search term change', () => {
     it('if term is null list is not changed', function () {
       this.scope.context.searchTerm = null;
       this.scope.$apply();
       expect(this.scope.context.list).toBe('all');
     });
 
-    describe('if term is set', function () {
+    describe('if term is set', () => {
       beforeEach(function () {
         this.scope.context.searchTerm = 'thing';
         this.scope.$apply();
@@ -45,7 +45,7 @@ describe('Content Type List Controller', function () {
     });
   });
 
-  describe('switching lists', function () {
+  describe('switching lists', () => {
     it('preserves search term', function () {
       this.scope.context.searchTerm = 'thing';
       this.scope.context.list = 'changed';
@@ -60,7 +60,7 @@ describe('Content Type List Controller', function () {
     });
   });
 
-  describe('list of content types', function () {
+  describe('list of content types', () => {
     it('only contains content types matched by the search', function () {
       const matched = {name: 'MATCH'};
       const unmatched = {name: 'MA'};
@@ -76,7 +76,7 @@ describe('Content Type List Controller', function () {
     });
   });
 
-  describe('query check', function () {
+  describe('query check', () => {
     it('has a query', function () {
       this.scope.context.searchTerm = 'term';
       expect(this.scope.hasQuery()).toBeTruthy();
@@ -93,7 +93,7 @@ describe('Content Type List Controller', function () {
     });
   });
 
-  describe('status class and label', function () {
+  describe('status class and label', () => {
     it('is updated', function () {
       const contentType = {sys: {publishedVersion: 1, version: 100}};
       expect(this.scope.statusClass(contentType)).toBe('updated');

@@ -2,7 +2,7 @@ import * as DOM from 'helpers/DOM';
 import createSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
 import * as sinon from 'helpers/sinon';
 
-describe('app/RoleSelector', function () {
+describe('app/RoleSelector', () => {
   beforeEach(function () {
     module('contentful/test');
     this.$client = $('<div class="client"/>');
@@ -26,9 +26,7 @@ describe('app/RoleSelector', function () {
 
     const openRoleSelector = this.$inject('app/ContentList/RoleSelector').default;
 
-    this.open = function (initialValue) {
-      return openRoleSelector(endpoint.request, initialValue);
-    };
+    this.open = initialValue => openRoleSelector(endpoint.request, initialValue);
   });
 
   afterEach(function () {

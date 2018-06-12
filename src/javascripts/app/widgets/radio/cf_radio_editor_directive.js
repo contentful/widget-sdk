@@ -6,7 +6,7 @@ angular.module('cf.app')
  * @module cf.app
  * @name cfRadioEditor
  */
-.directive('cfRadioEditor', ['require', function (require) {
+.directive('cfRadioEditor', ['require', require => {
   var random = require('random');
   var selectionController = require('widgets/selectionController');
   return {

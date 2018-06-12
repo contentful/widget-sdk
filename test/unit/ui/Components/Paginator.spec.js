@@ -2,7 +2,7 @@ import * as sinon from 'helpers/sinon';
 import {h} from 'ui/Framework';
 import paginator from 'ui/Components/Paginator';
 
-describe('ui/Components/Paginator', function () {
+describe('ui/Components/Paginator', () => {
   beforeEach(function () {
     this.view = this.createUI();
     this.select = sinon.spy();

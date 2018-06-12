@@ -6,7 +6,7 @@ angular.module('contentful')
  * @ngdoc service
  * @name validationDecorator
  */
-.factory('validationDecorator', ['require', function (require) {
+.factory('validationDecorator', ['require', require => {
   var pluralize = require('pluralize');
   var validationViews = require('validationViews');
   var createSchema = require('validation');
@@ -95,30 +95,24 @@ angular.module('contentful')
    * @returns {DecoratedValidation[]}
    */
   function decorateFieldValidations (field) {
-    var types = _.filter(validationTypesForField(field), function (t) {
-      return t in validationSettings;
-    });
+    var types = _.filter(validationTypesForField(field), t => t in validationSettings);
 
     var fieldValidations = _.map(types, validationDecorator(field));
 
     if (field.items) {
       var itemValidations = decorateFieldValidations(field.items);
-      _.each(itemValidations, function (v) {
+      _.each(itemValidations, v => {
         v.onItems = true;
       });
 
       // remove unique validation for items as we don't support
       // it for items nor for the Array container type
-      itemValidations = _.filter(itemValidations, function (validation) {
-        return validation.type !== 'unique';
-      });
+      itemValidations = _.filter(itemValidations, validation => validation.type !== 'unique');
 
       fieldValidations = itemValidations.concat(fieldValidations);
     }
 
-    return _.sortBy(fieldValidations, function (validation) {
-      return validationsOrder.indexOf(validation.type);
-    });
+    return _.sortBy(fieldValidations, validation => validationsOrder.indexOf(validation.type));
   }
 
   function validationDecorator (field) {
@@ -188,7 +182,7 @@ angular.module('contentful')
       errors = schema.errors(extractOne(validation));
     }
 
-    return _.forEach(errors, function (error) {
+    return _.forEach(errors, error => {
       error.path = [];
       error.message = getErrorMessage(validation.type, error);
     });
@@ -217,9 +211,9 @@ angular.module('contentful')
   }
 
   function validateAll (decoratedValidations) {
-    return _.reduce(decoratedValidations, function (allErrors, validation, index) {
+    return _.reduce(decoratedValidations, (allErrors, validation, index) => {
       var errors = validate(validation);
-      _.forEach(errors, function (error) {
+      _.forEach(errors, error => {
         error.path = [index].concat(error.path);
       });
       return allErrors.concat(errors);
@@ -231,9 +225,7 @@ angular.module('contentful')
    * `type` from a list of `validations`.
    */
   function findValidationByType (validations, name) {
-    return _.find(validations, function (validation) {
-      return validationName(validation) === name;
-    });
+    return _.find(validations, validation => validationName(validation) === name);
   }
 
   function getValidationLabel (field, type) {

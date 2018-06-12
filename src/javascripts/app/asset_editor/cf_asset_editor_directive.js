@@ -1,6 +1,6 @@
 angular.module('contentful').directive('cfAssetEditor', [
   'require',
-  function (require) {
+  require => {
     var createEditorController = require('app/entity_editor/AssetController')
       .default;
     return {
@@ -12,9 +12,7 @@ angular.module('contentful').directive('cfAssetEditor', [
       template: JST.asset_editor(),
       controller: [
         '$scope',
-        function ($scope) {
-          return createEditorController($scope, $scope.assetId);
-        }
+        $scope => createEditorController($scope, $scope.assetId)
       ]
     };
   }

@@ -172,9 +172,7 @@ function createElement (container, selector) {
   // Bind a function that excepts an element as its first argument to
   // the lazily computed element of this interface.
   function bindEl (fn) {
-    return function (...args) {
-      return fn(getElement(), ...args);
-    };
+    return (...args) => fn(getElement(), ...args);
   }
 
   function getElement () {

@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Tracking persistent notification', function () {
+describe('Tracking persistent notification', () => {
   beforeEach(function () {
     module('contentful/test');
     this.analytics = this.$inject('analytics/Analytics');
@@ -8,7 +8,7 @@ describe('Tracking persistent notification', function () {
     this.trackPersistenNotification = this.$inject('analyticsEvents/persistentNotification');
   });
 
-  describe('without organization data available', function () {
+  describe('without organization data available', () => {
     it('tracks action', function () {
       this.trackPersistenNotification.action('ACTION_NAME');
       sinon.assert.calledWith(this.analytics.track, sinon.match.string, {
@@ -18,7 +18,7 @@ describe('Tracking persistent notification', function () {
     });
   });
 
-  describe('with organization data set', function () {
+  describe('with organization data set', () => {
     it('tracks action and contains current plan name', function () {
       const space = {};
       const planName = 'subscriptionPlanName';

@@ -1,11 +1,11 @@
 'use strict';
 
-describe('EntityHelpers', function () {
+describe('EntityHelpers', () => {
   const REWRITTEN_URL = 'http://rewritten.url/file.txt';
   const throwingFn = () => { throw new Error('Should not end up here!'); };
 
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.value('assetUrlFilter', _.constant(REWRITTEN_URL));
     });
 
@@ -14,7 +14,7 @@ describe('EntityHelpers', function () {
     this.helpers = this.EntityHelpers.newForLocale('en-US');
   });
 
-  describe('#assetFileUrl', function () {
+  describe('#assetFileUrl', () => {
     it('rejects if invalid file is provided', function* () {
       yield this.helpers.assetFileUrl({}).then(throwingFn, _.noop);
     });
@@ -50,7 +50,7 @@ describe('EntityHelpers', function () {
     });
   }
 
-  describe('.contentTypeFieldLinkCtIds()', function () {
+  describe('.contentTypeFieldLinkCtIds()', () => {
     beforeEach(function () {
       this.getIds = this.EntityHelpers.contentTypeFieldLinkCtIds;
     });

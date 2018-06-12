@@ -1,6 +1,6 @@
 'use strict';
 
-describe('subscriptionPlanRecommender', function () {
+describe('subscriptionPlanRecommender', () => {
   let $httpBackend;
   let recommend;
 
@@ -23,24 +23,24 @@ describe('subscriptionPlanRecommender', function () {
     $httpBackend = this.$inject('$httpBackend');
   });
 
-  afterEach(function () {
+  afterEach(() => {
     $httpBackend.verifyNoOutstandingExpectation();
     $httpBackend.verifyNoOutstandingRequest();
     $httpBackend = recommend = null;
   });
 
-  describe('.recommend(organizationId)', function () {
+  describe('.recommend(organizationId)', () => {
     beforeEach(function () {
       this.promise = recommend(TEST_ORG_ID);
       this.respond = $httpBackend.whenGET(ENDPOINT).respond;
     });
 
-    it('requests the organization`s recommended plan card on GK', function () {
+    it('requests the organization`s recommended plan card on GK', () => {
       $httpBackend.expectGET(ENDPOINT).respond();
       $httpBackend.flush();
     });
 
-    describe('returned promise', function () {
+    describe('returned promise', () => {
       let rejected, resolved;
       beforeEach(function () {
         rejected = sinon.spy();
@@ -94,18 +94,18 @@ describe('subscriptionPlanRecommender', function () {
         responseBody());
 
       function describeSuccessOnResponseBody (msg, responseBody, plan, reason) {
-        describe('on response body' + msg, function () {
+        describe('on response body' + msg, () => {
           beforeEach(function () {
             this.respond(200, responseBody);
             $httpBackend.flush();
           });
 
-          it('gets resolved', function () {
+          it('gets resolved', () => {
             sinon.assert.notCalled(rejected);
             sinon.assert.calledWithExactly(resolved, sinon.match.object);
           });
 
-          it('contains a `plan` HTMLElement', function () {
+          it('contains a `plan` HTMLElement', () => {
             sinon.assert.calledWithExactly(resolved, sinon.match({
               plan: sinon.match.instanceOf(HTMLElement).and(sinon.match({
                 nodeName: plan.prop('tagName'),
@@ -115,7 +115,7 @@ describe('subscriptionPlanRecommender', function () {
           });
 
           if (reason) {
-            it('contains a `reason` HTMLElement', function () {
+            it('contains a `reason` HTMLElement', () => {
               sinon.assert.calledWithExactly(resolved, sinon.match({
                 reason: sinon.match.instanceOf(HTMLElement).and(sinon.match({
                   nodeName: reason.prop('tagName'),
@@ -128,7 +128,7 @@ describe('subscriptionPlanRecommender', function () {
       }
 
       function describeFailureOnResponseBody (msg, responseBody) {
-        describe('on response body' + msg, function () {
+        describe('on response body' + msg, () => {
           beforeEach(function () {
             const data = responseBody;
             this.respond(200, data);

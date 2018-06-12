@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfPersistentNotification', ['require', function (require) {
+.directive('cfPersistentNotification', ['require', require => {
   var $sce = require('$sce');
   var $timeout = require('$timeout');
   var Analytics = require('analytics/Analytics');
@@ -28,7 +28,7 @@ angular.module('contentful')
 
     resetNotification();
 
-    scope.dismissPersistentNotification = function () {
+    scope.dismissPersistentNotification = () => {
       Analytics.track('global:top_banner_dismissed');
       dismissed = true;
       resetNotification();
@@ -36,7 +36,7 @@ angular.module('contentful')
 
     // TODO: Introduce a service with full control over a notification's
     //  lifecycle instead of abusing broadcast.
-    scope.$on('persistentNotification', function (_ev, params) {
+    scope.$on('persistentNotification', (_ev, params) => {
       dismissed = false;
       if (!notificationsOfCycle.length) {
         $timeout(updateNotificationForCycle, 0);
@@ -44,7 +44,7 @@ angular.module('contentful')
       notificationsOfCycle.push(params);
     });
 
-    scope.$on('resetPersistentNotification', function () {
+    scope.$on('resetPersistentNotification', () => {
       dismissed = true;
       resetNotification();
     });
@@ -84,9 +84,7 @@ angular.module('contentful')
   }
 
   function logConcurrentNotifications (notifications) {
-    notifications = notifications.map(function (params) {
-      return params || '*RESET NOTIFICATION*';
-    });
+    notifications = notifications.map(params => params || '*RESET NOTIFICATION*');
     logger.logWarn('Concurrent persistent notifications', {
       notifications: notifications
     });

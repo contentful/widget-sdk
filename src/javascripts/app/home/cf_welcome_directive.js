@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 
-.directive('cfWelcome', ['require', function (require) {
+.directive('cfWelcome', ['require', require => {
   var React = require('react');
   var ReactDOM = require('react-dom');
   var Welcome = require('app/home/welcome/Welcome').default;
@@ -25,7 +25,7 @@ angular.module('contentful')
 
       // user is always there, so the callback will be invoked immediately
       // so we don't need initial render
-      K.onValueScope($scope, TokenStore.user$, function (user) {
+      K.onValueScope($scope, TokenStore.user$, user => {
         state.user = user;
         render();
       });
@@ -34,13 +34,13 @@ angular.module('contentful')
       // we don't wait LD flag's value for initial rendering, for two reasons:
       // 1. We don't overcomplicate rendering logic (we can remove this easily)
       // 2. LD is a 3rd-party service, so it _might_ be slow (and it is not crucial)
-      LD.onFeatureFlag($scope, contactUsFlagName, function (flag) {
+      LD.onFeatureFlag($scope, contactUsFlagName, flag => {
         state.hasContactUs = flag;
         render();
       });
       // End test code: feature-ps-10-2017-contact-us-space-home
 
-      $scope.$on('$destroy', function () {
+      $scope.$on('$destroy', () => {
         ReactDOM.unmountComponentAtNode(host);
       });
 

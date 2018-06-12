@@ -1,6 +1,6 @@
 'use strict';
 
-describe('cfCopyToClipboard Directive', function () {
+describe('cfCopyToClipboard Directive', () => {
   let stubs;
 
   beforeEach(function () {
@@ -15,7 +15,7 @@ describe('cfCopyToClipboard Directive', function () {
       ]
     };
 
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.value('userAgent', stubs.userAgent);
     });
 

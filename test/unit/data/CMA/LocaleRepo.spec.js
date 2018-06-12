@@ -1,6 +1,6 @@
-describe('Locale Repo', function () {
+describe('Locale Repo', () => {
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.value('data/CMA/FetchAll', {
         fetchAll: sinon.stub().resolves([{}, {}, {}])
       });

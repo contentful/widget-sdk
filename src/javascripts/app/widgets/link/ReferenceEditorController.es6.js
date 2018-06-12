@@ -66,7 +66,7 @@ export default function create ($scope, widgetApi) {
     link: true
   };
 
-  K.onValueScope($scope, isDisabled$, function (isDisabled) {
+  K.onValueScope($scope, isDisabled$, isDisabled => {
     $scope.isDisabled = isDisabled;
     $scope.config.draggable = !$scope.single && !isDisabled;
   });
@@ -80,7 +80,7 @@ export default function create ($scope, widgetApi) {
   // TODO: This is for inline reference editing
   // BETA release. Remove this once we are done with
   // the experiment.
-  onFeatureFlag($scope, INLINE_REFERENCE_FEATURE_FLAG, function (isEnabled) {
+  onFeatureFlag($scope, INLINE_REFERENCE_FEATURE_FLAG, isEnabled => {
     $scope.isInlineEditingEnabled = isEnabled;
     const featureEnabledForField = isInlineEditingEnabledForField();
     const isAsset = $scope.isAssetCard;
@@ -95,7 +95,7 @@ export default function create ($scope, widgetApi) {
     }
   });
 
-  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, function (flagState) {
+  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, flagState => {
     const isEnabled = flagState === 2;
     $scope.isSlideinEntryEditorEnabled = isEnabled;
     if (!slideInEditorEnabled && canEditReferences && isEnabled) {
@@ -113,12 +113,10 @@ export default function create ($scope, widgetApi) {
     return store.get(ctExpandedStoreKey);
   }
 
-  $scope.uiSortable.update = function () {
+  $scope.uiSortable.update = () => {
     // let uiSortable update the model, then sync
-    $scope.$applyAsync(function () {
-      const entityModelIds = $scope.entityModels.map(function (model) {
-        return model.value.id;
-      });
+    $scope.$applyAsync(() => {
+      const entityModelIds = $scope.entityModels.map(model => model.value.id);
 
       state.setIds(entityModelIds);
     });
@@ -140,14 +138,14 @@ export default function create ($scope, widgetApi) {
   }
 
   // TODO: Legacy code to be removed with FEATURE_LOTS_OF_CT_ADD_ENTRY_REDESIGN
-  $scope.addNew = function (event) {
+  $scope.addNew = event => {
     event.preventDefault();
     const contentType = spaceContext.publishedCTs.get($scope.type);
     return createEntity($scope.type, field, widgetApi.space)
       .then(makeNewEntityHandler(contentType));
   };
 
-  $scope.addNewAsset = function () {
+  $scope.addNewAsset = () => {
     if (!$scope.canAddNewAsset) {
       return;
     }
@@ -157,7 +155,7 @@ export default function create ($scope, widgetApi) {
       .then(() => { $scope.canAddNewAsset = true; });
   };
 
-  $scope.addNewEntry = function (contentTypeId) {
+  $scope.addNewEntry = contentTypeId => {
     const contentType = spaceContext.publishedCTs.get(contentTypeId);
     if ($scope.referenceType.inline) {
       // necessary to prompt loading state
@@ -180,7 +178,7 @@ export default function create ($scope, widgetApi) {
   };
 
   function makeNewEntityHandler (contentType) {
-    return function (entity) {
+    return entity => {
       if ($scope.referenceType.inline) {
         $scope.isReady = true;
       }
@@ -211,7 +209,7 @@ export default function create ($scope, widgetApi) {
     };
   }
 
-  $scope.addExisting = function (event) {
+  $scope.addExisting = event => {
     event.preventDefault && event.preventDefault();
     const currentSize = $scope.entityModels.length;
     entitySelector.openFromField(field, currentSize).then(state.addEntities);
@@ -219,10 +217,7 @@ export default function create ($scope, widgetApi) {
 
   // Property that holds the items that are rendered with the
   // 'cfEntityLink' directive.
-  const entityModels$ = K.combine([state.entities$, isDisabled$], function (
-    entities,
-    isDisabled
-  ) {
+  const entityModels$ = K.combine([state.entities$, isDisabled$], (entities, isDisabled) => {
     // entities is a list of [id, entityData] pairs
     if (entities) {
       return entities.map(([id, entity], index) => {
@@ -231,7 +226,7 @@ export default function create ($scope, widgetApi) {
     }
   });
 
-  K.onValueScope($scope, entityModels$, function (models) {
+  K.onValueScope($scope, entityModels$, models => {
     if (models) {
       // We could just use models but for performance reasons we use
       // a keyed list.
@@ -278,7 +273,7 @@ export default function create ($scope, widgetApi) {
 
   function getUnpublishedReferences () {
     const models = $scope.entityModels || [];
-    return models.filter(function (item) {
+    return models.filter(item => {
       if (item.value.entity) {
         return !item.value.entity.sys.publishedVersion;
       } else {
@@ -302,9 +297,7 @@ export default function create ($scope, widgetApi) {
   }
 
   function showWarning (unpublishedRefs) {
-    unpublishedRefs = filter(unpublishedRefs, function (ref) {
-      return ref && ref.count > 0;
-    });
+    unpublishedRefs = filter(unpublishedRefs, ref => ref && ref.count > 0);
 
     const counts = countBy(unpublishedRefs, 'linked');
     const linkedEntityTypes = [
@@ -374,7 +367,7 @@ export default function create ($scope, widgetApi) {
 
   function prepareEditAction (entity, index, isDisabled) {
     if (entity && !isDisabled && !isCurrentEntry(entity) && bulkEditorEnabled) {
-      return function ($event) {
+      return $event => {
         if ($event && $event.preventDefault) {
           $event.preventDefault();
         }

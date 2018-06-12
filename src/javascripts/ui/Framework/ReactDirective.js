@@ -34,7 +34,7 @@ angular.module('contentful')
 
       var reactComponent = getReactComponent(attrs.name, require);
 
-      var renderMyComponent = function () {
+      var renderMyComponent = () => {
         var scopeProps = $scope.$eval(attrs.props);
 
         renderComponent(reactComponent, scopeProps, $scope, element);

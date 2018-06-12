@@ -12,7 +12,7 @@
  * module.
  */
 angular.module('contentful/mocks')
-.factory('mocks/TheStore/ClientStorageWrapper', [function () {
+.factory('mocks/TheStore/ClientStorageWrapper', [() => {
   let localStore = {};
 
   return {

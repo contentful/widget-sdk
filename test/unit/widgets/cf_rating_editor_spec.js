@@ -1,8 +1,8 @@
 'use strict';
 
-describe('cfRatingEditor directive', function () {
+describe('cfRatingEditor directive', () => {
   beforeEach(function () {
-    module('cf.app', function ($provide) {
+    module('cf.app', $provide => {
       // Disable cfIcon directive
       $provide.value('cfIconDirective', {});
     });

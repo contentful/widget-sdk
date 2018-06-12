@@ -2,7 +2,7 @@ import _ from 'lodash';
 import sinon from 'npm:sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
-describe('ReferenceEditor', function () {
+describe('ReferenceEditor', () => {
   beforeEach(function* () {
     const system = createIsolatedSystem();
 
@@ -26,7 +26,7 @@ describe('ReferenceEditor', function () {
     this.TheLocaleStore.getActiveLocales.returns([{}]);
   });
 
-  describe('onEntryCreate', function () {
+  describe('onEntryCreate', () => {
     it('tracks entry create', function () {
       const contentType = getMockContentType();
 
@@ -51,7 +51,7 @@ describe('ReferenceEditor', function () {
     });
   });
 
-  describe('onEntryEdit', function () {
+  describe('onEntryEdit', () => {
     it('tracks entry edit', function () {
       const contentType = getMockContentType();
 
@@ -72,7 +72,7 @@ describe('ReferenceEditor', function () {
     });
   });
 
-  describe('onToggleInlineEditor', function () {
+  describe('onToggleInlineEditor', () => {
     it('tracks inline editor toggle ', function () {
       const contentType = getMockContentType();
 

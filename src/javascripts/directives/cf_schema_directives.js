@@ -9,7 +9,7 @@
  * @property {SchemaController} $scope.schema
  */
 angular.module('contentful')
-.directive('cfContentTypeSchema', ['require', function (require) {
+.directive('cfContentTypeSchema', ['require', require => {
   var errorMessageBuilder = require('errorMessageBuilder');
   var SchemaController = require('SchemaController');
   var validation = require('validation');
@@ -17,7 +17,7 @@ angular.module('contentful')
   return {
     restrict: 'A',
     scope: true,
-    controller: ['$scope', function ($scope) {
+    controller: ['$scope', $scope => {
       var buildMessage = errorMessageBuilder.forContentType;
       $scope.schema = new SchemaController(buildMessage, validation.schemas.ContentType);
     }]
@@ -33,7 +33,7 @@ angular.module('contentful')
  * error messages.
  */
 angular.module('contentful')
-.factory('SchemaController', [function () {
+.factory('SchemaController', [() => {
   function SchemaController (messageBuilder, schema) {
     this.messageBuilder = messageBuilder;
     this.context = {};

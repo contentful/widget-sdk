@@ -57,12 +57,12 @@ angular.module('contentful', [
  * @name contentful/app
  */
 angular.module('contentful/app', ['contentful'])
-.config(['environment', '$compileProvider', function (environment, $compileProvider) {
+.config(['environment', '$compileProvider', (environment, $compileProvider) => {
   if (environment.env !== 'development') {
     $compileProvider.debugInfoEnabled(false);
   }
 }])
-.run(['require', function (require) {
+.run(['require', require => {
   var $document = require('$document');
   var Config = require('Config');
   if (Config.env === 'development') {
@@ -84,7 +84,7 @@ angular.module('contentful/app', ['contentful'])
 }]);
 
 angular.module('contentful')
-.config(['$locationProvider', function ($locationProvider) {
+.config(['$locationProvider', $locationProvider => {
   $locationProvider.html5Mode({
     enabled: true,
     requireBase: false
@@ -95,15 +95,15 @@ angular.module('contentful')
   $locationProvider.hashPrefix('!!!');
 }])
 
-.config(['$compileProvider', function ($compileProvider) {
+.config(['$compileProvider', $compileProvider => {
   $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|contentful):/);
 }])
 
-.config(['$animateProvider', function ($animateProvider) {
+.config(['$animateProvider', $animateProvider => {
   $animateProvider.classNameFilter(/animate/);
 }])
 
-.config(['$httpProvider', function ($httpProvider) {
+.config(['$httpProvider', $httpProvider => {
   // IE11 caches AJAX requests by default :facepalm: if we don’t set
   // these headers.
   // See: http://viralpatel.net/blogs/ajax-cache-problem-in-ie/
@@ -112,7 +112,7 @@ angular.module('contentful')
 }]);
 
 
-(function () {
+((() => {
   var registry = [];
   window.AngularSystem = {
     register: register,
@@ -121,7 +121,7 @@ angular.module('contentful')
   };
 
   // Load the modules defined in `libs/index.js`
-  window.libs.forEach(function (lib) {
+  window.libs.forEach(lib => {
     set(lib[0], lib[1]);
   });
 
@@ -139,7 +139,7 @@ angular.module('contentful')
     registry.push([
       id,
       [],
-      function (export_) {
+      export_ => {
         const exports = moduleObj;
         export_(Object.assign({default: exports}, exports));
         return {
@@ -166,12 +166,12 @@ angular.module('contentful')
     registerDirectoryAlias(id);
 
     angular.module('cf.es6')
-    .factory(id, ['require', function (require) {
+    .factory(id, ['require', require => {
       var mod = makeModule();
 
       var ctx = run(mod.export);
 
-      deps.forEach(function (name, i) {
+      deps.forEach((name, i) => {
         var absName = resolve(name, id);
         var depExports = coerceExports(require(absName));
         ctx.setters[i](depExports);
@@ -256,7 +256,7 @@ angular.module('contentful')
       // directory.
       froms.pop();
       var tos = to.split('/');
-      return tos.reduce(function (resolved, seg) {
+      return tos.reduce((resolved, seg) => {
         if (seg === '..') {
           resolved.pop();
         } else if (seg !== '.') {
@@ -269,4 +269,4 @@ angular.module('contentful')
       return to;
     }
   }
-})();
+}))();

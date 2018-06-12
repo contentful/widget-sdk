@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('PolicyBuilder/removeOutdatedRules', ['require', function (require) {
+angular.module('contentful').factory('PolicyBuilder/removeOutdatedRules', ['require', require => {
 
   var CONFIG = require('PolicyBuilder/CONFIG');
 
@@ -23,7 +23,7 @@ angular.module('contentful').factory('PolicyBuilder/removeOutdatedRules', ['requ
     return false;
 
     function filterPolicies(internal) {
-      return _.transform(PATHS, function (acc, path) {
+      return _.transform(PATHS, (acc, path) => {
         var collection = _.get(internal, path, []);
         var filtered = filterPolicyCollection(collection);
         _.set(acc, path, filtered);
@@ -31,15 +31,11 @@ angular.module('contentful').factory('PolicyBuilder/removeOutdatedRules', ['requ
     }
 
     function countPolicies(wrapper) {
-      return _.reduce(PATHS, function (acc, path) {
-        return acc + _.get(wrapper, path, []).length;
-      }, 0);
+      return _.reduce(PATHS, (acc, path) => acc + _.get(wrapper, path, []).length, 0);
     }
 
     function filterPolicyCollection(collection) {
-      return _.filter(collection, function (p) {
-        return !isMissingContentType(p) && !isMissingField(p) && !isMissingLocale(p);
-      });
+      return _.filter(collection, p => !isMissingContentType(p) && !isMissingField(p) && !isMissingLocale(p));
     }
 
     function isMissingContentType(p) {

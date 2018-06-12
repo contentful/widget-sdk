@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Policy Builder, to internal representation', function () {
+describe('Policy Builder, to internal representation', () => {
 
   var toInternal, CONFIG;
 
@@ -10,20 +10,20 @@ describe('Policy Builder, to internal representation', function () {
     CONFIG = this.$inject('PolicyBuilder/CONFIG');
   });
 
-  describe('takes external and returns internal representation', function () {
-    it('extracts id and version', function () {
+  describe('takes external and returns internal representation', () => {
+    it('extracts id and version', () => {
       var internal = toInternal({sys: {id: 'testid', version: 123}});
       expect(internal.id).toBe('testid');
       expect(internal.version).toBe(123);
     });
 
-    it('uses the same name and description', function () {
+    it('uses the same name and description', () => {
       var internal = toInternal({name: 'name', description: 'desc'});
       expect(internal.name).toBe('name');
       expect(internal.description).toBe('desc');
     });
 
-    it('clones permissions', function () {
+    it('clones permissions', () => {
       var permissions = {contentDelivery: ['read', 'manage'], settings: ['read']};
       var internal = toInternal({permissions: permissions});
       expect(internal.contentDelivery !== permissions.contentDelivery).toBe(true);
@@ -32,24 +32,24 @@ describe('Policy Builder, to internal representation', function () {
       expect(internal.settings[0]).toBe('read');
     });
 
-    it('adds collections', function () {
+    it('adds collections', () => {
       var i = toInternal({});
-      [i.entries.allowed, i.entries.denied, i.assets.allowed, i.assets.denied].forEach(function (collection) {
+      [i.entries.allowed, i.entries.denied, i.assets.allowed, i.assets.denied].forEach(collection => {
         expect(Array.isArray(collection)).toBe(true);
         expect(collection.length).toBe(0);
       });
     });
 
-    it('adds policyString and uiCompatible flag', function () {
+    it('adds policyString and uiCompatible flag', () => {
       var internal = toInternal({policies: []});
       expect(internal.policyString).toBe('[]');
       expect(internal.uiCompatible).toBe(true);
     });
   });
 
-  describe('translating policies', function () {
+  describe('translating policies', () => {
 
-    it('marks as non-UI-compatible', function () {
+    it('marks as non-UI-compatible', () => {
       // no constraint
       var internal = toInternal({policies: [
         {actions: 'all', effect: 'allow'}
@@ -89,19 +89,19 @@ describe('Policy Builder, to internal representation', function () {
       expect(as[0].action).toBe(Array.isArray(action) ? action[0] : action);
     }
 
-    it('translates base for entry and action', function () {
+    it('translates base for entry and action', () => {
       base('Entry', 'entries', 'all');
       base('Entry', 'entries', ['read']);
       base('Entry' ,'entries', ['create']);
     });
 
-    it('translates base for assets and action', function () {
+    it('translates base for assets and action', () => {
       base('Asset', 'assets', 'all');
       base('Asset', 'assets', ['read']);
       base('Asset' ,'assets', ['create']);
     });
 
-    it('translates content type constraints', function () {
+    it('translates content type constraints', () => {
       var internal = toInternal({policies: [
         {actions: 'all', effect: 'allow', constraint: {
           and: [ { equals: [{doc: 'sys.type'}, 'Entry'] } ]
@@ -118,7 +118,7 @@ describe('Policy Builder, to internal representation', function () {
       expect(internal.entries.allowed[1].contentType).toBe('ctid');
     });
 
-    it('translates multiple policies with exceptions', function () {
+    it('translates multiple policies with exceptions', () => {
       var internal = toInternal({policies: [
         {actions: 'all', effect: 'allow', constraint: {
           and: [ { equals: [{doc: 'sys.type'}, 'Entry'] } ]
@@ -136,7 +136,7 @@ describe('Policy Builder, to internal representation', function () {
       expect(internal.entries.denied[0].action).toBe('create');
     });
 
-    it('translates scope', function () {
+    it('translates scope', () => {
       var internal = toInternal({policies: [
         {actions: ['read'], effect: 'allow', constraint: {
           and: [ { equals: [{doc: 'sys.type'}, 'Entry'] } ]
@@ -154,7 +154,7 @@ describe('Policy Builder, to internal representation', function () {
       expect(internal.entries.allowed[1].scope).toBe('user');
     });
 
-    it('translates path (field, locale)', function () {
+    it('translates path (field, locale)', () => {
       var internal = toInternal({policies: [
         {actions: ['read'], effect: 'allow', constraint: {
           and: [
@@ -191,7 +191,7 @@ describe('Policy Builder, to internal representation', function () {
 
     });
 
-    it('translates "glued" actions', function () {
+    it('translates "glued" actions', () => {
       var internal = toInternal({policies: [
         {actions: ['publish', 'unpublish'], effect: 'allow', constraint: {
           and: [ { equals: [{doc: 'sys.type'}, 'Entry'] } ]

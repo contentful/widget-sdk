@@ -5,7 +5,7 @@ angular.module('contentful')
  * @ngdoc service
  * @name EntityEditor/DataFields
  */
-.factory('EntityEditor/DataFields', ['require', function (require) {
+.factory('EntityEditor/DataFields', ['require', require => {
   var TheLocaleStore = require('TheLocaleStore');
   var K = require('utils/kefir');
 
@@ -24,7 +24,7 @@ angular.module('contentful')
    * @param {Document} doc
    */
   function buildFieldsApi (fields, otDoc) {
-    return _.transform(fields, function (fieldsApi, field) {
+    return _.transform(fields, (fieldsApi, field) => {
       // TODO we should normalize fields so that the API name is always
       // defined.
       var publicId = field.apiName || field.id;

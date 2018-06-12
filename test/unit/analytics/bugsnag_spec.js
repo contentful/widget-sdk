@@ -1,6 +1,6 @@
 import * as sinon from 'helpers/sinon';
 
-describe('bugsnag', function () {
+describe('bugsnag', () => {
   beforeEach(function () {
     module('contentful/test');
     this.bugsnag = this.$inject('bugsnag');
@@ -41,7 +41,7 @@ describe('bugsnag', function () {
     sinon.assert.calledOnce(this.LazyLoader.get);
   });
 
-  describe('user information', function () {
+  describe('user information', () => {
     it('is added for user without organizations', function () {
       this.bugsnag.enable({
         sys: {id: 'USER_ID'}
@@ -74,7 +74,7 @@ describe('bugsnag', function () {
     sinon.assert.notCalled(this.BugsnagStub.notify);
   });
 
-  describe('when script loading fails', function () {
+  describe('when script loading fails', () => {
     beforeEach(function () {
       this.LazyLoader.get = sinon.stub().rejects();
     });

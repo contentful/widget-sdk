@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfSpaceWizard', ['require', function (require) {
+.directive('cfSpaceWizard', ['require', require => {
   var React = require('react');
   var ReactDOM = require('react-dom');
   var Wizard = require('components/shared/space-wizard/Wizard').default;
@@ -19,7 +19,7 @@ angular.module('contentful')
         onCancel: function () { $scope.dialog.cancel(); },
         onConfirm: function () {
           if ($scope.onSubmit) {
-            $scope.onSubmit().then(function () {
+            $scope.onSubmit().then(() => {
               $scope.dialog.confirm();
             });
           } else {
@@ -38,7 +38,7 @@ angular.module('contentful')
         }
       }), host);
 
-      $scope.$on('$destroy', function () {
+      $scope.$on('$destroy', () => {
         ReactDOM.unmountComponentAtNode(host);
       });
     }

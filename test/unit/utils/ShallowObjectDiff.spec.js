@@ -1,4 +1,4 @@
-describe('ShallowObjectDiff', function () {
+describe('ShallowObjectDiff', () => {
   beforeEach(function () {
     module('contentful/test');
     this.shallowObjectDiff = this.$inject('utils/ShallowObjectDiff').default;

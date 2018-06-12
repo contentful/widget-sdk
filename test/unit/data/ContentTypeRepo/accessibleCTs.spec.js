@@ -1,6 +1,6 @@
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
-describe('data/ContentTypeRepo/accessibleCTs', function () {
+describe('data/ContentTypeRepo/accessibleCTs', () => {
   let accessibleCTs;
   const accessibleCTsIds = [1, 2, 3];
 
@@ -19,7 +19,7 @@ describe('data/ContentTypeRepo/accessibleCTs', function () {
     accessibleCTs = accessibleCTs.default;
   });
 
-  it('returns list of CTs that the user has READ access to or selected', function () {
+  it('returns list of CTs that the user has READ access to or selected', () => {
     const publishedCTs = {};
     const testData = [
       {
@@ -44,7 +44,7 @@ describe('data/ContentTypeRepo/accessibleCTs', function () {
       }
     ];
 
-    testData.forEach(function (testData) {
+    testData.forEach(testData => {
       publishedCTs.getAllBare = () => testData.bareCTs;
 
       expect(accessibleCTs(publishedCTs, testData.selectedCtId)).toEqual(

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfExtensionExamplePicker', ['require', function (require) {
+.directive('cfExtensionExamplePicker', ['require', require => {
   var React = require('react');
   var ReactDOM = require('react-dom');
   var ExamplePicker = require('app/Extensions/ExamplePicker').default;

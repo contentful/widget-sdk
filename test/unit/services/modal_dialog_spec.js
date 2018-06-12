@@ -1,6 +1,6 @@
 import * as sinon from 'helpers/sinon';
 
-describe('Modal dialog service', function () {
+describe('Modal dialog service', () => {
   let modalDialog, scope;
   let successStub, errorStub;
   beforeEach(function () {
@@ -11,9 +11,9 @@ describe('Modal dialog service', function () {
     errorStub = sinon.stub();
   });
 
-  describe('create a dialog', function () {
+  describe('create a dialog', () => {
     let dialog;
-    beforeEach(function () {
+    beforeEach(() => {
       $('<div class="client"></div>').appendTo('body');
       dialog = modalDialog.open({
         scope: scope,
@@ -24,67 +24,67 @@ describe('Modal dialog service', function () {
                     .catch(errorStub);
     });
 
-    afterEach(function () {
+    afterEach(() => {
       dialog.destroy();
       $('.client').remove();
     });
 
-    it('creates a dialog', function () {
+    it('creates a dialog', () => {
       expect(dialog).toBeDefined();
     });
 
-    it('dom element property exists', function () {
+    it('dom element property exists', () => {
       expect(dialog.domElement).toBeDefined();
     });
 
-    it('dom element exists', function () {
+    it('dom element exists', () => {
       expect(dialog.domElement.get(0)).toBeDefined();
     });
 
-    it('sets title', function () {
+    it('sets title', () => {
       expect(dialog.domElement.find('header h1').html()).toMatch('TITLE');
     });
 
-    it('sets content', function () {
+    it('sets content', () => {
       expect(dialog.domElement.find('.modal-dialog__content').html()).toMatch(dialog.params.message);
     });
 
-    describe('closes by clicking on background', function () {
+    describe('closes by clicking on background', () => {
       let event;
       let cancelStub;
-      beforeEach(function () {
+      beforeEach(() => {
         event = {};
         event.target = $('.modal-background').get(0);
         cancelStub = sinon.stub(dialog, 'cancel');
       });
 
-      it('cancel is called', function () {
+      it('cancel is called', () => {
         dialog._closeOnBackground(event);
         sinon.assert.called(cancelStub);
       });
 
-      it('modal can be closed', function () {
+      it('modal can be closed', () => {
         dialog._closeOnBackground(event);
         sinon.assert.called(cancelStub);
       });
 
-      it('cancel is not called with params attr', function () {
+      it('cancel is not called with params attr', () => {
         dialog.params.backgroundClose = false;
         dialog._closeOnBackground(event);
         sinon.assert.notCalled(cancelStub);
       });
     });
 
-    describe('closes via keyboard shortcuts', function () {
+    describe('closes via keyboard shortcuts', () => {
       let event;
       let confirmStub, cancelStub;
-      beforeEach(function () {
+      beforeEach(() => {
         event = {};
         cancelStub = sinon.stub(dialog, 'cancel');
         confirmStub = sinon.stub(dialog, 'confirm');
       });
 
-      it('cancel is called with ESC key', function () {
+      it('cancel is called with ESC key', () => {
         event.keyCode = 27;
         event.target = {tagName: ''};
         dialog._handleKeys(event);
@@ -92,7 +92,7 @@ describe('Modal dialog service', function () {
         sinon.assert.called(cancelStub);
       });
 
-      it('confirm is called with Enter key', function () {
+      it('confirm is called with Enter key', () => {
         event.keyCode = 13;
         event.target = {tagName: ''};
         dialog.params.ignoreEnter = false;
@@ -102,12 +102,12 @@ describe('Modal dialog service', function () {
       });
     });
 
-    describe('with a scope', function () {
-      beforeEach(function () {
+    describe('with a scope', () => {
+      beforeEach(() => {
         dialog.scope = {$apply: sinon.stub(), $destroy: sinon.stub()};
       });
 
-      it('properly removes the global event listeners', function () {
+      it('properly removes the global event listeners', () => {
         $(window).trigger('keyup');
         sinon.assert.called(dialog.scope.$apply);
         dialog.destroy();
@@ -116,58 +116,58 @@ describe('Modal dialog service', function () {
         sinon.assert.notCalled(dialog.scope.$apply);
       });
 
-      it('confirms with values', function () {
+      it('confirms with values', () => {
         let result;
         dialog.confirm('foo');
-        dialog.promise.then(function (value) { result = value; });
+        dialog.promise.then(value => { result = value; });
         scope.$apply();
         expect(result).toBe('foo');
       });
 
-      it('cancels with values', function () {
+      it('cancels with values', () => {
         let result;
         dialog.cancel('bar');
-        dialog.promise.catch(function (value) { result = value; });
+        dialog.promise.catch(value => { result = value; });
         scope.$apply();
         expect(result).toBe('bar');
       });
 
-      it('calls the success stub', function () {
-        dialog.confirm().promise.finally(function () {
+      it('calls the success stub', () => {
+        dialog.confirm().promise.finally(() => {
           sinon.assert.called(successStub);
         });
       });
 
-      it('modal background exists', function () {
+      it('modal background exists', () => {
         expect($('.modal-background').length).toBe(1);
       });
 
       it('calls the success stub', function* () {
-        dialog.cancel().promise.finally(function () {
+        dialog.cancel().promise.finally(() => {
           sinon.assert.called(errorStub);
         });
       });
 
-      it('dom element gets cleaned up', function () {
-        dialog.confirm().promise.finally(function () {
+      it('dom element gets cleaned up', () => {
+        dialog.confirm().promise.finally(() => {
           expect(dialog.domElement).toBeNull();
         });
       });
     });
   });
 
-  describe('#closeAll()', function () {
-    beforeEach(function () {
-      _.times(2, function () {
+  describe('#closeAll()', () => {
+    beforeEach(() => {
+      _.times(2, () => {
         modalDialog.open({
           message: 'test'
         }).promise
-        .then(function () {})
+        .then(() => {})
         .catch(errorStub);
       });
     });
 
-    it('closes all opened dialogs by default', function () {
+    it('closes all opened dialogs by default', () => {
       expect(modalDialog.getOpened().length).toBe(2);
       modalDialog.closeAll();
       scope.$apply();
@@ -175,12 +175,12 @@ describe('Modal dialog service', function () {
       expect(modalDialog.getOpened().length).toBe(0);
     });
 
-    it('does not close modals with `persistOnNavigation` =  true', function () {
+    it('does not close modals with `persistOnNavigation` =  true', () => {
       modalDialog.open({
         message: 'yo',
         persistOnNavigation: true
       }).promise
-      .then(function () {})
+      .then(() => {})
       .catch(errorStub);
 
       expect(modalDialog.getOpened().length).toBe(3);

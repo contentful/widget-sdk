@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 
-.directive('cfRolesForWalkMe', ['require', function (require) {
+.directive('cfRolesForWalkMe', ['require', require => {
   var SpaceContext = require('spaceContext');
   var LD = require('utils/LaunchDarkly');
   var LazyLoader = require('LazyLoader');
@@ -18,8 +18,8 @@ angular.module('contentful')
     restrict: 'A',
     scope: {},
     link: function (_scope, $el) {
-      $rootScope.$on('$stateChangeSuccess', function () {
-        LD.getCurrentVariation(featureName).then(function (variation) {
+      $rootScope.$on('$stateChangeSuccess', () => {
+        LD.getCurrentVariation(featureName).then(variation => {
           // if the last variation was for a targeted space
           // when you move out of it, reload to unload WalkMe scripts
           if (lastVariation && variation !== lastVariation) {

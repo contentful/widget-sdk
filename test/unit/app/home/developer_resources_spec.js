@@ -1,4 +1,4 @@
-describe('cfDeveloperResources directive', function () {
+describe('cfDeveloperResources directive', () => {
   beforeEach(function () {
     module('contentful/test');
 

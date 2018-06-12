@@ -1,6 +1,6 @@
 'use strict';
 
-describe('ui/inputControl', function () {
+describe('ui/inputControl', () => {
   let inputEl;
 
   beforeEach(function () {

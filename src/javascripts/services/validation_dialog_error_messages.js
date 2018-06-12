@@ -18,8 +18,8 @@
  * [wiki-validations]: https://contentful.atlassian.net/wiki/display/PROD/Validations
  */
 angular.module('contentful')
-.factory('validationDialogErrorMessages', function () {
-  var sizeMessage = function (details) {
+.factory('validationDialogErrorMessages', () => {
+  var sizeMessage = details => {
     if (details === 'Expected max >= min') {
       return 'Minimum value has to be smaller than maximum value';
     } else {

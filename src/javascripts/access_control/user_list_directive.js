@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfUserList', ['require', function (require) {
+angular.module('contentful').directive('cfUserList', ['require', require => {
   var popRoleId = require('UserListController/jumpToRole').popRoleId;
   var $timeout = require('$timeout');
   var getStore = require('TheStore').getStore;
@@ -34,7 +34,7 @@ angular.module('contentful').directive('cfUserList', ['require', function (requi
     scope.$watch('selectedView', saveView);
 
     function jumpToRole () {
-      $timeout(function () {
+      $timeout(() => {
         var groupHeader = el.find('#role-group-' + roleId).first();
         var scrollContainer = el.find('.workbench-main__content').first();
 
@@ -47,7 +47,7 @@ angular.module('contentful').directive('cfUserList', ['require', function (requi
   }
 }]);
 
-angular.module('contentful').controller('UserListController', ['$scope', 'require', function ($scope, require) {
+angular.module('contentful').controller('UserListController', ['$scope', 'require', ($scope, require) => {
   var ReloadNotification = require('ReloadNotification');
   var spaceContext = require('spaceContext');
   var userListHandler = require('UserListHandler').create();
@@ -58,7 +58,7 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
   var actions = UserListActions.create(spaceContext, userListHandler, TokenStore);
 
   $scope.userQuota = {used: 1};
-  $scope.$watch(accessChecker.getUserQuota, function (q) { $scope.userQuota = q; });
+  $scope.$watch(accessChecker.getUserQuota, q => { $scope.userQuota = q; });
 
   $scope.openRemovalConfirmationDialog = decorateWithReload(actions.openRemovalConfirmationDialog);
   $scope.openRoleChangeDialog = decorateWithReload(actions.openRoleChangeDialog);
@@ -84,7 +84,7 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
   function openSpaceInvitationDialog () {
     $scope.isInvitingUsersToSpace = true;
 
-    decorateWithReload(actions.openSpaceInvitationDialog)().finally(function () {
+    decorateWithReload(actions.openSpaceInvitationDialog)().finally(() => {
       $scope.isInvitingUsersToSpace = false;
     });
   }
@@ -109,7 +109,7 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
   }
 }]);
 
-angular.module('contentful').factory('UserListController/jumpToRole', ['require', function (require) {
+angular.module('contentful').factory('UserListController/jumpToRole', ['require', require => {
   var $state = require('$state');
   var targetRoleId = null;
 

@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 
-.directive('cfCreateNewSpace', ['require', function (require) {
+.directive('cfCreateNewSpace', ['require', require => {
   var template = require('components/shared/create_new_space/Template').default;
   return {
     restrict: 'E',
@@ -51,52 +51,48 @@ angular.module('contentful')
   // Load the list of space templates
   controller.templates = [];
   getTemplatesList().then(setupTemplates)
-  .catch(function () {
+  .catch(() => {
     controller.templates = undefined;
   });
 
   // Populate locales
-  controller.localesList = _.map(localesList, function (locale) {
-    return {
-      displayName: locale.name + ' (' + locale.code + ')',
-      code: locale.code
-    };
-  });
+  controller.localesList = _.map(localesList, locale => ({
+    displayName: locale.name + ' (' + locale.code + ')',
+    code: locale.code
+  }));
 
   // Scroll to bottom if example templates are opened and templates loaded
-  $scope.$watch(function () {
-    return controller.newSpace.useTemplate;
-  }, function (usingTemplate) {
+  $scope.$watch(() => controller.newSpace.useTemplate, usingTemplate => {
     if (usingTemplate && controller.templates) {
       $element.animate({scrollTop: $element.scrollTop() + 260}, 'linear');
     }
   });
 
   // Switch space template
-  controller.selectTemplate = function (template) {
+  controller.selectTemplate = template => {
     if (!controller.createSpaceInProgress) {
       controller.newSpace.selectedTemplate = template;
     }
   };
 
   // Request space creation
-  controller.requestSpaceCreation = function () {
+  controller.requestSpaceCreation = () => {
     var organization = controller.newSpace.organization;
 
     var resources = createResourceService(organization.sys.id, 'organization');
 
     // First check that there are resources available
     // to create the space
-    resources.canCreate('space').then(function (canCreate) {
+    resources.canCreate('space').then(canCreate => {
       if (canCreate) {
         // Resources are available. Attempt to create a new space
         createNewSpace();
       } else {
-        resources.messagesFor('space').then(function (errorObj) {
+        resources.messagesFor('space').then(errorObj => {
           handleUsageWarning(errorObj.error);
         });
       }
-    }).catch(function (error) {
+    }).catch(error => {
       showFormError(DEFAULT_ERROR_MESSAGE);
       logger.logServerWarn('Could not fetch permissions', {error: error});
     });
@@ -104,7 +100,7 @@ angular.module('contentful')
 
   function setupTemplates (templates) {
     // Don't need this once the `Blank` template gets removed from Contentful
-    controller.templates = _.reduce(templates, function (acc, template) {
+    controller.templates = _.reduce(templates, (acc, template) => {
       if (!template.fields.blank) {
         var fields = template.fields;
         acc.push(fields);
@@ -156,12 +152,12 @@ angular.module('contentful')
     });
 
     client.createSpace(dataWithUpdatedLocale, organization.sys.id)
-    .then(function (newSpace) {
+    .then(newSpace => {
       // Create space
       TokenStore.refresh()
         .then(_.partial(handleSpaceCreation, newSpace, template));
     })
-    .catch(function (error) {
+    .catch(error => {
       var errors = _.get(error, 'body.details.errors');
       var fieldErrors = [
         {name: 'length', path: 'name', message: 'Space name is too long'},
@@ -177,7 +173,7 @@ angular.module('contentful')
         return;
       }
 
-      _.forEach(fieldErrors, function (e) {
+      _.forEach(fieldErrors, e => {
         if (hasErrorOnField(errors, e.path, e.name)) {
           showFieldError(e.path, e.message);
         }
@@ -189,7 +185,7 @@ angular.module('contentful')
     var templateName = _.get(template, 'name');
 
     $state.go('spaces.detail', {spaceId: newSpace.sys.id})
-      .then(function () {
+      .then(() => {
         var spaceCreateEventData =
             templateName === 'Blank'
             ? {templateName: templateName}
@@ -209,7 +205,7 @@ angular.module('contentful')
           return loadSelectedTemplate();
         }
       })
-      .finally(function () {
+      .finally(() => {
         // Just show the success message whatever happens
         controller.createTemplateInProgress = false;
         controller.createSpaceInProgress = false;
@@ -223,17 +219,15 @@ angular.module('contentful')
     // We need to catch all errors, because http requests
     // are backed by $q, and we have global handlers on
     // $q errors
-    createTemplatePromises.spaceSetup.catch(function () {});
+    createTemplatePromises.spaceSetup.catch(() => {});
 
     return createTemplatePromises
     .contentCreated
-    .catch(function (data) {
+    .catch(data => {
       if (!retried) {
         createTemplate(data.template, true);
       }
-    }).then(function () {
-      return spaceContext.publishedCTs.refresh();
-    }).then(function () {
+    }).then(() => spaceContext.publishedCTs.refresh()).then(() => {
       // Picked up by the learn page which then refreshes itself
       $rootScope.$broadcast('spaceTemplateCreated');
     });
@@ -272,9 +266,7 @@ angular.module('contentful')
 
   // Form validations
   function hasErrorOnField (errors, fieldPath, errorName) {
-    return _.some(errors, function (e) {
-      return e.path === fieldPath && e.name === errorName;
-    });
+    return _.some(errors, e => e.path === fieldPath && e.name === errorName);
   }
 
   function resetErrors () {

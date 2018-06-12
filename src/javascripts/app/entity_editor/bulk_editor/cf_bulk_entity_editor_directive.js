@@ -28,7 +28,7 @@ angular.module('contentful')
  *   The tracking object created by the bulk editor tracking service.
  *   Contains methods that can be called to track actions.
  */
-.directive('cfBulkEntityEditor', ['require', function (require) {
+.directive('cfBulkEntityEditor', ['require', require => {
   var $q = require('$q');
   var $controller = require('$controller');
   var $timeout = require('$timeout');
@@ -49,7 +49,7 @@ angular.module('contentful')
       $scope.$el = $el;
       $scope.el = $el.get(0);
     },
-    controller: ['$scope', function ($scope) {
+    controller: ['$scope', $scope => {
       var entityContext = $scope.entityContext;
       var bulkEditorContext = $scope.bulkEditorContext;
 
@@ -71,9 +71,9 @@ angular.module('contentful')
       };
 
 
-      K.onValueScope($scope, bulkEditorContext.scrollTarget$, function (key) {
+      K.onValueScope($scope, bulkEditorContext.scrollTarget$, key => {
         if (key === entityContext.key) {
-          $timeout(function () {
+          $timeout(() => {
             $scope.$el.find('input').eq(0).focus();
             $scope.el.scrollIntoView({behavior: 'smooth', block: 'start'});
           });
@@ -82,53 +82,43 @@ angular.module('contentful')
 
       var editorDataPromise$ = K.promiseProperty(
         bulkEditorContext.loadEditorData(entityContext.id)
-        .then(function (editorData) {
+        .then(editorData => {
           var doc = editorData.openDoc(K.scopeLifeline($scope));
           // We wait for the document to be opened until we setup the
           // editor
           return doc.state.loaded$.toPromise($q)
-            .then(function () {
-              return _.assign({doc: doc}, editorData);
-            });
+            .then(() => _.assign({doc: doc}, editorData));
         })
       );
 
       // Property<boolean>
       // True if the entry data is still loading. False when the data was loaded
       // or the loading failed.
-      var loadingEditorData$ = editorDataPromise$.map(function (p) {
-        return caseof(p, [
-          [K.PromiseStatus.Pending, _.constant(true)],
-          [null, _.constant(false)]
-        ]);
-      });
+      var loadingEditorData$ = editorDataPromise$.map(p => caseof(p, [
+        [K.PromiseStatus.Pending, _.constant(true)],
+        [null, _.constant(false)]
+      ]));
 
       // Stream<void>
       // Emits exactly one event when the entry data has been loaded or the
       // loading has failed
-      var loaded$ = loadingEditorData$.filter(function (loading) {
-        return loading === false;
-      });
+      var loaded$ = loadingEditorData$.filter(loading => loading === false);
 
       K.onValueScope($scope, loaded$, bulkEditorContext.initializedEditor);
 
-      K.onValueScope($scope, loadingEditorData$, function (loading) {
+      K.onValueScope($scope, loadingEditorData$, loading => {
         $scope.loading = loading;
       });
 
       // Property<object?>
       // Holds the editor data if it has been loaded successfully. Holds 'null'
       // otherwise
-      var editorData$ = editorDataPromise$.map(function (p) {
-        return caseof(p, [
-          [K.PromiseStatus.Resolved, function (p) {
-            return p.value;
-          }],
-          [null, _.constant(null)]
-        ]);
-      });
+      var editorData$ = editorDataPromise$.map(p => caseof(p, [
+        [K.PromiseStatus.Resolved, p => p.value],
+        [null, _.constant(null)]
+      ]));
 
-      K.onValueScope($scope, editorData$, function (editorData) {
+      K.onValueScope($scope, editorData$, editorData => {
         if (editorData) {
           setupEditor(editorData);
         }
@@ -175,9 +165,7 @@ angular.module('contentful')
   var editorData = $scope.editorData;
   var entityInfo = this.entityInfo = editorData.entityInfo;
 
-  var notify = makeNotify('Entry', function () {
-    return '“' + $scope.title + '”';
-  });
+  var notify = makeNotify('Entry', () => '“' + $scope.title + '”');
 
   $scope.editorContext = this;
   $scope.entityInfo = entityInfo;
@@ -200,22 +188,22 @@ angular.module('contentful')
   });
 
   var track = $scope.bulkEditorContext.track;
-  K.onValueScope($scope, $scope.otDoc.resourceState.stateChange$, function (data) {
+  K.onValueScope($scope, $scope.otDoc.resourceState.stateChange$, data => {
     track.changeStatus($scope.entityInfo.id, data.to);
   });
 
-  K.onValueScope($scope, $scope.otDoc.localFieldChanges$, function () {
+  K.onValueScope($scope, $scope.otDoc.localFieldChanges$, () => {
     track.edited(entityInfo.id);
   });
 
 
   this.focus = Focus.create();
 
-  K.onValueScope($scope, $scope.otDoc.state.isSaving$, function (isSaving) {
+  K.onValueScope($scope, $scope.otDoc.state.isSaving$, isSaving => {
     $scope.data.isSaving = isSaving;
   });
 
-  K.onValueScope($scope, $scope.otDoc.valuePropertyAt([]), function (data) {
+  K.onValueScope($scope, $scope.otDoc.valuePropertyAt([]), data => {
     var title = spaceContext.entryTitle({
       getContentTypeId: _.constant($scope.entityInfo.contentTypeId),
       data: data

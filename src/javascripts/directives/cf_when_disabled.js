@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfWhenDisabled', ['require', function (require) {
+angular.module('contentful').directive('cfWhenDisabled', ['require', require => {
 
   var accessChecker = require('access_control/AccessChecker');
 
@@ -35,16 +35,14 @@ angular.module('contentful').directive('cfWhenDisabled', ['require', function (r
   return {
     restrict: 'A',
     link: function (scope, elem, attrs) {
-      scope.$watch(function () {
-        return accessChecker.getResponseByActionName(attrs.cfWhenDisabled);
-      }, addTooltip, true);
+      scope.$watch(() => accessChecker.getResponseByActionName(attrs.cfWhenDisabled), addTooltip, true);
 
       function addTooltip(response) {
         if (response && response.shouldDisable && response.enforcement) {
           var layerId = 'transparent-button-layer-'+Math.ceil(Math.random()*100000);
           elem.attr('disable-layer', layerId);
 
-          setTimeout(function () {
+          setTimeout(() => {
             var layer = makeLayer(layerId, elem);
             layer.prependTo(elem.parent());
             layer.tooltip({

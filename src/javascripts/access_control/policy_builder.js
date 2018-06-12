@@ -9,15 +9,13 @@ angular.module('contentful').constant('PolicyBuilder/CONFIG', {
   PATH_SEPARATOR: '.'
 });
 
-angular.module('contentful').factory('PolicyBuilder', ['require', function (require) {
-  return {
-    toInternal: require('PolicyBuilder/toInternal'),
-    toExternal: require('PolicyBuilder/toExternal'),
-    removeOutdatedRules: require('PolicyBuilder/removeOutdatedRules')
-  };
-}]);
+angular.module('contentful').factory('PolicyBuilder', ['require', require => ({
+  toInternal: require('PolicyBuilder/toInternal'),
+  toExternal: require('PolicyBuilder/toExternal'),
+  removeOutdatedRules: require('PolicyBuilder/removeOutdatedRules')
+})]);
 
-angular.module('contentful').factory('PolicyBuilder/defaultRule', ['require', function (require) {
+angular.module('contentful').factory('PolicyBuilder/defaultRule', ['require', require => {
 
   var random  = require('random');
   var ALL_CTS = require('PolicyBuilder/CONFIG').ALL_CTS;
@@ -39,9 +37,7 @@ angular.module('contentful').factory('PolicyBuilder/defaultRule', ['require', fu
   };
 
   function getDefaultRuleGetterFor(entity) {
-    return function () {
-      return getDefaultRuleFor(entity);
-    };
+    return () => getDefaultRuleFor(entity);
   }
 
   function getDefaultRuleFor(entity) {
@@ -57,7 +53,7 @@ angular.module('contentful').factory('PolicyBuilder/defaultRule', ['require', fu
   }
 }]);
 
-angular.module('contentful').factory('PolicyBuilder/toInternal', ['require', function (require) {
+angular.module('contentful').factory('PolicyBuilder/toInternal', ['require', require => {
 
   var CONFIG            = require('PolicyBuilder/CONFIG');
   var getDefaultRuleFor = require('PolicyBuilder/defaultRule').getDefaultRuleFor;
@@ -101,13 +97,11 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['require', fun
   }
 
   function prepare(external) {
-    return _.map(external.policies, function (policy) {
-      return {
-        action: extractAction(policy),
-        effectCollection: {allow: 'allowed', deny: 'denied'}[policy.effect],
-        constraints: extractConstraints(policy)
-      };
-    });
+    return _.map(external.policies, policy => ({
+      action: extractAction(policy),
+      effectCollection: {allow: 'allowed', deny: 'denied'}[policy.effect],
+      constraints: extractConstraints(policy)
+    }));
   }
 
   function extendPolicyWithRule(policy) {
@@ -195,33 +189,23 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['require', fun
   }
 
   function findEntityConstraint(cs) {
-    return searchResult(cs, _.findIndex(cs, function (c) {
-      return docEq(c, 'sys.type') && _.includes(['Entry', 'Asset'], c.equals[1]);
-    }));
+    return searchResult(cs, _.findIndex(cs, c => docEq(c, 'sys.type') && _.includes(['Entry', 'Asset'], c.equals[1])));
   }
 
   function findContentTypeConstraint(cs) {
-    return searchResult(cs, _.findIndex(cs, function (c) {
-      return docEq(c, 'sys.contentType.sys.id') && _.isString(c.equals[1]);
-    }));
+    return searchResult(cs, _.findIndex(cs, c => docEq(c, 'sys.contentType.sys.id') && _.isString(c.equals[1])));
   }
 
   function findIdConstraint(cs) {
-    return searchResult(cs, _.findIndex(cs, function (c) {
-      return docEq(c, 'sys.id') && _.isString(c.equals[1]);
-    }));
+    return searchResult(cs, _.findIndex(cs, c => docEq(c, 'sys.id') && _.isString(c.equals[1])));
   }
 
   function findScopeConstraint(cs) {
-    return searchResult(cs, _.findIndex(cs, function (c) {
-      return docEq(c, 'sys.createdBy.sys.id') && _.isString(c.equals[1]);
-    }));
+    return searchResult(cs, _.findIndex(cs, c => docEq(c, 'sys.createdBy.sys.id') && _.isString(c.equals[1])));
   }
 
   function findPathConstraint(cs) {
-    var index = _.findIndex(cs, function (c) {
-      return _.isArray(c.paths) && _.isObject(c.paths[0]) && _.isString(c.paths[0].doc);
-    });
+    var index = _.findIndex(cs, c => _.isArray(c.paths) && _.isObject(c.paths[0]) && _.isString(c.paths[0].doc));
 
     return {
       index: index,
@@ -253,7 +237,7 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['require', fun
   }
 }]);
 
-angular.module('contentful').factory('PolicyBuilder/toExternal', ['require', function (require) {
+angular.module('contentful').factory('PolicyBuilder/toExternal', ['require', require => {
 
   var capitalize = require('stringUtils').capitalize;
   var CONFIG     = require('PolicyBuilder/CONFIG');
@@ -297,12 +281,10 @@ angular.module('contentful').factory('PolicyBuilder/toExternal', ['require', fun
   }
 
   function prepareCollection(collection, entity, effect) {
-    return _.map(collection, function (source) {
-      return {
-        source: _.extend({ effect: effect, entity: entity }, source),
-        result: {}
-      };
-    });
+    return _.map(collection, source => ({
+      source: _.extend({ effect: effect, entity: entity }, source),
+      result: {}
+    }));
   }
 
   function addBase(pair) {
