@@ -6,7 +6,7 @@ angular.module('contentful')
  * @ngdoc service
  * @name states/settings/users
  */
-.factory('states/settings/users', ['require', function (require) {
+.factory('states/settings/users', ['require', require => {
   var base = require('states/Base').default;
 
   var list = base({

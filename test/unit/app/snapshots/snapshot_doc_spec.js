@@ -1,6 +1,6 @@
 'use strict';
 
-describe('SnapshotComparatorController/snapshotDoc', function () {
+describe('SnapshotComparatorController/snapshotDoc', () => {
   const data = {
     sys: {},
     fields: {
@@ -22,7 +22,7 @@ describe('SnapshotComparatorController/snapshotDoc', function () {
     this.K = this.$inject('utils/kefir');
   });
 
-  describe('#getValueAt', function () {
+  describe('#getValueAt', () => {
     it('returns value at path', function () {
       expect(this.doc.getValueAt(['fields', 'field1', 'en-US'])).toBe('lol');
       expect(this.doc.getValueAt(['fields', 'field2', 'de-DE'])).toEqual({some: 'prop'});
@@ -31,7 +31,7 @@ describe('SnapshotComparatorController/snapshotDoc', function () {
     });
   });
 
-  describe('#valuePropertyAt', function () {
+  describe('#valuePropertyAt', () => {
     it('returns a constant value property of path', function () {
       const property = this.doc.valuePropertyAt(['fields', 'field1', 'en-US']);
       const spy1 = sinon.spy();
@@ -44,7 +44,7 @@ describe('SnapshotComparatorController/snapshotDoc', function () {
     });
   });
 
-  describe('mutating methods', function () {
+  describe('mutating methods', () => {
     it('resolves, but does nothing', function () {
       const $q = this.$inject('$q');
       const path = ['fields', 'field2', 'de-DE'];

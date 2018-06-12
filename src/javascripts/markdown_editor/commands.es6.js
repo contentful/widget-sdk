@@ -128,7 +128,7 @@ export function create (editor) {
  * Used b the `bold`, `italic`, and `strike` commands.
  */
 function wrapSelection (editor, marker, emptyText) {
-  return function () {
+  return () => {
     editor.usePrimarySelection();
 
     // there's a selection - wrap it with inline marker
@@ -149,13 +149,13 @@ function wrapSelection (editor, marker, emptyText) {
  * If there is no selection we just call `toggleFn(editor)`.
  */
 function modifySelection (editor, toggleFn, isList) {
-  return function () {
+  return () => {
     editor.usePrimarySelection();
 
     if (editor.getSelection()) {
       // there's a selection - toggle list bullet for each line
       // listNumber is 1, 2, 3... and can be used as ol bullet
-      forLineIn(editor.getSelection(), function (lineNumber, listNumber) {
+      forLineIn(editor.getSelection(), (lineNumber, listNumber) => {
         // TODO move this into forLineIn
         editor.moveToLineBeginning(lineNumber);
         toggleFn(editor, listNumber);
@@ -185,7 +185,7 @@ function forLineIn (selection, cb) {
   const lines = [selection.anchor.line, selection.head.line];
   const lineRange = range(min(lines), max(lines) + 1);
 
-  lineRange.forEach(function (lineNumber, i) {
+  lineRange.forEach((lineNumber, i) => {
     cb(lineNumber, i + 1);
   });
 }
@@ -222,7 +222,7 @@ function countEmptyLines (editor) {
 
 
 function createPrefixToggleFn (prefix) {
-  return function (editor) {
+  return editor => {
     if (editor.lineStartsWith(prefix)) {
       editor.removeFromLineBeginning(prefix.length);
     } else {
@@ -271,14 +271,12 @@ function tableTemplate (nrows, ncols) {
   let baseRow = '|';
   let separatorRow = '|';
 
-  times(ncols, function () {
+  times(ncols, () => {
     baseRow += cell;
     separatorRow += separatorCell;
   });
 
-  const bodyRows = range(nrows).map(function () {
-    return baseRow.replace(/\| {5}/g, '| Cell');
-  });
+  const bodyRows = range(nrows).map(() => baseRow.replace(/\| {5}/g, '| Cell'));
 
   const headerRow = baseRow.replace(/\| {7}/g, '| Header');
 
@@ -293,7 +291,7 @@ function tableTemplate (nrows, ncols) {
  * - Otherwise inserts the header
  */
 function toggleHeader (editor, level) {
-  return function () {
+  return () => {
     const initialCh = editor.getCurrentCharacter();
     const currentHeader = selectHeader(editor);
     const prefix = repeat(HEADER_CHAR, level);

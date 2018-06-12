@@ -1,10 +1,10 @@
 'use strict';
 
-describe('Entry List Actions Controller', function () {
+describe('Entry List Actions Controller', () => {
   let scope, stubs, accessChecker;
   let action1, action2, action3, action4;
 
-  afterEach(function () {
+  afterEach(() => {
     scope = stubs = accessChecker = null;
     action1 = action2 = action3 = action4 = null;
   });
@@ -28,7 +28,7 @@ describe('Entry List Actions Controller', function () {
       }))
     };
 
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       stubs = $provide.makeStubs([
         'track',
         'info',
@@ -126,8 +126,8 @@ describe('Entry List Actions Controller', function () {
   }
 
   function makePerformTests (action, extraSpecs) {
-    describe(`${action} selected entries`, function () {
-      beforeEach(function () {
+    describe(`${action} selected entries`, () => {
+      beforeEach(() => {
         stubs.size.returns(2);
         const entities = [
           makeEntity(action, stubs.action1),
@@ -146,43 +146,43 @@ describe('Entry List Actions Controller', function () {
         scope.$digest();
       });
 
-      it(`calls ${action} on first selected entry`, function () {
+      it(`calls ${action} on first selected entry`, () => {
         sinon.assert.called(stubs.action1);
       });
 
-      it(`calls ${action} on second selected entry`, function () {
+      it(`calls ${action} on second selected entry`, () => {
         sinon.assert.called(stubs.action2);
       });
 
-      it(`calls ${action} on third selected entry`, function () {
+      it(`calls ${action} on third selected entry`, () => {
         sinon.assert.called(stubs.action3);
       });
 
-      it(`calls ${action} on fourth selected entry`, function () {
+      it(`calls ${action} on fourth selected entry`, () => {
         sinon.assert.called(stubs.action4);
       });
 
-      it('calls success notification', function () {
+      it('calls success notification', () => {
         sinon.assert.calledOnce(stubs.info);
       });
 
-      it('success notification shown for 3 items', function () {
+      it('success notification shown for 3 items', () => {
         expect(stubs.info.args[0][0]).toMatch(/^2*/);
       });
 
-      it('calls warn notification', function () {
+      it('calls warn notification', () => {
         sinon.assert.calledOnce(stubs.warn);
       });
 
-      it('warn notification shown for 1 item', function () {
+      it('warn notification shown for 1 item', () => {
         expect(stubs.warn.args[0][0]).toMatch(/^2*/);
       });
 
-      it('clears selection', function () {
+      it('clears selection', () => {
         sinon.assert.called(stubs.clear);
       });
 
-      it('tracks analytics event', function () {
+      it('tracks analytics event', () => {
         sinon.assert.called(stubs.track);
       });
 
@@ -198,8 +198,8 @@ describe('Entry List Actions Controller', function () {
   makePerformTests('archive');
   makePerformTests('unarchive');
 
-  describe('duplicates selected entries', function () {
-    beforeEach(function () {
+  describe('duplicates selected entries', () => {
+    beforeEach(() => {
       stubs.size.returns(2);
       stubs.action1.returns({
         type: 'Entry',
@@ -255,48 +255,48 @@ describe('Entry List Actions Controller', function () {
       scope.$digest();
     });
 
-    it('calls getSys on first selected entry', function () {
+    it('calls getSys on first selected entry', () => {
       sinon.assert.called(stubs.action1);
     });
 
-    it('calls getSys on second selected entry', function () {
+    it('calls getSys on second selected entry', () => {
       sinon.assert.called(stubs.action2);
     });
 
-    it('attempts to create first entries', function () {
+    it('attempts to create first entries', () => {
       sinon.assert.calledWith(stubs.createEntry, 'foo');
     });
 
-    it('attempts to create second entries', function () {
+    it('attempts to create second entries', () => {
       sinon.assert.calledWith(stubs.createEntry, 'bar');
     });
 
-    it('calls success notification', function () {
+    it('calls success notification', () => {
       sinon.assert.calledOnce(stubs.info);
     });
 
-    it('calls warn notification', function () {
+    it('calls warn notification', () => {
       sinon.assert.calledOnce(stubs.warn);
     });
 
-    it('clears selection', function () {
+    it('clears selection', () => {
       sinon.assert.called(stubs.clear);
     });
 
-    it('tracks analytics event', function () {
+    it('tracks analytics event', () => {
       sinon.assert.called(stubs.track);
     });
 
-    it('increases paginator value', function () {
+    it('increases paginator value', () => {
       expect(scope.paginator.getTotal()).toBe(2);
     });
   });
 
-  it('can show duplicate action', function () {
+  it('can show duplicate action', () => {
     expect(scope.showDuplicate()).toBeTruthy();
   });
 
-  it('cannot show duplicate action', function () {
+  it('cannot show duplicate action', () => {
     accessChecker.shouldHide.withArgs('createEntry').returns(true);
     expect(scope.showDuplicate()).toBeFalsy();
   });
@@ -305,7 +305,7 @@ describe('Entry List Actions Controller', function () {
     const methodName = 'show' + action.charAt(0).toUpperCase() + action.substr(1);
     const canMethodName = 'can' + action.charAt(0).toUpperCase() + action.substr(1);
 
-    it('can show ' + action + ' action', function () {
+    it('can show ' + action + ' action', () => {
       stubs.action1.returns(true);
       stubs.action2.returns(true);
       accessChecker.canPerformActionOnEntity.returns(true);
@@ -317,7 +317,7 @@ describe('Entry List Actions Controller', function () {
       expect(scope[methodName]()).toBeTruthy();
     });
 
-    it('cannot show delete ' + action + ' because no general permission', function () {
+    it('cannot show delete ' + action + ' because no general permission', () => {
       accessChecker.shouldHide.withArgs(action + 'Entry').returns(true);
       stubs.action1.returns(true);
       stubs.action2.returns(true);
@@ -330,7 +330,7 @@ describe('Entry List Actions Controller', function () {
       expect(scope[methodName]()).toBeFalsy();
     });
 
-    it('cannot show ' + action + ' action because no permission on item', function () {
+    it('cannot show ' + action + ' action because no permission on item', () => {
       stubs.action1.returns(true);
       stubs.action2.returns(false);
       accessChecker.canPerformActionOnEntity.returns(true);
@@ -348,7 +348,7 @@ describe('Entry List Actions Controller', function () {
   makePermissionTests('publish');
   makePermissionTests('unpublish');
 
-  it('gets publish button name if all are unpublished', function () {
+  it('gets publish button name if all are unpublished', () => {
     stubs.action1.returns(false);
     stubs.action2.returns(false);
     stubs.getSelected.returns([
@@ -359,7 +359,7 @@ describe('Entry List Actions Controller', function () {
     expect(scope.publishButtonName()).toBe('Publish');
   });
 
-  it('gets publish button name if all published', function () {
+  it('gets publish button name if all published', () => {
     stubs.action1.returns(true);
     stubs.action2.returns(true);
     stubs.getSelected.returns([
@@ -370,7 +370,7 @@ describe('Entry List Actions Controller', function () {
     expect(scope.publishButtonName()).toBe('Republish');
   });
 
-  it('gets publish button name not all are published', function () {
+  it('gets publish button name not all are published', () => {
     stubs.action1.returns(true);
     stubs.action2.returns(false);
     stubs.getSelected.returns([

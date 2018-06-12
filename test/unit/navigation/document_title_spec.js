@@ -1,6 +1,6 @@
 'use strict';
 
-describe('navigation/DocumentTitle', function () {
+describe('navigation/DocumentTitle', () => {
   beforeEach(function () {
     this.currentState = {};
     this.document = {title: 'initial'};
@@ -13,7 +13,7 @@ describe('navigation/DocumentTitle', function () {
     this.dt = this.$inject('navigation/DocumentTitle');
   });
 
-  describe('#init', function () {
+  describe('#init', () => {
     it('does not set title if not initialized', function () {
       this.currentState.label = 'boo';
       this.$apply();
@@ -38,7 +38,7 @@ describe('navigation/DocumentTitle', function () {
     });
   });
 
-  describe('#setTitle', function () {
+  describe('#setTitle', () => {
     it('sets the title', function () {
       this.dt.setTitle('xxx');
       expect(this.document.title).toBe('xxx');
@@ -52,7 +52,7 @@ describe('navigation/DocumentTitle', function () {
     });
   });
 
-  describe('#maybeOverride', function () {
+  describe('#maybeOverride', () => {
     it('overrides the title if string', function () {
       expect(this.document.title).not.toBe('test');
       this.dt.maybeOverride('test');

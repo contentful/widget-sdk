@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 
-.factory('analyticsEvents/versioning', ['require', function (require) {
+.factory('analyticsEvents/versioning', ['require', require => {
   var Analytics = require('analytics/Analytics');
   var leaveConfirmator = require('navigation/confirmLeaveEditor');
 
@@ -68,15 +68,13 @@ angular.module('contentful')
   function trackableConfirmator (save) {
     var confirmator = leaveConfirmator(save, 'confirm_leave_comparison');
 
-    return function () {
-      return confirmator().then(function (result) {
-        if (result && result.discarded) {
-          closed(true);
-        }
+    return () => confirmator().then(result => {
+      if (result && result.discarded) {
+        closed(true);
+      }
 
-        return result;
-      });
-    };
+      return result;
+    });
   }
 
   function basicInfo () {

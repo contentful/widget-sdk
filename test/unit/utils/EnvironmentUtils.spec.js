@@ -1,6 +1,6 @@
 import * as EnvironmentUtils from 'utils/EnvironmentUtils';
 
-describe('utils/EnvironmentUtils', function () {
+describe('utils/EnvironmentUtils', () => {
   beforeEach(function () {
     module('contentful/test');
 
@@ -25,7 +25,7 @@ describe('utils/EnvironmentUtils', function () {
     };
   });
 
-  describe('#isInsideMasterEnv', function () {
+  describe('#isInsideMasterEnv', () => {
     it('should return true if inside master environment', function () {
       const flag = EnvironmentUtils.isInsideMasterEnv(this.spaceContext);
 

@@ -7,7 +7,7 @@
  * Opens a modal window for entity selection.
  */
 angular.module('contentful')
-.factory('entitySelector', ['require', function (require) {
+.factory('entitySelector', ['require', require => {
   var modalDialog = require('modalDialog');
   var spaceContext = require('spaceContext');
   var ListQuery = require('ListQuery');
@@ -144,15 +144,11 @@ angular.module('contentful')
   function openFromExtension (options) {
     return newConfigFromExtension(options)
       .then(open)
-      .then(function (selected) {
-        // resolve with a single object if selecting only
-        // one entity, resolve with an array otherwise
-        return options.multiple ? selected : selected[0];
-      }, function (err) {
-        // resolve with `null` if a user skipped selection,
-        // reject with an error otherwise
-        return err ? $q.reject(err) : null;
-      });
+      .then(selected => // resolve with a single object if selecting only
+    // one entity, resolve with an array otherwise
+    (options.multiple ? selected : selected[0]), err => // resolve with `null` if a user skipped selection,
+    // reject with an error otherwise
+    (err ? $q.reject(err) : null));
   }
 
   function getListHeight () {
@@ -199,7 +195,7 @@ angular.module('contentful')
     };
     config.fetch = makeFetch(config);
 
-    return getSingleContentType(config).then(function (singleContentType) {
+    return getSingleContentType(config).then(singleContentType => {
       config.scope.singleContentType = singleContentType;
       return config;
     });
@@ -223,7 +219,7 @@ angular.module('contentful')
     });
     config.fetch = makeFetch(config);
 
-    return getSingleContentType(config).then(function (singleContentType) {
+    return getSingleContentType(config).then(singleContentType => {
       config.scope.singleContentType = singleContentType;
       return config;
     });
@@ -243,12 +239,10 @@ angular.module('contentful')
     var queryMethod = 'getFor' + getEntityTypePlural(config.entityType);
     var queryExtension = prepareQueryExtension(config);
 
-    return function (params) {
-      return ListQuery[queryMethod](params).then(function (query) {
-        query = _.extend(query, queryExtension);
-        return spaceContext.cma[fnName](query);
-      });
-    };
+    return params => ListQuery[queryMethod](params).then(query => {
+      query = _.extend(query, queryExtension);
+      return spaceContext.cma[fnName](query);
+    });
   }
 
   function getEntityTypePlural (singular) {
@@ -266,9 +260,7 @@ angular.module('contentful')
 
   function findValidation (field, property, defaultValue) {
     var validations = [].concat(field.validations || [], field.itemValidations || []);
-    var found = _.find(validations, function (v) {
-      return _.isObject(v[property]) || _.isString(v[property]);
-    });
+    var found = _.find(validations, v => _.isObject(v[property]) || _.isString(v[property]));
 
     return (found && found[property]) || defaultValue;
   }
@@ -299,9 +291,7 @@ angular.module('contentful')
     if (config.entityType === 'Asset') {
       var groups = config.linkedMimetypeGroups;
       if (Array.isArray(groups) && groups.length > 0) {
-        extension['fields.file.contentType[in]'] = _.reduce(groups, function (cts, group) {
-          return cts.concat(mimetype.getTypesForGroup(group));
-        }, []).join(',');
+        extension['fields.file.contentType[in]'] = _.reduce(groups, (cts, group) => cts.concat(mimetype.getTypesForGroup(group)), []).join(',');
       }
 
       // @todo there are multiple BE problems that need to be solved first;

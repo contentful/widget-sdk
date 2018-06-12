@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('cf.ui')
-.directive('uiHighlightMatch', ['require', function (require) {
+.directive('uiHighlightMatch', ['require', require => {
   var document = require('$document').get(0);
   return {
     restrict: 'A',
@@ -10,7 +10,7 @@ angular.module('cf.ui')
       search: '=search'
     },
     link: function ($scope, $el) {
-      $scope.$watchGroup(['baseString', 'search'], function (values) {
+      $scope.$watchGroup(['baseString', 'search'], values => {
         var base = values[0] || '';
         var search = values[1] || '';
         var start = base.toLowerCase().indexOf(search.toLowerCase());

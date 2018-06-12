@@ -28,11 +28,7 @@ angular.module('contentful')
   var Analytics = require('analytics/Analytics');
   var createActions = require('app/ContentModel/Editor/Actions').default;
 
-  var contentTypeIds = spaceContext.cma.getContentTypes().then(function (response) {
-    return response.items.map(function (ct) {
-      return ct.sys.id;
-    });
-  });
+  var contentTypeIds = spaceContext.cma.getContentTypes().then(response => response.items.map(ct => ct.sys.id));
 
   var canEdit = accessChecker.can('update', 'ContentType');
   // Read-only data for template
@@ -51,7 +47,7 @@ angular.module('contentful')
 
   $scope.stateIs = $state.is;
 
-  $scope.goTo = function (stateName) {
+  $scope.goTo = stateName => {
     $state.go('^.' + stateName);
   };
 
@@ -62,17 +58,15 @@ angular.module('contentful')
   $scope.$watch('contentTypeForm.$dirty', setDirtyState);
   $scope.$watch('context.isNew', setDirtyState);
 
-  $scope.$watch(function () {
-    return $scope.contentType.getName();
-  }, function (title) {
+  $scope.$watch(() => $scope.contentType.getName(), title => {
     $scope.context.title = title;
   });
 
-  $scope.$watch('contentType.data.fields', function (newVal, oldVal) {
+  $scope.$watch('contentType.data.fields', (newVal, oldVal) => {
     checkForDirtyForm(newVal, oldVal);
   }, true);
 
-  $scope.$watch('contentType.data.fields.length', function (length) {
+  $scope.$watch('contentType.data.fields.length', length => {
     $scope.hasFields = length > 0;
     ctHelpers.assureDisplayField($scope.contentType.data);
     setDirtyState();
@@ -81,14 +75,14 @@ angular.module('contentful')
 
   if ($scope.context.isNew) {
     metadataDialog.openCreateDialog(contentTypeIds)
-    .then(applyContentTypeMetadata(true), function () {
+    .then(applyContentTypeMetadata(true), () => {
       // X.detail.fields -> X.list
       $state.go('^.^.list');
     });
   }
 
   function applyContentTypeMetadata (withId) {
-    return function (metadata) {
+    return metadata => {
       var data = $scope.contentType.data;
       data.name = metadata.name;
       data.description = metadata.description;
@@ -109,7 +103,7 @@ angular.module('contentful')
    * @param {string} id
    * @returns {API.ContentType.Field}
    */
-  controller.getPublishedField = function (id) {
+  controller.getPublishedField = id => {
     var publishedFields = _.get($scope.publishedContentType, 'data.fields', []);
     return _.cloneDeep(_.find(publishedFields, {id: id}));
   };
@@ -119,7 +113,7 @@ angular.module('contentful')
    * @name ContentTypeEditorController#removeField
    * @param {string} id
    */
-  controller.removeField = function (id) {
+  controller.removeField = id => {
     var fields = $scope.contentType.data.fields;
     _.remove(fields, {id: id});
     syncEditingInterface();
@@ -130,10 +124,10 @@ angular.module('contentful')
    * @name ContentTypeEditorController#openFieldDialog
    * @param {Client.ContentType.Field} field
    */
-  controller.openFieldDialog = function (field) {
+  controller.openFieldDialog = field => {
     var control = eiHelpers.findWidget($scope.editingInterface.controls, field);
     return openFieldDialog($scope, field, control)
-    .then(function () {
+    .then(() => {
       $scope.contentTypeForm.$setDirty();
     });
   };
@@ -156,7 +150,7 @@ angular.module('contentful')
    * @ngdoc method
    * @name ContentTypeEditorController#$scope.showMetadataDialog
   */
-  $scope.showMetadataDialog = Command.create(function () {
+  $scope.showMetadataDialog = Command.create(() => {
     metadataDialog.openEditDialog($scope.contentType)
     .then(applyContentTypeMetadata());
   }, {
@@ -170,7 +164,7 @@ angular.module('contentful')
    * @ngdoc property
    * @name ContentTypeEditorController#$scope.showNewFieldDialog
    */
-  $scope.showNewFieldDialog = Command.create(function () {
+  $scope.showNewFieldDialog = Command.create(() => {
     modalDialog.open({
       template: 'add_field_dialog',
       scope: $scope

@@ -1,6 +1,6 @@
 'use strict';
 
-describe('contentTypeEditor/metadataDialog', function () {
+describe('contentTypeEditor/metadataDialog', () => {
   beforeEach(function () {
     module('contentful/test');
     this.dialogContainer = $('<div class="client">').appendTo('body');
@@ -12,7 +12,7 @@ describe('contentTypeEditor/metadataDialog', function () {
     this.dialogContainer.remove();
   });
 
-  describe('#openEditDialog()', function () {
+  describe('#openEditDialog()', () => {
     it('shows the content type name and description', function () {
       this.metadataDialog.openEditDialog({data: {name: 'NAME', description: 'DESC'}});
       this.$apply();
@@ -44,7 +44,7 @@ describe('contentTypeEditor/metadataDialog', function () {
     });
   });
 
-  describe('#openCreateDialog()', function () {
+  describe('#openCreateDialog()', () => {
     it('sets the content type id from the content type name', function () {
       const handleMetadataChange = sinon.stub();
       this.metadataDialog.openCreateDialog().then(handleMetadataChange);
@@ -65,7 +65,7 @@ describe('contentTypeEditor/metadataDialog', function () {
     });
   });
 
-  describe('#openDuplicateDialog()', function () {
+  describe('#openDuplicateDialog()', () => {
     it('duplicates a provided content type', function () {
       const duplicate = sinon.stub().resolves();
       this.metadataDialog.openDuplicateDialog({data: {name: 'test', description: 'xyz'}}, duplicate);

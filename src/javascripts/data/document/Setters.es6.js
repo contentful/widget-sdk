@@ -55,7 +55,7 @@ export function create ({
   }
 
   function setValueAt (path, value) {
-    return withRawDoc(path, function (doc) {
+    return withRawDoc(path, doc => {
       maybeEmitLocalChange(path);
       return setValueAtRaw(doc, path, value);
     });

@@ -10,7 +10,7 @@ angular.module('contentful')
  * This service exposes some helper methods for
  * account section URL manipulation.
  */
-.factory('TheAccountView', ['require', function (require) {
+.factory('TheAccountView', ['require', require => {
   var $q = require('$q');
   var spaceContext = require('spaceContext');
   var OrganizationRoles = require('services/OrganizationRoles');

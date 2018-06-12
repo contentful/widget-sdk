@@ -1,8 +1,8 @@
 import * as sinon from 'helpers/sinon';
 
-describe('The ContentType list directive', function () {
+describe('The ContentType list directive', () => {
   it('filters content types by name', function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.value('$state', {current: {}, href: () => {}});
     });
 

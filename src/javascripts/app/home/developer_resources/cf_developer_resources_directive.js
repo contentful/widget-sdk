@@ -1,15 +1,13 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfDeveloperResources', function () {
-  return {
-    template: JST.cf_developer_resources(),
-    restrict: 'E',
-    scope: {},
-    controller: 'LanguageResourcesController',
-    controllerAs: 'resources'
-  };
-})
+.directive('cfDeveloperResources', () => ({
+  template: JST.cf_developer_resources(),
+  restrict: 'E',
+  scope: {},
+  controller: 'LanguageResourcesController',
+  controllerAs: 'resources'
+}))
 
 .controller('LanguageResourcesController', ['require', function (require) {
   var controller = this;

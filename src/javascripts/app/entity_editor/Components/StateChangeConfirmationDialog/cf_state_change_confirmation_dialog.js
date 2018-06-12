@@ -1,6 +1,6 @@
 angular.module('contentful').directive('cfStateChangeConfirmationDialog', [
   'require',
-  function (require) {
+  require => {
     var _ = require('lodash');
     var React = require('react');
     var ReactDOM = require('react-dom');
@@ -34,7 +34,7 @@ angular.module('contentful').directive('cfStateChangeConfirmationDialog', [
 
         render();
 
-        $scope.$on('$destroy', function () {
+        $scope.$on('$destroy', () => {
           ReactDOM.unmountComponentAtNode(elem[0]);
         });
       }

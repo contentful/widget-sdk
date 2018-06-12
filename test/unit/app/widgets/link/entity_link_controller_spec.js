@@ -1,6 +1,6 @@
 import $q from '$q';
 
-describe('EntityLinkController', function () {
+describe('EntityLinkController', () => {
   beforeEach(function () {
     module('contentful/test');
     const $rootScope = this.$inject('$rootScope');
@@ -9,7 +9,7 @@ describe('EntityLinkController', function () {
     this.helpers = _.transform([
       'entityTitle', 'entityStatus', 'entityDescription',
       'entryImage', 'assetFile', 'assetFileUrl'
-    ], function (acc, method) {
+    ], (acc, method) => {
       acc[method] = sinon.stub().resolves();
     }, {});
 
@@ -21,7 +21,7 @@ describe('EntityLinkController', function () {
     };
   });
 
-  describe('entity missing state', function () {
+  describe('entity missing state', () => {
     const id = 'testid';
     const entity = {sys: {id: id, type: 'Entry'}};
 
@@ -41,7 +41,7 @@ describe('EntityLinkController', function () {
     });
   });
 
-  describe('getting entity info', function () {
+  describe('getting entity info', () => {
     const entry = {sys: {id: 'entryid', type: 'Entry'}};
     const asset = {sys: {id: 'assetid', type: 'Asset'}};
     const url = 'http://some.image.host/pika.gif';

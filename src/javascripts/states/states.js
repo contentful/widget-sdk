@@ -6,7 +6,7 @@ angular.module('contentful')
  * @ngdoc service
  * @name states
  */
-.factory('states', ['require', function (require) {
+.factory('states', ['require', require => {
   var config = require('states/config');
   var notification = require('notification');
 
@@ -60,7 +60,7 @@ angular.module('contentful')
   }
 }])
 
-.config(['$urlMatcherFactoryProvider', function ($urlMatcherFactoryProvider) {
+.config(['$urlMatcherFactoryProvider', $urlMatcherFactoryProvider => {
   /*
    * We need to define a dumb type PathSuffix here and use that to
    * represent path suffixes for the Space Settings and Account
@@ -78,7 +78,7 @@ angular.module('contentful')
   $urlMatcherFactoryProvider.strictMode(false);
 }])
 
-.factory('states/resolvers', [function () {
+.factory('states/resolvers', [() => {
   editingInterfaceResolver.$inject = ['spaceContext', 'contentType'];
   function editingInterfaceResolver (spaceContext, contentType) {
     return spaceContext.editingInterfaces.get(contentType.data);

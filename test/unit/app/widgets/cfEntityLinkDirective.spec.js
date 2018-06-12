@@ -1,4 +1,4 @@
-describe('cfEntityLink directive', function () {
+describe('cfEntityLink directive', () => {
   beforeEach(function () {
     module('contentful/test');
     this.h = this.$inject('utils/hyperscript').h;
@@ -37,7 +37,7 @@ describe('cfEntityLink directive', function () {
     };
   });
 
-  describe('title', function () {
+  describe('title', () => {
     it('is value from entity field', function () {
       const el = this.compile({
         fields: {
@@ -65,7 +65,7 @@ describe('cfEntityLink directive', function () {
     });
   });
 
-  describe('edit action', function () {
+  describe('edit action', () => {
     beforeEach(function () {
       this.edit = sinon.spy();
       this.el = this.compile({}, {
@@ -113,7 +113,7 @@ describe('cfEntityLink directive', function () {
     expect(edit.getAttribute('href')).toBe('/spaces//entries/EID');
   });
 
-  describe('"data-entity-state" attribute', function () {
+  describe('"data-entity-state" attribute', () => {
     testStateAttribute('archived', {
       version: 1,
       archivedVersion: 2

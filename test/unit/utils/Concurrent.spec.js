@@ -3,12 +3,12 @@ import * as sinon from 'helpers/sinon';
 import * as C from 'utils/Concurrent';
 import $q from '$q';
 
-describe('utils/Concurrent', function () {
-  beforeEach(function () {
+describe('utils/Concurrent', () => {
+  beforeEach(() => {
     module('contentful/test');
   });
 
-  describe('.createSlot()', function () {
+  describe('.createSlot()', () => {
     it('only resolves current promise', function* () {
       const $q = this.$inject('$q');
       const onResult = sinon.spy();
@@ -43,7 +43,7 @@ describe('utils/Concurrent', function () {
     });
   });
 
-  describe('.createQueue()', function () {
+  describe('.createQueue()', () => {
     it('works', function* () {
       const calls = [];
       const q = C.createQueue();
@@ -84,7 +84,7 @@ describe('utils/Concurrent', function () {
     });
   });
 
-  describe('.createExclusiveTask()', function () {
+  describe('.createExclusiveTask()', () => {
     it('does not run multiple tasks concurrently', function* () {
       let callCount = 0;
       const taskDone = C.createMVar();

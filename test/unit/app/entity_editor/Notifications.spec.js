@@ -1,4 +1,4 @@
-describe('app/entityEditor/Notifications', function () {
+describe('app/entityEditor/Notifications', () => {
   beforeEach(function () {
     module('contentful/test');
     this.notification = this.mockService('notification');
@@ -7,7 +7,7 @@ describe('app/entityEditor/Notifications', function () {
     this.notify = N.makeNotify('Entry', () => 'TITLE');
   });
 
-  describe('generic actions', function () {
+  describe('generic actions', () => {
     // TODO firefox does not yet support for (const x in y)
     /* eslint prefer-const: off */
 
@@ -39,7 +39,7 @@ describe('app/entityEditor/Notifications', function () {
     });
   });
 
-  describe('reverting', function () {
+  describe('reverting', () => {
     it('handles success', function () {
       this.notify(this.Notification.Success('revert'));
       sinon.assert.calledWith(
@@ -57,7 +57,7 @@ describe('app/entityEditor/Notifications', function () {
     });
   });
 
-  describe('deleting', function () {
+  describe('deleting', () => {
     it('handles success', function () {
       this.notify(this.Notification.Success('delete'));
       sinon.assert.calledWith(
@@ -76,7 +76,7 @@ describe('app/entityEditor/Notifications', function () {
     });
   });
 
-  describe('duplicating', function () {
+  describe('duplicating', () => {
     it('handles error', function () {
       this.notify(this.Notification.Error('duplicate'));
       sinon.assert.calledWith(
@@ -86,7 +86,7 @@ describe('app/entityEditor/Notifications', function () {
     });
   });
 
-  describe('publishing', function () {
+  describe('publishing', () => {
     it('handles success', function () {
       this.notify(this.Notification.Success('publish'));
       sinon.assert.calledWith(

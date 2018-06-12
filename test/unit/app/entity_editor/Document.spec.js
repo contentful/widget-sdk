@@ -1,6 +1,6 @@
 import * as K from 'helpers/mocks/kefir';
 
-describe('entityEditor/Document', function () {
+describe('entityEditor/Document', () => {
   beforeEach(function () {
     module('contentful/test', ($provide) => {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
@@ -81,7 +81,7 @@ describe('entityEditor/Document', function () {
     this.doc = this.createDoc();
   });
 
-  describe('snapshot normalization', function () {
+  describe('snapshot normalization', () => {
     beforeEach(function () {
       this.contentType.data.fields = [{id: 'field1'}, {id: 'field2'}];
     });
@@ -126,7 +126,7 @@ describe('entityEditor/Document', function () {
     });
   });
 
-  describe('on instance destruction', function () {
+  describe('on instance destruction', () => {
     it('closes the doc', function () {
       this.otDoc = this.connectAndOpen();
       this.doc.destroy();
@@ -134,7 +134,7 @@ describe('entityEditor/Document', function () {
     });
   });
 
-  describe('on document change', function () {
+  describe('on document change', () => {
     it('closes current doc', function () {
       this.otDoc = this.connectAndOpen();
       this.docLoader.doc.set(this.DocLoad.Doc(new this.OtDoc({sys: {type: 'Entry'}})));
@@ -148,7 +148,7 @@ describe('entityEditor/Document', function () {
     });
   });
 
-  describe('#status$', function () {
+  describe('#status$', () => {
     it('is "ok" initially', function () {
       K.assertCurrentValue(this.doc.status$, 'ok');
     });
@@ -184,7 +184,7 @@ describe('entityEditor/Document', function () {
     });
   });
 
-  describe('#getValueAt()', function () {
+  describe('#getValueAt()', () => {
     it('gets value from snapshot if doc is connected', function () {
       const doc = this.connectAndOpen();
       _.set(doc.snapshot, ['a', 'b'], 'VAL');
@@ -198,7 +198,7 @@ describe('entityEditor/Document', function () {
   });
 
 
-  describe('#setValueAt()', function () {
+  describe('#setValueAt()', () => {
     itRejectsWithoutDocument('setValueAt');
 
     itEmitsLocalFieldChange((doc, path) => {
@@ -267,7 +267,7 @@ describe('entityEditor/Document', function () {
     }
   });
 
-  describe('#removeValueAt()', function () {
+  describe('#removeValueAt()', () => {
     itRejectsWithoutDocument('removeValueAt');
 
     itEmitsLocalFieldChange((doc, path) => {
@@ -307,7 +307,7 @@ describe('entityEditor/Document', function () {
     });
   });
 
-  describe('#insertValueAt()', function () {
+  describe('#insertValueAt()', () => {
     beforeEach(function () {
       this.otDoc = this.connectAndOpen({a: [0, 1, 2], sys: {}});
     });
@@ -332,7 +332,7 @@ describe('entityEditor/Document', function () {
     });
   });
 
-  describe('#pushValueAt()', function () {
+  describe('#pushValueAt()', () => {
     beforeEach(function () {
       this.otDoc = this.connectAndOpen({a: [0, 1, 2], sys: {}});
     });
@@ -363,7 +363,7 @@ describe('entityEditor/Document', function () {
     });
   });
 
-  describe('#valuePropertyAt()', function () {
+  describe('#valuePropertyAt()', () => {
     it('gets initial value from entity if the doc is not opened', function () {
       this.entity.data = {a: {b: 'VAL'}};
       const cb = sinon.spy();
@@ -406,7 +406,7 @@ describe('entityEditor/Document', function () {
       const cb = sinon.spy();
       this.doc.valuePropertyAt(['foo', 'bar']).onValue(cb);
 
-      paths.forEach(function (path, i) {
+      paths.forEach((path, i) => {
         doc.setAt(['foo', 'bar'], i);
         cb.reset();
         doc.emit('change', [{p: path}]);
@@ -426,13 +426,13 @@ describe('entityEditor/Document', function () {
       this.doc.valuePropertyAt(['foo', 'bar']).onValue(cb);
       cb.reset();
 
-      paths.forEach(function (path) {
+      paths.forEach(path => {
         doc.emit('change', [{p: path}]);
         sinon.assert.notCalled(cb);
       });
     });
 
-    describe('merging change events', function () {
+    describe('merging change events', () => {
       beforeEach(function () {
         const doc = this.connectAndOpen();
         this.emitChange = doc.emit.bind(doc, 'change');
@@ -470,14 +470,14 @@ describe('entityEditor/Document', function () {
 
         this.emitChange([{p: ['y']}, {p: ['x']}]);
 
-        spies.forEach(function (spy) {
+        spies.forEach(spy => {
           sinon.assert.calledOnce(spy);
         });
       });
     });
   });
 
-  describe('#reverter', function () {
+  describe('#reverter', () => {
     it('has changes if changes are made', function* () {
       this.connectAndOpen();
       expect(this.doc.reverter.hasChanges()).toBe(false);
@@ -504,7 +504,7 @@ describe('entityEditor/Document', function () {
     });
   });
 
-  describe('#sysProperty', function () {
+  describe('#sysProperty', () => {
     it('holds entity.data.sys as initial value', function () {
       K.assertCurrentValue(
         this.doc.sysProperty,
@@ -542,7 +542,7 @@ describe('entityEditor/Document', function () {
     });
   });
 
-  describe('#state.isSaving$', function () {
+  describe('#state.isSaving$', () => {
     it('is false if there is no document initially', function () {
       K.assertCurrentValue(this.doc.state.isSaving$, false);
     });
@@ -563,7 +563,7 @@ describe('entityEditor/Document', function () {
     });
   });
 
-  describe('#state.isDirty$', function () {
+  describe('#state.isDirty$', () => {
     beforeEach(function () {
       this.otDoc = this.connectAndOpen();
       this.docUpdate = function (path, value) {
@@ -600,7 +600,7 @@ describe('entityEditor/Document', function () {
     });
   });
 
-  describe('#state.isConnected$', function () {
+  describe('#state.isConnected$', () => {
     it('changes to true when connecting', function () {
       K.assertCurrentValue(this.doc.state.isConnected$, false);
       this.connectAndOpen();
@@ -615,7 +615,7 @@ describe('entityEditor/Document', function () {
     });
   });
 
-  describe('#state.error$', function () {
+  describe('#state.error$', () => {
     it('emits "OpenForbidden" error when opening fails', function () {
       const errors = K.extractValues(this.doc.state.error$);
       this.docLoader.doc.set(this.DocLoad.Error('forbidden'));
@@ -624,8 +624,8 @@ describe('entityEditor/Document', function () {
     });
   });
 
-  describe('#permissions', function () {
-    describe('#can()', function () {
+  describe('#permissions', () => {
+    describe('#can()', () => {
       it('delegates to "accessChecker.canPerformActionOnEntity()"', function () {
         this.accessChecker.canPerformActionOnEntity.returns(true);
         expect(this.doc.permissions.can('publish')).toBe(true);
@@ -669,7 +669,7 @@ describe('entityEditor/Document', function () {
       });
     });
 
-    describe('#canEditFieldLocale()', function () {
+    describe('#canEditFieldLocale()', () => {
       it('returns false if `update` permission is denied', function () {
         this.accessChecker.canUpdateEntry.returns(false);
         expect(this.doc.permissions.canEditFieldLocale('FIELD', 'LOCALE')).toBe(false);
@@ -693,7 +693,7 @@ describe('entityEditor/Document', function () {
     });
   });
 
-  describe('#getVersion', function () {
+  describe('#getVersion', () => {
     it('gets version from entity data if document is not connected', function () {
       this.entity.data.sys.version = 1999;
       const doc = this.createDoc();
@@ -708,7 +708,7 @@ describe('entityEditor/Document', function () {
     });
   });
 
-  describe('client entity instance', function () {
+  describe('client entity instance', () => {
     it('updates data when OtDoc emits changes', function () {
       const otDoc = this.connectAndOpen();
       this.$apply();
@@ -738,7 +738,7 @@ describe('entityEditor/Document', function () {
   }
 
   function handlesForbidden (beforeAction, action) {
-    describe('handles forbidden error', function () {
+    describe('handles forbidden error', () => {
       beforeEach(function () {
         this.docConnection.refreshAuth.rejects();
         beforeAction.call(this);

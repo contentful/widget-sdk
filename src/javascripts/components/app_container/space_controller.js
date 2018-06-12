@@ -9,13 +9,11 @@ angular.module('contentful')
   var TokenStore = require('services/TokenStore');
 
   $scope.sidePanelIsShown = false;
-  $scope.toggleSidePanel = function () {
+  $scope.toggleSidePanel = () => {
     $scope.sidePanelIsShown = !$scope.sidePanelIsShown;
   };
 
-  $scope.$watch(function () {
-    return authorization.isUpdated(TokenStore.getTokenLookup(), spaceContext.space);
-  }, function () {
+  $scope.$watch(() => authorization.isUpdated(TokenStore.getTokenLookup(), spaceContext.space), () => {
     if (TokenStore.getTokenLookup()) {
       var enforcement = enforcements.getPeriodUsage(spaceContext.organization);
       if (enforcement) {

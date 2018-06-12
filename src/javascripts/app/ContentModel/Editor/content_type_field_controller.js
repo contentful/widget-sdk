@@ -41,7 +41,7 @@ angular.module('contentful')
    * @ngdoc method
    * @name ContentTypeFieldController#setAsTitle
    */
-  controller.setAsTitle = function () {
+  controller.setAsTitle = () => {
     $scope.contentType.data.displayField = $scope.field.id;
   };
 
@@ -49,7 +49,7 @@ angular.module('contentful')
    * @ngdoc method
    * @name ContentTypeFieldController#delete
    */
-  controller.delete = function () {
+  controller.delete = () => {
     var publishedField = $scope.ctEditorController.getPublishedField($scope.field.id);
     var publishedOmitted = publishedField && publishedField.omitted;
 
@@ -63,11 +63,9 @@ angular.module('contentful')
     } else if (isOmittedInApiAndUi) {
       $scope.field.deleted = true;
     } else if (isOmittedInUiOnly) {
-      dialogs.openSaveDialog().then(function () {
-        return $scope.actions.save.execute();
-      });
+      dialogs.openSaveDialog().then(() => $scope.actions.save.execute());
     } else {
-      dialogs.openOmitDialog().then(function () {
+      dialogs.openOmitDialog().then(() => {
         controller.toggle('omitted');
       });
     }
@@ -77,17 +75,15 @@ angular.module('contentful')
    * @ngdoc method
    * @name ContentTypeFieldController#undelete
    */
-  controller.undelete = function () {
+  controller.undelete = () => {
     delete $scope.field.deleted;
   };
 
-  $scope.$watch(function (scope) {
-    return scope.contentType.data.displayField === scope.field.id;
-  }, function (isTitle) {
+  $scope.$watch(scope => scope.contentType.data.displayField === scope.field.id, isTitle => {
     $scope.fieldIsTitle = isTitle;
   });
 
-  $scope.$watchGroup(['fieldIsTitle', 'field.disabled', 'field.omitted'], function () {
+  $scope.$watchGroup(['fieldIsTitle', 'field.disabled', 'field.omitted'], () => {
     var isTitle = $scope.fieldIsTitle;
     var disabled = $scope.field.disabled;
     var omitted = $scope.field.omitted;
@@ -95,7 +91,7 @@ angular.module('contentful')
   });
 }])
 
-.factory('ContentTypeFieldController/dialogs', ['require', function (require) {
+.factory('ContentTypeFieldController/dialogs', ['require', require => {
   var modalDialog = require('modalDialog');
   var htmlEncode = require('encoder').htmlEncode;
 

@@ -9,7 +9,7 @@ angular.module('contentful/mocks')
  *
  * Use `mockWidgetApi._state` to inspect internal state modified by methods.
  */
-.factory('mocks/widgetApi', ['require', function (require) {
+.factory('mocks/widgetApi', ['require', require => {
   const $q = require('$q');
 
   return {
@@ -56,9 +56,7 @@ angular.module('contentful/mocks')
       },
       fieldProperties: fieldProperties,
       field: {
-        onValueChanged: sinon.spy(function (cb) {
-          return K.onValue(fieldProperties.value$, cb);
-        }),
+        onValueChanged: sinon.spy(cb => K.onValue(fieldProperties.value$, cb)),
         onIsDisabledChanged: function (cb) {
           return K.onValue(fieldProperties.isDisabled$, cb);
         },
@@ -68,13 +66,11 @@ angular.module('contentful/mocks')
         onSchemaErrorsChanged: function (cb) {
           return K.onValue(fieldProperties.schemaErrors$, cb);
         },
-        setInvalid: sinon.spy(function (isInvalid) {
+        setInvalid: sinon.spy(isInvalid => {
           state.isInvalid = isInvalid;
         }),
-        getValue: sinon.spy(function () {
-          return K.getValue(fieldProperties.value$);
-        }),
-        setValue: sinon.spy(function (value) {
+        getValue: sinon.spy(() => K.getValue(fieldProperties.value$)),
+        setValue: sinon.spy(value => {
           fieldProperties.value$.set(value);
           return $q.resolve();
         }),

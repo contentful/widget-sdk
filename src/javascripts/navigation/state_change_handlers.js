@@ -13,7 +13,7 @@ angular.module('cf.app')
  * @usage[js]
  * require('navigation/stateChangeHandlers').setup()
  */
-.factory('navigation/stateChangeHandlers', ['require', function (require) {
+.factory('navigation/stateChangeHandlers', ['require', require => {
   var $rootScope = require('$rootScope');
   var $state = require('$state');
   var contextHistory = require('navigation/Breadcrumbs/History').default;
@@ -89,13 +89,13 @@ angular.module('cf.app')
     if (needConfirmation) {
       event.preventDefault();
       confirmationInProgress = true;
-      requestLeaveConfirmation().then(function (confirmed) {
+      requestLeaveConfirmation().then(confirmed => {
         confirmationInProgress = false;
         if (confirmed) {
           navigationConfirmed = true;
           $state.go(toState.name, toStateParams);
         }
-      }, function () {
+      }, () => {
         confirmationInProgress = false;
       });
       return;

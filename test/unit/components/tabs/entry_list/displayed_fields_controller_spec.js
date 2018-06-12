@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Displayed Fields Controller', function () {
+describe('Displayed Fields Controller', () => {
   beforeEach(function () {
     module('contentful/test');
 
@@ -21,7 +21,7 @@ describe('Displayed Fields Controller', function () {
     $controller('DisplayedFieldsController', {$scope: this.scope});
   });
 
-  describe('refreshes displayed fields', function () {
+  describe('refreshes displayed fields', () => {
     beforeEach(function () {
       this.scope.context.view.displayedFieldIds = ['id1', 'id2', 'id5', 'display1'];
       this.scope.context.view.contentTypeId = 'ct1';

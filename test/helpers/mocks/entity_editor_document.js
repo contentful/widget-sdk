@@ -24,7 +24,7 @@ export function create (initialData, spaceEndpoint) {
       }
     }
   );
-  data$.onValue(function (data) {
+  data$.onValue(data => {
     currentData = data;
   });
 
@@ -68,9 +68,7 @@ export function create (initialData, spaceEndpoint) {
     getValueAt: sinon.spy(getValueAt),
 
     setValueAt: sinon.spy(setValueAt),
-    removeValueAt: sinon.spy(function (path) {
-      return setValueAt(path, undefined);
-    }),
+    removeValueAt: sinon.spy(path => setValueAt(path, undefined)),
     insertValueAt: sinon.spy(insertValueAt),
     pushValueAt: sinon.spy(pushValueAt),
 
@@ -102,9 +100,7 @@ export function create (initialData, spaceEndpoint) {
   }
 
   function valuePropertyAt (path) {
-    return data$.map(function (data) {
-      return _.cloneDeep(getAtPath(data, path));
-    });
+    return data$.map(data => _.cloneDeep(getAtPath(data, path)));
   }
 
   function getAtPath (obj, path) {

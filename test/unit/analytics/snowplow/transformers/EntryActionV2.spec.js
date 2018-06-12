@@ -1,6 +1,6 @@
 const PATH = 'analytics/snowplow/transformers/EntryActionV2';
 
-describe(PATH, function () {
+describe(PATH, () => {
   const BASE_EVENT = {
     data: {},
     contexts: [
@@ -63,14 +63,14 @@ describe(PATH, function () {
     expect(transformed.data.entry_id).toEqual('ENTRY_ID');
   });
 
-  describe('when there is an eventOrigin', function () {
+  describe('when there is an eventOrigin', () => {
     it('adds the `event_origin` to the tracking data', function () {
       const transformed = this.transform({ eventOrigin: 'entry-editor' });
       expect(transformed.data.event_origin).toEqual('entry-editor');
     });
   });
 
-  describe('when there is a contentType', function () {
+  describe('when there is a contentType', () => {
     const nonEntryReferenceFields = [
       { type: 'Object' },
       { type: 'Number' },

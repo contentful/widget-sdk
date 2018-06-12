@@ -3,7 +3,7 @@
 // TODO: should use transclusion
 // e.g. <cf-knowledge-base target="roles">text to be displayed</cf-knowlege-base>
 
-angular.module('contentful').directive('cfKnowledgeBase', ['require', function (require) {
+angular.module('contentful').directive('cfKnowledgeBase', ['require', require => {
   var KnowledgeBaseComponent = require('components/shared/knowledge_base_icon/KnowledgeBase').default;
 
   return {
@@ -15,7 +15,7 @@ angular.module('contentful').directive('cfKnowledgeBase', ['require', function (
       inlineText: '@',
       cssClass: '@'
     },
-    controller: ['$scope', function ($scope) {
+    controller: ['$scope', $scope => {
       $scope.component = KnowledgeBaseComponent({
         target: $scope.target,
         text: $scope.text,

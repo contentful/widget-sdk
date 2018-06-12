@@ -1,6 +1,6 @@
 import { assign } from 'utils/Collections';
 
-describe('data/Endpoint', function () {
+describe('data/Endpoint', () => {
   const baseUrl = '//test.io';
 
   // These headers are set by `$http` by default
@@ -96,7 +96,7 @@ describe('data/Endpoint', function () {
     this.$http.flush();
   });
 
-  describe('error response', function () {
+  describe('error response', () => {
     it('is an error object', function* () {
       this.$http.whenGET(/./).respond(500);
       const req = this.makeRequest({
@@ -137,7 +137,7 @@ describe('data/Endpoint', function () {
   describeCreateEndpoint('createSpaceEndpoint', 'spaces');
   describeCreateEndpoint('createOrganizationEndpoint', 'organizations');
 
-  describe('.createSpaceEndpoint()', function () {
+  describe('.createSpaceEndpoint()', () => {
     it('is aware of environment', function () {
       const test = (envId, expected) => {
         const auth = {getToken: sinon.stub().resolves('TOKEN')};
@@ -154,7 +154,7 @@ describe('data/Endpoint', function () {
   });
 
   function describeCreateEndpoint (methodName, endpointUrl) {
-    describe(`.${methodName}()`, function () {
+    describe(`.${methodName}()`, () => {
       beforeEach(function () {
         this.auth = {
           getToken: sinon.stub().resolves('TOKEN')

@@ -11,7 +11,7 @@ angular.module('contentful/mocks')
  *
  * The implementation is not yet complete.
  */
-.factory('mocks/entityEditor/Context', ['require', function (require) {
+.factory('mocks/entityEditor/Context', ['require', require => {
   const Focus = require('app/entity_editor/Focus');
 
   return {create: create};
@@ -36,7 +36,7 @@ angular.module('contentful/mocks')
       run: sinon.stub().returns(true),
       hasFieldError: sinon.stub().returns(false),
       hasFieldLocaleError: sinon.stub().returns(false),
-      setApiResponseErrors: sinon.spy(function (response) {
+      setApiResponseErrors: sinon.spy(response => {
         errors$.set(_.get(response, ['body', 'details', 'errors']));
       }),
       validateFieldLocale: sinon.spy()

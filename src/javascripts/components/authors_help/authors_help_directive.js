@@ -14,7 +14,7 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfAuthorsHelp', ['require', function (require) {
+.directive('cfAuthorsHelp', ['require', require => {
   var h = require('utils/hyperscript').h;
   var helpModal = require('components/authors_help/helpModal');
   var LD = require('utils/LaunchDarkly');
@@ -45,7 +45,7 @@ angular.module('contentful')
     controller: ['$scope', function ($scope) {
       var controller = this;
 
-      K.onValueScope($scope, TokenStore.user$, function (user) {
+      K.onValueScope($scope, TokenStore.user$, user => {
         const userId = user.sys.id;
         var modalKey = 'ctfl:' + userId + ':author_auto_help_modal';
         var feedbackKey = 'ctfl:' + userId + ':author_help_feedback';
@@ -54,7 +54,7 @@ angular.module('contentful')
 
         $scope.needFeedback = !store.get(feedbackKey);
 
-        LD.onFeatureFlag($scope, authorHelpFlag, function (variation) {
+        LD.onFeatureFlag($scope, authorHelpFlag, variation => {
           controller.needHelp = variation;
 
           // if the user has help, we'll try to show him it
@@ -64,7 +64,7 @@ angular.module('contentful')
           }
         });
 
-        controller.openHelp = function () {
+        controller.openHelp = () => {
           Analytics.track('element:click', {
             elementId: 'modal_help_open',
             groupId: 'editors_authors_help',
@@ -74,15 +74,15 @@ angular.module('contentful')
           return helpModal
             .openHelp($scope)
             .promise
-            .then(function () {
+            .then(() => {
               $scope.feedback = undefined;
             })
-            .catch(function () {
+            .catch(() => {
               $scope.feedback = undefined;
             });
         };
 
-        $scope.chooseFeedback = function (type) {
+        $scope.chooseFeedback = type => {
           Analytics.track('element:click', {
             elementId: 'modal_feedback_' + type,
             groupId: 'editors_authors_help_feedback',
@@ -93,7 +93,7 @@ angular.module('contentful')
           store.set(feedbackKey, true);
         };
 
-        $scope.openLink = function (type) {
+        $scope.openLink = type => {
           Analytics.track('element:click', {
             elementId: 'modal_link_' + type,
             groupId: 'editors_authors_help',
@@ -108,7 +108,7 @@ angular.module('contentful')
           var wasModalShown = store.get(modalKey);
 
           if (!wasModalShown && isNewUser) {
-            controller.openHelp().then(function () {
+            controller.openHelp().then(() => {
               store.set(modalKey, true);
             });
           }

@@ -1,16 +1,14 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfApiKeyList', function () {
-  return {
-    template: JST['api_key_list'](),
-    restrict: 'E',
-    controller: 'ApiKeyListController',
-    scope: true
-  };
-})
+.directive('cfApiKeyList', () => ({
+  template: JST['api_key_list'](),
+  restrict: 'E',
+  controller: 'ApiKeyListController',
+  scope: true
+}))
 
-.controller('ApiKeyListController', ['$scope', 'require', function ($scope, require) {
+.controller('ApiKeyListController', ['$scope', 'require', ($scope, require) => {
   var ReloadNotification = require('ReloadNotification');
   var spaceContext = require('spaceContext');
   var accessChecker = require('access_control/AccessChecker');
@@ -59,9 +57,7 @@ angular.module('contentful')
   function create () {
     var spaceName = spaceContext.getData(['name']);
     return spaceContext.apiKeyRepo.create(spaceName)
-    .then(function (apiKey) {
-      return $state.go('^.detail', { apiKeyId: apiKey.sys.id });
-    }, function (err) {
+    .then(apiKey => $state.go('^.detail', { apiKeyId: apiKey.sys.id }), err => {
       notification.error(err.data.message);
     });
   }
@@ -70,7 +66,7 @@ angular.module('contentful')
     apiKeys: spaceContext.apiKeyRepo.getAll(),
     resource: resources.get('apiKey'),
     legacy: ResourceUtils.useLegacy(organization)
-  }).then(function (result) {
+  }).then(result => {
     $scope.apiKeys = result.apiKeys;
     $scope.empty = _.isEmpty($scope.apiKeys);
 

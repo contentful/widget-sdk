@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Features service', function(){
+describe('Features service', () => {
   beforeEach(function(){
     module('contentful/test');
 
@@ -16,7 +16,7 @@ describe('Features service', function(){
     this.features = this.$inject('features');
   });
 
-  describe('#allowAnalytics', function(){
+  describe('#allowAnalytics', () => {
     it('should allow by default', function() {
       expect(this.features.allowAnalytics(this.user)).toBe(true);
     });

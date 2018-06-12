@@ -48,14 +48,14 @@ angular.module('contentful')
   $scope.getAssetDimensions = getAssetDimensions;
   $scope.paginator = searchController.paginator;
 
-  $scope.newAsset = function () {
-    entityCreator.newAsset().then(function (asset) {
+  $scope.newAsset = () => {
+    entityCreator.newAsset().then(asset => {
       // X.list -> X.detail
       $state.go('^.detail', {assetId: asset.getId()});
     });
   };
 
-  var debouncedResetAssets = debounce(function () {
+  var debouncedResetAssets = debounce(() => {
     searchController.resetAssets();
   }, 3000);
 
@@ -67,7 +67,7 @@ angular.module('contentful')
       pageLength: searchController.paginator.getPerPage(),
       spaceId: spaceContext.getId()
     };
-  }, function (pageParameters, old) {
+  }, (pageParameters, old) => {
     searchController.resetAssets(pageParameters.page === old.page);
   }, true);
 
@@ -82,7 +82,7 @@ angular.module('contentful')
    * @return {boolean}
    */
   // TODO this code is duplicated in the entry list controller
-  $scope.hasNoSearchResults = function () {
+  $scope.hasNoSearchResults = () => {
     var hasQuery = searchController.hasQuery();
     var hasAssets = $scope.paginator.getTotal() > 0;
     return !hasAssets && hasQuery && !$scope.context.isSearching;
@@ -90,7 +90,7 @@ angular.module('contentful')
 
 
   // TODO this code is duplicated in the entry list controller
-  $scope.showNoAssetsAdvice = function () {
+  $scope.showNoAssetsAdvice = () => {
     var hasQuery = searchController.hasQuery();
     var hasAssets = $scope.paginator.getTotal() > 0;
 
@@ -99,11 +99,11 @@ angular.module('contentful')
 
   $scope.getAssetFile = getAssetFile;
 
-  $scope.$watch('showNoAssetsAdvice()', function (show) {
+  $scope.$watch('showNoAssetsAdvice()', show => {
     if (show) {
       $scope.hasArchivedAssets = false;
       return hasArchivedAssets(spaceContext.space)
-      .then(function (hasArchived) {
+      .then(hasArchived => {
         $scope.hasArchivedAssets = hasArchived;
       });
     }
@@ -113,21 +113,19 @@ angular.module('contentful')
     return space.getAssets({
       'limit': 1,
       'sys.archivedAt[exists]': true
-    }).then(function (response) {
-      return response && response.total > 0;
-    });
+    }).then(response => response && response.total > 0);
   }
 
-  $scope.createMultipleAssets = function () {
+  $scope.createMultipleAssets = () => {
     var defaultLocaleCode = TheLocaleStore.getDefaultLocale().internal_code;
-    BulkAssetsCreator.open(defaultLocaleCode).finally(function () {
+    BulkAssetsCreator.open(defaultLocaleCode).finally(() => {
       // We reload all assets to get the new ones. Unfortunately the
       // CMA is not immediately consistent so we have to wait.
       // TODO Instead of querying the collection endpoint we should
       // add the assets manually. This is currently not possible as the
       // asset's `process` endpoint doesn't give us the final `url`.
-      delay(function () {
-        searchController.resetAssets().then(function () {
+      delay(() => {
+        searchController.resetAssets().then(() => {
           notification.info('Updated asset list');
         });
       }, 5000);

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.controller('EntryListColumnsController', ['$scope', 'require', function ($scope, require) {
+.controller('EntryListColumnsController', ['$scope', 'require', ($scope, require) => {
   var systemFields = require('systemFields');
 
   var SORTABLE_TYPES = [
@@ -13,15 +13,11 @@ angular.module('contentful')
     'Location'
   ];
 
-  $scope.fieldIsSortable = function (field) {
-    return _.includes(SORTABLE_TYPES, field.type) && field.id !== 'author';
-  };
+  $scope.fieldIsSortable = field => _.includes(SORTABLE_TYPES, field.type) && field.id !== 'author';
 
-  $scope.isOrderField = function (field) {
-    return $scope.context.view.order.fieldId === field.id;
-  };
+  $scope.isOrderField = field => $scope.context.view.order.fieldId === field.id;
 
-  $scope.orderColumnBy = function (field) {
+  $scope.orderColumnBy = field => {
     if (!$scope.isOrderField(field)) {
       setOrderField(field);
     }
@@ -29,7 +25,7 @@ angular.module('contentful')
     $scope.updateEntries();
   };
 
-  $scope.$watch('context.view.displayedFieldIds', function (displayedFieldIds) {
+  $scope.$watch('context.view.displayedFieldIds', displayedFieldIds => {
     if (displayedFieldIds &&
       !_.includes(displayedFieldIds, $scope.context.view.order.fieldId)
     ) {
@@ -38,15 +34,13 @@ angular.module('contentful')
     }
   }, true);
 
-  $scope.orderDescription = function (view) {
+  $scope.orderDescription = view => {
     var field = _.find($scope.displayedFields, {id: view.order.fieldId});
     var direction = view.order.direction;
     return '' + direction + ' by ' + field.name;
   };
 
-  $scope.getFieldList = function () {
-    return _.map($scope.displayedFields, 'name').join(', ');
-  };
+  $scope.getFieldList = () => _.map($scope.displayedFields, 'name').join(', ');
 
   function setOrderField (field) {
     $scope.context.view.order = {fieldId: field.id};

@@ -124,9 +124,7 @@ export function createBase (buildMessage, schema, doc) {
    * @return {boolean}
    */
   function hasFieldError (fieldId) {
-    return K.getValue(errors$).some(function (error) {
-      return Path.isPrefix(['fields', fieldId], error.path);
-    });
+    return K.getValue(errors$).some(error => Path.isPrefix(['fields', fieldId], error.path));
   }
 
   /**
@@ -141,9 +139,7 @@ export function createBase (buildMessage, schema, doc) {
    * @return {boolean}
    */
   function hasFieldLocaleError (fieldId, localeCode) {
-    return K.getValue(errors$).some(function (error) {
-      return Path.isPrefix(['fields', fieldId, localeCode], error.path);
-    });
+    return K.getValue(errors$).some(error => Path.isPrefix(['fields', fieldId, localeCode], error.path));
   }
 
   /**
@@ -203,9 +199,7 @@ export function createBase (buildMessage, schema, doc) {
    */
   function validateFieldLocale (fieldId, localeCode) {
     const errors = validate();
-    const fieldErrors = errors.filter(function (error) {
-      return Path.isPrefix(['fields', fieldId, localeCode], error.path);
-    });
+    const fieldErrors = errors.filter(error => Path.isPrefix(['fields', fieldId, localeCode], error.path));
     const otherErrors = K.getValue(errors$).filter((error) => {
       return !Path.isPrefix(['fields', fieldId, localeCode], error.path) && !isEqual(['fields', fieldId], error.path);
     });
@@ -230,13 +224,9 @@ export function createBase (buildMessage, schema, doc) {
    * library or API responses.
    */
   function processErrors (errors) {
-    return errors.filter(function (error) {
-      return error && error.path;
-    }).map(function (error) {
-      // TODO we should freeze this but duplicate errors modify this.
-      return assign({}, error, {
-        message: buildMessage(error)
-      });
-    });
+    return errors.filter(error => error && error.path).map(error => // TODO we should freeze this but duplicate errors modify this.
+    assign({}, error, {
+      message: buildMessage(error)
+    }));
   }
 }

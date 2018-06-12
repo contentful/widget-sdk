@@ -1,6 +1,6 @@
 'use strict';
 
-describe('notifications', function () {
+describe('notifications', () => {
   beforeEach(function () {
     this.clearTimeoutMs = 100;
     this.transformTimeoutMs = 200;
@@ -28,7 +28,7 @@ describe('notifications', function () {
     this.sandbox.restore();
   });
 
-  describe('main bus', function () {
+  describe('main bus', () => {
     it('sets error message', function () {
       this.notify.error('MESSAGE');
       expect(this.notify.message.body).toEqual('MESSAGE');
@@ -74,7 +74,7 @@ describe('notifications', function () {
     });
   });
 
-  describe('directive', function () {
+  describe('directive', () => {
     beforeEach(function () {
       this.element = this.$compile('<cf-notifications>');
       this.$apply();

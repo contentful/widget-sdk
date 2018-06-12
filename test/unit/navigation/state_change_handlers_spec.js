@@ -1,12 +1,12 @@
 import * as sinon from 'helpers/sinon';
 import * as K from 'helpers/mocks/kefir';
 
-describe('navigation/stateChangeHandlers', function () {
+describe('navigation/stateChangeHandlers', () => {
   let logger;
   let $rootScope;
   let modalCloseStub;
 
-  afterEach(function () {
+  afterEach(() => {
     // Avoid memory leak
     logger = $rootScope = modalCloseStub = null;
   });
@@ -44,15 +44,15 @@ describe('navigation/stateChangeHandlers', function () {
     stateChangeHandlers.setup();
   });
 
-  describe('state change', function () {
-    it('closes opened modal dialog', function () {
+  describe('state change', () => {
+    it('closes opened modal dialog', () => {
       $rootScope.$emit('$stateChangeStart', {name: 'page1'}, {}, {name: 'page2'}, {});
       sinon.assert.calledOnce(modalCloseStub);
     });
   });
 
-  describe('error handling', function () {
-    it('logs exceptions raised during routing', function () {
+  describe('error handling', () => {
+    it('logs exceptions raised during routing', () => {
       logger.logException = sinon.stub();
 
       const error = new Error();
@@ -60,7 +60,7 @@ describe('navigation/stateChangeHandlers', function () {
       sinon.assert.calledWith(logger.logException, error);
     });
 
-    it('logs servers errors encountered during routing', function () {
+    it('logs servers errors encountered during routing', () => {
       logger.logServerError = sinon.stub();
 
       const error = {statusCode: 500};
@@ -69,8 +69,8 @@ describe('navigation/stateChangeHandlers', function () {
     });
   });
 
-  describe('redirections', function () {
-    it('does not close modals', function () {
+  describe('redirections', () => {
+    it('does not close modals', () => {
       sinon.assert.notCalled(modalCloseStub);
     });
 
@@ -82,7 +82,7 @@ describe('navigation/stateChangeHandlers', function () {
     });
   });
 
-  describe('leave confirmation', function () {
+  describe('leave confirmation', () => {
     it('logs error when changing state during confirmation', function () {
       const logger = this.$inject('logger');
       logger.logError = sinon.stub();
@@ -103,8 +103,8 @@ describe('navigation/stateChangeHandlers', function () {
     });
   });
 
-  describe('addToContext', function () {
-    it('prevents transition when only "addToContext" has changed', function () {
+  describe('addToContext', () => {
+    it('prevents transition when only "addToContext" has changed', () => {
       const change = $rootScope.$emit(
         '$stateChangeStart',
         {name: 'A'},
@@ -115,7 +115,7 @@ describe('navigation/stateChangeHandlers', function () {
       expect(change.defaultPrevented).toBe(true);
     });
 
-    it('does not prevent transition when "addToContext" is missing', function () {
+    it('does not prevent transition when "addToContext" is missing', () => {
       const change = $rootScope.$emit(
         '$stateChangeStart',
         {name: 'A'},
@@ -126,7 +126,7 @@ describe('navigation/stateChangeHandlers', function () {
       expect(change.defaultPrevented).toBe(false);
     });
 
-    it('does not prevent transition when name is different', function () {
+    it('does not prevent transition when name is different', () => {
       const change = $rootScope.$emit(
         '$stateChangeStart',
         {name: 'A'},
@@ -138,7 +138,7 @@ describe('navigation/stateChangeHandlers', function () {
     });
   });
 
-  describe('nav states', function () {
+  describe('nav states', () => {
     beforeEach(function () {
       logger.leaveBreadcrumb = () => {};
 

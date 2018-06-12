@@ -1,13 +1,13 @@
 'use strict';
 
-describe('FetchAll', function () {
+describe('FetchAll', () => {
   beforeEach(function () {
     module('contentful/test');
     this.fetchAll = this.$inject('data/CMA/FetchAll').fetchAll;
     this.query = { skip: 0, limit: 10 };
   });
 
-  describe('when there is only one page of results', function () {
+  describe('when there is only one page of results', () => {
     beforeEach(function () {
       this.response = { total: 10, items: [{ sys: { id: 'sysId' } }] };
       this.stub = sinon.stub().resolves(this.response);
@@ -30,7 +30,7 @@ describe('FetchAll', function () {
     });
   });
 
-  describe('when there is more than one page of results', function () {
+  describe('when there is more than one page of results', () => {
     it('fetches all pages', function () {
       const stub = sinon.stub().resolves({ total: 15, items: [{ sys: { id: 'a' } }] });
 
@@ -69,7 +69,7 @@ describe('FetchAll', function () {
     });
   });
 
-  describe('when there are duplicate resources in the API response', function () {
+  describe('when there are duplicate resources in the API response', () => {
     it('returns only unique resources', function* () {
       const response = {
         total: 3,

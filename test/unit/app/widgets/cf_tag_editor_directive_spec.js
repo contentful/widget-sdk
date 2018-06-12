@@ -1,6 +1,6 @@
 'use strict';
 
-describe('cfTagEditor directive', function () {
+describe('cfTagEditor directive', () => {
   beforeEach(function () {
     module('contentful/test');
 
@@ -30,7 +30,7 @@ describe('cfTagEditor directive', function () {
     expect(listedValues).toEqual([]);
   });
 
-  describe('adding an item', function () {
+  describe('adding an item', () => {
     beforeEach(function () {
       this.fieldApi.pushValue = sinon.stub();
     });
@@ -60,7 +60,7 @@ describe('cfTagEditor directive', function () {
     });
   });
 
-  describe('removing an item', function () {
+  describe('removing an item', () => {
     beforeEach(function () {
       this.fieldApi.removeValueAt = sinon.stub();
     });
@@ -89,7 +89,7 @@ describe('cfTagEditor directive', function () {
     });
   });
 
-  describe('contraint hints', function () {
+  describe('contraint hints', () => {
     it('is shown for maximum constraint', function () {
       this.fieldApi.validations = [{size: {max: 10}}];
       const el = this.compile();

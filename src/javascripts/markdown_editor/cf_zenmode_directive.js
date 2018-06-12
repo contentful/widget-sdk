@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfZenmode', ['require', function (require) {
+angular.module('contentful').directive('cfZenmode', ['require', require => {
   var $window = require('$window');
   var MarkdownEditor = require('markdown_editor/markdown_editor');
   var actions = require('markdown_editor/markdown_actions');
@@ -34,14 +34,14 @@ angular.module('contentful').directive('cfZenmode', ['require', function (requir
         preview: el.find('.zenmode-preview').first()
       };
 
-      scope.showPreview = function (show) {
+      scope.showPreview = show => {
         scope.isPreviewActive = show;
         initialShowPreview = show;
       };
 
       scope.showPreview(initialShowPreview);
 
-      scope.$watch('isPreviewActive', function (active) {
+      scope.$watch('isPreviewActive', active => {
         if (active) {
           containers.editor.css('width', '50%');
           containers.preview.css('width', '50%');
@@ -59,9 +59,7 @@ angular.module('contentful').directive('cfZenmode', ['require', function (requir
 
         var locales = LocaleStore.getLocales();
         var fieldLocaleCode = scope.zenApi.getLocale();
-        var locale = locales.find(function (locale) {
-          return locale.code === fieldLocaleCode;
-        });
+        var locale = locales.find(locale => locale.code === fieldLocaleCode);
 
         scope.actions = actions.create(editor, locale, defaultLocale.code);
         scope.history = editor.history;
@@ -73,7 +71,7 @@ angular.module('contentful').directive('cfZenmode', ['require', function (requir
         editor.events.onScroll(handleScroll);
         win.on('keyup', handleEsc);
 
-        scope.$on('$destroy', function () {
+        scope.$on('$destroy', () => {
           tieParentEditor();
           win.off('keyup', handleEsc);
           editor.destroy();

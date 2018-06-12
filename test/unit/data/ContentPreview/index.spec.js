@@ -1,11 +1,11 @@
-describe('data/ContentPreview', function () {
+describe('data/ContentPreview', () => {
   beforeEach(function () {
     this.environment = {
       env: 'production'
     };
   });
 
-  describe('#hasTEAContentPreviews', function () {
+  describe('#hasTEAContentPreviews', () => {
     beforeEach(function () {
       module('contentful/test', $provide => {
         $provide.value('Config', this.environment);
@@ -53,7 +53,7 @@ describe('data/ContentPreview', function () {
     });
   });
 
-  describe('#hasHighlightedCourseCT', function () {
+  describe('#hasHighlightedCourseCT', () => {
     beforeEach(function () {
       module('contentful/test', $provide => {
         $provide.value('Config', this.environment);

@@ -1,19 +1,19 @@
 'use strict';
 
-describe('Webhook Headers directive', function () {
+describe('Webhook Headers directive', () => {
   beforeEach(function () {
     module('contentful/test');
 
-    this.compile = function (headers) {
+    this.compile = headers => {
       const data = {headers: headers || [], isDirty: false};
       this.element = this.$compile('<cf-webhook-headers headers="headers" is-dirty="isDirty" />', data);
       this.scope = this.element.isolateScope();
-    }.bind(this);
+    };
 
     this.enter = $.Event('keydown', {which: 13});
   });
 
-  describe('initial state', function () {
+  describe('initial state', () => {
     it('displays no rows for an empty headers hash', function () {
       this.compile();
       expect(this.element.find('.webhook-header__item').length).toBe(0);
@@ -27,11 +27,9 @@ describe('Webhook Headers directive', function () {
     });
   });
 
-  describe('"add" button', function () {
+  describe('"add" button', () => {
     beforeEach(function () {
-      this.add = function () {
-        return this.element.find('.webhook-new-header__actions > button');
-      }.bind(this);
+      this.add = () => this.element.find('.webhook-new-header__actions > button');
     });
 
     it('disables "add" button if there is no key', function () {
@@ -84,7 +82,7 @@ describe('Webhook Headers directive', function () {
     });
   });
 
-  describe('edit mode', function () {
+  describe('edit mode', () => {
     it('enters edit mode and shows input for a value', function () {
       this.compile([{key: 'test', value: 'some-val'}]);
       this.scope.edit(this.scope.headers[0]);
@@ -106,7 +104,7 @@ describe('Webhook Headers directive', function () {
     });
   });
 
-  describe('"delete" button', function () {
+  describe('"delete" button', () => {
     it('removes a pair from the list', function () {
       this.compile([{key: 'test', value: 'test'}]);
       const btn = this.element.find('.webhook-header__actions:eq(0) button:last-child');

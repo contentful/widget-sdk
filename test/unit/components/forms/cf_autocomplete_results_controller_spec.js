@@ -1,8 +1,8 @@
 'use strict';
 
-describe('cfAutocompleteResultsController', function () {
+describe('cfAutocompleteResultsController', () => {
   let controller, scope;
-  afterEach(function () {
+  afterEach(() => {
     controller = scope = null;
   });
 
@@ -22,7 +22,7 @@ describe('cfAutocompleteResultsController', function () {
     });
   });
 
-  it('should adjust selectedIndex, numResults when results change', function () {
+  it('should adjust selectedIndex, numResults when results change', () => {
     scope.results = [1, 2, 3, 4];
     scope.$apply();
     expect(controller.selectedIndex).toBe(0);
@@ -34,7 +34,7 @@ describe('cfAutocompleteResultsController', function () {
     expect(controller.numResults).toBe(0);
   });
 
-  it('should return the selected element from the autocompleteResults in getSelected', function () {
+  it('should return the selected element from the autocompleteResults in getSelected', () => {
     scope.results = [1, 2, 3, 4];
     scope.$apply();
     expect(controller.getSelectedResult()).toBe(1);
@@ -43,7 +43,7 @@ describe('cfAutocompleteResultsController', function () {
     expect(controller.getSelectedResult()).toBe(3);
   });
 
-  it('should never go past the upper border with selectNext', function () {
+  it('should never go past the upper border with selectNext', () => {
     scope.results = [1, 2, 3, 4];
     scope.$apply();
     controller.selectedIndex = 3;
@@ -51,7 +51,7 @@ describe('cfAutocompleteResultsController', function () {
     expect(controller.selectedIndex).toBe(3);
   });
 
-  it('should never go past 0 with selectPrevious', function () {
+  it('should never go past 0 with selectPrevious', () => {
     scope.results = [1, 2, 3, 4];
     scope.$apply();
     controller.selectedIndex = 0;
@@ -59,7 +59,7 @@ describe('cfAutocompleteResultsController', function () {
     expect(controller.selectedIndex).toBe(0);
   });
 
-  it('should never move with empty results', function () {
+  it('should never move with empty results', () => {
     expect(controller.selectedIndex).toBe(-1);
     controller.selectNext();
     expect(controller.selectedIndex).toBe(-1);
@@ -67,7 +67,7 @@ describe('cfAutocompleteResultsController', function () {
     expect(controller.selectedIndex).toBe(-1);
   });
 
-  it('should broadcast when moving', function () {
+  it('should broadcast when moving', () => {
     scope.results = ['a', 'b', 'c'];
     scope.$apply();
     spyOn(scope, '$broadcast');
@@ -77,7 +77,7 @@ describe('cfAutocompleteResultsController', function () {
     expect(scope.$broadcast).toHaveBeenCalledWith('autocompleteResultSelected', 0, 'a');
   });
 
-  it('should emit event when picked', function () {
+  it('should emit event when picked', () => {
     scope.results = ['a', 'b', 'c'];
     scope.$apply();
     spyOn(scope, '$emit').and.returnValue({
@@ -87,23 +87,23 @@ describe('cfAutocompleteResultsController', function () {
     expect(scope.$emit).toHaveBeenCalledWith('autocompleteResultPicked', 0, 'a');
   });
 
-  it('should emit an event when the search when canceled', function () {
+  it('should emit an event when the search when canceled', () => {
     spyOn(scope, '$emit').and.callThrough();
     controller.cancelAutocomplete();
     expect(scope.$emit).toHaveBeenCalledWith('autocompleteResultsCancel');
   });
 
-  it('should handle the event if canceling search', function () {
+  it('should handle the event if canceling search', () => {
     spyOn(scope, '$emit').and.returnValue({defaultPrevented: false});
     expect(controller.cancelAutocomplete()).toBe(true);
   });
 
-  it('should not handle the event if canceling search doesn\'t do anything', function () {
+  it('should not handle the event if canceling search doesn\'t do anything', () => {
     spyOn(scope, '$emit').and.returnValue({defaultPrevented: true});
     expect(controller.cancelAutocomplete()).toBe(false);
   });
 
-  it('should return false from the action methods if operating on a normal list', function () {
+  it('should return false from the action methods if operating on a normal list', () => {
     scope.results = [1, 2, 3];
     scope.$apply();
     expect(controller.selectPrevious()).toBe(true);
@@ -112,7 +112,7 @@ describe('cfAutocompleteResultsController', function () {
     expect(controller.cancelAutocomplete()).toBe(true);
   });
 
-  it('should return false from the action methods if operating on an empty list', function () {
+  it('should return false from the action methods if operating on an empty list', () => {
     scope.results = null;
     scope.$apply();
     expect(controller.selectNext()).toBe(false);

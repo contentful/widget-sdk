@@ -5,7 +5,7 @@
  * Displays the top navigation bar for organizations & billing views.
  */
  angular.module('contentful')
-.directive('cfOrganizationNav', ['require', function (require) {
+.directive('cfOrganizationNav', ['require', require => {
   var navBar = require('navigation/templates/NavBar').default;
 
   return {
@@ -26,19 +26,19 @@
       var onNavChange = _.debounce(updateNav, 50);
 
       // Update on state transition to another org
-      $scope.$watch(function () { return $stateParams.orgId; }, onNavChange);
+      $scope.$watch(() => $stateParams.orgId, onNavChange);
 
       // Update when token response is refreshed (e.g. billing tab should appear)
       K.onValueScope($scope, TokenStore.organizations$, onNavChange);
 
       function updateNav () {
         var orgId = nav.orgId = $stateParams.orgId;
-        TokenStore.getOrganization(orgId).then(function (org) {
+        TokenStore.getOrganization(orgId).then(org => {
           var FeatureService = createFeatureService(orgId, 'organization');
 
           nav.pricingVersion = org.pricingVersion;
 
-          FeatureService.get('offsiteBackup').then(function (featureEnabled) {
+          FeatureService.get('offsiteBackup').then(featureEnabled => {
             nav.hasOffsiteBackup = featureEnabled;
           });
           nav.hasBillingTab = org.isBillable && OrganizationRoles.isOwner(org);

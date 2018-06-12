@@ -1,6 +1,6 @@
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
-describe('ResourceUtils', function () {
+describe('ResourceUtils', () => {
   beforeEach(function* () {
     function createResource (type, limits, usage) {
       const { maximum, included } = limits;
@@ -69,7 +69,7 @@ describe('ResourceUtils', function () {
     this.ResourceUtils = yield system.import('utils/ResourceUtils');
   });
 
-  describe('#canCreate', function () {
+  describe('#canCreate', () => {
     it('should return true if the maximum limit is not reached', function () {
       expect(this.ResourceUtils.canCreate(this.resources.entries.notReachedAnyLimit)).toBe(true);
       expect(this.ResourceUtils.canCreate(this.resources.entries.reachedIncludedLimit)).toBe(true);
@@ -88,7 +88,7 @@ describe('ResourceUtils', function () {
     });
   });
 
-  describe('#generateMessage', function () {
+  describe('#generateMessage', () => {
     it('should always return an object with warning and error keys when given a resource', function () {
       Object.keys(this.resources.entries).forEach(i => {
         const resource = this.resources.entries[i];
@@ -146,7 +146,7 @@ describe('ResourceUtils', function () {
     });
   });
 
-  describe('#getResourceLimits', function () {
+  describe('#getResourceLimits', () => {
     it('returns an object with the included and maximum limits given a resource', function () {
       const limits = this.ResourceUtils.getResourceLimits(this.resources.entries.notReachedAnyLimit);
 
@@ -202,7 +202,7 @@ describe('ResourceUtils', function () {
     });
   });
 
-  describe('#useLegacy', function () {
+  describe('#useLegacy', () => {
     it('should return false if given a pricing V2 organization regardless of feature flag', function* () {
       this.flags['feature-bv-2018-01-resources-api'] = false;
       expect(yield this.ResourceUtils.useLegacy(this.organization)).toBe(false);
@@ -224,7 +224,7 @@ describe('ResourceUtils', function () {
     });
   });
 
-  describe('#isLegacyOrganization', function () {
+  describe('#isLegacyOrganization', () => {
     it('should return true if the organization uses pricing version 1', function () {
       const organization = {
         pricingVersion: 'pricing_version_1',

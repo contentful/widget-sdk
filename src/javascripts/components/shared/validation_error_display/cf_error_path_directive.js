@@ -15,17 +15,16 @@
  * In addition it hides the element if there are no error messages.
  *
  */
-angular.module('contentful').directive('cfErrorPath', function () {
-  return {
-    scope: true,
-    controller: 'ErrorPathController',
-    controllerAs: 'errors',
-    require: 'cfErrorPath',
-    link: function (scope, elem, attrs) {
-      scope.$watch('errors.hasErrors', function (hasErrors) {
-        if (!attrs['ngHide'] && !attrs['ngShow'])
-          elem.toggle(hasErrors);
-      });
-    }
-  };
-});
+angular.module('contentful').directive('cfErrorPath', () => ({
+  scope: true,
+  controller: 'ErrorPathController',
+  controllerAs: 'errors',
+  require: 'cfErrorPath',
+
+  link: function (scope, elem, attrs) {
+    scope.$watch('errors.hasErrors', hasErrors => {
+      if (!attrs['ngHide'] && !attrs['ngShow'])
+        elem.toggle(hasErrors);
+    });
+  }
+}));

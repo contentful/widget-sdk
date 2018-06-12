@@ -1,6 +1,6 @@
 import * as K from 'helpers/mocks/kefir';
 
-describe('DocumentPool', function () {
+describe('DocumentPool', () => {
   beforeEach(function () {
     module('contentful/test');
 
@@ -22,7 +22,7 @@ describe('DocumentPool', function () {
     this.pool = createPool(this.conn);
   });
 
-  describe('instance creation', function () {
+  describe('instance creation', () => {
     it('returns an object with pool API', function () {
       expect(
         Object.keys(this.pool).sort()
@@ -37,7 +37,7 @@ describe('DocumentPool', function () {
   const ct = {ct: true};
   const user = {user: true};
 
-  describe('#get', function () {
+  describe('#get', () => {
     beforeEach(function () {
       this.get = function (id, type) {
         const entity = {data: {sys: {id: id, type: type || 'Entry'}}};
@@ -80,7 +80,7 @@ describe('DocumentPool', function () {
     });
   });
 
-  describe('disposing', function () {
+  describe('disposing', () => {
     beforeEach(function () {
       this.lifeline1 = K.createMockStream();
       this.pool.get(entity, ct, user, this.lifeline1);
@@ -100,7 +100,7 @@ describe('DocumentPool', function () {
     });
   });
 
-  describe('#destroy', function () {
+  describe('#destroy', () => {
     it('destroys all document instances', function () {
       const lifeline = K.createMockStream();
       this.pool.get(entity, ct, user, lifeline);

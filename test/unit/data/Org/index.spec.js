@@ -1,11 +1,11 @@
-describe('data/Org', function () {
+describe('data/Org', () => {
   beforeEach(function () {
     module('contentful/test');
 
     this.orgUtils = this.$inject('data/Org');
   });
 
-  describe('#isOrgPlanEnterprise', function () {
+  describe('#isOrgPlanEnterprise', () => {
     beforeEach(function () {
       this.assertIfEnterprise = function (planNames, isEnterprise) {
         planNames.forEach(planName => {

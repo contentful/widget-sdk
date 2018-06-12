@@ -1,6 +1,6 @@
 'use strict';
 
-describe('SlugEditor directive', function () {
+describe('SlugEditor directive', () => {
   beforeEach(function () {
     module('contentful/test');
     const MockApi = this.$inject('mocks/widgetApi');
@@ -35,7 +35,7 @@ describe('SlugEditor directive', function () {
     };
   });
 
-  describe('#titleToSlug', function () {
+  describe('#titleToSlug', () => {
     it('uses an "untitled" slug with the entry creation time, when the title is empty', function () {
       this.entrySys.createdAt = '2015-01-28T10:38:28.989Z';
       const $inputEl = this.compileElement().find('input');
@@ -81,8 +81,8 @@ describe('SlugEditor directive', function () {
       expect($inputEl.val()).toEqual('this-is-the-third-title');
     });
 
-    describe('field locale is different from default locale', function () {
-      describe('title for field locale is empty', function () {
+    describe('field locale is different from default locale', () => {
+      describe('title for field locale is empty', () => {
         it('should generate a slug using title value in default locale', function () {
           this.cfWidgetApi.field.locale = 'hi';
 
@@ -109,7 +109,7 @@ describe('SlugEditor directive', function () {
     expect($inputEl.val()).toBe('INITIAL');
   });
 
-  describe('#alreadyPublished', function () {
+  describe('#alreadyPublished', () => {
     beforeEach(function () {
       this.inputEl = this.compileElement().find('input');
       this.entrySys.publishedVersion = 1;
@@ -123,7 +123,7 @@ describe('SlugEditor directive', function () {
     });
   });
 
-  describe('uniquenness state', function () {
+  describe('uniquenness state', () => {
     it('queries duplicates when input value changes', function () {
       const $inputEl = this.compileElement().find('input');
       const getEntries = this.cfWidgetApi.space.getEntries;

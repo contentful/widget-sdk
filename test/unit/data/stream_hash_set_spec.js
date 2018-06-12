@@ -1,6 +1,6 @@
 import * as K from 'helpers/mocks/kefir';
 
-describe('data/StreamHashSet', function () {
+describe('data/StreamHashSet', () => {
   beforeEach(function () {
     module('contentful/test');
     this.store = this.$inject('data/StreamHashSet').create();
@@ -8,7 +8,7 @@ describe('data/StreamHashSet', function () {
     this.itemValues = K.extractValues(this.store.items$);
   });
 
-  describe('#add()', function () {
+  describe('#add()', () => {
     it('makes item retrievable with #get()', function () {
       expect(this.store.get('X')).toBe(undefined);
       const item = makeItem('X');
@@ -31,7 +31,7 @@ describe('data/StreamHashSet', function () {
     });
   });
 
-  describe('#remove()', function () {
+  describe('#remove()', () => {
     it('makes item not retrievable with #get()', function () {
       const item = makeItem('X');
       this.store.add(item);
@@ -55,7 +55,7 @@ describe('data/StreamHashSet', function () {
     });
   });
 
-  describe('#reset()', function () {
+  describe('#reset()', () => {
     it('adds new items', function () {
       const item1 = makeItem('1');
       const item2 = makeItem('2');

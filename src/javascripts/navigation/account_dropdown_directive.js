@@ -2,16 +2,14 @@
 
 angular.module('contentful')
 
-.directive('cfAccountDropdown', ['require', function (require) {
-  return {
-    template: require('navigation/templates/AccountDropdown.template').default(),
-    restrict: 'E',
-    scope: {user: '='},
-    controller: 'cfAccountDropdownController'
-  };
-}])
+.directive('cfAccountDropdown', ['require', require => ({
+  template: require('navigation/templates/AccountDropdown.template').default(),
+  restrict: 'E',
+  scope: {user: '='},
+  controller: 'cfAccountDropdownController'
+})])
 
-.controller('cfAccountDropdownController', ['$scope', 'require', function ($scope, require) {
+.controller('cfAccountDropdownController', ['$scope', 'require', ($scope, require) => {
   var Authentication = require('Authentication');
   var Config = require('Config');
   var Analytics = require('analytics/Analytics');
@@ -26,7 +24,7 @@ angular.module('contentful')
   $scope.supportUrl = Config.supportUrl;
   $scope.isIntercomLoaded = intercom.isLoaded;
   $scope.logout = logout;
-  $scope.talkToUsClicked = function () {
+  $scope.talkToUsClicked = () => {
     Analytics.track('element:click', {
       elementId: 'contact_sales_dropdown',
       groupId: 'contact_sales',

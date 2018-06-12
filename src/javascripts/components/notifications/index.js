@@ -2,14 +2,14 @@
 
 angular.module('contentful')
 
-.config(['$provide', function ($provide) {
+.config(['$provide', $provide => {
   $provide.constant('notification/CLEAR_TIMEOUT_MS', 6000);
 
   // This should be aligned with the hide/show transform time in the stylesheet.
   $provide.constant('notification/TRANSFORM_TIMEOUT_MS', 200);
 }])
 
-.factory('notification', ['require', function (require) {
+.factory('notification', ['require', require => {
   var getNotificationBus = require('notifications/bus');
   var setupClearMessageHooks = require('notifications/clearMessageHooks');
 
@@ -23,7 +23,7 @@ angular.module('contentful')
 }])
 
 
-.factory('notifications/bus', ['require', function (require) {
+.factory('notifications/bus', ['require', require => {
   var CLEAR_TIMEOUT_MS = require('notification/CLEAR_TIMEOUT_MS');
   var TRANSFORM_TIMEOUT_MS = require('notification/TRANSFORM_TIMEOUT_MS');
 
@@ -59,9 +59,9 @@ angular.module('contentful')
           this.message.hidden = true;
         }
         window.clearTimeout(this._seenTimeout);
-        $timeout(function () {
+        $timeout(() => {
           window.setTimeout(
-            function () {
+            () => {
               // The message needs to be cleared asynchronously to ensure the
               // UI transform and message clear events are not executed in
               // immediate sequence.
@@ -95,13 +95,13 @@ angular.module('contentful')
         };
 
         this._seenTimeout = window.setTimeout(
-          function () {
+          () => {
             self.markAsSeen();
           },
           CLEAR_TIMEOUT_MS
         );
 
-        $timeout(function () {
+        $timeout(() => {
           // The message needs to be unhidden asynchronously to ensure the
           // UI transform occurs on the initial appearance of the element.
           self.message.hidden = false;
@@ -112,16 +112,16 @@ angular.module('contentful')
   }
 }])
 
-.factory('notifications/clearMessageHooks', ['require', function (require) {
+.factory('notifications/clearMessageHooks', ['require', require => {
   var $rootScope = require('$rootScope');
   var Command = require('command');
 
   return function init (notification) {
-    $rootScope.$on('$stateChangeSuccess', function () {
+    $rootScope.$on('$stateChangeSuccess', () => {
       notification.clearSeen();
     });
 
-    Command.executions.attach(function () {
+    Command.executions.attach(() => {
       notification.clearSeen();
     });
   };

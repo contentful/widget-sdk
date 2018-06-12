@@ -1,8 +1,8 @@
 'use strict';
 
-describe('LocationEditor integration', function () {
+describe('LocationEditor integration', () => {
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.value('LazyLoader', {
         get: sinon.stub()
       });
@@ -34,7 +34,7 @@ describe('LocationEditor integration', function () {
     };
   });
 
-  describe('input method selection', function () {
+  describe('input method selection', () => {
     beforeEach(function () {
       this.el = this.compile();
     });
@@ -67,7 +67,7 @@ describe('LocationEditor integration', function () {
     });
   });
 
-  describe('address search', function () {
+  describe('address search', () => {
     beforeEach(function () {
       this.fieldApi.onValueChanged.yields({lat: 1, lon: 2});
       this.el = this.compile();
@@ -113,7 +113,7 @@ describe('LocationEditor integration', function () {
       expect(resultElement.is(':visible')).toBe(false);
     });
 
-    describe('selecting address', function () {
+    describe('selecting address', () => {
       beforeEach(function () {
         this.el.setInputValue('address', 'something');
         this.geocode.callArgWith(1, [
@@ -157,7 +157,7 @@ describe('LocationEditor integration', function () {
     });
   });
 
-  describe('coordinate input', function () {
+  describe('coordinate input', () => {
     beforeEach(function () {
       this.fieldApi.onValueChanged.yields({lat: 1, lon: 2});
       this.el = this.compile();
@@ -211,7 +211,7 @@ describe('LocationEditor integration', function () {
     });
   });
 
-  describe('map', function () {
+  describe('map', () => {
     it('selects location when marker is dragged', function () {
       this.compile();
       this.googleMaps.event.addListener
@@ -259,22 +259,20 @@ describe('LocationEditor integration', function () {
   });
 
   function extendWithUiMethods (el, context) {
-    el.setInputValue = function (name, value) {
+    el.setInputValue = (name, value) => {
       el.find('[name=' + name + ']').val(value).trigger('change');
       context.$apply();
     };
 
-    el.getInputValue = function (name) {
+    el.getInputValue = name => {
       context.$apply();
       return el.find('[name=' + name + ']').val();
     };
 
-    el.findStatus = function (code) {
-      return el.find(
-        '[role=status]' +
-        '[data-status-code=' + code + ']'
-      );
-    };
+    el.findStatus = code => el.find(
+      '[role=status]' +
+      '[data-status-code=' + code + ']'
+    );
 
     return el;
   }

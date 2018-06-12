@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 
-.factory('systemFields', [function () {
+.factory('systemFields', [() => {
   var createdAt = {
     id: 'createdAt',
     name: 'Created',
@@ -47,14 +47,10 @@ angular.module('contentful')
   };
 
   function returnClone (obj) {
-    return function () {
-      return _.cloneDeep(obj);
-    };
+    return () => _.cloneDeep(obj);
   }
 
   function getFallbackOrderField (availableFieldIds) {
-    return _.find(fallbackFields, function (field) {
-      return _.includes(availableFieldIds, field.id);
-    }) || {id: undefined};
+    return _.find(fallbackFields, field => _.includes(availableFieldIds, field.id)) || {id: undefined};
   }
 }]);

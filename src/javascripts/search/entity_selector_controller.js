@@ -53,11 +53,7 @@ angular.module('contentful')
 
   // Returns a promise for the content type of the given entry.
   // We cache this by the entry id
-  var getContentType = _.memoize(function (entity) {
-    return spaceContext.publishedCTs.fetch(entity.sys.contentType.sys.id);
-  }, function (entity) {
-    return entity.sys.id;
-  });
+  var getContentType = _.memoize(entity => spaceContext.publishedCTs.fetch(entity.sys.contentType.sys.id), entity => entity.sys.id);
 
   _.assign($scope, MODES, {
     spaceContext: spaceContext,
@@ -94,9 +90,7 @@ angular.module('contentful')
     if ($scope.singleContentType) {
       initialSearchState.contentTypeId = $scope.singleContentType.getId();
     }
-    var isSearching$ = K.fromScopeValue($scope, function ($scope) {
-      return $scope.isLoading && !$scope.isLoadingMore;
-    });
+    var isSearching$ = K.fromScopeValue($scope, $scope => $scope.isLoading && !$scope.isLoadingMore);
     var accessibleContentType = getAccessibleCTs(spaceContext.publishedCTs, initialSearchState.contentTypeId);
     var contentTypes = getValidContentTypes($scope.config.linkedContentTypeIds, accessibleContentType);
 
@@ -114,9 +108,7 @@ angular.module('contentful')
       var acceptsOnlySpecificContentType = linkedContentTypeIds && linkedContentTypeIds.length > 0;
 
       if (acceptsOnlySpecificContentType) {
-        contentTypes = contentTypes.filter(function (ct) {
-          return linkedContentTypeIds.indexOf(ct.sys.id) > -1;
-        });
+        contentTypes = contentTypes.filter(ct => linkedContentTypeIds.indexOf(ct.sys.id) > -1);
       }
 
       return contentTypes;
@@ -226,7 +218,7 @@ angular.module('contentful')
   function handleResponse (res) {
     $scope.paginator.setTotal(res.total);
     $scope.items.push.apply($scope.items, getItemsToAdd(res));
-    $timeout(function () {
+    $timeout(() => {
       $scope.isLoading = false;
       $scope.isLoadingMore = false;
     });
@@ -240,7 +232,7 @@ angular.module('contentful')
       itemsById: _.groupBy($scope.items, 'sys.id')
     };
 
-    return res.items.reduce(function (acc, item) {
+    return res.items.reduce((acc, item) => {
       var id = _.get(item, 'sys.id');
       if (id && !acc.itemsById[id] && !isAssetWithoutFile(item)) {
         return {
@@ -258,7 +250,7 @@ angular.module('contentful')
 
   function resetAndLoad () {
     $scope.isLoading = true;
-    load().then(function (response) {
+    load().then(response => {
       $scope.items = [];
       $scope.paginator.setTotal(0);
       $scope.paginator.setPage(0);

@@ -7,7 +7,7 @@ angular.module('contentful')
  *
  * This directive display the new navigation side panel.
  */
-.directive('cfNavSidepanel', ['require', function (require) {
+.directive('cfNavSidepanel', ['require', require => {
   var $window = require('$window');
   var createController = require('navigation/Sidepanel/DirectiveController').default;
 
@@ -17,7 +17,7 @@ angular.module('contentful')
     scope: {
       sidePanelIsShown: '=isShown'
     },
-    controller: ['$scope', function ($scope) {
+    controller: ['$scope', $scope => {
       createController($scope, $($window));
     }]
   };

@@ -1,16 +1,14 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfContentPreviewEditor', [function () {
-  return {
-    template: JST.content_preview_editor(),
-    restrict: 'E',
-    controller: 'cfContentPreviewEditorController',
-    scope: true
-  };
-}])
+.directive('cfContentPreviewEditor', [() => ({
+  template: JST.content_preview_editor(),
+  restrict: 'E',
+  controller: 'cfContentPreviewEditorController',
+  scope: true
+})])
 
-.controller('cfContentPreviewEditorController', ['$scope', 'require', function ($scope, require) {
+.controller('cfContentPreviewEditorController', ['$scope', 'require', ($scope, require) => {
   var $q = require('$q');
   var $state = require('$state');
   var $stateParams = require('$stateParams');
@@ -33,11 +31,11 @@ angular.module('contentful')
 
   $q.all(promises).then(handleSuccessResponse, redirectToList);
 
-  $scope.$watch('previewEnvironment.name', function (name) {
+  $scope.$watch('previewEnvironment.name', name => {
     $scope.context.title = name || 'Untitled';
   });
 
-  $scope.$watch('contentPreviewForm.$dirty', function (isDirty) {
+  $scope.$watch('contentPreviewForm.$dirty', isDirty => {
     $scope.context.dirty = isDirty;
   });
 
@@ -51,9 +49,7 @@ angular.module('contentful')
     disabled: function () { return $scope.save.inProgress(); }
   });
 
-  $scope.slugify = function (text) {
-    return slugUtils.slugify(text, 'en-US');
-  };
+  $scope.slugify = text => slugUtils.slugify(text, 'en-US');
 
   function validate () {
     $scope.invalidFields = null;
@@ -120,7 +116,7 @@ angular.module('contentful')
   function handleSuccessResponse (responses) {
     var cts = responses[0];
     if ($scope.context.isNew) {
-      contentPreview.canCreate().then(function (allowed) {
+      contentPreview.canCreate().then(allowed => {
         if (allowed) {
           $scope.previewEnvironment = contentPreview.new(cts);
           $scope.context.ready = true;
@@ -150,7 +146,7 @@ angular.module('contentful')
     }
     var action = $scope.context.isNew ? 'create' : 'update';
     return contentPreview[action]($scope.previewEnvironment)
-    .then(function (env) {
+    .then(env => {
       notification.info('Content preview "' + env.name + '" saved successfully');
       $scope.previewEnvironment.version = env.sys.version;
       $scope.contentPreviewForm.$setPristine();
@@ -169,7 +165,7 @@ angular.module('contentful')
       } else {
         track('updated', env);
       }
-    }, function (err) {
+    }, err => {
       var defaultMessage = 'Could not save Preview Environment';
       var serverMessage = _.first(_.split(_.get(err, 'body.message'), '\n'));
       notification.warn(serverMessage || defaultMessage);
@@ -180,12 +176,12 @@ angular.module('contentful')
     var env = $scope.previewEnvironment;
 
     return contentPreview.remove(env)
-    .then(function () {
+    .then(() => {
       notification.info('Content preview was deleted successfully');
       $scope.context.dirty = false;
       track('deleted', {name: env.name, sys: {id: env.id}});
       return $state.go('^.list');
-    }, function () {
+    }, () => {
       notification.warn('An error occurred');
     });
   }

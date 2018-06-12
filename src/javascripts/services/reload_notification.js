@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.factory('ReloadNotification', ['require', function (require) {
+.factory('ReloadNotification', ['require', require => {
   var $location = require('$location');
   var $q = require('$q');
   var modalDialog = require('modalDialog');

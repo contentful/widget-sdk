@@ -3,7 +3,7 @@
 import * as K from 'test/helpers/mocks/kefir';
 import $q from '$q';
 
-describe('cfOnboardingSteps Directive', function () {
+describe('cfOnboardingSteps Directive', () => {
   beforeEach(function () {
     this.previews$ = K.createMockProperty([]);
     this.organizations = [{
@@ -52,7 +52,7 @@ describe('cfOnboardingSteps Directive', function () {
     };
   });
 
-  describe('app home page', function () {
+  describe('app home page', () => {
     beforeEach(function () {
       this.$state.current.name = 'home';
       this.compile();
@@ -76,8 +76,8 @@ describe('cfOnboardingSteps Directive', function () {
     });
   });
 
-  describe('space home page', function () {
-    describe('not activated', function () {
+  describe('space home page', () => {
+    describe('not activated', () => {
       beforeEach(function () {
         this.$state.current.name = 'spaces.detail.home';
         this.spaceContext = this.$inject('spaceContext');
@@ -109,7 +109,7 @@ describe('cfOnboardingSteps Directive', function () {
       });
     });
 
-    describe('activated', function () {
+    describe('activated', () => {
       beforeEach(function () {
         this.$state.current.name = 'spaces.detail.home';
         this.spaceContext = this.$inject('spaceContext');

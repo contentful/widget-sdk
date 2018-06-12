@@ -5,15 +5,15 @@
  * whether the content type is acceptable for this link field.
  */
 angular.module('contentful')
-.controller('ValidationLinkTypeController', ['require', '$scope', function (require, $scope) {
+.controller('ValidationLinkTypeController', ['require', '$scope', (require, $scope) => {
   var spaceContext = require('spaceContext');
   var K = require('utils/kefir');
 
-  K.onValueScope($scope, spaceContext.publishedCTs.items$, function (cts) {
+  K.onValueScope($scope, spaceContext.publishedCTs.items$, cts => {
     $scope.contentTypes = cts.map(decorateContentType);
   });
 
-  $scope.update = function () {
+  $scope.update = () => {
     $scope.validation.settings = getSelectedIDs();
     $scope.validator.run();
   };

@@ -13,7 +13,7 @@
  * cf-icon(name="close" height="20")
  */
 angular.module('cf.ui')
-.directive('cfIcon', ['require', function (require) {
+.directive('cfIcon', ['require', require => {
   var createMountPoint = require('ui/Framework/DOMRenderer').default;
 
   return {

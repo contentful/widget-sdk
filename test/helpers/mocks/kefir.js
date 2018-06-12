@@ -17,11 +17,9 @@ export function extractValues (stream) {
 export function createMockProperty (initial) {
   const bus = Kefir.createBus();
   let current = initial;
-  const property = bus.stream.toProperty(function () {
-    return current;
-  });
+  const property = bus.stream.toProperty(() => current);
   property.end = bus.end;
-  property.set = function (value) {
+  property.set = value => {
     current = value;
     bus.emit(value);
   };
@@ -38,7 +36,7 @@ export function createMockStream () {
 export function assertCurrentValue (prop, expected) {
   let called = false;
   let actual;
-  const off = Kefir.onValue(prop, function (value) {
+  const off = Kefir.onValue(prop, value => {
     actual = value;
     called = true;
   });
@@ -50,7 +48,7 @@ export function assertCurrentValue (prop, expected) {
 export function assertMatchCurrentValue (prop, matcher) {
   let called = false;
   let actual;
-  const off = Kefir.onValue(prop, function (value) {
+  const off = Kefir.onValue(prop, value => {
     actual = value;
     called = true;
   });

@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Datetime Editor', function () {
+describe('Datetime Editor', () => {
   beforeEach(function () {
     module('contentful/test');
 
@@ -26,7 +26,7 @@ describe('Datetime Editor', function () {
     sinon.assert.notCalled(this.fieldApi.setValue);
   });
 
-  describe('rendering', function () {
+  describe('rendering', () => {
     it('leaves date and time field empty without value', function () {
       const el = this.compile();
       expect(getInputValue(el, 'datetime.date')).toEqual('');
@@ -97,7 +97,7 @@ describe('Datetime Editor', function () {
     });
   });
 
-  describe('date input', function () {
+  describe('date input', () => {
     beforeEach(function () {
       this.el = this.compile({format: 'dateonly'});
     });
@@ -154,7 +154,7 @@ describe('Datetime Editor', function () {
     });
   });
 
-  describe('time input', function () {
+  describe('time input', () => {
     beforeEach(function () {
       this.widgetApi.fieldProperties.value$.set('2000-01-01T09:00');
       // TODO The tests don’t work if the `setValue()` method is
@@ -185,7 +185,7 @@ describe('Datetime Editor', function () {
       expect(this.widgetApi._state.isInvalid).toBe(true);
     });
 
-    describe('with 12h clock', function () {
+    describe('with 12h clock', () => {
       beforeEach(function () {
         this.widgetApi.fieldProperties.value$.set('2000-01-01T09:00');
         this.el = this.compile({format: 'time', ampm: '12'});
@@ -214,7 +214,7 @@ describe('Datetime Editor', function () {
     });
   });
 
-  describe('timezone input', function () {
+  describe('timezone input', () => {
     it('updates the field value', function () {
       this.widgetApi.fieldProperties.value$.set('2000-01-01T00:00');
       const el = this.compile();

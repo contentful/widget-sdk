@@ -1,4 +1,4 @@
-describe('ViewSerializer', function () {
+describe('ViewSerializer', () => {
   beforeEach(function () {
     module('contentful/test');
 
@@ -36,7 +36,7 @@ describe('ViewSerializer', function () {
     });
   }
 
-  describe('#serialize() and #unserialize() round-trip', function () {
+  describe('#serialize() and #unserialize() round-trip', () => {
     itRoundTrips('`order` object', {
       order: {
         direction: 'descending',
@@ -96,7 +96,7 @@ describe('ViewSerializer', function () {
     });
   });
 
-  describe('#serialize()', function () {
+  describe('#serialize()', () => {
     itFlattens('and removes empty `searchTerm`', {
       id: 'VIEW_ID',
       searchFilters: []
@@ -105,7 +105,7 @@ describe('ViewSerializer', function () {
     });
   });
 
-  describe('#unserialize()', function () {
+  describe('#unserialize()', () => {
     itUnflattens('and adds empty `searchFilters` if `searchTerm` is not set', {
       id: 'VIEW_ID'
     }, {

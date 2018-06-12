@@ -1,7 +1,7 @@
 'use strict';
 
-describe('cfContentTypePreview directive', function () {
-  beforeEach(module('contentful/test', function ($provide) {
+describe('cfContentTypePreview directive', () => {
+  beforeEach(module('contentful/test', $provide => {
     const contentTypePreview = sinon.stub();
     contentTypePreview.fromData = sinon.stub();
     $provide.value('contentTypePreview', contentTypePreview);

@@ -1,6 +1,6 @@
 'use strict';
 
-describe('dialogsInitController', function () {
+describe('dialogsInitController', () => {
   beforeEach(function () {
     this.spaceContext = { getId: sinon.stub() };
     this.OrganizationRoles = { isEmpty: sinon.stub() };
@@ -29,8 +29,8 @@ describe('dialogsInitController', function () {
     this.$rootScope.$apply();
   });
 
-  describe('init()', function () {
-    describe('notifier services communication', function () {
+  describe('init()', () => {
+    describe('notifier services communication', () => {
       const ORGANIZATION = {};
 
       beforeEach(function () {

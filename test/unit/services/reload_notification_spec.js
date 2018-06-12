@@ -1,9 +1,9 @@
 'use strict';
 
-describe('ReloadNotification service', function () {
+describe('ReloadNotification service', () => {
   var $q, $rootScope, ReloadNotification, open;
   beforeEach(module('contentful/test'));
-  beforeEach(inject(function ($injector){
+  beforeEach(inject($injector => {
     $q                 = $injector.get('$q');
     $rootScope         = $injector.get('$rootScope');
     ReloadNotification = $injector.get('ReloadNotification');
@@ -12,41 +12,41 @@ describe('ReloadNotification service', function () {
     ReloadNotification.apiErrorHandler.restore();
   }));
 
-  describe('the apiErrorHandler', function () {
-    it('should trigger the api error for 500eds', function () {
+  describe('the apiErrorHandler', () => {
+    it('should trigger the api error for 500eds', () => {
       $q.reject({statusCode: 500}).catch(ReloadNotification.apiErrorHandler);
       $rootScope.$apply();
       sinon.assert.called(open);
     });
 
-    it('should not trigger the api error for 502', function () {
+    it('should not trigger the api error for 502', () => {
       $q.reject({statusCode: 502}).catch(ReloadNotification.apiErrorHandler);
       $rootScope.$apply();
       sinon.assert.notCalled(open);
     });
 
-    it('should not trigger the api error for < 500eds', function () {
+    it('should not trigger the api error for < 500eds', () => {
       $q.reject({statusCode: 404}).catch(ReloadNotification.apiErrorHandler);
       $rootScope.$apply();
       sinon.assert.notCalled(open);
     });
 
-    it('should not trigger the api error for errors without statusCode', function () {
+    it('should not trigger the api error for errors without statusCode', () => {
       $q.reject({}).catch(ReloadNotification.apiErrorHandler);
       $rootScope.$apply();
       sinon.assert.notCalled(open);
     });
 
-    it('should not trigger the api error for errors that are Strings', function () {
+    it('should not trigger the api error for errors that are Strings', () => {
       $q.reject('lolnope').catch(ReloadNotification.apiErrorHandler);
       $rootScope.$apply();
       sinon.assert.notCalled(open);
     });
 
-    describe('should not interfere with further processing', function () {
+    describe('should not interfere with further processing', () => {
       var successHandler, errorHandler, error;
 
-      beforeEach(function () {
+      beforeEach(() => {
         successHandler = sinon.stub();
         errorHandler   = sinon.stub();
         error          = {statusCode: 500};
@@ -59,19 +59,19 @@ describe('ReloadNotification service', function () {
         $rootScope.$apply();
       }
 
-      it('when success', function () {
+      it('when success', () => {
         run($q.resolve('derp'));
         sinon.assert.calledWith(successHandler, 'derp');
         sinon.assert.notCalled(errorHandler);
       });
 
-      it('when handled error', function () {
+      it('when handled error', () => {
         run($q.reject(error));
         sinon.assert.notCalled(successHandler);
         sinon.assert.calledWith(errorHandler, error);
       });
 
-      it('when unhandled error', function () {
+      it('when unhandled error', () => {
         error = {};
         run($q.reject(error));
         sinon.assert.notCalled(successHandler);

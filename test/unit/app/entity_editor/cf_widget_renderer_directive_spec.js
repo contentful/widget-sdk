@@ -1,8 +1,8 @@
 'use strict';
 
-describe('cfWidgetRenderer Directive', function () {
+describe('cfWidgetRenderer Directive', () => {
   beforeEach(function () {
-    module('cf.app', function ($provide) {
+    module('cf.app', $provide => {
       $provide.value('$state', {
         href: function (_state, params) {
           return '/spaceHref/' + params.contentTypeId;

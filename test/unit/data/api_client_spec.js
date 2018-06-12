@@ -1,11 +1,11 @@
 'use strict';
 
-describe('data/ApiClient', function () {
+describe('data/ApiClient', () => {
   let $http;
 
   beforeEach(function () {
     $http = sinon.stub();
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.value('$http', $http);
     });
 
@@ -15,18 +15,18 @@ describe('data/ApiClient', function () {
 
     const auth = { getToken: sinon.stub().resolves('TOKEN') };
     const endpoint = createSpaceEndpoint('//api.test.local', 'SPACE', auth);
-    this.client = new Client(function (...args) {
+    this.client = new Client((...args) => {
       const response = endpoint(...args);
       $timeout.flush();
       return response;
     });
   });
 
-  afterEach(function () {
+  afterEach(() => {
     $http = null;
   });
 
-  describe('single resource', function () {
+  describe('single resource', () => {
     const headers = (extraHeaders) => {
       return _.extend({}, {
         'Content-Type': 'application/vnd.contentful.management.v1+json',
@@ -34,7 +34,7 @@ describe('data/ApiClient', function () {
       }, extraHeaders);
     };
 
-    beforeEach(function () {
+    beforeEach(() => {
       $http.resolves({data: 'DATA'});
     });
 
@@ -100,8 +100,8 @@ describe('data/ApiClient', function () {
     });
   });
 
-  describe('resource list', function () {
-    beforeEach(function () {
+  describe('resource list', () => {
+    beforeEach(() => {
       $http.resolves({data: 'DATA'});
     });
 
@@ -160,8 +160,8 @@ describe('data/ApiClient', function () {
     });
   });
 
-  describe('Extensions', function () {
-    beforeEach(function () {
+  describe('Extensions', () => {
+    beforeEach(() => {
       $http.resolves({data: 'DATA'});
     });
 
@@ -216,11 +216,11 @@ describe('data/ApiClient', function () {
    * parameter and on the argument `$http` has been called with
    */
   function assertRequestResponse (resExp, reqExp) {
-    return function (res) {
+    return res => {
       expect(res).toEqual(resExp);
       sinon.assert.calledOnce($http);
       const req = $http.getCall(0).args[0];
-      _.forEach(reqExp, function (val, prop) {
+      _.forEach(reqExp, (val, prop) => {
         expect(req[prop]).toEqual(val);
       });
     };

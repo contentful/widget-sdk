@@ -1,11 +1,11 @@
-describe('utils/List', function () {
+describe('utils/List', () => {
   beforeEach(function () {
     module('contentful/test');
     this.List = this.$inject('utils/List');
   });
 
   // TODO use generative testing!
-  describe('#makeKeyed', function () {
+  describe('#makeKeyed', () => {
     beforeEach(function () {
       this.makeKeyed = (items) => {
         return this.List.makeKeyed(items, (i) => i.hash);

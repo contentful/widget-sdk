@@ -1,6 +1,6 @@
 import * as sinon from 'helpers/sinon';
 
-describe('CreateSpace', function () {
+describe('CreateSpace', () => {
   beforeEach(function () {
     this.v1Org = {sys: {id: 'v1'}, pricingVersion: 'pricing_version_1'};
     this.v2Org = {sys: {id: 'v2'}, pricingVersion: 'pricing_version_2'};
@@ -26,7 +26,7 @@ describe('CreateSpace', function () {
     this.CreateSpace = this.$inject('services/CreateSpace');
   });
 
-  describe('#showDialog', function () {
+  describe('#showDialog', () => {
     it('opens old dialog with v1 org id', function* () {
       yield this.CreateSpace.showDialog('v1');
       const modalArgs = this.modalDialog.open.firstCall.args[0];

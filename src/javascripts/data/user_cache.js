@@ -28,35 +28,29 @@ angular.module('cf.data')
  *   // ...
  * })
  */
-.factory('data/userCache', ['require', function (require) {
+.factory('data/userCache', ['require', require => {
   var memoize = require('utils/memoize');
   var fetchAll = require('data/CMA/FetchAll').fetchAll;
 
   return function createCache (endpoint) {
     var getUserMap = createUserFetcher(endpoint);
 
-    var getUserList = memoize(function () {
-      return getUserMap().then(_.values);
-    });
+    var getUserList = memoize(() => getUserMap().then(_.values));
 
     return {
       getAll: getUserList,
       get: function (id) {
-        return getUserMap().then(function (users) {
-          return users[id];
-        });
+        return getUserMap().then(users => users[id]);
       }
     };
   };
 
   function createUserFetcher (endpoint) {
-    return memoize(function () {
-      return fetchAll(endpoint, ['users'], 100).then(mapUsersById);
-    });
+    return memoize(() => fetchAll(endpoint, ['users'], 100).then(mapUsersById));
   }
 
   function mapUsersById (users) {
-    return _.transform(users, function (map, user) {
+    return _.transform(users, (map, user) => {
       map[user.sys.id] = user;
     }, {});
   }

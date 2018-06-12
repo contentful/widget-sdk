@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('cf.app')
-.directive('cfLocationEditor', ['require', function (require) {
+.directive('cfLocationEditor', ['require', require => {
   var $controller = require('$controller');
   var LocationMap = require('app/widgets/location/Map');
 
@@ -15,7 +15,7 @@ angular.module('cf.app')
       var searchResultsMenu = $el.find('[data-search-results]');
       var mapSlotElement = $el.find('[data-map-slot]').get(0);
 
-      var offDisabledStatusChanged = field.onIsDisabledChanged(function (disabled) {
+      var offDisabledStatusChanged = field.onIsDisabledChanged(disabled => {
         $scope.isDisabled = disabled;
       });
 
@@ -25,11 +25,11 @@ angular.module('cf.app')
 
       $scope.search = $controller('LocationEditorSearchController', {$scope: $scope});
 
-      $scope.search.onResultsAvailable(function () {
+      $scope.search.onResultsAvailable(() => {
         searchResultsMenu.show();
       });
 
-      var offValueChanged = field.onValueChanged(function (location) {
+      var offValueChanged = field.onValueChanged(location => {
         $scope.location = location || {};
         $scope.search.updateAddressFromLocation();
       });
@@ -37,7 +37,7 @@ angular.module('cf.app')
       $scope.$on('$destroy', offValueChanged);
       $scope.$on('$destroy', offDisabledStatusChanged);
 
-      $scope.$watchCollection('location', function (location) {
+      $scope.$watchCollection('location', location => {
         if (_.isNumber(location.lat) && _.isNumber(location.lon)) {
           field.setValue(location);
         } else {

@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Remove outdated rules', function () {
+describe('Remove outdated rules', () => {
 
   var toInternal, remove;
 
@@ -30,8 +30,8 @@ describe('Remove outdated rules', function () {
     };
   }
 
-  describe('path constraints with non-existent components', function () {
-    it('removes rule if CT is missing', function () {
+  describe('path constraints with non-existent components', () => {
+    it('removes rule if CT is missing', () => {
       var internal = toInternal({policies: [
         createPolicy('ctid', 'fields.%.%'),
         createPolicy('ctid2', 'fields.%.%')
@@ -42,7 +42,7 @@ describe('Remove outdated rules', function () {
       expect(result).toBe(true);
     });
 
-    it('removes rule if a single field is missing', function () {
+    it('removes rule if a single field is missing', () => {
       var internal = toInternal({policies: [
         createPolicy('ctid', 'fields.test.%'),
         createPolicy('ctid', 'fields.z.%'),
@@ -58,7 +58,7 @@ describe('Remove outdated rules', function () {
       expect(result).toBe(true);
     });
 
-    it('removes rules if a locale is missing', function () {
+    it('removes rules if a locale is missing', () => {
       var internal = toInternal({policies: [
         createPolicy('ctid', 'fields.%.en-US'),
         createPolicy('ctid', 'fields.%.de-DE')
@@ -69,7 +69,7 @@ describe('Remove outdated rules', function () {
       expect(result).toBe(true);
     });
 
-    it('fallbacks to internal field ID', function () {
+    it('fallbacks to internal field ID', () => {
       var internal = toInternal({policies: [createPolicy('ctid', 'fields.internal.%')]});
       var ct = createCt('ctid',  {fields: [{id: 'internal'}, {apiName: 'xyz'}]});
 
@@ -78,7 +78,7 @@ describe('Remove outdated rules', function () {
       expect(result).toBe(true);
     });
 
-    it('removes rules from all rule sets', function () {
+    it('removes rules from all rule sets', () => {
       function t(path, cts, locales) {
         var internal = toInternal({policies: [
           createPolicy('ctid', path, 'Entry', 'allow'),
@@ -100,7 +100,7 @@ describe('Remove outdated rules', function () {
       t('fields.test.en-US', [createCt('ctid')], [{code: 'de-DE'}]);
     });
 
-    it('changes policy collections only when were autofixed', function () {
+    it('changes policy collections only when were autofixed', () => {
       var internal = toInternal({policies: [createPolicy('ctid', 'fields.%.%')]});
       var original = internal.entries.allowed;
 

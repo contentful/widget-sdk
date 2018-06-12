@@ -5,7 +5,7 @@ import Picker from 'app/Extensions/ExamplePicker';
 
 const BTN_SELECTOR = '.btn-action';
 
-describe('ExamplePicker', function () {
+describe('ExamplePicker', () => {
   const mount = () => {
     const confirmStub = sinon.stub();
     const cancelStub = sinon.stub();
@@ -17,12 +17,12 @@ describe('ExamplePicker', function () {
     return [wrapper, confirmStub, cancelStub];
   };
 
-  it('renders list of predefined extensions', function () {
+  it('renders list of predefined extensions', () => {
     const [wrapper] = mount();
     expect(wrapper.find(BTN_SELECTOR).length).toBe(6);
   });
 
-  it('blocks all installation buttons once clicked', function () {
+  it('blocks all installation buttons once clicked', () => {
     const [wrapper] = mount();
     wrapper.find(BTN_SELECTOR).first().simulate('click');
     wrapper.find(BTN_SELECTOR).forEach(btn => {
@@ -30,7 +30,7 @@ describe('ExamplePicker', function () {
     });
   });
 
-  it('confirms dialog with fetched extension', function () {
+  it('confirms dialog with fetched extension', () => {
     const [wrapper, confirmStub] = mount();
     const fetchStub = sinon.stub(Fetcher, 'fetchExtension');
     fetchStub.returns({then: handle => handle({extension: true})});
@@ -40,7 +40,7 @@ describe('ExamplePicker', function () {
     fetchStub.restore();
   });
 
-  it('cancels dialog with fetch error', function () {
+  it('cancels dialog with fetch error', () => {
     const [wrapper, _, cancelStub] = mount();
     const fetchStub = sinon.stub(Fetcher, 'fetchExtension');
     fetchStub.returns({then: (_, handle) => handle(new Error('error'))});

@@ -1,6 +1,6 @@
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
-describe('utils/locales', function () {
+describe('utils/locales', () => {
   beforeEach(function* () {
     const system = createIsolatedSystem();
 
@@ -21,21 +21,21 @@ describe('utils/locales', function () {
     this.localeUtils = yield system.import('utils/locales');
   });
 
-  describe('#isRtlLocale()', function () {
-    describe('when the locale is not featured in the web app', function () {
+  describe('#isRtlLocale()', () => {
+    describe('when the locale is not featured in the web app', () => {
       it('returns false', function () {
         expect(this.localeUtils.isRtlLocale('he-IL')).toBe(false);
       });
     });
 
-    describe('when the locale is featured in the web app', function () {
-      describe('when the locale code should be displayed as LTR', function () {
+    describe('when the locale is featured in the web app', () => {
+      describe('when the locale code should be displayed as LTR', () => {
         it('returns false', function () {
           expect(this.localeUtils.isRtlLocale('ar-AE')).toBe(false);
         });
       });
 
-      describe('when the locale code should be displayed as RTL', function () {
+      describe('when the locale code should be displayed as RTL', () => {
         it('returns true', function () {
           expect(this.localeUtils.isRtlLocale('hr-BA')).toBe(true);
         });

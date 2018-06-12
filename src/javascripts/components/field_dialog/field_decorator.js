@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.factory('fieldDecorator', ['require', function (require) {
+.factory('fieldDecorator', ['require', require => {
   var schemas = require('validation').schemas;
   var fieldSchema = schemas.ContentType.atItems(['fields']);
 

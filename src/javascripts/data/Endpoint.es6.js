@@ -166,9 +166,7 @@ export function create (baseUrl, auth) {
       params: config.query
     };
 
-    return baseRequest(req).then(function (response) {
-      return response.data;
-    }, function (response) {
+    return baseRequest(req).then(response => response.data, response => {
       const status = parseInt(response.status, 10);
       const error = extend(new Error('API request failed'), {
         status: status,
@@ -198,7 +196,7 @@ export function create (baseUrl, auth) {
 function joinPath (components) {
   const startSlashRegex = /^\//;
   const endSlashRegex = /\/$/;
-  return filter(components).map(function (component, ix) {
+  return filter(components).map((component, ix) => {
     if (ix > 0) {
       component = component.replace(startSlashRegex, '');
     }

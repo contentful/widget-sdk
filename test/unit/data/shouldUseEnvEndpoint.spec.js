@@ -1,7 +1,7 @@
 import shouldUseEnvEndpoint from 'data/shouldUseEnvEndpoint';
 
-describe('shouldUseEnvEndpoint', function () {
-  it('returns true when should use env endpoint for various input formats', function () {
+describe('shouldUseEnvEndpoint', () => {
+  it('returns true when should use env endpoint for various input formats', () => {
     [
       'content_types',
       'public/content_types',
@@ -19,7 +19,7 @@ describe('shouldUseEnvEndpoint', function () {
     });
   });
 
-  it('returns false when entity belongs directly to a space', function () {
+  it('returns false when entity belongs directly to a space', () => {
     [
       ['roles', 'rid'],
       '/users/',

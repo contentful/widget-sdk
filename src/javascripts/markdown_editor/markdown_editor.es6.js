@@ -44,7 +44,7 @@ export function create (textarea, options) {
   return api;
 
   function wrapChange (fn) {
-    return function (e, ch) {
+    return (e, ch) => {
       fn(editor.getValue(), e, ch);
     };
   }
@@ -52,7 +52,7 @@ export function create (textarea, options) {
   function tiePreviewToEditor (el) {
     const fraction = editor.getScrollFraction();
 
-    $timeout(function () {
+    $timeout(() => {
       const top = el.get(0).scrollHeight * fraction;
       el.scrollTop(top);
     });
@@ -74,7 +74,7 @@ export function create (textarea, options) {
     const top = previewElement.scrollTop();
     const position = height === 0 ? 0 : top / height;
 
-    $timeout(function () {
+    $timeout(() => {
       editor.scrollToFraction(position);
     });
   }

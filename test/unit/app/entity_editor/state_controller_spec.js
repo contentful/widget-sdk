@@ -2,13 +2,13 @@
 import $q from '$q';
 import {create as createDocument} from 'helpers/mocks/entity_editor_document';
 
-describe('entityEditor/StateController', function () {
+describe('entityEditor/StateController', () => {
   const SLIDE_IN_EDITOR_FEATURE_FLAG_VALUE = 2; // Enabled with multiple levels.
 
   beforeEach(function () {
     const closeStateSpy = this.closeStateSpy = sinon.spy();
 
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.value('navigation/closeState', closeStateSpy);
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
@@ -84,7 +84,7 @@ describe('entityEditor/StateController', function () {
     });
   });
 
-  describe('#delete command execution', function () {
+  describe('#delete command execution', () => {
     beforeEach(function () {
       this.scope.entityInfo = {
         id: 'abc',
@@ -135,7 +135,7 @@ describe('entityEditor/StateController', function () {
     });
   });
 
-  describe('in published state without changes', function () {
+  describe('in published state without changes', () => {
     beforeEach(function () {
       this.doc.setValueAt(['sys'], {
         id: 'EID',
@@ -158,7 +158,7 @@ describe('entityEditor/StateController', function () {
       expect(this.controller.secondary.length).toEqual(2);
     });
 
-    describe('the first secondary action', function () {
+    describe('the first secondary action', () => {
       beforeEach(function () {
         this.action = this.controller.secondary[0];
       });
@@ -185,7 +185,7 @@ describe('entityEditor/StateController', function () {
       });
     });
 
-    describe('the second secondary action', function () {
+    describe('the second secondary action', () => {
       beforeEach(function () {
         this.action = this.controller.secondary[1];
       });
@@ -205,12 +205,12 @@ describe('entityEditor/StateController', function () {
     });
   });
 
-  describe('in draft state', function () {
+  describe('in draft state', () => {
     it('sets current state to "draft"', function () {
       expect(this.controller.current).toEqual('draft');
     });
 
-    describe('primary action publish', function () {
+    describe('primary action publish', () => {
       it('publishes entity', function () {
         this.controller.primary.execute();
         this.$apply();
@@ -236,7 +236,7 @@ describe('entityEditor/StateController', function () {
         sinon.assert.calledOnce(this.validator.run);
       });
 
-      describe('when the entity is an entry', function () {
+      describe('when the entity is an entry', () => {
         beforeEach(function () {
           const contentTypeId = 'foo';
           this.scope.entityInfo = {
@@ -250,7 +250,7 @@ describe('entityEditor/StateController', function () {
           };
         });
 
-        describe('when we are in the bulk editor', function () {
+        describe('when we are in the bulk editor', () => {
           beforeEach(function () {
             this.scope.bulkEditorContext = {};
           });
@@ -258,7 +258,7 @@ describe('entityEditor/StateController', function () {
           itTracksThePublishEventWithOrigin('bulk-editor');
         });
 
-        describe('when we are in the entry editor', function () {
+        describe('when we are in the entry editor', () => {
           beforeEach(function () {
             delete this.scope.bulkEditorContext;
           });
@@ -283,7 +283,7 @@ describe('entityEditor/StateController', function () {
         }
       });
 
-      describe('when the entity is not an entry', function () {
+      describe('when the entity is not an entry', () => {
         beforeEach(function () {
           const contentTypeId = 'foo';
           this.scope.entityInfo = {
@@ -329,7 +329,7 @@ describe('entityEditor/StateController', function () {
       });
     });
 
-    describe('secondary action archive', function () {
+    describe('secondary action archive', () => {
       beforeEach(function () {
         this.action = this.controller.secondary[0];
       });
@@ -366,7 +366,7 @@ describe('entityEditor/StateController', function () {
     });
   });
 
-  describe('#revertToPrevious command', function () {
+  describe('#revertToPrevious command', () => {
     it('is available iff document has changes and the document is editable', function () {
       this.doc.reverter.hasChanges.returns(true);
       this.doc.state.canEdit$.set(true);
@@ -404,7 +404,7 @@ describe('entityEditor/StateController', function () {
     });
   });
 
-  describe('publication warnings', function () {
+  describe('publication warnings', () => {
     it('allows publication warnings registration', function () {
       const warning = {};
       this.controller.registerPublicationWarning(warning);

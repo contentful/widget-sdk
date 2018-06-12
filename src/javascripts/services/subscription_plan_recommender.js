@@ -9,7 +9,7 @@
  * provides a rendered plan card.
  */
 angular.module('contentful')
-.factory('subscriptionPlanRecommender', ['require', function (require) {
+.factory('subscriptionPlanRecommender', ['require', require => {
   var Config = require('Config');
   var $http = require('$http');
   var $q = require('$q');

@@ -1,6 +1,6 @@
 'use strict';
 
-describe('cfUrlEditor directive', function () {
+describe('cfUrlEditor directive', () => {
   beforeEach(function () {
     module('contentful/test', ($provide) => {
       $provide.removeDirectives(['cfEmbedlyPreview']);
@@ -30,7 +30,7 @@ describe('cfUrlEditor directive', function () {
         broken: self.$el.find('[data-status-code*=broken]')
       };
 
-      assertions.forEach(function (assertion) {
+      assertions.forEach(assertion => {
         expect(statusEls[assertion[0]].css('display')).toBe(assertion[1]);
       });
     };

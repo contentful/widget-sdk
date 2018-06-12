@@ -1,4 +1,4 @@
-describe('data/Request/Auth', function () {
+describe('data/Request/Auth', () => {
   beforeEach(function () {
     module('contentful/test');
     const wrapWithAuth = this.$inject('data/Request/Auth').default;

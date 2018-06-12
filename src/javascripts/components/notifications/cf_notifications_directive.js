@@ -1,33 +1,28 @@
 'use strict';
 
-angular.module('contentful').directive('cfNotifications', function() {
-  return {
-    restrict: 'E',
-    template: JST.cf_notifications(),
-    scope: true,
-    controller: ['$scope', 'require', function ($scope, require) {
-      var notification = require('notification');
-      var $timeout = require('$timeout');
+angular.module('contentful').directive('cfNotifications', () => ({
+  restrict: 'E',
+  template: JST.cf_notifications(),
+  scope: true,
 
-      $scope.markAsSeen = function () {
-        notification.markAsSeen();
-      };
+  controller: ['$scope', 'require', ($scope, require) => {
+    var notification = require('notification');
+    var $timeout = require('$timeout');
 
-      $scope.$watch(function () {
-        return !notification.message || notification.message.hidden;
-      }, setHidden);
+    $scope.markAsSeen = () => {
+      notification.markAsSeen();
+    };
 
-      $scope.$watch(function () {
-        return notification.message;
-      }, setMessage);
+    $scope.$watch(() => !notification.message || notification.message.hidden, setHidden);
 
-      function setHidden (hidden) {
-        $scope.hidden = hidden;
-      }
+    $scope.$watch(() => notification.message, setMessage);
 
-      function setMessage (message) {
-        $scope.message = message;
-      }
-    }]
-  };
-});
+    function setHidden (hidden) {
+      $scope.hidden = hidden;
+    }
+
+    function setMessage (message) {
+      $scope.message = message;
+    }
+  }]
+}));

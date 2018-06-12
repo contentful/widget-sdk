@@ -1,6 +1,6 @@
 'use strict';
 
-describe('logger service', function () {
+describe('logger service', () => {
   let step = 0;
 
   beforeEach(function () {
@@ -60,7 +60,7 @@ describe('logger service', function () {
     sinon.assert.calledWith(this.bugsnag.notify, 'Logged ShareJS Warning', 'test', sinon.match({meta: 'Data'}), 'warning');
   });
 
-  describe('when receiving error with status code 0', function () {
+  describe('when receiving error with status code 0', () => {
     it('logs errors as cors warnings', function () {
       this.logger.logServerError('test', {meta: 'Data', error: {statusCode: 0}});
       sinon.assert.calledWith(this.bugsnag.notify, 'CORS Warning', 'test', sinon.match({
@@ -77,7 +77,7 @@ describe('logger service', function () {
     });
   });
 
-  describe('message processing', function () {
+  describe('message processing', () => {
     beforeEach(function () {
       this.logger.enable({
         firstName: 'Hans',
@@ -96,7 +96,7 @@ describe('logger service', function () {
         'Logged Error', 'error', sinon.match({groupingHash: 'error'}), 'error');
     });
 
-    describe('augmenting metadata', function () {
+    describe('augmenting metadata', () => {
       it('adds params', function () {
         this.logger.logError('error', {groupingHash: 'grp'});
         const actual = this.bugsnag.notify.args[0][2];
@@ -190,7 +190,7 @@ describe('logger service', function () {
     }
   };
 
-  _.each(SERVER_LOGGING_CASES, function (testCase, descriptionMsg) {
+  _.each(SERVER_LOGGING_CASES, (testCase, descriptionMsg) => {
     const msg = ' for ' + descriptionMsg;
 
     describe('#logServerError()' + msg, testServerErrorLogging.bind(
@@ -216,10 +216,10 @@ describe('logger service', function () {
         loggingType, 'LOG_MSG', sinon.match.object, severityLC);
     });
 
-    _.each(testCase.expected, function (value, name) {
+    _.each(testCase.expected, (value, name) => {
       const tabName = name.replace(/([A-Z])/g, ' $1').toUpperCase();
 
-      describe('“' + tabName + '” tab on Bugsnag', function () {
+      describe('“' + tabName + '” tab on Bugsnag', () => {
         it('will be present', function () {
           expect(this.transformedData[name]).toEqual(jasmine.any(Object));
         });

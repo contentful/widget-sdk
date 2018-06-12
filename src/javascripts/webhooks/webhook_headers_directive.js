@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 
-.directive('cfWebhookHeaders', ['require', function (require) {
+.directive('cfWebhookHeaders', ['require', require => {
   var Command = require('command');
   var $timeout = require('$timeout');
 
@@ -11,14 +11,14 @@ angular.module('contentful')
     template: JST['webhook_headers'](),
     scope: {headers: '=', isDirty: '='},
     link: function (scope, el) {
-      scope.focusNewKey = function () {
+      scope.focusNewKey = () => {
         el.find('#webhook-new-header-key').focus();
       };
-      scope.focusFirst = function () {
+      scope.focusFirst = () => {
         el.find('input:visible').first().focus();
       };
     },
-    controller: ['$scope', function ($scope) {
+    controller: ['$scope', $scope => {
       $scope.model = {fresh: {}, existing: {}};
       $scope.add = Command.create(add, {disabled: cannotAdd});
       $scope.addWithEnter = addWithEnter;
@@ -29,7 +29,7 @@ angular.module('contentful')
       $scope.updateWithEnter = updateWithEnter;
       $scope.remove = remove;
 
-      $scope.$watchCollection('model.fresh', function (m) {
+      $scope.$watchCollection('model.fresh', m => {
         $scope.isDirty = !!(m.key && m.value);
       });
 

@@ -2,7 +2,7 @@ import _ from 'lodash';
 import moment from 'npm:moment';
 import { contentTypes } from './helpers';
 
-describe('app/ContentList/Search/QueryBuilder', function () {
+describe('app/ContentList/Search/QueryBuilder', () => {
   let buildQuery;
   beforeEach(function () {
     module('contentful/test');

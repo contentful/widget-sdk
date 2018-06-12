@@ -1,14 +1,12 @@
 'use strict';
 
-angular.module('contentful').directive('cfRoleList', function () {
-  return {
-    restrict: 'E',
-    template: JST['role_list'](),
-    controller: 'RoleListController'
-  };
-});
+angular.module('contentful').directive('cfRoleList', () => ({
+  restrict: 'E',
+  template: JST['role_list'](),
+  controller: 'RoleListController'
+}));
 
-angular.module('contentful').controller('RoleListController', ['$scope', 'require', function ($scope, require) {
+angular.module('contentful').controller('RoleListController', ['$scope', 'require', ($scope, require) => {
   var $state = require('$state');
   var $q = require('$q');
   var ReloadNotification = require('ReloadNotification');
@@ -29,7 +27,7 @@ angular.module('contentful').controller('RoleListController', ['$scope', 'requir
   $q.all({
     canModifyRoles: AccessChecker.canModifyRoles(),
     useLegacy: ResourceUtils.useLegacy(org)
-  }).then(function (result) {
+  }).then(result => {
     var subscription = spaceContext.subscription;
     var trialLockdown = subscription.isTrial() && subscription.hasTrialEnded();
 
@@ -71,7 +69,7 @@ angular.module('contentful').controller('RoleListController', ['$scope', 'requir
     $scope.memberships = listHandler.getMembershipCounts();
     $scope.countAdmin = $scope.memberships.admin || 0;
 
-    $scope.roles = _.sortBy(data.roles, 'name').map(function (role) {
+    $scope.roles = _.sortBy(data.roles, 'name').map(role => {
       role.count = $scope.memberships[role.sys.id] || 0;
 
       return role;

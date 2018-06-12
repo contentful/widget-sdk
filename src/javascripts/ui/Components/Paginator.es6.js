@@ -77,9 +77,7 @@ function getRange (pageCount, activePage) {
     const range = _([1])
         .concat(neighbors)
         .concat(pageCount)
-        .filter(function (v) {
-          return v > 0 && v <= pageCount;
-        })
+        .filter(v => v > 0 && v <= pageCount)
         .sortedUniq()
         .value();
 

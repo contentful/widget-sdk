@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').directive('cfAutocompleteList', ['require', function (require) {
+angular.module('contentful').directive('cfAutocompleteList', ['require', require => {
   var h = require('utils/hyperscript').h;
   var $timeout = require('$timeout');
   var scrollIntoView = require('scroll-into-view');
@@ -29,7 +29,7 @@ angular.module('contentful').directive('cfAutocompleteList', ['require', functio
 
       function autoscroll () {
         // wait for the ".selected" class to be applied
-        $timeout(function () {
+        $timeout(() => {
           // scroll-into-view expects a single DOM element
           var selected = el.find('.selected').first().get(0);
           if (selected) {
@@ -38,28 +38,28 @@ angular.module('contentful').directive('cfAutocompleteList', ['require', functio
         });
       }
     },
-    controller: ['$scope', function ($scope) {
-      $scope.$on('selectNextAutocompletion', function () {
+    controller: ['$scope', $scope => {
+      $scope.$on('selectNextAutocompletion', () => {
         selectNextAutocompletion();
         fill();
       });
 
-      $scope.$on('selectPreviousAutocompletion', function () {
+      $scope.$on('selectPreviousAutocompletion', () => {
         selectPreviousAutocompletion();
         fill();
       });
 
-      $scope.$on('cancelAutocompletion', function () {
+      $scope.$on('cancelAutocompletion', () => {
         // TODO probably unnecessessary, because the directive should be destroyed
         $scope.selectedAutocompletion = null;
       });
 
-      $scope.$on('submitAutocompletion', function (event) {
+      $scope.$on('submitAutocompletion', event => {
         if (!$scope.selectedAutocompletion) event.preventDefault();
         $scope.selectedAutocompletion = null;
       });
 
-      $scope.$watch('autocompletion.items', function (items, old) {
+      $scope.$watch('autocompletion.items', (items, old) => {
         if (items === old) {
           selectInitialAutocompletion();
           fill();
@@ -68,7 +68,7 @@ angular.module('contentful').directive('cfAutocompleteList', ['require', functio
         }
       });
 
-      $scope.selectAutocompletion = function (autocompletion, $event) {
+      $scope.selectAutocompletion = (autocompletion, $event) => {
         $scope.selectedAutocompletion = autocompletion;
         fill();
         $scope.confirmAutocompletion();
@@ -77,9 +77,7 @@ angular.module('contentful').directive('cfAutocompleteList', ['require', functio
 
       function selectInitialAutocompletion () {
         var token = $scope.currentTokenContent();
-        $scope.selectedAutocompletion = _.find($scope.autocompletion.items, function (i) {
-          return i.value.toString() === token;
-        });
+        $scope.selectedAutocompletion = _.find($scope.autocompletion.items, i => i.value.toString() === token);
       }
 
       function selectNextAutocompletion () {
@@ -93,9 +91,7 @@ angular.module('contentful').directive('cfAutocompleteList', ['require', functio
       }
 
       function getSelectedIndex () {
-        return _.findIndex($scope.autocompletion.items, function (i) {
-          return i.value === ($scope.selectedAutocompletion && $scope.selectedAutocompletion.value);
-        });
+        return _.findIndex($scope.autocompletion.items, i => i.value === ($scope.selectedAutocompletion && $scope.selectedAutocompletion.value));
       }
 
       function fill () {

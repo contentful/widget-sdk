@@ -31,7 +31,7 @@
  *     a(data-drag-handle)
  */
 angular.module('cf.ui')
-.directive('cfUiSortable', ['uiSortableDirective', function (uiSortableDirectives) {
+.directive('cfUiSortable', ['uiSortableDirective', uiSortableDirectives => {
   var uiSortable = uiSortableDirectives[0];
 
   var DEFAULTS = {

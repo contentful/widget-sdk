@@ -1,6 +1,6 @@
 'use strict';
 
-describe('cfMarkdownEditor', function () {
+describe('cfMarkdownEditor', () => {
   beforeEach(function () {
     module('contentful/test', $provide => {
       $provide.value('TheLocaleStore', {
@@ -42,7 +42,7 @@ describe('cfMarkdownEditor', function () {
     expect(infoKeys.length).toBe(2);
   });
 
-  describe('Widget <-> field synchronization', function () {
+  describe('Widget <-> field synchronization', () => {
     beforeEach(function () {
       sinon.spy(this.editor, 'setValue');
     });
@@ -65,7 +65,7 @@ describe('cfMarkdownEditor', function () {
     });
   });
 
-  describe('Handling OT problems', function () {
+  describe('Handling OT problems', () => {
     it('Goes to preview in case of connection problems', function () {
       expect(this.scope.inMode('md')).toBe(true);
       this.widgetApi.fieldProperties.isDisabled$.set(true);
@@ -92,7 +92,7 @@ describe('cfMarkdownEditor', function () {
     });
   });
 
-  describe('Zen Mode API', function () {
+  describe('Zen Mode API', () => {
     beforeEach(function () {
       this.editorMock = {setContent: sinon.stub()};
       this.scope.zenApi.registerChild(this.editorMock);

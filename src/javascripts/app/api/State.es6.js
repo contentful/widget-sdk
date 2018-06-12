@@ -27,7 +27,7 @@ import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo';
 // These properties are common to the key editor state for new and
 // existing keys.
 const apiKeyEditorState = {
-  controller: ['$scope', '$stateParams', 'apiKey', 'spaceEnvironments', function ($scope, $stateParams, apiKey, spaceEnvironments) {
+  controller: ['$scope', '$stateParams', 'apiKey', 'spaceEnvironments', ($scope, $stateParams, apiKey, spaceEnvironments) => {
     attachEditorController($scope, apiKey, spaceEnvironments);
 
     contextHistory.set([
@@ -42,13 +42,11 @@ const keyDetail = assign({
   name: 'detail',
   url: '/:apiKeyId',
   resolve: {
-    spaceEnvironments: ['spaceContext', function (spaceContext) {
+    spaceEnvironments: ['spaceContext', spaceContext => {
       const repo = SpaceEnvironmentRepo.create(spaceContext.endpoint);
       return repo.getAll();
     }],
-    apiKey: ['$stateParams', 'spaceContext', function ($stateParams, spaceContext) {
-      return spaceContext.apiKeyRepo.get($stateParams.apiKeyId);
-    }]
+    apiKey: ['$stateParams', 'spaceContext', ($stateParams, spaceContext) => spaceContext.apiKeyRepo.get($stateParams.apiKeyId)]
   }
 }, apiKeyEditorState);
 
@@ -62,7 +60,7 @@ export default {
   name: 'api',
   url: '/api',
   abstract: true,
-  onEnter: ['spaceContext', function (spaceContext) {
+  onEnter: ['spaceContext', spaceContext => {
     spaceContext.apiKeyRepo.refresh();
   }],
   children: [{

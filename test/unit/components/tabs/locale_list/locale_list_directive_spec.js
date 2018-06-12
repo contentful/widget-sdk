@@ -1,4 +1,4 @@
-describe('The Locale list directive', function () {
+describe('The Locale list directive', () => {
   beforeEach(function () {
     this.flags = {
       'feature-bv-2018-01-resources-api': false
@@ -248,7 +248,7 @@ describe('The Locale list directive', function () {
     expect(this.container.find('.workbench-main__sidebar button.add-entity').attr('disabled')).toBe('disabled');
   });
 
-  describe('inside non-master environment', function () {
+  describe('inside non-master environment', () => {
     beforeEach(function () {
       this.environment.sys.id = 'dev';
     });
@@ -270,13 +270,13 @@ describe('The Locale list directive', function () {
     });
   });
 
-  describe('the UX', function () {
+  describe('the UX', () => {
     beforeEach(function () {
       this.organization.pricingVersion = 'pricing_version_2';
       this.flags['feature-bv-2018-01-resources-api'] = true;
     });
 
-    describe('inside of a non-master environment', function () {
+    describe('inside of a non-master environment', () => {
       beforeEach(function () {
         this.environment.sys.id = 'dev';
       });
@@ -293,7 +293,7 @@ describe('The Locale list directive', function () {
       });
     });
 
-    describe('with limit of 1', function () {
+    describe('with limit of 1', () => {
       beforeEach(function* () {
         // You will always be at the limit with 1 locale, as a space
         // is always created with a default locale
@@ -312,7 +312,7 @@ describe('The Locale list directive', function () {
       });
     });
 
-    describe('with a limit over 1', function () {
+    describe('with a limit over 1', () => {
       beforeEach(function* () {
         this.setUsageLimits(1, 3);
         this.compileElement();
@@ -329,7 +329,7 @@ describe('The Locale list directive', function () {
       });
     });
 
-    describe('when hitting your limit', function () {
+    describe('when hitting your limit', () => {
       beforeEach(function () {
         this.setUsageLimits(3, 3);
       });
@@ -382,7 +382,7 @@ describe('The Locale list directive', function () {
     });
   });
 
-  describe('list of locales', function () {
+  describe('list of locales', () => {
     beforeEach(function () {
       this.compileElement();
       this.list = this.container.find('.table tbody');
@@ -392,7 +392,7 @@ describe('The Locale list directive', function () {
       expect(this.list.find('tr').length).toBe(4);
     });
 
-    describe('locale info and flags', function () {
+    describe('locale info and flags', () => {
       beforeEach(function () {
         this.tableCell = this.list.find('td');
       });

@@ -6,7 +6,7 @@ angular.module('contentful')
  * @ngdoc service
  * @name states/contentTypes
  */
-.factory('states/contentTypes', ['require', function (require) {
+.factory('states/contentTypes', ['require', require => {
   var contextHistory = require('navigation/Breadcrumbs/History').default;
   var crumbFactory = require('navigation/Breadcrumbs/Factory');
 
@@ -40,13 +40,9 @@ angular.module('contentful')
     name: 'new',
     url: '_new',
     resolve: {
-      contentType: ['spaceContext', function (spaceContext) {
-        return spaceContext.space.newContentType({sys: {type: 'ContentType'}, fields: []});
-      }],
+      contentType: ['spaceContext', spaceContext => spaceContext.space.newContentType({sys: {type: 'ContentType'}, fields: []})],
       editingInterface: resolvers.editingInterface,
-      publishedContentType: [function () {
-        return null;
-      }]
+      publishedContentType: [() => null]
     }
   }, true);
 
@@ -54,11 +50,11 @@ angular.module('contentful')
     name: 'detail',
     url: '/:contentTypeId',
     resolve: {
-      contentType: ['require', '$stateParams', 'spaceContext', function (require, $stateParams, spaceContext) {
+      contentType: ['require', '$stateParams', 'spaceContext', (require, $stateParams, spaceContext) => {
         var space = spaceContext.space;
         var ctHelpers = require('data/ContentTypes');
         return space.getContentType($stateParams.contentTypeId)
-          .then(function (ct) {
+          .then(ct => {
             // Some legacy content types do not have a name. If it is
             // missing we set it to 'Untitled' so we can display
             // something in the UI. Note that the API requires new
@@ -67,15 +63,13 @@ angular.module('contentful')
             return ct;
           });
       }],
-      publishedContentType: ['contentType', function (contentType) {
-        return contentType.getPublishedStatus().catch(function (err) {
-          if (err.statusCode === 404) {
-            return null;
-          } else {
-            throw err;
-          }
-        });
-      }],
+      publishedContentType: ['contentType', contentType => contentType.getPublishedStatus().catch(err => {
+        if (err.statusCode === 404) {
+          return null;
+        } else {
+          throw err;
+        }
+      })],
       editingInterface: resolvers.editingInterface
     }
   }, false);
@@ -93,7 +87,7 @@ angular.module('contentful')
       children: [ fields, preview ],
       controller: [
         '$scope', '$stateParams', 'contentType', 'editingInterface', 'publishedContentType',
-        function ($scope, $stateParams, contentType, editingInterface, publishedContentType) {
+        ($scope, $stateParams, contentType, editingInterface, publishedContentType) => {
           $scope.context.isNew = isNew;
           $scope.contentType = contentType;
           $scope.editingInterface = editingInterface;

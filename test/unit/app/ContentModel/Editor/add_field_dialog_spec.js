@@ -2,7 +2,7 @@ import {setCheckbox} from 'helpers/DOM';
 import * as sinon from 'helpers/sinon';
 
 // TODO Rewrite this with the new actor based test DSL.
-describe('AddFieldDialogController', function () {
+describe('AddFieldDialogController', () => {
   beforeEach(module('contentful/test'));
 
   beforeEach(function () {
@@ -19,7 +19,7 @@ describe('AddFieldDialogController', function () {
     });
   });
 
-  describe('text field group', function () {
+  describe('text field group', () => {
     beforeEach(function () {
       this.el.find('button[aria-label="Text"]').click();
       this.$apply();
@@ -71,7 +71,7 @@ describe('AddFieldDialogController', function () {
     });
   });
 
-  describe('number field group', function () {
+  describe('number field group', () => {
     beforeEach(function () {
       this.el.find('button[aria-label="Number"]').click();
       this.$apply();
@@ -108,7 +108,7 @@ describe('AddFieldDialogController', function () {
     });
   });
 
-  describe('media field group', function () {
+  describe('media field group', () => {
     beforeEach(function () {
       this.el.find('button[aria-label="Media"]').click();
       this.$apply();
@@ -146,7 +146,7 @@ describe('AddFieldDialogController', function () {
     });
   });
 
-  describe('field id input', function () {
+  describe('field id input', () => {
     beforeEach(function () {
       this.el.find('button[aria-label="Text"]').click();
       this.$apply();
@@ -193,7 +193,7 @@ describe('AddFieldDialogController', function () {
     });
   });
 
-  describe('field name input', function () {
+  describe('field name input', () => {
     it('shows an error if empty', function () {
       this.el.find('button[aria-label="Text"]').click();
       this.$apply();

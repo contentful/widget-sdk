@@ -37,7 +37,7 @@ export function create (sys$, setSys, getData, spaceEndpoint) {
 
   const state$ = sys$.map(getState);
   let currentState;
-  state$.onValue(function (state) {
+  state$.onValue(state => {
     currentState = state;
   });
 
@@ -54,7 +54,7 @@ export function create (sys$, setSys, getData, spaceEndpoint) {
     const previousState = currentState;
     inProgressBus.set(true);
     return applyAction(action, getData())
-    .then(function (data) {
+    .then(data => {
       // Deleting does not return any data.
       if (data && data.sys) {
         setSys(data.sys);
@@ -65,7 +65,7 @@ export function create (sys$, setSys, getData, spaceEndpoint) {
       }
       return data;
     })
-    .finally(function () {
+    .finally(() => {
       inProgressBus.set(false);
     });
   }

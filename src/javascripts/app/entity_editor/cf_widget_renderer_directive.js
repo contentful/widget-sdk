@@ -14,7 +14,7 @@
  * @property {string} $scope.contentTypeHref
  */
 angular.module('cf.app')
-.directive('cfWidgetRenderer', ['require', function (require) {
+.directive('cfWidgetRenderer', ['require', require => {
   var $compile = require('$compile');
   var $state = require('$state');
 
@@ -33,14 +33,14 @@ angular.module('cf.app')
       element.append($widget);
       $compile($widget)(scope);
 
-      element.on('focusin', function () {
-        scope.$applyAsync(function () {
+      element.on('focusin', () => {
+        scope.$applyAsync(() => {
           scope.fieldLocale.setActive(true);
         });
       });
 
-      element.on('focusout', function () {
-        scope.$applyAsync(function () {
+      element.on('focusout', () => {
+        scope.$applyAsync(() => {
           scope.fieldLocale.setActive(false);
           scope.fieldLocale.revalidate();
         });

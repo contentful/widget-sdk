@@ -25,7 +25,7 @@ angular.module('contentful').controller('ViewStateController', ['require', '$sco
    *
    * @param {string} name of state to transition to
   */
-  this.set = function (newState) {
+  this.set = newState => {
     state = newState;
   };
 
@@ -33,9 +33,7 @@ angular.module('contentful').controller('ViewStateController', ['require', '$sco
    * @ngdoc method
    * @name ViewStateController#get
   */
-  this.get = function () {
-    return state;
-  };
+  this.get = () => state;
 
   /**
    * @ngdoc method
@@ -46,8 +44,6 @@ angular.module('contentful').controller('ViewStateController', ['require', '$sco
    *
    * @param {string} name of state to verify
   */
-  this.is = function (expectedState) {
-    return state === expectedState;
-  };
+  this.is = expectedState => state === expectedState;
 
 }]);

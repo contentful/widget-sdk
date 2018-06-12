@@ -1,6 +1,6 @@
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
-describe('data/EndpointFactory', function () {
+describe('data/EndpointFactory', () => {
   beforeEach(function* () {
     this.Authentication = {};
     this.Config = {apiUrl: sinon.stub().returns('API_URL')};
@@ -19,7 +19,7 @@ describe('data/EndpointFactory', function () {
     this.factory = yield this.system.import('data/EndpointFactory');
   });
 
-  describe('#createOrganizationEndpoint', function () {
+  describe('#createOrganizationEndpoint', () => {
     it('delegates to `data/Endpoint#createOrganizationEndpoint`', function () {
       const orgEndpoint = this.factory.createOrganizationEndpoint('ORG_ID');
       sinon.assert.calledOnce(this.Endpoint.createOrganizationEndpoint.withArgs(
@@ -30,7 +30,7 @@ describe('data/EndpointFactory', function () {
       expect(orgEndpoint).toBe(this.orgEndpoint);
     });
   });
-  describe('#createSpaceEndpoint', function () {
+  describe('#createSpaceEndpoint', () => {
     it('delegates to `data/Endpoint#createSpaceEndpoint`', function () {
       const spaceEndpoint = this.factory.createSpaceEndpoint('SPACE_ID', 'ENV_ID');
       sinon.assert.calledOnce(this.Endpoint.createSpaceEndpoint.withArgs(

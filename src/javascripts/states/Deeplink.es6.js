@@ -24,7 +24,7 @@ export default makeState({
   url: '/deeplink',
   template: createTemplate(),
   loadingText: 'Redirecting…',
-  controller: ['$scope', function ($scope) {
+  controller: ['$scope', $scope => {
     createController($scope);
   }]
 });

@@ -20,7 +20,7 @@
  * instantiated, so it might be not available if you call it immediately.
  */
 
-angular.module('contentful').factory('intercom', ['require', function (require) {
+angular.module('contentful').factory('intercom', ['require', require => {
   var $window = require('$window');
   var isDisabled = false;
 

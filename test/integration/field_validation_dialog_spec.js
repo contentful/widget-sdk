@@ -11,7 +11,7 @@ import * as K from 'utils/kefir';
  *
  * Stubs the scope's `field`, `index`, and `otDoc`.
  */
-xdescribe('validation dialog', function() {
+xdescribe('validation dialog', () => {
   var openDialog, dialog, scope;
 
   function getFieldProperty(scope, path) {
@@ -22,15 +22,15 @@ xdescribe('validation dialog', function() {
     return _.set(scope, ['field', path].join('.'), value);
   }
 
-  beforeEach(function () {
+  beforeEach(() => {
     var modalDialog;
     module('contentful/test');
-    inject(function($rootScope, $injector) {
+    inject(($rootScope, $injector) => {
       scope        = $rootScope.$new();
       modalDialog  = $injector.get('modalDialog');
     });
 
-    openDialog = function() {
+    openDialog = () => {
       if (dialog)
         dialog.cancel();
 
@@ -51,7 +51,7 @@ xdescribe('validation dialog', function() {
     openDialog();
   });
 
-  afterEach(function() {
+  afterEach(() => {
     if (dialog) {
       dialog.cancel();
       dialog = null;
@@ -69,8 +69,8 @@ xdescribe('validation dialog', function() {
   }
 
 
-  describe('text length validation', function() {
-    beforeEach(function() {
+  describe('text length validation', () => {
+    beforeEach(() => {
       scope.field.type = 'Text';
       openDialog();
     });
@@ -78,8 +78,8 @@ xdescribe('validation dialog', function() {
     describeLengthValidation('validations');
   });
 
-  describe('multiple symbols length validation', function() {
-    beforeEach(function() {
+  describe('multiple symbols length validation', () => {
+    beforeEach(() => {
       scope.field.type = 'Array';
       scope.field.items = {type: 'Symbol'};
       openDialog();
@@ -94,7 +94,7 @@ xdescribe('validation dialog', function() {
       return dialog.domElement.find('[aria-label="Enforce input length"]');
     }
 
-    it('can be enabled and set', function() {
+    it('can be enabled and set', () => {
       expect(settings().find('.validation-controls').is(':hidden')).toBe(true);
 
       settings()
@@ -114,7 +114,7 @@ xdescribe('validation dialog', function() {
       .toEqual([{size: {min: 10, max: 20}}]);
     });
 
-    it('existing validation is shown and can be disabled', function() {
+    it('existing validation is shown and can be disabled', () => {
       setFieldProperty(scope, validationPath, [{size: {min: 10, max: 20}}]);
       openDialog();
 
@@ -130,7 +130,7 @@ xdescribe('validation dialog', function() {
       expect(getFieldProperty(scope, validationPath)).toEqual([]);
     });
 
-    it('shows errors when opened', function() {
+    it('shows errors when opened', () => {
       setFieldProperty(scope, validationPath, [{size: {min: null, max: null}}]);
       openDialog();
 
@@ -142,7 +142,7 @@ xdescribe('validation dialog', function() {
       expect(errors.text()).toEqual('Please provide a positive integer');
     });
 
-    it('does not save invalid validations', function() {
+    it('does not save invalid validations', () => {
       setFieldProperty(scope, validationPath, [{size: {min: 10, max: null}}]);
       openDialog();
 
@@ -159,7 +159,7 @@ xdescribe('validation dialog', function() {
       expect(errors.text()).toEqual('Please provide a positive integer');
     });
 
-    it('selects the correct initial view', function() {
+    it('selects the correct initial view', () => {
       setFieldProperty(scope, validationPath, [{size: {min: 10, max: null}}]);
       openDialog();
 
@@ -169,7 +169,7 @@ xdescribe('validation dialog', function() {
       expect(selectedView).toEqual('At least');
     });
 
-    it('changes custom error message', function() {
+    it('changes custom error message', () => {
       setFieldProperty(scope, validationPath, [{
         size: {min: 10, max: null},
         message: 'my custom error message'
@@ -190,8 +190,8 @@ xdescribe('validation dialog', function() {
 
   }
 
-  describe('range validation', function() {
-    beforeEach(function() {
+  describe('range validation', () => {
+    beforeEach(() => {
       scope.field.type = 'Number';
       openDialog();
     });
@@ -200,7 +200,7 @@ xdescribe('validation dialog', function() {
       return dialog.domElement.find('[aria-label="Specify allowed number range"]');
     }
 
-    it('can be enabled and set', function() {
+    it('can be enabled and set', () => {
       settings()
       .find('[aria-label="Enable validation"]')
       .click();
@@ -219,7 +219,7 @@ xdescribe('validation dialog', function() {
       .toEqual([{range: {min: -0.1, max: 0.1}}]);
     });
 
-    it('it can be disabled', function() {
+    it('it can be disabled', () => {
       scope.field.validations = [{range: {min: -1, max: 2}}];
       openDialog();
 
@@ -238,7 +238,7 @@ xdescribe('validation dialog', function() {
 
   });
 
-  describe('regexp validation', function() {
+  describe('regexp validation', () => {
     function settings() {
       return dialog.domElement.find('[aria-label="Match a specific pattern"]');
     }
@@ -249,7 +249,7 @@ xdescribe('validation dialog', function() {
       .click();
     }
 
-    it('can be enabled and set', function() {
+    it('can be enabled and set', () => {
       enable();
 
       settings()
@@ -266,7 +266,7 @@ xdescribe('validation dialog', function() {
       .toEqual([{regexp: {pattern: 'foo|bar', flags: 'i'}}]);
     });
 
-    it('shows error for invalid flags', function () {
+    it('shows error for invalid flags', () => {
       enable();
 
       settings()
@@ -287,7 +287,7 @@ xdescribe('validation dialog', function() {
 
     it('selects the correct initial view');
 
-    it('changes view to "custom" on change', function() {
+    it('changes view to "custom" on change', () => {
       scope.field.validation = {regexp: {pattern: ''}};
       openDialog();
       settings()
@@ -313,7 +313,7 @@ xdescribe('validation dialog', function() {
   });
 
 
-  describe('predefined values', function() {
+  describe('predefined values', () => {
     function enterKeypressEvent() {
       return $.Event('keydown', {keyCode: $.ui.keyCode.ENTER} );
     }
@@ -322,7 +322,7 @@ xdescribe('validation dialog', function() {
       return dialog.domElement.find('[aria-label="Predefined values"]');
     }
 
-    it('can be added and enabled', function() {
+    it('can be added and enabled', () => {
       expect(scope.field.validations).toBeUndefined();
 
       settings()
@@ -340,7 +340,7 @@ xdescribe('validation dialog', function() {
       expect(scope.field.validations).toEqual([{in: ['a value', 'another value']}]);
     });
 
-    it('shows warning for existing values', function() {
+    it('shows warning for existing values', () => {
       settings()
       .find('[aria-label="Enable validation"]')
       .click();
@@ -358,19 +358,17 @@ xdescribe('validation dialog', function() {
       expect(scope.field.validations).toEqual([{in: ['a value']}]);
     });
 
-    it('shows existing values', function() {
+    it('shows existing values', () => {
       scope.field.validations = [{in: ['a value', 'another value']}];
       openDialog();
 
       var values = settings().find('[aria-label="List of predefined values"] > li');
-      var valuesText = values.map(function(_, li) {
-        return $(li).text();
-      }).get();
+      var valuesText = values.map((_, li) => $(li).text()).get();
 
       expect(valuesText).toEqual(['a value', 'another value']);
     });
 
-    it('can delete existing values', function() {
+    it('can delete existing values', () => {
       scope.field.validations = [{in: ['a value', 'another value', 'even more value']}];
       openDialog();
 
@@ -384,14 +382,14 @@ xdescribe('validation dialog', function() {
       expect(scope.field.validations).toEqual([{in: ['a value', 'even more value']}]);
     });
 
-    describe('for number field', function() {
-      beforeEach(function() {
+    describe('for number field', () => {
+      beforeEach(() => {
         scope.field.type = 'Number';
         scope.field.validations = [{in: []}];
         openDialog();
       });
 
-      it('parses number', function() {
+      it('parses number', () => {
         settings()
         .find('[aria-label="Add a value"]')
         .val('12.34').trigger(enterKeypressEvent());
@@ -400,7 +398,7 @@ xdescribe('validation dialog', function() {
         expect(scope.field.validations).toEqual([{in: [12.34]}]);
       });
 
-      it('warns if input is not a number', function() {
+      it('warns if input is not a number', () => {
         settings()
         .find('[aria-label="Add a value"]')
         .val('not a number').trigger(enterKeypressEvent());
@@ -411,12 +409,12 @@ xdescribe('validation dialog', function() {
     });
   });
 
-  describe('content type validation', function() {
+  describe('content type validation', () => {
     function settings() {
       return dialog.domElement.find('[aria-label="Specify allowed entry type"]');
     }
 
-    beforeEach(function() {
+    beforeEach(() => {
       scope.field.type = 'Link';
       scope.field.linkType = 'Entry';
       scope.spaceContext = {
@@ -437,7 +435,7 @@ xdescribe('validation dialog', function() {
       openDialog();
     });
 
-    it('can select content types', function() {
+    it('can select content types', () => {
       scope.field.validations = [{linkContentType: ['1']}];
       openDialog();
 
@@ -462,18 +460,18 @@ xdescribe('validation dialog', function() {
     });
   });
 
-  describe('asset type validation', function() {
+  describe('asset type validation', () => {
     function settings() {
       return dialog.domElement.find('[aria-label="Specify allowed file types"]');
     }
 
-    beforeEach(function() {
+    beforeEach(() => {
       scope.field.type = 'Link';
       scope.field.linkType = 'Asset';
       openDialog();
     });
 
-    it('can select file type', function() {
+    it('can select file type', () => {
       settings()
       .find('[aria-label="Enable validation"]')
       .click();
@@ -490,7 +488,7 @@ xdescribe('validation dialog', function() {
       expect(scope.field.validations).toEqual([{linkMimetypeGroup: ['image', 'code']}]);
     });
 
-    it('shows previously selected type', function() {
+    it('shows previously selected type', () => {
       scope.field.validations = [{linkMimetypeGroup: 'markup'}];
       openDialog();
       var selected = settings()
@@ -498,7 +496,7 @@ xdescribe('validation dialog', function() {
       expect(selected.is(':checked')).toBe(true);
     });
 
-    it('shows error if no type slected', function() {
+    it('shows error if no type slected', () => {
       scope.field.validations = [{linkMimetypeGroup: 'markup'}];
       openDialog();
       settings()
@@ -512,8 +510,8 @@ xdescribe('validation dialog', function() {
     });
   });
 
-  describe('array length validation', function() {
-    beforeEach(function() {
+  describe('array length validation', () => {
+    beforeEach(() => {
       scope.otDoc = {state: {editable: true}};
       scope.field = {type: 'Array', items: {type: 'Symbol'}};
       openDialog();
@@ -523,7 +521,7 @@ xdescribe('validation dialog', function() {
       return dialog.domElement.find('[aria-label="Specify number of Symbols"]');
     }
 
-    it('can be set', function() {
+    it('can be set', () => {
       settings()
       .find('[aria-label="Enable validation"]')
       .click();
@@ -542,8 +540,8 @@ xdescribe('validation dialog', function() {
 
   });
 
-  describe('file size validation', function() {
-    beforeEach(function() {
+  describe('file size validation', () => {
+    beforeEach(() => {
       scope.field = {type: 'Link', linkType: 'Asset'};
       openDialog();
     });
@@ -554,7 +552,7 @@ xdescribe('validation dialog', function() {
       .find(locator);
     }
 
-    it('can be set', function() {
+    it('can be set', () => {
       settings('[aria-label="Enable validation"]')
       .click();
 
@@ -573,7 +571,7 @@ xdescribe('validation dialog', function() {
       .toEqual([{assetFileSize: {min: 2048, max: null}}]);
     });
 
-    it('selects "at least" as initial view and changes to between', function () {
+    it('selects "at least" as initial view and changes to between', () => {
       scope.field.validations = [{assetFileSize: {min: 1}}];
       openDialog();
 
@@ -594,8 +592,8 @@ xdescribe('validation dialog', function() {
     });
   });
 
-  describe('image dimension validations', function () {
-    beforeEach(function() {
+  describe('image dimension validations', () => {
+    beforeEach(() => {
       scope.field = {type: 'Link', linkType: 'Asset'};
       openDialog();
     });
@@ -606,7 +604,7 @@ xdescribe('validation dialog', function() {
       .find(selector);
     }
 
-    it('can set width minimum and exact height', function () {
+    it('can set width minimum and exact height', () => {
       settings('[aria-label="Enable validation"]')
       .click();
 

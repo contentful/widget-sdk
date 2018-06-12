@@ -1,10 +1,10 @@
-describe('widgets', function () {
+describe('widgets', () => {
   beforeEach(function () {
     module('contentful/test');
     this.widgets = this.$inject('widgets');
   });
 
-  describe('#buildRenderable()', function () {
+  describe('#buildRenderable()', () => {
     it('returns object with widget arrays', function () {
       const renderable = this.widgets.buildRenderable([], []);
       expect(renderable.form).toEqual([]);

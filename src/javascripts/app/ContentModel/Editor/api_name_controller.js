@@ -55,7 +55,7 @@ angular.module('contentful')
       html: true,
       scope: $scope,
       confirmLabel: 'Edit field ID'
-    }).promise.then(function () {
+    }).promise.then(() => {
       unlocked = true;
     });
   }

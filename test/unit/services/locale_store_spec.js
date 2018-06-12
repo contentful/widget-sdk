@@ -1,6 +1,6 @@
 'use strict';
 
-describe('TheLocaleStore', function () {
+describe('TheLocaleStore', () => {
   const makeLocale = (code, sid = 'SID') => {
     return {
       sys: {space: {sys: {id: sid}}},
@@ -32,7 +32,7 @@ describe('TheLocaleStore', function () {
     yield this.theLocaleStore.init(makeRepo(makeTestLocales()));
   });
 
-  describe('refreshes locales', function () {
+  describe('refreshes locales', () => {
     beforeEach(function* () {
       yield this.theLocaleStore.init(makeRepo(makeTestLocales()));
     });
@@ -66,7 +66,7 @@ describe('TheLocaleStore', function () {
       expect(this.theLocaleStore.getActiveLocales()).toEqual([makeDefaultLocale('en-US')]);
     });
 
-    describe('changes active locales', function () {
+    describe('changes active locales', () => {
       beforeEach(function () {
         this.theLocaleStore.setActiveLocales([
           makeLocale('en-US'),
@@ -86,7 +86,7 @@ describe('TheLocaleStore', function () {
     });
   });
 
-  describe('#setActiveLocales', function () {
+  describe('#setActiveLocales', () => {
     it('activates given locale', function () {
       const locale = makeLocale('zz');
       expect(this.theLocaleStore.isLocaleActive(locale)).toBe(false);
@@ -111,7 +111,7 @@ describe('TheLocaleStore', function () {
     });
   });
 
-  describe('#deactivateLocale', function () {
+  describe('#deactivateLocale', () => {
     it('it makes locale inactive', function () {
       const locale = makeLocale('zz');
       this.theLocaleStore.setActiveLocales([locale]);
@@ -121,7 +121,7 @@ describe('TheLocaleStore', function () {
     });
   });
 
-  describe('persistence', function () {
+  describe('persistence', () => {
     const saved = makeLocale('save');
     const notSaved = makeLocale('nosave');
     const key = sid => `activeLocalesForSpace.${sid}`;

@@ -9,12 +9,12 @@ angular.module('cf.app')
  * The state references accepted by this directive can be generated
  * with the `states/Navigator` module.
  */
-.directive('cfSref', ['require', function (require) {
+.directive('cfSref', ['require', require => {
   var Navigator = require('states/Navigator');
   return {
     restrict: 'A',
     link: function ($scope, _$elem, $attrs) {
-      $scope.$watch($attrs.cfSref, function (state) {
+      $scope.$watch($attrs.cfSref, state => {
         $attrs.$set('href', Navigator.href(state));
       });
     }

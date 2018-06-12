@@ -1,19 +1,19 @@
 'use strict';
 
-describe('helpers', function () {
+describe('helpers', () => {
 
-  beforeEach(function () {
+  beforeEach(() => {
     module('contentful/test');
   });
 
-  describe('#findWidget', function () {
+  describe('#findWidget', () => {
     var findWidget;
 
     beforeEach(function () {
       findWidget = this.$inject('editingInterfaces/helpers').findWidget;
     });
 
-    it('finds a widget for a field where the field has an apiName', function () {
+    it('finds a widget for a field where the field has an apiName', () => {
       var widgetArr = [
         {fieldId: 'foo'},
         {fieldId: 'bar'},
@@ -25,7 +25,7 @@ describe('helpers', function () {
       expect(result).toEqual(expected);
     });
 
-    it('finds a widget for a field where the field does not have an apiName', function () {
+    it('finds a widget for a field where the field does not have an apiName', () => {
       var widgetArr = [
         {fieldId: 'foo'},
         {fieldId: 'bar'},
@@ -37,7 +37,7 @@ describe('helpers', function () {
       expect(result).toEqual(expected);
     });
 
-    it('returns undefined when a matching widget is not found', function () {
+    it('returns undefined when a matching widget is not found', () => {
       var widgetArr = [
         {fieldId: 'foo'},
         {fieldId: 'bar'},
@@ -48,7 +48,7 @@ describe('helpers', function () {
       expect(result).toBeUndefined();
     });
 
-    it('returns undefined when a fieldId and apiName are undefined', function () {
+    it('returns undefined when a fieldId and apiName are undefined', () => {
       var widgetArr = [
         {fieldId: undefined},
       ];

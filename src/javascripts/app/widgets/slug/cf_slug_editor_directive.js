@@ -24,7 +24,7 @@ angular.module('contentful')
  * Also, there is a field to track API errors for the uniqueness,
  * so we don't duplicate our API error and custom check inside this directive.
  */
-.directive('cfSlugEditor', ['require', function (require) {
+.directive('cfSlugEditor', ['require', require => {
   var slugUtils = require('slug');
   var moment = require('moment');
   var debounce = require('debounce');
@@ -74,28 +74,26 @@ angular.module('contentful')
             return disabled === false;
           });
 
-      K.onValueScope(scope, titleUpdate$, function (values) {
+      K.onValueScope(scope, titleUpdate$, values => {
         var title = values[1];
         var val = makeSlug(title);
         updateInput(val);
         field.setValue(val);
       });
 
-      var detachOnFieldDisabledHandler = field.onPermissionChanged(function (disabledStatus) {
+      var detachOnFieldDisabledHandler = field.onPermissionChanged(disabledStatus => {
         scope.isDisabled = !!disabledStatus.disabled;
         disabledBus.emit(!!disabledStatus.denied);
       });
 
-      var offSchemaErrorsChanged = field.onSchemaErrorsChanged(function (errors) {
+      var offSchemaErrorsChanged = field.onSchemaErrorsChanged(errors => {
         if (errors) {
           scope.hasErrors = errors.length > 0;
-          scope.hasUniqueValidationError = errors.some(function (error) {
-            return error && error.name === 'unique';
-          });
+          scope.hasUniqueValidationError = errors.some(error => error && error.name === 'unique');
         }
       });
 
-      var detachOnValueChangedHandler = field.onValueChanged(function (val) {
+      var detachOnValueChangedHandler = field.onValueChanged(val => {
         val = val || '';
         updateInput(val);
       });
@@ -106,7 +104,7 @@ angular.module('contentful')
         scope.$on('$destroy', detachLocaleTitleChangeHandler);
 
         if (field.locale !== locales.default) {
-          var detachDefaultLocaleTitleChangeHandler = titleField.onValueChanged(locales.default, function (titleValue) {
+          var detachDefaultLocaleTitleChangeHandler = titleField.onValueChanged(locales.default, titleValue => {
             if (!titleField.getValue(field.locale)) {
               setTitle(titleValue);
             }
@@ -141,20 +139,18 @@ angular.module('contentful')
       scope.$on('$destroy', detachOnFieldDisabledHandler);
       scope.$on('$destroy', offSchemaErrorsChanged);
 
-      scope.$watch('state', function (state) {
+      scope.$watch('state', state => {
         field.setInvalid(state === 'duplicate');
       });
 
-      scope.$watch(function () {
-        return $inputEl.val();
-      }, function (val) {
+      scope.$watch(() => $inputEl.val(), val => {
         updateStateFromSlug(val);
         if (!scope.isDisabled) {
           field.setValue(val);
         }
       });
 
-      $inputEl.on('input change', debounce(function () {
+      $inputEl.on('input change', debounce(() => {
         scope.$apply();
       }, 200));
 
@@ -188,7 +184,7 @@ angular.module('contentful')
           req['fields.' + field.id] = value;
           req['sys.id[ne]'] = entry.getSys().id;
           req['sys.publishedAt[exists]'] = true;
-          space.getEntries(req).then(function (res) {
+          space.getEntries(req).then(res => {
             scope.state = (res.total !== 0) ? 'duplicate' : 'unique';
           });
         }

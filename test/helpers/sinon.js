@@ -12,7 +12,7 @@ export const match = sinon.match;
 export const useFakeTimers = sinon.useFakeTimers;
 export const sandbox = sinon.sandbox;
 
-assert.calledOnceWith = function (spy, ...args) {
+assert.calledOnceWith = (spy, ...args) => {
   assert.calledOnce(spy);
   assert.calledWith(spy, ...args);
 };

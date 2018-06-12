@@ -9,7 +9,7 @@ angular.module('cf.app')
  * A service tracking the process of
  * field version selection.
  */
-.factory('SnapshotComparatorController/versionPicker', function () {
+.factory('SnapshotComparatorController/versionPicker', () => {
   return {create: create};
 
   function create () {
@@ -89,7 +89,7 @@ angular.module('cf.app')
      * Calls "restoreFn" of all paths
      */
     function restoreAll () {
-      restoreFns.forEach(function (fn) {
+      restoreFns.forEach(fn => {
         fn();
       });
     }
@@ -102,9 +102,7 @@ angular.module('cf.app')
      * Gets an array of paths to restore
      */
     function getPathsToRestore () {
-      return pathsToRestore.map(function (path) {
-        return path.split('.');
-      });
+      return pathsToRestore.map(path => path.split('.'));
     }
 
     /**

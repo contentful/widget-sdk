@@ -12,29 +12,25 @@ angular.module('contentful')
  * 'imageLoadState' event on the scope when the load state changes. The
  * event parameter is either 'loading' or 'loaded'.
  */
-.directive('cfImgLoadEvent', [function () {
-  return {
-    link: function (scope, elem, attrs) {
-      var previousSrc;
+.directive('cfImgLoadEvent', [() => ({
+  link: function (scope, elem, attrs) {
+    var previousSrc;
 
-      scope.$watch(function () {
-        return attrs.src;
-      }, function (src) {
-        if (src !== previousSrc) {
-          if (src) {
-            scope.$emit('imageLoadState', 'loading');
-          } else {
-            scope.$emit('imageLoadState', 'loaded');
-          }
-          previousSrc = src;
-        }
-      });
-
-      elem.on('load', function () {
-        scope.$apply(function () {
+    scope.$watch(() => attrs.src, src => {
+      if (src !== previousSrc) {
+        if (src) {
+          scope.$emit('imageLoadState', 'loading');
+        } else {
           scope.$emit('imageLoadState', 'loaded');
-        });
+        }
+        previousSrc = src;
+      }
+    });
+
+    elem.on('load', () => {
+      scope.$apply(() => {
+        scope.$emit('imageLoadState', 'loaded');
       });
-    }
-  };
-}]);
+    });
+  }
+})]);

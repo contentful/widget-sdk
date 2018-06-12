@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('cf.utils')
-.factory('utils/StringDiff', [function () {
+.factory('utils/StringDiff', [() => {
   return {
     diff: diff
   };

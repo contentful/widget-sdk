@@ -1,6 +1,6 @@
 import * as sinon from 'helpers/sinon';
 
-describe('EntitySelectorController', function () {
+describe('EntitySelectorController', () => {
   beforeEach(function () {
     module('contentful/test');
 
@@ -61,7 +61,7 @@ describe('EntitySelectorController', function () {
     expect(this.scope.view.mode).toBe(this.scope.AVAILABLE);
   });
 
-  describe('triggering search', function () {
+  describe('triggering search', () => {
     it('responds to "forceSearch" event', function () {
       this.createController();
       this.scope.$broadcast('forceSearch');
@@ -98,7 +98,7 @@ describe('EntitySelectorController', function () {
     });
   });
 
-  describe('search placeholder', function () {
+  describe('search placeholder', () => {
     beforeEach(function () {
       this.expectPlaceholder = function (text) {
         expect(this.scope.getSearchPlaceholder()).toBe(text);
@@ -130,7 +130,7 @@ describe('EntitySelectorController', function () {
     });
   });
 
-  describe('fetching entities', function () {
+  describe('fetching entities', () => {
     it('requests first page of results on init', function () {
       this.createController();
       sinon.assert.calledOnce(this.fetch);
@@ -186,7 +186,7 @@ describe('EntitySelectorController', function () {
     });
   });
 
-  describe('single content type link', function () {
+  describe('single content type link', () => {
     beforeEach(function () {
       this.ct = {getId: _.constant('ctid'), data: {}};
       this.withData = (data) => {
@@ -216,7 +216,7 @@ describe('EntitySelectorController', function () {
     });
   });
 
-  describe('selection', function () {
+  describe('selection', () => {
     beforeEach(function () {
       this.fetch.resolves({ items: [ E1, E2, E3 ] });
     });

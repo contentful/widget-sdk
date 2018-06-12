@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('PromisedLoader', ['$q', '$rootScope', 'debounce', function ($q, $rootScope, debounce) {
+angular.module('contentful').factory('PromisedLoader', ['$q', '$rootScope', 'debounce', ($q, $rootScope, debounce) => {
 
   function PromisedLoader() {
     this.inProgress = false;
@@ -22,10 +22,10 @@ angular.module('contentful').factory('PromisedLoader', ['$q', '$rootScope', 'deb
     _loadPromiseImmediately: function (promiseLoader, args, deferred) {
       var loader = this;
       this.startLoading();
-      promiseLoader.apply(null, args).then(function (res) {
+      promiseLoader.apply(null, args).then(res => {
         deferred.resolve(res);
         loader.endLoading();
-      }, function (err) {
+      }, err => {
         deferred.reject(err);
         loader.endLoading();
       });

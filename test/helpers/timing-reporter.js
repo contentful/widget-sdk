@@ -59,10 +59,8 @@ function createTimingReporter () {
 
   function sortChildren (thing) {
     if (thing.children) {
-      thing.children = _.sortBy(thing.children, function (child) {
-        return -child.length;
-      });
-      _.each(thing.children, function (child) {
+      thing.children = _.sortBy(thing.children, child => -child.length);
+      _.each(thing.children, child => {
         sortChildren(child);
       });
     }

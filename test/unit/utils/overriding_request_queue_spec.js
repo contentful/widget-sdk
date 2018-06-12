@@ -1,6 +1,6 @@
 'use strict';
 
-describe('overridingRequestQueue', function () {
+describe('overridingRequestQueue', () => {
   beforeEach(function () {
     module('contentful/test');
     this.createQueue = this.$inject('overridingRequestQueue');
@@ -9,9 +9,9 @@ describe('overridingRequestQueue', function () {
 
   it('handles single request', function () {
     var d = sinon.stub().resolves();
-    var request = this.createQueue(function () { return d(); });
+    var request = this.createQueue(() => d());
 
-    return request().then(function () {
+    return request().then(() => {
       sinon.assert.calledOnce(d);
     });
   });
@@ -27,7 +27,7 @@ describe('overridingRequestQueue', function () {
 
   it('reuses promise for consecutive calls', function () {
     var d = sinon.stub().defers();
-    var request = this.createQueue(function () { return d(); });
+    var request = this.createQueue(() => d());
     var promise = request();
 
     expect(request()).toBe(promise);
@@ -45,7 +45,7 @@ describe('overridingRequestQueue', function () {
     var request = this.createQueue(requestFn);
     var promise = request(); request();
 
-    return promise.then(function (result) {
+    return promise.then(result => {
       expect(result).toBe(true);
       sinon.assert.calledTwice(requestFn);
     });
@@ -60,9 +60,9 @@ describe('overridingRequestQueue', function () {
     var request = this.createQueue(requestFn);
     var promise = request(); request(); request();
 
-    return promise.then(function () {
+    return promise.then(() => {
       throw new Error('Should not end up here, rejecting first!');
-    }, function (err) {
+    }, err => {
       expect(err).toBe('boom');
       sinon.assert.calledThrice(requestFn);
     });
@@ -73,7 +73,7 @@ describe('overridingRequestQueue', function () {
     var spy = sinon.stub().resolves();
     var wasCalled = false;
 
-    var request = this.createQueue(function () {
+    var request = this.createQueue(() => {
       if (wasCalled) {
         return spy('second call');
       } else {
@@ -86,7 +86,7 @@ describe('overridingRequestQueue', function () {
     request();
     $timeout.flush();
 
-    return promise.then(function () {
+    return promise.then(() => {
       sinon.assert.calledTwice(spy);
       sinon.assert.calledOnce(spy.withArgs('second call'));
     });
@@ -95,7 +95,7 @@ describe('overridingRequestQueue', function () {
   it('sets up one-time final actions', function () {
     var d = sinon.stub().resolves();
     var spy = sinon.spy();
-    var request = this.createQueue(function () { return d(); }, spy);
+    var request = this.createQueue(() => d(), spy);
     var promise = request();
     request();
 

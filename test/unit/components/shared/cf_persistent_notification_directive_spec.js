@@ -1,6 +1,6 @@
 'use strict';
 
-describe('cfPersistentNotification Directive', function () {
+describe('cfPersistentNotification Directive', () => {
   let element, scope;
   let $rootScope, $timeout;
 
@@ -19,15 +19,15 @@ describe('cfPersistentNotification Directive', function () {
     scope = element.scope();
   });
 
-  afterEach(function () {
+  afterEach(() => {
     element.remove();
     element = scope = $rootScope = $timeout = null;
   });
 
-  describe('broadcast a `message`', function () {
+  describe('broadcast a `message`', () => {
     const MESSAGE = 'SOME MESSAGE';
 
-    beforeEach(function () {
+    beforeEach(() => {
       $rootScope.$broadcast('persistentNotification', {
         message: MESSAGE
       });
@@ -36,25 +36,25 @@ describe('cfPersistentNotification Directive', function () {
 
     itShowsTheNotification();
 
-    it('shows the message', function () {
+    it('shows the message', () => {
       expect($message().text()).toBe(MESSAGE);
     });
   });
 
-  describe('broadcast nothing', function () {
-    beforeEach(function () {
+  describe('broadcast nothing', () => {
+    beforeEach(() => {
       $rootScope.$broadcast('persistentNotification');
       $rootScope.$broadcast('persistentNotification', null);
       digest();
     });
 
-    it('hides the notification', function () {
+    it('hides the notification', () => {
       expect($body().length).toBe(0);
     });
   });
 
-  describe('broadcast `actionMessage`', function () {
-    beforeEach(function () {
+  describe('broadcast `actionMessage`', () => {
+    beforeEach(() => {
       $rootScope.$broadcast('persistentNotification', {
         actionMessage: 'some message'
       });
@@ -63,26 +63,26 @@ describe('cfPersistentNotification Directive', function () {
 
     itShowsTheNotification();
 
-    it('shows a button', function () {
+    it('shows a button', () => {
       expect($body().find('button')).not.toBeNgHidden();
     });
   });
 
-  describe('reset', function () {
-    beforeEach(function () {
+  describe('reset', () => {
+    beforeEach(() => {
       $rootScope.$broadcast('persistentNotification', {
         message: 'foo'
       });
     });
 
-    it('hides the notification', function () {
+    it('hides the notification', () => {
       $rootScope.$broadcast('resetPersistentNotification');
       scope.$digest();
       expect($body().length).toBe(0);
     });
   });
 
-  describe('concurrent notifications handling', function () {
+  describe('concurrent notifications handling', () => {
     const PARAMS_1 = { message: 'FIRST MESSAGE' };
     const PARAMS_2 = { message: 'some message 2' };
 
@@ -97,11 +97,11 @@ describe('cfPersistentNotification Directive', function () {
 
     itShowsTheNotification();
 
-    it('shows the first message and ignores resets', function () {
+    it('shows the first message and ignores resets', () => {
       expect($message().text()).toBe(PARAMS_1.message);
     });
 
-    it('dismisses all notifications', function () {
+    it('dismisses all notifications', () => {
       $rootScope.$broadcast('resetPersistentNotification');
       scope.$digest();
       expect($body().length).toBe(0);
@@ -118,7 +118,7 @@ describe('cfPersistentNotification Directive', function () {
   });
 
   function itShowsTheNotification () {
-    it('shows the notification', function () {
+    it('shows the notification', () => {
       expect($body().length).toBe(1);
     });
   }

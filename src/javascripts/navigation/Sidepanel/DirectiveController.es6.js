@@ -18,7 +18,7 @@ const ENVIRONMENTS_FLAG_NAME = 'feature-dv-11-2017-environments';
 export default function createController ($scope, $window) {
   $window.on('keyup', handleEsc);
 
-  $scope.$on('$destroy', function () {
+  $scope.$on('$destroy', () => {
     $window.off('keyup', handleEsc);
   });
 
@@ -55,22 +55,22 @@ export default function createController ($scope, $window) {
 
   render();
 
-  $scope.$watch('sidePanelIsShown', function (sidePanelIsShown) {
+  $scope.$watch('sidePanelIsShown', sidePanelIsShown => {
     state = assign(state, {sidePanelIsShown: sidePanelIsShown});
     render();
   });
 
-  K.onValueScope($scope, TokenStore.organizations$, function (orgs) {
+  K.onValueScope($scope, TokenStore.organizations$, orgs => {
     state = assign(state, {orgs: orgs || []});
     render();
   });
 
-  K.onValueScope($scope, TokenStore.spacesByOrganization$, function (spacesByOrg) {
+  K.onValueScope($scope, TokenStore.spacesByOrganization$, spacesByOrg => {
     state = assign(state, {spacesByOrg: spacesByOrg || {}});
     render();
   });
 
-  K.onValueScope($scope, navState$.combine(AccessChecker.isInitialized$), function (values) {
+  K.onValueScope($scope, navState$.combine(AccessChecker.isInitialized$), values => {
     if (values[1]) {
       navState = values[0];
       state = assign(state, {
@@ -82,7 +82,7 @@ export default function createController ($scope, $window) {
     }
   });
 
-  LD.onFeatureFlag($scope, ENVIRONMENTS_FLAG_NAME, function (isEnabled) {
+  LD.onFeatureFlag($scope, ENVIRONMENTS_FLAG_NAME, isEnabled => {
     state = assign(state, {environmentsEnabled: isEnabled});
     render();
   });

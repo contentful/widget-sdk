@@ -1,6 +1,6 @@
 import ReactTestUtils from 'react-dom/test-utils';
 
-describe('app/api/KeyEditor/Controller', function () {
+describe('app/api/KeyEditor/Controller', () => {
   beforeEach(function () {
     module('contentful/test', ($provide) => {
       $provide.value('navigation/closeState', sinon.spy());
@@ -26,7 +26,7 @@ describe('app/api/KeyEditor/Controller', function () {
     this.spaceContext = this.$inject('mocks/spaceContext').init();
     this.apiKeyRepo = this.spaceContext.apiKeyRepo;
 
-    this.compile = function (apiKey) {
+    this.compile = apiKey => {
       apiKey = _.assign({
         sys: {
           id: 'KEY_ID'
@@ -68,7 +68,7 @@ describe('app/api/KeyEditor/Controller', function () {
     expect(editor.input.previewToken.value).toBe('PREVIEW_TOKEN');
   });
 
-  describe('delete action', function () {
+  describe('delete action', () => {
     it('removes api key from repo', function () {
       const $state = this.$inject('$state');
       this.apiKeyRepo.remove = sinon.stub().resolves();
@@ -81,7 +81,7 @@ describe('app/api/KeyEditor/Controller', function () {
     });
   });
 
-  describe('save action', function () {
+  describe('save action', () => {
     it('saves key to repo', function () {
       this.apiKeyRepo.save = sinon.spy((data) => {
         return this.$inject('$q').resolve(data);

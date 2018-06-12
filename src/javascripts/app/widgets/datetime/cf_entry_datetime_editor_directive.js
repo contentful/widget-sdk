@@ -6,7 +6,7 @@ angular.module('cf.app')
  * @module cf.app
  * @name cfEntryDatetimeEditor
  */
-.directive('cfEntryDatetimeEditor', ['require', function (require) {
+.directive('cfEntryDatetimeEditor', ['require', require => {
   var moment = require('moment');
   var zoneOffsets = require('zoneOffsets');
   var Datepicker = require('datepicker');
@@ -48,30 +48,26 @@ angular.module('cf.app')
       var dateController = dateInputEl.controller('ngModel');
       dateController.$formatters.push(Data.formatDateDisplay);
       dateController.$parsers.push(Data.parseFreeFormDate);
-      dateController.$validators.dateFormat = function (date) {
-        return date ? date.isValid() : true;
-      };
+      dateController.$validators.dateFormat = date => date ? date.isValid() : true;
 
       // We replace the parsed user date with the normalized date when
       // the date input is blurred.
-      dateController.$viewChangeListeners.push(function () {
+      dateController.$viewChangeListeners.push(() => {
         if (dateController.$valid) {
           dateController.$viewValue = Data.formatDateDisplay(dateController.$modelValue);
           dateController.$render();
         }
       });
 
-      var offValueChanged = field.onValueChanged(function (datetime) {
+      var offValueChanged = field.onValueChanged(datetime => {
         $scope.data = Data.userInputFromDatetime(datetime, $scope.uses12hClock);
       });
 
-      var offDisabledStatusChanged = field.onIsDisabledChanged(function (isDisabled) {
+      var offDisabledStatusChanged = field.onIsDisabledChanged(isDisabled => {
         $scope.isDisabled = isDisabled;
       });
 
-      $scope.$watch(function () {
-        return dateController.$valid && timeController.$valid;
-      }, function (isValid) {
+      $scope.$watch(() => dateController.$valid && timeController.$valid, isValid => {
         field.setInvalid(!isValid);
       });
 
@@ -79,7 +75,7 @@ angular.module('cf.app')
         field: $el.find('[data-datepicker-slot]').get(0),
         trigger: dateInputEl.get(0),
         onSelect: function (date) {
-          $scope.$apply(function () {
+          $scope.$apply(() => {
             $scope.data.date = moment(date);
             setValueFromInputData();
           });
@@ -87,23 +83,21 @@ angular.module('cf.app')
         }
       });
 
-      $scope.$watch(function () {
-        return $scope.data.date;
-      }, function (date) {
+      $scope.$watch(() => $scope.data.date, date => {
         if (date) {
           datepicker.setMoment(date, true);
         }
       });
 
-      $scope.focusDateInput = function () {
+      $scope.focusDateInput = () => {
         // We delay this so that any click events that close the
         // datepicker are handled before.
-        $timeout(function () {
+        $timeout(() => {
           dateInputEl.focus();
         });
       };
 
-      $scope.$on('$destroy', function () {
+      $scope.$on('$destroy', () => {
         offValueChanged();
         offDisabledStatusChanged();
         datepicker.destroy();
@@ -131,13 +125,11 @@ angular.module('cf.app')
         }
       }
 
-      $scope.$watchCollection(function () {
-        return [].concat(
-          Object.keys(dateController.$error),
-          Object.keys(timeController.$error)
-        );
-      }, function (errors) {
-        $scope.errors = _.transform(errors, function (errors, key) {
+      $scope.$watchCollection(() => [].concat(
+        Object.keys(dateController.$error),
+        Object.keys(timeController.$error)
+      ), errors => {
+        $scope.errors = _.transform(errors, (errors, key) => {
           if (key in ERRORS) {
             errors.push(ERRORS[key]);
           }

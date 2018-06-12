@@ -2,7 +2,7 @@ import * as K from 'helpers/mocks/kefir';
 import * as sinon from 'helpers/sinon';
 import {create as createDocument} from 'helpers/mocks/entity_editor_document';
 
-describe('FieldLocaleController', function () {
+describe('FieldLocaleController', () => {
   beforeEach(function () {
     module('contentful/test');
     const $rootScope = this.$inject('$rootScope');
@@ -32,7 +32,7 @@ describe('FieldLocaleController', function () {
     this.sandbox.restore();
   });
 
-  describe('#errors$ and #errors', function () {
+  describe('#errors$ and #errors', () => {
     it('get filtered items from "validator.errors"', function () {
       const scope = this.init();
 
@@ -80,8 +80,8 @@ describe('FieldLocaleController', function () {
     });
   });
 
-  describe('#isRequired', function () {
-    describe('for entries', function () {
+  describe('#isRequired', () => {
+    describe('for entries', () => {
       beforeEach(function () {
         this.isRequired = function (required, optional) {
           return this.init((scope) => {
@@ -104,7 +104,7 @@ describe('FieldLocaleController', function () {
       });
     });
 
-    describe('for assets', function () {
+    describe('for assets', () => {
       beforeEach(function () {
         this.isRequired = function (required, def) {
           return this.init((scope) => {
@@ -129,7 +129,7 @@ describe('FieldLocaleController', function () {
     });
   });
 
-  describe('#collaborators', function () {
+  describe('#collaborators', () => {
     it('watches "docPresence" with path', function () {
       const scope = this.init();
       this.otDoc.collaboratorsFor().set(['USER']);
@@ -138,7 +138,7 @@ describe('FieldLocaleController', function () {
     });
   });
 
-  describe('#setActive()', function () {
+  describe('#setActive()', () => {
     beforeEach(function () {
       this.scope = this.init();
     });
@@ -163,7 +163,7 @@ describe('FieldLocaleController', function () {
     });
   });
 
-  describe('#access', function () {
+  describe('#access', () => {
     beforeEach(function () {
       this.otDoc = createDocument();
       this.hasEditingPermission = this.otDoc.permissions.canEditFieldLocale;

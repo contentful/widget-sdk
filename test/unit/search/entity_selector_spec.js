@@ -1,6 +1,6 @@
 'use strict';
 
-describe('entitySelector', function () {
+describe('entitySelector', () => {
   beforeEach(function () {
     module('contentful/test');
 
@@ -34,7 +34,7 @@ describe('entitySelector', function () {
     expect(() => this.open({linkType: 'Foobar'})).toThrowError('Unsupported entity type: \'Foobar\'.');
   });
 
-  describe('config preparation', function () {
+  describe('config preparation', () => {
     it('sets type of linked entity', function () {
       this.open({linkType: 'Entry'});
       expect(this.getConfig().entityType).toBe('Entry');
@@ -42,7 +42,7 @@ describe('entitySelector', function () {
       expect(this.getConfig().entityType).toBe('Asset');
     });
 
-    describe('setting min/max number of linked entities', function () {
+    describe('setting min/max number of linked entities', () => {
       it('do not limit by default', function () {
         this.open({linkType: 'Entry'});
         expect(this.getConfig().min).toBe(1);
@@ -68,7 +68,7 @@ describe('entitySelector', function () {
       });
     });
 
-    describe('differentiating between single link and array of links', function () {
+    describe('differentiating between single link and array of links', () => {
       it('checks for "Array" field type', function () {
         this.open({linkType: 'Entry', type: 'Array'});
         expect(this.getConfig().multiple).toBe(true);
@@ -82,7 +82,7 @@ describe('entitySelector', function () {
       });
     });
 
-    describe('processing validations', function () {
+    describe('processing validations', () => {
       it('defaults to an appropriate (empty) data structure', function () {
         this.open({linkType: 'Entry'});
         const config = this.getConfig();
@@ -134,7 +134,7 @@ describe('entitySelector', function () {
     expect(this.getScope().labels.title).toBe('Insert existing assets');
   });
 
-  describe('single CT prefetching', function () {
+  describe('single CT prefetching', () => {
     it('fetches CT if a field links to a single CT', function () {
       const spaceContext = this.$inject('mocks/spaceContext').init();
 
@@ -169,7 +169,7 @@ describe('entitySelector', function () {
     });
   });
 
-  describe('opening from an extension', function () {
+  describe('opening from an extension', () => {
     beforeEach(function () {
       this.$inject('TheLocaleStore').getDefaultLocale = _.constant({code: 'de-DE'});
 
@@ -216,7 +216,7 @@ describe('entitySelector', function () {
       expect(err.message).toBe('selector error');
     });
 
-    describe('converting options to validations', function () {
+    describe('converting options to validations', () => {
       it('"contentTypes" option converted to validation', function () {
         const spaceContext = this.$inject('mocks/spaceContext').init();
         spaceContext.publishedCTs.fetch.resolves({});
@@ -234,7 +234,7 @@ describe('entitySelector', function () {
       });
     });
 
-    describe('locale option', function () {
+    describe('locale option', () => {
       it('uses provided locale', function () {
         this.openFromExt({entityType: 'Entry', locale: 'co-DE'});
         expect(this.getConfig().locale).toBe('co-DE');

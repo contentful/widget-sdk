@@ -1,6 +1,6 @@
 import sinon from 'npm:sinon';
 
-describe('The Webhook Definition list directive', function () {
+describe('The Webhook Definition list directive', () => {
   beforeEach(function () {
     this.webhooks = [
       {
@@ -126,7 +126,7 @@ describe('The Webhook Definition list directive', function () {
     expect(this.container.find('.entity-sidebar').length).toBe(1);
   });
 
-  describe('Version 1 organizations', function () {
+  describe('Version 1 organizations', () => {
     it('should show the number of webhooks in the list in the header', function () {
       this.compile();
 
@@ -158,7 +158,7 @@ describe('The Webhook Definition list directive', function () {
     });
   });
 
-  describe('Version 2 organizations', function () {
+  describe('Version 2 organizations', () => {
     beforeEach(function () {
       this.organization.pricingVersion = 'pricing_version_2';
     });

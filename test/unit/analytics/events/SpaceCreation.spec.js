@@ -2,7 +2,7 @@
 
 import { deepFreeze } from 'utils/Freeze';
 
-describe('analytics/events/SpaceCreation#entityActionSuccess()', function () {
+describe('analytics/events/SpaceCreation#entityActionSuccess()', () => {
   beforeEach(function () {
     module('contentful/test');
     this.analytics = this.$inject('analytics/Analytics');
@@ -35,7 +35,7 @@ describe('analytics/events/SpaceCreation#entityActionSuccess()', function () {
 function describeTrackingOf ({ event, entityData, tracksOrigin = false }) {
   const withOrigin = tracksOrigin ? ' (with `event_origin`)' : '';
 
-  describe(`tracking of \`${event}\`${withOrigin}`, function () {
+  describe(`tracking of \`${event}\`${withOrigin}`, () => {
     it('tracks provided entity data$', function () {
       this.SpaceCreation.entityActionSuccess('ct123', entityData);
 

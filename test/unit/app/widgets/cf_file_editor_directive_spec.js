@@ -1,8 +1,8 @@
 'use strict';
 
-describe('cfFileEditor Directive', function () {
+describe('cfFileEditor Directive', () => {
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.removeDirectives('cfFileDrop');
       $provide.value('services/Filestack', {
         makeDropPane: sinon.stub(),
@@ -44,7 +44,7 @@ describe('cfFileEditor Directive', function () {
     this.scope.$destroy();
   });
 
-  describe('scope.selectFile()', function () {
+  describe('scope.selectFile()', () => {
     beforeEach(function () {
       this.Filestack = this.$inject('services/Filestack');
       this.scope.selectFile();
@@ -103,7 +103,7 @@ describe('cfFileEditor Directive', function () {
     });
   });
 
-  describe('scope.deleteFile()', function () {
+  describe('scope.deleteFile()', () => {
     beforeEach(function () {
       this.fieldApi.removeValue = sinon.stub().resolves();
       this.scope.deleteFile();

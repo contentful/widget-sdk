@@ -1,6 +1,6 @@
 'use strict';
 
-describe('cfSearchResultsPaginator', function () {
+describe('cfSearchResultsPaginator', () => {
   beforeEach(function () {
     let page = 0;
 

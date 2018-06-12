@@ -1,6 +1,6 @@
 'use strict';
 
-describe('paywallOpener', function () {
+describe('paywallOpener', () => {
   let self, $q, $rootScope;
 
   beforeEach(function () {
@@ -22,7 +22,7 @@ describe('paywallOpener', function () {
     };
 
     self = this;
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.value('modalDialog', self.modalDialog);
       $provide.value('subscriptionPlanRecommender', subscriptionPlanRecommender);
       $provide.value('analytics/Analytics', self.analytics);
@@ -36,7 +36,7 @@ describe('paywallOpener', function () {
     this.modalDialog.open.returns({promise: $q.defer().promise});
   });
 
-  afterEach(function () {
+  afterEach(() => {
     self = $q = $rootScope = null;
   });
 
@@ -44,8 +44,8 @@ describe('paywallOpener', function () {
 
   describeOpenPaywall('without plan upgrading option', {offerPlanUpgrade: false});
 
-  describeOpenPaywall('with plan upgrading option', {offerPlanUpgrade: true}, function () {
-    describe('with recommendPlan() failing', function () {
+  describeOpenPaywall('with plan upgrading option', {offerPlanUpgrade: true}, () => {
+    describe('with recommendPlan() failing', () => {
       beforeEach(function () {
         this.recommendPlan.rejects();
       });
@@ -53,7 +53,7 @@ describe('paywallOpener', function () {
       it('opens a modal dialog nonetheless', testOpensPaywallModalDialog);
     });
 
-    describe('with plan cards CSS not being able to load', function () {
+    describe('with plan cards CSS not being able to load', () => {
       beforeEach(function () {
         this.LazyLoader.get.withArgs('gkPlanCardStyles').rejects();
       });
@@ -63,7 +63,7 @@ describe('paywallOpener', function () {
   });
 
   function describeOpenPaywall (caseMsg, options, moreTests) {
-    describe('.openPaywall() ' + caseMsg, function () {
+    describe('.openPaywall() ' + caseMsg, () => {
       testOpenPaywall(options, moreTests);
     });
   }
@@ -100,7 +100,7 @@ describe('paywallOpener', function () {
 
     it('opens a modal dialog', testOpensPaywallModalDialog);
 
-    describe('while paywall is open', function () {
+    describe('while paywall is open', () => {
       beforeEach(function () {
         this.openPaywall();
       });
@@ -110,7 +110,7 @@ describe('paywallOpener', function () {
       describeNthAnalyticsEvent(0, 'paywall:viewed');
     });
 
-    describe('after paywall got cancelled', function () {
+    describe('after paywall got cancelled', () => {
       beforeEach(function () {
         this.modalDialog.open.returns({promise: $q.reject()});
         this.openPaywall();
@@ -121,7 +121,7 @@ describe('paywallOpener', function () {
       describeNthAnalyticsEvent(1, 'paywall:closed');
     });
 
-    describe('after user attempted to set up payment', function () {
+    describe('after user attempted to set up payment', () => {
       beforeEach(function () {
         this.modalDialog.open.returns({promise: $q.resolve()});
         this.openPaywall();
@@ -140,7 +140,7 @@ describe('paywallOpener', function () {
     });
 
     function describeNthAnalyticsEvent (n, event) {
-      describe('“' + event + '” analytics event', function () {
+      describe('“' + event + '” analytics event', () => {
         beforeEach(function () {
           this.nthTrack = this.analytics.track.getCall(n);
         });
@@ -159,7 +159,7 @@ describe('paywallOpener', function () {
     }
 
     function testCanReopen (canReopen) {
-      return function () {
+      return () => {
         const initialCallCount = self.modalDialog.open.callCount;
         self.openPaywall();
         sinon.assert.callCount(self.modalDialog.open, initialCallCount + canReopen);

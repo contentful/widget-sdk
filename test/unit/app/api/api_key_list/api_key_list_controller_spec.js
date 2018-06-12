@@ -1,5 +1,5 @@
 // TODO merge this with directive tests
-describe('API Key List Controller', function () {
+describe('API Key List Controller', () => {
   beforeEach(function () {
     module('contentful/test', ($provide) => {
       // TODO: truly mock this somewhere
@@ -54,7 +54,7 @@ describe('API Key List Controller', function () {
     };
   });
 
-  describe('empty marker', function () {
+  describe('empty marker', () => {
     it('is true', function () {
       this.getApiKeys.resolves([]);
       this.create();
@@ -69,7 +69,7 @@ describe('API Key List Controller', function () {
     });
   });
 
-  describe('has reached the API keys limit', function () {
+  describe('has reached the API keys limit', () => {
     it('under keys limit', function () {
       this.resource.usage = 0;
       this.create();
@@ -83,7 +83,7 @@ describe('API Key List Controller', function () {
     });
   });
 
-  describe('refreshing api keys', function () {
+  describe('refreshing api keys', () => {
     it('saves api keys on scope', function () {
       this.getApiKeys.resolves({});
       this.create();
@@ -91,7 +91,7 @@ describe('API Key List Controller', function () {
     });
   });
 
-  describe('refreshing api keys fails', function () {
+  describe('refreshing api keys fails', () => {
     it('results in an error message', function () {
       this.getApiKeys.rejects();
       this.create();

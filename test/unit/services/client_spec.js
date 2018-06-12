@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Client', function () {
+describe('Client', () => {
   beforeEach(function () {
     module('contentful/test');
     this.baseRequest = sinon.stub().resolves({data: 'RESPONSE DATA'});
@@ -17,7 +17,7 @@ describe('Client', function () {
     };
   });
 
-  describe('#request', function () {
+  describe('#request', () => {
     it('constructs a path, strips extra slashes', function () {
       this.client.request({path: '/some/path'});
       this.client.request({path: 'path/2'});
@@ -47,7 +47,7 @@ describe('Client', function () {
     });
 
     it('resolves with response data', function () {
-      return this.client.request({path: ''}).then(function (res) {
+      return this.client.request({path: ''}).then(res => {
         expect(res).toBe('RESPONSE DATA');
       });
     });
@@ -55,7 +55,7 @@ describe('Client', function () {
     it('rejects with status code, data and request for errors', function () {
       this.baseRequest.rejects({status: '777', data: 'OMG ERROR'});
 
-      return this.client.request({path: 'error'}).then(_.noop, function (err) {
+      return this.client.request({path: 'error'}).then(_.noop, err => {
         expect(err.statusCode).toBe(777);
         expect(err.body).toBe('OMG ERROR');
         expect(err.request.url).toBe('//api.contentful.com/error');

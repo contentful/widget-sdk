@@ -1,4 +1,4 @@
-describe('account/UrlSyncHelper', function () {
+describe('account/UrlSyncHelper', () => {
   beforeEach(function () {
     module('contentful/test');
     this.$state = this.mockService('$state');
@@ -7,7 +7,7 @@ describe('account/UrlSyncHelper', function () {
     this.UrlSyncHelper = this.$inject('account/UrlSyncHelper');
   });
 
-  describe('.getGatekeeperUrl()', function () {
+  describe('.getGatekeeperUrl()', () => {
     beforeEach(function () {
       this.$location.url.returns('/account/profile/user/foo%2fbar');
       this.$state.href.withArgs('account').returns('/account');
@@ -18,7 +18,7 @@ describe('account/UrlSyncHelper', function () {
     });
   });
 
-  describe('.updateWebappUrl()', function () {
+  describe('.updateWebappUrl()', () => {
     beforeEach(function () {
       this.$state.current.name = 'account.profile.foo';
       this.$state.href.returns('/account/profile/user/foo/bar');

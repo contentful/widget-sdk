@@ -12,7 +12,7 @@ angular.module('contentful')
  *
  * Tests for this are included in the Document tests.
  */
-.factory('entityEditor/Document/Reverter', [function () {
+.factory('entityEditor/Document/Reverter', [() => {
   return {create: create};
 
   /**
@@ -25,7 +25,7 @@ angular.module('contentful')
     var snapshotVersion = snapshot.sys.version;
     var currentVersion;
 
-    version$.onValue(function (version) {
+    version$.onValue(version => {
       currentVersion = version;
     });
 
@@ -55,7 +55,7 @@ angular.module('contentful')
      */
     function revert () {
       return setFields(snapshot.fields)
-      .then(function (version) {
+      .then(version => {
         snapshotVersion = version;
       });
     }

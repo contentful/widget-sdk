@@ -1,7 +1,7 @@
 import * as K from 'helpers/mocks/kefir';
 import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
 
-describe('data/document/ResourceStateManager', function () {
+describe('data/document/ResourceStateManager', () => {
   beforeEach(function () {
     module('contentful/test');
 

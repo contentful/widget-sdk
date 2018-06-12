@@ -1,6 +1,6 @@
 'use strict';
 angular.module('contentful')
-.factory('widgets/builtin', [function () {
+.factory('widgets/builtin', [() => {
   var widgets = [];
 
   var COMMON_PARAMETERS = [

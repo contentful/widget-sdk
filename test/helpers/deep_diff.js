@@ -5,7 +5,7 @@
  * deep-diff.
  * Licensed under the MIT License.
  */
-(function (undefined) {
+((undefined => {
   var $scope , conflict, conflictResolution = [];
   if (typeof global === 'object' && global) {
     $scope = global;
@@ -17,7 +17,7 @@
   conflict = $scope.DeepDiff;
   if (conflict) {
     conflictResolution.push(
-      function () {
+      () => {
         if ('undefined' !== typeof conflict && $scope.DeepDiff === accumulateDiff) {
           $scope.DeepDiff = conflict;
           conflict = undefined;
@@ -116,7 +116,7 @@
         } else {
           var akeys = Object.keys(lhs);
           var pkeys = Object.keys(rhs);
-          akeys.forEach(function (k) {
+          akeys.forEach(k => {
             var other = pkeys.indexOf(k);
             if (other >= 0) {
               deepDiff(lhs[k], rhs[k], changes, prefilter, currentPath, k, stack);
@@ -125,7 +125,7 @@
               deepDiff(lhs[k], undefined, changes, prefilter, currentPath, k, stack);
             }
           });
-          pkeys.forEach(function (k) {
+          pkeys.forEach(k => {
             deepDiff(undefined, rhs[k], changes, prefilter, currentPath, k, stack);
           });
         }
@@ -141,7 +141,7 @@
   function accumulateDiff(lhs, rhs, prefilter, accum) {
     accum = accum || [];
     deepDiff(lhs, rhs,
-      function (diff) {
+      diff => {
         if (diff) {
           accum.push(diff);
         }
@@ -284,7 +284,7 @@
 
   function applyDiff(target, source, filter) {
     if (target && source) {
-      var onChange = function (change) {
+      var onChange = change => {
         if (!filter || filter(target, source, change)) {
           applyChange(target, source, change);
         }
@@ -304,7 +304,7 @@
     noConflict: {
       value: function () {
         if (conflictResolution) {
-          conflictResolution.forEach(function (it) { it(); });
+          conflictResolution.forEach(it => { it(); });
           conflictResolution = null;
         }
         return accumulateDiff;
@@ -314,7 +314,7 @@
   });
 
   window.deepDiff = accumulateDiff; // other... browser?
-}());
+})());
 
 
 

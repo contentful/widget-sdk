@@ -1,14 +1,12 @@
 'use strict';
 
-angular.module('contentful').directive('cfRoleEditor', function () {
-  return {
-    restrict: 'E',
-    template: JST['role_editor'](),
-    controller: 'RoleEditorController'
-  };
-});
+angular.module('contentful').directive('cfRoleEditor', () => ({
+  restrict: 'E',
+  template: JST['role_editor'](),
+  controller: 'RoleEditorController'
+}));
 
-angular.module('contentful').controller('RoleEditorController', ['$scope', 'require', function ($scope, require) {
+angular.module('contentful').controller('RoleEditorController', ['$scope', 'require', ($scope, require) => {
   var $state = require('$state');
   var $q = require('$q');
   var Command = require('command');
@@ -36,7 +34,7 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
     featureEnabled: FeatureService.get('customRoles'),
     resource: createResourceService(spaceContext.getId()).get('role'),
     useLegacy: ResourceUtils.useLegacy(org)
-  }).then(function (result) {
+  }).then(result => {
     var isNew = $scope.context.isNew;
     var subscription = spaceContext.subscription;
     var isTrial = subscription && subscription.isTrial();
@@ -78,19 +76,19 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
   // 3. setup leaving confirmation
   $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
 
-  $scope.$watch('context.touched', function (touched) {
+  $scope.$watch('context.touched', touched => {
     $scope.context.dirty = touched > 0;
   });
 
-  $scope.$watch('role', function (role) {
+  $scope.$watch('role', role => {
     $scope.internal = PolicyBuilder.toInternal(role);
   }, true);
 
-  $scope.$watch('internal', function (current, prev) {
+  $scope.$watch('internal', (current, prev) => {
     if (current === prev) { autofixPolicies(); }
   });
 
-  $scope.$watch('internal', function (internal) {
+  $scope.$watch('internal', internal => {
     $scope.external = PolicyBuilder.toExternal(internal);
     $scope.context.touched += 1;
     $scope.context.title = internal.name || 'Untitled';
@@ -107,9 +105,9 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
   $scope.showTranslator = showTranslator();
 
   // setup "Remove" button:
-  listHandler.reset().then(function () {
-    $scope.removeRole = function () {
-      createRoleRemover(listHandler, function () {
+  listHandler.reset().then(() => {
+    $scope.removeRole = () => {
+      createRoleRemover(listHandler, () => {
         $scope.context.touched = 0;
         $scope.context.dirty = false;
         $state.go('^.list');
@@ -188,9 +186,7 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
     return $q.reject();
 
     function findError (errName) {
-      return _.find(errors, function (err) {
-        return _.isObject(err) && err.name === errName && err.path === 'name';
-      });
+      return _.find(errors, err => _.isObject(err) && err.name === errName && err.path === 'name');
     }
   }
 

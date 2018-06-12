@@ -1,12 +1,12 @@
 'use strict';
 
-describe('versionPicker', function () {
+describe('versionPicker', () => {
   beforeEach(function () {
     module('contentful/test');
     this.picker = this.$inject('SnapshotComparatorController/versionPicker').create();
   });
 
-  describe('versionPicker#create()', function () {
+  describe('versionPicker#create()', () => {
     it('does not restore anything', function () {
       expect(this.picker.getPathsToRestore()).toEqual([]);
     });
@@ -16,7 +16,7 @@ describe('versionPicker', function () {
     });
   });
 
-  describe('#registerPath', function () {
+  describe('#registerPath', () => {
     it('registers differences', function () {
       this.picker.registerPath({isDifferent: true});
       this.picker.registerPath({isDifferent: false});
@@ -36,7 +36,7 @@ describe('versionPicker', function () {
     });
   });
 
-  describe('#restore', function () {
+  describe('#restore', () => {
     it('marks path as "to be restored"', function () {
       this.picker.restore(['some', 'path']);
       expect(this.picker.getPathsToRestore()).toEqual([['some', 'path']]);
@@ -54,7 +54,7 @@ describe('versionPicker', function () {
     });
   });
 
-  describe('#keep', function () {
+  describe('#keep', () => {
     it('removes path from list of "paths to be restored"', function () {
       this.picker.restore(['path', 'one']);
       this.picker.restore(['path', 'two']);

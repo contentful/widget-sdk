@@ -3,7 +3,7 @@
 
 angular.module('contentful/mocks')
 
-.factory('TestingAdapter', function ($q) {
+.factory('TestingAdapter', $q => {
   function Adapter () {
     this.requests = [];
   }
@@ -48,7 +48,7 @@ angular.module('contentful/mocks')
   return Adapter;
 })
 
-.factory('cfStub', function ($injector) {
+.factory('cfStub', $injector => {
   const $rootScope = $injector.get('$rootScope');
   const spaceContext = $injector.get('spaceContext');
   const Client = $injector.get('legacy-client');
@@ -59,24 +59,20 @@ angular.module('contentful/mocks')
   const cfStub = {};
   cfStub.adapter = adapter;
 
-  cfStub.locale = function (code, extraData) {
-    return _.extend({
-      code: code,
-      internal_code: code,
-      contentDeliveryApi: true,
-      contentManagementApi: true,
-      'default': true,
-      name: code
-    }, extraData || {});
-  };
+  cfStub.locale = (code, extraData) => _.extend({
+    code: code,
+    internal_code: code,
+    contentDeliveryApi: true,
+    contentManagementApi: true,
+    'default': true,
+    name: code
+  }, extraData || {});
 
   cfStub.locales = function () {
-    return _.map(arguments, function (code, index) {
-      return cfStub.locale(code, {'default': index === 0});
-    });
+    return _.map(arguments, (code, index) => cfStub.locale(code, {'default': index === 0}));
   };
 
-  cfStub.space = function (id, extraData) {
+  cfStub.space = (id, extraData) => {
     id = id || 'testSpace';
 
     return (new Client(adapter)).newSpace(_.merge({
@@ -100,7 +96,7 @@ angular.module('contentful/mocks')
     }, extraData || {}));
   };
 
-  cfStub.mockSpaceContext = function () {
+  cfStub.mockSpaceContext = () => {
     const spaceData = cfStub.space('test').data;
     const contentTypeData = cfStub.contentTypeData('testType');
     spaceContext.resetWithSpace(spaceData);
@@ -108,7 +104,7 @@ angular.module('contentful/mocks')
     return spaceContext;
   };
 
-  cfStub.contentTypeData = function (id, fields, extraData) {
+  cfStub.contentTypeData = (id, fields, extraData) => {
     fields = fields || [];
     return _.merge({
       fields: fields,
@@ -119,7 +115,7 @@ angular.module('contentful/mocks')
     }, extraData || {});
   };
 
-  cfStub.contentType = function (space, id, name, fields, extraData) {
+  cfStub.contentType = (space, id, name, fields, extraData) => {
     const data = cfStub.contentTypeData(id, fields, {
       name: name,
       sys: { version: 1 }
@@ -128,11 +124,11 @@ angular.module('contentful/mocks')
     return space.newContentType(data);
   };
 
-  cfStub.entry = function (space, id, contentTypeId, fields, extraData) {
+  cfStub.entry = (space, id, contentTypeId, fields, extraData) => {
     fields = fields || {};
     let entry;
     space.getEntry(id)
-    .then(function (res) {
+    .then(res => {
       entry = res;
     });
     adapter.resolveLast(_.merge({
@@ -154,9 +150,9 @@ angular.module('contentful/mocks')
     return entry;
   };
 
-  cfStub.asset = function (space, id, fields, extraData) {
+  cfStub.asset = (space, id, fields, extraData) => {
     let asset;
-    space.getAsset(id).then(function (res) {
+    space.getAsset(id).then(res => {
       asset = res;
     });
     adapter.resolveLast(_.merge({

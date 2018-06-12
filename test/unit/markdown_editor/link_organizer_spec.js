@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Link organizer', function () {
+describe('Link organizer', () => {
   var LinkOrganizer;
 
   beforeEach(function () {
@@ -8,8 +8,8 @@ describe('Link organizer', function () {
     LinkOrganizer = this.$inject('LinkOrganizer');
   });
 
-  describe('Inline link finder', function () {
-    it('Finds all inline links in text', function () {
+  describe('Inline link finder', () => {
+    it('Finds all inline links in text', () => {
       var subject = 'test [link](http://url.com) test [link2](http://url2.com) test [link3](http://url.com)';
       var found = LinkOrganizer.findInline(subject);
       expect(found.length).toBe(3);
@@ -19,7 +19,7 @@ describe('Link organizer', function () {
       expect(found[0].title).toBe('');
     });
 
-    it('Finds and standardizes title', function () {
+    it('Finds and standardizes title', () => {
       var subject = 'test [x](http://url.com   "title!") [y](http://xyz.com title 2   )';
       var found = LinkOrganizer.findInline(subject);
       expect(found.length).toBe(2);
@@ -28,8 +28,8 @@ describe('Link organizer', function () {
     });
   });
 
-  describe('Reference finder', function () {
-    it('Finds all references in text', function () {
+  describe('Reference finder', () => {
+    it('Finds all references in text', () => {
       var subject = 'test [x][1] test [y][2] [with space separator] [3]';
       var found = LinkOrganizer.findRefs(subject);
       expect(found.length).toBe(3);
@@ -40,7 +40,7 @@ describe('Link organizer', function () {
     });
   });
 
-  describe('Label finder', function () {
+  describe('Label finder', () => {
     var subject = [
       '[1]:  http://test.com',
       '[2]: http://url.com',
@@ -48,7 +48,7 @@ describe('Link organizer', function () {
       '[4]: http://test.com  "Hello world"'
     ].join('\n');
 
-    it('Finds all labels', function () {
+    it('Finds all labels', () => {
       var found = LinkOrganizer.findLabels(subject);
       expect(found.length).toBe(4);
       expect(found[0].id).toBe('1');
@@ -59,7 +59,7 @@ describe('Link organizer', function () {
       expect(found[3].title).toBe('Hello world');
     });
 
-    it('Finds max label id', function () {
+    it('Finds max label id', () => {
       expect(LinkOrganizer.findMaxLabelId(subject)).toBe(4);
     });
   });

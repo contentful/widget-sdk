@@ -1,10 +1,10 @@
 'use strict';
 
-describe('Account Dropdown Controller', function () {
+describe('Account Dropdown Controller', () => {
   beforeEach(function () {
     const stubs = this.stubs = {};
 
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.value('analytics/Analytics', stubs.analytics);
       $provide.value('Authentication', stubs.authentication);
       $provide.value('$window', stubs.window);
@@ -24,7 +24,7 @@ describe('Account Dropdown Controller', function () {
     $controller('cfAccountDropdownController', { $scope: this.scope });
   });
 
-  describe('calls logout', function () {
+  describe('calls logout', () => {
     beforeEach(function () {
       this.scope.logout();
     });

@@ -41,9 +41,7 @@ export function createBreadcrumbsHistory () {
 
   function add (crumb) {
     let old;
-    const index = findIndex(history, function (historyCrumb) {
-      return historyCrumb.id === crumb.id;
-    });
+    const index = findIndex(history, historyCrumb => historyCrumb.id === crumb.id);
     if (index > -1) {
       old = history[index];
       history = history.slice(0, index);

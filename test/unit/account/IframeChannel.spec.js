@@ -1,6 +1,6 @@
 import * as K from 'helpers/mocks/kefir';
 
-describe('account/IframeChannel', function () {
+describe('account/IframeChannel', () => {
   beforeEach(function () {
     module('contentful/test');
     const $window = this.$inject('$window');
@@ -11,7 +11,7 @@ describe('account/IframeChannel', function () {
     const messages$ = IframeChannel.default(iframe);
     this.messages = K.extractValues(messages$);
 
-    this.postMessage = function (data, src) {
+    this.postMessage = (data, src) => {
       const event = _.assign(new Event('message'), {
         source: src || iframe.contentWindow,
         data: data

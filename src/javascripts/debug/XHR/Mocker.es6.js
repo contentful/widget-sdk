@@ -84,9 +84,7 @@ function createMockClass (rules, XMLHttpRequest) {
   XHR.prototype.open = function (method, url, ...args) {
     this._method = method;
     this._url = url;
-    this._rule = rules.find(function (rule) {
-      return rule.urlPattern.exec(url);
-    });
+    this._rule = rules.find(rule => rule.urlPattern.exec(url));
 
     if (!this._rule) {
       return this._xhr.open(method, url, ...args);
@@ -110,9 +108,9 @@ function createMockClass (rules, XMLHttpRequest) {
       const xhrWrapper = this;
       const realXhr = this._xhr;
 
-      realXhr.onload = function () {
+      realXhr.onload = () => {
         ['status', 'statusText', 'response', 'responseText', 'responseType', 'readyState']
-          .forEach(function (key) {
+          .forEach(key => {
             xhrWrapper[key] = realXhr[key];
           });
 

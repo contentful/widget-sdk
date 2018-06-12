@@ -2,7 +2,7 @@
 
 angular.module('cf.data')
 
-.factory('data/editingInterfaces/asset', ['require', function (require) {
+.factory('data/editingInterfaces/asset', ['require', require => {
   var assetFields = require('assetContentType').data.fields;
 
   var widgets = _.forEach([{

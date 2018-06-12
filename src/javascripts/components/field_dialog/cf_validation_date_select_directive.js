@@ -4,21 +4,21 @@
  * Enable time range boundary and select time.
  */
 angular.module('contentful')
-.directive('cfValidationDateSelect', function() {
+.directive('cfValidationDateSelect', () => {
   return {
     restrict: 'E',
     require: ['^cfValidate', '^form'],
     template: JST['cf_validation_date_select'](),
     scope: true,
     controllerAs: 'dateSelect',
-    controller: ['$scope', '$attrs', '$parse', function($scope, $attrs, $parse) {
+    controller: ['$scope', '$attrs', '$parse', ($scope, $attrs, $parse) => {
       var dataGetter = $parse($attrs.data);
       var date = getDate();
       $scope.enabled = !!date;
       $scope.date = date;
 
       $scope.$watch('date', setDate);
-      $scope.$watch('date', function (date, prev) {
+      $scope.$watch('date', (date, prev) => {
         if (date !== prev) {
           $scope.$parent.$emit('ngModel:update', {value: date, ngModel: {}});
           $scope.$parent.$emit('ngModel:commit', {value: date, ngModel: {}});
@@ -29,7 +29,7 @@ angular.module('contentful')
       $scope.$on('ngModel:commit', stopPropagation);
       $scope.$on('ngModel:update', stopPropagation);
 
-      $scope.$watch('enabled', function(enabled) {
+      $scope.$watch('enabled', enabled => {
         if (enabled)
           setDate($scope.date);
         else
@@ -49,7 +49,7 @@ angular.module('contentful')
 
       var validator = ctrls[0];
       var form = ctrls[1];
-      scope.$watch('enabled', function() {
+      scope.$watch('enabled', () => {
         if (form.$dirty) {
           validator.run();
         }

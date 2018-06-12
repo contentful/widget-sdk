@@ -1,6 +1,6 @@
 'use strict';
 
-describe('cfMultiLineEditor directive', function () {
+describe('cfMultiLineEditor directive', () => {
   beforeEach(function () {
     this.clock = sinon.useFakeTimers();
     module('contentful/test');

@@ -1,19 +1,19 @@
 import { joinWithAnd } from 'utils/StringUtils';
 
-describe('StringUtils', function () {
-  describe('joinWithAnd', function () {
+describe('StringUtils', () => {
+  describe('joinWithAnd', () => {
     beforeEach(function () {
       this.twoItems = ['two', 'items'];
       this.threeItems = ['definitely', 'three', 'items'];
       this.fourItems = ['absolutely', '100%', 'four', 'items'];
     });
 
-    it('should return null if not given array', function () {
+    it('should return null if not given array', () => {
       expect(joinWithAnd('')).toBe(null);
       expect(joinWithAnd({})).toBe(null);
     });
 
-    it('should return the first item if only one item given', function () {
+    it('should return the first item if only one item given', () => {
       expect(joinWithAnd(['hello world'])).toBe('hello world');
       expect(joinWithAnd(['testing 1234'])).toBe('testing 1234');
     });

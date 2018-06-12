@@ -427,7 +427,7 @@ function collectSectionVisibility () {
 }
 
 function createResponseAttributeGetter (attrName) {
-  return function (actionName) {
+  return actionName => {
     const action = responses[actionName];
     return (action && attrName in action) ? action[attrName] : false;
   };
@@ -480,7 +480,7 @@ function determineEnforcement (reasonsDenied, entityType) {
 // Usage:
 // export const getUserQuota = wrapGKMethod('getUserQuota');
 function wrapGKMethod (name) {
-  return function (...args) {
+  return (...args) => {
     if (gkPermissionChecker) {
       return gkPermissionChecker[name].apply(gkPermissionChecker, args);
     }

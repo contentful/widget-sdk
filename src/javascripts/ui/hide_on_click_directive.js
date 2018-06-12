@@ -13,14 +13,14 @@ angular.module('cf.ui')
  * It uses the JQuery `element.hide()` method to hide the element. To
  * show it again you need to call `element.show()`.
  */
-.directive('uiHideOnClick', ['require', function (require) {
+.directive('uiHideOnClick', ['require', require => {
   var $document = require('$document');
   return {
     restrict: 'A',
     link: function (_scope, element) {
       $document.on('click', hideElement);
 
-      element.on('$destroy', function () {
+      element.on('$destroy', () => {
         $document.off('click', hideElement);
       });
 

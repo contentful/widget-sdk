@@ -7,13 +7,13 @@ angular.module('contentful')
  *
  * This directive display the new navigation side panel.
  */
-.directive('cfNavSidepanelTrigger', ['require', function (require) {
+.directive('cfNavSidepanelTrigger', ['require', require => {
   var sidepanelTrigger = require('navigation/Sidepanel/Trigger').default;
   return {
     restrict: 'E',
     template: '<cf-component-bridge component=sidepanelComponent>',
     scope: {},
-    controller: ['$scope', function ($scope) {
+    controller: ['$scope', $scope => {
       $scope.sidepanelComponent = sidepanelTrigger();
     }]
   };

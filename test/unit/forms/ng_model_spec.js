@@ -1,9 +1,9 @@
 'use strict';
 
-describe('ngModel directive', function () {
+describe('ngModel directive', () => {
   beforeEach(module('cf.forms'));
 
-  describe('aria-invalid attribute', function () {
+  describe('aria-invalid attribute', () => {
     it('is link to model errors', function () {
       var $compile = this.$inject('$compile');
       var scope = this.$inject('$rootScope').$new();
@@ -23,7 +23,7 @@ describe('ngModel directive', function () {
     });
   });
 
-  describe('hideErrors property', function () {
+  describe('hideErrors property', () => {
     beforeEach(function () {
       var $compile = this.$inject('$compile');
       var scope = this.$inject('$rootScope').$new();
@@ -50,7 +50,7 @@ describe('ngModel directive', function () {
     });
   });
 
-  describe('ngModel:update event', function () {
+  describe('ngModel:update event', () => {
     it('is emitted when view value changes', function () {
       var $compile = this.$inject('$compile');
       var scope = this.$inject('$rootScope').$new();
@@ -67,7 +67,7 @@ describe('ngModel directive', function () {
     });
   });
 
-  describe('ngModel:commit event', function () {
+  describe('ngModel:commit event', () => {
     it('is emitted when input is blured', function () {
       var $compile = this.$inject('$compile');
       var scope = this.$inject('$rootScope').$new();

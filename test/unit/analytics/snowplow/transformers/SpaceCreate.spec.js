@@ -1,10 +1,10 @@
-describe('Space create transformer', function () {
+describe('Space create transformer', () => {
   beforeEach(function () {
     module('contentful/test');
     this.transformer = this.$inject('analytics/snowplow/transformers/SpaceCreate').default;
   });
 
-  describe('space created from template', function () {
+  describe('space created from template', () => {
     beforeEach(function () {
       const eventData = {
         userId: 'user-1',
@@ -42,7 +42,7 @@ describe('Space create transformer', function () {
     });
   });
 
-  describe('space created without template', function () {
+  describe('space created without template', () => {
     beforeEach(function () {
       const eventData = {
         userId: 'user-1',

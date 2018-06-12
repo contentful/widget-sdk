@@ -1,4 +1,4 @@
-describe('Config', function () {
+describe('Config', () => {
   beforeEach(function () {
     module('contentful/test');
     this.settings = this.$inject('environment').settings;

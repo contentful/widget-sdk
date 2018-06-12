@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.factory('widgets/selectionController', [function () {
+.factory('widgets/selectionController', [() => {
   return {
     create: create,
     createFromValidations: createFromValidations
@@ -29,15 +29,15 @@ angular.module('contentful')
       field.removeValue();
     };
 
-    var removeChangeListener = field.onValueChanged(function (value) {
+    var removeChangeListener = field.onValueChanged(value => {
       scope.data.selected = value;
     });
 
-    var removeDisabledStatusListener = field.onIsDisabledChanged(function (disabled) {
+    var removeDisabledStatusListener = field.onIsDisabledChanged(disabled => {
       scope.isDisabled = disabled;
     });
 
-    scope.$watch('data.selected', function (value) {
+    scope.$watch('data.selected', value => {
       // ngModel uses 'null' when nothing is selected
       if (value === null) {
         value = undefined;
@@ -45,7 +45,7 @@ angular.module('contentful')
       field.setValue(value);
     });
 
-    scope.$on('destroy', function () {
+    scope.$on('destroy', () => {
       removeChangeListener();
       removeDisabledStatusListener();
     });
@@ -72,8 +72,9 @@ angular.module('contentful')
   function getOptions (field) {
     // Get first object that has a 'in' property
     var predefinedValues = _.filter(_.map(field.validations, 'in'))[0];
-    return _.map(predefinedValues, function (value) {
-      return { value: parseValue(value, field.type), label: String(value) };
-    });
+    return _.map(predefinedValues, value => ({
+      value: parseValue(value, field.type),
+      label: String(value)
+    }));
   }
 }]);

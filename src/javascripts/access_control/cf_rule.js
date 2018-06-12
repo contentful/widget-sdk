@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfRule', ['require', function (require) {
+.directive('cfRule', ['require', require => {
   var spaceContext = require('spaceContext');
   var K = require('utils/kefir');
   var CONFIG = require('PolicyBuilder/CONFIG');
@@ -9,19 +9,20 @@ angular.module('contentful')
   return {
     restrict: 'E',
     template: JST['rule'](),
-    controller: ['$scope', function ($scope) {
+    controller: ['$scope', $scope => {
       // prepare content type select options
-      K.onValueScope($scope, spaceContext.publishedCTs.items$, function (cts) {
+      K.onValueScope($scope, spaceContext.publishedCTs.items$, cts => {
         $scope.contentTypes = [{
           id: CONFIG.ALL_CTS,
           name: 'All content types'
-        }].concat(cts.map(function (ct) {
-          return { id: ct.sys.id, name: ct.name };
-        }));
+        }].concat(cts.map(ct => ({
+          id: ct.sys.id,
+          name: ct.name
+        })));
       });
 
       // when selected action changes...
-      $scope.$watch('rule.action', function (action, prev) {
+      $scope.$watch('rule.action', (action, prev) => {
         // ...for the first time -> do nothing
         if (action === prev) {
           /* eslint no-empty: off */
@@ -39,13 +40,14 @@ angular.module('contentful')
       });
 
       // when selected content type is changed
-      $scope.$watch('rule.contentType', function (id, prev) {
+      $scope.$watch('rule.contentType', (id, prev) => {
         var ct = spaceContext.publishedCTs.get(id);
 
         // get fields of selected content type
-        $scope.contentTypeFields = _.map(_.get(ct, 'data.fields', []), function (f) {
-          return { id: f.apiName || f.id, name: f.name };
-        });
+        $scope.contentTypeFields = _.map(_.get(ct, 'data.fields', []), f => ({
+          id: f.apiName || f.id,
+          name: f.name
+        }));
         $scope.contentTypeFields.unshift({ id: CONFIG.ALL_FIELDS, name: 'All fields' });
 
         // reset selected field to default one

@@ -1,6 +1,6 @@
 angular.module('contentful')
 
-.directive('cfBulkEditor', ['require', function (require) {
+.directive('cfBulkEditor', ['require', require => {
   var K = require('utils/kefir');
   var accessChecker = require('access_control/AccessChecker');
   var spaceContext = require('spaceContext');
@@ -49,32 +49,28 @@ angular.module('contentful')
 
     // Property<string>
     // List of IDs for the linked entries
-    var ids$ = referenceContext.links$.map(function (links) {
+    var ids$ = referenceContext.links$.map(links => {
       links = Array.isArray(links) ? links : [links];
       return links.map(_.property('sys.id')).filter(_.isString);
     });
 
     // Each of these contexts is passed to a cfBulkEntityEditor
     // directive.
-    var entityContexts$ = ids$.map(function (ids) {
-      return List.makeKeyed(ids, _.identity)
-      .map(function (item) {
-        return deepFreeze({
-          id: item.value,
-          remove: _.partial(removeByKey, item.key),
-          key: item.key
-        });
-      });
-    });
+    var entityContexts$ = ids$.map(ids => List.makeKeyed(ids, _.identity)
+    .map(item => deepFreeze({
+      id: item.value,
+      remove: _.partial(removeByKey, item.key),
+      key: item.key
+    })));
 
-    K.onValueScope($scope, entityContexts$, function (ctxs) {
+    K.onValueScope($scope, entityContexts$, ctxs => {
       $scope.entityContexts = ctxs;
       templateData.linkCount = ctxs.length;
     });
 
     // The initial count helps us figure out when to remove the global
     // loader.
-    K.onValueScope($scope, entityContexts$.take(1), function (ctxs) {
+    K.onValueScope($scope, entityContexts$.take(1), ctxs => {
       initialLoadCount = ctxs.length;
     });
 
@@ -95,7 +91,7 @@ angular.module('contentful')
     };
 
 
-    $scope.actions = makeActions(referenceContext.field, function (links) {
+    $scope.actions = makeActions(referenceContext.field, links => {
       nextFocusIndex = -1;
       links.forEach(referenceContext.add);
     }, referenceContext.links$, track, $scope.renderInline);
@@ -134,12 +130,10 @@ angular.module('contentful')
       itemValidations: _.get(field, ['items', 'validations'], [])
     });
     var allowedCTs = getAllowedCTs(extendedField);
-    var accessibleCTs = allowedCTs.map(function (ct) {
-      return {
-        id: ct.sys.id,
-        name: ct.name
-      };
-    });
+    var accessibleCTs = allowedCTs.map(ct => ({
+      id: ct.sys.id,
+      name: ct.name
+    }));
 
     return {
       allowedCTs: allowedCTs, // For new "Add entry" button behind feature flag.
@@ -153,7 +147,7 @@ angular.module('contentful')
         ? ctOrCtId
         : spaceContext.publishedCTs.get(ctOrCtId);
       spaceContext.cma.createEntry(contentType.getId(), {})
-      .then(function (entry) {
+      .then(entry => {
         Analytics.track('entry:create', {
           eventOrigin: isInline ? 'inline-reference-editor' : 'bulk-editor',
           contentType: contentType,
@@ -167,7 +161,7 @@ angular.module('contentful')
     function addExistingEntries () {
       var currentSize = K.getValue(links$).length;
       entitySelector.openFromField(extendedField, currentSize)
-      .then(function (entities) {
+      .then(entities => {
         track.addExisting(entities.length);
         addLinks(entities.map(linkEntity));
       });
@@ -184,29 +178,19 @@ angular.module('contentful')
   function getAllowedCTs (field) {
     var itemValidations = _.get(field, ['items', 'validations']);
 
-    var contentTypeValidation = _.find(itemValidations, function (validation) {
-      return !!validation.linkContentType;
-    });
+    var contentTypeValidation = _.find(itemValidations, validation => !!validation.linkContentType);
 
     var validCtIds = contentTypeValidation
       ? contentTypeValidation.linkContentType
       : getAllContentTypeIds();
 
-    var validCTs = _.uniq(validCtIds).map(function (ctId) {
-      return spaceContext.publishedCTs.get(ctId);
-    });
+    var validCTs = _.uniq(validCtIds).map(ctId => spaceContext.publishedCTs.get(ctId));
 
-    return _.filter(validCTs, function (ct) {
-      return ct && accessChecker.canPerformActionOnEntryOfType('create', ct.getId());
-    }).map(function (ct) {
-      return ct.data;
-    });
+    return _.filter(validCTs, ct => ct && accessChecker.canPerformActionOnEntryOfType('create', ct.getId())).map(ct => ct.data);
   }
 
   function getAllContentTypeIds () {
-    return spaceContext.publishedCTs.getAllBare().map(function (ct) {
-      return ct.sys.id;
-    });
+    return spaceContext.publishedCTs.getAllBare().map(ct => ct.sys.id);
   }
 
   function linkEntity (entity) {

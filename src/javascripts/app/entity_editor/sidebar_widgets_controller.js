@@ -6,7 +6,7 @@ angular.module('contentful')
  *
  * Used in the `entity_sidebar.mixin.jade` template.
  */
-.controller('SidebarWidgetRenderController', ['$scope', 'require', function ($scope, require) {
+.controller('SidebarWidgetRenderController', ['$scope', 'require', ($scope, require) => {
   var TheLocaleStore = require('TheLocaleStore');
   var $controller = require('$controller');
 

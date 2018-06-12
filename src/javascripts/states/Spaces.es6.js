@@ -19,7 +19,7 @@ const newSpace = {
   name: 'new',
   url: '_new',
   template: JST.cf_create_space_advice(),
-  controller: ['$scope', 'access_control/AccessChecker', function ($scope, accessChecker) {
+  controller: ['$scope', 'access_control/AccessChecker', ($scope, accessChecker) => {
     $scope.canCreateSpace = accessChecker.canCreateSpace;
   }]
 };
@@ -33,23 +33,19 @@ const hibernation = {
   }
 };
 
-const resolveSpaceData = ['services/TokenStore', '$stateParams', function (TokenStore, $stateParams) {
-  return TokenStore.getSpace($stateParams.spaceId);
-}];
+const resolveSpaceData = ['services/TokenStore', '$stateParams', (TokenStore, $stateParams) => TokenStore.getSpace($stateParams.spaceId)];
 
 const spaceEnvironment = {
   name: 'environment',
   url: '/environments/:environmentId',
   resolve: {
     spaceData: resolveSpaceData,
-    spaceContext: ['spaceContext', 'spaceData', '$stateParams', function (spaceContext, spaceData, $stateParams) {
-      return spaceContext.resetWithSpace(spaceData, $stateParams.environmentId);
-    }]
+    spaceContext: ['spaceContext', 'spaceData', '$stateParams', (spaceContext, spaceData, $stateParams) => spaceContext.resetWithSpace(spaceData, $stateParams.environmentId)]
   },
   views: {
     'content@': {
       template: '<div />',
-      controller: ['spaceData', '$state', function (spaceData, $state) {
+      controller: ['spaceData', '$state', (spaceData, $state) => {
         if (!spaceData.spaceMembership.admin) {
           $state.go('spaces.detail', null, {reload: true});
         } else if (isHibernated(spaceData)) {
@@ -78,15 +74,13 @@ const spaceDetail = {
   url: '/:spaceId',
   resolve: {
     spaceData: resolveSpaceData,
-    spaceContext: ['spaceContext', 'spaceData', function (spaceContext, spaceData) {
-      return spaceContext.resetWithSpace(spaceData);
-    }]
+    spaceContext: ['spaceContext', 'spaceData', (spaceContext, spaceData) => spaceContext.resetWithSpace(spaceData)]
   },
-  onEnter: ['spaceData', function (spaceData) {
+  onEnter: ['spaceData', spaceData => {
     Analytics.trackSpaceChange({data: spaceData});
   }],
   template: JST.cf_no_section_available(),
-  controller: ['$scope', '$state', 'spaceData', function ($scope, $state, spaceData) {
+  controller: ['$scope', '$state', 'spaceData', ($scope, $state, spaceData) => {
     const accessibleSref = sectionAccess.getFirstAccessibleSref();
 
     if (isHibernated(spaceData)) {

@@ -1,16 +1,15 @@
 'use strict';
 
-angular.module('contentful').directive('cfSelectAllInput', function() {
-  return {
-    restrict: 'A',
-    link: function(scope, el) {
-      el.css('cursor', 'pointer');
-      el.on('click', selectAll);
+angular.module('contentful').directive('cfSelectAllInput', () => ({
+  restrict: 'A',
 
-      function selectAll() {
-        var end = el.val().length;
-        el.textrange('set', 0, end);
-      }
+  link: function(scope, el) {
+    el.css('cursor', 'pointer');
+    el.on('click', selectAll);
+
+    function selectAll() {
+      var end = el.val().length;
+      el.textrange('set', 0, end);
     }
-  };
-});
+  }
+}));

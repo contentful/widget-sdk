@@ -3,7 +3,7 @@ import * as sinon from 'helpers/sinon';
 
 import { mount } from 'enzyme';
 
-describe('Space Wizard', function () {
+describe('Space Wizard', () => {
   beforeEach(function () {
     this.stubs = {
       track: sinon.stub()
@@ -42,7 +42,7 @@ describe('Space Wizard', function () {
     };
   });
 
-  describe('space creation', function () {
+  describe('space creation', () => {
     beforeEach(function () {
       this.component = this.mount('create');
     });
@@ -56,7 +56,7 @@ describe('Space Wizard', function () {
     });
   });
 
-  describe('space changing (upgrading/downgrading)', function () {
+  describe('space changing (upgrading/downgrading)', () => {
     beforeEach(function () {
       this.component = this.mount('change');
     });
@@ -70,7 +70,7 @@ describe('Space Wizard', function () {
     });
   });
 
-  describe('analytics', function () {
+  describe('analytics', () => {
     it('should track modal open event', function () {
       this.mount('create');
       sinon.assert.calledOnce(this.stubs.track.withArgs('space_wizard:open'));

@@ -4,7 +4,7 @@
  * This module translates between serialized validations that are send
  * to the backend and the front end validation views.
  */
-angular.module('contentful').service('validationViews', ['require', function (require) {
+angular.module('contentful').service('validationViews', ['require', require => {
   var urlRegexp = require('urlUtils').regexp;
 
   /**
@@ -53,9 +53,7 @@ angular.module('contentful').service('validationViews', ['require', function (re
 
 
   function findViewByName(views, name) {
-    return _.find(views, function(v) {
-      return v.name == name;
-    });
+    return _.find(views, v => v.name == name);
   }
 
 
@@ -98,9 +96,7 @@ angular.module('contentful').service('validationViews', ['require', function (re
       if (hasMax)
         return 'max';
     } else if (type == 'regexp') {
-      var view = _.find(validation.views, function(view) {
-        return view.pattern == settings.pattern;
-      });
+      var view = _.find(validation.views, view => view.pattern == settings.pattern);
       if (view)
         return view.name;
       else

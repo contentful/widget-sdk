@@ -71,7 +71,7 @@ describe('Entry Editor Controller', function () {
     expect(this.scope.user).toBe(this.user);
   });
 
-  describe('when the entry title changes', function () {
+  describe('when the entry title changes', () => {
     it('should update the tab title', function () {
       this.scope.otDoc.setValueAt(['fields', 'title'], 'foo');
       this.$apply();
@@ -82,7 +82,7 @@ describe('Entry Editor Controller', function () {
     });
   });
 
-  describe('scope.context.dirty', function () {
+  describe('scope.context.dirty', () => {
     it('changes according to doc state', function () {
       this.scope.otDoc.state.isDirty$.set(true);
       this.$apply();

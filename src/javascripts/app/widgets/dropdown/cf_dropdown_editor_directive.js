@@ -7,15 +7,14 @@ angular.module('cf.app')
  * @module cf.app
  * @name cfDropdownEditor
  */
-.directive('cfDropdownEditor', ['require', function (require) {
-  return {
-    restrict: 'E',
-    scope: {},
-    template: JST['cf_dropdown_editor'](),
-    require: '^cfWidgetApi',
-    link: function (scope, _elem, _attrs, widgetApi) {
-      var selectionController = require('widgets/selectionController');
-      selectionController.createFromValidations(widgetApi, scope);
-    }
-  };
-}]);
+.directive('cfDropdownEditor', ['require', require => ({
+  restrict: 'E',
+  scope: {},
+  template: JST['cf_dropdown_editor'](),
+  require: '^cfWidgetApi',
+
+  link: function (scope, _elem, _attrs, widgetApi) {
+    var selectionController = require('widgets/selectionController');
+    selectionController.createFromValidations(widgetApi, scope);
+  }
+})]);

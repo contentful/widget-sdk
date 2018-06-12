@@ -147,7 +147,5 @@ export function match (tagged, handlers, ...args) {
 
 
 export function makeMatcher (handlers) {
-  return function (tagged, ...args) {
-    return match(tagged, handlers, ...args);
-  };
+  return (tagged, ...args) => match(tagged, handlers, ...args);
 }

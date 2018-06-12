@@ -10,7 +10,7 @@
  * with eachother.
  */
 angular.module('contentful')
-.factory('dialogsInitController', ['require', function (require) {
+.factory('dialogsInitController', ['require', require => {
   var $rootScope = require('$rootScope');
   var spaceContext = require('spaceContext');
   var activationEmailResendController = require('activationEmailResendController');
@@ -38,8 +38,6 @@ angular.module('contentful')
   }
 
   function initSpaceWatcher () {
-    $rootScope.$watch(function () {
-      return spaceContext.getId();
-    }, onSpaceChanged);
+    $rootScope.$watch(() => spaceContext.getId(), onSpaceChanged);
   }
 }]);

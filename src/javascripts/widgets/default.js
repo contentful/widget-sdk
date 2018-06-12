@@ -6,7 +6,7 @@
  * @name widgets/default
  */
 angular.module('contentful')
-.factory('widgets/default', ['require', function (require) {
+.factory('widgets/default', ['require', require => {
   var fieldFactory = require('fieldFactory');
   var widgetMap = require('widgetMap');
 
@@ -54,8 +54,6 @@ angular.module('contentful')
   };
 
   function hasInValidation (validations) {
-    return _.find(validations, function (validation) {
-      return 'in' in validation;
-    });
+    return _.find(validations, validation => 'in' in validation);
   }
 }]);

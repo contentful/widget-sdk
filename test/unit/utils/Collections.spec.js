@@ -2,9 +2,9 @@ import * as C from 'utils/Collections';
 import { deepFreeze } from 'utils/Freeze';
 import { range } from 'lodash';
 
-describe('utils/Collections', function () {
-  describe('.update', function () {
-    it('deeply updates collection for array of keys', function () {
+describe('utils/Collections', () => {
+  describe('.update', () => {
+    it('deeply updates collection for array of keys', () => {
       const c = { x: [{}, {z: true}, {}] };
       const c2 = C.update(c, ['x', 1, 'z'], (v) => !v);
 
@@ -12,7 +12,7 @@ describe('utils/Collections', function () {
       expect(c2).toEqual(c);
     });
 
-    it('updates array for number key', function () {
+    it('updates array for number key', () => {
       const c = [true, false, true];
       const c2 = C.update(c, 1, (v) => !v);
 
@@ -20,7 +20,7 @@ describe('utils/Collections', function () {
       expect(c2).toEqual(c);
     });
 
-    it('updates object for string key', function () {
+    it('updates object for string key', () => {
       const c = { x: true, y: false, z: true };
       const c2 = C.update(c, 'y', (v) => !v);
 
@@ -29,28 +29,28 @@ describe('utils/Collections', function () {
     });
   });
 
-  describe('.concat', function () {
-    it('concats all arguments', function () {
+  describe('.concat', () => {
+    it('concats all arguments', () => {
       const arrays = range(5).map((x) => deepFreeze([2 * x, 2 * x + 1]));
       const concatted = C.concat(...arrays);
       const result = range(10);
       expect(concatted).toEqual(result);
     });
 
-    it('throws if argument is not array', function () {
+    it('throws if argument is not array', () => {
       expect(() => {
         C.concat([], [], 4, []);
       }).toThrowError(TypeError);
     });
   });
 
-  describe('.move', function () {
-    it('returns the same array if indexes are equal', function () {
+  describe('.move', () => {
+    it('returns the same array if indexes are equal', () => {
       const arr = [1, 2, 3];
       expect(C.move(arr, 1, 1)).toBe(arr);
     });
 
-    it('moves an element', function () {
+    it('moves an element', () => {
       const arr = [1, 2, 3, 4, 5];
       expect(C.move(arr, 0, 4)).toEqual([2, 3, 4, 5, 1]);
       expect(C.move(arr, 4, 0)).toEqual([5, 1, 2, 3, 4]);
@@ -58,7 +58,7 @@ describe('utils/Collections', function () {
       expect(C.move(arr, 3, 1)).toEqual([1, 4, 2, 3, 5]);
     });
 
-    it('throws for invalid input', function () {
+    it('throws for invalid input', () => {
       expect(() => C.move({})).toThrowError(TypeError);
       expect(() => C.move([1, 2], -1, 1)).toThrowError(TypeError);
       expect(() => C.move([1, 2, 3], 1, 100)).toThrowError(TypeError);

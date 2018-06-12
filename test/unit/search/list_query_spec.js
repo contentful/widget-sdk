@@ -1,6 +1,6 @@
-describe('ListQuery service', function () {
+describe('ListQuery service', () => {
   let ListQuery, paginator;
-  afterEach(function () {
+  afterEach(() => {
     ListQuery = paginator = null;
   });
 
@@ -35,7 +35,7 @@ describe('ListQuery service', function () {
     return assetOpts(Object.assign({ contentTypeId: 'TEST_CT_ID' }, more));
   }
 
-  describe('Returns promise of a query', function () {
+  describe('Returns promise of a query', () => {
     it('for assets', function* () {
       const q = yield ListQuery.getForAssets(assetOpts());
       testQuery(q);
@@ -49,7 +49,7 @@ describe('ListQuery service', function () {
     });
   });
 
-  describe('special search terms', function () {
+  describe('special search terms', () => {
     function queryFor (search) {
       return ListQuery.getForEntries(entryOpts(search));
     }

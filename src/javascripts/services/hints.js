@@ -8,7 +8,7 @@
  * app. These hints should only be shown once for each user.
  */
 angular.module('contentful')
-.service('hints', ['require', function (require) {
+.service('hints', ['require', require => {
   var getStore = require('TheStore').getStore;
   var store = getStore();
 

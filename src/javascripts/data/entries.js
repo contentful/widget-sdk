@@ -7,7 +7,7 @@ angular.module('cf.data')
  * @module cf.data
  * @name data/Entries
  */
-.factory('data/Entries', ['require', function (require) {
+.factory('data/Entries', ['require', require => {
   var TheLocaleStore = require('TheLocaleStore');
 
   return {
@@ -30,7 +30,7 @@ angular.module('cf.data')
   function transformRepresentation (entryData, transformPath) {
     var result = {sys: _.cloneDeep(entryData.sys)};
 
-    getAllPathsOf(entryData.fields).forEach(function (path) {
+    getAllPathsOf(entryData.fields).forEach(path => {
       var value = _.cloneDeep(_.get(entryData, path));
       _.set(result, transformPath(path), value);
     });
@@ -55,10 +55,6 @@ angular.module('cf.data')
   }
 
   function getAllPathsOf (fields) {
-    return _.reduce(fields, function (acc, field, fieldId) {
-      return acc.concat(_.reduce(field, function (acc, _locale, localeCode) {
-        return acc.concat([['fields', fieldId, localeCode]]);
-      }, []));
-    }, []);
+    return _.reduce(fields, (acc, field, fieldId) => acc.concat(_.reduce(field, (acc, _locale, localeCode) => acc.concat([['fields', fieldId, localeCode]]), [])), []);
   }
 }]);

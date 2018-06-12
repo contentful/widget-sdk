@@ -1,5 +1,5 @@
 angular.module('contentful')
-.directive('cfCreateEntryButton', ['require', function (require) {
+.directive('cfCreateEntryButton', ['require', require => {
   var _ = require('lodash');
   var React = require('react');
   var ReactDOM = require('react-dom');
@@ -7,15 +7,13 @@ angular.module('contentful')
 
   return {
     link: function ($scope, elem, attr) {
-      $scope.$watchCollection(function () {
-        return {
-          contentTypes: _.get($scope, attr.contentTypes, []),
-          suggestedContentTypeId: _.get($scope, attr.suggestedContentTypeId),
-          size: attr.size,
-          style: attr.style,
-          text: attr.text
-        };
-      }, function (props) {
+      $scope.$watchCollection(() => ({
+        contentTypes: _.get($scope, attr.contentTypes, []),
+        suggestedContentTypeId: _.get($scope, attr.suggestedContentTypeId),
+        size: attr.size,
+        style: attr.style,
+        text: attr.text
+      }), props => {
         props = Object.assign({}, props, {
           onSelect: $scope.$eval(attr.onSelect)
         });
@@ -24,7 +22,7 @@ angular.module('contentful')
       });
 
       // Remember to unmount
-      $scope.$on('$destroy', function () {
+      $scope.$on('$destroy', () => {
         ReactDOM.unmountComponentAtNode(elem[0]);
       });
     }

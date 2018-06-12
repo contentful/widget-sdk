@@ -14,7 +14,7 @@
  * reposition-when-scrolls=".widget-list"></cf-icon>
  *
  */
-angular.module('contentful').directive('cfPositionRelativeToWidgetList', ['require', function (require){
+angular.module('contentful').directive('cfPositionRelativeToWidgetList', ['require', require => {
   var defer    = require('defer');
   var debounce = require('debounce');
 
@@ -27,7 +27,7 @@ angular.module('contentful').directive('cfPositionRelativeToWidgetList', ['requi
       var debouncedReposition = debounce(reposition, 50);
       $(attrs.repositionWhenScrolls).on('scroll', debouncedReposition);
 
-      elem.on('$destroy', function () {
+      elem.on('$destroy', () => {
         $(attrs.repositionWhenScrolls).off('scroll', debouncedReposition);
       });
 

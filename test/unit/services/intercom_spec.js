@@ -1,12 +1,12 @@
 'use strict';
 
-describe('Intercom service', function () {
+describe('Intercom service', () => {
   var $window, intercom, $windowIntercomStub;
 
   function setGlobalIntercom (value) {
     $windowIntercomStub = $window.Intercom = value;
 
-    inject(function ($rootScope, $controller, _intercom_) {
+    inject(($rootScope, $controller, _intercom_) => {
       intercom = _intercom_;
     });
   }
@@ -16,40 +16,40 @@ describe('Intercom service', function () {
     $window = this.$inject('$window');
   });
 
-  describe('with $window.Intercom defined', function () {
-    beforeEach(function () {
+  describe('with $window.Intercom defined', () => {
+    beforeEach(() => {
       setGlobalIntercom(sinon.stub());
       intercom.open();
     });
 
-    describe('.open()', function () {
-      it('calls $window.Intercom with "showNewMessage"', function () {
+    describe('.open()', () => {
+      it('calls $window.Intercom with "showNewMessage"', () => {
         expect($windowIntercomStub.called).toBe(true);
         expect($windowIntercomStub.calledWithExactly('showNewMessage')).toBe(true);
       });
     });
 
-    describe('isLoaded()', function () {
-      it('does nothing and trows no error', function () {
+    describe('isLoaded()', () => {
+      it('does nothing and trows no error', () => {
         expect(intercom.isLoaded()).toBe(true);
       });
     });
   });
 
-  describe('with $window.Intercom undefined', function () {
-    beforeEach(function () {
+  describe('with $window.Intercom undefined', () => {
+    beforeEach(() => {
       setGlobalIntercom(undefined);
       intercom.open();
     });
 
-    describe('.open()', function () {
-      it('does nothing and trows no error', function () {
+    describe('.open()', () => {
+      it('does nothing and trows no error', () => {
         expect(true).toBe(true);
       });
     });
 
-    describe('isLoaded()', function () {
-      it('does nothing and trows no error', function () {
+    describe('isLoaded()', () => {
+      it('does nothing and trows no error', () => {
         expect(intercom.isLoaded()).toBe(false);
       });
     });

@@ -1,6 +1,6 @@
 'use strict';
 
-describe('data/Entries', function () {
+describe('data/Entries', () => {
   beforeEach(function () {
     module('contentful/test');
     this.entries = this.$inject('data/Entries');
@@ -11,7 +11,7 @@ describe('data/Entries', function () {
     });
   });
 
-  describe('path transformation', function () {
+  describe('path transformation', () => {
     const ctData = {fields: [{id: 'internal-id', apiName: 'external-id'}]};
 
     it('transforms internal path to external', function () {
@@ -29,7 +29,7 @@ describe('data/Entries', function () {
     });
   });
 
-  describe('entry representation transformation', function () {
+  describe('entry representation transformation', () => {
     const ctData = {fields: [
       {id: 'internal-id-1', apiName: 'external-id-1'},
       {id: 'internal-id-2', apiName: 'external-id-2'}

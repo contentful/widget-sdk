@@ -1,12 +1,12 @@
 'use strict';
 
-describe('data/ContentTypes', function () {
+describe('data/ContentTypes', () => {
 
-  beforeEach(function () {
+  beforeEach(() => {
     module('cf.data');
   });
 
-  describe('#assureDisplayField', function () {
+  describe('#assureDisplayField', () => {
     beforeEach(function () {
       this.assureDisplayField = this.$inject('data/ContentTypes').assureDisplayField;
     });
@@ -78,7 +78,7 @@ describe('data/ContentTypes', function () {
     });
   });
 
-  describe('#assureName', function () {
+  describe('#assureName', () => {
     beforeEach(function () {
       this.assureName = this.$inject('data/ContentTypes').assureName;
     });
@@ -96,7 +96,7 @@ describe('data/ContentTypes', function () {
     });
   });
 
-  describe('#internalToPublic()', function () {
+  describe('#internalToPublic()', () => {
     beforeEach(function () {
       this.data = {
         name: 'apple',
@@ -168,13 +168,13 @@ describe('data/ContentTypes', function () {
     });
 
     it('removes "apiName" property from all the fields', function () {
-      this.ct.fields.forEach(function (field) {
+      this.ct.fields.forEach(field => {
         expect('apiName' in field).toEqual(false);
       });
     });
 
     it('uses "apiName" as id if available', function () {
-      this.ct.fields.forEach(function (field, i) {
+      this.ct.fields.forEach((field, i) => {
         var originalField = this.data.fields[i];
 
         if ('apiName' in originalField) {
@@ -182,7 +182,7 @@ describe('data/ContentTypes', function () {
         } else {
           expect(field.id).toEqual(originalField.id);
         }
-      }.bind(this));
+      });
     });
   });
 });

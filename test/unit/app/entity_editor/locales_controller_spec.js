@@ -1,6 +1,6 @@
-describe('entityEditor/LocalesController', function () {
+describe('entityEditor/LocalesController', () => {
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
 
@@ -16,7 +16,7 @@ describe('entityEditor/LocalesController', function () {
     expect(controller.active).toEqual('ACTIVE');
   });
 
-  describe('#deactivate', function () {
+  describe('#deactivate', () => {
     const locale = {
       sys: {space: {sys: {id: 'sid'}}},
       internal_code: 'en',

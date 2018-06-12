@@ -13,7 +13,7 @@ angular.module('contentful')
  *
  * [json-rpc]: http://www.jsonrpc.org/specification
  */
-.factory('widgets/channel', ['require', function (require) {
+.factory('widgets/channel', ['require', require => {
   var $window = require('$window');
   var $q = require('$q');
   var random = require('random');
@@ -36,8 +36,8 @@ angular.module('contentful')
     this.messageQueue = [];
 
     var self = this;
-    this.messageListener = function (ev) {
-      $rootScope.$apply(function () {
+    this.messageListener = ev => {
+      $rootScope.$apply(() => {
         var data = ev.data;
         if (data.source === self.id) {
           self._dispatch(data.method, data.id, data.params);

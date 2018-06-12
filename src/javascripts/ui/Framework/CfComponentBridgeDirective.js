@@ -20,7 +20,7 @@ angular.module('contentful')
  *   }
  * }
  */
-.directive('cfComponentBridge', ['require', function (require) {
+.directive('cfComponentBridge', ['require', require => {
   var createMountPoint = require('ui/Framework/DOMRenderer').default;
   return {
     restrict: 'E',
@@ -75,7 +75,7 @@ angular.module('contentful')
  *   }
  * }
  */
-.directive('cfComponentStoreBridge', ['require', function (require) {
+.directive('cfComponentStoreBridge', ['require', require => {
   var K = require('utils/kefir');
   var bindActions = require('ui/Framework/Store').bindActions;
   var createMountPoint = require('ui/Framework/DOMRenderer').default;
@@ -88,7 +88,7 @@ angular.module('contentful')
 
       var mountPoint = createMountPoint($element.get(0));
 
-      K.onValueScope($scope, c.store.state$, function (state) {
+      K.onValueScope($scope, c.store.state$, state => {
         mountPoint.render(c.render(state, actions));
       });
 

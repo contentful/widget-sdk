@@ -1,8 +1,8 @@
 'use strict';
 
-describe('Locale Editor Directive', function () {
+describe('Locale Editor Directive', () => {
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.constant('localesList', [
         {
           code: 'fr',

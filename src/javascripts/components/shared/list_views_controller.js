@@ -2,7 +2,7 @@
 angular.module('contentful')
 .controller('ListViewsController', [
   '$scope', 'require', 'getBlankView', 'resetList', 'preserveStateAs',
-  function ($scope, require, getBlankView, resetList, preserveStateAs) {
+  ($scope, require, getBlankView, resetList, preserveStateAs) => {
     var createViewMigrator = require('data/ViewMigrator').default;
     var createViewPersistor = require('data/ListViewPersistor').default;
     var spaceContext = require('spaceContext');

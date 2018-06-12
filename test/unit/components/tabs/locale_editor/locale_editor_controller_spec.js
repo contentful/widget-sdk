@@ -1,6 +1,6 @@
 import * as sinon from 'helpers/sinon';
 
-describe('Locale editor controller', function () {
+describe('Locale editor controller', () => {
   beforeEach(function () {
     const self = this;
     this.logger = {
@@ -16,7 +16,7 @@ describe('Locale editor controller', function () {
     };
     this.closeStateSpy = sinon.spy();
 
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.value('logger', self.logger);
       $provide.value('notification', self.notification);
       $provide.value('analytics/Analytics', self.analytics);
@@ -98,7 +98,7 @@ describe('Locale editor controller', function () {
     expect(this.scope.hasDependantLocales).toBe(true);
   });
 
-  describe('changing locale code', function () {
+  describe('changing locale code', () => {
     it('resets fallback if used as locale code', function () {
       this.scope.locale.fallbackCode = 'de-DE';
       this.scope.locale.code = 'de-DE';
@@ -118,12 +118,12 @@ describe('Locale editor controller', function () {
     });
   });
 
-  describe('#delete command succeeds', function () {
+  describe('#delete command succeeds', () => {
     beforeEach(function () {
       this.spaceContext.localeRepo.remove.resolves();
     });
 
-    describe('with confirmation', function () {
+    describe('with confirmation', () => {
       beforeEach(function () {
         this.modalDialog.openConfirmDialog.resolves({confirmed: true});
         this.controller.delete.execute();
@@ -144,7 +144,7 @@ describe('Locale editor controller', function () {
       });
     });
 
-    describe('with no confirmation', function () {
+    describe('with no confirmation', () => {
       beforeEach(function () {
         this.modalDialog.openConfirmDialog.resolves({});
         this.controller.delete.execute();
@@ -161,7 +161,7 @@ describe('Locale editor controller', function () {
     });
   });
 
-  describe('#delete when locale is used as a fallback', function () {
+  describe('#delete when locale is used as a fallback', () => {
     beforeEach(function () {
       this.$q = this.$inject('$q');
       this.scope.locale.code = 'de-DE';
@@ -204,7 +204,7 @@ describe('Locale editor controller', function () {
     });
   });
 
-  describe('#delete command failures', function () {
+  describe('#delete command failures', () => {
     const error = { body: { message: 'errorMessage' } };
     beforeEach(function () {
       this.scope.localeForm.$dirty = true;
@@ -235,8 +235,8 @@ describe('Locale editor controller', function () {
     });
   });
 
-  describe('#save command succeeds', function () {
-    describe('with unchanged code', function () {
+  describe('#save command succeeds', () => {
+    describe('with unchanged code', () => {
       beforeEach(function () {
         this.spaceContext.localeRepo.save.resolves({sys: {id: 'locale-id'}});
         this.controller.save.execute();
@@ -265,13 +265,13 @@ describe('Locale editor controller', function () {
       });
     });
 
-    describe('with changed code', function () {
+    describe('with changed code', () => {
       beforeEach(function () {
         this.spaceContext.localeRepo.save.resolves({sys: {id: 'locale-id'}});
         this.scope.locale.code = 'en-UK';
       });
 
-      describe('with confirmation', function () {
+      describe('with confirmation', () => {
         beforeEach(function () {
           this.modalDialog.openConfirmDialog.resolves({confirmed: true});
           this.controller.save.execute();
@@ -291,7 +291,7 @@ describe('Locale editor controller', function () {
         });
       });
 
-      describe('with no confirmation', function () {
+      describe('with no confirmation', () => {
         beforeEach(function () {
           this.modalDialog.openConfirmDialog.resolves({});
           this.controller.save.execute();
@@ -313,7 +313,7 @@ describe('Locale editor controller', function () {
     });
   });
 
-  describe('#save command fails', function () {
+  describe('#save command fails', () => {
     beforeEach(function () {
       this.spaceContext.localeRepo.save.rejects({});
       this.scope.localeForm.$dirty = true;

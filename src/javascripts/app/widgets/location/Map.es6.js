@@ -11,18 +11,18 @@ import * as K from 'utils/kefir';
  */
 export function init (scope, mapSlotElement) {
   let destroyed = false;
-  scope.$on('$destroy', function () {
+  scope.$on('$destroy', () => {
     destroyed = true;
   });
 
   scope.isLoading = true;
   LazyLoader.get('googleMaps')
-  .then(function (GMaps) {
+  .then(GMaps => {
     if (!destroyed) {
       scope.isLoading = false;
       initMap(scope, GMaps, mapSlotElement);
     }
-  }, function () {
+  }, () => {
     scope.isLoading = false;
     scope.loadError = true;
   });
@@ -36,7 +36,7 @@ function initMap (scope, GMaps, mapSlotElement) {
     mapTypeId: GMaps.MapTypeId.ROADMAP
   });
 
-  K.onValueScope(scope, observeResize(mapSlotElement), function () {
+  K.onValueScope(scope, observeResize(mapSlotElement), () => {
     GMaps.event.trigger(map, 'resize');
   });
 
@@ -47,11 +47,11 @@ function initMap (scope, GMaps, mapSlotElement) {
     visible: true
   });
 
-  scope.$watch('isDisabled', function (isDisabled) {
+  scope.$watch('isDisabled', isDisabled => {
     marker.setDraggable(!isDisabled);
   });
 
-  scope.$watchCollection('location', function (location) {
+  scope.$watchCollection('location', location => {
     const latLng = toLatLng(location);
     if (latLng) {
       marker.setVisible(true);
@@ -62,15 +62,15 @@ function initMap (scope, GMaps, mapSlotElement) {
     }
   });
 
-  GMaps.event.addListener(marker, 'dragend', function (event) {
-    scope.$apply(function () {
+  GMaps.event.addListener(marker, 'dragend', event => {
+    scope.$apply(() => {
       scope.location = fromLatLng(event.latLng);
       scope.search.updateAddressFromLocation();
     });
   });
 
-  GMaps.event.addListener(map, 'click', function (event) {
-    scope.$apply(function () {
+  GMaps.event.addListener(map, 'click', event => {
+    scope.$apply(() => {
       const latLng = event.latLng;
       if (!toLatLng(scope.location) && !scope.isDisabled) {
         marker.setPosition(latLng);
@@ -80,7 +80,7 @@ function initMap (scope, GMaps, mapSlotElement) {
     });
   });
 
-  scope.$on('$destroy', function () {
+  scope.$on('$destroy', () => {
     GMaps.event.clearInstanceListeners(map);
     GMaps.event.clearInstanceListeners(marker);
     map = null;

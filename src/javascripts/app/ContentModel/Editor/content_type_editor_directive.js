@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfContentTypeEditor', ['require', function (require) {
+.directive('cfContentTypeEditor', ['require', require => {
   var $timeout = require('$timeout');
   var template = require('app/ContentModel/Editor/Template').default;
   var renderString = require('ui/Framework').renderString;
@@ -25,7 +25,7 @@ angular.module('contentful')
 
         // We need a timeout here for a newly added field
         // to be rendered; otherwise we get the old height
-        $timeout(function () {
+        $timeout(() => {
           var height = fieldList.height();
           fieldList.scrollParent().scrollTop(height);
         });

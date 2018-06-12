@@ -1,22 +1,23 @@
 'use strict';
 
-describe('Asset List Controller', function () {
+describe('Asset List Controller', () => {
   let scope, spaceContext, stubs, $q, getAssets;
 
-  afterEach(function () {
+  afterEach(() => {
     scope = spaceContext = stubs = $q = getAssets = null;
   });
 
   function createAssets (n) {
-    const assets = _.map(new Array(n), function () {
-      return { isDeleted: _.constant(false), data: { fields: [] } };
-    });
+    const assets = _.map(new Array(n), () => ({
+      isDeleted: _.constant(false),
+      data: { fields: [] }
+    }));
     Object.defineProperty(assets, 'total', {value: n});
     return assets;
   }
 
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       stubs = $provide.makeStubs([
         'archived',
         'track',
@@ -71,42 +72,42 @@ describe('Asset List Controller', function () {
   });
 
 
-  describe('on search change', function () {
-    beforeEach(function () {
+  describe('on search change', () => {
+    beforeEach(() => {
       scope.context.view = {};
       scope.$digest();
     });
 
-    describe('if search is not defined', function () {
-      it('list is not defined', function () {
+    describe('if search is not defined', () => {
+      it('list is not defined', () => {
         expect(scope.context.list).toBeUndefined();
       });
     });
 
-    describe('if search is set', function () {
-      beforeEach(function () {
+    describe('if search is set', () => {
+      beforeEach(() => {
         scope.context.view.searchText = 'thing';
         scope.context.view.searchFilters = [];
         scope.$digest();
       });
 
-      it('page is set to the first one', function () {
+      it('page is set to the first one', () => {
         expect(scope.searchController.paginator.getPage()).toBe(0);
       });
     });
   });
 
 
-  describe('page parameters change trigger assets reset', function () {
-    beforeEach(function () {
+  describe('page parameters change trigger assets reset', () => {
+    beforeEach(() => {
       stubs.reset = sinon.stub(scope.searchController, 'resetAssets');
     });
 
-    afterEach(function () {
+    afterEach(() => {
       stubs.reset.restore();
     });
 
-    it('search', function () {
+    it('search', () => {
       scope.context.view = {};
       scope.searchController.paginator.setPage(0);
       scope.$digest();
@@ -117,25 +118,25 @@ describe('Asset List Controller', function () {
       sinon.assert.calledOnce(stubs.reset);
     });
 
-    it('page', function () {
+    it('page', () => {
       scope.searchController.paginator.setPage(1);
       scope.$digest();
       sinon.assert.called(stubs.reset);
     });
 
-    it('page length', function () {
+    it('page length', () => {
       scope.pageLength = 10;
       scope.$digest();
       sinon.assert.called(stubs.reset);
     });
 
-    it('list', function () {
+    it('list', () => {
       scope.context.list = 'all';
       scope.$digest();
       sinon.assert.called(stubs.reset);
     });
 
-    it('space id', function () {
+    it('space id', () => {
       stubs.id = sinon.stub(spaceContext.space, 'getId');
       stubs.id.returns(123);
       scope.$digest();
@@ -144,38 +145,38 @@ describe('Asset List Controller', function () {
     });
   });
 
-  describe('resetting assets', function () {
+  describe('resetting assets', () => {
     let assets;
-    beforeEach(function () {
+    beforeEach(() => {
       assets = createAssets(30);
       getAssets.resolve(assets);
     });
 
-    it('unsets isSearching flag if successful', function () {
+    it('unsets isSearching flag if successful', () => {
       scope.searchController.resetAssets();
       scope.$apply();
       expect(scope.context.isSearching).toBe(false);
     });
 
-    it('loads assets', function () {
+    it('loads assets', () => {
       scope.searchController.resetAssets();
       scope.$apply();
       sinon.assert.called(stubs.getAssets);
     });
 
-    it('sets assets num on the paginator', function () {
+    it('sets assets num on the paginator', () => {
       scope.searchController.resetAssets();
       scope.$apply();
       expect(scope.searchController.paginator.getTotal()).toEqual(30);
     });
 
-    it('sets assets on scope', function () {
+    it('sets assets on scope', () => {
       scope.searchController.resetAssets();
       scope.$apply();
       expect(scope.assets).toEqual(assets);
     });
 
-    it('filters out deleted assets', function () {
+    it('filters out deleted assets', () => {
       assets[0].isDeleted = _.constant(true);
       scope.searchController.resetAssets();
       scope.$apply();
@@ -183,27 +184,27 @@ describe('Asset List Controller', function () {
       expect(scope.assets.indexOf(assets[0])).toBe(-1);
     });
 
-    it('updates selected items with retrieved list', function () {
+    it('updates selected items with retrieved list', () => {
       scope.searchController.resetAssets();
       scope.$apply();
       sinon.assert.called(scope.selection.updateList.withArgs(assets));
     });
 
-    describe('creates a query object', function () {
-      it('with a defined order', function () {
+    describe('creates a query object', () => {
+      it('with a defined order', () => {
         scope.context.list = 'all';
         scope.searchController.resetAssets();
         scope.$apply();
         expect(stubs.getAssets.args[0][0].order).toEqual('-sys.updatedAt');
       });
 
-      it('with a defined limit', function () {
+      it('with a defined limit', () => {
         scope.searchController.resetAssets();
         scope.$apply();
         expect(stubs.getAssets.args[0][0].limit).toEqual(40);
       });
 
-      it('with a defined skip param', function () {
+      it('with a defined skip param', () => {
         const SKIP = 1337;
         scope.searchController.paginator.getSkipParam = sinon.stub().returns(SKIP);
         scope.searchController.resetAssets();
@@ -213,7 +214,7 @@ describe('Asset List Controller', function () {
     });
   });
 
-  describe('Api Errors', function () {
+  describe('Api Errors', () => {
     beforeEach(function () {
       this.handler = this.$inject('ReloadNotification').apiErrorHandler;
       stubs.getAssets.returns($q.reject({statusCode: 500}));
@@ -232,9 +233,9 @@ describe('Asset List Controller', function () {
     });
   });
 
-  describe('loadMore', function () {
+  describe('loadMore', () => {
     let assets;
-    beforeEach(function () {
+    beforeEach(() => {
       assets = createAssets(30);
 
       scope.assets = createAssets(60);
@@ -248,25 +249,25 @@ describe('Asset List Controller', function () {
       scope.searchController.paginator.isAtLast = sinon.stub().returns(false);
     });
 
-    it('doesnt load if on last page', function () {
+    it('doesnt load if on last page', () => {
       scope.searchController.paginator.isAtLast.returns(true);
       scope.searchController.loadMore();
       sinon.assert.notCalled(stubs.getAssets);
     });
 
-    it('paginator count is increased', function () {
+    it('paginator count is increased', () => {
       scope.searchController.paginator.setPage(0);
       scope.searchController.loadMore();
       expect(scope.searchController.paginator.getPage()).toBe(1);
     });
 
-    it('gets query params', function () {
+    it('gets query params', () => {
       scope.searchController.loadMore();
       scope.$apply();
       expect(stubs.getAssets.args[0][0]).toBeDefined();
     });
 
-    it('should work on the page before the last', function () {
+    it('should work on the page before the last', () => {
       // Regression test for https://www.pivotaltracker.com/story/show/57743532
       scope.searchController.paginator.setTotal(47);
       scope.searchController.paginator.setPage(0);
@@ -275,29 +276,29 @@ describe('Asset List Controller', function () {
       sinon.assert.called(stubs.getAssets);
     });
 
-    describe('on successful load response', function () {
-      beforeEach(function () {
+    describe('on successful load response', () => {
+      beforeEach(() => {
         getAssets.resolve(assets);
         scope.$apply();
         scope.searchController.paginator.setPage(1);
         scope.searchController.loadMore();
       });
 
-      it('sets num assets', function () {
+      it('sets num assets', () => {
         scope.$apply();
         expect(scope.searchController.paginator.getTotal()).toEqual(30);
       });
 
-      it('appends assets to scope', function () {
+      it('appends assets to scope', () => {
         scope.$apply();
-        scope.assets.slice(60).forEach(function (asset, i) {
+        scope.assets.slice(60).forEach((asset, i) => {
           expect(assets[i]).toBe(asset);
         });
       });
     });
 
-    describe('on failed load response', function () {
-      beforeEach(function () {
+    describe('on failed load response', () => {
+      beforeEach(() => {
         getAssets.resolve(assets);
         scope.searchController.paginator.setPage(1);
         scope.$apply(); // trigger resetAssets
@@ -307,17 +308,17 @@ describe('Asset List Controller', function () {
         scope.$apply(); // trigger loadMore promises
       });
 
-      it('appends assets to scope', function () {
+      it('appends assets to scope', () => {
         sinon.assert.notCalled(scope.assets.push);
       });
 
-      it('sends an error', function () {
+      it('sends an error', () => {
         sinon.assert.called(stubs.logError);
       });
     });
 
-    describe('on previous page', function () {
-      beforeEach(function () {
+    describe('on previous page', () => {
+      beforeEach(() => {
         scope.$apply(); // trigger resetAssets
         getAssets.reject();
         scope.$apply();
@@ -327,17 +328,17 @@ describe('Asset List Controller', function () {
         scope.$apply();
       });
 
-      it('appends assets to scope', function () {
+      it('appends assets to scope', () => {
         sinon.assert.notCalled(scope.assets.push);
       });
 
-      it('pagination count decreases', function () {
+      it('pagination count decreases', () => {
         expect(scope.searchController.paginator.getPage()).toBe(1);
       });
     });
   });
 
-  describe('creating multiple assets', function () {
+  describe('creating multiple assets', () => {
     beforeEach(function () {
       const files = [{fileName: 'x.jpg'}, {fileName: 'y.png'}];
       scope.searchController.resetAssets = sinon.stub().resolves();
@@ -362,23 +363,23 @@ describe('Asset List Controller', function () {
       this.$apply();
     });
 
-    it('Filestack.pickMultiple is called', function () {
+    it('Filestack.pickMultiple is called', () => {
       sinon.assert.calledOnce(stubs.pickMultiple);
     });
 
-    it('asset is created', function () {
+    it('asset is created', () => {
       sinon.assert.calledTwice(spaceContext.space.createAsset);
     });
 
-    it('process is triggered', function () {
+    it('process is triggered', () => {
       sinon.assert.calledTwice(stubs.process);
     });
   });
 
-  describe('#showNoAssetsAdvice', function () {
+  describe('#showNoAssetsAdvice', () => {
     beforeEach(function () {
       scope.context.view = {};
-      this.assertShowNoAssetsAdvice = function ({total, term, searching, expected}) {
+      this.assertShowNoAssetsAdvice = ({total, term, searching, expected}) => {
         scope.searchController.paginator.setTotal(total);
         scope.context.view.searchText = term;
         scope.context.isSearching = searching;

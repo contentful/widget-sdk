@@ -1,8 +1,8 @@
 import * as K from 'helpers/mocks/kefir';
 
-describe('bulk editor', function () {
+describe('bulk editor', () => {
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
       $provide.removeDirectives('cfWidgetApi', 'cfWidgetRenderer');
     });
@@ -18,16 +18,14 @@ describe('bulk editor', function () {
 
     this.spaceContext = this.$inject('mocks/spaceContext').init();
 
-    this.spaceContext.space.getEntries = function (query) {
+    this.spaceContext.space.getEntries = query => {
       const ids = query['sys.id[in]'].split(',');
       const entities = ids.map((id) => makeEntry(id, 'CTID'));
       return $q.resolve(entities);
     };
 
     this.spaceContext.publishedCTs.getAllBare = () => [];
-    this.spaceContext.publishedCTs.fetch = function (id) {
-      return $q.resolve(makeContentType(id));
-    };
+    this.spaceContext.publishedCTs.fetch = id => $q.resolve(makeContentType(id));
 
     this.compile = function (ids = []) {
       const referenceContext = {

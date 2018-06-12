@@ -9,7 +9,7 @@
  * object where it is needed.
  */
 angular.module('cf.app')
-.factory('EntityHelpers', ['require', function (require) {
+.factory('EntityHelpers', ['require', require => {
   var $q = require('$q');
   var spaceContext = require('spaceContext');
   var assetUrlFilter = require('$filter')('assetUrl');
@@ -38,11 +38,7 @@ angular.module('cf.app')
    * method to work.
    */
   function spaceContextDelegator (methodName, localeCode) {
-    return function (data) {
-      return dataToEntity(data).then(function (entity) {
-        return spaceContext[methodName](entity, localeCode);
-      });
-    };
+    return data => dataToEntity(data).then(entity => spaceContext[methodName](entity, localeCode));
   }
 
   /**
@@ -57,9 +53,9 @@ angular.module('cf.app')
     if (data.sys.type === 'Entry') {
       prepareFields = spaceContext
       .publishedCTs.fetch(ctId)
-      .then(function (ct) {
+      .then(ct => {
         if (ct) {
-          return _.transform(ct.data.fields, function (acc, ctField) {
+          return _.transform(ct.data.fields, (acc, ctField) => {
             var field = _.get(data, ['fields', ctField.apiName]);
             if (field) {
               acc[ctField.id] = field;
@@ -71,13 +67,11 @@ angular.module('cf.app')
       });
     }
 
-    return prepareFields.then(function (fields) {
-      return {
-        data: {fields: fields, sys: data.sys},
-        getType: _.constant(data.sys.type),
-        getContentTypeId: _.constant(ctId)
-      };
-    });
+    return prepareFields.then(fields => ({
+      data: {fields: fields, sys: data.sys},
+      getType: _.constant(data.sys.type),
+      getContentTypeId: _.constant(ctId)
+    }));
   }
 
   function assetFile (data, locale) {
@@ -105,9 +99,7 @@ angular.module('cf.app')
     }
     var validations = (field.type === 'Array' ? field.items : field).validations;
 
-    var contentTypeValidation = _.find(validations, function (validation) {
-      return !!validation.linkContentType;
-    });
+    var contentTypeValidation = _.find(validations, validation => !!validation.linkContentType);
 
     return contentTypeValidation ? contentTypeValidation.linkContentType : [];
   }

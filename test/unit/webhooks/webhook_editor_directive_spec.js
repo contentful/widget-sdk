@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Webhook Editor directive', function () {
+describe('Webhook Editor directive', () => {
   beforeEach(function () {
     this.go = sinon.stub();
 
@@ -33,7 +33,7 @@ describe('Webhook Editor directive', function () {
     this.button = (label) => this.element.find(`button:contains("${label}")`).first();
   });
 
-  describe('Editor new and dirty state', function () {
+  describe('Editor new and dirty state', () => {
     it('marks as dirty for a new webhook', function () {
       this.compile({isNew: true});
       expect(this.scope.context.dirty).toBe(true);
@@ -53,7 +53,7 @@ describe('Webhook Editor directive', function () {
     });
   });
 
-  describe('Action buttons', function () {
+  describe('Action buttons', () => {
     it('hides "delete" button for new webhooks', function () {
       this.compile({isNew: true});
       expect(this.button('Remove')).toBeNgHidden();
@@ -74,7 +74,7 @@ describe('Webhook Editor directive', function () {
     });
   });
 
-  describe('Checks if API has Basic Auth credentials', function () {
+  describe('Checks if API has Basic Auth credentials', () => {
     const PASSWORD_FIELD_ID = '#webhook-http-basic-password';
 
     it('looks for username on initialization', function () {
@@ -112,10 +112,10 @@ describe('Webhook Editor directive', function () {
     });
   });
 
-  describe('Saving webhook', function () {
+  describe('Saving webhook', () => {
     const SUCCESS_MSG = 'Webhook "test" saved successfully.';
 
-    describe('Model handling', function () {
+    describe('Model handling', () => {
       beforeEach(function () {
         this.compile({isNew: false}, {name: 'test', url: 'http://test.com', topics: ['*.*']});
       });
@@ -144,7 +144,7 @@ describe('Webhook Editor directive', function () {
       });
     });
 
-    describe('New webhook', function () {
+    describe('New webhook', () => {
       beforeEach(function () {
         this.compile({isNew: true}, {name: 'test', url: 'http://test.com', topics: ['*.*']});
         const saved = _.cloneDeep(this.scope.webhook);
@@ -168,7 +168,7 @@ describe('Webhook Editor directive', function () {
       });
     });
 
-    describe('Existing webhook', function () {
+    describe('Existing webhook', () => {
       beforeEach(function () {
         this.compile({isNew: false}, {sys: {id: 'whid'}, name: 'old', url: 'http://test.com', topics: ['*.*']});
         this.scope.webhook.name = 'test';
@@ -194,7 +194,7 @@ describe('Webhook Editor directive', function () {
       });
     });
 
-    describe('Frontend validation', function () {
+    describe('Frontend validation', () => {
       beforeEach(function () {
         this.clickSave = (wh) => {
           this.compile({isNew: true}, wh);
@@ -219,7 +219,7 @@ describe('Webhook Editor directive', function () {
       });
     });
 
-    describe('Server errors', function () {
+    describe('Server errors', () => {
       beforeEach(function () {
         this.rejectWithError = (err) => {
           this.compile({isNew: true}, {name: 'test', url: 'http://test.com', topics: ['*.*']});
@@ -257,7 +257,7 @@ describe('Webhook Editor directive', function () {
     });
   });
 
-  describe('Deleting webhook', function () {
+  describe('Deleting webhook', () => {
     let modal;
     beforeEach(function () {
       modal = this.$inject('modalDialog');

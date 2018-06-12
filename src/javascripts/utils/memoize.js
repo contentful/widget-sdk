@@ -15,16 +15,14 @@ angular.module('cf.utils')
  * runOnce() // Returns true and logs 'run'
  * runOnce() // Returns true
  */
-.factory('utils/memoize', [function () {
-  return function memoize (fn) {
-    var result;
-    var called = false;
-    return function () {
-      if (!called) {
-        result = fn();
-        called = true;
-      }
-      return result;
-    };
+.factory('utils/memoize', [() => function memoize (fn) {
+  var result;
+  var called = false;
+  return () => {
+    if (!called) {
+      result = fn();
+      called = true;
+    }
+    return result;
   };
 }]);

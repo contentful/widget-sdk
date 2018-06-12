@@ -1,19 +1,17 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfContentPreviewList', [function () {
-  return {
-    template: JST.content_preview_list(),
-    restrict: 'E',
-    controller: 'cfContentPreviewListController',
-    scope: true
-  };
-}])
+.directive('cfContentPreviewList', [() => ({
+  template: JST.content_preview_list(),
+  restrict: 'E',
+  controller: 'cfContentPreviewListController',
+  scope: true
+})])
 
-.controller('cfContentPreviewListController', ['require', '$scope', function (require, $scope) {
+.controller('cfContentPreviewListController', ['require', '$scope', (require, $scope) => {
   var contentPreview = require('contentPreview');
 
-  contentPreview.getAll().then(function (environments) {
+  contentPreview.getAll().then(environments => {
     $scope.previewEnvironments = mapList(environments);
     $scope.context.ready = true;
   });
@@ -21,13 +19,11 @@ angular.module('contentful')
   $scope.maxPreviewEnvironments = contentPreview.MAX_PREVIEW_ENVIRONMENTS;
 
   function mapList (environments) {
-    return _.values(environments).map(function (env) {
-      return {
-        id: env.sys.id,
-        name: env.name,
-        description: env.description
-      };
-    });
+    return _.values(environments).map(env => ({
+      id: env.sys.id,
+      name: env.name,
+      description: env.description
+    }));
   }
 
 

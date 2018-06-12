@@ -1,6 +1,6 @@
-describe('widgets/migrations', function () {
+describe('widgets/migrations', () => {
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.value('widgets/migrations/data', []);
     });
 

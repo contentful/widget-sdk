@@ -105,12 +105,10 @@ export default function (queryEntities) {
  */
 function getEntitiesById (queryEntities, ids) {
   const queries = chunk(uniq(ids), IDS_PER_QUERY)
-  .map(function (ids) {
-    return queryEntities({
-      'sys.id[in]': ids.join(','),
-      limit: IDS_PER_QUERY
-    });
-  });
+  .map(ids => queryEntities({
+    'sys.id[in]': ids.join(','),
+    limit: IDS_PER_QUERY
+  }));
 
   return $q.all(queries).then(flatten);
 }

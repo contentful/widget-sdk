@@ -1,6 +1,6 @@
 angular.module('contentful')
 
-.directive('cfSpaceSettings', ['require', function (require) {
+.directive('cfSpaceSettings', ['require', require => {
   var renderString = require('ui/Framework').renderString;
   var templates = require('components/tabs/space_settings/space_settings_templates');
 
@@ -11,7 +11,7 @@ angular.module('contentful')
   };
 }])
 
-.controller('SpaceSettingsController', ['require', '$scope', function (require, $scope) {
+.controller('SpaceSettingsController', ['require', '$scope', (require, $scope) => {
   var $q = require('$q');
   var $state = require('$state');
   var spaceContext = require('spaceContext');
@@ -27,7 +27,7 @@ angular.module('contentful')
   $scope.spaceId = space.sys.id;
   $scope.model = {name: space.name};
   $scope.save = Command.create(save, {disabled: isSaveDisabled});
-  $scope.openRemovalDialog = Command.create(function () {
+  $scope.openRemovalDialog = Command.create(() => {
     openRemovalDialog({
       space: space,
       onSuccess: function () { $state.go('home'); }
@@ -37,14 +37,12 @@ angular.module('contentful')
 
   function save () {
     return spaceContext.cma.renameSpace($scope.model.name, space.sys.version)
-    .then(function () {
+    .then(() => {
       TokenStore.refresh();
       return TokenStore.getSpace(space.sys.id);
     })
-    .then(function (space) {
-      return spaceContext.resetWithSpace(space);
-    })
-    .then(function () {
+    .then(space => spaceContext.resetWithSpace(space))
+    .then(() => {
       space = spaceContext.space.data;
       notification.info('Space renamed to ' + $scope.model.name + ' successfully.');
     })

@@ -25,7 +25,7 @@
  * ]);
  */
 angular.module('contentful/mocks')
-.factory('mocks/TheLocaleStore', ['$injector', function ($injector) {
+.factory('mocks/TheLocaleStore', ['$injector', $injector => {
   const createBase = $injector.get('TheLocaleStore/implementation').create;
   const getStore = $injector.get('TheStore').getStore;
   const localeStoreMock = createBase(getStore);
@@ -42,7 +42,7 @@ angular.module('contentful/mocks')
    *
    * @param {Array<API.Locale>} locales
    */
-  localeStoreMock.setLocales = function (locales) {
+  localeStoreMock.setLocales = locales => {
     locales = locales.map(locale => _.extend({
       sys: {space: {sys: {id: 'SID'}}},
       internal_code: `${locale.code}-internal`,

@@ -1,10 +1,10 @@
-describe('cfThumbnailDirective', function () {
+describe('cfThumbnailDirective', () => {
   beforeEach(function () {
     module('contentful/test');
 
     const $compile = this.$inject('$compile');
     const $rootScope = this.$inject('$rootScope');
-    this.compile = function (file, attrs = {}) {
+    this.compile = (file, attrs = {}) => {
       const element = $('<cf-thumbnail>');
       const scope = $rootScope.$new();
       scope.file = file;
@@ -20,7 +20,7 @@ describe('cfThumbnailDirective', function () {
     tokenStore.getDomains = sinon.stub().returns({});
   });
 
-  describe('file without preview', function () {
+  describe('file without preview', () => {
     it('does not render preview for non-images MIME types', function () {
       const el = this.compile({
         url: '//images.contentful.com/image.png',
@@ -38,12 +38,12 @@ describe('cfThumbnailDirective', function () {
     });
   });
 
-  describe('file with image preview', function () {
+  describe('file with image preview', () => {
     const imageUrl = 'https://images.contentful.com/path';
 
     beforeEach(function () {
       const compile = this.compile;
-      this.compile = function (attrs) {
+      this.compile = attrs => {
         const file = {
           url: imageUrl,
           contentType: 'image/png'

@@ -2,7 +2,7 @@ import * as K from 'helpers/mocks/kefir';
 import { h } from 'ui/Framework';
 import { observeResize } from 'ui/ResizeDetector';
 
-describe('ui/ResizeDetector', function () {
+describe('ui/ResizeDetector', () => {
   beforeEach(function () {
     const view = this.createUI();
     view.render(h('#container', {

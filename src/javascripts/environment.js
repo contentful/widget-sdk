@@ -11,7 +11,7 @@
  * TODO This service should be replaced by the 'Config' service
  */
 angular.module('contentful/environment')
-.constant('environment', (function () {
+.constant('environment', ((() => {
   var injected = extractInjectedConfig();
 
   /**
@@ -43,4 +43,4 @@ angular.module('contentful/environment')
       return defaultValue;
     }
   }
-}()));
+})()));

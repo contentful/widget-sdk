@@ -1,4 +1,4 @@
-describe('FieldDialogAppearanceController', function () {
+describe('FieldDialogAppearanceController', () => {
   beforeEach(function () {
     module('contentful/test');
     const $controller = this.$inject('$controller');

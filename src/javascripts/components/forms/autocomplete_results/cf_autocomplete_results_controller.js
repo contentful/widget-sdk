@@ -8,7 +8,7 @@ angular.module('contentful').controller('CfAutocompleteResultsController', ['$sc
 
   var unwatchResults = $scope.$watch(
     getAutocompleteResults,
-  function (results) {
+  results => {
     if (_.isEmpty(results)) {
       controller.selectedIndex = -1;
       controller.numResults = 0;
@@ -54,7 +54,7 @@ angular.module('contentful').controller('CfAutocompleteResultsController', ['$sc
     return !event.defaultPrevented;
   };
 
-  $scope.$on('$destroy', function () {
+  $scope.$on('$destroy', () => {
     unwatchResults();
     unwatchResults = null;
     $scope = null; // MEMLEAK FIX

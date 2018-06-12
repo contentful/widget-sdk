@@ -1,6 +1,6 @@
 import * as sinon from 'helpers/sinon';
 
-describe('states/Deeplink', function () {
+describe('states/Deeplink', () => {
   beforeEach(function () {
     this.getFromStore = sinon.stub();
     this.getSpaces = sinon.stub();
@@ -65,7 +65,7 @@ describe('states/Deeplink', function () {
     expect($scope.status).toBe('not_exist');
   });
 
-  describe('#api', function () {
+  describe('#api', () => {
     it('should redirect to the general api page if no keys', function* () {
       this.search.returns({ link: 'api' });
       this.store.set('lastUsedSpace', 'test2');
@@ -139,7 +139,7 @@ describe('states/Deeplink', function () {
     });
   });
 
-  describe('#invite', function () {
+  describe('#invite', () => {
     it('should redirect to invite users page', function* () {
       this.search.returns({ link: 'invite' });
       this.store.set('lastUsedOrg', 'some');
@@ -201,7 +201,7 @@ describe('states/Deeplink', function () {
     });
   });
 
-  describe('#users', function () {
+  describe('#users', () => {
     it('should redirect to users list page', function* () {
       this.search.returns({ link: 'users' });
       this.store.set('lastUsedOrg', 'some');
@@ -239,7 +239,7 @@ describe('states/Deeplink', function () {
     });
   });
 
-  describe('#subscription', function () {
+  describe('#subscription', () => {
     it('should redirect to subscription page', function* () {
       this.search.returns({ link: 'subscription' });
       this.store.set('lastUsedOrg', 'some');
@@ -277,7 +277,7 @@ describe('states/Deeplink', function () {
     });
   });
 
-  describe('#org', function () {
+  describe('#org', () => {
     it('should redirect to org info page', function* () {
       this.search.returns({ link: 'org' });
       this.store.set('lastUsedOrg', 'some');

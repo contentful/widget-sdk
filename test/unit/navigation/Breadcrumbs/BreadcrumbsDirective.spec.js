@@ -2,7 +2,7 @@ import {constant, range} from 'lodash';
 import * as sinon from 'helpers/sinon';
 import * as DOM from 'helpers/DOM';
 
-describe('cfBreadcrumbsDirective spec', function () {
+describe('cfBreadcrumbsDirective spec', () => {
   beforeEach(function () {
     module('contentful/test');
 
@@ -33,7 +33,7 @@ describe('cfBreadcrumbsDirective spec', function () {
     };
   });
 
-  describe('ancestor menu', function () {
+  describe('ancestor menu', () => {
     it('is only shown for more then two crumbs', function () {
       this.setCrumbs(1);
       this.view.find('breadcrumbs-ancestor-btn').assertNotVisible();
@@ -68,7 +68,7 @@ describe('cfBreadcrumbsDirective spec', function () {
     });
   });
 
-  describe('"back" button', function () {
+  describe('"back" button', () => {
     it('goes back to second to last crumb', function () {
       this.setCrumbs(4);
       this.view.find('breadcrumbs-back-btn').click();

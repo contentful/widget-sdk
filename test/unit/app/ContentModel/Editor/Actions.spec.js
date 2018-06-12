@@ -1,6 +1,6 @@
 import sinon from 'npm:sinon';
 
-describe('app/ContentModel/Editor/Actions', function () {
+describe('app/ContentModel/Editor/Actions', () => {
   let controller, scope, $q, logger, notification, accessChecker, ReloadNotification, spaceContext;
   let space, contentType;
 
@@ -23,7 +23,7 @@ describe('app/ContentModel/Editor/Actions', function () {
 
   beforeEach(function () {
     const self = this;
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.value('navigation/closeState', self.closeSpy = sinon.spy());
       $provide.value('utils/LaunchDarkly', {
         getCurrentVariation: sinon.stub().resolves(false)
@@ -57,7 +57,7 @@ describe('app/ContentModel/Editor/Actions', function () {
     controller = this.$inject('app/ContentModel/Editor/Actions').default(scope);
   });
 
-  describe('#delete command', function () {
+  describe('#delete command', () => {
     beforeEach(function () {
       contentType.delete = sinon.stub().resolves();
       contentType.unpublish = sinon.stub().resolves(contentType);
@@ -75,7 +75,7 @@ describe('app/ContentModel/Editor/Actions', function () {
       });
     });
 
-    describe('without entries', function () {
+    describe('without entries', () => {
       it('calls unpublish and then delete', function () {
         controller.delete.execute();
         this.$apply();
@@ -118,7 +118,7 @@ describe('app/ContentModel/Editor/Actions', function () {
       });
     });
 
-    describe('delete flow interruptions', function () {
+    describe('delete flow interruptions', () => {
       function testForbiddenRemoval (dialog, data) {
         const matchObj = {
           template: 'content_type_removal_forbidden_dialog',
@@ -154,21 +154,21 @@ describe('app/ContentModel/Editor/Actions', function () {
         testForbiddenRemoval(this.modalDialog, {count: 1});
       });
 
-      it('fails for 404 when entries can be read by policy', function () {
+      it('fails for 404 when entries can be read by policy', () => {
         accessChecker.canPerformActionOnEntryOfType.returns(true);
         space.getEntries.rejects({statusCode: 404});
         testEndpointError();
       });
 
-      it('fails for non-404 status codes', function () {
+      it('fails for non-404 status codes', () => {
         accessChecker.canPerformActionOnEntryOfType.returns(true);
         space.getEntries.rejects({statusCode: 500});
         testEndpointError();
       });
     });
 
-    describe('when CT is not published', function () {
-      beforeEach(function () {
+    describe('when CT is not published', () => {
+      beforeEach(() => {
         contentType.isPublished = sinon.stub().returns(false);
       });
 
@@ -197,7 +197,7 @@ describe('app/ContentModel/Editor/Actions', function () {
     sinon.assert.calledWith(this.$state.go, '^.^.list');
   });
 
-  describe('#save command', function () {
+  describe('#save command', () => {
     beforeEach(function () {
       spaceContext.editingInterfaces.save = sinon.stub().resolves();
       spaceContext.editingInterfaces.get = sinon.stub().resolves({
@@ -216,25 +216,23 @@ describe('app/ContentModel/Editor/Actions', function () {
       scope.contentType.publish = sinon.stub().returns(this.when(scope.contentType));
     });
 
-    it('resets form and state context to pristine state', function () {
+    it('resets form and state context to pristine state', () => {
       scope.context.dirty = true;
       return controller.save.execute()
-      .then(function () {
+      .then(() => {
         expect(scope.context.dirty).toBe(false);
         expect(scope.contentTypeForm.$pristine).toBe(true);
       });
     });
 
-    it('saves and publishes content type', function () {
-      return controller.save.execute()
-      .then(function () {
-        const ct = scope.contentType;
-        sinon.assert.calledOnce(ct.save);
-        sinon.assert.calledOnce(ct.publish);
-      });
-    });
+    it('saves and publishes content type', () => controller.save.execute()
+    .then(() => {
+      const ct = scope.contentType;
+      sinon.assert.calledOnce(ct.save);
+      sinon.assert.calledOnce(ct.publish);
+    }));
 
-    it('saves editing interface', function () {
+    it('saves editing interface', () => {
       spaceContext.editingInterfaces.get = sinon.stub().resolves({
         sys: { version: 10 },
         controls: []
@@ -242,7 +240,7 @@ describe('app/ContentModel/Editor/Actions', function () {
 
 
       return controller.save.execute()
-      .then(function () {
+      .then(() => {
         sinon.assert.calledOnce(spaceContext.editingInterfaces.save);
 
         const callArgs = spaceContext.editingInterfaces.save.getCall(0).args;
@@ -272,60 +270,48 @@ describe('app/ContentModel/Editor/Actions', function () {
       expect(scope.editingInterface).toBe('NEW EI');
     });
 
-    describe('with invalid data', function () {
-      beforeEach(function () {
+    describe('with invalid data', () => {
+      beforeEach(() => {
         scope.validate.returns(false);
         scope.validationResult = {errors: []};
       });
 
-      it('does not save entities', function () {
-        return controller.save.execute()
-        .catch(function () {
-          sinon.assert.notCalled(spaceContext.editingInterfaces.save);
-          sinon.assert.notCalled(scope.contentType.save);
-        });
-      });
+      it('does not save entities', () => controller.save.execute()
+      .catch(() => {
+        sinon.assert.notCalled(spaceContext.editingInterfaces.save);
+        sinon.assert.notCalled(scope.contentType.save);
+      }));
 
-      it('shows error message', function () {
-        return controller.save.execute()
-        .catch(function () {
-          sinon.assert.called(notification.error);
-        });
-      });
+      it('shows error message', () => controller.save.execute()
+      .catch(() => {
+        sinon.assert.called(notification.error);
+      }));
     });
 
-    describe('content type server error', function () {
+    describe('content type server error', () => {
       beforeEach(function () {
         scope.contentType.save.returns(this.reject('err'));
       });
 
-      it('rejects promise', function () {
-        return controller.save.execute()
-        .catch(function (err) {
-          expect(err).toBe('err');
-        });
-      });
+      it('rejects promise', () => controller.save.execute()
+      .catch(err => {
+        expect(err).toBe('err');
+      }));
 
-      it('does not publish content type', function () {
-        return controller.save.execute()
-        .catch(function () {
-          sinon.assert.notCalled(scope.contentType.publish);
-        });
-      });
+      it('does not publish content type', () => controller.save.execute()
+      .catch(() => {
+        sinon.assert.notCalled(scope.contentType.publish);
+      }));
 
-      it('shows error message', function () {
-        return controller.save.execute()
-        .catch(function () {
-          sinon.assert.called(notification.error);
-        });
-      });
+      it('shows error message', () => controller.save.execute()
+      .catch(() => {
+        sinon.assert.called(notification.error);
+      }));
 
-      it('does not reset form', function () {
-        return controller.save.execute()
-        .catch(function () {
-          expect(scope.contentTypeForm.$pristine).toBe(false);
-        });
-      });
+      it('does not reset form', () => controller.save.execute()
+      .catch(() => {
+        expect(scope.contentTypeForm.$pristine).toBe(false);
+      }));
     });
 
     it('redirects if the content type is new', function* () {
@@ -339,8 +325,8 @@ describe('app/ContentModel/Editor/Actions', function () {
     });
   });
 
-  describe('#save command disabled', function () {
-    beforeEach(function () {
+  describe('#save command disabled', () => {
+    beforeEach(() => {
       scope.contentTypeForm = {
         $dirty: true
       };
@@ -351,20 +337,20 @@ describe('app/ContentModel/Editor/Actions', function () {
       scope.contentType.data.sys.publishedVersion = 1;
     });
 
-    it('is true when form is pristine', function () {
+    it('is true when form is pristine', () => {
       expect(controller.save.isDisabled()).toBe(false);
       scope.contentTypeForm.$dirty = false;
       expect(controller.save.isDisabled()).toBe(true);
     });
 
-    it('is false when form is pristine and Content Type unpublished', function () {
+    it('is false when form is pristine and Content Type unpublished', () => {
       expect(controller.save.isDisabled()).toBe(false);
       scope.contentTypeForm.$dirty = false;
       delete scope.contentType.data.sys.publishedVersion;
       expect(controller.save.isDisabled()).toBe(false);
     });
 
-    it('is true when content type has no fields', function () {
+    it('is true when content type has no fields', () => {
       expect(controller.save.isDisabled()).toBe(false);
       scope.contentType.data.fields = [];
       expect(controller.save.isDisabled()).toBe(true);
@@ -372,14 +358,14 @@ describe('app/ContentModel/Editor/Actions', function () {
       expect(controller.save.isDisabled()).toBe(true);
     });
 
-    it('is false when all fields are disabled', function () {
+    it('is false when all fields are disabled', () => {
       expect(controller.save.isDisabled()).toBe(false);
       scope.contentType.data.fields[0].disabled = true;
       expect(controller.save.isDisabled()).toBe(true);
     });
   });
 
-  describe('#duplicate command', function () {
+  describe('#duplicate command', () => {
     function getCreatedCt () {
       return spaceContext.space.newContentType.returnValues[0];
     }
@@ -415,25 +401,24 @@ describe('app/ContentModel/Editor/Actions', function () {
       sinon.stub(spaceContext.editingInterfaces, 'get').callsFake((ctData) => {
         return $q.resolve({
           sys: { version: 1 },
-          controls: _.map(ctData.fields, function (field) {
-            return { field: field, widgetId: 'some-widget' };
-          })
+          controls: _.map(ctData.fields, field => ({
+            field: field,
+            widgetId: 'some-widget'
+          }))
         });
       });
     });
 
-    it('creates new content types type with a provided name', function () {
-      return controller.duplicate.execute().then(function () {
-        sinon.assert.calledOnce(spaceContext.space.newContentType);
-        expect(spaceContext.space.newContentType.firstCall.args[0].name).toBe('test');
-      });
-    });
+    it('creates new content types type with a provided name', () => controller.duplicate.execute().then(() => {
+      sinon.assert.calledOnce(spaceContext.space.newContentType);
+      expect(spaceContext.space.newContentType.firstCall.args[0].name).toBe('test');
+    }));
 
-    it('saves a duplicate with the same field IDs and display field', function () {
+    it('saves a duplicate with the same field IDs and display field', () => {
       contentType.data.displayField = 'field-id-2-disp';
       contentType.data.fields = [{id: 'field-id-1'}, {id: 'field-id-2-disp'}];
 
-      return controller.duplicate.execute().then(function () {
+      return controller.duplicate.execute().then(() => {
         const ct = getCreatedCt();
         sinon.assert.calledOnce(ct.save);
         expect(typeof ct.data.displayField).toBe('string');
@@ -444,20 +429,18 @@ describe('app/ContentModel/Editor/Actions', function () {
       });
     });
 
-    it('publishes content type duplicate', function () {
-      return controller.duplicate.execute().then(function () {
-        sinon.assert.calledOnce(getCreatedCt().publish);
-      });
-    });
+    it('publishes content type duplicate', () => controller.duplicate.execute().then(() => {
+      sinon.assert.calledOnce(getCreatedCt().publish);
+    }));
 
-    it('synchronizes controls in the new EI', function () {
+    it('synchronizes controls in the new EI', () => {
       contentType.data.fields = [{id: 'xyz'}, {id: 'boom'}];
       scope.editingInterface.controls = [
         {widgetId: 'margarita-making-widget'},
         {widgetId: 'some-other-widget'}
       ];
 
-      return controller.duplicate.execute().then(function () {
+      return controller.duplicate.execute().then(() => {
         sinon.assert.calledOnce(spaceContext.editingInterfaces.save);
         const ei = spaceContext.editingInterfaces.save.firstCall.args[1];
         expect(ei.controls[0].widgetId).toBe('margarita-making-widget');
@@ -466,8 +449,8 @@ describe('app/ContentModel/Editor/Actions', function () {
     });
   });
 
-  describe('#duplicate command disabled', function () {
-    beforeEach(function () {
+  describe('#duplicate command disabled', () => {
+    beforeEach(() => {
       scope.context.isNew = false;
       scope.contentTypeForm = {$dirty: false};
       scope.contentType.data.sys.publishedVersion = 100;
@@ -476,12 +459,12 @@ describe('app/ContentModel/Editor/Actions', function () {
       expect(controller.duplicate.isDisabled()).toBe(false);
     });
 
-    it('is true when content type is new', function () {
+    it('is true when content type is new', () => {
       scope.context.isNew = true;
       expect(controller.duplicate.isDisabled()).toBe(true);
     });
 
-    it('is true when from is dirty', function () {
+    it('is true when from is dirty', () => {
       scope.contentTypeForm.$dirty = true;
       expect(controller.duplicate.isDisabled()).toBe(true);
       scope.contentTypeForm.$dirty = false;
@@ -489,12 +472,12 @@ describe('app/ContentModel/Editor/Actions', function () {
       expect(controller.duplicate.isDisabled()).toBe(true);
     });
 
-    it('is true when update/create are denied', function () {
+    it('is true when update/create are denied', () => {
       accessChecker.shouldDisable = _.constant(true);
       expect(controller.duplicate.isDisabled()).toBe(true);
     });
 
-    it('is true when content type is not published', function () {
+    it('is true when content type is not published', () => {
       scope.contentType.isPublished = _.constant(false);
       expect(controller.duplicate.isDisabled()).toBe(true);
     });

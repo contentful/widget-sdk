@@ -18,7 +18,7 @@ angular.module('contentful')
  * @scope.requires {API.Locale} locale
  *   Provided by FieldLocaleController
  */
-.directive('cfIframeWidget', ['require', function (require) {
+.directive('cfIframeWidget', ['require', require => {
   var ERRORS = {
     codes: {
       EBADUPDATE: 'ENTRY UPDATE FAILED'
@@ -47,7 +47,7 @@ angular.module('contentful')
       var entityInfo = scope.entityInfo;
 
       var fields = entityInfo.contentType.fields;
-      var fieldsById = _.transform(fields, function (fieldsById, field) {
+      var fieldsById = _.transform(fields, (fieldsById, field) => {
         fieldsById[field.id] = field;
       }, {});
 
@@ -65,36 +65,36 @@ angular.module('contentful')
         iframe
       );
 
-      scope.$on('$destroy', function () {
+      scope.$on('$destroy', () => {
         widgetAPI.destroy();
       });
 
-      widgetAPI.registerHandler('setValue', function (apiName, localeCode, value) {
+      widgetAPI.registerHandler('setValue', (apiName, localeCode, value) => {
         var path = widgetAPI.buildDocPath(apiName, localeCode);
 
         return doc.setValueAt(path, value)
         .catch(makeErrorHandler(ERRORS.codes.EBADUPDATE, ERRORS.messages.MFAILUPDATE));
       });
 
-      widgetAPI.registerHandler('removeValue', function (apiName, localeCode) {
+      widgetAPI.registerHandler('removeValue', (apiName, localeCode) => {
         var path = widgetAPI.buildDocPath(apiName, localeCode);
 
         return doc.removeValueAt(path)
         .catch(makeErrorHandler(ERRORS.codes.EBADUPDATE, ERRORS.messages.MFAILREMOVAL));
       });
 
-      widgetAPI.registerHandler('setInvalid', function (isInvalid, localeCode) {
+      widgetAPI.registerHandler('setInvalid', (isInvalid, localeCode) => {
         scope.fieldController.setInvalid(localeCode, isInvalid);
       });
 
-      widgetAPI.registerHandler('setActive', function (isActive) {
+      widgetAPI.registerHandler('setActive', isActive => {
         scope.fieldLocale.setActive(isActive);
       });
 
       initializeIframe();
 
       function makeErrorHandler (code, msg) {
-        return function (e) {
+        return e => {
           if (e && e.message) {
             e = e.message;
           }
@@ -109,8 +109,8 @@ angular.module('contentful')
       }
 
       function initializeIframe () {
-        $iframe.one('load', function () {
-          scope.$applyAsync(function () {
+        $iframe.one('load', () => {
+          scope.$applyAsync(() => {
             widgetAPI.connect();
           });
         });
@@ -122,25 +122,23 @@ angular.module('contentful')
         }
       }
 
-      K.onValueScope(scope, doc.sysProperty, function (sys) {
+      K.onValueScope(scope, doc.sysProperty, sys => {
         widgetAPI.send('sysChanged', [sys]);
       });
 
-      K.onValueScope(scope, scope.fieldLocale.errors$, function (errors) {
+      K.onValueScope(scope, scope.fieldLocale.errors$, errors => {
         errors = errors || [];
         widgetAPI.send('schemaErrorsChanged', [errors]);
       });
 
-      var fieldChanges = doc.changes.filter(function (path) {
-        return PathUtils.isAffecting(path, ['fields']);
-      });
+      var fieldChanges = doc.changes.filter(path => PathUtils.isAffecting(path, ['fields']));
 
-      K.onValueScope(scope, fieldChanges, function (path) {
+      K.onValueScope(scope, fieldChanges, path => {
         updateWidgetValue(path[1], path[2]);
       });
 
       // Send a message when the disabled status of the field changes
-      scope.$watch(isEditingDisabled, function (isDisabled) {
+      scope.$watch(isEditingDisabled, isDisabled => {
         widgetAPI.send('isDisabledChanged', [isDisabled]);
       });
 
@@ -170,7 +168,7 @@ angular.module('contentful')
       }
 
       function updateWidgetFields () {
-        _.forEach(fields, function (field) {
+        _.forEach(fields, field => {
           updateWidgetLocales(field.id);
         });
       }
@@ -185,7 +183,7 @@ angular.module('contentful')
         }
 
         var locales = fieldFactory.getLocaleCodes(field);
-        _.forEach(locales, function (locale) {
+        _.forEach(locales, locale => {
           updateWidgetLocaleValue(fieldId, locale);
         });
       }

@@ -16,7 +16,7 @@ angular.module('contentful')
  * 'Analytics' and use an event stream provided by the 'Analytics'
  * module.
  */
-.factory('analytics/console', ['require', function (require) {
+.factory('analytics/console', ['require', require => {
   var $compile = require('$compile');
   var $rootScope = require('$rootScope');
   var moment = require('moment');
@@ -32,9 +32,7 @@ angular.module('contentful')
   var eventsBus = K.createBus();
   var sessionDataBus = K.createPropertyBus();
 
-  var events$ = eventsBus.stream.scan(function (events, newEvent) {
-    return events.concat([newEvent]);
-  }, []);
+  var events$ = eventsBus.stream.scan((events, newEvent) => events.concat([newEvent]), []);
   events$.onValue(_.noop);
 
   var scope = _.extend($rootScope.$new(true), {
@@ -84,7 +82,7 @@ angular.module('contentful')
       document.body.appendChild(first);
     }
 
-    scope.$applyAsync(function () {
+    scope.$applyAsync(() => {
       scope.isVisible = true;
     });
 
@@ -138,7 +136,7 @@ angular.module('contentful')
   }
 }])
 
-.directive('cfAnalyticsConsole', ['require', function (require) {
+.directive('cfAnalyticsConsole', ['require', require => {
   var $timeout = require('$timeout');
 
   return {
@@ -146,7 +144,7 @@ angular.module('contentful')
     link: function (scope, $el) {
       var containerEl = $el.find('.analytics-console__content').get(0);
 
-      scope.toggleSessionData = function () {
+      scope.toggleSessionData = () => {
         scope.showingSnowplowDebugInfo = false;
         scope.showSessionData = !scope.showSessionData;
 
@@ -157,7 +155,7 @@ angular.module('contentful')
         }
       };
 
-      scope.toggleSnowplowDebugInfo = function () {
+      scope.toggleSnowplowDebugInfo = () => {
         scope.showSessionData = false;
         scope.showingSnowplowDebugInfo = !scope.showingSnowplowDebugInfo;
 
@@ -166,25 +164,25 @@ angular.module('contentful')
         }
       };
 
-      scope.events$.onValue(function (events) {
+      scope.events$.onValue(events => {
         scope.events = events;
         if (!scope.showSessionData) {
           scrollDown();
         }
       });
 
-      scope.sessionData$.onValue(function (data) {
+      scope.sessionData$.onValue(data => {
         scope.sessionData = data;
       });
 
       function scrollDown () {
-        $timeout(function () {
+        $timeout(() => {
           containerEl.scrollTop = containerEl.scrollHeight;
         });
       }
 
       function scrollUp () {
-        $timeout(function () {
+        $timeout(() => {
           containerEl.scrollTop = 0;
         });
       }

@@ -19,7 +19,7 @@
 
 angular.module('contentful/test', ['contentful', 'contentful/mocks'])
 
-.config(['$provide', 'environment', function ($provide) {
+.config(['$provide', 'environment', $provide => {
   // We cannot provide the environment as a constant directly because
   // changes to it would leak between tests.
   $provide.constant('environment', {

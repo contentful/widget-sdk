@@ -1,6 +1,6 @@
 'use strict';
 
-describe('widgets/channel', function () {
+describe('widgets/channel', () => {
   beforeEach(function () {
     const addEventListener = sinon.stub();
     module('contentful/test', ($provide) => {
@@ -25,7 +25,7 @@ describe('widgets/channel', function () {
     };
   });
 
-  describe('#connect()', function () {
+  describe('#connect()', () => {
     it('sends connect message with id', function () {
       this.channel.connect();
       const id = this.channel.id;
@@ -45,7 +45,7 @@ describe('widgets/channel', function () {
     });
   });
 
-  describe('#send()', function () {
+  describe('#send()', () => {
     const PARAMS = ['PARAM'];
 
     it('messages to the iframe', function () {
@@ -80,7 +80,7 @@ describe('widgets/channel', function () {
     });
   });
 
-  describe('on message', function () {
+  describe('on message', () => {
     it('calls handlers on message event', function () {
       const handler = sinon.stub();
       this.channel.handlers['MY_METHOD'] = handler;

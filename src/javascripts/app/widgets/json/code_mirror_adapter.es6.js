@@ -47,7 +47,7 @@ export function create () {
 
   cm.on('change', debounce(validateAndSave, 400));
   cm.on('change', updateHistorySize);
-  const y = function () {};
+  const y = () => {};
   y();
 
   return {

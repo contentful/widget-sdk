@@ -1,14 +1,14 @@
 'use strict';
 import {create as createDocument} from 'helpers/mocks/entity_editor_document';
 
-describe('EntityEditor/DataFields', function () {
-  beforeEach(function () {
-    module('contentful/test', function ($provide) {
+describe('EntityEditor/DataFields', () => {
+  beforeEach(() => {
+    module('contentful/test', $provide => {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
   });
 
-  describe('#create()', function () {
+  describe('#create()', () => {
     beforeEach(function () {
       const ctFields = [
         {
@@ -47,7 +47,7 @@ describe('EntityEditor/DataFields', function () {
       this.fieldsApi = createDataFields(ctFields, this.otDoc);
     });
 
-    describe('#getValue()', function () {
+    describe('#getValue()', () => {
       it('returns value of field for the default locale', function () {
         const fieldData = this.otDoc.getValueAt(['fields']);
         expect(this.fieldsApi.A.getValue())
@@ -66,13 +66,13 @@ describe('EntityEditor/DataFields', function () {
 
       it('throws if locale isn’t in list of active locales', function () {
         const field = this.fieldsApi.A;
-        expect(function () {
+        expect(() => {
           field.getValue('invalidLocale');
         }).toThrowError('Unknown locale "invalidLocale"');
       });
     });
 
-    describe('#onValueChanged()', function () {
+    describe('#onValueChanged()', () => {
       it('call callback when value at locale changes', function () {
         const cb = sinon.spy();
         this.fieldsApi.A.onValueChanged('hi', cb);
@@ -95,7 +95,7 @@ describe('EntityEditor/DataFields', function () {
 
       it('throws if locale is invalid', function () {
         const field = this.fieldsApi.A;
-        expect(function () {
+        expect(() => {
           field.onValueChanged('invalidLocale', sinon.spy());
         }).toThrowError('Unknown locale "invalidLocale"');
       });

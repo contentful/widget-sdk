@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Subscription', function () {
+describe('Subscription', () => {
   let moment;
 
   let ORGANIZATION;
@@ -17,19 +17,19 @@ describe('Subscription', function () {
     this.newFromOrganization = this.$inject('Subscription').newFromOrganization;
   });
 
-  afterEach(function () {
+  afterEach(() => {
     moment = ORGANIZATION = null;
   });
 
-  describe('.newFromOrganization()', function () {
+  describe('.newFromOrganization()', () => {
     it('returns the given organization`s subscription', function () {
       const subscription = this.newFromOrganization(ORGANIZATION);
       assertSubscriptionMatchesOrg(subscription, ORGANIZATION);
     });
 
-    describe('returned subscription', function () {
-      describe('isLimitedFree()', function () {
-        beforeEach(function () {
+    describe('returned subscription', () => {
+      describe('isLimitedFree()', () => {
+        beforeEach(() => {
           ORGANIZATION.subscription.status = 'free';
         });
 
@@ -58,7 +58,7 @@ describe('Subscription', function () {
         });
       });
 
-      describe('.isTrial()', function () {
+      describe('.isTrial()', () => {
         it('returns `true` for a trial subscription', function () {
           ORGANIZATION.subscription.status = 'trial';
           const subscription = this.newFromOrganization(ORGANIZATION);
@@ -84,8 +84,8 @@ describe('Subscription', function () {
         });
       });
 
-      describe('.hasTrialEnded()', function () {
-        beforeEach(function () {
+      describe('.hasTrialEnded()', () => {
+        beforeEach(() => {
           ORGANIZATION.subscription.status = 'trial';
         });
 
@@ -108,8 +108,8 @@ describe('Subscription', function () {
         });
       });
 
-      describe('.getTrialHoursLeft()', function () {
-        beforeEach(function () {
+      describe('.getTrialHoursLeft()', () => {
+        beforeEach(() => {
           ORGANIZATION.subscription.status = 'trial';
         });
 

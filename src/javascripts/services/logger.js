@@ -51,7 +51,7 @@
  * logged to the console and to Bugsnag if bugsnag is enabled.
  */
 angular.module('contentful')
-.factory('logger', ['require', function (require) {
+.factory('logger', ['require', require => {
   var $window = require('$window');
   var bugsnag = require('bugsnag');
   var environment = require('environment');

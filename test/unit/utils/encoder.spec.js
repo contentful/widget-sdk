@@ -1,6 +1,6 @@
 'use strict';
 
-describe('encoder', function () {
+describe('encoder', () => {
   let encoder;
 
   const RAW = 'RAW_STRING';
@@ -12,7 +12,7 @@ describe('encoder', function () {
   };
 
   beforeEach(function () {
-    module('cf.utils', function ($provide) {
+    module('cf.utils', $provide => {
       $provide.constant('raw/htmlEncoder', {
         Encoder: function () {
           return libraryMockInstance;
@@ -22,22 +22,22 @@ describe('encoder', function () {
     encoder = this.$inject('encoder');
   });
 
-  describe('.htmlEncode()', function () {
-    it('calls respective function in used library', function () {
+  describe('.htmlEncode()', () => {
+    it('calls respective function in used library', () => {
       expect(encoder.htmlEncode(RAW)).toBe(ENCODED);
     });
 
-    it('does not require `encoder` as context', function () {
+    it('does not require `encoder` as context', () => {
       expect(encoder.htmlEncode.bind(null)(RAW)).toBe(ENCODED);
     });
   });
 
-  describe('.htmlDecode()', function () {
-    it('calls respective function in used library', function () {
+  describe('.htmlDecode()', () => {
+    it('calls respective function in used library', () => {
       expect(encoder.htmlDecode(ENCODED)).toBe(RAW);
     });
 
-    it('does not require `encoder` as context', function () {
+    it('does not require `encoder` as context', () => {
       expect(encoder.htmlDecode.bind(null)(ENCODED)).toBe(RAW);
     });
   });

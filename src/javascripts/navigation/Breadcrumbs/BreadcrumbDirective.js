@@ -7,7 +7,7 @@
  * @property {boolean} topState  Is true if there is only one
  * breadcrumb. This breadcrumb is associated to the current page.
  */
-angular.module('contentful').directive('cfBreadcrumbs', ['require', function (require) {
+angular.module('contentful').directive('cfBreadcrumbs', ['require', require => {
   var $parse = require('$parse');
   var $state = require('$state');
   var Analytics = require('analytics/Analytics');
@@ -59,7 +59,7 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
       // using addEventListener as $el.on doesn't support capture mode handler
       document.addEventListener('click', closeAncestorListIfVisible, true);
 
-      $scope.$on('$destroy', function () {
+      $scope.$on('$destroy', () => {
         $el.off('click', goBackToPreviousPage);
         $el.off('click', toggleAncestorList);
         $el.off('click', handleAncestorLinkClick);
@@ -137,13 +137,13 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
         $el.find(hintDismissBtnSelector).click();
       }
     },
-    controller: ['$scope', function ($scope) {
-      $scope.$watch(function () {
+    controller: ['$scope', $scope => {
+      $scope.$watch(() => {
         var last = _.last($scope.crumbs);
         return last && last.getTitle();
       }, documentTitle.maybeOverride);
 
-      K.onValueScope($scope, contextHistory.crumbs$, function (crumbs) {
+      K.onValueScope($scope, contextHistory.crumbs$, crumbs => {
         $scope.crumbs = crumbs;
         $scope.shouldHide = crumbs.length <= 1;
         $scope.shouldShowBack = crumbs.length >= 2;

@@ -7,7 +7,7 @@ const VALID_URL = 'https://github.com/jelz/sample/blob/master/extension.json';
 const ERR_SELECTOR = '.cfnext-form__field-error';
 const BTN_SELECTOR = '.btn-primary-action';
 
-describe('GitHubInstaller', function () {
+describe('GitHubInstaller', () => {
   const mount = () => {
     const confirmStub = sinon.stub();
     const wrapper = Enzyme.mount(<Installer
@@ -18,7 +18,7 @@ describe('GitHubInstaller', function () {
     return [wrapper, confirmStub];
   };
 
-  it('initially does not render error but disallows installation', function () {
+  it('initially does not render error but disallows installation', () => {
     const [wrapper, confirmStub] = mount();
     expect(wrapper.find(ERR_SELECTOR).length).toBe(0);
     const installBtn = wrapper.find(BTN_SELECTOR);
@@ -27,13 +27,13 @@ describe('GitHubInstaller', function () {
     sinon.assert.notCalled(confirmStub);
   });
 
-  it('renders error message and disallows installation when invalid URL is provided', function () {
+  it('renders error message and disallows installation when invalid URL is provided', () => {
     const [wrapper] = mount();
     wrapper.find('input').simulate('change', {target: {value: 'test'}});
     expect(wrapper.find(ERR_SELECTOR).text()).toBe('Please provide a valid GitHub URL');
   });
 
-  it('accepts valid Github URLs', function () {
+  it('accepts valid Github URLs', () => {
     [
       VALID_URL,
       'https://raw.githubusercontent.com/jelz/sample/master/extension.json'
@@ -53,7 +53,7 @@ describe('GitHubInstaller', function () {
     });
   });
 
-  it('blocks button while fetching', function () {
+  it('blocks button while fetching', () => {
     const [wrapper] = mount();
     wrapper.find('input').simulate('change', {target: {value: VALID_URL}});
     const installBtn = wrapper.find(BTN_SELECTOR);
@@ -65,7 +65,7 @@ describe('GitHubInstaller', function () {
     fetchStub.restore();
   });
 
-  it('renders fetch error and unblocks button', function () {
+  it('renders fetch error and unblocks button', () => {
     const [wrapper] = mount();
     wrapper.find('input').simulate('change', {target: {value: VALID_URL}});
     const installBtn = wrapper.find(BTN_SELECTOR);

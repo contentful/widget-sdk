@@ -1,6 +1,6 @@
 'use strict';
 
-describe('command service', function () {
+describe('command service', () => {
 
   beforeEach(function () {
     module('cf.ui');
@@ -8,7 +8,7 @@ describe('command service', function () {
     this.executions = this.$inject('command').executions;
   });
 
-  describe('#execute', function () {
+  describe('#execute', () => {
 
     it('calls action', function () {
       var action = sinon.stub();
@@ -24,7 +24,7 @@ describe('command service', function () {
       var command = this.create(action);
 
       var executed = false;
-      command.execute().then(function () {
+      command.execute().then(() => {
         executed = true;
       });
 
@@ -49,7 +49,7 @@ describe('command service', function () {
 
   });
 
-  describe('#isDisabled()', function () {
+  describe('#isDisabled()', () => {
     it('is "true" when command in progress', function () {
       var action = sinon.stub().resolves();
       var command = this.create(action);
@@ -62,7 +62,7 @@ describe('command service', function () {
     });
   });
 
-  describe('#inProgress()', function () {
+  describe('#inProgress()', () => {
     it ('is "true" when command in progress', function () {
       var action = sinon.stub().resolves();
       var command = this.create(action);

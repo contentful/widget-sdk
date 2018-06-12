@@ -9,7 +9,7 @@ angular.module('contentful')
  *
  * Tested in the 'app/entity_editor/Document' tests.
  */
-.factory('data/Document/Status', ['require', function (require) {
+.factory('data/Document/Status', ['require', require => {
   var K = require('utils/kefir');
   var Logger = require('logger');
 
@@ -40,7 +40,7 @@ angular.module('contentful')
     if (canUpdate) {
       return K.combineProperties(
         [sys$, docError$],
-        function (sys, docError) {
+        (sys, docError) => {
           if (docError === 'forbidden') {
             return Status.NOT_ALLOWED;
           } else if (docError === 'disconnected') {

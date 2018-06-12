@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Batch performer service', function () {
+describe('Batch performer service', () => {
   const ENTITY_API = ['publish', 'unpublish', 'archive', 'unarchive', 'delete'];
   const API = ENTITY_API.concat(['duplicate']);
 
@@ -12,18 +12,18 @@ describe('Batch performer service', function () {
     this.analytics.track = sinon.spy();
   });
 
-  describe('performing batch entry operations', function () {
+  describe('performing batch entry operations', () => {
     beforeEach(preparePerformer('Entry', makeEntry));
 
     it('creates API consisting of available entry batch operations', function () {
-      API.forEach(function (method) {
+      API.forEach(method => {
         expect(typeof this.performer[method]).toBe('function');
-      }.bind(this));
+      });
     });
 
     describeSharedBehavior();
 
-    describe('duplicate', function () {
+    describe('duplicate', () => {
       beforeEach(function () {
         let i = 0;
         const retried = cc();
@@ -39,13 +39,13 @@ describe('Batch performer service', function () {
     });
   });
 
-  describe('performing batch asset operations', function () {
+  describe('performing batch asset operations', () => {
     beforeEach(preparePerformer('Asset', makeEntity));
 
     it('creates API consisting of available asset batch operations', function () {
-      ENTITY_API.forEach(function (method) {
+      ENTITY_API.forEach(method => {
         expect(typeof this.performer[method]).toBe('function');
-      }.bind(this));
+      });
     });
 
     describeSharedBehavior();
@@ -72,7 +72,7 @@ describe('Batch performer service', function () {
     const entity = {};
     entity.getVersion = sinon.stub().returns(123);
     entity.setDeleted = sinon.spy();
-    return _.transform(ENTITY_API, function (entity, method) {
+    return _.transform(ENTITY_API, (entity, method) => {
       entity[method] = sinon.stub().resolves(entity);
     }, entity);
   }
@@ -82,15 +82,13 @@ describe('Batch performer service', function () {
     describeBatchBehavior('unpublish');
     describeBatchBehavior('archive');
     describeBatchBehavior('unarchive');
-    describeBatchBehavior('delete', function () { itCallsDeleteListener(); });
+    describeBatchBehavior('delete', () => { itCallsDeleteListener(); });
   }
 
   function describeBatchBehavior (action, extraTests) {
-    describe(action, function () {
+    describe(action, () => {
       beforeEach(function () {
-        this.actionStubs = _.map(this.entities, function (entity) {
-          return entity[action];
-        });
+        this.actionStubs = _.map(this.entities, entity => entity[action]);
       });
 
       testSharedBehavior(action);
@@ -110,7 +108,7 @@ describe('Batch performer service', function () {
   function itCallsAction (action) {
     it('calls entity action for all selected entities', function () {
       this.performer[action]();
-      this.actionStubs.forEach(function (actionStub) {
+      this.actionStubs.forEach(actionStub => {
         sinon.assert.calledOnce(actionStub);
       });
     });
@@ -118,16 +116,16 @@ describe('Batch performer service', function () {
 
   function itCallsCompleteListener (action) {
     it('calls complete listener', function () {
-      return this.performer[action]().then(function () {
+      return this.performer[action]().then(() => {
         sinon.assert.calledOnce(this.onComplete);
-      }.bind(this));
+      });
     });
   }
 
   function itResolvesWithResult (action) {
     it('resolves with an object containing successful and failed call arrays', function () {
       this.actionStubs[1].rejects('boom');
-      return this.performer[action]().then(function (results) {
+      return this.performer[action]().then(results => {
         expect(results.succeeded.length).toBe(2);
         expect(results.failed.length).toBe(1);
       });
@@ -139,12 +137,12 @@ describe('Batch performer service', function () {
       const isEntry = this.entityType === 'Entry';
       this.actionStubs[1].rejects('boom!');
 
-      return this.performer[action]().then(function () {
+      return this.performer[action]().then(() => {
         sinon.assert.calledOnce(this.notification.info);
         expect(this.notification.info.args[0][0]).toMatch(isEntry ? /^2 Entries/ : /^2 Assets/);
         sinon.assert.calledOnce(this.notification.warn);
         expect(this.notification.warn.args[0][0]).toMatch(isEntry ? /^1 Entries/ : /^1 Assets/);
-      }.bind(this));
+      });
     });
   }
 
@@ -170,11 +168,11 @@ describe('Batch performer service', function () {
 
   function itCallsDeleteListener () {
     it('fires delete listener for successful calls', function () {
-      return this.performer.delete().then(function () {
+      return this.performer.delete().then(() => {
         sinon.assert.calledOnce(this.onDelete.withArgs(this.entities[0]));
         sinon.assert.calledOnce(this.onDelete.withArgs(this.entities[1]));
         sinon.assert.calledOnce(this.onDelete.withArgs(this.entities[2]));
-      }.bind(this));
+      });
     });
   }
 });

@@ -46,9 +46,7 @@ export default async function create ($scope, assetId) {
 
   const entityInfo = editorContext.entityInfo = editorData.entityInfo;
 
-  const notify = makeNotify('Asset', function () {
-    return '“' + $scope.title + '”';
-  });
+  const notify = makeNotify('Asset', () => '“' + $scope.title + '”');
 
   $scope.entityInfo = entityInfo;
 
@@ -80,7 +78,7 @@ export default async function create ($scope, assetId) {
   });
 
 
-  K.onValueScope($scope, $scope.otDoc.valuePropertyAt([]), function (data) {
+  K.onValueScope($scope, $scope.otDoc.valuePropertyAt([]), data => {
     const title = spaceContext.assetTitle({
       getContentTypeId: () => {},
       data: data
@@ -89,7 +87,7 @@ export default async function create ($scope, assetId) {
     $scope.title = truncate(title, 50);
   });
 
-  K.onValueScope($scope, $scope.otDoc.state.isDirty$, function (isDirty) {
+  K.onValueScope($scope, $scope.otDoc.state.isDirty$, isDirty => {
     $scope.context.dirty = isDirty;
   });
 

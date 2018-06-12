@@ -6,11 +6,9 @@ const detail = {
   url: '/:extensionId',
   template: '<cf-extension-editor />',
   resolve: {
-    extension: ['spaceContext', '$stateParams', function (spaceContext, $stateParams) {
-      return spaceContext.cma.getExtension($stateParams.extensionId);
-    }]
+    extension: ['spaceContext', '$stateParams', (spaceContext, $stateParams) => spaceContext.cma.getExtension($stateParams.extensionId)]
   },
-  controller: ['$scope', 'extension', function ($scope, extension) {
+  controller: ['$scope', 'extension', ($scope, extension) => {
     $scope.extension = extension;
   }]
 };

@@ -3,7 +3,7 @@ import {cloneDeep} from 'lodash';
 
 let step = 0;
 
-describe('ViewMigrator', function () {
+describe('ViewMigrator', () => {
   let ViewMigrator, migrateView, migrateViewsFolder, migrateUIConfigViews;
 
   const SPACE = uniqueObject();
@@ -30,8 +30,8 @@ describe('ViewMigrator', function () {
     migrateUIConfigViews = this.viewMigrator.migrateUIConfigViews.bind(this.viewMigrator);
   });
 
-  describe('#migrateView()', function () {
-    describe('on View without a `searchTerm` (no migration required)', function () {
+  describe('#migrateView()', () => {
+    describe('on View without a `searchTerm` (no migration required)', () => {
       const VIEW = {
         contentTypeId: 'SOME_ID'
       };
@@ -47,7 +47,7 @@ describe('ViewMigrator', function () {
       });
     });
 
-    describe('on View requiring migration', function () {
+    describe('on View requiring migration', () => {
       const SEARCH_TERM = uniqueObject();
       const BASE_VIEW = {
         id: 'SOME_VIEW_ID',
@@ -59,7 +59,7 @@ describe('ViewMigrator', function () {
         searchFilters: uniqueObject()
       };
 
-      describe('on view with a `searchTerm`', function () {
+      describe('on view with a `searchTerm`', () => {
         beforeEach(function () {
           // `null` instead of {ContentType} as no `contentTypeId` is set in VIEW.
           this.convertStub.withArgs(
@@ -69,7 +69,7 @@ describe('ViewMigrator', function () {
         testMigrateViewSuccess(BASE_VIEW, CONVERTED_SEARCH_TERM);
       });
 
-      describe('on view with a `searchTerm` and `contentTypeId`', function () {
+      describe('on view with a `searchTerm` and `contentTypeId`', () => {
         const VIEW_WITH_CT = Object.assign({}, BASE_VIEW, {
           contentTypeId: 'TEST_CT_ID'
         });
@@ -89,7 +89,7 @@ describe('ViewMigrator', function () {
         });
       });
 
-      describe('TextQueryConverter.textQueryToUISearch() error', function () {
+      describe('TextQueryConverter.textQueryToUISearch() error', () => {
         beforeEach(function () {
           this.convertStub.throws('SOME UNKNOWN MIGRATION ERROR');
         });
@@ -97,7 +97,7 @@ describe('ViewMigrator', function () {
         testMigrateViewOnError(BASE_VIEW);
       });
 
-      describe('TextQueryConverter.textQueryToUISearch() rejects', function () {
+      describe('TextQueryConverter.textQueryToUISearch() rejects', () => {
         beforeEach(function () {
           this.convertStub.rejects('SOME UNKNOWN MIGRATION ERROR');
         });
@@ -163,13 +163,13 @@ describe('ViewMigrator', function () {
     }
   });
 
-  describe('#migrateViewsFolder()', function () {
+  describe('#migrateViewsFolder()', () => {
     beforeEach(function () {
       this.migrateViewStub = sinon.stub();
       this.viewMigrator.migrateView = this.migrateViewStub;
     });
 
-    describe('with multiple views', function () {
+    describe('with multiple views', () => {
       const VIEWS = [uniqueObject(), uniqueObject()];
       const MIGRATED_VIEWS = [uniqueObject(), uniqueObject()];
       const FOLDER = {
@@ -190,7 +190,7 @@ describe('ViewMigrator', function () {
       testMigrateViewsFolder(FOLDER, MIGRATED_FOLDER);
     });
 
-    describe('without any views', function () {
+    describe('without any views', () => {
       const FOLDER = {
         name: 'No views',
         views: []
@@ -218,25 +218,25 @@ describe('ViewMigrator', function () {
     }
   });
 
-  describe('#migrateUIConfigViews()', function () {
+  describe('#migrateUIConfigViews()', () => {
     beforeEach(function () {
       this.migrateViewsFolderStub = sinon.stub();
       this.viewMigrator.migrateViewsFolder = this.migrateViewsFolderStub;
     });
 
-    describe('without `entryListViews` or `assetListViews`', function () {
+    describe('without `entryListViews` or `assetListViews`', () => {
       testDoesNotMigrate({ sys: { id: 'SOME_ID' } });
     });
 
-    describe('without `assetListViews` and empty `entryListViews`', function () {
+    describe('without `assetListViews` and empty `entryListViews`', () => {
       testDoesNotMigrate({ entryListViews: [] });
     });
 
-    describe('without `entryListViews` and empty `assetListViews`', function () {
+    describe('without `entryListViews` and empty `assetListViews`', () => {
       testDoesNotMigrate({ someThingElse: 'foo', assetListViews: [] });
     });
 
-    describe('with empty `entryListViews` and empty `assetListViews`', function () {
+    describe('with empty `entryListViews` and empty `assetListViews`', () => {
       testDoesNotMigrate({ foo: 'bar', entryListViews: [], assetListViews: [] });
     });
 
@@ -298,7 +298,7 @@ describe('ViewMigrator', function () {
     }
   });
 
-  describe('.normalizeMigratedUIConfigData(), .prepareUIConfigForStorage() ', function () {
+  describe('.normalizeMigratedUIConfigData(), .prepareUIConfigForStorage() ', () => {
     testHelpers('without `entryListViews` or `assetListViews`',
       { sys: { id: 'SOME_ID' } },
       { sys: { id: 'SOME_ID' }, _migrated: {} }
@@ -320,18 +320,18 @@ describe('ViewMigrator', function () {
     );
 
     function testHelpers (description, normal, stored) {
-      describe(description, function () {
-        it('.normalizeMigratedUIConfigData() normalizes UIConfig data', function () {
+      describe(description, () => {
+        it('.normalizeMigratedUIConfigData() normalizes UIConfig data', () => {
           const normalized = ViewMigrator.normalizeMigratedUIConfigData(stored);
           expect(normalized).toEqual(normal);
         });
 
-        it('.prepareUIConfigForStorage() converts UIConfig to store format', function () {
+        it('.prepareUIConfigForStorage() converts UIConfig to store format', () => {
           const storeReady = ViewMigrator.prepareUIConfigForStorage(normal);
           expect(storeReady).toEqual(stored);
         });
 
-        it('.isUIConfigDataMigrated()', function () {
+        it('.isUIConfigDataMigrated()', () => {
           expect(ViewMigrator.isUIConfigDataMigrated(normal)).toBe(false);
           expect(ViewMigrator.isUIConfigDataMigrated(stored)).toBe(true);
         });
@@ -339,13 +339,13 @@ describe('ViewMigrator', function () {
     }
   });
 
-  describe('.getMigrationSuccessCount()', function () {
-    it('returns 0/0 for empty object', function () {
+  describe('.getMigrationSuccessCount()', () => {
+    it('returns 0/0 for empty object', () => {
       const count = ViewMigrator.getMigrationSuccessCount({});
       expect(count).toEqual({ migratedCount: 0, failedCount: 0 });
     });
 
-    describe('on uiConfig with failed/successful migration', function () {
+    describe('on uiConfig with failed/successful migration', () => {
       const UI_CONFIG = {
         entryListViews: [
           { views: [
@@ -359,12 +359,12 @@ describe('ViewMigrator', function () {
         ]
       };
 
-      it('returns correct `migratedCount`', function () {
+      it('returns correct `migratedCount`', () => {
         const count = ViewMigrator.getMigrationSuccessCount(UI_CONFIG);
         expect(count.migratedCount).toBe(5);
       });
 
-      it('returns correct `failedCount`', function () {
+      it('returns correct `failedCount`', () => {
         const count = ViewMigrator.getMigrationSuccessCount(UI_CONFIG);
         expect(count.failedCount).toBe(3);
       });

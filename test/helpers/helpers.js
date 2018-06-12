@@ -28,7 +28,7 @@ beforeEach(function () {
   this.$inject = function (serviceName) {
     if (!this.$injector) {
       const self = this;
-      inject(function ($injector) {
+      inject($injector => {
         self.$injector = $injector;
       });
     }
@@ -137,11 +137,9 @@ beforeEach(function () {
 
     if (controllers) {
       // convert controllers to a form `$compile` understands
-      transcludeControllers = _.mapValues(controllers, function (controllerInstance) {
-        return {
-          instance: controllerInstance
-        };
-      });
+      transcludeControllers = _.mapValues(controllers, controllerInstance => ({
+        instance: controllerInstance
+      }));
     }
 
     const element = $compile(template)(scope, undefined, {
@@ -228,11 +226,7 @@ beforeEach(function () {
    * @param {Promise<any>} promise
    * @return {Promise<Error>}
    */
-  this.catchPromise = function (promise) {
-    return promise.then(function () {
-      throw new Error('Unexpectedly resolved promise');
-    }, function (error) {
-      return error;
-    });
-  };
+  this.catchPromise = promise => promise.then(() => {
+    throw new Error('Unexpectedly resolved promise');
+  }, error => error);
 });

@@ -3,7 +3,7 @@ import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
 
 import { get, set, values } from 'lodash';
 
-describe('ResourceService', function () {
+describe('ResourceService', () => {
   beforeEach(function* () {
     this.createResource = (type, limits, usage) => {
       const { maximum, included } = limits;
@@ -82,11 +82,9 @@ describe('ResourceService', function () {
     this.spies = {};
     this.stubs = {};
 
-    this.isPromiseLike = function (object) {
-      return typeof object.then === 'function' &&
-        typeof object.catch === 'function' &&
-        typeof object.finally === 'function';
-    };
+    this.isPromiseLike = object => typeof object.then === 'function' &&
+      typeof object.catch === 'function' &&
+      typeof object.finally === 'function';
 
     const system = createIsolatedSystem();
 
@@ -186,7 +184,7 @@ describe('ResourceService', function () {
     expect(this.ResourceService.messages).toBeDefined();
   });
 
-  describe('#get', function () {
+  describe('#get', () => {
     it('should return a failed Promise if not supplied with any arguments', function* () {
       try {
         yield this.ResourceService.get();
@@ -242,7 +240,7 @@ describe('ResourceService', function () {
     });
   });
 
-  describe('#getAll', function () {
+  describe('#getAll', () => {
     it('should return a promise-like object', function () {
       expect(this.isPromiseLike(this.ResourceService.getAll())).toBe(true);
     });
@@ -267,7 +265,7 @@ describe('ResourceService', function () {
     });
   });
 
-  describe('#canCreate', function () {
+  describe('#canCreate', () => {
     it('should return a promise-like object', function () {
       expect(this.isPromiseLike(this.ResourceService.canCreate('locale'))).toBe(true);
     });
@@ -288,7 +286,7 @@ describe('ResourceService', function () {
     });
   });
 
-  describe('#messagesFor', function () {
+  describe('#messagesFor', () => {
     it('should return a promise-like object', function () {
       expect(this.isPromiseLike(this.ResourceService.messagesFor('locale'))).toBe(true);
     });
@@ -312,7 +310,7 @@ describe('ResourceService', function () {
     });
   });
 
-  describe('#messages', function () {
+  describe('#messages', () => {
     it('should return a promise-like object', function () {
       expect(this.isPromiseLike(this.ResourceService.messages())).toBe(true);
     });

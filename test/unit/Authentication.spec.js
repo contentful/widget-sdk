@@ -1,6 +1,6 @@
 import * as K from 'helpers/mocks/kefir';
 
-describe('Authentication', function () {
+describe('Authentication', () => {
   beforeEach(function () {
     this.$http = sinon.stub();
     this.window = {
@@ -24,7 +24,7 @@ describe('Authentication', function () {
     this.localStore = getStore('local');
   });
 
-  describe('#refreshToken()', function () {
+  describe('#refreshToken()', () => {
     beforeEach(function () {
       this.store.set('STORED_TOKEN');
       this.Auth.init();
@@ -83,7 +83,7 @@ describe('Authentication', function () {
     });
   });
 
-  describe('#init()', function () {
+  describe('#init()', () => {
     it('obtains token from local storage', function* () {
       this.store.set('STORED_TOKEN');
       this.Auth.init();
@@ -109,7 +109,7 @@ describe('Authentication', function () {
       expect(this.window.location).toEqual('//be.test.com/logout');
     });
 
-    describe('on login from gatekeeper', function () {
+    describe('on login from gatekeeper', () => {
       beforeEach(function () {
         const $location = this.mockService('$location');
         $location.url.returns('/?login=1');
@@ -150,7 +150,7 @@ describe('Authentication', function () {
     });
   });
 
-  describe('#logout()', function () {
+  describe('#logout()', () => {
     beforeEach(function () {
       this.store.set('STORED_TOKEN');
       this.Auth.init();

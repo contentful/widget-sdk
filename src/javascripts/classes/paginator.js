@@ -32,7 +32,7 @@ angular.module('cf.app')
  * });
  * paginator.getPage(); // => 4
  */
-.factory('Paginator', [function () {
+.factory('Paginator', [() => {
   var DEFAULT_PER_PAGE = 40;
 
   return {create: create};

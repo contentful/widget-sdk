@@ -1,8 +1,8 @@
 import * as K from 'helpers/mocks/kefir';
 
-describe('cfWidgetApi directive', function () {
+describe('cfWidgetApi directive', () => {
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
       $provide.value('spaceContext', {
         cma: {}
@@ -49,8 +49,8 @@ describe('cfWidgetApi directive', function () {
     this.widgetApi = this.getWidgetApi();
   });
 
-  describe('#settings', function () {
-    describe('helpText', function () {
+  describe('#settings', () => {
+    describe('helpText', () => {
       it('should equal what has been set for the widget', function () {
         expect(this.widgetApi.settings.helpText).toEqual(this.widget.settings.helpText);
       });
@@ -72,15 +72,15 @@ describe('cfWidgetApi directive', function () {
     });
   });
 
-  describe('#entry', function () {
-    describe('#getSys()', function () {
+  describe('#entry', () => {
+    describe('#getSys()', () => {
       it('returns sys data from entry object', function () {
         this.scope.fieldLocale.doc.sys.set('wat');
         expect(this.widgetApi.entry.getSys()).toEqual('wat');
       });
     });
 
-    describe('#onSysChanged()', function () {
+    describe('#onSysChanged()', () => {
       it('calls callback if "doc.sys" emits changes', function () {
         const cb = sinon.spy();
         this.widgetApi.entry.onSysChanged(cb);
@@ -93,7 +93,7 @@ describe('cfWidgetApi directive', function () {
   });
 
 
-  describe('#space', function () {
+  describe('#space', () => {
     it('exposes spaceContext.cma', function () {
       const spaceContext = this.$inject('spaceContext');
       expect(this.widgetApi.space).toEqual(spaceContext.cma);
@@ -101,7 +101,7 @@ describe('cfWidgetApi directive', function () {
   });
 
 
-  describe('#onIsDisabledChanged()', function () {
+  describe('#onIsDisabledChanged()', () => {
     it('is dispatched with initial value', function () {
       const cb = sinon.spy();
       this.scope.fieldLocale.access$.set({disabled: true});
@@ -122,7 +122,7 @@ describe('cfWidgetApi directive', function () {
     });
   });
 
-  describe('#onSchemaErrorsChanged()', function () {
+  describe('#onSchemaErrorsChanged()', () => {
     it('emits errors when "fieldLocale.errors" changes', function () {
       const cb = sinon.spy();
       this.widgetApi.field.onSchemaErrorsChanged(cb);
@@ -136,7 +136,7 @@ describe('cfWidgetApi directive', function () {
     });
   });
 
-  describe('#field.setInvalid()', function () {
+  describe('#field.setInvalid()', () => {
     it('delegates to $scope.fieldController with locale code', function () {
       const setInvalid = sinon.stub();
       this.scope.fieldController = {setInvalid: setInvalid};

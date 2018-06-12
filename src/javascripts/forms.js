@@ -19,17 +19,14 @@ angular.module('cf.forms')
  * @description
  * Set the model value to `null` if the input is the empty string
  */
-.directive('cfNullEmptyInput', [function () {
-  return {
-    restrict: 'A',
-    require: 'ngModel',
-    link: function (_scope, _elem, _attrs, modelCtrl) {
-      modelCtrl.$parsers.push(function (value) {
-        return value || null;
-      });
-    }
-  };
-}])
+.directive('cfNullEmptyInput', [() => ({
+  restrict: 'A',
+  require: 'ngModel',
+
+  link: function (_scope, _elem, _attrs, modelCtrl) {
+    modelCtrl.$parsers.push(value => value || null);
+  }
+})])
 
 /**
  * @ngdoc directive
@@ -44,23 +41,22 @@ angular.module('cf.forms')
  * model value changes and stops propagation of the `ngModel:update`
  * and `ngModel:commit` events fired by the `ngModel` controller.
  */
-.directive('cfNoForm', [function () {
-  return {
-    restrict: 'A',
-    require: 'ngModel',
-    link: function (scope, _elem, _attrs, modelCtrl) {
-      modelCtrl.$setDirty = _.noop;
-      scope.$on('ngModel:update', stopThisPropagation);
-      scope.$on('ngModel:commit', stopThisPropagation);
+.directive('cfNoForm', [() => ({
+  restrict: 'A',
+  require: 'ngModel',
 
-      function stopThisPropagation (ev, ngModel) {
-        if (ngModel === modelCtrl) {
-          ev.stopPropagation();
-        }
+  link: function (scope, _elem, _attrs, modelCtrl) {
+    modelCtrl.$setDirty = _.noop;
+    scope.$on('ngModel:update', stopThisPropagation);
+    scope.$on('ngModel:commit', stopThisPropagation);
+
+    function stopThisPropagation (ev, ngModel) {
+      if (ngModel === modelCtrl) {
+        ev.stopPropagation();
       }
     }
-  };
-}])
+  }
+})])
 
 
 /**
@@ -74,34 +70,33 @@ angular.module('cf.forms')
  *
  * The event data is the model controller.
  */
-.directive('ngModel', [function () {
-  return {
-    require: 'ngModel',
-    link: function (scope, elem, _attrs, modelCtrl) {
-      listenOnViewChange(emitUpdateEvent);
+.directive('ngModel', [() => ({
+  require: 'ngModel',
 
-      if (elem.prop('tagName') === 'INPUT') {
-        elem.on('blur', emitCommitEvent);
-      } else {
-        listenOnViewChange(emitCommitEvent);
-      }
+  link: function (scope, elem, _attrs, modelCtrl) {
+    listenOnViewChange(emitUpdateEvent);
 
-      function emitCommitEvent () {
-        modelCtrl.composing = false;
-        scope.$emit('ngModel:commit', modelCtrl);
-      }
-
-      function emitUpdateEvent () {
-        modelCtrl.composing = true;
-        scope.$emit('ngModel:update', modelCtrl);
-      }
-
-      function listenOnViewChange (listener) {
-        modelCtrl.$viewChangeListeners.push(listener);
-      }
+    if (elem.prop('tagName') === 'INPUT') {
+      elem.on('blur', emitCommitEvent);
+    } else {
+      listenOnViewChange(emitCommitEvent);
     }
-  };
-}])
+
+    function emitCommitEvent () {
+      modelCtrl.composing = false;
+      scope.$emit('ngModel:commit', modelCtrl);
+    }
+
+    function emitUpdateEvent () {
+      modelCtrl.composing = true;
+      scope.$emit('ngModel:update', modelCtrl);
+    }
+
+    function listenOnViewChange (listener) {
+      modelCtrl.$viewChangeListeners.push(listener);
+    }
+  }
+})])
 
 
 /**
@@ -112,20 +107,17 @@ angular.module('cf.forms')
  * Sets the `aria-invalid` attribute to the same value as the model
  * controllers `$invalid` property.
  */
-.directive('ngModel', [function () {
-  return {
-    require: 'ngModel',
-    link: function (scope, elem, attrs, modelCtrl) {
-      if (elem.is('input, textarea')) {
-        scope.$watch(function () {
-          return modelCtrl.$invalid && !modelCtrl.hideErrors;
-        }, function (isInvalid) {
-          attrs.$set('aria-invalid', isInvalid);
-        });
-      }
+.directive('ngModel', [() => ({
+  require: 'ngModel',
+
+  link: function (scope, elem, attrs, modelCtrl) {
+    if (elem.is('input, textarea')) {
+      scope.$watch(() => modelCtrl.$invalid && !modelCtrl.hideErrors, isInvalid => {
+        attrs.$set('aria-invalid', isInvalid);
+      });
     }
-  };
-}])
+  }
+})])
 
 
 /**
@@ -143,25 +135,22 @@ angular.module('cf.forms')
  * - The DOM element of the model has a `data-show-errors` attribute.
  * - The form controller has a truthy `showErrors` property.
  */
-.directive('ngModel', [function () {
-  return {
-    require: ['ngModel', '?^form'],
-    link: function (scope, _elem, attrs, ctrls) {
-      var modelCtrl = ctrls[0];
-      var formCtrl = ctrls[1];
-      modelCtrl.hideErrors = true;
-      scope.$watch(function () {
-        return modelCtrl.$dirty ||
-               ('showErrors' in attrs) ||
-               (formCtrl && formCtrl.showErrors);
-      }, function (show) {
-        if (show) {
-          modelCtrl.hideErrors = false;
-        }
-      });
-    }
-  };
-}])
+.directive('ngModel', [() => ({
+  require: ['ngModel', '?^form'],
+
+  link: function (scope, _elem, attrs, ctrls) {
+    var modelCtrl = ctrls[0];
+    var formCtrl = ctrls[1];
+    modelCtrl.hideErrors = true;
+    scope.$watch(() => modelCtrl.$dirty ||
+           ('showErrors' in attrs) ||
+           (formCtrl && formCtrl.showErrors), show => {
+      if (show) {
+        modelCtrl.hideErrors = false;
+      }
+    });
+  }
+})])
 
 
 /**
@@ -171,28 +160,27 @@ angular.module('cf.forms')
  * @description
  * Adds the form controller as the `$form` property to the scope.
  */
-.directive('ngForm', ['$timeout', function ($timeout) {
-  return {
-    restrict: 'A',
-    require: 'form',
-    controller: function () {},
-    link: function (scope, _elem, attrs, formCtrl) {
-      scope.$form = formCtrl;
+.directive('ngForm', ['$timeout', $timeout => ({
+  restrict: 'A',
+  require: 'form',
+  controller: function () {},
 
-      if ('showErrors' in attrs) {
-        formCtrl.showErrors = true;
-      }
+  link: function (scope, _elem, attrs, formCtrl) {
+    scope.$form = formCtrl;
 
-      var removeControl = formCtrl.$removeControl;
-      formCtrl.$removeControl = function (ctrl) {
-        removeControl.call(this, ctrl);
-        $timeout(function () {
-          scope.$apply();
-        });
-      };
+    if ('showErrors' in attrs) {
+      formCtrl.showErrors = true;
     }
-  };
-}])
+
+    var removeControl = formCtrl.$removeControl;
+    formCtrl.$removeControl = function (ctrl) {
+      removeControl.call(this, ctrl);
+      $timeout(() => {
+        scope.$apply();
+      });
+    };
+  }
+})])
 
 
 /**
@@ -206,24 +194,23 @@ angular.module('cf.forms')
  * @description
  * Calls the `submit()` method on the form controller when clicked.
  */
-.directive('cfFormSubmit', [function () {
-  return {
-    restrict: 'A',
-    require: '^form',
-    link: function (scope, element, attrs, formCtrl) {
-      if (!attrs.type) {
-        attrs.$set('type', 'submit');
-      }
+.directive('cfFormSubmit', [() => ({
+  restrict: 'A',
+  require: '^form',
 
-      element.on('click', function (ev) {
-        ev.preventDefault();
-        scope.$apply(function () {
-          formCtrl.submit();
-        });
-      });
+  link: function (scope, element, attrs, formCtrl) {
+    if (!attrs.type) {
+      attrs.$set('type', 'submit');
     }
-  };
-}])
+
+    element.on('click', ev => {
+      ev.preventDefault();
+      scope.$apply(() => {
+        formCtrl.submit();
+      });
+    });
+  }
+})])
 
 
 /**
@@ -240,15 +227,14 @@ angular.module('cf.forms')
  * For more on the `showErrors` property see the `ngModel/hideErrors`
  * directive.
  */
-.directive('cfOnSubmit', function () {
-  return {
-    restrict: 'A',
-    require: 'form',
-    link: function (scope, _element, attrs, formCtrl) {
-      formCtrl.submit = function () {
-        formCtrl.showErrors = true;
-        scope.$eval(attrs.cfOnSubmit);
-      };
-    }
-  };
-});
+.directive('cfOnSubmit', () => ({
+  restrict: 'A',
+  require: 'form',
+
+  link: function (scope, _element, attrs, formCtrl) {
+    formCtrl.submit = () => {
+      formCtrl.showErrors = true;
+      scope.$eval(attrs.cfOnSubmit);
+    };
+  }
+}));

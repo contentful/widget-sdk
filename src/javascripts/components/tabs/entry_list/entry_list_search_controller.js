@@ -28,7 +28,7 @@ angular.module('contentful')
   $scope.search = h('div');
 
   // TODO rename this everywhere
-  $scope.updateEntries = function () {
+  $scope.updateEntries = () => {
     if (isViewLoaded()) {
       resetEntries();
     }
@@ -42,9 +42,7 @@ angular.module('contentful')
   // We need this to determine if a change to 'paginator.getPage()'
   // comes from us or the user.
   var page = 0;
-  $scope.$watch(function () {
-    return $scope.paginator.getPage();
-  }, function (newPage) {
+  $scope.$watch(() => $scope.paginator.getPage(), newPage => {
     if (page !== newPage && initialized) {
       page = newPage;
       updateEntries();
@@ -53,33 +51,29 @@ angular.module('contentful')
 
   // TODO: Get rid of duplicate code in asset_search_controller.js
 
-  $scope.$watch(function () {
-    return {
-      viewId: getViewItem('id'),
-      search: getViewSearchState()
-    };
-  }, function () {
+  $scope.$watch(() => ({
+    viewId: getViewItem('id'),
+    search: getViewSearchState()
+  }), () => {
     if (!isViewLoaded()) {
       return;
     }
     resetEntries();
   }, true);
 
-  $scope.$watch(function () {
-    return {
-      contentTypeId: getViewItem('contentTypeId'),
-      displayedFieldIds: getViewItem('displayedFieldIds'),
-      entriesLength: $scope.entries && $scope.entries.length,
-      page: $scope.paginator.getPage(),
-      orderDirection: getViewItem('order.direction'),
-      orderFieldId: getViewItem('order.fieldId')
-    };
-  }, refreshEntityCaches, true);
+  $scope.$watch(() => ({
+    contentTypeId: getViewItem('contentTypeId'),
+    displayedFieldIds: getViewItem('displayedFieldIds'),
+    entriesLength: $scope.entries && $scope.entries.length,
+    page: $scope.paginator.getPage(),
+    orderDirection: getViewItem('order.direction'),
+    orderFieldId: getViewItem('order.fieldId')
+  }), refreshEntityCaches, true);
 
   // "forceSearch" event is emitted by the tokenized search directive when:
   // - Enter is pressed and not selecting an autocompletion item
   // - "magnifying glass" icon next to input is clicked
-  $scope.$on('forceSearch', function () {
+  $scope.$on('forceSearch', () => {
     if (!$scope.context.loading) {
       resetEntries();
     }
@@ -88,7 +82,7 @@ angular.module('contentful')
   // When the user deletes an entry it is removed from the entries
   // list. If that list becomes empty we want to go to the previous
   // page.
-  $scope.$watch('entries.length', function (entriesLength) {
+  $scope.$watch('entries.length', entriesLength => {
     var currPage = $scope.paginator.getPage();
     if (!entriesLength && !$scope.context.loading && $scope.paginator.getPage() > 0) {
       $scope.paginator.setPage(currPage - 1);
@@ -108,17 +102,15 @@ angular.module('contentful')
     $scope.context.isSearching = true;
 
     return prepareQuery()
-      .then(function (query) {
-        return spaceContext.space.getEntries(query);
-      }, function (err) {
+      .then(query => spaceContext.space.getEntries(query), err => {
         handleEntriesError(err);
         return $q.reject(err);
       })
-      .then(function (result) {
+      .then(result => {
         $scope.context.isSearching = false;
         Tracking.searchPerformed($scope.context.view, result.total);
         return result;
-      }, function (err) {
+      }, err => {
         handleEntriesError(err);
         return $q.reject(err);
       });
@@ -131,9 +123,7 @@ angular.module('contentful')
     $scope.loadView(newView);
   }
 
-  var isSearching$ = K.fromScopeValue($scope, function ($scope) {
-    return $scope.context.isSearching;
-  });
+  var isSearching$ = K.fromScopeValue($scope, $scope => $scope.context.isSearching);
 
   function initializeSearchUI () {
     var initialSearchState = getViewSearchState();
@@ -157,7 +147,7 @@ angular.module('contentful')
   function setupEntriesHandler (promise) {
     return promise
       .then(handleEntriesResponse, accessChecker.wasForbidden($scope.context))
-      .catch(function (err) {
+      .catch(err => {
         if (_.isObject(err) && 'statusCode' in err && err.statusCode === -1) {
           // entries update failed due to some network issue
           $scope.context.isSearching = true;
@@ -180,7 +170,7 @@ angular.module('contentful')
         $scope.setPage(lastPage);
       }
 
-      $scope.entries = entries.filter(function (entry) { return !entry.isDeleted(); });
+      $scope.entries = entries.filter(entry => !entry.isDeleted());
     }
     refreshEntityCaches();
     $scope.selection.updateList($scope.entries);
@@ -210,7 +200,7 @@ angular.module('contentful')
   }
 
   function prepareQuery () {
-    return ListQuery.getForEntries(getQueryOptions()).then(function (query) {
+    return ListQuery.getForEntries(getQueryOptions()).then(query => {
       var collection = getViewItem('collection');
       if (collection && Array.isArray(collection.items)) {
         query['sys.id[in]'] = collection.items.join(',');

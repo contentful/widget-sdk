@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfExtensionGithubInstaller', ['require', function (require) {
+.directive('cfExtensionGithubInstaller', ['require', require => {
   var React = require('react');
   var ReactDOM = require('react-dom');
   var GitHubInstaller = require('app/Extensions/GitHubInstaller').default;

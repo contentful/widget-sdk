@@ -2,7 +2,7 @@ import _ from 'lodash';
 import sinon from 'npm:sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
-describe('IncomingLinks', function () {
+describe('IncomingLinks', () => {
   beforeEach(function* () {
     const system = createIsolatedSystem();
 
@@ -20,7 +20,7 @@ describe('IncomingLinks', function () {
     );
   });
 
-  describe('onIncomingLinkClick', function () {
+  describe('onIncomingLinkClick', () => {
     it('tracks incoming links clicks', function () {
       this.incomingLinksEvents.onIncomingLinkClick({
         origin: this.incomingLinksEvents.Origin.SIDEBAR,
@@ -42,7 +42,7 @@ describe('IncomingLinks', function () {
       );
     });
 
-    describe('when the origin is the dialog', function () {
+    describe('when the origin is the dialog', () => {
       it('tracks incoming links clicks, including the dialog session id', function () {
         this.incomingLinksEvents.onIncomingLinkClick({
           origin: this.incomingLinksEvents.Origin.DIALOG,
@@ -70,7 +70,7 @@ describe('IncomingLinks', function () {
     });
   });
 
-  describe('onDialogOpen', function () {
+  describe('onDialogOpen', () => {
     it('tracks the dialog open event', function () {
       this.incomingLinksEvents.onDialogOpen({
         entityId: 'foo',
@@ -94,7 +94,7 @@ describe('IncomingLinks', function () {
     });
   });
 
-  describe('onDialogConfirm', function () {
+  describe('onDialogConfirm', () => {
     it('tracks the dialog confirm event', function () {
       this.incomingLinksEvents.onDialogConfirm({
         entityId: 'foo',
@@ -118,7 +118,7 @@ describe('IncomingLinks', function () {
     });
   });
 
-  describe('onFetchLinks', function () {
+  describe('onFetchLinks', () => {
     it('tracks the link fetch event', function () {
       this.incomingLinksEvents.onFetchLinks({
         entityId: 'foo',

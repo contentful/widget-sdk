@@ -2,7 +2,7 @@ import * as sinon from 'helpers/sinon';
 import {isObject} from 'lodash';
 import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
 
-describe('spaceContext', function () {
+describe('spaceContext', () => {
   beforeEach(function () {
     this.Subscription = {
       newFromOrganization: sinon.stub()
@@ -40,18 +40,18 @@ describe('spaceContext', function () {
     LD._setFlag('feature-dv-11-2017-environments', true);
   });
 
-  describe('#purge', function () {
+  describe('#purge', () => {
     it('gets rid of all space-related data', function () {
       const sc = this.spaceContext;
       sc.purge();
 
-      ['space', 'users', 'widgets'].forEach(function (field) {
+      ['space', 'users', 'widgets'].forEach(field => {
         expect(sc[field]).toEqual(null);
       });
     });
   });
 
-  describe('#resetWithSpace()', function () {
+  describe('#resetWithSpace()', () => {
     beforeEach(function () {
       const createEditingInterfaces = this.$inject('data/editingInterfaces');
       createEditingInterfaces.returns('EI');
@@ -109,7 +109,7 @@ describe('spaceContext', function () {
       expect(this.spaceContext.editingInterfaces).toEqual('EI');
     });
 
-    describe('updated `.subscription` value on context', function () {
+    describe('updated `.subscription` value on context', () => {
       let ORGANIZATION, SUBSCRIPTION;
       beforeEach(function () {
         ORGANIZATION = {};
@@ -156,7 +156,7 @@ describe('spaceContext', function () {
     });
   });
 
-  describe('#getEnvironmentId()', function () {
+  describe('#getEnvironmentId()', () => {
     it('defaults to master if a space is set', function () {
       this.spaceContext.resetWithSpace({sys: {id: 'spaceid'}});
       expect(this.spaceContext.getEnvironmentId()).toBe('master');
@@ -173,7 +173,7 @@ describe('spaceContext', function () {
     });
   });
 
-  describe('#getData() ', function () {
+  describe('#getData() ', () => {
     beforeEach(function () {
       this.space = this.resetWithSpace();
     });
@@ -194,7 +194,7 @@ describe('spaceContext', function () {
     });
   });
 
-  describe('#entryTitle()', function () {
+  describe('#entryTitle()', () => {
     let entry;
     beforeEach(function () {
       entry = {
@@ -253,9 +253,9 @@ describe('spaceContext', function () {
     });
   });
 
-  describe('#assetTitle()', function () {
+  describe('#assetTitle()', () => {
     let asset;
-    beforeEach(function () {
+    beforeEach(() => {
       asset = {
         getType: _.constant('Asset'),
         data: {
@@ -304,7 +304,7 @@ describe('spaceContext', function () {
     });
   });
 
-  describe('#displayedFieldForType()', function () {
+  describe('#displayedFieldForType()', () => {
     beforeEach(function () {
       const CTRepo = this.$inject('data/ContentTypeRepo/Published');
       this.spaceContext.publishedCTs = sinon.stubAll(CTRepo.create());
@@ -334,7 +334,7 @@ describe('spaceContext', function () {
   });
 
 
-  describe('finding entity fields', function () {
+  describe('finding entity fields', () => {
     const ASSET_LINK_XX = {
       sys: {id: 'ASSET_1'}
     };
@@ -378,7 +378,7 @@ describe('spaceContext', function () {
       this.spaceContext.publishedCTs.get.withArgs('CTID').returns(this.ct);
     });
 
-    describe('#entityDescription()', function () {
+    describe('#entityDescription()', () => {
       it('returns value of first text or symbol field, falls back to default locale', function () {
         const desc = this.spaceContext.entityDescription(this.entry);
         expect(desc).toBe('SYMBOL VAL');
@@ -389,11 +389,9 @@ describe('spaceContext', function () {
         expect(desc).toBe('SYMBOL VAL DE');
       });
 
-      describe('skips display field', function () {
+      describe('skips display field', () => {
         beforeEach(function () {
-          _.remove(this.fields, function (field) {
-            return field.id === 'TEXT';
-          });
+          _.remove(this.fields, field => field.id === 'TEXT');
           delete this.entry.data.fields.TEXT;
           this.ct.data.displayField = 'SYMBOL';
         });
@@ -423,7 +421,7 @@ describe('spaceContext', function () {
       });
     });
 
-    describe('#entryImage', function () {
+    describe('#entryImage', () => {
       beforeEach(function () {
         this.file = {details: {image: {}}};
         const asset = {};
@@ -451,9 +449,7 @@ describe('spaceContext', function () {
       });
 
       it('resolves a promise with null if no linked asset field in CT', function () {
-        _.remove(this.fields, function (field) {
-          return field.type === 'Link';
-        });
+        _.remove(this.fields, field => field.type === 'Link');
         return this.spaceContext.entryImage(this.entry)
         .then((file) => expect(file).toBe(null));
       });
@@ -474,7 +470,7 @@ describe('spaceContext', function () {
     });
   });
 
-  describe('#docConnection and #docPool', function () {
+  describe('#docConnection and #docPool', () => {
     beforeEach(function () {
       const ShareJSConnection = this.$inject('data/sharejs/Connection');
       const DocumentPool = this.$inject('data/sharejs/DocumentPool');
@@ -505,7 +501,7 @@ describe('spaceContext', function () {
     });
   });
 
-  describe('#uiConfig', function () {
+  describe('#uiConfig', () => {
     it('exposes the store', function () {
       this.resetWithSpace();
       expect(isObject(this.spaceContext.uiConfig)).toBe(true);

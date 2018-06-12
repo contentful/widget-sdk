@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfFileEditor', ['require', function (require) {
+.directive('cfFileEditor', ['require', require => {
   var _ = require('lodash');
   var Filestack = require('services/Filestack');
   var ImageOperations = require('app/widgets/ImageOperations');
@@ -33,25 +33,25 @@ angular.module('contentful')
         });
       }
 
-      var removeUpdateListener = field.onValueChanged(function (file) {
+      var removeUpdateListener = field.onValueChanged(file => {
         scope.file = file;
         validate();
       });
       scope.$on('$destroy', removeUpdateListener);
 
-      scope.$on('imageLoadState', function (_e, state) {
+      scope.$on('imageLoadState', (_e, state) => {
         scope.imageIsLoading = state === 'loading';
       });
 
       scope.selectFile = function selectFile () {
-        Filestack.pick().then(setFile, function () {
+        Filestack.pick().then(setFile, () => {
           notification.error('An error occurred while uploading your asset.');
         });
       };
 
       scope.rotateOrMirror = function rotateOrMirror (mode) {
         scope.imageIsLoading = true;
-        ImageOperations.rotateOrMirror(mode, scope.file).then(setUpload, function (err) {
+        ImageOperations.rotateOrMirror(mode, scope.file).then(setUpload, err => {
           scope.imageIsLoading = false;
           notifyEditError(err);
         });
@@ -95,7 +95,7 @@ angular.module('contentful')
         scope.$applyAsync();
         if (file) {
           return field.setValue(file)
-          .then(function () {
+          .then(() => {
             maybeSetTitleOnDoc();
             process();
             validate();
@@ -115,7 +115,7 @@ angular.module('contentful')
 
       function process () {
         scope.editorData.entity.process(scope.otDoc.getVersion(), scope.locale.internal_code)
-        .catch(function (err) {
+        .catch(err => {
           deleteFile();
 
           const errors = _.get(err, ['body', 'details', 'errors'], []);

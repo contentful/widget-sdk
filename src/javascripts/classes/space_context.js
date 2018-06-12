@@ -14,7 +14,7 @@ angular.module('contentful')
  * @property {Data.APIClient} cma
  * @property {ACL.SpaceMembershipRepository} memberships
  */
-.factory('spaceContext', ['require', function (require) {
+.factory('spaceContext', ['require', require => {
   var $q = require('$q');
   var TheLocaleStore = require('TheLocaleStore');
   var createUserCache = require('data/userCache');
@@ -135,7 +135,7 @@ angular.module('contentful')
        * @type {data/ContentTypeRepo/Published}
        */
       var publishedCTsForSpace = PublishedCTRepo.create(space);
-      K.onValue(publishedCTsForSpace.items$, function (items) {
+      K.onValue(publishedCTsForSpace.items$, items => {
         publishedCTsBus$.set(items);
       });
       _.assign(self.publishedCTs, _.omit(publishedCTsForSpace, 'items$'));
@@ -146,22 +146,20 @@ angular.module('contentful')
 
       return $q.all([
         self.widgets.refresh(),
-        self.publishedCTs.refresh().then(function () {
+        self.publishedCTs.refresh().then(() => {
           var viewMigrator = createViewMigrator(space, self.publishedCTs);
           return createUiConfigStore(
             space, self.endpoint, self.publishedCTs, viewMigrator
           )
-          .then(function (api) {
+          .then(api => {
             self.uiConfig = api;
           });
         }),
-        maybeFetchEnvironments(self.endpoint).then(function (environments) {
+        maybeFetchEnvironments(self.endpoint).then(environments => {
           self.environments = deepFreeze(environments);
         }),
         TheLocaleStore.init(self.localeRepo)
-      ]).then(function () {
-        return self;
-      });
+      ]).then(() => self);
     },
 
     /**
@@ -317,9 +315,7 @@ angular.module('contentful')
         return;
       }
       var displayFieldId = contentType.data.displayField;
-      var field = _.find(contentType.data.fields, function (field) {
-        return _.includes(['Symbol', 'Text'], field.type) && field.id !== displayFieldId;
-      });
+      var field = _.find(contentType.data.fields, field => _.includes(['Symbol', 'Text'], field.type) && field.id !== displayFieldId);
       if (!field) {
         return;
       }
@@ -342,13 +338,11 @@ angular.module('contentful')
 
       var assetId = _.get(link, 'sys.id');
       if (link && assetId) {
-        return this.space.getAsset(assetId).then(function (asset) {
+        return this.space.getAsset(assetId).then(asset => {
           var file = this.getFieldValue(asset, 'file', localeCode);
           var isImage = _.get(file, 'details.image');
           return isImage ? file : null;
-        }.bind(this), function () {
-          return null;
-        });
+        }, () => null);
       } else {
         return $q.resolve(null);
       }
@@ -463,7 +457,7 @@ angular.module('contentful')
     // FIXME This prevents a circular dependency
     var LD = require('utils/LaunchDarkly');
     return LD.getCurrentVariation('feature-dv-11-2017-environments')
-      .then(function (environmentsEnabled) {
+      .then(environmentsEnabled => {
         if (environmentsEnabled) {
           return createEnvironmentsRepo(spaceEndpoint).getAll();
         }

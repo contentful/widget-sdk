@@ -5,7 +5,7 @@
  * @description
  * Various helpers for preparing API queries.
  */
-angular.module('contentful').factory('ListQuery', ['require', function (require) {
+angular.module('contentful').factory('ListQuery', ['require', require => {
   var $q = require('$q');
   var _ = require('lodash');
   var systemFields = require('systemFields');
@@ -31,9 +31,7 @@ angular.module('contentful').factory('ListQuery', ['require', function (require)
     getForEntries: function (opts) {
       if (opts.contentTypeId) {
         return spaceContext.publishedCTs.fetch(opts.contentTypeId)
-          .then(function (contentType) {
-            return prepareEntityListQuery(contentType, opts);
-          });
+          .then(contentType => prepareEntityListQuery(contentType, opts));
       } else {
         return prepareEntityListQuery(null, opts);
       }

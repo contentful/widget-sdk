@@ -8,10 +8,10 @@ function ErrorPathController($scope, $attrs, require) {
 
   controller.messages = [];
 
-  $scope.$watch('validationResult.errors', function (errors) {
+  $scope.$watch('validationResult.errors', errors => {
     var pathPattern = $scope.$eval($attrs.cfErrorPath);
 
-    var fieldErrors = _.filter(errors, function (error) {
+    var fieldErrors = _.filter(errors, error => {
       try {
         return matchesPath(pathPattern, error.path);
       } catch (e) {

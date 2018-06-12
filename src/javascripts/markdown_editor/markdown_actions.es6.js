@@ -193,7 +193,7 @@ export function create (editor, locale, defaultLocaleCode) {
         urlStatus: 'invalid'
       },
       template: 'markdown_embed_dialog'
-    }).promise.then(function (data) {
+    }).promise.then(data => {
       editor.insert(_makeEmbedlyLink(data));
     });
   }

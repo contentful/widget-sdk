@@ -1,6 +1,6 @@
 import * as K from 'helpers/mocks/kefir';
 
-describe('Markdown preview', function () {
+describe('Markdown preview', () => {
   beforeEach(function () {
     module('contentful/test');
     this.markdown = K.createMockProperty('__test__');

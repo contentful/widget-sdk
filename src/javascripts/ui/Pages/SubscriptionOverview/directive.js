@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfSubscriptionOverview', ['require', function (require) {
+.directive('cfSubscriptionOverview', ['require', require => {
   var React = require('react');
   var ReactDOM = require('react-dom');
   var SubscriptionOverview = require('ui/Pages/SubscriptionOverview').default;
@@ -17,7 +17,7 @@ angular.module('contentful')
         onForbidden: function () { context.forbidden = true; $scope.$applyAsync(); }
       }), host);
 
-      $scope.$on('$destroy', function () {
+      $scope.$on('$destroy', () => {
         ReactDOM.unmountComponentAtNode(host);
       });
     }

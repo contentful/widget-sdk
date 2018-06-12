@@ -2,13 +2,13 @@ import * as K from 'utils/kefir';
 import * as KMock from 'helpers/mocks/kefir';
 import * as sinon from 'helpers/sinon';
 
-describe('utils/kefir', function () {
+describe('utils/kefir', () => {
   beforeEach(function () {
     module('ng');
     this.scope = this.$inject('$rootScope').$new();
   });
 
-  describe('#fromScopeEvent()', function () {
+  describe('#fromScopeEvent()', () => {
     it('emits value when event is fired', function () {
       const stream = K.fromScopeEvent(this.scope, 'event');
       const cb = sinon.stub();
@@ -39,7 +39,7 @@ describe('utils/kefir', function () {
     });
   });
 
-  describe('#fromScopeValue()', function () {
+  describe('#fromScopeValue()', () => {
     beforeEach(function () {
       this.$scope = this.$inject('$rootScope').$new();
     });
@@ -68,8 +68,8 @@ describe('utils/kefir', function () {
     });
   });
 
-  describe('#onValue()', function () {
-    it('calls callback on value', function () {
+  describe('#onValue()', () => {
+    it('calls callback on value', () => {
       const stream = KMock.createMockStream();
       const cb = sinon.spy();
       K.onValue(stream, cb);
@@ -77,7 +77,7 @@ describe('utils/kefir', function () {
       sinon.assert.calledOnce(cb.withArgs('VAL'));
     });
 
-    it('removes callback when detach is called', function () {
+    it('removes callback when detach is called', () => {
       const stream = KMock.createMockStream();
       const cb = sinon.spy();
       const detach = K.onValue(stream, cb);
@@ -89,7 +89,7 @@ describe('utils/kefir', function () {
     });
   });
 
-  describe('#onValueScope()', function () {
+  describe('#onValueScope()', () => {
     it('applies scope after calling callback when value changes', function () {
       const bus = K.createBus();
       const cb = sinon.spy();
@@ -114,8 +114,8 @@ describe('utils/kefir', function () {
     });
   });
 
-  describe('#onValueWhile()', function () {
-    it('does not call callback when lifeline has ended', function () {
+  describe('#onValueWhile()', () => {
+    it('does not call callback when lifeline has ended', () => {
       const stream = KMock.createMockStream();
       const lifeline = KMock.createMockStream();
       const cb = sinon.spy();
@@ -130,8 +130,8 @@ describe('utils/kefir', function () {
     });
   });
 
-  describe('#createBus()', function () {
-    it('emits value events', function () {
+  describe('#createBus()', () => {
+    it('emits value events', () => {
       const bus = K.createBus();
       const cb = sinon.spy();
       bus.stream.onValue(cb);
@@ -140,7 +140,7 @@ describe('utils/kefir', function () {
       sinon.assert.calledWithExactly(cb, 'VAL');
     });
 
-    it('emits end event', function () {
+    it('emits end event', () => {
       const bus = K.createBus();
       const cb = sinon.spy();
       bus.stream.onEnd(cb);
@@ -157,15 +157,15 @@ describe('utils/kefir', function () {
     });
   });
 
-  describe('#createPropertyBus()', function () {
-    it('emits initial value', function () {
+  describe('#createPropertyBus()', () => {
+    it('emits initial value', () => {
       const bus = K.createPropertyBus('INIT');
       const cb = sinon.spy();
       bus.property.onValue(cb);
       sinon.assert.calledWithExactly(cb, 'INIT');
     });
 
-    it('set value when subscribing later', function () {
+    it('set value when subscribing later', () => {
       const bus = K.createPropertyBus('INIT');
       bus.set('VAL');
       const cb = sinon.spy();
@@ -174,8 +174,8 @@ describe('utils/kefir', function () {
     });
   });
 
-  describe('#sampleBy()', function () {
-    it('samples new value when event is fired', function () {
+  describe('#sampleBy()', () => {
+    it('samples new value when event is fired', () => {
       const obs = KMock.createMockStream();
       const sampler = sinon.stub();
       const prop = K.sampleBy(obs, sampler);
@@ -189,7 +189,7 @@ describe('utils/kefir', function () {
     });
   });
 
-  describe('#promiseProperty', function () {
+  describe('#promiseProperty', () => {
     it('is set to "Pending" initially', function* () {
       const deferred = makeDeferred();
       const prop = K.promiseProperty(deferred.promise, 'PENDING');
@@ -234,8 +234,8 @@ describe('utils/kefir', function () {
     }
   });
 
-  describe('#combinePropertiesObject()', function () {
-    it('combines the state as an object', function () {
+  describe('#combinePropertiesObject()', () => {
+    it('combines the state as an object', () => {
       const a = KMock.createMockProperty('A1');
       const b = KMock.createMockProperty('B1');
       const x = K.combinePropertiesObject({a, b});
@@ -249,29 +249,29 @@ describe('utils/kefir', function () {
     });
   });
 
-  describe('#getValue', function () {
-    it('returns current value', function () {
+  describe('#getValue', () => {
+    it('returns current value', () => {
       const prop = KMock.createMockProperty('A');
       expect(K.getValue(prop)).toBe('A');
       prop.set('B');
       expect(K.getValue(prop)).toBe('B');
     });
 
-    it('returns last value when property has ended', function () {
+    it('returns last value when property has ended', () => {
       const prop = KMock.createMockProperty('A');
       prop.set('B');
       prop.end();
       expect(K.getValue(prop)).toBe('B');
     });
 
-    it('throws if there is no current value', function () {
+    it('throws if there is no current value', () => {
       const prop = KMock.createMockStream();
       expect(() => K.getValue(prop)).toThrowError('Property does not have current value');
     });
   });
 
-  describe('#holdWhen', function () {
-    it('emits values until predicate is true', function () {
+  describe('#holdWhen', () => {
+    it('emits values until predicate is true', () => {
       const prop = KMock.createMockProperty('A');
 
       const hold = K.holdWhen(prop, (x) => x === 'X');
@@ -287,7 +287,7 @@ describe('utils/kefir', function () {
       KMock.assertCurrentValue(hold, 'X');
     });
 
-    it('ends after predicate is true', function () {
+    it('ends after predicate is true', () => {
       const prop = KMock.createMockProperty('A');
       const hold = K.holdWhen(prop, (x) => x === 'X');
 
@@ -298,7 +298,7 @@ describe('utils/kefir', function () {
     });
   });
 
-  describe('#scopeLifeline', function () {
+  describe('#scopeLifeline', () => {
     beforeEach(function () {
       this.scope = this.$inject('$rootScope').$new();
     });
@@ -319,7 +319,7 @@ describe('utils/kefir', function () {
     });
   });
 
-  describe('#endWith', function () {
+  describe('#endWith', () => {
     beforeEach(function () {
       this.prop = KMock.createMockProperty('A');
       this.lifeline = KMock.createMockStream();

@@ -2,37 +2,36 @@
 
 angular.module('cf.app')
 
-.directive('cfSnapshotSelector', [function () {
-  return {
-    template: JST.cf_snapshot_selector(),
-    restrict: 'E',
-    controller: 'SnapshotSelectorController',
-    link: function ($scope, $el) {
-      var snapshotListSel = '[aria-label="snapshot-list"]';
-      var snapshotListBtnSel = '[aria-label="show-snapshot-list-btn"]';
+.directive('cfSnapshotSelector', [() => ({
+  template: JST.cf_snapshot_selector(),
+  restrict: 'E',
+  controller: 'SnapshotSelectorController',
 
-      var $snapshotSelectorContainer = $el.find(':first-child');
-      var $snapshotSelectorToggleBtn = $(snapshotListBtnSel);
+  link: function ($scope, $el) {
+    var snapshotListSel = '[aria-label="snapshot-list"]';
+    var snapshotListBtnSel = '[aria-label="show-snapshot-list-btn"]';
 
-      document.addEventListener('click', hideSnapshotList, true);
+    var $snapshotSelectorContainer = $el.find(':first-child');
+    var $snapshotSelectorToggleBtn = $(snapshotListBtnSel);
 
-      $scope.$on('$destroy', function () {
-        document.removeEventListener('click', hideSnapshotList, true);
-      });
+    document.addEventListener('click', hideSnapshotList, true);
 
-      function hideSnapshotList (e) {
-        var $target = $(e.target);
-        var keepListOpen = $target.parents(snapshotListBtnSel).length || $target.parents(snapshotListSel).length;
+    $scope.$on('$destroy', () => {
+      document.removeEventListener('click', hideSnapshotList, true);
+    });
 
-        if ($snapshotSelectorContainer.is(':visible') && !keepListOpen) {
-          $snapshotSelectorToggleBtn.click();
-        }
+    function hideSnapshotList (e) {
+      var $target = $(e.target);
+      var keepListOpen = $target.parents(snapshotListBtnSel).length || $target.parents(snapshotListSel).length;
+
+      if ($snapshotSelectorContainer.is(':visible') && !keepListOpen) {
+        $snapshotSelectorToggleBtn.click();
       }
     }
-  };
-}])
+  }
+})])
 
-.controller('SnapshotSelectorController', ['$scope', 'require', function ($scope, require) {
+.controller('SnapshotSelectorController', ['$scope', 'require', ($scope, require) => {
   var K = require('utils/kefir');
   var spaceContext = require('spaceContext');
   var moment = require('moment');
@@ -62,7 +61,7 @@ angular.module('cf.app')
 
 
   var snapshotsFirstShown$ = $scope.showSnapshotSelector$
-      .filter(function (val) { return val; })
+      .filter(val => val)
       .take(1);
 
   K.onValueScope($scope, snapshotsFirstShown$, load);
@@ -89,24 +88,20 @@ angular.module('cf.app')
     $scope.isLoading = true;
 
     return spaceContext.cma.getEntrySnapshots(entryId, query)
-    .then(function (res) { return res.items; })
+    .then(res => res.items)
     .then(addUnique)
-    .then(function (snapshots) { return snapshotDecorator.withCurrent(entrySys, snapshots); })
-    .then(function (snapshots) { return snapshotDecorator.withAuthorName(spaceContext, snapshots); })
-    .then(function (snapshots) {
+    .then(snapshots => snapshotDecorator.withCurrent(entrySys, snapshots))
+    .then(snapshots => snapshotDecorator.withAuthorName(spaceContext, snapshots))
+    .then(snapshots => {
       $scope.snapshots = $scope.snapshots.concat(snapshots);
       $scope.isLoading = false;
     });
   }
 
   function addUnique (snapshots) {
-    $scope.paginator.setTotal(function (total) {
-      return total + snapshots.length;
-    });
+    $scope.paginator.setTotal(total => total + snapshots.length);
 
-    return snapshots.slice(0, PER_PAGE).filter(function (snapshot) {
-      return !snapshotsById[snapshot.sys.id];
-    }).reduce(function (acc, snapshot) {
+    return snapshots.slice(0, PER_PAGE).filter(snapshot => !snapshotsById[snapshot.sys.id]).reduce((acc, snapshot) => {
       snapshotsById[snapshot.sys.id] = snapshot;
       acc.push(snapshot);
       return acc;
@@ -153,14 +148,12 @@ angular.module('cf.app')
   }
 
   function sortByDate (isAscending) {
-    $scope.snapshots.sort(function (a, b) {
-      return moment(a.sys.createdAt).unix() - moment(b.sys.createdAt).unix();
-    });
+    $scope.snapshots.sort((a, b) => moment(a.sys.createdAt).unix() - moment(b.sys.createdAt).unix());
     handleOrdering($scope.snapshots, isAscending);
   }
 
   function sortAsStringAtPath (stringPropertyPath, isAscending) {
-    $scope.snapshots.sort(function (a, b) {
+    $scope.snapshots.sort((a, b) => {
       a = _.get(a, stringPropertyPath, '');
       b = _.get(b, stringPropertyPath, '');
 

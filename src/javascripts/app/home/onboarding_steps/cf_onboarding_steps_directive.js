@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfOnboardingSteps', ['require', function (require) {
+.directive('cfOnboardingSteps', ['require', require => {
   var $state = require('$state');
   var Analytics = require('analytics/Analytics');
   var template = require('app/home/onboarding_steps/OnboardingStepsTemplate').default;
@@ -33,10 +33,10 @@ angular.module('contentful')
         controller.isContentPreviewsLoading = true;
 
         // we convert property to a stream in order to get the next, not current value
-        var previewBusPromise = new Promise(function (resolve) {
+        var previewBusPromise = new Promise(resolve => {
           K.onValueScope($scope, contentPreviewsBus$.changes(), resolve);
         });
-        var sleepPromise = new Promise(function (resolve) {
+        var sleepPromise = new Promise(resolve => {
           // we wait for 3000ms since content previews are being polled every 2500ms,
           // and request should take 500ms at most
           setTimeout(resolve, 3000);
@@ -50,17 +50,17 @@ angular.module('contentful')
           // content previews are updated every 2.5 seconds, so this promise is needed
           // to indicate that we've loaded before this controller
           sleepPromise
-        ]).then(function () {
+        ]).then(() => {
           // after this value is updated, LD sends new info to its servers
           // and then LD flag value is updated. So we need to wait some time
           // empirically, 200ms is enough for 3G - this is a dirty hack
-          setTimeout(function () {
+          setTimeout(() => {
             controller.isContentPreviewsLoading = false;
             $scope.$apply();
           }, 200);
         });
 
-        LD.onABTest($scope, isExampleSpaceFlagName, function (flag) {
+        LD.onABTest($scope, isExampleSpaceFlagName, flag => {
           controller.isExampleSpace = flag;
           // if user is not qualified, we don't send this value
           if (flag !== null) {
@@ -161,7 +161,7 @@ angular.module('contentful')
       ];
 
       function makeAction (action, cta) {
-        return function () {
+        return () => {
           Analytics.track('learn:step_clicked', {linkName: cta});
           action();
         };
@@ -169,7 +169,7 @@ angular.module('contentful')
 
       caseofEq($state.current.name, [
         ['home', initHomePage],
-        ['spaces.detail.home', function () {
+        ['spaces.detail.home', () => {
           initSpaceHomePage();
           // Refresh after new space creation as content types and entries might have been created
           $scope.$on('spaceTemplateCreated', initSpaceHomePage);
@@ -199,7 +199,7 @@ angular.module('contentful')
         var hasContentTypes = spaceContext.publishedCTs.getAllBare().length > 0;
 
         if (hasContentTypes) {
-          spaceContext.space.getEntries().then(function (entries) {
+          spaceContext.space.getEntries().then(entries => {
             var hasEntries = !!_.size(entries);
             var nextStep = hasEntries ? 3 : 2;
             setStepCompletion(nextStep);
@@ -212,7 +212,7 @@ angular.module('contentful')
       function setStepCompletion (nextStepIdx) {
         // Set previous steps to completed and disable future steps
         // This is for the first page only
-        firstSteps.forEach(function (step, i) {
+        firstSteps.forEach((step, i) => {
           step.disabled = false;
           step.completed = i < nextStepIdx;
 
@@ -228,12 +228,12 @@ angular.module('contentful')
         spaceContext.endpoint({
           method: 'GET',
           path: ['users']
-        }).then(function (res) {
+        }).then(res => {
           controller.steps[0].completed = res.items.length > 1;
         });
 
         WebhookRepository.getInstance(spaceContext.space).getAll()
-        .then(function (webhooks) {
+        .then(webhooks => {
           controller.steps[2].completed = webhooks.length > 0;
         });
       }
@@ -249,7 +249,7 @@ angular.module('contentful')
           var contentTypeId = contentTypes[0].sys.id;
           var contentType = spaceContext.publishedCTs.get(contentTypeId);
           entityCreator.newEntry(contentTypeId)
-          .then(function (entry) {
+          .then(entry => {
             Analytics.track('entry:create', {
               eventOrigin: 'onboarding',
               contentType: contentType,
@@ -266,7 +266,7 @@ angular.module('contentful')
       // one otherwise API home
       function goToApiKeySection () {
         spaceContext.apiKeyRepo.getAll()
-        .then(function (keys) {
+        .then(keys => {
           if (keys.length === 1) {
             var name = 'spaces.detail.api.keys.detail';
             var params = { apiKeyId: keys[0].sys.id };
@@ -278,7 +278,7 @@ angular.module('contentful')
       }
 
       function goToSettings (page) {
-        return function () {
+        return () => {
           $state.go('spaces.detail.settings.' + page + '.list');
         };
       }
@@ -287,10 +287,8 @@ angular.module('contentful')
       // For this reason we get the id of the first org the user has access to.
       function createNewSpace () {
         TokenStore.getOrganizations()
-          .then(function (orgs) {
-            return orgs[0].sys.id;
-          })
-          .then(function (id) {
+          .then(orgs => orgs[0].sys.id)
+          .then(id => {
             CreateSpace.showDialog(id);
           });
       }

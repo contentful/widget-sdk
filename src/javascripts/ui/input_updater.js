@@ -5,7 +5,7 @@ angular.module('cf.ui')
  * @ngdoc service
  * @name ui/inputUpdater
  */
-.factory('ui/inputUpdater', [function () {
+.factory('ui/inputUpdater', [() => {
   return {
     create: createInputUpdater
   };

@@ -1,10 +1,10 @@
 'use strict';
 
-describe('data/userCache', function () {
+describe('data/userCache', () => {
   let userCache, fetchAll;
 
   beforeEach(function () {
-    module('cf.data', function ($provide) {
+    module('cf.data', $provide => {
       $provide.value('data/CMA/FetchAll', {
         fetchAll: fetchAll = sinon.stub().resolves()
       });
@@ -19,8 +19,8 @@ describe('data/userCache', function () {
     return {sys: {id: id}};
   }
 
-  describe('#getAll()', function () {
-    it('fetches users only once', function () {
+  describe('#getAll()', () => {
+    it('fetches users only once', () => {
       sinon.assert.notCalled(fetchAll);
       userCache.getAll();
       sinon.assert.calledOnce(fetchAll);
@@ -28,11 +28,11 @@ describe('data/userCache', function () {
       sinon.assert.calledOnce(fetchAll);
     });
 
-    it('it maps users by id', function () {
+    it('it maps users by id', () => {
       const userResponse = [makeUser('0'), makeUser('1')];
       fetchAll.resolves(userResponse);
       return userCache.getAll()
-      .then(function (users) {
+      .then(users => {
         expect(users).toEqual(userResponse);
       });
     });
@@ -48,8 +48,8 @@ describe('data/userCache', function () {
     });
   });
 
-  describe('#get()', function () {
-    it('fetches users only once', function () {
+  describe('#get()', () => {
+    it('fetches users only once', () => {
       sinon.assert.notCalled(fetchAll);
       userCache.get();
       sinon.assert.calledOnce(fetchAll);
@@ -57,26 +57,24 @@ describe('data/userCache', function () {
       sinon.assert.calledOnce(fetchAll);
     });
 
-    it('it gets users by id', function () {
+    it('it gets users by id', () => {
       const userResponse = [makeUser('0'), makeUser('1')];
       fetchAll.resolves(userResponse);
       return userCache.get('1')
-      .then(function (user) {
+      .then(user => {
         expect(user).toEqual(userResponse[1]);
       });
     });
 
-    it('resuses response from call to "#getAll()"', function () {
+    it('resuses response from call to "#getAll()"', () => {
       const userResponse = [makeUser('0'), makeUser('1')];
       fetchAll.resolves(userResponse);
       return userCache.getAll()
-      .then(function (users) {
-        return userCache.get('0')
-        .then(function (user) {
-          expect(user).toBe(users[0]);
-          sinon.assert.calledOnce(fetchAll);
-        });
-      });
+      .then(users => userCache.get('0')
+      .then(user => {
+        expect(user).toBe(users[0]);
+        sinon.assert.calledOnce(fetchAll);
+      }));
     });
   });
 });

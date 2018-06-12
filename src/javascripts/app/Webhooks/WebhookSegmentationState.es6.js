@@ -153,7 +153,7 @@ export function transformTopicsToMap (topics) {
 
   const map = createMap(false);
 
-  topics.forEach(function (topic) {
+  topics.forEach(topic => {
     const [ entityType, action ] = topic.split('.');
 
     if (entityType !== '*' && action !== '*') {

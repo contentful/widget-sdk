@@ -6,7 +6,7 @@ beforeEach(function () {
 
 afterEach(function () {
   // Destroy all elements created with `this.$compile()`
-  this._angularElements.forEach(function (el) {
+  this._angularElements.forEach(el => {
     el.remove();
   });
   delete this._angularElements;

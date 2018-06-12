@@ -8,7 +8,7 @@ angular.module('contentful')
  * TODO Temporary module to avoid circular dependencies. Name is
  * horrible.
  */
-.factory('editingInterfaces/helpers', [function () {
+.factory('editingInterfaces/helpers', [() => {
 
   return {
     findWidget: findWidget

@@ -3,7 +3,7 @@ import sinon from 'npm:sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
 import { EntityType } from 'app/entity_editor/Components/constants';
 
-describe('fetchLinks', function () {
+describe('fetchLinks', () => {
   beforeEach(function* () {
     const system = createIsolatedSystem();
 

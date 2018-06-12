@@ -7,7 +7,7 @@ angular.module('cf.data')
  * @module cf.data
  * @name data/editingInterfaces
  */
-.factory('data/editingInterfaces', ['require', function (require) {
+.factory('data/editingInterfaces', ['require', require => {
   var $q = require('$q');
   var Transformer = require('data/editingInterfaces/transformer');
 
@@ -47,16 +47,12 @@ angular.module('cf.data')
         method: 'GET',
         path: makePath(contentType)
       })
-      .then(function (editingInterface) {
-        return Transformer.fromAPI(contentType, editingInterface);
-      }, createErrorResponseHandler(404, function () {
-        return Transformer.makeDefault(contentType);
-      }));
+      .then(editingInterface => Transformer.fromAPI(contentType, editingInterface), createErrorResponseHandler(404, () => Transformer.makeDefault(contentType)));
     }
 
     // TODO this might be useful in other places
     function createErrorResponseHandler (statusCode, handler) {
-      return function (error) {
+      return error => {
         if (error.status === statusCode) {
           return handler(error);
         } else {
@@ -79,9 +75,7 @@ angular.module('cf.data')
         path: makePath(contentType),
         version: data.sys.version,
         data: data
-      }).then(function (editingInterface) {
-        return Transformer.fromAPI(contentType, editingInterface);
-      });
+      }).then(editingInterface => Transformer.fromAPI(contentType, editingInterface));
     }
   };
 

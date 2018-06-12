@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfPlatformUsage', ['require', function (require) {
+.directive('cfPlatformUsage', ['require', require => {
   var React = require('react');
   var ReactDOM = require('react-dom');
   var OrganizationUsage = require('account/usage/OrganizationUsage').default;
@@ -17,7 +17,7 @@ angular.module('contentful')
         onForbidden: function () { context.forbidden = true; }
       }), host);
 
-      $scope.$on('$destroy', function () {
+      $scope.$on('$destroy', () => {
         ReactDOM.unmountComponentAtNode(host);
       });
     }

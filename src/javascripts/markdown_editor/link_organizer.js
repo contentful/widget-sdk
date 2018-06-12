@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('LinkOrganizer', ['require', function (require) {
+angular.module('contentful').factory('LinkOrganizer', ['require', require => {
 
   var PROCESSORS = require('LinkOrganizer/matchProcessors');
   var REGEXS     = {
@@ -25,7 +25,7 @@ angular.module('contentful').factory('LinkOrganizer', ['require', function (requ
   function convertInlineToRef(text) {
     var id = findMaxLabelId(text) ;
 
-    _.forEach(findInline(text), function (inline) {
+    _.forEach(findInline(text), inline => {
       id += 1;
       text = text.replace(inline.match, buildRef(inline, id));
       text += '\n' + buildLabel(inline, id);
@@ -38,7 +38,7 @@ angular.module('contentful').factory('LinkOrganizer', ['require', function (requ
     var byHref = {};
     var byOldId = {};
 
-    _.forEach(findLabels(text), function (label) {
+    _.forEach(findLabels(text), label => {
       var alreadyAdded = byHref[label.href];
       var current = _.extend({}, label);
 
@@ -65,7 +65,7 @@ angular.module('contentful').factory('LinkOrganizer', ['require', function (requ
     var i = 1;
 
     // 1. compose list of labels with new ids, in order
-    _.forEach(findRefs(text), function (ref) {
+    _.forEach(findRefs(text), ref => {
       var oldLabel = merged.byOldId[ref.id];
       if (!oldLabel) { return; }
       var href = oldLabel.href;
@@ -82,7 +82,7 @@ angular.module('contentful').factory('LinkOrganizer', ['require', function (requ
     });
 
     // 2. remove all labels!
-    _.forEach(findLabels(text), function (label) {
+    _.forEach(findLabels(text), label => {
       text = text.replace(label.match, '');
     });
 
@@ -91,12 +91,12 @@ angular.module('contentful').factory('LinkOrganizer', ['require', function (requ
     text += '\n\n';
 
     // 4. apply rewrites
-    _.forEach(rewrites, function (ref) {
+    _.forEach(rewrites, ref => {
       text = text.replace(ref.match, buildRef(ref, ref.newId));
     });
 
     // 5. print new labels at the end of text
-    _.forEach(labels, function (label) {
+    _.forEach(labels, label => {
       text += '\n' + buildLabel(label, label.newId);
     });
 
@@ -108,9 +108,7 @@ angular.module('contentful').factory('LinkOrganizer', ['require', function (requ
    */
 
   function makeFinder(type) {
-    return function (text) {
-      return _.map(findAll(text, type), PROCESSORS[type]);
-    };
+    return text => _.map(findAll(text, type), PROCESSORS[type]);
   }
 
   function findMaxLabelId(textOrLabels) {
@@ -119,8 +117,8 @@ angular.module('contentful').factory('LinkOrganizer', ['require', function (requ
     }
 
     var ids = _(textOrLabels).map('id')
-      .map(function (x) { return parseInt(x, 10); })
-      .filter(function (x) { return _.isFinite(x) && x > 0; })
+      .map(x => parseInt(x, 10))
+      .filter(x => _.isFinite(x) && x > 0)
       .value();
 
     return ids.length > 0 ? _.max(ids) : 0;
@@ -161,7 +159,7 @@ angular.module('contentful').factory('LinkOrganizer', ['require', function (requ
 
 }]);
 
-angular.module('contentful').factory('LinkOrganizer/matchProcessors', function () {
+angular.module('contentful').factory('LinkOrganizer/matchProcessors', () => {
 
   return {
     inline: function (match) {

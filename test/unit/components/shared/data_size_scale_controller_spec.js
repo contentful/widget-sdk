@@ -1,6 +1,6 @@
 'use strict';
 
-describe('DataSizeScaleController', function() {
+describe('DataSizeScaleController', () => {
 
   beforeEach(module('contentful/test'));
 

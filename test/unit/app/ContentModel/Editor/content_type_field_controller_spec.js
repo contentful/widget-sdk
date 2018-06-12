@@ -1,5 +1,5 @@
 // TODO rewrite this with new interaction test framework
-describe('Content Type Field Controller', function () {
+describe('Content Type Field Controller', () => {
   beforeEach(module('contentful/test'));
 
   beforeEach(function () {
@@ -45,7 +45,7 @@ describe('Content Type Field Controller', function () {
   describeFieldPropertyActions('disabled');
 
   function describeFieldPropertyActions (prop) {
-    describe('field "' + prop + '" property toggling actions', function () {
+    describe('field "' + prop + '" property toggling actions', () => {
       beforeEach(function () {
         this.click = function (label) {
           this.fieldElement.find('[aria-label=Actions]').click();
@@ -79,7 +79,7 @@ describe('Content Type Field Controller', function () {
     });
   }
 
-  describe('title action', function () {
+  describe('title action', () => {
     it('sets field as title', function () {
       expect(this.contentType.data.displayField).not.toEqual(this.field.id);
 
@@ -120,7 +120,7 @@ describe('Content Type Field Controller', function () {
     });
   });
 
-  describe('delete action', function () {
+  describe('delete action', () => {
     beforeEach(function () {
       this.dialogs = this.$inject('ContentTypeFieldController/dialogs');
       this.getPublishedField = sinon.stub();

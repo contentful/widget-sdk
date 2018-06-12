@@ -1,6 +1,6 @@
 angular.module('contentful').directive('cfEntryEditor', [
   'require',
-  function (require) {
+  require => {
     var createEditorController = require('app/entity_editor/EntryController')
       .default;
     return {
@@ -12,9 +12,7 @@ angular.module('contentful').directive('cfEntryEditor', [
       template: JST.entry_editor(),
       controller: [
         '$scope',
-        function ($scope) {
-          return createEditorController($scope, $scope.entryId);
-        }
+        $scope => createEditorController($scope, $scope.entryId)
       ]
     };
   }

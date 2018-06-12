@@ -17,7 +17,7 @@
  * map.locale.toInternal[aLocale.code]  // => aLocale.internal_code
  */
 angular.module('contentful')
-.factory('widgets/IDMap', ['require', function (require) {
+.factory('widgets/IDMap', ['require', require => {
   var TheLocaleStore = require('TheLocaleStore');
 
   return createIDMap;
@@ -30,7 +30,7 @@ angular.module('contentful')
   }
 
   function createFieldMap (fields) {
-    var toPublic = _.transform(fields, function (toPublic, field) {
+    var toPublic = _.transform(fields, (toPublic, field) => {
       toPublic[field.id] = field.apiName;
     });
     var toInternal = _.invert(toPublic);
@@ -44,7 +44,7 @@ angular.module('contentful')
   function createLocaleMap () {
     var locales = TheLocaleStore.getPrivateLocales();
 
-    var toPublic = _.transform(locales, function (toPublic, locale) {
+    var toPublic = _.transform(locales, (toPublic, locale) => {
       toPublic[locale.internal_code] = locale.code;
     });
     var toInternal = _.invert(toPublic);
@@ -56,7 +56,7 @@ angular.module('contentful')
     };
 
     function valuesToPublic (localized) {
-      return _.transform(localized, function (transformed, value, internalLocale) {
+      return _.transform(localized, (transformed, value, internalLocale) => {
         transformed[toPublic[internalLocale]] = value;
       }, {});
     }

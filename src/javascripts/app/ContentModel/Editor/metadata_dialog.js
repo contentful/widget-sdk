@@ -6,7 +6,7 @@ angular.module('contentful')
  * @ngdoc service
  * @name contentTypeEditor/metadataDialog
  */
-.factory('contentTypeEditor/metadataDialog', ['require', function (require) {
+.factory('contentTypeEditor/metadataDialog', ['require', require => {
   var $rootScope = require('$rootScope');
   var modalDialog = require('modalDialog');
   var Command = require('command');
@@ -60,7 +60,7 @@ angular.module('contentful')
     });
 
     scope.originalName = contentType.data.name;
-    scope.duplicate = Command.create(function () {
+    scope.duplicate = Command.create(() => {
       var d = scope.dialog;
       var form = d.formController;
 
@@ -92,9 +92,7 @@ angular.module('contentful')
       scope: scope,
       ignoreEnter: true,
       noNewScope: true
-    }).promise.then(function () {
-      return scope.contentTypeMetadata;
-    });
+    }).promise.then(() => scope.contentTypeMetadata);
   }
 
   function prepareScope (params) {
@@ -119,18 +117,18 @@ angular.module('contentful')
  * @scope.requires {object} contentTypeMetadata
  * @scope.requires {bool}   contentTypeIsNew
 */
-.controller('ContentTypeMetadataController', ['$scope', 'require', function ($scope, require) {
+.controller('ContentTypeMetadataController', ['$scope', 'require', ($scope, require) => {
   var stringUtils = require('stringUtils');
   var ID_REGEXP = /^[a-zA-Z0-9-_.]*$/;
 
   var contentTypeIds = [];
   if ($scope.contentTypeIds) {
-    $scope.contentTypeIds.then(function (ctIds) {
+    $scope.contentTypeIds.then(ctIds => {
       contentTypeIds = ctIds;
     });
   }
 
-  $scope.$watch('newContentTypeForm.contentTypeId', function (ctrl) {
+  $scope.$watch('newContentTypeForm.contentTypeId', ctrl => {
     if (!ctrl) { return; }
 
     ctrl.errorDetails = {
@@ -139,20 +137,14 @@ angular.module('contentful')
       length: {message: 'Please shorten the text so it’s no longer than 64 characters'}
     };
 
-    ctrl.$validators.unique = function (value) {
-      return !_.includes(contentTypeIds, value);
-    };
+    ctrl.$validators.unique = value => !_.includes(contentTypeIds, value);
 
-    ctrl.$validators.format = function (value) {
-      return ID_REGEXP.test(value);
-    };
+    ctrl.$validators.format = value => ID_REGEXP.test(value);
 
-    ctrl.$validators.length = function (value) {
-      return value.length <= 64;
-    };
+    ctrl.$validators.length = value => value.length <= 64;
   });
 
-  $scope.$watch('contentTypeMetadata.name', function (name) {
+  $scope.$watch('contentTypeMetadata.name', name => {
     var idField = $scope.newContentTypeForm.contentTypeId;
     if (idField && !idField.$touched) {
       $scope.contentTypeMetadata.id = stringUtils.toIdentifier(name);

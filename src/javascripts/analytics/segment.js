@@ -13,7 +13,7 @@ angular.module('contentful')
  * call. Once disabled, this service cannot
  * be enabled again.
  */
-.factory('analytics/segment', ['require', function (require) {
+.factory('analytics/segment', ['require', require => {
   var $window = require('$window');
   var $q = require('$q');
   var CallBuffer = require('utils/CallBuffer');
@@ -94,7 +94,7 @@ angular.module('contentful')
    * Removes all user traits.
    */
   function disable () {
-    buffer.call(function (analytics) {
+    buffer.call(analytics => {
       analytics.user().traits({});
     });
     buffer.disable();
@@ -104,7 +104,7 @@ angular.module('contentful')
   function bufferedCall (fnName) {
     return function () {
       var args = _.toArray(arguments);
-      buffer.call(function (analytics) {
+      buffer.call(analytics => {
         try {
           analytics[fnName].apply(analytics, args);
         } catch (err) {
@@ -149,16 +149,14 @@ angular.module('contentful')
       'on'
     ];
 
-    analytics.factory = function (method) {
-      return function () {
-        var args = _.toArray(arguments);
-        args.unshift(method);
-        analytics.push(args);
-        return analytics;
-      };
+    analytics.factory = method => function () {
+      var args = _.toArray(arguments);
+      args.unshift(method);
+      analytics.push(args);
+      return analytics;
     };
 
-    analytics.methods.forEach(function (key) {
+    analytics.methods.forEach(key => {
       analytics[key] = analytics.factory(key);
     });
 

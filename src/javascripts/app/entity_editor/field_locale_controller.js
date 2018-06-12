@@ -54,7 +54,7 @@ angular.module('contentful')
    * This is called by the `cfWidgetRenderer` directive when a field
    * editor is unfocussed.
    */
-  controller.revalidate = function () {
+  controller.revalidate = () => {
     $scope.editorContext.validator.validateFieldLocale(field.id, locale.internal_code);
   };
 
@@ -78,13 +78,13 @@ angular.module('contentful')
    */
   controller.errors$ =
     editorContext.validator.errors$
-    .map(function (errors) {
+    .map(errors => {
       errors = filterLocaleErrors(errors);
 
       // TODO instead of initiating a request that mutates the error
       // object we should have a dedicated error component that takes
       // care of this.
-      errors.forEach(function (error) {
+      errors.forEach(error => {
         if (error.name === 'unique') {
           decorateUniquenessError(error);
         }
@@ -101,14 +101,14 @@ angular.module('contentful')
    *
    * @type {Array<Error>?}
    */
-  K.onValueScope($scope, controller.errors$, function (errors) {
+  K.onValueScope($scope, controller.errors$, errors => {
     controller.errors = errors;
   });
 
   // Only retuns errors that apply to this field locale
   // TODO move this to entry validator
   function filterLocaleErrors (errors) {
-    return errors.filter(function (error) {
+    return errors.filter(error => {
       var path = error.path;
 
       if (!path) {
@@ -135,11 +135,9 @@ angular.module('contentful')
 
     // asynchronously add conflicting entry title to the error objects
     // so that we can display the list in the UI
-    spaceContext.space.getEntries(query).then(function (entries) {
-      entries.forEach(function (entry) {
-        var conflict = _.find(conflicts, function (c) {
-          return c.sys.id === entry.data.sys.id;
-        });
+    spaceContext.space.getEntries(query).then(entries => {
+      entries.forEach(entry => {
+        var conflict = _.find(conflicts, c => c.sys.id === entry.data.sys.id);
 
         conflict.data = conflict.data || {};
         conflict.data.entryTitle = spaceContext.entryTitle(entry);
@@ -158,7 +156,7 @@ angular.module('contentful')
    * @description
    * A list of users that are also editing this field locale.
    */
-  K.onValueScope($scope, controller.doc.collaborators, function (collaborators) {
+  K.onValueScope($scope, controller.doc.collaborators, collaborators => {
     controller.collaborators = collaborators;
   });
 
@@ -191,7 +189,7 @@ angular.module('contentful')
    *
    * @param {boolean} active
    */
-  controller.setActive = function (isActive) {
+  controller.setActive = isActive => {
     if (isActive) {
       controller.doc.notifyFocus();
       editorContext.focus.set(field.id);
@@ -223,7 +221,7 @@ angular.module('contentful')
   controller.access$ =
     // TODO move this to FieldLocaleDocument
     $scope.docImpl.state.isConnected$
-    .map(function (connected) {
+    .map(connected => {
       if (field.disabled) {
         return EDITING_DISABLED;
       } else if (!editingAllowed) {
@@ -235,7 +233,7 @@ angular.module('contentful')
       }
     });
 
-  K.onValueScope($scope, controller.access$, function (access) {
+  K.onValueScope($scope, controller.access$, access => {
     controller.access = access;
   });
 }]);

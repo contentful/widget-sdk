@@ -49,7 +49,7 @@ describe('data/User', () => {
     this.utils = this.$inject('data/User');
   });
 
-  describe('#userDataBus$', function () {
+  describe('#userDataBus$', () => {
     beforeEach(function () {
       this.spy = sinon.spy();
       this.utils.userDataBus$.onValue(this.spy);
@@ -139,7 +139,7 @@ describe('data/User', () => {
     });
   });
 
-  describe('#getOrgRole', function () {
+  describe('#getOrgRole', () => {
     it('should return the role the user has for a given orgId', function () {
       const role = 'some role';
       const orgId = 'org-1';
@@ -159,7 +159,7 @@ describe('data/User', () => {
     });
   });
 
-  describe('#getUserAgeInDays', function () {
+  describe('#getUserAgeInDays', () => {
     it('should get the user\'s age in days for older dates', function () {
       const diff = 7;
       const creationDate = this.moment().subtract(diff, 'days');
@@ -171,7 +171,7 @@ describe('data/User', () => {
     });
   });
 
-  describe('#getUserCreationDateUnixTimestamp', function () {
+  describe('#getUserCreationDateUnixTimestamp', () => {
     it('should return the user creation date as a unix timestamp', function () {
       const creationDate = this.moment();
 
@@ -181,7 +181,7 @@ describe('data/User', () => {
     });
   });
 
-  describe('#isNonPayingUser', function () {
+  describe('#isNonPayingUser', () => {
     beforeEach(function () {
       this.checkIfUserIsNonpaying = function (subscriptionStatus, valToAssert) {
         const isNonPayingUser = this.utils.isNonPayingUser({
@@ -214,7 +214,7 @@ describe('data/User', () => {
     });
   });
 
-  describe('#hasAnOrgWithSpaces', function () {
+  describe('#hasAnOrgWithSpaces', () => {
     it('should return true if any of the orgs user belongs to has one or more spaces', function () {
       expect(this.utils.hasAnOrgWithSpaces({org1: [1, 2]})).toBe(true);
       expect(this.utils.hasAnOrgWithSpaces({org1: [1, 2], org2: []})).toBe(true);
@@ -225,7 +225,7 @@ describe('data/User', () => {
     });
   });
 
-  describe('#ownsAtleastOneOrg', function () {
+  describe('#ownsAtleastOneOrg', () => {
     it('should return true if user owns at least on org', function () {
       expect(this.utils.ownsAtleastOneOrg({organizationMemberships: this.orgs})).toBe(true);
     });
@@ -236,7 +236,7 @@ describe('data/User', () => {
     });
   });
 
-  describe('#getOwnedOrgs', function () {
+  describe('#getOwnedOrgs', () => {
     it('should return a list of orgs the user is an owner of', function () {
       expect(this.utils.getOwnedOrgs({organizationMemberships: this.orgs})).toEqual([this.orgs[0]]);
     });
@@ -245,7 +245,7 @@ describe('data/User', () => {
     });
   });
 
-  describe('#getFirstOwnedOrgWithoutSpaces', function () {
+  describe('#getFirstOwnedOrgWithoutSpaces', () => {
     beforeEach(function () {
       this.testGetFirstOwnedOrgWithoutSpaces = (spacesByOrg, assertion) => {
         const org = this.utils.getFirstOwnedOrgWithoutSpaces({
@@ -264,7 +264,7 @@ describe('data/User', () => {
     });
   });
 
-  describe('#isAutomationTestUser', function () {
+  describe('#isAutomationTestUser', () => {
     beforeEach(function () {
       this.assertOnEmails = function (emails, value) {
         emails.forEach(email => {
@@ -297,7 +297,7 @@ describe('data/User', () => {
     });
   });
 
-  describe('#isUserOrgCreator', function () {
+  describe('#isUserOrgCreator', () => {
     it('should return true if the current org was created by the current user', function () {
       expect(this.utils.isUserOrgCreator({sys: {id: 1}}, {sys: {createdBy: {sys: {id: 1}}}})).toEqual(true);
     });
@@ -311,7 +311,7 @@ describe('data/User', () => {
     });
   });
 
-  describe('#getUserSpaceRoles', function () {
+  describe('#getUserSpaceRoles', () => {
     it('should include "admin" in the array in case of admin', function () {
       const space = {
         spaceMembership: {

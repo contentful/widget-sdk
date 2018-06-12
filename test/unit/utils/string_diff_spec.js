@@ -1,6 +1,6 @@
 'use string';
 
-describe('utils/StringDiff', function () {
+describe('utils/StringDiff', () => {
   const CHARS = '0123456789abcdefghijklmnopqvwxyzABCDEFGHIJKLMNOPQVWXYZ';
   let diff;
 
@@ -9,20 +9,20 @@ describe('utils/StringDiff', function () {
     diff = this.$inject('utils/StringDiff').diff;
   });
 
-  afterEach(function () {
+  afterEach(() => {
     diff = null;
   });
 
-  it('diffs inserts', function () {
-    _.times(1000, function () {
+  it('diffs inserts', () => {
+    _.times(1000, () => {
       const a = randomString();
       const p = randomInsert(a.length);
       assertPatchedDiff(a, [p]);
     });
   });
 
-  it('diffs deletes', function () {
-    _.times(1000, function () {
+  it('diffs deletes', () => {
+    _.times(1000, () => {
       const a = randomString();
       const p = randomDelete(a.length);
       assertPatchedDiff(a, [p]);
@@ -31,7 +31,7 @@ describe('utils/StringDiff', function () {
 
 
   function patch (a, patches) {
-    return _.reduce(patches, function (a, p) {
+    return _.reduce(patches, (a, p) => {
       let prefix, suffix;
       if (p.insert) {
         prefix = a.slice(0, p.insert[0]);
@@ -64,9 +64,7 @@ describe('utils/StringDiff', function () {
 
   function randomString () {
     const size = _.random(0, 8);
-    return _.times(size, function () {
-      return randomChar();
-    }).join('');
+    return _.times(size, () => randomChar()).join('');
   }
 
   function randomChar () {

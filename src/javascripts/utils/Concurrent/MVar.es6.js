@@ -60,7 +60,7 @@ function createBase (PromiseImplementation, initialEmpty, value) {
   }
 
   function take () {
-    return read().then(function (value) {
+    return read().then(value => {
       empty();
       return value;
     });

@@ -6,7 +6,7 @@ angular.module('contentful')
  * @ngdoc service
  * @name states/settings
  */
-.factory('states/settings', ['require', function (require) {
+.factory('states/settings', ['require', require => {
   var base = require('states/Base').default;
 
   var space = base({

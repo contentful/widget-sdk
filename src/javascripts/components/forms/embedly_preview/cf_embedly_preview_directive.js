@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfEmbedlyPreview', ['require', function (require) {
+angular.module('contentful').directive('cfEmbedlyPreview', ['require', require => {
   var $timeout = require('$timeout');
   var debounce = require('debounce');
   var urlUtils = require('urlUtils');
@@ -35,12 +35,12 @@ angular.module('contentful').directive('cfEmbedlyPreview', ['require', function 
           embedly('card', previewElement.get(0));
 
           cancelCheck();
-          loadCheck = $timeout(function () { changeStatus('broken'); }, TIMEOUT);
+          loadCheck = $timeout(() => { changeStatus('broken'); }, TIMEOUT);
         }
 
         function markAsLoaded () {
           cancelCheck();
-          scope.$apply(function () {
+          scope.$apply(() => {
             changeStatus('ok');
           });
         }

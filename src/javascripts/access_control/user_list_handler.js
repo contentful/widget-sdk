@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.factory('UserListHandler', ['require', function (require) {
+.factory('UserListHandler', ['require', require => {
   var $q = require('$q');
   var spaceContext = require('spaceContext');
   var RoleRepository = require('RoleRepository');
@@ -31,7 +31,7 @@ angular.module('contentful')
       reset: reset,
       getMembershipCounts: function () { return membershipCounts; },
       getUserCount: function () { return users.length; },
-      getUserIds: function () { return users.map(function (user) { return user.id; }); },
+      getUserIds: function () { return users.map(user => user.id); },
       getGroupedUsers: getGroupedUsers,
       getUsersByRole: getUsersByRole,
       getRoleOptions: getRoleOptions,
@@ -54,18 +54,18 @@ angular.module('contentful')
       roleNameMap = {};
       userRolesMap = {};
 
-      _.forEach(data.memberships, function (membership) {
+      _.forEach(data.memberships, membership => {
         var userId = membership.user.sys.id;
         adminMap[userId] = membership.admin;
         membershipMap[userId] = membership;
 
         userRolesMap[userId] = userRolesMap[userId] || [];
-        _.forEach(membership.roles, function (role) {
+        _.forEach(membership.roles, role => {
           userRolesMap[userId].push(role.sys.id);
         });
       });
 
-      _.forEach(data.roles, function (role) {
+      _.forEach(data.roles, role => {
         roleNameMap[role.sys.id] = role.name;
       });
 
@@ -78,9 +78,9 @@ angular.module('contentful')
     function countMemberships (memberships) {
       var counts = { admin: 0 };
 
-      _.forEach(memberships, function (item) {
+      _.forEach(memberships, item => {
         if (item.admin) { counts.admin += 1; }
-        _.forEach(item.roles || [], function (role) {
+        _.forEach(item.roles || [], role => {
           counts[role.sys.id] = counts[role.sys.id] || 0;
           counts[role.sys.id] += 1;
         });
@@ -90,7 +90,7 @@ angular.module('contentful')
     }
 
     function prepareUsers (users) {
-      return _(users).map(function (user) {
+      return _(users).map(user => {
         var id = user.sys.id;
 
         return {
@@ -132,19 +132,18 @@ angular.module('contentful')
     }
 
     function getRoleOptions () {
-      return [ADMIN_OPT].concat(_.map(roleNameMap, function (name, id) {
-        return { id: id, name: name };
-      }));
+      return [ADMIN_OPT].concat(_.map(roleNameMap, (name, id) => ({
+        id: id,
+        name: name
+      })));
     }
 
     function getRoleOptionsBut (roleIdToExclude) {
-      return _.filter(getRoleOptions(), function (option) {
-        return option.id !== roleIdToExclude;
-      });
+      return _.filter(getRoleOptions(), option => option.id !== roleIdToExclude);
     }
 
     function getUsersByRole (id) {
-      return _.filter(users, function (user) {
+      return _.filter(users, user => {
         if (isAdminRole(id)) { return user.isAdmin; }
         return user.roles.indexOf(id) > -1;
       });
@@ -160,7 +159,7 @@ angular.module('contentful')
     function groupUsersByName () {
       var byLetter = {};
 
-      _.forEach(users, function (user) {
+      _.forEach(users, user => {
         var first = user.name.substr(0, 1).toUpperCase();
         byLetter[first] = byLetter[first] || [];
         byLetter[first].push(user);
@@ -168,22 +167,20 @@ angular.module('contentful')
 
       var sortedLetters = _.keys(byLetter).sort();
 
-      return _.map(sortedLetters, function (letter) {
-        return {
-          id: 'letter-group-' + letter.toLowerCase(),
-          label: letter,
-          users: byLetter[letter]
-        };
-      });
+      return _.map(sortedLetters, letter => ({
+        id: 'letter-group-' + letter.toLowerCase(),
+        label: letter,
+        users: byLetter[letter]
+      }));
     }
 
     function groupUsersByRole () {
       var byRole = {};
       var admins = [];
 
-      _.forEach(users, function (user) {
+      _.forEach(users, user => {
         if (user.isAdmin) { admins.push(user); }
-        _.forEach(user.roles, function (roleId) {
+        _.forEach(user.roles, roleId => {
           byRole[roleId] = byRole[roleId] || [];
           byRole[roleId].push(user);
         });
@@ -193,13 +190,11 @@ angular.module('contentful')
       sortedRoleIds.unshift(ADMIN_ROLE_ID);
       byRole[ADMIN_ROLE_ID] = admins;
 
-      return _.map(sortedRoleIds, function (roleId) {
-        return {
-          id: 'role-group-' + roleId,
-          label: getRoleName(roleId),
-          users: byRole[roleId]
-        };
-      });
+      return _.map(sortedRoleIds, roleId => ({
+        id: 'role-group-' + roleId,
+        label: getRoleName(roleId),
+        users: byRole[roleId]
+      }));
     }
 
     function getAllUsers () {

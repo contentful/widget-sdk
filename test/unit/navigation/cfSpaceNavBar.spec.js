@@ -1,11 +1,11 @@
 'use strict';
 
-describe('Space nav bar directive', function () {
+describe('Space nav bar directive', () => {
   let container, scope, accessChecker, spaceContext;
   let compileElement;
 
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.removeDirectives('otDocPresence', 'entryEditor', 'apiKeyEditor', 'entryList', 'cfIcon');
     });
 
@@ -17,29 +17,29 @@ describe('Space nav bar directive', function () {
 
     spaceContext.organizationContext = {organization: {sys: {id: '123'}}};
 
-    compileElement = function () {
+    compileElement = () => {
       container = $('<cf-space-nav-bar></cf-space-nav-bar>');
       $compile(container)(scope);
       scope.$apply();
     };
   });
 
-  afterEach(function () {
+  afterEach(() => {
     container.remove();
     container = scope = accessChecker = compileElement = null;
   });
 
   function makeNavbarItemTest (key, viewType) {
-    describe('navbar item for ' + key, function () {
+    describe('navbar item for ' + key, () => {
       const selector = 'a[data-view-type="' + viewType + '"]';
 
-      it('is hidden', function () {
+      it('is hidden', () => {
         accessChecker.getSectionVisibility.returns(getVisibility(key, false));
         compileElement();
         expect(container.find(selector).length).toEqual(0);
       });
 
-      it('is shown', function () {
+      it('is shown', () => {
         accessChecker.getSectionVisibility.returns(getVisibility(key, true));
         compileElement();
         expect(container.find(selector).length).toEqual(1);

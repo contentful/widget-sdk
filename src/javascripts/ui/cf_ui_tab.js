@@ -27,17 +27,15 @@ angular.module('cf.ui')
  *     div(ui-tabpanel="two")
  *       | content of tab two
  */
-.directive('cfUiTab', [function () {
-  return {
-    controllerAs: 'tabController',
-    controller: 'UiTabController'
-  };
-}])
+.directive('cfUiTab', [() => ({
+  controllerAs: 'tabController',
+  controller: 'UiTabController'
+})])
 
 .controller('UiTabController', [function () {
   function Tab (controller, name) {
     this.name = name;
-    this.activate = function () {
+    this.activate = () => {
       controller.activate(name);
     };
   }
@@ -74,9 +72,7 @@ angular.module('cf.ui')
     return tab;
   };
 
-  this.getActiveTabName = function () {
-    return activeTab && activeTab.name;
-  };
+  this.getActiveTabName = () => activeTab && activeTab.name;
 
   this.activate = function (name) {
     if (activeTab) {
@@ -92,40 +88,38 @@ angular.module('cf.ui')
   };
 }])
 
-.directive('uiTab', [function () {
-  return {
-    scope: true,
-    link: function (scope, element, attrs) {
-      var tabName = attrs.uiTab;
-      var tab = scope.tabController.registerControl(tabName);
+.directive('uiTab', [() => ({
+  scope: true,
 
-      attrs.$set('role', 'tab');
-      scope.tab = tab;
+  link: function (scope, element, attrs) {
+    var tabName = attrs.uiTab;
+    var tab = scope.tabController.registerControl(tabName);
 
-      element.on('click', function () {
-        scope.$apply(tab.activate);
-      });
+    attrs.$set('role', 'tab');
+    scope.tab = tab;
 
-      scope.$watch('tab.active', function (isActive) {
-        attrs.$set('ariaSelected', isActive);
-      });
-    }
-  };
-}])
+    element.on('click', () => {
+      scope.$apply(tab.activate);
+    });
 
-.directive('uiTabpanel', [function () {
-  return {
-    scope: true,
-    link: function (scope, element, attrs) {
-      var tabName = attrs.uiTabpanel;
-      var tabController = scope.tabController;
-      var tab = tabController.registerPanel(tabName, element);
-      attrs.$set('role', 'tabpanel');
-      scope.tab = tab;
+    scope.$watch('tab.active', isActive => {
+      attrs.$set('ariaSelected', isActive);
+    });
+  }
+})])
 
-      scope.$watch('tab.active', function (isActive) {
-        attrs.$set('ariaHidden', !isActive);
-      });
-    }
-  };
-}]);
+.directive('uiTabpanel', [() => ({
+  scope: true,
+
+  link: function (scope, element, attrs) {
+    var tabName = attrs.uiTabpanel;
+    var tabController = scope.tabController;
+    var tab = tabController.registerPanel(tabName, element);
+    attrs.$set('role', 'tabpanel');
+    scope.tab = tab;
+
+    scope.$watch('tab.active', isActive => {
+      attrs.$set('ariaHidden', !isActive);
+    });
+  }
+})]);

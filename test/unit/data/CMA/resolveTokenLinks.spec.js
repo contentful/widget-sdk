@@ -2,8 +2,8 @@ import resolveTokenLinks from 'data/CMA/resolveTokenLinks';
 
 const makeLink = (type, id) => ({sys: {type: 'Link', linkType: type, id}});
 
-describe('data/CMA/resolveTokenLinks', function () {
-  describe('link resolution', function () {
+describe('data/CMA/resolveTokenLinks', () => {
+  describe('link resolution', () => {
     beforeEach(function () {
       const foo0 = {
         sys: {type: 'Foo', id: '0'},
@@ -81,8 +81,8 @@ describe('data/CMA/resolveTokenLinks', function () {
     });
   });
 
-  describe('item uniqness', function () {
-    it('throws for repeated type,id pairs', function () {
+  describe('item uniqness', () => {
+    it('throws for repeated type,id pairs', () => {
       const tokenData = {
         items: [{
           sys: {type: 'AccessToken'},

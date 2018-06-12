@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Policy Builder, to external representation', function () {
+describe('Policy Builder, to external representation', () => {
 
   var toExternal, CONFIG;
 
@@ -10,21 +10,21 @@ describe('Policy Builder, to external representation', function () {
     CONFIG = this.$inject('PolicyBuilder/CONFIG');
   });
 
-  describe('takes internal and returns external representation', function () {
-    it('creates sys object with id and version', function () {
+  describe('takes internal and returns external representation', () => {
+    it('creates sys object with id and version', () => {
       var external = toExternal({id: 'testid', version: 123});
       expect(_.isObject(external.sys)).toBe(true);
       expect(external.sys.id).toBe('testid');
       expect(external.sys.version).toBe(123);
     });
 
-    it('picks name and description', function () {
+    it('picks name and description', () => {
       var external = toExternal({name: 'name', description: 'desc'});
       expect(external.name).toBe('name');
       expect(external.description).toBe('desc');
     });
 
-    it('picks permissions to object', function () {
+    it('picks permissions to object', () => {
       var external = toExternal({contentModel: 'all', contentDelivery: 'all', settings: 'all'});
       expect(external.permissions.contentModel).toBe('all');
       expect(external.permissions.contentDelivery).toBe('all');
@@ -32,8 +32,8 @@ describe('Policy Builder, to external representation', function () {
     });
   });
 
-  describe('translating non-ui-compatible policies', function () {
-    it('returns parsed policy JSON string', function () {
+  describe('translating non-ui-compatible policies', () => {
+    it('returns parsed policy JSON string', () => {
       var external = toExternal({
         uiCompatible: false,
         policyString: '{"test": true}'
@@ -42,7 +42,7 @@ describe('Policy Builder, to external representation', function () {
       expect(external.policies.test).toBe(true);
     });
 
-    it('returns null for an invalid JSON string', function () {
+    it('returns null for an invalid JSON string', () => {
       var external = toExternal({
         uiCompatible: false,
         policyString: '{test": false}}'
@@ -51,7 +51,7 @@ describe('Policy Builder, to external representation', function () {
       expect(external.policies).toBe(null);
     });
 
-    it('does not parse policyString with uiCompatible flag', function () {
+    it('does not parse policyString with uiCompatible flag', () => {
       var external = toExternal({
         uiCompatible: true,
         policyString: '{"test": true}'
@@ -62,7 +62,7 @@ describe('Policy Builder, to external representation', function () {
     });
   });
 
-  describe('translating policies', function () {
+  describe('translating policies', () => {
 
     function baseExternal(collection, effect) {
       var internal = {uiCompatible: true};
@@ -78,27 +78,27 @@ describe('Policy Builder, to external representation', function () {
       expect(p.constraint.and[0].equals[1]).toBe(type);
     }
 
-    it('adding content type and effect, allowed entries', function () {
+    it('adding content type and effect, allowed entries', () => {
       var external = baseExternal('entries', 'allowed');
       testBase(external, 'Entry', 'allow');
     });
 
-    it('adding content type and effect, denied entries', function () {
+    it('adding content type and effect, denied entries', () => {
       var external = baseExternal('entries', 'denied');
       testBase(external, 'Entry', 'deny');
     });
 
-    it('adding content type and effect, allowed assets', function () {
+    it('adding content type and effect, allowed assets', () => {
       var external = baseExternal('assets', 'allowed');
       testBase(external, 'Asset', 'allow');
     });
 
-    it('adding content type and effect, denied assets', function () {
+    it('adding content type and effect, denied assets', () => {
       var external = baseExternal('assets', 'denied');
       testBase(external, 'Asset', 'deny');
     });
 
-    it('parses policyString for non-UI-compatible policies', function () {
+    it('parses policyString for non-UI-compatible policies', () => {
       var external = toExternal({
         uiCompatible: false,
         policyString: '{"test":true}'
@@ -107,7 +107,7 @@ describe('Policy Builder, to external representation', function () {
       expect(external.policies.test).toBe(true);
     });
 
-    it('translating multiple policies with exceptions', function () {
+    it('translating multiple policies with exceptions', () => {
       var external = toExternal({
         uiCompatible: true,
         entries: {
@@ -128,7 +128,7 @@ describe('Policy Builder, to external representation', function () {
       expect(ps[1].constraint.and[0].equals[1]).toBe('Entry');
     });
 
-    it('translates content types', function () {
+    it('translates content types', () => {
       var external = toExternal({
         uiCompatible: true,
         entries: {
@@ -154,7 +154,7 @@ describe('Policy Builder, to external representation', function () {
       expect(ps[2].constraint.and[1].equals[1]).toBe('ctid');
     });
 
-    it('translates scope', function () {
+    it('translates scope', () => {
       var external = toExternal({
         uiCompatible: true,
         entries: {
@@ -174,7 +174,7 @@ describe('Policy Builder, to external representation', function () {
     });
 
 
-    it('translates path (field, locale)', function () {
+    it('translates path (field, locale)', () => {
       var external = toExternal({
         uiCompatible: true,
         entries: {
@@ -192,7 +192,7 @@ describe('Policy Builder, to external representation', function () {
       expect(ps[1].constraint.and[1].paths[0].doc).toBe('fields.test.%');
     });
 
-    it('translates "glued" actions', function () {
+    it('translates "glued" actions', () => {
       var external = toExternal({
         uiCompatible: true,
         entries: {

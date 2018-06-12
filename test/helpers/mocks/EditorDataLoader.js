@@ -5,7 +5,7 @@ angular.module('contentful/mocks')
  * The data shape is the same as the one returned by the
  * 'app/entit_editor/DataLoader' module.
  */
-.factory('mocks/app/entity_editor/DataLoader', ['require', function (require) {
+.factory('mocks/app/entity_editor/DataLoader', ['require', require => {
   const createDoc = require('mocks/entityEditor/Document').create;
 
   return {

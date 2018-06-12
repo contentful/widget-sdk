@@ -1,5 +1,5 @@
 angular.module('contentful')
-.factory('random', function () {
+.factory('random', () => {
   var LETTERS = 'abcdefghijklmnopqvwxyzABCDEFGHIJKLMNOPQVWXYZ';
   var NUMS = '0123456789';
   var ALNUM = NUMS + LETTERS;
@@ -17,14 +17,10 @@ angular.module('contentful')
   }
 
   function letter (count) {
-    return _.times(count, function () {
-      return fromArray(LETTERS);
-    }).join('');
+    return _.times(count, () => fromArray(LETTERS)).join('');
   }
 
   function alnum (count) {
-    return _.times(count, function () {
-      return fromArray(ALNUM);
-    }).join('');
+    return _.times(count, () => fromArray(ALNUM)).join('');
   }
 });

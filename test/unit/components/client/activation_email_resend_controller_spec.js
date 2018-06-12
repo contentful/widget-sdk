@@ -1,6 +1,6 @@
 import * as K from 'helpers/mocks/kefir';
 
-describe('activationEmailResendController', function () {
+describe('activationEmailResendController', () => {
   let moment;
   let openDialogStub, dialogConfirmSpy;
 
@@ -10,7 +10,7 @@ describe('activationEmailResendController', function () {
   beforeEach(function () {
     openDialogStub = sinon.stub();
     dialogConfirmSpy = sinon.spy();
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.value('modalDialog', {
         open: openDialogStub
       });
@@ -23,7 +23,7 @@ describe('activationEmailResendController', function () {
     const tokenStore = this.mockService('services/TokenStore', {
       user$: K.createMockProperty()
     });
-    this.setUser = function (props) {
+    this.setUser = props => {
       tokenStore.user$.set(_.assign({
         name: 'Some User',
         email: 'user@example.com',
@@ -48,7 +48,7 @@ describe('activationEmailResendController', function () {
     controller.init();
   });
 
-  describe('with user already activated', function () {
+  describe('with user already activated', () => {
     it('does not open the resend activation email dialog', function () {
       this.setUser({confirmed: true});
       sinon.assert.notCalled(openDialogStub);
@@ -61,8 +61,8 @@ describe('activationEmailResendController', function () {
     });
   });
 
-  describe('with user not activated yet', function () {
-    beforeEach(function () {
+  describe('with user not activated yet', () => {
+    beforeEach(() => {
       jasmine.clock().install();
       jasmine.clock().mockDate(new Date(2016, 1, 1));
     });
@@ -80,7 +80,7 @@ describe('activationEmailResendController', function () {
       expect(this.store.get()).toBeTruthy();
     });
 
-    describe('dialog has been shown before in another session', function () {
+    describe('dialog has been shown before in another session', () => {
       beforeEach(function () {
         this.store.set(moment().unix());
       });
@@ -105,7 +105,7 @@ describe('activationEmailResendController', function () {
       });
     });
 
-    describe('dialog gets shown and the browser tab remains open', function () {
+    describe('dialog gets shown and the browser tab remains open', () => {
       beforeEach(function () {
         this.setUser({confirmed: false});
       });
@@ -130,7 +130,7 @@ describe('activationEmailResendController', function () {
       });
     });
 
-    describe('dialog is not shown because only 12 hours have passed since last time', function () {
+    describe('dialog is not shown because only 12 hours have passed since last time', () => {
       beforeEach(function () {
         const lastShown = moment().subtract(12, 'hours').unix();
         this.store.set(lastShown);
@@ -157,7 +157,7 @@ describe('activationEmailResendController', function () {
       });
     });
 
-    describe('resend activation email`s “Resend” button', function () {
+    describe('resend activation email`s “Resend” button', () => {
       let $timeout, openDialogOptions, openEmailSentDialogStub;
       beforeEach(function () {
         this.resendConfirmation = this.$inject('activationEmailResender').resend;
@@ -175,7 +175,7 @@ describe('activationEmailResendController', function () {
         sinon.assert.calledWithExactly(this.resendConfirmation, 'EMAIL');
       });
 
-      it('shows a confirmation dialog on success and closes the first one', function () {
+      it('shows a confirmation dialog on success and closes the first one', () => {
         openDialogOptions.scopeData.resendEmail();
         $timeout.flush();
 

@@ -17,12 +17,10 @@
  * @scope.requires {object} state
  */
 angular.module('contentful')
-.directive('cfWidgetApi', [function () {
-  return {
-    restrict: 'A',
-    controller: 'WidgetApiController'
-  };
-}])
+.directive('cfWidgetApi', [() => ({
+  restrict: 'A',
+  controller: 'WidgetApiController'
+})])
 
 /**
  * @ngdoc type
@@ -42,9 +40,7 @@ angular.module('contentful')
   var fieldLocale = $scope.fieldLocale;
   var ctField = $scope.widget.field;
 
-  var isEditingDisabled = fieldLocale.access$.map(function (access) {
-    return !!access.disabled;
-  });
+  var isEditingDisabled = fieldLocale.access$.map(access => !!access.disabled);
 
   this.settings = _.clone($scope.widget.settings);
   this.settings.helpText = this.settings.helpText || $scope.widget.defaultHelpText;
@@ -59,7 +55,7 @@ angular.module('contentful')
   // Collection of APIs that are not exposed by the extensions API.
   this._internal = {};
   if ($scope.editorContext.editReferences) {
-    this._internal.editReferences = function (index, cb) {
+    this._internal.editReferences = (index, cb) => {
       $scope.editorContext.editReferences(ctField.id, $scope.locale.internal_code, index, cb);
     };
   }
@@ -68,9 +64,7 @@ angular.module('contentful')
   // to be able to open multiple instances of the bulk editor
   // simultaneously.
   if ($scope.editorContext.createReferenceContext) {
-    this._internal.createReferenceContext = function (index, cb) {
-      return $scope.editorContext.createReferenceContext(ctField.id, $scope.locale.internal_code, index, cb);
-    };
+    this._internal.createReferenceContext = (index, cb) => $scope.editorContext.createReferenceContext(ctField.id, $scope.locale.internal_code, index, cb);
   }
 
   if ($scope.editorContext.toggleSlideinEditor) {

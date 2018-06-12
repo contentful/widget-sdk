@@ -1,7 +1,7 @@
 'use strict';
 import * as sinon from 'helpers/sinon';
 
-describe('data/Request/Retry', function () {
+describe('data/Request/Retry', () => {
   beforeEach(function () {
     module('contentful/test');
 
@@ -14,11 +14,9 @@ describe('data/Request/Retry', function () {
     this.requestStub = sinon.stub();
     const wrapped = wrap(this.requestStub);
 
-    this.push = function (n) {
+    this.push = n => {
       if (n) {
-        return _.map(_.range(n)).forEach(function (i) {
-          return wrapped({i: i});
-        });
+        return _.map(_.range(n)).forEach(i => wrapped({i: i}));
       } else {
         return wrapped({});
       }
@@ -43,7 +41,7 @@ describe('data/Request/Retry', function () {
     this.requestStub.resolves(res);
     this.flush();
 
-    return promise.then(function (requestRes) {
+    return promise.then(requestRes => {
       expect(requestRes).toBe(res);
     });
   });
@@ -142,7 +140,7 @@ describe('data/Request/Retry', function () {
     this.requestStub.resolves(res);
     this.flush(1000);
 
-    return promise.then(function (requestRes) {
+    return promise.then(requestRes => {
       expect(requestRes).toBe(res);
     });
   });
@@ -156,7 +154,7 @@ describe('data/Request/Retry', function () {
 
     this.flush(9000);
 
-    return promise.then(onSuccess, onError).then(function () {
+    return promise.then(onSuccess, onError).then(() => {
       sinon.assert.notCalled(onSuccess);
       sinon.assert.calledOnce(onError);
     });

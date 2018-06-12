@@ -1,9 +1,9 @@
 import * as sinon from 'helpers/sinon';
 
-describe('Space Controller', function () {
+describe('Space Controller', () => {
   beforeEach(function () {
     const self = this;
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       self.authorizationMock = {isUpdated: sinon.stub()};
       $provide.value('authorization', self.authorizationMock);
 
@@ -22,7 +22,7 @@ describe('Space Controller', function () {
     this.$inject('$controller')('SpaceController', {$scope: this.$rootScope.$new()});
   });
 
-  describe('watches for updated tokenLookup', function () {
+  describe('watches for updated tokenLookup', () => {
     beforeEach(function () {
       this.tokenStore.getTokenLookup.returns({items: [{sys: {}}]});
       this.authorizationMock.isUpdated.returns(true);

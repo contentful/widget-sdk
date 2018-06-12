@@ -7,7 +7,7 @@ angular.module('contentful')
  * @description
  * Allows to resend the activation email sent to each new user.
  */
-.factory('activationEmailResender', ['require', function (require) {
+.factory('activationEmailResender', ['require', require => {
   var $q = require('$q');
   var Config = require('Config');
   var logger = require('logger');
@@ -39,7 +39,7 @@ angular.module('contentful')
     return postForm(ENDPOINT, data)
       .then(
         _.constant(undefined),
-        function (response) {
+        response => {
           logger.logError('Failed activation email resend attempt', {
             data: {
               email: email,

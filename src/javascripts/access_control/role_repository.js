@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('RoleRepository', [function () {
+angular.module('contentful').factory('RoleRepository', [() => {
 
   var AVAILABLE_PERMISSIONS = {
     ContentModel: ['read', 'manage'],
@@ -32,7 +32,7 @@ angular.module('contentful').factory('RoleRepository', [function () {
     function getAll() {
       return getBaseCall()
       .payload({ limit: 100 })
-      .get().then(function (res) { return res.items; });
+      .get().then(res => res.items);
     }
 
     function get(id) {
@@ -101,19 +101,19 @@ angular.module('contentful').factory('RoleRepository', [function () {
   }
 
   function rewritePermissions(permissions) {
-    return _.transform(AVAILABLE_PERMISSIONS, function (acc, names, group) {
+    return _.transform(AVAILABLE_PERMISSIONS, (acc, names, group) => {
       acc[PERMISSION_GROUP_NAME_MAP[group]] = rewrite(names, group);
     }, {});
 
     function rewrite(names, group) {
       if (permissions[group] === 'all') {
-        return _.transform(names, function (acc, name) {
+        return _.transform(names, (acc, name) => {
           acc[name] = true;
         }, {});
       }
 
       if (_.isArray(permissions[group])) {
-        return _.transform(names, function (acc, param) {
+        return _.transform(names, (acc, param) => {
           acc[param] = permissions[group].indexOf(param) > -1;
         }, {});
       }
@@ -123,8 +123,8 @@ angular.module('contentful').factory('RoleRepository', [function () {
   }
 
   function flattenPermissions(permissions) {
-    return _.transform(permissions, function (acc, map, group) {
-      acc[group] = _.transform(map, function (acc, isEnabled, name) {
+    return _.transform(permissions, (acc, map, group) => {
+      acc[group] = _.transform(map, (acc, isEnabled, name) => {
         if (isEnabled) { acc.push(name); }
       }, []);
     }, {});

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('cf.app')
-.directive('cfReferenceEditor', ['require', function (require) {
+.directive('cfReferenceEditor', ['require', require => {
   var createController = require('app/widgets/link/ReferenceEditorController').default;
 
   return {
@@ -12,7 +12,7 @@ angular.module('cf.app')
       single: '='
     },
     template: JST.cf_reference_editor(),
-    controller: ['$scope', function ($scope) {
+    controller: ['$scope', $scope => {
       // We need to define the uiSortable property in the pre-link
       // stage. The ui-sortable directive will obtain a reference to
       // the object that we can later modify.
@@ -25,7 +25,7 @@ angular.module('cf.app')
   };
 }])
 
-.factory('cfReferenceEditor/createEntity', ['require', function (require) {
+.factory('cfReferenceEditor/createEntity', ['require', require => {
   var modalDialog = require('modalDialog');
   var getAvailableContentTypes = require('app/widgets/link/utils').getAvailableContentTypes;
 
@@ -40,7 +40,7 @@ angular.module('cf.app')
 
     function maybeAskAndCreateEntry () {
       return getAvailableContentTypes(space, field)
-      .then(function (cts) {
+      .then(cts => {
         if (cts.length === 1) {
           return createEntry(cts[0]);
         } else {

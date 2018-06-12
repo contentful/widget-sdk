@@ -6,7 +6,7 @@ angular.module('cf.app')
  * @module cf.app
  * @name cfTagEditor
  */
-.directive('cfTagEditor', ['require', function (require) {
+.directive('cfTagEditor', ['require', require => {
   var KEYCODES = require('utils/keycodes').default;
 
   return {
@@ -33,7 +33,7 @@ angular.module('cf.app')
        * @name cfTagEditor#$scope.items
        * @type {string[]}
        */
-      var offValueChanged = field.onValueChanged(function (items) {
+      var offValueChanged = field.onValueChanged(items => {
         items = items || [];
         // We make a copy so we do not modify the object in the
         // snapshot.
@@ -47,7 +47,7 @@ angular.module('cf.app')
        * @name cfTagEditor#$scope.isEmpty
        * @type {boolean}
        */
-      $scope.$watch('items.length', function (length) {
+      $scope.$watch('items.length', length => {
         $scope.isEmpty = length === 0;
       });
 
@@ -56,7 +56,7 @@ angular.module('cf.app')
        * @name cfTagEditor#$scope.isDisabled
        * @type {boolean}
        */
-      field.onIsDisabledChanged(function (isDisabled) {
+      field.onIsDisabledChanged(isDisabled => {
         $scope.isDisabled = isDisabled;
       });
 
@@ -66,7 +66,7 @@ angular.module('cf.app')
        * @name cfTagEditor#$scope.addItem
        * @param {Event} event
        */
-      $scope.addItem = function (ev) {
+      $scope.addItem = ev => {
         var value = ev.target.value;
         if (ev.keyCode === KEYCODES.ENTER && value) {
           $scope.items.push(value);
@@ -80,7 +80,7 @@ angular.module('cf.app')
        * @name cfTagEditor#$scope.removeItem
        * @param {number} index
        */
-      $scope.removeItem = function (i) {
+      $scope.removeItem = i => {
         $scope.items.splice(i, 1);
         if ($scope.items.length === 0) {
           field.removeValue();

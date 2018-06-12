@@ -1,11 +1,11 @@
 import * as DOM from 'helpers/DOM';
 
-describe('app/SpaceSettings/Environments', function () {
+describe('app/SpaceSettings/Environments', () => {
   beforeEach(function () {
     const resourceService = {
       canCreate: sinon.stub().withArgs('environment').resolves(true)
     };
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.value('services/ResourceService', () => resourceService);
     });
 

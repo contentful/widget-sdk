@@ -6,12 +6,12 @@ angular.module('contentful')
  * @description
  * Add this attribute directive to focus an element once it is rendered
  */
-.directive('uiAutofocus', ['require', function (require) {
+.directive('uiAutofocus', ['require', require => {
   var $timeout = require('$timeout');
   return {
     restrict: 'A',
     link: function (_$scope, $element) {
-      $timeout(function () {
+      $timeout(() => {
         $element[0].focus();
       });
     }

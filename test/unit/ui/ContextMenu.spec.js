@@ -1,7 +1,7 @@
 import setupContextMenuHandler from 'ui/ContextMenuHandler';
 import {h} from 'utils/hyperscript';
 
-describe('context menu', function () {
+describe('context menu', () => {
   beforeEach(function () {
     module('contentful/test');
     const $document = this.$inject('$document');
@@ -19,7 +19,7 @@ describe('context menu', function () {
     this.detach();
   });
 
-  describe('one context menu', function () {
+  describe('one context menu', () => {
     beforeEach(function () {
       this.$body.append(this.$compile([
         h('button', {
@@ -80,7 +80,7 @@ describe('context menu', function () {
     });
   });
 
-  describe('nested context menu', function () {
+  describe('nested context menu', () => {
     beforeEach(function () {
       this.$body.append(this.$compile(
         '<button id="trigger-outer" cf-context-menu-trigger>Open</button>' +
@@ -127,7 +127,7 @@ describe('context menu', function () {
     });
   });
 
-  describe('two context menus', function () {
+  describe('two context menus', () => {
     const selectA = '[cf-context-menu]:contains(A)';
     const selectB = '[cf-context-menu]:contains(B)';
 

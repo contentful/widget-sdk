@@ -50,12 +50,10 @@ export default function wrapWithRetry (requestFn) {
     inFlight += 1;
 
     $timeout(call.wait)
-    .then(function () {
-      return requestFn.apply(null, call.args);
-    })
+    .then(() => requestFn.apply(null, call.args))
     .then(handleSuccess, handleError)
     .then(completePeriod)
-    .then(function () {
+    .then(() => {
       inFlight -= 1;
       shift();
     });

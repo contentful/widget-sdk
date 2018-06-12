@@ -1,14 +1,12 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfLocaleEditor', [function () {
-  return {
-    template: JST.locale_editor(),
-    restrict: 'E',
-    controller: 'LocaleEditorController',
-    controllerAs: 'localeEditor'
-  };
-}])
+.directive('cfLocaleEditor', [() => ({
+  template: JST.locale_editor(),
+  restrict: 'E',
+  controller: 'LocaleEditorController',
+  controllerAs: 'localeEditor'
+})])
 
 /**
  * @ngdoc type
@@ -43,11 +41,11 @@ angular.module('contentful')
 
   $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
 
-  $scope.$watch('localeForm.$dirty', function (modified) {
+  $scope.$watch('localeForm.$dirty', modified => {
     $scope.context.dirty = modified;
   });
 
-  $scope.$watch('locale.code', function (code) {
+  $scope.$watch('locale.code', code => {
     $scope.context.title = prepareTitle();
     clearFallbackIfTheSame(code);
     $scope.fallbackLocales = localeList.prepareFallbackList(code);
@@ -101,7 +99,7 @@ angular.module('contentful')
   function startDeleteFlow () {
     lockFormWhileSubmitting();
     return openConfirmationDialog()
-    .then(function (result) {
+    .then(result => {
       if (result.confirmed) {
         return maybeOpenFallbackLocaleChangeDialog()
         .then(deleteLocale, resetFormStatusOnFailure);
@@ -138,9 +136,9 @@ angular.module('contentful')
         dependantLocaleNames: prepareDependantLocaleNames(dependantLocales),
         availableLocales: localeList.getAvailableFallbackLocales(code)
       }
-    }).promise.then(function (newFallbackCode) {
+    }).promise.then(newFallbackCode => {
       var updates = _.map(dependantLocales, fallbackUpdater(newFallbackCode));
-      return $q.all(updates).catch(function () {
+      return $q.all(updates).catch(() => {
         notify.codeChangeError();
         return $q.reject();
       });
@@ -157,7 +155,7 @@ angular.module('contentful')
   }
 
   function fallbackUpdater (newFallbackCode) {
-    return function (locale) {
+    return locale => {
       var localeToUpdate = _.find($scope.spaceLocales, {code: locale.code});
       if (localeToUpdate) {
         var data = _.cloneDeep(localeToUpdate);
@@ -174,9 +172,7 @@ angular.module('contentful')
     return spaceContext.localeRepo.remove(sys.id, sys.version)
     .then(function deletedSuccesfully () {
       return TheLocaleStore.refresh()
-      .then(function () {
-        return closeState();
-      })
+      .then(() => closeState())
       .finally(notify.deleteSuccess);
     }, function errorDeletingLocale (err) {
       resetFormStatusOnFailure();
@@ -221,7 +217,7 @@ angular.module('contentful')
     $scope.locale.name = getLocaleName();
     lockFormWhileSubmitting();
     return confirmCodeChange()
-    .then(function (result) {
+    .then(result => {
       if (result.confirmed) {
         return spaceContext.localeRepo.save($scope.locale)
         .then(saveSuccessHandler)
@@ -237,7 +233,7 @@ angular.module('contentful')
     $scope.localeForm.$setPristine();
     $scope.context.dirty = false;
     return TheLocaleStore.refresh()
-    .then(function () {
+    .then(() => {
       onLoadOrUpdate();
       notify.saveSuccess();
       if ($scope.context.isNew) {
@@ -285,7 +281,7 @@ angular.module('contentful')
   }
 }])
 
-.factory('LocaleEditor/notifications', ['require', function (require) {
+.factory('LocaleEditor/notifications', ['require', require => {
   var notification = require('notification');
   var logger = require('logger');
 
@@ -348,9 +344,7 @@ angular.module('contentful')
   }
 
   function getErrorMessage (err) {
-    var found = _.find(ERROR_CHECKS, function (item) {
-      return item.check(err);
-    });
+    var found = _.find(ERROR_CHECKS, item => item.check(err));
 
     return found && found.message;
   }

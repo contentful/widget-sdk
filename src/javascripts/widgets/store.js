@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 
-.factory('widgets/store', ['require', function (require) {
+.factory('widgets/store', ['require', require => {
   var builtin = require('widgets/builtin');
   var fieldFactory = require('fieldFactory');
 
@@ -16,12 +16,8 @@ angular.module('contentful')
 
     function refresh () {
       return cma.getExtensions()
-      .then(function (res) {
-        return res.items.map(buildExtensionWidget);
-      }, function () {
-        return [];
-      })
-      .then(function (extensions) {
+      .then(res => res.items.map(buildExtensionWidget), () => [])
+      .then(extensions => {
         cache = prepareList(extensions);
         return cache;
       });
@@ -33,10 +29,8 @@ angular.module('contentful')
     // Extensions used to "override" built-in widgets.
     // It's far from ideal but we retain this behavior for now.
     // TODO figure out what to do?
-    var extensionIds = extensions.map(function (e) { return e.id; });
-    var filteredBuiltins = builtin.filter(function (b) {
-      return !extensionIds.includes(b.id);
-    });
+    var extensionIds = extensions.map(e => e.id);
+    var filteredBuiltins = builtin.filter(b => !extensionIds.includes(b.id));
 
     return [].concat(filteredBuiltins).concat(extensions);
   }

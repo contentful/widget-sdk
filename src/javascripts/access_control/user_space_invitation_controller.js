@@ -31,9 +31,7 @@ angular.module('contentful')
   }
 
   function getInvalidRoleSelectionsCount () {
-    var invalidUsers = $scope.users.filter(function (user) {
-      return !$scope.selectedRoles[user.sys.id];
-    });
+    var invalidUsers = $scope.users.filter(user => !$scope.selectedRoles[user.sys.id]);
     return invalidUsers.length;
   }
 
@@ -42,17 +40,15 @@ angular.module('contentful')
     $scope.invitationsScheduled = $scope.users.length;
     $scope.invitationsDone = 0;
 
-    var invitees = $scope.users.map(function (user) {
-      return {
-        user: user,
-        roleId: $scope.selectedRoles[user.sys.id]
-      };
-    });
+    var invitees = $scope.users.map(user => ({
+      user: user,
+      roleId: $scope.selectedRoles[user.sys.id]
+    }));
     var currentInvitationId = 0;
 
-    return $q.all(invitees.map(scheduleInvitation)).then(function () {
+    return $q.all(invitees.map(scheduleInvitation)).then(() => {
       $scope.dialog.confirm();
-    }, function () {
+    }, () => {
       $scope.hasFailedInvitations = true;
       $scope.invitationsScheduled = 0;
       $scope.invitationsDone = 0;
@@ -63,13 +59,11 @@ angular.module('contentful')
       // We wait 350ms between invitations to avoid rate limitation errors
       // @TODO we need a backend endpoint for batch invitation:
       // https://contentful.tpondemand.com/entity/17146
-      return $timeout(350 * i).then(function () {
-        return spaceContext.memberships.invite(invitee.user.email, [invitee.roleId])
-        .then(function () {
-          $scope.invitationsDone++;
-          $scope.users = _.without($scope.users, invitee.user);
-        });
-      });
+      return $timeout(350 * i).then(() => spaceContext.memberships.invite(invitee.user.email, [invitee.roleId])
+      .then(() => {
+        $scope.invitationsDone++;
+        $scope.users = _.without($scope.users, invitee.user);
+      }));
     }
   }
 }]);

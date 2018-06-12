@@ -1,6 +1,6 @@
 'use strict';
 
-describe('cfRadioEditor Directive', function () {
+describe('cfRadioEditor Directive', () => {
   let fieldApi;
 
   beforeEach(function () {
@@ -88,8 +88,8 @@ describe('cfRadioEditor Directive', function () {
   });
 
 
-  describe('selecting an option', function () {
-    beforeEach(function () {
+  describe('selecting an option', () => {
+    beforeEach(() => {
       const predefined = ['banana', 'orange', 'strawberry'];
       fieldApi.validations = [{ in: predefined }];
     });

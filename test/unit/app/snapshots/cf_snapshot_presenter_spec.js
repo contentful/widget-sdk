@@ -1,8 +1,8 @@
 'use strict';
 
-describe('cfSnapshotPresenter', function () {
+describe('cfSnapshotPresenter', () => {
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.removeDirectives('cfIframeWidget', 'cfWidgetRenderer', 'cfWidgetApi');
     });
 
@@ -18,14 +18,14 @@ describe('cfSnapshotPresenter', function () {
     };
   });
 
-  describe('$scope.value', function () {
+  describe('$scope.value', () => {
     it('gets value from the doc', function () {
       const scope = this.prepare('test');
       expect(scope.value).toBe('test');
     });
   });
 
-  describe('$scope.hasValue', function () {
+  describe('$scope.hasValue', () => {
     [
       ['null', null],
       ['undefined', undefined],
@@ -53,7 +53,7 @@ describe('cfSnapshotPresenter', function () {
     }
   });
 
-  describe('$scope.isCustom', function () {
+  describe('$scope.isCustom', () => {
     it('is false for standard widget', function () {
       const scope = this.prepare();
       expect(scope.isCustom).toBe(false);
@@ -65,12 +65,12 @@ describe('cfSnapshotPresenter', function () {
     });
   });
 
-  describe('$scope.type', function () {
+  describe('$scope.type', () => {
     [
       'Boolean', 'Text', 'Symbol',
       'Object', 'Integer', 'Number',
       'Date', 'Location'
-    ].forEach(function (type) {
+    ].forEach(type => {
       it(`recognizes ${type} type`, function () {
         const scope = this.prepare(null, {type: type});
         expect(scope.type).toBe(type);
@@ -90,7 +90,7 @@ describe('cfSnapshotPresenter', function () {
     });
   });
 
-  describe('$scope.linkType', function () {
+  describe('$scope.linkType', () => {
     it('is undefined if field is not link or array of links', function () {
       const scope = this.prepare();
       expect(scope.linkType).toBeUndefined();

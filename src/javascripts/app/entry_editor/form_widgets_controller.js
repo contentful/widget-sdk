@@ -20,7 +20,7 @@ angular.module('contentful')
  * entity field directive. This wasy we can do without the list
  * manipulation.
  */
-.controller('FormWidgetsController', ['$scope', 'require', 'controls', function ($scope, require, controls) {
+.controller('FormWidgetsController', ['$scope', 'require', 'controls', ($scope, require, controls) => {
   var K = require('utils/kefir');
   var trackCustomWidgets = require('analyticsEvents/customWidgets');
 
@@ -41,8 +41,8 @@ angular.module('contentful')
   K.onValueScope($scope, validator.errors$, updateWidgets);
 
   // Executed only once when `$scope.widgets` is not undefined.
-  $scope.$watch('::widgets', function (widgets) {
-    _.forEach(widgets, function (widget) {
+  $scope.$watch('::widgets', widgets => {
+    _.forEach(widgets, widget => {
       trackCustomWidgets.rendered(widget, $scope.contentType, $scope.entry);
     });
   });

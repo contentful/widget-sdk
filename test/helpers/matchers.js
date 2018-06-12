@@ -2,7 +2,7 @@
 
 // FIXME Somehow we need to add the matchers before every test case. If
 // we add them once globally they are removed later and the tests fail.
-beforeEach(function () {
+beforeEach(() => {
   jasmine.addMatchers({
 
     toLookEqual: function () {
@@ -84,23 +84,19 @@ beforeEach(function () {
       };
 
       function formatDiff (objdiff) {
-        return objdiff.map(function (diff) {
-          return '\t' + diff.kind + ' at ' + diff.path.join('.') + '\n' +
-            '\t' + diff.actual + ' should be ' + diff.expected;
-        }).join('\n\n');
+        return objdiff.map(diff => '\t' + diff.kind + ' at ' + diff.path.join('.') + '\n' +
+          '\t' + diff.actual + ' should be ' + diff.expected).join('\n\n');
       }
 
       return {
         compare: function (actual, expected) {
           /* global deepDiff */
-          const objdiff = (deepDiff(expected, actual) || []).map(function (diff) {
-            return {
-              kind: KINDS[diff.kind],
-              path: diff.path,
-              expected: diff.lhs,
-              actual: diff.rhs
-            };
-          });
+          const objdiff = (deepDiff(expected, actual) || []).map(diff => ({
+            kind: KINDS[diff.kind],
+            path: diff.path,
+            expected: diff.lhs,
+            actual: diff.rhs
+          }));
 
           return {
             pass: objdiff.length === 0,

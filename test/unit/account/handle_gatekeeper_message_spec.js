@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Gatekeeper Message Handler', function () {
+describe('Gatekeeper Message Handler', () => {
   beforeEach(function () {
     this.window = {location: ''};
     module('contentful/test', ($provide) => {
@@ -15,7 +15,7 @@ describe('Gatekeeper Message Handler', function () {
     this.mockService('notification');
   });
 
-  describe('actions on message', function () {
+  describe('actions on message', () => {
     it('logs out cancelled user and redirects them', function () {
       this.handle({action: 'create', type: 'UserCancellation'});
       expect(this.window.location).toBe('website/goodbye');
@@ -62,7 +62,7 @@ describe('Gatekeeper Message Handler', function () {
       sinon.assert.calledOnce(refresh);
     });
 
-    describe('handles gk errors', function () {
+    describe('handles gk errors', () => {
       beforeEach(function () {
         this.modalDialog = this.$inject('modalDialog');
         this.modalDialog.open = sinon.stub().returns({promise: Promise.resolve()});

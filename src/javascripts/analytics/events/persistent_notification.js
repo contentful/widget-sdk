@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 
-.factory('analyticsEvents/persistentNotification', ['require', function (require) {
+.factory('analyticsEvents/persistentNotification', ['require', require => {
   var Analytics = require('analytics/Analytics');
 
   return {action: action};

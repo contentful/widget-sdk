@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 
-.directive('cfMarkdownPreview', ['require', function (require) {
+.directive('cfMarkdownPreview', ['require', require => {
   var createMountPoint = require('ui/Framework/DOMRenderer').default;
 
   return {

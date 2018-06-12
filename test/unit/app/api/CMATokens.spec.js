@@ -5,7 +5,7 @@ import attachContextMenuHandler from 'ui/ContextMenuHandler';
 /**
  * Acceptance tests for personal CMA tokens
  */
-describe('app/api/CMATokens', function () {
+describe('app/api/CMATokens', () => {
   beforeEach(function () {
     module('contentful/test', ($provide) => {
       // TODO Fix modal dialog or immediately invoked defer.
@@ -97,7 +97,7 @@ describe('app/api/CMATokens', function () {
     rowWithNewToken.assertHasText('TOKEN-2-NAME');
   });
 
-  describe('create dialog', function () {
+  describe('create dialog', () => {
     beforeEach(function () {
       this.init();
       this.container.find('pat.create.open').click();
@@ -154,7 +154,7 @@ describe('app/api/CMATokens', function () {
     this.container.find('paginator.select.2').assertNonExistent();
   });
 
-  describe('revoke', function () {
+  describe('revoke', () => {
     beforeEach(function () {
       this.notification = this.mockService('notification');
       this.init();

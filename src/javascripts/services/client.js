@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.factory('client', ['require', function (require) {
+.factory('client', ['require', require => {
   var $q = require('$q');
   var Config = require('Config');
   var Client = require('legacy-client');
@@ -23,18 +23,14 @@ angular.module('contentful')
   function request (req) {
     req = buildRequest(req);
     return baseRequest(req)
-    .then(function (res) {
-      return res.data;
-    }, function (res) {
-      // @todo most likely we should reject with an Error instance
-      return $q.reject({
-        // We duplicate this property because `statusCode` is used througout the code base
-        statusCode: parseInt(res.status, 10),
-        status: res.status,
-        body: res.data,
-        request: req
-      });
-    });
+    .then(res => res.data, res => // @todo most likely we should reject with an Error instance
+    $q.reject({
+      // We duplicate this property because `statusCode` is used througout the code base
+      statusCode: parseInt(res.status, 10),
+      status: res.status,
+      body: res.data,
+      request: req
+    }));
   }
 
   function buildRequest (data) {

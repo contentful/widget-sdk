@@ -1,12 +1,12 @@
 'use strict';
 
-describe('stringUtils service', function () {
+describe('stringUtils service', () => {
   beforeEach(function () {
     module('cf.utils');
     this.utils = this.$inject('stringUtils');
   });
 
-  describe('#joinAndTruncate()', function () {
+  describe('#joinAndTruncate()', () => {
     it('does not truncate short lists', function () {
       expect(this.utils.joinAndTruncate(split('a b c'), 3))
       .toEqual('a, b and c');
@@ -27,7 +27,7 @@ describe('stringUtils service', function () {
     }
   });
 
-  describe('#truncate()', function () {
+  describe('#truncate()', () => {
     it('retains short strings', function () {
       expect(this.utils.truncate('abc', 3)).toEqual('abc');
     });
@@ -63,7 +63,7 @@ describe('stringUtils service', function () {
     });
   });
 
-  describe('#truncateMiddle()', function () {
+  describe('#truncateMiddle()', () => {
     it('throws an error if string end greater than total length param', function () {
       const call = this.utils.truncateMiddle.bind(null, 'foo', 10, 11);
       expect(call).toThrow();
@@ -90,69 +90,69 @@ describe('stringUtils service', function () {
     });
   });
 
-  describe('#startsWithVowel', function () {
+  describe('#startsWithVowel', () => {
     let starts;
     beforeEach(function () {
       starts = this.$inject('stringUtils').startsWithVowel;
     });
 
-    it('returns false for non-string or empty string', function () {
+    it('returns false for non-string or empty string', () => {
       expect(starts({})).toBe(false);
       expect(starts('')).toBe(false);
     });
 
-    it('returns true for strings starting with vowel', function () {
-      ['anna', 'eleonore', 'isabel', 'olga', 'ulrika'].forEach(function (name) {
+    it('returns true for strings starting with vowel', () => {
+      ['anna', 'eleonore', 'isabel', 'olga', 'ulrika'].forEach(name => {
         expect(starts(name)).toBe(true);
         expect(starts(name.toUpperCase())).toBe(true);
       });
     });
 
-    it('returns false for strings that are not starting with vowel', function () {
-      ['daisy', 'wanda', 'rachel', 'salomea', 'tania'].forEach(function (name) {
+    it('returns false for strings that are not starting with vowel', () => {
+      ['daisy', 'wanda', 'rachel', 'salomea', 'tania'].forEach(name => {
         expect(starts(name)).toBe(false);
         expect(starts(name.toUpperCase())).toBe(false);
       });
     });
   });
 
-  describe('.fileNameToTitle()', function () {
+  describe('.fileNameToTitle()', () => {
     let toTitle;
     beforeEach(function () {
       toTitle = this.$inject('stringUtils').fileNameToTitle;
     });
 
-    it('removes the file extension', function () {
+    it('removes the file extension', () => {
       expect(toTitle('file.jpg')).toBe('file');
     });
 
-    it('trims spaces', function () {
+    it('trims spaces', () => {
       expect(toTitle(' file .jpg')).toBe('file');
     });
 
-    it('replaces underscores with one space', function () {
+    it('replaces underscores with one space', () => {
       expect(toTitle('_file_name_.jpg')).toBe('file name');
       expect(toTitle('file___name.jpg')).toBe('file name');
     });
 
-    it('replaces underscore even if it is the only character', function () {
+    it('replaces underscore even if it is the only character', () => {
       expect(toTitle('_.jpg')).toBe('');
     });
   });
 
-  describe('#normalizeWhiteSpace()', function () {
+  describe('#normalizeWhiteSpace()', () => {
     it('remoes extraneous whitespace', function () {
       expect(this.utils.normalizeWhiteSpace(' a  b   c ')).toEqual('a b c');
     });
   });
 
-  describe('#isValidEmail', function () {
+  describe('#isValidEmail', () => {
     let isValidEmail;
     beforeEach(function () {
       isValidEmail = this.$inject('stringUtils').isValidEmail;
     });
 
-    it('returns true for valid emails', function () {
+    it('returns true for valid emails', () => {
       [
         'jeffrey.lebowski@gmail.com', // Regular old email address
         'jeffrey.lebowski+thedude@gmail.com', // Email address with plus sign
@@ -161,7 +161,7 @@ describe('stringUtils service', function () {
       ].forEach((email) => { expect(isValidEmail(email)).toBe(true); });
     });
 
-    it('returns false for invalid emails', function () {
+    it('returns false for invalid emails', () => {
       [
         '@gmail.com', // No Local-part
         '01234567890123456789012345678901234567890123456789012345678901234@gmail.com', // 65 char local-part (too long)
@@ -172,7 +172,7 @@ describe('stringUtils service', function () {
       ].forEach((email) => { expect(isValidEmail(email)).toBe(false); });
     });
 
-    it('returns false for non-strings', function () {
+    it('returns false for non-strings', () => {
       expect(isValidEmail({})).toBe(false);
     });
   });

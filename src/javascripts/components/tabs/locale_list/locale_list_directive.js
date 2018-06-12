@@ -1,15 +1,13 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfLocaleList', [function () {
-  return {
-    template: JST.locale_list(),
-    restrict: 'A',
-    controller: 'LocaleListController'
-  };
-}])
+.directive('cfLocaleList', [() => ({
+  template: JST.locale_list(),
+  restrict: 'A',
+  controller: 'LocaleListController'
+})])
 
-.controller('LocaleListController', ['$scope', 'require', function ($scope, require) {
+.controller('LocaleListController', ['$scope', 'require', ($scope, require) => {
   var ReloadNotification = require('ReloadNotification');
   var spaceContext = require('spaceContext');
   var TheAccountView = require('TheAccountView');
@@ -33,7 +31,7 @@ angular.module('contentful')
 
   var FeatureService = createFeatureService(spaceContext.getId());
 
-  ResourceUtils.useLegacy(organization).then(function (legacy) {
+  ResourceUtils.useLegacy(organization).then(legacy => {
     $scope.showSidebar = !legacy;
   });
 
@@ -63,14 +61,14 @@ angular.module('contentful')
   }
 
   TheLocaleStore.refresh()
-  .then(function (locales) {
+  .then(locales => {
     $scope.locales = locales;
     $scope.localeNamesByCode = groupLocaleNamesByCode(locales);
 
     // The locales usage is only important inside of the master environment.
     // In non-master envs, we skip the call and set the readystate to true.
     if ($scope.insideMasterEnv) {
-      getLocalesUsageState().then(function (state) {
+      getLocalesUsageState().then(state => {
         $scope.localesUsageState = state;
 
         $scope.context.ready = true;
@@ -82,7 +80,7 @@ angular.module('contentful')
   .catch(ReloadNotification.apiErrorHandler);
 
   function groupLocaleNamesByCode (locales) {
-    return _.transform(locales, function (acc, locale) {
+    return _.transform(locales, (acc, locale) => {
       acc[locale.code] = locale.name + ' (' + locale.code + ')';
     }, {});
   }
@@ -90,7 +88,7 @@ angular.module('contentful')
   function getLocalesUsageState () {
     var len = $scope.locales.length;
 
-    return $q.resolve().then(function () {
+    return $q.resolve().then(() => {
       if (ResourceUtils.isLegacyOrganization(organization)) {
         return hasMultipleLocales();
       } else {
@@ -99,13 +97,11 @@ angular.module('contentful')
         // by the limits
         return true;
       }
-    }).then(function (canCreateMultiple) {
-      return $q.all({
-        canCreateMultiple: canCreateMultiple,
-        usage: getPlanLocalesUsage(),
-        limits: getPlanLocalesLimit()
-      });
-    }).then(function (result) {
+    }).then(canCreateMultiple => $q.all({
+      canCreateMultiple: canCreateMultiple,
+      usage: getPlanLocalesUsage(),
+      limits: getPlanLocalesLimit()
+    })).then(result => {
       if (!result.canCreateMultiple) {
         return STATES.NO_MULTIPLE_LOCALES;
       }
@@ -151,15 +147,11 @@ angular.module('contentful')
   }
 
   function getPlanLocalesUsage () {
-    return getPlanResource().then(function (resource) {
-      return resource.usage;
-    });
+    return getPlanResource().then(resource => resource.usage);
   }
 
   function getPlanLocalesLimit () {
-    return getPlanResource().then(function (resource) {
-      return ResourceUtils.getResourceLimits(resource);
-    });
+    return getPlanResource().then(resource => ResourceUtils.getResourceLimits(resource));
   }
 
   function hasMultipleLocales () {

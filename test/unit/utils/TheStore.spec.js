@@ -6,16 +6,16 @@ import { createIsolatedSystem } from 'test/helpers/system-js';
 
 import Cookies from 'Cookies';
 
-describe('TheStore', function () {
-  describe('#getStore', function () {
-    it('should return the default local storage if called with no arguments', function () {
+describe('TheStore', () => {
+  describe('#getStore', () => {
+    it('should return the default local storage if called with no arguments', () => {
       const local = getStore('local');
 
       local.set('localKey', 'localValue');
       expect(window.localStorage.getItem('localKey')).toBe('localValue');
     });
 
-    it('should return the storage based on given argument', function () {
+    it('should return the storage based on given argument', () => {
       const local = getStore('local');
       const session = getStore('session');
       const cookie = getStore('cookie');
@@ -34,7 +34,7 @@ describe('TheStore', function () {
     });
   });
 
-  describe('utils', function () {
+  describe('utils', () => {
     beforeEach(function* () {
       this.primitives = {
         '1': 1,
@@ -67,7 +67,7 @@ describe('TheStore', function () {
       this.storeUtils = yield this.system.import('TheStore/Utils');
     });
 
-    describe('#set', function () {
+    describe('#set', () => {
       it('stores string as is', function () {
         this.storeUtils.set(this.storage, 'test', 'test-string');
 
@@ -87,7 +87,7 @@ describe('TheStore', function () {
       });
     });
 
-    describe('#get', function () {
+    describe('#get', () => {
       it('returns null for non-existent value', function () {
         this.storage.get.returns(null);
         expect(this.storeUtils.get(this.storage, 'non-existent')).toEqual(null);
@@ -111,14 +111,14 @@ describe('TheStore', function () {
       });
     });
 
-    describe('#remove', function () {
+    describe('#remove', () => {
       it('proxies to underlying remove function', function () {
         this.storeUtils.remove(this.storage, 'test');
         sinon.assert.calledOnce(this.storage.remove.withArgs('test'));
       });
     });
 
-    describe('#has', function () {
+    describe('#has', () => {
       it('returns bool depending on #get result', function () {
         this.storage.get.returns('test-string');
         expect(this.storeUtils.has(this.storage, 'test')).toEqual(true);
@@ -130,7 +130,7 @@ describe('TheStore', function () {
       });
     });
 
-    describe('#externalChanges', function () {
+    describe('#externalChanges', () => {
       it('emits value on `storage` window event after setting in localthis. storage', function () {
         this.storeUtils.set(this.storage, 'mykey', 'initial');
 
@@ -146,22 +146,22 @@ describe('TheStore', function () {
   });
 
 
-  describe('TheStore/ClientStorageWrapper', function () {
+  describe('TheStore/ClientStorageWrapper', () => {
     beforeEach(function () {
       this.SessionStorageWrapper = ClientStorageWrapper('session');
       this.LocalStorageWrapper = ClientStorageWrapper('local');
     });
 
     it('exposes a simplified Local/Session Storage API', function () {
-      [ this.LocalStorageWrapper, this.SessionStorageWrapper ].forEach(function (wrapper) {
-        ['setItem', 'getItem', 'removeItem'].forEach(function (method) {
+      [ this.LocalStorageWrapper, this.SessionStorageWrapper ].forEach(wrapper => {
+        ['setItem', 'getItem', 'removeItem'].forEach(method => {
           expect(typeof wrapper[method]).toEqual('function');
         });
       });
     });
   });
 
-  describe('TheStore/StorageStore', function () {
+  describe('TheStore/StorageStore', () => {
     beforeEach(function* () {
       this.stubs = {};
 
@@ -207,7 +207,7 @@ describe('TheStore', function () {
       sinon.assert.calledTwice(this.stubs.removeItem);
     });
 
-    describe('#isSupported', function () {
+    describe('#isSupported', () => {
       beforeEach(function () {
         this.LocalStorage.set = sinon.stub();
         this.SessionStorage.set = sinon.stub();
@@ -246,7 +246,7 @@ describe('TheStore', function () {
     });
   });
 
-  describe('TheStore/CookieStorage', function () {
+  describe('TheStore/CookieStorage', () => {
     beforeEach(function* () {
       this.testSecureCookie = function (method, mode, expected) {
         const stub = this.stubs[method];
@@ -311,7 +311,7 @@ describe('TheStore', function () {
       expect(this.CookieStorage.type).toBe('CookieStorage');
     });
 
-    describe('#set', function () {
+    describe('#set', () => {
       it('uses non-secure cookie for dev mode', function () {
         this.testSecureCookie(this.stubs, 'set', 'development', false);
       });
@@ -328,7 +328,7 @@ describe('TheStore', function () {
       });
     });
 
-    describe('#remove', function () {
+    describe('#remove', () => {
       it('uses non-secure cookie for dev mode', function () {
         this.testSecureCookie('remove', 'development', false);
       });

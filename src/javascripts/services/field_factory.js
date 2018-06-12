@@ -7,7 +7,7 @@
  * Utilities for creating and handling Content Type Fields
  */
 angular.module('contentful')
-.factory('fieldFactory', ['require', function (require) {
+.factory('fieldFactory', ['require', require => {
   var capitalize = require('stringUtils').capitalize;
   var TheLocaleStore = require('TheLocaleStore');
 
@@ -71,7 +71,7 @@ angular.module('contentful')
       label: 'Reference',
       listLabel: 'References, many',
     }
-  ], function (descriptor) {
+  ], descriptor => {
     _.defaults(descriptor, {
       label: descriptor.name
     });
@@ -116,7 +116,7 @@ angular.module('contentful')
     name: 'reference',
     description: 'For example, a blog post can reference its author(s)',
     types: ['Entry']
-  }], function (group) {
+  }], group => {
     group.types = _.map(group.types, getTypeByName);
     _.defaults(group, {
       label: capitalize(group.name),

@@ -1,8 +1,8 @@
 'use strict';
 
-describe('translatorLocaleSelector directive', function () {
+describe('translatorLocaleSelector directive', () => {
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', $provide => {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
 
@@ -29,7 +29,7 @@ describe('translatorLocaleSelector directive', function () {
     };
   });
 
-  describe('locale dropdown', function () {
+  describe('locale dropdown', () => {
     it('dropdown populates locales', function () {
       this.compile();
       const options = this.element.find('option');
@@ -65,7 +65,7 @@ describe('translatorLocaleSelector directive', function () {
     });
   });
 
-  describe('toggle locale', function () {
+  describe('toggle locale', () => {
     it('updates scope', function () {
       this.compile();
       const select = this.element.find('select');

@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').directive('cfAutocompleteDate', ['require', function (require) {
+angular.module('contentful').directive('cfAutocompleteDate', ['require', require => {
   var moment = require('moment');
   var h = require('utils/hyperscript').h;
 
@@ -25,7 +25,7 @@ angular.module('contentful').directive('cfAutocompleteDate', ['require', functio
       $datepicker.datepicker({
         dateFormat: DATE_FORMAT,
         onSelect: function (dateString) {
-          scope.$apply(function (scope) {
+          scope.$apply(scope => {
             scope.fillAutocompletion(dateString);
           });
         },
@@ -33,23 +33,23 @@ angular.module('contentful').directive('cfAutocompleteDate', ['require', functio
         firstDay: 1
       });
 
-      scope.$on('autocompletionsUpdated', function () {
+      scope.$on('autocompletionsUpdated', () => {
         var date = getDate();
         if (date) {
           $datepicker.datepicker('setDate', date);
         }
       });
 
-      scope.$evalAsync(function () {
+      scope.$evalAsync(() => {
         var date = moment($datepicker.datepicker('getDate')).format(DATE_FORMAT_INTERNAL);
         scope.fillAutocompletion(date);
       });
 
-      scope.$on('selectNextAutocompletion', function () {
+      scope.$on('selectNextAutocompletion', () => {
         adjustDate(+1);
       });
 
-      scope.$on('selectPreviousAutocompletion', function () {
+      scope.$on('selectPreviousAutocompletion', () => {
         adjustDate(-1);
       });
 

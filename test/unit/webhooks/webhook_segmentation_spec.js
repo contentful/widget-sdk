@@ -6,18 +6,18 @@ import {
   transformTopicsToMap
 } from 'app/Webhooks/WebhookSegmentationState';
 
-describe('Webhook Segmentation directive', function () {
+describe('Webhook Segmentation directive', () => {
   beforeEach(function () {
     module('contentful/test');
 
-    this.compile = function (topics) {
+    this.compile = topics => {
       const data = { webhook: { topics: topics || [] } };
       this.element = this.$compile('<cf-webhook-segmentation topics="topics" />', data);
       this.scope = this.element.isolateScope() || this.element.scope();
-    }.bind(this);
+    };
   });
 
-  describe('selection mode', function () {
+  describe('selection mode', () => {
     beforeEach(function () {
       this.radio = function (i) { return this.element.find('input[type="radio"]').get(i); };
       this.hasTable = function () { return this.element.find('table').length > 0; };
@@ -42,42 +42,42 @@ describe('Webhook Segmentation directive', function () {
     });
   });
 
-  describe('translating topics to selection', function () {
-    it('selects specific topics', function () {
+  describe('translating topics to selection', () => {
+    it('selects specific topics', () => {
       const transformed = transformTopicsToMap(['Entry.autosave', 'Entry.delete']);
 
       expect(isActionChecked(transformed, 'Entry', 'autosave')).toBe(true);
       expect(isActionChecked(transformed, 'Entry', 'delete')).toBe(true);
     });
 
-    it('selects entity type wildcards', function () {
+    it('selects entity type wildcards', () => {
       const transformed = transformTopicsToMap(['ContentType.*']);
       expect(isActionChecked(transformed, 'ContentType', '*')).toBe(true);
     });
 
-    it('selects action wildcards', function () {
+    it('selects action wildcards', () => {
       const transformed = transformTopicsToMap(['*.save']);
       expect(isActionChecked(transformed, '*', 'save')).toBe(true);
     });
   });
 
-  describe('translating selection to topics', function () {
-    it('translates specific topics', function () {
+  describe('translating selection to topics', () => {
+    it('translates specific topics', () => {
       const map = changeAction(createInternalState(false), 'Entry', 'save', true);
       expect(transformMapToTopics(map)).toEqual(['Entry.save']);
     });
 
-    it('translates entity type wildcards, removes redundant topics', function () {
+    it('translates entity type wildcards, removes redundant topics', () => {
       const map = changeAction(createInternalState(false), 'Entry', '*', true);
       expect(transformMapToTopics(map)).toEqual(['Entry.*']);
     });
 
-    it('translates action wildcards, removes redundant topics', function () {
+    it('translates action wildcards, removes redundant topics', () => {
       const map = changeAction(createInternalState(false), '*', 'save', true);
       expect(transformMapToTopics(map)).toEqual(['*.save']);
     });
 
-    it('utilizes all types of translation creating minimal set of topics', function () {
+    it('utilizes all types of translation creating minimal set of topics', () => {
       let map = changeAction(createInternalState(false), 'Entry', 'save', true);
       map = changeAction(map, 'Asset', 'save', true);
       map = changeAction(map, 'ContentType', 'save', true);
@@ -85,11 +85,9 @@ describe('Webhook Segmentation directive', function () {
     });
   });
 
-  describe('wildcard selections', function () {
+  describe('wildcard selections', () => {
     it('selects all horizontal checkboxes for entity wildcard, stores selection', function () {
-      const inputs = function () {
-        return this.element.find('tbody tr:nth-child(2) input');
-      }.bind(this);
+      const inputs = () => this.element.find('tbody tr:nth-child(2) input');
 
       this.compile(['Entry.save']);
       inputs().first()[0].click();
@@ -100,9 +98,7 @@ describe('Webhook Segmentation directive', function () {
     });
 
     it('selects all vertical checkboxes for action wildcard, stores selection', function () {
-      const inputs = function () {
-        return this.element.find('tbody tr td:nth-child(2) input');
-      }.bind(this);
+      const inputs = () => this.element.find('tbody tr td:nth-child(2) input');
 
       this.compile(['Asset.create']);
       inputs().last()[0].click();

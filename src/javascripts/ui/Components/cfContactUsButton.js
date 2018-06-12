@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfContactUsButton', ['require', function (require) {
+.directive('cfContactUsButton', ['require', require => {
   var React = require('react');
   var ReactDOM = require('react-dom');
   var ContactUsButton = require('ui/Components/ContactUsButton').default;
@@ -12,7 +12,7 @@ angular.module('contentful')
 
       ReactDOM.render(React.createElement(ContactUsButton, {}), host);
 
-      $scope.$on('$destroy', function () {
+      $scope.$on('$destroy', () => {
         ReactDOM.unmountComponentAtNode(host);
       });
     }

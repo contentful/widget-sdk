@@ -25,7 +25,7 @@ import * as sinon from 'helpers/sinon';
  * doc.getAt(['sub'])  // => false
  */
 angular.module('contentful/mocks')
-.factory('mocks/OtDoc', [function () {
+.factory('mocks/OtDoc', [() => {
   // TODO(mudit): Convert this from a contructor to a normal function
   // that returns an object with the methods. This would make it easier
   // to spy on stuff.
@@ -133,7 +133,7 @@ angular.module('contentful/mocks')
     this.set(newValue, cb);
   };
 
-  OtDoc.prototype.emit = function () {};
+  OtDoc.prototype.emit = () => {};
 
 
   class SubDoc {

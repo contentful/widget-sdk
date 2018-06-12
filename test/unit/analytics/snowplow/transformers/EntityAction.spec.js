@@ -1,6 +1,6 @@
 const PATH = 'analytics/snowplow/transformers/EntityAction';
 
-describe(PATH, function () {
+describe(PATH, () => {
   beforeEach(function () {
     module('contentful/test');
     this.transform = this.$inject(PATH).default;

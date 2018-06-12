@@ -2,9 +2,7 @@ import { isString, find, filter } from 'lodash';
 
 export function getAvailableContentTypes (space, field) {
   return space.getContentTypes({order: 'name', limit: 1000})
-    .then(function (res) {
-      return filter(res.items, canCreate(field));
-    });
+    .then(res => filter(res.items, canCreate(field)));
 }
 
 export function canLinkToContentType (field, ct) {
@@ -13,16 +11,12 @@ export function canLinkToContentType (field, ct) {
 }
 
 function canCreate (field) {
-  return function (ct) {
-    return !!ct.sys.publishedVersion && canLinkToContentType(field, ct);
-  };
+  return ct => !!ct.sys.publishedVersion && canLinkToContentType(field, ct);
 }
 
 function getValidContentTypesForField (field) {
   const validations = [].concat(field.validations || [], field.itemValidations || []);
-  const found = find(validations, function (v) {
-    return Array.isArray(v.linkContentType) || isString(v.linkContentType);
-  });
+  const found = find(validations, v => Array.isArray(v.linkContentType) || isString(v.linkContentType));
   let contentTypes = found && found.linkContentType;
   contentTypes = isString(contentTypes) ? [contentTypes] : contentTypes;
 

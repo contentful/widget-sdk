@@ -1,6 +1,6 @@
 import * as K from 'helpers/mocks/kefir';
 
-describe('entityEditor/Document/PresenceHub', function () {
+describe('entityEditor/Document/PresenceHub', () => {
   function extractUserIds (userStream) {
     return K.extractValues(userStream.map((users = []) => {
       return users.map((user) => user.sys.id);
@@ -23,7 +23,7 @@ describe('entityEditor/Document/PresenceHub', function () {
     this.presence = PresenceHub.create('ownUser', docEvents, this.shout);
   });
 
-  describe('#collaborators', function () {
+  describe('#collaborators', () => {
     it('adds users when presence is shouted', function () {
       const idsStream = extractUserIds(this.presence.collaborators);
       this.receiveShout(['ping', 'sourceUser']);
@@ -62,7 +62,7 @@ describe('entityEditor/Document/PresenceHub', function () {
     });
   });
 
-  describe('#collaboratorsFor', function () {
+  describe('#collaboratorsFor', () => {
     it('adds user to field when presence is shouted', function () {
       const idsStream = extractUserIds(this.presence.collaboratorsFor('FID', 'LID'));
       this.receiveShout(['focus', 'userA', 'fields.FID.LID']);
@@ -72,7 +72,7 @@ describe('entityEditor/Document/PresenceHub', function () {
     });
   });
 
-  describe('on "open" shout', function () {
+  describe('on "open" shout', () => {
     it('shouts back "focus" when field has been focused', function () {
       this.presence.focus('FID', 'LID');
       this.shout.reset();
@@ -88,7 +88,7 @@ describe('entityEditor/Document/PresenceHub', function () {
     });
   });
 
-  describe('#leave()', function () {
+  describe('#leave()', () => {
     it('shouts "close" with user id', function () {
       this.shout.reset();
       this.presence.leave();
@@ -96,7 +96,7 @@ describe('entityEditor/Document/PresenceHub', function () {
     });
   });
 
-  describe('#focus', function () {
+  describe('#focus', () => {
     it('shouts field focus', function () {
       this.presence.focus('FID', 'LID');
       sinon.assert.calledWithExactly(this.shout, ['focus', 'ownUser', 'fields.FID.LID']);

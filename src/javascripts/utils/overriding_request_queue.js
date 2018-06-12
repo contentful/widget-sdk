@@ -32,7 +32,7 @@ angular.module('cf.utils')
  * // - "fnReturningPromise" was called once with ['x'] arguments
  * // - "doSomethingWithData" was called once with a result of the last call
  */
-.factory('overridingRequestQueue', ['require', function (require) {
+.factory('overridingRequestQueue', ['require', require => {
 
   var $q     = require('$q');
   var random = require('random');

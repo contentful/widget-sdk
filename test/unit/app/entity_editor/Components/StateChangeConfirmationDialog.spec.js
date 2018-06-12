@@ -17,7 +17,7 @@ import {
 } from 'app/entity_editor/Components/constants';
 import messages from 'app/entity_editor/Components/StateChangeConfirmationDialog/messages';
 
-describe('StateChangeConfirmationDialog', function () {
+describe('StateChangeConfirmationDialog', () => {
   const defaultProps = {
     onCancel: _.noop,
     onConfirm: _.noop,

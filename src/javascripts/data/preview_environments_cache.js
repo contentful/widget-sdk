@@ -5,7 +5,7 @@
  * @name data/previewEnvironmentsCache
  */
 angular.module('cf.data')
-.factory('data/previewEnvironmentsCache', function () {
+.factory('data/previewEnvironmentsCache', () => {
   var previewEnvironmentsCache;
 
   return {

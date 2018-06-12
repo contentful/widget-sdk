@@ -7,7 +7,7 @@ angular.module('cf.app')
  * @module cf.app
  * @name cfBooleanEditor
  */
-.directive('cfBooleanEditor', ['require', function (require) {
+.directive('cfBooleanEditor', ['require', require => {
   var selectionController = require('widgets/selectionController');
   var Random = require('random');
 

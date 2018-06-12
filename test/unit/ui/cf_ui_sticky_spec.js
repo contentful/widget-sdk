@@ -1,6 +1,6 @@
 'use strict';
 
-describe('cfUiSticky directive', function () {
+describe('cfUiSticky directive', () => {
   beforeEach(function () {
     module('contentful/test');
     const markup = `<div class="workbench-main" cf-ui-sticky-container>

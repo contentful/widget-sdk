@@ -8,7 +8,7 @@
  * Represents an organization's subscription.
  */
 angular.module('contentful')
-.factory('Subscription', ['require', function (require) {
+.factory('Subscription', ['require', require => {
   var moment = require('moment');
   var get = require('lodash').get;
 

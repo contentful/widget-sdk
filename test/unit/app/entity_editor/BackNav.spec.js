@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 import sinon from 'npm:sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
-describe('BackNav', function () {
+describe('BackNav', () => {
   const SLIDE_IN_EDITOR_FEATURE_FLAG_VALUE = 'feature-flag-val';
 
   beforeEach(async function () {

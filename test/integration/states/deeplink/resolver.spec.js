@@ -1,6 +1,6 @@
 import * as sinon from 'helpers/sinon';
 
-describe('states/deeplink/resolver', function () {
+describe('states/deeplink/resolver', () => {
   beforeEach(function () {
     this.logException = sinon.stub();
     module('contentful/test', ($provide) => {
@@ -12,7 +12,7 @@ describe('states/deeplink/resolver', function () {
     this.resolver = this.$inject('states/deeplink/resolver');
   });
 
-  describe('#resolveLink', function () {
+  describe('#resolveLink', () => {
     it('should log an error in case of error', function* () {
       yield this.resolver.resolveLink('some random link');
 

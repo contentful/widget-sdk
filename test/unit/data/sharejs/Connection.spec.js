@@ -1,6 +1,6 @@
 import * as K from 'helpers/mocks/kefir';
 
-describe('data/sharejs/Connection', function () {
+describe('data/sharejs/Connection', () => {
   beforeEach(function () {
     this.baseConnection = {
       socket: {},
@@ -70,7 +70,7 @@ describe('data/sharejs/Connection', function () {
     this.connection.close();
   });
 
-  describe('#create', function () {
+  describe('#create', () => {
     it('passes URL and getToken() to base connection', function () {
       sinon.assert.calledWith(
         this.sharejs.Connection,
@@ -88,7 +88,7 @@ describe('data/sharejs/Connection', function () {
     });
   });
 
-  describe('#getDocLoader()', function () {
+  describe('#getDocLoader()', () => {
     let DocLoad;
 
     beforeEach(function () {
@@ -131,7 +131,7 @@ describe('data/sharejs/Connection', function () {
       };
     });
 
-    afterEach(function () {
+    afterEach(() => {
       DocLoad = null;
     });
 
@@ -296,7 +296,7 @@ describe('data/sharejs/Connection', function () {
     });
   });
 
-  describe('#open()', function () {
+  describe('#open()', () => {
     beforeEach(function () {
       const entity = {
         data: {sys: {
@@ -332,7 +332,7 @@ describe('data/sharejs/Connection', function () {
     });
   });
 
-  describe('#close()', function () {
+  describe('#close()', () => {
     it('delegates to baseConnection.disconnect', function () {
       this.connection.close();
       sinon.assert.calledOnce(this.baseConnection.disconnect);
@@ -347,7 +347,7 @@ describe('data/sharejs/Connection', function () {
     });
   });
 
-  describe('#refreshAuth()', function () {
+  describe('#refreshAuth()', () => {
     beforeEach(function () {
       this.setState('ok');
     });

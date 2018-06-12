@@ -1,7 +1,7 @@
 import * as K from 'helpers/mocks/kefir';
 import {create as createDocument} from 'helpers/mocks/entity_editor_document';
 
-describe('app/entity_editor/Validator', function () {
+describe('app/entity_editor/Validator', () => {
   beforeEach(function () {
     module('contentful/test');
 
@@ -18,7 +18,7 @@ describe('app/entity_editor/Validator', function () {
     };
   });
 
-  describe('#setApiResponseErrors', function () {
+  describe('#setApiResponseErrors', () => {
     it('includes only API validation errors', function () {
       this.schemaErrors.returns([]);
       const errors = [{id: 'EID', path: [], message: ''}];
@@ -56,7 +56,7 @@ describe('app/entity_editor/Validator', function () {
     });
   });
 
-  describe('#validateFieldLocale', function () {
+  describe('#validateFieldLocale', () => {
     it('it only updates errors on specified field', function () {
       // Initial errors
       this.schemaErrors.returns([

@@ -54,7 +54,7 @@ export default function create ($scope, contentTypeIds) {
   });
 
   function startDeleteFlow () {
-    return checkRemovable().then(function (status) {
+    return checkRemovable().then(status => {
       if (status.isRemovable) {
         return confirmRemoval(status.isPublished);
       } else {
@@ -73,10 +73,10 @@ export default function create ($scope, contentTypeIds) {
 
     return spaceContext.space.getEntries({
       content_type: $scope.contentType.getId()
-    }).then(function (res) {
+    }).then(res => {
       const count = res.length;
       return createStatusObject(canRead && count < 1, count);
-    }, function (res) {
+    }, res => {
       if (res.statusCode === 404 && !canRead) {
         return createStatusObject(false);
       } else {
@@ -116,12 +116,10 @@ export default function create ($scope, contentTypeIds) {
         assign(scope, {
           input: {},
           contentTypeName: $scope.contentType.data.name,
-          delete: Command.create(function () {
-            return remove(isPublished)
-            .finally(() => {
-              scope.dialog.confirm();
-            });
-          }, {
+          delete: Command.create(() => remove(isPublished)
+          .finally(() => {
+            scope.dialog.confirm();
+          }), {
             disabled: () => scope.input.contentTypeName !== scope.contentTypeName
           })
         });
@@ -141,7 +139,7 @@ export default function create ($scope, contentTypeIds) {
 
   function sendDeleteRequest () {
     return $scope.contentType.delete()
-    .then(function () {
+    .then(() => {
       notify.deleteSuccess();
       return closeState();
     }, notify.deleteFail);
@@ -152,10 +150,8 @@ export default function create ($scope, contentTypeIds) {
    * @name ContentTypeActionsController#scope#cancel
    * @type {Command}
    */
-  controller.cancel = Command.create(function () {
-    // X.detail.fields -> X.list
-    return $state.go('^.^.list');
-  }, {
+  controller.cancel = Command.create(() => // X.detail.fields -> X.list
+  $state.go('^.^.list'), {
     available: function () {
       return $scope.context.isNew;
     }
@@ -167,9 +163,7 @@ export default function create ($scope, contentTypeIds) {
    * @name ContentTypeActionsController#save
    * @type {Command}
    */
-  controller.save = Command.create(function () {
-    return save(true);
-  }, {
+  controller.save = Command.create(() => save(true), {
     disabled: function () {
       const dirty = $scope.contentTypeForm.$dirty ||
                   $scope.contentType.hasUnpublishedChanges() ||
@@ -185,9 +179,7 @@ export default function create ($scope, contentTypeIds) {
   // This is called by the state manager in case the user leaves the
   // Content Type editor without saving. We do not redirect in that
   // case.
-  controller.saveAndClose = function () {
-    return save(false);
-  };
+  controller.saveAndClose = () => save(false);
 
   function save (redirect) {
     ctHelpers.assureDisplayField($scope.contentType.data);
@@ -200,14 +192,14 @@ export default function create ($scope, contentTypeIds) {
 
     return $scope.contentType.save()
     .then(publishContentType)
-    .then(function (published) {
+    .then(published => {
       $scope.publishedContentType = cloneDeep(published);
       return published;
     })
     .then(saveEditingInterface)
     .catch(triggerApiErrorNotification)
     .then(setPristine)
-    .then(function () {
+    .then(() => {
       setPristine();
       previewEnvironmentsCache.clearAll();
       spaceContext.uiConfig.addOrEditCt($scope.contentType.data);
@@ -222,9 +214,7 @@ export default function create ($scope, contentTypeIds) {
 
   function publishContentType (contentType) {
     return spaceContext.publishedCTs.publish(contentType)
-    .then(function () {
-      return spaceContext.editingInterfaces.get(contentType.data);
-    }).then(function (editingInterface) {
+    .then(() => spaceContext.editingInterfaces.get(contentType.data)).then(editingInterface => {
       // On publish the API also updates the editor interface
       $scope.editingInterface.sys.version = editingInterface.sys.version;
       return contentType;
@@ -233,7 +223,7 @@ export default function create ($scope, contentTypeIds) {
 
   function saveEditingInterface (contentType) {
     return spaceContext.editingInterfaces.save(contentType.data, $scope.editingInterface)
-    .then(function (editingInterface) {
+    .then(editingInterface => {
       $scope.editingInterface = editingInterface;
     });
   }
@@ -271,12 +261,10 @@ export default function create ($scope, contentTypeIds) {
    * @name ContentTypeActionsController#duplicate
    * @type {Command}
    */
-  controller.duplicate = Command.create(function () {
-    return metadataDialog
-    .openDuplicateDialog($scope.contentType, createDuplicate, contentTypeIds)
-    .then(askAboutRedirection)
-    .then(notify.duplicateSuccess);
-  }, {
+  controller.duplicate = Command.create(() => metadataDialog
+  .openDuplicateDialog($scope.contentType, createDuplicate, contentTypeIds)
+  .then(askAboutRedirection)
+  .then(notify.duplicateSuccess), {
     disabled: function () {
       const isNew = $scope.context.isNew;
       const isDenied = accessChecker.shouldDisable('updateContentType') ||
@@ -301,12 +289,8 @@ export default function create ($scope, contentTypeIds) {
 
     return duplicate.save()
     .then(publishContentType)
-    .then(function (ct) {
-      return spaceContext.editingInterfaces.save(ct.data, $scope.editingInterface);
-    })
-    .then(function () {
-      return duplicate;
-    }, function (err) {
+    .then(ct => spaceContext.editingInterfaces.save(ct.data, $scope.editingInterface))
+    .then(() => duplicate, err => {
       notify.duplicateError();
       return $q.reject(err);
     });
@@ -318,7 +302,7 @@ export default function create ($scope, contentTypeIds) {
       message: 'Content type was successfully duplicated. What do you want to do now?',
       confirmLabel: 'Go to the duplicated content type',
       cancelLabel: null
-    }).promise.then(function () {
+    }).promise.then(() => {
       setPristine();
       return goToDetails(duplicated);
     }, noop);

@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Tracking versioning', function () {
+describe('Tracking versioning', () => {
   const data = {
     entry: {sys: {id: 'eid'}},
     snapshot: {sys: {
@@ -42,7 +42,7 @@ describe('Tracking versioning', function () {
     };
   });
 
-  describe('"authorIsUser" event data', function () {
+  describe('"authorIsUser" event data', () => {
     it('sends true if author of snapshot is the current user', function () {
       this.track.opened();
       this.assertAnalyticsCall('snapshot_opened', {authorIsUser: true});
@@ -58,14 +58,14 @@ describe('Tracking versioning', function () {
     });
   });
 
-  describe('#noSnapshots', function () {
+  describe('#noSnapshots', () => {
     it('sends entryId', function () {
       this.track.noSnapshots('xxx');
       this.assertAnalyticsCall('no_snapshots', {entryId: 'xxx'});
     });
   });
 
-  describe('#opened', function () {
+  describe('#opened', () => {
     it('uses "deepLink" as a default source', function () {
       this.track.opened();
       this.assertBasicAnalyticsCall('snapshot_opened');
@@ -79,7 +79,7 @@ describe('Tracking versioning', function () {
     });
   });
 
-  describe('#closed', function () {
+  describe('#closed', () => {
     it('is not discarded by default', function () {
       this.track.closed();
       this.assertBasicAnalyticsCall('snapshot_closed');
@@ -93,7 +93,7 @@ describe('Tracking versioning', function () {
     });
   });
 
-  describe('#restored', function () {
+  describe('#restored', () => {
     const picker = {
       getPathsToRestore: _.constant([1, 2, 3]),
       getDifferenceCount: _.constant(4)
@@ -126,7 +126,7 @@ describe('Tracking versioning', function () {
     });
   });
 
-  describe('#trackableConfirmator', function () {
+  describe('#trackableConfirmator', () => {
     beforeEach(function () {
       this.$q = this.$inject('$q');
       this.dialog = this.$inject('modalDialog');
@@ -164,7 +164,7 @@ describe('Tracking versioning', function () {
     });
   });
 
-  describe('#publishedRestored', function () {
+  describe('#publishedRestored', () => {
     it('sends entry ID if was published right after restoring', function () {
       this.track.registerRestoredVersion({sys: {version: 1, id: 'xyz'}});
       this.track.publishedRestored({sys: {version: 2, id: 'xyz'}});

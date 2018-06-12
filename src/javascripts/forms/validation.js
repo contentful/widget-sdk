@@ -25,37 +25,36 @@ angular.module('cf.forms')
  * @property {Error[]} formCtrl.errors
  * @property {string[]} formCtrl.errorMessages
  */
-.directive('cfValidateForm', ['$interpolate', function ($interpolate) {
-  return {
-    restrict: 'A',
-    require: ['^cfValidate', 'form'],
-    link: function (scope, elem, attrs, ctrls) {
-      var validator = ctrls[0];
-      var form = ctrls[1];
+.directive('cfValidateForm', ['$interpolate', $interpolate => ({
+  restrict: 'A',
+  require: ['^cfValidate', 'form'],
 
-      var errorPath = $interpolate(attrs.cfValidateForm || attrs.name || '')(scope);
+  link: function (scope, elem, attrs, ctrls) {
+    var validator = ctrls[0];
+    var form = ctrls[1];
 
-      var validateOn = 'ngModel:' + (scope.$validateOn || 'update');
-      scope.$on(validateOn, validate);
+    var errorPath = $interpolate(attrs.cfValidateForm || attrs.name || '')(scope);
 
-      scope.$watchCollection('validator.errors', function () {
-        var schemaErrors = validator.getPathErrors(errorPath, true);
-        var valid = _.isEmpty(schemaErrors);
+    var validateOn = 'ngModel:' + (scope.$validateOn || 'update');
+    scope.$on(validateOn, validate);
 
-        form.errors = schemaErrors;
+    scope.$watchCollection('validator.errors', () => {
+      var schemaErrors = validator.getPathErrors(errorPath, true);
+      var valid = _.isEmpty(schemaErrors);
 
-        // TODO do we realy need this
-        form.errorMessages = _.map(schemaErrors, 'message');
+      form.errors = schemaErrors;
 
-        form.$setValidity('schema', valid, 'schema');
-      });
+      // TODO do we realy need this
+      form.errorMessages = _.map(schemaErrors, 'message');
 
-      function validate () {
-        return validator.runLater(errorPath, true);
-      }
+      form.$setValidity('schema', valid, 'schema');
+    });
+
+    function validate () {
+      return validator.runLater(errorPath, true);
     }
-  };
-}])
+  }
+})])
 
 
 /**
@@ -81,47 +80,44 @@ angular.module('cf.forms')
  *
  * @property {[name: string]: Error} ngModelCtrl.errorDetails
  */
-.directive('cfValidateModel', ['$interpolate', function ($interpolate) {
-  return {
-    require: ['ngModel', '^cfValidate'],
-    link: function (scope, elem, attrs, ctrls) {
-      var modelCtrl = ctrls[0];
-      var validator = ctrls[1];
-      var schemaErrors = [];
+.directive('cfValidateModel', ['$interpolate', $interpolate => ({
+  require: ['ngModel', '^cfValidate'],
 
-      var errorPath = $interpolate(attrs.cfValidateModel || attrs.name || '')(scope);
+  link: function (scope, elem, attrs, ctrls) {
+    var modelCtrl = ctrls[0];
+    var validator = ctrls[1];
+    var schemaErrors = [];
 
-      var validateOn = 'ngModel:' + (scope.$validateOn || 'update');
-      scope.$on(validateOn, validate);
+    var errorPath = $interpolate(attrs.cfValidateModel || attrs.name || '')(scope);
 
-      scope.$watch('validator.errors', function () {
-        _.forEach(schemaErrors, function (error) {
-          modelCtrl.$setValidity(error.name, null);
-        });
+    var validateOn = 'ngModel:' + (scope.$validateOn || 'update');
+    scope.$on(validateOn, validate);
 
-        schemaErrors = validator.getPathErrors(errorPath);
-
-        modelCtrl.errorDetails = mapBy(schemaErrors, 'name');
-
-        _.forEach(schemaErrors, function (error) {
-          modelCtrl.$setValidity(error.name, false);
-        });
+    scope.$watch('validator.errors', () => {
+      _.forEach(schemaErrors, error => {
+        modelCtrl.$setValidity(error.name, null);
       });
 
-      function validate () {
-        return validator.runLater(errorPath, true);
-      }
+      schemaErrors = validator.getPathErrors(errorPath);
 
-      function mapBy(collection, iteratee) {
-        var grouped = _.groupBy(collection, iteratee);
-        return _.mapValues(grouped, function (items) {
-          return items[0];
-        });
-      }
+      modelCtrl.errorDetails = mapBy(schemaErrors, 'name');
 
+      _.forEach(schemaErrors, error => {
+        modelCtrl.$setValidity(error.name, false);
+      });
+    });
+
+    function validate () {
+      return validator.runLater(errorPath, true);
     }
-  };
-}])
+
+    function mapBy(collection, iteratee) {
+      var grouped = _.groupBy(collection, iteratee);
+      return _.mapValues(grouped, items => items[0]);
+    }
+
+  }
+})])
 
 
 /**
@@ -136,7 +132,7 @@ angular.module('cf.forms')
  *
  * Allowed events are `update` and `commit`.
  */
-.directive('cfValidateOn', [function () {
+.directive('cfValidateOn', [() => {
   var allowedEvents = ['update', 'commit'];
   return {
     link: function (scope, element, attrs) {
