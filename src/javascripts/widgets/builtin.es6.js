@@ -191,7 +191,7 @@ export function create (config) {
     fieldTypes: ['Object'],
     name: 'Object',
     template: config.replaceJsonEditorWithStructuredTextEditor
-      ? '<cf-json-editor structured-text-beta="{{true}}" />'
+      ? '<cf-structured-text-editor />'
       : '<cf-json-editor />'
   });
 

@@ -5,9 +5,4 @@ div(ng-show="isDisabled")
     | // No value
 
 div.json-editor__code-editor-container(ng-show="!isDisabled")
-  div.editor-control-warning(ng-if="hasCrashed")
-    cf-icon(name="plug" scale="0.8")
-    p
-      | The widget failed to initialize
-
-  cf-json-editor-code-editor(ng-if="editor" editor="editor")
+  <react-component name="app/widgets/structured_text/StructuredTextEditor" props="slateEditorProps"></react-component>
