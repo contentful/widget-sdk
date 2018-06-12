@@ -3,17 +3,15 @@
 angular.module('cf.app')
 .directive('cfJsonEditor', ['require', require => {
   var Editor = require('app/widgets/json/code_editor');
-  var LD = require('utils/LaunchDarkly');
-
-  var STRUCTURED_TEXT_FIELD_DEMO_FEATURE_FLAG = 'feature-at-05-2018-structured-text-field-demo';
 
   return {
     restrict: 'E',
-    scope: {},
+    scope: {
+      structuredTextBeta: '@'
+    },
     template: JST['cf_json_editor'](),
     require: '^cfWidgetApi',
     link: function (scope, _$el, _attr, widgetApi) {
-      scope.renderSlateEditor = false;
       var field = widgetApi.field;
       var offValueChanged = field.onValueChanged((json) => {
         scope.content = stringifyJSON(json);
@@ -29,18 +27,16 @@ angular.module('cf.app')
         offDisabledStatusChanged();
       });
 
-      LD.onFeatureFlag(scope, STRUCTURED_TEXT_FIELD_DEMO_FEATURE_FLAG, (variation) => {
-        scope.renderSlateEditor = variation;
+      scope.renderSlateEditor = !!scope.structuredTextBeta;
 
-        if (scope.renderSlateEditor) {
-          scope.slateEditorProps = {
-            field: {
-              ...widgetApi.field,
-              linkType: 'Entry'
-            }
-          };
-        }
-      });
+      if (scope.renderSlateEditor) {
+        scope.slateEditorProps = {
+          field: {
+            ...widgetApi.field,
+            linkType: 'Entry'
+          }
+        };
+      }
 
       try {
         scope.editor = Editor.create(widgetApi);

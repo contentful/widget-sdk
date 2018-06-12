@@ -3,9 +3,16 @@ import { range } from 'lodash';
 /**
  * Returns a list of all builtin widgets.
  *
+ * @param {boolean?} config.replaceJsonEditorWithStructuredTextEditor
  * @returns {Widget.Descriptor[]}
  */
-export function create () {
+export function create (config) {
+  const DEFAULT_CONFIG = {
+    replaceJsonEditorWithStructuredTextEditor: false
+  };
+
+  config = { ...DEFAULT_CONFIG, ...config };
+
   const widgets = [];
 
   const COMMON_PARAMETERS = [
@@ -183,7 +190,9 @@ export function create () {
   registerWidget('objectEditor', {
     fieldTypes: ['Object'],
     name: 'Object',
-    template: '<cf-json-editor />'
+    template: config.replaceJsonEditorWithStructuredTextEditor
+      ? '<cf-json-editor structured-text-beta="{{true}}" />'
+      : '<cf-json-editor />'
   });
 
   registerWidget('listInput', {
