@@ -7,8 +7,14 @@
 # running the tests or creating a distribution. For details see
 # `tools/docker/entry-script.js`.
 #
-# To build this image use `bin/docker-build-test` and to run this image
-# use `bin/docker-run`.
+# To build this image use `bin/docker-build-ci` and to run this image
+# use `bin/docker-run-ci`.
+#
+# Build arguments:
+# * NPM_TOKEN used to fetch private NPM package from the @contentful
+#   scope. Required.
+# * SSH_KEY plain SSH key to fetch NPM dependencies from Github.
+#   Optional.
 
 # The base image is hosted on Docker hub and built using
 # `tools/docker/base/Dockerfile`.
@@ -21,15 +27,24 @@ ENV PATH=/app/node_modules/.bin:$PATH \
     CHROME_BIN=/usr/bin/google-chrome
 
 ARG NPM_TOKEN
-RUN echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+RUN \
+  echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc && \
+  mkdir ~/.ssh
 
 # Install dependencies
 COPY package.json package-lock.json ./
 COPY packages/client/package.json ./packages/client/
-RUN npm install --no-optional --unsafe-perm
+
+ARG SSH_KEY
+RUN \
+  ssh-keyscan github.com > ~/.ssh/known_hosts && \
+  echo "$SSH_KEY" > ~/.ssh/id_rsa && \
+  chmod 0600 ~/.ssh/id_rsa && \
+  npm install --no-optional --unsafe-perm && \
+  rm -f ~/.ssh/id_rsa
 
 # Copy source files and build app
 COPY ./ ./
-RUN NODE_ENV=production gulp build/with-styleguide
+RUN NODE_ENV=production ./node_modules/.bin/gulp build/with-styleguide
 
 ENTRYPOINT ["bin/docker-entry"]
