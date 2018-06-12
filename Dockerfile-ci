@@ -33,7 +33,6 @@ RUN \
 
 # Install dependencies
 COPY package.json package-lock.json ./
-COPY packages/client/package.json ./packages/client/
 
 ARG SSH_KEY
 RUN \

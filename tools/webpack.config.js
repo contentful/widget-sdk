@@ -81,7 +81,7 @@ module.exports = ({ dev = false } = {}) => ({
       // these are not real `import/export`).
       {
         test: /\.es6.js$/,
-        exclude: /(node_modules|vendor|packages)/,
+        exclude: /(node_modules|vendor)/,
         use: {
           loader: 'babel-loader',
           options: createBabelOptions()
@@ -109,7 +109,7 @@ module.exports = ({ dev = false } = {}) => ({
 
           return /\.js$/.test(path);
         },
-        exclude: /(node_modules|vendor|packages)/,
+        exclude: /(node_modules|vendor)/,
         use: {
           loader: 'babel-loader',
           options: createBabelOptions({

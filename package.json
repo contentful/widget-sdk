@@ -155,7 +155,6 @@
     "start": "gulp all serve",
     "test": "node run-tests.js",
     "test:once": "node run-tests.js --once",
-    "postinstall": "cd packages/client && npm install --no-package-lock",
     "hint": "eslint src test bin tools",
     "cloc": "cloc --read-lang-def .cloc.def src",
     "clean": "rm -rf node_modules",

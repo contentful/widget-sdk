@@ -62,7 +62,7 @@ window.libs = [
   ['sum-types/caseof-eq', require('sum-types/caseof-eq')],
   ['editors', require('@contentful/field-editors')],
   ['kefir', require('kefir')],
-  ['legacy-client', require('../../../packages/client')],
+  ['legacy-client', require('./legacy_client/client.js')],
   ['sharejs', require('@contentful/sharejs/lib/client')],
   ['flat', require('flat')],
   ['rtl-detect', require('rtl-detect')],
