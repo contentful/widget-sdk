@@ -74,7 +74,7 @@ module.exports = ({ dev = false } = {}) => ({
   },
   module: {
     // sharejs is build by `js/sharejs` gulp task, so we don't touch it here
-    noParse: filename => /public\/app\/sharejs\.js$/.test(filename),
+    noParse: filename => filename.endsWith('/public/app/sharejs-types.js'),
     rules: [
       // this rule is only for ES6 files, we need to use SystemJS plugin to register them
       // and resolve "imported" files correctly (they are transpiled to use Angular DI, so
