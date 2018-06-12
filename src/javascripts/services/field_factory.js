@@ -59,7 +59,13 @@ angular.module('contentful')
       name: 'Object',
       label: 'JSON object',
       icon: 'json'
-    }, {
+    },
+    {
+      name: 'StructuredText',
+      label: 'Structured text',
+      icon: 'json'
+    },
+    {
       name: 'Entry',
       isLink: true,
       hasListVariant: true,

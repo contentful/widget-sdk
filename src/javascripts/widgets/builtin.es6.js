@@ -190,14 +190,13 @@ export function create (config) {
   registerWidget('objectEditor', {
     fieldTypes: ['Object'],
     name: 'Object',
-    template: config.replaceJsonEditorWithStructuredTextEditor
-      ? '<cf-structured-text-editor />'
-      : '<cf-json-editor />'
+    template: '<cf-json-editor />'
   });
 
   registerWidget('structuredTextEditor', {
     fieldTypes: ['StructuredText'],
-    name: 'Structured text editor',
+    name: 'StructuredText',
+    icon: 'json',
     template: '<cf-structured-text-editor />'
   });
 
