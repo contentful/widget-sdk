@@ -98,7 +98,7 @@ export default function create (space, spaceEndpoint$q, publishedCTs, viewMigrat
       method: 'GET',
       path: getEndpointPath(type)
     }, getEndpointHeaders(type)).then(
-      remoteData => migrateUIConfig(type, remoteData),
+      remoteData => setUiConfigOrMigrate(type, remoteData),
       error => {
         const statusCode = getPath(error, 'statusCode');
         if (statusCode === 404) {
@@ -111,7 +111,7 @@ export default function create (space, spaceEndpoint$q, publishedCTs, viewMigrat
     );
   }
 
-  function migrateUIConfig (type, data) {
+  function setUiConfigOrMigrate (type, data) {
     const isMigrated = isUIConfigDataMigrated(data);
     isMigratedState[type] = isMigrated;
     if (isMigrated) {
@@ -152,7 +152,7 @@ export default function create (space, spaceEndpoint$q, publishedCTs, viewMigrat
           const endpointPath = getEndpointPath(type).join('/');
           trackSearchTermsMigrated(uiConfig, endpointPath);
         }
-        return migrateUIConfig(type, remoteData);
+        return setUiConfigOrMigrate(type, remoteData);
       },
       error => {
         const reject = () => Promise.reject(error);
