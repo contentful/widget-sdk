@@ -8,8 +8,13 @@ import Command from 'command';
 import * as TokenStore from 'services/TokenStore';
 import {createSpaceEndpoint} from 'data/EndpointFactory';
 import ApiClient from 'data/ApiClient';
+import { openModal as openCommittedSpaceWarningDialog } from 'components/shared/space-wizard/CommittedSpaceWarningModal';
 
-export function openDeleteSpaceDialog ({space, onSuccess}) {
+export function openDeleteSpaceDialog ({space, plan, onSuccess}) {
+  if (plan && plan.committed) {
+    return openCommittedSpaceWarningDialog();
+  }
+
   const spaceName = space.name;
   const scope = extend($rootScope.$new(), {
     spaceName: spaceName,

@@ -11,8 +11,7 @@ angular.module('contentful')
   };
 }])
 
-.controller('SpaceSettingsController', ['require', '$scope', (require, $scope) => {
-  var $q = require('$q');
+.controller('SpaceSettingsController', ['require', '$scope', function (require, $scope) {
   var $state = require('$state');
   var spaceContext = require('spaceContext');
   var Command = require('command');
@@ -20,6 +19,8 @@ angular.module('contentful')
   var notification = require('notification');
   var ReloadNotification = require('ReloadNotification');
   var openRemovalDialog = require('services/DeleteSpace').openDeleteSpaceDialog;
+  var getSingleSpacePlan = require('account/pricing/PricingDataProvider').getSingleSpacePlan;
+  var createOrganizationEndpoint = require('data/EndpointFactory').createOrganizationEndpoint;
 
   var space = spaceContext.space.data;
 
@@ -27,12 +28,22 @@ angular.module('contentful')
   $scope.spaceId = space.sys.id;
   $scope.model = {name: space.name};
   $scope.save = Command.create(save, {disabled: isSaveDisabled});
-  $scope.openRemovalDialog = Command.create(() => {
-    openRemovalDialog({
-      space: space,
-      onSuccess: function () { $state.go('home'); }
-    });
-    return $q.resolve();
+  $scope.openRemovalDialog = Command.create(async function () {
+    const orgEndpoint = createOrganizationEndpoint(spaceContext.organizationContext.organization.sys.id);
+    let plan;
+
+    try {
+      plan = await getSingleSpacePlan(orgEndpoint, spaceContext.space.getId());
+    } catch (e) {
+      // spaces on the old pricing model don't have a space plan
+      // the the promise gets rejected
+    } finally {
+      openRemovalDialog({
+        space,
+        plan,
+        onSuccess: () => $state.go('home')
+      });
+    }
   });
 
   function save () {

@@ -38,7 +38,7 @@ export async function showDialog ({ organizationId, space, spacePlan, limitReach
     throw new Error(`ChangeSpaceService.showDialog: action ${action} invalid, valid actions: ${validActions.join(', ')}`);
   }
 
-  if (spacePlan.committed) {
+  if (spacePlan && spacePlan.committed) {
     openCommittedSpaceWarningDialog();
   } else {
     modalDialog.open({
