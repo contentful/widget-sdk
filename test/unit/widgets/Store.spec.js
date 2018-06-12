@@ -1,7 +1,7 @@
-describe('widgets/store', () => {
+describe('widgets/Store', () => {
   beforeEach(function () {
     module('contentful/test');
-    this.createStore = this.$inject('widgets/store');
+    this.createStore = this.$inject('widgets/Store').create;
     this.builtins = this.$inject('widgets/builtin').create();
   });
 

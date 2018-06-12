@@ -29,7 +29,7 @@ angular.module('contentful/mocks')
 .factory('mocks/spaceContext', ['require', require => {
   const cfStub = require('cfStub');
   const createEIRepo = require('data/editingInterfaces');
-  const createWidgetStore = require('widgets/store');
+  const createWidgetStore = require('widgets/Store').create;
   const createApiKeyRepo = require('data/CMA/ApiKeyRepo').default;
   const CMAClient = require('data/ApiClient');
 
