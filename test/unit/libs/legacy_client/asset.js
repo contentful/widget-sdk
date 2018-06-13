@@ -1,16 +1,13 @@
-const co = require('co');
-const {coit} = require('./support');
-const {expect} = require('chai');
-const describeEntity = require('./entity');
-const describeArchivable = require('./archivable');
-const {
+import describeEntity from './entity';
+import describeArchivable from './archivable';
+import {
   describeResource,
   describeGetResource,
   describeCreateResource,
   describeContentEntity
-} = require('./space_resource');
+} from './space_resource';
 
-module.exports = function describeAsset () {
+export default function describeAsset () {
   const asset = { singular: 'asset', plural: 'assets' };
   describeGetResource(asset);
   describeCreateResource(asset);
@@ -19,21 +16,21 @@ module.exports = function describeAsset () {
   describeArchivable(asset, setupEntity);
 
   function setupEntity () {
-    beforeEach(co.wrap(function* () {
+    beforeEach(function* () {
       this.request.respond({sys: {type: 'Asset'}});
       this.entity = yield this.space.createAsset();
-    }));
+    });
   }
 
   describeResource(asset, function () {
-    coit('#process()', function* () {
+    it('#process()', function* () {
       this.request.respond(null);
       yield this.asset.process('myversion', 'mylocale');
-      expect(this.request).to.be.calledWith({
+      sinon.assert.calledWith(this.request, {
         method: 'PUT',
         url: '/spaces/42/assets/43/files/mylocale/process',
         headers: { 'X-Contentful-Version': 'myversion' }
       });
     });
   });
-};
+}
