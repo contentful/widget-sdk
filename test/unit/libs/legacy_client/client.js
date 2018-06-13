@@ -1,32 +1,40 @@
-const co = require('co');
-const sinon = require('sinon');
-const _ = require('lodash');
+import Client from 'legacy-client';
+import describeSpaceInstance from './space_instance';
 
-const chai = require('chai');
-chai.use(require('chai-as-promised'));
-chai.use(require('sinon-chai'));
+describe('client', function () {
+  beforeEach(function () {
+    this.request = createRequestStub();
+    this.client = new Client({
+      request: ({ method, path, headers, payload }) => {
+        const payloadKey = method === 'GET' ? 'params' : 'data';
+        return this.request.adapterRequest({
+          method,
+          url: path,
+          headers,
+          [payloadKey]: payload
+        });
+      }
+    });
+  });
 
-module.exports = {
-  coit: coit,
-  createRequestStub: createRequestStub,
-  clone: _.cloneDeep.bind(_),
-  expect: chai.expect
-};
+  describe('space', function () {
+    const serverSpaceData = Object.freeze({
+      name: 'myspace',
+      sys: {
+        id: '42',
+        type: 'Space',
+        version: 0
+      }
+    });
 
-
-function coit (name, generator) {
-  if (generator) { it(name, co.wrap(generator)); } else { it(name); }
-}
-
-coit.only = function coitOnly (name, generator) {
-  it.only(name, co.wrap(generator));
-};
-
+    describeSpaceInstance(serverSpaceData);
+  });
+});
 
 function createRequestStub () {
-  var request = sinon.spy(function ({payload}) {
+  const request = sinon.spy(function ({payload}) {
     if (!request.responses.length) { throw new Error('No server responses provided'); }
-    var {data, error, mirror} = request.responses.shift();
+    const {data, error, mirror} = request.responses.shift();
     if (error) { return Promise.reject(error); } else if (mirror) { return Promise.resolve(_.cloneDeep(payload)); } else { return Promise.resolve(_.cloneDeep(data)); }
   });
 

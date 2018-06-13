@@ -1,14 +1,12 @@
-const {coit} = require('./support');
-const {expect} = require('chai');
-const describeEntity = require('./entity');
-const describeArchivable = require('./archivable');
-const {
+import describeEntity from './entity';
+import describeArchivable from './archivable';
+import {
   describeResource,
   describeGetResource,
   describeContentEntity
-} = require('./space_resource');
+} from './space_resource';
 
-module.exports = function describeEntry () {
+export default function describeEntry () {
   const entry = { singular: 'entry', plural: 'entries' };
   describeGetResource(entry);
   describeContentEntity(entry, setupEntity);
@@ -27,7 +25,7 @@ module.exports = function describeEntry () {
     setupEntity();
 
     it('gets content type id', function () {
-      expect(this.entity.getContentTypeId()).to.be.equal('abcd');
+      expect(this.entity.getContentTypeId()).toEqual('abcd');
     });
   });
 
@@ -38,32 +36,32 @@ module.exports = function describeEntry () {
       fields: 'hey ho'
     });
 
-    coit('posts to server', function* () {
+    it('posts to server', function* () {
       this.request.respond(serverData);
-      var resource = yield this.space.createEntry('123', {name: 'my resource'});
-      expect(this.request).to.be.calledWith({
+      const resource = yield this.space.createEntry('123', {name: 'my resource'});
+      sinon.assert.calledWith(this.request, {
         method: 'POST',
         url: '/spaces/42/entries',
         data: { name: 'my resource' },
         headers: { 'X-Contentful-Content-Type': '123' }
       });
-      expect(resource.getId()).to.equal('43');
+      expect(resource.getId()).toEqual('43');
     });
 
-    coit('identical object is retrieved by .getId()', function* () {
+    it('identical object is retrieved by .getId()', function* () {
       this.request.respond(serverData);
-      var resource = yield this.space.createEntry('123', {name: 'my resource'});
-      expect(resource.getId()).to.equal('43');
+      const resource = yield this.space.createEntry('123', {name: 'my resource'});
+      expect(resource.getId()).toEqual('43');
     });
 
-    coit('updates with id given', function* () {
-      var newData = {
+    it('updates with id given', function* () {
+      const newData = {
         name: 'my resource',
         sys: { id: '55' }
       };
       this.request.respond(serverData);
       yield this.space.createEntry('123', newData);
-      expect(this.request).to.be.calledWith({
+      sinon.assert.calledWith(this.request, {
         method: 'PUT',
         url: '/spaces/42/entries/55',
         data: newData,
@@ -71,4 +69,4 @@ module.exports = function describeEntry () {
       });
     });
   });
-};
+}
