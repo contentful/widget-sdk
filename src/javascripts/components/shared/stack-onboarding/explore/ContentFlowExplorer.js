@@ -31,7 +31,7 @@ angular.module('contentful')
     },
     renderContent (content) {
       return (
-        <div className={'modern-stack-onboarding--content-explorer-wrapper'}>
+        <div className='modern-stack-onboarding--content-explorer-wrapper'>
           {content}
         </div>
       );
@@ -58,24 +58,24 @@ angular.module('contentful')
       const { iframe: stateIframe } = this.state;
       return (
         <iframe
-          sandbox={'allow-scripts allow-same-origin'}
+          sandbox='allow-scripts allow-same-origin'
           ref={iframe => {
             if (stateIframe !== iframe) {
               this.setState({ iframe });
             }
           }}
           src={GATSBY_APP_URL}
-          className={'modern-stack-onboarding--iframe'}
+          className='modern-stack-onboarding--iframe'
         />
       );
     },
     render () {
       return (
-        <div className={'modern-stack-onboarding--content-explorer'}>
-          <div className={'modern-stack-onboarding--content-explorer-data'}>
+        <div className='modern-stack-onboarding--content-explorer'>
+          <div className='modern-stack-onboarding--content-explorer-data'>
             {this.renderTabs()}
           </div>
-          <div className={'modern-stack-onboarding--content-explorer-iframe'}>
+          <div className='modern-stack-onboarding--content-explorer-iframe'>
             {this.renderIframe()}
           </div>
         </div>

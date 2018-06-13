@@ -7,6 +7,7 @@ import {name as NavigationModule} from '../components/Navigation';
 import {name as DeploymentStrategiesModule} from '../deployment/DeploymentStrategies';
 import {name as DeploymentFormModule} from '../deployment/DeploymentForm';
 import {name as WithLinkModule} from '../components/WithLink';
+import {name as ScreenHeaderModule} from './Header';
 
 export const name = 'deploy-screen-onboarding';
 
@@ -18,6 +19,7 @@ angular.module('contentful')
   const DeploymentStrategies = require(DeploymentStrategiesModule);
   const WithLink = require(WithLinkModule);
   const DeploymentForm = require(DeploymentFormModule);
+  const ScreenHeader = require(ScreenHeaderModule);
 
   const DeployScreen = createReactClass({
     getInitialState () {
@@ -28,32 +30,32 @@ angular.module('contentful')
     selectProvider (provider) {
       this.setState({ provider });
     },
-    renderHeader () {
-      return (
-        <React.Fragment>
-          <h1 className={'modern-stack-onboarding--title'}>
-            {'Deploy the '}
-            <strong>
-              {'Gatsby Starter for Contentful'}
-            </strong>
-            {' blog repository.'}
-          </h1>
-          <h3 className={'modern-stack-onboarding--subtitle'}>
-            {'Select your preferred deployment service to see the CLI deploy commands.'}
-          </h3>
-          </React.Fragment>
-      );
-    },
     render () {
       const { provider } = this.state;
+      const headerTitle = (
+        <React.Fragment>
+          Deploy the&nbsp;
+          <strong>
+            Gatsby Starter for Contentful
+          </strong>
+          &nbsp;blog
+        </React.Fragment>
+      );
+      const headerSubtitle = (
+        <React.Fragment>
+          <p>Select your preferred hosting service to see the CLI deploy commands.</p>
+          <p>We’ve selected two hosting service options as an example to get you started.</p>
+        </React.Fragment>
+      );
+
       return (
-        <FullScreen close={<Skip link={'deploy'} />}>
+        <FullScreen close={<Skip link='deploy' />}>
           <Navigation active={3} />
-          {this.renderHeader()}
-          <div className={'modern-stack-onboarding--deploy-content'}>
+          <ScreenHeader title={headerTitle} subtitle={headerSubtitle} />
+          <div className='modern-stack-onboarding--deploy-content'>
             <DeploymentStrategies />
           </div>
-          <WithLink trackingElementId={`deploy_screen_completed:${provider}`} link={'spaceHome'}>
+          <WithLink trackingElementId={`deploy_screen_completed:${provider}`} link='spaceHome'>
             {move => <DeploymentForm onProviderChange={this.selectProvider} onComplete={move} />}
           </WithLink>
         </FullScreen>

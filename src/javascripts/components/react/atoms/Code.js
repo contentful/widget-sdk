@@ -30,12 +30,12 @@ angular.module('contentful')
       // it might be react object, so we can't check for string
       if (!Array.isArray(code)) {
         return (
-          <span className={'code-block__line'}>{code}</span>
+          <span className='code-block__line'>{code}</span>
         );
       }
 
       const codeMarkup = code.map((codeLine, i) => (
-        <span key={`${codeLine}_${i}`} className={'code-block__line'}>{codeLine}</span>
+        <span key={`${codeLine}_${i}`} className='code-block__line'>{codeLine}</span>
       ));
       return (
         <React.Fragment>
@@ -50,9 +50,9 @@ angular.module('contentful')
 
       return (
         <div className={classList}>
-          {language && <span className={'code-block__language'}>{language}</span>}
+          {language && <span className='code-block__language'>{language}</span>}
           {this.renderCode()}
-          {copy && <div className={'code-block__copy-wrapper'}>
+          {copy && <div className='code-block__copy-wrapper'>
             <CopyButton value={code} />
           </div>}
         </div>

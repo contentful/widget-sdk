@@ -8,19 +8,22 @@ import {name as CodeModule} from '../../../react/atoms/Code';
 import {name as NavigationModule} from '../components/Navigation';
 import {name as WithLinkModule} from '../components/WithLink';
 import {name as CreateModernOnboardingModule} from '../../auto_create_new_space/CreateModernOnboarding';
+import {name as ScreenHeaderModule} from './Header';
 
 export const name = 'copy-screen-component';
 
 angular.module('contentful')
 .factory(name, ['require', function (require) {
+  const $stateParams = require('$stateParams');
+  const { getCredentials } = require(CreateModernOnboardingModule);
+
   const FullScreen = require(FullScreenModule);
   const Skip = require(SkipModule);
   const Button = require(ButtonModule);
   const Code = require(CodeModule);
   const Navigation = require(NavigationModule);
   const WithLink = require(WithLinkModule);
-  const $stateParams = require('$stateParams');
-  const { getCredentials } = require(CreateModernOnboardingModule);
+  const ScreenHeader = require(ScreenHeaderModule);
 
   const CopyScreen = createReactClass({
     getInitialState () {
@@ -59,44 +62,38 @@ angular.module('contentful')
         </React.Fragment>
       );
     },
-    renderHeader () {
-      return (
+    render () {
+      const headerTitle = (
         <React.Fragment>
-          <h1 className={'modern-stack-onboarding--title'}>
-            {'Copy the '}
-            <strong>
-              {'Gatsby Starter for Contentful'}
-            </strong>
-            {' blog repository.'}
-          </h1>
-          <h3 className={'modern-stack-onboarding--subtitle'}>
-            {'You\'ll need a localcopy of this repository to deploy in the next steps.'}
-          </h3>
-          <div className={'modern-stack-onboarding--line'} />
+          Copy the&nbsp;
+          <strong>
+            Gatsby Starter for Contentful
+          </strong>
+          &nbsp;blog
         </React.Fragment>
       );
-    },
-    render () {
+      const headerSubtitle = <p>You’ll need a local copy of this repository to deploy in the next steps.</p>;
+
       return (
-        <FullScreen close={<Skip link={'copy'} />}>
+        <FullScreen close={<Skip link='copy' />}>
           <Navigation active={1} />
-          {this.renderHeader()}
-          <div className={'modern-stack-onboarding--copyscreen-content'}>
-            <div className={'modern-stack-onboarding--copyscreen-text'}>
-              {'Copy the following commands into your terminal'}
+          <ScreenHeader title={headerTitle} subtitle={headerSubtitle} />
+          <div className='modern-stack-onboarding--copyscreen-content'>
+            <div className='modern-stack-onboarding--copyscreen-text'>
+              Copy the following commands into your terminal
             </div>
             {this.renderGitSteps()}
-            <div className={'modern-stack-onboarding--copyscreen-text'}>
-              {'See the website in action on a localhost.'}
+            <div className='modern-stack-onboarding--copyscreen-text'>
+              See the website in action on a localhost.
             </div>
             {this.renderCodeLine('npm run dev')}
-            <div className={'modern-stack-onboarding--copyscreen-text'}>
-              {'View the website in your browser, then explore how it’s built.'}
+            <div className='modern-stack-onboarding--copyscreen-text'>
+              View the website in your browser, then explore how it’s built.
             </div>
-            <WithLink trackingElementId={'copy_screen_completed'} link={'explore'}>
+            <WithLink trackingElementId='copy_screen_completed' link='explore'>
               {move => (
-                <Button onClick={move} className={'modern-stack-onboarding--next-button modern-stack-onboarding--next-button__left'}>
-                  {'Explore how the website is built'}
+                <Button onClick={move} className='modern-stack-onboarding--next-button modern-stack-onboarding--next-button__left'>
+                  Explore how the website is built
                 </Button>
               )}
             </WithLink>

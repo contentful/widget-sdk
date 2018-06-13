@@ -59,9 +59,9 @@ angular.module('contentful')
 
         return (
           <React.Fragment>
-            <div className={'modern-stack-onboarding--data-flow-line'} style={leftLineStyle} />
-            <div className={'modern-stack-onboarding--data-flow-line'} style={verticalLineStyle} />
-            <div className={'modern-stack-onboarding--data-flow-line'} style={rightLineStyle} />
+            <div className='modern-stack-onboarding--data-flow-line' style={leftLineStyle} />
+            <div className='modern-stack-onboarding--data-flow-line' style={verticalLineStyle} />
+            <div className='modern-stack-onboarding--data-flow-line' style={rightLineStyle} />
           </React.Fragment>
         );
       }
@@ -80,7 +80,7 @@ angular.module('contentful')
       };
 
       return (
-        <React.Fragment>
+        <React.Fragment key={`${level}.${position}`}>
           {this.renderLine(style, parentStyle)}
           <div
             key={elem.title}
@@ -92,7 +92,7 @@ angular.module('contentful')
             <div className={`${titleClassName} ${titleClassName}__${elem.color}`}>
               {elem.title}
             </div>
-            <div className={'modern-stack-onboarding--data-flow-elem-subtitle'}>
+            <div className='modern-stack-onboarding--data-flow-elem-subtitle'>
               {elem.subtitle}
             </div>
           </div>
@@ -111,7 +111,7 @@ angular.module('contentful')
       const { onHover, onLeave, active } = this.props;
       const structure = {
         title: 'App',
-        subtitle: '????',
+        subtitle: 'Application shell',
         color: 'red',
         children: [{
           title: 'Person',
@@ -161,7 +161,7 @@ angular.module('contentful')
       };
 
       return (
-        <div className={'modern-stack-onboarding--data-flow-container'}>
+        <div className='modern-stack-onboarding--data-flow-container'>
           {this.renderElem(structure)}
         </div>
       );

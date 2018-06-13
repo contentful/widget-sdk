@@ -1,12 +1,11 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
-
 import {name as FullScreenModule} from '../../../react/molecules/FullScreen';
 import {name as SkipModule} from '../components/Skip';
 import {name as NavigationModule} from '../components/Navigation';
 import {name as ButtonModule} from '../../../react/atoms/Button';
 import {name as ContentFlowExplorerModule} from '../explore/ContentFlowExplorer';
 import {name as WithLinkModule} from '../components/WithLink';
+import {name as ScreenHeaderModule} from './Header';
 
 export const name = 'explore-screen-component';
 
@@ -18,43 +17,35 @@ angular.module('contentful')
   const Button = require(ButtonModule);
   const ContentFlowExplorer = require(ContentFlowExplorerModule);
   const WithLink = require(WithLinkModule);
+  const ScreenHeader = require(ScreenHeaderModule);
 
-  const ExploreScreen = createReactClass({
-    renderHeader () {
-      return (
-        <React.Fragment>
-          <h1 className={'modern-stack-onboarding--title'}>
-            {'Explore the '}
-            <strong>
-              {'Gatsby Starter for Contentful'}
-            </strong>
-            {' blog content structure.'}
-          </h1>
-          <h3 className={'modern-stack-onboarding--subtitle'}>
-            {'Hover and compare tab views to see the data flow of the website.'}
-            <br />
-            {'When you\'re ready, move on to the next deploy step.'}
-          </h3>
-          </React.Fragment>
-      );
-    },
-    render () {
-      return (
-        <FullScreen close={<Skip link={'explore'} />}>
-          <Navigation active={2} />
-          {this.renderHeader()}
-          <WithLink trackingElementId={'explore_screen_completed'} link={'deploy'}>
-            {move => (
-              <Button onClick={move} className={'modern-stack-onboarding--next-button'}>
-                {'Select deployment service'}
-              </Button>
-            )}
-          </WithLink>
-          <ContentFlowExplorer />
-        </FullScreen>
-      );
-    }
-  });
+  const ExploreScreen = () => {
+    const headerTitle = (
+      <React.Fragment>
+        Explore the&nbsp;
+        <strong>
+          Gatsby Starter for Contentful
+        </strong>
+        &nbsp;blog content structure
+      </React.Fragment>
+    );
+    const headerSubtitle = <p>Explore the data flow of the blog, then select a hosting service.</p>;
+
+    return (
+      <FullScreen close={<Skip link='explore' />}>
+        <Navigation active={2} />
+        <ScreenHeader title={headerTitle} subtitle={headerSubtitle} />
+        <WithLink trackingElementId='explore_screen_completed' link='deploy'>
+          {move => (
+            <Button onClick={move} className='modern-stack-onboarding--next-button'>
+              Select deployment service
+            </Button>
+          )}
+        </WithLink>
+        <ContentFlowExplorer />
+      </FullScreen>
+    );
+  };
 
   return ExploreScreen;
 }]);

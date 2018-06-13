@@ -25,21 +25,21 @@ angular.module('contentful')
     },
     renderBlock ({ title, text, button }) {
       return (
-        <div className={'modern-stack-onboarding--choice-block'}>
+        <div className='modern-stack-onboarding--choice-block'>
           <h3>
             {title}
           </h3>
-          <div>
+          <p>
             {text}
-          </div>
+          </p>
           {button}
         </div>
       );
     },
     renderButton ({ text, ...props }) {
       return (
-        <div className={'modern-stack-onboarding--block-button-wrapper'}>
-          <Button className={'modern-stack-onboarding--block-button'} {...props}>
+        <div className='modern-stack-onboarding--block-button-wrapper'>
+          <Button className='modern-stack-onboarding--block-button' {...props}>
             {text}
           </Button>
         </div>
@@ -84,10 +84,10 @@ angular.module('contentful')
 
       return (
         <FullScreen>
-          <h1 className={'modern-stack-onboarding--title'}>
-            {'How do you usually work with the content?'}
+          <h1 className='modern-stack-onboarding--title'>
+            How do you usually work with the content?
           </h1>
-          <div className={'modern-stack-onboarding--choice-blocks'}>
+          <div className='modern-stack-onboarding--choice-blocks'>
             {contentChoice}
             {developerChoice}
           </div>

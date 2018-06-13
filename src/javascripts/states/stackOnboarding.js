@@ -36,8 +36,15 @@ angular.module('contentful')
     name: 'onboarding',
     url: '/onboarding',
     abstract: true,
-    onEnter: [createModernOnboardingModule, '$stateParams', '$state', function ({ checkSpace }, { spaceId }, { go }) {
-      // we allow to see this screen only registered spaces
+    onEnter: ['require', function (require) {
+      const { checkSpace } = require(createModernOnboardingModule);
+      const spaceContext = require('spaceContext');
+      const { go } = require('$state');
+
+      const spaceId = spaceContext.space && spaceContext.space.getId();
+
+      // The onboarding steps are accessible only when
+      // the user is in the context of the onboarding space
       if (!checkSpace(spaceId)) {
         go('spaces.detail.home', { spaceId });
       }

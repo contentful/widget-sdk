@@ -8,7 +8,7 @@ export const name = 'with-link-onboarding';
 angular.module('contentful')
 .factory(name, ['require', function (require) {
   const $state = require('$state');
-  const $stateParams = require('$stateParams');
+  const spaceContext = require('spaceContext');
   const { track } = require(CreateModernOnboardingModule);
 
   const WithLink = createReactClass({
@@ -17,32 +17,34 @@ angular.module('contentful')
       trackingElementId: PropTypes.string.isRequired,
       children: PropTypes.func.isRequired
     },
-    getStateParams () {
-      const { link } = this.props;
-      const params = { spaceId: $stateParams.spaceId };
-      if (link === 'spaceHome') {
-        return {
-          path: 'spaces.detail.home',
-          params
-        };
-      }
-
-      return {
-        path: `spaces.detail.onboarding.${link}`,
-        params
-      };
-    },
     render () {
       const { children, trackingElementId } = this.props;
-      // we need to bind `this` context, so no arrow functions
-      const move = function move () {
+      const getStateParams = () => {
+        const { link } = this.props;
+        const spaceId = spaceContext.space && spaceContext.space.getId();
+        const params = { spaceId };
+        let path;
+
+        if (link === 'spaceHome') {
+          path = 'spaces.detail.home';
+        } else {
+          path = `spaces.detail.onboarding.${link}`;
+        }
+
+        return {
+          path,
+          params
+        };
+      };
+
+      const move = () => {
         if (trackingElementId) {
           track(trackingElementId);
         }
-        const { path, params } = this.getStateParams();
+        const { path, params } = getStateParams();
         $state.go(path, params);
       };
-      return children(move.bind(this));
+      return children(move);
     }
   });
 

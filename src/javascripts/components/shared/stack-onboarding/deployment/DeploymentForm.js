@@ -43,29 +43,29 @@ angular.module('contentful')
     render () {
       const { url, error } = this.state;
       return (
-        <div className={'modern-stack-onboarding--deployment-form'}>
-          <h4 className={'modern-stack-onboarding--deployment-form-title'}>
+        <div className='modern-stack-onboarding--deployment-form'>
+          <h4 className='modern-stack-onboarding--deployment-form-title'>
             <strong>
-              {'Enter the website URL after deployment is complete.'}
+              Enter the website URL after deployment is complete.
             </strong>
             <br />
-            {'Your suggested next steps will be determined by the deployment service you selected.'}
+            Your suggested next steps will be determined by the deployment service you selected.
           </h4>
           <Form>
             <Input
-              wrapperClassName={'modern-stack-onboarding--deployment-form-input'}
+              wrapperClassName='modern-stack-onboarding--deployment-form-input'
               value={url}
               onChange={this.onChange}
-              placeholder={'Enter the website url of the deployed site'}
+              placeholder='Enter the website url of the deployed site'
               error={url && error}
             />
             <Button
-              type={'submit'}
-              className={'modern-stack-onboarding--deployment-form-button'}
+              type='submit'
+              className='modern-stack-onboarding--deployment-form-button'
               onClick={this.onComplete}
               disabled={Boolean(!url || error)}
             >
-              {'Deployment Complete'}
+              Deployment Complete
             </Button>
           </Form>
         </div>
