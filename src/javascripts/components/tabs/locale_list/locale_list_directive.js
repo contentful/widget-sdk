@@ -31,7 +31,7 @@ angular.module('contentful')
 
   var FeatureService = createFeatureService(spaceContext.getId());
 
-  var showSpaceModal = require('services/ChangeSpaceService').showDialog;
+  var {showDialog: showSpaceModal, SpaceResourceTypes} = require('services/ChangeSpaceService');
 
   ResourceUtils.useLegacy(organization).then(legacy => {
     $scope.showSidebar = !legacy;
@@ -39,6 +39,10 @@ angular.module('contentful')
       showSpaceModal({
         organizationId: organization.sys.id,
         space: spaceContext.space.data,
+        limitReached: {
+          resourceType: SpaceResourceTypes.Locales,
+          usage: $scope.usage
+        },
         action: 'change',
         onSubmit: function () {
           return updateLocalesUsageState()

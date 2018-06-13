@@ -1,15 +1,24 @@
 import modalDialog from 'modalDialog';
 import { getOrganization } from 'services/TokenStore';
 
+export {SpaceResourceTypes} from 'components/shared/space-wizard/WizardUtils';
+
 /**
  * Displays the space creation dialog. The dialog type will depend on the
  * organization that the new space should belong to.
  *
- * Accepts one required parameter - `organizationId`;
- *
  * @param {string} organizationId
+ * @param {object?} space - optional space to upgrade
+ * @param {Array<object>?} limitsReached - optional used to determine recommended plan
+ *    based on which limits were reached:
+ *    {
+ *      resourceType: <WizardUtils.SpaceResourceTypes>`,
+ *      usage: <number>
+ *    }
+ * @param {string} action - one of 'change', 'upgrade', 'downgrade'.
+ * @param {function} onSubmit
  */
-export async function showDialog ({ organizationId, space, action, onSubmit }) {
+export async function showDialog ({ organizationId, space, limitReached, action, onSubmit }) {
   const validActions = [ 'change', 'upgrade', 'downgrade' ];
 
   if (!organizationId) {
@@ -38,6 +47,7 @@ export async function showDialog ({ organizationId, space, action, onSubmit }) {
     scopeData: {
       action,
       space,
+      limitReached,
       organization,
       onSubmit
     }

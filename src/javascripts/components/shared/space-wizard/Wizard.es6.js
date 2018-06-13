@@ -2,7 +2,7 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import {Steps} from './WizardUtils';
+import {Steps, SpaceResourceTypes} from './WizardUtils';
 import SpacePlanSelector from './SpacePlanSelector';
 import SpaceDetails from './SpaceDetails';
 import ConfirmScreen from './ConfirmScreen';
@@ -68,6 +68,10 @@ const Wizard = createReactClass({
       isBillable: PropTypes.bool
     }).isRequired,
     space: PropTypes.object,
+    limitReached: PropTypes.shape({
+      resourceType: PropTypes.oneOf(Object.values(SpaceResourceTypes)).isRequired,
+      usage: PropTypes.number.isRequired
+    }),
     action: function (props, propName) {
       const validActions = [ 'create', 'change' ];
       const action = props[propName];
@@ -107,6 +111,7 @@ const Wizard = createReactClass({
   render () {
     const {
       space,
+      limitReached,
       action,
       organization,
       onCancel,
@@ -159,6 +164,7 @@ const Wizard = createReactClass({
         ...data,
         organization,
         space,
+        limitReached,
         action,
         isFormSubmitted,
         serverValidationErrors,

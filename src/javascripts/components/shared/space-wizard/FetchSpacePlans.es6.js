@@ -5,7 +5,7 @@ import { getSpaceRatePlans } from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
 import {canCreate} from 'utils/ResourceUtils';
 import {get} from 'lodash';
-import {RequestState} from './WizardUtils';
+import {RequestState, SpaceResourceTypes} from './WizardUtils';
 import logger from 'logger';
 
 const FetchSpacePlans = createReactClass({
@@ -106,16 +106,8 @@ async function plansMeta ({ organization, spaceId }) {
   };
 }
 
-export const ResourceTypes = {
-  Environments: 'Environments',
-  Roles: 'Roles',
-  Locales: 'Locales',
-  ContentTypes: 'Content types',
-  Records: 'Records'
-};
-
 function getIncludedResources (charges) {
-  return Object.values(ResourceTypes).map((value) => ({
+  return Object.values(SpaceResourceTypes).map((value) => ({
     type: value,
     number: get(charges.find(({name}) => name === value), 'tiers[0].endingUnit')
   }));

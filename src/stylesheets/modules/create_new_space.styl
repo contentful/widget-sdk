@@ -198,6 +198,24 @@ $close-button-small()
       background-color: $color
       border: 1px solid $border-color
 
+  $item-tag($text, $color, $text-color)
+    &:after
+      content: $text
+      color: $text-color
+      background-color: $color
+      border-radius: 2px
+      position: absolute
+      right: -12px
+      top: 35%
+      padding: 6px 10px
+      font-family: "Avenir Next"
+      text-transform: uppercase
+      font-weight: 600
+      font-size: 12px
+      line-height: 12px
+      letter-spacing: 0.4px
+      opacity: 0.9
+
   display: flex
   flex-direction: column
   &__item
@@ -248,22 +266,9 @@ $close-button-small()
       &:before
         opacity: $opacity
     &--current
-      &:after
-        content: "Current"
-        color: #fff
-        background-color: #a9b9c0
-        border-radius: 2px
-        position: absolute
-        right: -12px
-        top: 35%
-        padding: 6px 10px
-        font-family: "Avenir Next"
-        text-transform: uppercase
-        font-weight: 600
-        font-size: 12px
-        line-height: 12px
-        letter-spacing: 0.4px
-        opacity: 0.9
+      $item-tag("Current space", #a9b9c0, #fff)
+    &--recommended
+      $item-tag("Recommended", #5095ed, #fff)
 
     &__heading
       font-size: 17px
