@@ -116,11 +116,12 @@ header.workbench-header
             span(ng-if="!canUpgrade")
               | Ask the administrator of your organization to&#32;
             | {{canUpgrade ? 'Upgrade' : 'upgrade'}} the space to add more.
-          p(ng-if="canUpgrade")
+          p.entity-sidebar__widget(ng-if="canUpgrade")
             button.btn-primary-action.upgrade-space.x--block(ng-click="upgradeSpacePlan()")
               | Upgrade space
 
-      h2.entity-sidebar__heading
-        | Documentation
-      p.entity-sidebar__text-profile
-        | Contentful enables publishing content in multiple language. To translate your content, add a locale, and enable translation for each necessary field in your content.
+      div(ng-if="locales.length <= 1")
+        h2.entity-sidebar__heading
+          | Documentation
+        p.entity-sidebar__text-profile
+          | Contentful enables publishing content in multiple language. To translate your content, add a locale, and enable translation for each necessary field in your content.
