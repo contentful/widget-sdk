@@ -4,6 +4,8 @@
 # `Dockerfile-ci`. To run the ci image use `bin/docker-run-ci`.
 #
 # Uses the NPM_TOKEN environment variable or reads it from ~/.npmrc
+# Uses the SSH_KEY environment variable or reads it from ~/.ssh/id_rsa when
+# running in CI.
 #
 
 set -e
@@ -18,9 +20,14 @@ if [[ -z "${NPM_TOKEN}" ]]; then
   exit 2
 fi
 
+if [[ ! -z "${CI}" ]]; then
+  SSH_KEY=$(cat ~/.ssh/id_rsa)
+fi
+
 echo "Building docker image"
 docker build \
   --file Dockerfile-ci \
   --tag contentful/user-interface-ci \
   --build-arg "NPM_TOKEN=${NPM_TOKEN}" \
+  --build-arg "SSH_KEY=${SSH_KEY}" \
   .

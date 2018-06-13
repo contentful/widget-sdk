@@ -332,7 +332,8 @@ describe('ViewMigrator', () => {
         });
 
         it('.isUIConfigDataMigrated()', () => {
-          expect(ViewMigrator.isUIConfigDataMigrated(normal)).toBe(false);
+          const normalIsEmpty = Object.keys(normal).length === 1 && !!normal.sys;
+          expect(ViewMigrator.isUIConfigDataMigrated(normal)).toBe(normalIsEmpty);
           expect(ViewMigrator.isUIConfigDataMigrated(stored)).toBe(true);
         });
       });

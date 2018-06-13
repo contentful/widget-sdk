@@ -4,8 +4,15 @@
 # We just install the node dependencies. The source code is mounted as
 # a volume. The default command runs the development server.
 #
+# Build arguments:
+# * NPM_TOKEN used to fetch private NPM package from the @contentful
+#   scope. Required.
+# * SSH_KEY plain SSH key to fetch NPM dependencies from Github.
+#   Optional.
+#
 # [1]: https://github.com/contentful/lab/
 #
+
 FROM ubuntu:14.04
 
 RUN apt-get update && apt-get install -y curl xz-utils ssh git build-essential
@@ -24,11 +31,19 @@ RUN node_version=$(cat .node-version) && \
 ENV PATH=/opt/node/bin:$PATH
 
 ARG NPM_TOKEN
-RUN echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+RUN echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc && \
+  mkdir ~/.ssh
 
 # Install dependencies
 COPY package.json package-lock.json ./
 COPY packages/client/package.json ./packages/client/
-RUN npm install --no-optional --unsafe-perm
+
+ARG SSH_KEY
+RUN \
+  ssh-keyscan github.com > ~/.ssh/known_hosts && \
+  echo "$SSH_KEY" > ~/.ssh/id_rsa && \
+  chmod 0600 ~/.ssh/id_rsa && \
+  npm install --no-optional --unsafe-perm && \
+  rm -f ~/.ssh/id_rsa
 
 CMD ["./node_modules/.bin/gulp", "all", "serve"]

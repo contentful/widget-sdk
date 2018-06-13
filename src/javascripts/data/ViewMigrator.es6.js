@@ -132,7 +132,12 @@ function updateViewWithSearch (view, search) {
  * @returns {boolean}
  */
 export function isUIConfigDataMigrated (data) {
-  return !!data._migrated;
+  if (data._migrated) {
+    return true;
+  }
+  // Empty UIConfig counts as migrated. This is important as all ui_config/me/ return
+  // an empty config instead of a 404 like ui_config/
+  return Object.keys(data).length === 1 && !!data.sys;
 }
 
 /**
