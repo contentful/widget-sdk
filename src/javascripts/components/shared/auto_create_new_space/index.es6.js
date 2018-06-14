@@ -4,7 +4,6 @@ import {getCurrentVariation} from 'utils/LaunchDarkly';
 import {user$, spacesByOrganization$ as spacesByOrg$} from 'services/TokenStore';
 import createSampleSpace from './CreateSampleSpace';
 import seeThinkDoFeatureModalTemplate from './SeeThinkDoTemplate';
-import {runTask} from 'utils/Concurrent';
 
 import {
   getFirstOwnedOrgWithoutSpaces,
@@ -12,6 +11,8 @@ import {
   ownsAtleastOneOrg,
   getUserAgeInDays
 } from 'data/User';
+
+import {create} from 'createModernOnboarding';
 
 const store = getStore();
 
@@ -26,26 +27,48 @@ export function init () {
 
   combine([user$, spacesByOrg$])
     .filter(([user, spacesByOrg]) => user && spacesByOrg && qualifyUser(user, spacesByOrg) && !creatingSampleSpace)
-    .onValue(([user, spacesByOrg]) => {
+    .onValue(async ([user, spacesByOrg]) => {
       const org = getFirstOwnedOrgWithoutSpaces(user, spacesByOrg);
 
       creatingSampleSpace = true;
 
-      runTask(function* () {
+      let modernStackVariation = false;
+      try {
+        modernStackVariation = await getCurrentVariation('feature-dl-05-2018-modern-stack-onboarding');
+      } catch (e) {
+        // pass
+      }
+
+      if (modernStackVariation) {
+        create({
+          onDefaultChoice: defaultChoice,
+          org,
+          markOnboarding
+        });
+        return;
+      } else {
+        defaultChoice();
+      }
+
+      async function defaultChoice () {
         let variation = false;
 
         try {
-          variation = yield getCurrentVariation('feature-ps-11-2017-project-status');
+          variation = await getCurrentVariation('feature-ps-11-2017-project-status');
         } finally {
           // if getCurrentVariation throws, auto create the usual way
           const template = variation ? seeThinkDoFeatureModalTemplate : undefined;
 
           // we swallow all errors, so auto creation modal will always have green mark
-          yield createSampleSpace(org, 'the example app', template).catch(() => {});
-          store.set(getKey(user), true);
+          await createSampleSpace(org, 'the example app', template).catch(() => {});
+          markOnboarding();
           creatingSampleSpace = false;
         }
-      });
+      }
+
+      function markOnboarding () {
+        store.set(getKey(user), true);
+      }
     });
 }
 

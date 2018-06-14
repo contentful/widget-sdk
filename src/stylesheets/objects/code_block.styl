@@ -20,6 +20,7 @@ Styleguide 13.0
   background-color: $colors.element-lightest
   padding: 8px 0
   white-space: pre
+  overflow-x: scroll
 
   &__language
     position: absolute
@@ -51,8 +52,26 @@ Styleguide 13.0
     font-weight: bold
     color: $colors.text-lightest
 
+  &__no-line-numbers
+    .code-block__line:before
+      visibility: hidden
+      padding-left: 0
+      padding-right: 0
+      margin-right: 0
+
   // code highlighting
   .s1
     color: $colors.red-mid
   .s2
     color: $colors.green-dark
+
+  &__copy-wrapper
+    background-color: $colors.element-light
+    border-left: 1px solid $colors.element-dark
+    padding-left: 1em
+    padding-right: 1em
+    padding-top: 5px
+    position: absolute
+    top: 0
+    bottom: 0
+    right: 0

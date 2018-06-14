@@ -9,6 +9,7 @@ import assets from './assets';
 import api from 'app/api/State';
 import settings from './settings';
 import home from './space_home';
+import stackOnboarding from 'states/stackOnboarding';
 
 const store = getStore();
 
@@ -100,7 +101,8 @@ const spaceDetail = {
     api,
     settings,
     home,
-    spaceEnvironment
+    spaceEnvironment,
+    stackOnboarding
   ]
 };
 
