@@ -22,7 +22,6 @@
 
 angular.module('contentful').factory('intercom', ['require', require => {
   var $window = require('$window');
-  var supportUrl = require('Config').supportUrl;
   var isDisabled = false;
 
   var intercom = {
@@ -45,10 +44,8 @@ angular.module('contentful').factory('intercom', ['require', require => {
   }
 
   function openIntercom () {
-    if (isLoaded() && isEnabled()) {
+    if (isLoaded()) {
       $window.Intercom('showNewMessage');
-    } else {
-      $window.open(supportUrl);
     }
   }
 
