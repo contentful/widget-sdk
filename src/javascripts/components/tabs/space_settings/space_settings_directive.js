@@ -18,7 +18,7 @@ angular.module('contentful')
   var TokenStore = require('services/TokenStore');
   var notification = require('notification');
   var ReloadNotification = require('ReloadNotification');
-  var openRemovalDialog = require('services/DeleteSpace').openDeleteSpaceDialog;
+  var openDeleteSpaceDialog = require('services/DeleteSpace').openDeleteSpaceDialog;
   var getSingleSpacePlan = require('account/pricing/PricingDataProvider').getSingleSpacePlan;
   var createOrganizationEndpoint = require('data/EndpointFactory').createOrganizationEndpoint;
 
@@ -28,7 +28,9 @@ angular.module('contentful')
   $scope.spaceId = space.sys.id;
   $scope.model = {name: space.name};
   $scope.save = Command.create(save, {disabled: isSaveDisabled});
-  $scope.openRemovalDialog = Command.create(async function () {
+  $scope.openRemovalDialog = Command.create(openRemovalDialog);
+
+  async function openRemovalDialog () {
     const orgEndpoint = createOrganizationEndpoint(spaceContext.organizationContext.organization.sys.id);
     let plan;
 
@@ -38,13 +40,13 @@ angular.module('contentful')
       // spaces on the old pricing model don't have a space plan
       // the the promise gets rejected
     } finally {
-      openRemovalDialog({
+      openDeleteSpaceDialog({
         space,
         plan,
         onSuccess: () => $state.go('home')
       });
     }
-  });
+  }
 
   function save () {
     return spaceContext.cma.renameSpace($scope.model.name, space.sys.version)

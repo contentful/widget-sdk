@@ -9,12 +9,12 @@ import Icon from 'ui/Components/Icon';
 import Price from 'ui/Components/Price';
 import ContactUsButton from 'ui/Components/ContactUsButton';
 
-import { hasAnySpacesInaccessible, hasAnyCommittedSpaces } from './utils';
+import { hasAnyInaccessibleSpaces, hasAnyCommittedSpaces } from './utils';
 
 function Sidebar ({grandTotal, spacePlans, orgId, isOrgOwner, isOrgBillable}) {
   // TODO - add these styles to stylesheets
   const iconStyle = {fill: colors.blueDarkest, paddingRight: '6px', position: 'relative', bottom: '-0.125em'};
-  const anyInaccessibleSpaces = hasAnySpacesInaccessible(spacePlans);
+  const anyInaccessibleSpaces = hasAnyInaccessibleSpaces(spacePlans);
   const hasCommittedSpaces = hasAnyCommittedSpaces(spacePlans);
 
   return <div className='entity-sidebar' data-test-id='subscription-page.sidebar'>

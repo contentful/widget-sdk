@@ -127,7 +127,7 @@ const SubscriptionOverview = createReactClass({
     showCreateSpaceModal(this.props.orgId);
   },
 
-  changeSpace: function (spacePlan, space, action) {
+  changeSpace: function (space, spacePlan, action) {
     return () => {
       showChangeSpaceModal({
         spacePlan,
@@ -155,7 +155,7 @@ const SubscriptionOverview = createReactClass({
     };
   },
 
-  deleteSpace: function (plan, space) {
+  deleteSpace: function (space, plan) {
     if (plan.committed) {
       return () => openCommittedSpaceWarningDialog();
     }
