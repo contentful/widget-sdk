@@ -1,3 +1,4 @@
+const { promisify } = require('util');
 const webpack = require('webpack');
 const createWebpackConfig = require('./webpack.config');
 
@@ -18,13 +19,25 @@ function watch (done, callbacks) {
   );
 }
 
-function build (done, options = { dev: false }) {
-  const config = createWebpackConfig({ dev: options.dev });
+async function build () {
+  const config = createWebpackConfig({ dev: false });
   const compiler = webpack(config);
-  compiler.run((err, stats) => {
-    handleCompileResults(err, stats, config, options);
-    done && done();
-  });
+  const stats = await promisify(compiler.run.bind(compiler))();
+
+  const info = stats.toJson({chunks: false});
+
+  if (stats.hasErrors()) {
+    info.errors.forEach((error) => {
+      console.error(error);
+    });
+    throw new Error('Webpack failed to compile');
+  }
+
+  if (stats.hasWarnings()) {
+    console.warn(info.warnings);
+  }
+
+  console.log(stats.toString(config.stats));
 }
 
 function handleCompileResults (err, stats, config, { onSuccess, onError } = {}) {
