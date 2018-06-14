@@ -4,9 +4,16 @@ import Dialog from 'app/entity_editor/Components/Dialog';
 
 import modalDialog from 'modalDialog';
 import * as Intercom from 'intercom';
+import { supportUrl } from 'Config';
 
 export default function CommittedSpaceWarningModal ({scope}) {
-  const handleContact = Intercom.open;
+  const handleContact = () => {
+    if (Intercom.isEnabled()) {
+      Intercom.open();
+    } else {
+      window.open(supportUrl);
+    }
+  };
   const handleCancel = scope.dialog.destroy.bind(scope.dialog);
 
   return (
