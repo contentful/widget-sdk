@@ -38,7 +38,7 @@ export async function fetchSpacePlans ({ organization, spaceId }) {
   } catch (e) {
     dispatch({
       type: 'SPACE_PLANS_ERRORED',
-      error: e.message
+      error: e
     });
 
     dispatch({ type: 'SPACE_PLANS_LOADING', isLoading: false });
@@ -96,6 +96,7 @@ export async function createSpace ({
     newSpace = await client.createSpace(spaceData, organization.sys.id);
   } catch (error) {
     dispatch({ type: 'SPACE_CREATION_ERROR', error });
+    dispatch({ type: 'SPACE_CREATION_PENDING', pending: false });
 
     return;
   }
@@ -109,11 +110,10 @@ export async function createSpace ({
   // This navigates to the new space
   onSpaceCreated(newSpace);
 
-  const wizardData = createTrackingData({ action, organization, currentStepId, selectedPlan, newSpaceMeta });
   const spaceCreateEventData =
-      template
-      ? {templateName: template.name, entityAutomationScope: {scope: 'space_template'}, wizardData}
-      : {templateName: 'Blank', wizardData};
+    template
+    ? {templateName: template.name, entityAutomationScope: {scope: 'space_template'}}
+    : {templateName: 'Blank'};
 
   track('create', spaceCreateEventData, { action, organization, currentStepId, selectedPlan, newSpaceMeta });
   dispatch({ type: 'SPACE_CREATION_SUCCESS' });
