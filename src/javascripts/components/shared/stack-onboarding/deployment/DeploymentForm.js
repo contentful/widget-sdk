@@ -84,7 +84,7 @@ angular.module('contentful')
             <br />
             Your suggested next steps will be determined by the deployment service you selected.
           </h4>
-          <Form>
+          <Form onSubmit={e => e.preventDefault()}>
             <Input
               wrapperClassName='modern-stack-onboarding--deployment-form-input'
               value={url}
