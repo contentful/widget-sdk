@@ -18,7 +18,7 @@ angular.module('contentful')
   var $q = require('$q');
   var TheLocaleStore = require('TheLocaleStore');
   var createUserCache = require('data/userCache');
-  var createWidgetStore = require('widgets/store');
+  var createWidgetStore = require('widgets/Store').create;
   var createSpaceEndpoint = require('data/Endpoint').createSpaceEndpoint;
   var Config = require('Config');
   var createEIRepo = require('data/editingInterfaces');

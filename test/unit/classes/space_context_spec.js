@@ -23,8 +23,13 @@ describe('spaceContext', () => {
       });
       $provide.value('data/UiConfig/Store', {default: sinon.stub().resolves({store: true})});
       $provide.value('client', {newSpace: makeClientSpaceMock});
-      $provide.value('widgets/store', sinon.stub().returns({refresh: sinon.stub().resolves([])}));
+      $provide.value('widgets/Store', {
+        create: sinon.stub().returns({
+          refresh: sinon.stub().resolves([])
+        })
+      });
     });
+    this.widgetStoreCreate = this.$inject('widgets/Store').create;
     this.spaceContext = this.$inject('spaceContext');
     this.localeStore = this.mockService('TheLocaleStore');
     this.localeStore.init.resolves();
@@ -99,7 +104,7 @@ describe('spaceContext', () => {
     });
 
     it('creates and refreshes widget store', function () {
-      sinon.assert.calledWith(this.$inject('widgets/store'), this.spaceContext.cma);
+      sinon.assert.calledWith(this.widgetStoreCreate, this.spaceContext.cma);
       sinon.assert.calledOnce(this.spaceContext.widgets.refresh);
     });
 
