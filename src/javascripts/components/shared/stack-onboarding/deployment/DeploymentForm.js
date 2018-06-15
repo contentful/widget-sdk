@@ -53,6 +53,9 @@ angular.module('contentful')
       if (!this.isValidDeployedUrl(url)) {
         this.markAsInvalidUrl(url);
       } else {
+        const { onProviderChange } = this.props;
+
+        onProviderChange && onProviderChange(this.getChosenDeploymentProvider(url));
         this.setState({ url, error: false });
       }
     },
