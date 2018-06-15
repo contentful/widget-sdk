@@ -117,9 +117,12 @@ header.workbench-header
             span(ng-if="!canUpgrade")
               | Ask the administrator of your organization to&#32;
             | {{canUpgrade ? 'Upgrade' : 'upgrade'}} the space to add more.
-          p.entity-sidebar__widget(ng-if="canUpgrade")
+          p.entity-sidebar__widget(ng-if="canUpgrade && showUpgradeIncentive")
             button.btn-primary-action.upgrade-space.x--block(ng-click="upgradeSpacePlan()")
               | Upgrade space
+          p(ng-if="canUpgrade && !showUpgradeIncentive")
+            a.btn-link(ui-sref="{{accountUpgradeState}}")
+              | Go to subscription page to upgrade
 
       h2.entity-sidebar__heading(ng-if="locales.length <= 1")
         | Documentation

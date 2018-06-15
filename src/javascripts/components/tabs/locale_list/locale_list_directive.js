@@ -33,6 +33,15 @@ angular.module('contentful')
 
   var {showDialog: showSpaceModal, SpaceResourceTypes} = require('services/ChangeSpaceService');
 
+  // Start: incentivize upgrade feature flag
+  var LD = require('utils/LaunchDarkly');
+  var flagName = 'feature-bv-06-2018-incentivize-upgrade';
+
+  LD.onFeatureFlag($scope, flagName, isEnabled => {
+    $scope.showUpgradeIncentive = isEnabled;
+  });
+  // End: incentivize upgrade feature flag
+
   ResourceUtils.useLegacy(organization).then(legacy => {
     $scope.showSidebar = !legacy;
     $scope.upgradeSpacePlan = () => {
