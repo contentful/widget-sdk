@@ -131,7 +131,7 @@ const Wizard = createReactClass({
 
     if (isSpaceCreated) {
       return (
-        <div className="modal-dialog" style={{width: '760px'}}>
+        <div className="modal-dialog" style={{width: '750px'}}>
           <div className="modal-dialog__content">
             <ProgressScreen
               done={isContentCreated}
@@ -176,7 +176,7 @@ const Wizard = createReactClass({
       };
 
       return (
-        <div className="modal-dialog create-space-wizard" style={{width: '750px'}}>
+        <div className="modal-dialog create-space-wizard" style={{width: '780px'}}>
           <div className="modal-dialog__header" style={{padding: 0}}>
             {navigation}
             {closeButton}

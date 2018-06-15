@@ -46,7 +46,7 @@ const SpacePlanSelector = createReactClass({
         {({requestState, spaceRatePlans, freeSpacesResource}) => {
           const currentPlan = getCurrentPlan(spaceRatePlans);
           const highestPlan = getHighestPlan(spaceRatePlans);
-          const suggestedPlan = limitReached && getSuggestedPlan(spaceRatePlans, limitReached);
+          const recommendedPlan = limitReached && getRecommendedPlan(spaceRatePlans, limitReached);
           const atHighestPlan = highestPlan && highestPlan.unavailabilityReasons && highestPlan.unavailabilityReasons.find(reason => reason.type === 'currentPlan');
           const payingOrg = organization.isBillable;
 
@@ -96,7 +96,7 @@ const SpacePlanSelector = createReactClass({
                       freeSpacesResource={freeSpacesResource}
                       isCurrentPlan={currentPlan === plan}
                       isSelected={get(newSpaceRatePlan, 'sys.id') === plan.sys.id}
-                      isSuggested={get(suggestedPlan, 'sys.id') === plan.sys.id}
+                      isRecommended={get(recommendedPlan, 'sys.id') === plan.sys.id}
                       isPayingOrg={payingOrg}
                       onSelect={this.selectPlan(currentPlan)} />)}
                   </div>
@@ -151,7 +151,7 @@ function getHighestPlan (spaceRatePlans) {
   return spaceRatePlans.slice().sort((planX, planY) => planY.price >= planX.price)[0];
 }
 
-function getSuggestedPlan (spaceRatePlans, {resourceType, usage}) {
+function getRecommendedPlan (spaceRatePlans, {resourceType, usage}) {
   function getResource ({includedResources}) {
     const resource = includedResources.find(({type}) => type === resourceType);
     return get(resource, 'number', 0);
@@ -170,10 +170,10 @@ const SpacePlanItem = createReactClass({
     onSelect: PropTypes.func.isRequired,
     isPayingOrg: PropTypes.bool.isRequired,
     isCurrentPlan: PropTypes.bool,
-    isSuggested: PropTypes.bool
+    isRecommended: PropTypes.bool
   },
   render: function () {
-    const {plan, isCurrentPlan, isSelected, isSuggested, freeSpacesResource, isPayingOrg, onSelect} = this.props;
+    const {plan, isCurrentPlan, isSelected, isRecommended, freeSpacesResource, isPayingOrg, onSelect} = this.props;
     const freeSpacesUsage = freeSpacesResource && freeSpacesResource.usage;
     const freeSpacesLimit = freeSpacesResource && freeSpacesResource.limits.maximum;
 
@@ -189,7 +189,7 @@ const SpacePlanItem = createReactClass({
             'space-plans-list__item--selected': isSelected,
             'space-plans-list__item--disabled': plan.disabled,
             'space-plans-list__item--current': isCurrentPlan,
-            'space-plans-list__item--suggested': isSuggested
+            'space-plans-list__item--recommended': isRecommended
           }
         )}
         onClick={() => !plan.disabled && onSelect(plan)}>

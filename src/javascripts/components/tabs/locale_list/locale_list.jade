@@ -95,24 +95,25 @@ header.workbench-header
 
   .workbench-main__sidebar(ng-if="showSidebar")
     .entity-sidebar
-      p(ng-if="localesUsageState !== LOCALES_LIMIT_REACHED")
-        button.btn-action.add-entity.x--block(ng-click="newLocale()")
-          cf-icon.btn-icon.inverted(name="plus")
-          | Add Locale
-
-      div(ng-if="insideMasterEnv")
-        p.entity-sidebar__text-profile
+      h2.entity-sidebar__heading
+        | Usage
+      .entity-sidebar__text-profile(ng-if="insideMasterEnv")
+        p
           | You are using {{usage}} out of {{limit}}&#32;
           ng-pluralize(count="limit" when="{'1': 'locale', 'other': 'locales'}")
           | &#32;available in {{spaceType ? 'the ' + spaceType : 'your'}} space.
 
+        p.entity-sidebar__widget(ng-if="localesUsageState !== LOCALES_LIMIT_REACHED")
+          button.btn-action.add-entity.x--block(ng-click="newLocale()")
+            cf-icon.btn-icon.inverted(name="plus")
+            | Add Locale
         div(ng-if="localesUsageState === LOCALES_LIMIT_REACHED")
-          p.entity-sidebar__text-profile(ng-if="limit > 1")
+          p(ng-if="limit > 1")
             | Delete existing locales or
             span(ng-if="!canUpgrade")
               | &#32;ask the administrator of your organization to
             | &#32;upgrade the space to add more.
-          p.entity-sidebar__text-profile(ng-if="limit <= 1")
+          p(ng-if="limit <= 1")
             span(ng-if="!canUpgrade")
               | Ask the administrator of your organization to&#32;
             | {{canUpgrade ? 'Upgrade' : 'upgrade'}} the space to add more.
@@ -120,8 +121,8 @@ header.workbench-header
             button.btn-primary-action.upgrade-space.x--block(ng-click="upgradeSpacePlan()")
               | Upgrade space
 
-      div(ng-if="locales.length <= 1")
-        h2.entity-sidebar__heading
-          | Documentation
-        p.entity-sidebar__text-profile
+      h2.entity-sidebar__heading(ng-if="locales.length <= 1")
+        | Documentation
+      .entity-sidebar__text-profile(ng-if="locales.length <= 1")
+        p
           | Contentful enables publishing content in multiple language. To translate your content, add a locale, and enable translation for each necessary field in your content.
