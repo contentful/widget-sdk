@@ -1,31 +1,29 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { noop } from 'lodash';
 
 export const name = 'react/form-component';
 
 angular.module('contentful')
-.factory(name, [function () {
-  class Form extends React.Component {
-    onSubmit (e) {
-      const { onSubmit } = this.props;
-      e.preventDefault();
-      return onSubmit && onSubmit(e);
-    }
-    render () {
-      const { className = '', children } = this.props;
+  .factory(name, [function () {
+    const Form = ({className, children, onSubmit}) => {
       return (
-        <form className={className} onSubmit={this.onSubmit}>
+        <form className={className} onSubmit={onSubmit}>
           {children}
         </form>
       );
-    }
-  }
+    };
 
-  Form.propTypes = {
-    className: PropTypes.string,
-    children: PropTypes.node,
-    onSubmit: PropTypes.func
-  };
+    Form.defaultProps = {
+      className: '',
+      onSubmit: noop
+    };
 
-  return Form;
-}]);
+    Form.propTypes = {
+      className: PropTypes.string,
+      children: PropTypes.node,
+      onSubmit: PropTypes.func
+    };
+
+    return Form;
+  }]);
