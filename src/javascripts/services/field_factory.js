@@ -8,8 +8,8 @@
  */
 angular.module('contentful')
 .factory('fieldFactory', ['require', require => {
-  var capitalize = require('stringUtils').capitalize;
-  var TheLocaleStore = require('TheLocaleStore');
+  const capitalize = require('stringUtils').capitalize;
+  const TheLocaleStore = require('TheLocaleStore');
 
   /**
    * @ngdoc property
@@ -21,59 +21,50 @@ angular.module('contentful')
    * If the `label` and `icon` properties of a descriptor are not set,
    * they will be auto-generated.
    */
-  var fieldTypes = _.forEach([
+  const fieldTypes = _.forEach([
     {
       name: 'Symbol',
       hasListVariant: true,
       label: 'Short text',
-      listLabel: 'Short text, list',
-    },
-    {
+      listLabel: 'Short text, list'
+    }, {
       name: 'Text',
-      label: 'Long text',
-    },
-    {
+      label: 'Long text'
+    }, {
       name: 'StructuredText',
       label: 'Structured text',
       icon: 'longtext' // TODO: Update icon.
     }, {
       name: 'Integer',
-      icon: 'number',
-    },
-    {
+      icon: 'number'
+    }, {
       name: 'Number',
       label: 'Decimal number',
-      icon: 'decimal',
-    },
-    {
+      icon: 'decimal'
+    }, {
       name: 'Date',
       label: 'Date & time',
-      icon: 'calendar',
-    },
-    {
-      name: 'Location',
-    },
-    {
+      icon: 'calendar'
+    }, {
+      name: 'Location'
+    }, {
       name: 'Asset',
       isLink: true,
       hasListVariant: true,
       label: 'Media',
-      listLabel: 'Media, many files',
-    },
-    {
-      name: 'Boolean',
-    },
-    {
+      listLabel: 'Media, many files'
+    }, {
+      name: 'Boolean'
+    }, {
       name: 'Object',
       label: 'JSON object',
-      icon: 'json',
-    },
-    {
+      icon: 'json'
+    }, {
       name: 'Entry',
       isLink: true,
       hasListVariant: true,
       label: 'Reference',
-      listLabel: 'References, many',
+      listLabel: 'References, many'
     }
   ], descriptor => {
     _.defaults(descriptor, {
@@ -84,11 +75,11 @@ angular.module('contentful')
     });
   });
 
-  var fieldGroups = _.forEach([{
+  const fieldGroups = _.forEach([{
     name: 'text',
     icon: 'longtext',
     description: 'Titles, names, paragraphs, list of names',
-    types: [ 'Symbol', 'Text' ]
+    types: ['Symbol', 'Text']
   }, {
     name: 'structured-text',
     label: 'Structured text',
@@ -98,7 +89,7 @@ angular.module('contentful')
   }, {
     name: 'number',
     description: 'ID, order number, rating, quantity',
-    types: [ 'Integer', 'Number' ]
+    types: ['Integer', 'Number']
   }, {
     name: 'date-time',
     icon: 'calendar',
@@ -134,10 +125,11 @@ angular.module('contentful')
     });
   });
 
-  function getTypeByName(name) {
-    var type = _.find(fieldTypes, {name: name});
-    if (!type)
-      throw new Error('Could not find field type "'+name+'"');
+  function getTypeByName (name) {
+    const type = _.find(fieldTypes, { name: name });
+    if (!type) {
+      throw new Error(`Could not find field type "${name}"`);
+    }
     return type;
   }
 
@@ -145,10 +137,10 @@ angular.module('contentful')
     types: fieldTypes,
     groups: fieldGroups,
     getLabel: getFieldLabel,
-    getIconId: getIconId,
-    createTypeInfo: createTypeInfo,
-    getTypeName: getTypeName,
-    getLocaleCodes: getLocaleCodes
+    getIconId,
+    createTypeInfo,
+    getTypeName,
+    getLocaleCodes
   };
 
   /**
@@ -161,11 +153,10 @@ angular.module('contentful')
    * @return {string}
    */
   function getFieldLabel (field) {
-    var descriptor = getFieldDescriptor(field);
-    if (descriptor.isList)
-      return descriptor.listLabel;
-    else
-      return descriptor.label;
+    const descriptor = getFieldDescriptor(field);
+    return descriptor.isList
+      ? descriptor.listLabel
+      : descriptor.label;
   }
 
   /**
@@ -175,9 +166,9 @@ angular.module('contentful')
    * Return an id for the associated field icon
    * @param {API.ContentType.Field} field
    * @return {string}
-  */
-  function getIconId(field) {
-    return 'field-'+getFieldDescriptor(field).icon;
+   */
+  function getIconId (field) {
+    return `field-${getFieldDescriptor(field).icon}`;
   }
 
   /**
@@ -191,17 +182,15 @@ angular.module('contentful')
    * @return {FieldTypeInfo}
    */
   function createTypeInfo (descriptor, isList) {
-    var type = descriptor.name;
-    var info = { type: type };
+    const type = descriptor.name;
+    let info = { type };
     if (descriptor.isLink) {
       info.type = 'Link';
       info.linkType = type;
     }
-
     if (isList && descriptor.hasListVariant) {
-      info = { type: 'Array', items: info};
+      info = { type: 'Array', items: info };
     }
-
     return info;
   }
 
@@ -232,13 +221,13 @@ angular.module('contentful')
    * @return {string}
    */
   function getTypeName (field) {
-    var type = field.type;
+    const type = field.type;
     if (type === 'Link') {
       return field.linkType;
     } else if (type === 'Array') {
-      var itemsType = _.get(field, 'items.type');
+      const itemsType = _.get(field, 'items.type');
       if (itemsType === 'Link') {
-        var linkType  = _.get(field, 'items.linkType');
+        const linkType = _.get(field, 'items.linkType');
         if (linkType === 'Entry') {
           return 'Entries';
         }
@@ -252,7 +241,6 @@ angular.module('contentful')
       return type;
     }
   }
-
 
   /**
    * @ngdoc method
@@ -268,42 +256,32 @@ angular.module('contentful')
    * @return {Array<string>}
    */
   function getLocaleCodes (field) {
-    var locales;
-    if (field.localized) {
-      locales = TheLocaleStore.getPrivateLocales();
-    } else {
-      locales = [TheLocaleStore.getDefaultLocale()];
-    }
+    let locales = field.localized
+      ? TheLocaleStore.getPrivateLocales()
+      : [TheLocaleStore.getDefaultLocale()];
     return _.map(locales, 'internal_code');
   }
-
 
   /**
    * @param {API.ContentType.Field} field
    * @return {FieldDescriptor}
    */
   function getFieldDescriptor (field) {
-    var type = field.type;
-    var linkType = field.linkType;
+    let type = field.type;
+    let linkType = field.linkType;
+    const isList = type === 'Array';
 
-    var isArray = type === 'Array';
-    if (isArray) {
+    if (isList) {
       type = field.items.type;
       linkType = field.items.linkType;
     }
-
-    var isLink = type === 'Link';
-    if (isLink) {
+    if (type === 'Link') {
       type = linkType;
     }
-
-    var descriptor = _.find(fieldTypes, {name: type});
+    const descriptor = _.find(fieldTypes, { name: type });
     if (!descriptor) {
-      throw new Error('Unknown field type "'+type+'"');
+      throw new Error(`Unknown field type "${type}"`);
     }
-
-    return _.extend({
-      isList: isArray
-    }, descriptor);
+    return { isList, ...descriptor };
   }
 }]);
