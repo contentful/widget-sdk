@@ -15,7 +15,8 @@ describe('Navigation', () => {
         go: goStub
       });
       $provide.value('createModernOnboarding', {
-        track: () => {}
+        track: () => {},
+        getStoragePrefix: sinon.stub().returns('prefix')
       });
       $provide.value('services/TokenStore', {
         user$: K.createMockProperty({sys: {id: 1}})

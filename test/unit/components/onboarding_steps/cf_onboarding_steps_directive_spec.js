@@ -1,7 +1,6 @@
 'use strict';
 
 import * as K from 'test/helpers/mocks/kefir';
-import $q from '$q';
 
 describe('cfOnboardingSteps Directive', () => {
   beforeEach(function () {
@@ -32,14 +31,25 @@ describe('cfOnboardingSteps Directive', () => {
         contentPreviewsBus$: this.previews$
       });
       $provide.value('services/TokenStore', {
-        getOrganizations: () => $q.resolve(this.organizations),
+        getOrganizations: sinon.stub().resolves(this.organizations),
         user$: K.createMockProperty({sys: {id: 1}})
       });
       $provide.value('services/CreateSpace', {
         showDialog: this.createSpaceDialog
       });
       $provide.value('contentPreview', {
-        getAll: sinon.stub().resolves(this.contentPreviews)
+        // using this instead of our added on `.resolves` since that uses
+        // $q internally but this directive uses native Promises and that
+        // causes things to fail
+        getAll: sinon.stub().callsFake(() => Promise.resolve(this.contentPreviews))
+      });
+      $provide.value('createModernOnboarding', {
+        getStoragePrefix: 'ctfl:userSysId:modernStackOnboarding',
+        getCredentials: sinon.stub().resolves({
+          deliveryToken: 'deliveryToken',
+          managementToken: 'managementToken'
+        }),
+        MODERN_STACK_ONBOARDING_SPACE_NAME: 'gatsby-bruv'
       });
     });
     this.$state = this.$inject('$state');
