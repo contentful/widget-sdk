@@ -12,7 +12,7 @@
     "@contentful/sharejs": "^1.31.0",
     "@contentful/ui-component-library": "^1.0.3",
     "@contentful/validation": "^6.3.1",
-    "@contentful/widget-map": "^1.0.1",
+    "@contentful/widget-map": "^1.1.0",
     "@contentful/worf": "^3.4.0",
     "ajv": "^5.2.2",
     "angular": "~1.5.7",

@@ -1,5 +1,3 @@
-'use strict';
-
 describe('widgets/default', () => {
   let getDefault, field;
   afterEach(() => {
@@ -62,6 +60,11 @@ describe('widgets/default', () => {
     it('is not a display field', () => {
       expect(getDefault(field, 'displayfieldid')).toBe('markdown');
     });
+  });
+
+  it('if field is StructuredText', () => {
+    field.type = 'StructuredText';
+    expect(getDefault(field, 'displayfieldid')).toBe('structuredTextEditor');
   });
 
   it('if field is Entry', () => {

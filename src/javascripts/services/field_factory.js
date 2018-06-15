@@ -33,6 +33,10 @@ angular.module('contentful')
       label: 'Long text',
     },
     {
+      name: 'StructuredText',
+      label: 'Structured text',
+      icon: 'longtext' // TODO: Update icon.
+    }, {
       name: 'Integer',
       icon: 'number',
     },
@@ -85,6 +89,12 @@ angular.module('contentful')
     icon: 'longtext',
     description: 'Titles, names, paragraphs, list of names',
     types: [ 'Symbol', 'Text' ]
+  }, {
+    name: 'structured-text',
+    label: 'Structured text',
+    icon: 'longtext',
+    description: 'Text with references and formatting (EXPERIMENTAL)',
+    types: ['StructuredText']
   }, {
     name: 'number',
     description: 'ID, order number, rating, quantity',
@@ -201,7 +211,7 @@ angular.module('contentful')
    * @description
    * Returns a string identifier for a type object.
    *
-   * We use this string as a simpliefied reference to field types.
+   * We use this string as a simplified reference to field types.
    * Possible values are
    *
    * - Symbol
