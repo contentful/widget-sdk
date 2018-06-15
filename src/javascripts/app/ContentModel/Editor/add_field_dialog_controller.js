@@ -27,7 +27,7 @@ angular.module('contentful')
     defaultState: 'fieldSelection'
   });
 
-  $scope.fieldGroupRows = chunk(fieldFactory.groups, 4);
+  $scope.fieldGroupRows = fieldGroupsToRows(fieldFactory.groups);
   $scope.selectFieldGroup = selectFieldGroup;
   $scope.showFieldSelection = showFieldSelection;
   $scope.create = create;
@@ -125,16 +125,10 @@ angular.module('contentful')
     }, _.noop);
   }
 
-  function chunk (array, size) {
-    var index = 0;
-    var length = array.length;
-    var resIndex = -1;
-    var result = new Array(Math.ceil(length / size));
-
-    while (index < length) {
-      result[++resIndex] = array.slice(index, (index += size));
-    }
-    return result;
+  function fieldGroupsToRows (fieldGroups) {
+    const NUMBER_OF_ROWS = 2;
+    const itemsPerGroup = Math.ceil(fieldGroups.length / NUMBER_OF_ROWS);
+    return _.chunk(fieldGroups, itemsPerGroup);
   }
 
   function first (array) {
