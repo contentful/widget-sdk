@@ -18,7 +18,7 @@ angular.module('contentful')
     const { getAll: getAllContentPreviews } = require('contentPreview');
     const { user$, getOrganizations } = require('services/TokenStore');
     const { default: template } = require('app/home/onboarding_steps/OnboardingStepsTemplate');
-    const { getCredentials, MODERN_STACK_ONBOARDING_SPACE_NAME } = require(CreateModernOnboardingModule);
+    const { getStoragePrefix, getCredentials, MODERN_STACK_ONBOARDING_SPACE_NAME } = require(CreateModernOnboardingModule);
     const Entries = require('data/Entries');
 
     return {
@@ -28,7 +28,6 @@ angular.module('contentful')
       controller: ['$scope', function ($scope) {
         const controller = this;
         const user = K.getValue(user$);
-        const spaceAutoCreationFailedKey = `ctfl:${user.sys.id}:spaceAutoCreationFailed`;
 
         controller.shouldShowTEANextSteps =
           () => controller.showModernStackContentChoiceNextSteps || controller.isTEASpace;
@@ -36,21 +35,21 @@ angular.module('contentful')
         controller.shouldShowGenericNextSteps =
           () => !controller.showModernStackDevChoiceNextSteps && !controller.shouldShowTEANextSteps();
 
-        const updateModernStackOnboardingData = async flag => {
-          const prefix = `ctfl:${user.sys.id}:modernStackOnboarding`;
+        async function updateModernStackOnboardingData (flag) {
+          const prefix = getStoragePrefix();
           const msDevChoiceKey = `${prefix}:developerChoiceSpace`;
+
           const msDevChoiceSpace = store.get(msDevChoiceKey);
           const msContentChoiceSpace = store.get(`${prefix}:contentChoiceSpace`);
-          const spaceAutoCreationFailed = store.get(spaceAutoCreationFailedKey);
+          const spaceAutoCreationFailed = store.get(`ctfl:${user.sys.id}:spaceAutoCreationFailed`);
 
           const currentSpaceId = spaceContext.space && spaceContext.space.getSys().id;
           const currentSpaceName = spaceContext.space && spaceContext.space.data.name;
 
           const showModernStackDevChoiceNextSteps =
-                flag &&
-                !spaceAutoCreationFailed &&
-            currentSpaceId &&
-            (currentSpaceId === msDevChoiceSpace || currentSpaceName === MODERN_STACK_ONBOARDING_SPACE_NAME);
+                flag && !spaceAutoCreationFailed &&
+                currentSpaceId &&
+                (currentSpaceId === msDevChoiceSpace || currentSpaceName === MODERN_STACK_ONBOARDING_SPACE_NAME);
 
           controller.showModernStackContentChoiceNextSteps =
             flag &&
@@ -59,13 +58,13 @@ angular.module('contentful')
             currentSpaceId === msContentChoiceSpace;
 
           if (showModernStackDevChoiceNextSteps) {
+            const currentStepKey = `${prefix}:currentStep`;
             // If we are to show modern stack onboarding but none of the
             // required data was found in localStorage, like when the user
             // uses a new browser, set some sane defaults
-            if (!msDevChoiceSpace) {
+            if (!msDevChoiceSpace || !store.get(currentStepKey)) {
               store.set(msDevChoiceKey, currentSpaceId);
 
-              const currentStepKey = `${prefix}:currentStep`;
               const currentStep = store.get(currentStepKey);
 
               if (!currentStep) {
@@ -109,18 +108,12 @@ angular.module('contentful')
               };
             }
           }
-        };
+        }
 
         // delay execution of a fn that returns a promise by `ms` milliseconds
-        const delay = (fn, ms) => {
-          return new Promise((resolve, reject) => {
-            setTimeout(() => {
-              fn().then(resolve, reject);
-            }, ms);
-          });
-        };
+        const delay = (fn, ms) => (new Promise(resolve => setTimeout(resolve, ms))).then(fn);
 
-        const updateNextStepsState = async (delayMs = 0) => {
+        async function updateNextStepsState (delayMs = 0) {
           controller.isTEASpace = false;
           controller.isContentPreviewsLoading = true;
 
@@ -139,11 +132,11 @@ angular.module('contentful')
           } finally {
             controller.isContentPreviewsLoading = false;
           }
-        };
+        }
 
         // update all flags once the empty space is loaded with the selected template
         $scope.$on('spaceTemplateCreated', async () => {
-          // wait for two seconds before requesting the content previews to account for eventual
+          // wait for three seconds before requesting the content previews to account for eventual
           // consistency on the CMA
           updateNextStepsState(3000);
         });
