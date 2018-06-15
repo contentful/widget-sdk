@@ -21,7 +21,7 @@ angular.module('contentful')
    * If the `label` and `icon` properties of a descriptor are not set,
    * they will be auto-generated.
    */
-  const fieldTypes = _.forEach([
+  const fieldTypes = [
     {
       name: 'Symbol',
       hasListVariant: true,
@@ -66,16 +66,13 @@ angular.module('contentful')
       label: 'Reference',
       listLabel: 'References, many'
     }
-  ], descriptor => {
-    _.defaults(descriptor, {
-      label: descriptor.name
-    });
-    _.defaults(descriptor, {
-      icon: descriptor.label.replace(/ +/g, '').toLowerCase(),
-    });
+  ].map(fieldType => {
+    const label = fieldType.label || fieldType.name;
+    const icon = label.replace(/\s/g, '').toLowerCase();
+    return { label, icon, ...fieldType };
   });
 
-  const fieldGroups = _.forEach([{
+  const fieldGroups = [{
     name: 'text',
     icon: 'longtext',
     description: 'Titles, names, paragraphs, list of names',
@@ -117,12 +114,11 @@ angular.module('contentful')
     name: 'reference',
     description: 'For example, a blog post can reference its author(s)',
     types: ['Entry']
-  }], group => {
-    group.types = _.map(group.types, getTypeByName);
-    _.defaults(group, {
-      label: capitalize(group.name),
-      icon: group.types[0].icon
-    });
+  }].map(group => {
+    const types = group.types.map(getTypeByName);
+    const label = capitalize(group.name);
+    const icon = types[0].icon;
+    return { label, icon, ...group, types };
   });
 
   function getTypeByName (name) {
