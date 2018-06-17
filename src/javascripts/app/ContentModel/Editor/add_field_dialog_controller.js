@@ -21,17 +21,26 @@ angular.module('contentful')
   var stringUtils = require('stringUtils');
   var buildMessage = require('fieldErrorMessageBuilder');
   var $q = require('$q');
+  var $timeout = require('$timeout');
+  var LD = require('utils/LaunchDarkly');
+
+  const STRUCTURED_TEXT_FIELD_FEATURE_FLAG =
+    'feature-at-06-2018-structured-text-field';
 
   $scope.viewState = $controller('ViewStateController', {
     $scope: $scope,
     defaultState: 'fieldSelection'
   });
 
-  $scope.fieldGroupRows = fieldGroupsToRows(fieldFactory.groups);
   $scope.selectFieldGroup = selectFieldGroup;
   $scope.showFieldSelection = showFieldSelection;
   $scope.create = create;
   $scope.createAndConfigure = createAndConfigure;
+  setFieldGroupRows($scope);
+
+  LD.getCurrentVariation(STRUCTURED_TEXT_FIELD_FEATURE_FLAG).then((isEnabled) => {
+    $timeout(() => setFieldGroupRows($scope, isEnabled));
+  });
 
   $scope.schema = {
     errors: function (field) {
@@ -123,6 +132,15 @@ angular.module('contentful')
     .then(field => {
       $scope.ctEditorController.openFieldDialog(field);
     }, _.noop);
+  }
+
+  function setFieldGroupRows (scope, enableExperimentalStructuredText = false) {
+    let fieldGroups = fieldFactory.groups;
+    if (!enableExperimentalStructuredText) {
+      fieldGroups = _.filter(fieldGroups,
+        fieldGroup => fieldGroup.name !== 'structured-text');
+    }
+    scope.fieldGroupRows = fieldGroupsToRows(fieldGroups);
   }
 
   function fieldGroupsToRows (fieldGroups) {
