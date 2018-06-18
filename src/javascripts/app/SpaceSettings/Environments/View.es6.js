@@ -162,9 +162,11 @@ function sidebar ({
   limit,
   organizationId,
   isLegacyOrganization,
-  canUpgradeSpace
+  canUpgradeSpace,
+  incentivizeUpgradeEnabled
 }, {
-  OpenCreateDialog
+  OpenCreateDialog,
+  OpenUpgradeSpaceDialog
 }) {
   return [
     h('h2.entity-sidebar__heading', [
@@ -176,19 +178,27 @@ function sidebar ({
       !limit && `${pluralize('environment', usage)} `,
       'in this space.'
     ]),
-    !canCreateEnv && h('p', [
-      'You have exceeded your environments usage. ',
-      ...upgradeInfo({ organizationId, isLegacyOrganization, canUpgradeSpace })
-    ]),
     canCreateEnv && h('button.btn-action.x--block', {
       dataTestId: 'openCreateDialog',
       onClick: () => OpenCreateDialog()
     }, [ 'Add environment' ]),
+    // Don't show limits and upgrade info for v1 orgs
+    !canCreateEnv && !isLegacyOrganization && h('p', [
+      limit > 1 && 'Delete existing environments or ',
+      limit > 1 ? 'upgrade ' : 'Upgrade ',
+      'the space to add more.'
+    ]),
+    h('p', [
+      !canCreateEnv && !isLegacyOrganization && canUpgradeSpace &&
+        upgradeButton({ organizationId, incentivizeUpgradeEnabled }, { OpenUpgradeSpaceDialog })
+    ]),
+
     vspace(5),
-    usage <= 1 && h('h2.entity-sidebar__heading', [
+
+    usage === 0 && h('h2.entity-sidebar__heading', [
       'Documentation'
     ]),
-    usage <= 1 && h('.entity-sidebar__text-profile', [
+    usage === 0 && h('.entity-sidebar__text-profile', [
       h('p', [
         `Environments allow you to modify the data in your space
         without affecting the data in your master environment.`
@@ -208,18 +218,15 @@ function sidebar ({
   ];
 }
 
-function upgradeInfo ({ organizationId, isLegacyOrganization, canUpgradeSpace }) {
-  if (isLegacyOrganization) return [];
-
-  if (canUpgradeSpace) {
-    return [
-      'You can upgrade your space from the ',
-      h('a', {
-        href: href(subscriptionState(organizationId, false))
-      }, ['subscription page']),
-      '.'
-    ];
+function upgradeButton ({ organizationId, incentivizeUpgradeEnabled }, { OpenUpgradeSpaceDialog }) {
+  if (incentivizeUpgradeEnabled) {
+    return h('button.btn-action.x--block', {
+      dataTestId: 'openUpgradeDialog',
+      onClick: () => OpenUpgradeSpaceDialog()
+    }, [ 'Upgrade space' ]);
   } else {
-    return ['The administrator of your organization can upgrade this space to get more environments.'];
+    return h('a', {
+      href: href(subscriptionState(organizationId, false))
+    }, ['Go to subscription page to upgrade']);
   }
 }

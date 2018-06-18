@@ -15,7 +15,11 @@ import $q from '$q';
 import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo';
 import { openCreateDialog, openEditDialog } from './EditDialog';
 import { openDeleteDialog } from './DeleteDialog';
+import { showDialog as showUpgradeSpaceDialog, SpaceResourceTypes } from 'services/ChangeSpaceService';
 import render from './View';
+
+const environmentsFlagName = 'feature-dv-11-2017-environments';
+const incentivizeFlagName = 'feature-bv-06-2018-incentivize-upgrade';
 
 export default {
   name: 'environments',
@@ -27,10 +31,10 @@ export default {
       $state.go('spaces.detail');
     }
 
-    LD.getCurrentVariation('feature-dv-11-2017-environments')
-      .then((environmentsEnabled) => {
+    $q.all([LD.getCurrentVariation(environmentsFlagName), LD.getCurrentVariation(incentivizeFlagName)])
+      .then(([environmentsEnabled, incentivizeUpgradeEnabled]) => {
         if (environmentsEnabled) {
-          $scope.environmentComponent = createComponent(spaceContext);
+          $scope.environmentComponent = createComponent(spaceContext, incentivizeUpgradeEnabled);
         } else {
           $state.go('spaces.detail');
         }
@@ -45,6 +49,7 @@ const OpenCreateDialog = makeCtor('OpenCreateDialog');
 const OpenEditDialog = makeCtor('OpenEditDialog');
 const OpenDeleteDialog = makeCtor('OpenDeleteDialog');
 const ReceiveResponse = makeCtor('ReceiveResponse');
+const OpenUpgradeSpaceDialog = makeCtor('OpenUpgradeSpaceDialog');
 
 
 const reduce = makeReducer({
@@ -85,6 +90,23 @@ const reduce = makeReducer({
     });
     return state;
   },
+  [OpenUpgradeSpaceDialog]: (state, _, { dispatch }) => {
+    showUpgradeSpaceDialog({
+      organizationId: state.organizationId,
+      space: state.spaceData,
+      limitReached: {
+        resourceType: SpaceResourceTypes.Environments,
+        usage: state.usage
+      },
+      action: 'change',
+      onSubmit: () => {
+        dispatch(Reload);
+        return Promise.resolve();
+      }
+    });
+
+    return state;
+  },
   [ReceiveResponse]: (state, result) => {
     return match(result, {
       [C.Success]: ([items, resource]) => {
@@ -107,7 +129,7 @@ const reduce = makeReducer({
 
 
 // This is exported for testing purposes.
-export function createComponent (spaceContext) {
+export function createComponent (spaceContext, incentivizeUpgradeEnabled) {
   const resourceEndpoint = SpaceEnvironmentRepo.create(spaceContext.endpoint, spaceContext.getId());
   const resourceService = createResourceService(spaceContext.getId(), 'space');
   const context = {
@@ -119,9 +141,13 @@ export function createComponent (spaceContext) {
   const initialState = {
     items: [],
     canCreateEnv: true,
+    usage: 0,
+    limit: undefined,
     canUpgradeSpace: isOwnerOrAdmin(organization),
     isLegacyOrganization: isLegacyOrganization(organization),
-    organizationId: organization.sys.id
+    organizationId: organization.sys.id,
+    spaceData: spaceContext.space.data,
+    incentivizeUpgradeEnabled
   };
 
   const store = createStore(
@@ -132,7 +158,7 @@ export function createComponent (spaceContext) {
   context.dispatch = store.dispatch;
 
   const actions = bindActions(store, {
-    OpenCreateDialog, OpenEditDialog, OpenDeleteDialog
+    OpenCreateDialog, OpenEditDialog, OpenDeleteDialog, OpenUpgradeSpaceDialog
   });
 
   store.dispatch(Reload);
