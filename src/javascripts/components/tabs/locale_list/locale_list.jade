@@ -123,7 +123,7 @@ header.workbench-header
             button.btn-primary-action.upgrade-space.x--block(ng-click="upgradeSpacePlan()")
               | Upgrade space
           p(ng-if="canUpgrade && !showUpgradeIncentive")
-            a.btn-link.upgrade-link(ui-sref="{{accountUpgradeState}}")
+            a.btn-link.upgrade-link(cf-sref="{{ accountUpgradeState }}")
               | Go to subscription page to upgrade
 
       h2.entity-sidebar__heading(ng-if="locales.length <= 1")
