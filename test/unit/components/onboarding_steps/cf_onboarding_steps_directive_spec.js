@@ -51,6 +51,9 @@ describe('cfOnboardingSteps Directive', () => {
         }),
         MODERN_STACK_ONBOARDING_SPACE_NAME: 'gatsby-bruv'
       });
+      $provide.value('components/shared/auto_create_new_space', {
+        getKey: sinon.stub().returns('key')
+      });
     });
     this.$state = this.$inject('$state');
     this.compile = function () {
