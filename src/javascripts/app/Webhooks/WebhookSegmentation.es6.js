@@ -34,7 +34,7 @@ export default class WebhookSegmentation extends React.Component {
         <label>
           <input type="radio"
                  checked={value === this.state.allEventsSelected}
-                 onClick={() => this.onSelectionTypeChange(value)} />
+                 onChange={() => this.onSelectionTypeChange(value)} />
           {caption}
         </label>
       </div>
