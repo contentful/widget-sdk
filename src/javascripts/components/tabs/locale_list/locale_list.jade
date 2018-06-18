@@ -111,7 +111,7 @@ header.workbench-header
             | Add Locale
         div(ng-if="localesUsageState === LOCALES_LIMIT_REACHED" data-test-id="upgradeSpaceBlock")
           p(ng-if="limit > 1")
-            | Delete existing locales or
+            | Delete an existing locale or
             span(ng-if="!canUpgrade")
               | &#32;ask the administrator of your organization to
             | &#32;upgrade the space to add more.
@@ -123,8 +123,9 @@ header.workbench-header
             button.btn-primary-action.upgrade-space.x--block(ng-click="upgradeSpacePlan()")
               | Upgrade space
           p(ng-if="canUpgrade && !showUpgradeIncentive")
-            a.btn-link.upgrade-link(cf-sref="{{ accountUpgradeState }}")
-              | Go to subscription page to upgrade
+            a.text-link.upgrade-link(cf-sref="{{ accountUpgradeState }}")
+              | Go to the subscription page
+            | &#32;to upgrade.
 
       h2.entity-sidebar__heading(ng-if="locales.length <= 1")
         | Documentation

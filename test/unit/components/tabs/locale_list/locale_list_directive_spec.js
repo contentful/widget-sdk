@@ -310,7 +310,7 @@ describe('The Locale list directive', () => {
         const sidebar = this.getSidebar();
         const text = sidebar.find('.entity-sidebar__text-profile > p').eq(0).text();
 
-        expect(text).toBe('You are using 1 out of 1 locale available in your space.');
+        expect(text).toBe('You are using 1 out of 1 locale available in this space.');
       });
     });
 
@@ -327,7 +327,7 @@ describe('The Locale list directive', () => {
       it('should show plural "locales"', function () {
         const text = this.sidebar.find('.entity-sidebar__text-profile > p').eq(0).text();
 
-        expect(text).toBe('You are using 1 out of 3 locales available in your space.');
+        expect(text).toBe('You are using 1 out of 3 locales available in this space.');
       });
     });
 
@@ -371,7 +371,7 @@ describe('The Locale list directive', () => {
 
           const sidebar = await this.compileAndGetSidebar();
 
-          expect(getUpgradeText(sidebar)).toBe('Delete existing locales or upgrade the space to add more.');
+          expect(getUpgradeText(sidebar)).toBe('Delete an existing locale or upgrade the space to add more.');
           expect(getUpgradeButton(sidebar).length).toBe(1);
         });
 
@@ -380,7 +380,7 @@ describe('The Locale list directive', () => {
 
           const sidebar = await this.compileAndGetSidebar();
 
-          expect(getUpgradeText(sidebar)).toBe('Delete existing locales or upgrade the space to add more.');
+          expect(getUpgradeText(sidebar)).toBe('Delete an existing locale or upgrade the space to add more.');
           expect(getUpgradeButton(sidebar).length).toBe(1);
         });
 
@@ -389,7 +389,7 @@ describe('The Locale list directive', () => {
 
           const sidebar = await this.compileAndGetSidebar();
 
-          expect(getUpgradeText(sidebar)).toBe('Delete existing locales or ask the administrator of your organization to upgrade the space to add more.');
+          expect(getUpgradeText(sidebar)).toBe('Delete an existing locale or ask the administrator of your organization to upgrade the space to add more.');
           expect(getUpgradeButton(sidebar).length).toBe(0);
         });
       });
@@ -408,7 +408,7 @@ describe('The Locale list directive', () => {
 
           const sidebar = await this.compileAndGetSidebar();
 
-          expect(getUpgradeText(sidebar)).toBe('Delete existing locales or upgrade the space to add more.');
+          expect(getUpgradeText(sidebar)).toBe('Delete an existing locale or upgrade the space to add more.');
           expect(getUpgradeLink(sidebar).length).toBe(1);
         });
 
@@ -417,7 +417,7 @@ describe('The Locale list directive', () => {
 
           const sidebar = await this.compileAndGetSidebar();
 
-          expect(getUpgradeText(sidebar)).toBe('Delete existing locales or upgrade the space to add more.');
+          expect(getUpgradeText(sidebar)).toBe('Delete an existing locale or upgrade the space to add more.');
           expect(getUpgradeLink(sidebar).length).toBe(1);
         });
 
@@ -426,7 +426,7 @@ describe('The Locale list directive', () => {
 
           const sidebar = await this.compileAndGetSidebar();
 
-          expect(getUpgradeText(sidebar)).toBe('Delete existing locales or ask the administrator of your organization to upgrade the space to add more.');
+          expect(getUpgradeText(sidebar)).toBe('Delete an existing locale or ask the administrator of your organization to upgrade the space to add more.');
           expect(getUpgradeLink(sidebar).length).toBe(0);
         });
       });

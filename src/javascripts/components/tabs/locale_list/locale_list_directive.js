@@ -106,7 +106,7 @@ angular.module('contentful')
 
   function updateLocalesUsageState () {
     // The locales usage is only important inside of the master environment.
-    // In non-master envs, we skip the call and set the readystate to true.
+    // In non-master envs, we skip the call to resources api.
     if (!$scope.insideMasterEnv) {
       return $q.resolve();
     }
