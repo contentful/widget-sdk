@@ -53,7 +53,7 @@ export default class WebhookSegmentationTable extends React.Component {
 
   renderRow (entityType) {
     return (
-      <tr>
+      <tr key={entityType}>
         {['*'].concat(ACTIONS).map(action => this.renderActionCheckbox(entityType, action))}
       </tr>
     );
@@ -61,7 +61,7 @@ export default class WebhookSegmentationTable extends React.Component {
 
   renderActionLabel (action) {
     return (
-      <th onClick={() => this.onChange({ type: '*', action, checked: !this.isChecked('*', action) })}>
+      <th key={ACTION_LABELS[action]} onClick={() => this.onChange({ type: '*', action, checked: !this.isChecked('*', action) })}>
         <label>{ACTION_LABELS[action]}</label>
       </th>
     );
@@ -80,8 +80,10 @@ export default class WebhookSegmentationTable extends React.Component {
     return (
       <table className="webhook-segmentation__matrix">
         <thead>
-          <th></th>
-          {ACTIONS.map(action => this.renderActionLabel(action))}
+          <tr>
+            <th></th>
+            {ACTIONS.map(action => this.renderActionLabel(action))}
+          </tr>
         </thead>
         <tbody>
           {this.renderRows()}
