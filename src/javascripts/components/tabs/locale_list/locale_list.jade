@@ -104,7 +104,7 @@ header.workbench-header
         p
           | You are using {{usage}} out of {{limit}}&#32;
           ng-pluralize(count="limit" when="{'1': 'locale', 'other': 'locales'}")
-          | &#32;available in {{spaceType ? 'the ' + spaceType : 'your'}} space.
+          | &#32;available in this space.
 
         p.entity-sidebar__widget(ng-if="localesUsageState !== LOCALES_LIMIT_REACHED")
           button.btn-action.add-entity.x--block(ng-click="newLocale()")

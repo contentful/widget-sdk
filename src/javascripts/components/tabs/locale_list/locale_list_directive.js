@@ -59,7 +59,6 @@ angular.module('contentful')
         }
       });
     };
-    $scope.spaceType = undefined; // TODO get it from API
   });
 
   var STATES = {
