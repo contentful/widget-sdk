@@ -18,12 +18,13 @@ angular.module('contentful')
     const { getAll: getAllContentPreviews } = require('contentPreview');
     const { getOrganizations } = require('services/TokenStore');
     const { default: template } = require('app/home/onboarding_steps/OnboardingStepsTemplate');
-    const Entries = require('data/Entries');
     const {getKey: getSpaceAutoCreatedKey} = require('components/shared/auto_create_new_space');
     const {
       getStoragePrefix: getModernStackStoragePrefix,
       getCredentials,
-      getUser, MODERN_STACK_ONBOARDING_SPACE_NAME
+      getUser,
+      getPerson,
+      MODERN_STACK_ONBOARDING_SPACE_NAME
     } = require(CreateModernOnboardingModule);
 
     return {
@@ -99,26 +100,19 @@ angular.module('contentful')
           }
         }
 
-        async function getModernStackOnboardingDevChoiceData (currentSpaceId) {
-          const person = 'person';
-          const credentialsPromise = getCredentials();
-          const personEntryPromise = spaceContext.space.getEntries({content_type: person});
-          const personCTPromise = spaceContext.space.getContentType(person);
-
+        async function getModernStackOnboardingDevChoiceData (spaceId) {
           let showModernStackDevChoiceNextSteps;
           let msDevChoiceNextStepsData;
 
           const [
             {managementToken},
-            personEntry,
-            contentType
+            personEntry
           ] = await Promise.all([
-            credentialsPromise,
-            personEntryPromise,
-            personCTPromise
+            getCredentials(),
+            getPerson()
           ]);
 
-          if (!personEntry.total) {
+          if (!personEntry) {
             // if the person entry wasn't found, don't show next steps for dev
             // choice in the modern stack onboarding
             showModernStackDevChoiceNextSteps = false;
@@ -126,8 +120,8 @@ angular.module('contentful')
             showModernStackDevChoiceNextSteps = true;
             msDevChoiceNextStepsData = {
               managementToken,
-              entry: Entries.internalToExternal(personEntry[0].data, contentType.data),
-              spaceId: currentSpaceId
+              entry: personEntry,
+              spaceId
             };
           }
 

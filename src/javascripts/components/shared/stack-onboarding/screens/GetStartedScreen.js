@@ -17,10 +17,10 @@ angular.module('contentful')
     return (
       <FullScreen close={<Skip link='getStarted' />}>
         <h1 className='modern-stack-onboarding--title'>
-          Ready to deploy a website using the latest web techonologies?
+          Contentful works with the latest web technologies
         </h1>
         <h3 className='modern-stack-onboarding--subtitle'>
-          You’ll see how Contentful delivers content through APIs and integrates with a modern stack to build the fastest possible website.
+          We have selected a static site stack as an example to get you started.
         </h3>
         <WithLink trackingElementId='get_started_screen_completed' link='copy'>
           {move => (
