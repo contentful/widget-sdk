@@ -113,6 +113,9 @@ angular.module('contentful')
         title: 'App',
         subtitle: 'Application shell',
         color: 'red',
+        onHover: () => onHover('all'),
+        active: active === 'all',
+        onLeave,
         children: [{
           title: 'Person',
           subtitle: 'Collection of authors',
