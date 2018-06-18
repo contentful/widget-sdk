@@ -107,6 +107,27 @@ export function spacePlans (state = {
   }
 }
 
+export function templates (state = {}, action) {
+  if (action.type === 'SPACE_TEMPLATES_LOADING') {
+    return {
+      ...state,
+      isLoading: action.isLoading
+    };
+  } else if (action.type === 'SPACE_TEMPLATES_ERROR') {
+    return {
+      ...state,
+      error: action.error
+    };
+  } else if (action.type === 'SPACE_TEMPLATES_SUCCESS') {
+    return {
+      ...state,
+      templatesList: action.templatesList
+    };
+  } else {
+    return state;
+  }
+}
+
 export function spacePlanSelected (state = {}, action) {
   if (action.type === 'SPACE_PLAN_SELECTED') {
     return {

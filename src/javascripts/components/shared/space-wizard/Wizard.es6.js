@@ -78,6 +78,7 @@ const Wizard = createReactClass({
     navigate: PropTypes.func.isRequired,
     fetchSpacePlans: PropTypes.func.isRequired,
     fetchSubscriptionPrice: PropTypes.func.isRequired,
+    fetchTemplates: PropTypes.func.isRequired,
     selectPlan: PropTypes.func.isRequired,
     setNewSpaceName: PropTypes.func.isRequired,
     setNewSpaceTemplate: PropTypes.func.isRequired,
@@ -91,6 +92,7 @@ const Wizard = createReactClass({
     subscriptionPrice: PropTypes.object.isRequired,
     spaceCreation: PropTypes.object.isRequired,
     spaceChange: PropTypes.object.isRequired,
+    templates: PropTypes.object.isRequired,
     currentPlan: PropTypes.object,
     selectedPlan: PropTypes.object
   },
@@ -132,6 +134,7 @@ const Wizard = createReactClass({
       spacePlans,
       fetchSpacePlans,
       fetchSubscriptionPrice,
+      fetchTemplates,
       currentPlan,
       selectedPlan,
       selectPlan,
@@ -141,7 +144,8 @@ const Wizard = createReactClass({
       setNewSpaceTemplate,
       subscriptionPrice,
       spaceCreation,
-      spaceChange
+      spaceChange,
+      templates
     } = this.props;
 
     const {
@@ -200,6 +204,7 @@ const Wizard = createReactClass({
         spacePlans,
         fetchSpacePlans,
         fetchSubscriptionPrice,
+        fetchTemplates,
         currentPlan,
         selectedPlan,
         selectPlan,
@@ -208,7 +213,8 @@ const Wizard = createReactClass({
         setNewSpaceTemplate,
         subscriptionPrice,
         spaceCreation,
-        spaceChange
+        spaceChange,
+        templates
       };
 
       return (
@@ -331,6 +337,7 @@ const Wizard = createReactClass({
 const mapStateToProps = (state) => {
   return {
     spacePlans: state.spacePlans,
+    templates: state.templates,
     currentPlan: state.spacePlanSelected.current,
     selectedPlan: state.spacePlanSelected.selected,
     currentStepId: state.currentStep,
@@ -345,6 +352,7 @@ const mapDispatchToProps = () => {
   return {
     fetchSpacePlans: actions.fetchSpacePlans,
     fetchSubscriptionPrice: actions.fetchSubscriptionPrice,
+    fetchTemplates: actions.fetchTemplates,
     selectPlan: actions.selectPlan,
     navigate: actions.navigate,
     track: actions.track,

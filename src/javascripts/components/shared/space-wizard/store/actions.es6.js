@@ -14,7 +14,7 @@ import * as TokenStore from 'services/TokenStore';
 import * as Analytics from 'analytics/Analytics';
 import spaceContext from 'spaceContext';
 import { getCreator as getTemplateCreator } from 'services/SpaceTemplateCreator';
-import { getTemplate } from 'services/SpaceTemplateLoader';
+import { getTemplatesList, getTemplate } from 'services/SpaceTemplateLoader';
 import { canCreate } from 'utils/ResourceUtils';
 
 import { dispatch } from './store';
@@ -70,6 +70,29 @@ export async function fetchSpacePlans ({ organization, spaceId }) {
   });
 
   dispatch({ type: 'SPACE_PLANS_LOADING', isLoading: false });
+}
+
+export async function fetchTemplates () {
+  dispatch({ type: 'SPACE_TEMPLATES_LOADING', isLoading: true });
+
+  let templatesList;
+
+  try {
+    templatesList = await getTemplatesList();
+  } catch (e) {
+    dispatch({ type: 'SPACE_TEMPLATES_ERROR', error: e });
+    dispatch({ type: 'SPACE_TEMPLATES_LOADING', isLoading: false });
+
+    return;
+  }
+
+  // The templates are technically entries, but this abstraction doesn't matter
+  // here, so we take the keys/values in "fields" and make them on the base object
+
+  templatesList = templatesList.map(({ fields, sys }) => ({ ...fields, sys }));
+
+  dispatch({ type: 'SPACE_TEMPLATES_SUCCESS', templatesList });
+  dispatch({ type: 'SPACE_TEMPLATES_LOADING', isLoading: false });
 }
 
 export async function createSpace ({
@@ -149,6 +172,7 @@ export async function changeSpace ({ space, selectedPlan, onConfirm }) {
     await changeSpaceApiCall(endpoint, planId);
   } catch (e) {
     dispatch({ type: 'SPACE_CHANGE_ERROR', error: e });
+    dispatch({ type: 'SPACE_CHANGE_PENDING', pending: false });
     return;
   }
 

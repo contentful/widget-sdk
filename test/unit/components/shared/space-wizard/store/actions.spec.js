@@ -37,6 +37,15 @@ describe('Space Wizard actions', function () {
       }
     };
 
+    this.template = {
+      fields: {
+        name: 'Testing Template'
+      },
+      sys: {
+        id: 'template_1234'
+      }
+    };
+
     this.stubs = {
       ResourceService_get: sinon.stub().resolves(this.resource),
       createOrganizationEndpoint: sinon.stub(),
@@ -48,7 +57,8 @@ describe('Space Wizard actions', function () {
       TokenStore_refresh: sinon.stub().resolves(),
       ApiKeyRepo_create: sinon.stub(),
       getSubscriptionPlans: sinon.stub().resolves([this.plan]),
-      calculateTotalPrice: sinon.stub()
+      calculateTotalPrice: sinon.stub(),
+      getTemplatesList: sinon.stub().resolves([this.template])
     };
 
     module('contentful/test', ($provide) => {
@@ -88,6 +98,10 @@ describe('Space Wizard actions', function () {
             create: this.stubs.ApiKeyRepo_create
           };
         }
+      });
+
+      $provide.value('services/SpaceTemplateLoader', {
+        getTemplatesList: this.stubs.getTemplatesList
       });
     });
 
@@ -193,16 +207,17 @@ describe('Space Wizard actions', function () {
       expect(this.stubs.dispatch.args[0]).toEqual([{ type: 'SPACE_CHANGE_PENDING', pending: true }]);
     });
 
-    it('should dispatch 2 times if error is thrown during space changing', async function () {
+    it('should dispatch 3 times if error is thrown during space changing', async function () {
       const error = new Error('Could not change space');
 
       this.stubs.changeSpace.throws(error);
 
       await this.actions.changeSpace({ space: this.space, selectedPlan: this.plan, onConfirm: this.onConfirm });
 
-      expect(this.stubs.dispatch.callCount).toBe(2);
+      expect(this.stubs.dispatch.callCount).toBe(3);
       expect(this.stubs.dispatch.args[0]).toEqual([{ type: 'SPACE_CHANGE_PENDING', pending: true }]);
       expect(this.stubs.dispatch.args[1]).toEqual([{ type: 'SPACE_CHANGE_ERROR', error }]);
+      expect(this.stubs.dispatch.args[2]).toEqual([{ type: 'SPACE_CHANGE_PENDING', pending: false }]);
     });
   });
 
@@ -273,6 +288,31 @@ describe('Space Wizard actions', function () {
       expect(this.stubs.dispatch.args[0]).toEqual([{ type: 'SUBSCRIPTION_PRICE_LOADING', isLoading: true }]);
       expect(this.stubs.dispatch.args[1]).toEqual([{ type: 'SUBSCRIPTION_PRICE_ERROR', error }]);
       expect(this.stubs.dispatch.args[2]).toEqual([{ type: 'SUBSCRIPTION_PRICE_LOADING', isLoading: false }]);
+    });
+  });
+
+  describe('fetchTemplates', function () {
+    it('should dispatch 3 times if no error thrown during fetching', async function () {
+      await this.actions.fetchTemplates();
+      expect(this.stubs.dispatch.callCount).toBe(3);
+
+      const list = [this.template].map(({fields, sys}) => ({ ...fields, sys }));
+
+      expect(this.stubs.dispatch.args[0]).toEqual([{ type: 'SPACE_TEMPLATES_LOADING', isLoading: true }]);
+      expect(this.stubs.dispatch.args[1]).toEqual([{ type: 'SPACE_TEMPLATES_SUCCESS', templatesList: list }]);
+      expect(this.stubs.dispatch.args[2]).toEqual([{ type: 'SPACE_TEMPLATES_LOADING', isLoading: false }]);
+    });
+
+    it('should dispatch 3 times if error thrown during fetching', async function () {
+      const error = new Error('Could not fetch templates');
+
+      this.stubs.getTemplatesList.throws(error);
+
+      await this.actions.fetchTemplates();
+      expect(this.stubs.dispatch.callCount).toBe(3);
+      expect(this.stubs.dispatch.args[0]).toEqual([{ type: 'SPACE_TEMPLATES_LOADING', isLoading: true }]);
+      expect(this.stubs.dispatch.args[1]).toEqual([{ type: 'SPACE_TEMPLATES_ERROR', error }]);
+      expect(this.stubs.dispatch.args[2]).toEqual([{ type: 'SPACE_TEMPLATES_LOADING', isLoading: false }]);
     });
   });
 
