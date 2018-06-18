@@ -16,10 +16,15 @@ angular.module('contentful')
     const store = require('TheStore').getStore();
     const { isExampleSpace } = require('data/ContentPreview');
     const { getAll: getAllContentPreviews } = require('contentPreview');
-    const { user$, getOrganizations } = require('services/TokenStore');
+    const { getOrganizations } = require('services/TokenStore');
     const { default: template } = require('app/home/onboarding_steps/OnboardingStepsTemplate');
-    const { getStoragePrefix, getCredentials, MODERN_STACK_ONBOARDING_SPACE_NAME } = require(CreateModernOnboardingModule);
     const Entries = require('data/Entries');
+    const {getKey: getSpaceAutoCreatedKey} = require('components/shared/auto_create_new_space');
+    const {
+      getStoragePrefix: getModernStackStoragePrefix,
+      getCredentials,
+      getUser, MODERN_STACK_ONBOARDING_SPACE_NAME
+    } = require(CreateModernOnboardingModule);
 
     return {
       template: template(),
@@ -27,7 +32,6 @@ angular.module('contentful')
       scope: {},
       controller: ['$scope', function ($scope) {
         const controller = this;
-        const user = K.getValue(user$);
 
         controller.shouldShowTEANextSteps =
           () => controller.showModernStackContentChoiceNextSteps || controller.isTEASpace;
@@ -35,79 +39,102 @@ angular.module('contentful')
         controller.shouldShowGenericNextSteps =
           () => !controller.showModernStackDevChoiceNextSteps && !controller.shouldShowTEANextSteps();
 
+        function setSaneModernStackOnboardingDefaults (msDevChoiceKey, currentStepKey, spaceId) {
+          // store the modern stack onboarding space that was created for the dev choice
+          store.set(msDevChoiceKey, spaceId);
+
+          const currentStep = store.get(currentStepKey);
+
+          if (!currentStep) {
+            store.set(currentStepKey, {
+              path: 'spaces.detail.onboarding.getStarted',
+              params: {
+                spaceId
+              }
+            });
+          }
+          // mark auto space creation as succeeded since space with
+          // modern stack onboarding name exists
+          store.set(getSpaceAutoCreatedKey(getUser(), 'success'), true);
+        }
+
         async function updateModernStackOnboardingData (flag) {
-          const prefix = getStoragePrefix();
+          const prefix = getModernStackStoragePrefix();
           const msDevChoiceKey = `${prefix}:developerChoiceSpace`;
 
           const msDevChoiceSpace = store.get(msDevChoiceKey);
           const msContentChoiceSpace = store.get(`${prefix}:contentChoiceSpace`);
-          const spaceAutoCreationFailed = store.get(`ctfl:${user.sys.id}:spaceAutoCreationFailed`);
+          const spaceAutoCreationFailed = store.get(getSpaceAutoCreatedKey(getUser(), 'failure'));
 
           const currentSpaceId = spaceContext.space && spaceContext.space.getSys().id;
           const currentSpaceName = spaceContext.space && spaceContext.space.data.name;
 
           const showModernStackDevChoiceNextSteps =
                 flag && !spaceAutoCreationFailed &&
-                currentSpaceId &&
                 (currentSpaceId === msDevChoiceSpace || currentSpaceName === MODERN_STACK_ONBOARDING_SPACE_NAME);
 
           controller.showModernStackContentChoiceNextSteps =
             flag &&
             !spaceAutoCreationFailed &&
-            currentSpaceId &&
             currentSpaceId === msContentChoiceSpace;
 
           if (showModernStackDevChoiceNextSteps) {
             const currentStepKey = `${prefix}:currentStep`;
+
             // If we are to show modern stack onboarding but none of the
             // required data was found in localStorage, like when the user
             // uses a new browser, set some sane defaults
             if (!msDevChoiceSpace || !store.get(currentStepKey)) {
-              store.set(msDevChoiceKey, currentSpaceId);
-
-              const currentStep = store.get(currentStepKey);
-
-              if (!currentStep) {
-                store.set(currentStepKey, {
-                  path: 'spaces.detail.onboarding.getStarted',
-                  params: {
-                    spaceId: currentSpaceId
-                  }
-                });
-              }
-              // mark auto space creation as succeeded since space with
-              // modern stack onboarding name exists
-              store.set(`ctfl:${user.sys.id}:spaceAutoCreated`, true);
+              setSaneModernStackOnboardingDefaults(msDevChoiceKey, currentStepKey, currentSpaceId);
             }
 
-            const person = 'person';
-            const credentialsPromise = getCredentials();
-            const personEntryPromise = spaceContext.space.getEntries({content_type: person});
-            const personCTPromise = spaceContext.space.getContentType(person);
+            const {
+              showModernStackDevChoiceNextSteps,
+              msDevChoiceNextStepsData
+            } = await getModernStackOnboardingDevChoiceData(currentSpaceId);
 
-            const [
-              {managementToken},
-              personEntry,
-              contentType
-            ] = await Promise.all([
-              credentialsPromise,
-              personEntryPromise,
-              personCTPromise
-            ]);
-
-            if (!personEntry.total) {
-              // if the person entry wasn't found, don't show next steps for dev
-              // choice in the modern stack onboarding
-              controller.showModernStackDevChoiceNextSteps = false;
-            } else {
-              controller.showModernStackDevChoiceNextSteps = true;
-              controller.msDevChoiceNextSteps = {
-                managementToken,
-                entry: Entries.internalToExternal(personEntry[0].data, contentType.data),
-                spaceId: currentSpaceId
-              };
-            }
+            // add data required for modern stack onboarding to the controller
+            controller.showModernStackDevChoiceNextSteps = showModernStackDevChoiceNextSteps;
+            controller.msDevChoiceNextStepsData = msDevChoiceNextStepsData;
           }
+        }
+
+        async function getModernStackOnboardingDevChoiceData (currentSpaceId) {
+          const person = 'person';
+          const credentialsPromise = getCredentials();
+          const personEntryPromise = spaceContext.space.getEntries({content_type: person});
+          const personCTPromise = spaceContext.space.getContentType(person);
+
+          let showModernStackDevChoiceNextSteps;
+          let msDevChoiceNextStepsData;
+
+          const [
+            {managementToken},
+            personEntry,
+            contentType
+          ] = await Promise.all([
+            credentialsPromise,
+            personEntryPromise,
+            personCTPromise
+          ]);
+
+          if (!personEntry.total) {
+            // if the person entry wasn't found, don't show next steps for dev
+            // choice in the modern stack onboarding
+            showModernStackDevChoiceNextSteps = false;
+          } else {
+            showModernStackDevChoiceNextSteps = true;
+            msDevChoiceNextStepsData = {
+              managementToken,
+              entry: Entries.internalToExternal(personEntry[0].data, contentType.data),
+              spaceId: currentSpaceId
+            };
+          }
+
+          return {
+            showModernStackDevChoiceNextSteps,
+            msDevChoiceNextStepsData
+          };
         }
 
         // delay execution of a fn that returns a promise by `ms` milliseconds

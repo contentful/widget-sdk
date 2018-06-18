@@ -98,7 +98,7 @@ function attemptedSpaceAutoCreation (user) {
     store.get(getKey(user, 'failure'));
 }
 
-function getKey (user, action) {
+export function getKey (user, action) {
   const prefix = `ctfl:${user.sys.id}`;
 
   if (action === 'success') {
