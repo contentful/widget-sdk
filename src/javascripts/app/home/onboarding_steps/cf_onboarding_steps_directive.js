@@ -168,7 +168,11 @@ angular.module('contentful')
           updateNextStepsState(3000);
         });
 
-        LD.onFeatureFlag($scope, modernStackOnboardingFlag, updateModernStackOnboardingData);
+        LD.onFeatureFlag($scope, modernStackOnboardingFlag, flag => {
+          if (spaceContext.space) {
+            updateModernStackOnboardingData(flag);
+          }
+        });
 
         if (spaceContext.space) {
           updateNextStepsState();
