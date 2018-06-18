@@ -1,9 +1,14 @@
 import * as DOM from 'helpers/DOM';
 
 describe('app/SpaceSettings/Environments', () => {
+  const ENVIRONMENTS_LIMIT = 3;
+
   beforeEach(function () {
     const resourceService = {
-      canCreate: sinon.stub().withArgs('environment').resolves(true)
+      get: sinon.stub().withArgs('environment').resolves({
+        usage: 0,
+        limits: {maximum: ENVIRONMENTS_LIMIT}
+      })
     };
     module('contentful/test', $provide => {
       $provide.value('services/ResourceService', () => resourceService);
@@ -34,8 +39,11 @@ describe('app/SpaceSettings/Environments', () => {
       };
     };
 
-    this.setCanCreate = (value) => {
-      resourceService.canCreate.withArgs('environment').resolves(value);
+    this.setUsage = (usage) => {
+      resourceService.get.withArgs('environment').resolves({
+        usage,
+        limits: {maximum: ENVIRONMENTS_LIMIT}
+      });
     };
   });
 
@@ -80,10 +88,10 @@ describe('app/SpaceSettings/Environments', () => {
     this.container.find('environment.e1').assertNonExistent();
   });
 
-  it('disables create button if limit is reached', function () {
-    this.setCanCreate(false);
+  it('does not render create button if limit is reached', function () {
+    this.setUsage(ENVIRONMENTS_LIMIT);
     this.init();
 
-    this.container.find('openCreateDialog').assertIsDisabled();
+    this.container.find('openCreateDialog').assertNonExistent();
   });
 });
