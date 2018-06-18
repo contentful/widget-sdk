@@ -1,6 +1,5 @@
 import {extend} from 'lodash';
 import {track as analyticsTrack} from 'analytics/Analytics';
-import stringifySafe from 'stringifySafe';
 import {getMigrationSuccessCount} from 'data/ViewMigrator';
 
 const PREFIX = 'search:';
@@ -80,12 +79,9 @@ function details ({title, roles}) {
   };
 }
 
-function query ({searchText = null, searchFilters = [], contentTypeId = null}) {
+function query ({searchText = null, contentTypeId = null}) {
   return {
-    search_text: searchText,
     content_type_id: contentTypeId,
-    search_filter_count: searchFilters.length,
-    search_filter_concatenated: stringifySafe(searchFilters),
-    search_query: null // We keep this for compatibility with schemas for now.
+    search_query: searchText // We keep this for compatibility with schemas for now.
   };
 }
