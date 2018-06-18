@@ -15,7 +15,7 @@ import $q from '$q';
 import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo';
 import { openCreateDialog, openEditDialog } from './EditDialog';
 import { openDeleteDialog } from './DeleteDialog';
-import { showDialog as showUpgradeSpaceDialog, SpaceResourceTypes } from 'services/ChangeSpaceService';
+import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService';
 import render from './View';
 
 const environmentsFlagName = 'feature-dv-11-2017-environments';
@@ -94,10 +94,7 @@ const reduce = makeReducer({
     showUpgradeSpaceDialog({
       organizationId: state.organizationId,
       space: state.spaceData,
-      limitReached: {
-        resourceType: SpaceResourceTypes.Environments,
-        usage: state.usage
-      },
+      limitReached: state.resource,
       action: 'change',
       onSubmit: () => {
         dispatch(Reload);
@@ -116,8 +113,7 @@ const reduce = makeReducer({
           // There is a hardcoded limit of 100 environments for v1 orgs on the
           // backend, but we don't enforce it on frontend as it should not be hit
           // under normal circumstances.
-          usage: resource.usage,
-          limit: resource.limits.maximum,
+          resource,
           canCreateEnv: canCreate(resource),
           isLoading: false
         });
@@ -141,8 +137,7 @@ export function createComponent (spaceContext, incentivizeUpgradeEnabled) {
   const initialState = {
     items: [],
     canCreateEnv: true,
-    usage: 0,
-    limit: undefined,
+    resource: { usage: 0 },
     canUpgradeSpace: isOwnerOrAdmin(organization),
     isLegacyOrganization: isLegacyOrganization(organization),
     organizationId: organization.sys.id,

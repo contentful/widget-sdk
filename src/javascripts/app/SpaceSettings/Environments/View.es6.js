@@ -1,4 +1,5 @@
 import pluralize from 'pluralize';
+import { get } from 'lodash';
 import * as Config from 'Config';
 import { assign } from 'utils/Collections';
 import { caseofEq } from 'sum-types';
@@ -158,8 +159,7 @@ function deleteButton (environment) {
 
 function sidebar ({
   canCreateEnv,
-  usage,
-  limit,
+  resource,
   organizationId,
   isLegacyOrganization,
   canUpgradeSpace,
@@ -168,6 +168,9 @@ function sidebar ({
   OpenCreateDialog,
   OpenUpgradeSpaceDialog
 }) {
+  const usage = resource.usage;
+  const limit = get(resource, 'limits.maximum');
+
   return [
     h('h2.entity-sidebar__heading', [
       'Usage'
