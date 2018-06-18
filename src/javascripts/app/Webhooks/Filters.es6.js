@@ -45,19 +45,13 @@ export default class Filters extends React.Component {
     return '';
   }
 
-  onChange (filters) {
-    setTimeout(() => this.props.onChange(filters), 1);
-  }
-
   updateByIndex (index, updateObj) {
     this.setState(state => {
       const filters = [ ...state.filters ];
       filters[index] = {...filters[index], ...updateObj};
 
-      this.onChange(filters);
-
       return { filters };
-    });
+    }, () => this.props.onChange(this.state.filters));
   }
 
   removeByIndex (index) {
@@ -66,10 +60,8 @@ export default class Filters extends React.Component {
             .slice(0, index)
             .concat(state.filters.slice(index + 1));
 
-      this.onChange(filters);
-
       return { filters };
-    });
+    }, () => this.props.onChange(this.state.filters));
   }
 
   renderConstraintOption (constraint, index) {
