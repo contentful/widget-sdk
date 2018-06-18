@@ -22,6 +22,7 @@ angular.module('contentful')
         <h3 className='modern-stack-onboarding--subtitle'>
           We selected a static site stack as an example to get you started.
         </h3>
+        <img src={'/app/images/modern_onboarding_overview.png'} />
         <WithLink trackingElementId='get_started_screen_completed' link='copy'>
           {move => (
             <Button onClick={move} className='modern-stack-onboarding--next-button'>
