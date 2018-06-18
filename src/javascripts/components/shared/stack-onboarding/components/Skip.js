@@ -16,8 +16,12 @@ angular.module('contentful')
     propTypes: {
       link: PropTypes.oneOf(['getStarted', 'copy', 'explore', 'deploy'])
     },
-    onClick () {
-      track(`skip_from_${this.props.link}`);
+    onClick (onboardingStepsComplete) {
+      if (onboardingStepsComplete) {
+        track(`close_from_${this.props.link}`);
+      } else {
+        track(`skip_from_${this.props.link}`);
+      }
       $state.go('spaces.detail.home', {
         spaceId: $stateParams.spaceId
       });
@@ -26,7 +30,7 @@ angular.module('contentful')
       const onboardingStepsComplete = store.get(`${getStoragePrefix()}:completed`);
 
       return (
-        <div onClick={this.onClick} className='modern-stack-onboarding--skip'>
+        <div onClick={() => this.onClick(onboardingStepsComplete)} className='modern-stack-onboarding--skip'>
           {onboardingStepsComplete ? 'Close' : 'Skip >'}
         </div>
       );
