@@ -7,7 +7,7 @@ import * as LD from 'utils/LaunchDarkly';
 
 import * as accessChecker from 'access_control/AccessChecker';
 import createResourceService from 'services/ResourceService';
-import { isLegacyOrganization } from 'utils/ResourceUtils';
+import { isLegacyOrganization, canCreate } from 'utils/ResourceUtils';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import $state from '$state';
 import $q from '$q';
@@ -52,7 +52,7 @@ const reduce = makeReducer({
     C.runTask(function* () {
       const result = yield C.tryP($q.all([
         resourceEndpoint.getAll(),
-        resourceService.canCreate('environment')
+        resourceService.get('environment')
       ]));
       dispatch(ReceiveResponse, result);
     });
@@ -87,14 +87,16 @@ const reduce = makeReducer({
   },
   [ReceiveResponse]: (state, result) => {
     return match(result, {
-      [C.Success]: ([items, canCreateEnv]) => {
+      [C.Success]: ([items, resource]) => {
         return assign(state, {
           items: items.map(makeEnvironmentModel),
-          // Note: canCreateEnv will always be true for v1 orgs.
+          // Note: we don't show limits for v1 orgs.
           // There is a hardcoded limit of 100 environments for v1 orgs on the
           // backend, but we don't enforce it on frontend as it should not be hit
           // under normal circumstances.
-          canCreateEnv: canCreateEnv,
+          usage: resource.usage,
+          limit: resource.limits.maximum,
+          canCreateEnv: canCreate(resource),
           isLoading: false
         });
       },

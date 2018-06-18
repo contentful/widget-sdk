@@ -1,3 +1,4 @@
+import pluralize from 'pluralize';
 import * as Config from 'Config';
 import { assign } from 'utils/Collections';
 import { caseofEq } from 'sum-types';
@@ -155,25 +156,39 @@ function deleteButton (environment) {
 }
 
 
-function sidebar ({ canCreateEnv, organizationId, isLegacyOrganization, canUpgradeSpace }, { OpenCreateDialog }) {
+function sidebar ({
+  canCreateEnv,
+  usage,
+  limit,
+  organizationId,
+  isLegacyOrganization,
+  canUpgradeSpace
+}, {
+  OpenCreateDialog
+}) {
   return [
     h('h2.entity-sidebar__heading', [
-      'Add environment'
+      'Usage'
+    ]),
+    h('p', [
+      `You are using ${usage} `,
+      limit && `out of ${limit} ${pluralize('environment', limit)} available `,
+      !limit && `${pluralize('environment', usage)} `,
+      'in this space.'
     ]),
     !canCreateEnv && h('p', [
       'You have exceeded your environments usage. ',
       ...upgradeInfo({ organizationId, isLegacyOrganization, canUpgradeSpace })
     ]),
-    h('button.btn-action.x--block', {
+    canCreateEnv && h('button.btn-action.x--block', {
       dataTestId: 'openCreateDialog',
-      onClick: () => OpenCreateDialog(),
-      disabled: !canCreateEnv
+      onClick: () => OpenCreateDialog()
     }, [ 'Add environment' ]),
     vspace(5),
-    h('h2.entity-sidebar__heading', [
+    usage <= 1 && h('h2.entity-sidebar__heading', [
       'Documentation'
     ]),
-    h('.entity-sidebar__text-profile', [
+    usage <= 1 && h('.entity-sidebar__text-profile', [
       h('p', [
         `Environments allow you to modify the data in your space
         without affecting the data in your master environment.`
