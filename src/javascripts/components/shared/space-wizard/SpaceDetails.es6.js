@@ -2,7 +2,7 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import TemplateSelector from './TemplateSelector';
-import {formatPrice} from './WizardUtils';
+import { formatPrice, getFieldErrors } from './WizardUtils';
 
 const SpaceDetails = createReactClass({
   propTypes: {
@@ -14,7 +14,8 @@ const SpaceDetails = createReactClass({
     setNewSpaceName: PropTypes.func.isRequired,
     setNewSpaceTemplate: PropTypes.func.isRequired,
     templates: PropTypes.object.isRequired,
-    fetchTemplates: PropTypes.func.isRequired
+    fetchTemplates: PropTypes.func.isRequired,
+    spaceCreation: PropTypes.object.isRequired
   },
   getInitialState: function () {
     const state = {
@@ -25,9 +26,13 @@ const SpaceDetails = createReactClass({
     state.validation = validateState(state);
     return state;
   },
-  componentWillReceiveProps: function ({serverValidationErrors}) {
-    if (serverValidationErrors && serverValidationErrors !== this.props.serverValidationErrors) {
-      this.setState({validation: serverValidationErrors});
+  componentWillReceiveProps: function ({ spaceCreation: { error } }) {
+    const { spaceCreation: { error: currentError } } = this.props;
+
+    if (error && error !== currentError) {
+      const fieldErrors = getFieldErrors(error);
+
+      this.setState({validation: fieldErrors});
     }
   },
   render: function () {
@@ -112,9 +117,11 @@ const SpaceDetails = createReactClass({
 
 function validateState ({name = ''}) {
   const validation = {};
+
   if (!name.trim()) {
     validation.name = 'Name is required';
   }
+
   return validation;
 }
 

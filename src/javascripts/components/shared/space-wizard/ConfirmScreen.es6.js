@@ -12,7 +12,6 @@ const ConfirmScreen = createReactClass({
     selectedPlan: PropTypes.object.isRequired,
     space: PropTypes.object,
     action: PropTypes.string.isRequired,
-    spaceName: PropTypes.string.isRequired,
     template: PropTypes.object,
     organization: PropTypes.object.isRequired,
     fetchSubscriptionPrice: PropTypes.func.isRequired,

@@ -2,12 +2,11 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import {Steps} from './WizardUtils';
+import { Steps, getFieldErrors } from './WizardUtils';
 import SpacePlanSelector from './SpacePlanSelector';
 import SpaceDetails from './SpaceDetails';
 import ConfirmScreen from './ConfirmScreen';
 import ProgressScreen from './ProgressScreen';
-import {get} from 'lodash';
 import notification from 'notification';
 import logger from 'logger';
 
@@ -96,24 +95,7 @@ const Wizard = createReactClass({
     currentPlan: PropTypes.object,
     selectedPlan: PropTypes.object
   },
-  getInitialState () {
-    const { action } = this.props;
 
-    const steps = getSteps(action);
-
-    return {
-      currentStepId: steps[0].id,
-      isFormSubmitted: false,
-      isSpaceCreated: false,
-      isContentCreated: false,
-      data: {
-        newSpaceRatePlan: null,
-        spaceName: '',
-        template: null,
-        serverValidationErrors: null
-      }
-    };
-  },
   componentDidMount () {
     const { navigate, action } = this.props;
     const steps = getSteps(action);
@@ -122,6 +104,26 @@ const Wizard = createReactClass({
 
     navigate(steps[0].id);
   },
+
+  componentWillReceiveProps ({ spaceCreation: { error } }) {
+    const { spaceCreation: { error: currentError } } = this.props;
+
+    const { action, onCancel, navigate } = this.props;
+    const steps = getSteps(action);
+
+    if (error && error !== currentError) {
+      logger.logServerWarn(`Could not ${action} space`, {error});
+      const serverValidationErrors = getFieldErrors(error);
+
+      if (action === 'create' && Object.keys(serverValidationErrors).length) {
+        navigate(steps[1].id);
+      } else {
+        notification.error(`Could not ${action} your space. If the problem persists, get in touch with us.`);
+        onCancel(); // close modal without tracking 'cancel' event
+      }
+    }
+  },
+
   render () {
     const {
       space,
@@ -147,12 +149,6 @@ const Wizard = createReactClass({
       spaceChange,
       templates
     } = this.props;
-
-    const {
-      isFormSubmitted,
-      data,
-      serverValidationErrors
-    } = this.state;
 
     const steps = getSteps(action);
 
@@ -188,13 +184,10 @@ const Wizard = createReactClass({
         onClick={this.cancel} />;
 
       const stepProps = {
-        ...data,
         organization,
         space,
         limitReached,
         action,
-        isFormSubmitted,
-        serverValidationErrors,
         reposition: onDimensionsChange,
         onCancel,
         track: this.track,
@@ -385,19 +378,4 @@ function getNextStep (steps, stepId) {
     const index = steps.findIndex(({id}) => id === stepId);
     return steps[index + 1].id;
   }
-}
-
-function getFieldErrors (error) {
-  const errors = get(error, 'body.details.errors') || [];
-
-  return errors.reduce((acc, err) => {
-    let message;
-    if (err.path === 'name' && err.name === 'length') {
-      message = 'Space name is too long';
-    } else {
-      message = `Value "${err.value}" is invalid`;
-    }
-    acc[err.path] = message;
-    return acc;
-  }, {});
 }

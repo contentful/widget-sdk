@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { upperFirst, lowerCase, template } from 'lodash';
+import { upperFirst, lowerCase, template, get } from 'lodash';
 import { joinWithAnd } from 'utils/StringUtils';
 import pluralize from 'pluralize';
 
@@ -123,4 +123,19 @@ export function getTooltip (type, number) {
   const unitName = ResourceUnitNames[type];
   const units = unitName && pluralize(unitName, number);
   return ResourceTooltips[type] && template(ResourceTooltips[type])({number, units});
+}
+
+export function getFieldErrors (error) {
+  const errors = get(error, 'body.details.errors') || [];
+
+  return errors.reduce((acc, err) => {
+    let message;
+    if (err.path === 'name' && err.name === 'length') {
+      message = 'Space name is too long';
+    } else {
+      message = `Value "${err.value}" is invalid`;
+    }
+    acc[err.path] = message;
+    return acc;
+  }, {});
 }

@@ -6,7 +6,6 @@ import {isOwner} from 'services/OrganizationRoles';
 import {go} from 'states/Navigator';
 import spinner from 'ui/Components/Spinner';
 import {asReact} from 'ui/Framework/DOMRenderer';
-import pluralize from 'pluralize';
 import {resourceHumanNameMap} from 'utils/ResourceUtils';
 import logger from 'logger';
 
