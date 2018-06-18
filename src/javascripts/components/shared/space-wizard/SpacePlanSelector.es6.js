@@ -16,6 +16,8 @@ import ContactUsButton from 'ui/Components/ContactUsButton';
 import {RequestState, SpaceResourceTypes, formatPrice, unavailabilityTooltipNode} from './WizardUtils';
 import {byName as colors} from 'Styles/Colors';
 import pluralize from 'pluralize';
+import {resourceHumanNameMap} from 'utils/ResourceUtils';
+import logger from 'logger';
 
 const SpacePlanSelector = createReactClass({
   propTypes: {
@@ -151,7 +153,12 @@ function getHighestPlan (spaceRatePlans) {
   return spaceRatePlans.slice().sort((planX, planY) => planY.price >= planX.price)[0];
 }
 
-function getRecommendedPlan (spaceRatePlans, {resourceType, usage}) {
+function getRecommendedPlan (spaceRatePlans, {sys: {id}, usage}) {
+  const resourceType = resourceHumanNameMap[id];
+  if (!resourceType) {
+    logger.logError(`Unknown resource type id: ${id}`);
+  }
+
   function getResource ({includedResources}) {
     const resource = includedResources.find(({type}) => type === resourceType);
     return get(resource, 'number', 0);

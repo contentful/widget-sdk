@@ -15,7 +15,7 @@ header.workbench-header
       cf-icon.btn-icon.inverted(name="plus")
       | Add Locale
     p.add-entity__advice(ng-show="localesUsageState === LOCALES_LIMIT_REACHED")
-      | Your plan supports up to {{ limit }} locales.&#32;
+      | Your plan supports up to {{ resource.limits.maximum }} locales.&#32;
       a(ng-if="accountUpgradeState" cf-sref="{{accountUpgradeState}}")
         | Upgrade for more
       span(ng-if="!accountUpgradeState")
@@ -77,7 +77,7 @@ header.workbench-header
 
         div(ng-if="localesUsageState === LOCALES_LIMIT_REACHED")
           h1.advice__title You have reached the organization locales limit
-          p.advice__description Your current subscription plan <strong>({{ subscriptionPlanName }})</strong> enables a maximum of {{ limit }} locales per organization
+          p.advice__description Your current subscription plan <strong>({{ subscriptionPlanName }})</strong> enables a maximum of {{ resource.limits.maximum }} locales per organization
           p.advice__description(ng-if="accountUpgradeState")
             | Please <a ui-sref="{{ accountUpgradeState }}">upgrade</a> if you need more locales or delete some of the existing ones
           p.advice__description(ng-if="!accountUpgradeState")
@@ -102,20 +102,20 @@ header.workbench-header
         | Usage
       .entity-sidebar__text-profile(ng-if="insideMasterEnv")
         p
-          | You are using {{usage}} out of {{limit}}&#32;
-          ng-pluralize(count="limit" when="{'1': 'locale', 'other': 'locales'}")
+          | You are using {{resource.usage}} out of {{resource.limits.maximum}}&#32;
+          ng-pluralize(count="resource.limits.maximum" when="{'1': 'locale', 'other': 'locales'}")
           | &#32;available in this space.
 
         p.entity-sidebar__widget(ng-if="localesUsageState !== LOCALES_LIMIT_REACHED")
           button.btn-action.add-entity.x--block(ng-click="newLocale()")
             | Add Locale
         div(ng-if="localesUsageState === LOCALES_LIMIT_REACHED" data-test-id="upgradeSpaceBlock")
-          p(ng-if="limit > 1")
+          p(ng-if="resource.limits.maximum > 1")
             | Delete an existing locale or
             span(ng-if="!canUpgrade")
               | &#32;ask the administrator of your organization to
             | &#32;upgrade the space to add more.
-          p(ng-if="limit <= 1")
+          p(ng-if="resource.limits.maximum <= 1")
             span(ng-if="!canUpgrade")
               | Ask the administrator of your organization to&#32;
             | {{canUpgrade ? 'Upgrade' : 'upgrade'}} the space to add more.

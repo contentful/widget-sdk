@@ -31,7 +31,7 @@ angular.module('contentful')
 
   var FeatureService = createFeatureService(spaceContext.getId());
 
-  var {showDialog: showSpaceModal, SpaceResourceTypes} = require('services/ChangeSpaceService');
+  var {showDialog: showSpaceModal} = require('services/ChangeSpaceService');
 
   // Start: incentivize upgrade feature flag
   var LD = require('utils/LaunchDarkly');
@@ -48,10 +48,7 @@ angular.module('contentful')
       showSpaceModal({
         organizationId: organization.sys.id,
         space: spaceContext.space.data,
-        limitReached: {
-          resourceType: SpaceResourceTypes.Locales,
-          usage: $scope.usage
-        },
+        limitReached: $scope.resource,
         action: 'change',
         onSubmit: function () {
           return updateLocalesUsageState()
@@ -76,7 +73,6 @@ angular.module('contentful')
 
   $scope.locales = [];
   $scope.localeNamesByCode = {};
-  $scope.getPlanLocalesLimit = getPlanLocalesLimit;
   $scope.subscriptionPlanName = getSubscriptionPlanData('name');
   $scope.newLocale = newLocale;
   $scope.showSidebar = false;
@@ -124,17 +120,15 @@ angular.module('contentful')
       }
     }).then(canCreateMultiple => $q.all({
       canCreateMultiple: canCreateMultiple,
-      usage: getPlanLocalesUsage(),
-      limits: getPlanLocalesLimit()
+      resource: getPlanResource()
     })).then(result => {
       if (!result.canCreateMultiple) {
         return STATES.NO_MULTIPLE_LOCALES;
       }
 
-      $scope.usage = result.usage;
-      $scope.limit = result.limits.maximum;
+      $scope.resource = result.resource;
 
-      var reachedLimit = $scope.usage >= $scope.limit;
+      var reachedLimit = $scope.resource.usage >= $scope.resource.limits.maximum;
 
       if (!reachedLimit && len <= 1) {
         return STATES.ONE_LOCALE_USED;
@@ -171,14 +165,6 @@ angular.module('contentful')
 
 
     return resource;
-  }
-
-  function getPlanLocalesUsage () {
-    return getPlanResource().then(resource => resource.usage);
-  }
-
-  function getPlanLocalesLimit () {
-    return getPlanResource().then(resource => ResourceUtils.getResourceLimits(resource));
   }
 
   function hasMultipleLocales () {

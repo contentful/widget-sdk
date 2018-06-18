@@ -1,8 +1,6 @@
 import modalDialog from 'modalDialog';
 import { getOrganization } from 'services/TokenStore';
 
-export {SpaceResourceTypes} from 'components/shared/space-wizard/WizardUtils';
-
 /**
  * Displays the space creation dialog. The dialog type will depend on the
  * organization that the new space should belong to.
