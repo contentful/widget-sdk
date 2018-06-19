@@ -48,23 +48,24 @@ angular.module('contentful')
       return this.renderSnippet({
         title: 'Bootstrap the Contentful JS SDK',
         code: [
-          'import { createClient } from \'contentful\';',
+          'import contentful from \'contentful\'',
           '',
-          'const client = createClient({',
+          'const client = contentful.createClient({',
           `  space: '${$stateParams.spaceId}',`,
           `  accessToken: '${deliveryToken || 'loading...'}'`,
-          '});'
+          '})'
         ]
       });
     },
     renderPeopleSnippet () {
       const { onHover, onLeave, active } = this.props;
       return this.renderSnippet({
-        title: 'Fetch the persons',
-        subtitle: 'We filter the data (entries) by the “person” type',
+        title: 'Fetch all people',
+        subtitle: 'We filter and fetch the data (entries) in your space by the “person” content type.',
         code: [
-          'function getPersons() {',
-          '  return client.getEntries({ content_type: \'person\' });',
+          'async function getPeople() {',
+          '  const entries = await client.getEntries({ content_type: \'person\' })',
+          '  return entries.items',
           '}'
         ],
         onHover: () => onHover('person'),
@@ -75,11 +76,12 @@ angular.module('contentful')
     renderPostsSnippet () {
       const { onHover, onLeave, active } = this.props;
       return this.renderSnippet({
-        title: 'Fetch the blog posts that are shown',
-        subtitle: 'We filter the data (entries) by the “blogPost” type',
+        title: 'Fetch all blog posts',
+        subtitle: 'We filter and fetch the data (entries) in your space by the “blogPost” content type.',
         code: [
-          'function getBlogPosts() {',
-          '  return client.getEntries({ content_type: \'blogPost\' });',
+          'async function getBlogPosts() {',
+          '  const entries = await client.getEntries({ content_type: \'blogPost\' })',
+          '  return entries.items',
           '}'
         ],
         onHover: () => onHover('articles'),
@@ -90,8 +92,8 @@ angular.module('contentful')
     renderAllSnippet () {
       const { onHover, onLeave, active } = this.props;
       return this.renderSnippet({
-        title: 'Fetch the blog post “Static sites are great”',
-        subtitle: 'We fetch single entry by id',
+        title: 'Put it all together',
+        subtitle: 'We use the data from your Contentful space to render the interface.',
         code: [
           'const App = ({ author, blogPosts }) => (',
           '  <div>',
@@ -106,8 +108,8 @@ angular.module('contentful')
           ')',
           '',
           'async function renderApp() {',
-          '  const [author] = await getAll(\'person\')',
-          '  const blogPosts = await getAll(\'blogPost\')',
+          '  const [author] = await getPeople()',
+          '  const blogPosts = await getBlogPosts()',
           '',
           '  ReactDOM.render(',
           '    <App author={author} blogPosts={blogPosts} />,',
@@ -115,11 +117,7 @@ angular.module('contentful')
           '  )',
           '}',
           '',
-          'renderApp()',
-          '',
-          'function getStaticSitesArticle() {',
-          '  return client.getEntry(\'3K9b0esdy0q0yGqgW2g6Ke\');',
-          '}'
+          'renderApp()'
         ],
         onHover: () => onHover('all'),
         onLeave,

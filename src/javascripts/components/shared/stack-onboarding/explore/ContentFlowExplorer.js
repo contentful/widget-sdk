@@ -31,28 +31,15 @@ angular.module('contentful')
     },
     renderContent (content) {
       return (
-        <div className='modern-stack-onboarding--content-explorer-wrapper'>
-          {content}
+        <div className='modern-stack-onboarding--content-explorer'>
+          <div className='modern-stack-onboarding--content-explorer-data'>
+            {content}
+          </div>
+          <div className='modern-stack-onboarding--content-explorer-iframe'>
+            {this.renderIframe()}
+          </div>
         </div>
       );
-    },
-    renderTabs () {
-      const { active, iframe } = this.state;
-
-      const tabs = [
-        {
-          id: 'code',
-          title: 'Code snippets',
-          content: this.renderContent(<CodeSnippets iframe={iframe} />)
-        },
-        {
-          id: 'data-flow',
-          title: 'Data model and data flow',
-          content: this.renderContent(<DataFlow iframe={iframe} />)
-        }
-      ];
-
-      return <Tabs tabs={tabs} active={active} onSelect={this.selectTab} />;
     },
     renderIframe () {
       const { iframe: stateIframe } = this.state;
@@ -70,16 +57,22 @@ angular.module('contentful')
       );
     },
     render () {
-      return (
-        <div className='modern-stack-onboarding--content-explorer'>
-          <div className='modern-stack-onboarding--content-explorer-data'>
-            {this.renderTabs()}
-          </div>
-          <div className='modern-stack-onboarding--content-explorer-iframe'>
-            {this.renderIframe()}
-          </div>
-        </div>
-      );
+      const { active, iframe } = this.state;
+
+      const tabs = [
+        {
+          id: 'code',
+          title: 'Code snippets',
+          content: this.renderContent(<CodeSnippets iframe={iframe} />)
+        },
+        {
+          id: 'data-flow',
+          title: 'Data model and data flow',
+          content: this.renderContent(<DataFlow iframe={iframe} />)
+        }
+      ];
+
+      return <Tabs tabs={tabs} active={active} onSelect={this.selectTab} />;
     }
   });
 
