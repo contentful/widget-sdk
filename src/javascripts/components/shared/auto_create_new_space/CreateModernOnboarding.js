@@ -15,6 +15,7 @@ angular.module('contentful')
   const spaceContext = require('spaceContext');
   const $state = require('$state');
   const { refresh } = require('services/TokenStore');
+  const Entries = require('data/Entries');
 
   const Resource = require('app/api/CMATokens/Resource');
   const auth = require('Authentication');
@@ -28,6 +29,26 @@ angular.module('contentful')
     MODERN_STACK_ONBOARDING_SPACE_NAME: 'Gatsby Starter for Contentful',
     getUser: () => getValue(user$),
     getStoragePrefix: () => `ctfl:${createModernOnboarding.getUser().sys.id}:modernStackOnboarding`,
+    /**
+     * @description
+     * Get the first entry that has content type "person"
+     *
+     * @return {Promise<Entry>}
+     */
+    async getPerson () {
+      const person = 'person';
+      const personEntryPromise = spaceContext.space.getEntries({content_type: person});
+      const personCTPromise = spaceContext.space.getContentType(person);
+
+      const [personEntry, personCT] = await Promise.all([personEntryPromise, personCTPromise]);
+
+      if (!personEntry.total) {
+        return null;
+      }
+
+      // this is needed as getEntries returns entries with internal field ids
+      return Entries.internalToExternal(personEntry[0].data, personCT.data);
+    },
     create: ({ onDefaultChoice, org, user, markOnboarding }) => {
       const scope = $rootScope.$new();
       let dialog;

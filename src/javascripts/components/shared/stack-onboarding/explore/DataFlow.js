@@ -9,6 +9,8 @@ export const name = 'data-flow-onboarding';
 angular.module('contentful')
 .factory(name, ['require', function (require) {
   const IframeHighlightHOC = require(IframeHighlightHOCModule);
+  const Icon = require('ui/Components/Icon').default;
+
   const DataFlow = createReactClass({
     propTypes: {
       onHover: PropTypes.func,
@@ -109,6 +111,7 @@ angular.module('contentful')
     },
     render () {
       const { onHover, onLeave, active } = this.props;
+
       const structure = {
         title: 'App',
         subtitle: 'Application shell',
@@ -118,14 +121,14 @@ angular.module('contentful')
         onLeave,
         children: [{
           title: 'Person',
-          subtitle: 'Collection of authors',
+          subtitle: 'collection of authors',
           color: 'green',
           onHover: () => onHover('person'),
           onLeave,
           active: active === 'person',
           children: [{
             title: 'John Doe',
-            subtitle: 'content type: Person',
+            subtitle: 'content type: person',
             color: 'blue',
             onHover: () => onHover('person'),
             onLeave,
@@ -146,7 +149,7 @@ angular.module('contentful')
             onLeave,
             active: active === 'static-sites-are-great'
           }, {
-            title: 'Hello World',
+            title: 'Hello world',
             subtitle: 'content type: blogPost',
             color: 'blue',
             onHover: () => onHover('hello-world'),
@@ -165,6 +168,7 @@ angular.module('contentful')
 
       return (
         <div className='modern-stack-onboarding--data-flow-container'>
+          <Icon name='icon-onboarding-contentful-req-res' className='modern-stack-onboarding--data-flow-diagram' />
           {this.renderElem(structure)}
         </div>
       );

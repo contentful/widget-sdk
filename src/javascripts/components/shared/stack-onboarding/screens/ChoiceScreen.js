@@ -68,13 +68,13 @@ angular.module('contentful')
 
       const contentChoice = this.renderBlock({
         title: 'Create content',
-        text: 'The Contentful web-app enables you to easily create, manage and publish content in a customizable workflow.',
+        text: 'The Contentful web-app enables you to create, manage and publish content.',
         button: this.renderButton({
           onClick: () => {
             this.setState({ isDefaultPathPending: true });
             onDefaultChoice();
           },
-          text: 'Explore Content Modelling',
+          text: 'Explore content modeling',
           disabled: isButtonDisabled,
           isLoading: isDefaultPathPending
         })
@@ -82,7 +82,7 @@ angular.module('contentful')
 
       const developerChoice = this.renderBlock({
         title: 'Develop content-rich products',
-        text: 'Contentful enables you to manage, integrate and deliver content via APIs. Your preferred programming language is supported.',
+        text: 'Contentful enables you to manage, integrate and deliver content via APIs.',
         button: this.renderButton({
           onClick: this.createSpace,
           text: 'Deploy a website in 3 steps',
@@ -94,7 +94,7 @@ angular.module('contentful')
       return (
         <FullScreen>
           <h1 className='modern-stack-onboarding--title'>
-            How do you usually work with the content?
+            How do you usually work with content?
           </h1>
           <div className='modern-stack-onboarding--choice-blocks'>
             {contentChoice}
