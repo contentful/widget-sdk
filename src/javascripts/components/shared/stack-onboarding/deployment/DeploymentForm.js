@@ -78,12 +78,11 @@ angular.module('contentful')
       return (
         <div className='modern-stack-onboarding--deployment-form'>
           <h4 className='modern-stack-onboarding--deployment-form-title'>
-            <strong>
-              Enter the website URL after deployment is complete.
-            </strong>
-            <br />
-            Your suggested next steps will be determined by the deployment service you selected.
+            {'Enter the website URL after deployment is complete.'}
           </h4>
+          <div className={'modern-stack-onboarding--deployment-form-subtitle'}>
+            {'Your suggested next steps will be determined by the deployment service you selected.'}
+          </div>
           <Form onSubmit={e => e.preventDefault()}>
             <Input
               wrapperClassName='modern-stack-onboarding--deployment-form-input'
