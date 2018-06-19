@@ -17,6 +17,15 @@ const SUPPORTED_CT_FIELD_TYPES = [
   'Link'
 ];
 
+export const statusQueryKey = '__status';
+export const Status = {
+  Any: '',
+  Published: 'published',
+  Changed: 'changed',
+  Draft: 'draft',
+  Archived: 'archived'
+};
+
 /**
  * This module exports functions to construct field filters.
  *
@@ -90,14 +99,14 @@ const sysFieldFilters = [
       name: 'status',
       type: 'Text',
       description: 'Current status of the item',
-      queryKey: '__status',
+      queryKey: statusQueryKey,
       operators: [equalityOperator],
       valueInput: ValueInput.Select([
-        ['', 'Any (except “Archived”)'],
-        ['published', 'Published'],
-        ['changed', 'Changed'],
-        ['draft', 'Draft'],
-        ['archived', 'Archived']
+        [Status.Any, 'Any (except “Archived”)'],
+        [Status.Published, 'Published'],
+        [Status.Changed, 'Changed'],
+        [Status.Draft, 'Draft'],
+        [Status.Archived, 'Archived']
       ]),
       contentType: null
     }

@@ -29,4 +29,4 @@
       on-select="newEntry")
   .empty-state__note-box(ng-if="hasArchivedEntries")
     | You can look up old entries in the
-    | <a ng-click="loadView({searchTerm: 'status:archived'})">archive</a>.
+    | <a ng-click="loadArchived()" data-test-id="load-archived">archive</a>.

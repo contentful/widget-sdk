@@ -5,6 +5,8 @@ angular.module('contentful')
   ($scope, require, getBlankView, resetList, preserveStateAs) => {
     var createViewMigrator = require('data/ViewMigrator').default;
     var createViewPersistor = require('data/ListViewPersistor').default;
+    const { Status, statusQueryKey } = require('app/ContentList/Search/Filters');
+    const { Operator } = require('app/ContentList/Search/Operators');
     var spaceContext = require('spaceContext');
     var Notification = require('notification');
 
@@ -14,6 +16,10 @@ angular.module('contentful')
 
     $scope.$watch('context.view', viewPersistor.save, true);
     $scope.loadView = loadView;
+
+    $scope.loadArchived = () => {
+      loadView({ searchFilters: [[statusQueryKey, Operator.EQUALS, Status.Archived]] });
+    };
 
     viewPersistor.read().then(loadView);
 

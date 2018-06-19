@@ -24,4 +24,4 @@
 
   .empty-state__note-box(ng-if="hasArchivedAssets")
     | You can look up old assets in the
-    | <a ng-click="loadView({searchTerm: 'status:archived'})">archive</a>.
+    | <a ng-click="loadArchived()" data-test-id="load-archived">archive</a>.
