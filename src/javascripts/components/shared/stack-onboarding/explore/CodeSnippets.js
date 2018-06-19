@@ -31,8 +31,8 @@ angular.module('contentful')
     renderSnippet ({ title, subtitle, code, onHover, onLeave, active }) {
       return (
         <div>
-          <h4>{title}</h4>
-          {subtitle && <div>{subtitle}</div>}
+          <h4 className={'modern-stack-onboarding--code-title'}>{title}</h4>
+          {subtitle && <div className={'modern-stack-onboarding--code-subtitle'}>{subtitle}</div>}
           <div
             onMouseEnter={onHover}
             onMouseLeave={onLeave}
@@ -40,6 +40,7 @@ angular.module('contentful')
             <Code
               lineNumbers={false}
               code={code}
+              className={'modern-stack-onboarding--code-block'}
             />
             {active && <div className={'modern-stack-onboarding--active-data'} />}
           </div>

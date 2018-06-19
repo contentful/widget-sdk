@@ -93,7 +93,7 @@ angular.module('contentful')
 
       return (
         <FullScreen>
-          <h1 className='modern-stack-onboarding--title'>
+          <h1 className='modern-stack-onboarding--title modern-stack-onboarding--title__margin'>
             How do you usually work with content?
           </h1>
           <div className='modern-stack-onboarding--choice-blocks'>

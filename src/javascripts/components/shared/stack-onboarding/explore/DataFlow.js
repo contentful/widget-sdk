@@ -116,14 +116,14 @@ angular.module('contentful')
       const structure = {
         title: 'App',
         subtitle: 'Application shell',
-        color: 'red',
+        color: 'blue',
         onHover: () => onHover('all'),
         active: active === 'all',
         onLeave,
         children: [{
           title: 'Person',
           subtitle: 'collection of authors',
-          color: 'green',
+          color: 'blue',
           onHover: () => onHover('person'),
           onLeave,
           active: active === 'person',
@@ -138,7 +138,7 @@ angular.module('contentful')
         }, {
           title: 'Blog Posts',
           subtitle: 'collection of articles',
-          color: 'green',
+          color: 'blue',
           onHover: () => onHover('articles'),
           onLeave,
           active: active === 'articles',
