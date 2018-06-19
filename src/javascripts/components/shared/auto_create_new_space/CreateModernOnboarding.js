@@ -15,6 +15,7 @@ angular.module('contentful')
   const spaceContext = require('spaceContext');
   const $state = require('$state');
   const { refresh } = require('services/TokenStore');
+  const Entries = require('data/Entries');
 
   const Resource = require('app/api/CMATokens/Resource');
   const auth = require('Authentication');
@@ -25,7 +26,30 @@ angular.module('contentful')
   const store = getStore();
 
   const createModernOnboarding = {
-    create: ({ onDefaultChoice, org, markOnboarding }) => {
+    MODERN_STACK_ONBOARDING_SPACE_NAME: 'Gatsby Starter for Contentful',
+    getUser: () => getValue(user$),
+    getStoragePrefix: () => `ctfl:${createModernOnboarding.getUser().sys.id}:modernStackOnboarding`,
+    /**
+     * @description
+     * Get the first entry that has content type "person"
+     *
+     * @return {Promise<Entry>}
+     */
+    async getPerson () {
+      const person = 'person';
+      const personEntryPromise = spaceContext.space.getEntries({content_type: person});
+      const personCTPromise = spaceContext.space.getContentType(person);
+
+      const [personEntry, personCT] = await Promise.all([personEntryPromise, personCTPromise]);
+
+      if (!personEntry.total) {
+        return null;
+      }
+
+      // this is needed as getEntries returns entries with internal field ids
+      return Entries.internalToExternal(personEntry[0].data, personCT.data);
+    },
+    create: ({ onDefaultChoice, org, user, markOnboarding }) => {
       const scope = $rootScope.$new();
       let dialog;
       const closeModal = () => {
@@ -40,21 +64,24 @@ angular.module('contentful')
         createSpace: async () => {
           createModernOnboarding.track('dev_path_selected');
 
-          await createSpace({
+          const newSpace = await createSpace({
             closeModal,
             org,
             markOnboarding,
-            markSpace: createModernOnboarding.markSpace
+            markSpace: createModernOnboarding.markSpace,
+            userId: user.sys.id
           });
 
           createModernOnboarding.createDeliveryToken();
           createModernOnboarding.createManagementToken();
+
+          return newSpace;
         }
       };
 
       dialog = modalDialog.open({
-        title: 'Space auto creation',
-        template: `<react-component name="${choiceScreenName}" props="props"></react-component`,
+        title: 'Select your path',
+        template: `<react-component name="${choiceScreenName}" props="props"></react-component>`,
         backgroundClose: false,
         ignoreEsc: true,
         // we don't want to close this modal after we create new space
@@ -64,18 +91,24 @@ angular.module('contentful')
       });
     },
     markSpace: (spaceId) => {
-      store.set(getKey(spaceId), true);
+      store.set(getMSOnboardingSpaceKey(), spaceId);
     },
-    checkSpace: (spaceId) => {
-      return Boolean(store.get(getKey(spaceId)));
-    },
+    checkSpace: (spaceId) => store.get(getMSOnboardingSpaceKey()) === spaceId,
     // used for grouping all related analytics events
     getGroupId: () => 'modernStackOnboarding',
-    track: (elementId) => track('element:click', {
-      elementId,
-      groupId: createModernOnboarding.getGroupId(),
-      fromState: $state.current.name
-    }),
+    track: (elementId, toState) => {
+      const payload = {
+        elementId,
+        groupId: createModernOnboarding.getGroupId(),
+        fromState: $state.current.name
+      };
+
+      if (toState) {
+        payload.toState = toState;
+      }
+
+      track('element:click', payload);
+    },
     getDeliveryToken: async () => {
       const keys = await spaceContext.apiKeyRepo.getAll();
       const key = keys[0];
@@ -95,15 +128,15 @@ angular.module('contentful')
       );
     },
     createManagementToken: async () => {
-      const data = await Resource.create(auth).create('modern stack onboarding importing key');
+      const data = await Resource.create(auth).create('Gatsby Starter for Contentful import token');
       const token = data.token;
 
-      store.set(getCPATokenKey(), token);
+      store.set(getPersonalAccessTokenKey(), token);
 
       return token;
     },
     getManagementToken: () => {
-      const token = store.get(getCPATokenKey());
+      const token = store.get(getPersonalAccessTokenKey());
 
       if (token) {
         return token;
@@ -118,24 +151,19 @@ angular.module('contentful')
 
   };
 
-  // CPA token is global for all spaces, so we separate by user id
-  function getCPATokenKey () {
-    const user = getValue(user$);
-    return `ctfl:${user.sys.id}:modernStackOnboarding:cpaToken`;
-  }
-
   return createModernOnboarding;
 
-  // we can guarantee that there will be no same space ids, so even
-  // several users go through this experience in the same session,
-  // it won't give incorrect result
-  function getKey (spaceId) {
-    return `ctfl:${spaceId}:modernStackOnboarding:space`;
+  function getPersonalAccessTokenKey () {
+    return `${createModernOnboarding.getStoragePrefix()}:personalAccessToken`;
   }
 
-  async function createSpace ({ closeModal, org, markOnboarding, markSpace }) {
+  function getMSOnboardingSpaceKey () {
+    return `${createModernOnboarding.getStoragePrefix()}:developerChoiceSpace`;
+  }
+
+  async function createSpace ({ closeModal, org, markOnboarding, markSpace, userId }) {
     const newSpace = await client.createSpace({
-      name: 'Modern Stack Website',
+      name: createModernOnboarding.MODERN_STACK_ONBOARDING_SPACE_NAME,
       defaultLocale: DEFAULT_LOCALE
     }, org.sys.id);
 
@@ -143,12 +171,14 @@ angular.module('contentful')
     // we need to mark space as onboarding before transitioning
     // because otherwise it won't let us do that
     // all onboarding steps are guarded by space id
-    markSpace(newSpaceId);
+    markSpace(newSpaceId, userId);
     markOnboarding();
 
     await refresh();
     await $state.go('spaces.detail.onboarding.getStarted', {spaceId: newSpaceId});
     // if we need to close modal, we need to do it after redirect
     closeModal && closeModal();
+
+    return newSpace;
   }
 }]);

@@ -2,6 +2,7 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 
+import {name as CreateModernOnboardingModule} from '../../auto_create_new_space/CreateModernOnboarding';
 import {name as InputModule} from '../../../react/atoms/Input';
 import {name as ButtonModule} from '../../../react/atoms/Button';
 import {name as FormModule} from '../../../react/atoms/Form';
@@ -13,6 +14,13 @@ angular.module('contentful')
   const Button = require(ButtonModule);
   const Input = require(InputModule);
   const Form = require(FormModule);
+  const store = require('TheStore').getStore();
+  const {getStoragePrefix} = require(CreateModernOnboardingModule);
+
+  const DEPLOYMENT_PROVIDERS = {
+    NETLIFY: 'netlify',
+    HEROKU: 'heroku'
+  };
 
   const DeploymentForm = createReactClass({
     propTypes: {
@@ -21,24 +29,49 @@ angular.module('contentful')
     },
     getInitialState () {
       return {
-        url: '',
+        url: store.get(`${getStoragePrefix()}:deployedTo`) || '',
         error: false
       };
     },
-    onChange (value) {
-      const { onProviderChange } = this.props;
-      const usesNetlify = value && value.includes('netlify.com');
-      const usesHeroku = value && value.includes('heroku.com');
-      const isValid = usesNetlify || usesHeroku;
-
-      if (isValid && onProviderChange) {
-        onProviderChange(usesNetlify ? 'netlify' : 'heroku');
+    isValidDeployedUrl (url) {
+      return Object.values(DEPLOYMENT_PROVIDERS)
+        .includes(this.getChosenDeploymentProvider(url));
+    },
+    getChosenDeploymentProvider (url) {
+      if (url.includes('netlify.com')) {
+        return DEPLOYMENT_PROVIDERS.NETLIFY;
       }
 
-      this.setState({ url: value, error: isValid ? false : 'Please provide a URL on netlify or heroku.' });
+      if (url.includes('herokuapp.com')) {
+        return DEPLOYMENT_PROVIDERS.HEROKU;
+      }
+    },
+    markAsInvalidUrl (url) {
+      this.setState({ url, error: 'Please provide the Netlify or Heroku URL of your deployed application.' });
+    },
+    onChange (url) {
+      if (!this.isValidDeployedUrl(url)) {
+        this.markAsInvalidUrl(url);
+      } else {
+        const { onProviderChange } = this.props;
+
+        onProviderChange && onProviderChange(this.getChosenDeploymentProvider(url));
+        this.setState({ url, error: false });
+      }
     },
     onComplete () {
-      this.props.onComplete(this.state.url);
+      const {url} = this.state;
+      const prefix = getStoragePrefix();
+
+      if (this.isValidDeployedUrl(url)) {
+        store.set(`${prefix}:completed`, true);
+        store.set(`${prefix}:deploymentProvider`, this.getChosenDeploymentProvider(url));
+        store.set(`${prefix}:deployedTo`, url);
+
+        this.props.onComplete(url);
+      } else {
+        this.markAsInvalidUrl(url);
+      }
     },
     render () {
       const { url, error } = this.state;
@@ -51,7 +84,7 @@ angular.module('contentful')
             <br />
             Your suggested next steps will be determined by the deployment service you selected.
           </h4>
-          <Form>
+          <Form onSubmit={e => e.preventDefault()}>
             <Input
               wrapperClassName='modern-stack-onboarding--deployment-form-input'
               value={url}

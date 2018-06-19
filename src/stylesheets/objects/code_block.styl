@@ -16,11 +16,16 @@ Styleguide 13.0
   color: $colors.text-mid
   position: relative
   border: 1px solid $colors.element-mid
-  margin-top: 1.5rem
   background-color: $colors.element-lightest
   padding: 8px 0
   white-space: pre
-  overflow-x: scroll
+  overflow-x: auto
+  flex-grow: 1
+
+  &__wrapper
+    margin-top: 1.5rem
+    overflow-x: hidden
+    display: flex
 
   &__language
     position: absolute
@@ -67,11 +72,10 @@ Styleguide 13.0
 
   &__copy-wrapper
     background-color: $colors.element-light
-    border-left: 1px solid $colors.element-dark
+    border: 1px solid $colors.element-dark
+    border-left: none
     padding-left: 1em
     padding-right: 1em
-    padding-top: 5px
-    position: absolute
-    top: 0
-    bottom: 0
-    right: 0
+    padding-bottom: 5px
+    display: flex
+    align-items: center

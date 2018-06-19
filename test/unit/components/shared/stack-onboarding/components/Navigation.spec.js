@@ -1,6 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import sinon from 'npm:sinon';
+import * as K from 'helpers/mocks/kefir';
 
 import { mount } from 'enzyme';
 
@@ -14,7 +15,11 @@ describe('Navigation', () => {
         go: goStub
       });
       $provide.value('createModernOnboarding', {
-        track: () => {}
+        track: () => {},
+        getStoragePrefix: sinon.stub().returns('prefix')
+      });
+      $provide.value('services/TokenStore', {
+        user$: K.createMockProperty({sys: {id: 1}})
       });
     });
 

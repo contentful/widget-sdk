@@ -32,7 +32,9 @@ angular.module('contentful')
     selectTab (tabId) {
       this.setState({ active: tabId });
     },
-    renderCode: (code) => <Code lineNumbers={false} copy code={code} />,
+    renderCode (code) {
+      return <Code lineNumbers={false} copy code={code} tooltipPosition='right' />;
+    },
     renderList (steps) {
       const stepsMarkup = steps.map((step, i) => (
         <li key={`step_${i}`} className='modern-stack-onboarding--deployment-list-elem'>

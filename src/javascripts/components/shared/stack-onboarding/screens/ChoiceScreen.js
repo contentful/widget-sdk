@@ -2,6 +2,7 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 
+import {name as CreateModernOnboardingModule} from '../../auto_create_new_space/CreateModernOnboarding';
 import {name as FullScreenModule} from '../../../react/molecules/FullScreen';
 import {name as ButtonModule} from '../../../react/atoms/Button';
 
@@ -11,6 +12,8 @@ angular.module('contentful')
 .factory(name, ['require', function (require) {
   const FullScreen = require(FullScreenModule);
   const Button = require(ButtonModule);
+  const store = require('TheStore').getStore();
+  const {getStoragePrefix} = require(CreateModernOnboardingModule);
 
   const ChoiceScreen = createReactClass({
     propTypes: {
@@ -45,11 +48,17 @@ angular.module('contentful')
         </div>
       );
     },
-    createSpace () {
+    async createSpace () {
       this.setState({
         isDevPathPending: true
       });
-      this.props.createSpace();
+      const newSpace = await this.props.createSpace();
+      store.set(`${getStoragePrefix()}:currentStep`, {
+        path: 'spaces.detail.onboarding.getStarted',
+        params: {
+          spaceId: newSpace.sys.id
+        }
+      });
     },
     render () {
       const { isDefaultPathPending, isDevPathPending } = this.state;
@@ -59,13 +68,13 @@ angular.module('contentful')
 
       const contentChoice = this.renderBlock({
         title: 'Create content',
-        text: 'The Contentful web-app enables you to easily create, manage and publish content in a customizable workflow.',
+        text: 'The Contentful web-app enables you to create, manage and publish content.',
         button: this.renderButton({
           onClick: () => {
             this.setState({ isDefaultPathPending: true });
             onDefaultChoice();
           },
-          text: 'Explore Content Modelling',
+          text: 'Explore content modeling',
           disabled: isButtonDisabled,
           isLoading: isDefaultPathPending
         })
@@ -73,7 +82,7 @@ angular.module('contentful')
 
       const developerChoice = this.renderBlock({
         title: 'Develop content-rich products',
-        text: 'Contentful enables you to manage, integrate and deliver content via APIs. Your preferred programming language is supported.',
+        text: 'Contentful enables you to manage, integrate and deliver content via APIs.',
         button: this.renderButton({
           onClick: this.createSpace,
           text: 'Deploy a website in 3 steps',
@@ -85,7 +94,7 @@ angular.module('contentful')
       return (
         <FullScreen>
           <h1 className='modern-stack-onboarding--title'>
-            How do you usually work with the content?
+            How do you usually work with content?
           </h1>
           <div className='modern-stack-onboarding--choice-blocks'>
             {contentChoice}

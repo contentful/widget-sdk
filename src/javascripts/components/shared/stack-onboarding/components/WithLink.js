@@ -1,6 +1,5 @@
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
-
 import {name as CreateModernOnboardingModule} from '../../auto_create_new_space/CreateModernOnboarding';
 
 export const name = 'with-link-onboarding';
@@ -10,6 +9,9 @@ angular.module('contentful')
   const $state = require('$state');
   const spaceContext = require('spaceContext');
   const { track } = require(CreateModernOnboardingModule);
+  const store = require('TheStore').getStore();
+
+  const {getStoragePrefix} = require(CreateModernOnboardingModule);
 
   const WithLink = createReactClass({
     propTypes: {
@@ -37,12 +39,16 @@ angular.module('contentful')
         };
       };
 
-      const move = () => {
+      const move = async () => {
+        const { path, params } = getStateParams();
+
         if (trackingElementId) {
           track(trackingElementId);
         }
-        const { path, params } = getStateParams();
-        $state.go(path, params);
+
+        await $state.go(path, params);
+        // set current step after we have successfully transitioned to the new step
+        store.set(`${getStoragePrefix()}:currentStep`, {path, params});
       };
       return children(move);
     }

@@ -38,13 +38,13 @@ angular.module('contentful')
           <strong>
             Gatsby Starter for Contentful
           </strong>
-          &nbsp;blog
+          &nbsp;blog.
         </React.Fragment>
       );
       const headerSubtitle = (
         <React.Fragment>
           <p>Select your preferred hosting service to see the CLI deploy commands.</p>
-          <p>We’ve selected two hosting service options as an example to get you started.</p>
+          <p>We selected two hosting service options as an example to get you started.</p>
         </React.Fragment>
       );
 

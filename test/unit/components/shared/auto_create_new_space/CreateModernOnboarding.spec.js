@@ -1,7 +1,6 @@
 import * as sinon from 'helpers/sinon';
 import * as K from 'helpers/mocks/kefir';
 
-
 describe('CreateModernOnboarding service', function () {
   beforeEach(function () {
     module('contentful/test', $provide => {
@@ -24,6 +23,19 @@ describe('CreateModernOnboarding service', function () {
     });
 
     this.CreateModernOnboarding = this.$inject('createModernOnboarding');
+  });
+
+  describe('getUser', function () {
+    it('should return given user', function () {
+      expect(this.CreateModernOnboarding.getUser()).toEqual(K.getValue(this.user$));
+    });
+  });
+
+  describe('getStoragePrefix', function () {
+    it('should return the localStorage prefix used by modern stack onboarding', function () {
+      expect(this.CreateModernOnboarding.getStoragePrefix())
+        .toEqual(`ctfl:someUser:modernStackOnboarding`);
+    });
   });
 
   describe('getDeliveryToken', function () {

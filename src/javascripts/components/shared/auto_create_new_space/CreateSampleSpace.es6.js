@@ -74,9 +74,10 @@ export default function (org, templateName, modalTemplate = autoCreateSpaceTempl
     scope.isCreatingSpace = true;
     dialog = openDialog(scope, templateName, modalTemplate);
     const template = yield* loadTemplate(templateName);
+    let newSpace;
 
     try {
-      yield* createSpace(org, template.name);
+      newSpace = yield* createSpace(org, template.name);
       yield* applyTemplate(spaceContext, template);
       yield spaceContext.publishedCTs.refresh();
       $rootScope.$broadcast('spaceTemplateCreated');
@@ -100,6 +101,8 @@ export default function (org, templateName, modalTemplate = autoCreateSpaceTempl
     } finally {
       scope.isCreatingSpace = false;
     }
+
+    return newSpace;
   });
 }
 
@@ -126,6 +129,7 @@ function* createSpace (org, templateName) {
     // mark space as an auto created space
     entityAutomationScope: { scope: 'auto_create' }
   });
+  return newSpace;
 }
 
 

@@ -4,12 +4,12 @@ const prefix = 'space-home-page-contact-us';
 
 export function render (props) {
   if (props.isVisible) {
-    return h(`.${prefix}__container`, [
+    return h(`.home-section.${prefix}__container`, [
       h('div', [
-        h(`h3.${prefix}__title`, [
+        h(`h3.home-section__heading`, [
           'A fast setup for your project'
         ]),
-        h(`.${prefix}__description`, [
+        h(`.home-section__description`, [
           'Most projects launch faster when they receive advice from our experts.'
         ]),
         h('div', [

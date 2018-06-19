@@ -19,7 +19,7 @@ export const STEPS_KEYS = {
   VIEW_SAMPLE_CONTENT, PREVIEW_USING_EXAMPLE_APP, CREATE_ENTRY, GET_REPO, INVITE_DEV
 };
 
-const TEASteps = createReactClass({
+export const TEASteps = createReactClass({
   propTypes: {
     state: PropTypes.object.isRequired,
     actions: PropTypes.object.isRequired,
@@ -50,9 +50,9 @@ const TEASteps = createReactClass({
           {...state[CREATE_ENTRY]}
           onToggle={toggleExpanding}
           markAsDone={_ => this.markAsDone(CREATE_ENTRY)} />
-        <GetRepoOrInviteDevStep
-          getRepo={{...state[GET_REPO], markAsDone: _ => this.markAsDone(GET_REPO)}}
-          inviteDev={{...state[INVITE_DEV], markAsDone: _ => this.markAsDone(INVITE_DEV)}} />
+        <InviteADevStep
+          {...state[INVITE_DEV]}
+          markAsDone={_ => this.markAsDone(INVITE_DEV)} />
       </div>
     );
   }
@@ -320,57 +320,6 @@ const CreateEntryStep = createReactClass({
   }
 });
 
-const GetRepoOrInviteDevStep = createReactClass({
-  propTypes: {
-    getRepo: PropTypes.shape({
-      isDone: PropTypes.bool.isRequired,
-      markAsDone: PropTypes.func.isRequired
-    }),
-    inviteDev: PropTypes.shape({
-      isDone: PropTypes.bool.isRequired,
-      markAsDone: PropTypes.func.isRequired
-    })
-  },
-  render () {
-    return (
-      <div className='tea-onboarding__split-steps'>
-        <GetRepoForExampleAppStep {...this.props.getRepo} />
-        <InviteADevStep {...this.props.inviteDev} />
-      </div>
-    );
-  }
-});
-
-const GetRepoForExampleAppStep = createReactClass({
-  propTypes: {
-    isDone: PropTypes.bool.isRequired,
-    markAsDone: PropTypes.func.isRequired
-  },
-  handleClick () {
-    this.props.markAsDone();
-  },
-  render () {
-    const props = {
-      headerCopy: 'Clone the example app',
-      headerIcon: 'icon-github',
-      isDone: this.props.isDone
-    };
-
-    return (
-      <SplitStep {...props}>
-        <p>Run the app locally with custom content for your preferred platform.</p>
-        <a className='tea-onboarding__split-step-cta'
-           href='https://github.com/contentful?utf8=%E2%9C%93&q=%22the-example-app%22&type=&language='
-           target='_blank'
-           rel='noopener noreferrer'
-           onClick={this.handleClick}>
-          View on GitHub
-        </a>
-      </SplitStep>
-    );
-  }
-});
-
 const InviteADevStep = createReactClass({
   propTypes: {
     isDone: PropTypes.bool.isRequired,
@@ -385,7 +334,7 @@ const InviteADevStep = createReactClass({
   },
   render () {
     const props = {
-      headerCopy: 'Invite a developer to this space',
+      headerCopy: 'Invite a developer',
       headerIcon: 'onboarding-add-user',
       isDone: this.props.isDone
     };
@@ -405,37 +354,37 @@ const InviteADevStep = createReactClass({
     const inviteLink = href(urlParams);
 
     return (
-      <SplitStep {...props}>
-        <p>Need some help setting up your project? Invite a developer to get started.</p>
+      <AltStep {...props}>
         {orgId &&
           <a
             href={inviteLink}
             target={'_blank'}
             rel={'noopener noreferrer'}
-            className='tea-onboarding__split-step-cta'
+            className='tea-onboarding__alt-step-cta'
             onClick={e => this.handleClick(e, urlParams)}
           >
             Invite user
+            <span className='arrow'></span>
           </a>
         }
-      </SplitStep>
+      </AltStep>
     );
   }
 });
 
-const SplitStep = createReactClass({
+export const AltStep = createReactClass({
   propTypes: {
     headerCopy: PropTypes.string.isRequired,
     headerIcon: PropTypes.string.isRequired,
     isDone: PropTypes.bool.isRequired,
-    children: PropTypes.array.isRequired
+    children: PropTypes.node.isRequired
   },
   render () {
     const {headerCopy, headerIcon, isDone, children} = this.props;
 
     return (
-      <div className='tea-onboarding__split-step'>
-        <div className='tea-onboarding__split-step-header'>
+      <div className='tea-onboarding__alt-step'>
+        <div className='tea-onboarding__alt-step-header'>
           {
             isDone
             ? <Icon name='icon-checkmark-done' className='tea-onboarding__step-header-icon' key='complete-step' />
@@ -443,7 +392,7 @@ const SplitStep = createReactClass({
           }
           <h4>{headerCopy}</h4>
         </div>
-        <div className='tea-onboarding__split-step-body'>
+        <div className='tea-onboarding__alt-step-body'>
           {children}
         </div>
       </div>
@@ -451,13 +400,13 @@ const SplitStep = createReactClass({
   }
 });
 
-const Step = createReactClass({
+export const Step = createReactClass({
   propTypes: {
     headerCopy: PropTypes.string.isRequired,
     headerIcon: PropTypes.string.isRequired,
     isExpanded: PropTypes.bool.isRequired,
     isDone: PropTypes.bool.isRequired,
-    children: PropTypes.array.isRequired,
+    children: PropTypes.node.isRequired,
     onToggle: PropTypes.func.isRequired,
     stepKey: PropTypes.string.isRequired
   },
@@ -489,5 +438,3 @@ const Step = createReactClass({
     );
   }
 });
-
-export default TEASteps;

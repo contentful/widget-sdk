@@ -25,6 +25,9 @@ import ArrowDown from 'svg/dd-arrow-down';
 import InvoiceIcon from 'svg/invoice';
 import BackIcon from 'svg/breadcrumbs-icon-back';
 import SpaceIcon from 'svg/space';
+import PagesIcon from 'svg/icon-pages';
+import OnboardingArrowIcon from 'svg/icon-onboarding-arrow';
+import OnboardingContentfulFlowDiagram from 'svg/icon-onboarding-contentful-req-res';
 
 const SVGS = {
   'home-welcome': HomeWelcomeIcon,
@@ -47,7 +50,10 @@ const SVGS = {
   'dd-arrow-down': ArrowDown,
   'back': BackIcon,
   'invoice': InvoiceIcon,
-  'space': SpaceIcon
+  'space': SpaceIcon,
+  'icon-pages': PagesIcon,
+  'icon-onboarding-arrow': OnboardingArrowIcon,
+  'icon-onboarding-contentful-req-res': OnboardingContentfulFlowDiagram
 };
 
 const Icon = createReactClass({

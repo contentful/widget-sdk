@@ -1,7 +1,6 @@
 'use strict';
 
 import * as K from 'test/helpers/mocks/kefir';
-import $q from '$q';
 
 describe('cfOnboardingSteps Directive', () => {
   beforeEach(function () {
@@ -11,22 +10,49 @@ describe('cfOnboardingSteps Directive', () => {
     }];
 
     this.createSpaceDialog = sinon.stub();
-
+    this.contentPreviews = {
+      previewId: {
+        configurations: [
+          {
+            contentType: 'contentTypeId',
+            enabled: true,
+            example: true,
+            url: 'https://potato.media'
+          }
+        ]
+      }
+    };
     module('contentful/test', $provide => {
       $provide.value('utils/LaunchDarkly', {
-        // Begin test code: test-ps-02-2018-tea-onboarding-steps
-        // eslint-disable-next-line no-unused-vars
-        onABTest: (scope, flagName, handler) => handler(false)
-        // End test code: test-ps-02-2018-tea-onboarding-steps
+        onFeatureFlag: sinon.stub(),
+        getCurrentVariation: sinon.stub().resolves(false)
       });
       $provide.value('contentPreview', {
         contentPreviewsBus$: this.previews$
       });
       $provide.value('services/TokenStore', {
-        getOrganizations: () => $q.resolve(this.organizations)
+        getOrganizations: sinon.stub().resolves(this.organizations),
+        user$: K.createMockProperty({sys: {id: 1}})
       });
       $provide.value('services/CreateSpace', {
         showDialog: this.createSpaceDialog
+      });
+      $provide.value('contentPreview', {
+        // using this instead of our added on `.resolves` since that uses
+        // $q internally but this directive uses native Promises and that
+        // causes things to fail
+        getAll: sinon.stub().callsFake(() => Promise.resolve(this.contentPreviews))
+      });
+      $provide.value('createModernOnboarding', {
+        getStoragePrefix: 'ctfl:userSysId:modernStackOnboarding',
+        getCredentials: sinon.stub().resolves({
+          deliveryToken: 'deliveryToken',
+          managementToken: 'managementToken'
+        }),
+        MODERN_STACK_ONBOARDING_SPACE_NAME: 'gatsby-bruv'
+      });
+      $provide.value('components/shared/auto_create_new_space', {
+        getKey: sinon.stub().returns('key')
       });
     });
     this.$state = this.$inject('$state');
@@ -57,7 +83,7 @@ describe('cfOnboardingSteps Directive', () => {
       this.$state.current.name = 'home';
       this.compile();
       const spaceContext = this.$inject('spaceContext');
-      spaceContext.publishedCTs = {getAllBare: () => []};
+      spaceContext.publishedCTs = {getAllBare: () => [], items$: K.createMockProperty([])};
       spaceContext.getData = sinon.stub().withArgs('activatedAt').returns(null);
       spaceContext.space = null;
     });
@@ -81,7 +107,7 @@ describe('cfOnboardingSteps Directive', () => {
       beforeEach(function () {
         this.$state.current.name = 'spaces.detail.home';
         this.spaceContext = this.$inject('spaceContext');
-        this.spaceContext.publishedCTs = {getAllBare: () => []};
+        this.spaceContext.publishedCTs = {getAllBare: () => [], items$: K.createMockProperty([])};
         this.spaceContext.getData = sinon.stub().withArgs('activatedAt').returns(null);
         this.spaceContext.space = {};
       });
@@ -93,7 +119,7 @@ describe('cfOnboardingSteps Directive', () => {
       });
 
       it('no entries yet', function () {
-        this.spaceContext.publishedCTs = {getAllBare: () => [{}]};
+        this.spaceContext.publishedCTs = {getAllBare: () => [{}], items$: K.createMockProperty([])};
         this.spaceContext.space.getEntries = sinon.stub().resolves([]);
         this.compile();
         this.assertCompletedSteps(2);
@@ -101,7 +127,7 @@ describe('cfOnboardingSteps Directive', () => {
       });
 
       it('content types and entries created', function () {
-        this.spaceContext.publishedCTs = {getAllBare: () => [{}]};
+        this.spaceContext.publishedCTs = {getAllBare: () => [{}], items$: K.createMockProperty([])};
         this.spaceContext.space.getEntries = sinon.stub().resolves([{}]);
         this.compile();
         this.assertCompletedSteps(3);
@@ -113,7 +139,7 @@ describe('cfOnboardingSteps Directive', () => {
       beforeEach(function () {
         this.$state.current.name = 'spaces.detail.home';
         this.spaceContext = this.$inject('spaceContext');
-        this.spaceContext.publishedCTs = {getAllBare: () => [{}]};
+        this.spaceContext.publishedCTs = {getAllBare: () => [{}], items$: K.createMockProperty([])};
         this.spaceContext.getData = sinon.stub();
         this.spaceContext.getData.withArgs('activatedAt').returns('2017-03-03T16:14:00Z');
         this.spaceContext.space = {};

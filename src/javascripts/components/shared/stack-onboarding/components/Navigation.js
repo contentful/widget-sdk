@@ -66,7 +66,7 @@ angular.module('contentful')
             active={active}
             id={2}
             value={2}
-            title='Explore website Content Structure'
+            title='Explore website content structure'
             link='explore'
             trackingElementId='explore_step_from_navigation'
           />

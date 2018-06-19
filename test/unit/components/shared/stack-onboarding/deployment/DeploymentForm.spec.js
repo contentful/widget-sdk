@@ -3,12 +3,17 @@ import _ from 'lodash';
 import sinon from 'npm:sinon';
 
 import { mount } from 'enzyme';
+import * as K from 'test/helpers/mocks/kefir';
 
 describe('in DeploymentForm', () => {
   let DeploymentForm;
 
   beforeEach(function () {
-    module('contentful/test');
+    module('contentful/test', $provide => {
+      $provide.value('services/TokenStore', {
+        user$: K.createMockProperty({sys: {id: 1}})
+      });
+    });
 
     DeploymentForm = this.$inject('DeploymentFormModule');
   });
@@ -62,7 +67,7 @@ describe('in DeploymentForm', () => {
     const wrapper = mount(<DeploymentForm onComplete={onComplete} />);
 
     wrapper.setState({
-      url: 'correct-url.heroku.com'
+      url: 'correct-url.herokuapp.com'
     });
 
     wrapper.find('button[type="submit"]').simulate('click');

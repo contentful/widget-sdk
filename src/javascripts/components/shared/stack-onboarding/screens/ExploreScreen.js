@@ -18,6 +18,7 @@ angular.module('contentful')
   const ContentFlowExplorer = require(ContentFlowExplorerModule);
   const WithLink = require(WithLinkModule);
   const ScreenHeader = require(ScreenHeaderModule);
+  const Icon = require('ui/Components/Icon').default;
 
   const ExploreScreen = () => {
     const headerTitle = (
@@ -26,7 +27,7 @@ angular.module('contentful')
         <strong>
           Gatsby Starter for Contentful
         </strong>
-        &nbsp;blog content structure
+        &nbsp;blog content structure.
       </React.Fragment>
     );
     const headerSubtitle = <p>Explore the data flow of the blog, then select a hosting service.</p>;
@@ -38,10 +39,14 @@ angular.module('contentful')
         <WithLink trackingElementId='explore_screen_completed' link='deploy'>
           {move => (
             <Button onClick={move} className='modern-stack-onboarding--next-button'>
-              Select deployment service
+              Select hosting service
             </Button>
           )}
         </WithLink>
+        <div className='modern-stack-onboarding--floating-hint'>
+          <p>Hover over the left panel to see the data flow of the blog.</p>
+          <Icon name='icon-onboarding-arrow' className='modern-stack-onboarding--floating-hint-arrow' />
+        </div>
         <ContentFlowExplorer />
       </FullScreen>
     );
