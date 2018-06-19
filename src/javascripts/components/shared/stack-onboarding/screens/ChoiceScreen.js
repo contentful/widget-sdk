@@ -29,10 +29,10 @@ angular.module('contentful')
     renderBlock ({ title, text, button }) {
       return (
         <div className='modern-stack-onboarding--choice-block'>
-          <h3>
+          <h3 className='modern-stack-onboarding--choice-block-title'>
             {title}
           </h3>
-          <p>
+          <p className='modern-stack-onboarding--choice-block-description'>
             {text}
           </p>
           {button}
