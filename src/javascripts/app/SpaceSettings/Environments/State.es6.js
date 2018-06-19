@@ -107,12 +107,18 @@ const reduce = makeReducer({
   [ReceiveResponse]: (state, result) => {
     return match(result, {
       [C.Success]: ([items, resource]) => {
+        // Resource service gets usage on organization level for v1 orgs - see
+        // https://contentful.atlassian.net/browse/MOI-144
+        // This should be fixed when `feature-bv-2018-01-features-api` is turned on.
+        //
+        // Note: there is a hardcoded limit of 100 environments for v1 orgs on the
+        // backend, but we don't enforce it on frontend as it should not be hit
+        // under normal circumstances.
+        if (state.isLegacyOrganization) {
+          resource = { usage: items.length };
+        }
         return assign(state, {
           items: items.map(makeEnvironmentModel),
-          // Note: we don't show limits for v1 orgs.
-          // There is a hardcoded limit of 100 environments for v1 orgs on the
-          // backend, but we don't enforce it on frontend as it should not be hit
-          // under normal circumstances.
           resource,
           canCreateEnv: canCreate(resource),
           isLoading: false
