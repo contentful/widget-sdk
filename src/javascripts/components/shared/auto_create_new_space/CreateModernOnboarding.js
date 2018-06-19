@@ -29,6 +29,12 @@ angular.module('contentful')
     MODERN_STACK_ONBOARDING_SPACE_NAME: 'Gatsby Starter for Contentful',
     getUser: () => getValue(user$),
     getStoragePrefix: () => `ctfl:${createModernOnboarding.getUser().sys.id}:modernStackOnboarding`,
+    /**
+     * @description
+     * Get the first entry that has content type "person"
+     *
+     * @return {Promise<Entry>}
+     */
     async getPerson () {
       const person = 'person';
       const personEntryPromise = spaceContext.space.getEntries({content_type: person});
@@ -40,6 +46,7 @@ angular.module('contentful')
         return null;
       }
 
+      // this is needed as getEntries returns entries with internal field ids
       return Entries.internalToExternal(personEntry[0].data, personCT.data);
     },
     create: ({ onDefaultChoice, org, user, markOnboarding }) => {
