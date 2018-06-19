@@ -36,12 +36,11 @@ angular.module('contentful')
       var fieldFactory = require('fieldFactory');
       var spaceContext = require('spaceContext');
       var $q = require('$q');
-
-      var $iframe = element.find('iframe');
-      var iframe = $iframe.get(0);
       var WidgetAPI = require('widgets/API');
       var K = require('utils/kefir');
       var PathUtils = require('utils/Path');
+
+      var appDomain = 'app.' + require('Config').domain;
 
       var doc = scope.docImpl || scope.otDoc;
       var entityInfo = scope.entityInfo;
@@ -62,7 +61,7 @@ angular.module('contentful')
         // TODO the isDisabled property is only required for <v2.1 of the
         // extension SDK. We should remove it
         {field: scope.widget.field, locale: scope.locale, isDisabled: scope.fieldLocale.access.disabled},
-        iframe
+        element[0].querySelector('iframe')
       );
 
       scope.$on('$destroy', () => {
@@ -109,16 +108,33 @@ angular.module('contentful')
       }
 
       function initializeIframe () {
+        var $iframe = element.find('iframe');
+        var src = scope.widget.src;
+        var srcdoc = scope.widget.srcdoc;
+
         $iframe.one('load', () => {
           scope.$applyAsync(() => {
             widgetAPI.connect();
           });
         });
 
-        if (scope.widget.src) {
-          $iframe.attr('src', scope.widget.src);
+        if (src && !isAppDomain(src)) {
+          var sandbox = $iframe.attr('sandbox') + ' allow-same-origin';
+          $iframe.attr('sandbox', sandbox);
+          $iframe.attr('src', src);
+        } else if (srcdoc) {
+          $iframe.attr('srcdoc', srcdoc);
+        }
+      }
+
+      function isAppDomain (src) {
+        const protocol = ['//', 'http://', 'https://'].find(p => src.startsWith(p));
+
+        if (protocol) {
+          const [domain] = src.slice(protocol.length).split('/');
+          return domain === appDomain || domain.endsWith(`.${appDomain}`);
         } else {
-          $iframe.attr('srcdoc', scope.widget.srcdoc);
+          return false;
         }
       }
 
