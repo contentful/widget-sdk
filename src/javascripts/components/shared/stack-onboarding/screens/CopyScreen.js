@@ -80,11 +80,11 @@ angular.module('contentful')
           <ScreenHeader title={headerTitle} subtitle={headerSubtitle} />
           <div className='modern-stack-onboarding--copyscreen-content'>
             <div className='modern-stack-onboarding--copyscreen-text'>
-              Copy the following commands into your terminal.
+              Copy the following commands into your terminal:
             </div>
             {this.renderGitSteps()}
             <div className='modern-stack-onboarding--copyscreen-text'>
-              See the blog in action.
+              See the blog in action:
             </div>
             {this.renderCodeLine('npm run dev')}
             <div className='modern-stack-onboarding--copyscreen-text'>
