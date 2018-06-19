@@ -27,7 +27,7 @@ angular.module('contentful')
         <strong>
           Gatsby Starter for Contentful
         </strong>
-        &nbsp;blog content structure
+        &nbsp;blog content structure.
       </React.Fragment>
     );
     const headerSubtitle = <p>Explore the data flow of the blog, then select a hosting service.</p>;
