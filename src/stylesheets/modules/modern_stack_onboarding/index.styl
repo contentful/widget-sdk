@@ -23,10 +23,10 @@
   &--title
     text-align: center
     margin: 150px auto 100px
-    font-size: 48px
-    line-height: 56px
+    font-size: 44px
     font-weight: 500
-    max-width: 800px
+    line-height: 46px
+    max-width: 1000px
 
     &__small
       font-size: 36px
@@ -56,9 +56,6 @@
       left: -110px
       margin-top: 5px
 
-
-  &--choice-title
-
   &--choice-blocks
     display: flex
     justify-content: center
@@ -67,11 +64,21 @@
     position: relative
     text-align: center
     padding: 15px 25px
-    border-radius: 3px
-    width: 400px
-    height: 200px
-    margin: 0 30px
-    border: 1px solid gray
+    border-radius: 4px
+    width: 481px
+    height: 240px
+    margin: 0 35px
+    border: 1px solid $colors.element-mid
+
+  &--choice-block-title
+    font-size: 21px
+    font-weight: 600
+    line-height: 29px
+
+  &--choice-block-description
+    font-size: 18px
+    line-height: 25px
+    color: $colors.text-mid
 
   &--block-button-wrapper
     position: absolute
@@ -165,12 +172,18 @@
     justify-content: space-between
     margin-top: -40px
 
+    &-tabs
+      padding-left: 50px
+
     &-data
-      width: 44%
+      background: #fff
+      width: 50%
+      padding: 0 50px
 
     &-iframe
-      width: 52%
-      padding-top: 56px
+      width: 50%
+      background-color: #536171
+      padding: 75px 38px 30px
 
     &-wrapper
       background: #fff
@@ -180,8 +193,9 @@
 
   &--iframe
     width: 100%
-    height: 1200px
+    height: 1000px
     border: 0
+    display: block
 
   &--deploy-content
     margin: 0 auto
@@ -284,14 +298,16 @@
       background-color: $colors.element-mid
       position: absolute
 
-  &--active-code
-    transition: background 0.2s
-    background: red
-    cursor: pointer
+  &--code-wrapper
+    position: relative
 
   &--active-data
+    position: absolute
+    top: -10px
+    bottom: -10px
+    left: -10px
+    right: -10px
     transition: background 0.2s
-    cursor: pointer
-
-    .modern-stack-onboarding--data-flow-elem-title, .modern-stack-onboarding--data-flow-elem-subtitle
-      background: red
+    background: $colors.green-light
+    opacity: 0.3
+    pointer-events: none

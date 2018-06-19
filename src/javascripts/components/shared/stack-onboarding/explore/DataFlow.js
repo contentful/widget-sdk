@@ -87,7 +87,7 @@ angular.module('contentful')
           <div
             key={elem.title}
             style={style}
-            className={`modern-stack-onboarding--data-flow-elem ${elem.active ? 'modern-stack-onboarding--active-data' : ''}`}
+            className={'modern-stack-onboarding--data-flow-elem'}
             onMouseEnter={elem.onHover}
             onMouseLeave={elem.onLeave}
           >
@@ -97,6 +97,7 @@ angular.module('contentful')
             <div className='modern-stack-onboarding--data-flow-elem-subtitle'>
               {elem.subtitle}
             </div>
+            {elem.active && <div className={'modern-stack-onboarding--active-data'} />}
           </div>
           {elem.children && elem.children.map((child, i) => {
             // lift element a bit if it is a single child

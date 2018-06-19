@@ -33,12 +33,15 @@ angular.module('contentful')
         <div>
           <h4>{title}</h4>
           {subtitle && <div>{subtitle}</div>}
-          <div onMouseEnter={onHover} onMouseLeave={onLeave}>
+          <div
+            onMouseEnter={onHover}
+            onMouseLeave={onLeave}
+            className={'modern-stack-onboarding--code-wrapper'}>
             <Code
               lineNumbers={false}
               code={code}
-              className={active ? 'modern-stack-onboarding--active-code' : ''}
             />
+            {active && <div className={'modern-stack-onboarding--active-data'} />}
           </div>
         </div>
       );
