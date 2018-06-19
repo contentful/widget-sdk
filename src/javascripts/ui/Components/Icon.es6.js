@@ -28,6 +28,16 @@ import SpaceIcon from 'svg/space';
 import PagesIcon from 'svg/icon-pages';
 import OnboardingArrowIcon from 'svg/icon-onboarding-arrow';
 import OnboardingContentfulFlowDiagram from 'svg/icon-onboarding-contentful-req-res';
+import AWSIcon from 'svg/aws';
+import DotNetIcon from 'svg/dotnet';
+import JavaScriptIcon from 'svg/javascript';
+import MetalSmithIcon from 'svg/metalsmith';
+import PythonIcon from 'svg/python';
+import RubyIcon from 'svg/ruby';
+import SwiftIcon from 'svg/swift';
+import AndroidIcon from 'svg/android';
+import PHPIcon from 'svg/php';
+import JekyllIcon from 'svg/jekyll';
 
 const SVGS = {
   'home-welcome': HomeWelcomeIcon,
@@ -53,7 +63,17 @@ const SVGS = {
   'space': SpaceIcon,
   'icon-pages': PagesIcon,
   'icon-onboarding-arrow': OnboardingArrowIcon,
-  'icon-onboarding-contentful-req-res': OnboardingContentfulFlowDiagram
+  'icon-onboarding-contentful-req-res': OnboardingContentfulFlowDiagram,
+  'aws': AWSIcon,
+  'dotnet': DotNetIcon,
+  'javascript': JavaScriptIcon,
+  'metalsmith': MetalSmithIcon,
+  'python': PythonIcon,
+  'ruby': RubyIcon,
+  'swift': SwiftIcon,
+  'android': AndroidIcon,
+  'php': PHPIcon,
+  'jekyll': JekyllIcon
 };
 
 const Icon = createReactClass({
