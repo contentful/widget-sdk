@@ -35,7 +35,7 @@ angular.module('contentful')
         const controller = this;
 
         controller.shouldShowTEANextSteps =
-          () => controller.showModernStackContentChoiceNextSteps || controller.isTEASpace;
+          () => controller.showModernStackContentChoiceNextSteps || (controller.isModernStackOnboardingFeatureEnabled && controller.isTEASpace);
 
         controller.shouldShowGenericNextSteps =
           () => !controller.showModernStackDevChoiceNextSteps && !controller.shouldShowTEANextSteps();
@@ -163,6 +163,8 @@ angular.module('contentful')
         });
 
         LD.onFeatureFlag($scope, modernStackOnboardingFlag, flag => {
+          controller.isModernStackOnboardingFeatureEnabled = flag;
+
           if (spaceContext.space) {
             updateModernStackOnboardingData(flag);
           }
