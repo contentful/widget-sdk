@@ -69,7 +69,7 @@ angular.module('contentful')
           <strong>
             Gatsby Starter for Contentful
           </strong>
-          &nbsp;blog
+          &nbsp;blog.
         </React.Fragment>
       );
       const headerSubtitle = <p>You’ll need a local copy of this repository to deploy in the next steps.</p>;
@@ -80,7 +80,7 @@ angular.module('contentful')
           <ScreenHeader title={headerTitle} subtitle={headerSubtitle} />
           <div className='modern-stack-onboarding--copyscreen-content'>
             <div className='modern-stack-onboarding--copyscreen-text'>
-              Copy the following commands into your terminal
+              Copy the following commands into your terminal.
             </div>
             {this.renderGitSteps()}
             <div className='modern-stack-onboarding--copyscreen-text'>
