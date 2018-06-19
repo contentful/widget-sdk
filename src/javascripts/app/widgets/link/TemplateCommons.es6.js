@@ -74,13 +74,13 @@ export function actions (actionClass) {
       dataTestId: 'entity-edit',
       ngIf: 'actions.edit',
       cfSref: 'stateRef',
-      ngClick: 'actions.edit($event)'
+      ngClick: 'actions.edit($event); $event.stopPropagation();'
     }, [h('cf-icon', {name: 'edit'})]),
     h(`a.${actionClass}`, {
       dataTestId: 'entity-edit',
       ngIf: '(stateRef || actions.slideinEdit) && !actions.edit',
       cfSref: 'stateRef',
-      ngClick: 'onClick($event)'
+      ngClick: 'onClick($event); $event.stopPropagation();'
     }, [h('cf-icon', {name: 'edit'})]),
     h(`a.${actionClass}`, {
       dataTestId: 'asset-download',
@@ -88,7 +88,7 @@ export function actions (actionClass) {
       ngHref: '{{downloadUrl}}',
       target: '_blank',
       rel: 'noopener noreferrer',
-      ngClick: 'onClick($event)'
+      ngClick: 'onClick($event); $event.stopPropagation();'
     }, [h('cf-icon', {name: 'download'})]),
     h(`button.${actionClass}`, {
       dataTestId: 'entity-remove',

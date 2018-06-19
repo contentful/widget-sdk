@@ -23,7 +23,7 @@ describe('cfEntityLink directive', () => {
         }, entity.sys);
       }
 
-      return this.$compile(this.h('cf-entity-link', {
+      const element = this.$compile(this.h('cf-entity-link', {
         entity: 'entity',
         entityHelpers: 'entityHelpers',
         actions: 'actions',
@@ -33,7 +33,12 @@ describe('cfEntityLink directive', () => {
         entityHelpers: entityHelpers,
         actions: actions,
         config: config
-      }).get(0);
+      });
+
+      const scope = element.isolateScope();
+      scope.useRedesignedCardTemplate = false;
+      this.$apply();
+      return element.get(0);
     };
   });
 
@@ -153,7 +158,7 @@ describe('cfEntityLink directive', () => {
     if (results.length === 0) {
       throw new Error(`Cannot find element with selector ${selector}`);
     } else if (results.length > 1) {
-      throw new Error(`Found multiple elements with selector ${selector}`);
+      throw new Error(`Found ${results.length} elements with selector ${selector}`);
     } else {
       return results[0];
     }

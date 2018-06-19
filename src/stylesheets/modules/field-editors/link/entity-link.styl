@@ -59,3 +59,151 @@
         transform: rotate(45deg)
       &:after
         transform: rotate(-45deg)
+
+// ReferenceCard Beta Start
+
+.ReferenceCard {
+  border: 1px solid $colors.element-mid;
+  border-radius: 2px;
+  display: flex;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  background: $colors.white;
+  transition: all 200ms ease-in-out;
+  transform: translate3d(0 ,0 ,0);
+  cursor: pointer;
+
+  &:hover {
+    transform: translate3d(0 ,-2px ,0);
+    box-shadow: 0 6px 3px -3px rgba(0,0,0,0.1);
+    border-color: $colors.element-dark;
+  }
+
+  &--minimized {
+    &:hover {
+      transform: none;
+    }
+  }
+
+  .entity-selector__item.x--selected & {
+    background: $colors.element-light;
+  }
+}
+
+.ui-sortable-helper .ReferenceCard {
+  box-shadow: 0 3px 10px rgba(0,0,0,0.20);
+}
+
+.ReferenceCard__handle {
+  width: 14px;
+  border-right: 1px solid $colors.element-mid;
+  align-items: center;
+  display: flex;
+  background: $colors.element-lightest;
+
+  [data-drag-handle] {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    transition: background 200ms ease-in-out;
+
+    &:hover {
+      background: #E5EBED;
+    }
+  }
+}
+
+.ReferenceCard__wrapper {
+  flex: 1 0 0;
+  padding: 14px;
+}
+
+.ReferenceCard__header {
+  line-height: 21px;
+  display: flex;
+
+  /**
+   * ReferenceCard actions are absolutely positioned. This padding is required
+   * to make sure that content within the header don't cause any overlap.
+   */
+
+  &--has-actions {
+    padding-right: 44px;
+  }
+}
+
+.ReferenceCard__content-type {
+  flex: 1 1 0;
+  overflow: hidden;
+  color: $colors.text-light;
+  margin-bottom: 4px;
+}
+
+.ReferenceCard__status {
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+
+  &--archived  { color: $colors.red-light; }
+  &--changed   { color: $colors.blue-light; }
+  &--draft     { color: $colors.orange-light; }
+  &--published { color: $colors.green-light; }
+}
+
+.ReferenceCard__actions {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: $colors.text-mid;
+  position: absolute;
+  top: 14px;
+  right: 14px;
+}
+
+.ReferenceCard__action {
+  display: inline-block;
+
+  svg {
+    color: #8091a5
+  }
+
+  & + .ReferenceCard__action {
+    margin-left: 4px;
+  }
+}
+
+.ReferenceCard__content {
+  line-height: 21px;
+  position: relative;
+  display: flex;
+}
+
+.ReferenceCard__text {
+  flex: 1 0 0;
+}
+
+.ReferenceCard__title {
+  font-weight: bold;
+  color: $colors.text-dark;
+
+  .ReferenceCard--minimized &,
+  .ReferenceCard--missing & {
+    flex: 1 0 0;
+  }
+}
+
+.ReferenceCard__description {
+  margin-top: 4px;
+  color: $colors.text-mid;
+}
+
+.ReferenceCard__image {
+  img {
+    display: block;
+  }
+
+  &--thumbnail {
+    margin-left: 20px;
+  }
+}

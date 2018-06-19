@@ -1,135 +1,88 @@
 import {h} from 'utils/hyperscript';
-import * as Colors from 'Styles/Colors';
-import {
-  dragHandle,
-  status,
-  titleText,
-  actions
-} from './TemplateCommons';
+import {dragHandle, actions} from './TemplateCommons';
+import LegacyEntityLinkTemplate from './LegacyEntityLinkTemplate';
 
 /**
  * Creates the template for entity links used by the `cfEntityLink`
  * directives.
- *
- * Consists of
- * - drag handler (configurable)
- * - thumbnail (configurable)
- * - status
- * - title
- * - description (configurable)
- * - actions
- *   - edit
- *   - download
- *   - remove
  */
-export default function () {
-  return h('div.entity-link', [
-    dragHandle({
-      position: 'absolute',
-      paddingLeft: '11px',
-      paddingRight: '9px',
-      marginTop: '-1px'
-    }),
 
-    h('a.entity-link__content', {
+export default function () {
+  // Using triple equals to protect against slow feature flag loading
+
+  return h('div', [
+    h('div', { ngIf: 'useRedesignedCardTemplate === false' }, [
+      LegacyEntityLinkTemplate()
+    ]),
+    h('div', { ngIf: 'useRedesignedCardTemplate === true' }, [
+      entityCard(),
+      entityCardMinimized(),
+      entityCardMissing()
+    ])
+  ]);
+}
+
+function entityCardMissing () {
+  return h('article.ReferenceCard.ReferenceCard--missing', { ngIf: 'missing' }, [
+    h('div.ReferenceCard__handle', {
+      ngIf: 'config.draggable'
+    }, [dragHandle({})]),
+
+    h('a.ReferenceCard__wrapper', {
       dataTestId: 'entity-link-content',
-      ngIf: '(stateRef || actions.slideinEdit) && !actions.edit',
       cfSref: 'stateRef',
       ngClick: 'onClick($event)'
-    }, [content()]),
-    h('a.entity-link__content', {
-      dataTestId: 'entity-link-content',
-      ngIf: 'actions.edit',
-      ngClick: 'actions.edit($event)',
-      cfSref: 'stateRef'
-    }, [content()]),
-    h('.entity-link__content', {
-      dataTestId: 'entity-link-content',
-      ngIf: '!stateRef && !actions.edit'
-    }, [content()]),
+    }, [
+      h('header.ReferenceCard__header', { ngClass: '!(actions | isEmpty) && "ReferenceCard__header--has-actions"' }, [
+        h('div.ReferenceCard__title', { dataTestId: 'entity-link-title' }, ['{{ (title | truncate:255) || "Entity missing or inaccessible" }}'])
+      ])
+    ]),
 
-    actions('entity-link__action')
+    h('div.ReferenceCard__actions', [actions('ReferenceCard__action')])
   ]);
 }
 
-function content () {
-  return [
-    image(),
-    status({
-      marginTop: '2px',
-      marginRight: '0.5em'
-    }),
-    h('div', {
-      style: {
-        flex: '1 1 auto',
-        overflow: 'hidden'
-      }
-    }, text()),
-
-    // Content type information
-    h('div', {
-      dataTooltip: 'Content type',
-      style: {
-        flexShrink: '0',
-        margin: '1px 10px -1px 10px',
-        color: Colors.byName.textLight,
-        maxWidth: '30%',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
-        overflow: 'hidden'
-      }
-    }, [
-      '{{ contentTypeName }}'
-    ])
-  ].join('');
-}
-
-/**
- * A thumbnail image for the entity when it is available
- */
-function image () {
-  return h('.entity-link__image', {
-    ngIf: 'config.showDetails',
-    ngClass: '{"entity-link__image--missing": !image}'
+function entityCardMinimized () {
+  return h('article.ReferenceCard.ReferenceCard--minimized', {
+    ngIf: 'config.minimized && !missing'
   }, [
-    h('cf-thumbnail', {file: 'image', size: '56', fit: 'thumb'})
+    h('a.ReferenceCard__wrapper', { dataTestId: 'entity-link-content' }, [
+      h('header.ReferenceCard__header', [
+        h('div.ReferenceCard__title', { dataTestId: 'entity-link-title' }, ['{{ (title | truncate:255) || "Untitled" }}']),
+        h('div.ReferenceCard__status.ReferenceCard__status--{{entityState}}', { dataEntityState: '{{entityState}}' }, ['{{ entityState }}'])
+      ])
+    ])
   ]);
 }
 
+function entityCard () {
+  return h('article.ReferenceCard', { ngIf: '!config.minimized && !missing' }, [
+    h('div.ReferenceCard__handle', {
+      ngIf: 'config.draggable'
+    }, [dragHandle({})]),
 
-/**
- * Display the entity title and description.
- *
- * There are special styles and placeholders when the title or
- * description cannot be determined or the entity is missing.
- */
-function text () {
-  return [
-    h('div', {
-      dataTestId: 'entity-link-title',
-      style: {
-        fontSize: '16px',
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis'
-      }
-    }, [titleText()]),
-    h('div', {
-      ngIf: 'config.showDetails',
-      style: {
-        // TODO should be imported from styles
-        color: '#8091A5',
-        // TODO should be imported from style helper
-        marginTop: '0.64em'
-      }
+    h('a.ReferenceCard__wrapper', {
+      dataTestId: 'entity-link-content',
+      cfSref: 'stateRef',
+      ngClick: 'onClick($event)'
     }, [
-      h('span', {
-        ngIf: '!missing && description'
-      }, ['{{ description | truncate:150 }}']),
-      h('span', {
-        ngIf: 'missing || !description',
-        style: {fontStyle: 'italic'}
-      }, ['No description available'])
-    ])
-  ];
+      h('header.ReferenceCard__header', { ngClass: '!(actions | isEmpty) && "ReferenceCard__header--has-actions"' }, [
+        h('div.ReferenceCard__content-type', { ngIf: 'contentTypeName' }, ['{{ contentTypeName }}']),
+        h('div.ReferenceCard__status.ReferenceCard__status--{{entityState}}', { dataEntityState: '{{entityState}}' }, ['{{ entityState }}'])
+      ]),
+      h('div.ReferenceCard__content', [
+        h('div.ReferenceCard__text', [
+          h('div.ReferenceCard__title', { dataTestId: 'entity-link-title' }, ['{{ (title | truncate:255) || "Untitled" }}']),
+          h('div.ReferenceCard__description', {
+            ngIf: 'description'
+          }, ['{{ description | truncate:127 }}'])
+        ]),
+        h('div.ReferenceCard__image.ReferenceCard__image--thumbnail', {
+          ngIf: 'image'
+        }, [h('cf-thumbnail', {file: 'image', size: '70', fit: 'thumb'})])
+      ])
+    ]),
+
+    h('div.ReferenceCard__actions', [actions('ReferenceCard__action')])
+  ]);
 }

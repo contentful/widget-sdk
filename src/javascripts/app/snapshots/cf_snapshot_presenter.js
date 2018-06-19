@@ -104,7 +104,7 @@ angular.module('cf.app')
       });
 
       $scope.helper = EntityHelpers.newForLocale($scope.locale.code);
-      $scope.config = {};
+      $scope.config = { minimized: true };
     }]
   };
 }])

@@ -124,7 +124,7 @@ angular.module('contentful')
 
     var params = _.pickBy({
       w: options.width,
-      h: options.width,
+      h: options.height !== undefined ? options.height : options.width,
       f: options.focus,
       fit: options.fit
     }, value => !!value);
