@@ -42,10 +42,10 @@ angular.module('contentful')
         </React.Fragment>
       );
       const headerSubtitle = (
-        <React.Fragment>
+        <p>
           Select your preferred hosting service to see the CLI deploy commands.<br />
           We selected two hosting service options as an example to get you started.
-        </React.Fragment>
+        </p>
       );
 
       return (
