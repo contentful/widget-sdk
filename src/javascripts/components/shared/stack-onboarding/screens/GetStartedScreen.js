@@ -36,8 +36,7 @@ angular.module('contentful')
         </h3>
         <div className={'modern-stack-onboarding--logogrid-wrapper'}>
           {logos}
-          <img
-            src={'/app/images/modern_onboarding_overview.png'}
+          <div
             className={'modern-stack-onboarding--logogrid-image'}
           />
           <WithLink trackingElementId='get_started_screen_completed' link='copy'>
