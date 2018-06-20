@@ -4,6 +4,7 @@ import createReactClass from 'create-react-class';
 import {name as TabsModule} from '../../../react/molecules/Tabs';
 import {name as CodeModule} from '../../../react/atoms/Code';
 import {name as CreateModernOnboardingModule} from '../../auto_create_new_space/CreateModernOnboarding';
+import {name as AnchorModule} from '../../../react/atoms/Anchor';
 
 export const name = 'deployment-strategies-onboarding';
 
@@ -11,6 +12,7 @@ angular.module('contentful')
 .factory(name, ['require', function (require) {
   const Tabs = require(TabsModule);
   const Code = require(CodeModule);
+  const A = require(AnchorModule);
   const {getCredentials} = require(CreateModernOnboardingModule);
   const spaceContext = require('spaceContext');
 
@@ -51,13 +53,9 @@ angular.module('contentful')
       /* eslint-disable react/jsx-key */
       const steps = [
         <div className='modern-stack-onboarding--deployment-list-text'>
-          <a
-            href='https://github.com/netlify/netlifyctl#installation'
-            target='_blank'
-            rel='noopener noreferrer'
-          >
+          <A href='https://github.com/netlify/netlifyctl#installation'>
             Install the Netlify CLI
-          </a>{' '}
+          </A>{' '}
           (This is a free account. You may create an account and login through your CLI).
         </div>,
         this.renderCode('netlifyctl login'),
@@ -71,10 +69,10 @@ angular.module('contentful')
       return (
         <div className='modern-stack-onboarding--deployment-strategy'>
           <h4 className='modern-stack-onboarding--deployment-strategy-title'>
-            <a href='https://www.netlify.com/' target='_blank' rel='noopener noreferrer'>
+            <A href='https://www.netlify.com/'>
               Netlify
-            </a>
-            &nbsp;CLI commands
+            </A>
+            {' CLI commands'}
           </h4>
           {this.renderList(steps)}
         </div>
@@ -84,14 +82,10 @@ angular.module('contentful')
       /* eslint-disable react/jsx-key */
       const steps = [
         <div className='modern-stack-onboarding--deployment-list-text'>
-          <a
-            href='https://devcenter.heroku.com/articles/heroku-cli#download-and-install'
-            target='_blank'
-            rel='noopener noreferrer'
-          >
+          <A href='https://devcenter.heroku.com/articles/heroku-cli#download-and-install'>
             Install the Heroku CLI
-          </a>{' '}
-          (This is a free account. You may create an account and login through your CLI).
+          </A>
+          {' (This is a free account. You may create an account and login through your CLI).'}
         </div>,
         this.renderCode('heroku login'),
         this.renderCode('heroku create --buildpack heroku/nodejs'),
@@ -111,10 +105,10 @@ angular.module('contentful')
         return (
           <div className='modern-stack-onboarding--deployment-strategy'>
             <h4 className='modern-stack-onboarding--deployment-strategy-title'>
-              <a href='https://www.heroku.com/' target='_blank' rel='noopener noreferrer'>
+              <A href='https://www.heroku.com/'>
                 Heroku
-              </a>
-              &nbsp;CLI commands
+              </A>
+              {' CLI commands'}
             </h4>
             {this.renderList(steps)}
           </div>
