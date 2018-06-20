@@ -50,7 +50,7 @@ angular.module('contentful')
     renderNetlifySteps () {
       /* eslint-disable react/jsx-key */
       const steps = [
-        <div className={'modern-stack-onboarding--deployment-list-text'}>
+        <div className='modern-stack-onboarding--deployment-list-text'>
           <a
             href='https://github.com/netlify/netlifyctl#installation'
             target='_blank'
@@ -63,7 +63,7 @@ angular.module('contentful')
         this.renderCode('netlifyctl login'),
         this.renderCode('npm run build'),
         this.renderCode('netlifyctl deploy -b public'),
-        <p className={'modern-stack-onboarding--deployment-list-text'}>
+        <p className='modern-stack-onboarding--deployment-list-text'>
           Netlify will ask if you want to create a new website. Select YES to deploy this website.
         </p>
       ];
@@ -110,11 +110,11 @@ angular.module('contentful')
       } else {
         return (
           <div className='modern-stack-onboarding--deployment-strategy'>
-            <h4 className={'modern-stack-onboarding--deployment-strategy-title'}>
-              <a href={'https://www.heroku.com/'} target='_blank' rel='noopener noreferrer'>
-                {'Heroku'}
+            <h4 className='modern-stack-onboarding--deployment-strategy-title'>
+              <a href='https://www.heroku.com/' target='_blank' rel='noopener noreferrer'>
+                Heroku
               </a>
-              {' CLI commands'}
+              &nbsp;CLI commands
             </h4>
             {this.renderList(steps)}
           </div>

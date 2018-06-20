@@ -78,9 +78,9 @@ angular.module('contentful')
       return (
         <div className='modern-stack-onboarding--deployment-form'>
           <h4 className='modern-stack-onboarding--deployment-form-title'>
-            {'Enter the website URL after deployment is complete.'}
+            Enter the website URL after deployment is complete.
           </h4>
-          <div className={'modern-stack-onboarding--deployment-form-subtitle'}>
+          <div className='modern-stack-onboarding--deployment-form-subtitle'>
             We’ll suggest next steps based on the hosting service you selected.
           </div>
           <Form onSubmit={e => e.preventDefault()}>
