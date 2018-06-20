@@ -1,5 +1,5 @@
 import pluralize from 'pluralize';
-import { get } from 'lodash';
+import { get, isNumber } from 'lodash';
 import * as Config from 'Config';
 import { assign } from 'utils/Collections';
 import { caseofEq } from 'sum-types';
@@ -168,8 +168,9 @@ function sidebar ({
   OpenCreateDialog,
   OpenUpgradeSpaceDialog
 }) {
-  const usage = resource.usage;
-  const limit = get(resource, 'limits.maximum');
+  // Master is not included in the api, display +1 usage and limit
+  const usage = resource.usage + 1;
+  const limit = get(resource, 'limits.maximum', -1) + 1;
 
   return [
     h('h2.entity-sidebar__heading', [

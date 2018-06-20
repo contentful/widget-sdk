@@ -115,7 +115,7 @@ const reduce = makeReducer({
         // backend, but we don't enforce it on frontend as it should not be hit
         // under normal circumstances.
         if (state.isLegacyOrganization) {
-          resource = { usage: items.length };
+          resource = { usage: items.length - 1 }; // exclude master for consistency with v2 api
         }
         return assign(state, {
           items: items.map(makeEnvironmentModel),
