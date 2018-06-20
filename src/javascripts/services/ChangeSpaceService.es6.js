@@ -7,10 +7,10 @@ import { getOrganization } from 'services/TokenStore';
  *
  * @param {string} organizationId
  * @param {object?} space - optional space to upgrade
- * @param {Array<object>?} limitsReached - optional used to determine recommended plan
+ * @param {object?} limitReached - optional used to determine recommended plan
  *    based on which limits were reached:
  *    {
- *      resourceType: <WizardUtils.SpaceResourceTypes>`,
+ *      name: <string> - one of ResourceUtils.resourceHumanNameMap values,
  *      usage: <number>
  *    }
  * @param {string} action - one of 'change', 'upgrade', 'downgrade'.
