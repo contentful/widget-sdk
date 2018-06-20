@@ -31,8 +31,31 @@ angular.module('contentful')
 
   var FeatureService = createFeatureService(spaceContext.getId());
 
+  var {showDialog: showSpaceModal} = require('services/ChangeSpaceService');
+
+  // Start: incentivize upgrade feature flag
+  var LD = require('utils/LaunchDarkly');
+  var flagName = 'feature-bv-06-2018-incentivize-upgrade';
+
+  LD.onFeatureFlag($scope, flagName, isEnabled => {
+    $scope.showUpgradeIncentive = isEnabled;
+  });
+  // End: incentivize upgrade feature flag
+
   ResourceUtils.useLegacy(organization).then(legacy => {
     $scope.showSidebar = !legacy;
+    $scope.upgradeSpacePlan = () => {
+      showSpaceModal({
+        organizationId: organization.sys.id,
+        space: spaceContext.space.data,
+        limitReached: $scope.resource,
+        action: 'change',
+        onSubmit: function () {
+          return updateLocalesUsageState()
+            .catch(ReloadNotification.apiErrorHandler);
+        }
+      });
+    };
   });
 
   var STATES = {
@@ -50,7 +73,6 @@ angular.module('contentful')
 
   $scope.locales = [];
   $scope.localeNamesByCode = {};
-  $scope.getPlanLocalesLimit = getPlanLocalesLimit;
   $scope.subscriptionPlanName = getSubscriptionPlanData('name');
   $scope.newLocale = newLocale;
   $scope.showSidebar = false;
@@ -65,17 +87,10 @@ angular.module('contentful')
     $scope.locales = locales;
     $scope.localeNamesByCode = groupLocaleNamesByCode(locales);
 
-    // The locales usage is only important inside of the master environment.
-    // In non-master envs, we skip the call and set the readystate to true.
-    if ($scope.insideMasterEnv) {
-      getLocalesUsageState().then(state => {
-        $scope.localesUsageState = state;
-
-        $scope.context.ready = true;
-      });
-    } else {
-      $scope.context.ready = true;
-    }
+    return updateLocalesUsageState();
+  })
+  .then(() => {
+    $scope.context.ready = true;
   })
   .catch(ReloadNotification.apiErrorHandler);
 
@@ -85,7 +100,13 @@ angular.module('contentful')
     }, {});
   }
 
-  function getLocalesUsageState () {
+  function updateLocalesUsageState () {
+    // The locales usage is only important inside of the master environment.
+    // In non-master envs, we skip the call to resources api.
+    if (!$scope.insideMasterEnv) {
+      return $q.resolve();
+    }
+
     var len = $scope.locales.length;
 
     return $q.resolve().then(() => {
@@ -99,17 +120,15 @@ angular.module('contentful')
       }
     }).then(canCreateMultiple => $q.all({
       canCreateMultiple: canCreateMultiple,
-      usage: getPlanLocalesUsage(),
-      limits: getPlanLocalesLimit()
+      resource: getPlanResource()
     })).then(result => {
       if (!result.canCreateMultiple) {
         return STATES.NO_MULTIPLE_LOCALES;
       }
 
-      $scope.usage = result.usage;
-      $scope.limit = result.limits.maximum;
+      $scope.resource = result.resource;
 
-      var reachedLimit = $scope.usage >= $scope.limit;
+      var reachedLimit = $scope.resource.usage >= $scope.resource.limits.maximum;
 
       if (!reachedLimit && len <= 1) {
         return STATES.ONE_LOCALE_USED;
@@ -120,6 +139,8 @@ angular.module('contentful')
       } else {
         return STATES.UNKNOWN;
       }
+    }).then(function (state) {
+      $scope.localesUsageState = state;
     });
   }
 
@@ -144,14 +165,6 @@ angular.module('contentful')
 
 
     return resource;
-  }
-
-  function getPlanLocalesUsage () {
-    return getPlanResource().then(resource => resource.usage);
-  }
-
-  function getPlanLocalesLimit () {
-    return getPlanResource().then(resource => ResourceUtils.getResourceLimits(resource));
   }
 
   function hasMultipleLocales () {

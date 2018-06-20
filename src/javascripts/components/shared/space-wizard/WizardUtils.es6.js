@@ -20,6 +20,14 @@ export const RequestState = {
   ERROR: 'error'
 };
 
+export const SpaceResourceTypes = {
+  Environments: 'Environments',
+  Roles: 'Roles',
+  Locales: 'Locales',
+  ContentTypes: 'Content types',
+  Records: 'Records'
+};
+
 export function formatPrice (value) {
   if (!Number.isFinite(value)) {
     return null;

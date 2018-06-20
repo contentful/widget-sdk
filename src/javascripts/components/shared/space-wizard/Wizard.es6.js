@@ -67,15 +67,14 @@ const Wizard = createReactClass({
       name: PropTypes.string.isRequired,
       isBillable: PropTypes.bool
     }).isRequired,
-    space: PropTypes.object,
-    action: function (props, propName) {
-      const validActions = [ 'create', 'change' ];
-      const action = props[propName];
 
-      if (validActions.indexOf(action) === -1) {
-        return new Error(`Action ${action} not valid for Wizard, expected one of ${validActions.join(', ')}`);
-      }
-    },
+    // Space data as defined in spaceContext.space.data
+    space: PropTypes.object,
+
+    // Resource object as created by ResourceService
+    limitReached: PropTypes.object,
+
+    action: PropTypes.oneOf([ 'create', 'change' ]),
     onCancel: PropTypes.func.isRequired,
     onConfirm: PropTypes.func.isRequired,
     onSpaceCreated: PropTypes.func.isRequired,
@@ -107,6 +106,7 @@ const Wizard = createReactClass({
   render () {
     const {
       space,
+      limitReached,
       action,
       organization,
       onCancel,
@@ -159,6 +159,7 @@ const Wizard = createReactClass({
         ...data,
         organization,
         space,
+        limitReached,
         action,
         isFormSubmitted,
         serverValidationErrors,
@@ -170,7 +171,7 @@ const Wizard = createReactClass({
       };
 
       return (
-        <div className="modal-dialog create-space-wizard" style={{width: '750px'}}>
+        <div className="modal-dialog create-space-wizard" style={{width: '780px'}}>
           <div className="modal-dialog__header" style={{padding: 0}}>
             {navigation}
             {closeButton}

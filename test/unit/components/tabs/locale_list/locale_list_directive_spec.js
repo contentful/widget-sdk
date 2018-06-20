@@ -1,7 +1,8 @@
 describe('The Locale list directive', () => {
   beforeEach(function () {
     this.flags = {
-      'feature-bv-2018-01-resources-api': false
+      'feature-bv-2018-01-resources-api': false,
+      'feature-bv-06-2018-incentivize-upgrade': false
     };
 
     this.spaceUser = {
@@ -64,6 +65,9 @@ describe('The Locale list directive', () => {
       $provide.value('utils/LaunchDarkly', {
         getCurrentVariation: sinon.stub().callsFake((flagName) => {
           return Promise.resolve(this.flags[flagName]);
+        }),
+        onFeatureFlag: sinon.stub().callsFake((_, flagName, cb) => {
+          cb(this.flags[flagName]);
         })
       });
 
@@ -192,8 +196,6 @@ describe('The Locale list directive', () => {
     this.getSidebar = function () {
       return this.container.find('.workbench-main__sidebar > .entity-sidebar');
     };
-
-    this.$inject('utils/LaunchDarkly').onFeatureFlag = sinon.stub();
   });
 
   afterEach(function () {
@@ -206,46 +208,46 @@ describe('The Locale list directive', () => {
     expect(this.container.find('.workbench-header__actions button.add-entity')).toBeNgHidden();
   });
 
-  it('the tab header add button is shown if you are not at your locale limit', function* () {
+  it('the tab header add button is shown if you are not at your locale limit', async function () {
     this.setUsageLimits(1, 10);
     this.compileElement();
 
-    yield this.$q.resolve();
+    await this.$q.resolve();
 
     expect(this.container.find('.workbench-header__actions button.add-entity')).not.toBeNgHidden();
   });
 
-  it('should show the sidebar if organization is pricing version 2', function* () {
+  it('should show the sidebar if organization is pricing version 2', async function () {
     this.organization.pricingVersion = 'pricing_version_2';
     this.flags['feature-bv-2018-01-resources-api'] = true;
 
     this.compileElement();
 
-    yield this.$q.resolve();
+    await this.$q.resolve();
 
     expect(this.container.find('div.workbench-main__sidebar').length).toBe(1);
     expect(this.container.find('div.workbench-main__sidebar')).not.toBeNgHidden();
   });
 
-  it('should not show the sidebar if organization is pricing version 1', function* () {
+  it('should not show the sidebar if organization is pricing version 1', async function () {
     this.organization.pricingVersion = 'pricing_version_1';
     this.compileElement();
 
-    yield this.$q.resolve();
+    await this.$q.resolve();
 
     expect(this.container.find('div.workbench-main__sidebar').length).toBe(0);
   });
 
-  it('should disable the button in the sidebar if the limit is reached', function* () {
+  it('should not display the add button in the sidebar if the limit is reached', async function () {
     this.organization.pricingVersion = 'pricing_version_2';
     this.flags['feature-bv-2018-01-resources-api'] = true;
 
     this.setUsageLimits(10, 10);
     this.compileElement();
 
-    yield this.$q.resolve();
+    await this.$q.resolve();
 
-    expect(this.container.find('.workbench-main__sidebar button.add-entity').attr('disabled')).toBe('disabled');
+    expect(this.container.find('.workbench-main__sidebar button.add-entity').length).toBe(0);
   });
 
   describe('inside non-master environment', () => {
@@ -253,18 +255,18 @@ describe('The Locale list directive', () => {
       this.environment.sys.id = 'dev';
     });
 
-    it('should not call the API', function* () {
+    it('should not call the API', async function () {
       this.compileElement();
 
-      yield this.$q.resolve();
+      await this.$q.resolve();
 
       expect(this.stubs.ResourceService.get.called).toBe(false);
     });
 
-    it('should not set the usage state', function* () {
+    it('should not set the usage state', async function () {
       this.compileElement();
 
-      yield this.$q.resolve();
+      await this.$q.resolve();
 
       expect(this.$scope.localesUsageState).toBeUndefined();
     });
@@ -281,103 +283,152 @@ describe('The Locale list directive', () => {
         this.environment.sys.id = 'dev';
       });
 
-      it('should always allow creation of locales', function* () {
+      it('should always allow creation of locales', async function () {
         // Force reaching the limit
         this.setUsageLimits(3, 3);
         this.compileElement();
 
-        yield this.$q.resolve();
+        await this.$q.resolve();
 
-        const sidebar = this.container.find('.workbench-main__sidebar > .entity-sidebar');
+        const sidebar = this.getSidebar();
+        expect(sidebar.find('button.add-entity').length).toBe(1);
         expect(sidebar.find('button.add-entity').attr('disabled')).toBeUndefined();
       });
     });
 
     describe('with limit of 1', () => {
-      beforeEach(function* () {
+      beforeEach(async function () {
         // You will always be at the limit with 1 locale, as a space
         // is always created with a default locale
         this.setUsageLimits(1, 1);
         this.compileElement();
 
-        yield this.$q.resolve();
-
-        this.sidebar = this.container.find('.workbench-main__sidebar > .entity-sidebar');
+        await this.$q.resolve();
       });
 
       it('should show singular "locale"', function () {
-        const text = this.sidebar.find('> p.entity-sidebar__text-profile').eq(0).text();
+        const sidebar = this.getSidebar();
+        const text = sidebar.find('.entity-sidebar__text-profile > p').eq(0).text();
 
-        expect(text).toBe('You are using 1 out of 1 locale in your space.');
+        expect(text).toBe('You are using 1 out of 1 locale available in this space.');
       });
     });
 
     describe('with a limit over 1', () => {
-      beforeEach(function* () {
+      beforeEach(async function () {
         this.setUsageLimits(1, 3);
         this.compileElement();
 
-        yield this.$q.resolve();
+        await this.$q.resolve();
 
-        this.sidebar = this.container.find('.workbench-main__sidebar > .entity-sidebar');
+        this.sidebar = this.getSidebar();
       });
 
       it('should show plural "locales"', function () {
-        const text = this.sidebar.find('> p.entity-sidebar__text-profile').eq(0).text();
+        const text = this.sidebar.find('.entity-sidebar__text-profile > p').eq(0).text();
 
-        expect(text).toBe('You are using 1 out of 3 locales in your space.');
+        expect(text).toBe('You are using 1 out of 3 locales available in this space.');
       });
     });
 
     describe('when hitting your limit', () => {
       beforeEach(function () {
         this.setUsageLimits(3, 3);
+
+        this.compileAndGetSidebar = async function () {
+          this.compileElement();
+          await this.$q.resolve();
+
+          return this.getSidebar();
+        };
       });
 
-      it('should not ask you to delete a locale if you only have one available', function* () {
-        this.setUsageLimits(1, 1);
+      function getUpgradeText (sidebar) {
+        return sidebar.find('[data-test-id="upgradeSpaceBlock"] > p').eq(0).text();
+      }
 
-        this.setRole('owner');
-        this.compileElement();
-        yield this.$q.resolve();
+      describe('with incentivize upgrade feature on', () => {
+        function getUpgradeButton (sidebar) {
+          return sidebar.find('button.upgrade-space');
+        }
 
-        const sidebar = this.container.find('.workbench-main__sidebar > .entity-sidebar');
-        const text = sidebar.find('> p.entity-sidebar__text-profile').eq(1).text();
+        beforeEach(function () {
+          this.flags['feature-bv-06-2018-incentivize-upgrade'] = true;
+        });
 
-        expect(text).toBe("You've reached the space locales limit. Upgrade to add more locales.");
+        it('should not ask you to delete a locale if you only have one available', async function () {
+          this.setUsageLimits(1, 1);
+          this.setRole('owner');
+
+          const sidebar = await this.compileAndGetSidebar();
+
+          expect(getUpgradeText(sidebar)).toBe('Upgrade the space to add more.');
+          expect(getUpgradeButton(sidebar).length).toBe(1);
+        });
+
+        it('should tell you to upgrade if you are an org admin', async function () {
+          this.setRole('admin');
+
+          const sidebar = await this.compileAndGetSidebar();
+
+          expect(getUpgradeText(sidebar)).toBe('Delete an existing locale or upgrade the space to add more.');
+          expect(getUpgradeButton(sidebar).length).toBe(1);
+        });
+
+        it('should tell you to upgrade if you are an org owner', async function () {
+          this.setRole('owner');
+
+          const sidebar = await this.compileAndGetSidebar();
+
+          expect(getUpgradeText(sidebar)).toBe('Delete an existing locale or upgrade the space to add more.');
+          expect(getUpgradeButton(sidebar).length).toBe(1);
+        });
+
+        it('should tell you to contact the admin if you are not org admin/owner', async function () {
+          this.setRole('editor');
+
+          const sidebar = await this.compileAndGetSidebar();
+
+          expect(getUpgradeText(sidebar)).toBe('Delete an existing locale or ask the administrator of your organization to upgrade the space to add more.');
+          expect(getUpgradeButton(sidebar).length).toBe(0);
+        });
       });
 
-      it('should tell you to upgrade if you are an org admin', function* () {
-        this.setRole('admin');
-        this.compileElement();
-        yield this.$q.resolve();
+      describe('with incentivize upgrade feature off', () => {
+        function getUpgradeLink (sidebar) {
+          return sidebar.find('.upgrade-link');
+        }
 
-        const sidebar = this.container.find('.workbench-main__sidebar > .entity-sidebar');
-        const text = sidebar.find('> p.entity-sidebar__text-profile').eq(1).text();
+        beforeEach(function () {
+          this.flags['feature-bv-06-2018-incentivize-upgrade'] = false;
+        });
 
-        expect(text).toBe("You've reached the space locales limit. Upgrade to add more locales, or delete an existing locale.");
-      });
+        it('should tell you to upgrade if you are an org admin', async function () {
+          this.setRole('admin');
 
-      it('should tell you to upgrade if you are an org owner', function* () {
-        this.setRole('owner');
-        this.compileElement();
-        yield this.$q.resolve();
+          const sidebar = await this.compileAndGetSidebar();
 
-        const sidebar = this.container.find('.workbench-main__sidebar > .entity-sidebar');
-        const text = sidebar.find('> p.entity-sidebar__text-profile').eq(1).text();
+          expect(getUpgradeText(sidebar)).toBe('Delete an existing locale or upgrade the space to add more.');
+          expect(getUpgradeLink(sidebar).length).toBe(1);
+        });
 
-        expect(text).toBe("You've reached the space locales limit. Upgrade to add more locales, or delete an existing locale.");
-      });
+        it('should tell you to upgrade if you are an org owner', async function () {
+          this.setRole('owner');
 
-      it('should tell you to contact the admin if you are not org admin/owner', function* () {
-        this.setRole('editor');
-        this.compileElement();
-        yield this.$q.resolve();
+          const sidebar = await this.compileAndGetSidebar();
 
-        const sidebar = this.container.find('.workbench-main__sidebar > .entity-sidebar');
-        const text = sidebar.find('> p.entity-sidebar__text-profile').eq(1).text();
+          expect(getUpgradeText(sidebar)).toBe('Delete an existing locale or upgrade the space to add more.');
+          expect(getUpgradeLink(sidebar).length).toBe(1);
+        });
 
-        expect(text).toBe("You've reached the space locales limit. Contact the admin or owner of this space to upgrade the space, or delete an existing locale.");
+        it('should tell you to contact the admin if you are not org admin/owner', async function () {
+          this.setRole('editor');
+
+          const sidebar = await this.compileAndGetSidebar();
+
+          expect(getUpgradeText(sidebar)).toBe('Delete an existing locale or ask the administrator of your organization to upgrade the space to add more.');
+          expect(getUpgradeLink(sidebar).length).toBe(0);
+        });
       });
     });
   });

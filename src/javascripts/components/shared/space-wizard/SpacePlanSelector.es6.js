@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import FetchSpacePlans, {ResourceTypes} from './FetchSpacePlans';
+import FetchSpacePlans from './FetchSpacePlans';
 import {get, kebabCase, template} from 'lodash';
 import {isOwner} from 'services/OrganizationRoles';
 import {go} from 'states/Navigator';
@@ -13,14 +13,17 @@ import {TextLink} from '@contentful/ui-component-library';
 import {asReact} from 'ui/Framework/DOMRenderer';
 import Icon from 'ui/Components/Icon';
 import ContactUsButton from 'ui/Components/ContactUsButton';
-import {RequestState, formatPrice, unavailabilityTooltipNode} from './WizardUtils';
+import {RequestState, SpaceResourceTypes, formatPrice, unavailabilityTooltipNode} from './WizardUtils';
 import {byName as colors} from 'Styles/Colors';
 import pluralize from 'pluralize';
+import {resourceHumanNameMap} from 'utils/ResourceUtils';
+import logger from 'logger';
 
 const SpacePlanSelector = createReactClass({
   propTypes: {
     organization: PropTypes.object.isRequired,
     space: PropTypes.object,
+    limitReached: PropTypes.object,
     action: PropTypes.string.isRequired,
     track: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
@@ -32,7 +35,7 @@ const SpacePlanSelector = createReactClass({
     return {newSpaceRatePlan: null};
   },
   render () {
-    const {organization, space, action, reposition} = this.props;
+    const {organization, space, limitReached, action, reposition} = this.props;
     const {newSpaceRatePlan} = this.state;
 
     return (
@@ -43,10 +46,9 @@ const SpacePlanSelector = createReactClass({
         onFetch={reposition}
       >
         {({requestState, spaceRatePlans, freeSpacesResource}) => {
-          const currentPlan = spaceRatePlans.find(plan => {
-            return plan.unavailabilityReasons && plan.unavailabilityReasons.find(reason => reason.type === 'currentPlan');
-          });
-          const highestPlan = spaceRatePlans.slice().sort((planX, planY) => planY.price >= planX.price)[0];
+          const currentPlan = getCurrentPlan(spaceRatePlans);
+          const highestPlan = getHighestPlan(spaceRatePlans);
+          const recommendedPlan = limitReached && getRecommendedPlan(spaceRatePlans, limitReached);
           const atHighestPlan = highestPlan && highestPlan.unavailabilityReasons && highestPlan.unavailabilityReasons.find(reason => reason.type === 'currentPlan');
           const payingOrg = organization.isBillable;
 
@@ -96,6 +98,7 @@ const SpacePlanSelector = createReactClass({
                       freeSpacesResource={freeSpacesResource}
                       isCurrentPlan={currentPlan === plan}
                       isSelected={get(newSpaceRatePlan, 'sys.id') === plan.sys.id}
+                      isRecommended={get(recommendedPlan, 'sys.id') === plan.sys.id}
                       isPayingOrg={payingOrg}
                       onSelect={this.selectPlan(currentPlan)} />)}
                   </div>
@@ -139,6 +142,33 @@ const SpacePlanSelector = createReactClass({
   }
 });
 
+function getCurrentPlan (spaceRatePlans) {
+  return spaceRatePlans.find(plan => {
+    return plan.unavailabilityReasons &&
+      plan.unavailabilityReasons.find(reason => reason.type === 'currentPlan');
+  });
+}
+
+function getHighestPlan (spaceRatePlans) {
+  return spaceRatePlans.slice().sort((planX, planY) => planY.price >= planX.price)[0];
+}
+
+function getRecommendedPlan (spaceRatePlans, {sys: {id}, usage}) {
+  const resourceType = resourceHumanNameMap[id];
+  if (!resourceType) {
+    logger.logError(`Unknown resource type id: ${id}`);
+  }
+
+  function getResource ({includedResources}) {
+    const resource = includedResources.find(({type}) => type === resourceType);
+    return get(resource, 'number', 0);
+  }
+
+  return spaceRatePlans.slice()
+    .sort((planX, planY) => getResource(planX) >= getResource(planY))
+    .find((plan) => getResource(plan) > usage);
+}
+
 const SpacePlanItem = createReactClass({
   propTypes: {
     plan: PropTypes.object.isRequired,
@@ -146,10 +176,11 @@ const SpacePlanItem = createReactClass({
     freeSpacesResource: PropTypes.object,
     onSelect: PropTypes.func.isRequired,
     isPayingOrg: PropTypes.bool.isRequired,
-    isCurrentPlan: PropTypes.bool
+    isCurrentPlan: PropTypes.bool,
+    isRecommended: PropTypes.bool
   },
   render: function () {
-    const {plan, isCurrentPlan, isSelected, freeSpacesResource, isPayingOrg, onSelect} = this.props;
+    const {plan, isCurrentPlan, isSelected, isRecommended, freeSpacesResource, isPayingOrg, onSelect} = this.props;
     const freeSpacesUsage = freeSpacesResource && freeSpacesResource.usage;
     const freeSpacesLimit = freeSpacesResource && freeSpacesResource.limits.maximum;
 
@@ -164,7 +195,8 @@ const SpacePlanItem = createReactClass({
           {
             'space-plans-list__item--selected': isSelected,
             'space-plans-list__item--disabled': plan.disabled,
-            'space-plans-list__item--current': isCurrentPlan
+            'space-plans-list__item--current': isCurrentPlan,
+            'space-plans-list__item--recommended': isRecommended
           }
         )}
         onClick={() => !plan.disabled && onSelect(plan)}>
@@ -218,17 +250,17 @@ const SpacePlanItem = createReactClass({
 });
 
 const ResourceTooltips = {
-  [ResourceTypes.Environments]: `This space type includes <%= number %>
+  [SpaceResourceTypes.Environments]: `This space type includes <%= number %>
       <%= units %> additional to the master environment, which allow you to create and
       maintain multiple versions of the space-specific data, and make changes to them
       in isolation.`,
-  [ResourceTypes.Roles]: `This space type includes <%= number %> <%= units %>
+  [SpaceResourceTypes.Roles]: `This space type includes <%= number %> <%= units %>
       additional to the admin role`,
-  [ResourceTypes.Records]: 'Records are entries and assets combined.'
+  [SpaceResourceTypes.Records]: 'Records are entries and assets combined.'
 };
 const ResourceUnitNames = {
-  [ResourceTypes.Environments]: 'sandbox environment',
-  [ResourceTypes.Roles]: 'user role'
+  [SpaceResourceTypes.Environments]: 'sandbox environment',
+  [SpaceResourceTypes.Roles]: 'user role'
 };
 
 function getTooltip (type, number) {

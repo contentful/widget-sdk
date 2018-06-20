@@ -5,11 +5,18 @@ import { getOrganization } from 'services/TokenStore';
  * Displays the space creation dialog. The dialog type will depend on the
  * organization that the new space should belong to.
  *
- * Accepts one required parameter - `organizationId`;
- *
  * @param {string} organizationId
+ * @param {object?} space - optional space to upgrade
+ * @param {object?} limitReached - optional used to determine recommended plan
+ *    based on which limits were reached:
+ *    {
+ *      name: <string> - one of ResourceUtils.resourceHumanNameMap values,
+ *      usage: <number>
+ *    }
+ * @param {string} action - one of 'change', 'upgrade', 'downgrade'.
+ * @param {function} onSubmit
  */
-export async function showDialog ({ organizationId, space, action, onSubmit }) {
+export async function showDialog ({ organizationId, space, limitReached, action, onSubmit }) {
   const validActions = [ 'change', 'upgrade', 'downgrade' ];
 
   if (!organizationId) {
@@ -38,6 +45,7 @@ export async function showDialog ({ organizationId, space, action, onSubmit }) {
     scopeData: {
       action,
       space,
+      limitReached,
       organization,
       onSubmit
     }

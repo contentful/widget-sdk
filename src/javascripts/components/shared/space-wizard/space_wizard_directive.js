@@ -15,6 +15,7 @@ angular.module('contentful')
       ReactDOM.render(React.createElement(Wizard, {
         action: $scope.action,
         space: $scope.space,
+        limitReached: $scope.limitReached,
         organization: $scope.organization,
         onCancel: function () { $scope.dialog.cancel(); },
         onConfirm: function () {
