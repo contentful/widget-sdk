@@ -88,9 +88,9 @@ angular.module('contentful')
             <Code
               copy
               code={curlSnippets}
-              tooltipPosition={'right'}
+              tooltipPosition='right'
               onCopy={_ => track('copy_curl_snippets')}
-              style={'margin-top: 0'}
+              style='margin-top: 0'
             />
             <br />
             <p>
