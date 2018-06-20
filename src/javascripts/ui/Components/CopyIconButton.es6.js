@@ -63,18 +63,18 @@ const CopyIconButton = createReactClass({
     const self = this;
     return (
       <span
-        role={'button'}
-        data-test-id={''}
+        role='button'
+        data-test-id='clickToCopy'
         onClick={this.copyToClipboard}
         style={{ cursor: 'pointer' }}
         className={className || ''}
       >
         <Tippy.Tooltip
-          title={'Copied!'}
+          title='Copied!'
           open={this.state.showCopiedTooltip}
           position={tooltipPosition}
           arrow
-          trigger={'manual'}
+          trigger='manual'
           duration={0}
           onShow={function () {
             // * We want the tooltip to be closed when the user clicks it.
