@@ -13,7 +13,6 @@ test/unit/forms/ng_model_spec.js
 test/unit/forms/ng_no_form_spec.js
 test/unit/services/contentful_client_spec.js
 test/unit/services/exception_handler_spec.js
-test/unit/services/field_factory_spec.js
 test/unit/services/intercom_spec.js
 test/unit/services/validation_views_spec.js
 test/unit/services/authorization_spec.js
@@ -65,7 +64,6 @@ src/javascripts/directives/cf_relative_datetime.js
 src/javascripts/directives/cf_select_all_input.js
 src/javascripts/directives/tooltip_directive.js
 src/javascripts/directives/cf_when_disabled.js
-src/javascripts/services/field_factory.js
 src/javascripts/services/lodash_timing.js
 src/javascripts/services/q_decorator.js
 src/javascripts/services/validation_dialog_error_messages.js

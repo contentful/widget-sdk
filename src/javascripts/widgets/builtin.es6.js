@@ -195,6 +195,12 @@ export function create (config) {
       : '<cf-json-editor />'
   });
 
+  registerWidget('structuredTextEditor', {
+    fieldTypes: ['StructuredText'],
+    name: 'Structured text editor',
+    template: '<cf-structured-text-editor />'
+  });
+
   registerWidget('listInput', {
     fieldTypes: ['Symbols'],
     defaultHelpText: 'Insert comma separated values',
