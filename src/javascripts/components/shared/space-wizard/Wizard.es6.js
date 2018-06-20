@@ -13,6 +13,7 @@ import logger from 'logger';
 import { connect } from 'react-redux';
 
 import * as actions from './store/actions';
+import { wrapWithDispatch } from 'utils/ReduxUtils';
 
 const SpaceCreateSteps = [
   {
@@ -327,7 +328,7 @@ const Wizard = createReactClass({
   }
 });
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     spacePlans: state.spacePlans,
     templates: state.templates,
@@ -341,21 +342,19 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = () => {
-  return {
-    fetchSpacePlans: actions.fetchSpacePlans,
-    fetchSubscriptionPrice: actions.fetchSubscriptionPrice,
-    fetchTemplates: actions.fetchTemplates,
-    selectPlan: actions.selectPlan,
-    navigate: actions.navigate,
-    track: actions.track,
-    setNewSpaceName: actions.setNewSpaceName,
-    setNewSpaceTemplate: actions.setNewSpaceTemplate,
-    createSpace: actions.createSpace,
-    changeSpace: actions.changeSpace,
-    reset: actions.reset
-  };
-};
+const mapDispatchToProps = wrapWithDispatch({
+  fetchSpacePlans: actions.fetchSpacePlans,
+  fetchSubscriptionPrice: actions.fetchSubscriptionPrice,
+  fetchTemplates: actions.fetchTemplates,
+  createSpace: actions.createSpace,
+  changeSpace: actions.changeSpace,
+  selectPlan: actions.selectPlan,
+  navigate: actions.navigate,
+  track: actions.track,
+  setNewSpaceName: actions.setNewSpaceName,
+  setNewSpaceTemplate: actions.setNewSpaceTemplate,
+  reset: actions.reset
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Wizard);
 
