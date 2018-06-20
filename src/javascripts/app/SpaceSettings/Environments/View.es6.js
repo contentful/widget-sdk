@@ -1,5 +1,5 @@
 import pluralize from 'pluralize';
-import { get, isNumber } from 'lodash';
+import { get } from 'lodash';
 import * as Config from 'Config';
 import { assign } from 'utils/Collections';
 import { caseofEq } from 'sum-types';
@@ -230,7 +230,8 @@ function upgradeButton ({ organizationId, incentivizeUpgradeEnabled }, { OpenUpg
     }, [ 'Upgrade space' ]);
   } else {
     return h('a', {
-      href: href(subscriptionState(organizationId, false))
+      href: href(subscriptionState(organizationId, false)),
+      dataTestId: 'subscriptionLink'
     }, ['Go to subscription page to upgrade']);
   }
 }

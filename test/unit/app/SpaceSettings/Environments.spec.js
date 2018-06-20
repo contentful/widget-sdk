@@ -10,8 +10,13 @@ describe('app/SpaceSettings/Environments', () => {
         limits: {maximum: ENVIRONMENTS_LIMIT}
       })
     };
+
+    const isOwnerOrAdmin = sinon.stub().returns(false);
+    let incentivizeUpgradeEnabled = false;
+
     module('contentful/test', $provide => {
       $provide.value('services/ResourceService', () => resourceService);
+      $provide.value('services/OrganizationRoles', { isOwnerOrAdmin });
     });
 
     const { createComponent } = this.$inject('app/SpaceSettings/Environments/State');
@@ -23,7 +28,7 @@ describe('app/SpaceSettings/Environments', () => {
 
     this.init = () => {
       this.$compileWith('<cf-component-store-bridge component=component>', ($scope) => {
-        $scope.component = createComponent(spaceContext);
+        $scope.component = createComponent(spaceContext, incentivizeUpgradeEnabled);
       }).appendTo(this.container.element);
     };
 
@@ -45,6 +50,13 @@ describe('app/SpaceSettings/Environments', () => {
         limits: {maximum: ENVIRONMENTS_LIMIT}
       });
     };
+
+    this.setPricing = (pricingVersion) => {
+      spaceContext.organizationContext.organization.pricingVersion = pricingVersion;
+    };
+
+    this.setIncentivizeFlag = (value) => { incentivizeUpgradeEnabled = value; };
+    this.setAdmin = (value) => { isOwnerOrAdmin.returns(value); };
   });
 
   afterEach(function () {
@@ -88,10 +100,59 @@ describe('app/SpaceSettings/Environments', () => {
     this.container.find('environment.e1').assertNonExistent();
   });
 
-  it('does not render create button if limit is reached', function () {
-    this.setUsage(ENVIRONMENTS_LIMIT);
-    this.init();
+  describe('when limit is reached on v2 pricing', function () {
+    beforeEach(function () {
+      this.setPricing('pricing_version_2');
+      this.setUsage(ENVIRONMENTS_LIMIT);
+    });
 
-    this.container.find('openCreateDialog').assertNonExistent();
+    it('does not render create button', function () {
+      this.init();
+      this.container.find('openCreateDialog').assertNonExistent();
+    });
+
+    describe('when user is admin', function () {
+      beforeEach(function () {
+        this.setAdmin(true);
+      });
+
+      it('renders upgrade space button with feature flag on', function () {
+        this.setIncentivizeFlag(true);
+        this.init();
+
+        this.container.find('openUpgradeDialog').assertIsVisible();
+        this.container.find('subscriptionLink').assertNonExistent();
+      });
+
+      it('renders subscription link with feature flag off', function () {
+        this.setIncentivizeFlag(false);
+        this.init();
+
+        this.container.find('openUpgradeDialog').assertNonExistent();
+        this.container.find('subscriptionLink').assertIsVisible();
+      });
+    });
+
+    describe('when user is not admin, do not show upgrade action', function () {
+      beforeEach(function () {
+        this.setAdmin(false);
+      });
+
+      it('with feature flag on', function () {
+        this.setIncentivizeFlag(true);
+        this.init();
+
+        this.container.find('openUpgradeDialog').assertNonExistent();
+        this.container.find('subscriptionLink').assertNonExistent();
+      });
+
+      it('with feature flag off', function () {
+        this.setIncentivizeFlag(false);
+        this.init();
+
+        this.container.find('openUpgradeDialog').assertNonExistent();
+        this.container.find('subscriptionLink').assertNonExistent();
+      });
+    });
   });
 });
