@@ -38,6 +38,7 @@ import SwiftIcon from 'svg/swift';
 import AndroidIcon from 'svg/android';
 import PHPIcon from 'svg/php';
 import JekyllIcon from 'svg/jekyll';
+import ContentfulLogo from 'svg/ContentfulLogo';
 
 const SVGS = {
   'home-welcome': HomeWelcomeIcon,
@@ -73,7 +74,8 @@ const SVGS = {
   'swift': SwiftIcon,
   'android': AndroidIcon,
   'php': PHPIcon,
-  'jekyll': JekyllIcon
+  'jekyll': JekyllIcon,
+  'contentful-logo': ContentfulLogo
 };
 
 const Icon = createReactClass({
