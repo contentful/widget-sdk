@@ -81,14 +81,14 @@ angular.module('contentful')
             {'Enter the website URL after deployment is complete.'}
           </h4>
           <div className={'modern-stack-onboarding--deployment-form-subtitle'}>
-            {'Your suggested next steps will be determined by the deployment service you selected.'}
+            We’ll suggest next steps based on the hosting service you selected.
           </div>
           <Form onSubmit={e => e.preventDefault()}>
             <Input
               wrapperClassName='modern-stack-onboarding--deployment-form-input'
               value={url}
               onChange={this.onChange}
-              placeholder='Enter the website url of the deployed site'
+              placeholder='Enter the website URL'
               error={url && error}
             />
             <Button
@@ -97,7 +97,7 @@ angular.module('contentful')
               onClick={this.onComplete}
               disabled={Boolean(!url || error)}
             >
-              Deployment Complete
+              View next steps
             </Button>
           </Form>
         </div>

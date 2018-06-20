@@ -70,11 +70,11 @@ angular.module('contentful')
       /* eslint-enable react/jsx-key */
       return (
         <div className='modern-stack-onboarding--deployment-strategy'>
-          <h4 className={'modern-stack-onboarding--deployment-strategy-title'}>
-            <a href={'https://www.netlify.com/'} target='_blank' rel='noopener noreferrer'>
-              {'Netlify'}
+          <h4 className='modern-stack-onboarding--deployment-strategy-title'>
+            <a href='https://www.netlify.com/' target='_blank' rel='noopener noreferrer'>
+              Netlify
             </a>
-            {' CLI commands'}
+            &nbsp;CLI commands
           </h4>
           {this.renderList(steps)}
         </div>
@@ -83,7 +83,7 @@ angular.module('contentful')
     renderHerokuSteps (spaceId, deliveryToken) {
       /* eslint-disable react/jsx-key */
       const steps = [
-        <div className={'modern-stack-onboarding--deployment-list-text'}>
+        <div className='modern-stack-onboarding--deployment-list-text'>
           <a
             href='https://devcenter.heroku.com/articles/heroku-cli#download-and-install'
             target='_blank'
