@@ -14,7 +14,7 @@ angular.module('contentful')
   const WithLink = require(WithLinkModule);
   const Icon = require('ui/Components/Icon').default;
 
-  const icons = ['aws', 'dotnet', 'javascript', 'metalsmith', 'python', 'ruby', 'swift', 'php', 'android', 'jekyll'];
+  const icons = ['aws', 'dotnet', 'javascript', 'metalsmith', 'python', 'ruby', 'swift', 'php', 'android', 'jekyll', 'gitbook', 'brunch'];
 
   const GetStarted = () => {
     const logos = (

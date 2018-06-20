@@ -1,9 +1,9 @@
 import {h} from 'ui/Framework';
 
 export default h('svg', {
-  width: '49',
+  width: '60',
   height: '32',
-  viewBox: '0 0 49 32',
+  viewBox: '0 0 60 32',
   xmlns: 'http://www.w3.org/2000/svg'
 }, [
   h('g', {
