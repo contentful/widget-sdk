@@ -290,8 +290,15 @@ function getIncludedResources (charges) {
     Records: 'Records'
   };
 
-  return Object.values(ResourceTypes).map((value) => ({
-    type: value,
-    number: get(charges.find(({name}) => name === value), 'tiers[0].endingUnit')
-  }));
+  return Object.values(ResourceTypes).map((type) => {
+    const charge = charges.find(({name}) => name === type);
+    let number = get(charge, 'tiers[0].endingUnit');
+
+    // Add "extra" environment and role to include `master` and `admin`
+    if ([ResourceTypes.Environments, ResourceTypes.Roles].includes(type)) {
+      number = number + 1;
+    }
+
+    return { type, number };
+  });
 }
