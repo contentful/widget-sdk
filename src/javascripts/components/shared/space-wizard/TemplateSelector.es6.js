@@ -41,7 +41,7 @@ const TemplateSelector = createReactClass({
       }
     );
 
-    const { isLoading, error, templatesList } = templates;
+    const { isPending, error, templatesList } = templates;
 
     return (
       <div>
@@ -50,7 +50,7 @@ const TemplateSelector = createReactClass({
           onChange={this.toggle}
         />
         {
-          isLoading &&
+          isPending &&
             <div className={templatesListClassName}>
               <div className="loader__container">
                 {asReact(spinner({diameter: '40px'}))}
@@ -58,7 +58,7 @@ const TemplateSelector = createReactClass({
             </div>
         }
         {
-          !isLoading && !error &&
+          !isPending && !error &&
           <div className={templatesListClassName}>
             <TemplatesList
               templates={templatesList}
@@ -68,7 +68,7 @@ const TemplateSelector = createReactClass({
           </div>
         }
         {
-          !isLoading && error &&
+          !isPending && error &&
           <div className="note-box--warning">
             <p>Could not fetch space templates.</p>
           </div>

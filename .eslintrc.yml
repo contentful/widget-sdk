@@ -64,8 +64,6 @@ overrides:
     - LabeledStatement
     - MetaProperty
     - SequenceExpression
-    - SwitchCase
-    - SwitchStatement
     - TaggedTemplateExpression
     - UpdateExpression
     - WithStatement

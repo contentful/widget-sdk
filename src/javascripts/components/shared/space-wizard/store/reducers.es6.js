@@ -1,82 +1,89 @@
+import * as actions from './actions';
+
 export function spaceCreation (state = {}, action) {
-  if (action.type === 'SPACE_CREATION_PENDING') {
-    return {
-      ...state,
-      isLoading: action.pending
-    };
-  } else if (action.type === 'SPACE_CREATION_ERROR') {
-    return {
-      ...state,
-      error: action.error
-    };
-  } else if (action.type === 'SPACE_CREATION_SUCCESS') {
-    return {
-      ...state,
-      success: true
-    };
-  } else {
-    return state;
+  switch (action.type) {
+    case actions.SPACE_CREATION_PENDING:
+      return {
+        ...state,
+        isPending: action.isPending
+      };
+    case actions.SPACE_CREATION_FAILURE:
+      return {
+        ...state,
+        error: action.error
+      };
+    case actions.SPACE_CREATION_SUCCESS:
+      return {
+        ...state,
+        success: true
+      };
+    default:
+      return state;
   }
 }
 
 export function spaceChange (state = {}, action) {
-  if (action.type === 'SPACE_CHANGE_PENDING') {
-    return {
-      ...state,
-      isLoading: action.pending
-    };
-  } else if (action.type === 'SPACE_CHANGE_ERROR') {
-    return {
-      ...state,
-      error: action.error
-    };
-  } else {
-    return state;
+  switch (action.type) {
+    case actions.SPACE_CHANGE_PENDING:
+      return {
+        ...state,
+        isPending: action.isPending
+      };
+    case actions.SPACE_CHANGE_FAILURE:
+      return {
+        ...state,
+        error: action.error
+      };
+    default:
+      return state;
   }
 }
 
 export function subscriptionPrice (state = {}, action) {
-  if (action.type === 'SUBSCRIPTION_PRICE_LOADING') {
-    return {
-      ...state,
-      isLoading: action.isLoading
-    };
-  } else if (action.type === 'SUBSCRIPTION_PRICE_SUCCESS') {
-    return {
-      ...state,
-      totalPrice: action.totalPrice
-    };
-  } else if (action.type === 'SUBSCRIPTION_PRICE_ERROR') {
-    return {
-      ...state,
-      error: action.error
-    };
-  } else {
-    return state;
+  switch (action.type) {
+    case actions.SUBSCRIPTION_PRICE_PENDING:
+      return {
+        ...state,
+        isPending: action.isPending
+      };
+    case actions.SUBSCRIPTION_PRICE_FAILURE:
+      return {
+        ...state,
+        error: action.error
+      };
+    case actions.SUBSCRIPTION_PRICE_SUCCESS:
+      return {
+        ...state,
+        totalPrice: action.totalPrice
+      };
+    default:
+      return state;
   }
 }
 
 export function currentStep (state = '', action) {
-  if (action.type === 'SPACE_WIZARD_NAVIGATE') {
-    return action.id;
-  } else {
-    return state;
+  switch (action.type) {
+    case actions.SPACE_WIZARD_NAVIGATE:
+      return action.stepId;
+    default:
+      return state;
   }
 }
 
 export function newSpaceMeta (state = {}, action) {
-  if (action.type === 'NEW_SPACE_NAME') {
-    return {
-      ...state,
-      name: action.name
-    };
-  } else if (action.type === 'NEW_SPACE_TEMPLATE') {
-    return {
-      ...state,
-      template: action.template
-    };
-  } else {
-    return state;
+  switch (action.type) {
+    case actions.NEW_SPACE_NAME:
+      return {
+        ...state,
+        name: action.name
+      };
+    case actions.NEW_SPACE_TEMPLATE:
+      return {
+        ...state,
+        template: action.template
+      };
+    default:
+      return state;
   }
 }
 
@@ -84,57 +91,61 @@ export function spacePlans (state = {
   spaceRatePlans: [],
   freeSpacesResource: {}
 }, action) {
-  if (action.type === 'SPACE_PLANS_LOADING') {
-    return {
-      ...state,
-      isLoading: action.isLoading
-    };
-  } else if (action.type === 'SPACE_PLANS_LOADED') {
-    const { spaceRatePlans, freeSpacesResource } = action;
+  const { spaceRatePlans, freeSpacesResource } = action;
 
-    return {
-      ...state,
-      spaceRatePlans,
-      freeSpacesResource
-    };
-  } else if (action.type === 'SPACE_PLANS_ERRORED') {
-    return {
-      ...state,
-      error: action.error
-    };
-  } else {
-    return state;
+  switch (action.type) {
+    case actions.SPACE_PLANS_PENDING:
+      return {
+        ...state,
+        isPending: action.isPending
+      };
+    case actions.SPACE_PLANS_FAILURE:
+      return {
+        ...state,
+        error: action.error
+      };
+    case actions.SPACE_PLANS_SUCCESS:
+      return {
+        ...state,
+        spaceRatePlans,
+        freeSpacesResource
+      };
+    default:
+      return state;
   }
 }
 
 export function templates (state = {}, action) {
-  if (action.type === 'SPACE_TEMPLATES_LOADING') {
-    return {
-      ...state,
-      isLoading: action.isLoading
-    };
-  } else if (action.type === 'SPACE_TEMPLATES_ERROR') {
-    return {
-      ...state,
-      error: action.error
-    };
-  } else if (action.type === 'SPACE_TEMPLATES_SUCCESS') {
-    return {
-      ...state,
-      templatesList: action.templatesList
-    };
-  } else {
-    return state;
+  switch (action.type) {
+    case actions.SPACE_TEMPLATES_PENDING:
+      return {
+        ...state,
+        isPending: action.isPending
+      };
+
+    case actions.SPACE_TEMPLATES_FAILURE:
+      return {
+        ...state,
+        error: action.error
+      };
+    case actions.SPACE_TEMPLATES_SUCCESS:
+      return {
+        ...state,
+        templatesList: action.templatesList
+      };
+    default:
+      return state;
   }
 }
 
 export function spacePlanSelected (state = {}, action) {
-  if (action.type === 'SPACE_PLAN_SELECTED') {
-    return {
-      selected: action.selected,
-      current: action.current
-    };
-  } else {
-    return state;
+  switch (action.type) {
+    case actions.SPACE_PLAN_SELECTED:
+      return {
+        currentPlan: action.currentPlan,
+        selectedPlan: action.selectedPlan
+      };
+    default:
+      return state;
   }
 }

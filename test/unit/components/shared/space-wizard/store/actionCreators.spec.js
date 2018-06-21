@@ -1,4 +1,4 @@
-describe('Space Wizard actions', function () {
+describe('Space Wizard action creators', function () {
   beforeEach(async function () {
     this.organization = {
       isBillable: true,
@@ -61,6 +61,10 @@ describe('Space Wizard actions', function () {
       getTemplatesList: sinon.stub().resolves([this.template])
     };
 
+    this.dispatch = (action, ...args) => {
+      return action(...args)(this.stubs.dispatch);
+    };
+
     module('contentful/test', ($provide) => {
       $provide.value('services/ResourceService', {
         default: () => {
@@ -68,10 +72,6 @@ describe('Space Wizard actions', function () {
             get: this.stubs.ResourceService_get
           };
         }
-      });
-
-      $provide.value('components/shared/space-wizard/store/store', {
-        dispatch: this.stubs.dispatch
       });
 
       $provide.value('data/EndpointFactory', {
@@ -109,6 +109,7 @@ describe('Space Wizard actions', function () {
       refresh: this.stubs.TokenStore_refresh
     });
 
+    this.actionCreators = this.$inject('components/shared/space-wizard/store/actionCreators');
     this.actions = this.$inject('components/shared/space-wizard/store/actions');
   });
 
@@ -118,16 +119,25 @@ describe('Space Wizard actions', function () {
     });
 
     it('should dispatch 3 times if successfully loading resource and rate plans', async function () {
-      await this.actions.fetchSpacePlans({ organization: this.organization, spaceId: this.spaceId });
+      await this.dispatch(this.actionCreators.fetchSpacePlans, {
+        organization: this.organization,
+        spaceId: this.spaceId
+      });
 
       expect(this.stubs.dispatch.callCount).toBe(3);
-      expect(this.stubs.dispatch.args[0]).toEqual([{ type: 'SPACE_PLANS_LOADING', isLoading: true }]);
+      expect(this.stubs.dispatch.args[0]).toEqual([{
+        type: this.actions.SPACE_PLANS_PENDING,
+        isPending: true
+      }]);
       expect(this.stubs.dispatch.args[1]).toEqual([{
-        type: 'SPACE_PLANS_LOADED',
+        type: this.actions.SPACE_PLANS_SUCCESS,
         spaceRatePlans: [],
         freeSpacesResource: this.resource
       }]);
-      expect(this.stubs.dispatch.args[2]).toEqual([{ type: 'SPACE_PLANS_LOADING', isLoading: false }]);
+      expect(this.stubs.dispatch.args[2]).toEqual([{
+        type: this.actions.SPACE_PLANS_PENDING,
+        isPending: false
+      }]);
     });
 
     it('should dispatch 3 times if error is thrown during API calls', async function () {
@@ -135,15 +145,24 @@ describe('Space Wizard actions', function () {
 
       this.stubs.getSpaceRatePlans.throws(new Error('Could not load from API'));
 
-      await this.actions.fetchSpacePlans({ organization: this.organization, spaceId: this.spaceId });
+      await this.dispatch(this.actionCreators.fetchSpacePlans, {
+        organization: this.organization,
+        spaceId: this.spaceId
+      });
 
       expect(this.stubs.dispatch.callCount).toBe(3);
-      expect(this.stubs.dispatch.args[0]).toEqual([{ type: 'SPACE_PLANS_LOADING', isLoading: true }]);
+      expect(this.stubs.dispatch.args[0]).toEqual([{
+        type: this.actions.SPACE_PLANS_PENDING,
+        isPending: true
+      }]);
       expect(this.stubs.dispatch.args[1]).toEqual([{
-        type: 'SPACE_PLANS_ERRORED',
+        type: this.actions.SPACE_PLANS_FAILURE,
         error
       }]);
-      expect(this.stubs.dispatch.args[2]).toEqual([{ type: 'SPACE_PLANS_LOADING', isLoading: false }]);
+      expect(this.stubs.dispatch.args[2]).toEqual([{
+        type: this.actions.SPACE_PLANS_PENDING,
+        isPending: false
+      }]);
     });
   });
 
@@ -153,32 +172,8 @@ describe('Space Wizard actions', function () {
       this.onTemplateCreated = sinon.stub();
     });
 
-    it('should dispatch 4 times if no error is thrown creating the space', async function () {
-      await this.actions.createSpace({
-        organization: this.organization,
-        action: 'create',
-        currentStepId: 2,
-        selectedPlan: this.plan,
-        newSpaceMeta: { name: 'My favorite space', template: null },
-        onSpaceCreated: this.onSpaceCreated,
-        onTemplateCreated: this.onTemplateCreated
-      });
-
-      expect(this.stubs.dispatch.callCount).toBe(4);
-      expect(this.stubs.dispatch.args[0]).toEqual([{ type: 'SPACE_CREATION_PENDING', pending: true }]);
-
-      // Only care about the event, not the data
-      expect(this.stubs.dispatch.args[1][0].type).toBe('SPACE_WIZARD_TRACK');
-      expect(this.stubs.dispatch.args[2]).toEqual([{ type: 'SPACE_CREATION_SUCCESS' }]);
-      expect(this.stubs.dispatch.args[3]).toEqual([{ type: 'SPACE_CREATION_PENDING', pending: false }]);
-    });
-
-    it('should dispatch 3 times if error thrown during space creation', async function () {
-      const error = new Error('Could not create space');
-
-      this.stubs.createSpace.throws(error);
-
-      await this.actions.createSpace({
+    it('should dispatch 3 times if no error is thrown creating the space', async function () {
+      await this.dispatch(this.actionCreators.createSpace, {
         organization: this.organization,
         action: 'create',
         currentStepId: 2,
@@ -189,9 +184,48 @@ describe('Space Wizard actions', function () {
       });
 
       expect(this.stubs.dispatch.callCount).toBe(3);
-      expect(this.stubs.dispatch.args[0]).toEqual([{ type: 'SPACE_CREATION_PENDING', pending: true }]);
-      expect(this.stubs.dispatch.args[1]).toEqual([{ type: 'SPACE_CREATION_ERROR', error }]);
-      expect(this.stubs.dispatch.args[2]).toEqual([{ type: 'SPACE_CREATION_PENDING', pending: false }]);
+      expect(this.stubs.dispatch.args[0]).toEqual([{
+        type: this.actions.SPACE_CREATION_PENDING,
+        isPending: true
+      }]);
+
+      expect(this.stubs.dispatch.args[1]).toEqual([{
+        type: this.actions.SPACE_CREATION_SUCCESS
+      }]);
+      expect(this.stubs.dispatch.args[2]).toEqual([{
+        type: this.actions.SPACE_CREATION_PENDING,
+        isPending: false
+      }]);
+    });
+
+    it('should dispatch 3 times if error thrown during space creation', async function () {
+      const error = new Error('Could not create space');
+
+      this.stubs.createSpace.throws(error);
+
+      await this.dispatch(this.actionCreators.createSpace, {
+        organization: this.organization,
+        action: 'create',
+        currentStepId: 2,
+        selectedPlan: this.plan,
+        newSpaceMeta: { name: 'My favorite space', template: null },
+        onSpaceCreated: this.onSpaceCreated,
+        onTemplateCreated: this.onTemplateCreated
+      });
+
+      expect(this.stubs.dispatch.callCount).toBe(3);
+      expect(this.stubs.dispatch.args[0]).toEqual([{
+        type: this.actions.SPACE_CREATION_PENDING,
+        isPending: true
+      }]);
+      expect(this.stubs.dispatch.args[1]).toEqual([{
+        type: this.actions.SPACE_CREATION_FAILURE,
+        error
+      }]);
+      expect(this.stubs.dispatch.args[2]).toEqual([{
+        type: this.actions.SPACE_CREATION_PENDING,
+        isPending: false
+      }]);
     });
   });
 
@@ -201,10 +235,17 @@ describe('Space Wizard actions', function () {
     });
 
     it('should dispatch 1 time if no error is thrown during space changing', async function () {
-      await this.actions.changeSpace({ space: this.space, selectedPlan: this.plan, onConfirm: this.onConfirm });
+      await this.dispatch(this.actionCreators.changeSpace, {
+        space: this.space,
+        selectedPlan: this.plan,
+        onConfirm: this.onConfirm
+      });
 
       expect(this.stubs.dispatch.callCount).toBe(1);
-      expect(this.stubs.dispatch.args[0]).toEqual([{ type: 'SPACE_CHANGE_PENDING', pending: true }]);
+      expect(this.stubs.dispatch.args[0]).toEqual([{
+        type: this.actions.SPACE_CHANGE_PENDING,
+        isPending: true
+      }]);
     });
 
     it('should dispatch 3 times if error is thrown during space changing', async function () {
@@ -212,18 +253,30 @@ describe('Space Wizard actions', function () {
 
       this.stubs.changeSpace.throws(error);
 
-      await this.actions.changeSpace({ space: this.space, selectedPlan: this.plan, onConfirm: this.onConfirm });
+      await this.dispatch(this.actionCreators.changeSpace, {
+        space: this.space,
+        selectedPlan: this.plan,
+        onConfirm: this.onConfirm
+      });
 
       expect(this.stubs.dispatch.callCount).toBe(3);
-      expect(this.stubs.dispatch.args[0]).toEqual([{ type: 'SPACE_CHANGE_PENDING', pending: true }]);
-      expect(this.stubs.dispatch.args[1]).toEqual([{ type: 'SPACE_CHANGE_ERROR', error }]);
-      expect(this.stubs.dispatch.args[2]).toEqual([{ type: 'SPACE_CHANGE_PENDING', pending: false }]);
+      expect(this.stubs.dispatch.args[0]).toEqual([{
+        type: this.actions.SPACE_CHANGE_PENDING,
+        isPending: true
+      }]);
+      expect(this.stubs.dispatch.args[1]).toEqual([{
+        type: this.actions.SPACE_CHANGE_FAILURE,
+        error
+      }]);
+      expect(this.stubs.dispatch.args[2]).toEqual([{
+        type: this.actions.SPACE_CHANGE_PENDING,
+        isPending: false
+      }]);
     });
   });
 
   describe('track', function () {
     it('should dispatch 1 time', function () {
-      // action, organization, currentStepId, selectedPlan, currentPlan, newSpaceMeta
       const props = {
         action: 'create',
         organization: this.organization,
@@ -233,11 +286,13 @@ describe('Space Wizard actions', function () {
         newSpaceMeta: { spaceName: 'Best Space Ever', template: { name: 'Blank' } }
       };
 
-      this.actions.track('my_event', { specialProp: 'special_value' }, props);
+      this.dispatch(this.actionCreators.track, 'my_event', {
+        specialProp: 'special_value'
+      }, props);
 
       expect(this.stubs.dispatch.callCount).toBe(1);
       expect(this.stubs.dispatch.args[0]).toEqual([{
-        type: 'SPACE_WIZARD_TRACK',
+        type: this.actions.SPACE_WIZARD_TRACK,
         eventName: 'my_event',
         trackingData: {
           specialProp: 'special_value',
@@ -255,12 +310,12 @@ describe('Space Wizard actions', function () {
 
   describe('navigate', function () {
     it('should dispatch 1 time', function () {
-      this.actions.navigate(1);
+      this.dispatch(this.actionCreators.navigate, 1);
 
       expect(this.stubs.dispatch.callCount).toBe(1);
       expect(this.stubs.dispatch.args[0]).toEqual([{
-        type: 'SPACE_WIZARD_NAVIGATE',
-        id: 1
+        type: this.actions.SPACE_WIZARD_NAVIGATE,
+        stepId: 1
       }]);
     });
   });
@@ -269,12 +324,23 @@ describe('Space Wizard actions', function () {
     it('should dispatch 3 times if no error thrown during fetching', async function () {
       this.stubs.calculateTotalPrice.returns(150);
 
-      await this.actions.fetchSubscriptionPrice({ organization: this.organization });
+      await this.dispatch(this.actionCreators.fetchSubscriptionPrice, {
+        organization: this.organization
+      });
 
       expect(this.stubs.dispatch.callCount).toBe(3);
-      expect(this.stubs.dispatch.args[0]).toEqual([{ type: 'SUBSCRIPTION_PRICE_LOADING', isLoading: true }]);
-      expect(this.stubs.dispatch.args[1]).toEqual([{ type: 'SUBSCRIPTION_PRICE_SUCCESS', totalPrice: 150 }]);
-      expect(this.stubs.dispatch.args[2]).toEqual([{ type: 'SUBSCRIPTION_PRICE_LOADING', isLoading: false }]);
+      expect(this.stubs.dispatch.args[0]).toEqual([{
+        type: this.actions.SUBSCRIPTION_PRICE_PENDING,
+        isPending: true
+      }]);
+      expect(this.stubs.dispatch.args[1]).toEqual([{
+        type: this.actions.SUBSCRIPTION_PRICE_SUCCESS,
+        totalPrice: 150
+      }]);
+      expect(this.stubs.dispatch.args[2]).toEqual([{
+        type: this.actions.SUBSCRIPTION_PRICE_PENDING,
+        isPending: false
+      }]);
     });
 
     it('should dispatch 3 times if error thrown during fetching', async function () {
@@ -282,25 +348,45 @@ describe('Space Wizard actions', function () {
 
       this.stubs.getSubscriptionPlans.throws(error);
 
-      await this.actions.fetchSubscriptionPrice({ organization: this.organization });
+      await this.dispatch(this.actionCreators.fetchSubscriptionPrice, {
+        organization: this.organization
+      });
 
       expect(this.stubs.dispatch.callCount).toBe(3);
-      expect(this.stubs.dispatch.args[0]).toEqual([{ type: 'SUBSCRIPTION_PRICE_LOADING', isLoading: true }]);
-      expect(this.stubs.dispatch.args[1]).toEqual([{ type: 'SUBSCRIPTION_PRICE_ERROR', error }]);
-      expect(this.stubs.dispatch.args[2]).toEqual([{ type: 'SUBSCRIPTION_PRICE_LOADING', isLoading: false }]);
+      expect(this.stubs.dispatch.args[0]).toEqual([{
+        type: this.actions.SUBSCRIPTION_PRICE_PENDING,
+        isPending: true
+      }]);
+      expect(this.stubs.dispatch.args[1]).toEqual([{
+        type: this.actions.SUBSCRIPTION_PRICE_FAILURE,
+        error
+      }]);
+      expect(this.stubs.dispatch.args[2]).toEqual([{
+        type: this.actions.SUBSCRIPTION_PRICE_PENDING,
+        isPending: false
+      }]);
     });
   });
 
   describe('fetchTemplates', function () {
     it('should dispatch 3 times if no error thrown during fetching', async function () {
-      await this.actions.fetchTemplates();
+      await this.dispatch(this.actionCreators.fetchTemplates);
       expect(this.stubs.dispatch.callCount).toBe(3);
 
       const list = [this.template].map(({fields, sys}) => ({ ...fields, sys }));
 
-      expect(this.stubs.dispatch.args[0]).toEqual([{ type: 'SPACE_TEMPLATES_LOADING', isLoading: true }]);
-      expect(this.stubs.dispatch.args[1]).toEqual([{ type: 'SPACE_TEMPLATES_SUCCESS', templatesList: list }]);
-      expect(this.stubs.dispatch.args[2]).toEqual([{ type: 'SPACE_TEMPLATES_LOADING', isLoading: false }]);
+      expect(this.stubs.dispatch.args[0]).toEqual([{
+        type: this.actions.SPACE_TEMPLATES_PENDING,
+        isPending: true
+      }]);
+      expect(this.stubs.dispatch.args[1]).toEqual([{
+        type: this.actions.SPACE_TEMPLATES_SUCCESS,
+        templatesList: list
+      }]);
+      expect(this.stubs.dispatch.args[2]).toEqual([{
+        type: this.actions.SPACE_TEMPLATES_PENDING,
+        isPending: false
+      }]);
     });
 
     it('should dispatch 3 times if error thrown during fetching', async function () {
@@ -308,21 +394,30 @@ describe('Space Wizard actions', function () {
 
       this.stubs.getTemplatesList.throws(error);
 
-      await this.actions.fetchTemplates();
+      await this.dispatch(this.actionCreators.fetchTemplates);
       expect(this.stubs.dispatch.callCount).toBe(3);
-      expect(this.stubs.dispatch.args[0]).toEqual([{ type: 'SPACE_TEMPLATES_LOADING', isLoading: true }]);
-      expect(this.stubs.dispatch.args[1]).toEqual([{ type: 'SPACE_TEMPLATES_ERROR', error }]);
-      expect(this.stubs.dispatch.args[2]).toEqual([{ type: 'SPACE_TEMPLATES_LOADING', isLoading: false }]);
+      expect(this.stubs.dispatch.args[0]).toEqual([{
+        type: this.actions.SPACE_TEMPLATES_PENDING,
+        isPending: true
+      }]);
+      expect(this.stubs.dispatch.args[1]).toEqual([{
+        type: this.actions.SPACE_TEMPLATES_FAILURE,
+        error
+      }]);
+      expect(this.stubs.dispatch.args[2]).toEqual([{
+        type: this.actions.SPACE_TEMPLATES_PENDING,
+        isPending: false
+      }]);
     });
   });
 
   describe('setNewSpaceName', function () {
     it('should dispatch 1 time', function () {
-      this.actions.setNewSpaceName('My Awesome Space Name');
+      this.dispatch(this.actionCreators.setNewSpaceName, 'My Awesome Space Name');
 
       expect(this.stubs.dispatch.callCount).toBe(1);
       expect(this.stubs.dispatch.args[0]).toEqual([{
-        type: 'NEW_SPACE_NAME',
+        type: this.actions.NEW_SPACE_NAME,
         name: 'My Awesome Space Name'
       }]);
     });
@@ -330,11 +425,11 @@ describe('Space Wizard actions', function () {
 
   describe('setNewSpaceTemplate', function () {
     it('should dispatch 1 time', function () {
-      this.actions.setNewSpaceTemplate({ name: 'best template ever!' });
+      this.dispatch(this.actionCreators.setNewSpaceTemplate, { name: 'best template ever!' });
 
       expect(this.stubs.dispatch.callCount).toBe(1);
       expect(this.stubs.dispatch.args[0]).toEqual([{
-        type: 'NEW_SPACE_TEMPLATE',
+        type: this.actions.NEW_SPACE_TEMPLATE,
         template: {
           name: 'best template ever!'
         }
@@ -346,13 +441,13 @@ describe('Space Wizard actions', function () {
     it('should dispatch 1 time', function () {
       const currentPlan = this.plan;
       const selectedPlan = { ...this.plan, name: 'Bestest', internalName: 'bestest' };
-      this.actions.selectPlan(currentPlan, selectedPlan);
+      this.dispatch(this.actionCreators.selectPlan, currentPlan, selectedPlan);
 
       expect(this.stubs.dispatch.callCount).toBe(1);
       expect(this.stubs.dispatch.args[0]).toEqual([{
-        type: 'SPACE_PLAN_SELECTED',
-        current: currentPlan,
-        selected: selectedPlan
+        type: this.actions.SPACE_PLAN_SELECTED,
+        currentPlan,
+        selectedPlan
       }]);
     });
   });

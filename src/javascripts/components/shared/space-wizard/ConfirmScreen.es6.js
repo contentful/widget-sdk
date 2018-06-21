@@ -50,20 +50,20 @@ const ConfirmScreen = createReactClass({
       confirmButtonText = 'Confirm and change space';
     }
 
-    const { isLoading, totalPrice, error } = subscriptionPrice;
+    const { isPending, totalPrice, error } = subscriptionPrice;
     const { name, template } = newSpaceMeta;
-    const submitted = spaceCreation.isLoading || spaceChange.isLoading;
+    const submitted = spaceCreation.isPending || spaceChange.isPending;
 
     return (
       <div>
         {
-          isLoading &&
+          isPending &&
           <div className="loader__container">
             {asReact(spinner({diameter: '40px'}))}
           </div>
         }
         {
-          !isLoading &&
+          !isPending &&
           <div>
             <h2 className="create-space-wizard__heading">
               Confirm your selection

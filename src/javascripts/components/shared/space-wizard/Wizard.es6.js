@@ -12,7 +12,7 @@ import logger from 'logger';
 
 import { connect } from 'react-redux';
 
-import * as actions from './store/actions';
+import * as actionCreators from './store/actionCreators';
 import { wrapWithDispatch } from 'utils/ReduxUtils';
 
 const SpaceCreateSteps = [
@@ -332,8 +332,8 @@ const mapStateToProps = state => {
   return {
     spacePlans: state.spacePlans,
     templates: state.templates,
-    currentPlan: state.spacePlanSelected.current,
-    selectedPlan: state.spacePlanSelected.selected,
+    currentPlan: state.spacePlanSelected.currentPlan,
+    selectedPlan: state.spacePlanSelected.selectedPlan,
     currentStepId: state.currentStep,
     newSpaceMeta: state.newSpaceMeta,
     subscriptionPrice: state.subscriptionPrice,
@@ -343,17 +343,17 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = wrapWithDispatch({
-  fetchSpacePlans: actions.fetchSpacePlans,
-  fetchSubscriptionPrice: actions.fetchSubscriptionPrice,
-  fetchTemplates: actions.fetchTemplates,
-  createSpace: actions.createSpace,
-  changeSpace: actions.changeSpace,
-  selectPlan: actions.selectPlan,
-  navigate: actions.navigate,
-  track: actions.track,
-  setNewSpaceName: actions.setNewSpaceName,
-  setNewSpaceTemplate: actions.setNewSpaceTemplate,
-  reset: actions.reset
+  fetchSpacePlans: actionCreators.fetchSpacePlans,
+  fetchSubscriptionPrice: actionCreators.fetchSubscriptionPrice,
+  fetchTemplates: actionCreators.fetchTemplates,
+  createSpace: actionCreators.createSpace,
+  changeSpace: actionCreators.changeSpace,
+  selectPlan: actionCreators.selectPlan,
+  navigate: actionCreators.navigate,
+  track: actionCreators.track,
+  setNewSpaceName: actionCreators.setNewSpaceName,
+  setNewSpaceTemplate: actionCreators.setNewSpaceTemplate,
+  reset: actionCreators.reset
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Wizard);

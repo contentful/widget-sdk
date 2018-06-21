@@ -1,330 +1,161 @@
-import client from 'client';
-import { get, noop } from 'lodash';
-
-import createResourceService from 'services/ResourceService';
-import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
-import {
-  getSpaceRatePlans,
-  getSubscriptionPlans,
-  calculateTotalPrice,
-  changeSpace as changeSpaceApiCall
-} from 'account/pricing/PricingDataProvider';
-import createApiKeyRepo from 'data/CMA/ApiKeyRepo';
-import * as TokenStore from 'services/TokenStore';
-import * as Analytics from 'analytics/Analytics';
-import spaceContext from 'spaceContext';
-import { getCreator as getTemplateCreator } from 'services/SpaceTemplateCreator';
-import { getTemplatesList, getTemplate } from 'services/SpaceTemplateLoader';
-import { canCreate } from 'utils/ResourceUtils';
-
-const DEFAULT_LOCALE = 'en-US';
-
-export function fetchSpacePlans ({ organization, spaceId }) {
-  return async dispatch => {
-    const resources = createResourceService(organization.sys.id, 'organization');
-    const endpoint = createOrganizationEndpoint(organization.sys.id);
-
-    dispatch({ type: 'SPACE_PLANS_LOADING', isLoading: true });
-
-    let rawSpaceRatePlans;
-    let freeSpacesResource;
-
-    try {
-      [ rawSpaceRatePlans, freeSpacesResource ] = await Promise.all([
-        getSpaceRatePlans(endpoint, spaceId),
-        resources.get('free_space')
-      ]);
-    } catch (e) {
-      dispatch({
-        type: 'SPACE_PLANS_ERRORED',
-        error: e
-      });
-
-      dispatch({ type: 'SPACE_PLANS_LOADING', isLoading: false });
-
-      return;
-    }
-
-    const spaceRatePlans = rawSpaceRatePlans.map(plan => {
-      const isFree = (plan.productPlanType === 'free_space');
-      const includedResources = getIncludedResources(plan.productRatePlanCharges);
-      let disabled = false;
-
-      if (plan.unavailabilityReasons && plan.unavailabilityReasons.length > 0) {
-        disabled = true;
-      } else if (plan.isFree) {
-        disabled = !canCreate(freeSpacesResource);
-      } else if (!organization.isBillable) {
-        disabled = true;
-      }
-
-      return {...plan, isFree, includedResources, disabled};
-    });
-
-
-    dispatch({
-      type: 'SPACE_PLANS_LOADED',
-      spaceRatePlans,
-      freeSpacesResource
-    });
-
-    dispatch({ type: 'SPACE_PLANS_LOADING', isLoading: false });
+export const SPACE_PLANS_PENDING = 'SPACE_WIZARD/SPACE_PLANS_PENDING';
+export function spacePlansPending (isPending) {
+  return {
+    type: SPACE_PLANS_PENDING,
+    isPending
   };
 }
 
-export function fetchTemplates () {
-  return async dispatch => {
-    dispatch({ type: 'SPACE_TEMPLATES_LOADING', isLoading: true });
-
-    let templatesList;
-
-    try {
-      templatesList = await getTemplatesList();
-    } catch (e) {
-      dispatch({ type: 'SPACE_TEMPLATES_ERROR', error: e });
-      dispatch({ type: 'SPACE_TEMPLATES_LOADING', isLoading: false });
-
-      return;
-    }
-
-    // The templates are technically entries, but this abstraction doesn't matter
-    // here, so we take the keys/values in "fields" and make them on the base object
-
-    templatesList = templatesList.map(({ fields, sys }) => ({ ...fields, sys }));
-
-    dispatch({ type: 'SPACE_TEMPLATES_SUCCESS', templatesList });
-    dispatch({ type: 'SPACE_TEMPLATES_LOADING', isLoading: false });
+export const SPACE_PLANS_FAILURE = 'SPACE_WIZARD/SPACE_PLANS_FAILURE';
+export function spacePlansFailure (error) {
+  return {
+    type: SPACE_PLANS_FAILURE,
+    error
   };
 }
 
-export function createSpace ({
-  action,
-  organization,
-  currentStepId,
-  selectedPlan,
-  newSpaceMeta,
-  onSpaceCreated,
-  onTemplateCreated
-}) {
-  return async dispatch => {
-    const { name, template } = newSpaceMeta;
-    const spaceData = {
-      defaultLocale: 'en-US',
-      name: name,
-      productRatePlanId: get(selectedPlan, 'sys.id')
-    };
-
-    let newSpace;
-
-    dispatch({ type: 'SPACE_CREATION_PENDING', pending: true });
-
-    try {
-      newSpace = await client.createSpace(spaceData, organization.sys.id);
-    } catch (error) {
-      dispatch({ type: 'SPACE_CREATION_ERROR', error });
-      dispatch({ type: 'SPACE_CREATION_PENDING', pending: false });
-
-      return;
-    }
-
-    const spaceEndpoint = createSpaceEndpoint(newSpace.sys.id);
-    const apiKeyRepo = createApiKeyRepo(spaceEndpoint);
-
-    await TokenStore.refresh();
-
-    // Emit space creation event
-    // This navigates to the new space
-    onSpaceCreated(newSpace);
-
-    const spaceCreateEventData =
-      template
-      ? {templateName: template.name, entityAutomationScope: {scope: 'space_template'}}
-      : {templateName: 'Blank'};
-
-    track('create', spaceCreateEventData, { action, organization, currentStepId, selectedPlan, newSpaceMeta });
-    dispatch({ type: 'SPACE_CREATION_SUCCESS' });
-
-    if (template) {
-      dispatch({ type: 'SPACE_CREATION_TEMPLATE', pending: true });
-
-      await createTemplate(template);
-      await spaceContext.publishedCTs.refresh();
-
-      // Emit template creation event
-      onTemplateCreated();
-
-      dispatch({ type: 'SPACE_CREATION_TEMPLATE', pending: false });
-    } else {
-      await apiKeyRepo.create(
-        'Example Key',
-        'We’ve created an example API key for you to help you get started.'
-      );
-    }
-
-    dispatch({ type: 'SPACE_CREATION_PENDING', pending: false });
+export const SPACE_PLANS_SUCCESS = 'SPACE_WIZARD/SPACE_PLANS_SUCCESS';
+export function spacePlansSuccess (spaceRatePlans, freeSpacesResource) {
+  return {
+    type: SPACE_PLANS_SUCCESS,
+    spaceRatePlans,
+    freeSpacesResource
   };
 }
 
-export function changeSpace ({ space, selectedPlan, onConfirm }) {
-  return async dispatch => {
-    dispatch({ type: 'SPACE_CHANGE_PENDING', pending: true });
-
-    const spaceId = space.sys.id;
-    const endpoint = createSpaceEndpoint(spaceId);
-    const planId = get(selectedPlan, 'sys.id');
-
-    try {
-      await changeSpaceApiCall(endpoint, planId);
-    } catch (e) {
-      dispatch({ type: 'SPACE_CHANGE_ERROR', error: e });
-      dispatch({ type: 'SPACE_CHANGE_PENDING', pending: false });
-      return;
-    }
-
-    // We don't fire a "success" event since we close the modal directly
-    onConfirm();
+export const SPACE_TEMPLATES_PENDING = 'SPACE_WIZARD/SPACE_TEMPLATES_PENDING';
+export function spaceTemplatesPending (isPending) {
+  return {
+    type: SPACE_TEMPLATES_PENDING,
+    isPending
   };
 }
 
-export function fetchSubscriptionPrice ({ organization }) {
-  return async dispatch => {
-    const orgId = organization.sys.id;
-    const endpoint = createOrganizationEndpoint(orgId);
-    let plans;
-
-    dispatch({ type: 'SUBSCRIPTION_PRICE_LOADING', isLoading: true });
-
-    try {
-      plans = await getSubscriptionPlans(endpoint);
-    } catch (e) {
-      dispatch({
-        type: 'SUBSCRIPTION_PRICE_ERROR',
-        error: e
-      });
-
-      dispatch({ type: 'SUBSCRIPTION_PRICE_LOADING', isLoading: false });
-
-      return;
-    }
-
-    const totalPrice = calculateTotalPrice(plans.items);
-
-    dispatch({
-      type: 'SUBSCRIPTION_PRICE_SUCCESS',
-      totalPrice
-    });
-
-    dispatch({ type: 'SUBSCRIPTION_PRICE_LOADING', isLoading: false });
+export const SPACE_TEMPLATES_FAILURE = 'SPACE_WIZARD/SPACE_TEMPLATES_FAILURE';
+export function spaceTemplatesFailure (error) {
+  return {
+    type: SPACE_TEMPLATES_FAILURE,
+    error
   };
 }
 
-export function track (eventName, data, props) {
-  return dispatch => {
-    const trackingData = { ...data, ...createTrackingData(props) };
-
-    Analytics.track(`space_wizard:${eventName}`, trackingData);
-
-    return dispatch({
-      type: 'SPACE_WIZARD_TRACK',
-      eventName,
-      trackingData
-    });
+export const SPACE_TEMPLATES_SUCCESS = 'SPACE_WIZARD/SPACE_TEMPLATES_SUCCESS';
+export function spaceTemplatesSuccess (templatesList) {
+  return {
+    type: SPACE_TEMPLATES_SUCCESS,
+    templatesList
   };
 }
 
-export function navigate (stepId) {
-  return dispatch => {
-    return dispatch({
-      type: 'SPACE_WIZARD_NAVIGATE',
-      id: stepId
-    });
+export const SPACE_CREATION_PENDING = 'SPACE_WIZARD/SPACE_CREATION_PENDING';
+export function spaceCreationPending (isPending) {
+  return {
+    type: SPACE_CREATION_PENDING,
+    isPending
   };
 }
 
-export function setNewSpaceName (name) {
-  return dispatch => {
-    return dispatch({
-      type: 'NEW_SPACE_NAME',
-      name
-    });
+export const SPACE_CREATION_FAILURE = 'SPACE_WIZARD/SPACE_CREATION_FAILIRE';
+export function spaceCreationFailure (error) {
+  return {
+    type: SPACE_CREATION_FAILURE,
+    error
   };
 }
 
-export function setNewSpaceTemplate (template) {
-  return dispatch => {
-    return dispatch({
-      type: 'NEW_SPACE_TEMPLATE',
-      template
-    });
+export const SPACE_CREATION_SUCCESS = 'SPACE_WIZARD/SPACE_CREATION_SUCCESS';
+export function spaceCreationSuccess () {
+  return {
+    type: SPACE_CREATION_SUCCESS
   };
 }
 
-export function selectPlan (currentPlan, selectedPlan) {
-  return dispatch => {
-    return dispatch({
-      type: 'SPACE_PLAN_SELECTED',
-      selected: selectedPlan,
-      current: currentPlan
-    });
+export const SPACE_CREATION_TEMPLATE = 'SPACE_WIZARD/SPACE_CREATION_TEMPLATE';
+export function spaceCreationTemplate (isPending) {
+  return {
+    type: SPACE_CREATION_TEMPLATE,
+    isPending
   };
 }
 
-function createTrackingData ({ action, organization, currentStepId, selectedPlan, currentPlan, newSpaceMeta }) {
-  const { spaceName, template } = newSpaceMeta;
-
-  const eventData = {
-    currentStep: currentStepId,
-    action: action,
-    paymentDetailsExist: organization.isBillable,
-    spaceType: get(selectedPlan, 'internalName'),
-    spaceName: spaceName,
-    template: get(template, 'name'),
-    currentSpaceType: get(currentPlan, 'internalName')
+export const SPACE_CHANGE_PENDING = 'SPACE_WIZARD/SPACE_CHANGE_PENDING';
+export function spaceChangePending (isPending) {
+  return {
+    type: SPACE_CHANGE_PENDING,
+    isPending
   };
-
-  return eventData;
 }
 
-async function createTemplate (templateInfo) {
-  const templateCreator = getTemplateCreator(
-    spaceContext,
-    // TODO add analytics tracking
-    {onItemSuccess: noop, onItemError: noop},
-    templateInfo,
-    DEFAULT_LOCALE
-  );
-
-  const templateData = await getTemplate(templateInfo);
-  return tryCreateTemplate(templateCreator, templateData);
-}
-
-async function tryCreateTemplate (templateCreator, templateData, retried) {
-  const {spaceSetup, contentCreated} = templateCreator.create(templateData);
-
-  try {
-    await Promise.all([
-      // we suppress errors, since `contentCreated` will handle them
-      spaceSetup.catch(noop),
-      contentCreated
-    ]);
-  } catch (err) {
-    if (!retried) {
-      await tryCreateTemplate(templateCreator, err.template, true);
-    }
-  }
-}
-
-function getIncludedResources (charges) {
-  const ResourceTypes = {
-    Environments: 'Environments',
-    Roles: 'Roles',
-    Locales: 'Locales',
-    ContentTypes: 'Content types',
-    Records: 'Records'
+export const SPACE_CHANGE_FAILURE = 'SPACE_WIZARD/SPACE_CHANGE_FAILURE';
+export function spaceChangeFailure (error) {
+  return {
+    type: SPACE_CHANGE_FAILURE,
+    error
   };
+}
 
-  return Object.values(ResourceTypes).map((value) => ({
-    type: value,
-    number: get(charges.find(({name}) => name === value), 'tiers[0].endingUnit')
-  }));
+export const SUBSCRIPTION_PRICE_PENDING = 'SPACE_WIZARD/SUBSCRIPTION_PRICE_PENDING';
+export function subscriptionPricePending (isPending) {
+  return {
+    type: SUBSCRIPTION_PRICE_PENDING,
+    isPending
+  };
+}
+
+export const SUBSCRIPTION_PRICE_FAILURE = 'SPACE_WIZARD/SUBSCRIPTION_PRICE_FAILURE';
+export function subscriptionPriceFailure (error) {
+  return {
+    type: SUBSCRIPTION_PRICE_FAILURE,
+    error
+  };
+}
+
+export const SUBSCRIPTION_PRICE_SUCCESS = 'SPACE_WIZARD/SUBSCRIPTION_PRICE_SUCCESS';
+export function subscriptionPriceSuccess (totalPrice) {
+  return {
+    type: SUBSCRIPTION_PRICE_SUCCESS,
+    totalPrice
+  };
+}
+
+export const SPACE_WIZARD_TRACK = 'SPACE_WIZARD/SPACE_WIZARD_TRACK';
+export function spaceWizardTrack (eventName, trackingData) {
+  return {
+    type: SPACE_WIZARD_TRACK,
+    eventName,
+    trackingData
+  };
+}
+
+export const SPACE_WIZARD_NAVIGATE = 'SPACE_WIZARD/SPACE_WIZARD_NAVIGATE';
+export function spaceWizardNavigate (stepId) {
+  return {
+    type: SPACE_WIZARD_NAVIGATE,
+    stepId
+  };
+}
+
+export const NEW_SPACE_NAME = 'SPACE_WIZARD/NEW_SPACE_NAME';
+export function newSpaceName (name) {
+  return {
+    type: NEW_SPACE_NAME,
+    name
+  };
+}
+
+export const NEW_SPACE_TEMPLATE = 'SPACE_WIZARD/NEW_SPACE_TEMPLATE';
+export function newSpaceTemplate (template) {
+  return {
+    type: NEW_SPACE_TEMPLATE,
+    template
+  };
+}
+
+export const SPACE_PLAN_SELECTED = 'SPACE_WIZARD/SPACE_PLAN_SELECTED';
+export function spacePlanSelected (currentPlan, selectedPlan) {
+  return {
+    type: SPACE_PLAN_SELECTED,
+    currentPlan,
+    selectedPlan
+  };
 }

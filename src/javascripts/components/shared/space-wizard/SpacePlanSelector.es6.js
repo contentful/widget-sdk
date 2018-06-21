@@ -38,7 +38,7 @@ const SpacePlanSelector = createReactClass({
 
   render () {
     const {organization, space, limitReached, action, spacePlans, selectedPlan} = this.props;
-    const { spaceRatePlans, freeSpacesResource, isLoading } = spacePlans;
+    const { spaceRatePlans, freeSpacesResource, isPending } = spacePlans;
 
     const currentPlan = getCurrentPlan(spaceRatePlans);
     const highestPlan = getHighestPlan(spaceRatePlans);
@@ -48,13 +48,13 @@ const SpacePlanSelector = createReactClass({
 
     return <div>
       {
-        isLoading &&
+        isPending &&
         <div className="loader__container">
           {asReact(spinner({diameter: '40px'}))}
         </div>
       }
       {
-        !isLoading && spaceRatePlans &&
+        !isPending && spaceRatePlans &&
         <div>
           {!payingOrg &&
             <BillingInfo
@@ -106,7 +106,7 @@ const SpacePlanSelector = createReactClass({
         </div>
       }
       {
-        !isLoading && !spaceRatePlans &&
+        !isPending && !spaceRatePlans &&
         <div className="note-box--warning">
           <p>Could not fetch space plans.</p>
         </div>
