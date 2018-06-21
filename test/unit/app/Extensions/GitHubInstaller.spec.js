@@ -48,7 +48,11 @@ describe('GitHubInstaller', () => {
       fetchStub.returns({then: handle => handle({extension: true})});
       installBtn.simulate('click');
       sinon.assert.calledWith(fetchStub, value);
-      sinon.assert.calledWith(confirmStub, {extension: true});
+      sinon.assert.calledWith(confirmStub, {
+        extension: { extension: true },
+        type: 'github',
+        url: value
+      });
       fetchStub.restore();
     });
   });

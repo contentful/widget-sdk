@@ -92,7 +92,14 @@ const ExamplePicker = createReactClass({
         disabled={fetching}
         onClick={() => {
           this.setState(() => ({fetching: true}));
-          Fetcher.fetchExtension(`${example.url}/extension.json`).then(onConfirm, onCancel);
+          Fetcher.fetchExtension(`${example.url}/extension.json`)
+            .then(extension => {
+              return onConfirm({
+                extension,
+                type: 'github-example',
+                url: example.url
+              });
+            }, onCancel);
         }}
       >
         Install

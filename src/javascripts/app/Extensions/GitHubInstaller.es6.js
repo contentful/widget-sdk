@@ -19,7 +19,7 @@ const Installer = createReactClass({
     this.setState(state => ({...state, fetching: true}));
     Fetcher.fetchExtension(url)
     .then(
-      extension => this.props.onConfirm(extension),
+      extension => this.props.onConfirm({ extension, url, type: 'github' }),
       err => this.setState(state => ({...state, fetching: false, err}))
     );
   },

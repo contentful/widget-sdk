@@ -8,6 +8,9 @@ import {stateLink} from 'ui/Content';
 import * as Workbench from 'app/Workbench';
 import $state from '$state';
 import modalDialog from 'modalDialog';
+import { track } from 'analytics/Analytics';
+import { toInternalFieldType } from './FieldTypes';
+import { get } from 'lodash';
 
 const SDK_URL = 'https://unpkg.com/contentful-ui-extensions-sdk@3';
 
@@ -33,6 +36,13 @@ function alphabetically (a, b) {
   } else {
     return 0;
   }
+}
+
+export function getExtensionParameterIds (extension) {
+  return {
+    installationParams: get(extension, ['parameters', 'installation'], []).map(p => p.id),
+    instanceParams: get(extension, ['parameters', 'instance'], []).map(p => p.id)
+  };
 }
 
 function render (extensions, refresh) {
@@ -78,18 +88,19 @@ function actions () {
 
 function createExtension () {
   return install({
-    name: 'New extension',
-    fieldTypes: [{type: 'Symbol'}],
-    srcdoc: [
-      '<!DOCTYPE html>',
-      `<script src="${SDK_URL}"></script>`,
-      '<script>',
-      'window.contentfulExtension.init(function(api) {',
-      '  console.log(api.field.getValue());',
-      '});',
-      '</script>'
-    ].join('\n') + '\n'
-  }).catch(handleInstallError);
+    extension: {
+      name: 'New extension',
+      fieldTypes: [{type: 'Symbol'}],
+      srcdoc: [
+        '<!DOCTYPE html>',
+        `<script src="${SDK_URL}"></script>`,
+        '<script>',
+        'window.contentfulExtension.init(function(api) {',
+        '  console.log(api.field.getValue());',
+        '});',
+        '</script>'
+      ].join('\n') + '\n'
+    }}).catch(handleInstallError);
 }
 
 function openExamplePicker () {
@@ -104,10 +115,21 @@ function openGitHubInstaller () {
   }).promise.then(install).catch(handleInstallError);
 }
 
-function install (extension) {
-  return spaceContext.cma.createExtension({extension})
+function install ({ extension, type, url }) {
+  return spaceContext.cma.createExtension({ extension })
   .then(res => $state.go('.detail', {extensionId: res.sys.id}))
-  .then(() => notification.info('Your new extension was successfully created.'));
+  .then(() => {
+    notification.info('Your new extension was successfully created.');
+
+    type && url && track('extension:install', {
+      type,
+      url,
+      name: extension.name,
+      src: extension.src,
+      fieldTypes: toInternalFieldType(extension.fieldTypes),
+      ...getExtensionParameterIds(extension)
+    });
+  });
 }
 
 function handleInstallError (err) {
