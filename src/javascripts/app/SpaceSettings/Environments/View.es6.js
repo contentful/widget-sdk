@@ -188,7 +188,7 @@ function sidebar ({
     }, [ 'Add environment' ]),
     // Don't show limits and upgrade info for v1 orgs
     !canCreateEnv && !isLegacyOrganization && h('p', [
-      limit > 1 && 'Delete existing environments or ',
+      limit > 1 && 'Delete an existing environment or ',
       canUpgradeSpace && (limit > 1 ? 'upgrade ' : 'Upgrade '),
       !canUpgradeSpace && `${limit > 1 ? 'ask' : 'Ask'} the administrator of your organization to upgrade `,
       'the space to add more.'
@@ -230,9 +230,12 @@ function upgradeButton ({ organizationId, incentivizeUpgradeEnabled }, { OpenUpg
       onClick: () => OpenUpgradeSpaceDialog()
     }, [ 'Upgrade space' ]);
   } else {
-    return h('a', {
-      href: href(subscriptionState(organizationId, false)),
-      dataTestId: 'subscriptionLink'
-    }, ['Go to subscription page to upgrade']);
+    return [
+      h('a', {
+        href: href(subscriptionState(organizationId, false)),
+        dataTestId: 'subscriptionLink'
+      }, ['Go to the subscription page']),
+      ' to upgrade'
+    ]
   }
 }
