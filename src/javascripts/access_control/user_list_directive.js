@@ -111,6 +111,7 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
 
 angular.module('contentful').factory('UserListController/jumpToRole', ['require', require => {
   var $state = require('$state');
+  var spaceContext = require('spaceContext');
   var targetRoleId = null;
 
   jump.popRoleId = popRoleId;
@@ -118,7 +119,11 @@ angular.module('contentful').factory('UserListController/jumpToRole', ['require'
 
   function jump (roleId) {
     targetRoleId = roleId;
-    $state.go('spaces.detail.settings.users.list');
+    if (spaceContext.getEnvironmentId() === 'master') {
+      $state.go('spaces.detail.settings.users.list');
+    } else {
+      $state.go('spaces.detail.environment.settings.users.list');
+    }
   }
 
   function popRoleId () {
