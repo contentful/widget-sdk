@@ -7,15 +7,17 @@ import { href } from 'states/Navigator';
 import { subscription as subscriptionState } from 'ui/NavStates/Org';
 
 import { h } from 'ui/Framework';
+import { asReact } from 'ui/Framework/DOMRenderer';
 import { linkOpen, badge, codeFragment } from 'ui/Content';
 import { table, tr, td, th } from 'ui/Content/Table';
-import { container, hbox, vspace, ihspace } from 'ui/Layout';
+import { container, hbox, ihspace } from 'ui/Layout';
 import * as Workbench from 'app/Workbench';
 import { byName as Colors } from 'Styles/Colors';
 
 import pageSettingsIcon from 'svg/page-settings';
 import questionMarkIcon from 'svg/QuestionMarkIcon';
 import CopyIconButton from 'ui/Components/CopyIconButton';
+import { Tooltip } from 'react-tippy';
 
 export default function render (state, actions) {
   return Workbench.withSidebar({
@@ -176,34 +178,37 @@ function sidebar ({
     h('h2.entity-sidebar__heading', [
       'Usage'
     ]),
-    h('p', [
-      `You are using ${usage} `,
-      limit && `out of ${limit} ${pluralize('environment', limit)} available `,
-      !limit && `${pluralize('environment', usage)} `,
-      'in this space.'
+    h('.entity-sidebar__text-profile', [
+      h('p', [
+        `You are using ${usage} `,
+        limit && `out of ${pluralize('environment', limit, true)} available `,
+        !limit && `${pluralize('environment', usage)} `,
+        'in this space.',
+        // Note: this results in semantically incorrect html (div within p)
+        // https://github.com/tvkhoa/react-tippy/pull/73 would fix it.
+        !isLegacyOrganization && usageTooltip({ resource })
+      ]),
+      // Don't show limits and upgrade info for v1 orgs
+      !canCreateEnv && !isLegacyOrganization && h('p', [
+        limit > 1 && 'Delete existing environments or ',
+        canUpgradeSpace && (limit > 1 ? 'upgrade ' : 'Upgrade '),
+        !canUpgradeSpace && `${limit > 1 ? 'ask' : 'Ask'} the administrator of your organization to upgrade `,
+        'the space to add more.'
+      ])
     ]),
-    canCreateEnv && h('button.btn-action.x--block', {
-      dataTestId: 'openCreateDialog',
-      onClick: () => OpenCreateDialog()
-    }, [ 'Add environment' ]),
-    // Don't show limits and upgrade info for v1 orgs
-    !canCreateEnv && !isLegacyOrganization && h('p', [
-      limit > 1 && 'Delete an existing environment or ',
-      canUpgradeSpace && (limit > 1 ? 'upgrade ' : 'Upgrade '),
-      !canUpgradeSpace && `${limit > 1 ? 'ask' : 'Ask'} the administrator of your organization to upgrade `,
-      'the space to add more.'
-    ]),
-    h('p', [
+    h('.entity-sidebar__widget', [
+      canCreateEnv && h('button.btn-action.x--block', {
+        dataTestId: 'openCreateDialog',
+        onClick: () => OpenCreateDialog()
+      }, [ 'Add environment' ]),
       !canCreateEnv && !isLegacyOrganization && canUpgradeSpace &&
         upgradeButton({ organizationId, incentivizeUpgradeEnabled }, { OpenUpgradeSpaceDialog })
     ]),
 
-    vspace(5),
-
-    usage === 0 && h('h2.entity-sidebar__heading', [
+    usage === 1 && h('h2.entity-sidebar__heading', [
       'Documentation'
     ]),
-    usage === 0 && h('.entity-sidebar__text-profile', [
+    usage === 1 && h('.entity-sidebar__text-profile', [
       h('p', [
         `Environments allow you to modify the data in your space
         without affecting the data in your master environment.`
@@ -221,6 +226,29 @@ function sidebar ({
       ])
     ])
   ];
+}
+
+function usageTooltip ({ resource }) {
+  const limit = get(resource, 'limits.maximum');
+  if (!limit) {
+    return '';
+  }
+
+  return h(Tooltip, {
+    html: asReact(h('div', [
+      `This space type includes ${pluralize('sandbox environment', limit, true)} `,
+      h('br', []),
+      'additional to the master environment'
+    ])),
+    position: 'bottom-end',
+    style: {
+      color: Colors.elementDarkest,
+      marginLeft: '0.2em'
+    },
+    arrow: true,
+    duration: 0,
+    trigger: 'mouseenter'
+  }, asReact(questionMarkIcon()));
 }
 
 function upgradeButton ({ organizationId, incentivizeUpgradeEnabled }, { OpenUpgradeSpaceDialog }) {
