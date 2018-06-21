@@ -40,14 +40,18 @@ angular.module('contentful')
       const personEntryPromise = spaceContext.space.getEntries({content_type: person});
       const personCTPromise = spaceContext.space.getContentType(person);
 
-      const [personEntry, personCT] = await Promise.all([personEntryPromise, personCTPromise]);
+      try {
+        const [personEntry, personCT] = await Promise.all([personEntryPromise, personCTPromise]);
 
-      if (!personEntry.total) {
+        if (!personEntry.total) {
+          return null;
+        }
+
+        // this is needed as getEntries returns entries with internal field ids
+        return Entries.internalToExternal(personEntry[0].data, personCT.data);
+      } catch (_) {
         return null;
       }
-
-      // this is needed as getEntries returns entries with internal field ids
-      return Entries.internalToExternal(personEntry[0].data, personCT.data);
     },
     create: ({ onDefaultChoice, org, user, markOnboarding }) => {
       const scope = $rootScope.$new();
