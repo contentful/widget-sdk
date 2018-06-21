@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
 import {isFunction} from 'lodash';
 
 /**
@@ -34,10 +35,14 @@ angular.module('contentful')
 
       var reactComponent = getReactComponent(attrs.name, require);
 
+      // Since we only have one component using Redux, we use its store
+      // TODO: use a high level store for the whole application
+      var store = require('components/shared/space-wizard/store').default;
+
       var renderMyComponent = () => {
         var scopeProps = $scope.$eval(attrs.props);
 
-        renderComponent(reactComponent, scopeProps, $scope, element);
+        renderComponent(reactComponent, scopeProps, $scope, element, store);
       };
 
       // If there are props, re-render when they change
@@ -61,11 +66,14 @@ angular.module('contentful')
   };
 }]);
 
-function renderComponent (Component, props, scope, elem) {
+function renderComponent (Component, props, scope, elem, store) {
   scope.$evalAsync(() => {
     // this is the single place we mount all our components, so all
     // providers should be added here
-    ReactDOM.render(<Component {...props} scope={scope} />,
+    ReactDOM.render(
+      <Provider store={store}>
+        <Component {...props} scope={scope} />
+      </Provider>,
       elem
     );
   });

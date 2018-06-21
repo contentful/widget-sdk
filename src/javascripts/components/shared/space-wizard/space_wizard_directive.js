@@ -2,23 +2,19 @@
 
 angular.module('contentful')
 .directive('cfSpaceWizard', ['require', require => {
-  var React = require('react');
-  var ReactDOM = require('react-dom');
-  var Wizard = require('components/shared/space-wizard/Wizard').default;
-  var store = require('components/shared/space-wizard/store').store;
   var $state = require('$state');
   var $rootScope = require('$rootScope');
+  var WizardStore = require('components/shared/space-wizard/store');
+  var store = WizardStore.default;
+  var actionCreators = WizardStore.actionCreators;
 
   return {
-    link: function ($scope, el) {
-      var host = el[0];
-
-      ReactDOM.render(React.createElement(Wizard, {
+    link: function ($scope) {
+      $scope.props = {
         action: $scope.action,
         space: $scope.space,
         limitReached: $scope.limitReached,
         organization: $scope.organization,
-        store,
         onCancel: function () { $scope.dialog.cancel(); },
         onConfirm: function () {
           if ($scope.onSubmit) {
@@ -39,14 +35,19 @@ angular.module('contentful')
         onDimensionsChange: function () {
           $scope.dialog.reposition();
         }
-      }), host);
+      };
 
-      $scope.$on('$destroy', () => {
-        ReactDOM.unmountComponentAtNode(host);
+      $scope.onScopeDestroy = function (scope) {
+        scope.unmountComponent();
 
-        // Reset the store so that it has fresh state next opening
-        store.dispatch({ type: 'SPACE_WIZARD_RESET' });
-      });
-    }
+        store.dispatch(actionCreators.reset());
+      };
+    },
+    template: `<react-component
+      name="components/shared/space-wizard/Wizard"
+      props="props"
+      onScopeDestroy="onScopeDestroy"
+      watch-depth="reference"
+    ></react-component>`
   };
 }]);

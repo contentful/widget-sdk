@@ -118,7 +118,7 @@ export function subscriptionPriceSuccess (totalPrice) {
   };
 }
 
-export const SPACE_WIZARD_TRACK = 'SPACE_WIZARD/SPACE_WIZARD_TRACK';
+export const SPACE_WIZARD_TRACK = 'SPACE_WIZARD/TRACK';
 export function spaceWizardTrack (eventName, trackingData) {
   return {
     type: SPACE_WIZARD_TRACK,
@@ -127,7 +127,7 @@ export function spaceWizardTrack (eventName, trackingData) {
   };
 }
 
-export const SPACE_WIZARD_NAVIGATE = 'SPACE_WIZARD/SPACE_WIZARD_NAVIGATE';
+export const SPACE_WIZARD_NAVIGATE = 'SPACE_WIZARD/NAVIGATE';
 export function spaceWizardNavigate (stepId) {
   return {
     type: SPACE_WIZARD_NAVIGATE,
@@ -157,5 +157,12 @@ export function spacePlanSelected (currentPlan, selectedPlan) {
     type: SPACE_PLAN_SELECTED,
     currentPlan,
     selectedPlan
+  };
+}
+
+export const SPACE_WIZARD_RESET = 'SPACE_WIZARD/RESET';
+export function spaceWizardReset () {
+  return {
+    type: SPACE_WIZARD_RESET
   };
 }

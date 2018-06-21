@@ -21,6 +21,10 @@ import * as actions from './actions';
 
 const DEFAULT_LOCALE = 'en-US';
 
+export function reset () {
+  return dispatch => dispatch(actions.spaceWizardReset());
+}
+
 export function fetchSpacePlans ({ organization, spaceId }) {
   return async dispatch => {
     const resources = createResourceService(organization.sys.id, 'organization');

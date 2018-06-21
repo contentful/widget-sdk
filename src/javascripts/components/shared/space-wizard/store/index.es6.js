@@ -5,6 +5,7 @@ import store from './store';
 
 const dispatch = store.dispatch;
 
+export default store;
 export {
   actions,
   actionCreators,

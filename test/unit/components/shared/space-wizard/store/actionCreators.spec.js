@@ -451,4 +451,15 @@ describe('Space Wizard action creators', function () {
       }]);
     });
   });
+
+  describe('reset', function () {
+    it('should dispatch 1 time', function () {
+      this.dispatch(this.actionCreators.reset);
+
+      expect(this.stubs.dispatch.callCount).toBe(1);
+      expect(this.stubs.dispatch.args[0]).toEqual([{
+        type: this.actions.SPACE_WIZARD_RESET
+      }]);
+    });
+  });
 });
