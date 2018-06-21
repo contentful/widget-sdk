@@ -101,28 +101,30 @@ angular.module('contentful')
         }
 
         async function getModernStackOnboardingDevChoiceData (spaceId) {
-          let showModernStackDevChoiceNextSteps;
-          let msDevChoiceNextStepsData;
+          let msDevChoiceNextStepsData = {};
+          let showModernStackDevChoiceNextSteps = true;
+          const isModernStackOnboardingComplete = store.get(`${getModernStackStoragePrefix()}:completed`);
 
-          const [
-            {managementToken},
-            personEntry
-          ] = await Promise.all([
-            getCredentials(),
-            getPerson()
-          ]);
-
-          if (!personEntry) {
-            // if the person entry wasn't found, don't show next steps for dev
-            // choice in the modern stack onboarding
-            showModernStackDevChoiceNextSteps = false;
-          } else {
-            showModernStackDevChoiceNextSteps = true;
-            msDevChoiceNextStepsData = {
-              managementToken,
-              entry: personEntry,
-              spaceId
-            };
+          if (isModernStackOnboardingComplete) {
+            const [
+              {managementToken},
+              personEntry
+            ] = await Promise.all([
+              getCredentials(),
+              getPerson()
+            ]);
+            if (!personEntry) {
+              // if the person entry wasn't found, don't show next steps for dev
+              // choice in the modern stack onboarding
+              showModernStackDevChoiceNextSteps = false;
+            } else {
+              showModernStackDevChoiceNextSteps = true;
+              msDevChoiceNextStepsData = {
+                managementToken,
+                entry: personEntry,
+                spaceId
+              };
+            }
           }
 
           return {
