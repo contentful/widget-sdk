@@ -10,6 +10,7 @@ import notifications from 'notification';
 import localeStore from 'TheLocaleStore';
 import contextHistory from 'navigation/Breadcrumbs/History';
 import {user$} from 'services/TokenStore';
+import logger from 'logger';
 
 import DataFields from 'EntityEditor/DataFields';
 import ContentTypes from 'data/ContentTypes';
@@ -19,7 +20,7 @@ import * as Validator from './Validator';
 import * as Focus from './Focus';
 import initDocErrorHandler from './DocumentErrorHandler';
 import {makeNotify} from './Notifications';
-import installTracking from './Tracking';
+import installTracking, {trackEntryView} from './Tracking';
 import renderStatusNotification from './StatusNotification';
 
 
@@ -93,6 +94,17 @@ export default async function create ($scope, entryId) {
   });
 
   installTracking(entityInfo, doc, K.scopeLifeline($scope));
+  try {
+    trackEntryView({
+      editorData: editorData,
+      entityInfo: entityInfo,
+      currentSlideLevel: $scope.$parent.entities.length,
+      locale: localeStore.getDefaultLocale().internal_code,
+      editorType: $scope.$parent.entities.length > 1 ? 'slide_in_editor' : 'entry_editor'
+    });
+  } catch (error) {
+    logger.logError(error);
+  }
 
   editorContext.validator = Validator.createForEntry(
     entityInfo.contentType,
@@ -172,6 +184,7 @@ export default async function create ($scope, entryId) {
       }
     };
   }
+
 
   $scope.$on('scroll-editor', (_ev, scrollTop) => {
     contextHistory.extendCurrent({scroll: scrollTop});

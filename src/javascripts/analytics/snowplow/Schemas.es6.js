@@ -184,6 +184,21 @@ registerSchema({
   version: '1-0-0'
 });
 
+registerSchema({
+  name: 'entry_view',
+  version: '1-0-0'
+});
+
+registerSchema({
+  name: 'feature_references_metadata',
+  version: '1-0-0'
+});
+
+registerSchema({
+  name: 'feature_reference_actions',
+  version: '1-0-0'
+});
+
 function registerSchema (schema) {
   _schemas[schema.name] = schema;
   _schemas[schema.name].path = buildPath(schema);

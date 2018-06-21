@@ -74,7 +74,7 @@ export function actions (actionClass) {
       dataTestId: 'entity-edit',
       ngIf: 'actions.edit',
       cfSref: 'stateRef',
-      ngClick: 'actions.edit($event); $event.stopPropagation();'
+      ngClick: 'onClick($event); $event.stopPropagation();'
     }, [h('cf-icon', {name: 'edit'})]),
     h(`a.${actionClass}`, {
       dataTestId: 'entity-edit',

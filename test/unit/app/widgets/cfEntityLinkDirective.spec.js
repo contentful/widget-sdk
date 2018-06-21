@@ -73,8 +73,15 @@ describe('cfEntityLink directive', () => {
   describe('edit action', () => {
     beforeEach(function () {
       this.edit = sinon.spy();
-      this.el = this.compile({}, {
-        edit: this.edit
+      this.el = this.compile({
+        sys: {
+          contentType: {
+            sys: { id: 'abc' }
+          }
+        }
+      }, {
+        edit: this.edit,
+        trackEdit: sinon.stub()
       });
     });
 

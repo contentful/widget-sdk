@@ -19,6 +19,8 @@ import Snapshot from './transformers/Snapshot';
 import InviteUserExperiment from './transformers/InviteUserExperiment';
 import SearchAndViews from './transformers/SearchAndViews';
 import ElementClickTransform from './transformers/ElementClick';
+import EntryViewTransform from './transformers/EntryView';
+import ReferenceEditorTransform from './transformers/ReferenceEditor';
 
 /**
  * @ngdoc module
@@ -40,9 +42,9 @@ registerGenericEvent('learn:language_selected');
 registerGenericEvent('learn:resource_selected');
 registerGenericEvent('learn:step_clicked');
 
-registerGenericEvent(`reference_editor:create_entry`);
-registerGenericEvent(`reference_editor:edit_entry`);
-registerGenericEvent(`reference_editor:toggle_inline_editor`);
+registerGenericEvent('reference_editor:create_entry');
+registerGenericEvent('reference_editor:edit_entry');
+registerGenericEvent('reference_editor:toggle_inline_editor');
 
 registerGenericEvent('incoming_links:dialog_open');
 registerGenericEvent('incoming_links:dialog_confirm');
@@ -111,6 +113,13 @@ registerEvent('search:view_edited', 'view_edit', SearchAndViews);
 registerEvent('search:view_deleted', 'view_delete', SearchAndViews);
 registerEvent('search:view_loaded', 'view_load', SearchAndViews);
 registerEvent('search:search_terms_migrated', 'ui_config_migrate', SearchAndViews);
+
+registerEvent('entry_editor:view', 'entry_view', EntryViewTransform);
+
+registerEvent('reference_editor_actions:create', 'reference_editor_actions', ReferenceEditorTransform);
+registerEvent('reference_editor_actions:edit', 'reference_editor_actions', ReferenceEditorTransform);
+registerEvent('reference_editor_actions:delete', 'reference_editor_actions', ReferenceEditorTransform);
+registerEvent('reference_editor_actions:link', 'reference_editor_actions', ReferenceEditorTransform);
 
 /**
  * Registers an event to be tracked by snowplow.

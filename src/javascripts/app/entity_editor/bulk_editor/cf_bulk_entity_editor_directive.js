@@ -36,6 +36,9 @@ angular.module('contentful')
   var Navigator = require('states/Navigator');
   var caseof = require('sum-types').caseof;
   var spaceContext = require('spaceContext');
+  var trackEntryView = require('app/entity_editor/Tracking').trackEntryView;
+  var localeStore = require('TheLocaleStore');
+  var logger = require('logger');
 
   return {
     restrict: 'E',
@@ -121,8 +124,21 @@ angular.module('contentful')
       K.onValueScope($scope, editorData$, editorData => {
         if (editorData) {
           setupEditor(editorData);
+
+          try {
+            trackEntryView({
+              editorData: $scope.editorData,
+              entityInfo: $scope.entityInfo,
+              currentSlideLevel: 0,
+              locale: localeStore.getDefaultLocale().internal_code,
+              editorType: 'bulk_editor'
+            });
+          } catch (error) {
+            logger.logError(error);
+          }
         }
       });
+
 
       function setupEditor (editorData) {
         $scope.editorData = editorData;

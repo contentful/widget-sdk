@@ -38,7 +38,8 @@ export const validEvents = {
     'disabled_fields_visibility_toggled',
     'created_with_same_ct',
     'preview_opened',
-    'custom_extension_rendered'
+    'custom_extension_rendered',
+    'view'
   ],
   versioning: [
     'no_snapshots',
@@ -65,10 +66,18 @@ export const validEvents = {
   invite_user: ['learn', 'create_space'],
   personal_access_token: ['action'],
   element: ['click'],
+  // TODO: These should be merged with the reference_editor_actions
+  // schema.
   reference_editor: [
     'create_entry',
     'edit_entry',
     'toggle_inline_editor'
+  ],
+  reference_editor_actions: [
+    'create',
+    'edit',
+    'delete',
+    'link'
   ],
   incoming_links: [
     'dialog_open',

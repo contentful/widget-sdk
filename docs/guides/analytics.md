@@ -95,16 +95,16 @@ Please follow this checklist:
   for more detailed instructions
 - Come up with an internal / Segment event name - select one of existing namespaces or
   introduce a new one as required
-- Add the name to the list of valid event names (`analytics/validEvents`
-  constant in `analytics/analytics_validator.js`)
+- Add the name to the list of valid event names (`validEvents`
+  constant in [analytics/Validator](../../src/javascripts/analytics/Validator.es6.js))
 - Add a call to `analytics.track` method
 - If computing a payload requires some logic or events can be grouped
   together, introduce a special service for tracking purposes only
-  (put this service into `src/javascripts/analytics/events`)
+  (put this service into [analytics/events](.././src/javascripts/analytics/events))
 - To send the event to Snowplow as well as Segment, you need to register the event
-  in `analytics/snowplow.Events.es6.js` together with the relevant `schema` and
+  in [analytics/snowplow/Events](../../src/javascripts/analytics/snowplow/Events.es6.js) together with the relevant `schema` and
   `transformer`. The schema will be the Snowplow schema to send to from the list
-  `analytics/snowplow/Schemas.es6.js`. Transformer is a function that accepts event
+  [analytics/snowplow/Schemas](../../src/javascripts/analytics/snowplow/Schemas.es6.js). Transformer is a function that accepts event
   name and data and returns the output sent to Snowplow
 
 

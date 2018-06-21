@@ -1,4 +1,4 @@
-import { partial, countBy, filter, get } from 'lodash';
+import { countBy, filter, get } from 'lodash';
 import * as K from 'utils/kefir';
 import * as List from 'utils/List';
 
@@ -173,6 +173,7 @@ export default function create ($scope, widgetApi) {
             isInlineEditingEnabledForField: isInlineEditingEnabledForField()
           });
         }
+        track('reference_editor_actions:create', { ctId: contentTypeId });
         return entry;
       });
   };
@@ -212,7 +213,12 @@ export default function create ($scope, widgetApi) {
   $scope.addExisting = event => {
     event.preventDefault && event.preventDefault();
     const currentSize = $scope.entityModels.length;
-    entitySelector.openFromField(field, currentSize).then(state.addEntities);
+    entitySelector.openFromField(field, currentSize).then((entities) => {
+      if ($scope.isAssetCard === false) {
+        entities.map(entity => track('reference_editor_actions:link', { ctId: entity.sys.contentType.sys.id }));
+      }
+      state.addEntities(entities);
+    });
   };
 
   // Property that holds the items that are rendered with the
@@ -426,7 +432,19 @@ export default function create ($scope, widgetApi) {
   }
 
   function prepareRemoveAction (index, isDisabled) {
-    return isDisabled ? null : partial(state.removeAt, index);
+    if (isDisabled) {
+      return null;
+    } else {
+      return () => {
+        if ($scope.isAssetCard === false) {
+          track('reference_editor_actions:delete', {
+            ctId:
+              $scope.entityModels[index].value.entity.sys.contentType.sys.id
+          });
+        }
+        state.removeAt(index);
+      };
+    }
   }
 
   function isCurrentEntry (entity) {

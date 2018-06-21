@@ -120,16 +120,18 @@ angular.module('cf.app')
             $event.preventDefault();
             const eventData = $scope.actions.slideinEdit();
             Analytics.track('slide_in_editor:open', eventData);
-          } else if ($scope.actions.edit) {
-            $event.preventDefault();
-            $scope.actions.edit();
-          } else if ($scope.actions.edit) {
-            $scope.actions.trackEdit();
+            Analytics.track('reference_editor_actions:edit', {
+              ctId: $scope.entity.sys.contentType.sys.id
+            });
           }
         }
 
         if ($scope.actions.edit) {
           $scope.actions.edit($event);
+          Analytics.track('reference_editor_actions:edit', {
+            ctId: $scope.entity.sys.contentType.sys.id
+          });
+          $scope.actions.trackEdit();
         }
       };
 
