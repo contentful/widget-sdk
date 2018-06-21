@@ -29,10 +29,10 @@ angular.module('contentful')
     renderBlock ({ title, text, button }) {
       return (
         <div className='modern-stack-onboarding--choice-block'>
-          <h3>
+          <h3 className='modern-stack-onboarding--choice-block-title'>
             {title}
           </h3>
-          <p>
+          <p className='modern-stack-onboarding--choice-block-description'>
             {text}
           </p>
           {button}
@@ -93,7 +93,7 @@ angular.module('contentful')
 
       return (
         <FullScreen>
-          <h1 className='modern-stack-onboarding--title'>
+          <h1 className='modern-stack-onboarding--title modern-stack-onboarding--title__margin'>
             How do you usually work with content?
           </h1>
           <div className='modern-stack-onboarding--choice-blocks'>

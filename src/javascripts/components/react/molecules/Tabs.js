@@ -20,13 +20,14 @@ angular.module('contentful')
         title: PropTypes.node,
         content: PropTypes.node
       })),
-      onSelect: PropTypes.func
+      onSelect: PropTypes.func,
+      className: PropTypes.string
     },
     selectTab (tabId) {
       this.props.onSelect(tabId);
     },
     renderTabs () {
-      const { active, tabs } = this.props;
+      const { active, tabs, className } = this.props;
 
       const tabsMarkup = tabs.map(tab => {
         const onClick = this.selectTab.bind(this, tab.id);
@@ -38,7 +39,7 @@ angular.module('contentful')
       });
 
       return (
-        <ul className={'tab-list'}>
+        <ul className={`tab-list ${className || ''}`}>
           {tabsMarkup}
         </ul>
       );

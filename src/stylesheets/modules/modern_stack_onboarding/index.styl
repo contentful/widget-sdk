@@ -9,6 +9,7 @@
     right: 0
     background: $colors.element-lightest
     overflow-y: auto
+    padding: 43px 65px
 
   &--wrapper
     margin: 15px auto
@@ -17,15 +18,19 @@
   &--header
     display: flex
     justify-content: space-between
-    margin: 50px 0 30px
+    align-items: center
+    margin: 0 0 30px
 
   &--title
     text-align: center
-    margin: 150px auto 100px
-    font-size: 48px
-    line-height: 56px
+    margin: 35px auto 100px
+    font-size: 44px
     font-weight: 500
-    max-width: 800px
+    line-height: 46px
+    max-width: 1000px
+
+    &__margin
+      margin-top: 150px
 
     &__small
       font-size: 36px
@@ -34,7 +39,7 @@
       margin: 50px auto
 
   &--subtitle
-    margin: -80px auto 50px
+    margin: -80px auto 40px
     max-width: 800px
     font-size: 21px
     font-weight: 300
@@ -44,6 +49,7 @@
 
   &--floating-hint
     color: $colors.green-light
+    margin-top: 55px
     font-size: 21px
     font-weight: bold
     display: flex
@@ -55,31 +61,124 @@
       left: -110px
       margin-top: 5px
 
-
-  &--choice-title
-
   &--choice-blocks
     display: flex
     justify-content: center
+
+  &--logogrid
+    &-wrapper
+      position: relative
+      min-height: 800px
+      margin-top: 80px
+
+    &-image
+      display: block
+      position: relative
+      margin: 10px auto 55px
+      width: 732px
+      height: 503px
+      background: url("/app/images/modern_onboarding_overview.png")
+
+    &-grid
+      z-index: 0
+      pointer-events: none
+      position: absolute
+      top: -30px
+      bottom: 30px
+      left: 0
+      right: 0
+
+    &-elem
+      &__python
+        position: absolute
+        left: 17%
+        top: 0
+
+      &__ruby
+        position: absolute
+        left: 25%
+        top: 63%
+
+      &__aws
+        position: absolute
+        left: 3%
+        top: 50%
+
+      &__dotnet
+        position: absolute
+        left: 80%
+        top: 30%
+
+      &__javascript
+        position: absolute
+        left: 16%
+        top: 90%
+
+      &__metalsmith
+        position: absolute
+        left: 82%
+        top: 0
+
+      &__swift
+        position: absolute
+        left: 93%
+        top: 95%
+
+      &__php
+        position: absolute
+        left: 96%
+        top: 28%
+
+      &__android
+        position: absolute
+        left: 43%
+        top: 91%
+
+      &__jekyll
+        position: absolute
+        left: 84%
+        top: 55%
+
+      &__gitbook
+        position: absolute
+        left: 0
+        top: 23%
+
+      &__brunch
+        position: absolute
+        left: 70%
+        top: 75%
+
 
   &--choice-block
     position: relative
     text-align: center
     padding: 15px 25px
-    border-radius: 3px
-    width: 400px
-    height: 200px
-    margin: 0 30px
-    border: 1px solid gray
+    border-radius: 4px
+    width: 481px
+    height: 240px
+    margin: 0 35px
+    border: 1px solid $colors.element-mid
+
+  &--choice-block-title
+    font-size: 21px
+    font-weight: 600
+    line-height: 29px
+
+  &--choice-block-description
+    font-size: 18px
+    line-height: 25px
+    color: $colors.text-mid
 
   &--block-button-wrapper
     position: absolute
-    bottom: 25px
+    left: 0
+    bottom: 38px
     width: 100%
 
   &--next-button
     display: block
-    margin: 30px auto
+    margin: 20px auto
     padding: 10px 55px
 
     &__left
@@ -87,13 +186,16 @@
       margin-right: 0
 
   &--skip
-    font-weight: 700
+    font-weight: 600
     font-size: 18px
     cursor: pointer
+    color: $colors.text-mid
+
 
   &--navigation
     position: relative
     margin: 0 auto
+    padding-bottom: 25px
     max-width: 800px
 
     &-wrapper
@@ -105,7 +207,7 @@
     &-circle
       color: $colors.blue-dark
       border: 3px solid $colors.blue-dark
-      background: #fff
+      background: $colors.element-lightest
       font-weight: 700
       border-radius: 100%
       display: flex
@@ -135,24 +237,29 @@
 
     &-title
       margin-top: 10px
-      font-size: 12px
+      font-size: 11px
       font-weight: 600
-      line-height: 16px
+      line-height: 15px
       color: $colors.blue-dark
       position: relative
       left: -35%
 
   &--copyscreen-content
     margin: 0 auto
-    max-width: 1000px
-    border-top: 2px solid $colors.gray
-    padding-right: 100px
+    max-width: 1050px
+    border-top: 2px solid #979797
+    padding-right: 250px
 
   &--copyscreen-text
     font-size: 18px
     font-weight: 600
     line-height: 30px
-    margin-top: 50px
+    margin-top: 0
+    padding-top: 50px
+    color: $colors.text-mid
+
+  &--copyscreen-snippet
+    margin-top: 1.5rem
 
   &--copy-title
     font-size: 22px
@@ -162,14 +269,20 @@
   &--content-explorer
     display: flex
     justify-content: space-between
-    margin-top: -40px
+
+    &-tabs
+      padding-left: 50px
+      margin-top: -40px
 
     &-data
-      width: 44%
+      background: #fff
+      width: 50%
+      padding: 16px 50px 30px
 
     &-iframe
-      width: 52%
-      padding-top: 56px
+      width: 50%
+      background-color: #536171
+      padding: 75px 38px 30px
 
     &-wrapper
       background: #fff
@@ -179,16 +292,23 @@
 
   &--iframe
     width: 100%
-    height: 1200px
+    height: 1000px
     border: 0
+    display: block
 
   &--deploy-content
     margin: 0 auto
-    max-width: 800px
+    max-width: 900px
 
   &--deployment-strategy
     border-top: 2px solid $colors.gray
-    padding-top: 20px
+    padding-top: 50px
+
+    &-title
+      font-size: 18px
+      font-weight: 600
+      line-height: 30px
+      margin-top: 0
 
   &--deployment-list
     padding-left: 20px
@@ -197,9 +317,15 @@
     &-elem
       list-style: decimal
       padding-left: 10px
+      margin-bottom: 40px
+
+    &-text
+      font-size: 18px
+      font-weight: 600
+      margin-top: 40px
 
   &--deployment-form
-    max-width: 800px
+    max-width: 900px
     margin: 50px auto 30px
 
     &__centered
@@ -207,9 +333,14 @@
 
     &-title
       font-size: 20px
-      line-height: 1.3
-      font-weight: 300
+      line-height: 25px
+      font-weight: 600
       margin-bottom: 30px
+
+    &-subtitle
+      color: $colors.text-mid
+      margin-top: -20px
+      margin-bottom: 25px
 
     &-button
       padding: 14px 45px
@@ -283,14 +414,33 @@
       background-color: $colors.element-mid
       position: absolute
 
-  &--active-code
-    transition: background 0.2s
-    background: red
-    cursor: pointer
+  &--code-title
+    margin: 24px 0 16px
+    font-size: 16px
+    font-weight: 600
+    line-height: 22px
+
+  &--code-subtitle
+    margin-top: -10px
+    font-size: 14px
+    line-height: 19px
+    color: $colors.mid-text
+
+  &--code-wrapper
+    margin-top: 1.5rem
+    position: relative
+
+  &--code-block
+    margin: 0
 
   &--active-data
+    position: absolute
+    top: -10px
+    bottom: -10px
+    left: -10px
+    right: -10px
+    border-radius: 4px
     transition: background 0.2s
-    cursor: pointer
-
-    .modern-stack-onboarding--data-flow-elem-title, .modern-stack-onboarding--data-flow-elem-subtitle
-      background: red
+    background: $colors.green-light
+    opacity: 0.3
+    pointer-events: none

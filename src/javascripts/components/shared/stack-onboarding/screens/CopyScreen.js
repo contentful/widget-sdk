@@ -37,7 +37,16 @@ angular.module('contentful')
       this.setState({ managementToken, deliveryToken, pending: false });
     },
     renderCodeLine (code) {
-      return <Code lineNumbers={false} copy code={code} tooltipPosition={'right'} />;
+      return (
+        <div className={'modern-stack-onboarding--copyscreen-snippet'}>
+          <Code
+            lineNumbers={false}
+            copy
+            code={code}
+            tooltipPosition={'right'}
+          />
+        </div>
+      );
     },
     getSetupLine () {
       const { pending, managementToken, deliveryToken } = this.state;

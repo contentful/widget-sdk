@@ -62,12 +62,12 @@ angular.module('contentful')
             {language && <span className='code-block__language'>{language}</span>}
             {this.renderCode()}
           </div>
-          {copy && <div className='code-block__copy-wrapper'>
-              <CopyButton
-                  value={Array.isArray(code) ? code.join('\n') : code}
-                  tooltipPosition={tooltipPosition}
-                  onCopy={onCopy} />
-          </div>}
+          {copy &&
+            <CopyButton
+              className={'code-block__copy-wrapper'}
+              value={Array.isArray(code) ? code.join('\n') : code}
+              tooltipPosition={tooltipPosition}
+              onCopy={onCopy} />}
         </div>
       );
     }

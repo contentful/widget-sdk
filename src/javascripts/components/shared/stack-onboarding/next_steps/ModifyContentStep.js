@@ -50,6 +50,13 @@ angular.module('contentful')
       publishContentCurlSnippet += ` -H 'X-Contentful-Version: ${entry.sys.version + 1}'`;
       publishContentCurlSnippet += ` https://api.${domain}.com/spaces/${spaceId}/entries/${entry.sys.id}/published\n`;
 
+      // replace single quotes with double because windows doesn't seem to like
+      // single quotes very much and errors when you paste and run the snippets in cmd
+      const curlSnippets = [
+        modifyContentCurlSnippet,
+        publishContentCurlSnippet
+      ].map(snippet => snippet.replace(/"/g, '\\"').replace(/'/g, '"'));
+
       const propsForStep = {
         headerCopy: 'Modify the Gatsby Starter for Contentful blog content',
         headerIcon: 'page-content',
@@ -80,10 +87,10 @@ angular.module('contentful')
             <p>Re-deploy to view this update to the blog.</p>
             <Code
               copy
-              code={[modifyContentCurlSnippet, publishContentCurlSnippet]}
-              tooltipPosition={'right'}
+              code={curlSnippets}
+              tooltipPosition='right'
               onCopy={_ => track('copy_curl_snippets')}
-              style={'margin-top: 0'}
+              style='margin-top: 0'
             />
             <br />
             <p>

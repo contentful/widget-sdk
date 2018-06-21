@@ -1,5 +1,5 @@
 import * as Tippy from 'react-tippy';
-import { createElement as h } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import createReactClass from 'create-react-class';
 
@@ -27,7 +27,8 @@ const CopyIconButton = createReactClass({
   propTypes: {
     tooltipPosition: PropTypes.oneOf(['top', 'bottom', 'left', 'right']),
     value: PropTypes.string.isRequired,
-    onCopy: PropTypes.func
+    onCopy: PropTypes.func,
+    className: PropTypes.string
   },
 
   getDefaultProps () {
@@ -58,40 +59,35 @@ const CopyIconButton = createReactClass({
   }),
 
   render () {
-    const {tooltipPosition} = this.props;
+    const {tooltipPosition, className} = this.props;
     const self = this;
-    return h('span', {
-      role: 'button',
-      'data-test-id': 'clickToCopy',
-      onClick: this.copyToClipboard,
-      style: {
-        cursor: 'pointer'
-      }
-    },
-      // TODO we should extract the tooltip stuff once it is used in
-      // different places
-      h(Tippy.Tooltip, {
-        title: 'Copied!',
-        open: this.state.showCopiedTooltip,
-        position: tooltipPosition,
-        arrow: true,
-        // We don’t want the target element for the tooltip to control
-        // the visibility.
-        trigger: 'manual',
-        // Disable animation
-        duration: 0,
-        onShow: function () {
-          // * We want the tooltip to be closed when the user clicks it.
-          // * There is no need to remove the event listener because the
-          //   element is destroyed when it is closed.
-          // * `this` refers to the DOM node that contains the tooltip
-          this.addEventListener('click', () => {
-            self.setState({ showCopiedTooltip: false });
-          });
-        }
-      },
-        asReact(copyIcon({ color: Colors.textLightest }))
-      )
+    return (
+      <span
+        role='button'
+        data-test-id='clickToCopy'
+        onClick={this.copyToClipboard}
+        style={{ cursor: 'pointer' }}
+        className={className || ''}
+      >
+        <Tippy.Tooltip
+          title='Copied!'
+          open={this.state.showCopiedTooltip}
+          position={tooltipPosition}
+          arrow
+          trigger='manual'
+          duration={0}
+          onShow={function () {
+            // * We want the tooltip to be closed when the user clicks it.
+            // * There is no need to remove the event listener because the
+            //   element is destroyed when it is closed.
+            // * `this` refers to the DOM node that contains the tooltip
+            this.addEventListener('click', () => {
+              self.setState({ showCopiedTooltip: false });
+            });
+          }}>
+          {asReact(copyIcon({ color: Colors.textLightest }))}
+        </Tippy.Tooltip>
+      </span>
     );
   }
 });
