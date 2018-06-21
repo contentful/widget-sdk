@@ -136,7 +136,7 @@ registerSchema({
 
 registerSchema({
   name: 'view_create',
-  version: '2-0-0'
+  version: '3-0-0'
 });
 
 registerSchema({
@@ -151,7 +151,7 @@ registerSchema({
 
 registerSchema({
   name: 'view_load',
-  version: '2-0-0'
+  version: '3-0-0'
 });
 
 registerSchema({
