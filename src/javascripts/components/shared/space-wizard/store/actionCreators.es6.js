@@ -54,7 +54,7 @@ export function fetchSpacePlans ({ organization, spaceId }) {
 
       if (plan.unavailabilityReasons && plan.unavailabilityReasons.length > 0) {
         disabled = true;
-      } else if (plan.isFree) {
+      } else if (isFree) {
         disabled = !canCreate(freeSpacesResource);
       } else if (!organization.isBillable) {
         disabled = true;
@@ -101,7 +101,8 @@ export function createSpace ({
   selectedPlan,
   newSpaceMeta,
   onSpaceCreated,
-  onTemplateCreated
+  onTemplateCreated,
+  onConfirm
 }) {
   return async dispatch => {
     const { name, template } = newSpaceMeta;
@@ -156,6 +157,8 @@ export function createSpace ({
         'Example Key',
         'We’ve created an example API key for you to help you get started.'
       );
+
+      onConfirm();
     }
 
     dispatch(actions.spaceCreationPending(false));

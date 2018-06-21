@@ -152,13 +152,14 @@ const Wizard = createReactClass({
     } = this.props;
 
     const steps = getSteps(action);
+    const { template } = newSpaceMeta;
 
-    if (spaceCreation.success) {
+    if (spaceCreation.success && template) {
       return (
         <div className="modal-dialog" style={{width: '750px'}}>
           <div className="modal-dialog__content">
             <ProgressScreen
-              done={!spaceCreation.isLoading}
+              done={!spaceCreation.isPending}
               onConfirm={this.confirm}
             />
           </div>
@@ -297,7 +298,8 @@ const Wizard = createReactClass({
         selectedPlan,
         newSpaceMeta,
         onSpaceCreated,
-        onTemplateCreated
+        onTemplateCreated,
+        onConfirm
       });
     } else if (lastStep && action === 'change') {
       changeSpace({ space, selectedPlan, onConfirm });

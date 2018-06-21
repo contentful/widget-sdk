@@ -58,7 +58,8 @@ describe('Space Wizard action creators', function () {
       ApiKeyRepo_create: sinon.stub(),
       getSubscriptionPlans: sinon.stub().resolves([this.plan]),
       calculateTotalPrice: sinon.stub(),
-      getTemplatesList: sinon.stub().resolves([this.template])
+      getTemplatesList: sinon.stub().resolves([this.template]),
+      onConfirm: sinon.stub()
     };
 
     this.dispatch = (action, ...args) => {
@@ -180,7 +181,8 @@ describe('Space Wizard action creators', function () {
         selectedPlan: this.plan,
         newSpaceMeta: { name: 'My favorite space', template: null },
         onSpaceCreated: this.onSpaceCreated,
-        onTemplateCreated: this.onTemplateCreated
+        onTemplateCreated: this.onTemplateCreated,
+        onConfirm: this.stubs.onConfirm
       });
 
       expect(this.stubs.dispatch.callCount).toBe(4);
@@ -213,7 +215,8 @@ describe('Space Wizard action creators', function () {
         selectedPlan: this.plan,
         newSpaceMeta: { name: 'My favorite space', template: null },
         onSpaceCreated: this.onSpaceCreated,
-        onTemplateCreated: this.onTemplateCreated
+        onTemplateCreated: this.onTemplateCreated,
+        onConfirm: this.stubs.onConfirm
       });
 
       expect(this.stubs.dispatch.callCount).toBe(3);
