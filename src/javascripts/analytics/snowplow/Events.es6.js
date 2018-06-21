@@ -116,10 +116,10 @@ registerEvent('search:search_terms_migrated', 'ui_config_migrate', SearchAndView
 
 registerEvent('entry_editor:view', 'entry_view', EntryViewTransform);
 
-registerEvent('reference_editor_actions:create', 'reference_editor_actions', ReferenceEditorTransform);
-registerEvent('reference_editor_actions:edit', 'reference_editor_actions', ReferenceEditorTransform);
-registerEvent('reference_editor_actions:delete', 'reference_editor_actions', ReferenceEditorTransform);
-registerEvent('reference_editor_actions:link', 'reference_editor_actions', ReferenceEditorTransform);
+registerEvent('reference_editor_action:create', 'reference_editor_action', ReferenceEditorTransform);
+registerEvent('reference_editor_action:edit', 'reference_editor_action', ReferenceEditorTransform);
+registerEvent('reference_editor_action:delete', 'reference_editor_action', ReferenceEditorTransform);
+registerEvent('reference_editor_action:link', 'reference_editor_action', ReferenceEditorTransform);
 
 /**
  * Registers an event to be tracked by snowplow.

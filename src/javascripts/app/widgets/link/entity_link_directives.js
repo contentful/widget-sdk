@@ -120,7 +120,7 @@ angular.module('cf.app')
             $event.preventDefault();
             const eventData = $scope.actions.slideinEdit();
             Analytics.track('slide_in_editor:open', eventData);
-            Analytics.track('reference_editor_actions:edit', {
+            Analytics.track('reference_editor_action:edit', {
               ctId: $scope.entity.sys.contentType.sys.id
             });
           }
@@ -128,7 +128,7 @@ angular.module('cf.app')
 
         if ($scope.actions.edit) {
           $scope.actions.edit($event);
-          Analytics.track('reference_editor_actions:edit', {
+          Analytics.track('reference_editor_action:edit', {
             ctId: $scope.entity.sys.contentType.sys.id
           });
           $scope.actions.trackEdit();

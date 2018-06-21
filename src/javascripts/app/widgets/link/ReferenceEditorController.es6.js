@@ -173,7 +173,7 @@ export default function create ($scope, widgetApi) {
             isInlineEditingEnabledForField: isInlineEditingEnabledForField()
           });
         }
-        track('reference_editor_actions:create', { ctId: contentTypeId });
+        track('reference_editor_action:create', { ctId: contentTypeId });
         return entry;
       });
   };
@@ -215,7 +215,7 @@ export default function create ($scope, widgetApi) {
     const currentSize = $scope.entityModels.length;
     entitySelector.openFromField(field, currentSize).then((entities) => {
       if ($scope.isAssetCard === false) {
-        entities.map(entity => track('reference_editor_actions:link', { ctId: entity.sys.contentType.sys.id }));
+        entities.map(entity => track('reference_editor_action:link', { ctId: entity.sys.contentType.sys.id }));
       }
       state.addEntities(entities);
     });
@@ -437,7 +437,7 @@ export default function create ($scope, widgetApi) {
     } else {
       return () => {
         if ($scope.isAssetCard === false) {
-          track('reference_editor_actions:delete', {
+          track('reference_editor_action:delete', {
             ctId:
               $scope.entityModels[index].value.entity.sys.contentType.sys.id
           });
