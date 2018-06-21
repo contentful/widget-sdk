@@ -138,7 +138,7 @@ export function createSpace ({
       ? {templateName: template.name, entityAutomationScope: {scope: 'space_template'}}
       : {templateName: 'Blank'};
 
-    track('create', spaceCreateEventData, { action, organization, currentStepId, selectedPlan, newSpaceMeta });
+    dispatch(track('space_create', spaceCreateEventData, { action, organization, currentStepId, selectedPlan, newSpaceMeta }));
     dispatch(actions.spaceCreationSuccess());
 
     if (template) {

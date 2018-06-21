@@ -172,7 +172,7 @@ describe('Space Wizard action creators', function () {
       this.onTemplateCreated = sinon.stub();
     });
 
-    it('should dispatch 3 times if no error is thrown creating the space', async function () {
+    it('should dispatch 4 times if no error is thrown creating the space', async function () {
       await this.dispatch(this.actionCreators.createSpace, {
         organization: this.organization,
         action: 'create',
@@ -183,16 +183,19 @@ describe('Space Wizard action creators', function () {
         onTemplateCreated: this.onTemplateCreated
       });
 
-      expect(this.stubs.dispatch.callCount).toBe(3);
+      expect(this.stubs.dispatch.callCount).toBe(4);
       expect(this.stubs.dispatch.args[0]).toEqual([{
         type: this.actions.SPACE_CREATION_PENDING,
         isPending: true
       }]);
 
-      expect(this.stubs.dispatch.args[1]).toEqual([{
+      // Track event
+      expect(typeof this.stubs.dispatch.args[1][0]).toBe('function');
+
+      expect(this.stubs.dispatch.args[2]).toEqual([{
         type: this.actions.SPACE_CREATION_SUCCESS
       }]);
-      expect(this.stubs.dispatch.args[2]).toEqual([{
+      expect(this.stubs.dispatch.args[3]).toEqual([{
         type: this.actions.SPACE_CREATION_PENDING,
         isPending: false
       }]);
