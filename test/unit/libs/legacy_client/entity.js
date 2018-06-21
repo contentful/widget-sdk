@@ -265,6 +265,11 @@ export default function describeEntity (names, description) {
     });
 
     describe('#publish', function () {
+      const maybeContentTypeAlphaHeaders = resource =>
+        resource === 'content_types'
+          ? { 'X-Contentful-Enable-Alpha-Feature': 'structured_text_fields' }
+          : {};
+
       it('sends PUT request with current version header', function* () {
         this.entity.data.sys.id = 'eid';
         this.entity.data.sys.version = 'VERSION';
@@ -272,7 +277,10 @@ export default function describeEntity (names, description) {
         yield this.entity.publish();
         sinon.assert.calledWith(this.request, {
           method: 'PUT',
-          headers: {'X-Contentful-Version': 'VERSION'},
+          headers: {
+            'X-Contentful-Version': 'VERSION',
+            ...maybeContentTypeAlphaHeaders(names.plural)
+          },
           url: `/spaces/42/${names.plural}/eid/published`
         });
       });
@@ -283,7 +291,10 @@ export default function describeEntity (names, description) {
         yield this.entity.publish(1);
         sinon.assert.calledWith(this.request, {
           method: 'PUT',
-          headers: {'X-Contentful-Version': 1},
+          headers: {
+            'X-Contentful-Version': 1,
+            ...maybeContentTypeAlphaHeaders(names.plural)
+          },
           url: `/spaces/42/${names.plural}/eid/published`
         });
       });

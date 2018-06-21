@@ -47,7 +47,11 @@ ContentType.prototype.endpoint = function (...args) {
 ContentType.prototype.publish = function (version) {
   var self = this;
   return this.endpoint('published')
-    .headers({'X-Contentful-Version': version})
+    .headers({
+      'X-Contentful-Version': version,
+      // TODO: remove this for structured text beta release
+      'X-Contentful-Enable-Alpha-Feature': 'structured_text_fields'
+    })
     .put()
     .then(function (response) {
       self.update(response);
