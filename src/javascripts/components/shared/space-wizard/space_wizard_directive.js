@@ -37,8 +37,8 @@ angular.module('contentful')
         }
       };
 
-      $scope.onScopeDestroy = function (scope) {
-        scope.unmountComponent();
+      $scope.onScopeDestroy = function ({ unmountComponent }) {
+        unmountComponent();
 
         store.dispatch(actionCreators.reset());
       };
@@ -46,7 +46,7 @@ angular.module('contentful')
     template: `<react-component
       name="components/shared/space-wizard/Wizard"
       props="props"
-      onScopeDestroy="onScopeDestroy"
+      on-scope-destroy="onScopeDestroy"
       watch-depth="reference"
     ></react-component>`
   };

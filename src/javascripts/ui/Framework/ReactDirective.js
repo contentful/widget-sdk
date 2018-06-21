@@ -57,7 +57,7 @@ angular.module('contentful')
         if (!attrs.onScopeDestroy) {
           ReactDOM.unmountComponentAtNode(element);
         } else {
-          $scope.$eval(attrs.onScopeDestroy, {
+          $scope.$eval(attrs.onScopeDestroy)({
             unmountComponent: ReactDOM.unmountComponentAtNode.bind(this, element)
           });
         }
