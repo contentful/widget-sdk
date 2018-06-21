@@ -3,16 +3,9 @@ import { range } from 'lodash';
 /**
  * Returns a list of all builtin widgets.
  *
- * @param {boolean?} config.replaceJsonEditorWithStructuredTextEditor
  * @returns {Widget.Descriptor[]}
  */
-export function create (config) {
-  const DEFAULT_CONFIG = {
-    replaceJsonEditorWithStructuredTextEditor: false
-  };
-
-  config = { ...DEFAULT_CONFIG, ...config };
-
+export function create () {
   const widgets = [];
 
   const COMMON_PARAMETERS = [
