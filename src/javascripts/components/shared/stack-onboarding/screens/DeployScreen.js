@@ -22,16 +22,7 @@ angular.module('contentful')
   const ScreenHeader = require(ScreenHeaderModule);
 
   const DeployScreen = createReactClass({
-    getInitialState () {
-      return {
-        provider: 'no_provider'
-      };
-    },
-    selectProvider (provider) {
-      this.setState({ provider });
-    },
     render () {
-      const { provider } = this.state;
       const headerTitle = (
         <React.Fragment>
           Deploy the&nbsp;
@@ -55,8 +46,8 @@ angular.module('contentful')
           <div className='modern-stack-onboarding--deploy-content'>
             <DeploymentStrategies />
           </div>
-          <WithLink trackingElementId={`deploy_screen_completed:${provider}`} link='spaceHome'>
-            {move => <DeploymentForm onProviderChange={this.selectProvider} onComplete={move} />}
+          <WithLink link='spaceHome'>
+            {move => <DeploymentForm onComplete={(event, provider) => move(event, `deploy_screen_completed:${provider}`)} />}
           </WithLink>
         </FullScreen>
       );
