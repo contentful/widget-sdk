@@ -15,7 +15,7 @@ export default function SearchInput ({ getInputProps }) {
       />
       <label htmlFor="addEntrySearchInput">
         <Icon
-          icon="MdSearch"
+          icon="Search"
           size="small"
           color="muted"
           extraClassNames="context-menu__search-input-icon"
