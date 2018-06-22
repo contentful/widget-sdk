@@ -230,12 +230,12 @@ function upgradeButton ({ organizationId, incentivizeUpgradeEnabled }, { OpenUpg
       onClick: () => OpenUpgradeSpaceDialog()
     }, [ 'Upgrade space' ]);
   } else {
-    return [
-      h('a', {
+    return h('span', [
+      h('a.text-link', {
         href: href(subscriptionState(organizationId, false)),
         dataTestId: 'subscriptionLink'
       }, ['Go to the subscription page']),
       ' to upgrade'
-    ]
+    ]);
   }
 }
