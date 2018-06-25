@@ -1,9 +1,34 @@
-import {getSpaces, getOrganizations, getOrganization} from 'services/TokenStore';
+import {getSpaces, getOrganizations, getOrganization, user$} from 'services/TokenStore';
 import { getStore } from 'TheStore';
 import * as accessChecker from 'access_control/AccessChecker';
 import {isOwnerOrAdmin} from 'services/OrganizationRoles';
+import {getValue, onValue} from 'utils/kefir';
 
 const store = getStore();
+
+function getUser () {
+  // user$ is a property which starts with `null`
+  // so it will never throw an error
+  const user = getValue(user$);
+
+  if (user) {
+    return user;
+  }
+
+  return new Promise(resolve => {
+    const off = onValue(user$, user => {
+      if (user) {
+        resolve(user);
+        off();
+      }
+    });
+  });
+}
+
+export function* getOnboardingSpaceId () {
+  const user = yield getUser();
+  return store.get(`ctfl:${user.sys.id}:modernStackOnboarding:developerChoiceSpace`);
+}
 
 /**
  * @description get current space info

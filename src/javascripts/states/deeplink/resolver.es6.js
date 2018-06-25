@@ -1,6 +1,6 @@
 import spaceContext from 'spaceContext';
 import {runTask} from 'utils/Concurrent';
-import {getSpaceInfo, getOrg, checkSpaceApiAccess, checkOrgAccess} from './utils';
+import {getSpaceInfo, getOrg, checkSpaceApiAccess, checkOrgAccess, getOnboardingSpaceId} from './utils';
 import logger from 'logger';
 import {isLegacyOrganization} from 'utils/ResourceUtils';
 
@@ -32,7 +32,7 @@ export function resolveLink (link) {
  */
 function resolveParams (link) {
   // we map links from `link` queryParameter to resolve fn
-  // keys are quoted, so we can use special symbols later
+  // keys are quoted for consistency, you can use special symbols
   //
   // Please document all possible links in the wiki
   // https://contentful.atlassian.net/wiki/spaces/PROD/pages/208765005/Deeplinking+in+the+Webapp
@@ -43,7 +43,11 @@ function resolveParams (link) {
     'invite': resolveInviteUser,
     'users': resolveUsers,
     'subscription': resolveSubscriptions,
-    'org': resolveOrganizationInfo
+    'org': resolveOrganizationInfo,
+    'onboarding-get-started': createOnboardingScreenResolver('getStarted'),
+    'onboarding-copy': createOnboardingScreenResolver('copy'),
+    'onboarding-explore': createOnboardingScreenResolver('explore'),
+    'onboarding-deploy': createOnboardingScreenResolver('deploy')
   };
 
   const resolverFn = mappings[link];
@@ -53,6 +57,19 @@ function resolveParams (link) {
   } else {
     return Promise.reject(new Error('path does not exist'));
   }
+}
+
+function createOnboardingScreenResolver (screen) {
+  return () => runTask(function* () {
+    const spaceId = yield* getOnboardingSpaceId();
+
+    if (spaceId) {
+      return {
+        path: ['spaces', 'detail', 'onboarding', screen],
+        params: { spaceId }
+      };
+    }
+  });
 }
 
 // resolve Home page
