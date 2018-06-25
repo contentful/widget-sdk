@@ -32,6 +32,8 @@ header.workbench-header
   .workbench-main__right-content
     .search-results__count(ng-show="hasPage()")
       +pluralize-entity("entry", "paginator.getTotal()", "found")
+    .usage(ng-show="hasPage() && resource")
+      | Usage: {{resource.usage}} / {{resource.limits.maximum}}
     .view-customizer(
       ng-show="hasPage()"
       cf-view-customizer)

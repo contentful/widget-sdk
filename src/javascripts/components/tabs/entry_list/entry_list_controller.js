@@ -20,6 +20,7 @@ angular.module('contentful')
   var _ = require('lodash');
   var $state = require('$state');
   var entityCreator = require('entityCreator');
+  var createResourceService = require('services/ResourceService').default;
 
   var searchController = $controller('EntryListSearchController', {$scope: $scope});
   $controller('DisplayedFieldsController', {$scope: $scope});
@@ -46,6 +47,9 @@ angular.module('contentful')
       endpoint: spaceContext.endpoint
     }
   });
+
+  var resourceService = createResourceService(spaceContext.getId(), 'space');
+  resourceService.get('record').then((resource) => { $scope.resource = resource; });
 
   $scope.entityStatus = entityStatus;
 
