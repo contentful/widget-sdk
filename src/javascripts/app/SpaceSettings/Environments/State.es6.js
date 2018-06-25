@@ -7,7 +7,7 @@ import * as LD from 'utils/LaunchDarkly';
 
 import * as accessChecker from 'access_control/AccessChecker';
 import createResourceService from 'services/ResourceService';
-import { isLegacyOrganization } from 'utils/ResourceUtils';
+import { isLegacyOrganization, canCreate } from 'utils/ResourceUtils';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import $state from '$state';
 import $q from '$q';
@@ -15,7 +15,11 @@ import $q from '$q';
 import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo';
 import { openCreateDialog, openEditDialog } from './EditDialog';
 import { openDeleteDialog } from './DeleteDialog';
+import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService';
 import render from './View';
+
+const environmentsFlagName = 'feature-dv-11-2017-environments';
+const incentivizeFlagName = 'feature-bv-06-2018-incentivize-upgrade';
 
 export default {
   name: 'environments',
@@ -27,10 +31,10 @@ export default {
       $state.go('spaces.detail');
     }
 
-    LD.getCurrentVariation('feature-dv-11-2017-environments')
-      .then((environmentsEnabled) => {
+    $q.all([LD.getCurrentVariation(environmentsFlagName), LD.getCurrentVariation(incentivizeFlagName)])
+      .then(([environmentsEnabled, incentivizeUpgradeEnabled]) => {
         if (environmentsEnabled) {
-          $scope.environmentComponent = createComponent(spaceContext);
+          $scope.environmentComponent = createComponent(spaceContext, incentivizeUpgradeEnabled);
         } else {
           $state.go('spaces.detail');
         }
@@ -45,6 +49,7 @@ const OpenCreateDialog = makeCtor('OpenCreateDialog');
 const OpenEditDialog = makeCtor('OpenEditDialog');
 const OpenDeleteDialog = makeCtor('OpenDeleteDialog');
 const ReceiveResponse = makeCtor('ReceiveResponse');
+const OpenUpgradeSpaceDialog = makeCtor('OpenUpgradeSpaceDialog');
 
 
 const reduce = makeReducer({
@@ -52,7 +57,7 @@ const reduce = makeReducer({
     C.runTask(function* () {
       const result = yield C.tryP($q.all([
         resourceEndpoint.getAll(),
-        resourceService.canCreate('environment')
+        resourceService.get('environment')
       ]));
       dispatch(ReceiveResponse, result);
     });
@@ -85,16 +90,38 @@ const reduce = makeReducer({
     });
     return state;
   },
+  [OpenUpgradeSpaceDialog]: (state, _, { dispatch }) => {
+    showUpgradeSpaceDialog({
+      organizationId: state.organizationId,
+      space: state.spaceData,
+      limitReached: state.resource,
+      action: 'change',
+      onSubmit: () => {
+        dispatch(Reload);
+        return Promise.resolve();
+      }
+    });
+
+    return state;
+  },
   [ReceiveResponse]: (state, result) => {
     return match(result, {
-      [C.Success]: ([items, canCreateEnv]) => {
+      [C.Success]: ([items, resource]) => {
+        // Resource service gets usage on organization level for v1 orgs - see
+        // https://contentful.atlassian.net/browse/MOI-144
+        // This should be fixed when `feature-bv-2018-01-features-api` is turned on.
+        //
+        // Note: there is a hardcoded limit of 100 environments for v1 orgs on the
+        // backend, but we don't enforce it on frontend as it should not be hit
+        // under normal circumstances.
+        if (state.isLegacyOrganization) {
+          resource = { usage: items.length && items.length - 1 }; // exclude master for consistency with v2 api
+        }
+
         return assign(state, {
           items: items.map(makeEnvironmentModel),
-          // Note: canCreateEnv will always be true for v1 orgs.
-          // There is a hardcoded limit of 100 environments for v1 orgs on the
-          // backend, but we don't enforce it on frontend as it should not be hit
-          // under normal circumstances.
-          canCreateEnv: canCreateEnv,
+          resource,
+          canCreateEnv: state.isLegacyOrganization || canCreate(resource),
           isLoading: false
         });
       },
@@ -105,7 +132,7 @@ const reduce = makeReducer({
 
 
 // This is exported for testing purposes.
-export function createComponent (spaceContext) {
+export function createComponent (spaceContext, incentivizeUpgradeEnabled) {
   const resourceEndpoint = SpaceEnvironmentRepo.create(spaceContext.endpoint, spaceContext.getId());
   const resourceService = createResourceService(spaceContext.getId(), 'space');
   const context = {
@@ -117,9 +144,12 @@ export function createComponent (spaceContext) {
   const initialState = {
     items: [],
     canCreateEnv: true,
+    resource: { usage: 0 },
     canUpgradeSpace: isOwnerOrAdmin(organization),
     isLegacyOrganization: isLegacyOrganization(organization),
-    organizationId: organization.sys.id
+    organizationId: organization.sys.id,
+    spaceData: spaceContext.space.data,
+    incentivizeUpgradeEnabled
   };
 
   const store = createStore(
@@ -130,7 +160,7 @@ export function createComponent (spaceContext) {
   context.dispatch = store.dispatch;
 
   const actions = bindActions(store, {
-    OpenCreateDialog, OpenEditDialog, OpenDeleteDialog
+    OpenCreateDialog, OpenEditDialog, OpenDeleteDialog, OpenUpgradeSpaceDialog
   });
 
   store.dispatch(Reload);

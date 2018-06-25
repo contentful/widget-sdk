@@ -1,3 +1,5 @@
+import pluralize from 'pluralize';
+import { get } from 'lodash';
 import * as Config from 'Config';
 import { assign } from 'utils/Collections';
 import { caseofEq } from 'sum-types';
@@ -155,25 +157,53 @@ function deleteButton (environment) {
 }
 
 
-function sidebar ({ canCreateEnv, organizationId, isLegacyOrganization, canUpgradeSpace }, { OpenCreateDialog }) {
+function sidebar ({
+  canCreateEnv,
+  resource,
+  organizationId,
+  isLegacyOrganization,
+  canUpgradeSpace,
+  incentivizeUpgradeEnabled
+}, {
+  OpenCreateDialog,
+  OpenUpgradeSpaceDialog
+}) {
+  // Master is not included in the api, display +1 usage and limit
+  const usage = resource.usage + 1;
+  const limit = get(resource, 'limits.maximum', -1) + 1;
+
   return [
     h('h2.entity-sidebar__heading', [
-      'Add environment'
+      'Usage'
     ]),
-    !canCreateEnv && h('p', [
-      'You have exceeded your environments usage. ',
-      ...upgradeInfo({ organizationId, isLegacyOrganization, canUpgradeSpace })
+    h('p', [
+      `You are using ${usage} `,
+      limit && `out of ${limit} ${pluralize('environment', limit)} available `,
+      !limit && `${pluralize('environment', usage)} `,
+      'in this space.'
     ]),
-    h('button.btn-action.x--block', {
+    canCreateEnv && h('button.btn-action.x--block', {
       dataTestId: 'openCreateDialog',
-      onClick: () => OpenCreateDialog(),
-      disabled: !canCreateEnv
+      onClick: () => OpenCreateDialog()
     }, [ 'Add environment' ]),
+    // Don't show limits and upgrade info for v1 orgs
+    !canCreateEnv && !isLegacyOrganization && h('p', [
+      limit > 1 && 'Delete an existing environment or ',
+      canUpgradeSpace && (limit > 1 ? 'upgrade ' : 'Upgrade '),
+      !canUpgradeSpace && `${limit > 1 ? 'ask' : 'Ask'} the administrator of your organization to upgrade `,
+      'the space to add more.'
+    ]),
+    h('p', [
+      !canCreateEnv && !isLegacyOrganization && canUpgradeSpace &&
+        upgradeButton({ organizationId, incentivizeUpgradeEnabled }, { OpenUpgradeSpaceDialog })
+    ]),
+
     vspace(5),
-    h('h2.entity-sidebar__heading', [
+
+    usage === 0 && h('h2.entity-sidebar__heading', [
       'Documentation'
     ]),
-    h('.entity-sidebar__text-profile', [
+    usage === 0 && h('.entity-sidebar__text-profile', [
       h('p', [
         `Environments allow you to modify the data in your space
         without affecting the data in your master environment.`
@@ -193,18 +223,19 @@ function sidebar ({ canCreateEnv, organizationId, isLegacyOrganization, canUpgra
   ];
 }
 
-function upgradeInfo ({ organizationId, isLegacyOrganization, canUpgradeSpace }) {
-  if (isLegacyOrganization) return [];
-
-  if (canUpgradeSpace) {
-    return [
-      'You can upgrade your space from the ',
-      h('a', {
-        href: href(subscriptionState(organizationId, false))
-      }, ['subscription page']),
-      '.'
-    ];
+function upgradeButton ({ organizationId, incentivizeUpgradeEnabled }, { OpenUpgradeSpaceDialog }) {
+  if (incentivizeUpgradeEnabled) {
+    return h('button.btn-action.x--block', {
+      dataTestId: 'openUpgradeDialog',
+      onClick: () => OpenUpgradeSpaceDialog()
+    }, [ 'Upgrade space' ]);
   } else {
-    return ['The administrator of your organization can upgrade this space to get more environments.'];
+    return h('span', [
+      h('a.text-link', {
+        href: href(subscriptionState(organizationId, false)),
+        dataTestId: 'subscriptionLink'
+      }, ['Go to the subscription page']),
+      ' to upgrade'
+    ]);
   }
 }
