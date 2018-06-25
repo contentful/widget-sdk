@@ -29,7 +29,7 @@ export default class LinkEntrySelector extends Component {
 
   render () {
     return (
-      <TextLink onClick={event => this.onClick(event)} icon="MdAdd">
+      <TextLink onClick={event => this.onClick(event)} icon="Plus">
         Link entry
       </TextLink>
     );

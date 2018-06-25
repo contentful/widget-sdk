@@ -82,7 +82,7 @@ const CreateEntryButton = createReactClass({
         {this.getCtaText()}
         {contentTypes.length > 1 && (
           <Icon
-            icon="MdKeyboardArrowDown"
+            icon="ChevronDown"
             size="small"
             color="white"
             data-test-id="dropdown-icon"
@@ -95,12 +95,12 @@ const CreateEntryButton = createReactClass({
   renderLink () {
     const { contentTypes } = this.props;
     return (
-      <TextLink onClick={this.handleClick} icon="MdAdd">
+      <TextLink onClick={this.handleClick} icon="Plus">
         {this.getCtaText()}
         {contentTypes.length > 1 && (
           <Icon
             data-test-id="dropdown-icon"
-            icon="MdKeyboardArrowDown"
+            icon="ChevronDown"
             color="secondary"
             extraClassNames="btn-dropdown-icon"
           />

@@ -30,7 +30,7 @@ const ContactUsButton = createReactClass({
     };
 
     if (!noIcon) {
-      props.icon = 'MdChatBubble';
+      props.icon = 'ChatBubble';
     }
 
     return (
