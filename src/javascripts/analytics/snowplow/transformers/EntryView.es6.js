@@ -14,7 +14,7 @@ export default addUserOrgSpace((_, data) => ({
 
 function getReferenceContext (refMetadata) {
   return {
-    schema: getSchema('feature_references_metadata').path,
+    schema: getSchema('feature_reference_metadata').path,
     data: {
       content_type_id: refMetadata.id,
       content_type_name: refMetadata.name

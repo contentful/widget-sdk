@@ -190,7 +190,7 @@ registerSchema({
 });
 
 registerSchema({
-  name: 'feature_references_metadata',
+  name: 'feature_reference_metadata',
   version: '1-0-0'
 });
 

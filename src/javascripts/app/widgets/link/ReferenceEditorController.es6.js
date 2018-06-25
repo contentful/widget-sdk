@@ -214,8 +214,8 @@ export default function create ($scope, widgetApi) {
     event.preventDefault && event.preventDefault();
     const currentSize = $scope.entityModels.length;
     entitySelector.openFromField(field, currentSize).then((entities) => {
-      if ($scope.isAssetCard === false) {
-        entities.map(entity => track('reference_editor_action:link', { ctId: entity.sys.contentType.sys.id }));
+      if ($scope.type !== 'Asset') {
+        entities.map(entity => track('reference_editor_action:link', { ctId: get(entity, 'sys.contentType.sys.id') }));
       }
       state.addEntities(entities);
     });
@@ -436,10 +436,10 @@ export default function create ($scope, widgetApi) {
       return null;
     } else {
       return () => {
-        if ($scope.isAssetCard === false) {
+        if ($scope.type !== 'Asset') {
           track('reference_editor_action:delete', {
             ctId:
-              $scope.entityModels[index].value.entity.sys.contentType.sys.id
+              get($scope.entityModels, [index, 'value', 'entity', 'sys', 'contentType', 'sys', 'id'])
           });
         }
         state.removeAt(index);

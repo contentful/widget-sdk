@@ -141,7 +141,7 @@ describe('cfReferenceEditorDirective', () => {
       });
 
       it('sets field value when entity is being selected', function () {
-        const entity = {sys: {type: 'Entry', id: 'testid2', contentType: { sys: { id: 'abc' } }}};
+        const entity = {sys: {type: 'Entry', id: 'testid2'}};
         this.$inject('entitySelector').openFromField = sinon.stub().resolves([entity]);
         this.scope.addExisting({preventDefault: _.noop});
         this.$apply();
@@ -149,7 +149,6 @@ describe('cfReferenceEditorDirective', () => {
       });
 
       it('sets field value when link is being removed', function () {
-        this.scope.entityModels[0].value.entity = {sys: {contentType: {sys: {id: 'ctid'}}}};
         this.$apply();
         this.scope.entityModels[0].value.actions.remove();
         sinon.assert.calledOnce(this.field.setValue.withArgs([link2]));
