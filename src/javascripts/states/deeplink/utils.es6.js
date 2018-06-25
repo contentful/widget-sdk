@@ -27,7 +27,13 @@ function getUser () {
 
 export function* getOnboardingSpaceId () {
   const user = yield getUser();
-  return store.get(`ctfl:${user.sys.id}:modernStackOnboarding:developerChoiceSpace`);
+  const spaceId = store.get(`ctfl:${user.sys.id}:modernStackOnboarding:developerChoiceSpace`);
+  if (spaceId) {
+    const spaces = yield getSpaces();
+    const spaceExist = spaces.some(space => space.sys.id === spaceId);
+
+    return spaceExist ? spaceId : undefined;
+  }
 }
 
 /**

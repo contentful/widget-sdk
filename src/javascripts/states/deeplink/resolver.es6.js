@@ -68,6 +68,8 @@ function createOnboardingScreenResolver (screen) {
         path: ['spaces', 'detail', 'onboarding', screen],
         params: { spaceId }
       };
+    } else {
+      throw new Error('modern onboarding space id does not exist');
     }
   });
 }
