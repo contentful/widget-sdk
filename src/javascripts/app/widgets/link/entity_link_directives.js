@@ -88,6 +88,7 @@ angular.module('cf.app')
       var LD = require('utils/LaunchDarkly');
       var spaceContext = require('spaceContext');
       var Analytics = require('analytics/Analytics');
+      var _ = require('lodash');
 
       var INLINE_REFERENCE_FEATURE_FLAG =
         'feature-at-02-2018-inline-reference-field';
@@ -121,7 +122,7 @@ angular.module('cf.app')
             const eventData = $scope.actions.slideinEdit();
             Analytics.track('slide_in_editor:open', eventData);
             Analytics.track('reference_editor_action:edit', {
-              ctId: $scope.entity.sys.contentType.sys.id
+              ctId: _.get($scope.entity, 'sys.contentType.sys.id')
             });
           }
         }
