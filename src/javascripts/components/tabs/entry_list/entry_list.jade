@@ -32,8 +32,21 @@ header.workbench-header
   .workbench-main__right-content
     .search-results__count(ng-show="hasPage()")
       +pluralize-entity("entry", "paginator.getTotal()", "found")
-    .usage(ng-show="hasPage() && resource")
-      | Usage: {{resource.usage}} / {{resource.limits.maximum}}
+
+    .usage(
+      ng-if="limit"
+      ng-show="hasPage()"
+      ng-class="{'usage--warn': usage / limit >= 0.9 && usage / limit < 0.95, 'usage--danger': usage / limit >= 0.95}"
+    )
+      span(ng-if="usage / limit < 0.9")
+        | Usage: {{usage | number}} / {{limit | number}}
+      span(ng-if="usage / limit >= 0.9 && usage / limit < 1")
+        | Usage: {{usage | number}} / {{limit | number}} entries and assets.&#32;
+      span(ng-if="usage / limit >= 1")
+        | You've reached the limit of {{limit | number}} records (entries and assets).&#32;
+      a(ng-if="usage / limit >= 0.9" href="#")
+        | Upgrade space
+
     .view-customizer(
       ng-show="hasPage()"
       cf-view-customizer)

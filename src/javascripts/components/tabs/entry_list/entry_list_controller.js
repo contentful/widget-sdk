@@ -49,7 +49,10 @@ angular.module('contentful')
   });
 
   var resourceService = createResourceService(spaceContext.getId(), 'space');
-  resourceService.get('record').then((resource) => { $scope.resource = resource; });
+  resourceService.get('record').then((resource) => {
+    $scope.usage = _.get(resource, 'usage');
+    $scope.limit = _.get(resource, 'limits.maximum');
+  });
 
   $scope.entityStatus = entityStatus;
 

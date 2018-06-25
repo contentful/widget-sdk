@@ -146,6 +146,10 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
       float: left;
     .usage
       float: right;
+      &--warn
+        color: $colors.orange-light
+      &--danger
+        color: $colors.red-light
 
   // Animated slide-in. Only used in API key editor
   &__info-sidebar
