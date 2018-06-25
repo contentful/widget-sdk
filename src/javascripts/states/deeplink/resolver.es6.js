@@ -33,6 +33,9 @@ export function resolveLink (link) {
 function resolveParams (link) {
   // we map links from `link` queryParameter to resolve fn
   // keys are quoted, so we can use special symbols later
+  //
+  // Please document all possible links in the wiki
+  // https://contentful.atlassian.net/wiki/spaces/PROD/pages/208765005/Deeplinking+in+the+Webapp
   const mappings = {
     'home': resolveHome,
     'api': resolveApi,
