@@ -3,6 +3,10 @@ import {runTask} from 'utils/Concurrent';
 import {getSpaceInfo, getOrg, checkSpaceApiAccess, checkOrgAccess, getOnboardingSpaceId} from './utils';
 import logger from 'logger';
 import {isLegacyOrganization} from 'utils/ResourceUtils';
+import {getStoragePrefix} from 'createModernOnboarding';
+import { getStore } from 'TheStore';
+
+const store = getStore();
 
 /**
  * @description Given a string identifier we return a state reference (for our
@@ -64,6 +68,11 @@ function createOnboardingScreenResolver (screen) {
     const spaceId = yield* getOnboardingSpaceId();
 
     if (spaceId) {
+      const currentStepKey = `${getStoragePrefix()}:currentStep`;
+      store.set(currentStepKey, {
+        path: `spaces.detail.onboarding.${screen}`,
+        params: { spaceId }
+      });
       return {
         path: ['spaces', 'detail', 'onboarding', screen],
         params: { spaceId }

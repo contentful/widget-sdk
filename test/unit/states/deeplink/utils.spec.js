@@ -19,6 +19,8 @@ describe('states/deeplink/utils', () => {
         getSpaces: this.getSpaces,
         getOrganizations: this.getOrganizations
       });
+      $provide.value('components/shared/auto_create_new_space', {});
+      $provide.value('createModernOnboarding', {});
     });
 
     this.utils = this.$inject('states/deeplink/utils');

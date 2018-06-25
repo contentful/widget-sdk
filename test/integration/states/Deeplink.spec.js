@@ -40,6 +40,8 @@ describe('states/Deeplink', () => {
       $provide.value('utils/LaunchDarkly', {
         getCurrentVariation: () => Promise.resolve(false)
       });
+      $provide.value('components/shared/auto_create_new_space', {});
+      $provide.value('createModernOnboarding', {});
     });
 
     const getStore = this.$inject('TheStore').getStore;
