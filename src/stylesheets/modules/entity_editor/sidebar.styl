@@ -152,6 +152,17 @@ $entity-sidebar-content()
     text-decoration: underline
   &__incoming-links
     color: $colors.text-light
+
+  &__translation-pills {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  &__translation-pills-container {
+    margin: 0px 8px 8px 0px;
+  }
+
 /*
 Translation selector
 
@@ -187,8 +198,6 @@ Styleguide sidebar.translations
 
 .entity-sidebar
   &__translation-pill
-    $pill-item()
-    background: $colors.element-mid
     &.x--default
       background: $colors.element-light
 

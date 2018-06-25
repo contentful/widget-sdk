@@ -65,18 +65,13 @@
   h2.entity-sidebar__heading
     | Translation
 
-  .pill-list
+  .pill-list.entity-sidebar__translation-pills
     .entity-sidebar__translation-pill(
       ng-repeat="locale in locales.active track by locale.sys.id"
       ng-class="locale.default && 'x--default'")
-      | {{locale.code}}
-      button.entity-sidebar__translation-remove(
-        ng-if="!locale.default"
-        ng-click="locales.deactivate(locale)")
-        cf-icon(name="close" scale="0.6")
-    button.btn-link(
-      ui-command="locales.changeActive")
-      | Change
+        <react-component name="@contentful/ui-component-library/Pill" props="locales.buildPillProps(locale)"></react-component>
+    <react-component name="@contentful/ui-component-library/TextLink" props="locales.buildChangeLocaleProps()">Change</react-component>
+
 
   div(ng-if="data.isEntry && data.isMasterEnvironment")
     h2.entity-sidebar__heading Versions
