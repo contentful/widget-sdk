@@ -130,7 +130,7 @@ angular.module('cf.app')
         if ($scope.actions.edit) {
           $scope.actions.edit($event);
           Analytics.track('reference_editor_action:edit', {
-            ctId: $scope.entity.sys.contentType.sys.id
+            ctId: _.get($scope.entity, 'sys.contentType.sys.id')
           });
           $scope.actions.trackEdit();
         }
