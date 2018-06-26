@@ -79,6 +79,7 @@ const TemplateSelector = createReactClass({
 
   toggle (value) {
     const { onSelect } = this.props;
+    const { selectedTemplate } = this.state;
 
     this.setState({ isShowingTemplates: value });
 
@@ -86,6 +87,8 @@ const TemplateSelector = createReactClass({
     // for visual representation
     if (value === false) {
       onSelect(null);
+    } else {
+      onSelect(selectedTemplate);
     }
   },
 
