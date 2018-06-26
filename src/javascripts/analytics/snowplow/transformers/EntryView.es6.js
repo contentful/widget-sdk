@@ -7,7 +7,7 @@ export default addUserOrgSpace((_, data) => ({
     content_type_id: data.ctId,
     content_type_name: data.ctName,
     slide_in_level: data.currentSlideLevel,
-    editorType: data.editorType
+    editor_type: data.editorType
   },
   contexts: [data.referencesCTMetadata.map(getReferenceContext)]
 }));
