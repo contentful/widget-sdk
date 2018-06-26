@@ -69,6 +69,14 @@ cf-loader(watch-state-change="true")
             | Can create and update API keys for this space.
 
       .role-details__section
+        h3 Sandbox environments settings
+        .cfnext-form-option
+          input(id="opt_manage_environments_access" type="checkbox" ng-model="internal.environments.manage" ng-disabled="!canModifyRoles")
+          label(for="opt_manage_environments_access")
+            | Can manage and use all sandbox environments in this space.
+            |  <em>(Content level permissions do not apply in a sandbox environment.)</em>.
+
+      .role-details__section
         h3 Space settings
         .cfnext-form-option
           input(id="opt_space_settings_access" type="checkbox" ng-model="internal.settings.manage" ng-disabled="!canModifyRoles")
