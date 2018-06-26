@@ -15,6 +15,7 @@ import { openDeleteSpaceDialog } from 'services/DeleteSpace';
 import { getSpaces, getOrganization } from 'services/TokenStore';
 import { isOwnerOrAdmin, isOwner } from 'services/OrganizationRoles';
 import { calcUsersMeta, calculateTotalPrice } from 'utils/SubscriptionUtils';
+import { openModal as openCommittedSpaceWarningDialog } from 'components/shared/space-wizard/CommittedSpaceWarningModal';
 
 import Workbench from 'ui/Components/Workbench/JSX';
 
@@ -126,9 +127,10 @@ const SubscriptionOverview = createReactClass({
     showCreateSpaceModal(this.props.orgId);
   },
 
-  changeSpace: function (space, action) {
+  changeSpace: function (space, spacePlan, action) {
     return () => {
       showChangeSpaceModal({
+        spacePlan,
         organizationId: this.props.orgId,
         space,
         action,
@@ -153,7 +155,11 @@ const SubscriptionOverview = createReactClass({
     };
   },
 
-  deleteSpace: function (space) {
+  deleteSpace: function (space, plan) {
+    if (plan.committed) {
+      return () => openCommittedSpaceWarningDialog();
+    }
+
     return () => {
       openDeleteSpaceDialog({
         space,

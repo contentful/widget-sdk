@@ -9,12 +9,13 @@ import Icon from 'ui/Components/Icon';
 import Price from 'ui/Components/Price';
 import ContactUsButton from 'ui/Components/ContactUsButton';
 
-import { hasAnySpacesInaccessible } from './utils';
+import { hasAnyInaccessibleSpaces, hasAnyCommittedSpaces } from './utils';
 
 function Sidebar ({grandTotal, spacePlans, orgId, isOrgOwner, isOrgBillable}) {
   // TODO - add these styles to stylesheets
   const iconStyle = {fill: colors.blueDarkest, paddingRight: '6px', position: 'relative', bottom: '-0.125em'};
-  const anyInaccessibleSpaces = hasAnySpacesInaccessible(spacePlans);
+  const anyInaccessibleSpaces = hasAnyInaccessibleSpaces(spacePlans);
+  const hasCommittedSpaces = hasAnyCommittedSpaces(spacePlans);
 
   return <div className='entity-sidebar' data-test-id='subscription-page.sidebar'>
     { isOrgBillable &&
@@ -81,15 +82,33 @@ function Sidebar ({grandTotal, spacePlans, orgId, isOrgOwner, isOrgBillable}) {
         </p>
       </Fragment>
     }
-    <h2 className='entity-sidebar__heading'>Need help?</h2>
-    <p>
-      { isOrgBillable && 'Do you need to upgrade or downgrade your spaces?' }
-      { !isOrgBillable && 'Do you have any questions about our pricing?' }
-      <Fragment>&#32;Don&apos;t hesitate to talk to our customer success team.</Fragment>
-    </p>
-    <p>
-      <ContactUsButton data-test-id='subscription-page.sidebar.contact-link' />
-    </p>
+    { hasCommittedSpaces &&
+      <Fragment>
+        <h2 className='entity-sidebar__heading'>Committed spaces</h2>
+        <p>
+          Spaces that are part of your Enterprise deal are not available for change of plans and cannot be removed.
+        </p>
+        <p>
+          If you need help, don&apos;t hesitate to talk to our customer success team.
+        </p>
+        <p>
+          <ContactUsButton data-test-id='subscription-page.sidebar.contact-link' />
+        </p>
+      </Fragment>
+    }
+    { !hasAnyCommittedSpaces &&
+      <Fragment>
+        <h2 className='entity-sidebar__heading'>Need help?</h2>
+        <p>
+          { isOrgBillable && 'Do you need to upgrade or downgrade your spaces?' }
+          { !isOrgBillable && 'Do you have any questions about our pricing?' }
+          <Fragment>&#32;Don&apos;t hesitate to talk to our customer success team.</Fragment>
+        </p>
+        <p>
+          <ContactUsButton data-test-id='subscription-page.sidebar.contact-link' />
+        </p>
+      </Fragment>
+    }
   </div>;
 }
 
