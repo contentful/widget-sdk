@@ -181,7 +181,7 @@ function sidebar ({
     h('.entity-sidebar__text-profile', [
       h('p', [
         `You are using ${usage} `,
-        limit && `out of ${pluralize('environment', limit, true)} available `,
+        limit && `out of ${limit} environments available `,
         !limit && `${pluralize('environment', usage)} `,
         'in this space.',
         // Note: this results in semantically incorrect html (div within p)
