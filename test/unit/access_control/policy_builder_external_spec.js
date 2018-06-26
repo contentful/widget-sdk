@@ -25,10 +25,11 @@ describe('Policy Builder, to external representation', () => {
     });
 
     it('picks permissions to object', () => {
-      var external = toExternal({contentModel: 'all', contentDelivery: 'all', settings: 'all'});
+      var external = toExternal({contentModel: 'all', contentDelivery: 'all', settings: 'all', environments: 'all'});
       expect(external.permissions.contentModel).toBe('all');
       expect(external.permissions.contentDelivery).toBe('all');
       expect(external.permissions.settings).toBe('all');
+      expect(external.permissions.environments).toBe('all');
     });
   });
 
