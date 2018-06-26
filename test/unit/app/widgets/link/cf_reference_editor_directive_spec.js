@@ -244,6 +244,11 @@ describe('cfReferenceEditorDirective', () => {
     it('does not call analytics.track()', function () {
       sinon.assert.notCalled(this.analytics.track);
     });
+
+    itWontAddMultipleEntitiesAtOnce(
+      'assets',
+      (scope) => scope.addNewAsset()
+    );
   });
 
   describe('adding a new entry', () => {
@@ -280,6 +285,11 @@ describe('cfReferenceEditorDirective', () => {
         }
       );
     });
+
+    itWontAddMultipleEntitiesAtOnce(
+      'entries',
+      (scope) => scope.addNewEntry(CT_ID)
+    );
   });
 
   describe('publication warning - unpublished references', () => {
@@ -369,4 +379,22 @@ describe('cfReferenceEditorDirective', () => {
       this.warning.warnFn([assetWarning]);
     });
   });
+
+  function itWontAddMultipleEntitiesAtOnce (entityType, addEntityFn) {
+    it(`won't add multiple ${entityType} at once`, async function () {
+      const addEntity = () => addEntityFn(this.scope);
+      const initialEntitiesCount = this.scope.entityModels.length;
+
+      const promise1 = addEntity();
+      const promise2 = addEntity();
+      expect(promise1).toBe(promise2);
+
+      await promise1;
+      await promise2;
+      expect(this.scope.entityModels.length).toBe(initialEntitiesCount + 1);
+
+      const promise3 = addEntity();
+      expect(promise3).not.toBe(promise1);
+    });
+  }
 });
