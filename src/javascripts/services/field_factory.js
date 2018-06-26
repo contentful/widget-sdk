@@ -81,7 +81,7 @@ angular.module('contentful')
     name: 'structured-text',
     icon: 'structuredtext',
     label: 'Structured text',
-    description: 'Text with references and formatting (EXPERIMENTAL)',
+    description: 'Long form articles, documentation, news articles',
     types: ['StructuredText']
   }, {
     name: 'number',
