@@ -181,7 +181,7 @@ function sidebar ({
       'Usage'
     ]),
     h('.entity-sidebar__text-profile', [
-      h('p', [
+      h('p', { dataTestId: 'environmentsUsage' }, [
         `You are using ${usage} `,
         limit && `out of ${limit} environments available `,
         !limit && `${pluralize('environment', usage)} `,
@@ -248,6 +248,7 @@ function usageTooltip ({ resource }) {
     <Tooltip
       html={tooltipContent}
       position="bottom-end"
+      className="environments-usage-tooltip"
       style={{
         color: Colors.elementDarkest,
         marginLeft: '0.2em'
@@ -255,7 +256,7 @@ function usageTooltip ({ resource }) {
       arrow={true}
       duration={0}
       trigger="mouseenter">
-      {asReact(questionMarkIcon())}
+      <span data-test-id="environments-usage-tooltip">{asReact(questionMarkIcon())}</span>
     </Tooltip>
   );
 }

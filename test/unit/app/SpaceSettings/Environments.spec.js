@@ -100,6 +100,44 @@ describe('app/SpaceSettings/Environments', () => {
     this.container.find('environment.e1').assertNonExistent();
   });
 
+  describe('shows usage info in the sidebar', function () {
+    beforeEach(function () {
+      this.getUsageText = () => this.container.find('environmentsUsage');
+      this.getUsageTooltip = () => this.container.find('environmentsUsage', 'environments-usage-tooltip');
+    });
+
+    describe('on v2 pricing', function () {
+      beforeEach(function () {
+        this.setPricing('pricing_version_2');
+        this.setUsage(1);
+        this.init();
+      });
+
+      it('shows usage and limits', function () {
+        this.getUsageText().assertHasText(`You are using 2 out of ${ENVIRONMENTS_LIMIT + 1} environments`);
+      });
+
+      it('shows tooltip ', function () {
+        this.getUsageTooltip().assertIsVisible();
+      });
+    });
+
+    describe('on v1 pricing', function () {
+      beforeEach(function () {
+        this.setPricing('pricing_version_1');
+        this.init();
+      });
+
+      it('shows usage only', function () {
+        this.getUsageText().assertHasText(`You are using 1 environment`);
+      });
+
+      it('does not show tooltip ', function () {
+        this.getUsageTooltip().assertNonExistent();
+      });
+    });
+  });
+
   describe('when limit is reached on v2 pricing', function () {
     beforeEach(function () {
       this.setPricing('pricing_version_2');
