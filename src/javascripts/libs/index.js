@@ -83,5 +83,8 @@ window.libs = [
   ['widgetMap', require('@contentful/widget-map')],
   ['scroll-into-view', require('scroll-into-view')],
   ['Sortable', require('sortablejs')],
-  ['parse-github-url', require('parse-github-url')]
+  ['parse-github-url', require('parse-github-url')],
+  ['redux', require('redux')],
+  ['react-redux', require('react-redux')],
+  ['redux-thunk', require('redux-thunk')]
 ];

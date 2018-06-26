@@ -2,17 +2,15 @@
 
 angular.module('contentful')
 .directive('cfSpaceWizard', ['require', require => {
-  var React = require('react');
-  var ReactDOM = require('react-dom');
-  var Wizard = require('components/shared/space-wizard/Wizard').default;
   var $state = require('$state');
   var $rootScope = require('$rootScope');
+  var WizardStore = require('components/shared/space-wizard/store');
+  var store = WizardStore.default;
+  var actionCreators = WizardStore.actionCreators;
 
   return {
-    link: function ($scope, el) {
-      var host = el[0];
-
-      ReactDOM.render(React.createElement(Wizard, {
+    link: function ($scope) {
+      $scope.props = {
         action: $scope.action,
         space: $scope.space,
         limitReached: $scope.limitReached,
@@ -37,11 +35,19 @@ angular.module('contentful')
         onDimensionsChange: function () {
           $scope.dialog.reposition();
         }
-      }), host);
+      };
 
-      $scope.$on('$destroy', () => {
-        ReactDOM.unmountComponentAtNode(host);
-      });
-    }
+      $scope.onScopeDestroy = function ({ unmountComponent }) {
+        unmountComponent();
+
+        store.dispatch(actionCreators.reset());
+      };
+    },
+    template: `<react-component
+      name="components/shared/space-wizard/Wizard"
+      props="props"
+      on-scope-destroy="onScopeDestroy"
+      watch-depth="reference"
+    ></react-component>`
   };
 }]);

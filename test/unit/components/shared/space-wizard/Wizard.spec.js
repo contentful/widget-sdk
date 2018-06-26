@@ -22,17 +22,33 @@ describe('Space Wizard', () => {
       }
     };
 
+    this.space = {
+      name: 'Best space ever',
+      sys: {
+        id: 'space_1234'
+      }
+    };
+
+    this.store = this.$inject('components/shared/space-wizard/store/store').default;
+
     this.Wizard = this.$inject('components/shared/space-wizard/Wizard').default;
     this.create = (action) => {
-      return <this.Wizard
-        organization={this.organization}
-        onCancel={sinon.stub()}
-        onConfirm={sinon.stub()}
-        onSpaceCreated={sinon.stub()}
-        onTemplateCreated={sinon.stub()}
-        onDimensionsChange={sinon.stub()}
-        action={action}
-      />;
+      const props = {
+        organization: this.organization,
+        onCancel: sinon.stub(),
+        onConfirm: sinon.stub(),
+        onSpaceCreated: sinon.stub(),
+        onTemplateCreated: sinon.stub(),
+        onDimensionsChange: sinon.stub(),
+        action: action,
+        store: this.store
+      };
+
+      if (action !== 'create') {
+        props.space = this.space;
+      }
+
+      return React.createElement(this.Wizard, props);
     };
 
     this.React = React;
@@ -51,12 +67,12 @@ describe('Space Wizard', () => {
       expect(this.component.find('.create-space-wizard__navigation > li').length).toBe(3);
     });
 
-    it('should have the latter two steps disabled', function () {
+    it('should have the later two steps disabled on loading', function () {
       expect(this.component.find('.create-space-wizard__navigation > li[aria-disabled=true]').length).toBe(2);
     });
   });
 
-  describe('space changing (upgrading/downgrading)', () => {
+  describe('space changing', () => {
     beforeEach(function () {
       this.component = this.mount('change');
     });
@@ -65,7 +81,7 @@ describe('Space Wizard', () => {
       expect(this.component.find('.create-space-wizard__navigation > li').length).toBe(2);
     });
 
-    it('should have the last step disabled', function () {
+    it('should have the last step disabled on loading', function () {
       expect(this.component.find('.create-space-wizard__navigation > li[aria-disabled=true]').length).toBe(1);
     });
   });
@@ -89,10 +105,11 @@ describe('Space Wizard', () => {
       expect(data.action).toBe('create');
     });
 
-    it('should not track change space intended action', function () {
+    it('should track change space intended action', function () {
       this.mount('change');
+      const data = this.stubs.track.firstCall.args[1];
 
-      sinon.assert.notCalled(this.stubs.track);
+      expect(data.action).toBe('change');
     });
   });
 });
