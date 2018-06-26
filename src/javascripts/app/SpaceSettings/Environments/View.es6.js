@@ -1,3 +1,5 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import pluralize from 'pluralize';
 import { get } from 'lodash';
 import * as Config from 'Config';
@@ -234,22 +236,33 @@ function usageTooltip ({ resource }) {
     return '';
   }
 
-  return h(Tooltip, {
-    html: asReact(h('div', [
-      `This space type includes ${pluralize('sandbox environment', limit, true)} `,
-      h('br', []),
-      'additional to the master environment'
-    ])),
-    position: 'bottom-end',
-    style: {
-      color: Colors.elementDarkest,
-      marginLeft: '0.2em'
-    },
-    arrow: true,
-    duration: 0,
-    trigger: 'mouseenter'
-  }, asReact(questionMarkIcon()));
+  const tooltipContent = (
+    <div>
+      This space type includes {pluralize('sandbox environment', limit, true)}
+      <br/>
+      additional to the master environment
+    </div>
+  );
+
+  return (
+    <Tooltip
+      html={tooltipContent}
+      position="bottom-end"
+      style={{
+        color: Colors.elementDarkest,
+        marginLeft: '0.2em'
+      }}
+      arrow={true}
+      duration={0}
+      trigger="mouseenter">
+      {asReact(questionMarkIcon())}
+    </Tooltip>
+  );
 }
+
+usageTooltip.propTypes = {
+  resource: PropTypes.object.isRequired
+};
 
 function upgradeButton ({ organizationId, incentivizeUpgradeEnabled }, { OpenUpgradeSpaceDialog }) {
   if (incentivizeUpgradeEnabled) {
