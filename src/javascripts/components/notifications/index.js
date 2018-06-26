@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('contentful')
 
 .config(['$provide', $provide => {
@@ -12,6 +10,7 @@ angular.module('contentful')
 .factory('notification', ['require', require => {
   var getNotificationBus = require('notifications/bus');
   var setupClearMessageHooks = require('notifications/clearMessageHooks');
+  var _ = require('lodash');
 
   var main = getNotificationBus('main');
   return _.extend(main, {
@@ -26,6 +25,7 @@ angular.module('contentful')
 .factory('notifications/bus', ['require', require => {
   var CLEAR_TIMEOUT_MS = require('notification/CLEAR_TIMEOUT_MS');
   var TRANSFORM_TIMEOUT_MS = require('notification/TRANSFORM_TIMEOUT_MS');
+  var _ = require('lodash');
 
   var buses = {};
   var $timeout = require('$timeout');
@@ -104,7 +104,9 @@ angular.module('contentful')
         $timeout(() => {
           // The message needs to be unhidden asynchronously to ensure the
           // UI transform occurs on the initial appearance of the element.
-          self.message.hidden = false;
+          if (self.message) {
+            self.message.hidden = false;
+          }
         });
       },
 
