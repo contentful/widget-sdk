@@ -81,7 +81,7 @@ deploy:
     skip_cleanup: true
     on:
       all_branches: true
-  ## Deploy production assets only when the branch that was pushed to is 'production'
+  ## Deploy production assets only when the branch that was pushed to is 'master'
   - provider: s3
     access_key_id: AKIAITC7MCJO3VAWCEOA
     secret_access_key:
@@ -91,7 +91,7 @@ deploy:
     local-dir: output/files/production
     acl: public_read
     skip_cleanup: true
-    on: 'production'
+    on: 'master'
   # Deploy production preview assets.
   # This is the same as the one above but with a different branch name
   - provider: s3
