@@ -1,3 +1,4 @@
+import { get, flatten } from 'lodash';
 import { track } from 'analytics/Analytics';
 import { stateName } from 'data/CMA/EntityState';
 import * as K from 'utils/kefir';
@@ -38,18 +39,27 @@ export async function trackEntryView ({
   });
 }
 
+const isEntryReferenceField = ({ field }) =>
+  field.type === 'Array' &&
+  field.items.type === 'Link' &&
+  field.items.linkType === 'Entry';
+
+const getFieldId = ctrl => ctrl.field.id;
+const getReferenceEntitiesIds = (id, locale, editorData) =>
+  editorData.entity.data.fields[id][locale].map(entity => entity.sys.id);
+
 async function getReferencesContentTypes (editorData, locale) {
   const referenceFieldsIds = editorData.fieldControls.form
-    .filter(({ field }) => field.type === 'Link' && field.linkType === 'Entry')
-    .map(ctrl => ctrl.field.id);
+    .filter(isEntryReferenceField)
+    .map(getFieldId);
   const refEntitiesIds = referenceFieldsIds
     .filter(id => editorData.entity.data.fields[id] !== undefined)
-    .map(id => editorData.entity.data.fields[id][locale].sys.id);
+    .map(id => getReferenceEntitiesIds(id, locale, editorData));
   const refEntities = await Promise.all(
-    refEntitiesIds.map(id => spaceContext.space.getEntry(id))
+    flatten(refEntitiesIds).map(id => spaceContext.space.getEntry(id))
   );
   const refCts = refEntities.map(entity =>
-    spaceContext.publishedCTs.get(entity.data.sys.contentType.sys.id)
+    spaceContext.publishedCTs.get(get(entity, 'data.sys.contentType.sys.id'))
   );
 
   return refCts;
