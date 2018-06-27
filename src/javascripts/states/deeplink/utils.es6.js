@@ -28,8 +28,10 @@ function getUser () {
 }
 
 export function* getOnboardingSpaceId () {
-  const user = yield getUser();
-  const spaces = yield getSpaces();
+  const [user, spaces] = yield Promise.all([
+    getUser(),
+    getSpaces()
+  ]);
   const prefix = getStoragePrefix();
 
   const onboardingSpaceKey = `${prefix}:developerChoiceSpace`;

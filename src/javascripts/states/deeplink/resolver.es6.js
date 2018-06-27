@@ -69,6 +69,8 @@ function createOnboardingScreenResolver (screen) {
 
     if (spaceId) {
       const currentStepKey = `${getStoragePrefix()}:currentStep`;
+      // we set current step flag in local storage, so if we click "skip"
+      // and resume the flow later, it opens the same step
       store.set(currentStepKey, {
         path: `spaces.detail.onboarding.${screen}`,
         params: { spaceId }
