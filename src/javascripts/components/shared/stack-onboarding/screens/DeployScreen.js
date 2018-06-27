@@ -48,7 +48,11 @@ angular.module('contentful')
           </div>
           {/* We add a default trackingElementId, which should never appear in our analytics */}
           {/* If we see it, we need to debug why is it so */}
-          <WithLink trackingElementId={'deploy_screen_completed:no_provider'} link='spaceHome'>
+          <WithLink
+            intercomKey='onboardingDeployCompleted'
+            trackingElementId={'deploy_screen_completed:no_provider'}
+            link='spaceHome'
+          >
             {move => <DeploymentForm onComplete={(event, provider) => move(event, `deploy_screen_completed:${provider}`)} />}
           </WithLink>
         </FullScreen>

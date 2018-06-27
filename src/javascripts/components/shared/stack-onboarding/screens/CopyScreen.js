@@ -99,7 +99,11 @@ angular.module('contentful')
             <div className='modern-stack-onboarding--copyscreen-text'>
               View the blog in your browser, then come back to explore how it’s built.
             </div>
-            <WithLink trackingElementId='copy_screen_completed' link='explore'>
+            <WithLink
+              intercomKey='onboardingCopyCompleted'
+              trackingElementId='copy_screen_completed'
+              link='explore'
+            >
               {move => (
                 <Button
                   onClick={move}

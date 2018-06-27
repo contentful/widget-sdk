@@ -14,6 +14,7 @@ angular.module('contentful')
   const Button = require(ButtonModule);
   const store = require('TheStore').getStore();
   const {getStoragePrefix} = require(CreateModernOnboardingModule);
+  const { updateUserInSegment } = require('analytics/Analytics');
 
   const ChoiceScreen = createReactClass({
     propTypes: {
@@ -60,6 +61,11 @@ angular.module('contentful')
         }
       });
     },
+    setChoiceInIntercom (choice) {
+      updateUserInSegment({
+        onboardingChoice: choice
+      });
+    },
     render () {
       const { isDefaultPathPending, isDevPathPending } = this.state;
       const { onDefaultChoice } = this.props;
@@ -71,6 +77,7 @@ angular.module('contentful')
         text: 'The Contentful web-app enables you to create, manage and publish content.',
         button: this.renderButton({
           onClick: () => {
+            this.setChoiceInIntercom('content');
             this.setState({ isDefaultPathPending: true });
             onDefaultChoice();
           },
@@ -85,7 +92,10 @@ angular.module('contentful')
         title: 'Develop content-rich products',
         text: 'Contentful enables you to manage, integrate and deliver content via APIs.',
         button: this.renderButton({
-          onClick: this.createSpace,
+          onClick: () => {
+            this.setChoiceInIntercom('dev');
+            this.createSpace();
+          },
           text: 'Deploy a website in 3 steps',
           disabled: isButtonDisabled,
           isLoading: isDevPathPending,

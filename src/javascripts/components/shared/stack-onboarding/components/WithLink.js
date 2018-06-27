@@ -10,6 +10,7 @@ angular.module('contentful')
   const spaceContext = require('spaceContext');
   const { track } = require(CreateModernOnboardingModule);
   const store = require('TheStore').getStore();
+  const { updateUserInSegment } = require('analytics/Analytics');
 
   const {getStoragePrefix} = require(CreateModernOnboardingModule);
 
@@ -17,10 +18,11 @@ angular.module('contentful')
     propTypes: {
       link: PropTypes.oneOf(['getStarted', 'copy', 'explore', 'deploy', 'spaceHome']),
       trackingElementId: PropTypes.string.isRequired,
+      intercomKey: PropTypes.string.isRequired,
       children: PropTypes.func.isRequired
     },
     render () {
-      const { children, trackingElementId } = this.props;
+      const { children, trackingElementId, intercomKey } = this.props;
       const getStateParams = () => {
         const { link } = this.props;
         const spaceId = spaceContext.space && spaceContext.space.getId();
@@ -45,6 +47,12 @@ angular.module('contentful')
 
         if (elementId) {
           track(elementId);
+        }
+
+        if (intercomKey) {
+          updateUserInSegment({
+            [intercomKey]: true
+          });
         }
 
         await $state.go(path, params);

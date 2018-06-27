@@ -11,6 +11,7 @@ angular.module('contentful')
   const $stateParams = require('$stateParams');
   const store = require('TheStore').getStore();
   const {getStoragePrefix, track} = require(CreateModernOnboardingModule);
+  const {updateUserInSegment} = require('analytics/Analytics');
 
   const StackOnboardingSkip = createReactClass({
     propTypes: {
@@ -21,6 +22,9 @@ angular.module('contentful')
         track(`close_from_${this.props.link}`);
       } else {
         track(`skip_from_${this.props.link}`);
+        updateUserInSegment({
+          onboardingSkipped: true
+        });
       }
       $state.go('spaces.detail.home', {
         spaceId: $stateParams.spaceId
