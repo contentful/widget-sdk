@@ -21,6 +21,7 @@ angular.module('contentful')
   var $state = require('$state');
   var entityCreator = require('entityCreator');
   var createResourceService = require('services/ResourceService').default;
+  var ResourceUtils = require('utils/ResourceUtils');
 
   var searchController = $controller('EntryListSearchController', {$scope: $scope});
   $controller('DisplayedFieldsController', {$scope: $scope});
@@ -48,11 +49,13 @@ angular.module('contentful')
     }
   });
 
-  var resourceService = createResourceService(spaceContext.getId(), 'space');
-  resourceService.get('record').then((resource) => {
-    $scope.usage = _.get(resource, 'usage');
-    $scope.limit = _.get(resource, 'limits.maximum');
-  });
+  if (!ResourceUtils.isLegacyOrganization(spaceContext.organizationContext.organization)) {
+    var resourceService = createResourceService(spaceContext.getId(), 'space');
+    resourceService.get('record').then((resource) => {
+      $scope.usage = _.get(resource, 'usage');
+      $scope.limit = _.get(resource, 'limits.maximum');
+    });
+  }
 
   $scope.entityStatus = entityStatus;
 
