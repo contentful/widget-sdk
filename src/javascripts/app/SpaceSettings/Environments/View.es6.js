@@ -9,7 +9,6 @@ import { href } from 'states/Navigator';
 import { subscription as subscriptionState } from 'ui/NavStates/Org';
 
 import { h } from 'ui/Framework';
-import { asReact } from 'ui/Framework/DOMRenderer';
 import { linkOpen, badge, codeFragment } from 'ui/Content';
 import { table, tr, td, th } from 'ui/Content/Table';
 import { container, hbox, ihspace } from 'ui/Layout';
@@ -18,6 +17,7 @@ import { byName as Colors } from 'Styles/Colors';
 
 import pageSettingsIcon from 'svg/page-settings';
 import questionMarkIcon from 'svg/QuestionMarkIcon';
+import Icon from 'ui/Components/Icon';
 import CopyIconButton from 'ui/Components/CopyIconButton';
 import { Tooltip } from 'react-tippy';
 
@@ -201,7 +201,7 @@ function sidebar ({
     h('.entity-sidebar__widget', [
       canCreateEnv && h('button.btn-action.x--block', {
         dataTestId: 'openCreateDialog',
-        onClick: () => OpenCreateDialog()
+        onClick: OpenCreateDialog
       }, [ 'Add environment' ]),
       !canCreateEnv && !isLegacyOrganization && canUpgradeSpace &&
         upgradeButton({ organizationId, incentivizeUpgradeEnabled }, { OpenUpgradeSpaceDialog })
@@ -233,7 +233,7 @@ function sidebar ({
 function usageTooltip ({ resource }) {
   const limit = get(resource, 'limits.maximum');
   if (!limit) {
-    return '';
+    return null;
   }
 
   const tooltipContent = (
@@ -248,15 +248,14 @@ function usageTooltip ({ resource }) {
     <Tooltip
       html={tooltipContent}
       position="bottom-end"
-      className="environments-usage-tooltip"
       style={{
         color: Colors.elementDarkest,
         marginLeft: '0.2em'
       }}
-      arrow={true}
+      arrow
       duration={0}
       trigger="mouseenter">
-      <span data-test-id="environments-usage-tooltip">{asReact(questionMarkIcon())}</span>
+      <span data-test-id="environments-usage-tooltip"><Icon name='question-mark' /></span>
     </Tooltip>
   );
 }

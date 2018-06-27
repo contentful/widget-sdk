@@ -128,7 +128,7 @@ describe('app/SpaceSettings/Environments', () => {
         this.init();
       });
 
-      it('shows usage only', function () {
+      it('shows usage without limits', function () {
         this.getUsageText().assertHasText(`You are using 1 environment`);
       });
 
