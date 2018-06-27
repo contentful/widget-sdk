@@ -22,6 +22,9 @@ angular.module('contentful')
   var entityCreator = require('entityCreator');
   var createResourceService = require('services/ResourceService').default;
   var ResourceUtils = require('utils/ResourceUtils');
+  var LD = require('utils/LaunchDarkly');
+  var TheAccountView = require('TheAccountView');
+  var showUpgradeSpaceDialog = require('services/ChangeSpaceService').showDialog;
 
   var searchController = $controller('EntryListSearchController', {$scope: $scope});
   $controller('DisplayedFieldsController', {$scope: $scope});
@@ -49,12 +52,38 @@ angular.module('contentful')
     }
   });
 
-  if (!ResourceUtils.isLegacyOrganization(spaceContext.organizationContext.organization)) {
+  const organization = spaceContext.organizationContext.organization;
+
+  if (!ResourceUtils.isLegacyOrganization(organization)) {
     var resourceService = createResourceService(spaceContext.getId(), 'space');
-    resourceService.get('record').then((resource) => {
-      $scope.usage = _.get(resource, 'usage');
-      $scope.limit = _.get(resource, 'limits.maximum');
+
+    const updateUsage = () => {
+      resourceService.get('record').then((resource) => {
+        $scope.resource = resource;
+        $scope.usage = _.get(resource, 'usage');
+        $scope.limit = _.get(resource, 'limits.maximum');
+      });
+    };
+
+    var incentivizeFlagName = 'feature-bv-06-2018-incentivize-upgrade';
+
+    LD.getCurrentVariation(incentivizeFlagName).then((value) => {
+      $scope.incentivizeUpgradeEnabled = value;
     });
+
+    $scope.subscriptionState = TheAccountView.getSubscriptionState();
+
+    $scope.upgradeSpace = () => {
+      showUpgradeSpaceDialog({
+        organizationId: organization.sys.id,
+        space: spaceContext.space.data,
+        limitReached: $scope.resource,
+        action: 'change',
+        onSubmit: updateUsage
+      });
+    };
+
+    updateUsage();
   }
 
   $scope.entityStatus = entityStatus;

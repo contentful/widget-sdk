@@ -44,8 +44,14 @@ header.workbench-header
         | Usage: {{usage | number}} / {{limit | number}} entries and assets.&#32;
       span(ng-if="usage / limit >= 1")
         | You've reached the limit of {{limit | number}} records (entries and assets).&#32;
-      a(ng-if="usage / limit >= 0.9" href="#")
-        | Upgrade space
+
+      span(ng-if="usage / limit >= 0.9")
+        a.text-link(ng-if="incentivizeUpgradeEnabled" ng-click="upgradeSpace()")
+          | Upgrade space
+        span(ng-if="!incentivizeUpgradeEnabled")
+          a.text-link(cf-sref="{{subscriptionState}}")
+            | Go to the subscription page
+          | &nbsp;to upgrade.
 
     .view-customizer(
       ng-show="hasPage()"
