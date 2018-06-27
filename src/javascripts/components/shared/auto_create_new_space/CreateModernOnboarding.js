@@ -36,14 +36,15 @@ angular.module('contentful')
       const currentSpaceName = currentSpace && currentSpace.data.name;
       const msDevChoiceSpace = store.get(`${createModernOnboarding.getStoragePrefix()}:developerChoiceSpace`);
 
-      return currentSpaceId === msDevChoiceSpace ||
-        currentSpaceName === createModernOnboarding.MODERN_STACK_ONBOARDING_SPACE_NAME;
+      return !!currentSpace &&
+        (currentSpaceId === msDevChoiceSpace ||
+         currentSpaceName === createModernOnboarding.MODERN_STACK_ONBOARDING_SPACE_NAME);
     },
     isContentOnboardingSpace: (currentSpace) => {
       const currentSpaceId = currentSpace && currentSpace.getSys().id;
       const msContentChoiceSpace = store.get(`${createModernOnboarding.getStoragePrefix()}:contentChoiceSpace`);
 
-      return currentSpaceId === msContentChoiceSpace;
+      return !!currentSpace && currentSpaceId === msContentChoiceSpace;
     },
     /**
      * @description

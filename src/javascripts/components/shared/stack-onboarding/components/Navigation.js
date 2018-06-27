@@ -53,6 +53,8 @@ angular.module('contentful')
   };
 
   const Navigation = ({ active }) => {
+    // 4 marks all steps as done and let's you move both
+    // back and forth using the step number navigation
     active = isOnboardingComplete() ? 4 : active;
 
     return (

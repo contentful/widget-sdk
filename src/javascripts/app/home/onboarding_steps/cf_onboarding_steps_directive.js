@@ -76,7 +76,7 @@ angular.module('contentful')
           controller.showModernStackContentChoiceNextSteps =
             flag &&
             !spaceAutoCreationFailed &&
-            isContentOnboardingSpace();
+            isContentOnboardingSpace(spaceContext.space);
 
           if (showModernStackDevChoiceNextSteps) {
             const currentStepKey = `${prefix}:currentStep`;
