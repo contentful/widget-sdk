@@ -29,6 +29,7 @@ angular.module('contentful')
     MODERN_STACK_ONBOARDING_SPACE_NAME: 'Gatsby Starter for Contentful',
     getUser: () => getValue(user$),
     getStoragePrefix: () => `ctfl:${createModernOnboarding.getUser().sys.id}:modernStackOnboarding`,
+    isOnboardingComplete: () => store.get(`${createModernOnboarding.getStoragePrefix()}:completed`),
     /**
      * @description
      * Get the first entry that has content type "person"

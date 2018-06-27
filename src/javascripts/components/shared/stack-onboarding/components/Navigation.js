@@ -2,12 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import {name as WithLinkModule} from './WithLink';
+import {name as CreateModernOnboardingModule} from '../../auto_create_new_space/CreateModernOnboarding';
 
 export const name = 'stack-onboarding-navigation';
 
 
 angular.module('contentful')
 .factory(name, ['require', function (require) {
+  const { isOnboardingComplete } = require(CreateModernOnboardingModule);
   const WithLink = require(WithLinkModule);
 
   const Step = ({ id, title, value, link, trackingElementId, active }) => {
@@ -47,10 +49,12 @@ angular.module('contentful')
     value: PropTypes.number.isRequired,
     link: PropTypes.string,
     trackingElementId: PropTypes.string.isRequired,
-    active: PropTypes.oneOf([1, 2, 3])
+    active: PropTypes.oneOf([1, 2, 3, 4])
   };
 
   const Navigation = ({ active }) => {
+    active = isOnboardingComplete() ? 4 : active;
+
     return (
       <div className='modern-stack-onboarding--navigation'>
         <div className='modern-stack-onboarding--navigation-wrapper'>
@@ -75,6 +79,7 @@ angular.module('contentful')
             id={3}
             value={3}
             title='Deploy website'
+            link='deploy'
             trackingElementId='deploy_step_from_navigation'
           />
         </div>
