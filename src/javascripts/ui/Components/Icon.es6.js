@@ -42,6 +42,7 @@ import ContentfulLogo from 'svg/ContentfulLogo';
 import BrunchIcon from 'svg/brunch';
 import GitBookIcon from 'svg/gitbook';
 import StackOverviewIcon from 'svg/infographic';
+import RelaunchOnboardingIcon from 'svg/icon-onboarding-relaunch';
 
 const SVGS = {
   'home-welcome': HomeWelcomeIcon,
@@ -81,7 +82,8 @@ const SVGS = {
   'contentful-logo': ContentfulLogo,
   'brunch': BrunchIcon,
   'gitbook': GitBookIcon,
-  'stack-overview': StackOverviewIcon
+  'stack-overview': StackOverviewIcon,
+  'relaunch-onboarding': RelaunchOnboardingIcon
 };
 
 const Icon = createReactClass({

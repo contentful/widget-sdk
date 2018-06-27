@@ -18,6 +18,7 @@ angular.module('contentful')
     } = require(CreateModernOnboardingModule);
 
     const WithLink = require(WithLinkModule);
+    const Icon = require('ui/Components/Icon').default;
 
     class Relaunch extends React.Component {
       constructor () {
@@ -42,8 +43,9 @@ angular.module('contentful')
             <WithLink link='copy' trackingElementId='onboarding_relaunched'>
               {
                 move => (
-                  <div className='modern-stack-onboarding--relaunch-wrapper' onClick={move}>
-                    <span style={{color: 'white'}}>Relaunch</span>
+                  <div className='modern-stack-onboarding--relaunch-wrapper nav-bar__link' onClick={move}>
+                    <Icon name='relaunch-onboarding' className='modern-stack-onboarding--relaunch-icon'/>
+                    <span className='nav-bar__list-label'>Relaunch onboarding</span>
                   </div>
                 )
               }

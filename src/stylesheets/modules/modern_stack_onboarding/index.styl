@@ -445,12 +445,26 @@
     opacity: 0.3
     pointer-events: none
 
-  &--relaunch-wrapper
-    display: flex
-    align-items: center
-    justify-content: center
-    height: 100%
-    padding: 0 40px
+  &--relaunch
+    &-wrapper
+      display: flex
+      align-items: center
+      justify-content: center
+      height: 100%
+      padding: 0 40px
+      color: $colors.white
 
-    &:hover
-      cursor: pointer
+      &:hover
+        cursor: pointer
+
+        path, circle
+          stroke: $colors.blue-mid
+
+    &-icon
+      margin-right: 10px
+
+      @media (max-width: $nav-bar-break-width)
+        display: none
+
+      path, circle
+        transition: all 0.1s ease-in-out
