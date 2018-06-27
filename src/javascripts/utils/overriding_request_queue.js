@@ -50,12 +50,12 @@ angular.module('cf.utils')
       return requests.length === 0;
     }
 
-    function requestRequired() {
-      return performRequest(prepareOpts(arguments, true));
+    function requestRequired(...args) {
+      return performRequest(prepareOpts(args, true));
     }
 
-    function request() {
-      return performRequest(prepareOpts(arguments));
+    function request(...args) {
+      return performRequest(prepareOpts(args));
     }
 
     function prepareOpts(argsObj, required) {
@@ -79,7 +79,7 @@ angular.module('cf.utils')
         required.push(opts.id);
       }
 
-      requestFn.apply(null, opts.args)
+      requestFn(...opts.args)
       .then(createResponseHandler(opts.id), handleError);
 
       return deferred.promise;

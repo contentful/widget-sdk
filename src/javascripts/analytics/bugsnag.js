@@ -44,14 +44,14 @@ angular.module('contentful')
     notify: function () {
       var args = arguments;
       callBuffer.call(() => {
-        if (bugsnag) bugsnag.notify.apply(bugsnag, args);
+        if (bugsnag) bugsnag.notify(...args);
       });
     },
 
     notifyException: function () {
       var args = arguments;
       callBuffer.call(() => {
-        if (bugsnag) bugsnag.notifyException.apply(bugsnag, args);
+        if (bugsnag) bugsnag.notifyException(...args);
       });
     },
 

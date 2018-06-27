@@ -217,7 +217,7 @@ angular.module('contentful')
 
   function handleResponse (res) {
     $scope.paginator.setTotal(res.total);
-    $scope.items.push.apply($scope.items, getItemsToAdd(res));
+    $scope.items.push(...getItemsToAdd(res));
     $timeout(() => {
       $scope.isLoading = false;
       $scope.isLoadingMore = false;

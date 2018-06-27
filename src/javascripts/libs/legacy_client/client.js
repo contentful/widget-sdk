@@ -11,8 +11,8 @@ var Client = function Client (adapter) {
 };
 
 Client.prototype = {
-  endpoint: function () {
-    return this.persistenceContext.endpoint().paths(arguments);
+  endpoint: function (...args) {
+    return this.persistenceContext.endpoint().paths(args);
   }
 };
 

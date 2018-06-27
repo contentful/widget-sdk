@@ -33,8 +33,8 @@ ContentType.prototype.getIdentity = function () {
   }
 };
 
-ContentType.prototype.endpoint = function () {
-  var endpoint = Entity.prototype.endpoint.apply(this, _.toArray(arguments));
+ContentType.prototype.endpoint = function (...args) {
+  var endpoint = Entity.prototype.endpoint.apply(this, _.toArray(args));
   if (this.getVersion()) {
     // TODO it is not clear where this belongs. For subresources the
     // version header should be ommited

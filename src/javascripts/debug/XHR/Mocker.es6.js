@@ -121,9 +121,9 @@ function createMockClass (rules, XMLHttpRequest) {
     }
   };
 
-  XHR.prototype.abort = function () {
+  XHR.prototype.abort = function (...args) {
     if (!this._rule) {
-      return this._xhr.abort.apply(this._xhr, arguments);
+      return this._xhr.abort(...args);
     }
   };
 
@@ -133,25 +133,25 @@ function createMockClass (rules, XMLHttpRequest) {
     }
   };
 
-  XHR.prototype.setRequestHeader = function () {
+  XHR.prototype.setRequestHeader = function (...args) {
     if (!this._rule) {
-      this._xhr.setRequestHeader.apply(this._xhr, arguments);
+      this._xhr.setRequestHeader(...args);
     }
   };
 
-  XHR.prototype.getAllResponseHeaders = function () {
+  XHR.prototype.getAllResponseHeaders = function (...args) {
     if (this._rule) {
       return '';
     } else {
-      return this._xhr.getAllResponseHeaders.apply(this._xhr, arguments);
+      return this._xhr.getAllResponseHeaders(...args);
     }
   };
 
-  XHR.prototype.getResponseHeader = function () {
+  XHR.prototype.getResponseHeader = function (...args) {
     if (this._rule) {
       return '';
     } else {
-      return this._xhr.getResponseHeader.apply(this._xhr, arguments);
+      return this._xhr.getResponseHeader(...args);
     }
   };
 

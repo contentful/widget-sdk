@@ -23,7 +23,7 @@ describe('cfSnapshotSelector', () => {
 
     spaceContext.cma = {
       getEntrySnapshots: sinon.stub().resolves({
-        items: Array.apply(null, {length: 50}).map(makeFakeSnapshots(50))
+        items: Array.from({length: 50}).map(makeFakeSnapshots(50))
       })
     };
 
@@ -206,7 +206,7 @@ describe('cfSnapshotSelector', () => {
 
   describe('dont add duplicate snapshots', () => {
     it('should only add unique snapshots to the list', function () {
-      const snapshotsArr = Array.apply(null, {length: PER_PAGE}).map(this.makeFakeSnapshots(PER_PAGE));
+      const snapshotsArr = Array.from({length: PER_PAGE}).map(this.makeFakeSnapshots(PER_PAGE));
 
       this.spaceContext.cma.getEntrySnapshots = sinon.stub().resolves({
         items: snapshotsArr

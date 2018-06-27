@@ -85,7 +85,7 @@ export function track (eventName, data) {
   const eventData = buildUnstructEventData(eventName, data);
 
   if (eventData) {
-    snowplowSend.apply(null, eventData);
+    snowplowSend(...eventData);
   }
 }
 
@@ -118,8 +118,8 @@ export function buildUnstructEventData (eventName, data) {
   }
 }
 
-function snowplowSend () {
+function snowplowSend (...args) {
   if (!isDisabled) {
-    snowplow.q.push(arguments);
+    snowplow.q.push(args);
   }
 }

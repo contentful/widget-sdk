@@ -68,8 +68,8 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
   reload();
 
   function decorateWithReload (command) {
-    return function () {
-      return command.apply(null, arguments).then(reload);
+    return function (...args) {
+      return command(...args).then(reload);
     };
   }
 

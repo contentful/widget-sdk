@@ -60,7 +60,7 @@ angular.module('cf.app')
       return paths[0];
     }
 
-    var segments = _.zip.apply(_, paths);
+    var segments = _.zip(...paths);
     var prefix = [];
     var i = 0;
     /* eslint no-constant-condition: off */

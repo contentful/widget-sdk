@@ -121,9 +121,9 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['require', req
       return 'all';
     } else if (isArrayOfLength(1) && !_.includes(glued, as[0])) {
       return as[0];
-    } else if (isArrayOfLength(2) && containsBoth.apply(null, glued.slice(0, 2))) {
+    } else if (isArrayOfLength(2) && containsBoth(...glued.slice(0, 2))) {
       return 'publish';
-    } else if (isArrayOfLength(2) && containsBoth.apply(null, glued.slice(2, 4))) {
+    } else if (isArrayOfLength(2) && containsBoth(...glued.slice(2, 4))) {
       return 'archive';
     }
 

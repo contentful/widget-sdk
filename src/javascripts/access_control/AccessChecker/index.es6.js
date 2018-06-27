@@ -482,7 +482,7 @@ function determineEnforcement (reasonsDenied, entityType) {
 function wrapGKMethod (name) {
   return (...args) => {
     if (gkPermissionChecker) {
-      return gkPermissionChecker[name].apply(gkPermissionChecker, args);
+      return gkPermissionChecker[name](...args);
     }
   };
 }

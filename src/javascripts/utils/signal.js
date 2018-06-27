@@ -51,7 +51,7 @@ angular.module('cf.utils')
       dispatch: function () {
         var args = arguments;
         _.forEach(listeners, listener => {
-          listener.apply(null, args);
+          listener(...args);
         });
       },
 
@@ -71,19 +71,19 @@ angular.module('cf.utils')
    * @name signal#createMemoized
    * @returns {Signal}
    */
-  function createMemoized () {
-    var lastArgs = arguments;
+  function createMemoized (...args) {
+    var lastArgs = args;
 
     var baseSignal = create();
 
     return {
-      dispatch: function () {
-        lastArgs = arguments;
-        baseSignal.dispatch.apply(null, arguments);
+      dispatch: function (...args) {
+        lastArgs = args;
+        baseSignal.dispatch.apply(null, args);
       },
 
       attach: function (listener) {
-        listener.apply(null, lastArgs);
+        listener(...lastArgs);
         return baseSignal.attach(listener);
       }
     };

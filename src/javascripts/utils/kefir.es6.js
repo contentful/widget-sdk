@@ -216,12 +216,12 @@ export function onValueWhile (lifeline, stream, cb) {
  */
 export function fromScopeEvent (scope, event, uncurry) {
   return Kefir.stream(emitter => {
-    const offEvent = scope.$on(event, function () {
+    const offEvent = scope.$on(event, function (...args) {
       let value;
       if (uncurry) {
-        value = Array.prototype.slice.call(arguments, 1);
+        value = Array.prototype.slice.call(args, 1);
       } else {
-        value = arguments[1];
+        value = args[1];
       }
       emitter.emit(value);
     });

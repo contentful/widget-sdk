@@ -78,8 +78,8 @@ angular.module('contentful')
    * @param {string} method
    * @param {Array<any>} params
    */
-  API.prototype.send = function () {
-    this.channel.send.apply(this.channel, arguments);
+  API.prototype.send = function (...args) {
+    this.channel.send(...args);
   };
 
   /**
@@ -220,7 +220,7 @@ angular.module('contentful')
           entryAction = matchData[1];
           contentType = getContentType(entryAction, args[0]);
         }
-        return apiClient[methodName].apply(apiClient, args)
+        return apiClient[methodName](...args)
         .then(entity => {
           if (_.get(entity, ['sys', 'type']) === 'Entry' && entryAction) {
             Analytics.track('entry:' + entryAction, {

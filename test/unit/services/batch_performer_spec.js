@@ -32,7 +32,7 @@ describe('Batch performer service', () => {
         this.$inject('spaceContext').space = {createEntry: ce};
 
         function cc () { return sinon.stub().resolves({}); }
-        function ce () { return calls[i++].apply(null, arguments); }
+        function ce (...args) { return calls[i++].apply(null, args); }
       });
 
       testSharedBehavior('duplicate');

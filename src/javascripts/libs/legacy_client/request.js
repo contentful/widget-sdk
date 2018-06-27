@@ -76,8 +76,8 @@ Request.prototype.putHeaders = function (headers) {
 };
 
 
-Request.prototype.path = function () {
-  return this.paths(arguments);
+Request.prototype.path = function (...args) {
+  return this.paths(args);
 };
 
 

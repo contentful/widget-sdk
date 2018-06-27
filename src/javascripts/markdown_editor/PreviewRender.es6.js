@@ -268,7 +268,7 @@ export default function create () {
 
   function createReactEl (tag, props, children) {
     const args = [tag, props].concat(prepareChildren(children));
-    return React.createElement.apply(React, args);
+    return React.createElement(...args);
   }
 
   // using string hashing to get unique keys for React

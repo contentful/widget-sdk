@@ -74,7 +74,7 @@
   function arrayRemove(arr, from, to) {
     var rest = arr.slice((to || from) + 1 || arr.length);
     arr.length = from < 0 ? arr.length + from : from;
-    arr.push.apply(arr, rest);
+    arr.push(...rest);
     return arr;
   }
 

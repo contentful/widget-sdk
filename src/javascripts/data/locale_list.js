@@ -70,8 +70,8 @@ angular.module('cf.data')
   }
 
   function asListItems (fn) {
-    return function () {
-      return fn.apply(null, arguments)
+    return function (...args) {
+      return fn(...args)
       .map(localeToListItem);
     };
   }

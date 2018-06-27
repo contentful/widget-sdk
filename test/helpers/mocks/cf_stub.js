@@ -68,8 +68,8 @@ angular.module('contentful/mocks')
     name: code
   }, extraData || {});
 
-  cfStub.locales = function () {
-    return _.map(arguments, (code, index) => cfStub.locale(code, {'default': index === 0}));
+  cfStub.locales = function (...args) {
+    return _.map(args, (code, index) => cfStub.locale(code, {'default': index === 0}));
   };
 
   cfStub.space = (id, extraData) => {

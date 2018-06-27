@@ -18,9 +18,9 @@ angular.module('contentful')
 
   var controller = this;
   var publish = $scope.publishSelected;
-  $scope.publishSelected = function () {
+  $scope.publishSelected = function (...args) {
     const contentTypes = getContentTypes();
-    publish.apply(controller, arguments)
+    publish.apply(controller, args)
     .then(results => {
       results.succeeded.forEach(
         entryEventTracker('publish', 'content-list', contentTypes)
@@ -39,7 +39,7 @@ angular.module('contentful')
       succeeded.forEach(
         entryEventTracker('create', 'content-list__duplicate', contentTypes)
       );
-      $scope.entries.unshift.apply($scope.entries, succeeded);
+      $scope.entries.unshift(...succeeded);
       $scope.paginator.setTotal(total => total + succeeded.length);
       // instead of the stuff done above, we should call updateEntries here
       // and treat the server as the source of truth.

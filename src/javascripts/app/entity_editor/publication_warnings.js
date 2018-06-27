@@ -91,7 +91,7 @@ angular.module('contentful')
 
       return _.transform(grouped, (acc, inGroup, key) => {
         if (key === NO_GROUP) {
-          acc.push.apply(acc, inGroup);
+          acc.push(...inGroup);
         } else {
           acc.push(merge(inGroup));
         }

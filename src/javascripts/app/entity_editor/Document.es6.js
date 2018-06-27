@@ -543,7 +543,7 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
   function plugDocEvents (doc) {
     doc._originalEmit = doc.emit;
     doc.emit = function (name, data) {
-      this._originalEmit.apply(this, arguments);
+      this._originalEmit(...arguments);
       docEventsBus.emit({ doc, name, data });
     };
     docEventsBus.emit({ doc, name: 'open' });

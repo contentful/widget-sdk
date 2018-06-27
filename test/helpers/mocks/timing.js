@@ -16,10 +16,10 @@ angular.module('contentful/mocks')
 
 .constant('delayedInvocationStub', originalFunction => {
   let result;
-  function delayedFunction () {
+  function delayedFunction (...args) {
     delayedFunction.calls.push({
       thisArg: this,
-      arguments: arguments
+      arguments: args
     });
     return result;
   }
@@ -39,8 +39,8 @@ angular.module('contentful/mocks')
 
 .constant('createQueuedDebounce', () => {
   function debounce (fn) {
-    return function () {
-      debounce.queue.push({fn: fn, args: arguments});
+    return function (...args) {
+      debounce.queue.push({fn: fn, args: args});
     };
   }
 

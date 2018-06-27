@@ -9,8 +9,8 @@ function PersistenceContext (baseRequest) {
 module.exports = PersistenceContext;
 
 
-PersistenceContext.prototype.changePath = function () {
-  return this.withEndpoint(this.endpoint().paths(arguments));
+PersistenceContext.prototype.changePath = function (...args) {
+  return this.withEndpoint(this.endpoint().paths(args));
 };
 
 
@@ -21,9 +21,9 @@ PersistenceContext.prototype.withEndpoint = function (endpoint) {
 };
 
 
-PersistenceContext.prototype.endpoint = function () {
+PersistenceContext.prototype.endpoint = function (...args) {
   return this._baseRequest
-    .paths(arguments);
+    .paths(args);
 };
 
 

@@ -17,7 +17,7 @@ angular.module('contentful').config(['$provide', $provide => {
           if (err) {
             deferred.reject(err);
           } else {
-            deferred.resolve.apply(deferred, args);
+            deferred.resolve(...args);
           }
         });
       };
@@ -32,7 +32,7 @@ angular.module('contentful').config(['$provide', $provide => {
         if (err) {
           deferred.reject(err);
         } else {
-          deferred.resolve.apply(deferred, args);
+          deferred.resolve(...args);
         }
       };
       callbackFunction.promise = deferred.promise;

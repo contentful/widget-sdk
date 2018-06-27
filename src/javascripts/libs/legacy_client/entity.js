@@ -143,10 +143,10 @@ Entity.prototype = {
       });
   },
 
-  endpoint: function () {
+  endpoint: function (...args) {
     var pc = this.persistenceContext;
     var id = this.getId();
-    if (id) { return pc.endpoint(id).paths(arguments); } else { return new Request().throw(new Error('Cannot determine endpoint: Entity does not have id.')); }
+    if (id) { return pc.endpoint(id).paths(args); } else { return new Request().throw(new Error('Cannot determine endpoint: Entity does not have id.')); }
   }
 };
 

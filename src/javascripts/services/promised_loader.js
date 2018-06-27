@@ -22,7 +22,7 @@ angular.module('contentful').factory('PromisedLoader', ['$q', '$rootScope', 'deb
     _loadPromiseImmediately: function (promiseLoader, args, deferred) {
       var loader = this;
       this.startLoading();
-      promiseLoader.apply(null, args).then(res => {
+      promiseLoader(...args).then(res => {
         deferred.resolve(res);
         loader.endLoading();
       }, err => {

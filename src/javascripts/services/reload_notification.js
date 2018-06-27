@@ -62,7 +62,7 @@ angular.module('contentful')
           attachTo: 'body'
         });
       }
-      return $q.reject.apply($q, arguments);
+      return $q.reject(...arguments);
     },
     apiErrorHandler: function (err) {
       if (isApiError(err)) {
@@ -72,7 +72,7 @@ angular.module('contentful')
           message: 'There was a problem connecting to the Content Management API.'
         });
       }
-      return $q.reject.apply($q, arguments);
+      return $q.reject(...arguments);
     },
     basicErrorHandler: function () { trigger(); }
   };

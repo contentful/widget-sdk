@@ -106,7 +106,7 @@ angular.module('contentful')
       var args = _.toArray(arguments);
       buffer.call(analytics => {
         try {
-          analytics[fnName].apply(analytics, args);
+          analytics[fnName](...args);
         } catch (err) {
           logger.logError('Failed Segment call', {
             err: err,

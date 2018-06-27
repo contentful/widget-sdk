@@ -46,9 +46,8 @@ function* resolveReferences_ ({url, entry, defaultLocale}) {
    * Finally, we take the max of the count and then proceed to resolve `count` level
    * of incoming links to current entry.
    */
-  const numberOfIncomingLinksToResolve = Math.max.apply(
-    Math,
-    (url.match(PLACEHOLDER_PATTERN) || []).map(m => (m.match(REFERENCES_PATTERN) || []).length)
+  const numberOfIncomingLinksToResolve = Math.max(
+    ...(url.match(PLACEHOLDER_PATTERN) || []).map(m => (m.match(REFERENCES_PATTERN) || []).length)
   );
 
   // This object is what is used in the final interpolation

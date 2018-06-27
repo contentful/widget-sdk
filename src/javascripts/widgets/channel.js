@@ -91,7 +91,7 @@ angular.module('contentful')
 
     if (handler) {
       // TODO catch synchronous errors
-      var result = handler.apply(null, args);
+      var result = handler(...args);
       if (typeof result !== 'undefined') {
         $q.resolve(result).then(respondResult, respondError);
       }

@@ -83,8 +83,8 @@ angular.module('contentful/mocks', [])
     }, definition)]);
   };
 
-  $provide.removeDirectives = function () {
-    _.flatten(arguments).forEach(directive => {
+  $provide.removeDirectives = function (...args) {
+    _.flatten(args).forEach(directive => {
       const fullName = directive + 'Directive';
       $provide.factory(fullName, () => []);
     });
@@ -94,8 +94,8 @@ angular.module('contentful/mocks', [])
     $controllerProvider.register(label, fakeController || angular.noop);
   };
 
-  $provide.removeControllers = function () {
-    _.flatten(arguments).forEach(controller => {
+  $provide.removeControllers = function (...args) {
+    _.flatten(args).forEach(controller => {
       $controllerProvider.register(controller, angular.noop);
     });
   };

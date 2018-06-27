@@ -139,9 +139,9 @@ describe('subscriptionPlanRecommender', () => {
         });
       }
 
-      function responseBody () {
+      function responseBody (...args) {
         const body = $('<body>');
-        body.append.apply(body, arguments);
+        body.append(...args);
         return $('<html>').append(body).html();
       }
 

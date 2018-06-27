@@ -129,7 +129,7 @@ angular.module('contentful')
         }
         controller.paginator.setTotal(assets.total);
         assets = _.difference(assets, $scope.assets);
-        $scope.assets.push.apply($scope.assets, filterOutDeleted(assets));
+        $scope.assets.push(...filterOutDeleted(assets));
         $scope.selection.updateList($scope.assets);
       }, err => {
         controller.paginator.prev();

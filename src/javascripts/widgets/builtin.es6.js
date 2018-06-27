@@ -28,7 +28,7 @@ export function create (config) {
     widgetDescriptor.id = id;
     widgetDescriptor.parameters = [
       ...COMMON_PARAMETERS,
-      ...widgetDescriptor.parameters || []
+      ...(widgetDescriptor.parameters || [])
     ];
     widgets.push(widgetDescriptor);
   }

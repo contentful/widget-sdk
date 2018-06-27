@@ -172,15 +172,15 @@ angular.module('contentful').factory('modalDialog', ['require', require => {
       });
     },
 
-    confirm: function () {
-      this._deferred.resolve.apply(this, arguments);
+    confirm: function (...args) {
+      this._deferred.resolve.apply(this, args);
       this.destroy();
       removeFromOpened(this);
       return this;
     },
 
-    cancel: function () {
-      this._deferred.reject.apply(this, arguments);
+    cancel: function (...args) {
+      this._deferred.reject.apply(this, args);
       this.destroy();
       removeFromOpened(this);
       return this;

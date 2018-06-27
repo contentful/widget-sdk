@@ -17,7 +17,7 @@ export default function createClientStorageWrapper (storageType) {
     wrapper[method] = function () {
       const args = Array.prototype.slice.call(arguments);
 
-      return storage[method].apply(storage, args);
+      return storage[method](...args);
     };
   });
 
