@@ -32,9 +32,9 @@ export default makeState({
 export function createController ($scope) {
   const { link } = $location.search();
 
-  return resolveLink(link).then(({ path, params }) => {
+  return resolveLink(link).then(({ path, params, onboarding }) => {
     if (!path) {
-      $scope.status = 'not_exist';
+      $scope.status = onboarding ? 'onboarding' : 'not_exist';
       $scope.context.ready = true;
     } else {
       Navigator.go({
@@ -50,43 +50,59 @@ export function createController ($scope) {
 
 function createTemplate () {
   return h('.workbench', [
-    h('div', {
-      ngShow: 'status === "not_exist"',
-      style: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100%'
-      }
-    }, [
-      h('h3', {
-        style: {
-          marginTop: 0,
-          marginBottom: '0.5em',
-          fontSize: '2em',
-          lineHeight: '1.2em'
-        }
-      }, [
-        'The link you provided is broken or does not exist'
-      ]),
-      h('div', {
-        style: {
-          fontSize: '1.2em',
-          lineHeight: '1.2em'
-        }
-      }, [
+    createScreen({
+      condition: 'status === "onboarding"',
+      title: 'Unfortunately, we didn\'t find your onboarding space.',
+      subtitle: [
+        h('a', {
+          uiSref: 'home'
+        }, ['Go to the main page']),
+        '.'
+      ]
+    }),
+    createScreen({
+      condition: 'status === "not_exist"',
+      title: 'The link you provided is broken or does not exist',
+      subtitle: [
         'We are notified about it. You can contact our support or ',
         h('a', {
           uiSref: 'home'
         }, ['go to the main page']),
         '.'
-      ])
-    ]),
+      ]
+    }),
     h('div', {
       ngShow: '!status'
     }, [
       'Redirecting…'
     ])
+  ]);
+}
+
+function createScreen ({ condition, title, subtitle }) {
+  return h('div', {
+    ngShow: condition,
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: '100%'
+    }
+  }, [
+    h('h3', {
+      style: {
+        marginTop: 0,
+        marginBottom: '0.5em',
+        fontSize: '2em',
+        lineHeight: '1.2em'
+      }
+    }, [title]),
+    h('div', {
+      style: {
+        fontSize: '1.2em',
+        lineHeight: '1.2em'
+      }
+    }, subtitle)
   ]);
 }

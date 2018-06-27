@@ -8,6 +8,8 @@ import { getStore } from 'TheStore';
 
 const store = getStore();
 
+const ONBOARDING_ERROR = 'modern onboarding space id does not exist';
+
 /**
  * @description Given a string identifier we return a state reference (for our
  * ui router). This allows you to link to a resource type without knowning
@@ -25,7 +27,9 @@ export function resolveLink (link) {
       },
       groupingHash: 'Error during deeplink redirect'
     });
-    return {};
+    return {
+      onboarding: e.message === ONBOARDING_ERROR
+    };
   });
 }
 
@@ -80,7 +84,7 @@ function createOnboardingScreenResolver (screen) {
         params: { spaceId }
       };
     } else {
-      throw new Error('modern onboarding space id does not exist');
+      throw new Error(ONBOARDING_ERROR);
     }
   });
 }
