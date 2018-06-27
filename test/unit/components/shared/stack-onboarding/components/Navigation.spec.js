@@ -16,7 +16,8 @@ describe('Navigation', () => {
       });
       $provide.value('createModernOnboarding', {
         track: () => {},
-        getStoragePrefix: sinon.stub().returns('prefix')
+        getStoragePrefix: sinon.stub().returns('prefix'),
+        isOnboardingComplete: sinon.stub().returns(false)
       });
       $provide.value('services/TokenStore', {
         user$: K.createMockProperty({sys: {id: 1}})
