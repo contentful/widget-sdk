@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
-import { upperFirst, lowerCase, template, get } from 'lodash';
+import PropTypes from 'prop-types';
+import { upperFirst, lowerCase, get } from 'lodash';
 import { joinWithAnd } from 'utils/StringUtils';
 import pluralize from 'pluralize';
 
@@ -11,19 +12,34 @@ export const SpaceResourceTypes = {
   Records: 'Records'
 };
 
-const ResourceTooltips = {
-  [SpaceResourceTypes.Environments]: `This space type includes <%= number %>
-      <%= units %> additional to the master environment, which allow you to create and
-      maintain multiple versions of the space-specific data, and make changes to them
-      in isolation.`,
-  [SpaceResourceTypes.Roles]: `This space type includes <%= number %> <%= units %>
-      additional to the admin role`,
-  [SpaceResourceTypes.Records]: 'Records are entries and assets combined.'
+const resourceTooltipPropTypes = {
+  number: PropTypes.number.isRequired
 };
 
-const ResourceUnitNames = {
-  [SpaceResourceTypes.Environments]: 'sandbox environment',
-  [SpaceResourceTypes.Roles]: 'user role'
+function EnvironmentsTooltip ({number}) {
+  return <div>
+    <p>This space type includes 1 master and {pluralize('sandbox environment', number - 1, true)}.</p>
+    <p>
+      Environments allow you to create and
+      maintain multiple versions of the space-specific data, and make changes to them
+      in isolation.
+    </p>
+  </div>;
+}
+EnvironmentsTooltip.propTypes = resourceTooltipPropTypes;
+
+function RolesTooltip ({number}) {
+  return <Fragment>
+    This space type includes the admin role
+    { number === 1 ? ' only.' : ` and ${pluralize('additional role', number - 1, true)}.`}
+  </Fragment>;
+}
+RolesTooltip.propTypes = resourceTooltipPropTypes;
+
+const ResourceTooltips = {
+  [SpaceResourceTypes.Environments]: EnvironmentsTooltip,
+  [SpaceResourceTypes.Roles]: RolesTooltip,
+  [SpaceResourceTypes.Records]: () => 'Records are entries and assets combined.'
 };
 
 export const Steps = {
@@ -120,9 +136,7 @@ export function unavailabilityTooltipNode (plan) {
 }
 
 export function getTooltip (type, number) {
-  const unitName = ResourceUnitNames[type];
-  const units = unitName && pluralize(unitName, number);
-  return ResourceTooltips[type] && template(ResourceTooltips[type])({number, units});
+  return ResourceTooltips[type] && ResourceTooltips[type]({number});
 }
 
 export function getFieldErrors (error) {
