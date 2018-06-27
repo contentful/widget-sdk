@@ -389,7 +389,7 @@ angular.module('contentful')
    * Always uses the default locale value.
   */
   function replaceVariablesInUrl (urlTemplate, entry, contentType) {
-    var defaultLocale = TheLocaleStore.getDefaultLocale().internal_code;
+    var defaultLocale = TheLocaleStore.getDefaultLocale().code;
     var processedUrl = urlTemplate
     .replace(ENTRY_ID_PATTERN, entry.sys.id)
     .replace(ENTRY_FIELD_PATTERN, (match, fieldId) => {
