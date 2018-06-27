@@ -186,7 +186,7 @@ registerSchema({
 
 registerSchema({
   name: 'entry_view',
-  version: '1-0-0'
+  version: '1-0-1'
 });
 
 registerSchema({
@@ -195,7 +195,7 @@ registerSchema({
 });
 
 registerSchema({
-  name: 'feature_reference_actions',
+  name: 'feature_reference_action',
   version: '1-0-0'
 });
 
