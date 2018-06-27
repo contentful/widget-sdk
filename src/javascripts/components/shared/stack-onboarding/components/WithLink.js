@@ -39,11 +39,12 @@ angular.module('contentful')
         };
       };
 
-      const move = async () => {
+      const move = async (_event, newTrackingElementId) => {
         const { path, params } = getStateParams();
+        const elementId = newTrackingElementId || trackingElementId;
 
-        if (trackingElementId) {
-          track(trackingElementId);
+        if (elementId) {
+          track(elementId);
         }
 
         await $state.go(path, params);

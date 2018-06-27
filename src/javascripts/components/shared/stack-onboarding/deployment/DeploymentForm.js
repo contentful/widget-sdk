@@ -24,8 +24,7 @@ angular.module('contentful')
 
   const DeploymentForm = createReactClass({
     propTypes: {
-      onComplete: PropTypes.func.isRequired,
-      onProviderChange: PropTypes.func
+      onComplete: PropTypes.func.isRequired
     },
     getInitialState () {
       return {
@@ -53,22 +52,20 @@ angular.module('contentful')
       if (!this.isValidDeployedUrl(url)) {
         this.markAsInvalidUrl(url);
       } else {
-        const { onProviderChange } = this.props;
-
-        onProviderChange && onProviderChange(this.getChosenDeploymentProvider(url));
         this.setState({ url, error: false });
       }
     },
-    onComplete () {
+    onComplete (event) {
       const {url} = this.state;
       const prefix = getStoragePrefix();
 
       if (this.isValidDeployedUrl(url)) {
+        const provider = this.getChosenDeploymentProvider(url);
         store.set(`${prefix}:completed`, true);
-        store.set(`${prefix}:deploymentProvider`, this.getChosenDeploymentProvider(url));
+        store.set(`${prefix}:deploymentProvider`, provider);
         store.set(`${prefix}:deployedTo`, url);
 
-        this.props.onComplete(url);
+        this.props.onComplete(event, provider);
       } else {
         this.markAsInvalidUrl(url);
       }
