@@ -10,36 +10,40 @@ const CONTENT_TYPE_2 = { name: 'name-2', sys: { id: 'ID_2' } };
 
 describe('CreateEntryButton', () => {
   beforeEach(function () {
-    this.mount = (dom) => {
-      this.wrapper = mount(dom);
-    };
     const findByTestId = (id) => this.wrapper.find(`[data-test-id="${id}"]`);
     this.findCta = () => findByTestId('cta');
     this.findMenu = () => findByTestId('add-entry-menu');
     this.findDropdownIcon = () => findByTestId('dropdown-icon');
+    this.setup = () => {
+      this.wrapper = mount(<CreateEntryButton {...this.props} />);
+      return {
+        cta: this.findCta(),
+        menu: this.findMenu(),
+        dropdownIcon: this.findDropdownIcon()
+      };
+    };
   });
 
   describe('with multiple content types', function () {
     beforeEach(function () {
-      const props = {
+      this.props = {
         contentTypes: [CONTENT_TYPE_1, CONTENT_TYPE_2],
         onSelect: _.noop
       };
-      this.mount(<CreateEntryButton {...props} />);
     });
 
     itRendersTriggerButtonWithLabel('Add entry');
 
     itRendersDropdownIs(true);
 
-    it('opens menu after click on btn', function () {
-      this.findCta().simulate('click');
+    it('opens menu after click on btn', function ({ cta }) {
+      cta.simulate('click');
       expect(this.findMenu().length).toEqual(1);
     });
 
-    it('hides menu after second click on btn', function () {
-      this.findCta().simulate('click');
-      this.findCta().simulate('click');
+    it('hides menu after second click on btn', function ({ cta }) {
+      cta.simulate('click');
+      cta.simulate('click');
       expect(this.findMenu().length).toEqual(0);
     });
   });
@@ -47,35 +51,36 @@ describe('CreateEntryButton', () => {
   describe('with single content type', function () {
     beforeEach(function () {
       this.onSelect = sinon.spy();
-      const props = {
+      this.props = {
         contentTypes: [CONTENT_TYPE_1],
         onSelect: this.onSelect
       };
-      this.mount(<CreateEntryButton {...props} />);
     });
 
     itRendersTriggerButtonWithLabel(`Add ${CONTENT_TYPE_1.name}`);
 
     itRendersDropdownIs(false);
 
-    it('emits onSelect after clicking on cta', function () {
-      this.findCta().simulate('click');
+    it('emits onSelect after clicking on cta', function ({ cta }) {
+      cta.simulate('click');
       sinon.assert.calledWith(this.onSelect, 'ID_1');
     });
   });
 });
 
 function itRendersTriggerButtonWithLabel (label) {
-  it(`renders the trigger button with label “${label}”`, function () {
-    expect(this.findCta().length).toEqual(1);
-    expect(this.findCta().text()).toEqual(label);
-    expect(this.findMenu().length).toEqual(0);
+  it(`renders the trigger button with label “${label}”`, ({ cta, menu }) => {
+    expect(cta.length).toEqual(1);
+    expect(cta.text()).toEqual(label);
+    expect(menu.length).toEqual(0);
   });
 }
 
 function itRendersDropdownIs (isTrue = true) {
-  it(`${isTrue ? 'renders' : 'does not render'} button as dropdown`, function () {
-    const toBeFn = isTrue ? 'toBeGreaterThan' : 'toBe';
-    expect(this.findDropdownIcon().length)[toBeFn](0);
-  });
+  it(`${isTrue ? 'renders' : 'does not render'} button as dropdown`,
+    ({ dropdownIcon }) => {
+      const toBeFn = isTrue ? 'toBeGreaterThan' : 'toBe';
+      expect(dropdownIcon.length)[toBeFn](0);
+    }
+  );
 }
