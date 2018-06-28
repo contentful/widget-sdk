@@ -66,12 +66,12 @@ div(ng-show="!isReady")
       ng-if="type === 'Asset'"
       ng-click="isNewAddAndLinkRefButtonEnabled ? addNewAsset() : addNew($event)"
       type="button"
-      ng-disabled="!canAddNewAsset")
+      ng-disabled="!canAddNew")
       cf-icon.btn-link__icon(
         name="add"
-        ng-if="canAddNewAsset")
+        ng-if="canAddNew")
       .link-editor__create-asset-loading-spinner(
-        ng-if="!canAddNewAsset")
+        ng-if="!canAddNew")
       | Create new asset and link
 
     button.btn-link(

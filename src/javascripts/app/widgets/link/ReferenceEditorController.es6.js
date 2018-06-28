@@ -50,7 +50,7 @@ export default function create ($scope, widgetApi) {
   let slideInEditorEnabled = false;
   const canEditReferences = !!widgetApi._internal.editReferences;
   const bulkEditorEnabled = canEditReferences && widgetApi.settings.bulkEditing;
-  $scope.canAddNewAsset = true;
+  $scope.canAddNew = true;
   $scope.typePlural = { Entry: 'entries', Asset: 'assets' }[$scope.type];
   $scope.isAssetCard = is('Asset', 'card');
   $scope.referenceType = {};
@@ -145,17 +145,12 @@ export default function create ($scope, widgetApi) {
       .then(makeNewEntityHandler(contentType));
   };
 
-  $scope.addNewAsset = () => {
-    if (!$scope.canAddNewAsset) {
-      return;
-    }
-    $scope.canAddNewAsset = false;
+  $scope.addNewAsset = makeAddNewEntityHandler(() => {
     return widgetApi.space.createAsset({})
-      .then(makeNewEntityHandler())
-      .then(() => { $scope.canAddNewAsset = true; });
-  };
+      .then(makeNewEntityHandler());
+  });
 
-  $scope.addNewEntry = contentTypeId => {
+  $scope.addNewEntry = makeAddNewEntityHandler(contentTypeId => {
     const contentType = spaceContext.publishedCTs.get(contentTypeId);
     if ($scope.referenceType.inline) {
       // necessary to prompt loading state
@@ -176,7 +171,24 @@ export default function create ($scope, widgetApi) {
         track('reference_editor_action:create', { ctId: contentTypeId });
         return entry;
       });
-  };
+  });
+
+  function makeAddNewEntityHandler (fn) {
+    let currentJob;
+    return (...args) => {
+      if (currentJob) {
+        return currentJob;
+      }
+      $scope.canAddNew = false;
+      currentJob = fn(...args).then(doneHandler, doneHandler);
+      return currentJob;
+    };
+    function doneHandler (result) {
+      $scope.canAddNew = true;
+      currentJob = null;
+      return result;
+    }
+  }
 
   function makeNewEntityHandler (contentType) {
     return entity => {
