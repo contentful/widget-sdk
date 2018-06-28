@@ -42,20 +42,20 @@ export function* getOnboardingSpaceId () {
     if (spaceExist) {
       return spaceId;
     }
-  } else {
-    // try to find a space in all spaces with onboarding space name
-    const onboardingSpace = spaces.find(space => space.name === MODERN_STACK_ONBOARDING_SPACE_NAME);
+  }
 
-    if (onboardingSpace) {
-      const onboardingSpaceId = onboardingSpace.sys.id;
-      // mark space as a developer choice
-      store.set(onboardingSpaceKey, onboardingSpaceId);
-      // mark auto space creation as succeeded since space with
-      // modern stack onboarding name exists
-      store.set(getSpaceAutoCreatedKey(user, 'success'), true);
+  // try to find a space in all spaces with onboarding space name
+  const onboardingSpace = spaces.find(space => space.name === MODERN_STACK_ONBOARDING_SPACE_NAME);
 
-      return onboardingSpaceId;
-    }
+  if (onboardingSpace) {
+    const onboardingSpaceId = onboardingSpace.sys.id;
+    // mark space as a developer choice
+    store.set(onboardingSpaceKey, onboardingSpaceId);
+    // mark auto space creation as succeeded since space with
+    // modern stack onboarding name exists
+    store.set(getSpaceAutoCreatedKey(user, 'success'), true);
+
+    return onboardingSpaceId;
   }
 }
 
