@@ -76,7 +76,8 @@ angular.module('contentful')
           },
           text: 'Explore content modeling',
           disabled: isButtonDisabled,
-          isLoading: isDefaultPathPending
+          isLoading: isDefaultPathPending,
+          'data-test-id': 'onboarding-content-choice-btn'
         })
       });
 
@@ -87,7 +88,8 @@ angular.module('contentful')
           onClick: this.createSpace,
           text: 'Deploy a website in 3 steps',
           disabled: isButtonDisabled,
-          isLoading: isDevPathPending
+          isLoading: isDevPathPending,
+          'data-test-id': 'onboarding-developer-choice-btn'
         })
       });
 
@@ -96,7 +98,7 @@ angular.module('contentful')
           <h1 className='modern-stack-onboarding--title modern-stack-onboarding--title__margin'>
             How do you usually work with content?
           </h1>
-          <div className='modern-stack-onboarding--choice-blocks'>
+          <div className='modern-stack-onboarding--choice-blocks' data-test-id='onboarding-choice-blocks'>
             {contentChoice}
             {developerChoice}
           </div>

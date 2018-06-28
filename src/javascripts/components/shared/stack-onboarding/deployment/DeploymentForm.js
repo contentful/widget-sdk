@@ -87,12 +87,14 @@ angular.module('contentful')
               onChange={this.onChange}
               placeholder='Enter the website URL'
               error={url && error}
+              data-test-id='onboarding-deploy-input-container'
             />
             <Button
               type='submit'
               className='modern-stack-onboarding--deployment-form-button'
               onClick={this.onComplete}
               disabled={Boolean(!url || error)}
+              data-test-id='onboarding-view-next-steps-cta'
             >
               View next steps
             </Button>
