@@ -52,7 +52,7 @@ function createTemplate () {
   return h('.workbench', [
     createScreen({
       condition: 'status === "onboarding"',
-      title: 'Unfortunately, we didn\'t find your onboarding space.',
+      title: `Unfortunately, we didn't find your onboarding space.`,
       subtitle: [
         h('a', {
           uiSref: 'home'
