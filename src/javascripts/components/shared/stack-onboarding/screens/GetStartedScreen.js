@@ -41,7 +41,11 @@ angular.module('contentful')
           />
           <WithLink trackingElementId='get_started_screen_completed' link='copy'>
             {move => (
-              <Button onClick={move} className='modern-stack-onboarding--next-button'>
+              <Button
+                onClick={move}
+                className='modern-stack-onboarding--next-button'
+                data-test-id='onboarding-get-started-cta'
+              >
                 Get started
               </Button>
             )}

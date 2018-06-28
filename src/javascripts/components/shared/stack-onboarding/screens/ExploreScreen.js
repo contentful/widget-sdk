@@ -38,7 +38,11 @@ angular.module('contentful')
         <ScreenHeader title={headerTitle} subtitle={headerSubtitle} />
         <WithLink trackingElementId='explore_screen_completed' link='deploy'>
           {move => (
-            <Button onClick={move} className='modern-stack-onboarding--next-button'>
+            <Button
+              onClick={move}
+              className='modern-stack-onboarding--next-button'
+              data-test-id='onboarding-select-hosting-cta'
+            >
               Select hosting service
             </Button>
           )}

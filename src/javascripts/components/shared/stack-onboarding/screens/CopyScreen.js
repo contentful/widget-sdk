@@ -101,7 +101,11 @@ angular.module('contentful')
             </div>
             <WithLink trackingElementId='copy_screen_completed' link='explore'>
               {move => (
-                <Button onClick={move} className='modern-stack-onboarding--next-button modern-stack-onboarding--next-button__left'>
+                <Button
+                  onClick={move}
+                  className='modern-stack-onboarding--next-button modern-stack-onboarding--next-button__left'
+                  data-test-id='onboarding-explore-cta'
+                >
                   Explore the blog structure
                 </Button>
               )}
