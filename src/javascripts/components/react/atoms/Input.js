@@ -21,11 +21,12 @@ angular.module('contentful')
         value,
         placeholder,
         width,
-        wrapperClassName = ''
+        wrapperClassName = '',
+        'data-test-id': dataTestId
       } = this.props;
 
       return (
-        <div className={`cfnext-form__field ${wrapperClassName}`}>
+        <div className={`cfnext-form__field ${wrapperClassName}`} data-test-id={dataTestId}>
           {label &&
             <label htmlFor={name}>
               {label}
@@ -67,7 +68,8 @@ angular.module('contentful')
     placeholder: PropTypes.string,
     onChange: PropTypes.func.isRequired,
     width: PropTypes.string,
-    wrapperClassName: PropTypes.string
+    wrapperClassName: PropTypes.string,
+    'data-test-id': PropTypes.string
   };
 
   return Input;
