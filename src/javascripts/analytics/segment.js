@@ -51,20 +51,14 @@ angular.module('contentful')
      */
     track: function track (event, data) {
       // we need to send an event to segment (Intercom included)
-      // if event was a click on "deployment" in onboarding
-      if (event === 'element:click' &&
-          data.elementId &&
-          data.elementId.startsWith('deploy_screen_completed')) {
-        const provider = data.elementId.split(':')[1];
-        // we create yet another event for this specific thing
-        bufferedTrack('deployCompleted', {
-          provider
-        }, {
-          integrations: {
-            Intercom: true
-          }
-        });
-      }
+      // usually we don't do that, but you might have to do so
+      // alternatively, you can use `updateUserInSegment` from
+      // `analytics/Analytics` module, which will set a custom
+      // attribute – https://developers.intercom.com/docs/adding-custom-information
+      // Intercom docs on events:
+      // https://developers.intercom.com/docs/working-with-events
+      sendOnboardingDeploymentEvent(event, data);
+
       bufferedTrack(event, data, {integrations: TRACK_INTEGRATIONS});
     },
     /**
@@ -178,5 +172,27 @@ angular.module('contentful')
     analytics.load = _.noop;
 
     return LazyLoader.get('segment');
+  }
+
+  // we send an event to Segment (Intercom included) if modern onboarding
+  // flow was completed (onboarding deployment completed). We send it as an
+  // event, and it is immediately available to react – e.g. send a survey
+  function sendOnboardingDeploymentEvent (event, data) {
+    // we have this information in `element:click` event with certain data
+    // so we just check it and if so, send this event.
+    if (event === 'element:click' &&
+      data.elementId &&
+      data.elementId.startsWith('deploy_screen_completed')) {
+      const provider = data.elementId.split(':')[1];
+      // we create yet another event for this specific thing
+      // events support human-readable names, and we use them
+      bufferedTrack('onboarding deployment completed', {
+        provider
+      }, {
+        integrations: {
+          Intercom: true
+        }
+      });
+    }
   }
 }]);

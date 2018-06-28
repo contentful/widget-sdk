@@ -93,7 +93,7 @@ angular.module('contentful')
         text: 'Contentful enables you to manage, integrate and deliver content via APIs.',
         button: this.renderButton({
           onClick: () => {
-            this.setChoiceInIntercom('dev');
+            this.setChoiceInIntercom('developer');
             this.createSpace();
           },
           text: 'Deploy a website in 3 steps',
