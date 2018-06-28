@@ -50,6 +50,21 @@ angular.module('contentful')
      * the selected integrations.
      */
     track: function track (event, data) {
+      // we need to send an event to segment (Intercom included)
+      // if event was a click on "deployment" in onboarding
+      if (event === 'element:click' &&
+          data.elementId &&
+          data.elementId.startsWith('deploy_screen_completed')) {
+        const provider = data.elementId.split(':')[1];
+        // we create yet another event for this specific thing
+        bufferedTrack('deployCompleted', {
+          provider
+        }, {
+          integrations: {
+            Intercom: true
+          }
+        });
+      }
       bufferedTrack(event, data, {integrations: TRACK_INTEGRATIONS});
     },
     /**
