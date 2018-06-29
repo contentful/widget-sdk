@@ -35,6 +35,7 @@ header.workbench-header
 
     react-component(
       ng-if="!isLegacyOrganization && isInsideMasterEnv"
+      ng-show="hasPage()"
       name="components/tabs/entry_list/RecordsResourceUsage"
       props="usageProps"
       watch-depth="reference")

@@ -16,6 +16,8 @@ angular.module('contentful')
   var TheLocaleStore = require('TheLocaleStore');
   var entityCreator = require('entityCreator');
   var $state = require('$state');
+  var ResourceUtils = require('utils/ResourceUtils');
+  var EnvironmentUtils = require('utils/EnvironmentUtils');
 
   var searchController = $controller('AssetSearchController', { $scope: $scope });
 
@@ -47,6 +49,15 @@ angular.module('contentful')
   $scope.selection = createSelection();
   $scope.getAssetDimensions = getAssetDimensions;
   $scope.paginator = searchController.paginator;
+
+  const organization = spaceContext.organizationContext.organization;
+
+  $scope.isLegacyOrganization = ResourceUtils.isLegacyOrganization(organization);
+  $scope.isInsideMasterEnv = EnvironmentUtils.isInsideMasterEnv(spaceContext);
+
+  $scope.usageProps = {
+    space: spaceContext.space.data
+  };
 
   $scope.newAsset = () => {
     entityCreator.newAsset().then(asset => {

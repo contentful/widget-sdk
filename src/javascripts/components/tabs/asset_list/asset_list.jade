@@ -42,6 +42,14 @@ header.workbench-header
   .workbench-main__right-content
     .search-results__count(ng-show="paginator.getTotal() > 0")
       +pluralize-entity("asset", "paginator.getTotal()", "found")
+
+    react-component(
+      ng-if="!isLegacyOrganization && isInsideMasterEnv"
+      ng-show="paginator.getTotal() > 0"
+      name="components/tabs/entry_list/RecordsResourceUsage"
+      props="usageProps"
+      watch-depth="reference")
+
     .table(ng-show="assets.length && !isEmpty")
       .table__head
         table
