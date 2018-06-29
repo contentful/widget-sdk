@@ -33,25 +33,11 @@ header.workbench-header
     .search-results__count(ng-show="hasPage()")
       +pluralize-entity("entry", "paginator.getTotal()", "found")
 
-    .usage(
-      ng-if="limit"
-      ng-show="hasPage()"
-      ng-class="{'usage--warn': usage / limit >= 0.9 && usage / limit < 0.95, 'usage--danger': usage / limit >= 0.95}"
-    )
-      span(ng-if="usage / limit < 0.9")
-        | Usage: {{usage | number}} / {{limit | number}}
-      span(ng-if="usage / limit >= 0.9 && usage / limit < 1")
-        | Usage: {{usage | number}} / {{limit | number}} entries and assets.&#32;
-      span(ng-if="usage / limit >= 1")
-        | You've reached the limit of {{limit | number}} records (entries and assets).&#32;
-
-      span(ng-if="usage / limit >= 0.9")
-        a.text-link(ng-if="incentivizeUpgradeEnabled" ng-click="upgradeSpace()")
-          | Upgrade space
-        span(ng-if="!incentivizeUpgradeEnabled")
-          a.text-link(cf-sref="{{subscriptionState}}")
-            | Go to the subscription page
-          | &nbsp;to upgrade.
+    react-component(
+      ng-if="!isLegacyOrganization && isInsideMasterEnv"
+      name="components/tabs/entry_list/RecordsResourceUsage"
+      props="usageProps"
+      watch-depth="reference")
 
     .view-customizer(
       ng-show="hasPage()"
