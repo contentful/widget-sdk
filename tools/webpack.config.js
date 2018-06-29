@@ -88,9 +88,13 @@ module.exports = ({ dev = false } = {}) => ({
         }
       },
       // The sharejs client is provided as a package of ESnext
-      // modules. We also need to transple it.
+      // modules. We also need to transpile it.
+      // We also need to transpile our first party (@contentful) dependencies,
+      // as many of these are shared between front-end/back-end and are liable
+      // to be exported directly as node packages (complete with es6).
       {
-        test: /sharejs\/lib\/client/,
+        test: /sharejs\/lib\/client|node_modules\/@contentful.+.js$/,
+        exclude: /node_modules\/@contentful\/[^/]+\/node_modules/,
         use: {
           loader: 'babel-loader',
           options: createBabelOptions({ angularModules: false })
