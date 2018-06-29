@@ -109,7 +109,7 @@
     transition: background 200ms ease-in-out;
 
     &:hover {
-      background: #E5EBED;
+      background: $colors.element-light;
     }
   }
 }
@@ -165,7 +165,13 @@
   display: inline-block;
 
   svg {
-    color: #8091a5
+    color: $colors.text-light;
+    transition: color 200ms ease-in-out;
+  }
+
+  &:hover svg,
+  &:focus svg {
+    color: $colors.text-mid;
   }
 
   & + .ReferenceCard__action {
