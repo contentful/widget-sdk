@@ -48,6 +48,13 @@ describe('Asset List Controller', () => {
       });
 
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
+
+      $provide.value('utils/ResourceUtils', {
+        isLegacyOrganization: () => false
+      });
+      $provide.value('utils/EnvironmentUtils', {
+        isInsideMasterEnv: () => false
+      });
     });
 
     $q = this.$inject('$q');
