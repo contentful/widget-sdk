@@ -51,6 +51,7 @@ angular.module('contentful')
         limitReached: $scope.resource,
         action: 'change',
         onSubmit: function () {
+          resource = null;
           return updateLocalesUsageState()
             .catch(ReloadNotification.apiErrorHandler);
         }
