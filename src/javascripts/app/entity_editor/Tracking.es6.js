@@ -1,4 +1,4 @@
-import { get, flatten } from 'lodash';
+import { get, flatten, uniqBy } from 'lodash';
 import { track } from 'analytics/Analytics';
 import { stateName } from 'data/CMA/EntityState';
 import * as K from 'utils/kefir';
@@ -29,10 +29,10 @@ export async function trackEntryView ({
     ctId: entityInfo.contentTypeId,
     ctName: entityInfo.contentType.name,
     referencesCTMetadata: [
-      ...refCts.map(ct => ({
+      ...uniqBy(refCts.map(ct => ({
         id: ct.data.sys.id,
         name: ct.data.name
-      }))
+      })), 'id')
     ],
     currentSlideLevel,
     editorType

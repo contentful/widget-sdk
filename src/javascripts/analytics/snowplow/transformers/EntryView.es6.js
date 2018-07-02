@@ -9,7 +9,7 @@ export default addUserOrgSpace((_, data) => ({
     slide_in_level: data.currentSlideLevel,
     editor_type: data.editorType
   },
-  contexts: [data.referencesCTMetadata.map(getReferenceContext)]
+  contexts: [...data.referencesCTMetadata.map(getReferenceContext)]
 }));
 
 function getReferenceContext (refMetadata) {
