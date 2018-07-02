@@ -18,7 +18,7 @@ angular.module('contentful')
     propTypes: {
       link: PropTypes.oneOf(['getStarted', 'copy', 'explore', 'deploy', 'spaceHome']),
       trackingElementId: PropTypes.string.isRequired,
-      intercomKey: PropTypes.string.isRequired,
+      intercomKey: PropTypes.string,
       children: PropTypes.func.isRequired
     },
     render () {
