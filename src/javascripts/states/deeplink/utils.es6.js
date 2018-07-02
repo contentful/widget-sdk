@@ -1,9 +1,63 @@
-import {getSpaces, getOrganizations, getOrganization} from 'services/TokenStore';
+import {getSpaces, getOrganizations, getOrganization, user$} from 'services/TokenStore';
 import { getStore } from 'TheStore';
 import * as accessChecker from 'access_control/AccessChecker';
 import {isOwnerOrAdmin} from 'services/OrganizationRoles';
+import {getValue, onValue} from 'utils/kefir';
+import {MODERN_STACK_ONBOARDING_SPACE_NAME, getStoragePrefix} from 'createModernOnboarding';
+import {getKey as getSpaceAutoCreatedKey} from 'components/shared/auto_create_new_space';
 
 const store = getStore();
+
+function getUser () {
+  // user$ is a property which starts with `null`
+  // so it will never throw an error
+  const user = getValue(user$);
+
+  if (user) {
+    return user;
+  }
+
+  return new Promise(resolve => {
+    const off = onValue(user$, user => {
+      if (user) {
+        resolve(user);
+        off();
+      }
+    });
+  });
+}
+
+export function* getOnboardingSpaceId () {
+  const [user, spaces] = yield Promise.all([
+    getUser(),
+    getSpaces()
+  ]);
+  const prefix = getStoragePrefix();
+
+  const onboardingSpaceKey = `${prefix}:developerChoiceSpace`;
+  const spaceId = store.get(onboardingSpaceKey);
+  if (spaceId) {
+    const spaceExist = spaces.some(space => space.sys.id === spaceId);
+
+    if (spaceExist) {
+      return spaceId;
+    }
+  }
+
+  // try to find a space in all spaces with onboarding space name
+  const onboardingSpace = spaces.find(space => space.name === MODERN_STACK_ONBOARDING_SPACE_NAME);
+
+  if (onboardingSpace) {
+    const onboardingSpaceId = onboardingSpace.sys.id;
+    // mark space as a developer choice
+    store.set(onboardingSpaceKey, onboardingSpaceId);
+    // mark auto space creation as succeeded since space with
+    // modern stack onboarding name exists
+    store.set(getSpaceAutoCreatedKey(user, 'success'), true);
+
+    return onboardingSpaceId;
+  }
+}
 
 /**
  * @description get current space info

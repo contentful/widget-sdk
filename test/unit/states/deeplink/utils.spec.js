@@ -1,27 +1,76 @@
 import * as sinon from 'helpers/sinon';
+import * as K from 'test/helpers/mocks/kefir';
 import {noop} from 'lodash';
 
 describe('states/deeplink/utils', () => {
   beforeEach(function () {
     this.storeGet = sinon.stub();
+    this.storeSet = sinon.stub();
     this.getSpaces = sinon.stub();
     this.getOrganizations = sinon.stub();
+    this.user$ = K.createMockProperty(null);
+    this.modernStackName = 'modern stack name';
     module('contentful/test', ($provide) => {
       $provide.value('TheStore', {
         getStore: () => {
           return {
             get: this.storeGet,
-            forKey: noop
+            forKey: noop,
+            set: this.storeSet
           };
         }
       });
       $provide.value('services/TokenStore', {
         getSpaces: this.getSpaces,
-        getOrganizations: this.getOrganizations
+        getOrganizations: this.getOrganizations,
+        user$: this.user$
+      });
+      $provide.value('components/shared/auto_create_new_space', {
+        getKey: noop
+      });
+      $provide.value('createModernOnboarding', {
+        getStoragePrefix: noop,
+        MODERN_STACK_ONBOARDING_SPACE_NAME: this.modernStackName
       });
     });
 
     this.utils = this.$inject('states/deeplink/utils');
+  });
+
+  describe('#getOnboardingSpaceId', () => {
+    it('takes spaceId from local storage', function* () {
+      this.getSpaces.resolves([{ sys: { id: 'some_id' } }]);
+      this.user$.set({ sys: { id: 'user_id' } });
+      this.storeGet.returns('some_id');
+      const spaceId = yield* this.utils.getOnboardingSpaceId();
+
+      expect(spaceId).toBe('some_id');
+    });
+
+    it('looks for spaces with modern stack onboarding name if no value in local storage', function* () {
+      this.getSpaces.resolves([{ sys: { id: 'another_id' }, name: this.modernStackName }]);
+      this.user$.set({ sys: { id: 'user_id' } });
+
+      const spaceId = yield* this.utils.getOnboardingSpaceId();
+      expect(spaceId).toBe('another_id');
+    });
+
+    it('sets defaults to local storage if space id was not in local storage', function* () {
+      this.getSpaces.resolves([{ sys: { id: 'another_id' }, name: this.modernStackName }]);
+      this.user$.set({ sys: { id: 'user_id' } });
+
+      yield* this.utils.getOnboardingSpaceId();
+      expect(this.storeSet.callCount).toBeGreaterThan(0);
+    });
+
+    it('returns undefined if there is no space from local storage and no space with name', function* () {
+      this.getSpaces.resolves([{ sys: { id: 'another_id' }, name: `${this.modernStackName} and some text` }]);
+      this.user$.set({ sys: { id: 'user_id' } });
+      this.storeGet.returns('some_id');
+
+      const spaceId = yield* this.utils.getOnboardingSpaceId();
+      expect(spaceId).toBe(undefined);
+    });
   });
 
   describe('#getSpaceInfo', () => {

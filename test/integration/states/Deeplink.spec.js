@@ -1,4 +1,6 @@
 import * as sinon from 'helpers/sinon';
+import * as K from 'test/helpers/mocks/kefir';
+import {noop} from 'lodash';
 
 describe('states/Deeplink', () => {
   beforeEach(function () {
@@ -11,6 +13,7 @@ describe('states/Deeplink', () => {
     this.navigate = sinon.spy();
     this.search = sinon.stub();
     this.apiKeys = sinon.stub();
+    this.user$ = K.createMockProperty({ sys: { id: 'user_id' } });
 
     module('contentful/test', $provide => {
       $provide.value('$location', {
@@ -26,7 +29,8 @@ describe('states/Deeplink', () => {
       $provide.value('services/TokenStore', {
         getSpaces: this.getSpaces,
         getOrganizations: this.getOrganizations,
-        getOrganization: this.getOrganization
+        getOrganization: this.getOrganization,
+        user$: this.user$
       });
       $provide.value('access_control/AccessChecker', {
         canReadApiKeys: this.canReadApiKeys
@@ -39,6 +43,13 @@ describe('states/Deeplink', () => {
       });
       $provide.value('utils/LaunchDarkly', {
         getCurrentVariation: () => Promise.resolve(false)
+      });
+      $provide.value('components/shared/auto_create_new_space', {
+        getKey: noop
+      });
+      $provide.value('createModernOnboarding', {
+        getStoragePrefix: noop,
+        MODERN_STACK_ONBOARDING_SPACE_NAME: 'some name'
       });
     });
 
@@ -312,6 +323,19 @@ describe('states/Deeplink', () => {
       yield promise;
 
       expect($scope.status).toBe('not_exist');
+    });
+
+    it('should give a specific onboarding error', function* () {
+      this.search.returns({ link: 'onboarding-explore' });
+      this.getSpaces.resolves([{
+        name: 'another name',
+        sys: {id: 'space_id'}
+      }]);
+
+      const { $scope, promise } = this.createController();
+      yield promise;
+
+      expect($scope.status).toBe('onboarding');
     });
   });
 });

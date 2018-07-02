@@ -1,8 +1,14 @@
 import spaceContext from 'spaceContext';
 import {runTask} from 'utils/Concurrent';
-import {getSpaceInfo, getOrg, checkSpaceApiAccess, checkOrgAccess} from './utils';
+import {getSpaceInfo, getOrg, checkSpaceApiAccess, checkOrgAccess, getOnboardingSpaceId} from './utils';
 import logger from 'logger';
 import {isLegacyOrganization} from 'utils/ResourceUtils';
+import {getStoragePrefix} from 'createModernOnboarding';
+import { getStore } from 'TheStore';
+
+const store = getStore();
+
+const ONBOARDING_ERROR = 'modern onboarding space id does not exist';
 
 /**
  * @description Given a string identifier we return a state reference (for our
@@ -21,7 +27,9 @@ export function resolveLink (link) {
       },
       groupingHash: 'Error during deeplink redirect'
     });
-    return {};
+    return {
+      onboarding: e.message === ONBOARDING_ERROR
+    };
   });
 }
 
@@ -32,7 +40,10 @@ export function resolveLink (link) {
  */
 function resolveParams (link) {
   // we map links from `link` queryParameter to resolve fn
-  // keys are quoted, so we can use special symbols later
+  // keys are quoted for consistency, you can use special symbols
+  //
+  // Please document all possible links in the wiki
+  // https://contentful.atlassian.net/wiki/spaces/PROD/pages/208765005/Deeplinking+in+the+Webapp
   const mappings = {
     'home': resolveHome,
     'api': resolveApi,
@@ -40,7 +51,11 @@ function resolveParams (link) {
     'invite': resolveInviteUser,
     'users': resolveUsers,
     'subscription': resolveSubscriptions,
-    'org': resolveOrganizationInfo
+    'org': resolveOrganizationInfo,
+    'onboarding-get-started': createOnboardingScreenResolver('getStarted'),
+    'onboarding-copy': createOnboardingScreenResolver('copy'),
+    'onboarding-explore': createOnboardingScreenResolver('explore'),
+    'onboarding-deploy': createOnboardingScreenResolver('deploy')
   };
 
   const resolverFn = mappings[link];
@@ -50,6 +65,28 @@ function resolveParams (link) {
   } else {
     return Promise.reject(new Error('path does not exist'));
   }
+}
+
+function createOnboardingScreenResolver (screen) {
+  return () => runTask(function* () {
+    const spaceId = yield* getOnboardingSpaceId();
+
+    if (spaceId) {
+      const currentStepKey = `${getStoragePrefix()}:currentStep`;
+      // we set current step flag in local storage, so if we click "skip"
+      // and resume the flow later, it opens the same step
+      store.set(currentStepKey, {
+        path: `spaces.detail.onboarding.${screen}`,
+        params: { spaceId }
+      });
+      return {
+        path: ['spaces', 'detail', 'onboarding', screen],
+        params: { spaceId }
+      };
+    } else {
+      throw new Error(ONBOARDING_ERROR);
+    }
+  });
 }
 
 // resolve Home page
