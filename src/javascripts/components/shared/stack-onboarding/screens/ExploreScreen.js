@@ -36,7 +36,10 @@ angular.module('contentful')
       <FullScreen close={<Skip link='explore' />}>
         <Navigation active={2} />
         <ScreenHeader title={headerTitle} subtitle={headerSubtitle} />
-        <WithLink trackingElementId='explore_screen_completed' link='deploy'>
+        <WithLink
+          intercomKey='onboardingExploreCompleted'
+          trackingElementId='explore_screen_completed' link='deploy'
+        >
           {move => (
             <Button
               onClick={move}

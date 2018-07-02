@@ -39,7 +39,11 @@ angular.module('contentful')
           <div
             className={'modern-stack-onboarding--logogrid-image'}
           />
-          <WithLink trackingElementId='get_started_screen_completed' link='copy'>
+          <WithLink
+            intercomKey='onboardingStackOverviewCompleted'
+            trackingElementId='get_started_screen_completed'
+            link='copy'
+          >
             {move => (
               <Button
                 onClick={move}
