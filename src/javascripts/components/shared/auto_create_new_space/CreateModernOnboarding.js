@@ -28,6 +28,7 @@ angular.module('contentful')
   const createModernOnboarding = {
     MODERN_STACK_ONBOARDING_SPACE_NAME: 'Gatsby Starter for Contentful',
     MODERN_STACK_ONBOARDING_FEATURE_FLAG: 'feature-dl-05-2018-modern-stack-onboarding',
+    MODERN_STACK_ONBOARDING_COMPLETE_EVENT: 'onboardingComplete',
     getUser: () => getValue(user$),
     getStoragePrefix: () => `ctfl:${createModernOnboarding.getUser().sys.id}:modernStackOnboarding`,
     isOnboardingComplete: () => store.get(`${createModernOnboarding.getStoragePrefix()}:completed`),

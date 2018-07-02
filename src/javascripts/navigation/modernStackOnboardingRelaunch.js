@@ -6,11 +6,13 @@ export const name = 'ms-relaunch';
 
 angular.module('contentful')
   .factory(name, ['require', require => {
+    const $rootScope = require('$rootScope');
     const spaceContext = require('spaceContext');
     const store = require('TheStore').getStore();
     const {getKey: getSpaceAutoCreatedKey} = require('components/shared/auto_create_new_space');
     const {getCurrentVariation} = require('utils/LaunchDarkly');
     const {
+      MODERN_STACK_ONBOARDING_COMPLETE_EVENT,
       MODERN_STACK_ONBOARDING_FEATURE_FLAG,
       isDevOnboardingSpace,
       isOnboardingComplete,
@@ -55,6 +57,16 @@ angular.module('contentful')
         return null;
       }
     }
+
+
+    // since this component is rendered when the onboarding begins, we need to ask it to update
+    // once the onboarding is complete.
+    // this component is rendered when the onboarding begins since it's jammed into the dom
+    // by angular-ui-router in "views" for "/spaces" url. And throughout onboarding, this
+    // componnet isn't ejected from the DOM hence it keeps the old state and hides itself
+    // even after onboarding is complete. This fixes that by asking it to re-render once
+    // onboarding is complete
+    $rootScope.$on(MODERN_STACK_ONBOARDING_COMPLETE_EVENT, () => Relaunch.forceUpdate());
 
     return Relaunch;
   }]);
