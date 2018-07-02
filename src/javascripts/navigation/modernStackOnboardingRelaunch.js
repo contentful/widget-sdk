@@ -23,12 +23,18 @@ angular.module('contentful')
     const Icon = require('ui/Components/Icon').default;
 
     class Relaunch extends React.Component {
-      constructor () {
-        super();
-        this.state = { flag: false };
-      }
+      state = { flag: false }
       async componentDidMount () {
         const flag = await getCurrentVariation(MODERN_STACK_ONBOARDING_FEATURE_FLAG);
+
+        // since this component is rendered when the onboarding begins, we need to ask it to update
+        // once the onboarding is complete.
+        // this component is rendered when the onboarding begins since it's jammed into the dom
+        // by angular-ui-router in "views" for "/spaces" url. And throughout onboarding, this
+        // componnet isn't ejected from the DOM hence it keeps the old state and hides itself
+        // even after onboarding is complete. This fixes that by asking it to re-render once
+        // onboarding is complete
+        $rootScope.$on(MODERN_STACK_ONBOARDING_COMPLETE_EVENT, () => this.forceUpdate());
 
         this.setState({ flag });
       }
@@ -59,14 +65,6 @@ angular.module('contentful')
     }
 
 
-    // since this component is rendered when the onboarding begins, we need to ask it to update
-    // once the onboarding is complete.
-    // this component is rendered when the onboarding begins since it's jammed into the dom
-    // by angular-ui-router in "views" for "/spaces" url. And throughout onboarding, this
-    // componnet isn't ejected from the DOM hence it keeps the old state and hides itself
-    // even after onboarding is complete. This fixes that by asking it to re-render once
-    // onboarding is complete
-    $rootScope.$on(MODERN_STACK_ONBOARDING_COMPLETE_EVENT, () => Relaunch.forceUpdate());
 
     return Relaunch;
   }]);
