@@ -40,7 +40,9 @@ angular.module('contentful')
   var fieldLocale = $scope.fieldLocale;
   var ctField = $scope.widget.field;
 
-  var isEditingDisabled = fieldLocale.access$.map(access => !!access.disabled);
+  var isEditingDisabled = fieldLocale.access$.map(access => {
+    return !!access.disabled;
+  });
 
   this.settings = _.clone($scope.widget.settings);
   this.settings.helpText = this.settings.helpText || $scope.widget.defaultHelpText;

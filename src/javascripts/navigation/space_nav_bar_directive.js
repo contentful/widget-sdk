@@ -39,7 +39,7 @@ angular.module('contentful')
   });
 }])
 
-.directive('cfSpaceNavBar', ['makeNavBar', makeNavBar => makeNavBar(false)])
+.directive('cfSpaceNavBar', ['makeNavBar', makeNavBar => makeNavBar(false, true)])
 
 .directive('cfSpaceEnvNavBar', ['makeNavBar', makeNavBar => makeNavBar(true)])
 
@@ -48,13 +48,14 @@ angular.module('contentful')
 .directive('cfSpaceNavBarWrapped', ['require', require => {
   var LD = require('utils/LaunchDarkly');
   var spaceContext = require('spaceContext');
+  var accessChecker = require('access_control/AccessChecker');
 
   return {
     scope: {},
     restrict: 'E',
     controller: ['$scope', $scope => {
-      $scope.$watch(() => !!spaceContext.getData(['spaceMembership', 'admin']), isAdmin => {
-        $scope.isAdmin = isAdmin;
+      $scope.$watch(() => accessChecker.can('manage', 'Environments'), canManageEnvironments => {
+        $scope.canManageEnvironments = canManageEnvironments;
       });
 
       LD.onFeatureFlag($scope, 'feature-dv-11-2017-environments', environmentsEnabled => {
@@ -66,9 +67,9 @@ angular.module('contentful')
       });
     }],
     template: [
-      '<cf-space-master-nav-bar ng-if=" isAdmin &&  environmentsEnabled &&  isMaster" />',
-      '<cf-space-env-nav-bar    ng-if=" isAdmin &&  environmentsEnabled && !isMaster" />',
-      '<cf-space-nav-bar        ng-if="!isAdmin || !environmentsEnabled             " />'
+      '<cf-space-master-nav-bar ng-if=" canManageEnvironments &&  environmentsEnabled &&  isMaster" />',
+      '<cf-space-env-nav-bar    ng-if=" canManageEnvironments &&  environmentsEnabled && !isMaster" />',
+      '<cf-space-nav-bar        ng-if="!canManageEnvironments || !environmentsEnabled             " />'
     ].join('')
   };
 }]);

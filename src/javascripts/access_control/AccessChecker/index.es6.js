@@ -208,7 +208,7 @@ function setContext (context) {
   organization = context.organization;
 
   cache.reset(spaceAuthContext);
-  policyChecker.setMembership(get(space, 'spaceMembership'));
+  policyChecker.setMembership(get(space, 'spaceMembership'), spaceAuthContext);
   gkPermissionChecker = createGKPermissionChecker({space, organization});
   collectResponses();
   collectSectionVisibility();
@@ -422,6 +422,14 @@ function collectSectionVisibility () {
     asset: !shouldHide('readAsset') || policyChecker.canAccessAssets(),
     apiKey: !shouldHide('readApiKey'),
     settings: !shouldHide('updateSettings'),
+    locales: !shouldHide('updateSettings'),
+    extensions: !shouldHide('updateSettings'),
+    users: !shouldHide('updateSettings'),
+    roles: !shouldHide('updateSettings'),
+    environments: can('manage', 'Environments'),
+    usage: !shouldHide('updateSettings'),
+    preview: !shouldHide('updateSettings'),
+    webhooks: !shouldHide('updateSettings'),
     spaceHome: get(space, 'spaceMembership.admin')
   };
 }

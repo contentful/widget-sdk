@@ -2,6 +2,7 @@ import {h} from 'ui/Framework';
 import spaceIcon from 'svg/space';
 import folderIcon from 'svg/folder';
 import SpaceWithEnvironments from './SpaceWithEnvironments';
+import * as accessChecker from 'access_control/AccessChecker';
 
 export default function (props) {
   const {currOrg, spacesByOrg, canCreateSpaceInCurrOrg, showCreateSpaceModal} = props;
@@ -38,7 +39,7 @@ function renderSpaceList (props) {
   return h('ul.nav-sidepanel__space-list', spaces.map((space, index) => {
     const isCurrSpace = space.sys.id === currentSpaceId;
 
-    if (environmentsEnabled && space.spaceMembership.admin) {
+    if (environmentsEnabled && accessChecker.can('manage', 'Environments')) {
       return h(SpaceWithEnvironments, {
         index,
         key: space.sys.id,
