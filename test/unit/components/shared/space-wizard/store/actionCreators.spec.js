@@ -182,7 +182,8 @@ describe('Space Wizard action creators', function () {
         newSpaceMeta: { name: 'My favorite space', template: null },
         onSpaceCreated: this.onSpaceCreated,
         onTemplateCreated: this.onTemplateCreated,
-        onConfirm: this.stubs.onConfirm
+        onConfirm: this.stubs.onConfirm,
+        partnership: { isPartnership: false }
       });
 
       expect(this.stubs.dispatch.callCount).toBe(4);
@@ -444,13 +445,17 @@ describe('Space Wizard action creators', function () {
   });
 
   describe('selectPlan', function () {
-    it('should dispatch 1 time', function () {
+    it('should dispatch 2 times', function () {
       const currentPlan = this.plan;
       const selectedPlan = { ...this.plan, name: 'Bestest', internalName: 'bestest' };
       this.dispatch(this.actionCreators.selectPlan, currentPlan, selectedPlan);
 
-      expect(this.stubs.dispatch.callCount).toBe(1);
+      expect(this.stubs.dispatch.callCount).toBe(2);
       expect(this.stubs.dispatch.args[0]).toEqual([{
+        type: this.actions.SPACE_PARTNERSHIP,
+        isPartnership: false
+      }]);
+      expect(this.stubs.dispatch.args[1]).toEqual([{
         type: this.actions.SPACE_PLAN_SELECTED,
         currentPlan,
         selectedPlan

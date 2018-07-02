@@ -25,6 +25,31 @@ export function reset () {
   return dispatch => dispatch(actions.spaceWizardReset());
 }
 
+export function setPartnershipFields ({ fields }) {
+  return dispatch => {
+    dispatch(actions.spacePartnershipFields(fields));
+  };
+}
+
+export function sendPartnershipEmail ({ spaceId, fields }) {
+  return async dispatch => {
+    dispatch(actions.spacePartnershipEmailPending(true));
+
+    const endpoint = createSpaceEndpoint(spaceId);
+    try {
+      await endpoint({
+        method: 'POST',
+        path: [ 'partner_projects' ],
+        data: fields
+      });
+    } catch (e) {
+      // TODO: log error somewhere
+    }
+
+    dispatch(actions.spacePartnershipEmailPending(false));
+  };
+}
+
 export function fetchSpacePlans ({ organization, spaceId }) {
   return async dispatch => {
     const resources = createResourceService(organization.sys.id, 'organization');
@@ -63,7 +88,6 @@ export function fetchSpacePlans ({ organization, spaceId }) {
       return {...plan, isFree, includedResources, disabled};
     });
 
-
     dispatch(actions.spacePlansSuccess(spaceRatePlans, freeSpacesResource));
     dispatch(actions.spacePlansPending(false));
   };
@@ -100,6 +124,7 @@ export function createSpace ({
   currentStepId,
   selectedPlan,
   newSpaceMeta,
+  partnership,
   onSpaceCreated,
   onTemplateCreated,
   onConfirm
@@ -123,6 +148,13 @@ export function createSpace ({
       dispatch(actions.spaceCreationPending(false));
 
       return;
+    }
+
+    // Send partnerships email if this is a partnership space
+    const { isPartnership, fields } = partnership;
+
+    if (isPartnership) {
+      dispatch(sendPartnershipEmail({ fields, spaceId: newSpace.sys.id }));
     }
 
     const spaceEndpoint = createSpaceEndpoint(newSpace.sys.id);
@@ -233,7 +265,18 @@ export function setNewSpaceTemplate (template) {
 }
 
 export function selectPlan (currentPlan, selectedPlan) {
-  return dispatch => dispatch(actions.spacePlanSelected(currentPlan, selectedPlan));
+  return dispatch => {
+    const { productType, productPlanType } = selectedPlan;
+    const isPartnerSpace = productType === 'partner' && productPlanType === 'space';
+
+    if (isPartnerSpace) {
+      dispatch(actions.spacePartnership(true));
+    } else {
+      dispatch(actions.spacePartnership(false));
+    }
+
+    dispatch(actions.spacePlanSelected(currentPlan, selectedPlan));
+  };
 }
 
 function createTrackingData ({ action, organization, currentStepId, selectedPlan, currentPlan, newSpaceMeta }) {

@@ -1,5 +1,22 @@
 import * as actions from './actions';
 
+export function partnership (state = {}, action) {
+  switch (action.type) {
+    case actions.SPACE_PARTNERSHIP:
+      return {
+        ...state,
+        isPartnership: action.isPartnership
+      };
+    case actions.SPACE_PARTNERSHIP_FIELDS:
+      return {
+        ...state,
+        fields: action.fields
+      };
+    default:
+      return state;
+  }
+}
+
 export function spaceCreation (state = {}, action) {
   switch (action.type) {
     case actions.SPACE_CREATION_PENDING:
