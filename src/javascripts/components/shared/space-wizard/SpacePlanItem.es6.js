@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
@@ -50,11 +50,16 @@ const SpacePlanItem = createReactClass({
             <span data-test-id="space-plan-price">{formatPrice(plan.price)}</span>
             {' / month'}
           </React.Fragment>}
-          {plan.isFree && ` - ${freeSpacesUsage}/${freeSpacesLimit} used`}
-          {plan.isFree && <HelpIcon tooltipWidth={400}>
-            You can have up to {freeSpacesLimit} free spaces for your organization.
-            If you delete a free space, another one can be created.
-          </HelpIcon>}
+          {
+            plan.isFree && freeSpacesLimit &&
+            <Fragment>
+              {` - ${freeSpacesUsage}/${freeSpacesLimit} used`}
+              <HelpIcon tooltipWidth={400}>
+                You can have up to {freeSpacesLimit} free spaces for your organization.
+                If you delete a free space, another one can be created.
+              </HelpIcon>
+            </Fragment>
+        }
         </div>
         <ul className="space-plans-list__item__features">
           {plan.includedResources.map(({type, number}) => {
