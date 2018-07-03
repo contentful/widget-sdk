@@ -64,7 +64,5 @@ angular.module('contentful')
       }
     }
 
-
-
     return Relaunch;
   }]);
