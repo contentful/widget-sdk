@@ -30,7 +30,8 @@ angular.module('contentful')
       require('states/settings/content_preview'),
       require('states/settings/Extensions').default,
       require('app/SpaceSettings/Environments/State').default,
-      require('app/SpaceSettings/Usage/SpaceUsageState').default
+      require('app/SpaceSettings/Usage/SpaceUsageState').default,
+      require('app/Functions/State').default
       // Note: app/api/State is in the "Settings" menu but is not a child here.
     ]
   };
