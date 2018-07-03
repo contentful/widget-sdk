@@ -264,14 +264,18 @@ $close-button-small()
       top: -1px
       left: -1px
       border-radius: 2px 0 0 2px;
+    &--free
+      $item-label($colors.ice-mid, $colors.ice-dark)
     &--micro
-      $item-label($colors.orange-light, $colors.orange-mid)
+      $item-label($colors.yellow-dark, $colors.yellow-dark)
     &--small
-      $item-label($colors.green-light, $colors.green-mid)
+      $item-label($colors.red-light, $colors.red-mid)
     &--medium
       $item-label($colors.blue-light, $colors.blue-mid)
     &--large
-      $item-label($colors.red-light, $colors.red-mid)
+      $item-label($colors.green-light, $colors.green-mid)
+    &--partner-space-plan
+      $item-label($colors.blue-light, $colors.blue-dark)
     &--disabled
       $opacity = 0.3
       cursor: not-allowed
