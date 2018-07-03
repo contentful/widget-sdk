@@ -51,6 +51,8 @@ describe('The Locale list directive', () => {
       }
     };
 
+    this.showUpgradeDialog = sinon.stub().yieldsTo('onSubmit');
+
     this.stubs = {
       ResourceService: {
         get: sinon.stub().resolves(this.resource)
@@ -97,6 +99,10 @@ describe('The Locale list directive', () => {
         isInsideMasterEnv: () => {
           return this.environment.sys.id === 'master';
         }
+      });
+
+      $provide.value('services/ChangeSpaceService', {
+        showDialog: this.showUpgradeDialog
       });
     });
 
@@ -391,6 +397,26 @@ describe('The Locale list directive', () => {
 
           expect(getUpgradeText(sidebar)).toBe('Delete an existing locale or ask the administrator of your organization to upgrade the space to add more.');
           expect(getUpgradeButton(sidebar).length).toBe(0);
+        });
+
+        it('should open upgrade dialog', async function () {
+          this.setRole('owner');
+
+          const sidebar = await this.compileAndGetSidebar();
+          getUpgradeButton(sidebar).click();
+
+          sinon.assert.calledOnce(this.showUpgradeDialog);
+        });
+        it('should reload resources after the space is upgraded', async function () {
+          this.setRole('owner');
+
+          const sidebar = await this.compileAndGetSidebar();
+
+          sinon.assert.calledOnce(this.stubs.ResourceService.get);
+
+          getUpgradeButton(sidebar).click();
+
+          sinon.assert.calledTwice(this.stubs.ResourceService.get);
         });
       });
 
