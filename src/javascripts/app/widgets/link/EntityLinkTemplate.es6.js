@@ -34,7 +34,9 @@ function entityCardMissing () {
       ngClick: 'onClick($event)'
     }, [
       h('header.ReferenceCard__header', { ngClass: '!(actions | isEmpty) && "ReferenceCard__header--has-actions"' }, [
-        h('div.ReferenceCard__title', { dataTestId: 'entity-link-title' }, ['{{ (title | truncate:255) || "Entity missing or inaccessible" }}'])
+        h('div.ReferenceCard__title', { dataTestId: 'entity-link-title' }, [
+          '{{ (title | truncate:255) || "Entity missing or inaccessible" }}'
+        ])
       ])
     ]),
 
@@ -48,7 +50,9 @@ function entityCardMinimized () {
   }, [
     h('a.ReferenceCard__wrapper', { dataTestId: 'entity-link-content' }, [
       h('header.ReferenceCard__header', [
-        h('div.ReferenceCard__title', { dataTestId: 'entity-link-title' }, ['{{ (title | truncate:255) || "Untitled" }}']),
+        h('div.ReferenceCard__title', { dataTestId: 'entity-link-title' }, [
+          '{{(title | truncate:255) || "Untitled"}}'
+        ]),
         h('div.ReferenceCard__status.ReferenceCard__status--{{entityState}}', { dataEntityState: '{{entityState}}' }, ['{{ entityState }}'])
       ])
     ])
@@ -67,12 +71,14 @@ function entityCard () {
       ngClick: 'onClick($event)'
     }, [
       h('header.ReferenceCard__header', { ngClass: '!(actions | isEmpty) && "ReferenceCard__header--has-actions"' }, [
-        h('div.ReferenceCard__content-type', { ngIf: 'contentTypeName' }, ['{{ contentTypeName }}']),
+        h('div.ReferenceCard__content-type', { ngIf: 'contentTypeName' }, ['{{contentTypeName}}']),
         h('div.ReferenceCard__status.ReferenceCard__status--{{entityState}}', { dataEntityState: '{{entityState}}' }, ['{{ entityState }}'])
       ]),
       h('div.ReferenceCard__content', [
         h('div.ReferenceCard__text', [
-          h('div.ReferenceCard__title', { dataTestId: 'entity-link-title' }, ['{{ (title | truncate:255) || "Untitled" }}']),
+          h('div.ReferenceCard__title', { dataTestId: 'entity-link-title', ngAttrTitle: '{{ title.length > 255 ? title : "" }}' }, [
+            '{{ (title | truncate:255) || "Untitled" }}'
+          ]),
           h('div.ReferenceCard__description', {
             ngIf: 'description'
           }, ['{{ description | truncate:127 }}'])
