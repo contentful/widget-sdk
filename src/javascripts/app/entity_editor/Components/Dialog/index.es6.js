@@ -1,25 +1,40 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import createReactClass from 'create-react-class';
 
-const Dialog = createReactClass({
-  propTypes: {
+class Dialog extends React.Component {
+  style = {};
+
+  sizes = {
+    small: '400px',
+    medium: '600px'
+  };
+
+  static propTypes = {
     testId: PropTypes.string,
-    children: PropTypes.node
-  },
+    children: PropTypes.node,
+    size: PropTypes.oneOf(['small', 'medium'])
+  }
+
+  constructor (props) {
+    super(props);
+
+    this.style.width = this.sizes[this.props.size];
+  }
+
   render () {
     return (
-      <div className="modal-dialog" data-test-id={this.props.testId}>
+      <div className="modal-dialog" data-test-id={this.props.testId} style={this.style}>
         {this.props.children}
       </div>
     );
   }
-});
+}
 
-const Header = createReactClass({
-  propTypes: {
+class Header extends React.Component {
+  static propTypes = {
     children: PropTypes.node
-  },
+  };
+
   render () {
     return (
       <header className="modal-dialog__header" data-test-id="header">
@@ -27,12 +42,13 @@ const Header = createReactClass({
       </header>
     );
   }
-});
+}
 
-const Body = createReactClass({
-  propTypes: {
+class Body extends React.Component {
+  static propTypes = {
     children: PropTypes.node
-  },
+  }
+
   render () {
     return (
       <div className="modal-dialog__content">
@@ -42,12 +58,13 @@ const Body = createReactClass({
       </div>
     );
   }
-});
+}
 
-const Controls = createReactClass({
-  propTypes: {
+class Controls extends React.Component {
+  static propTypes = {
     children: PropTypes.node
-  },
+  }
+
   render () {
     return (
       <div className="modal-dialog__controls" data-test-id="controls">
@@ -55,7 +72,7 @@ const Controls = createReactClass({
       </div>
     );
   }
-});
+}
 
 Dialog.Header = Header;
 Dialog.Body = Body;

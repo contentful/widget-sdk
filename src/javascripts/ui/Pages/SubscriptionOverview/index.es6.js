@@ -127,10 +127,9 @@ const SubscriptionOverview = createReactClass({
     showCreateSpaceModal(this.props.orgId);
   },
 
-  changeSpace: function (space, spacePlan, action) {
+  changeSpace: function (space, action) {
     return () => {
       showChangeSpaceModal({
-        spacePlan,
         organizationId: this.props.orgId,
         space,
         action,

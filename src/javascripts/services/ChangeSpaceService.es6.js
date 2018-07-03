@@ -1,6 +1,8 @@
 import modalDialog from 'modalDialog';
 import { getOrganization } from 'services/TokenStore';
 import { openModal as openCommittedSpaceWarningDialog } from 'components/shared/space-wizard/CommittedSpaceWarningModal';
+import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
+import { createOrganizationEndpoint } from 'data/EndpointFactory';
 
 /**
  * Displays the space creation dialog. The dialog type will depend on the
@@ -17,7 +19,7 @@ import { openModal as openCommittedSpaceWarningDialog } from 'components/shared/
  * @param {string} action - one of 'change', 'upgrade', 'downgrade'.
  * @param {function} onSubmit
  */
-export async function showDialog ({ organizationId, space, spacePlan, limitReached, action, onSubmit }) {
+export async function showDialog ({ organizationId, space, limitReached, action, onSubmit }) {
   const validActions = [ 'change', 'upgrade', 'downgrade' ];
 
   if (!organizationId) {
@@ -37,6 +39,10 @@ export async function showDialog ({ organizationId, space, spacePlan, limitReach
   if (validActions.indexOf(action) === -1) {
     throw new Error(`ChangeSpaceService.showDialog: action ${action} invalid, valid actions: ${validActions.join(', ')}`);
   }
+
+  const orgEndpoint = createOrganizationEndpoint(organization.sys.id);
+  const spacePlan = await getSingleSpacePlan(orgEndpoint, space.sys.id);
+
 
   if (spacePlan && spacePlan.committed) {
     openCommittedSpaceWarningDialog();
