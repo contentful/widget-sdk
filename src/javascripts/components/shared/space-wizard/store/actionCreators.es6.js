@@ -1,6 +1,7 @@
 import client from 'client';
 import { get, noop } from 'lodash';
 
+import logger from 'logger';
 import createResourceService from 'services/ResourceService';
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
 import {
@@ -25,7 +26,7 @@ export function reset () {
   return dispatch => dispatch(actions.spaceWizardReset());
 }
 
-export function setPartnershipFields ({ fields }) {
+export function setPartnershipFields (fields) {
   return dispatch => {
     dispatch(actions.spacePartnershipFields(fields));
   };
@@ -43,7 +44,12 @@ export function sendPartnershipEmail ({ spaceId, fields }) {
         data: fields
       });
     } catch (e) {
-      // TODO: log error somewhere
+      logger.logError(`Could not send partnership data to API`, {
+        error: e,
+        fields
+      });
+
+      dispatch(actions.spacePartnershipEmailFailure(e));
     }
 
     dispatch(actions.spacePartnershipEmailPending(false));

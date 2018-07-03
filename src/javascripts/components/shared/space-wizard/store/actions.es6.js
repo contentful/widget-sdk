@@ -190,3 +190,11 @@ export function spacePartnershipEmailPending (isPending) {
     isPending
   };
 }
+
+export const SPACE_PARTNERSHIP_EMAIL_FAILURE = 'SPACE_WIZARD/PARTNERSHIP_EMAIL_FAILURE';
+export function spacePartnershipEmailFailure (error) {
+  return {
+    type: SPACE_PARTNERSHIP_EMAIL_FAILURE,
+    error
+  };
+}

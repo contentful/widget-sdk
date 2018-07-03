@@ -49,7 +49,7 @@ const ConfirmScreen = createReactClass({
       partnershipFields[fieldName] = value;
 
       this.setState({ partnershipFields });
-      setPartnershipFields({ fields: partnershipFields });
+      setPartnershipFields(partnershipFields);
     };
   },
 
