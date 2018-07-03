@@ -17,7 +17,7 @@ const list = {
   url: '/functions',
   template: '<react-component name="app/Functions/FunctionList" props="props"/>',
   resolve: {
-    backend: ['$stateParams', ({spaceId}) => createBackend(spaceId)],
+    backend: ['spaceContext', spaceContext => createBackend(spaceContext.getId())],
     fns: ['backend', backend => backend.list().then(res => res.items)]
   },
   controller: ['$scope', 'backend', 'fns', ($scope, backend, fns) => {
