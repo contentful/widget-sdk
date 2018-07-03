@@ -78,7 +78,7 @@ angular.module('contentful')
             Enter the website URL after deployment is complete.
           </h4>
           <div className='modern-stack-onboarding--deployment-form-subtitle'>
-            We’ll suggest next steps based on the hosting service you selected.
+            We’ll provide guidance to set up webhooks based on the hosting service you’ve selected.
           </div>
           <Form onSubmit={e => e.preventDefault()}>
             <Input

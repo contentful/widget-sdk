@@ -36,9 +36,7 @@ angular.module('contentful')
         </h3>
         <div className={'modern-stack-onboarding--logogrid-wrapper'}>
           {logos}
-          <div
-            className={'modern-stack-onboarding--logogrid-image'}
-          />
+          <Icon className={'modern-stack-onboarding--logogrid-image'} name={'stack-overview'} />
           <WithLink
             intercomKey='onboardingStackOverviewCompleted'
             trackingElementId='get_started_screen_completed'
