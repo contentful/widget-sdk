@@ -186,9 +186,19 @@ $close-button-small()
 
   & .fieldset
     border: 1px solid $colors.element-mid
-    padding: 10px
+    padding: 0 10px
     margin: 20px 0 0
     border-radius: 2px
+
+    & > .field
+      margin: 10px 0 15px
+
+  // Temporary, until the DatePicker is in ui-component-library
+  & .label
+    display: inline-block
+    color: $colors.text-dark
+    font-weight: 600
+    margin-bottom: 0.5rem
 
 .space-plans-list
   &__item__heading
