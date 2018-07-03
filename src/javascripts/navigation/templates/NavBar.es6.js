@@ -36,7 +36,7 @@ import {byName as Colors} from 'Styles/Colors';
 export default function (listItems = []) {
   return h('nav.nav-bar', [
     h('ul.nav-bar__list', listItems.map((data, index) => {
-      const html = data.children ? navbarDropdown(data, index) : navbarItem(data, index);
+      const html = data.children ? navbarDropdown(data, index) : navbarItem(data);
       const attrs = {};
 
       if (data.if) {
@@ -52,7 +52,7 @@ export default function (listItems = []) {
   ]);
 }
 
-function navbarItem (data, tabIndex = 0) {
+function navbarItem (data) {
   const inheritUrlParams = isBoolean(data.inheritUrlParams) ? data.inheritUrlParams : true;
   const tag = `a.nav-bar__link${data.disabled ? '.is-disabled' : ''}`;
 
@@ -61,10 +61,11 @@ function navbarItem (data, tabIndex = 0) {
     uiSref: data.sref,
     uiSrefOpts: `{ inherit: ${inheritUrlParams} }`,
     dataViewType: data.dataViewType || '',
-    tabindex: String(tabIndex)
+    tabindex: String(0)
   }, [
-    data.icon && h('cf-icon', { name: data.icon }),
-    h('span.nav-bar__list-label', [data.title])
+    h('span.nav-bar__list-label', [
+      data.icon && h('cf-icon', { name: data.icon }),
+      data.title])
   ]);
 }
 
@@ -77,8 +78,7 @@ function navbarDropdown (data, tabIndex = 0) {
       cfContextMenuTrigger: 'cf-context-menu-trigger',
       uiSrefActive: `{ "is-active": "${data.rootSref || data.sref}" }`
     }, [
-      data.icon && h('cf-icon', { name: data.icon }),
-      h('span.nav-bar__list-label', [data.title]),
+      h('span.nav-bar__list-label', [data.icon && h('cf-icon', { name: data.icon }), data.title]),
       h('span.triangle-down', {
         style: {
           margin: '2px 0 0 12px'

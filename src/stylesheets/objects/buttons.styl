@@ -104,10 +104,6 @@ $button-colors($bg, $text)
   &:link, a&:hover, a&:link, a&:visited
     color: $text
 
-  // Reset Browser styles
-  &, &:hover, &:active
-    outline: 0
-
   &:disabled, &[aria-disabled=true], &.disabled
     opacity: 0.4
     cursor: default
@@ -325,7 +321,6 @@ $button-plain()
   text-decoration: underline
   &:hover
     color: $colors.text-dark
-  outline: 0
 
 .btn-plain
   $button-plain()

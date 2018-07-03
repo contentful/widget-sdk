@@ -70,17 +70,17 @@ $app-top-bar__action-color()
     flex-direction: column
     justify-content: center
     height: 100%
-    padding: 0 20px
     &:first-child
-      padding-left: 30px
+      padding-left: 15px
     & > a > cf-icon
       margin-right: 10px
     @media (max-width: $nav-bar-break-width)
-      padding: 0 15px
-      & > a > cf-icon
+      padding: 0px
+      & > a > .nav-bar__list-label > cf-icon
         display: none
     a
       $app-top-bar__action-color()
+      padding: 0 20px
     &:focus
       $focus-styles
 

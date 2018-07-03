@@ -29,12 +29,27 @@
   align-items: center
   height: 100%
   border-top: solid 3px transparent
-  border-bottom: solid 3px transparent
   transition: color 0.1s ease-in-out
+  .nav-bar__list-label
+    height: 100%;
+    display: flex;
+    align-items: center;
+    border-bottom: 3px solid transparent
+    cf-icon
+      margin-right: 10px;
   &:hover, &.is-active
     color: $colors.blue-mid
+    .nav-bar__list-label
+      border-bottom-color: $colors.blue-mid
+    .app-top-bar__menu-trigger
+      .nav-bar__list-label
+        border-bottom-color: transparent
+.app-top-bar__menu-trigger
+  &:hover, &.is-active
+    .nav-bar__list-label
+        border-bottom-color: transparent
   &.is-active
-    border-bottom-color: $colors.blue-mid
+    padding: 0 20px
   &.is-disabled, &.is-disabled:hover
     color: $colors.text-light
     cursor: not-allowed

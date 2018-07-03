@@ -26,8 +26,7 @@ export default function ({ children, text, onCopy = noop, id = text }, render) {
       padding: '10px',
       position: 'relative',
       marginTop: '10px',
-      marginBottom: '10px',
-      outline: 0
+      marginBottom: '10px'
     },
     tabindex: '0',
     onKeyDown: ({ keyCode, metaKey, ctrlKey }) => {
