@@ -24,18 +24,18 @@ export function getResource ({ spaceId, resourceName }) {
     const resources = createResourceService(spaceId);
     let resource;
 
-    dispatch(actions.resourcePending(true));
+    dispatch(actions.resourcePending(spaceId, resourceName, true));
 
     try {
       resource = await resources.get(resourceName);
     } catch (e) {
-      dispatch(actions.resourceFailure(e));
-      dispatch(actions.resourcePending(false));
+      dispatch(actions.resourceFailure(spaceId, resourceName, e));
+      dispatch(actions.resourcePending(spaceId, resourceName, false));
 
       return;
     }
 
     dispatch(actions.resourceSuccess(spaceId, resourceName, resource));
-    dispatch(actions.resourcePending(false));
+    dispatch(actions.resourcePending(spaceId, resourceName, false));
   };
 }

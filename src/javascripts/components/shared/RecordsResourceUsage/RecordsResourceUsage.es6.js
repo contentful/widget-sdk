@@ -1,45 +1,29 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+
 import classnames from 'classnames';
 import { get } from 'lodash';
-import createResourceService from 'services/ResourceService';
-import * as LD from 'utils/LaunchDarkly';
 import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService';
 
 import UpgradeLink from './UpgradeLink';
 
-const incentivizeFlagName = 'feature-bv-06-2018-incentivize-upgrade';
+import * as actionCreators from './store/actionCreators';
 
-export default class RecordsResourceUsage extends React.Component {
+class RecordsResourceUsage extends React.Component {
   static propTypes = {
-    space: PropTypes.object.isRequired
-  }
-
-  constructor () {
-    super();
-
-    this.state = {
-      incentivizeUpgradeEnabled: false,
-      resource: {}
-    };
+    space: PropTypes.object.isRequired,
+    getIncentivizingFlag: PropTypes.func.isRequired,
+    getResource: PropTypes.func.isRequired,
+    incentivizeUpgradeEnabled: PropTypes.bool.isRequired,
+    resources: PropTypes.object.isRequired
   }
 
   componentDidMount () {
-    LD.getCurrentVariation(incentivizeFlagName).then((incentivizeUpgradeEnabled) => {
-      this.setState({ incentivizeUpgradeEnabled });
-    });
+    const { getIncentivizingFlag, getResource, space } = this.props;
 
-    this.updateUsage();
-  }
-
-  updateUsage () {
-    const { space } = this.props;
-
-    const resourceService = createResourceService(space.sys.id, 'space');
-
-    resourceService.get('record').then((resource) => {
-      this.setState({resource});
-    });
+    getIncentivizingFlag();
+    getResource({ spaceId: space.sys.id, resourceName: 'record' });
   }
 
   upgradeSpace () {
@@ -56,14 +40,19 @@ export default class RecordsResourceUsage extends React.Component {
   }
 
   render () {
-    const { incentivizeUpgradeEnabled, resource } = this.state;
+    const { incentivizeUpgradeEnabled, resources, space } = this.props;
+    const spaceId = space.sys.id;
+
+    const resourceMeta = get(resources, `${spaceId}.record`);
+
+    if (!resourceMeta || resourceMeta.isPending) {
+      return null;
+    }
+
+    const resource = resourceMeta.resource;
 
     const usage = get(resource, 'usage');
     const limit = get(resource, 'limits.maximum');
-
-    if (!limit) {
-      return null;
-    }
 
     const warnThreshold = 0.9;
     const errorThreshold = 0.95;
@@ -98,3 +87,17 @@ export default class RecordsResourceUsage extends React.Component {
     );
   }
 }
+
+const mapStateToProps = state => {
+  return {
+    resources: state.recordsResourceUsage.resources,
+    incentivizeUpgradeEnabled: state.recordsResourceUsage.incentivizeUpgradeEnabled
+  };
+};
+
+const mapDispatchToProps = {
+  getIncentivizingFlag: actionCreators.getIncentivizingFlag,
+  getResource: actionCreators.getResource
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(RecordsResourceUsage);

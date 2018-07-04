@@ -2,6 +2,8 @@ import * as actions from './actions';
 
 export function partnershipData (state = {}, action) {
   switch (action.type) {
+    case actions.SPACE_WIZARD_RESET:
+      return {};
     case actions.SPACE_PARTNERSHIP:
       return {
         ...state,
@@ -19,6 +21,8 @@ export function partnershipData (state = {}, action) {
 
 export function spaceCreation (state = {}, action) {
   switch (action.type) {
+    case actions.SPACE_WIZARD_RESET:
+      return {};
     case actions.SPACE_CREATION_PENDING:
       return {
         ...state,
@@ -41,6 +45,8 @@ export function spaceCreation (state = {}, action) {
 
 export function spaceChange (state = {}, action) {
   switch (action.type) {
+    case actions.SPACE_WIZARD_RESET:
+      return {};
     case actions.SPACE_CHANGE_PENDING:
       return {
         ...state,
@@ -58,6 +64,8 @@ export function spaceChange (state = {}, action) {
 
 export function subscriptionPrice (state = {}, action) {
   switch (action.type) {
+    case actions.SPACE_WIZARD_RESET:
+      return {};
     case actions.SUBSCRIPTION_PRICE_PENDING:
       return {
         ...state,
@@ -80,6 +88,8 @@ export function subscriptionPrice (state = {}, action) {
 
 export function currentStep (state = '', action) {
   switch (action.type) {
+    case actions.SPACE_WIZARD_RESET:
+      return '';
     case actions.SPACE_WIZARD_NAVIGATE:
       return action.stepId;
     default:
@@ -89,6 +99,8 @@ export function currentStep (state = '', action) {
 
 export function newSpaceMeta (state = {}, action) {
   switch (action.type) {
+    case actions.SPACE_WIZARD_RESET:
+      return {};
     case actions.NEW_SPACE_NAME:
       return {
         ...state,
@@ -111,6 +123,11 @@ export function spacePlans (state = {
   const { spaceRatePlans, freeSpacesResource } = action;
 
   switch (action.type) {
+    case actions.SPACE_WIZARD_RESET:
+      return {
+        spaceRatePlans: [],
+        freeSpacesResource: {}
+      };
     case actions.SPACE_PLANS_PENDING:
       return {
         ...state,
@@ -134,6 +151,8 @@ export function spacePlans (state = {
 
 export function templates (state = {}, action) {
   switch (action.type) {
+    case actions.SPACE_WIZARD_RESET:
+      return {};
     case actions.SPACE_TEMPLATES_PENDING:
       return {
         ...state,
@@ -157,6 +176,8 @@ export function templates (state = {}, action) {
 
 export function spacePlanSelected (state = {}, action) {
   switch (action.type) {
+    case actions.SPACE_WIZARD_RESET:
+      return {};
     case actions.SPACE_PLAN_SELECTED:
       return {
         currentPlan: action.currentPlan,
