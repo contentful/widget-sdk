@@ -44,8 +44,7 @@ header.workbench-header
       +pluralize-entity("asset", "paginator.getTotal()", "found")
 
     react-component(
-      ng-if="!isLegacyOrganization && isInsideMasterEnv"
-      ng-show="paginator.getTotal() > 0"
+      ng-if="!isLegacyOrganization && isInsideMasterEnv && paginator.getTotal() > 0"
       name="components/tabs/entry_list/RecordsResourceUsage"
       props="usageProps"
       watch-depth="reference")
