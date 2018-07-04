@@ -1,5 +1,7 @@
 'use strict';
 
+import { dispatchOnChange } from 'test/helpers/DOM';
+
 describe('contentTypeEditor/metadataDialog', () => {
   beforeEach(function () {
     module('contentful/test');
@@ -29,9 +31,10 @@ describe('contentTypeEditor/metadataDialog', () => {
       this.$apply();
 
       const nameInput = this.dialogContainer.find('input[name=contentTypeName]');
-      nameInput.val('NEW NAME').trigger('input');
-      const descriptionInput = this.dialogContainer.find('textarea[name=contentTypeDescription]');
-      descriptionInput.val('NEW DESC').trigger('input');
+      dispatchOnChange(nameInput[0], 'NEW NAME');
+
+      const descriptionTextarea = this.dialogContainer.find('textarea[name=contentTypeDescription]');
+      dispatchOnChange(descriptionTextarea[0], 'NEW DESC');
 
       const submitButton = this.dialogContainer.find('button:contains(Save)');
       submitButton.trigger('click');
@@ -47,11 +50,12 @@ describe('contentTypeEditor/metadataDialog', () => {
   describe('#openCreateDialog()', () => {
     it('sets the content type id from the content type name', function () {
       const handleMetadataChange = sinon.stub();
-      this.metadataDialog.openCreateDialog().then(handleMetadataChange);
+      this.metadataDialog.openCreateDialog().then((res) => {
+        handleMetadataChange(res);
+      });
       this.$apply();
-
       const nameInput = this.dialogContainer.find('input[name=contentTypeName]');
-      nameInput.val('NEW NAME').trigger('input');
+      dispatchOnChange(nameInput[0], 'NEW NAME');
       this.$apply();
 
       const submitButton = this.dialogContainer.find('button:contains(Create)');
@@ -73,7 +77,8 @@ describe('contentTypeEditor/metadataDialog', () => {
 
       const nameInput = this.dialogContainer.find('input[name=contentTypeName]');
       expect(nameInput.attr('placeholder')).toBe('Duplicate of "test"');
-      nameInput.val('NEW NAME').trigger('input');
+
+      dispatchOnChange(nameInput[0], 'NEW NAME');
       this.$apply();
 
       const submitButton = this.dialogContainer.find('button:contains(Duplicate)');

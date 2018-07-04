@@ -11,7 +11,7 @@
       include ./content_type_metadata_form
 
     .modal-dialog__controls
-      button.btn-primary-action(cf-form-submit)
+      button.btn-primary-action(cf-form-submit ng-disabled="!isNewContentTypeFormClean()")
         | {{dialog.confirmLabel}}
       button.btn-secondary-action(type="button" ng-click="dialog.cancel()")
         | Cancel
