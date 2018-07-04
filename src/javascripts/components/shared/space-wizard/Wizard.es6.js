@@ -85,6 +85,7 @@ const Wizard = createReactClass({
     createSpace: PropTypes.func.isRequired,
     changeSpace: PropTypes.func.isRequired,
     track: PropTypes.func.isRequired,
+    setPartnershipFields: PropTypes.func.isRequired,
 
     spacePlans: PropTypes.object.isRequired,
     currentStepId: PropTypes.string.isRequired,
@@ -94,7 +95,8 @@ const Wizard = createReactClass({
     spaceChange: PropTypes.object.isRequired,
     templates: PropTypes.object.isRequired,
     currentPlan: PropTypes.object,
-    selectedPlan: PropTypes.object
+    selectedPlan: PropTypes.object,
+    partnershipData: PropTypes.object
   },
 
   componentDidMount () {
@@ -145,10 +147,12 @@ const Wizard = createReactClass({
       newSpaceMeta,
       setNewSpaceName,
       setNewSpaceTemplate,
+      setPartnershipFields,
       subscriptionPrice,
       spaceCreation,
       spaceChange,
-      templates
+      templates,
+      partnershipData
     } = this.props;
 
     const steps = getSteps(action);
@@ -206,10 +210,12 @@ const Wizard = createReactClass({
         newSpaceMeta,
         setNewSpaceName,
         setNewSpaceTemplate,
+        setPartnershipFields,
         subscriptionPrice,
         spaceCreation,
         spaceChange,
-        templates
+        templates,
+        partnershipData
       };
 
       return (
@@ -284,7 +290,8 @@ const Wizard = createReactClass({
       newSpaceMeta,
       onSpaceCreated,
       onTemplateCreated,
-      onConfirm
+      onConfirm,
+      partnershipData
     } = this.props;
 
     const steps = getSteps(action);
@@ -299,7 +306,8 @@ const Wizard = createReactClass({
         newSpaceMeta,
         onSpaceCreated,
         onTemplateCreated,
-        onConfirm
+        onConfirm,
+        partnershipData
       });
     } else if (lastStep && action === 'change') {
       changeSpace({ space, selectedPlan, onConfirm });
@@ -340,7 +348,8 @@ const mapStateToProps = state => {
     newSpaceMeta: state.newSpaceMeta,
     subscriptionPrice: state.subscriptionPrice,
     spaceCreation: state.spaceCreation,
-    spaceChange: state.spaceChange
+    spaceChange: state.spaceChange,
+    partnershipData: state.partnershipData
   };
 };
 
@@ -355,7 +364,9 @@ const mapDispatchToProps = wrapWithDispatch({
   track: actionCreators.track,
   setNewSpaceName: actionCreators.setNewSpaceName,
   setNewSpaceTemplate: actionCreators.setNewSpaceTemplate,
-  reset: actionCreators.reset
+  reset: actionCreators.reset,
+  sendPartnershipEmail: actionCreators.sendPartnershipEmail,
+  setPartnershipFields: actionCreators.setPartnershipFields
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Wizard);

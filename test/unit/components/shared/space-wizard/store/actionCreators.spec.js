@@ -22,6 +22,7 @@ describe('Space Wizard action creators', function () {
     };
 
     this.plan = {
+      productPlanType: 'space',
       name: 'Best Micro Plan',
       internalName: 'best_micro',
       disabled: false,
@@ -182,7 +183,8 @@ describe('Space Wizard action creators', function () {
         newSpaceMeta: { name: 'My favorite space', template: null },
         onSpaceCreated: this.onSpaceCreated,
         onTemplateCreated: this.onTemplateCreated,
-        onConfirm: this.stubs.onConfirm
+        onConfirm: this.stubs.onConfirm,
+        partnershipData: { isPartnership: false }
       });
 
       expect(this.stubs.dispatch.callCount).toBe(4);
@@ -444,16 +446,112 @@ describe('Space Wizard action creators', function () {
   });
 
   describe('selectPlan', function () {
-    it('should dispatch 1 time', function () {
+    it('should dispatch 2 times', function () {
       const currentPlan = this.plan;
       const selectedPlan = { ...this.plan, name: 'Bestest', internalName: 'bestest' };
       this.dispatch(this.actionCreators.selectPlan, currentPlan, selectedPlan);
 
-      expect(this.stubs.dispatch.callCount).toBe(1);
+      expect(this.stubs.dispatch.callCount).toBe(2);
       expect(this.stubs.dispatch.args[0]).toEqual([{
+        type: this.actions.SPACE_PARTNERSHIP,
+        isPartnership: false
+      }]);
+      expect(this.stubs.dispatch.args[1]).toEqual([{
         type: this.actions.SPACE_PLAN_SELECTED,
         currentPlan,
         selectedPlan
+      }]);
+    });
+
+    it('should dispatch with the partnership flag is given a partner space plan', function () {
+      const currentPlan = this.plan;
+      const selectedPlan = {
+        ...this.plan,
+        name: 'Bestest',
+        internalName: 'bestest',
+        productType: 'partner'
+      };
+      this.dispatch(this.actionCreators.selectPlan, currentPlan, selectedPlan);
+
+      expect(this.stubs.dispatch.callCount).toBe(2);
+      expect(this.stubs.dispatch.args[0]).toEqual([{
+        type: this.actions.SPACE_PARTNERSHIP,
+        isPartnership: true
+      }]);
+      expect(this.stubs.dispatch.args[1]).toEqual([{
+        type: this.actions.SPACE_PLAN_SELECTED,
+        currentPlan,
+        selectedPlan
+      }]);
+    });
+  });
+
+  describe('setPartnershipFields', function () {
+    it('should dispatch 1 time', function () {
+      const fields = {
+        myAwesomeField: 'hello world'
+      };
+
+      this.dispatch(this.actionCreators.setPartnershipFields, fields);
+
+      expect(this.stubs.dispatch.callCount).toBe(1);
+      expect(this.stubs.dispatch.args[0]).toEqual([{
+        type: this.actions.SPACE_PARTNERSHIP_FIELDS,
+        fields
+      }]);
+    });
+  });
+
+  describe('sendPartnershipEmail', function () {
+    it('should dispatch 2 times if API request is successful', async function () {
+      const fields = {
+        myAwesomeField: 'hello world'
+      };
+
+      this.stubs.createSpaceEndpoint.callsFake(function () {
+        return () => Promise.resolve({
+          message: 'Successful!'
+        });
+      });
+
+      await this.dispatch(this.actionCreators.sendPartnershipEmail, { spaceId: this.space.sys.id, fields });
+
+      expect(this.stubs.dispatch.callCount).toBe(2);
+      expect(this.stubs.dispatch.args[0]).toEqual([{
+        type: this.actions.SPACE_PARTNERSHIP_EMAIL_PENDING,
+        isPending: true
+      }]);
+      expect(this.stubs.dispatch.args[1]).toEqual([{
+        type: this.actions.SPACE_PARTNERSHIP_EMAIL_PENDING,
+        isPending: false
+      }]);
+    });
+
+    it('should dispatch 3 times if API request errors', async function () {
+      const error = new Error('Could not send partnership email');
+
+      this.stubs.createSpaceEndpoint.callsFake(function () {
+        return () => { throw error; };
+      });
+
+      const fields = {
+        myAwesomeField: 'hello world'
+      };
+
+      await this.dispatch(this.actionCreators.sendPartnershipEmail, { spaceId: this.space.sys.id, fields });
+
+      expect(this.stubs.dispatch.callCount).toBe(3);
+      expect(this.stubs.dispatch.args[0]).toEqual([{
+        type: this.actions.SPACE_PARTNERSHIP_EMAIL_PENDING,
+        isPending: true
+      }]);
+      expect(this.stubs.dispatch.args[1]).toEqual([{
+        type: this.actions.SPACE_PARTNERSHIP_EMAIL_FAILURE,
+        error
+      }]);
+      expect(this.stubs.dispatch.args[2]).toEqual([{
+        type: this.actions.SPACE_PARTNERSHIP_EMAIL_PENDING,
+        isPending: false
       }]);
     });
   });

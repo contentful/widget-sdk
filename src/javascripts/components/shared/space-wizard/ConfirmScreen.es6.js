@@ -1,10 +1,14 @@
 import React, { Fragment } from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
+import { get, trim } from 'lodash';
+import moment from 'moment';
 import spinner from 'ui/Components/Spinner';
 import {asReact} from 'ui/Framework/DOMRenderer';
 import {formatPrice} from './WizardUtils';
 import Price from 'ui/Components/Price';
+
+import PartnershipForm from './PartnershipForm';
 
 const ConfirmScreen = createReactClass({
   propTypes: {
@@ -19,13 +23,71 @@ const ConfirmScreen = createReactClass({
     spaceChange: PropTypes.object.isRequired,
     newSpaceMeta: PropTypes.object.isRequired,
     onSubmit: PropTypes.func.isRequired,
-    subscriptionPrice: PropTypes.object.isRequired
+    setPartnershipFields: PropTypes.func.isRequired,
+    subscriptionPrice: PropTypes.object.isRequired,
+    partnershipData: PropTypes.object
+  },
+
+  getInitialState () {
+    return {
+      partnershipFields: {},
+      partnershipValidation: {}
+    };
   },
 
   componentDidMount () {
     const { organization, fetchSubscriptionPrice } = this.props;
 
     fetchSubscriptionPrice({ organization });
+  },
+
+  onPartnershipFieldChange (fieldName) {
+    return (value) => {
+      const { setPartnershipFields } = this.props;
+      const { partnershipFields } = this.state;
+
+      partnershipFields[fieldName] = value;
+
+      this.setState({ partnershipFields });
+      setPartnershipFields(partnershipFields);
+    };
+  },
+
+  onSubmit () {
+    const { partnershipData, onSubmit } = this.props;
+    const { partnershipFields } = this.state;
+    const { isPartnership } = partnershipData;
+
+    if (isPartnership) {
+      // All of the partnership information is required if this is a partnership form
+      const fieldNames = [ 'estimatedDeliveryDate', 'clientName', 'description' ];
+
+      // Validate that the fields are present and not considered empty
+      const validation = fieldNames.reduce((formErrors, fieldName) => {
+        const fieldValue = trim(get(partnershipFields, fieldName));
+
+        if (!fieldValue) {
+          formErrors[fieldName] = 'This field is required';
+        }
+
+        return formErrors;
+      }, {});
+
+      // Validate that the given date is in the future
+      const estimatedDeliveryDate = get(partnershipFields, 'estimatedDeliveryDate');
+
+      if (estimatedDeliveryDate && !moment(estimatedDeliveryDate).isAfter(moment())) {
+        validation['estimatedDeliveryDate'] = 'You must choose a date in the future';
+      }
+
+      this.setState({ partnershipValidation: validation });
+
+      if (Object.keys(validation).length === 0) {
+        onSubmit();
+      }
+    } else {
+      onSubmit();
+    }
   },
 
   render () {
@@ -35,12 +97,13 @@ const ConfirmScreen = createReactClass({
       space,
       action,
       organization,
-      onSubmit,
       subscriptionPrice,
       spaceCreation,
       spaceChange,
-      newSpaceMeta
+      newSpaceMeta,
+      partnershipData
     } = this.props;
+    const { partnershipValidation } = this.state;
 
     let confirmButtonText = '';
 
@@ -51,7 +114,8 @@ const ConfirmScreen = createReactClass({
     }
 
     const { isPending, totalPrice, error } = subscriptionPrice;
-    const { name, template } = newSpaceMeta;
+    const { template, name } = newSpaceMeta;
+    const { isPartnership } = partnershipData;
     const submitted = spaceCreation.isPending || spaceChange.isPending;
 
     return (
@@ -89,15 +153,21 @@ const ConfirmScreen = createReactClass({
                       }
                     </Fragment>
                   }
-                  { selectedPlan.price === 0 &&
+                  { !isPartnership && selectedPlan.price === 0 &&
                     <Fragment>
                       You are about to create a free space for the organization <em>{organization.name}</em> and it won&apos;t change your organization&apos;s subscription.
                     </Fragment>
                   }
-                  {' '}
-                  The space’s name will be <em>{name}</em>
-                  {template && ', and we will fill it with example content'}
-                  {'.'}
+                  {
+                    isPartnership &&
+                    <PartnershipForm
+                      organization={organization}
+                      template={template}
+                      spaceName={name}
+                      validation={partnershipValidation}
+                      onFieldChange={this.onPartnershipFieldChange}
+                    />
+                  }
                 </p>
               </Fragment>
             }
@@ -133,7 +203,7 @@ const ConfirmScreen = createReactClass({
                 className={`button btn-primary-action ${submitted ? 'is-loading' : ''}`}
                 disabled={submitted}
                 data-test-id="space-create-confirm"
-                onClick={onSubmit}
+                onClick={this.onSubmit}
               >
                 {confirmButtonText}
               </button>

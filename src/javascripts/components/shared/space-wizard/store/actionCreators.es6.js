@@ -1,6 +1,7 @@
 import client from 'client';
 import { get, noop } from 'lodash';
 
+import logger from 'logger';
 import createResourceService from 'services/ResourceService';
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
 import {
@@ -23,6 +24,36 @@ const DEFAULT_LOCALE = 'en-US';
 
 export function reset () {
   return dispatch => dispatch(actions.spaceWizardReset());
+}
+
+export function setPartnershipFields (fields) {
+  return dispatch => {
+    dispatch(actions.spacePartnershipFields(fields));
+  };
+}
+
+export function sendPartnershipEmail ({ spaceId, fields }) {
+  return async dispatch => {
+    dispatch(actions.spacePartnershipEmailPending(true));
+
+    const endpoint = createSpaceEndpoint(spaceId);
+    try {
+      await endpoint({
+        method: 'POST',
+        path: [ 'partner_projects' ],
+        data: fields
+      });
+    } catch (e) {
+      logger.logError(`Could not send partnership data to API`, {
+        error: e,
+        fields
+      });
+
+      dispatch(actions.spacePartnershipEmailFailure(e));
+    }
+
+    dispatch(actions.spacePartnershipEmailPending(false));
+  };
 }
 
 export function fetchSpacePlans ({ organization, spaceId }) {
@@ -63,7 +94,6 @@ export function fetchSpacePlans ({ organization, spaceId }) {
       return {...plan, isFree, includedResources, disabled};
     });
 
-
     dispatch(actions.spacePlansSuccess(spaceRatePlans, freeSpacesResource));
     dispatch(actions.spacePlansPending(false));
   };
@@ -100,6 +130,7 @@ export function createSpace ({
   currentStepId,
   selectedPlan,
   newSpaceMeta,
+  partnershipData,
   onSpaceCreated,
   onTemplateCreated,
   onConfirm
@@ -123,6 +154,13 @@ export function createSpace ({
       dispatch(actions.spaceCreationPending(false));
 
       return;
+    }
+
+    // Send partnerships email if this is a partnership space
+    const { isPartnership, fields } = partnershipData;
+
+    if (isPartnership) {
+      dispatch(sendPartnershipEmail({ fields, spaceId: newSpace.sys.id }));
     }
 
     const spaceEndpoint = createSpaceEndpoint(newSpace.sys.id);
@@ -233,7 +271,18 @@ export function setNewSpaceTemplate (template) {
 }
 
 export function selectPlan (currentPlan, selectedPlan) {
-  return dispatch => dispatch(actions.spacePlanSelected(currentPlan, selectedPlan));
+  return dispatch => {
+    const { productType, productPlanType } = selectedPlan;
+    const isPartnerSpace = productType === 'partner' && productPlanType === 'space';
+
+    if (isPartnerSpace) {
+      dispatch(actions.spacePartnership(true));
+    } else {
+      dispatch(actions.spacePartnership(false));
+    }
+
+    dispatch(actions.spacePlanSelected(currentPlan, selectedPlan));
+  };
 }
 
 function createTrackingData ({ action, organization, currentStepId, selectedPlan, currentPlan, newSpaceMeta }) {

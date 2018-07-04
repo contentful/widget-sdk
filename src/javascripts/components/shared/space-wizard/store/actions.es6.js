@@ -166,3 +166,35 @@ export function spaceWizardReset () {
     type: SPACE_WIZARD_RESET
   };
 }
+
+export const SPACE_PARTNERSHIP = 'SPACE_WIZARD/PARTNERSHIP';
+export function spacePartnership (isPartnership) {
+  return {
+    type: SPACE_PARTNERSHIP,
+    isPartnership
+  };
+}
+
+export const SPACE_PARTNERSHIP_FIELDS = 'SPACE_WIZARD/PARTNERSHIP_FIELDS';
+export function spacePartnershipFields (fields) {
+  return {
+    type: SPACE_PARTNERSHIP_FIELDS,
+    fields
+  };
+}
+
+export const SPACE_PARTNERSHIP_EMAIL_PENDING = 'SPACE_WIZARD/PARTNERSHIP_EMAIL_PENDING';
+export function spacePartnershipEmailPending (isPending) {
+  return {
+    type: SPACE_PARTNERSHIP_EMAIL_PENDING,
+    isPending
+  };
+}
+
+export const SPACE_PARTNERSHIP_EMAIL_FAILURE = 'SPACE_WIZARD/PARTNERSHIP_EMAIL_FAILURE';
+export function spacePartnershipEmailFailure (error) {
+  return {
+    type: SPACE_PARTNERSHIP_EMAIL_FAILURE,
+    error
+  };
+}
