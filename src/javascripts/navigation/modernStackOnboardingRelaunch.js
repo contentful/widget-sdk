@@ -34,9 +34,15 @@ angular.module('contentful')
         // componnet isn't ejected from the DOM hence it keeps the old state and hides itself
         // even after onboarding is complete. This fixes that by asking it to re-render once
         // onboarding is complete
-        $rootScope.$on(MODERN_STACK_ONBOARDING_COMPLETE_EVENT, () => this.forceUpdate());
+        // TODO: move space id from the context to redux, as well as onboarding completion
+        this.unsubscribeFromOnboarding = $rootScope.$on(MODERN_STACK_ONBOARDING_COMPLETE_EVENT, () => this.forceUpdate());
+        this.unsubscribeFromSpaceContext = $rootScope.$on('spaceContextUpdated', () => this.forceUpdate());
 
         this.setState({ flag });
+      }
+      componentWillUnmount () {
+        this.unsubscribeFromOnboarding && this.unsubscribeFromOnboarding();
+        this.unsubscribeFromSpaceContext && this.unsubscribeFromSpaceContext();
       }
       render () {
         const spaceAutoCreationFailed = store.get(getSpaceAutoCreatedKey(getUser(), 'failure'));
