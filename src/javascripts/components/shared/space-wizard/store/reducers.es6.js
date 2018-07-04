@@ -1,6 +1,6 @@
 import * as actions from './actions';
 
-export function partnership (state = {}, action) {
+export function partnershipData (state = {}, action) {
   switch (action.type) {
     case actions.SPACE_PARTNERSHIP:
       return {

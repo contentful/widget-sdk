@@ -25,7 +25,7 @@ const ConfirmScreen = createReactClass({
     onSubmit: PropTypes.func.isRequired,
     setPartnershipFields: PropTypes.func.isRequired,
     subscriptionPrice: PropTypes.object.isRequired,
-    partnership: PropTypes.object
+    partnershipData: PropTypes.object
   },
 
   getInitialState () {
@@ -54,23 +54,23 @@ const ConfirmScreen = createReactClass({
   },
 
   onSubmit () {
-    const { partnership, onSubmit } = this.props;
+    const { partnershipData, onSubmit } = this.props;
     const { partnershipFields } = this.state;
-    const { isPartnership } = partnership;
+    const { isPartnership } = partnershipData;
 
     if (isPartnership) {
       // All of the partnership information is required if this is a partnership form
       const fieldNames = [ 'estimatedDeliveryDate', 'clientName', 'description' ];
 
       // Validate that the fields are present and not considered empty
-      const validation = fieldNames.reduce((memo, name) => {
-        const fieldValue = trim(get(partnershipFields, name));
+      const validation = fieldNames.reduce((formErrors, fieldName) => {
+        const fieldValue = trim(get(partnershipFields, fieldName));
 
         if (!fieldValue) {
-          memo[name] = 'This field is required';
+          formErrors[fieldName] = 'This field is required';
         }
 
-        return memo;
+        return formErrors;
       }, {});
 
       // Validate that the given date is in the future
@@ -82,9 +82,7 @@ const ConfirmScreen = createReactClass({
 
       this.setState({ partnershipValidation: validation });
 
-      if (Object.keys(validation).length > 0) {
-        return;
-      } else {
+      if (Object.keys(validation).length === 0) {
         onSubmit();
       }
     } else {
@@ -103,7 +101,7 @@ const ConfirmScreen = createReactClass({
       spaceCreation,
       spaceChange,
       newSpaceMeta,
-      partnership
+      partnershipData
     } = this.props;
     const { partnershipValidation } = this.state;
 
@@ -117,7 +115,7 @@ const ConfirmScreen = createReactClass({
 
     const { isPending, totalPrice, error } = subscriptionPrice;
     const { template, name } = newSpaceMeta;
-    const { isPartnership } = partnership;
+    const { isPartnership } = partnershipData;
     const submitted = spaceCreation.isPending || spaceChange.isPending;
 
     return (

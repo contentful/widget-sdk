@@ -184,7 +184,7 @@ describe('Space Wizard action creators', function () {
         onSpaceCreated: this.onSpaceCreated,
         onTemplateCreated: this.onTemplateCreated,
         onConfirm: this.stubs.onConfirm,
-        partnership: { isPartnership: false }
+        partnershipData: { isPartnership: false }
       });
 
       expect(this.stubs.dispatch.callCount).toBe(4);

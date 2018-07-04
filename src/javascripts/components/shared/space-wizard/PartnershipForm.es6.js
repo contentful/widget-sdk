@@ -18,14 +18,7 @@ export default class PartnershipForm extends React.Component {
     super();
 
     // Set the initial date to today in the form
-    const date = new Date();
-    const estimatedDeliveryDateYear = date.getFullYear();
-    const estimatedDeliveryDateMonth = date.getUTCMonth();
-    const estimatedDeliveryDateDay = date.getUTCDate();
     const estimatedDeliveryDate = moment()
-      .year(estimatedDeliveryDateYear)
-      .month(estimatedDeliveryDateMonth)
-      .date(estimatedDeliveryDateDay)
       .hour(0)
       .minute(0)
       .second(0)
@@ -33,9 +26,6 @@ export default class PartnershipForm extends React.Component {
       .utcOffset(0, true);
 
     this.state = {
-      estimatedDeliveryDateYear,
-      estimatedDeliveryDateMonth,
-      estimatedDeliveryDateDay,
       estimatedDeliveryDate
     };
 
@@ -74,27 +64,10 @@ export default class PartnershipForm extends React.Component {
 
   render () {
     const { organization, template, spaceName, validation } = this.props;
-    const {
-      estimatedDeliveryDateYear,
-      estimatedDeliveryDateMonth,
-      estimatedDeliveryDateDay
-    } = this.state;
+    const { estimatedDeliveryDate } = this.state;
 
-    const months = {
-      'January': 31,
-      'February': 28,
-      'March': 31,
-      'April': 30,
-      'May': 31,
-      'June': 30,
-      'July': 31,
-      'August': 31,
-      'September': 30,
-      'October': 31,
-      'November': 30,
-      'December': 31
-    };
-
+    const months = moment.months();
+    const daysInCurrentMonth = estimatedDeliveryDate.daysInMonth();
     const currentYear = (new Date()).getFullYear();
     const years = [
       currentYear,
@@ -135,33 +108,33 @@ export default class PartnershipForm extends React.Component {
               <select
                 id='estimatedDeliveryDateMonth'
                 name='estimatedDeliveryDateMonth'
-                value={estimatedDeliveryDateMonth}
+                value={estimatedDeliveryDate.month()}
                 onChange={this.onChange('estimatedDeliveryDateMonth')}
                 className="cfnext-select-box"
                 aria-invalid={Boolean(validation.estimatedDeliveryDate)}
               >
                 {
-                  Object.keys(months).map((name, i) => {
+                  months.map((name, i) => {
                     return <option key={name} value={i}>{name}</option>;
                   })
                 }
               </select>
               <select
                 name='estimatedDeliveryDateDay'
-                value={estimatedDeliveryDateDay}
+                value={estimatedDeliveryDate.date()}
                 onChange={this.onChange('estimatedDeliveryDateDay')}
                 className="cfnext-select-box"
                 aria-invalid={Boolean(validation.estimatedDeliveryDate)}
               >
                 {
-                  (range(Object.values(months)[estimatedDeliveryDateMonth - 1])).map(day => {
+                  range(daysInCurrentMonth).map(day => {
                     return <option key={day} value={day + 1}>{day + 1}</option>;
                   })
                 }
               </select>
               <select
                 name='estimatedDeliveryDateYear'
-                value={estimatedDeliveryDateYear}
+                value={estimatedDeliveryDate.year()}
                 onChange={this.onChange('estimatedDeliveryDateYear')}
                 className="cfnext-select-box"
                 aria-invalid={Boolean(validation.estimatedDeliveryDate)}
