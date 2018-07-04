@@ -52,6 +52,7 @@ function createTemplate () {
   return h('.workbench', [
     createScreen({
       condition: 'status === "onboarding"',
+      dataTestId: 'deeplink-onboarding-error',
       title: `Unfortunately, we didn't find your onboarding space.`,
       subtitle: [
         h('a', {
@@ -62,6 +63,7 @@ function createTemplate () {
     }),
     createScreen({
       condition: 'status === "not_exist"',
+      dataTestId: 'deeplink-generic-error',
       title: 'The link you provided is broken or does not exist',
       subtitle: [
         'We are notified about it. You can contact our support or ',
@@ -79,9 +81,10 @@ function createTemplate () {
   ]);
 }
 
-function createScreen ({ condition, title, subtitle }) {
+function createScreen ({ condition, dataTestId, title, subtitle }) {
   return h('div', {
     ngShow: condition,
+    dataTestId,
     style: {
       display: 'flex',
       flexDirection: 'column',
