@@ -1,82 +1,115 @@
 import React from 'react';
-import _ from 'lodash';
 import sinon from 'npm:sinon';
 import CreateEntryButton from 'components/CreateEntryButton';
 
 import { mount } from 'enzyme';
 
-const sel = id => `[data-test-id="${id}"]`;
-
-const findCta = wrapper => wrapper.find(sel('cta'));
-const findMenu = wrapper => wrapper.find(sel('add-entry-menu'));
-const findDropdownIcon = wrapper => wrapper.find(sel('dropdown-icon'));
+const CONTENT_TYPE_1 = { name: 'name-1', sys: { id: 'ID_1' } };
+const CONTENT_TYPE_2 = { name: 'name-2', sys: { id: 'ID_2' } };
+const CONTENT_TYPE_3 = { name: 'name-3', sys: { id: 'ID_3' } };
 
 describe('CreateEntryButton', () => {
-  describe('with multiple content types', () => {
-    let wrapper;
-
-    beforeEach(() => {
-      const props = {
-        contentTypes: [
-          { name: 'name-1', sys: { id: '1' } },
-          { name: 'name-2', sys: { id: '2' } }
-        ],
-        onSelect: _.noop,
-        text: 'Add entry'
+  beforeEach(function () {
+    const findByTestId = (id) => this.wrapper.find(`[data-test-id="${id}"]`);
+    this.findCta = () => findByTestId('cta');
+    this.findMenu = () => findByTestId('add-entry-menu');
+    this.findMenuItems = () => findByTestId('contentType');
+    this.findDropdownIcon = () => findByTestId('dropdown-icon');
+    this.setup = () => {
+      this.wrapper = mount(<CreateEntryButton {...this.props} />);
+      return {
+        cta: this.findCta(),
+        menu: this.findMenu(),
+        dropdownIcon: this.findDropdownIcon()
       };
-      wrapper = mount(<CreateEntryButton {...props} />);
+    };
+  });
+
+  describe('with multiple content types', function () {
+    beforeEach(function () {
+      this.onSelect = sinon.spy();
+      this.props = {
+        contentTypes: [CONTENT_TYPE_1, CONTENT_TYPE_2, CONTENT_TYPE_3],
+        onSelect: this.onSelect
+      };
     });
 
-    afterEach(() => {
-      wrapper = null;
-    });
+    itRendersTriggerButtonWithLabel('Add entry');
 
-    it('renders the trigger button', () => {
-      expect(findCta(wrapper).length).toEqual(1);
-      expect(findMenu(wrapper).length).toEqual(0);
-    });
+    itRendersDropdownIs(true);
 
-    it('opens menu after click on btn', () => {
-      findCta(wrapper).simulate('click');
-      expect(findMenu(wrapper).length).toEqual(1);
-    });
+    describe('menu', function () {
+      it('opens after click on btn', function ({ cta }) {
+        cta.simulate('click');
+        expect(this.findMenu().length).toEqual(1);
+      });
 
-    it('hides menu after second click on btn', () => {
-      findCta(wrapper).simulate('click');
-      expect(findMenu(wrapper).length).toEqual(1);
-      findCta(wrapper).simulate('click');
-      expect(findMenu(wrapper).length).toEqual(0);
+      it('hides after second click on btn', function ({ cta }) {
+        cta.simulate('click');
+        cta.simulate('click');
+        expect(this.findMenu().length).toEqual(0);
+      });
+
+      it('has one item for each content type', function ({ cta }) {
+        cta.simulate('click');
+        expect(this.findMenuItems().length).toBe(3);
+      });
+
+      it('emits onSelect after click on menu item', function ({ cta }) {
+        cta.simulate('click');
+        this.findMenuItems().at(1).simulate('click');
+        sinon.assert.calledWith(this.onSelect, 'ID_2');
+      });
     });
   });
 
-  describe('with single content type', () => {
-    let wrapper, onSelect;
-
-    beforeEach(() => {
-      onSelect = sinon.spy();
-      const props = {
-        contentTypes: [{ name: 'name-1', sys: { id: '1' } }],
-        onSelect,
-        text: 'Add entry'
+  describe('with single content type', function () {
+    beforeEach(function () {
+      this.onSelect = sinon.spy();
+      this.props = {
+        contentTypes: [CONTENT_TYPE_1],
+        onSelect: this.onSelect
       };
-      wrapper = mount(<CreateEntryButton {...props} />);
     });
 
-    afterEach(() => {
-      wrapper = null;
-      onSelect = null;
+    itRendersTriggerButtonWithLabel(`Add ${CONTENT_TYPE_1.name}`);
+
+    itRendersDropdownIs(false);
+
+    it('emits onSelect after clicking on cta', function ({ cta }) {
+      cta.simulate('click');
+      sinon.assert.calledWith(this.onSelect, 'ID_1');
+    });
+  });
+
+  describe('with custom label', function () {
+    const CUSTOM_LABEL = 'Some custom label';
+
+    beforeEach(function () {
+      this.props = {
+        contentTypes: [CONTENT_TYPE_1],
+        onSelect: sinon.spy(),
+        text: CUSTOM_LABEL
+      };
     });
 
-    it('renders the trigger button', () => {
-      expect(findCta(wrapper).length).toEqual(1);
-      expect(findDropdownIcon(wrapper).length).toEqual(0);
-      expect(findCta(wrapper).text()).toEqual('Add entry');
-      expect(findMenu(wrapper).length).toEqual(0);
-    });
-
-    it('emits onSelect after clicking on cta', () => {
-      findCta(wrapper).simulate('click');
-      sinon.assert.calledWith(onSelect, '1');
-    });
+    itRendersTriggerButtonWithLabel(CUSTOM_LABEL);
   });
 });
+
+function itRendersTriggerButtonWithLabel (label) {
+  it(`renders the trigger button with label “${label}”`, ({ cta, menu }) => {
+    expect(cta.length).toEqual(1);
+    expect(cta.text()).toEqual(label);
+    expect(menu.length).toEqual(0);
+  });
+}
+
+function itRendersDropdownIs (isTrue = true) {
+  it(`${isTrue ? 'renders' : 'does not render'} button as dropdown`,
+    ({ dropdownIcon }) => {
+      const toBeFn = isTrue ? 'toBeGreaterThan' : 'toBe';
+      expect(dropdownIcon.length)[toBeFn](0);
+    }
+  );
+}
