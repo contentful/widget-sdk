@@ -24,7 +24,15 @@ describe('entityEditor/Document/StringField', () => {
     });
 
     it('returns false for any other field type', function () {
-      ['Boolean', 'Location', 'Date', 'Object', 'Entry', 'Asset'].forEach((type) => {
+      [
+        'Boolean',
+        'Location',
+        'Date',
+        'Object',
+        'StructuredText',
+        'Entry',
+        'Asset'
+      ].forEach((type) => {
         const fields = [{id: 'x', type: 'Boolean'}, {id: 'fid', type}];
         expect(this.is('fid', this.ctWithFields(fields))).toBe(false);
       });

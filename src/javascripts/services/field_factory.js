@@ -59,7 +59,13 @@ angular.module('contentful')
       name: 'Object',
       label: 'JSON object',
       icon: 'json'
-    }, {
+    },
+    {
+      name: 'StructuredText',
+      label: 'Structured text',
+      icon: 'json'
+    },
+    {
       name: 'Entry',
       isLink: true,
       hasListVariant: true,
@@ -79,9 +85,9 @@ angular.module('contentful')
     types: ['Symbol', 'Text']
   }, {
     name: 'structured-text',
+    icon: 'structuredtext',
     label: 'Structured text',
-    icon: 'longtext',
-    description: 'Text with references and formatting (EXPERIMENTAL)',
+    description: 'Long form articles, documentation, news articles',
     types: ['StructuredText']
   }, {
     name: 'number',

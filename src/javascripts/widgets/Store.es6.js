@@ -1,5 +1,4 @@
 import { get } from 'lodash';
-import require from 'require';
 import { create as createBuiltinWidgetsList } from 'widgets/builtin';
 import fieldFactory from 'fieldFactory';
 
@@ -19,19 +18,18 @@ export function create (cma) {
     } catch (e) {
       extensions = [];
     }
-    cache = await prepareList(extensions);
+    cache = prepareList(extensions);
     return cache;
   }
 }
 
-async function prepareList (extensions) {
+function prepareList (extensions) {
   // Extension and built-in widget IDs may clash :(
   // Extensions used to "override" built-in widgets.
   // It's far from ideal but we retain this behavior for now.
   // TODO figure out what to do?
   const extensionIds = extensions.map(e => e.id);
-  const builtinWidgetsConfig = await getBuiltinWidgetsListConfig();
-  const builtin = createBuiltinWidgetsList(builtinWidgetsConfig);
+  const builtin = createBuiltinWidgetsList();
   const filteredBuiltins = builtin.filter(b => {
     return !extensionIds.includes(b.id);
   });
@@ -55,16 +53,5 @@ function buildExtensionWidget (data) {
       values: data.parameters || {}
     },
     custom: true
-  };
-}
-
-async function getBuiltinWidgetsListConfig () {
-  // TODO: Prevent circular ref!
-  const LD = require('utils/LaunchDarkly');
-  const STRUCTURED_TEXT_FIELD_DEMO_FEATURE_FLAG =
-    'feature-at-05-2018-structured-text-field-demo';
-  return {
-    replaceJsonEditorWithStructuredTextEditor:
-      await LD.getCurrentVariation(STRUCTURED_TEXT_FIELD_DEMO_FEATURE_FLAG)
   };
 }

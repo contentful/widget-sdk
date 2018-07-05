@@ -86,7 +86,10 @@ export default function describeContentType () {
         sinon.assert.calledWith(this.request, {
           method: 'PUT',
           url: '/spaces/42/content_types/ctid/published',
-          headers: { 'X-Contentful-Version': 4 }
+          headers: {
+            'X-Contentful-Version': 4,
+            'X-Contentful-Enable-Alpha-Feature': 'structured_text_fields'
+          }
         });
       });
 
