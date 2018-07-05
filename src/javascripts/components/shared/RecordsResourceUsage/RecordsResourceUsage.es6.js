@@ -13,10 +13,20 @@ import * as actionCreators from './store/actionCreators';
 class RecordsResourceUsage extends React.Component {
   static propTypes = {
     space: PropTypes.object.isRequired,
+    currentTotal: PropTypes.number.isRequired,
     getIncentivizingFlag: PropTypes.func.isRequired,
     getResource: PropTypes.func.isRequired,
     incentivizeUpgradeEnabled: PropTypes.bool.isRequired,
     resources: PropTypes.object.isRequired
+  }
+
+  componentDidUpdate (prevProps) {
+    const { currentTotal: previousTotal } = prevProps;
+    const { getResource, space, currentTotal } = this.props;
+
+    if (previousTotal !== currentTotal) {
+      getResource({ spaceId: space.sys.id, resourceName: 'record' });
+    }
   }
 
   componentDidMount () {
@@ -26,9 +36,22 @@ class RecordsResourceUsage extends React.Component {
     getResource({ spaceId: space.sys.id, resourceName: 'record' });
   }
 
+  resource () {
+    const { resources, space } = this.props;
+    const spaceId = space.sys.id;
+
+    const resourceMeta = get(resources, `${spaceId}.record`);
+
+    if (!resourceMeta || resourceMeta.isPending) {
+      return null;
+    }
+
+    return resourceMeta.resource;
+  }
+
   upgradeSpace () {
     const { space } = this.props;
-    const { resource } = this.state;
+    const resource = this.resource();
 
     showUpgradeSpaceDialog({
       organizationId: space.organization.sys.id,
@@ -40,16 +63,13 @@ class RecordsResourceUsage extends React.Component {
   }
 
   render () {
-    const { incentivizeUpgradeEnabled, resources, space } = this.props;
-    const spaceId = space.sys.id;
+    const { incentivizeUpgradeEnabled } = this.props;
 
-    const resourceMeta = get(resources, `${spaceId}.record`);
+    const resource = this.resource();
 
-    if (!resourceMeta || resourceMeta.isPending) {
+    if (!resource) {
       return null;
     }
-
-    const resource = resourceMeta.resource;
 
     const usage = get(resource, 'usage');
     const limit = get(resource, 'limits.maximum');

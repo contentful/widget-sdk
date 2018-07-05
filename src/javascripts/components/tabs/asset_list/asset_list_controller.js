@@ -55,10 +55,6 @@ angular.module('contentful')
   $scope.isLegacyOrganization = ResourceUtils.isLegacyOrganization(organization);
   $scope.isInsideMasterEnv = EnvironmentUtils.isInsideMasterEnv(spaceContext);
 
-  $scope.usageProps = {
-    space: spaceContext.space.data
-  };
-
   $scope.newAsset = () => {
     entityCreator.newAsset().then(asset => {
       // X.list -> X.detail
@@ -66,8 +62,19 @@ angular.module('contentful')
     });
   };
 
+  // These are the props that are sent to the RecordsResourceUsage component
+  var resetUsageProps = debounce(() => {
+    $scope.usageProps = {
+      space: spaceContext.space.data,
+      currentTotal: $scope.paginator.getTotal()
+    };
+  });
+
+  resetUsageProps();
+
   var debouncedResetAssets = debounce(() => {
     searchController.resetAssets();
+    resetUsageProps();
   }, 3000);
 
   $scope.$watch('paginator.getTotal()', debouncedResetAssets);

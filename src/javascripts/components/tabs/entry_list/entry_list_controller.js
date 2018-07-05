@@ -22,6 +22,7 @@ angular.module('contentful')
   var entityCreator = require('entityCreator');
   var ResourceUtils = require('utils/ResourceUtils');
   var EnvironmentUtils = require('utils/EnvironmentUtils');
+  var debounce = require('lodash').debounce;
 
   var searchController = $controller('EntryListSearchController', {$scope: $scope});
   $controller('DisplayedFieldsController', {$scope: $scope});
@@ -54,10 +55,6 @@ angular.module('contentful')
   $scope.isLegacyOrganization = ResourceUtils.isLegacyOrganization(organization);
   $scope.isInsideMasterEnv = EnvironmentUtils.isInsideMasterEnv(spaceContext);
 
-  $scope.usageProps = {
-    space: spaceContext.space.data
-  };
-
   $scope.entityStatus = entityStatus;
 
   $scope.paginator = Paginator.create();
@@ -65,6 +62,17 @@ angular.module('contentful')
 
   $scope.shouldHide = accessChecker.shouldHide;
   $scope.shouldDisable = accessChecker.shouldDisable;
+
+  // Properties passed to RecordsResourceUsage
+  var resetUsageProps = debounce(() => {
+    $scope.usageProps = {
+      space: spaceContext.space.data,
+      currentTotal: $scope.paginator.getTotal()
+    };
+  });
+
+  $scope.$watch('paginator.getTotal()', resetUsageProps);
+  resetUsageProps();
 
   $scope.entryCache = new EntityListCache({
     space: spaceContext.space,

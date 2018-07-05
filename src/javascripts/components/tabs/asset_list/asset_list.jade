@@ -47,7 +47,8 @@ header.workbench-header
       ng-if="!isLegacyOrganization && isInsideMasterEnv && paginator.getTotal() > 0"
       name="components/shared/RecordsResourceUsage"
       props="usageProps"
-      watch-depth="reference")
+      watch-depth="reference"
+    )
 
     .table(ng-show="assets.length && !isEmpty")
       .table__head
