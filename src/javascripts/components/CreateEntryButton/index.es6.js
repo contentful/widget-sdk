@@ -33,23 +33,34 @@ const CreateEntryButton = createReactClass({
   },
   getInitialState () {
     return {
-      isOpen: false
+      isOpen: false,
+      isHandlingOnSelect: false
     };
   },
   handleClick () {
-    this.setState({
-      isOpen: !this.state.isOpen
-    });
-
     if (this.props.contentTypes.length === 1) {
-      this.props.onSelect(this.props.contentTypes[0].sys.id);
+      const onlyItem = this.props.contentTypes[0];
+      this.handleSelect(onlyItem);
+    } else {
+      this.setState({
+        isOpen: !this.state.isOpen
+      });
     }
   },
   handleSelect (item) {
     this.setState({
       isOpen: false
     });
-    this.props.onSelect(item.sys.id);
+    const selectHandlerReturnValue = this.props.onSelect(item.sys.id);
+    if (isPromise(selectHandlerReturnValue)) {
+      const setIsHandlingOnSelect =
+        (value) => this.setState({ isHandlingOnSelect: value });
+      setIsHandlingOnSelect(true);
+      selectHandlerReturnValue.then(
+        () => setIsHandlingOnSelect(false),
+        () => setIsHandlingOnSelect(false)
+      );
+    }
   },
   handleClose () {
     this.setState({
@@ -94,18 +105,31 @@ const CreateEntryButton = createReactClass({
   },
   renderLink () {
     const { contentTypes } = this.props;
+    const isIdle = this.state.isHandlingOnSelect;
+    const linkProps = {
+      onClick: this.handleClick,
+      disabled: isIdle,
+      icon: isIdle ? null : 'Plus'
+    };
     return (
-      <TextLink onClick={this.handleClick} icon="Plus">
-        {this.getCtaText()}
-        {contentTypes.length > 1 && (
-          <Icon
-            data-test-id="dropdown-icon"
-            icon="ChevronDown"
-            color="secondary"
-            extraClassNames="btn-dropdown-icon"
+      <div>
+        {isIdle &&
+          <div className="create-entry-button__handling-select-spinner"
+            data-test-id="spinner"
           />
-        )}
-      </TextLink>
+        }
+        <TextLink {...linkProps} data-test-id="cta">
+          {this.getCtaText()}
+          {contentTypes.length > 1 && (
+            <Icon
+              data-test-id="dropdown-icon"
+              icon="ChevronDown"
+              color="secondary"
+              extraClassNames="btn-dropdown-icon"
+            />
+          )}
+        </TextLink>
+      </div>
     );
   },
   renderMenu () {
@@ -145,3 +169,7 @@ const CreateEntryButton = createReactClass({
 });
 
 export default enhanceWithClickOutside(CreateEntryButton);
+
+function isPromise (value) {
+  return value && typeof value.then === 'function';
+}
