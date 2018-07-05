@@ -1,5 +1,5 @@
 import { getCurrentVariation } from 'utils/LaunchDarkly';
-import { assign } from 'lodash';
+import { assign, get } from 'lodash';
 import $q from '$q';
 
 const flagName = 'feature-bv-2018-01-resources-api';
@@ -24,6 +24,17 @@ export const resourceHumanNameMap = {
 };
 
 export const canCreate = resource => !resourceMaximumLimitReached(resource);
+
+/**
+ * Returns the whole resource metadata object from the Redux store, given the resources in the store.
+ * @param  {object} resources    Resources in the Redux store
+ * @param  {string} spaceId      Space id
+ * @param  {string} resourceName
+ * @return {Object|null}              Resource metadata object or null
+ */
+export function getStoreResource (resources, spaceId, resourceName) {
+  return get(resources, `${spaceId}.${resourceName}`);
+}
 
 export function generateMessage (resource) {
   const resourceId = resource.sys.id;

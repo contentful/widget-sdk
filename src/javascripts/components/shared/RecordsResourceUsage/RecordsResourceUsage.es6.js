@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { get } from 'lodash';
 import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService';
+import { getStoreResource } from 'utils/ResourceUtils';
 
 import UpgradeLink from './UpgradeLink';
 
@@ -40,7 +41,7 @@ class RecordsResourceUsage extends React.Component {
     const { resources, space } = this.props;
     const spaceId = space.sys.id;
 
-    const resourceMeta = get(resources, `${spaceId}.record`);
+    const resourceMeta = getStoreResource(resources, spaceId, 'record');
 
     if (!resourceMeta || resourceMeta.isPending) {
       return null;

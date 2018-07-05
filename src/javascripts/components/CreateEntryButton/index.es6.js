@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import createReactClass from 'create-react-class';
 import enhanceWithClickOutside from 'react-click-outside';
 import cn from 'classnames';
 import Menu from './Menu';
 import { Icon, TextLink } from '@contentful/ui-component-library';
+import { getStoreResource, resourceMaximumLimitReached } from 'utils/ResourceUtils';
 
 export const Size = {
   Normal: 'normal',
@@ -18,6 +20,8 @@ export const Style = {
 
 const CreateEntryButton = createReactClass({
   propTypes: {
+    resources: PropTypes.object.isRequired,
+    space: PropTypes.object.isRequired,
     contentTypes: PropTypes.array.isRequired,
     suggestedContentTypeId: PropTypes.string,
     onSelect: PropTypes.func.isRequired,
@@ -79,7 +83,16 @@ const CreateEntryButton = createReactClass({
     );
   },
   renderButton () {
-    const { contentTypes, size } = this.props;
+    const { contentTypes, size, resources, space } = this.props;
+    const spaceId = space.sys.id;
+
+    const storeResource = getStoreResource(resources, spaceId, 'record');
+    let limitReached = false;
+
+    if (storeResource && storeResource.resource) {
+      limitReached = resourceMaximumLimitReached(storeResource.resource);
+    }
+
     const className = cn('btn-action', 'u-truncate', {
       'x--block': size === Size.Large
     });
@@ -89,6 +102,7 @@ const CreateEntryButton = createReactClass({
         className={className}
         onClick={this.handleClick}
         data-test-id="cta"
+        disabled={limitReached}
       >
         {this.getCtaText()}
         {contentTypes.length > 1 && (
@@ -168,8 +182,14 @@ const CreateEntryButton = createReactClass({
   }
 });
 
-export default enhanceWithClickOutside(CreateEntryButton);
+const mapStateToProps = state => {
+  return {
+    resources: state.recordsResourceUsage.resources
+  };
+};
 
 function isPromise (value) {
   return value && typeof value.then === 'function';
 }
+
+export default enhanceWithClickOutside(connect(mapStateToProps)(CreateEntryButton));
