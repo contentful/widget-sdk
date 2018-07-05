@@ -83,9 +83,8 @@ export default h('svg', {
       })
     ]),
     h('text', {
-      fontFamily: 'AvenirNext-DemiBold, Avenir Next',
       fontSize: '24',
-      fontWeight: '500',
+      fontWeight: '700',
       fill: '#3FA2F7',
       transform: 'translate(2 -5)'
     }, [
@@ -95,9 +94,8 @@ export default h('svg', {
       }, ['Content'])
     ]),
     h('text', {
-      fontFamily: 'AvenirNext-Medium, Avenir Next',
       fontSize: '12',
-      fontWeight: '400',
+      fontWeight: '600',
       fill: '#2FDF95',
       transform: 'translate(2 -5)'
     }, [
@@ -107,9 +105,8 @@ export default h('svg', {
       }, ['Gatsby.js'])
     ]),
     h('text', {
-      fontFamily: 'AvenirNext-Medium, Avenir Next',
       fontSize: '12',
-      fontWeight: '400',
+      fontWeight: '600',
       fill: '#2FDF95',
       transform: 'translate(2 -5)'
     }, [
@@ -119,9 +116,8 @@ export default h('svg', {
       }, ['GraphQL'])
     ]),
     h('text', {
-      fontFamily: 'AvenirNext-Medium, Avenir Next',
       fontSize: '12',
-      fontWeight: '400',
+      fontWeight: '600',
       fill: '#2FDF95',
       transform: 'translate(2 -5)'
     }, [
@@ -132,9 +128,8 @@ export default h('svg', {
     ]),
     h('text', {
       transform: 'rotate(20 380.242 361.601)',
-      fontFamily: 'AvenirNext-Medium, Avenir Next',
       fontSize: '15',
-      fontWeight: '400',
+      fontWeight: '600',
       fill: '#2FDF95'
     }, [
       h('tspan', {
@@ -144,9 +139,8 @@ export default h('svg', {
     ]),
     h('text', {
       transform: 'rotate(-20 367.139 156.77)',
-      fontFamily: 'AvenirNext-Medium, Avenir Next',
       fontSize: '15',
-      fontWeight: '400',
+      fontWeight: '600',
       fill: '#2FDF95'
     }, [
       h('tspan', {
@@ -155,9 +149,8 @@ export default h('svg', {
       }, ['Fetch content from Delivery API'])
     ]),
     h('text', {
-      fontFamily: 'AvenirNext-DemiBold, Avenir Next',
       fontSize: '12',
-      fontWeight: '500',
+      fontWeight: '700',
       fill: '#2FDF95',
       transform: 'translate(2 -5)'
     }, [
@@ -167,9 +160,8 @@ export default h('svg', {
       }, ['Static site hosting options'])
     ]),
     h('text', {
-      fontFamily: 'AvenirNext-Medium, Avenir Next',
       fontSize: '12',
-      fontWeight: '400',
+      fontWeight: '600',
       fill: '#2FDF95',
       transform: 'translate(2 -5)'
     }, [
@@ -179,9 +171,8 @@ export default h('svg', {
       }, ['Netlify'])
     ]),
     h('text', {
-      fontFamily: 'AvenirNext-DemiBold, Avenir Next',
       fontSize: '24',
-      fontWeight: '500',
+      fontWeight: '700',
       fill: '#2FDF95',
       transform: 'translate(2 -5)'
     }, [
@@ -191,9 +182,8 @@ export default h('svg', {
       }, ['Build'])
     ]),
     h('text', {
-      fontFamily: 'AvenirNext-DemiBold, Avenir Next',
       fontSize: '24',
-      fontWeight: '500',
+      fontWeight: '700',
       fill: '#2FDF95',
       transform: 'translate(2 -5)'
     }, [
