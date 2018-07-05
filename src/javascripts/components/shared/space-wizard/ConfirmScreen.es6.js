@@ -148,7 +148,8 @@ const ConfirmScreen = createReactClass({
                         <span>
                           {' '}
                           This will increase your organization’s subscription
-                          to <strong>{formatPrice(totalPrice + selectedPlan.price)} / month</strong>
+                          to <strong>{formatPrice(totalPrice + selectedPlan.price)} / month</strong>.
+                          {' '}
                         </span>
                       }
                     </Fragment>
@@ -156,6 +157,21 @@ const ConfirmScreen = createReactClass({
                   { !isPartnership && selectedPlan.price === 0 &&
                     <Fragment>
                       You are about to create a free space for the organization <em>{organization.name}</em> and it won&apos;t change your organization&apos;s subscription.
+                      {' '}
+                    </Fragment>
+                  }
+                  { !isPartnership &&
+                    <Fragment>
+                      The space’s name will be <em>{name}</em>
+                      {
+                        template &&
+                        ', and we will fill it with example content'
+                      }
+                      {'. '}
+                      <br/><br/>
+                      <p>
+                        If everything looks okay, click <strong>Confirm and create space</strong> to create your space.
+                      </p>
                     </Fragment>
                   }
                   {
