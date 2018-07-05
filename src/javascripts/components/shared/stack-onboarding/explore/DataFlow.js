@@ -69,6 +69,7 @@ angular.module('contentful')
       }
     },
     renderElem (elem, { level = 0, position = 0 } = {}, parentStyle) {
+      const { onHover, onLeave, active } = this.props;
       const titleClassName = 'modern-stack-onboarding--data-flow-elem-title';
       const modifier = level === 0 ? 1 : 1 / level;
 
@@ -88,16 +89,16 @@ angular.module('contentful')
             key={elem.title}
             style={style}
             className={'modern-stack-onboarding--data-flow-elem'}
-            onMouseEnter={elem.onHover}
-            onMouseLeave={elem.onLeave}
+            onMouseEnter={elem.item && (() => onHover(elem.item))}
+            onMouseLeave={elem.item && onLeave}
           >
-            <div className={`${titleClassName} ${titleClassName}__${elem.color}`}>
+            <div className={`${titleClassName} ${titleClassName}__${elem.color || 'blue'}`}>
               {elem.title}
             </div>
             <div className='modern-stack-onboarding--data-flow-elem-subtitle'>
               {elem.subtitle}
             </div>
-            {elem.active && <div className={'modern-stack-onboarding--active-data'} />}
+            {elem.item && elem.item === active && <div className={'modern-stack-onboarding--active-data'} />}
           </div>
           {elem.children && elem.children.map((child, i) => {
             // lift element a bit if it is a single child
@@ -111,60 +112,49 @@ angular.module('contentful')
       );
     },
     render () {
-      const { onHover, onLeave, active } = this.props;
+      const JohnDoeBlock = {
+        title: 'John Doe',
+        subtitle: 'content type: person',
+        item: 'person'
+      };
+
+      const PersonsBlock = {
+        title: 'Person',
+        subtitle: 'collection of authors',
+        item: 'person',
+        children: [JohnDoeBlock]
+      };
+
+      const StaticSitesArticleBlock = {
+        title: 'Static sites are great',
+        subtitle: 'content type: blogPost',
+        item: 'static-sites-are-great'
+      };
+
+      const HelloWorldArticleBlock = {
+        title: 'Hello world',
+        subtitle: 'content type: blogPost',
+        item: 'hello-world'
+      };
+
+      const WebhooksArticleBlock = {
+        title: 'Automate with webhooks',
+        subtitle: 'content type: blogPost',
+        item: 'automate-with-webhooks'
+      };
+
+      const BlogPostsBlock = {
+        title: 'Blog Posts',
+        subtitle: 'collection of articles',
+        item: 'articles',
+        children: [StaticSitesArticleBlock, HelloWorldArticleBlock, WebhooksArticleBlock]
+      };
 
       const structure = {
         title: 'App',
         subtitle: 'Application shell',
-        color: 'blue',
-        onHover: () => onHover('all'),
-        active: active === 'all',
-        onLeave,
-        children: [{
-          title: 'Person',
-          subtitle: 'collection of authors',
-          color: 'blue',
-          onHover: () => onHover('person'),
-          onLeave,
-          active: active === 'person',
-          children: [{
-            title: 'John Doe',
-            subtitle: 'content type: person',
-            color: 'blue',
-            onHover: () => onHover('person'),
-            onLeave,
-            active: active === 'person'
-          }]
-        }, {
-          title: 'Blog Posts',
-          subtitle: 'collection of articles',
-          color: 'blue',
-          onHover: () => onHover('articles'),
-          onLeave,
-          active: active === 'articles',
-          children: [{
-            title: 'Static sites are great',
-            subtitle: 'content type: blogPost',
-            color: 'blue',
-            onHover: () => onHover('static-sites-are-great'),
-            onLeave,
-            active: active === 'static-sites-are-great'
-          }, {
-            title: 'Hello world',
-            subtitle: 'content type: blogPost',
-            color: 'blue',
-            onHover: () => onHover('hello-world'),
-            onLeave,
-            active: active === 'hello-world'
-          }, {
-            title: 'Automate with webhooks',
-            subtitle: 'content type: blogPost',
-            color: 'blue',
-            onHover: () => onHover('automate-with-webhooks'),
-            onLeave,
-            active: active === 'automate-with-webhooks'
-          }]
-        }]
+        item: 'all',
+        children: [PersonsBlock, BlogPostsBlock]
       };
 
       return (
