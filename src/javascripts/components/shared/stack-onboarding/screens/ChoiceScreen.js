@@ -73,7 +73,7 @@ angular.module('contentful')
       const isButtonDisabled = isDefaultPathPending || isDevPathPending;
 
       const contentChoice = this.renderBlock({
-        title: 'Create content',
+        title: 'I create content',
         text: 'The Contentful web-app enables you to create, manage and publish content.',
         button: this.renderButton({
           onClick: () => {
@@ -89,7 +89,7 @@ angular.module('contentful')
       });
 
       const developerChoice = this.renderBlock({
-        title: 'Develop content-rich products',
+        title: 'I develop content-rich products',
         text: 'Contentful enables you to manage, integrate and deliver content via APIs.',
         button: this.renderButton({
           onClick: () => {
