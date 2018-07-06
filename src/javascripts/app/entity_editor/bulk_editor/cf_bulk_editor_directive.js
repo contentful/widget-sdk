@@ -91,11 +91,20 @@ angular.module('contentful')
     };
 
 
-    $scope.actions = makeActions(referenceContext.field, links => {
-      nextFocusIndex = -1;
-      links.forEach(referenceContext.add);
-    }, referenceContext.links$, track, $scope.renderInline);
+    $scope.actions = makeActions(
+      referenceContext.field,
+      addLinks,
+      referenceContext.links$,
+      track,
+      $scope.renderInline
+    );
 
+    function addLinks (links) {
+      nextFocusIndex = -1;
+      return Promise.all(
+        links.map((link) => referenceContext.add(link))
+      );
+    }
 
     function removeByKey (key) {
       var index = _.findIndex($scope.entityContexts, {key: key});
@@ -146,7 +155,7 @@ angular.module('contentful')
       var contentType = _.isObject(ctOrCtId)
         ? ctOrCtId
         : spaceContext.publishedCTs.get(ctOrCtId);
-      spaceContext.cma.createEntry(contentType.getId(), {})
+      return spaceContext.cma.createEntry(contentType.getId(), {})
       .then(entry => {
         Analytics.track('entry:create', {
           eventOrigin: isInline ? 'inline-reference-editor' : 'bulk-editor',
@@ -154,7 +163,7 @@ angular.module('contentful')
           response: { data: entry }
         });
         track.addNew();
-        addLinks([linkEntity(entry)]);
+        return addLinks([linkEntity(entry)]);
       });
     }
 
