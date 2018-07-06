@@ -45,6 +45,12 @@ angular.module('cf.app')
         }
       });
 
+      $scope.$watch('search.address', address => {
+        if (address === '') {
+          field.removeValue();
+        }
+      });
+
       LocationMap.init($scope, mapSlotElement);
     }
   };
