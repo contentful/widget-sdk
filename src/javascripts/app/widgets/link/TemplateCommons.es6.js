@@ -87,8 +87,7 @@ export function actions (actionClass) {
       ngIf: '!missing && downloadUrl',
       ngHref: '{{downloadUrl}}',
       target: '_blank',
-      rel: 'noopener noreferrer',
-      ngClick: 'onClick($event); $event.stopPropagation();'
+      rel: 'noopener noreferrer'
     }, [h('cf-icon', {name: 'download'})]),
     h(`button.${actionClass}`, {
       dataTestId: 'entity-remove',
