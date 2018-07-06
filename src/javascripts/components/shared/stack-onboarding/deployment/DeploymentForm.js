@@ -15,7 +15,8 @@ angular.module('contentful')
   const Input = require(InputModule);
   const Form = require(FormModule);
   const store = require('TheStore').getStore();
-  const {getStoragePrefix} = require(CreateModernOnboardingModule);
+  const {getStoragePrefix, MODERN_STACK_ONBOARDING_COMPLETE_EVENT} = require(CreateModernOnboardingModule);
+  const $rootScope = require('$rootScope');
 
   const DEPLOYMENT_PROVIDERS = {
     NETLIFY: 'netlify',
@@ -64,6 +65,12 @@ angular.module('contentful')
         store.set(`${prefix}:completed`, true);
         store.set(`${prefix}:deploymentProvider`, provider);
         store.set(`${prefix}:deployedTo`, url);
+
+        // let other disconnected but dependent component re-render
+        // once user completes onboarding
+        // TODO: This can and should be done better but I can't think
+        // of a better way given the current code base.
+        $rootScope.$broadcast(MODERN_STACK_ONBOARDING_COMPLETE_EVENT);
 
         this.props.onComplete(event, provider);
       } else {

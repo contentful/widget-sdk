@@ -12,7 +12,6 @@ angular.module('contentful')
     const entityCreator = require('entityCreator');
     const LD = require('utils/LaunchDarkly');
     const K = require('utils/kefir');
-    const modernStackOnboardingFlag = 'feature-dl-05-2018-modern-stack-onboarding';
     const store = require('TheStore').getStore();
     const { isExampleSpace } = require('data/ContentPreview');
     const { getAll: getAllContentPreviews } = require('contentPreview');
@@ -24,7 +23,9 @@ angular.module('contentful')
       getCredentials,
       getUser,
       getPerson,
-      MODERN_STACK_ONBOARDING_SPACE_NAME
+      isDevOnboardingSpace,
+      isContentOnboardingSpace,
+      MODERN_STACK_ONBOARDING_FEATURE_FLAG
     } = require(CreateModernOnboardingModule);
 
     return {
@@ -64,20 +65,18 @@ angular.module('contentful')
           const msDevChoiceKey = `${prefix}:developerChoiceSpace`;
 
           const msDevChoiceSpace = store.get(msDevChoiceKey);
-          const msContentChoiceSpace = store.get(`${prefix}:contentChoiceSpace`);
           const spaceAutoCreationFailed = store.get(getSpaceAutoCreatedKey(getUser(), 'failure'));
 
           const currentSpaceId = spaceContext.space && spaceContext.space.getSys().id;
-          const currentSpaceName = spaceContext.space && spaceContext.space.data.name;
 
           const showModernStackDevChoiceNextSteps =
                 flag && !spaceAutoCreationFailed &&
-                (currentSpaceId === msDevChoiceSpace || currentSpaceName === MODERN_STACK_ONBOARDING_SPACE_NAME);
+                isDevOnboardingSpace(spaceContext.space);
 
           controller.showModernStackContentChoiceNextSteps =
             flag &&
             !spaceAutoCreationFailed &&
-            currentSpaceId === msContentChoiceSpace;
+            isContentOnboardingSpace(spaceContext.space);
 
           if (showModernStackDevChoiceNextSteps) {
             const currentStepKey = `${prefix}:currentStep`;
@@ -146,7 +145,7 @@ angular.module('contentful')
             // be consistent. Without the delay, this returns previews at times
             // and not at other times. This should even that behaviour out.
             const previewsPromise = delay(getAllContentPreviews, delayMs);
-            const modernStackVariationPromise = LD.getCurrentVariation(modernStackOnboardingFlag);
+            const modernStackVariationPromise = LD.getCurrentVariation(MODERN_STACK_ONBOARDING_FEATURE_FLAG);
             const [previews, modernStackOnboarding] = await Promise.all([previewsPromise, modernStackVariationPromise]);
 
             await updateModernStackOnboardingData(modernStackOnboarding);
@@ -164,7 +163,7 @@ angular.module('contentful')
           updateNextStepsState(3000);
         });
 
-        LD.onFeatureFlag($scope, modernStackOnboardingFlag, flag => {
+        LD.onFeatureFlag($scope, MODERN_STACK_ONBOARDING_FEATURE_FLAG, flag => {
           controller.isModernStackOnboardingFeatureEnabled = flag;
 
           if (spaceContext.space) {

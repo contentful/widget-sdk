@@ -43,6 +43,7 @@ angular.module('contentful')
   var shouldUseEnvEndpoint = require('data/shouldUseEnvEndpoint').default;
   var createEnvironmentsRepo = require('data/CMA/SpaceEnvironmentsRepo').create;
   var deepFreeze = require('utils/Freeze').deepFreeze;
+  var $rootScope = require('$rootScope');
 
   var publishedCTsBus$ = K.createPropertyBus([]);
 
@@ -143,6 +144,10 @@ angular.module('contentful')
       self.user = K.getValue(TokenStore.user$);
 
       previewEnvironmentsCache.clearAll();
+
+      // TODO: remove this after we have store with combined reducers on top level
+      // string is hardcoded because this code _is_ temporary
+      $rootScope.$broadcast('spaceContextUpdated');
 
       return $q.all([
         self.widgets.refresh(),
