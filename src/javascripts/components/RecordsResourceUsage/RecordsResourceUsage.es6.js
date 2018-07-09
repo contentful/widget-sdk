@@ -11,7 +11,7 @@ import { TextLink } from '@contentful/ui-component-library';
 
 import * as actionCreators from './store/actionCreators';
 
-class RecordsResourceUsage extends React.Component {
+export class RecordsResourceUsage extends React.Component {
   static propTypes = {
     space: PropTypes.object.isRequired,
     currentTotal: PropTypes.number.isRequired,
