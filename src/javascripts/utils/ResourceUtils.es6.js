@@ -33,7 +33,7 @@ export const canCreate = resource => !resourceMaximumLimitReached(resource);
  * @return {Object|null}              Resource metadata object or null
  */
 export function getStoreResource (resources, spaceId, resourceName) {
-  return get(resources, `${spaceId}.${resourceName}`);
+  return get(resources, `${spaceId}.${resourceName}`, null);
 }
 
 export function generateMessage (resource) {
