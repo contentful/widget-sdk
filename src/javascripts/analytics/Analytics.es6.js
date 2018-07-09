@@ -130,11 +130,11 @@ function identify (extension) {
   // organization. This happens, for example, after the user signs up
   // and when they have no spaces – so adding it to the session
   // automatically enriches all events with an organizationId.
-  if (!session.organization && _.get(session, 'user.organizationMemberships[0].organization')) {
+  if (!session.organization) {
     // we've already removed all circular references
     // we default to the first org the user belongs to as the "current org".
     // this behaviour is the same as what the sidepanel does when it doesn't find a "current org"
-    session.organization = session.user.organizationMemberships[0].organization;
+    session.organization = _.get(session, 'user.organizationMemberships[0].organization');
   }
 
   // We need to remove the list of organization memberships as this array gets
