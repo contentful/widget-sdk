@@ -5,7 +5,7 @@ angular.module('contentful')
  * @ngdoc type
  * @name EntryListController
  */
-.controller('EntryListController', ['$scope', 'require', function EntryListController ($scope, require) {
+.controller('EntryListController', ['$scope', '$q', 'require', function EntryListController ($scope, $q, require) {
   var $controller = require('$controller');
   var EntityListCache = require('EntityListCache');
   var Paginator = require('Paginator');
@@ -21,6 +21,7 @@ angular.module('contentful')
   var $state = require('$state');
   var entityCreator = require('entityCreator');
   var ResourceUtils = require('utils/ResourceUtils');
+  var createResourceService = require('services/ResourceService').default;
   var EnvironmentUtils = require('utils/EnvironmentUtils');
   var debounce = require('lodash').debounce;
 
@@ -63,6 +64,17 @@ angular.module('contentful')
   $scope.shouldHide = accessChecker.shouldHide;
   $scope.shouldDisable = accessChecker.shouldDisable;
 
+  const spaceId = spaceContext.space.data.sys.id;
+
+  // Get the resource for disabling the button
+  const resources = createResourceService(spaceId);
+  const refetchResource = debounce(() => {
+    return resources.get('record').then(recordResource => {
+      $scope.disableButton = ResourceUtils.resourceMaximumLimitReached(recordResource);
+      $scope.$evalAsync();
+    });
+  });
+
   // Properties passed to RecordsResourceUsage
   var resetUsageProps = debounce(() => {
     $scope.usageProps = {
@@ -71,8 +83,10 @@ angular.module('contentful')
     };
   });
 
+  $scope.$watch('paginator.getTotal()', refetchResource);
   $scope.$watch('paginator.getTotal()', resetUsageProps);
   resetUsageProps();
+  refetchResource();
 
   $scope.entryCache = new EntityListCache({
     space: spaceContext.space,

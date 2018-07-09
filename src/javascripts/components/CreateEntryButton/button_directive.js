@@ -4,8 +4,6 @@ angular.module('contentful')
   var React = require('react');
   var ReactDOM = require('react-dom');
   var Menu = require('components/CreateEntryButton').default;
-  var spaceContext = require('spaceContext');
-  var ReduxStore = require('ReduxStore/store').default;
 
   return {
     link: function ($scope, elem, attr) {
@@ -14,11 +12,10 @@ angular.module('contentful')
         suggestedContentTypeId: _.get($scope, attr.suggestedContentTypeId),
         size: attr.size,
         style: attr.style,
-        text: attr.text
+        text: attr.text,
+        disabled: _.get($scope, attr.disabled, false)
       }), props => {
         props = Object.assign({}, props, {
-          store: ReduxStore,
-          space: spaceContext.space.data,
           onSelect: $scope.$eval(attr.onSelect)
         });
 
