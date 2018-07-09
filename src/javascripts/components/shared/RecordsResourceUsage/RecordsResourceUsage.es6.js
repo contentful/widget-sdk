@@ -7,7 +7,7 @@ import { get } from 'lodash';
 import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService';
 import { getStoreResource } from 'utils/ResourceUtils';
 
-import UpgradeLink from './UpgradeLink';
+import { TextLink } from '@contentful/ui-component-library';
 
 import * as actionCreators from './store/actionCreators';
 
@@ -66,6 +66,11 @@ class RecordsResourceUsage extends React.Component {
   render () {
     const { incentivizeUpgradeEnabled } = this.props;
 
+    // Explicitly don't show this until the feature flag is enabled
+    if (!incentivizeUpgradeEnabled) {
+      return null;
+    }
+
     const resource = this.resource();
 
     if (!resource) {
@@ -83,10 +88,10 @@ class RecordsResourceUsage extends React.Component {
 
     return (
       <div className={classnames(
-        'usage',
+        'resource-usage',
         {
-          'usage--warn': usage / limit >= warnThreshold && usage / limit < errorThreshold,
-          'usage--danger': usage / limit >= errorThreshold
+          'resource-usage--warn': usage / limit >= warnThreshold && usage / limit < errorThreshold,
+          'resource-usage--danger': usage / limit >= errorThreshold
         }
       )}>
         {
@@ -99,10 +104,7 @@ class RecordsResourceUsage extends React.Component {
         }
         {
           usagePercentage >= warnThreshold &&
-          <UpgradeLink
-            incentivizeUpgradeEnabled={incentivizeUpgradeEnabled}
-            upgradeSpace={this.upgradeSpace.bind(this)}
-          />
+          <TextLink onClick={this.upgradeSpace.bind(this)}>Upgrade space</TextLink>
         }
       </div>
     );
