@@ -13,13 +13,13 @@ angular.module('contentful')
   const Tabs = require(TabsModule);
   const Code = require(CodeModule);
   const A = require(AnchorModule);
-  const {getCredentials} = require(CreateModernOnboardingModule);
+  const {getCredentials, isOnboardingComplete, getDeploymentProvider} = require(CreateModernOnboardingModule);
   const spaceContext = require('spaceContext');
 
   const DeploymentStrategies = createReactClass({
     getInitialState () {
       return {
-        active: 'netlify'
+        active: getDeploymentProvider() || 'netlify'
       };
     },
     async componentDidMount () {
@@ -79,8 +79,31 @@ angular.module('contentful')
       );
     },
     renderHerokuSteps (spaceId, deliveryToken) {
+      const isComplete = isOnboardingComplete();
+      const isHeroku = getDeploymentProvider() === 'heroku';
+      const wasDeployedWithHeroku = isComplete && isHeroku;
+
       /* eslint-disable react/jsx-key */
-      const steps = [
+      const steps = wasDeployedWithHeroku ? [
+        <div className='modern-stack-onboarding--deployment-list-text'>
+          <A href='https://devcenter.heroku.com/articles/heroku-cli#download-and-install'>
+            Install the Heroku CLI
+          </A>
+          {' (This is a free account. You may create an account and login through your CLI).'}
+        </div>,
+        this.renderCode('heroku login'),
+        <div>
+          {this.renderCode('git commit --allow-empty -m "empty commit to rebuild website"')}
+          <div style={{ marginTop: '10px' }}>
+            {'In order to build a new version on Heroku, the commit should be empty. You can '}
+            <A href={'https://www.contentful.com/developers/docs/tutorials/general/automate-site-builds-with-webhooks/#heroku'}>
+              {'set up webhooks'}
+            </A>
+            {' to rebuild automatically.'}
+          </div>
+        </div>,
+        this.renderCode('git push heroku master')
+      ] : [
         <div className='modern-stack-onboarding--deployment-list-text'>
           <A href='https://devcenter.heroku.com/articles/heroku-cli#download-and-install'>
             Install the Heroku CLI

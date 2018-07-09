@@ -31,6 +31,7 @@ angular.module('contentful')
     MODERN_STACK_ONBOARDING_COMPLETE_EVENT: 'onboardingComplete',
     getUser: () => getValue(user$),
     getStoragePrefix: () => `ctfl:${createModernOnboarding.getUser().sys.id}:modernStackOnboarding`,
+    getDeploymentProvider: () => store.get(`${createModernOnboarding.getStoragePrefix()}:deploymentProvider`),
     isOnboardingComplete: () => store.get(`${createModernOnboarding.getStoragePrefix()}:completed`),
     isDevOnboardingSpace: (currentSpace) => {
       const currentSpaceId = currentSpace && currentSpace.getSys().id;
