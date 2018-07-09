@@ -125,6 +125,18 @@ function identify (extension) {
   session.user = session.user || {};
   const rawUserData = _.merge(session.user, extension || {});
 
+  // we set up organization immediately, if it is not set up yet.
+  // the reason for it – we might not have a space, but belong to an
+  // organization. This happens, for example, after the user signs up
+  // and when they have no spaces – so adding it to the session
+  // automatically enriches all events with an organizationId.
+  if (!session.organization) {
+    // we've already removed all circular references
+    // we default to the first org the user belongs to as the "current org".
+    // this behaviour is the same as what the sidepanel does when it doesn't find a "current org"
+    session.organization = _.get(session, 'user.organizationMemberships[0].organization');
+  }
+
   // We need to remove the list of organization memberships as this array gets
   // flattened when it is passed to Intercom and creates a lot of noise
   const user = _.omitBy(rawUserData, val => _.isArray(val) || _.isObject(val));
