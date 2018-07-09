@@ -5,7 +5,7 @@ angular.module('contentful')
  * @ngdoc type
  * @name EntryListController
  */
-.controller('EntryListController', ['$scope', '$q', 'require', function EntryListController ($scope, $q, require) {
+.controller('EntryListController', ['$scope', 'require', function EntryListController ($scope, require) {
   var $controller = require('$controller');
   var EntityListCache = require('EntityListCache');
   var Paginator = require('Paginator');

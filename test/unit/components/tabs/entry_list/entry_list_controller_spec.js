@@ -27,6 +27,18 @@ describe('Entry List Controller', () => {
   }
 
   beforeEach(function () {
+    this.resource = {
+      limits: {
+        maximum: 10,
+        included: 10
+      },
+      usage: 5
+    };
+
+    this.stubs = {
+      resourceService_get: sinon.stub().resolves(this.resource)
+    };
+
     module('contentful/test', ($provide) => {
       $provide.removeControllers('DisplayedFieldsController');
 
@@ -37,6 +49,14 @@ describe('Entry List Controller', () => {
       $provide.value('TheLocaleStore', {
         resetWithSpace: sinon.stub(),
         getDefaultLocale: sinon.stub().returns({internal_code: 'en-US'})
+      });
+
+      $provide.value('services/ResourceService', {
+        default: () => {
+          return {
+            get: this.stubs.resourceService_get
+          };
+        }
       });
 
       const readStub = this.readStub = sinon.stub();
