@@ -33,6 +33,7 @@ window.libs = [
   ['jquery', window.$],
   ['lodash', window._],
   ['@contentful/ui-component-library', require('@contentful/ui-component-library')],
+  ['is-hotkey', require('is-hotkey')],
   ['slate', require('slate')],
   ['slate-react', require('slate-react')],
   ['qs', require('qs')],

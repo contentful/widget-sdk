@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import cn from 'classnames';
 
 import FetchEntry from './FetchEntry';
-
 import { goToSlideInEntity } from 'states/EntityNavigationHelpers';
 
 export default class LinkedEntryBlock extends React.Component {
