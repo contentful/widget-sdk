@@ -4,9 +4,8 @@ angular.module('contentful')
 .directive('cfSpaceWizard', ['require', require => {
   var $state = require('$state');
   var $rootScope = require('$rootScope');
-  var WizardStore = require('components/shared/space-wizard/store');
-  var store = WizardStore.default;
-  var actionCreators = WizardStore.actionCreators;
+  var ReduxStore = require('ReduxStore/store').default;
+  var resetActionCreator = require('components/shared/space-wizard/store/actionCreators').reset;
 
   return {
     link: function ($scope) {
@@ -40,7 +39,7 @@ angular.module('contentful')
       $scope.onScopeDestroy = function ({ unmountComponent }) {
         unmountComponent();
 
-        store.dispatch(actionCreators.reset());
+        ReduxStore.dispatch(resetActionCreator());
       };
     },
     template: `<react-component
