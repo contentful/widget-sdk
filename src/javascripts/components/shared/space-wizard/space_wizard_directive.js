@@ -12,6 +12,7 @@ angular.module('contentful')
       $scope.props = {
         action: $scope.action,
         space: $scope.space,
+        scope: $scope.scope,
         limitReached: $scope.limitReached,
         organization: $scope.organization,
         onCancel: function () { $scope.dialog.cancel(); },

@@ -96,6 +96,7 @@ const reduce = makeReducer({
       space: state.spaceData,
       limitReached: state.resource,
       action: 'change',
+      scope: 'space',
       onSubmit: () => {
         dispatch(Reload);
         return Promise.resolve();

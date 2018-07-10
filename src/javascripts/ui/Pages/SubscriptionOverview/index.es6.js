@@ -131,6 +131,7 @@ const SubscriptionOverview = createReactClass({
     return () => {
       showChangeSpaceModal({
         organizationId: this.props.orgId,
+        scope: 'organization',
         space,
         action,
         onSubmit: async () => {

@@ -59,6 +59,7 @@ export class RecordsResourceUsage extends React.Component {
       space: space,
       limitReached: resource,
       action: 'change',
+      scope: 'space',
       onSubmit: this.updateUsage
     });
   }
