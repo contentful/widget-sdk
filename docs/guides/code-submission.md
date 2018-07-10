@@ -7,7 +7,7 @@ This guide explains how to get code changes deployed.
 3. [Get QA approval](#qa-approval)
 4. [Run automated tests](#run-automated-tests)
 5. [Merge to master](#merging-a-release-pr)
-6. [Deploy `master` to `production`](#deploying-to-production)
+6. [Deploy `master` to production](#deploying-to-production)
 
 
 Although generally this process should be followed closely you may deviate from
@@ -146,23 +146,7 @@ After merging a PR you continue with the following steps
 Deploying to Production
 -----------------------
 
-1. Create a PR from `master` to `production` and add the “Production deploy”
-   label.
-2. For each release PR included in the deployment PR add the following to the
-   description.
-   * A link to the release PR
-   * A link to the Target Process, Zendesk, and Bugsnag tickets if available
-   * A link to a change log entry if provided by the product owner.
-3. Wait for successful builds, including `ci/jenkins/staging-full-automatic`
-4. Merge the PR
-5. Monitor the `#dev-deployment` channel for a message from Estivador:
-   “user_interface: production RC added”.
-6. Notify `#support` and `#product-releases` of the changes
-7. If applicable
-   * Set Target Process ticket states to “Done”
-   * Notify agents assigned to Zendesk tickets
-   * Resolve Bugsnag errors
-   * Publish the changelog
+See [deployment docs](./deploy.md)
 
 
 Appendix

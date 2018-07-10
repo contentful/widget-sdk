@@ -32,6 +32,9 @@ This is a list of all the guides for developing the Contentful web application.
 * How to review PRs
 * How to respond to a review
 
+## [Deployment](./deploy.md)
+* How we use Samson for production deployment
+
 ## [Debug Tools](./debug.md)
 
 * Lists debugging tools available in the app
