@@ -64,6 +64,8 @@ describe('Policy Access Checker', () => {
     pac.setMembership({
       admin: isAdmin,
       roles: [role]
+    }, {
+      environment: {sys: { isMaster: true }}
     });
   }
 
@@ -450,9 +452,20 @@ describe('Policy Access Checker', () => {
       test({}, {code: 'en'}, true, undefined);
     });
 
-    it('merges policies from two roles', () => {
-      pac.setMembership({admin: false, roles: [roles.allowReadEntry]});
+    it('merges policies from two roles in a master environment', () => {
+      pac.setMembership({admin: false, roles: [roles.allowReadEntry]}, {environment: {sys: { isMaster: true }}});
       expect(pac.canEditFieldLocale('ctid', {}, {})).toBe(false);
+
+      pac.setMembership({admin: false, roles: [
+        roles.allowReadEntry,
+        roles.allowReadAndEditOfEntry('ctid')
+      ]});
+      expect(pac.canEditFieldLocale('ctid', {}, {})).toBe(true);
+    });
+
+    it('merges policies from two roles in a non master environment', () => {
+      pac.setMembership({admin: false, roles: [roles.allowReadEntry]}, {environment: {sys: { isMaster: false }}});
+      expect(pac.canEditFieldLocale('ctid', {}, {})).toBe(true);
 
       pac.setMembership({admin: false, roles: [
         roles.allowReadEntry,
