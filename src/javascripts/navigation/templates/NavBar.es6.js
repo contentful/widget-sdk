@@ -97,7 +97,11 @@ function navbarDropdown (data, tabIndex = 0) {
 
 function navbarDropdownItem (data) {
   if (data.separator) {
-    return h('.nav-bar__separator', [
+    const attrs = {};
+    if (data.if) {
+      attrs.ngIf = data.if;
+    }
+    return h('.nav-bar__separator', attrs, [
       h('span', {
         style: {
           textTransform: 'uppercase',

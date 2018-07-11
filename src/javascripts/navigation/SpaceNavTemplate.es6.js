@@ -1,6 +1,4 @@
 import navBar from 'navigation/templates/NavBar';
-import * as accessChecker from 'access_control/AccessChecker';
-import spaceContext from 'spaceContext';
 
 export default function spaceNavTemplate (useSpaceEnv, isMaster) {
   const makeRef = (spaceRef) => {
@@ -82,15 +80,15 @@ export default function spaceNavTemplate (useSpaceEnv, isMaster) {
     }
   };
 
-  const isAdmin = spaceContext.getData(['spaceMembership', 'admin']);
   const envSettingsDropdown = [
-    (accessChecker.can('manage', 'Environments') && !isMaster) || isAdmin
-      ? ({
-        if: false,
-        separator: true,
-        label: 'Environment settings',
-        tooltip: 'These settings apply only to the environment you’ve currently selected.'
-      }) : null,
+    {
+      // If the user cannot access locales but has manager role, do not show the
+      // environment settings section.
+      if: 'nav.canNavigateTo("locales")',
+      separator: true,
+      label: 'Environment settings',
+      tooltip: 'These settings apply only to the environment you’ve currently selected.'
+    },
     dropdownItems.locales,
     dropdownItems.extensions,
     {
