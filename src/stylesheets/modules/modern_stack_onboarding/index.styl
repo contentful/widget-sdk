@@ -303,11 +303,37 @@
     border-top: 2px solid $colors.gray
     padding-top: 50px
 
+    &-title-container
+      display: flex
+      align-items: center
+      justify-content: space-between
+      border-bottom: 1px solid $colors.element-mid
+      padding-bottom: 15px
+      margin-bottom: 50px
+
+    &-expand-text
+      color: $colors.text-mid
+      font-size: 15px
+      cursor: pointer
+
+    &-expand-icon
+      height: 0
+      display: inline-block
+      margin-left: 20px
+      font-size: 30px
+      position: relative
+      top: 5px
+      opacity: 0.85
+
     &-title
       font-size: 18px
       font-weight: 600
       line-height: 30px
       margin-top: 0
+
+    &-subtitle
+      font-size: 16px
+      font-weight: 100
 
   &--deployment-list
     padding-left: 20px
