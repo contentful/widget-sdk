@@ -13,8 +13,7 @@ angular.module('contentful')
         name: 'Title',
         type: 'Symbol',
         localized: true,
-        disabled: false,
-        required: true
+        disabled: false
       },
       {
         id: 'description',
