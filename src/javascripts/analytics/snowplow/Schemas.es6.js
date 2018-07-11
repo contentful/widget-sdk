@@ -191,12 +191,12 @@ registerSchema({
 
 registerSchema({
   name: 'feature_reference_metadata',
-  version: '1-0-0'
+  version: '2-0-0'
 });
 
 registerSchema({
   name: 'feature_reference_action',
-  version: '1-0-0'
+  version: '2-0-0'
 });
 
 function registerSchema (schema) {

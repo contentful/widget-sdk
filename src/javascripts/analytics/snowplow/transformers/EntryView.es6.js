@@ -9,15 +9,16 @@ export default addUserOrgSpace((_, data) => ({
     slide_in_level: data.currentSlideLevel,
     editor_type: data.editorType
   },
-  contexts: [...data.referencesCTMetadata.map(getReferenceContext)]
+  contexts: [...data.referencesCTMetadata.map((refMetadata) => getReferenceContext(refMetadata, data.entryId))]
 }));
 
-function getReferenceContext (refMetadata) {
+function getReferenceContext (refMetadata, parentEntryId) {
   return {
     schema: getSchema('feature_reference_metadata').path,
     data: {
       content_type_id: refMetadata.id,
-      content_type_name: refMetadata.name
+      content_type_name: refMetadata.name,
+      parent_entry_id: parentEntryId
     }
   };
 }
