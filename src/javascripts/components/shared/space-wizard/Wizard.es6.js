@@ -13,7 +13,7 @@ import logger from 'logger';
 import { connect } from 'react-redux';
 
 import * as actionCreators from './store/actionCreators';
-import { wrapWithDispatch } from 'utils/ReduxUtils';
+import * as resourceActionCreators from 'ReduxAppActions/resources/actionCreators';
 
 const SpaceCreateSteps = [
   {
@@ -64,10 +64,8 @@ const Wizard = createReactClass({
     // Space data as defined in spaceContext.space.data
     space: PropTypes.object,
 
-    // Resource object as created by ResourceService
-    limitReached: PropTypes.object,
-
     action: PropTypes.oneOf([ 'create', 'change' ]),
+    wizardScope: PropTypes.oneOf([ 'space', 'organization' ]),
     onCancel: PropTypes.func.isRequired,
     onConfirm: PropTypes.func.isRequired,
     onSpaceCreated: PropTypes.func.isRequired,
@@ -79,6 +77,7 @@ const Wizard = createReactClass({
     fetchSpacePlans: PropTypes.func.isRequired,
     fetchSubscriptionPrice: PropTypes.func.isRequired,
     fetchTemplates: PropTypes.func.isRequired,
+    getResourcesForSpace: PropTypes.func.isRequired,
     selectPlan: PropTypes.func.isRequired,
     setNewSpaceName: PropTypes.func.isRequired,
     setNewSpaceTemplate: PropTypes.func.isRequired,
@@ -94,6 +93,7 @@ const Wizard = createReactClass({
     spaceCreation: PropTypes.object.isRequired,
     spaceChange: PropTypes.object.isRequired,
     templates: PropTypes.object.isRequired,
+    resources: PropTypes.object.isRequired,
     currentPlan: PropTypes.object,
     selectedPlan: PropTypes.object,
     partnershipData: PropTypes.object
@@ -130,8 +130,8 @@ const Wizard = createReactClass({
   render () {
     const {
       space,
-      limitReached,
       action,
+      wizardScope,
       organization,
       onCancel,
       onDimensionsChange,
@@ -140,6 +140,8 @@ const Wizard = createReactClass({
       fetchSpacePlans,
       fetchSubscriptionPrice,
       fetchTemplates,
+      getResourcesForSpace,
+      resources,
       currentPlan,
       selectedPlan,
       selectPlan,
@@ -192,8 +194,8 @@ const Wizard = createReactClass({
       const stepProps = {
         organization,
         space,
-        limitReached,
         action,
+        wizardScope,
         reposition: onDimensionsChange,
         onCancel,
         track: this.track,
@@ -204,6 +206,8 @@ const Wizard = createReactClass({
         fetchSpacePlans,
         fetchSubscriptionPrice,
         fetchTemplates,
+        getResourcesForSpace,
+        resources,
         currentPlan,
         selectedPlan,
         selectPlan,
@@ -342,6 +346,7 @@ const mapStateToProps = state => {
   return {
     spacePlans: state.spaceWizard.spacePlans,
     templates: state.spaceWizard.templates,
+    resources: state.resources,
     currentPlan: state.spaceWizard.spacePlanSelected.currentPlan,
     selectedPlan: state.spaceWizard.spacePlanSelected.selectedPlan,
     currentStepId: state.spaceWizard.currentStep,
@@ -353,10 +358,11 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = wrapWithDispatch({
+const mapDispatchToProps = {
   fetchSpacePlans: actionCreators.fetchSpacePlans,
   fetchSubscriptionPrice: actionCreators.fetchSubscriptionPrice,
   fetchTemplates: actionCreators.fetchTemplates,
+  getResourcesForSpace: resourceActionCreators.getResourcesForSpace,
   createSpace: actionCreators.createSpace,
   changeSpace: actionCreators.changeSpace,
   selectPlan: actionCreators.selectPlan,
@@ -367,7 +373,7 @@ const mapDispatchToProps = wrapWithDispatch({
   reset: actionCreators.reset,
   sendPartnershipEmail: actionCreators.sendPartnershipEmail,
   setPartnershipFields: actionCreators.setPartnershipFields
-});
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Wizard);
 

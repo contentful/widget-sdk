@@ -94,7 +94,6 @@ const reduce = makeReducer({
     showUpgradeSpaceDialog({
       organizationId: state.organizationId,
       space: state.spaceData,
-      limitReached: state.resource,
       action: 'change',
       scope: 'space',
       onSubmit: () => {

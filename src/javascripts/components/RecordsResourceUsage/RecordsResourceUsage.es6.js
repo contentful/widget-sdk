@@ -52,12 +52,10 @@ export class RecordsResourceUsage extends React.Component {
 
   upgradeSpace () {
     const { space } = this.props;
-    const resource = this.resource();
 
     showUpgradeSpaceDialog({
       organizationId: space.organization.sys.id,
       space: space,
-      limitReached: resource,
       action: 'change',
       scope: 'space',
       onSubmit: this.updateUsage

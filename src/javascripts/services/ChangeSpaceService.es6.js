@@ -10,17 +10,11 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory';
  *
  * @param {string} organizationId
  * @param {object?} space - optional space to upgrade
- * @param {object?} limitReached - optional used to determine recommended plan
- *    based on which limits were reached:
- *    {
- *      name: <string> - one of ResourceUtils.resourceHumanNameMap values,
- *      usage: <number>
- *    }
  * @param {string} action - one of 'change', 'create'.
  * @param {string} scope - The scope of the call (from a space or organization page). One of 'space', 'organization'.
  * @param {function} onSubmit
  */
-export async function showDialog ({ organizationId, space, limitReached, action, scope, onSubmit }) {
+export async function showDialog ({ organizationId, space, action, scope, onSubmit }) {
   const validActions = [ 'change', 'upgrade', 'downgrade' ];
 
   if (!organizationId) {
@@ -58,8 +52,8 @@ export async function showDialog ({ organizationId, space, limitReached, action,
       persistOnNavigation: true,
       scopeData: {
         action,
+        scope,
         space,
-        limitReached,
         organization,
         onSubmit
       }

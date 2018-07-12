@@ -36,6 +36,10 @@ export function getStoreResource (resources, spaceId, resourceName) {
   return get(resources, `${spaceId}.${resourceName}`, null);
 }
 
+export function getStoreResources (resources, spaceId) {
+  return get(resources, spaceId, null);
+}
+
 export function generateMessage (resource) {
   const resourceId = resource.sys.id;
   const humanResourceName = resourceHumanNameMap[resourceId];
