@@ -10,6 +10,7 @@ import * as OrgRoles from 'services/OrganizationRoles';
 import * as CreateSpace from 'services/CreateSpace';
 import * as AccessChecker from 'access_control/AccessChecker';
 import * as LD from 'utils/LaunchDarkly';
+import logger from 'logger';
 
 import renderSidepanel from './SidepanelView';
 
@@ -122,7 +123,7 @@ export default function createController ($scope, $window) {
       // Collapse environment list if navigation failed
       // e.g. when environment was deleted
       setOpenedSpaceId(null);
-      throw err;
+      logger.logException(err);
     });
   }
 
