@@ -216,7 +216,7 @@ export function create (textarea, options, CodeMirror) {
   }
 
   function restoreCursor (character, lineNumber, noFocus) {
-    cm.setCursor({line: defaultToCurrentLineNumber(lineNumber), ch: character});
+    cm.setCursor({ line: defaultToCurrentLineNumber(lineNumber), ch: character }, null, { scroll: !noFocus });
     if (!noFocus) { cm.focus(); }
   }
 
