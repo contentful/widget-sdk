@@ -1,9 +1,18 @@
 function formatFloat (value, localize) {
   return localize
-    ? value.toLocaleString('en-US')
+    ? toLocaleString(value)
     : value.toFixed(2)
       // remove floating point if not necessary
       .replace(/\.(0)*$|0*$/, '');
+}
+
+/**
+ * Transforms a number into a localized string (en-US)
+ * toLocaleString(1000); // "1,000"
+ * @param {Number} number
+ */
+export function toLocaleString (number) {
+  return number.toLocaleString('en-US');
 }
 
 /**
