@@ -42,7 +42,7 @@ angular.module('contentful')
 
       // We don't want to display the following sections within the context of
       // a sandbox space environment.
-      function isSpaceSettingsSection(section) {
+      function isSpaceSettingsSection (section) {
         var spaceSettingsSections = [
           'settings',
           'users',
