@@ -75,7 +75,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
       });
 
       function toggleMinorActions () {
-        console.log('showMinorActions (', !!scope.minorActionsShown, ')');
+        console.log('showMinorActions (', !!scope.minorActionsShown, ') (zen mode ', !!scope.zen, ')');
         scope.minorActionsShown = !scope.minorActionsShown;
       }
 
@@ -99,7 +99,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
 
         var locales = LocaleStore.getLocales();
         var locale = locales.find(locale => locale.code === field.locale);
-        scope.actions = actions.create(editor, locale, defaultLocale.code);
+        scope.actions = actions.create(editor, locale, defaultLocale.code, {zen: false});
         scope.history = editor.history;
 
         var preview$ = makePreview(field.value$);

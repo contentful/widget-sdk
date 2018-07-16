@@ -61,7 +61,7 @@ angular.module('contentful').directive('cfZenmode', ['require', require => {
         var fieldLocaleCode = scope.zenApi.getLocale();
         var locale = locales.find(locale => locale.code === fieldLocaleCode);
 
-        scope.actions = actions.create(editor, locale, defaultLocale.code);
+        scope.actions = actions.create(editor, locale, defaultLocale.code, {zen: true});
         scope.history = editor.history;
 
         scope.zenApi.registerChild(editorInstance);

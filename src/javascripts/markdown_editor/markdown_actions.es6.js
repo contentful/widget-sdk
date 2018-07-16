@@ -10,7 +10,7 @@ import {track} from 'analytics/Analytics';
 import $state from '$state';
 import * as BulkAssetsCreator from 'services/BulkAssetsCreator';
 
-export function create (editor, locale, defaultLocaleCode) {
+export function create (editor, locale, defaultLocaleCode, {zen}) {
   const {
     fallbackCode,
     internal_code: localeCode,
@@ -36,7 +36,7 @@ export function create (editor, locale, defaultLocaleCode) {
   return mapValues(
     defaults(advancedActions, editor.actions),
     (handler, action) => (...args) => {
-      console.log(`${action} action`);
+      console.log(`${action} action (zen mode ${!!zen})`);
       return handler(...args);
     }
   );
