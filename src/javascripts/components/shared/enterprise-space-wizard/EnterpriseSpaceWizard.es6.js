@@ -1,26 +1,48 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { getIncludedResources, getTooltip } from 'components/shared/space-wizard/WizardUtils';
 import pluralize from 'pluralize';
 import { toLocaleString } from 'utils/NumberUtils';
+import { go } from 'states/Navigator';
+import { get } from 'lodash';
+
+// import spinner from 'ui/Components/Spinner';
+// import {asReact} from 'ui/Framework/DOMRenderer';
+
+import * as actionCreators from '../space-wizard/store/actionCreators';
+import { wrapWithDispatch } from 'utils/ReduxUtils';
 
 import Tooltip from 'ui/Components/Tooltip';
 import Dialog from 'app/entity_editor/Components/Dialog';
 import ContactUsButton from 'ui/Components/ContactUsButton';
 import { TextField } from '@contentful/ui-component-library';
 
-export default class EnterpriseSpaceWizard extends React.Component {
+class EnterpriseSpaceWizard extends React.Component {
   static propTypes = {
-    ratePlans: PropTypes.array.isRequired
-    // onCancel: PropTypes.func.isRequired,
-    // onConfirm: PropTypes.func.isRequired,
-    // onSpaceCreated: PropTypes.func.isRequired,
-    // onTemplateCreated: PropTypes.func.isRequired
+    ratePlans: PropTypes.array.isRequired,
+    setNewSpaceName: PropTypes.func.isRequired,
+    createSpace: PropTypes.func.isRequired,
+    reset: PropTypes.func.isRequired,
+    organization: PropTypes.shape({
+      sys: PropTypes.shape({
+        id: PropTypes.string.isRequired
+      }).isRequired,
+      name: PropTypes.string.isRequired
+    }).isRequired,
+    newSpaceMeta: PropTypes.object.isRequired,
+    spaceCreation: PropTypes.any,
+    error: PropTypes.object,
+    scope: PropTypes.any
   }
 
-  state = {spaceName: ''};
+  static MAX_SPACE_NAME_LENGTH = 30;
+
   plan = {};
   resources = [];
+  state = {
+    errorMessage: null
+  };
 
   constructor (props) {
     super(props);
@@ -29,14 +51,53 @@ export default class EnterpriseSpaceWizard extends React.Component {
   }
 
   handleSpaceNameChange (value) {
-    this.setState({spaceName: value});
+    const name = value.trim();
+    this.validateName(name);
+    this.props.setNewSpaceName(name);
   }
 
-  handleSubmit () {
-    //
+  async handleSubmit () {
+    this.validateName(get(this.props, 'newSpaceMeta.name'));
+
+    if (this.state.invalidName) return;
+
+    await this.props.createSpace({
+      action: 'create',
+      organization: this.props.organization,
+      currentStepId: 'confirmation',
+      selectedPlan: this.plan,
+      newSpaceMeta: this.props.newSpaceMeta,
+      partnershipData: {},
+      onSpaceCreated: this.handleSpaceCreated,
+      onTemplateCreated: () => {},
+      onConfirm: () => {
+        this.props.scope.dialog.destroy();
+        this.props.reset();
+      }
+    });
+  }
+
+  handleSpaceCreated (newSpace) {
+    return go({
+      path: ['spaces', 'detail'],
+      params: {spaceId: newSpace.sys.id}
+    });
+  }
+
+  validateName (name) {
+    let errorMessage = null;
+
+    if (!name || !name.length) {
+      errorMessage = 'Name is required';
+    } else if (name.length > EnterpriseSpaceWizard.MAX_SPACE_NAME_LENGTH) {
+      errorMessage = `Name should contain no more than ${EnterpriseSpaceWizard.MAX_SPACE_NAME_LENGTH} characters`;
+    }
+
+    this.setState({errorMessage});
   }
 
   render () {
+    const submitted = get(this.props, 'spaceCreation.isPending');
     return (
       <Dialog testId="enterprise-space-creation-dialog" size="large">
         <Dialog.Header>Create a space</Dialog.Header>
@@ -44,7 +105,7 @@ export default class EnterpriseSpaceWizard extends React.Component {
           <Plan plan={this.plan} resources={this.resources} />
           <Note />
           <TextField
-            value={this.state.spaceName}
+            value={this.props.newSpaceMeta.name}
             name="spaceName"
             id="spaceName"
             labelText="Space name"
@@ -54,11 +115,14 @@ export default class EnterpriseSpaceWizard extends React.Component {
               width: 'large'
             }}
             onChange={(evt) => this.handleSpaceNameChange(evt.target.value)}
+            validationMessage={this.state.errorMessage}
           />
+        {this.state.invalidName && <p className="cfnext-form__field-error">Invalid name</p>}
         </Dialog.Body>
         <Dialog.Controls>
             <button
-              className="btn-action"
+              className={`btn-action ${submitted ? 'is-loading' : ''}`}
+              onClick={this.handleSubmit.bind(this)}
             >
               Confirm and create space
             </button>
@@ -70,7 +134,7 @@ export default class EnterpriseSpaceWizard extends React.Component {
 
 function Plan ({plan, resources}) {
   return (
-    <div className="space-plans-list__item">
+    <div className="space-plans-list__item space-plans-list__item--proof-of-concept">
       <div className="space-plans-list__item__heading">
         <strong data-test-id="space-plan-name">{plan.name}</strong>
         <span data-test-id="space-plan-price"> - Free</span>
@@ -100,10 +164,31 @@ function Note () {
     <div className='note-box--info' style={{margin: '30px 0'}}>
       <p>
         {`Proof of concept spaces can't be used for production applications.
-        You can create as many of them as you wish, and they can be deleteed at any time.`}
+        You can create as many of them as you wish, and they can be deleteed at any time. `}
         <ContactUsButton noIcon={true} data-test-id='subscription-page.sidebar.contact-link' />
         to transform a proof of concept space into a production-ready space.
       </p>
     </div>
   );
 }
+
+const mapStateToProps = state => {
+  return {
+    templates: state.spaceWizard.templates,
+    newSpaceMeta: state.spaceWizard.newSpaceMeta,
+    error: state.spaceWizard.error,
+    success: state.spaceWizard.success,
+    spaceCreation: state.spaceWizard.spaceCreation
+  };
+};
+
+const mapDispatchToProps = wrapWithDispatch({
+  fetchTemplates: actionCreators.fetchTemplates,
+  createSpace: actionCreators.createSpace,
+  track: actionCreators.track,
+  setNewSpaceName: actionCreators.setNewSpaceName,
+  setNewSpaceTemplate: actionCreators.setNewSpaceTemplate,
+  reset: actionCreators.reset
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(EnterpriseSpaceWizard);
