@@ -36,13 +36,16 @@ export function create (editor, locale, defaultLocaleCode, {zen}) {
   return mapValues(
     defaults(advancedActions, editor.actions),
     (handler, action) => (...args) => {
-      track(
-        'markdown_editor:action',
-        {
-          action,
-          zen: !!zen
-        }
-      );
+      // help is already tracked
+      if (action !== 'openHelp') {
+        track(
+          'markdown_editor:action',
+          {
+            action,
+            zen: !!zen
+          }
+        );
+      }
       return handler(...args);
     }
   );
