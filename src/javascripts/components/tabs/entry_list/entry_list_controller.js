@@ -20,6 +20,10 @@ angular.module('contentful')
   var _ = require('lodash');
   var $state = require('$state');
   var entityCreator = require('entityCreator');
+  var ResourceUtils = require('utils/ResourceUtils');
+  var createResourceService = require('services/ResourceService').default;
+  var EnvironmentUtils = require('utils/EnvironmentUtils');
+  var debounce = require('lodash').debounce;
 
   var searchController = $controller('EntryListSearchController', {$scope: $scope});
   $controller('DisplayedFieldsController', {$scope: $scope});
@@ -47,6 +51,11 @@ angular.module('contentful')
     }
   });
 
+  const organization = spaceContext.organizationContext.organization;
+
+  $scope.isLegacyOrganization = ResourceUtils.isLegacyOrganization(organization);
+  $scope.isInsideMasterEnv = EnvironmentUtils.isInsideMasterEnv(spaceContext);
+
   $scope.entityStatus = entityStatus;
 
   $scope.paginator = Paginator.create();
@@ -54,6 +63,30 @@ angular.module('contentful')
 
   $scope.shouldHide = accessChecker.shouldHide;
   $scope.shouldDisable = accessChecker.shouldDisable;
+
+  const spaceId = spaceContext.space.data.sys.id;
+
+  // Get the resource for disabling the button
+  const resources = createResourceService(spaceId);
+  const refetchResource = debounce(() => {
+    return resources.get('record').then(recordResource => {
+      $scope.disableButton = ResourceUtils.resourceMaximumLimitReached(recordResource);
+      $scope.$evalAsync();
+    });
+  });
+
+  // Properties passed to RecordsResourceUsage
+  var resetUsageProps = debounce(() => {
+    $scope.usageProps = {
+      space: spaceContext.space.data,
+      currentTotal: $scope.paginator.getTotal()
+    };
+  });
+
+  $scope.$watch('paginator.getTotal()', refetchResource);
+  $scope.$watch('paginator.getTotal()', resetUsageProps);
+  resetUsageProps();
+  refetchResource();
 
   $scope.entryCache = new EntityListCache({
     space: spaceContext.space,

@@ -36,6 +36,15 @@ describe('ResourceUtils', () => {
       apiKeys: createResource('locale', { maximum: null, included: null }, 2)
     };
 
+    this.storeResources = {
+      space_1234: {
+        record: {
+          isPending: false,
+          resource: createResource('record', { maximum: 10, included: 5 }, 2)
+        }
+      }
+    };
+
     this.pricingVersions = {
       pricingVersion1: 'pricing_version_1',
       pricingVersion2: 'pricing_version_2'
@@ -245,6 +254,20 @@ describe('ResourceUtils', () => {
       };
 
       expect(this.ResourceUtils.isLegacyOrganization(organization)).toBe(false);
+    });
+  });
+
+  describe('#getStoreResource', function () {
+    it('should return the store resource object if it exists', function () {
+      expect(this.ResourceUtils.getStoreResource(this.storeResources, 'space_1234', 'record')).toEqual(this.storeResources.space_1234.record);
+    });
+
+    it('should return null if the resource does not exist for the space', function () {
+      expect(this.ResourceUtils.getStoreResource(this.storeResources, 'space_1234', 'content_type')).toBe(null);
+    });
+
+    it('should return null if the space does not have any resources in the store', function () {
+      expect(this.ResourceUtils.getStoreResource(this.storeResources, 'space_5678', 'record')).toBe(null);
     });
   });
 });

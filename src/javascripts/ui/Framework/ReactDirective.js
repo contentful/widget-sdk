@@ -34,10 +34,7 @@ angular.module('contentful')
       const element = $element[0];
 
       var reactComponent = getReactComponent(attrs.name, require);
-
-      // Since we only have one component using Redux, we use its store
-      // TODO: use a high level store for the whole application
-      var store = require('components/shared/space-wizard/store').default;
+      var store = require('ReduxStore/store').default;
 
       var renderMyComponent = () => {
         var scopeProps = $scope.$eval(attrs.props);

@@ -340,16 +340,16 @@ const Wizard = createReactClass({
 
 const mapStateToProps = state => {
   return {
-    spacePlans: state.spacePlans,
-    templates: state.templates,
-    currentPlan: state.spacePlanSelected.currentPlan,
-    selectedPlan: state.spacePlanSelected.selectedPlan,
-    currentStepId: state.currentStep,
-    newSpaceMeta: state.newSpaceMeta,
-    subscriptionPrice: state.subscriptionPrice,
-    spaceCreation: state.spaceCreation,
-    spaceChange: state.spaceChange,
-    partnershipData: state.partnershipData
+    spacePlans: state.spaceWizard.spacePlans,
+    templates: state.spaceWizard.templates,
+    currentPlan: state.spaceWizard.spacePlanSelected.currentPlan,
+    selectedPlan: state.spaceWizard.spacePlanSelected.selectedPlan,
+    currentStepId: state.spaceWizard.currentStep,
+    newSpaceMeta: state.spaceWizard.newSpaceMeta,
+    subscriptionPrice: state.spaceWizard.subscriptionPrice,
+    spaceCreation: state.spaceWizard.spaceCreation,
+    spaceChange: state.spaceWizard.spaceChange,
+    partnershipData: state.spaceWizard.partnershipData
   };
 };
 

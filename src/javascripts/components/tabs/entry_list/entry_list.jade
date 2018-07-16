@@ -21,6 +21,7 @@ header.workbench-header
     cf-create-entry-button(
       content-types="accessibleCts"
       suggested-content-type-id="context.view.contentTypeId"
+      disabled="disableButton"
       on-select="newEntry")
 
 .workbench-main(ng-hide="showNoEntriesAdvice()")
@@ -32,6 +33,13 @@ header.workbench-header
   .workbench-main__right-content
     .search-results__count(ng-show="hasPage()")
       +pluralize-entity("entry", "paginator.getTotal()", "found")
+
+    react-component(
+      ng-if="!isLegacyOrganization && isInsideMasterEnv && hasPage()"
+      name="components/RecordsResourceUsage"
+      props="usageProps"
+      watch-depth="reference")
+
     .view-customizer(
       ng-show="hasPage()"
       cf-view-customizer)

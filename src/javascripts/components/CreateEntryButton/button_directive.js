@@ -12,7 +12,8 @@ angular.module('contentful')
         suggestedContentTypeId: _.get($scope, attr.suggestedContentTypeId),
         size: attr.size,
         style: attr.style,
-        text: attr.text
+        text: attr.text,
+        disabled: _.get($scope, attr.disabled, false)
       }), props => {
         props = Object.assign({}, props, {
           onSelect: $scope.$eval(attr.onSelect)

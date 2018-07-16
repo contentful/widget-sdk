@@ -27,6 +27,24 @@ describe('Entry List Controller', () => {
   }
 
   beforeEach(function () {
+    this.wait = function (ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    };
+
+    this.resource = {
+      limits: {
+        maximum: 10,
+        included: 10
+      },
+      usage: 5
+    };
+
+    this.stubs = {
+      resourcePromise: Promise.resolve(this.resource)
+    };
+
+    this.stubs.resourceService_get = sinon.stub().returns(this.stubs.resourcePromise);
+
     module('contentful/test', ($provide) => {
       $provide.removeControllers('DisplayedFieldsController');
 
@@ -37,6 +55,14 @@ describe('Entry List Controller', () => {
       $provide.value('TheLocaleStore', {
         resetWithSpace: sinon.stub(),
         getDefaultLocale: sinon.stub().returns({internal_code: 'en-US'})
+      });
+
+      $provide.value('services/ResourceService', {
+        default: () => {
+          return {
+            get: this.stubs.resourceService_get
+          };
+        }
       });
 
       const readStub = this.readStub = sinon.stub();
@@ -383,6 +409,30 @@ describe('Entry List Controller', () => {
       entriesResponse.resolve({total: 0});
       this.$apply();
       expect(scope.hasArchivedEntries).toBe(false);
+    });
+  });
+
+  describe('Disabling entry button', function () {
+    it('should set disableButton to false if the resource usage has not reached the limit', async function () {
+      await this.stubs.resourcePromise;
+
+      // We wait in this and the next tests due to debouncing the function that sets the disableButton state
+      await this.wait(0);
+
+      expect(scope.disableButton).toBe(false);
+    });
+
+    it('should set disableButton to true if the resource usage has reached the limit', async function () {
+      this.resource.usage = 10;
+
+      // Call getTotal to refetch resource
+      scope.paginator.getTotal();
+      scope.$apply();
+
+      await this.stubs.resourcePromise;
+      await this.wait(0);
+
+      expect(scope.disableButton).toBe(true);
     });
   });
 });

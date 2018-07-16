@@ -23,6 +23,7 @@ const CreateEntryButton = createReactClass({
     onSelect: PropTypes.func.isRequired,
     size: PropTypes.oneOf([Size.Large, Size.Normal]),
     style: PropTypes.oneOf([Style.Button, Style.Link]),
+    disabled: PropTypes.bool.isRequired,
     text: PropTypes.string
   },
   getDefaultProps () {
@@ -79,7 +80,8 @@ const CreateEntryButton = createReactClass({
     );
   },
   renderButton () {
-    const { contentTypes, size } = this.props;
+    const { contentTypes, size, disabled } = this.props;
+
     const className = cn('btn-action', 'u-truncate', {
       'x--block': size === Size.Large
     });
@@ -89,6 +91,7 @@ const CreateEntryButton = createReactClass({
         className={className}
         onClick={this.handleClick}
         data-test-id="cta"
+        disabled={disabled}
       >
         {this.getCtaText()}
         {contentTypes.length > 1 && (
@@ -168,8 +171,8 @@ const CreateEntryButton = createReactClass({
   }
 });
 
-export default enhanceWithClickOutside(CreateEntryButton);
-
 function isPromise (value) {
   return value && typeof value.then === 'function';
 }
+
+export default enhanceWithClickOutside(CreateEntryButton);

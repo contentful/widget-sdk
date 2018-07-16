@@ -16,6 +16,8 @@ angular.module('contentful')
   var TheLocaleStore = require('TheLocaleStore');
   var entityCreator = require('entityCreator');
   var $state = require('$state');
+  var ResourceUtils = require('utils/ResourceUtils');
+  var EnvironmentUtils = require('utils/EnvironmentUtils');
 
   var searchController = $controller('AssetSearchController', { $scope: $scope });
 
@@ -48,6 +50,11 @@ angular.module('contentful')
   $scope.getAssetDimensions = getAssetDimensions;
   $scope.paginator = searchController.paginator;
 
+  const organization = spaceContext.organizationContext.organization;
+
+  $scope.isLegacyOrganization = ResourceUtils.isLegacyOrganization(organization);
+  $scope.isInsideMasterEnv = EnvironmentUtils.isInsideMasterEnv(spaceContext);
+
   $scope.newAsset = () => {
     entityCreator.newAsset().then(asset => {
       // X.list -> X.detail
@@ -55,8 +62,19 @@ angular.module('contentful')
     });
   };
 
+  // These are the props that are sent to the RecordsResourceUsage component
+  var resetUsageProps = debounce(() => {
+    $scope.usageProps = {
+      space: spaceContext.space.data,
+      currentTotal: $scope.paginator.getTotal()
+    };
+  });
+
+  resetUsageProps();
+
   var debouncedResetAssets = debounce(() => {
     searchController.resetAssets();
+    resetUsageProps();
   }, 3000);
 
   $scope.$watch('paginator.getTotal()', debouncedResetAssets);
