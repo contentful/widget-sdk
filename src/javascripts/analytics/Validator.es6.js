@@ -73,6 +73,9 @@ export const validEvents = {
     'edit_entry',
     'toggle_inline_editor'
   ],
+  markdown_editor: [
+    'action'
+  ],
   reference_editor_action: [
     'create',
     'edit',

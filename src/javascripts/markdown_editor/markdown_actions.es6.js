@@ -36,7 +36,13 @@ export function create (editor, locale, defaultLocaleCode, {zen}) {
   return mapValues(
     defaults(advancedActions, editor.actions),
     (handler, action) => (...args) => {
-      console.log(`${action} action (zen mode ${!!zen})`);
+      track(
+        'markdown_editor:action',
+        {
+          action,
+          zen: !!zen
+        }
+      );
       return handler(...args);
     }
   );

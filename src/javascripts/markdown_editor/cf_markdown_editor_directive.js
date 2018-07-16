@@ -19,6 +19,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
   var isRtlLocale = require('utils/locales').isRtlLocale;
   var K = require('utils/kefir');
   var LD = require('utils/LaunchDarkly');
+  var Analytics = require('analytics/Analytics');
 
   return {
     restrict: 'E',
@@ -75,7 +76,13 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
       });
 
       function toggleMinorActions () {
-        console.log('showMinorActions (', !!scope.minorActionsShown, ') (zen mode ', !!scope.zen, ')');
+        Analytics.track(
+          'markdown_editor:action',
+          {
+            action: 'toggleMinorActions',
+            value: !!scope.minorActionsShown
+          }
+        );
         scope.minorActionsShown = !scope.minorActionsShown;
       }
 
@@ -221,7 +228,13 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
 
       function toggleZenMode () {
         scope.zen = !scope.zen;
-        console.log('toggleZenMode action (', scope.zen, ')');
+        Analytics.track(
+          'markdown_editor:action',
+          {
+            action: 'toggleZenMode',
+            value: !!scope.zen
+          }
+        );
 
         if (scope.zen) {
           // hide leftovers from the previous screen
