@@ -27,7 +27,7 @@ div(ng-if="hasCrashed")
       cf-markdown-action(actions="actions" name="link"   is-disabled="!canEdit()")
 
       button.toolbar-button.markdown-more-actions.fa.fa-ellipsis-h(
-        ng-click="minorActionsShown = !minorActionsShown"
+        ng-click="toggleMinorActions()"
         tabindex="-1"
         tooltip="More actions…"
         ng-class="{'active': minorActionsShown}"

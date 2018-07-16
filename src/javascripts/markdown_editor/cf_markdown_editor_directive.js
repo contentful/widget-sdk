@@ -40,6 +40,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
       scope.setMode = setMode;
       scope.inMode = inMode;
       scope.canEdit = canEdit;
+      scope.toggleMinorActions = toggleMinorActions;
 
       // By default, the markdown editor should be displayed as LTR unless the
       // RTL support feature flag is enabled.
@@ -72,6 +73,11 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
           initEditorOrRenderError();
         }
       });
+
+      function toggleMinorActions () {
+        console.log('showMinorActions (', !!scope.minorActionsShown, ')');
+        scope.minorActionsShown = !scope.minorActionsShown;
+      }
 
       function initEditorOrRenderError () {
         try {
@@ -215,6 +221,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
 
       function toggleZenMode () {
         scope.zen = !scope.zen;
+        console.log('toggleZenMode action (', scope.zen, ')');
 
         if (scope.zen) {
           // hide leftovers from the previous screen
