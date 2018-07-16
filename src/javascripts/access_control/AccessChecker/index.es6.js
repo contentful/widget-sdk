@@ -428,7 +428,7 @@ function collectSectionVisibility () {
     roles: !shouldHide('updateSettings'),
     environments: can('manage', 'Environments'),
     usage: !shouldHide('updateSettings'),
-    preview: !shouldHide('updateSettings'),
+    previews: !shouldHide('updateSettings'),
     webhooks: !shouldHide('updateSettings'),
     spaceHome: get(space, 'spaceMembership.admin')
   };
