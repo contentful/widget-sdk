@@ -29,11 +29,31 @@ angular.module('contentful')
       });
 
       function canNavigateTo (section) {
+        if (spaceContext.getEnvironmentId() !== 'master' && isSpaceSettingsSection(section)) {
+          return false;
+        }
+
         var sectionAvailable = accessChecker.getSectionVisibility()[section];
         var enforcements = spaceContext.getData('enforcements') || [];
         var isHibernated = enforcements.some(e => e.reason === 'hibernated');
 
         return spaceContext.space && !isHibernated && sectionAvailable;
+      }
+
+      // We don't want to display the following sections within the context of
+      // a sandbox space environment.
+      function isSpaceSettingsSection(section) {
+        var spaceSettingsSections = [
+          'settings',
+          'users',
+          'roles',
+          'apiKey',
+          'webhooks',
+          'previews',
+          'usage'
+        ];
+
+        return spaceSettingsSections.includes(section);
       }
     }]
   });
