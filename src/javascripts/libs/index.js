@@ -36,6 +36,7 @@ window.libs = [
   ['is-hotkey', require('is-hotkey')],
   ['slate', require('slate')],
   ['slate-react', require('slate-react')],
+  ['@contentful/contentful-slatejs-adapter', require('@contentful/contentful-slatejs-adapter')],
   ['qs', require('qs')],
   ['react-tippy', require('react-tippy')],
   ['color', require('color')],

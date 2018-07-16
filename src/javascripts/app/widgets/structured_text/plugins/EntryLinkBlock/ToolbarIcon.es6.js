@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { ENTRY_LINK, PARAGRAPH } from '../../constants/Blocks';
+import { ENTRY_LINK } from '../../constants/Blocks';
 import ToolbarIcon from '../shared/ToolbarIcon';
 import { haveBlocks } from '../shared/UtilHave';
 
@@ -37,7 +37,9 @@ export default class EntryLinkToolbarIcon extends Component {
 
       const { change } = this.props;
 
-      change.setBlocks(PARAGRAPH).insertBlock(linkedEntryBlock);
+      change
+        .insertBlock(linkedEntryBlock)
+        .collapseToStartOfNextBlock();
 
       this.props.onToggle(change);
     } catch (error) {

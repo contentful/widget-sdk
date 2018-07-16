@@ -6,6 +6,7 @@
   "bin": {},
   "directories": {},
   "dependencies": {
+    "@contentful/contentful-slatejs-adapter": "1.1.1",
     "@contentful/field-editors": "^1.0.0",
     "@contentful/hostname-transformer": "^1.2.7",
     "@contentful/mimetype": "^1.0.1",

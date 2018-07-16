@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { Editor } from 'slate-react';
 import { Value, Schema } from 'slate';
 
+import { toSlatejsDocument, toContentfulDocument } from '@contentful/contentful-slatejs-adapter';
+
 import Bold, { BoldPlugin } from './plugins/Bold';
 import Italic, { ItalicPlugin } from './plugins/Italic';
 import Underlined, { UnderlinedPlugin } from './plugins/Underlined';
@@ -26,6 +28,7 @@ const plugins = [
 ];
 
 const schema = Schema.fromJSON(schemaJson);
+
 
 const initialValue = Value.fromJSON({
   document: {
@@ -54,12 +57,19 @@ export default class StructuredTextEditor extends React.Component {
   };
   state = {
     value:
-      this.props.field.getValue() && this.props.field.getValue().document
-        ? Value.fromJSON(this.props.field.getValue())
+      this.props.field.getValue() &&
+      this.props.field.getValue().category === 'document'
+        ? Value.fromJSON({
+          object: 'value',
+          document: toSlatejsDocument(this.props.field.getValue())
+        })
         : initialValue
   };
   onChange = ({ value }) => {
-    this.props.field.setValue(value.toJSON());
+    /* eslint no-console: off */
+    this.props.field.setValue(toContentfulDocument(value.toJSON().document));
+    console.log('Slate: ', value.toJSON());
+    console.log('Contentful: ', this.props.field.getValue());
     this.setState({ value });
   };
   render () {
