@@ -31,7 +31,7 @@ export function resources (state = {}, action) {
     case actions.RESOURCE_FAILURE:
       return setCurrentResourceState({ error: action.error });
     case actions.RESOURCE_SUCCESS:
-      return setCurrentResourceState({ resource: action.resource });
+      return setCurrentResourceState({ value: action.value });
     default:
       return state;
   }

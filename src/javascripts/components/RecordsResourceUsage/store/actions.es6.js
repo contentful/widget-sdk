@@ -27,11 +27,11 @@ export function resourceFailure (spaceId, resourceName, error) {
 }
 
 export const RESOURCE_SUCCESS = 'RESOURCE/SUCCESS';
-export function resourceSuccess (spaceId, resourceName, resource) {
+export function resourceSuccess (spaceId, resourceName, value) {
   return {
     type: RESOURCE_SUCCESS,
     spaceId,
     resourceName,
-    resource
+    value
   };
 }

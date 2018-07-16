@@ -47,7 +47,7 @@ export class RecordsResourceUsage extends React.Component {
       return null;
     }
 
-    return resourceMeta.resource;
+    return resourceMeta.value;
   }
 
   upgradeSpace () {

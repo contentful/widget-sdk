@@ -19,7 +19,7 @@ describe('RecordsResourceUsage', function () {
       space_1234: {
         record: {
           isPending: false,
-          resource: {
+          value: {
             limits: {
               maximum: 10
             },
@@ -75,14 +75,14 @@ describe('RecordsResourceUsage', function () {
   });
 
   it('should add the resource-usage--warn class if near the limit', function () {
-    this.resources.space_1234.record.resource.usage = 9;
+    this.resources.space_1234.record.value.usage = 9;
     const component = this.render(true);
 
     expect(component.first().hasClass('resource-usage--warn')).toBe(true);
   });
 
   it('should add the resource-usage--danger class if at the limit', function () {
-    this.resources.space_1234.record.resource.usage = 10;
+    this.resources.space_1234.record.value.usage = 10;
     const component = this.render(true);
 
     expect(component.first().hasClass('resource-usage--danger')).toBe(true);
