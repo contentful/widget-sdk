@@ -17,7 +17,10 @@ import spaceContext from 'spaceContext';
 import { getCreator as getTemplateCreator } from 'services/SpaceTemplateCreator';
 import { getTemplatesList, getTemplate } from 'services/SpaceTemplateLoader';
 import { canCreate } from 'utils/ResourceUtils';
+<<<<<<< HEAD
 import { createTrackingData } from '../WizardUtils';
+=======
+>>>>>>> DRY Space Wizard action creators
 import { getIncludedResources } from 'components/shared/space-wizard/WizardUtils';
 
 import * as actions from './actions';
