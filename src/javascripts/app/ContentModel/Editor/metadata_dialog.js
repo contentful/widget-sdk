@@ -209,7 +209,7 @@ angular.module('contentful')
     onChange: (e) => {
       newContentTypeFormState.idFieldTouched = true;
       newContentTypeFormState.pristine = false;
-      $scope.contentTypeMetadata.id = stringUtils.toIdentifier(e.target.value);
+      $scope.contentTypeMetadata.id = e.target.value;
       newContentTypeFormState.idFieldRequiredMessage =
         validateRequiredField($scope.contentTypeMetadata.id, 'Api key is required', 'apiIdRequired');
     },
