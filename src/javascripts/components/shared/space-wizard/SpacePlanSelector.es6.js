@@ -6,11 +6,13 @@ import {isOwner} from 'services/OrganizationRoles';
 import {go} from 'states/Navigator';
 import spinner from 'ui/Components/Spinner';
 import {asReact} from 'ui/Framework/DOMRenderer';
-import {resourceHumanNameMap, getStoreResources} from 'utils/ResourceUtils';
+import { getStoreResources } from 'utils/ResourceUtils';
+import { getRecommendedPlan } from './WizardUtils';
 
 import SpacePlanItem from './SpacePlanItem';
 import BillingInfo from './BillingInfo';
 import NoMorePlans from './NoMorePlans';
+import ExplainRecommendation from './ExplainRecommendation';
 
 const SpacePlanSelector = createReactClass({
   propTypes: {
@@ -75,6 +77,14 @@ const SpacePlanSelector = createReactClass({
           }
           { atHighestPlan &&
             <NoMorePlans canSetupBilling={isOwner(organization)} />
+          }
+          {
+            recommendedPlan &&
+            <ExplainRecommendation
+              currentPlan={currentPlan}
+              recommendedPlan={recommendedPlan}
+              resources={resources}
+            />
           }
           <h2 className="create-space-wizard__heading">
             Choose the space type
@@ -154,32 +164,6 @@ function getCurrentPlan (spaceRatePlans) {
 
 function getHighestPlan (spaceRatePlans) {
   return spaceRatePlans.slice().sort((planX, planY) => planY.price >= planX.price)[0];
-}
-
-function getRecommendedPlan (spaceRatePlans, resources) {
-  // Valid plans are only ones that have no unavailablilty reasons
-  const validPlans = spaceRatePlans.filter(plan => !get(plan, 'unavailabilityReasons'));
-
-  function planFulfillsResources (plan, resources) {
-    const planIncludedResources = plan.includedResources;
-
-    return resources.reduce((doesFulfill, resource) => {
-      const mappedId = resourceHumanNameMap[get(resource, 'sys.id')];
-      const includedResource = planIncludedResources.find(r => r.type === mappedId);
-
-      if (!includedResource) {
-        return doesFulfill;
-      } else {
-        if (includedResource.number <= resource.usage) {
-          return false;
-        } else {
-          return doesFulfill;
-        }
-      }
-    }, true);
-  }
-
-  return validPlans.find(plan => planFulfillsResources(plan, resources));
 }
 
 export default SpacePlanSelector;
