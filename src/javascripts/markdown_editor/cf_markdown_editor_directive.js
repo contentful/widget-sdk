@@ -80,7 +80,8 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
           'markdown_editor:action',
           {
             action: 'toggleMinorActions',
-            value: !!scope.minorActionsShown
+            value: !!scope.minorActionsShown,
+            zen: !!scope.zen
           }
         );
         scope.minorActionsShown = !scope.minorActionsShown;
