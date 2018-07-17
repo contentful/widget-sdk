@@ -40,7 +40,8 @@ angular.module('contentful')
 
   function spaceAndTokenWatchHandler (collection) {
     if (collection.tokenLookup) {
-      authorization.setTokenLookup(collection.tokenLookup);
+      authorization.setTokenLookup(collection.tokenLookup, null, spaceContext.getEnvironmentId());
+
       if (collection.space && authorization.authContext && authorization.authContext.hasSpace(collection.space.getId())) {
         authorization.setSpace(collection.space);
       }

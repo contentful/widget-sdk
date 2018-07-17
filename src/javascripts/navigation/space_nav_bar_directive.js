@@ -29,17 +29,37 @@ angular.module('contentful')
       });
 
       function canNavigateTo (section) {
+        if (spaceContext.getEnvironmentId() !== 'master' && isSpaceSettingsSection(section)) {
+          return false;
+        }
+
         var sectionAvailable = accessChecker.getSectionVisibility()[section];
         var enforcements = spaceContext.getData('enforcements') || [];
         var isHibernated = enforcements.some(e => e.reason === 'hibernated');
 
         return spaceContext.space && !isHibernated && sectionAvailable;
       }
+
+      // We don't want to display the following sections within the context of
+      // a sandbox space environment.
+      function isSpaceSettingsSection (section) {
+        var spaceSettingsSections = [
+          'settings',
+          'users',
+          'roles',
+          'apiKey',
+          'webhooks',
+          'previews',
+          'usage'
+        ];
+
+        return spaceSettingsSections.includes(section);
+      }
     }]
   });
 }])
 
-.directive('cfSpaceNavBar', ['makeNavBar', makeNavBar => makeNavBar(false)])
+.directive('cfSpaceNavBar', ['makeNavBar', makeNavBar => makeNavBar(false, true)])
 
 .directive('cfSpaceEnvNavBar', ['makeNavBar', makeNavBar => makeNavBar(true)])
 
@@ -48,13 +68,14 @@ angular.module('contentful')
 .directive('cfSpaceNavBarWrapped', ['require', require => {
   var LD = require('utils/LaunchDarkly');
   var spaceContext = require('spaceContext');
+  var accessChecker = require('access_control/AccessChecker');
 
   return {
     scope: {},
     restrict: 'E',
     controller: ['$scope', $scope => {
-      $scope.$watch(() => !!spaceContext.getData(['spaceMembership', 'admin']), isAdmin => {
-        $scope.isAdmin = isAdmin;
+      $scope.$watch(() => accessChecker.can('manage', 'Environments'), canManageEnvironments => {
+        $scope.canManageEnvironments = canManageEnvironments;
       });
 
       LD.onFeatureFlag($scope, 'feature-dv-11-2017-environments', environmentsEnabled => {
@@ -66,9 +87,9 @@ angular.module('contentful')
       });
     }],
     template: [
-      '<cf-space-master-nav-bar ng-if=" isAdmin &&  environmentsEnabled &&  isMaster" />',
-      '<cf-space-env-nav-bar    ng-if=" isAdmin &&  environmentsEnabled && !isMaster" />',
-      '<cf-space-nav-bar        ng-if="!isAdmin || !environmentsEnabled             " />'
+      '<cf-space-master-nav-bar ng-if=" canManageEnvironments &&  environmentsEnabled &&  isMaster" />',
+      '<cf-space-env-nav-bar    ng-if=" canManageEnvironments &&  environmentsEnabled && !isMaster" />',
+      '<cf-space-nav-bar        ng-if="!canManageEnvironments || !environmentsEnabled             " />'
     ].join('')
   };
 }]);

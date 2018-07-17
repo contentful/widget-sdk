@@ -2,6 +2,7 @@ import { h } from 'utils/hyperscript';
 import { getStore } from 'TheStore';
 import sectionAccess from 'sectionAccess';
 import * as Analytics from 'analytics/Analytics';
+import * as accessChecker from 'access_control/AccessChecker';
 
 import contentTypes from './contentTypes';
 import entries from './entries';
@@ -47,7 +48,7 @@ const spaceEnvironment = {
     'content@': {
       template: '<div />',
       controller: ['spaceData', '$state', (spaceData, $state) => {
-        if (!spaceData.spaceMembership.admin) {
+        if (!accessChecker.can('manage', 'Environments')) {
           $state.go('spaces.detail', null, {reload: true});
         } else if (isHibernated(spaceData)) {
           $state.go('spaces.detail.hibernation', null, {reload: true});

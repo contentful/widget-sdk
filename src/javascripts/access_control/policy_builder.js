@@ -248,7 +248,7 @@ angular.module('contentful').factory('PolicyBuilder/toExternal', ['require', req
       name: internal.name,
       description: internal.description,
       policies: translatePolicies(internal),
-      permissions: _.pick(internal, ['contentModel', 'contentDelivery', 'settings'])
+      permissions: _.pick(internal, ['contentModel', 'contentDelivery', 'settings', 'environments'])
     };
   };
 

@@ -5,13 +5,15 @@ angular.module('contentful').factory('RoleRepository', [() => {
   var AVAILABLE_PERMISSIONS = {
     ContentModel: ['read', 'manage'],
     ContentDelivery: ['read', 'manage'],
-    Settings: ['manage']
+    Settings: ['manage'],
+    Environments: ['manage']
   };
 
   var PERMISSION_GROUP_NAME_MAP = {
     ContentModel: 'contentModel',
     ContentDelivery: 'contentDelivery',
-    Settings: 'settings'
+    Settings: 'settings',
+    Environments: 'environments'
   };
 
   return {
@@ -84,7 +86,8 @@ angular.module('contentful').factory('RoleRepository', [() => {
       permissions: {
         ContentModel: ['read'],
         ContentDelivery: [],
-        Settings: []
+        Settings: [],
+        Environments: []
       }
     });
   }

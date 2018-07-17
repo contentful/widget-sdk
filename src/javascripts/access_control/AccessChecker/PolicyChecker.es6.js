@@ -11,17 +11,22 @@ const policies = {
 };
 
 let isAdmin = false;
+let isEnvironmentManager = false;
 let fieldAccessCache = {};
 
 export const canAccessEntries = () => policies.entry.allowed.flat.length > 0;
 export const canAccessAssets = () => policies.asset.allowed.length > 0;
 
-export function setMembership (membership) {
+export function setMembership (membership, spaceAuthContext) {
   const internals = get(membership, 'roles', [])
     .map((role) => role && PolicyBuilder.toInternal(role))
     .filter(identity);
 
   isAdmin = get(membership, 'admin', false);
+
+  // Within a sandbox space environment all fields are freely editable. So if the space
+  // environment is anything other than 'master', we allow them to edit.
+  isEnvironmentManager = !get(spaceAuthContext, ['environment', 'sys', 'isMaster'], isAdmin);
   fieldAccessCache = {};
 
   policies.entry.allowed.flat = reduceInternals(internals, 'entries.allowed');
@@ -57,7 +62,7 @@ export function canEditFieldLocale (contentTypeId, field, locale) {
   const hasAllowing = checkPolicyCollectionForPath(allowed, fieldId, localeCode);
   const hasDenying = checkPolicyCollectionForPath(denied, fieldId, localeCode);
 
-  const result = isAdmin || (hasAllowing && !hasDenying);
+  const result = isAdmin || isEnvironmentManager || (hasAllowing && !hasDenying);
   cacheResult(contentTypeId, fieldId, localeCode, result);
   return result;
 }

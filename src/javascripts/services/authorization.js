@@ -11,10 +11,17 @@ angular.module('contentful')
   Authorization.prototype = {
     authContext: null,
     spaceContext: null,
-    setTokenLookup: function (tokenLookup, space) {
+    setTokenLookup: function (tokenLookup, space, environmentId) {
       this._tokenLookup = tokenLookup;
       try {
-        this.authContext = worf(tokenLookup);
+        var worfEnvironment = {
+          sys: {
+            id: environmentId,
+            isMaster: environmentId === 'master'
+          }
+        };
+
+        this.authContext = worf(tokenLookup, worfEnvironment);
       } catch (exp) {
         logger.logError('Worf initialization exception', {
           data: {

@@ -13,7 +13,8 @@ describe('cfNavSidepanel directive', () => {
   const accessChecker = {
     canCreateSpaceInOrganization: sinon.stub(),
     canCreateOrganization: sinon.stub(),
-    isInitialized$: K.createMockProperty(true)
+    isInitialized$: K.createMockProperty(true),
+    can: sinon.stub().withArgs('manage', 'Environment').returns(true)
   };
 
   const OrganizationRoles = {

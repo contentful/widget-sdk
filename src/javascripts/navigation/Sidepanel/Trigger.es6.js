@@ -12,6 +12,7 @@ import hamburger from 'svg/hamburger';
 
 import { navState$, NavStates } from 'navigation/NavState';
 import * as TokenStore from 'services/TokenStore';
+import * as accessChecker from 'access_control/AccessChecker';
 
 const Trigger = createReactClass({
   componentWillMount () {
@@ -51,9 +52,10 @@ export default function () {
 function renderContent ({ navState, showOrganization }) {
   return caseof(navState, [
     [NavStates.Space, ({ space, env, org, availableEnvironments }) => {
-      const showEnvironments =
-        space.spaceMembership.admin &&
-        availableEnvironments && availableEnvironments.length > 1;
+      const canManageEnvs = accessChecker.can('manage', 'Environments');
+      const hasManyEnvs = (availableEnvironments || []).length > 1;
+      const showEnvironments = canManageEnvs && hasManyEnvs;
+
       return [
         showOrganization && organizationName(org.name),
         stateTitle(space.name),

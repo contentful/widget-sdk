@@ -11,14 +11,14 @@ export default function spaceNavTemplate (useSpaceEnv, isMaster) {
 
   const dropdownItems = {
     locales: {
-      if: 'nav.canNavigateTo("settings")',
+      if: 'nav.canNavigateTo("locales")',
       sref: makeRef('settings.locales.list'),
       rootSref: makeRef('settings.locales'),
       dataViewType: 'spaces-settings-locales',
       title: 'Locales'
     },
     extensions: {
-      if: 'nav.canNavigateTo("settings")',
+      if: 'nav.canNavigateTo("extensions")',
       sref: makeRef('settings.extensions'),
       dataViewType: 'spaces-settings-extensions',
       title: 'Extensions'
@@ -30,21 +30,21 @@ export default function spaceNavTemplate (useSpaceEnv, isMaster) {
       title: 'General settings'
     },
     users: {
-      if: 'nav.canNavigateTo("settings")',
+      if: 'nav.canNavigateTo("users")',
       sref: makeRef('settings.users.list'),
       rootSref: makeRef('settings.users'),
       dataViewType: 'spaces-settings-users',
       title: 'Users'
     },
     roles: {
-      if: 'nav.canNavigateTo("settings")',
+      if: 'nav.canNavigateTo("roles")',
       sref: makeRef('settings.roles.list'),
       rootSref: makeRef('settings.roles'),
       dataViewType: 'spaces-settings-roles',
       title: 'Roles & permissions'
     },
     environments: {
-      if: 'nav.canNavigateTo("settings")',
+      if: 'nav.canNavigateTo("environments")',
       sref: makeRef('settings.environments'),
       dataViewType: 'spaces-settings-environments',
       title: 'Environments'
@@ -57,14 +57,14 @@ export default function spaceNavTemplate (useSpaceEnv, isMaster) {
       title: 'API keys'
     },
     webhooks: {
-      if: 'nav.canNavigateTo("settings")',
+      if: 'nav.canNavigateTo("webhooks")',
       sref: makeRef('settings.webhooks.list'),
       rootSref: makeRef('settings.webhooks'),
       dataViewType: 'spaces-settings-webhooks',
       title: 'Webhooks'
     },
     previews: {
-      if: 'nav.canNavigateTo("settings")',
+      if: 'nav.canNavigateTo("previews")',
       sref: makeRef('settings.content_preview.list'),
       rootSref: makeRef('settings.content_preview'),
       dataViewType: 'spaces-settings-content-preview',
@@ -72,7 +72,7 @@ export default function spaceNavTemplate (useSpaceEnv, isMaster) {
       reload: useSpaceEnv
     },
     usage: {
-      if: 'nav.usageEnabled && nav.canNavigateTo("settings")',
+      if: 'nav.usageEnabled && nav.canNavigateTo("usage")',
       sref: makeRef('settings.usage'),
       dataViewType: 'spaces-settings-usage',
       title: 'Usage',
@@ -82,6 +82,9 @@ export default function spaceNavTemplate (useSpaceEnv, isMaster) {
 
   const envSettingsDropdown = [
     {
+      // If the user cannot access locales but has manager role, do not show the
+      // environment settings section.
+      if: 'nav.canNavigateTo("locales")',
       separator: true,
       label: 'Environment settings',
       tooltip: 'These settings apply only to the environment you’ve currently selected.'
@@ -154,7 +157,7 @@ export default function spaceNavTemplate (useSpaceEnv, isMaster) {
       title: 'Media'
     },
     {
-      if: 'nav.canNavigateTo("settings") || nav.canNavigateTo("apiKey")',
+      if: 'nav.canNavigateTo("settings") || nav.canNavigateTo("apiKey") || nav.canNavigateTo("environments")',
       dataViewType: 'space-settings',
       rootSref: makeRef('settings'),
       icon: 'nav-settings',

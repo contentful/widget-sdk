@@ -10,7 +10,10 @@ describe('Space nav bar directive', () => {
     });
 
     const $compile = this.$inject('$compile');
-    spaceContext = this.mockService('spaceContext', {space: {}});
+    spaceContext = this.mockService('spaceContext', {
+      space: {},
+      getEnvironmentId: sinon.stub().returns('master')
+    });
     scope = this.$inject('$rootScope').$new();
     accessChecker = this.$inject('access_control/AccessChecker');
     accessChecker.getSectionVisibility = sinon.stub().returns({});
