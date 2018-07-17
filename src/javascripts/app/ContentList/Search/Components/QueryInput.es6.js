@@ -10,6 +10,8 @@ const QueryInput = createReactClass({
     placeholder: PropTypes.string,
     autoFocus: PropTypes.bool,
     isFocused: PropTypes.bool,
+    onFocus: PropTypes.func,
+    onBlur: PropTypes.func,
     value: PropTypes.string,
     onKeyDown: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired
@@ -40,7 +42,9 @@ const QueryInput = createReactClass({
     const {
       placeholder,
       autoFocus,
-      onKeyDown
+      onKeyDown,
+      onFocus,
+      onBlur
     } = this.props;
     const { value } = this.state;
 
@@ -58,6 +62,8 @@ const QueryInput = createReactClass({
         className: 'input-reset search-next__query-input',
         'data-test-id': 'queryInput',
         ref: (input) => { this.inputRef = input; },
+        onFocus,
+        onBlur,
         autoFocus,
         value,
         onKeyDown,

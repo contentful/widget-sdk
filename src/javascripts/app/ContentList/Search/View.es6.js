@@ -61,7 +61,6 @@ export default function render ({
 
   return h('div', {
     hooks: [ H.TrackFocus((value) => actions.SetBoxFocus(value)) ],
-    tabIndex: '0',
     style: {
       height: '40px',
       width: '100%',
