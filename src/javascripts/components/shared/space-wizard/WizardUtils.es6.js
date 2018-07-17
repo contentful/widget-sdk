@@ -14,6 +14,9 @@ export const SpaceResourceTypes = {
   Records: 'Records'
 };
 
+const ERROR_THRESHOLD = 1;
+const WARNING_THRESHOLD = 0.9;
+
 const resourceTooltipPropTypes = {
   number: PropTypes.number.isRequired
 };
@@ -168,10 +171,18 @@ export function getRecommendedPlan (spaceRatePlans, resources) {
   // Valid plans are only ones that have no unavailablilty reasons
   const validPlans = spaceRatePlans.filter(plan => !get(plan, 'unavailabilityReasons'));
 
+  if (validPlans.length === 0) {
+    return null;
+  }
+
   // Find the first plan that has all true fulfillments, e.g. the status is "true" for all of the given fulfillments
   // for a given space rate plan, which means the plan fulfills the given resource usage
-  return validPlans.find(plan => {
+  const recommendedPlan = validPlans.find(plan => {
     const statuses = Object.values(getPlanResourceFulfillment(plan, resources));
+
+    if (statuses.length === 0) {
+      return false;
+    }
 
     return Boolean(statuses.reduce((fulfills, status) => {
       if (status.reached) {
@@ -181,6 +192,12 @@ export function getRecommendedPlan (spaceRatePlans, resources) {
       }
     }), true);
   });
+
+  if (!recommendedPlan) {
+    return null;
+  }
+
+  return recommendedPlan;
 }
 
 /*
@@ -209,7 +226,7 @@ export function getRecommendedPlan (spaceRatePlans, resources) {
   the limit, but would be near it and should be aware during the recommendation process.
 
  */
-export function getPlanResourceFulfillment (plan, spaceResources) {
+export function getPlanResourceFulfillment (plan, spaceResources = []) {
   const planIncludedResources = plan.includedResources;
 
   return planIncludedResources.reduce((fulfillments, planResource) => {
@@ -225,12 +242,12 @@ export function getPlanResourceFulfillment (plan, spaceResources) {
     } else {
       const usagePercentage = spaceResource.usage / planResource.number;
 
-      if (usagePercentage >= 1) {
+      if (usagePercentage >= ERROR_THRESHOLD) {
         fulfillments[planResource.type] = {
           reached: true,
           near: true
         };
-      } else if (usagePercentage >= 0.9) {
+      } else if (usagePercentage >= WARNING_THRESHOLD) {
         fulfillments[planResource.type] = {
           reached: false,
           near: true
