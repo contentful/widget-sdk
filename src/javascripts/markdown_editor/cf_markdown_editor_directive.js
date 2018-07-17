@@ -76,15 +76,17 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
       });
 
       function toggleMinorActions () {
+        const { minorActionsShown, zen } = scope;
+        const newMinorActionsShown = !minorActionsShown;
         Analytics.track(
           'markdown_editor:action',
           {
             action: 'toggleMinorActions',
-            value: !!scope.minorActionsShown,
-            zen: !!scope.zen
+            new_value: newMinorActionsShown,
+            zen: !!zen
           }
         );
-        scope.minorActionsShown = !scope.minorActionsShown;
+        scope.minorActionsShown = newMinorActionsShown;
       }
 
       function initEditorOrRenderError () {
@@ -228,12 +230,14 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
       }
 
       function toggleZenMode () {
-        scope.zen = !scope.zen;
+        const newZen = !scope.zen;
+        scope.zen = newZen;
         Analytics.track(
           'markdown_editor:action',
           {
             action: 'toggleZenMode',
-            value: !!scope.zen
+            new_value: newZen,
+            zen: !newZen
           }
         );
 
