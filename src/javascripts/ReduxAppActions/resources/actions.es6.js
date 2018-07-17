@@ -17,10 +17,10 @@ export function resourcesForSpaceFailure (spaceId, error) {
 }
 
 export const RESOURCES_FOR_SPACE_SUCCESS = 'RESOURCES_FOR_SPACE/SUCCESS';
-export function resourcesForSpaceSuccess (spaceId, resources) {
+export function resourcesForSpaceSuccess (spaceId, value) {
   return {
     type: RESOURCES_FOR_SPACE_SUCCESS,
     spaceId,
-    resources
+    value
   };
 }

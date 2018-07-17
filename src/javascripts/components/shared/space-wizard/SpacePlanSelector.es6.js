@@ -42,11 +42,11 @@ const SpacePlanSelector = createReactClass({
   },
 
   render () {
-    const {organization, space, action, wizardScope, spacePlans, selectedPlan, resources: storeResources} = this.props;
+    const {organization, space, action, wizardScope, spacePlans, selectedPlan, resources: resourcesMeta} = this.props;
     const { spaceRatePlans, freeSpacesResource, isPending } = spacePlans;
 
     const spaceId = space && space.sys.id;
-    const resources = get(getStoreResources(storeResources, spaceId), 'resources');
+    const resources = get(getStoreResources(resourcesMeta, spaceId), 'value');
 
     const changeInSpace = action === 'change' && wizardScope === 'space';
 

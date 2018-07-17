@@ -45,7 +45,7 @@ describe('App Resources action creators', function () {
       this.assertDispatch(1, {
         type: this.actions.RESOURCES_FOR_SPACE_SUCCESS,
         spaceId: this.spaceId,
-        resources: []
+        value: []
       });
       this.assertDispatch(2, {
         type: this.actions.RESOURCES_FOR_SPACE_PENDING,

@@ -18,7 +18,7 @@ export default function resources (state = {}, action) {
     case actions.RESOURCES_FOR_SPACE_FAILURE:
       return setCurrentState({ error: action.error });
     case actions.RESOURCES_FOR_SPACE_SUCCESS:
-      return setCurrentState({ resources: action.resources });
+      return setCurrentState({ value: action.value });
     default:
       return state;
   }
