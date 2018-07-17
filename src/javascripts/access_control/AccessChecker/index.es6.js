@@ -417,7 +417,7 @@ function collectResponses () {
 
 function collectSectionVisibility () {
   sectionVisibility = {
-    contentType: !shouldHide('updateContentType') || !shouldHide('readApiKey'),
+    contentType: can('manage', 'ContentType') || !shouldHide('readApiKey'),
     entry: !shouldHide('readEntry') || policyChecker.canAccessEntries(),
     asset: !shouldHide('readAsset') || policyChecker.canAccessAssets(),
     apiKey: !shouldHide('readApiKey'),
