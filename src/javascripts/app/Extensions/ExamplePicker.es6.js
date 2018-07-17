@@ -26,6 +26,11 @@ const EXAMPLES = [
     url: 'https://github.com/contentful/extensions/blob/master/samples/shopify'
   },
   {
+    name: 'Marketo Forms',
+    description: 'Adds the ability to get all the Marketo provided context of your forms into your Contentful entry.',
+    url: 'https://github.com/contentful/extensions/blob/master/samples/marketo-forms'
+  },
+  {
     name: 'Diff',
     description: 'Renders a diff of draft and published values below a field.',
     url: 'https://github.com/contentful/extensions/blob/master/samples/diff'
