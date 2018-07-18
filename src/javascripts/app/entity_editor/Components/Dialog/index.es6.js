@@ -34,7 +34,7 @@ class Dialog extends React.Component {
 class Header extends React.Component {
   static propTypes = {
     children: PropTypes.node,
-    onCloseButtonClicked: PropTypes.bool
+    onCloseButtonClicked: PropTypes.func
   };
 
   render () {
