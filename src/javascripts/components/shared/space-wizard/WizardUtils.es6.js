@@ -14,7 +14,10 @@ export const SpaceResourceTypes = {
   Records: 'Records'
 };
 
+// Threshold for usage limit displaying/causing an error (100% usage e.g. limit reached)
 const ERROR_THRESHOLD = 1;
+
+// Threshold for usage limit displaying a warning (80% usage, e.g. near limit)
 const WARNING_THRESHOLD = 0.8;
 
 const resourceTooltipPropTypes = {
@@ -163,15 +166,11 @@ export function getFieldErrors (error) {
   Returns the plan that would fulfill your resource usage, given a set of space rate plans and
   the current space resources (usage/limits).
  */
-export function getRecommendedPlan (spaceRatePlans, resources) {
-  if (!resources) {
-    return null;
-  }
-
+export function getRecommendedPlan (spaceRatePlans = [], resources) {
   // Valid plans are only ones that have no unavailablilty reasons
   const validPlans = spaceRatePlans.filter(plan => !get(plan, 'unavailabilityReasons'));
 
-  if (validPlans.length === 0) {
+  if (!resources || validPlans.length === 0) {
     return null;
   }
 
@@ -184,13 +183,7 @@ export function getRecommendedPlan (spaceRatePlans, resources) {
       return false;
     }
 
-    return Boolean(statuses.reduce((fulfills, status) => {
-      if (status.reached) {
-        return false;
-      } else {
-        return fulfills;
-      }
-    }), true);
+    return statuses.reduce((fulfills, {reached}) => fulfills && !reached, true);
   });
 
   if (!recommendedPlan) {
@@ -201,7 +194,7 @@ export function getRecommendedPlan (spaceRatePlans, resources) {
 }
 
 /*
-  Returns the space plan relative esource usage information (resource fulfillment) based on
+  Returns the space plan relative resource usage information (resource fulfillment) based on
   the current resource usage.
 
   Returns an object, keyed by the resource name, which has values that are objects with

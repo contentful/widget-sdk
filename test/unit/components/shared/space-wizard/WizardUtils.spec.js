@@ -236,7 +236,7 @@ describe('WizardUtils', function () {
       });
 
       it('should return the first available plan in the list that fulfills the resource requirements', function () {
-        expect(this.WizardUtils.getRecommendedPlan(this.spaceRatePlans, this.resources)).toEqual(this.spaceRatePlans[2]);
+        expect(this.WizardUtils.getRecommendedPlan(this.spaceRatePlans, this.resources)).toEqual(this.spaceRatePlans[3]);
       });
     });
 

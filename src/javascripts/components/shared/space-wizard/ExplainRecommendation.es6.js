@@ -5,6 +5,7 @@ import { getPlanResourceFulfillment } from './WizardUtils';
 import { joinWithAnd } from 'utils/StringUtils';
 
 export default function ExplainRecommendation ({ currentPlan, recommendedPlan, resources }) {
+  // The fulfillments object describes if the resource is near or has reached a limit
   const fulfillments = getPlanResourceFulfillment(currentPlan, resources);
   const recommendPlanName = recommendedPlan.name;
 
