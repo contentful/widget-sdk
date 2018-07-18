@@ -14,12 +14,20 @@ describe('CreateSpace', () => {
       canCreateSpaceInOrganization: sinon.stub().returns(true)
     };
 
+    this.getSpaceRatePlans = sinon.stub().returns([{
+      productPlanType: 'free_space',
+      productType: 'on_demand'
+    }]);
+
     module('contentful/test', ($provide) => {
       $provide.value('services/TokenStore', {
         getOrganization: this.getOrganization
       });
       $provide.value('utils/LaunchDarkly', {});
       $provide.value('access_control/AccessChecker', this.accessChecker);
+      $provide.value('account/pricing/PricingDataProvider', {
+        getSpaceRatePlans: this.getSpaceRatePlans
+      });
     });
     this.modalDialog = this.$inject('modalDialog');
     this.modalDialog.open = sinon.stub().returns({promise: this.resolve()});
