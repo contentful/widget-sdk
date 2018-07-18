@@ -7,9 +7,9 @@ import { kebabCase } from 'lodash';
 import HelpIcon from 'ui/Components/HelpIcon';
 import Tooltip from 'ui/Components/Tooltip';
 import Icon from 'ui/Components/Icon';
-import { formatPrice, unavailabilityTooltipNode, getTooltip } from './WizardUtils';
+import PlanFeatures from 'components/shared/space-wizard/PlanFeatures';
+import { formatPrice, unavailabilityTooltipNode } from './WizardUtils';
 import { byName as colors } from 'Styles/Colors';
-import pluralize from 'pluralize';
 
 const SpacePlanItem = createReactClass({
   propTypes: {
@@ -61,18 +61,8 @@ const SpacePlanItem = createReactClass({
             </Fragment>
         }
         </div>
-        <ul className="space-plans-list__item__features">
-          {plan.includedResources.map(({type, number}) => {
-            const tooltip = getTooltip(type, number);
-            return <li key={type}>
-              {number + ' '}
-              {tooltip && <Tooltip style={{display: 'inline'}} tooltip={tooltip}>
-                <em className="x--underline">{pluralize(type, number)}</em>
-              </Tooltip>}
-              {!tooltip && pluralize(type, number)}
-            </li>;
-          })}
-        </ul>
+
+        <PlanFeatures resources={plan.includedResources} />
 
         { isPayingOrg && plan.disabled && !isCurrentPlan &&
           <Tooltip
