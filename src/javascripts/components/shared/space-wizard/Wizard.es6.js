@@ -96,7 +96,7 @@ const Wizard = createReactClass({
     resources: PropTypes.object.isRequired,
     currentPlan: PropTypes.object,
     selectedPlan: PropTypes.object,
-    partnershipData: PropTypes.object
+    partnershipMeta: PropTypes.object
   },
 
   componentDidMount () {
@@ -154,7 +154,7 @@ const Wizard = createReactClass({
       spaceCreation,
       spaceChange,
       templates,
-      partnershipData
+      partnershipMeta
     } = this.props;
 
     const steps = getSteps(action);
@@ -219,7 +219,7 @@ const Wizard = createReactClass({
         spaceCreation,
         spaceChange,
         templates,
-        partnershipData
+        partnershipMeta
       };
 
       return (
@@ -295,7 +295,7 @@ const Wizard = createReactClass({
       onSpaceCreated,
       onTemplateCreated,
       onConfirm,
-      partnershipData
+      partnershipMeta
     } = this.props;
 
     const steps = getSteps(action);
@@ -311,7 +311,7 @@ const Wizard = createReactClass({
         onSpaceCreated,
         onTemplateCreated,
         onConfirm,
-        partnershipData
+        partnershipMeta
       });
     } else if (lastStep && action === 'change') {
       changeSpace({ space, selectedPlan, onConfirm });
@@ -354,7 +354,7 @@ const mapStateToProps = state => {
     subscriptionPrice: state.spaceWizard.subscriptionPrice,
     spaceCreation: state.spaceWizard.spaceCreation,
     spaceChange: state.spaceWizard.spaceChange,
-    partnershipData: state.spaceWizard.partnershipData
+    partnershipMeta: state.spaceWizard.partnershipMeta
   };
 };
 

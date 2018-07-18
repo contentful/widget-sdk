@@ -1,13 +1,13 @@
 import * as actions from './actions';
 
-export function partnershipData (state = {}, action) {
+export function partnershipMeta (state = {}, action) {
   switch (action.type) {
     case actions.SPACE_WIZARD_RESET:
       return {};
     case actions.SPACE_PARTNERSHIP:
       return {
         ...state,
-        isPartnership: action.isPartnership
+        isPartnerSpacePlan: action.isPartnerSpacePlan
       };
     case actions.SPACE_PARTNERSHIP_FIELDS:
       return {
