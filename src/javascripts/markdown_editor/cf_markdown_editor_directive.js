@@ -38,6 +38,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
       var editorHeader = el.closest('.workbench-main').siblings('.workbench-header').first();
 
       scope.preview = {};
+      scope.zen = false;
       scope.setMode = setMode;
       scope.inMode = inMode;
       scope.canEdit = canEdit;
