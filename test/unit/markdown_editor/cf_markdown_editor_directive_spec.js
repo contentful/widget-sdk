@@ -139,7 +139,7 @@ describe('cfMarkdownEditor', () => {
         this.analytics.track,
         'markdown_editor:action',
         {
-          action: 'toggleZenMode',
+          action: 'toggleFullscreenMode',
           new_value: true,
           fullscreen: false
         }

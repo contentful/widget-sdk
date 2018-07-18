@@ -6,7 +6,7 @@ import notification from 'notification';
 import entitySelector from 'entitySelector';
 import {defaults, isObject, get, mapValues} from 'lodash';
 import {fileNameToTitle, truncate} from 'stringUtils';
-import {track} from 'analytics/Analytics';
+import {trackMarkdownEditorAction} from 'analytics/MarkdownEditorActions';
 import $state from '$state';
 import * as BulkAssetsCreator from 'services/BulkAssetsCreator';
 
@@ -36,12 +36,9 @@ export function create (editor, locale, defaultLocaleCode, {zen}) {
   return mapValues(
     defaults(advancedActions, editor.actions),
     (handler, action) => (...args) => {
-      track(
-        'markdown_editor:action',
-        {
-          action,
-          fullscreen: !!zen
-        }
+      trackMarkdownEditorAction(
+        action,
+        zen
       );
       return handler(...args);
     }

@@ -19,7 +19,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
   var isRtlLocale = require('utils/locales').isRtlLocale;
   var K = require('utils/kefir');
   var LD = require('utils/LaunchDarkly');
-  var Analytics = require('analytics/Analytics');
+  var {trackMarkdownEditorAction} = require('analytics/MarkdownEditorActions');
 
   return {
     restrict: 'E',
@@ -56,7 +56,9 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
       scope.zenApi = {
         syncToParent: syncFromChildToParent,
         registerChild: registerChildEditor,
-        getParent: function () { return editor; },
+        getParent: function () {
+          return editor;
+        },
         getLocale: _.constant(field.locale),
         toggle: toggleZenMode
       };
@@ -77,14 +79,13 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
       });
 
       function toggleMinorActions () {
-        const { minorActionsShown, zen } = scope;
+        const {minorActionsShown, zen} = scope;
         const newMinorActionsShown = !minorActionsShown;
-        Analytics.track(
-          'markdown_editor:action',
+        trackMarkdownEditorAction(
+          'toggleMinorActions',
+          zen,
           {
-            action: 'toggleMinorActions',
-            new_value: newMinorActionsShown,
-            fullscreen: !!zen
+            new_value: newMinorActionsShown
           }
         );
         scope.minorActionsShown = newMinorActionsShown;
@@ -154,7 +155,9 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
         scope.isDisabled = isDisabled;
         if (isDisabled) {
           setMode('preview');
-          if (scope.zen) { scope.zenApi.toggle(); }
+          if (scope.zen) {
+            scope.zenApi.toggle();
+          }
         } else {
           setMode('md');
         }
@@ -193,7 +196,9 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
         }
 
         if (nextMode === currentMode) {
-          if (currentMode === 'md') { setAutoHeight(); }
+          if (currentMode === 'md') {
+            setAutoHeight();
+          }
           return;
         } else {
           currentMode = nextMode;
@@ -222,7 +227,9 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
       function syncFromChildToParent (value) {
         // it only changes field value
         // main editor will be updated when leaving Zen Mode
-        if (childEditor) { field.setValue(value); }
+        if (childEditor) {
+          field.setValue(value);
+        }
       }
 
       function registerChildEditor (editor) {
@@ -233,12 +240,11 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
       function toggleZenMode () {
         const newZen = !scope.zen;
         scope.zen = newZen;
-        Analytics.track(
-          'markdown_editor:action',
+        trackMarkdownEditorAction(
+          'toggleFullscreenMode',
+          !newZen,
           {
-            action: 'toggleFullscreenMode',
-            new_value: newZen,
-            fullscreen: !newZen
+            new_value: newZen
           }
         );
 
