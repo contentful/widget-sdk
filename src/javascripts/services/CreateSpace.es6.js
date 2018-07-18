@@ -61,7 +61,9 @@ export async function showDialog (organizationId) {
       };
       modalDialog.open({
         template: '<react-component name="components/shared/enterprise-space-wizard/EnterpriseSpaceWizard" class="modal-background" props="modalProps"></react-component>',
-        scopeData: {modalProps}
+        scopeData: {modalProps},
+        backgroundClose: false,
+        persistOnNavigation: true
       });
     } else {
       modalDialog.open({

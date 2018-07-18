@@ -56,6 +56,10 @@ class EnterpriseSpaceWizard extends React.Component {
     this.props.setNewSpaceName(name);
   }
 
+  close () {
+    this.props.scope.dialog.destroy();
+  }
+
   async handleSubmit () {
     this.validateName(get(this.props, 'newSpaceMeta.name'));
 
@@ -71,7 +75,7 @@ class EnterpriseSpaceWizard extends React.Component {
       onSpaceCreated: this.handleSpaceCreated,
       onTemplateCreated: () => {},
       onConfirm: () => {
-        this.props.scope.dialog.destroy();
+        this.close();
         this.props.reset();
       }
     });
@@ -100,7 +104,7 @@ class EnterpriseSpaceWizard extends React.Component {
     const submitted = get(this.props, 'spaceCreation.isPending');
     return (
       <Dialog testId="enterprise-space-creation-dialog" size="large">
-        <Dialog.Header>Create a space</Dialog.Header>
+        <Dialog.Header onCloseButtonClicked={() => this.close()}>Create a space</Dialog.Header>
         <Dialog.Body>
           <Plan plan={this.plan} resources={this.resources} />
           <Note />

@@ -33,13 +33,15 @@ class Dialog extends React.Component {
 
 class Header extends React.Component {
   static propTypes = {
-    children: PropTypes.node
+    children: PropTypes.node,
+    onCloseButtonClicked: PropTypes.bool
   };
 
   render () {
     return (
       <header className="modal-dialog__header" data-test-id="header">
         <h1>{this.props.children}</h1>
+        {this.props.onCloseButtonClicked && <button className="modal-dialog__close" onClick={this.props.onCloseButtonClicked} />}
       </header>
     );
   }
