@@ -8,7 +8,7 @@ describe('markdown actions', function () {
     this.markdownActions = this.$inject('markdown_editor/markdown_actions');
   });
 
-  it('track when editor action is called', function () {
+  it('tracks when editor action is called', function () {
     const editor = {actions: {bold: sinon.spy()}};
     const locale = {};
     const defaultLocaleCode = null;
@@ -29,7 +29,7 @@ describe('markdown actions', function () {
     );
   });
 
-  it('track when advanced action is called', function () {
+  it('tracks when advanced action is called', function () {
     const editor = {actions: {special: sinon.spy()}};
     const locale = {};
     const defaultLocaleCode = null;
