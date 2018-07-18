@@ -6,18 +6,22 @@ describe('markdown actions', function () {
     });
 
     this.markdownActions = this.$inject('markdown_editor/markdown_actions');
+
+    this.createActionsWithStubbedAction = (stubbedAction, zen) => {
+      const editor = {actions: {[stubbedAction]: sinon.spy()}};
+      const locale = {};
+      const defaultLocaleCode = null;
+      return this.markdownActions.create(
+        editor,
+        locale,
+        defaultLocaleCode,
+        {zen}
+      );
+    };
   });
 
   it('tracks when editor action is called', function () {
-    const editor = {actions: {bold: sinon.spy()}};
-    const locale = {};
-    const defaultLocaleCode = null;
-    const actions = this.markdownActions.create(
-      editor,
-      locale,
-      defaultLocaleCode,
-      {fullscreen: false}
-    );
+    const actions = this.createActionsWithStubbedAction('bold', undefined);
     actions.bold();
     sinon.assert.calledOnceWith(
       this.analytics.track,
@@ -30,15 +34,7 @@ describe('markdown actions', function () {
   });
 
   it('tracks when advanced action is called', function () {
-    const editor = {actions: {special: sinon.spy()}};
-    const locale = {};
-    const defaultLocaleCode = null;
-    const actions = this.markdownActions.create(
-      editor,
-      locale,
-      defaultLocaleCode,
-      {fullscreen: false}
-    );
+    const actions = this.createActionsWithStubbedAction('special', undefined);
     actions.special();
     sinon.assert.calledOnceWith(
       this.analytics.track,
