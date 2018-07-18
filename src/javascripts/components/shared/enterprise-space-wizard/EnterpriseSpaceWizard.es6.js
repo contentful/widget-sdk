@@ -166,7 +166,7 @@ function Note () {
         {`Proof of concept spaces can't be used for production applications.
         You can create as many of them as you wish, and they can be deleteed at any time. `}
         <ContactUsButton noIcon={true} data-test-id='subscription-page.sidebar.contact-link' />
-        to transform a proof of concept space into a production-ready space.
+        {` to transform a proof of concept space into a production-ready space.`}
       </p>
     </div>
   );
