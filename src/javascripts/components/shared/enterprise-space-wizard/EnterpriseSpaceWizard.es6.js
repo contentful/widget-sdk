@@ -93,8 +93,6 @@ class EnterpriseSpaceWizard extends React.Component {
 
     if (!name || !name.length) {
       errorMessage = 'Name is required';
-    } else if (name.length > EnterpriseSpaceWizard.MAX_SPACE_NAME_LENGTH) {
-      errorMessage = `Name should contain no more than ${EnterpriseSpaceWizard.MAX_SPACE_NAME_LENGTH} characters`;
     }
 
     this.setState({errorMessage});
