@@ -1,10 +1,12 @@
 describe('cfMarkdownEditor', () => {
   beforeEach(function () {
+    this.analytics = { track: sinon.spy() };
     module('contentful/test', $provide => {
       $provide.value('TheLocaleStore', {
         getDefaultLocale: () => ({ code: 'some random locale' }),
         getLocales: () => [{ code: 'en-US' }]
       });
+      $provide.value('analytics/Analytics', this.analytics);
     });
 
     this.widgetApi = this.$inject('mocks/widgetApi').create();
@@ -129,6 +131,34 @@ describe('cfMarkdownEditor', () => {
       // wire field set value with getter:
       this.scope.zenApi.toggle();
       sinon.assert.calledOnce(this.editor.setValue.withArgs('ZEN CONTENT'));
+    });
+
+    it('tracks toggling zen mode on', function () {
+      this.scope.zenApi.toggle();
+      sinon.assert.calledOnceWith(
+        this.analytics.track,
+        'markdown_editor:action',
+        {
+          action: 'toggleZenMode',
+          new_value: true,
+          zen: false
+        }
+      );
+    });
+
+    it('tracks toggling zen mode off', function () {
+      this.scope.zenApi.toggle();
+      this.analytics.track.reset();
+      this.scope.zenApi.toggle();
+      sinon.assert.calledOnceWith(
+        this.analytics.track,
+        'markdown_editor:action',
+        {
+          action: 'toggleZenMode',
+          new_value: false,
+          zen: true
+        }
+      );
     });
   });
 });
