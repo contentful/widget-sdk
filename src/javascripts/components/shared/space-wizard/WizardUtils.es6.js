@@ -4,6 +4,8 @@ import { upperFirst, lowerCase, get } from 'lodash';
 import { joinWithAnd } from 'utils/StringUtils';
 import pluralize from 'pluralize';
 
+import { resourceHumanNameMap } from 'utils/ResourceUtils';
+
 export const SpaceResourceTypes = {
   Environments: 'Environments',
   Roles: 'Roles',
@@ -11,6 +13,12 @@ export const SpaceResourceTypes = {
   ContentTypes: 'Content types',
   Records: 'Records'
 };
+
+// Threshold for usage limit displaying/causing an error (100% usage e.g. limit reached)
+const ERROR_THRESHOLD = 1;
+
+// Threshold for usage limit displaying a warning (80% usage, e.g. near limit)
+const WARNING_THRESHOLD = 0.8;
 
 const resourceTooltipPropTypes = {
   number: PropTypes.number.isRequired
@@ -151,5 +159,100 @@ export function getFieldErrors (error) {
     }
     acc[err.path] = message;
     return acc;
+  }, {});
+}
+
+/*
+  Returns the plan that would fulfill your resource usage, given a set of space rate plans and
+  the current space resources (usage/limits).
+ */
+export function getRecommendedPlan (spaceRatePlans = [], resources) {
+  // Valid plans are only ones that have no unavailablilty reasons
+  const validPlans = spaceRatePlans.filter(plan => !get(plan, 'unavailabilityReasons'));
+
+  if (!resources || validPlans.length === 0) {
+    return null;
+  }
+
+  // Find the first plan that has all true fulfillments, e.g. the status is "true" for all of the given fulfillments
+  // for a given space rate plan, which means the plan fulfills the given resource usage
+  const recommendedPlan = validPlans.find(plan => {
+    const statuses = Object.values(getPlanResourceFulfillment(plan, resources));
+
+    if (statuses.length === 0) {
+      return false;
+    }
+
+    return statuses.reduce((fulfills, {reached}) => fulfills && !reached, true);
+  });
+
+  if (!recommendedPlan) {
+    return null;
+  }
+
+  return recommendedPlan;
+}
+
+/*
+  Returns the space plan relative resource usage information (resource fulfillment) based on
+  the current resource usage.
+
+  Returns an object, keyed by the resource name, which has values that are objects with
+  two keys, `reached` and `near`:
+
+  {
+    'Content types': {
+      reached: true,
+      near: true
+    },
+    'Environments': {
+      reached: false,
+      near: true
+    }
+  }
+
+  `reached` denotes that, if the user were to change to this space plan, that they would
+  either be at the limit or over the limit, which means it doesn't make sense to recommend them
+  this space plan.
+
+  `near` denotes that, if the user were to change to this space plan, that they would not be at
+  the limit, but would be near it and should be aware during the recommendation process.
+
+ */
+export function getPlanResourceFulfillment (plan, spaceResources = []) {
+  const planIncludedResources = plan.includedResources;
+
+  return planIncludedResources.reduce((fulfillments, planResource) => {
+    const typeLower = planResource.type.toLowerCase();
+    const spaceResource = spaceResources.find(r => {
+      const mappedId = resourceHumanNameMap[get(r, 'sys.id')].toLowerCase();
+
+      return mappedId === typeLower;
+    });
+
+    if (!spaceResource) {
+      return fulfillments;
+    } else {
+      const usagePercentage = spaceResource.usage / planResource.number;
+
+      if (usagePercentage >= ERROR_THRESHOLD) {
+        fulfillments[planResource.type] = {
+          reached: true,
+          near: true
+        };
+      } else if (usagePercentage >= WARNING_THRESHOLD) {
+        fulfillments[planResource.type] = {
+          reached: false,
+          near: true
+        };
+      } else {
+        fulfillments[planResource.type] = {
+          reached: false,
+          near: false
+        };
+      }
+
+      return fulfillments;
+    }
   }, {});
 }
