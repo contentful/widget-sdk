@@ -8,6 +8,7 @@ import {asReact} from 'ui/Framework/DOMRenderer';
 import {formatPrice} from './WizardUtils';
 import Price from 'ui/Components/Price';
 
+import * as propTypes from './PropTypes';
 import PartnershipForm from './PartnershipForm';
 
 const ConfirmScreen = createReactClass({
@@ -25,7 +26,7 @@ const ConfirmScreen = createReactClass({
     onSubmit: PropTypes.func.isRequired,
     setPartnershipFields: PropTypes.func.isRequired,
     subscriptionPrice: PropTypes.object.isRequired,
-    partnershipMeta: PropTypes.object
+    partnershipMeta: propTypes.partnershipMeta
   },
 
   getInitialState () {

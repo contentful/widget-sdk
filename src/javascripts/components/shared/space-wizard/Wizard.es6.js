@@ -12,6 +12,7 @@ import logger from 'logger';
 
 import { connect } from 'react-redux';
 
+import * as propTypes from './PropTypes';
 import * as actionCreators from './store/actionCreators';
 import * as resourceActionCreators from 'ReduxAppActions/resources/actionCreators';
 
@@ -96,7 +97,7 @@ const Wizard = createReactClass({
     resources: PropTypes.object.isRequired,
     currentPlan: PropTypes.object,
     selectedPlan: PropTypes.object,
-    partnershipMeta: PropTypes.object
+    partnershipMeta: propTypes.partnershipMeta
   },
 
   componentDidMount () {
