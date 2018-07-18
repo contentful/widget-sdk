@@ -96,6 +96,21 @@ describe('cfMarkdownEditor', () => {
       this.scope.zenApi.registerChild(this.editorMock);
     });
 
+    it('sets zen mode as inactive by default', function () {
+      expect(this.scope.zen).toBe(false);
+    });
+
+    it('enters zen mode', function () {
+      this.scope.zenApi.toggle();
+      expect(this.scope.zen).toBe(true);
+    });
+
+    it('exits zen mode', function () {
+      this.scope.zenApi.toggle();
+      this.scope.zenApi.toggle();
+      expect(this.scope.zen).toBe(false);
+    });
+
     it('Allows to register child editor and populates content', function () {
       this.scope.zenApi.registerChild(this.editorMock);
       sinon.assert.calledWith(this.editorMock.setContent, 'test');
