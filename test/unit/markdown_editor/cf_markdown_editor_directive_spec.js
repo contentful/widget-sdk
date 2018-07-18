@@ -1,5 +1,3 @@
-'use strict';
-
 describe('cfMarkdownEditor', () => {
   beforeEach(function () {
     module('contentful/test', $provide => {
