@@ -21,6 +21,19 @@ describe('markdown actions', function () {
   });
 
   it('tracks when editor action is called', function () {
+    const actions = this.createActionsWithStubbedAction('bold', true);
+    actions.bold();
+    sinon.assert.calledOnceWith(
+      this.analytics.track,
+      'markdown_editor:action',
+      {
+        action: 'bold',
+        fullscreen: true
+      }
+    );
+  });
+
+  it('tracks if fullscreen was used', function () {
     const actions = this.createActionsWithStubbedAction('bold', undefined);
     actions.bold();
     sinon.assert.calledOnceWith(
