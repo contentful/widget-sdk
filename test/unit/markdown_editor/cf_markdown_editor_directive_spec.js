@@ -71,7 +71,7 @@ describe('cfMarkdownEditor', () => {
     });
 
     it('Closes zen mode', function () {
-      this.scope.zen = true;
+      this.scope.zenApi.toggle();
       this.widgetApi.fieldProperties.isDisabled$.set(true);
       expect(this.scope.zen).toBe(false);
     });
@@ -124,7 +124,7 @@ describe('cfMarkdownEditor', () => {
 
     it('Syncs field value to parent editor when leaving Zen Mode', function () {
       sinon.spy(this.editor, 'setValue');
-      this.scope.zen = true;
+      this.scope.zenApi.toggle();
       this.scope.zenApi.syncToParent('ZEN CONTENT');
       // wire field set value with getter:
       this.scope.zenApi.toggle();
