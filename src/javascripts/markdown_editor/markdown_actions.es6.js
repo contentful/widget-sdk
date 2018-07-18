@@ -39,7 +39,7 @@ export function create (editor, locale, defaultLocaleCode, {zen}) {
     (handler, action) => (...args) => {
       trackMarkdownEditorAction(
         action,
-        zen
+        {fullscreen: zen}
       );
       return handler(...args);
     }

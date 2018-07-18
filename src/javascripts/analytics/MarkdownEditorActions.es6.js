@@ -1,7 +1,7 @@
 import * as Analytics from 'analytics/Analytics';
 
-export const trackMarkdownEditorAction = (action, zen = false, payload = {}) =>
+export const trackMarkdownEditorAction = (action, {newValue, fullscreen}) =>
   Analytics.track(
     'markdown_editor:action',
-    {action, fullscreen: zen, ...payload}
+    {...{action, fullscreen: !!fullscreen}, ...(typeof newValue !== 'undefined' ? {new_value: newValue} : {})}
   );

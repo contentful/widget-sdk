@@ -83,9 +83,9 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
         const newMinorActionsShown = !minorActionsShown;
         trackMarkdownEditorAction(
           'toggleMinorActions',
-          zen,
           {
-            new_value: newMinorActionsShown
+            fullscreen: zen,
+            newValue: newMinorActionsShown
           }
         );
         scope.minorActionsShown = newMinorActionsShown;
@@ -242,9 +242,9 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
         scope.zen = newZen;
         trackMarkdownEditorAction(
           'toggleFullscreenMode',
-          !newZen,
           {
-            new_value: newZen
+            fullscreen: !newZen,
+            newValue: newZen
           }
         );
 
