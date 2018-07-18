@@ -41,56 +41,54 @@ export function getBasePlan (endpoint) {
  * @param {object} endpoint an organization endpoint
  * @returns {Promise<object[]>} array of subscription plans w. spaces & users
  */
-export function getPlansWithSpaces (endpoint) {
-  return Promise.all([
+export async function getPlansWithSpaces (endpoint) {
+  const [plans, spaces] = await Promise.all([
     getSubscriptionPlans(endpoint),
     getAllSpaces(endpoint)
-  ])
-    // Map spaces to space plans, create 'free plan' objects for spaces w/o plans
-    .then(([plans, spaces]) => {
-      const freeSpaces = spaces.filter(
-        (space) => !plans.items.find(({gatekeeperKey}) => space.sys.id === gatekeeperKey)
-      );
-      return {
-        plans,
-        items: [
-          // Space plans from the endpoint
-          ...plans.items.map((plan) => ({
-            ...plan,
-            space: plan.gatekeeperKey && spaces.find(({sys}) => sys.id === plan.gatekeeperKey)
-          })),
-          // 'Free plan' objects for spaces w/o a space plan
-          ...freeSpaces.map((space) => ({
-            sys: {id: uniqueId('free-space-plan-')},
-            gatekeeperKey: space.sys.id,
-            planType: 'space',
-            name: 'Free',
-            space
-          }))
-        ]
-      };
-    })
+  ]);
+  const findSpaceByPlan = plan => plan.gatekeeperKey && spaces.find(({sys}) => sys.id === plan.gatekeeperKey);
+  // Map spaces to space plans, create 'free plan' objects for spaces w/o plans
+  const isFreeSpace = space => !plans.items.find(({gatekeeperKey}) => space.sys.id === gatekeeperKey);
+  const freeSpaces = spaces.filter(isFreeSpace);
+  const basePlan = plans.items.find(plan => plan.planType === 'base');
+  const isEnterprise = basePlan && basePlan.committed;
 
-    // Load `createdBy` users for all spaces
-    .then((plans) => {
-      const userIds = plans.items.map(({space}) => get(space, 'sys.createdBy.sys.id'));
-      return getUsersByIds(endpoint, userIds).then((users) => [plans, users]);
-    })
-
-    // Map users to spaces
-    .then(([plans, users]) => ({
-      ...plans,
-      items: plans.items.map((plan) => ({
+  const plansWithSpaces = {
+    plans,
+    items: [
+      // Space plans from the endpoint
+      ...plans.items.map((plan) => ({
         ...plan,
-        space: plan.space && {
-          ...plan.space,
-          sys: {
-            ...plan.space.sys,
-            createdBy: users.find(({sys}) => sys.id === plan.space.sys.createdBy.sys.id)
-          }
-        }
+        space: findSpaceByPlan(plan)
+      })),
+      // 'Free plan' objects for spaces w/o a space plan
+      ...freeSpaces.map((space) => ({
+        sys: {id: uniqueId('free-space-plan-')},
+        gatekeeperKey: space.sys.id,
+        planType: 'space',
+        name: isEnterprise ? 'Proof of concept' : 'Free',
+        space
       }))
-    }));
+    ]
+  };
+
+  // Load `createdBy` users for all spaces
+  const userIds = plansWithSpaces.items.map(({space}) => get(space, 'sys.createdBy.sys.id'));
+  const users = await getUsersByIds(endpoint, userIds);
+    // Map users to spaces
+  return {
+    ...plansWithSpaces,
+    items: plansWithSpaces.items.map((plan) => ({
+      ...plan,
+      space: plan.space && {
+        ...plan.space,
+        sys: {
+          ...plan.space.sys,
+          createdBy: users.find(({sys}) => sys.id === plan.space.sys.createdBy.sys.id)
+        }
+      }
+    }))
+  };
 }
 
 export function changeSpace (endpoint, planId) {
