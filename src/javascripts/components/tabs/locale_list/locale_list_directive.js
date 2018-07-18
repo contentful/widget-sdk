@@ -48,8 +48,8 @@ angular.module('contentful')
       showSpaceModal({
         organizationId: organization.sys.id,
         space: spaceContext.space.data,
-        limitReached: $scope.resource,
         action: 'change',
+        scope: 'space',
         onSubmit: function () {
           resource = null;
           return updateLocalesUsageState()

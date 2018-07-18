@@ -6,8 +6,7 @@ import {isOwner} from 'services/OrganizationRoles';
 import {go} from 'states/Navigator';
 import spinner from 'ui/Components/Spinner';
 import {asReact} from 'ui/Framework/DOMRenderer';
-import {resourceHumanNameMap} from 'utils/ResourceUtils';
-import logger from 'logger';
+import {resourceHumanNameMap, getStoreResources} from 'utils/ResourceUtils';
 
 import SpacePlanItem from './SpacePlanItem';
 import BillingInfo from './BillingInfo';
@@ -17,32 +16,43 @@ const SpacePlanSelector = createReactClass({
   propTypes: {
     organization: PropTypes.object.isRequired,
     space: PropTypes.object,
-    limitReached: PropTypes.object,
     action: PropTypes.string.isRequired,
+    wizardScope: PropTypes.string.isRequired,
     track: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
     reposition: PropTypes.func.isRequired,
     fetchSpacePlans: PropTypes.func.isRequired,
+    getResourcesForSpace: PropTypes.func.isRequired,
     selectPlan: PropTypes.func.isRequired,
     spacePlans: PropTypes.object.isRequired,
+    resources: PropTypes.object.isRequired,
     selectedPlan: PropTypes.object
   },
 
   componentDidMount () {
-    const { fetchSpacePlans, organization, space, reposition } = this.props;
+    const { fetchSpacePlans, getResourcesForSpace, organization, space, action, wizardScope, reposition } = this.props;
     const spaceId = space && space.sys.id;
 
     fetchSpacePlans({ organization, spaceId }).then(reposition);
+
+    if (action === 'change' && wizardScope === 'space') {
+      getResourcesForSpace(spaceId);
+    }
   },
 
   render () {
-    const {organization, space, limitReached, action, spacePlans, selectedPlan} = this.props;
+    const {organization, space, action, wizardScope, spacePlans, selectedPlan, resources: resourcesMeta} = this.props;
     const { spaceRatePlans, freeSpacesResource, isPending } = spacePlans;
+
+    const spaceId = space && space.sys.id;
+    const resources = get(getStoreResources(resourcesMeta, spaceId), 'value');
+
+    const isChangingInSpace = action === 'change' && wizardScope === 'space';
 
     const currentPlan = getCurrentPlan(spaceRatePlans);
     const highestPlan = getHighestPlan(spaceRatePlans);
-    const recommendedPlan = limitReached && getRecommendedPlan(spaceRatePlans, limitReached);
+    const recommendedPlan = isChangingInSpace && getRecommendedPlan(spaceRatePlans, resources);
     const atHighestPlan = highestPlan && highestPlan.unavailabilityReasons && highestPlan.unavailabilityReasons.find(reason => reason.type === 'currentPlan');
     const payingOrg = organization.isBillable;
 
@@ -146,20 +156,30 @@ function getHighestPlan (spaceRatePlans) {
   return spaceRatePlans.slice().sort((planX, planY) => planY.price >= planX.price)[0];
 }
 
-function getRecommendedPlan (spaceRatePlans, {sys: {id}, usage}) {
-  const resourceType = resourceHumanNameMap[id];
-  if (!resourceType) {
-    logger.logError(`Unknown resource type id: ${id}`);
+function getRecommendedPlan (spaceRatePlans, resources) {
+  // Valid plans are only ones that have no unavailablilty reasons
+  const validPlans = spaceRatePlans.filter(plan => !get(plan, 'unavailabilityReasons'));
+
+  function planFulfillsResources (plan, resources) {
+    const planIncludedResources = plan.includedResources;
+
+    return resources.reduce((doesFulfill, resource) => {
+      const mappedId = resourceHumanNameMap[get(resource, 'sys.id')];
+      const includedResource = planIncludedResources.find(r => r.type === mappedId);
+
+      if (!includedResource) {
+        return doesFulfill;
+      } else {
+        if (includedResource.number <= resource.usage) {
+          return false;
+        } else {
+          return doesFulfill;
+        }
+      }
+    }, true);
   }
 
-  function getResource ({includedResources}) {
-    const resource = includedResources.find(({type}) => type === resourceType);
-    return get(resource, 'number', 0);
-  }
-
-  return spaceRatePlans.slice()
-    .sort((planX, planY) => getResource(planX) >= getResource(planY))
-    .find((plan) => getResource(plan) > usage);
+  return validPlans.find(plan => planFulfillsResources(plan, resources));
 }
 
 export default SpacePlanSelector;
