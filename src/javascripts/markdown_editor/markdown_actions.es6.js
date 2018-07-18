@@ -7,6 +7,7 @@ import entitySelector from 'entitySelector';
 import {defaults, isObject, get, mapValues} from 'lodash';
 import {fileNameToTitle, truncate} from 'stringUtils';
 import {trackMarkdownEditorAction} from 'analytics/MarkdownEditorActions';
+import {track} from 'analytics/Analytics';
 import $state from '$state';
 import * as BulkAssetsCreator from 'services/BulkAssetsCreator';
 
