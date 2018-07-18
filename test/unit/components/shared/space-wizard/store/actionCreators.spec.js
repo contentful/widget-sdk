@@ -454,7 +454,7 @@ describe('Space Wizard action creators', function () {
       expect(this.stubs.dispatch.callCount).toBe(2);
       expect(this.stubs.dispatch.args[0]).toEqual([{
         type: this.actions.SPACE_PARTNERSHIP,
-        isPartnership: false
+        isPartnerSpacePlan: false
       }]);
       expect(this.stubs.dispatch.args[1]).toEqual([{
         type: this.actions.SPACE_PLAN_SELECTED,
@@ -476,7 +476,7 @@ describe('Space Wizard action creators', function () {
       expect(this.stubs.dispatch.callCount).toBe(2);
       expect(this.stubs.dispatch.args[0]).toEqual([{
         type: this.actions.SPACE_PARTNERSHIP,
-        isPartnership: true
+        isPartnerSpacePlan: true
       }]);
       expect(this.stubs.dispatch.args[1]).toEqual([{
         type: this.actions.SPACE_PLAN_SELECTED,
