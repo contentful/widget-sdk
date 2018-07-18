@@ -86,24 +86,31 @@ header.workbench-header
             tr.entity-list__item(
               ng-repeat="contentType in visibleContentTypes track by contentType.sys.id"
               ng-init="linkToCt='^.detail.fields({ contentTypeId: contentType.sys.id })'"
-              ui-sref="{{linkToCt}}")
+              ui-sref="{{linkToCt}}"
+              data-test-id="content-type-item")
               +td.x--medium-cell(aria-label="cell-display-name"
-                ui-sref="{{linkToCt}}")
+                ui-sref="{{linkToCt}}"
+                data-test-id="cell-name")
                 | {{contentType.name || '&nbsp;'}}
               +td.x--large-cell(aria-label="cell-description"
-                ui-sref="{{linkToCt}}")
+                ui-sref="{{linkToCt}}"
+                data-test-id="cell-description")
                 | {{contentType.description || '&nbsp;'}}
               +td.x--small-cell(aria-label="cell-integer"
-                ui-sref="{{linkToCt}}")
+                ui-sref="{{linkToCt}}"
+                data-test-id="cell-fields")
                 | {{numFields(contentType)}}
               +td.x--small-cell(aria-label="cell-date"
-                ui-sref="{{linkToCt}}")
+                ui-sref="{{linkToCt}}"
+                data-test-id="cell-date")
                 date(ng-if="contentType.sys.updatedAt" datetime="{{contentType.sys.updatedAt}}" cf-relative-datetime)
               +td.x--small-cell(aria-label="cell-symbol"
-                ui-sref="{{linkToCt}}")
+                ui-sref="{{linkToCt}}"
+                data-test-id="cell-created-by")
                 span(cf-user link="contentType.sys.updatedBy" as="updater")
                   | {{updater | userNameDisplay:user}}
               +td.entity-status.x--small-cell(aria-label="cell-status"
-                ui-sref="{{linkToCt}}")
+                ui-sref="{{linkToCt}}"
+                data-test-id="cell-status")
                 span(ng-class="statusClass(contentType)")
                   | {{statusLabel(contentType) || '&nbsp;'}}
