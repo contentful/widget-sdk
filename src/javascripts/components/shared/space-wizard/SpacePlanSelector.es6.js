@@ -48,11 +48,11 @@ const SpacePlanSelector = createReactClass({
     const spaceId = space && space.sys.id;
     const resources = get(getStoreResources(resourcesMeta, spaceId), 'value');
 
-    const changeInSpace = action === 'change' && wizardScope === 'space';
+    const isChangingInSpace = action === 'change' && wizardScope === 'space';
 
     const currentPlan = getCurrentPlan(spaceRatePlans);
     const highestPlan = getHighestPlan(spaceRatePlans);
-    const recommendedPlan = changeInSpace && getRecommendedPlan(spaceRatePlans, resources);
+    const recommendedPlan = isChangingInSpace && getRecommendedPlan(spaceRatePlans, resources);
     const atHighestPlan = highestPlan && highestPlan.unavailabilityReasons && highestPlan.unavailabilityReasons.find(reason => reason.type === 'currentPlan');
     const payingOrg = organization.isBillable;
 
