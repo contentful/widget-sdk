@@ -267,7 +267,7 @@ describe('WizardUtils', function () {
           }
         });
 
-        // Plan that fulfills but is near one resource
+        // Plan that fulfills but is near one resource limit (80%)
         expect(this.WizardUtils.getPlanResourceFulfillment(this.spaceRatePlans[2], this.resources)).toEqual({
           'Environments': {
             reached: true,

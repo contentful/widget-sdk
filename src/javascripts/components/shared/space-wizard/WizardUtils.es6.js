@@ -15,7 +15,7 @@ export const SpaceResourceTypes = {
 };
 
 const ERROR_THRESHOLD = 1;
-const WARNING_THRESHOLD = 0.9;
+const WARNING_THRESHOLD = 0.8;
 
 const resourceTooltipPropTypes = {
   number: PropTypes.number.isRequired
