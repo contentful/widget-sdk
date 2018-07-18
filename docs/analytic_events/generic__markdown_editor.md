@@ -4,6 +4,7 @@
 
 ### `markdown_editor:action`
 Tracks when the user triggers one of the markdown editor actions like _bold_ or _zen mode_.
+This doesn't track keyboard shortcuts like `undo` or `redo`, except for exiting zen mode (`Escape`).
 
 ## Schema
 
