@@ -40,7 +40,7 @@ export function create (editor, locale, defaultLocaleCode, {zen}) {
         'markdown_editor:action',
         {
           action,
-          zen: !!zen
+          fullscreen: !!zen
         }
       );
       return handler(...args);

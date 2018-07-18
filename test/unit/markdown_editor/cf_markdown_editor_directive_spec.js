@@ -1,4 +1,4 @@
-describe('cfMarkdownEditor', () => {
+fdescribe('cfMarkdownEditor', () => {
   beforeEach(function () {
     this.analytics = { track: sinon.spy() };
     module('contentful/test', $provide => {
@@ -141,7 +141,7 @@ describe('cfMarkdownEditor', () => {
         {
           action: 'toggleZenMode',
           new_value: true,
-          zen: false
+          fullscreen: false
         }
       );
     });
@@ -154,9 +154,9 @@ describe('cfMarkdownEditor', () => {
         this.analytics.track,
         'markdown_editor:action',
         {
-          action: 'toggleZenMode',
+          action: 'toggleFullscreenMode',
           new_value: false,
-          zen: true
+          fullscreen: true
         }
       );
     });
