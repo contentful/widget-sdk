@@ -1,4 +1,4 @@
-fdescribe('cfMarkdownEditor', () => {
+describe('cfMarkdownEditor', () => {
   beforeEach(function () {
     this.analytics = { track: sinon.spy() };
     module('contentful/test', $provide => {
