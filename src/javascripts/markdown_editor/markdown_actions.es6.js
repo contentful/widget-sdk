@@ -4,13 +4,14 @@ import specialCharacters from './markdown_special_characters';
 import LinkOrganizer from 'LinkOrganizer';
 import notification from 'notification';
 import entitySelector from 'entitySelector';
-import {defaults, isObject, get} from 'lodash';
+import {defaults, isObject, get, mapValues} from 'lodash';
 import {fileNameToTitle, truncate} from 'stringUtils';
+import {trackMarkdownEditorAction} from 'analytics/MarkdownEditorActions';
 import {track} from 'analytics/Analytics';
 import $state from '$state';
 import * as BulkAssetsCreator from 'services/BulkAssetsCreator';
 
-export function create (editor, locale, defaultLocaleCode) {
+export function create (editor, locale, defaultLocaleCode, {zen}) {
   const {
     fallbackCode,
     internal_code: localeCode,
@@ -32,7 +33,17 @@ export function create (editor, locale, defaultLocaleCode) {
     openHelp
   };
 
-  return defaults(advancedActions, editor.actions);
+
+  return mapValues(
+    defaults(advancedActions, editor.actions),
+    (handler, action) => (...args) => {
+      trackMarkdownEditorAction(
+        action,
+        {fullscreen: zen}
+      );
+      return handler(...args);
+    }
+  );
 
   function link () {
     editor.usePrimarySelection();
@@ -56,8 +67,8 @@ export function create (editor, locale, defaultLocaleCode) {
       itemLinkType: 'Asset',
       locale: localeCode
     })
-    .then((assets) => _insertAssetLinks(assets))
-    .finally(editor.getWrapper().focus);
+      .then((assets) => _insertAssetLinks(assets))
+      .finally(editor.getWrapper().focus);
   }
 
   function newAssets () {
@@ -70,21 +81,21 @@ export function create (editor, locale, defaultLocaleCode) {
 
     BulkAssetsCreator.open(localeCode).then((assetObjects) => {
       BulkAssetsCreator.tryToPublishProcessingAssets(assetObjects)
-      .then((result) => {
-        const { publishedAssets, unpublishableAssets } = result;
-        if (publishedAssets.length && !unpublishableAssets.length) {
-          notification.info((publishedAssets.length === 1
-            ? 'The asset was' : `All ${publishedAssets.length} assets were`) +
-            ' just published');
-        } else if (unpublishableAssets.length) {
-          notification.warn(`Failed to publish ${unpublishableAssets.length === 1
-            ? 'the asset' : `${unpublishableAssets.length} assets`}`);
-        }
-        wrapper.setCursor(cursor);
-        _insertAssetLinks(publishedAssets.map(({data}) => data));
-        wrapper.enable();
-        wrapper.focus();
-      });
+        .then((result) => {
+          const {publishedAssets, unpublishableAssets} = result;
+          if (publishedAssets.length && !unpublishableAssets.length) {
+            notification.info((publishedAssets.length === 1
+              ? 'The asset was' : `All ${publishedAssets.length} assets were`) +
+              ' just published');
+          } else if (unpublishableAssets.length) {
+            notification.warn(`Failed to publish ${unpublishableAssets.length === 1
+              ? 'the asset' : `${unpublishableAssets.length} assets`}`);
+          }
+          wrapper.setCursor(cursor);
+          _insertAssetLinks(publishedAssets.map(({data}) => data));
+          wrapper.enable();
+          wrapper.focus();
+        });
     });
   }
 
@@ -99,15 +110,15 @@ export function create (editor, locale, defaultLocaleCode) {
       .map(_makeAssetLink)
       // remove empty links
       .filter(Boolean);
-    const links = linksWithMeta.map(({ link }) => link).join(' ');
+    const links = linksWithMeta.map(({link}) => link).join(' ');
 
     // if there have values from fallback/default locales, we need to
     // provide user a warning so we show him modal
     if (otherLocales.length > 0) {
       const text = linksWithMeta
-        // we don't want to warn about normally localized files
-        .filter(({ isLocalized }) => !isLocalized)
-        .map(({ title, isFallback, asset }) => {
+      // we don't want to warn about normally localized files
+        .filter(({isLocalized}) => !isLocalized)
+        .map(({title, isFallback, asset}) => {
           const localeText = isFallback
             ? `fallback locale (${fallbackCode})`
             : `default locale (${defaultLocaleCode})`;
@@ -131,7 +142,8 @@ export function create (editor, locale, defaultLocaleCode) {
         }
       }).promise.then(() => {
         editor.insert(links);
-      }).catch(() => {});
+      }).catch(() => {
+      });
     } else {
       editor.insert(links);
       return Promise.resolve();
@@ -169,8 +181,10 @@ export function create (editor, locale, defaultLocaleCode) {
   function special () {
     const scopeData = {
       specialCharacters: specialCharacters,
-      model: { choice: specialCharacters[0] },
-      entity: function (x) { return '&' + x.id + ';'; }
+      model: {choice: specialCharacters[0]},
+      entity: function (x) {
+        return '&' + x.id + ';';
+      }
     };
 
     modalDialog.open({
@@ -181,7 +195,7 @@ export function create (editor, locale, defaultLocaleCode) {
 
   function table () {
     modalDialog.open({
-      scopeData: { model: { rows: 2, cols: 2 } },
+      scopeData: {model: {rows: 2, cols: 2}},
       template: 'markdown_table_dialog'
     }).promise.then(editor.actions.table);
   }
@@ -189,7 +203,7 @@ export function create (editor, locale, defaultLocaleCode) {
   function embed () {
     modalDialog.open({
       scopeData: {
-        model: { value: 'https://', width: { px: 600, percent: 100 }, widthSuffix: 'percent' },
+        model: {value: 'https://', width: {px: 600, percent: 100}, widthSuffix: 'percent'},
         urlStatus: 'invalid'
       },
       template: 'markdown_embed_dialog'
@@ -199,7 +213,7 @@ export function create (editor, locale, defaultLocaleCode) {
   }
 
   function _makeEmbedlyLink (data) {
-    const s = { percent: '%', px: 'px' };
+    const s = {percent: '%', px: 'px'};
     return [
       '<a href="' + data.value + '" class="embedly-card" ',
       'data-card-width="' + data.width[data.widthSuffix] + s[data.widthSuffix] + '" ',

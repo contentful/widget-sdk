@@ -46,6 +46,8 @@ registerGenericEvent('reference_editor:create_entry');
 registerGenericEvent('reference_editor:edit_entry');
 registerGenericEvent('reference_editor:toggle_inline_editor');
 
+registerGenericEvent('markdown_editor:action');
+
 registerGenericEvent('incoming_links:dialog_open');
 registerGenericEvent('incoming_links:dialog_confirm');
 registerGenericEvent('incoming_links:dialog_link_click');

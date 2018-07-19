@@ -1,12 +1,12 @@
-'use strict';
-
 describe('cfMarkdownEditor', () => {
   beforeEach(function () {
+    this.analytics = { track: sinon.spy() };
     module('contentful/test', $provide => {
       $provide.value('TheLocaleStore', {
         getDefaultLocale: () => ({ code: 'some random locale' }),
         getLocales: () => [{ code: 'en-US' }]
       });
+      $provide.value('analytics/Analytics', this.analytics);
     });
 
     this.widgetApi = this.$inject('mocks/widgetApi').create();
@@ -73,7 +73,7 @@ describe('cfMarkdownEditor', () => {
     });
 
     it('Closes zen mode', function () {
-      this.scope.zen = true;
+      this.scope.zenApi.toggle();
       this.widgetApi.fieldProperties.isDisabled$.set(true);
       expect(this.scope.zen).toBe(false);
     });
@@ -98,6 +98,21 @@ describe('cfMarkdownEditor', () => {
       this.scope.zenApi.registerChild(this.editorMock);
     });
 
+    it('sets zen mode as inactive by default', function () {
+      expect(this.scope.zen).toBe(false);
+    });
+
+    it('enters zen mode', function () {
+      this.scope.zenApi.toggle();
+      expect(this.scope.zen).toBe(true);
+    });
+
+    it('exits zen mode', function () {
+      this.scope.zenApi.toggle();
+      this.scope.zenApi.toggle();
+      expect(this.scope.zen).toBe(false);
+    });
+
     it('Allows to register child editor and populates content', function () {
       this.scope.zenApi.registerChild(this.editorMock);
       sinon.assert.calledWith(this.editorMock.setContent, 'test');
@@ -111,11 +126,39 @@ describe('cfMarkdownEditor', () => {
 
     it('Syncs field value to parent editor when leaving Zen Mode', function () {
       sinon.spy(this.editor, 'setValue');
-      this.scope.zen = true;
+      this.scope.zenApi.toggle();
       this.scope.zenApi.syncToParent('ZEN CONTENT');
       // wire field set value with getter:
       this.scope.zenApi.toggle();
       sinon.assert.calledOnce(this.editor.setValue.withArgs('ZEN CONTENT'));
+    });
+
+    it('tracks toggling zen mode on', function () {
+      this.scope.zenApi.toggle();
+      sinon.assert.calledOnceWith(
+        this.analytics.track,
+        'markdown_editor:action',
+        {
+          action: 'toggleFullscreenMode',
+          new_value: true,
+          fullscreen: false
+        }
+      );
+    });
+
+    it('tracks toggling zen mode off', function () {
+      this.scope.zenApi.toggle();
+      this.analytics.track.reset();
+      this.scope.zenApi.toggle();
+      sinon.assert.calledOnceWith(
+        this.analytics.track,
+        'markdown_editor:action',
+        {
+          action: 'toggleFullscreenMode',
+          new_value: false,
+          fullscreen: true
+        }
+      );
     });
   });
 });

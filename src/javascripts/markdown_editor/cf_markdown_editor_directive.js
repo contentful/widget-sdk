@@ -19,6 +19,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
   var isRtlLocale = require('utils/locales').isRtlLocale;
   var K = require('utils/kefir');
   var LD = require('utils/LaunchDarkly');
+  var {trackMarkdownEditorAction} = require('analytics/MarkdownEditorActions');
 
   return {
     restrict: 'E',
@@ -37,9 +38,11 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
       var editorHeader = el.closest('.workbench-main').siblings('.workbench-header').first();
 
       scope.preview = {};
+      scope.zen = false;
       scope.setMode = setMode;
       scope.inMode = inMode;
       scope.canEdit = canEdit;
+      scope.toggleMinorActions = toggleMinorActions;
 
       // By default, the markdown editor should be displayed as LTR unless the
       // RTL support feature flag is enabled.
@@ -53,7 +56,9 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
       scope.zenApi = {
         syncToParent: syncFromChildToParent,
         registerChild: registerChildEditor,
-        getParent: function () { return editor; },
+        getParent: function () {
+          return editor;
+        },
         getLocale: _.constant(field.locale),
         toggle: toggleZenMode
       };
@@ -72,6 +77,19 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
           initEditorOrRenderError();
         }
       });
+
+      function toggleMinorActions () {
+        const {minorActionsShown, zen} = scope;
+        const newMinorActionsShown = !minorActionsShown;
+        trackMarkdownEditorAction(
+          'toggleMinorActions',
+          {
+            fullscreen: zen,
+            newValue: newMinorActionsShown
+          }
+        );
+        scope.minorActionsShown = newMinorActionsShown;
+      }
 
       function initEditorOrRenderError () {
         try {
@@ -93,7 +111,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
 
         var locales = LocaleStore.getLocales();
         var locale = locales.find(locale => locale.code === field.locale);
-        scope.actions = actions.create(editor, locale, defaultLocale.code);
+        scope.actions = actions.create(editor, locale, defaultLocale.code, {zen: false});
         scope.history = editor.history;
 
         var preview$ = makePreview(field.value$);
@@ -137,7 +155,9 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
         scope.isDisabled = isDisabled;
         if (isDisabled) {
           setMode('preview');
-          if (scope.zen) { scope.zenApi.toggle(); }
+          if (scope.zen) {
+            scope.zenApi.toggle();
+          }
         } else {
           setMode('md');
         }
@@ -176,7 +196,9 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
         }
 
         if (nextMode === currentMode) {
-          if (currentMode === 'md') { setAutoHeight(); }
+          if (currentMode === 'md') {
+            setAutoHeight();
+          }
           return;
         } else {
           currentMode = nextMode;
@@ -205,7 +227,9 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
       function syncFromChildToParent (value) {
         // it only changes field value
         // main editor will be updated when leaving Zen Mode
-        if (childEditor) { field.setValue(value); }
+        if (childEditor) {
+          field.setValue(value);
+        }
       }
 
       function registerChildEditor (editor) {
@@ -214,7 +238,15 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
       }
 
       function toggleZenMode () {
-        scope.zen = !scope.zen;
+        const newZen = !scope.zen;
+        scope.zen = newZen;
+        trackMarkdownEditorAction(
+          'toggleFullscreenMode',
+          {
+            fullscreen: !newZen,
+            newValue: newZen
+          }
+        );
 
         if (scope.zen) {
           // hide leftovers from the previous screen
