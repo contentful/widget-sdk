@@ -16,7 +16,7 @@ import Tooltip from 'ui/Components/Tooltip';
 import Price from 'ui/Components/Price';
 import ContextMenu from 'ui/Components/ContextMenu';
 
-function SpacePlanRow ({ plan, upgraded, onChangeSpace, onDeleteSpace }) {
+function SpacePlanRow ({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }) {
   const space = plan.space;
   const enabledFeatures = getEnabledFeatures(plan);
   const hasAnyFeatures = enabledFeatures.length > 0;
@@ -33,6 +33,8 @@ function SpacePlanRow ({ plan, upgraded, onChangeSpace, onDeleteSpace }) {
   const contextMenuItems = [
     {
       label: 'Change space type',
+      // disable if org is enterprise/committed and space is free/proof of concept
+      disabled: basePlan.committed && !plan.committed,
       action: onChangeSpace(space, 'change'),
       otherProps: {
         'data-test-id': 'subscription-page.spaces-list.change-space-link'
@@ -82,14 +84,13 @@ function SpacePlanRow ({ plan, upgraded, onChangeSpace, onDeleteSpace }) {
         <HelpIcon>This space includes {joinAnd(enabledFeatures.map(({name}) => name))}</HelpIcon>
       }
       <br />
-      <Price value={plan.price} unit='month' />
+      {!basePlan.committed && <Price value={plan.price} unit='month' />}
     </td>
     <td>{createdBy}</td>
     <td>{createdAt}</td>
-    <td style={{textAlign: 'right'}}>
+    <td style={{textAlign: 'right', verticalAlign: 'middle'}}>
       { space &&
         <ContextMenu
-          style={{top: '8px'}}
           data-test-id='subscription-page.spaces-list.space-context-menu'
           items={contextMenuItems}
         />
@@ -99,6 +100,7 @@ function SpacePlanRow ({ plan, upgraded, onChangeSpace, onDeleteSpace }) {
 }
 
 SpacePlanRow.propTypes = {
+  basePlan: PropTypes.object.isRequired,
   plan: PropTypes.object.isRequired,
   onChangeSpace: PropTypes.func.isRequired,
   onDeleteSpace: PropTypes.func.isRequired,

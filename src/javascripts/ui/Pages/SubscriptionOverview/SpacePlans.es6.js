@@ -8,7 +8,7 @@ import Price from 'ui/Components/Price';
 
 import SpacePlanRow from './SpacePlanRow';
 
-function SpacePlans ({spacePlans, upgradedSpace, onCreateSpace, onChangeSpace, onDeleteSpace, isOrgOwner}) {
+function SpacePlans ({basePlan, spacePlans, upgradedSpace, onCreateSpace, onChangeSpace, onDeleteSpace, isOrgOwner}) {
   const numSpaces = spacePlans.length;
   const hasSpacePlans = numSpaces > 0;
   const totalCost = calculatePlansCost({ plans: spacePlans });
@@ -34,9 +34,14 @@ function SpacePlans ({spacePlans, upgradedSpace, onCreateSpace, onChangeSpace, o
         <table>
           <thead className='table__head'>
             <tr>
-              <th style={{width: '30%'}}>Name</th>
-              <th style={{width: '20%'}}>Space type / price</th>
-              <th style={{width: '15%'}}>Created by</th>
+              <th style={{width: '33%'}}>Name</th>
+              <th style={{width: '20%'}}>
+                {basePlan.committed
+                  ? 'Space type'
+                  : 'Space type / price'
+                }
+              </th>
+              <th style={{width: '25%'}}>Created by</th>
               <th style={{width: '15%'}}>Created on</th>
               <th>&#32;</th>
             </tr>
@@ -48,6 +53,7 @@ function SpacePlans ({spacePlans, upgradedSpace, onCreateSpace, onChangeSpace, o
               return <SpacePlanRow
                 key={plan.sys.id || plan.space && plan.space.sys.id}
                 upgraded={isUpgraded}
+                basePlan={basePlan}
                 plan={plan}
                 onChangeSpace={onChangeSpace}
                 onDeleteSpace={onDeleteSpace}
@@ -62,6 +68,7 @@ function SpacePlans ({spacePlans, upgradedSpace, onCreateSpace, onChangeSpace, o
 }
 
 SpacePlans.propTypes = {
+  basePlan: PropTypes.object.isRequired,
   spacePlans: PropTypes.array.isRequired,
   onCreateSpace: PropTypes.func.isRequired,
   onChangeSpace: PropTypes.func.isRequired,
