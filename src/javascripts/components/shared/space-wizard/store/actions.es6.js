@@ -168,10 +168,10 @@ export function spaceWizardReset () {
 }
 
 export const SPACE_PARTNERSHIP = 'SPACE_WIZARD/PARTNERSHIP';
-export function spacePartnership (isPartnership) {
+export function spacePartnership (isPartnerSpacePlan) {
   return {
     type: SPACE_PARTNERSHIP,
-    isPartnership
+    isPartnerSpacePlan
   };
 }
 

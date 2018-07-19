@@ -130,7 +130,7 @@ export function createSpace ({
   currentStepId,
   selectedPlan,
   newSpaceMeta,
-  partnershipData,
+  partnershipMeta,
   onSpaceCreated,
   onTemplateCreated,
   onConfirm
@@ -156,10 +156,12 @@ export function createSpace ({
       return;
     }
 
-    // Send partnerships email if this is a partnership space
-    const { isPartnership, fields } = partnershipData;
+    const isPartnerSpacePlan = get(partnershipMeta, 'isPartnerSpacePlan', false);
 
-    if (isPartnership) {
+    if (isPartnerSpacePlan) {
+      // Send partnerships email if this is a partnership space
+      const { fields } = partnershipMeta;
+
       dispatch(sendPartnershipEmail({ fields, spaceId: newSpace.sys.id }));
     }
 

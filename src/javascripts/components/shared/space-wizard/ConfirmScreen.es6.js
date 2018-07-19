@@ -8,6 +8,7 @@ import {asReact} from 'ui/Framework/DOMRenderer';
 import {formatPrice} from './WizardUtils';
 import Price from 'ui/Components/Price';
 
+import * as propTypes from './PropTypes';
 import PartnershipForm from './PartnershipForm';
 
 const ConfirmScreen = createReactClass({
@@ -25,7 +26,7 @@ const ConfirmScreen = createReactClass({
     onSubmit: PropTypes.func.isRequired,
     setPartnershipFields: PropTypes.func.isRequired,
     subscriptionPrice: PropTypes.object.isRequired,
-    partnershipData: PropTypes.object
+    partnershipMeta: propTypes.partnershipMeta
   },
 
   getInitialState () {
@@ -54,11 +55,11 @@ const ConfirmScreen = createReactClass({
   },
 
   onSubmit () {
-    const { partnershipData, onSubmit } = this.props;
+    const { partnershipMeta, onSubmit } = this.props;
     const { partnershipFields } = this.state;
-    const { isPartnership } = partnershipData;
+    const { isPartnerSpacePlan } = partnershipMeta;
 
-    if (isPartnership) {
+    if (isPartnerSpacePlan) {
       // All of the partnership information is required if this is a partnership form
       const fieldNames = [ 'estimatedDeliveryDate', 'clientName', 'description' ];
 
@@ -101,7 +102,7 @@ const ConfirmScreen = createReactClass({
       spaceCreation,
       spaceChange,
       newSpaceMeta,
-      partnershipData
+      partnershipMeta
     } = this.props;
     const { partnershipValidation } = this.state;
 
@@ -115,7 +116,7 @@ const ConfirmScreen = createReactClass({
 
     const { isPending, totalPrice, error } = subscriptionPrice;
     const { template, name } = newSpaceMeta;
-    const { isPartnership } = partnershipData;
+    const { isPartnerSpacePlan } = partnershipMeta;
     const submitted = spaceCreation.isPending || spaceChange.isPending;
 
     return (
@@ -154,13 +155,13 @@ const ConfirmScreen = createReactClass({
                       }
                     </Fragment>
                   }
-                  { !isPartnership && selectedPlan.price === 0 &&
+                  { !isPartnerSpacePlan && selectedPlan.price === 0 &&
                     <Fragment>
                       You are about to create a free space for the organization <em>{organization.name}</em> and it won&apos;t change your organization&apos;s subscription.
                       {' '}
                     </Fragment>
                   }
-                  { !isPartnership &&
+                  { !isPartnerSpacePlan &&
                     <Fragment>
                       The space’s name will be <em>{name}</em>
                       {
@@ -175,7 +176,7 @@ const ConfirmScreen = createReactClass({
                     </Fragment>
                   }
                   {
-                    isPartnership &&
+                    isPartnerSpacePlan &&
                     <PartnershipForm
                       organization={organization}
                       template={template}

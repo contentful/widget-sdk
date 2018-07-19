@@ -80,7 +80,7 @@ export default class PartnershipForm extends React.Component {
         You are about to create a space for the organization <em>{organization.name}</em>. The space’s name will be <em>{spaceName}</em>
     {template && ', and we will fill it with example content'}
     {'. '}
-        Before you do, please give us a few more details about this space.
+        Before you do, please give us a few more details about this space. These details will be sent to your partnership manager.
         <fieldset className='fieldset'>
           <legend>Project information</legend>
           <div className='field'>
@@ -94,7 +94,7 @@ export default class PartnershipForm extends React.Component {
           </div>
           <div className='field'>
             <TextField
-              labelText="Short description"
+              labelText="Short project description"
               name="description"
               id="description"
               validationMessage={validation.description}
