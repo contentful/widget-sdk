@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import ToolbarIcon from '../shared/ToolbarIcon';
 import markPlugin from '../shared/MarkPlugin';
 import markToggleDecorator from '../shared/MarkToggleDecorator';
-import { ITALIC } from '../../constants/Marks';
+import { MARKS } from '@contentful/structured-text-types';
 
 export const ItalicPlugin = () => {
   return markPlugin(
     {
-      type: ITALIC,
+      type: MARKS.ITALIC,
       tagName: 'em'
     },
     'cmd+i'
@@ -21,7 +21,7 @@ class Italic extends Component {
 }
 
 export default markToggleDecorator({
-  type: ITALIC,
+  type: MARKS.ITALIC,
   title: 'Italic (cmd + i)',
   icon: 'FormatItalic'
 })(Italic);

@@ -1,6 +1,6 @@
 import isHotkey from 'is-hotkey';
 import { applyChange } from '../shared/BlockToggleDecorator';
-import { HEADING_1, HEADING_2, PARAGRAPH } from '../../constants/Blocks';
+import { BLOCKS } from '@contentful/structured-text-types';
 
 import commonNode from '../shared/NodeDecorator';
 
@@ -18,7 +18,7 @@ const plugin = (type, tagName, hotkey) => {
         const getCurrentblock = blocks.get(0);
 
         if (getCurrentblock.type === type) {
-          return change.splitBlock().setBlock(PARAGRAPH);
+          return change.splitBlock().setBlock(BLOCKS.PARAGRAPH);
         }
       } else if (isHotkey(hotkey, e)) {
         change.call(applyChange, type);
@@ -29,9 +29,9 @@ const plugin = (type, tagName, hotkey) => {
 };
 
 // TODO: move hotkeys to components
-export const Heading1Plugin = (type = HEADING_1) =>
+export const Heading1Plugin = (type = BLOCKS.HEADING_1) =>
   plugin(type, 'h1', 'cmd+opt+1');
-export const Heading2Plugin = (type = HEADING_2) =>
+export const Heading2Plugin = (type = BLOCKS.HEADING_2) =>
   plugin(type, 'h2', 'cmd+opt+2');
 
 export { default as Heading1 } from './Heading1';

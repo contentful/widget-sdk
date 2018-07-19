@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ToolbarIcon from '../shared/ToolbarIcon';
-import { HEADING_2 } from '../../constants/Blocks';
+import { BLOCKS } from '@contentful/structured-text-types';
 import blockDecorator from '../shared/BlockToggleDecorator';
 
 class Heading2 extends Component {
@@ -10,7 +10,7 @@ class Heading2 extends Component {
 }
 
 export default blockDecorator({
-  type: HEADING_2,
+  type: BLOCKS.HEADING_2,
   title: 'Heading 2 (ctrl+opt+2)',
   icon: 'LooksTwo'
 })(Heading2);

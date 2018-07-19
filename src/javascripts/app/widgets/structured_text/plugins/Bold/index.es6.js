@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import ToolbarIcon from '../shared/ToolbarIcon';
 import markPlugin from '../shared/MarkPlugin';
 import markToggleDecorator from '../shared/MarkToggleDecorator';
-import { BOLD } from '../../constants/Marks';
+import { MARKS } from '@contentful/structured-text-types';
 
 export const BoldPlugin = () => {
   return markPlugin(
     {
-      type: BOLD,
+      type: MARKS.BOLD,
       tagName: 'b'
     },
     'cmd+b'
@@ -21,7 +21,7 @@ class Bold extends Component {
 }
 
 export default markToggleDecorator({
-  type: BOLD,
+  type: MARKS.BOLD,
   title: 'Make a bold move',
   icon: 'FormatBold'
 })(Bold);

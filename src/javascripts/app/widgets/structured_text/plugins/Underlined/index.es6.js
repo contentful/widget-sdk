@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import ToolbarIcon from '../shared/ToolbarIcon';
 import markPlugin from '../shared/MarkPlugin';
 import markToggleDecorator from '../shared/MarkToggleDecorator';
-import { UNDERLINED } from '../../constants/Marks';
+import { MARKS } from '@contentful/structured-text-types';
 
 export const UnderlinedPlugin = () => {
   return markPlugin(
     {
-      type: UNDERLINED,
+      type: MARKS.UNDERLINED,
       tagName: 'u'
     },
     'cmd+u'
@@ -21,7 +21,7 @@ class Underlined extends Component {
 }
 
 export default markToggleDecorator({
-  type: UNDERLINED,
+  type: MARKS.UNDERLINED,
   title: 'Underline (cmd + u)',
   icon: 'FormatUnderlined'
 })(Underlined);

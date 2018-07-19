@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { PARAGRAPH } from '../../constants/Blocks';
+import { BLOCKS } from '@contentful/structured-text-types';
 import { haveBlocks } from './UtilHave';
 import { ToolbarIconPropTypes } from './PropTypes';
 
 export const applyChange = (change, type) => {
   const isActive = haveBlocks(change, type);
-  return change.setBlocks(isActive ? PARAGRAPH : type);
+  return change.setBlocks(isActive ? BLOCKS.PARAGRAPH : type);
 };
 
 export default ({ type, title, icon }) => Block => {

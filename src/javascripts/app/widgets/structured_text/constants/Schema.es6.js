@@ -1,29 +1,29 @@
-import * as Block from './Blocks';
+import { BLOCKS } from '@contentful/structured-text-types';
 
 export default {
   document: {
     nodes: [
       {
         types: [
-          Block.PARAGRAPH,
-          Block.HEADING_1,
-          Block.HEADING_2,
-          Block.ENTRY_LINK
+          BLOCKS.PARAGRAPH,
+          BLOCKS.HEADING_1,
+          BLOCKS.HEADING_2,
+          BLOCKS.ENTRY_LINK
         ]
       }
     ]
   },
   blocks: {
-    [Block.PARAGRAPH]: {
+    [BLOCKS.PARAGRAPH]: {
       nodes: [{ objects: ['text'] }]
     },
-    [Block.HEADING_1]: {
+    [BLOCKS.HEADING_1]: {
       nodes: [{ objects: ['text'] }]
     },
-    [Block.HEADING_2]: {
+    [BLOCKS.HEADING_2]: {
       nodes: [{ objects: ['text'] }]
     },
-    [Block.ENTRY_LINK]: {
+    [BLOCKS.ENTRY_LINK]: {
       isVoid: true
     }
   }

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { ENTRY_LINK } from '../../constants/Blocks';
+import { BLOCKS } from '@contentful/structured-text-types';
 import ToolbarIcon from '../shared/ToolbarIcon';
 import { haveBlocks } from '../shared/UtilHave';
 
@@ -24,7 +24,7 @@ export default class EntryLinkToolbarIcon extends Component {
       }
 
       const linkedEntryBlock = {
-        type: ENTRY_LINK,
+        type: BLOCKS.ENTRY_LINK,
         object: 'block',
         data: {
           sys: {
@@ -50,11 +50,11 @@ export default class EntryLinkToolbarIcon extends Component {
     const { change } = this.props;
     return (
       <ToolbarIcon
-        type={ENTRY_LINK}
+        type={BLOCKS.ENTRY_LINK}
         icon="PlusCircle"
         title="Link Entry"
         onToggle={this.handleClick}
-        isActive={haveBlocks(change, ENTRY_LINK)}
+        isActive={haveBlocks(change, BLOCKS.ENTRY_LINK)}
       />
     );
   }

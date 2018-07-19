@@ -2,8 +2,7 @@ import React from 'react';
 import { mount } from 'enzyme';
 
 import { createIsolatedSystem } from 'test/helpers/system-js';
-import { HEADING_1, HEADING_2, ENTRY_LINK } from 'app/widgets/structured_text/constants/Blocks';
-import { BOLD, ITALIC, UNDERLINED } from 'app/widgets/structured_text/constants/Marks';
+import { BLOCKS, MARKS } from '@contentful/structured-text-types';
 
 describe('StructuredTextEditor', () => {
   beforeEach(async function () {
@@ -28,7 +27,9 @@ describe('StructuredTextEditor', () => {
     this.system.set('states/EntityNavigationHelpers', {
       goToSlideInEntity: sinon.stub()
     });
-    const { default: StructuredTextEditor } = await this.system.import('app/widgets/structured_text/StructuredTextEditor');
+    const { default: StructuredTextEditor } = await this.system.import(
+      'app/widgets/structured_text/StructuredTextEditor'
+    );
 
     this.wrapper = mount(<StructuredTextEditor {...this.props} />);
   });
@@ -38,7 +39,14 @@ describe('StructuredTextEditor', () => {
   });
 
   it('renders the toolbar icons', function () {
-    const toolbarItems = [HEADING_1, HEADING_2, ENTRY_LINK, BOLD, ITALIC, UNDERLINED];
+    const toolbarItems = [
+      BLOCKS.HEADING_1,
+      BLOCKS.HEADING_2,
+      BLOCKS.ENTRY_LINK,
+      MARKS.BOLD,
+      MARKS.ITALIC,
+      MARKS.UNDERLINED
+    ];
     toolbarItems.forEach(item => {
       const el = this.wrapper.find(`[data-test-id="toolbar-toggle-${item}"]`);
       expect(el.length).toEqual(1);
