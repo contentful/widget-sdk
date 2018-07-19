@@ -33,14 +33,6 @@ export async function showDialog (organizationId) {
     enterprise: 'committed'
   };
 
-  const orgEndpoint = createOrganizationEndpoint(organizationId);
-  // get all rate plans (a.k.a space types) available for the current org.
-  const ratePlans = await getSpaceRatePlans(orgEndpoint);
-  // it's garanteed that every product contains a 'free_space' rate plan
-  const freeSpaceRatePlan = ratePlans.find(plan => plan.productPlanType === 'free_space');
-  // we use the free_space plan to find what's the product type for this org
-  const productType = freeSpaceRatePlan.productType;
-  const isEnterprise = productType === productTypes.enterprise;
 
   if (isLegacyOrganization(organization)) {
     modalDialog.open({
@@ -51,6 +43,15 @@ export async function showDialog (organizationId) {
       scopeData: {organization}
     });
   } else {
+    const orgEndpoint = createOrganizationEndpoint(organizationId);
+    // get all rate plans (a.k.a space types) available for the current org.
+    const ratePlans = await getSpaceRatePlans(orgEndpoint);
+    // it's garanteed that every product contains a 'free_space' rate plan
+    const freeSpaceRatePlan = ratePlans.find(plan => plan.productPlanType === 'free_space');
+    // we use the free_space plan to find what's the product type for this org
+    const productType = freeSpaceRatePlan.productType;
+    const isEnterprise = productType === productTypes.enterprise;
+
     if (isEnterprise) {
       const modalProps = {
         ratePlans,

@@ -6,11 +6,7 @@ import { getIncludedResources } from 'components/shared/space-wizard/WizardUtils
 import { go } from 'states/Navigator';
 import { get } from 'lodash';
 
-// import spinner from 'ui/Components/Spinner';
-// import {asReact} from 'ui/Framework/DOMRenderer';
-
 import * as actionCreators from '../space-wizard/store/actionCreators';
-import { wrapWithDispatch } from 'utils/ReduxUtils';
 
 import PlanFeatures from 'components/shared/space-wizard/PlanFeatures';
 import Dialog from 'app/entity_editor/Components/Dialog';
@@ -171,13 +167,13 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = wrapWithDispatch({
+const mapDispatchToProps = {
   fetchTemplates: actionCreators.fetchTemplates,
   createSpace: actionCreators.createSpace,
   track: actionCreators.track,
   setNewSpaceName: actionCreators.setNewSpaceName,
   setNewSpaceTemplate: actionCreators.setNewSpaceTemplate,
   reset: actionCreators.reset
-});
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(EnterpriseSpaceWizard);
