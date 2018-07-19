@@ -165,10 +165,12 @@ angular.module('contentful')
      * any 3rd party services running
      */
     disable: function () {
-      bugsnag.disable();
-      _.forEach(this, _.bind(function (_value, key) {
-        this[key] = _.noop;
-      }, this));
+      if (environment.env === 'production' || environment.env === 'unittest') {
+        bugsnag.disable();
+        _.forEach(this, _.bind(function (_value, key) {
+          this[key] = _.noop;
+        }, this));
+      }
     },
 
     findActualServerError: findActualServerError,

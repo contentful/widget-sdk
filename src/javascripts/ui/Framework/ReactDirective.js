@@ -32,8 +32,9 @@ angular.module('contentful')
     replace: true,
     link: ($scope, $element, attrs) => {
       const element = $element[0];
+      var logger = require('logger');
 
-      var reactComponent = getReactComponent(attrs.name, require);
+      var reactComponent = getReactComponent(attrs.name, require, logger);
       var store = require('ReduxStore/store').default;
 
       var renderMyComponent = () => {
@@ -77,7 +78,7 @@ function renderComponent (Component, props, scope, elem, store) {
 }
 
 
-function getReactComponent (name, require) {
+function getReactComponent (name, require, logger) {
   // if name is a function assume it is component and return it
   if (isFunction(name)) {
     return name;
@@ -93,7 +94,7 @@ function getReactComponent (name, require) {
   try {
     reactComponent = requireComponent(name, require);
   } catch (e) {
-    // pass
+    logger.logException(e);
   }
 
   if (!reactComponent) {
