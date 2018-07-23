@@ -14,14 +14,14 @@ angular.module('contentful')
     setTokenLookup: function (tokenLookup, space, environmentId) {
       this._tokenLookup = tokenLookup;
       try {
-        var worfEnvironment = {
+        this._environment = {
           sys: {
             id: environmentId,
             isMaster: environmentId === 'master'
           }
         };
 
-        this.authContext = worf(tokenLookup, worfEnvironment);
+        this.authContext = worf(this._tokenLookup, this._environment);
       } catch (exp) {
         logger.logError('Worf initialization exception', {
           data: {
@@ -32,10 +32,15 @@ angular.module('contentful')
       }
       this.setSpace(space);
     },
-    setSpace: function (space) {
+    setSpace: function (space, enforcements) {
       this._space = space;
       if (space && this.authContext) {
         try {
+          if (enforcements) {
+            const tokenSpace = this._tokenLookup.spaces.find(({sys}) => sys.id === space.getId());
+            tokenSpace.enforcements = enforcements;
+            this.authContext = worf(this._tokenLookup, this._environment);
+          }
           this.spaceContext = this.authContext.space(space.getId());
         } catch (exp) {
           logger.logError('Worf authContext space exception', exp);

@@ -14,6 +14,10 @@ angular.module('contentful')
   const CreateSpace = require('services/CreateSpace');
   const refreshNavState = require('navigation/NavState').makeStateRefresher($state, spaceContext);
   const Intercom = require('intercom');
+  const makeFetchEnforcements = require('data/CMA/EnforcementsInfo').default;
+  const auth = require('Authentication');
+
+  const fetchEnforcements = makeFetchEnforcements(auth);
 
   // TODO remove this eventually. All components should access it as a service
   $scope.spaceContext = spaceContext;
@@ -38,12 +42,13 @@ angular.module('contentful')
 
   $scope.showCreateSpaceDialog = CreateSpace.showDialog;
 
-  function spaceAndTokenWatchHandler (collection) {
+  async function spaceAndTokenWatchHandler (collection) {
     if (collection.tokenLookup) {
       authorization.setTokenLookup(collection.tokenLookup, null, spaceContext.getEnvironmentId());
 
       if (collection.space && authorization.authContext && authorization.authContext.hasSpace(collection.space.getId())) {
-        authorization.setSpace(collection.space);
+        const enforcements = await fetchEnforcements(collection.space.getId());
+        authorization.setSpace(collection.space, enforcements);
       }
       refreshNavState();
     }
