@@ -197,6 +197,7 @@ const SubscriptionOverview = createReactClass({
         </Workbench.Content>
         <Workbench.Sidebar>
           <Sidebar
+            basePlan={basePlan}
             orgId={orgId}
             grandTotal={grandTotal}
             spacePlans={spacePlans}
