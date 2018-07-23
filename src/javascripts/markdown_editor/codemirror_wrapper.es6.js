@@ -103,6 +103,8 @@ export function create (textarea, options, CodeMirror) {
     getNl: getNl,
     getValue: getValue,
     getHistorySize: getHistorySize,
+    getHistory: () => cm.getHistory(),
+    setHistory: history => cm.setHistory(history),
 
     scrollToFraction: scrollToFraction,
     getScrollFraction: getScrollFraction
