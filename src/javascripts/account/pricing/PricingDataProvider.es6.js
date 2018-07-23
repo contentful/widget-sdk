@@ -1,5 +1,6 @@
 import {get, uniqueId} from 'lodash';
 import {getAllSpaces, getUsersByIds} from 'access_control/OrganizationMembershipRepository';
+import {getCurrentVariation} from 'utils/LaunchDarkly';
 
 const alphaHeader = {
   'x-contentful-enable-alpha-feature': 'subscriptions-api'
@@ -155,4 +156,8 @@ export function calculateTotalPrice (subscriptionPlans) {
     (total, plan) => total + (parseInt(plan.price, 10) || 0),
     0
   );
+}
+
+export function isPOCEnabled () {
+  return getCurrentVariation('feature-bv-07-2018-enterprise-poc-spaces');
 }

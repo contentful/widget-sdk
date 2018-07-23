@@ -26,7 +26,8 @@ describe('CreateSpace', () => {
       $provide.value('utils/LaunchDarkly', {});
       $provide.value('access_control/AccessChecker', this.accessChecker);
       $provide.value('account/pricing/PricingDataProvider', {
-        getSpaceRatePlans: this.getSpaceRatePlans
+        getSpaceRatePlans: this.getSpaceRatePlans,
+        isPOCEnabled: sinon.stub().returns(false)
       });
     });
     this.modalDialog = this.$inject('modalDialog');

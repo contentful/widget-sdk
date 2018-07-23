@@ -4,7 +4,7 @@ import {isLegacyOrganization} from 'utils/ResourceUtils';
 import {canCreateSpaceInOrganization} from 'access_control/AccessChecker';
 import {createOrganizationEndpoint} from 'data/EndpointFactory';
 import notification from 'notification';
-import {getSpaceRatePlans} from 'account/pricing/PricingDataProvider';
+import {getSpaceRatePlans, isPOCEnabled} from 'account/pricing/PricingDataProvider';
 /**
  * Displays the space creation dialog. The dialog type will depend on the
  * organization that the new space should belong to.
@@ -51,8 +51,9 @@ export async function showDialog (organizationId) {
     // we use the free_space plan to find what's the product type for this org
     const productType = freeSpaceRatePlan.productType;
     const isEnterprise = productType === productTypes.enterprise;
+    const shouldCreatePOC = await isPOCEnabled();
 
-    if (isEnterprise) {
+    if (isEnterprise && shouldCreatePOC) {
       const modalProps = {
         ratePlans,
         organization: {
