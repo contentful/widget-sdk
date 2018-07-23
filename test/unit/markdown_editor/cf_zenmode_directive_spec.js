@@ -12,11 +12,10 @@ describe('cfZenmode', () => {
       return {
         tie: {editorToEditor: tieSpy},
         restoreCursor: sinon.stub(),
-        setHistory: sinon.spy()
+        setHistory: parentSetHistory
       };
     },
     getLocale: _.constant('en'),
-    getHistory: _.constant({}),
     setHistory: sinon.spy()
   };
 
@@ -36,6 +35,10 @@ describe('cfZenmode', () => {
   it('Registers editor on startup', () => {
     sinon.assert.calledOnce(apiMock.registerChild);
     sinon.assert.calledOnce(tieSpy);
+  });
+
+  it('sets history of parent', () => {
+    sinon.assert.calledOnceWith(parentSetHistory, editor.getHistory());
   });
 
   it('Syncs changes from editor to parent', () => {
