@@ -61,6 +61,7 @@ export function create (textarea, options) {
   function tieEditorToEditor (other) {
     other = isFunction(other.getWrapper) ? other.getWrapper() : other;
     other.restoreCursor(editor.getCurrentCharacter(), editor.getCurrentLineNumber());
+    other.setHistory(editor.getHistory());
   }
 
   /**
