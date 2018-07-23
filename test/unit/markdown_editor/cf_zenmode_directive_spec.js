@@ -4,16 +4,20 @@ describe('cfZenmode', () => {
   let editor;
 
   const tieSpy = sinon.spy();
+  const parentSetHistory = sinon.spy();
   const apiMock = {
     registerChild: sinon.spy(),
     syncToParent: sinon.spy(),
     getParent: function () {
       return {
         tie: {editorToEditor: tieSpy},
-        restoreCursor: sinon.stub()
+        restoreCursor: sinon.stub(),
+        setHistory: sinon.spy()
       };
     },
-    getLocale: _.constant('en')
+    getLocale: _.constant('en'),
+    getHistory: _.constant({}),
+    setHistory: sinon.spy()
   };
 
   beforeEach(function () {
