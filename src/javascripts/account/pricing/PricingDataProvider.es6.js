@@ -43,9 +43,10 @@ export function getBasePlan (endpoint) {
  * @returns {Promise<object[]>} array of subscription plans w. spaces & users
  */
 export async function getPlansWithSpaces (endpoint) {
-  const [plans, spaces] = await Promise.all([
+  const [plans, spaces, usePOC] = await Promise.all([
     getSubscriptionPlans(endpoint),
-    getAllSpaces(endpoint)
+    getAllSpaces(endpoint),
+    isPOCEnabled()
   ]);
   const findSpaceByPlan = plan => plan.gatekeeperKey && spaces.find(({sys}) => sys.id === plan.gatekeeperKey);
   // Map spaces to space plans, create 'free plan' objects for spaces w/o plans
@@ -67,7 +68,7 @@ export async function getPlansWithSpaces (endpoint) {
         sys: {id: uniqueId('free-space-plan-')},
         gatekeeperKey: space.sys.id,
         planType: 'space',
-        name: isEnterprise ? 'Proof of concept' : 'Free',
+        name: (isEnterprise && usePOC) ? 'Proof of concept' : 'Free',
         space
       }))
     ]
