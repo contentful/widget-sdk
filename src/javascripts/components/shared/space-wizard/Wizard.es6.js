@@ -101,12 +101,13 @@ const Wizard = createReactClass({
   },
 
   componentDidMount () {
-    const { navigate, action } = this.props;
+    const { action, organization } = this.props;
     const steps = getSteps(action);
 
-    this.track('open');
-
-    navigate(steps[0].id);
+    this.track('open', {
+      paymentDetailsExist: organization.isBillable
+    });
+    this.navigate(steps[0].id);
   },
 
   componentWillReceiveProps ({ spaceCreation: { error } }) {
@@ -259,13 +260,14 @@ const Wizard = createReactClass({
     const { onConfirm } = this.props;
 
     onConfirm && onConfirm();
-    this.track('confirm');
   },
 
   track (eventName, data = {}) {
-    const { track } = this.props;
+    const { track, action } = this.props;
 
-    track(eventName, data, this.props);
+    const requiredTrackingData = { action };
+
+    track(eventName, { ...data, ...requiredTrackingData });
   },
 
   setStateData (stepData) {
@@ -277,10 +279,13 @@ const Wizard = createReactClass({
   },
 
   navigate (stepId) {
-    const { navigate } = this.props;
+    const { navigate, currentStepId } = this.props;
 
     navigate(stepId);
-    this.track('navigate', { targetStep: stepId });
+    this.track('navigate', {
+      currentStepId,
+      targetStepId: stepId
+    });
   },
 
   goForward () {
@@ -304,9 +309,7 @@ const Wizard = createReactClass({
 
     if (lastStep && action === 'create') {
       createSpace({
-        action,
         organization,
-        currentStepId,
         selectedPlan,
         newSpaceMeta,
         onSpaceCreated,

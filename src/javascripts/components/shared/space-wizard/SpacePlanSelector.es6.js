@@ -119,7 +119,7 @@ const SpacePlanSelector = createReactClass({
                   isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
                   isRecommended={get(recommendedPlan, 'sys.id') === plan.sys.id}
                   isPayingOrg={payingOrg}
-                  onSelect={this.selectPlan(currentPlan)} />)}
+                  onSelect={this.selectPlan(currentPlan, recommendedPlan)} />)}
               </div>
             </Fragment>
           }
@@ -134,11 +134,12 @@ const SpacePlanSelector = createReactClass({
     </div>;
   },
 
-  selectPlan (currentPlan) {
-    const { selectPlan, onSubmit } = this.props;
+  selectPlan (currentPlan, recommendedPlan) {
+    const { selectPlan, track, onSubmit } = this.props;
 
     return (selectedPlan) => {
       selectPlan(currentPlan, selectedPlan);
+      track('select_plan', { currentPlan, selectedPlan, recommendedPlan });
       onSubmit && onSubmit();
     };
   },

@@ -256,3 +256,35 @@ export function getPlanResourceFulfillment (plan, spaceResources = []) {
     }
   }, {});
 }
+
+/*
+  Returns tracking data for `feature_space_wizard` schema from the Wizard component properties.
+ */
+export function createTrackingData (data) {
+  const {
+    action,
+    paymentDetailsExist,
+    currentStepId,
+    targetStepId,
+    selectedPlan,
+    currentPlan,
+    recommendedPlan,
+    newSpaceName,
+    newSpaceTemplate
+  } = data;
+
+  return {
+    currentStep: currentStepId,
+    targetStep: targetStepId,
+    intendedAction: action,
+    paymentDetailsExist,
+    targetSpaceType: get(selectedPlan, 'internalName'),
+    targetProductType: get(selectedPlan, 'productType'),
+    targetSpaceName: newSpaceName,
+    targetSpaceTemplateId: get(newSpaceTemplate, 'name'),
+    currentSpaceType: get(currentPlan, 'internalName'),
+    currentProductType: get(currentPlan, 'productType'),
+    recommendedSpaceType: get(recommendedPlan, 'internalName'),
+    recommendedProductType: get(recommendedPlan, 'productType')
+  };
+}

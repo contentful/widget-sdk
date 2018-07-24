@@ -19,6 +19,7 @@ const ConfirmScreen = createReactClass({
     action: PropTypes.string.isRequired,
     template: PropTypes.object,
     organization: PropTypes.object.isRequired,
+    track: PropTypes.func.isRequired,
     fetchSubscriptionPrice: PropTypes.func.isRequired,
     spaceCreation: PropTypes.object.isRequired,
     spaceChange: PropTypes.object.isRequired,
@@ -55,7 +56,7 @@ const ConfirmScreen = createReactClass({
   },
 
   onSubmit () {
-    const { partnershipMeta, onSubmit } = this.props;
+    const { partnershipMeta, onSubmit, track } = this.props;
     const { partnershipFields } = this.state;
     const { isPartnerSpacePlan } = partnershipMeta;
 
@@ -84,9 +85,11 @@ const ConfirmScreen = createReactClass({
       this.setState({ partnershipValidation: validation });
 
       if (Object.keys(validation).length === 0) {
+        track('confirm');
         onSubmit();
       }
     } else {
+      track('confirm');
       onSubmit();
     }
   },

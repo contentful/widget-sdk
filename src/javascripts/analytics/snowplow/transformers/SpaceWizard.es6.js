@@ -46,7 +46,7 @@ export function getSpaceWizardData (action, data) {
     recommended_product_type: data.recommendedProductType || null,
 
     // If payment details exist for the organization
-    payment_details_exist: data.paymentDetailsExist,
+    payment_details_exist: data.paymentDetailsExist || null,
 
     // The current step, can be null, for example on `open` event
     current_step: data.currentStep || null,
@@ -91,9 +91,6 @@ function validateSpaceWizardData (wizardData) {
         'select_plan',
         'entered_details'
       ]
-    },
-    'payment_details_exist': {
-      'type': ['boolean']
     }
   };
 

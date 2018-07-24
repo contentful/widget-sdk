@@ -17,6 +17,7 @@ import spaceContext from 'spaceContext';
 import { getCreator as getTemplateCreator } from 'services/SpaceTemplateCreator';
 import { getTemplatesList, getTemplate } from 'services/SpaceTemplateLoader';
 import { canCreate } from 'utils/ResourceUtils';
+import { createTrackingData } from '../WizardUtils';
 
 import * as actions from './actions';
 
@@ -125,9 +126,7 @@ export function fetchTemplates () {
 }
 
 export function createSpace ({
-  action,
   organization,
-  currentStepId,
   selectedPlan,
   newSpaceMeta,
   partnershipMeta,
@@ -174,12 +173,14 @@ export function createSpace ({
     // This navigates to the new space
     onSpaceCreated(newSpace);
 
-    const spaceCreateEventData =
-      template
-      ? {templateName: template.name, entityAutomationScope: {scope: 'space_template'}}
-      : {templateName: 'Blank'};
+    // const spaceCreateEventData =
+    //   template
+    //   ? {templateName: template.name, entityAutomationScope: {scope: 'space_template'}}
+    //   : {templateName: 'Blank'};
 
-    dispatch(track('space_create', spaceCreateEventData, { action, organization, currentStepId, selectedPlan, newSpaceMeta }));
+    dispatch(track('space_create', {
+      action: 'create'
+    }));
     dispatch(actions.spaceCreationSuccess());
 
     if (template) {
@@ -221,6 +222,11 @@ export function changeSpace ({ space, selectedPlan, onConfirm }) {
       return;
     }
 
+    dispatch(track('space_type_change', {
+      action: 'change'
+    }));
+
+
     // We don't fire a "success" event since we close the modal directly
     onConfirm();
   };
@@ -250,9 +256,9 @@ export function fetchSubscriptionPrice ({ organization }) {
   };
 }
 
-export function track (eventName, data, props) {
+export function track (eventName, data) {
   return dispatch => {
-    const trackingData = { ...data, ...createTrackingData(props) };
+    const trackingData = createTrackingData(data);
 
     Analytics.track(`space_wizard:${eventName}`, trackingData);
 
@@ -287,21 +293,6 @@ export function selectPlan (currentPlan, selectedPlan) {
   };
 }
 
-function createTrackingData ({ action, organization, currentStepId, selectedPlan, currentPlan, newSpaceMeta }) {
-  const { spaceName, template } = newSpaceMeta;
-
-  const eventData = {
-    currentStep: currentStepId,
-    action: action,
-    paymentDetailsExist: organization.isBillable,
-    spaceType: get(selectedPlan, 'internalName'),
-    spaceName: spaceName,
-    template: get(template, 'name'),
-    currentSpaceType: get(currentPlan, 'internalName')
-  };
-
-  return eventData;
-}
 
 async function createTemplate (templateInfo) {
   const templateCreator = getTemplateCreator(
