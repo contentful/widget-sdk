@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import moment from 'npm:moment';
 import { contentTypes } from './helpers';
 

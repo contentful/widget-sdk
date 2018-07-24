@@ -41,6 +41,7 @@ angular.module('contentful')
   var _ = require('lodash');
   var createSearchInput = require('app/ContentList/Search').default;
   var getAccessibleCTs = require('data/ContentTypeRepo/accessibleCTs').default;
+  const { Operator } = require('app/ContentList/Search/Operators');
 
   var MIN_SEARCH_TRIGGERING_LEN = 1;
   var MODES = {AVAILABLE: 1, SELECTED: 2};
@@ -134,6 +135,9 @@ angular.module('contentful')
 
     if (config.entityType === 'Entry' && $scope.singleContentType) {
       params.contentTypeId = $scope.singleContentType.getId();
+    }
+    if (config.entityType === 'Asset') {
+      params.searchFilters = [...(params.searchFilters || []), ['fields.file', Operator.EXISTS, true]];
     }
 
     return params;
