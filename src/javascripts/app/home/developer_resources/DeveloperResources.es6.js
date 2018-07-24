@@ -84,11 +84,6 @@ export const developerResources = {
         description: 'Create your first Swift based app with Contentful'
       },
       {
-        name: 'Objective-C app',
-        url: 'https://www.contentful.com/developers/docs/ios/tutorials/using-delivery-api-with-swift/',
-        description: 'Create your first Objective-C based app with Contentful'
-      },
-      {
         name: 'Apple Watch',
         url: 'https://github.com/contentful/ContentfulWatchKitExample',
         description: 'Explore this GitHub repository to learn how to use Contentful with Apple Watch.'
