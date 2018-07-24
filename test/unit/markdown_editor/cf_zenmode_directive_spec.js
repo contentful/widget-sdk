@@ -4,16 +4,19 @@ describe('cfZenmode', () => {
   let editor;
 
   const tieSpy = sinon.spy();
+  const parentSetHistory = sinon.spy();
   const apiMock = {
     registerChild: sinon.spy(),
     syncToParent: sinon.spy(),
     getParent: function () {
       return {
         tie: {editorToEditor: tieSpy},
-        restoreCursor: sinon.stub()
+        restoreCursor: sinon.stub(),
+        setHistory: parentSetHistory
       };
     },
-    getLocale: _.constant('en')
+    getLocale: _.constant('en'),
+    setHistory: sinon.spy()
   };
 
   beforeEach(function () {
@@ -32,6 +35,10 @@ describe('cfZenmode', () => {
   it('Registers editor on startup', () => {
     sinon.assert.calledOnce(apiMock.registerChild);
     sinon.assert.calledOnce(tieSpy);
+  });
+
+  it('sets history of parent', () => {
+    sinon.assert.calledOnceWith(parentSetHistory, editor.getHistory());
   });
 
   it('Syncs changes from editor to parent', () => {
