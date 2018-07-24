@@ -1,4 +1,4 @@
-# Contentful Web Application
+# Contentful Web Application ![Production Build Commit](https://samson.contentful.org/projects/user_interface/stages/production.svg?token=8d70d6eaf8ef80c828d2f1472e89dc6d)
 
 ## Quickstart
 
