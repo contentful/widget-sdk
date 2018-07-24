@@ -173,10 +173,12 @@ export function createSpace ({
     // This navigates to the new space
     onSpaceCreated(newSpace);
 
-    // const spaceCreateEventData =
-    //   template
-    //   ? {templateName: template.name, entityAutomationScope: {scope: 'space_template'}}
-    //   : {templateName: 'Blank'};
+    const spaceCreateEventData =
+      template
+      ? {templateName: template.name, entityAutomationScope: {scope: 'space_template'}}
+      : {templateName: 'Blank'};
+
+    Analytics.track('space:create', spaceCreateEventData);
 
     dispatch(track('space_create', {
       action: 'create'
