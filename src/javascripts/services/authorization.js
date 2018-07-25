@@ -11,17 +11,26 @@ angular.module('contentful')
   Authorization.prototype = {
     authContext: null,
     spaceContext: null,
-    setTokenLookup: function (tokenLookup, space, environmentId) {
+    update: function (tokenLookup, space, enforcements, environmentId) {
+      this.authContext = null;
+      this.spaceContext = null;
       this._tokenLookup = tokenLookup;
-      try {
-        this._environment = {
-          sys: {
-            id: environmentId,
-            isMaster: environmentId === 'master'
-          }
-        };
+      this._space = space;
 
-        this.authContext = worf(this._tokenLookup, this._environment);
+      var environment = {
+        sys: {
+          id: environmentId,
+          isMaster: environmentId === 'master'
+        }
+      };
+
+      if (space && enforcements) {
+        var tokenSpace = tokenLookup.spaces.find(({sys}) => sys.id === space.getId());
+        tokenSpace.enforcements = enforcements;
+      }
+
+      try {
+        this.authContext = worf(this._tokenLookup, environment);
       } catch (exp) {
         logger.logError('Worf initialization exception', {
           data: {
@@ -30,24 +39,15 @@ angular.module('contentful')
           }
         });
       }
-      this.setSpace(space);
-    },
-    setSpace: function (space, enforcements) {
-      this._space = space;
-      if (space && this.authContext) {
+
+      if (space && this.authContext.hasSpace(space.getId())) {
         try {
-          if (enforcements) {
-            const tokenSpace = this._tokenLookup.spaces.find(({sys}) => sys.id === space.getId());
-            tokenSpace.enforcements = enforcements;
-            this.authContext = worf(this._tokenLookup, this._environment);
-          }
           this.spaceContext = this.authContext.space(space.getId());
         } catch (exp) {
           logger.logError('Worf authContext space exception', exp);
         }
-      } else {
-        this.spaceContext = null;
       }
+
       accessChecker.setAuthContext({
         authContext: this.authContext,
         spaceAuthContext: this.spaceContext

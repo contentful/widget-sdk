@@ -42,16 +42,19 @@ angular.module('contentful')
 
   $scope.showCreateSpaceDialog = CreateSpace.showDialog;
 
-  async function spaceAndTokenWatchHandler (collection) {
-    if (collection.tokenLookup) {
-      authorization.setTokenLookup(collection.tokenLookup, null, spaceContext.getEnvironmentId());
-
-      if (collection.space && authorization.authContext && authorization.authContext.hasSpace(collection.space.getId())) {
-        const enforcements = await fetchEnforcements(collection.space.getId());
-        authorization.setSpace(collection.space, enforcements);
-      }
-      refreshNavState();
+  async function spaceAndTokenWatchHandler ({tokenLookup, space}) {
+    if (!tokenLookup) {
+      return;
     }
+
+    let enforcements;
+    if (space) {
+      enforcements = await fetchEnforcements(space.getId());
+    }
+
+    authorization.update(tokenLookup, space, enforcements, spaceContext.getEnvironmentId());
+
+    refreshNavState();
   }
 
   function handleUser (user) {
