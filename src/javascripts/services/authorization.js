@@ -26,7 +26,9 @@ angular.module('contentful')
 
       if (space && enforcements) {
         var tokenSpace = tokenLookup.spaces.find(({sys}) => sys.id === space.getId());
-        tokenSpace.enforcements = enforcements;
+        if (tokenSpace) {
+          tokenSpace.enforcements = enforcements;
+        }
       }
 
       try {

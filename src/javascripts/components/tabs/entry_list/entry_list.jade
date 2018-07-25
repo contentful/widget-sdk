@@ -21,7 +21,7 @@ header.workbench-header
     cf-create-entry-button(
       content-types="accessibleCts"
       suggested-content-type-id="context.view.contentTypeId"
-      disabled="disableButton"
+      disabled="shouldDisable('createEntry')"
       on-select="newEntry")
 
 .workbench-main(ng-hide="showNoEntriesAdvice()")
