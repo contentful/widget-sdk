@@ -1,10 +1,10 @@
-'use strict';
-
 describe('cfSingleLineEditor directive', () => {
+  let clock;
+
   beforeEach(function () {
     module('contentful/test');
 
-    this.clock = sinon.useFakeTimers();
+    clock = sinon.useFakeTimers();
 
     this.widgetApi = this.$inject('mocks/widgetApi').create({
       settings: {
@@ -30,14 +30,16 @@ describe('cfSingleLineEditor directive', () => {
     };
   });
 
-  function waitRaf () {
-    return new Promise((resolve) => {
+  function* waitRaf () {
+    clock.restore();
+    yield new Promise((resolve) => {
       window.requestAnimationFrame(resolve);
     });
+    clock = sinon.useFakeTimers();
   }
 
   afterEach(function () {
-    this.clock.restore();
+    clock.restore();
   });
 
   it('updates input value when document value is changed', function* () {
@@ -54,7 +56,7 @@ describe('cfSingleLineEditor directive', () => {
     const input = $el.find('input').get(0);
     input.value = 'NEW';
     input.dispatchEvent(new Event('input'));
-    this.clock.tick(300);
+    clock.tick(300);
     sinon.assert.calledOnce(this.setValue);
     sinon.assert.calledWithExactly(this.setValue, 'NEW');
   });
@@ -68,7 +70,7 @@ describe('cfSingleLineEditor directive', () => {
     ];
 
     const $el = this.compileElement();
-    this.clock.restore();
+    clock.restore();
 
     /* eslint prefer-const: off */
     for (let {input, expected} of testData) {
