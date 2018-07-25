@@ -6,10 +6,10 @@ angular.module('contentful')
  * @name ContentTypeFieldController
  */
 .controller('ContentTypeFieldController', ['$scope', 'require', function ($scope, require) {
-  var controller = this;
-  var fieldFactory = require('fieldFactory');
-  var isTitleType = require('fieldDecorator').isTitleType;
-  var dialogs = require('ContentTypeFieldController/dialogs');
+  const controller = this;
+  const fieldFactory = require('fieldFactory');
+  const isTitleType = require('fieldDecorator').isTitleType;
+  const dialogs = require('ContentTypeFieldController/dialogs');
 
   $scope.fieldTypeLabel = fieldFactory.getLabel($scope.field);
   $scope.iconId = fieldFactory.getIconId($scope.field) + '-small';
@@ -27,8 +27,8 @@ angular.module('contentful')
    * @name ContentTypeFieldController#toggle
    */
   controller.toggle = function toggle (property) {
-    var field = $scope.field;
-    var toggled = !field[property];
+    const field = $scope.field;
+    const toggled = !field[property];
 
     if ($scope.fieldIsTitle && toggled) {
       dialogs.openDisallowDialog(field, 'disable');
@@ -50,11 +50,11 @@ angular.module('contentful')
    * @name ContentTypeFieldController#delete
    */
   controller.delete = () => {
-    var publishedField = $scope.ctEditorController.getPublishedField($scope.field.id);
-    var publishedOmitted = publishedField && publishedField.omitted;
+    const publishedField = $scope.ctEditorController.getPublishedField($scope.field.id);
+    const publishedOmitted = publishedField && publishedField.omitted;
 
-    var isOmittedInApiAndUi = publishedOmitted && $scope.field.omitted;
-    var isOmittedInUiOnly = !publishedOmitted && $scope.field.omitted;
+    const isOmittedInApiAndUi = publishedOmitted && $scope.field.omitted;
+    const isOmittedInUiOnly = !publishedOmitted && $scope.field.omitted;
 
     if ($scope.fieldIsTitle) {
       dialogs.openDisallowDialog($scope.field, 'delete');
@@ -84,16 +84,16 @@ angular.module('contentful')
   });
 
   $scope.$watchGroup(['fieldIsTitle', 'field.disabled', 'field.omitted'], () => {
-    var isTitle = $scope.fieldIsTitle;
-    var disabled = $scope.field.disabled;
-    var omitted = $scope.field.omitted;
+    const isTitle = $scope.fieldIsTitle;
+    const disabled = $scope.field.disabled;
+    const omitted = $scope.field.omitted;
     $scope.fieldCanBeTitle = isTitleType($scope.field.type) && !isTitle && !disabled && !omitted;
   });
 }])
 
 .factory('ContentTypeFieldController/dialogs', ['require', require => {
-  var modalDialog = require('modalDialog');
-  var htmlEncode = require('encoder').htmlEncode;
+  const modalDialog = require('modalDialog');
+  const htmlEncode = require('encoder').htmlEncode;
 
   return {
     openDisallowDialog: openDisallowDialog,

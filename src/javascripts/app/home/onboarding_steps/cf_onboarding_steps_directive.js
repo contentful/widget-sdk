@@ -175,7 +175,7 @@ angular.module('contentful')
           updateNextStepsState();
         }
 
-        var firstSteps = [
+        const firstSteps = [
           {
             id: 'create_space',
             title: 'Create a space',
@@ -218,7 +218,7 @@ angular.module('contentful')
           }
         ];
 
-        var advancedSteps = [
+        const advancedSteps = [
           {
             id: 'invite_user',
             title: 'Invite users',
@@ -279,9 +279,9 @@ angular.module('contentful')
         }
 
         function initSpaceHomePage () {
-          var hasContentTypes = spaceContext.publishedCTs.getAllBare().length > 0;
-          var isActivated = !!spaceContext.getData('activatedAt');
-          var showAdvancedSteps = isActivated && hasContentTypes;
+          const hasContentTypes = spaceContext.publishedCTs.getAllBare().length > 0;
+          const isActivated = !!spaceContext.getData('activatedAt');
+          const showAdvancedSteps = isActivated && hasContentTypes;
 
           if (showAdvancedSteps) {
             controller.steps = advancedSteps;
@@ -293,12 +293,12 @@ angular.module('contentful')
         }
 
         function setOnboardingStepsCompletion () {
-          var hasContentTypes = spaceContext.publishedCTs.getAllBare().length > 0;
+          const hasContentTypes = spaceContext.publishedCTs.getAllBare().length > 0;
 
           if (hasContentTypes) {
             spaceContext.space.getEntries().then(function (entries) {
-              var hasEntries = !!_.size(entries);
-              var nextStep = hasEntries ? 3 : 2;
+              const hasEntries = !!_.size(entries);
+              const nextStep = hasEntries ? 3 : 2;
               setStepCompletion(nextStep);
             });
           } else {
@@ -340,11 +340,11 @@ angular.module('contentful')
         }
 
         function addEntry () {
-          var contentTypes = spaceContext.publishedCTs.getAllBare();
+          const contentTypes = spaceContext.publishedCTs.getAllBare();
 
           if (contentTypes.length === 1) {
-            var contentTypeId = contentTypes[0].sys.id;
-            var contentType = spaceContext.publishedCTs.get(contentTypeId);
+            const contentTypeId = contentTypes[0].sys.id;
+            const contentType = spaceContext.publishedCTs.get(contentTypeId);
             entityCreator.newEntry(contentTypeId)
               .then(function (entry) {
                 Analytics.track('entry:create', {
@@ -365,8 +365,8 @@ angular.module('contentful')
           spaceContext.apiKeyRepo.getAll()
             .then(function (keys) {
               if (keys.length === 1) {
-                var name = 'spaces.detail.api.keys.detail';
-                var params = { apiKeyId: keys[0].sys.id };
+                const name = 'spaces.detail.api.keys.detail';
+                const params = { apiKeyId: keys[0].sys.id };
                 $state.go(name, params);
               } else {
                 $state.go('spaces.detail.api.keys.list');

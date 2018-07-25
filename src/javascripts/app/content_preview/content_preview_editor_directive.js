@@ -9,22 +9,22 @@ angular.module('contentful')
 })])
 
 .controller('cfContentPreviewEditorController', ['$scope', 'require', ($scope, require) => {
-  var $q = require('$q');
-  var $state = require('$state');
-  var $stateParams = require('$stateParams');
-  var spaceContext = require('spaceContext');
-  var Command = require('command');
-  var leaveConfirmator = require('navigation/confirmLeaveEditor');
-  var contentPreview = require('contentPreview');
-  var notification = require('notification');
-  var logger = require('logger');
-  var slugUtils = require('slug');
-  var Analytics = require('analytics/Analytics');
+  const $q = require('$q');
+  const $state = require('$state');
+  const $stateParams = require('$stateParams');
+  const spaceContext = require('spaceContext');
+  const Command = require('command');
+  const leaveConfirmator = require('navigation/confirmLeaveEditor');
+  const contentPreview = require('contentPreview');
+  const notification = require('notification');
+  const logger = require('logger');
+  const slugUtils = require('slug');
+  const Analytics = require('analytics/Analytics');
 
   // Fetch content types and preview environment
-  var getPreviewEnvironment = contentPreview.get($stateParams.contentPreviewId);
-  var contentTypes = spaceContext.publishedCTs.refreshBare();
-  var promises = ($scope.context.isNew
+  const getPreviewEnvironment = contentPreview.get($stateParams.contentPreviewId);
+  const contentTypes = spaceContext.publishedCTs.refreshBare();
+  const promises = ($scope.context.isNew
     ? [contentTypes]
     : [contentTypes, getPreviewEnvironment]
   );
@@ -65,8 +65,8 @@ angular.module('contentful')
   }
 
   function getWarnings (config) {
-    var warnings = [];
-    var invalidFields = contentPreview.getInvalidFields(
+    const warnings = [];
+    const invalidFields = contentPreview.getInvalidFields(
       config.url,
       config.contentTypeFields
     );
@@ -93,7 +93,7 @@ angular.module('contentful')
     } else if (config.url && !contentPreview.urlFormatIsValid(config.url)) {
       addCtError(config.contentType, 'URL is invalid.');
     } else {
-      var warnings = getWarnings(config);
+      const warnings = getWarnings(config);
       if (warnings.length) {
         addCtWarning(config.contentType, warnings);
       }
@@ -114,7 +114,7 @@ angular.module('contentful')
   }
 
   function handleSuccessResponse (responses) {
-    var cts = responses[0];
+    const cts = responses[0];
     if ($scope.context.isNew) {
       contentPreview.canCreate().then(allowed => {
         if (allowed) {
@@ -126,7 +126,7 @@ angular.module('contentful')
       });
     } else {
       $scope.context.ready = true;
-      var env = responses[1];
+      const env = responses[1];
       if (env) {
         $scope.previewEnvironment = contentPreview.toInternal(env, cts);
         validate();
@@ -144,7 +144,7 @@ angular.module('contentful')
     if (!validate()) {
       return $q.reject();
     }
-    var action = $scope.context.isNew ? 'create' : 'update';
+    const action = $scope.context.isNew ? 'create' : 'update';
     return contentPreview[action]($scope.previewEnvironment)
     .then(env => {
       notification.info('Content preview "' + env.name + '" saved successfully');
@@ -166,14 +166,14 @@ angular.module('contentful')
         track('updated', env);
       }
     }, err => {
-      var defaultMessage = 'Could not save Preview Environment';
-      var serverMessage = _.first(_.split(_.get(err, 'body.message'), '\n'));
+      const defaultMessage = 'Could not save Preview Environment';
+      const serverMessage = _.first(_.split(_.get(err, 'body.message'), '\n'));
       notification.warn(serverMessage || defaultMessage);
     });
   }
 
   function remove () {
-    var env = $scope.previewEnvironment;
+    const env = $scope.previewEnvironment;
 
     return contentPreview.remove(env)
     .then(() => {

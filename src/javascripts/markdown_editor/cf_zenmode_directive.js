@@ -1,16 +1,16 @@
 'use strict';
 
 angular.module('contentful').directive('cfZenmode', ['require', require => {
-  var $window = require('$window');
-  var MarkdownEditor = require('markdown_editor/markdown_editor');
-  var actions = require('markdown_editor/markdown_actions');
-  var keycodes = require('utils/keycodes').default;
-  var modalDialog = require('modalDialog');
-  var win = $($window);
-  var LocaleStore = require('TheLocaleStore');
+  const $window = require('$window');
+  const MarkdownEditor = require('markdown_editor/markdown_editor');
+  const actions = require('markdown_editor/markdown_actions');
+  const keycodes = require('utils/keycodes').default;
+  const modalDialog = require('modalDialog');
+  const win = $($window);
+  const LocaleStore = require('TheLocaleStore');
 
   // This is persisted accross Zen Mode instances
-  var initialShowPreview = true;
+  let initialShowPreview = true;
 
   return {
     restrict: 'E',
@@ -21,15 +21,15 @@ angular.module('contentful').directive('cfZenmode', ['require', require => {
       direction: '='
     },
     link: function (scope, el) {
-      var textarea = el.find('textarea').get(0);
-      var preview = el.find('.markdown-preview').first();
-      var editor = null;
-      var opts = {
+      const textarea = el.find('textarea').get(0);
+      const preview = el.find('.markdown-preview').first();
+      let editor = null;
+      const opts = {
         height: '100%',
         fixedHeight: true,
         direction: scope.direction
       };
-      var containers = {
+      const containers = {
         editor: el.find('.zenmode-editor').first(),
         preview: el.find('.zenmode-preview').first()
       };
@@ -55,11 +55,11 @@ angular.module('contentful').directive('cfZenmode', ['require', require => {
 
       function initEditor (editorInstance) {
         editor = editorInstance;
-        var defaultLocale = LocaleStore.getDefaultLocale();
+        const defaultLocale = LocaleStore.getDefaultLocale();
 
-        var locales = LocaleStore.getLocales();
-        var fieldLocaleCode = scope.zenApi.getLocale();
-        var locale = locales.find(locale => locale.code === fieldLocaleCode);
+        const locales = LocaleStore.getLocales();
+        const fieldLocaleCode = scope.zenApi.getLocale();
+        const locale = locales.find(locale => locale.code === fieldLocaleCode);
 
         scope.actions = actions.create(editor, locale, defaultLocale.code, {zen: true});
         scope.history = editor.history;
@@ -79,7 +79,7 @@ angular.module('contentful').directive('cfZenmode', ['require', require => {
       }
 
       function tieChildEditor () {
-        var parent = scope.zenApi.getParent();
+        const parent = scope.zenApi.getParent();
         parent.tie.editorToEditor(editor);
       }
 

@@ -2,7 +2,7 @@ angular.module('contentful')
 .directive('cfEditorCharacterInfo', [() => {
   // If the character count is less than this number of charachters
   // away from the constraint we set the state to 'approaching'
-  var CLOSE_TO_CONSTRAINT = 10;
+  const CLOSE_TO_CONSTRAINT = 10;
 
   return {
     scope: {
@@ -34,7 +34,7 @@ angular.module('contentful')
       return;
     }
 
-    var charsLeft = maxChars - len;
+    const charsLeft = maxChars - len;
 
     if (charsLeft < 0) {
       return 'exceeded';

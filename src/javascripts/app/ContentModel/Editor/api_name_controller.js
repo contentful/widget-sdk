@@ -8,8 +8,8 @@
  */
 angular.module('contentful')
 .controller('ApiNameController', ['$scope', 'require', function ApiNameController ($scope, require) {
-  var modalDialog = require('modalDialog');
-  var $q = require('$q');
+  const modalDialog = require('modalDialog');
+  const $q = require('$q');
 
   /**
    * @ngdoc method
@@ -31,11 +31,11 @@ angular.module('contentful')
    */
   this.unlockEditing = unlockEditing;
 
-  var unlocked = false;
+  let unlocked = false;
 
 
   function isEditable () {
-    var isFieldPublished = !!$scope.ctEditorController.getPublishedField($scope.field.id);
+    const isFieldPublished = !!$scope.ctEditorController.getPublishedField($scope.field.id);
     return !isFieldPublished || unlocked;
   }
 

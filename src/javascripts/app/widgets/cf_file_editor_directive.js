@@ -2,14 +2,14 @@
 
 angular.module('contentful')
 .directive('cfFileEditor', ['require', require => {
-  var _ = require('lodash');
-  var Filestack = require('services/Filestack');
-  var ImageOperations = require('app/widgets/ImageOperations');
-  var notification = require('notification');
-  var stringUtils = require('stringUtils');
-  var mimetype = require('mimetype');
+  const _ = require('lodash');
+  const Filestack = require('services/Filestack');
+  const ImageOperations = require('app/widgets/ImageOperations');
+  const notification = require('notification');
+  const stringUtils = require('stringUtils');
+  const mimetype = require('mimetype');
 
-  var dropPaneMountCount = 0;
+  let dropPaneMountCount = 0;
 
   // TODO use isolated scope for this editor.
   // Ideally everything we do in here should be possible via `widgetApi`.
@@ -20,10 +20,10 @@ angular.module('contentful')
     require: '^cfWidgetApi',
     template: JST.cf_file_editor(),
     link: function (scope, elem, _attrs, widgetApi) {
-      var field = widgetApi.field;
-      var deleteFile = scope.deleteFile = setFile.bind(null, null);
+      const field = widgetApi.field;
+      const deleteFile = scope.deleteFile = setFile.bind(null, null);
 
-      var dropPaneMountPoint = elem[0].querySelectorAll('.__filestack-drop-pane-mount')[0];
+      const dropPaneMountPoint = elem[0].querySelectorAll('.__filestack-drop-pane-mount')[0];
       if (dropPaneMountPoint) {
         dropPaneMountCount += 1;
         dropPaneMountPoint.id = '__filestack-drop-pane-mount-' + dropPaneMountCount;
@@ -33,7 +33,7 @@ angular.module('contentful')
         });
       }
 
-      var removeUpdateListener = field.onValueChanged(file => {
+      const removeUpdateListener = field.onValueChanged(file => {
         scope.file = file;
         validate();
       });
@@ -69,10 +69,10 @@ angular.module('contentful')
       };
 
       scope.canEditFile = function canEditFile () {
-        var isEditable = _.get(scope, 'fieldLocale.access.editable', false);
-        var fileType = _.get(scope, 'file.contentType', '');
-        var isImage = mimetype.getGroupLabel({type: fileType}) === 'image';
-        var isReady = !scope.imageIsLoading && _.get(scope, 'file.url');
+        const isEditable = _.get(scope, 'fieldLocale.access.editable', false);
+        const fileType = _.get(scope, 'file.contentType', '');
+        const isImage = mimetype.getGroupLabel({type: fileType}) === 'image';
+        const isReady = !scope.imageIsLoading && _.get(scope, 'file.url');
         return isEditable && isImage && isReady;
       };
 

@@ -2,24 +2,24 @@
 
 angular.module('contentful')
 .controller('AssetListController', ['$scope', 'require', function AssetListController ($scope, require) {
-  var $controller = require('$controller');
-  var createSelection = require('selection');
-  var delay = require('delay');
-  var notification = require('notification');
-  var spaceContext = require('spaceContext');
-  var accessChecker = require('access_control/AccessChecker');
-  var entityStatus = require('entityStatus');
-  var debounce = require('debounce');
-  var getBlankView = require('data/UiConfig/Blanks').getBlankAssetView;
-  var createSavedViewsSidebar = require('app/ContentList/SavedViewsSidebar').default;
-  var BulkAssetsCreator = require('services/BulkAssetsCreator');
-  var TheLocaleStore = require('TheLocaleStore');
-  var entityCreator = require('entityCreator');
-  var $state = require('$state');
-  var ResourceUtils = require('utils/ResourceUtils');
-  var EnvironmentUtils = require('utils/EnvironmentUtils');
+  const $controller = require('$controller');
+  const createSelection = require('selection');
+  const delay = require('delay');
+  const notification = require('notification');
+  const spaceContext = require('spaceContext');
+  const accessChecker = require('access_control/AccessChecker');
+  const entityStatus = require('entityStatus');
+  const debounce = require('debounce');
+  const getBlankView = require('data/UiConfig/Blanks').getBlankAssetView;
+  const createSavedViewsSidebar = require('app/ContentList/SavedViewsSidebar').default;
+  const BulkAssetsCreator = require('services/BulkAssetsCreator');
+  const TheLocaleStore = require('TheLocaleStore');
+  const entityCreator = require('entityCreator');
+  const $state = require('$state');
+  const ResourceUtils = require('utils/ResourceUtils');
+  const EnvironmentUtils = require('utils/EnvironmentUtils');
 
-  var searchController = $controller('AssetSearchController', { $scope: $scope });
+  const searchController = $controller('AssetSearchController', { $scope: $scope });
 
   $controller('ListViewsController', {
     $scope: $scope,
@@ -63,7 +63,7 @@ angular.module('contentful')
   };
 
   // These are the props that are sent to the RecordsResourceUsage component
-  var resetUsageProps = debounce(() => {
+  const resetUsageProps = debounce(() => {
     $scope.usageProps = {
       space: spaceContext.space.data,
       currentTotal: $scope.paginator.getTotal()
@@ -72,7 +72,7 @@ angular.module('contentful')
 
   resetUsageProps();
 
-  var debouncedResetAssets = debounce(() => {
+  const debouncedResetAssets = debounce(() => {
     searchController.resetAssets();
     resetUsageProps();
   }, 3000);
@@ -101,16 +101,16 @@ angular.module('contentful')
    */
   // TODO this code is duplicated in the entry list controller
   $scope.hasNoSearchResults = () => {
-    var hasQuery = searchController.hasQuery();
-    var hasAssets = $scope.paginator.getTotal() > 0;
+    const hasQuery = searchController.hasQuery();
+    const hasAssets = $scope.paginator.getTotal() > 0;
     return !hasAssets && hasQuery && !$scope.context.isSearching;
   };
 
 
   // TODO this code is duplicated in the entry list controller
   $scope.showNoAssetsAdvice = () => {
-    var hasQuery = searchController.hasQuery();
-    var hasAssets = $scope.paginator.getTotal() > 0;
+    const hasQuery = searchController.hasQuery();
+    const hasAssets = $scope.paginator.getTotal() > 0;
 
     return !hasAssets && !hasQuery && !$scope.context.isSearching;
   };
@@ -135,7 +135,7 @@ angular.module('contentful')
   }
 
   $scope.createMultipleAssets = () => {
-    var defaultLocaleCode = TheLocaleStore.getDefaultLocale().internal_code;
+    const defaultLocaleCode = TheLocaleStore.getDefaultLocale().internal_code;
     BulkAssetsCreator.open(defaultLocaleCode).finally(() => {
       // We reload all assets to get the new ones. Unfortunately the
       // CMA is not immediately consistent so we have to wait.
@@ -151,9 +151,9 @@ angular.module('contentful')
   };
 
   function getAssetDimensions (asset) {
-    var file = getAssetFile(asset);
-    var width = _.get(file, 'details.image.width', false);
-    var height = _.get(file, 'details.image.height', false);
+    const file = getAssetFile(asset);
+    const width = _.get(file, 'details.image.width', false);
+    const height = _.get(file, 'details.image.height', false);
 
     if (width && height) {
       return width + ' &times; ' + height + '&thinsp;px';

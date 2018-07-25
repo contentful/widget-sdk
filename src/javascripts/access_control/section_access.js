@@ -10,10 +10,10 @@
  */
 angular.module('contentful')
 .factory('sectionAccess', ['require', require => {
-  var accessChecker = require('access_control/AccessChecker');
-  var spaceContext = require('spaceContext');
+  const accessChecker = require('access_control/AccessChecker');
+  const spaceContext = require('spaceContext');
 
-  var SECTION_ACCESS_ORDER = [
+  const SECTION_ACCESS_ORDER = [
     ['entry', '.entries.list'],
     ['contentType', '.content_types.list'],
     ['asset', '.assets.list'],
@@ -33,13 +33,13 @@ angular.module('contentful')
    * to `spaces.detail`. Returns `null` if no section can be accessed.
    */
   function getFirstAccessibleSref () {
-    var visibility = accessChecker.getSectionVisibility();
-    var section = _.find(SECTION_ACCESS_ORDER, section => visibility[section[0]]);
+    const visibility = accessChecker.getSectionVisibility();
+    const section = _.find(SECTION_ACCESS_ORDER, section => visibility[section[0]]);
 
-    var firstAccessible = _.isArray(section) ? section[1] : null;
-    var userIsAdmin = spaceContext.getData('spaceMembership.admin', false);
-    var notActivated = !spaceContext.getData('activatedAt');
-    var shouldGoToHome = notActivated && userIsAdmin;
+    const firstAccessible = _.isArray(section) ? section[1] : null;
+    const userIsAdmin = spaceContext.getData('spaceMembership.admin', false);
+    const notActivated = !spaceContext.getData('activatedAt');
+    const shouldGoToHome = notActivated && userIsAdmin;
 
     return shouldGoToHome ? '.home' : firstAccessible;
   }

@@ -2,26 +2,26 @@
 
 angular.module('contentful')
 .directive('cfDatetimeEditor', ['require', require => {
-  var _ = require('lodash');
-  var zoneOffsets = require('zoneOffsets');
-  var moment = require('moment');
-  var Datepicker = require('datepicker');
-  var $timeout = require('$timeout');
+  const _ = require('lodash');
+  const zoneOffsets = require('zoneOffsets');
+  const moment = require('moment');
+  const Datepicker = require('datepicker');
+  const $timeout = require('$timeout');
 
-  var DATE_FORMAT_INTERNAL = 'YYYY-MM-DD'; // moment.js format
-  var LOCAL_TIMEZONE = moment().format('Z');
+  const DATE_FORMAT_INTERNAL = 'YYYY-MM-DD'; // moment.js format
+  const LOCAL_TIMEZONE = moment().format('Z');
 
   // Patterns to validate and parse user input
-  var DATE_RX = '(\\d{4}-\\d{2}-\\d{2})';
-  var ZONE_RX = '(Z|[+-]\\d{2}:?\\d{2})?';
-  var TIME_RX =
+  const DATE_RX = '(\\d{4}-\\d{2}-\\d{2})';
+  const ZONE_RX = '(Z|[+-]\\d{2}:?\\d{2})?';
+  const TIME_RX =
     '([0-1]?[0-9]|2[0-3])' + // hours
     ':([0-5][\\d])' + // minutes
     '(?::([0-5][\\d])(?:\\.(\\d{3}))?)?'; // seconds + milliseconds :XX.YYY
-  var ISO_8601_RX = new RegExp(
+  const ISO_8601_RX = new RegExp(
     '^' + DATE_RX + '(?:T(' + TIME_RX + ')' + ZONE_RX + ')?'
   );
-  var TIME_RX_12 =
+  const TIME_RX_12 =
     '(0?[1-9]|1[0-2])' + // hours
     ':([0-5][\\d])' + // minutes
     '(?::([0-5][\\d])(?:\\.(\\d{3}))?)?'; // seconds + milliseconds :XX.YYY
@@ -34,10 +34,10 @@ angular.module('contentful')
     template: require('components/forms/datetime_editor/cf_datetime_editor').default(),
     require: 'ngModel',
     link: function (scope, elm, _attr, ngModelCtrl) {
-      var dateController = elm.find('.date').controller('ngModel');
-      var timeController = elm.find('.time').controller('ngModel');
-      var ampmController = elm.find('.ampm').controller('ngModel');
-      var zoneController = elm.find('.zone').controller('ngModel');
+      const dateController = elm.find('.date').controller('ngModel');
+      const timeController = elm.find('.time').controller('ngModel');
+      const ampmController = elm.find('.ampm').controller('ngModel');
+      const zoneController = elm.find('.zone').controller('ngModel');
 
       scope.timezones = zoneOffsets;
       scope.tzOffset = LOCAL_TIMEZONE;
@@ -58,7 +58,7 @@ angular.module('contentful')
         scope.setFromISO(ngModelCtrl.$modelValue);
       };
 
-      var datepicker = Datepicker.create({
+      const datepicker = Datepicker.create({
         field: elm.find('.date').get(0),
         format: DATE_FORMAT_INTERNAL,
         firstDay: 1,
@@ -71,7 +71,7 @@ angular.module('contentful')
         }
       });
 
-      var handleMouseDownOnCalendarIcon = e => {
+      const handleMouseDownOnCalendarIcon = e => {
         if (e.path.indexOf(elm.find('i.fa.fa-calendar').get(0)) > -1) {
           e.preventDefault();
         }
@@ -90,7 +90,7 @@ angular.module('contentful')
       });
 
       dateController.$parsers.unshift(viewValue => {
-        var date = moment(viewValue, moment.ISO_8601);
+        const date = moment(viewValue, moment.ISO_8601);
         scope.dateInvalid = !date.isValid();
         return date.isValid() ? date.format(DATE_FORMAT_INTERNAL) : null;
       });
@@ -113,7 +113,7 @@ angular.module('contentful')
       };
 
       timeController.$parsers.push(viewValue => {
-        var time = parseTimeInput(viewValue);
+        const time = parseTimeInput(viewValue);
         if (time) {
           timeController.$setValidity('format', true);
           return time;
@@ -123,7 +123,7 @@ angular.module('contentful')
       });
 
       function changeHandler () {
-        var value = buildIsoString(
+        const value = buildIsoString(
           scope.localDate,
           scope.localTime,
           scope.ampm,
@@ -157,11 +157,11 @@ angular.module('contentful')
       // containing the four components which we then can apply to the
       // scope.
       scope.setFromISO = iso => {
-        var tokens = parseIso(iso);
-        var tzOffset = LOCAL_TIMEZONE;
+        const tokens = parseIso(iso);
+        let tzOffset = LOCAL_TIMEZONE;
 
         if (tokens) {
-          var dateTime = tokens.tzString
+          const dateTime = tokens.tzString
             ? moment(iso).utcOffset(iso)
             : moment(iso);
           tzOffset = tokens.tzString ? dateTime.format('Z') : scope.tzOffset;
@@ -191,7 +191,7 @@ angular.module('contentful')
           return null;
         }
 
-        var results = ISO_8601_RX.exec(isoString);
+        const results = ISO_8601_RX.exec(isoString);
         if (results) {
           return {
             date: results[1],
@@ -203,9 +203,9 @@ angular.module('contentful')
             tzString: results[7]
           };
         } else {
-          var m = moment(isoString).zone(isoString);
+          const m = moment(isoString).zone(isoString);
           if (m.isValid()) {
-            var timeFmt = 'HH:mm';
+            let timeFmt = 'HH:mm';
             if (m.milliseconds()) {
               timeFmt = timeFmt + ':ss.SSS';
             } else if (m.seconds()) {
@@ -227,10 +227,10 @@ angular.module('contentful')
       }
 
       function parseTimeInput (value) {
-        var localTimeRx = uses24hMode() ? TIME_RX : TIME_RX_12;
-        var inputMatcher = '^\\s*(' + localTimeRx + ')?\\s*$';
-        var match = value.match(inputMatcher);
-        var time = match && match[1];
+        const localTimeRx = uses24hMode() ? TIME_RX : TIME_RX_12;
+        const inputMatcher = '^\\s*(' + localTimeRx + ')?\\s*$';
+        const match = value.match(inputMatcher);
+        let time = match && match[1];
         if (time && time.match(/^\d:/)) {
           time = '0' + time;
         }
@@ -243,8 +243,8 @@ angular.module('contentful')
           return localTime;
         }
 
-        var seg = localTime.split(':');
-        var hour = parseInt(seg[0], 10);
+        const seg = localTime.split(':');
+        let hour = parseInt(seg[0], 10);
         hour =
           ampm === 'am' && hour === 12
             ? 0
@@ -259,8 +259,8 @@ angular.module('contentful')
           return timeStr;
         }
 
-        var seg = timeStr.split(':');
-        var hour = parseInt(seg[0], 10);
+        const seg = timeStr.split(':');
+        let hour = parseInt(seg[0], 10);
         hour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
         seg[0] =
           hour === 0 ? '00' : hour < 10 ? '0' + String(hour) : String(hour);

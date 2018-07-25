@@ -2,10 +2,10 @@
 
 angular.module('contentful')
 .factory('fieldDecorator', ['require', require => {
-  var schemas = require('validation').schemas;
-  var fieldSchema = schemas.ContentType.atItems(['fields']);
+  const schemas = require('validation').schemas;
+  const fieldSchema = schemas.ContentType.atItems(['fields']);
 
-  var fieldProperties = [
+  const fieldProperties = [
     'id', 'name', 'apiName',
     'type', 'linkType',
     'localized', 'required', 'disabled'
@@ -22,7 +22,7 @@ angular.module('contentful')
 
 
   function decorate (field, contentType) {
-    var isTitle = contentType.displayField === field.id;
+    const isTitle = contentType.displayField === field.id;
 
     return _.extend(_.pick(field, fieldProperties), {
       displayName: getDisplayFieldName(field),
@@ -40,7 +40,7 @@ angular.module('contentful')
   function update (decoratedField, field, contentType) {
     _.extend(field, extract(decoratedField));
 
-    var isTitle = decoratedField.isTitle;
+    const isTitle = decoratedField.isTitle;
     if (isTitle) {
       contentType.displayField = field.id;
     } else if (contentType.displayField === field.id && !isTitle) {
@@ -56,7 +56,7 @@ angular.module('contentful')
   }
 
   function validateInContentType (field, contentType) {
-    var errors = validate(field);
+    const errors = validate(field);
     if (!isApiNameUnique(field, contentType)) {
       errors.push({
         name: 'uniqueFieldId',
@@ -67,8 +67,8 @@ angular.module('contentful')
   }
 
   function isApiNameUnique (field, contentType) {
-    var otherFields = _.reject(contentType.fields, {id: field.id});
-    var apiNames = _.map(otherFields, 'apiName');
+    const otherFields = _.reject(contentType.fields, {id: field.id});
+    const apiNames = _.map(otherFields, 'apiName');
     return apiNames.indexOf(field.apiName) < 0;
   }
 

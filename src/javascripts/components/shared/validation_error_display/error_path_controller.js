@@ -3,15 +3,15 @@
 angular.module('contentful')
 .controller('ErrorPathController', ['$scope', '$attrs', 'require',
 function ErrorPathController($scope, $attrs, require) {
-  var controller = this;
-  var logger = require('logger');
+  const controller = this;
+  const logger = require('logger');
 
   controller.messages = [];
 
   $scope.$watch('validationResult.errors', errors => {
-    var pathPattern = $scope.$eval($attrs.cfErrorPath);
+    const pathPattern = $scope.$eval($attrs.cfErrorPath);
 
-    var fieldErrors = _.filter(errors, error => {
+    const fieldErrors = _.filter(errors, error => {
       try {
         return matchesPath(pathPattern, error.path);
       } catch (e) {
@@ -27,7 +27,7 @@ function ErrorPathController($scope, $attrs, require) {
       }
     });
 
-    var hasErrors = fieldErrors.length > 0;
+    const hasErrors = fieldErrors.length > 0;
 
     controller.messages = _.map(fieldErrors, 'message');
     controller.hasErrors = hasErrors;
@@ -35,7 +35,7 @@ function ErrorPathController($scope, $attrs, require) {
   });
 
   function matchesPath (pattern, target) {
-    var prefixLen = pattern.length - 1;
+    const prefixLen = pattern.length - 1;
     if (pattern[prefixLen] === '*') {
       target = target.slice(0, prefixLen);
       pattern = pattern.slice(0, prefixLen);

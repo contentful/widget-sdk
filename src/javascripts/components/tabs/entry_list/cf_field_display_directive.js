@@ -35,11 +35,11 @@ angular.module('contentful')
     scope.dataForField = (entry, field) => scope.spaceContext.getFieldValue(entry, field.id);
 
     function filterVisibleItems (items) {
-      var counter = 0;
-      var cacheName = hasItemsOfType(items, 'Entry') ? 'entryCache' : 'assetCache';
-      var limit = scope[cacheName].params.limit;
+      let counter = 0;
+      const cacheName = hasItemsOfType(items, 'Entry') ? 'entryCache' : 'assetCache';
+      const limit = scope[cacheName].params.limit;
       return _.filter(items, item => {
-        var hasItem = scope[cacheName].has(item.sys.id);
+        const hasItem = scope[cacheName].has(item.sys.id);
         if (hasItem && counter < limit) {
           counter++;
           return true;
@@ -49,22 +49,22 @@ angular.module('contentful')
     }
 
     scope.isEntryArray = (entity, field) => {
-      var items = scope.dataForField(entity, field);
+      const items = scope.dataForField(entity, field);
       return hasItemsOfType(items, 'Entry');
     };
 
     scope.isAssetArray = (entity, field) => {
-      var items = scope.dataForField(entity, field);
+      const items = scope.dataForField(entity, field);
       return hasItemsOfType(items, 'Asset');
     };
 
     scope.countArrayHiddenItems = (entity, field) => {
-      var items = scope.dataForField(entity, field);
+      const items = scope.dataForField(entity, field);
       return items && items.length - filterVisibleItems(items).length;
     };
 
     scope.dataForArray = (entry, field) => {
-      var items = scope.dataForField(entry, field);
+      const items = scope.dataForField(entry, field);
       if (hasItemsOfType(items, 'Entry')) {
         return _.map(filterVisibleItems(items), entry => scope.dataForEntry(entry));
       }
@@ -80,7 +80,7 @@ angular.module('contentful')
      * If the link points to a missing entry, return "missing".
      */
     scope.dataForEntry = entryLink => {
-      var entry = scope.entryCache.get(entryLink.sys.id);
+      const entry = scope.entryCache.get(entryLink.sys.id);
       if (entry) {
         return scope.spaceContext.entryTitle(entry);
       } else {
@@ -89,17 +89,17 @@ angular.module('contentful')
     };
 
     scope.dataForAsset = assetLink => {
-      var asset = scope.assetCache.get(assetLink.sys.id);
+      const asset = scope.assetCache.get(assetLink.sys.id);
       return scope.spaceContext.getFieldValue(asset, 'file');
     };
 
     scope.dataForLinkedEntry = (entry, field) => {
-      var entryLinkField = scope.spaceContext.getFieldValue(entry, field.id);
+      const entryLinkField = scope.spaceContext.getFieldValue(entry, field.id);
       return entryLinkField ? scope.dataForEntry(entryLinkField) : '';
     };
 
     scope.dataForLinkedAsset = (entry, field) => {
-      var assetLinkField = scope.spaceContext.getFieldValue(entry, field.id);
+      const assetLinkField = scope.spaceContext.getFieldValue(entry, field.id);
       return assetLinkField ? scope.dataForAsset(assetLinkField) : '';
     };
 

@@ -10,11 +10,11 @@ angular.module('contentful')
 })])
 
 .controller('cfAccountDropdownController', ['$scope', 'require', ($scope, require) => {
-  var Authentication = require('Authentication');
-  var Config = require('Config');
-  var Analytics = require('analytics/Analytics');
-  var intercom = require('intercom');
-  var $state = require('$state');
+  const Authentication = require('Authentication');
+  const Config = require('Config');
+  const Analytics = require('analytics/Analytics');
+  const intercom = require('intercom');
+  const $state = require('$state');
 
   $scope.userProfileRef = {
     path: ['account', 'profile', 'user'],

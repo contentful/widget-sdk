@@ -11,10 +11,10 @@
  */
 angular.module('contentful')
 .factory('dialogsInitController', ['require', require => {
-  var $rootScope = require('$rootScope');
-  var spaceContext = require('spaceContext');
-  var activationEmailResendController = require('activationEmailResendController');
-  var subscriptionNotifier = require('subscriptionNotifier');
+  const $rootScope = require('$rootScope');
+  const spaceContext = require('spaceContext');
+  const activationEmailResendController = require('activationEmailResendController');
+  const subscriptionNotifier = require('subscriptionNotifier');
 
   return {
     init: init
@@ -32,7 +32,7 @@ angular.module('contentful')
     // Reset notification related to the previous space.
     $rootScope.$broadcast('persistentNotification', null);
 
-    var organization = spaceContext.organizationContext.organization || {};
+    const organization = spaceContext.organizationContext.organization || {};
 
     subscriptionNotifier.notifyAbout(organization);
   }

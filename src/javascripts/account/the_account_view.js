@@ -11,13 +11,13 @@ angular.module('contentful')
  * account section URL manipulation.
  */
 .factory('TheAccountView', ['require', require => {
-  var $q = require('$q');
-  var spaceContext = require('spaceContext');
-  var OrganizationRoles = require('services/OrganizationRoles');
-  var TokenStore = require('services/TokenStore');
-  var K = require('utils/kefir');
-  var Navigator = require('states/Navigator');
-  var isLegacyOrganization = require('utils/ResourceUtils').isLegacyOrganization;
+  const $q = require('$q');
+  const spaceContext = require('spaceContext');
+  const OrganizationRoles = require('services/OrganizationRoles');
+  const TokenStore = require('services/TokenStore');
+  const K = require('utils/kefir');
+  const Navigator = require('states/Navigator');
+  const isLegacyOrganization = require('utils/ResourceUtils').isLegacyOrganization;
 
   return {
     getSubscriptionState: getSubscriptionState,
@@ -34,7 +34,7 @@ angular.module('contentful')
    * view if the user has permission to access it otherwise returns null.
    */
   function getSubscriptionState () {
-    var org = spaceContext.getData('organization');
+    const org = spaceContext.getData('organization');
     if (!org || !OrganizationRoles.isOwnerOrAdmin(org)) {
       return null;
     } else if (isLegacyOrganization(org)) {
@@ -52,7 +52,7 @@ angular.module('contentful')
    * organization's subscription page.
    */
   function goToSubscription () {
-    var org = getGoToOrganizationsOrganization();
+    const org = getGoToOrganizationsOrganization();
     if (!org) {
       return $q.reject('Cannot go to subscription - no suitable organization');
     } else if (isLegacyOrganization(org)) {
@@ -82,7 +82,7 @@ angular.module('contentful')
    * organization. Only organization owners and admins get navigated.
    */
   function goToOrganizations (subpage) {
-    var ref = getOrganizationRef(subpage);
+    const ref = getOrganizationRef(subpage);
     if (ref) {
       return Navigator.go(ref);
     } else {
@@ -106,7 +106,7 @@ angular.module('contentful')
    * @returns {Navigator.Ref}
    */
   function getOrganizationRef (subpage) {
-    var org = getGoToOrganizationsOrganization();
+    const org = getGoToOrganizationsOrganization();
     if (org) {
       subpage = subpage || 'subscription';
       return {
@@ -131,7 +131,7 @@ angular.module('contentful')
    * user hasn't got any space yet - the next best current user owned organization.
    */
   function getGoToOrganizationsOrganization () {
-    var orgs = [spaceContext.getData('organization')];
+    let orgs = [spaceContext.getData('organization')];
     if (!orgs[0]) {
       // No space yet, get next best organization.
       orgs = K.getValue(TokenStore.organizations$);

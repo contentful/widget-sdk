@@ -1,8 +1,8 @@
 'use strict';
 
 describe('Contentful Client', () => {
-  var $httpBackend, $rootScope;
-  var client, successStub, failStub;
+  let $httpBackend, $rootScope;
+  let client, successStub, failStub;
 
   beforeEach(() => {
     module('contentful/test');
@@ -10,7 +10,7 @@ describe('Contentful Client', () => {
 
       $httpBackend = $injector.get('$httpBackend');
       $rootScope = $injector.get('$rootScope');
-      var contentfulClient = $injector.get('contentfulClient');
+      const contentfulClient = $injector.get('contentfulClient');
       client = contentfulClient.newClient({
         host: 'api.contentful.com',
         space: 'spaceid',

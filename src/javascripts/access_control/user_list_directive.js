@@ -1,15 +1,15 @@
 'use strict';
 
 angular.module('contentful').directive('cfUserList', ['require', require => {
-  var popRoleId = require('UserListController/jumpToRole').popRoleId;
-  var $timeout = require('$timeout');
-  var getStore = require('TheStore').getStore;
-  var store = getStore().forKey('userListView');
-  var renderString = require('ui/Framework').renderString;
+  const popRoleId = require('UserListController/jumpToRole').popRoleId;
+  const $timeout = require('$timeout');
+  const getStore = require('TheStore').getStore;
+  const store = getStore().forKey('userListView');
+  const renderString = require('ui/Framework').renderString;
 
-  var VIEW_BY_NAME = 'name';
-  var VIEW_BY_ROLE = 'role';
-  var VIEW_LABELS = {};
+  const VIEW_BY_NAME = 'name';
+  const VIEW_BY_ROLE = 'role';
+  const VIEW_LABELS = {};
   VIEW_LABELS[VIEW_BY_NAME] = 'Show users in alphabetical order';
   VIEW_LABELS[VIEW_BY_ROLE] = 'Show users grouped by role';
 
@@ -27,7 +27,7 @@ angular.module('contentful').directive('cfUserList', ['require', require => {
   }
 
   function link (scope, el) {
-    var roleId = popRoleId();
+    const roleId = popRoleId();
     scope.viewLabels = VIEW_LABELS;
     scope.selectedView = roleId ? VIEW_BY_ROLE : (store.get() || VIEW_BY_NAME);
     scope.jumpToRole = roleId ? _.once(jumpToRole) : _.noop;
@@ -35,11 +35,11 @@ angular.module('contentful').directive('cfUserList', ['require', require => {
 
     function jumpToRole () {
       $timeout(() => {
-        var groupHeader = el.find('#role-group-' + roleId).first();
-        var scrollContainer = el.find('.workbench-main__content').first();
+        const groupHeader = el.find('#role-group-' + roleId).first();
+        const scrollContainer = el.find('.workbench-main__content').first();
 
         if (groupHeader.length && scrollContainer.length) {
-          var scrollTo = scrollContainer.scrollTop() + groupHeader.position().top;
+          const scrollTo = scrollContainer.scrollTop() + groupHeader.position().top;
           scrollContainer.scrollTop(scrollTo);
         }
       });
@@ -48,14 +48,14 @@ angular.module('contentful').directive('cfUserList', ['require', require => {
 }]);
 
 angular.module('contentful').controller('UserListController', ['$scope', 'require', ($scope, require) => {
-  var ReloadNotification = require('ReloadNotification');
-  var spaceContext = require('spaceContext');
-  var userListHandler = require('UserListHandler').create();
-  var accessChecker = require('access_control/AccessChecker');
-  var TokenStore = require('services/TokenStore');
-  var UserListActions = require('access_control/UserListActions');
+  const ReloadNotification = require('ReloadNotification');
+  const spaceContext = require('spaceContext');
+  const userListHandler = require('UserListHandler').create();
+  const accessChecker = require('access_control/AccessChecker');
+  const TokenStore = require('services/TokenStore');
+  const UserListActions = require('access_control/UserListActions');
 
-  var actions = UserListActions.create(spaceContext, userListHandler, TokenStore);
+  const actions = UserListActions.create(spaceContext, userListHandler, TokenStore);
 
   $scope.userQuota = {used: 1};
   $scope.$watch(accessChecker.getUserQuota, q => { $scope.userQuota = q; });
@@ -74,8 +74,8 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
   }
 
   function canModifyUsers () {
-    var subscription = spaceContext.subscription;
-    var trialLockdown = subscription &&
+    const subscription = spaceContext.subscription;
+    const trialLockdown = subscription &&
       subscription.isTrial() && subscription.hasTrialEnded();
 
     return accessChecker.canModifyUsers() && !trialLockdown;
@@ -110,9 +110,9 @@ angular.module('contentful').controller('UserListController', ['$scope', 'requir
 }]);
 
 angular.module('contentful').factory('UserListController/jumpToRole', ['require', require => {
-  var $state = require('$state');
-  var spaceContext = require('spaceContext');
-  var targetRoleId = null;
+  const $state = require('$state');
+  const spaceContext = require('spaceContext');
+  let targetRoleId = null;
 
   jump.popRoleId = popRoleId;
   return jump;
@@ -127,7 +127,7 @@ angular.module('contentful').factory('UserListController/jumpToRole', ['require'
   }
 
   function popRoleId () {
-    var roleId = targetRoleId;
+    const roleId = targetRoleId;
     targetRoleId = null;
     return roleId;
   }

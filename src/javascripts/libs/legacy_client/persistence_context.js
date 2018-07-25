@@ -1,6 +1,6 @@
 'use strict';
 
-var IdentityMap = require('./identity_map');
+const IdentityMap = require('./identity_map');
 
 function PersistenceContext (baseRequest) {
   this._baseRequest = baseRequest;
@@ -15,7 +15,7 @@ PersistenceContext.prototype.changePath = function (...args) {
 
 
 PersistenceContext.prototype.withEndpoint = function (endpoint) {
-  var clone = new PersistenceContext(endpoint);
+  const clone = new PersistenceContext(endpoint);
   clone.identityMap = this.identityMap;
   return clone;
 };

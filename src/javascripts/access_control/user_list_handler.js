@@ -2,30 +2,30 @@
 
 angular.module('contentful')
 .factory('UserListHandler', ['require', require => {
-  var $q = require('$q');
-  var spaceContext = require('spaceContext');
-  var RoleRepository = require('RoleRepository');
-  var SpaceMembershipRepository = require('access_control/SpaceMembershipRepository');
-  var fetchAll = require('data/CMA/FetchAll').fetchAll;
-  var createResourceService = require('services/ResourceService').default;
+  const $q = require('$q');
+  const spaceContext = require('spaceContext');
+  const RoleRepository = require('RoleRepository');
+  const SpaceMembershipRepository = require('access_control/SpaceMembershipRepository');
+  const fetchAll = require('data/CMA/FetchAll').fetchAll;
+  const createResourceService = require('services/ResourceService').default;
 
-  var ADMIN_ROLE_ID = SpaceMembershipRepository.ADMIN_ROLE_ID;
-  var ADMIN_ROLE_NAME = 'Administrator';
-  var ADMIN_OPT = { id: ADMIN_ROLE_ID, name: ADMIN_ROLE_NAME };
-  var UNKNOWN_ROLE_NAME = 'Unknown';
-  var NOT_DEFINED_USER_NAME = 'Name not defined';
+  const ADMIN_ROLE_ID = SpaceMembershipRepository.ADMIN_ROLE_ID;
+  const ADMIN_ROLE_NAME = 'Administrator';
+  const ADMIN_OPT = { id: ADMIN_ROLE_ID, name: ADMIN_ROLE_NAME };
+  const UNKNOWN_ROLE_NAME = 'Unknown';
+  const NOT_DEFINED_USER_NAME = 'Name not defined';
   // `GET /spaces/:id/users` endpoint returns a max of 100 items
-  var PER_PAGE = 100;
+  const PER_PAGE = 100;
 
   return { create: create };
 
   function create () {
-    var membershipCounts = {};
-    var users = [];
-    var adminMap = {};
-    var membershipMap = {};
-    var roleNameMap = {};
-    var userRolesMap = {};
+    let membershipCounts = {};
+    let users = [];
+    let adminMap = {};
+    let membershipMap = {};
+    let roleNameMap = {};
+    let userRolesMap = {};
 
     return {
       reset: reset,
@@ -55,7 +55,7 @@ angular.module('contentful')
       userRolesMap = {};
 
       _.forEach(data.memberships, membership => {
-        var userId = membership.user.sys.id;
+        const userId = membership.user.sys.id;
         adminMap[userId] = membership.admin;
         membershipMap[userId] = membership;
 
@@ -76,7 +76,7 @@ angular.module('contentful')
     }
 
     function countMemberships (memberships) {
-      var counts = { admin: 0 };
+      const counts = { admin: 0 };
 
       _.forEach(memberships, item => {
         if (item.admin) { counts.admin += 1; }
@@ -91,7 +91,7 @@ angular.module('contentful')
 
     function prepareUsers (users) {
       return _(users).map(user => {
-        var id = user.sys.id;
+        const id = user.sys.id;
 
         return {
           id: id,
@@ -111,9 +111,9 @@ angular.module('contentful')
     }
 
     function getRoleNamesForUser (userId) {
-      var roleIds = _.clone(userRolesMap[userId]);
+      const roleIds = _.clone(userRolesMap[userId]);
       if (adminMap[userId]) { roleIds.unshift(ADMIN_ROLE_ID); }
-      var roleString = _(roleIds).map(getRoleName).value().join(', ');
+      const roleString = _(roleIds).map(getRoleName).value().join(', ');
       return roleString.length > 0 ? roleString : UNKNOWN_ROLE_NAME;
     }
 
@@ -127,7 +127,7 @@ angular.module('contentful')
     }
 
     function isLastAdmin (userId) {
-      var adminCount = _.filter(adminMap, _.identity).length;
+      const adminCount = _.filter(adminMap, _.identity).length;
       return adminMap[userId] && adminCount < 2;
     }
 
@@ -157,15 +157,15 @@ angular.module('contentful')
     }
 
     function groupUsersByName () {
-      var byLetter = {};
+      const byLetter = {};
 
       _.forEach(users, user => {
-        var first = user.name.substr(0, 1).toUpperCase();
+        const first = user.name.substr(0, 1).toUpperCase();
         byLetter[first] = byLetter[first] || [];
         byLetter[first].push(user);
       });
 
-      var sortedLetters = _.keys(byLetter).sort();
+      const sortedLetters = _.keys(byLetter).sort();
 
       return _.map(sortedLetters, letter => ({
         id: 'letter-group-' + letter.toLowerCase(),
@@ -175,8 +175,8 @@ angular.module('contentful')
     }
 
     function groupUsersByRole () {
-      var byRole = {};
-      var admins = [];
+      const byRole = {};
+      const admins = [];
 
       _.forEach(users, user => {
         if (user.isAdmin) { admins.push(user); }
@@ -186,7 +186,7 @@ angular.module('contentful')
         });
       });
 
-      var sortedRoleIds = _(byRole).keys().sortBy(getRoleName).value();
+      const sortedRoleIds = _(byRole).keys().sortBy(getRoleName).value();
       sortedRoleIds.unshift(ADMIN_ROLE_ID);
       byRole[ADMIN_ROLE_ID] = admins;
 

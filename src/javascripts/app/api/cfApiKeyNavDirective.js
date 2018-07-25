@@ -2,10 +2,10 @@
 
 angular.module('contentful')
 .directive('cfApiKeyNav', ['require', require => {
-  var h = require('utils/hyperscript').h;
-  var $state = require('$state');
+  const h = require('utils/hyperscript').h;
+  const $state = require('$state');
 
-  var template = h('header.workbench-header.x--with-nav', [
+  const template = h('header.workbench-header.x--with-nav', [
     h('cf-breadcrumbs'),
     h('.page-header', [
       h('cf-icon.workbench-header__icon', {name: 'page-apis', scale: '0.75'}),
@@ -29,9 +29,9 @@ angular.module('contentful')
     template: template,
     restrict: 'E',
     controller: [function () {
-      var controller = this;
-      var state = $state.current.name;
-      var spacePrefix = state.match(/^(.+)\.api\./)[1];
+      const controller = this;
+      const state = $state.current.name;
+      const spacePrefix = state.match(/^(.+)\.api\./)[1];
 
       controller.state = $state.current.name;
       controller.tabs = [

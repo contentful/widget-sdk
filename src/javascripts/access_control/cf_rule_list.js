@@ -2,10 +2,10 @@
 
 angular.module('contentful').directive('cfRuleList', ['require', require => {
 
-  var spaceContext            = require('spaceContext');
-  var TheLocaleStore          = require('TheLocaleStore');
-  var getDefaultRuleGetterFor = require('PolicyBuilder/defaultRule').getDefaultRuleGetterFor;
-  var ALL_LOCALES             = require('PolicyBuilder/CONFIG').ALL_LOCALES;
+  const spaceContext            = require('spaceContext');
+  const TheLocaleStore          = require('TheLocaleStore');
+  const getDefaultRuleGetterFor = require('PolicyBuilder/defaultRule').getDefaultRuleGetterFor;
+  const ALL_LOCALES             = require('PolicyBuilder/CONFIG').ALL_LOCALES;
 
   return {
     restrict: 'E',
@@ -34,8 +34,8 @@ angular.module('contentful').directive('cfRuleList', ['require', require => {
       });
 
       function remove(rule) {
-        var index = -1;
-        var collection = null;
+        let index = -1;
+        let collection = null;
         find('allowed');
 
         if (index < 0) { find('denied'); }

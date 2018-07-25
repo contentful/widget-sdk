@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = function createMethods (constructor, path) {
-  var methods = {
+  const methods = {
     getById: function (id) {
       if (!id) throw new Error('No id provided');
 

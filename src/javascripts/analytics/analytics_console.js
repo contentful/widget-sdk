@@ -17,25 +17,25 @@ angular.module('contentful')
  * module.
  */
 .factory('analytics/console', ['require', require => {
-  var $compile = require('$compile');
-  var $rootScope = require('$rootScope');
-  var moment = require('moment');
-  var K = require('utils/kefir');
-  var validateEvent = require('analytics/Validator').validateEvent;
-  var logger = require('logger');
-  var buildSnowplowEvent = require('analytics/snowplow/Snowplow').buildUnstructEventData;
-  var getSnowplowSchema = require('analytics/snowplow/Events').getSchema;
+  const $compile = require('$compile');
+  const $rootScope = require('$rootScope');
+  const moment = require('moment');
+  const K = require('utils/kefir');
+  const validateEvent = require('analytics/Validator').validateEvent;
+  const logger = require('logger');
+  const buildSnowplowEvent = require('analytics/snowplow/Snowplow').buildUnstructEventData;
+  const getSnowplowSchema = require('analytics/snowplow/Events').getSchema;
 
-  var isEnabled = false;
-  var el = null;
+  let isEnabled = false;
+  let el = null;
 
-  var eventsBus = K.createBus();
-  var sessionDataBus = K.createPropertyBus();
+  const eventsBus = K.createBus();
+  const sessionDataBus = K.createPropertyBus();
 
-  var events$ = eventsBus.stream.scan((events, newEvent) => events.concat([newEvent]), []);
+  const events$ = eventsBus.stream.scan((events, newEvent) => events.concat([newEvent]), []);
   events$.onValue(_.noop);
 
-  var scope = _.extend($rootScope.$new(true), {
+  const scope = _.extend($rootScope.$new(true), {
     events$: events$,
     sessionData$: sessionDataBus.property
   });
@@ -77,7 +77,7 @@ angular.module('contentful')
    */
   function show () {
     el = el || $compile('<cf-analytics-console />')(scope);
-    var first = el[0];
+    const first = el[0];
     if (!first.parentElement) {
       document.body.appendChild(first);
     }
@@ -98,9 +98,9 @@ angular.module('contentful')
    * Adds an event to the console.
    */
   function add (name, data) {
-    var snowplowEvent = buildSnowplowEvent(name, data);
+    const snowplowEvent = buildSnowplowEvent(name, data);
 
-    var event = {
+    const event = {
       time: moment().format('HH:mm:ss'),
       name: name,
       data: data,
@@ -108,7 +108,7 @@ angular.module('contentful')
     };
 
     if (snowplowEvent) {
-      var snowplowSchema = getSnowplowSchema(name);
+      const snowplowSchema = getSnowplowSchema(name);
 
       event.snowplow = {
         name: snowplowSchema.name,
@@ -127,7 +127,7 @@ angular.module('contentful')
       return;
     }
 
-    var message = 'Invalid analytical event name: ' + event.name;
+    const message = 'Invalid analytical event name: ' + event.name;
     if (isEnabled) {
       throw new Error(message);
     } else {
@@ -137,12 +137,12 @@ angular.module('contentful')
 }])
 
 .directive('cfAnalyticsConsole', ['require', require => {
-  var $timeout = require('$timeout');
+  const $timeout = require('$timeout');
 
   return {
     template: JST.analytics_console(),
     link: function (scope, $el) {
-      var containerEl = $el.find('.analytics-console__content').get(0);
+      const containerEl = $el.find('.analytics-console__content').get(0);
 
       scope.toggleSessionData = () => {
         scope.showingSnowplowDebugInfo = false;

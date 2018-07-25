@@ -2,18 +2,18 @@
 
 angular.module('contentful')
 .controller('ClientController', ['$scope', 'require', function ClientController ($scope, require) {
-  var $state = require('$state');
-  var K = require('utils/kefir');
-  var features = require('features');
-  var logger = require('logger');
-  var spaceContext = require('spaceContext');
-  var TokenStore = require('services/TokenStore');
-  var Analytics = require('analytics/Analytics');
-  var authorization = require('authorization');
-  var fontsDotCom = require('fontsDotCom');
-  var CreateSpace = require('services/CreateSpace');
-  var refreshNavState = require('navigation/NavState').makeStateRefresher($state, spaceContext);
-  var Intercom = require('intercom');
+  const $state = require('$state');
+  const K = require('utils/kefir');
+  const features = require('features');
+  const logger = require('logger');
+  const spaceContext = require('spaceContext');
+  const TokenStore = require('services/TokenStore');
+  const Analytics = require('analytics/Analytics');
+  const authorization = require('authorization');
+  const fontsDotCom = require('fontsDotCom');
+  const CreateSpace = require('services/CreateSpace');
+  const refreshNavState = require('navigation/NavState').makeStateRefresher($state, spaceContext);
+  const Intercom = require('intercom');
 
   // TODO remove this eventually. All components should access it as a service
   $scope.spaceContext = spaceContext;
@@ -23,7 +23,7 @@ angular.module('contentful')
   $scope.preferences = {
     showAuxPanel: false,
     toggleAuxPanel: function () {
-      var showAuxPanel = !$scope.preferences.showAuxPanel;
+      const showAuxPanel = !$scope.preferences.showAuxPanel;
       $scope.preferences.showAuxPanel = showAuxPanel;
     },
     showDisabledFields: false

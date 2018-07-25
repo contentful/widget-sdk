@@ -4,11 +4,11 @@ describe('cfNullEmptyInput directive', () => {
   beforeEach(module('contentful/test'));
 
   it('empty string sets model value to null', function () {
-    var $compile = this.$inject('$compile');
-    var scope = this.$inject('$rootScope').$new();
+    const $compile = this.$inject('$compile');
+    const scope = this.$inject('$rootScope').$new();
 
-    var template = '<input type=text ng-model=myvalue>';
-    var element = $compile(template)(scope);
+    let template = '<input type=text ng-model=myvalue>';
+    let element = $compile(template)(scope);
     element.val('').trigger('change');
     expect(scope.myvalue).toBe('');
 

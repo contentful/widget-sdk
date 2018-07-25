@@ -3,9 +3,9 @@
 angular.module('cf.data')
 
 .factory('data/editingInterfaces/asset', ['require', require => {
-  var assetFields = require('assetContentType').data.fields;
+  const assetFields = require('assetContentType').data.fields;
 
-  var widgets = _.forEach([{
+  const widgets = _.forEach([{
     fieldId: 'title',
     widgetId: 'singleLine'
   }, {

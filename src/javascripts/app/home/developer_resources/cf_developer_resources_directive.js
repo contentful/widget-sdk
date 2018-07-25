@@ -10,9 +10,9 @@ angular.module('contentful')
 }))
 
 .controller('LanguageResourcesController', ['require', function (require) {
-  var controller = this;
-  var resources = require('app/home/developer_resources/DeveloperResources');
-  var analyticsEvents = require('analytics/events/home');
+  const controller = this;
+  const resources = require('app/home/developer_resources/DeveloperResources');
+  const analyticsEvents = require('analytics/events/home');
 
   controller.languages = _.keys(resources.developerResources);
   controller.docsUrls = resources.apiDocsUrls;

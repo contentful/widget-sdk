@@ -17,7 +17,7 @@ angular.module('contentful').controller('ViewStateController', ['require', '$sco
    *
    */
 
-  var state = defaultState;
+  let state = defaultState;
 
   /**
    * @ngdoc method

@@ -6,8 +6,8 @@
  */
 angular.module('contentful')
 .controller('ValidationLinkTypeController', ['require', '$scope', (require, $scope) => {
-  var spaceContext = require('spaceContext');
-  var K = require('utils/kefir');
+  const spaceContext = require('spaceContext');
+  const K = require('utils/kefir');
 
   K.onValueScope($scope, spaceContext.publishedCTs.items$, cts => {
     $scope.contentTypes = cts.map(decorateContentType);
@@ -19,7 +19,7 @@ angular.module('contentful')
   };
 
   function decorateContentType (ct) {
-    var id = ct.sys.id;
+    const id = ct.sys.id;
     return {
       id: id,
       selected: isSelected(id),

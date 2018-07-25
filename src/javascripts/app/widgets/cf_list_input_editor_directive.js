@@ -8,17 +8,17 @@ angular.module('cf.app')
   require: '^cfWidgetApi',
 
   link: function ($scope, _$el, _attrs, widgetApi) {
-    var field = widgetApi.field;
+    const field = widgetApi.field;
 
-    var removeChangeListener = field.onValueChanged(items => {
+    const removeChangeListener = field.onValueChanged(items => {
       $scope.items = items || [];
     });
 
-    var removeDisabledStatusListener = field.onIsDisabledChanged(disabled => {
+    const removeDisabledStatusListener = field.onIsDisabledChanged(disabled => {
       $scope.isDisabled = disabled;
     }, true);
 
-    var offSchemaErrorsChanged = field.onSchemaErrorsChanged(errors => {
+    const offSchemaErrorsChanged = field.onSchemaErrorsChanged(errors => {
       $scope.hasErrors = errors && errors.length > 0;
     });
 

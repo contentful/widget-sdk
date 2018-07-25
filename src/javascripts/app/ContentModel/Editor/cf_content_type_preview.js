@@ -8,8 +8,8 @@ angular.module('contentful')
  * @scope.requires {Client.ContentType} contentType
  */
 .directive('cfContentTypePreview', ['require', require => {
-  var getContentTypePreview = require('contentTypePreview');
-  var template = require('app/ContentModel/Editor/ContentTypePreviewTemplate').default;
+  const getContentTypePreview = require('contentTypePreview');
+  const template = require('app/ContentModel/Editor/ContentTypePreviewTemplate').default;
 
   return {
     scope: true,
@@ -17,7 +17,7 @@ angular.module('contentful')
     template: template(),
     controller: ['$scope', $scope => {
       $scope.$watch('contentType.data', data => {
-        var publishedVersion = _.get(data, 'sys.publishedVersion');
+        const publishedVersion = _.get(data, 'sys.publishedVersion');
         $scope.isNew = !publishedVersion;
 
         loadPreview($scope.isNew)
@@ -62,7 +62,7 @@ angular.module('contentful')
  * response.
  */
 .factory('contentTypePreview', ['$q', $q => {
-  var orderedKeys = ['name', 'description', 'displayField', 'fields', 'sys'];
+  const orderedKeys = ['name', 'description', 'displayField', 'fields', 'sys'];
 
   getContentTypePreview.fromData = fromData;
   return getContentTypePreview;
@@ -80,7 +80,7 @@ angular.module('contentful')
   // We rely on the fact the keys are displayed in the order they
   // were added.
   function orderPreviewKeys (data) {
-    var ordered = _.transform(orderedKeys, (preview, key) => {
+    const ordered = _.transform(orderedKeys, (preview, key) => {
       preview[key] = data[key];
     }, {});
     return _.defaults(ordered, data);

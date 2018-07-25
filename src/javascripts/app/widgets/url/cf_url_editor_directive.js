@@ -2,8 +2,8 @@
 
 angular.module('contentful')
 .directive('cfUrlEditor', ['require', require => {
-  var debounce = require('debounce');
-  var InputUpdater = require('ui/inputUpdater');
+  const debounce = require('debounce');
+  const InputUpdater = require('ui/inputUpdater');
 
   return {
     restrict: 'E',
@@ -11,9 +11,9 @@ angular.module('contentful')
     scope: {},
     template: JST.cf_url_editor(),
     link: function (scope, $el, _attrs, widgetApi) {
-      var field = widgetApi.field;
-      var $inputEl = $el.find('input');
-      var updateInput = InputUpdater.create($inputEl.get(0));
+      const field = widgetApi.field;
+      const $inputEl = $el.find('input');
+      const updateInput = InputUpdater.create($inputEl.get(0));
 
       _.extend(scope, {
         urlStatus: 'ok',
@@ -21,19 +21,19 @@ angular.module('contentful')
       });
 
       scope.$watch('urlStatus', urlStatus => {
-        var isInvalid = urlStatus === 'broken' || urlStatus === 'invalid';
+        const isInvalid = urlStatus === 'broken' || urlStatus === 'invalid';
         field.setInvalid(isInvalid);
       });
 
-      var detachOnValueChangedHandler = field.onValueChanged(val => {
+      const detachOnValueChangedHandler = field.onValueChanged(val => {
         // Might be `null` or `undefined` when value is not present
         updateInput(val || '');
       });
 
       // call handler when the disabled status of the field changes
-      var detachOnFieldDisabledHandler = field.onIsDisabledChanged(updateDisabledStatus);
+      const detachOnFieldDisabledHandler = field.onIsDisabledChanged(updateDisabledStatus);
 
-      var offSchemaErrorsChanged = field.onSchemaErrorsChanged(errors => {
+      const offSchemaErrorsChanged = field.onSchemaErrorsChanged(errors => {
         scope.hasErrors = errors && errors.length > 0;
       });
 

@@ -4,10 +4,10 @@ describe('cfOnSubmit', () => {
   beforeEach(module('cf.forms'));
 
   beforeEach(function () {
-    var $compile = this.$inject('$compile');
+    const $compile = this.$inject('$compile');
     this.scope = this.$inject('$rootScope').$new();
 
-    var template = '<form cf-on-submit="submit()">';
+    const template = '<form cf-on-submit="submit()">';
     this.formElement = $compile(template)(this.scope);
     this.formController = this.formElement.controller('form');
   });
@@ -33,10 +33,10 @@ describe('cfFormSubmit', () => {
   beforeEach(module('cf.forms'));
 
   beforeEach(function () {
-    var $compile = this.$inject('$compile');
+    const $compile = this.$inject('$compile');
     this.scope = this.$inject('$rootScope').$new();
 
-    var template =
+    const template =
       '<form cf-on-submit="submit()">' +
         '<button cf-form-submit>' +
       '</form>';

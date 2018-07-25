@@ -2,15 +2,15 @@
 
 angular.module('contentful').factory('LinkOrganizer', ['require', require => {
 
-  var PROCESSORS = require('LinkOrganizer/matchProcessors');
-  var REGEXS     = {
+  const PROCESSORS = require('LinkOrganizer/matchProcessors');
+  const REGEXS     = {
     inline: /\[([^\r\n\[\]]+)]\(([^\r\n\)]+)\)/,
     ref:    /\[([^\r\n\[\]]+)] ?\[([^\r\n\[\]]+)]/,
     label:  /^ {0,3}\[([^\r\n\[\]]+)]:\s+(.+)$/
   };
-  var findInline = makeFinder('inline');
-  var findRefs   = makeFinder('ref');
-  var findLabels = makeFinder('label');
+  const findInline = makeFinder('inline');
+  const findRefs   = makeFinder('ref');
+  const findLabels = makeFinder('label');
 
   return {
     convertInlineToRef: convertInlineToRef,
@@ -23,7 +23,7 @@ angular.module('contentful').factory('LinkOrganizer', ['require', require => {
   };
 
   function convertInlineToRef(text) {
-    var id = findMaxLabelId(text) ;
+    let id = findMaxLabelId(text);
 
     _.forEach(findInline(text), inline => {
       id += 1;
@@ -35,12 +35,12 @@ angular.module('contentful').factory('LinkOrganizer', ['require', require => {
   }
 
   function mergeLabels(text) {
-    var byHref = {};
-    var byOldId = {};
+    const byHref = {};
+    const byOldId = {};
 
     _.forEach(findLabels(text), label => {
-      var alreadyAdded = byHref[label.href];
-      var current = _.extend({}, label);
+      const alreadyAdded = byHref[label.href];
+      const current = _.extend({}, label);
 
       if (!alreadyAdded) {
         byHref[current.href] = current;
@@ -58,18 +58,18 @@ angular.module('contentful').factory('LinkOrganizer', ['require', require => {
   }
 
   function rewriteRefs(text) {
-    var merged = mergeLabels(text);
-    var hrefToRefId = {};
-    var labels = [];
-    var rewrites = [];
-    var i = 1;
+    const merged = mergeLabels(text);
+    const hrefToRefId = {};
+    const labels = [];
+    const rewrites = [];
+    let i = 1;
 
     // 1. compose list of labels with new ids, in order
     _.forEach(findRefs(text), ref => {
-      var oldLabel = merged.byOldId[ref.id];
+      const oldLabel = merged.byOldId[ref.id];
       if (!oldLabel) { return; }
-      var href = oldLabel.href;
-      var newRefId = hrefToRefId[href];
+      const href = oldLabel.href;
+      let newRefId = hrefToRefId[href];
 
       if (!newRefId) {
         hrefToRefId[href] = newRefId = i;
@@ -116,7 +116,7 @@ angular.module('contentful').factory('LinkOrganizer', ['require', require => {
       textOrLabels = findLabels(textOrLabels);
     }
 
-    var ids = _(textOrLabels).map('id')
+    const ids = _(textOrLabels).map('id')
       .map(x => parseInt(x, 10))
       .filter(x => _.isFinite(x) && x > 0)
       .value();
@@ -125,10 +125,10 @@ angular.module('contentful').factory('LinkOrganizer', ['require', require => {
   }
 
   function findAll(text, type) {
-    var flags = 'g' + (type === 'label' ? 'm' : '');
-    var matches = [];
-    var re = new RegExp(REGEXS[type].source, flags);
-    var found = re.exec(text);
+    const flags = 'g' + (type === 'label' ? 'm' : '');
+    const matches = [];
+    const re = new RegExp(REGEXS[type].source, flags);
+    let found = re.exec(text);
 
     while (found) {
       matches.push(found);
@@ -148,7 +148,7 @@ angular.module('contentful').factory('LinkOrganizer', ['require', require => {
   }
 
   function buildLabel(link, id) {
-    var markup = '[' + id + ']: ' + link.href;
+    let markup = '[' + id + ']: ' + link.href;
     if (hasTitle(link)) { markup += ' "' + link.title + '"'; }
     return markup;
   }
@@ -199,7 +199,7 @@ angular.module('contentful').factory('LinkOrganizer/matchProcessors', () => {
   }
 
   function tail(text) {
-    var segments = text.split(' ');
+    const segments = text.split(' ');
     segments.shift();
     return segments.join(' ');
   }

@@ -4,7 +4,7 @@
 // e.g. <cf-knowledge-base target="roles">text to be displayed</cf-knowlege-base>
 
 angular.module('contentful').directive('cfKnowledgeBase', ['require', require => {
-  var KnowledgeBaseComponent = require('components/shared/knowledge_base_icon/KnowledgeBase').default;
+  const KnowledgeBaseComponent = require('components/shared/knowledge_base_icon/KnowledgeBase').default;
 
   return {
     restrict: 'E',

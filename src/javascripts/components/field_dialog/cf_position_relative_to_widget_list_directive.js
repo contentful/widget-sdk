@@ -15,8 +15,8 @@
  *
  */
 angular.module('contentful').directive('cfPositionRelativeToWidgetList', ['require', require => {
-  var defer    = require('defer');
-  var debounce = require('debounce');
+  const defer    = require('defer');
+  const debounce = require('debounce');
 
   return {
     restrict: 'A',
@@ -24,7 +24,7 @@ angular.module('contentful').directive('cfPositionRelativeToWidgetList', ['requi
       defer(reposition);
       attrs.$observe('positionRelativeTo', reposition);
 
-      var debouncedReposition = debounce(reposition, 50);
+      const debouncedReposition = debounce(reposition, 50);
       $(attrs.repositionWhenScrolls).on('scroll', debouncedReposition);
 
       elem.on('$destroy', () => {
@@ -33,9 +33,9 @@ angular.module('contentful').directive('cfPositionRelativeToWidgetList', ['requi
 
       function reposition(params) {
         params = params || {};
-        var relativeTo = $(attrs.positionRelativeTo);
+        const relativeTo = $(attrs.positionRelativeTo);
         if(relativeTo.get(0)){
-          var newMargin = relativeTo.position().left + relativeTo.width() / 2;
+          const newMargin = relativeTo.position().left + relativeTo.width() / 2;
           elem.css('marginLeft', newMargin+'px');
         }
       }

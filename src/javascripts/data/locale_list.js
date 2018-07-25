@@ -9,7 +9,7 @@
  */
 angular.module('cf.data')
 .factory('data/localeList', ['require', require => {
-  var localesList = require('localesList');
+  const localesList = require('localesList');
 
   return {create: create};
 
@@ -28,7 +28,7 @@ angular.module('cf.data')
 
     function getDependantLocales (code) {
       return spaceLocales.filter(locale => {
-        var fallbackCode = locale.fallbackCode;
+        const fallbackCode = locale.fallbackCode;
         return fallbackCode && fallbackCode === code;
       });
     }
@@ -38,9 +38,9 @@ angular.module('cf.data')
     }
 
     function getAvailableFallbackLocales (code) {
-      var dependantLocales = getDependantLocales(code);
+      const dependantLocales = getDependantLocales(code);
       return _.filter(spaceLocales, locale => {
-        var isDependant = dependantLocales.indexOf(locale) > -1;
+        const isDependant = dependantLocales.indexOf(locale) > -1;
         return locale.code !== code && !isDependant;
       });
     }

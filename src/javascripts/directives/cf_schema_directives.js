@@ -10,15 +10,15 @@
  */
 angular.module('contentful')
 .directive('cfContentTypeSchema', ['require', require => {
-  var errorMessageBuilder = require('errorMessageBuilder');
-  var SchemaController = require('SchemaController');
-  var validation = require('validation');
+  const errorMessageBuilder = require('errorMessageBuilder');
+  const SchemaController = require('SchemaController');
+  const validation = require('validation');
 
   return {
     restrict: 'A',
     scope: true,
     controller: ['$scope', $scope => {
-      var buildMessage = errorMessageBuilder.forContentType;
+      const buildMessage = errorMessageBuilder.forContentType;
       $scope.schema = new SchemaController(buildMessage, validation.schemas.ContentType);
     }]
   };

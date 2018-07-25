@@ -2,8 +2,8 @@
 
 angular.module('cf.app')
 .directive('cfLocationEditor', ['require', require => {
-  var $controller = require('$controller');
-  var LocationMap = require('app/widgets/location/Map');
+  const $controller = require('$controller');
+  const LocationMap = require('app/widgets/location/Map');
 
   return {
     restrict: 'E',
@@ -11,11 +11,11 @@ angular.module('cf.app')
     scope: {},
     template: JST.cf_location_editor(),
     link: function ($scope, $el, _attrs, widgetApi) {
-      var field = widgetApi.field;
-      var searchResultsMenu = $el.find('[data-search-results]');
-      var mapSlotElement = $el.find('[data-map-slot]').get(0);
+      const field = widgetApi.field;
+      const searchResultsMenu = $el.find('[data-search-results]');
+      const mapSlotElement = $el.find('[data-map-slot]').get(0);
 
-      var offDisabledStatusChanged = field.onIsDisabledChanged(disabled => {
+      const offDisabledStatusChanged = field.onIsDisabledChanged(disabled => {
         $scope.isDisabled = disabled;
       });
 
@@ -29,7 +29,7 @@ angular.module('cf.app')
         searchResultsMenu.show();
       });
 
-      var offValueChanged = field.onValueChanged(location => {
+      const offValueChanged = field.onValueChanged(location => {
         $scope.location = location || {};
         $scope.search.updateAddressFromLocation();
       });

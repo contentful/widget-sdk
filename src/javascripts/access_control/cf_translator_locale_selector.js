@@ -13,10 +13,10 @@ angular.module('contentful')
   }
 }))
 .controller('translatorLocaleSelectorController', ['$scope', 'require', function ($scope, require) {
-  var TheLocaleStore = require('TheLocaleStore');
-  var ALL_LOCALES = require('PolicyBuilder/CONFIG').ALL_LOCALES;
+  const TheLocaleStore = require('TheLocaleStore');
+  const ALL_LOCALES = require('PolicyBuilder/CONFIG').ALL_LOCALES;
 
-  var controller = this;
+  const controller = this;
 
   controller.locales = _.map(TheLocaleStore.getPrivateLocales(), l => ({
     code: l.code,

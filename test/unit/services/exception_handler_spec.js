@@ -4,9 +4,9 @@
 // $esceptionHandler for all the tests except for this one
 // (hint: put it in a separate module and load that AFTER the rest of the app)
 xdescribe('Exception handler service', () => {
-  var $exceptionHandler;
-  var exception;
-  var exceptionStub, errorStub, triggerStub;
+  let $exceptionHandler;
+  let exception;
+  let exceptionStub, errorStub, triggerStub;
 
   beforeEach(() => {
     module('contentful/test', $provide => {

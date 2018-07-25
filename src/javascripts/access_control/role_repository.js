@@ -2,14 +2,14 @@
 
 angular.module('contentful').factory('RoleRepository', [() => {
 
-  var AVAILABLE_PERMISSIONS = {
+  const AVAILABLE_PERMISSIONS = {
     ContentModel: ['read', 'manage'],
     ContentDelivery: ['read', 'manage'],
     Settings: ['manage'],
     Environments: ['manage']
   };
 
-  var PERMISSION_GROUP_NAME_MAP = {
+  const PERMISSION_GROUP_NAME_MAP = {
     ContentModel: 'contentModel',
     ContentDelivery: 'contentDelivery',
     Settings: 'settings',
@@ -69,13 +69,13 @@ angular.module('contentful').factory('RoleRepository', [() => {
     }
 
     function getBaseCall(config) {
-      var headers = {};
+      const headers = {};
       config = config || {};
       if (config.version) {
         headers['X-Contentful-Version'] = config.version;
       }
 
-      var call = space.endpoint('roles', config.id).headers(headers);
+      const call = space.endpoint('roles', config.id).headers(headers);
       return config.rejectEmpty ? call.rejectEmpty() : call;
     }
   }

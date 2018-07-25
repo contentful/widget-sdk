@@ -14,19 +14,19 @@
 angular.module('contentful')
 .controller('DataSizeScaleController',
 ['$scope', '$attrs', 'require', function($scope, $attrs, require) {
-  var $parse = require('$parse');
-  var controller = this;
+  const $parse = require('$parse');
+  const controller = this;
 
-  var getModelValue = _.partial($parse($attrs.model), $scope.$parent);
-  var setModelValue = _.partial($parse($attrs.model).assign, $scope.$parent);
+  const getModelValue = _.partial($parse($attrs.model), $scope.$parent);
+  const setModelValue = _.partial($parse($attrs.model).assign, $scope.$parent);
 
-  var units = controller.units = [
+  const units = controller.units = [
     {label: 'Bytes', factor: 1},
     {label: 'KB',    factor: 1024},
     {label: 'MB',    factor: 1024 * 1024},
   ];
 
-  var unitFactors = _.map(units, 'factor');
+  const unitFactors = _.map(units, 'factor');
 
   $scope.unitFactor = getUnitFactor(getModelValue());
 
@@ -38,7 +38,7 @@ angular.module('contentful')
 
 
   function updateModelValue() {
-    var raw = _.isFinite($scope.value) ? $scope.value * $scope.unitFactor : null;
+    const raw = _.isFinite($scope.value) ? $scope.value * $scope.unitFactor : null;
     setModelValue(raw);
   }
 
@@ -51,7 +51,7 @@ angular.module('contentful')
    * larger than 1.
    */
   function getUnitFactor(baseValue) {
-    var factor = _.findLast(unitFactors, factor => baseValue / factor >= 1);
+    const factor = _.findLast(unitFactors, factor => baseValue / factor >= 1);
     return factor || unitFactors[0];
   }
 }]);

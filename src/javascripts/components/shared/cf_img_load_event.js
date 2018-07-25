@@ -14,7 +14,7 @@ angular.module('contentful')
  */
 .directive('cfImgLoadEvent', [() => ({
   link: function (scope, elem, attrs) {
-    var previousSrc;
+    let previousSrc;
 
     scope.$watch(() => attrs.src, src => {
       if (src !== previousSrc) {

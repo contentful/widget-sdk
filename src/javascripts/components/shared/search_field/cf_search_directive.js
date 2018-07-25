@@ -1,13 +1,13 @@
 'use strict';
 
 angular.module('contentful').directive('cfSearch', ['require', require => {
-  var keycodes = require('utils/keycodes').default;
-  var debounce = require('debounce');
-  var $timeout = require('$timeout');
-  var h = require('utils/hyperscript').h;
-  var Colors = require('Styles/Colors').byName;
-  var renderString = require('ui/Framework').renderString;
-  var searchIcon = renderString(require('svg/search').default);
+  const keycodes = require('utils/keycodes').default;
+  const debounce = require('debounce');
+  const $timeout = require('$timeout');
+  const h = require('utils/hyperscript').h;
+  const Colors = require('Styles/Colors').byName;
+  const renderString = require('ui/Framework').renderString;
+  const searchIcon = renderString(require('svg/search').default);
 
   return {
     template: h('div', {
@@ -46,14 +46,14 @@ angular.module('contentful').directive('cfSearch', ['require', require => {
       isSearching: '='
     },
     link: function (scope, element) {
-      var debouncedUpdate = debounce(update, 300);
+      const debouncedUpdate = debounce(update, 300);
 
       $timeout(() => {
         element.find('input').first().focus();
       });
 
       element.on('keyup', ev => {
-        var pressedReturn = ev.keyCode === keycodes.ENTER;
+        const pressedReturn = ev.keyCode === keycodes.ENTER;
 
         if (pressedReturn) {
           if (!scope.inner.term) {

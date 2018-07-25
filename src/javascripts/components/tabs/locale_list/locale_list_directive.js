@@ -8,34 +8,34 @@ angular.module('contentful')
 })])
 
 .controller('LocaleListController', ['$scope', 'require', ($scope, require) => {
-  var ReloadNotification = require('ReloadNotification');
-  var spaceContext = require('spaceContext');
-  var TheAccountView = require('TheAccountView');
-  var TheLocaleStore = require('TheLocaleStore');
-  var notification = require('notification');
-  var enforcements = require('access_control/Enforcements');
-  var $state = require('$state');
-  var ResourceUtils = require('utils/ResourceUtils');
-  var EnvironmentUtils = require('utils/EnvironmentUtils');
+  const ReloadNotification = require('ReloadNotification');
+  const spaceContext = require('spaceContext');
+  const TheAccountView = require('TheAccountView');
+  const TheLocaleStore = require('TheLocaleStore');
+  const notification = require('notification');
+  const enforcements = require('access_control/Enforcements');
+  const $state = require('$state');
+  const ResourceUtils = require('utils/ResourceUtils');
+  const EnvironmentUtils = require('utils/EnvironmentUtils');
 
-  var $q = require('$q');
+  const $q = require('$q');
 
-  var ResourceService = require('services/ResourceService').default;
-  var createFeatureService = require('services/FeatureService').default;
+  const ResourceService = require('services/ResourceService').default;
+  const createFeatureService = require('services/FeatureService').default;
 
-  var organization = spaceContext.organizationContext.organization;
-  var canUpgrade = require('services/OrganizationRoles').isOwnerOrAdmin(organization);
+  const organization = spaceContext.organizationContext.organization;
+  const canUpgrade = require('services/OrganizationRoles').isOwnerOrAdmin(organization);
 
-  var resources = ResourceService(spaceContext.getId());
-  var resource;
+  const resources = ResourceService(spaceContext.getId());
+  let resource;
 
-  var FeatureService = createFeatureService(spaceContext.getId());
+  const FeatureService = createFeatureService(spaceContext.getId());
 
-  var {showDialog: showSpaceModal} = require('services/ChangeSpaceService');
+  const {showDialog: showSpaceModal} = require('services/ChangeSpaceService');
 
   // Start: incentivize upgrade feature flag
-  var LD = require('utils/LaunchDarkly');
-  var flagName = 'feature-bv-06-2018-incentivize-upgrade';
+  const LD = require('utils/LaunchDarkly');
+  const flagName = 'feature-bv-06-2018-incentivize-upgrade';
 
   LD.onFeatureFlag($scope, flagName, isEnabled => {
     $scope.showUpgradeIncentive = isEnabled;
@@ -59,7 +59,7 @@ angular.module('contentful')
     };
   });
 
-  var STATES = {
+  const STATES = {
     NO_MULTIPLE_LOCALES: 1,
     ONE_LOCALE_USED: 2,
     MORE_THAN_ONE_LOCALE_USED: 3,
@@ -108,7 +108,7 @@ angular.module('contentful')
       return $q.resolve();
     }
 
-    var len = $scope.locales.length;
+    const len = $scope.locales.length;
 
     return $q.resolve().then(() => {
       if (ResourceUtils.isLegacyOrganization(organization)) {
@@ -129,7 +129,7 @@ angular.module('contentful')
 
       $scope.resource = result.resource;
 
-      var reachedLimit = $scope.resource.usage >= $scope.resource.limits.maximum;
+      const reachedLimit = $scope.resource.usage >= $scope.resource.limits.maximum;
 
       if (!reachedLimit && len <= 1) {
         return STATES.ONE_LOCALE_USED;
@@ -146,8 +146,8 @@ angular.module('contentful')
   }
 
   function newLocale () {
-    var organization = spaceContext.organization;
-    var usage = enforcements.computeUsageForOrganization(organization, 'locale');
+    const organization = spaceContext.organization;
+    const usage = enforcements.computeUsageForOrganization(organization, 'locale');
 
     if (usage) {
       return notification.error(usage);

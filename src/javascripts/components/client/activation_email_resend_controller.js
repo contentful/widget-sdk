@@ -2,17 +2,17 @@
 
 angular.module('contentful')
 .factory('activationEmailResendController', ['require', require => {
-  var $timeout = require('$timeout');
-  var $q = require('$q');
-  var moment = require('moment');
-  var TokenStore = require('services/TokenStore');
-  var modalDialog = require('modalDialog');
-  var resendActivationEmail = require('activationEmailResender').resend;
-  var getStore = require('TheStore').getStore;
+  const $timeout = require('$timeout');
+  const $q = require('$q');
+  const moment = require('moment');
+  const TokenStore = require('services/TokenStore');
+  const modalDialog = require('modalDialog');
+  const resendActivationEmail = require('activationEmailResender').resend;
+  const getStore = require('TheStore').getStore;
 
-  var HOUR_IN_MS = 1000 * 60 * 60;
-  var HOURS_BEFORE_REOPEN_DIALOG = 24;
-  var store = getStore().forKey('lastActivationEmailResendReminderTimestamp');
+  const HOUR_IN_MS = 1000 * 60 * 60;
+  const HOURS_BEFORE_REOPEN_DIALOG = 24;
+  const store = getStore().forKey('lastActivationEmailResendReminderTimestamp');
 
   return { init: init };
 
@@ -37,7 +37,7 @@ angular.module('contentful')
   }
 
   function showDialog (email) {
-    var dialog = modalDialog.open({
+    const dialog = modalDialog.open({
       title: 'Please confirm your email address',
       template: 'activation_email_resend_dialog',
       persistOnNavigation: true,
@@ -78,15 +78,15 @@ angular.module('contentful')
   }
 
   function resendActivationEmailWithDelay (email, delay) {
-    var delayed = $timeout(_.noop, delay);
+    const delayed = $timeout(_.noop, delay);
     return resendActivationEmail(email)
     .then(() => delayed, () => delayed.then(() => $q.reject()));
   }
 
   function getMillisecondsUntilDialogCanBeReopened () {
-    var lastMoment = fetchDialogLastShownTimestamp();
+    const lastMoment = fetchDialogLastShownTimestamp();
     if (lastMoment) {
-      var msSinceLastShown = moment().diff(lastMoment, 'milliseconds');
+      const msSinceLastShown = moment().diff(lastMoment, 'milliseconds');
       // Use Math.abs() since the user might have messed around with the clock and
       // we do not want to completely ignore future dates created this way.
       return Math.max(0,
@@ -97,9 +97,9 @@ angular.module('contentful')
   }
 
   function fetchDialogLastShownTimestamp () {
-    var lastUnixTimestamp = store.get();
+    const lastUnixTimestamp = store.get();
     if (lastUnixTimestamp) {
-      var lastShown = moment.unix(lastUnixTimestamp);
+      const lastShown = moment.unix(lastUnixTimestamp);
       return lastShown.isValid() ? lastShown : null;
     } else {
       return null;

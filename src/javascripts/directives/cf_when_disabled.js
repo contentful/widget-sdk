@@ -2,7 +2,7 @@
 
 angular.module('contentful').directive('cfWhenDisabled', ['require', require => {
 
-  var accessChecker = require('access_control/AccessChecker');
+  const accessChecker = require('access_control/AccessChecker');
 
   function makePropGetter(elem){
     return function getCssProperty(name) {
@@ -12,9 +12,9 @@ angular.module('contentful').directive('cfWhenDisabled', ['require', require => 
 
   // A layer over the button is necessary because disabled buttons don't react to hover events
   function makeLayer(id, elem) {
-    var position = elem.position();
-    var prop = makePropGetter(elem);
-    var layer = $('<div id="'+id+'" class="transparent-button-layer"></div>');
+    const position = elem.position();
+    const prop = makePropGetter(elem);
+    const layer = $('<div id="'+id+'" class="transparent-button-layer"></div>');
     layer.css({
       top: position.top + prop('marginTop'),
       left: position.left + prop('marginLeft'),
@@ -39,11 +39,11 @@ angular.module('contentful').directive('cfWhenDisabled', ['require', require => 
 
       function addTooltip(response) {
         if (response && response.shouldDisable && response.enforcement) {
-          var layerId = 'transparent-button-layer-'+Math.ceil(Math.random()*100000);
+          const layerId = 'transparent-button-layer-'+Math.ceil(Math.random()*100000);
           elem.attr('disable-layer', layerId);
 
           setTimeout(() => {
-            var layer = makeLayer(layerId, elem);
+            const layer = makeLayer(layerId, elem);
             layer.prependTo(elem.parent());
             layer.tooltip({
               title: response.enforcement.tooltip,

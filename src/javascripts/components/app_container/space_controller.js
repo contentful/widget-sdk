@@ -2,11 +2,11 @@
 
 angular.module('contentful')
 .controller('SpaceController', ['$scope', 'require', function SpaceController ($scope, require) {
-  var $rootScope = require('$rootScope');
-  var authorization = require('authorization');
-  var enforcements = require('access_control/Enforcements');
-  var spaceContext = require('spaceContext');
-  var TokenStore = require('services/TokenStore');
+  const $rootScope = require('$rootScope');
+  const authorization = require('authorization');
+  const enforcements = require('access_control/Enforcements');
+  const spaceContext = require('spaceContext');
+  const TokenStore = require('services/TokenStore');
 
   $scope.sidePanelIsShown = false;
   $scope.toggleSidePanel = () => {
@@ -15,7 +15,7 @@ angular.module('contentful')
 
   $scope.$watch(() => authorization.isUpdated(TokenStore.getTokenLookup(), spaceContext.space), () => {
     if (TokenStore.getTokenLookup()) {
-      var enforcement = enforcements.getPeriodUsage(spaceContext.organization);
+      const enforcement = enforcements.getPeriodUsage(spaceContext.organization);
       if (enforcement) {
         $rootScope.$broadcast('persistentNotification', {
           message: enforcement.message,

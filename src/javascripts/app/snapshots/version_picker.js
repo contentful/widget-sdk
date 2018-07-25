@@ -13,9 +13,9 @@ angular.module('cf.app')
   return {create: create};
 
   function create () {
-    var pathsToRestore = [];
-    var restoreFns = [];
-    var differenceCount = 0;
+    let pathsToRestore = [];
+    const restoreFns = [];
+    let differenceCount = 0;
 
     return {
       keep: keep,
@@ -58,7 +58,7 @@ angular.module('cf.app')
      * version should be used
      */
     function restore (path) {
-      var joined = path.join('.');
+      const joined = path.join('.');
       if (pathsToRestore.indexOf(joined) < 0) {
         pathsToRestore.push(joined);
       }

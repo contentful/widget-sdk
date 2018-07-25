@@ -16,8 +16,8 @@
  */
 angular.module('contentful')
 .directive('cfRelativeDatetime', ['require', require => {
-  var $timeout = require('$timeout');
-  var moment   = require('moment');
+  const $timeout = require('$timeout');
+  const moment   = require('moment');
 
   return {
     restrict: 'A',
@@ -25,16 +25,16 @@ angular.module('contentful')
       datetime: '@'
     },
     link: function(scope, element, attrs) {
-      var timeout;
+      let timeout;
 
       scope.$watch('datetime', dateString => {
         $timeout.cancel(timeout);
 
-        var date = moment(dateString);
+        const date = moment(dateString);
         if (!date || !date.isValid()) throw new Error('Invalid date');
 
-        var to = () => moment(attrs.to);
-        var withoutSuffix = 'withoutSuffix' in attrs;
+        const to = () => moment(attrs.to);
+        const withoutSuffix = 'withoutSuffix' in attrs;
 
         if (!attrs.title)
           element.attr('title', date.format('LLLL'));
@@ -64,7 +64,7 @@ angular.module('contentful')
         }
 
         function nextUpdateIn() {
-          var delta = Math.abs(moment().diff(date));
+          const delta = Math.abs(moment().diff(date));
           if (delta < 45e3) return 45e3 - delta;
           if (delta < 90e3) return 90e3 - delta;
           if (delta < 45 * 60e3) return 60e3 - (delta + 30e3) % 60e3;

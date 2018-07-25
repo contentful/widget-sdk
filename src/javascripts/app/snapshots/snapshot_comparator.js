@@ -19,20 +19,20 @@ angular.module('cf.app')
 })])
 
 .controller('SnapshotComparatorController', ['require', '$scope', (require, $scope) => {
-  var $q = require('$q');
-  var K = require('utils/kefir');
-  var spaceContext = require('spaceContext');
-  var SnapshotDoc = require('SnapshotComparatorController/snapshotDoc');
-  var DataFields = require('EntityEditor/DataFields');
-  var ContentTypes = require('data/ContentTypes');
-  var Entries = require('data/Entries');
-  var Command = require('command');
-  var $state = require('$state');
-  var $stateParams = require('$stateParams');
-  var notification = require('notification');
-  var trackVersioning = require('analyticsEvents/versioning');
-  var Validator = require('app/entity_editor/Validator');
-  var Focus = require('app/entity_editor/Focus');
+  const $q = require('$q');
+  const K = require('utils/kefir');
+  const spaceContext = require('spaceContext');
+  const SnapshotDoc = require('SnapshotComparatorController/snapshotDoc');
+  const DataFields = require('EntityEditor/DataFields');
+  const ContentTypes = require('data/ContentTypes');
+  const Entries = require('data/Entries');
+  const Command = require('command');
+  const $state = require('$state');
+  const $stateParams = require('$stateParams');
+  const notification = require('notification');
+  const trackVersioning = require('analyticsEvents/versioning');
+  const Validator = require('app/entity_editor/Validator');
+  const Focus = require('app/entity_editor/Focus');
 
   $scope.versionPicker = require('SnapshotComparatorController/versionPicker').create();
   $scope.snapshotCount = $stateParams.snapshotCount;
@@ -51,11 +51,11 @@ angular.module('cf.app')
     $scope.context.dirty = isDirty;
   });
 
-  var ctData = $scope.contentType.data;
-  var snapshotData = $scope.snapshot.snapshot || {};
+  const ctData = $scope.contentType.data;
+  const snapshotData = $scope.snapshot.snapshot || {};
 
-  var isShowingSnapshotSelector = false;
-  var showSnapshotSelectorBus = K.createPropertyBus(isShowingSnapshotSelector, $scope);
+  let isShowingSnapshotSelector = false;
+  const showSnapshotSelectorBus = K.createPropertyBus(isShowingSnapshotSelector, $scope);
 
   $scope.toggleSnapshotSelector = () => {
     isShowingSnapshotSelector = !isShowingSnapshotSelector;
@@ -111,8 +111,8 @@ angular.module('cf.app')
   }
 
   function prepareRestoredEntry () {
-    var snapshot = Entries.internalToExternal(snapshotData, ctData);
-    var result = Entries.internalToExternal($scope.entry.data, ctData);
+    const snapshot = Entries.internalToExternal(snapshotData, ctData);
+    const result = Entries.internalToExternal($scope.entry.data, ctData);
 
     $scope.versionPicker.getPathsToRestore()
     .forEach(path => {
@@ -135,10 +135,10 @@ angular.module('cf.app')
 }])
 
 .controller('SnapshotFieldController', ['require', '$scope', function (require, $scope) {
-  var store = require('TheLocaleStore');
+  const store = require('TheLocaleStore');
 
-  var field = $scope.widget.field;
-  var locales = field.localized ? store.getPrivateLocales() : [store.getDefaultLocale()];
+  const field = $scope.widget.field;
+  const locales = field.localized ? store.getPrivateLocales() : [store.getDefaultLocale()];
 
   $scope.field = field;
   $scope.locales = _.filter(locales, store.isLocaleActive);
@@ -149,15 +149,15 @@ angular.module('cf.app')
 }])
 
 .controller('SnapshotComparisonController', ['$scope', $scope => {
-  var field = $scope.field;
-  var locale = $scope.locale;
-  var fieldPath = ['fields', field.id, locale.internal_code];
+  const field = $scope.field;
+  const locale = $scope.locale;
+  const fieldPath = ['fields', field.id, locale.internal_code];
 
-  var canEdit =
+  const canEdit =
     $scope.otDoc.permissions.canEditFieldLocale(field.apiName, locale.code);
 
-  var currentVersion = $scope.otDoc.getValueAt(fieldPath);
-  var snapshotVersion = $scope.snapshotDoc.getValueAt(fieldPath);
+  const currentVersion = $scope.otDoc.getValueAt(fieldPath);
+  const snapshotVersion = $scope.snapshotDoc.getValueAt(fieldPath);
 
   $scope.isDifferent = !_.isEqual(currentVersion, snapshotVersion);
   $scope.isDisabled = $scope.field.disabled || !canEdit;
@@ -173,7 +173,7 @@ angular.module('cf.app')
 
   function select (version) {
     if ($scope.canRestore) {
-      var method = version === 'current' ? 'keep' : 'restore';
+      const method = version === 'current' ? 'keep' : 'restore';
       $scope.versionPicker[method](fieldPath);
       $scope.selected = version;
     }

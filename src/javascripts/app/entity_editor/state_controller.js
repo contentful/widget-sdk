@@ -2,35 +2,35 @@
 
 angular.module('contentful')
 .controller('entityEditor/StateController', ['$scope', 'require', 'notify', 'validator', 'otDoc', function ($scope, require, notify, validator, otDoc) {
-  var controller = this;
-  var $q = require('$q');
-  var Command = require('command');
-  var closeState = require('navigation/closeState');
-  var _ = require('lodash');
-  var publicationWarnings = require('entityEditor/publicationWarnings').create();
-  var trackVersioning = require('analyticsEvents/versioning');
-  var K = require('utils/kefir');
-  var N = require('app/entity_editor/Notifications');
-  var modalDialog = require('modalDialog');
-  var Notification = N.Notification;
-  var SumTypes = require('sum-types');
-  var caseof = SumTypes.caseofEq;
-  var otherwise = SumTypes.otherwise;
-  var EntityState = require('data/CMA/EntityState');
-  var State = EntityState.State;
-  var Action = EntityState.Action;
-  var Analytics = require('analytics/Analytics');
-  var spaceContext = require('spaceContext');
-  var onFeatureFlag = require('utils/LaunchDarkly').onFeatureFlag;
-  var goToPreviousSlideOrExit =
+  const controller = this;
+  const $q = require('$q');
+  const Command = require('command');
+  const closeState = require('navigation/closeState');
+  const _ = require('lodash');
+  const publicationWarnings = require('entityEditor/publicationWarnings').create();
+  const trackVersioning = require('analyticsEvents/versioning');
+  const K = require('utils/kefir');
+  const N = require('app/entity_editor/Notifications');
+  const modalDialog = require('modalDialog');
+  const Notification = N.Notification;
+  const SumTypes = require('sum-types');
+  const caseof = SumTypes.caseofEq;
+  const otherwise = SumTypes.otherwise;
+  const EntityState = require('data/CMA/EntityState');
+  const State = EntityState.State;
+  const Action = EntityState.Action;
+  const Analytics = require('analytics/Analytics');
+  const spaceContext = require('spaceContext');
+  const onFeatureFlag = require('utils/LaunchDarkly').onFeatureFlag;
+  const goToPreviousSlideOrExit =
     require('states/EntityNavigationHelpers').goToPreviousSlideOrExit;
 
-  var permissions = otDoc.permissions;
-  var reverter = otDoc.reverter;
-  var docStateManager = otDoc.resourceState;
+  const permissions = otDoc.permissions;
+  const reverter = otDoc.reverter;
+  const docStateManager = otDoc.resourceState;
 
   // Is set to 'true' when the entity has been deleted by another user.
-  var isDeleted = false;
+  let isDeleted = false;
 
   K.onValueScope($scope, docStateManager.inProgress$, inProgress => {
     controller.inProgress = inProgress;
@@ -41,9 +41,9 @@ angular.module('contentful')
     $scope.slideInFeatureFlagValue = flagState === 2 ? 2 : 0;
   });
 
-  var noop = Command.create(() => {});
+  const noop = Command.create(() => {});
 
-  var archive = Command.create(() => applyActionWithConfirmation(Action.Archive()), {
+  const archive = Command.create(() => applyActionWithConfirmation(Action.Archive()), {
     disabled: checkDisallowed(Action.Archive())
   }, {
     label: 'Archive',
@@ -51,7 +51,7 @@ angular.module('contentful')
     targetStateId: 'archived'
   });
 
-  var unarchive = Command.create(() => applyAction(Action.Unarchive()), {
+  const unarchive = Command.create(() => applyAction(Action.Unarchive()), {
     disabled: checkDisallowed(Action.Unarchive())
   }, {
     label: 'Unarchive',
@@ -60,7 +60,7 @@ angular.module('contentful')
   });
 
 
-  var unpublish = Command.create(() => applyActionWithConfirmation(Action.Unpublish()), {
+  const unpublish = Command.create(() => applyActionWithConfirmation(Action.Unpublish()), {
     disabled: checkDisallowed(Action.Unpublish())
   }, {
     label: 'Unpublish',
@@ -68,14 +68,14 @@ angular.module('contentful')
     targetStateId: 'draft'
   });
 
-  var publishChanges = Command.create(publishEntity, {
+  const publishChanges = Command.create(publishEntity, {
     disabled: checkDisallowed(Action.Publish())
   }, {
     label: 'Publish changes',
     targetStateId: 'published'
   });
 
-  var publish = Command.create(publishEntity, {
+  const publish = Command.create(publishEntity, {
     disabled: checkDisallowed(Action.Publish())
   }, {
     label: 'Publish',
@@ -131,16 +131,16 @@ angular.module('contentful')
     return publicationWarnings.show()
     .then(() => {
       if (validator.run()) {
-        var contentType;
-        var entityInfo = $scope.entityInfo;
+        let contentType;
+        const entityInfo = $scope.entityInfo;
         if (entityInfo.type === 'Entry') {
           contentType = spaceContext.publishedCTs.get(entityInfo.contentTypeId);
         }
-        var action = Action.Publish();
+        const action = Action.Publish();
         return applyAction(action)
         .then(entity => {
           if (contentType) {
-            var eventOrigin = 'entry-editor';
+            let eventOrigin = 'entry-editor';
 
             if ($scope.bulkEditorContext) {
               eventOrigin = 'bulk-editor';
@@ -181,8 +181,8 @@ angular.module('contentful')
     }),
     {
       disabled: function () {
-        var canDelete = permissions.can('delete');
-        var canMoveToDraft = caseof(controller.current, [
+        const canDelete = permissions.can('delete');
+        const canMoveToDraft = caseof(controller.current, [
           ['archived', _.constant(permissions.can('unarchive'))],
           ['changes', 'published', _.constant(permissions.can('unpublish'))],
           [otherwise, _.constant(true)]
@@ -202,7 +202,7 @@ angular.module('contentful')
     });
   }, {
     available: function () {
-      var canEdit = K.getValue(otDoc.state.canEdit$);
+      const canEdit = K.getValue(otDoc.state.canEdit$);
       return canEdit && reverter.hasChanges();
     }
   });

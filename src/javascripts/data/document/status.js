@@ -10,10 +10,10 @@ angular.module('contentful')
  * Tested in the 'app/entity_editor/Document' tests.
  */
 .factory('data/Document/Status', ['require', require => {
-  var K = require('utils/kefir');
-  var Logger = require('logger');
+  const K = require('utils/kefir');
+  const Logger = require('logger');
 
-  var Status = {
+  const Status = {
     NOT_ALLOWED: 'editing-not-allowed',
     CONNECTION_ERROR: 'ot-connection-error',
     ARCHIVED: 'archived',

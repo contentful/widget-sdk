@@ -8,7 +8,7 @@ angular.module('contentful').directive('cfSelectAllInput', () => ({
     el.on('click', selectAll);
 
     function selectAll() {
-      var end = el.val().length;
+      const end = el.val().length;
       el.textrange('set', 0, end);
     }
   }

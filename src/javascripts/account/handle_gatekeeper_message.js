@@ -3,17 +3,17 @@
 angular.module('contentful')
 
 .factory('handleGatekeeperMessage', ['require', require => {
-  var $location = require('$location');
-  var Authentication = require('Authentication');
-  var notification = require('notification');
-  var TokenStore = require('services/TokenStore');
-  var CreateSpace = require('services/CreateSpace');
-  var UrlSyncHelper = require('account/UrlSyncHelper');
-  var modalDialog = require('modalDialog');
-  var $state = require('$state');
+  const $location = require('$location');
+  const Authentication = require('Authentication');
+  const notification = require('notification');
+  const TokenStore = require('services/TokenStore');
+  const CreateSpace = require('services/CreateSpace');
+  const UrlSyncHelper = require('account/UrlSyncHelper');
+  const modalDialog = require('modalDialog');
+  const $state = require('$state');
 
   return function handleGatekeeperMessage (data) {
-    var match = makeMessageMatcher(data);
+    const match = makeMessageMatcher(data);
 
     if (match('create', 'UserCancellation')) {
       Authentication.cancelUser();
@@ -48,16 +48,16 @@ angular.module('contentful')
 
   function makeMessageMatcher (data) {
     return function matchMessage (action, type) {
-      var messageAction = _.get(data, 'action', '').toLowerCase();
-      var messageType = _.get(data, 'type', '').toLowerCase();
+      const messageAction = _.get(data, 'action', '').toLowerCase();
+      const messageType = _.get(data, 'type', '').toLowerCase();
 
       return action.toLowerCase() === messageAction && type.toLowerCase() === messageType;
     };
   }
 
   function showErrorModal (data) {
-    var defaultTitle = 'Something went wrong';
-    var defaultMessage = 'An error has occurred. We have been automatically notified and will investigate. If it re-occurs, please contact support.';
+    const defaultTitle = 'Something went wrong';
+    const defaultMessage = 'An error has occurred. We have been automatically notified and will investigate. If it re-occurs, please contact support.';
 
     modalDialog.open({
       title: _.unescape(data.heading) || defaultTitle,
@@ -71,8 +71,8 @@ angular.module('contentful')
   }
 
   function showNotification (data) {
-    var level = _.get(data, 'resource.type', 'info');
-    var message = _.get(data, 'resource.message');
+    let level = _.get(data, 'resource.type', 'info');
+    const message = _.get(data, 'resource.message');
 
     if (!level) {
       return;

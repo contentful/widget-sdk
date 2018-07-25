@@ -11,14 +11,14 @@ angular.module('cf.app')
  * editor.
  */
 .factory('widgets/datetime/data', ['require', require => {
-  var moment = require('moment');
+  const moment = require('moment');
 
-  var ZONE_RX = /(Z|[+-]\d{2}[:+]?\d{2})$/;
-  var TIME_24_RX = /^([01]?[0-9]|2[0-3]):([0-5][0-9])(:[0-5][0-9])?$/;
-  var TIME_12_RX = /^([0]?[1-9]|10|11|12):([0-5][0-9])(:[0-5][0-9])?$/;
+  const ZONE_RX = /(Z|[+-]\d{2}[:+]?\d{2})$/;
+  const TIME_24_RX = /^([01]?[0-9]|2[0-3]):([0-5][0-9])(:[0-5][0-9])?$/;
+  const TIME_12_RX = /^([0]?[1-9]|10|11|12):([0-5][0-9])(:[0-5][0-9])?$/;
 
   // All formats that we try when parsing free-form date input from the user.
-  var DATE_INPUT_FORMATS = [
+  const DATE_INPUT_FORMATS = [
     'YYYY-MM-DD',
     'DD-MM-YYYY',
     'DD.MM.YYYY',
@@ -68,7 +68,7 @@ angular.module('cf.app')
       return null;
     }
 
-    var date = moment.utc(dateString, DATE_INPUT_FORMATS);
+    const date = moment.utc(dateString, DATE_INPUT_FORMATS);
 
     if (date.isValid()) {
       return date;
@@ -95,12 +95,12 @@ angular.module('cf.app')
    * @returns {{valid: string|null}|{invalid: boolean}}}
    */
   function buildFieldValue (data, parse12hClock, useTime, useTimezone) {
-    var date = datetimeFromUserInput(data, parse12hClock);
+    const date = datetimeFromUserInput(data, parse12hClock);
     if (date.invalid || date.valid === null) {
       return date;
     }
 
-    var format;
+    let format;
     if (useTimezone) {
       format = 'YYYY-MM-DDTHH:mmZ';
     } else if (useTime) {
@@ -133,9 +133,9 @@ angular.module('cf.app')
       return {valid: null};
     }
 
-    var time = timeFromUserInput(input, uses12hClock);
+    const time = timeFromUserInput(input, uses12hClock);
 
-    var date =
+    const date =
       moment.parseZone(input.utcOffset, 'Z')
       .set(input.date.toObject())
       .set({hours: time.hours(), minutes: time.minutes()});
@@ -148,7 +148,7 @@ angular.module('cf.app')
   }
 
   function timeFromUserInput (input, uses12hClock) {
-    var timeInput = input.time || '00:00';
+    const timeInput = input.time || '00:00';
     if (uses12hClock) {
       return moment.utc(timeInput + '!' + input.ampm, 'HH:mm!A');
     } else {
@@ -167,10 +167,10 @@ angular.module('cf.app')
    * @returns {DateTimeInput}
    */
   function userInputFromDatetime (datetimeString, use12hClock) {
-    var datetime = fieldValueToMoment(datetimeString);
+    const datetime = fieldValueToMoment(datetimeString);
 
     if (datetime) {
-      var timeFormat = use12hClock ? 'hh:mm' : 'HH:mm';
+      const timeFormat = use12hClock ? 'hh:mm' : 'HH:mm';
       return {
         date: datetime,
         time: datetime.format(timeFormat),
@@ -190,7 +190,7 @@ angular.module('cf.app')
       return null;
     }
 
-    var datetime = moment(datetimeString);
+    const datetime = moment(datetimeString);
     if (ZONE_RX.test(datetimeString)) {
       datetime.utcOffset(datetimeString);
     }

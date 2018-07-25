@@ -2,7 +2,7 @@
 
 angular.module('cf.app')
 .directive('cfJsonEditor', ['require', require => {
-  var Editor = require('app/widgets/json/code_editor');
+  const Editor = require('app/widgets/json/code_editor');
 
   return {
     restrict: 'E',
@@ -10,12 +10,12 @@ angular.module('cf.app')
     template: JST['cf_json_editor'](),
     require: '^cfWidgetApi',
     link: (scope, _$el, _attr, widgetApi) => {
-      var field = widgetApi.field;
-      var offValueChanged = field.onValueChanged((json) => {
+      const field = widgetApi.field;
+      const offValueChanged = field.onValueChanged((json) => {
         scope.content = stringifyJSON(json);
       });
 
-      var offDisabledStatusChanged =
+      const offDisabledStatusChanged =
         field.onIsDisabledChanged((isDisabled) => {
           scope.isDisabled = isDisabled;
         });

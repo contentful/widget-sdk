@@ -4,7 +4,7 @@ angular.module('contentful').directive('cfEndlessContainer', () => ({
   restrict: 'A',
 
   link: function (scope, elem, attr) {
-    var debouncedHandleAtBottom = _.debounce(handleAtBottom, 50);
+    const debouncedHandleAtBottom = _.debounce(handleAtBottom, 50);
 
     elem.css({
       'overflow-y': 'auto'
@@ -22,13 +22,13 @@ angular.module('contentful').directive('cfEndlessContainer', () => ({
     });
 
     function getThreshold () {
-      var threshold = parseInt(attr.threshold, 10);
+      const threshold = parseInt(attr.threshold, 10);
       return !isNaN(threshold) && threshold >= 0 ? threshold : 200;
     }
 
     function handleAtBottom () {
       if (!elem.is(':visible')) return;
-      var scrollBottom = elem.scrollTop() + elem.prop('clientHeight');
+      const scrollBottom = elem.scrollTop() + elem.prop('clientHeight');
       if (elem.prop('scrollHeight') - getThreshold() <= scrollBottom) {
         scope.$eval(attr.atBottom);
       }

@@ -9,21 +9,21 @@ angular.module('contentful')
 }))
 
 .controller('ApiKeyListController', ['$scope', 'require', ($scope, require) => {
-  var ReloadNotification = require('ReloadNotification');
-  var spaceContext = require('spaceContext');
-  var accessChecker = require('access_control/AccessChecker');
-  var Command = require('command');
-  var TheAccountView = require('TheAccountView');
-  var $state = require('$state');
-  var notification = require('notification');
-  var ResourceUtils = require('utils/ResourceUtils');
-  var createResourceService = require('services/ResourceService').default;
-  var $q = require('$q');
+  const ReloadNotification = require('ReloadNotification');
+  const spaceContext = require('spaceContext');
+  const accessChecker = require('access_control/AccessChecker');
+  const Command = require('command');
+  const TheAccountView = require('TheAccountView');
+  const $state = require('$state');
+  const notification = require('notification');
+  const ResourceUtils = require('utils/ResourceUtils');
+  const createResourceService = require('services/ResourceService').default;
+  const $q = require('$q');
 
-  var organization = spaceContext.organizationContext.organization;
-  var resources = createResourceService(spaceContext.getId());
+  const organization = spaceContext.organizationContext.organization;
+  const resources = createResourceService(spaceContext.getId());
 
-  var disableCreateApiKey = accessChecker.shouldDisable('createApiKey');
+  const disableCreateApiKey = accessChecker.shouldDisable('createApiKey');
   $scope.showCreateApiKey = !accessChecker.shouldHide('createApiKey');
 
   $scope.context.ready = false;
@@ -55,7 +55,7 @@ angular.module('contentful')
   );
 
   function create () {
-    var spaceName = spaceContext.getData(['name']);
+    const spaceName = spaceContext.getData(['name']);
     return spaceContext.apiKeyRepo.create(spaceName)
     .then(apiKey => $state.go('^.detail', { apiKeyId: apiKey.sys.id }), err => {
       notification.error(err.data.message);
@@ -70,8 +70,8 @@ angular.module('contentful')
     $scope.apiKeys = result.apiKeys;
     $scope.empty = _.isEmpty($scope.apiKeys);
 
-    var canCreate = ResourceUtils.canCreate(result.resource);
-    var limits = ResourceUtils.getResourceLimits(result.resource);
+    const canCreate = ResourceUtils.canCreate(result.resource);
+    const limits = ResourceUtils.getResourceLimits(result.resource);
 
     $scope.legacy = result.legacy;
     $scope.limit = limits.maximum;

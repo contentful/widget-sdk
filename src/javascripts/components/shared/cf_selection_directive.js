@@ -9,7 +9,7 @@ angular.module('contentful').directive('cfSelection', [() => ({
     });
 
     function getEntities () {
-      var entities = scope.$eval(attrs.cfSelection);
+      const entities = scope.$eval(attrs.cfSelection);
 
       if (_.isArray(entities)) {
         return entities;

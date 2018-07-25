@@ -4,12 +4,12 @@ describe('cfNoForm directive', () => {
   beforeEach(module('cf.forms'));
 
   beforeEach(function () {
-    var $compile = this.$inject('$compile');
+    const $compile = this.$inject('$compile');
 
     this.$rootScope = this.$inject('$rootScope');
     this.scope = this.$rootScope.$new();
 
-    var template = '<form name="myform">' +
+    const template = '<form name="myform">' +
                      '<input name="no-dirty" ng-model="x" cf-no-form>' +
                      '<input name="dirty" ng-model="y">' +
                    '</form>';
@@ -17,7 +17,7 @@ describe('cfNoForm directive', () => {
   });
 
   it('does not set the form to dirty', function () {
-    var form = this.scope.myform;
+    const form = this.scope.myform;
 
     this.element.find('[name=no-dirty]').trigger('change');
     expect(form.$dirty).toBe(false);
@@ -27,7 +27,7 @@ describe('cfNoForm directive', () => {
   });
 
   it('does not propagate the update event', function () {
-    var listener = sinon.spy();
+    const listener = sinon.spy();
     this.$rootScope.$on('ngModel:update', listener);
     this.$rootScope.$on('ngModel:commit', listener);
 

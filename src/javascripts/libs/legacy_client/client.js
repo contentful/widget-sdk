@@ -1,12 +1,12 @@
 'use strict';
 
-var PersistenceContext = require('./persistence_context');
-var Space = require('./space');
-var Request = require('./request');
-var mixinChildResourceMethods = require('./child_resources');
+const PersistenceContext = require('./persistence_context');
+const Space = require('./space');
+const Request = require('./request');
+const mixinChildResourceMethods = require('./child_resources');
 
-var Client = function Client (adapter) {
-  var baseRequest = new Request(adapter);
+const Client = function Client (adapter) {
+  const baseRequest = new Request(adapter);
   this.persistenceContext = new PersistenceContext(baseRequest);
 };
 

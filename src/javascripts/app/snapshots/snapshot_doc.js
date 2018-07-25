@@ -14,14 +14,14 @@ angular.module('cf.app')
  * are no-ops.
  */
 .factory('SnapshotComparatorController/snapshotDoc', ['require', require => {
-  var K = require('utils/kefir');
-  var $q = require('$q');
-  var Permissions = require('access_control/EntityPermissions');
+  const K = require('utils/kefir');
+  const $q = require('$q');
+  const Permissions = require('access_control/EntityPermissions');
 
   return {create: create};
 
   function create (data) {
-    var permissions = Permissions.create(data.sys);
+    const permissions = Permissions.create(data.sys);
 
     return {
       state: {

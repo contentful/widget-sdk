@@ -2,9 +2,9 @@
 angular.module('contentful')
 
 .factory('EntityListCache', ['require', require => {
-  var $q             = require('$q');
-  var logger         = require('logger');
-  var TheLocaleStore = require('TheLocaleStore');
+  const $q             = require('$q');
+  const logger         = require('logger');
+  const TheLocaleStore = require('TheLocaleStore');
 
   // params:
   // - space
@@ -46,13 +46,13 @@ angular.module('contentful')
         return linkResolver.promise;
       }
 
-      var self = this;
+      const self = this;
       this.inProgress = true;
       this.getLinkedEntities(entities).then(() => {
         linkResolver.resolve();
         self.inProgress = false;
         if(self.queue.length > 0){
-          var nextRequest = self.queue.splice(0, 1)[0];
+          const nextRequest = self.queue.splice(0, 1)[0];
           self.resolveLinkedEntities(nextRequest.entities, nextRequest.linkResolver);
         }
       });
@@ -61,7 +61,7 @@ angular.module('contentful')
     },
 
     getLinkedEntities: function (entities) {
-      var self = this;
+      const self = this;
       this.determineMissingEntityIds(entities);
 
       if(this.missingIds.length) {
@@ -83,7 +83,7 @@ angular.module('contentful')
     },
 
     determineMissingEntityIds: function (entities) {
-      var self = this;
+      const self = this;
       _.forEach(entities, entity => {
         if(_.isUndefined(entity.data)){
           logger.logError('Entity data is undefined', {
@@ -94,13 +94,13 @@ angular.module('contentful')
         } else {
           _.forEach(entity.data.fields, (field, fieldId) => {
             if(!self.fieldIsDisplayed(fieldId)) return;
-            var locfield = field && field[self.locale];
+            const locfield = field && field[self.locale];
 
             if(isLink(locfield))
               self.pushFieldId(locfield);
             if(isLinkArray(locfield)){
-              var limit = locfield.length > self.params.limit ? self.params.limit : locfield.length;
-              for(var i=0; i<limit; i++){
+              const limit = locfield.length > self.params.limit ? self.params.limit : locfield.length;
+              for(let i=0; i<limit; i++){
                 self.pushFieldId(locfield[i]);
               }
             }

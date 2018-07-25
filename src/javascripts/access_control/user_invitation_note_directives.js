@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').directive('cfAddUsersToSpaceNote', ['require', require => {
-  var h = require('utils/hyperscript').h;
+  const h = require('utils/hyperscript').h;
 
   return {
     restrict: 'E',
@@ -24,7 +24,7 @@ angular.module('contentful').directive('cfAddUsersToSpaceNote', ['require', requ
   }
 }])
 .directive('cfNoUsersToAddToSpaceDialog', ['require', require => {
-  var h = require('utils/hyperscript').h;
+  const h = require('utils/hyperscript').h;
 
   return {
     restrict: 'E',
@@ -54,10 +54,10 @@ angular.module('contentful').directive('cfAddUsersToSpaceNote', ['require', requ
   }
 }])
 .controller('UserInvitationNotesController', ['$scope', 'require', ($scope, require) => {
-  var spaceContext = require('spaceContext');
-  var TheAccountView = require('TheAccountView');
-  var OrganizationRoles = require('services/OrganizationRoles');
-  var organization = spaceContext.organizationContext.organization;
+  const spaceContext = require('spaceContext');
+  const TheAccountView = require('TheAccountView');
+  const OrganizationRoles = require('services/OrganizationRoles');
+  const organization = spaceContext.organizationContext.organization;
 
   $scope.canInviteUsersToOrganization = () => OrganizationRoles.isOwnerOrAdmin(organization);
   $scope.goToOrganizationUsers = TheAccountView.goToUsers;

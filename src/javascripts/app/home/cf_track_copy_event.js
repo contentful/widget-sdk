@@ -15,9 +15,9 @@
 angular.module('contentful')
 
 .directive('cfTrackCopyEvent', ['require', require => {
-  var $document = require('$document');
-  var $window = require('$window');
-  var analyticsEvents = require('analytics/events/home');
+  const $document = require('$document');
+  const $window = require('$window');
+  const analyticsEvents = require('analytics/events/home');
 
   return {
     restrict: 'A',
@@ -31,11 +31,11 @@ angular.module('contentful')
 
       function handleKeydown (event) {
         if (event.key === 'c' && event.metaKey) {
-          var selection = $window.getSelection();
-          var selectedNode = _.get(selection, 'anchorNode.parentNode');
+          const selection = $window.getSelection();
+          const selectedNode = _.get(selection, 'anchorNode.parentNode');
           // Only track event if selected text is contained in this section
           if ($.contains(element[0], selectedNode)) {
-            var language = scope.resources.selected;
+            const language = scope.resources.selected;
             analyticsEvents.commandCopied(language, selection.toString());
           }
         }

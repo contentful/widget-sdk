@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Intercom service', () => {
-  var $window, intercom, $windowIntercomStub;
+  let $window, intercom, $windowIntercomStub;
 
   function setGlobalIntercom (value) {
     $windowIntercomStub = $window.Intercom = value;

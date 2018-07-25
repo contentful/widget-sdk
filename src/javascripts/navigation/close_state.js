@@ -1,11 +1,11 @@
 'use strict';
 
 angular.module('contentful').factory('navigation/closeState', ['require', require => {
-  var $q = require('$q');
-  var $state = require('$state');
-  var $location = require('$location');
-  var contextHistory = require('navigation/Breadcrumbs/History').default;
-  var stateChangeHandlers = require('navigation/stateChangeHandlers');
+  const $q = require('$q');
+  const $state = require('$state');
+  const $location = require('$location');
+  const contextHistory = require('navigation/Breadcrumbs/History').default;
+  const stateChangeHandlers = require('navigation/stateChangeHandlers');
 
   return closeState;
 
@@ -19,8 +19,8 @@ angular.module('contentful').factory('navigation/closeState', ['require', requir
   function goToPreviousEntity () {
     // TODO This code is duplicated in `cfBreadcrumbsDirective`. Maybe
     // the context history is a better place for the shared code.
-    var link = contextHistory.getLast().link;
-    var state = link.state;
+    const link = contextHistory.getLast().link;
+    let state = link.state;
 
     // TODO The `contextHistory` should take care of setting the
     // correct state when a crumb is added.

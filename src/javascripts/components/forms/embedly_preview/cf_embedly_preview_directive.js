@@ -1,10 +1,10 @@
 'use strict';
 
 angular.module('contentful').directive('cfEmbedlyPreview', ['require', require => {
-  var $timeout = require('$timeout');
-  var debounce = require('debounce');
-  var urlUtils = require('urlUtils');
-  var LazyLoader = require('LazyLoader');
+  const $timeout = require('$timeout');
+  const debounce = require('debounce');
+  const urlUtils = require('urlUtils');
+  const LazyLoader = require('LazyLoader');
 
   return {
     restrict: 'E',
@@ -13,19 +13,19 @@ angular.module('contentful').directive('cfEmbedlyPreview', ['require', require =
       urlStatus: '='
     },
     link: function (scope, element) {
-      var TIMEOUT = 7500;
+      const TIMEOUT = 7500;
 
       LazyLoader.get('embedly').then(setup);
 
       function setup (embedly) {
-        var debouncedRequestPreview = debounce(requestPreview, 500);
-        var loadCheck = null;
+        const debouncedRequestPreview = debounce(requestPreview, 500);
+        let loadCheck = null;
 
         scope.$watch('previewUrl', handleValueChange);
         embedly('on', 'card.rendered', markAsLoaded);
 
         function requestPreview (url) {
-          var previewElement = $('<a/>', {
+          const previewElement = $('<a/>', {
             href: encodeURI(decodeURI(url)),
             'data-card-controls': 0,
             'data-card-chrome': 0,

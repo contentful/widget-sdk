@@ -8,18 +8,18 @@ angular.module('cf.app')
   require: '^cfWidgetApi',
 
   link: function ($scope, _$el, _attrs, widgetApi) {
-    var field = widgetApi.field;
+    const field = widgetApi.field;
     // Determines whether to highlight stars according to mouse
     // position
-    var hovered = false;
+    let hovered = false;
 
     $scope.stars = _.map(_.range(getStarCount()), index => ({
       index: index + 1
     }));
 
-    var removeChangeListener = field.onValueChanged(selectStars, true);
+    const removeChangeListener = field.onValueChanged(selectStars, true);
 
-    var removeDisabledStatusListener = field.onIsDisabledChanged(disabled => {
+    const removeDisabledStatusListener = field.onIsDisabledChanged(disabled => {
       $scope.isDisabled = disabled;
     }, true);
 
@@ -79,13 +79,13 @@ angular.module('cf.app')
     // We return whole positive numbers. If it's not possible to
     // convert to a valid value we use 5 as a default.
     function getStarCount () {
-      var count = widgetApi.settings.stars;
-      var defaultValue = 5;
+      const count = widgetApi.settings.stars;
+      const defaultValue = 5;
 
       if (isValidCount(count)) {
         return Math.round(count);
       } else if (typeof count === 'string') {
-        var parsed = parseInt(count, 10);
+        const parsed = parseInt(count, 10);
         return isValidCount(parsed) ? Math.round(parsed) : defaultValue;
       } else {
         return defaultValue;

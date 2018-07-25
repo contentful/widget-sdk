@@ -6,13 +6,13 @@ describe('cfFieldErrorsFor', () => {
   }));
 
   beforeEach(function () {
-    var $compile = this.$inject('$compile');
-    var template =
+    const $compile = this.$inject('$compile');
+    const template =
       '<form>' +
         '<input name="myfield" ng-model="myfield">' +
         '<ul cf-field-errors-for="myfield"></ul>' +
       '</form>';
-    var element = $compile(template)(this.$inject('$rootScope'));
+    const element = $compile(template)(this.$inject('$rootScope'));
     this.errorList = element.find('ul');
     this.modelController = element.find('input').controller('ngModel');
     this.$apply();
@@ -46,7 +46,7 @@ describe('cfFieldErrorsFor', () => {
     this.modelController.$setValidity('a', false);
     this.modelController.$setValidity('b', false);
     this.$apply();
-    var errorMessages = this.errorList.find('li').map((i, e) => $(e).text()).get();
+    const errorMessages = this.errorList.find('li').map((i, e) => $(e).text()).get();
     expect(errorMessages).toEqual([
       'the a error', 'Error: b'
     ]);

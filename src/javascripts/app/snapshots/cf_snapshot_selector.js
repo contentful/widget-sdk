@@ -8,11 +8,11 @@ angular.module('cf.app')
   controller: 'SnapshotSelectorController',
 
   link: function ($scope, $el) {
-    var snapshotListSel = '[aria-label="snapshot-list"]';
-    var snapshotListBtnSel = '[aria-label="show-snapshot-list-btn"]';
+    const snapshotListSel = '[aria-label="snapshot-list"]';
+    const snapshotListBtnSel = '[aria-label="show-snapshot-list-btn"]';
 
-    var $snapshotSelectorContainer = $el.find(':first-child');
-    var $snapshotSelectorToggleBtn = $(snapshotListBtnSel);
+    const $snapshotSelectorContainer = $el.find(':first-child');
+    const $snapshotSelectorToggleBtn = $(snapshotListBtnSel);
 
     document.addEventListener('click', hideSnapshotList, true);
 
@@ -21,8 +21,8 @@ angular.module('cf.app')
     });
 
     function hideSnapshotList (e) {
-      var $target = $(e.target);
-      var keepListOpen = $target.parents(snapshotListBtnSel).length || $target.parents(snapshotListSel).length;
+      const $target = $(e.target);
+      const keepListOpen = $target.parents(snapshotListBtnSel).length || $target.parents(snapshotListSel).length;
 
       if ($snapshotSelectorContainer.is(':visible') && !keepListOpen) {
         $snapshotSelectorToggleBtn.click();
@@ -32,18 +32,18 @@ angular.module('cf.app')
 })])
 
 .controller('SnapshotSelectorController', ['$scope', 'require', ($scope, require) => {
-  var K = require('utils/kefir');
-  var spaceContext = require('spaceContext');
-  var moment = require('moment');
-  var Paginator = require('Paginator');
-  var snapshotStatus = require('app/snapshots/helpers/SnapshotStatus');
-  var snapshotDecorator = require('app/snapshots/helpers/SnapshotDecorator');
+  const K = require('utils/kefir');
+  const spaceContext = require('spaceContext');
+  const moment = require('moment');
+  const Paginator = require('Paginator');
+  const snapshotStatus = require('app/snapshots/helpers/SnapshotStatus');
+  const snapshotDecorator = require('app/snapshots/helpers/SnapshotDecorator');
 
-  var PER_PAGE = 20;
+  const PER_PAGE = 20;
 
-  var otDoc = $scope.otDoc;
-  var entryId = $scope.entityInfo.id;
-  var snapshotsById = {};
+  const otDoc = $scope.otDoc;
+  const entryId = $scope.entityInfo.id;
+  const snapshotsById = {};
 
   $scope.isAscending = true;
   $scope.isLoading = false;
@@ -60,13 +60,13 @@ angular.module('cf.app')
   $scope.paginator.setPage(0);
 
 
-  var snapshotsFirstShown$ = $scope.showSnapshotSelector$
+  const snapshotsFirstShown$ = $scope.showSnapshotSelector$
       .filter(val => val)
       .take(1);
 
   K.onValueScope($scope, snapshotsFirstShown$, load);
 
-  var entrySys = K.getValue(otDoc.sysProperty);
+  const entrySys = K.getValue(otDoc.sysProperty);
 
   function isActive (snapshot) {
     return $scope.snapshot.sys.id === snapshot.sys.id;
@@ -80,7 +80,7 @@ angular.module('cf.app')
   }
 
   function load () {
-    var query = {
+    const query = {
       skip: $scope.paginator.getSkipParam(),
       limit: PER_PAGE + 1
     };

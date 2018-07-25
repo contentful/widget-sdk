@@ -2,10 +2,10 @@
 
 angular.module('contentful')
 .directive('cfPersistentNotification', ['require', require => {
-  var $sce = require('$sce');
-  var $timeout = require('$timeout');
-  var Analytics = require('analytics/Analytics');
-  var logger = require('logger');
+  const $sce = require('$sce');
+  const $timeout = require('$timeout');
+  const Analytics = require('analytics/Analytics');
+  const logger = require('logger');
 
   return {
     restrict: 'E',
@@ -23,8 +23,8 @@ angular.module('contentful')
      * - empty the array.
      * @type {Array<object|null>}
      */
-    var notificationsOfCycle = [];
-    var dismissed;
+    let notificationsOfCycle = [];
+    let dismissed;
 
     resetNotification();
 
@@ -50,8 +50,8 @@ angular.module('contentful')
     });
 
     function updateNotificationForCycle () {
-      var actualNotifications = _.filter(notificationsOfCycle);
-      var includesReset = actualNotifications.length < notificationsOfCycle.length;
+      const actualNotifications = _.filter(notificationsOfCycle);
+      const includesReset = actualNotifications.length < notificationsOfCycle.length;
 
       if (actualNotifications.length) {
         setNotification(actualNotifications[0]);
@@ -71,7 +71,7 @@ angular.module('contentful')
       resetNotification();
       scope.persistentNotification = true;
       _.assign(scope, params);
-      var message = params.message;
+      const message = params.message;
       scope.message = message && $sce.trustAsHtml(message);
     }
 

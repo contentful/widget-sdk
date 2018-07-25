@@ -12,7 +12,7 @@
  */
 angular.module('contentful/environment')
 .constant('environment', ((() => {
-  var injected = extractInjectedConfig();
+  const injected = extractInjectedConfig();
 
   /**
    * @ngdoc property
@@ -34,8 +34,8 @@ angular.module('contentful/environment')
 
   function extractInjectedConfig () {
     // TODO Should throw when config is not injected, but currently required for tests
-    var defaultValue = {config: {environment: 'development'}};
-    var el = document.querySelector('meta[name="external-config"]');
+    const defaultValue = {config: {environment: 'development'}};
+    const el = document.querySelector('meta[name="external-config"]');
 
     try {
       return JSON.parse(el.getAttribute('content')) || defaultValue;

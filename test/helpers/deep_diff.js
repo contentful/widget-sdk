@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 ((undefined => {
-  var $scope , conflict, conflictResolution = [];
+  let $scope, conflict, conflictResolution = [];
   if (typeof global === 'object' && global) {
     $scope = global;
   } else if (typeof window !== 'undefined') {
@@ -72,7 +72,7 @@
   inherits(DiffArray, Diff);
 
   function arrayRemove(arr, from, to) {
-    var rest = arr.slice((to || from) + 1 || arr.length);
+    const rest = arr.slice((to || from) + 1 || arr.length);
     arr.length = from < 0 ? arr.length + from : from;
     arr.push(...rest);
     return arr;
@@ -80,13 +80,13 @@
 
   function deepDiff(lhs, rhs, changes, prefilter, path, key, stack) {
     path = path || [];
-    var currentPath = path.slice(0);
+    const currentPath = path.slice(0);
     if (typeof key !== 'undefined') {
       if (prefilter && prefilter(currentPath, key)) { return; }
       currentPath.push(key);
     }
-    var ltype = typeof lhs;
-    var rtype = typeof rhs;
+    const ltype = typeof lhs;
+    const rtype = typeof rhs;
     if (ltype === 'undefined') {
       if (rtype !== 'undefined') {
         changes(new DiffNew(currentPath, rhs));
@@ -102,7 +102,7 @@
       if (stack.indexOf(lhs) < 0) {
         stack.push(lhs);
         if (Array.isArray(lhs)) {
-          var i;
+          let i;
           for (i = 0; i < lhs.length; i++) {
             if (i >= rhs.length) {
               changes(new DiffArray(currentPath, i, new DiffDeleted(undefined, lhs[i])));
@@ -114,10 +114,10 @@
             changes(new DiffArray(currentPath, i, new DiffNew(undefined, rhs[i++])));
           }
         } else {
-          var akeys = Object.keys(lhs);
-          var pkeys = Object.keys(rhs);
+          const akeys = Object.keys(lhs);
+          let pkeys = Object.keys(rhs);
           akeys.forEach(k => {
-            var other = pkeys.indexOf(k);
+            const other = pkeys.indexOf(k);
             if (other >= 0) {
               deepDiff(lhs[k], rhs[k], changes, prefilter, currentPath, k, stack);
               pkeys = arrayRemove(pkeys, other);
@@ -152,7 +152,9 @@
 
   function applyArrayChange(arr, index, change) {
     if (change.path && change.path.length) {
-      var it = arr[index], i, u = change.path.length - 1;
+      let it = arr[index];
+      let i;
+      const u = change.path.length - 1;
       for (i = 0; i < u; i++) {
         it = it[change.path[i]];
       }
@@ -187,7 +189,9 @@
 
   function applyChange(target, source, change) {
     if (target && source && change && change.kind) {
-      var it = target, i = -1, last = change.path.length - 1;
+      let it = target;
+      let i = -1;
+      const last = change.path.length - 1;
       while (++i < last) {
         if (typeof it[change.path[i]] === 'undefined') {
           it[change.path[i]] = (typeof change.path[i] === 'number') ? new Array() : {};
@@ -212,7 +216,10 @@
   function revertArrayChange(arr, index, change) {
     if (change.path && change.path.length) {
       // the structure of the object at the index has changed...
-      var it = arr[index], i, u = change.path.length - 1;
+      let it = arr[index];
+
+      let i;
+      const u = change.path.length - 1;
       for (i = 0; i < u; i++) {
         it = it[change.path[i]];
       }
@@ -252,7 +259,7 @@
 
   function revertChange(target, source, change) {
     if (target && source && change && change.kind) {
-      var it = target, i, u;
+      let it = target, i, u;
       u = change.path.length - 1;
       for (i = 0; i < u; i++) {
         if (typeof it[change.path[i]] === 'undefined') {
@@ -284,7 +291,7 @@
 
   function applyDiff(target, source, filter) {
     if (target && source) {
-      var onChange = change => {
+      const onChange = change => {
         if (!filter || filter(target, source, change)) {
           applyChange(target, source, change);
         }

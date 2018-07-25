@@ -1,16 +1,16 @@
 angular.module('contentful').directive('cfStateChangeConfirmationDialog', [
   'require',
   require => {
-    var _ = require('lodash');
-    var React = require('react');
-    var ReactDOM = require('react-dom');
-    var random = require('random');
-    var Dialog = require('app/entity_editor/Components/StateChangeConfirmationDialog').default;
+    const _ = require('lodash');
+    const React = require('react');
+    const ReactDOM = require('react-dom');
+    const random = require('random');
+    const Dialog = require('app/entity_editor/Components/StateChangeConfirmationDialog').default;
 
     return {
       link: function link ($scope, elem) {
-        var dialogSessionId = random.id(); // uuid
-        var defaultProps = {
+        const dialogSessionId = random.id(); // uuid
+        const defaultProps = {
           dialogSessionId: dialogSessionId,
           entityInfo: $scope.entityInfo,
           action: $scope.action,

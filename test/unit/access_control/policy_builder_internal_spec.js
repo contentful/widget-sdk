@@ -2,7 +2,7 @@
 
 describe('Policy Builder, to internal representation', () => {
 
-  var toInternal, CONFIG;
+  let toInternal, CONFIG;
 
   beforeEach(function () {
     module('contentful/test');
@@ -12,20 +12,20 @@ describe('Policy Builder, to internal representation', () => {
 
   describe('takes external and returns internal representation', () => {
     it('extracts id and version', () => {
-      var internal = toInternal({sys: {id: 'testid', version: 123}});
+      const internal = toInternal({sys: {id: 'testid', version: 123}});
       expect(internal.id).toBe('testid');
       expect(internal.version).toBe(123);
     });
 
     it('uses the same name and description', () => {
-      var internal = toInternal({name: 'name', description: 'desc'});
+      const internal = toInternal({name: 'name', description: 'desc'});
       expect(internal.name).toBe('name');
       expect(internal.description).toBe('desc');
     });
 
     it('clones permissions', () => {
-      var permissions = {contentDelivery: ['read', 'manage'], settings: ['read']};
-      var internal = toInternal({permissions: permissions});
+      const permissions = {contentDelivery: ['read', 'manage'], settings: ['read']};
+      const internal = toInternal({permissions: permissions});
       expect(internal.contentDelivery !== permissions.contentDelivery).toBe(true);
       expect(internal.settings !== permissions.settings).toBe(true);
       expect(internal.contentDelivery[1]).toBe('manage');
@@ -33,7 +33,7 @@ describe('Policy Builder, to internal representation', () => {
     });
 
     it('adds collections', () => {
-      var i = toInternal({});
+      const i = toInternal({});
       [i.entries.allowed, i.entries.denied, i.assets.allowed, i.assets.denied].forEach(collection => {
         expect(Array.isArray(collection)).toBe(true);
         expect(collection.length).toBe(0);
@@ -41,7 +41,7 @@ describe('Policy Builder, to internal representation', () => {
     });
 
     it('adds policyString and uiCompatible flag', () => {
-      var internal = toInternal({policies: []});
+      const internal = toInternal({policies: []});
       expect(internal.policyString).toBe('[]');
       expect(internal.uiCompatible).toBe(true);
     });
@@ -51,7 +51,7 @@ describe('Policy Builder, to internal representation', () => {
 
     it('marks as non-UI-compatible', () => {
       // no constraint
-      var internal = toInternal({policies: [
+      let internal = toInternal({policies: [
         {actions: 'all', effect: 'allow'}
       ]});
       expect(internal.uiCompatible).toBe(false);
@@ -77,13 +77,13 @@ describe('Policy Builder, to internal representation', () => {
     });
 
     function base (type, collection, action) {
-      var internal = toInternal({policies: [
+      const internal = toInternal({policies: [
         {actions: action, effect: 'allow', constraint: {
           and: [{equals: [{doc: 'sys.type'}, type]}]
         }}
       ]});
 
-      var as = internal[collection].allowed;
+      const as = internal[collection].allowed;
       expect(as.length).toBe(1);
       expect(as[0].entity).toBe(type.toLowerCase());
       expect(as[0].action).toBe(Array.isArray(action) ? action[0] : action);
@@ -102,7 +102,7 @@ describe('Policy Builder, to internal representation', () => {
     });
 
     it('translates content type constraints', () => {
-      var internal = toInternal({policies: [
+      const internal = toInternal({policies: [
         {actions: 'all', effect: 'allow', constraint: {
           and: [ { equals: [{doc: 'sys.type'}, 'Entry'] } ]
         }},
@@ -119,7 +119,7 @@ describe('Policy Builder, to internal representation', () => {
     });
 
     it('translates multiple policies with exceptions', () => {
-      var internal = toInternal({policies: [
+      const internal = toInternal({policies: [
         {actions: 'all', effect: 'allow', constraint: {
           and: [ { equals: [{doc: 'sys.type'}, 'Entry'] } ]
         }},
@@ -137,7 +137,7 @@ describe('Policy Builder, to internal representation', () => {
     });
 
     it('translates scope', () => {
-      var internal = toInternal({policies: [
+      const internal = toInternal({policies: [
         {actions: ['read'], effect: 'allow', constraint: {
           and: [ { equals: [{doc: 'sys.type'}, 'Entry'] } ]
         }},
@@ -155,7 +155,7 @@ describe('Policy Builder, to internal representation', () => {
     });
 
     it('translates path (field, locale)', () => {
-      var internal = toInternal({policies: [
+      const internal = toInternal({policies: [
         {actions: ['read'], effect: 'allow', constraint: {
           and: [
             { equals: [{doc: 'sys.type'}, 'Entry'] },
@@ -192,7 +192,7 @@ describe('Policy Builder, to internal representation', () => {
     });
 
     it('translates "glued" actions', () => {
-      var internal = toInternal({policies: [
+      let internal = toInternal({policies: [
         {actions: ['publish', 'unpublish'], effect: 'allow', constraint: {
           and: [ { equals: [{doc: 'sys.type'}, 'Entry'] } ]
         }},

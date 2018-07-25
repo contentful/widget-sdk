@@ -24,21 +24,21 @@ angular.module('cf.app')
  * @scope.requires {entityEditor/Context} editorContext
  */
 .directive('cfEntityField', ['require', require => {
-  var INLINE_REFERENCE_FEATURE_FLAG =
+  const INLINE_REFERENCE_FEATURE_FLAG =
     'feature-at-02-2018-inline-reference-field';
-  var RTL_SUPPORT_FEATURE_FLAG =
+  const RTL_SUPPORT_FEATURE_FLAG =
     'feature-at-03-2018-rtl-support';
 
-  var TheLocaleStore = require('TheLocaleStore');
-  var $q = require('$q');
-  var K = require('utils/kefir');
-  var getStore = require('TheStore').getStore;
-  var spaceContext = require('spaceContext');
-  var EntityHelpers = require('EntityHelpers');
-  var LD = require('utils/LaunchDarkly');
-  var trackInlineEditorToggle = require('analytics/events/ReferenceEditor').onToggleInlineEditor;
-  var getInlineEditingStoreKey = require('app/widgets/link/utils').getInlineEditingStoreKey;
-  var isRtlLocale = require('utils/locales').isRtlLocale;
+  const TheLocaleStore = require('TheLocaleStore');
+  const $q = require('$q');
+  const K = require('utils/kefir');
+  const getStore = require('TheStore').getStore;
+  const spaceContext = require('spaceContext');
+  const EntityHelpers = require('EntityHelpers');
+  const LD = require('utils/LaunchDarkly');
+  const trackInlineEditorToggle = require('analytics/events/ReferenceEditor').onToggleInlineEditor;
+  const getInlineEditingStoreKey = require('app/widgets/link/utils').getInlineEditingStoreKey;
+  const isRtlLocale = require('utils/locales').isRtlLocale;
 
   return {
     restrict: 'E',
@@ -47,14 +47,14 @@ angular.module('cf.app')
     controller: ['$scope', function ($scope) {
       // Records the 'invalid' flag for each locale’s control. Keys are public
       // locale codes.
-      var invalidControls = {};
+      const invalidControls = {};
 
-      var widget = $scope.widget;
-      var field = widget.field;
-      var store = getStore();
+      const widget = $scope.widget;
+      const field = widget.field;
+      const store = getStore();
 
       // All data that is read by the template
-      var templateData = {
+      const templateData = {
         field: field,
         tooltipPlacement: $scope.$first ? 'bottom' : 'top',
         helpText: _.get(widget, ['settings', 'helpText']) || widget.defaultHelpText,
@@ -122,9 +122,9 @@ angular.module('cf.app')
       }
 
       function toggleLocaleFieldExpansion (locale) {
-        var localeCode = locale.code;
-        var ctExpandedStoreKey = getLocaleFieldExpandedStoreKey(localeCode);
-        var newVal = !isLocaleFieldExpanded(localeCode);
+        const localeCode = locale.code;
+        const ctExpandedStoreKey = getLocaleFieldExpandedStoreKey(localeCode);
+        const newVal = !isLocaleFieldExpanded(localeCode);
 
         getFieldOrLinkCt(localeCode).then(linkContentType => {
           trackInlineEditorToggle({
@@ -144,7 +144,7 @@ angular.module('cf.app')
       }
 
       function isLocaleFieldExpanded (localeCode) {
-        var ctExpandedStoreKey = getLocaleFieldExpandedStoreKey(localeCode);
+        const ctExpandedStoreKey = getLocaleFieldExpandedStoreKey(localeCode);
         return $scope.data.canRenderInline && store.get(ctExpandedStoreKey);
       }
 
@@ -158,14 +158,14 @@ angular.module('cf.app')
       }
 
       function getFieldOrLinkCt (localeCode) {
-        var validIds = EntityHelpers.contentTypeFieldLinkCtIds(field);
+        const validIds = EntityHelpers.contentTypeFieldLinkCtIds(field);
         if (validIds.length === 1) {
           return spaceContext.publishedCTs.fetch(validIds[0]);
         }
-        var linkedEntry = $scope.fields[field.apiName].getValue(localeCode);
+        const linkedEntry = $scope.fields[field.apiName].getValue(localeCode);
         if (linkedEntry) {
           return spaceContext.space.getEntry(linkedEntry.sys.id).then(entry => {
-            var contentTypeId = entry.data.sys.contentType.sys.id;
+            const contentTypeId = entry.data.sys.contentType.sys.id;
             return spaceContext.publishedCTs.get(contentTypeId);
           });
         }
@@ -173,8 +173,8 @@ angular.module('cf.app')
       }
 
       function updateErrorStatus () {
-        var hasSchemaErrors = $scope.editorContext.validator.hasFieldError(field.id);
-        var hasControlErrors = _.some(invalidControls);
+        const hasSchemaErrors = $scope.editorContext.validator.hasFieldError(field.id);
+        const hasControlErrors = _.some(invalidControls);
         $scope.data.fieldHasErrors = hasSchemaErrors || hasControlErrors;
       }
 
@@ -184,8 +184,8 @@ angular.module('cf.app')
 
       function updateLocales () {
         $scope.locales = _.filter(getFieldLocales(field), locale => {
-          var isActive = TheLocaleStore.isLocaleActive(locale);
-          var hasError = $scope.editorContext.validator.hasFieldLocaleError(field.id, locale.internal_code);
+          const isActive = TheLocaleStore.isLocaleActive(locale);
+          const hasError = $scope.editorContext.validator.hasFieldLocaleError(field.id, locale.internal_code);
           return isActive || hasError;
         });
       }

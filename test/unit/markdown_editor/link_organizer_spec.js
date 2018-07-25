@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Link organizer', () => {
-  var LinkOrganizer;
+  let LinkOrganizer;
 
   beforeEach(function () {
     module('contentful/test');
@@ -10,8 +10,8 @@ describe('Link organizer', () => {
 
   describe('Inline link finder', () => {
     it('Finds all inline links in text', () => {
-      var subject = 'test [link](http://url.com) test [link2](http://url2.com) test [link3](http://url.com)';
-      var found = LinkOrganizer.findInline(subject);
+      const subject = 'test [link](http://url.com) test [link2](http://url2.com) test [link3](http://url.com)';
+      const found = LinkOrganizer.findInline(subject);
       expect(found.length).toBe(3);
       expect(found[0].match).toBe('[link](http://url.com)');
       expect(found[0].text).toBe('link');
@@ -20,8 +20,8 @@ describe('Link organizer', () => {
     });
 
     it('Finds and standardizes title', () => {
-      var subject = 'test [x](http://url.com   "title!") [y](http://xyz.com title 2   )';
-      var found = LinkOrganizer.findInline(subject);
+      const subject = 'test [x](http://url.com   "title!") [y](http://xyz.com title 2   )';
+      const found = LinkOrganizer.findInline(subject);
       expect(found.length).toBe(2);
       expect(found[0].title).toBe('title!');
       expect(found[1].title).toBe('title 2');
@@ -30,8 +30,8 @@ describe('Link organizer', () => {
 
   describe('Reference finder', () => {
     it('Finds all references in text', () => {
-      var subject = 'test [x][1] test [y][2] [with space separator] [3]';
-      var found = LinkOrganizer.findRefs(subject);
+      const subject = 'test [x][1] test [y][2] [with space separator] [3]';
+      const found = LinkOrganizer.findRefs(subject);
       expect(found.length).toBe(3);
       expect(found[0].match).toBe('[x][1]');
       expect(found[2].match).toBe('[with space separator] [3]');
@@ -41,7 +41,7 @@ describe('Link organizer', () => {
   });
 
   describe('Label finder', () => {
-    var subject = [
+    const subject = [
       '[1]:  http://test.com',
       '[2]: http://url.com',
       '[string]: http://url.com',
@@ -49,7 +49,7 @@ describe('Link organizer', () => {
     ].join('\n');
 
     it('Finds all labels', () => {
-      var found = LinkOrganizer.findLabels(subject);
+      const found = LinkOrganizer.findLabels(subject);
       expect(found.length).toBe(4);
       expect(found[0].id).toBe('1');
       expect(found[2].id).toBe('string');

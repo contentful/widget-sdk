@@ -17,22 +17,22 @@ angular.module('contentful')
  * @scope.requires {Widget.Renderable} widget
  */
 .controller('FieldLocaleController', ['require', '$scope', '$attrs', function (require, $scope, $attrs) {
-  var spaceContext = require('spaceContext');
-  var K = require('utils/kefir');
-  var createFieldLocaleDoc = require('app/entity_editor/FieldLocaleDocument').default;
-  var Navigator = require('states/Navigator');
+  const spaceContext = require('spaceContext');
+  const K = require('utils/kefir');
+  const createFieldLocaleDoc = require('app/entity_editor/FieldLocaleDocument').default;
+  const Navigator = require('states/Navigator');
 
-  var controller = this;
-  var field = $scope.widget.field;
-  var locale = $scope.locale;
-  var fieldPath = ['fields', field.id];
-  var localePath = fieldPath.concat([locale.internal_code]);
+  const controller = this;
+  const field = $scope.widget.field;
+  const locale = $scope.locale;
+  const fieldPath = ['fields', field.id];
+  const localePath = fieldPath.concat([locale.internal_code]);
 
   // Values for controller.access
-  var DENIED = {denied: true, disabled: true};
-  var EDITING_DISABLED = {editing_disabled: true, disabled: true};
-  var EDITABLE = {editable: true};
-  var DISCONNECTED = {disconnected: true, disabled: true};
+  const DENIED = {denied: true, disabled: true};
+  const EDITING_DISABLED = {editing_disabled: true, disabled: true};
+  const EDITABLE = {editable: true};
+  const DISCONNECTED = {disconnected: true, disabled: true};
 
   // TODO We should remove the dependency on $attrs. This was the
   // source of a bug.
@@ -40,7 +40,7 @@ angular.module('contentful')
   controller.doc = createFieldLocaleDoc($scope.docImpl, field.id, locale.internal_code);
 
   // Provided by the entry and asset controllers
-  var editorContext = $scope.editorContext;
+  const editorContext = $scope.editorContext;
 
   /**
    * @ngdoc method
@@ -109,7 +109,7 @@ angular.module('contentful')
   // TODO move this to entry validator
   function filterLocaleErrors (errors) {
     return errors.filter(error => {
-      var path = error.path;
+      const path = error.path;
 
       if (!path) {
         return false;
@@ -119,8 +119,8 @@ angular.module('contentful')
       // validation library reports an error on a [fields, fid] path.
       // In this case we don't want to have a visual hint for optional locale
       if (_.isEqual(path, fieldPath)) {
-        var fieldRequired = error.name === 'required';
-        var localeOptional = $scope.locale.optional;
+        const fieldRequired = error.name === 'required';
+        const localeOptional = $scope.locale.optional;
         return !fieldRequired || !localeOptional;
       }
 
@@ -129,15 +129,15 @@ angular.module('contentful')
   }
 
   function decorateUniquenessError (error) {
-    var conflicts = error.conflicting;
-    var conflictingEntryIds = conflicts.map(_.property('sys.id')).join(',');
-    var query = { 'sys.id[in]': conflictingEntryIds };
+    const conflicts = error.conflicting;
+    const conflictingEntryIds = conflicts.map(_.property('sys.id')).join(',');
+    const query = { 'sys.id[in]': conflictingEntryIds };
 
     // asynchronously add conflicting entry title to the error objects
     // so that we can display the list in the UI
     spaceContext.space.getEntries(query).then(entries => {
       entries.forEach(entry => {
-        var conflict = _.find(conflicts, c => c.sys.id === entry.data.sys.id);
+        const conflict = _.find(conflicts, c => c.sys.id === entry.data.sys.id);
 
         conflict.data = conflict.data || {};
         conflict.data.entryTitle = spaceContext.entryTitle(entry);
@@ -198,7 +198,7 @@ angular.module('contentful')
     }
   };
 
-  var editingAllowed = $scope.docImpl
+  const editingAllowed = $scope.docImpl
     .permissions.canEditFieldLocale(field.apiName, locale.code);
 
   /**

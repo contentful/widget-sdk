@@ -1,11 +1,11 @@
 'use strict';
 
-var Entity = require('./entity');
-var mixinPublishable = require('./publishable');
-var mixinArchivable = require('./archivable');
-var createResourceFactoryMethods = require('./resource_factory');
+const Entity = require('./entity');
+const mixinPublishable = require('./publishable');
+const mixinArchivable = require('./archivable');
+const createResourceFactoryMethods = require('./resource_factory');
 
-var Asset = function Asset (data, persistenceContext) {
+const Asset = function Asset (data, persistenceContext) {
   Entity.call(this, data, persistenceContext);
 };
 
@@ -20,7 +20,7 @@ Asset.prototype.process = function (version, localeCode) {
 };
 
 
-var factoryMethods = createResourceFactoryMethods(Asset, 'assets');
+const factoryMethods = createResourceFactoryMethods(Asset, 'assets');
 Asset.factoryMethods = {
   getAsset: factoryMethods.getById,
   getAssets: factoryMethods.getByQuery,

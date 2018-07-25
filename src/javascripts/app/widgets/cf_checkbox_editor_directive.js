@@ -8,8 +8,8 @@ angular.module('cf.app')
   require: '^cfWidgetApi',
 
   link: function (scope, _elem, _attrs, widgetApi) {
-    var field = widgetApi.field;
-    var options = scope.options = getOptions(field);
+    const field = widgetApi.field;
+    const options = scope.options = getOptions(field);
 
     if (options.length === 0) {
       scope.misconfigured = true;
@@ -17,9 +17,9 @@ angular.module('cf.app')
     }
 
     scope.$watch('options', options => {
-      var selected = _.filter(options, 'selected');
-      var values = _.map(selected, 'value');
-      var oldValues = field.getValue();
+      const selected = _.filter(options, 'selected');
+      const values = _.map(selected, 'value');
+      const oldValues = field.getValue();
       if (!_.isEqual(oldValues, values)) {
         if (values.length === 0) {
           field.removeValue();
@@ -29,13 +29,13 @@ angular.module('cf.app')
       }
     }, true);
 
-    var removeChangeListener = field.onValueChanged(values => {
+    const removeChangeListener = field.onValueChanged(values => {
       _.forEach(options, option => {
         option.selected = values && values.indexOf(option.value) > -1;
       });
     });
 
-    var removeDisabledStatusListener = field.onIsDisabledChanged(disabled => {
+    const removeDisabledStatusListener = field.onIsDisabledChanged(disabled => {
       scope.isDisabled = disabled;
     });
 
@@ -47,7 +47,7 @@ angular.module('cf.app')
 
     function getOptions (field) {
       // Get first object that has a 'in' property
-      var predefinedValues = _.filter(_.map(field.itemValidations, 'in'))[0];
+      const predefinedValues = _.filter(_.map(field.itemValidations, 'in'))[0];
       return _.map(predefinedValues, (value, index) => ({
         id: ['entity', field.id, field.locale, index].join('.'),
         value: value,

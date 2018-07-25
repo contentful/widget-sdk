@@ -6,7 +6,7 @@
  */
 angular.module('cf.data')
 .factory('data/previewEnvironmentsCache', () => {
-  var previewEnvironmentsCache;
+  let previewEnvironmentsCache;
 
   return {
     getAll: getAll,

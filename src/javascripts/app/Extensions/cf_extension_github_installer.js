@@ -2,9 +2,9 @@
 
 angular.module('contentful')
 .directive('cfExtensionGithubInstaller', ['require', require => {
-  var React = require('react');
-  var ReactDOM = require('react-dom');
-  var GitHubInstaller = require('app/Extensions/GitHubInstaller').default;
+  const React = require('react');
+  const ReactDOM = require('react-dom');
+  const GitHubInstaller = require('app/Extensions/GitHubInstaller').default;
 
   return {
     restrict: 'E',

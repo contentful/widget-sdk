@@ -24,23 +24,23 @@ angular.module('contentful')
  * ~~~
  */
 .factory('navigation/confirmLeaveEditor', ['require', require => {
-  var modalDialog = require('modalDialog');
-  var Command     = require('command');
+  const modalDialog = require('modalDialog');
+  const Command     = require('command');
 
   return function createLeaveConfirmator (runSave, template) {
     return function confirmLeaveEditor () {
-      var dialog;
-      var save = Command.create(() => runSave().then(() => {
+      let dialog;
+      const save = Command.create(() => runSave().then(() => {
         dialog.confirm({saved: true});
       }, error => {
         dialog.cancel(error);
       }));
 
-      var discard = Command.create(() => {
+      const discard = Command.create(() => {
         dialog.confirm({discarded: true});
       });
 
-      var cancel = Command.create(() => {
+      const cancel = Command.create(() => {
         dialog.confirm(false);
       });
 

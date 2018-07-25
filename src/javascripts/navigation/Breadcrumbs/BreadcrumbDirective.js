@@ -8,24 +8,24 @@
  * breadcrumb. This breadcrumb is associated to the current page.
  */
 angular.module('contentful').directive('cfBreadcrumbs', ['require', require => {
-  var $parse = require('$parse');
-  var $state = require('$state');
-  var Analytics = require('analytics/Analytics');
-  var contextHistory = require('navigation/Breadcrumbs/History').default;
-  var documentTitle = require('navigation/DocumentTitle');
-  var K = require('utils/kefir');
+  const $parse = require('$parse');
+  const $state = require('$state');
+  const Analytics = require('analytics/Analytics');
+  const contextHistory = require('navigation/Breadcrumbs/History').default;
+  const documentTitle = require('navigation/DocumentTitle');
+  const K = require('utils/kefir');
 
-  var backBtnSelector = '[aria-label="breadcrumbs-back-btn"]';
-  var ancestorBtnSelector = '[aria-label="breadcrumbs-ancestor-btn"]';
-  var ancestorMenuContainerSelector = '[aria-label="breadcrumbs-ancestor-menu-container"]';
-  var ancestorMenuSelector = '[aria-label="breadcrumbs-ancestor-menu"]';
-  var ancestorLinkSelector = ancestorMenuSelector + ' [role="link"]';
-  var hintDismissBtnSelector = '[aria-label="ui-hint-dismiss-btn"]';
+  const backBtnSelector = '[aria-label="breadcrumbs-back-btn"]';
+  const ancestorBtnSelector = '[aria-label="breadcrumbs-ancestor-btn"]';
+  const ancestorMenuContainerSelector = '[aria-label="breadcrumbs-ancestor-menu-container"]';
+  const ancestorMenuSelector = '[aria-label="breadcrumbs-ancestor-menu"]';
+  const ancestorLinkSelector = ancestorMenuSelector + ' [role="link"]';
+  const hintDismissBtnSelector = '[aria-label="ui-hint-dismiss-btn"]';
 
-  var renderString = require('ui/Framework').renderString;
-  var template = require('navigation/Breadcrumbs/Template').template;
+  const renderString = require('ui/Framework').renderString;
+  const template = require('navigation/Breadcrumbs/Template').template;
 
-  var analyticsData = {
+  const analyticsData = {
     clickedOn: {
       BACK: 'back',
       ANCESTOR: 'ancestor',
@@ -83,8 +83,8 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', require => {
         // code.
         contextHistory.pop();
 
-        var link = contextHistory.getLast().link;
-        var state = link.state;
+        const link = contextHistory.getLast().link;
+        let state = link.state;
 
         // TODO The `contextHistory` should take care of setting the
         // correct state when a crumb is added.
@@ -98,10 +98,10 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', require => {
       }
 
       function toggleAncestorList () {
-        var $ancestorBtn = $el.find(ancestorBtnSelector);
-        var $ancestorList = $el.find(ancestorMenuContainerSelector);
-        var $ancestorMenu = $el.find(ancestorMenuSelector);
-        var menuAriaHidden = $ancestorMenu.attr('aria-hidden');
+        const $ancestorBtn = $el.find(ancestorBtnSelector);
+        const $ancestorList = $el.find(ancestorMenuContainerSelector);
+        const $ancestorMenu = $el.find(ancestorMenuSelector);
+        const menuAriaHidden = $ancestorMenu.attr('aria-hidden');
 
         $ancestorBtn.toggleClass('btn__active');
         $ancestorList.toggle();
@@ -111,8 +111,8 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', require => {
       }
 
       function trackAncestorLinkClick (e) {
-        var sref = $(e.target).attr('ui-sref');
-        var clickedOn = analyticsData.clickedOn[isTopState(sref) ? 'TOP_STATE' : 'ANCESTOR'];
+        const sref = $(e.target).attr('ui-sref');
+        const clickedOn = analyticsData.clickedOn[isTopState(sref) ? 'TOP_STATE' : 'ANCESTOR'];
 
         track(clickedOn);
       }
@@ -123,10 +123,10 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', require => {
       }
 
       function closeAncestorListIfVisible (e) {
-        var $ancestorList = $el.find(ancestorMenuContainerSelector);
+        const $ancestorList = $el.find(ancestorMenuContainerSelector);
         // IE 11 does not always have a target or getAttribute method :(
-        var targetLabel = e.target && e.target.getAttribute && e.target.getAttribute('aria-label');
-        var isAncestorBtn = targetLabel === 'breadcrumbs-ancestor-btn';
+        const targetLabel = e.target && e.target.getAttribute && e.target.getAttribute('aria-label');
+        const isAncestorBtn = targetLabel === 'breadcrumbs-ancestor-btn';
 
         if ($ancestorList.is(':visible') && !isAncestorBtn) {
           toggleAncestorList();
@@ -139,7 +139,7 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', require => {
     },
     controller: ['$scope', $scope => {
       $scope.$watch(() => {
-        var last = _.last($scope.crumbs);
+        const last = _.last($scope.crumbs);
         return last && last.getTitle();
       }, documentTitle.maybeOverride);
 

@@ -3,9 +3,9 @@
 angular.module('contentful')
 
 .factory('analyticsEvents/customWidgets', ['require', require => {
-  var Analytics = require('analytics/Analytics');
-  var spaceContext = require('spaceContext');
-  var getFieldLabel = require('fieldFactory').getLabel;
+  const Analytics = require('analytics/Analytics');
+  const spaceContext = require('spaceContext');
+  const getFieldLabel = require('fieldFactory').getLabel;
 
   return {
     selected: selected,
@@ -26,8 +26,8 @@ angular.module('contentful')
   }
 
   function trackEventIfCustom (event, widget, field, extraData) {
-    var descriptor = _.find(spaceContext.widgets.getAll(), {id: widget.widgetId});
-    var isCustom = descriptor && descriptor.custom;
+    const descriptor = _.find(spaceContext.widgets.getAll(), {id: widget.widgetId});
+    const isCustom = descriptor && descriptor.custom;
 
     if (isCustom) {
       Analytics.track(event, _.extend({

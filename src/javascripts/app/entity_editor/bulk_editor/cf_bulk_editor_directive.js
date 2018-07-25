@@ -1,15 +1,15 @@
 angular.module('contentful')
 
 .directive('cfBulkEditor', ['require', require => {
-  var K = require('utils/kefir');
-  var accessChecker = require('access_control/AccessChecker');
-  var spaceContext = require('spaceContext');
-  var entitySelector = require('entitySelector');
-  var deepFreeze = require('utils/Freeze').deepFreeze;
-  var List = require('utils/List');
-  var Tracking = require('app/entity_editor/bulk_editor/Tracking');
-  var DataLoader = require('app/entity_editor/DataLoader');
-  var Analytics = require('analytics/Analytics');
+  const K = require('utils/kefir');
+  const accessChecker = require('access_control/AccessChecker');
+  const spaceContext = require('spaceContext');
+  const entitySelector = require('entitySelector');
+  const deepFreeze = require('utils/Freeze').deepFreeze;
+  const List = require('utils/List');
+  const Tracking = require('app/entity_editor/bulk_editor/Tracking');
+  const DataLoader = require('app/entity_editor/DataLoader');
+  const Analytics = require('analytics/Analytics');
 
   return {
     scope: {
@@ -23,17 +23,17 @@ angular.module('contentful')
 
   function link ($scope) {
     // This is passed from the EntryEditorController
-    var referenceContext = $scope.referenceContext;
+    const referenceContext = $scope.referenceContext;
 
-    var templateData = {};
+    const templateData = {};
     $scope.data = templateData;
 
-    var nextFocusIndex = referenceContext.focusIndex;
-    var initialLoadCount = null;
+    let nextFocusIndex = referenceContext.focusIndex;
+    let initialLoadCount = null;
 
-    var scrollTargetBus = K.createBus($scope);
+    const scrollTargetBus = K.createBus($scope);
 
-    var track = Tracking.create(
+    let track = Tracking.create(
       referenceContext.parentId,
       referenceContext.links$
     );
@@ -49,14 +49,14 @@ angular.module('contentful')
 
     // Property<string>
     // List of IDs for the linked entries
-    var ids$ = referenceContext.links$.map(links => {
+    const ids$ = referenceContext.links$.map(links => {
       links = Array.isArray(links) ? links : [links];
       return links.map(_.property('sys.id')).filter(_.isString);
     });
 
     // Each of these contexts is passed to a cfBulkEntityEditor
     // directive.
-    var entityContexts$ = ids$.map(ids => List.makeKeyed(ids, _.identity)
+    const entityContexts$ = ids$.map(ids => List.makeKeyed(ids, _.identity)
     .map(item => deepFreeze({
       id: item.value,
       remove: _.partial(removeByKey, item.key),
@@ -74,7 +74,7 @@ angular.module('contentful')
       initialLoadCount = ctxs.length;
     });
 
-    var loadEditorData = DataLoader.makePrefetchEntryLoader(spaceContext, ids$);
+    const loadEditorData = DataLoader.makePrefetchEntryLoader(spaceContext, ids$);
     // Passed to cfBulkEntityEditor directive
     $scope.editorContext = {
       editorSettings: referenceContext.editorSettings,
@@ -107,7 +107,7 @@ angular.module('contentful')
     }
 
     function removeByKey (key) {
-      var index = _.findIndex($scope.entityContexts, {key: key});
+      const index = _.findIndex($scope.entityContexts, {key: key});
       if (index > -1) {
         referenceContext.remove(index);
       }
@@ -118,10 +118,10 @@ angular.module('contentful')
       if (nextFocusIndex === null) {
         return;
       }
-      var focusIndex = nextFocusIndex < 0
+      const focusIndex = nextFocusIndex < 0
         ? $scope.entityContexts.length + nextFocusIndex
         : nextFocusIndex;
-      var focusContext = $scope.entityContexts[focusIndex];
+      const focusContext = $scope.entityContexts[focusIndex];
       if (focusContext && !$scope.renderInline) {
         scrollTargetBus.emit(focusContext.key);
       }
@@ -134,12 +134,12 @@ angular.module('contentful')
    */
   function makeActions (field, addLinks, links$, track, isInline) {
     // TODO necessary for entitySelector change it
-    var extendedField = _.extend({}, field, {
+    const extendedField = _.extend({}, field, {
       itemLinkType: _.get(field, ['items', 'linkType']),
       itemValidations: _.get(field, ['items', 'validations'], [])
     });
-    var allowedCTs = getAllowedCTs(extendedField);
-    var accessibleCTs = allowedCTs.map(ct => ({
+    const allowedCTs = getAllowedCTs(extendedField);
+    const accessibleCTs = allowedCTs.map(ct => ({
       id: ct.sys.id,
       name: ct.name
     }));
@@ -152,7 +152,7 @@ angular.module('contentful')
     };
 
     function addNewEntry (ctOrCtId) {
-      var contentType = _.isObject(ctOrCtId)
+      const contentType = _.isObject(ctOrCtId)
         ? ctOrCtId
         : spaceContext.publishedCTs.get(ctOrCtId);
       return spaceContext.cma.createEntry(contentType.getId(), {})
@@ -168,7 +168,7 @@ angular.module('contentful')
     }
 
     function addExistingEntries () {
-      var currentSize = K.getValue(links$).length;
+      const currentSize = K.getValue(links$).length;
       entitySelector.openFromField(extendedField, currentSize)
       .then(entities => {
         track.addExisting(entities.length);
@@ -185,15 +185,15 @@ angular.module('contentful')
    * the content type validation on the field.
    */
   function getAllowedCTs (field) {
-    var itemValidations = _.get(field, ['items', 'validations']);
+    const itemValidations = _.get(field, ['items', 'validations']);
 
-    var contentTypeValidation = _.find(itemValidations, validation => !!validation.linkContentType);
+    const contentTypeValidation = _.find(itemValidations, validation => !!validation.linkContentType);
 
-    var validCtIds = contentTypeValidation
+    const validCtIds = contentTypeValidation
       ? contentTypeValidation.linkContentType
       : getAllContentTypeIds();
 
-    var validCTs = _.uniq(validCtIds).map(ctId => spaceContext.publishedCTs.get(ctId));
+    const validCTs = _.uniq(validCtIds).map(ctId => spaceContext.publishedCTs.get(ctId));
 
     return _.filter(validCTs, ct => ct && accessChecker.canPerformActionOnEntryOfType('create', ct.getId())).map(ct => ct.data);
   }

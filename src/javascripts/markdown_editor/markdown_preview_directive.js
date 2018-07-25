@@ -3,7 +3,7 @@
 angular.module('contentful')
 
 .directive('cfMarkdownPreview', ['require', require => {
-  var createMountPoint = require('ui/Framework/DOMRenderer').default;
+  const createMountPoint = require('ui/Framework/DOMRenderer').default;
 
   return {
     restrict: 'E',
@@ -20,8 +20,8 @@ angular.module('contentful')
       '</div>'
     ].join(''),
     link: function (scope, el) {
-      var container = el.find('.markdown-preview-mounting-point').get(0);
-      var mountPoint = createMountPoint(container);
+      const container = el.find('.markdown-preview-mounting-point').get(0);
+      const mountPoint = createMountPoint(container);
 
       scope.renderHasCrashed = false;
 
@@ -31,7 +31,7 @@ angular.module('contentful')
       scope.$on('$destroy', mountPoint.destroy);
 
       function update () {
-        var newTree = scope.preview && scope.preview.tree;
+        const newTree = scope.preview && scope.preview.tree;
 
         if (newTree && !scope.isDisabled) {
           try {

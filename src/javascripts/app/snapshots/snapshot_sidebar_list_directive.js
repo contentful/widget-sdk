@@ -15,38 +15,38 @@ angular.module('cf.app')
  *   As provided by the entry/asset editor controller
  */
 .directive('cfSnapshotSidebarList', ['require', require => {
-  var K = require('utils/kefir');
-  var caseof = require('sum-types').caseof;
-  var spaceContext = require('spaceContext');
-  var snapshotDecorator = require('app/snapshots/helpers/SnapshotDecorator');
-  var snapshotStatus = require('app/snapshots/helpers/SnapshotStatus');
-  var template = require('app/snapshots/SnapshotSidebarListTemplates').snapshotSidebarlist;
+  const K = require('utils/kefir');
+  const caseof = require('sum-types').caseof;
+  const spaceContext = require('spaceContext');
+  const snapshotDecorator = require('app/snapshots/helpers/SnapshotDecorator');
+  const snapshotStatus = require('app/snapshots/helpers/SnapshotStatus');
+  const template = require('app/snapshots/SnapshotSidebarListTemplates').snapshotSidebarlist;
 
   return {
     restrict: 'E',
     template: template,
     controller: ['$scope', $scope => {
-      var PREVIEW_COUNT = 7;
+      const PREVIEW_COUNT = 7;
 
-      var entryId = $scope.entityInfo.id;
-      var otDoc = $scope.otDoc;
+      const entryId = $scope.entityInfo.id;
+      const otDoc = $scope.otDoc;
 
       $scope.snapshotStatus = snapshotStatus;
 
-      var publishedVersion$ = otDoc.sysProperty.map(sys => sys.publishedVersion).skipDuplicates();
+      const publishedVersion$ = otDoc.sysProperty.map(sys => sys.publishedVersion).skipDuplicates();
 
       // Promise property containing the request for the first couple
       // of snapshots
       // We re-request snapshots whenever the documents published
       // version changes.
-      var snapshotLoad$ = publishedVersion$.flatMapLatest(() => K.promiseProperty(
+      const snapshotLoad$ = publishedVersion$.flatMapLatest(() => K.promiseProperty(
         spaceContext.cma.getEntrySnapshots(entryId, {limit: PREVIEW_COUNT})
         .then(res => res.items)
       )).toProperty();
 
       // Property that is true whenever a snapshot request is in
       // progress
-      var isLoading$ = snapshotLoad$.map(load => caseof(load, [
+      const isLoading$ = snapshotLoad$.map(load => caseof(load, [
         [K.PromiseStatus.Pending, _.constant(true)],
         [null, _.constant(false)]
       ]));
@@ -56,7 +56,7 @@ angular.module('cf.app')
       });
 
       // Property that is true whenever a snapshot request failed
-      var hasError$ = snapshotLoad$.map(load => caseof(load, [
+      const hasError$ = snapshotLoad$.map(load => caseof(load, [
         [K.PromiseStatus.Rejected, _.constant(true)],
         [null, _.constant(false)]
       ]));
@@ -69,14 +69,14 @@ angular.module('cf.app')
 
       // Extract the snapshots from the request. If the request is in
       // progress we reuse the previously fetched list of snapshots
-      var snapshots$ = snapshotLoad$.scan((prev, load) => caseof(load, [
+      const snapshots$ = snapshotLoad$.scan((prev, load) => caseof(load, [
         [K.PromiseStatus.Resolved, load => load.value],
         [null, _.constant(prev)]
       ]), []);
 
       // Decorate the snapshot list based on the current entry sys
       // information.
-      var decoratedSnapshots$ = K.combineProperties(
+      const decoratedSnapshots$ = K.combineProperties(
         [snapshots$, otDoc.sysProperty],
         (snapshots, sys) => snapshotDecorator.withCurrent(sys, snapshots));
 

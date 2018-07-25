@@ -3,16 +3,16 @@
 angular.module('contentful')
 
 .directive('cfRolesForWalkMe', ['require', require => {
-  var SpaceContext = require('spaceContext');
-  var LD = require('utils/LaunchDarkly');
-  var LazyLoader = require('LazyLoader');
-  var $rootScope = require('$rootScope');
-  var $window = require('$window');
+  const SpaceContext = require('spaceContext');
+  const LD = require('utils/LaunchDarkly');
+  const LazyLoader = require('LazyLoader');
+  const $rootScope = require('$rootScope');
+  const $window = require('$window');
 
-  var isAdminAttr = 'data-space-role-is-admin';
-  var roleNamesAttr = 'data-space-role-names';
-  var featureName = 'feature-fe-10-2017-walkme-integration-eli-lilly';
-  var lastVariation = null;
+  const isAdminAttr = 'data-space-role-is-admin';
+  const roleNamesAttr = 'data-space-role-names';
+  const featureName = 'feature-fe-10-2017-walkme-integration-eli-lilly';
+  let lastVariation = null;
 
   return {
     restrict: 'A',
@@ -27,9 +27,9 @@ angular.module('contentful')
           }
 
           if (variation && variation !== lastVariation) {
-            var spaceMembership = SpaceContext.getData('spaceMembership');
-            var isSpaceAdmin = spaceMembership.admin;
-            var spaceRoleNames = _.sortBy(_.map(spaceMembership.roles, 'name')).join(',');
+            const spaceMembership = SpaceContext.getData('spaceMembership');
+            const isSpaceAdmin = spaceMembership.admin;
+            const spaceRoleNames = _.sortBy(_.map(spaceMembership.roles, 'name')).join(',');
 
             // load attributes needed by walkME
             $el.attr(isAdminAttr, isSpaceAdmin);

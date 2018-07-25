@@ -3,11 +3,11 @@
 angular.module('contentful')
 
 .factory('analyticsEvents/versioning', ['require', require => {
-  var Analytics = require('analytics/Analytics');
-  var leaveConfirmator = require('navigation/confirmLeaveEditor');
+  const Analytics = require('analytics/Analytics');
+  const leaveConfirmator = require('navigation/confirmLeaveEditor');
 
-  var data = {};
-  var restoredVersions = {};
+  let data = {};
+  const restoredVersions = {};
 
   return {
     setData: setData,
@@ -44,7 +44,7 @@ angular.module('contentful')
   }
 
   function restored (picker, showDiffsOnly) {
-    var count = picker.getPathsToRestore().length;
+    const count = picker.getPathsToRestore().length;
 
     track('snapshot_restored', _.extend({
       fullRestore: count === picker.getDifferenceCount(),
@@ -58,7 +58,7 @@ angular.module('contentful')
   }
 
   function publishedRestored (entry) {
-    var id = entry.sys.id;
+    const id = entry.sys.id;
 
     if (entry.sys.version - restoredVersions[id] < 2) {
       track('published_restored', {entryId: id});
@@ -66,7 +66,7 @@ angular.module('contentful')
   }
 
   function trackableConfirmator (save) {
-    var confirmator = leaveConfirmator(save, 'confirm_leave_comparison');
+    const confirmator = leaveConfirmator(save, 'confirm_leave_comparison');
 
     return () => confirmator().then(result => {
       if (result && result.discarded) {
@@ -78,8 +78,8 @@ angular.module('contentful')
   }
 
   function basicInfo () {
-    var userId = Analytics.getSessionData('user.sys.id');
-    var snapshotSys = data.snapshot.sys;
+    const userId = Analytics.getSessionData('user.sys.id');
+    const snapshotSys = data.snapshot.sys;
 
     return {
       entryId: data.entry.sys.id,

@@ -7,26 +7,26 @@ angular.module('contentful').directive('cfRoleEditor', () => ({
 }));
 
 angular.module('contentful').controller('RoleEditorController', ['$scope', 'require', ($scope, require) => {
-  var $state = require('$state');
-  var $q = require('$q');
-  var Command = require('command');
-  var spaceContext = require('spaceContext');
-  var TheLocaleStore = require('TheLocaleStore');
-  var space = spaceContext.space;
-  var roleRepo = require('RoleRepository').getInstance(space);
-  var listHandler = require('UserListHandler').create();
-  var createRoleRemover = require('createRoleRemover');
-  var PolicyBuilder = require('PolicyBuilder');
-  var TheAccountView = require('TheAccountView');
-  var leaveConfirmator = require('navigation/confirmLeaveEditor');
-  var notification = require('notification');
-  var logger = require('logger');
-  var createFeatureService = require('services/FeatureService').default;
-  var createResourceService = require('services/ResourceService').default;
-  var ResourceUtils = require('utils/ResourceUtils');
+  const $state = require('$state');
+  const $q = require('$q');
+  const Command = require('command');
+  const spaceContext = require('spaceContext');
+  const TheLocaleStore = require('TheLocaleStore');
+  const space = spaceContext.space;
+  const roleRepo = require('RoleRepository').getInstance(space);
+  const listHandler = require('UserListHandler').create();
+  const createRoleRemover = require('createRoleRemover');
+  const PolicyBuilder = require('PolicyBuilder');
+  const TheAccountView = require('TheAccountView');
+  const leaveConfirmator = require('navigation/confirmLeaveEditor');
+  const notification = require('notification');
+  const logger = require('logger');
+  const createFeatureService = require('services/FeatureService').default;
+  const createResourceService = require('services/ResourceService').default;
+  const ResourceUtils = require('utils/ResourceUtils');
 
-  var org = spaceContext.organizationContext.organization;
-  var FeatureService = createFeatureService(spaceContext.getId());
+  const org = spaceContext.organizationContext.organization;
+  const FeatureService = createFeatureService(spaceContext.getId());
 
   $scope.loading = true;
 
@@ -35,10 +35,10 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
     resource: createResourceService(spaceContext.getId()).get('role'),
     useLegacy: ResourceUtils.useLegacy(org)
   }).then(result => {
-    var isNew = $scope.context.isNew;
-    var subscription = spaceContext.subscription;
-    var isTrial = subscription && subscription.isTrial();
-    var trialLockdown = isTrial && subscription.hasTrialEnded();
+    const isNew = $scope.context.isNew;
+    const subscription = spaceContext.subscription;
+    const isTrial = subscription && subscription.isTrial();
+    const trialLockdown = isTrial && subscription.hasTrialEnded();
 
     $scope.legacy = result.useLegacy;
 
@@ -140,7 +140,7 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
       return $q.reject();
     }
 
-    var method = $scope.context.isNew ? 'create' : 'save';
+    const method = $scope.context.isNew ? 'create' : 'save';
     return roleRepo[method]($scope.external).then(handleRole, handleError);
   }
 
@@ -159,7 +159,7 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
   }
 
   function handleError (res) {
-    var errors = _.get(res, 'body.details.errors', []);
+    const errors = _.get(res, 'body.details.errors', []);
 
     if (_.includes([403, 404], parseInt(_.get(res, 'statusCode'), 10))) {
       notification.error('You have exceeded your plan limits for Custom Roles.');
@@ -171,8 +171,8 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
       return $q.reject();
     }
 
-    var nameError = findError('length');
-    var nameValue = _.isObject(nameError) ? nameError.value : null;
+    const nameError = findError('length');
+    const nameValue = _.isObject(nameError) ? nameError.value : null;
 
     if (!nameValue) {
       notification.error('You have to provide a role name.');
@@ -191,8 +191,8 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', 'requ
   }
 
   function autofixPolicies () {
-    var cts = spaceContext.publishedCTs.getAllBare();
-    var locales = TheLocaleStore.getPrivateLocales();
+    const cts = spaceContext.publishedCTs.getAllBare();
+    const locales = TheLocaleStore.getPrivateLocales();
     $scope.autofixed = PolicyBuilder.removeOutdatedRules($scope.internal, cts, locales);
     if ($scope.autofixed) {
       $scope.context.touched += 1;

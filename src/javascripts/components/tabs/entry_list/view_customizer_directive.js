@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').directive('cfViewCustomizer', ['require', 'defer', (require, defer) => {
-  var $timeout = require('$timeout');
+  const $timeout = require('$timeout');
 
   return {
     template: JST.view_customizer(),
@@ -39,7 +39,7 @@ angular.module('contentful').directive('cfViewCustomizer', ['require', 'defer', 
         update: function () {
           // Ensure that function isn't called before displayedFields is updated
           $timeout(() => {
-            var fieldIds = $scope.displayedFields.map(field => field.id);
+            const fieldIds = $scope.displayedFields.map(field => field.id);
             $scope.context.view.displayedFieldIds = fieldIds;
           });
         }
@@ -48,7 +48,7 @@ angular.module('contentful').directive('cfViewCustomizer', ['require', 'defer', 
       $scope.isActiveDisplayField = field => field.type !== 'Object' && !field.disabled;
 
       $scope.isPersistent = field => {
-        var displayedFields = _.reject($scope.displayedFields, {id: field.id});
+        const displayedFields = _.reject($scope.displayedFields, {id: field.id});
 
         return !_.some(displayedFields, 'canPersist');
       };

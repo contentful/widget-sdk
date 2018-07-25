@@ -1,9 +1,9 @@
 'use strict';
 
 describe('Authorization service', () => {
-  var authorization;
-  var worfStub;
-  var accessChecker;
+  let authorization;
+  let worfStub;
+  let accessChecker;
 
   beforeEach(function () {
     worfStub = sinon.stub();
@@ -30,8 +30,8 @@ describe('Authorization service', () => {
   });
 
   describe('setting a token lookup', () => {
-    var tokenLookup, space, worfReturn;
-    var setSpaceStub;
+    let tokenLookup, space, worfReturn;
+    let setSpaceStub;
     beforeEach(() => {
       tokenLookup = {tokenLookup: 0};
       space = {name: 'space'};
@@ -54,8 +54,8 @@ describe('Authorization service', () => {
   });
 
   describe('setting a space', () => {
-    var spaceStub, idStub;
-    var spaceContext = {
+    let spaceStub, idStub;
+    const spaceContext = {
       spaceStuff: 123
     };
     beforeEach(() => {

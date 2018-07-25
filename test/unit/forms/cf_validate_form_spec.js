@@ -8,11 +8,11 @@ describe('cfValidateForm directive', () => {
       });
     })
 
-    var $compile = this.$inject('$compile');
+    const $compile = this.$inject('$compile');
 
-    var $rootScope = this.$inject('$rootScope');
+    const $rootScope = this.$inject('$rootScope');
 
-    var template = '<form cf-validate="data" cf-validate-form="a.b">';
+    const template = '<form cf-validate="data" cf-validate-form="a.b">';
 
     this.element = $compile(template)($rootScope);
     this.scope = this.element.scope();
@@ -41,7 +41,7 @@ describe('cfValidateForm directive', () => {
     ]);
     this.validator.run();
     this.$apply();
-    var errorNames = _.map(this.form.errors, 'name');
+    const errorNames = _.map(this.form.errors, 'name');
     expect(errorNames).toEqual(['2', '3', '4']);
   });
 

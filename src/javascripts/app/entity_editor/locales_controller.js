@@ -12,11 +12,11 @@ angular
   .controller('entityEditor/LocalesController', [
     'require',
     function (require) {
-      var localeStore = require('TheLocaleStore');
-      var modalDialog = require('modalDialog');
+      const localeStore = require('TheLocaleStore');
+      const modalDialog = require('modalDialog');
 
-      var controller = this;
-      var availableLocales = localeStore.getPrivateLocales();
+      const controller = this;
+      const availableLocales = localeStore.getPrivateLocales();
 
       refreshActiveLocales();
 
@@ -30,7 +30,7 @@ angular
        * select the active locales.
        */
       controller.changeActive = function () {
-        var locales = getLocalesWithActiveFlag(availableLocales);
+        const locales = getLocalesWithActiveFlag(availableLocales);
         modalDialog
           .open({
             template: 'locale_select_dialog',
@@ -40,7 +40,7 @@ angular
             }
           })
           .promise.then(function () {
-            var active = _.filter(locales, 'active');
+            const active = _.filter(locales, 'active');
             localeStore.setActiveLocales(active);
             refreshActiveLocales();
           });

@@ -3,28 +3,28 @@
 angular.module('contentful')
 
 .controller('AssetSearchController', ['$scope', 'require', function ($scope, require) {
-  var controller = this;
-  var $q = require('$q');
-  var Paginator = require('Paginator');
-  var PromisedLoader = require('PromisedLoader');
-  var ReloadNotification = require('ReloadNotification');
-  var logger = require('logger');
-  var spaceContext = require('spaceContext');
-  var ListQuery = require('ListQuery');
-  var systemFields = require('systemFields');
-  var Tracking = require('analytics/events/SearchAndViews');
-  var Notification = require('notification');
-  var K = require('utils/kefir');
-  var Kefir = require('kefir');
-  var createSearchInput = require('app/ContentList/Search').default;
-  var h = require('ui/Framework').h;
+  const controller = this;
+  const $q = require('$q');
+  const Paginator = require('Paginator');
+  const PromisedLoader = require('PromisedLoader');
+  const ReloadNotification = require('ReloadNotification');
+  const logger = require('logger');
+  const spaceContext = require('spaceContext');
+  const ListQuery = require('ListQuery');
+  const systemFields = require('systemFields');
+  const Tracking = require('analytics/events/SearchAndViews');
+  const Notification = require('notification');
+  const K = require('utils/kefir');
+  const Kefir = require('kefir');
+  const createSearchInput = require('app/ContentList/Search').default;
+  const h = require('ui/Framework').h;
 
-  var assetLoader = new PromisedLoader();
+  const assetLoader = new PromisedLoader();
 
-  var setIsSearching = makeIsSearchingSetter(true);
-  var unsetIsSearching = makeIsSearchingSetter(false);
+  const setIsSearching = makeIsSearchingSetter(true);
+  const unsetIsSearching = makeIsSearchingSetter(false);
 
-  var lastUISearchState = null;
+  let lastUISearchState = null;
 
   $scope.context.ready = false;
   $scope.context.loading = true;
@@ -56,7 +56,7 @@ angular.module('contentful')
   }
 
   this.resetAssets = function (resetPage) {
-    var currPage = this.paginator.getPage();
+    const currPage = this.paginator.getPage();
 
     if (resetPage) {
       this.paginator.setPage(0);
@@ -110,7 +110,7 @@ angular.module('contentful')
     }
 
     this.paginator.next();
-    var queryForDebug;
+    let queryForDebug;
 
     return prepareQuery()
       .then(query => {
@@ -154,16 +154,16 @@ angular.module('contentful')
     delete nextState.contentTypeId; // Assets don't have a content type.
     lastUISearchState = nextState;
 
-    var oldView = _.cloneDeep($scope.context.view);
-    var newView = _.extend(oldView, nextState);
+    const oldView = _.cloneDeep($scope.context.view);
+    const newView = _.extend(oldView, nextState);
     $scope.loadView(newView);
   }
 
-  var isSearching$ = K.fromScopeValue($scope, $scope => $scope.context.isSearching);
+  const isSearching$ = K.fromScopeValue($scope, $scope => $scope.context.isSearching);
 
   function initializeSearchUI () {
-    var initialSearchState = getViewSearchState();
-    var withAssets = true;
+    const initialSearchState = getViewSearchState();
+    const withAssets = true;
 
     if (_.isEqual(lastUISearchState, initialSearchState)) {
       return;
@@ -196,7 +196,7 @@ angular.module('contentful')
   }
 
   function hasQuery () {
-    var search = getViewSearchState();
+    const search = getViewSearchState();
     return (
       !_.isEmpty(search.searchText) ||
       !_.isEmpty(search.searchFilters)

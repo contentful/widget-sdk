@@ -7,13 +7,13 @@ angular.module('cf.app')
  * @name cfEntryDatetimeEditor
  */
 .directive('cfEntryDatetimeEditor', ['require', require => {
-  var moment = require('moment');
-  var zoneOffsets = require('zoneOffsets');
-  var Datepicker = require('datepicker');
-  var Data = require('widgets/datetime/data');
-  var $timeout = require('$timeout');
+  const moment = require('moment');
+  const zoneOffsets = require('zoneOffsets');
+  const Datepicker = require('datepicker');
+  const Data = require('widgets/datetime/data');
+  const $timeout = require('$timeout');
 
-  var ERRORS = {
+  const ERRORS = {
     timeFormat: {
       message: 'Time is not in a valid format',
       code: 'datetime.time-parse-error'
@@ -30,10 +30,10 @@ angular.module('cf.app')
     require: '^cfWidgetApi',
     template: JST.cf_entry_datetime_editor(),
     link: function ($scope, $el, _$attrs, widgetApi) {
-      var settings = widgetApi.settings || {};
-      var field = widgetApi.field;
-      var dateInputEl = $el.find('[name="datetime.date"]');
-      var timeInputEl = $el.find('[name="datetime.time"]');
+      const settings = widgetApi.settings || {};
+      const field = widgetApi.field;
+      const dateInputEl = $el.find('[name="datetime.date"]');
+      const timeInputEl = $el.find('[name="datetime.time"]');
 
       $scope.usesTime = settings.format !== 'dateonly';
       $scope.usesTimezone = settings.format === 'timeZ';
@@ -41,11 +41,11 @@ angular.module('cf.app')
       $scope.zoneOffsets = zoneOffsets;
       $scope.data = {};
 
-      var validateTime = $scope.uses12hClock ? Data.validate12hTime : Data.validate24hTime;
-      var timeController = timeInputEl.controller('ngModel');
+      const validateTime = $scope.uses12hClock ? Data.validate12hTime : Data.validate24hTime;
+      const timeController = timeInputEl.controller('ngModel');
       timeController.$validators.timeFormat = validateTime;
 
-      var dateController = dateInputEl.controller('ngModel');
+      const dateController = dateInputEl.controller('ngModel');
       dateController.$formatters.push(Data.formatDateDisplay);
       dateController.$parsers.push(Data.parseFreeFormDate);
       dateController.$validators.dateFormat = date => date ? date.isValid() : true;
@@ -59,11 +59,11 @@ angular.module('cf.app')
         }
       });
 
-      var offValueChanged = field.onValueChanged(datetime => {
+      const offValueChanged = field.onValueChanged(datetime => {
         $scope.data = Data.userInputFromDatetime(datetime, $scope.uses12hClock);
       });
 
-      var offDisabledStatusChanged = field.onIsDisabledChanged(isDisabled => {
+      const offDisabledStatusChanged = field.onIsDisabledChanged(isDisabled => {
         $scope.isDisabled = isDisabled;
       });
 
@@ -71,7 +71,7 @@ angular.module('cf.app')
         field.setInvalid(!isValid);
       });
 
-      var datepicker = Datepicker.create({
+      const datepicker = Datepicker.create({
         field: $el.find('[data-datepicker-slot]').get(0),
         trigger: dateInputEl.get(0),
         onSelect: function (date) {
@@ -114,7 +114,7 @@ angular.module('cf.app')
         // would lead to an infinite loop.
         datepicker.setMoment($scope.data.date, true);
 
-        var value = Data.buildFieldValue(
+        const value = Data.buildFieldValue(
           $scope.data,
           $scope.uses12hClock, $scope.usesTime, $scope.usesTimezone
         );

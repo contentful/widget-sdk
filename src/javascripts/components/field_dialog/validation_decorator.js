@@ -7,15 +7,15 @@ angular.module('contentful')
  * @name validationDecorator
  */
 .factory('validationDecorator', ['require', require => {
-  var pluralize = require('pluralize');
-  var validationViews = require('validationViews');
-  var createSchema = require('validation');
-  var getErrorMessage = require('validationDialogErrorMessages');
+  const pluralize = require('pluralize');
+  const validationViews = require('validationViews');
+  const createSchema = require('validation');
+  const getErrorMessage = require('validationDialogErrorMessages');
 
-  var validationName = createSchema.Validation.getName;
-  var validationTypesForField = createSchema.Validation.forField;
+  const validationName = createSchema.Validation.getName;
+  const validationTypesForField = createSchema.Validation.forField;
 
-  var validationSettings = {
+  const validationSettings = {
     size: {min: null, max: null},
     range: {min: null, max: null},
     dateRange: {after: null, before: null},
@@ -31,7 +31,7 @@ angular.module('contentful')
     }
   };
 
-  var validationLabels = {
+  const validationLabels = {
     size: {
       Text: 'Limit character count',
       Symbol: 'Limit character count',
@@ -48,7 +48,7 @@ angular.module('contentful')
     assetImageDimensions: 'Accept only specified image dimensions'
   };
 
-  var validationHelpText = {
+  const validationHelpText = {
     size: {
       Text: 'Specify a minimum and/or maximum allowed number of characters',
       Symbol: 'Specify a minimum and/or maximum allowed number of characters',
@@ -66,7 +66,7 @@ angular.module('contentful')
   };
 
 
-  var validationsOrder = [
+  const validationsOrder = [
     'unique',
     'size',
     'range',
@@ -78,7 +78,7 @@ angular.module('contentful')
     'in'
   ];
 
-  var schema = createSchema({type: 'Validation'});
+  const schema = createSchema({type: 'Validation'});
 
   return {
     decorateFieldValidations: decorateFieldValidations,
@@ -95,12 +95,12 @@ angular.module('contentful')
    * @returns {DecoratedValidation[]}
    */
   function decorateFieldValidations (field) {
-    var types = _.filter(validationTypesForField(field), t => t in validationSettings);
+    const types = _.filter(validationTypesForField(field), t => t in validationSettings);
 
-    var fieldValidations = _.map(types, validationDecorator(field));
+    let fieldValidations = _.map(types, validationDecorator(field));
 
     if (field.items) {
-      var itemValidations = decorateFieldValidations(field.items);
+      let itemValidations = decorateFieldValidations(field.items);
       _.each(itemValidations, v => {
         v.onItems = true;
       });
@@ -117,8 +117,8 @@ angular.module('contentful')
 
   function validationDecorator (field) {
     return function decorateValidation (type) {
-      var fieldValidation = findValidationByType(field.validations, type);
-      var settings, enabled, message;
+      const fieldValidation = findValidationByType(field.validations, type);
+      let settings, enabled, message;
 
       if (fieldValidation) {
         enabled = true;
@@ -130,10 +130,10 @@ angular.module('contentful')
         message = null;
       }
 
-      var name = getValidationLabel(field, type);
-      var views = validationViews.get(type);
-      var currentView = views && views[0].name;
-      var helpText = getValidationHelpText(field, type);
+      const name = getValidationLabel(field, type);
+      const views = validationViews.get(type);
+      const currentView = views && views[0].name;
+      const helpText = getValidationHelpText(field, type);
 
       return {
         name: name,
@@ -157,12 +157,12 @@ angular.module('contentful')
    * @returns {Validation[]}
    */
   function extractAll (decorated) {
-    var enabled = _.filter(decorated, 'enabled');
+    const enabled = _.filter(decorated, 'enabled');
     return _.map(enabled, extractOne);
   }
 
   function extractOne (decorated) {
-    var extracted = {};
+    const extracted = {};
     extracted[decorated.type] = _.cloneDeep(decorated.settings);
     if (decorated.message) {
       extracted.message = decorated.message;
@@ -177,7 +177,7 @@ angular.module('contentful')
    * @return {Error[]}
    */
   function validate (validation) {
-    var errors = [];
+    let errors = [];
     if (validation.enabled) {
       errors = schema.errors(extractOne(validation));
     }
@@ -201,8 +201,8 @@ angular.module('contentful')
    * @param {DecoratedValdiation[]} validations
    */
   function updateField (field, validations) {
-    var baseValidations = _.filter(validations, {onItems: false});
-    var itemValidations = _.filter(validations, {onItems: true});
+    const baseValidations = _.filter(validations, {onItems: false});
+    const itemValidations = _.filter(validations, {onItems: true});
 
     field.validations = extractAll(baseValidations);
     if (!_.isEmpty(itemValidations)) {
@@ -212,7 +212,7 @@ angular.module('contentful')
 
   function validateAll (decoratedValidations) {
     return _.reduce(decoratedValidations, (allErrors, validation, index) => {
-      var errors = validate(validation);
+      const errors = validate(validation);
       _.forEach(errors, error => {
         error.path = [index].concat(error.path);
       });
@@ -230,7 +230,7 @@ angular.module('contentful')
 
   function getValidationLabel (field, type) {
     if (field.type === 'Array' && type === 'size') {
-      var itemTypes = pluralize((field.items.linkType || field.items.type).toLowerCase());
+      const itemTypes = pluralize((field.items.linkType || field.items.type).toLowerCase());
 
       return 'Accept only a specified number of ' + itemTypes;
     }
@@ -240,7 +240,7 @@ angular.module('contentful')
 
   function getValidationHelpText (field, type) {
     if (field.type === 'Array' && type === 'size') {
-      var itemTypes = pluralize((field.items.linkType || field.items.type).toLowerCase());
+      const itemTypes = pluralize((field.items.linkType || field.items.type).toLowerCase());
 
       return 'Specify a minimum and/or maximum allowed number of ' + itemTypes;
     }
@@ -249,7 +249,7 @@ angular.module('contentful')
   }
 
   function getValidationStringForType (object, field, type) {
-    var label = object[type];
+    const label = object[type];
 
     if (!label) {
       return type;

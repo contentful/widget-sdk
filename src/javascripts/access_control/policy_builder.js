@@ -17,16 +17,16 @@ angular.module('contentful').factory('PolicyBuilder', ['require', require => ({
 
 angular.module('contentful').factory('PolicyBuilder/defaultRule', ['require', require => {
 
-  var random  = require('random');
-  var ALL_CTS = require('PolicyBuilder/CONFIG').ALL_CTS;
+  const random  = require('random');
+  const ALL_CTS = require('PolicyBuilder/CONFIG').ALL_CTS;
 
-  var DEFAULT_RULE = {
+  const DEFAULT_RULE = {
     action: 'all',
     scope: 'any',
     locale: null
   };
 
-  var DEFAULT_ENTRY_RULE = {
+  const DEFAULT_ENTRY_RULE = {
     contentType: ALL_CTS,
     field: null
   };
@@ -42,8 +42,8 @@ angular.module('contentful').factory('PolicyBuilder/defaultRule', ['require', re
 
   function getDefaultRuleFor(entity) {
     entity = entity.toLowerCase();
-    var meta = { id: random.id(), entity: entity };
-    var base = _.extend(meta, DEFAULT_RULE);
+    const meta = { id: random.id(), entity: entity };
+    const base = _.extend(meta, DEFAULT_RULE);
 
     if (entity === 'entry') {
       return _.extend(base, DEFAULT_ENTRY_RULE);
@@ -55,8 +55,8 @@ angular.module('contentful').factory('PolicyBuilder/defaultRule', ['require', re
 
 angular.module('contentful').factory('PolicyBuilder/toInternal', ['require', require => {
 
-  var CONFIG            = require('PolicyBuilder/CONFIG');
-  var getDefaultRuleFor = require('PolicyBuilder/defaultRule').getDefaultRuleFor;
+  const CONFIG            = require('PolicyBuilder/CONFIG');
+  const getDefaultRuleFor = require('PolicyBuilder/defaultRule').getDefaultRuleFor;
 
   return function toInternal(external) {
     return _.extend({
@@ -68,12 +68,12 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['require', req
   };
 
   function translatePolicies(external) {
-    var policyString = '[]';
+    let policyString = '[]';
     try {
       policyString = JSON.stringify(external.policies);
     } catch (e) {}
 
-    var extension = {
+    const extension = {
       entries: {allowed: [], denied: []},
       assets: {allowed: [], denied: []},
       policyString: policyString,
@@ -90,7 +90,7 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['require', req
       if (!p.action || !p.entityCollection || !p.effectCollection || !p.rule) {
         extension.uiCompatible = false;
       } else {
-        var rule = _.extend(p.rule, { action: p.action });
+        const rule = _.extend(p.rule, { action: p.action });
         extension[p.entityCollection][p.effectCollection].push(rule);
       }
     }
@@ -105,7 +105,7 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['require', req
   }
 
   function extendPolicyWithRule(policy) {
-    var rule = createRule(policy);
+    const rule = createRule(policy);
 
     return _.extend(policy, {
       rule: rule,
@@ -114,8 +114,8 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['require', req
   }
 
   function extractAction(policy) {
-    var as = policy.actions;
-    var glued = ['publish', 'unpublish', 'archive', 'unarchive'];
+    const as = policy.actions;
+    const glued = ['publish', 'unpublish', 'archive', 'unarchive'];
 
     if (as === 'all') {
       return 'all';
@@ -143,25 +143,25 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['require', req
 
   function createRule(policy) {
     // 1. find entity type
-    var entityConstraint = findEntityConstraint(policy.constraints);
+    const entityConstraint = findEntityConstraint(policy.constraints);
 
     // 1a. no value - abort
     if (!entityConstraint.value) { return; }
 
     // 1b. create default rule for entity type
-    var rule = getDefaultRuleFor(entityConstraint.value);
-    var rest = _.clone(policy.constraints);
+    const rule = getDefaultRuleFor(entityConstraint.value);
+    const rest = _.clone(policy.constraints);
     rest.splice(entityConstraint.index, 1);
 
     // 2. find content type
-    var ctConstraint = findContentTypeConstraint(rest);
+    const ctConstraint = findContentTypeConstraint(rest);
     if (ctConstraint.value) {
       rule.contentType = ctConstraint.value;
       rest.splice(ctConstraint.index, 1);
     }
 
     // 3. find matching entity ID
-    var idConstraint = findIdConstraint(rest);
+    const idConstraint = findIdConstraint(rest);
     if (idConstraint.value) {
       rule.contentType = CONFIG.NO_CTS;
       rule.entityId = idConstraint.value;
@@ -169,14 +169,14 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['require', req
     }
 
     // 4. find scope
-    var scopeConstraint = findScopeConstraint(rest);
+    const scopeConstraint = findScopeConstraint(rest);
     if (scopeConstraint.value) {
       rule.scope = _.isString(scopeConstraint.value) ? 'user' : 'any';
       rest.splice(scopeConstraint.index, 1);
     }
 
     // 5. find path
-    var pathConstraint = findPathConstraint(rest);
+    const pathConstraint = findPathConstraint(rest);
     if (pathConstraint.value) {
       rule.isPath = true;
       rule.field = fieldPathSegment(pathConstraint.value[1]);
@@ -205,7 +205,7 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['require', req
   }
 
   function findPathConstraint(cs) {
-    var index = _.findIndex(cs, c => _.isArray(c.paths) && _.isObject(c.paths[0]) && _.isString(c.paths[0].doc));
+    const index = _.findIndex(cs, c => _.isArray(c.paths) && _.isObject(c.paths[0]) && _.isString(c.paths[0].doc));
 
     return {
       index: index,
@@ -239,8 +239,8 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['require', req
 
 angular.module('contentful').factory('PolicyBuilder/toExternal', ['require', require => {
 
-  var capitalize = require('stringUtils').capitalize;
-  var CONFIG     = require('PolicyBuilder/CONFIG');
+  const capitalize = require('stringUtils').capitalize;
+  const CONFIG     = require('PolicyBuilder/CONFIG');
 
   return function toExternal(internal) {
     return {
@@ -291,7 +291,7 @@ angular.module('contentful').factory('PolicyBuilder/toExternal', ['require', req
     pair.result.effect = pair.source.effect;
     pair.result.constraint = {};
 
-    var a = pair.source.action;
+    const a = pair.source.action;
     if (a === 'all') {
       pair.result.actions = 'all';
     } else if (a === 'publish' || a === 'archive') {
@@ -304,7 +304,7 @@ angular.module('contentful').factory('PolicyBuilder/toExternal', ['require', req
   }
 
   function addEntityTypeConstraint(pair) {
-    var entityName = capitalize(pair.source.entity);
+    const entityName = capitalize(pair.source.entity);
     pushConstraint(pair, eq('sys.type', entityName));
     return pair;
   }
@@ -317,7 +317,7 @@ angular.module('contentful').factory('PolicyBuilder/toExternal', ['require', req
   }
 
   function addContentTypeConstraint(pair) {
-    var ct = pair.source.contentType;
+    const ct = pair.source.contentType;
     if (ct === CONFIG.ALL_CTS || !_.isString(ct)) { return pair; }
 
     pushConstraint(pair, eq('sys.contentType.sys.id', ct));
@@ -325,7 +325,7 @@ angular.module('contentful').factory('PolicyBuilder/toExternal', ['require', req
   }
 
   function addPathConstraint(pair) {
-    var source = pair.source;
+    const source = pair.source;
 
     if (pair.source.entity === 'asset') {
       if (!_.isString(source.locale)) { return pair; }
@@ -333,7 +333,7 @@ angular.module('contentful').factory('PolicyBuilder/toExternal', ['require', req
       if (!_.isString(source.field) || !_.isString(source.locale)) { return pair; }
     }
 
-    var segments = ['fields', fieldSegment(source.field), localeSegment(source.locale)];
+    const segments = ['fields', fieldSegment(source.field), localeSegment(source.locale)];
     pushConstraint(pair, paths(segments));
     return pair;
   }

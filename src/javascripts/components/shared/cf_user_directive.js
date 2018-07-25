@@ -5,7 +5,7 @@ angular.module('contentful')
   restrict: 'A',
 
   controller: ['$scope', '$attrs', 'require', ($scope, $attrs, require) => {
-    var spaceContext = require('spaceContext');
+    const spaceContext = require('spaceContext');
     $scope.$watch($attrs.link, link => {
       if (!link || !$attrs.as) return;
       spaceContext.users.get(link.sys.id).then(user => {

@@ -2,14 +2,14 @@
 
 angular.module('contentful')
 .directive('cfPlatformUsage', ['require', require => {
-  var React = require('react');
-  var ReactDOM = require('react-dom');
-  var OrganizationUsage = require('account/usage/OrganizationUsage').default;
+  const React = require('react');
+  const ReactDOM = require('react-dom');
+  const OrganizationUsage = require('account/usage/OrganizationUsage').default;
 
   return {
     link: function ($scope, el) {
-      var host = el[0];
-      var context = $scope.properties.context;
+      const host = el[0];
+      const context = $scope.properties.context;
 
       ReactDOM.render(React.createElement(OrganizationUsage, {
         orgId: $scope.properties.orgId,

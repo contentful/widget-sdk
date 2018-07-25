@@ -29,13 +29,13 @@ angular.module('cf.data')
  * })
  */
 .factory('data/userCache', ['require', require => {
-  var memoize = require('utils/memoize');
-  var fetchAll = require('data/CMA/FetchAll').fetchAll;
+  const memoize = require('utils/memoize');
+  const fetchAll = require('data/CMA/FetchAll').fetchAll;
 
   return function createCache (endpoint) {
-    var getUserMap = createUserFetcher(endpoint);
+    const getUserMap = createUserFetcher(endpoint);
 
-    var getUserList = memoize(() => getUserMap().then(_.values));
+    const getUserList = memoize(() => getUserMap().then(_.values));
 
     return {
       getAll: getUserList,

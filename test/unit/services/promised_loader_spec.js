@@ -1,8 +1,8 @@
 import * as sinon from 'helpers/sinon';
 
 describe('Promised loader service', () => {
-  var loader, stubs, $rootScope, $q;
-  var host;
+  let loader, stubs, $rootScope, $q;
+  let host;
 
   beforeEach(() => {
     module('contentful/test', $provide => {
@@ -11,8 +11,8 @@ describe('Promised loader service', () => {
       ]);
     });
     inject($injector => {
-      var PromisedLoader        = $injector.get('PromisedLoader');
-      var delayedInvocationStub = $injector.get('delayedInvocationStub');
+      const PromisedLoader        = $injector.get('PromisedLoader');
+      const delayedInvocationStub = $injector.get('delayedInvocationStub');
       $rootScope                = $injector.get('$rootScope');
       $q                        = $injector.get('$q');
       loader = new PromisedLoader();
@@ -121,7 +121,7 @@ describe('Promised loader service', () => {
 });
 
 describe('PromisedLoader service', () => {
-  var a,b;
+  let a, b;
   beforeEach(() => {
     module('contentful/test', $provide => {
       $provide.value('debounce', _.debounce);

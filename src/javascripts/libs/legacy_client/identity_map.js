@@ -13,17 +13,17 @@ module.exports = IdentityMap;
  * version.
  */
 IdentityMap.prototype.store = function (entity) {
-  var identity = entity.getIdentity && entity.getIdentity();
+  const identity = entity.getIdentity && entity.getIdentity();
   if (!identity) { return entity; }
 
-  var existing = this._get(identity);
+  const existing = this._get(identity);
   if (!existing) {
     this._set(identity, entity);
     return entity;
   }
 
-  var currentVersion = existing.getVersion();
-  var newVersion = entity.getVersion();
+  const currentVersion = existing.getVersion();
+  const newVersion = entity.getVersion();
   if (currentVersion === undefined || currentVersion <= newVersion) { existing.update(entity.data); }
   return existing;
 };

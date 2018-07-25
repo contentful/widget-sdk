@@ -1,14 +1,14 @@
 'use strict';
 
 angular.module('contentful').controller('ContentTypeListController', ['$scope', 'require', ($scope, require) => {
-  var notification = require('notification');
-  var spaceContext = require('spaceContext');
-  var accessChecker = require('access_control/AccessChecker');
-  var ctHelpers = require('data/ContentTypes');
-  var createViewPersistor = require('data/ListViewPersistor').default;
-  var $state = require('$state');
+  const notification = require('notification');
+  const spaceContext = require('spaceContext');
+  const accessChecker = require('access_control/AccessChecker');
+  const ctHelpers = require('data/ContentTypes');
+  const createViewPersistor = require('data/ListViewPersistor').default;
+  const $state = require('$state');
 
-  var viewPersistor = createViewPersistor(
+  const viewPersistor = createViewPersistor(
     spaceContext.getId(), null, 'contentTypes');
 
   viewPersistor.read().then(loadView);
@@ -44,7 +44,7 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
       query: {order: 'name', limit: 1000}
     })
       .then(res => {
-        var contentTypes = res.items;
+        const contentTypes = res.items;
 
         // Some legacy content types do not have a name. If it is
         // missing we set it to 'Untitled' so we can display
@@ -56,7 +56,7 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
 
         contentTypes.sort((a, b) => (a.name || '').localeCompare(b.name));
 
-        var sectionVisibility = accessChecker.getSectionVisibility();
+        const sectionVisibility = accessChecker.getSectionVisibility();
 
         $scope.context.forbidden = !sectionVisibility.contentType;
         $scope.context.ready = true;
@@ -84,7 +84,7 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
   }
 
   function matchesSearchTerm (contentType) {
-    var searchTermRe;
+    let searchTermRe;
 
     try {
       if ($scope.hasQuery()) {
@@ -110,7 +110,7 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
   $scope.hasQueryResults = () => !_.isEmpty($scope.visibleContentTypes);
 
   function getStatus (ct, statusType) {
-    var status = {
+    const status = {
       'class': 'entity-status--published',
       label: 'active'
     };

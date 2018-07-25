@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('lodash');
+const _ = require('lodash');
 
 /**
  * Allows resources to create child resources that inherit the
@@ -16,9 +16,9 @@ module.exports = function mixinChildResourceFactory (target) {
      * with 'path' added to it.
      */
     childResourceFactory: function (Constructor, path) {
-      var persistenceContext = this.childPersistenceContext(path);
+      const persistenceContext = this.childPersistenceContext(path);
       function construct (data) {
-        var entity = new Constructor(data, persistenceContext);
+        const entity = new Constructor(data, persistenceContext);
         return persistenceContext.store(entity);
       }
 
@@ -26,7 +26,7 @@ module.exports = function mixinChildResourceFactory (target) {
         if (!response) { throw new Error('Response not available'); }
 
         if ('sys' in response && response.sys.type === 'Array') {
-          var entities = _.map(response.items, construct);
+          const entities = _.map(response.items, construct);
           Object.defineProperty(entities, 'total', {value: response.total});
           return entities;
         } else {
@@ -36,7 +36,7 @@ module.exports = function mixinChildResourceFactory (target) {
     },
 
     childPersistenceContext: function (path) {
-      var endpoint = this.endpoint(path).deleteHeader('X-Contentful-Version');
+      const endpoint = this.endpoint(path).deleteHeader('X-Contentful-Version');
       return this.persistenceContext.withEndpoint(endpoint);
     }
   });

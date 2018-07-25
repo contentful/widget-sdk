@@ -7,8 +7,8 @@ angular.module('contentful')
  * Used in the `entity_sidebar.mixin.jade` template.
  */
 .controller('SidebarWidgetRenderController', ['$scope', 'require', ($scope, require) => {
-  var TheLocaleStore = require('TheLocaleStore');
-  var $controller = require('$controller');
+  const TheLocaleStore = require('TheLocaleStore');
+  const $controller = require('$controller');
 
   $scope.field = $scope.widget.field;
   $scope.locale = TheLocaleStore.getDefaultLocale();

@@ -14,15 +14,15 @@
 */
 angular.module('contentful')
 .controller('AddFieldDialogController', ['$scope', 'require', function AddFieldDialogController ($scope, require) {
-  var $controller = require('$controller');
-  var fieldFactory = require('fieldFactory');
-  var fieldDecorator = require('fieldDecorator');
-  var random = require('random');
-  var stringUtils = require('stringUtils');
-  var buildMessage = require('fieldErrorMessageBuilder');
-  var $q = require('$q');
-  var $timeout = require('$timeout');
-  var LD = require('utils/LaunchDarkly');
+  const $controller = require('$controller');
+  const fieldFactory = require('fieldFactory');
+  const fieldDecorator = require('fieldDecorator');
+  const random = require('random');
+  const stringUtils = require('stringUtils');
+  const buildMessage = require('fieldErrorMessageBuilder');
+  const $q = require('$q');
+  const $timeout = require('$timeout');
+  const LD = require('utils/LaunchDarkly');
 
   const STRUCTURED_TEXT_FIELD_FEATURE_FLAG =
     'feature-at-06-2018-structured-text-field';
@@ -85,8 +85,8 @@ angular.module('contentful')
   }
 
   $scope.$watch('field.data.name', name => {
-    var apiNameField = $scope.newFieldForm.apiName;
-    var apiName = $scope.field.data.apiName;
+    const apiNameField = $scope.newFieldForm.apiName;
+    const apiName = $scope.field.data.apiName;
     if (!apiNameField || !apiNameField.$touched || !apiName) {
       $scope.field.data.apiName = stringUtils.toIdentifier(name);
       if (apiNameField) {
@@ -104,8 +104,8 @@ angular.module('contentful')
    * the dialog with that field.
    */
   function create () {
-    var field = $scope.field.data;
-    var typeInfo = fieldFactory.createTypeInfo($scope.field.type, $scope.field.isList);
+    const field = $scope.field.data;
+    const typeInfo = fieldFactory.createTypeInfo($scope.field.type, $scope.field.isList);
     _.extend(field, typeInfo);
 
     if (!$scope.validator.run()) {

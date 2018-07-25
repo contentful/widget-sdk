@@ -10,11 +10,11 @@ angular.module('cf.app')
  * This service handles setting value on string fields.
  */
 .factory('entityEditor/Document/StringField', ['require', require => {
-  var $q = require('$q');
-  var diff = require('utils/StringDiff').diff;
-  var ShareJS = require('data/ShareJS/Utils');
+  const $q = require('$q');
+  const diff = require('utils/StringDiff').diff;
+  const ShareJS = require('data/ShareJS/Utils');
 
-  var STRING_FIELD_TYPES = ['Symbol', 'Text'];
+  const STRING_FIELD_TYPES = ['Symbol', 'Text'];
 
   return {
     setAt: setAt,
@@ -22,7 +22,7 @@ angular.module('cf.app')
   };
 
   function setAt (doc, path, newValue) {
-    var oldValue = ShareJS.peek(doc, path);
+    const oldValue = ShareJS.peek(doc, path);
 
     if (!isValidStringFieldValue(newValue)) {
       return $q.reject(new Error('Invalid string field value.'));
@@ -48,7 +48,7 @@ angular.module('cf.app')
   }
 
   function patchStringAt (doc, path, oldValue, newValue) {
-    var patches = diff(oldValue, newValue);
+    const patches = diff(oldValue, newValue);
 
     /**
      * `diff` returns patches in the right order:
@@ -62,7 +62,7 @@ angular.module('cf.app')
      * - patch.insert[1] is the string to be inserted
      *   at the start position
      */
-    var ops = patches.map(patch => {
+    const ops = patches.map(patch => {
       if (patch.delete) {
         return deleteOp(path, oldValue, patch);
       } else if (patch.insert) {
@@ -75,8 +75,8 @@ angular.module('cf.app')
   }
 
   function deleteOp (path, value, patch) {
-    var pos = patch.delete[0];
-    var len = patch.delete[1];
+    const pos = patch.delete[0];
+    const len = patch.delete[1];
 
     return {
       p: path.concat(pos),
@@ -92,7 +92,7 @@ angular.module('cf.app')
   }
 
   function isStringField (fieldId, contentType) {
-    var field = _.find(_.get(contentType, 'data.fields', []), field => field.id === fieldId);
+    const field = _.find(_.get(contentType, 'data.fields', []), field => field.id === fieldId);
 
     return _.includes(STRING_FIELD_TYPES, field && field.type);
   }

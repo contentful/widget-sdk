@@ -21,20 +21,20 @@ angular.module('contentful')
  * @scope.provides fallbackLocales
  */
 .controller('LocaleEditorController', ['$scope', 'require', function ($scope, require) {
-  var controller = this;
-  var spaceContext = require('spaceContext');
-  var TheLocaleStore = require('TheLocaleStore');
-  var $q = require('$q');
-  var modalDialog = require('modalDialog');
-  var Command = require('command');
-  var leaveConfirmator = require('navigation/confirmLeaveEditor');
-  var $state = require('$state');
-  var closeState = require('navigation/closeState');
-  var localeList = require('data/localeList').create($scope.spaceLocales);
-  var notify = require('LocaleEditor/notifications');
+  const controller = this;
+  const spaceContext = require('spaceContext');
+  const TheLocaleStore = require('TheLocaleStore');
+  const $q = require('$q');
+  const modalDialog = require('modalDialog');
+  const Command = require('command');
+  const leaveConfirmator = require('navigation/confirmLeaveEditor');
+  const $state = require('$state');
+  const closeState = require('navigation/closeState');
+  const localeList = require('data/localeList').create($scope.spaceLocales);
+  const notify = require('LocaleEditor/notifications');
 
-  var formWasDirty = false;
-  var persistedLocaleCode = null;
+  let formWasDirty = false;
+  let persistedLocaleCode = null;
 
   $scope.locales = localeList.prepareLocaleList($scope.locale);
   onLoadOrUpdate();
@@ -52,20 +52,20 @@ angular.module('contentful')
   });
 
   function onLoadOrUpdate () {
-    var code = $scope.locale.code;
+    const code = $scope.locale.code;
     persistedLocaleCode = code;
     $scope.hasDependantLocales = localeList.hasDependantLocales(code);
   }
 
   function prepareTitle () {
-    var name = getLocaleName();
-    var empty = $scope.locale.sys.id ? 'Unnamed locale' : 'New locale';
+    const name = getLocaleName();
+    const empty = $scope.locale.sys.id ? 'Unnamed locale' : 'New locale';
     return name || empty;
   }
 
   function getLocaleName () {
-    var code = $scope.locale.code;
-    var locale = findLocale(code);
+    const code = $scope.locale.code;
+    const locale = findLocale(code);
     return locale && locale.name;
   }
 
@@ -125,8 +125,8 @@ angular.module('contentful')
   }
 
   function openFallbackLocaleChangeDialog () {
-    var code = $scope.locale.code;
-    var dependantLocales = localeList.getDependantLocales(code);
+    const code = $scope.locale.code;
+    const dependantLocales = localeList.getDependantLocales(code);
 
     return modalDialog.open({
       template: 'choose_new_fallback_dialog',
@@ -137,7 +137,7 @@ angular.module('contentful')
         availableLocales: localeList.getAvailableFallbackLocales(code)
       }
     }).promise.then(newFallbackCode => {
-      var updates = _.map(dependantLocales, fallbackUpdater(newFallbackCode));
+      const updates = _.map(dependantLocales, fallbackUpdater(newFallbackCode));
       return $q.all(updates).catch(() => {
         notify.codeChangeError();
         return $q.reject();
@@ -147,7 +147,7 @@ angular.module('contentful')
 
   function prepareDependantLocaleNames (dependantLocales) {
     if (dependantLocales.length > 4) {
-      var rest = ' and ' + (dependantLocales.length - 3) + ' other locales';
+      const rest = ' and ' + (dependantLocales.length - 3) + ' other locales';
       return _.map(dependantLocales.slice(0, 3), 'name').join(', ') + rest;
     } else {
       return _.map(dependantLocales, 'name').join(', ');
@@ -156,9 +156,9 @@ angular.module('contentful')
 
   function fallbackUpdater (newFallbackCode) {
     return locale => {
-      var localeToUpdate = _.find($scope.spaceLocales, {code: locale.code});
+      const localeToUpdate = _.find($scope.spaceLocales, {code: locale.code});
       if (localeToUpdate) {
-        var data = _.cloneDeep(localeToUpdate);
+        const data = _.cloneDeep(localeToUpdate);
         data.fallbackCode = newFallbackCode;
         return spaceContext.localeRepo.save(data);
       } else {
@@ -168,7 +168,7 @@ angular.module('contentful')
   }
 
   function deleteLocale () {
-    var sys = $scope.locale.sys;
+    const sys = $scope.locale.sys;
     return spaceContext.localeRepo.remove(sys.id, sys.version)
     .then(function deletedSuccesfully () {
       return TheLocaleStore.refresh()
@@ -203,7 +203,7 @@ angular.module('contentful')
    */
   controller.save = Command.create(save, {
     disabled: function () {
-      var form = $scope.localeForm;
+      const form = $scope.localeForm;
       return form.$invalid || !form.$dirty || !$scope.locale.code;
     }
   });
@@ -282,11 +282,11 @@ angular.module('contentful')
 }])
 
 .factory('LocaleEditor/notifications', ['require', require => {
-  var notification = require('notification');
-  var logger = require('logger');
+  const notification = require('notification');
+  const logger = require('logger');
 
-  var NOT_RENAMEABLE_MESSAGE = 'Cannot change the code of a locale which is fallback of another one';
-  var ERROR_CHECKS = [
+  const NOT_RENAMEABLE_MESSAGE = 'Cannot change the code of a locale which is fallback of another one';
+  const ERROR_CHECKS = [
     {
       message: 'This locale already exists',
       check: _.partial(checkUnprocessableEntityErrorName, 'taken')
@@ -334,7 +334,7 @@ angular.module('contentful')
   }
 
   function saveError (err) {
-    var message = getErrorMessage(err);
+    const message = getErrorMessage(err);
     if (message) {
       notification.error('Locale could not be saved: ' + message);
     } else {
@@ -344,14 +344,14 @@ angular.module('contentful')
   }
 
   function getErrorMessage (err) {
-    var found = _.find(ERROR_CHECKS, item => item.check(err));
+    const found = _.find(ERROR_CHECKS, item => item.check(err));
 
     return found && found.message;
   }
 
   function checkUnprocessableEntityErrorName (name, err) {
-    var status = _.get(err, 'statusCode');
-    var errors = _.get(err, 'body.details.errors');
+    const status = _.get(err, 'statusCode');
+    const errors = _.get(err, 'body.details.errors');
 
     return status === 422 && errors && errors.length > 0 && errors[0].name === name;
   }

@@ -11,9 +11,9 @@ describe('signal', () => {
     });
 
     it('calls attached listeners on dispatch', function () {
-      var listeners = _.map(_.range(1,4), () => sinon.stub());
+      const listeners = _.map(_.range(1,4), () => sinon.stub());
 
-      var signal = this.createSignal();
+      const signal = this.createSignal();
 
       _.forEach(listeners, listener => {
         signal.attach(listener);
@@ -27,9 +27,9 @@ describe('signal', () => {
     });
 
     it('does not call detached listeners', function () {
-      var listener = sinon.stub();
-      var signal = this.createSignal();
-      var detach = signal.attach(listener);
+      const listener = sinon.stub();
+      const signal = this.createSignal();
+      const detach = signal.attach(listener);
 
       signal.dispatch();
       sinon.assert.calledOnce(listener);
@@ -46,16 +46,16 @@ describe('signal', () => {
     });
 
     it('sends initial value on attach with send option', function () {
-      var signal = this.createSignal('INITIAL');
-      var listener = sinon.stub();
+      const signal = this.createSignal('INITIAL');
+      const listener = sinon.stub();
 
       signal.attach(listener, true);
       sinon.assert.calledWithExactly(listener, 'INITIAL');
     });
 
     it('sends last value on attach with send option', function () {
-      var signal = this.createSignal();
-      var listener = sinon.stub();
+      const signal = this.createSignal();
+      const listener = sinon.stub();
 
       signal.dispatch('VALUE');
       signal.attach(listener, true);
@@ -63,10 +63,10 @@ describe('signal', () => {
     });
 
     it('overides initial value when dispatched', function () {
-      var signal = this.createSignal('INITIAL');
+      const signal = this.createSignal('INITIAL');
       signal.dispatch('VALUE');
 
-      var listener = sinon.stub();
+      const listener = sinon.stub();
       signal.attach(listener, true);
       sinon.assert.calledWithExactly(listener, 'VALUE');
     });

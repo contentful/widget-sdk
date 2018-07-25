@@ -7,9 +7,9 @@ angular.module('contentful')
  * @name contentTypeEditor/metadataDialog
  */
 .factory('contentTypeEditor/metadataDialog', ['require', require => {
-  var $rootScope = require('$rootScope');
-  var modalDialog = require('modalDialog');
-  var Command = require('command');
+  const $rootScope = require('$rootScope');
+  const modalDialog = require('modalDialog');
+  const Command = require('command');
 
   return {
     openCreateDialog: openCreateDialog,
@@ -38,8 +38,8 @@ angular.module('contentful')
    * @param {Client.ContentType} contentType
    */
   function openEditDialog (contentType) {
-    var name = contentType.data.name;
-    var desc = contentType.data.description;
+    const name = contentType.data.name;
+    const desc = contentType.data.description;
     return openDialog({
       name: name,
       description: desc,
@@ -52,7 +52,7 @@ angular.module('contentful')
   }
 
   function openDuplicateDialog (contentType, duplicate, contentTypeIds) {
-    var scope = prepareScope({
+    const scope = prepareScope({
       description: contentType.data.description,
       isNew: true,
       contentTypeIds: contentTypeIds,
@@ -61,8 +61,8 @@ angular.module('contentful')
 
     scope.originalName = contentType.data.name;
     scope.duplicate = Command.create(() => {
-      var d = scope.dialog;
-      var form = d.formController;
+      const d = scope.dialog;
+      const form = d.formController;
 
       if (scope.contentTypeMetadata.name && scope.contentTypeMetadata.id) {
         return duplicate(scope.contentTypeMetadata)
@@ -82,7 +82,7 @@ angular.module('contentful')
   }
 
   function openDialog (params) {
-    var scope = prepareScope(params);
+    const scope = prepareScope(params);
 
     return modalDialog.open({
       title: params.labels.title,

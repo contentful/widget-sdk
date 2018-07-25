@@ -2,9 +2,9 @@
 
 angular.module('contentful')
 .directive('cfNumberEditor', ['require', require => {
-  var parseNumber = require('cfNumberEditor/parseNumber');
-  var InputUpdater = require('ui/inputUpdater');
-  var debounce = require('debounce');
+  const parseNumber = require('cfNumberEditor/parseNumber');
+  const InputUpdater = require('ui/inputUpdater');
+  const debounce = require('debounce');
 
   return {
     scope: {},
@@ -12,22 +12,22 @@ angular.module('contentful')
     require: '^cfWidgetApi',
     template: JST['cf_number_editor'](),
     link: function (scope, $el, _attrs, widgetApi) {
-      var field = widgetApi.field;
-      var $inputEl = $el.find('input');
-      var updateInput = InputUpdater.create($inputEl.get(0));
+      const field = widgetApi.field;
+      const $inputEl = $el.find('input');
+      const updateInput = InputUpdater.create($inputEl.get(0));
 
       // update input field value when new synced value received via ot magic
-      var detachOnValueChangedHandler = field.onValueChanged(val => {
+      const detachOnValueChangedHandler = field.onValueChanged(val => {
         updateInput(val === 0 ? String(val) : (val ? String(val) : ''));
       });
       // call handler when the disabled status of the field changes
-      var detachOnFieldDisabledHandler = field.onIsDisabledChanged(updateDisabledStatus);
+      const detachOnFieldDisabledHandler = field.onIsDisabledChanged(updateDisabledStatus);
 
-      var offSchemaErrorsChanged = field.onSchemaErrorsChanged(errors => {
+      const offSchemaErrorsChanged = field.onSchemaErrorsChanged(errors => {
         scope.hasErrors = errors && errors.length > 0;
       });
 
-      var range = getRangeFromField(field);
+      const range = getRangeFromField(field);
 
       scope.min = range.min;
       scope.max = range.max;
@@ -39,7 +39,7 @@ angular.module('contentful')
       scope.$on('$destroy', offSchemaErrorsChanged);
 
       scope.$watch(() => $inputEl.val(), val => {
-        var parseResult = parseNumber(val, field.type);
+        const parseResult = parseNumber(val, field.type);
 
         scope.parseWarning = parseResult.warning;
         field.setInvalid(!parseResult.isValid);
@@ -62,7 +62,7 @@ angular.module('contentful')
   };
 
   function getRangeFromField (field) {
-    var validation = _.find(field.validations, validation => validation.range);
+    const validation = _.find(field.validations, validation => validation.range);
     return _.get(validation, 'range', {});
   }
 }])
@@ -74,9 +74,9 @@ angular.module('contentful')
   // This has saner semantics than parseFloat.
   // For values with chars in 'em, it gives
   // us NaN unlike parseFloat
-  var floatVal = +value;
-  var hasDot = (/\./g).test(value);
-  var hasFractional = (/\.\d+/g).test(value);
+  const floatVal = +value;
+  const hasDot = (/\./g).test(value);
+  const hasFractional = (/\.\d+/g).test(value);
 
   if (_.isEmpty(value)) {
     return {
@@ -95,7 +95,7 @@ angular.module('contentful')
   }
 
   if (type === 'Integer' && hasDot) {
-    var intVal = parseInt(value, 10);
+    const intVal = parseInt(value, 10);
 
     return {
       isValid: false,

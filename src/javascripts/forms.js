@@ -139,8 +139,8 @@ angular.module('cf.forms')
   require: ['ngModel', '?^form'],
 
   link: function (scope, _elem, attrs, ctrls) {
-    var modelCtrl = ctrls[0];
-    var formCtrl = ctrls[1];
+    const modelCtrl = ctrls[0];
+    const formCtrl = ctrls[1];
     modelCtrl.hideErrors = true;
     scope.$watch(() => modelCtrl.$dirty ||
            ('showErrors' in attrs) ||
@@ -172,7 +172,7 @@ angular.module('cf.forms')
       formCtrl.showErrors = true;
     }
 
-    var removeControl = formCtrl.$removeControl;
+    const removeControl = formCtrl.$removeControl;
     formCtrl.$removeControl = function (ctrl) {
       removeControl.call(this, ctrl);
       $timeout(() => {

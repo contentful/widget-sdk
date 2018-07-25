@@ -5,7 +5,7 @@ describe('DataSizeScaleController', () => {
   beforeEach(module('contentful/test'));
 
   beforeEach(function() {
-    var $controller = this.$inject('$controller');
+    const $controller = this.$inject('$controller');
     this.parentScope = this.$inject('$rootScope');
     this.parentScope.size = 1;
     this.scope = this.parentScope.$new();

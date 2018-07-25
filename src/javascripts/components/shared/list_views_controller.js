@@ -3,15 +3,15 @@ angular.module('contentful')
 .controller('ListViewsController', [
   '$scope', 'require', 'getBlankView', 'resetList', 'preserveStateAs',
   ($scope, require, getBlankView, resetList, preserveStateAs) => {
-    var createViewMigrator = require('data/ViewMigrator').default;
-    var createViewPersistor = require('data/ListViewPersistor').default;
+    const createViewMigrator = require('data/ViewMigrator').default;
+    const createViewPersistor = require('data/ListViewPersistor').default;
     const { Status, statusQueryKey } = require('app/ContentList/Search/Filters');
     const { Operator } = require('app/ContentList/Search/Operators');
-    var spaceContext = require('spaceContext');
-    var Notification = require('notification');
+    const spaceContext = require('spaceContext');
+    const Notification = require('notification');
 
-    var viewMigrator = createViewMigrator(spaceContext.space, spaceContext.publishedCTs);
-    var viewPersistor = createViewPersistor(
+    const viewMigrator = createViewMigrator(spaceContext.space, spaceContext.publishedCTs);
+    const viewPersistor = createViewPersistor(
       spaceContext.getId(), viewMigrator, preserveStateAs);
 
     $scope.$watch('context.view', viewPersistor.save, true);
@@ -47,9 +47,9 @@ angular.module('contentful')
     }
 
     function showViewMigrationFailedNotification (view) {
-      var isAdmin = spaceContext.getData('spaceMembership.admin', false);
-      var contactPerson = isAdmin ? 'support' : 'your administrator';
-      var intro = 'There is a problem with your ' + (
+      const isAdmin = spaceContext.getData('spaceMembership.admin', false);
+      const contactPerson = isAdmin ? 'support' : 'your administrator';
+      const intro = 'There is a problem with your ' + (
         view.title ? '“' + view.title + '” view' : 'current search');
       Notification.error(intro + ', which has been reported. If the problem ' +
         'persists, contact ' + contactPerson + '.');

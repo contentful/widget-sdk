@@ -11,9 +11,9 @@ angular.module('cf.data')
  * the internal UI format.
  */
 .factory('data/editingInterfaces/transformer', ['require', require => {
-  var eiHelpers = require('editingInterfaces/helpers');
-  var migrateWidgetId = require('widgets/migrations');
-  var getDefaultWidgetId = require('widgets/default');
+  const eiHelpers = require('editingInterfaces/helpers');
+  const migrateWidgetId = require('widgets/migrations');
+  const getDefaultWidgetId = require('widgets/default');
 
   return {
     fromAPI: fromAPI,
@@ -34,7 +34,7 @@ angular.module('cf.data')
    * @returns {Data.EditingInterface}
    */
   function makeDefault (contentType) {
-    var contentTypeLink = {
+    const contentTypeLink = {
       sys: {
         id: contentType.sys.id,
         type: 'Link',
@@ -42,7 +42,7 @@ angular.module('cf.data')
       }
     };
 
-    var ei = {
+    const ei = {
       sys: {
         contentType: contentTypeLink,
         version: 0
@@ -81,7 +81,7 @@ angular.module('cf.data')
    */
   function alignControls (contentType, controls) {
     return _.map(contentType.fields, field => {
-      var control =
+      let control =
         eiHelpers.findWidget(controls, field) ||
         defaultControl(contentType, field);
       control = _.cloneDeep(control);
@@ -107,7 +107,7 @@ angular.module('cf.data')
    * @returns {Data.EditingInterface}
    */
   function fromAPI (contentType, ei) {
-    var controls = controlsFromApi(contentType, ei.controls);
+    const controls = controlsFromApi(contentType, ei.controls);
     return {
       sys: ei.sys,
       controls: controls
@@ -128,8 +128,8 @@ angular.module('cf.data')
     // TODO Content Types should always have an api name. The UI must
     // make sure to set the default if it retrieves one from the
     // server.
-    var fieldId = field.apiName || field.id;
-    var widgetId = getDefaultWidgetId(field, contentType.displayField);
+    const fieldId = field.apiName || field.id;
+    const widgetId = getDefaultWidgetId(field, contentType.displayField);
     return {
       fieldId: fieldId,
       field: field,

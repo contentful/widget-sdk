@@ -1,12 +1,12 @@
 'use strict';
 angular.module('contentful').directive('cfApiNameShadow', ['require', require => {
-  var $parse = require('$parse');
+  const $parse = require('$parse');
 
   return {
     restrict: 'A',
     require: 'ngModel',
     link: function (scope, elem, attr, ngModelController) {
-      var getField = $parse(attr.cfApiNameShadow);
+      const getField = $parse(attr.cfApiNameShadow);
       ngModelController.$formatters.push(modelValue => {
         modelValue = ngModelController.$modelValue;
         return (modelValue === undefined || modelValue === null) ? getField(scope).id : modelValue;

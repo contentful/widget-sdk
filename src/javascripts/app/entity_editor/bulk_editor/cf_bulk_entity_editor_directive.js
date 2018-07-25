@@ -29,16 +29,16 @@ angular.module('contentful')
  *   Contains methods that can be called to track actions.
  */
 .directive('cfBulkEntityEditor', ['require', require => {
-  var $q = require('$q');
-  var $controller = require('$controller');
-  var $timeout = require('$timeout');
-  var K = require('utils/kefir');
-  var Navigator = require('states/Navigator');
-  var caseof = require('sum-types').caseof;
-  var spaceContext = require('spaceContext');
-  var trackEntryView = require('app/entity_editor/Tracking').trackEntryView;
-  var localeStore = require('TheLocaleStore');
-  var logger = require('logger');
+  const $q = require('$q');
+  const $controller = require('$controller');
+  const $timeout = require('$timeout');
+  const K = require('utils/kefir');
+  const Navigator = require('states/Navigator');
+  const caseof = require('sum-types').caseof;
+  const spaceContext = require('spaceContext');
+  const trackEntryView = require('app/entity_editor/Tracking').trackEntryView;
+  const localeStore = require('TheLocaleStore');
+  const logger = require('logger');
 
   return {
     restrict: 'E',
@@ -53,8 +53,8 @@ angular.module('contentful')
       $scope.el = $el.get(0);
     },
     controller: ['$scope', $scope => {
-      var entityContext = $scope.entityContext;
-      var bulkEditorContext = $scope.bulkEditorContext;
+      const entityContext = $scope.entityContext;
+      const bulkEditorContext = $scope.bulkEditorContext;
 
       // TODO required by entityEditor/Document. Should not be on scope
       $scope.user = bulkEditorContext.user;
@@ -62,7 +62,7 @@ angular.module('contentful')
       // TODO required by FormWidgetsController. Should not be on scope
       $scope.preferences = bulkEditorContext.editorSettings;
 
-      var data = $scope.data = {
+      const data = $scope.data = {
         expanded: true,
         stateRef: Navigator.makeEntityRef(
           {sys: {
@@ -83,10 +83,10 @@ angular.module('contentful')
         }
       });
 
-      var editorDataPromise$ = K.promiseProperty(
+      const editorDataPromise$ = K.promiseProperty(
         bulkEditorContext.loadEditorData(entityContext.id)
         .then(editorData => {
-          var doc = editorData.openDoc(K.scopeLifeline($scope));
+          const doc = editorData.openDoc(K.scopeLifeline($scope));
           // We wait for the document to be opened until we setup the
           // editor
           return doc.state.loaded$.toPromise($q)
@@ -97,7 +97,7 @@ angular.module('contentful')
       // Property<boolean>
       // True if the entry data is still loading. False when the data was loaded
       // or the loading failed.
-      var loadingEditorData$ = editorDataPromise$.map(p => caseof(p, [
+      const loadingEditorData$ = editorDataPromise$.map(p => caseof(p, [
         [K.PromiseStatus.Pending, _.constant(true)],
         [null, _.constant(false)]
       ]));
@@ -105,7 +105,7 @@ angular.module('contentful')
       // Stream<void>
       // Emits exactly one event when the entry data has been loaded or the
       // loading has failed
-      var loaded$ = loadingEditorData$.filter(loading => loading === false);
+      const loaded$ = loadingEditorData$.filter(loading => loading === false);
 
       K.onValueScope($scope, loaded$, bulkEditorContext.initializedEditor);
 
@@ -116,7 +116,7 @@ angular.module('contentful')
       // Property<object?>
       // Holds the editor data if it has been loaded successfully. Holds 'null'
       // otherwise
-      var editorData$ = editorDataPromise$.map(p => caseof(p, [
+      const editorData$ = editorDataPromise$.map(p => caseof(p, [
         [K.PromiseStatus.Resolved, p => p.value],
         [null, _.constant(null)]
       ]));
@@ -147,7 +147,7 @@ angular.module('contentful')
         data.hasEditor = true;
       }
 
-      var trackAction = $scope.bulkEditorContext.track.actions(entityContext.id);
+      const trackAction = $scope.bulkEditorContext.track.actions(entityContext.id);
 
       $scope.actions = {
         unlink: function () {
@@ -166,22 +166,22 @@ angular.module('contentful')
 
 // TODO Consolidate this! same as entry editor minus some stuff
 .controller('InlineEditingController/editor', ['$scope', 'require', function ($scope, require) {
-  var makeNotify = require('app/entity_editor/Notifications').makeNotify;
-  var $controller = require('$controller');
-  var spaceContext = require('spaceContext');
-  var truncate = require('stringUtils').truncate;
-  var DataFields = require('EntityEditor/DataFields');
-  var ContentTypes = require('data/ContentTypes');
-  var Validator = require('app/entity_editor/Validator');
-  var localeStore = require('TheLocaleStore');
-  var Focus = require('app/entity_editor/Focus');
-  var K = require('utils/kefir');
-  var initDocErrorHandler = require('app/entity_editor/DocumentErrorHandler').default;
+  const makeNotify = require('app/entity_editor/Notifications').makeNotify;
+  const $controller = require('$controller');
+  const spaceContext = require('spaceContext');
+  const truncate = require('stringUtils').truncate;
+  const DataFields = require('EntityEditor/DataFields');
+  const ContentTypes = require('data/ContentTypes');
+  const Validator = require('app/entity_editor/Validator');
+  const localeStore = require('TheLocaleStore');
+  const Focus = require('app/entity_editor/Focus');
+  const K = require('utils/kefir');
+  const initDocErrorHandler = require('app/entity_editor/DocumentErrorHandler').default;
 
-  var editorData = $scope.editorData;
-  var entityInfo = this.entityInfo = editorData.entityInfo;
+  const editorData = $scope.editorData;
+  const entityInfo = this.entityInfo = editorData.entityInfo;
 
-  var notify = makeNotify('Entry', () => '“' + $scope.title + '”');
+  const notify = makeNotify('Entry', () => '“' + $scope.title + '”');
 
   $scope.editorContext = this;
   $scope.entityInfo = entityInfo;
@@ -203,7 +203,7 @@ angular.module('contentful')
     otDoc: $scope.otDoc
   });
 
-  var track = $scope.bulkEditorContext.track;
+  const track = $scope.bulkEditorContext.track;
   K.onValueScope($scope, $scope.otDoc.resourceState.stateChange$, data => {
     track.changeStatus($scope.entityInfo.id, data.to);
   });
@@ -220,7 +220,7 @@ angular.module('contentful')
   });
 
   K.onValueScope($scope, $scope.otDoc.valuePropertyAt([]), data => {
-    var title = spaceContext.entryTitle({
+    const title = spaceContext.entryTitle({
       getContentTypeId: _.constant($scope.entityInfo.contentTypeId),
       data: data
     });
@@ -241,7 +241,7 @@ angular.module('contentful')
    * for every widget. Instead, we share this version in every
    * cfWidgetApi instance.
    */
-  var fields = entityInfo.contentType.fields;
+  const fields = entityInfo.contentType.fields;
   $scope.fields = DataFields.create(fields, $scope.otDoc);
   $scope.transformedContentTypeData = ContentTypes.internalToPublic(entityInfo.contentType);
 }]);

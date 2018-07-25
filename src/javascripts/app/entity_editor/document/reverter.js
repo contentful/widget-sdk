@@ -22,8 +22,8 @@ angular.module('contentful')
    *   Set the 'fields' value of the entity data
    */
   function create (snapshot, version$, setFields) {
-    var snapshotVersion = snapshot.sys.version;
-    var currentVersion;
+    let snapshotVersion = snapshot.sys.version;
+    let currentVersion;
 
     version$.onValue(version => {
       currentVersion = version;

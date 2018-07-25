@@ -4,7 +4,7 @@ describe('predefined validation regexps', () => {
 
   beforeEach(function () {
     module('contentful/test');
-    var views = this.$inject('validationViews');
+    const views = this.$inject('validationViews');
     this.views = views.get('regexp');
   });
 
@@ -41,7 +41,7 @@ describe('predefined validation regexps', () => {
   describe('time', () => {
 
     it('validates 12h time', function () {
-      var regexp = _.find(this.views, {name: '12h-time'}).pattern;
+      const regexp = _.find(this.views, {name: '12h-time'}).pattern;
       expectRegexpMatch(regexp, [
         '01:00 pm', '01:00 pM', '01:00 Am', '01:00AM',
         '1:00 am',
@@ -51,7 +51,7 @@ describe('predefined validation regexps', () => {
     });
 
     it('rejects 12h time', function () {
-      var regexp = _.find(this.views, {name: '12h-time'}).pattern;
+      const regexp = _.find(this.views, {name: '12h-time'}).pattern;
       expectRegexpFail(regexp, [
         '00:59 am',
         '01:0 am',
@@ -60,7 +60,7 @@ describe('predefined validation regexps', () => {
     });
 
     it('validates 24h time', function () {
-      var regexp = _.find(this.views, {name: '24h-time'}).pattern;
+      const regexp = _.find(this.views, {name: '24h-time'}).pattern;
       expectRegexpMatch(regexp, [
         '00:00', '01:00', '13:00', '23:59',
         '1:00',
@@ -69,7 +69,7 @@ describe('predefined validation regexps', () => {
     });
 
     it('rejects 24h time', function () {
-      var regexp = _.find(this.views, {name: '24h-time'}).pattern;
+      const regexp = _.find(this.views, {name: '24h-time'}).pattern;
       expectRegexpFail(regexp, [
         '24:00', '00:60',
         '01:00:60',

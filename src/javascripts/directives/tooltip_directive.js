@@ -5,8 +5,8 @@ angular.module('contentful').
   restrict: 'A',
 
   link: function(scope, element, attrs) {
-    var tooltipInitialized = false;
-    var tooltipDisabled    = false;
+    let tooltipInitialized = false;
+    let tooltipDisabled    = false;
 
     element.on('mouseenter focus', initialize);
 
@@ -23,11 +23,11 @@ angular.module('contentful').
     }
 
     function getOptions() {
-      var options = {
+      const options = {
         title: function(){ return attrs.tooltip; },
         delay: {show: 100, hide: 100}
       };
-      var newKey;
+      let newKey;
       if(attrs.tooltipDelayShow){
         options.delay.show = attrs.tooltipDelayShow;
         delete attrs.tooltipDelayShow;
@@ -46,7 +46,7 @@ angular.module('contentful').
     }
 
     function createTooltip(show) {
-      var options = getOptions();
+      const options = getOptions();
       element.tooltip(options);
       if (show) element.tooltip('show');
     }

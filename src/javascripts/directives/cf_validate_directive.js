@@ -19,14 +19,14 @@ angular.module('contentful')
 })])
 
 .controller('ValidationController', ['$scope', '$attrs', 'require', function ValidationController ($scope, $attrs, require) {
-  var $timeout = require('$timeout');
-  var K = require('utils/kefir');
-  var controller = this;
+  const $timeout = require('$timeout');
+  const K = require('utils/kefir');
+  const controller = this;
 
   // Caches values for #hasError()
-  var errorTree = {};
+  let errorTree = {};
 
-  var errorsBus = K.createPropertyBus([], $scope);
+  const errorsBus = K.createPropertyBus([], $scope);
 
   /**
    * @ngdoc property
@@ -42,7 +42,7 @@ angular.module('contentful')
   $scope.validationResult = {};
 
   $scope.$on('$destroy', event => {
-    var scope = event.currentScope;
+    const scope = event.currentScope;
     scope.validationResult = {};
   });
 
@@ -69,17 +69,17 @@ angular.module('contentful')
    * @returns boolean
    */
   controller.run = function (path, parent) {
-    var data = getData();
-    var errors = $scope.schema.errors(data);
+    const data = getData();
+    const errors = $scope.schema.errors(data);
 
     if (_.isUndefined(errors)) {
       return this.valid;
     }
 
     if (path) {
-      var matchesPath = errorPathMatcher(path, parent);
-      var pathErrors = _.filter(errors, matchesPath);
-      var otherErrors = _.reject(this.errors, matchesPath);
+      const matchesPath = errorPathMatcher(path, parent);
+      const pathErrors = _.filter(errors, matchesPath);
+      const otherErrors = _.reject(this.errors, matchesPath);
       this.setErrors(otherErrors.concat(pathErrors));
     } else {
       this.setErrors(errors);
@@ -160,7 +160,7 @@ angular.module('contentful')
       });
     }
 
-    var valid = _.isEmpty(errors);
+    const valid = _.isEmpty(errors);
     return {
       data: data,
       schema: schema,
@@ -184,10 +184,10 @@ angular.module('contentful')
    * ~~~
    */
   function makeTree (items) {
-    var root = {};
+    const root = {};
     _.forEach(items, item => {
-      var node = root;
-      var path = normalizePath(item.path);
+      let node = root;
+      const path = normalizePath(item.path);
       _.forEach(path, segment => {
         node = node[segment] = node[segment] || {};
       });
@@ -221,7 +221,7 @@ angular.module('contentful')
 
     target = normalizePath(target);
 
-    var prefixLen = pattern.length - 1;
+    const prefixLen = pattern.length - 1;
     if (pattern[prefixLen] === '*') {
       return _.isEqual(target.slice(0, prefixLen), pattern.slice(0, prefixLen));
     } else {

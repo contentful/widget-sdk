@@ -1,17 +1,17 @@
 angular.module('contentful')
 .directive('cfSidebarContentPreview', ['require', require => {
-  var K = require('utils/kefir');
-  var contentPreview = require('contentPreview');
-  var Analytics = require('analytics/Analytics');
-  var spaceContext = require('spaceContext');
-  var $state = require('$state');
+  const K = require('utils/kefir');
+  const contentPreview = require('contentPreview');
+  const Analytics = require('analytics/Analytics');
+  const spaceContext = require('spaceContext');
+  const $state = require('$state');
 
   return {
     restrict: 'E',
     scope: true,
     template: JST.cf_sidebar_content_preview(),
     controller: ['$scope', $scope => {
-      var isAdmin = spaceContext.getData('spaceMembership.admin', false);
+      const isAdmin = spaceContext.getData('spaceMembership.admin', false);
 
       $scope.isAdmin = isAdmin;
       $scope.isPreviewSetup = false;
@@ -20,8 +20,8 @@ angular.module('contentful')
         .then(environments => {
           $scope.contentPreviewEnvironments = environments;
 
-          var selectedEnvironmentId = contentPreview.getSelected($scope.entityInfo.contentTypeId);
-          var selectedEnvironment = _.find(environments, { 'envId': selectedEnvironmentId });
+          const selectedEnvironmentId = contentPreview.getSelected($scope.entityInfo.contentTypeId);
+          const selectedEnvironment = _.find(environments, { 'envId': selectedEnvironmentId });
 
           $scope.selectedEnvironment = selectedEnvironment || environments[0];
 
@@ -49,13 +49,13 @@ angular.module('contentful')
 
       $scope.trackClickedLink = () => {
         if ($scope.isPreviewSetup) {
-          var contentTypeId = $scope.selectedEnvironment.contentType;
-          var contentTypeName = _.get(
+          const contentTypeId = $scope.selectedEnvironment.contentType;
+          const contentTypeName = _.get(
             spaceContext.publishedCTs.get(contentTypeId),
             'data.name',
             '<UNPUBLISHED CONTENT TYPE>'
           );
-          var toState = $scope.selectedEnvironment.compiledUrl.replace(/\?.*$/, '');
+          const toState = $scope.selectedEnvironment.compiledUrl.replace(/\?.*$/, '');
 
           Analytics.track('element:click', {
             elementId: 'openContentPreviewBtn',

@@ -2,19 +2,19 @@
 
 angular.module('contentful')
 .directive('cfExtensionEditor', ['require', require => {
-  var React = require('react');
-  var ReactDOM = require('react-dom');
-  var ExtensionEditor = require('app/Extensions/ExtensionEditor').default;
-  var leaveConfirmator = require('navigation/confirmLeaveEditor');
-  var spaceContext = require('spaceContext');
-  var notification = require('notification');
+  const React = require('react');
+  const ReactDOM = require('react-dom');
+  const ExtensionEditor = require('app/Extensions/ExtensionEditor').default;
+  const leaveConfirmator = require('navigation/confirmLeaveEditor');
+  const spaceContext = require('spaceContext');
+  const notification = require('notification');
 
   return {
     restrict: 'E',
     template: '<div class="mount-point"></div>',
     scope: true,
     link: function (scope, el) {
-      var entity = scope.extension;
+      let entity = scope.extension;
       scope.context.requestLeaveConfirmation = leaveConfirmator(save);
 
       ReactDOM.render(

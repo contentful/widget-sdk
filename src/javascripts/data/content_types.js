@@ -43,7 +43,7 @@ angular.module('cf.data')
    * @param {API.ContentType} ctData
    */
   function assureDisplayField (ctData) {
-    var validDisplayField = getDisplayField(ctData);
+    const validDisplayField = getDisplayField(ctData);
 
     if (typeof validDisplayField === 'string') {
       // If the display field was set before and is valid, it is retained.
@@ -68,7 +68,7 @@ angular.module('cf.data')
    * @returns {boolean}
    */
   function hasValidDisplayField (contentTypeData) {
-    var displayField = contentTypeData.displayField;
+    const displayField = contentTypeData.displayField;
     return _.some(contentTypeData.fields, field => displayField === field.id && isDisplayField(field));
   }
 
@@ -124,13 +124,13 @@ angular.module('cf.data')
    * @returns {API.ContentTypeExternal}
    */
   function internalToPublic (data) {
-    var result = {};
+    const result = {};
 
     result.name = data.name;
     result.sys = data.sys;
     result.description = data.description;
     result.fields = _.map(data.fields, field => {
-      var newField = _.assign({}, field);
+      const newField = _.assign({}, field);
 
       newField.id = newField.apiName || newField.id;
 

@@ -45,14 +45,14 @@ angular.module('contentful')
  * });
  */
 .factory('entityEditor/publicationWarnings', ['require', require => {
-  var $q = require('$q');
+  const $q = require('$q');
 
-  var NO_GROUP = '__no_group';
+  const NO_GROUP = '__no_group';
 
   return {create: create};
 
   function create () {
-    var warnings = [];
+    const warnings = [];
 
     return {
       register: register,
@@ -77,14 +77,14 @@ angular.module('contentful')
     }
 
     function show () {
-      var processed = orderByPriority(mergeGroups());
+      const processed = orderByPriority(mergeGroups());
 
       return _.reduce(processed, (promise, warning) => warning.shouldShow() ? promise.then(warning.warnFn) : promise, $q.resolve());
     }
 
     function mergeGroups () {
-      var grouped = _.transform(warnings, (acc, warning) => {
-        var group = _.isString(warning.group) ? warning.group : NO_GROUP;
+      const grouped = _.transform(warnings, (acc, warning) => {
+        const group = _.isString(warning.group) ? warning.group : NO_GROUP;
         acc[group] = acc[group] || [];
         acc[group].push(warning);
       }, {});
@@ -99,15 +99,15 @@ angular.module('contentful')
     }
 
     function merge (warnings) {
-      var processed = _.filter(orderByPriority(warnings), _.method('shouldShow'));
-      var highestPriority = _.first(processed) || {warnFn: $q.resolve(), priority: 0};
+      const processed = _.filter(orderByPriority(warnings), _.method('shouldShow'));
+      const highestPriority = _.first(processed) || {warnFn: $q.resolve(), priority: 0};
 
       return {
         shouldShow: function () {
           return processed.length > 0;
         },
         warnFn: function () {
-          var data = _.map(processed, _.method('getData'));
+          const data = _.map(processed, _.method('getData'));
           return highestPriority.warnFn(data);
         },
         priority: highestPriority.priority

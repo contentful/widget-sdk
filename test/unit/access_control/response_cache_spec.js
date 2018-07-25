@@ -2,9 +2,9 @@
 
 describe('Response Cache', () => {
 
-  var cache, canStub;
-  var entry = {sys: {id: 'eid', type: 'Entry'}};
-  var asset = {sys: {id: 'aid', type: 'Asset'}};
+  let cache, canStub;
+  const entry = {sys: {id: 'eid', type: 'Entry'}};
+  const asset = {sys: {id: 'aid', type: 'Asset'}};
 
   beforeEach(function () {
     module('contentful/test');
@@ -45,7 +45,7 @@ describe('Response Cache', () => {
   });
 
   it('Caches separate permission checks for two different Entries', () => {
-    var entry2 = _.clone(entry, true);
+    const entry2 = _.clone(entry, true);
     entry2.sys.id = 'eid2';
     callTwice('read', entry);
     callTwice('read', entry2);
@@ -67,7 +67,7 @@ describe('Response Cache', () => {
   });
 
   it('Caches separate permission checks for two different Assets', () => {
-    var asset2 = _.clone(asset, true);
+    const asset2 = _.clone(asset, true);
     asset.sys.id = 'aid2';
     callTwice('update', asset);
     callTwice('update', asset2);

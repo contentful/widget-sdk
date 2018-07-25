@@ -8,7 +8,7 @@
  */
 angular.module('cf.data')
 .factory('data/ShareJS/Utils', ['require', require => {
-  var $q = require('$q');
+  const $q = require('$q');
 
   return {
     setDeep: setDeep,
@@ -92,8 +92,8 @@ angular.module('cf.data')
     }
 
     return $q.denodeify(callback => {
-      var container = getContainer(doc, path);
-      var wrappedValue = makeDeepObject(container.restPath, value);
+      const container = getContainer(doc, path);
+      const wrappedValue = makeDeepObject(container.restPath, value);
       container.doc.set(wrappedValue, callback);
     });
   }
@@ -102,20 +102,20 @@ angular.module('cf.data')
     if (path.length === 0) {
       return value;
     } else {
-      var obj = {};
+      const obj = {};
       _.set(obj, path, value);
       return obj;
     }
   }
 
   function getContainer (doc, path) {
-    var segment;
+    let segment;
     path = path.slice();
     /* eslint no-cond-assign: "off" */
     while (segment = path.shift()) {
       doc = doc.at(segment);
-      var value = doc.get();
-      var isContainer = _.isObject(value) || _.isArray(value);
+      const value = doc.get();
+      const isContainer = _.isObject(value) || _.isArray(value);
       if (!isContainer) {
         break;
       }

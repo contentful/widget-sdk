@@ -2,14 +2,14 @@
 
 angular.module('contentful')
 .directive('cfSingleLineEditor', ['require', require => {
-  var Editors = require('editors');
+  const Editors = require('editors');
 
   return {
     scope: {},
     require: '^cfWidgetApi',
     restrict: 'E',
     link: function ($scope, $el, _attributes, widgetApi) {
-      var editor = Editors.textInput(widgetApi);
+      const editor = Editors.textInput(widgetApi);
       $el.append(editor);
 
       // This is necessary to free the component for garbage collection.

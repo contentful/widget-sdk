@@ -12,25 +12,25 @@
  */
 angular.module('contentful')
 .controller('ContentTypeEditorController', ['$scope', 'require', function ContentTypeEditorController ($scope, require) {
-  var controller = this;
-  var $state = require('$state');
-  var validation = require('validation');
-  var modalDialog = require('modalDialog');
-  var openFieldDialog = require('openFieldDialog');
-  var leaveConfirmator = require('navigation/confirmLeaveEditor');
-  var metadataDialog = require('contentTypeEditor/metadataDialog');
-  var Command = require('command');
-  var accessChecker = require('access_control/AccessChecker');
-  var ctHelpers = require('data/ContentTypes');
-  var eiHelpers = require('editingInterfaces/helpers');
-  var spaceContext = require('spaceContext');
-  var editingInterfaces = spaceContext.editingInterfaces;
-  var Analytics = require('analytics/Analytics');
-  var createActions = require('app/ContentModel/Editor/Actions').default;
+  const controller = this;
+  const $state = require('$state');
+  const validation = require('validation');
+  const modalDialog = require('modalDialog');
+  const openFieldDialog = require('openFieldDialog');
+  const leaveConfirmator = require('navigation/confirmLeaveEditor');
+  const metadataDialog = require('contentTypeEditor/metadataDialog');
+  const Command = require('command');
+  const accessChecker = require('access_control/AccessChecker');
+  const ctHelpers = require('data/ContentTypes');
+  const eiHelpers = require('editingInterfaces/helpers');
+  const spaceContext = require('spaceContext');
+  const editingInterfaces = spaceContext.editingInterfaces;
+  const Analytics = require('analytics/Analytics');
+  const createActions = require('app/ContentModel/Editor/Actions').default;
 
-  var contentTypeIds = spaceContext.cma.getContentTypes().then(response => response.items.map(ct => ct.sys.id));
+  const contentTypeIds = spaceContext.cma.getContentTypes().then(response => response.items.map(ct => ct.sys.id));
 
-  var canEdit = accessChecker.can('update', 'ContentType');
+  const canEdit = accessChecker.can('update', 'ContentType');
   // Read-only data for template
   $scope.data = {
     canEdit: canEdit
@@ -83,7 +83,7 @@ angular.module('contentful')
 
   function applyContentTypeMetadata (withId) {
     return metadata => {
-      var data = $scope.contentType.data;
+      const data = $scope.contentType.data;
       data.name = metadata.name;
       data.description = metadata.description;
       if (withId) {
@@ -104,7 +104,7 @@ angular.module('contentful')
    * @returns {API.ContentType.Field}
    */
   controller.getPublishedField = id => {
-    var publishedFields = _.get($scope.publishedContentType, 'data.fields', []);
+    const publishedFields = _.get($scope.publishedContentType, 'data.fields', []);
     return _.cloneDeep(_.find(publishedFields, {id: id}));
   };
 
@@ -114,7 +114,7 @@ angular.module('contentful')
    * @param {string} id
    */
   controller.removeField = id => {
-    var fields = $scope.contentType.data.fields;
+    const fields = $scope.contentType.data.fields;
     _.remove(fields, {id: id});
     syncEditingInterface();
   };
@@ -125,7 +125,7 @@ angular.module('contentful')
    * @param {Client.ContentType.Field} field
    */
   controller.openFieldDialog = field => {
-    var control = eiHelpers.findWidget($scope.editingInterface.controls, field);
+    const control = eiHelpers.findWidget($scope.editingInterface.controls, field);
     return openFieldDialog($scope, field, control)
     .then(() => {
       $scope.contentTypeForm.$setDirty();
@@ -139,7 +139,7 @@ angular.module('contentful')
   }
 
   function setDirtyState () {
-    var modified = $scope.contentTypeForm.$dirty;
+    let modified = $scope.contentTypeForm.$dirty;
     if (modified === true && $scope.context.isNew && $scope.contentType.data.fields.length < 1) {
       modified = false;
     }
@@ -178,7 +178,7 @@ angular.module('contentful')
   });
 
   function addField (newField) {
-    var data = $scope.contentType.data;
+    const data = $scope.contentType.data;
     data.fields = data.fields || [];
     data.fields.push(newField);
     $scope.$broadcast('fieldAdded');

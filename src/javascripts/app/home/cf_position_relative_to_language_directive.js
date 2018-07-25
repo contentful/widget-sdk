@@ -8,9 +8,9 @@ angular.module('contentful')
     attrs.$observe('positionRelativeTo', reposition);
 
     function reposition () {
-      var relativeTo = $(attrs.positionRelativeTo);
+      const relativeTo = $(attrs.positionRelativeTo);
       if (relativeTo.get(0)) {
-        var newMargin = relativeTo.position().left + relativeTo.width() / 2;
+        const newMargin = relativeTo.position().left + relativeTo.width() / 2;
         elem.css('marginLeft', newMargin + 'px');
       }
     }

@@ -21,8 +21,8 @@ angular.module('contentful')
  * manipulation.
  */
 .controller('FormWidgetsController', ['$scope', 'require', 'controls', ($scope, require, controls) => {
-  var K = require('utils/kefir');
-  var trackCustomWidgets = require('analyticsEvents/customWidgets');
+  const K = require('utils/kefir');
+  const trackCustomWidgets = require('analyticsEvents/customWidgets');
 
   // Widgets, which we need to instantiate, even despite
   // they are not visible. For example, we need a
@@ -32,11 +32,11 @@ angular.module('contentful')
   //
   // we keep this object inside the controller to avoid
   // global object's polluting
-  var BACKGROUND_WIDGETS = {
+  const BACKGROUND_WIDGETS = {
     slugEditor: true
   };
 
-  var validator = $scope.editorContext.validator;
+  const validator = $scope.editorContext.validator;
   $scope.$watch('preferences.showDisabledFields', updateWidgets);
   K.onValueScope($scope, validator.errors$, updateWidgets);
 
@@ -76,8 +76,8 @@ angular.module('contentful')
     if (!field) {
       return false;
     }
-    var isNotDisabled = !field.disabled || $scope.preferences.showDisabledFields;
-    var hasErrors = $scope.editorContext.validator.hasFieldError(field.id);
+    const isNotDisabled = !field.disabled || $scope.preferences.showDisabledFields;
+    const hasErrors = $scope.editorContext.validator.hasFieldError(field.id);
     return isNotDisabled || hasErrors;
   }
 }]);

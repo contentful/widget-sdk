@@ -3,15 +3,15 @@
 angular.module('contentful')
 
 .directive('cfWelcome', ['require', require => {
-  var React = require('react');
-  var ReactDOM = require('react-dom');
-  var Welcome = require('app/home/welcome/Welcome').default;
-  var K = require('utils/kefir');
-  var TokenStore = require('services/TokenStore');
+  const React = require('react');
+  const ReactDOM = require('react-dom');
+  const Welcome = require('app/home/welcome/Welcome').default;
+  const K = require('utils/kefir');
+  const TokenStore = require('services/TokenStore');
 
   return {
     link: function ($scope, el) {
-      var host = el[0];
+      const host = el[0];
       // if we assign to the $scope, angular will start to track it
       // automatically, which we don't want - we call re-renders manually
       const state = {

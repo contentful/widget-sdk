@@ -7,29 +7,29 @@ angular.module('contentful').directive('cfRoleList', () => ({
 }));
 
 angular.module('contentful').controller('RoleListController', ['$scope', 'require', ($scope, require) => {
-  var $state = require('$state');
-  var $q = require('$q');
-  var ReloadNotification = require('ReloadNotification');
-  var listHandler = require('UserListHandler').create();
-  var createRoleRemover = require('createRoleRemover');
-  var accessChecker = require('access_control/AccessChecker');
-  var jumpToRoleMembers = require('UserListController/jumpToRole');
-  var spaceContext = require('spaceContext');
-  var ADMIN_ROLE_ID = require('access_control/SpaceMembershipRepository').ADMIN_ROLE_ID;
-  var ResourceUtils = require('utils/ResourceUtils');
-  var TheAccountView = require('TheAccountView');
-  var isOwnerOrAdmin = require('services/OrganizationRoles').isOwnerOrAdmin;
-  var AccessChecker = require('access_control/AccessChecker');
+  const $state = require('$state');
+  const $q = require('$q');
+  const ReloadNotification = require('ReloadNotification');
+  const listHandler = require('UserListHandler').create();
+  const createRoleRemover = require('createRoleRemover');
+  const accessChecker = require('access_control/AccessChecker');
+  const jumpToRoleMembers = require('UserListController/jumpToRole');
+  const spaceContext = require('spaceContext');
+  const ADMIN_ROLE_ID = require('access_control/SpaceMembershipRepository').ADMIN_ROLE_ID;
+  const ResourceUtils = require('utils/ResourceUtils');
+  const TheAccountView = require('TheAccountView');
+  const isOwnerOrAdmin = require('services/OrganizationRoles').isOwnerOrAdmin;
+  const AccessChecker = require('access_control/AccessChecker');
 
-  var org = spaceContext.organizationContext.organization;
+  const org = spaceContext.organizationContext.organization;
 
   $scope.loading = true;
   $q.all({
     canModifyRoles: AccessChecker.canModifyRoles(),
     useLegacy: ResourceUtils.useLegacy(org)
   }).then(result => {
-    var subscription = spaceContext.subscription;
-    var trialLockdown = subscription.isTrial() && subscription.hasTrialEnded();
+    const subscription = spaceContext.subscription;
+    const trialLockdown = subscription.isTrial() && subscription.hasTrialEnded();
 
     $scope.legacy = result.useLegacy;
     $scope.hasFeatureEnabled = !trialLockdown && result.canModifyRoles;

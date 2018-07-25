@@ -1,12 +1,12 @@
 'use strict';
 
 angular.module('contentful').controller('CfAutocompleteResultsController', ['$scope', '$attrs', '$parse', function ($scope, $attrs, $parse) {
-  var controller = this;
-  var getAutocompleteResults = $parse($attrs.cfAutocompleteResults);
+  const controller = this;
+  const getAutocompleteResults = $parse($attrs.cfAutocompleteResults);
   this.selectedIndex = -1;
   this.numResults = 0;
 
-  var unwatchResults = $scope.$watch(
+  let unwatchResults = $scope.$watch(
     getAutocompleteResults,
   results => {
     if (_.isEmpty(results)) {
@@ -19,7 +19,7 @@ angular.module('contentful').controller('CfAutocompleteResultsController', ['$sc
   });
 
   this.getSelectedResult = function () {
-    var results = getAutocompleteResults($scope);
+    const results = getAutocompleteResults($scope);
     return results[this.selectedIndex];
   };
 
@@ -48,7 +48,7 @@ angular.module('contentful').controller('CfAutocompleteResultsController', ['$sc
   };
 
   this.cancelAutocomplete = function cancelAutocomplete () {
-    var event = $scope.$emit('autocompleteResultsCancel');
+    const event = $scope.$emit('autocompleteResultsCancel');
     // If default prevent that means the search was already
     // canceled and that means we didn't really handle anything
     return !event.defaultPrevented;

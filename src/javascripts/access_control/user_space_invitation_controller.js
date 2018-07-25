@@ -11,9 +11,9 @@
  */
 angular.module('contentful')
 .controller('UserSpaceInvitationController', ['require', '$scope', function (require, $scope) {
-  var $q = require('$q');
-  var $timeout = require('$timeout');
-  var spaceContext = require('spaceContext');
+  const $q = require('$q');
+  const $timeout = require('$timeout');
+  const spaceContext = require('spaceContext');
 
   // A hash with user ids as keys, and role ids as values
   $scope.selectedRoles = {};
@@ -31,7 +31,7 @@ angular.module('contentful')
   }
 
   function getInvalidRoleSelectionsCount () {
-    var invalidUsers = $scope.users.filter(user => !$scope.selectedRoles[user.sys.id]);
+    const invalidUsers = $scope.users.filter(user => !$scope.selectedRoles[user.sys.id]);
     return invalidUsers.length;
   }
 
@@ -40,11 +40,11 @@ angular.module('contentful')
     $scope.invitationsScheduled = $scope.users.length;
     $scope.invitationsDone = 0;
 
-    var invitees = $scope.users.map(user => ({
+    const invitees = $scope.users.map(user => ({
       user: user,
       roleId: $scope.selectedRoles[user.sys.id]
     }));
-    var currentInvitationId = 0;
+    let currentInvitationId = 0;
 
     return $q.all(invitees.map(scheduleInvitation)).then(() => {
       $scope.dialog.confirm();
@@ -55,7 +55,7 @@ angular.module('contentful')
     });
 
     function scheduleInvitation (invitee) {
-      var i = currentInvitationId++;
+      const i = currentInvitationId++;
       // We wait 350ms between invitations to avoid rate limitation errors
       // @TODO we need a backend endpoint for batch invitation:
       // https://contentful.tpondemand.com/entity/17146

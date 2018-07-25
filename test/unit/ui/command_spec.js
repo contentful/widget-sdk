@@ -11,19 +11,19 @@ describe('command service', () => {
   describe('#execute', () => {
 
     it('calls action', function () {
-      var action = sinon.stub();
-      var command = this.create(action);
+      const action = sinon.stub();
+      const command = this.create(action);
 
       command.execute();
       sinon.assert.calledOnce(action);
     });
 
     it('resolves only when action resolve', function () {
-      var deferred = this.$inject('$q').defer();
-      var action = sinon.stub().returns(deferred.promise);
-      var command = this.create(action);
+      const deferred = this.$inject('$q').defer();
+      const action = sinon.stub().returns(deferred.promise);
+      const command = this.create(action);
 
-      var executed = false;
+      let executed = false;
       command.execute().then(() => {
         executed = true;
       });
@@ -37,9 +37,9 @@ describe('command service', () => {
     });
 
     it('triggers #executions signal', function () {
-      var command = this.create(sinon.stub());
+      const command = this.create(sinon.stub());
 
-      var executed = sinon.stub();
+      const executed = sinon.stub();
       this.executions.attach(executed);
 
       command.execute();
@@ -51,8 +51,8 @@ describe('command service', () => {
 
   describe('#isDisabled()', () => {
     it('is "true" when command in progress', function () {
-      var action = sinon.stub().resolves();
-      var command = this.create(action);
+      const action = sinon.stub().resolves();
+      const command = this.create(action);
 
       expect(command.isDisabled()).toBe(false);
       command.execute();
@@ -64,8 +64,8 @@ describe('command service', () => {
 
   describe('#inProgress()', () => {
     it ('is "true" when command in progress', function () {
-      var action = sinon.stub().resolves();
-      var command = this.create(action);
+      const action = sinon.stub().resolves();
+      const command = this.create(action);
 
       expect(command.inProgress()).toBe(false);
       command.execute();

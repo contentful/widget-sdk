@@ -1,9 +1,9 @@
 'use strict';
 
-var _ = require('lodash');
-var Request = require('./request');
-var mixinChildResourceMethods = require('./child_resources');
-var dateStringToIso = require('./utils').dateStringToIso;
+const _ = require('lodash');
+const Request = require('./request');
+const mixinChildResourceMethods = require('./child_resources');
+const dateStringToIso = require('./utils').dateStringToIso;
 
 /**
  * Base class for all entities exposed by the REST API
@@ -41,8 +41,8 @@ Entity.prototype = {
    * TODO find a more descriptive name
    */
   getIdentity: function () {
-    var id = this.getId();
-    var type = this.getType();
+    const id = this.getId();
+    const type = this.getType();
     if (id && type) return '' + type + '.' + id;
   },
 
@@ -112,7 +112,7 @@ Entity.prototype = {
   save: function (headers) {
     headers = headers || {};
 
-    var endpoint, method;
+    let endpoint, method;
     if (!this.getId()) {
       endpoint = this.persistenceContext.endpoint();
       method = 'POST';
@@ -123,7 +123,7 @@ Entity.prototype = {
     }
 
 
-    var self = this;
+    const self = this;
     return endpoint
       .headers(headers)
       .payload(this.data)
@@ -135,7 +135,7 @@ Entity.prototype = {
   },
 
   delete: function () {
-    var self = this;
+    const self = this;
     return this.endpoint().delete()
       .then(function () {
         self.setDeleted();
@@ -144,8 +144,8 @@ Entity.prototype = {
   },
 
   endpoint: function (...args) {
-    var pc = this.persistenceContext;
-    var id = this.getId();
+    const pc = this.persistenceContext;
+    const id = this.getId();
     if (id) { return pc.endpoint(id).paths(args); } else { return new Request().throw(new Error('Cannot determine endpoint: Entity does not have id.')); }
   }
 };

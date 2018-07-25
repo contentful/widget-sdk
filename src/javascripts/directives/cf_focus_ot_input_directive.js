@@ -18,8 +18,8 @@
  */
 angular.module('contentful')
 .directive('cfFocusOtInput', ['require', require => {
-  var K = require('utils/kefir');
-  var defer = require('defer');
+  const K = require('utils/kefir');
+  const defer = require('defer');
 
   return {
     restrict: 'A',
@@ -27,7 +27,7 @@ angular.module('contentful')
       if (scope.$eval(attrs.cfFocusOtInput) || _.isEmpty(attrs.cfFocusOtInput)) {
         K.onValueScope(scope, scope.otDoc.state.loaded$, loaded => {
           if (loaded) {
-            var input = elem.find('input').eq(0);
+            const input = elem.find('input').eq(0);
             defer(() => { input.focus(); });
           }
         });

@@ -12,8 +12,8 @@ angular.module('contentful')
     scope: true,
     controllerAs: 'dateSelect',
     controller: ['$scope', '$attrs', '$parse', ($scope, $attrs, $parse) => {
-      var dataGetter = $parse($attrs.data);
-      var date = getDate();
+      const dataGetter = $parse($attrs.data);
+      const date = getDate();
       $scope.enabled = !!date;
       $scope.date = date;
 
@@ -47,8 +47,8 @@ angular.module('contentful')
     link: function(scope, elem, attrs, ctrls) {
       scope.label = attrs.ariaLabel;
 
-      var validator = ctrls[0];
-      var form = ctrls[1];
+      const validator = ctrls[0];
+      const form = ctrls[1];
       scope.$watch('enabled', () => {
         if (form.$dirty) {
           validator.run();

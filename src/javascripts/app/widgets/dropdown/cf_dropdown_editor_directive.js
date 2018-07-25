@@ -14,7 +14,7 @@ angular.module('cf.app')
   require: '^cfWidgetApi',
 
   link: function (scope, _elem, _attrs, widgetApi) {
-    var selectionController = require('widgets/selectionController');
+    const selectionController = require('widgets/selectionController');
     selectionController.createFromValidations(widgetApi, scope);
   }
 })]);

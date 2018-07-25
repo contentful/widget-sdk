@@ -2,22 +2,22 @@
 
 angular.module('contentful')
 .controller('EntryActionsController', ['$scope', 'require', 'notify', 'fields$', 'entityInfo', 'preferences', function ($scope, require, notify, fields$, entityInfo, preferences) {
-  var controller = this;
-  var Command = require('command');
-  var spaceContext = require('spaceContext');
-  var $state = require('$state');
-  var Analytics = require('analytics/Analytics');
-  var accessChecker = require('access_control/AccessChecker');
-  var K = require('utils/kefir');
-  var Notification = require('app/entity_editor/Notifications').Notification;
+  const controller = this;
+  const Command = require('command');
+  const spaceContext = require('spaceContext');
+  const $state = require('$state');
+  const Analytics = require('analytics/Analytics');
+  const accessChecker = require('access_control/AccessChecker');
+  const K = require('utils/kefir');
+  const Notification = require('app/entity_editor/Notifications').Notification;
 
-  var currentFields;
+  let currentFields;
   K.onValueScope($scope, fields$, fields => {
     currentFields = fields;
   });
 
   controller.toggleDisabledFields = Command.create(() => {
-    var show = !preferences.showDisabledFields;
+    const show = !preferences.showDisabledFields;
     preferences.showDisabledFields = show;
     Analytics.track('entry_editor:disabled_fields_visibility_toggled', {
       entryId: entityInfo.id,
@@ -32,7 +32,7 @@ angular.module('contentful')
   });
 
   // Command options for the #add and #duplicate actions
-  var options = {
+  const options = {
     disabled: function () {
       return !canCreateEntry();
     }
@@ -40,7 +40,7 @@ angular.module('contentful')
 
   controller.add = Command.create(
     () => {
-      var contentType = getContentType(entityInfo);
+      const contentType = getContentType(entityInfo);
       Analytics.track('entry_editor:created_with_same_ct', {
         contentTypeId: contentType.id,
         entryId: entityInfo.id
@@ -55,7 +55,7 @@ angular.module('contentful')
 
   controller.duplicate = Command.create(
     () => {
-      var contentType = getContentType(entityInfo);
+      const contentType = getContentType(entityInfo);
       return spaceContext.space.createEntry(contentType.id, {
         fields: currentFields
       })
@@ -66,7 +66,7 @@ angular.module('contentful')
   );
 
   function goToEntryDetailWithTracking (contentType, options) {
-    var eventOrigin = options && options.duplicate
+    const eventOrigin = options && options.duplicate
       ? 'entry-editor__duplicate'
       : 'entry-editor';
     return entry => {
@@ -76,7 +76,7 @@ angular.module('contentful')
   }
 
   function getContentType (entityInfo) {
-    var contentTypeId = entityInfo.contentTypeId;
+    const contentTypeId = entityInfo.contentTypeId;
     return {
       id: contentTypeId,
       type: spaceContext.publishedCTs.get(contentTypeId)

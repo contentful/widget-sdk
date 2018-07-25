@@ -13,12 +13,12 @@
  */
 angular.module('contentful')
 .directive('cfCopyToClipboard', ['require', require => {
-  var h = require('utils/hyperscript').h;
-  var $timeout = require('$timeout');
-  var userAgent = require('userAgent');
-  var domCopy = require('utils/DomClipboardCopy').default;
+  const h = require('utils/hyperscript').h;
+  const $timeout = require('$timeout');
+  const userAgent = require('userAgent');
+  const domCopy = require('utils/DomClipboardCopy').default;
 
-  var template = h('button', {
+  const template = h('button', {
     class: [
       'cfnext-form__icon-suffix',
       'copy-to-clipboard', 'x--input-suffix',
@@ -32,7 +32,7 @@ angular.module('contentful')
     scope: true,
     template: template,
     link: function (scope, elem, attrs) {
-      var canCopy = !userAgent.isSafari();
+      const canCopy = !userAgent.isSafari();
 
       scope.icon = 'fa-copy';
 

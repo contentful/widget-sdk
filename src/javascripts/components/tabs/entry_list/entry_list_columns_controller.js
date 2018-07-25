@@ -2,9 +2,9 @@
 
 angular.module('contentful')
 .controller('EntryListColumnsController', ['$scope', 'require', ($scope, require) => {
-  var systemFields = require('systemFields');
+  const systemFields = require('systemFields');
 
-  var SORTABLE_TYPES = [
+  const SORTABLE_TYPES = [
     'Boolean',
     'Date',
     'Integer',
@@ -35,8 +35,8 @@ angular.module('contentful')
   }, true);
 
   $scope.orderDescription = view => {
-    var field = _.find($scope.displayedFields, {id: view.order.fieldId});
-    var direction = view.order.direction;
+    const field = _.find($scope.displayedFields, {id: view.order.fieldId});
+    const direction = view.order.direction;
     return '' + direction + ' by ' + field.name;
   };
 

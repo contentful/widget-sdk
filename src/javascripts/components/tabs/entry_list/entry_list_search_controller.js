@@ -3,22 +3,22 @@
 angular.module('contentful')
 
 .controller('EntryListSearchController', ['$scope', 'require', function ($scope, require) {
-  var $q = require('$q');
-  var ListQuery = require('ListQuery');
-  var ReloadNotification = require('ReloadNotification');
-  var Notification = require('notification');
-  var createRequestQueue = require('overridingRequestQueue');
-  var spaceContext = require('spaceContext');
-  var accessChecker = require('access_control/AccessChecker');
-  var Tracking = require('analytics/events/SearchAndViews');
-  var K = require('utils/kefir');
-  var Kefir = require('kefir');
-  var createSearchInput = require('app/ContentList/Search').default;
-  var h = require('ui/Framework').h;
-  var getAccessibleCTs = require('data/ContentTypeRepo/accessibleCTs').default;
+  const $q = require('$q');
+  const ListQuery = require('ListQuery');
+  const ReloadNotification = require('ReloadNotification');
+  const Notification = require('notification');
+  const createRequestQueue = require('overridingRequestQueue');
+  const spaceContext = require('spaceContext');
+  const accessChecker = require('access_control/AccessChecker');
+  const Tracking = require('analytics/events/SearchAndViews');
+  const K = require('utils/kefir');
+  const Kefir = require('kefir');
+  const createSearchInput = require('app/ContentList/Search').default;
+  const h = require('ui/Framework').h;
+  const getAccessibleCTs = require('data/ContentTypeRepo/accessibleCTs').default;
 
-  var initialized = false;
-  var lastUISearchState = null;
+  let initialized = false;
+  let lastUISearchState = null;
 
   $scope.context.ready = false;
   $scope.context.loading = true;
@@ -34,14 +34,14 @@ angular.module('contentful')
     }
   };
 
-  var updateEntries = createRequestQueue(requestEntries, setupEntriesHandler);
+  const updateEntries = createRequestQueue(requestEntries, setupEntriesHandler);
 
   this.hasQuery = hasQuery;
 
   // We store the page in a local variable.
   // We need this to determine if a change to 'paginator.getPage()'
   // comes from us or the user.
-  var page = 0;
+  let page = 0;
   $scope.$watch(() => $scope.paginator.getPage(), newPage => {
     if (page !== newPage && initialized) {
       page = newPage;
@@ -83,7 +83,7 @@ angular.module('contentful')
   // list. If that list becomes empty we want to go to the previous
   // page.
   $scope.$watch('entries.length', entriesLength => {
-    var currPage = $scope.paginator.getPage();
+    const currPage = $scope.paginator.getPage();
     if (!entriesLength && !$scope.context.loading && $scope.paginator.getPage() > 0) {
       $scope.paginator.setPage(currPage - 1);
     }
@@ -118,16 +118,16 @@ angular.module('contentful')
 
   function onSearchChange (newSearchState) {
     lastUISearchState = newSearchState;
-    var oldView = _.cloneDeep($scope.context.view);
-    var newView = _.extend(oldView, newSearchState);
+    const oldView = _.cloneDeep($scope.context.view);
+    const newView = _.extend(oldView, newSearchState);
     $scope.loadView(newView);
   }
 
-  var isSearching$ = K.fromScopeValue($scope, $scope => $scope.context.isSearching);
+  const isSearching$ = K.fromScopeValue($scope, $scope => $scope.context.isSearching);
 
   function initializeSearchUI () {
-    var initialSearchState = getViewSearchState();
-    var contentTypes = getAccessibleCTs(spaceContext.publishedCTs, initialSearchState.contentTypeId);
+    const initialSearchState = getViewSearchState();
+    const contentTypes = getAccessibleCTs(spaceContext.publishedCTs, initialSearchState.contentTypeId);
 
     if (_.isEqual(lastUISearchState, initialSearchState)) {
       return;
@@ -166,7 +166,7 @@ angular.module('contentful')
       $scope.paginator.setTotal(entries.total);
 
       if ($scope.paginator.isBeyondLast()) {
-        var lastPage = $scope.paginator.getPageCount() - 1;
+        const lastPage = $scope.paginator.getPageCount() - 1;
         $scope.setPage(lastPage);
       }
 
@@ -201,7 +201,7 @@ angular.module('contentful')
 
   function prepareQuery () {
     return ListQuery.getForEntries(getQueryOptions()).then(query => {
-      var collection = getViewItem('collection');
+      const collection = getViewItem('collection');
       if (collection && Array.isArray(collection.items)) {
         query['sys.id[in]'] = collection.items.join(',');
       }
@@ -211,7 +211,7 @@ angular.module('contentful')
 
   function refreshEntityCaches () {
     if (getViewItem('contentTypeId')) {
-      var fieldIds = getViewItem('displayedFieldIds');
+      const fieldIds = getViewItem('displayedFieldIds');
       $scope.entryCache.setDisplayedFieldIds(fieldIds);
       $scope.entryCache.resolveLinkedEntities($scope.entries);
       $scope.assetCache.setDisplayedFieldIds(fieldIds);
@@ -231,7 +231,7 @@ angular.module('contentful')
   }
 
   function hasQuery () {
-    var search = getViewSearchState();
+    const search = getViewSearchState();
     return (
       !_.isEmpty(search.searchText) ||
       !_.isEmpty(search.searchFilters) ||

@@ -5,11 +5,11 @@ describe('ngModel directive', () => {
 
   describe('aria-invalid attribute', () => {
     it('is link to model errors', function () {
-      var $compile = this.$inject('$compile');
-      var scope = this.$inject('$rootScope').$new();
+      const $compile = this.$inject('$compile');
+      const scope = this.$inject('$rootScope').$new();
 
-      var template = '<input required ng-model=myvalue>';
-      var element = $compile(template)(scope);
+      const template = '<input required ng-model=myvalue>';
+      const element = $compile(template)(scope);
       expect(element.attr('aria-invalid')).toBeUndefined();
 
       this.$apply();
@@ -25,10 +25,10 @@ describe('ngModel directive', () => {
 
   describe('hideErrors property', () => {
     beforeEach(function () {
-      var $compile = this.$inject('$compile');
-      var scope = this.$inject('$rootScope').$new();
+      const $compile = this.$inject('$compile');
+      const scope = this.$inject('$rootScope').$new();
 
-      var template = '<form><input required ng-model=myvalue></form>';
+      const template = '<form><input required ng-model=myvalue></form>';
       this.form = $compile(template)(scope);
       this.modelController = this.form.find('input').controller('ngModel');
       this.formController = this.form.controller('form');
@@ -52,31 +52,31 @@ describe('ngModel directive', () => {
 
   describe('ngModel:update event', () => {
     it('is emitted when view value changes', function () {
-      var $compile = this.$inject('$compile');
-      var scope = this.$inject('$rootScope').$new();
+      const $compile = this.$inject('$compile');
+      const scope = this.$inject('$rootScope').$new();
 
-      var eventListener = sinon.stub();
+      const eventListener = sinon.stub();
       scope.$on('ngModel:update', eventListener);
 
-      var template = '<input type=text ng-model=myvalue>';
-      var element = $compile(template)(scope);
+      const template = '<input type=text ng-model=myvalue>';
+      const element = $compile(template)(scope);
       element.val('x').trigger('change');
       sinon.assert.calledOnce(eventListener);
-      var modelCtrl = eventListener.firstCall.args[1];
+      const modelCtrl = eventListener.firstCall.args[1];
       expect(modelCtrl.$viewValue).toEqual('x');
     });
   });
 
   describe('ngModel:commit event', () => {
     it('is emitted when input is blured', function () {
-      var $compile = this.$inject('$compile');
-      var scope = this.$inject('$rootScope').$new();
+      const $compile = this.$inject('$compile');
+      const scope = this.$inject('$rootScope').$new();
 
-      var eventListener = sinon.stub();
+      const eventListener = sinon.stub();
       scope.$on('ngModel:commit', eventListener);
 
-      var template = '<input type=text ng-model=myvalue>';
-      var element = $compile(template)(scope);
+      const template = '<input type=text ng-model=myvalue>';
+      const element = $compile(template)(scope);
       element.trigger('blur');
       sinon.assert.calledOnce(eventListener);
     });

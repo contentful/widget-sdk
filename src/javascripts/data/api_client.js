@@ -90,8 +90,8 @@ angular.module('cf.data')
   };
 
   Client.prototype._createResource = function (name, data, headers) {
-    var id = getId(data);
-    var method = id ? 'PUT' : 'POST';
+    const id = getId(data);
+    const method = id ? 'PUT' : 'POST';
     return this._request({
       method: method,
       path: [name, id],
@@ -113,8 +113,8 @@ angular.module('cf.data')
 
 
   Client.prototype._updateResource = function (path, data) {
-    var id = getId(data);
-    var version = getVersion(data);
+    const id = getId(data);
+    const version = getVersion(data);
     return this._request({
       method: 'PUT',
       path: [path, id],
@@ -124,7 +124,7 @@ angular.module('cf.data')
   };
 
   Client.prototype.updateContentType = function (data) {
-    var self = this;
+    const self = this;
     return this._updateResource('content_types', data)
     .then(data => self.publishContentType(data));
   };
@@ -139,7 +139,7 @@ angular.module('cf.data')
 
 
   Client.prototype._setResourceFlag = function (name, data, flag, version) {
-    var id = getId(data);
+    const id = getId(data);
     version = version || getVersion(data);
     return this._request({
       method: 'PUT',
@@ -149,7 +149,7 @@ angular.module('cf.data')
   };
 
   Client.prototype._unsetResourceFlag = function (name, data, flag) {
-    var id = getId(data);
+    const id = getId(data);
     return this._request({
       method: 'DELETE',
       path: [name, id, flag]
@@ -206,7 +206,7 @@ angular.module('cf.data')
 
 
   Client.prototype._deleteResource = function (name, data) {
-    var id = getId(data);
+    const id = getId(data);
     return this._request({
       method: 'DELETE',
       path: [name, id]
@@ -216,7 +216,7 @@ angular.module('cf.data')
   };
 
   Client.prototype.deleteContentType = function (data) {
-    var self = this;
+    const self = this;
     return this.unpublishContentType(data)
     .catch(() => {})
     .then(() => self._deleteResource('content_types', data));
@@ -232,7 +232,7 @@ angular.module('cf.data')
 
 
   Client.prototype.processAsset = function (asset, fileId, version) {
-    var id = getId(asset);
+    const id = getId(asset);
     version = version || getVersion(asset);
     return this._request({
       method: 'PUT',

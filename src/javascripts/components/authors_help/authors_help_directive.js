@@ -15,18 +15,18 @@
 
 angular.module('contentful')
 .directive('cfAuthorsHelp', ['require', require => {
-  var h = require('utils/hyperscript').h;
-  var helpModal = require('components/authors_help/helpModal');
-  var LD = require('utils/LaunchDarkly');
-  var K = require('utils/kefir');
-  var TokenStore = require('services/TokenStore');
-  var getStore = require('TheStore').getStore;
-  var store = getStore();
-  var $state = require('$state');
-  var Analytics = require('analytics/Analytics');
-  var infoIcon = require('svg/icon-info').default;
+  const h = require('utils/hyperscript').h;
+  const helpModal = require('components/authors_help/helpModal');
+  const LD = require('utils/LaunchDarkly');
+  const K = require('utils/kefir');
+  const TokenStore = require('services/TokenStore');
+  const getStore = require('TheStore').getStore;
+  const store = getStore();
+  const $state = require('$state');
+  const Analytics = require('analytics/Analytics');
+  const infoIcon = require('svg/icon-info').default;
 
-  var authorHelpFlag = 'feature-ps-12-2017-author-onboarding-help';
+  const authorHelpFlag = 'feature-ps-12-2017-author-onboarding-help';
 
   return {
     restrict: 'E',
@@ -43,12 +43,12 @@ angular.module('contentful')
     ]),
     controllerAs: 'help',
     controller: ['$scope', function ($scope) {
-      var controller = this;
+      const controller = this;
 
       K.onValueScope($scope, TokenStore.user$, user => {
         const userId = user.sys.id;
-        var modalKey = 'ctfl:' + userId + ':author_auto_help_modal';
-        var feedbackKey = 'ctfl:' + userId + ':author_help_feedback';
+        const modalKey = 'ctfl:' + userId + ':author_auto_help_modal';
+        const feedbackKey = 'ctfl:' + userId + ':author_help_feedback';
 
         $scope.name = user.firstName;
 
@@ -104,8 +104,8 @@ angular.module('contentful')
         // we automatically open the modal for users who logged in
         // for the first time and have not seen it yet
         function showModal () {
-          var isNewUser = user.signInCount === 1;
-          var wasModalShown = store.get(modalKey);
+          const isNewUser = user.signInCount === 1;
+          const wasModalShown = store.get(modalKey);
 
           if (!wasModalShown && isNewUser) {
             controller.openHelp().then(() => {

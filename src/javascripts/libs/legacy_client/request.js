@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('lodash');
+const _ = require('lodash');
 
 module.exports = Request;
 
@@ -23,14 +23,14 @@ function Request (adapter, params) {
 Request.prototype.send = function send (method) {
   if (this._params.error) { return Promise.reject(this._params.error); }
 
-  var params = _.pick(this._params, ['path', 'headers', 'payload']);
+  const params = _.pick(this._params, ['path', 'headers', 'payload']);
 
   params.method = method;
   if (method === 'PUT' && this._params.putHeaders) { params.headers = _.extend(params.headers || {}, this._params.putHeaders); }
 
   if (_.isEmpty(params.headers)) { delete params.headers; }
 
-  var responseHandler = this._params.responseHandler || identity;
+  const responseHandler = this._params.responseHandler || identity;
   return this.adapter.request(params).then(responseHandler);
 };
 
@@ -62,8 +62,8 @@ Request.prototype.headers = function (headers) {
 
 
 Request.prototype.deleteHeader = function (name) {
-  var headers = _.omit(this._params.headers, name);
-  var putHeaders = _.omit(this._params.putHeaders, name);
+  const headers = _.omit(this._params.headers, name);
+  const putHeaders = _.omit(this._params.putHeaders, name);
   return this._clone({
     headers: headers,
     putHeaders: putHeaders
@@ -82,8 +82,8 @@ Request.prototype.path = function (...args) {
 
 
 Request.prototype.paths = function (add) {
-  var components = [this._params.path].concat(_.toArray(add));
-  var newPath = joinPath(components);
+  const components = [this._params.path].concat(_.toArray(add));
+  const newPath = joinPath(components);
   return this._clone({path: newPath});
 };
 
@@ -100,7 +100,7 @@ Request.prototype._clone = function (params) {
 
 
 function joinPath (components) {
-  var path = '/' + _.filter(components).join('/');
+  const path = '/' + _.filter(components).join('/');
   return path.replace(/\/+/, '/');
 }
 

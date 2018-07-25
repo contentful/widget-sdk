@@ -1,7 +1,7 @@
 angular.module('contentful').directive('cfAssetEditor', [
   'require',
   require => {
-    var createEditorController = require('app/entity_editor/AssetController')
+    const createEditorController = require('app/entity_editor/AssetController')
       .default;
     return {
       restrict: 'E',

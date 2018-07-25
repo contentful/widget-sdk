@@ -2,12 +2,12 @@
 
 angular.module('contentful')
 .directive('cfEntryList', ['require', require => {
-  var $timeout = require('$timeout');
-  var spaceContext = require('spaceContext');
-  var K = require('utils/kefir');
+  const $timeout = require('$timeout');
+  const spaceContext = require('spaceContext');
+  const K = require('utils/kefir');
 
   // Definitions for narrow/medium types in entry list controller
-  var classToWidth = {
+  const classToWidth = {
     narrow: 70,
     medium: 130
   };
@@ -20,10 +20,10 @@ angular.module('contentful')
       // We obtain a reference to the publishedCTs directly so that if
       // we are changing the space we do not refer to the new CT
       // repository.
-      var publishedCTs = spaceContext.publishedCTs;
+      const publishedCTs = spaceContext.publishedCTs;
 
-      var collapsedStates = {};
-      var expandedField;
+      let collapsedStates = {};
+      let expandedField;
 
       scope.expandColumn = field => {
         expandedField = field.id;
@@ -38,8 +38,8 @@ angular.module('contentful')
       });
 
       scope.contentTypeName = entry => {
-        var ctId = entry.getContentTypeId();
-        var ct = publishedCTs.get(ctId);
+        const ctId = entry.getContentTypeId();
+        const ct = publishedCTs.get(ctId);
         if (ct) {
           return ct.getName();
         } else {
@@ -67,8 +67,8 @@ angular.module('contentful')
 
 
       function collapseElement (field) {
-        var fieldEl = elem.find('th[data-field-id=' + field.id + ']');
-        var minWidth = getMinWidth(fieldEl.get(0));
+        const fieldEl = elem.find('th[data-field-id=' + field.id + ']');
+        const minWidth = getMinWidth(fieldEl.get(0));
 
         if (!fieldEl.hasClass('collapsed') && field.id !== expandedField && !isOrderingField(fieldEl) && fieldEl.width() < minWidth) {
           // console.log('field.id %s field width: %d min width: %d', field.id, fieldEl.width(), minWidth);
@@ -80,7 +80,7 @@ angular.module('contentful')
       }
 
       function getMinWidth (elem) {
-        var minWidth;
+        let minWidth;
         _.forEach(elem.className.split(' '), classname => {
           minWidth = classToWidth[classname];
           if (minWidth) return false;

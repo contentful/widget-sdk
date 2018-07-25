@@ -20,10 +20,10 @@
 angular.module('contentful')
 .controller('ImageDimensionsValidationController',
 ['$scope', function($scope) {
-  var controller = this;
+  const controller = this;
 
   // Either 'width' or 'height';
-  var dimension = $scope.dimension;
+  const dimension = $scope.dimension;
 
   loadValidationSettings();
 
@@ -32,15 +32,15 @@ angular.module('contentful')
    * `assetImageDimension` validation.
    */
   controller.update = function saveValidationSettings() {
-    var settings = $scope.validation.settings[dimension];
+    const settings = $scope.validation.settings[dimension];
     if (!$scope.enabled) {
       settings.min = null;
       settings.max = null;
       return;
     }
 
-    var condition = $scope.condition;
-    var bounds = $scope.bounds;
+    const condition = $scope.condition;
+    const bounds = $scope.bounds;
     if (condition == 'min') {
       settings.min = bounds.min;
       settings.max = null;
@@ -62,9 +62,9 @@ angular.module('contentful')
    * validation and populate the scope with the corresponding data.
    */
   function loadValidationSettings() {
-    var bounds = $scope.validation.settings[dimension];
-    var min = bounds.min;
-    var max = bounds.max;
+    const bounds = $scope.validation.settings[dimension];
+    const min = bounds.min;
+    const max = bounds.max;
 
     $scope.condition = 'min';
     $scope.bounds = {};

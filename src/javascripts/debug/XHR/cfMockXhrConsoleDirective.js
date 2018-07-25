@@ -1,12 +1,12 @@
 angular.module('contentful')
 
 .directive('cfMockXhrConsole', ['require', require => {
-  var h = require('utils/hyperscript').h;
+  const h = require('utils/hyperscript').h;
 
   return {
     template: getTemplate(),
     link: function (scope) {
-      var mxhr = scope.xhrMock;
+      const mxhr = scope.xhrMock;
 
       scope.rules = [];
       scope.enabled = true;
@@ -16,7 +16,7 @@ angular.module('contentful')
       scope.toggle = toggle;
 
       function add (urlPattern, status) {
-        var rule = { urlPattern: RegExp(urlPattern), status: status };
+        const rule = { urlPattern: RegExp(urlPattern), status: status };
         mxhr.addRule(rule);
         scope.rules.push(rule);
       }
@@ -34,7 +34,7 @@ angular.module('contentful')
   };
 
   function getTemplate () {
-    var style = {
+    const style = {
       wrapper: {
         position: 'fixed',
         width: '400px',
@@ -50,11 +50,11 @@ angular.module('contentful')
       }
     };
 
-    var closeBtn = h('button', {ngClick: 'isVisible = false'}, ['close']);
+    const closeBtn = h('button', {ngClick: 'isVisible = false'}, ['close']);
 
-    var collapseBtn = h('button', {ngClick: 'isCollapsed = !isCollapsed'}, ['{{isCollapsed ? "expand" : "collapse"}}']);
+    const collapseBtn = h('button', {ngClick: 'isCollapsed = !isCollapsed'}, ['{{isCollapsed ? "expand" : "collapse"}}']);
 
-    var rulesTable = h('table', {}, [
+    const rulesTable = h('table', {}, [
       h('tr', {}, [
         h('th', {}, ['Url match (RegExp)']),
         h('th', {}, ['Response status'])
@@ -71,12 +71,12 @@ angular.module('contentful')
       ])
     ]);
 
-    var disableButton = h('button', {
+    const disableButton = h('button', {
       ngClick: 'toggle()',
       ngDisabled: 'rules.length === 0'
     }, ['{{ enabled ? "Disable" : "Enable" }}']);
 
-    var noRulesMsg = h('p', {ngIf: 'rules.length === 0'}, ['Add some rules and click \'enable\'']);
+    const noRulesMsg = h('p', {ngIf: 'rules.length === 0'}, ['Add some rules and click \'enable\'']);
 
     return h('.xhr-console', {
       style: style.wrapper,

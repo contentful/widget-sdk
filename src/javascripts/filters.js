@@ -1,6 +1,6 @@
 'use strict';
 
-var filters = angular.module('contentful');
+let filters = angular.module('contentful');
 
 filters.filter('dateTime', () => unixTime => {
   if (unixTime) {
@@ -46,7 +46,7 @@ filters.filter('fileType', ['mimetype', mimetype => file => {
  * actual domain. This is used to replace the hosts.
  */
 filters.filter('assetUrl', ['hostnameTransformer', 'services/TokenStore', (hostnameTransformer, TokenStore) => assetOrUrl => {
-  var domains = TokenStore.getDomains();
+  const domains = TokenStore.getDomains();
   if (domains) {
     return hostnameTransformer.toExternal(assetOrUrl, domains);
   } else {
@@ -56,7 +56,7 @@ filters.filter('assetUrl', ['hostnameTransformer', 'services/TokenStore', (hostn
 
 filters.filter('fileExtension', ['mimetype', mimetype => file => {
   if (file) {
-    var ext = mimetype.getExtension(file.fileName);
+    const ext = mimetype.getExtension(file.fileName);
     return ext ? ext.slice(1) : '';
   }
   return '';
@@ -74,7 +74,7 @@ filters.filter('userNameDisplay', () => (currentUser, user) => {
 
 filters.filter('decimalMarks', () => str => {
   str = str ? str + '' : '';
-  var markedStr = '';
+  let markedStr = '';
   for (var i = str.length; i > 0; i -= 3) {
     markedStr = str.slice(i - 3, i) + (i < str.length ? ',' : '') + markedStr;
   }

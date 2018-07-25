@@ -7,7 +7,7 @@ angular.module('cf.app')
  * @name cfTagEditor
  */
 .directive('cfTagEditor', ['require', require => {
-  var KEYCODES = require('utils/keycodes').default;
+  const KEYCODES = require('utils/keycodes').default;
 
   return {
     restrict: 'E',
@@ -15,7 +15,7 @@ angular.module('cf.app')
     require: '^cfWidgetApi',
     template: JST.cf_tag_editor(),
     link: function ($scope, _el, _attrs, widgetApi) {
-      var field = widgetApi.field;
+      const field = widgetApi.field;
 
       $scope.constraints = _(field.validations).map('size').filter().first() || {};
 
@@ -33,7 +33,7 @@ angular.module('cf.app')
        * @name cfTagEditor#$scope.items
        * @type {string[]}
        */
-      var offValueChanged = field.onValueChanged(items => {
+      const offValueChanged = field.onValueChanged(items => {
         items = items || [];
         // We make a copy so we do not modify the object in the
         // snapshot.
@@ -67,7 +67,7 @@ angular.module('cf.app')
        * @param {Event} event
        */
       $scope.addItem = ev => {
-        var value = ev.target.value;
+        const value = ev.target.value;
         if (ev.keyCode === KEYCODES.ENTER && value) {
           $scope.items.push(value);
           field.pushValue(value);

@@ -2,9 +2,9 @@
 
 angular.module('contentful')
 .directive('cfExtensionExamplePicker', ['require', require => {
-  var React = require('react');
-  var ReactDOM = require('react-dom');
-  var ExamplePicker = require('app/Extensions/ExamplePicker').default;
+  const React = require('react');
+  const ReactDOM = require('react-dom');
+  const ExamplePicker = require('app/Extensions/ExamplePicker').default;
 
   return {
     restrict: 'E',

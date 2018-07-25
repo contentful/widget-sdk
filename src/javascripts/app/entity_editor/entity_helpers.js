@@ -10,9 +10,9 @@
  */
 angular.module('cf.app')
 .factory('EntityHelpers', ['require', require => {
-  var $q = require('$q');
-  var spaceContext = require('spaceContext');
-  var assetUrlFilter = require('$filter')('assetUrl');
+  const $q = require('$q');
+  const spaceContext = require('spaceContext');
+  const assetUrlFilter = require('$filter')('assetUrl');
 
   return {
     newForLocale: newForLocale,
@@ -47,8 +47,8 @@ angular.module('cf.app')
    * In particular it uses private ids.
    */
   function dataToEntity (data) {
-    var prepareFields = $q.resolve(data.fields);
-    var ctId = _.get(data, 'sys.contentType.sys.id');
+    let prepareFields = $q.resolve(data.fields);
+    const ctId = _.get(data, 'sys.contentType.sys.id');
 
     if (data.sys.type === 'Entry') {
       prepareFields = spaceContext
@@ -56,7 +56,7 @@ angular.module('cf.app')
       .then(ct => {
         if (ct) {
           return _.transform(ct.data.fields, (acc, ctField) => {
-            var field = _.get(data, ['fields', ctField.apiName]);
+            const field = _.get(data, ['fields', ctField.apiName]);
             if (field) {
               acc[ctField.id] = field;
             }
@@ -97,9 +97,9 @@ angular.module('cf.app')
     if (!_.isObject(field)) {
       throw new Error('expects a content type field');
     }
-    var validations = (field.type === 'Array' ? field.items : field).validations;
+    const validations = (field.type === 'Array' ? field.items : field).validations;
 
-    var contentTypeValidation = _.find(validations, validation => !!validation.linkContentType);
+    const contentTypeValidation = _.find(validations, validation => !!validation.linkContentType);
 
     return contentTypeValidation ? contentTypeValidation.linkContentType : [];
   }

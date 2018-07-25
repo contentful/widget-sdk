@@ -15,21 +15,21 @@
  */
 angular.module('cf.app')
 .directive('cfWidgetRenderer', ['require', require => {
-  var $compile = require('$compile');
-  var $state = require('$state');
+  const $compile = require('$compile');
+  const $state = require('$state');
 
   return {
     scope: true,
     restrict: 'E',
     link: function (scope, element) {
-      var template = scope.widget.template;
+      const template = scope.widget.template;
       if (!template) {
         throw new Error('Widget template is required');
       }
 
       scope.contentTypeHref = buildContentTypeHref(scope.contentType);
 
-      var $widget = $(template);
+      const $widget = $(template);
       element.append($widget);
       $compile($widget)(scope);
 

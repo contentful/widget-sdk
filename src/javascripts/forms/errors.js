@@ -111,9 +111,9 @@ angular.module('cf.forms')
  */
 .controller('FieldErrorController', ['$scope', '$injector',
 function ($scope, $injector) {
-  var fieldErrorMessage = $injector.get('fieldErrorMessage');
-  var controller = this;
-  var unwatchErrors, unwatchHide;
+  const fieldErrorMessage = $injector.get('fieldErrorMessage');
+  const controller = this;
+  let unwatchErrors, unwatchHide;
 
   /**
    * @ngdoc method
@@ -137,10 +137,10 @@ function ($scope, $injector) {
     if (unwatchHide) unwatchHide();
 
     unwatchErrors = $scope.$watchCollection(ngModelError, errors => {
-      var errorDetails = (form[ctrlName] || {}).errorDetails || {};
+      const errorDetails = (form[ctrlName] || {}).errorDetails || {};
 
       controller.messages = _.map(_.keys(errors), error => {
-        var details = errorDetails[error] || {};
+        const details = errorDetails[error] || {};
         return details.message || fieldErrorMessage(error, details);
       });
 
@@ -167,7 +167,7 @@ function ($scope, $injector) {
  * Build messages for `ngModel` validation errors.
  */
 .provider('fieldErrorMessage', function fieldErrorMessageProvider() {
-  var messages = {
+  const messages = {
     required: 'Please provide a value.'
   };
 
@@ -176,7 +176,7 @@ function ($scope, $injector) {
   };
 
   this.$get = () => {
-    var templates = _.mapValues(messages, message => _.template(message));
+    const templates = _.mapValues(messages, message => _.template(message));
 
     return function build (key, details) {
       if (key in templates)

@@ -31,16 +31,16 @@ angular.module('contentful')
  * Exposed by the `cfWidgetApi` directive.
  */
 .controller('WidgetApiController', ['$scope', 'require', function ($scope, require) {
-  var TheLocaleStore = require('TheLocaleStore');
-  var K = require('utils/kefir');
-  var spaceContext = require('spaceContext');
-  var EntityHelpers = require('EntityHelpers');
-  var Navigator = require('states/Navigator');
+  const TheLocaleStore = require('TheLocaleStore');
+  const K = require('utils/kefir');
+  const spaceContext = require('spaceContext');
+  const EntityHelpers = require('EntityHelpers');
+  const Navigator = require('states/Navigator');
 
-  var fieldLocale = $scope.fieldLocale;
-  var ctField = $scope.widget.field;
+  const fieldLocale = $scope.fieldLocale;
+  const ctField = $scope.widget.field;
 
-  var isEditingDisabled = fieldLocale.access$.map(access => !!access.disabled);
+  const isEditingDisabled = fieldLocale.access$.map(access => !!access.disabled);
 
   this.settings = _.clone($scope.widget.settings);
   this.settings.helpText = this.settings.helpText || $scope.widget.defaultHelpText;
@@ -87,7 +87,7 @@ angular.module('contentful')
   this.entityHelpers = EntityHelpers.newForLocale($scope.locale.code);
   this.state = {
     goToEditor: function (entity) {
-      var ref = Navigator.makeEntityRef(entity);
+      const ref = Navigator.makeEntityRef(entity);
       return Navigator.go(ref);
     }
   };

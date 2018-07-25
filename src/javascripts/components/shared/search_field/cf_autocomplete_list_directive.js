@@ -1,8 +1,8 @@
 'use strict';
 angular.module('contentful').directive('cfAutocompleteList', ['require', require => {
-  var h = require('utils/hyperscript').h;
-  var $timeout = require('$timeout');
-  var scrollIntoView = require('scroll-into-view');
+  const h = require('utils/hyperscript').h;
+  const $timeout = require('$timeout');
+  const scrollIntoView = require('scroll-into-view');
 
   return {
     template: h('ul.search-autocomplete-list', [
@@ -31,7 +31,7 @@ angular.module('contentful').directive('cfAutocompleteList', ['require', require
         // wait for the ".selected" class to be applied
         $timeout(() => {
           // scroll-into-view expects a single DOM element
-          var selected = el.find('.selected').first().get(0);
+          const selected = el.find('.selected').first().get(0);
           if (selected) {
             scrollIntoView(selected);
           }
@@ -76,17 +76,17 @@ angular.module('contentful').directive('cfAutocompleteList', ['require', require
       };
 
       function selectInitialAutocompletion () {
-        var token = $scope.currentTokenContent();
+        const token = $scope.currentTokenContent();
         $scope.selectedAutocompletion = _.find($scope.autocompletion.items, i => i.value.toString() === token);
       }
 
       function selectNextAutocompletion () {
-        var index = getSelectedIndex();
+        const index = getSelectedIndex();
         $scope.selectedAutocompletion = $scope.autocompletion.items[index + 1] || $scope.autocompletion.items[0];
       }
 
       function selectPreviousAutocompletion () {
-        var index = getSelectedIndex();
+        const index = getSelectedIndex();
         $scope.selectedAutocompletion = $scope.autocompletion.items[index - 1] || $scope.autocompletion.items[$scope.autocompletion.items.length - 1];
       }
 

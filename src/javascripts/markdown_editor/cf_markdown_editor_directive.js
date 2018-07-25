@@ -1,25 +1,25 @@
 'use strict';
 
 angular.module('contentful').directive('cfMarkdownEditor', ['require', require => {
-  var RTL_SUPPORT_FEATURE_FLAG =
+  const RTL_SUPPORT_FEATURE_FLAG =
     'feature-at-03-2018-rtl-support';
-  var EDITOR_DIRECTIONS = {
+  const EDITOR_DIRECTIONS = {
     LTR: 'ltr',
     RTL: 'rtl'
   };
 
-  var $timeout = require('$timeout');
-  var LazyLoader = require('LazyLoader');
-  var MarkdownEditor = require('markdown_editor/markdown_editor');
-  var actions = require('markdown_editor/markdown_actions');
-  var makePreview = require('markdown_editor/PreviewGenerator').default;
-  var notification = require('notification');
-  var throttle = require('throttle');
-  var LocaleStore = require('TheLocaleStore');
-  var isRtlLocale = require('utils/locales').isRtlLocale;
-  var K = require('utils/kefir');
-  var LD = require('utils/LaunchDarkly');
-  var {trackMarkdownEditorAction} = require('analytics/MarkdownEditorActions');
+  const $timeout = require('$timeout');
+  const LazyLoader = require('LazyLoader');
+  const MarkdownEditor = require('markdown_editor/markdown_editor');
+  const actions = require('markdown_editor/markdown_actions');
+  const makePreview = require('markdown_editor/PreviewGenerator').default;
+  const notification = require('notification');
+  const throttle = require('throttle');
+  const LocaleStore = require('TheLocaleStore');
+  const isRtlLocale = require('utils/locales').isRtlLocale;
+  const K = require('utils/kefir');
+  const LD = require('utils/LaunchDarkly');
+  const {trackMarkdownEditorAction} = require('analytics/MarkdownEditorActions');
 
   return {
     restrict: 'E',
@@ -27,15 +27,15 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
     scope: {},
     require: '^cfWidgetApi',
     link: function (scope, el, _attrs, api) {
-      var field = api.field;
-      var textarea = el.find('textarea').get(0);
-      var preview = el.find('.markdown-preview').first();
-      var currentMode = 'md';
-      var editor = null;
-      var childEditor = null;
+      const field = api.field;
+      const textarea = el.find('textarea').get(0);
+      const preview = el.find('.markdown-preview').first();
+      let currentMode = 'md';
+      let editor = null;
+      let childEditor = null;
 
       // @todo find a better way of hiding header in Zen Mode
-      var editorHeader = el.closest('.workbench-main').siblings('.workbench-header').first();
+      const editorHeader = el.closest('.workbench-main').siblings('.workbench-header').first();
 
       scope.preview = {};
       scope.zen = false;
@@ -48,7 +48,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
       // RTL support feature flag is enabled.
       scope.direction = EDITOR_DIRECTIONS.LTR;
 
-      var constraints = _(field.validations).map('size').filter().first() || {};
+      const constraints = _(field.validations).map('size').filter().first() || {};
 
       scope.constraints = constraints;
 
@@ -100,21 +100,21 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
       }
 
       function initEditor () {
-        var isReinit = !!editor;
+        const isReinit = !!editor;
         if (isReinit) {
           editor.destroy();
         }
         editor = MarkdownEditor.create(textarea, {
           direction: scope.direction
         });
-        var defaultLocale = LocaleStore.getDefaultLocale();
+        const defaultLocale = LocaleStore.getDefaultLocale();
 
-        var locales = LocaleStore.getLocales();
-        var locale = locales.find(locale => locale.code === field.locale);
+        const locales = LocaleStore.getLocales();
+        const locale = locales.find(locale => locale.code === field.locale);
         scope.actions = actions.create(editor, locale, defaultLocale.code, {zen: false});
         scope.history = editor.history;
 
-        var preview$ = makePreview(field.value$);
+        const preview$ = makePreview(field.value$);
         K.onValueScope(scope, preview$, updatePreview);
 
         editor.events.onChange(throttle(handleEditorChange, 200, {leading: false}));
@@ -127,8 +127,8 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
       }
 
       function setupDestructorJobs () {
-        var detachValueHandler = field.onValueChanged(handleFieldChange);
-        var detachStateHandler = field.onIsDisabledChanged(handleStateChange);
+        const detachValueHandler = field.onValueChanged(handleFieldChange);
+        const detachStateHandler = field.onIsDisabledChanged(handleStateChange);
         scope.$on('$destroy', () => {
           detachValueHandler();
           detachStateHandler();
@@ -187,10 +187,10 @@ angular.module('contentful').directive('cfMarkdownEditor', ['require', require =
       }
 
       function setMode (mode) {
-        var areas = el.find('.markdown-areas');
+        const areas = el.find('.markdown-areas');
 
         // change mode
-        var nextMode = 'preview';
+        let nextMode = 'preview';
         if (mode === 'md' && !scope.isDisabled) {
           nextMode = 'md';
         }

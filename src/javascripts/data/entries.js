@@ -8,7 +8,7 @@ angular.module('cf.data')
  * @name data/Entries
  */
 .factory('data/Entries', ['require', require => {
-  var TheLocaleStore = require('TheLocaleStore');
+  const TheLocaleStore = require('TheLocaleStore');
 
   return {
     internalToExternal: internalToExternal,
@@ -18,20 +18,20 @@ angular.module('cf.data')
   };
 
   function internalToExternal (entryData, contentTypeData) {
-    var transformPath = _.partial(internalPathToExternal, contentTypeData);
+    const transformPath = _.partial(internalPathToExternal, contentTypeData);
     return transformRepresentation(entryData, transformPath);
   }
 
   function externalToInternal (entryData, contentTypeData) {
-    var transformPath = _.partial(externalPathToInternal, contentTypeData);
+    const transformPath = _.partial(externalPathToInternal, contentTypeData);
     return transformRepresentation(entryData, transformPath);
   }
 
   function transformRepresentation (entryData, transformPath) {
-    var result = {sys: _.cloneDeep(entryData.sys)};
+    const result = {sys: _.cloneDeep(entryData.sys)};
 
     getAllPathsOf(entryData.fields).forEach(path => {
-      var value = _.cloneDeep(_.get(entryData, path));
+      const value = _.cloneDeep(_.get(entryData, path));
       _.set(result, transformPath(path), value);
     });
 
@@ -39,17 +39,17 @@ angular.module('cf.data')
   }
 
   function internalPathToExternal (contentTypeData, path) {
-    var field = _.find(contentTypeData.fields, {id: path[1]});
-    var fieldId = field && (field.apiName || field.id);
-    var localeCode = TheLocaleStore.toPublicCode(path[2]);
+    const field = _.find(contentTypeData.fields, {id: path[1]});
+    const fieldId = field && (field.apiName || field.id);
+    const localeCode = TheLocaleStore.toPublicCode(path[2]);
 
     return ['fields', fieldId, localeCode];
   }
 
   function externalPathToInternal (contentTypeData, path) {
-    var field = _.find(contentTypeData.fields, {apiName: path[1]});
-    var fieldId = field && (field.id || field.apiName);
-    var localeCode = TheLocaleStore.toInternalCode(path[2]);
+    const field = _.find(contentTypeData.fields, {apiName: path[1]});
+    const fieldId = field && (field.id || field.apiName);
+    const localeCode = TheLocaleStore.toInternalCode(path[2]);
 
     return ['fields', fieldId, localeCode];
   }

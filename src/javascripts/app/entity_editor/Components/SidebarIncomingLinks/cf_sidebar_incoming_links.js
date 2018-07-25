@@ -1,16 +1,16 @@
 angular.module('contentful').directive('cfSidebarIncomingLinks', [
   'require',
   require => {
-    var _ = require('lodash');
-    var React = require('react');
-    var ReactDOM = require('react-dom');
-    var SidebarIncomingLinks = require('app/entity_editor/Components/SidebarIncomingLinks')
+    const _ = require('lodash');
+    const React = require('react');
+    const ReactDOM = require('react-dom');
+    const SidebarIncomingLinks = require('app/entity_editor/Components/SidebarIncomingLinks')
       .default;
 
     return {
       link: function link ($scope, elem) {
-        var entityInfo = $scope.entityInfo;
-        var defaultProps = {
+        const entityInfo = $scope.entityInfo;
+        const defaultProps = {
           entityInfo: entityInfo
         };
 

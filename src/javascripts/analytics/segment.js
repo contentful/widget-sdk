@@ -14,11 +14,11 @@ angular.module('contentful')
  * be enabled again.
  */
 .factory('analytics/segment', ['require', require => {
-  var $window = require('$window');
-  var $q = require('$q');
-  var CallBuffer = require('utils/CallBuffer');
-  var LazyLoader = require('LazyLoader');
-  var logger = require('logger');
+  const $window = require('$window');
+  const $q = require('$q');
+  const CallBuffer = require('utils/CallBuffer');
+  const LazyLoader = require('LazyLoader');
+  const logger = require('logger');
 
   /**
    * Our intercom setup doesn't care about
@@ -29,13 +29,13 @@ angular.module('contentful')
    * here so we won't get exceptions in the
    * dev tools.
    */
-  var TRACK_INTEGRATIONS = {
+  const TRACK_INTEGRATIONS = {
     Intercom: false
   };
 
-  var buffer = CallBuffer.create();
-  var bufferedTrack = bufferedCall('track');
-  var isDisabled = false;
+  const buffer = CallBuffer.create();
+  const bufferedTrack = bufferedCall('track');
+  let isDisabled = false;
 
   return {
     enable: _.once(enable),
@@ -112,7 +112,7 @@ angular.module('contentful')
 
   function bufferedCall (fnName) {
     return function () {
-      var args = _.toArray(arguments);
+      const args = _.toArray(arguments);
       buffer.call(analytics => {
         try {
           analytics[fnName](...args);
@@ -131,7 +131,7 @@ angular.module('contentful')
   // Adapted from the docs ("step 1" section):
   // https://segment.com/docs/sources/website/analytics.js/quickstart/
   function install () {
-    var analytics = $window.analytics = $window.analytics || [];
+    const analytics = $window.analytics = $window.analytics || [];
 
     if (analytics.initialize || analytics.invoked) {
       return $q.reject();
@@ -159,7 +159,7 @@ angular.module('contentful')
     ];
 
     analytics.factory = method => function () {
-      var args = _.toArray(arguments);
+      const args = _.toArray(arguments);
       args.unshift(method);
       analytics.push(args);
       return analytics;

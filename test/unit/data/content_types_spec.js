@@ -12,7 +12,7 @@ describe('data/ContentTypes', () => {
     });
 
     it('does not change valid display field', function () {
-      var ct = {
+      const ct = {
         displayField: 'ID',
         fields: [{
           id: 'ID',
@@ -24,7 +24,7 @@ describe('data/ContentTypes', () => {
     });
 
     it('removes display field if field type cannot be displayed', function () {
-      var ct = {
+      const ct = {
         displayField: 'ID',
         fields: [{
           id: 'ID',
@@ -36,7 +36,7 @@ describe('data/ContentTypes', () => {
     });
 
     it('removes display field if it points to missing field', function () {
-      var ct = {
+      const ct = {
         displayField: 'ID',
         fields: [{
           id: 'ANOTHER ID',
@@ -48,7 +48,7 @@ describe('data/ContentTypes', () => {
     });
 
     it('changes invalid display field to first applicable field', function () {
-      var ct = {
+      const ct = {
         displayField: 'ID',
         fields: [{
           id: 'FIRST ID',
@@ -66,7 +66,7 @@ describe('data/ContentTypes', () => {
     });
 
     it('retains null as value if no applicable field was found', function () {
-      var ct = {
+      const ct = {
         displayField: null,
         fields: [{
           id: 'fieldid',
@@ -84,13 +84,13 @@ describe('data/ContentTypes', () => {
     });
 
     it('sets missing name to "Untitled"', function () {
-      var ct = {name: ''};
+      const ct = {name: ''};
       this.assureName(ct);
       expect(ct.name).toEqual('Untitled');
     });
 
     it('retains existing name', function () {
-      var ct = {name: 'NAME'};
+      const ct = {name: 'NAME'};
       this.assureName(ct);
       expect(ct.name).toEqual('NAME');
     });
@@ -122,19 +122,19 @@ describe('data/ContentTypes', () => {
       this.internalToPublic = this.$inject('data/ContentTypes').internalToPublic;
       this.ct = this.internalToPublic(this.data);
       this.assertPublicProp = (internalObj, prop) => {
-        var publicData = this.internalToPublic(internalObj);
+        const publicData = this.internalToPublic(internalObj);
         expect(prop in publicData).toBe(true);
       };
     });
 
     it('sets "displayField" to apiName of referenced field', function () {
-      var internalData = {
+      const internalData = {
         displayField: 'internal',
         fields: [
           {id: 'internal', apiName: 'apiName'}
         ]
       };
-      var publicData = this.internalToPublic(internalData);
+      const publicData = this.internalToPublic(internalData);
       expect(publicData.displayField).toEqual('apiName');
     });
 
@@ -152,18 +152,18 @@ describe('data/ContentTypes', () => {
 
     it('has a fields array', function () {
       this.assertPublicProp({}, 'fields');
-      var publicData = this.internalToPublic({});
+      const publicData = this.internalToPublic({});
       expect(Array.isArray(publicData.fields)).toBe(true);
     });
 
     it('keeps internal "displayField" ID if apiName is not present', function () {
-      var internalData = {
+      const internalData = {
         displayField: 'internal',
         fields: [
           {id: 'internal'}
         ]
       };
-      var publicData = this.internalToPublic(internalData);
+      const publicData = this.internalToPublic(internalData);
       expect(publicData.displayField).toEqual('internal');
     });
 
@@ -175,7 +175,7 @@ describe('data/ContentTypes', () => {
 
     it('uses "apiName" as id if available', function () {
       this.ct.fields.forEach((field, i) => {
-        var originalField = this.data.fields[i];
+        const originalField = this.data.fields[i];
 
         if ('apiName' in originalField) {
           expect(field.id).toEqual(originalField.apiName);

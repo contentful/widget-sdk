@@ -2,8 +2,8 @@
 
 angular.module('contentful')
 .factory('selection', [() => function createSelection () {
-  var selectedById = {};
-  var selected = [];
+  let selectedById = {};
+  let selected = [];
 
   return {
     add: add,
@@ -50,7 +50,7 @@ angular.module('contentful')
     // Hence when checked is true, it means the user is going from
     // checked -> unchecked.
     // Therefore, the counterintuitive add and remove assignments
-    var action = $event.currentTarget.checked ? add : remove;
+    const action = $event.currentTarget.checked ? add : remove;
 
     entities.forEach(action);
     $event.stopPropagation();

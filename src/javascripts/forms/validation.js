@@ -30,17 +30,17 @@ angular.module('cf.forms')
   require: ['^cfValidate', 'form'],
 
   link: function (scope, elem, attrs, ctrls) {
-    var validator = ctrls[0];
-    var form = ctrls[1];
+    const validator = ctrls[0];
+    const form = ctrls[1];
 
-    var errorPath = $interpolate(attrs.cfValidateForm || attrs.name || '')(scope);
+    const errorPath = $interpolate(attrs.cfValidateForm || attrs.name || '')(scope);
 
-    var validateOn = 'ngModel:' + (scope.$validateOn || 'update');
+    const validateOn = 'ngModel:' + (scope.$validateOn || 'update');
     scope.$on(validateOn, validate);
 
     scope.$watchCollection('validator.errors', () => {
-      var schemaErrors = validator.getPathErrors(errorPath, true);
-      var valid = _.isEmpty(schemaErrors);
+      const schemaErrors = validator.getPathErrors(errorPath, true);
+      const valid = _.isEmpty(schemaErrors);
 
       form.errors = schemaErrors;
 
@@ -84,13 +84,13 @@ angular.module('cf.forms')
   require: ['ngModel', '^cfValidate'],
 
   link: function (scope, elem, attrs, ctrls) {
-    var modelCtrl = ctrls[0];
-    var validator = ctrls[1];
-    var schemaErrors = [];
+    const modelCtrl = ctrls[0];
+    const validator = ctrls[1];
+    let schemaErrors = [];
 
-    var errorPath = $interpolate(attrs.cfValidateModel || attrs.name || '')(scope);
+    const errorPath = $interpolate(attrs.cfValidateModel || attrs.name || '')(scope);
 
-    var validateOn = 'ngModel:' + (scope.$validateOn || 'update');
+    const validateOn = 'ngModel:' + (scope.$validateOn || 'update');
     scope.$on(validateOn, validate);
 
     scope.$watch('validator.errors', () => {
@@ -112,7 +112,7 @@ angular.module('cf.forms')
     }
 
     function mapBy(collection, iteratee) {
-      var grouped = _.groupBy(collection, iteratee);
+      const grouped = _.groupBy(collection, iteratee);
       return _.mapValues(grouped, items => items[0]);
     }
 
@@ -133,10 +133,10 @@ angular.module('cf.forms')
  * Allowed events are `update` and `commit`.
  */
 .directive('cfValidateOn', [() => {
-  var allowedEvents = ['update', 'commit'];
+  const allowedEvents = ['update', 'commit'];
   return {
     link: function (scope, element, attrs) {
-      var eventName = attrs.cfValidateOn;
+      const eventName = attrs.cfValidateOn;
       if (allowedEvents.indexOf(eventName) === -1)
         throw new Error('Unknown validation event "' + eventName + '"');
       scope.$validateOn = eventName;

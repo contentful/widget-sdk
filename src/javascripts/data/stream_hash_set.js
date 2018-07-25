@@ -16,15 +16,15 @@ angular.module('cf.data')
  * functions is called.
  */
 .factory('data/StreamHashSet', ['require', require => {
-  var K = require('utils/kefir');
+  const K = require('utils/kefir');
 
   return {
     create: create
   };
 
   function create () {
-    var itemsBus = K.createPropertyBus([]);
-    var byId = {};
+    const itemsBus = K.createPropertyBus([]);
+    let byId = {};
 
     return {
       items$: itemsBus.property,
@@ -49,7 +49,7 @@ angular.module('cf.data')
     }
 
     function remove (item) {
-      var id = item.getId();
+      const id = item.getId();
       if (byId[id] === item) {
         delete byId[id];
         updateItems();
@@ -58,9 +58,9 @@ angular.module('cf.data')
     }
 
     function addMultiple (items) {
-      var changed = false;
+      let changed = false;
       items.forEach(item => {
-        var id = item.getId();
+        const id = item.getId();
         if (byId[id] !== item) {
           byId[id] = item;
           changed = true;
@@ -73,7 +73,7 @@ angular.module('cf.data')
     }
 
     function updateItems () {
-      var items = _.values(byId);
+      const items = _.values(byId);
       itemsBus.set(items);
     }
   }

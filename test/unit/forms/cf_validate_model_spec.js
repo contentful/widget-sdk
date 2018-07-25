@@ -8,11 +8,11 @@ describe('cfValidateModel directive', () => {
       });
     });
 
-    var $compile = this.$inject('$compile');
+    const $compile = this.$inject('$compile');
 
-    var $rootScope = this.$inject('$rootScope');
+    const $rootScope = this.$inject('$rootScope');
 
-    var template =
+    const template =
       '<div cf-validate="data">' +
         '<input ng-model="data.x" cf-validate-model="x">' +
       '</div>';

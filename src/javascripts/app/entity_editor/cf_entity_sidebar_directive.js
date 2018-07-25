@@ -21,8 +21,8 @@ angular.module('contentful')
  *   These probably need a lot of stuff in return
  */
 .directive('cfEntitySidebar', ['require', require => {
-  var K = require('utils/kefir');
-  var spaceContext = require('spaceContext');
+  const K = require('utils/kefir');
+  const spaceContext = require('spaceContext');
 
   return {
     restrict: 'E',
@@ -45,7 +45,7 @@ angular.module('contentful')
       // This code is responsible for showing the saving indicator. We
       // debounce switching the indicator off so that it is shown for
       // at least one second.
-      var setNotSavingTimeout;
+      let setNotSavingTimeout;
       K.onValueScope($scope, $scope.otDoc.state.isSaving$.skipDuplicates(), isSaving => {
         clearTimeout(setNotSavingTimeout);
         if (isSaving) {

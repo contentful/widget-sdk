@@ -6,8 +6,8 @@ angular.module('contentful')
  * @name EntityEditor/DataFields
  */
 .factory('EntityEditor/DataFields', ['require', require => {
-  var TheLocaleStore = require('TheLocaleStore');
-  var K = require('utils/kefir');
+  const TheLocaleStore = require('TheLocaleStore');
+  const K = require('utils/kefir');
 
   return {
     create: buildFieldsApi
@@ -27,15 +27,15 @@ angular.module('contentful')
     return _.transform(fields, (fieldsApi, field) => {
       // TODO we should normalize fields so that the API name is always
       // defined.
-      var publicId = field.apiName || field.id;
+      const publicId = field.apiName || field.id;
       fieldsApi[publicId] = createField(field, otDoc);
     }, {});
   }
 
   function createField (field, otDoc) {
-    var internalId = field.id;
-    var publicId = field.apiName || internalId;
-    var locales = getPublicLocaleCodes(field);
+    const internalId = field.id;
+    const publicId = field.apiName || internalId;
+    const locales = getPublicLocaleCodes(field);
 
     return {
       id: publicId,
@@ -63,7 +63,7 @@ angular.module('contentful')
         cb = locale;
         locale = undefined;
       }
-      var path = makeLocalePath(internalId, locale);
+      const path = makeLocalePath(internalId, locale);
       return K.onValue(otDoc.valuePropertyAt(path), cb);
     }
   }
@@ -73,13 +73,13 @@ angular.module('contentful')
   }
 
   function makeLocalePath (id, publicLocale) {
-    var locale = getInternalLocaleCode(publicLocale);
+    const locale = getInternalLocaleCode(publicLocale);
     return ['fields', id, locale];
   }
 
   function getInternalLocaleCode (publicCode) {
     publicCode = publicCode || getDefaultLocaleCode();
-    var internalLocaleCode = TheLocaleStore.toInternalCode(publicCode);
+    const internalLocaleCode = TheLocaleStore.toInternalCode(publicCode);
     if (internalLocaleCode) {
       return internalLocaleCode;
     } else {
@@ -88,7 +88,7 @@ angular.module('contentful')
   }
 
   function getPublicLocaleCodes (field) {
-    var locales;
+    let locales;
     if (field.localized) {
       locales = TheLocaleStore.getPrivateLocales();
     } else {

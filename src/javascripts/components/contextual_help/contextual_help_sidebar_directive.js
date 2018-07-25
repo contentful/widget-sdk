@@ -1,20 +1,20 @@
 'use strict';
 
 angular.module('contentful').directive('cfContextualHelpSidebar', ['require', require => {
-  var $document = require('$document');
-  var $state = require('$state');
-  var SumTypes = require('sum-types');
-  var caseof = SumTypes.caseofEq;
-  var otherwise = SumTypes.otherwise;
-  var ContextualSidebarStore = require('components/contextual_help/Store');
-  var ContextualSidebarComponent = require('components/contextual_help/ContextualHelpSidebarComponent').default;
-  var KEYCODES = require('utils/keycodes').default;
-  var spaceContext = require('spaceContext');
-  var user$ = require('services/TokenStore').user$;
-  var $stateParams = require('$stateParams');
-  var $q = require('$q');
-  var K = require('utils/kefir');
-  var logger = require('logger');
+  const $document = require('$document');
+  const $state = require('$state');
+  const SumTypes = require('sum-types');
+  const caseof = SumTypes.caseofEq;
+  const otherwise = SumTypes.otherwise;
+  const ContextualSidebarStore = require('components/contextual_help/Store');
+  const ContextualSidebarComponent = require('components/contextual_help/ContextualHelpSidebarComponent').default;
+  const KEYCODES = require('utils/keycodes').default;
+  const spaceContext = require('spaceContext');
+  const user$ = require('services/TokenStore').user$;
+  const $stateParams = require('$stateParams');
+  const $q = require('$q');
+  const K = require('utils/kefir');
+  const logger = require('logger');
 
   return {
     template: '<cf-component-bridge component="component">',
@@ -30,7 +30,7 @@ angular.module('contentful').directive('cfContextualHelpSidebar', ['require', re
         getFirstContentType(),
         getToken()
       ]).then(values => {
-        var userId = K.getValue(user$).sys.id;
+        const userId = K.getValue(user$).sys.id;
 
         ContextualSidebarStore.init(userId, {
           view: $state.current.name,
@@ -60,9 +60,9 @@ angular.module('contentful').directive('cfContextualHelpSidebar', ['require', re
       });
 
       function handleClick (e) {
-        var isTargetChildOfSidebar = !!$(e.target).parents('.contextual-help__main-container').length;
-        var isContextualHelpVisible = $('.contextual-help__modal').hasClass('contextual-help__modal--fade-in');
-        var isContainerVisible = !$('.contextual-help__main-container').hasClass('contextual-help__main-container--hidden');
+        const isTargetChildOfSidebar = !!$(e.target).parents('.contextual-help__main-container').length;
+        const isContextualHelpVisible = $('.contextual-help__modal').hasClass('contextual-help__modal--fade-in');
+        const isContainerVisible = !$('.contextual-help__main-container').hasClass('contextual-help__main-container--hidden');
 
         if (isContainerVisible && isContextualHelpVisible && !isTargetChildOfSidebar) {
           ContextualSidebarStore.minimize();
@@ -86,7 +86,7 @@ angular.module('contentful').directive('cfContextualHelpSidebar', ['require', re
 
       function getFirstContentType () {
         if (spaceContext && spaceContext.publishedCTs && spaceContext.publishedCTs.getAllBare) {
-          var ct = _.sortBy(spaceContext.publishedCTs.getAllBare(), ct => ct.name.length)[0];
+          const ct = _.sortBy(spaceContext.publishedCTs.getAllBare(), ct => ct.name.length)[0];
 
           return {
             id: ct.sys.id,
@@ -112,7 +112,7 @@ angular.module('contentful').directive('cfContextualHelpSidebar', ['require', re
                   id: null
                 };
               } else {
-                var key = apiKeys[0];
+                const key = apiKeys[0];
 
                 return {
                   accessToken: key.accessToken,
@@ -129,14 +129,14 @@ angular.module('contentful').directive('cfContextualHelpSidebar', ['require', re
         caseof(evt.keyCode, [
           [KEYCODES.ESC, ContextualSidebarStore.minimize],
           [KEYCODES.H, () => {
-            var $target = $(evt.target);
+            const $target = $(evt.target);
 
             if (!$target.is('input, textarea, [contenteditable="true"]')) {
               ContextualSidebarStore.toggleVisibility();
             }
           }],
           [KEYCODES.SPACE, () => {
-            var state = ContextualSidebarStore.get().state;
+            const state = ContextualSidebarStore.get().state;
 
             if (state.isExpanded) {
               evt.preventDefault();

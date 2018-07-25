@@ -2,7 +2,7 @@
 
 angular.module('cf.app')
 .factory('entityStatus', [() => {
-  var PREFIX = 'entity-status--';
+  const PREFIX = 'entity-status--';
 
   return {
     getClassname: getClassname,

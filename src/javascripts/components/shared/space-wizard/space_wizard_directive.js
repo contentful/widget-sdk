@@ -2,10 +2,10 @@
 
 angular.module('contentful')
 .directive('cfSpaceWizard', ['require', require => {
-  var $state = require('$state');
-  var $rootScope = require('$rootScope');
-  var ReduxStore = require('ReduxStore/store').default;
-  var resetActionCreator = require('components/shared/space-wizard/store/actionCreators').reset;
+  const $state = require('$state');
+  const $rootScope = require('$rootScope');
+  const ReduxStore = require('ReduxStore/store').default;
+  const resetActionCreator = require('components/shared/space-wizard/store/actionCreators').reset;
 
   return {
     link: function ($scope) {

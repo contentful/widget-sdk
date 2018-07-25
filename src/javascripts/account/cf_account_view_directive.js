@@ -2,14 +2,14 @@
 
 angular.module('contentful')
 .directive('cfAccountView', ['require', require => {
-  var h = require('utils/hyperscript').h;
-  var $timeout = require('$timeout');
-  var Authentication = require('Authentication');
-  var modalDialog = require('modalDialog');
-  var createChannel = require('account/IframeChannel').default;
-  var K = require('utils/kefir');
-  var handleGK = require('handleGatekeeperMessage');
-  var UrlSyncHelper = require('account/UrlSyncHelper');
+  const h = require('utils/hyperscript').h;
+  const $timeout = require('$timeout');
+  const Authentication = require('Authentication');
+  const modalDialog = require('modalDialog');
+  const createChannel = require('account/IframeChannel').default;
+  const K = require('utils/kefir');
+  const handleGK = require('handleGatekeeperMessage');
+  const UrlSyncHelper = require('account/UrlSyncHelper');
 
   return {
     template: template(),
@@ -19,9 +19,9 @@ angular.module('contentful')
       hideHeader: '='
     },
     link: function (scope, elem) {
-      var iframe = elem.find('iframe');
-      var messages$ = createChannel(iframe.get(0));
-      var timeout = null;
+      const iframe = elem.find('iframe');
+      const messages$ = createChannel(iframe.get(0));
+      let timeout = null;
 
       K.onValueScope(scope, messages$, handleGK);
       K.onValueScope(scope, messages$, closeModalsIfLocationUpdated);

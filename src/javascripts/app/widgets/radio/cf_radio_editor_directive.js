@@ -7,8 +7,8 @@ angular.module('cf.app')
  * @name cfRadioEditor
  */
 .directive('cfRadioEditor', ['require', require => {
-  var random = require('random');
-  var selectionController = require('widgets/selectionController');
+  const random = require('random');
+  const selectionController = require('widgets/selectionController');
   return {
     restrict: 'E',
     scope: {},
@@ -17,7 +17,7 @@ angular.module('cf.app')
     link: function (scope, _elem, _attrs, widgetApi) {
       selectionController.createFromValidations(widgetApi, scope);
 
-      var field = widgetApi.field;
+      const field = widgetApi.field;
       scope.radioGroupName = ['entity', field.id, field.locale, random.letter(5)].join('.');
     }
   };

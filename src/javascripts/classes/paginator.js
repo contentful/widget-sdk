@@ -33,13 +33,13 @@ angular.module('cf.app')
  * paginator.getPage(); // => 4
  */
 .factory('Paginator', [() => {
-  var DEFAULT_PER_PAGE = 40;
+  const DEFAULT_PER_PAGE = 40;
 
   return {create: create};
 
   function create (perPage) {
-    var page = 0;
-    var total = 0;
+    let page = 0;
+    let total = 0;
     perPage = perPage || DEFAULT_PER_PAGE;
 
     return {
@@ -170,7 +170,7 @@ angular.module('cf.app')
   }
 
   function updateValue (next, current) {
-    var nextVal;
+    let nextVal;
 
     if (_.isNumber(next)) {
       nextVal = next;

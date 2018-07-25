@@ -1,7 +1,7 @@
 'use strict';
 
 describe('ErrorPathController', () => {
-  var controller, scope, attrs;
+  let controller, scope, attrs;
 
   afterEach(() => {
     controller = scope = attrs = null;
@@ -10,9 +10,9 @@ describe('ErrorPathController', () => {
   beforeEach(module('contentful/test'));
 
   beforeEach(function () {
-    var $rootScope = this.$inject('$rootScope');
-    var $controller = this.$inject('$controller');
-    var errorMessageBuilder = this.$inject('errorMessageBuilder');
+    const $rootScope = this.$inject('$rootScope');
+    const $controller = this.$inject('$controller');
+    const errorMessageBuilder = this.$inject('errorMessageBuilder');
 
     scope = $rootScope.$new();
 

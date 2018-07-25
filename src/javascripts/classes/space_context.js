@@ -15,39 +15,39 @@ angular.module('contentful')
  * @property {ACL.SpaceMembershipRepository} memberships
  */
 .factory('spaceContext', ['require', require => {
-  var $q = require('$q');
-  var TheLocaleStore = require('TheLocaleStore');
-  var createUserCache = require('data/userCache');
-  var createWidgetStore = require('widgets/Store').create;
-  var createSpaceEndpoint = require('data/Endpoint').createSpaceEndpoint;
-  var Config = require('Config');
-  var createEIRepo = require('data/editingInterfaces');
-  var ApiClient = require('data/ApiClient');
-  var ShareJSConnection = require('data/sharejs/Connection');
-  var Subscription = require('Subscription');
-  var previewEnvironmentsCache = require('data/previewEnvironmentsCache');
-  var PublishedCTRepo = require('data/ContentTypeRepo/Published');
-  var logger = require('logger');
-  var DocumentPool = require('data/sharejs/DocumentPool');
-  var TokenStore = require('services/TokenStore');
-  var createApiKeyRepo = require('data/CMA/ApiKeyRepo').default;
-  var K = require('utils/kefir');
-  var Auth = require('Authentication');
-  var OrganizationContext = require('classes/OrganizationContext');
-  var MembershipRepo = require('access_control/SpaceMembershipRepository');
-  var createUiConfigStore = require('data/UiConfig/Store').default;
-  var createViewMigrator = require('data/ViewMigrator').default;
-  var client = require('client');
-  var createLocaleRepo = require('data/CMA/LocaleRepo').default;
-  var accessChecker = require('access_control/AccessChecker');
-  var shouldUseEnvEndpoint = require('data/shouldUseEnvEndpoint').default;
-  var createEnvironmentsRepo = require('data/CMA/SpaceEnvironmentsRepo').create;
-  var deepFreeze = require('utils/Freeze').deepFreeze;
-  var $rootScope = require('$rootScope');
+  const $q = require('$q');
+  const TheLocaleStore = require('TheLocaleStore');
+  const createUserCache = require('data/userCache');
+  const createWidgetStore = require('widgets/Store').create;
+  const createSpaceEndpoint = require('data/Endpoint').createSpaceEndpoint;
+  const Config = require('Config');
+  const createEIRepo = require('data/editingInterfaces');
+  const ApiClient = require('data/ApiClient');
+  const ShareJSConnection = require('data/sharejs/Connection');
+  const Subscription = require('Subscription');
+  const previewEnvironmentsCache = require('data/previewEnvironmentsCache');
+  const PublishedCTRepo = require('data/ContentTypeRepo/Published');
+  const logger = require('logger');
+  const DocumentPool = require('data/sharejs/DocumentPool');
+  const TokenStore = require('services/TokenStore');
+  const createApiKeyRepo = require('data/CMA/ApiKeyRepo').default;
+  const K = require('utils/kefir');
+  const Auth = require('Authentication');
+  const OrganizationContext = require('classes/OrganizationContext');
+  const MembershipRepo = require('access_control/SpaceMembershipRepository');
+  const createUiConfigStore = require('data/UiConfig/Store').default;
+  const createViewMigrator = require('data/ViewMigrator').default;
+  const client = require('client');
+  const createLocaleRepo = require('data/CMA/LocaleRepo').default;
+  const accessChecker = require('access_control/AccessChecker');
+  const shouldUseEnvEndpoint = require('data/shouldUseEnvEndpoint').default;
+  const createEnvironmentsRepo = require('data/CMA/SpaceEnvironmentsRepo').create;
+  const deepFreeze = require('utils/Freeze').deepFreeze;
+  const $rootScope = require('$rootScope');
 
-  var publishedCTsBus$ = K.createPropertyBus([]);
+  const publishedCTsBus$ = K.createPropertyBus([]);
 
-  var spaceContext = {
+  const spaceContext = {
     /**
      * @description
      * A property containing data on the published CTs in the current space.
@@ -86,11 +86,11 @@ angular.module('contentful')
      * @returns {Promise<self>}
      */
     resetWithSpace: function (spaceData, environmentId) {
-      var self = this;
+      const self = this;
       accessChecker.setSpace(spaceData);
 
       // `space` is @contentful/client.Space instance!
-      var space = client.newSpace(spaceData);
+      let space = client.newSpace(spaceData);
       if (environmentId) {
         space = space.makeEnvironment(environmentId, shouldUseEnvEndpoint);
       }
@@ -110,7 +110,7 @@ angular.module('contentful')
       self.apiKeyRepo = createApiKeyRepo(self.endpoint);
       self.editingInterfaces = createEIRepo(self.endpoint);
       self.localeRepo = createLocaleRepo(self.endpoint);
-      var organization = self.getData('organization') || null;
+      const organization = self.getData('organization') || null;
       self.organizationContext = OrganizationContext.create(organization);
       self.subscription = organization && Subscription.newFromOrganization(organization);
 
@@ -135,7 +135,7 @@ angular.module('contentful')
        * usage of `spaceContext.publishedCTs.get(...)` (instead of `.fetch(...)`).
        * @type {data/ContentTypeRepo/Published}
        */
-      var publishedCTsForSpace = PublishedCTRepo.create(space);
+      const publishedCTsForSpace = PublishedCTRepo.create(space);
       K.onValue(publishedCTsForSpace.items$, items => {
         publishedCTsBus$.set(items);
       });
@@ -152,7 +152,7 @@ angular.module('contentful')
       return $q.all([
         self.widgets.refresh(),
         self.publishedCTs.refresh().then(() => {
-          var viewMigrator = createViewMigrator(space, self.publishedCTs);
+          const viewMigrator = createViewMigrator(space, self.publishedCTs);
           return createUiConfigStore(
             space, self.endpoint, self.publishedCTs, viewMigrator
           )
@@ -202,7 +202,7 @@ angular.module('contentful')
      * @returns *
      */
     getData: function (path, defaultValue) {
-      var data = _.get(this, 'space.data', {});
+      const data = _.get(this, 'space.data', {});
       return _.get(data, path, defaultValue);
     },
 
@@ -215,7 +215,7 @@ angular.module('contentful')
      * Returns the display field for a given content type id
     */
     displayFieldForType: function (contentTypeId) {
-      var ct = this.publishedCTs.get(contentTypeId);
+      const ct = this.publishedCTs.get(contentTypeId);
       return ct && _.find(ct.data.fields, {id: ct.data.displayField});
     },
 
@@ -240,14 +240,14 @@ angular.module('contentful')
      * @return {any}
      */
     getFieldValue: function (entity, fieldId, localeCode) {
-      var values = _.get(entity, ['data', 'fields', fieldId]);
+      const values = _.get(entity, ['data', 'fields', fieldId]);
       if (!_.isObject(values)) {
         return;
       }
 
-      var defaultLocale = TheLocaleStore.getDefaultLocale();
-      var defaultLocaleCode = defaultLocale && defaultLocale.internal_code;
-      var firstLocaleCode = Object.keys(values)[0];
+      const defaultLocale = TheLocaleStore.getDefaultLocale();
+      const defaultLocaleCode = defaultLocale && defaultLocale.internal_code;
+      const firstLocaleCode = Object.keys(values)[0];
 
       localeCode = localeCode || defaultLocaleCode || firstLocaleCode;
 
@@ -269,12 +269,12 @@ angular.module('contentful')
      * UI string indicating that is returned, which is 'Untitled'.
      */
     entryTitle: function (entry, localeCode, modelValue) {
-      var defaultTitle = modelValue ? null : 'Untitled';
-      var title, displayField;
+      const defaultTitle = modelValue ? null : 'Untitled';
+      let title, displayField;
 
       try {
-        var contentTypeId = entry.getContentTypeId();
-        var contentType = this.publishedCTs.get(contentTypeId);
+        const contentTypeId = entry.getContentTypeId();
+        const contentType = this.publishedCTs.get(contentTypeId);
         if (!contentType) {
           return defaultTitle;
         }
@@ -314,13 +314,13 @@ angular.module('contentful')
      * @return {string?}
      */
     entityDescription: function (entity, localeCode) {
-      var contentTypeId = entity.getContentTypeId();
-      var contentType = this.publishedCTs.get(contentTypeId);
+      const contentTypeId = entity.getContentTypeId();
+      const contentType = this.publishedCTs.get(contentTypeId);
       if (!contentType) {
         return;
       }
-      var displayFieldId = contentType.data.displayField;
-      var field = _.find(contentType.data.fields, field => _.includes(['Symbol', 'Text'], field.type) && field.id !== displayFieldId);
+      const displayFieldId = contentType.data.displayField;
+      const field = _.find(contentType.data.fields, field => _.includes(['Symbol', 'Text'], field.type) && field.id !== displayFieldId);
       if (!field) {
         return;
       }
@@ -339,13 +339,13 @@ angular.module('contentful')
      * given entities image. The promise may resolve with null.
      */
     entryImage: function (entry, localeCode) {
-      var link = getValueForMatchedField(this, entry, localeCode, {type: 'Link', linkType: 'Asset'});
+      const link = getValueForMatchedField(this, entry, localeCode, {type: 'Link', linkType: 'Asset'});
 
-      var assetId = _.get(link, 'sys.id');
+      const assetId = _.get(link, 'sys.id');
       if (link && assetId) {
         return this.space.getAsset(assetId).then(asset => {
-          var file = this.getFieldValue(asset, 'file', localeCode);
-          var isImage = _.get(file, 'details.image');
+          const file = this.getFieldValue(asset, 'file', localeCode);
+          const isImage = _.get(file, 'details.image');
           return isImage ? file : null;
         }, () => null);
       } else {
@@ -368,8 +368,8 @@ angular.module('contentful')
      * UI string indicating that is returned, which is 'Untitled'.
      */
     assetTitle: function (asset, localeCode, modelValue) {
-      var defaultTitle = modelValue ? null : 'Untitled';
-      var title;
+      const defaultTitle = modelValue ? null : 'Untitled';
+      let title;
 
       try {
         title = this.getFieldValue(asset, 'title', localeCode);
@@ -400,11 +400,11 @@ angular.module('contentful')
      * no title can be found for the entity.
      */
     entityTitle: function (entity, localeCode) {
-      var type = entity.getType();
+      const type = entity.getType();
       if (!_.includes(['Entry', 'Asset'], type)) {
         return null;
       }
-      var getterName = type.toLowerCase() + 'Title'; // entryTitle() or assetTitle()
+      const getterName = type.toLowerCase() + 'Title'; // entryTitle() or assetTitle()
       return this[getterName](entity, localeCode, true);
     }
   };
@@ -447,12 +447,12 @@ angular.module('contentful')
    * @returns {any}
    */
   function getValueForMatchedField (spaceContext, entity, localeCode, fieldDefinition) {
-    var contentTypeId = entity.getContentTypeId();
-    var contentType = spaceContext.publishedCTs.get(contentTypeId);
+    const contentTypeId = entity.getContentTypeId();
+    const contentType = spaceContext.publishedCTs.get(contentTypeId);
     if (!contentType) {
       return;
     }
-    var field = _.find(contentType.data.fields, fieldDefinition);
+    const field = _.find(contentType.data.fields, fieldDefinition);
     if (field) {
       return spaceContext.getFieldValue(entity, field.id, localeCode);
     }
@@ -460,7 +460,7 @@ angular.module('contentful')
 
   function maybeFetchEnvironments (spaceEndpoint) {
     // FIXME This prevents a circular dependency
-    var LD = require('utils/LaunchDarkly');
+    const LD = require('utils/LaunchDarkly');
     return LD.getCurrentVariation('feature-dv-11-2017-environments')
       .then(environmentsEnabled => {
         if (environmentsEnabled) {

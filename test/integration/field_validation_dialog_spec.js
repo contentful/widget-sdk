@@ -12,7 +12,7 @@ import * as K from 'utils/kefir';
  * Stubs the scope's `field`, `index`, and `otDoc`.
  */
 xdescribe('validation dialog', () => {
-  var openDialog, dialog, scope;
+  let openDialog, dialog, scope;
 
   function getFieldProperty(scope, path) {
     return _.get(scope, ['field', path].join('.'));
@@ -23,7 +23,7 @@ xdescribe('validation dialog', () => {
   }
 
   beforeEach(() => {
-    var modalDialog;
+    let modalDialog;
     module('contentful/test');
     inject(($rootScope, $injector) => {
       scope        = $rootScope.$new();
@@ -102,9 +102,9 @@ xdescribe('validation dialog', () => {
       .click();
       expect(settings().find('.validation-controls').is(':hidden')).toBe(false);
 
-      var minInput = settings().find('[aria-label="Minimum size"]');
+      const minInput = settings().find('[aria-label="Minimum size"]');
       minInput.val('10').trigger('input');
-      var maxInput = settings().find('[aria-label="Maximum size"]');
+      const maxInput = settings().find('[aria-label="Maximum size"]');
       maxInput.val('20').trigger('input');
 
       clickSave();
@@ -118,9 +118,9 @@ xdescribe('validation dialog', () => {
       setFieldProperty(scope, validationPath, [{size: {min: 10, max: 20}}]);
       openDialog();
 
-      var minInput = settings().find('[aria-label="Minimum size"]');
+      const minInput = settings().find('[aria-label="Minimum size"]');
       expect(minInput.val()).toBe('10');
-      var maxInput = settings().find('[aria-label="Maximum size"]');
+      const maxInput = settings().find('[aria-label="Maximum size"]');
       expect(maxInput.val()).toBe('20');
 
       settings()
@@ -137,7 +137,7 @@ xdescribe('validation dialog', () => {
       clickSave();
       expect(dialog.open).toBe(true);
 
-      var errors = settings()
+      const errors = settings()
       .find('[aria-label="Errors"] li');
       expect(errors.text()).toEqual('Please provide a positive integer');
     });
@@ -154,7 +154,7 @@ xdescribe('validation dialog', () => {
       clickSave();
       expect(dialog.open).toBe(true);
 
-      var errors = settings()
+      const errors = settings()
       .find('[aria-label="Errors"] li');
       expect(errors.text()).toEqual('Please provide a positive integer');
     });
@@ -163,7 +163,7 @@ xdescribe('validation dialog', () => {
       setFieldProperty(scope, validationPath, [{size: {min: 10, max: null}}]);
       openDialog();
 
-      var selectedView = settings()
+      const selectedView = settings()
       .find('select[aria-label="Select condition"]')
       .find('option:selected').text();
       expect(selectedView).toEqual('At least');
@@ -176,7 +176,7 @@ xdescribe('validation dialog', () => {
       }]);
       openDialog();
 
-      var errorMessage = settings()
+      const errorMessage = settings()
       .find('input[aria-label="Custom error message"]');
       expect(errorMessage.val()).toEqual('my custom error message');
 
@@ -208,9 +208,9 @@ xdescribe('validation dialog', () => {
       .find('[aria-label="Enable validation"]')
       .click();
 
-      var minValue = settings().find('[aria-label="Minimum value"]');
+      const minValue = settings().find('[aria-label="Minimum value"]');
       minValue.val('-0.1').trigger('input');
-      var maxValue = settings().find('[aria-label="Maximum value"]');
+      const maxValue = settings().find('[aria-label="Maximum value"]');
       maxValue.val('0.1').trigger('input');
 
       clickSave();
@@ -223,9 +223,9 @@ xdescribe('validation dialog', () => {
       scope.field.validations = [{range: {min: -1, max: 2}}];
       openDialog();
 
-      var minInput = settings().find('[aria-label="Minimum value"]');
+      const minInput = settings().find('[aria-label="Minimum value"]');
       expect(minInput.val()).toBe('-1');
-      var maxInput = settings().find('[aria-label="Maximum value"]');
+      const maxInput = settings().find('[aria-label="Maximum value"]');
       expect(maxInput.val()).toBe('2');
 
       settings()
@@ -279,7 +279,7 @@ xdescribe('validation dialog', () => {
 
       clickSave();
 
-      var errors = settings().find('[aria-label="Errors"]').text();
+      const errors = settings().find('[aria-label="Errors"]').text();
       expect(errors).toEqual('Please provide a valid regular expression with valid flags');
     });
 
@@ -294,7 +294,7 @@ xdescribe('validation dialog', () => {
       .find('select[aria-label="Select pattern"]')
       .val('1');
 
-      var selected = settings()
+      let selected = settings()
       .find('select[aria-label="Select pattern"] option:selected')
       .text();
       expect(selected).not.toEqual('Custom');
@@ -329,7 +329,7 @@ xdescribe('validation dialog', () => {
       .find('[aria-label="Enable validation"]')
       .click();
 
-      var valueInput = settings().find('[aria-label="Add a value"]');
+      const valueInput = settings().find('[aria-label="Add a value"]');
 
       valueInput.val('a value').trigger(enterKeypressEvent());
       expect(valueInput.val()).toBe('');
@@ -345,13 +345,13 @@ xdescribe('validation dialog', () => {
       .find('[aria-label="Enable validation"]')
       .click();
 
-      var valueInput = settings().find('[aria-label="Add a value"]');
+      const valueInput = settings().find('[aria-label="Add a value"]');
       valueInput
       .val('a value').trigger(enterKeypressEvent())
       .val('a value').trigger(enterKeypressEvent());
       scope.$digest();
 
-      var errors = settings().find('[aria-label="Errors"] li');
+      const errors = settings().find('[aria-label="Errors"] li');
       expect(errors.text()).toEqual('This value already exists on the list');
 
       clickSave();
@@ -362,8 +362,8 @@ xdescribe('validation dialog', () => {
       scope.field.validations = [{in: ['a value', 'another value']}];
       openDialog();
 
-      var values = settings().find('[aria-label="List of predefined values"] > li');
-      var valuesText = values.map((_, li) => $(li).text()).get();
+      const values = settings().find('[aria-label="List of predefined values"] > li');
+      const valuesText = values.map((_, li) => $(li).text()).get();
 
       expect(valuesText).toEqual(['a value', 'another value']);
     });
@@ -403,7 +403,7 @@ xdescribe('validation dialog', () => {
         .find('[aria-label="Add a value"]')
         .val('not a number').trigger(enterKeypressEvent());
 
-        var errors = settings().find('[aria-label="Errors"] li');
+        const errors = settings().find('[aria-label="Errors"] li');
         expect(errors.text()).toEqual('You can only add number values.');
       });
     });
@@ -443,7 +443,7 @@ xdescribe('validation dialog', () => {
       .find('[aria-label="Enable validation"]')
       .click();
 
-      var ct1Checkbox = settings()
+      const ct1Checkbox = settings()
       .find('label:contains("CT 1") input');
       expect(ct1Checkbox.is(':checked')).toBe(true);
 
@@ -491,7 +491,7 @@ xdescribe('validation dialog', () => {
     it('shows previously selected type', () => {
       scope.field.validations = [{linkMimetypeGroup: 'markup'}];
       openDialog();
-      var selected = settings()
+      const selected = settings()
       .find('label:contains("Markup") input');
       expect(selected.is(':checked')).toBe(true);
     });
@@ -504,7 +504,7 @@ xdescribe('validation dialog', () => {
       .click();
 
       clickSave();
-      var errors = settings()
+      const errors = settings()
       .find('[aria-label="Errors"] li');
       expect(errors.length).toEqual(1);
     });
@@ -526,9 +526,9 @@ xdescribe('validation dialog', () => {
       .find('[aria-label="Enable validation"]')
       .click();
 
-      var minInput = settings().find('[aria-label="Minimum size"]');
+      const minInput = settings().find('[aria-label="Minimum size"]');
       minInput.val('10').trigger('input');
-      var maxInput = settings().find('[aria-label="Maximum size"]');
+      const maxInput = settings().find('[aria-label="Maximum size"]');
       maxInput.val('20').trigger('input');
 
       clickSave();
@@ -558,10 +558,10 @@ xdescribe('validation dialog', () => {
 
       settings('[aria-label="Select condition"]').val('min');
 
-      var minInput = settings('[aria-label="Minimum size"]');
+      const minInput = settings('[aria-label="Minimum size"]');
       minInput.val('2').trigger('input');
 
-      var minScaleInput = settings('[aria-label="Select size unit"]');
+      const minScaleInput = settings('[aria-label="Select size unit"]');
       minScaleInput.val('1').trigger('change');
 
       clickSave();
@@ -575,7 +575,7 @@ xdescribe('validation dialog', () => {
       scope.field.validations = [{assetFileSize: {min: 1}}];
       openDialog();
 
-      var condition = settings('[aria-label="Select condition"] option:selected').text();
+      const condition = settings('[aria-label="Select condition"] option:selected').text();
       expect(condition).toBe('At least');
 
       settings('[aria-label="Select condition"]')

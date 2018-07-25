@@ -1,9 +1,9 @@
 angular.module('contentful')
 .directive('cfCreateEntryButton', ['require', require => {
-  var _ = require('lodash');
-  var React = require('react');
-  var ReactDOM = require('react-dom');
-  var Menu = require('components/CreateEntryButton').default;
+  const _ = require('lodash');
+  const React = require('react');
+  const ReactDOM = require('react-dom');
+  const Menu = require('components/CreateEntryButton').default;
 
   return {
     link: function ($scope, elem, attr) {

@@ -6,10 +6,10 @@
  */
 angular.module('contentful')
 .directive('cfValidationValues', ['require', require => {
-  var KEYCODES = require('utils/keycodes').default;
-  var normalizeWhiteSpace = require('stringUtils').normalizeWhiteSpace;
+  const KEYCODES = require('utils/keycodes').default;
+  const normalizeWhiteSpace = require('stringUtils').normalizeWhiteSpace;
 
-  var ERROR_MESSAGES = {
+  const ERROR_MESSAGES = {
     integerOutOfRange: 'Number is out of range.',
     numberOverflow: 'Numbers should be 21 characters long or less (use a text field otherwise).',
     emptyValue: 'The input is empty. Please add some non-whitespace characters.',
@@ -21,7 +21,7 @@ angular.module('contentful')
 
   // The maximum number of digits we can represent without rounding
   // errors.
-  var MAX_PRECISION = 21;
+  const MAX_PRECISION = 21;
 
   return {
     scope: true,
@@ -41,7 +41,7 @@ angular.module('contentful')
       });
 
       $scope.addItem = ev => {
-        var value = ev.target.value;
+        let value = ev.target.value;
         if (ev.keyCode !== KEYCODES.ENTER || !value) {
           return;
         }

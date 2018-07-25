@@ -6,26 +6,26 @@ angular.module('contentful')
  * @name EntryListController
  */
 .controller('EntryListController', ['$scope', 'require', function EntryListController ($scope, require) {
-  var $controller = require('$controller');
-  var EntityListCache = require('EntityListCache');
-  var Paginator = require('Paginator');
-  var createSelection = require('selection');
-  var spaceContext = require('spaceContext');
-  var accessChecker = require('access_control/AccessChecker');
-  var entityStatus = require('entityStatus');
-  var getBlankView = require('data/UiConfig/Blanks').getBlankEntryView;
-  var createSavedViewsSidebar = require('app/ContentList/SavedViewsSidebar').default;
-  var Analytics = require('analytics/Analytics');
-  var K = require('utils/kefir');
-  var _ = require('lodash');
-  var $state = require('$state');
-  var entityCreator = require('entityCreator');
-  var ResourceUtils = require('utils/ResourceUtils');
-  var createResourceService = require('services/ResourceService').default;
-  var EnvironmentUtils = require('utils/EnvironmentUtils');
-  var debounce = require('lodash').debounce;
+  const $controller = require('$controller');
+  const EntityListCache = require('EntityListCache');
+  const Paginator = require('Paginator');
+  const createSelection = require('selection');
+  const spaceContext = require('spaceContext');
+  const accessChecker = require('access_control/AccessChecker');
+  const entityStatus = require('entityStatus');
+  const getBlankView = require('data/UiConfig/Blanks').getBlankEntryView;
+  const createSavedViewsSidebar = require('app/ContentList/SavedViewsSidebar').default;
+  const Analytics = require('analytics/Analytics');
+  const K = require('utils/kefir');
+  const _ = require('lodash');
+  const $state = require('$state');
+  const entityCreator = require('entityCreator');
+  const ResourceUtils = require('utils/ResourceUtils');
+  const createResourceService = require('services/ResourceService').default;
+  const EnvironmentUtils = require('utils/EnvironmentUtils');
+  const debounce = require('lodash').debounce;
 
-  var searchController = $controller('EntryListSearchController', {$scope: $scope});
+  const searchController = $controller('EntryListSearchController', {$scope: $scope});
   $controller('DisplayedFieldsController', {$scope: $scope});
   $controller('EntryListColumnsController', {$scope: $scope});
 
@@ -76,7 +76,7 @@ angular.module('contentful')
   });
 
   // Properties passed to RecordsResourceUsage
-  var resetUsageProps = debounce(() => {
+  const resetUsageProps = debounce(() => {
     $scope.usageProps = {
       space: spaceContext.space.data,
       currentTotal: $scope.paginator.getTotal()
@@ -106,9 +106,9 @@ angular.module('contentful')
   };
 
   $scope.newEntry = contentTypeId => {
-    var contentType = spaceContext.publishedCTs.get(contentTypeId);
+    const contentType = spaceContext.publishedCTs.get(contentTypeId);
     entityCreator.newEntry(contentTypeId).then(entry => {
-      var eventOriginFlag = $scope.showNoEntriesAdvice() ? '--empty' : '';
+      const eventOriginFlag = $scope.showNoEntriesAdvice() ? '--empty' : '';
       Analytics.track('entry:create', {
         eventOrigin: 'content-list' + eventOriginFlag,
         contentType: contentType,
@@ -158,8 +158,8 @@ angular.module('contentful')
    * @return {boolean}
    */
   $scope.showNoEntriesAdvice = () => {
-    var hasQuery = searchController.hasQuery();
-    var hasEntries = $scope.paginator.getTotal() > 0;
+    const hasQuery = searchController.hasQuery();
+    const hasEntries = $scope.paginator.getTotal() > 0;
 
     return !hasEntries && !hasQuery && !$scope.context.loading;
   };
@@ -174,9 +174,9 @@ angular.module('contentful')
    * @return {boolean}
    */
   $scope.hasNoSearchResults = () => {
-    var hasQuery = searchController.hasQuery();
-    var hasEntries = $scope.paginator.getTotal() > 0;
-    var hasCollection = getViewItem('collection');
+    const hasQuery = searchController.hasQuery();
+    const hasEntries = $scope.paginator.getTotal() > 0;
+    const hasCollection = getViewItem('collection');
     return !hasEntries && hasQuery && !hasCollection && !$scope.context.loading;
   };
 

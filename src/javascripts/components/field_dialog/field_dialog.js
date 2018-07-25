@@ -17,10 +17,10 @@ angular.module('contentful')
  * @return {Promise<void>}
  */
 .factory('openFieldDialog', ['require', require => {
-  var modalDialog = require('modalDialog');
+  const modalDialog = require('modalDialog');
 
   return function openFieldDialog ($scope, field, widget) {
-    var scope = _.extend($scope.$new(), {
+    const scope = _.extend($scope.$new(), {
       field: field,
       widget: widget
     });
@@ -43,18 +43,18 @@ angular.module('contentful')
  * @property {object} $scope.widgetSettings.params
  */
 .controller('FieldDialogController', ['$scope', 'require', function FieldDialogController ($scope, require) {
-  var dialog = $scope.dialog;
+  const dialog = $scope.dialog;
 
-  var validations = require('validationDecorator');
-  var fieldDecorator = require('fieldDecorator');
-  var trackCustomWidgets = require('analyticsEvents/customWidgets');
-  var fieldFactory = require('fieldFactory');
-  var WidgetParametersUtils = require('widgets/WidgetParametersUtils');
-  var spaceContext = require('spaceContext');
-  var $timeout = require('$timeout');
-  var notification = require('notification');
+  const validations = require('validationDecorator');
+  const fieldDecorator = require('fieldDecorator');
+  const trackCustomWidgets = require('analyticsEvents/customWidgets');
+  const fieldFactory = require('fieldFactory');
+  const WidgetParametersUtils = require('widgets/WidgetParametersUtils');
+  const spaceContext = require('spaceContext');
+  const $timeout = require('$timeout');
+  const notification = require('notification');
 
-  var contentTypeData = $scope.contentType.data;
+  const contentTypeData = $scope.contentType.data;
 
   $scope.decoratedField = fieldDecorator.decorate($scope.field, contentTypeData);
 
@@ -62,7 +62,7 @@ angular.module('contentful')
 
   $scope.currentTitleField = getTitleField();
 
-  var initialWidgetId = $scope.widget.widgetId;
+  const initialWidgetId = $scope.widget.widgetId;
 
   $scope.widgetSettings = {
     id: $scope.widget.widgetId,
@@ -85,7 +85,7 @@ angular.module('contentful')
    * @type {Widgets.Descriptor[]}
    */
   spaceContext.widgets.refresh().then(widgets => {
-    var fieldType = fieldFactory.getTypeName($scope.field);
+    const fieldType = fieldFactory.getTypeName($scope.field);
 
     $scope.availableWidgets = widgets.filter(widget => widget.fieldTypes.includes(fieldType));
   });
@@ -103,16 +103,16 @@ angular.module('contentful')
     fieldDecorator.update($scope.decoratedField, $scope.field, contentTypeData);
     validations.updateField($scope.field, $scope.validations);
 
-    var selectedWidgetId = $scope.widgetSettings.id;
-    var selectedWidget = _.find($scope.availableWidgets, {id: selectedWidgetId}) || {};
-    var values = $scope.widgetSettings.params;
-    var definitions = _.get(selectedWidget, ['parameters']) || [];
+    const selectedWidgetId = $scope.widgetSettings.id;
+    const selectedWidget = _.find($scope.availableWidgets, {id: selectedWidgetId}) || {};
+    let values = $scope.widgetSettings.params;
+    let definitions = _.get(selectedWidget, ['parameters']) || [];
 
     definitions = WidgetParametersUtils.filterDefinitions(definitions, values, selectedWidget);
     values = WidgetParametersUtils.filterValues(definitions, values);
 
-    var missing = WidgetParametersUtils.markMissingValues(definitions, values);
-    var hasMissingParameters = Object.keys(missing).some(key => missing[key] === true);
+    const missing = WidgetParametersUtils.markMissingValues(definitions, values);
+    const hasMissingParameters = Object.keys(missing).some(key => missing[key] === true);
 
     if (hasMissingParameters) {
       notification.error('Please provide all required parameters.');
@@ -145,21 +145,21 @@ angular.module('contentful')
   }
 
   function getTitleField () {
-    var fieldId = contentTypeData.displayField;
+    const fieldId = contentTypeData.displayField;
     if (!fieldId || fieldId === $scope.field.id) {
       return null;
     }
 
-    var titleField = _.find(contentTypeData.fields, {id: fieldId});
+    const titleField = _.find(contentTypeData.fields, {id: fieldId});
     return fieldDecorator.getDisplayName(titleField);
   }
 }])
 
 
 .controller('FieldDialogSettingsController', ['$scope', 'require', ($scope, require) => {
-  var fieldDecorator = require('fieldDecorator');
-  var buildMessage = require('fieldErrorMessageBuilder');
-  var TheLocaleStore = require('TheLocaleStore');
+  const fieldDecorator = require('fieldDecorator');
+  const buildMessage = require('fieldErrorMessageBuilder');
+  const TheLocaleStore = require('TheLocaleStore');
 
   $scope.schema = {
     errors: function (decoratedField) {
@@ -184,7 +184,7 @@ angular.module('contentful')
  * @scope.requires {Widgets.Descriptor[]}  availableWidgets
  */
 .controller('FieldDialogValidationsController', ['$scope', 'require', ($scope, require) => {
-  var validations = require('validationDecorator');
+  const validations = require('validationDecorator');
 
   $scope.$watch('fieldValidationsForm.$invalid', isInvalid => {
     $scope.tab.invalid = isInvalid;
@@ -202,13 +202,13 @@ angular.module('contentful')
    * @type {boolean}
    */
   $scope.$watchGroup(['widgetSettings.id', 'availableWidgets'], values => {
-    var name = values[0];
-    var available = values[1];
-    var properWidgets = ['radio', 'dropdown', 'checkbox'];
+    const name = values[0];
+    const available = values[1];
+    const properWidgets = ['radio', 'dropdown', 'checkbox'];
 
-    var isProper = _.includes(properWidgets, name);
-    var availableIds = _.map(available, 'id');
-    var properAvailable = _.intersection(availableIds, properWidgets).length;
+    const isProper = _.includes(properWidgets, name);
+    const availableIds = _.map(available, 'id');
+    const properAvailable = _.intersection(availableIds, properWidgets).length;
     $scope.showPredefinedValueWidgetHint = !isProper && properAvailable;
   });
 }])
@@ -227,30 +227,30 @@ angular.module('contentful')
  * @property {Widgets.Options[]}     widgetOptions
  */
 .controller('FieldDialogAppearanceController', ['$scope', 'require', ($scope, require) => {
-  var getDefaultWidgetId = require('widgets/default');
+  const getDefaultWidgetId = require('widgets/default');
 
   $scope.defaultWidgetId = getDefaultWidgetId($scope.field, $scope.contentType.data.displayField);
   $scope.selectWidget = selectWidget;
 
   $scope.$watch('availableWidgets', available => {
     if (Array.isArray(available)) {
-      var selected = _.findIndex(available, {id: $scope.widgetSettings.id});
+      const selected = _.findIndex(available, {id: $scope.widgetSettings.id});
       selectWidget(selected > -1 ? selected : 0);
     }
   });
 
   function selectWidget (i) {
-    var widget = $scope.availableWidgets[i];
+    const widget = $scope.availableWidgets[i];
     $scope.selectedWidgetIndex = i;
     $scope.widgetSettings.id = widget.id;
   }
 }])
 
 .directive('cfFieldAppearanceParameters', ['require', require => {
-  var ReactDOM = require('react-dom');
-  var React = require('react');
-  var WidgetParametersUtils = require('widgets/WidgetParametersUtils');
-  var WidgetParametersForm = require('widgets/WidgetParametersForm').default;
+  const ReactDOM = require('react-dom');
+  const React = require('react');
+  const WidgetParametersUtils = require('widgets/WidgetParametersUtils');
+  const WidgetParametersForm = require('widgets/WidgetParametersForm').default;
 
   return {
     restrict: 'E',
@@ -261,7 +261,7 @@ angular.module('contentful')
       scope.$watch('availableWidgets', render);
 
       function render () {
-        var widget = _.find(scope.availableWidgets, {id: scope.widgetSettings.id});
+        const widget = _.find(scope.availableWidgets, {id: scope.widgetSettings.id});
         if (widget) {
           ReactDOM.render(
             React.createElement(WidgetParametersForm, prepareProps(widget)),
@@ -271,8 +271,8 @@ angular.module('contentful')
       }
 
       function prepareProps (widget) {
-        var definitions = widget.parameters;
-        var settings = scope.widgetSettings;
+        let definitions = widget.parameters;
+        const settings = scope.widgetSettings;
 
         settings.params = WidgetParametersUtils.applyDefaultValues(definitions, settings.params);
         definitions = WidgetParametersUtils.filterDefinitions(definitions, settings.params, widget);

@@ -8,8 +8,8 @@ angular.module('cf.data')
  * @name data/editingInterfaces
  */
 .factory('data/editingInterfaces', ['require', require => {
-  var $q = require('$q');
-  var Transformer = require('data/editingInterfaces/transformer');
+  const $q = require('$q');
+  const Transformer = require('data/editingInterfaces/transformer');
 
   return function createEIRepo (spaceEndpoint) {
     return {

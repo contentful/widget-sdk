@@ -1,14 +1,14 @@
 'use strict';
 
 angular.module('contentful').directive('cfAutocompleteResults', ['require', require => {
-  var keycodes = require('utils/keycodes').default;
+  const keycodes = require('utils/keycodes').default;
   return {
     controller: 'CfAutocompleteResultsController',
     controllerAs: 'resultsController',
     restrict: 'A',
     link: function (scope, elem) {
-      var navigateResultList = function navigateResultList (event) {
-        var handled;
+      let navigateResultList = function navigateResultList (event) {
+        let handled;
         scope.$apply(() => {
           if (event.keyCode === keycodes.DOWN) {
             handled = scope.resultsController.selectNext();

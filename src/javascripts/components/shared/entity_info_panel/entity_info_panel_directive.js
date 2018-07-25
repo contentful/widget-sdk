@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 .directive('cfEntityInfoPanel', ['require', require => {
-  var K = require('utils/kefir');
+  const K = require('utils/kefir');
 
   return {
     scope: {

@@ -1,19 +1,19 @@
 angular.module('contentful')
 .directive('cfContactUsSpaceHome', ['require', require => {
-  var LD = require('utils/LaunchDarkly');
-  var Intercom = require('intercom');
-  var renderTemplate = require('app/home/contactUs/template').render;
-  var Analytics = require('analytics/Analytics');
-  var $state = require('$state');
+  const LD = require('utils/LaunchDarkly');
+  const Intercom = require('intercom');
+  const renderTemplate = require('app/home/contactUs/template').render;
+  const Analytics = require('analytics/Analytics');
+  const $state = require('$state');
 
-  var flagName = 'feature-ps-10-2017-contact-us-space-home';
+  const flagName = 'feature-ps-10-2017-contact-us-space-home';
 
   return {
     restrict: 'E',
     template: '<cf-component-bridge component="contact.component" />',
     controllerAs: 'contact',
     controller: ['$scope', function ($scope) {
-      var controller = this;
+      const controller = this;
 
       render();
       LD.onFeatureFlag($scope, flagName, flag => {

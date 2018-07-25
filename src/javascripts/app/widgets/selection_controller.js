@@ -8,7 +8,7 @@ angular.module('contentful')
   };
 
   function create (widgetApi, scope, options) {
-    var field = widgetApi.field;
+    const field = widgetApi.field;
 
     scope.required = field.required;
     scope.options = options;
@@ -29,11 +29,11 @@ angular.module('contentful')
       field.removeValue();
     };
 
-    var removeChangeListener = field.onValueChanged(value => {
+    const removeChangeListener = field.onValueChanged(value => {
       scope.data.selected = value;
     });
 
-    var removeDisabledStatusListener = field.onIsDisabledChanged(disabled => {
+    const removeDisabledStatusListener = field.onIsDisabledChanged(disabled => {
       scope.isDisabled = disabled;
     });
 
@@ -52,7 +52,7 @@ angular.module('contentful')
   }
 
   function createFromValidations (widgetApi, scope) {
-    var options = getOptions(widgetApi.field);
+    const options = getOptions(widgetApi.field);
     create(widgetApi, scope, options);
   }
 
@@ -71,7 +71,7 @@ angular.module('contentful')
 
   function getOptions (field) {
     // Get first object that has a 'in' property
-    var predefinedValues = _.filter(_.map(field.validations, 'in'))[0];
+    const predefinedValues = _.filter(_.map(field.validations, 'in'))[0];
     return _.map(predefinedValues, value => ({
       value: parseValue(value, field.type),
       label: String(value)

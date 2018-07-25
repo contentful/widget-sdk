@@ -82,17 +82,17 @@ angular.module('cf.app')
     'require',
     '$scope',
     (require, $scope) => {
-      var makeEntityRef = require('states/Navigator').makeEntityRef;
-      var EntityState = require('data/CMA/EntityState');
-      var entityStateColor = require('Styles/Colors').entityStateColor;
-      var LD = require('utils/LaunchDarkly');
-      var spaceContext = require('spaceContext');
-      var Analytics = require('analytics/Analytics');
-      var _ = require('lodash');
+      const makeEntityRef = require('states/Navigator').makeEntityRef;
+      const EntityState = require('data/CMA/EntityState');
+      const entityStateColor = require('Styles/Colors').entityStateColor;
+      const LD = require('utils/LaunchDarkly');
+      const spaceContext = require('spaceContext');
+      const Analytics = require('analytics/Analytics');
+      const _ = require('lodash');
 
-      var INLINE_REFERENCE_FEATURE_FLAG =
+      const INLINE_REFERENCE_FEATURE_FLAG =
         'feature-at-02-2018-inline-reference-field';
-      var REFERENCE_CARD_REDESIGN_FEATURE_FLAG =
+      const REFERENCE_CARD_REDESIGN_FEATURE_FLAG =
         'feature-at-06-2018-reference-cards-redesign';
 
       LD.onFeatureFlag($scope, INLINE_REFERENCE_FEATURE_FLAG, isEnabled => {
@@ -103,7 +103,7 @@ angular.module('cf.app')
         $scope.useRedesignedCardTemplate = isEnabled;
       });
 
-      var data = $scope.entity;
+      const data = $scope.entity;
       $scope.config = _.assign({}, $scope.config || {});
       $scope.actions = $scope.actions || {};
       $scope.onClick = $event => {
@@ -197,7 +197,7 @@ angular.module('cf.app')
           );
         }
 
-        var state = EntityState.getState(data.sys);
+        const state = EntityState.getState(data.sys);
 
         // We do not show the state indicator for published assets
         if (

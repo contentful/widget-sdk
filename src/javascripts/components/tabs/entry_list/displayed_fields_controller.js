@@ -2,13 +2,13 @@
 
 angular.module('contentful')
 .controller('DisplayedFieldsController', ['$scope', 'require', ($scope, require) => {
-  var systemFields = require('systemFields');
-  var spaceContext = require('spaceContext');
+  const systemFields = require('systemFields');
+  const spaceContext = require('spaceContext');
 
   function getAvailableFields (contentTypeId) {
-    var filteredContentType = spaceContext.publishedCTs.get(contentTypeId);
-    var contentTypeFields = filteredContentType ? _.reject(filteredContentType.data.fields, {disabled: true}) : [];
-    var fields = systemFields.getList().concat(contentTypeFields);
+    const filteredContentType = spaceContext.publishedCTs.get(contentTypeId);
+    const contentTypeFields = filteredContentType ? _.reject(filteredContentType.data.fields, {disabled: true}) : [];
+    const fields = systemFields.getList().concat(contentTypeFields);
 
     if (filteredContentType) {
       _.remove(fields, field => field.id === filteredContentType.data.displayField);
@@ -19,12 +19,12 @@ angular.module('contentful')
   $scope.hiddenFields = [];
 
   $scope.refreshDisplayFields = () => {
-    var displayedFieldIds = $scope.context.view.displayedFieldIds;
-    var fields = getAvailableFields($scope.context.view.contentTypeId);
-    var unavailableFieldIds = [];
+    const displayedFieldIds = $scope.context.view.displayedFieldIds;
+    const fields = getAvailableFields($scope.context.view.contentTypeId);
+    const unavailableFieldIds = [];
 
     $scope.displayedFields = _.filter(_.map(displayedFieldIds, id => {
-      var field = _.find(fields, {id: id});
+      const field = _.find(fields, {id: id});
       if (!field) unavailableFieldIds.push(id);
       return field;
     }));

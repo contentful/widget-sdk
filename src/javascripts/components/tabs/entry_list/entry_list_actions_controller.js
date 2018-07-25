@@ -3,12 +3,12 @@
 angular.module('contentful')
 
 .controller('EntryListActionsController', ['$scope', 'require', function EntryListActionsController ($scope, require) {
-  var accessChecker = require('access_control/AccessChecker');
-  var $controller = require('$controller');
-  var spaceContext = require('spaceContext');
-  var Analytics = require('analytics/Analytics');
+  const accessChecker = require('access_control/AccessChecker');
+  const $controller = require('$controller');
+  const spaceContext = require('spaceContext');
+  const Analytics = require('analytics/Analytics');
 
-  var listActionsController = $controller('ListActionsController', {
+  const listActionsController = $controller('ListActionsController', {
     $scope: $scope,
     entityType: 'Entry'
   });
@@ -16,8 +16,8 @@ angular.module('contentful')
   $scope.showDuplicate = showDuplicate;
   $scope.duplicateSelected = duplicate;
 
-  var controller = this;
-  var publish = $scope.publishSelected;
+  const controller = this;
+  const publish = $scope.publishSelected;
   $scope.publishSelected = function (...args) {
     const contentTypes = getContentTypes();
     publish.apply(controller, args)
@@ -35,7 +35,7 @@ angular.module('contentful')
   function duplicate () {
     const contentTypes = getContentTypes();
     listActionsController.duplicate().then(results => {
-      var succeeded = results.succeeded;
+      const succeeded = results.succeeded;
       succeeded.forEach(
         entryEventTracker('create', 'content-list__duplicate', contentTypes)
       );
@@ -65,7 +65,7 @@ angular.module('contentful')
 
   function entryEventTracker (action, origin, contentTypes) {
     return entry => {
-      var event = 'entry:' + action; // entry:create, entry:publish
+      const event = 'entry:' + action; // entry:create, entry:publish
       Analytics.track(event, {
         eventOrigin: origin,
         contentType: contentTypes[entry.data.sys.contentType.sys.id],

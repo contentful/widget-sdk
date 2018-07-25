@@ -2,9 +2,9 @@
 
 angular.module('contentful').factory('PolicyBuilder/removeOutdatedRules', ['require', require => {
 
-  var CONFIG = require('PolicyBuilder/CONFIG');
+  const CONFIG = require('PolicyBuilder/CONFIG');
 
-  var PATHS = [
+  const PATHS = [
     'entries.allowed',
     'entries.denied',
     'assets.allowed',
@@ -13,7 +13,7 @@ angular.module('contentful').factory('PolicyBuilder/removeOutdatedRules', ['requ
 
   return function removeOutdatedRules(internal, contentTypes, locales) {
 
-    var filtered = filterPolicies(internal);
+    const filtered = filterPolicies(internal);
 
     if (countPolicies(internal) !== countPolicies(filtered)) {
       _.extend(internal, filtered);
@@ -24,8 +24,8 @@ angular.module('contentful').factory('PolicyBuilder/removeOutdatedRules', ['requ
 
     function filterPolicies(internal) {
       return _.transform(PATHS, (acc, path) => {
-        var collection = _.get(internal, path, []);
-        var filtered = filterPolicyCollection(collection);
+        const collection = _.get(internal, path, []);
+        const filtered = filterPolicyCollection(collection);
         _.set(acc, path, filtered);
       }, {});
     }
@@ -59,9 +59,9 @@ angular.module('contentful').factory('PolicyBuilder/removeOutdatedRules', ['requ
     }
 
     function hasField(ctId, fieldId) {
-      var ct = findCt(ctId);
-      var fields = _.get(ct, 'fields', []);
-      var field = _.find(fields, {apiName: fieldId}) || _.find(fields, {id: fieldId});
+      const ct = findCt(ctId);
+      const fields = _.get(ct, 'fields', []);
+      const field = _.find(fields, {apiName: fieldId}) || _.find(fields, {id: fieldId});
       return _.isObject(field);
     }
 

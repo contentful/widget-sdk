@@ -1,7 +1,7 @@
 'use strict';
 
 describe('ReloadNotification service', () => {
-  var $q, $rootScope, ReloadNotification, open;
+  let $q, $rootScope, ReloadNotification, open;
   beforeEach(module('contentful/test'));
   beforeEach(inject($injector => {
     $q                 = $injector.get('$q');
@@ -44,7 +44,7 @@ describe('ReloadNotification service', () => {
     });
 
     describe('should not interfere with further processing', () => {
-      var successHandler, errorHandler, error;
+      let successHandler, errorHandler, error;
 
       beforeEach(() => {
         successHandler = sinon.stub();

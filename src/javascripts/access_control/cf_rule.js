@@ -2,9 +2,9 @@
 
 angular.module('contentful')
 .directive('cfRule', ['require', require => {
-  var spaceContext = require('spaceContext');
-  var K = require('utils/kefir');
-  var CONFIG = require('PolicyBuilder/CONFIG');
+  const spaceContext = require('spaceContext');
+  const K = require('utils/kefir');
+  const CONFIG = require('PolicyBuilder/CONFIG');
 
   return {
     restrict: 'E',
@@ -41,7 +41,7 @@ angular.module('contentful')
 
       // when selected content type is changed
       $scope.$watch('rule.contentType', (id, prev) => {
-        var ct = spaceContext.publishedCTs.get(id);
+        const ct = spaceContext.publishedCTs.get(id);
 
         // get fields of selected content type
         $scope.contentTypeFields = _.map(_.get(ct, 'data.fields', []), f => ({

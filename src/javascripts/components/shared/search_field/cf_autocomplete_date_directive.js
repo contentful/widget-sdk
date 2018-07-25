@@ -1,10 +1,10 @@
 'use strict';
 angular.module('contentful').directive('cfAutocompleteDate', ['require', require => {
-  var moment = require('moment');
-  var h = require('utils/hyperscript').h;
+  const moment = require('moment');
+  const h = require('utils/hyperscript').h;
 
-  var DATE_FORMAT = 'yy-mm-dd'; // datepicker format
-  var DATE_FORMAT_INTERNAL = 'YYYY-MM-DD'; // moment.js format
+  const DATE_FORMAT = 'yy-mm-dd'; // datepicker format
+  const DATE_FORMAT_INTERNAL = 'YYYY-MM-DD'; // moment.js format
 
   return {
     restrict: 'A',
@@ -21,7 +21,7 @@ angular.module('contentful').directive('cfAutocompleteDate', ['require', require
       })
     ]),
     link: function (scope, elem) {
-      var $datepicker = elem.find('.datepicker');
+      const $datepicker = elem.find('.datepicker');
       $datepicker.datepicker({
         dateFormat: DATE_FORMAT,
         onSelect: function (dateString) {
@@ -34,14 +34,14 @@ angular.module('contentful').directive('cfAutocompleteDate', ['require', require
       });
 
       scope.$on('autocompletionsUpdated', () => {
-        var date = getDate();
+        const date = getDate();
         if (date) {
           $datepicker.datepicker('setDate', date);
         }
       });
 
       scope.$evalAsync(() => {
-        var date = moment($datepicker.datepicker('getDate')).format(DATE_FORMAT_INTERNAL);
+        const date = moment($datepicker.datepicker('getDate')).format(DATE_FORMAT_INTERNAL);
         scope.fillAutocompletion(date);
       });
 
@@ -54,15 +54,15 @@ angular.module('contentful').directive('cfAutocompleteDate', ['require', require
       });
 
       function adjustDate (offset) {
-        var date = $datepicker.datepicker('getDate');
-        var m = date ? moment(date) : moment();
+        const date = $datepicker.datepicker('getDate');
+        let m = date ? moment(date) : moment();
         m = m.add(offset, 'days');
         $datepicker.datepicker('setDate', m.format(DATE_FORMAT_INTERNAL));
         scope.fillAutocompletion(m.format(DATE_FORMAT_INTERNAL));
       }
 
       function getDate () {
-        var dateStr = scope.currentTokenContent();
+        const dateStr = scope.currentTokenContent();
         if (dateStr && dateStr.match(/\d{4}-\d{1,2}-\d{1,2}/)) {
           return dateStr;
         }

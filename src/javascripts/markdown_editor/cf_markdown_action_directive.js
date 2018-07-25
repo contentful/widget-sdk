@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').directive('cfMarkdownAction', () => {
-  var descriptors = {
+  const descriptors = {
     bold:          ['Bold',                     'fa-bold'],
     italic:        ['Italic',                   'fa-italic'],
     quote:         ['Quote',                    'fa-quote-left'],
@@ -21,7 +21,7 @@ angular.module('contentful').directive('cfMarkdownAction', () => {
     redo:          ['Redo',                     'fa-repeat']
   };
 
-  var template = [
+  const template = [
     '<button ',
       'tabindex="-1" ',
       'tooltip="{{ tooltip }}" ',
@@ -43,7 +43,7 @@ angular.module('contentful').directive('cfMarkdownAction', () => {
     },
     template: template,
     link: function (scope) {
-      var descriptor = descriptors[scope.name];
+      const descriptor = descriptors[scope.name];
       scope.tooltip = descriptor[0];
       scope.cssClass = descriptor[1];
       scope.placement = scope.mode === 'zen' ? 'bottom' : 'top';
@@ -64,9 +64,9 @@ angular.module('contentful').directive('cfMarkdownHeadingAction', () => ({
 }));
 
 angular.module('contentful').directive('cfMarkdownInsertMediaAction', ['require', require => {
-  var LD = require('utils/LaunchDarkly');
-  var accessChecker = require('access_control/AccessChecker');
-  var templateString = require('markdown_editor/templates/InsertMediaAction').default
+  const LD = require('utils/LaunchDarkly');
+  const accessChecker = require('access_control/AccessChecker');
+  const templateString = require('markdown_editor/templates/InsertMediaAction').default;
 
   return {
     restrict: 'E',

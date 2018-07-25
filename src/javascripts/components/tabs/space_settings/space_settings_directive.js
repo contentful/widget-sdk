@@ -1,8 +1,8 @@
 angular.module('contentful')
 
 .directive('cfSpaceSettings', ['require', require => {
-  var renderString = require('ui/Framework').renderString;
-  var templates = require('components/tabs/space_settings/space_settings_templates');
+  const renderString = require('ui/Framework').renderString;
+  const templates = require('components/tabs/space_settings/space_settings_templates');
 
   return {
     template: renderString(templates.form()),
@@ -12,17 +12,17 @@ angular.module('contentful')
 }])
 
 .controller('SpaceSettingsController', ['require', '$scope', function (require, $scope) {
-  var $state = require('$state');
-  var spaceContext = require('spaceContext');
-  var Command = require('command');
-  var TokenStore = require('services/TokenStore');
-  var notification = require('notification');
-  var ReloadNotification = require('ReloadNotification');
-  var openDeleteSpaceDialog = require('services/DeleteSpace').openDeleteSpaceDialog;
-  var getSingleSpacePlan = require('account/pricing/PricingDataProvider').getSingleSpacePlan;
-  var createOrganizationEndpoint = require('data/EndpointFactory').createOrganizationEndpoint;
+  const $state = require('$state');
+  const spaceContext = require('spaceContext');
+  const Command = require('command');
+  const TokenStore = require('services/TokenStore');
+  const notification = require('notification');
+  const ReloadNotification = require('ReloadNotification');
+  const openDeleteSpaceDialog = require('services/DeleteSpace').openDeleteSpaceDialog;
+  const getSingleSpacePlan = require('account/pricing/PricingDataProvider').getSingleSpacePlan;
+  const createOrganizationEndpoint = require('data/EndpointFactory').createOrganizationEndpoint;
 
-  var space = spaceContext.space.data;
+  let space = spaceContext.space.data;
 
   $scope.context.ready = true;
   $scope.spaceId = space.sys.id;
@@ -73,8 +73,8 @@ angular.module('contentful')
   }
 
   function isSaveDisabled () {
-    var input = _.get($scope, 'model.name');
-    var currentName = _.get(space, 'name');
+    const input = _.get($scope, 'model.name');
+    const currentName = _.get(space, 'name');
 
     return !input || input === currentName;
   }

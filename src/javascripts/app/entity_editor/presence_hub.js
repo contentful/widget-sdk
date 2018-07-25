@@ -10,10 +10,10 @@ angular.module('contentful')
  * const presence = PresenceHub.create(userId, docEvents, shout)
  */
 .factory('entityEditor/Document/PresenceHub', ['require', require => {
-  var $interval = require('$interval');
-  var K = require('utils/kefir');
-  var FOCUS_THROTTLE = 10e3;
-  var PING_TIMEOUT = 60e3;
+  const $interval = require('$interval');
+  const K = require('utils/kefir');
+  const FOCUS_THROTTLE = 10e3;
+  const PING_TIMEOUT = 60e3;
 
   return {
     create: createPresenceHub
@@ -36,20 +36,20 @@ angular.module('contentful')
      * - `shoutedAt` has the `Date` corresponding to the most recent
      *   shout.
      */
-    var presence = {};
+    let presence = {};
 
-    var ownFocusedPath = null;
+    let ownFocusedPath = null;
 
-    var shoutFieldFocus = _.throttle(path => {
+    const shoutFieldFocus = _.throttle(path => {
       shout(['focus', ownUserId, path]);
     }, FOCUS_THROTTLE);
 
     // Repeatedly checks if users have not pinged in a while and removes
     // them from presence map.
-    var userTimeoutInterval = $interval(removeTimedOutUsers, PING_TIMEOUT);
+    const userTimeoutInterval = $interval(removeTimedOutUsers, PING_TIMEOUT);
 
-    var fieldCollaboratorsBus = K.createPropertyBus({});
-    var collaboratorsBus = K.createPropertyBus([]);
+    const fieldCollaboratorsBus = K.createPropertyBus({});
+    const collaboratorsBus = K.createPropertyBus([]);
 
     docEvents.onValue(event => {
       if (event.name === 'shout') {
@@ -101,7 +101,7 @@ angular.module('contentful')
      * @returns {Property<API.User[]}
      */
     function collaboratorsFor (fieldId, localeCode) {
-      var path = ['fields', fieldId, localeCode].join('.');
+      const path = ['fields', fieldId, localeCode].join('.');
       return fieldCollaboratorsBus.property.map(fields => fields[path]);
     }
 
@@ -116,7 +116,7 @@ angular.module('contentful')
      * @param {string} localeCode  Internal locale code
      */
     function focus (fieldId, localeCode) {
-      var path = ['fields', fieldId, localeCode].join('.');
+      const path = ['fields', fieldId, localeCode].join('.');
       if (path !== ownFocusedPath) {
         shoutFieldFocus.cancel();
       }
@@ -136,16 +136,16 @@ angular.module('contentful')
 
     function removeTimedOutUsers () {
       presence = _.omitBy(presence, userPresence => {
-        var timeSinceLastShout = new Date() - userPresence.shoutedAt;
+        const timeSinceLastShout = new Date() - userPresence.shoutedAt;
         return timeSinceLastShout > PING_TIMEOUT;
       });
       updatePresence(presence);
     }
 
     function receiveShout (shoutArgs) {
-      var type = shoutArgs[0];
-      var from = shoutArgs[1];
-      var focusedPath = shoutArgs[2];
+      const type = shoutArgs[0];
+      const from = shoutArgs[1];
+      const focusedPath = shoutArgs[2];
 
       if (!presence[from]) {
         presence[from] = {};
@@ -185,7 +185,7 @@ angular.module('contentful')
 
   function groupPresenceByField (presence) {
     return _.transform(presence, (fieldPresence, userPresence, presenceUserId) => {
-      var fieldId = userPresence.focus;
+      const fieldId = userPresence.focus;
       if (fieldId) {
         fieldPresence[fieldId] = fieldPresence[fieldId] || [];
         fieldPresence[fieldId].push(toUserLink(presenceUserId));

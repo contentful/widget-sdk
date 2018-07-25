@@ -1,7 +1,7 @@
 'use strict';
 
-var _ = require('lodash');
-var dateStringToIso = require('./utils').dateStringToIso;
+const _ = require('lodash');
+const dateStringToIso = require('./utils').dateStringToIso;
 
 module.exports = function mixinPublishable (base) {
   return _.extend(base, {

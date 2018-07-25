@@ -1,7 +1,7 @@
 'use strict';
 angular.module('contentful').directive('cfValidationSetting', ['require', require => {
-  var mimetype        = require('mimetype');
-  var validationViews = require('validationViews');
+  const mimetype        = require('mimetype');
+  const validationViews = require('validationViews');
 
   return {
     scope: true,

@@ -9,7 +9,7 @@ angular.module('contentful')
 })])
 
 .controller('cfContentPreviewListController', ['require', '$scope', (require, $scope) => {
-  var contentPreview = require('contentPreview');
+  const contentPreview = require('contentPreview');
 
   contentPreview.getAll().then(environments => {
     $scope.previewEnvironments = mapList(environments);

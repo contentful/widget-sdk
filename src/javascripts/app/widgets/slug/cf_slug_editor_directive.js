@@ -25,11 +25,11 @@ angular.module('contentful')
  * so we don't duplicate our API error and custom check inside this directive.
  */
 .directive('cfSlugEditor', ['require', require => {
-  var slugUtils = require('slug');
-  var moment = require('moment');
-  var debounce = require('debounce');
-  var InputUpdater = require('ui/inputUpdater');
-  var K = require('utils/kefir');
+  const slugUtils = require('slug');
+  const moment = require('moment');
+  const debounce = require('debounce');
+  const InputUpdater = require('ui/inputUpdater');
+  const K = require('utils/kefir');
 
   return {
     restrict: 'E',
@@ -37,20 +37,20 @@ angular.module('contentful')
     require: '^cfWidgetApi',
     template: JST['cf_slug_editor'](),
     link: function (scope, $el, _attrs, widgetApi) {
-      var field = widgetApi.field;
-      var entry = widgetApi.entry;
-      var space = widgetApi.space;
-      var locales = widgetApi.locales;
-      var contentType = widgetApi.contentType;
+      const field = widgetApi.field;
+      const entry = widgetApi.entry;
+      const space = widgetApi.space;
+      const locales = widgetApi.locales;
+      const contentType = widgetApi.contentType;
 
-      var $inputEl = $el.find('input');
-      var updateInput = InputUpdater.create($inputEl.get(0));
-      var titleField = entry.fields[contentType.displayField];
+      const $inputEl = $el.find('input');
+      const updateInput = InputUpdater.create($inputEl.get(0));
+      const titleField = entry.fields[contentType.displayField];
 
       // The most recent value of the title field.
       // It is used to check if the slug is currently tracking the
       // title when the title field changes its value.
-      var trackingTitle;
+      let trackingTitle;
 
       // we don't want to show our custom error about uniqueness
       // in case of the API error for it. We also cannot just get
@@ -61,50 +61,50 @@ angular.module('contentful')
       // editor in the background, but it will make it too complicated
       scope.hasUniqueValidationError = false;
 
-      var debouncedPerformDuplicityCheck = debounce(performDuplicityCheck, 500);
+      const debouncedPerformDuplicityCheck = debounce(performDuplicityCheck, 500);
 
-      var disabledBus = K.createStreamBus();
-      var titleBus = K.createStreamBus();
+      const disabledBus = K.createStreamBus();
+      const titleBus = K.createStreamBus();
 
       // we need to update slug values from title only after
       // field becomes not disabled (sharejs connected)
-      var titleUpdate$ = K.combine([disabledBus.stream, titleBus.stream])
+      const titleUpdate$ = K.combine([disabledBus.stream, titleBus.stream])
           .filter(function filterDisabled (values) {
-            var disabled = values[0];
+            const disabled = values[0];
             return disabled === false;
           });
 
       K.onValueScope(scope, titleUpdate$, values => {
-        var title = values[1];
-        var val = makeSlug(title);
+        const title = values[1];
+        const val = makeSlug(title);
         updateInput(val);
         field.setValue(val);
       });
 
-      var detachOnFieldDisabledHandler = field.onPermissionChanged(disabledStatus => {
+      const detachOnFieldDisabledHandler = field.onPermissionChanged(disabledStatus => {
         scope.isDisabled = !!disabledStatus.disabled;
         disabledBus.emit(!!disabledStatus.denied);
       });
 
-      var offSchemaErrorsChanged = field.onSchemaErrorsChanged(errors => {
+      const offSchemaErrorsChanged = field.onSchemaErrorsChanged(errors => {
         if (errors) {
           scope.hasErrors = errors.length > 0;
           scope.hasUniqueValidationError = errors.some(error => error && error.name === 'unique');
         }
       });
 
-      var detachOnValueChangedHandler = field.onValueChanged(val => {
+      const detachOnValueChangedHandler = field.onValueChanged(val => {
         val = val || '';
         updateInput(val);
       });
 
       // The content type’s display field might not exist.
       if (titleField) {
-        var detachLocaleTitleChangeHandler = titleField.onValueChanged(field.locale, setTitle);
+        const detachLocaleTitleChangeHandler = titleField.onValueChanged(field.locale, setTitle);
         scope.$on('$destroy', detachLocaleTitleChangeHandler);
 
         if (field.locale !== locales.default) {
-          var detachDefaultLocaleTitleChangeHandler = titleField.onValueChanged(locales.default, titleValue => {
+          const detachDefaultLocaleTitleChangeHandler = titleField.onValueChanged(locales.default, titleValue => {
             if (!titleField.getValue(field.locale)) {
               setTitle(titleValue);
             }
@@ -129,8 +129,8 @@ angular.module('contentful')
        * `true` if the current value was built from the previous title
        */
       function isTracking () {
-        var isPublished = entry.getSys().publishedVersion;
-        var value = $inputEl.val();
+        const isPublished = entry.getSys().publishedVersion;
+        const value = $inputEl.val();
         return !isPublished && (value === makeSlug(trackingTitle) || !value);
       }
 
@@ -177,7 +177,7 @@ angular.module('contentful')
        * but this is an anti-pattern and will likely change in the future.
        */
       function performDuplicityCheck (value) {
-        var req = {};
+        const req = {};
 
         if (value) {
           req['content_type'] = entry.getSys().contentType.sys.id;
@@ -197,8 +197,8 @@ angular.module('contentful')
       }
 
       function untitledSlug () {
-        var createdAt = entry.getSys().createdAt;
-        var createdAtFormatted =
+        const createdAt = entry.getSys().createdAt;
+        const createdAtFormatted =
           moment.utc(createdAt)
           .format('YYYY MM DD [at] hh mm ss');
         return slugUtils.slugify('Untitled entry ' + createdAtFormatted, 'en-US');

@@ -8,11 +8,11 @@ angular.module('contentful')
 }])
 
 .factory('notification', ['require', require => {
-  var getNotificationBus = require('notifications/bus');
-  var setupClearMessageHooks = require('notifications/clearMessageHooks');
-  var _ = require('lodash');
+  const getNotificationBus = require('notifications/bus');
+  const setupClearMessageHooks = require('notifications/clearMessageHooks');
+  const _ = require('lodash');
 
-  var main = getNotificationBus('main');
+  const main = getNotificationBus('main');
   return _.extend(main, {
     setupClearMessageHooks: function () {
       setupClearMessageHooks(this);
@@ -23,12 +23,12 @@ angular.module('contentful')
 
 
 .factory('notifications/bus', ['require', require => {
-  var CLEAR_TIMEOUT_MS = require('notification/CLEAR_TIMEOUT_MS');
-  var TRANSFORM_TIMEOUT_MS = require('notification/TRANSFORM_TIMEOUT_MS');
-  var _ = require('lodash');
+  const CLEAR_TIMEOUT_MS = require('notification/CLEAR_TIMEOUT_MS');
+  const TRANSFORM_TIMEOUT_MS = require('notification/TRANSFORM_TIMEOUT_MS');
+  const _ = require('lodash');
 
-  var buses = {};
-  var $timeout = require('$timeout');
+  const buses = {};
+  const $timeout = require('$timeout');
 
   return function getNotificationBus (name) {
     if (!(name in buses)) {
@@ -54,7 +54,7 @@ angular.module('contentful')
       },
 
       markAsSeen: function () {
-        var self = this;
+        const self = this;
         if (this.message) {
           this.message.hidden = true;
         }
@@ -77,15 +77,15 @@ angular.module('contentful')
       },
 
       clearSeen: function () {
-        var timestamp = this.message && this.message.timestamp;
-        var elapsed = _.now() - timestamp;
+        const timestamp = this.message && this.message.timestamp;
+        const elapsed = _.now() - timestamp;
         if (timestamp && elapsed > 1 * 1000) {
           this.markAsSeen();
         }
       },
 
       _notify: function (body, severity) {
-        var self = this;
+        const self = this;
 
         this.message = {
           body: body,
@@ -115,8 +115,8 @@ angular.module('contentful')
 }])
 
 .factory('notifications/clearMessageHooks', ['require', require => {
-  var $rootScope = require('$rootScope');
-  var Command = require('command');
+  const $rootScope = require('$rootScope');
+  const Command = require('command');
 
   return function init (notification) {
     $rootScope.$on('$stateChangeSuccess', () => {

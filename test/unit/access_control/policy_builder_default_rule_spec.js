@@ -2,7 +2,7 @@
 
 describe('Policy Builder, default rule', () => {
 
-  var getDefaultRuleFor, getDefaultRuleGetterFor, CONFIG;
+  let getDefaultRuleFor, getDefaultRuleGetterFor, CONFIG;
 
   beforeEach(function () {
     module('contentful/test');
@@ -12,7 +12,7 @@ describe('Policy Builder, default rule', () => {
   });
 
   it('getting default rule for entry', () => {
-    var rule = getDefaultRuleFor('entry');
+    const rule = getDefaultRuleFor('entry');
     expect(_.isString(rule.id)).toBe(true);
     expect(rule.contentType).toBe(CONFIG.ALL_CTS);
     expect(rule.action).toBe('all');
@@ -22,7 +22,7 @@ describe('Policy Builder, default rule', () => {
   });
 
   it('getting default rule for asset', () => {
-    var rule = getDefaultRuleFor('asset');
+    const rule = getDefaultRuleFor('asset');
     expect(_.isString(rule.id)).toBe(true);
     expect(rule.contentType).toBe(undefined);
     expect(rule.action).toBe('all');
@@ -32,7 +32,7 @@ describe('Policy Builder, default rule', () => {
   });
 
   it('creates getter for default entry rule', () => {
-    var getRule = getDefaultRuleGetterFor('entry');
+    const getRule = getDefaultRuleGetterFor('entry');
     expect(_.isFunction(getRule)).toBe(true);
     expect(_.isObject(getRule())).toBe(true);
     expect(getRule().contentType).toBe(CONFIG.ALL_CTS);
@@ -40,7 +40,7 @@ describe('Policy Builder, default rule', () => {
   });
 
   it('creates getter for default asset rule', () => {
-    var getRule = getDefaultRuleGetterFor('asset');
+    const getRule = getDefaultRuleGetterFor('asset');
     expect(_.isFunction(getRule)).toBe(true);
     expect(_.isObject(getRule())).toBe(true);
     expect(getRule().contentType).toBe(undefined);

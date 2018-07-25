@@ -8,16 +8,16 @@
 */
 angular.module('contentful')
 .factory('bugsnag', ['require', require => {
-  var CallBuffer = require('utils/CallBuffer');
-  var environment = require('environment');
+  const CallBuffer = require('utils/CallBuffer');
+  const environment = require('environment');
 
   // TODO this should be stored in the environment configuration. Need
   // to work with devops get this done.
-  var API_KEY = 'b253f10d5d0184a99e1773cec7b726e8';
+  const API_KEY = 'b253f10d5d0184a99e1773cec7b726e8';
 
-  var bugsnag;
-  var callBuffer = CallBuffer.create();
-  var loadOnce = _.once(load);
+  let bugsnag;
+  const callBuffer = CallBuffer.create();
+  const loadOnce = _.once(load);
 
   return {
     /**
@@ -42,14 +42,14 @@ angular.module('contentful')
     },
 
     notify: function () {
-      var args = arguments;
+      const args = arguments;
       callBuffer.call(() => {
         if (bugsnag) bugsnag.notify(...args);
       });
     },
 
     notifyException: function () {
-      var args = arguments;
+      const args = arguments;
       callBuffer.call(() => {
         if (bugsnag) bugsnag.notifyException(...args);
       });
@@ -84,7 +84,7 @@ angular.module('contentful')
 
   function load (user) {
     // Prevent circular dependency
-    var LazyLoader = require('LazyLoader');
+    const LazyLoader = require('LazyLoader');
     return LazyLoader.get('bugsnag')
     .then(_bugsnag => {
       bugsnag = _bugsnag;
@@ -103,7 +103,7 @@ angular.module('contentful')
   }
 
   function setUserInfo (user, bugsnag) {
-    var userId = _.get(user, ['sys', 'id']);
+    const userId = _.get(user, ['sys', 'id']);
     if (userId) {
       bugsnag.user = {
         id: userId,
@@ -114,12 +114,12 @@ angular.module('contentful')
   }
 
   function getOrganizations (user) {
-    var organizationMemberships = user.organizationMemberships || [];
+    const organizationMemberships = user.organizationMemberships || [];
     return organizationMemberships.map(membership => membership.organization.sys.id).join(', ');
   }
 
   function getAdminLink (user) {
-    var id = _.get(user, ['sys', 'id']);
+    const id = _.get(user, ['sys', 'id']);
     return 'https://admin.' + environment.settings.main_domain + '/admin/users/' + id;
   }
 }]);

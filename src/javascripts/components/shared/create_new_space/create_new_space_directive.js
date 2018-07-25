@@ -3,7 +3,7 @@
 angular.module('contentful')
 
 .directive('cfCreateNewSpace', ['require', require => {
-  var template = require('components/shared/create_new_space/Template').default;
+  const template = require('components/shared/create_new_space/Template').default;
   return {
     restrict: 'E',
     template: template(),
@@ -14,25 +14,25 @@ angular.module('contentful')
 
 angular.module('contentful')
 .controller('createSpaceController', ['$scope', 'require', '$element', function ($scope, require, $element) {
-  var controller = this;
-  var $rootScope = require('$rootScope');
-  var client = require('client');
-  var localesList = require('localesList');
-  var spaceTemplateLoader = require('services/SpaceTemplateLoader');
-  var getTemplatesList = spaceTemplateLoader.getTemplatesList;
-  var getTemplate = spaceTemplateLoader.getTemplate;
-  var spaceTemplateCreator = require('services/SpaceTemplateCreator');
-  var TokenStore = require('services/TokenStore');
-  var enforcements = require('access_control/Enforcements');
-  var $state = require('$state');
-  var logger = require('logger');
-  var Analytics = require('analytics/Analytics');
-  var spaceContext = require('spaceContext');
-  var spaceTemplateEvents = require('analytics/events/SpaceCreation');
-  var createResourceService = require('services/ResourceService').default;
+  const controller = this;
+  const $rootScope = require('$rootScope');
+  const client = require('client');
+  const localesList = require('localesList');
+  const spaceTemplateLoader = require('services/SpaceTemplateLoader');
+  const getTemplatesList = spaceTemplateLoader.getTemplatesList;
+  const getTemplate = spaceTemplateLoader.getTemplate;
+  const spaceTemplateCreator = require('services/SpaceTemplateCreator');
+  const TokenStore = require('services/TokenStore');
+  const enforcements = require('access_control/Enforcements');
+  const $state = require('$state');
+  const logger = require('logger');
+  const Analytics = require('analytics/Analytics');
+  const spaceContext = require('spaceContext');
+  const spaceTemplateEvents = require('analytics/events/SpaceCreation');
+  const createResourceService = require('services/ResourceService').default;
 
-  var DEFAULT_LOCALE = 'en-US';
-  var DEFAULT_ERROR_MESSAGE = 'Could not create Space. If the problem persists please get in contact with us.';
+  const DEFAULT_LOCALE = 'en-US';
+  const DEFAULT_ERROR_MESSAGE = 'Could not create Space. If the problem persists please get in contact with us.';
 
   // Keep track of the view state
   controller.viewState = 'createSpaceForm';
@@ -77,9 +77,9 @@ angular.module('contentful')
 
   // Request space creation
   controller.requestSpaceCreation = () => {
-    var organization = controller.newSpace.organization;
+    const organization = controller.newSpace.organization;
 
-    var resources = createResourceService(organization.sys.id, 'organization');
+    const resources = createResourceService(organization.sys.id, 'organization');
 
     // First check that there are resources available
     // to create the space
@@ -102,7 +102,7 @@ angular.module('contentful')
     // Don't need this once the `Blank` template gets removed from Contentful
     controller.templates = _.reduce(templates, (acc, template) => {
       if (!template.fields.blank) {
-        var fields = template.fields;
+        const fields = template.fields;
         acc.push(fields);
       }
       return acc;
@@ -113,7 +113,7 @@ angular.module('contentful')
   }
 
   function validate (data) {
-    var hasSpaceName = data.name && data.name.length;
+    const hasSpaceName = data.name && data.name.length;
     if (!hasSpaceName) {
       showFormError('Please provide space name');
     }
@@ -121,9 +121,9 @@ angular.module('contentful')
   }
 
   function createNewSpace () {
-    var data = controller.newSpace.data;
-    var organization = controller.newSpace.organization;
-    var template = null;
+    const data = controller.newSpace.data;
+    const organization = controller.newSpace.organization;
+    let template = null;
 
     if (!validate(data)) {
       return;
@@ -144,10 +144,10 @@ angular.module('contentful')
     Analytics.track('space:template_selected', {templateName: template.name});
 
     // if we use a template, we want to use DEFAULT_LOCALE
-    var selectedLocale = controller.newSpace.useTemplate === true
+    const selectedLocale = controller.newSpace.useTemplate === true
       ? DEFAULT_LOCALE
       : data.defaultLocale;
-    var dataWithUpdatedLocale = Object.assign({}, data, {
+    const dataWithUpdatedLocale = Object.assign({}, data, {
       defaultLocale: selectedLocale
     });
 
@@ -158,8 +158,8 @@ angular.module('contentful')
         .then(_.partial(handleSpaceCreation, newSpace, template));
     })
     .catch(error => {
-      var errors = _.get(error, 'body.details.errors');
-      var fieldErrors = [
+      const errors = _.get(error, 'body.details.errors');
+      const fieldErrors = [
         {name: 'length', path: 'name', message: 'Space name is too long'},
         {name: 'invalid', path: 'default_locale', message: 'Invalid locale'}
       ];
@@ -182,11 +182,11 @@ angular.module('contentful')
   }
 
   function handleSpaceCreation (newSpace, template) {
-    var templateName = _.get(template, 'name');
+    const templateName = _.get(template, 'name');
 
     $state.go('spaces.detail', {spaceId: newSpace.sys.id})
       .then(() => {
-        var spaceCreateEventData =
+        const spaceCreateEventData =
             templateName === 'Blank'
             ? {templateName: templateName}
             : {templateName: templateName, entityAutomationScope: {scope: 'space_template'}};
@@ -234,7 +234,7 @@ angular.module('contentful')
   }
 
   function loadSelectedTemplate () {
-    var itemHandlers = {
+    const itemHandlers = {
       // no need to show status of individual items
       onItemSuccess: function (entityId, entityData, templateName) {
         spaceTemplateEvents.entityActionSuccess(
@@ -249,8 +249,8 @@ angular.module('contentful')
       onItemError: _.noop
     };
 
-    var selectedTemplate = controller.newSpace.selectedTemplate;
-    var selectedLocale = controller.newSpace.useTemplate === true
+    const selectedTemplate = controller.newSpace.selectedTemplate;
+    const selectedLocale = controller.newSpace.useTemplate === true
       ? DEFAULT_LOCALE
       : controller.newSpace.data.defaultLocale;
 
@@ -283,7 +283,7 @@ angular.module('contentful')
   }
 
   function handleUsageWarning (usage) {
-    var enforcement = enforcements.determineEnforcement(
+    const enforcement = enforcements.determineEnforcement(
       spaceContext.organization,
       ['usageExceeded'],
       'space'

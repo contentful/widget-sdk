@@ -10,7 +10,7 @@ angular.module('contentful')
   },
 
   link: function ($scope, _element, _attrs) {
-    var watchers = {
+    const watchers = {
       suspended: false
     };
 
@@ -66,7 +66,7 @@ angular.module('contentful')
       iterateChildren($scope, resumeScopeWatchers);
     }
 
-    var mockScopeWatch = scopeId => (watchExp, listener, objectEquality, prettyPrintExpression) => {
+    const mockScopeWatch = scopeId => (watchExp, listener, objectEquality, prettyPrintExpression) => {
       watchers[scopeId].unshift({
         fn: angular.isFunction(listener) ? listener : angular.noop,
         last: undefined,

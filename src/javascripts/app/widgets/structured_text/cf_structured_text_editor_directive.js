@@ -9,12 +9,12 @@ angular.module('cf.app')
     require: '^cfWidgetApi',
     link: (scope, _$el, _attr, widgetApi) => {
       // TODO: Move disabled state handling to react component.
-      var field = widgetApi.field;
-      var offValueChanged = field.onValueChanged((json) => {
+      const field = widgetApi.field;
+      const offValueChanged = field.onValueChanged((json) => {
         scope.content = stringifyJSON(json);
       });
 
-      var offDisabledStatusChanged =
+      const offDisabledStatusChanged =
         field.onIsDisabledChanged((isDisabled) => {
           scope.isDisabled = isDisabled;
         });

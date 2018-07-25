@@ -2,16 +2,16 @@
 
 angular.module('cf.app')
 .controller('LocationEditorSearchController', ['require', '$scope', function (require, $scope) {
-  var $q = require('$q');
-  var memoize = require('utils/memoize');
-  var LazyLoader = require('LazyLoader');
-  var Signal = require('signal');
-  var throttle = require('throttle');
+  const $q = require('$q');
+  const memoize = require('utils/memoize');
+  const LazyLoader = require('LazyLoader');
+  const Signal = require('signal');
+  const throttle = require('throttle');
 
-  var controller = this;
-  var resultsAvailable = Signal.create();
+  const controller = this;
+  const resultsAvailable = Signal.create();
 
-  var ADDRESS_NOT_FOUND_ERROR = {
+  const ADDRESS_NOT_FOUND_ERROR = {
     code: 'address-not-found',
     message: 'Could not find address'
   };
@@ -25,7 +25,7 @@ angular.module('cf.app')
   };
 
   controller.updateAddressFromLocation = () => {
-    var latLng = toLatLng($scope.location);
+    const latLng = toLatLng($scope.location);
     if (latLng) {
       controller.inProgress = true;
       geocode({location: latLng})
@@ -41,7 +41,7 @@ angular.module('cf.app')
     }
   };
 
-  var searchAddress = addressSearcher(results => {
+  const searchAddress = addressSearcher(results => {
     if (results === null) {
       controller.results = null;
       controller.error = null;
@@ -67,7 +67,7 @@ angular.module('cf.app')
     searchAddress(controller.address);
   };
 
-  var getGeocoder = memoize(() => LazyLoader.get('googleMaps').then(GMaps => new GMaps.Geocoder()));
+  const getGeocoder = memoize(() => LazyLoader.get('googleMaps').then(GMaps => new GMaps.Geocoder()));
 
   function convertResults (rawResults) {
     return rawResults.map(result => ({
@@ -88,10 +88,10 @@ angular.module('cf.app')
   }
 
   function addressSearcher (onSuccess, onError, inProgress) {
-    var lastQueryId = 0;
-    var pending = 0;
+    let lastQueryId = 0;
+    let pending = 0;
 
-    var throttledRun = throttle(run, 350);
+    const throttledRun = throttle(run, 350);
 
     return address => {
       inProgress(true);
@@ -99,7 +99,7 @@ angular.module('cf.app')
     };
 
     function run (address) {
-      var queryId = ++lastQueryId;
+      const queryId = ++lastQueryId;
       pending++;
       geocodeAddress(address)
       .then(result => {
