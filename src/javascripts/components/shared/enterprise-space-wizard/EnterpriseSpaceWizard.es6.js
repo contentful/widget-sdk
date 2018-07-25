@@ -149,7 +149,7 @@ function Note () {
     <div className='note-box--info' style={{margin: '30px 0'}}>
       <p>
         {`Proof of concept spaces can't be used for production applications.
-        You can create as many of them as you wish, and they can be deleteed at any time. `}
+        You can create as many of them as you wish, and they can be deleted at any time. `}
         <ContactUsButton noIcon={true} data-test-id='subscription-page.sidebar.contact-link' />
         {` to transform a proof of concept space into a production-ready space.`}
       </p>
