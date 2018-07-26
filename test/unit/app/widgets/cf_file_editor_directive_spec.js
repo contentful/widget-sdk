@@ -1,4 +1,4 @@
-'use strict';
+import sinon from 'npm:sinon';
 
 describe('cfFileEditor Directive', () => {
   beforeEach(function () {
@@ -37,6 +37,11 @@ describe('cfFileEditor Directive', () => {
     this.scope = this.el.scope();
 
     this.scope.$apply();
+
+    this.assertProcessesAndValidatesAsset = () => {
+      sinon.assert.calledWith(this.scope.editorData.entity.process, 123, 'en-US');
+      sinon.assert.called(this.scope.editorContext.validator.run);
+    };
   });
 
   afterEach(function () {
@@ -66,8 +71,7 @@ describe('cfFileEditor Directive', () => {
     });
 
     it('processes and validates asset', function () {
-      sinon.assert.calledWith(this.scope.editorData.entity.process, 123, 'en-US');
-      sinon.assert.called(this.scope.editorContext.validator.run);
+      this.assertProcessesAndValidatesAsset();
     });
 
     it('sets the document title if it is not yet present', function () {
@@ -136,5 +140,12 @@ describe('cfFileEditor Directive', () => {
     this.el.find('img').trigger('load');
     this.$apply();
     expect(loader.is(':visible')).toBe(false);
+  });
+
+  it('processes unprocessed asset', function () {
+    this.fieldApi.onValueChanged.yield({
+      upload: '//images.contentful.com'
+    });
+    this.assertProcessesAndValidatesAsset();
   });
 });

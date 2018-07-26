@@ -35,6 +35,9 @@ angular.module('contentful')
 
       const removeUpdateListener = field.onValueChanged(file => {
         scope.file = file;
+        if (isUnprocessedFile(file)) {
+          process();
+        }
         validate();
       });
       scope.$on('$destroy', removeUpdateListener);
@@ -75,6 +78,8 @@ angular.module('contentful')
         const isReady = !scope.imageIsLoading && _.get(scope, 'file.url');
         return isEditable && isImage && isReady;
       };
+
+      scope.isUnprocessedFile = isUnprocessedFile;
 
       function notifyEditError (err) {
         if (!err || !err.cancelled) {
@@ -131,6 +136,11 @@ angular.module('contentful')
 
       function validate () {
         return scope.editorContext.validator.run();
+      }
+
+      function isUnprocessedFile (file) {
+        // File uploaded but not processed (there is no `file.url` yet).
+        return !!(file && file.upload && !file.url);
       }
     }
   };
