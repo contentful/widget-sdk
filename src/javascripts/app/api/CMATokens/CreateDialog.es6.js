@@ -45,6 +45,16 @@ function initController (tokenResourceManager, $scope, successHandler) {
     }
   });
 
+  $scope.buildTokenInputProps = () => ({
+    value: $scope.state.token,
+    name: 'tokenInput',
+    'data-test-id': 'pat.create.tokenCopy',
+    'cf-select-all-input': true,
+    id: 'tokenInput',
+    withCopyButton: true,
+    disabled: true
+  });
+
   function showSuccess (name, token) {
     $scope.state = {
       success: true,
@@ -121,7 +131,10 @@ function successTemplate () {
       ])
     ]),
     vspace(3),
-    inputWithCopy('state.token'),
+    h('react-component', {
+      name: '@contentful/ui-component-library/TextInput',
+      props: 'buildTokenInputProps()'
+    }),
     vspace(3),
     h('button.btn-action', {ngClick: 'dialog.confirm()'}, ['Done'])
   ];
@@ -182,20 +195,4 @@ function inputTemplate () {
       }, ['Generate'])
     ])
   ];
-}
-
-// TODO extract. Simliar to function in API key editor
-function inputWithCopy (valueRef) {
-  return h('.cfnext-form__input-group--full-size', [
-    h('input.cfnext-form__input--full-size', {
-      type: 'text',
-      dataTestId: 'pat.create.tokenCopy',
-      cfSelectAllInput: true,
-      value: `{{${valueRef}}}`,
-      readonly: true
-    }),
-    h('cf-copy-to-clipboard', {
-      text: `{{${valueRef}}}`
-    })
-  ]);
 }

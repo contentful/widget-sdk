@@ -177,6 +177,15 @@ angular.module('contentful')
     }
   });
 
+  $scope.buildContentTypeIdInputProps = () => ({
+    value: $scope.contentType.data.sys.id,
+    name: 'contentTypeIdInput',
+    id: 'contentTypeIdInput',
+    testId: 'contentTypeIdInput',
+    withCopyButton: true,
+    disabled: true
+  });
+
   function addField (newField) {
     const data = $scope.contentType.data;
     data.fields = data.fields || [];

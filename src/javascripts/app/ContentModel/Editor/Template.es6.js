@@ -323,8 +323,10 @@ function sidebar () {
     h('p', [
       'Use this ID to retrieve everything related to this content type via the API.'
     ]),
-    inputWithCopy('contentType.data.sys.id'),
-
+    h('react-component', {
+      name: '@contentful/ui-component-library/TextInput',
+      props: 'buildContentTypeIdInputProps()'
+    }),
     // Documentation links
     h('h2.entity-sidebar__heading', ['Documentation']),
     h('ul', [
@@ -336,21 +338,5 @@ function sidebar () {
         docsLink('field lifecycle', 'field_lifecycle'), '.'
       ])
     ])
-  ]);
-}
-
-
-// TODO extract. Simliar to function in API key editor
-function inputWithCopy (valueRef) {
-  return h('.cfnext-form__input-group--full-size', [
-    h('input.cfnext-form__input--full-size', {
-      type: 'text',
-      cfSelectAllInput: true,
-      value: `{{${valueRef}}}`,
-      readonly: true
-    }),
-    h('cf-copy-to-clipboard', {
-      text: `{{${valueRef}}}`
-    })
   ]);
 }
