@@ -7,7 +7,6 @@ angular.module('contentful').directive('cfNotifications', () => ({
 
   controller: ['$scope', 'require', ($scope, require) => {
     const notification = require('notification');
-    const $timeout = require('$timeout');
 
     $scope.markAsSeen = () => {
       notification.markAsSeen();

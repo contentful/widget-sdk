@@ -47,7 +47,7 @@ angular.module('cf.data')
         contentType: contentTypeLink,
         version: 0
       },
-      controls: [],
+      controls: []
     };
 
     syncControls(contentType, ei);
@@ -133,7 +133,7 @@ angular.module('cf.data')
     return {
       fieldId: fieldId,
       field: field,
-      widgetId: widgetId,
+      widgetId: widgetId
     };
   }
 

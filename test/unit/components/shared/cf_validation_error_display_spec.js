@@ -19,13 +19,13 @@ describe('ErrorPathController', () => {
     scope.entity = {};
     scope.schema = {
       errors: sinon.stub(),
-      buildMessage: errorMessageBuilder(),
+      buildMessage: errorMessageBuilder()
     };
 
     $controller('ValidationController', {
       $scope: scope,
       $attrs: {
-        cfValidate: 'entity',
+        cfValidate: 'entity'
       }
     });
 
@@ -36,12 +36,10 @@ describe('ErrorPathController', () => {
     });
 
     this.processError = error => {
-      if (error)
-        scope.schema.errors.returns([error]);
+      if (error) { scope.schema.errors.returns([error]); }
       scope.validate();
       scope.$apply();
     };
-
   });
 
   describe('"size" error message', () => {
@@ -110,7 +108,7 @@ describe('ErrorPathController', () => {
     it('falls back to error name property', function () {
       this.processError({
         name: 'this is an unknown validation',
-        path: ['foo', 'bars'],
+        path: ['foo', 'bars']
       });
       expect(controller.messages)
       .toEqual(['Error: this is an unknown validation']);

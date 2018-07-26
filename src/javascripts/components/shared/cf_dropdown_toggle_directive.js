@@ -16,11 +16,11 @@
 angular.module('contentful').directive('cfDropdownToggle', ['$rootScope', $rootScope => ({
   restrict: 'A',
 
-  link: function(scope, toggleElement, attrs) {
+  link: function (scope, toggleElement, attrs) {
     const id = attrs.cfDropdownToggle;
 
     toggleElement.click(event => {
-      if(!toggleElement.attr('disabled')){
+      if (!toggleElement.attr('disabled')) {
         event.stopPropagation();
         event.preventDefault();
         scope.$apply(() => {
@@ -30,4 +30,3 @@ angular.module('contentful').directive('cfDropdownToggle', ['$rootScope', $rootS
     });
   }
 })]);
-

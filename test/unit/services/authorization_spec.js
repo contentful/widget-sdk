@@ -11,7 +11,7 @@ describe('Authorization service', () => {
 
     module('contentful/test', $provide => {
       $provide.constant('worf', worfStub);
-      $provide.value('access_control/AccessChecker', accessChecker)
+      $provide.value('access_control/AccessChecker', accessChecker);
     });
 
     authorization = this.$inject('authorization');

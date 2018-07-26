@@ -9,7 +9,6 @@ angular.module('contentful')
  * horrible.
  */
 .factory('editingInterfaces/helpers', [() => {
-
   return {
     findWidget: findWidget
   };
@@ -26,7 +25,7 @@ angular.module('contentful')
    * @param {API.Field} contentTypeField
    * @return {API.Widget?}
    */
-  function findWidget(widgets, field) {
+  function findWidget (widgets, field) {
     var fieldId = field.apiName || field.id;
     return _.find(widgets, {fieldId: fieldId});
   }

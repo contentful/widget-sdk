@@ -33,11 +33,10 @@ angular.module('cf.utils')
  * // - "doSomethingWithData" was called once with a result of the last call
  */
 .factory('overridingRequestQueue', ['require', require => {
-
-  var $q     = require('$q');
+  var $q = require('$q');
   var random = require('random');
 
-  return function createQueue(requestFn, onceFn) {
+  return function createQueue (requestFn, onceFn) {
     var deferred, requests, required, performed;
     reset();
 
@@ -46,19 +45,19 @@ angular.module('cf.utils')
 
     return request;
 
-    function isIdle() {
+    function isIdle () {
       return requests.length === 0;
     }
 
-    function requestRequired(...args) {
+    function requestRequired (...args) {
       return performRequest(prepareOpts(args, true));
     }
 
-    function request(...args) {
+    function request (...args) {
       return performRequest(prepareOpts(args));
     }
 
-    function prepareOpts(argsObj, required) {
+    function prepareOpts (argsObj, required) {
       return {
         args: Array.prototype.slice.apply(argsObj),
         id: random.id(),
@@ -66,7 +65,7 @@ angular.module('cf.utils')
       };
     }
 
-    function performRequest(opts) {
+    function performRequest (opts) {
       if (!deferred || requests.length < 1) {
         deferred = $q.defer();
         if (_.isFunction(onceFn)) {
@@ -85,8 +84,8 @@ angular.module('cf.utils')
       return deferred.promise;
     }
 
-    function createResponseHandler(id) {
-      return function handleResponse(response) {
+    function createResponseHandler (id) {
+      return function handleResponse (response) {
         // mark request as performed
         performed[id] = true;
 
@@ -105,14 +104,14 @@ angular.module('cf.utils')
       };
     }
 
-    function handleError(err) {
+    function handleError (err) {
       // reject only if wasn't resolved or rejected yet
       if (deferred) { deferred.reject(err); }
 
       reset();
     }
 
-    function reset() {
+    function reset () {
       deferred = null;
       requests = [];
       required = [];

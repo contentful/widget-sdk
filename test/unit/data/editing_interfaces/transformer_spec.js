@@ -11,7 +11,6 @@ describe('data/editingInterfaces/transformer', () => {
   });
 
   describe('#fromAPI()', () => {
-
     beforeEach(function () {
       const Transformer = this.$inject('data/editingInterfaces/transformer');
       this.fromAPI = Transformer.fromAPI;
@@ -57,7 +56,7 @@ describe('data/editingInterfaces/transformer', () => {
       const migrations = this.$inject('widgets/migrations/data');
       migrations.push({
         from: 'OLD',
-        to: 'NEW',
+        to: 'NEW'
       });
 
       const contentType = {
@@ -72,7 +71,7 @@ describe('data/editingInterfaces/transformer', () => {
     });
 
     describe('field mapping', () => {
-      it('prefers the apiName over the field id', function() {
+      it('prefers the apiName over the field id', function () {
         const contentType = {fields: [
           { id: 'id2', apiName: 'apiName' },
           { id: 'apiName', apiName: 'field2' }
@@ -88,15 +87,15 @@ describe('data/editingInterfaces/transformer', () => {
         expect(controls[0].widgetId).toEqual('W');
       });
 
-      it('falls back on field id', function(){
+      it('falls back on field id', function () {
         const contentType = {fields: [
           { id: 'id1' },
-          { id: 'id2', apiName: 'apiName2' },
+          { id: 'id2', apiName: 'apiName2' }
         ]};
 
         const editingInterface = {controls: [
-          { widgetId: 'A', fieldId: 'id1'},
-          { widgetId: 'B', fieldId: 'apiName2' },
+          { widgetId: 'A', fieldId: 'id1' },
+          { widgetId: 'B', fieldId: 'apiName2' }
         ]};
 
         const controls = this.fromAPI(contentType, editingInterface).controls;

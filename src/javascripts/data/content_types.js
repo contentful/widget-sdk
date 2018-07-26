@@ -10,7 +10,6 @@ angular.module('cf.data')
  * Content Type data.
  */
 .factory('data/ContentTypes', [() => {
-
   return {
     assureDisplayField: assureDisplayField,
     assureName: assureName,
@@ -99,7 +98,7 @@ angular.module('cf.data')
    * @returns {string?}
    */
   function findFieldUsableAsTitle (fields) {
-    return  _(fields)
+    return _(fields)
       .filter(isDisplayField)
       .map('id')
       .first();

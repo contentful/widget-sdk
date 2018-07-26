@@ -1,28 +1,28 @@
 'use strict';
 
 angular.module('contentful').factory('LinkOrganizer', ['require', require => {
-
   const PROCESSORS = require('LinkOrganizer/matchProcessors');
-  const REGEXS     = {
-    inline: /\[([^\r\n\[\]]+)]\(([^\r\n\)]+)\)/,
-    ref:    /\[([^\r\n\[\]]+)] ?\[([^\r\n\[\]]+)]/,
-    label:  /^ {0,3}\[([^\r\n\[\]]+)]:\s+(.+)$/
+  const _ = require('lodash');
+  const REGEXS = {
+    inline: /\[([^\r\n[\]]+)]\(([^\r\n)]+)\)/,
+    ref: /\[([^\r\n[\]]+)] ?\[([^\r\n[\]]+)]/,
+    label: /^ {0,3}\[([^\r\n[\]]+)]:\s+(.+)$/
   };
   const findInline = makeFinder('inline');
-  const findRefs   = makeFinder('ref');
+  const findRefs = makeFinder('ref');
   const findLabels = makeFinder('label');
 
   return {
     convertInlineToRef: convertInlineToRef,
-    mergeLabels:        mergeLabels,
-    rewriteRefs:        rewriteRefs,
-    findInline:         findInline,
-    findRefs:           findRefs,
-    findLabels:         findLabels,
-    findMaxLabelId:     findMaxLabelId
+    mergeLabels: mergeLabels,
+    rewriteRefs: rewriteRefs,
+    findInline: findInline,
+    findRefs: findRefs,
+    findLabels: findLabels,
+    findMaxLabelId: findMaxLabelId
   };
 
-  function convertInlineToRef(text) {
+  function convertInlineToRef (text) {
     let id = findMaxLabelId(text);
 
     _.forEach(findInline(text), inline => {
@@ -34,7 +34,7 @@ angular.module('contentful').factory('LinkOrganizer', ['require', require => {
     return text;
   }
 
-  function mergeLabels(text) {
+  function mergeLabels (text) {
     const byHref = {};
     const byOldId = {};
 
@@ -52,12 +52,12 @@ angular.module('contentful').factory('LinkOrganizer', ['require', require => {
     });
 
     return {
-      byHref:  byHref,
+      byHref: byHref,
       byOldId: byOldId
     };
   }
 
-  function rewriteRefs(text) {
+  function rewriteRefs (text) {
     const merged = mergeLabels(text);
     const hrefToRefId = {};
     const labels = [];
@@ -107,11 +107,11 @@ angular.module('contentful').factory('LinkOrganizer', ['require', require => {
    * Finding stuff
    */
 
-  function makeFinder(type) {
+  function makeFinder (type) {
     return text => _.map(findAll(text, type), PROCESSORS[type]);
   }
 
-  function findMaxLabelId(textOrLabels) {
+  function findMaxLabelId (textOrLabels) {
     if (_.isString(textOrLabels)) {
       textOrLabels = findLabels(textOrLabels);
     }
@@ -124,7 +124,7 @@ angular.module('contentful').factory('LinkOrganizer', ['require', require => {
     return ids.length > 0 ? _.max(ids) : 0;
   }
 
-  function findAll(text, type) {
+  function findAll (text, type) {
     const flags = 'g' + (type === 'label' ? 'm' : '');
     const matches = [];
     const re = new RegExp(REGEXS[type].source, flags);
@@ -143,24 +143,22 @@ angular.module('contentful').factory('LinkOrganizer', ['require', require => {
    * Other utilities
    */
 
-  function hasTitle(link) {
+  function hasTitle (link) {
     return _.isObject(link) && _.isString(link.title) && link.title.length > 0;
   }
 
-  function buildLabel(link, id) {
+  function buildLabel (link, id) {
     let markup = '[' + id + ']: ' + link.href;
     if (hasTitle(link)) { markup += ' "' + link.title + '"'; }
     return markup;
   }
 
-  function buildRef(link, id) {
+  function buildRef (link, id) {
     return '[' + link.text + '][' + id + ']';
   }
-
 }]);
 
 angular.module('contentful').factory('LinkOrganizer/matchProcessors', () => {
-
   return {
     inline: function (match) {
       return {
@@ -180,28 +178,27 @@ angular.module('contentful').factory('LinkOrganizer/matchProcessors', () => {
     label: function (match) {
       return {
         match: match[0],
-        id:    match[1],
-        href:  head(match[2]),
+        id: match[1],
+        href: head(match[2]),
         title: extractTitle(tail(match[2]))
       };
     }
   };
 
-  function extractTitle(title) {
+  function extractTitle (title) {
     title = title || '';
     title = title.replace(/^ *('|"|\()*/, '');
     title = title.replace(/('|"|\))* *$/, '');
     return title;
   }
 
-  function head(text) {
+  function head (text) {
     return text.split(' ').shift();
   }
 
-  function tail(text) {
+  function tail (text) {
     const segments = text.split(' ');
     segments.shift();
     return segments.join(' ');
   }
-
 });

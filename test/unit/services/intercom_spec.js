@@ -6,7 +6,7 @@ describe('Intercom service', () => {
   function setGlobalIntercom (value) {
     $windowIntercomStub = $window.Intercom = value;
 
-    inject(($rootScope, $controller, _intercom_) => {
+    inject((_$rootScope, _$controller, _intercom_) => {
       intercom = _intercom_;
     });
   }
@@ -54,5 +54,4 @@ describe('Intercom service', () => {
       });
     });
   });
-
 });

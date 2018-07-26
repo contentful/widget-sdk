@@ -30,21 +30,18 @@ angular.module('contentful')
       $scope.$on('ngModel:update', stopPropagation);
 
       $scope.$watch('enabled', enabled => {
-        if (enabled)
-          setDate($scope.date);
-        else
-          setDate(null);
+        if (enabled) { setDate($scope.date); } else { setDate(null); }
       });
 
-      function getDate() {
+      function getDate () {
         return dataGetter($scope.$parent);
       }
 
-      function setDate(value) {
+      function setDate (value) {
         return dataGetter.assign($scope.$parent, value);
       }
     }],
-    link: function(scope, elem, attrs, ctrls) {
+    link: function (scope, _elem, attrs, ctrls) {
       scope.label = attrs.ariaLabel;
 
       const validator = ctrls[0];

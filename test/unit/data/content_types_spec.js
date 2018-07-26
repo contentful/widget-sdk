@@ -1,7 +1,6 @@
 'use strict';
 
 describe('data/ContentTypes', () => {
-
   beforeEach(() => {
     module('cf.data');
   });

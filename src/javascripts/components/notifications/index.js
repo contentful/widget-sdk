@@ -108,7 +108,7 @@ angular.module('contentful')
             self.message.hidden = false;
           }
         });
-      },
+      }
 
     };
   }

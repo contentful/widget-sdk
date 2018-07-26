@@ -1,8 +1,7 @@
 'use strict';
 
-angular.module('contentful').factory('PromisedLoader', ['$q', '$rootScope', 'debounce', ($q, $rootScope, debounce) => {
-
-  function PromisedLoader() {
+angular.module('contentful').factory('PromisedLoader', ['$q', 'debounce', ($q, debounce) => {
+  function PromisedLoader () {
     this.inProgress = false;
     this._loadPromise = debounce(this._loadPromiseImmediately, 500, {leading: true});
   }
@@ -15,7 +14,7 @@ angular.module('contentful').factory('PromisedLoader', ['$q', '$rootScope', 'deb
       this.inProgress = true;
     },
 
-    endLoading: function() {
+    endLoading: function () {
       this.inProgress = false;
     },
 
@@ -33,10 +32,10 @@ angular.module('contentful').factory('PromisedLoader', ['$q', '$rootScope', 'deb
 
     _loadPromise: null, // Initialized in Constructor
 
-    loadPromise: function (promiseLoader/*, args[]*/) {
+    loadPromise: function (promiseLoader/*, args[] */) {
       var deferred = $q.defer();
       var args = _.drop(arguments, 1);
-      if (this.inProgress){
+      if (this.inProgress) {
         deferred.reject(PromisedLoader.IN_PROGRESS);
         return deferred.promise;
       }

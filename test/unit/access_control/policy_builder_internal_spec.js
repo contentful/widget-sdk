@@ -1,7 +1,6 @@
 'use strict';
 
 describe('Policy Builder, to internal representation', () => {
-
   let toInternal, CONFIG;
 
   beforeEach(function () {
@@ -48,7 +47,6 @@ describe('Policy Builder, to internal representation', () => {
   });
 
   describe('translating policies', () => {
-
     it('marks as non-UI-compatible', () => {
       // no constraint
       let internal = toInternal({policies: [
@@ -92,13 +90,13 @@ describe('Policy Builder, to internal representation', () => {
     it('translates base for entry and action', () => {
       base('Entry', 'entries', 'all');
       base('Entry', 'entries', ['read']);
-      base('Entry' ,'entries', ['create']);
+      base('Entry', 'entries', ['create']);
     });
 
     it('translates base for assets and action', () => {
       base('Asset', 'assets', 'all');
       base('Asset', 'assets', ['read']);
-      base('Asset' ,'assets', ['create']);
+      base('Asset', 'assets', ['create']);
     });
 
     it('translates content type constraints', () => {
@@ -188,7 +186,6 @@ describe('Policy Builder, to internal representation', () => {
       expect(internal.entries.allowed[1].locale).toBe(CONFIG.ALL_LOCALES);
       expect(internal.entries.allowed[2].isPath).toBe(true);
       expect(internal.entries.allowed[3].isPath).toBeUndefined();
-
     });
 
     it('translates "glued" actions', () => {

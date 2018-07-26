@@ -1,7 +1,6 @@
 'use strict';
 
 describe('command service', () => {
-
   beforeEach(function () {
     module('cf.ui');
     this.create = this.$inject('command').create;
@@ -9,7 +8,6 @@ describe('command service', () => {
   });
 
   describe('#execute', () => {
-
     it('calls action', function () {
       const action = sinon.stub();
       const command = this.create(action);
@@ -46,7 +44,6 @@ describe('command service', () => {
       sinon.assert.calledOnce(executed);
       sinon.assert.calledWith(executed, command);
     });
-
   });
 
   describe('#isDisabled()', () => {
@@ -63,7 +60,7 @@ describe('command service', () => {
   });
 
   describe('#inProgress()', () => {
-    it ('is "true" when command in progress', function () {
+    it('is "true" when command in progress', function () {
       const action = sinon.stub().resolves();
       const command = this.create(action);
 
@@ -72,9 +69,6 @@ describe('command service', () => {
       expect(command.inProgress()).toBe(true);
       this.$apply();
       expect(command.inProgress()).toBe(false);
-
     });
   });
-
-
 });
