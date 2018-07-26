@@ -14,10 +14,7 @@ angular.module('contentful')
   const CreateSpace = require('services/CreateSpace');
   const refreshNavState = require('navigation/NavState').makeStateRefresher($state, spaceContext);
   const Intercom = require('intercom');
-  const makeFetchEnforcements = require('data/CMA/EnforcementsInfo').default;
-  const auth = require('Authentication');
-
-  const fetchEnforcements = makeFetchEnforcements(auth);
+  const Enforcements = require('services/Enforcements');
 
   // TODO remove this eventually. All components should access it as a service
   $scope.spaceContext = spaceContext;
@@ -34,22 +31,18 @@ angular.module('contentful')
   };
 
   $scope.$watchCollection(() => ({
+    tokenLookup: TokenStore.getTokenLookup(),
     space: spaceContext.space,
-    tokenLookup: TokenStore.getTokenLookup()
+    enforcements: Enforcements.getEnforcements()
   }), spaceAndTokenWatchHandler);
 
   K.onValueScope($scope, TokenStore.user$, handleUser);
 
   $scope.showCreateSpaceDialog = CreateSpace.showDialog;
 
-  async function spaceAndTokenWatchHandler ({tokenLookup, space}) {
-    if (!tokenLookup) {
+  function spaceAndTokenWatchHandler ({tokenLookup, space, enforcements}) {
+    if (!tokenLookup || !enforcements) {
       return;
-    }
-
-    let enforcements;
-    if (space) {
-      enforcements = await fetchEnforcements(space.getId());
     }
 
     authorization.update(tokenLookup, space, enforcements, spaceContext.getEnvironmentId());

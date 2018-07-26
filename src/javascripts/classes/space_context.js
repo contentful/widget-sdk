@@ -30,6 +30,7 @@ angular.module('contentful')
   const logger = require('logger');
   const DocumentPool = require('data/sharejs/DocumentPool');
   const TokenStore = require('services/TokenStore');
+  const Enforcements = require('services/Enforcements');
   const createApiKeyRepo = require('data/CMA/ApiKeyRepo').default;
   const K = require('utils/kefir');
   const Auth = require('Authentication');
@@ -146,6 +147,8 @@ angular.module('contentful')
       self.user = K.getValue(TokenStore.user$);
 
       previewEnvironmentsCache.clearAll();
+
+      Enforcements.refresh(space.getId());
 
       // TODO: remove this after we have store with combined reducers on top level
       // string is hardcoded because this code _is_ temporary

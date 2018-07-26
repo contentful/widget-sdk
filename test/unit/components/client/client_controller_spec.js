@@ -24,9 +24,9 @@ describe('Client Controller', () => {
       };
       $provide.value('authorization', this.authorizationStubs);
 
-      this.enforcements = [];
-      $provide.value('data/CMA/EnforcementsInfo', {
-        default: () => () => Promise.resolve(this.enforcements)
+      this.getEnforcements = sinon.stub().returns([]);
+      $provide.value('services/Enforcements', {
+        getEnforcements: this.getEnforcements
       });
     });
     this.tokenStore = this.$inject('services/TokenStore');
@@ -66,7 +66,7 @@ describe('Client Controller', () => {
     it('on tokenLookup update', function () {
       this.spaceContext.space = null;
       this.$apply();
-      sinon.assert.calledWith(this.authorizationStubs.update, TOKEN, null, undefined, ENV_ID);
+      sinon.assert.calledWith(this.authorizationStubs.update, TOKEN, null, [], ENV_ID);
     });
 
     it('on spaceContext.space update', async function () {
@@ -81,7 +81,7 @@ describe('Client Controller', () => {
         this.authorizationStubs.update,
         TOKEN,
         this.spaceContext.space,
-        this.enforcements,
+        [],
         ENV_ID
       );
     });
