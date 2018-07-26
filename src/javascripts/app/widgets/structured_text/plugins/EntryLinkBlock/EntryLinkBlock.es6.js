@@ -1,72 +1,121 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import cn from 'classnames';
+import { ReferenceCard, Card, IconButton } from '@contentful/ui-component-library';
 
 import FetchEntry from './FetchEntry';
 import { goToSlideInEntity } from 'states/EntityNavigationHelpers';
+import { isValidImage, getExternalImageUrl } from 'ui/cf/thumbnailHelpers';
 
 export default class LinkedEntryBlock extends React.Component {
   static propTypes = {
     isSelected: PropTypes.bool.isRequired,
     attributes: PropTypes.object.isRequired,
-    node: PropTypes.object.isRequired,
-    children: PropTypes.node
+    editor: PropTypes.object.isRequired,
+    node: PropTypes.object.isRequired
   };
 
-  handleClick = entry => {
-    goToSlideInEntity({
-      id: entry.sys.id,
-      type: 'Entry'
-    }, 2);
+  renderEntryThumbnail = entryThumbnail => {
+    if (!entryThumbnail) {
+      return;
+    }
+
+    if (isValidImage(entryThumbnail.contentType)) {
+      return (
+        <img
+          src={`${getExternalImageUrl(entryThumbnail.url)}?w=70&h=70&fit=thumb`}
+          height='70'
+          width='70'
+        />
+      );
+    } else {
+      return null;
+    }
+  };
+
+  handleEditClick = (event, entry) => {
+    event.stopPropagation();
+    goToSlideInEntity(
+      {
+        id: entry.sys.id,
+        type: 'Entry'
+      },
+      2
+    );
+  };
+
+  handleRemoveClick = event => {
+    event.stopPropagation();
+    const { editor, node } = this.props;
+    editor.change(change => change.removeNodeByKey(node.key));
   };
 
   render () {
-    const { node, attributes, isSelected, children } = this.props;
+    const { node, isSelected } = this.props;
 
     return (
       <FetchEntry
         node={node}
-        render={({ entry }) => {
-          return (
-            entry && (
-              <div
-                {...attributes}
-                className={cn('entity-link', {
-                  'entity-link--selected': isSelected
-                })}
-                onClick={() => this.handleClick(entry)}
-              >
-                <div className="entity-link-content">
-                  <div
-                    style={{
-                      flex: '1 1 auto',
-                      lineHeight: '1.5',
-                      overflow: 'hidden'
-                    }}
-                  >
-                    <div
-                      style={{
-                        color: '#8091A5'
-                      }}
-                    >
-                      {entry.sys.contentType.sys.id}
-                    </div>
-                    <div
-                      style={{
-                        fontWeight: 'bold',
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis'
-                      }}
-                    >
-                      {entry.fields.title && entry.fields.title['en-US']}
-                    </div>
-                    {children}
-                  </div>
+        render={({
+          entry,
+          entryTitle,
+          entryDescription,
+          entryThumbnail,
+          entryStatus,
+          entryIsMissing
+        }) => {
+          if (entryIsMissing) {
+            return (
+              <Card selected={isSelected}>
+                <div style={{display: 'flex'}}>
+                  <h1 style={{
+                    margin: 0,
+                    fontSize: '.875rem', // Equal to 14px when browser text size is set to 100%
+                    lineHeight: 1.5,
+                    flex: '1 1 0'
+                  }}
+                  >Entity missing or inaccessible</h1>
+                  <IconButton
+                    iconProps={{ icon: 'Close' }}
+                    label='Remove reference to entry'
+                    onClick={event => this.handleRemoveClick(event, entry)}
+                    buttonType='muted'
+                    key='1'
+                  />
                 </div>
-              </div>
-            )
-          );
+              </Card>
+            );
+          } else {
+            return (
+              entry && (
+                <ReferenceCard
+                  title={entryTitle}
+                  contentType={entry.sys.contentType.sys.id}
+                  description={entryDescription}
+                  selected={isSelected}
+                  status={entryStatus}
+                  thumbnailElement={this.renderEntryThumbnail(entryThumbnail)}
+                  actionElements={
+                    <React.Fragment>
+                      <IconButton
+                        iconProps={{ icon: 'Edit' }}
+                        label='Edit entry'
+                        onClick={event => this.handleEditClick(event, entry)}
+                        buttonType='muted'
+                        key='0'
+                      />
+                      <IconButton
+                        iconProps={{ icon: 'Close' }}
+                        label='Remove reference to entry'
+                        onClick={event => this.handleRemoveClick(event, entry)}
+                        buttonType='muted'
+                        key='1'
+                      />
+                    </React.Fragment>
+                  }
+                />
+              )
+            );
+          }
         }}
       />
     );

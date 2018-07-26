@@ -19,6 +19,7 @@ describe('StructuredTextEditor', () => {
     this.system = createIsolatedSystem();
 
     this.system.set('entitySelector', {});
+    this.system.set('ui/cf/thumbnailHelpers', {});
     this.system.set('spaceContext', {
       cma: {
         getEntry: sinon.stub.resolves()

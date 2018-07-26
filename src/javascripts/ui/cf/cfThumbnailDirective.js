@@ -23,12 +23,11 @@
 
 angular.module('contentful')
 .directive('cfThumbnail', ['require', require => {
-  var mimetype = require('mimetype');
-  var h = require('utils/hyperscript').h;
-  var TokenStore = require('services/TokenStore');
-  var HostnameTransformer = require('hostnameTransformer');
+  const mimetype = require('mimetype');
+  const h = require('utils/hyperscript').h;
+  const { isValidImage, getExternalImageUrl } = require('ui/cf/thumbnailHelpers');
 
-  var groupToIconMap = {
+  const groupToIconMap = {
     image: 'image',
     video: 'video',
     audio: 'audio',
@@ -42,23 +41,7 @@ angular.module('contentful')
     markup: 'code'
   };
 
-  /**
-   * List of asset MIME types we want to show an image preview for.
-   */
-  var imageMimeTypes = [
-    'image/bmp',
-    'image/x-windows-bmp',
-    'image/gif',
-    // This is not a valid MIME type but we supported it in the past.
-    'image/jpg',
-    'image/jpeg',
-    'image/pjpeg',
-    'image/x-jps',
-    'image/png',
-    'image/svg+xml'
-  ];
-
-  var template = [
+  const template = [
     h('img.thumbnail', {
       ngIf: 'thumbnailUrl',
       ngSrc: '{{thumbnailUrl}}',
@@ -79,12 +62,12 @@ angular.module('contentful')
       file: '='
     },
     link: function (scope, _el, attrs) {
-      var options = {
+      const options = {
         fit: attrs.fit,
         focus: attrs.focus
       };
 
-      var size = parseInt(attrs.size, 10);
+      const size = parseInt(attrs.size, 10);
       if (size > 0) {
         options.width = options.height = size;
       } else {
@@ -117,12 +100,12 @@ angular.module('contentful')
    * @returns {string?}
    */
   function getThumbnailUrl (file, options) {
-    var imageUrl = getImageUrl(file);
+    const imageUrl = getImageUrl(file);
     if (!imageUrl) {
       return imageUrl;
     }
 
-    var params = _.pickBy({
+    const params = _.pickBy({
       w: options.width,
       h: options.height !== undefined ? options.height : options.width,
       f: options.focus,
@@ -148,25 +131,11 @@ angular.module('contentful')
       return null;
     }
 
-    var isImage = imageMimeTypes.indexOf(file.contentType) > -1;
-
-    if (isImage) {
-      return externalImageUrl(file.url);
+    if (isValidImage(file.contentType)) {
+      return getExternalImageUrl(file.url);
     } else {
       return null;
     }
-  }
-
-  /**
-   * Given a URL on the 'assets.contentful.com' or
-   * 'images.contentful.com' domain we replace the host with the images
-   * host configured for the organization.
-   */
-  function externalImageUrl (url) {
-    var domains = TokenStore.getDomains();
-    var internalUrl = HostnameTransformer.toInternal(url, domains);
-    domains.assets = domains.images;
-    return HostnameTransformer.toExternal(internalUrl, domains);
   }
 
   function getIconName (file) {
@@ -174,7 +143,7 @@ angular.module('contentful')
       return '';
     }
 
-    var groupName = mimetype.getGroupLabel({
+    const groupName = mimetype.getGroupLabel({
       type: file.contentType,
       fallbackFileName: file.fileName
     });

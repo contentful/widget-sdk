@@ -38,6 +38,7 @@ window.libs = [
   ['slate-react', require('slate-react')],
   ['@contentful/contentful-slatejs-adapter', require('@contentful/contentful-slatejs-adapter')],
   ['@contentful/structured-text-types', require('@contentful/structured-text-types')],
+  ['slate-trailing-block', require('slate-trailing-block')],
   ['qs', require('qs')],
   ['react-tippy', require('react-tippy')],
   ['color', require('color')],

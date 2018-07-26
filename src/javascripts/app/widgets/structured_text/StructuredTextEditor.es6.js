@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Editor } from 'slate-react';
 import { Value, Schema } from 'slate';
+import TrailingBlock from 'slate-trailing-block';
 
 import { toSlatejsDocument, toContentfulDocument } from '@contentful/contentful-slatejs-adapter';
 
@@ -24,7 +25,8 @@ const plugins = [
   UnderlinedPlugin(),
   Heading1Plugin(),
   Heading2Plugin(),
-  EntryLinkBlockPlugin()
+  EntryLinkBlockPlugin(),
+  TrailingBlock()
 ];
 
 const schema = Schema.fromJSON(schemaJson);
