@@ -65,8 +65,8 @@ const Wizard = createReactClass({
     // Space data as defined in spaceContext.space.data
     space: PropTypes.object,
 
-    action: PropTypes.oneOf([ 'create', 'change' ]),
-    wizardScope: PropTypes.oneOf([ 'space', 'organization' ]),
+    action: PropTypes.oneOf([ 'create', 'change' ]).isRequired,
+    wizardScope: PropTypes.oneOf([ 'space', 'organization' ]).isRequired,
     onCancel: PropTypes.func.isRequired,
     onConfirm: PropTypes.func.isRequired,
     onSpaceCreated: PropTypes.func.isRequired,
@@ -281,11 +281,11 @@ const Wizard = createReactClass({
   navigate (stepId) {
     const { navigate, currentStepId } = this.props;
 
-    navigate(stepId);
     this.track('navigate', {
       currentStepId,
       targetStepId: stepId
     });
+    navigate(stepId);
   },
 
   goForward () {
@@ -379,6 +379,7 @@ const mapDispatchToProps = {
   setPartnershipFields: actionCreators.setPartnershipFields
 };
 
+export { Wizard };
 export default connect(mapStateToProps, mapDispatchToProps)(Wizard);
 
 function getSteps (action) {

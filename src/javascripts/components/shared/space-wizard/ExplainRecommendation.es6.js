@@ -58,5 +58,5 @@ export default function ExplainRecommendation ({ currentPlan, recommendedPlan, r
 ExplainRecommendation.propTypes = {
   currentPlan: PropTypes.object.isRequired,
   recommendedPlan: PropTypes.object.isRequired,
-  resources: PropTypes.object.isRequired
+  resources: PropTypes.array.isRequired
 };

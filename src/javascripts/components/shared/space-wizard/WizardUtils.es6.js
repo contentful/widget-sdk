@@ -274,17 +274,17 @@ export function createTrackingData (data) {
   } = data;
 
   return {
-    currentStep: currentStepId,
-    targetStep: targetStepId,
+    currentStep: currentStepId || null,
+    targetStep: targetStepId || null,
     intendedAction: action,
-    paymentDetailsExist,
-    targetSpaceType: get(selectedPlan, 'internalName'),
-    targetProductType: get(selectedPlan, 'productType'),
-    targetSpaceName: newSpaceName,
-    targetSpaceTemplateId: get(newSpaceTemplate, 'name'),
-    currentSpaceType: get(currentPlan, 'internalName'),
-    currentProductType: get(currentPlan, 'productType'),
-    recommendedSpaceType: get(recommendedPlan, 'internalName'),
-    recommendedProductType: get(recommendedPlan, 'productType')
+    paymentDetailsExist: paymentDetailsExist || null,
+    targetSpaceType: get(selectedPlan, 'internalName', null),
+    targetProductType: get(selectedPlan, 'productType', null),
+    targetSpaceName: newSpaceName || null,
+    targetSpaceTemplateId: get(newSpaceTemplate, 'name', null),
+    currentSpaceType: get(currentPlan, 'internalName', null),
+    currentProductType: get(currentPlan, 'productType', null),
+    recommendedSpaceType: get(recommendedPlan, 'internalName', null),
+    recommendedProductType: get(recommendedPlan, 'productType', null)
   };
 }
