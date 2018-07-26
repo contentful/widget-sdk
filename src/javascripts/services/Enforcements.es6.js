@@ -30,6 +30,15 @@ export async function refresh (spaceId) {
   timeout = window.setTimeout(() => refresh(spaceId), ENFORCEMENT_INFO_REFRESH_INTERVAL);
 }
 
+/**
+ * Stops refreshing the enforcements - used in tests
+ */
+export function stopRefreshing () {
+  if (timeout) {
+    window.clearTimeout(timeout);
+  }
+}
+
 function compareEnforcements (a, b) {
   if (!isArray(a) || !isArray(b)) {
     return a === b;

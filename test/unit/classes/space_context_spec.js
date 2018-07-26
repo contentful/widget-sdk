@@ -11,6 +11,7 @@ describe('spaceContext', () => {
     this.OrganizationContext = { create: sinon.stub().returns({organization: this.organization}) };
     this.AccessChecker = {setSpace: sinon.stub()};
     this.mockSpaceEndpoint = createMockSpaceEndpoint();
+    this.refreshEnforcements = sinon.stub();
 
     module('contentful/test', ($provide) => {
       $provide.value('data/userCache', sinon.stub());
@@ -28,6 +29,7 @@ describe('spaceContext', () => {
           refresh: sinon.stub().resolves([])
         })
       });
+      $provide.value('services/Enforcements', {refresh: this.refreshEnforcements});
     });
     this.widgetStoreCreate = this.$inject('widgets/Store').create;
     this.spaceContext = this.$inject('spaceContext');
@@ -158,6 +160,10 @@ describe('spaceContext', () => {
       });
       yield this.result;
       expect(this.spaceContext.environments).toEqual(['master', 'other']);
+    });
+
+    it('refreshes enforcements with new space id', function () {
+      sinon.assert.calledOnce(this.refreshEnforcements.withArgs(this.spaceContext.space.data.sys.id));
     });
   });
 

@@ -24,7 +24,7 @@ describe('Client Controller', () => {
       };
       $provide.value('authorization', this.authorizationStubs);
 
-      this.getEnforcements = sinon.stub().returns([]);
+      this.getEnforcements = sinon.stub();
       $provide.value('services/Enforcements', {
         getEnforcements: this.getEnforcements
       });
@@ -55,34 +55,62 @@ describe('Client Controller', () => {
 
   describe('updates authorization data', () => {
     const TOKEN = {sys: {}};
+    const ENFORCEMENTS = [];
     const ENV_ID = 'ENV ID';
 
     beforeEach(function () {
       this.spaceContext = this.$inject('spaceContext');
       this.spaceContext.getEnvironmentId = () => ENV_ID;
+      this.spaceContext.space = null;
       this.tokenStore.getTokenLookup.returns(TOKEN);
+      this.getEnforcements.returns(ENFORCEMENTS);
+      this.$apply();
+    });
+
+    it('initializes authorization with correct data', function () {
+      sinon.assert.calledWith(this.authorizationStubs.update,
+        TOKEN,
+        this.spaceContext.space,
+        ENFORCEMENTS,
+        ENV_ID
+      );
     });
 
     it('on tokenLookup update', function () {
-      this.spaceContext.space = null;
+      const newToken = {sys: {}};
+      this.tokenStore.getTokenLookup.returns(newToken);
       this.$apply();
-      sinon.assert.calledWith(this.authorizationStubs.update, TOKEN, null, [], ENV_ID);
+
+      sinon.assert.calledWith(this.authorizationStubs.update.secondCall, newToken);
     });
 
-    it('on spaceContext.space update', async function () {
-      this.spaceContext.space = {
+    it('on spaceContext.space update', function () {
+      const space = {
         getId: () => 'SPACE ID'
       };
-
+      this.spaceContext.space = space;
       this.$apply();
-      await Promise.resolve(); // wait for enforcements to be resolved
 
       sinon.assert.calledWith(
-        this.authorizationStubs.update,
-        TOKEN,
-        this.spaceContext.space,
-        [],
-        ENV_ID
+        this.authorizationStubs.update.secondCall,
+        sinon.match.any,
+        this.spaceContext.space
+      );
+    });
+
+    it('on enforcements update', function () {
+      this.$apply();
+
+      const enforcements = [{sys: {id: 'E_1'}}];
+      this.getEnforcements.returns(enforcements);
+
+      this.$apply();
+
+      sinon.assert.calledWith(
+        this.authorizationStubs.update.secondCall,
+        sinon.match.any,
+        sinon.match.any,
+        enforcements
       );
     });
 

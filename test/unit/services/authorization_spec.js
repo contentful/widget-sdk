@@ -36,7 +36,7 @@ describe('Authorization service', () => {
       authContext = {space: () => spaceContext, hasSpace: () => true};
       tokenLookup = {tokenLookup: 0, spaces: [{sys: {id: '1234'}}]};
       space = {name: 'space', getId: () => '1234'};
-      enforcements = [];
+      enforcements = [{sys: {id: 'E_1'}}];
       environmentId = 'master';
       worfStub.returns(authContext);
     });
@@ -70,6 +70,13 @@ describe('Authorization service', () => {
       authContext.hasSpace = () => false;
       authorization.update(tokenLookup, space, enforcements, environmentId);
       expect(authorization.spaceContext).toBe(null);
+    });
+
+    it('patches the token with enforcements data', function () {
+      authorization.update(tokenLookup, space, enforcements, environmentId);
+      const worfToken = worfStub.firstCall.args[0];
+
+      expect(worfToken.spaces[0].enforcements).toBe(enforcements);
     });
   });
 });
