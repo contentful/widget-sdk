@@ -60,7 +60,7 @@ export default class StructuredTextEditor extends React.Component {
   state = {
     value:
       this.props.field.getValue() &&
-      this.props.field.getValue().category === 'document'
+      this.props.field.getValue().nodeClass === 'document'
         ? Value.fromJSON({
           object: 'value',
           document: toSlatejsDocument(this.props.field.getValue())

@@ -43,10 +43,10 @@ describe('StructuredTextEditor', () => {
     const toolbarItems = [
       BLOCKS.HEADING_1,
       BLOCKS.HEADING_2,
-      BLOCKS.ENTRY_LINK,
+      BLOCKS.EMBEDDED_ENTRY,
       MARKS.BOLD,
       MARKS.ITALIC,
-      MARKS.UNDERLINED
+      MARKS.UNDERLINE
     ];
     toolbarItems.forEach(item => {
       const el = this.wrapper.find(`[data-test-id="toolbar-toggle-${item}"]`);

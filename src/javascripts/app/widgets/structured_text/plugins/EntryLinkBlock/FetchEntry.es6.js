@@ -31,7 +31,7 @@ export default class FetchEntry extends React.Component {
   async fetchEntry (props) {
     // TODO: Handle error & pending states
     try {
-      const entry = await getEntry(props.node.data.get('sys').id);
+      const entry = await getEntry(props.node.data.get('target').sys.id);
       const thumbnail = await getEntryThumbnail(entry);
 
       this.setState({

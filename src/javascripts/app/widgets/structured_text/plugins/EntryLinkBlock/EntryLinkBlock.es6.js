@@ -77,9 +77,8 @@ export default class LinkedEntryBlock extends React.Component {
                   <IconButton
                     iconProps={{ icon: 'Close' }}
                     label='Remove reference to entry'
-                    onClick={event => this.handleRemoveClick(event, entry)}
+                    onClick={event => this.handleRemoveClick(event)}
                     buttonType='muted'
-                    key='1'
                   />
                 </div>
               </Card>
@@ -101,14 +100,12 @@ export default class LinkedEntryBlock extends React.Component {
                         label='Edit entry'
                         onClick={event => this.handleEditClick(event, entry)}
                         buttonType='muted'
-                        key='0'
                       />
                       <IconButton
                         iconProps={{ icon: 'Close' }}
                         label='Remove reference to entry'
-                        onClick={event => this.handleRemoveClick(event, entry)}
+                        onClick={event => this.handleRemoveClick(event)}
                         buttonType='muted'
-                        key='1'
                       />
                     </React.Fragment>
                   }
