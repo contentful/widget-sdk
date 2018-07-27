@@ -104,7 +104,7 @@ function strictObject (props, optional) {
 function alnumExact (length) {
   return {
     type: 'string',
-    pattern: `^[a-zA-Z0-9]{${length}}$`
+    pattern: `^[a-zA-Z0-9_]{${length}}$`
   };
 }
 
