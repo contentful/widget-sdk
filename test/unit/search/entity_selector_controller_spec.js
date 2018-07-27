@@ -130,6 +130,19 @@ describe('EntitySelectorController', () => {
     });
   });
 
+  describe('fetching assets', () => {
+    it('requests only assets with files', function () {
+      this.createController({entityType: 'Asset'});
+      sinon.assert.calledOnceWith(
+        this.fetch,
+        sinon.match.has(
+          'searchFilters',
+          [['fields.file', 'exists', true]]
+        )
+      );
+    });
+  });
+
   describe('fetching entities', () => {
     it('requests first page of results on init', function () {
       this.createController();

@@ -31,29 +31,30 @@
  */
 angular.module('contentful')
 .controller('EntitySelectorController', ['require', '$scope', function EntitySelectorController (require, $scope) {
-  var $timeout = require('$timeout');
-  var spaceContext = require('spaceContext');
-  var Paginator = require('Paginator');
-  var createQueue = require('overridingRequestQueue');
-  var EntityHelpers = require('EntityHelpers');
-  var K = require('utils/kefir');
-  var Kefir = require('kefir');
-  var _ = require('lodash');
-  var createSearchInput = require('app/ContentList/Search').default;
-  var getAccessibleCTs = require('data/ContentTypeRepo/accessibleCTs').default;
+  const $timeout = require('$timeout');
+  const spaceContext = require('spaceContext');
+  const Paginator = require('Paginator');
+  const createQueue = require('overridingRequestQueue');
+  const EntityHelpers = require('EntityHelpers');
+  const K = require('utils/kefir');
+  const Kefir = require('kefir');
+  const _ = require('lodash');
+  const createSearchInput = require('app/ContentList/Search').default;
+  const getAccessibleCTs = require('data/ContentTypeRepo/accessibleCTs').default;
+  const { Operator } = require('app/ContentList/Search/Operators');
 
-  var MIN_SEARCH_TRIGGERING_LEN = 1;
-  var MODES = {AVAILABLE: 1, SELECTED: 2};
+  const MIN_SEARCH_TRIGGERING_LEN = 1;
+  const MODES = {AVAILABLE: 1, SELECTED: 2};
 
-  var config = $scope.config;
+  const config = $scope.config;
 
   initializeSearchUI();
 
-  var load = createQueue(fetch);
+  const load = createQueue(fetch);
 
   // Returns a promise for the content type of the given entry.
   // We cache this by the entry id
-  var getContentType = _.memoize(entity => spaceContext.publishedCTs.fetch(entity.sys.contentType.sys.id), entity => entity.sys.id);
+  const getContentType = _.memoize(entity => spaceContext.publishedCTs.fetch(entity.sys.contentType.sys.id), entity => entity.sys.id);
 
   _.assign($scope, MODES, {
     spaceContext: spaceContext,
@@ -134,6 +135,9 @@ angular.module('contentful')
 
     if (config.entityType === 'Entry' && $scope.singleContentType) {
       params.contentTypeId = $scope.singleContentType.getId();
+    }
+    if (config.entityType === 'Asset') {
+      params.searchFilters = [...(params.searchFilters || []), ['fields.file', Operator.EXISTS, true]];
     }
 
     return params;

@@ -8,6 +8,7 @@ import { values } from 'lodash';
 export const Operator = {
   EQUALS: '',
   NOT_EQUALS: 'ne',
+  EXISTS: 'exists',
   MATCH: 'match',
   LT: 'lt',
   LTE: 'lte',
