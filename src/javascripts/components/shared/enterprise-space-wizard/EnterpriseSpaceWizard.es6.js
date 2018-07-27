@@ -55,12 +55,12 @@ class EnterpriseSpaceWizard extends React.Component {
     this.props.scope.dialog.destroy();
   }
 
-  async handleSubmit () {
+  handleSubmit () {
     this.validateName(get(this.props, 'newSpaceMeta.name'));
 
     if (this.state.invalidName) return;
 
-    await this.props.createSpace({
+    this.props.createSpace({
       action: 'create',
       organization: this.props.organization,
       currentStepId: 'confirmation',

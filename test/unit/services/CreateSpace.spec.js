@@ -5,6 +5,17 @@ describe('CreateSpace', () => {
     this.v1Org = {sys: {id: 'v1'}, pricingVersion: 'pricing_version_1'};
     this.v2Org = {sys: {id: 'v2'}, pricingVersion: 'pricing_version_2'};
 
+    this.ratePlans = {
+      enterprise: {
+        productPlanType: 'free_space',
+        productType: 'committed'
+      },
+      onDemand: {
+        productPlanType: 'free_space',
+        productType: 'on_demand'
+      }
+    };
+
     this.getOrganization = sinon.stub().rejects();
 
     this.getOrganization.withArgs('v1').resolves(this.v1Org);
@@ -13,11 +24,10 @@ describe('CreateSpace', () => {
     this.accessChecker = {
       canCreateSpaceInOrganization: sinon.stub().returns(true)
     };
+    this.getSpaceRatePlans = sinon.stub()
+      .returns([this.ratePlans.onDemand]);
+    this.isPOCEnabled = sinon.stub().returns(false);
 
-    this.getSpaceRatePlans = sinon.stub().returns([{
-      productPlanType: 'free_space',
-      productType: 'on_demand'
-    }]);
 
     module('contentful/test', ($provide) => {
       $provide.value('services/TokenStore', {
@@ -27,7 +37,7 @@ describe('CreateSpace', () => {
       $provide.value('access_control/AccessChecker', this.accessChecker);
       $provide.value('account/pricing/PricingDataProvider', {
         getSpaceRatePlans: this.getSpaceRatePlans,
-        isPOCEnabled: sinon.stub().returns(false)
+        isPOCEnabled: this.isPOCEnabled
       });
     });
     this.modalDialog = this.$inject('modalDialog');
@@ -65,6 +75,16 @@ describe('CreateSpace', () => {
       this.accessChecker.canCreateSpaceInOrganization.returns(false);
       yield this.CreateSpace.showDialog('v1');
       sinon.assert.calledWith(this.accessChecker.canCreateSpaceInOrganization, 'v1');
+    });
+
+    it('opens the enterprise dialog for enterprise orgs', async function () {
+      this.getSpaceRatePlans.returns([this.ratePlans.enterprise]);
+      this.isPOCEnabled.returns(true);
+      await this.CreateSpace.showDialog('v2');
+      const modalArgs = this.modalDialog.open.firstCall.args[0];
+      expect(modalArgs.scopeData.modalProps.organization.sys.id).toBe(this.v2Org.sys.id);
+      expect(modalArgs.template).toContain('enterprise-space-wizard');
+      sinon.assert.calledOnce(this.modalDialog.open);
     });
   });
 });
