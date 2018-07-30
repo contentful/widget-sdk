@@ -1,22 +1,26 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import $rootScope from '$rootScope';
 import { connect } from 'react-redux';
 import { getIncludedResources } from 'components/shared/space-wizard/WizardUtils';
-
 import { go } from 'states/Navigator';
 import { get } from 'lodash';
 
 import * as actionCreators from '../space-wizard/store/actionCreators';
 
+import TemplateSelector from 'components/shared/space-wizard/TemplateSelector';
 import PlanFeatures from 'components/shared/space-wizard/PlanFeatures';
+import ProgressScreen from 'components/shared/space-wizard/ProgressScreen';
 import Dialog from 'app/entity_editor/Components/Dialog';
 import ContactUsButton from 'ui/Components/ContactUsButton';
+
 import { TextField } from '@contentful/ui-component-library';
 
 class EnterpriseSpaceWizard extends React.Component {
   static propTypes = {
     ratePlans: PropTypes.array.isRequired,
     setNewSpaceName: PropTypes.func.isRequired,
+    setNewSpaceTemplate: PropTypes.func.isRequired,
     createSpace: PropTypes.func.isRequired,
     reset: PropTypes.func.isRequired,
     organization: PropTypes.shape({
@@ -26,6 +30,8 @@ class EnterpriseSpaceWizard extends React.Component {
       name: PropTypes.string.isRequired
     }).isRequired,
     newSpaceMeta: PropTypes.object.isRequired,
+    fetchTemplates: PropTypes.func.isRequired,
+    templates: PropTypes.object.isRequired,
     spaceCreation: PropTypes.any,
     error: PropTypes.object,
     scope: PropTypes.any
@@ -53,6 +59,7 @@ class EnterpriseSpaceWizard extends React.Component {
 
   close () {
     this.props.scope.dialog.destroy();
+    this.props.reset();
   }
 
   handleSubmit () {
@@ -67,11 +74,8 @@ class EnterpriseSpaceWizard extends React.Component {
       selectedPlan: this.plan,
       newSpaceMeta: this.props.newSpaceMeta,
       onSpaceCreated: this.handleSpaceCreated,
-      onTemplateCreated: () => {},
-      onConfirm: () => {
-        this.close();
-        this.props.reset();
-      }
+      onTemplateCreated: this.handleTemplateCreated,
+      onConfirm: this.close
     });
   }
 
@@ -80,6 +84,10 @@ class EnterpriseSpaceWizard extends React.Component {
       path: ['spaces', 'detail'],
       params: {spaceId: newSpace.sys.id}
     });
+  }
+
+  handleTemplateCreated () {
+    $rootScope.$broadcast('spaceTemplateCreated');
   }
 
   validateName (name) {
@@ -93,27 +101,53 @@ class EnterpriseSpaceWizard extends React.Component {
   }
 
   render () {
-    const submitted = get(this.props, 'spaceCreation.isPending');
+    const {
+      setNewSpaceTemplate,
+      templates,
+      fetchTemplates,
+      spaceCreation
+    } = this.props;
+    const submitted = spaceCreation.isPending;
+    const {name, template} = this.props.newSpaceMeta;
+    const {errorMessage, invalidName} = this.state;
+    // we show a more robust progress indicator for the
+    // template creation that happens after the space has been
+    // successfully created
+    const showProgress = spaceCreation.success && template;
+
     return (
       <Dialog testId="enterprise-space-creation-dialog" size="large">
         <Dialog.Header onCloseButtonClicked={() => this.close()}>Create a space</Dialog.Header>
         <Dialog.Body>
-          <Plan plan={this.plan} resources={this.resources} />
-          <Note />
-          <TextField
-            value={this.props.newSpaceMeta.name}
-            name="spaceName"
-            id="spaceName"
-            labelText="Space name"
-            required={true}
-            textInputProps={{
-              maxLength: 30,
-              width: 'large'
-            }}
-            onChange={(evt) => this.handleSpaceNameChange(evt.target.value)}
-            validationMessage={this.state.errorMessage}
-          />
-        {this.state.invalidName && <p className="cfnext-form__field-error">Invalid name</p>}
+          {showProgress &&
+            <ProgressScreen done={!spaceCreation.isPending} onConfirm={this.close} />
+          }
+          {!showProgress &&
+            <div>
+              <Plan plan={this.plan} resources={this.resources} />
+              <Note />
+              <TextField
+                value={name}
+                name="spaceName"
+                id="spaceName"
+                labelText="Space name"
+                required={true}
+                textInputProps={{
+                  maxLength: 30,
+                  width: 'large'
+                }}
+                onChange={(evt) => this.handleSpaceNameChange(evt.target.value)}
+                validationMessage={errorMessage}
+              />
+              {invalidName && <p className="cfnext-form__field-error">Invalid name</p>}
+
+              <TemplateSelector
+                onSelect={setNewSpaceTemplate}
+                templates={templates}
+                fetchTemplates={fetchTemplates}
+              />
+            </div>
+          }
         </Dialog.Body>
         <Dialog.Controls>
             <button
@@ -163,7 +197,8 @@ const mapStateToProps = state => {
     newSpaceMeta: state.spaceWizard.newSpaceMeta,
     error: state.spaceWizard.error,
     success: state.spaceWizard.success,
-    spaceCreation: state.spaceWizard.spaceCreation
+    spaceCreation: state.spaceWizard.spaceCreation,
+    spaceCreationTempalte: state.spaceWizard.spaceCreationTemplate
   };
 };
 
