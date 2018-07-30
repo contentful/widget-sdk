@@ -51,7 +51,7 @@ describe('The Locale list directive', () => {
       }
     };
 
-    this.showUpgradeDialog = sinon.stub().yieldsTo('onSubmit');
+    this.showChangeSpaceDialog = sinon.stub().yieldsTo('onSubmit');
 
     this.stubs = {
       ResourceService: {
@@ -102,7 +102,7 @@ describe('The Locale list directive', () => {
       });
 
       $provide.value('services/ChangeSpaceService', {
-        showDialog: this.showUpgradeDialog
+        showDialog: this.showChangeSpaceDialog
       });
     });
 
@@ -349,13 +349,13 @@ describe('The Locale list directive', () => {
         };
       });
 
-      function getUpgradeText (sidebar) {
-        return sidebar.find('[data-test-id="upgradeSpaceBlock"] > p').eq(0).text();
+      function getChangeSpaceText (sidebar) {
+        return sidebar.find('div[data-test-id="change-space-block"] > p').eq(0).text();
       }
 
       describe('with incentivize upgrade feature on', () => {
-        function getUpgradeButton (sidebar) {
-          return sidebar.find('button.upgrade-space');
+        function getChangeSpaceButton (sidebar) {
+          return sidebar.find("button[data-test-id='locales-change']");
         }
 
         beforeEach(function () {
@@ -368,26 +368,26 @@ describe('The Locale list directive', () => {
 
           const sidebar = await this.compileAndGetSidebar();
 
-          expect(getUpgradeText(sidebar)).toBe('Upgrade the space to add more.');
-          expect(getUpgradeButton(sidebar).length).toBe(1);
+          expect(getChangeSpaceText(sidebar)).toBe('Change the space to add more.');
+          expect(getChangeSpaceButton(sidebar).length).toBe(1);
         });
 
-        it('should tell you to upgrade if you are an org admin', async function () {
+        it('should tell you to change if you are an org admin', async function () {
           this.setRole('admin');
 
           const sidebar = await this.compileAndGetSidebar();
 
-          expect(getUpgradeText(sidebar)).toBe('Delete an existing locale or upgrade the space to add more.');
-          expect(getUpgradeButton(sidebar).length).toBe(1);
+          expect(getChangeSpaceText(sidebar)).toBe('Delete an existing locale or change the space to add more.');
+          expect(getChangeSpaceButton(sidebar).length).toBe(1);
         });
 
-        it('should tell you to upgrade if you are an org owner', async function () {
+        it('should tell you to change if you are an org owner', async function () {
           this.setRole('owner');
 
           const sidebar = await this.compileAndGetSidebar();
 
-          expect(getUpgradeText(sidebar)).toBe('Delete an existing locale or upgrade the space to add more.');
-          expect(getUpgradeButton(sidebar).length).toBe(1);
+          expect(getChangeSpaceText(sidebar)).toBe('Delete an existing locale or change the space to add more.');
+          expect(getChangeSpaceButton(sidebar).length).toBe(1);
         });
 
         it('should tell you to contact the admin if you are not org admin/owner', async function () {
@@ -395,32 +395,32 @@ describe('The Locale list directive', () => {
 
           const sidebar = await this.compileAndGetSidebar();
 
-          expect(getUpgradeText(sidebar)).toBe('Delete an existing locale or ask the administrator of your organization to upgrade the space to add more.');
-          expect(getUpgradeButton(sidebar).length).toBe(0);
+          expect(getChangeSpaceText(sidebar)).toBe('Delete an existing locale or ask the administrator of your organization to change the space to add more.');
+          expect(getChangeSpaceButton(sidebar).length).toBe(0);
         });
 
-        it('should open upgrade dialog', async function () {
+        it('should open change dialog', async function () {
           this.setRole('owner');
 
           const sidebar = await this.compileAndGetSidebar();
-          getUpgradeButton(sidebar).click();
+          getChangeSpaceButton(sidebar).click();
 
-          sinon.assert.calledOnce(this.showUpgradeDialog);
+          sinon.assert.calledOnce(this.showChangeSpaceDialog);
         });
-        it('should reload resources after the space is upgraded', async function () {
+        it('should reload resources after the space is changed', async function () {
           this.setRole('owner');
 
           const sidebar = await this.compileAndGetSidebar();
 
           sinon.assert.calledOnce(this.stubs.ResourceService.get);
 
-          getUpgradeButton(sidebar).click();
+          getChangeSpaceButton(sidebar).click();
 
           sinon.assert.calledTwice(this.stubs.ResourceService.get);
         });
       });
 
-      describe('with incentivize upgrade feature off', () => {
+      describe('with incentivize change feature off', () => {
         function getUpgradeLink (sidebar) {
           return sidebar.find('.upgrade-link');
         }
@@ -429,21 +429,21 @@ describe('The Locale list directive', () => {
           this.flags['feature-bv-06-2018-incentivize-upgrade'] = false;
         });
 
-        it('should tell you to upgrade if you are an org admin', async function () {
+        it('should tell you to change if you are an org admin', async function () {
           this.setRole('admin');
 
           const sidebar = await this.compileAndGetSidebar();
 
-          expect(getUpgradeText(sidebar)).toBe('Delete an existing locale or upgrade the space to add more.');
+          expect(getChangeSpaceText(sidebar)).toBe('Delete an existing locale or change the space to add more.');
           expect(getUpgradeLink(sidebar).length).toBe(1);
         });
 
-        it('should tell you to upgrade if you are an org owner', async function () {
+        it('should tell you to change if you are an org owner', async function () {
           this.setRole('owner');
 
           const sidebar = await this.compileAndGetSidebar();
 
-          expect(getUpgradeText(sidebar)).toBe('Delete an existing locale or upgrade the space to add more.');
+          expect(getChangeSpaceText(sidebar)).toBe('Delete an existing locale or change the space to add more.');
           expect(getUpgradeLink(sidebar).length).toBe(1);
         });
 
@@ -452,7 +452,7 @@ describe('The Locale list directive', () => {
 
           const sidebar = await this.compileAndGetSidebar();
 
-          expect(getUpgradeText(sidebar)).toBe('Delete an existing locale or ask the administrator of your organization to upgrade the space to add more.');
+          expect(getChangeSpaceText(sidebar)).toBe('Delete an existing locale or ask the administrator of your organization to change the space to add more.');
           expect(getUpgradeLink(sidebar).length).toBe(0);
         });
       });

@@ -24,7 +24,7 @@ angular.module('contentful')
   const createFeatureService = require('services/FeatureService').default;
 
   const organization = spaceContext.organizationContext.organization;
-  const canUpgrade = require('services/OrganizationRoles').isOwnerOrAdmin(organization);
+  const canChangeSpace = require('services/OrganizationRoles').isOwnerOrAdmin(organization);
 
   const resources = ResourceService(spaceContext.getId());
   let resource;
@@ -33,18 +33,18 @@ angular.module('contentful')
 
   const {showDialog: showSpaceModal} = require('services/ChangeSpaceService');
 
-  // Start: incentivize upgrade feature flag
+  // Start: incentivize upgrade (change) feature flag
   const LD = require('utils/LaunchDarkly');
   const flagName = 'feature-bv-06-2018-incentivize-upgrade';
 
   LD.onFeatureFlag($scope, flagName, isEnabled => {
-    $scope.showUpgradeIncentive = isEnabled;
+    $scope.showChangeSpaceIncentive = isEnabled;
   });
   // End: incentivize upgrade feature flag
 
   ResourceUtils.useLegacy(organization).then(legacy => {
     $scope.showSidebar = !legacy;
-    $scope.upgradeSpacePlan = () => {
+    $scope.changeSpacePlan = () => {
       showSpaceModal({
         organizationId: organization.sys.id,
         space: spaceContext.space.data,
@@ -69,8 +69,8 @@ angular.module('contentful')
 
   _.extend($scope, STATES);
 
-  $scope.accountUpgradeState = TheAccountView.getSubscriptionState();
-  $scope.canUpgrade = canUpgrade;
+  $scope.accountSubscriptionSref = TheAccountView.getSubscriptionState();
+  $scope.canChangeSpace = canChangeSpace;
 
   $scope.locales = [];
   $scope.localeNamesByCode = {};
