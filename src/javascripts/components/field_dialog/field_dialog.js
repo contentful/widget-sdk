@@ -73,6 +73,34 @@ angular.module('contentful')
   $scope.$watch('widgetSettings.id', reposition);
   $scope.$watch(() => $scope.tabController.getActiveTabName(), reposition);
 
+  $scope.buildRequiredCheckboxProps = () => ({
+    id: 'field-validations--required',
+    labelText: 'Required field',
+    checked: $scope.decoratedField.required,
+    helpText: "You won't be able to publish an entry if this field is empty",
+    extraClassNames: 'validation-checkboxfield',
+    onChange: (e) => {
+      $scope.decoratedField.required = e.target.checked;
+      $scope.$digest();
+    }
+  });
+
+  $scope.buildValidationCheckboxProps = (validation) => ({
+    id: `field-validations--${validation.type}`,
+    labelText: validation.name,
+    checked: validation.enabled,
+    helpText: validation.helpText,
+    extraClassNames: 'validation-checkboxfield',
+    checkboxProps: {
+      name: 'isthisenabled',
+      'aria-label': `${validation.enabled ? 'Disable' : 'Enable'} validation`
+    },
+    onChange: (e) => {
+      validation.enabled = e.target.checked;
+      $scope.$digest();
+    }
+  });
+
   function reposition () {
     $timeout(() => {
       $scope.$emit('centerOn:reposition');
@@ -157,9 +185,10 @@ angular.module('contentful')
 
 
 .controller('FieldDialogSettingsController', ['$scope', 'require', ($scope, require) => {
-  const fieldDecorator = require('fieldDecorator');
-  const buildMessage = require('fieldErrorMessageBuilder');
-  const TheLocaleStore = require('TheLocaleStore');
+  var fieldDecorator = require('fieldDecorator');
+  var buildMessage = require('fieldErrorMessageBuilder');
+  var TheLocaleStore = require('TheLocaleStore');
+  var joinAndTruncate = require('stringUtils').joinAndTruncate;
 
   $scope.schema = {
     errors: function (decoratedField) {
@@ -168,6 +197,36 @@ angular.module('contentful')
     buildMessage: buildMessage
   };
   $scope.field = $scope.decoratedField;
+
+  $scope.buildTitleCheckboxProps = () => ({
+    disabled: $scope.field.disabled,
+    id: 'field-dialog--is-title',
+    labelText: 'This field represents the Entry title',
+    checked: $scope.field.isTitle,
+    helpText: $scope.currentTitleField && !$scope.field.disabled
+      ? `Currently ${$scope.currentTitleField} is set as the title field. Please enable the field to select it as the Entry title.`
+      : undefined,
+    light: true,
+    onChange: (e) => {
+      $scope.field.isTitle = e.target.checked;
+      fieldDecorator.update($scope.decoratedField, $scope.field, $scope.contentType);
+      $scope.$digest();
+    }
+  });
+
+  $scope.buildLocalisationCheckboxProps = () => ({
+    id: 'field-dialog--localized',
+    labelText: 'Enable localization of this field',
+    checked: $scope.field.localized,
+    helpText: `All the content can be translated to ${joinAndTruncate($scope.locales, 2, 'locales')}`,
+    light: true,
+    onChange: (e) => {
+      $scope.field.localized = e.target.checked;
+      $scope.$digest();
+    }
+  });
+
+
   $scope.$watch('fieldSettingsForm.$invalid', isInvalid => {
     $scope.tab.invalid = isInvalid;
   });

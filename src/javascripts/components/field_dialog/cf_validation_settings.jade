@@ -1,16 +1,6 @@
 include ./validation_settings_mixins
 
-h2.validation-settings__header
-  label.validation-settings__toggle
-    span.validation-settings__toggle-input-wrapper
-      input(type="checkbox" name="isthisenabled"
-            aria-label="{{validation.enabled ? 'Disable' : 'Enable'}} validation"
-            ng-model="validation.enabled" cf-no-form)
-    span
-      | {{validation.name}}
-    p.validation-settings__help-text
-      | {{validation.helpText}}
-
+<react-component name="@contentful/ui-component-library/CheckboxField" props="buildValidationCheckboxProps(validation)" />
 .validation-controls(
   ng-switch="validation.type" ng-if="validation.enabled && (validation.type !== 'unique')"
   ng-form="validationForm"
