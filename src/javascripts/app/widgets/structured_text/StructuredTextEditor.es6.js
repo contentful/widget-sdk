@@ -70,8 +70,6 @@ export default class StructuredTextEditor extends React.Component {
   onChange = ({ value }) => {
     /* eslint no-console: off */
     this.props.field.setValue(toContentfulDocument(value.toJSON().document));
-    console.log('Slate: ', value.toJSON());
-    console.log('Contentful: ', this.props.field.getValue());
     this.setState({ value });
   };
   render () {
