@@ -1,67 +1,38 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import WebhookSegmentationTable from './WebhookSegmentationTable';
-import { createMap, areAllEventsChecked } from './WebhookSegmentationState';
+import {WILDCARD, createMap} from './WebhookSegmentationState';
 
 export default class WebhookSegmentation extends React.Component {
-  constructor (props) {
-    super(props);
-
-    this.state = {
-      allEventsSelected: areAllEventsChecked(this.props.values)
-    };
+  static propTypes = {
+    values: PropTypes.object.isRequired,
+    onChange: PropTypes.func.isRequired
   }
 
-  onSelectionTypeChange (allEventsSelected) {
-    // When all events are currently selected and user unselects "All events selected" radio button,
-    // Unselect everything.
-    if (!allEventsSelected && this.state.allEventsSelected && areAllEventsChecked(this.props.values)) {
-      this.setState({ values: createMap(false) });
-    }
-
-    this.setState({
-      allEventsSelected
-    });
-
-    if (allEventsSelected) {
-      this.props.onChange(createMap(true));
-    }
-  }
-
-  renderOption (caption, value) {
+  renderOption (caption, checked, onChange) {
     return (
-      <div className="webhook-segmentation__option">
+      <div className="webhook-editor__settings-option">
         <label>
-          <input type="radio"
-                 checked={value === this.state.allEventsSelected}
-                 onChange={() => this.onSelectionTypeChange(value)} />
-          {caption}
+          <input type="radio" checked={checked} onChange={onChange} />
+          {` ${caption}`}
         </label>
       </div>
     );
   }
 
-  renderTable () {
-    if (!this.state.allEventsSelected) {
-      return (
-        <WebhookSegmentationTable values={this.state.values || this.props.values}
-                                  onChange={this.props.onChange} />
-      );
-    }
-  }
-
   render () {
+    const {values, onChange} = this.props;
+    const isWildcarded = values === WILDCARD;
+
     return (
-      <div className="webhook-segmentation">
-        {this.renderOption('All Events', true)}
-        {this.renderOption('Only Selected Events', false)}
-        {this.renderTable()}
+      <div className="cfnext-form__field" id="webhook-segmentation">
+        <p>
+          Specify for what kind of events this webhook should be triggered.
+        </p>
+        {this.renderOption('Trigger for all events', isWildcarded, () => onChange(WILDCARD))}
+        {this.renderOption('Select specific triggering events', !isWildcarded, () => onChange(createMap(false)))}
+        {!isWildcarded && <WebhookSegmentationTable values={values} onChange={onChange} />}
       </div>
     );
   }
 }
-
-WebhookSegmentation.propTypes = {
-  onChange: PropTypes.func,
-  values: PropTypes.object
-};

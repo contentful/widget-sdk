@@ -24,59 +24,9 @@ cf-loader(watch-state-change="true")
 
 .workbench-main(ui-tabpanel="settings")
   .workbench-main__content
-    .webhook-editor__settings
-      .cfnext-form__field
-        label(for="webhook-name") Name (required):
-        input.cfnext-form__input--full-size(id="webhook-name" ng-model="webhook.name")
-      .cfnext-form__field
-        label(for="webhook-url") URL (required):
-        input.cfnext-form__input--full-size(id="webhook-url" ng-model="webhook.url")
-      .cfnext-form__field
-        label(for="webhook-http-basic-user") HTTP basic auth username:
-        input.cfnext-form__input--full-size(id="webhook-http-basic-user" ng-model="webhook.httpBasicUsername")
-      .cfnext-form__field
-        label(for="webhook-http-basic-password") HTTP basic auth password:
-        input.cfnext-form__input--full-size(
-          id="webhook-http-basic-password" type="password"
-          placeholder="{{ (webhook.httpBasicUsername && apiHasAuthCredentials && 'use previously provided password') || '' }}"
-          ng-model="webhook.httpBasicPassword")
-      .cfnext-form__field
-        label Custom headers:
-        cf-webhook-headers(headers="webhook.headers" is-dirty="context.headersDirty")
-      .cfnext-form__field
-        label Trigger this webhook for:
-        cf-webhook-segmentation
-      .cfnext-form__field
-        cf-webhook-filters
-
+    react-component(name="app/Webhooks/WebhookForm" props="props")
   .workbench-main__sidebar
-    .entity-sidebar
-      h2.entity-sidebar__heading
-        | Webhook URL requirements
-      .entity-sidebar__text-profile
-        p
-          | When creating a new webhook keep in mind that the URL field will reject:
-        ul
-          li Private IPs (10.x, 192.x, etc.)
-          li Localhost
-          li Hostnames without a top-level domain
-          li URLs that resolve to localhost or redirects
-        p
-          | For further information please visit&#32;
-          a(
-            href="https://www.contentful.com/developers/docs/references/content-management-api/#/reference/webhooks"
-            target="_blank"
-            rel="noopener noreferrer"
-            ) our content management API reference
-          | .
-
-      h2.entity-sidebar__heading
-        | Webhook IP sources
-      .entity-sidebar__text-profile
-        p
-          | If in order to configure webhooks in your network you need more information about their IP range visit&#32;
-          a(href="http://docs.aws.amazon.com/general/latest/gr/aws-ip-ranges.html" target="_blank" rel="noopener noreferrer") this page
-          | .
+    react-component(name="app/Webhooks/WebhookSidebar")
 
 .workbench-main(ui-tabpanel="activity")
   .workbench-main__content

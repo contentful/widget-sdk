@@ -1,100 +1,74 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ActionCheckbox from './WebhookSegmentationActionbox';
+
 import {
-  ACTIONS, ENTITY_TYPES, ACTION_LABELS, changeAction, isActionChecked, isActionDisabled
+  ACTIONS,
+  ENTITY_TYPES,
+  ACTION_LABELS,
+  TYPE_LABELS,
+  isActionChecked,
+  isActionDisabled,
+  changeAction
 } from './WebhookSegmentationState';
 
 export default class WebhookSegmentationTable extends React.Component {
-  constructor (props) {
-    super(props);
-
-    this.state = {
-      values: this.props.values
-    };
+  static propTypes = {
+    values: PropTypes.object.isRequired,
+    onChange: PropTypes.func.isRequired
   }
 
+  renderCheckbox (entityType, action) {
+    const key = `${entityType}.${action}`;
 
-  isChecked (type, action) {
-    return isActionChecked(this.state.values, type, action);
-  }
+    if (isActionDisabled(entityType, action)) {
+      return (
+        <td key={key} className="x--disabled-cell">
+          <input type="checkbox" disabled />
+        </td>
+      );
+    }
 
-  // This method is passed to child elements. They provide a change object, e.g
-  // {
-  //   action: "save",
-  //   type: "contentType",
-  //   checked: true
-  // }
-  onChange (change) {
-    // Get a copy of the values object
-    const map = changeAction(this.state.values, change.type, change.action, change.checked);
+    const {values, onChange} = this.props;
 
-    this.setState({
-      values: map
-    });
-
-    this.props.onChange(map);
-  }
-
-  renderActionCheckbox (entityType, action) {
     return (
-      <ActionCheckbox key={`${entityType}.${action}`}
-                      action={action}
-                      type={entityType}
-                      isChecked={this.isChecked(entityType, action)}
-                      isDisabled={isActionDisabled(entityType, action)}
-                      onChange={change => this.onChange(change)} />
+      <td key={key} className={entityType === '*' ? 'x--highlighted-cell' : ''}>
+        <label>
+          <input
+            type="checkbox"
+            checked={isActionChecked(values, entityType, action)}
+            onChange={e => onChange(changeAction(values, entityType, action, e.target.checked))}
+          />
+          {action === '*' ? ` ${TYPE_LABELS[entityType]}` : ''}
+        </label>
+      </td>
     );
-  }
-
-  renderRows () {
-    return ENTITY_TYPES.map(t => this.renderRow(t));
   }
 
   renderRow (entityType) {
     return (
       <tr key={entityType}>
-        {['*'].concat(ACTIONS).map(action => this.renderActionCheckbox(entityType, action))}
-      </tr>
-    );
-  }
-
-  renderActionLabel (action) {
-    return (
-      <th key={ACTION_LABELS[action]} onClick={() => this.onChange({ type: '*', action, checked: !this.isChecked('*', action) })}>
-        <label>{ACTION_LABELS[action]}</label>
-      </th>
-    );
-  }
-
-  renderFooter () {
-    return (
-      <tr className="footer">
-        <td></td>
-        {ACTIONS.map(action => this.renderActionCheckbox('*', action))}
+        {['*'].concat(ACTIONS).map(action => this.renderCheckbox(entityType, action))}
       </tr>
     );
   }
 
   render () {
     return (
-      <table className="webhook-segmentation__matrix">
+      <table className="webhook-editor__segmentation-table">
         <thead>
           <tr>
-            <th></th>
-            {ACTIONS.map(action => this.renderActionLabel(action))}
+            <th className="x--empty-cell"></th>
+            {ACTIONS.map(a => ACTION_LABELS[a]).map(a => <th key={a}>{a}</th>)}
           </tr>
         </thead>
         <tbody>
-          {this.renderRows()}
-          {this.renderFooter()}
+          {ENTITY_TYPES.map(entityType => this.renderRow(entityType))}
+          <tr>
+            <td className="x--empty-cell"></td>
+            {ACTIONS.map(action => this.renderCheckbox('*', action))}
+          </tr>
         </tbody>
       </table>
     );
   }
 }
-
-WebhookSegmentationTable.propTypes = {
-  onChange: PropTypes.func,
-  values: PropTypes.object
-};

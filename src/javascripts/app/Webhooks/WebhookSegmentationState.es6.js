@@ -1,5 +1,9 @@
 import { cloneDeep } from 'lodash';
 
+// We introduce this special object to mark double asterisk "*.*" wildcard.
+// We check the reference with `===` in the component using this module.
+export const WILDCARD = {isDoubleAsteriskWildcard: true};
+
 export const ENTITY_TYPES = ['ContentType', 'Entry', 'Asset'];
 export const ACTIONS = ['create', 'save', 'auto_save', 'archive', 'unarchive', 'publish', 'unpublish', 'delete'];
 export const DISABLED = { ContentType: ['auto_save', 'archive', 'unarchive'] };
@@ -102,11 +106,6 @@ export function areAllEntityTypesChecked (map, action) {
   return ENTITY_TYPES.filter(t => !isActionDisabled(t, action)).every(t => map[t][action]);
 }
 
-// Are all actions checked ?
-export function areAllEventsChecked (map) {
-  return ENTITY_TYPES.every(t => areAllActionsChecked(map, t));
-}
-
 // It takes a map, and returns list of topics from given map. Output looks like this;
 // [
 //   "*.create",
@@ -114,6 +113,10 @@ export function areAllEventsChecked (map) {
 //   "Entry.Archive"
 // ]
 export function transformMapToTopics (map) {
+  if (map === WILDCARD) {
+    return ['*.*'];
+  }
+
   const result = [];
 
   // Find wildcarded entity types and add them into the result array first
@@ -137,19 +140,19 @@ export function transformMapToTopics (map) {
     });
   });
 
-  // If all entity types are wildcarded, then return ['*.*']
-  if (result.length === ENTITY_TYPES.length && result.every(t => t.endsWith('.*'))) {
-    return ['*.*'];
-  }
-
   return result;
 }
 
 
 // Take a list of topics, convert them into a simple map of entity types and actions:
 export function transformTopicsToMap (topics) {
-  if (!topics || topics.length === 0) return createMap(false);
-  if (topics.includes('*.*')) return createMap(true);
+  if (!Array.isArray(topics) || topics.length < 1) {
+    return createMap(false);
+  }
+
+  if (topics.includes('*.*')) {
+    return WILDCARD;
+  }
 
   const map = createMap(false);
 
@@ -160,7 +163,7 @@ export function transformTopicsToMap (topics) {
       map[entityType][action] = true;
     } else if (entityType === '*') {
       ENTITY_TYPES.forEach(t => { map[t][action] = true; });
-    } else {
+    } else if (action === '*') {
       ACTIONS.forEach(a => { map[entityType][a] = true; });
     }
   });

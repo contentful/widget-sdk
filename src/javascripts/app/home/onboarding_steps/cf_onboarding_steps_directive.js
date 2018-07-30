@@ -5,7 +5,6 @@ angular.module('contentful')
     const $state = require('$state');
     const Analytics = require('analytics/Analytics');
     const spaceContext = require('spaceContext');
-    const WebhookRepository = require('WebhookRepository');
     const CreateSpace = require('services/CreateSpace');
     const caseofEq = require('sum-types').caseofEq;
     const TheLocaleStore = require('TheLocaleStore');
@@ -329,7 +328,7 @@ angular.module('contentful')
             controller.steps[0].completed = res.items.length > 1;
           });
 
-          WebhookRepository.getInstance(spaceContext.space).getAll()
+          spaceContext.webhookRepo.getAll()
             .then(function (webhooks) {
               controller.steps[2].completed = webhooks.length > 0;
             });

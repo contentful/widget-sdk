@@ -45,7 +45,8 @@ export function matchConstraintType (constraint) {
 
 export function normalizeValue (constraint, value) {
   if (constraint.name === CONSTRAINT_NAMES.IN) {
-    return value.split(',').map(el => el.trim()).filter(el => !!el);
+    const values = value.split(',').map(val => val.trim());
+    return values.filter((val, i) => i === values.length - 1 || val.length > 0);
   }
 
   if (constraint.name === CONSTRAINT_NAMES.REGEXP) {
@@ -57,14 +58,14 @@ export function normalizeValue (constraint, value) {
 
 export function denormalizeValue (constraint, value) {
   if (constraint.name === CONSTRAINT_NAMES.IN && Array.isArray(value)) {
-    return value.join(', ');
+    return value.join(',');
   }
 
-  if (constraint.name === CONSTRAINT_NAMES.REGEXP && value.pattern) {
+  if (constraint.name === CONSTRAINT_NAMES.REGEXP && typeof value.pattern === 'string') {
     return value.pattern;
   }
 
-  return value;
+  return typeof value === 'string' ? value : '';
 }
 
 export function transformFiltersToList (filters) {

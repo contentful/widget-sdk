@@ -6,7 +6,6 @@ angular.module('contentful')
   restrict: 'E',
   template: JST['webhook_editor'](),
   controller: 'WebhookEditorController',
-
   link: function (scope) {
     if (!scope.context.isNew) {
       scope.tabController.activate('activity');
@@ -15,21 +14,16 @@ angular.module('contentful')
 }))
 
 .controller('WebhookEditorController', ['$scope', 'require', ($scope, require) => {
-  var $q = require('$q');
-  var $controller = require('$controller');
-  var Command = require('command');
-  var modalDialog = require('modalDialog');
-  var leaveConfirmator = require('navigation/confirmLeaveEditor');
-  var spaceContext = require('spaceContext');
-  var webhookRepo = require('WebhookRepository').getInstance(spaceContext.space);
+  const $q = require('$q');
+  const $controller = require('$controller');
+  const Command = require('command');
+  const modalDialog = require('modalDialog');
+  const leaveConfirmator = require('navigation/confirmLeaveEditor');
 
-  var activityController = $controller('WebhookEditorController/activity', {
-    $scope: $scope, repo: webhookRepo
-  });
+  $scope.context.dirty = $scope.context.isNew;
 
-  var settingsController = $controller('WebhookEditorController/settings', {
-    $scope: $scope, repo: webhookRepo
-  });
+  const activityController = $controller('WebhookEditorController/activity', {$scope});
+  const settingsController = $controller('WebhookEditorController/settings', {$scope});
 
   $scope.context.requestLeaveConfirmation = leaveConfirmator(settingsController.save);
 
@@ -58,99 +52,124 @@ angular.module('contentful')
   }
 }])
 
-.controller('WebhookEditorController/settings', ['$scope', 'repo', 'require', function ($scope, repo, require) {
-  var $q = require('$q');
-  var $state = require('$state');
-  var notification = require('notification');
-  var ReloadNotification = require('ReloadNotification');
-  var modalDialog = require('modalDialog');
-  var validation = require('WebhookEditor/validationHelper');
+.controller('WebhookEditorController/settings', ['$scope', 'require', function ($scope, require) {
+  const $q = require('$q');
+  const $state = require('$state');
+  const notification = require('notification');
+  const ReloadNotification = require('ReloadNotification');
+  const spaceContext = require('spaceContext');
 
-  var touched = getInitialTouchCount();
+  const INVALID_BODY_TRANSFORMATION_ERROR_MSG = 'Please make sure your custom payload is a valid JSON.';
+  const HTTP_BASIC_ERROR_MSG = 'Please provide a valid username/password combination.';
+  const CONFLICT_ERROR_MSG = 'Can only save the most recent version. Please refresh the page and try again.';
+  const UNKNOWN_ERROR_MSG = 'An error occurred while saving your webhook. Please try again.';
 
-  this.save = save;
-  this.remove = remove;
+  const PATH_TO_ERROR_MSG = {
+    name: 'Please provide a valid webhook name.',
+    url: 'Please provide a valid webhook URL.',
+    topics: 'Please select at least one triggering event type.',
+    filters: 'Please make sure all filters are valid or remove incomplete ones.',
+    headers: 'Please make sure all headers are valid or remove incomplete ones.',
+    http_basic_username: HTTP_BASIC_ERROR_MSG,
+    http_basic_password: HTTP_BASIC_ERROR_MSG
+  };
 
-  $scope.$watch('webhook', (webhook, prev) => {
-    touched += 1;
-    $scope.context.title = isEmpty('name') ? 'Unnamed' : webhook.name;
-    if (webhook === prev) { checkCredentials(); }
-  }, true);
+  // Hack: we want to rerender the component every time
+  // the tab is changed so children requiring DOM sizes
+  // can lay themselves out properly. CodeMirror is a good
+  // example.
+  // TODO: do tabs with React
+  $scope.$watch(
+    () => $scope.tabController.getActiveTabName(),
+    activeTab => { $scope.props.activeTab = activeTab; }
+  );
 
-  $scope.$watch(() => touched, () => {
-    $scope.context.dirty = touched > 0;
-  });
+  updatePropsFromScope();
+  updateContextName();
 
-  function save () {
-    return askAboutHeader().then(() => {
-      prepareCredentials();
-      var validationError = validation.validate($scope.webhook);
-      if (validationError) {
-        notification.error(validationError);
-        return $q.reject(validationError);
-      } else {
-        return repo.save($scope.webhook).then(handleWebhook, validation.handleServerError);
-      }
-    });
+  function updatePropsFromScope () {
+    const cloned = _.cloneDeep($scope.webhook);
+    const withoutSys = _.omit(cloned, ['sys']);
+
+    $scope.props = {
+      webhook: withoutSys,
+      hasHttpBasicStored: hasHttpBasic($scope.webhook),
+      onChange
+    };
   }
 
-  function askAboutHeader () {
-    return !$scope.context.headersDirty ? $q.resolve() : modalDialog.open({
-      title: 'Check your custom headers',
-      message: 'There is an unsaved custom header. You have to click the "Add" button if you want to save it.',
-      confirmLabel: 'Continue without adding',
-      cancelLabel: 'Cancel'
-    }).promise;
-  }
-
-  function handleWebhook (webhook) {
-    notification.info('Webhook "' + $scope.webhook.name + '" saved successfully.');
-
-    if ($scope.context.isNew) {
-      $scope.context.dirty = false;
-      return $state.go('^.detail', {webhookId: webhook.sys.id});
-    } else {
-      $scope.webhook = webhook;
-      checkCredentials();
-      touched = getInitialTouchCount();
-      return $q.resolve(webhook);
+  function onChange (changedWebhook) {
+    Object.assign($scope.webhook, changedWebhook);
+    if (!hasHttpBasic($scope.webhook)) {
+      $scope.props.hasHttpBasicStored = false;
     }
+
+    $scope.context.dirty = true;
+    updateContextName();
+    $scope.$applyAsync();
   }
 
-  function remove () {
-    return repo.remove($scope.webhook).then(() => {
+  function hasHttpBasic (webhook) {
+    return typeof webhook.httpBasicUsername === 'string';
+  }
+
+  function updateContextName () {
+    const {name} = $scope.webhook;
+    const named = typeof name === 'string' && name.length > 0;
+    $scope.context.title = named ? name : 'Unnamed';
+  }
+
+  this.save = function save () {
+    if (!spaceContext.webhookRepo.hasValidBodyTransformation($scope.webhook)) {
+      notification.error(INVALID_BODY_TRANSFORMATION_ERROR_MSG);
+      return;
+    }
+
+    return spaceContext.webhookRepo.save($scope.webhook).then(webhook => {
+      $scope.context.dirty = false;
+      notification.info('Webhook "' + $scope.webhook.name + '" saved successfully.');
+
+      if ($scope.context.isNew) {
+        return $state.go('^.detail', {webhookId: webhook.sys.id});
+      } else {
+        // `$scope.webhook` is resolved with Angular UI Router.
+        // We want to reuse the scope reference for storing the saved
+        // webhook so consecutive requests of resolved data result in
+        // the latest state, not the originally resolved object.
+        Object.keys($scope.webhook).forEach(k => { delete $scope.webhook[k]; });
+        Object.assign($scope.webhook, webhook);
+
+        updatePropsFromScope();
+        updateContextName();
+        return $q.resolve(webhook);
+      }
+    }, err => {
+      if (_.get(err, ['body', 'sys', 'id']) === 'Conflict') {
+        notification.error(CONFLICT_ERROR_MSG);
+        return $q.reject(err);
+      }
+
+      const [apiError] = _.get(err, ['body', 'details', 'errors'], []);
+      const message = apiError && PATH_TO_ERROR_MSG[apiError.path];
+      notification.error(message || UNKNOWN_ERROR_MSG);
+      return $q.reject(err);
+    });
+  };
+
+  this.remove = function remove () {
+    return spaceContext.webhookRepo.remove($scope.webhook).then(() => {
       $scope.context.dirty = false;
       notification.info('Webhook "' + $scope.webhook.name + '" deleted successfully.');
       return $state.go('^.list');
     }, ReloadNotification.basicErrorHandler);
-  }
-
-  function checkCredentials () {
-    $scope.apiHasAuthCredentials = !isEmpty('httpBasicUsername');
-  }
-
-  function prepareCredentials () {
-    if (isEmpty('httpBasicUsername')) {
-      $scope.webhook.httpBasicUsername = null;
-      if (isEmpty('httpBasicPassword')) {
-        $scope.webhook.httpBasicPassword = null;
-      }
-    }
-  }
-
-  function isEmpty (prop) {
-    var value = _.get($scope, ['webhook', prop], null);
-    return !_.isString(value) || value.length < 1;
-  }
-
-  function getInitialTouchCount () {
-    return $scope.context.isNew ? 0 : -1;
-  }
+  };
 }])
 
-.controller('WebhookEditorController/activity', ['$scope', 'repo', function ($scope, repo) {
-  var PER_PAGE = 30;
-  var items = [];
+.controller('WebhookEditorController/activity', ['$scope', 'require', function ($scope, require) {
+  const spaceContext = require('spaceContext');
+
+  const PER_PAGE = 30;
+  let items = [];
 
   this.refresh = refreshActivity;
   $scope.activity = {};
@@ -171,74 +190,11 @@ angular.module('contentful')
   }
 
   function fetchActivity () {
-    return repo.logs.getCalls($scope.webhook.sys.id).then(res => {
+    return spaceContext.webhookRepo.logs.getCalls($scope.webhook.sys.id).then(res => {
       items = res.items;
       $scope.activity.pages = _.range(0, Math.ceil(res.items.length / PER_PAGE));
       $scope.activity.loading = false;
       $scope.activity.page = 0;
     });
-  }
-}])
-
-.factory('WebhookEditor/validationHelper', ['require', require => {
-  var $q = require('$q');
-  var notification = require('notification');
-  var logger = require('logger');
-  var urlUtils = require('urlUtils');
-
-  var MESSAGES = {
-    INVALID_NAME: 'Please provide a valid webhook name.',
-    INVALID_TOPICS: 'Please select at least one triggering event type.',
-    INVALID_URL: 'Please provide a valid webhook URL.',
-    TAKEN_URL: 'This webhook URL is already used.',
-    FILTER_ERROR: 'Could not save changes due to incorrect filters. Please verify the values you provided.',
-    INVALID_CREDENTIALS: [
-      'Please provide a valid user/password combination.',
-      'If you don\'t want to use HTTP Basic Authentication, please clear both fields.'
-    ].join(' '),
-    OTHER_ERROR: 'Error saving webhook. Please try again.'
-  };
-
-  return {
-    validate: validate,
-    handleServerError: handleServerError
-  };
-
-  function validate (webhook) {
-    if (!webhook.name) {
-      return MESSAGES.INVALID_NAME;
-    }
-    if (!_.isArray(webhook.topics) || !webhook.topics.length) {
-      return MESSAGES.INVALID_TOPICS;
-    }
-    if (!webhook.url || !urlUtils.isValid(webhook.url)) {
-      return MESSAGES.INVALID_URL;
-    }
-
-    return null;
-  }
-
-  function handleServerError (res) {
-    var errors = _.get(res, 'body.details.errors', []);
-    var error = _.isObject(errors[0]) ? errors[0] : {};
-
-    switch (error.path) {
-      case 'url':
-        var key = error.name === 'taken' ? 'TAKEN_URL' : 'INVALID_URL';
-        notification.error(MESSAGES[key]);
-        break;
-      case 'filters':
-        notification.error(MESSAGES.FILTER_ERROR);
-        break;
-      case 'http_basic_password':
-      case 'http_basic_username':
-        notification.error(MESSAGES.INVALID_CREDENTIALS);
-        break;
-      default:
-        notification.error(MESSAGES.OTHER_ERROR);
-        logger.logServerWarn('Error saving webhook.', { errors: errors });
-    }
-
-    return $q.reject(error);
   }
 }]);

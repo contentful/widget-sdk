@@ -3,23 +3,20 @@
 describe('Webhook Editor directive', () => {
   beforeEach(function () {
     this.go = sinon.stub();
-
-    module('contentful/test', ($provide) => {
-      $provide.removeDirectives('uiSref');
-      $provide.value('$state', {
-        go: this.go
-      });
-    });
-
-    this.notification = this.mockService('notification');
-
     this.repo = {
       save: sinon.stub(),
       remove: sinon.stub(),
-      logs: {getCalls: sinon.stub().resolves({items: []})}
+      logs: {getCalls: sinon.stub().resolves({items: []})},
+      hasValidBodyTransformation: () => true
     };
 
-    this.$inject('WebhookRepository').getInstance = sinon.stub().returns(this.repo);
+    module('contentful/test', ($provide) => {
+      $provide.removeDirectives('uiSref');
+      $provide.value('$state', {go: this.go});
+      $provide.value('spaceContext', {webhookRepo: this.repo});
+    });
+
+    this.notification = this.mockService('notification');
 
     this.compile = (context, webhook) => {
       const data = {context: context || {}, webhook: webhook || {headers: [], topics: ['*.*']}};
@@ -43,13 +40,38 @@ describe('Webhook Editor directive', () => {
       this.compile({isNew: false});
       expect(this.scope.context.dirty).toBe(false);
     });
+  });
 
-    it('increments "touched" counter, switches "dirty" flag', function () {
-      this.compile({isNew: false});
-      this.scope.webhook.url = 'http://test.com';
-      expect(this.scope.context.dirty).toBe(false);
-      this.$apply();
-      expect(this.scope.context.dirty).toBe(true);
+  describe('WebhookForm props', function () {
+    it('has a copy of webhook data without sys', function () {
+      const shouldBeCloned = {};
+      this.compile({isNew: false}, {name: 'test', shouldBeCloned, sys: {test: true}});
+      expect(this.scope.props.webhook).toEqual({name: 'test', shouldBeCloned});
+      expect(this.scope.props.webhook.shouldBeCloned).not.toBe(shouldBeCloned);
+    });
+
+    it('has method for merging changes into a scope webhook', function () {
+      this.compile({isNew: false}, {});
+      const webhook = this.scope.webhook;
+      webhook.name = 'hello';
+      this.scope.props.onChange({url: 'http://test'});
+      expect(this.scope.webhook).toBe(webhook);
+      expect(this.scope.webhook.url).toBe('http://test');
+    });
+
+    it('has flag indicating if credentials are stored', function () {
+      this.compile({isNew: false}, {name: 'test', httpBasicUsername: 'jakub'});
+      expect(this.scope.props.hasHttpBasicStored).toBe(true);
+
+      this.compile({isNew: false}, {name: 'test'});
+      expect(this.scope.props.hasHttpBasicStored).toBe(false);
+    });
+
+    it('allows to clear stored credentials', function () {
+      this.compile({isNew: false}, {name: 'test', httpBasicUsername: 'jakub'});
+      expect(this.scope.props.hasHttpBasicStored).toBe(true);
+      this.scope.props.onChange({httpBasicUsername: null});
+      expect(this.scope.props.hasHttpBasicStored).toBe(false);
     });
   });
 
@@ -67,82 +89,15 @@ describe('Webhook Editor directive', () => {
 
     it('enables "save" button when dirty', function () {
       this.compile({isNew: false});
-      this.scope.webhook.url = 'http://test.com';
+      this.scope.props.onChange({...this.scope.webhook, url: 'http://test.com'});
       this.scope.$apply();
       expect(this.scope.context.dirty).toBe(true);
       expect(this.button('Save').get(0).disabled).toBe(false);
     });
   });
 
-  describe('Checks if API has Basic Auth credentials', () => {
-    const PASSWORD_FIELD_ID = '#webhook-http-basic-password';
-
-    it('looks for username on initialization', function () {
-      this.compile(undefined, {httpBasicUsername: 'jakub'});
-      expect(this.scope.apiHasAuthCredentials).toBe(true);
-    });
-
-    it('treats null, undefined and empty string as invalid values', function () {
-      this.compile(undefined, {httpBasicUsername: ''});
-      expect(this.scope.apiHasAuthCredentials).toBe(false);
-      this.compile(undefined, {httpBasicUsername: null});
-      expect(this.scope.apiHasAuthCredentials).toBe(false);
-      this.compile();
-      expect(this.scope.apiHasAuthCredentials).toBe(false);
-    });
-
-    it('sets placeholder if has credentials and username', function () {
-      this.compile({isNew: false}, {httpBasicUsername: 'jakub'});
-      const el = this.element.find(PASSWORD_FIELD_ID);
-      expect(el.attr('placeholder')).toBe('use previously provided password');
-    });
-
-    it('keeps placeholder empty if there is no username', function () {
-      this.compile({isNew: false}, undefined);
-      const el = this.element.find(PASSWORD_FIELD_ID);
-      expect(el.attr('placeholder')).toBe('');
-    });
-
-    it('handles changes to model', function () {
-      this.compile({isNew: false}, {httpBasicUsername: 'jakub'});
-      this.scope.webhook.httpBasicUsername = '';
-      this.$apply();
-      const el = this.element.find(PASSWORD_FIELD_ID);
-      expect(el.attr('placeholder')).toBe('');
-    });
-  });
-
   describe('Saving webhook', () => {
     const SUCCESS_MSG = 'Webhook "test" saved successfully.';
-
-    describe('Model handling', () => {
-      beforeEach(function () {
-        this.compile({isNew: false}, {name: 'test', url: 'http://test.com', topics: ['*.*']});
-      });
-
-      it('nullifies username and password', function () {
-        this.scope.webhook.httpBasicUsername = '';
-        this.scope.webhook.httpBasicPassword = '';
-        this.scope.$apply();
-        const webhookPreSave = this.scope.webhook;
-        this.repo.save.rejects();
-        this.button('Save').click();
-        sinon.assert.calledOnce(this.repo.save);
-        expect(webhookPreSave.httpBasicUsername).toBeNull();
-        expect(webhookPreSave.httpBasicPassword).toBeNull();
-      });
-
-      it('leaves password as undefined when username is defined', function () {
-        this.scope.webhook.httpBasicUsername = 'test';
-        this.scope.$apply();
-        const webhookPreSave = this.scope.webhook;
-        this.repo.save.rejects();
-        this.button('Save').click();
-        sinon.assert.calledOnce(this.repo.save);
-        expect(webhookPreSave.httpBasicUsername).toBe('test');
-        expect(webhookPreSave.httpBasicPassword).toBeUndefined();
-      });
-    });
 
     describe('New webhook', () => {
       beforeEach(function () {
@@ -171,7 +126,7 @@ describe('Webhook Editor directive', () => {
     describe('Existing webhook', () => {
       beforeEach(function () {
         this.compile({isNew: false}, {sys: {id: 'whid'}, name: 'old', url: 'http://test.com', topics: ['*.*']});
-        this.scope.webhook.name = 'test';
+        this.scope.props.onChange({...this.scope.webhook, name: 'test'});
         const response = _.cloneDeep(this.scope.webhook);
         response.sys.version = 2;
         this.repo.save.resolves(response);
@@ -191,68 +146,6 @@ describe('Webhook Editor directive', () => {
       it('shows success notification', function () {
         sinon.assert.calledOnce(this.notification.info);
         sinon.assert.calledWith(this.notification.info, SUCCESS_MSG);
-      });
-    });
-
-    describe('Frontend validation', () => {
-      beforeEach(function () {
-        this.clickSave = (wh) => {
-          this.compile({isNew: true}, wh);
-          this.button('Save').click();
-        };
-      });
-
-      it('handles invalid name', function () {
-        this.clickSave({url: 'http://test.com', topics: ['*.*']});
-        sinon.assert.calledWith(this.notification.error, 'Please provide a valid webhook name.');
-      });
-
-      it('handles invalid URL', function () {
-        this.clickSave({name: 'test', topics: ['*.*']});
-        sinon.assert.calledWith(this.notification.error, 'Please provide a valid webhook URL.');
-      });
-
-      it('handles invalid topics', function () {
-        this.clickSave({name: 'test', url: 'http://test.com', topics: []});
-        sinon.assert.calledOnce(this.notification.error);
-        expect(this.notification.error.firstCall.args[0]).toMatch(/triggering event/);
-      });
-    });
-
-    describe('Server errors', () => {
-      beforeEach(function () {
-        this.rejectWithError = (err) => {
-          this.compile({isNew: true}, {name: 'test', url: 'http://test.com', topics: ['*.*']});
-          this.repo.save.rejects({body: {details: {errors: [err]}}});
-          this.scope.$apply();
-          this.button('Save').click();
-        };
-      });
-
-      it('handles invalid URL', function () {
-        this.rejectWithError({path: 'url', name: 'invalid'});
-        sinon.assert.calledWith(this.notification.error, 'Please provide a valid webhook URL.');
-      });
-
-      it('handles taken URL', function () {
-        this.rejectWithError({path: 'url', name: 'taken'});
-        sinon.assert.calledWith(this.notification.error, 'This webhook URL is already used.');
-      });
-
-      it('handles Basic Auth credentials errors', function () {
-        this.rejectWithError({path: 'http_basic_password'});
-        sinon.assert.calledOnce(this.notification.error);
-        expect(this.notification.error.firstCall.args[0]).toMatch(/user\/password combination/);
-      });
-
-      it('handles and logs server errors', function () {
-        const logSpy = sinon.spy();
-        this.$inject('logger').logServerWarn = logSpy;
-        this.rejectWithError(undefined);
-
-        sinon.assert.calledOnce(this.notification.error);
-        expect(this.notification.error.firstCall.args[0]).toMatch(/Error saving webhook/);
-        sinon.assert.calledOnce(logSpy);
       });
     });
   });
