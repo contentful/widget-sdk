@@ -14,7 +14,8 @@ const SUPPORTED_CT_FIELD_TYPES = [
   'Date',
   'Boolean',
   'Array',
-  'Link'
+  'Link',
+  'StructuredText'
 ];
 
 export const statusQueryKey = '__status';

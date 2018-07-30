@@ -41,6 +41,7 @@ export function getOperatorsByType (type) {
   switch (type) {
     case 'Symbol':
       return [equality, inequality, fts];
+    case 'StructuredText':
     case 'AssetField':
     case 'Text':
       return [fts];
