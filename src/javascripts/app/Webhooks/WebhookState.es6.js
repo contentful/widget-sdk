@@ -1,4 +1,3 @@
-import {omit} from 'lodash';
 import spaceContext from 'spaceContext';
 import createResourceService from 'services/ResourceService';
 
@@ -31,15 +30,9 @@ const call = {
       return spaceContext.webhookRepo.logs.getCall(webhook.sys.id, $stateParams.callId);
     }]
   },
-  template: JST['webhook_call'](), // eslint-disable-line no-undef
+  template: '<react-component class="workbench webhook-call" name="app/Webhooks/WebhookCall" props="props" />',
   controller: ['$scope', 'webhook', 'call', ($scope, webhook, call) => {
-    $scope.webhook = webhook;
-    $scope.call = call;
-
-    try {
-      $scope.body = JSON.parse(call.request.body);
-      call.request = omit($scope.call.request, ['body']);
-    } catch (e) { /* ignore */ } // eslint-disable-line no-empty
+    $scope.props = {webhook, call};
   }]
 };
 
