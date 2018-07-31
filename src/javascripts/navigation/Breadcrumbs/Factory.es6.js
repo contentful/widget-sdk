@@ -116,27 +116,6 @@ export function Role (id, context) {
   });
 }
 
-export function WebhookList () {
-  return base('WebhookList', {
-    getTitle: constantly('Webhooks'),
-    link: link('settings.webhooks.list')
-  });
-}
-
-export function Webhook (id, context) {
-  return base('Webhook', id, {
-    getTitle: titleFromContext(context),
-    link: entityLink('settings.webhooks', 'webhookId', id)
-  });
-}
-
-export function WebhookCall (call) {
-  return base('WebhookCall', call.sys.id, {
-    getTitle: constantly('Call details (' + call.requestAt + ')'),
-    link: link('settings.webhooks.detail.call', {callId: call.sys.id})
-  });
-}
-
 export function PreviewEnvList () {
   return base('PreviewEnvList', {
     getTitle: constantly('Content Preview'),

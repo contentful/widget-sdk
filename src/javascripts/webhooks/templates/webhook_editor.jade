@@ -6,16 +6,18 @@ header.workbench-header
   h1.workbench-header__title Webhook: {{ context.title }}
 
   .workbench-header__actions(ui-tabpanel="settings")
+    button.btn-secondary-action(ui-sref="^.list")
+      | Close
     button.btn-secondary-action(ui-command="openRemovalDialog")
       | Remove
     button.btn-primary-action(ui-command="save")
       | Save
 
   .workbench-header__actions(ui-tabpanel="activity")
+    button.btn-secondary-action(ui-sref="^.list")
+      | Close
     button.btn-secondary-action(ui-command="refreshLogs")
       | Refresh logs
-
-cf-loader(watch-state-change="true")
 
 .workbench-nav(ng-hide="context.isNew")
   ul.workbench-nav__tabs

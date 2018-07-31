@@ -4,7 +4,9 @@
     cf-icon.workbench-header__icon(name="page-settings", scale="0.75")
     h1.workbench-header__title Call details for {{ webhook.name }} at {{ call.requestAt }}
 
-  cf-loader(watch-state-change="true")
+    .workbench-header__actions
+      button.btn-secondary-action(ui-sref="^")
+        | Close
 
   .workbench-main
     .workbench-main__content

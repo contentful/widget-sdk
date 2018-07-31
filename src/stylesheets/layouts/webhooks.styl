@@ -3,6 +3,16 @@
   th:first-child, td:first-child
     padding-left: 25px
 
+.webhook-list td
+  &.x--clickable
+    cursor: pointer
+  code
+    font-size: .9em
+    display: block
+    white-space: nowrap
+    overflow: hidden
+    text-overflow: ellipsis
+
 .webhook-editor .workbench-nav__tabs
   margin-left: $rhythm(1)
 
