@@ -42,8 +42,9 @@ header.workbench-header
                 ui-sref="{{ entityNavState }}")
                 | {{ webhook.url }}
               +td.x--small-cell(aria-label="cell-health"
+                ng-init="props = {webhookId: webhook.sys.id, webhookRepo: webhookRepo}"
                 ui-sref="{{ entityNavState }}")
-                cf-webhook-health(webhook-id="webhook.sys.id")
+                react-component(name="app/Webhooks/WebhookHealth" props="props")
               +td.x--small-cell(aria-label="cell-http-basic"
                 ui-sref="{{ entityNavState }}")
                 | {{ webhook.httpBasicUsername ? 'yes' : 'no' }}

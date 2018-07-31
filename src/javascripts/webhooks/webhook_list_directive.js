@@ -17,6 +17,8 @@ angular.module('contentful')
   var organization = spaceContext.organizationContext.organization;
   var resources = createResourceService(spaceContext.getId());
 
+  $scope.webhookRepo = spaceContext.webhookRepo;
+
   ResourceUtils.useLegacy(organization).then(legacy => {
     $scope.showSidebar = !legacy;
   });

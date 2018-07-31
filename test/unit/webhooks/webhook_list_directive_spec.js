@@ -73,7 +73,10 @@ describe('The Webhook Definition list directive', () => {
     };
 
     spaceContext.webhookRepo = {
-      getAll: sinon.stub().resolves(this.webhooks)
+      getAll: sinon.stub().resolves(this.webhooks),
+      logs: {
+        getHealth: sinon.stub().resolves({calls: {total: 1, healthy: 1}})
+      }
     };
 
     this.compile = function () {
