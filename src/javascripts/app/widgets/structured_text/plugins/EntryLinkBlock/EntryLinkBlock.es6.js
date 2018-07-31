@@ -14,7 +14,11 @@ export default class LinkedEntryBlock extends React.Component {
     node: PropTypes.object.isRequired
   };
 
-  renderEntryThumbnail = entryThumbnail => {
+  renderEntryThumbnail = (entryThumbnail, loading) => {
+    if (loading) {
+      return <div style={{height: '70px', width: '70px'}}>Loading...</div>;
+    }
+
     if (!entryThumbnail) {
       return;
     }
@@ -61,7 +65,8 @@ export default class LinkedEntryBlock extends React.Component {
           entryDescription,
           entryThumbnail,
           entryStatus,
-          entryIsMissing
+          entryIsMissing,
+          loading
         }) => {
           if (entryIsMissing) {
             return (
@@ -85,32 +90,31 @@ export default class LinkedEntryBlock extends React.Component {
             );
           } else {
             return (
-              entry && (
-                <ReferenceCard
-                  title={entryTitle}
-                  contentType={entry.sys.contentType.sys.id}
-                  description={entryDescription}
-                  selected={isSelected}
-                  status={entryStatus}
-                  thumbnailElement={this.renderEntryThumbnail(entryThumbnail)}
-                  actionElements={
-                    <React.Fragment>
-                      <IconButton
-                        iconProps={{ icon: 'Edit' }}
-                        label='Edit entry'
-                        onClick={event => this.handleEditClick(event, entry)}
-                        buttonType='muted'
-                      />
-                      <IconButton
-                        iconProps={{ icon: 'Close' }}
-                        label='Remove reference to entry'
-                        onClick={event => this.handleRemoveClick(event)}
-                        buttonType='muted'
-                      />
-                    </React.Fragment>
-                  }
-                />
-              )
+              <ReferenceCard
+                title={entryTitle}
+                contentType={entry.sys.contentType.sys.id}
+                description={entryDescription}
+                selected={isSelected}
+                status={entryStatus}
+                thumbnailElement={this.renderEntryThumbnail(entryThumbnail, loading.thumbnail)}
+                loading={loading.entry}
+                actionElements={
+                  <React.Fragment>
+                    <IconButton
+                      iconProps={{ icon: 'Edit' }}
+                      label='Edit entry'
+                      onClick={event => this.handleEditClick(event, entry)}
+                      buttonType='muted'
+                    />
+                    <IconButton
+                      iconProps={{ icon: 'Close' }}
+                      label='Remove reference to entry'
+                      onClick={event => this.handleRemoveClick(event)}
+                      buttonType='muted'
+                    />
+                  </React.Fragment>
+                }
+              />
             );
           }
         }}
