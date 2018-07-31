@@ -17,6 +17,10 @@ export default class FetchEntry extends React.Component {
         }
       },
       fields: {}
+    },
+    loading: {
+      entry: true,
+      thumbnail: true
     }
   };
   componentDidMount () {
@@ -31,15 +35,19 @@ export default class FetchEntry extends React.Component {
   async fetchEntry (props) {
     // TODO: Handle error & pending states
     try {
+      this.setState({pending: {entry: true, thumbnail: true}});
       const entry = await getEntry(props.node.data.get('target').sys.id);
-      const thumbnail = await getEntryThumbnail(entry);
-
       this.setState({
         entry: entry.data,
         entryTitle: getEntryTitle(entry),
         entryDescription: getEntryDescription(entry),
+        entryStatus: getEntryStatus(entry),
+        loading: {entry: false, thumbnail: true}
+      });
+      const thumbnail = await getEntryThumbnail(entry);
+      this.setState({
         entryThumbnail: thumbnail,
-        entryStatus: getEntryStatus(entry)
+        loading: {entry: false, thumbnail: false}
       });
     } catch (error) {
       this.setState({
