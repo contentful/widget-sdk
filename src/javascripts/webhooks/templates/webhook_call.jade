@@ -13,7 +13,8 @@
         .webhook-call__header
           strong.webhook-call__header-item {{ webhook.name }} ({{ call.url }})
           span.webhook-call__header-item {{ call.requestAt }}
-          cf-webhook-call-status.webhook-call__header-item(call="call")
+          .webhook-call__header-item(ng-init="props = {call: call}")
+            react-component(name="app/Webhooks/WebhookCallStatus" props="props")
 
         .webhook-call__columns
           .webhook-call__column

@@ -50,7 +50,9 @@ cf-loader(watch-state-change="true")
                 ui-sref="{{entityNavState}}")
                 | {{ log.requestAt }}
               +td.x--large-cell(aria-label="cell-result"
-                ui-sref="{{entityNavState}}")
+                ui-sref="{{entityNavState}}"
+                ng-init="props = {call: log}")
+                react-component(name="app/Webhooks/WebhookCallStatus" props="props")
                 cf-webhook-call-status(call="log")
               +td(aria-label="cell-actions"
                 ui-sref="{{entityNavState}}")

@@ -2,8 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const THRESHOLD = {WARNING: 70, SUCCESS: 90};
+
 const STATUSES = ['LOADING', 'NODATA', 'FAILURE', 'WARNING', 'SUCCESS'];
-const STATUS = STATUSES.reduce((acc, k) => ({...acc, [k]: k.toLowerCase()}), {});
+export const STATUS = STATUSES.reduce((acc, k) => ({...acc, [k]: k.toLowerCase()}), {});
 
 function calculateHealth ({calls}) {
   const percentage = Math.round(calls.healthy / calls.total * 100);
