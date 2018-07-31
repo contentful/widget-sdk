@@ -249,11 +249,12 @@ describe('Space Wizard action creators', function () {
         onConfirm: this.onConfirm
       });
 
-      expect(this.stubs.dispatch.callCount).toBe(1);
+      expect(this.stubs.dispatch.callCount).toBe(2);
       expect(this.stubs.dispatch.args[0]).toEqual([{
         type: this.actions.SPACE_CHANGE_PENDING,
         isPending: true
       }]);
+      expect(typeof this.stubs.dispatch.args[1][0]).toBe('function');
     });
 
     it('should dispatch 3 times if error is thrown during space changing', async function () {
@@ -287,30 +288,36 @@ describe('Space Wizard action creators', function () {
     it('should dispatch 1 time', function () {
       const props = {
         action: 'create',
-        organization: this.organization,
+        paymentDetailsExist: this.organization.isBillable,
         currentStepId: 1,
         selectedPlan: this.plan,
         currentPlan: { ...this.plan, name: 'Even Better Micro Plan', internalName: 'even_better' },
-        newSpaceMeta: { spaceName: 'Best Space Ever', template: { name: 'Blank' } }
+        newSpaceName: 'Best Space Ever',
+        newSpaceTemplate: { name: 'Blank' }
       };
 
       this.dispatch(this.actionCreators.track, 'my_event', {
-        specialProp: 'special_value'
-      }, props);
+        extraProp: 'special_value',
+        ...props
+      });
 
       expect(this.stubs.dispatch.callCount).toBe(1);
       expect(this.stubs.dispatch.args[0]).toEqual([{
         type: this.actions.SPACE_WIZARD_TRACK,
         eventName: 'my_event',
         trackingData: {
-          specialProp: 'special_value',
           currentStep: 1,
-          action: 'create',
+          intendedAction: 'create',
           paymentDetailsExist: true,
-          spaceType: 'best_micro',
-          spaceName: 'Best Space Ever',
-          template: 'Blank',
-          currentSpaceType: 'even_better'
+          targetSpaceType: 'best_micro',
+          targetSpaceName: 'Best Space Ever',
+          targetSpaceTemplateId: 'Blank',
+          currentSpaceType: 'even_better',
+          targetStep: null,
+          targetProductType: null,
+          currentProductType: null,
+          recommendedSpaceType: null,
+          recommendedProductType: null
         }
       }]);
     });
