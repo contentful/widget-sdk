@@ -6,7 +6,7 @@ describe('Webhook Editor directive', () => {
     this.repo = {
       save: sinon.stub(),
       remove: sinon.stub(),
-      logs: {getCalls: sinon.stub().resolves({items: []})},
+      logs: {getCalls: sinon.stub().resolves([])},
       hasValidBodyTransformation: () => true
     };
 

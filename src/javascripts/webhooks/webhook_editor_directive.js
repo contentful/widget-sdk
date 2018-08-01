@@ -15,49 +15,13 @@ angular.module('contentful')
 
 .controller('WebhookEditorController', ['$scope', 'require', ($scope, require) => {
   const $q = require('$q');
-  const $controller = require('$controller');
-  const Command = require('command');
-  const modalDialog = require('modalDialog');
-  const leaveConfirmator = require('navigation/confirmLeaveEditor');
-
-  $scope.context.dirty = $scope.context.isNew;
-
-  const activityController = $controller('WebhookEditorController/activity', {$scope});
-  const settingsController = $controller('WebhookEditorController/settings', {$scope});
-
-  $scope.context.requestLeaveConfirmation = leaveConfirmator(settingsController.save);
-
-  $scope.save = Command.create(settingsController.save, {
-    disabled: function () { return !$scope.context.dirty; }
-  });
-
-  $scope.openRemovalDialog = Command.create(openRemovalDialog, {
-    available: function () { return !$scope.context.isNew; }
-  });
-
-  $scope.refreshLogs = Command.create(activityController.refresh);
-
-  function openRemovalDialog () {
-    modalDialog.open({
-      ignoreEsc: true,
-      backgroundClose: false,
-      template: 'webhook_removal_confirm_dialog',
-      scopeData: {
-        webhook: $scope.webhook,
-        remove: Command.create(settingsController.remove)
-      }
-    });
-
-    return $q.resolve();
-  }
-}])
-
-.controller('WebhookEditorController/settings', ['$scope', 'require', function ($scope, require) {
-  const $q = require('$q');
   const $state = require('$state');
   const notification = require('notification');
   const ReloadNotification = require('ReloadNotification');
   const spaceContext = require('spaceContext');
+  const Command = require('command');
+  const modalDialog = require('modalDialog');
+  const leaveConfirmator = require('navigation/confirmLeaveEditor');
 
   const INVALID_BODY_TRANSFORMATION_ERROR_MSG = 'Please make sure your custom payload is a valid JSON.';
   const HTTP_BASIC_ERROR_MSG = 'Please provide a valid username/password combination.';
@@ -74,6 +38,19 @@ angular.module('contentful')
     http_basic_password: HTTP_BASIC_ERROR_MSG
   };
 
+  $scope.context.dirty = $scope.context.isNew;
+  $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
+
+  $scope.refreshLog = Command.create(() => Promise.resolve());
+  $scope.activityProps = {
+    webhookId: _.get($scope.webhook, ['sys', 'id']),
+    webhookRepo: spaceContext.webhookRepo,
+    registerActivityLogFetch: fn => {
+      $scope.refreshLog = Command.create(fn);
+      $scope.$applyAsync();
+    }
+  };
+
   // Hack: we want to rerender the component every time
   // the tab is changed so children requiring DOM sizes
   // can lay themselves out properly. CodeMirror is a good
@@ -86,6 +63,28 @@ angular.module('contentful')
 
   updatePropsFromScope();
   updateContextName();
+
+  $scope.save = Command.create(save, {
+    disabled: function () { return !$scope.context.dirty; }
+  });
+
+  $scope.openRemovalDialog = Command.create(openRemovalDialog, {
+    available: function () { return !$scope.context.isNew; }
+  });
+
+  function openRemovalDialog () {
+    modalDialog.open({
+      ignoreEsc: true,
+      backgroundClose: false,
+      template: 'webhook_removal_confirm_dialog',
+      scopeData: {
+        webhook: $scope.webhook,
+        remove: Command.create(remove)
+      }
+    });
+
+    return $q.resolve();
+  }
 
   function updatePropsFromScope () {
     const cloned = _.cloneDeep($scope.webhook);
@@ -119,7 +118,7 @@ angular.module('contentful')
     $scope.context.title = named ? name : 'Unnamed';
   }
 
-  this.save = function save () {
+  function save () {
     if (!spaceContext.webhookRepo.hasValidBodyTransformation($scope.webhook)) {
       notification.error(INVALID_BODY_TRANSFORMATION_ERROR_MSG);
       return;
@@ -154,47 +153,13 @@ angular.module('contentful')
       notification.error(message || UNKNOWN_ERROR_MSG);
       return $q.reject(err);
     });
-  };
+  }
 
-  this.remove = function remove () {
+  function remove () {
     return spaceContext.webhookRepo.remove($scope.webhook).then(() => {
       $scope.context.dirty = false;
       notification.info('Webhook "' + $scope.webhook.name + '" deleted successfully.');
       return $state.go('^.list');
     }, ReloadNotification.basicErrorHandler);
-  };
-}])
-
-.controller('WebhookEditorController/activity', ['$scope', 'require', function ($scope, require) {
-  const spaceContext = require('spaceContext');
-
-  const PER_PAGE = 30;
-  let items = [];
-
-  this.refresh = refreshActivity;
-  $scope.activity = {};
-  if (!$scope.context.isNew) { refreshActivity(); }
-
-  $scope.$watch('activity.page', page => {
-    if (_.isNumber(page) && _.isArray(items)) {
-      $scope.activity.visible = items.slice(page * PER_PAGE, (page + 1) * PER_PAGE);
-    } else {
-      $scope.activity.visible = null;
-    }
-  });
-
-  function refreshActivity () {
-    $scope.activity.page = null;
-    $scope.activity.loading = fetchActivity();
-    return $scope.activity.loading;
-  }
-
-  function fetchActivity () {
-    return spaceContext.webhookRepo.logs.getCalls($scope.webhook.sys.id).then(res => {
-      items = res.items;
-      $scope.activity.pages = _.range(0, Math.ceil(res.items.length / PER_PAGE));
-      $scope.activity.loading = false;
-      $scope.activity.page = 0;
-    });
   }
 }]);
