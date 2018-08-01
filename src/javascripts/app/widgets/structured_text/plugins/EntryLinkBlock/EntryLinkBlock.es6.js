@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ReferenceCard, Card, IconButton } from '@contentful/ui-component-library';
+import { ReferenceCard, Card, IconButton, Spinner } from '@contentful/ui-component-library';
 
 import FetchEntry from './FetchEntry';
 import { goToSlideInEntity } from 'states/EntityNavigationHelpers';
@@ -16,7 +16,7 @@ export default class LinkedEntryBlock extends React.Component {
 
   renderEntryThumbnail = (entryThumbnail, loading) => {
     if (loading) {
-      return <div style={{height: '70px', width: '70px'}}>Loading...</div>;
+      return <div style={{height: '70px', width: '70px'}}><Spinner /></div>;
     }
 
     if (!entryThumbnail) {
