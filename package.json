@@ -12,7 +12,7 @@
     "@contentful/mimetype": "^1.0.1",
     "@contentful/sharejs": "^1.33.3",
     "@contentful/structured-text-types": "^2.0.0",
-    "@contentful/ui-component-library": "^3.0.0",
+    "@contentful/ui-component-library": "^3.1.1",
     "@contentful/validation": "^6.5.0",
     "@contentful/widget-map": "^1.1.0",
     "@contentful/worf": "^3.11.0",
