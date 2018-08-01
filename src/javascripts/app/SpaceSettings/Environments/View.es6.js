@@ -193,8 +193,8 @@ function sidebar ({
       // Don't show limits and upgrade info for v1 orgs
       !canCreateEnv && !isLegacyOrganization && h('p', [
         limit > 1 && 'Delete existing environments or ',
-        canUpgradeSpace && (limit > 1 ? 'upgrade ' : 'Upgrade '),
-        !canUpgradeSpace && `${limit > 1 ? 'ask' : 'Ask'} the administrator of your organization to upgrade `,
+        canUpgradeSpace && (limit > 1 ? 'change ' : 'Change '),
+        !canUpgradeSpace && `${limit > 1 ? 'ask' : 'Ask'} the administrator of your organization to change `,
         'the space to add more.'
       ])
     ]),

@@ -109,23 +109,23 @@ header.workbench-header
         p.entity-sidebar__widget(ng-if="localesUsageState !== LOCALES_LIMIT_REACHED")
           button.btn-action.add-entity.x--block(ng-click="newLocale()")
             | Add Locale
-        div(ng-if="localesUsageState === LOCALES_LIMIT_REACHED" data-test-id="upgradeSpaceBlock")
+        div(ng-if="localesUsageState === LOCALES_LIMIT_REACHED" data-test-id="change-space-block")
           p(ng-if="resource.limits.maximum > 1")
             | Delete an existing locale or
-            span(ng-if="!canUpgrade")
+            span(ng-if="!canChangeSpace")
               | &#32;ask the administrator of your organization to
-            | &#32;upgrade the space to add more.
+            | &#32;change the space to add more.
           p(ng-if="resource.limits.maximum <= 1")
-            span(ng-if="!canUpgrade")
+            span(ng-if="!canChangeSpace")
               | Ask the administrator of your organization to&#32;
-            | {{canUpgrade ? 'Upgrade' : 'upgrade'}} the space to add more.
-          p.entity-sidebar__widget(ng-if="canUpgrade && showUpgradeIncentive")
-            button.btn-action.upgrade-space.x--block(ng-click="upgradeSpacePlan()")
-              | Upgrade space
-          p(ng-if="canUpgrade && !showUpgradeIncentive")
-            a.text-link.upgrade-link(cf-sref="{{ accountUpgradeState }}")
+            | {{canChangeSpace ? 'Change' : 'change'}} the space to add more.
+          p.entity-sidebar__widget(ng-if="canChangeSpace && showChangeSpaceIncentive")
+            button.btn-action.change-space.x--block(data-test-id='locales-change' ng-click="changeSpacePlan()")
+              | Change space
+          p(ng-if="canChangeSpace && !showChangeSpaceIncentive")
+            a.text-link.upgrade-link(cf-sref="{{ accountSubscriptionSref }}")
               | Go to the subscription page
-            | &#32;to upgrade.
+            | &#32;to change.
 
       h2.entity-sidebar__heading(ng-if="locales.length <= 1")
         | Documentation
