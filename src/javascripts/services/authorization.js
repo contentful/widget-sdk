@@ -26,7 +26,16 @@ angular.module('contentful')
 
       if (space && enforcements) {
         var tokenSpace = tokenLookup.spaces.find(({sys}) => sys.id === space.getId());
+
         if (tokenSpace) {
+          // See space_context.js
+          //
+          // Enforcements are now handled in a separate endpoint and are essentially
+          // "patched" into the token information, which happens here.
+          //
+          // The reason Enforcements and the rest of the token are handled differently
+          // is so that enforcement information can be updated in a much quicker time-
+          // frame, every 30s, rather than the 5m token refresh timeframe.
           tokenSpace.enforcements = enforcements;
         }
       }
@@ -43,11 +52,7 @@ angular.module('contentful')
       }
 
       if (space && this.authContext.hasSpace(space.getId())) {
-        try {
-          this.spaceContext = this.authContext.space(space.getId());
-        } catch (exp) {
-          logger.logError('Worf authContext space exception', exp);
-        }
+        this.spaceContext = this.authContext.space(space.getId());
       }
 
       accessChecker.setAuthContext({

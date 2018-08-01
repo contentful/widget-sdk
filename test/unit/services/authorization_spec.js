@@ -39,25 +39,23 @@ describe('Authorization service', () => {
       enforcements = [{sys: {id: 'E_1'}}];
       environmentId = 'master';
       worfStub.returns(authContext);
+
+      authorization.update(tokenLookup, space, enforcements, environmentId);
     });
 
     it('gets an auth context', () => {
-      authorization.update(tokenLookup, space, enforcements, environmentId);
       expect(authorization.authContext).toBe(authContext);
     });
 
     it('calls worf with tokenLookup', () => {
-      authorization.update(tokenLookup, space, enforcements, environmentId);
       sinon.assert.calledWith(worfStub, tokenLookup);
     });
 
     it('calls worf with environment data', () => {
-      authorization.update(tokenLookup, space, enforcements, environmentId);
       expect(worfStub.firstCall.args[1].sys.id).toBe(environmentId);
     });
 
     it('sets a space', () => {
-      authorization.update(tokenLookup, space, enforcements, environmentId);
       expect(authorization.spaceContext).toBe(spaceContext);
     });
 
@@ -73,7 +71,6 @@ describe('Authorization service', () => {
     });
 
     it('patches the token with enforcements data', function () {
-      authorization.update(tokenLookup, space, enforcements, environmentId);
       const worfToken = worfStub.firstCall.args[0];
 
       expect(worfToken.spaces[0].enforcements).toBe(enforcements);

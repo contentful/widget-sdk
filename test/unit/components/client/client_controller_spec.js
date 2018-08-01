@@ -9,6 +9,8 @@ describe('Client Controller', () => {
   });
 
   beforeEach(function () {
+    this.getEnforcements = sinon.stub();
+
     module('contentful/test', ($provide) => {
       $provide.value('analytics/Analytics', {
         enable: sinon.stub(),
@@ -23,9 +25,7 @@ describe('Client Controller', () => {
         }
       };
       $provide.value('authorization', this.authorizationStubs);
-
-      this.getEnforcements = sinon.stub();
-      $provide.value('services/Enforcements', {
+      $provide.value('services/EnforcementsService', {
         getEnforcements: this.getEnforcements
       });
     });
@@ -54,25 +54,25 @@ describe('Client Controller', () => {
   });
 
   describe('updates authorization data', () => {
-    const TOKEN = {sys: {}};
-    const ENFORCEMENTS = [];
-    const ENV_ID = 'ENV ID';
-
     beforeEach(function () {
+      this.token = {sys: {}};
+      this.enforcements = [];
+      this.envId = 'ENV ID';
+
       this.spaceContext = this.$inject('spaceContext');
-      this.spaceContext.getEnvironmentId = () => ENV_ID;
+      this.spaceContext.getEnvironmentId = () => this.envId;
       this.spaceContext.space = null;
-      this.tokenStore.getTokenLookup.returns(TOKEN);
-      this.getEnforcements.returns(ENFORCEMENTS);
+      this.tokenStore.getTokenLookup.returns(this.token);
+      this.getEnforcements.returns(this.enforcements);
       this.$apply();
     });
 
     it('initializes authorization with correct data', function () {
       sinon.assert.calledWith(this.authorizationStubs.update,
-        TOKEN,
+        this.token,
         this.spaceContext.space,
-        ENFORCEMENTS,
-        ENV_ID
+        this.enforcements,
+        this.envId
       );
     });
 
