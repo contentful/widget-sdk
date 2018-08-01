@@ -47,7 +47,8 @@ angular.module('contentful').directive('cfWhenDisabled', ['require', require => 
             layer.prependTo(elem.parent());
             layer.tooltip({
               title: response.enforcement.tooltip,
-              trigger: 'hover'
+              trigger: 'hover',
+              placement: attrs.tooltipPosition || 'top'
             });
           }, 1000);
         }
