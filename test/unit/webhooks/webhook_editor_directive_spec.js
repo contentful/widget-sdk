@@ -151,40 +151,71 @@ describe('Webhook Editor directive', () => {
   });
 
   describe('Deleting webhook', () => {
-    let modal;
     beforeEach(function () {
-      modal = this.$inject('modalDialog');
-      modal.open = sinon.spy();
+      this.promise = new Promise((resolve, reject) => {
+        this.resolve = resolve;
+        this.reject = reject;
+      });
+
+      this.modal = this.$inject('modalDialog');
+      this.modal.open = sinon.stub().returns({promise: this.promise});
       this.compile({isNew: false}, {sys: {id: 'whid'}, url: 'http://test.com', name: 'test'});
       this.button('Remove').click();
-      this.args = modal.open.firstCall.args[0];
+      this.args = this.modal.open.firstCall.args[0];
     });
 
     it('opens confirmation dialog', function () {
-      sinon.assert.calledOnce(modal.open);
-      expect(this.args.template).toBe('webhook_removal_confirm_dialog');
-      expect(this.args.scopeData.webhook.sys.id).toBe('whid');
+      sinon.assert.calledOnce(this.modal.open);
+      expect(this.args.template.includes('app/Webhooks/WebhookRemovalDialog')).toBe(true);
+      const scope = {};
+      this.args.controller(scope);
+      expect(scope.props.webhookUrl).toBe('http://test.com');
     });
 
-    it('calls repository with a webhook object, shows message and redirects to list', async function () {
+    it('calls repository with a webhook object, ', async function () {
       this.repo.remove.resolves();
-
-      await this.args.scopeData.remove.execute();
-
+      const scope = {};
+      this.args.controller(scope);
+      await scope.props.remove();
       sinon.assert.calledOnce(this.repo.remove);
       expect(this.repo.remove.firstCall.args[0].sys.id).toBe('whid');
+    });
+
+    it('shows message and redirects to list when webhook is removed', async function () {
+      this.resolve();
+      await this.promise;
       sinon.assert.calledWith(this.notification.info, 'Webhook "test" deleted successfully.');
       sinon.assert.calledWith(this.go, '^.list');
     });
 
-    it('shows notification when repository call fails', async function () {
+    it('shows notification when webhook failed to remove', async function () {
       const ReloadNotification = this.$inject('ReloadNotification');
       ReloadNotification.basicErrorHandler = sinon.spy();
-      this.repo.remove.rejects();
+      this.reject(new Error('failed'));
 
-      await this.args.scopeData.remove.execute();
+      try {
+        await this.promise;
+      } catch (err) {
+        sinon.assert.calledOnce(ReloadNotification.basicErrorHandler);
+        return;
+      }
 
-      sinon.assert.calledOnce(ReloadNotification.basicErrorHandler);
+      throw new Error('should not end up here');
+    });
+
+    it('does nothing if canceled', async function () {
+      const ReloadNotification = this.$inject('ReloadNotification');
+      ReloadNotification.basicErrorHandler = sinon.spy();
+      this.reject();
+
+      try {
+        await this.promise;
+      } catch (err) {
+        sinon.assert.notCalled(ReloadNotification.basicErrorHandler);
+        return;
+      }
+
+      throw new Error('should not end up here');
     });
   });
 });

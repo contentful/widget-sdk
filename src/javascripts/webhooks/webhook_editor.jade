@@ -5,7 +5,7 @@ header.workbench-header
   .workbench-header__actions(ui-tabpanel="settings")
     button.btn-secondary-action(ui-sref="^.list")
       | Close
-    button.btn-secondary-action(ui-command="openRemovalDialog")
+    button.btn-secondary-action(ng-click="remove()" ng-show="webhook.sys.id")
       | Remove
     button.btn-primary-action(ui-command="save")
       | Save

@@ -41,6 +41,9 @@ angular.module('contentful')
   $scope.context.dirty = $scope.context.isNew;
   $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
 
+  $scope.save = Command.create(save, {disabled: () => !$scope.context.dirty});
+  $scope.remove = remove;
+
   $scope.refreshLog = Command.create(() => Promise.resolve());
   $scope.activityProps = {
     webhookId: _.get($scope.webhook, ['sys', 'id']),
@@ -50,6 +53,9 @@ angular.module('contentful')
       $scope.$applyAsync();
     }
   };
+
+  updatePropsFromScope();
+  updateContextName();
 
   // Hack: we want to rerender the component every time
   // the tab is changed so children requiring DOM sizes
@@ -61,29 +67,33 @@ angular.module('contentful')
     activeTab => { $scope.props.activeTab = activeTab; }
   );
 
-  updatePropsFromScope();
-  updateContextName();
-
-  $scope.save = Command.create(save, {
-    disabled: function () { return !$scope.context.dirty; }
-  });
-
-  $scope.openRemovalDialog = Command.create(openRemovalDialog, {
-    available: function () { return !$scope.context.isNew; }
-  });
-
-  function openRemovalDialog () {
+  function remove () {
     modalDialog.open({
       ignoreEsc: true,
       backgroundClose: false,
-      template: 'webhook_removal_confirm_dialog',
-      scopeData: {
-        webhook: $scope.webhook,
-        remove: Command.create(remove)
+      template: '<react-component class="modal-background" name="app/Webhooks/WebhookRemovalDialog" props="props" />',
+      controller: modalScope => {
+        modalScope.props = {
+          webhookUrl: $scope.webhook.url,
+          remove: () => spaceContext.webhookRepo.remove($scope.webhook),
+          // `modalScope.dialog` is not available right away
+          // so we pass wrapped invocations to the component.
+          confirm: () => modalScope.dialog.confirm(),
+          cancel: err => modalScope.dialog.cancel(err)
+        };
       }
-    });
-
-    return $q.resolve();
+    }).promise.then(
+      () => {
+        $scope.context.dirty = false;
+        notification.info('Webhook "' + $scope.webhook.name + '" deleted successfully.');
+        return $state.go('^.list');
+      },
+      err => {
+        if (err instanceof Error) {
+          ReloadNotification.basicErrorHandler();
+        }
+      }
+    );
   }
 
   function updatePropsFromScope () {
@@ -153,13 +163,5 @@ angular.module('contentful')
       notification.error(message || UNKNOWN_ERROR_MSG);
       return $q.reject(err);
     });
-  }
-
-  function remove () {
-    return spaceContext.webhookRepo.remove($scope.webhook).then(() => {
-      $scope.context.dirty = false;
-      notification.info('Webhook "' + $scope.webhook.name + '" deleted successfully.');
-      return $state.go('^.list');
-    }, ReloadNotification.basicErrorHandler);
   }
 }]);
