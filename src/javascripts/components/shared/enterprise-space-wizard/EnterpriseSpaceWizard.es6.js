@@ -34,7 +34,12 @@ class EnterpriseSpaceWizard extends React.Component {
     templates: PropTypes.object.isRequired,
     spaceCreation: PropTypes.any,
     error: PropTypes.object,
-    scope: PropTypes.any
+    scope: PropTypes.shape({
+      dialog: PropTypes.shape({
+        destroy: PropTypes.func.isRequired,
+        reposition: PropTypes.func.isRequired
+      })
+    })
   }
 
   static MAX_SPACE_NAME_LENGTH = 30;
@@ -62,6 +67,10 @@ class EnterpriseSpaceWizard extends React.Component {
     this.props.reset();
   }
 
+  reposition () {
+    this.props.scope.dialog.reposition();
+  }
+
   handleSubmit () {
     this.validateName(get(this.props, 'newSpaceMeta.name'));
 
@@ -73,13 +82,16 @@ class EnterpriseSpaceWizard extends React.Component {
       currentStepId: 'confirmation',
       selectedPlan: this.plan,
       newSpaceMeta: this.props.newSpaceMeta,
-      onSpaceCreated: this.handleSpaceCreated,
-      onTemplateCreated: this.handleTemplateCreated,
-      onConfirm: this.close
+      onSpaceCreated: this.handleSpaceCreated.bind(this),
+      onTemplateCreated: this.handleTemplateCreated.bind(this),
+      onConfirm: this.close.bind(this)
     });
   }
 
   handleSpaceCreated (newSpace) {
+    const {template} = this.props.newSpaceMeta;
+    template && this.reposition();
+
     return go({
       path: ['spaces', 'detail'],
       params: {spaceId: newSpace.sys.id}
@@ -118,15 +130,20 @@ class EnterpriseSpaceWizard extends React.Component {
     return (
       <Dialog testId="enterprise-space-creation-dialog" size="large">
         <Dialog.Header onCloseButtonClicked={() => this.close()}>Create a space</Dialog.Header>
-        <Dialog.Body>
           {showProgress &&
-            <ProgressScreen done={!spaceCreation.isPending} onConfirm={this.close} />
+            <Dialog.Body>
+              <ProgressScreen
+                done={!spaceCreation.isPending}
+                onConfirm={() => this.close()}
+              />
+            </Dialog.Body>
           }
           {!showProgress &&
-            <div>
+            <Dialog.Body>
               <Plan plan={this.plan} resources={this.resources} />
               <Note />
               <TextField
+                style={{marginBottom: '30px'}}
                 value={name}
                 name="spaceName"
                 id="spaceName"
@@ -143,20 +160,23 @@ class EnterpriseSpaceWizard extends React.Component {
 
               <TemplateSelector
                 onSelect={setNewSpaceTemplate}
+                onToggle={() => this.reposition()}
                 templates={templates}
                 fetchTemplates={fetchTemplates}
+                formAlign="left"
               />
-            </div>
+            </Dialog.Body>
           }
-        </Dialog.Body>
-        <Dialog.Controls>
-            <button
-              className={`btn-action ${submitted ? 'is-loading' : ''}`}
-              onClick={this.handleSubmit.bind(this)}
-            >
-              Confirm and create space
-            </button>
-        </Dialog.Controls>
+          {!showProgress &&
+            <Dialog.Controls>
+              <button
+                className={`btn-action ${submitted ? 'is-loading' : ''}`}
+                onClick={this.handleSubmit.bind(this)}
+              >
+                Confirm and create space
+              </button>
+            </Dialog.Controls>
+          }
       </Dialog>
     );
   }
