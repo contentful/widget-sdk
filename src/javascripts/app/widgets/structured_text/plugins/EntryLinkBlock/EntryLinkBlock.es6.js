@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { ReferenceCard, Card, IconButton, Spinner } from '@contentful/ui-component-library';
 
@@ -8,44 +8,76 @@ import { isValidImage, getExternalImageUrl } from 'ui/cf/thumbnailHelpers';
 
 const thumbnailDimensions = {w: 70, h: 70};
 
+const ThumbnailSpinner = () =>
+  <div
+    style={{
+      height: `${thumbnailDimensions.h}px`,
+      width: `${thumbnailDimensions.w}px`,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center'
+    }}
+  >
+    <Spinner />
+  </div>;
+
+class Thumbnail extends Component {
+  static propTypes = {
+    entryThumbnail: PropTypes.shape({
+      url: PropTypes.string,
+      contentType: PropTypes.string
+    }),
+    loading: PropTypes.bool.isRequired
+  }
+
+  static defaulProps = {
+    entryThumbnail: undefined
+  }
+
+  constructor (props) {
+    super(props);
+    this.state = { finishedLoading: false };
+  }
+
+  handleImageLoaded () {
+    this.setState({ finishedLoading: true });
+  }
+
+  render () {
+    if (this.props.loading) {
+      return <ThumbnailSpinner />;
+    }
+
+    if (!this.props.entryThumbnail) {
+      return;
+    }
+
+    if (isValidImage(this.props.entryThumbnail.contentType)) {
+      return (
+        <React.Fragment>
+          {
+            !this.state.finishedLoading && <ThumbnailSpinner />
+          }
+          <img
+            src={`${getExternalImageUrl(this.props.entryThumbnail.url)}?w=${thumbnailDimensions.w}&h=${thumbnailDimensions.h}&fit=thumb`}
+            height={`${thumbnailDimensions.h}`}
+            width={`${thumbnailDimensions.w}`}
+            onLoad={this.handleImageLoaded.bind(this)}
+          />
+        </React.Fragment>
+      );
+    } else {
+      return null;
+    }
+  }
+}
+
 export default class LinkedEntryBlock extends React.Component {
   static propTypes = {
     isSelected: PropTypes.bool.isRequired,
     attributes: PropTypes.object.isRequired,
     editor: PropTypes.object.isRequired,
     node: PropTypes.object.isRequired
-  };
-
-  renderEntryThumbnail = (entryThumbnail, loading) => {
-    if (loading) {
-      return <div
-        style={{
-          height: `${thumbnailDimensions.h}px`,
-          width: `${thumbnailDimensions.w}px`,
-          display: 'flex',
-          'justify-content': 'center',
-          'align-items': 'center'
-        }}
-      >
-        <Spinner />
-      </div>;
-    }
-
-    if (!entryThumbnail) {
-      return;
-    }
-
-    if (isValidImage(entryThumbnail.contentType)) {
-      return (
-        <img
-          src={`${getExternalImageUrl(entryThumbnail.url)}?w=${thumbnailDimensions.w}&h=${thumbnailDimensions.h}&fit=thumb`}
-          height={`${thumbnailDimensions.h}`}
-          width={`${thumbnailDimensions.w}`}
-        />
-      );
-    } else {
-      return null;
-    }
   };
 
   handleEditClick = (event, entry) => {
@@ -108,7 +140,7 @@ export default class LinkedEntryBlock extends React.Component {
                 description={entryDescription}
                 selected={isSelected}
                 status={entryStatus}
-                thumbnailElement={this.renderEntryThumbnail(entryThumbnail, loading.thumbnail)}
+                thumbnailElement={<Thumbnail {...{entryThumbnail, loading: loading.thumbnail}} />}
                 loading={loading.entry}
                 actionElements={
                   <React.Fragment>
