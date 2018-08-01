@@ -43,17 +43,25 @@ export async function showDialog (organizationId) {
       scopeData: {organization}
     });
   } else {
-    const orgEndpoint = createOrganizationEndpoint(organizationId);
-    // get all rate plans (a.k.a space types) available for the current org.
-    const ratePlans = await getSpaceRatePlans(orgEndpoint);
-    // it's garanteed that every product contains a 'free_space' rate plan
-    const freeSpaceRatePlan = ratePlans.find(plan => plan.productPlanType === 'free_space');
-    // we use the free_space plan to find what's the product type for this org
-    const productType = freeSpaceRatePlan.productType;
-    const isEnterprise = productType === productTypes.enterprise;
-    const shouldCreatePOC = await isPOCEnabled();
+    // check if Proof of Concept spaces feature is on
+    const canCreatePOC = await isPOCEnabled();
+    let shouldCreatePOC, ratePlans;
 
-    if (isEnterprise && shouldCreatePOC) {
+    // TODO: implement a loading state for when we make
+    // requests to check if the org is Enterprise
+    if (canCreatePOC) {
+      const orgEndpoint = createOrganizationEndpoint(organizationId);
+      // get all rate plans (a.k.a space types) available for the current org.
+      ratePlans = await getSpaceRatePlans(orgEndpoint);
+      // it's garanteed that every product contains a 'free_space' rate plan
+      const freeSpaceRatePlan = ratePlans.find(plan => plan.productPlanType === 'free_space');
+      // we use the free_space plan to find what's the product type for this org
+      const productType = freeSpaceRatePlan.productType;
+      // org should create POC if it is Enterprise
+      shouldCreatePOC = productType === productTypes.enterprise;
+    }
+
+    if (shouldCreatePOC) {
       const modalProps = {
         ratePlans,
         organization: {
