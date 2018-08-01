@@ -6,7 +6,7 @@ import pluralize from 'pluralize';
 import { toLocaleString } from 'utils/NumberUtils';
 import Tooltip from 'ui/Components/Tooltip';
 
-export default function SpaceWizardPlanFeatures ({resources}) {
+export default function PlanFeatures ({resources}) {
   return (
     <ul className="space-plans-list__item__features">
       {resources.map(({type, number}) => {
@@ -24,7 +24,7 @@ export default function SpaceWizardPlanFeatures ({resources}) {
     </ul>
   );
 }
-SpaceWizardPlanFeatures.propTypes = {
+PlanFeatures.propTypes = {
   resources: PropTypes.arrayOf(PropTypes.shape({
     type: PropTypes.string.isRequired,
     number: PropTypes.number.isRequired

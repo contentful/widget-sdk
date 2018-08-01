@@ -13,6 +13,10 @@ describe('NumberUtils', () => {
       toLocaleString = this.NumberUtils.toLocaleString;
     });
 
+    afterEach(function () {
+      toLocaleString = null;
+    });
+
     it('localizes a number, transforming it into a string', () => {
       expect(toLocaleString(1000)).toEqual('1,000');
       expect(toLocaleString(1000000)).toEqual('1,000,000');

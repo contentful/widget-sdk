@@ -159,6 +159,10 @@ export function calculateTotalPrice (subscriptionPlans) {
   );
 }
 
+/**
+ * Check feature flag for Proof of Concept spaces in Enterprise orgs
+ * @returns {Promise<Boolean>}
+ */
 export function isPOCEnabled () {
   return getCurrentVariation('feature-bv-07-2018-enterprise-poc-spaces');
 }
