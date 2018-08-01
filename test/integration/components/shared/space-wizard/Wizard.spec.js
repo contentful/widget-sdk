@@ -25,13 +25,30 @@ describe('Space Wizard', function () {
       }
     };
 
+    this.ratePlanCharges = [{
+      name: 'Environments',
+      tiers: [{endingUnit: 10}]
+    }, {
+      name: 'Roles',
+      tiers: [{endingUnit: 10}]
+    }, {
+      name: 'Locales',
+      tiers: [{endingUnit: 10}]
+    }, {
+      name: 'Content types',
+      tiers: [{endingUnit: 10}]
+    }, {
+      name: 'Records',
+      tiers: [{endingUnit: 10}]
+    }];
+
     this.spaceRatePlansCreate = [
       {
         name: 'Micro',
         internalName: 'space_size_1',
         productType: 'on_demand',
         productPlanType: 'space',
-        productRatePlanCharges: [],
+        productRatePlanCharges: this.ratePlanCharges,
         sys: {
           id: 'plan_1234'
         }
@@ -44,7 +61,7 @@ describe('Space Wizard', function () {
         internalName: 'space_size_1',
         productType: 'on_demand',
         productPlanType: 'space',
-        productRatePlanCharges: [],
+        productRatePlanCharges: this.ratePlanCharges,
         unavailabilityReasons: [
           {
             type: 'currentPlan'
@@ -59,12 +76,7 @@ describe('Space Wizard', function () {
         internalName: 'space_size_90',
         productType: 'on_demand',
         productPlanType: 'space',
-        productRatePlanCharges: [
-          {
-            type: 'Environments',
-            number: 7
-          }
-        ],
+        productRatePlanCharges: this.ratePlanCharges,
         sys: {
           id: 'plan_5678'
         }

@@ -18,6 +18,7 @@ import { getCreator as getTemplateCreator } from 'services/SpaceTemplateCreator'
 import { getTemplatesList, getTemplate } from 'services/SpaceTemplateLoader';
 import { canCreate } from 'utils/ResourceUtils';
 import { createTrackingData } from '../WizardUtils';
+import { getIncludedResources } from 'components/shared/space-wizard/WizardUtils';
 
 import * as actions from './actions';
 
@@ -151,6 +152,7 @@ export function createSpace ({
     } catch (error) {
       dispatch(actions.spaceCreationFailure(error));
       dispatch(actions.spaceCreationPending(false));
+
 
       return;
     }
@@ -323,26 +325,4 @@ async function tryCreateTemplate (templateCreator, templateData, retried) {
       await tryCreateTemplate(templateCreator, err.template, true);
     }
   }
-}
-
-function getIncludedResources (charges) {
-  const ResourceTypes = {
-    Environments: 'Environments',
-    Roles: 'Roles',
-    Locales: 'Locales',
-    ContentTypes: 'Content types',
-    Records: 'Records'
-  };
-
-  return Object.values(ResourceTypes).map((type) => {
-    const charge = charges.find(({name}) => name === type);
-    let number = get(charge, 'tiers[0].endingUnit');
-
-    // Add "extra" environment and role to include `master` and `admin`
-    if ([ResourceTypes.Environments, ResourceTypes.Roles].includes(type)) {
-      number = number + 1;
-    }
-
-    return { type, number };
-  });
 }

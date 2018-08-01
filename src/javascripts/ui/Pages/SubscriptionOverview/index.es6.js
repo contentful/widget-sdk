@@ -185,6 +185,7 @@ const SubscriptionOverview = createReactClass({
               <UsersForPlan usersMeta={usersMeta} orgId={orgId} />
             </div>
             <SpacePlans
+              basePlan={basePlan}
               spacePlans={spacePlans}
               upgradedSpace={upgradedSpace}
               onCreateSpace={this.createSpace}
@@ -196,6 +197,7 @@ const SubscriptionOverview = createReactClass({
         </Workbench.Content>
         <Workbench.Sidebar>
           <Sidebar
+            basePlan={basePlan}
             orgId={orgId}
             grandTotal={grandTotal}
             spacePlans={spacePlans}

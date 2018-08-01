@@ -9,16 +9,15 @@ import Icon from 'ui/Components/Icon';
 import Price from 'ui/Components/Price';
 import ContactUsButton from 'ui/Components/ContactUsButton';
 
-import { hasAnyInaccessibleSpaces, hasAnyCommittedSpaces } from './utils';
+import { hasAnyInaccessibleSpaces } from './utils';
 
-function Sidebar ({grandTotal, spacePlans, orgId, isOrgOwner, isOrgBillable}) {
+function Sidebar ({grandTotal, spacePlans, orgId, isOrgOwner, isOrgBillable, basePlan}) {
   // TODO - add these styles to stylesheets
   const iconStyle = {fill: colors.blueDarkest, paddingRight: '6px', position: 'relative', bottom: '-0.125em'};
   const anyInaccessibleSpaces = hasAnyInaccessibleSpaces(spacePlans);
-  const hasCommittedSpaces = hasAnyCommittedSpaces(spacePlans);
 
   return <div className='entity-sidebar' data-test-id='subscription-page.sidebar'>
-    { isOrgBillable &&
+    { isOrgBillable && !basePlan.committed &&
       <Fragment>
         <h2 className='entity-sidebar__heading'>Grand total</h2>
         <p data-test-id='subscription-page.sidebar.grand-total'>
@@ -82,21 +81,7 @@ function Sidebar ({grandTotal, spacePlans, orgId, isOrgOwner, isOrgBillable}) {
         </p>
       </Fragment>
     }
-    { hasCommittedSpaces &&
-      <Fragment>
-        <h2 className='entity-sidebar__heading'>Committed spaces</h2>
-        <p>
-          Spaces that are part of your Enterprise deal are not available for change of plans and cannot be removed.
-        </p>
-        <p>
-          If you need help, don&apos;t hesitate to talk to our customer success team.
-        </p>
-        <p>
-          <ContactUsButton data-test-id='subscription-page.sidebar.contact-link' />
-        </p>
-      </Fragment>
-    }
-    { !hasAnyCommittedSpaces &&
+    { !basePlan.committed &&
       <Fragment>
         <h2 className='entity-sidebar__heading'>Need help?</h2>
         <p>
@@ -113,6 +98,7 @@ function Sidebar ({grandTotal, spacePlans, orgId, isOrgOwner, isOrgBillable}) {
 }
 
 Sidebar.propTypes = {
+  basePlan: PropTypes.object.isRequired,
   grandTotal: PropTypes.number.isRequired,
   orgId: PropTypes.string.isRequired,
   isOrgOwner: PropTypes.bool.isRequired,

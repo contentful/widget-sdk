@@ -71,6 +71,7 @@ describe('account/pricing/PricingDataProvider', () => {
       system.set('$http', {});
 
       system.set('data/CMA/FetchAll', {fetchAll});
+      system.set('utils/LaunchDarkly', {getCurrentVariation: () => Promise.resolve(false)});
       const PricingDataProvider = yield system.import('account/pricing/PricingDataProvider');
 
       yield PricingDataProvider.getPlansWithSpaces(this.endpoint);
