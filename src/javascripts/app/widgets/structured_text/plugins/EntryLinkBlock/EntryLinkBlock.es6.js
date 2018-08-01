@@ -6,6 +6,8 @@ import FetchEntry from './FetchEntry';
 import { goToSlideInEntity } from 'states/EntityNavigationHelpers';
 import { isValidImage, getExternalImageUrl } from 'ui/cf/thumbnailHelpers';
 
+const thumbnailDimensions = {w: 70, h: 70};
+
 export default class LinkedEntryBlock extends React.Component {
   static propTypes = {
     isSelected: PropTypes.bool.isRequired,
@@ -16,7 +18,7 @@ export default class LinkedEntryBlock extends React.Component {
 
   renderEntryThumbnail = (entryThumbnail, loading) => {
     if (loading) {
-      return <div style={{height: '70px', width: '70px'}}><Spinner /></div>;
+      return <div style={{height: `${thumbnailDimensions.h}px`, width: `${thumbnailDimensions.w}px`}}><Spinner /></div>;
     }
 
     if (!entryThumbnail) {
@@ -26,9 +28,9 @@ export default class LinkedEntryBlock extends React.Component {
     if (isValidImage(entryThumbnail.contentType)) {
       return (
         <img
-          src={`${getExternalImageUrl(entryThumbnail.url)}?w=70&h=70&fit=thumb`}
-          height='70'
-          width='70'
+          src={`${getExternalImageUrl(entryThumbnail.url)}?w=${thumbnailDimensions.w}&h=${thumbnailDimensions.h}&fit=thumb`}
+          height={`${thumbnailDimensions.h}`}
+          width={`${thumbnailDimensions.w}`}
         />
       );
     } else {
