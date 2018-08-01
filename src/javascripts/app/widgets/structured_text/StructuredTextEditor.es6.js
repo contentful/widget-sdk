@@ -43,7 +43,7 @@ const initialValue = Value.fromJSON({
             object: 'text',
             leaves: [
               {
-                text: 'Welcome to fractured content!'
+                text: ''
               }
             ]
           }
