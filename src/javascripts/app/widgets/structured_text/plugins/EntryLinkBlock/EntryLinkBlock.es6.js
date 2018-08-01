@@ -18,7 +18,17 @@ export default class LinkedEntryBlock extends React.Component {
 
   renderEntryThumbnail = (entryThumbnail, loading) => {
     if (loading) {
-      return <div style={{height: `${thumbnailDimensions.h}px`, width: `${thumbnailDimensions.w}px`}}><Spinner /></div>;
+      return <div
+        style={{
+          height: `${thumbnailDimensions.h}px`,
+          width: `${thumbnailDimensions.w}px`,
+          display: 'flex',
+          'justify-content': 'center',
+          'align-items': 'center'
+        }}
+      >
+        <Spinner />
+      </div>;
     }
 
     if (!entryThumbnail) {
