@@ -1,16 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import createReactClass from 'create-react-class';
 
-const TemplatesToggle = createReactClass({
-  propTypes: {
+import classnames from 'classnames';
+
+class TemplatesToggle extends React.Component {
+  static propTypes = {
     isShowingTemplates: PropTypes.bool.isRequired,
-    onChange: PropTypes.func.isRequired
-  },
+    onChange: PropTypes.func.isRequired,
+    formAlign: PropTypes.oneOf(['left', 'center'])
+  }
+
   render () {
-    const {isShowingTemplates, onChange} = this.props;
+    const {isShowingTemplates, onChange, formAlign} = this.props;
     return (
-      <div className="cfnext-form__field create-new-space__form__radios create-space-wizard__centered-block">
+      <div className={classnames(
+        'cfnext-form__field create-new-space__form__radios',
+        {'create-space-wizard__centered-block': !formAlign || formAlign === 'center'}
+      )}>
         <div className="cfnext-form-option create-new-space__form__option">
           <input
             id="newspace-template-none"
@@ -44,6 +50,6 @@ const TemplatesToggle = createReactClass({
       </div>
     );
   }
-});
+}
 
 export default TemplatesToggle;
