@@ -1,10 +1,67 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ReferenceCard, Card, IconButton } from '@contentful/ui-component-library';
+import { ReferenceCard, Card, IconButton, Spinner } from '@contentful/ui-component-library';
 
 import FetchEntry from './FetchEntry';
 import { goToSlideInEntity } from 'states/EntityNavigationHelpers';
 import { isValidImage, getExternalImageUrl } from 'ui/cf/thumbnailHelpers';
+
+const thumbnailDimensions = {w: 70, h: 70};
+
+const ThumbnailSpinner = () =>
+  <div
+    style={{
+      height: `${thumbnailDimensions.h}px`,
+      width: `${thumbnailDimensions.w}px`,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center'
+    }}
+  >
+    <Spinner />
+  </div>;
+
+class Thumbnail extends Component {
+  static propTypes = {
+    entryThumbnail: PropTypes.shape({
+      url: PropTypes.string,
+      contentType: PropTypes.string
+    }),
+    loading: PropTypes.bool.isRequired
+  }
+
+  static defaulProps = {
+    entryThumbnail: undefined
+  }
+
+  state = {
+    finishedLoading: false
+  };
+
+  handleImageLoaded () {
+    this.setState({ finishedLoading: true });
+  }
+
+  render () {
+    const valid = this.props.entryThumbnail && isValidImage(this.props.entryThumbnail.contentType);
+    return (
+      <React.Fragment>
+        {
+          (this.props.loading || (valid && !this.state.finishedLoading)) && <ThumbnailSpinner />
+        }
+        {
+          valid &&
+            <img
+              src={`${getExternalImageUrl(this.props.entryThumbnail.url)}?w=${thumbnailDimensions.w}&h=${thumbnailDimensions.h}&fit=thumb`}
+              height={`${thumbnailDimensions.h}`}
+              width={`${thumbnailDimensions.w}`}
+              onLoad={this.handleImageLoaded.bind(this)}
+            />
+        }
+      </React.Fragment>
+    );
+  }
+}
 
 export default class LinkedEntryBlock extends React.Component {
   static propTypes = {
@@ -12,24 +69,6 @@ export default class LinkedEntryBlock extends React.Component {
     attributes: PropTypes.object.isRequired,
     editor: PropTypes.object.isRequired,
     node: PropTypes.object.isRequired
-  };
-
-  renderEntryThumbnail = entryThumbnail => {
-    if (!entryThumbnail) {
-      return;
-    }
-
-    if (isValidImage(entryThumbnail.contentType)) {
-      return (
-        <img
-          src={`${getExternalImageUrl(entryThumbnail.url)}?w=70&h=70&fit=thumb`}
-          height='70'
-          width='70'
-        />
-      );
-    } else {
-      return null;
-    }
   };
 
   handleEditClick = (event, entry) => {
@@ -61,7 +100,8 @@ export default class LinkedEntryBlock extends React.Component {
           entryDescription,
           entryThumbnail,
           entryStatus,
-          entryIsMissing
+          entryIsMissing,
+          loading
         }) => {
           if (entryIsMissing) {
             return (
@@ -85,32 +125,31 @@ export default class LinkedEntryBlock extends React.Component {
             );
           } else {
             return (
-              entry && (
-                <ReferenceCard
-                  title={entryTitle}
-                  contentType={entry.sys.contentType.sys.id}
-                  description={entryDescription}
-                  selected={isSelected}
-                  status={entryStatus}
-                  thumbnailElement={this.renderEntryThumbnail(entryThumbnail)}
-                  actionElements={
-                    <React.Fragment>
-                      <IconButton
-                        iconProps={{ icon: 'Edit' }}
-                        label='Edit entry'
-                        onClick={event => this.handleEditClick(event, entry)}
-                        buttonType='muted'
-                      />
-                      <IconButton
-                        iconProps={{ icon: 'Close' }}
-                        label='Remove reference to entry'
-                        onClick={event => this.handleRemoveClick(event)}
-                        buttonType='muted'
-                      />
-                    </React.Fragment>
-                  }
-                />
-              )
+              <ReferenceCard
+                title={entryTitle}
+                contentType={entry.sys.contentType.sys.id}
+                description={entryDescription}
+                selected={isSelected}
+                status={entryStatus}
+                thumbnailElement={<Thumbnail {...{entryThumbnail, loading: loading.thumbnail}} />}
+                loading={loading.entry}
+                actionElements={
+                  <React.Fragment>
+                    <IconButton
+                      iconProps={{ icon: 'Edit' }}
+                      label='Edit entry'
+                      onClick={event => this.handleEditClick(event, entry)}
+                      buttonType='muted'
+                    />
+                    <IconButton
+                      iconProps={{ icon: 'Close' }}
+                      label='Remove reference to entry'
+                      onClick={event => this.handleRemoveClick(event)}
+                      buttonType='muted'
+                    />
+                  </React.Fragment>
+                }
+              />
             );
           }
         }}
