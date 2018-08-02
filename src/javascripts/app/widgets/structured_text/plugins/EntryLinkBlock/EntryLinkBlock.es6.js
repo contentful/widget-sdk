@@ -34,10 +34,9 @@ class Thumbnail extends Component {
     entryThumbnail: undefined
   }
 
-  constructor (props) {
-    super(props);
-    this.state = { finishedLoading: false };
-  }
+  state = {
+    finishedLoading: false
+  };
 
   handleImageLoaded () {
     this.setState({ finishedLoading: true });
