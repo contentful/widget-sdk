@@ -12,7 +12,7 @@ export default class WebhookActivityLog extends React.Component {
   static propTypes = {
     webhookId: PropTypes.string,
     webhookRepo: PropTypes.object.isRequired,
-    registerActivityLogFetch: PropTypes.func.isRequired
+    registerLogRefreshAction: PropTypes.func.isRequired
   }
 
   constructor (props) {
@@ -22,7 +22,7 @@ export default class WebhookActivityLog extends React.Component {
 
   componentDidMount () {
     this.fetch();
-    this.props.registerActivityLogFetch(this.fetch.bind(this));
+    this.props.registerLogRefreshAction(this.fetch.bind(this));
   }
 
   fetch () {
@@ -35,9 +35,10 @@ export default class WebhookActivityLog extends React.Component {
     this.setState({loading: true});
 
     return new Promise(resolve => {
-      webhookRepo.logs.getCalls(webhookId).then(calls => {
-        this.setState({page: 0, loading: false, calls}, () => resolve());
-      });
+      webhookRepo.logs.getCalls(webhookId).then(
+        calls => this.setState({page: 0, loading: false, calls}, () => resolve()),
+        () => this.setState({page: 0, loading: false, calls: []}, () => resolve())
+      );
     });
   }
 

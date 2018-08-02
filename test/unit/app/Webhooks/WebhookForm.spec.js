@@ -25,10 +25,11 @@ describe('WebhookForm', function () {
 
     name.simulate('change', {target: {value: 'webhook'}});
     sinon.assert.calledWith(onChangeStub, {name: 'webhook'});
+    wrapper.setProps({webhook: {name: 'webhook'}});
+
     url.simulate('change', {target: {value: 'http://test.com'}});
     const finalWebhook = {name: 'webhook', url: 'http://test.com'};
     sinon.assert.calledWith(onChangeStub, finalWebhook);
-    expect(wrapper.state('webhook')).toEqual(finalWebhook);
   });
 
   it('renders and updates transformation properties', function () {
@@ -42,9 +43,10 @@ describe('WebhookForm', function () {
 
     contentType.simulate('change', {target: {value: 'application/json'}});
     sinon.assert.calledWith(onChangeStub, {transformation: {contentType: 'application/json'}});
+    wrapper.setProps({webhook: {transformation: {contentType: 'application/json'}}});
+
     method.simulate('change', {target: {value: 'GET'}});
     const finalWebhook = {transformation: {contentType: 'application/json', method: 'GET'}};
     sinon.assert.calledWith(onChangeStub, finalWebhook);
-    expect(wrapper.state('webhook')).toEqual(finalWebhook);
   });
 });

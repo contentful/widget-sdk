@@ -1,5 +1,6 @@
 import spaceContext from 'spaceContext';
 import createResourceService from 'services/ResourceService';
+import leaveConfirmator from 'navigation/confirmLeaveEditor';
 
 const list = {
   name: 'list',
@@ -36,6 +37,27 @@ const call = {
   }]
 };
 
+const editorTemplate = '<react-component class="workbench webhook-editor" name="app/Webhooks/WebhookEditor" props="props" />';
+
+const editorController = ['$scope', 'webhook', ($scope, webhook) => {
+  $scope.props = {
+    initialWebhook: webhook,
+    webhookRepo: spaceContext.webhookRepo,
+    registerSaveAction: save => {
+      $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
+      $scope.$applyAsync();
+    },
+    setDirty: value => {
+      $scope.context.dirty = value;
+      $scope.$applyAsync();
+    },
+    onChange: changedWebhook => {
+      Object.assign(webhook, changedWebhook);
+      $scope.$applyAsync();
+    }
+  };
+}];
+
 const detail = {
   name: 'detail',
   url: '/:webhookId',
@@ -44,22 +66,19 @@ const detail = {
       return spaceContext.webhookRepo.get($stateParams.webhookId);
     }]
   },
-  template: '<cf-webhook-editor cf-ui-tab class="workbench webhook-editor" />',
-  controller: ['$scope', 'webhook', ($scope, webhook) => {
-    $scope.context.isNew = false;
-    $scope.webhook = webhook;
-  }],
+  template: editorTemplate,
+  controller: editorController,
   children: [call]
 };
 
 const fresh = {
   name: 'new',
   url: '/new',
-  template: '<cf-webhook-editor cf-ui-tab class="workbench webhook-editor" />',
-  controller: ['$scope', $scope => {
-    $scope.context.isNew = true;
-    $scope.webhook = { headers: [], topics: ['*.*'] };
-  }]
+  resolve: {
+    webhook: () => ({ headers: [], topics: ['*.*'] })
+  },
+  template: editorTemplate,
+  controller: editorController
 };
 
 export default {

@@ -30,34 +30,19 @@ export default class WebhookForm extends React.Component {
     onChange: PropTypes.func.isRequired
   }
 
-  constructor (props) {
-    super(props);
-
-    // `props.webhook` should not be copied to state!
-    // The only reason for us maintaining state in this
-    // component is the fact we use it from Angular.
-    // Async Angular changes to props cause the form to
-    // behave quirky (jumpy cursor).
-    // TODO: no state as soon as we have a parent React
-    // component.
-    this.state = {webhook: props.webhook};
-  }
-
   updatedTransformation (change) {
-    const {transformation} = this.state.webhook;
+    const {transformation} = this.props.webhook;
     const cur = transformation || {};
     return {transformation: {...cur, ...change}};
   }
 
   onChange (change) {
-    this.setState(
-      state => ({webhook: {...state.webhook, ...change}}),
-      () => this.props.onChange(this.state.webhook)
-    );
+    const {webhook, onChange} = this.props;
+    onChange({...webhook, ...change});
   }
 
   render () {
-    const {webhook} = this.state;
+    const {webhook} = this.props;
     const contentType = get(webhook, ['transformation', 'contentType'], CONTENT_TYPES[0]);
 
     return (
