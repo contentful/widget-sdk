@@ -44,31 +44,22 @@ class Thumbnail extends Component {
   }
 
   render () {
-    if (this.props.loading) {
-      return <ThumbnailSpinner />;
-    }
-
-    if (!this.props.entryThumbnail) {
-      return;
-    }
-
-    if (isValidImage(this.props.entryThumbnail.contentType)) {
-      return (
-        <React.Fragment>
-          {
-            !this.state.finishedLoading && <ThumbnailSpinner />
-          }
-          <img
-            src={`${getExternalImageUrl(this.props.entryThumbnail.url)}?w=${thumbnailDimensions.w}&h=${thumbnailDimensions.h}&fit=thumb`}
-            height={`${thumbnailDimensions.h}`}
-            width={`${thumbnailDimensions.w}`}
-            onLoad={this.handleImageLoaded.bind(this)}
-          />
-        </React.Fragment>
-      );
-    } else {
-      return null;
-    }
+    return (
+      <React.Fragment>
+        {
+          (this.props.loading || !this.state.finishedLoading) && <ThumbnailSpinner />
+        }
+        {
+          (this.props.entryThumbnail && isValidImage(this.props.entryThumbnail.contentType)) &&
+            <img
+              src={`${getExternalImageUrl(this.props.entryThumbnail.url)}?w=${thumbnailDimensions.w}&h=${thumbnailDimensions.h}&fit=thumb`}
+              height={`${thumbnailDimensions.h}`}
+              width={`${thumbnailDimensions.w}`}
+              onLoad={this.handleImageLoaded.bind(this)}
+            />
+        }
+      </React.Fragment>
+    );
   }
 }
 
