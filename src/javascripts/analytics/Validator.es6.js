@@ -98,6 +98,10 @@ export const validEvents = {
     'dialog_link_click',
     'sidebar_link_click',
     'query'
+  ],
+  extension: [
+    'save',
+    'install'
   ]
 };
 

@@ -21,6 +21,8 @@ import SearchAndViews from './transformers/SearchAndViews';
 import ElementClickTransform from './transformers/ElementClick';
 import EntryViewTransform from './transformers/EntryView';
 import ReferenceEditorTransform from './transformers/ReferenceEditor';
+import ExtensionSaveTransform from './transformers/ExtensionSave';
+import ExtensionInstallTransform from './transformers/ExtensionInstall';
 
 /**
  * @ngdoc module
@@ -37,6 +39,9 @@ const _events = {};
 
 registerEvent('element:click', 'element_click', ElementClickTransform);
 registerEvent('global:state_changed', 'page_view', PageViewTransform);
+
+registerEvent('extension:save', 'ui_extension_save', ExtensionSaveTransform);
+registerEvent('extension:install', 'ui_extension_install', ExtensionInstallTransform);
 
 registerGenericEvent('learn:language_selected');
 registerGenericEvent('learn:resource_selected');
