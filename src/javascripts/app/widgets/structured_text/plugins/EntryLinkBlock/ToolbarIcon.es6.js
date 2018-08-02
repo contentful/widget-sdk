@@ -30,7 +30,7 @@ export default class EntryLinkToolbarIcon extends Component {
           target: {
             sys: {
               id: entry.sys.id,
-              link: 'Link',
+              type: 'Link',
               linkType: 'Entry'
             }
           }
