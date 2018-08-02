@@ -2,9 +2,9 @@
 
 angular.module('contentful')
 .factory('authorization', ['require', require => {
-  var worf = require('worf');
-  var logger = require('logger');
-  var accessChecker = require('access_control/AccessChecker');
+  const worf = require('worf');
+  const logger = require('logger');
+  const accessChecker = require('access_control/AccessChecker');
 
   function Authorization () {}
 
@@ -17,7 +17,7 @@ angular.module('contentful')
       this._tokenLookup = tokenLookup;
       this._space = space;
 
-      var environment = {
+      const environment = {
         sys: {
           id: environmentId,
           isMaster: environmentId === 'master'
@@ -25,7 +25,7 @@ angular.module('contentful')
       };
 
       if (space && enforcements) {
-        var tokenSpace = tokenLookup.spaces.find(({sys}) => sys.id === space.getId());
+        const tokenSpace = tokenLookup.spaces.find(({sys}) => sys.id === space.getId());
 
         if (tokenSpace) {
           // See space_context.js

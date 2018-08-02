@@ -3,11 +3,14 @@ import { createSpaceEndpoint } from 'data/EndpointFactory';
 
 // 30 seconds
 const ENFORCEMENT_INFO_REFRESH_INTERVAL = 30 * 1000;
+const enforcements = {};
 
-let enforcements;
+export function getEnforcements (spaceId) {
+  if (!spaceId) {
+    return null;
+  }
 
-export function getEnforcements () {
-  return enforcements;
+  return get(enforcements, spaceId, null);
 }
 
 /*
@@ -25,17 +28,20 @@ export function init (spaceId) {
 
   return function deinit () {
     window.clearInterval(refreshInterval);
+    delete enforcements[spaceId];
   };
 }
 
 /**
- * Refresh enforcements info with space id, and set an interval to update it every 30 sec
+ * Refresh enforcements info with space id, and sets enforcements for given `spaceId`
+ * if the enforcements change.
  */
 export async function refresh (spaceId) {
   const newEnforcements = await fetchEnforcements(spaceId);
+  const currentEnforcements = get(enforcements, spaceId);
 
-  if (!compareEnforcements(enforcements, newEnforcements)) {
-    enforcements = newEnforcements;
+  if (!enforcementsEqual(currentEnforcements, newEnforcements)) {
+    enforcements[spaceId] = newEnforcements;
   }
 }
 
@@ -50,20 +56,25 @@ async function fetchEnforcements (spaceId) {
   return raw.items;
 }
 
-function compareEnforcements (a, b) {
-  if (!isArray(a) || !isArray(b)) {
-    return a === b;
+function enforcementsEqual (current, newEnforcements) {
+  if (!isArray(current) || !isArray(newEnforcements)) {
+    return current === newEnforcements;
   }
-  if (a.length !== b.length) {
-    return false;
-  }
-  if (a.find((value, index) => !compareById(value, b[index]))) {
-    return false;
-  } else {
-    return true;
-  }
-}
 
-function compareById (a, b) {
-  return get(a, 'sys.id') === get(b, 'sys.id');
+  if (current.length !== newEnforcements.length) {
+    return false;
+  }
+
+  const allEnforcementsValuesEqual = current.reduce((isEqual, currentValue, valueIndex) => {
+    // If it's not equal, just return false early
+    if (!isEqual) {
+      return false;
+    }
+
+    // Check that 1) there is a value at the same index in both enforcements, and 2) that the
+    // value of both `sys.id` for the index is equal
+    return get(currentValue, 'sys.id') === get(newEnforcements[valueIndex], 'sys.id');
+  }, true);
+
+  return allEnforcementsValuesEqual;
 }

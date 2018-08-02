@@ -33,7 +33,7 @@ angular.module('contentful')
   $scope.$watchCollection(() => ({
     tokenLookup: TokenStore.getTokenLookup(),
     space: spaceContext.space,
-    enforcements: EnforcementsService.getEnforcements()
+    enforcements: EnforcementsService.getEnforcements(spaceContext.getId())
   }), spaceAndTokenWatchHandler);
 
   K.onValueScope($scope, TokenStore.user$, handleUser);

@@ -17,47 +17,54 @@ describe('Enforcements Service', function () {
     };
   });
 
-  it('is initialized with enforcements not defined', function () {
-    expect(this.EnforcementsService.getEnforcements()).toBeUndefined();
-  });
+  describe('getEnforcements', function () {
+    it('should return null if given no space id', function () {
+      expect(this.EnforcementsService.getEnforcements()).toBe(null);
+    });
 
-  it('fetches enforcements when requested', async function () {
-    const enforcements = [ {} ];
-    this.setEnforcementsResp(enforcements);
-    await this.EnforcementsService.refresh('SPACE_ID');
+    it('should return null if given a space id for which no enforcements exist', function () {
+      expect(this.EnforcementsService.getEnforcements('BAD_SPACE_ID')).toBe(null);
+    });
 
-    expect(this.fetchEnforcements.callCount).toBe(1);
-    expect(this.EnforcementsService.getEnforcements()).toBe(enforcements);
-  });
+    it('fetches enforcements for a given space id when requested', async function () {
+      const enforcements = [ {} ];
+      this.setEnforcementsResp(enforcements);
+      await this.EnforcementsService.refresh('SPACE_ID');
 
-  it('returns the same enforcements object if it has not been changed remotely', async function () {
-    const enforcements = [ { sys: {id: 'E_1'} } ];
+      expect(this.fetchEnforcements.callCount).toBe(1);
+      expect(this.EnforcementsService.getEnforcements('SPACE_ID')).toBe(enforcements);
+      expect(this.EnforcementsService.getEnforcements('SPACE_ID_2')).toBe(null);
+    });
 
-    this.setEnforcementsResp(enforcements);
-    await this.EnforcementsService.refresh('SPACE_ID');
-    const first = this.EnforcementsService.getEnforcements();
+    it('returns the same enforcements object if it has not been changed remotely', async function () {
+      const enforcements = [ { sys: {id: 'E_1'} } ];
 
-    this.setEnforcementsResp(cloneDeep(enforcements));
-    await this.EnforcementsService.refresh('SPACE_ID');
-    const second = this.EnforcementsService.getEnforcements();
+      this.setEnforcementsResp(enforcements);
+      await this.EnforcementsService.refresh('SPACE_ID');
+      const first = this.EnforcementsService.getEnforcements('SPACE_ID');
 
-    expect(first).toBe(enforcements);
-    expect(second).toBe(first);
-  });
+      this.setEnforcementsResp(cloneDeep(enforcements));
+      await this.EnforcementsService.refresh('SPACE_ID');
+      const second = this.EnforcementsService.getEnforcements('SPACE_ID');
 
-  it('returns new enforcements if they were changed remotely', async function () {
-    const enforcements = [ { sys: {id: 'E_1'} } ];
-    this.setEnforcementsResp(enforcements);
-    await this.EnforcementsService.refresh('SPACE_ID');
-    const first = this.EnforcementsService.getEnforcements();
+      expect(first).toBe(enforcements);
+      expect(second).toBe(first);
+    });
 
-    const newEnforcements = [];
-    this.setEnforcementsResp(newEnforcements);
-    await this.EnforcementsService.refresh('SPACE_ID');
-    const second = this.EnforcementsService.getEnforcements();
+    it('returns new enforcements if they were changed remotely', async function () {
+      const enforcements = [ { sys: {id: 'E_1'} } ];
+      this.setEnforcementsResp(enforcements);
+      await this.EnforcementsService.refresh('SPACE_ID');
+      const first = this.EnforcementsService.getEnforcements('SPACE_ID');
 
-    expect(first).toBe(enforcements);
-    expect(second).toBe(newEnforcements);
+      const newEnforcements = [];
+      this.setEnforcementsResp(newEnforcements);
+      await this.EnforcementsService.refresh('SPACE_ID');
+      const second = this.EnforcementsService.getEnforcements('SPACE_ID');
+
+      expect(first).toBe(enforcements);
+      expect(second).toBe(newEnforcements);
+    });
   });
 
   describe('periodically refreshes enforcements', function () {
@@ -79,6 +86,18 @@ describe('Enforcements Service', function () {
       expect(this.fetchEnforcements.callCount).toBe(2);
 
       deinit();
+    });
+
+    it('should remove any enforcements when deinitialized', async function () {
+      const enforcements = [ { sys: {id: 'E_1'} } ];
+      this.setEnforcementsResp(enforcements);
+
+      const deinit = this.EnforcementsService.init('SPACE_ID');
+      await this.wait(15);
+
+      expect(this.EnforcementsService.getEnforcements('SPACE_ID')).toEqual(enforcements);
+      deinit();
+      expect(this.EnforcementsService.getEnforcements('SPACE_ID')).toEqual(null);
     });
   });
 });
