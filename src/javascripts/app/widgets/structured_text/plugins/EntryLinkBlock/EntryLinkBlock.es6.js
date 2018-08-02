@@ -43,13 +43,14 @@ class Thumbnail extends Component {
   }
 
   render () {
+    const valid = this.props.entryThumbnail && isValidImage(this.props.entryThumbnail.contentType);
     return (
       <React.Fragment>
         {
-          (this.props.loading || !this.state.finishedLoading) && <ThumbnailSpinner />
+          (this.props.loading || (valid && !this.state.finishedLoading)) && <ThumbnailSpinner />
         }
         {
-          (this.props.entryThumbnail && isValidImage(this.props.entryThumbnail.contentType)) &&
+          valid &&
             <img
               src={`${getExternalImageUrl(this.props.entryThumbnail.url)}?w=${thumbnailDimensions.w}&h=${thumbnailDimensions.h}&fit=thumb`}
               height={`${thumbnailDimensions.h}`}
