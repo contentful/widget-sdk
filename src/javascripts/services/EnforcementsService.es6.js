@@ -2,6 +2,7 @@ import {isArray, get} from 'lodash';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 
 // 30 seconds
+// This is the Varnish caching time for this endpoint
 const ENFORCEMENT_INFO_REFRESH_INTERVAL = 30 * 1000;
 const enforcements = {};
 
