@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ReferenceCard, Card, IconButton, Spinner } from '@contentful/ui-component-library';
+import { ReferenceCard, Card, IconButton } from '@contentful/ui-component-library';
 
 import FetchEntry from './FetchEntry';
 import { goToSlideInEntity } from 'states/EntityNavigationHelpers';
@@ -8,57 +8,27 @@ import { isValidImage, getExternalImageUrl } from 'ui/cf/thumbnailHelpers';
 
 const thumbnailDimensions = {w: 70, h: 70};
 
-const ThumbnailSpinner = () =>
-  <div
-    style={{
-      height: `${thumbnailDimensions.h}px`,
-      width: `${thumbnailDimensions.w}px`,
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center'
-    }}
-  >
-    <Spinner />
-  </div>;
-
 class Thumbnail extends Component {
   static propTypes = {
     entryThumbnail: PropTypes.shape({
       url: PropTypes.string,
       contentType: PropTypes.string
-    }),
-    loading: PropTypes.bool.isRequired
+    })
   }
 
   static defaulProps = {
     entryThumbnail: undefined
   }
 
-  state = {
-    finishedLoading: false
-  };
-
-  handleImageLoaded () {
-    this.setState({ finishedLoading: true });
-  }
-
   render () {
     const valid = this.props.entryThumbnail && isValidImage(this.props.entryThumbnail.contentType);
+    if (!valid) return null;
     return (
-      <React.Fragment>
-        {
-          (this.props.loading || (valid && !this.state.finishedLoading)) && <ThumbnailSpinner />
-        }
-        {
-          valid &&
-            <img
-              src={`${getExternalImageUrl(this.props.entryThumbnail.url)}?w=${thumbnailDimensions.w}&h=${thumbnailDimensions.h}&fit=thumb`}
-              height={`${thumbnailDimensions.h}`}
-              width={`${thumbnailDimensions.w}`}
-              onLoad={this.handleImageLoaded.bind(this)}
-            />
-        }
-      </React.Fragment>
+        <img
+          src={`${getExternalImageUrl(this.props.entryThumbnail.url)}?w=${thumbnailDimensions.w}&h=${thumbnailDimensions.h}&fit=thumb`}
+          height={`${thumbnailDimensions.h}`}
+          width={`${thumbnailDimensions.w}`}
+        />
     );
   }
 }
@@ -131,8 +101,8 @@ export default class LinkedEntryBlock extends React.Component {
                 description={entryDescription}
                 selected={isSelected}
                 status={entryStatus}
-                thumbnailElement={<Thumbnail {...{entryThumbnail, loading: loading.thumbnail}} />}
-                loading={loading.entry}
+                thumbnailElement={<Thumbnail entryThumbnail={entryThumbnail} />}
+                loading={loading.entry || loading.thumbnail}
                 actionElements={
                   <React.Fragment>
                     <IconButton
