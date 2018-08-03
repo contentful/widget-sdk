@@ -7,13 +7,25 @@ div(
     ul.field-dialog__widget-list
       li.field-dialog__widget-item(
           ng-repeat="w in availableWidgets track by w.id"
-          ng-class="{'is-selected': selectedWidgetIndex === $index}"
+          ng-class="{'is-selected': selectedWidgetIndex === $index, 'is-custom': w.custom === true}"
           data-current-widget-index="{{$index}}"
           ng-click="selectWidget($index)")
-        cf-icon.field-dialog__widget-icon(ng-if="w.icon" name="{{w.icon}}-widget")
-        p {{w.name}}
-        p.field-dialog__widget-default(ng-if="w.id === defaultWidgetId") (default)
-        cf-icon(name="checkmark")
+        div.field-dialog__widget-item-header(ng-if="w.custom")
+          span 
+            | Custom
+          a(
+            ui-sref="^.^.^.settings.extensions.detail({ extensionId: w.id })"
+            ng-click="$event.stopPropagation()"
+            rel="nofollow noopener"
+            title="Edit"
+            target="_blank"
+          )
+            cf-icon(name="edit", scale="0.9")
+        div.field-dialog__widget-item-content
+          cf-icon.field-dialog__widget-icon(ng-if="w.icon" name="{{w.icon}}-widget")
+          p {{w.name}}
+          p.field-dialog__widget-default(ng-if="w.id === defaultWidgetId") (default)
+          cf-icon(name="checkmark")
 
   div.modal-dialog__slice(ng-class="{'field-dialog__widget-options': availableWidgets.length > 1}")
     cf-icon(name="arrow-up"

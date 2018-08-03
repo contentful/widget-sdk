@@ -57,20 +57,30 @@ $field-dialog-width = 60em
   color: $colors.light-gray
 
 .field-dialog__widget-item
-  width: 100px
+  width: 130px
   height: 120px
-  margin-right: 0.95em
-  margin-bottom: 1em
-  padding: 0.5em
-  padding-top: 0.7em
+  border: 1px solid $colors.light-gray
+  margin: 0 0.95em 1em 0
+  padding: 1px
   flex-shrink: 0
   position: relative
   display: flex
   flex-direction: column
   justify-content: flex-end
   text-align: center
-  border: 1px solid $colors.light-gray
   cursor: pointer
+  &:hover,
+  &.is-selected
+    padding: 0
+  &:hover
+    border: 2px solid $colors.gray
+  &.is-custom
+    justify-content: space-between
+  &.is-selected
+    border: 2px solid $colors.blue-dark
+    box-shadow: 0 8px 6px -6px hsla(black, 0.1)
+    cf-icon[name="checkmark"]
+      display: block
   p
     margin-bottom: 0.3em
     padding: 0 0.5em
@@ -81,14 +91,37 @@ $field-dialog-width = 60em
     display: none
     padding: 4px 3px
     border-radius: 10px
-    background: $colors.green
+    background: $colors.blue-dark
     > svg path
       fill: white
-  &.is-selected
-    box-shadow: 2px 2px 6px hsla(black, 0.1) inset, -2px -2px 6px hsla(black, 0.1) inset
-    cf-icon[name="checkmark"]
-      display: block
 
+.field-dialog__widget-item-header
+  display: flex
+  flex-direction: row
+  justify-content: space-between
+  align-items: center
+  border-bottom: 1px solid $colors.light-gray
+  height: 30px
+  color: $colors.gray
+  text-transform: uppercase
+  font-size: 0.9em
+  padding: 0 8px
+  margin-left: -1px
+  margin-right: -1px
+  text-align: left
+  a
+    color: $colors.gray
+  a:hover,
+  a:focus
+    color: $colors.dark-gray
+
+.field-dialog__widget-item-content
+  flex-grow: 1
+  display: flex
+  flex-direction: column
+  justify-content: flex-end
+  padding: 0.5em
+  padding-top: 0.7em
 
 .field-dialog__widget-icon
   margin: auto 0
