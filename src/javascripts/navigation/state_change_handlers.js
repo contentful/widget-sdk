@@ -57,7 +57,7 @@ angular.module('cf.app')
     // using the latter caused problems when redirecting with
     // ui-router's option {reload: true}
     if (toState.name.slice(0, 7) !== 'spaces.') {
-      Analytics.trackSpaceChange(null);
+      Analytics.trackContextChange(null);
       spaceContext.purge();
     }
 
