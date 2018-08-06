@@ -154,25 +154,26 @@ function identify (extension) {
 /**
  * @ngdoc method
  * @name analytics#trackContextChange
- * @param {API.Space} space
- * @param {API.Organization} organization
+ * @param {object} space
+ * @param {object} organization
  * @description
  * Sets or replaces session space and organization
  * data. Pass `null` when leaving context.
+ *
+ * `null` must be explicitly passed to unset the current
+ * space/org contexts.
  */
 export function trackContextChange (space, organization) {
   if (space) {
     session.space = removeCircularRefs(space);
-  } else {
+  } else if (space === null) {
     session.space = null;
-    // session.organization = removeCircularRefs(_.get(space, 'data.organization', {}));
   }
 
   if (organization) {
     session.organization = removeCircularRefs(organization);
-  } else {
+  } else if (organization === null) {
     session.organization = null;
-    // session.space = session.organization = null;
   }
 
   sendSessionDataToConsole();
