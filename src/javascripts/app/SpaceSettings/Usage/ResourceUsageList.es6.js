@@ -15,7 +15,7 @@ const ResourceUsageList = ({resources}) => {
         <ResourceUsageHighlight resource={byId['entry']} />
         <ResourceUsageHighlight resource={byId['asset']} />
         <ResourceUsageHighlight resource={byId['space_membership']} />
-        <ResourceUsageHighlight resource={byId['environment']} />
+        <ResourceUsageHighlight resource={byId['environment']} showMaximumLimit />
       </section>
 
       <ResourceUsage resource={byId['content_type']} />
