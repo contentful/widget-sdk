@@ -4,9 +4,13 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
   const notification = require('notification');
   const spaceContext = require('spaceContext');
   const accessChecker = require('access_control/AccessChecker');
+  const Analytics = require('analytics/Analytics');
   const ctHelpers = require('data/ContentTypes');
   const createViewPersistor = require('data/ListViewPersistor').default;
   const $state = require('$state');
+  const debounce = require('lodash').debounce;
+  const createResourceService = require('services/ResourceService').default;
+  const ResourceUtils = require('utils/ResourceUtils');
 
   const viewPersistor = createViewPersistor(
     spaceContext.getId(), null, 'contentTypes');
@@ -18,7 +22,23 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
   $scope.shouldHide = accessChecker.shouldHide;
   $scope.shouldDisable = accessChecker.shouldDisable;
 
+  const spaceId = spaceContext.space.data.sys.id;
+  const resources = createResourceService(spaceId);
+
+  const trackButtonClick = debounce(() => {
+    // Track the new CT button click, with usage
+    return resources.get('record').then(recordResource => {
+      Analytics.track('entity_button:click', {
+        entityType: 'contentType',
+        usage: recordResource.usage,
+        limit: ResourceUtils.getResourceLimits(recordResource).maximum
+      });
+    });
+  });
+
   $scope.newContentType = () => {
+    trackButtonClick();
+
     // X.list -> X.new
     $state.go('^.new');
   };

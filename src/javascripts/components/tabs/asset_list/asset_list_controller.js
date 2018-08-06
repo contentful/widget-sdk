@@ -5,6 +5,7 @@ angular.module('contentful')
   const $controller = require('$controller');
   const createSelection = require('selection');
   const delay = require('delay');
+  const Analytics = require('analytics/Analytics');
   const notification = require('notification');
   const spaceContext = require('spaceContext');
   const accessChecker = require('access_control/AccessChecker');
@@ -18,6 +19,7 @@ angular.module('contentful')
   const $state = require('$state');
   const ResourceUtils = require('utils/ResourceUtils');
   const EnvironmentUtils = require('utils/EnvironmentUtils');
+  const createResourceService = require('services/ResourceService').default;
 
   const searchController = $controller('AssetSearchController', { $scope: $scope });
 
@@ -50,12 +52,31 @@ angular.module('contentful')
   $scope.getAssetDimensions = getAssetDimensions;
   $scope.paginator = searchController.paginator;
 
+  const spaceId = spaceContext.space.data.sys.id;
   const organization = spaceContext.organizationContext.organization;
 
   $scope.isLegacyOrganization = ResourceUtils.isLegacyOrganization(organization);
   $scope.isInsideMasterEnv = EnvironmentUtils.isInsideMasterEnv(spaceContext);
 
+  const resources = createResourceService(spaceId);
+
+  const trackButtonClick = debounce(() => {
+    // Track the new asset button click, with usage
+    //
+    // This should happen before the call to the CMA to check if the asset(s) can be
+    // created occurs, so that the click with usage can be registered
+
+    return resources.get('record').then(recordResource => {
+      Analytics.track('entity_button:click', {
+        entityType: 'asset',
+        usage: recordResource.usage,
+        limit: ResourceUtils.getResourceLimits(recordResource).maximum
+      });
+    });
+  });
+
   $scope.newAsset = () => {
+    trackButtonClick();
     entityCreator.newAsset().then(asset => {
       // X.list -> X.detail
       $state.go('^.detail', {assetId: asset.getId()});
@@ -135,6 +156,8 @@ angular.module('contentful')
   }
 
   $scope.createMultipleAssets = () => {
+    trackButtonClick();
+
     const defaultLocaleCode = TheLocaleStore.getDefaultLocale().internal_code;
     BulkAssetsCreator.open(defaultLocaleCode).finally(() => {
       // We reload all assets to get the new ones. Unfortunately the

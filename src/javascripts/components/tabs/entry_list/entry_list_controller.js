@@ -72,6 +72,20 @@ angular.module('contentful')
     };
   });
 
+  const trackButtonClick = debounce(() => {
+    // Track the new entry button click, with usage
+    //
+    // This should happen before the entry is created via the CMA, so that
+    // if the CMA fails the button click is still tracked properly with usage
+    return resources.get('record').then(recordResource => {
+      Analytics.track('entity_button:click', {
+        entityType: 'entry',
+        usage: recordResource.usage,
+        limit: ResourceUtils.getResourceLimits(recordResource).maximum
+      });
+    });
+  });
+
   $scope.$watch('paginator.getTotal()', resetUsageProps);
   resetUsageProps();
 
@@ -93,6 +107,8 @@ angular.module('contentful')
   };
 
   $scope.newEntry = contentTypeId => {
+    trackButtonClick();
+
     const contentType = spaceContext.publishedCTs.get(contentTypeId);
     entityCreator.newEntry(contentTypeId).then(entry => {
       const eventOriginFlag = $scope.showNoEntriesAdvice() ? '--empty' : '';
@@ -101,6 +117,7 @@ angular.module('contentful')
         contentType: contentType,
         response: entry
       });
+
       // X.list -> X.detail
       $state.go('^.detail', {entryId: entry.getId()});
     });
