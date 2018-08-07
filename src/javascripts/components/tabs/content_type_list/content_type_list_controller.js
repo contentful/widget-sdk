@@ -27,7 +27,7 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
 
   const trackButtonClick = debounce(() => {
     // Track the new CT button click, with usage
-    return resources.get('record').then(recordResource => {
+    return resources.get('contentType').then(recordResource => {
       Analytics.track('entity_button:click', {
         entityType: 'contentType',
         usage: recordResource.usage,
