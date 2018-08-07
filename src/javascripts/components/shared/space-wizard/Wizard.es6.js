@@ -105,7 +105,7 @@ const Wizard = createReactClass({
     const steps = getSteps(action);
 
     this.track('open', {
-      paymentDetailsExist: organization.isBillable
+      paymentDetailsExist: Boolean(organization.isBillable)
     });
     this.navigate(steps[0].id);
   },
