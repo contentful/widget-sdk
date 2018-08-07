@@ -20,7 +20,8 @@ export async function trackEntryView ({
   entityInfo,
   editorType,
   currentSlideLevel,
-  locale
+  locale,
+  customWidgets
 }) {
   const refCts = await getReferencesContentTypes(editorData, locale);
 
@@ -35,7 +36,8 @@ export async function trackEntryView ({
       })), 'id')
     ],
     currentSlideLevel,
-    editorType
+    editorType,
+    customWidgets
   });
 }
 
