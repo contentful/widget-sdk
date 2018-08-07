@@ -11,6 +11,7 @@ angular.module('contentful')
   var workbenchHeader = require('app/Workbench').header;
   var getStore = require('TheStore').getStore;
   var store = getStore();
+  var Analytics = require('analytics/Analytics');
 
   // A list of states that have been changed
   // to be adapted to the new pricing model (V2).
@@ -153,30 +154,34 @@ angular.module('contentful')
   function organizationsBase (definition) {
     var defaults = {
       label: 'Organizations & Billing',
-      onEnter: ['$state', '$stateParams', 'require', ($state, $stateParams, require) => {
+      onEnter: ['$state', '$stateParams', 'require', async ($state, $stateParams, require) => {
         var accessChecker = require('access_control/AccessChecker');
         var useLegacy = require('utils/ResourceUtils').useLegacy;
         var TokenStore = require('services/TokenStore');
         var go = require('states/Navigator').go;
 
-        TokenStore.getOrganization($stateParams.orgId).then(org => {
-          var migration = migratedStates.find(state => $state.is(state.v1));
-          accessChecker.setOrganization(org);
-          store.set('lastUsedOrg', $stateParams.orgId);
+        const org = await TokenStore.getOrganization($stateParams.orgId);
 
-          useLegacy(org).then(isLegacy => {
-            var shouldRedirectToV2 = !isLegacy && Boolean(migration);
-            // redirect old v1 state to the new v2 state
-            // in case a user from a previously v1 org has
-            // the URL bookmarked
-            if (shouldRedirectToV2) {
-              go({
-                path: migration.v2.split('.'),
-                params: { orgId: $stateParams.orgId }
-              });
-            }
-          });
-        });
+        Analytics.trackContextChange(null, org);
+
+        var migration = migratedStates.find(state => $state.is(state.v1));
+        accessChecker.setOrganization(org);
+        store.set('lastUsedOrg', $stateParams.orgId);
+
+        const isLegacy = await useLegacy(org);
+
+        if (isLegacy) {
+          var shouldRedirectToV2 = !isLegacy && Boolean(migration);
+          // redirect old v1 state to the new v2 state
+          // in case a user from a previously v1 org has
+          // the URL bookmarked
+          if (shouldRedirectToV2) {
+            go({
+              path: migration.v2.split('.'),
+              params: { orgId: $stateParams.orgId }
+            });
+          }
+        }
       }]
     };
     return base(_.extend(defaults, definition));

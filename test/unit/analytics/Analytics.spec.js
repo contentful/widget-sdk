@@ -75,6 +75,51 @@ describe('Analytics', () => {
     });
   });
 
+  describe('#trackContextChange', function () {
+    it('should set the space in the session if given', function () {
+      const space = { sys: { id: 'space_1234' } };
+      this.analytics.trackContextChange(space);
+
+      expect(this.analytics.getSessionData('space')).toEqual(space);
+    });
+
+    it('should set the organization in the session if given', function () {
+      const org = { sys: { id: 'org_1234' } };
+      this.analytics.trackContextChange(null, org);
+
+      expect(this.analytics.getSessionData('organization')).toEqual(org);
+    });
+
+    it('should set both space and org if given', function () {
+      const space = { sys: { id: 'space_4567' } };
+      const org = { sys: { id: 'org_4567' } };
+      this.analytics.trackContextChange(space, org);
+
+      expect(this.analytics.getSessionData('space')).toEqual(space);
+      expect(this.analytics.getSessionData('organization')).toEqual(org);
+    });
+
+    it('should unset if explicitly called with null value for given param', function () {
+      const space = { sys: { id: 'space_4567' } };
+      const org = { sys: { id: 'org_4567' } };
+      this.analytics.trackContextChange(space, org);
+
+      expect(this.analytics.getSessionData('space')).toEqual(space);
+      expect(this.analytics.getSessionData('organization')).toEqual(org);
+
+      this.analytics.trackContextChange(null);
+      expect(this.analytics.getSessionData('space')).toBe(null);
+      expect(this.analytics.getSessionData('organization')).toEqual(org);
+
+      this.analytics.trackContextChange(space, null);
+      expect(this.analytics.getSessionData('space')).toEqual(space);
+      expect(this.analytics.getSessionData('organization')).toBe(null);
+
+      this.analytics.trackContextChange(undefined);
+      expect(this.analytics.getSessionData('space')).toEqual(space);
+    });
+  });
+
   describe('identifying data', () => {
     it('should identify when enabling the service', function () {
       sinon.assert.notCalled(this.segment.identify);
