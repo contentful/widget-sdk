@@ -140,7 +140,7 @@ class EnterpriseSpaceWizard extends React.Component {
           }
           {!showProgress &&
             <Dialog.Body>
-              <Plan plan={this.plan} resources={this.resources} />
+              <Plan resources={this.resources} />
               <Note />
               <TextField
                 style={{marginBottom: '30px'}}
@@ -182,11 +182,11 @@ class EnterpriseSpaceWizard extends React.Component {
   }
 }
 
-function Plan ({plan, resources}) {
+function Plan ({resources}) {
   return (
     <div className="space-plans-list__item space-plans-list__item--proof-of-concept">
       <div className="space-plans-list__item__heading">
-        <strong data-test-id="space-plan-name">{plan.name}</strong>
+        <strong data-test-id="space-plan-name">Proof of concept</strong>
         <span data-test-id="space-plan-price"> - Free</span>
       </div>
       <PlanFeatures resources={resources} />
