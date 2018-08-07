@@ -1,5 +1,4 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import {get} from 'lodash';
@@ -9,28 +8,29 @@ import {asReact} from 'ui/Framework/DOMRenderer';
 import TemplatesToggle from './TemplatesToggle';
 import TemplatesList from './TemplatesList';
 
-const TemplateSelector = createReactClass({
-  propTypes: {
+class TemplateSelector extends React.Component {
+  static propTypes = {
     onSelect: PropTypes.func.isRequired,
+    onToggle: PropTypes.func,
     fetchTemplates: PropTypes.func.isRequired,
-    templates: PropTypes.object.isRequired
-  },
-  getInitialState () {
-    return {
-      isShowingTemplates: false,
-      selectedTemplate: null
-    };
-  },
+    templates: PropTypes.object.isRequired,
+    formAlign: PropTypes.oneOf(['left', 'center'])
+  }
+
+  state = {
+    isShowingTemplates: false,
+    selectedTemplate: null
+  }
 
   componentDidMount () {
     const { fetchTemplates } = this.props;
 
     // Select the first template after loading is finished
-    fetchTemplates().then(this.setInitialTemplate);
-  },
+    fetchTemplates().then(this.setInitialTemplate.bind(this));
+  }
 
   render () {
-    const { templates } = this.props;
+    const { templates, formAlign } = this.props;
     const {selectedTemplate, isShowingTemplates} = this.state;
     const templatesListClassName = classnames(
       'modal-dialog__slice',
@@ -47,7 +47,8 @@ const TemplateSelector = createReactClass({
       <div>
         <TemplatesToggle
           isShowingTemplates={isShowingTemplates}
-          onChange={this.toggle}
+          onChange={(val) => this.toggle(val)}
+          formAlign={formAlign}
         />
         {
           isPending &&
@@ -63,7 +64,7 @@ const TemplateSelector = createReactClass({
             <TemplatesList
               templates={templatesList}
               selectedTemplate={selectedTemplate}
-              onSelect={this.selectTemplate}
+              onSelect={(template) => this.selectTemplate(template)}
             />
           </div>
         }
@@ -75,13 +76,15 @@ const TemplateSelector = createReactClass({
         }
       </div>
     );
-  },
+  }
 
   toggle (value) {
-    const { onSelect } = this.props;
+    const { onSelect, onToggle } = this.props;
     const { selectedTemplate } = this.state;
 
-    this.setState({ isShowingTemplates: value });
+    this.setState(() => ({ isShowingTemplates: value }), () => {
+      onToggle && onToggle();
+    });
 
     // We set it directly in the parent so that it can persist in local component state
     // for visual representation
@@ -90,7 +93,7 @@ const TemplateSelector = createReactClass({
     } else {
       onSelect(selectedTemplate);
     }
-  },
+  }
 
   setInitialTemplate () {
     const { templates: { templatesList } } = this.props;
@@ -104,13 +107,13 @@ const TemplateSelector = createReactClass({
     } else {
       this.setState({ selectedTemplate: template });
     }
-  },
+  }
 
   selectTemplate (selectedTemplate) {
     this.props.onSelect(selectedTemplate);
 
     this.setState({selectedTemplate});
   }
-});
+}
 
 export default TemplateSelector;

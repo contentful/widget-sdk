@@ -65,8 +65,8 @@ const Wizard = createReactClass({
     // Space data as defined in spaceContext.space.data
     space: PropTypes.object,
 
-    action: PropTypes.oneOf([ 'create', 'change' ]),
-    wizardScope: PropTypes.oneOf([ 'space', 'organization' ]),
+    action: PropTypes.oneOf([ 'create', 'change' ]).isRequired,
+    wizardScope: PropTypes.oneOf([ 'space', 'organization' ]).isRequired,
     onCancel: PropTypes.func.isRequired,
     onConfirm: PropTypes.func.isRequired,
     onSpaceCreated: PropTypes.func.isRequired,
@@ -101,12 +101,13 @@ const Wizard = createReactClass({
   },
 
   componentDidMount () {
-    const { navigate, action } = this.props;
+    const { action, organization } = this.props;
     const steps = getSteps(action);
 
-    this.track('open');
-
-    navigate(steps[0].id);
+    this.track('open', {
+      paymentDetailsExist: organization.isBillable
+    });
+    this.navigate(steps[0].id);
   },
 
   componentWillReceiveProps ({ spaceCreation: { error } }) {
@@ -259,13 +260,14 @@ const Wizard = createReactClass({
     const { onConfirm } = this.props;
 
     onConfirm && onConfirm();
-    this.track('confirm');
   },
 
   track (eventName, data = {}) {
-    const { track } = this.props;
+    const { track, action } = this.props;
 
-    track(eventName, data, this.props);
+    const requiredTrackingData = { action };
+
+    track(eventName, { ...data, ...requiredTrackingData });
   },
 
   setStateData (stepData) {
@@ -277,10 +279,13 @@ const Wizard = createReactClass({
   },
 
   navigate (stepId) {
-    const { navigate } = this.props;
+    const { navigate, currentStepId } = this.props;
 
+    this.track('navigate', {
+      currentStepId,
+      targetStepId: stepId
+    });
     navigate(stepId);
-    this.track('navigate', { targetStep: stepId });
   },
 
   goForward () {
@@ -304,9 +309,7 @@ const Wizard = createReactClass({
 
     if (lastStep && action === 'create') {
       createSpace({
-        action,
         organization,
-        currentStepId,
         selectedPlan,
         newSpaceMeta,
         onSpaceCreated,
@@ -376,6 +379,7 @@ const mapDispatchToProps = {
   setPartnershipFields: actionCreators.setPartnershipFields
 };
 
+export { Wizard };
 export default connect(mapStateToProps, mapDispatchToProps)(Wizard);
 
 function getSteps (action) {

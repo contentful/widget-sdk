@@ -2,10 +2,10 @@
 
 describe('Webhook Health directive', () => {
   beforeEach(function () {
-    module('contentful/test');
-
     this.getStub = sinon.stub().resolves({calls: {}});
-    this.$inject('WebhookRepository').getInstance = _.constant({logs: {getHealth: this.getStub}});
+    module('contentful/test', ($provide) => {
+      $provide.value('spaceContext', {webhookRepo: {logs: {getHealth: this.getStub}}});
+    });
 
     this.compile = webhookId => {
       const data = {webhook: {id: 'whid' || webhookId}};

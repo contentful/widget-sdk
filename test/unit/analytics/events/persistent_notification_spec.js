@@ -20,11 +20,11 @@ describe('Tracking persistent notification', () => {
 
   describe('with organization data set', () => {
     it('tracks action and contains current plan name', function () {
-      const space = {};
+      const org = {};
       const planName = 'subscriptionPlanName';
-      _.set(space, 'data.organization.subscriptionPlan.name', planName);
+      _.set(org, 'subscriptionPlan.name', planName);
 
-      this.analytics.trackSpaceChange(space);
+      this.analytics.trackContextChange(null, org);
       this.trackPersistenNotification.action('ACTION_NAME');
 
       sinon.assert.calledWith(this.analytics.track, sinon.match.string, sinon.match({

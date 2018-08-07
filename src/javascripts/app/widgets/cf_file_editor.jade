@@ -6,7 +6,7 @@
     .loading-box__spinner
     | Loading…
 
-  .file-progress.loading-box--stretched(ng-show="file && !!file.upload")
+  .file-progress.loading-box--stretched(ng-show="isUnprocessedFile(file)")
     .loading-box__spinner
     | Processing…
 
@@ -80,7 +80,7 @@
     button.btn-secondary-action(type="button"
       aria-label="Delete file" tooltip="Delete file"
       ng-click="deleteFile()"
-      ng-show="fieldLocale.access.editable && file && (file.url || file.upload)")
+      ng-show="fieldLocale.access.editable && file && (file.url || isUnprocessedFile(file))")
       i.fa.fa-trash
 
   .file-selector(ng-show="!file && fieldLocale.access.editable")

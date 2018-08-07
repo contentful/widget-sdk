@@ -8,7 +8,7 @@ export default {
           BLOCKS.PARAGRAPH,
           BLOCKS.HEADING_1,
           BLOCKS.HEADING_2,
-          BLOCKS.ENTRY_LINK
+          BLOCKS.EMBEDDED_ENTRY
         ]
       }
     ]
@@ -23,7 +23,7 @@ export default {
     [BLOCKS.HEADING_2]: {
       nodes: [{ objects: ['text'] }]
     },
-    [BLOCKS.ENTRY_LINK]: {
+    [BLOCKS.EMBEDDED_ENTRY]: {
       isVoid: true
     }
   }

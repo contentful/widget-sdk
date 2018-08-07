@@ -64,7 +64,7 @@ angular.module('contentful')
     renderGitSteps () {
       return (
         <React.Fragment>
-          {this.renderCodeLine('git clone https://github.com/contentful-userland/gatsby-contentful-starter.git')}
+          {this.renderCodeLine('git clone https://github.com/contentful/starter-gatsby-blog.git')}
           {this.renderCodeLine('cd gatsby-contentful-starter')}
           {this.renderCodeLine('npm install')}
           {this.renderCodeLine(this.getSetupLine())}

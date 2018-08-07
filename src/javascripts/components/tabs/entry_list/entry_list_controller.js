@@ -24,6 +24,7 @@ angular.module('contentful')
   const createResourceService = require('services/ResourceService').default;
   const EnvironmentUtils = require('utils/EnvironmentUtils');
   const debounce = require('lodash').debounce;
+  const truncate = require('stringUtils').truncate;
 
   const searchController = $controller('EntryListSearchController', {$scope: $scope});
   $controller('DisplayedFieldsController', {$scope: $scope});
@@ -213,6 +214,23 @@ angular.module('contentful')
         });
     }
   });
+
+  // TODO This function is called repeatedly from the template.
+  // Unfortunately, 'publishedCTs.get' has the side effect of
+  // fetching the CT if it was not found. This results in problems
+  // when we switch the space but this directive is still active. We
+  // request a content type from the _new_ space which does not
+  // exist.
+  // The solution is to separate `entryTitle()` and similar
+  // functions from the space context.
+  $scope.entryTitle = entry => {
+    var entryTitle = spaceContext.entryTitle(entry);
+    var length = 130;
+    if (entryTitle.length > length) {
+      entryTitle = truncate(entryTitle, length);
+    }
+    return entryTitle;
+  };
 
   // TODO this code is duplicated in the asset list controller
   function hasArchivedEntries (space) {

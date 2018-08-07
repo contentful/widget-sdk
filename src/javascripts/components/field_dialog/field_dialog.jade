@@ -37,13 +37,7 @@
           li(aria-label="This field is required"
              role="option"
              data-validation-type="required")
-            h2.validation-settings__header
-              label.validation-settings__toggle
-                span.validation-settings__toggle-input-wrapper
-                  input(type="checkbox" ng-model="decoratedField.required")
-                span Required field
-                p.validation-settings__help-text
-                  | You won't be able to publish an entry if this field is empty
+            <react-component name="@contentful/ui-component-library/CheckboxField" props="buildRequiredCheckboxProps()" />
 
           li(ng-repeat="validation in validations"
              aria-label="{{validation.name}}"

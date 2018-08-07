@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Editor } from 'slate-react';
 import { Value, Schema } from 'slate';
+import TrailingBlock from 'slate-trailing-block';
 
 import { toSlatejsDocument, toContentfulDocument } from '@contentful/contentful-slatejs-adapter';
 
@@ -24,7 +25,8 @@ const plugins = [
   UnderlinedPlugin(),
   Heading1Plugin(),
   Heading2Plugin(),
-  EntryLinkBlockPlugin()
+  EntryLinkBlockPlugin(),
+  TrailingBlock()
 ];
 
 const schema = Schema.fromJSON(schemaJson);
@@ -41,7 +43,7 @@ const initialValue = Value.fromJSON({
             object: 'text',
             leaves: [
               {
-                text: 'Welcome to fractured content!'
+                text: ''
               }
             ]
           }
@@ -58,7 +60,7 @@ export default class StructuredTextEditor extends React.Component {
   state = {
     value:
       this.props.field.getValue() &&
-      this.props.field.getValue().category === 'document'
+      this.props.field.getValue().nodeClass === 'document'
         ? Value.fromJSON({
           object: 'value',
           document: toSlatejsDocument(this.props.field.getValue())
@@ -68,8 +70,6 @@ export default class StructuredTextEditor extends React.Component {
   onChange = ({ value }) => {
     /* eslint no-console: off */
     this.props.field.setValue(toContentfulDocument(value.toJSON().document));
-    console.log('Slate: ', value.toJSON());
-    console.log('Contentful: ', this.props.field.getValue());
     this.setState({ value });
   };
   render () {

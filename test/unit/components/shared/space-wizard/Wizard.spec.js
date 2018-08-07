@@ -102,14 +102,14 @@ describe('Space Wizard', () => {
       this.mount('create');
       const data = this.stubs.track.firstCall.args[1];
 
-      expect(data.action).toBe('create');
+      expect(data.intendedAction).toBe('create');
     });
 
     it('should track change space intended action', function () {
       this.mount('change');
       const data = this.stubs.track.firstCall.args[1];
 
-      expect(data.action).toBe('change');
+      expect(data.intendedAction).toBe('change');
     });
   });
 });

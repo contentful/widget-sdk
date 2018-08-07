@@ -7,7 +7,7 @@ import { MARKS } from '@contentful/structured-text-types';
 export const UnderlinedPlugin = () => {
   return markPlugin(
     {
-      type: MARKS.UNDERLINED,
+      type: MARKS.UNDERLINE,
       tagName: 'u'
     },
     'cmd+u'
@@ -21,7 +21,7 @@ class Underlined extends Component {
 }
 
 export default markToggleDecorator({
-  type: MARKS.UNDERLINED,
+  type: MARKS.UNDERLINE,
   title: 'Underline (cmd + u)',
   icon: 'FormatUnderlined'
 })(Underlined);

@@ -28,21 +28,7 @@ div(
     legend Field options
 
     div.cfnext-form-option(ng-show="field.canBeTitle")
-      input(id="field-dialog--is-title" type="checkbox"
-        ng-model="field.isTitle" ng-disabled="field.disabled")
-      div.cfnext-form-option__desc
-        label(for="field-dialog--is-title")
-          | This field represents the Entry title
-        p(ng-if="currentTitleField && !field.disabled")
-          | Currently “{{currentTitleField}}” is set as the title field
-        p(ng-if="field.disabled")
-          | Please enable the field to select it as the Entry title.
+      <react-component name="@contentful/ui-component-library/CheckboxField" props="buildTitleCheckboxProps()" />
 
     div.cfnext-form-option(ng-show="field.canBeLocalized")
-      input(id="field-dialog--localized" ng-model="field.localized" type="checkbox")
-      div.cfnext-form-option__desc
-        label(for="field-dialog--localized")
-          | Enable localization of this field
-        p
-          | All the content can be translated to
-          | {{locales | joinAndTruncate:2:'locales' }}.
+      <react-component name="@contentful/ui-component-library/CheckboxField" props="buildLocalisationCheckboxProps()" />

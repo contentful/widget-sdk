@@ -6,9 +6,6 @@
 .webhook-editor .workbench-nav__tabs
   margin-left: $rhythm(1)
 
-.webhook-editor__settings
-  margin: $rhythm(1.5)
-
 .webhook-call__header
   padding: $rhythm(1)
   display: flex
@@ -81,78 +78,95 @@
   &[data-status="failure"]
     background: $colors.red-dark
 
-.webhook-header, .webhook-new-header
-  background: $colors.element-lightest
-  border-radius: 3px
-  border: 1px solid $colors.element-light
-  border-width: 0 1px 1px 0
-  padding: $rhythm(.5)
-  margin-bottom $rhythm(.4)
-  display: flex
-  justify-content: space-between
-  align-items: center
-  button
-    padding: $rhythm(.2) $rhythm(.8)
-  input
-    margin-bottom: 0
-    font-family monospace
+.webhook-editor__settings-section
+  margin-top: $rhythm(1)
+  padding-top: 0
+  padding-left: $rhythm(1.5)
+  padding-right: $rhythm(2.5)
+  padding-bottom: $rhythm(1)
+  border-top: 1px solid $colors.element-light
 
-.webhook-header__actions
-  display: flex
+  .webhook-editor__settings-header
+    display: flex
+    align-items: center
+    margin: 0
+    margin-top: -13px
+    margin-bottom: $rhythm(.7)
 
-.x--jsonlike
-  font-family: monospace
+    > h3, button
+      margin: 0
+      margin-right: 10px
+      padding: $rhythm(.2)
+      background-color: white
 
-.webhook-segmentation__matrix
+    > button:hover
+      background-color: white
+
+    > button i
+      margin-right: 10px
+
+  .cfnext-form__field
+    max-width: 65vw
+
+    > label
+      font-weight: bold
+      span
+        font-weight: normal
+        color: $colors.text-light
+
+  .webhook-editor__settings-option
+    margin-bottom: $rhythm(.4)
+
+  .webhook-editor__settings-row
+    display: flex
+    margin-bottom: $rhythm(.4)
+
+    &:last-of-type
+      margin-bottom: $rhythm(1)
+
+    input
+      flex-grow: 1
+
+    > *
+      margin-right: $rhythm(.4)
+
+  #webhook-name, #webhook-content-type
+    width: 75%
+
+  .webhook-editor__settings_payload
+    width: 75%
+    margin-top: $rhythm(1)
+    border: 1px solid #ddd
+    border-radius: 4px
+
+.webhook-editor__segmentation-table
   border-collapse: collapse
   margin: $rhythm(1) 0
   width: 100%
 
+  label, input
+    cursor: pointer
+
+  .x--disabled-cell
+    label, input
+      cursor: not-allowed
+
   td, th
     font-weight: normal
-    padding: $rhythm(.4)
+    text-align: center
+    padding: $rhythm(.5) $rhythm(.5) $rhythm(.4)
     border: 1px solid $colors.element-light
 
-    label
-      cursor: pointer
-
   td:first-child
-    border-left-width: 0
     white-space: nowrap
-  td:last-child
-    border-right-width: 0
-  tr:last-child
-    td, th
-      border-width: 0
-  .action-cell
-    text-align: center
-    cursor: pointer
-  .x--clickable-cell
-    cursor: pointer
-    *
-      cursor: pointer
-  .x--centered-cell
-    text-align: center
-    span
-      color: $colors.text-lightest
-  .x--highlighted-cell, .footer .action-cell
+    text-align: left
+  .x--highlighted-cell
     background: $colors.element-lightest
-  .x--unavailable-checkbox
-    opacity: .5
-
-.webhook-segmentation__option
-  margin-bottom: $rhythm(.4)
-
-.webhook-filters
-  .webhook-filters-title
-    margin-bottom: 10px
-
-    label
-      display: block
-
-  .webhook-filter
-    display: grid
-    grid-template-columns: 1fr auto 1fr 50px
-    grid-column-gap: 10px
-    grid-row-gap: 10px
-    margin-bottom: 20px
+  .x--empty-cell
+    background: repeating-linear-gradient(
+      45deg,
+      $colors.element-lightest,
+      $colors.element-lightest 10px,
+      white 10px,
+      white 20px
+    )

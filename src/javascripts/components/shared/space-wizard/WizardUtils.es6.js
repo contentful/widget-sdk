@@ -256,3 +256,57 @@ export function getPlanResourceFulfillment (plan, spaceResources = []) {
     }
   }, {});
 }
+
+export function getIncludedResources (charges) {
+  const ResourceTypes = {
+    Environments: 'Environments',
+    Roles: 'Roles',
+    Locales: 'Locales',
+    ContentTypes: 'Content types',
+    Records: 'Records'
+  };
+
+  return Object.values(ResourceTypes).map((type) => {
+    const charge = charges.find(({name}) => name === type);
+    let number = get(charge, 'tiers[0].endingUnit');
+
+    // Add "extra" environment and role to include `master` and `admin`
+    if ([ResourceTypes.Environments, ResourceTypes.Roles].includes(type)) {
+      number = number + 1;
+    }
+
+    return { type, number };
+  });
+}
+
+/*
+  Returns tracking data for `feature_space_wizard` schema from the Wizard component properties.
+ */
+export function createTrackingData (data) {
+  const {
+    action,
+    paymentDetailsExist,
+    currentStepId,
+    targetStepId,
+    selectedPlan,
+    currentPlan,
+    recommendedPlan,
+    newSpaceName,
+    newSpaceTemplate
+  } = data;
+
+  return {
+    currentStep: currentStepId || null,
+    targetStep: targetStepId || null,
+    intendedAction: action,
+    paymentDetailsExist: paymentDetailsExist || null,
+    targetSpaceType: get(selectedPlan, 'internalName', null),
+    targetProductType: get(selectedPlan, 'productType', null),
+    targetSpaceName: newSpaceName || null,
+    targetSpaceTemplateId: get(newSpaceTemplate, 'name', null),
+    currentSpaceType: get(currentPlan, 'internalName', null),
+    currentProductType: get(currentPlan, 'productType', null),
+    recommendedSpaceType: get(recommendedPlan, 'internalName', null),
+    recommendedProductType: get(recommendedPlan, 'productType', null)
+  };
+}

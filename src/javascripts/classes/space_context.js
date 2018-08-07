@@ -42,6 +42,7 @@ angular.module('contentful')
   const accessChecker = require('access_control/AccessChecker');
   const shouldUseEnvEndpoint = require('data/shouldUseEnvEndpoint').default;
   const createEnvironmentsRepo = require('data/CMA/SpaceEnvironmentsRepo').create;
+  const createWebhookRepo = require('data/CMA/WebhookRepo').default;
   const deepFreeze = require('utils/Freeze').deepFreeze;
   const $rootScope = require('$rootScope');
 
@@ -108,6 +109,7 @@ angular.module('contentful')
       self.users = createUserCache(self.endpoint);
       self.widgets = createWidgetStore(self.cma);
       self.apiKeyRepo = createApiKeyRepo(self.endpoint);
+      self.webhookRepo = createWebhookRepo(space);
       self.editingInterfaces = createEIRepo(self.endpoint);
       self.localeRepo = createLocaleRepo(self.endpoint);
       const organization = self.getData('organization') || null;

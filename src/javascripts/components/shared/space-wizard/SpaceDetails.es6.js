@@ -6,6 +6,7 @@ import { formatPrice, getFieldErrors } from './WizardUtils';
 
 const SpaceDetails = createReactClass({
   propTypes: {
+    track: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired,
     selectedPlan: PropTypes.object.isRequired,
@@ -104,12 +105,21 @@ const SpaceDetails = createReactClass({
     this.setState({template, touched: true});
   },
   submit: function () {
-    const { onSubmit } = this.props;
+    const { onSubmit, track } = this.props;
 
     const validation = validateState(this.state);
     this.setState({validation});
 
+    const {
+      name: newSpaceName,
+      template: newSpaceTemplate
+    } = this.state;
+
     if (!Object.keys(validation).length) {
+      track('entered_details', {
+        newSpaceName,
+        newSpaceTemplate
+      });
       onSubmit();
     }
   }

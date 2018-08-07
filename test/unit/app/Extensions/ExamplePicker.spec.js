@@ -36,7 +36,11 @@ describe('ExamplePicker', () => {
     fetchStub.returns({then: handle => handle({extension: true})});
     wrapper.find(BTN_SELECTOR).first().simulate('click');
     sinon.assert.calledOnce(confirmStub);
-    sinon.assert.calledWith(confirmStub, {extension: true});
+    sinon.assert.calledWith(confirmStub, {
+      extension: { extension: true },
+      type: 'github-example',
+      url: 'https://github.com/contentful/extensions/blob/master/samples/template-vanilla'
+    });
     fetchStub.restore();
   });
 

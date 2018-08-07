@@ -47,16 +47,6 @@ angular.module('contentful')
         }
       };
 
-      // TODO This function is called repeatedly from the template.
-      // Unfortunately, 'publishedCTs.get' has the side effect of
-      // fetching the CT if it was not found. This results in problems
-      // when we switch the space but this directive is still active. We
-      // request a content type from the _new_ space which does not
-      // exist.
-      // The solution is to separate `entryTitle()` and similar
-      // functions from the space context.
-      scope.entryTitle = entry => spaceContext.entryTitle(entry);
-
       // Must be deferred because it depends on the rendered content
 
       function collapseColumns () {

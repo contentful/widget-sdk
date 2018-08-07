@@ -10,7 +10,6 @@ angular.module('contentful')
 
 .controller('WebhookListController', ['$scope', 'require', ($scope, require) => {
   var spaceContext = require('spaceContext');
-  var webhookRepo = require('WebhookRepository').getInstance(spaceContext.space);
   var ReloadNotification = require('ReloadNotification');
   var ResourceUtils = require('utils/ResourceUtils');
   var createResourceService = require('services/ResourceService').default;
@@ -31,7 +30,7 @@ angular.module('contentful')
   });
 
   function reload () {
-    return webhookRepo.getAll().then(items => {
+    return spaceContext.webhookRepo.getAll().then(items => {
       // Currently, for Version 1 organizations, the usage comes
       // from the token, but this is unreliable as the token is
       // cached. We instead look at the length of the webhooks to

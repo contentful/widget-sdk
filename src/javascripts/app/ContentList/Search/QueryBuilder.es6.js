@@ -1,5 +1,7 @@
 import moment from 'moment';
 import { assign } from 'utils/Collections';
+import logger from 'logger';
+
 import { buildFilterFieldByQueryKey } from './Filters';
 import { Operator, isValid as isValidOperator } from './Operators';
 
@@ -47,6 +49,13 @@ export function buildQuery ({
 
 function applyGenericValue (query, [queryKey, operator, value]) {
   if (!value || !isValidOperator(operator)) {
+    if (!isValidOperator(operator)) {
+      logger.logError(`invalid operator “${operator}” for search query`, {
+        queryKey, operator, value
+      });
+    }
+    // Ignore missing values, we get them all the time when user adds a filter but
+    // provides no value for that filter.
     return query;
   }
   operator = operator.length > 0 ? `[${operator}]` : '';

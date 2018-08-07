@@ -24,13 +24,15 @@ export default class EntryLinkToolbarIcon extends Component {
       }
 
       const linkedEntryBlock = {
-        type: BLOCKS.ENTRY_LINK,
+        type: BLOCKS.EMBEDDED_ENTRY,
         object: 'block',
         data: {
-          sys: {
-            id: entry.sys.id,
-            link: 'Link',
-            linkType: 'Entry'
+          target: {
+            sys: {
+              id: entry.sys.id,
+              type: 'Link',
+              linkType: 'Entry'
+            }
           }
         }
       };
@@ -50,11 +52,11 @@ export default class EntryLinkToolbarIcon extends Component {
     const { change } = this.props;
     return (
       <ToolbarIcon
-        type={BLOCKS.ENTRY_LINK}
+        type={BLOCKS.EMBEDDED_ENTRY}
         icon="PlusCircle"
         title="Link Entry"
         onToggle={this.handleClick}
-        isActive={haveBlocks(change, BLOCKS.ENTRY_LINK)}
+        isActive={haveBlocks(change, BLOCKS.EMBEDDED_ENTRY)}
       />
     );
   }

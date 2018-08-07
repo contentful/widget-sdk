@@ -121,7 +121,7 @@ registerSchema({
 
 registerSchema({
   name: 'feature_space_wizard',
-  version: '1-0-0'
+  version: '2-0-0'
 });
 
 registerSchema({
@@ -167,6 +167,16 @@ registerSchema({
 registerSchema({
   name: 'slide_in_editor',
   version: '1-0-0'
+});
+
+registerSchema({
+  name: 'ui_extension_install',
+  version: '2-0-0'
+});
+
+registerSchema({
+  name: 'ui_extension_save',
+  version: '2-0-0'
 });
 
 // Objects following this schema are meant to be passed as context

@@ -10,7 +10,7 @@ export default ToolbarIcon;
 export const EntryLinkBlockPlugin = () => {
   return {
     renderNode: props => {
-      if (props.node.type === BLOCKS.ENTRY_LINK) {
+      if (props.node.type === BLOCKS.EMBEDDED_ENTRY) {
         return <EntryLinkBlock {...props} />;
       }
     },

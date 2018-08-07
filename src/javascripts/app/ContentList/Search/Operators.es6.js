@@ -8,6 +8,7 @@ import { values } from 'lodash';
 export const Operator = {
   EQUALS: '',
   NOT_EQUALS: 'ne',
+  EXISTS: 'exists',
   MATCH: 'match',
   LT: 'lt',
   LTE: 'lte',
@@ -40,6 +41,7 @@ export function getOperatorsByType (type) {
   switch (type) {
     case 'Symbol':
       return [equality, inequality, fts];
+    case 'StructuredText':
     case 'AssetField':
     case 'Text':
       return [fts];

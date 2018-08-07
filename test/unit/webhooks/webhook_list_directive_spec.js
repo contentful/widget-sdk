@@ -32,13 +32,6 @@ describe('The Webhook Definition list directive', () => {
 
     module('contentful/test', ($provide) => {
       $provide.removeDirectives('cfWebhookHealth');
-      $provide.value('WebhookRepository', {
-        getInstance: () => {
-          return {
-            getAll: sinon.stub().resolves(this.webhooks)
-          };
-        }
-      });
       $provide.value('services/ResourceService', {
         default: () => {
           return {
@@ -77,6 +70,10 @@ describe('The Webhook Definition list directive', () => {
     spaceContext.space = {
       data: this.space,
       getId: sinon.stub().returns(this.space.sys.id)
+    };
+
+    spaceContext.webhookRepo = {
+      getAll: sinon.stub().resolves(this.webhooks)
     };
 
     this.compile = function () {

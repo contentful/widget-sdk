@@ -17,6 +17,8 @@ import spaceContext from 'spaceContext';
 import { getCreator as getTemplateCreator } from 'services/SpaceTemplateCreator';
 import { getTemplatesList, getTemplate } from 'services/SpaceTemplateLoader';
 import { canCreate } from 'utils/ResourceUtils';
+import { createTrackingData } from '../WizardUtils';
+import { getIncludedResources } from 'components/shared/space-wizard/WizardUtils';
 
 import * as actions from './actions';
 
@@ -125,9 +127,7 @@ export function fetchTemplates () {
 }
 
 export function createSpace ({
-  action,
   organization,
-  currentStepId,
   selectedPlan,
   newSpaceMeta,
   partnershipMeta,
@@ -152,6 +152,7 @@ export function createSpace ({
     } catch (error) {
       dispatch(actions.spaceCreationFailure(error));
       dispatch(actions.spaceCreationPending(false));
+
 
       return;
     }
@@ -179,7 +180,11 @@ export function createSpace ({
       ? {templateName: template.name, entityAutomationScope: {scope: 'space_template'}}
       : {templateName: 'Blank'};
 
-    dispatch(track('space_create', spaceCreateEventData, { action, organization, currentStepId, selectedPlan, newSpaceMeta }));
+    Analytics.track('space:create', spaceCreateEventData);
+
+    dispatch(track('space_create', {
+      action: 'create'
+    }));
     dispatch(actions.spaceCreationSuccess());
 
     if (template) {
@@ -221,6 +226,11 @@ export function changeSpace ({ space, selectedPlan, onConfirm }) {
       return;
     }
 
+    dispatch(track('space_type_change', {
+      action: 'change'
+    }));
+
+
     // We don't fire a "success" event since we close the modal directly
     onConfirm();
   };
@@ -250,9 +260,9 @@ export function fetchSubscriptionPrice ({ organization }) {
   };
 }
 
-export function track (eventName, data, props) {
+export function track (eventName, data) {
   return dispatch => {
-    const trackingData = { ...data, ...createTrackingData(props) };
+    const trackingData = createTrackingData(data);
 
     Analytics.track(`space_wizard:${eventName}`, trackingData);
 
@@ -287,21 +297,6 @@ export function selectPlan (currentPlan, selectedPlan) {
   };
 }
 
-function createTrackingData ({ action, organization, currentStepId, selectedPlan, currentPlan, newSpaceMeta }) {
-  const { spaceName, template } = newSpaceMeta;
-
-  const eventData = {
-    currentStep: currentStepId,
-    action: action,
-    paymentDetailsExist: organization.isBillable,
-    spaceType: get(selectedPlan, 'internalName'),
-    spaceName: spaceName,
-    template: get(template, 'name'),
-    currentSpaceType: get(currentPlan, 'internalName')
-  };
-
-  return eventData;
-}
 
 async function createTemplate (templateInfo) {
   const templateCreator = getTemplateCreator(
@@ -330,26 +325,4 @@ async function tryCreateTemplate (templateCreator, templateData, retried) {
       await tryCreateTemplate(templateCreator, err.template, true);
     }
   }
-}
-
-function getIncludedResources (charges) {
-  const ResourceTypes = {
-    Environments: 'Environments',
-    Roles: 'Roles',
-    Locales: 'Locales',
-    ContentTypes: 'Content types',
-    Records: 'Records'
-  };
-
-  return Object.values(ResourceTypes).map((type) => {
-    const charge = charges.find(({name}) => name === type);
-    let number = get(charge, 'tiers[0].endingUnit');
-
-    // Add "extra" environment and role to include `master` and `admin`
-    if ([ResourceTypes.Environments, ResourceTypes.Roles].includes(type)) {
-      number = number + 1;
-    }
-
-    return { type, number };
-  });
 }

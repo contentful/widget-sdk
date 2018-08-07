@@ -4,7 +4,9 @@ import PropTypes from 'prop-types';
 import {get, cloneDeep, isEqual, omit} from 'lodash';
 import $state from '$state';
 import Workbench from 'app/WorkbenchReact';
+import { track } from 'analytics/Analytics';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils';
+import { getExtensionParameterIds } from './Extensions';
 
 import {toInternalFieldType, toApiFieldType} from './FieldTypes';
 import ExtensionForm from './ExtensionForm';
@@ -94,7 +96,19 @@ const ExtensionEditor = createReactClass({
     this.setState({saving: true});
     this.props.save() // `this.props.save()` takes care of displaying success/error messages
     .then(
-      entity => this.setState(() => this.entityToFreshState(entity)),
+      entity => {
+        this.setState(() => this.entityToFreshState(entity), () => {
+          const { extension } = this.state.entity;
+
+          track('extension:save', {
+            ui_extension_id: this.state.entity.sys.id,
+            name: extension.name,
+            version: this.state.entity.sys.version,
+            fieldTypes: extension.fieldTypes,
+            ...getExtensionParameterIds(extension)
+          });
+        });
+      },
       () => this.setState({saving: false})
     );
   }

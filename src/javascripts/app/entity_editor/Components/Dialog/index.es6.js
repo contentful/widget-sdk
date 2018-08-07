@@ -4,21 +4,22 @@ import PropTypes from 'prop-types';
 class Dialog extends React.Component {
   style = {};
 
-  sizes = {
+  static sizes = {
     small: '400px',
-    medium: '600px'
+    medium: '600px',
+    large: '750px'
   };
 
   static propTypes = {
     testId: PropTypes.string,
     children: PropTypes.node,
-    size: PropTypes.oneOf(['small', 'medium'])
+    size: PropTypes.oneOf(Object.keys(Dialog.sizes))
   }
 
   constructor (props) {
     super(props);
 
-    this.style.width = this.sizes[this.props.size];
+    this.style.width = Dialog.sizes[this.props.size];
   }
 
   render () {
@@ -32,13 +33,15 @@ class Dialog extends React.Component {
 
 class Header extends React.Component {
   static propTypes = {
-    children: PropTypes.node
+    children: PropTypes.node,
+    onCloseButtonClicked: PropTypes.func
   };
 
   render () {
     return (
       <header className="modal-dialog__header" data-test-id="header">
         <h1>{this.props.children}</h1>
+        {this.props.onCloseButtonClicked && <button className="modal-dialog__close" onClick={this.props.onCloseButtonClicked} />}
       </header>
     );
   }

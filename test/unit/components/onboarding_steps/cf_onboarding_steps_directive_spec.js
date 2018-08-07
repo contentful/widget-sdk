@@ -143,14 +143,8 @@ describe('cfOnboardingSteps Directive', () => {
         this.spaceContext.getData = sinon.stub();
         this.spaceContext.getData.withArgs('activatedAt').returns('2017-03-03T16:14:00Z');
         this.spaceContext.space = {};
-
-        this.WebhookRepository = this.$inject('WebhookRepository');
         this.webhooks = sinon.stub().resolves([]);
-        this.WebhookRepository.getInstance = () => {
-          return {
-            getAll: this.webhooks
-          };
-        };
+        this.spaceContext.webhookRepo = {getAll: this.webhooks};
         this.spaceContext.endpoint = sinon.stub().resolves({items: []});
         this.$inject('TheLocaleStore').getLocales = sinon.stub().returns([{}]);
       });
