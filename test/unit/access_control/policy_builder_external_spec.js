@@ -1,7 +1,6 @@
 'use strict';
 
 describe('Policy Builder, to external representation', () => {
-
   let toExternal, CONFIG;
 
   beforeEach(function () {
@@ -64,15 +63,14 @@ describe('Policy Builder, to external representation', () => {
   });
 
   describe('translating policies', () => {
-
-    function baseExternal(collection, effect) {
+    function baseExternal (collection, effect) {
       const internal = {uiCompatible: true};
       internal[collection] = {};
       internal[collection][effect] = [{}];
       return toExternal(internal);
     }
 
-    function testBase(external, type, effect) {
+    function testBase (external, type, effect) {
       const p = external.policies[0];
       expect(p.effect).toBe(effect);
       expect(p.constraint.and[0].equals[0].doc).toBe('sys.type');

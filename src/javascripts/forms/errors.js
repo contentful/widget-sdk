@@ -30,7 +30,7 @@ angular.module('cf.forms')
   controllerAs: 'errors',
   controller: 'FieldErrorController',
 
-  link: function (scope, elem, attrs, form) {
+  link: function (scope, elem, _attrs, form) {
     scope.errors.link(form, scope.fieldName);
     scope.$watch('errors.exist && !errors.hide', hasErrors => {
       elem.toggleClass('ng-hide', !hasErrors);
@@ -82,7 +82,7 @@ angular.module('cf.forms')
   controllerAs: 'errors',
   controller: 'FieldErrorController',
 
-  link: function (scope, elem, attrs, form) {
+  link: function (scope, elem, _attrs, form) {
     scope.errors.link(form, scope.fieldName);
     scope.$watch('errors.exist && !errors.hide', hasErrors => {
       elem.toggleClass('ng-hide', !hasErrors);
@@ -110,10 +110,10 @@ angular.module('cf.forms')
  *   Corresponds to the form controllers `hideErrors` property.
  */
 .controller('FieldErrorController', ['$scope', '$injector',
-function ($scope, $injector) {
-  const fieldErrorMessage = $injector.get('fieldErrorMessage');
-  const controller = this;
-  let unwatchErrors, unwatchHide;
+  function ($scope, $injector) {
+    const fieldErrorMessage = $injector.get('fieldErrorMessage');
+    const controller = this;
+    let unwatchErrors, unwatchHide;
 
   /**
    * @ngdoc method
@@ -129,33 +129,32 @@ function ($scope, $injector) {
    * @param {FormController} form
    * @param {string} formCtrlName
    */
-  controller.link = (form, ctrlName) => {
-    if (!ctrlName)
-      throw new TypeError('FieldErrorController#link(): argument required');
+    controller.link = (form, ctrlName) => {
+      if (!ctrlName) { throw new TypeError('FieldErrorController#link(): argument required'); }
 
-    if (unwatchErrors) unwatchErrors();
-    if (unwatchHide) unwatchHide();
+      if (unwatchErrors) unwatchErrors();
+      if (unwatchHide) unwatchHide();
 
-    unwatchErrors = $scope.$watchCollection(ngModelError, errors => {
-      const errorDetails = (form[ctrlName] || {}).errorDetails || {};
+      unwatchErrors = $scope.$watchCollection(ngModelError, errors => {
+        const errorDetails = (form[ctrlName] || {}).errorDetails || {};
 
-      controller.messages = _.map(_.keys(errors), error => {
-        const details = errorDetails[error] || {};
-        return details.message || fieldErrorMessage(error, details);
+        controller.messages = _.map(_.keys(errors), error => {
+          const details = errorDetails[error] || {};
+          return details.message || fieldErrorMessage(error, details);
+        });
+
+        controller.exist = controller.messages.length > 0;
       });
 
-      controller.exist = controller.messages.length > 0;
-    });
+      unwatchHide = $scope.$watch(() => form[ctrlName] && form[ctrlName].hideErrors, hideErrors => {
+        controller.hide = hideErrors;
+      });
 
-    unwatchHide = $scope.$watch(() => form[ctrlName] && form[ctrlName].hideErrors, hideErrors => {
-      controller.hide = hideErrors;
-    });
-
-    function ngModelError() {
-      return form[ctrlName] && form[ctrlName].$error;
-    }
-  };
-}])
+      function ngModelError () {
+        return form[ctrlName] && form[ctrlName].$error;
+      }
+    };
+  }])
 
 /**
  * @ngdoc service
@@ -166,7 +165,7 @@ function ($scope, $injector) {
  * @description
  * Build messages for `ngModel` validation errors.
  */
-.provider('fieldErrorMessage', function fieldErrorMessageProvider() {
+.provider('fieldErrorMessage', function fieldErrorMessageProvider () {
   const messages = {
     required: 'Please provide a value.'
   };
@@ -179,11 +178,7 @@ function ($scope, $injector) {
     const templates = _.mapValues(messages, message => _.template(message));
 
     return function build (key, details) {
-      if (key in templates)
-        return templates[key](details);
-      else
-        return 'Error: ' + key;
+      if (key in templates) { return templates[key](details); } else { return 'Error: ' + key; }
     };
   };
-
 });

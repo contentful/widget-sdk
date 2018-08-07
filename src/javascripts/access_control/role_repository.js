@@ -1,7 +1,6 @@
 'use strict';
 
 angular.module('contentful').factory('RoleRepository', [() => {
-
   const AVAILABLE_PERMISSIONS = {
     ContentModel: ['read', 'manage'],
     ContentDelivery: ['read', 'manage'],
@@ -21,8 +20,7 @@ angular.module('contentful').factory('RoleRepository', [() => {
     getEmpty: getEmpty
   };
 
-  function getInstance(space) {
-
+  function getInstance (space) {
     return {
       getAll: getAll,
       get: get,
@@ -31,26 +29,26 @@ angular.module('contentful').factory('RoleRepository', [() => {
       remove: remove
     };
 
-    function getAll() {
+    function getAll () {
       return getBaseCall()
       .payload({ limit: 100 })
       .get().then(res => res.items);
     }
 
-    function get(id) {
+    function get (id) {
       return getBaseCall({id: id})
       .get()
       .then(handleRole);
     }
 
-    function create(role) {
+    function create (role) {
       return getBaseCall()
       .payload(map(role))
       .post()
       .then(handleRole);
     }
 
-    function save(role) {
+    function save (role) {
       return getBaseCall({
         id: role.sys.id,
         version: role.sys.version
@@ -60,7 +58,7 @@ angular.module('contentful').factory('RoleRepository', [() => {
       .then(handleRole);
     }
 
-    function remove(role) {
+    function remove (role) {
       return getBaseCall({
         id: role.sys.id,
         rejectEmpty: false
@@ -68,7 +66,7 @@ angular.module('contentful').factory('RoleRepository', [() => {
       .delete();
     }
 
-    function getBaseCall(config) {
+    function getBaseCall (config) {
       const headers = {};
       config = config || {};
       if (config.version) {
@@ -80,7 +78,7 @@ angular.module('contentful').factory('RoleRepository', [() => {
     }
   }
 
-  function getEmpty() {
+  function getEmpty () {
     return handleRole({
       policies: [],
       permissions: {
@@ -92,23 +90,23 @@ angular.module('contentful').factory('RoleRepository', [() => {
     });
   }
 
-  function handleRole(role) {
+  function handleRole (role) {
     role.permissions = rewritePermissions(role.permissions);
     return role;
   }
 
-  function map(role) {
+  function map (role) {
     role = _.omit(role, ['sys']);
     role.permissions = flattenPermissions(role.permissions);
     return role;
   }
 
-  function rewritePermissions(permissions) {
+  function rewritePermissions (permissions) {
     return _.transform(AVAILABLE_PERMISSIONS, (acc, names, group) => {
       acc[PERMISSION_GROUP_NAME_MAP[group]] = rewrite(names, group);
     }, {});
 
-    function rewrite(names, group) {
+    function rewrite (names, group) {
       if (permissions[group] === 'all') {
         return _.transform(names, (acc, name) => {
           acc[name] = true;
@@ -125,7 +123,7 @@ angular.module('contentful').factory('RoleRepository', [() => {
     }
   }
 
-  function flattenPermissions(permissions) {
+  function flattenPermissions (permissions) {
     return _.transform(permissions, (acc, map, group) => {
       acc[group] = _.transform(map, (acc, isEnabled, name) => {
         if (isEnabled) { acc.push(name); }

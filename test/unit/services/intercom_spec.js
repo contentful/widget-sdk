@@ -6,6 +6,7 @@ describe('Intercom service', () => {
   function setGlobalIntercom (value) {
     $windowIntercomStub = $window.Intercom = value;
 
+    // eslint-disable-next-line no-unused-vars
     inject(($rootScope, $controller, _intercom_) => {
       intercom = _intercom_;
     });
@@ -54,5 +55,4 @@ describe('Intercom service', () => {
       });
     });
   });
-
 });

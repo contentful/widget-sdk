@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Features service', () => {
-  beforeEach(function(){
+  beforeEach(function () {
     module('contentful/test');
 
     this.user = {
@@ -17,16 +17,16 @@ describe('Features service', () => {
   });
 
   describe('#allowAnalytics', () => {
-    it('should allow by default', function() {
+    it('should allow by default', function () {
       expect(this.features.allowAnalytics(this.user)).toBe(true);
     });
 
-    it('should disallow when user has analytics disabled', function() {
+    it('should disallow when user has analytics disabled', function () {
       this.user.features.logAnalytics = false;
       expect(this.features.allowAnalytics(this.user)).toBe(false);
     });
 
-    it('should disallow if user has one organization with analytics disabled', function() {
+    it('should disallow if user has one organization with analytics disabled', function () {
       this.user.organizationMemberships.push({
         organization: {disableAnalytics: true}
       });

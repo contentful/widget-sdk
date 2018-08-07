@@ -4,10 +4,10 @@ describe('ReloadNotification service', () => {
   let $q, $rootScope, ReloadNotification, open;
   beforeEach(module('contentful/test'));
   beforeEach(inject($injector => {
-    $q                 = $injector.get('$q');
-    $rootScope         = $injector.get('$rootScope');
+    $q = $injector.get('$q');
+    $rootScope = $injector.get('$rootScope');
     ReloadNotification = $injector.get('ReloadNotification');
-    open               = sinon.stub($injector.get('modalDialog'), 'open');
+    open = sinon.stub($injector.get('modalDialog'), 'open');
     open.returns({promise: $q.defer().promise});
     ReloadNotification.apiErrorHandler.restore();
   }));
@@ -48,11 +48,11 @@ describe('ReloadNotification service', () => {
 
       beforeEach(() => {
         successHandler = sinon.stub();
-        errorHandler   = sinon.stub();
-        error          = {statusCode: 500};
+        errorHandler = sinon.stub();
+        error = {statusCode: 500};
       });
 
-      function run(promise) {
+      function run (promise) {
         promise
         .catch(ReloadNotification.apiErrorHandler)
         .then(successHandler, errorHandler);
@@ -78,6 +78,5 @@ describe('ReloadNotification service', () => {
         sinon.assert.calledWith(errorHandler, error);
       });
     });
-
   });
 });

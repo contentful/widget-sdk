@@ -46,7 +46,7 @@ describe('cfFieldErrorsFor', () => {
     this.modelController.$setValidity('a', false);
     this.modelController.$setValidity('b', false);
     this.$apply();
-    const errorMessages = this.errorList.find('li').map((i, e) => $(e).text()).get();
+    const errorMessages = this.errorList.find('li').map((_, e) => $(e).text()).get();
     expect(errorMessages).toEqual([
       'the a error', 'Error: b'
     ]);
@@ -60,5 +60,4 @@ describe('cfFieldErrorsFor', () => {
     this.$apply();
     expect(this.errorList.text()).toEqual('my custom message');
   });
-
 });

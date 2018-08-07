@@ -17,14 +17,14 @@
 angular.module('contentful')
 .directive('cfRelativeDatetime', ['require', require => {
   const $timeout = require('$timeout');
-  const moment   = require('moment');
+  const moment = require('moment');
 
   return {
     restrict: 'A',
     scope: {
       datetime: '@'
     },
-    link: function(scope, element, attrs) {
+    link: function (scope, element, attrs) {
       let timeout;
 
       scope.$watch('datetime', dateString => {
@@ -36,8 +36,7 @@ angular.module('contentful')
         const to = () => moment(attrs.to);
         const withoutSuffix = 'withoutSuffix' in attrs;
 
-        if (!attrs.title)
-          element.attr('title', date.format('LLLL'));
+        if (!attrs.title) { element.attr('title', date.format('LLLL')); }
 
         element.bind('$destroy', () => {
           $timeout.cancel(timeout);
@@ -45,25 +44,22 @@ angular.module('contentful')
 
         updateLater();
 
-        function updateTime() {
+        function updateTime () {
           element.text(diffString(date, to()));
         }
 
-        function diffString(a, b) {
-          if (Math.abs(a.clone().startOf('day').diff(b, 'days', true)) < 1)
-            return a.from(b, withoutSuffix);
-          else
-            return a.calendar(b);
+        function diffString (a, b) {
+          if (Math.abs(a.clone().startOf('day').diff(b, 'days', true)) < 1) { return a.from(b, withoutSuffix); } else { return a.calendar(b); }
         }
 
-        function updateLater() {
+        function updateLater () {
           updateTime();
           timeout = $timeout(() => {
             updateLater();
           }, nextUpdateIn());
         }
 
-        function nextUpdateIn() {
+        function nextUpdateIn () {
           const delta = Math.abs(moment().diff(date));
           if (delta < 45e3) return 45e3 - delta;
           if (delta < 90e3) return 90e3 - delta;

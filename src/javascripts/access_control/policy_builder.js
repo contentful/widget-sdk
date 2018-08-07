@@ -16,8 +16,8 @@ angular.module('contentful').factory('PolicyBuilder', ['require', require => ({
 })]);
 
 angular.module('contentful').factory('PolicyBuilder/defaultRule', ['require', require => {
-
-  const random  = require('random');
+  const random = require('random');
+  const _ = require('lodash');
   const ALL_CTS = require('PolicyBuilder/CONFIG').ALL_CTS;
 
   const DEFAULT_RULE = {
@@ -36,11 +36,11 @@ angular.module('contentful').factory('PolicyBuilder/defaultRule', ['require', re
     getDefaultRuleGetterFor: getDefaultRuleGetterFor
   };
 
-  function getDefaultRuleGetterFor(entity) {
+  function getDefaultRuleGetterFor (entity) {
     return () => getDefaultRuleFor(entity);
   }
 
-  function getDefaultRuleFor(entity) {
+  function getDefaultRuleFor (entity) {
     entity = entity.toLowerCase();
     const meta = { id: random.id(), entity: entity };
     const base = _.extend(meta, DEFAULT_RULE);
@@ -54,11 +54,11 @@ angular.module('contentful').factory('PolicyBuilder/defaultRule', ['require', re
 }]);
 
 angular.module('contentful').factory('PolicyBuilder/toInternal', ['require', require => {
-
-  const CONFIG            = require('PolicyBuilder/CONFIG');
+  const CONFIG = require('PolicyBuilder/CONFIG');
   const getDefaultRuleFor = require('PolicyBuilder/defaultRule').getDefaultRuleFor;
+  const _ = require('lodash');
 
-  return function toInternal(external) {
+  return function toInternal (external) {
     return _.extend({
       id: _.get(external, 'sys.id', null),
       version: _.get(external, 'sys.version', null),
@@ -67,11 +67,13 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['require', req
     }, (_.cloneDeep(external.permissions) || {}), translatePolicies(external));
   };
 
-  function translatePolicies(external) {
+  function translatePolicies (external) {
     let policyString = '[]';
     try {
       policyString = JSON.stringify(external.policies);
-    } catch (e) {}
+    } catch (e) {
+      // ignore
+    }
 
     const extension = {
       entries: {allowed: [], denied: []},
@@ -86,7 +88,7 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['require', req
 
     return extension;
 
-    function prepareExtension(p) {
+    function prepareExtension (p) {
       if (!p.action || !p.entityCollection || !p.effectCollection || !p.rule) {
         extension.uiCompatible = false;
       } else {
@@ -96,7 +98,7 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['require', req
     }
   }
 
-  function prepare(external) {
+  function prepare (external) {
     return _.map(external.policies, policy => ({
       action: extractAction(policy),
       effectCollection: {allow: 'allowed', deny: 'denied'}[policy.effect],
@@ -104,7 +106,7 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['require', req
     }));
   }
 
-  function extendPolicyWithRule(policy) {
+  function extendPolicyWithRule (policy) {
     const rule = createRule(policy);
 
     return _.extend(policy, {
@@ -113,7 +115,7 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['require', req
     });
   }
 
-  function extractAction(policy) {
+  function extractAction (policy) {
     const as = policy.actions;
     const glued = ['publish', 'unpublish', 'archive', 'unarchive'];
 
@@ -129,11 +131,11 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['require', req
 
     return null;
 
-    function isArrayOfLength(n)   { return _.isArray(as) && as.length === n;           }
-    function containsBoth(s1, s2) { return as.indexOf(s1) > -1 && as.indexOf(s2) > -1; }
+    function isArrayOfLength (n) { return _.isArray(as) && as.length === n; }
+    function containsBoth (s1, s2) { return as.indexOf(s1) > -1 && as.indexOf(s2) > -1; }
   }
 
-  function extractConstraints(policy) {
+  function extractConstraints (policy) {
     if (_.isArray(policy.constraint)) {
       return policy.constraint;
     } else if (_.isObject(policy.constraint) && _.isArray(policy.constraint.and)) {
@@ -141,7 +143,7 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['require', req
     }
   }
 
-  function createRule(policy) {
+  function createRule (policy) {
     // 1. find entity type
     const entityConstraint = findEntityConstraint(policy.constraints);
 
@@ -188,23 +190,23 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['require', req
     if (rest.length < 1) { return rule; }
   }
 
-  function findEntityConstraint(cs) {
+  function findEntityConstraint (cs) {
     return searchResult(cs, _.findIndex(cs, c => docEq(c, 'sys.type') && _.includes(['Entry', 'Asset'], c.equals[1])));
   }
 
-  function findContentTypeConstraint(cs) {
+  function findContentTypeConstraint (cs) {
     return searchResult(cs, _.findIndex(cs, c => docEq(c, 'sys.contentType.sys.id') && _.isString(c.equals[1])));
   }
 
-  function findIdConstraint(cs) {
+  function findIdConstraint (cs) {
     return searchResult(cs, _.findIndex(cs, c => docEq(c, 'sys.id') && _.isString(c.equals[1])));
   }
 
-  function findScopeConstraint(cs) {
+  function findScopeConstraint (cs) {
     return searchResult(cs, _.findIndex(cs, c => docEq(c, 'sys.createdBy.sys.id') && _.isString(c.equals[1])));
   }
 
-  function findPathConstraint(cs) {
+  function findPathConstraint (cs) {
     const index = _.findIndex(cs, c => _.isArray(c.paths) && _.isObject(c.paths[0]) && _.isString(c.paths[0].doc));
 
     return {
@@ -213,36 +215,36 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['require', req
     };
   }
 
-  function docEq(c, val) {
+  function docEq (c, val) {
     return _.isArray(c.equals) && _.isObject(c.equals[0]) && c.equals[0].doc === val;
   }
 
-  function searchResult(cs, index) {
+  function searchResult (cs, index) {
     return {
       index: index,
       value: index > -1 ? cs[index].equals[1] : null
     };
   }
 
-  function fieldPathSegment(segment) {
+  function fieldPathSegment (segment) {
     return pathSegment(segment, CONFIG.ALL_FIELDS);
   }
 
-  function localePathSegment(segment) {
+  function localePathSegment (segment) {
     return pathSegment(segment, CONFIG.ALL_LOCALES);
   }
 
-  function pathSegment(segment, allValue) {
+  function pathSegment (segment, allValue) {
     return segment === CONFIG.PATH_WILDCARD ? allValue : segment;
   }
 }]);
 
 angular.module('contentful').factory('PolicyBuilder/toExternal', ['require', require => {
-
   const capitalize = require('stringUtils').capitalize;
-  const CONFIG     = require('PolicyBuilder/CONFIG');
+  const CONFIG = require('PolicyBuilder/CONFIG');
+  const _ = require('lodash');
 
-  return function toExternal(internal) {
+  return function toExternal (internal) {
     return {
       sys: _.pick(internal, ['id', 'version']),
       name: internal.name,
@@ -252,7 +254,7 @@ angular.module('contentful').factory('PolicyBuilder/toExternal', ['require', req
     };
   };
 
-  function translatePolicies(internal) {
+  function translatePolicies (internal) {
     if (!internal.uiCompatible) {
       try {
         return JSON.parse(internal.policyString);
@@ -271,23 +273,23 @@ angular.module('contentful').factory('PolicyBuilder/toExternal', ['require', req
       .value();
   }
 
-  function prepare(internal) {
+  function prepare (internal) {
     return _.union(
       prepareCollection(_.get(internal, 'entries.allowed', []), 'entry', 'allow'),
-      prepareCollection(_.get(internal, 'entries.denied',  []), 'entry', 'deny'),
-      prepareCollection(_.get(internal, 'assets.allowed',  []), 'asset', 'allow'),
-      prepareCollection(_.get(internal, 'assets.denied',   []), 'asset', 'deny')
+      prepareCollection(_.get(internal, 'entries.denied', []), 'entry', 'deny'),
+      prepareCollection(_.get(internal, 'assets.allowed', []), 'asset', 'allow'),
+      prepareCollection(_.get(internal, 'assets.denied', []), 'asset', 'deny')
     );
   }
 
-  function prepareCollection(collection, entity, effect) {
+  function prepareCollection (collection, entity, effect) {
     return _.map(collection, source => ({
       source: _.extend({ effect: effect, entity: entity }, source),
       result: {}
     }));
   }
 
-  function addBase(pair) {
+  function addBase (pair) {
     pair.result.effect = pair.source.effect;
     pair.result.constraint = {};
 
@@ -303,20 +305,20 @@ angular.module('contentful').factory('PolicyBuilder/toExternal', ['require', req
     return pair;
   }
 
-  function addEntityTypeConstraint(pair) {
+  function addEntityTypeConstraint (pair) {
     const entityName = capitalize(pair.source.entity);
     pushConstraint(pair, eq('sys.type', entityName));
     return pair;
   }
 
-  function addScopeConstraint(pair) {
+  function addScopeConstraint (pair) {
     if (pair.source.scope !== 'user') { return pair; }
 
     pushConstraint(pair, eq('sys.createdBy.sys.id', 'User.current()'));
     return pair;
   }
 
-  function addContentTypeConstraint(pair) {
+  function addContentTypeConstraint (pair) {
     const ct = pair.source.contentType;
     if (ct === CONFIG.ALL_CTS || !_.isString(ct)) { return pair; }
 
@@ -324,7 +326,7 @@ angular.module('contentful').factory('PolicyBuilder/toExternal', ['require', req
     return pair;
   }
 
-  function addPathConstraint(pair) {
+  function addPathConstraint (pair) {
     const source = pair.source;
 
     if (pair.source.entity === 'asset') {
@@ -338,28 +340,28 @@ angular.module('contentful').factory('PolicyBuilder/toExternal', ['require', req
     return pair;
   }
 
-  function fieldSegment(prop) {
+  function fieldSegment (prop) {
     return segment(prop, CONFIG.ALL_FIELDS);
   }
 
-  function localeSegment(prop) {
+  function localeSegment (prop) {
     return segment(prop, CONFIG.ALL_LOCALES);
   }
 
-  function segment(prop, allValue) {
+  function segment (prop, allValue) {
     return (prop === allValue || !prop) ? CONFIG.PATH_WILDCARD : prop;
   }
 
-  function pushConstraint(pair, constraint) {
+  function pushConstraint (pair, constraint) {
     pair.result.constraint.and = pair.result.constraint.and || [];
     pair.result.constraint.and.push(constraint);
   }
 
-  function eq(prop, value) {
-    return { equals: [{ doc: prop }, value ] };
+  function eq (prop, value) {
+    return { equals: [ { doc: prop }, value ] };
   }
 
-  function paths(segments) {
+  function paths (segments) {
     return { paths: [{doc: segments.join(CONFIG.PATH_SEPARATOR)}] };
   }
 }]);

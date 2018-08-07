@@ -26,7 +26,6 @@ describe('cfOnSubmit', () => {
       sinon.assert.calledOnce(this.scope.submit);
     });
   });
-
 });
 
 describe('cfFormSubmit', () => {

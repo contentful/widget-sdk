@@ -23,8 +23,7 @@ angular.module('contentful').directive('cfErrorPath', () => ({
 
   link: function (scope, elem, attrs) {
     scope.$watch('errors.hasErrors', hasErrors => {
-      if (!attrs['ngHide'] && !attrs['ngShow'])
-        elem.toggle(hasErrors);
+      if (!attrs['ngHide'] && !attrs['ngShow']) { elem.toggle(hasErrors); }
     });
   }
 }));

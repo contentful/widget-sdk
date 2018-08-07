@@ -11,8 +11,7 @@
 angular.module('contentful').directive('cfFocusOnRender', () => ({
   restrict: 'A',
 
-  link: function(scope, elem, attrs){
-    if(scope.$eval(attrs.cfFocusOnRender) || _.isEmpty(attrs.cfFocusOnRender))
-      elem.focus();
+  link: function (scope, elem, attrs) {
+    if (scope.$eval(attrs.cfFocusOnRender) || _.isEmpty(attrs.cfFocusOnRender)) { elem.focus(); }
   }
 }));
