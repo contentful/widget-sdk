@@ -106,8 +106,19 @@ angular.module('contentful')
     });
 
     if (descriptor.custom) {
+      renderable.custom = true;
+      renderable.trackingData = {
+        extension_id: descriptor.id,
+        extension_name: descriptor.name,
+        field_id: control.fieldId,
+        field_type: _.get(field, ['type']),
+        installation_params: Object.keys(renderable.installationParameterValues),
+        instance_params: Object.keys(renderable.settings)
+      };
+
       if (descriptor.src) {
         renderable.src = descriptor.src;
+        renderable.trackingData.src = descriptor.src;
       } else {
         renderable.srcdoc = descriptor.srcdoc;
       }

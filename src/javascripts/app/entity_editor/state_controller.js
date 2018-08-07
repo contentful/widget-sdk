@@ -153,7 +153,8 @@ angular.module('contentful')
             Analytics.track('entry:publish', {
               eventOrigin: eventOrigin,
               contentType: contentType,
-              response: { data: entity }
+              response: { data: entity },
+              customWidgets: ($scope.widgets || []).filter(w => w.custom).map(w => w.trackingData)
             });
           }
           trackVersioning.publishedRestored(entity);
