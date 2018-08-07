@@ -66,7 +66,7 @@ ResourceUsage.propTypes = {
 export const ResourceUsageHighlight = ({resource, showMaximumLimit}) => {
   return (
     <div className="resource-list__item resource-list__item--highlight">
-      <div className="resource-list__item__usage">{`${resource.usage}${showMaximumLimit ? ` out of ${resource.limits.maximum}` : ''}`}</div>
+      <div className="resource-list__item__usage">{`${resource.usage}${showMaximumLimit ? ` / ${resource.limits.maximum}` : ''}`}</div>
       <div className="resource-list__item__title">{resourceHumanNameMap[resource.sys.id]}</div>
     </div>
   );
