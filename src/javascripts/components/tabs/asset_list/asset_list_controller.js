@@ -19,7 +19,7 @@ angular.module('contentful')
   const $state = require('$state');
   const ResourceUtils = require('utils/ResourceUtils');
   const EnvironmentUtils = require('utils/EnvironmentUtils');
-  const createResourceService = require('services/ResourceService').default;
+  const get = require('lodash').get;
 
   const searchController = $controller('AssetSearchController', { $scope: $scope });
 
@@ -52,34 +52,31 @@ angular.module('contentful')
   $scope.getAssetDimensions = getAssetDimensions;
   $scope.paginator = searchController.paginator;
 
-  const spaceId = spaceContext.space.data.sys.id;
   const organization = spaceContext.organizationContext.organization;
 
   $scope.isLegacyOrganization = ResourceUtils.isLegacyOrganization(organization);
   $scope.isInsideMasterEnv = EnvironmentUtils.isInsideMasterEnv(spaceContext);
 
-  const resources = createResourceService(spaceId);
+  const trackEnforcedButtonClick = (err) => {
+    // If we get reason(s), that means an enforcement is present
+    const reason = get(err, 'body.details.reasons', null);
 
-  const trackButtonClick = debounce(() => {
-    // Track the new asset button click, with usage
-    //
-    // This should happen before the call to the CMA to check if the asset(s) can be
-    // created occurs, so that the click with usage can be registered
-
-    return resources.get('record').then(recordResource => {
-      Analytics.track('entity_button:click', {
-        entityType: 'asset',
-        usage: recordResource.usage,
-        limit: ResourceUtils.getResourceLimits(recordResource).maximum
-      });
+    Analytics.track('entity_button:click', {
+      entityType: 'asset',
+      enforced: Boolean(reason),
+      reason
     });
-  });
+  };
 
   $scope.newAsset = () => {
-    trackButtonClick();
     entityCreator.newAsset().then(asset => {
       // X.list -> X.detail
       $state.go('^.detail', {assetId: asset.getId()});
+    }).catch(err => {
+      trackEnforcedButtonClick(err);
+
+      // Throw err so the UI can also display it
+      throw err;
     });
   };
 
@@ -156,8 +153,6 @@ angular.module('contentful')
   }
 
   $scope.createMultipleAssets = () => {
-    trackButtonClick();
-
     const defaultLocaleCode = TheLocaleStore.getDefaultLocale().internal_code;
     BulkAssetsCreator.open(defaultLocaleCode).finally(() => {
       // We reload all assets to get the new ones. Unfortunately the

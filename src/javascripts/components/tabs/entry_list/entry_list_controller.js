@@ -24,6 +24,7 @@ angular.module('contentful')
   const EnvironmentUtils = require('utils/EnvironmentUtils');
   const debounce = require('lodash').debounce;
   const truncate = require('stringUtils').truncate;
+  const get = require('lodash').get;
 
   const searchController = $controller('EntryListSearchController', {$scope: $scope});
   $controller('DisplayedFieldsController', {$scope: $scope});
@@ -72,19 +73,16 @@ angular.module('contentful')
     };
   });
 
-  const trackButtonClick = debounce(() => {
-    // Track the new entry button click, with usage
-    //
-    // This should happen before the entry is created via the CMA, so that
-    // if the CMA fails the button click is still tracked properly with usage
-    return resources.get('record').then(recordResource => {
-      Analytics.track('entity_button:click', {
-        entityType: 'entry',
-        usage: recordResource.usage,
-        limit: ResourceUtils.getResourceLimits(recordResource).maximum
-      });
+  const trackEnforcedButtonClick = (err) => {
+    // If we get reason(s), that means an enforcement is present
+    const reason = get(err, 'body.details.reasons', null);
+
+    Analytics.track('entity_button:click', {
+      entityType: 'entry',
+      enforced: Boolean(reason),
+      reason
     });
-  });
+  };
 
   $scope.$watch('paginator.getTotal()', resetUsageProps);
   resetUsageProps();
@@ -107,8 +105,6 @@ angular.module('contentful')
   };
 
   $scope.newEntry = contentTypeId => {
-    trackButtonClick();
-
     const contentType = spaceContext.publishedCTs.get(contentTypeId);
     entityCreator.newEntry(contentTypeId).then(entry => {
       const eventOriginFlag = $scope.showNoEntriesAdvice() ? '--empty' : '';
@@ -120,6 +116,10 @@ angular.module('contentful')
 
       // X.list -> X.detail
       $state.go('^.detail', {entryId: entry.getId()});
+    }).catch(err => {
+      trackEnforcedButtonClick(err);
+
+      throw err;
     });
   };
 
