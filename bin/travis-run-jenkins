@@ -39,7 +39,7 @@ if [[ "$TRAVIS_BRANCH" =~ ^(preview|production)$ ]]; then
 fi
 
 if [[ "$TRAVIS_BRANCH" = "master" ]]; then
-	JOB="staging-custom-ui-version"
+	JOB="user-interface-master"
 else
 	JOB="user-interface-pr"
 fi
