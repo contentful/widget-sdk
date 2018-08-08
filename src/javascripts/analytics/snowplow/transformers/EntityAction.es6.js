@@ -27,6 +27,10 @@ export default function (_eventName, eventData) {
     });
   }
 
+  if (Array.isArray(eventData.customWidgets)) {
+    const schema = getSchema('extension_render').path;
+    eventData.customWidgets.forEach(data => contexts.push({schema, data}));
+  }
 
   return {
     data: {},

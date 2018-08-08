@@ -276,7 +276,8 @@ describe('entityEditor/StateController', () => {
               {
                 eventOrigin: eventOrigin,
                 contentType: { data: { name: 'foo' } },
-                response: { data: this.entity }
+                response: { data: this.entity },
+                customWidgets: []
               }
             );
           });

@@ -9,7 +9,10 @@ export default addUserOrgSpace((_, data) => ({
     slide_in_level: data.currentSlideLevel,
     editor_type: data.editorType
   },
-  contexts: [...data.referencesCTMetadata.map((refMetadata) => getReferenceContext(refMetadata, data.entryId))]
+  contexts: [
+    ...data.referencesCTMetadata.map((refMetadata) => getReferenceContext(refMetadata, data.entryId)),
+    ...customWidgetsContexts(data)
+  ]
 }));
 
 function getReferenceContext (refMetadata, parentEntryId) {
@@ -21,4 +24,13 @@ function getReferenceContext (refMetadata, parentEntryId) {
       parent_entry_id: parentEntryId
     }
   };
+}
+
+function customWidgetsContexts (eventData) {
+  if (Array.isArray(eventData.customWidgets)) {
+    const schema = getSchema('extension_render').path;
+    return eventData.customWidgets.map(data => ({schema, data}));
+  } else {
+    return [];
+  }
 }
