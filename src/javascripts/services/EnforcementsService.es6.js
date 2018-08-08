@@ -1,5 +1,9 @@
+import require from 'require';
 import {isArray, get} from 'lodash';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
+import { getSpace } from 'services/TokenStore';
+
+const flagName = 'feature-bv-2018-08-enforcements-api';
 
 // 30 seconds
 // This is the Varnish caching time for this endpoint
@@ -47,14 +51,23 @@ export async function refresh (spaceId) {
 }
 
 async function fetchEnforcements (spaceId) {
-  const endpoint = createSpaceEndpoint(spaceId);
+  // To get around circular dep
+  const { getCurrentVariation } = require('utils/LaunchDarkly');
+  const useApi = await getCurrentVariation(flagName);
 
-  const raw = await endpoint({
-    method: 'GET',
-    path: [ 'enforcements' ]
-  });
+  if (useApi) {
+    const endpoint = createSpaceEndpoint(spaceId);
 
-  return raw.items;
+    const raw = await endpoint({
+      method: 'GET',
+      path: [ 'enforcements' ]
+    });
+
+    return raw.items;
+  } else {
+    const tokenSpace = await getSpace(spaceId);
+    return get(tokenSpace, `enforcements`, []);
+  }
 }
 
 function enforcementsEqual (current, newEnforcements) {

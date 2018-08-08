@@ -152,12 +152,6 @@ angular.module('contentful')
 
       previewEnvironmentsCache.clearAll();
 
-      // Deinit the enforcement refreshing on space ID change, so that
-      // the previous space ID enforcement information isn't queried
-      if (enforcementsDeInit) {
-        enforcementsDeInit();
-      }
-
       // This happens here, rather than in `prelude.js`, since it's scoped to a space
       // and not the user, so the spaceId is required.
       enforcementsDeInit = EnforcementsService.init(space.getId());
@@ -444,6 +438,12 @@ angular.module('contentful')
     }
     if (self.publishedCTs) {
       self.publishedCTs = null;
+    }
+
+    // Deinit the enforcement refreshing on space ID change, so that
+    // the previous space ID enforcement information isn't queried
+    if (enforcementsDeInit) {
+      enforcementsDeInit();
     }
   }
 
