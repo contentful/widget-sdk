@@ -56,6 +56,7 @@ pipeline {
           'pricing_v1': {
             script {
               def sha = "${params.ui_version}"
+              def context = "ci/jenkins/${JOB_NAME}: pricing_v1"
               runPyTest {
                 id = 'v1'
                 lab = true
@@ -64,7 +65,7 @@ pipeline {
                 notifyIndividually = [
                   repo: 'user_interface',
                   sha: sha,
-                  context: "ci/jenkins/${JOB_NAME}: pricing_v1"
+                  context: context
                 ]
               }
             }
@@ -72,6 +73,7 @@ pipeline {
           'pricing_v2': {
             script {
               def sha = "${params.ui_version}"
+              def context = "ci/jenkins/${JOB_NAME}: pricing_v2"
               runPyTest {
                 id = 'v2'
                 lab = true
@@ -80,7 +82,7 @@ pipeline {
                 notifyIndividually = [
                   repo: 'user_interface',
                   sha: sha,
-                  context: "ci/jenkins/${JOB_NAME}: pricing_v2"
+                  context: context
                 ]
               }
             }
