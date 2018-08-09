@@ -43,7 +43,6 @@ describe('StructuredTextEditor', () => {
     const toolbarItems = [
       BLOCKS.HEADING_1,
       BLOCKS.HEADING_2,
-      BLOCKS.EMBEDDED_ENTRY,
       MARKS.BOLD,
       MARKS.ITALIC,
       MARKS.UNDERLINE
@@ -54,5 +53,12 @@ describe('StructuredTextEditor', () => {
       el.simulate('click');
       sinon.assert.calledOnce(this.props.field.setValue);
     });
+  });
+
+  it('renders the embed entry button', function () {
+    const el = this.wrapper.first(`[data-test-id="toolbar-toggle-${BLOCKS.EMBEDDED_ENTRY}"]`);
+    expect(el).toBeDefined();
+    el.simulate('click');
+    sinon.assert.calledOnce(this.props.field.setValue);
   });
 });

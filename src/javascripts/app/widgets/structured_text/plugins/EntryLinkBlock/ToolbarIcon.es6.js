@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Button } from '@contentful/ui-component-library';
 
 import { BLOCKS } from '@contentful/structured-text-types';
-import ToolbarIcon from '../shared/ToolbarIcon';
-import { haveBlocks } from '../shared/UtilHave';
-
 import entitySelector from 'entitySelector';
 
 export default class EntryLinkToolbarIcon extends Component {
@@ -49,15 +47,17 @@ export default class EntryLinkToolbarIcon extends Component {
     }
   };
   render () {
-    const { change } = this.props;
     return (
-      <ToolbarIcon
-        type={BLOCKS.EMBEDDED_ENTRY}
-        icon="PlusCircle"
-        title="Link Entry"
-        onToggle={this.handleClick}
-        isActive={haveBlocks(change, BLOCKS.EMBEDDED_ENTRY)}
-      />
+      <Button
+        extraClassNames='structured-text__entry-link-block-button'
+        size="small"
+        icon="Description"
+        buttonType="muted"
+        data-test-id={`toolbar-toggle-${BLOCKS.EMBEDDED_ENTRY}`}
+        onClick={this.handleClick}
+      >
+        Embed entry
+      </Button>
     );
   }
 }
