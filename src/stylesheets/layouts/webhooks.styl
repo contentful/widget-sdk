@@ -1,17 +1,16 @@
-.webhook-list .main-results,
-.webhook-editor .main-results
-  th:first-child, td:first-child
-    padding-left: 25px
-
-.webhook-list td
-  &.x--clickable
+.webhook-list, .webhook-editor, .webhook-call
+  .x--clickable
     cursor: pointer
-  code
-    font-size: .9em
+  .x--ellipsis
     display: block
     white-space: nowrap
     overflow: hidden
     text-overflow: ellipsis
+  .x--nowrap
+    display: block
+    white-space: nowrap
+  code
+    font-size: .9em
 
 .webhook-editor .workbench-nav__tabs
   margin-left: $rhythm(1)

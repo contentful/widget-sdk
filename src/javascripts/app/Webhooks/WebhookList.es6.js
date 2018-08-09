@@ -48,21 +48,25 @@ export default class WebhookList extends React.Component {
                 <table>
                   <tbody>
                     {webhooks.length > 0 && webhooks.map(wh => {
-                      const method = get(wh, ['transformation', 'method'], 'POST');
-                      const navigate = () => $state.go('^.detail', { webhookId: wh.sys.id });
                       return (
-                        <tr key={wh.sys.id}>
-                          <td className="x--medium-cell x--clickable" onClick={navigate}>
-                            <strong>{wh.name}</strong>
+                        <tr
+                          className="x--clickable"
+                          key={wh.sys.id}
+                          onClick={() => $state.go('^.detail', { webhookId: wh.sys.id })}
+                        >
+                          <td className="x--medium-cell">
+                            <strong className="x--ellipsis">{wh.name}</strong>
                           </td>
-                          <td className="x--large-cell x--clickable" onClick={navigate}>
-                            <code>{method} {wh.url}</code>
+                          <td className="x--large-cell">
+                            <code className="x--ellipsis">
+                              {get(wh, ['transformation', 'method'], 'POST')} {wh.url}
+                            </code>
                           </td>
-                          <td className="x--small-cell x--clickable" onClick={navigate}>
+                          <td className="x--small-cell">
                             <WebhookHealth webhookId={wh.sys.id} webhookRepo={webhookRepo} />
                           </td>
                           <td className="x--medium-cell">
-                            <button className="text-link" onClick={navigate}>
+                            <button className="text-link">
                               View details
                             </button>
                           </td>

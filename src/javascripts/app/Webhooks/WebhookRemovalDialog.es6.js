@@ -11,15 +11,14 @@ export default class WebhookRemovalDialog extends React.Component {
 
   constructor (props) {
     super(props);
-    this.state = {removing: false};
+    this.state = {busy: false};
     this.remove = this.remove.bind(this);
   }
 
   remove () {
     const {remove, confirm, cancel} = this.props;
-
-    this.setState({removing: true});
-    return remove().then(() => confirm(), err => cancel(err));
+    this.setState({busy: true});
+    return remove().then(confirm, cancel);
   }
 
   render () {
@@ -41,7 +40,7 @@ export default class WebhookRemovalDialog extends React.Component {
         <div className="modal-dialog__controls">
           <button
             className="btn-caution"
-            disabled={this.state.removing}
+            disabled={this.state.busy}
             onClick={this.remove}
           >
             Remove

@@ -29,7 +29,7 @@ describe('WebhookRemovalDialog', function () {
     const [wrapper] = mount();
     const isDisabled = () => wrapper.find('button').first().prop('disabled');
     expect(isDisabled()).toBe(false);
-    wrapper.setState({removing: true});
+    wrapper.setState({busy: true});
     expect(isDisabled()).toBe(true);
   });
 

@@ -1,11 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {pick} from 'lodash';
 
 import $state from '$state';
 import Icon from 'ui/Components/Icon';
 
 import WebhookCallStatus from './WebhookCallStatus';
+
+const parseJsonSafe = s => {
+  try {
+    return JSON.parse(s);
+  } catch (e) { /* ignore */ } // eslint-disable-line no-empty
+};
 
 export default class WebhookCall extends React.Component {
   static propTypes = {
@@ -15,13 +20,14 @@ export default class WebhookCall extends React.Component {
 
   render () {
     const {webhook, call} = this.props;
-    const {body} = call.request;
-    const details = pick(call.request, ['method', 'url', 'headers']);
 
-    let jsonBody;
-    try {
-      jsonBody = JSON.parse(body);
-    } catch (e) { /* ignore */ } // eslint-disable-line no-empty
+    const reqBody = call.request.body;
+    const reqBodyJson = parseJsonSafe(reqBody);
+    const reqHeaders = call.request.headers;
+
+    const resBody = call.response.body;
+    const resBodyJson = parseJsonSafe(resBody);
+    const resHeaders = call.response.headers;
 
     return (
       <React.Fragment>
@@ -44,28 +50,35 @@ export default class WebhookCall extends React.Component {
           <div className="workbench-main__content">
             <div className="webhook-call__details">
               <div className="webhook-call__header">
-                <strong className="webhook-call__header-item">
-                  {webhook.name} ({call.url })
+                <strong className="webhook-call__header-item x--ellipsis">
+                  {webhook.name}
                 </strong>
-                <span className="webhook-call__header-item">
+                <code className="webhook-call__header-item x--ellipsis">
+                   {call.request.method} {call.url }
+                </code>
+                <span className="webhook-call__header-item x--nowrap">
                   {call.requestAt}
                 </span>
-                <div className="webhook-call__header-item">
+                <div className="webhook-call__header-item x--nowrap">
                   <WebhookCallStatus call={call} />
                 </div>
               </div>
               <div className="webhook-call__columns">
                 <div className="webhook-call__column">
-                  <strong>Request details</strong>
-                  <pre>{JSON.stringify(details, null, 2)}</pre>
+                  <strong>Request headers</strong>
+                  <pre>{JSON.stringify(reqHeaders, null, 2)}</pre>
 
                   <strong>Request body</strong>
-                  {jsonBody && <pre>{JSON.stringify(jsonBody, null, 2)}</pre>}
-                  {!jsonBody && <pre>{body}</pre>}
+                  {reqBodyJson && <pre>{JSON.stringify(reqBodyJson, null, 2)}</pre>}
+                  {!reqBodyJson && <pre>{reqBody}</pre>}
                 </div>
                 <div className="webhook-call__column">
-                  <strong>Complete response</strong>
-                  <pre>{JSON.stringify(call.response, null, 2)}</pre>
+                  <strong>Response headers</strong>
+                  <pre>{JSON.stringify(resHeaders, null, 2)}</pre>
+
+                  <strong>Response body</strong>
+                  {resBodyJson && <pre>{JSON.stringify(resBodyJson, null, 2)}</pre>}
+                  {!resBodyJson && <pre>{resBody}</pre>}
                 </div>
               </div>
             </div>

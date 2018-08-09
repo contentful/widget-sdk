@@ -34,7 +34,7 @@ export default class WebhookEditor extends React.Component {
       tab: fresh ? TABS.SETTINGS : TABS.LOG,
       webhook: props.initialWebhook,
       fresh,
-      // Entity is "dirty" when not saved or there were changes to the intially loaded version.
+      // Entity is "dirty" when not saved or there were changes to the initially loaded version.
       dirty: fresh,
       hasHttpBasicStored: hasBasic(props.initialWebhook),
       // Editor is "busy" if there's any HTTP request in flight.
@@ -53,19 +53,22 @@ export default class WebhookEditor extends React.Component {
     this.props.registerSaveAction(this.save);
   }
 
-  notify () {
+  propagateChange () {
     this.props.setDirty(this.state.dirty);
     this.props.onChange(this.state.webhook);
   }
 
-  onChange (webhook) {
-    this.setState({webhook, dirty: true}, () => this.notify());
+  onChange (change) {
+    this.setState(
+      s => ({...s, webhook: {...s.webhook, ...change}, dirty: true}),
+      () => this.propagateChange()
+    );
   }
 
   onSave (webhook) {
     this.setState(
       {webhook, dirty: false, hasHttpBasicStored: hasBasic(webhook), busy: false},
-      () => this.notify()
+      () => this.propagateChange()
     );
   }
 

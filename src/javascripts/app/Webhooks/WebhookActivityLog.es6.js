@@ -67,16 +67,17 @@ export default class WebhookActivityLog extends React.Component {
               <tbody>
                 {!loading && pageCalls.length > 0 && pageCalls.map(call => {
                   return (
-                    <tr key={call.sys.id}>
+                    <tr
+                      className="x--clickable"
+                      key={call.sys.id}
+                      onClick={() => $state.go('^.detail.call', {callId: call.sys.id})}
+                    >
                       <td>{call.requestAt}</td>
                       <td className="x--large-cell">
                         <WebhookCallStatus call={call} />
                       </td>
                       <td>
-                        <button
-                          className="text-link"
-                          onClick={() => $state.go('^.detail.call', {callId: call.sys.id})}
-                        >
+                        <button className="text-link">
                           View details
                         </button>
                       </td>
@@ -101,7 +102,7 @@ export default class WebhookActivityLog extends React.Component {
           <a
             href=""
             className="webhook-calls__paginator-item"
-            onClick={() => this.setState(s => ({...s, page: s.page - 1}))}
+            onClick={() => this.setState(s => ({page: s.page - 1}))}
           >
             «
           </a>
@@ -122,7 +123,7 @@ export default class WebhookActivityLog extends React.Component {
           <a
             href=""
             className="webhook-calls__paginator-item"
-            onClick={() => this.setState(s => ({...s, page: s.page + 1}))}
+            onClick={() => this.setState(s => ({page: s.page + 1}))}
           >
             »
           </a>

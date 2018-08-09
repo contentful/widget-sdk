@@ -25,11 +25,9 @@ describe('WebhookForm', function () {
 
     name.simulate('change', {target: {value: 'webhook'}});
     sinon.assert.calledWith(onChangeStub, {name: 'webhook'});
-    wrapper.setProps({webhook: {name: 'webhook'}});
 
     url.simulate('change', {target: {value: 'http://test.com'}});
-    const finalWebhook = {name: 'webhook', url: 'http://test.com'};
-    sinon.assert.calledWith(onChangeStub, finalWebhook);
+    sinon.assert.calledWith(onChangeStub, {url: 'http://test.com'});
   });
 
   it('renders and updates transformation properties', function () {

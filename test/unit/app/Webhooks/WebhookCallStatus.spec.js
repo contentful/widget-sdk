@@ -31,11 +31,6 @@ describe('WebhookCallStatus', function () {
     testStatus(wrapper, 'failure');
   });
 
-  it('shows red light if has some error', function () {
-    const wrapper = mount(undefined, 'TimeoutError');
-    testStatus(wrapper, 'failure');
-  });
-
   it('shows red light if has both invalid code and some error', function () {
     const wrapper = mount(400, 'TimeoutError');
     testStatus(wrapper, 'failure');
