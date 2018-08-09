@@ -16,7 +16,7 @@ class Thumbnail extends Component {
     })
   }
 
-  static defaulProps = {
+  static defaultProps = {
     entryThumbnail: undefined
   }
 

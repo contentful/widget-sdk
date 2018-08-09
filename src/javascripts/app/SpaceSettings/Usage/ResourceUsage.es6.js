@@ -76,6 +76,6 @@ ResourceUsageHighlight.propTypes = {
   showMaximumLimit: PropTypes.bool
 };
 
-ResourceUsageHighlight.defaulProps = {
+ResourceUsageHighlight.defaultProps = {
   showMaximumLimit: false
 };
