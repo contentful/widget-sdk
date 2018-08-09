@@ -41,7 +41,7 @@ angular.module('contentful')
   $scope.showCreateSpaceDialog = CreateSpace.showDialog;
 
   function spaceAndTokenWatchHandler ({tokenLookup, space, enforcements}) {
-    if (!tokenLookup || !enforcements) {
+    if (!tokenLookup) {
       return;
     }
 
