@@ -5,6 +5,7 @@ angular.module('contentful')
   const $controller = require('$controller');
   const createSelection = require('selection');
   const delay = require('delay');
+  const Analytics = require('analytics/Analytics');
   const notification = require('notification');
   const spaceContext = require('spaceContext');
   const accessChecker = require('access_control/AccessChecker');
@@ -18,6 +19,7 @@ angular.module('contentful')
   const $state = require('$state');
   const ResourceUtils = require('utils/ResourceUtils');
   const EnvironmentUtils = require('utils/EnvironmentUtils');
+  const get = require('lodash').get;
 
   const searchController = $controller('AssetSearchController', { $scope: $scope });
 
@@ -55,10 +57,26 @@ angular.module('contentful')
   $scope.isLegacyOrganization = ResourceUtils.isLegacyOrganization(organization);
   $scope.isInsideMasterEnv = EnvironmentUtils.isInsideMasterEnv(spaceContext);
 
+  const trackEnforcedButtonClick = (err) => {
+    // If we get reason(s), that means an enforcement is present
+    const reason = get(err, 'body.details.reasons', null);
+
+    Analytics.track('entity_button:click', {
+      entityType: 'asset',
+      enforced: Boolean(reason),
+      reason
+    });
+  };
+
   $scope.newAsset = () => {
     entityCreator.newAsset().then(asset => {
       // X.list -> X.detail
       $state.go('^.detail', {assetId: asset.getId()});
+    }).catch(err => {
+      trackEnforcedButtonClick(err);
+
+      // Throw err so the UI can also display it
+      throw err;
     });
   };
 

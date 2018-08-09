@@ -45,6 +45,10 @@ angular.module('contentful')
 
   $scope.actions = createActions($scope, contentTypeIds);
 
+  // We want to track if the user is creating a new CT, but the save
+  // action is enforced. Somehow they got to this page, but weren't
+  // able to save the CT.
+
   $scope.stateIs = $state.is;
 
   $scope.goTo = stateName => {
