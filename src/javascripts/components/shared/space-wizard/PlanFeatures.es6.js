@@ -13,7 +13,7 @@ export default function PlanFeatures ({resources}) {
         const tooltip = getTooltip(type, number);
         return (
           <li key={type}>
-            {toLocaleString(number) + ' '}
+            {['number', 'string'].includes(typeof number) && (toLocaleString(number) + ' ')}
             {tooltip && <Tooltip style={{display: 'inline'}} tooltip={tooltip}>
               <em className="x--underline">{pluralize(type, number)}</em>
             </Tooltip>}
