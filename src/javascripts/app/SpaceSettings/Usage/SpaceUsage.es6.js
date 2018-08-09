@@ -9,6 +9,14 @@ import Workbench from 'app/WorkbenchReact';
 import ResourceUsageList from './ResourceUsageList';
 import SpaceUsageSidebar from './SpaceUsageSidebar';
 
+const addMasterEnvironment = flow(
+  update('limits', flow(
+    update('included', add(1)),
+    update('maximum', add(1))
+  )),
+  update('usage', add(1))
+);
+
 const SpaceUsage = createReactClass({
   propTypes: {
     orgId: PropTypes.string.isRequired,
@@ -34,13 +42,7 @@ const SpaceUsage = createReactClass({
           flow(
             filter(isPermanent),
             keyBy('sys.id'),
-            update('environment', flow(
-              update('limits', flow(
-                update('included', add(1)),
-                update('maximum', add(1))
-              )),
-              update('usage', add(1))
-            ))
+            update('environment', addMasterEnvironment)
           )(
             await service.getAll()
           )
