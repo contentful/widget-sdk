@@ -14,6 +14,7 @@ angular.module('contentful')
   const CreateSpace = require('services/CreateSpace');
   const refreshNavState = require('navigation/NavState').makeStateRefresher($state, spaceContext);
   const Intercom = require('intercom');
+  const EnforcementsService = require('services/EnforcementsService');
 
   // TODO remove this eventually. All components should access it as a service
   $scope.spaceContext = spaceContext;
@@ -30,23 +31,23 @@ angular.module('contentful')
   };
 
   $scope.$watchCollection(() => ({
+    tokenLookup: TokenStore.getTokenLookup(),
     space: spaceContext.space,
-    tokenLookup: TokenStore.getTokenLookup()
+    enforcements: EnforcementsService.getEnforcements(spaceContext.getId())
   }), spaceAndTokenWatchHandler);
 
   K.onValueScope($scope, TokenStore.user$, handleUser);
 
   $scope.showCreateSpaceDialog = CreateSpace.showDialog;
 
-  function spaceAndTokenWatchHandler (collection) {
-    if (collection.tokenLookup) {
-      authorization.setTokenLookup(collection.tokenLookup, null, spaceContext.getEnvironmentId());
-
-      if (collection.space && authorization.authContext && authorization.authContext.hasSpace(collection.space.getId())) {
-        authorization.setSpace(collection.space);
-      }
-      refreshNavState();
+  function spaceAndTokenWatchHandler ({tokenLookup, space, enforcements}) {
+    if (!tokenLookup) {
+      return;
     }
+
+    authorization.update(tokenLookup, space, enforcements, spaceContext.getEnvironmentId());
+
+    refreshNavState();
   }
 
   function handleUser (user) {

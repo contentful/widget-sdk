@@ -4,16 +4,19 @@ angular.module('contentful')
   const React = require('react');
   const ReactDOM = require('react-dom');
   const Menu = require('components/CreateEntryButton').default;
+  const $parse = require('$parse');
 
   return {
     link: function ($scope, elem, attr) {
+      const isDisabled = $parse(attr.disabled);
+
       $scope.$watchCollection(() => ({
         contentTypes: _.get($scope, attr.contentTypes, []),
         suggestedContentTypeId: _.get($scope, attr.suggestedContentTypeId),
         size: attr.size,
         style: attr.style,
         text: attr.text,
-        disabled: _.get($scope, attr.disabled, false)
+        disabled: isDisabled($scope) || false
       }), props => {
         props = Object.assign({}, props, {
           onSelect: $scope.$eval(attr.onSelect)

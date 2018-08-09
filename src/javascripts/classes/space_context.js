@@ -30,6 +30,7 @@ angular.module('contentful')
   const logger = require('logger');
   const DocumentPool = require('data/sharejs/DocumentPool');
   const TokenStore = require('services/TokenStore');
+  const EnforcementsService = require('services/EnforcementsService');
   const createApiKeyRepo = require('data/CMA/ApiKeyRepo').default;
   const K = require('utils/kefir');
   const Auth = require('Authentication');
@@ -47,6 +48,9 @@ angular.module('contentful')
   const $rootScope = require('$rootScope');
 
   const publishedCTsBus$ = K.createPropertyBus([]);
+
+  // Enforcements deinitialization function, when changing space
+  let enforcementsDeInit;
 
   const spaceContext = {
     /**
@@ -92,6 +96,7 @@ angular.module('contentful')
 
       // `space` is @contentful/client.Space instance!
       let space = client.newSpace(spaceData);
+
       if (environmentId) {
         space = space.makeEnvironment(environmentId, shouldUseEnvEndpoint);
       }
@@ -146,6 +151,10 @@ angular.module('contentful')
       self.user = K.getValue(TokenStore.user$);
 
       previewEnvironmentsCache.clearAll();
+
+      // This happens here, rather than in `prelude.js`, since it's scoped to a space
+      // and not the user, so the spaceId is required.
+      enforcementsDeInit = EnforcementsService.init(space.getId());
 
       // TODO: remove this after we have store with combined reducers on top level
       // string is hardcoded because this code _is_ temporary
@@ -429,6 +438,12 @@ angular.module('contentful')
     }
     if (self.publishedCTs) {
       self.publishedCTs = null;
+    }
+
+    // Deinit the enforcement refreshing on space ID change, so that
+    // the previous space ID enforcement information isn't queried
+    if (enforcementsDeInit) {
+      enforcementsDeInit();
     }
   }
 

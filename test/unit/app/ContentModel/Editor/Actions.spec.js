@@ -23,10 +23,23 @@ describe('app/ContentModel/Editor/Actions', () => {
 
   beforeEach(function () {
     const self = this;
+
+    const flags = {
+      'feature-bv-2018-08-enforcements-api': true
+    };
+
     module('contentful/test', $provide => {
       $provide.value('navigation/closeState', self.closeSpy = sinon.spy());
       $provide.value('utils/LaunchDarkly', {
-        getCurrentVariation: sinon.stub().resolves(false)
+        getCurrentVariation: sinon.stub().callsFake(function (flagName) {
+          return new Promise(resolve => {
+            if (flags[flagName]) {
+              return resolve(flags[flagName]);
+            } else {
+              return resolve(false);
+            }
+          });
+        })
       });
     });
 
