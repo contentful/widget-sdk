@@ -5,7 +5,7 @@ import {assign, get, isNull, omitBy} from 'lodash';
 import {onValueScope, createPropertyBus} from 'utils/kefir';
 import getChangesObject from 'utils/ShallowObjectDiff';
 import {isOrgPlanEnterprise} from 'data/Org';
-import {getEnabledFlags} from 'debug/EnforceFlags';
+import {getEnabledFlags, getDisabledFlags} from 'debug/EnforceFlags';
 import {createMVar} from 'utils/Concurrent';
 import logger from 'logger';
 
@@ -170,7 +170,18 @@ function getVariationSetter (flagName, obs$) {
  */
 function getVariation (flagName, defaultValue) {
   const enabledFeatures = getEnabledFlags();
-  if (enabledFeatures.indexOf(flagName) >= 0) {
+  const disabledFeatures = getDisabledFlags();
+
+  const isDisabled = disabledFeatures.includes(flagName);
+  const isEnabled = enabledFeatures.includes(flagName);
+
+  if (isDisabled) {
+    // if we return undefined (UNINIT_VAL), `getCurrentVariation` will log an error
+    // also, semantically we want to return `false`, since we want to indicate
+    // that user does not need to have this feature (whatever behaviour it implies)
+    // because we check for disabled first, it means that it overrides enabled flags
+    return false;
+  } else if (isEnabled) {
     return true;
   } else {
     return client.variation(flagName, defaultValue);

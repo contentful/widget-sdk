@@ -83,7 +83,10 @@ describe('LaunchDarkly', () => {
 
     this.shallowObjectDiff = {default: sinon.stub().returns({})};
 
-    this.EnforceFlags = {getEnabledFlags: sinon.stub().returns([])};
+    this.EnforceFlags = {
+      getEnabledFlags: sinon.stub().returns([]),
+      getDisabledFlags: sinon.stub().returns([])
+    };
 
     this.logger = { logError: sinon.stub() };
 
@@ -249,6 +252,22 @@ describe('LaunchDarkly', () => {
       this.client.variation.withArgs('FLAG').returns('false');
       this.client._emit('change:FLAG');
       expect(this.$scope.flagValue).toBe(true);
+    });
+
+    it('overrides value with false for disabled feature flags', function* () {
+      yield this.ready();
+      this.EnforceFlags.getDisabledFlags.returns(['FLAG']);
+      this.client.variation.withArgs('FLAG').returns('true');
+      this.client._emit('change:FLAG');
+      expect(this.$scope.flagValue).toBe(false);
+    });
+
+    it('disabled feature flag overrides enable feature flag', function* () {
+      yield this.ready();
+      this.EnforceFlags.getDisabledFlags.returns(['FLAG']);
+      this.EnforceFlags.getEnabledFlags.returns(['FLAG']);
+      this.client._emit('change:FLAG');
+      expect(this.$scope.flagValue).toBe(false);
     });
   });
 });
