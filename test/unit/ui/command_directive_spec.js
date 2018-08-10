@@ -1,7 +1,6 @@
 'use strict';
 
 describe('uiCommand directive element', () => {
-
   beforeEach(function () {
     module('contentful/test');
     this.createCommand = this.$inject('command').create;
@@ -34,7 +33,6 @@ describe('uiCommand directive element', () => {
   });
 
   describe('disabled', () => {
-
     it('is not disabled by default', function () {
       const cmd = this.createCommand(sinon.stub());
       const el = this.$compile('<button ui-command=cmd>', {cmd: cmd});
@@ -108,7 +106,6 @@ describe('uiCommand directive element', () => {
       expect(el.prop('disabled')).toBe(false);
       expect(el.attr('aria-disabled')).toBeUndefined();
     });
-
   });
 
   it('runs the action on click', function () {
@@ -148,5 +145,4 @@ describe('uiCommand directive element', () => {
     expect(el.hasClass('is-loading')).toBe(false);
     expect(el.attr('aria-busy')).toBeUndefined();
   });
-
 });

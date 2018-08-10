@@ -29,7 +29,7 @@ angular.module('cf.forms')
   restrict: 'A',
   require: ['^cfValidate', 'form'],
 
-  link: function (scope, elem, attrs, ctrls) {
+  link: function (scope, _elem, attrs, ctrls) {
     const validator = ctrls[0];
     const form = ctrls[1];
 
@@ -83,7 +83,7 @@ angular.module('cf.forms')
 .directive('cfValidateModel', ['$interpolate', $interpolate => ({
   require: ['ngModel', '^cfValidate'],
 
-  link: function (scope, elem, attrs, ctrls) {
+  link: function (scope, _elem, attrs, ctrls) {
     const modelCtrl = ctrls[0];
     const validator = ctrls[1];
     let schemaErrors = [];
@@ -111,11 +111,10 @@ angular.module('cf.forms')
       return validator.runLater(errorPath, true);
     }
 
-    function mapBy(collection, iteratee) {
+    function mapBy (collection, iteratee) {
       const grouped = _.groupBy(collection, iteratee);
       return _.mapValues(grouped, items => items[0]);
     }
-
   }
 })])
 
@@ -135,10 +134,9 @@ angular.module('cf.forms')
 .directive('cfValidateOn', [() => {
   const allowedEvents = ['update', 'commit'];
   return {
-    link: function (scope, element, attrs) {
+    link: function (scope, _element, attrs) {
       const eventName = attrs.cfValidateOn;
-      if (allowedEvents.indexOf(eventName) === -1)
-        throw new Error('Unknown validation event "' + eventName + '"');
+      if (allowedEvents.indexOf(eventName) === -1) { throw new Error('Unknown validation event "' + eventName + '"'); }
       scope.$validateOn = eventName;
     }
   };

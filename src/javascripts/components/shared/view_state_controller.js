@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('ViewStateController', ['require', '$scope', 'defaultState', function ViewStateController(require, $scope, defaultState) {
+angular.module('contentful').controller('ViewStateController', ['defaultState', function ViewStateController (defaultState) {
   /**
    * @ngdoc type
    * @name ViewStateController
@@ -45,5 +45,4 @@ angular.module('contentful').controller('ViewStateController', ['require', '$sco
    * @param {string} name of state to verify
   */
   this.is = expectedState => state === expectedState;
-
 }]);

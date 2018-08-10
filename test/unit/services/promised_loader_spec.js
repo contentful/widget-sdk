@@ -2,7 +2,6 @@ import * as sinon from 'helpers/sinon';
 
 describe('Promised loader service', () => {
   let loader, stubs, $rootScope, $q;
-  let host;
 
   beforeEach(() => {
     module('contentful/test', $provide => {
@@ -11,16 +10,12 @@ describe('Promised loader service', () => {
       ]);
     });
     inject($injector => {
-      const PromisedLoader        = $injector.get('PromisedLoader');
+      const PromisedLoader = $injector.get('PromisedLoader');
       const delayedInvocationStub = $injector.get('delayedInvocationStub');
-      $rootScope                = $injector.get('$rootScope');
-      $q                        = $injector.get('$q');
+      $rootScope = $injector.get('$rootScope');
+      $q = $injector.get('$q');
       loader = new PromisedLoader();
       loader._loadPromise = delayedInvocationStub(loader._loadPromise);
-
-      host = {
-        methodName: stubs.method
-      };
     });
   });
 
@@ -83,8 +78,8 @@ describe('Promised loader service', () => {
   });
 
   describe('attempt to load more than once simultaneously', () => {
-    beforeEach(function() {
-      this.first  = $q.defer();
+    beforeEach(function () {
+      this.first = $q.defer();
       this.second = $q.defer();
       stubs.method
         .onCall(0).returns(this.first.promise)
@@ -115,9 +110,7 @@ describe('Promised loader service', () => {
     it('calls second error callback', () => {
       sinon.assert.called(stubs.error2);
     });
-
   });
-
 });
 
 describe('PromisedLoader service', () => {
@@ -135,5 +128,4 @@ describe('PromisedLoader service', () => {
   it('The debounced function in two Promised Loaders should be distinct', () => {
     expect(a._loadPromise).not.toBe(b._loadPromise);
   });
-
 });

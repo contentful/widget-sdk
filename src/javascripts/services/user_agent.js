@@ -10,11 +10,10 @@
  * We also determine what key is used as keystroke action modifier ("Ctrl" or "Cmd")
  */
 angular.module('contentful').factory('userAgent', ['require', require => {
-
-  var $window   = require('$window');
+  var $window = require('$window');
   var userAgent = _.get($window, 'navigator.userAgent', '');
-  var platform  = _.get($window, 'navigator.platform', '');
-  var ctrlKey   = 'Ctrl';
+  var platform = _.get($window, 'navigator.platform', '');
+  var ctrlKey = 'Ctrl';
 
   /**
    * Tests reference:

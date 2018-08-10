@@ -1,34 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {keyBy, property} from 'lodash';
 import {ResourceUsageHighlight, ResourceUsage} from './ResourceUsage';
 
-const ResourceUsageList = ({resources}) => {
-  if (!resources.length) return null;
-
-  const byId = keyBy(resources, property('sys.id'));
-
-  return (
-    <div className="resource-list">
+const ResourceUsageList = ({resources}) =>
+  (resources ? <div className="resource-list">
       <section className="resource-list__highlights">
-        <ResourceUsageHighlight resource={byId['entry']} />
-        <ResourceUsageHighlight resource={byId['asset']} />
-        <ResourceUsageHighlight resource={byId['space_membership']} />
-        <ResourceUsageHighlight resource={byId['environment']} />
+        <ResourceUsageHighlight resource={resources['entry']} />
+        <ResourceUsageHighlight resource={resources['asset']} />
+        <ResourceUsageHighlight resource={resources['space_membership']} />
+        <ResourceUsageHighlight resource={resources['environment']} showMaximumLimit />
       </section>
 
-      <ResourceUsage resource={byId['content_type']} />
-      <ResourceUsage resource={byId['locale']} />
-      <ResourceUsage resource={byId['role']} />
-      <ResourceUsage resource={byId['record']} description="Entries + Media" />
-      <ResourceUsage resource={byId['api_key']} />
-      <ResourceUsage resource={byId['webhook_definition']} />
-    </div>
+      <ResourceUsage resource={resources['content_type']}/>
+      <ResourceUsage resource={resources['locale']}/>
+      <ResourceUsage resource={resources['role']}/>
+      <ResourceUsage resource={resources['record']} description="Entries + Media"/>
+      <ResourceUsage resource={resources['api_key']}/>
+      <ResourceUsage resource={resources['webhook_definition']}/>
+    </div> : null
   );
-};
+
 ResourceUsageList.propTypes = {
-  resources: PropTypes.arrayOf(PropTypes.object)
+  resources: PropTypes.object
 };
 
 export default ResourceUsageList;

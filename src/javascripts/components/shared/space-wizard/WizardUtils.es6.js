@@ -299,7 +299,7 @@ export function createTrackingData (data) {
     currentStep: currentStepId || null,
     targetStep: targetStepId || null,
     intendedAction: action,
-    paymentDetailsExist: paymentDetailsExist || null,
+    paymentDetailsExist: (typeof paymentDetailsExist === 'boolean' ? paymentDetailsExist : null),
     targetSpaceType: get(selectedPlan, 'internalName', null),
     targetProductType: get(selectedPlan, 'productType', null),
     targetSpaceName: newSpaceName || null,

@@ -25,7 +25,7 @@ angular.module('contentful')
  */
 .factory('navigation/confirmLeaveEditor', ['require', require => {
   const modalDialog = require('modalDialog');
-  const Command     = require('command');
+  const Command = require('command');
 
   return function createLeaveConfirmator (runSave, template) {
     return function confirmLeaveEditor () {
@@ -52,12 +52,11 @@ angular.module('contentful')
           save.execute();
         },
         scopeData: {
-          actions: {save: save, discard: discard, cancel: cancel},
+          actions: {save: save, discard: discard, cancel: cancel}
         }
       });
 
       return dialog.promise;
     };
   };
-
 }]);

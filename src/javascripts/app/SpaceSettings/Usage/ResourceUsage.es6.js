@@ -63,18 +63,19 @@ ResourceUsage.propTypes = {
   abbreviateLimit: PropTypes.bool
 };
 
-export const ResourceUsageHighlight = ({resource}) => {
+export const ResourceUsageHighlight = ({resource, showMaximumLimit}) => {
   return (
     <div className="resource-list__item resource-list__item--highlight">
-      <div className="resource-list__item__content">
-        <div>
-          <span className="resource-list__item__usage">{resource.usage}</span>
-          <span className="resource-list__item__title">{resourceHumanNameMap[resource.sys.id]}</span>
-        </div>
-      </div>
+      <div className="resource-list__item__usage">{`${resource.usage}${showMaximumLimit ? ` / ${getResourceLimits(resource).maximum}` : ''}`}</div>
+      <div className="resource-list__item__title">{resourceHumanNameMap[resource.sys.id]}</div>
     </div>
   );
 };
 ResourceUsageHighlight.propTypes = {
-  resource: PropTypes.object.isRequired
+  resource: PropTypes.object.isRequired,
+  showMaximumLimit: PropTypes.bool
+};
+
+ResourceUsageHighlight.defaultProps = {
+  showMaximumLimit: false
 };

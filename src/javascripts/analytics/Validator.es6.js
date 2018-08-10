@@ -102,6 +102,9 @@ export const validEvents = {
   extension: [
     'save',
     'install'
+  ],
+  entity_button: [
+    'click'
   ]
 };
 

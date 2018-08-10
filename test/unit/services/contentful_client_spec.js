@@ -1,15 +1,15 @@
 'use strict';
 
 describe('Contentful Client', () => {
-  let $httpBackend, $rootScope;
+  let $httpBackend;
+
   let client, successStub, failStub;
 
   beforeEach(() => {
     module('contentful/test');
     inject($injector => {
-
       $httpBackend = $injector.get('$httpBackend');
-      $rootScope = $injector.get('$rootScope');
+
       const contentfulClient = $injector.get('contentfulClient');
       client = contentfulClient.newClient({
         host: 'api.contentful.com',
@@ -28,8 +28,8 @@ describe('Contentful Client', () => {
     $httpBackend.verifyNoOutstandingRequest();
   }));
 
-  function getUrl(path) {
-    return 'https://api.contentful.com:443/spaces/spaceid'+path;
+  function getUrl (path) {
+    return 'https://api.contentful.com:443/spaces/spaceid' + path;
   }
 
   it('gets a space', () => {
@@ -157,6 +157,4 @@ describe('Contentful Client', () => {
     $httpBackend.expectGET(getUrl('/assets/123')).respond(404, {});
     $httpBackend.flush();
   });
-
-
 });

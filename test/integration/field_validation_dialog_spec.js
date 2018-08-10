@@ -14,11 +14,11 @@ import * as K from 'utils/kefir';
 xdescribe('validation dialog', () => {
   let openDialog, dialog, scope;
 
-  function getFieldProperty(scope, path) {
+  function getFieldProperty (scope, path) {
     return _.get(scope, ['field', path].join('.'));
   }
 
-  function setFieldProperty(scope, path, value) {
+  function setFieldProperty (scope, path, value) {
     return _.set(scope, ['field', path].join('.'), value);
   }
 
@@ -26,13 +26,12 @@ xdescribe('validation dialog', () => {
     let modalDialog;
     module('contentful/test');
     inject(($rootScope, $injector) => {
-      scope        = $rootScope.$new();
-      modalDialog  = $injector.get('modalDialog');
+      scope = $rootScope.$new();
+      modalDialog = $injector.get('modalDialog');
     });
 
     openDialog = () => {
-      if (dialog)
-        dialog.cancel();
+      if (dialog) { dialog.cancel(); }
 
       dialog = modalDialog.open({
         scope: scope,
@@ -62,7 +61,7 @@ xdescribe('validation dialog', () => {
     }
   });
 
-  function clickSave() {
+  function clickSave () {
     dialog.domElement
     .find('button:contains(Save)')
     .click();
@@ -88,9 +87,8 @@ xdescribe('validation dialog', () => {
     describeLengthValidation('items.validations');
   });
 
-  function describeLengthValidation(validationPath) {
-
-    function settings() {
+  function describeLengthValidation (validationPath) {
+    function settings () {
       return dialog.domElement.find('[aria-label="Enforce input length"]');
     }
 
@@ -187,7 +185,6 @@ xdescribe('validation dialog', () => {
         message: 'a new error message'
       }]);
     });
-
   }
 
   describe('range validation', () => {
@@ -196,7 +193,7 @@ xdescribe('validation dialog', () => {
       openDialog();
     });
 
-    function settings() {
+    function settings () {
       return dialog.domElement.find('[aria-label="Specify allowed number range"]');
     }
 
@@ -235,15 +232,14 @@ xdescribe('validation dialog', () => {
 
       expect(scope.field.validations).toEqual([]);
     });
-
   });
 
   describe('regexp validation', () => {
-    function settings() {
+    function settings () {
       return dialog.domElement.find('[aria-label="Match a specific pattern"]');
     }
 
-    function enable() {
+    function enable () {
       settings()
       .find('[aria-label="Enable validation"]')
       .click();
@@ -314,11 +310,11 @@ xdescribe('validation dialog', () => {
 
 
   describe('predefined values', () => {
-    function enterKeypressEvent() {
-      return $.Event('keydown', {keyCode: $.ui.keyCode.ENTER} );
+    function enterKeypressEvent () {
+      return $.Event('keydown', {keyCode: $.ui.keyCode.ENTER});
     }
 
-    function settings() {
+    function settings () {
       return dialog.domElement.find('[aria-label="Predefined values"]');
     }
 
@@ -410,7 +406,7 @@ xdescribe('validation dialog', () => {
   });
 
   describe('content type validation', () => {
-    function settings() {
+    function settings () {
       return dialog.domElement.find('[aria-label="Specify allowed entry type"]');
     }
 
@@ -420,13 +416,13 @@ xdescribe('validation dialog', () => {
       scope.spaceContext = {
         publishedCTs: {
           items$: K.createMockProperty([{
-            getId:   sinon.stub().returns('1'),
+            getId: sinon.stub().returns('1'),
             getName: sinon.stub().returns('CT 1')
           }, {
-            getId:   sinon.stub().returns('2'),
+            getId: sinon.stub().returns('2'),
             getName: sinon.stub().returns('CT 2')
           }, {
-            getId:   sinon.stub().returns('3'),
+            getId: sinon.stub().returns('3'),
             getName: sinon.stub().returns('CT 3')
           }])
         }
@@ -461,7 +457,7 @@ xdescribe('validation dialog', () => {
   });
 
   describe('asset type validation', () => {
-    function settings() {
+    function settings () {
       return dialog.domElement.find('[aria-label="Specify allowed file types"]');
     }
 
@@ -517,7 +513,7 @@ xdescribe('validation dialog', () => {
       openDialog();
     });
 
-    function settings() {
+    function settings () {
       return dialog.domElement.find('[aria-label="Specify number of Symbols"]');
     }
 
@@ -537,7 +533,6 @@ xdescribe('validation dialog', () => {
       expect(scope.field.validations)
       .toEqual([{size: {min: 10, max: 20}}]);
     });
-
   });
 
   describe('file size validation', () => {
@@ -546,7 +541,7 @@ xdescribe('validation dialog', () => {
       openDialog();
     });
 
-    function settings(locator) {
+    function settings (locator) {
       return dialog.domElement
       .find('[aria-label="Specify allowed file size"]')
       .find(locator);
@@ -598,7 +593,7 @@ xdescribe('validation dialog', () => {
       openDialog();
     });
 
-    function settings(selector) {
+    function settings (selector) {
       return dialog.domElement
       .find('[aria-label="Specify image dimensions"]')
       .find(selector);
@@ -628,7 +623,7 @@ xdescribe('validation dialog', () => {
       expect(scope.field.validations)
       .toEqual([{assetImageDimensions: {
         width: {min: 100, max: null},
-        height: {min: 200, max: 200},
+        height: {min: 200, max: 200}
       }}]);
     });
   });

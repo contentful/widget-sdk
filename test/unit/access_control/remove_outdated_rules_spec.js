@@ -1,7 +1,6 @@
 'use strict';
 
 describe('Remove outdated rules', () => {
-
   let toInternal, remove;
 
   beforeEach(function () {
@@ -10,7 +9,7 @@ describe('Remove outdated rules', () => {
     remove = this.$inject('PolicyBuilder/removeOutdatedRules');
   });
 
-  function createPolicy(ctId, path, type, effect) {
+  function createPolicy (ctId, path, type, effect) {
     type = type || 'Entry';
     effect = effect || 'allow';
 
@@ -23,7 +22,7 @@ describe('Remove outdated rules', () => {
     }};
   }
 
-  function createCt(id, fields) {
+  function createCt (id, fields) {
     return {
       sys: {id: id},
       fields: fields || []
@@ -71,7 +70,7 @@ describe('Remove outdated rules', () => {
 
     it('fallbacks to internal field ID', () => {
       const internal = toInternal({policies: [createPolicy('ctid', 'fields.internal.%')]});
-      const ct = createCt('ctid',  {fields: [{id: 'internal'}, {apiName: 'xyz'}]});
+      const ct = createCt('ctid', {fields: [{id: 'internal'}, {apiName: 'xyz'}]});
 
       const result = remove(internal, [ct], []);
       expect(internal.entries.allowed.length).toBe(0);
@@ -79,7 +78,7 @@ describe('Remove outdated rules', () => {
     });
 
     it('removes rules from all rule sets', () => {
-      function t(path, cts, locales) {
+      function t (path, cts, locales) {
         const internal = toInternal({policies: [
           createPolicy('ctid', path, 'Entry', 'allow'),
           createPolicy('ctid', path, 'Entry', 'deny'),

@@ -21,10 +21,10 @@ angular.module('contentful')
   const $state = require('$state');
   const entityCreator = require('entityCreator');
   const ResourceUtils = require('utils/ResourceUtils');
-  const createResourceService = require('services/ResourceService').default;
   const EnvironmentUtils = require('utils/EnvironmentUtils');
   const debounce = require('lodash').debounce;
   const truncate = require('stringUtils').truncate;
+  const get = require('lodash').get;
 
   const searchController = $controller('EntryListSearchController', {$scope: $scope});
   $controller('DisplayedFieldsController', {$scope: $scope});
@@ -65,17 +65,6 @@ angular.module('contentful')
   $scope.shouldHide = accessChecker.shouldHide;
   $scope.shouldDisable = accessChecker.shouldDisable;
 
-  const spaceId = spaceContext.space.data.sys.id;
-
-  // Get the resource for disabling the button
-  const resources = createResourceService(spaceId);
-  const refetchResource = debounce(() => {
-    return resources.get('record').then(recordResource => {
-      $scope.disableButton = ResourceUtils.resourceMaximumLimitReached(recordResource);
-      $scope.$evalAsync();
-    });
-  });
-
   // Properties passed to RecordsResourceUsage
   const resetUsageProps = debounce(() => {
     $scope.usageProps = {
@@ -84,10 +73,19 @@ angular.module('contentful')
     };
   });
 
-  $scope.$watch('paginator.getTotal()', refetchResource);
+  const trackEnforcedButtonClick = (err) => {
+    // If we get reason(s), that means an enforcement is present
+    const reason = get(err, 'body.details.reasons', null);
+
+    Analytics.track('entity_button:click', {
+      entityType: 'entry',
+      enforced: Boolean(reason),
+      reason
+    });
+  };
+
   $scope.$watch('paginator.getTotal()', resetUsageProps);
   resetUsageProps();
-  refetchResource();
 
   $scope.entryCache = new EntityListCache({
     space: spaceContext.space,
@@ -115,8 +113,13 @@ angular.module('contentful')
         contentType: contentType,
         response: entry
       });
+
       // X.list -> X.detail
       $state.go('^.detail', {entryId: entry.getId()});
+    }).catch(err => {
+      trackEnforcedButtonClick(err);
+
+      throw err;
     });
   };
 

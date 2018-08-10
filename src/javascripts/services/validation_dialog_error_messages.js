@@ -54,18 +54,15 @@ angular.module('contentful')
       return 'Please check at least one file type';
     },
 
-   'linkContentType': function () {
-     return 'Please check at least one content type';
-   },
+    'linkContentType': function () {
+      return 'Please check at least one content type';
+    },
 
-   'assetFileSize': sizeMessage,
-   'assetImageDimensions': sizeMessage,
+    'assetFileSize': sizeMessage,
+    'assetImageDimensions': sizeMessage
   };
 
   return function getErrorMessage (validationType, error) {
-    if (validationType in messages)
-      return messages[validationType](error.details);
-    else
-      return error.details;
+    if (validationType in messages) { return messages[validationType](error.details); } else { return error.details; }
   };
 });

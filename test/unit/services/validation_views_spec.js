@@ -1,7 +1,6 @@
 'use strict';
 
 describe('predefined validation regexps', () => {
-
   beforeEach(function () {
     module('contentful/test');
     const views = this.$inject('validationViews');
@@ -39,14 +38,13 @@ describe('predefined validation regexps', () => {
   });
 
   describe('time', () => {
-
     it('validates 12h time', function () {
       const regexp = _.find(this.views, {name: '12h-time'}).pattern;
       expectRegexpMatch(regexp, [
         '01:00 pm', '01:00 pM', '01:00 Am', '01:00AM',
         '1:00 am',
         '12:00 am', '12:59 pm',
-        '1:00:00 am',
+        '1:00:00 am'
       ]);
     });
 
@@ -55,7 +53,7 @@ describe('predefined validation regexps', () => {
       expectRegexpFail(regexp, [
         '00:59 am',
         '01:0 am',
-        '01:00:60 am',
+        '01:00:60 am'
       ]);
     });
 
@@ -64,7 +62,7 @@ describe('predefined validation regexps', () => {
       expectRegexpMatch(regexp, [
         '00:00', '01:00', '13:00', '23:59',
         '1:00',
-        '1:00:00',
+        '1:00:00'
       ]);
     });
 
@@ -78,18 +76,16 @@ describe('predefined validation regexps', () => {
       ]);
     });
 
-    function expectRegexpMatch(re, values) {
+    function expectRegexpMatch (re, values) {
       _.forEach(values, value => {
         expect(value).toMatch(re);
       });
     }
 
-    function expectRegexpFail(re, values) {
+    function expectRegexpFail (re, values) {
       _.forEach(values, value => {
         expect(value).not.toMatch(re);
       });
     }
-
   });
-
 });

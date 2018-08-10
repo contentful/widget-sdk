@@ -2,34 +2,34 @@
 
 angular.module('contentful').directive('cfMarkdownAction', () => {
   const descriptors = {
-    bold:          ['Bold',                     'fa-bold'],
-    italic:        ['Italic',                   'fa-italic'],
-    quote:         ['Quote',                    'fa-quote-left'],
-    ul:            ['Unordered list',           'fa-list'],
-    ol:            ['Ordered list',             'fa-list-ol'],
-    link:          ['Link',                     'fa-link'],
-    strike:        ['Strike out',               'fa-strikethrough'],
-    code:          ['Code block',               'fa-code'],
-    hr:            ['Horizontal rule',          'fa-arrows-h'],
-    indent:        ['Increase indentation',     'fa-indent'],
-    dedent:        ['Decrease indentation',     'fa-dedent'],
-    embed:         ['Embed external content',   'fa-cubes'],
-    table:         ['Insert table',             'fa-table'],
-    special:       ['Insert special character', 'fa-eur'],
-    organizeLinks: ['Organize links',           'fa-sitemap'],
-    undo:          ['Undo',                     'fa-undo'],
-    redo:          ['Redo',                     'fa-repeat']
+    bold: ['Bold', 'fa-bold'],
+    italic: ['Italic', 'fa-italic'],
+    quote: ['Quote', 'fa-quote-left'],
+    ul: ['Unordered list', 'fa-list'],
+    ol: ['Ordered list', 'fa-list-ol'],
+    link: ['Link', 'fa-link'],
+    strike: ['Strike out', 'fa-strikethrough'],
+    code: ['Code block', 'fa-code'],
+    hr: ['Horizontal rule', 'fa-arrows-h'],
+    indent: ['Increase indentation', 'fa-indent'],
+    dedent: ['Decrease indentation', 'fa-dedent'],
+    embed: ['Embed external content', 'fa-cubes'],
+    table: ['Insert table', 'fa-table'],
+    special: ['Insert special character', 'fa-eur'],
+    organizeLinks: ['Organize links', 'fa-sitemap'],
+    undo: ['Undo', 'fa-undo'],
+    redo: ['Redo', 'fa-repeat']
   };
 
   const template = [
     '<button ',
-      'tabindex="-1" ',
-      'tooltip="{{ tooltip }}" ',
-      'tooltip-placement="{{ placement }}" ',
-      'ng-click="actions[name]()" ',
-      'class="toolbar-button fa" ',
-      'ng-class="cssClass" ',
-      'ng-disabled="isDisabled"',
+    'tabindex="-1" ',
+    'tooltip="{{ tooltip }}" ',
+    'tooltip-placement="{{ placement }}" ',
+    'ng-click="actions[name]()" ',
+    'class="toolbar-button fa" ',
+    'ng-class="cssClass" ',
+    'ng-disabled="isDisabled"',
     '></button>'
   ].join('');
 
@@ -64,7 +64,6 @@ angular.module('contentful').directive('cfMarkdownHeadingAction', () => ({
 }));
 
 angular.module('contentful').directive('cfMarkdownInsertMediaAction', ['require', require => {
-  const LD = require('utils/LaunchDarkly');
   const accessChecker = require('access_control/AccessChecker');
   const templateString = require('markdown_editor/templates/InsertMediaAction').default;
 

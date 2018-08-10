@@ -11,7 +11,7 @@ describe('signal', () => {
     });
 
     it('calls attached listeners on dispatch', function () {
-      const listeners = _.map(_.range(1,4), () => sinon.stub());
+      const listeners = _.map(_.range(1, 4), () => sinon.stub());
 
       const signal = this.createSignal();
 
@@ -71,5 +71,4 @@ describe('signal', () => {
       sinon.assert.calledWithExactly(listener, 'VALUE');
     });
   });
-
 });

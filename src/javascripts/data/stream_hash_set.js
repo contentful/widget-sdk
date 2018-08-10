@@ -58,18 +58,13 @@ angular.module('cf.data')
     }
 
     function addMultiple (items) {
-      let changed = false;
       items.forEach(item => {
         const id = item.getId();
         if (byId[id] !== item) {
           byId[id] = item;
-          changed = true;
         }
       });
-
-      if (changed) {
-        updateItems();
-      }
+      updateItems();
     }
 
     function updateItems () {

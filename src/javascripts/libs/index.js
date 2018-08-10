@@ -32,6 +32,7 @@ window.libs = [
 
   ['jquery', window.$],
   ['lodash', window._],
+  ['lodash/fp', require('lodash/fp')],
   ['@contentful/ui-component-library', require('@contentful/ui-component-library')],
   ['is-hotkey', require('is-hotkey')],
   ['slate', require('slate')],

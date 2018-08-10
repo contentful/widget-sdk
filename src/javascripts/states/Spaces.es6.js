@@ -79,7 +79,8 @@ const spaceDetail = {
     spaceContext: ['spaceContext', 'spaceData', (spaceContext, spaceData) => spaceContext.resetWithSpace(spaceData)]
   },
   onEnter: ['spaceData', spaceData => {
-    Analytics.trackSpaceChange({data: spaceData});
+    const organizationData = spaceData.organization;
+    Analytics.trackContextChange(spaceData, organizationData);
   }],
   template: JST.cf_no_section_available(),
   controller: ['$scope', '$state', 'spaceData', ($scope, $state, spaceData) => {

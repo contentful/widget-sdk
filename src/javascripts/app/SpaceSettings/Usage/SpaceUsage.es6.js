@@ -3,10 +3,19 @@ import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import * as ReloadNotification from 'ReloadNotification';
 import createResourceService from 'services/ResourceService';
+import {update, add, keyBy, flow, filter} from 'lodash/fp';
 
 import Workbench from 'app/WorkbenchReact';
 import ResourceUsageList from './ResourceUsageList';
 import SpaceUsageSidebar from './SpaceUsageSidebar';
+
+const addMasterEnvironment = flow(
+  update('limits', flow(
+    update('included', add(1)),
+    update('maximum', add(1))
+  )),
+  update('usage', add(1))
+);
 
 const SpaceUsage = createReactClass({
   propTypes: {
@@ -15,7 +24,7 @@ const SpaceUsage = createReactClass({
   },
   getInitialState () {
     return {
-      resources: []
+      resources: undefined
     };
   },
   componentDidMount () {
@@ -26,11 +35,18 @@ const SpaceUsage = createReactClass({
     const {spaceId} = this.props;
     const service = createResourceService(spaceId);
     const isPermanent = resource => resource.kind === 'permanent';
-    let resources;
 
     try {
-      resources = await service.getAll();
-      this.setState({resources: resources.filter(isPermanent)});
+      this.setState({
+        resources:
+          flow(
+            filter(isPermanent),
+            keyBy('sys.id'),
+            update('environment', addMasterEnvironment)
+          )(
+            await service.getAll()
+          )
+      });
     } catch (e) {
       ReloadNotification.apiErrorHandler(e);
     }

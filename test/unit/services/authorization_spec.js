@@ -11,7 +11,7 @@ describe('Authorization service', () => {
 
     module('contentful/test', $provide => {
       $provide.constant('worf', worfStub);
-      $provide.value('access_control/AccessChecker', accessChecker)
+      $provide.value('access_control/AccessChecker', accessChecker);
     });
 
     authorization = this.$inject('authorization');
@@ -29,70 +29,51 @@ describe('Authorization service', () => {
     expect(authorization.spaceContext).toBeNull();
   });
 
-  describe('setting a token lookup', () => {
-    let tokenLookup, space, worfReturn;
-    let setSpaceStub;
+  describe('setting context', () => {
+    let tokenLookup, space, enforcements, environmentId, authContext, spaceContext;
     beforeEach(() => {
-      tokenLookup = {tokenLookup: 0};
-      space = {name: 'space'};
-      worfStub.returns(worfReturn);
-      setSpaceStub = sinon.stub(authorization, 'setSpace');
-      authorization.setTokenLookup(tokenLookup, space);
+      spaceContext = {};
+      authContext = {space: () => spaceContext, hasSpace: () => true};
+      tokenLookup = {tokenLookup: 0, spaces: [{sys: {id: '1234'}}]};
+      space = {name: 'space', getId: () => '1234'};
+      enforcements = [{sys: {id: 'E_1'}}];
+      environmentId = 'master';
+      worfStub.returns(authContext);
+
+      authorization.update(tokenLookup, space, enforcements, environmentId);
     });
 
     it('gets an auth context', () => {
-      expect(authorization.authContext).toBe(worfReturn);
+      expect(authorization.authContext).toBe(authContext);
     });
 
     it('calls worf with tokenLookup', () => {
       sinon.assert.calledWith(worfStub, tokenLookup);
     });
 
+    it('calls worf with environment data', () => {
+      expect(worfStub.firstCall.args[1].sys.id).toBe(environmentId);
+    });
+
     it('sets a space', () => {
-      sinon.assert.calledWith(setSpaceStub, space);
-    });
-  });
-
-  describe('setting a space', () => {
-    let spaceStub, idStub;
-    const spaceContext = {
-      spaceStuff: 123
-    };
-    beforeEach(() => {
-      spaceStub = sinon.stub();
-      idStub = sinon.stub();
-      spaceStub.returns(spaceContext);
+      expect(authorization.spaceContext).toBe(spaceContext);
     });
 
-    it('sets nothing with no space', () => {
-      authorization.setSpace();
-      expect(authorization.spaceContext).toBeNull();
+    it('does not set a space if space is null', () => {
+      authorization.update(tokenLookup, null, null, environmentId);
+      expect(authorization.spaceContext).toBe(null);
     });
 
-    it('sets nothing with no authContext', () => {
-      authorization.setSpace({});
-      expect(authorization.spaceContext).toBeNull();
+    it('does not set a space if it is not in the token', () => {
+      authContext.hasSpace = () => false;
+      authorization.update(tokenLookup, space, enforcements, environmentId);
+      expect(authorization.spaceContext).toBe(null);
     });
 
-    describe('with space and auth context', () => {
-      beforeEach(() => {
-        authorization.authContext = {
-          space: spaceStub
-        };
-        authorization.setSpace({getId: idStub});
-      });
+    it('patches the token with enforcements data', function () {
+      const worfToken = worfStub.firstCall.args[0];
 
-      it('has a space context', () => {
-        expect(authorization.spaceContext).toBe(spaceContext);
-      });
-
-      it('calls space on auth context', () => {
-        sinon.assert.called(spaceStub);
-      });
-
-      it('gets an id from the space', () => {
-        sinon.assert.called(idStub);
-      });
+      expect(worfToken.spaces[0].enforcements).toBe(enforcements);
     });
   });
 });

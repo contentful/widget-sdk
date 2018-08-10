@@ -6,7 +6,7 @@ describe('cfValidateForm directive', () => {
       $provide.constant('$timeout', fn => {
         fn();
       });
-    })
+    });
 
     const $compile = this.$inject('$compile');
 
@@ -37,7 +37,7 @@ describe('cfValidateForm directive', () => {
       {name: '1', path: ['a']},
       {name: '2', path: ['a', 'b']},
       {name: '3', path: ['a', 'b', 'c']},
-      {name: '4', path: ['a', 'b', 'c']},
+      {name: '4', path: ['a', 'b', 'c']}
     ]);
     this.validator.run();
     this.$apply();
@@ -49,7 +49,7 @@ describe('cfValidateForm directive', () => {
     expect(this.form.$valid).toBe(true);
 
     this.scope.schema.errors.returns([
-      {name: '1', path: ['a', 'b']},
+      {name: '1', path: ['a', 'b']}
     ]);
     this.validator.run();
     this.$apply();
@@ -57,7 +57,7 @@ describe('cfValidateForm directive', () => {
     expect(this.form.$valid).toBe(false);
 
     this.scope.schema.errors.returns([
-      {name: '1', path: ['a', 'c']},
+      {name: '1', path: ['a', 'c']}
     ]);
     this.validator.run();
     this.$apply();

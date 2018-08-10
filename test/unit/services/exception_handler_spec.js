@@ -47,6 +47,4 @@ xdescribe('Exception handler service', () => {
   it('ReloadNotification triggered', () => {
     sinon.assert.called(triggerStub);
   });
-
-
 });

@@ -15,7 +15,7 @@ import _ from 'lodash';
  * Call to `enable` enables tracking and initializes
  * session data with user's details. There are three
  * tracking methods that are also used to collect
- * session data (`trackSpaceChange`, `trackStateChange`)
+ * session data (`trackContextChange`, `trackStateChange`)
  * . Session data can be obtained with `getSessionData`.
  *
  * The rest of tracking is realised with calls to
@@ -153,18 +153,27 @@ function identify (extension) {
 
 /**
  * @ngdoc method
- * @name analytics#trackSpaceChange
- * @param {API.Space} space
+ * @name analytics#trackContextChange
+ * @param {object} space
+ * @param {object} organization
  * @description
  * Sets or replaces session space and organization
- * data. Pass `null` when leaving space context.
+ * data. Pass `null` when leaving context.
+ *
+ * `null` must be explicitly passed to unset the current
+ * space/org contexts.
  */
-export function trackSpaceChange (space) {
+export function trackContextChange (space, organization) {
   if (space) {
-    session.space = removeCircularRefs(_.get(space, 'data', {}));
-    session.organization = removeCircularRefs(_.get(space, 'data.organization', {}));
-  } else {
-    session.space = session.organization = null;
+    session.space = removeCircularRefs(space);
+  } else if (space === null) {
+    session.space = null;
+  }
+
+  if (organization) {
+    session.organization = removeCircularRefs(organization);
+  } else if (organization === null) {
+    session.organization = null;
   }
 
   sendSessionDataToConsole();

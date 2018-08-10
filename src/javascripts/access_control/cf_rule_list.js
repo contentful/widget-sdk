@@ -1,11 +1,10 @@
 'use strict';
 
 angular.module('contentful').directive('cfRuleList', ['require', require => {
-
-  const spaceContext            = require('spaceContext');
-  const TheLocaleStore          = require('TheLocaleStore');
+  const spaceContext = require('spaceContext');
+  const TheLocaleStore = require('TheLocaleStore');
   const getDefaultRuleGetterFor = require('PolicyBuilder/defaultRule').getDefaultRuleGetterFor;
-  const ALL_LOCALES             = require('PolicyBuilder/CONFIG').ALL_LOCALES;
+  const ALL_LOCALES = require('PolicyBuilder/CONFIG').ALL_LOCALES;
 
   return {
     restrict: 'E',
@@ -33,7 +32,7 @@ angular.module('contentful').directive('cfRuleList', ['require', require => {
         }
       });
 
-      function remove(rule) {
+      function remove (rule) {
         let index = -1;
         let collection = null;
         find('allowed');
@@ -41,7 +40,7 @@ angular.module('contentful').directive('cfRuleList', ['require', require => {
         if (index < 0) { find('denied'); }
         if (index > -1 && collection) { collection.splice(index, 1); }
 
-        function find(collectionName) {
+        function find (collectionName) {
           index = $scope.rules[collectionName].indexOf(rule);
           collection = $scope.rules[collectionName];
         }
@@ -49,7 +48,7 @@ angular.module('contentful').directive('cfRuleList', ['require', require => {
     }]
   };
 
-  function getEntityName(entity) {
+  function getEntityName (entity) {
     if (entity === 'entry') {
       return ['entry', 'Entries'];
     } else {

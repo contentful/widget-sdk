@@ -1,6 +1,6 @@
 'use strict';
 angular.module('contentful').directive('cfValidationSetting', ['require', require => {
-  const mimetype        = require('mimetype');
+  const mimetype = require('mimetype');
   const validationViews = require('validationViews');
 
   return {
@@ -20,8 +20,7 @@ angular.module('contentful').directive('cfValidationSetting', ['require', requir
       $scope.setMatchingView();
 
       $scope.$watch('validation.enabled', isEnabled => {
-        if (!isEnabled)
-          $scope.validate();
+        if (!isEnabled) { $scope.validate(); }
       });
     }]
   };

@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Enforcements service', () => {
+describe('access_control/Enforcements', () => {
   let enforcements;
   let organizationMock;
   let OrganizationRoles;

@@ -1,4 +1,4 @@
-import {noop, cloneDeep, assign, map} from 'lodash';
+import {noop, cloneDeep, assign, map, get} from 'lodash';
 import logger from 'logger';
 import $q from '$q';
 import modalDialog from 'modalDialog';
@@ -12,6 +12,7 @@ import closeState from 'navigation/closeState';
 import metadataDialog from 'contentTypeEditor/metadataDialog';
 import previewEnvironmentsCache from 'data/previewEnvironmentsCache';
 import * as notify from './Notifications';
+import * as Analytics from 'analytics/Analytics';
 
 /**
  * @description
@@ -127,6 +128,19 @@ export default function create ($scope, contentTypeIds) {
     });
   }
 
+  function trackEnforcedButtonClick (err) {
+    // If we get reason(s), that means an enforcement is present
+    const reason = get(err, 'body.details.reasons', null);
+
+    Analytics.track('entity_button:click', {
+      entityType: 'contentType',
+      enforced: Boolean(reason),
+      reason
+    });
+
+    return $q.reject(err);
+  }
+
   function unpublish () {
     return spaceContext.publishedCTs.unpublish($scope.contentType)
       .then(() => {
@@ -197,6 +211,7 @@ export default function create ($scope, contentTypeIds) {
       return published;
     })
     .then(saveEditingInterface)
+    .catch(trackEnforcedButtonClick)
     .catch(triggerApiErrorNotification)
     .then(setPristine)
     .then(() => {

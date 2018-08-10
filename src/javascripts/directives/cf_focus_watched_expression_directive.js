@@ -6,24 +6,21 @@
  */
 angular.module('contentful')
 .directive('cfFocusWatchedExpression', ['require', require => {
-
   const $timeout = require('$timeout');
   const $parse = require('$parse');
 
   return {
     restrict: 'A',
-    link: function(scope, elem, attrs){
-
+    link: function (scope, elem, attrs) {
       const model = $parse(attrs.cfFocusWatchedExpression);
 
       scope.$watch(model, value => {
         if (value) {
-          $timeout( () => {
+          $timeout(() => {
             elem[0].focus();
           });
         }
       });
-
     }
   };
 }]);

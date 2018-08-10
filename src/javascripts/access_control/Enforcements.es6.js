@@ -119,7 +119,7 @@ export function computeUsageForOrganization (organization, filter) {
 }
 
 function getMetricMessage (metricKey) {
-  return `You have exceeded your ${USAGE_METRICS[uncapitalize(metricKey)]} usage`;
+  return `You have reached your ${USAGE_METRICS[uncapitalize(metricKey)]} limit`;
 }
 
 function isOwner (organization) {

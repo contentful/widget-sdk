@@ -15,12 +15,12 @@
  *
  */
 angular.module('contentful').directive('cfPositionRelativeToWidgetList', ['require', require => {
-  const defer    = require('defer');
+  const defer = require('defer');
   const debounce = require('debounce');
 
   return {
     restrict: 'A',
-    link: function(scope, elem, attrs){
+    link: function (_scope, elem, attrs) {
       defer(reposition);
       attrs.$observe('positionRelativeTo', reposition);
 
@@ -31,12 +31,11 @@ angular.module('contentful').directive('cfPositionRelativeToWidgetList', ['requi
         $(attrs.repositionWhenScrolls).off('scroll', debouncedReposition);
       });
 
-      function reposition(params) {
-        params = params || {};
+      function reposition () {
         const relativeTo = $(attrs.positionRelativeTo);
-        if(relativeTo.get(0)){
+        if (relativeTo.get(0)) {
           const newMargin = relativeTo.position().left + relativeTo.width() / 2;
-          elem.css('marginLeft', newMargin+'px');
+          elem.css('marginLeft', newMargin + 'px');
         }
       }
     }

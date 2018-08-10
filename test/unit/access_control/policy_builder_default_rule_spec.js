@@ -1,7 +1,6 @@
 'use strict';
 
 describe('Policy Builder, default rule', () => {
-
   let getDefaultRuleFor, getDefaultRuleGetterFor, CONFIG;
 
   beforeEach(function () {

@@ -43,21 +43,21 @@ describe('cfValidateModel directive', () => {
   it('sets validity according to schema errors', function () {
     // initial error
     this.scope.schema.errors.returns([
-      {name: 'e', path: ['x']},
+      {name: 'e', path: ['x']}
     ]);
     this.commitValue();
     expect(this.ngModel.$error).toEqual({e: true});
 
     // replace path error
     this.scope.schema.errors.returns([
-      {name: 'f', path: ['x']},
+      {name: 'f', path: ['x']}
     ]);
     this.commitValue();
     expect(this.ngModel.$error).toEqual({f: true});
 
     // remove path error
     this.scope.schema.errors.returns([
-      {name: 'e', path: ['y']},
+      {name: 'e', path: ['y']}
     ]);
     this.commitValue();
     expect(this.ngModel.$error).toEqual({});
@@ -65,7 +65,7 @@ describe('cfValidateModel directive', () => {
 
   it('adds error details', function () {
     this.scope.schema.errors.returns([
-      {name: 'e', path: ['x']},
+      {name: 'e', path: ['x']}
     ]);
     this.commitValue();
     expect(this.ngModel.errorDetails).toEqual({

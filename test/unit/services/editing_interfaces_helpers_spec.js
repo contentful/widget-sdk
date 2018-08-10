@@ -1,7 +1,6 @@
 'use strict';
 
 describe('helpers', () => {
-
   beforeEach(() => {
     module('contentful/test');
   });
@@ -50,13 +49,11 @@ describe('helpers', () => {
 
     it('returns undefined when a fieldId and apiName are undefined', () => {
       const widgetArr = [
-        {fieldId: undefined},
+        {fieldId: undefined}
       ];
       const field = {id: 'abc', apiName: undefined};
       const result = findWidget(widgetArr, field);
       expect(result).toBeUndefined();
     });
   });
-
 });
-
