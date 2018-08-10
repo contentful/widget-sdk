@@ -1,4 +1,3 @@
-import { template } from 'lodash';
 import { h } from 'ui/Framework';
 
 /**
@@ -8,29 +7,21 @@ import { h } from 'ui/Framework';
  */
 
 // Maps status IDs to string template functions.
-const messages = {
+const messages = ({entityLabel}) => ({
   'ot-connection-error':
-    template(
-      'It appears that you aren’t connected to internet at the moment. ' +
-      'The fields are temporarily locked so that you won’t lose any ' +
-      'important changes.'
-    ),
+    'It appears that you aren’t connected to internet at the moment. ' +
+    'The fields are temporarily locked so that you won’t lose any ' +
+    'important changes.',
   'archived':
-    template(
-      'This ${entityLabel} is archived and cannot be ' +
-      'modified. Please unarchive it to make any changes.'
-    ),
+    `This ${entityLabel} is archived and cannot be ` +
+    'modified. Please unarchive it to make any changes.',
   'deleted':
-    template(
-      'This ${entityLabel} has been deleted and cannot be ' +
-      'modified anymore.'
-    ),
+    `This ${entityLabel} has been deleted and cannot be ` +
+    'modified anymore.',
   'editing-not-allowed':
-    template(
-      'You have read-only access to this ${entityLabel}. If you need to edit ' +
-      'it please contact your administrator.'
-    )
-};
+    `You have read-only access to this ${entityLabel}. If you need to edit ` +
+    'it please contact your administrator.'
+});
 
 export default function renderStatusNotification (status, entityLabel) {
   if (status === 'ok') {
@@ -39,7 +30,7 @@ export default function renderStatusNotification (status, entityLabel) {
     // undefined or null values.
     return h('noscript');
   } else {
-    const message = messages[status]({entityLabel});
+    const message = messages({entityLabel})[status];
     return h('.entity-editor__notification', [
       h('p', [ message ])
     ]);
