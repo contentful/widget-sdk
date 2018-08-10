@@ -27,7 +27,8 @@ export default function createWebhookRepo (space) {
     return getLogsBaseCall(webhookId)
     .paths(['calls'])
     .payload({ limit: 500 })
-    .get();
+    .get()
+    .then(res => res.items);
   }
 
   function getHealth (webhookId) {

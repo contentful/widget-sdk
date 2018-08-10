@@ -30,34 +30,14 @@ export default class WebhookForm extends React.Component {
     onChange: PropTypes.func.isRequired
   }
 
-  constructor (props) {
-    super(props);
-
-    // `props.webhook` should not be copied to state!
-    // The only reason for us maintaining state in this
-    // component is the fact we use it from Angular.
-    // Async Angular changes to props cause the form to
-    // behave quirky (jumpy cursor).
-    // TODO: no state as soon as we have a parent React
-    // component.
-    this.state = {webhook: props.webhook};
-  }
-
   updatedTransformation (change) {
-    const {transformation} = this.state.webhook;
+    const {transformation} = this.props.webhook;
     const cur = transformation || {};
     return {transformation: {...cur, ...change}};
   }
 
-  onChange (change) {
-    this.setState(
-      state => ({webhook: {...state.webhook, ...change}}),
-      () => this.props.onChange(this.state.webhook)
-    );
-  }
-
   render () {
-    const {webhook} = this.state;
+    const {webhook} = this.props;
     const contentType = get(webhook, ['transformation', 'contentType'], CONTENT_TYPES[0]);
 
     return (
@@ -70,7 +50,7 @@ export default class WebhookForm extends React.Component {
               className="cfnext-form__input"
               id="webhook-name"
               value={webhook.name || ''}
-              onChange={e => this.onChange({name: e.target.value})}
+              onChange={e => this.props.onChange({name: e.target.value})}
             />
           </div>
           <div className="cfnext-form__field">
@@ -80,7 +60,7 @@ export default class WebhookForm extends React.Component {
                 className="cfnext-select-box"
                 id="webhook-method"
                 value={get(webhook, ['transformation', 'method'], METHODS[0])}
-                onChange={e => this.onChange(this.updatedTransformation({method: e.target.value}))}
+                onChange={e => this.props.onChange(this.updatedTransformation({method: e.target.value}))}
               >
                 {METHODS.map(m => <option key={m} value={m}>{m}</option>)}
               </select>
@@ -89,7 +69,7 @@ export default class WebhookForm extends React.Component {
                 className="cfnext-form__input"
                 id="webhook-url"
                 value={webhook.url || ''}
-                onChange={e => this.onChange({url: e.target.value})}
+                onChange={e => this.props.onChange({url: e.target.value})}
               />
             </div>
           </div>
@@ -98,24 +78,24 @@ export default class WebhookForm extends React.Component {
         <WebhookFormSection title="Triggers" collapsible={true}>
           <WebhookSegmentation
             values={transformTopicsToMap(webhook.topics)}
-            onChange={map => this.onChange({topics: transformMapToTopics(map)})}
+            onChange={map => this.props.onChange({topics: transformMapToTopics(map)})}
           />
           <WebhookFilters
             filters={transformFiltersToList(webhook.filters)}
-            onChange={list => this.onChange({filters: transformListToFilters(list)})}
+            onChange={list => this.props.onChange({filters: transformListToFilters(list)})}
           />
         </WebhookFormSection>
 
         <WebhookFormSection title="Headers" collapsible={true}>
           <WebhookHeaders
             headers={webhook.headers}
-            onChange={headers => this.onChange({headers})}
+            onChange={headers => this.props.onChange({headers})}
           />
           <WebhookBasicAuth
             httpBasicUsername={webhook.httpBasicUsername}
             httpBasicPassword={webhook.httpBasicPassword}
             hasHttpBasicStored={this.props.hasHttpBasicStored}
-            onChange={this.onChange.bind(this)}
+            onChange={credentials => this.props.onChange(credentials)}
           />
           <div className="cfnext-form__field">
             <label htmlFor="webhook-content-type">Content type</label>
@@ -123,7 +103,7 @@ export default class WebhookForm extends React.Component {
               className="cfnext-select-box"
               id="webhook-content-type"
               value={contentType}
-              onChange={e => this.onChange(this.updatedTransformation({contentType: e.target.value}))}
+              onChange={e => this.props.onChange(this.updatedTransformation({contentType: e.target.value}))}
             >
               {CONTENT_TYPES.map(ct => <option key={ct} value={ct}>{ct}</option>)}
             </select>
@@ -141,7 +121,7 @@ export default class WebhookForm extends React.Component {
         <WebhookFormSection title="Payload" collapsible={true}>
           <WebhookBodyTransformation
             body={get(webhook, ['transformation', 'body'])}
-            onChange={body => this.onChange(this.updatedTransformation({body}))}
+            onChange={body => this.props.onChange(this.updatedTransformation({body}))}
           />
         </WebhookFormSection>
       </div>

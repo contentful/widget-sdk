@@ -1,33 +1,11 @@
 import React from 'react';
 
+import WebhookSidebarDocumentation from './WebhookSidebarDocumentation';
+
 export default function WebhookSidebar () {
   return (
     <div className="entity-sidebar">
-      <h2 className="entity-sidebar__heading">
-        Documentation
-      </h2>
-      <div className="entity-sidebar__text-profile">
-        <ul>
-          <li>
-            <a
-              href="https://www.contentful.com/developers/docs/concepts/webhooks/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Webhooks explained
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://www.contentful.com/developers/docs/references/content-management-api/#/reference/webhooks"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Webhook management API reference
-            </a>
-          </li>
-        </ul>
-      </div>
+      <WebhookSidebarDocumentation />
       <h2 className="entity-sidebar__heading">
         Webhook URL requirements
       </h2>
