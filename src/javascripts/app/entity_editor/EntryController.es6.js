@@ -21,7 +21,6 @@ import * as Focus from './Focus';
 import initDocErrorHandler from './DocumentErrorHandler';
 import {makeNotify} from './Notifications';
 import installTracking, {trackEntryView} from './Tracking';
-import renderStatusNotification from './StatusNotification';
 
 
 import { loadEntry } from 'app/entity_editor/DataLoader';
@@ -90,7 +89,7 @@ export default async function create ($scope, entryId) {
   initDocErrorHandler($scope, doc.state.error$);
 
   K.onValueScope($scope, doc.status$, (status) => {
-    $scope.entityStatusComponent = renderStatusNotification(status, 'entry');
+    $scope.props = {status, entityLabel: 'entry'};
   });
 
   installTracking(entityInfo, doc, K.scopeLifeline($scope));
