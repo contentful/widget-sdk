@@ -250,7 +250,7 @@ $close-button-small()
     $item-label($colors.text-lightest, $colors.text-light)
     &:hover
       z-index: 1
-    &:not(&--disabled):hover
+    &:not(&--disabled, &--proof-of-concept):hover
       border: 1px solid $colors.element-darkest
       box-shadow: 0 3px 3px 0 rgba(0,0,0,0.08)
       transform: translateY(-2px)
@@ -278,6 +278,9 @@ $close-button-small()
       $item-label($colors.blue-dark, $colors.blue-darkest)
     &--proof-of-concept
       $item-label($colors.blue-dark, $colors.blue-darkest)
+      &:hover
+        cursor: default
+        z-index: 2
     &--disabled
       $opacity = 0.3
       cursor: not-allowed

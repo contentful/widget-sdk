@@ -82,6 +82,6 @@ describe('Enterprise Space Wizard', () => {
   });
 
   it('displays a disclaimer about POC spaces', function () {
-    expect(this.component.find('.note-box--info').length).toEqual(1);
+    expect(this.component.find('.enterprise-space-wizard__info').length).toEqual(1);
   });
 });
