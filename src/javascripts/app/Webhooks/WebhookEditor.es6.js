@@ -123,21 +123,23 @@ export default class WebhookEditor extends React.Component {
       <React.Fragment>
         <div className="workbench-header__wrapper">
           <header className="workbench-header">
+            <div className="breadcrumbs-widget">
+              <div className="breadcrumbs-container">
+                <div className="btn btn__back" onClick={() => this.navigateToList()}>
+                  <Icon name="back" />
+                </div>
+              </div>
+            </div>
+
             <div className="workbench-header__icon cf-icon">
               <Icon name="page-settings" scale="0.75" />
             </div>
+
             <h1 className="workbench-header__title">
               Webhook: {webhook.name || 'Unnamed'}{dirty ? '*' : ''}
             </h1>
 
             <div className="workbench-header__actions">
-              <button
-                className="btn-secondary-action"
-                onClick={() => this.navigateToList()}
-              >
-                Close
-              </button>
-
               {tab === TABS.SETTINGS && !fresh && <button
                 className="btn-secondary-action"
                 disabled={busy}
