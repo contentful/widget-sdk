@@ -65,8 +65,8 @@ function main () {
         width: '30em',
         flexShrink: 0
       }, [
-        h('div', {ngIf: 'boilerplateComponent'}, [
-          h('cf-component-bridge', {component: 'boilerplateComponent'})
+        h('div', {ngIf: 'boilerplateProps'}, [
+          h('react-component', {name: 'app/api/KeyEditor/Boilerplate', props: 'boilerplateProps'})
         ]),
         h('div', {ngIf: 'contactUsComponent'}, [
           h('cf-component-bridge', {component: 'contactUsComponent'})

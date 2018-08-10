@@ -16,7 +16,6 @@ import * as Intercom from 'intercom';
 
 import initKeyEditor from './KeyEditor';
 import {get as getBoilerplates} from './BoilerplateCode';
-import initBoilerplate from './Boilerplate';
 import renderContactUs from './ContactUs';
 
 const CONTACT_US_BOILERPLATE_FLAG_NAME = 'feature-ps-10-2017-contact-us-boilerplate';
@@ -32,19 +31,17 @@ export default function attach ($scope, apiKey, spaceEnvironments) {
 }
 
 function mountBoilerplates ($scope, apiKey) {
-  getBoilerplates().then(boilerplates => initBoilerplate({
-    boilerplates,
-    connect: component => {
-      $scope.boilerplateComponent = component;
-      $scope.$applyAsync();
-    },
-    spaceId: spaceContext.getId(),
-    deliveryToken: apiKey.accessToken,
-    track: {
-      select: platform => track('api_key:boilerplate', {action: 'select', platform}),
-      download: platform => track('api_key:boilerplate', {action: 'download', platform})
-    }
-  }));
+  getBoilerplates().then(boilerplates => {
+    $scope.boilerplateProps = {
+      boilerplates,
+      spaceId: spaceContext.getId(),
+      deliveryToken: apiKey.accessToken,
+      track: {
+        select: platform => track('api_key:boilerplate', {action: 'select', platform}),
+        download: platform => track('api_key:boilerplate', {action: 'download', platform})
+      }
+    };
+  });
 }
 
 function mountContactUs ($scope) {
