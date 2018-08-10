@@ -16,7 +16,6 @@ import * as Intercom from 'intercom';
 
 import initKeyEditor from './KeyEditor';
 import {get as getBoilerplates} from './BoilerplateCode';
-import renderContactUs from './ContactUs';
 
 const CONTACT_US_BOILERPLATE_FLAG_NAME = 'feature-ps-10-2017-contact-us-boilerplate';
 const ENVIRONMENTS_FLAG_NAME = 'feature-dv-11-2017-environments';
@@ -47,16 +46,14 @@ function mountBoilerplates ($scope, apiKey) {
 function mountContactUs ($scope) {
   LD.onFeatureFlag($scope, CONTACT_US_BOILERPLATE_FLAG_NAME, flag => {
     if (flag && Intercom.isEnabled()) {
-      $scope.contactUsComponent = renderContactUs({
+      $scope.contactUsProps = {
         track: () => track('element:click', {
           elementId: 'contact_sales_boilerplate',
           groupId: 'contact_sales',
           fromState: $state.current.name
         }),
         openIntercom: () => Intercom.open()
-      });
-    } else {
-      $scope.contactUsComponent = null;
+      };
     }
 
     $scope.$applyAsync();

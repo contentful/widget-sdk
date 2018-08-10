@@ -68,8 +68,8 @@ function main () {
         h('div', {ngIf: 'boilerplateProps'}, [
           h('react-component', {name: 'app/api/KeyEditor/Boilerplate', props: 'boilerplateProps'})
         ]),
-        h('div', {ngIf: 'contactUsComponent'}, [
-          h('cf-component-bridge', {component: 'contactUsComponent'})
+        h('div', {ngIf: 'contactUsProps'}, [
+          h('react-component', {name: 'app/api/KeyEditor/ContactUs', props: 'contactUsProps'})
         ])
       ])
     ])
