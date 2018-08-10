@@ -1,4 +1,5 @@
-import { h } from 'ui/Framework';
+import React from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * This component renders an alert depending on the document status.
@@ -23,16 +24,20 @@ const messages = ({entityLabel}) => ({
     'it please contact your administrator.'
 });
 
-export default function renderStatusNotification (status, entityLabel) {
-  if (status === 'ok') {
-    // TODO we need this currently because the return value is used by
-    // the `cf-component-bridge` directive which cannot handle
-    // undefined or null values.
-    return h('noscript');
-  } else {
-    const message = messages({entityLabel})[status];
-    return h('.entity-editor__notification', [
-      h('p', [ message ])
-    ]);
+export default class StatusNotification extends React.Component {
+  static propTypes = {
+    status: PropTypes.string.isRequired,
+    entityLabel: PropTypes.string.isRequired
+  };
+
+  render () {
+    const {status, entityLabel} = this.props;
+    if (status && status !== 'ok' && entityLabel) {
+      return <div className="entity-editor__notification">
+        <p>{messages({entityLabel})[status]}</p>
+      </div>;
+    } else {
+      return null;
+    }
   }
 }

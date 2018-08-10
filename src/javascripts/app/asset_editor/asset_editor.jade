@@ -18,7 +18,7 @@ div.asset-editor.workbench(ng-if="context.ready")
 
   .workbench-main
     .workbench-main__content
-      cf-component-bridge(component="entityStatusComponent")
+      react-component(name="app/entity_editor/StatusNotification" props="props")
 
       .entity-editor-form
         cf-error-list.form-box-error(cf-error-path="['fields']")

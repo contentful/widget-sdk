@@ -14,7 +14,6 @@ import * as Focus from './Focus';
 import initDocErrorHandler from './DocumentErrorHandler';
 import {makeNotify} from './Notifications';
 import installTracking from './Tracking';
-import renderStatusNotification from './StatusNotification';
 
 import { loadAsset } from 'app/entity_editor/DataLoader';
 import { onFeatureFlag } from 'utils/LaunchDarkly';
@@ -57,7 +56,7 @@ export default async function create ($scope, assetId) {
   initDocErrorHandler($scope, $scope.otDoc.state.error$);
 
   K.onValueScope($scope, $scope.otDoc.status$, (status) => {
-    $scope.entityStatusComponent = renderStatusNotification(status, 'asset');
+    $scope.props = {status, entityLabel: 'asset'};
   });
 
   installTracking(entityInfo, $scope.otDoc, K.scopeLifeline($scope));
