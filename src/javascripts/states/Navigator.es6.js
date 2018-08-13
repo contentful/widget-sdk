@@ -89,7 +89,7 @@ function makeEntityPath (entity, spaceEnvId) {
 }
 
 function makeEntityParams (entity) {
-  const params = {addToContext: true};
+  const params = {addToContext: true, bulkEditor: ''};
   const type = getType(entity);
   const entityIdKey = type.toLowerCase() + 'Id';
   params[entityIdKey] = entity.sys.id;

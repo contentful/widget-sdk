@@ -1,4 +1,4 @@
-import { countBy, filter, get } from 'lodash';
+import { countBy, filter, get, isNaN } from 'lodash';
 import * as K from 'utils/kefir';
 import * as List from 'utils/List';
 
@@ -250,8 +250,12 @@ export default function create ($scope, widgetApi) {
       // a keyed list.
       $scope.entityModels = List.makeKeyed(models, model => model.hash);
       $scope.isReady = true;
+
+      maybeOpenBulkEditor();
     }
   });
+
+  maybeOpenBulkEditor();
 
   const unregisterPublicationWarning = field.registerPublicationWarning({
     group: 'reference_widget_unpublished_references',
@@ -343,16 +347,10 @@ export default function create ($scope, widgetApi) {
     // This is passed down to the bulk entity editor actions
     // to be able to unlink an entry when the bulk editor is
     // rendered inline.
-    let refCtxt;
+    let refCtxt = null;
     if (widgetApi._internal.createReferenceContext) {
-      refCtxt = {
-        ...widgetApi._internal.createReferenceContext(index, state.refreshEntities),
-        remove: prepareRemoveAction(index, isDisabled)
-      };
-    } else {
-      refCtxt = null;
+      refCtxt = {};
     }
-
     const entityModel = {
       id,
       entity,
@@ -425,7 +423,7 @@ export default function create ($scope, widgetApi) {
       trackOpenSlideIn();
       goToSlideInEntity(entity);
     } else {
-      widgetApi._internal.editReferences(index, state.refreshEntities);
+      goToBulkEditor(index);
     }
   }
 
@@ -441,6 +439,21 @@ export default function create ($scope, widgetApi) {
       { id, type },
       $scope.isSlideinEntryEditorEnabled
     );
+  }
+
+  function maybeOpenBulkEditor () {
+    const bulkEditorParam = $state.params.bulkEditor;
+    if (bulkEditorParam) {
+      const [fieldId, locale, index] = bulkEditorParam.split(':');
+      if (fieldId === field.id && locale === field.locale) {
+        goToBulkEditor(index);
+      }
+    }
+  }
+
+  function goToBulkEditor (referenceIndex) {
+    const fieldIndex = isNaN(Number(referenceIndex)) ? 0 : Number(referenceIndex);
+    widgetApi._internal.editReferences && widgetApi._internal.editReferences(fieldIndex, state.refreshEntities);
   }
 
   function prepareRemoveAction (index, isDisabled) {

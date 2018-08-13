@@ -82,6 +82,7 @@ angular.module('cf.app')
     'require',
     '$scope',
     (require, $scope) => {
+      const $state = require('$state');
       const makeEntityRef = require('states/Navigator').makeEntityRef;
       const EntityState = require('data/CMA/EntityState');
       const entityStateColor = require('Styles/Colors').entityStateColor;
@@ -124,6 +125,11 @@ angular.module('cf.app')
             Analytics.track('reference_editor_action:edit', {
               ctId: _.get($scope.entity, 'sys.contentType.sys.id')
             });
+          } else {
+            // Control navigation to entry editor even if the link has
+            // an href to prevent app reload and losing navigation history.
+            $event.preventDefault();
+            $state.go($scope.stateRef.path.join('.'), $scope.stateRef.params);
           }
         }
 

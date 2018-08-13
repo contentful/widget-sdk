@@ -1,4 +1,5 @@
 import $controller from '$controller';
+import $rootScope from '$rootScope';
 
 import {deepFreeze} from 'utils/Freeze';
 import * as K from 'utils/kefir';
@@ -9,6 +10,7 @@ import spaceContext from 'spaceContext';
 import notifications from 'notification';
 import localeStore from 'TheLocaleStore';
 import contextHistory from 'navigation/Breadcrumbs/History';
+import $state from '$state';
 import {user$} from 'services/TokenStore';
 import logger from 'logger';
 
@@ -141,8 +143,32 @@ export default async function create ($scope, entryId) {
     $scope.title = truncate(title, 50);
   });
 
-  editorContext.editReferences = (field, locale, index, cb) => {
-    $scope.referenceContext = createReferenceContext(field, locale, index, cb);
+  $rootScope.$on(
+    '$stateChangeStart',
+    (_event, _toState, toParams, _fromState, fromParams) => {
+      if (
+        fromParams.bulkEditor &&
+        !toParams.bulkEditor &&
+        $scope.referenceContext
+      ) {
+        $scope.referenceContext.close();
+      }
+    }
+  );
+
+  editorContext.editReferences = (fieldApiName, locale, index, cb) => {
+    const bulkEditorParam = {bulkEditor: `${fieldApiName}:${locale}:${index}`};
+    const crumb = cloneDeep(crumbFactory.Entry(editorData.entity.data.sys, $scope.context));
+    crumb.link.params = {
+      ...crumb.link.params,
+      ...bulkEditorParam
+    };
+    $state.go('.', bulkEditorParam);
+    contextHistory.add(crumb);
+    $scope.referenceContext = createReferenceContext(fieldApiName, locale, index, () => {
+      $state.go('.', {bulkEditor: ''});
+      cb();
+    });
   };
 
   editorContext.createReferenceContext = createReferenceContext;
@@ -153,11 +179,12 @@ export default async function create ($scope, entryId) {
     $scope.inlineEditor = !$scope.inlineEditor;
   };
 
-  function createReferenceContext (field, locale, index, cb) {
+  function createReferenceContext (fieldApiName, locale, index, cb) {
     // The links$ property should end when the editor is closed
+    const field = find(entityInfo.contentType.fields, {apiName: fieldApiName});
     const lifeline = K.createBus();
     const links$ = K.endWith(
-      doc.valuePropertyAt(['fields', field, locale]),
+      doc.valuePropertyAt(['fields', field.id, locale]),
       lifeline.stream
     ).map((links) => links || []);
 
@@ -167,12 +194,12 @@ export default async function create ($scope, entryId) {
       focusIndex: index,
       editorSettings: deepFreeze(cloneDeep($scope.preferences)),
       parentId: entityInfo.id,
-      field: find(entityInfo.contentType.fields, {id: field}),
+      field,
       add: function (link) {
-        return doc.pushValueAt(['fields', field, locale], link);
+        return doc.pushValueAt(['fields', field.id, locale], link);
       },
       remove: function (index) {
-        return doc.removeValueAt(['fields', field, locale, index]);
+        return doc.removeValueAt(['fields', field.id, locale, index]);
       },
       close: function () {
         lifeline.end();

@@ -56,7 +56,7 @@ angular.module('contentful')
   this._internal = {};
   if ($scope.editorContext.editReferences) {
     this._internal.editReferences = (index, cb) => {
-      $scope.editorContext.editReferences(ctField.id, $scope.locale.internal_code, index, cb);
+      $scope.editorContext.editReferences(this.field.id, $scope.locale.internal_code, index, cb);
     };
   }
 

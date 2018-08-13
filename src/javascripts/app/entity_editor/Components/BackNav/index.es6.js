@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import createReactClass from 'create-react-class';
 import Icon from 'ui/Components/Icon';
 import { goToPreviousSlideOrExit } from 'states/EntityNavigationHelpers';
-import $state from '$state';
+import closeState from 'navigation/closeState';
 
 const BackNav = createReactClass({
   propTypes: {
@@ -13,7 +13,7 @@ const BackNav = createReactClass({
     goToPreviousSlideOrExit(
       this.props.slideInFeatureFlagValue,
       'arrow_back',
-      () => $state.go('^.list')
+      closeState
     );
   },
   render () {

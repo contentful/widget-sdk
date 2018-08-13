@@ -130,7 +130,7 @@ angular.module('contentful')
   function detail (withSnapshots) {
     return base({
       name: 'detail',
-      url: '/:entryId?previousEntries',
+      url: '/:entryId?previousEntries&bulkEditor',
       children: withSnapshots ? [compare] : [],
       params: { addToContext: true },
       template: JST.entity_page(),

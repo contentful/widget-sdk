@@ -7,6 +7,7 @@ include ../entity_editor/entity_editor.mixins.jade
       ng-click="referenceContext.close()")
     .workbench-stack__content
       cf-bulk-editor(
+        data-test-id="bulk-editor-container"
         reference-context="referenceContext")
   .workbench
     header.workbench-header

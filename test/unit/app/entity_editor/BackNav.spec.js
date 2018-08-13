@@ -10,18 +10,14 @@ describe('BackNav', () => {
     module('contentful/test');
 
     this.sandbox = sinon.sandbox.create();
-    this.$stateGoStub = this.sandbox.stub();
     this.goToPreviousSlideOrExitStub = this.sandbox.stub();
+    this.closeState = this.sandbox.stub();
 
     this.system = createIsolatedSystem();
     this.system.set('states/EntityNavigationHelpers', {
       goToPreviousSlideOrExit: this.goToPreviousSlideOrExitStub
     });
-    this.system.set('$state', {
-      default: {
-        go: this.$stateGoStub
-      }
-    });
+    this.system.set('navigation/closeState', { default: this.closeState });
 
     const { default: BackNav } = await this.system.import(
       'app/entity_editor/Components/BackNav'
@@ -60,12 +56,9 @@ describe('BackNav', () => {
       'arrow_back',
       sinon.match.func
     );
-    sinon.assert.notCalled(this.$stateGoStub);
+    sinon.assert.notCalled(this.closeState);
     const [[, , callback]] = this.goToPreviousSlideOrExitStub.args;
     callback();
-    sinon.assert.calledOnceWith(
-      this.$stateGoStub,
-      '^.list'
-    );
+    sinon.assert.calledOnce(this.closeState);
   });
 });
