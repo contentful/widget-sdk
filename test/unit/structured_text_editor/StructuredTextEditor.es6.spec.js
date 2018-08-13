@@ -7,15 +7,6 @@ import { BLOCKS, MARKS } from '@contentful/structured-text-types';
 describe('StructuredTextEditor', () => {
   beforeEach(async function () {
     module('contentful/test');
-    const mockDocument = {
-      document: {}
-    };
-    this.props = {
-      field: {
-        getValue: sinon.stub.returns(mockDocument),
-        setValue: sinon.stub()
-      }
-    };
     this.system = createIsolatedSystem();
 
     this.system.set('entitySelector', {});
@@ -32,11 +23,29 @@ describe('StructuredTextEditor', () => {
       'app/widgets/structured_text/StructuredTextEditor'
     );
 
+    this.widgetApi = this.$inject('mocks/widgetApi').create();
+    this.props = {
+      field: this.widgetApi.field
+    };
     this.wrapper = mount(<StructuredTextEditor {...this.props} />);
+
+    this.expectIsEditorReadOnly = (expected) => {
+      const el = this.wrapper.find('[data-test-id="editor"]');
+      expect(el.props().readOnly).toBe(expected);
+    };
   });
 
   it('renders the component', function () {
     expect(this.wrapper).toBeDefined();
+  });
+
+  it('can be focused', function () {
+    this.expectIsEditorReadOnly(false);
+  });
+
+  it('renders toolbar', function () {
+    const el = this.wrapper.find('[data-test-id="toolbar"]');
+    expect(el.length).toEqual(1);
   });
 
   it('renders the toolbar icons', function () {
@@ -60,5 +69,21 @@ describe('StructuredTextEditor', () => {
     expect(el).toBeDefined();
     el.simulate('click');
     sinon.assert.calledOnce(this.props.field.setValue);
+  });
+
+  describe('disabled `props.field`', function () {
+    beforeEach(function () {
+      this.widgetApi.fieldProperties.isDisabled$.set(true);
+      this.wrapper.update();
+    });
+
+    it('can not be focused', function () {
+      this.expectIsEditorReadOnly(true);
+    });
+
+    it('renders no toolbar', function () {
+      const el = this.wrapper.find('[data-test-id="toolbar"]');
+      expect(el.length).toEqual(0);
+    });
   });
 });

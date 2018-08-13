@@ -14,14 +14,8 @@ angular.module('cf.app')
         scope.content = stringifyJSON(json);
       });
 
-      const offDisabledStatusChanged =
-        field.onIsDisabledChanged((isDisabled) => {
-          scope.isDisabled = isDisabled;
-        });
-
       scope.$on('$destroy', () => {
         offValueChanged();
-        offDisabledStatusChanged();
       });
 
       scope.slateEditorProps = {
