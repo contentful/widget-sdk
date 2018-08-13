@@ -12,8 +12,12 @@ export default class InputDialog extends React.Component {
     value: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
     onKeyDown: PropTypes.func.isRequired,
-    maxLength: PropTypes.number.isRequired,
+    maxLength: PropTypes.number,
     isInvalid: PropTypes.bool.isRequired
+  };
+
+  static defaultProps = {
+    maxLength: undefined
   };
 
   render () {
@@ -38,7 +42,7 @@ export default class InputDialog extends React.Component {
             value,
             onChange,
             onKeyDown,
-            maxLength: isFinite(maxLength) ? `${maxLength}` : ''
+            maxLength: maxLength ? `${maxLength}` : ''
           }}
         />
       </div>

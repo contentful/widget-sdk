@@ -46,7 +46,10 @@ export default function open (params = {}) {
         const confirm = () => !isInvalid && $scope.dialog.confirm(trimmed);
         const onKeyDown = e => e.keyCode === keycodes.ENTER && confirm();
 
-        $scope.props = {params, confirm, cancel, value, onChange, onKeyDown, maxLength: max, isInvalid};
+        $scope.props = {params, confirm, cancel, value, onChange, onKeyDown, isInvalid};
+        if (isFinite(input.max)) {
+          $scope.props.maxLength = input.max;
+        }
 
         $scope.$applyAsync();
       }
