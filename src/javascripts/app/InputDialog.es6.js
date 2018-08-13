@@ -1,4 +1,3 @@
-import {h} from 'ui/Framework';
 import modalDialog from 'modalDialog';
 import keycodes from 'utils/keycodes';
 
@@ -33,10 +32,9 @@ export default function open (params = {}) {
   input.max = input.max || +Infinity;
 
   return modalDialog.open({
-    template: '<cf-component-bridge class="modal-background" component="component">',
+    template: '<react-component name="app/InputDialogComponent" props="props" class="modal-background">',
     controller: function ($scope) {
       const {min, max, regex, value} = input;
-      const maxLength = isFinite(max) ? `${max}` : '';
       const onChange = e => render(e.target.value);
       const cancel = () => $scope.dialog.cancel({cancelled: true});
 
@@ -48,29 +46,10 @@ export default function open (params = {}) {
         const confirm = () => !isInvalid && $scope.dialog.confirm(trimmed);
         const onKeyDown = e => e.keyCode === keycodes.ENTER && confirm();
 
-        $scope.component = h('.modal-dialog', [
-          h('header.modal-dialog__header', [
-            h('h1', [params.title]),
-            h('button.modal-dialog__close', {onClick: cancel})
-          ]),
-          h('.modal-dialog__content', [
-            h('p.modal-dialog__richtext', {dangerouslySetInnerHTML: {__html: params.message}}),
-            h('input.cfnext-form__input--full-size', {
-              type: 'text', value, onChange, onKeyDown, maxLength
-            })
-          ]),
-          h('.modal-dialog__controls', [
-            h('button.btn-primary-action', {
-              onClick: confirm,
-              disabled: isInvalid
-            }, [
-              params.confirmLabel || 'OK'
-            ]),
-            h('button.btn-secondary-action', {onClick: cancel}, [
-              params.cancelLabel || 'Cancel'
-            ])
-          ])
-        ]);
+        $scope.props = {params, confirm, cancel, value, onChange, onKeyDown, isInvalid};
+        if (isFinite(input.max)) {
+          $scope.props.maxLength = input.max;
+        }
 
         $scope.$applyAsync();
       }
