@@ -15,6 +15,7 @@ import HelpIcon from 'ui/Components/HelpIcon';
 import Tooltip from 'ui/Components/Tooltip';
 import Price from 'ui/Components/Price';
 import ContextMenu from 'ui/Components/ContextMenu';
+import {byName} from 'Styles/Colors';
 
 function SpacePlanRow ({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }) {
   const space = plan.space;
@@ -75,7 +76,9 @@ function SpacePlanRow ({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace 
           style={{fontSize: '12px'}}
           tooltip="This space is part of your Enterprise deal with Contentful"
           className="help-icon"
-        >★</Tooltip>
+        >
+          <span style={{color: byName.orangeLight}}>★</span>
+        </Tooltip>
       }
     </td>
     <td>

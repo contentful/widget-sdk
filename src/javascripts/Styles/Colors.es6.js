@@ -48,7 +48,7 @@ export const byName = {
 
   orangeDark: '#db8500',
   orangeMid: '#ea9005',
-  orangeLight: '#fba012',
+  orangeLight: '#ffb239',
 
   coralDark: '#D0A2A0',
   coralMid: '#FBE3E2',

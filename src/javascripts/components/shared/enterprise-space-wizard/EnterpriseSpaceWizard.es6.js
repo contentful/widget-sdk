@@ -140,15 +140,20 @@ class EnterpriseSpaceWizard extends React.Component {
           }
           {!showProgress &&
             <Dialog.Body>
-              <Plan plan={this.plan} resources={this.resources} />
-              <Note />
+              <p className="enterprise-space-wizard__info" style={{marginBottom: '30px'}}>
+                {`Use a proof of concept space to experiment or start new projects. Talk to us when you decide to launch. `}
+                <ContactUsButton noIcon={true} data-test-id='subscription-page.sidebar.contact-link'>Learn more</ContactUsButton>
+              </p>
+              <Plan resources={this.resources} />
               <TextField
-                style={{marginBottom: '30px'}}
-                value={name}
+                countCharacters
+                required
+                style={{marginBottom: '30px', display: 'inline-block'}}
+                value={name || ''}
                 name="spaceName"
                 id="spaceName"
                 labelText="Space name"
-                required={true}
+                helpText="Can have up to 30 characters"
                 textInputProps={{
                   maxLength: 30,
                   width: 'large'
@@ -182,11 +187,11 @@ class EnterpriseSpaceWizard extends React.Component {
   }
 }
 
-function Plan ({plan, resources}) {
+function Plan ({resources}) {
   return (
-    <div className="space-plans-list__item space-plans-list__item--proof-of-concept">
+    <div className="space-plans-list__item space-plans-list__item--proof-of-concept" style={{marginBottom: '30px'}}>
       <div className="space-plans-list__item__heading">
-        <strong data-test-id="space-plan-name">{plan.name}</strong>
+        <strong data-test-id="space-plan-name">Proof of concept</strong>
         <span data-test-id="space-plan-price"> - Free</span>
       </div>
       <PlanFeatures resources={resources} />
@@ -194,22 +199,8 @@ function Plan ({plan, resources}) {
   );
 }
 Plan.propTypes = {
-  resources: PropTypes.array.isRequired,
-  plan: PropTypes.object.isRequired
+  resources: PropTypes.array.isRequired
 };
-
-function Note () {
-  return (
-    <div className='note-box--info' style={{margin: '30px 0'}}>
-      <p>
-        {`Proof of concept spaces can't be used for production applications.
-        You can create as many of them as you wish, and they can be deleted at any time. `}
-        <ContactUsButton noIcon={true} data-test-id='subscription-page.sidebar.contact-link' />
-        {` to transform a proof of concept space into a production-ready space.`}
-      </p>
-    </div>
-  );
-}
 
 const mapStateToProps = state => {
   return {

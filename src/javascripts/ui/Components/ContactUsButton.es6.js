@@ -9,12 +9,13 @@ import { TextLink } from '@contentful/ui-component-library';
 
 const ContactUsButton = createReactClass({
   propTypes: {
-    noIcon: PropTypes.bool
+    noIcon: PropTypes.bool,
+    children: PropTypes.node
   },
 
   contactUs () {
     // Open intercom if it's possible, otherwise go to support page.
-    if (Intercom.isEnabled()) {
+    if (Intercom.isEnabled() && Intercom.isLoaded()) {
       Intercom.open();
     } else {
       window.open(supportUrl);
@@ -22,7 +23,7 @@ const ContactUsButton = createReactClass({
   },
 
   render () {
-    const { noIcon, ...otherProps } = this.props;
+    const { noIcon, children, ...otherProps } = this.props;
 
     const props = {
       onClick: this.contactUs,
@@ -34,7 +35,9 @@ const ContactUsButton = createReactClass({
     }
 
     return (
-      <TextLink {...props}>Get in touch with us</TextLink>
+      <TextLink {...props}>
+        {children || `Get in touch with us`}
+      </TextLink>
     );
   }
 });
