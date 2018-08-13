@@ -50,8 +50,8 @@ export default class SaveViewDialog extends React.Component {
     const {value, isShared} = this.state;
 
     const trimmed = value.trim();
-    const isInvalid = trimmed.length < minLength || trimmed.length > maxLength;
-    const confirm = () => !isInvalid && this.props.confirm({title: trimmed, isShared});
+    const isValid = !(trimmed.length < minLength || trimmed.length > maxLength);
+    const confirm = () => isValid && this.props.confirm({title: trimmed, isShared});
     const onKeyDown = e => e.keyCode === keycodes.ENTER && confirm();
 
     return <div className="modal-dialog">
