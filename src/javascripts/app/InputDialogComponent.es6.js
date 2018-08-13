@@ -36,14 +36,12 @@ export default class InputDialog extends React.Component {
           dangerouslySetInnerHTML={{__html: params.message}}
         />
         <input
-          {...{
-            className: 'cfnext-form__input--full-size',
-            type: 'text',
-            value,
-            onChange,
-            onKeyDown,
-            maxLength: maxLength ? `${maxLength}` : ''
-          }}
+          className="cfnext-form__input--full-size"
+          type="text"
+          value={value}
+          onChange={onChange}
+          onKeyDown={onKeyDown}
+          maxLength={maxLength ? `${maxLength}` : ''}
         />
       </div>
       <div className="modal-dialog__controls">
