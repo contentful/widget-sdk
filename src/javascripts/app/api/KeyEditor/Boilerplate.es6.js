@@ -15,10 +15,7 @@ export default class Boilerplate extends React.Component {
     }).isRequired
   };
 
-  constructor (props) {
-    super(props);
-    this.state = {selectedId: props.boilerplates[0].id};
-  }
+  state = {selectedId: this.props.boilerplates[0].id};
 
   render () {
     const {boilerplates, spaceId, deliveryToken, track} = this.props;
