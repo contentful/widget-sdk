@@ -1,9 +1,4 @@
 import modalDialog from 'modalDialog';
-import keycodes from 'utils/keycodes';
-
-
-const minLength = 1;
-const maxLength = 32;
 
 export default function SaveViewDialog ({
   allowViewTypeSelection = false,
@@ -12,29 +7,16 @@ export default function SaveViewDialog ({
   return modalDialog.open({
     template: '<react-component class="modal-background" name="app/ContentList/SaveViewDialogComponent" props="props"/>',
     controller: function ($scope) {
-      render('', false);
+      $scope.props = {
+        confirm: values => $scope.dialog.confirm(values),
+        cancel: () => $scope.dialog.cancel(),
+        minLength: 1,
+        maxLength: 32,
+        allowViewTypeSelection,
+        allowRoleAssignment: !!allowRoleAssignment
+      };
 
-      function render (value, isShared) {
-        const trimmed = value.trim();
-        const isInvalid = trimmed.length < minLength || trimmed.length > maxLength;
-
-        $scope.props = {
-          value,
-          maxLength,
-          allowViewTypeSelection,
-          isShared,
-          trimmed,
-          minLength,
-          confirmLabel: isShared && allowRoleAssignment ? 'Proceed and select roles' : 'Save view',
-          confirm: () => !isInvalid && $scope.dialog.confirm({ title: trimmed, isShared }),
-          cancel: () => $scope.dialog.cancel(),
-          onChange: e => render(e.target.value, isShared),
-          onKeyDown: e => e.keyCode === keycodes.ENTER && confirm(),
-          setSaveAsShared: saveAsShared => render(value, saveAsShared)
-        };
-
-        $scope.$applyAsync();
-      }
+      $scope.$applyAsync();
     }
   });
 }
