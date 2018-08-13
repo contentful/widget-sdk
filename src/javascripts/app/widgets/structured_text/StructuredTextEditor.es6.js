@@ -57,50 +57,76 @@ export default class StructuredTextEditor extends React.Component {
   static propTypes = {
     field: PropTypes.object.isRequired
   };
-  state = {
-    value:
-      this.props.field.getValue() &&
-      this.props.field.getValue().nodeClass === 'document'
-        ? Value.fromJSON({
-          object: 'value',
-          document: toSlatejsDocument(this.props.field.getValue())
-        })
-        : initialValue
-  };
+
+  constructor (props) {
+    super(props);
+
+    // onIsDisabledChanged() immediately dispatches!
+    this.offDisabledState = this.props.field.onIsDisabledChanged((isDisabled) => {
+      if (this.state) {
+        this.setState({ isDisabled });
+      } else {
+        this.state = {
+          value:
+            this.props.field.getValue() &&
+            this.props.field.getValue().nodeClass === 'document'
+              ? Value.fromJSON({
+                object: 'value',
+                document: toSlatejsDocument(this.props.field.getValue())
+              })
+              : initialValue,
+          isDisabled
+        };
+      }
+    });
+  }
+
+  componentWillUnmount () {
+    this.offDisabledState();
+  }
+
   onChange = ({ value }) => {
     /* eslint no-console: off */
     this.props.field.setValue(toContentfulDocument(value.toJSON().document));
     this.setState({ value });
   };
+
   render () {
     return (
       <div className="structured-text">
-        <div className="structured-text__toolbar">
-          <Bold change={this.state.value.change()} onToggle={this.onChange} />
-          <Italic change={this.state.value.change()} onToggle={this.onChange} />
-          <Underlined
-            change={this.state.value.change()}
-            onToggle={this.onChange}
-          />
-          <Heading1
-            change={this.state.value.change()}
-            onToggle={this.onChange}
-          />
-          <Heading2
-            change={this.state.value.change()}
-            onToggle={this.onChange}
-          />
-          <EntryLinkBlock
-            change={this.state.value.change()}
-            onToggle={this.onChange}
-            field={this.props.field}
-          />
-        </div>
-        <Editor
+        {!this.state.isDisabled && this.renderToolbar()}
+        <Editor data-test-id="editor"
           value={this.state.value}
           onChange={this.onChange}
           plugins={plugins}
           schema={schema}
+          readOnly={this.state.isDisabled}
+        />
+      </div>
+    );
+  }
+
+  renderToolbar () {
+    return (
+      <div className="structured-text__toolbar" data-test-id="toolbar">
+        <Bold change={this.state.value.change()} onToggle={this.onChange} />
+        <Italic change={this.state.value.change()} onToggle={this.onChange} />
+        <Underlined
+          change={this.state.value.change()}
+          onToggle={this.onChange}
+        />
+        <Heading1
+          change={this.state.value.change()}
+          onToggle={this.onChange}
+        />
+        <Heading2
+          change={this.state.value.change()}
+          onToggle={this.onChange}
+        />
+        <EntryLinkBlock
+          change={this.state.value.change()}
+          onToggle={this.onChange}
+          field={this.props.field}
         />
       </div>
     );
