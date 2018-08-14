@@ -117,7 +117,13 @@ Analytics.track('experiment:interaction', {
 As discussed with folks from the QA team, the idea is to not have automated tests for A/B tests since they are shortlived by definition. Instead, A/B tests will only undergo manual testing.
 Therefore, for your flag on `Staging` environment on LD, please make sure you add a rule that serve `false` when `isAutomationTestUser` `is one of` `true` so as to not break our automated test suite.
 
-To QA manually, you can pass the flag name using a query parameter to our webapp. The parameter is called `ui_enable_flags` and accepts a list of LaunchDarkly test/flag names. Example: `ui_enable_flags=test-ps-03-2017-example-space-impact`
+### Enabling flags
+
+To QA manually, you can pass the flag name using a query parameter to our webapp. The parameter is called `ui_enable_flags` and accepts a list of LaunchDarkly test/flag names (you can pass multiple separating them by comma). Example: `ui_enable_flags=feature-ps-12-2017-author-onboarding-help`
+
+### Disabling flags
+
+Similar to enabling flags, you can disable specific flags by passing a flag using the query parameter called `ui_disable_flags`. It accepts a list of LaunchDarkly test/flag names in the same way as in the enabling flags. This will automatically return `false` for all specified flags. Example: `ui_disable_flags=feature-ps-12-2017-author-onboarding-help`
 
 ## Running the test
 
