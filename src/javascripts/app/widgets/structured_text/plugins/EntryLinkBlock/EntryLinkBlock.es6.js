@@ -14,11 +14,11 @@ class Thumbnail extends Component {
       url: PropTypes.string,
       contentType: PropTypes.string
     })
-  }
+  };
 
   static defaultProps = {
     entryThumbnail: undefined
-  }
+  };
 
   render () {
     const valid = this.props.entryThumbnail && isValidImage(this.props.entryThumbnail.contentType);
@@ -59,7 +59,8 @@ export default class LinkedEntryBlock extends React.Component {
   };
 
   render () {
-    const { node, isSelected } = this.props;
+    const { node, isSelected, editor } = this.props;
+    const isDisabled = editor.props.readOnly;
 
     return (
       <FetchEntry
@@ -84,12 +85,14 @@ export default class LinkedEntryBlock extends React.Component {
                     flex: '1 1 0'
                   }}
                   >Entity missing or inaccessible</h1>
-                  <IconButton
-                    iconProps={{ icon: 'Close' }}
-                    label='Remove reference to entry'
-                    onClick={event => this.handleRemoveClick(event)}
-                    buttonType='muted'
-                  />
+                  {isDisabled ||
+                    <IconButton
+                      iconProps={{ icon: 'Close' }}
+                      label='Remove reference to entry'
+                      onClick={event => this.handleRemoveClick(event)}
+                      buttonType='muted'
+                    />
+                  }
                 </div>
               </Card>
             );
@@ -111,12 +114,14 @@ export default class LinkedEntryBlock extends React.Component {
                       onClick={event => this.handleEditClick(event, entry)}
                       buttonType='muted'
                     />
-                    <IconButton
-                      iconProps={{ icon: 'Close' }}
-                      label='Remove reference to entry'
-                      onClick={event => this.handleRemoveClick(event)}
-                      buttonType='muted'
-                    />
+                    {isDisabled ||
+                      <IconButton
+                        iconProps={{ icon: 'Close' }}
+                        label='Remove reference to entry'
+                        onClick={event => this.handleRemoveClick(event)}
+                        buttonType='muted'
+                      />
+                    }
                   </React.Fragment>
                 }
               />
