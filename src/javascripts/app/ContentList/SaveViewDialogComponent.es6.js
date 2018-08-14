@@ -28,12 +28,13 @@ class ViewTypeOption extends React.Component {
   }
 }
 
+const MIN_LENGTH = 1;
+const MAX_LENGTH = 32;
+
 export default class SaveViewDialog extends React.Component {
   static propTypes = {
     confirm: PropTypes.func.isRequired,
     cancel: PropTypes.func.isRequired,
-    minLength: PropTypes.number.isRequired,
-    maxLength: PropTypes.number.isRequired,
     allowViewTypeSelection: PropTypes.bool.isRequired,
     allowRoleAssignment: PropTypes.bool.isRequired
   };
@@ -43,15 +44,13 @@ export default class SaveViewDialog extends React.Component {
   render () {
     const {
       cancel,
-      maxLength,
       allowViewTypeSelection,
-      minLength,
       allowRoleAssignment
     } = this.props;
     const {value, isShared} = this.state;
 
     const trimmed = value.trim();
-    const isValid = !(trimmed.length < minLength || trimmed.length > maxLength);
+    const isValid = !(trimmed.length < MIN_LENGTH || trimmed.length > MAX_LENGTH);
     const confirm = () => isValid && this.props.confirm({title: trimmed, isShared});
     const onKeyDown = e => e.keyCode === keycodes.ENTER && confirm();
 
@@ -73,7 +72,7 @@ export default class SaveViewDialog extends React.Component {
           value={value}
           onChange={e => this.setState({value: e.target.value})}
           onKeyDown={onKeyDown}
-          maxLength={String(maxLength)}
+          maxLength={String(MAX_LENGTH)}
           style={{marginTop: '5px'}}
         />
         {allowViewTypeSelection &&
@@ -97,7 +96,7 @@ export default class SaveViewDialog extends React.Component {
         <button
           className="btn-primary-action"
           onClick={confirm}
-          disabled={trimmed.length < minLength}
+          disabled={trimmed.length < MIN_LENGTH}
         >
           {isShared && allowRoleAssignment ? 'Proceed and select roles' : 'Save view'}
         </button>

@@ -10,8 +10,6 @@ export default function SaveViewDialog ({
       $scope.props = {
         confirm: values => $scope.dialog.confirm(values),
         cancel: () => $scope.dialog.cancel(),
-        minLength: 1,
-        maxLength: 32,
         allowViewTypeSelection,
         allowRoleAssignment: !!allowRoleAssignment
       };
