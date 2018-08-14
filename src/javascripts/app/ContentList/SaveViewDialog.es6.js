@@ -15,8 +15,6 @@ export default function SaveViewDialog ({
         allowViewTypeSelection,
         allowRoleAssignment: !!allowRoleAssignment
       };
-
-      $scope.$applyAsync();
     }
   });
 }
