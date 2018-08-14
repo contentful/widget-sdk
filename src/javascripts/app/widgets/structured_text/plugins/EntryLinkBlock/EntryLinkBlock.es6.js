@@ -59,75 +59,84 @@ export default class LinkedEntryBlock extends React.Component {
   };
 
   render () {
-    const { node, isSelected, editor } = this.props;
-    const isDisabled = editor.props.readOnly;
+    const { node } = this.props;
 
     return (
       <FetchEntry
         node={node}
-        render={({
-          entry,
-          entryTitle,
-          entryDescription,
-          entryThumbnail,
-          entryStatus,
-          entryIsMissing,
-          loading
-        }) => {
-          if (entryIsMissing) {
-            return (
-              <Card selected={isSelected}>
-                <div style={{display: 'flex'}}>
-                  <h1 style={{
-                    margin: 0,
-                    fontSize: '.875rem', // Equal to 14px when browser text size is set to 100%
-                    lineHeight: 1.5,
-                    flex: '1 1 0'
-                  }}
-                  >Entity missing or inaccessible</h1>
-                  {isDisabled ||
-                    <IconButton
-                      iconProps={{ icon: 'Close' }}
-                      label='Remove reference to entry'
-                      onClick={event => this.handleRemoveClick(event)}
-                      buttonType='muted'
-                    />
-                  }
-                </div>
-              </Card>
-            );
+        render={(fetchEntryResult) => {
+          if (fetchEntryResult.entryIsMissing) {
+            return this.renderMissingEntryReferenceCard();
           } else {
-            return (
-              <ReferenceCard
-                title={entryTitle}
-                contentType={entry.sys.contentType.sys.id}
-                description={entryDescription}
-                selected={isSelected}
-                status={entryStatus}
-                thumbnailElement={<Thumbnail entryThumbnail={entryThumbnail} />}
-                loading={loading.entry || loading.thumbnail}
-                actionElements={
-                  <React.Fragment>
-                    <IconButton
-                      iconProps={{ icon: 'Edit' }}
-                      label='Edit entry'
-                      onClick={event => this.handleEditClick(event, entry)}
-                      buttonType='muted'
-                    />
-                    {isDisabled ||
-                      <IconButton
-                        iconProps={{ icon: 'Close' }}
-                        label='Remove reference to entry'
-                        onClick={event => this.handleRemoveClick(event)}
-                        buttonType='muted'
-                      />
-                    }
-                  </React.Fragment>
-                }
-              />
-            );
+            return this.renderReferenceCard(fetchEntryResult);
           }
         }}
+      />
+    );
+  }
+
+  renderReferenceCard ({
+    entry,
+    entryTitle,
+    entryDescription,
+    entryThumbnail,
+    entryStatus,
+    loading
+  }) {
+    const { isSelected, editor } = this.props;
+    const isDisabled = editor.props.readOnly;
+
+    return (
+      <ReferenceCard
+        title={entryTitle}
+        contentType={entry.sys.contentType.sys.id}
+        description={entryDescription}
+        selected={isSelected}
+        status={entryStatus}
+        thumbnailElement={<Thumbnail entryThumbnail={entryThumbnail} />}
+        loading={loading.entry || loading.thumbnail}
+        actionElements={
+          <React.Fragment>
+            <IconButton
+              iconProps={{ icon: 'Edit' }}
+              label='Edit entry'
+              onClick={event => this.handleEditClick(event, entry)}
+              buttonType='muted'
+            />
+            {isDisabled || this.renderDeleteButton()}
+          </React.Fragment>
+        }
+      />
+    );
+  }
+
+  renderMissingEntryReferenceCard () {
+    const { isSelected, editor } = this.props;
+    const isDisabled = editor.props.readOnly;
+
+    return (
+      <Card selected={isSelected}>
+        <div style={{display: 'flex'}}>
+          <h1 style={{
+            margin: 0,
+            fontSize: '.875rem', // Equal to 14px when browser text size is set to 100%
+            lineHeight: 1.5,
+            flex: '1 1 0'
+          }}
+          >Entity missing or inaccessible</h1>
+          {isDisabled || this.renderDeleteButton()}
+        </div>
+      </Card>
+    );
+  }
+
+  renderDeleteButton () {
+    return (
+      <IconButton
+        iconProps={{ icon: 'Close' }}
+        label='Remove reference to entry'
+        onClick={event => this.handleRemoveClick(event)}
+        buttonType='muted'
       />
     );
   }
