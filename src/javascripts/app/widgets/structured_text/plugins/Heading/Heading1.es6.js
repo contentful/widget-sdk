@@ -12,5 +12,5 @@ class Heading1 extends Component {
 export default blockDecorator({
   type: BLOCKS.HEADING_1,
   title: 'Heading 1 (ctrl+opt+1)',
-  icon: 'LooksOne'
+  icon: 'HeadingOne'
 })(Heading1);

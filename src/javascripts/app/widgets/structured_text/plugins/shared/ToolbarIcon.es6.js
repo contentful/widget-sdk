@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Icon } from '@contentful/ui-component-library';
+// import { Icon } from '@contentful/ui-component-library';
+import { EditorToolbarButton } from '@contentful/ui-component-library';
 
 export default class ToolbarIcon extends Component {
   static propTypes = {
@@ -12,6 +13,11 @@ export default class ToolbarIcon extends Component {
   };
 
   handleMouseDown = event => {
+    /*
+      We're using the mousedown event rather than onclick because onclick will
+      steal the focus.
+    */
+
     event.preventDefault();
     this.props.onToggle(event);
   };
@@ -20,18 +26,14 @@ export default class ToolbarIcon extends Component {
     const { icon, isActive, title, type } = this.props;
 
     return (
-      <button
+      <EditorToolbarButton
+        icon={icon}
+        tooltip={title}
+        label={title}
+        isActive={isActive}
         data-test-id={`toolbar-toggle-${type}`}
-        title={title}
         onMouseDown={this.handleMouseDown}
-        className="structured-text__toolbar__button"
-      >
-        <Icon
-          icon={icon}
-          size="small"
-          color={isActive ? 'secondary' : 'muted'}
-        />
-      </button>
+      />
     );
   }
 }

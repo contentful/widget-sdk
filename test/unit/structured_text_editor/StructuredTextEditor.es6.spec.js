@@ -44,7 +44,7 @@ describe('StructuredTextEditor', () => {
   });
 
   it('renders toolbar', function () {
-    const el = this.wrapper.find('[data-test-id="toolbar"]');
+    const el = this.wrapper.first('[data-test-id="toolbar"]');
     expect(el.length).toEqual(1);
   });
 
@@ -57,7 +57,7 @@ describe('StructuredTextEditor', () => {
       MARKS.UNDERLINE
     ];
     toolbarItems.forEach(item => {
-      const el = this.wrapper.find(`[data-test-id="toolbar-toggle-${item}"]`);
+      const el = this.wrapper.first(`[data-test-id="toolbar-toggle-${item}"]`);
       expect(el.length).toEqual(1);
       el.simulate('click');
       sinon.assert.calledOnce(this.props.field.setValue);

@@ -5,6 +5,7 @@ import { Value, Schema } from 'slate';
 import TrailingBlock from 'slate-trailing-block';
 
 import { toSlatejsDocument, toContentfulDocument } from '@contentful/contentful-slatejs-adapter';
+import { EditorToolbar } from '@contentful/ui-component-library';
 
 import Bold, { BoldPlugin } from './plugins/Bold';
 import Italic, { ItalicPlugin } from './plugins/Italic';
@@ -91,24 +92,9 @@ export default class StructuredTextEditor extends React.Component {
     this.setState({ value });
   };
 
-  render () {
-    return (
-      <div className="structured-text">
-        {!this.state.isDisabled && this.renderToolbar()}
-        <Editor data-test-id="editor"
-          value={this.state.value}
-          onChange={this.onChange}
-          plugins={plugins}
-          schema={schema}
-          readOnly={this.state.isDisabled}
-        />
-      </div>
-    );
-  }
-
   renderToolbar () {
     return (
-      <div className="structured-text__toolbar" data-test-id="toolbar">
+      <EditorToolbar data-test-id="toolbar">
         <Bold change={this.state.value.change()} onToggle={this.onChange} />
         <Italic change={this.state.value.change()} onToggle={this.onChange} />
         <Underlined
@@ -127,6 +113,23 @@ export default class StructuredTextEditor extends React.Component {
           change={this.state.value.change()}
           onToggle={this.onChange}
           field={this.props.field}
+        />
+      </EditorToolbar>
+    );
+  }
+
+  render () {
+    return (
+      <div className="structured-text">
+        {!this.state.isDisabled && this.renderToolbar()}
+        <Editor
+          data-test-id="editor"
+          value={this.state.value}
+          onChange={this.onChange}
+          plugins={plugins}
+          schema={schema}
+          readOnly={this.state.isDisabled}
+          className="structured-text__editor"
         />
       </div>
     );
