@@ -11,6 +11,7 @@ angular.module('contentful')
   $scope.sidePanelIsShown = false;
   $scope.toggleSidePanel = () => {
     $scope.sidePanelIsShown = !$scope.sidePanelIsShown;
+    $scope.$applyAsync();
   };
 
   $scope.$watch(() => authorization.isUpdated(TokenStore.getTokenLookup(), spaceContext.space), () => {

@@ -9,8 +9,9 @@ export default function () {
       isShown: 'sidePanelIsShown'
     }),
     h('div.app-top-bar', [
-      h('cf-nav-sidepanel-trigger', {
-        ngClick: 'toggleSidePanel()'
+      h('react-component', {
+        name: 'navigation/Sidepanel/Trigger',
+        props: '{onClick: toggleSidePanel}'
       }),
       h('div.app-top-bar__child.app-top-bar__main-nav', {
         uiView: 'nav-bar'
