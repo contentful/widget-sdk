@@ -2,7 +2,6 @@ angular.module('contentful')
 .directive('cfContactUsSpaceHome', ['require', require => {
   const LD = require('utils/LaunchDarkly');
   const Intercom = require('intercom');
-  const renderTemplate = require('app/home/contactUs/template').render;
   const Analytics = require('analytics/Analytics');
   const $state = require('$state');
 
@@ -10,22 +9,21 @@ angular.module('contentful')
 
   return {
     restrict: 'E',
-    template: '<cf-component-bridge component="contact.component" />',
+    template: '<react-component name="app/home/contactUs/Template" props="contact.props"/>',
     controllerAs: 'contact',
     controller: ['$scope', function ($scope) {
       const controller = this;
 
       render();
       LD.onFeatureFlag($scope, flagName, flag => {
-        controller.isVisible = Intercom.isEnabled() && flag;
-        render();
+        render(Intercom.isEnabled() && flag);
       });
 
-      function render () {
-        controller.component = renderTemplate({
-          isVisible: controller.isVisible,
-          onClick: onClick
-        });
+      function render (isVisible = false) {
+        controller.props = {
+          isVisible,
+          onClick
+        };
       }
 
       function onClick () {
