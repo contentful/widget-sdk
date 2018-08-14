@@ -17,7 +17,7 @@ class ViewTypeOption extends React.Component {
       <input
         type="radio"
         checked={checked}
-        readOnly={true}
+        readOnly
       />
       <span style={{marginLeft: '5px'}}>
         <label>{label}</label>
