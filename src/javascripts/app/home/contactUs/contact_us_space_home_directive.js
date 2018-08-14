@@ -14,17 +14,11 @@ angular.module('contentful')
     controller: ['$scope', function ($scope) {
       const controller = this;
 
-      render();
-      LD.onFeatureFlag($scope, flagName, flag => {
-        render(Intercom.isEnabled() && flag);
-      });
+      controller.props = { onClick };
 
-      function render (isVisible = false) {
-        controller.props = {
-          isVisible,
-          onClick
-        };
-      }
+      LD.onFeatureFlag($scope, flagName, flag => {
+        controller.props.isVisible = Intercom.isEnabled() && flag;
+      });
 
       function onClick () {
         Analytics.track('element:click', {

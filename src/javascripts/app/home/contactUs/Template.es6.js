@@ -5,8 +5,12 @@ const prefix = 'space-home-page-contact-us';
 
 export default class ContactUs extends React.Component {
   static propTypes = {
-    isVisible: PropTypes.bool.isRequired,
+    isVisible: PropTypes.bool,
     onClick: PropTypes.func.isRequired
+  };
+
+  static defaultProps = {
+    isVisible: false
   };
 
   render () {
