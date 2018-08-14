@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {TextField} from '@contentful/ui-component-library';
 import {byName as colors} from 'Styles/Colors';
 import keycodes from 'utils/keycodes';
 
@@ -64,14 +65,15 @@ export default class SaveViewDialog extends React.Component {
           A view displays a list of entries you searched for. By saving the current view, you will be able to re-use it
           later.
         </p>
-        <span>Name of the view<span className="modal-dialog__richtext"> (required)</span></span>
-        <input
-          className="cfnext-form__input--full-size"
-          type="text"
+        <TextField
+          id="name"
+          name="name"
+          labelText="Name of the view"
+          required
           value={value}
           onChange={e => this.setState({value: e.target.value})}
           onKeyDown={onKeyDown}
-          maxLength={`${maxLength}`}
+          maxLength={String(maxLength)}
           style={{marginTop: '5px'}}
         />
         {allowViewTypeSelection &&
