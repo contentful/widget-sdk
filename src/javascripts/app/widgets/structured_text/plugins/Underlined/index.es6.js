@@ -22,6 +22,6 @@ class Underlined extends Component {
 
 export default markToggleDecorator({
   type: MARKS.UNDERLINE,
-  title: 'Underline (cmd + u)',
+  title: 'Underline',
   icon: 'FormatUnderlined'
 })(Underlined);
