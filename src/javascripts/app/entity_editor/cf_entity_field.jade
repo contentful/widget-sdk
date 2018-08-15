@@ -22,6 +22,12 @@ mixin field-permission-info
     tooltip-placement="left")
       cf-icon(name="lock")
       | This field is disabled
+  div.entity-editor__no-permission-info(
+    data-test-id="field-locale-occupied"
+    ng-show="fieldLocale.access.occupied")
+      // We do not want a tooltip for this case for now.
+      cf-icon(name="lock")
+      | This field is being edited by another user
 
 mixin field-locale-errors
   ul.cfnext-form__field-errors(ng-if="fieldLocale.errors")

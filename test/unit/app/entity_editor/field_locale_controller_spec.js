@@ -192,6 +192,18 @@ describe('FieldLocaleController', () => {
       });
     });
 
+    it('is "disabled" and "occupied" for `StructuredText` field with collaborators', function () {
+      this.otDoc.collaboratorsFor.returns(K.createMockProperty([{}]));
+      const scope = this.init((scope) => {
+        scope.widget.field.type = 'StructuredText';
+      });
+      this.$apply();
+      expect(scope.fieldLocale.access).toEqual({
+        occupied: true,
+        disabled: true
+      });
+    });
+
     it('is "disabled" and "denied" without permissions and with connection', function () {
       this.hasEditingPermission.returns(false);
       const scope = this.init();

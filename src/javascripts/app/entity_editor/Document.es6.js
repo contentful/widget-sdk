@@ -131,7 +131,7 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
     if (PathUtils.isPrefix(changePath, ['fields']) && currentDoc) {
       const locales = TheLocaleStore.getPrivateLocales();
       Normalizer.normalize({
-        getValueAt: getValueAt,
+        getValueAt,
         setValueAt: docSetters.setValueAt
       }, currentDoc.snapshot, contentType, locales);
     }
@@ -430,7 +430,7 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
 
     status$,
 
-    getValueAt: getValueAt,
+    getValueAt,
     setValueAt: docSetters.setValueAt,
     removeValueAt: docSetters.removeValueAt,
     insertValueAt: docSetters.insertValueAt,

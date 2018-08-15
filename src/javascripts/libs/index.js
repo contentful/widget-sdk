@@ -40,6 +40,8 @@ window.libs = [
   ['@contentful/contentful-slatejs-adapter', require('@contentful/contentful-slatejs-adapter')],
   ['@contentful/structured-text-types', require('@contentful/structured-text-types')],
   ['slate-trailing-block', require('slate-trailing-block')],
+  ['json0-ot-diff', require('json0-ot-diff')],
+  ['diff-match-patch', require('diff-match-patch')],
   ['qs', require('qs')],
   ['react-tippy', require('react-tippy')],
   ['color', require('color')],

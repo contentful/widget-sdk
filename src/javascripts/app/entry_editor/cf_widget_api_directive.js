@@ -92,9 +92,9 @@ angular.module('contentful')
     }
   };
 
-  // This interace is not exposed on the Extensions SDK. It serves for
+  // This interface is not exposed on the Extensions SDK. It serves for
   // internal convenience. Everything that uses these values can be
-  // written (albeit akwardly) with the Extensions SDK.
+  // written (albeit awkwardly) with the Extensions SDK.
   this.fieldProperties = {
     // Property<boolean>
     isDisabled$: isEditingDisabled,

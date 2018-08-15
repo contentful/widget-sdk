@@ -128,7 +128,7 @@ angular.module('contentful')
      * @ngdoc method
      * @name PresenceHub#leave
      * @description
-     * Anounce to collaborators that we are leaving the document
+     * Announce to collaborators that we are leaving the document
      */
     function leave () {
       shout(['close', ownUserId]);

@@ -24,6 +24,7 @@ export default class EntryLinkToolbarIcon extends Component {
       const linkedEntryBlock = {
         type: BLOCKS.EMBEDDED_ENTRY,
         object: 'block',
+        isVoid: true,
         data: {
           target: {
             sys: {

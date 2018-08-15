@@ -1,12 +1,26 @@
 import React from 'react';
 import { mount } from 'enzyme';
 
+import * as sinon from 'helpers/sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
+
 import { BLOCKS, MARKS } from '@contentful/structured-text-types';
 
 describe('StructuredTextEditor', () => {
   beforeEach(async function () {
     module('contentful/test');
+    const mockDocument = {
+      content: []
+    };
+    this.props = {
+      field: {
+        getValue: sinon.stub().returns(mockDocument),
+        setValue: sinon.stub(),
+        onValueChanged: sinon.stub().returns(mockDocument)
+      },
+      value: mockDocument,
+      readOnly: false
+    };
     this.system = createIsolatedSystem();
 
     this.system.set('entitySelector', {});

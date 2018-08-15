@@ -3,9 +3,12 @@ import PropTypes from 'prop-types';
 import { Editor } from 'slate-react';
 import { Value, Schema } from 'slate';
 import TrailingBlock from 'slate-trailing-block';
-import { EditorToolbar } from '@contentful/ui-component-library';
 
-import { toSlatejsDocument, toContentfulDocument } from '@contentful/contentful-slatejs-adapter';
+import {
+  toSlatejsDocument,
+  toContentfulDocument
+} from '@contentful/contentful-slatejs-adapter';
+import { EditorToolbar } from '@contentful/ui-component-library';
 
 import Bold, { BoldPlugin } from './plugins/Bold';
 import Italic, { ItalicPlugin } from './plugins/Italic';
@@ -20,6 +23,7 @@ import {
 import EntryLinkBlock, { EntryLinkBlockPlugin } from './plugins/EntryLinkBlock';
 
 import schemaJson from './constants/Schema';
+import emptyDoc from './constants/EmptyDoc';
 
 const plugins = [
   BoldPlugin(),
@@ -32,56 +36,45 @@ const plugins = [
 ];
 
 const schema = Schema.fromJSON(schemaJson);
-
-
-const initialValue = Value.fromJSON({
-  document: {
-    nodes: [
-      {
-        object: 'block',
-        type: 'paragraph',
-        nodes: [
-          {
-            object: 'text',
-            leaves: [
-              {
-                text: ''
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  }
-});
+const initialValue = Value.fromJSON(toSlatejsDocument(emptyDoc));
 
 export default class StructuredTextEditor extends React.Component {
   static propTypes = {
-    field: PropTypes.object.isRequired
+    field: PropTypes.object.isRequired,
+    value: PropTypes.object.isRequired,
+    readOnly: PropTypes.bool
   };
-
+  static defaultProps = {
+    value: emptyDoc,
+    readOnly: false
+  };
   constructor (props) {
+    let isDisabledInitially = true;
+
     super(props);
 
-    // onIsDisabledChanged() immediately dispatches!
+    // onIsDisabledChanged() should immediately dispatch but it seems this is
+    // not always the case.
     this.offDisabledState = this.props.field.onIsDisabledChanged((isDisabled) => {
       if (this.state) {
         this.setState({ isDisabled });
       } else {
-        this.state = {
-          headingMenuOpen: false,
-          value:
-            this.props.field.getValue() &&
-            this.props.field.getValue().nodeClass === 'document'
-              ? Value.fromJSON({
-                object: 'value',
-                document: toSlatejsDocument(this.props.field.getValue())
-              })
-              : initialValue,
-          isDisabled
-        };
+        isDisabledInitially = isDisabled;
       }
     });
+
+    this.state = {
+      value:
+        this.props.field.getValue() &&
+        this.props.field.getValue().nodeClass === 'document'
+          ? Value.fromJSON({
+            object: 'value',
+            document: toSlatejsDocument(this.props.field.getValue())
+          })
+          : initialValue,
+      isDisabled: isDisabledInitially
+    };
+    this.offValueChanged = this.props.field.onValueChanged(this.handleIncomingChanges);
   }
 
   componentWillUnmount () {
@@ -89,11 +82,36 @@ export default class StructuredTextEditor extends React.Component {
   }
 
   onChange = ({ value }) => {
-    /* eslint no-console: off */
-    this.props.field.setValue(toContentfulDocument(value.toJSON().document));
     this.setState({ value, headingMenuOpen: false });
   };
-
+  componentDidUpdate () {
+    const isInComingChange = this.state.isDisabled === true;
+    if (!isInComingChange) {
+      this.props.field.setValue(
+        toContentfulDocument(this.state.value.document.toJSON())
+      );
+    }
+  }
+  handleDisabledChange = (isDisabled) => {
+    if (this.state.isDisabled !== isDisabled) {
+      this.setState({ isDisabled });
+    }
+  }
+  /**
+   * Handles incoming changes in readOnly mode, meaning the field is being
+   * edited by an other user simultanously.
+   */
+  handleIncomingChanges = (nextValue = initialValue) => {
+    if (this.state.isDisabled) {
+      const slateDoc = Value.fromJSON({
+        object: 'value',
+        document: toSlatejsDocument(nextValue)
+      });
+      this.setState({
+        value: slateDoc
+      });
+    }
+  };
   renderToolbar () {
     return (
       <EditorToolbar>
@@ -141,7 +159,6 @@ export default class StructuredTextEditor extends React.Component {
   closeHeadingMenu = () => this.setState({
     headingMenuOpen: false
   });
-
 
   render () {
     return (

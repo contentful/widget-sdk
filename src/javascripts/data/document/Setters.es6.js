@@ -4,6 +4,8 @@ import * as K from 'utils/kefir';
 import * as StringField from 'entityEditor/Document/StringField';
 import * as ShareJS from 'data/ShareJS/Utils';
 
+import * as StructuredTextFieldSetter from 'app/widgets/structured_text/StructuredTextFieldSetter';
+
 /**
  * Create an object that exposes all methods for changing values in a
  * ShareJS document.
@@ -64,6 +66,8 @@ export function create ({
   function setValueAtRaw (doc, path, value) {
     if (path.length === 3 && StringField.is(path[1], contentType)) {
       return StringField.setAt(doc, path, value);
+    } else if (StructuredTextFieldSetter.is(path[1], contentType)) {
+      return StructuredTextFieldSetter.setAt(doc, path, value);
     } else {
       return ShareJS.setDeep(doc, path, value);
     }

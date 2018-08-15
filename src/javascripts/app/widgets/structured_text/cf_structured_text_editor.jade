@@ -1,8 +1,2 @@
-div(ng-show="isDisabled")
-  pre.json-editor__disabled-content(ng-if="content")
-    | {{content}}
-  pre.json-editor__disabled-content.x--empty(ng-if="!content")
-    | // No value
-
-div.json-editor__code-editor-container(ng-show="!isDisabled")
+div.json-editor__code-editor-container
   <react-component name="app/widgets/structured_text/StructuredTextEditor" props="slateEditorProps"></react-component>

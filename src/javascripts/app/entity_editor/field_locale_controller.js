@@ -31,6 +31,7 @@ angular.module('contentful')
   // Values for controller.access
   const DENIED = {denied: true, disabled: true};
   const EDITING_DISABLED = {editing_disabled: true, disabled: true};
+  const OCCUPIED = {occupied: true, disabled: true};
   const EDITABLE = {editable: true};
   const DISCONNECTED = {disconnected: true, disabled: true};
 
@@ -211,29 +212,42 @@ angular.module('contentful')
    * The object has a number of boolean properties that are set
    * according to the connection state and editing permissions.
    *
-   * - `disconnected`  No ShareJS connection
-   * - `denied`  The user does not have permission to edit the field
-   * - `editing_disabled`  The field is disabled at the content type
-   *   level
+   * - `disconnected` No ShareJS connection
+   * - `denied` The user does not have permission to edit the field
+   * - `editing_disabled` The field is disabled at the content type level
    * - `disabled` Is true if one of the above is true
    * - `editable` Is true if 'disabled' is false
    */
   controller.access$ =
     // TODO move this to FieldLocaleDocument
-    $scope.docImpl.state.isConnected$
-    .map(connected => {
-      if (field.disabled) {
-        return EDITING_DISABLED;
-      } else if (!editingAllowed) {
-        return DENIED;
-      } else if (connected) {
-        return EDITABLE;
-      } else {
-        return DISCONNECTED;
+    K.combine(
+      [
+        $scope.docImpl.state.isConnected$,
+        controller.doc.collaborators
+      ],
+      (isConnected, collaborators) => {
+        if (field.disabled) {
+          return EDITING_DISABLED;
+        } else if (!editingAllowed) {
+          return DENIED;
+        } else if (
+          isCollaborativeEditingDisabledForFieldType(field.type) &&
+          collaborators && collaborators.length > 0
+        ) {
+          return OCCUPIED;
+        } else if (isConnected) {
+          return EDITABLE;
+        } else {
+          return DISCONNECTED;
+        }
       }
-    });
+    ).toProperty();
 
   K.onValueScope($scope, controller.access$, access => {
     controller.access = access;
   });
+
+  function isCollaborativeEditingDisabledForFieldType (fieldType) {
+    return fieldType === 'StructuredText';
+  }
 }]);
