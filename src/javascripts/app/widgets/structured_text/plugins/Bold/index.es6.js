@@ -22,6 +22,6 @@ class Bold extends Component {
 
 export default markToggleDecorator({
   type: MARKS.BOLD,
-  title: 'Make a bold move',
+  title: 'Bold',
   icon: 'FormatBold'
 })(Bold);

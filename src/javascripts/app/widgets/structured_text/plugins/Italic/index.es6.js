@@ -22,6 +22,6 @@ class Italic extends Component {
 
 export default markToggleDecorator({
   type: MARKS.ITALIC,
-  title: 'Italic (cmd + i)',
+  title: 'Italic',
   icon: 'FormatItalic'
 })(Italic);
