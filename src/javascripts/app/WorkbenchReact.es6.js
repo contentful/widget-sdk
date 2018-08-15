@@ -1,4 +1,5 @@
 import {createElement as h} from 'react';
+import cn from 'classnames';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import Icon from 'ui/Components/Icon';
@@ -11,10 +12,11 @@ const Workbench = createReactClass({
     actions: PropTypes.element,
     sidebar: PropTypes.element,
     icon: PropTypes.string,
-    testId: PropTypes.string
+    testId: PropTypes.string,
+    centerContent: PropTypes.bool
   },
   render () {
-    const {title, children, content, actions, sidebar, icon, testId} = this.props;
+    const {title, children, content, actions, sidebar, icon, testId, centerContent} = this.props;
 
     return h('div', {
       className: 'workbench',
@@ -36,7 +38,9 @@ const Workbench = createReactClass({
         )
       ),
       h('div', {
-        className: 'workbench-main'
+        className: cn('workbench-main', {
+          'x--content': centerContent === true
+        })
       },
         h('div', {
           className: sidebar ? 'workbench-main__content' : 'workbench-main__middle-content'
