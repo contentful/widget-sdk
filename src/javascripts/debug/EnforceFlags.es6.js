@@ -6,39 +6,55 @@ import {addNotification} from 'debug/DevNotifications';
 import location from '$location';
 import Cookies from 'Cookies';
 
+const ENABLE_FLAGS_KEY = 'ui_enable_flags';
+const DISABLE_FLAGS_KEY = 'ui_disable_flags';
+
+const storeForEnable = getStore().forKey(ENABLE_FLAGS_KEY);
+const storeForDisable = getStore().forKey(DISABLE_FLAGS_KEY);
+
 /**
  * Stores enabled ui flags from url in local storage, and shows
  * a notification.
  */
 export function init () {
   const urlParams = location.search();
-  const enabledFlags = urlParams['ui_enable_flags'];
-  setFromQuery(enabledFlags);
-  if (enabledFlags) {
+  const enabledFlags = urlParams[ENABLE_FLAGS_KEY];
+  const disabledFlags = urlParams[DISABLE_FLAGS_KEY];
+
+  setFromQuery(enabledFlags, storeForEnable);
+  setFromQuery(disabledFlags, storeForDisable);
+  if (enabledFlags || disabledFlags) {
     // Updates url without reloading
-    location.search(omit(urlParams, 'ui_enable_flags'));
+    location.search(omit(urlParams, ENABLE_FLAGS_KEY, DISABLE_FLAGS_KEY));
   }
   displayNotification();
 }
-
-const store = getStore().forKey('ui_enable_flags');
 
 /**
  * Returns an array of ui flags enabled via query string param.
  */
 export function getEnabledFlags () {
-  return store.get() || [];
+  return storeForEnable.get() || [];
 }
 
-function setFromQuery (value = '') {
+export function getDisabledFlags () {
+  return storeForDisable.get() || [];
+}
+
+function setFromQuery (value = '', store) {
   if (value.length > 0) {
     store.set(uniq(value.split(',')));
   }
 }
 
-function removeFlag (flagName) {
+function removeEnabledFlag (flagName) {
   const enabledFlags = without(getEnabledFlags(), flagName);
-  store.set(enabledFlags);
+  storeForEnable.set(enabledFlags);
+}
+
+function removeDisabledFlag (flagName) {
+  const disabledFlags = without(getDisabledFlags(), flagName);
+  storeForDisable.set(disabledFlags);
 }
 
 function displayNotification () {
@@ -48,17 +64,22 @@ function displayNotification () {
   if (Cookies.get('cf_test_run')) {
     return;
   }
-  const flags = getEnabledFlags();
-  if (flags.length) {
-    addNotification('Enabled flags:', h('ul', null, flags.map(renderFlagsListItem)));
+  const enabledFlags = getEnabledFlags();
+  if (enabledFlags.length) {
+    addNotification('Enabled flags:', h('ul', null, enabledFlags.map(flag => renderFlagsListItem(flag, removeEnabledFlag))));
+  }
+
+  const disabledFlags = getDisabledFlags();
+  if (disabledFlags.length) {
+    addNotification('Disabled flags:', h('ul', null, disabledFlags.map(flag => renderFlagsListItem(flag, removeDisabledFlag))));
   }
 }
 
-function renderFlagsListItem (flag) {
+function renderFlagsListItem (flag, removeFn) {
   const clearBtn = h('button', {
     className: 'btn-link',
     onClick: () => {
-      removeFlag(flag);
+      removeFn(flag);
       $window.location.reload();
     },
     style: {float: 'right', marginLeft: '3px'}

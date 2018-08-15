@@ -79,7 +79,13 @@ It is possible to add custom properties to LD. But before doing so, *please disc
 If automated tests exists for your feature, work with a QA engineer to run the right version of the integration suite against your branch.
 If automated tests do not exist for your feature, then in your flag on `Staging` environment on LD, please make sure you add a rule that serve `false` when `isAutomationTestUser` `is one of` `true` so as to not break our automated test suite.
 
+### Enabling flags
+
 To QA manually, you can pass the flag name using a query parameter to our webapp. The parameter is called `ui_enable_flags` and accepts a list of LaunchDarkly test/flag names. Example: `ui_enable_flags=feature-ps-12-2017-author-onboarding-help`
+
+### Disabling flags
+
+Similar to enabling flags, you can disable specific flags by passing a flag using the query parameter called `ui_disable_flags`. It accepts a list of LaunchDarkly test/flag names in the same way as in the enabling flags. This will automatically return `false` for all specified flags. Example: `ui_disable_flags=feature-ps-12-2017-author-onboarding-help`
 
 ## Running
 
