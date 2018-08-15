@@ -1,6 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+const URL_STYLE = {
+  margin: '10px 0',
+  fontFamily: 'monospace',
+  fontSize: '.9em',
+  wordWrap: 'break-word'
+};
+
 export default class WebhookRemovalDialog extends React.Component {
   static propTypes = {
     webhookUrl: PropTypes.string.isRequired,
@@ -31,10 +38,9 @@ export default class WebhookRemovalDialog extends React.Component {
         </header>
         <div className="modal-dialog__content">
           <div className="modal-dialog__richtext">
-            <p>
-              You are about to remove webhook calling <span className="modal-dialog__highlight">{webhookUrl}</span>.
-              After removal your external integrations may stop working properly. Do you want to proceed?
-            </p>
+            You are about to remove webhook calling the following URL:
+            <div style={URL_STYLE}>{webhookUrl}</div>
+            After removal your external integrations may stop working properly. Do you want to proceed?
           </div>
         </div>
         <div className="modal-dialog__controls">

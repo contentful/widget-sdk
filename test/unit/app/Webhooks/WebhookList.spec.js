@@ -12,6 +12,7 @@ describe('WebhookList', function () {
     return Enzyme.mount(<WebhookList
       webhooks={webhooks}
       webhookRepo={webhookRepo}
+      templateContentTypes={[]}
       resource={resource}
       organization={organization}
     />);
@@ -27,7 +28,7 @@ describe('WebhookList', function () {
     const wrapper = mount([]);
     const rows = wrapper.find('.table__body tbody tr');
     expect(rows.length).toBe(1);
-    expect(rows.find('td').text()).toBe('No webhooks yet!');
+    expect(rows.find('td').text()).toBe('Add a webhook, then manage it in this space.');
   });
 
   it('renders non-empty list of webhooks', function () {

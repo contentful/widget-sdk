@@ -14,7 +14,7 @@ export default function WehhookSidebarDocumentation () {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Webhooks explained
+              Intro to webhooks
             </a>
           </li>
           <li>

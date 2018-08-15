@@ -23,6 +23,7 @@ import EntryViewTransform from './transformers/EntryView';
 import ReferenceEditorTransform from './transformers/ReferenceEditor';
 import ExtensionSaveTransform from './transformers/ExtensionSave';
 import ExtensionInstallTransform from './transformers/ExtensionInstall';
+import WebhookEditorTransform from './transformers/WebhookEditor';
 
 /**
  * @ngdoc module
@@ -132,6 +133,8 @@ registerEvent('reference_editor_action:create', 'feature_reference_action', Refe
 registerEvent('reference_editor_action:edit', 'feature_reference_action', ReferenceEditorTransform);
 registerEvent('reference_editor_action:delete', 'feature_reference_action', ReferenceEditorTransform);
 registerEvent('reference_editor_action:link', 'feature_reference_action', ReferenceEditorTransform);
+
+registerEvent('ui_webhook_editor:save', 'ui_webhook_editor_save', WebhookEditorTransform);
 
 /**
  * Registers an event to be tracked by snowplow.

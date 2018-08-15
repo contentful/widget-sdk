@@ -14,7 +14,8 @@ const TRANSFORMATION_EXAMPLE = {
 const CODE_MIRROR_OPTIONS = {
   mode: 'application/json',
   lineNumbers: true,
-  tabSize: 2
+  tabSize: 2,
+  lineWrapping: true
 };
 
 const refreshCodeMirror = throttle(el => {

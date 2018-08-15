@@ -5,8 +5,11 @@ import $state from '$state';
 
 import * as ResourceUtils from 'utils/ResourceUtils';
 import WebhookSidebarDocumentation from './WebhookSidebarDocumentation';
+import WebhookSidebarTemplatesList from './WebhookSidebarTemplatesList';
 
-export default function WebhookListSidebar ({webhooks, resource, organization}) {
+export default function WebhookListSidebar (props) {
+  const {webhooks, resource, organization, webhookRepo, templateContentTypes} = props;
+
   // Currently, for Version 1 organizations, the usage comes
   // from the token, but this is unreliable as the token is
   // cached. We instead look at the length of the webhooks to
@@ -33,6 +36,10 @@ export default function WebhookListSidebar ({webhooks, resource, organization}) 
         <i className="fa fa-plus-circle" /> Add Webhook
       </button>
       <WebhookSidebarDocumentation />
+      <WebhookSidebarTemplatesList
+        webhookRepo={webhookRepo}
+        templateContentTypes={templateContentTypes}
+      />
     </div>
   );
 }
@@ -40,5 +47,7 @@ export default function WebhookListSidebar ({webhooks, resource, organization}) 
 WebhookListSidebar.propTypes = {
   webhooks: PropTypes.array.isRequired,
   resource: PropTypes.object.isRequired,
-  organization: PropTypes.object.isRequired
+  organization: PropTypes.object.isRequired,
+  webhookRepo: PropTypes.object.isRequired,
+  templateContentTypes: PropTypes.array.isRequired
 };

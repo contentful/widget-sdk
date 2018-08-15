@@ -2,6 +2,7 @@ import {get} from 'lodash';
 import notification from 'notification';
 import modalDialog from 'modalDialog';
 import ReloadNotification from 'ReloadNotification';
+import * as Analytics from 'analytics/Analytics';
 
 const INVALID_BODY_TRANSFORMATION_ERROR_MSG = 'Please make sure your custom payload is a valid JSON.';
 const HTTP_BASIC_ERROR_MSG = 'Please provide a valid username/password combination.';
@@ -18,29 +19,28 @@ const PATH_TO_ERROR_MSG = {
   http_basic_password: HTTP_BASIC_ERROR_MSG
 };
 
-export async function save (webhookRepo, webhook) {
+export async function save (webhookRepo, webhook, templateId) {
   if (!webhookRepo.hasValidBodyTransformation(webhook)) {
-    notification.error(INVALID_BODY_TRANSFORMATION_ERROR_MSG);
     throw new Error(INVALID_BODY_TRANSFORMATION_ERROR_MSG);
   }
 
   try {
     const saved = await webhookRepo.save(webhook);
+    trackSave(saved, templateId);
     notification.info(`Webhook "${saved.name}" saved successfully.`);
     return saved;
   } catch (err) {
-    handleSaveApiError(err);
-    throw err;
+    throw new Error(getSaveApiErrorMessage(err));
   }
 }
 
-function handleSaveApiError (err) {
+function getSaveApiErrorMessage (err) {
   if (get(err, ['body', 'sys', 'id']) === 'Conflict') {
-    notification.error(CONFLICT_ERROR_MSG);
+    return CONFLICT_ERROR_MSG;
   } else {
     const [apiError] = get(err, ['body', 'details', 'errors'], []);
     const message = apiError && PATH_TO_ERROR_MSG[apiError.path];
-    notification.error(message || UNKNOWN_ERROR_MSG);
+    return message || UNKNOWN_ERROR_MSG;
   }
 }
 
@@ -75,4 +75,23 @@ function openRemovalDialog (webhookRepo, webhook) {
       };
     }
   }).promise;
+}
+
+function trackSave (webhook, templateId = null) {
+  const trackingData = {
+    template_id: templateId,
+    webhook_id: get(webhook, ['sys', 'id']),
+    version: get(webhook, ['sys', 'version']),
+    method: get(webhook, ['transformation', 'method'], 'POST'),
+    url: get(webhook, ['url']),
+    webhook_name: get(webhook, ['name']),
+    custom_headers: get(webhook, ['headers'], []).map(({key}) => key),
+    uses_http_basic: !!get(webhook, ['httpBasicUsername']),
+    content_type_header: get(webhook, ['transformation', 'contentType']),
+    topics: get(webhook, ['topics']),
+    filters: JSON.stringify(get(webhook, ['filters'])),
+    body_transformation: get(webhook, ['transformation', 'body'])
+  };
+
+  Analytics.track('ui_webhook_editor:save', trackingData);
 }

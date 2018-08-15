@@ -105,6 +105,9 @@ export const validEvents = {
   ],
   entity_button: [
     'click'
+  ],
+  ui_webhook_editor: [
+    'save'
   ]
 };
 

@@ -22,7 +22,8 @@ describe('WebhookRemovalDialog', function () {
 
   it('renders webhook URL', function () {
     const [wrapper] = mount();
-    expect(wrapper.find('.modal-dialog__highlight').text()).toBe('http://test.com');
+    const text = wrapper.find('.modal-dialog__richtext').text();
+    expect(text.includes('http://test.com')).toBe(true);
   });
 
   it('blocks remove button if already removing', function () {

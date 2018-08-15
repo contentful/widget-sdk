@@ -12,12 +12,13 @@ export default class WebhookList extends React.Component {
   static propTypes = {
     webhooks: PropTypes.array.isRequired,
     webhookRepo: PropTypes.object.isRequired,
+    templateContentTypes: PropTypes.array.isRequired,
     resource: PropTypes.object.isRequired,
     organization: PropTypes.object.isRequired
   }
 
   render () {
-    const {webhooks, webhookRepo, resource, organization} = this.props;
+    const {webhooks, webhookRepo} = this.props;
 
     return (
       <React.Fragment>
@@ -73,18 +74,14 @@ export default class WebhookList extends React.Component {
                         </tr>
                       );
                     })}
-                    {webhooks.length < 1 && <tr><td colSpan="4">No webhooks yet!</td></tr>}
+                    {webhooks.length < 1 && <tr><td colSpan="4">Add a webhook, then manage it in this space.</td></tr>}
                   </tbody>
                 </table>
               </div>
             </div>
           </div>
           <div className="workbench-main__sidebar">
-            <WebhookListSidebar
-              webhooks={webhooks}
-              resource={resource}
-              organization={organization}
-            />
+            <WebhookListSidebar {...this.props} />
           </div>
         </div>
       </React.Fragment>

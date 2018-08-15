@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {get} from 'lodash';
+import notification from 'notification';
 
 import $state from '$state';
 import Icon from 'ui/Components/Icon';
@@ -90,7 +91,10 @@ export default class WebhookEditor extends React.Component {
 
     return WebhookEditorActions.save(webhookRepo, webhook).then(
       saved => fresh ? this.navigateToSaved(saved) : this.onSave(saved),
-      () => this.setState({busy: false})
+      (err) => {
+        notification.error(err.message);
+        this.setState({busy: false});
+      }
     );
   }
 

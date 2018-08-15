@@ -179,3 +179,93 @@
       white 10px,
       white 20px
     )
+
+.webhook-templates-dialog
+  width: 800px
+  &__content
+    padding: 0
+
+.webhook-templates-dialog-tabs
+  display: flex
+  flex-direction: row
+  position: relative
+  &__separator
+    position: absolute
+    width: 1px
+    top: 0
+    bottom: 0
+    left: 256px
+    border-left: 1px solid $colors.element-dark
+  &__list
+    width: 256px
+    min-width: 256px
+    padding-bottom: 100px
+  &__list-title
+    padding: 16px 20px 4px 20px
+    font-size: 12px
+    font-weight: 500
+    text-transform: uppercase
+    color: $colors.text-dark
+    letter-spacing: 1px
+  .webhook-template-item
+    padding: 8px 16px
+    cursor: pointer
+    border-bottom: none
+  &__pane
+    flex-grow: 1
+    padding: 24px 30px
+    overflow: hidden
+
+.webhook-template-form
+  &__title
+    font-size: 16px
+    margin: 0 0 10px 0
+  &__description li
+    list-style-type: disc
+    margin-left: 20px
+  &__field
+    margin-top: 24px
+  &__field select
+    display: block
+    width: 100%
+  &__field-description
+    margin-top: 10px
+  &__notice
+    display: flex
+    align-items: center
+    margin-top: 40px
+    svg
+      margin-right: 5px
+      font-size: 18px
+  &__error
+    margin-top: 10px
+  &__actions
+    margin-top: 20px
+    button
+      margin-right: 16px
+
+.webhook-template-item
+  height: 56px
+  display: flex
+  flex-direction: row
+  align-items: center
+  border-bottom: 1px solid $colors.element-light
+  &__logo
+    width: 38px
+    height: 38px
+    background-color: $colors.white
+    padding: 3px
+    border-radius: 5px
+  &__title
+    padding: 0 20px
+    flex-grow: 1
+    strong
+      display: block
+      color: $colors.text-mid
+      font-weight: 600
+    small
+      display: block
+      color: $colors.text-mid
+      font-weight: 300
+  &--active
+    background-color: $colors.element-light

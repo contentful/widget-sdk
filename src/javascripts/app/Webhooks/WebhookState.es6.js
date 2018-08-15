@@ -1,6 +1,32 @@
 import spaceContext from 'spaceContext';
 import createResourceService from 'services/ResourceService';
 import leaveConfirmator from 'navigation/confirmLeaveEditor';
+import TheLocaleStore from 'TheLocaleStore';
+import {domain} from 'Config';
+
+const isNonEmptyString = s => typeof s === 'string' && s.length > 0;
+
+function prepareContentTypesForTemplates () {
+  const contentTypes = spaceContext.publishedCTs.getAllBare();
+  const defaultLocale = TheLocaleStore.getDefaultLocale();
+
+  return contentTypes
+  .filter(ct => isNonEmptyString(ct.displayField))
+  .map(ct => {
+    const displayField = ct.fields.find(f => f.id === ct.displayField);
+    return {
+      id: ct.sys.id,
+      name: ct.name,
+      displayFieldId: displayField && displayField.apiName
+    };
+  })
+  .filter(ct => isNonEmptyString(ct.displayFieldId))
+  .map(ct => ({
+    ...ct,
+    titlePointer: `/payload/fields/${ct.displayFieldId}/${defaultLocale.code}`,
+    appUrlPointers: `https://app.${domain}/spaces/{ /payload/sys/space/sys/id }/entries/{ /payload/sys/id }`
+  }));
+}
 
 const list = {
   name: 'list',
@@ -17,6 +43,7 @@ const list = {
     $scope.props = {
       webhooks,
       webhookRepo: spaceContext.webhookRepo,
+      templateContentTypes: prepareContentTypesForTemplates(),
       resource,
       organization: {pricingVersion}
     };
