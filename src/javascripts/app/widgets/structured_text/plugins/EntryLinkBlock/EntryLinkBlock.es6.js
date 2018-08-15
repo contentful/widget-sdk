@@ -1,37 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { ReferenceCard, Card, IconButton } from '@contentful/ui-component-library';
 
 import FetchEntry from './FetchEntry';
+import Thumbnail from './Thumbnail';
 import { goToSlideInEntity } from 'states/EntityNavigationHelpers';
-import { isValidImage, getExternalImageUrl } from 'ui/cf/thumbnailHelpers';
-
-const thumbnailDimensions = {w: 70, h: 70};
-
-class Thumbnail extends Component {
-  static propTypes = {
-    entryThumbnail: PropTypes.shape({
-      url: PropTypes.string,
-      contentType: PropTypes.string
-    })
-  };
-
-  static defaultProps = {
-    entryThumbnail: undefined
-  };
-
-  render () {
-    const valid = this.props.entryThumbnail && isValidImage(this.props.entryThumbnail.contentType);
-    if (!valid) return null;
-    return (
-        <img
-          src={`${getExternalImageUrl(this.props.entryThumbnail.url)}?w=${thumbnailDimensions.w}&h=${thumbnailDimensions.h}&fit=thumb`}
-          height={`${thumbnailDimensions.h}`}
-          width={`${thumbnailDimensions.w}`}
-        />
-    );
-  }
-}
 
 export default class LinkedEntryBlock extends React.Component {
   static propTypes = {
