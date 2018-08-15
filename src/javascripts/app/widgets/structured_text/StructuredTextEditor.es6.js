@@ -113,6 +113,7 @@ export default class StructuredTextEditor extends React.Component {
     }
   };
   renderToolbar () {
+    const disabled = this.state.isDisabled;
     return (
       <EditorToolbar>
         <HeadingDropdown
@@ -121,26 +122,39 @@ export default class StructuredTextEditor extends React.Component {
           isOpen={this.state.headingMenuOpen}
           onClose={this.closeHeadingMenu}
           onChange={this.state.value.change()}
+          disabled={disabled}
         >
           <Heading1
+            disabled={disabled}
             change={this.state.value.change()}
             onToggle={this.onChange}
             menuIsOpen={this.state.headingMenuOpen}
             extraClassNames="toolbar-h1-toggle"
           />
           <Heading2
+            disabled={disabled}
             change={this.state.value.change()}
             onToggle={this.onChange}
             menuIsOpen={this.state.headingMenuOpen}
           />
         </HeadingDropdown>
-        <Bold change={this.state.value.change()} onToggle={this.onChange} />
-        <Italic change={this.state.value.change()} onToggle={this.onChange} />
+        <Bold
+          disabled={disabled}
+          change={this.state.value.change()}
+          onToggle={this.onChange}
+        />
+        <Italic
+          disabled={disabled}
+          change={this.state.value.change()}
+          onToggle={this.onChange}
+        />
         <Underlined
+          disabled={disabled}
           change={this.state.value.change()}
           onToggle={this.onChange}
         />
         <EntryLinkBlock
+          disabled={disabled}
           change={this.state.value.change()}
           onToggle={this.onChange}
           field={this.props.field}
@@ -163,7 +177,7 @@ export default class StructuredTextEditor extends React.Component {
   render () {
     return (
       <div className="structured-text">
-        {!this.state.isDisabled && this.renderToolbar()}
+        {this.renderToolbar()}
         <Editor
           data-test-id="editor"
           value={this.state.value}

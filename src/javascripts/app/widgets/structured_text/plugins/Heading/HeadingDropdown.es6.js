@@ -13,6 +13,7 @@ class HeadingDropdown extends Component {
     children: PropTypes.node.isRequired,
     onToggle: PropTypes.func,
     isOpen: PropTypes.bool,
+    disabled: PropTypes.bool,
     onClose: PropTypes.func,
     onChange: PropTypes.object
   };
@@ -33,6 +34,7 @@ class HeadingDropdown extends Component {
             icon="Heading"
             label="Heading"
             isActive={this.activeOnHeadingBlocks()}
+            disabled={this.props.disabled}
           />
         }
         isOpen={isOpen}

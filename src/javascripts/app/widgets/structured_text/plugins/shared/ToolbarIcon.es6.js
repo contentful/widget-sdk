@@ -6,6 +6,7 @@ import { EditorToolbarButton } from '@contentful/ui-component-library';
 export default class ToolbarIcon extends Component {
   static propTypes = {
     isActive: PropTypes.bool.isRequired,
+    disabled: PropTypes.bool.isRequired,
     onToggle: PropTypes.func.isRequired,
     icon: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
@@ -23,7 +24,7 @@ export default class ToolbarIcon extends Component {
   };
 
   render () {
-    const { icon, isActive, title, type } = this.props;
+    const { icon, isActive, disabled, title, type } = this.props;
 
     return (
       <EditorToolbarButton
@@ -31,6 +32,7 @@ export default class ToolbarIcon extends Component {
         tooltip={title}
         label={title}
         isActive={isActive}
+        disabled={disabled}
         data-test-id={`toolbar-toggle-${type}`}
         onMouseDown={this.handleMouseDown}
       />
