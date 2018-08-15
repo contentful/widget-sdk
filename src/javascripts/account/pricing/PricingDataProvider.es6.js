@@ -6,6 +6,12 @@ const alphaHeader = {
   'x-contentful-enable-alpha-feature': 'subscriptions-api'
 };
 
+export const productTypes = {
+  partnership: 'partnership',
+  onDemand: 'on_demand',
+  enterprise: 'committed'
+};
+
 /**
  * Load all subscription plans (space and base) from organization endpoint.
  * Note: this collection endpoint doesn't have pagination.
@@ -43,7 +49,8 @@ export function getBasePlan (endpoint) {
  * @returns {Promise<object[]>} array of subscription plans w. spaces & users
  */
 export async function getPlansWithSpaces (endpoint) {
-  const [plans, spaces, usePOC] = await Promise.all([
+  const [baseRatePlan, plans, spaces, usePOC] = await Promise.all([
+    getBaseRatePlan(endpoint),
     getSubscriptionPlans(endpoint),
     getAllSpaces(endpoint),
     isPOCEnabled()
@@ -52,8 +59,9 @@ export async function getPlansWithSpaces (endpoint) {
   // Map spaces to space plans, create 'free plan' objects for spaces w/o plans
   const isFreeSpace = space => !plans.items.find(({gatekeeperKey}) => space.sys.id === gatekeeperKey);
   const freeSpaces = spaces.filter(isFreeSpace);
-  const basePlan = plans.items.find(plan => plan.planType === 'base');
-  const isEnterprise = basePlan && basePlan.committed;
+  // TODO: use subscription insted of product to extract the productType from
+  // The product catalog can change and the subscription could be from a legacy product
+  const isEnterprise = baseRatePlan && baseRatePlan.productType === productTypes.enterprise;
 
   const plansWithSpaces = {
     plans,
@@ -125,6 +133,18 @@ export function getSingleSpacePlan (endpoint, spaceId) {
     plan_type: 'space', gatekeeper_key: spaceId
   })
     .then(data => data.items[0]);
+}
+
+export function getBaseRatePlan (endpoint) {
+  const query = {
+    plan_type: 'base'
+  };
+
+  return endpoint({
+    method: 'GET',
+    path: ['product_rate_plans'],
+    query: query
+  }, alphaHeader).then((data) => data.items[0]);
 }
 
 /* Gets collection of space product rate plans.

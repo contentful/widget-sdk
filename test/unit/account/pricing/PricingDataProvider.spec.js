@@ -8,6 +8,11 @@ describe('account/pricing/PricingDataProvider', () => {
 
   describe('#getPlansWithSpaces()', () => {
     beforeEach(function () {
+      this.baseRatePlanChargeData = {
+        items: [{
+          productType: 'committed'
+        }]
+      };
       this.spacePlansData = {items: [
         {sys: {id: 'plan1'}, gatekeeperKey: 'space1'},
         {sys: {id: 'plan2'}, gatekeeperKey: 'space2'},
@@ -24,6 +29,7 @@ describe('account/pricing/PricingDataProvider', () => {
 
       this.endpoint = sinon.stub().resolves();
       this.endpoint.withArgs(sinon.match({path: ['plans']}), sinon.match.any).resolves(this.spacePlansData);
+      this.endpoint.withArgs(sinon.match({query: {plan_type: 'base'}}), sinon.match.any).resolves(this.baseRatePlanChargeData);
       this.endpoint.withArgs(sinon.match({path: ['spaces']})).resolves(this.spacesData);
       this.endpoint.withArgs(sinon.match({path: ['users']})).resolves(this.usersData);
 
