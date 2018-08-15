@@ -125,7 +125,7 @@ export default class StructuredTextEditor extends React.Component {
           isToggleActive={true}
           isOpen={this.state.headingMenuOpen}
           onClose={this.closeHeadingMenu}
-          onChange={props.change}
+          change={props.change}
           disabled={props.disabled}
         >
           <Heading1 {...props}
