@@ -83,8 +83,7 @@ export default class LinkedEntryBlock extends React.Component {
     entryStatus,
     loading
   }) {
-    const { isSelected, editor } = this.props;
-    const isDisabled = editor.props.readOnly;
+    const { isSelected } = this.props;
 
     return (
       <ReferenceCard
@@ -103,7 +102,7 @@ export default class LinkedEntryBlock extends React.Component {
               onClick={event => this.handleEditClick(event, entry)}
               buttonType='muted'
             />
-            {isDisabled || this.renderDeleteButton()}
+            {this.renderDeleteButton()}
           </React.Fragment>
         }
       />
@@ -111,8 +110,7 @@ export default class LinkedEntryBlock extends React.Component {
   }
 
   renderMissingEntryReferenceCard () {
-    const { isSelected, editor } = this.props;
-    const isDisabled = editor.props.readOnly;
+    const { isSelected } = this.props;
 
     return (
       <Card selected={isSelected}>
@@ -124,19 +122,22 @@ export default class LinkedEntryBlock extends React.Component {
             flex: '1 1 0'
           }}
           >Entity missing or inaccessible</h1>
-          {isDisabled || this.renderDeleteButton()}
+          {this.renderDeleteButton()}
         </div>
       </Card>
     );
   }
 
   renderDeleteButton () {
+    const isDisabled = this.props.editor.props.readOnly;
+
     return (
       <IconButton
         iconProps={{ icon: 'Close' }}
         label='Remove reference to entry'
         onClick={event => this.handleRemoveClick(event)}
         buttonType='muted'
+        disabled={isDisabled}
       />
     );
   }
