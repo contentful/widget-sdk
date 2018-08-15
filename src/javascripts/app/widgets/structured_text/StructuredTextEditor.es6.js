@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { Editor } from 'slate-react';
 import { Value, Schema } from 'slate';
 import TrailingBlock from 'slate-trailing-block';
+import { EditorToolbar } from '@contentful/ui-component-library';
 
 import { toSlatejsDocument, toContentfulDocument } from '@contentful/contentful-slatejs-adapter';
-import { EditorToolbar } from '@contentful/ui-component-library';
 
 import Bold, { BoldPlugin } from './plugins/Bold';
 import Italic, { ItalicPlugin } from './plugins/Italic';
@@ -14,7 +14,8 @@ import {
   Heading1,
   Heading2,
   Heading1Plugin,
-  Heading2Plugin
+  Heading2Plugin,
+  HeadingDropdown
 } from './plugins/Heading';
 import EntryLinkBlock, { EntryLinkBlockPlugin } from './plugins/EntryLinkBlock';
 
@@ -68,6 +69,7 @@ export default class StructuredTextEditor extends React.Component {
         this.setState({ isDisabled });
       } else {
         this.state = {
+          headingMenuOpen: false,
           value:
             this.props.field.getValue() &&
             this.props.field.getValue().nodeClass === 'document'
@@ -89,23 +91,34 @@ export default class StructuredTextEditor extends React.Component {
   onChange = ({ value }) => {
     /* eslint no-console: off */
     this.props.field.setValue(toContentfulDocument(value.toJSON().document));
-    this.setState({ value });
+    this.setState({ value, headingMenuOpen: false });
   };
 
   renderToolbar () {
     return (
-      <EditorToolbar data-test-id="toolbar">
+      <EditorToolbar>
+        <HeadingDropdown
+          onToggle={this.toggleHeadingMenu}
+          isToggleActive={true}
+          isOpen={this.state.headingMenuOpen}
+          onClose={this.closeHeadingMenu}
+          onChange={this.state.value.change()}
+        >
+          <Heading1
+            change={this.state.value.change()}
+            onToggle={this.onChange}
+            menuIsOpen={this.state.headingMenuOpen}
+            extraClassNames="toolbar-h1-toggle"
+          />
+          <Heading2
+            change={this.state.value.change()}
+            onToggle={this.onChange}
+            menuIsOpen={this.state.headingMenuOpen}
+          />
+        </HeadingDropdown>
         <Bold change={this.state.value.change()} onToggle={this.onChange} />
         <Italic change={this.state.value.change()} onToggle={this.onChange} />
         <Underlined
-          change={this.state.value.change()}
-          onToggle={this.onChange}
-        />
-        <Heading1
-          change={this.state.value.change()}
-          onToggle={this.onChange}
-        />
-        <Heading2
           change={this.state.value.change()}
           onToggle={this.onChange}
         />
@@ -117,6 +130,18 @@ export default class StructuredTextEditor extends React.Component {
       </EditorToolbar>
     );
   }
+
+  toggleHeadingMenu = event => {
+    event.preventDefault();
+    this.setState({
+      headingMenuOpen: !this.state.headingMenuOpen
+    });
+  };
+
+  closeHeadingMenu = () => this.setState({
+    headingMenuOpen: false
+  });
+
 
   render () {
     return (

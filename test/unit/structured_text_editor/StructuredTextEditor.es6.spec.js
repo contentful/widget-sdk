@@ -50,13 +50,29 @@ describe('StructuredTextEditor', () => {
 
   it('renders the toolbar icons', function () {
     const toolbarItems = [
-      BLOCKS.HEADING_1,
-      BLOCKS.HEADING_2,
       MARKS.BOLD,
       MARKS.ITALIC,
       MARKS.UNDERLINE
     ];
     toolbarItems.forEach(item => {
+      const el = this.wrapper.first(`[data-test-id="toolbar-toggle-${item}"]`);
+      expect(el.length).toEqual(1);
+      el.simulate('click');
+      sinon.assert.calledOnce(this.props.field.setValue);
+    });
+  });
+
+  it('renders heading dropdown', function () {
+    const headingItems = [
+      BLOCKS.HEADING_1,
+      BLOCKS.HEADING_2
+    ];
+
+    const el = this.wrapper.first(`[data-test-id="toolbar-heading-toggle"]`);
+    expect(el).toBeDefined();
+    el.simulate('click');
+
+    headingItems.forEach(item => {
       const el = this.wrapper.first(`[data-test-id="toolbar-toggle-${item}"]`);
       expect(el.length).toEqual(1);
       el.simulate('click');

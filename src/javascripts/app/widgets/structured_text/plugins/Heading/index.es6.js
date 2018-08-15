@@ -36,3 +36,4 @@ export const Heading2Plugin = (type = BLOCKS.HEADING_2) =>
 
 export { default as Heading1 } from './Heading1';
 export { default as Heading2 } from './Heading2';
+export { default as HeadingDropdown } from './HeadingDropdown';
