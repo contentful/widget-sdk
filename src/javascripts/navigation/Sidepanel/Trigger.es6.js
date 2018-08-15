@@ -1,7 +1,8 @@
 import { h } from 'ui/Framework';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { container, hspace, hbox, vbox } from 'ui/Layout';
 import { asReact } from 'ui/Framework/DOMRenderer';
-import createReactClass from 'create-react-class';
 import { caseof } from 'sum-types';
 
 import { byName as colors } from 'Styles/Colors';
@@ -14,7 +15,11 @@ import { navState$, NavStates } from 'navigation/NavState';
 import * as TokenStore from 'services/TokenStore';
 import * as accessChecker from 'access_control/AccessChecker';
 
-const Trigger = createReactClass({
+export default class Trigger extends React.Component {
+  static propTypes = {
+    onClick: PropTypes.func.isRequired
+  };
+
   componentWillMount () {
     this.offNavState = navState$.onValue((navState) => {
       this.setState({ navState });
@@ -22,31 +27,34 @@ const Trigger = createReactClass({
     this.offOrganizations = TokenStore.organizations$.onValue((organizations) => {
       this.setState({ showOrganization: organizations.length > 1 });
     });
-  },
+  }
+
   componentWillUnmount () {
     this.offNavState();
-  },
-  render () {
-    return asReact(h('.app-top-bar__sidepanel-trigger', {
-      dataTestId: 'sidepanel-trigger'
-    }, [
-      logo,
-      hspace('15px'),
-      vbox({
-        justifyContent: 'center',
-        alignSelf: 'stretch',
-        flexGrow: '1',
-        flexShrink: '1',
-        overflow: 'hidden'
-      }, renderContent(this.state)),
-      hspace('15px'),
-      hamburger({ fill: 'white' })
-    ]));
   }
-});
 
-export default function () {
-  return h(Trigger);
+  render () {
+    const {onClick} = this.props;
+    return <div
+      className="app-top-bar__sidepanel-trigger"
+      onClick={onClick}
+      data-test-id="sidepanel-trigger"
+    >
+      {asReact(logo)}
+      {asReact(hspace('15px'))}
+      {asReact(
+        vbox({
+          justifyContent: 'center',
+          alignSelf: 'stretch',
+          flexGrow: '1',
+          flexShrink: '1',
+          overflow: 'hidden'
+        }, renderContent(this.state))
+      )}
+      {asReact(hspace('15px'))}
+      {asReact(hamburger({ fill: 'white' }))}
+    </div>;
+  }
 }
 
 function renderContent ({ navState, showOrganization }) {
