@@ -113,6 +113,11 @@ export default class StructuredTextEditor extends React.Component {
     }
   };
   renderToolbar () {
+    const props = {
+      change: this.state.value.change(),
+      onToggle: this.onChange,
+      disabled: this.state.isDisabled
+    };
     return (
       <EditorToolbar>
         <HeadingDropdown
@@ -120,31 +125,21 @@ export default class StructuredTextEditor extends React.Component {
           isToggleActive={true}
           isOpen={this.state.headingMenuOpen}
           onClose={this.closeHeadingMenu}
-          onChange={this.state.value.change()}
+          change={props.change}
+          disabled={props.disabled}
         >
-          <Heading1
-            change={this.state.value.change()}
-            onToggle={this.onChange}
+          <Heading1 {...props}
             menuIsOpen={this.state.headingMenuOpen}
             extraClassNames="toolbar-h1-toggle"
           />
-          <Heading2
-            change={this.state.value.change()}
-            onToggle={this.onChange}
+          <Heading2 {...props}
             menuIsOpen={this.state.headingMenuOpen}
           />
         </HeadingDropdown>
-        <Bold change={this.state.value.change()} onToggle={this.onChange} />
-        <Italic change={this.state.value.change()} onToggle={this.onChange} />
-        <Underlined
-          change={this.state.value.change()}
-          onToggle={this.onChange}
-        />
-        <EntryLinkBlock
-          change={this.state.value.change()}
-          onToggle={this.onChange}
-          field={this.props.field}
-        />
+        <Bold {...props} />
+        <Italic {...props} />
+        <Underlined {...props} />
+        <EntryLinkBlock {...props} field={this.props.field} />
       </EditorToolbar>
     );
   }
@@ -163,7 +158,7 @@ export default class StructuredTextEditor extends React.Component {
   render () {
     return (
       <div className="structured-text">
-        {!this.state.isDisabled && this.renderToolbar()}
+        {this.renderToolbar()}
         <Editor
           data-test-id="editor"
           value={this.state.value}

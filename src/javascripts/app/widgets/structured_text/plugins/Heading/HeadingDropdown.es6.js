@@ -11,15 +11,16 @@ import { haveBlocks } from '../shared/UtilHave';
 class HeadingDropdown extends Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
-    onToggle: PropTypes.func,
     isOpen: PropTypes.bool,
+    disabled: PropTypes.bool,
     onClose: PropTypes.func,
-    onChange: PropTypes.object
+    onToggle: PropTypes.func,
+    change: PropTypes.object
   };
 
   activeOnHeadingBlocks = () =>
-    haveBlocks(this.props.onChange, BLOCKS.HEADING_1) ||
-    haveBlocks(this.props.onChange, BLOCKS.HEADING_2);
+    haveBlocks(this.props.change, BLOCKS.HEADING_1) ||
+    haveBlocks(this.props.change, BLOCKS.HEADING_2);
 
   render () {
     const { onToggle, isOpen, onClose, children } = this.props;
@@ -33,6 +34,7 @@ class HeadingDropdown extends Component {
             icon="Heading"
             label="Heading"
             isActive={this.activeOnHeadingBlocks()}
+            disabled={this.props.disabled}
           />
         }
         isOpen={isOpen}
