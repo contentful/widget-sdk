@@ -4,7 +4,7 @@ import {isLegacyOrganization} from 'utils/ResourceUtils';
 import {canCreateSpaceInOrganization} from 'access_control/AccessChecker';
 import {createOrganizationEndpoint} from 'data/EndpointFactory';
 import notification from 'notification';
-import {getSpaceRatePlans, isPOCEnabled} from 'account/pricing/PricingDataProvider';
+import {getSpaceRatePlans, isPOCEnabled, productTypes} from 'account/pricing/PricingDataProvider';
 /**
  * Displays the space creation dialog. The dialog type will depend on the
  * organization that the new space should belong to.
@@ -26,13 +26,6 @@ export async function showDialog (organizationId) {
   if (!organization || !canCreateSpaceInOrganization(organizationId)) {
     notification.error('You don’t have rights to create a space, plase contact your organization’s administrator.');
   }
-
-  const productTypes = {
-    partnership: 'partnership',
-    onDemand: 'on_demand',
-    enterprise: 'committed'
-  };
-
 
   if (isLegacyOrganization(organization)) {
     modalDialog.open({
@@ -57,6 +50,7 @@ export async function showDialog (organizationId) {
       const freeSpaceRatePlan = ratePlans.find(plan => plan.productPlanType === 'free_space');
       // we use the free_space plan to find what's the product type for this org
       const productType = freeSpaceRatePlan.productType;
+      // TODO: use base plan instead
       // org should create POC if it is Enterprise
       shouldCreatePOC = productType === productTypes.enterprise;
     }
