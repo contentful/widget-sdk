@@ -77,10 +77,11 @@ export function create (editor, locale, defaultLocaleCode, {zen}) {
     const wrapper = editor.getWrapper();
     wrapper.focus();
     const cursor = wrapper.getCursor();
-    editor.getWrapper().disable();
+    wrapper.disable();
 
-    BulkAssetsCreator.open(localeCode).then((assetObjects) => {
-      BulkAssetsCreator.tryToPublishProcessingAssets(assetObjects)
+    BulkAssetsCreator.open(localeCode)
+    .then((assetObjects) => {
+      return BulkAssetsCreator.tryToPublishProcessingAssets(assetObjects)
         .then((result) => {
           const {publishedAssets, unpublishableAssets} = result;
           if (publishedAssets.length && !unpublishableAssets.length) {
@@ -93,9 +94,14 @@ export function create (editor, locale, defaultLocaleCode, {zen}) {
           }
           wrapper.setCursor(cursor);
           _insertAssetLinks(publishedAssets.map(({data}) => data));
-          wrapper.enable();
-          wrapper.focus();
         });
+    })
+    .catch(() => {
+      wrapper.setCursor(cursor);
+    })
+    .finally(() => {
+      wrapper.enable();
+      wrapper.focus();
     });
   }
 

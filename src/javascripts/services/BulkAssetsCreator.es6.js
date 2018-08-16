@@ -32,6 +32,9 @@ export function open (localeCode) {
   });
 
   function createAssetsForFiles (files) {
+    if (files.length === 0) {
+      return $q.resolve([]);
+    }
     return $q.all(files.map(createAssetForFile)).then((assets) => {
       assets = assets.filter(identity);
       notification.info('Assets uploaded. Processing…');

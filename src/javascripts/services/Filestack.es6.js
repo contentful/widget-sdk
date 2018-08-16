@@ -1,5 +1,6 @@
 import LazyLoader from 'LazyLoader';
 import environment from 'environment';
+import _ from 'lodash';
 
 const MAX_FILES = 20;
 
@@ -37,7 +38,8 @@ function pickOptions (options) {
   rootIdCounter += 1;
   return Object.assign({
     fromSources: SOURCES,
-    rootId: `__filestack-picker-root-${rootIdCounter}`
+    rootId: `__filestack-picker-root-${rootIdCounter}`,
+    rejectOnCancel: true
   }, options);
 }
 
@@ -63,7 +65,7 @@ export function makeDropPane ({id, onSuccess}) {
   .then(filestack => {
     return filestack.makeDropPane({
       id,
-      customText: 'Drag and drop a file to upload...',
+      customText: 'Drag and drop a file to upload…',
       disableClick: true,
       overlay: false,
       onSuccess: filesUploaded => {
@@ -88,6 +90,13 @@ export function pick () {
 export function pickMultiple () {
   return ensureScript()
   .then(filestack => filestack.pick(pickOptions({maxFiles: MAX_FILES})))
+  .catch((result) => {
+    // If user closes Filestack without picking a file it rejects will an empty array.
+    if (_.isEmpty(result)) {
+      return { filesFailed: [], filesUploaded: [] };
+    }
+    throw result;
+  })
   .then(({filesFailed, filesUploaded}) => {
     if (filesFailed.length < 1 || filesUploaded.length > 0) {
       return filesUploaded.map(prepareUploadedFile);
