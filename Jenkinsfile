@@ -29,7 +29,7 @@ pipeline {
         USER_INTERFACE_VERSION = "${params.ui_version}"
         E2E_TESTS_VERSION = "${params.e2e_version}"
         MARKETING_WEBSITE_VERSION = 'master'
-        GATEKEEPER_VERSION = 'master'
+        GATEKEEPER_VERSION = 'production'
         CONTENT_API_VERSION = 'production'
         SHAREJS_VERSION = 'production'
       }
