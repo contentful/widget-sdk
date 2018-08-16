@@ -1,22 +1,20 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '@contentful/ui-component-library';
-
 import { BLOCKS } from '@contentful/structured-text-types';
-import entitySelector from 'entitySelector';
+
+import WidgetAPIContext from 'app/widgets/WidgetAPIContext';
 
 export default class EntryLinkToolbarIcon extends Component {
   static propTypes = {
-    field: PropTypes.object.isRequired,
     change: PropTypes.object.isRequired,
     onToggle: PropTypes.func.isRequired,
     disabled: PropTypes.bool.isRequired
   };
-  handleClick = async event => {
+  handleClick = async (event, widgetAPI) => {
     event.preventDefault();
-    // TODO: refactor using widgetAPI.dialogs
     try {
-      const [entry] = await entitySelector.openFromField(this.props.field, 0);
+      const [entry] = await widgetAPI.dialogs.selectSingleEntry();
 
       if (!entry) {
         return;
@@ -39,9 +37,7 @@ export default class EntryLinkToolbarIcon extends Component {
 
       const { change } = this.props;
 
-      change
-        .insertBlock(linkedEntryBlock)
-        .collapseToStartOfNextBlock();
+      change.insertBlock(linkedEntryBlock).collapseToStartOfNextBlock();
 
       this.props.onToggle(change);
     } catch (error) {
@@ -50,17 +46,20 @@ export default class EntryLinkToolbarIcon extends Component {
   };
   render () {
     return (
-      <Button
-        extraClassNames='structured-text__entry-link-block-button'
-        size="small"
-        icon="Description"
-        buttonType="muted"
-        data-test-id={`toolbar-toggle-${BLOCKS.EMBEDDED_ENTRY}`}
-        onClick={this.handleClick}
-        disabled={this.props.disabled}
-      >
-        Embed entry
-      </Button>
+      <WidgetAPIContext.Consumer>
+        {({widgetAPI}) => (
+          <Button
+            extraClassNames="structured-text__entry-link-block-button"
+            size="small"
+            icon="Description"
+            buttonType="muted"
+            data-test-id={`toolbar-toggle-${BLOCKS.EMBEDDED_ENTRY}`}
+            onClick={(event) => this.handleClick(event, widgetAPI)}
+          >
+            Embed entry
+          </Button>
+        )}
+      </WidgetAPIContext.Consumer>
     );
   }
 }

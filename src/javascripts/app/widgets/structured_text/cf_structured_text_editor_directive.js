@@ -12,8 +12,7 @@ angular.module('cf.app')
         field: {
           ...widgetApi.field,
           linkType: 'Entry'
-        },
-        value: widgetApi.field.getValue()
+        }
       };
     }
   };

@@ -12,22 +12,12 @@ describe('StructuredTextEditor', () => {
     const mockDocument = {
       content: []
     };
-    this.props = {
-      field: {
-        getValue: sinon.stub().returns(mockDocument),
-        setValue: sinon.stub(),
-        onValueChanged: sinon.stub().returns(mockDocument)
-      },
-      value: mockDocument,
-      readOnly: false
-    };
     this.system = createIsolatedSystem();
 
-    this.system.set('entitySelector', {});
     this.system.set('ui/cf/thumbnailHelpers', {});
     this.system.set('spaceContext', {
       cma: {
-        getEntry: sinon.stub.resolves()
+        getEntry: sinon.stub().resolves()
       }
     });
     this.system.set('states/EntityNavigationHelpers', {
@@ -37,9 +27,10 @@ describe('StructuredTextEditor', () => {
       'app/widgets/structured_text/StructuredTextEditor'
     );
 
-    this.widgetApi = this.$inject('mocks/widgetApi').create();
     this.props = {
-      field: this.widgetApi.field
+      value: mockDocument,
+      isDisabled: false,
+      onChange: sinon.spy()
     };
     this.wrapper = mount(<StructuredTextEditor {...this.props} />);
 
@@ -72,7 +63,7 @@ describe('StructuredTextEditor', () => {
       const el = this.wrapper.first(`[data-test-id="toolbar-toggle-${item}"]`);
       expect(el.length).toEqual(1);
       el.simulate('click');
-      sinon.assert.calledOnce(this.props.field.setValue);
+      sinon.assert.calledOnce(this.wrapper.props().onChange);
     });
   });
 
@@ -90,7 +81,7 @@ describe('StructuredTextEditor', () => {
       const el = this.wrapper.first(`[data-test-id="toolbar-toggle-${item}"]`);
       expect(el.length).toEqual(1);
       el.simulate('click');
-      sinon.assert.calledOnce(this.props.field.setValue);
+      sinon.assert.calledOnce(this.wrapper.props().onChange);
     });
   });
 
@@ -98,13 +89,12 @@ describe('StructuredTextEditor', () => {
     const el = this.wrapper.first(`[data-test-id="toolbar-toggle-${BLOCKS.EMBEDDED_ENTRY}"]`);
     expect(el).toBeDefined();
     el.simulate('click');
-    sinon.assert.calledOnce(this.props.field.setValue);
+    sinon.assert.calledOnce(this.wrapper.props().onChange);
   });
 
   describe('disabled `props.field`', function () {
     beforeEach(function () {
-      this.widgetApi.fieldProperties.isDisabled$.set(true);
-      this.wrapper.update();
+      this.wrapper.setProps({ isDisabled: true });
     });
 
     it('can not be focused', function () {

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Editor } from 'slate-react';
 import { Value, Schema } from 'slate';
 import TrailingBlock from 'slate-trailing-block';
+import deepEqual from 'fast-deep-equal';
 
 import {
   toSlatejsDocument,
@@ -40,78 +41,48 @@ const initialValue = Value.fromJSON(toSlatejsDocument(emptyDoc));
 
 export default class StructuredTextEditor extends React.Component {
   static propTypes = {
-    field: PropTypes.object.isRequired,
     value: PropTypes.object.isRequired,
-    readOnly: PropTypes.bool
+    isDisabled: PropTypes.bool,
+    onChange: PropTypes.func.isRequired
   };
   static defaultProps = {
-    value: emptyDoc,
-    readOnly: false
+    value: emptyDoc
   };
   constructor (props) {
-    let isDisabledInitially = true;
-
     super(props);
-
-    // onIsDisabledChanged() should immediately dispatch but it seems this is
-    // not always the case.
-    this.offDisabledState = this.props.field.onIsDisabledChanged((isDisabled) => {
-      if (this.state) {
-        this.setState({ isDisabled });
-      } else {
-        isDisabledInitially = isDisabled;
-      }
-    });
 
     this.state = {
       value:
-        this.props.field.getValue() &&
-        this.props.field.getValue().nodeClass === 'document'
+        this.props.value &&
+        this.props.value.nodeClass === 'document'
           ? Value.fromJSON({
             object: 'value',
-            document: toSlatejsDocument(this.props.field.getValue())
+            document: toSlatejsDocument(this.props.value)
           })
-          : initialValue,
-      isDisabled: isDisabledInitially
+          : initialValue
     };
-    this.offValueChanged = this.props.field.onValueChanged(this.handleIncomingChanges);
-  }
-
-  componentWillUnmount () {
-    this.offDisabledState();
   }
 
   onChange = ({ value }) => {
     this.setState({ value, headingMenuOpen: false });
   };
-  componentDidUpdate () {
-    const isInComingChange = this.state.isDisabled === true;
-    if (!isInComingChange) {
-      this.props.field.setValue(
+
+  componentDidUpdate (prevProps) {
+    const isIncomingChange = !deepEqual(this.props.value, prevProps.value);
+    if (!this.props.isDisabled) {
+      this.props.onChange(
         toContentfulDocument(this.state.value.document.toJSON())
       );
-    }
-  }
-  handleDisabledChange = (isDisabled) => {
-    if (this.state.isDisabled !== isDisabled) {
-      this.setState({ isDisabled });
-    }
-  }
-  /**
-   * Handles incoming changes in readOnly mode, meaning the field is being
-   * edited by an other user simultanously.
-   */
-  handleIncomingChanges = (nextValue = initialValue) => {
-    if (this.state.isDisabled) {
-      const slateDoc = Value.fromJSON({
-        object: 'value',
-        document: toSlatejsDocument(nextValue)
-      });
+    } else if (isIncomingChange) {
       this.setState({
-        value: slateDoc
+        value: Value.fromJSON({
+          object: 'value',
+          document: toSlatejsDocument(this.props.value)
+        })
       });
     }
-  };
+  }
+
   renderToolbar () {
     const props = {
       change: this.state.value.change(),
@@ -139,7 +110,7 @@ export default class StructuredTextEditor extends React.Component {
         <Bold {...props} />
         <Italic {...props} />
         <Underlined {...props} />
-        <EntryLinkBlock {...props} field={this.props.field} />
+        <EntryLinkBlock {...props} />
       </EditorToolbar>
     );
   }
@@ -165,7 +136,7 @@ export default class StructuredTextEditor extends React.Component {
           onChange={this.onChange}
           plugins={plugins}
           schema={schema}
-          readOnly={this.state.isDisabled}
+          readOnly={this.props.isDisabled}
           className="structured-text__editor"
         />
       </div>

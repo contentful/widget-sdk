@@ -42,6 +42,7 @@ window.libs = [
   ['slate-trailing-block', require('slate-trailing-block')],
   ['json0-ot-diff', require('json0-ot-diff')],
   ['diff-match-patch', require('diff-match-patch')],
+  ['fast-deep-equal', require('fast-deep-equal')],
   ['qs', require('qs')],
   ['react-tippy', require('react-tippy')],
   ['color', require('color')],
@@ -93,5 +94,6 @@ window.libs = [
   ['parse-github-url', require('parse-github-url')],
   ['redux', require('redux')],
   ['react-redux', require('react-redux')],
-  ['redux-thunk', require('redux-thunk')]
+  ['redux-thunk', require('redux-thunk')],
+  ['create-react-context', require('create-react-context')]
 ];
