@@ -56,6 +56,7 @@
     "kefir": "^3.7.1",
     "kss": "^2.4.0",
     "ldclient-js": "^1.1.8",
+    "lint-staged": "^7.2.0",
     "lodash": "^4.14.2",
     "marked-ast": "^0.3.0",
     "merge-stream": "^0.1.7",
@@ -168,8 +169,14 @@
     "hint": "eslint src test bin tools",
     "cloc": "cloc --read-lang-def .cloc.def src",
     "clean": "rm -rf node_modules",
-    "prepush": "if test \"$ENABLE_HUSKY_HOOKS\" != \"\" ; then npm run hint ; fi ",
+    "precommit": "lint-staged",
     "bundle-analyzer": "webpack --config ./tools/webpack.analyzer.config.js"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ]
   },
   "repository": {
     "type": "git",

@@ -35,12 +35,7 @@ Run unit tests: `karma start`
 
 Run lint: `npm run hint` or `npm run hint -- --fix`
 
-As an alternative, linting could be done on pre-push stage (via husky .git hooks).
-
-To enable this edit your `~/.zshrc` (.bashrc etc) and set 
-
-`export ENABLE_HUSKY_HOOKS="yes please"`.
-
+Also, linting files staged for commit (files that you actually changed since the last commit) and automatic fixing trivial ESLint errors in those files is done automatically as a precommit hook (via husky .git hooks).
 
 When PR is ready for review, add `Please review` tag in github. Assign one person from the Frontend chapter randomly on smaller PR's, and 2 people on bigger ones. Use your judgement to request review from more people, depending on the scope of changes, and try to avoid big PRs[^1] if possible, splitting them into smaller ones.
 
