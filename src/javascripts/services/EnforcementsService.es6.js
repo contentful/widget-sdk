@@ -1,7 +1,7 @@
 import require from 'require';
 import {isArray, get} from 'lodash';
-import { createSpaceEndpoint } from 'data/EndpointFactory';
-import { getSpace } from 'services/TokenStore';
+import {createSpaceEndpoint} from 'data/EndpointFactory';
+import {getSpace} from 'services/TokenStore';
 
 const flagName = 'feature-bv-2018-08-enforcements-api';
 
@@ -50,17 +50,34 @@ export async function refresh (spaceId) {
   }
 }
 
+let active = true;
+
+function onBlur () {
+  active = false;
+}
+
+function onFocus () {
+  active = true;
+}
+
+window.onfocus = onFocus;
+window.onblur = onBlur;
+
+// IE
+document.onfocusin = onFocus;
+document.onfocusout = onBlur;
+
 async function fetchEnforcements (spaceId) {
   // To get around circular dep
-  const { getCurrentVariation } = require('utils/LaunchDarkly');
+  const {getCurrentVariation} = require('utils/LaunchDarkly');
   const useApi = await getCurrentVariation(flagName);
 
-  if (useApi) {
+  if (active && useApi) {
     const endpoint = createSpaceEndpoint(spaceId);
 
     const raw = await endpoint({
       method: 'GET',
-      path: [ 'enforcements' ]
+      path: ['enforcements']
     });
 
     return raw.items;
