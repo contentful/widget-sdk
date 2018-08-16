@@ -9,7 +9,8 @@ export default class EntryLinkToolbarIcon extends Component {
   static propTypes = {
     field: PropTypes.object.isRequired,
     change: PropTypes.object.isRequired,
-    onToggle: PropTypes.func.isRequired
+    onToggle: PropTypes.func.isRequired,
+    disabled: PropTypes.bool.isRequired
   };
   handleClick = async event => {
     event.preventDefault();
@@ -56,6 +57,7 @@ export default class EntryLinkToolbarIcon extends Component {
         buttonType="muted"
         data-test-id={`toolbar-toggle-${BLOCKS.EMBEDDED_ENTRY}`}
         onClick={this.handleClick}
+        disabled={this.props.disabled}
       >
         Embed entry
       </Button>

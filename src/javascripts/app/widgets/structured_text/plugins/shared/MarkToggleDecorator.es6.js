@@ -12,7 +12,7 @@ export default ({ type, title, icon }) => Mark => {
     };
 
     render () {
-      const { change } = this.props;
+      const { change, disabled } = this.props;
       return (
         <Mark
           type={type}
@@ -20,6 +20,7 @@ export default ({ type, title, icon }) => Mark => {
           title={title}
           onToggle={this.handleToggle}
           isActive={haveMarks(change, type)}
+          disabled={disabled}
         />
       );
     }
