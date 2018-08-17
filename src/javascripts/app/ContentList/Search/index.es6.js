@@ -89,7 +89,12 @@ function mapStateToProps (state, actions) {
     isSearching,
     withAssets
   } = state;
-
+  const suggestions = getMatchingFilters(
+    state.input,
+    state.contentTypeId,
+    contentTypes,
+    withAssets
+  );
   return {
     contentTypeFilter: contentTypeFilter(contentTypes),
     filters: getFiltersFromQueryKey({
@@ -99,14 +104,7 @@ function mapStateToProps (state, actions) {
       contentTypeId,
       withAssets
     }),
-    suggestions: state.isSuggestionOpen
-      ? getMatchingFilters(
-          state.input,
-          state.contentTypeId,
-          contentTypes,
-          withAssets
-        )
-      : [],
+    suggestions: state.isSuggestionOpen ? suggestions : [],
     focus: state.focus,
     contentTypeId: state.contentTypeId,
     isSearching: isSearching,

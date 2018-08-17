@@ -1,4 +1,4 @@
-import { cloneDeep, startsWith, find, get, has, map } from 'lodash';
+import { cloneDeep, startsWith, find, get, has, map, memoize } from 'lodash';
 import { makeCtor } from 'utils/TaggedValues';
 import { assign, push, concat } from 'utils/Collections';
 import { getOperatorsByType, equality as equalityOperator } from './Operators';
@@ -260,6 +260,30 @@ export function isFieldFilterApplicableToContentType (contentType, queryKey) {
 }
 
 /**
+ * Returns a list of all filters.
+ *
+ * This list consists of
+ * - The contentType filter
+ * - Filters for sys fields common to each content type
+ * - A filter for each field of the given content types
+ */
+// Memoized to improve performance on huge lists (>1500 elements).
+const allFilters = memoize((contentTypes, withAssets = false) => {
+  const ctFieldFilters = contentTypes.reduce((filters, ct) => {
+    return ct.fields.reduce((filters, ctField) => {
+      return push(filters, buildFilterField(ct, ctField));
+    }, filters);
+  }, []);
+
+  const fields = concat(
+    getSysFilters(withAssets),
+    withAssets ? [] : ctFieldFilters
+  );
+
+  return fields;
+});
+
+/**
  * Returns a list of filters that begin with the search string and
  * match the selected content type ID or
  * a list of all filters if there was no match by name.
@@ -271,18 +295,19 @@ export function isFieldFilterApplicableToContentType (contentType, queryKey) {
  * @param {API.ContentType[]} availableContentTypes
  * @returns {Filter[]}
  */
-export function getMatchingFilters (
+// Memoized to improve performance on huge lists (>1500 elements).
+export const getMatchingFilters = memoize((
   searchString,
   contentTypeId,
   availableContentTypes,
   withAssets
-) {
+) => {
   let filters = allFilters(availableContentTypes, withAssets);
   filters = filterByName(filters, searchString);
   filters = filterByContentType(filters, contentTypeId);
 
   return withAssets ? filters : filterBySupportedTypes(filters);
-}
+});
 
 function filterBySupportedTypes (filters) {
   return filters.filter(({ queryKey, type }) => {
@@ -354,29 +379,6 @@ function getApiName (queryKey) {
 
 function getFieldByApiName (contentType, apiName) {
   return find(contentType.fields, field => field.apiName === apiName);
-}
-
-/**
- * Returns a list of all filters.
- *
- * This list consists of
- * - The contentType filter
- * - Filters for sys fields common to each content type
- * - A filter for each field of the given content types
- */
-function allFilters (contentTypes, withAssets = false) {
-  const ctFieldFilters = contentTypes.reduce((filters, ct) => {
-    return ct.fields.reduce((filters, ctField) => {
-      return push(filters, buildFilterField(ct, ctField));
-    }, filters);
-  }, []);
-
-  const fields = concat(
-    getSysFilters(withAssets),
-    withAssets ? [] : ctFieldFilters
-  );
-
-  return fields;
 }
 
 function getSysFilters (withAssets = false) {
