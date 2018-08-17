@@ -7,22 +7,12 @@ angular.module('contentful')
  * @name states/settings
  */
 .factory('states/settings', ['require', require => {
-  var base = require('states/Base').default;
-
-  var space = base({
-    name: 'space',
-    url: '/space',
-    label: 'Space settings',
-    loadingText: 'Loading space settings…',
-    template: '<cf-space-settings class="workbench space-settings" />'
-  });
-
   return {
     name: 'settings',
     url: '/settings',
     abstract: true,
     children: [
-      space,
+      require('app/SpaceSettings/GeneralSettings/SpaceSettingsState').default,
       require('states/settings/locales'),
       require('states/settings/users'),
       require('states/settings/roles'),
