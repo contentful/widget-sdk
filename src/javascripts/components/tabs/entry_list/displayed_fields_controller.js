@@ -4,6 +4,7 @@ angular.module('contentful')
 .controller('DisplayedFieldsController', ['$scope', 'require', ($scope, require) => {
   const systemFields = require('systemFields');
   const spaceContext = require('spaceContext');
+  const _ = require('lodash');
 
   function getAvailableFields (contentTypeId) {
     const filteredContentType = spaceContext.publishedCTs.get(contentTypeId);
@@ -19,7 +20,7 @@ angular.module('contentful')
   $scope.hiddenFields = [];
 
   $scope.refreshDisplayFields = () => {
-    const displayedFieldIds = $scope.context.view.displayedFieldIds;
+    const displayedFieldIds = _.uniq($scope.context.view.displayedFieldIds);
     const fields = getAvailableFields($scope.context.view.contentTypeId);
     const unavailableFieldIds = [];
 
