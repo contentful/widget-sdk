@@ -90,7 +90,7 @@ export default class StructuredTextEditor extends React.Component {
     const props = {
       change: this.state.value.change(),
       onToggle: this.onChange,
-      disabled: this.state.isDisabled
+      disabled: this.props.isDisabled
     };
     return (
       <EditorToolbar>
