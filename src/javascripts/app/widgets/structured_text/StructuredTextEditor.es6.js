@@ -52,9 +52,9 @@ export default class StructuredTextEditor extends React.Component {
     super(props);
 
     this.state = {
+      lastOperations: [],
       value:
-        this.props.value &&
-        this.props.value.nodeClass === 'document'
+        this.props.value && this.props.value.nodeClass === 'document'
           ? Value.fromJSON({
             object: 'value',
             document: toSlatejsDocument(this.props.value)
@@ -63,13 +63,16 @@ export default class StructuredTextEditor extends React.Component {
     };
   }
 
-  onChange = ({ value }) => {
-    this.setState({ value, headingMenuOpen: false });
+  onChange = ({ value, operations }) => {
+    const lastOperations = operations
+      .filter(o => o.type !== 'set_selection')
+      .toJS();
+    this.setState({ value, lastOperations, headingMenuOpen: false });
   };
-
   componentDidUpdate (prevProps) {
     const isIncomingChange = !deepEqual(this.props.value, prevProps.value);
-    if (!this.props.isDisabled) {
+    const contentIsUpdated = this.state.lastOperations.length > 0;
+    if (!this.props.isDisabled && contentIsUpdated) {
       this.props.onChange(
         toContentfulDocument(this.state.value.document.toJSON())
       );
@@ -99,13 +102,12 @@ export default class StructuredTextEditor extends React.Component {
           change={props.change}
           disabled={props.disabled}
         >
-          <Heading1 {...props}
+          <Heading1
+            {...props}
             menuIsOpen={this.state.headingMenuOpen}
             extraClassNames="toolbar-h1-toggle"
           />
-          <Heading2 {...props}
-            menuIsOpen={this.state.headingMenuOpen}
-          />
+          <Heading2 {...props} menuIsOpen={this.state.headingMenuOpen} />
         </HeadingDropdown>
         <Bold {...props} />
         <Italic {...props} />
@@ -122,9 +124,10 @@ export default class StructuredTextEditor extends React.Component {
     });
   };
 
-  closeHeadingMenu = () => this.setState({
-    headingMenuOpen: false
-  });
+  closeHeadingMenu = () =>
+    this.setState({
+      headingMenuOpen: false
+    });
 
   render () {
     return (
