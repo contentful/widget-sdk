@@ -424,6 +424,12 @@ angular.module('contentful')
   return spaceContext;
 
   function resetMembers (spaceContext) {
+    // Deinit the enforcement refreshing on space ID change, so that
+    // the previous space ID enforcement information isn't queried
+    if (enforcementsDeInit) {
+      enforcementsDeInit();
+    }
+
     spaceContext.uiConfig = null;
     spaceContext.space = null;
     spaceContext.users = null;
@@ -438,12 +444,6 @@ angular.module('contentful')
     }
     if (self.publishedCTs) {
       self.publishedCTs = null;
-    }
-
-    // Deinit the enforcement refreshing on space ID change, so that
-    // the previous space ID enforcement information isn't queried
-    if (enforcementsDeInit) {
-      enforcementsDeInit();
     }
   }
 
