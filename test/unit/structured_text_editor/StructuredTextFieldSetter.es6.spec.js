@@ -5,7 +5,7 @@ describe('StructuredTextFieldSetter', () => {
   beforeEach(function () {
     this.ShareJS = {
       peek: (doc, filePath) => get(doc.snapshot, filePath),
-      setDeep: sinon.spy()
+      setDeep: sinon.stub().resolves()
     };
     this.logger = {
       logException: sinon.spy()
@@ -61,14 +61,15 @@ describe('StructuredTextFieldSetter', () => {
   describe('#setAt()', function () {
     it('initializes new documents with default value', function () {
       const doc = {
-        submitOp: sinon.spy()
+        submitOp: sinon.spy(),
+        snapshot: []
       };
       const fieldPath = ['fields', 'id', 'locale'];
       const nextValue = {};
-      this.StructuredTextFieldSetter.setAt(doc, fieldPath, nextValue);
-
-      sinon.assert.notCalled(doc.submitOp);
-      sinon.assert.calledWith(this.ShareJS.setDeep, doc, fieldPath, this.emptyDoc);
+      this.StructuredTextFieldSetter.setAt(doc, fieldPath, nextValue).then(() => {
+        sinon.assert.called(doc.submitOp);
+        sinon.assert.calledWith(this.ShareJS.setDeep, doc, fieldPath, this.emptyDoc);
+      });
     });
 
     it('sends changes as OT operations', function () {

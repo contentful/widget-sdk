@@ -41,9 +41,13 @@ export const is = (fieldId, contentType) => {
 export const setAt = (doc, fieldPath, nextFieldValue) => {
   const fieldValue = ShareJS.peek(doc, fieldPath);
   if (fieldValue === undefined) {
-    return ShareJS.setDeep(doc, fieldPath, emptyDoc);
+    return ShareJS.setDeep(doc, fieldPath, emptyDoc).then(() => setValue(doc, fieldPath, emptyDoc, nextFieldValue));
   }
 
+  return setValue(doc, fieldPath, fieldValue, nextFieldValue);
+};
+
+function setValue (doc, fieldPath, fieldValue, nextFieldValue) {
   const ops = jsondiff(fieldValue, nextFieldValue, diffMatchPatch).map(op => ({
     ...op,
     p: [...fieldPath, ...op.p]
@@ -56,4 +60,4 @@ export const setAt = (doc, fieldPath, nextFieldValue) => {
       logger.logException(e);
     }
   });
-};
+}
