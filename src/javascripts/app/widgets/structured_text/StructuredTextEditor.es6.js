@@ -65,7 +65,7 @@ export default class StructuredTextEditor extends React.Component {
 
   onChange = ({ value, operations }) => {
     const lastOperations = operations
-      .filter(o => o.type !== 'set_selection')
+      .filter(o => o.type !== 'set_selection' && o.type !== 'set_value')
       .toJS();
     this.setState({ value, lastOperations, headingMenuOpen: false });
   };
@@ -73,6 +73,7 @@ export default class StructuredTextEditor extends React.Component {
     const isIncomingChange = !deepEqual(this.props.value, prevProps.value);
     const contentIsUpdated = this.state.lastOperations.length > 0;
     if (!this.props.isDisabled && contentIsUpdated) {
+      this.setState({ lastOperations: [] });
       this.props.onChange(
         toContentfulDocument(this.state.value.document.toJSON())
       );
