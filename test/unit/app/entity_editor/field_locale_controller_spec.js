@@ -155,6 +155,14 @@ describe('FieldLocaleController', () => {
       K.assertCurrentValue(this.scope.editorContext.focus.field$, 'FID');
     });
 
+    it('does not set focus on a disabled field', function () {
+      this.otDoc.permissions.canEditFieldLocale.returns(false);
+      const scope = this.init();
+      this.$apply();
+      scope.fieldLocale.setActive(true);
+      K.assertCurrentValue(scope.editorContext.focus.field$, null);
+    });
+
     it('unsets the editor context field focus', function () {
       this.scope.fieldLocale.setActive(true);
       K.assertCurrentValue(this.scope.editorContext.focus.field$, 'FID');

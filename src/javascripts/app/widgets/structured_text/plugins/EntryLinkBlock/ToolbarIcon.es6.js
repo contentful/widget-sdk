@@ -49,6 +49,7 @@ export default class EntryLinkToolbarIcon extends Component {
       <WidgetAPIContext.Consumer>
         {({widgetAPI}) => (
           <Button
+            disabled={this.props.disabled}
             extraClassNames="structured-text__entry-link-block-button"
             size="small"
             icon="Description"

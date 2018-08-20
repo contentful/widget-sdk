@@ -191,7 +191,7 @@ angular.module('contentful')
    * @param {boolean} active
    */
   controller.setActive = isActive => {
-    if (isActive) {
+    if (isActive && !controller.access.disabled) {
       controller.doc.notifyFocus();
       editorContext.focus.set(field.id);
     } else {
