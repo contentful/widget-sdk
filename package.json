@@ -171,7 +171,7 @@
     "cloc": "cloc --read-lang-def .cloc.def src",
     "clean": "rm -rf node_modules",
     "precommit": "lint-staged",
-    "bundle-analyzer": "webpack --config ./tools/webpack.analyzer.config.js"
+    "bundle-analyzer": "node --max_old_space_size=4096 ./node_modules/webpack/bin/webpack.js --config ./tools/webpack.analyzer.config.js"
   },
   "lint-staged": {
     "*.js": [
