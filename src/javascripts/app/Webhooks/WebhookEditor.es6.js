@@ -61,7 +61,15 @@ export default class WebhookEditor extends React.Component {
 
   onChange (change) {
     this.setState(
-      s => ({...s, webhook: {...s.webhook, ...change}, dirty: true}),
+      s => ({
+        ...s,
+        webhook: {...s.webhook, ...change},
+        dirty: true,
+        // we clear stored HTTP Basic Auth credentials when change contains
+        // `httpBasicUsername` property set to `null`. Otherwise we use
+        // the previous value.
+        hasHttpBasicStored: change.httpBasicUsername === null ? false : s.hasHttpBasicStored
+      }),
       () => this.propagateChange()
     );
   }
