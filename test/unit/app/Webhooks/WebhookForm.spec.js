@@ -1,8 +1,9 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import WebhookForm from 'app/Webhooks/WebhookForm';
 
 describe('WebhookForm', function () {
+  let WebhookForm;
+
   const mount = () => {
     const onChangeStub = sinon.stub();
     const wrapper = Enzyme.mount(<WebhookForm
@@ -13,6 +14,12 @@ describe('WebhookForm', function () {
 
     return [wrapper, onChangeStub];
   };
+
+  // We inject instead of importing so modalDialog is available
+  beforeEach(function () {
+    module('contentful/test');
+    WebhookForm = this.$inject('app/Webhooks/WebhookForm').default;
+  });
 
   it('renders and updates details', function () {
     const [wrapper, onChangeStub] = mount();

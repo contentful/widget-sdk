@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import modalDialog from 'modalDialog';
 
 export default class WebhookHeaders extends React.Component {
   static propTypes = {
@@ -25,9 +26,9 @@ export default class WebhookHeaders extends React.Component {
     this.props.onChange(updated);
   }
 
-  add () {
+  add (header) {
     const headers = this.getHeaders();
-    this.props.onChange(headers.concat([{}]));
+    this.props.onChange(headers.concat([header || {}]));
   }
 
   remove (i) {
@@ -48,15 +49,22 @@ export default class WebhookHeaders extends React.Component {
                 className="cfnext-form__input"
                 placeholder="Key"
                 value={h.key || ''}
+                disabled={h.secret}
                 onChange={e => this.update(i, {key: e.target.value})}
               />
-              <input
+              {!h.secret && <input
                 type="text"
                 className="cfnext-form__input"
                 placeholder="Value"
                 value={h.value || ''}
                 onChange={e => this.update(i, {value: e.target.value})}
-              />
+              />}
+              {h.secret && <input
+                type="password"
+                className="cfnext-form__input"
+                placeholder="Value of this header is secret"
+                readOnly={true}
+              />}
               <button className="btn-link" onClick={() => this.remove(i)}>
                 Remove
               </button>
@@ -65,13 +73,33 @@ export default class WebhookHeaders extends React.Component {
         })}
 
         <button
-          className="btn-link"
+          className="btn-link webhook-header-action"
           onClick={() => {
             this.shouldFocus = true; // mark to be focused when the component updates next time
             this.add();
           }}
         >
           + Add custom header
+        </button>
+
+        <button
+          className="btn-link webhook-header-action"
+          onClick={() => {
+            modalDialog.open({
+              template: '<react-component class="modal-background" name="app/Webhooks/WebhookSecretHeaderDialog" props="props">',
+              controller: $scope => {
+                $scope.props = {
+                  confirm: val => $scope.dialog.confirm(val)
+                };
+              }
+            }).promise.then(header => {
+              if (['key', 'value', 'secret'].every(key => header[key])) {
+                this.add(header);
+              }
+            });
+          }}
+        >
+          + Add secret header
         </button>
       </div>
     );

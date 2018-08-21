@@ -1,8 +1,9 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import WebhookHeaders from 'app/Webhooks/WebhookHeaders';
 
 describe('WebhookHeaders', function () {
+  let WebhookHeaders;
+
   const mount = headers => {
     const onChangeStub = sinon.stub();
     const wrapper = Enzyme.mount(<WebhookHeaders
@@ -14,6 +15,12 @@ describe('WebhookHeaders', function () {
   };
 
   const findHeaderRows = wrapper => wrapper.find('.webhook-editor__settings-row');
+
+  // We inject instead of importing so modalDialog is available
+  beforeEach(function () {
+    module('contentful/test');
+    WebhookHeaders = this.$inject('app/Webhooks/WebhookHeaders').default;
+  });
 
   it('lists no headers when none defined', function () {
     const [wrapper] = mount([]);
@@ -71,5 +78,23 @@ describe('WebhookHeaders', function () {
     const removeBtn = headerRows.last().find('button').first();
     removeBtn.simulate('click');
     sinon.assert.calledWith(onChangeStub, [headers[0]]);
+  });
+
+  it('renders secret headers disabled not exposing value', function () {
+    const headers = [
+      {key: 'test', value: 'public'},
+      {key: 'test2', value: 'secret', secret: true}
+    ];
+
+    const [wrapper] = mount(headers);
+    const headerRows = findHeaderRows(wrapper);
+    const inputs = headerRows.find('input');
+
+    ['test', 'public', 'test2', undefined].forEach((value, i) => {
+      expect(inputs.at(i).prop('value')).toBe(value);
+    });
+    expect(inputs.at(2).prop('disabled')).toBe(true);
+    expect(inputs.at(3).prop('type')).toBe('password');
+    expect(inputs.at(3).prop('readOnly')).toBe(true);
   });
 });
