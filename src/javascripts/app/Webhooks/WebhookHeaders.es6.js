@@ -84,24 +84,26 @@ export default class WebhookHeaders extends React.Component {
 
         <button
           className="btn-link webhook-header-action"
-          onClick={() => {
-            modalDialog.open({
-              template: '<react-component class="modal-background" name="app/Webhooks/WebhookSecretHeaderDialog" props="props">',
-              controller: $scope => {
-                $scope.props = {
-                  confirm: val => $scope.dialog.confirm(val)
-                };
-              }
-            }).promise.then(header => {
-              if (['key', 'value', 'secret'].every(key => header[key])) {
-                this.add(header);
-              }
-            });
-          }}
+          onClick={this.openSecretHeaderDialog}
         >
           + Add secret header
         </button>
       </div>
     );
+  }
+
+  openSecretHeaderDialog = () => {
+    modalDialog.open({
+      template: '<react-component class="modal-background" name="app/Webhooks/WebhookSecretHeaderDialog" props="props">',
+      controller: $scope => {
+        $scope.props = {
+          confirm: val => $scope.dialog.confirm(val)
+        };
+      }
+    }).promise.then(header => {
+      if (['key', 'value', 'secret'].every(key => header[key])) {
+        this.add(header);
+      }
+    });
   }
 }
