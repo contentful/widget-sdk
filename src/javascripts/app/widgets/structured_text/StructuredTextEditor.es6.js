@@ -38,6 +38,9 @@ const plugins = [
 
 const schema = Schema.fromJSON(schemaJson);
 const initialValue = Value.fromJSON(toSlatejsDocument(emptyDoc));
+// We do not want to change the `widgetApi.field` value when these
+// operations fire from Slatejs to not trigger unncessary saves.
+const ignoredOperations = ['set_value', 'set_node', 'set_selection'];
 
 export default class StructuredTextEditor extends React.Component {
   static propTypes = {
@@ -65,7 +68,7 @@ export default class StructuredTextEditor extends React.Component {
 
   onChange = ({ value, operations }) => {
     const lastOperations = operations
-      .filter(o => o.type !== 'set_selection' && o.type !== 'set_value')
+      .filter(o => ignoredOperations.indexOf(o.type) === -1)
       .toJS();
     this.setState({ value, lastOperations, headingMenuOpen: false });
   };
