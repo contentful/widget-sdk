@@ -8,7 +8,7 @@ import WebhookSidebarDocumentation from './WebhookSidebarDocumentation';
 import WebhookSidebarTemplatesList from './WebhookSidebarTemplatesList';
 
 export default function WebhookListSidebar (props) {
-  const {webhooks, resource, organization, webhookRepo, templateContentTypes} = props;
+  const {webhooks, resource, organization, webhookRepo, templateContentTypes, openTemplateDialog} = props;
 
   // Currently, for Version 1 organizations, the usage comes
   // from the token, but this is unreliable as the token is
@@ -39,6 +39,7 @@ export default function WebhookListSidebar (props) {
       <WebhookSidebarTemplatesList
         webhookRepo={webhookRepo}
         templateContentTypes={templateContentTypes}
+        openTemplateDialog={openTemplateDialog}
       />
     </div>
   );
@@ -49,5 +50,6 @@ WebhookListSidebar.propTypes = {
   resource: PropTypes.object.isRequired,
   organization: PropTypes.object.isRequired,
   webhookRepo: PropTypes.object.isRequired,
-  templateContentTypes: PropTypes.array.isRequired
+  templateContentTypes: PropTypes.array.isRequired,
+  openTemplateDialog: PropTypes.func.isRequired
 };

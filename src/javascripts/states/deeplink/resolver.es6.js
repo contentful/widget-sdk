@@ -16,10 +16,11 @@ const ONBOARDING_ERROR = 'modern onboarding space id does not exist';
  * the full path of that resource.
  *
  * @param {string} link - one of `api`, `invite`, `users`, `subscription`, `org`.
+ * @param {object} params - All queryParameters except `link`
  * @return {Promise<{path:string, params:Object}>} - promise with resolved path and params
  */
-export function resolveLink (link) {
-  return resolveParams(link)
+export function resolveLink (link, params) {
+  return resolveParams(link, params)
   .catch((e) => {
     logger.logException(e, {
       data: {
@@ -34,11 +35,13 @@ export function resolveLink (link) {
 }
 
 /**
+ * @param {string} link Deeplink name
+ * @param {object} params All queryParameters except, `link`
  * @description function to get all needed params
  * we assume this is a first page user is landed,
  * so nothing is available yet, so we download everything
  */
-function resolveParams (link) {
+function resolveParams (link, params) {
   // we map links from `link` queryParameter to resolve fn
   // keys are quoted for consistency, you can use special symbols
   //
@@ -55,13 +58,14 @@ function resolveParams (link) {
     'onboarding-get-started': createOnboardingScreenResolver('getStarted'),
     'onboarding-copy': createOnboardingScreenResolver('copy'),
     'onboarding-explore': createOnboardingScreenResolver('explore'),
-    'onboarding-deploy': createOnboardingScreenResolver('deploy')
+    'onboarding-deploy': createOnboardingScreenResolver('deploy'),
+    'webhook-template': resolveWebhookTemplate
   };
 
   const resolverFn = mappings[link];
 
   if (resolverFn) {
-    return resolverFn();
+    return resolverFn(params);
   } else {
     return Promise.reject(new Error('path does not exist'));
   }
@@ -218,4 +222,17 @@ function* applyOrgAccess (orgId, successResult) {
   }
 
   return successResult;
+}
+
+function resolveWebhookTemplate ({ id }) {
+  return runTask(function* () {
+    if (!id) {
+      throw new Error(`Webhook Template ID was not specified in the URL you've used.`);
+    }
+    const { spaceId } = yield* getSpaceInfo();
+    return {
+      path: ['spaces', 'detail', 'settings', 'webhooks', 'list'],
+      params: { spaceId, templateId: id }
+    };
+  });
 }

@@ -30,9 +30,9 @@ export default makeState({
 });
 
 export function createController ($scope) {
-  const { link } = $location.search();
+  const { link, ...otherParams } = $location.search();
 
-  return resolveLink(link).then(({ path, params, onboarding }) => {
+  return resolveLink(link, otherParams).then(({ path, params, onboarding }) => {
     if (!path) {
       $scope.status = onboarding ? 'onboarding' : 'not_exist';
       $scope.context.ready = true;

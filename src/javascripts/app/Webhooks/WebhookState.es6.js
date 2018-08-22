@@ -3,8 +3,37 @@ import createResourceService from 'services/ResourceService';
 import leaveConfirmator from 'navigation/confirmLeaveEditor';
 import TheLocaleStore from 'TheLocaleStore';
 import {domain} from 'Config';
+import modalDialog from 'modalDialog';
+import Templates from './templates';
+
+const validTemplateIds = Templates.map(template => template.id);
 
 const isNonEmptyString = s => typeof s === 'string' && s.length > 0;
+
+export function openTemplateDialog (
+  templateId,
+  webhookRepo,
+  templateContentTypes
+) {
+  if (!validTemplateIds.includes(templateId)) {
+    return;
+  }
+  modalDialog.open({
+    ignoreEsc: true,
+    backgroundClose: false,
+    template:
+      '<react-component class="modal-background" name="app/Webhooks/WebhookTemplateDialog" props="props" />',
+    controller: $scope => {
+      $scope.props = {
+        templateId,
+        webhookRepo,
+        templateContentTypes,
+        reposition: () => $scope.$emit('centerOn:reposition'),
+        closeDialog: () => $scope.dialog.confirm()
+      };
+    }
+  });
+}
 
 function prepareContentTypesForTemplates () {
   const contentTypes = spaceContext.publishedCTs.getAllBare();
@@ -37,14 +66,26 @@ const list = {
       return createResourceService(spaceContext.getId()).get('webhookDefinition');
     }]
   },
+  params: {
+    // optional templateId param to open webhook template
+    templateId: null
+  },
   template: '<react-component class="workbench webhook-list" name="app/Webhooks/WebhookList" props="props" />',
-  controller: ['$scope', 'webhooks', 'resource', ($scope, webhooks, resource) => {
-    const {pricingVersion} = spaceContext.organizationContext.organization;
+  controller: ['$scope', '$stateParams', 'webhooks', 'resource', ($scope, $stateParams, webhooks, resource) => {
+    const { pricingVersion } = spaceContext.organizationContext.organization;
+    const templateContentTypes = prepareContentTypesForTemplates();
+    const webhookRepo = spaceContext.webhookRepo;
+
+    if ($stateParams.templateId) {
+      openTemplateDialog($stateParams.templateId, webhookRepo, templateContentTypes);
+    }
+
     $scope.props = {
       webhooks,
-      webhookRepo: spaceContext.webhookRepo,
-      templateContentTypes: prepareContentTypesForTemplates(),
+      webhookRepo,
+      templateContentTypes,
       resource,
+      openTemplateDialog,
       organization: {pricingVersion}
     };
   }]
