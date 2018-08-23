@@ -93,7 +93,8 @@ module.exports = ({ dev = false } = {}) => ({
       // as many of these are shared between front-end/back-end and are liable
       // to be exported directly as node packages (complete with es6).
       {
-        test: /sharejs\/lib\/client|node_modules\/@contentful.+.js$/,
+        // TODO: consider transpiling all dependencies to avoid non-ES5 code, specially for IE
+        test: /sharejs\/lib\/client|node_modules\/json0-ot-diff|node_modules\/@contentful.+.js$/,
         exclude: /node_modules\/@contentful\/[^/]+\/node_modules/,
         use: {
           loader: 'babel-loader',
