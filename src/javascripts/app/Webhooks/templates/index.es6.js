@@ -8,13 +8,17 @@ import PubNubWebhookTemplate from './PubNubWebhookTemplate';
 import CircleCIWebhookTemplate from './CircleCIWebhookTemplate';
 import HerokuWebhookTemplate from './HerokuWebhookTemplate';
 import TravisCIWebhookTemplate from './TravisCIWebhookTemplate';
+import WebtaskWebhookTemplate from './WebtaskWebhookTemplate';
+import GitlabWebhookTemplate from './GitlabWebhookTemplate';
 
 export default [
   NetlifyWebhookTemplate,
   HerokuWebhookTemplate,
   TravisCIWebhookTemplate,
   CircleCIWebhookTemplate,
+  GitlabWebhookTemplate,
   GoogleCloudWebhookTemplate,
+  WebtaskWebhookTemplate,
   SlackWebhookTemplate,
   TwilioWebhookTemplate,
   MailgunWebhookTemplate,
