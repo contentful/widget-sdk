@@ -23,7 +23,7 @@ export default {
         <p>
           Can be found on the{' '}
           <a
-            href="https://circleci.com/account/api"
+            href="https://www.algolia.com/manage/applications"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -47,7 +47,7 @@ export default {
         <p>
           Can be found on the{' '}
           <a
-            href="https://circleci.com/account/api"
+            href="https://www.algolia.com/manage/applications"
             target="_blank"
             rel="noopener noreferrer"
           >
