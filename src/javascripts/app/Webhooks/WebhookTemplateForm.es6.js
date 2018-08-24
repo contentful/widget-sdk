@@ -27,7 +27,7 @@ export default class WebhookTemplateForm extends React.Component {
       fields: props.template.fields.reduce(
         (acc, field) => ({
           ...acc,
-          [field.name]: ''
+          [field.name]: field.defaultValue || ''
         }),
         {}
       )

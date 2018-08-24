@@ -66,7 +66,7 @@ export default {
       name: 'branch',
       type: 'text',
       title: 'Branch',
-      placeholder: 'master',
+      defaultValue: 'master',
       description: (
         <p>
           The source code branch, for example <code>master</code>
