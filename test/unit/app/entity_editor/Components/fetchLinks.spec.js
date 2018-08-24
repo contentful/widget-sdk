@@ -70,12 +70,8 @@ describe('fetchLinks', () => {
           .withArgs(item)
           .returns(Promise.resolve(`title-${idx}`));
         const ref = `ref-${idx}`;
-        const envRef = `env-${idx}`;
         this.navigator.makeEntityRef.withArgs(item).returns(ref);
-        this.navigator.makeEntityRef.withArgs(item, 'dev').returns(envRef);
-        this.navigator.makeEntityRef.withArgs(item, 'master').returns(ref);
         this.navigator.href.withArgs(ref).returns(`href-${idx}`);
-        this.navigator.href.withArgs(envRef).returns(`href-dev-${idx}`);
       });
 
       const result = yield this.fetchLinks(id, type);
@@ -94,7 +90,7 @@ describe('fetchLinks', () => {
         {
           id: 'entity-id-2',
           title: 'title-2',
-          url: 'href-dev-2'
+          url: 'href-2'
         },
         {
           id: 'entity-id-3',

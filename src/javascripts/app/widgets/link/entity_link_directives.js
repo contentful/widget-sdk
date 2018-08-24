@@ -87,7 +87,6 @@ angular.module('cf.app')
       const EntityState = require('data/CMA/EntityState');
       const entityStateColor = require('Styles/Colors').entityStateColor;
       const LD = require('utils/LaunchDarkly');
-      const spaceContext = require('spaceContext');
       const Analytics = require('analytics/Analytics');
       const _ = require('lodash');
 
@@ -197,10 +196,7 @@ angular.module('cf.app')
 
       const getEntityState = () => {
         if ($scope.config.link) {
-          $scope.stateRef = makeEntityRef(
-            data,
-            spaceContext.getEnvironmentId()
-          );
+          $scope.stateRef = makeEntityRef(data);
         }
 
         const state = EntityState.getState(data.sys);
