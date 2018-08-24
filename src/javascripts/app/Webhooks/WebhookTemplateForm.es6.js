@@ -56,16 +56,22 @@ export default class WebhookTemplateForm extends React.Component {
   }
 
   onCreateClick () {
-    const { template, templateContentTypes } = this.props;
+    const { webhookRepo, template, templateContentTypes } = this.props;
     const name = `${template.title} - ${template.subtitle}`;
-    const webhook = template.mapParamsToDefinition(this.state.fields, name, templateContentTypes);
+
+    // `mapParamsToDefinition` can be a function or an array of functions
+    const mappers = Array.isArray(template.mapParamsToDefinition)
+      ? template.mapParamsToDefinition
+      : [template.mapParamsToDefinition];
 
     this.setState({ busy: true });
-    return WebhookEditorActions.save(this.props.webhookRepo, webhook, template.id).then(
-      saved => this.navigateToSaved(saved),
-      err => {
-        this.setState({ busy: false, error: err.message });
-      }
+
+    return Promise.all(mappers.map(mapFn => {
+      const webhook = mapFn(this.state.fields, name, templateContentTypes);
+      return WebhookEditorActions.save(webhookRepo, webhook, template.id);
+    })).then(
+      ([saved]) => this.navigateToSaved(saved),
+      err => this.setState({ busy: false, error: err.message })
     );
   }
 
