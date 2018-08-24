@@ -10,6 +10,7 @@ import HerokuWebhookTemplate from './HerokuWebhookTemplate';
 import TravisCIWebhookTemplate from './TravisCIWebhookTemplate';
 import WebtaskWebhookTemplate from './WebtaskWebhookTemplate';
 import GitlabWebhookTemplate from './GitlabWebhookTemplate';
+import AlgoliaWebhookTemplate from './AlgoliaWebhookTemplate';
 
 export default [
   NetlifyWebhookTemplate,
@@ -22,6 +23,7 @@ export default [
   SlackWebhookTemplate,
   TwilioWebhookTemplate,
   MailgunWebhookTemplate,
-  JiraWebhookTemplate,
-  PubNubWebhookTemplate
+  PubNubWebhookTemplate,
+  AlgoliaWebhookTemplate,
+  JiraWebhookTemplate
 ];
