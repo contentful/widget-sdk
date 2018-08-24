@@ -1,7 +1,6 @@
 import isHotkey from 'is-hotkey';
-import { applyChange } from '../shared/BlockToggleDecorator';
 import { BLOCKS } from '@contentful/structured-text-types';
-
+import { applyChange } from '../shared/BlockToggleDecorator';
 import commonNode from '../shared/NodeDecorator';
 
 const plugin = (type, tagName, hotkey) => {
@@ -34,6 +33,8 @@ export const Heading1Plugin = (type = BLOCKS.HEADING_1) =>
 export const Heading2Plugin = (type = BLOCKS.HEADING_2) =>
   plugin(type, 'h2', 'cmd+opt+2');
 
+
 export { default as Heading1 } from './Heading1';
 export { default as Heading2 } from './Heading2';
+export { default as Paragraph } from './Paragraph';
 export { default as HeadingDropdown } from './HeadingDropdown';

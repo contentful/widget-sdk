@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import ToolbarDropdownListItem from '../shared/ToolbarDropdownListItem';
 import { BLOCKS } from '@contentful/structured-text-types';
-import blockDecorator from '../shared/BlockToggleDecorator';
+import blockDecorator from '../shared/BlockSelectDecorator';
+import { blockTitles } from './HeadingDropdown';
 
 class Heading2 extends Component {
   render () {
@@ -11,6 +12,6 @@ class Heading2 extends Component {
 
 export default blockDecorator({
   type: BLOCKS.HEADING_2,
-  title: 'Heading 2',
-  icon: 'HeadingTwo'
+  title: blockTitles[BLOCKS.HEADING_2],
+  shouldToggle: false
 })(Heading2);

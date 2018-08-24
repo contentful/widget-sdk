@@ -17,10 +17,13 @@ import Underlined, { UnderlinedPlugin } from './plugins/Underlined';
 import {
   Heading1,
   Heading2,
+  Paragraph,
   Heading1Plugin,
   Heading2Plugin,
   HeadingDropdown
 } from './plugins/Heading';
+
+import { ParagraphPlugin } from './plugins/Paragraph';
 import EntryLinkBlock, { EntryLinkBlockPlugin } from './plugins/EntryLinkBlock';
 
 import schemaJson from './constants/Schema';
@@ -32,6 +35,7 @@ const plugins = [
   UnderlinedPlugin(),
   Heading1Plugin(),
   Heading2Plugin(),
+  ParagraphPlugin(),
   EntryLinkBlockPlugin(),
   TrailingBlock()
 ];
@@ -96,6 +100,7 @@ export default class StructuredTextEditor extends React.Component {
       onToggle: this.onChange,
       disabled: this.props.isDisabled
     };
+
     return (
       <EditorToolbar>
         <HeadingDropdown
@@ -106,12 +111,16 @@ export default class StructuredTextEditor extends React.Component {
           change={props.change}
           disabled={props.disabled}
         >
+          <Paragraph
+            {...props}
+          />
           <Heading1
             {...props}
-            menuIsOpen={this.state.headingMenuOpen}
             extraClassNames="toolbar-h1-toggle"
           />
-          <Heading2 {...props} menuIsOpen={this.state.headingMenuOpen} />
+          <Heading2
+            {...props}
+          />
         </HeadingDropdown>
         <Bold {...props} />
         <Italic {...props} />

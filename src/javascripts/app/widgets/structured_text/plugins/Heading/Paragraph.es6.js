@@ -4,14 +4,14 @@ import { BLOCKS } from '@contentful/structured-text-types';
 import blockDecorator from '../shared/BlockSelectDecorator';
 import { blockTitles } from './HeadingDropdown';
 
-class Heading1 extends Component {
+class Paragraph extends Component {
   render () {
-    return <ToolbarDropdownListItem {...this.props}>Heading 1</ToolbarDropdownListItem>;
+    return <ToolbarDropdownListItem {...this.props}>{blockTitles[BLOCKS.PARAGRAPH]}</ToolbarDropdownListItem>;
   }
 }
 
 export default blockDecorator({
-  type: BLOCKS.HEADING_1,
-  title: blockTitles[BLOCKS.HEADING_1],
+  type: BLOCKS.PARAGRAPH,
+  title: blockTitles[BLOCKS.PARAGRAPH],
   shouldToggle: false
-})(Heading1);
+})(Paragraph);

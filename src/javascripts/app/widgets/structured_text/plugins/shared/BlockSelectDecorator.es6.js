@@ -1,21 +1,15 @@
 import * as React from 'react';
-import { BLOCKS } from '@contentful/structured-text-types';
 import { haveBlocks } from './UtilHave';
 import { ToolbarIconPropTypes } from './PropTypes';
 
-export const applyChange = (change, type, shouldToggle) => {
-  const isActive = haveBlocks(change, type);
-  return change.setBlocks(isActive && shouldToggle ? BLOCKS.PARAGRAPH : type);
-};
-
-export default ({ type, title, icon, shouldToggle = true }) => Block => {
+export default ({ type, title, icon }) => Block => {
   return class BlockDecorator extends React.Component {
     static propTypes = ToolbarIconPropTypes
-    handleToggle = e => {
+    handleSelect = e => {
       const { change, onToggle } = this.props;
       e.preventDefault();
 
-      onToggle(applyChange(change, type, shouldToggle));
+      onToggle(change.setBlocks(type));
     };
 
     render () {
@@ -26,7 +20,7 @@ export default ({ type, title, icon, shouldToggle = true }) => Block => {
           type={type}
           icon={icon}
           title={title}
-          onToggle={this.handleToggle}
+          onToggle={this.handleSelect}
           isActive={haveBlocks(change, type)}
         />
       );

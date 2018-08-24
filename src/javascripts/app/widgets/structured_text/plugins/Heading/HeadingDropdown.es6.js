@@ -4,9 +4,16 @@ import { BLOCKS } from '@contentful/structured-text-types';
 import {
   Dropdown,
   DropdownList,
-  EditorToolbarButton
+  Button
 } from '@contentful/ui-component-library';
 import { haveBlocks } from '../shared/UtilHave';
+
+export const blockTitles = {
+  [BLOCKS.HEADING_1]: 'Heading 1',
+  [BLOCKS.HEADING_2]: 'Heading 2',
+  [BLOCKS.PARAGRAPH]: 'Normal Text',
+  [BLOCKS.EMBEDDED_ENTRY]: 'Embedded Entry'
+};
 
 class HeadingDropdown extends Component {
   static propTypes = {
@@ -18,29 +25,33 @@ class HeadingDropdown extends Component {
     change: PropTypes.object
   };
 
-  activeOnHeadingBlocks = () =>
-    haveBlocks(this.props.change, BLOCKS.HEADING_1) ||
-    haveBlocks(this.props.change, BLOCKS.HEADING_2);
+  getStyleNameForChange = () =>
+    Object.keys(blockTitles)
+      .filter(key =>
+        haveBlocks(this.props.change, key)
+      ).reduce((_, cur) => blockTitles[cur], undefined);
 
   render () {
     const { onToggle, isOpen, onClose, children } = this.props;
     return (
       <Dropdown
         toggleElement={
-          <EditorToolbarButton
+          <Button
             onMouseDown={onToggle}
             data-test-id="toolbar-heading-toggle"
-            withDropdown
-            icon="Heading"
-            label="Heading"
-            isActive={this.activeOnHeadingBlocks()}
+            extraClassNames="toolbar-heading-toggle"
+            indicateDropdown
+            buttonType="naked"
+            size="small"
             disabled={this.props.disabled}
-          />
+          >{this.getStyleNameForChange()}</Button>
         }
         isOpen={isOpen}
         onClose={onClose}
       >
-        <DropdownList>{children}</DropdownList>
+        <DropdownList extraClassNames="toolbar-heading-dropdown-list">
+          {children}
+        </DropdownList>
       </Dropdown>
     );
   }
