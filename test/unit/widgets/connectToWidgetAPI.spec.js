@@ -9,7 +9,7 @@ describe('connectToWidgetAPI', () => {
     module('contentful/test');
     this.system = createIsolatedSystem();
     this.system.set('entitySelector', {});
-    this.system.set('states/EntityNavigationHelpers', {
+    this.system.set('navigation/SlideInNavigator', {
       goToSlideInEntity: sinon.stub()
     });
     this.system.set('spaceContext', {

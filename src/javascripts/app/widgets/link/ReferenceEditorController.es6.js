@@ -23,7 +23,7 @@ import { getStore } from 'TheStore';
 import {
   getSlideInEntities,
   goToSlideInEntity as goToSlideInEntityBase
-} from 'states/EntityNavigationHelpers';
+} from 'navigation/SlideInNavigator';
 
 const FEATURE_LOTS_OF_CT_ADD_ENTRY_REDESIGN =
   'feature-at-11-2017-lots-of-cts-add-entry-and-link-reference';

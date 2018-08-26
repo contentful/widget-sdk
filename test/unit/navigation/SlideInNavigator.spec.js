@@ -1,6 +1,6 @@
 import sinon from 'npm:sinon';
 
-describe('EntityNavigationHelpers', () => {
+describe('SlideInNavigator', () => {
   beforeEach(function () {
     const params = sinon.stub();
     this.stateParams = params;
@@ -19,8 +19,8 @@ describe('EntityNavigationHelpers', () => {
       });
     });
 
-    this.entityNavigationHelper = this.$inject(
-      'states/EntityNavigationHelpers'
+    this.slideInNavigator = this.$inject(
+      'navigation/SlideInNavigator'
     );
   });
 
@@ -34,7 +34,7 @@ describe('EntityNavigationHelpers', () => {
         this.stateParams.returns(params);
         this.search.returns(search);
 
-        const entities = this.entityNavigationHelper.getSlideInEntities();
+        const entities = this.slideInNavigator.getSlideInEntities();
 
         expect(entities).toEqual(expectedOutput);
       });
@@ -132,7 +132,7 @@ describe('EntityNavigationHelpers', () => {
         this.stateParams.returns(params);
         this.search.returns(search);
 
-        const result = this.entityNavigationHelper.goToSlideInEntity(
+        const result = this.slideInNavigator.goToSlideInEntity(
           goToEntity,
           featureFlagValue
         );

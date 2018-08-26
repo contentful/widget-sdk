@@ -54,7 +54,7 @@ describe('Toolbar', () => {
         }
       }
     );
-    this.system.set('states/EntityNavigationHelpers', {
+    this.system.set('navigation/SlideInNavigator', {
       goToSlideInEntity: sinon.stub()
     });
 

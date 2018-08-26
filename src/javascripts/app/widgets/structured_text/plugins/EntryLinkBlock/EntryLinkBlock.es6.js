@@ -9,7 +9,7 @@ import {
 import FetchEntry from './FetchEntry';
 import Thumbnail from './Thumbnail';
 // TODO: move closer to the widgetAPI
-import { goToSlideInEntity } from 'states/EntityNavigationHelpers';
+import { goToSlideInEntity } from 'navigation/SlideInNavigator';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext';
 
 export default class LinkedEntryBlock extends React.Component {
