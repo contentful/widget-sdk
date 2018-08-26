@@ -60,6 +60,23 @@ describe('EntityNavigationHelpers', () => {
     );
 
     getSlideInEntitiesTestFactory(
+      'ignores empty values',
+      {
+        params: {
+          entryId: 'entry-id-3'
+        },
+        search: {
+          previousEntries: ',,entry-id-1,,,entry-id-2,,'
+        }
+      },
+      [
+        { id: 'entry-id-1', type: 'Entry' },
+        { id: 'entry-id-2', type: 'Entry' },
+        { id: 'entry-id-3', type: 'Entry' }
+      ]
+    );
+
+    getSlideInEntitiesTestFactory(
       'contains no duplicate ids',
       {
         params: {
@@ -138,7 +155,7 @@ describe('EntityNavigationHelpers', () => {
       {
         featureFlagValue: FeatureFlagValue.Off
       },
-      ['.', {
+      ['^.^.entries.detail', {
         entryId: 'entry-id',
         previousEntries: ''
       }]
