@@ -49,17 +49,17 @@ export function userEnvStateSuccess ({ key, spaceId, envId, data }) {
 }
 
 export const UPDATE_USER_ENV_STATE_PENDING = 'UPDATE_USER_ENV_PENDING';
-export function updateUserEnvStatePending ({ key, spaceId, envId }) {
+export function updateUserEnvStatePending ({ key, spaceId, envId, data }) {
   return {
     type: UPDATE_USER_ENV_STATE_PENDING,
-    payload: { key, spaceId, envId }
+    payload: { key, spaceId, envId, data }
   };
 }
 
 export const UPDATE_USER_ENV_STATE_SUCCESS = 'UPDATE_USER_ENV_SUCCESS';
 export function updateUserEnvStateSuccess ({ key, spaceId, envId, data }) {
   return {
-    type: UPDATE_USER_STATE_SUCCESS,
+    type: UPDATE_USER_ENV_STATE_SUCCESS,
     payload: { key, spaceId, envId, data }
   };
 }

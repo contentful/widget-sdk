@@ -157,7 +157,7 @@ function userEnvStateReducer (state = {}, action) {
         }
       });
     }
-    case actions.UPDATE_USER_ENV_SUCCESS: {
+    case actions.UPDATE_USER_ENV_STATE_SUCCESS: {
       return updateEnvState({
         state,
         payload: action.payload,
