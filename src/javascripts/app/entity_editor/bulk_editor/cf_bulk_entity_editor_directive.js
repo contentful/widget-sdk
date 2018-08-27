@@ -67,9 +67,13 @@ angular.module('contentful')
         stateRef: Navigator.makeEntityRef(
           {sys: {
             id: entityContext.id,
-            type: 'Entry'
-          }},
-          spaceContext.getEnvironmentId()
+            type: 'Entry',
+            environment: {
+              sys: {
+                id: spaceContext.getEnvironmentId()
+              }
+            }
+          }}
         )
       };
 

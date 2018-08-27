@@ -21,6 +21,7 @@
  * Angular UI router does) we treat them as one value.
  */
 import $state from '$state';
+import {get} from 'lodash';
 
 const ENTITY_PLURALS = {
   Entry: 'entries',
@@ -65,20 +66,19 @@ export function href (state) {
  * Creates a state reference for an entity or link object.
  *
  * @param {API.Entity|API.Link} entity}
- * @param {Boolean} useSpaceEnv} If space environments are enabled
- * @param {Boolean} isMasterEnv} If current env is the master/default env
  * @returns {Navigator.Ref}
  */
-export function makeEntityRef (entity, spaceEnvId) {
+export function makeEntityRef (entity) {
   return {
-    path: makeEntityPath(entity, spaceEnvId),
+    path: makeEntityPath(entity),
     params: makeEntityParams(entity)
   };
 }
 
-function makeEntityPath (entity, spaceEnvId) {
+function makeEntityPath (entity) {
   const type = getType(entity);
   const typePlural = ENTITY_PLURALS[type];
+  const spaceEnvId = get(entity, 'sys.environment.sys.id');
   const isMasterEnv = spaceEnvId === 'master';
 
   if (spaceEnvId && !isMasterEnv) {

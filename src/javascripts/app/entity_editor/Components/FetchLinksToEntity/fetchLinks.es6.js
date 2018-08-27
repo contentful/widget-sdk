@@ -3,7 +3,6 @@ import EntityHelpers from 'EntityHelpers';
 import TheLocaleStore from 'TheLocaleStore';
 import { makeEntityRef, href } from 'states/Navigator';
 import { EntityType } from '../constants';
-import { get } from 'lodash';
 
 const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
 const entityHelpers = EntityHelpers.newForLocale(defaultLocaleCode);
@@ -26,13 +25,10 @@ export default (id, type) => {
     return Promise.all(
       items.map(entry => {
         const { id } = entry.sys;
-        // make sure the url points to the corrent space env.
-        // falls back to master if no env id is found
-        const env = get(entry, 'sys.environment.sys.id', 'master');
         return entityHelpers.entityTitle(entry).then(title => ({
           id,
           title,
-          url: href(makeEntityRef(entry, env))
+          url: href(makeEntityRef(entry))
         }));
       })
     );
