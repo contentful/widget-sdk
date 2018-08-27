@@ -55,6 +55,10 @@ describe('Space Wizard', function() {
         productType: 'on_demand',
         productPlanType: 'space',
         productRatePlanCharges: this.ratePlanCharges,
+        roleSet: {
+          name: '',
+          roles: []
+        },
         sys: {
           id: 'plan_1234'
         }
@@ -68,6 +72,10 @@ describe('Space Wizard', function() {
         productType: 'on_demand',
         productPlanType: 'space',
         productRatePlanCharges: this.ratePlanCharges,
+        roleSet: {
+          name: '',
+          roles: []
+        },
         unavailabilityReasons: [
           {
             type: 'currentPlan'
@@ -83,6 +91,10 @@ describe('Space Wizard', function() {
         productType: 'on_demand',
         productPlanType: 'space',
         productRatePlanCharges: this.ratePlanCharges,
+        roleSet: {
+          name: '',
+          roles: []
+        },
         sys: {
           id: 'plan_5678'
         }

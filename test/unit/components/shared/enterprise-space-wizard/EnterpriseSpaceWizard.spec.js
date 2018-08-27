@@ -55,7 +55,11 @@ describe('Enterprise Space Wizard', () => {
     this.ratePlans = [
       {
         productPlanType: 'free_space',
-        productRatePlanCharges: this.ratePlanCharges
+        productRatePlanCharges: this.ratePlanCharges,
+        roleSet: {
+          name: 'lol',
+          roles: ['Wizard']
+        }
       }
     ];
 

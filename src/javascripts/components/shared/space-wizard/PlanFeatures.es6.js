@@ -1,16 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { getTooltip } from 'components/shared/space-wizard/WizardUtils';
+import { getTooltip, SpaceResourceTypes, getRolesTooltip } from 'components/shared/space-wizard/WizardUtils';
 import pluralize from 'pluralize';
 import { toLocaleString } from 'utils/NumberUtils';
 import Tooltip from 'ui/Components/Tooltip';
 
-export default function PlanFeatures({ resources }) {
+export default function PlanFeatures ({ resources, roleSet }) {
   return (
     <ul className="space-plans-list__item__features">
-      {resources.map(({ type, number }) => {
-        const tooltip = getTooltip(type, number);
+      {resources.map(({type, number}) => {
+        const tooltip = type === SpaceResourceTypes.Roles
+          ? getRolesTooltip(number, roleSet)
+          : getTooltip(type, number);
+
         return (
           <li key={type}>
             {toLocaleString(number) + ' '}
@@ -27,10 +30,12 @@ export default function PlanFeatures({ resources }) {
   );
 }
 PlanFeatures.propTypes = {
-  resources: PropTypes.arrayOf(
-    PropTypes.shape({
-      type: PropTypes.string.isRequired,
-      number: PropTypes.number.isRequired
-    })
-  )
+  resources: PropTypes.arrayOf(PropTypes.shape({
+    type: PropTypes.string.isRequired,
+    number: PropTypes.number.isRequired
+  })),
+  roleSet: PropTypes.shape({
+    name: PropTypes.string,
+    roles: PropTypes.arrayOf(PropTypes.string)
+  }).isRequired
 };

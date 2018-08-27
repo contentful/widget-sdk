@@ -125,62 +125,64 @@ class EnterpriseSpaceWizard extends React.Component {
     return (
       <Dialog testId="enterprise-space-creation-dialog" size="large">
         <Dialog.Header onCloseButtonClicked={() => this.close()}>Create a space</Dialog.Header>
-        {showProgress && (
-          <Dialog.Body>
-            <ProgressScreen done={!spaceCreation.isPending} onConfirm={() => this.close()} />
-          </Dialog.Body>
-        )}
-        {!showProgress && (
-          <Dialog.Body>
-            <p className="enterprise-space-wizard__info" style={{ marginBottom: '30px' }}>
-              {`Use a proof of concept space to experiment or start new projects. Talk to us when you decide to launch. `}
-              <ContactUsButton noIcon={true} data-test-id="subscription-page.sidebar.contact-link">
-                Learn more
-              </ContactUsButton>
-            </p>
-            <Plan resources={this.resources} />
-            <TextField
-              countCharacters
-              required
-              style={{ marginBottom: '30px', display: 'inline-block' }}
-              value={name || ''}
-              name="spaceName"
-              id="spaceName"
-              labelText="Space name"
-              helpText="Can have up to 30 characters"
-              textInputProps={{
-                maxLength: 30,
-                width: 'large'
-              }}
-              onChange={evt => this.handleSpaceNameChange(evt.target.value)}
-              validationMessage={errorMessage}
-            />
-            {invalidName && <p className="cfnext-form__field-error">Invalid name</p>}
+          {showProgress &&
+            <Dialog.Body>
+              <ProgressScreen
+                done={!spaceCreation.isPending}
+                onConfirm={() => this.close()}
+              />
+            </Dialog.Body>
+          }
+          {!showProgress &&
+            <Dialog.Body>
+              <p className="enterprise-space-wizard__info" style={{marginBottom: '30px'}}>
+                {`Use a proof of concept space to experiment or start new projects. Talk to us when you decide to launch. `}
+                <ContactUsButton noIcon={true} data-test-id='subscription-page.sidebar.contact-link'>Learn more</ContactUsButton>
+              </p>
+              <Plan resources={this.resources} roleSet={this.plan.roleSet} />
+              <TextField
+                countCharacters
+                required
+                style={{marginBottom: '30px', display: 'inline-block'}}
+                value={name || ''}
+                name="spaceName"
+                id="spaceName"
+                labelText="Space name"
+                helpText="Can have up to 30 characters"
+                textInputProps={{
+                  maxLength: 30,
+                  width: 'large'
+                }}
+                onChange={(evt) => this.handleSpaceNameChange(evt.target.value)}
+                validationMessage={errorMessage}
+              />
+              {invalidName && <p className="cfnext-form__field-error">Invalid name</p>}
 
-            <TemplateSelector
-              onSelect={setNewSpaceTemplate}
-              onToggle={() => this.reposition()}
-              templates={templates}
-              fetchTemplates={fetchTemplates}
-              formAlign="left"
-            />
-          </Dialog.Body>
-        )}
-        {!showProgress && (
-          <Dialog.Controls>
-            <button
-              className={`btn-action ${submitted ? 'is-loading' : ''}`}
-              onClick={this.handleSubmit.bind(this)}>
-              Confirm and create space
-            </button>
-          </Dialog.Controls>
-        )}
+              <TemplateSelector
+                onSelect={setNewSpaceTemplate}
+                onToggle={() => this.reposition()}
+                templates={templates}
+                fetchTemplates={fetchTemplates}
+                formAlign="left"
+              />
+            </Dialog.Body>
+          }
+          {!showProgress &&
+            <Dialog.Controls>
+              <button
+                className={`btn-action ${submitted ? 'is-loading' : ''}`}
+                onClick={this.handleSubmit.bind(this)}
+              >
+                Confirm and create space
+              </button>
+            </Dialog.Controls>
+          }
       </Dialog>
     );
   }
 }
 
-function Plan({ resources }) {
+function Plan ({ resources, roleSet }) {
   return (
     <div
       className="space-plans-list__item space-plans-list__item--proof-of-concept"
@@ -189,12 +191,13 @@ function Plan({ resources }) {
         <strong data-test-id="space-plan-name">Proof of concept</strong>
         <span data-test-id="space-plan-price"> - Free</span>
       </div>
-      <PlanFeatures resources={resources} />
-    </div>
+      <PlanFeatures resources={resources} roleSet={roleSet} />
+  </div>
   );
 }
 Plan.propTypes = {
-  resources: PropTypes.array.isRequired
+  resources: PropTypes.array.isRequired,
+  roleSet: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => {
