@@ -12,6 +12,5 @@ class Heading1 extends Component {
 
 export default blockDecorator({
   type: BLOCKS.HEADING_1,
-  title: blockTitles[BLOCKS.HEADING_1],
-  shouldToggle: false
+  title: blockTitles[BLOCKS.HEADING_1]
 })(Heading1);

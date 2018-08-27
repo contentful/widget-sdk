@@ -11,6 +11,10 @@ import { haveBlocks } from '../shared/UtilHave';
 export const blockTitles = {
   [BLOCKS.HEADING_1]: 'Heading 1',
   [BLOCKS.HEADING_2]: 'Heading 2',
+  [BLOCKS.HEADING_3]: 'Heading 3',
+  [BLOCKS.HEADING_4]: 'Heading 4',
+  [BLOCKS.HEADING_5]: 'Heading 5',
+  [BLOCKS.HEADING_6]: 'Heading 6',
   [BLOCKS.PARAGRAPH]: 'Normal Text',
   [BLOCKS.EMBEDDED_ENTRY]: 'Embedded Entry'
 };

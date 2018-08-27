@@ -17,9 +17,17 @@ import Underlined, { UnderlinedPlugin } from './plugins/Underlined';
 import {
   Heading1,
   Heading2,
+  Heading3,
+  Heading4,
+  Heading5,
+  Heading6,
   Paragraph,
   Heading1Plugin,
   Heading2Plugin,
+  Heading3Plugin,
+  Heading4Plugin,
+  Heading5Plugin,
+  Heading6Plugin,
   HeadingDropdown
 } from './plugins/Heading';
 
@@ -35,6 +43,10 @@ const plugins = [
   UnderlinedPlugin(),
   Heading1Plugin(),
   Heading2Plugin(),
+  Heading3Plugin(),
+  Heading4Plugin(),
+  Heading5Plugin(),
+  Heading6Plugin(),
   ParagraphPlugin(),
   EntryLinkBlockPlugin(),
   TrailingBlock()
@@ -118,9 +130,11 @@ export default class StructuredTextEditor extends React.Component {
             {...props}
             extraClassNames="toolbar-h1-toggle"
           />
-          <Heading2
-            {...props}
-          />
+          <Heading2 {...props} />
+          <Heading3 {...props} />
+          <Heading4 {...props} />
+          <Heading5 {...props} />
+          <Heading6 {...props} />
         </HeadingDropdown>
         <Bold {...props} />
         <Italic {...props} />
