@@ -1,13 +1,13 @@
 import isHotkey from 'is-hotkey';
 import { BLOCKS } from '@contentful/structured-text-types';
 import { applyChange } from '../shared/BlockToggleDecorator';
-import commonNode from '../shared/NodeDecorator';
+import CommonNode from '../shared/NodeDecorator';
 
 const plugin = (type, tagName, hotkey) => {
   return {
     renderNode: props => {
       if (props.node.type === type) {
-        return commonNode(tagName)(props);
+        return CommonNode(tagName)(props);
       }
     },
     onKeyDown: (e, change) => {
