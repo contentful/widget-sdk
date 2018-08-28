@@ -7,7 +7,7 @@ const plugin = (type, tagName, hotkey) => {
   return {
     renderNode: props => {
       if (props.node.type === type) {
-        return CommonNode(tagName)(props);
+        return CommonNode(tagName, { className: 'cf-slate-heading' })(props);
       }
     },
     onKeyDown: (e, change) => {
