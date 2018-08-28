@@ -8,7 +8,9 @@ const PREFIXES = [
   'assets',
   'ui_config',
   'extensions',
-  'locales'
+  'locales',
+  'user_states',
+  'states'
 ];
 
 // Given a path return `true` if the environment endpoint
