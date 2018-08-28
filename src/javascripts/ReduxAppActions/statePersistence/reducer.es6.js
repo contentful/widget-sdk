@@ -65,7 +65,8 @@ function userStateReducer (state = {}, action) {
         key: action.payload.key,
         state,
         newData: {
-          isPending: true
+          isPending: true,
+          error: null
         }
       });
     }
@@ -79,13 +80,24 @@ function userStateReducer (state = {}, action) {
         }
       });
     }
+    case actions.USER_STATE_FAILURE: {
+      return updateUserState({
+        key: action.payload.key,
+        state,
+        newData: {
+          isPending: false,
+          error: action.payload.error
+        }
+      });
+    }
     case actions.UPDATE_USER_STATE_PENDING: {
       return updateUserState({
         key: action.payload.key,
         state,
         newData: {
           isUpdating: true,
-          data: action.payload.data
+          data: action.payload.data,
+          updatingError: null
         }
       });
     }
@@ -95,6 +107,18 @@ function userStateReducer (state = {}, action) {
         state,
         newData: {
           isUpdating: false,
+          data: action.payload.data
+        }
+      });
+    }
+    case actions.UPDATE_USER_STATE_FAILURE: {
+      return updateUserState({
+        key: action.payload.key,
+        state,
+        newData: {
+          isUpdating: false,
+          updatingError: action.payload.error,
+          // we rollback to the previous data
           data: action.payload.data
         }
       });
@@ -133,7 +157,8 @@ function userEnvStateReducer (state = {}, action) {
         state,
         payload: action.payload,
         newData: {
-          isPending: true
+          isPending: true,
+          error: null
         }
       });
     }
@@ -147,13 +172,24 @@ function userEnvStateReducer (state = {}, action) {
         }
       });
     }
+    case actions.USER_ENV_STATE_FAILURE: {
+      return updateEnvState({
+        state,
+        payload: action.payload,
+        newData: {
+          isPending: false,
+          error: action.payload.error
+        }
+      });
+    }
     case actions.UPDATE_USER_ENV_STATE_PENDING: {
       return updateEnvState({
         state,
         payload: action.payload,
         newData: {
           isUpdating: true,
-          data: action.payload.data
+          data: action.payload.data,
+          updatingError: null
         }
       });
     }
@@ -163,6 +199,17 @@ function userEnvStateReducer (state = {}, action) {
         payload: action.payload,
         newData: {
           isUpdating: false,
+          data: action.payload.data
+        }
+      });
+    }
+    case actions.UPDATE_USER_ENV_STATE_FAILURE: {
+      return updateEnvState({
+        state,
+        payload: action.payload,
+        newData: {
+          isUpdating: false,
+          updatingError: action.payload.error,
           data: action.payload.data
         }
       });
@@ -179,7 +226,8 @@ function envStateReducer (state = {}, action) {
         state,
         payload: action.payload,
         newData: {
-          isPending: true
+          isPending: true,
+          error: null
         }
       });
     }
@@ -193,12 +241,23 @@ function envStateReducer (state = {}, action) {
         }
       });
     }
+    case actions.ENV_STATE_FAILURE: {
+      return updateEnvState({
+        state,
+        payload: action.payload,
+        newData: {
+          isPending: false,
+          error: action.payload.error
+        }
+      });
+    }
     case actions.UPDATE_ENV_PENDING: {
       return updateEnvState({
         state,
         payload: action.payload,
         newData: {
           isUpdating: true,
+          updatingError: null,
           data: action.payload.data
         }
       });
@@ -209,6 +268,17 @@ function envStateReducer (state = {}, action) {
         payload: action.payload,
         newData: {
           isUpdating: false,
+          data: action.payload.data
+        }
+      });
+    }
+    case actions.UPDATE_ENV_FAILURE: {
+      return updateEnvState({
+        state,
+        payload: action.payload,
+        newData: {
+          isUpdating: false,
+          updatingError: action.payload.error,
           data: action.payload.data
         }
       });

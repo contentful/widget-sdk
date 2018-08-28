@@ -1,5 +1,6 @@
 import {createUsersEndpoint, createSpaceEndpoint} from 'data/EndpointFactory';
 import * as actions from './actions';
+import * as selectors from './selectors';
 
 // We keep all references to the requests in progress
 // if they are in progress, we save new data
@@ -11,7 +12,7 @@ const values = {};
 // update state persistence API. if request is in progress, we'll save
 // the new data, and update once again after original request is done.
 function update (args) {
-  const { params, setPending, setSuccess, fetch, key, payload } = args;
+  const { params, setPending, setSuccess, setFailure, fetch, key, payload, fallbackData } = args;
 
   if (!values[key]) {
     values[key] = {};
@@ -57,6 +58,10 @@ function update (args) {
 
         return update({
           ...args,
+          // we update fallbackData, since it is the latest successfull data
+          // so in case the next request fails, we will rollback to the latest
+          // reply from the server
+          fallbackData: newValue,
           payload: valueWithSys
         });
       } else {
@@ -69,6 +74,21 @@ function update (args) {
 
         return newValue;
       }
+    }, error => {
+      const { value, promises } = values[key];
+
+      // even we have an error, it is fine – we can try to write the next data
+      // without changing sys property (since server failed to )
+      if (value) {
+        values[key].value = null;
+        return update({
+          ...args,
+          payload: value
+        });
+      } else {
+        setFailure({ error, fallbackData });
+        promises.forEach(fn => fn(null));
+      }
     });
   }
 }
@@ -79,26 +99,33 @@ export function fetchUserState ({ key }) {
 
     const endpoint = createUsersEndpoint();
 
-    const data = await endpoint({
-      method: 'GET',
-      path: ['states']
-    }, {
-      'x-contentful-enable-alpha-feature': 'user-state-persistence'
-    });
+    try {
+      const data = await endpoint({
+        method: 'GET',
+        path: ['states', key]
+      }, {
+        'x-contentful-enable-alpha-feature': 'user-state-persistence'
+      });
 
-    dispatch(actions.userStateSuccess({ key, data }));
+      dispatch(actions.userStateSuccess({ key, data }));
 
-    return data;
+      return data;
+    } catch (error) {
+      dispatch(actions.userStateFailure({ key, error }));
+    }
   };
 }
 
 export function updateUserState (params) {
   const { key, payload } = params;
-  return async dispatch => {
+  return async (dispatch, getState) => {
+    const { data } = selectors.getUserState({ state: getState(), key });
     return update({
       params,
+      fallbackData: data,
       setPending: () => dispatch(actions.updateUserStatePending({ key, data: payload })),
       setSuccess: (data) => dispatch(actions.updateUserStateSuccess({ key, data })),
+      setFailure: ({ error, fallbackData }) => dispatch(actions.updateUserStateFailure({ key, error, data: fallbackData })),
       fetch: data => {
         const endpoint = createUsersEndpoint();
         return endpoint({
@@ -121,26 +148,33 @@ export function fetchUserEnvState ({ key, spaceId, envId }) {
 
     const endpoint = createSpaceEndpoint(spaceId, envId);
 
-    const data = await endpoint({
-      method: 'GET',
-      path: ['user_states', key]
-    }, {
-      'x-contentful-enable-alpha-feature': 'user-state-persistence'
-    });
+    try {
+      const data = await endpoint({
+        method: 'GET',
+        path: ['user_states', key]
+      }, {
+        'x-contentful-enable-alpha-feature': 'user-state-persistence'
+      });
 
-    dispatch(actions.userEnvStateSuccess({ key, spaceId, envId, data }));
+      dispatch(actions.userEnvStateSuccess({ key, spaceId, envId, data }));
 
-    return data;
+      return data;
+    } catch (error) {
+      dispatch(actions.userEnvStateFailure({ key, spaceId, envId, error }));
+    }
   };
 }
 
 export function updateUserEnvState (params) {
   const { key, spaceId, envId, payload } = params;
-  return async dispatch => {
+  return async (dispatch, getState) => {
+    const { data } = selectors.getUserEnvState({ state: getState(), key, spaceId, envId });
     return update({
       params,
+      fallbackData: data,
       setPending: () => dispatch(actions.updateUserEnvStatePending({ key, spaceId, envId, data: payload })),
       setSuccess: (data) => dispatch(actions.updateUserEnvStateSuccess({ key, spaceId, envId, data })),
+      setFailure: ({ error, fallbackData }) => dispatch(actions.updateUserEnvStateFailure({ key, spaceId, envId, error, data: fallbackData })),
       fetch: data => {
         const endpoint = createSpaceEndpoint(spaceId, envId);
         return endpoint({
@@ -161,28 +195,35 @@ export function fetchEnvState ({ key, spaceId, envId }) {
   return async dispatch => {
     dispatch(actions.envStatePending({ key, spaceId, envId }));
 
-    const endpoint = createSpaceEndpoint(spaceId, envId);
+    try {
+      const endpoint = createSpaceEndpoint(spaceId, envId);
 
-    const data = await endpoint({
-      method: 'GET',
-      path: ['user_states', key]
-    }, {
-      'x-contentful-enable-alpha-feature': 'user-state-persistence'
-    });
+      const data = await endpoint({
+        method: 'GET',
+        path: ['user_states', key]
+      }, {
+        'x-contentful-enable-alpha-feature': 'user-state-persistence'
+      });
 
-    dispatch(actions.envStateSuccess({ key, spaceId, envId, data }));
+      dispatch(actions.envStateSuccess({ key, spaceId, envId, data }));
 
-    return data;
+      return data;
+    } catch (error) {
+      dispatch(actions.envStateFailure({ key, spaceId, envId, error }));
+    }
   };
 }
 
 export function updateEnvState (params) {
   const { key, spaceId, envId, payload } = params;
-  return async dispatch => {
+  return async (dispatch, getState) => {
+    const { data } = selectors.getEnvState({ state: getState(), key, spaceId, envId });
     return update({
       params,
+      fallbackData: data,
       setPending: () => dispatch(actions.updateEnvStatePending({ key, spaceId, envId, data: payload })),
       setSuccess: (data) => dispatch(actions.updateEnvStateSuccess({ key, spaceId, envId, data })),
+      setFailure: ({ error, fallbackData }) => dispatch(actions.updateEnvStateFailure({ key, spaceId, envId, error, data: fallbackData })),
       fetch: data => {
         const endpoint = createSpaceEndpoint(spaceId, envId);
         return endpoint({
