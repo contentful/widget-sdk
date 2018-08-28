@@ -5,6 +5,7 @@ import { calculatePlansCost } from 'utils/SubscriptionUtils';
 
 import Pluralized from 'ui/Components/Pluralized';
 import Price from 'ui/Components/Price';
+import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 
 import SpacePlanRow from './SpacePlanRow';
 
@@ -35,7 +36,7 @@ function SpacePlans({
             .&#32;
           </span>
         )}
-        {!basePlan.committed &&
+        {!isEnterprisePlan(basePlan) &&
           totalCost > 0 && (
             <span>
               The total for your spaces is{' '}
@@ -57,7 +58,7 @@ function SpacePlans({
               <tr>
                 <th style={{ width: '33%' }}>Name</th>
                 <th style={{ width: '20%' }}>
-                  {basePlan.committed ? 'Space type' : 'Space type / price'}
+                  {isEnterprisePlan(basePlan) ? 'Space type' : 'Space type / price'}
                 </th>
                 <th style={{ width: '25%' }}>Created by</th>
                 <th style={{ width: '15%' }}>Created on</th>
@@ -67,7 +68,6 @@ function SpacePlans({
             <tbody className="table__body">
               {spacePlans.map(plan => {
                 const isUpgraded = Boolean(plan.space && plan.space.sys.id === upgradedSpace);
-
                 return (
                   <SpacePlanRow
                     key={plan.sys.id || (plan.space && plan.space.sys.id)}

@@ -36,6 +36,7 @@ describe('CreateSpace', () => {
     });
     this.PricingDataProvider = this.$inject('account/pricing/PricingDataProvider');
     this.PricingDataProvider.getSpaceRatePlans = this.getSpaceRatePlans;
+    this.PricingDataProvider.getBasePlan = sinon.stub().returns({customerType: 'Enterprise'});
     this.PricingDataProvider.isPOCEnabled = this.isPOCEnabled;
     this.modalDialog = this.$inject('modalDialog');
     this.modalDialog.open = sinon.stub().returns({ promise: this.resolve() });

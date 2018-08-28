@@ -73,7 +73,7 @@ const SubscriptionOverview = createReactClass({
 
     const basePlan = plans.items.find(({ planType }) => planType === 'base');
     const spacePlans = plans.items
-      .filter(({ planType }) => planType === 'space')
+      .filter(({ planType }) => planType === 'space' || planType === 'free_space')
       .sort((plan1, plan2) => {
         const [name1, name2] = [plan1, plan2].map(plan => get(plan, 'space.name', ''));
         return name1.localeCompare(name2);

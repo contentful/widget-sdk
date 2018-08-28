@@ -6,11 +6,30 @@ const alphaHeader = {
   'x-contentful-enable-alpha-feature': 'subscriptions-api'
 };
 
-export const productTypes = {
-  partnership: 'partnership',
-  onDemand: 'on_demand',
-  enterprise: 'committed'
+export const customerTypes = {
+  selfService: 'Self-service',
+  enterprise: 'Enterprise'
 };
+
+export function isSelfServicePlan (plan) {
+  return plan.customerType === customerTypes.selfService;
+}
+
+export function isEnterprisePlan (plan) {
+  return plan.customerType === customerTypes.enterprise;
+}
+
+export function isFreeSpacePlan (plan) {
+  // free plans do not have subscription plans
+  // a plan object is created by the user interface
+  // so `planType` is a hardcoded value.
+  // regular paid spaces have planType of `space`
+  return plan.planType === 'free_space';
+}
+
+export function isPOCSpaceplan (plan) {
+  return isEnterprisePlan(plan) && !isFreeSpacePlan(plan);
+}
 
 /**
  * Load all subscription plans (space and base) from organization endpoint.
@@ -66,9 +85,7 @@ export async function getPlansWithSpaces(endpoint) {
   const isFreeSpace = space =>
     !plans.items.find(({ gatekeeperKey }) => space.sys.id === gatekeeperKey);
   const freeSpaces = spaces.filter(isFreeSpace);
-  // TODO: use subscription insted of product to extract the productType from
-  // The product catalog can change and the subscription could be from a legacy product
-  const isEnterprise = baseRatePlan && baseRatePlan.productType === productTypes.enterprise;
+  const isEnterprise = baseRatePlan && isEnterprisePlan(baseRatePlan);
 
   const plansWithSpaces = {
     plans,
@@ -82,8 +99,8 @@ export async function getPlansWithSpaces(endpoint) {
       ...freeSpaces.map(space => ({
         sys: { id: uniqueId('free-space-plan-') },
         gatekeeperKey: space.sys.id,
-        planType: 'space',
         name: isEnterprise && usePOC ? 'Proof of concept' : 'Free',
+        planType: 'free_space',
         space
       }))
     ]
@@ -184,6 +201,16 @@ export function getSpaceRatePlans(endpoint, spaceId) {
     },
     alphaHeader
   ).then(data => data.items);
+}
+
+/**
+ * Get base and all space rate plans available for the organization
+*/
+export function getRatePlans (endpoint) {
+  return endpoint({
+    method: 'GET',
+    path: ['product_rate_plans']
+  }, alphaHeader).then((data) => data.items);
 }
 
 /**

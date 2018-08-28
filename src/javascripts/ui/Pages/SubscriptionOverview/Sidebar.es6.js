@@ -10,6 +10,7 @@ import Price from 'ui/Components/Price';
 import ContactUsButton from 'ui/Components/ContactUsButton';
 
 import { hasAnyInaccessibleSpaces } from './utils';
+import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 
 function Sidebar({ grandTotal, spacePlans, orgId, isOrgOwner, isOrgBillable, basePlan }) {
   // TODO - add these styles to stylesheets
@@ -24,7 +25,7 @@ function Sidebar({ grandTotal, spacePlans, orgId, isOrgOwner, isOrgBillable, bas
   return (
     <div className="entity-sidebar" data-test-id="subscription-page.sidebar">
       {isOrgBillable &&
-        !basePlan.committed && (
+        !isEnterprisePlan(basePlan) && (
           <Fragment>
             <h2 className="entity-sidebar__heading">Grand total</h2>
             <p data-test-id="subscription-page.sidebar.grand-total">
@@ -90,7 +91,7 @@ function Sidebar({ grandTotal, spacePlans, orgId, isOrgOwner, isOrgBillable, bas
           </p>
         </Fragment>
       )}
-      {!basePlan.committed && (
+      {!isEnterprisePlan(basePlan) && (
         <Fragment>
           <h2 className="entity-sidebar__heading">Need help?</h2>
           <p>
