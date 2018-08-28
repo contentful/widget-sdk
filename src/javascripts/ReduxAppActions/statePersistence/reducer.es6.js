@@ -5,8 +5,10 @@ import { combineReducers } from 'redux';
  * {
  *   user: {
  *     [key]: {
- *       isPending: false
- *       isUpdating: false
+ *       isPending: false,
+ *       error: null, // fetching error
+ *       isUpdating: false,
+ *       updatingError: null, // updating error
  *       data: {}
  *     }
  *   },
@@ -15,7 +17,9 @@ import { combineReducers } from 'redux';
  *       [envId]: {
  *         [key]: {
  *           isPending: false,
+ *           error: null, // fetching error
  *           isUpdating: false,
+ *           updatingError: null, // updating error
  *           data: {}
  *         }
  *       }
@@ -26,17 +30,19 @@ import { combineReducers } from 'redux';
  *   }
  * }
  *
- * One important thing is that there are no errors in this reducer.
- * It is not a mistake – one requirement for the state persistence API
- * is that it is *not* crucial for the webapp – so if it is unavailable,
- * the webapp should work just fine. All API errors should be handled
- * in actionCreators and fallback to the localStorage in these cases.
+ * One important thing to note is that we never remove the data.
+ * For example, when you have some data, and you fetch once again, it raises
+ * `isPending` flag, but `data` field stays intact. After fetch is complete,
+ * it will update `data` field. However, it is not really expected to receive
+ * a new value (in case you already fetched data).
  *
- * isPending and isUpdating are subject to change and might be merged together
- * in the future.
- * isPending is about fetching the data, and isUpdating is about updating a key
- * when we update something, in a positive scenario we will receive the same data
- * back, except with an updated version and `updatedAt` field
+ * Another thing is how update works. When you update a value, it immediately
+ * updates `data` property, and tries to send a request. If an update request
+ * is in progress, if we send the second one immediately, we'll get a conflict.
+ * So we will wait for it, and apply new data. In case the request fails, it will
+ * rollback to the previous data.
+ *
+ * This behaviour is correct for all types (user, userEnv, env)
  */
 
 import * as actions from './actions';

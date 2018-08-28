@@ -3,6 +3,25 @@ import * as actions from './actions';
 import * as selectors from './selectors';
 import {update} from './update';
 
+/**
+ * @description State persistence action creators.
+ * There is a lot of duplication, but abstracting might reduce
+ * readability, which I'd like to keep.
+ *
+ * If you need to use this service outside of react components
+ * please require the whole store:
+ *
+ * const store = require('ReduxStore/store').default;
+ *
+ * ...
+ * await store.dispatch(actions.fetchUserState({ key: 'your_feature' }));
+ * selectors.getUserState({ state: store.getState(), key: 'your_feature' });
+ *
+ * The reason for that is that updating has a pretty specific logic inside,
+ * and fetching might get some in the future. If you find yourself writing
+ * lines on top too often, feel free to abstract them.
+ */
+
 export function fetchUserState ({ key }) {
   return async dispatch => {
     dispatch(actions.userStatePending({ key }));
