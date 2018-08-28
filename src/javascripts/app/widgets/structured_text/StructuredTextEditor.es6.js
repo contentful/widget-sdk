@@ -14,6 +14,8 @@ import { EditorToolbar } from '@contentful/ui-component-library';
 import Bold, { BoldPlugin } from './plugins/Bold';
 import Italic, { ItalicPlugin } from './plugins/Italic';
 import Underlined, { UnderlinedPlugin } from './plugins/Underlined';
+import Code, { CodePlugin } from './plugins/Code';
+
 import {
   Heading1,
   Heading2,
@@ -41,6 +43,7 @@ const plugins = [
   BoldPlugin(),
   ItalicPlugin(),
   UnderlinedPlugin(),
+  CodePlugin(),
   Heading1Plugin(),
   Heading2Plugin(),
   Heading3Plugin(),
@@ -139,6 +142,7 @@ export default class StructuredTextEditor extends React.Component {
         <Bold {...props} />
         <Italic {...props} />
         <Underlined {...props} />
+        <Code {...props} />
         <EntryLinkBlock {...props} />
       </EditorToolbar>
     );
