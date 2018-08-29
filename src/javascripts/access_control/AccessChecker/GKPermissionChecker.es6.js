@@ -1,12 +1,12 @@
 import * as OrganizationRoles from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
 import * as K from 'utils/kefir';
-import {get} from 'lodash';
+import { get } from 'lodash';
 
 import require from 'require';
 // TODO prevent circular ref
 
-export function create ({space, organization}) {
+export function create({ space, organization }) {
   const createFeatureService = require('services/FeatureService').default;
   const userQuota = {
     // TODO get from limits/usage endpoint
@@ -40,11 +40,11 @@ export function create ({space, organization}) {
    * @description
    * Returns true if current user can create a new organization.
    */
-  function canCreateOrganization () {
+  function canCreateOrganization() {
     return get(K.getValue(TokenStore.user$), 'canCreateOrganization', false);
   }
 
-  function isSuperUser () {
+  function isSuperUser() {
     const isSpaceAdmin = get(space, 'spaceMembership.admin');
     const isOrganizationAdmin = OrganizationRoles.isAdmin(organization);
     const isOrganizationOwner = OrganizationRoles.isOwner(organization);
@@ -57,7 +57,7 @@ export function create ({space, organization}) {
    * @description
    * Returns true if Roles can be modified.
    */
-  function canModifyRoles () {
+  function canModifyRoles() {
     if (!isSuperUser()) {
       return Promise.resolve(false);
     } else {

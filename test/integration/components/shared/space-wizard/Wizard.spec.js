@@ -1,8 +1,8 @@
 import React from 'react';
 import { mount } from 'enzyme';
 
-describe('Space Wizard', function () {
-  beforeEach(function () {
+describe('Space Wizard', function() {
+  beforeEach(function() {
     this.organization = {
       name: 'My Org',
       isBillable: true,
@@ -25,22 +25,28 @@ describe('Space Wizard', function () {
       }
     };
 
-    this.ratePlanCharges = [{
-      name: 'Environments',
-      tiers: [{endingUnit: 10}]
-    }, {
-      name: 'Roles',
-      tiers: [{endingUnit: 10}]
-    }, {
-      name: 'Locales',
-      tiers: [{endingUnit: 10}]
-    }, {
-      name: 'Content types',
-      tiers: [{endingUnit: 10}]
-    }, {
-      name: 'Records',
-      tiers: [{endingUnit: 10}]
-    }];
+    this.ratePlanCharges = [
+      {
+        name: 'Environments',
+        tiers: [{ endingUnit: 10 }]
+      },
+      {
+        name: 'Roles',
+        tiers: [{ endingUnit: 10 }]
+      },
+      {
+        name: 'Locales',
+        tiers: [{ endingUnit: 10 }]
+      },
+      {
+        name: 'Content types',
+        tiers: [{ endingUnit: 10 }]
+      },
+      {
+        name: 'Records',
+        tiers: [{ endingUnit: 10 }]
+      }
+    ];
 
     this.spaceRatePlansCreate = [
       {
@@ -139,12 +145,14 @@ describe('Space Wizard', function () {
       createOrganizationEndpoint: sinon.stub(),
       getTemplatesList: sinon.stub().resolves(this.templates),
       getTemplate: sinon.stub().resolves(),
-      getCreator_create: sinon.stub().returns({ spaceSetup: Promise.resolve(), contentCreated: Promise.resolve() }),
+      getCreator_create: sinon
+        .stub()
+        .returns({ spaceSetup: Promise.resolve(), contentCreated: Promise.resolve() }),
       publishedCTs_refresh: sinon.stub().resolves(),
       changeSpace: sinon.stub().resolves(true)
     };
 
-    module('contentful/test', ($provide) => {
+    module('contentful/test', $provide => {
       $provide.value('analytics/Analytics', {
         track: this.stubs.track
       });
@@ -203,29 +211,32 @@ describe('Space Wizard', function () {
     const Wizard = this.$inject('components/shared/space-wizard/Wizard').default;
     this.store = this.$inject('ReduxStore/store').default;
 
-    this.mountWithAction = function (action) {
-      return mount(<Wizard
-        organization={this.organization}
-        onConfirm={this.stubs.onConfirm}
-        onCancel={this.stubs.onCancel}
-        onSpaceCreated={this.stubs.onSpaceCreated}
-        onTemplateCreated={this.stubs.onTemplateCreated}
-        onDimensionsChange={this.stubs.onDimensionsChange}
-        wizardScope='space'
-        space={this.space}
-        action={action}
-      />, {
-        context: {
-          store: this.store
+    this.mountWithAction = function(action) {
+      return mount(
+        <Wizard
+          organization={this.organization}
+          onConfirm={this.stubs.onConfirm}
+          onCancel={this.stubs.onCancel}
+          onSpaceCreated={this.stubs.onSpaceCreated}
+          onTemplateCreated={this.stubs.onTemplateCreated}
+          onDimensionsChange={this.stubs.onDimensionsChange}
+          wizardScope="space"
+          space={this.space}
+          action={action}
+        />,
+        {
+          context: {
+            store: this.store
+          }
         }
-      });
+      );
     };
 
-    this.assertArgument = function (stub, order, ...args) {
+    this.assertArgument = function(stub, order, ...args) {
       return expect(stub.args[order]).toEqual(args);
     };
 
-    this.createTrackingDataWithAction = function (intendedAction, newData = {}) {
+    this.createTrackingDataWithAction = function(intendedAction, newData = {}) {
       const base = {
         intendedAction,
         currentSpaceType: null,
@@ -257,18 +268,21 @@ describe('Space Wizard', function () {
       await this.awaitStateUpdate();
 
       wizard.update();
-      wizard.find('SpacePlanItem').at(at).simulate('click');
+      wizard
+        .find('SpacePlanItem')
+        .at(at)
+        .simulate('click');
     };
 
-    this.confirm = async (wizard) => {
+    this.confirm = async wizard => {
       const confirmButton = wizard.find('button[data-test-id="space-create-confirm"]').first();
       confirmButton.simulate('click');
     };
   });
 
-  describe('Snowplow events', function () {
-    describe('space creation', function () {
-      beforeEach(function () {
+  describe('Snowplow events', function() {
+    describe('space creation', function() {
+      beforeEach(function() {
         this.stubs.getSpaceRatePlans.resolves(this.spaceRatePlansCreate);
         this.mount = this.mountWithAction.bind(this, 'create');
         this.createTrackingData = this.createTrackingDataWithAction.bind(this, 'create');
@@ -280,18 +294,27 @@ describe('Space Wizard', function () {
           wizard.update();
 
           if (selectTemplate) {
-            wizard.find('input[id="newspace-template-usetemplate"]').first().simulate('click');
+            wizard
+              .find('input[id="newspace-template-usetemplate"]')
+              .first()
+              .simulate('click');
             wizard.update();
 
-            wizard.find('TemplatesList a').at(0).simulate('click');
+            wizard
+              .find('TemplatesList a')
+              .at(0)
+              .simulate('click');
             wizard.update();
           }
 
-          wizard.find('button[data-test-id="space-details-confirm"]').first().simulate('click');
+          wizard
+            .find('button[data-test-id="space-details-confirm"]')
+            .first()
+            .simulate('click');
         };
       });
 
-      it('should fire the open and navigate events on mount', function () {
+      it('should fire the open and navigate events on mount', function() {
         this.mount();
 
         this.assertArgument(
@@ -313,7 +336,7 @@ describe('Space Wizard', function () {
         );
       });
 
-      it('should fire the select_plan and navigate events when selecting a plan', async function () {
+      it('should fire the select_plan and navigate events when selecting a plan', async function() {
         const wizard = this.mount();
         await this.selectPlan(wizard);
         await this.awaitStateUpdate();
@@ -339,7 +362,7 @@ describe('Space Wizard', function () {
         );
       });
 
-      it('should fire the entered_details and navigate events when clicking the button on the details page', async function () {
+      it('should fire the entered_details and navigate events when clicking the button on the details page', async function() {
         const wizard = this.mount();
         await this.selectPlan(wizard);
         await this.awaitStateUpdate();
@@ -366,7 +389,7 @@ describe('Space Wizard', function () {
         );
       });
 
-      it('should fire the nagivate event whenever navigating using the tabs', async function () {
+      it('should fire the nagivate event whenever navigating using the tabs', async function() {
         const wizard = this.mount();
         await this.selectPlan(wizard);
         await this.awaitStateUpdate();
@@ -408,22 +431,17 @@ describe('Space Wizard', function () {
         );
       });
 
-      it('should fire the confirm event when clicking the confirmation button', async function () {
+      it('should fire the confirm event when clicking the confirmation button', async function() {
         const wizard = this.mount();
         await this.selectPlan(wizard);
         await this.awaitStateUpdate();
         await this.enterDetails(wizard);
         await this.confirm(wizard);
 
-        this.assertArgument(
-          this.stubs.track,
-          6,
-          'space_wizard:confirm',
-          this.createTrackingData()
-        );
+        this.assertArgument(this.stubs.track, 6, 'space_wizard:confirm', this.createTrackingData());
       });
 
-      it('should fire space creation related events when the space is created on the API', async function () {
+      it('should fire space creation related events when the space is created on the API', async function() {
         const wizard = this.mount();
         await this.selectPlan(wizard);
         await this.awaitStateUpdate();
@@ -432,14 +450,9 @@ describe('Space Wizard', function () {
 
         await this.awaitStateUpdate();
 
-        this.assertArgument(
-          this.stubs.track,
-          7,
-          'space:create',
-          {
-            templateName: 'Blank'
-          }
-        );
+        this.assertArgument(this.stubs.track, 7, 'space:create', {
+          templateName: 'Blank'
+        });
 
         this.assertArgument(
           this.stubs.track,
@@ -449,7 +462,7 @@ describe('Space Wizard', function () {
         );
       });
 
-      it('should fill in template information if selected on the details page', async function () {
+      it('should fill in template information if selected on the details page', async function() {
         const wizard = this.mount();
         await this.selectPlan(wizard);
         await this.awaitStateUpdate();
@@ -470,28 +483,23 @@ describe('Space Wizard', function () {
         );
 
         // Template information on submission
-        this.assertArgument(
-          this.stubs.track,
-          7,
-          'space:create',
-          {
-            templateName: 'My awesome template!',
-            entityAutomationScope: {
-              scope: 'space_template'
-            }
+        this.assertArgument(this.stubs.track, 7, 'space:create', {
+          templateName: 'My awesome template!',
+          entityAutomationScope: {
+            scope: 'space_template'
           }
-        );
+        });
       });
     });
 
-    describe('space type changing', function () {
-      beforeEach(function () {
+    describe('space type changing', function() {
+      beforeEach(function() {
         this.stubs.getSpaceRatePlans.resolves(this.spaceRatePlansChange);
         this.mount = this.mountWithAction.bind(this, 'change');
         this.createTrackingData = this.createTrackingDataWithAction.bind(this, 'change');
       });
 
-      it('should fire the open and navigate events on mount', function () {
+      it('should fire the open and navigate events on mount', function() {
         this.mount();
 
         this.assertArgument(
@@ -513,7 +521,7 @@ describe('Space Wizard', function () {
         );
       });
 
-      it('should fire the select_plan and navigate events when selecting a plan', async function () {
+      it('should fire the select_plan and navigate events when selecting a plan', async function() {
         const wizard = this.mount();
         await this.selectPlan(wizard, 1);
 
@@ -542,20 +550,15 @@ describe('Space Wizard', function () {
         );
       });
 
-      it('should fire the confirm event when clicking the confirmation button', async function () {
+      it('should fire the confirm event when clicking the confirmation button', async function() {
         const wizard = this.mount();
         await this.selectPlan(wizard, 1);
         await this.confirm(wizard);
 
-        this.assertArgument(
-          this.stubs.track,
-          4,
-          'space_wizard:confirm',
-          this.createTrackingData()
-        );
+        this.assertArgument(this.stubs.track, 4, 'space_wizard:confirm', this.createTrackingData());
       });
 
-      it('should fire the space_type_change event when the space type is changed on the API', async function () {
+      it('should fire the space_type_change event when the space type is changed on the API', async function() {
         const wizard = this.mount();
         await this.selectPlan(wizard, 1);
         await this.confirm(wizard);

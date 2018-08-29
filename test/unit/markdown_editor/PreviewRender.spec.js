@@ -3,23 +3,23 @@
 describe('markdown_editor/PreviewRender', () => {
   let treeBuilder, buildTree;
 
-  function getRoot (source, fn) {
-    return ((fn || buildTree)(source)).root;
+  function getRoot(source, fn) {
+    return (fn || buildTree)(source).root;
   }
 
-  function getChildren (node) {
+  function getChildren(node) {
     return _.get(node, 'props.children');
   }
 
-  function getHTML (node) {
+  function getHTML(node) {
     return _.get(node, 'props.dangerouslySetInnerHTML.__html');
   }
 
-  function hash (str) {
+  function hash(str) {
     return treeBuilder.getHashCode(str);
   }
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     treeBuilder = this.$inject('markdown_editor/PreviewRender');
     buildTree = treeBuilder.default();
@@ -79,8 +79,12 @@ describe('markdown_editor/PreviewRender', () => {
   });
 
   it('extends embedly anchors with attributes', () => {
-    const embedlyAnchor = getHTML(getChildren(getRoot('<a class="embedly-card" data-card-width="100%"></a>')));
-    expect(embedlyAnchor).toBe('<a class="embedly-card markdown-block" data-card-width="100%" data-card-controls="0"></a>');
+    const embedlyAnchor = getHTML(
+      getChildren(getRoot('<a class="embedly-card" data-card-width="100%"></a>'))
+    );
+    expect(embedlyAnchor).toBe(
+      '<a class="embedly-card markdown-block" data-card-width="100%" data-card-controls="0"></a>'
+    );
   });
 
   it('Sanitizes data: and js: URIs', () => {
@@ -90,7 +94,7 @@ describe('markdown_editor/PreviewRender', () => {
       'java\nscript:it_would_work_with_nl'
     ];
 
-    BAD_URIS.forEach((uri) => {
+    BAD_URIS.forEach(uri => {
       const root = getRoot(`[test](${uri})`);
       // paragraph is created -> getting children twice to get the anchor
       const anchor = getChildren(getChildren(root));

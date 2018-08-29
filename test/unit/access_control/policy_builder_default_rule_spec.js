@@ -3,7 +3,7 @@
 describe('Policy Builder, default rule', () => {
   let getDefaultRuleFor, getDefaultRuleGetterFor, CONFIG;
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     getDefaultRuleFor = this.$inject('PolicyBuilder/defaultRule').getDefaultRuleFor;
     getDefaultRuleGetterFor = this.$inject('PolicyBuilder/defaultRule').getDefaultRuleGetterFor;

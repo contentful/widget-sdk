@@ -1,11 +1,11 @@
 import createFieldLocaleDoc from 'app/entity_editor/FieldLocaleDocument';
 import * as sinon from 'helpers/sinon';
-import {create as createDocument} from 'helpers/mocks/entity_editor_document';
+import { create as createDocument } from 'helpers/mocks/entity_editor_document';
 
 describe('entityEditor/FieldLocaleDocument', () => {
   const path = ['fields', 'FID', 'LC'];
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
 
     this.rootDoc = createDocument();
@@ -18,7 +18,7 @@ describe('entityEditor/FieldLocaleDocument', () => {
     testMethodDelegate('remove', 'removeValueAt');
 
     describe('with array value', () => {
-      beforeEach(function () {
+      beforeEach(function() {
         this.doc.set(['A', 'B']);
       });
 
@@ -26,8 +26,8 @@ describe('entityEditor/FieldLocaleDocument', () => {
       testMethodDelegate('insert', 'insertValueAt', [1, 'VAL']);
     });
 
-    function testMethodDelegate (method, target, args = []) {
-      it(`delegates calls to ${method}`, function () {
+    function testMethodDelegate(method, target, args = []) {
+      it(`delegates calls to ${method}`, function() {
         this.rootDoc[target].reset();
         this.doc[method].apply(null, args);
         const targetArgs = [path].concat(args);
@@ -37,7 +37,7 @@ describe('entityEditor/FieldLocaleDocument', () => {
   });
 
   describe('#valueProperty()', () => {
-    it('has initial value', function () {
+    it('has initial value', function() {
       this.rootDoc.setValueAt(path, 'VAL');
       const changed = sinon.stub();
 
@@ -45,7 +45,7 @@ describe('entityEditor/FieldLocaleDocument', () => {
       sinon.assert.calledWith(changed, 'VAL');
     });
 
-    it('update value when root doc changes at path', function () {
+    it('update value when root doc changes at path', function() {
       const changed = sinon.stub();
       this.doc.valueProperty.onValue(changed);
       changed.reset();
@@ -54,7 +54,7 @@ describe('entityEditor/FieldLocaleDocument', () => {
       sinon.assert.calledWith(changed, 'VAL');
     });
 
-    it('does not update value when "set()" is called', function () {
+    it('does not update value when "set()" is called', function() {
       const changed = sinon.stub();
       this.doc.valueProperty.onValue(changed);
       changed.reset();
@@ -66,7 +66,7 @@ describe('entityEditor/FieldLocaleDocument', () => {
   });
 
   describe('#fieldChanges$', () => {
-    it('emits when root document emits "localFieldChanges$" for current field', function () {
+    it('emits when root document emits "localFieldChanges$" for current field', function() {
       const emitted = sinon.spy();
       this.doc.localChanges$.onValue(emitted);
       this.rootDoc.localFieldChanges$.emit(['FID', 'LC-other']);

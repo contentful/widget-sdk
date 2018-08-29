@@ -1,7 +1,7 @@
 import * as K from 'helpers/mocks/kefir';
 
 describe('data/StreamHashSet', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     this.store = this.$inject('data/StreamHashSet').create();
 
@@ -9,30 +9,26 @@ describe('data/StreamHashSet', () => {
   });
 
   describe('#add()', () => {
-    it('makes item retrievable with #get()', function () {
+    it('makes item retrievable with #get()', function() {
       expect(this.store.get('X')).toBe(undefined);
       const item = makeItem('X');
       this.store.add(item);
       expect(this.store.get('X')).toBe(item);
     });
 
-    it('emits new items value', function () {
+    it('emits new items value', function() {
       const item1 = makeItem('1');
       this.store.add(item1);
 
       const item2 = makeItem('2');
       this.store.add(item2);
 
-      expect(this.itemValues).toEqual([
-        [item1, item2],
-        [item1],
-        []
-      ]);
+      expect(this.itemValues).toEqual([[item1, item2], [item1], []]);
     });
   });
 
   describe('#remove()', () => {
-    it('makes item not retrievable with #get()', function () {
+    it('makes item not retrievable with #get()', function() {
       const item = makeItem('X');
       this.store.add(item);
       expect(this.store.get('X')).toBe(item);
@@ -41,22 +37,18 @@ describe('data/StreamHashSet', () => {
       expect(this.store.get('X')).toBe(undefined);
     });
 
-    it('emits new items value', function () {
+    it('emits new items value', function() {
       const item1 = makeItem('1');
       const item2 = makeItem('2');
       this.store.reset([item1, item2]);
       this.store.remove(item1);
 
-      expect(this.itemValues).toEqual([
-        [item2],
-        [item1, item2],
-        []
-      ]);
+      expect(this.itemValues).toEqual([[item2], [item1, item2], []]);
     });
   });
 
   describe('#reset()', () => {
-    it('adds new items', function () {
+    it('adds new items', function() {
       const item1 = makeItem('1');
       const item2 = makeItem('2');
       this.store.reset([item1, item2]);
@@ -66,7 +58,7 @@ describe('data/StreamHashSet', () => {
       expect(this.store.get('2')).toBe(item2);
     });
 
-    it('evicts old items', function () {
+    it('evicts old items', function() {
       const old = makeItem('old');
       this.store.add(old);
       expect(this.store.get('old')).toBe(old);
@@ -76,7 +68,7 @@ describe('data/StreamHashSet', () => {
     });
   });
 
-  function makeItem (id) {
+  function makeItem(id) {
     return {
       id: id,
       getId: _.constant(id)

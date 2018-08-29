@@ -1,4 +1,4 @@
-import {h} from 'utils/hyperscript';
+import { h } from 'utils/hyperscript';
 
 describe('hyperscript', () => {
   describe('generating HTML strings', () => {
@@ -16,7 +16,7 @@ describe('hyperscript', () => {
     });
 
     it('overrides ID attribute with hyperscript-defined ID', () => {
-      expect(h('div#better', {id: 'worse'})).toBe('<div id="better"></div>');
+      expect(h('div#better', { id: 'worse' })).toBe('<div id="better"></div>');
     });
 
     it('uses hyperscript-defined classes', () => {
@@ -29,39 +29,39 @@ describe('hyperscript', () => {
     });
 
     it('merges class attribute and hyperscript-defined classes', () => {
-      expect(h('.one.two', {class: 'three'})).toBe('<div class="one two three"></div>');
+      expect(h('.one.two', { class: 'three' })).toBe('<div class="one two three"></div>');
     });
 
     it('uses passed attributes', () => {
-      const attrs = {one: '', two: 'test'};
+      const attrs = { one: '', two: 'test' };
       expect(h('div', attrs)).toBe('<div one="" two="test"></div>');
     });
 
     it('uses dashed attributes "as is"', () => {
-      const attrs = {'dashed-attr': 'test', 'x-y': 'z'};
+      const attrs = { 'dashed-attr': 'test', 'x-y': 'z' };
       expect(h('div', attrs)).toBe('<div dashed-attr="test" x-y="z"></div>');
     });
 
     it('converts camel-cased attributes to dashed attributes', () => {
-      const attrs = {camelCase: 'test', xY: 'z'};
+      const attrs = { camelCase: 'test', xY: 'z' };
       expect(h('div', attrs)).toBe('<div camel-case="test" x-y="z"></div>');
     });
 
     it('does not close void elements', () => {
-      ['br', 'hr', 'img', 'input'].forEach((tag) => {
+      ['br', 'hr', 'img', 'input'].forEach(tag => {
         const html = `<${tag} some-attr="test">`;
-        expect(h(tag, {someAttr: 'test'})).toBe(html);
+        expect(h(tag, { someAttr: 'test' })).toBe(html);
       });
     });
 
     it('includes only attribute name when true', () => {
-      const attrs = {test: true, camelCase: true, other: 'test'};
+      const attrs = { test: true, camelCase: true, other: 'test' };
       const html = '<div test camel-case other="test"></div>';
       expect(h('div', attrs)).toBe(html);
     });
 
     it('escapes attribute values', () => {
-      const attrs = {test: true, toEscape: '"boom"', 'some-attr': 'x"x"x'};
+      const attrs = { test: true, toEscape: '"boom"', 'some-attr': 'x"x"x' };
       const html = '<div test to-escape="&quot;boom&quot;" some-attr="x&quot;x&quot;x"></div>';
       expect(h('div', attrs)).toBe(html);
     });
@@ -86,8 +86,8 @@ describe('hyperscript', () => {
     });
 
     it('creates for multiple child elements', () => {
-      const generated = h('div', {foo: 'bar'}, [
-        h('p', {foo: 'baz'}, ['test']),
+      const generated = h('div', { foo: 'bar' }, [
+        h('p', { foo: 'baz' }, ['test']),
         h('span', ['lol']),
         h('br'),
         h('p', ['test 2'])
@@ -106,15 +106,9 @@ describe('hyperscript', () => {
     });
 
     it('creates for multiple nested elements', () => {
-      const generated = h('div', {foo: 'bar'}, [
-        h('.hello', [
-          h('p', ['hello']),
-          h('img', {src: 'wave.png'})
-        ]),
-        h('.bye', [
-          h('hr'),
-          h('span', {foo: 'doo'}, ['(c) lol'])
-        ])
+      const generated = h('div', { foo: 'bar' }, [
+        h('.hello', [h('p', ['hello']), h('img', { src: 'wave.png' })]),
+        h('.bye', [h('hr'), h('span', { foo: 'doo' }, ['(c) lol'])])
       ]);
 
       const expected = [
@@ -143,7 +137,7 @@ describe('hyperscript', () => {
 
       const inline = 'color: red;font-size: 12px;font-family: Comic Sans;z-index: 100';
 
-      expect(h('div', {style: styles})).toBe(`<div style="${inline}"></div>`);
+      expect(h('div', { style: styles })).toBe(`<div style="${inline}"></div>`);
     });
   });
 });

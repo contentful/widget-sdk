@@ -106,7 +106,7 @@ module.exports = ({ dev = false } = {}) => ({
       // work properly
       {
         // we need to process only es5 files, so pure regex would be too complicated
-        test: function (path) {
+        test: function(path) {
           // explicitly avoid es6 files
           if (/\.es6.js$/.test(path)) {
             return false;

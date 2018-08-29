@@ -18,7 +18,7 @@ export default class Thumbnail extends React.Component {
     entryThumbnail: undefined
   };
 
-  render () {
+  render() {
     const { entryThumbnail } = this.props;
     const valid = entryThumbnail && isValidImage(entryThumbnail.contentType);
     if (!valid) {
@@ -26,12 +26,6 @@ export default class Thumbnail extends React.Component {
     }
     const imgUrl = getExternalImageUrl(entryThumbnail.url);
     const thumbnailUrl = `${imgUrl}?w=${dimensions.w}&h=${dimensions.h}&fit=thumb`;
-    return (
-      <img
-        src={thumbnailUrl}
-        height={`${dimensions.h}`}
-        width={`${dimensions.w}`}
-      />
-    );
+    return <img src={thumbnailUrl} height={`${dimensions.h}`} width={`${dimensions.w}`} />;
   }
 }

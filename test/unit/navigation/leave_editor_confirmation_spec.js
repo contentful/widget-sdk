@@ -2,23 +2,26 @@
 
 describe('navigator', () => {
   describe('leave editor confirmation', () => {
-    beforeEach(module('contentful/test', $stateProvider => {
-      $stateProvider.state('dirty', {
-        data: {
-          dirty: true
-        }
-      });
+    beforeEach(
+      module('contentful/test', $stateProvider => {
+        $stateProvider.state('dirty', {
+          data: {
+            dirty: true
+          }
+        });
 
-      $stateProvider.state('leave', {});
-    }));
+        $stateProvider.state('leave', {});
+      })
+    );
 
-    beforeEach(module($urlRouterProvider => {
-      // We do not want to sync the $location to the $urlRouter
-      $urlRouterProvider.deferIntercept(true);
-    }));
+    beforeEach(
+      module($urlRouterProvider => {
+        // We do not want to sync the $location to the $urlRouter
+        $urlRouterProvider.deferIntercept(true);
+      })
+    );
 
-
-    beforeEach(function () {
+    beforeEach(function() {
       const stateChangeHandlers = this.$inject('navigation/stateChangeHandlers');
       stateChangeHandlers.setup();
 
@@ -31,14 +34,14 @@ describe('navigator', () => {
       expect($state.current.name).toEqual('dirty');
     });
 
-    it('request leave confirmation', function () {
+    it('request leave confirmation', function() {
       const confirm = sinon.stub().resolves();
       this.dirtyState.data.requestLeaveConfirmation = confirm;
       this.$state.go('leave');
       sinon.assert.calledOnce(confirm);
     });
 
-    it('transitions away when leave is confimed', function () {
+    it('transitions away when leave is confimed', function() {
       const confirm = sinon.stub().resolves(true);
       this.dirtyState.data.requestLeaveConfirmation = confirm;
 
@@ -50,7 +53,7 @@ describe('navigator', () => {
       sinon.assert.calledOnce(exit);
     });
 
-    it('does not transitions away when leave is cancelled', function () {
+    it('does not transitions away when leave is cancelled', function() {
       const confirm = sinon.stub().resolves(false);
       this.dirtyState.data.requestLeaveConfirmation = confirm;
 

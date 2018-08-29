@@ -3,7 +3,7 @@ import * as TokenStore from 'services/TokenStore';
 import * as K from 'utils/kefir';
 import * as policyChecker from './PolicyChecker';
 import * as cache from './ResponseCache';
-import {create as createGKPermissionChecker} from './GKPermissionChecker';
+import { create as createGKPermissionChecker } from './GKPermissionChecker';
 import {
   broadcastEnforcement,
   resetEnforcements,
@@ -11,12 +11,11 @@ import {
   getContentTypeIdFor,
   isAuthor
 } from './Utils';
-import {capitalize, capitalizeFirst} from 'stringUtils';
-import {get, some, forEach, values} from 'lodash';
+import { capitalize, capitalizeFirst } from 'stringUtils';
+import { get, some, forEach, values } from 'lodash';
 import * as Enforcements from 'access_control/Enforcements';
 
-export {wasForbidden} from './Utils';
-
+export { wasForbidden } from './Utils';
 
 /**
  * @name accessChecker
@@ -121,7 +120,7 @@ export const getResponses = () => responses;
  * @description
  * Returns worf response for a given action name.
  */
-export const getResponseByActionName = (action) => responses[action];
+export const getResponseByActionName = action => responses[action];
 
 /**
  * @name accessChecker#getSectionVisibility
@@ -130,7 +129,6 @@ export const getResponseByActionName = (action) => responses[action];
  * Returns section visibility information.
  */
 export const getSectionVisibility = () => sectionVisibility;
-
 
 /**
  * @name accessChecker#canEditFieldLocale
@@ -159,7 +157,7 @@ export const canCreateOrganization = wrapGKMethod('canCreateOrganization');
  * actions and entity types. Note that entity types should be
  * provided in camel case
  */
-export function can (action, entityType) {
+export function can(action, entityType) {
   return getPermissions(action, entityType).can;
 }
 
@@ -172,8 +170,8 @@ export function can (action, entityType) {
  *        {object?} authContext,
  *        {object?} spaceAuthToken
  */
-export function setAuthContext (context) {
-  setContext({...context, space, organization});
+export function setAuthContext(context) {
+  setContext({ ...context, space, organization });
 }
 
 /**
@@ -183,7 +181,7 @@ export function setAuthContext (context) {
  *
  * @param {object} newSpace - space data object
  */
-export function setSpace (newSpace) {
+export function setSpace(newSpace) {
   setContext({
     space: newSpace,
     organization: get(newSpace, 'organization'),
@@ -192,7 +190,7 @@ export function setSpace (newSpace) {
   });
 }
 
-export function setOrganization (newOrganization) {
+export function setOrganization(newOrganization) {
   setContext({
     space: null,
     organization: newOrganization,
@@ -201,7 +199,7 @@ export function setOrganization (newOrganization) {
   });
 }
 
-function setContext (context) {
+function setContext(context) {
   authContext = context.authContext;
   spaceAuthContext = context.spaceAuthContext;
   space = context.space;
@@ -209,7 +207,7 @@ function setContext (context) {
 
   cache.reset(spaceAuthContext);
   policyChecker.setMembership(get(space, 'spaceMembership'), spaceAuthContext);
-  gkPermissionChecker = createGKPermissionChecker({space, organization});
+  gkPermissionChecker = createGKPermissionChecker({ space, organization });
   collectResponses();
   collectSectionVisibility();
 
@@ -239,7 +237,7 @@ function setContext (context) {
  * @description
  * Returns true if action can be performed on entry with the given content type ID.
  */
-export function canPerformActionOnEntryOfType (action, ctId) {
+export function canPerformActionOnEntryOfType(action, ctId) {
   const entity = {
     data: {
       sys: {
@@ -265,7 +263,7 @@ export function canPerformActionOnEntryOfType (action, ctId) {
  *
  * This method can be provided with an entity object or string `"Entry"` or `"Asset"`.
  */
-export function canPerformActionOnEntity (action, entity) {
+export function canPerformActionOnEntity(action, entity) {
   return getPermissions(action, entity.data).can;
 }
 
@@ -276,7 +274,7 @@ export function canPerformActionOnEntity (action, entity) {
  * @description
  * Returns true if an entry can be updated.
  */
-export function canUpdateEntry (entry) {
+export function canUpdateEntry(entry) {
   const canUpdate = canPerformActionOnEntity('update', entry);
   const ctId = getContentTypeIdFor(entry);
   const canUpdateThisType = policyChecker.canUpdateEntriesOfType(ctId);
@@ -292,14 +290,13 @@ export function canUpdateEntry (entry) {
  * @description
  * Returns true if an asset can be updated.
  */
-export function canUpdateAsset (asset) {
+export function canUpdateAsset(asset) {
   const canUpdate = canPerformActionOnEntity('update', asset);
   const canUpdateWithPolicy = policyChecker.canUpdateAssets();
   const canUpdateOwn = policyChecker.canUpdateOwnAssets();
 
   return canUpdate || canUpdateWithPolicy || (canUpdateOwn && isAuthor(asset));
 }
-
 
 /**
  * @name accessChecker#canUpdateEntity
@@ -311,7 +308,7 @@ export function canUpdateAsset (asset) {
  * Dispatches to the entry or asset method based on
  * `entity.data.sys.type`.
  */
-export function canUpdateEntity (entity) {
+export function canUpdateEntity(entity) {
   const type = entity.data.sys.type;
   if (type === 'Entry') {
     return canUpdateEntry(entity);
@@ -328,7 +325,7 @@ export function canUpdateEntity (entity) {
  * @description
  * Returns true if multiple assets can be uploaded.
  */
-export function canUploadMultipleAssets () {
+export function canUploadMultipleAssets() {
   const canCreate = canPerformActionOnType('create', 'asset');
   const canUpdate = canPerformActionOnType('update', 'asset');
   const canUpdateWithPolicy = policyChecker.canUpdateAssets() || policyChecker.canUpdateOwnAssets();
@@ -342,7 +339,7 @@ export function canUploadMultipleAssets () {
  * @description
  * Returns true if API Keys can be modified.
  */
-export function canModifyApiKeys () {
+export function canModifyApiKeys() {
   return get(responses, 'createApiKey.can', false);
 }
 
@@ -352,7 +349,7 @@ export function canModifyApiKeys () {
  * @description
  * Returns true if API Keys can be read.
  */
-export function canReadApiKeys () {
+export function canReadApiKeys() {
   return get(responses, 'readApiKey.can', false);
 }
 /**
@@ -361,7 +358,7 @@ export function canReadApiKeys () {
  * @description
  * Returns true if space can be created.
  */
-export function canCreateSpace () {
+export function canCreateSpace() {
   if (!authContext || !canCreateSpaceInAnyOrganization()) {
     return false;
   }
@@ -380,9 +377,9 @@ export function canCreateSpace () {
  * @description
  * Returns true if space can be created in any organization.
  */
-export function canCreateSpaceInAnyOrganization () {
+export function canCreateSpaceInAnyOrganization() {
   const orgs = K.getValue(TokenStore.organizations$);
-  return some(orgs, (org) => canCreateSpaceInOrganization(org.sys.id));
+  return some(orgs, org => canCreateSpaceInOrganization(org.sys.id));
 }
 
 /**
@@ -392,8 +389,10 @@ export function canCreateSpaceInAnyOrganization () {
  * @description
  * Returns true if space can be created in an organization with a provided ID.
  */
-export function canCreateSpaceInOrganization (organizationId) {
-  if (!authContext) { return false; }
+export function canCreateSpaceInOrganization(organizationId) {
+  if (!authContext) {
+    return false;
+  }
 
   if (authContext.hasOrganization(organizationId)) {
     return checkIfCanCreateSpace(authContext.organization(organizationId));
@@ -402,12 +401,12 @@ export function canCreateSpaceInOrganization (organizationId) {
   }
 }
 
-function collectResponses () {
+function collectResponses() {
   const replacement = {};
 
   forEach(ACTIONS_FOR_ENTITIES, (actions, entity) => {
     entity = capitalizeFirst(entity);
-    actions.forEach((action) => {
+    actions.forEach(action => {
       replacement[action + entity] = getPermissions(action, entity);
     });
   });
@@ -415,7 +414,7 @@ function collectResponses () {
   responses = replacement;
 }
 
-function collectSectionVisibility () {
+function collectSectionVisibility() {
   sectionVisibility = {
     contentType: can('manage', 'ContentType') || !shouldHide('readApiKey'),
     entry: !shouldHide('readEntry') || policyChecker.canAccessEntries(),
@@ -434,22 +433,26 @@ function collectSectionVisibility () {
   };
 }
 
-function createResponseAttributeGetter (attrName) {
+function createResponseAttributeGetter(attrName) {
   return actionName => {
     const action = responses[actionName];
-    return (action && attrName in action) ? action[attrName] : false;
+    return action && attrName in action ? action[attrName] : false;
   };
 }
 
-function getPermissions (action, entity) {
+function getPermissions(action, entity) {
   const response = { shouldHide: false, shouldDisable: false };
 
-  if (!spaceAuthContext) { return response; }
+  if (!spaceAuthContext) {
+    return response;
+  }
   response.can = cache.getResponse(action, entity);
-  if (response.can) { return response; }
+  if (response.can) {
+    return response;
+  }
 
   const reasons = spaceAuthContext.reasonsDenied(action, entity);
-  response.reasons = (reasons && reasons.length > 0) ? reasons : null;
+  response.reasons = reasons && reasons.length > 0 ? reasons : null;
   response.enforcement = getEnforcement(action, entity);
   response.shouldDisable = !!response.reasons;
   response.shouldHide = !response.shouldDisable;
@@ -457,18 +460,18 @@ function getPermissions (action, entity) {
   return response;
 }
 
-function getEnforcement (action, entity) {
+function getEnforcement(action, entity) {
   const reasonsDenied = spaceAuthContext.reasonsDenied(action, entity);
   const entityType = toType(entity);
 
   return determineEnforcement(reasonsDenied, entityType);
 }
 
-function canPerformActionOnType (action, type) {
+function canPerformActionOnType(action, type) {
   return getPermissions(action, capitalize(type)).can;
 }
 
-function checkIfCanCreateSpace (context) {
+function checkIfCanCreateSpace(context) {
   let response = false;
   try {
     response = context.can('create', 'Space');
@@ -478,7 +481,7 @@ function checkIfCanCreateSpace (context) {
   return response;
 }
 
-function determineEnforcement (reasonsDenied, entityType) {
+function determineEnforcement(reasonsDenied, entityType) {
   const org = get(space, 'organization');
   return Enforcements.determineEnforcement(org, reasonsDenied, entityType);
 }
@@ -487,7 +490,7 @@ function determineEnforcement (reasonsDenied, entityType) {
 // initialized.
 // Usage:
 // export const getUserQuota = wrapGKMethod('getUserQuota');
-function wrapGKMethod (name) {
+function wrapGKMethod(name) {
   return (...args) => {
     if (gkPermissionChecker) {
       return gkPermissionChecker[name](...args);

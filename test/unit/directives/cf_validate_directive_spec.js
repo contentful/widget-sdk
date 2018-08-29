@@ -4,30 +4,30 @@ describe('cfValidate', () => {
   beforeEach(module('contentful/test'));
 
   describe('validator', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.scope = this.$inject('$rootScope').$new();
 
       const $controller = this.$inject('$controller');
       this.validator = $controller('ValidationController', {
         $scope: this.scope,
-        $attrs: {cfValidate: 'data'}
+        $attrs: { cfValidate: 'data' }
       });
 
       this.errors = sinon.stub();
-      this.scope.schema = {errors: this.errors};
+      this.scope.schema = { errors: this.errors };
     });
 
     describe('#run()', () => {
       describe('without schema errors', () => {
-        beforeEach(function () {
+        beforeEach(function() {
           this.errors.returns([]);
         });
 
-        it('return true', function () {
+        it('return true', function() {
           expect(this.validator.run()).toBe(true);
         });
 
-        it('sets validation result to "valid"', function () {
+        it('sets validation result to "valid"', function() {
           expect(this.scope.validationResult.valid).toBeUndefined();
           expect(this.validator.valid).toBeUndefined();
           this.validator.run();
@@ -37,15 +37,15 @@ describe('cfValidate', () => {
       });
 
       describe('with schema errors', () => {
-        beforeEach(function () {
-          this.errors.returns([{name: 'oops'}]);
+        beforeEach(function() {
+          this.errors.returns([{ name: 'oops' }]);
         });
 
-        it('return false', function () {
+        it('return false', function() {
           expect(this.validator.run()).toBe(false);
         });
 
-        it('sets validation result to "invalid"', function () {
+        it('sets validation result to "invalid"', function() {
           expect(this.scope.validationResult.valid).toBeUndefined();
           expect(this.validator.valid).toBeUndefined();
           this.validator.run();
@@ -53,88 +53,84 @@ describe('cfValidate', () => {
           expect(this.validator.valid).toBe(false);
         });
 
-        it('adds validation errors to scope', function () {
+        it('adds validation errors to scope', function() {
           expect(this.scope.validationResult.errors).toBeUndefined();
           expect(this.validator.errors).toEqual([]);
           this.validator.run();
-          expect(this.scope.validationResult.errors).toEqual([{name: 'oops'}]);
-          expect(this.validator.errors).toEqual([{name: 'oops'}]);
+          expect(this.scope.validationResult.errors).toEqual([{ name: 'oops' }]);
+          expect(this.validator.errors).toEqual([{ name: 'oops' }]);
         });
       });
     });
 
     describe('#run(path)', () => {
-      beforeEach(function () {
+      beforeEach(function() {
         this.validator.setErrors([
-          {name: '1', path: ['a']},
-          {name: '2', path: ['a', 'b']},
-          {name: '3', path: ['a', 'b', 'c']}
+          { name: '1', path: ['a'] },
+          { name: '2', path: ['a', 'b'] },
+          { name: '3', path: ['a', 'b', 'c'] }
         ]);
       });
 
-      it('removes errors if path is valid', function () {
-        this.errors.returns([
-          {name: '1x', path: ['a']}
-        ]);
+      it('removes errors if path is valid', function() {
+        this.errors.returns([{ name: '1x', path: ['a'] }]);
         this.validator.run('a.b');
         expect(this.validator.errors).toEqual([
-          {name: '1', path: ['a']},
-          {name: '3', path: ['a', 'b', 'c']}
+          { name: '1', path: ['a'] },
+          { name: '3', path: ['a', 'b', 'c'] }
         ]);
 
         this.validator.run('a.b', true);
-        expect(this.validator.errors).toEqual([
-          {name: '1', path: ['a']}
-        ]);
+        expect(this.validator.errors).toEqual([{ name: '1', path: ['a'] }]);
       });
 
-      it('replaces errors if path is invalid', function () {
+      it('replaces errors if path is invalid', function() {
         this.errors.returns([
-          {name: '1x', path: ['a']},
-          {name: '2x', path: ['a', 'b']},
-          {name: '2y', path: ['a', 'b']},
-          {name: '3x', path: ['a', 'b', 'c']}
+          { name: '1x', path: ['a'] },
+          { name: '2x', path: ['a', 'b'] },
+          { name: '2y', path: ['a', 'b'] },
+          { name: '3x', path: ['a', 'b', 'c'] }
         ]);
         this.validator.run('a.b');
         expect(_.sortBy(this.validator.errors, 'name')).toEqual([
-          {name: '1', path: ['a']},
-          {name: '2x', path: ['a', 'b']},
-          {name: '2y', path: ['a', 'b']},
-          {name: '3', path: ['a', 'b', 'c']}
+          { name: '1', path: ['a'] },
+          { name: '2x', path: ['a', 'b'] },
+          { name: '2y', path: ['a', 'b'] },
+          { name: '3', path: ['a', 'b', 'c'] }
         ]);
 
         this.validator.run('a.b.*');
         expect(_.sortBy(this.validator.errors, 'name')).toEqual([
-          {name: '1', path: ['a']},
-          {name: '2x', path: ['a', 'b']},
-          {name: '2y', path: ['a', 'b']},
-          {name: '3x', path: ['a', 'b', 'c']}
+          { name: '1', path: ['a'] },
+          { name: '2x', path: ['a', 'b'] },
+          { name: '2y', path: ['a', 'b'] },
+          { name: '3x', path: ['a', 'b', 'c'] }
         ]);
       });
     });
 
     describe('#getPathErrors(path)', () => {
-      it('returns errors with exact path', function () {
+      it('returns errors with exact path', function() {
         this.validator.errors = [
-          {name: '1', path: ['a']},
-          {name: '2', path: ['a', 'b']},
-          {name: '3', path: ['a', 'b', 'c']}
+          { name: '1', path: ['a'] },
+          { name: '2', path: ['a', 'b'] },
+          { name: '3', path: ['a', 'b', 'c'] }
         ];
 
         const errors = this.validator.getPathErrors('a.b');
-        expect(errors).toEqual([{name: '2', path: ['a', 'b']}]);
+        expect(errors).toEqual([{ name: '2', path: ['a', 'b'] }]);
       });
 
-      it('collects errors with glob and parent', function () {
+      it('collects errors with glob and parent', function() {
         this.validator.errors = [
-          {name: '1', path: ['a']},
-          {name: '2', path: ['a', 'b']},
-          {name: '3', path: ['a', 'b', 'c']}
+          { name: '1', path: ['a'] },
+          { name: '2', path: ['a', 'b'] },
+          { name: '3', path: ['a', 'b', 'c'] }
         ];
 
         const expectedErrors = [
-          {name: '2', path: ['a', 'b']},
-          {name: '3', path: ['a', 'b', 'c']}
+          { name: '2', path: ['a', 'b'] },
+          { name: '3', path: ['a', 'b', 'c'] }
         ];
         const errorsGlob = this.validator.getPathErrors('a.b.*');
         expect(errorsGlob).toEqual(expectedErrors);
@@ -143,32 +139,34 @@ describe('cfValidate', () => {
       });
     });
 
-    it('runs validation on "validate" event', function () {
+    it('runs validation on "validate" event', function() {
       sinon.spy(this.validator, 'run');
       this.scope.$broadcast('validate');
       this.$apply();
       sinon.assert.calledOnce(this.validator.run);
     });
     describe('#hasError()', () => {
-      beforeEach(function () {
-        this.setErrors = function (paths) {
-          this.validator.setErrors(paths.map(path => ({
-            path: path
-          })));
+      beforeEach(function() {
+        this.setErrors = function(paths) {
+          this.validator.setErrors(
+            paths.map(path => ({
+              path: path
+            }))
+          );
         };
       });
 
-      it('returns true when exact path has error', function () {
+      it('returns true when exact path has error', function() {
         this.setErrors([['a', 'b'], ['other']]);
         expect(this.validator.hasError(['a', 'b'])).toBe(true);
       });
 
-      it('returns true when exact child path has error', function () {
+      it('returns true when exact child path has error', function() {
         this.setErrors([['a', 'b', 'c'], ['other']]);
         expect(this.validator.hasError(['a', 'b'])).toBe(true);
       });
 
-      it('returns false when parent path has error', function () {
+      it('returns false when parent path has error', function() {
         this.setErrors([['a']]);
         expect(this.validator.hasError(['a', 'b'])).toBe(false);
       });
@@ -183,7 +181,7 @@ describe('cfValidate', () => {
       type: 'Symbol'
     };
 
-    beforeEach(function () {
+    beforeEach(function() {
       const $compile = this.$inject('$compile');
       const $rootScope = this.$inject('$rootScope');
 
@@ -193,7 +191,7 @@ describe('cfValidate', () => {
       this.$apply();
     });
 
-    it('validates', function () {
+    it('validates', function() {
       this.scope.contentType = {
         name: 'MyContentType',
         fields: [fieldFixture]
@@ -202,7 +200,7 @@ describe('cfValidate', () => {
       expect(this.scope.validationResult.valid).toBe(true);
     });
 
-    it('generates missing name error', function () {
+    it('generates missing name error', function() {
       this.scope.contentType = {
         fields: [fieldFixture]
       };

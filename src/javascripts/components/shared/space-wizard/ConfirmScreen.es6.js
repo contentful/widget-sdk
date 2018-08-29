@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 import { get, trim } from 'lodash';
 import moment from 'moment';
 import spinner from 'ui/Components/Spinner';
-import {asReact} from 'ui/Framework/DOMRenderer';
-import {formatPrice} from './WizardUtils';
+import { asReact } from 'ui/Framework/DOMRenderer';
+import { formatPrice } from './WizardUtils';
 import Price from 'ui/Components/Price';
 
 import * as propTypes from './PropTypes';
@@ -30,21 +30,21 @@ const ConfirmScreen = createReactClass({
     partnershipMeta: propTypes.partnershipMeta
   },
 
-  getInitialState () {
+  getInitialState() {
     return {
       partnershipFields: {},
       partnershipValidation: {}
     };
   },
 
-  componentDidMount () {
+  componentDidMount() {
     const { organization, fetchSubscriptionPrice } = this.props;
 
     fetchSubscriptionPrice({ organization });
   },
 
-  onPartnershipFieldChange (fieldName) {
-    return (value) => {
+  onPartnershipFieldChange(fieldName) {
+    return value => {
       const { setPartnershipFields } = this.props;
       const { partnershipFields } = this.state;
 
@@ -55,14 +55,14 @@ const ConfirmScreen = createReactClass({
     };
   },
 
-  onSubmit () {
+  onSubmit() {
     const { partnershipMeta, onSubmit, track } = this.props;
     const { partnershipFields } = this.state;
     const { isPartnerSpacePlan } = partnershipMeta;
 
     if (isPartnerSpacePlan) {
       // All of the partnership information is required if this is a partnership form
-      const fieldNames = [ 'estimatedDeliveryDate', 'clientName', 'description' ];
+      const fieldNames = ['estimatedDeliveryDate', 'clientName', 'description'];
 
       // Validate that the fields are present and not considered empty
       const validation = fieldNames.reduce((formErrors, fieldName) => {
@@ -94,7 +94,7 @@ const ConfirmScreen = createReactClass({
     }
   },
 
-  render () {
+  render() {
     const {
       currentPlan,
       selectedPlan,
@@ -124,62 +124,56 @@ const ConfirmScreen = createReactClass({
 
     return (
       <div>
-        {
-          isPending &&
-          <div className="loader__container">
-            {asReact(spinner({diameter: '40px'}))}
-          </div>
-        }
-        {
-          !isPending &&
+        {isPending && (
+          <div className="loader__container">{asReact(spinner({ diameter: '40px' }))}</div>
+        )}
+        {!isPending && (
           <div>
-            <h2 className="create-space-wizard__heading">
-              Confirm your selection
-            </h2>
-            { action === 'create' &&
+            <h2 className="create-space-wizard__heading">Confirm your selection</h2>
+            {action === 'create' && (
               <Fragment>
                 <p className="create-space-wizard__subheading">
                   Make sure everything is in order before creating your space.
                 </p>
                 <p className="create-space-wizard__info">
-                  { selectedPlan.price > 0 &&
+                  {selectedPlan.price > 0 && (
                     <Fragment>
-                      You are about to purchase a {selectedPlan.name.toLowerCase()} space
-                      for <strong>{formatPrice(selectedPlan.price)} / month</strong> for the
+                      You are about to purchase a {selectedPlan.name.toLowerCase()} space for{' '}
+                      <strong>{formatPrice(selectedPlan.price)} / month</strong> for the
                       organization <em>{organization.name}</em>.
-                      {
-                        !error &&
+                      {!error && (
                         <span>
                           {' '}
-                          This will increase your organization’s subscription
-                          to <strong>{formatPrice(totalPrice + selectedPlan.price)} / month</strong>.
-                          {' '}
+                          This will increase your organization’s subscription to{' '}
+                          <strong>
+                            {formatPrice(totalPrice + selectedPlan.price)} / month
+                          </strong>.{' '}
                         </span>
-                      }
+                      )}
                     </Fragment>
-                  }
-                  { !isPartnerSpacePlan && selectedPlan.price === 0 &&
-                    <Fragment>
-                      You are about to create a free space for the organization <em>{organization.name}</em> and it won&apos;t change your organization&apos;s subscription.
-                      {' '}
-                    </Fragment>
-                  }
-                  { !isPartnerSpacePlan &&
+                  )}
+                  {!isPartnerSpacePlan &&
+                    selectedPlan.price === 0 && (
+                      <Fragment>
+                        You are about to create a free space for the organization{' '}
+                        <em>{organization.name}</em> and it won&apos;t change your
+                        organization&apos;s subscription.{' '}
+                      </Fragment>
+                    )}
+                  {!isPartnerSpacePlan && (
                     <Fragment>
                       The space’s name will be <em>{name}</em>
-                      {
-                        template &&
-                        ', and we will fill it with example content'
-                      }
+                      {template && ', and we will fill it with example content'}
                       {'. '}
-                      <br/><br/>
+                      <br />
+                      <br />
                       <p>
-                        If everything looks okay, click <strong>Confirm and create space</strong> to create your space.
+                        If everything looks okay, click <strong>Confirm and create space</strong> to
+                        create your space.
                       </p>
                     </Fragment>
-                  }
-                  {
-                    isPartnerSpacePlan &&
+                  )}
+                  {isPartnerSpacePlan && (
                     <PartnershipForm
                       organization={organization}
                       template={template}
@@ -187,49 +181,82 @@ const ConfirmScreen = createReactClass({
                       validation={partnershipValidation}
                       onFieldChange={this.onPartnershipFieldChange}
                     />
-                  }
+                  )}
                 </p>
               </Fragment>
-            }
-            { action === 'change' &&
+            )}
+            {action === 'change' && (
               <Fragment>
                 <p className="create-space-wizard__subheading">
                   Make sure everything is in order before confirming the change.
                 </p>
                 <p className="create-space-wizard__info">
-                  <span>You&apos;re about to change the space <em>{space.name}</em> from a {currentPlan.name} to a {selectedPlan.name} space type.&#32;</span>
+                  <span>
+                    You&apos;re about to change the space <em>{space.name}</em> from a{' '}
+                    {currentPlan.name} to a {selectedPlan.name} space type.&#32;
+                  </span>
 
-                  { currentPlan.price === 0 &&
+                  {currentPlan.price === 0 && (
                     <Fragment>
-                      The price of this space will now be <strong><Price value={selectedPlan.price} /></strong> and will increase
+                      The price of this space will now be{' '}
+                      <strong>
+                        <Price value={selectedPlan.price} />
+                      </strong>{' '}
+                      and will increase
                     </Fragment>
-                  }
-                  { currentPlan.price !== 0 && currentPlan.price >= selectedPlan.price &&
-                    <Fragment>
-                      The price of this space will change from <strong><Price value={currentPlan.price} /></strong> to <strong><Price value={selectedPlan.price} /></strong> and will reduce
-                    </Fragment>
-                  }
-                  { currentPlan.price !== 0 && currentPlan.price < selectedPlan.price &&
-                    <Fragment>
-                      The price of this space will change from <strong><Price value={currentPlan.price} /></strong> to <strong><Price value={selectedPlan.price} /></strong> and will increase
-                    </Fragment>
-                  }
-                  <span>&#32;the total price of the spaces in your organization to <strong><Price unit='month' value={(totalPrice + selectedPlan.price - currentPlan.price)} /></strong>.</span>
+                  )}
+                  {currentPlan.price !== 0 &&
+                    currentPlan.price >= selectedPlan.price && (
+                      <Fragment>
+                        The price of this space will change from{' '}
+                        <strong>
+                          <Price value={currentPlan.price} />
+                        </strong>{' '}
+                        to{' '}
+                        <strong>
+                          <Price value={selectedPlan.price} />
+                        </strong>{' '}
+                        and will reduce
+                      </Fragment>
+                    )}
+                  {currentPlan.price !== 0 &&
+                    currentPlan.price < selectedPlan.price && (
+                      <Fragment>
+                        The price of this space will change from{' '}
+                        <strong>
+                          <Price value={currentPlan.price} />
+                        </strong>{' '}
+                        to{' '}
+                        <strong>
+                          <Price value={selectedPlan.price} />
+                        </strong>{' '}
+                        and will increase
+                      </Fragment>
+                    )}
+                  <span>
+                    &#32;the total price of the spaces in your organization to{' '}
+                    <strong>
+                      <Price
+                        unit="month"
+                        value={totalPrice + selectedPlan.price - currentPlan.price}
+                      />
+                    </strong>
+                    .
+                  </span>
                 </p>
               </Fragment>
-            }
-            <div style={{textAlign: 'center', margin: '1.2em 0'}}>
+            )}
+            <div style={{ textAlign: 'center', margin: '1.2em 0' }}>
               <button
                 className={`button btn-primary-action ${submitted ? 'is-loading' : ''}`}
                 disabled={submitted}
                 data-test-id="space-create-confirm"
-                onClick={this.onSubmit}
-              >
+                onClick={this.onSubmit}>
                 {confirmButtonText}
               </button>
             </div>
           </div>
-        }
+        )}
       </div>
     );
   }

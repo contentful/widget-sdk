@@ -3,17 +3,20 @@ import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import * as ReloadNotification from 'ReloadNotification';
 import createResourceService from 'services/ResourceService';
-import {update, add, keyBy, flow, filter} from 'lodash/fp';
+import { update, add, keyBy, flow, filter } from 'lodash/fp';
 
 import Workbench from 'app/WorkbenchReact';
 import ResourceUsageList from './ResourceUsageList';
 import SpaceUsageSidebar from './SpaceUsageSidebar';
 
 const addMasterEnvironment = flow(
-  update('limits', flow(
-    update('included', add(1)),
-    update('maximum', add(1))
-  )),
+  update(
+    'limits',
+    flow(
+      update('included', add(1)),
+      update('maximum', add(1))
+    )
+  ),
   update('usage', add(1))
 );
 
@@ -22,38 +25,35 @@ const SpaceUsage = createReactClass({
     orgId: PropTypes.string.isRequired,
     spaceId: PropTypes.string.isRequired
   },
-  getInitialState () {
+  getInitialState() {
     return {
       resources: undefined
     };
   },
-  componentDidMount () {
+  componentDidMount() {
     this.fetchPlan();
   },
 
-  async fetchPlan () {
-    const {spaceId} = this.props;
+  async fetchPlan() {
+    const { spaceId } = this.props;
     const service = createResourceService(spaceId);
     const isPermanent = resource => resource.kind === 'permanent';
 
     try {
       this.setState({
-        resources:
-          flow(
-            filter(isPermanent),
-            keyBy('sys.id'),
-            update('environment', addMasterEnvironment)
-          )(
-            await service.getAll()
-          )
+        resources: flow(
+          filter(isPermanent),
+          keyBy('sys.id'),
+          update('environment', addMasterEnvironment)
+        )(await service.getAll())
       });
     } catch (e) {
       ReloadNotification.apiErrorHandler(e);
     }
   },
 
-  render () {
-    const {resources} = this.state;
+  render() {
+    const { resources } = this.state;
     return (
       <Workbench
         title="Space usage"

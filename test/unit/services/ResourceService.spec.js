@@ -4,7 +4,7 @@ import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
 import { get, set, values } from 'lodash';
 
 describe('ResourceService', () => {
-  beforeEach(function* () {
+  beforeEach(function*() {
     this.createResource = (type, limits, usage) => {
       const { maximum, included } = limits;
 
@@ -82,7 +82,8 @@ describe('ResourceService', () => {
     this.spies = {};
     this.stubs = {};
 
-    this.isPromiseLike = object => typeof object.then === 'function' &&
+    this.isPromiseLike = object =>
+      typeof object.then === 'function' &&
       typeof object.catch === 'function' &&
       typeof object.finally === 'function';
 
@@ -92,31 +93,46 @@ describe('ResourceService', () => {
     this.resourceStore = mockedEndpoint.stores.resources;
 
     // Reached no limit
-    set(this.resourceStore, 'locale', this.createResource(
+    set(
+      this.resourceStore,
       'locale',
-      {
-        maximum: 10,
-        included: 5
-      }, 2
-    ));
+      this.createResource(
+        'locale',
+        {
+          maximum: 10,
+          included: 5
+        },
+        2
+      )
+    );
 
     // Reached included
-    set(this.resourceStore, 'content_type', this.createResource(
+    set(
+      this.resourceStore,
       'content_type',
-      {
-        maximum: 20,
-        included: 10
-      }, 14
-    ));
+      this.createResource(
+        'content_type',
+        {
+          maximum: 20,
+          included: 10
+        },
+        14
+      )
+    );
 
     // Reached max
-    set(this.resourceStore, 'entry', this.createResource(
+    set(
+      this.resourceStore,
       'entry',
-      {
-        maximum: 2500,
-        included: 2000
-      }, 2500
-    ));
+      this.createResource(
+        'entry',
+        {
+          maximum: 2500,
+          included: 2000
+        },
+        2500
+      )
+    );
 
     // Spying on both the endpoint creation and the actual endpoint
     // calls are important.
@@ -132,9 +148,7 @@ describe('ResourceService', () => {
       createOrganizationEndpoint: this.stubs.createOrganizationEndpoint
     });
 
-    system.set('Authentication', {
-
-    });
+    system.set('Authentication', {});
 
     system.set('services/TokenStore', {
       getSpace: sinon.stub().resolves(this.mocks.space),
@@ -146,7 +160,7 @@ describe('ResourceService', () => {
     };
 
     system.set('utils/LaunchDarkly', {
-      getCurrentVariation: (flagName) => {
+      getCurrentVariation: flagName => {
         return Promise.resolve(this.flags[flagName]);
       }
     });
@@ -155,7 +169,7 @@ describe('ResourceService', () => {
     this.ResourceService = this.createResourceService('1234');
   });
 
-  it('should by default use the space endpoint for instantiation', function () {
+  it('should by default use the space endpoint for instantiation', function() {
     // Reset the spy
     this.spies.createSpaceEndpoint.reset();
 
@@ -166,7 +180,7 @@ describe('ResourceService', () => {
   });
 
   // Skipped until we support separate organization and space endpoint usage
-  it('should optionally allow instantiation using the "organization" type parameter value', function () {
+  it('should optionally allow instantiation using the "organization" type parameter value', function() {
     this.spies.createSpaceEndpoint.reset();
 
     this.createResourceService('1234', 'organization');
@@ -175,7 +189,7 @@ describe('ResourceService', () => {
     expect(this.spies.createSpaceEndpoint.calledOnce).toBe(false);
   });
 
-  it('should return the expected object definition', function () {
+  it('should return the expected object definition', function() {
     expect(Object.keys(this.ResourceService).length).toBe(5);
     expect(this.ResourceService.get).toBeDefined();
     expect(this.ResourceService.getAll).toBeDefined();
@@ -185,7 +199,7 @@ describe('ResourceService', () => {
   });
 
   describe('#get', () => {
-    it('should return a failed Promise if not supplied with any arguments', function* () {
+    it('should return a failed Promise if not supplied with any arguments', function*() {
       try {
         yield this.ResourceService.get();
       } catch (e) {
@@ -194,11 +208,11 @@ describe('ResourceService', () => {
       }
     });
 
-    it('should return a successful Promise if supplied with valid arguments', function* () {
+    it('should return a successful Promise if supplied with valid arguments', function*() {
       yield this.ResourceService.get('entry');
     });
 
-    it('should return data from the endpoint if the pricing version is "pricing_version_2" and the feature flag is true', function* () {
+    it('should return data from the endpoint if the pricing version is "pricing_version_2" and the feature flag is true', function*() {
       this.mocks.organization.pricingVersion = 'pricing_version_2';
       this.flags['feature-bv-2018-01-resources-api'] = true;
 
@@ -206,7 +220,7 @@ describe('ResourceService', () => {
       expect(this.spies.spaceEndpoint.calledOnce).toBe(true);
     });
 
-    it('should return data from the token, via TokenStore, if the pricing version is "pricing_version_1" and the feature flag is false', function* () {
+    it('should return data from the token, via TokenStore, if the pricing version is "pricing_version_1" and the feature flag is false', function*() {
       this.mocks.organization.pricingVersion = 'pricing_version_1';
       this.flags['feature-bv-2018-01-resources-api'] = false;
 
@@ -216,7 +230,7 @@ describe('ResourceService', () => {
       expect(this.limits.called).toBeTruthy();
     });
 
-    it('should return an item that looks like a Resource regardless', function* () {
+    it('should return an item that looks like a Resource regardless', function*() {
       let locales;
 
       this.mocks.organization.pricingVersion = 'pricing_version_2';
@@ -241,11 +255,11 @@ describe('ResourceService', () => {
   });
 
   describe('#getAll', () => {
-    it('should return a promise-like object', function () {
+    it('should return a promise-like object', function() {
       expect(this.isPromiseLike(this.ResourceService.getAll())).toBe(true);
     });
 
-    it('should always return data via the endpoint, regardless of the pricing version & feature flag', function* () {
+    it('should always return data via the endpoint, regardless of the pricing version & feature flag', function*() {
       this.mocks.organization.pricingVersion = 'pricing_version_2';
 
       yield this.ResourceService.getAll();
@@ -257,7 +271,7 @@ describe('ResourceService', () => {
       expect(this.spies.spaceEndpoint.calledTwice).toBe(true);
     });
 
-    it('should return an array with multiple Resource items', function* () {
+    it('should return an array with multiple Resource items', function*() {
       const resources = yield this.ResourceService.getAll();
 
       expect(Array.isArray(resources)).toBe(true);
@@ -266,11 +280,11 @@ describe('ResourceService', () => {
   });
 
   describe('#canCreate', () => {
-    it('should return a promise-like object', function () {
+    it('should return a promise-like object', function() {
       expect(this.isPromiseLike(this.ResourceService.canCreate('locale'))).toBe(true);
     });
 
-    it('should return true if the maximum limit is not reached', function* () {
+    it('should return true if the maximum limit is not reached', function*() {
       let status;
 
       status = yield this.ResourceService.canCreate('contentType');
@@ -280,30 +294,30 @@ describe('ResourceService', () => {
       expect(status).toBe(true);
     });
 
-    it('should return false if the maximum limit is reached', function* () {
+    it('should return false if the maximum limit is reached', function*() {
       const status = yield this.ResourceService.canCreate('entry');
       expect(status).toBe(false);
     });
   });
 
   describe('#messagesFor', () => {
-    it('should return a promise-like object', function () {
+    it('should return a promise-like object', function() {
       expect(this.isPromiseLike(this.ResourceService.messagesFor('locale'))).toBe(true);
     });
 
-    it('should return an object that contains `warning` and `error` keys', function* () {
+    it('should return an object that contains `warning` and `error` keys', function*() {
       const messages = yield this.ResourceService.messagesFor('locale');
       expect(Object.keys(messages)).toContain('warning');
       expect(Object.keys(messages)).toContain('error');
     });
 
-    it('should return a warning if the included limit is, but the maximum limit is not, reached', function* () {
+    it('should return a warning if the included limit is, but the maximum limit is not, reached', function*() {
       const messages = yield this.ResourceService.messagesFor('contentType');
       expect(messages.warning).toBeDefined();
       expect(messages.error).toBe('');
     });
 
-    it('should return an error if the maximum limit is reached', function* () {
+    it('should return an error if the maximum limit is reached', function*() {
       const messages = yield this.ResourceService.messagesFor('entry');
       expect(messages.warning).toBe('');
       expect(messages.error).toBeDefined();
@@ -311,11 +325,11 @@ describe('ResourceService', () => {
   });
 
   describe('#messages', () => {
-    it('should return a promise-like object', function () {
+    it('should return a promise-like object', function() {
       expect(this.isPromiseLike(this.ResourceService.messages())).toBe(true);
     });
 
-    it('should return an array of objects that match the #messagesFor object definition', function* () {
+    it('should return an array of objects that match the #messagesFor object definition', function*() {
       const messages = yield this.ResourceService.messages();
 
       values(messages).forEach(message => {
@@ -324,7 +338,7 @@ describe('ResourceService', () => {
       });
     });
 
-    it('should return a different array depending on different limits of the resources', function* () {
+    it('should return a different array depending on different limits of the resources', function*() {
       const messages = yield this.ResourceService.messages();
 
       // Entries

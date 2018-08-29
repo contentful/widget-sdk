@@ -1,40 +1,48 @@
-import {kebabCase, mapValues} from 'lodash';
+import { kebabCase, mapValues } from 'lodash';
 import * as VTree from './VTree';
-import {caseof} from 'sum-types';
+import { caseof } from 'sum-types';
 
 /**
  * Render a virtual DOM tree into an HTML string.
  */
-export default function vtreeToString (vtree) {
+export default function vtreeToString(vtree) {
   return caseof(vtree, [
-    [VTree.Element, ({tag, props, children}) => {
-      const htmlProps = mapValues(props, (value, key) => {
-        if (key === 'style') {
-          return renderStyles(value);
-        } else {
-          return value;
-        }
-      });
+    [
+      VTree.Element,
+      ({ tag, props, children }) => {
+        const htmlProps = mapValues(props, (value, key) => {
+          if (key === 'style') {
+            return renderStyles(value);
+          } else {
+            return value;
+          }
+        });
 
-      const content = children
-        .filter((v) => v)
-        .map(vtreeToString)
-        .join('');
-      return createHTMLString(tag, htmlProps, content);
-    }],
-    [VTree.Text, ({text}) => {
-      return text;
-    }]
+        const content = children
+          .filter(v => v)
+          .map(vtreeToString)
+          .join('');
+        return createHTMLString(tag, htmlProps, content);
+      }
+    ],
+    [
+      VTree.Text,
+      ({ text }) => {
+        return text;
+      }
+    ]
   ]);
 }
 
-function renderStyles (styles) {
+function renderStyles(styles) {
   if (typeof styles === 'string') {
     return styles;
   } else {
-    return Object.keys(styles).map((prop) => {
-      return `${kebabCase(prop)}: ${styles[prop]}`;
-    }).join(';');
+    return Object.keys(styles)
+      .map(prop => {
+        return `${kebabCase(prop)}: ${styles[prop]}`;
+      })
+      .join(';');
   }
 }
 
@@ -55,12 +63,11 @@ const VOID_ELEMENTS = [
   'source'
 ];
 
-
 /**
  * Takes a tag name, a string to string map of attributes, and a
  * content string to produce an HTML element.
  */
-function createHTMLString (tag, attrs, content) {
+function createHTMLString(tag, attrs, content) {
   const isVoid = VOID_ELEMENTS.indexOf(tag) > -1;
   const closeTag = isVoid ? '' : `</${tag}>`;
 
@@ -68,15 +75,17 @@ function createHTMLString (tag, attrs, content) {
     content = '';
   }
 
-  attrs = Object.keys(attrs).map((attr) => {
-    const value = attrs[attr];
-    if (value === true) {
-      return attr;
-    } else {
-      const escapedValue = value.replace(/"/g, '&quot;');
-      return `${attr}="${escapedValue}"`;
-    }
-  }).join(' ');
+  attrs = Object.keys(attrs)
+    .map(attr => {
+      const value = attrs[attr];
+      if (value === true) {
+        return attr;
+      } else {
+        const escapedValue = value.replace(/"/g, '&quot;');
+        return `${attr}="${escapedValue}"`;
+      }
+    })
+    .join(' ');
 
   attrs = attrs.length > 0 ? ` ${attrs}` : '';
 

@@ -31,7 +31,7 @@ import { assign, update } from 'utils/Collections';
  *     stores.api_keys.get('xyz').sys  // => { id: 'xyz', type: 'DeliveryKey', ... }
  *
  */
-export default function create () {
+export default function create() {
   const endpoints = {
     entries: makeEntityEndpoint('Entry'),
     assets: makeEntityEndpoint('Assets'),
@@ -42,42 +42,46 @@ export default function create () {
     roles: makeGenericEndpoint(),
     extensions: makeGenericEndpoint(),
     environments: makeGenericEndpoint({
-      transformNew: (entity) => {
-        return update(entity, ['sys'], (sys) => assign(sys, {
-          type: 'Environment',
-          status: { sys: { id: 'queued' } }
-        }));
+      transformNew: entity => {
+        return update(entity, ['sys'], sys =>
+          assign(sys, {
+            type: 'Environment',
+            status: { sys: { id: 'queued' } }
+          })
+        );
       }
     }),
     resources: makeGenericEndpoint(),
     features: makeGenericEndpoint()
   };
 
-  const stores = mapValues(endpoints, (ep) => ep.store);
+  const stores = mapValues(endpoints, ep => ep.store);
 
-  function request ({method, path, data, version}) {
+  function request({ method, path, data, version }) {
     data = cloneDeep(data);
     const [typePath, ...resourcePath] = path;
 
     if (typePath in endpoints) {
       const endpoint = getEndpoint(endpoints, path);
-      return endpoint.request(method, resourcePath, data, version)
-        // We isolate the data structure from the response handlers so that
-        // changes do not leak into the store
-        .then(cloneDeep);
+      return (
+        endpoint
+          .request(method, resourcePath, data, version)
+          // We isolate the data structure from the response handlers so that
+          // changes do not leak into the store
+          .then(cloneDeep)
+      );
     } else {
       return rejectNotFound();
     }
   }
 
-  return {stores, request};
+  return { stores, request };
 }
 
-function getEndpoint (endpoints, [typePath, id]) {
+function getEndpoint(endpoints, [typePath, id]) {
   const isUserUIConfig = typePath === 'ui_config' && id === 'me';
   return isUserUIConfig ? endpoints.user_ui_config : endpoints[typePath];
 }
-
 
 /**
  * This object holds the default configuration for resource endpoints.
@@ -90,9 +94,8 @@ const defaultResourceConfig = {
    * user provided data. The result is stored and returned as the
    * reponse.
    */
-  transformNew: (data) => data
+  transformNew: data => data
 };
-
 
 /**
  * Create a request handler for a generic Contentful resource collection
@@ -109,13 +112,13 @@ const defaultResourceConfig = {
  *   Options that overide `defaultResourceConfig`. See that object for
  *   documentation.
  */
-function makeGenericEndpoint (resourceConfig) {
+function makeGenericEndpoint(resourceConfig) {
   resourceConfig = assign(defaultResourceConfig, resourceConfig);
   const store = {};
 
-  return {store, request};
+  return { store, request };
 
-  function request (method, path, data, version) {
+  function request(method, path, data, version) {
     const [id] = path;
 
     if (method === 'GET') {
@@ -138,7 +141,6 @@ function makeGenericEndpoint (resourceConfig) {
   }
 }
 
-
 /**
  * Create a {store, request} pair for content entities (content types,
  * entries, assets).
@@ -147,12 +149,12 @@ function makeGenericEndpoint (resourceConfig) {
  * it has the 'published' and 'archived' paths for resource state
  * changes.
  */
-function makeEntityEndpoint (resourceConfig) {
+function makeEntityEndpoint(resourceConfig) {
   const { store, request: baseRequest } = makeGenericEndpoint(resourceConfig);
 
-  return {store, request};
+  return { store, request };
 
-  function request (method, path, data, version) {
+  function request(method, path, data, version) {
     const [id, state] = path;
     if (state) {
       return updateResourceState(store, method, state, id, version);
@@ -162,7 +164,7 @@ function makeEntityEndpoint (resourceConfig) {
   }
 }
 
-function updateResourceState (store, method, state, id, version) {
+function updateResourceState(store, method, state, id, version) {
   const resource = store[id];
 
   if (!resource) {
@@ -202,12 +204,12 @@ function updateResourceState (store, method, state, id, version) {
  * - GET /
  * - PUT /
  */
-function makeSingletonEndpoint () {
+function makeSingletonEndpoint() {
   const id = 'default';
   const store = {};
-  return {store, request};
+  return { store, request };
 
-  function request (method, _path, data, version) {
+  function request(method, _path, data, version) {
     if (method === 'GET') {
       return getResource(store, id);
     }
@@ -217,15 +219,13 @@ function makeSingletonEndpoint () {
   }
 }
 
-
-function getResource (store, id) {
+function getResource(store, id) {
   if (id in store) {
     return $q.resolve(store[id]);
   } else {
     return rejectNotFound();
   }
 }
-
 
 /**
  * Insert or update a resource in the store and return the updated
@@ -235,7 +235,7 @@ function getResource (store, id) {
  * we update it. In that case we require the `version` to match. We
  * throw a `VersionMismatch` error otherwise.
  */
-function putResource (resourceConfig, store, id, version, data) {
+function putResource(resourceConfig, store, id, version, data) {
   const resource = store[id];
   if (resource) {
     const sys = resource.sys;
@@ -260,7 +260,6 @@ function putResource (resourceConfig, store, id, version, data) {
   }
 }
 
-
 /**
  * Delete a resource from the store and return the deleted resource.
  *
@@ -269,7 +268,7 @@ function putResource (resourceConfig, store, id, version, data) {
  * If the version does not match we return a `VersionMismatch` error.
  * If the resource does not exist we return a `NotFound` error.
  */
-function deleteResource (store, id, version) {
+function deleteResource(store, id, version) {
   const resource = store[id];
 
   if (!resource) {
@@ -286,17 +285,18 @@ function deleteResource (store, id, version) {
   return $q.resolve(resource);
 }
 
-
-function rejectVersionMismatch () {
+function rejectVersionMismatch() {
   return rejectResponse(422, 'Version mismatch');
 }
 
-function rejectNotFound () {
+function rejectNotFound() {
   return rejectResponse(404, 'Not found');
 }
 
-function rejectResponse (status, message) {
-  return $q.reject(Object.assign(new Error(`${status} ${message}`), {
-    statusCode: status
-  }));
+function rejectResponse(status, message) {
+  return $q.reject(
+    Object.assign(new Error(`${status} ${message}`), {
+      statusCode: status
+    })
+  );
 }

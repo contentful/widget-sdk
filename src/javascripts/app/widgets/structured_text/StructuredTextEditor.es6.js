@@ -7,10 +7,7 @@ import deepEqual from 'fast-deep-equal';
 
 import EditList from './plugins/List/EditListWrapper';
 
-import {
-  toSlatejsDocument,
-  toContentfulDocument
-} from '@contentful/contentful-slatejs-adapter';
+import { toSlatejsDocument, toContentfulDocument } from '@contentful/contentful-slatejs-adapter';
 import { EditorToolbar, EditorToolbarDivider } from '@contentful/ui-component-library';
 
 import Bold, { BoldPlugin } from './plugins/Bold';
@@ -69,7 +66,7 @@ const initialValue = Value.fromJSON(toSlatejsDocument(emptyDoc));
 // operations fire from Slatejs to not trigger unncessary saves.
 const ignoredOperations = ['set_value', 'set_selection'];
 
-function validateOperation (op) {
+function validateOperation(op) {
   // We want to allow "set_node" operations where the node
   // type changes like quoting text.
   if (op.type === 'set_node' && !op.properties.type) {
@@ -90,7 +87,7 @@ export default class StructuredTextEditor extends React.Component {
   static defaultProps = {
     value: emptyDoc
   };
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     this.state = {
@@ -98,30 +95,26 @@ export default class StructuredTextEditor extends React.Component {
       value:
         this.props.value && this.props.value.nodeClass === 'document'
           ? Value.fromJSON({
-            object: 'value',
-            document: toSlatejsDocument(this.props.value)
-          })
+              object: 'value',
+              document: toSlatejsDocument(this.props.value)
+            })
           : initialValue,
       hasFocus: false
     };
   }
 
   onChange = ({ value, operations }) => {
-    const lastOperations = operations
-      .filter(validateOperation)
-      .toJS();
+    const lastOperations = operations.filter(validateOperation).toJS();
 
     this.setState({ value, lastOperations, headingMenuOpen: false });
   };
 
-  componentDidUpdate (prevProps) {
+  componentDidUpdate(prevProps) {
     const isIncomingChange = !deepEqual(this.props.value, prevProps.value);
     const contentIsUpdated = this.state.lastOperations.length > 0;
     if (!this.props.isDisabled && contentIsUpdated) {
       this.setState({ lastOperations: [] });
-      this.props.onChange(
-        toContentfulDocument(this.state.value.document.toJSON())
-      );
+      this.props.onChange(toContentfulDocument(this.state.value.document.toJSON()));
     } else if (isIncomingChange) {
       this.setState({
         value: Value.fromJSON({
@@ -132,7 +125,7 @@ export default class StructuredTextEditor extends React.Component {
     }
   }
 
-  renderToolbar () {
+  renderToolbar() {
     const props = {
       change: this.state.value.change(),
       onToggle: this.onChange,
@@ -140,25 +133,16 @@ export default class StructuredTextEditor extends React.Component {
     };
 
     return (
-      <EditorToolbar
-        extraClassNames="structured-text__toolbar"
-        data-test-id="toolbar"
-      >
+      <EditorToolbar extraClassNames="structured-text__toolbar" data-test-id="toolbar">
         <HeadingDropdown
           onToggle={this.toggleHeadingMenu}
           isToggleActive={true}
           isOpen={this.state.headingMenuOpen}
           onClose={this.closeHeadingMenu}
           change={props.change}
-          disabled={props.disabled}
-        >
-          <Paragraph
-            {...props}
-          />
-          <Heading1
-            {...props}
-            extraClassNames="toolbar-h1-toggle"
-          />
+          disabled={props.disabled}>
+          <Paragraph {...props} />
+          <Heading1 {...props} extraClassNames="toolbar-h1-toggle" />
           <Heading2 {...props} />
           <Heading3 {...props} />
           <Heading4 {...props} />
@@ -192,7 +176,7 @@ export default class StructuredTextEditor extends React.Component {
       headingMenuOpen: false
     });
 
-  render () {
+  render() {
     const classNames = `
       structured-text
       ${!this.props.isDisabled ? 'structured-text--enabled' : ''}

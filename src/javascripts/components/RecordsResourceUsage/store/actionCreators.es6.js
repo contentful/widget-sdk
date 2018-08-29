@@ -3,7 +3,7 @@ import createResourceService from 'services/ResourceService';
 
 import * as actions from './actions';
 
-export function getIncentivizingFlag () {
+export function getIncentivizingFlag() {
   return async dispatch => {
     const flagName = 'feature-bv-06-2018-incentivize-upgrade';
     let status;
@@ -19,7 +19,7 @@ export function getIncentivizingFlag () {
   };
 }
 
-export function getResource ({ spaceId, resourceName }) {
+export function getResource({ spaceId, resourceName }) {
   return async dispatch => {
     const resources = createResourceService(spaceId);
     let resource;

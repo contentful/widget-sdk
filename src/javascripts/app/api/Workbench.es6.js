@@ -1,27 +1,29 @@
-import {h} from 'utils/hyperscript';
+import { h } from 'utils/hyperscript';
 
-export function withSidebar (content, sidebar) {
+export function withSidebar(content, sidebar) {
   return h('.workbench', [
     h('cf-api-key-nav'),
     h('.workbench-main', [
       h('.workbench-main__content', [content]),
-      h('.workbench-main__sidebar', [
-        h('.entity-sidebar', sidebar)
-      ])
+      h('.workbench-main__sidebar', [h('.entity-sidebar', sidebar)])
     ])
   ]);
 }
 
-export function withoutSidebar (content) {
+export function withoutSidebar(content) {
   return h('.workbench', [
     h('cf-api-key-nav'),
-    h('.workbench-main', {
-      style: {
-        display: 'block',
-        overflowY: 'auto',
-        overflowX: 'hidden',
-        position: 'relative'
-      }
-    }, [content])
+    h(
+      '.workbench-main',
+      {
+        style: {
+          display: 'block',
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          position: 'relative'
+        }
+      },
+      [content]
+    )
   ]);
 }

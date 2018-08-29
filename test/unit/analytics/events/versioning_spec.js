@@ -2,19 +2,21 @@
 
 describe('Tracking versioning', () => {
   const data = {
-    entry: {sys: {id: 'eid'}},
-    snapshot: {sys: {
-      id: 'sid',
-      snapshotType: 'publication',
-      createdBy: {sys: {id: 'uid'}}
-    }}
+    entry: { sys: { id: 'eid' } },
+    snapshot: {
+      sys: {
+        id: 'sid',
+        snapshotType: 'publication',
+        createdBy: { sys: { id: 'uid' } }
+      }
+    }
   };
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     this.analytics = this.$inject('analytics/Analytics');
     sinon.stub(this.analytics, 'track');
-    this.analytics.enable({sys: {id: 'uid'}});
+    this.analytics.enable({ sys: { id: 'uid' } });
 
     this.track = this.$inject('analyticsEvents/versioning');
     this.track.setData(data.entry, data.snapshot);
@@ -27,12 +29,12 @@ describe('Tracking versioning', () => {
       sinon.assert.calledOnce(this.analytics.track);
       expect(this.analytics.track.firstCall.args[0]).toBe(`versioning:${event}`);
       const data = this.getTrackingData();
-      Object.keys(expected).forEach((key) => {
+      Object.keys(expected).forEach(key => {
         expect(data[key]).toEqual(expected[key]);
       });
     };
 
-    this.assertBasicAnalyticsCall = (event) => {
+    this.assertBasicAnalyticsCall = event => {
       this.assertAnalyticsCall(event, {
         entryId: 'eid',
         snapshotId: 'sid',
@@ -43,36 +45,36 @@ describe('Tracking versioning', () => {
   });
 
   describe('"authorIsUser" event data', () => {
-    it('sends true if author of snapshot is the current user', function () {
+    it('sends true if author of snapshot is the current user', function() {
       this.track.opened();
-      this.assertAnalyticsCall('snapshot_opened', {authorIsUser: true});
+      this.assertAnalyticsCall('snapshot_opened', { authorIsUser: true });
     });
 
-    it('sends false if snapshot was taken by some other user', function () {
+    it('sends false if snapshot was taken by some other user', function() {
       const snapshot = _.cloneDeep(data.snapshot);
       snapshot.sys.createdBy.sys.id = 'other-user';
       this.track.setData(data.entry, snapshot);
 
       this.track.opened();
-      this.assertAnalyticsCall('snapshot_opened', {authorIsUser: false});
+      this.assertAnalyticsCall('snapshot_opened', { authorIsUser: false });
     });
   });
 
   describe('#noSnapshots', () => {
-    it('sends entryId', function () {
+    it('sends entryId', function() {
       this.track.noSnapshots('xxx');
-      this.assertAnalyticsCall('no_snapshots', {entryId: 'xxx'});
+      this.assertAnalyticsCall('no_snapshots', { entryId: 'xxx' });
     });
   });
 
   describe('#opened', () => {
-    it('uses "deepLink" as a default source', function () {
+    it('uses "deepLink" as a default source', function() {
       this.track.opened();
       this.assertBasicAnalyticsCall('snapshot_opened');
       expect(this.getTrackingData().source).toBe('deepLink');
     });
 
-    it('uses custom source', function () {
+    it('uses custom source', function() {
       this.track.opened('custom-source');
       this.assertBasicAnalyticsCall('snapshot_opened');
       expect(this.getTrackingData().source).toBe('custom-source');
@@ -80,13 +82,13 @@ describe('Tracking versioning', () => {
   });
 
   describe('#closed', () => {
-    it('is not discarded by default', function () {
+    it('is not discarded by default', function() {
       this.track.closed();
       this.assertBasicAnalyticsCall('snapshot_closed');
       expect(this.getTrackingData().changesDiscarded).toBe(false);
     });
 
-    it('is discarded if called with boolean true', function () {
+    it('is discarded if called with boolean true', function() {
       this.track.closed(true);
       this.assertBasicAnalyticsCall('snapshot_closed');
       expect(this.getTrackingData().changesDiscarded).toBe(true);
@@ -99,7 +101,7 @@ describe('Tracking versioning', () => {
       getDifferenceCount: _.constant(4)
     };
 
-    it('uses picker to calculate params for partial restore', function () {
+    it('uses picker to calculate params for partial restore', function() {
       this.track.restored(picker);
       this.assertBasicAnalyticsCall('snapshot_restored');
       this.assertAnalyticsCall('snapshot_restored', {
@@ -109,7 +111,7 @@ describe('Tracking versioning', () => {
       });
     });
 
-    it('uses picker to calculate params for full restore', function () {
+    it('uses picker to calculate params for full restore', function() {
       picker.getPathsToRestore = _.constant([1, 2, 3, 4]);
       this.track.restored(picker);
       this.assertBasicAnalyticsCall('snapshot_restored');
@@ -119,7 +121,7 @@ describe('Tracking versioning', () => {
       });
     });
 
-    it('makes use of "show only diffs" toggle', function () {
+    it('makes use of "show only diffs" toggle', function() {
       this.track.restored(picker, true);
       this.assertBasicAnalyticsCall('snapshot_restored');
       expect(this.getTrackingData().showDiffsOnly).toBe(true);
@@ -127,23 +129,23 @@ describe('Tracking versioning', () => {
   });
 
   describe('#trackableConfirmator', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.$q = this.$inject('$q');
       this.dialog = this.$inject('modalDialog');
     });
 
-    it('displays confirmation dialog', function () {
-      this.dialog.open = (params) => {
+    it('displays confirmation dialog', function() {
+      this.dialog.open = params => {
         expect(params.template).toBe('confirm_leave_comparison');
-        return {promise: this.$q.resolve()};
+        return { promise: this.$q.resolve() };
       };
 
       this.track.trackableConfirmator(_.noop)();
     });
 
-    it('tracks close with discarded changes', function () {
+    it('tracks close with discarded changes', function() {
       this.dialog.open = () => {
-        return {promise: this.$q.resolve({discarded: true})};
+        return { promise: this.$q.resolve({ discarded: true }) };
       };
 
       this.track.trackableConfirmator(_.noop)();
@@ -153,9 +155,9 @@ describe('Tracking versioning', () => {
       });
     });
 
-    it('does not track if was not discarded', function () {
+    it('does not track if was not discarded', function() {
       this.dialog.open = () => {
-        return {promise: this.$q.resolve({discarded: false})};
+        return { promise: this.$q.resolve({ discarded: false }) };
       };
 
       this.track.trackableConfirmator(_.noop)();
@@ -165,20 +167,20 @@ describe('Tracking versioning', () => {
   });
 
   describe('#publishedRestored', () => {
-    it('sends entry ID if was published right after restoring', function () {
-      this.track.registerRestoredVersion({sys: {version: 1, id: 'xyz'}});
-      this.track.publishedRestored({sys: {version: 2, id: 'xyz'}});
-      this.assertAnalyticsCall('published_restored', {entryId: 'xyz'});
+    it('sends entry ID if was published right after restoring', function() {
+      this.track.registerRestoredVersion({ sys: { version: 1, id: 'xyz' } });
+      this.track.publishedRestored({ sys: { version: 2, id: 'xyz' } });
+      this.assertAnalyticsCall('published_restored', { entryId: 'xyz' });
     });
 
-    it('does nothing if actions were performed between restoring and publishing', function () {
-      this.track.registerRestoredVersion({sys: {version: 1, id: 'xyz'}});
-      this.track.publishedRestored({sys: {version: 9, id: 'xyz'}});
+    it('does nothing if actions were performed between restoring and publishing', function() {
+      this.track.registerRestoredVersion({ sys: { version: 1, id: 'xyz' } });
+      this.track.publishedRestored({ sys: { version: 9, id: 'xyz' } });
       sinon.assert.notCalled(this.analytics.track);
     });
 
-    it('does nothing if entry was not restored', function () {
-      this.track.publishedRestored({sys: {version: 1, id: 'xyz'}});
+    it('does nothing if entry was not restored', function() {
+      this.track.publishedRestored({ sys: { version: 1, id: 'xyz' } });
       sinon.assert.notCalled(this.analytics.track);
     });
   });

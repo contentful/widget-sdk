@@ -1,6 +1,5 @@
-import {transform, flatten, chunk, uniq} from 'lodash';
+import { transform, flatten, chunk, uniq } from 'lodash';
 import $q from '$q';
-
 
 // The maximum number of IDs to query for in one request.
 //
@@ -57,23 +56,21 @@ const IDS_PER_QUERY = 50;
 // here uses the query methods and entity objects from
 // `@contentful/client` while the other service uses the barebone CMA
 // space api.
-export default function (queryEntities) {
+export default function(queryEntities) {
   const entities = {};
 
   return {
-    set (ids) {
+    set(ids) {
       // IDs not cached already
-      const newIds = ids.filter((id) => !entities[id]);
+      const newIds = ids.filter(id => !entities[id]);
 
       // IDs cached but now requested
-      const oldIds =
-        Object.keys(entities)
-        .filter((id) => ids.indexOf(id) === -1);
+      const oldIds = Object.keys(entities).filter(id => ids.indexOf(id) === -1);
 
-      oldIds.forEach((id) => delete entities[id]);
+      oldIds.forEach(id => delete entities[id]);
       addEntities(newIds);
     },
-    get (id) {
+    get(id) {
       if (!entities[id]) {
         addEntities([id]);
       }
@@ -81,16 +78,19 @@ export default function (queryEntities) {
     }
   };
 
-  function addEntities (ids) {
-    const req = getEntitiesById(queryEntities, ids)
-      .then((entities) => {
-        return transform(entities, (byId, entity) => {
+  function addEntities(ids) {
+    const req = getEntitiesById(queryEntities, ids).then(entities => {
+      return transform(
+        entities,
+        (byId, entity) => {
           byId[entity.data.sys.id] = entity;
-        }, {});
-      });
+        },
+        {}
+      );
+    });
 
-    ids.forEach((id) => {
-      entities[id] = req.then((byId) => byId[id]);
+    ids.forEach(id => {
+      entities[id] = req.then(byId => byId[id]);
     });
   }
 }
@@ -103,12 +103,13 @@ export default function (queryEntities) {
  * @param {string[]} ids
  * @returns {Promise<Entity[]>}
  */
-function getEntitiesById (queryEntities, ids) {
-  const queries = chunk(uniq(ids), IDS_PER_QUERY)
-  .map(ids => queryEntities({
-    'sys.id[in]': ids.join(','),
-    limit: IDS_PER_QUERY
-  }));
+function getEntitiesById(queryEntities, ids) {
+  const queries = chunk(uniq(ids), IDS_PER_QUERY).map(ids =>
+    queryEntities({
+      'sys.id[in]': ids.join(','),
+      limit: IDS_PER_QUERY
+    })
+  );
 
   return $q.all(queries).then(flatten);
 }

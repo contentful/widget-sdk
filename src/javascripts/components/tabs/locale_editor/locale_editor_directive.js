@@ -1,358 +1,372 @@
 'use strict';
 
-angular.module('contentful')
-.directive('cfLocaleEditor', [() => ({
-  template: JST.locale_editor(),
-  restrict: 'E',
-  controller: 'LocaleEditorController',
-  controllerAs: 'localeEditor'
-})])
-
-/**
- * @ngdoc type
- * @name LocaleEditorController
- *
- * @scope.requires context
- * @scope.requires locale
- * @scope.requires spaceLocales
- * @scope.requires localeForm
- *
- * @scope.provides locales
- * @scope.provides fallbackLocales
- */
-.controller('LocaleEditorController', ['$scope', 'require', function ($scope, require) {
-  const controller = this;
-  const spaceContext = require('spaceContext');
-  const TheLocaleStore = require('TheLocaleStore');
-  const $q = require('$q');
-  const modalDialog = require('modalDialog');
-  const Command = require('command');
-  const leaveConfirmator = require('navigation/confirmLeaveEditor');
-  const $state = require('$state');
-  const closeState = require('navigation/closeState');
-  const localeList = require('data/localeList').create($scope.spaceLocales);
-  const notify = require('LocaleEditor/notifications');
-
-  let formWasDirty = false;
-  let persistedLocaleCode = null;
-
-  $scope.locales = localeList.prepareLocaleList($scope.locale);
-  onLoadOrUpdate();
-
-  $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
-
-  $scope.$watch('localeForm.$dirty', modified => {
-    $scope.context.dirty = modified;
-  });
-
-  $scope.$watch('locale.code', code => {
-    $scope.context.title = prepareTitle();
-    clearFallbackIfTheSame(code);
-    $scope.fallbackLocales = localeList.prepareFallbackList(code);
-  });
-
-  function onLoadOrUpdate () {
-    const code = $scope.locale.code;
-    persistedLocaleCode = code;
-    $scope.hasDependantLocales = localeList.hasDependantLocales(code);
-  }
-
-  function prepareTitle () {
-    const name = getLocaleName();
-    const empty = $scope.locale.sys.id ? 'Unnamed locale' : 'New locale';
-    return name || empty;
-  }
-
-  function getLocaleName () {
-    const code = $scope.locale.code;
-    const locale = findLocale(code);
-    return locale && locale.name;
-  }
-
-  function findLocale (code) {
-    return _.find($scope.locales, {code: code});
-  }
-
-  // sometimes a code is selected as a fallback code, but then
-  // the same code is selected as the code of the locale;
-  // in this situation we clear the fallback code;
-  // it cannot happen in the opposite direction (list is filtered)
-  function clearFallbackIfTheSame (code) {
-    if (code && $scope.locale.fallbackCode === code) {
-      $scope.locale.fallbackCode = null;
-    }
-  }
+angular
+  .module('contentful')
+  .directive('cfLocaleEditor', [
+    () => ({
+      template: JST.locale_editor(),
+      restrict: 'E',
+      controller: 'LocaleEditorController',
+      controllerAs: 'localeEditor'
+    })
+  ])
 
   /**
-   * @ngdoc method
-   * @name LocaleEditorController#delete
-   * @type {Command}
+   * @ngdoc type
+   * @name LocaleEditorController
+   *
+   * @scope.requires context
+   * @scope.requires locale
+   * @scope.requires spaceLocales
+   * @scope.requires localeForm
+   *
+   * @scope.provides locales
+   * @scope.provides fallbackLocales
    */
-  controller.delete = Command.create(startDeleteFlow, {
-    available: function () {
-      return !$scope.context.isNew &&
-             $scope.locale.sys.id &&
-             !$scope.locale.default;
-    }
-  });
+  .controller('LocaleEditorController', [
+    '$scope',
+    'require',
+    function($scope, require) {
+      const controller = this;
+      const spaceContext = require('spaceContext');
+      const TheLocaleStore = require('TheLocaleStore');
+      const $q = require('$q');
+      const modalDialog = require('modalDialog');
+      const Command = require('command');
+      const leaveConfirmator = require('navigation/confirmLeaveEditor');
+      const $state = require('$state');
+      const closeState = require('navigation/closeState');
+      const localeList = require('data/localeList').create($scope.spaceLocales);
+      const notify = require('LocaleEditor/notifications');
 
-  function startDeleteFlow () {
-    lockFormWhileSubmitting();
-    return openConfirmationDialog()
-    .then(result => {
-      if (result.confirmed) {
-        return maybeOpenFallbackLocaleChangeDialog()
-        .then(deleteLocale, resetFormStatusOnFailure);
-      } else {
-        return resetFormStatusOnFailure();
-      }
-    });
-  }
+      let formWasDirty = false;
+      let persistedLocaleCode = null;
 
-  function openConfirmationDialog () {
-    return modalDialog.openConfirmDialog({
-      template: 'locale_removal_confirm_dialog',
-      scopeData: {locale: $scope.locale}
-    });
-  }
-
-  function maybeOpenFallbackLocaleChangeDialog () {
-    if (localeList.hasDependantLocales($scope.locale.code)) {
-      return openFallbackLocaleChangeDialog();
-    } else {
-      return $q.resolve();
-    }
-  }
-
-  function openFallbackLocaleChangeDialog () {
-    const code = $scope.locale.code;
-    const dependantLocales = localeList.getDependantLocales(code);
-
-    return modalDialog.open({
-      template: 'choose_new_fallback_dialog',
-      scopeData: {
-        locale: $scope.locale,
-        model: {newFallbackCode: null},
-        dependantLocaleNames: prepareDependantLocaleNames(dependantLocales),
-        availableLocales: localeList.getAvailableFallbackLocales(code)
-      }
-    }).promise.then(newFallbackCode => {
-      const updates = _.map(dependantLocales, fallbackUpdater(newFallbackCode));
-      return $q.all(updates).catch(() => {
-        notify.codeChangeError();
-        return $q.reject();
-      });
-    });
-  }
-
-  function prepareDependantLocaleNames (dependantLocales) {
-    if (dependantLocales.length > 4) {
-      const rest = ' and ' + (dependantLocales.length - 3) + ' other locales';
-      return _.map(dependantLocales.slice(0, 3), 'name').join(', ') + rest;
-    } else {
-      return _.map(dependantLocales, 'name').join(', ');
-    }
-  }
-
-  function fallbackUpdater (newFallbackCode) {
-    return locale => {
-      const localeToUpdate = _.find($scope.spaceLocales, {code: locale.code});
-      if (localeToUpdate) {
-        const data = _.cloneDeep(localeToUpdate);
-        data.fallbackCode = newFallbackCode;
-        return spaceContext.localeRepo.save(data);
-      } else {
-        return $q.resolve();
-      }
-    };
-  }
-
-  function deleteLocale () {
-    const sys = $scope.locale.sys;
-    return spaceContext.localeRepo.remove(sys.id, sys.version)
-    .then(function deletedSuccesfully () {
-      return TheLocaleStore.refresh()
-      .then(() => closeState())
-      .finally(notify.deleteSuccess);
-    }, function errorDeletingLocale (err) {
-      resetFormStatusOnFailure();
-      notify.deleteError(err);
-    });
-  }
-
-
-  /**
-   * @ngdoc property
-   * @name LocaleEditorController#cancel
-   * @type {Command}
-   */
-  controller.cancel = Command.create(function cancel () {
-    // X.detail -> X.list
-    return $state.go('^.list');
-  }, {
-    available: function () {
-      return $scope.context.isNew;
-    }
-  });
-
-
-  /**
-   * @ngdoc property
-   * @name LocaleEditorController#save
-   * @type {Command}
-   */
-  controller.save = Command.create(save, {
-    disabled: function () {
-      const form = $scope.localeForm;
-      return form.$invalid || !form.$dirty || !$scope.locale.code;
-    }
-  });
-
-  function save () {
-    if ($scope.hasDependantLocales && wasLocaleCodeChanged()) {
-      notify.notRenameable();
-      return $q.reject();
-    }
-
-    $scope.locale.name = getLocaleName();
-    lockFormWhileSubmitting();
-    return confirmCodeChange()
-    .then(result => {
-      if (result.confirmed) {
-        return spaceContext.localeRepo.save($scope.locale)
-        .then(saveSuccessHandler)
-        .catch(saveErrorHandler);
-      } else {
-        return resetFormStatusOnFailure();
-      }
-    });
-  }
-
-  function saveSuccessHandler (locale) {
-    $scope.locale = locale;
-    $scope.localeForm.$setPristine();
-    $scope.context.dirty = false;
-    return TheLocaleStore.refresh()
-    .then(() => {
+      $scope.locales = localeList.prepareLocaleList($scope.locale);
       onLoadOrUpdate();
-      notify.saveSuccess();
-      if ($scope.context.isNew) {
-        return $state.go('^.detail', {
-          localeId: $scope.locale.sys.id
-        });
+
+      $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
+
+      $scope.$watch('localeForm.$dirty', modified => {
+        $scope.context.dirty = modified;
+      });
+
+      $scope.$watch('locale.code', code => {
+        $scope.context.title = prepareTitle();
+        clearFallbackIfTheSame(code);
+        $scope.fallbackLocales = localeList.prepareFallbackList(code);
+      });
+
+      function onLoadOrUpdate() {
+        const code = $scope.locale.code;
+        persistedLocaleCode = code;
+        $scope.hasDependantLocales = localeList.hasDependantLocales(code);
       }
-    });
-  }
 
-  function saveErrorHandler (err) {
-    notify.saveError(err);
-    resetFormStatusOnFailure();
-  }
+      function prepareTitle() {
+        const name = getLocaleName();
+        const empty = $scope.locale.sys.id ? 'Unnamed locale' : 'New locale';
+        return name || empty;
+      }
 
-  function confirmCodeChange () {
-    if (wasLocaleCodeChanged()) {
-      return modalDialog.openConfirmDialog({
-        template: 'locale_code_change_confirm_dialog',
-        scopeData: {
-          locale: $scope.locale,
-          persistedLocaleName: findLocale(persistedLocaleCode).name,
-          persistedLocaleCode: persistedLocaleCode
+      function getLocaleName() {
+        const code = $scope.locale.code;
+        const locale = findLocale(code);
+        return locale && locale.name;
+      }
+
+      function findLocale(code) {
+        return _.find($scope.locales, { code: code });
+      }
+
+      // sometimes a code is selected as a fallback code, but then
+      // the same code is selected as the code of the locale;
+      // in this situation we clear the fallback code;
+      // it cannot happen in the opposite direction (list is filtered)
+      function clearFallbackIfTheSame(code) {
+        if (code && $scope.locale.fallbackCode === code) {
+          $scope.locale.fallbackCode = null;
+        }
+      }
+
+      /**
+       * @ngdoc method
+       * @name LocaleEditorController#delete
+       * @type {Command}
+       */
+      controller.delete = Command.create(startDeleteFlow, {
+        available: function() {
+          return !$scope.context.isNew && $scope.locale.sys.id && !$scope.locale.default;
         }
       });
-    } else {
-      return $q.resolve({confirmed: true});
-    }
-  }
 
-  function wasLocaleCodeChanged () {
-    return persistedLocaleCode && persistedLocaleCode !== $scope.locale.code;
-  }
+      function startDeleteFlow() {
+        lockFormWhileSubmitting();
+        return openConfirmationDialog().then(result => {
+          if (result.confirmed) {
+            return maybeOpenFallbackLocaleChangeDialog().then(
+              deleteLocale,
+              resetFormStatusOnFailure
+            );
+          } else {
+            return resetFormStatusOnFailure();
+          }
+        });
+      }
 
-  function lockFormWhileSubmitting () {
-    formWasDirty = $scope.localeForm.$dirty;
-    $scope.localeForm.$setSubmitted();
-  }
+      function openConfirmationDialog() {
+        return modalDialog.openConfirmDialog({
+          template: 'locale_removal_confirm_dialog',
+          scopeData: { locale: $scope.locale }
+        });
+      }
 
-  function resetFormStatusOnFailure () {
-    $scope.localeForm.$setPristine();
-    if (formWasDirty) {
-      $scope.localeForm.$setDirty();
-    }
-  }
-}])
+      function maybeOpenFallbackLocaleChangeDialog() {
+        if (localeList.hasDependantLocales($scope.locale.code)) {
+          return openFallbackLocaleChangeDialog();
+        } else {
+          return $q.resolve();
+        }
+      }
 
-.factory('LocaleEditor/notifications', ['require', require => {
-  const notification = require('notification');
-  const logger = require('logger');
+      function openFallbackLocaleChangeDialog() {
+        const code = $scope.locale.code;
+        const dependantLocales = localeList.getDependantLocales(code);
 
-  const NOT_RENAMEABLE_MESSAGE = 'Cannot change the code of a locale which is fallback of another one';
-  const ERROR_CHECKS = [
-    {
-      message: 'This locale already exists',
-      check: _.partial(checkUnprocessableEntityErrorName, 'taken')
-    },
-    {
-      message: 'Fallback setting creates a loop',
-      check: _.partial(checkUnprocessableEntityErrorName, 'fallback locale creates a loop')
-    },
-    {
-      message: NOT_RENAMEABLE_MESSAGE,
-      check: function (err) {
-        return status === 403 && _.get(err, 'body.sys.id') === 'FallbackLocaleNotRenameable';
+        return modalDialog
+          .open({
+            template: 'choose_new_fallback_dialog',
+            scopeData: {
+              locale: $scope.locale,
+              model: { newFallbackCode: null },
+              dependantLocaleNames: prepareDependantLocaleNames(dependantLocales),
+              availableLocales: localeList.getAvailableFallbackLocales(code)
+            }
+          })
+          .promise.then(newFallbackCode => {
+            const updates = _.map(dependantLocales, fallbackUpdater(newFallbackCode));
+            return $q.all(updates).catch(() => {
+              notify.codeChangeError();
+              return $q.reject();
+            });
+          });
+      }
+
+      function prepareDependantLocaleNames(dependantLocales) {
+        if (dependantLocales.length > 4) {
+          const rest = ' and ' + (dependantLocales.length - 3) + ' other locales';
+          return _.map(dependantLocales.slice(0, 3), 'name').join(', ') + rest;
+        } else {
+          return _.map(dependantLocales, 'name').join(', ');
+        }
+      }
+
+      function fallbackUpdater(newFallbackCode) {
+        return locale => {
+          const localeToUpdate = _.find($scope.spaceLocales, { code: locale.code });
+          if (localeToUpdate) {
+            const data = _.cloneDeep(localeToUpdate);
+            data.fallbackCode = newFallbackCode;
+            return spaceContext.localeRepo.save(data);
+          } else {
+            return $q.resolve();
+          }
+        };
+      }
+
+      function deleteLocale() {
+        const sys = $scope.locale.sys;
+        return spaceContext.localeRepo.remove(sys.id, sys.version).then(
+          function deletedSuccesfully() {
+            return TheLocaleStore.refresh()
+              .then(() => closeState())
+              .finally(notify.deleteSuccess);
+          },
+          function errorDeletingLocale(err) {
+            resetFormStatusOnFailure();
+            notify.deleteError(err);
+          }
+        );
+      }
+
+      /**
+       * @ngdoc property
+       * @name LocaleEditorController#cancel
+       * @type {Command}
+       */
+      controller.cancel = Command.create(
+        function cancel() {
+          // X.detail -> X.list
+          return $state.go('^.list');
+        },
+        {
+          available: function() {
+            return $scope.context.isNew;
+          }
+        }
+      );
+
+      /**
+       * @ngdoc property
+       * @name LocaleEditorController#save
+       * @type {Command}
+       */
+      controller.save = Command.create(save, {
+        disabled: function() {
+          const form = $scope.localeForm;
+          return form.$invalid || !form.$dirty || !$scope.locale.code;
+        }
+      });
+
+      function save() {
+        if ($scope.hasDependantLocales && wasLocaleCodeChanged()) {
+          notify.notRenameable();
+          return $q.reject();
+        }
+
+        $scope.locale.name = getLocaleName();
+        lockFormWhileSubmitting();
+        return confirmCodeChange().then(result => {
+          if (result.confirmed) {
+            return spaceContext.localeRepo
+              .save($scope.locale)
+              .then(saveSuccessHandler)
+              .catch(saveErrorHandler);
+          } else {
+            return resetFormStatusOnFailure();
+          }
+        });
+      }
+
+      function saveSuccessHandler(locale) {
+        $scope.locale = locale;
+        $scope.localeForm.$setPristine();
+        $scope.context.dirty = false;
+        return TheLocaleStore.refresh().then(() => {
+          onLoadOrUpdate();
+          notify.saveSuccess();
+          if ($scope.context.isNew) {
+            return $state.go('^.detail', {
+              localeId: $scope.locale.sys.id
+            });
+          }
+        });
+      }
+
+      function saveErrorHandler(err) {
+        notify.saveError(err);
+        resetFormStatusOnFailure();
+      }
+
+      function confirmCodeChange() {
+        if (wasLocaleCodeChanged()) {
+          return modalDialog.openConfirmDialog({
+            template: 'locale_code_change_confirm_dialog',
+            scopeData: {
+              locale: $scope.locale,
+              persistedLocaleName: findLocale(persistedLocaleCode).name,
+              persistedLocaleCode: persistedLocaleCode
+            }
+          });
+        } else {
+          return $q.resolve({ confirmed: true });
+        }
+      }
+
+      function wasLocaleCodeChanged() {
+        return persistedLocaleCode && persistedLocaleCode !== $scope.locale.code;
+      }
+
+      function lockFormWhileSubmitting() {
+        formWasDirty = $scope.localeForm.$dirty;
+        $scope.localeForm.$setSubmitted();
+      }
+
+      function resetFormStatusOnFailure() {
+        $scope.localeForm.$setPristine();
+        if (formWasDirty) {
+          $scope.localeForm.$setDirty();
+        }
       }
     }
-  ];
+  ])
 
-  return {
-    deleteSuccess: deleteSuccess,
-    saveSuccess: saveSuccess,
-    notRenameable: notRenameable,
-    codeChangeError: codeChangeError,
-    deleteError: deleteError,
-    saveError: saveError
-  };
+  .factory('LocaleEditor/notifications', [
+    'require',
+    require => {
+      const notification = require('notification');
+      const logger = require('logger');
 
-  function deleteSuccess () {
-    notification.info('Locale deleted successfully');
-  }
+      const NOT_RENAMEABLE_MESSAGE =
+        'Cannot change the code of a locale which is fallback of another one';
+      const ERROR_CHECKS = [
+        {
+          message: 'This locale already exists',
+          check: _.partial(checkUnprocessableEntityErrorName, 'taken')
+        },
+        {
+          message: 'Fallback setting creates a loop',
+          check: _.partial(checkUnprocessableEntityErrorName, 'fallback locale creates a loop')
+        },
+        {
+          message: NOT_RENAMEABLE_MESSAGE,
+          check: function(err) {
+            return status === 403 && _.get(err, 'body.sys.id') === 'FallbackLocaleNotRenameable';
+          }
+        }
+      ];
 
-  function saveSuccess () {
-    notification.info('Locale saved successfully');
-  }
+      return {
+        deleteSuccess: deleteSuccess,
+        saveSuccess: saveSuccess,
+        notRenameable: notRenameable,
+        codeChangeError: codeChangeError,
+        deleteError: deleteError,
+        saveError: saveError
+      };
 
-  function notRenameable () {
-    notification.error(NOT_RENAMEABLE_MESSAGE);
-  }
+      function deleteSuccess() {
+        notification.info('Locale deleted successfully');
+      }
 
-  function codeChangeError () {
-    notification.error('New fallback code could not be saved');
-  }
+      function saveSuccess() {
+        notification.info('Locale saved successfully');
+      }
 
-  function deleteError (err) {
-    notification.error('Locale could not be deleted: ' + err.body.message);
-    logger.logServerWarn('Locale could not be deleted', {error: err});
-  }
+      function notRenameable() {
+        notification.error(NOT_RENAMEABLE_MESSAGE);
+      }
 
-  function saveError (err) {
-    const message = getErrorMessage(err);
-    if (message) {
-      notification.error('Locale could not be saved: ' + message);
-    } else {
-      notification.error('Locale could not be saved');
-      logger.logServerWarn('Locale could not be saved', {error: err});
+      function codeChangeError() {
+        notification.error('New fallback code could not be saved');
+      }
+
+      function deleteError(err) {
+        notification.error('Locale could not be deleted: ' + err.body.message);
+        logger.logServerWarn('Locale could not be deleted', { error: err });
+      }
+
+      function saveError(err) {
+        const message = getErrorMessage(err);
+        if (message) {
+          notification.error('Locale could not be saved: ' + message);
+        } else {
+          notification.error('Locale could not be saved');
+          logger.logServerWarn('Locale could not be saved', { error: err });
+        }
+      }
+
+      function getErrorMessage(err) {
+        const found = _.find(ERROR_CHECKS, item => item.check(err));
+
+        return found && found.message;
+      }
+
+      function checkUnprocessableEntityErrorName(name, err) {
+        const status = _.get(err, 'statusCode');
+        const errors = _.get(err, 'body.details.errors');
+
+        return status === 422 && errors && errors.length > 0 && errors[0].name === name;
+      }
     }
-  }
-
-  function getErrorMessage (err) {
-    const found = _.find(ERROR_CHECKS, item => item.check(err));
-
-    return found && found.message;
-  }
-
-  function checkUnprocessableEntityErrorName (name, err) {
-    const status = _.get(err, 'statusCode');
-    const errors = _.get(err, 'body.details.errors');
-
-    return status === 422 && errors && errors.length > 0 && errors[0].name === name;
-  }
-}]);
+  ]);

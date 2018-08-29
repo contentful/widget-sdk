@@ -12,8 +12,8 @@ export default {
       <li>Triggered when an entry or asset is published or unpublished</li>
       <li>Scoped to events in the master environment</li>
       <li>
-        Passes entity ID, entity type, space ID and environment ID as build-time
-        environment variables
+        Passes entity ID, entity type, space ID and environment ID as build-time environment
+        variables
       </li>
     </ul>
   ),
@@ -48,11 +48,7 @@ export default {
       description: (
         <p>
           Can be found on the{' '}
-          <a
-            href="https://travis-ci.com/profile"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href="https://travis-ci.com/profile" target="_blank" rel="noopener noreferrer">
             Travis CI Profile Page
           </a>
           . This value can’t be revealed once stored.
@@ -65,12 +61,7 @@ export default {
       name,
       //    https://api.travis-ci.com/repo/travis-ci%2Ftravis-core/requests
       url: `https://api.travis-ci.com/repo/${githubOrg}%2F${githubRepo}/requests`,
-      topics: [
-        'Entry.publish',
-        'Asset.publish',
-        'Entry.unpublish',
-        'Asset.unpublish'
-      ],
+      topics: ['Entry.publish', 'Asset.publish', 'Entry.unpublish', 'Asset.unpublish'],
       filters: [{ equals: [{ doc: 'sys.environment.sys.id' }, 'master'] }],
       headers: [
         { key: 'Travis-API-Version', value: '3' },

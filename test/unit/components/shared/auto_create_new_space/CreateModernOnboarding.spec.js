@@ -1,8 +1,8 @@
 import * as sinon from 'helpers/sinon';
 import * as K from 'helpers/mocks/kefir';
 
-describe('CreateModernOnboarding service', function () {
-  beforeEach(function () {
+describe('CreateModernOnboarding service', function() {
+  beforeEach(function() {
     module('contentful/test', $provide => {
       this.getAllKeys = sinon.stub();
       this.createKey = sinon.stub();
@@ -25,21 +25,22 @@ describe('CreateModernOnboarding service', function () {
     this.CreateModernOnboarding = this.$inject('createModernOnboarding');
   });
 
-  describe('getUser', function () {
-    it('should return given user', function () {
+  describe('getUser', function() {
+    it('should return given user', function() {
       expect(this.CreateModernOnboarding.getUser()).toEqual(K.getValue(this.user$));
     });
   });
 
-  describe('getStoragePrefix', function () {
-    it('should return the localStorage prefix used by modern stack onboarding', function () {
-      expect(this.CreateModernOnboarding.getStoragePrefix())
-        .toEqual(`ctfl:someUser:modernStackOnboarding`);
+  describe('getStoragePrefix', function() {
+    it('should return the localStorage prefix used by modern stack onboarding', function() {
+      expect(this.CreateModernOnboarding.getStoragePrefix()).toEqual(
+        `ctfl:someUser:modernStackOnboarding`
+      );
     });
   });
 
-  describe('getDeliveryToken', function () {
-    it('should return a first key from the list', async function () {
+  describe('getDeliveryToken', function() {
+    it('should return a first key from the list', async function() {
       const key = { accessToken: 'some' };
       this.getAllKeys.returns(Promise.resolve([key]));
       const deliveryToken = await this.CreateModernOnboarding.getDeliveryToken();
@@ -47,7 +48,7 @@ describe('CreateModernOnboarding service', function () {
       expect(deliveryToken).toBe(key.accessToken);
     });
 
-    it('should create a new key if list is empty', async function () {
+    it('should create a new key if list is empty', async function() {
       const key = { accessToken: 'newly created key' };
       this.getAllKeys.returns(Promise.resolve([]));
       this.createKey.returns(Promise.resolve(key));
@@ -57,8 +58,8 @@ describe('CreateModernOnboarding service', function () {
     });
   });
 
-  describe('getManagementToken', function () {
-    it('should create a new token if does not exist yet', async function () {
+  describe('getManagementToken', function() {
+    it('should create a new token if does not exist yet', async function() {
       const originalCreateManagementToken = this.CreateModernOnboarding.createManagementToken;
       this.CreateModernOnboarding.createManagementToken = sinon.spy();
 
@@ -69,7 +70,7 @@ describe('CreateModernOnboarding service', function () {
       this.CreateModernOnboarding.createManagementToken = originalCreateManagementToken;
     });
 
-    it('should get a created token', async function () {
+    it('should get a created token', async function() {
       const cmaKey = { token: 'newly created CMA token' };
       this.createCMAKey.returns(Promise.resolve(cmaKey));
       await this.CreateModernOnboarding.createManagementToken();

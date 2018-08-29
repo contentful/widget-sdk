@@ -1,7 +1,10 @@
 'use strict';
-angular.module('contentful')
-.controller('ListViewsController', [
-  '$scope', 'require', 'getBlankView', 'resetList', 'preserveStateAs',
+angular.module('contentful').controller('ListViewsController', [
+  '$scope',
+  'require',
+  'getBlankView',
+  'resetList',
+  'preserveStateAs',
   ($scope, require, getBlankView, resetList, preserveStateAs) => {
     const createViewMigrator = require('data/ViewMigrator').default;
     const createViewPersistor = require('data/ListViewPersistor').default;
@@ -11,8 +14,7 @@ angular.module('contentful')
     const Notification = require('notification');
 
     const viewMigrator = createViewMigrator(spaceContext.space, spaceContext.publishedCTs);
-    const viewPersistor = createViewPersistor(
-      spaceContext.getId(), viewMigrator, preserveStateAs);
+    const viewPersistor = createViewPersistor(spaceContext.getId(), viewMigrator, preserveStateAs);
 
     $scope.$watch('context.view', viewPersistor.save, true);
     $scope.loadView = loadView;
@@ -23,18 +25,18 @@ angular.module('contentful')
 
     viewPersistor.read().then(loadView);
 
-    function loadView (view) {
+    function loadView(view) {
       view = handleViewMigrationIssues(view);
       replaceView(view);
       resetList();
     }
 
-    function replaceView (view) {
+    function replaceView(view) {
       view = _.extend(getBlankView(), _.cloneDeep(view || {}));
       _.set($scope, ['context', 'view'], view);
     }
 
-    function handleViewMigrationIssues (view) {
+    function handleViewMigrationIssues(view) {
       if (view && view._legacySearchTerm) {
         view = _.clone(view);
         showViewMigrationFailedNotification(view);
@@ -46,12 +48,19 @@ angular.module('contentful')
       return view;
     }
 
-    function showViewMigrationFailedNotification (view) {
+    function showViewMigrationFailedNotification(view) {
       const isAdmin = spaceContext.getData('spaceMembership.admin', false);
       const contactPerson = isAdmin ? 'support' : 'your administrator';
-      const intro = 'There is a problem with your ' + (
-        view.title ? '“' + view.title + '” view' : 'current search');
-      Notification.error(intro + ', which has been reported. If the problem ' +
-        'persists, contact ' + contactPerson + '.');
+      const intro =
+        'There is a problem with your ' +
+        (view.title ? '“' + view.title + '” view' : 'current search');
+      Notification.error(
+        intro +
+          ', which has been reported. If the problem ' +
+          'persists, contact ' +
+          contactPerson +
+          '.'
+      );
     }
-  }]);
+  }
+]);

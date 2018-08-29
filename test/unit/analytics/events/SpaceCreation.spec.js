@@ -3,7 +3,7 @@
 import { deepFreeze } from 'utils/Freeze';
 
 describe('analytics/events/SpaceCreation#entityActionSuccess()', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     this.analytics = this.$inject('analytics/Analytics');
     this.analytics.track = sinon.stub();
@@ -32,40 +32,36 @@ describe('analytics/events/SpaceCreation#entityActionSuccess()', () => {
   });
 });
 
-function describeTrackingOf ({ event, entityData, tracksOrigin = false }) {
+function describeTrackingOf({ event, entityData, tracksOrigin = false }) {
   const withOrigin = tracksOrigin ? ' (with `event_origin`)' : '';
 
   describe(`tracking of \`${event}\`${withOrigin}`, () => {
-    it('tracks provided entity data$', function () {
+    it('tracks provided entity data$', function() {
       this.SpaceCreation.entityActionSuccess('ct123', entityData);
 
       const actualEntityData = tracksOrigin
         ? { ...entityData, eventOrigin: 'space-creation' }
         : entityData;
 
-      sinon.assert.calledWith(
-        this.analytics.track, event, actualEntityData);
+      sinon.assert.calledWith(this.analytics.track, event, actualEntityData);
     });
 
-    it('tracks template if provided', function () {
+    it('tracks template if provided', function() {
       const template = 'my template';
 
-      this.SpaceCreation.entityActionSuccess(
-        'ct123', entityData, template);
+      this.SpaceCreation.entityActionSuccess('ct123', entityData, template);
 
       const actualEntityData = { template, ...entityData };
       if (tracksOrigin) {
         actualEntityData.eventOrigin = 'example-space-creation';
       }
 
-      sinon.assert.calledWith(
-        this.analytics.track, event, actualEntityData
-      );
+      sinon.assert.calledWith(this.analytics.track, event, actualEntityData);
     });
   });
 }
 
-function newEntityData (action, entityType) {
+function newEntityData(action, entityType) {
   return deepFreeze({
     actionData: { action, entity: entityType }
   });

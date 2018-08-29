@@ -1,5 +1,5 @@
-import {once} from 'lodash';
-import {newClient as createCfClient} from 'contentfulClient';
+import { once } from 'lodash';
+import { newClient as createCfClient } from 'contentfulClient';
 import * as Config from 'Config';
 
 /**
@@ -13,7 +13,6 @@ import * as Config from 'Config';
  * delivery API.
  */
 
-
 // Setup client to contentful space that provides the boilerplate data.
 const usePreview = Config.env === 'development';
 const boilerplateSpaceId = '2m3cigbhrkff';
@@ -25,7 +24,6 @@ const boilerplateSpace = createCfClient({
   accessToken: usePreview ? previewToken : deliveryToken,
   host: `${usePreview ? 'preview' : 'cdn'}.contentful.com`
 });
-
 
 /**
  * @ngdoc service
@@ -48,22 +46,24 @@ const boilerplateSpace = createCfClient({
  */
 export const get = once(fetch);
 
-function fetch () {
-  return boilerplateSpace.entries({
-    content_type: 'boilerplate',
-    order: 'fields.order'
-  })
-  .then((items) => items.map(makeBoilerplateData));
+function fetch() {
+  return boilerplateSpace
+    .entries({
+      content_type: 'boilerplate',
+      order: 'fields.order'
+    })
+    .then(items => items.map(makeBoilerplateData));
 }
 
-function makeBoilerplateData (entry) {
+function makeBoilerplateData(entry) {
   return {
     id: entry.sys.id,
     name: entry.fields.name,
-    sourceUrl: function (space, cdaToken) {
-      return Config.toolsUrl(
-        ['boilerplates', entry.fields.platformId, 'download'],
-        { space_id: space, access_token: cdaToken });
+    sourceUrl: function(space, cdaToken) {
+      return Config.toolsUrl(['boilerplates', entry.fields.platformId, 'download'], {
+        space_id: space,
+        access_token: cdaToken
+      });
     },
     instructions: entry.fields.instructions,
     platform: entry.fields.platformId

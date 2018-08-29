@@ -1,7 +1,7 @@
 import $controller from '$controller';
 
 import * as K from 'utils/kefir';
-import {truncate} from 'stringUtils';
+import { truncate } from 'stringUtils';
 
 import spaceContext from 'spaceContext';
 import localeStore from 'TheLocaleStore';
@@ -12,16 +12,15 @@ import * as crumbFactory from 'navigation/Breadcrumbs/Factory';
 import * as Validator from './Validator';
 import * as Focus from './Focus';
 import initDocErrorHandler from './DocumentErrorHandler';
-import {makeNotify} from './Notifications';
+import { makeNotify } from './Notifications';
 import installTracking from './Tracking';
 
 import { loadAsset } from 'app/entity_editor/DataLoader';
 import { onFeatureFlag } from 'utils/LaunchDarkly';
 
-const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG =
-  'feature-at-05-2018-sliding-entry-editor-multi-level';
+const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG = 'feature-at-05-2018-sliding-entry-editor-multi-level';
 
-export default async function create ($scope, assetId) {
+export default async function create($scope, assetId) {
   $scope.context = {};
   let editorData;
   try {
@@ -41,9 +40,9 @@ export default async function create ($scope, assetId) {
   // add current state
   contextHistory.add(crumbFactory.Asset(editorData.entity.getSys(), $scope.context));
 
-  const editorContext = $scope.editorContext = {};
+  const editorContext = ($scope.editorContext = {});
 
-  const entityInfo = editorContext.entityInfo = editorData.entityInfo;
+  const entityInfo = (editorContext.entityInfo = editorData.entityInfo);
 
   const notify = makeNotify('Asset', () => '“' + $scope.title + '”');
 
@@ -55,16 +54,13 @@ export default async function create ($scope, assetId) {
   $scope.otDoc = editorData.openDoc(K.scopeLifeline($scope));
   initDocErrorHandler($scope, $scope.otDoc.state.error$);
 
-  K.onValueScope($scope, $scope.otDoc.status$, (status) => {
-    $scope.props = {status, entityLabel: 'asset'};
+  K.onValueScope($scope, $scope.otDoc.status$, status => {
+    $scope.props = { status, entityLabel: 'asset' };
   });
 
   installTracking(entityInfo, $scope.otDoc, K.scopeLifeline($scope));
 
-  editorContext.validator = Validator.createForAsset(
-    $scope.otDoc,
-    localeStore.getPrivateLocales()
-  );
+  editorContext.validator = Validator.createForAsset($scope.otDoc, localeStore.getPrivateLocales());
 
   editorContext.focus = Focus.create();
 
@@ -75,7 +71,6 @@ export default async function create ($scope, assetId) {
     validator: editorContext.validator,
     otDoc: $scope.otDoc
   });
-
 
   K.onValueScope($scope, $scope.otDoc.valuePropertyAt([]), data => {
     const title = spaceContext.assetTitle({
@@ -96,7 +91,7 @@ export default async function create ($scope, assetId) {
     controls: editorData.fieldControls.form
   });
 
-  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, (flagValue) => {
+  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, flagValue => {
     $scope.shouldShowBreadcrumbs = flagValue !== 2;
   });
 }

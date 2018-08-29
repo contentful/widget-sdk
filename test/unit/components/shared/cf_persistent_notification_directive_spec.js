@@ -4,10 +4,10 @@ describe('cfPersistentNotification Directive', () => {
   let element, scope;
   let $rootScope, $timeout;
 
-  beforeEach(function () {
+  beforeEach(function() {
     this.logger = {};
 
-    module('contentful/test', ($provide) => {
+    module('contentful/test', $provide => {
       $provide.value('logger', this.logger);
     });
 
@@ -86,7 +86,7 @@ describe('cfPersistentNotification Directive', () => {
     const PARAMS_1 = { message: 'FIRST MESSAGE' };
     const PARAMS_2 = { message: 'some message 2' };
 
-    beforeEach(function () {
+    beforeEach(function() {
       this.logger.logWarn = sinon.stub();
       $rootScope.$broadcast('persistentNotification', null);
       $rootScope.$broadcast('persistentNotification', PARAMS_1);
@@ -107,31 +107,30 @@ describe('cfPersistentNotification Directive', () => {
       expect($body().length).toBe(0);
     });
 
-    it('logs concurrent broadcasted notification params', function () {
+    it('logs concurrent broadcasted notification params', function() {
       const RESET_NOTE = '*RESET NOTIFICATION*';
       sinon.assert.calledOnce(this.logger.logWarn);
-      sinon.assert.calledWithExactly(this.logger.logWarn,
-        sinon.match.string,
-        { notifications: [ RESET_NOTE, PARAMS_1, PARAMS_2, RESET_NOTE ] }
-      );
+      sinon.assert.calledWithExactly(this.logger.logWarn, sinon.match.string, {
+        notifications: [RESET_NOTE, PARAMS_1, PARAMS_2, RESET_NOTE]
+      });
     });
   });
 
-  function itShowsTheNotification () {
+  function itShowsTheNotification() {
     it('shows the notification', () => {
       expect($body().length).toBe(1);
     });
   }
 
-  function $body () {
+  function $body() {
     return element.find('.persistent-notification');
   }
 
-  function $message () {
+  function $message() {
     return $body().find('[data-test-id="message"]');
   }
 
-  function digest () {
+  function digest() {
     scope.$digest();
     $timeout.flush();
     $timeout.verifyNoPendingTasks();

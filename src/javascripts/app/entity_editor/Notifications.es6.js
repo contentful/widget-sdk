@@ -31,9 +31,9 @@
  * - `reponse.data.sys.id`
  * - `reponse.data.details.errors`
  */
-import {makeSum, caseof} from 'sum-types';
+import { makeSum, caseof } from 'sum-types';
 import Notifier from 'notification';
-import {get as getAtPath, first, template as _makeTemplate, assign} from 'lodash';
+import { get as getAtPath, first, template as _makeTemplate, assign } from 'lodash';
 
 export const Notification = makeSum({
   Success: ['action'],
@@ -43,15 +43,13 @@ export const Notification = makeSum({
   ValidationError: []
 });
 
-const publishValidationFailMessage =
-  publishFail('Validation failed. Please check the individual fields for errors.');
+const publishValidationFailMessage = publishFail(
+  'Validation failed. Please check the individual fields for errors.'
+);
 
-const publishServerFailMessage =
-  makeTemplate(
-    'Publishing %{title} has failed due to a server issue. ' +
-    'We have been notified.'
-  );
-
+const publishServerFailMessage = makeTemplate(
+  'Publishing %{title} has failed due to a server issue. ' + 'We have been notified.'
+);
 
 const successMessages = {
   // We cannot use `getTitle()` because that function will
@@ -76,24 +74,26 @@ const errorMessages = {
   duplicate: makeTemplate('Could not duplicate %{type}')
 };
 
-
-export function makeNotify (Type, getTitle) {
+export function makeNotify(Type, getTitle) {
   if (Type !== 'Entry' && Type !== 'Asset') {
     throw new Error(`Unknown entity type ${Type}`);
   }
   const type = Type.toLowerCase();
 
-  return function notify (notification) {
+  return function notify(notification) {
     caseof(notification, [
-      [Notification.Success, ({action}) => notifySuccess(action)],
-      [Notification.Error, ({action, response}) => notifyError(action, response)],
-      [Notification.ValidationError, () => {
-        Notifier.error(renderTemplate(publishValidationFailMessage));
-      }]
+      [Notification.Success, ({ action }) => notifySuccess(action)],
+      [Notification.Error, ({ action, response }) => notifyError(action, response)],
+      [
+        Notification.ValidationError,
+        () => {
+          Notifier.error(renderTemplate(publishValidationFailMessage));
+        }
+      ]
     ]);
   };
 
-  function notifySuccess (action) {
+  function notifySuccess(action) {
     const template = successMessages[action];
     if (template === undefined) {
       throw new Error(`Unknown success notification "${action}"`);
@@ -104,44 +104,45 @@ export function makeNotify (Type, getTitle) {
     }
   }
 
-  function notifyError (action, apiResponse) {
+  function notifyError(action, apiResponse) {
     Notifier.error(getErrorMessage(action, apiResponse));
   }
 
-
-  function getErrorMessage (action, apiResponse) {
-    const template = action === 'publish'
-      ? publishErrorMessage(apiResponse)
-      : errorMessages[action];
+  function getErrorMessage(action, apiResponse) {
+    const template =
+      action === 'publish' ? publishErrorMessage(apiResponse) : errorMessages[action];
 
     if (template === undefined) {
       throw new Error(`Unknown error notification "${action}"`);
     }
 
     const error = getAtPath(apiResponse, 'data.sys.id');
-    return renderTemplate(template, {error: error});
+    return renderTemplate(template, { error: error });
   }
 
-  function renderTemplate (template, env) {
-    return template(assign({
-      Type: Type,
-      type: type,
-      title: getTitle()
-    }, env));
+  function renderTemplate(template, env) {
+    return template(
+      assign(
+        {
+          Type: Type,
+          type: type,
+          title: getTitle()
+        },
+        env
+      )
+    );
   }
 }
 
-
-function makeTemplate (tpl) {
-  return _makeTemplate(tpl, {interpolate: /%{([\s\S]+?)}/});
+function makeTemplate(tpl) {
+  return _makeTemplate(tpl, { interpolate: /%{([\s\S]+?)}/ });
 }
-
 
 /**
  * Given an API response from the '/published' endpoint returns the
  * message template for the error notification.
  */
-function publishErrorMessage (error) {
+function publishErrorMessage(error) {
   const errorId = getAtPath(error, 'data.sys.id');
   if (errorId === 'ValidationFailed') {
     return publishValidationFailMessage;
@@ -162,19 +163,20 @@ function publishErrorMessage (error) {
   }
 }
 
-
-function publishFail (message) {
+function publishFail(message) {
   return makeTemplate(`Error publishing %{title}: ${message}`);
 }
 
-function isLinkValidationError (response) {
+function isLinkValidationError(response) {
   const errors = getAtPath(response, 'data.details.errors');
-  return response.data.message === 'Validation error' &&
-           errors.length > 0 &&
-           errors[0].name === 'linkContentType';
+  return (
+    response.data.message === 'Validation error' &&
+    errors.length > 0 &&
+    errors[0].name === 'linkContentType'
+  );
 }
 
-function getLinkValidationErrorMessage (response) {
+function getLinkValidationErrorMessage(response) {
   const error = first(getAtPath(response, 'data.details.errors'));
   return error && error.details;
 }

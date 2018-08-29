@@ -9,22 +9,17 @@ const BackNav = createReactClass({
   propTypes: {
     slideInFeatureFlagValue: PropTypes.number.isRequired
   },
-  handleClick () {
-    goToPreviousSlideOrExit(
-      this.props.slideInFeatureFlagValue,
-      'arrow_back',
-      closeState
-    );
+  handleClick() {
+    goToPreviousSlideOrExit(this.props.slideInFeatureFlagValue, 'arrow_back', closeState);
   },
-  render () {
+  render() {
     return (
       <div className="breadcrumbs-widget">
         <div className="breadcrumbs-container">
           <div
             className="btn btn__back"
             data-test-id="breadcrumbs-back-btn"
-            onClick={this.handleClick}
-          >
+            onClick={this.handleClick}>
             <Icon name="back" />
           </div>
         </div>

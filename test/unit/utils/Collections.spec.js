@@ -5,8 +5,8 @@ import { range } from 'lodash';
 describe('utils/Collections', () => {
   describe('.update', () => {
     it('deeply updates collection for array of keys', () => {
-      const c = { x: [{}, {z: true}, {}] };
-      const c2 = C.update(c, ['x', 1, 'z'], (v) => !v);
+      const c = { x: [{}, { z: true }, {}] };
+      const c2 = C.update(c, ['x', 1, 'z'], v => !v);
 
       c.x[1].z = false;
       expect(c2).toEqual(c);
@@ -14,7 +14,7 @@ describe('utils/Collections', () => {
 
     it('updates array for number key', () => {
       const c = [true, false, true];
-      const c2 = C.update(c, 1, (v) => !v);
+      const c2 = C.update(c, 1, v => !v);
 
       c[1] = true;
       expect(c2).toEqual(c);
@@ -22,7 +22,7 @@ describe('utils/Collections', () => {
 
     it('updates object for string key', () => {
       const c = { x: true, y: false, z: true };
-      const c2 = C.update(c, 'y', (v) => !v);
+      const c2 = C.update(c, 'y', v => !v);
 
       c.y = true;
       expect(c2).toEqual(c);
@@ -31,7 +31,7 @@ describe('utils/Collections', () => {
 
   describe('.concat', () => {
     it('concats all arguments', () => {
-      const arrays = range(5).map((x) => deepFreeze([2 * x, 2 * x + 1]));
+      const arrays = range(5).map(x => deepFreeze([2 * x, 2 * x + 1]));
       const concatted = C.concat(...arrays);
       const result = range(10);
       expect(concatted).toEqual(result);

@@ -1,7 +1,7 @@
 import $rootScope from '$rootScope';
 import Command from 'command';
 import * as Adapter from './code_mirror_adapter';
-import {forEach, pick} from 'lodash';
+import { forEach, pick } from 'lodash';
 
 /**
  * @ngdoc service
@@ -30,7 +30,7 @@ import {forEach, pick} from 'lodash';
  * // Cleanup
  * editor.destroy()
  */
-export function create (widgetApi) {
+export function create(widgetApi) {
   const field = widgetApi.field;
   const editor = Adapter.create();
 
@@ -41,13 +41,13 @@ export function create (widgetApi) {
   const state = {};
 
   const undoCmd = Command.create(editor.undo, {
-    disabled: function () {
+    disabled: function() {
       return !state.undoable;
     }
   });
 
   const redoCmd = Command.create(editor.redo, {
-    disabled: function () {
+    disabled: function() {
       return !state.redoable;
     }
   });
@@ -60,14 +60,14 @@ export function create (widgetApi) {
     redo: redoCmd,
     valid: undefined,
     attach: editor.attach,
-    destroy: function () {
+    destroy: function() {
       editor.destroy();
       offValueChanged();
       offStateChanged();
     }
   };
 
-  function updateState (editorState) {
+  function updateState(editorState) {
     $rootScope.$applyAsync(() => {
       if ('value' in editorState) {
         if (editorState.value) {

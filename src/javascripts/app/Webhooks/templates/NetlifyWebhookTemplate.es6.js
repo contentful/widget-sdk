@@ -24,8 +24,7 @@ export default {
           <a
             href="https://www.netlify.com/docs/webhooks/"
             target="_blank"
-            rel="noopener noreferrer"
-          >
+            rel="noopener noreferrer">
             refer to their documentation
           </a>
           .
@@ -38,9 +37,7 @@ export default {
       name,
       url,
       topics: ['Entry.publish', 'Asset.publish', 'Entry.unpublish', 'Asset.unpublish'],
-      filters: [
-        {equals: [{doc: 'sys.environment.sys.id'}, 'master']}
-      ],
+      filters: [{ equals: [{ doc: 'sys.environment.sys.id' }, 'master'] }],
       transformation: {
         contentType: 'application/json'
       }

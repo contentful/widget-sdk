@@ -1,7 +1,7 @@
 'use strict';
 
 describe('SlugEditor directive', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     const MockApi = this.$inject('mocks/widgetApi');
 
@@ -17,7 +17,7 @@ describe('SlugEditor directive', () => {
     this.title = MockApi.createField();
 
     this.entrySys = {
-      contentType: {sys: {id: 'CTID'}},
+      contentType: { sys: { id: 'CTID' } },
       createdAt: 1000
     };
 
@@ -28,28 +28,32 @@ describe('SlugEditor directive', () => {
       }
     };
 
-    this.compileElement = function () {
-      return this.$compile('<cf-slug-editor>', {}, {
-        cfWidgetApi: this.cfWidgetApi
-      });
+    this.compileElement = function() {
+      return this.$compile(
+        '<cf-slug-editor>',
+        {},
+        {
+          cfWidgetApi: this.cfWidgetApi
+        }
+      );
     };
   });
 
   describe('#titleToSlug', () => {
-    it('uses an "untitled" slug with the entry creation time, when the title is empty', function () {
+    it('uses an "untitled" slug with the entry creation time, when the title is empty', function() {
       this.entrySys.createdAt = '2015-01-28T10:38:28.989Z';
       const $inputEl = this.compileElement().find('input');
 
       expect($inputEl.val()).toEqual('untitled-entry-2015-01-28-at-10-38-28');
     });
 
-    it('sets slug to initial title', function () {
+    it('sets slug to initial title', function() {
       this.title.onValueChanged.yields('This is a title');
       const $inputEl = this.compileElement().find('input');
       expect($inputEl.val()).toEqual('this-is-a-title');
     });
 
-    it('does not track the title if both fields have diverged', function () {
+    it('does not track the title if both fields have diverged', function() {
       const $inputEl = this.compileElement().find('input');
 
       const slug = 'does-not-match';
@@ -58,7 +62,7 @@ describe('SlugEditor directive', () => {
       expect($inputEl.val()).toEqual(slug);
     });
 
-    it('tracks the title if both fields have not diverged', function () {
+    it('tracks the title if both fields have not diverged', function() {
       const $inputEl = this.compileElement().find('input');
       $inputEl.val('this-is-the-first-title');
       this.title.onValueChanged.yield('This is the first title');
@@ -66,7 +70,7 @@ describe('SlugEditor directive', () => {
       expect($inputEl.val()).toEqual('this-is-the-second-title');
     });
 
-    it('does not track the title if it is published', function () {
+    it('does not track the title if it is published', function() {
       const $inputEl = this.compileElement().find('input');
 
       this.title.onValueChanged.yield('This is the first title');
@@ -83,7 +87,7 @@ describe('SlugEditor directive', () => {
 
     describe('field locale is different from default locale', () => {
       describe('title for field locale is empty', () => {
-        it('should generate a slug using title value in default locale', function () {
+        it('should generate a slug using title value in default locale', function() {
           this.cfWidgetApi.field.locale = 'hi';
 
           const $inputEl = this.compileElement().find('input');
@@ -97,8 +101,8 @@ describe('SlugEditor directive', () => {
     });
   });
 
-  it('does not set the slug if user cannot edit the field', function () {
-    this.cfWidgetApi.fieldProperties.access$.set({denied: true, disabled: true});
+  it('does not set the slug if user cannot edit the field', function() {
+    this.cfWidgetApi.fieldProperties.access$.set({ denied: true, disabled: true });
     this.cfWidgetApi.field.setValue('INITIAL');
     this.cfWidgetApi.field.setValue.reset();
     this.title.onValueChanged.yields('A title');
@@ -110,21 +114,21 @@ describe('SlugEditor directive', () => {
   });
 
   describe('#alreadyPublished', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.inputEl = this.compileElement().find('input');
       this.entrySys.publishedVersion = 1;
       this.title.getValue.returns('old title');
       this.inputEl.val('old-title');
     });
 
-    it('does not track title when entry is already published', function () {
+    it('does not track title when entry is already published', function() {
       this.title.onValueChanged.yield('New title');
       expect(this.inputEl.val()).toEqual('old-title');
     });
   });
 
   describe('uniquenness state', () => {
-    it('queries duplicates when input value changes', function () {
+    it('queries duplicates when input value changes', function() {
       const $inputEl = this.compileElement().find('input');
       const getEntries = this.cfWidgetApi.space.getEntries;
       getEntries.resetHistory();
@@ -134,7 +138,7 @@ describe('SlugEditor directive', () => {
       sinon.assert.calledOnce(getEntries);
     });
 
-    it('queries duplicates when field value changes', function () {
+    it('queries duplicates when field value changes', function() {
       this.compileElement();
       const getEntries = this.cfWidgetApi.space.getEntries;
       getEntries.resetHistory();
@@ -144,7 +148,7 @@ describe('SlugEditor directive', () => {
       sinon.assert.calledOnce(getEntries);
     });
 
-    it('sets duplicate query parameters from entry sys', function () {
+    it('sets duplicate query parameters from entry sys', function() {
       this.entrySys.id = 'ENTRY ID';
       this.compileElement();
       const getEntries = this.cfWidgetApi.space.getEntries;
@@ -153,14 +157,14 @@ describe('SlugEditor directive', () => {
       this.cfWidgetApi.field.onValueChanged.yield('SLUG');
       this.$apply();
       sinon.assert.calledWith(getEntries, {
-        'content_type': 'CTID',
+        content_type: 'CTID',
         'fields.slug': 'SLUG',
         'sys.id[ne]': 'ENTRY ID',
         'sys.publishedAt[exists]': true
       });
     });
 
-    it('is "unique" when there are no duplicates', function () {
+    it('is "unique" when there are no duplicates', function() {
       const $inputEl = this.compileElement().find('input');
       const scope = $inputEl.scope();
 
@@ -171,7 +175,7 @@ describe('SlugEditor directive', () => {
       expect(scope.state).toEqual('unique');
     });
 
-    it('is "duplicate" when there are matching entries in the query result', function () {
+    it('is "duplicate" when there are matching entries in the query result', function() {
       const $inputEl = this.compileElement().find('input');
       const scope = $inputEl.scope();
 
@@ -186,7 +190,7 @@ describe('SlugEditor directive', () => {
       expect(this.cfWidgetApi._state.isInvalid).toBe(true);
     });
 
-    it('is "checking" when the query has not been resolved', function () {
+    it('is "checking" when the query has not been resolved', function() {
       const getEntries = sinon.stub().defers();
       this.cfWidgetApi.space.getEntries = getEntries;
 
@@ -205,13 +209,11 @@ describe('SlugEditor directive', () => {
       expect(scope.state).toEqual('unique');
     });
 
-    it('does not show "duplicate" when there are uniqueness errors in the API response', function () {
+    it('does not show "duplicate" when there are uniqueness errors in the API response', function() {
       const $duplicateEl = this.compileElement().find('.cfnext-form__field-error');
       const scope = $duplicateEl.scope();
 
-      this.cfWidgetApi.fieldProperties.schemaErrors$.set([
-        { name: 'unique' }
-      ]);
+      this.cfWidgetApi.fieldProperties.schemaErrors$.set([{ name: 'unique' }]);
       // Let the server respond with one entry
       this.cfWidgetApi.space.getEntries = sinon.stub().resolves({ total: 1 });
 
@@ -223,7 +225,7 @@ describe('SlugEditor directive', () => {
       expect($duplicateEl.hasClass('ng-hide')).toBe(true);
     });
 
-    it('does show "duplicate" when there are no uniqueness errors in the API response', function () {
+    it('does show "duplicate" when there are no uniqueness errors in the API response', function() {
       const $duplicateEl = this.compileElement().find('.cfnext-form__field-error');
       const scope = $duplicateEl.scope();
       // Let the server respond with one entry

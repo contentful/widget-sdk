@@ -27,11 +27,7 @@ export default {
       description: (
         <p>
           Can be found on the Mailgun{' '}
-          <a
-            href="https://app.mailgun.com/app/domains"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href="https://app.mailgun.com/app/domains" target="_blank" rel="noopener noreferrer">
             list of domains
           </a>
           .
@@ -57,12 +53,11 @@ export default {
       title: 'Private API Key',
       description: (
         <p>
-          Can be found on the {' '}
+          Can be found on the{' '}
           <a
             href="https://app.mailgun.com/app/account/security"
             target="_blank"
-            rel="noopener noreferrer"
-          >
+            rel="noopener noreferrer">
             Mailgun Dashboard
           </a>
           . This value can’t be revealed once stored.
@@ -83,12 +78,12 @@ export default {
       httpBasicPassword: apiKey,
       topics: ['Entry.publish'],
       filters: [
-        {equals: [{doc: 'sys.environment.sys.id'}, 'master']},
-        {equals: [{doc: 'sys.contentType.sys.id'}, contentType.id]}
+        { equals: [{ doc: 'sys.environment.sys.id' }, 'master'] },
+        { equals: [{ doc: 'sys.contentType.sys.id' }, contentType.id] }
       ],
       transformation: {
         contentType: 'application/x-www-form-urlencoded',
-        body: JSON.stringify({from, to, subject, text})
+        body: JSON.stringify({ from, to, subject, text })
       }
     };
   }

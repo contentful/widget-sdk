@@ -6,11 +6,11 @@ describe('signal', () => {
   });
 
   describe('#create()', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.createSignal = this.$inject('signal').create;
     });
 
-    it('calls attached listeners on dispatch', function () {
+    it('calls attached listeners on dispatch', function() {
       const listeners = _.map(_.range(1, 4), () => sinon.stub());
 
       const signal = this.createSignal();
@@ -26,7 +26,7 @@ describe('signal', () => {
       });
     });
 
-    it('does not call detached listeners', function () {
+    it('does not call detached listeners', function() {
       const listener = sinon.stub();
       const signal = this.createSignal();
       const detach = signal.attach(listener);
@@ -41,11 +41,11 @@ describe('signal', () => {
   });
 
   describe('#createMemoized()', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.createSignal = this.$inject('signal').createMemoized;
     });
 
-    it('sends initial value on attach with send option', function () {
+    it('sends initial value on attach with send option', function() {
       const signal = this.createSignal('INITIAL');
       const listener = sinon.stub();
 
@@ -53,7 +53,7 @@ describe('signal', () => {
       sinon.assert.calledWithExactly(listener, 'INITIAL');
     });
 
-    it('sends last value on attach with send option', function () {
+    it('sends last value on attach with send option', function() {
       const signal = this.createSignal();
       const listener = sinon.stub();
 
@@ -62,7 +62,7 @@ describe('signal', () => {
       sinon.assert.calledWithExactly(listener, 'VALUE');
     });
 
-    it('overides initial value when dispatched', function () {
+    it('overides initial value when dispatched', function() {
       const signal = this.createSignal('INITIAL');
       signal.dispatch('VALUE');
 

@@ -1,7 +1,7 @@
 import { addUserOrgSpace } from './Decorators';
 import { get as getAtPath, omit, extend } from 'lodash';
 
-const ENTITY_TYPE_MAPPING = {entries: 'entry', assets: 'asset'};
+const ENTITY_TYPE_MAPPING = { entries: 'entry', assets: 'asset' };
 const EVENTS_WITHOUT_ENTITY_TYPE = ['search:search_terms_migrated'];
 const PROPS_TO_OMIT = ['userId', 'spaceId', 'organizationId', 'currentState'];
 
@@ -14,12 +14,12 @@ export default addUserOrgSpace((event, data) => {
   };
 });
 
-function getEntityType (data) {
+function getEntityType(data) {
   const currentState = getAtPath(data, ['currentState'], '');
   const entityTypeSegment = currentState.split('.')[2];
   return ENTITY_TYPE_MAPPING[entityTypeSegment];
 }
 
-function eventHasEntityType (event) {
+function eventHasEntityType(event) {
   return EVENTS_WITHOUT_ENTITY_TYPE.indexOf(event) > -1;
 }

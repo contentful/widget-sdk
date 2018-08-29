@@ -1,5 +1,5 @@
-import {getSchema} from 'analytics/snowplow/Schemas';
-import {isUndefined, omitBy} from 'lodash';
+import { getSchema } from 'analytics/snowplow/Schemas';
+import { isUndefined, omitBy } from 'lodash';
 
 /**
  * @ngdoc service
@@ -7,17 +7,22 @@ import {isUndefined, omitBy} from 'lodash';
  * @description
  * Exports a function that transforms data for the app open event
  */
-export default function (_eventName, data) {
+export default function(_eventName, data) {
   return {
     data: {},
-    contexts: [{
-      schema: getSchema('app').path,
-      data: omitBy({
-        action: 'open',
-        organization_id: data.organizationId,
-        space_id: data.spaceId,
-        executing_user_id: data.userId
-      }, isUndefined)
-    }]
+    contexts: [
+      {
+        schema: getSchema('app').path,
+        data: omitBy(
+          {
+            action: 'open',
+            organization_id: data.organizationId,
+            space_id: data.spaceId,
+            executing_user_id: data.userId
+          },
+          isUndefined
+        )
+      }
+    ]
   };
 }

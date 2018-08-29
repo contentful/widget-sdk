@@ -1,8 +1,10 @@
 'use strict';
 
-angular.module('contentful')
-.controller('ErrorPathController', ['$scope', '$attrs', 'require',
-  function ErrorPathController ($scope, $attrs, require) {
+angular.module('contentful').controller('ErrorPathController', [
+  '$scope',
+  '$attrs',
+  'require',
+  function ErrorPathController($scope, $attrs, require) {
     const controller = this;
     const logger = require('logger');
 
@@ -15,8 +17,8 @@ angular.module('contentful')
         try {
           return matchesPath(pathPattern, error.path);
         } catch (e) {
-        // TODO We have seen `matchesPath` throw on bugsnag. This is
-        // some temporary logging to gather some data.
+          // TODO We have seen `matchesPath` throw on bugsnag. This is
+          // some temporary logging to gather some data.
           logger.logError('Cannot match validation result', {
             error: e,
             data: {
@@ -34,7 +36,7 @@ angular.module('contentful')
       controller.isEmpty = !hasErrors;
     });
 
-    function matchesPath (pattern, target) {
+    function matchesPath(pattern, target) {
       const prefixLen = pattern.length - 1;
       if (pattern[prefixLen] === '*') {
         target = target.slice(0, prefixLen);
@@ -42,4 +44,5 @@ angular.module('contentful')
       }
       return _.isEqual(target, pattern);
     }
-  }]);
+  }
+]);

@@ -14,30 +14,33 @@
  * reposition-when-scrolls=".widget-list"></cf-icon>
  *
  */
-angular.module('contentful').directive('cfPositionRelativeToWidgetList', ['require', require => {
-  const defer = require('defer');
-  const debounce = require('debounce');
+angular.module('contentful').directive('cfPositionRelativeToWidgetList', [
+  'require',
+  require => {
+    const defer = require('defer');
+    const debounce = require('debounce');
 
-  return {
-    restrict: 'A',
-    link: function (_scope, elem, attrs) {
-      defer(reposition);
-      attrs.$observe('positionRelativeTo', reposition);
+    return {
+      restrict: 'A',
+      link: function(_scope, elem, attrs) {
+        defer(reposition);
+        attrs.$observe('positionRelativeTo', reposition);
 
-      const debouncedReposition = debounce(reposition, 50);
-      $(attrs.repositionWhenScrolls).on('scroll', debouncedReposition);
+        const debouncedReposition = debounce(reposition, 50);
+        $(attrs.repositionWhenScrolls).on('scroll', debouncedReposition);
 
-      elem.on('$destroy', () => {
-        $(attrs.repositionWhenScrolls).off('scroll', debouncedReposition);
-      });
+        elem.on('$destroy', () => {
+          $(attrs.repositionWhenScrolls).off('scroll', debouncedReposition);
+        });
 
-      function reposition () {
-        const relativeTo = $(attrs.positionRelativeTo);
-        if (relativeTo.get(0)) {
-          const newMargin = relativeTo.position().left + relativeTo.width() / 2;
-          elem.css('marginLeft', newMargin + 'px');
+        function reposition() {
+          const relativeTo = $(attrs.positionRelativeTo);
+          if (relativeTo.get(0)) {
+            const newMargin = relativeTo.position().left + relativeTo.width() / 2;
+            elem.css('marginLeft', newMargin + 'px');
+          }
         }
       }
-    }
-  };
-}]);
+    };
+  }
+]);

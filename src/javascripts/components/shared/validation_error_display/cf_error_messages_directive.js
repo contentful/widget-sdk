@@ -18,9 +18,13 @@ angular.module('contentful').directive('cfErrorMessages', () => ({
   restrict: 'A',
   scope: true,
 
-  controller: ['$scope', '$attrs', ($scope, $attrs) => {
-    $scope.$watch($attrs.cfErrorMessages, messages => {
-      $scope.errors = {messages: messages};
-    });
-  }]
+  controller: [
+    '$scope',
+    '$attrs',
+    ($scope, $attrs) => {
+      $scope.$watch($attrs.cfErrorMessages, messages => {
+        $scope.errors = { messages: messages };
+      });
+    }
+  ]
 }));

@@ -9,35 +9,37 @@
  * Controlls how certain global dialogs play together to prevent them interfering
  * with eachother.
  */
-angular.module('contentful')
-.factory('dialogsInitController', ['require', require => {
-  const $rootScope = require('$rootScope');
-  const spaceContext = require('spaceContext');
-  const activationEmailResendController = require('activationEmailResendController');
-  const subscriptionNotifier = require('subscriptionNotifier');
+angular.module('contentful').factory('dialogsInitController', [
+  'require',
+  require => {
+    const $rootScope = require('$rootScope');
+    const spaceContext = require('spaceContext');
+    const activationEmailResendController = require('activationEmailResendController');
+    const subscriptionNotifier = require('subscriptionNotifier');
 
-  return {
-    init: init
-  };
+    return {
+      init: init
+    };
 
-  function init () {
-    activationEmailResendController.init();
-    initSpaceWatcher();
-  }
-
-  function onSpaceChanged (spaceId) {
-    if (!spaceId) {
-      return;
+    function init() {
+      activationEmailResendController.init();
+      initSpaceWatcher();
     }
-    // Reset notification related to the previous space.
-    $rootScope.$broadcast('persistentNotification', null);
 
-    const organization = spaceContext.organizationContext.organization || {};
+    function onSpaceChanged(spaceId) {
+      if (!spaceId) {
+        return;
+      }
+      // Reset notification related to the previous space.
+      $rootScope.$broadcast('persistentNotification', null);
 
-    subscriptionNotifier.notifyAbout(organization);
+      const organization = spaceContext.organizationContext.organization || {};
+
+      subscriptionNotifier.notifyAbout(organization);
+    }
+
+    function initSpaceWatcher() {
+      $rootScope.$watch(() => spaceContext.getId(), onSpaceChanged);
+    }
   }
-
-  function initSpaceWatcher () {
-    $rootScope.$watch(() => spaceContext.getId(), onSpaceChanged);
-  }
-}]);
+]);

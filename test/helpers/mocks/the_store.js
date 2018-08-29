@@ -11,28 +11,28 @@
  * This service replaces the original service in the `contentful/mocks`
  * module.
  */
-angular.module('contentful/mocks')
-.factory('mocks/TheStore/ClientStorageWrapper', [() => {
-  let localStore = {};
+angular.module('contentful/mocks').factory('mocks/TheStore/ClientStorageWrapper', [
+  () => {
+    let localStore = {};
 
-  return {
-    _store: localStore,
-    default: function () {
-      return {
-
-        getItem: function (key) {
-          return localStore[key];
-        },
-        setItem: function (key, value) {
-          localStore[key] = value + '';
-        },
-        removeItem: function (key) {
-          delete localStore[key];
-        },
-        clear: function () {
-          localStore = {};
-        }
-      };
-    }
-  };
-}]);
+    return {
+      _store: localStore,
+      default: function() {
+        return {
+          getItem: function(key) {
+            return localStore[key];
+          },
+          setItem: function(key, value) {
+            localStore[key] = value + '';
+          },
+          removeItem: function(key) {
+            delete localStore[key];
+          },
+          clear: function() {
+            localStore = {};
+          }
+        };
+      }
+    };
+  }
+]);

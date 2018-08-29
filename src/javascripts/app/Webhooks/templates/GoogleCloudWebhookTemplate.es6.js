@@ -24,8 +24,7 @@ export default {
           <a
             href="https://cloud.google.com/functions/docs/calling/http"
             target="_blank"
-            rel="noopener noreferrer"
-          >
+            rel="noopener noreferrer">
             refer to their documentation
           </a>
           .
@@ -38,9 +37,7 @@ export default {
       name,
       url,
       topics: ['*.*'],
-      filters: [
-        {equals: [{doc: 'sys.environment.sys.id'}, 'master']}
-      ],
+      filters: [{ equals: [{ doc: 'sys.environment.sys.id' }, 'master'] }],
       transformation: {
         contentType: 'application/json'
       }

@@ -8,15 +8,15 @@ class TemplatesToggle extends React.Component {
     isShowingTemplates: PropTypes.bool.isRequired,
     onChange: PropTypes.func.isRequired,
     formAlign: PropTypes.oneOf(['left', 'center'])
-  }
+  };
 
-  render () {
-    const {isShowingTemplates, onChange, formAlign} = this.props;
+  render() {
+    const { isShowingTemplates, onChange, formAlign } = this.props;
     return (
-      <div className={classnames(
-        'cfnext-form__field create-new-space__form__radios',
-        {'create-space-wizard__centered-block': !formAlign || formAlign === 'center'}
-      )}>
+      <div
+        className={classnames('cfnext-form__field create-new-space__form__radios', {
+          'create-space-wizard__centered-block': !formAlign || formAlign === 'center'
+        })}>
         <div className="cfnext-form-option create-new-space__form__option">
           <input
             id="newspace-template-none"
@@ -24,7 +24,8 @@ class TemplatesToggle extends React.Component {
             name="isShowingTemplates"
             value="false"
             checked={!isShowingTemplates}
-            onChange={() => onChange(false)} />
+            onChange={() => onChange(false)}
+          />
           <label htmlFor="newspace-template-none">
             <strong>Create an empty space. </strong>
             <span className="create-new-space__form__label-description">
@@ -39,7 +40,8 @@ class TemplatesToggle extends React.Component {
             name="isShowingTemplates"
             value="true"
             checked={isShowingTemplates}
-            onChange={() => onChange(true)} />
+            onChange={() => onChange(true)}
+          />
           <label htmlFor="newspace-template-usetemplate">
             <strong>Create an example space. </strong>
             <span className="create-new-space__form__label-description">

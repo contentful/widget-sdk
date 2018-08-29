@@ -3,14 +3,15 @@
 describe('Link organizer', () => {
   let LinkOrganizer;
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     LinkOrganizer = this.$inject('LinkOrganizer');
   });
 
   describe('Inline link finder', () => {
     it('Finds all inline links in text', () => {
-      const subject = 'test [link](http://url.com) test [link2](http://url2.com) test [link3](http://url.com)';
+      const subject =
+        'test [link](http://url.com) test [link2](http://url2.com) test [link3](http://url.com)';
       const found = LinkOrganizer.findInline(subject);
       expect(found.length).toBe(3);
       expect(found[0].match).toBe('[link](http://url.com)');

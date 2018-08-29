@@ -9,9 +9,7 @@ export const Tab = ({ isActive, template, ...rest }) => {
   });
   return (
     <div {...rest} className={classes}>
-      <div className="webhook-template-item__logo">
-        {template.logo}
-      </div>
+      <div className="webhook-template-item__logo">{template.logo}</div>
       <div className="webhook-template-item__title">
         <strong>{template.title}</strong>
         <small>{template.subtitle}</small>
@@ -27,19 +25,14 @@ Tab.propTypes = {
 
 export const TabsList = props => (
   <div className="webhook-templates-dialog-tabs__list">
-    <div className="webhook-templates-dialog-tabs__list-title">
-      {props.title}
-    </div>
+    <div className="webhook-templates-dialog-tabs__list-title">{props.title}</div>
     {props.children}
   </div>
 );
 
 TabsList.propTypes = {
   title: PropTypes.string.isRequired,
-  children: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.node),
-    PropTypes.node
-  ]).isRequired
+  children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired
 };
 
 export class TabPane extends React.Component {
@@ -48,12 +41,11 @@ export class TabPane extends React.Component {
     children: PropTypes.any
   };
 
-  render () {
+  render() {
     return (
       <div
         style={{ display: this.props.isActive ? 'block' : 'none' }}
-        className="webhook-templates-dialog-tabs__pane"
-      >
+        className="webhook-templates-dialog-tabs__pane">
         {this.props.children}
       </div>
     );
@@ -67,7 +59,7 @@ export default class Tabs extends React.Component {
     reposition: PropTypes.func.isRequired
   };
 
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = {
       active: props.initialActive
@@ -76,24 +68,24 @@ export default class Tabs extends React.Component {
     this.getPaneProps = this.getPaneProps.bind(this);
   }
 
-  componentDidUpdate () {
+  componentDidUpdate() {
     this.props.reposition();
   }
 
-  getTabProps (tabId) {
+  getTabProps(tabId) {
     return {
       onClick: () => this.setState({ active: tabId }),
       isActive: this.state.active === tabId
     };
   }
 
-  getPaneProps (tabId) {
+  getPaneProps(tabId) {
     return {
       isActive: this.state.active === tabId
     };
   }
 
-  render () {
+  render() {
     return (
       <div className="webhook-templates-dialog-tabs">
         <div className="webhook-templates-dialog-tabs__separator" />

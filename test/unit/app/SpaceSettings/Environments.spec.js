@@ -3,12 +3,15 @@ import * as DOM from 'helpers/DOM';
 describe('app/SpaceSettings/Environments', () => {
   const ENVIRONMENTS_LIMIT = 3;
 
-  beforeEach(function () {
+  beforeEach(function() {
     const resourceService = {
-      get: sinon.stub().withArgs('environment').resolves({
-        usage: 0,
-        limits: {maximum: ENVIRONMENTS_LIMIT}
-      })
+      get: sinon
+        .stub()
+        .withArgs('environment')
+        .resolves({
+          usage: 0,
+          limits: { maximum: ENVIRONMENTS_LIMIT }
+        })
     };
 
     const isOwnerOrAdmin = sinon.stub().returns(false);
@@ -27,7 +30,7 @@ describe('app/SpaceSettings/Environments', () => {
     $(this.container.element).appendTo('body');
 
     this.init = () => {
-      this.$compileWith('<cf-component-store-bridge component=component>', ($scope) => {
+      this.$compileWith('<cf-component-store-bridge component=component>', $scope => {
         $scope.component = createComponent(spaceContext, incentivizeUpgradeEnabled);
       }).appendTo(this.container.element);
     };
@@ -44,26 +47,30 @@ describe('app/SpaceSettings/Environments', () => {
       };
     };
 
-    this.setUsage = (usage) => {
+    this.setUsage = usage => {
       resourceService.get.withArgs('environment').resolves({
         usage,
-        limits: {maximum: ENVIRONMENTS_LIMIT}
+        limits: { maximum: ENVIRONMENTS_LIMIT }
       });
     };
 
-    this.setPricing = (pricingVersion) => {
+    this.setPricing = pricingVersion => {
       spaceContext.organizationContext.organization.pricingVersion = pricingVersion;
     };
 
-    this.setIncentivizeFlag = (value) => { incentivizeUpgradeEnabled = value; };
-    this.setAdmin = (value) => { isOwnerOrAdmin.returns(value); };
+    this.setIncentivizeFlag = value => {
+      incentivizeUpgradeEnabled = value;
+    };
+    this.setAdmin = value => {
+      isOwnerOrAdmin.returns(value);
+    };
   });
 
-  afterEach(function () {
+  afterEach(function() {
     $(this.container.element).remove();
   });
 
-  it('lists all environments with status', function () {
+  it('lists all environments with status', function() {
     this.putEnvironment({ id: 'e1', status: 'ready' });
     this.putEnvironment({ id: 'e2', status: 'queued' });
     this.putEnvironment({ id: 'e3', status: 'failed' });
@@ -77,7 +84,7 @@ describe('app/SpaceSettings/Environments', () => {
     this.container.find('environmentList', 'environment.e3').assertHasText('Failed');
   });
 
-  it('creates an environment', function () {
+  it('creates an environment', function() {
     this.init();
 
     this.container.find('openCreateDialog').click();
@@ -88,7 +95,7 @@ describe('app/SpaceSettings/Environments', () => {
     this.container.find('environmentList', 'environment.env_id').assertHasText('env_id');
   });
 
-  it('deletes an environment', function () {
+  it('deletes an environment', function() {
     this.putEnvironment({ id: 'e1', status: 'ready' });
     this.init();
 
@@ -100,61 +107,64 @@ describe('app/SpaceSettings/Environments', () => {
     this.container.find('environment.e1').assertNonExistent();
   });
 
-  describe('shows usage info in the sidebar', function () {
-    beforeEach(function () {
+  describe('shows usage info in the sidebar', function() {
+    beforeEach(function() {
       this.getUsageText = () => this.container.find('environmentsUsage');
-      this.getUsageTooltip = () => this.container.find('environmentsUsage', 'environments-usage-tooltip');
+      this.getUsageTooltip = () =>
+        this.container.find('environmentsUsage', 'environments-usage-tooltip');
     });
 
-    describe('on v2 pricing', function () {
-      beforeEach(function () {
+    describe('on v2 pricing', function() {
+      beforeEach(function() {
         this.setPricing('pricing_version_2');
         this.setUsage(1);
         this.init();
       });
 
-      it('shows usage and limits', function () {
-        this.getUsageText().assertHasText(`You are using 2 out of ${ENVIRONMENTS_LIMIT + 1} environments`);
+      it('shows usage and limits', function() {
+        this.getUsageText().assertHasText(
+          `You are using 2 out of ${ENVIRONMENTS_LIMIT + 1} environments`
+        );
       });
 
-      it('shows tooltip ', function () {
+      it('shows tooltip ', function() {
         this.getUsageTooltip().assertIsVisible();
       });
     });
 
-    describe('on v1 pricing', function () {
-      beforeEach(function () {
+    describe('on v1 pricing', function() {
+      beforeEach(function() {
         this.setPricing('pricing_version_1');
         this.init();
       });
 
-      it('shows usage without limits', function () {
+      it('shows usage without limits', function() {
         this.getUsageText().assertHasText(`You are using 1 environment`);
       });
 
-      it('does not show tooltip ', function () {
+      it('does not show tooltip ', function() {
         this.getUsageTooltip().assertNonExistent();
       });
     });
   });
 
-  describe('when limit is reached on v2 pricing', function () {
-    beforeEach(function () {
+  describe('when limit is reached on v2 pricing', function() {
+    beforeEach(function() {
       this.setPricing('pricing_version_2');
       this.setUsage(ENVIRONMENTS_LIMIT);
     });
 
-    it('does not render create button', function () {
+    it('does not render create button', function() {
       this.init();
       this.container.find('openCreateDialog').assertNonExistent();
     });
 
-    describe('when user is admin', function () {
-      beforeEach(function () {
+    describe('when user is admin', function() {
+      beforeEach(function() {
         this.setAdmin(true);
       });
 
-      it('renders upgrade space button with feature flag on', function () {
+      it('renders upgrade space button with feature flag on', function() {
         this.setIncentivizeFlag(true);
         this.init();
 
@@ -162,7 +172,7 @@ describe('app/SpaceSettings/Environments', () => {
         this.container.find('subscriptionLink').assertNonExistent();
       });
 
-      it('renders subscription link with feature flag off', function () {
+      it('renders subscription link with feature flag off', function() {
         this.setIncentivizeFlag(false);
         this.init();
 
@@ -171,12 +181,12 @@ describe('app/SpaceSettings/Environments', () => {
       });
     });
 
-    describe('when user is not admin, do not show upgrade action', function () {
-      beforeEach(function () {
+    describe('when user is not admin, do not show upgrade action', function() {
+      beforeEach(function() {
         this.setAdmin(false);
       });
 
-      it('with feature flag on', function () {
+      it('with feature flag on', function() {
         this.setIncentivizeFlag(true);
         this.init();
 
@@ -184,7 +194,7 @@ describe('app/SpaceSettings/Environments', () => {
         this.container.find('subscriptionLink').assertNonExistent();
       });
 
-      it('with feature flag off', function () {
+      it('with feature flag off', function() {
         this.setIncentivizeFlag(false);
         this.init();
 

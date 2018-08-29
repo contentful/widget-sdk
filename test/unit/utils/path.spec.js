@@ -1,13 +1,13 @@
 'use strict';
 
 describe('utils/Path', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     this.utils = this.$inject('utils/Path');
   });
 
   describe('#isAffecting', () => {
-    it('returns true if change at "changePath" affects the value of "valuePath"', function () {
+    it('returns true if change at "changePath" affects the value of "valuePath"', function() {
       const fn = this.utils.isAffecting;
       expect(fn(['a'], [])).toBe(true);
       expect(fn([], ['a'])).toBe(true);
@@ -16,7 +16,7 @@ describe('utils/Path', () => {
       expect(fn(['a', 'b', 'x'], ['a', 'b'])).toBe(true);
     });
 
-    it('returns false if change at "changePath" does not affect the value of "valuePath"', function () {
+    it('returns false if change at "changePath" does not affect the value of "valuePath"', function() {
       const fn = this.utils.isAffecting;
       expect(fn(['x'], ['a', 'b'])).toBe(false);
       expect(fn(['a', 'x'], ['a', 'b'])).toBe(false);
@@ -24,7 +24,7 @@ describe('utils/Path', () => {
   });
 
   describe('#findCommonPrefix', () => {
-    it('returns the longest shared prefix of given paths', function () {
+    it('returns the longest shared prefix of given paths', function() {
       const test = (paths, expected) => {
         expect(this.utils.findCommonPrefix(paths)).toEqual(expected);
       };
@@ -41,7 +41,7 @@ describe('utils/Path', () => {
     });
   });
 
-  it('#isPrefix', function () {
+  it('#isPrefix', function() {
     const test = (prefix, target, expected) => {
       expect(this.utils.isPrefix(prefix, target)).toBe(expected);
     };

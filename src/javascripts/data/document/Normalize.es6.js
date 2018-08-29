@@ -18,7 +18,7 @@ import { get, isObject, transform, map, forEach, keys } from 'lodash';
  * @param {Client.ContentType?} contentType
  * @param {API.Locale[]} locales
  */
-export function normalize (otDoc, snapshot, contentType, locales) {
+export function normalize(otDoc, snapshot, contentType, locales) {
   const ctFields = get(contentType, ['data', 'fields']);
   const localeMap = makeLocaleMap(locales);
   forceFieldObject(otDoc);
@@ -26,27 +26,28 @@ export function normalize (otDoc, snapshot, contentType, locales) {
   removeUnknownLocales(snapshot, localeMap);
 }
 
-
-function forceFieldObject (otDoc) {
+function forceFieldObject(otDoc) {
   const fields = otDoc.getValueAt(['fields']);
   if (!isObject(fields)) {
     otDoc.setValueAt(['fields'], {});
   }
 }
 
-
 /**
  * From a list of locale objects, return a map that has the internal
  * locale codes as keys.
  */
-function makeLocaleMap (locales) {
-  return transform(locales, (map, locale) => {
-    map[locale.internal_code] = true;
-  }, {});
+function makeLocaleMap(locales) {
+  return transform(
+    locales,
+    (map, locale) => {
+      map[locale.internal_code] = true;
+    },
+    {}
+  );
 }
 
-
-function removeUnknownLocales (data, localeMap) {
+function removeUnknownLocales(data, localeMap) {
   forEach(data.fields, field => {
     keys(field).forEach(internalCode => {
       if (!localeMap[internalCode]) {
@@ -57,8 +58,7 @@ function removeUnknownLocales (data, localeMap) {
   return data;
 }
 
-
-function removeDeletedFields (snapshot, ctFields) {
+function removeDeletedFields(snapshot, ctFields) {
   if (!ctFields) {
     return;
   }

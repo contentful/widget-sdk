@@ -4,7 +4,7 @@
  *
  */
 import $q from '$q';
-import {isEqual} from 'lodash';
+import { isEqual } from 'lodash';
 
 /**
  * @ngdoc method
@@ -13,7 +13,7 @@ import {isEqual} from 'lodash';
  * @param {string} fieldId  Internal field ID
  * @param {string} localeCode  Internal locale code
  */
-export default function create (doc, fieldId, localeCode) {
+export default function create(doc, fieldId, localeCode) {
   const path = ['fields', fieldId, localeCode];
 
   const getValue = bindToPath('getValueAt');
@@ -34,10 +34,10 @@ export default function create (doc, fieldId, localeCode) {
    *
    * @type {Property<any>}
    */
-  const valueProperty = doc.valuePropertyAt(path)
-    .filter((value) => !isEqual(value, lastSetValue))
+  const valueProperty = doc
+    .valuePropertyAt(path)
+    .filter(value => !isEqual(value, lastSetValue))
     .toProperty(getValue);
-
 
   /**
    * @ngdoc property
@@ -62,9 +62,11 @@ export default function create (doc, fieldId, localeCode) {
    *
    * @type {Property<void>}
    */
-  const localChanges$ = doc.localFieldChanges$.filter(([otherFieldId, otherLocaleCode]) => {
-    return otherFieldId === fieldId && otherLocaleCode === localeCode;
-  }).map(() => undefined);
+  const localChanges$ = doc.localFieldChanges$
+    .filter(([otherFieldId, otherLocaleCode]) => {
+      return otherFieldId === fieldId && otherLocaleCode === localeCode;
+    })
+    .map(() => undefined);
 
   return {
     sys: doc.sysProperty,
@@ -81,24 +83,23 @@ export default function create (doc, fieldId, localeCode) {
     localChanges$: localChanges$
   };
 
-  function notifyFocus () {
+  function notifyFocus() {
     return doc.notifyFocus(fieldId, localeCode);
   }
 
-  function set (value) {
+  function set(value) {
     lastSetValue = value;
-    return doc.setValueAt(path, value)
-    .catch(error => {
+    return doc.setValueAt(path, value).catch(error => {
       lastSetValue = getValue();
       return $q.reject(error);
     });
   }
 
-  function removeAt (i) {
+  function removeAt(i) {
     return doc.removeValueAt(path.concat([i]));
   }
 
-  function bindToPath (method) {
+  function bindToPath(method) {
     return doc[method].bind(null, path);
   }
 }

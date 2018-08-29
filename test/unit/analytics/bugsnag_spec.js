@@ -1,7 +1,7 @@
 import * as sinon from 'helpers/sinon';
 
 describe('bugsnag', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     this.bugsnag = this.$inject('bugsnag');
     this.LazyLoader = this.$inject('LazyLoader');
@@ -17,14 +17,14 @@ describe('bugsnag', () => {
     this.LazyLoader.get = sinon.stub().resolves(this.BugsnagStub);
   });
 
-  it('delegates #notify', function () {
+  it('delegates #notify', function() {
     this.bugsnag.enable();
     this.$apply();
     this.bugsnag.notify('ERROR');
     sinon.assert.calledWithExactly(this.BugsnagStub.notify, 'ERROR');
   });
 
-  it('delegates #notify after bugsnag has loaded', function () {
+  it('delegates #notify after bugsnag has loaded', function() {
     this.bugsnag.notify('ERROR');
     sinon.assert.notCalled(this.BugsnagStub.notify);
     this.bugsnag.enable();
@@ -32,7 +32,7 @@ describe('bugsnag', () => {
     sinon.assert.calledWithExactly(this.BugsnagStub.notify, 'ERROR');
   });
 
-  it('loads script only once', function () {
+  it('loads script only once', function() {
     this.bugsnag.enable();
     this.$apply();
     sinon.assert.calledOnce(this.LazyLoader.get);
@@ -42,21 +42,21 @@ describe('bugsnag', () => {
   });
 
   describe('user information', () => {
-    it('is added for user without organizations', function () {
+    it('is added for user without organizations', function() {
       this.bugsnag.enable({
-        sys: {id: 'USER_ID'}
+        sys: { id: 'USER_ID' }
       });
       this.$apply();
       expect(this.BugsnagStub.user.id).toEqual('USER_ID');
       expect(this.BugsnagStub.user.organizations).toEqual('');
     });
 
-    it('is added for user with organizations', function () {
+    it('is added for user with organizations', function() {
       this.bugsnag.enable({
-        sys: {id: 'UID'},
+        sys: { id: 'UID' },
         organizationMemberships: [
-          {organization: {sys: {id: 'foo'}}},
-          {organization: {sys: {id: 'bar'}}}
+          { organization: { sys: { id: 'foo' } } },
+          { organization: { sys: { id: 'bar' } } }
         ]
       });
       this.$apply();
@@ -65,7 +65,7 @@ describe('bugsnag', () => {
     });
   });
 
-  it('enabling after disabling does not send notifications', function () {
+  it('enabling after disabling does not send notifications', function() {
     this.bugsnag.enable();
     this.bugsnag.disable();
     this.$apply();
@@ -75,11 +75,11 @@ describe('bugsnag', () => {
   });
 
   describe('when script loading fails', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.LazyLoader.get = sinon.stub().rejects();
     });
 
-    it('#notify() does not throw', function () {
+    it('#notify() does not throw', function() {
       this.bugsnag.enable();
       this.$apply();
       this.bugsnag.notify();

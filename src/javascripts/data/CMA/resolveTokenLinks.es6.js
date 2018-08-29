@@ -1,4 +1,4 @@
-import {isPlainObject, set as setPath, get as getPath} from 'lodash';
+import { isPlainObject, set as setPath, get as getPath } from 'lodash';
 
 const isLink = item => getPath(item, ['sys', 'type']) === 'Link';
 
@@ -24,9 +24,9 @@ const isLink = item => getPath(item, ['sys', 'type']) === 'Link';
  * @returns {object}
  */
 
-export default function resolveTokenLinks (tokenData) {
+export default function resolveTokenLinks(tokenData) {
   const root = tokenData.items[0];
-  const {includes} = tokenData;
+  const { includes } = tokenData;
   const lookup = {};
   const visited = {};
 
@@ -37,8 +37,8 @@ export default function resolveTokenLinks (tokenData) {
 
   return root;
 
-  function store (item) {
-    const {type, id} = item.sys;
+  function store(item) {
+    const { type, id } = item.sys;
 
     if (!getPath(lookup, [type, id])) {
       setPath(lookup, [type, id], item);
@@ -47,13 +47,13 @@ export default function resolveTokenLinks (tokenData) {
     }
   }
 
-  function forEachInclude (fn) {
+  function forEachInclude(fn) {
     Object.keys(includes).forEach(type => {
       includes[type].forEach(item => fn(item));
     });
   }
 
-  function resolve (item) {
+  function resolve(item) {
     if (item.sys && alreadyVisited(item)) {
       return;
     }
@@ -70,8 +70,8 @@ export default function resolveTokenLinks (tokenData) {
     });
   }
 
-  function replaceLink (item, key) {
-    const {linkType, id} = item[key].sys;
+  function replaceLink(item, key) {
+    const { linkType, id } = item[key].sys;
     const target = getPath(lookup, [linkType, id]);
 
     if (target) {
@@ -80,8 +80,8 @@ export default function resolveTokenLinks (tokenData) {
     }
   }
 
-  function alreadyVisited (item) {
-    const {type, id} = item.sys;
+  function alreadyVisited(item) {
+    const { type, id } = item.sys;
 
     if (!getPath(visited, [type, id])) {
       setPath(visited, [type, id], true);

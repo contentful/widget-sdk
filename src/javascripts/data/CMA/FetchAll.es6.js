@@ -25,11 +25,11 @@ import _ from 'lodash';
  * @param {Object} params
  * @returns {array}
  */
-export function fetchAll (endpoint, path, batchLimit, params) {
+export function fetchAll(endpoint, path, batchLimit, params) {
   const requestPromises = [];
   let query = _.extend({}, params, { skip: 0, limit: batchLimit });
 
-  return makeRequest(endpoint, path, query).then((response) => {
+  return makeRequest(endpoint, path, query).then(response => {
     const total = response.total;
     let skip = batchLimit;
 
@@ -39,15 +39,18 @@ export function fetchAll (endpoint, path, batchLimit, params) {
       skip += batchLimit;
     }
 
-    return $q.all(requestPromises).then((requests) => {
-      const resources = _(requests).map('items').flatten().value();
+    return $q.all(requestPromises).then(requests => {
+      const resources = _(requests)
+        .map('items')
+        .flatten()
+        .value();
       const allResources = response.items.concat(resources);
-      return _.uniqBy(allResources, (r) => r.sys.id);
+      return _.uniqBy(allResources, r => r.sys.id);
     });
   });
 }
 
-function makeRequest (endpoint, path, query) {
+function makeRequest(endpoint, path, query) {
   return endpoint({
     method: 'GET',
     path: path,

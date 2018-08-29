@@ -3,7 +3,7 @@
 describe('TheLocaleStore', () => {
   const makeLocale = (code, sid = 'SID') => {
     return {
-      sys: {space: {sys: {id: sid}}},
+      sys: { space: { sys: { id: sid } } },
       code,
 
       internal_code: code,
@@ -12,18 +12,18 @@ describe('TheLocaleStore', () => {
   };
 
   const makeDefaultLocale = (code, sid) => {
-    return _.extend(makeLocale(code, sid), {default: true});
+    return _.extend(makeLocale(code, sid), { default: true });
   };
 
   const makeTestLocales = sid => [
     makeDefaultLocale('en-US', sid),
     makeLocale('de-DE', sid),
-    _.extend(makeLocale('pl-PL', sid), {contentManagementApi: false})
+    _.extend(makeLocale('pl-PL', sid), { contentManagementApi: false })
   ];
 
-  const makeRepo = items => ({getAll: () => Promise.resolve(items)});
+  const makeRepo = items => ({ getAll: () => Promise.resolve(items) });
 
-  beforeEach(function* () {
+  beforeEach(function*() {
     module('contentful/test');
     const getStore = this.$inject('TheStore').getStore;
     this.store = getStore();
@@ -33,53 +33,50 @@ describe('TheLocaleStore', () => {
   });
 
   describe('refreshes locales', () => {
-    beforeEach(function* () {
+    beforeEach(function*() {
       yield this.theLocaleStore.init(makeRepo(makeTestLocales()));
     });
 
-    it('gets all locales', function () {
+    it('gets all locales', function() {
       expect(this.theLocaleStore.getLocales()).toEqual(makeTestLocales());
     });
 
-    it('private locales are those enabled for entity editors (CMA)', function () {
+    it('private locales are those enabled for entity editors (CMA)', function() {
       const privateLocales = makeTestLocales().filter(l => l.contentManagementApi);
       expect(this.theLocaleStore.getPrivateLocales()).toEqual(privateLocales);
     });
 
-    it('gets default locale', function () {
+    it('gets default locale', function() {
       expect(this.theLocaleStore.getDefaultLocale()).toEqual(makeTestLocales()[0]);
     });
 
-    it('falls back to the first locale if no `default` flag is set', function* () {
+    it('falls back to the first locale if no `default` flag is set', function*() {
       const locales = makeTestLocales();
       delete locales[0].default;
       yield this.theLocaleStore.init(makeRepo(locales));
       expect(this.theLocaleStore.getDefaultLocale()).toEqual(locales[0]);
     });
 
-    it('gets active locale states', function () {
+    it('gets active locale states', function() {
       expect(this.theLocaleStore.isLocaleActive(makeLocale('en-US'))).toBe(true);
       expect(this.theLocaleStore.isLocaleActive(makeLocale('de-DE'))).toBe(false);
     });
 
-    it('gets updated active locales', function () {
+    it('gets updated active locales', function() {
       expect(this.theLocaleStore.getActiveLocales()).toEqual([makeDefaultLocale('en-US')]);
     });
 
     describe('changes active locales', () => {
-      beforeEach(function () {
-        this.theLocaleStore.setActiveLocales([
-          makeLocale('en-US'),
-          makeLocale('de-DE')
-        ]);
+      beforeEach(function() {
+        this.theLocaleStore.setActiveLocales([makeLocale('en-US'), makeLocale('de-DE')]);
       });
 
-      it('gets updated active locale states', function () {
+      it('gets updated active locale states', function() {
         expect(this.theLocaleStore.isLocaleActive(makeLocale('en-US'))).toBe(true);
         expect(this.theLocaleStore.isLocaleActive(makeLocale('de-DE'))).toBe(true);
       });
 
-      it('gets updated active locales', function () {
+      it('gets updated active locales', function() {
         const active = makeTestLocales().filter(l => l.contentManagementApi);
         expect(this.theLocaleStore.getActiveLocales()).toEqual(active);
       });
@@ -87,14 +84,14 @@ describe('TheLocaleStore', () => {
   });
 
   describe('#setActiveLocales', () => {
-    it('activates given locale', function () {
+    it('activates given locale', function() {
       const locale = makeLocale('zz');
       expect(this.theLocaleStore.isLocaleActive(locale)).toBe(false);
       this.theLocaleStore.setActiveLocales([locale]);
       expect(this.theLocaleStore.isLocaleActive(locale)).toBe(true);
     });
 
-    it('removes other locales', function () {
+    it('removes other locales', function() {
       const a = makeLocale('aa');
       const b = makeLocale('bb');
       this.theLocaleStore.setActiveLocales([a]);
@@ -103,7 +100,7 @@ describe('TheLocaleStore', () => {
       expect(this.theLocaleStore.isLocaleActive(a)).toBe(false);
     });
 
-    it('keeps default locale', function () {
+    it('keeps default locale', function() {
       const def = this.theLocaleStore.getDefaultLocale();
       expect(this.theLocaleStore.isLocaleActive(def)).toBe(true);
       this.theLocaleStore.setActiveLocales([]);
@@ -112,7 +109,7 @@ describe('TheLocaleStore', () => {
   });
 
   describe('#deactivateLocale', () => {
-    it('it makes locale inactive', function () {
+    it('it makes locale inactive', function() {
       const locale = makeLocale('zz');
       this.theLocaleStore.setActiveLocales([locale]);
       expect(this.theLocaleStore.isLocaleActive(locale)).toBe(true);
@@ -126,7 +123,7 @@ describe('TheLocaleStore', () => {
     const notSaved = makeLocale('nosave');
     const key = sid => `activeLocalesForSpace.${sid}`;
 
-    it('gets different stores for different spaces', function* () {
+    it('gets different stores for different spaces', function*() {
       yield this.theLocaleStore.init(makeRepo(makeTestLocales('sid1')));
       expect(this.clientStorageWrapper._store['activeLocalesForSpace.sid1']).toBeDefined();
       expect(this.clientStorageWrapper._store['activeLocalesForSpace.sid2']).not.toBeDefined();
@@ -135,7 +132,7 @@ describe('TheLocaleStore', () => {
       expect(this.clientStorageWrapper._store['activeLocalesForSpace.sid2']).toBeDefined();
     });
 
-    it('activates locales form the store', function* () {
+    it('activates locales form the store', function*() {
       const persistor = this.store.forKey(key('SID'));
       persistor.set(['save']);
       const locales = makeTestLocales().concat([saved, notSaved]);
@@ -145,7 +142,7 @@ describe('TheLocaleStore', () => {
       expect(this.theLocaleStore.isLocaleActive(notSaved)).toBe(false);
     });
 
-    it('saves locales to store', function* () {
+    it('saves locales to store', function*() {
       const persistor = this.store.forKey(key('SID'));
       const locales1 = makeTestLocales().concat([saved]);
       yield this.theLocaleStore.init(makeRepo(locales1));

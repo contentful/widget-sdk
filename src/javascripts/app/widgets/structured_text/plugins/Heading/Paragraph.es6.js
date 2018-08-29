@@ -5,8 +5,12 @@ import blockDecorator from '../shared/BlockSelectDecorator';
 import { blockTitles } from './HeadingDropdown';
 
 class Paragraph extends Component {
-  render () {
-    return <ToolbarDropdownListItem {...this.props}>{blockTitles[BLOCKS.PARAGRAPH]}</ToolbarDropdownListItem>;
+  render() {
+    return (
+      <ToolbarDropdownListItem {...this.props}>
+        {blockTitles[BLOCKS.PARAGRAPH]}
+      </ToolbarDropdownListItem>
+    );
   }
 }
 

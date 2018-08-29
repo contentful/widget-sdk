@@ -51,8 +51,7 @@ export default {
           <a
             href="https://gitlab.com/profile/personal_access_tokens"
             target="_blank"
-            rel="noopener noreferrer"
-          >
+            rel="noopener noreferrer">
             Gitlab Settings
           </a>
           . This value can’t be revealed once stored.
@@ -64,12 +63,7 @@ export default {
     return {
       name,
       url: `https://gitlab.com/api/v4/projects/${gitlabOrg}%2F${gitlabRepo}/pipeline`,
-      topics: [
-        'Entry.publish',
-        'Asset.publish',
-        'Entry.unpublish',
-        'Asset.unpublish'
-      ],
+      topics: ['Entry.publish', 'Asset.publish', 'Entry.unpublish', 'Asset.unpublish'],
       filters: [{ equals: [{ doc: 'sys.environment.sys.id' }, 'master'] }],
       headers: [{ key: 'Private-Token', value: token, secret: true }],
       transformation: {

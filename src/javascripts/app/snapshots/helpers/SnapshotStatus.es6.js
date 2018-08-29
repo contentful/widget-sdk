@@ -6,7 +6,7 @@ const STATES = {
   Other: 'other'
 };
 
-export function getLabel (snapshot) {
+export function getLabel(snapshot) {
   if (snapshot.sys.isCurrent) {
     return STATES.Current;
   } else if (snapshot.sys.snapshotType === 'publish') {
@@ -16,6 +16,6 @@ export function getLabel (snapshot) {
   }
 }
 
-export function getClassname (snapshot, prefix) {
+export function getClassname(snapshot, prefix) {
   return (prefix || DEFAULT_PREFIX) + getLabel(snapshot);
 }

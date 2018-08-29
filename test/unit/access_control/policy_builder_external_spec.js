@@ -3,7 +3,7 @@
 describe('Policy Builder, to external representation', () => {
   let toExternal, CONFIG;
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     toExternal = this.$inject('PolicyBuilder/toExternal');
     CONFIG = this.$inject('PolicyBuilder/CONFIG');
@@ -11,20 +11,25 @@ describe('Policy Builder, to external representation', () => {
 
   describe('takes internal and returns external representation', () => {
     it('creates sys object with id and version', () => {
-      const external = toExternal({id: 'testid', version: 123});
+      const external = toExternal({ id: 'testid', version: 123 });
       expect(_.isObject(external.sys)).toBe(true);
       expect(external.sys.id).toBe('testid');
       expect(external.sys.version).toBe(123);
     });
 
     it('picks name and description', () => {
-      const external = toExternal({name: 'name', description: 'desc'});
+      const external = toExternal({ name: 'name', description: 'desc' });
       expect(external.name).toBe('name');
       expect(external.description).toBe('desc');
     });
 
     it('picks permissions to object', () => {
-      const external = toExternal({contentModel: 'all', contentDelivery: 'all', settings: 'all', environments: 'all'});
+      const external = toExternal({
+        contentModel: 'all',
+        contentDelivery: 'all',
+        settings: 'all',
+        environments: 'all'
+      });
       expect(external.permissions.contentModel).toBe('all');
       expect(external.permissions.contentDelivery).toBe('all');
       expect(external.permissions.settings).toBe('all');
@@ -63,14 +68,14 @@ describe('Policy Builder, to external representation', () => {
   });
 
   describe('translating policies', () => {
-    function baseExternal (collection, effect) {
-      const internal = {uiCompatible: true};
+    function baseExternal(collection, effect) {
+      const internal = { uiCompatible: true };
       internal[collection] = {};
       internal[collection][effect] = [{}];
       return toExternal(internal);
     }
 
-    function testBase (external, type, effect) {
+    function testBase(external, type, effect) {
       const p = external.policies[0];
       expect(p.effect).toBe(effect);
       expect(p.constraint.and[0].equals[0].doc).toBe('sys.type');
@@ -110,8 +115,8 @@ describe('Policy Builder, to external representation', () => {
       const external = toExternal({
         uiCompatible: true,
         entries: {
-          allowed: [{action: 'all'}],
-          denied: [{action: 'update'}]
+          allowed: [{ action: 'all' }],
+          denied: [{ action: 'update' }]
         }
       });
 
@@ -132,9 +137,9 @@ describe('Policy Builder, to external representation', () => {
         uiCompatible: true,
         entries: {
           allowed: [
-            {action: 'read'},
-            {action: 'read', contentType: CONFIG.ALL_CTS},
-            {action: 'read', contentType: 'ctid'}
+            { action: 'read' },
+            { action: 'read', contentType: CONFIG.ALL_CTS },
+            { action: 'read', contentType: 'ctid' }
           ]
         }
       });
@@ -157,10 +162,7 @@ describe('Policy Builder, to external representation', () => {
       const external = toExternal({
         uiCompatible: true,
         entries: {
-          allowed: [
-            {action: 'read', scope: 'any'},
-            {action: 'update', scope: 'user'}
-          ]
+          allowed: [{ action: 'read', scope: 'any' }, { action: 'update', scope: 'user' }]
         }
       });
 
@@ -172,14 +174,13 @@ describe('Policy Builder, to external representation', () => {
       expect(p.constraint.and[1].equals[1]).toBe('User.current()');
     });
 
-
     it('translates path (field, locale)', () => {
       const external = toExternal({
         uiCompatible: true,
         entries: {
           allowed: [
-            {action: 'update', field: CONFIG.ALL_FIELDS, locale: 'en-US'},
-            {action: 'update', field: 'test', locale: CONFIG.ALL_LOCALES}
+            { action: 'update', field: CONFIG.ALL_FIELDS, locale: 'en-US' },
+            { action: 'update', field: 'test', locale: CONFIG.ALL_LOCALES }
           ]
         }
       });
@@ -195,10 +196,7 @@ describe('Policy Builder, to external representation', () => {
       const external = toExternal({
         uiCompatible: true,
         entries: {
-          allowed: [
-            {action: 'publish'},
-            {action: 'archive'}
-          ]
+          allowed: [{ action: 'publish' }, { action: 'archive' }]
         }
       });
 

@@ -14,15 +14,15 @@ class Dialog extends React.Component {
     testId: PropTypes.string,
     children: PropTypes.node,
     size: PropTypes.oneOf(Object.keys(Dialog.sizes))
-  }
+  };
 
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     this.style.width = Dialog.sizes[this.props.size];
   }
 
-  render () {
+  render() {
     return (
       <div className="modal-dialog" data-test-id={this.props.testId} style={this.style}>
         {this.props.children}
@@ -37,11 +37,13 @@ class Header extends React.Component {
     onCloseButtonClicked: PropTypes.func
   };
 
-  render () {
+  render() {
     return (
       <header className="modal-dialog__header" data-test-id="header">
         <h1>{this.props.children}</h1>
-        {this.props.onCloseButtonClicked && <button className="modal-dialog__close" onClick={this.props.onCloseButtonClicked} />}
+        {this.props.onCloseButtonClicked && (
+          <button className="modal-dialog__close" onClick={this.props.onCloseButtonClicked} />
+        )}
       </header>
     );
   }
@@ -50,9 +52,9 @@ class Header extends React.Component {
 class Body extends React.Component {
   static propTypes = {
     children: PropTypes.node
-  }
+  };
 
-  render () {
+  render() {
     return (
       <div className="modal-dialog__content">
         <div className="modal-dalog__richtext" data-test-id="content">
@@ -66,9 +68,9 @@ class Body extends React.Component {
 class Controls extends React.Component {
   static propTypes = {
     children: PropTypes.node
-  }
+  };
 
-  render () {
+  render() {
     return (
       <div className="modal-dialog__controls" data-test-id="controls">
         {this.props.children}

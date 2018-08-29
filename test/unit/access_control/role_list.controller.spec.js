@@ -1,5 +1,5 @@
 describe('Role List Controller', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     this.scope = this.$inject('$rootScope').$new();
     this.basicErrorHandler = this.$inject('ReloadNotification').basicErrorHandler;
@@ -8,22 +8,26 @@ describe('Role List Controller', () => {
     this.$inject('access_control/AccessChecker').canModifyRoles = this.canModifyRoles;
 
     this.scope.context = {};
-    this.roles = [{
-      name: 'Editor',
-      sys: {
-        id: '123'
+    this.roles = [
+      {
+        name: 'Editor',
+        sys: {
+          id: '123'
+        }
+      },
+      {
+        name: 'Author',
+        sys: {
+          id: '321'
+        }
+      },
+      {
+        name: 'Developer',
+        sys: {
+          id: '213'
+        }
       }
-    }, {
-      name: 'Author',
-      sys: {
-        id: '321'
-      }
-    }, {
-      name: 'Developer',
-      sys: {
-        id: '213'
-      }
-    }];
+    ];
 
     this.rolesResource = {
       limits: {
@@ -99,7 +103,7 @@ describe('Role List Controller', () => {
     };
 
     this.createController = () => {
-      this.$inject('$controller')('RoleListController', {$scope: this.scope});
+      this.$inject('$controller')('RoleListController', { $scope: this.scope });
       this.$apply();
     };
 
@@ -110,68 +114,68 @@ describe('Role List Controller', () => {
   });
 
   describe('loading roles', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.createController();
     });
 
-    it('calls reset on initialization', function () {
+    it('calls reset on initialization', function() {
       sinon.assert.calledOnce(this.reset);
     });
 
-    it('places roles on scope', function () {
+    it('places roles on scope', function() {
       expect(this.scope.roles.map(role => role.name)).toEqual(['Author', 'Developer', 'Editor']);
     });
 
-    it('exposes usage and limit in the scope', function () {
+    it('exposes usage and limit in the scope', function() {
       expect(this.scope.usage).toBe(2);
       expect(this.scope.limit).toBe(5);
     });
   });
 
   describe('reaching the limit', () => {
-    it('flags as true if limit has been reached', function () {
+    it('flags as true if limit has been reached', function() {
       this.setLimit(5, 5);
       this.createController();
 
       expect(this.scope.reachedLimit).toBe(true);
     });
 
-    it('flags as false if limit has not been reached', function () {
+    it('flags as false if limit has not been reached', function() {
       this.setLimit(1, 5);
       this.createController();
       expect(this.scope.reachedLimit).toBe(false);
     });
 
-    it('flags if the user can upgrade the plan', function () {
+    it('flags if the user can upgrade the plan', function() {
       this.OrganizationRoles.isOwnerOrAdmin.returns(true);
       this.createController();
       expect(this.scope.canUpgrade).toBe(true);
     });
 
-    it('flags if the user cannot upgrade the plan', function () {
+    it('flags if the user cannot upgrade the plan', function() {
       this.createController();
       expect(this.scope.canUpgrade).toBe(false);
     });
   });
 
   describe('duplicating role', () => {
-    it('should be able to successfully duplicate a role', function () {
+    it('should be able to successfully duplicate a role', function() {
       this.createController();
       const $state = this.$inject('$state');
       $state.go = sinon.spy();
-      const role = {sys: {id: 'foobar'}};
+      const role = { sys: { id: 'foobar' } };
       this.scope.duplicateRole(role);
-      sinon.assert.calledWith($state.go, '^.new', {baseRoleId: 'foobar'});
+      sinon.assert.calledWith($state.go, '^.new', { baseRoleId: 'foobar' });
     });
   });
 
   describe('reset fails', () => {
-    beforeEach(function () {
-      this.reset.rejects({statusCode: 500});
+    beforeEach(function() {
+      this.reset.rejects({ statusCode: 500 });
       this.createController();
     });
 
-    it('results in an error message', function () {
+    it('results in an error message', function() {
       sinon.assert.called(this.basicErrorHandler);
     });
   });

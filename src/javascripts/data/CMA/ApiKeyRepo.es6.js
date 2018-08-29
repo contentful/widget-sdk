@@ -1,11 +1,10 @@
-import {pick} from 'lodash';
+import { pick } from 'lodash';
 import $q from '$q';
 
 /**
  * @ngdoc service
  * @name data/CMA/ApiKeyRepo
  */
-
 
 /**
  * @ngdoc method
@@ -29,7 +28,7 @@ import $q from '$q';
  *   constructed with the 'data/Endpoint.createSpaceEndpoint()' service.
  * @returns {ApiKeyRepo}
  */
-export default function create (spaceEndpoint) {
+export default function create(spaceEndpoint) {
   // Promise to cached list of deliver keys
   let deliveryKeys = null;
 
@@ -42,31 +41,29 @@ export default function create (spaceEndpoint) {
     refresh
   };
 
-  function get (id) {
+  function get(id) {
     return spaceEndpoint({
       method: 'GET',
       path: ['api_keys', id]
     }).then(resolvePreviewKey);
   }
 
-
-  function create (name, description) {
+  function create(name, description) {
     return getNewName(name)
-    .then((uniqueName) => {
-      return spaceEndpoint({
-        method: 'POST',
-        path: ['api_keys'],
-        data: {name: uniqueName, description}
+      .then(uniqueName => {
+        return spaceEndpoint({
+          method: 'POST',
+          path: ['api_keys'],
+          data: { name: uniqueName, description }
+        });
+      })
+      .then(data => {
+        refresh();
+        return resolvePreviewKey(data);
       });
-    })
-    .then((data) => {
-      refresh();
-      return resolvePreviewKey(data);
-    });
   }
 
-
-  function save (data) {
+  function save(data) {
     const id = data.sys.id;
     const version = data.sys.version;
     const payload = pick(data, ['name', 'description', 'environments']);
@@ -76,15 +73,13 @@ export default function create (spaceEndpoint) {
       path: ['api_keys', id],
       data: payload,
       version: version
-    })
-    .then((data) => {
+    }).then(data => {
       refresh();
       return resolvePreviewKey(data);
     });
   }
 
-
-  function remove (id) {
+  function remove(id) {
     return spaceEndpoint({
       method: 'DELETE',
       path: ['api_keys', id]
@@ -93,57 +88,51 @@ export default function create (spaceEndpoint) {
     });
   }
 
-
-  function refresh () {
+  function refresh() {
     deliveryKeys = spaceEndpoint({
       method: 'GET',
       path: ['api_keys'],
       // TODO Maximum limit allowed by the API. We should paginate
       // this.
-      query: {limit: '100'}
-    }).then((response) => response.items);
+      query: { limit: '100' }
+    }).then(response => response.items);
     return deliveryKeys;
   }
 
-
-  function getAll () {
+  function getAll() {
     return deliveryKeys || refresh();
   }
-
 
   /**
    * Resolves the link in `apiKey.preview_api_key` and replaces it with
    * the key data. Returns the mutated object.
    */
-  function resolvePreviewKey (apiKey) {
+  function resolvePreviewKey(apiKey) {
     if (apiKey.preview_api_key) {
-      return getPreviewKey(apiKey.preview_api_key.sys.id)
-        .then((previewKey) => {
-          apiKey.preview_api_key = previewKey;
-          return apiKey;
-        });
+      return getPreviewKey(apiKey.preview_api_key.sys.id).then(previewKey => {
+        apiKey.preview_api_key = previewKey;
+        return apiKey;
+      });
     } else {
       return $q.resolve(apiKey);
     }
   }
 
-
-  function getPreviewKey (id) {
+  function getPreviewKey(id) {
     return spaceEndpoint({
       method: 'GET',
       path: ['preview_api_keys', id]
     });
   }
 
-
   /**
    * Get an API key name that is not taken yet by appending a number to
    * the base name.
    */
-  function getNewName (base) {
+  function getNewName(base) {
     let i = 1;
-    return getAll().then((keys) => {
-      const names = keys.map((k) => k.name);
+    return getAll().then(keys => {
+      const names = keys.map(k => k.name);
       /* eslint no-constant-condition: off */
       while (true) {
         const name = base + ' ' + i;

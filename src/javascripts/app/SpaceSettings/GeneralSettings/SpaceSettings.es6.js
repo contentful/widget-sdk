@@ -17,11 +17,8 @@ export default class SpaceSettings extends React.Component {
     spaceName: this.props.spaceName
   };
 
-  isSaveDisabled () {
-    return (
-      !this.state.spaceName ||
-      this.state.spaceName === this.state.initialSpaceName
-    );
+  isSaveDisabled() {
+    return !this.state.spaceName || this.state.spaceName === this.state.initialSpaceName;
   }
 
   onChangeSpaceName = e => {
@@ -43,7 +40,7 @@ export default class SpaceSettings extends React.Component {
     }
   };
 
-  renderContent () {
+  renderContent() {
     return (
       <React.Fragment>
         <TextField
@@ -67,14 +64,13 @@ export default class SpaceSettings extends React.Component {
     );
   }
 
-  renderActions () {
+  renderActions() {
     return (
       <React.Fragment>
         <Button
           buttonType="negative"
           onClick={this.props.openRemovalDialog}
-          data-test-id="delete-space"
-        >
+          data-test-id="delete-space">
           Remove space and all its contents
         </Button>
         <Button
@@ -82,15 +78,14 @@ export default class SpaceSettings extends React.Component {
           onClick={this.onSaveNewName}
           buttonType="positive"
           loading={this.state.isSaving}
-          data-test-id="update-space"
-        >
+          data-test-id="update-space">
           Save
         </Button>
       </React.Fragment>
     );
   }
 
-  render () {
+  render() {
     return (
       <Workbench
         centerContent

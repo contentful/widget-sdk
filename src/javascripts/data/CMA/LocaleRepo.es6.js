@@ -1,5 +1,5 @@
-import {omit} from 'lodash';
-import {fetchAll} from './FetchAll';
+import { omit } from 'lodash';
+import { fetchAll } from './FetchAll';
 
 /**
  * @name LocaleRepo.create
@@ -7,7 +7,7 @@ import {fetchAll} from './FetchAll';
  * Given a space endpoint produces a repository
  * for locale management and retrieval.
  */
-export default function create (spaceEndpoint) {
+export default function create(spaceEndpoint) {
   return {
     getAll,
     save,
@@ -21,7 +21,7 @@ export default function create (spaceEndpoint) {
    * Goes through all the response pages if needed.
    * @returns {Promise<API.Locale[]}
    */
-  function getAll () {
+  function getAll() {
     return fetchAll(spaceEndpoint, ['locales'], 100);
   }
 
@@ -34,7 +34,7 @@ export default function create (spaceEndpoint) {
    * @param {API.Locale} locale
    * @returns {Promise<API.Locale>} Promise of an updated entity
    */
-  function save (locale) {
+  function save(locale) {
     const sys = locale.sys;
     const isNew = !sys || !sys.id;
 
@@ -50,7 +50,7 @@ export default function create (spaceEndpoint) {
     // - additionally there's no harm in not sending `sys`
     const data = omit(locale, ['sys', 'default', 'fallback_code', 'internal_code']);
 
-    return spaceEndpoint({method, path, data, version});
+    return spaceEndpoint({ method, path, data, version });
   }
 
   /**
@@ -60,7 +60,7 @@ export default function create (spaceEndpoint) {
    * @param {string} id
    * @param {integer} version
    */
-  function remove (id, version) {
+  function remove(id, version) {
     return spaceEndpoint({
       method: 'DELETE',
       path: ['locales', id],

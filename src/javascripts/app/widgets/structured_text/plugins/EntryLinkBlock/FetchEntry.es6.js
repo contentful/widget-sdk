@@ -25,31 +25,31 @@ export default class FetchEntry extends React.Component {
       thumbnail: true
     }
   };
-  componentDidMount () {
+  componentDidMount() {
     this.fetchEntry(this.props);
   }
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (this.props.node !== nextProps.node || this.props.currentUrl !== nextProps.currentUrl) {
       this.fetchEntry(nextProps);
     }
   }
 
-  async fetchEntry (props) {
+  async fetchEntry(props) {
     // TODO: Handle error & pending states
     try {
-      this.setState({pending: {entry: true, thumbnail: true}});
+      this.setState({ pending: { entry: true, thumbnail: true } });
       const entry = await getEntry(props.node.data.get('target').sys.id);
       this.setState({
         entry: entry.data,
         entryTitle: getEntryTitle(entry),
         entryDescription: getEntryDescription(entry),
         entryStatus: getEntryStatus(entry),
-        loading: {entry: false, thumbnail: true}
+        loading: { entry: false, thumbnail: true }
       });
       const thumbnail = await getEntryThumbnail(entry);
       this.setState({
         entryThumbnail: thumbnail,
-        loading: {entry: false, thumbnail: false}
+        loading: { entry: false, thumbnail: false }
       });
     } catch (error) {
       this.setState({
@@ -57,20 +57,20 @@ export default class FetchEntry extends React.Component {
       });
     }
   }
-  render () {
+  render() {
     return this.props.render(this.state);
   }
 }
 
-function getEntryTitle (entry) {
+function getEntryTitle(entry) {
   return spaceContext.entryTitle(entry);
 }
 
-function getEntryDescription (entry) {
+function getEntryDescription(entry) {
   return spaceContext.entityDescription(entry);
 }
 
-function getEntryStatus (entry) {
+function getEntryStatus(entry) {
   const state = EntityState.getState(entry.data.sys);
 
   // We do not show the state indicator for published assets
@@ -79,10 +79,10 @@ function getEntryStatus (entry) {
   }
 }
 
-function getEntryThumbnail (entry) {
+function getEntryThumbnail(entry) {
   return spaceContext.entryImage(entry);
 }
 
-function getEntry (entryId) {
+function getEntry(entryId) {
   return spaceContext.space.getEntry(entryId);
 }

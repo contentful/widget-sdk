@@ -1,11 +1,11 @@
 import React, { Fragment } from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
-import {get} from 'lodash';
-import {isOwner} from 'services/OrganizationRoles';
-import {go} from 'states/Navigator';
+import { get } from 'lodash';
+import { isOwner } from 'services/OrganizationRoles';
+import { go } from 'states/Navigator';
 import spinner from 'ui/Components/Spinner';
-import {asReact} from 'ui/Framework/DOMRenderer';
+import { asReact } from 'ui/Framework/DOMRenderer';
 import { getStoreResources } from 'utils/ResourceUtils';
 import { getRecommendedPlan } from './WizardUtils';
 
@@ -32,8 +32,16 @@ const SpacePlanSelector = createReactClass({
     selectedPlan: PropTypes.object
   },
 
-  componentDidMount () {
-    const { fetchSpacePlans, getResourcesForSpace, organization, space, action, wizardScope, reposition } = this.props;
+  componentDidMount() {
+    const {
+      fetchSpacePlans,
+      getResourcesForSpace,
+      organization,
+      space,
+      action,
+      wizardScope,
+      reposition
+    } = this.props;
     const spaceId = space && space.sys.id;
 
     fetchSpacePlans({ organization, spaceId }).then(reposition);
@@ -43,8 +51,16 @@ const SpacePlanSelector = createReactClass({
     }
   },
 
-  render () {
-    const {organization, space, action, wizardScope, spacePlans, selectedPlan, resources: resourcesMeta} = this.props;
+  render() {
+    const {
+      organization,
+      space,
+      action,
+      wizardScope,
+      spacePlans,
+      selectedPlan,
+      resources: resourcesMeta
+    } = this.props;
     const { spaceRatePlans, freeSpacesResource, isPending } = spacePlans;
 
     const spaceId = space && space.sys.id;
@@ -55,115 +71,122 @@ const SpacePlanSelector = createReactClass({
     const currentPlan = getCurrentPlan(spaceRatePlans);
     const highestPlan = getHighestPlan(spaceRatePlans);
     const recommendedPlan = isChangingInSpace && getRecommendedPlan(spaceRatePlans, resources);
-    const atHighestPlan = highestPlan && highestPlan.unavailabilityReasons && highestPlan.unavailabilityReasons.find(reason => reason.type === 'currentPlan');
+    const atHighestPlan =
+      highestPlan &&
+      highestPlan.unavailabilityReasons &&
+      highestPlan.unavailabilityReasons.find(reason => reason.type === 'currentPlan');
     const payingOrg = organization.isBillable;
 
-    return <div>
-      {
-        isPending &&
-        <div className="loader__container">
-          {asReact(spinner({diameter: '40px'}))}
-        </div>
-      }
-      {
-        !isPending && spaceRatePlans &&
-        <div>
-          {!payingOrg &&
-            <BillingInfo
-              canSetupBilling={isOwner(organization)}
-              goToBilling={this.goToBilling}
-              action={action}
-            />
-          }
-          { atHighestPlan &&
-            <NoMorePlans canSetupBilling={isOwner(organization)} />
-          }
-          {
-            recommendedPlan &&
-            <ExplainRecommendation
-              currentPlan={currentPlan}
-              recommendedPlan={recommendedPlan}
-              resources={resources}
-            />
-          }
-          <h2 className="create-space-wizard__heading">
-            Choose the space type
-          </h2>
-          { action === 'create' &&
-            <Fragment>
-              <p className="create-space-wizard__subheading">
-                You are creating this space for the organization <em>{organization.name}</em>.<br/>
-              </p>
-              <div className="space-plans-list">
-                {spaceRatePlans.map((plan) => <SpacePlanItem
-                  key={plan.sys.id}
-                  plan={plan}
-                  freeSpacesResource={freeSpacesResource}
-                  isPayingOrg={payingOrg}
-                  isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
-                  onSelect={this.selectPlan()} />)}
-              </div>
-            </Fragment>
-          }
-          { action === 'change' &&
-            <Fragment>
-              <p className="create-space-wizard__subheading">
-                You are changing the space <em>{space.name}</em> for organization <em>{organization.name}</em>.<br/>
-              </p>
-              <div className="space-plans-list">
-                {spaceRatePlans.map((plan) => <SpacePlanItem
-                  key={plan.sys.id}
-                  plan={plan}
-                  freeSpacesResource={freeSpacesResource}
-                  isCurrentPlan={currentPlan === plan}
-                  isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
-                  isRecommended={get(recommendedPlan, 'sys.id') === plan.sys.id}
-                  isPayingOrg={payingOrg}
-                  onSelect={this.selectPlan(currentPlan, recommendedPlan)} />)}
-              </div>
-            </Fragment>
-          }
-        </div>
-      }
-      {
-        !isPending && !spaceRatePlans &&
-        <div className="note-box--warning">
-          <p>Could not fetch space plans.</p>
-        </div>
-      }
-    </div>;
+    return (
+      <div>
+        {isPending && (
+          <div className="loader__container">{asReact(spinner({ diameter: '40px' }))}</div>
+        )}
+        {!isPending &&
+          spaceRatePlans && (
+            <div>
+              {!payingOrg && (
+                <BillingInfo
+                  canSetupBilling={isOwner(organization)}
+                  goToBilling={this.goToBilling}
+                  action={action}
+                />
+              )}
+              {atHighestPlan && <NoMorePlans canSetupBilling={isOwner(organization)} />}
+              {recommendedPlan && (
+                <ExplainRecommendation
+                  currentPlan={currentPlan}
+                  recommendedPlan={recommendedPlan}
+                  resources={resources}
+                />
+              )}
+              <h2 className="create-space-wizard__heading">Choose the space type</h2>
+              {action === 'create' && (
+                <Fragment>
+                  <p className="create-space-wizard__subheading">
+                    You are creating this space for the organization <em>{organization.name}</em>.
+                    <br />
+                  </p>
+                  <div className="space-plans-list">
+                    {spaceRatePlans.map(plan => (
+                      <SpacePlanItem
+                        key={plan.sys.id}
+                        plan={plan}
+                        freeSpacesResource={freeSpacesResource}
+                        isPayingOrg={payingOrg}
+                        isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
+                        onSelect={this.selectPlan()}
+                      />
+                    ))}
+                  </div>
+                </Fragment>
+              )}
+              {action === 'change' && (
+                <Fragment>
+                  <p className="create-space-wizard__subheading">
+                    You are changing the space <em>{space.name}</em> for organization{' '}
+                    <em>{organization.name}</em>.<br />
+                  </p>
+                  <div className="space-plans-list">
+                    {spaceRatePlans.map(plan => (
+                      <SpacePlanItem
+                        key={plan.sys.id}
+                        plan={plan}
+                        freeSpacesResource={freeSpacesResource}
+                        isCurrentPlan={currentPlan === plan}
+                        isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
+                        isRecommended={get(recommendedPlan, 'sys.id') === plan.sys.id}
+                        isPayingOrg={payingOrg}
+                        onSelect={this.selectPlan(currentPlan, recommendedPlan)}
+                      />
+                    ))}
+                  </div>
+                </Fragment>
+              )}
+            </div>
+          )}
+        {!isPending &&
+          !spaceRatePlans && (
+            <div className="note-box--warning">
+              <p>Could not fetch space plans.</p>
+            </div>
+          )}
+      </div>
+    );
   },
 
-  selectPlan (currentPlan, recommendedPlan) {
+  selectPlan(currentPlan, recommendedPlan) {
     const { selectPlan, track, onSubmit } = this.props;
 
-    return (selectedPlan) => {
+    return selectedPlan => {
       selectPlan(currentPlan, selectedPlan);
       track('select_plan', { currentPlan, selectedPlan, recommendedPlan });
       onSubmit && onSubmit();
     };
   },
-  goToBilling () {
-    const {organization, track, onCancel} = this.props;
+  goToBilling() {
+    const { organization, track, onCancel } = this.props;
     const orgId = organization.sys.id;
     go({
       path: ['account', 'organizations', 'subscription_billing'],
-      params: {orgId, pathSuffix: '/billing_address'},
-      options: {reload: true}
+      params: { orgId, pathSuffix: '/billing_address' },
+      options: { reload: true }
     });
     track('link_click');
     onCancel();
   }
 });
 
-function getCurrentPlan (spaceRatePlans) {
+function getCurrentPlan(spaceRatePlans) {
   return spaceRatePlans.find(plan => {
-    return plan.unavailabilityReasons &&
-      plan.unavailabilityReasons.find(reason => reason.type === 'currentPlan');
+    return (
+      plan.unavailabilityReasons &&
+      plan.unavailabilityReasons.find(reason => reason.type === 'currentPlan')
+    );
   });
 }
 
-function getHighestPlan (spaceRatePlans) {
+function getHighestPlan(spaceRatePlans) {
   return spaceRatePlans.slice().sort((planX, planY) => planY.price >= planX.price)[0];
 }
 

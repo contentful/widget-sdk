@@ -4,30 +4,26 @@ import $stateParams from '$stateParams';
 import spaceContext from 'spaceContext';
 
 import { contentPreviewsBus$ } from 'contentPreview';
-import {isEqual, find, get, includes} from 'lodash';
-import {organizations$, user$, spacesByOrganization$} from 'services/TokenStore';
+import { isEqual, find, get, includes } from 'lodash';
+import { organizations$, user$, spacesByOrganization$ } from 'services/TokenStore';
 
-import {
-  combine,
-  onValue,
-  getValue,
-  createPropertyBus
-} from 'utils/kefir';
+import { combine, onValue, getValue, createPropertyBus } from 'utils/kefir';
 
 /**
  * @description
  * A stream combining user, current org, current space and spaces grouped by org id
  */
-export const userDataBus$ =
-  combine(
-    [
-      user$,
-      getCurrentOrgSpaceAndPublishedCTsBus(),
-      spacesByOrganization$,
-      contentPreviewsBus$
-    ],
-    (user, [org, space, publishedCTs], spacesByOrg, contentPreviews) => [user, org, spacesByOrg, space, contentPreviews, publishedCTs]
-  )
+export const userDataBus$ = combine(
+  [user$, getCurrentOrgSpaceAndPublishedCTsBus(), spacesByOrganization$, contentPreviewsBus$],
+  (user, [org, space, publishedCTs], spacesByOrg, contentPreviews) => [
+    user,
+    org,
+    spacesByOrg,
+    space,
+    contentPreviews,
+    publishedCTs
+  ]
+)
   .filter(([user, org, spacesByOrg]) => user && user.email && org && spacesByOrg) // space is a Maybe and so is contentPreviews
   .skipDuplicates(isEqual)
   .toProperty();
@@ -40,9 +36,16 @@ export const userDataBus$ =
  * @param {String} orgId
  * @returns {string?} orgRole
  */
-export function getOrgRole (user, orgId) {
+export function getOrgRole(user, orgId) {
   const orgMemberships = user.organizationMemberships;
-  const org = find(orgMemberships, ({organization: {sys: {id}}}) => orgId === id);
+  const org = find(
+    orgMemberships,
+    ({
+      organization: {
+        sys: { id }
+      }
+    }) => orgId === id
+  );
   const role = org && org.role;
 
   return role || null;
@@ -55,7 +58,7 @@ export function getOrgRole (user, orgId) {
  * @param {object} user
  * @returns {Number} user age
  */
-export function getUserAgeInDays (user) {
+export function getUserAgeInDays(user) {
   const creationDate = moment(user.sys.createdAt);
   const now = moment();
 
@@ -70,7 +73,7 @@ export function getUserAgeInDays (user) {
  *
  * @returns {Number} unix timestamp
  */
-export function getUserCreationDateUnixTimestamp (user) {
+export function getUserCreationDateUnixTimestamp(user) {
   return moment(user.sys.createdAt).unix();
 }
 
@@ -84,8 +87,8 @@ export function getUserCreationDateUnixTimestamp (user) {
  * @param {Object} user
  * @returns {boolean}
  */
-export function isNonPayingUser (user) {
-  const {organizationMemberships} = user;
+export function isNonPayingUser(user) {
+  const { organizationMemberships } = user;
   const convertedStatuses = ['paid', 'free_paid'];
 
   // disqualify all users that don't belong to any org
@@ -95,7 +98,7 @@ export function isNonPayingUser (user) {
 
   // TODO: Modify this to look at the organization payment status
   // instead of `subscription.status` directly. See below.
-  return !organizationMemberships.reduce((acc, {organization}) => {
+  return !organizationMemberships.reduce((acc, { organization }) => {
     // For now, we treat all V2 orgs as "paid"
     //
     // This logic is not truly accurate for V2 orgs, because in
@@ -126,7 +129,7 @@ export function isNonPayingUser (user) {
  * @param {Object} spacesByOrg
  * @returns {boolean}
  */
-export function hasAnOrgWithSpaces (spacesByOrg) {
+export function hasAnOrgWithSpaces(spacesByOrg) {
   return !!find(spacesByOrg, spaces => !!spaces.length);
 }
 
@@ -138,7 +141,7 @@ export function hasAnOrgWithSpaces (spacesByOrg) {
  * @param {Object} user
  * @returns {boolean}
  */
-export function ownsAtleastOneOrg (user) {
+export function ownsAtleastOneOrg(user) {
   return !!getOwnedOrgs(user).length;
 }
 
@@ -149,7 +152,7 @@ export function ownsAtleastOneOrg (user) {
  * @param {Object} user
  * @returns {Array<User>}
  */
-export function getOwnedOrgs (user) {
+export function getOwnedOrgs(user) {
   const orgMemberships = user.organizationMemberships || [];
   // filter out orgs user owns
   return orgMemberships.filter(org => org.role === 'owner');
@@ -163,7 +166,7 @@ export function getOwnedOrgs (user) {
  * @param {Object} spacesByOrg
  * @returns {Object<Org>?}
  */
-export function getFirstOwnedOrgWithoutSpaces (user, spacesByOrg) {
+export function getFirstOwnedOrgWithoutSpaces(user, spacesByOrg) {
   const ownedOrgs = getOwnedOrgs(user);
   // return the first org that has no spaces
   const orgMembership = find(ownedOrgs, ownedOrg => {
@@ -185,7 +188,7 @@ export function getFirstOwnedOrgWithoutSpaces (user, spacesByOrg) {
  * @param {Object} user
  * @returns {boolean}
  */
-export function isAutomationTestUser (user) {
+export function isAutomationTestUser(user) {
   return /^autotest\+.*@contentful.com$/.test(user.email);
 }
 
@@ -199,7 +202,7 @@ export function isAutomationTestUser (user) {
  * @params {Object} org
  * @returns {boolean}
  */
-export function isUserOrgCreator (user, org) {
+export function isUserOrgCreator(user, org) {
   const creatorUser = org.sys.createdBy;
   return !!creatorUser && creatorUser.sys.id === user.sys.id;
 }
@@ -212,12 +215,10 @@ export function isUserOrgCreator (user, org) {
  * @param {Object} space
  * @returns {string[]}
  */
-export function getUserSpaceRoles (space) {
+export function getUserSpaceRoles(space) {
   const adminRole = space.spaceMembership.admin ? ['admin'] : [];
   // we keep everything lower-case, just to avoid possible naming issues
-  const nonAdminRoles = space.spaceMembership.roles.map(
-    ({ name }) => name && name.toLowerCase()
-  );
+  const nonAdminRoles = space.spaceMembership.roles.map(({ name }) => name && name.toLowerCase());
   return adminRole.concat(nonAdminRoles);
 }
 
@@ -227,9 +228,11 @@ export function getUserSpaceRoles (space) {
  * there are two streams, one for curr space and one for
  * the curr org.
  */
-function getCurrentOrgSpaceAndPublishedCTsBus () {
+function getCurrentOrgSpaceAndPublishedCTsBus() {
   const currOrgSpaceAndPublishedCTsBus = createPropertyBus([]);
-  const currOrgSpaceAndPublishedCTsUpdater = updateCurrOrgSpaceAndPublishedCTs(currOrgSpaceAndPublishedCTsBus);
+  const currOrgSpaceAndPublishedCTsUpdater = updateCurrOrgSpaceAndPublishedCTs(
+    currOrgSpaceAndPublishedCTsBus
+  );
 
   // emit when orgs stream emits
   onValue(organizations$.filter(orgs => orgs && orgs.length), currOrgSpaceAndPublishedCTsUpdater);
@@ -241,7 +244,7 @@ function getCurrentOrgSpaceAndPublishedCTsBus () {
   return currOrgSpaceAndPublishedCTsBus.property;
 }
 
-function updateCurrOrgSpaceAndPublishedCTs (bus) {
+function updateCurrOrgSpaceAndPublishedCTs(bus) {
   return _ => {
     const orgId = $stateParams.orgId;
     const orgs = getValue(organizations$);
@@ -253,16 +256,18 @@ function updateCurrOrgSpaceAndPublishedCTs (bus) {
   };
 }
 
-function getCurrOrg (orgs, orgId) {
-  return getOrgById(orgs, orgId) ||
+function getCurrOrg(orgs, orgId) {
+  return (
+    getOrgById(orgs, orgId) ||
     get(spaceContext, 'organizationContext.organization', null) ||
-    orgs[0];
+    orgs[0]
+  );
 }
 
-function getCurrSpace () {
+function getCurrSpace() {
   return get(spaceContext, 'space.data', null);
 }
 
-function getOrgById (orgs, orgId) {
+function getOrgById(orgs, orgId) {
   return orgId && find(orgs, org => org.sys.id === orgId);
 }

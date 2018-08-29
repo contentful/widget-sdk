@@ -6,17 +6,17 @@ describe('subscriptionPlanRecommender', () => {
 
   const HOST = 'be.contentful.com:443';
   const TEST_ORG_ID = 'TEST_ORG_ID';
-  const ENDPOINT = HOST + '/account/organizations/' + TEST_ORG_ID +
-    '/z_subscription_plans/recommended';
+  const ENDPOINT =
+    HOST + '/account/organizations/' + TEST_ORG_ID + '/z_subscription_plans/recommended';
 
-  const PLAN_CLASS = {'class': 'z-subscription-plan'};
-  const REASON_CLASS = {'class': 'z-subscription-plan-recommendation-reason'};
+  const PLAN_CLASS = { class: 'z-subscription-plan' };
+  const REASON_CLASS = { class: 'z-subscription-plan-recommendation-reason' };
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
 
     this.mockService('environment', {
-      settings: {authUrl: HOST}
+      settings: { authUrl: HOST }
     });
 
     recommend = this.$inject('subscriptionPlanRecommender').recommend;
@@ -30,7 +30,7 @@ describe('subscriptionPlanRecommender', () => {
   });
 
   describe('.recommend(organizationId)', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.promise = recommend(TEST_ORG_ID);
       this.respond = $httpBackend.whenGET(ENDPOINT).respond;
     });
@@ -42,19 +42,19 @@ describe('subscriptionPlanRecommender', () => {
 
     describe('returned promise', () => {
       let rejected, resolved;
-      beforeEach(function () {
+      beforeEach(function() {
         rejected = sinon.spy();
         resolved = sinon.spy();
         this.promise.then(resolved, rejected);
       });
 
-      it('gets rejected if Gatekeeper does not know the organization', function () {
+      it('gets rejected if Gatekeeper does not know the organization', function() {
         this.respond(404);
         $httpBackend.flush();
         sinon.assert.calledWithExactly(rejected, sinon.match.instanceOf(Error));
       });
 
-      it('gets rejected on Gatekeeper server failure', function () {
+      it('gets rejected on Gatekeeper server failure', function() {
         this.respond(500);
         $httpBackend.flush();
         assertRejected();
@@ -63,39 +63,48 @@ describe('subscriptionPlanRecommender', () => {
       const plan = $('<article>', PLAN_CLASS).text('_PLAN_');
       const reason = $('<p>', REASON_CLASS).text('_REASON_');
 
-      describeSuccessOnResponseBody('containing a plan only',
-        responseBody(plan),
-        plan);
+      describeSuccessOnResponseBody('containing a plan only', responseBody(plan), plan);
 
-      describeSuccessOnResponseBody('containing a plan and unrelated elements',
+      describeSuccessOnResponseBody(
+        'containing a plan and unrelated elements',
         responseBody($('<p>'), plan, $('<p>')),
-        plan);
+        plan
+      );
 
-      describeSuccessOnResponseBody('containing a plan and reason',
+      describeSuccessOnResponseBody(
+        'containing a plan and reason',
         responseBody(plan, reason),
-        plan, reason);
+        plan,
+        reason
+      );
 
-      describeSuccessOnResponseBody('containing a reason and a plan',
+      describeSuccessOnResponseBody(
+        'containing a reason and a plan',
         responseBody(reason, plan),
-        plan, reason);
+        plan,
+        reason
+      );
 
-      describeSuccessOnResponseBody('with an element containing a plan only',
+      describeSuccessOnResponseBody(
+        'with an element containing a plan only',
         responseBody($('<div>').append(plan)),
-        plan);
+        plan
+      );
 
-      describeSuccessOnResponseBody('with an element containing a reason and a plan',
+      describeSuccessOnResponseBody(
+        'with an element containing a reason and a plan',
         responseBody($('<div>').append(reason, plan)),
-        plan, reason);
+        plan,
+        reason
+      );
 
-      describeFailureOnResponseBody('containing a reason only',
-        responseBody(reason));
+      describeFailureOnResponseBody('containing a reason only', responseBody(reason));
 
-      describeFailureOnResponseBody('which is empty',
-        responseBody());
+      describeFailureOnResponseBody('which is empty', responseBody());
 
-      function describeSuccessOnResponseBody (msg, responseBody, plan, reason) {
+      function describeSuccessOnResponseBody(msg, responseBody, plan, reason) {
         describe('on response body' + msg, () => {
-          beforeEach(function () {
+          beforeEach(function() {
             this.respond(200, responseBody);
             $httpBackend.flush();
           });
@@ -106,30 +115,40 @@ describe('subscriptionPlanRecommender', () => {
           });
 
           it('contains a `plan` HTMLElement', () => {
-            sinon.assert.calledWithExactly(resolved, sinon.match({
-              plan: sinon.match.instanceOf(HTMLElement).and(sinon.match({
-                nodeName: plan.prop('tagName'),
-                innerHTML: plan.html()
-              }))
-            }));
+            sinon.assert.calledWithExactly(
+              resolved,
+              sinon.match({
+                plan: sinon.match.instanceOf(HTMLElement).and(
+                  sinon.match({
+                    nodeName: plan.prop('tagName'),
+                    innerHTML: plan.html()
+                  })
+                )
+              })
+            );
           });
 
           if (reason) {
             it('contains a `reason` HTMLElement', () => {
-              sinon.assert.calledWithExactly(resolved, sinon.match({
-                reason: sinon.match.instanceOf(HTMLElement).and(sinon.match({
-                  nodeName: reason.prop('tagName'),
-                  innerHTML: reason.html()
-                }))
-              }));
+              sinon.assert.calledWithExactly(
+                resolved,
+                sinon.match({
+                  reason: sinon.match.instanceOf(HTMLElement).and(
+                    sinon.match({
+                      nodeName: reason.prop('tagName'),
+                      innerHTML: reason.html()
+                    })
+                  )
+                })
+              );
             });
           }
         });
       }
 
-      function describeFailureOnResponseBody (msg, responseBody) {
+      function describeFailureOnResponseBody(msg, responseBody) {
         describe('on response body' + msg, () => {
-          beforeEach(function () {
+          beforeEach(function() {
             const data = responseBody;
             this.respond(200, data);
             $httpBackend.flush();
@@ -139,13 +158,15 @@ describe('subscriptionPlanRecommender', () => {
         });
       }
 
-      function responseBody (...args) {
+      function responseBody(...args) {
         const body = $('<body>');
         body.append(...args);
-        return $('<html>').append(body).html();
+        return $('<html>')
+          .append(body)
+          .html();
       }
 
-      function assertRejected () {
+      function assertRejected() {
         sinon.assert.calledWithExactly(rejected, sinon.match.instanceOf(Error));
       }
     });

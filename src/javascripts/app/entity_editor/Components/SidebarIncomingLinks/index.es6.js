@@ -17,13 +17,10 @@ const SidebarIncomingLinks = createReactClass({
   propTypes: {
     entityInfo: PropTypes.shape({
       id: PropTypes.string,
-      type: PropTypes.oneOf([
-        EntityType.ASSET,
-        EntityType.ENTRY
-      ])
+      type: PropTypes.oneOf([EntityType.ASSET, EntityType.ENTRY])
     })
   },
-  handleClick ({ linkEntityId, incomingLinksCount }) {
+  handleClick({ linkEntityId, incomingLinksCount }) {
     trackIncomingLinkClick({
       linkEntityId,
       origin: IncomingLinksOrigin.SIDEBAR,
@@ -32,7 +29,7 @@ const SidebarIncomingLinks = createReactClass({
       incomingLinksCount
     });
   },
-  render () {
+  render() {
     const { entityInfo } = this.props;
 
     return (
@@ -43,21 +40,17 @@ const SidebarIncomingLinks = createReactClass({
           <div data-test-id="sidebar-incoming-links-section">
             <h2 className="entity-sidebar__heading">Links</h2>
             <div className="entity-sidebar__incoming-links">
-              {
-                requestState === RequestState.SUCCESS &&
-                  <IncomingLinksList
-                    origin={IncomingLinksOrigin.SIDEBAR}
-                    entityId={entityInfo.id}
-                    entityType={entityInfo.type}
-                    links={links}
-                    message={getMessages({ entityInfo, links }).subtitle}
-                    onClick={this.handleClick}
-                  />
-              }
-              {
-                requestState === RequestState.ERROR &&
-                  <IncomingLinksListError />
-              }
+              {requestState === RequestState.SUCCESS && (
+                <IncomingLinksList
+                  origin={IncomingLinksOrigin.SIDEBAR}
+                  entityId={entityInfo.id}
+                  entityType={entityInfo.type}
+                  links={links}
+                  message={getMessages({ entityInfo, links }).subtitle}
+                  onClick={this.handleClick}
+                />
+              )}
+              {requestState === RequestState.ERROR && <IncomingLinksListError />}
             </div>
           </div>
         )}
@@ -66,7 +59,7 @@ const SidebarIncomingLinks = createReactClass({
   }
 });
 
-function getMessages ({ entityInfo, links }) {
+function getMessages({ entityInfo, links }) {
   const numberOfLinks = getNumberOfLinks(links);
   return messages[entityInfo.type][numberOfLinks];
 }

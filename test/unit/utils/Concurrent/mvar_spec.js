@@ -1,4 +1,4 @@
-import {createMVar, createMVar$q} from 'utils/Concurrent';
+import { createMVar, createMVar$q } from 'utils/Concurrent';
 
 describe('utils/Concurrent/MVar', () => {
   beforeEach(() => {
@@ -8,7 +8,7 @@ describe('utils/Concurrent/MVar', () => {
   [createMVar, createMVar$q].forEach(createMVar => {
     describe(createMVar.name, () => {
       describe('#take()', () => {
-        it('resolves immediately and empties state when MVar has value', function* () {
+        it('resolves immediately and empties state when MVar has value', function*() {
           const mVar = createMVar('foo');
           expect(mVar.isEmpty()).toEqual(false);
           const value = yield mVar.take();
@@ -16,7 +16,7 @@ describe('utils/Concurrent/MVar', () => {
           expect(mVar.isEmpty()).toEqual(true);
         });
 
-        it('resolves and empties state after value is set on empty MVar', function* () {
+        it('resolves and empties state after value is set on empty MVar', function*() {
           const mVar = createMVar();
           expect(mVar.isEmpty()).toEqual(true);
           const takePromise = mVar.take();
@@ -27,7 +27,7 @@ describe('utils/Concurrent/MVar', () => {
       });
 
       describe('#read()', () => {
-        it('resolves immediately and keeps value when MVar has value', function* () {
+        it('resolves immediately and keeps value when MVar has value', function*() {
           const mVar = createMVar('foo');
           expect(mVar.isEmpty()).toEqual(false);
           let value = yield mVar.read();
@@ -37,7 +37,7 @@ describe('utils/Concurrent/MVar', () => {
           expect(value).toEqual('foo');
         });
 
-        it('resolves and keeps value after value is set on empty MVar', function* () {
+        it('resolves and keeps value after value is set on empty MVar', function*() {
           const mVar = createMVar();
           expect(mVar.isEmpty()).toEqual(true);
           const readPromise = mVar.read();
@@ -48,7 +48,7 @@ describe('utils/Concurrent/MVar', () => {
         });
       });
 
-      it('puts value into full MVar', function* () {
+      it('puts value into full MVar', function*() {
         const mVar = createMVar();
         mVar.put('foo');
         expect(yield mVar.read()).toEqual('foo');
@@ -69,7 +69,7 @@ describe('utils/Concurrent/MVar', () => {
         expect(mVar.isEmpty()).toEqual(true);
       });
 
-      it('empty() is a no-op if empty', function* () {
+      it('empty() is a no-op if empty', function*() {
         // This checks that we don’t throw the promise returned by
         // `read()` away when we call `empty()`.
         const mVar = createMVar();

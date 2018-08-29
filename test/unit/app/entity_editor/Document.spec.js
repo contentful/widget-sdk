@@ -1,8 +1,8 @@
 import * as K from 'helpers/mocks/kefir';
 
 describe('entityEditor/Document', () => {
-  beforeEach(function () {
-    module('contentful/test', ($provide) => {
+  beforeEach(function() {
+    module('contentful/test', $provide => {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
 
@@ -23,7 +23,7 @@ describe('entityEditor/Document', () => {
     this.accessChecker = this.mockService('access_control/AccessChecker');
     this.accessChecker.canUpdateEntity.returns(true);
 
-    this.connectAndOpen = function (data) {
+    this.connectAndOpen = function(data) {
       data = _.cloneDeep(data || this.entity.data);
       if (!_.get(data, ['sys', 'type'])) {
         _.set(data, ['sys', 'type'], 'Entry');
@@ -35,16 +35,12 @@ describe('entityEditor/Document', () => {
     };
 
     this.localeStore = this.$inject('TheLocaleStore');
-    this.localeStore.setLocales([
-      {internal_code: 'en'}
-    ]);
+    this.localeStore.setLocales([{ internal_code: 'en' }]);
 
     this.contentType = {
       data: {
-        sys: {id: 'CT_ID'},
-        fields: [
-          { id: 'a' }
-        ]
+        sys: { id: 'CT_ID' },
+        fields: [{ id: 'a' }]
       }
     };
 
@@ -70,23 +66,18 @@ describe('entityEditor/Document', () => {
 
       this.entity.data.sys.type = type;
 
-      return Doc.create(
-        this.docConnection,
-        this.entity,
-        this.contentType,
-        {sys: {id: 'USER'}}
-      );
+      return Doc.create(this.docConnection, this.entity, this.contentType, { sys: { id: 'USER' } });
     };
 
     this.doc = this.createDoc();
   });
 
   describe('snapshot normalization', () => {
-    beforeEach(function () {
-      this.contentType.data.fields = [{id: 'field1'}, {id: 'field2'}];
+    beforeEach(function() {
+      this.contentType.data.fields = [{ id: 'field1' }, { id: 'field2' }];
     });
 
-    it('removes unknown fields and locales on document load', function () {
+    it('removes unknown fields and locales on document load', function() {
       this.connectAndOpen({
         fields: {
           field1: { en: true, fr: true },
@@ -102,7 +93,7 @@ describe('entityEditor/Document', () => {
       });
     });
 
-    it('removes unknown fields and locales on full remote update', function () {
+    it('removes unknown fields and locales on full remote update', function() {
       const otDoc = this.connectAndOpen();
       const initialData = this.doc.getValueAt([]);
       expect(initialData.fields).toEqual({});
@@ -127,7 +118,7 @@ describe('entityEditor/Document', () => {
   });
 
   describe('on instance destruction', () => {
-    it('closes the doc', function () {
+    it('closes the doc', function() {
       this.otDoc = this.connectAndOpen();
       this.doc.destroy();
       sinon.assert.called(this.docLoader.close);
@@ -135,13 +126,13 @@ describe('entityEditor/Document', () => {
   });
 
   describe('on document change', () => {
-    it('closes current doc', function () {
+    it('closes current doc', function() {
       this.otDoc = this.connectAndOpen();
-      this.docLoader.doc.set(this.DocLoad.Doc(new this.OtDoc({sys: {type: 'Entry'}})));
+      this.docLoader.doc.set(this.DocLoad.Doc(new this.OtDoc({ sys: { type: 'Entry' } })));
       sinon.assert.calledOnce(this.docLoader.close);
     });
 
-    it('doesn\'t close current doc when updated with the same doc', function () {
+    it("doesn't close current doc when updated with the same doc", function() {
       this.otDoc = this.connectAndOpen();
       this.docLoader.doc.set(this.DocLoad.Doc(this.otDoc));
       sinon.assert.notCalled(this.docLoader.close);
@@ -149,17 +140,17 @@ describe('entityEditor/Document', () => {
   });
 
   describe('#status$', () => {
-    it('is "ok" initially', function () {
+    it('is "ok" initially', function() {
       K.assertCurrentValue(this.doc.status$, 'ok');
     });
 
-    it('is "ok" when the document connects', function () {
+    it('is "ok" when the document connects', function() {
       this.connectAndOpen();
       this.$apply();
       K.assertCurrentValue(this.doc.status$, 'ok');
     });
 
-    it('is "ot-connection-error" when there is a disconnected error', function () {
+    it('is "ot-connection-error" when there is a disconnected error', function() {
       this.connectAndOpen();
       this.$apply();
       K.assertCurrentValue(this.doc.status$, 'ok');
@@ -167,7 +158,7 @@ describe('entityEditor/Document', () => {
       K.assertCurrentValue(this.doc.status$, 'ot-connection-error');
     });
 
-    it('is "editing-not-allowed" when doc opening is forbidden', function () {
+    it('is "editing-not-allowed" when doc opening is forbidden', function() {
       this.connectAndOpen();
       this.$apply();
       K.assertCurrentValue(this.doc.status$, 'ok');
@@ -175,7 +166,7 @@ describe('entityEditor/Document', () => {
       K.assertCurrentValue(this.doc.status$, 'editing-not-allowed');
     });
 
-    it('is "archived" when the entity is archived', function () {
+    it('is "archived" when the entity is archived', function() {
       const doc = this.connectAndOpen();
       this.$apply();
       K.assertCurrentValue(this.doc.status$, 'ok');
@@ -185,18 +176,17 @@ describe('entityEditor/Document', () => {
   });
 
   describe('#getValueAt()', () => {
-    it('gets value from snapshot if doc is connected', function () {
+    it('gets value from snapshot if doc is connected', function() {
       const doc = this.connectAndOpen();
       _.set(doc.snapshot, ['a', 'b'], 'VAL');
       expect(this.doc.getValueAt(['a', 'b'])).toEqual('VAL');
     });
 
-    it('gets value from entity data if doc is not connected', function () {
+    it('gets value from entity data if doc is not connected', function() {
       _.set(this.entity.data, ['a', 'b'], 'VAL');
       expect(this.doc.getValueAt(['a', 'b'])).toEqual('VAL');
     });
   });
-
 
   describe('#setValueAt()', () => {
     itRejectsWithoutDocument('setValueAt');
@@ -205,30 +195,33 @@ describe('entityEditor/Document', () => {
       return doc.setValueAt(path, true);
     });
 
-    it('sets deep value', function () {
+    it('sets deep value', function() {
       this.connectAndOpen();
       expect(this.doc.getValueAt(['a', 'b'])).toBe(undefined);
       this.doc.setValueAt(['a', 'b'], 'VAL');
       expect(this.doc.getValueAt(['a', 'b'])).toBe('VAL');
     });
 
-    handlesForbidden(function () {
-      const sjsDoc = this.connectAndOpen();
-      sjsDoc.setAt = sinon.stub().yields('forbidden');
-    }, function () {
-      this.doc.setValueAt(['a', 'b'], 'VAL');
-    });
+    handlesForbidden(
+      function() {
+        const sjsDoc = this.connectAndOpen();
+        sjsDoc.setAt = sinon.stub().yields('forbidden');
+      },
+      function() {
+        this.doc.setValueAt(['a', 'b'], 'VAL');
+      }
+    );
 
     testDiff('Text');
     testDiff('Symbol');
 
-    function testDiff (fieldType) {
-      it(`uses diffing for ${fieldType} fields`, function () {
-        this.contentType.data.fields = [{id: 'id', type: fieldType}];
+    function testDiff(fieldType) {
+      it(`uses diffing for ${fieldType} fields`, function() {
+        this.contentType.data.fields = [{ id: 'id', type: fieldType }];
         const otDoc = this.connectAndOpen();
 
         const path = ['fields', 'id', 'en'];
-        const calledWith = (ops) => {
+        const calledWith = ops => {
           sinon.assert.calledWith(otDoc.submitOp, ops);
           otDoc.submitOp.reset();
         };
@@ -246,23 +239,23 @@ describe('entityEditor/Document', () => {
         // sole insert:
         this.doc.setValueAt(path, 'VAIL');
         expect(this.doc.getValueAt(path)).toBe('VAIL');
-        calledWith([{p: path.concat([2]), si: 'I'}]);
+        calledWith([{ p: path.concat([2]), si: 'I' }]);
 
         // delete inside of a string:
         this.doc.setValueAt(path, 'VIL');
         expect(this.doc.getValueAt(path)).toBe('VIL');
-        calledWith([{p: path.concat([1]), sd: 'A'}]);
+        calledWith([{ p: path.concat([1]), sd: 'A' }]);
 
         // compound patch:
         this.doc.setValueAt(path, 'PILS');
         expect(this.doc.getValueAt(path)).toBe('PILS');
         const p = path.concat([0]);
-        calledWith([{p: p, sd: 'VIL'}, {p: p, si: 'PILS'}]);
+        calledWith([{ p: p, sd: 'VIL' }, { p: p, si: 'PILS' }]);
 
         // delete from the front of a string:
         this.doc.setValueAt(path, 'S');
         expect(this.doc.getValueAt(path)).toBe('S');
-        calledWith([{p: path.concat([0]), sd: 'PIL'}]);
+        calledWith([{ p: path.concat([0]), sd: 'PIL' }]);
       });
     }
   });
@@ -274,14 +267,14 @@ describe('entityEditor/Document', () => {
       return doc.removeValueAt(path);
     });
 
-    it('delegates to ShareJS document', function () {
+    it('delegates to ShareJS document', function() {
       const doc = this.connectAndOpen();
       doc.removeAt = sinon.stub();
       this.doc.removeValueAt('PATH');
       sinon.assert.calledWith(doc.removeAt, 'PATH');
     });
 
-    it('resolves when ShareJS callback is called', function () {
+    it('resolves when ShareJS callback is called', function() {
       const doc = this.connectAndOpen();
       doc.removeAt = sinon.stub().yields();
       const resolved = sinon.stub();
@@ -290,7 +283,7 @@ describe('entityEditor/Document', () => {
       sinon.assert.called(resolved);
     });
 
-    it('resolves quietly when doc.removeAt() throws', function () {
+    it('resolves quietly when doc.removeAt() throws', function() {
       const doc = this.connectAndOpen();
       doc.removeAt = sinon.stub().throws('ERROR');
       const resolved = sinon.stub();
@@ -299,17 +292,20 @@ describe('entityEditor/Document', () => {
       sinon.assert.called(resolved);
     });
 
-    handlesForbidden(function () {
-      const sjsDoc = this.connectAndOpen();
-      sjsDoc.removeAt = sinon.stub().yields('forbidden');
-    }, function () {
-      this.doc.removeValueAt(['a', 'b']);
-    });
+    handlesForbidden(
+      function() {
+        const sjsDoc = this.connectAndOpen();
+        sjsDoc.removeAt = sinon.stub().yields('forbidden');
+      },
+      function() {
+        this.doc.removeValueAt(['a', 'b']);
+      }
+    );
   });
 
   describe('#insertValueAt()', () => {
-    beforeEach(function () {
-      this.otDoc = this.connectAndOpen({a: [0, 1, 2], sys: {}});
+    beforeEach(function() {
+      this.otDoc = this.connectAndOpen({ a: [0, 1, 2], sys: {} });
     });
 
     itEmitsLocalFieldChange((doc, path) => {
@@ -318,13 +314,13 @@ describe('entityEditor/Document', () => {
 
     itRejectsWithoutDocument('insertValueAt');
 
-    it('inserts value into ShareJS document', function () {
+    it('inserts value into ShareJS document', function() {
       this.doc.insertValueAt(['a'], 1, 'X');
       this.$apply();
       expect(this.otDoc.snapshot.a).toEqual([0, 'X', 1, 2]);
     });
 
-    it('sets value to singleton array', function () {
+    it('sets value to singleton array', function() {
       delete this.otDoc.snapshot.a;
       this.doc.insertValueAt(['a'], 0, 'X');
       this.$apply();
@@ -333,8 +329,8 @@ describe('entityEditor/Document', () => {
   });
 
   describe('#pushValueAt()', () => {
-    beforeEach(function () {
-      this.otDoc = this.connectAndOpen({a: [0, 1, 2], sys: {}});
+    beforeEach(function() {
+      this.otDoc = this.connectAndOpen({ a: [0, 1, 2], sys: {} });
     });
 
     itRejectsWithoutDocument('pushValueAt');
@@ -343,101 +339,93 @@ describe('entityEditor/Document', () => {
       return doc.pushValueAt(path);
     });
 
-    it('pushes value into ShareJS document', function () {
+    it('pushes value into ShareJS document', function() {
       this.doc.pushValueAt(['a'], 'X');
       this.$apply();
       expect(this.otDoc.snapshot.a).toEqual([0, 1, 2, 'X']);
     });
 
-    it('sets value to singleton array', function () {
+    it('sets value to singleton array', function() {
       delete this.otDoc.snapshot.a;
       this.doc.pushValueAt(['a'], 'X');
       this.$apply();
       expect(this.otDoc.snapshot.a).toEqual(['X']);
     });
 
-    handlesForbidden(function () {
-      this.otDoc.insertAt = sinon.stub().yields('forbidden');
-    }, function () {
-      this.doc.pushValueAt(['a'], 'X');
-    });
+    handlesForbidden(
+      function() {
+        this.otDoc.insertAt = sinon.stub().yields('forbidden');
+      },
+      function() {
+        this.doc.pushValueAt(['a'], 'X');
+      }
+    );
   });
 
   describe('#valuePropertyAt()', () => {
-    it('gets initial value from entity if the doc is not opened', function () {
-      this.entity.data = {a: {b: 'VAL'}};
+    it('gets initial value from entity if the doc is not opened', function() {
+      this.entity.data = { a: { b: 'VAL' } };
       const cb = sinon.spy();
       this.doc.valuePropertyAt(['a', 'b']).onValue(cb);
       sinon.assert.calledWith(cb, 'VAL');
     });
 
-    it('gets initial value from opened doc', function () {
-      this.connectAndOpen({a: {b: 'VAL'}, sys: {}});
+    it('gets initial value from opened doc', function() {
+      this.connectAndOpen({ a: { b: 'VAL' }, sys: {} });
       const cb = sinon.spy();
       this.doc.valuePropertyAt(['a', 'b']).onValue(cb);
       sinon.assert.calledWith(cb, 'VAL');
     });
 
-    it('gets initial value from opened doc', function () {
-      this.connectAndOpen({a: {b: 'VAL'}, sys: {}});
+    it('gets initial value from opened doc', function() {
+      this.connectAndOpen({ a: { b: 'VAL' }, sys: {} });
       const cb = sinon.spy();
       this.doc.valuePropertyAt(['a', 'b']).onValue(cb);
       sinon.assert.calledWith(cb, 'VAL');
     });
 
-    it('updates value when document is opened', function () {
+    it('updates value when document is opened', function() {
       const cb = sinon.spy();
       this.doc.valuePropertyAt(['a', 'b']).onValue(cb);
       cb.reset();
 
-      this.connectAndOpen({a: {b: 'VAL'}, sys: {}});
+      this.connectAndOpen({ a: { b: 'VAL' }, sys: {} });
       sinon.assert.calledWith(cb, 'VAL');
     });
 
-    it('updates value when "change" event is emitted with affected path', function () {
-      const paths = [
-        [],
-        ['foo'],
-        ['foo', 'bar'],
-        ['foo', 'bar', 'x'],
-        ['foo', 'bar', 'x', 'y']
-      ];
-      const doc = this.connectAndOpen({foo: {bar: false}, sys: {}});
+    it('updates value when "change" event is emitted with affected path', function() {
+      const paths = [[], ['foo'], ['foo', 'bar'], ['foo', 'bar', 'x'], ['foo', 'bar', 'x', 'y']];
+      const doc = this.connectAndOpen({ foo: { bar: false }, sys: {} });
       const cb = sinon.spy();
       this.doc.valuePropertyAt(['foo', 'bar']).onValue(cb);
 
       paths.forEach((path, i) => {
         doc.setAt(['foo', 'bar'], i);
         cb.reset();
-        doc.emit('change', [{p: path}]);
+        doc.emit('change', [{ p: path }]);
         sinon.assert.calledWith(cb, i);
       });
     });
 
-    it('does not update value when path is not affected', function () {
-      const paths = [
-        ['x'],
-        ['foo', 'x'],
-        ['x', 'bar'],
-        ['x', 'bar', 'y']
-      ];
+    it('does not update value when path is not affected', function() {
+      const paths = [['x'], ['foo', 'x'], ['x', 'bar'], ['x', 'bar', 'y']];
       const doc = this.connectAndOpen();
       const cb = sinon.spy();
       this.doc.valuePropertyAt(['foo', 'bar']).onValue(cb);
       cb.reset();
 
       paths.forEach(path => {
-        doc.emit('change', [{p: path}]);
+        doc.emit('change', [{ p: path }]);
         sinon.assert.notCalled(cb);
       });
     });
 
     describe('merging change events', () => {
-      beforeEach(function () {
+      beforeEach(function() {
         const doc = this.connectAndOpen();
         this.emitChange = doc.emit.bind(doc, 'change');
 
-        this.listenOn = function (paths) {
+        this.listenOn = function(paths) {
           const spies = paths.map(() => {
             return sinon.spy();
           });
@@ -451,24 +439,26 @@ describe('entityEditor/Document', () => {
         };
       });
 
-      it('finds longest common prefix', function () {
+      it('finds longest common prefix', function() {
         const paths = [['x', 'y', 'z'], ['x', 'y'], ['z']];
         const spies = this.listenOn(paths);
 
-        this.emitChange(paths.slice(0, 2).map((path) => {
-          return {p: path};
-        }));
+        this.emitChange(
+          paths.slice(0, 2).map(path => {
+            return { p: path };
+          })
+        );
 
         sinon.assert.calledOnce(spies[0]);
         sinon.assert.calledOnce(spies[1]);
         sinon.assert.notCalled(spies[2]);
       });
 
-      it('defaults to zero length shared prefix', function () {
+      it('defaults to zero length shared prefix', function() {
         const paths = [['x'], ['y'], ['z', 'w']];
         const spies = this.listenOn(paths);
 
-        this.emitChange([{p: ['y']}, {p: ['x']}]);
+        this.emitChange([{ p: ['y'] }, { p: ['x'] }]);
 
         spies.forEach(spy => {
           sinon.assert.calledOnce(spy);
@@ -478,14 +468,14 @@ describe('entityEditor/Document', () => {
   });
 
   describe('#reverter', () => {
-    it('has changes if changes are made', function* () {
+    it('has changes if changes are made', function*() {
       this.connectAndOpen();
       expect(this.doc.reverter.hasChanges()).toBe(false);
       yield this.doc.setValueAt(['fields', 'foo'], 'bar');
       expect(this.doc.reverter.hasChanges()).toBe(true);
     });
 
-    it('reverts field changes', function* () {
+    it('reverts field changes', function*() {
       const path = ['fields', 'a', 'en'];
       this.connectAndOpen();
       yield this.doc.setValueAt(path, 'NEW');
@@ -494,7 +484,7 @@ describe('entityEditor/Document', () => {
       expect(this.doc.getValueAt(path)).toBe('INITIAL');
     });
 
-    it('does not have changes after reverting', function* () {
+    it('does not have changes after reverting', function*() {
       this.connectAndOpen();
       expect(this.doc.reverter.hasChanges()).toBe(false);
       yield this.doc.setValueAt(['fields', 'foo'], 'bar');
@@ -505,14 +495,11 @@ describe('entityEditor/Document', () => {
   });
 
   describe('#sysProperty', () => {
-    it('holds entity.data.sys as initial value', function () {
-      K.assertCurrentValue(
-        this.doc.sysProperty,
-        this.entity.data.sys
-      );
+    it('holds entity.data.sys as initial value', function() {
+      K.assertCurrentValue(this.doc.sysProperty, this.entity.data.sys);
     });
 
-    it('updates value from OtDoc data on any event', function () {
+    it('updates value from OtDoc data on any event', function() {
       const doc = this.connectAndOpen();
 
       doc.version = 20;
@@ -529,7 +516,7 @@ describe('entityEditor/Document', () => {
       );
     });
 
-    it('calculates version from doc.version + doc.compressed', function () {
+    it('calculates version from doc.version + doc.compressed', function() {
       const doc = this.connectAndOpen();
 
       doc.version = 20;
@@ -543,11 +530,11 @@ describe('entityEditor/Document', () => {
   });
 
   describe('#state.isSaving$', () => {
-    it('is false if there is no document initially', function () {
+    it('is false if there is no document initially', function() {
       K.assertCurrentValue(this.doc.state.isSaving$, false);
     });
 
-    it('changes to if document has inflight operation', function () {
+    it('changes to if document has inflight operation', function() {
       this.otDoc = this.connectAndOpen();
       K.assertCurrentValue(this.doc.state.isSaving$, false);
 
@@ -564,15 +551,15 @@ describe('entityEditor/Document', () => {
   });
 
   describe('#state.isDirty$', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.otDoc = this.connectAndOpen();
-      this.docUpdate = function (path, value) {
+      this.docUpdate = function(path, value) {
         this.otDoc.setAt(path, value);
         this.$apply();
       };
     });
 
-    it('changes to false if document is at published version', function () {
+    it('changes to false if document is at published version', function() {
       K.assertCurrentValue(this.doc.state.isDirty$, true);
 
       this.otDoc.version = 12;
@@ -580,7 +567,7 @@ describe('entityEditor/Document', () => {
       K.assertCurrentValue(this.doc.state.isDirty$, false);
     });
 
-    xit('changes to true if a published document is changed', function () {
+    xit('changes to true if a published document is changed', function() {
       this.otDoc.version = 12;
       this.docUpdate(['sys', 'publishedVersion'], 12);
       K.assertCurrentValue(this.doc.state.isDirty$, false);
@@ -590,7 +577,7 @@ describe('entityEditor/Document', () => {
       K.assertCurrentValue(this.doc.state.isDirty$, true);
     });
 
-    it('changes to true if a document is unpublishd', function () {
+    it('changes to true if a document is unpublishd', function() {
       this.otDoc.version = 12;
       this.docUpdate(['sys', 'publishedVersion'], 12);
       K.assertCurrentValue(this.doc.state.isDirty$, false);
@@ -601,13 +588,13 @@ describe('entityEditor/Document', () => {
   });
 
   describe('#state.isConnected$', () => {
-    it('changes to true when connecting', function () {
+    it('changes to true when connecting', function() {
       K.assertCurrentValue(this.doc.state.isConnected$, false);
       this.connectAndOpen();
       K.assertCurrentValue(this.doc.state.isConnected$, true);
     });
 
-    it('changes to false when there is a connection error', function () {
+    it('changes to false when there is a connection error', function() {
       this.connectAndOpen();
       K.assertCurrentValue(this.doc.state.isConnected$, true);
       this.docLoader.doc.set(this.DocLoad.Error());
@@ -616,7 +603,7 @@ describe('entityEditor/Document', () => {
   });
 
   describe('#state.error$', () => {
-    it('emits "OpenForbidden" error when opening fails', function () {
+    it('emits "OpenForbidden" error when opening fails', function() {
       const errors = K.extractValues(this.doc.state.error$);
       this.docLoader.doc.set(this.DocLoad.Error('forbidden'));
       this.$apply();
@@ -626,7 +613,7 @@ describe('entityEditor/Document', () => {
 
   describe('#permissions', () => {
     describe('#can()', () => {
-      it('delegates to "accessChecker.canPerformActionOnEntity()"', function () {
+      it('delegates to "accessChecker.canPerformActionOnEntity()"', function() {
         this.accessChecker.canPerformActionOnEntity.returns(true);
         expect(this.doc.permissions.can('publish')).toBe(true);
 
@@ -637,7 +624,7 @@ describe('entityEditor/Document', () => {
         expect(entity.data.sys.id).toEqual('ENTITY_ID');
       });
 
-      it('delegates "update" calls to "accessChecker.canUpdateEntry()"', function () {
+      it('delegates "update" calls to "accessChecker.canUpdateEntry()"', function() {
         this.accessChecker.canUpdateEntry.returns(true);
         expect(this.doc.permissions.can('update')).toBe(true);
 
@@ -648,7 +635,7 @@ describe('entityEditor/Document', () => {
         expect(entity.data.sys.id).toEqual('ENTITY_ID');
       });
 
-      it('delegates "update" calls to "accessChecker.canUpdateAsset()"', function () {
+      it('delegates "update" calls to "accessChecker.canUpdateAsset()"', function() {
         const doc = this.createDoc('Asset');
 
         this.accessChecker.canUpdateAsset.returns(true);
@@ -661,21 +648,19 @@ describe('entityEditor/Document', () => {
         expect(entity.data.sys.id).toEqual('ENTITY_ID');
       });
 
-      it('throws when action is unknown', function () {
+      it('throws when action is unknown', function() {
         const doc = this.createDoc();
-        expect(
-          _.partial(doc.permissions.can, 'abc')
-        ).toThrowError('Unknown entity action "abc"');
+        expect(_.partial(doc.permissions.can, 'abc')).toThrowError('Unknown entity action "abc"');
       });
     });
 
     describe('#canEditFieldLocale()', () => {
-      it('returns false if `update` permission is denied', function () {
+      it('returns false if `update` permission is denied', function() {
         this.accessChecker.canUpdateEntry.returns(false);
         expect(this.doc.permissions.canEditFieldLocale('FIELD', 'LOCALE')).toBe(false);
       });
 
-      it('delegates to "policyAccessChecker"', function () {
+      it('delegates to "policyAccessChecker"', function() {
         this.accessChecker.canUpdateEntry.returns(true);
         this.accessChecker.canEditFieldLocale.returns(true);
 
@@ -685,7 +670,7 @@ describe('entityEditor/Document', () => {
         expect(this.doc.permissions.canEditFieldLocale('FIELD', 'LOCALE')).toBe(false);
 
         const args = this.accessChecker.canEditFieldLocale.args[0];
-        const [ctId, {apiName}, {code}] = args;
+        const [ctId, { apiName }, { code }] = args;
         expect(ctId).toBe('CT_ID');
         expect(apiName).toBe('FIELD');
         expect(code).toBe('LOCALE');
@@ -694,13 +679,13 @@ describe('entityEditor/Document', () => {
   });
 
   describe('#getVersion', () => {
-    it('gets version from entity data if document is not connected', function () {
+    it('gets version from entity data if document is not connected', function() {
       this.entity.data.sys.version = 1999;
       const doc = this.createDoc();
       expect(doc.getVersion()).toBe(1999);
     });
 
-    it('gets version from SJS Doc if document is connected', function () {
+    it('gets version from SJS Doc if document is connected', function() {
       const sjsDoc = this.connectAndOpen();
       sjsDoc.version = 2000;
       sjsDoc.emit();
@@ -709,14 +694,14 @@ describe('entityEditor/Document', () => {
   });
 
   describe('client entity instance', () => {
-    it('updates data when OtDoc emits changes', function () {
+    it('updates data when OtDoc emits changes', function() {
       const otDoc = this.connectAndOpen();
       this.$apply();
       otDoc.setAt(['fields', 'a', 'en'], 'VALUE');
       expect(this.entity.data.fields.a.en).toBe('VALUE');
     });
 
-    it('marks entity as deleted when sys has deletedVersion', function () {
+    it('marks entity as deleted when sys has deletedVersion', function() {
       const otDoc = this.connectAndOpen();
       this.entity.setDeleted = sinon.spy();
       this.$apply();
@@ -726,8 +711,8 @@ describe('entityEditor/Document', () => {
     });
   });
 
-  function itRejectsWithoutDocument (method) {
-    it('rejects when document is not opened', function () {
+  function itRejectsWithoutDocument(method) {
+    it('rejects when document is not opened', function() {
       this.docLoader.doc.set(this.DocLoad.None());
       this.$apply();
       const errored = sinon.stub();
@@ -737,20 +722,20 @@ describe('entityEditor/Document', () => {
     });
   }
 
-  function handlesForbidden (beforeAction, action) {
+  function handlesForbidden(beforeAction, action) {
     describe('handles forbidden error', () => {
-      beforeEach(function () {
+      beforeEach(function() {
         this.docConnection.refreshAuth.rejects();
         beforeAction.call(this);
       });
 
-      it('calls auth refresh on `forbidden` error', function () {
+      it('calls auth refresh on `forbidden` error', function() {
         action.call(this);
         this.$apply();
         sinon.assert.calledOnce(this.docConnection.refreshAuth);
       });
 
-      it('emits error on state.error$ if auth refresh fails', function () {
+      it('emits error on state.error$ if auth refresh fails', function() {
         const errors = K.extractValues(this.doc.state.error$);
         action.call(this);
         this.$apply();
@@ -759,8 +744,8 @@ describe('entityEditor/Document', () => {
     });
   }
 
-  function itEmitsLocalFieldChange (runSetter) {
-    it('emits local field change for fields', async function () {
+  function itEmitsLocalFieldChange(runSetter) {
+    it('emits local field change for fields', async function() {
       const otDoc = this.connectAndOpen();
       const localFieldChange = sinon.spy();
       this.doc.localFieldChanges$.onValue(localFieldChange);
@@ -775,7 +760,7 @@ describe('entityEditor/Document', () => {
       runSetter(this.doc, ['other', 'A', 'B', 'C']);
     });
 
-    it('does not emit local field change for other paths', async function () {
+    it('does not emit local field change for other paths', async function() {
       const otDoc = this.connectAndOpen();
       const localFieldChange = sinon.spy();
       this.doc.localFieldChanges$.onValue(localFieldChange);

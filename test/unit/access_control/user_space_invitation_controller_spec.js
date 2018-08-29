@@ -1,5 +1,5 @@
 describe('UserSpaceInvitationController', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     const $rootScope = this.$inject('$rootScope');
     const $controller = this.$inject('$controller');
@@ -8,22 +8,22 @@ describe('UserSpaceInvitationController', () => {
     this.spaceContext = this.$inject('mocks/spaceContext').init();
     this.spaceContext.memberships.invite = sinon.stub().resolves();
 
-    const scope = this.scope = _.extend($rootScope.$new(), {
+    const scope = (this.scope = _.extend($rootScope.$new(), {
       users: [],
       roleOptions: [],
       selectedRoles: {},
       dialog: { confirm: sinon.stub() }
-    });
+    }));
 
-    const controller = this.controller = $controller('UserSpaceInvitationController', {
+    const controller = (this.controller = $controller('UserSpaceInvitationController', {
       $scope: this.scope
-    });
+    }));
 
-    function addRole (id) {
+    function addRole(id) {
       scope.roleOptions.push({ id: id, name: id });
     }
 
-    function addUser (id) {
+    function addUser(id) {
       scope.users.push({ sys: { id: id, type: 'User' }, email: `${id}@example.com` });
     }
 
@@ -43,7 +43,7 @@ describe('UserSpaceInvitationController', () => {
   });
 
   describe('.getInvalidRoleSelectionsCount()', () => {
-    it('returns number of users without selected role', function () {
+    it('returns number of users without selected role', function() {
       expect(this.controller.getInvalidRoleSelectionsCount()).toEqual(2);
 
       this.selectUserRole('foo', 'admin');
@@ -58,12 +58,12 @@ describe('UserSpaceInvitationController', () => {
   });
 
   describe('.tryInviteSelectedUsers()', () => {
-    it('cannot invite when some user has no role selected', function () {
+    it('cannot invite when some user has no role selected', function() {
       this.controller.tryInviteSelectedUsers();
       expect(this.scope.canNotInvite).toEqual(true);
     });
 
-    it('can invite users and sets counter correctly when all have roles selected', function () {
+    it('can invite users and sets counter correctly when all have roles selected', function() {
       this.selectUserRole('foo', 'admin');
       this.selectUserRole('bar', 'admin');
       this.sendInvites();
@@ -71,7 +71,7 @@ describe('UserSpaceInvitationController', () => {
       expect(this.scope.invitationsScheduled).toEqual(2);
     });
 
-    it('calls memberships.invite() once for every user and sets counter correctly', function* () {
+    it('calls memberships.invite() once for every user and sets counter correctly', function*() {
       this.selectUserRole('foo', 'admin');
       this.selectUserRole('bar', 'admin');
       yield this.sendInvites();
@@ -79,14 +79,14 @@ describe('UserSpaceInvitationController', () => {
       expect(this.scope.invitationsDone).toEqual(2);
     });
 
-    it('closes dialog when all invitations were successful', function* () {
+    it('closes dialog when all invitations were successful', function*() {
       this.selectUserRole('foo', 'admin');
       this.selectUserRole('bar', 'admin');
       yield this.sendInvites();
       sinon.assert.calledOnce(this.scope.dialog.confirm);
     });
 
-    it('sets failed invitations flag and resets counters when some invitations were not successful', function* () {
+    it('sets failed invitations flag and resets counters when some invitations were not successful', function*() {
       this.selectUserRole('foo', 'admin');
       this.selectUserRole('bar', 'admin');
       this.spaceContext.memberships.invite.rejects();

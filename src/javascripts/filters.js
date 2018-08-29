@@ -14,30 +14,39 @@ filters.filter('isEmpty', () => _.isEmpty);
 
 filters.filter('isArray', () => _.isArray);
 
-filters.filter('fileSize', ['require', require => fileSizeInByte => {
-  const fileSize = require('fileSize');
+filters.filter('fileSize', [
+  'require',
+  require => fileSizeInByte => {
+    const fileSize = require('fileSize');
 
-  return fileSize(fileSizeInByte).human('si');
-}]);
-
-filters.filter('mimeGroup', ['mimetype', mimetype => file => {
-  if (file) {
-    return mimetype.getGroupName({
-      type: file.contentType,
-      fallbackFileName: file.fileName
-    });
+    return fileSize(fileSizeInByte).human('si');
   }
-}]);
+]);
 
-filters.filter('fileType', ['mimetype', mimetype => file => {
-  if (file) {
-    return mimetype.getGroupName({
-      type: file.contentType,
-      fallbackFileName: file.fileName
-    });
+filters.filter('mimeGroup', [
+  'mimetype',
+  mimetype => file => {
+    if (file) {
+      return mimetype.getGroupName({
+        type: file.contentType,
+        fallbackFileName: file.fileName
+      });
+    }
   }
-  return '';
-}]);
+]);
+
+filters.filter('fileType', [
+  'mimetype',
+  mimetype => file => {
+    if (file) {
+      return mimetype.getGroupName({
+        type: file.contentType,
+        fallbackFileName: file.fileName
+      });
+    }
+    return '';
+  }
+]);
 
 /**
  * Asset URLs are always hardcoded to the host `TYPE.contentful.com`.
@@ -45,22 +54,29 @@ filters.filter('fileType', ['mimetype', mimetype => file => {
  * `/token` endpoint. The token has a domain map mapping `TYPE` to the
  * actual domain. This is used to replace the hosts.
  */
-filters.filter('assetUrl', ['hostnameTransformer', 'services/TokenStore', (hostnameTransformer, TokenStore) => assetOrUrl => {
-  const domains = TokenStore.getDomains();
-  if (domains) {
-    return hostnameTransformer.toExternal(assetOrUrl, domains);
-  } else {
-    return assetOrUrl;
+filters.filter('assetUrl', [
+  'hostnameTransformer',
+  'services/TokenStore',
+  (hostnameTransformer, TokenStore) => assetOrUrl => {
+    const domains = TokenStore.getDomains();
+    if (domains) {
+      return hostnameTransformer.toExternal(assetOrUrl, domains);
+    } else {
+      return assetOrUrl;
+    }
   }
-}]);
+]);
 
-filters.filter('fileExtension', ['mimetype', mimetype => file => {
-  if (file) {
-    const ext = mimetype.getExtension(file.fileName);
-    return ext ? ext.slice(1) : '';
+filters.filter('fileExtension', [
+  'mimetype',
+  mimetype => file => {
+    if (file) {
+      const ext = mimetype.getExtension(file.fileName);
+      return ext ? ext.slice(1) : '';
+    }
+    return '';
   }
-  return '';
-}]);
+]);
 
 filters.filter('userNameDisplay', () => (currentUser, user) => {
   if (!currentUser || !user) {
@@ -81,11 +97,13 @@ filters.filter('decimalMarks', () => str => {
   return str.slice(0, i < 0 ? 3 + i : i) + (str.length > 3 ? markedStr : '');
 });
 
-filters.filter('displayedFieldName', () => field => _.isEmpty(field.name)
-  ? _.isEmpty(field.id) ? 'Untitled field' : 'ID: ' + field.id
-  : field.name);
+filters.filter('displayedFieldName', () => field =>
+  _.isEmpty(field.name) ? (_.isEmpty(field.id) ? 'Untitled field' : 'ID: ' + field.id) : field.name
+);
 
-filters.filter('isDisplayableAsTitle', () => field => field.type === 'Symbol' || field.type === 'Text');
+filters.filter('isDisplayableAsTitle', () => field =>
+  field.type === 'Symbol' || field.type === 'Text'
+);
 
 filters.filter('truncate', ['stringUtils', stringUtils => stringUtils.truncate]);
 

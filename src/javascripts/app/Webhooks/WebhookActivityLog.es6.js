@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {range} from 'lodash';
+import { range } from 'lodash';
 
 import $state from '$state';
 
@@ -13,37 +13,39 @@ export default class WebhookActivityLog extends React.Component {
     webhookId: PropTypes.string,
     webhookRepo: PropTypes.object.isRequired,
     registerLogRefreshAction: PropTypes.func.isRequired
-  }
+  };
 
-  constructor (props) {
+  constructor(props) {
     super(props);
-    this.state = {page: 0, loading: false, calls: []};
+    this.state = { page: 0, loading: false, calls: [] };
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.fetch();
     this.props.registerLogRefreshAction(this.fetch.bind(this));
   }
 
-  fetch () {
-    const {webhookId, webhookRepo} = this.props;
+  fetch() {
+    const { webhookId, webhookRepo } = this.props;
 
     if (typeof webhookId !== 'string' || this.state.loading) {
       return Promise.resolve();
     }
 
-    this.setState({loading: true});
+    this.setState({ loading: true });
 
     return new Promise(resolve => {
-      webhookRepo.logs.getCalls(webhookId).then(
-        calls => this.setState({page: 0, loading: false, calls}, () => resolve()),
-        () => this.setState({page: 0, loading: false, calls: []}, () => resolve())
-      );
+      webhookRepo.logs
+        .getCalls(webhookId)
+        .then(
+          calls => this.setState({ page: 0, loading: false, calls }, () => resolve()),
+          () => this.setState({ page: 0, loading: false, calls: [] }, () => resolve())
+        );
     });
   }
 
-  render () {
-    const {page, loading, calls} = this.state;
+  render() {
+    const { page, loading, calls } = this.state;
 
     const pageCalls = calls.slice(page * PER_PAGE, (page + 1) * PER_PAGE);
     const pages = range(0, Math.ceil(calls.length / PER_PAGE));
@@ -65,27 +67,35 @@ export default class WebhookActivityLog extends React.Component {
           <div className="table__body">
             <table>
               <tbody>
-                {!loading && pageCalls.length > 0 && pageCalls.map(call => {
-                  return (
-                    <tr
-                      className="x--clickable"
-                      key={call.sys.id}
-                      onClick={() => $state.go('^.detail.call', {callId: call.sys.id})}
-                    >
-                      <td>{call.requestAt}</td>
-                      <td className="x--large-cell">
-                        <WebhookCallStatus call={call} />
-                      </td>
-                      <td>
-                        <button className="text-link">
-                          View details
-                        </button>
-                      </td>
+                {!loading &&
+                  pageCalls.length > 0 &&
+                  pageCalls.map(call => {
+                    return (
+                      <tr
+                        className="x--clickable"
+                        key={call.sys.id}
+                        onClick={() => $state.go('^.detail.call', { callId: call.sys.id })}>
+                        <td>{call.requestAt}</td>
+                        <td className="x--large-cell">
+                          <WebhookCallStatus call={call} />
+                        </td>
+                        <td>
+                          <button className="text-link">View details</button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                {!loading &&
+                  pageCalls.length < 1 && (
+                    <tr>
+                      <td colSpan="3">No webhook calls yet!</td>
                     </tr>
-                  );
-                })}
-                {!loading && pageCalls.length < 1 && <tr><td colSpan="3">No webhook calls yet!</td></tr>}
-                {loading && <tr><td colSpan="3">Loading logs…</td></tr>}
+                  )}
+                {loading && (
+                  <tr>
+                    <td colSpan="3">Loading logs…</td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -95,15 +105,14 @@ export default class WebhookActivityLog extends React.Component {
     );
   }
 
-  renderPaginator (page, pages) {
+  renderPaginator(page, pages) {
     return (
       <div className="webhook-calls__paginator">
         {page > 0 && (
           <a
             href=""
             className="webhook-calls__paginator-item"
-            onClick={() => this.setState(s => ({page: s.page - 1}))}
-          >
+            onClick={() => this.setState(s => ({ page: s.page - 1 }))}>
             «
           </a>
         )}
@@ -113,8 +122,7 @@ export default class WebhookActivityLog extends React.Component {
             key={cur}
             href=""
             className={`webhook-calls__paginator-item${page === cur ? ' x--active' : ''}`}
-            onClick={() => this.setState({page: cur})}
-          >
+            onClick={() => this.setState({ page: cur })}>
             {cur + 1}
           </a>
         ))}
@@ -123,8 +131,7 @@ export default class WebhookActivityLog extends React.Component {
           <a
             href=""
             className="webhook-calls__paginator-item"
-            onClick={() => this.setState(s => ({page: s.page + 1}))}
-          >
+            onClick={() => this.setState(s => ({ page: s.page + 1 }))}>
             »
           </a>
         )}

@@ -2,28 +2,39 @@ import * as K from 'helpers/mocks/kefir';
 
 describe('Access Checker', () => {
   let enforcements, OrganizationRoles, TokenStore, policyChecker, ac;
-  let getResStub, reasonsDeniedStub, broadcastStub, resetEnforcements, mockSpace, mockSpaceAuthContext, mockOrgEndpoint, mockSpaceEndpoint, feature;
+  let getResStub,
+    reasonsDeniedStub,
+    broadcastStub,
+    resetEnforcements,
+    mockSpace,
+    mockSpaceAuthContext,
+    mockOrgEndpoint,
+    mockSpaceEndpoint,
+    feature;
 
-  function init () {
-    ac.setAuthContext({authContext: {}, spaceAuthContext: mockSpaceAuthContext});
+  function init() {
+    ac.setAuthContext({ authContext: {}, spaceAuthContext: mockSpaceAuthContext });
     ac.setSpace(mockSpace);
   }
 
-  function triggerChange () {
+  function triggerChange() {
     ac.setSpace(mockSpace);
   }
 
-  function changeAuthContext (authContext) {
-    ac.setAuthContext({authContext, spaceAuthContext: mockSpaceAuthContext});
+  function changeAuthContext(authContext) {
+    ac.setAuthContext({ authContext, spaceAuthContext: mockSpaceAuthContext });
   }
 
   afterEach(() => {
     enforcements = OrganizationRoles = policyChecker = ac = getResStub = reasonsDeniedStub = broadcastStub = mockSpaceEndpoint = feature = null;
   });
 
-  beforeEach(function () {
-    module('contentful/test', ($provide) => {
-      $provide.value('data/EndpointFactory', {createOrganizationEndpoint: () => mockOrgEndpoint, createSpaceEndpoint: () => mockSpaceEndpoint});
+  beforeEach(function() {
+    module('contentful/test', $provide => {
+      $provide.value('data/EndpointFactory', {
+        createOrganizationEndpoint: () => mockOrgEndpoint,
+        createSpaceEndpoint: () => mockSpaceEndpoint
+      });
       $provide.value('utils/LaunchDarkly', {
         getCurrentVariation: sinon.stub().resolves(false)
       });
@@ -53,8 +64,8 @@ describe('Access Checker', () => {
     reasonsDeniedStub = sinon.stub().returns([]);
     enforcements.determineEnforcement = sinon.stub().returns(undefined);
 
-    mockSpace = {sys: { id: '1234' }, organization: {sys: {}}};
-    mockSpaceAuthContext = {reasonsDenied: reasonsDeniedStub};
+    mockSpace = { sys: { id: '1234' }, organization: { sys: {} } };
+    mockSpaceAuthContext = { reasonsDenied: reasonsDeniedStub };
     mockOrgEndpoint = sinon.stub();
     mockSpaceEndpoint = sinon.stub();
 
@@ -72,22 +83,22 @@ describe('Access Checker', () => {
   describe('Initialization', () => {
     it('sets isInitialized$ to false when authContext is null', () => {
       ac.setOrganization(null);
-      ac.setAuthContext({authContext: null});
+      ac.setAuthContext({ authContext: null });
       expect(K.getValue(ac.isInitialized$)).toEqual(false);
 
-      ac.setOrganization({sys: {}});
+      ac.setOrganization({ sys: {} });
       expect(K.getValue(ac.isInitialized$)).toEqual(false);
 
       ac.setSpace(mockSpace);
       expect(K.getValue(ac.isInitialized$)).toEqual(false);
     });
     it('sets isInitialized$ to true when authContext is set', () => {
-      ac.setAuthContext({authContext: {}});
+      ac.setAuthContext({ authContext: {} });
       expect(K.getValue(ac.isInitialized$)).toEqual(true);
     });
     it('sets isInitialized$ to true when authContext, spaceAuthContext and space are set', () => {
       ac.setSpace(mockSpace);
-      ac.setAuthContext({authContext: {}, spaceAuthContext: mockSpaceAuthContext});
+      ac.setAuthContext({ authContext: {}, spaceAuthContext: mockSpaceAuthContext });
       expect(K.getValue(ac.isInitialized$)).toEqual(true);
     });
   });
@@ -106,7 +117,13 @@ describe('Access Checker', () => {
 
       it('contains keys for entity actions', () => {
         const responses = ac.getResponses();
-        const testKeys = ['createContentType', 'readEntry', 'updateAsset', 'createApiKey', 'updateSettings'];
+        const testKeys = [
+          'createContentType',
+          'readEntry',
+          'updateAsset',
+          'createApiKey',
+          'updateSettings'
+        ];
         const intersection = _.intersection(_.keys(responses), testKeys);
         expect(intersection.length).toBe(testKeys.length);
       });
@@ -144,13 +161,11 @@ describe('Access Checker', () => {
 
       it('should broadcast enforcement if found', () => {
         const reasons = ['DENIED!'];
-        const enforcement = {message: 'ENFORCEMENT MSG'};
+        const enforcement = { message: 'ENFORCEMENT MSG' };
         reasonsDeniedStub.withArgs('read', 'Entry').returns(reasons);
-        enforcements.determineEnforcement.withArgs(
-          mockSpace.organization,
-          reasons,
-          'Entry'
-        ).returns(enforcement);
+        enforcements.determineEnforcement
+          .withArgs(mockSpace.organization, reasons, 'Entry')
+          .returns(enforcement);
         triggerChange();
         sinon.assert.calledOnce(broadcastStub.withArgs(enforcement));
       });
@@ -177,26 +192,25 @@ describe('Access Checker', () => {
       });
 
       it('checks if there is a "hide" flag for chosen actions', () => {
-        function test (action, key, val) {
+        function test(action, key, val) {
           const entity = key.charAt(0).toUpperCase() + key.slice(1);
           getResStub.withArgs(action, entity).returns(val);
           triggerChange();
           expect(ac.getSectionVisibility()[key]).toBe(val);
         }
 
-        [
-          ['read', 'entry'],
-          ['read', 'asset'],
-          ['read', 'apiKey'],
-          ['update', 'settings']
-        ].forEach(([action, section]) => {
-          test(action, section, true);
-          test(action, section, false);
-        });
+        [['read', 'entry'], ['read', 'asset'], ['read', 'apiKey'], ['update', 'settings']].forEach(
+          ([action, section]) => {
+            test(action, section, true);
+            test(action, section, false);
+          }
+        );
       });
 
       it('shows entries/assets section when it has "hide" flag, but policy checker grants access', () => {
-        function test (key, val) { expect(ac.getSectionVisibility()[key]).toBe(val); }
+        function test(key, val) {
+          expect(ac.getSectionVisibility()[key]).toBe(val);
+        }
         test('entry', false);
         test('asset', false);
         policyChecker.canAccessEntries = sinon.stub().returns(true);
@@ -228,7 +242,7 @@ describe('Access Checker', () => {
 
     describe('#canPerformActionOnEntity', () => {
       it('calls "can" with entity data and extracts result from response', () => {
-        const entity = {data: {}};
+        const entity = { data: {} };
         getResStub.withArgs('update', entity.data).returns('YES WE CAN');
         const result = ac.canPerformActionOnEntity('update', entity);
         sinon.assert.calledOnce(getResStub.withArgs('update', entity.data));
@@ -237,15 +251,17 @@ describe('Access Checker', () => {
 
       it('determines enforcements for entity type', () => {
         const reasons = ['DENIED!'];
-        const entity = {data: {sys: {type: 'Entry'}}};
+        const entity = { data: { sys: { type: 'Entry' } } };
         reasonsDeniedStub.withArgs('update', entity.data).returns(reasons);
         getResStub.withArgs('update', entity.data).returns(false);
         ac.canPerformActionOnEntity('update', entity);
-        sinon.assert.calledOnce(enforcements.determineEnforcement.withArgs(
-          mockSpace.organization,
-          reasons,
-          entity.data.sys.type
-        ));
+        sinon.assert.calledOnce(
+          enforcements.determineEnforcement.withArgs(
+            mockSpace.organization,
+            reasons,
+            entity.data.sys.type
+          )
+        );
       });
     });
 
@@ -262,7 +278,7 @@ describe('Access Checker', () => {
     });
 
     describe('#canUpdateEntry', () => {
-      const entry = {data: {sys: {contentType: {sys: {id: 'ctid'}}}}};
+      const entry = { data: { sys: { contentType: { sys: { id: 'ctid' } } } } };
 
       it('returns true if "can" returns true', () => {
         getResStub.withArgs('update', entry.data).returns(true);
@@ -285,7 +301,7 @@ describe('Access Checker', () => {
     });
 
     describe('#canUpdateAsset', () => {
-      const asset = {data: {}};
+      const asset = { data: {} };
 
       it('returns true if "can" returns true', () => {
         getResStub.withArgs('update', asset.data).returns(true);
@@ -308,7 +324,7 @@ describe('Access Checker', () => {
     });
 
     describe('#canUploadMultipleAssets', () => {
-      function setup (canCreate, canUpdate, canUpdateWithPolicy, canUpdateOwn) {
+      function setup(canCreate, canUpdate, canUpdateWithPolicy, canUpdateOwn) {
         getResStub.withArgs('create', 'Asset').returns(canCreate);
         getResStub.withArgs('update', 'Asset').returns(canUpdate);
         policyChecker.canUpdateAssets = sinon.stub().returns(canUpdateWithPolicy);
@@ -356,23 +372,23 @@ describe('Access Checker', () => {
     });
 
     describe('#canModifyRoles', () => {
-      function changeSpace (hasFeature, isSpaceAdmin) {
+      function changeSpace(hasFeature, isSpaceAdmin) {
         ac.setSpace({
           sys: {
             id: '1234'
           },
           organization: {
-            sys: {id: 'orgid'},
-            subscriptionPlan: {limits: {features: {customRoles: hasFeature}}}
+            sys: { id: 'orgid' },
+            subscriptionPlan: { limits: { features: { customRoles: hasFeature } } }
           },
-          spaceMembership: {admin: isSpaceAdmin}
+          spaceMembership: { admin: isSpaceAdmin }
         });
 
         feature.enabled = hasFeature;
       }
 
       it('returns true when has feature and is admin of space, false otherwise', async () => {
-        OrganizationRoles.setUser({organizationMemberships: []});
+        OrganizationRoles.setUser({ organizationMemberships: [] });
         changeSpace(false, true);
         expect(await ac.canModifyRoles()).toBe(false);
         changeSpace(true, false);
@@ -381,8 +397,8 @@ describe('Access Checker', () => {
         expect(await ac.canModifyRoles()).toBe(true);
       });
 
-      it('should handle a null or undefined feature', function* () {
-        OrganizationRoles.setUser({organizationMemberships: []});
+      it('should handle a null or undefined feature', function*() {
+        OrganizationRoles.setUser({ organizationMemberships: [] });
         changeSpace(false, true); // User is space admin
 
         // Set the feature to null
@@ -395,11 +411,13 @@ describe('Access Checker', () => {
       });
 
       it('returns true when has feature, is not admin of space but is admin or owner of organization', () => {
-        const user = {organizationMemberships: [
-          {organization: {sys: {id: 'org1id'}}, role: 'admin'},
-          {organization: {sys: {id: 'org2id'}}, role: 'member'},
-          {organization: {sys: {id: 'org3id'}}, role: 'owner'}
-        ]};
+        const user = {
+          organizationMemberships: [
+            { organization: { sys: { id: 'org1id' } }, role: 'admin' },
+            { organization: { sys: { id: 'org2id' } }, role: 'member' },
+            { organization: { sys: { id: 'org3id' } }, role: 'owner' }
+          ]
+        };
 
         OrganizationRoles.setUser(user);
         changeSpace(true, false);
@@ -410,8 +428,8 @@ describe('Access Checker', () => {
         t('org3id', true);
         t('unknown', false);
 
-        function t (id, expectation) {
-          ac.setSpace({sys: { id: id }, organization: {sys: {id}}});
+        function t(id, expectation) {
+          ac.setSpace({ sys: { id: id }, organization: { sys: { id } } });
           expect(ac.canModifyUsers()).toBe(expectation);
         }
       });
@@ -425,18 +443,22 @@ describe('Access Checker', () => {
 
       it('returns result of organization authContext "can" call', () => {
         const organizationCanStub = sinon.stub().returns('YES WE CAN');
-        changeAuthContext(makeAuthContext({
-          orgid: organizationCanStub
-        }));
+        changeAuthContext(
+          makeAuthContext({
+            orgid: organizationCanStub
+          })
+        );
 
         expect(ac.canCreateSpaceInOrganization('orgid')).toBe('YES WE CAN');
         sinon.assert.calledOnce(organizationCanStub.withArgs('create', 'Space'));
       });
 
-      it('returns false and logs if organization authContext throws', function () {
-        changeAuthContext(makeAuthContext({
-          orgid: sinon.stub().throws()
-        }));
+      it('returns false and logs if organization authContext throws', function() {
+        changeAuthContext(
+          makeAuthContext({
+            orgid: sinon.stub().throws()
+          })
+        );
 
         expect(ac.canCreateSpaceInOrganization('orgid')).toBe(false);
         const logger = this.$inject('logger');
@@ -448,24 +470,29 @@ describe('Access Checker', () => {
     describe('#canCreateSpaceInAnyOrganization', () => {
       beforeEach(() => {
         TokenStore.organizations$ = K.createMockProperty([
-          {sys: {id: 'org1'}}, {sys: {id: 'org2'}}
+          { sys: { id: 'org1' } },
+          { sys: { id: 'org2' } }
         ]);
       });
 
       it('returns true if space can be created in at least on organization', () => {
-        changeAuthContext(makeAuthContext({
-          org1: sinon.stub().returns(false),
-          org2: sinon.stub().returns(true)
-        }));
+        changeAuthContext(
+          makeAuthContext({
+            org1: sinon.stub().returns(false),
+            org2: sinon.stub().returns(true)
+          })
+        );
 
         expect(ac.canCreateSpaceInAnyOrganization()).toBe(true);
       });
 
       it('returns false if space cannot be create in any organization', () => {
-        changeAuthContext(makeAuthContext({
-          org1: sinon.stub().returns(false),
-          org2: sinon.stub().returns(false)
-        }));
+        changeAuthContext(
+          makeAuthContext({
+            org1: sinon.stub().returns(false),
+            org2: sinon.stub().returns(false)
+          })
+        );
 
         expect(ac.canCreateSpaceInAnyOrganization()).toBe(false);
       });
@@ -477,10 +504,15 @@ describe('Access Checker', () => {
       beforeEach(() => {
         organizationCanStub = sinon.stub().returns(false);
         canStub = sinon.stub().returns(false);
-        TokenStore.organizations$ = K.createMockProperty([{sys: {id: 'org1'}}]);
-        changeAuthContext(makeAuthContext({
-          org1: organizationCanStub
-        }, canStub));
+        TokenStore.organizations$ = K.createMockProperty([{ sys: { id: 'org1' } }]);
+        changeAuthContext(
+          makeAuthContext(
+            {
+              org1: organizationCanStub
+            },
+            canStub
+          )
+        );
       });
 
       it('returns false when authContext is not defined', () => {
@@ -516,15 +548,13 @@ describe('Access Checker', () => {
 
       it('broadcasts enforcement if found for a general case', () => {
         const reasons = ['REASONS!'];
-        const enforcement = {message: 'MESSAGE'};
+        const enforcement = { message: 'MESSAGE' };
         organizationCanStub.returns(true);
         canStub.returns(false);
         reasonsDeniedStub.withArgs('create', 'Space').returns(reasons);
-        enforcements.determineEnforcement.withArgs(
-          mockSpace.organization,
-          reasons,
-          'Space'
-        ).returns(enforcement);
+        enforcements.determineEnforcement
+          .withArgs(mockSpace.organization, reasons, 'Space')
+          .returns(enforcement);
         expect(ac.canCreateSpace()).toBe(false);
         sinon.assert.calledOnce(broadcastStub.withArgs(enforcement));
       });
@@ -556,7 +586,7 @@ describe('Access Checker', () => {
         [200, 404, 403].forEach(status => {
           const context = {};
           const cb1 = ac.wasForbidden(context);
-          cb1({statusCode: status});
+          cb1({ statusCode: status });
           expect(context.forbidden).toBe(status === 200 ? undefined : true);
         });
       });
@@ -565,7 +595,7 @@ describe('Access Checker', () => {
         const ctx = {};
         const cb1 = ac.wasForbidden(ctx);
 
-        return cb1({statusCode: 404}).then(ctx2 => {
+        return cb1({ statusCode: 404 }).then(ctx2 => {
           expect(ctx === ctx2).toBe(true);
           expect(ctx2.forbidden).toBe(true);
         });
@@ -573,7 +603,7 @@ describe('Access Checker', () => {
 
       it('returns rejected promise with response if was not forbidden', () => {
         const cb = ac.wasForbidden({});
-        const res = {statusCode: 400};
+        const res = { statusCode: 400 };
 
         return cb(res).then(_.noop, res2 => {
           expect(res === res2);
@@ -588,12 +618,12 @@ describe('Access Checker', () => {
  *
  * The argument is a map from organization IDs to 'can' functions.
  */
-function makeAuthContext (orgs, can = sinon.stub()) {
+function makeAuthContext(orgs, can = sinon.stub()) {
   return {
-    organization (id) {
-      return {can: orgs[id]};
+    organization(id) {
+      return { can: orgs[id] };
     },
-    hasOrganization (id) {
+    hasOrganization(id) {
       return id in orgs;
     },
     can

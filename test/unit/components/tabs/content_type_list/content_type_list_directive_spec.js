@@ -1,19 +1,19 @@
 import * as sinon from 'helpers/sinon';
 
 describe('The ContentType list directive', () => {
-  it('filters content types by name', function () {
+  it('filters content types by name', function() {
     module('contentful/test', $provide => {
-      $provide.value('$state', {current: {}, href: () => {}});
+      $provide.value('$state', { current: {}, href: () => {} });
     });
 
     const contentTypes = [
-      {sys: {id: 1}, name: 'A'},
-      {sys: {id: 2}, name: 'B'},
-      {sys: {id: 3}, name: 'Bx'}
+      { sys: { id: 1 }, name: 'A' },
+      { sys: { id: 2 }, name: 'B' },
+      { sys: { id: 3 }, name: 'Bx' }
     ];
 
     const spaceContext = this.$inject('mocks/spaceContext').init();
-    spaceContext.endpoint = sinon.stub().resolves({items: contentTypes});
+    spaceContext.endpoint = sinon.stub().resolves({ items: contentTypes });
 
     const element = this.$compile('<div cf-content-type-list />', { context: {} });
     const scope = element.scope();

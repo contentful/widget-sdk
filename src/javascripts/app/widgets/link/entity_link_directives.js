@@ -1,6 +1,7 @@
 'use strict';
 
-angular.module('cf.app')
+angular
+  .module('cf.app')
 
   /**
    * @ngdoc service
@@ -90,10 +91,8 @@ angular.module('cf.app')
       const Analytics = require('analytics/Analytics');
       const _ = require('lodash');
 
-      const INLINE_REFERENCE_FEATURE_FLAG =
-        'feature-at-02-2018-inline-reference-field';
-      const REFERENCE_CARD_REDESIGN_FEATURE_FLAG =
-        'feature-at-06-2018-reference-cards-redesign';
+      const INLINE_REFERENCE_FEATURE_FLAG = 'feature-at-02-2018-inline-reference-field';
+      const REFERENCE_CARD_REDESIGN_FEATURE_FLAG = 'feature-at-06-2018-reference-cards-redesign';
 
       LD.onFeatureFlag($scope, INLINE_REFERENCE_FEATURE_FLAG, isEnabled => {
         $scope.isInlineEditingEnabled = isEnabled;
@@ -109,10 +108,7 @@ angular.module('cf.app')
       $scope.onClick = $event => {
         if (!$scope.stateRef && !$scope.actions.edit) return;
 
-        if (
-          ($scope.stateRef || $scope.actions.slideinEdit) &&
-          !$scope.actions.edit
-        ) {
+        if (($scope.stateRef || $scope.actions.slideinEdit) && !$scope.actions.edit) {
           if ($scope.actions.slideinEdit) {
             // This will prevent navigating to the entry page
             // when clicking the ref link and open it inline instead.
@@ -188,9 +184,7 @@ angular.module('cf.app')
 
       const maybeGetAssetDetails = () => {
         if (is('Asset')) {
-          get('assetFile', 'file').then(
-            _.partial(get, 'assetFileUrl', 'downloadUrl')
-          );
+          get('assetFile', 'file').then(_.partial(get, 'assetFileUrl', 'downloadUrl'));
         }
       };
 
@@ -202,11 +196,7 @@ angular.module('cf.app')
         const state = EntityState.getState(data.sys);
 
         // We do not show the state indicator for published assets
-        if (
-          !(
-            data.sys.type === 'Asset' && state === EntityState.State.Published()
-          )
-        ) {
+        if (!(data.sys.type === 'Asset' && state === EntityState.State.Published())) {
           $scope.entityState = EntityState.stateName(state);
         }
 

@@ -3,12 +3,11 @@ import { makeCtor } from 'utils/TaggedValues';
 
 // TODO document
 
-export function makeHook (run) {
-  return makeCtor((content) => {
+export function makeHook(run) {
+  return makeCtor(content => {
     return { content, run };
   });
 }
-
 
 export const Ref = makeHook((el, prevEl, prevCb, cb) => {
   if (!el && prevCb) {
@@ -18,7 +17,6 @@ export const Ref = makeHook((el, prevEl, prevCb, cb) => {
   }
   return el;
 });
-
 
 /**
  *
@@ -64,7 +62,6 @@ export const TrackFocus = makeHook((el, focusManager, _prev, setHasFocus) => {
   }
 });
 
-
 /**
  * A focus manager can be attached to an element to track whether it is
  * focused or not. It is used by the `TrackFocus` hook
@@ -84,7 +81,7 @@ export const TrackFocus = makeHook((el, focusManager, _prev, setHasFocus) => {
  * To stop listening, call `destroy()` on the returned focus manager
  * object.
  */
-function createFocusManager (el, setIsFocused) {
+function createFocusManager(el, setIsFocused) {
   if (!document.body.getAttribute('tabindex')) {
     throw new Error('The focus manager requires the "tabindex" attribute on the document body');
   }
@@ -97,20 +94,20 @@ function createFocusManager (el, setIsFocused) {
   document.addEventListener('click', listener);
 
   return {
-    setCallback (newCb) {
+    setCallback(newCb) {
       setIsFocused = newCb;
     },
-    destroy () {
+    destroy() {
       document.removeEventListener('focusin', listener);
       document.removeEventListener('click', listener);
     }
   };
 
-  function listener (ev) {
+  function listener(ev) {
     setFocusIfChanged(isParent(el, ev.target));
   }
 
-  function setFocusIfChanged (nextIsFocused) {
+  function setFocusIfChanged(nextIsFocused) {
     if (isFocused !== nextIsFocused) {
       isFocused = nextIsFocused;
       if (setIsFocused) {
@@ -120,7 +117,6 @@ function createFocusManager (el, setIsFocused) {
   }
 }
 
-
 /**
  * Receives two elements and returns true iff the first element is a
  * parent of the second. Both parameters maybe falsy.
@@ -129,7 +125,7 @@ function createFocusManager (el, setIsFocused) {
  * @param {DOM.Element?} maybeChildElement
  * @returns {boolean}
  */
-function isParent (parentElement, maybeChildElement) {
+function isParent(parentElement, maybeChildElement) {
   let currentElement = maybeChildElement;
   while (currentElement) {
     if (currentElement === parentElement) {

@@ -8,7 +8,7 @@ import { addUserOrgSpace } from './Decorators';
  */
 export default addUserOrgSpace(getExtensionSaveData);
 
-function getExtensionSaveData (_eventName, data) {
+function getExtensionSaveData(_eventName, data) {
   return {
     data: {
       ui_extension_id: data.ui_extension_id,

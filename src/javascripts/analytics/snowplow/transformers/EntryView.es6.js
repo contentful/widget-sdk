@@ -10,12 +10,12 @@ export default addUserOrgSpace((_, data) => ({
     editor_type: data.editorType
   },
   contexts: [
-    ...data.referencesCTMetadata.map((refMetadata) => getReferenceContext(refMetadata, data.entryId)),
+    ...data.referencesCTMetadata.map(refMetadata => getReferenceContext(refMetadata, data.entryId)),
     ...customWidgetsContexts(data)
   ]
 }));
 
-function getReferenceContext (refMetadata, parentEntryId) {
+function getReferenceContext(refMetadata, parentEntryId) {
   return {
     schema: getSchema('feature_reference_metadata').path,
     data: {
@@ -26,10 +26,10 @@ function getReferenceContext (refMetadata, parentEntryId) {
   };
 }
 
-function customWidgetsContexts (eventData) {
+function customWidgetsContexts(eventData) {
   if (Array.isArray(eventData.customWidgets)) {
     const schema = getSchema('extension_render').path;
-    return eventData.customWidgets.map(data => ({schema, data}));
+    return eventData.customWidgets.map(data => ({ schema, data }));
   } else {
     return [];
   }

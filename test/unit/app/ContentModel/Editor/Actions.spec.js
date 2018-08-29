@@ -4,16 +4,16 @@ describe('app/ContentModel/Editor/Actions', () => {
   let controller, scope, $q, logger, notification, accessChecker, ReloadNotification, spaceContext;
   let space, contentType;
 
-  function FormStub () {
-    this.$setDirty = function () {
+  function FormStub() {
+    this.$setDirty = function() {
       this._setDirty(true);
     };
 
-    this.$setPristine = function () {
+    this.$setPristine = function() {
       this._setDirty(false);
     };
 
-    this._setDirty = function (dirty) {
+    this._setDirty = function(dirty) {
       this.$dirty = dirty;
       this.$pristine = !dirty;
     };
@@ -21,7 +21,7 @@ describe('app/ContentModel/Editor/Actions', () => {
     this.$setPristine();
   }
 
-  beforeEach(function () {
+  beforeEach(function() {
     const self = this;
 
     const flags = {
@@ -29,9 +29,9 @@ describe('app/ContentModel/Editor/Actions', () => {
     };
 
     module('contentful/test', $provide => {
-      $provide.value('navigation/closeState', self.closeSpy = sinon.spy());
+      $provide.value('navigation/closeState', (self.closeSpy = sinon.spy()));
       $provide.value('utils/LaunchDarkly', {
-        getCurrentVariation: sinon.stub().callsFake(function (flagName) {
+        getCurrentVariation: sinon.stub().callsFake(function(flagName) {
           return new Promise(resolve => {
             if (flags[flagName]) {
               return resolve(flags[flagName]);
@@ -59,7 +59,7 @@ describe('app/ContentModel/Editor/Actions', () => {
     spaceContext = this.$inject('spaceContext');
     spaceContext.resetWithSpace(this.cfStub.space('spaceid').data);
     space = spaceContext.space;
-    spaceContext.uiConfig = {addOrEditCt: () => {}};
+    spaceContext.uiConfig = { addOrEditCt: () => {} };
     contentType = this.cfStub.contentType(space, 'typeid', 'typename');
 
     scope = this.$inject('$rootScope').$new();
@@ -71,7 +71,7 @@ describe('app/ContentModel/Editor/Actions', () => {
   });
 
   describe('#delete command', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       contentType.delete = sinon.stub().resolves();
       contentType.unpublish = sinon.stub().resolves(contentType);
       contentType.isPublished = sinon.stub().returns(true);
@@ -79,7 +79,7 @@ describe('app/ContentModel/Editor/Actions', () => {
       space.getEntries = sinon.stub().resolves([]);
 
       this.modalDialog = this.$inject('modalDialog');
-      sinon.stub(this.modalDialog, 'open').callsFake((params) => {
+      sinon.stub(this.modalDialog, 'open').callsFake(params => {
         if (params.controller) {
           const $scope = this.$inject('$rootScope').$new();
           params.controller($scope);
@@ -89,19 +89,19 @@ describe('app/ContentModel/Editor/Actions', () => {
     });
 
     describe('without entries', () => {
-      it('calls unpublish and then delete', function () {
+      it('calls unpublish and then delete', function() {
         controller.delete.execute();
         this.$apply();
         sinon.assert.callOrder(contentType.unpublish, contentType.delete);
       });
 
-      it('asks the user for confirmation', function () {
+      it('asks the user for confirmation', function() {
         controller.delete.execute();
         this.$apply();
         sinon.assert.called(this.modalDialog.open);
       });
 
-      it('does not send DELETE if the user denies confirmation', function () {
+      it('does not send DELETE if the user denies confirmation', function() {
         this.modalDialog.open.restore();
         sinon.stub(this.modalDialog, 'open').resolves();
 
@@ -110,21 +110,21 @@ describe('app/ContentModel/Editor/Actions', () => {
         sinon.assert.notCalled(contentType.delete);
       });
 
-      it('notifies of server errors', function () {
-        contentType.delete.rejects({error: true});
+      it('notifies of server errors', function() {
+        contentType.delete.rejects({ error: true });
         controller.delete.execute();
         this.$apply();
         sinon.assert.called(notification.error);
         sinon.assert.called(logger.logServerWarn);
       });
 
-      it('shows notification', function () {
+      it('shows notification', function() {
         controller.delete.execute();
         this.$apply();
         sinon.assert.called(notification.info);
       });
 
-      it('closes state', function () {
+      it('closes state', function() {
         controller.delete.execute();
         this.$apply();
         sinon.assert.calledOnce(this.closeSpy);
@@ -132,7 +132,7 @@ describe('app/ContentModel/Editor/Actions', () => {
     });
 
     describe('delete flow interruptions', () => {
-      function testForbiddenRemoval (dialog, data) {
+      function testForbiddenRemoval(dialog, data) {
         const matchObj = {
           template: 'content_type_removal_forbidden_dialog',
           scopeData: data || {}
@@ -144,38 +144,38 @@ describe('app/ContentModel/Editor/Actions', () => {
         sinon.assert.notCalled(contentType.delete);
       }
 
-      function testEndpointError () {
+      function testEndpointError() {
         controller.delete.execute();
         scope.$apply();
         sinon.assert.calledOnce(ReloadNotification.basicErrorHandler);
       }
 
-      it('notifies the user when entries endpoint cannot be read', function () {
+      it('notifies the user when entries endpoint cannot be read', function() {
         accessChecker.canPerformActionOnEntryOfType.returns(false);
-        space.getEntries.rejects({statusCode: 404});
-        testForbiddenRemoval(this.modalDialog, {count: ''});
+        space.getEntries.rejects({ statusCode: 404 });
+        testForbiddenRemoval(this.modalDialog, { count: '' });
       });
 
-      it('notifies the user when entries cannot be read due to policy', function () {
+      it('notifies the user when entries cannot be read due to policy', function() {
         accessChecker.canPerformActionOnEntryOfType.returns(false);
         space.getEntries.resolves([]);
-        testForbiddenRemoval(this.modalDialog, {count: ''});
+        testForbiddenRemoval(this.modalDialog, { count: '' });
       });
 
-      it('notifies the user when there are entries', function () {
-        space.getEntries.resolves([{data: {sys: {id: 'entry'}}}]);
-        testForbiddenRemoval(this.modalDialog, {count: 1});
+      it('notifies the user when there are entries', function() {
+        space.getEntries.resolves([{ data: { sys: { id: 'entry' } } }]);
+        testForbiddenRemoval(this.modalDialog, { count: 1 });
       });
 
       it('fails for 404 when entries can be read by policy', () => {
         accessChecker.canPerformActionOnEntryOfType.returns(true);
-        space.getEntries.rejects({statusCode: 404});
+        space.getEntries.rejects({ statusCode: 404 });
         testEndpointError();
       });
 
       it('fails for non-404 status codes', () => {
         accessChecker.canPerformActionOnEntryOfType.returns(true);
-        space.getEntries.rejects({statusCode: 500});
+        space.getEntries.rejects({ statusCode: 500 });
         testEndpointError();
       });
     });
@@ -185,19 +185,19 @@ describe('app/ContentModel/Editor/Actions', () => {
         contentType.isPublished = sinon.stub().returns(false);
       });
 
-      it('does not count entries', function () {
+      it('does not count entries', function() {
         controller.delete.execute();
         this.$apply();
         sinon.assert.notCalled(space.getEntries);
       });
 
-      it('does not call unpublish', function () {
+      it('does not call unpublish', function() {
         controller.delete.execute();
         this.$apply();
         sinon.assert.notCalled(contentType.unpublish);
       });
 
-      it('calls delete', function () {
+      it('calls delete', function() {
         controller.delete.execute();
         this.$apply();
         sinon.assert.called(contentType.delete);
@@ -205,13 +205,13 @@ describe('app/ContentModel/Editor/Actions', () => {
     });
   });
 
-  it('when cancelling navigates back to list', function () {
+  it('when cancelling navigates back to list', function() {
     controller.cancel.execute();
     sinon.assert.calledWith(this.$state.go, '^.^.list');
   });
 
   describe('#save command', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       spaceContext.editingInterfaces.save = sinon.stub().resolves();
       spaceContext.editingInterfaces.get = sinon.stub().resolves({
         sys: { version: 1 },
@@ -231,19 +231,18 @@ describe('app/ContentModel/Editor/Actions', () => {
 
     it('resets form and state context to pristine state', () => {
       scope.context.dirty = true;
-      return controller.save.execute()
-      .then(() => {
+      return controller.save.execute().then(() => {
         expect(scope.context.dirty).toBe(false);
         expect(scope.contentTypeForm.$pristine).toBe(true);
       });
     });
 
-    it('saves and publishes content type', () => controller.save.execute()
-    .then(() => {
-      const ct = scope.contentType;
-      sinon.assert.calledOnce(ct.save);
-      sinon.assert.calledOnce(ct.publish);
-    }));
+    it('saves and publishes content type', () =>
+      controller.save.execute().then(() => {
+        const ct = scope.contentType;
+        sinon.assert.calledOnce(ct.save);
+        sinon.assert.calledOnce(ct.publish);
+      }));
 
     it('saves editing interface', () => {
       spaceContext.editingInterfaces.get = sinon.stub().resolves({
@@ -251,9 +250,7 @@ describe('app/ContentModel/Editor/Actions', () => {
         controls: []
       });
 
-
-      return controller.save.execute()
-      .then(() => {
+      return controller.save.execute().then(() => {
         sinon.assert.calledOnce(spaceContext.editingInterfaces.save);
 
         const callArgs = spaceContext.editingInterfaces.save.getCall(0).args;
@@ -276,7 +273,7 @@ describe('app/ContentModel/Editor/Actions', () => {
       });
     });
 
-    it('updates editing interface on scope', function () {
+    it('updates editing interface on scope', function() {
       spaceContext.editingInterfaces.save.resolves('NEW EI');
       controller.save.execute();
       this.$apply();
@@ -286,54 +283,54 @@ describe('app/ContentModel/Editor/Actions', () => {
     describe('with invalid data', () => {
       beforeEach(() => {
         scope.validate.returns(false);
-        scope.validationResult = {errors: []};
+        scope.validationResult = { errors: [] };
       });
 
-      it('does not save entities', () => controller.save.execute()
-      .catch(() => {
-        sinon.assert.notCalled(spaceContext.editingInterfaces.save);
-        sinon.assert.notCalled(scope.contentType.save);
-      }));
+      it('does not save entities', () =>
+        controller.save.execute().catch(() => {
+          sinon.assert.notCalled(spaceContext.editingInterfaces.save);
+          sinon.assert.notCalled(scope.contentType.save);
+        }));
 
-      it('shows error message', () => controller.save.execute()
-      .catch(() => {
-        sinon.assert.called(notification.error);
-      }));
+      it('shows error message', () =>
+        controller.save.execute().catch(() => {
+          sinon.assert.called(notification.error);
+        }));
     });
 
     describe('content type server error', () => {
-      beforeEach(function () {
+      beforeEach(function() {
         scope.contentType.save.returns(this.reject('err'));
       });
 
-      it('rejects promise', () => controller.save.execute()
-      .catch(err => {
-        expect(err).toBe('err');
-      }));
+      it('rejects promise', () =>
+        controller.save.execute().catch(err => {
+          expect(err).toBe('err');
+        }));
 
-      it('does not publish content type', () => controller.save.execute()
-      .catch(() => {
-        sinon.assert.notCalled(scope.contentType.publish);
-      }));
+      it('does not publish content type', () =>
+        controller.save.execute().catch(() => {
+          sinon.assert.notCalled(scope.contentType.publish);
+        }));
 
-      it('shows error message', () => controller.save.execute()
-      .catch(() => {
-        sinon.assert.called(notification.error);
-      }));
+      it('shows error message', () =>
+        controller.save.execute().catch(() => {
+          sinon.assert.called(notification.error);
+        }));
 
-      it('does not reset form', () => controller.save.execute()
-      .catch(() => {
-        expect(scope.contentTypeForm.$pristine).toBe(false);
-      }));
+      it('does not reset form', () =>
+        controller.save.execute().catch(() => {
+          expect(scope.contentTypeForm.$pristine).toBe(false);
+        }));
     });
 
-    it('redirects if the content type is new', function* () {
+    it('redirects if the content type is new', function*() {
       scope.context.isNew = true;
       yield controller.save.execute();
       sinon.assert.calledWith(
         this.$state.go,
         '^.^.detail.fields',
-        sinon.match({contentTypeId: 'typeid'})
+        sinon.match({ contentTypeId: 'typeid' })
       );
     });
   });
@@ -343,10 +340,7 @@ describe('app/ContentModel/Editor/Actions', () => {
       scope.contentTypeForm = {
         $dirty: true
       };
-      scope.contentType.data.fields = [
-        { disabled: false },
-        { disabled: true }
-      ];
+      scope.contentType.data.fields = [{ disabled: false }, { disabled: true }];
       scope.contentType.data.sys.publishedVersion = 1;
     });
 
@@ -379,28 +373,32 @@ describe('app/ContentModel/Editor/Actions', () => {
   });
 
   describe('#duplicate command', () => {
-    function getCreatedCt () {
+    function getCreatedCt() {
       return spaceContext.space.newContentType.returnValues[0];
     }
 
-    beforeEach(function () {
-      sinon.stub(this.$inject('modalDialog'), 'open').callsFake((params) => {
+    beforeEach(function() {
+      sinon.stub(this.$inject('modalDialog'), 'open').callsFake(params => {
         if (params.scope && params.scope.duplicate) {
-          _.extend(params.scope.contentTypeMetadata, {name: 'test', id: 'test'});
+          _.extend(params.scope.contentTypeMetadata, { name: 'test', id: 'test' });
           const confirm = sinon.spy();
-          params.scope.dialog = {confirm: confirm, cancel: sinon.spy(), formController: {$valid: true}};
+          params.scope.dialog = {
+            confirm: confirm,
+            cancel: sinon.spy(),
+            formController: { $valid: true }
+          };
           params.scope.duplicate.execute();
           scope.$apply();
-          return {promise: $q.resolve(confirm.firstCall.args[0])};
+          return { promise: $q.resolve(confirm.firstCall.args[0]) };
         }
 
         if (params.title === 'Duplicated content type') {
-          return {promise: $q.resolve()};
+          return { promise: $q.resolve() };
         }
       });
 
-      sinon.stub(spaceContext.space, 'newContentType').callsFake((data) => {
-        const ct = {data: {sys: {id: 'ct-id'}}, name: 'ct-name'};
+      sinon.stub(spaceContext.space, 'newContentType').callsFake(data => {
+        const ct = { data: { sys: { id: 'ct-id' } }, name: 'ct-name' };
         _.extend(ct.data, data);
         ct.getId = () => 'ct-id';
         ct.save = sinon.stub().resolves(ct);
@@ -408,10 +406,10 @@ describe('app/ContentModel/Editor/Actions', () => {
         return ct;
       });
 
-      scope.editingInterface = {sys: {}, controls: []};
+      scope.editingInterface = { sys: {}, controls: [] };
       spaceContext.editingInterfaces.save = sinon.stub().resolves();
 
-      sinon.stub(spaceContext.editingInterfaces, 'get').callsFake((ctData) => {
+      sinon.stub(spaceContext.editingInterfaces, 'get').callsFake(ctData => {
         return $q.resolve({
           sys: { version: 1 },
           controls: _.map(ctData.fields, field => ({
@@ -422,14 +420,15 @@ describe('app/ContentModel/Editor/Actions', () => {
       });
     });
 
-    it('creates new content types type with a provided name', () => controller.duplicate.execute().then(() => {
-      sinon.assert.calledOnce(spaceContext.space.newContentType);
-      expect(spaceContext.space.newContentType.firstCall.args[0].name).toBe('test');
-    }));
+    it('creates new content types type with a provided name', () =>
+      controller.duplicate.execute().then(() => {
+        sinon.assert.calledOnce(spaceContext.space.newContentType);
+        expect(spaceContext.space.newContentType.firstCall.args[0].name).toBe('test');
+      }));
 
     it('saves a duplicate with the same field IDs and display field', () => {
       contentType.data.displayField = 'field-id-2-disp';
-      contentType.data.fields = [{id: 'field-id-1'}, {id: 'field-id-2-disp'}];
+      contentType.data.fields = [{ id: 'field-id-1' }, { id: 'field-id-2-disp' }];
 
       return controller.duplicate.execute().then(() => {
         const ct = getCreatedCt();
@@ -442,15 +441,16 @@ describe('app/ContentModel/Editor/Actions', () => {
       });
     });
 
-    it('publishes content type duplicate', () => controller.duplicate.execute().then(() => {
-      sinon.assert.calledOnce(getCreatedCt().publish);
-    }));
+    it('publishes content type duplicate', () =>
+      controller.duplicate.execute().then(() => {
+        sinon.assert.calledOnce(getCreatedCt().publish);
+      }));
 
     it('synchronizes controls in the new EI', () => {
-      contentType.data.fields = [{id: 'xyz'}, {id: 'boom'}];
+      contentType.data.fields = [{ id: 'xyz' }, { id: 'boom' }];
       scope.editingInterface.controls = [
-        {widgetId: 'margarita-making-widget'},
-        {widgetId: 'some-other-widget'}
+        { widgetId: 'margarita-making-widget' },
+        { widgetId: 'some-other-widget' }
       ];
 
       return controller.duplicate.execute().then(() => {
@@ -465,7 +465,7 @@ describe('app/ContentModel/Editor/Actions', () => {
   describe('#duplicate command disabled', () => {
     beforeEach(() => {
       scope.context.isNew = false;
-      scope.contentTypeForm = {$dirty: false};
+      scope.contentTypeForm = { $dirty: false };
       scope.contentType.data.sys.publishedVersion = 100;
       scope.contentType.isPublished = _.constant(true);
       accessChecker.shouldDisable = _.constant(false);

@@ -10,25 +10,25 @@ const ContextMenu = createReactClass({
     style: PropTypes.object
   },
 
-  getInitialState () {
+  getInitialState() {
     return {
       isOpen: false,
       isDisabled: !(this.props.items && this.props.items.length)
     };
   },
 
-  handleClickOutside () {
+  handleClickOutside() {
     this.setState({
       isOpen: false
     });
   },
 
-  toggle () {
-    this.setState({isOpen: !this.state.isOpen});
+  toggle() {
+    this.setState({ isOpen: !this.state.isOpen });
   },
 
-  render () {
-    const {isOpen, isDisabled} = this.state;
+  render() {
+    const { isOpen, isDisabled } = this.state;
     const { items, style: userStyles, ...otherProps } = this.props;
 
     const styles = { ...(userStyles || {}), marginLeft: '10px', position: 'relative' };
@@ -36,42 +36,41 @@ const ContextMenu = createReactClass({
     return (
       <div
         style={styles}
-        ref={menu => { this.menuElement = menu; }}
-        {...otherProps}
-      >
-        <button
-          disabled={isDisabled}
-          className="btn-inline btn-actions-nav"
-          onClick={this.toggle}
-        >•••</button>
+        ref={menu => {
+          this.menuElement = menu;
+        }}
+        {...otherProps}>
+        <button disabled={isDisabled} className="btn-inline btn-actions-nav" onClick={this.toggle}>
+          •••
+        </button>
 
-        { isOpen
-        ? <div
+        {isOpen ? (
+          <div
             className="context-menu x--arrow-up x--arrow-right"
             style={{
               right: '-25px',
               top: '30px'
-            }}
-          >
+            }}>
             <ul className="context-menu__items">
               {items.map(item => {
                 const disabled = Boolean(item.disabled);
 
                 return (
                   <li
-                    onClick={() => { !disabled && item.action(); }}
+                    onClick={() => {
+                      !disabled && item.action();
+                    }}
                     disabled={disabled}
-                    key={item.label}
-                  >
-                    <button {...item.otherProps} >
-                      {item.label}
-                    </button>
+                    key={item.label}>
+                    <button {...item.otherProps}>{item.label}</button>
                   </li>
                 );
               })}
             </ul>
           </div>
-        : '' }
+        ) : (
+          ''
+        )}
       </div>
     );
   }

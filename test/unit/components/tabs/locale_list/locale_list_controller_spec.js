@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Locale List Controller', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     this.scope = this.$inject('$rootScope').$new();
     this.apiErrorHandler = this.$inject('ReloadNotification').apiErrorHandler;
@@ -61,32 +61,32 @@ describe('Locale List Controller', () => {
     };
 
     this.createController = () => {
-      this.$inject('$controller')('LocaleListController', {$scope: this.scope});
+      this.$inject('$controller')('LocaleListController', { $scope: this.scope });
       this.$apply();
     };
   });
 
   describe('refreshing locales', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.createController();
     });
 
-    it('refreshes and gets locales', function () {
+    it('refreshes and gets locales', function() {
       sinon.assert.calledOnce(this.localeStore.refresh);
     });
 
-    it('places locales on scope', function () {
+    it('places locales on scope', function() {
       expect(this.scope.locales).toEqual([{}]);
     });
   });
 
   describe('refreshing locales fails', () => {
-    beforeEach(function () {
-      this.localeStore.refresh.rejects({statusCode: 500});
+    beforeEach(function() {
+      this.localeStore.refresh.rejects({ statusCode: 500 });
       this.createController();
     });
 
-    it('results in an error message', function () {
+    it('results in an error message', function() {
       sinon.assert.called(this.apiErrorHandler);
     });
   });

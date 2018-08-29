@@ -1,9 +1,9 @@
 import * as sinon from 'helpers/sinon';
 
 describe('CreateSpace', () => {
-  beforeEach(function () {
-    this.v1Org = {sys: {id: 'v1'}, pricingVersion: 'pricing_version_1'};
-    this.v2Org = {sys: {id: 'v2'}, pricingVersion: 'pricing_version_2'};
+  beforeEach(function() {
+    this.v1Org = { sys: { id: 'v1' }, pricingVersion: 'pricing_version_1' };
+    this.v2Org = { sys: { id: 'v2' }, pricingVersion: 'pricing_version_2' };
 
     this.ratePlans = {
       enterprise: {
@@ -24,12 +24,10 @@ describe('CreateSpace', () => {
     this.accessChecker = {
       canCreateSpaceInOrganization: sinon.stub().returns(true)
     };
-    this.getSpaceRatePlans = sinon.stub()
-      .returns([this.ratePlans.onDemand]);
+    this.getSpaceRatePlans = sinon.stub().returns([this.ratePlans.onDemand]);
     this.isPOCEnabled = sinon.stub().returns(false);
 
-
-    module('contentful/test', ($provide) => {
+    module('contentful/test', $provide => {
       $provide.value('services/TokenStore', {
         getOrganization: this.getOrganization
       });
@@ -40,12 +38,12 @@ describe('CreateSpace', () => {
     this.PricingDataProvider.getSpaceRatePlans = this.getSpaceRatePlans;
     this.PricingDataProvider.isPOCEnabled = this.isPOCEnabled;
     this.modalDialog = this.$inject('modalDialog');
-    this.modalDialog.open = sinon.stub().returns({promise: this.resolve()});
+    this.modalDialog.open = sinon.stub().returns({ promise: this.resolve() });
     this.CreateSpace = this.$inject('services/CreateSpace');
   });
 
   describe('#showDialog', () => {
-    it('opens old dialog with v1 org id', function* () {
+    it('opens old dialog with v1 org id', function*() {
       yield this.CreateSpace.showDialog('v1');
       const modalArgs = this.modalDialog.open.firstCall.args[0];
       expect(modalArgs.scopeData.organization).toBe(this.v1Org);
@@ -53,7 +51,7 @@ describe('CreateSpace', () => {
       sinon.assert.calledOnce(this.modalDialog.open);
     });
 
-    it('opens wizard with v2 org id', function* () {
+    it('opens wizard with v2 org id', function*() {
       yield this.CreateSpace.showDialog('v2');
       const modalArgs = this.modalDialog.open.firstCall.args[0];
       expect(modalArgs.scopeData.organization.sys.id).toBe(this.v2Org.sys.id);
@@ -61,7 +59,7 @@ describe('CreateSpace', () => {
       sinon.assert.calledOnce(this.modalDialog.open);
     });
 
-    it('throws if no org id is passed', function* () {
+    it('throws if no org id is passed', function*() {
       try {
         yield this.CreateSpace.showDialog();
       } catch (e) {
@@ -70,13 +68,13 @@ describe('CreateSpace', () => {
       }
     });
 
-    it('checks for creation permission', function* () {
+    it('checks for creation permission', function*() {
       this.accessChecker.canCreateSpaceInOrganization.returns(false);
       yield this.CreateSpace.showDialog('v1');
       sinon.assert.calledWith(this.accessChecker.canCreateSpaceInOrganization, 'v1');
     });
 
-    it('opens the enterprise dialog for enterprise orgs', async function () {
+    it('opens the enterprise dialog for enterprise orgs', async function() {
       this.getSpaceRatePlans.returns([this.ratePlans.enterprise]);
       this.isPOCEnabled.returns(true);
       await this.CreateSpace.showDialog('v2');

@@ -7,17 +7,14 @@ angular.module('contentful').directive('cfCreateEntryButton', [
     const Menu = require('components/CreateEntryButton').default;
 
     return {
-      link: function ($scope, elem, attr) {
+      link: function($scope, elem, attr) {
         $scope.$watchCollection(
           () => {
             const contentTypes = _.get($scope, attr.contentTypes, []);
             const disabled = contentTypes.length === 0;
             return {
               contentTypes,
-              suggestedContentTypeId: _.get(
-                $scope,
-                attr.suggestedContentTypeId
-              ),
+              suggestedContentTypeId: _.get($scope, attr.suggestedContentTypeId),
               size: attr.size,
               style: attr.style,
               text: attr.text,

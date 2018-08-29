@@ -7,13 +7,9 @@ describe('entityCreator', () => {
     stubs = null;
   });
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test', $provide => {
-      stubs = $provide.makeStubs([
-        'computeUsage',
-        'enforcement',
-        'track'
-      ]);
+      stubs = $provide.makeStubs(['computeUsage', 'enforcement', 'track']);
 
       $provide.value('access_control/Enforcements', {
         computeUsageForOrganization: stubs.computeUsage,
@@ -35,14 +31,11 @@ describe('entityCreator', () => {
   describe('creates an entry', () => {
     let createStub;
     let contentType;
-    beforeEach(inject(function (cfStub) {
+    beforeEach(inject(function(cfStub) {
       this.entity = { getId: sinon.stub() };
-      createStub = sinon.stub(
-        this.spaceContext.space,
-        'createEntry'
-      ).returns(
-        this.$q.resolve(this.entity)
-      );
+      createStub = sinon
+        .stub(this.spaceContext.space, 'createEntry')
+        .returns(this.$q.resolve(this.entity));
       contentType = cfStub.contentType(this.spaceContext.space, 'thing', 'Thing');
     }));
 
@@ -50,29 +43,36 @@ describe('entityCreator', () => {
       createStub.restore();
     });
 
-    it('calls the space create method', function () {
+    it('calls the space create method', function() {
       this.entityCreator.newEntry(contentType);
       sinon.assert.called(createStub);
     });
 
     describe('creation fails', () => {
-      beforeEach(function () {
-        createStub.returns(this.$q.reject({
-          body: {
-            details: {
-              reasons: []
+      beforeEach(function() {
+        createStub.returns(
+          this.$q.reject({
+            body: {
+              details: {
+                reasons: []
+              }
             }
-          }
-        }));
+          })
+        );
         this.entityCreator.newEntry(contentType);
         this.$apply();
       });
 
-      it('determines enforcements', function () {
-        sinon.assert.calledWith(stubs.enforcement, this.spaceContext.space.organization, [], 'entry');
+      it('determines enforcements', function() {
+        sinon.assert.calledWith(
+          stubs.enforcement,
+          this.spaceContext.space.organization,
+          [],
+          'entry'
+        );
       });
 
-      it('notifies of the error', function () {
+      it('notifies of the error', function() {
         sinon.assert.called(this.notification.error);
       });
     });
@@ -80,37 +80,46 @@ describe('entityCreator', () => {
 
   describe('creates an asset', () => {
     let createStub;
-    beforeEach(function () {
-      createStub = sinon.stub(this.spaceContext.space, 'createAsset').returns(this.$q.defer().promise);
+    beforeEach(function() {
+      createStub = sinon
+        .stub(this.spaceContext.space, 'createAsset')
+        .returns(this.$q.defer().promise);
     });
 
     afterEach(() => {
       createStub.restore();
     });
 
-    it('calls the space create method', function () {
+    it('calls the space create method', function() {
       this.entityCreator.newAsset();
       sinon.assert.called(createStub);
     });
 
     describe('creation fails', () => {
-      beforeEach(function () {
-        createStub.returns(this.$q.reject({
-          body: {
-            details: {
-              reasons: []
+      beforeEach(function() {
+        createStub.returns(
+          this.$q.reject({
+            body: {
+              details: {
+                reasons: []
+              }
             }
-          }
-        }));
+          })
+        );
         this.entityCreator.newAsset();
         this.$apply();
       });
 
-      it('determines enforcements', function () {
-        sinon.assert.calledWith(stubs.enforcement, this.spaceContext.space.organization, [], 'asset');
+      it('determines enforcements', function() {
+        sinon.assert.calledWith(
+          stubs.enforcement,
+          this.spaceContext.space.organization,
+          [],
+          'asset'
+        );
       });
 
-      it('notifies of the error', function () {
+      it('notifies of the error', function() {
         sinon.assert.called(this.notification.error);
       });
     });

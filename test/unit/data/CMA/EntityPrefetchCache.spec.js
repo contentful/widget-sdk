@@ -1,22 +1,24 @@
 describe('data/CMA/EntityPrefetchCache', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     const $q = this.$inject('$q');
     const createCache = this.$inject('data/CMA/EntityPrefetchCache').default;
 
-    this.queryEntities = sinon.spy((query) => {
+    this.queryEntities = sinon.spy(query => {
       const ids = query['sys.id[in]'].split(',');
-      return $q.resolve(ids.map((id) => {
-        return {
-          data: { sys: {id: id} }
-        };
-      }));
+      return $q.resolve(
+        ids.map(id => {
+          return {
+            data: { sys: { id: id } }
+          };
+        })
+      );
     });
 
     this.cache = createCache(this.queryEntities);
   });
 
-  it('prefetches entities', function* () {
+  it('prefetches entities', function*() {
     this.cache.set(['A', 'B']);
     sinon.assert.calledOnce(this.queryEntities);
 
@@ -28,7 +30,7 @@ describe('data/CMA/EntityPrefetchCache', () => {
     sinon.assert.calledOnce(this.queryEntities);
   });
 
-  it('only loads ids not already in cache', function* () {
+  it('only loads ids not already in cache', function*() {
     this.cache.set(['A', 'B']);
     this.queryEntities.reset();
     this.cache.set(['B', 'X', 'Y']);
@@ -42,7 +44,7 @@ describe('data/CMA/EntityPrefetchCache', () => {
     sinon.assert.calledOnce(this.queryEntities);
   });
 
-  it('removes ids not required anymore', function* () {
+  it('removes ids not required anymore', function*() {
     this.cache.set(['A', 'B']);
     this.cache.set(['B']);
 
@@ -52,8 +54,8 @@ describe('data/CMA/EntityPrefetchCache', () => {
     sinon.assert.calledOnce(this.queryEntities);
   });
 
-  it('chunks up IDs', function () {
-    const ids = _.range(101).map((i) => `id${i}`);
+  it('chunks up IDs', function() {
+    const ids = _.range(101).map(i => `id${i}`);
     this.cache.set(ids);
     sinon.assert.callCount(this.queryEntities, 3);
   });

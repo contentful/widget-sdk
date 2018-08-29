@@ -1,27 +1,25 @@
 import React from 'react';
 import Enzyme from 'enzyme';
 
-describe('WebhookForm', function () {
+describe('WebhookForm', function() {
   let WebhookForm;
 
   const mount = () => {
     const onChangeStub = sinon.stub();
-    const wrapper = Enzyme.mount(<WebhookForm
-      webhook={{}}
-      hasHttpBasicStored={false}
-      onChange={onChangeStub}
-    />);
+    const wrapper = Enzyme.mount(
+      <WebhookForm webhook={{}} hasHttpBasicStored={false} onChange={onChangeStub} />
+    );
 
     return [wrapper, onChangeStub];
   };
 
   // We inject instead of importing so modalDialog is available
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     WebhookForm = this.$inject('app/Webhooks/WebhookForm').default;
   });
 
-  it('renders and updates details', function () {
+  it('renders and updates details', function() {
     const [wrapper, onChangeStub] = mount();
 
     const name = wrapper.find('#webhook-name');
@@ -30,14 +28,14 @@ describe('WebhookForm', function () {
     expect(name.prop('value')).toBe('');
     expect(url.prop('value')).toBe('');
 
-    name.simulate('change', {target: {value: 'webhook'}});
-    sinon.assert.calledWith(onChangeStub, {name: 'webhook'});
+    name.simulate('change', { target: { value: 'webhook' } });
+    sinon.assert.calledWith(onChangeStub, { name: 'webhook' });
 
-    url.simulate('change', {target: {value: 'http://test.com'}});
-    sinon.assert.calledWith(onChangeStub, {url: 'http://test.com'});
+    url.simulate('change', { target: { value: 'http://test.com' } });
+    sinon.assert.calledWith(onChangeStub, { url: 'http://test.com' });
   });
 
-  it('renders and updates transformation properties', function () {
+  it('renders and updates transformation properties', function() {
     const [wrapper, onChangeStub] = mount();
 
     const method = wrapper.find('#webhook-method');
@@ -46,12 +44,12 @@ describe('WebhookForm', function () {
     expect(method.prop('value')).toBe('POST');
     expect(contentType.prop('value')).toBe('application/vnd.contentful.management.v1+json');
 
-    contentType.simulate('change', {target: {value: 'application/json'}});
-    sinon.assert.calledWith(onChangeStub, {transformation: {contentType: 'application/json'}});
-    wrapper.setProps({webhook: {transformation: {contentType: 'application/json'}}});
+    contentType.simulate('change', { target: { value: 'application/json' } });
+    sinon.assert.calledWith(onChangeStub, { transformation: { contentType: 'application/json' } });
+    wrapper.setProps({ webhook: { transformation: { contentType: 'application/json' } } });
 
-    method.simulate('change', {target: {value: 'GET'}});
-    const finalWebhook = {transformation: {contentType: 'application/json', method: 'GET'}};
+    method.simulate('change', { target: { value: 'GET' } });
+    const finalWebhook = { transformation: { contentType: 'application/json', method: 'GET' } };
     sinon.assert.calledWith(onChangeStub, finalWebhook);
   });
 });

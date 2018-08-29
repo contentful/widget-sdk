@@ -1,4 +1,4 @@
-import {get as getAtPath} from 'lodash';
+import { get as getAtPath } from 'lodash';
 
 /**
  * @ngdoc service
@@ -219,12 +219,12 @@ registerSchema({
   version: '1-0-0'
 });
 
-function registerSchema (schema) {
+function registerSchema(schema) {
   _schemas[schema.name] = schema;
   _schemas[schema.name].path = buildPath(schema);
 }
 
-function buildPath (schema) {
+function buildPath(schema) {
   return `iglu:com.contentful/${schema.name}/jsonschema/${schema.version}`;
 }
 
@@ -236,6 +236,6 @@ function buildPath (schema) {
  * @description
  * Returns schema for the provided schema name
  */
-export function getSchema (schemaName) {
+export function getSchema(schemaName) {
   return getAtPath(_schemas, schemaName);
 }

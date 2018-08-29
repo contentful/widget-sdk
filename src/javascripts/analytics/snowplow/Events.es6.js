@@ -1,5 +1,5 @@
-import {get as getAtPath, snakeCase} from 'lodash';
-import {getSchema as fetchSchema} from './Schemas';
+import { get as getAtPath, snakeCase } from 'lodash';
+import { getSchema as fetchSchema } from './Schemas';
 
 import EntityAction from './transformers/EntityAction';
 import EntryActionV2 from './transformers/EntryActionV2';
@@ -8,10 +8,7 @@ import SpaceCreate from './transformers/SpaceCreate';
 import SpaceWizardTransformer from './transformers/SpaceWizard';
 import createExperimentTransformer from './transformers/Experiment';
 import PageViewTransform from './transformers/PageView';
-import {
-  ClipboardCopyTransform,
-  BoilerplateTransform
-} from './transformers/ApiKey';
+import { ClipboardCopyTransform, BoilerplateTransform } from './transformers/ApiKey';
 import AppOpen from './transformers/AppOpen';
 import BulkEditor from './transformers/BulkEditor';
 import SlideInEditor from './transformers/SlideInEditor';
@@ -129,9 +126,17 @@ registerEvent('search:search_terms_migrated', 'ui_config_migrate', SearchAndView
 
 registerEvent('entry_editor:view', 'entry_view', EntryViewTransform);
 
-registerEvent('reference_editor_action:create', 'feature_reference_action', ReferenceEditorTransform);
+registerEvent(
+  'reference_editor_action:create',
+  'feature_reference_action',
+  ReferenceEditorTransform
+);
 registerEvent('reference_editor_action:edit', 'feature_reference_action', ReferenceEditorTransform);
-registerEvent('reference_editor_action:delete', 'feature_reference_action', ReferenceEditorTransform);
+registerEvent(
+  'reference_editor_action:delete',
+  'feature_reference_action',
+  ReferenceEditorTransform
+);
 registerEvent('reference_editor_action:link', 'feature_reference_action', ReferenceEditorTransform);
 
 registerEvent('ui_webhook_editor:save', 'ui_webhook_editor_save', WebhookEditorTransform);
@@ -151,7 +156,7 @@ registerEvent('ui_webhook_editor:save', 'ui_webhook_editor_save', WebhookEditorT
  *   payload defined in `analytics/Analytics`.
  *   Returns an object with a `data` and optional `context` property.
  */
-function registerEvent (event, schema, transformer) {
+function registerEvent(event, schema, transformer) {
   _events[event] = {
     schema,
     transformer
@@ -159,30 +164,29 @@ function registerEvent (event, schema, transformer) {
 }
 
 // Common register patterns
-function registerGenericEvent (event) {
+function registerGenericEvent(event) {
   registerEvent(event, 'generic', Generic);
 }
 
-function registerActionEvent (event, transformer) {
+function registerActionEvent(event, transformer) {
   registerEvent(event, snakeCase(event), transformer);
 }
 
-function registerBulkEditorEvent (event) {
+function registerBulkEditorEvent(event) {
   registerEvent(event, 'feature_bulk_editor', BulkEditor);
 }
 
-function registerSlideInEditorEvent (event) {
+function registerSlideInEditorEvent(event) {
   registerEvent(event, 'slide_in_editor', SlideInEditor);
 }
 
-function registerSnapshotEvent (event) {
+function registerSnapshotEvent(event) {
   registerEvent(event, 'feature_snapshot', Snapshot);
 }
 
-function registerSpaceWizardEvent (event) {
+function registerSpaceWizardEvent(event) {
   registerEvent(event, 'feature_space_wizard', SpaceWizardTransformer);
 }
-
 
 /**
  * @ngdoc method
@@ -193,11 +197,10 @@ function registerSpaceWizardEvent (event) {
  * @description
  * Returns data transformed for Snowplow
  */
-export function transform (event, data) {
+export function transform(event, data) {
   const transformer = getAtPath(_events, [event, 'transformer']);
   return transformer(event, data);
 }
-
 
 /**
  * @ngdoc method
@@ -207,7 +210,7 @@ export function transform (event, data) {
  * @description
  * Returns schema for provided event
  */
-export function getSchema (eventName) {
+export function getSchema(eventName) {
   const name = getAtPath(_events, [eventName, 'schema']);
   return fetchSchema(name);
 }

@@ -48,7 +48,7 @@ const SVGS = {
   'home-welcome': HomeWelcomeIcon,
   'page-media': PageMediaIcon,
   'question-mark': QuestionMarkIcon(),
-  'subscription': SubscriptionIcon,
+  subscription: SubscriptionIcon,
   'content-structure-graph': ContentStructureGraphIcon,
   'tea-screenshot': TeaScreenshotIcon,
   'content-graph-highlight': ContentGraphHighlightIcon,
@@ -61,27 +61,27 @@ const SVGS = {
   'onboarding-add-user': AddUserIcon,
   'page-settings': PageSettings,
   'page-usage': PageUsage,
-  'bubble': Bubble,
+  bubble: Bubble,
   'dd-arrow-down': ArrowDown,
-  'back': BackIcon,
-  'invoice': InvoiceIcon,
-  'space': SpaceIcon,
+  back: BackIcon,
+  invoice: InvoiceIcon,
+  space: SpaceIcon,
   'icon-pages': PagesIcon,
   'icon-onboarding-arrow': OnboardingArrowIcon,
   'icon-onboarding-contentful-req-res': OnboardingContentfulFlowDiagram,
-  'aws': AWSIcon,
-  'dotnet': DotNetIcon,
-  'javascript': JavaScriptIcon,
-  'metalsmith': MetalSmithIcon,
-  'python': PythonIcon,
-  'ruby': RubyIcon,
-  'swift': SwiftIcon,
-  'android': AndroidIcon,
-  'php': PHPIcon,
-  'jekyll': JekyllIcon,
+  aws: AWSIcon,
+  dotnet: DotNetIcon,
+  javascript: JavaScriptIcon,
+  metalsmith: MetalSmithIcon,
+  python: PythonIcon,
+  ruby: RubyIcon,
+  swift: SwiftIcon,
+  android: AndroidIcon,
+  php: PHPIcon,
+  jekyll: JekyllIcon,
   'contentful-logo': ContentfulLogo,
-  'brunch': BrunchIcon,
-  'gitbook': GitBookIcon,
+  brunch: BrunchIcon,
+  gitbook: GitBookIcon,
   'stack-overview': StackOverviewIcon,
   'relaunch-onboarding': RelaunchOnboardingIcon
 };
@@ -94,13 +94,15 @@ const Icon = createReactClass({
     scale: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     height: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
   },
-  getInitialState () {
+  getInitialState() {
     return {
       Icon: SVGS[this.props.name]
     };
   },
-  componentDidMount () {
-    const iconElem = $(this.container).children().get(0);
+  componentDidMount() {
+    const iconElem = $(this.container)
+      .children()
+      .get(0);
     if (!iconElem) {
       return;
     }
@@ -121,10 +123,20 @@ const Icon = createReactClass({
       iconElem.setAttribute('height', setHeight);
     }
   },
-  render () {
+  render() {
     const { className, style } = this.props;
     const { Icon } = this.state;
-    return h('span', {className, style, ref: node => { this.container = node; }}, asReact(Icon));
+    return h(
+      'span',
+      {
+        className,
+        style,
+        ref: node => {
+          this.container = node;
+        }
+      },
+      asReact(Icon)
+    );
   }
 });
 

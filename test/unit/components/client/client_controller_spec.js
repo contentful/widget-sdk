@@ -8,10 +8,10 @@ describe('Client Controller', () => {
     scope = null;
   });
 
-  beforeEach(function () {
+  beforeEach(function() {
     this.getEnforcements = sinon.stub();
 
-    module('contentful/test', ($provide) => {
+    module('contentful/test', $provide => {
       $provide.value('analytics/Analytics', {
         enable: sinon.stub(),
         disable: sinon.stub(),
@@ -39,7 +39,7 @@ describe('Client Controller', () => {
 
     const $rootScope = this.$inject('$rootScope');
     scope = $rootScope.$new();
-    this.$inject('$controller')('ClientController', {$scope: scope});
+    this.$inject('$controller')('ClientController', { $scope: scope });
   });
 
   describe('aux panel preferences', () => {
@@ -54,8 +54,8 @@ describe('Client Controller', () => {
   });
 
   describe('updates authorization data', () => {
-    beforeEach(function () {
-      this.token = {sys: {}};
+    beforeEach(function() {
+      this.token = { sys: {} };
       this.enforcements = [];
       this.envId = 'ENV ID';
 
@@ -67,8 +67,9 @@ describe('Client Controller', () => {
       this.$apply();
     });
 
-    it('initializes authorization with correct data', function () {
-      sinon.assert.calledWith(this.authorizationStubs.update,
+    it('initializes authorization with correct data', function() {
+      sinon.assert.calledWith(
+        this.authorizationStubs.update,
         this.token,
         this.spaceContext.space,
         this.enforcements,
@@ -76,15 +77,15 @@ describe('Client Controller', () => {
       );
     });
 
-    it('on tokenLookup update', function () {
-      const newToken = {sys: {}};
+    it('on tokenLookup update', function() {
+      const newToken = { sys: {} };
       this.tokenStore.getTokenLookup.returns(newToken);
       this.$apply();
 
       sinon.assert.calledWith(this.authorizationStubs.update.secondCall, newToken);
     });
 
-    it('on spaceContext.space update', function () {
+    it('on spaceContext.space update', function() {
       const space = {
         getId: () => 'SPACE ID'
       };
@@ -98,10 +99,10 @@ describe('Client Controller', () => {
       );
     });
 
-    it('on enforcements update', function () {
+    it('on enforcements update', function() {
       this.$apply();
 
-      const enforcements = [{sys: {id: 'E_1'}}];
+      const enforcements = [{ sys: { id: 'E_1' } }];
       this.getEnforcements.returns(enforcements);
 
       this.$apply();
@@ -114,20 +115,20 @@ describe('Client Controller', () => {
       );
     });
 
-    it('updates nav state', function () {
+    it('updates nav state', function() {
       this.$apply();
       sinon.assert.calledOnce(this.refreshNavState);
     });
   });
 
   describe('initializes client', () => {
-    beforeEach(function () {
-      this.user = {sys: {}};
+    beforeEach(function() {
+      this.user = { sys: {} };
       this.tokenStore.user$.set(this.user);
       scope.$digest();
     });
 
-    it('sets user', function () {
+    it('sets user', function() {
       expect(scope.user).toEqual(this.user);
     });
   });
@@ -135,7 +136,7 @@ describe('Client Controller', () => {
   describe('organizations on the scope', () => {
     let logger;
 
-    beforeEach(function () {
+    beforeEach(function() {
       logger = this.$inject('logger');
     });
 
@@ -145,17 +146,19 @@ describe('Client Controller', () => {
 
     describe('if user exists', () => {
       let user, org1, org2, org3;
-      beforeEach(function () {
-        org1 = {org1: true};
-        org2 = {org2: true};
-        org3 = {org3: true};
+      beforeEach(function() {
+        org1 = { org1: true };
+        org2 = { org2: true };
+        org3 = { org3: true };
         user = {
           organizationMemberships: [
-            {organization: org1}, {organization: org2}, {organization: org3}
+            { organization: org1 },
+            { organization: org2 },
+            { organization: org3 }
           ]
         };
 
-        this.prepare = function () {
+        this.prepare = function() {
           this.tokenStore.user$.set(user);
         };
 
@@ -164,13 +167,13 @@ describe('Client Controller', () => {
         this.intercom.disable = sinon.stub();
       });
 
-      it('sets analytics user data and enables tracking', function () {
+      it('sets analytics user data and enables tracking', function() {
         this.prepare();
         sinon.assert.calledWithExactly(this.analytics.enable, user);
         sinon.assert.calledWithExactly(logger.enable, user);
       });
 
-      it('should not set or enable anything when analytics are disallowed', function () {
+      it('should not set or enable anything when analytics are disallowed', function() {
         const features = this.$inject('features');
         features.allowAnalytics = sinon.stub().returns(false);
         this.prepare();

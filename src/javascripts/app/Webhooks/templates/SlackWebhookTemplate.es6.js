@@ -30,8 +30,7 @@ export default {
           <a
             href="https://api.slack.com/incoming-webhooks"
             target="_blank"
-            rel="noopener noreferrer"
-          >
+            rel="noopener noreferrer">
             refer to their documentation
           </a>
           .
@@ -47,13 +46,15 @@ export default {
       url,
       topics: ['Entry.publish'],
       filters: [
-        {equals: [{doc: 'sys.environment.sys.id'}, 'master']},
-        {equals: [{doc: 'sys.contentType.sys.id'}, contentType.id]}
+        { equals: [{ doc: 'sys.environment.sys.id' }, 'master'] },
+        { equals: [{ doc: 'sys.contentType.sys.id' }, contentType.id] }
       ],
       transformation: {
         contentType: 'application/json',
         body: JSON.stringify({
-          text: `Published a new ${contentType.name}: *<${contentType.appUrlPointers}|{ ${contentType.titlePointer} }>*`
+          text: `Published a new ${contentType.name}: *<${contentType.appUrlPointers}|{ ${
+            contentType.titlePointer
+          } }>*`
         })
       }
     };

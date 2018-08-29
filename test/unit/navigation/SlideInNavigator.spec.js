@@ -1,7 +1,7 @@
 import sinon from 'npm:sinon';
 
 describe('SlideInNavigator', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     const params = sinon.stub();
     this.stateParams = params;
     this.search = sinon.stub();
@@ -9,7 +9,7 @@ describe('SlideInNavigator', () => {
 
     module('contentful/test', $provide => {
       $provide.value('$state', {
-        get params () {
+        get params() {
           return params();
         },
         go: this.stateGo
@@ -19,18 +19,12 @@ describe('SlideInNavigator', () => {
       });
     });
 
-    this.slideInNavigator = this.$inject(
-      'navigation/SlideInNavigator'
-    );
+    this.slideInNavigator = this.$inject('navigation/SlideInNavigator');
   });
 
   describe('getSlideInEntities', () => {
-    function getSlideInEntitiesTestFactory (
-      message,
-      { params = {}, search = {} },
-      expectedOutput
-    ) {
-      it(message, function () {
+    function getSlideInEntitiesTestFactory(message, { params = {}, search = {} }, expectedOutput) {
+      it(message, function() {
         this.stateParams.returns(params);
         this.search.returns(search);
 
@@ -40,11 +34,9 @@ describe('SlideInNavigator', () => {
       });
     }
 
-    getSlideInEntitiesTestFactory(
-      'returns state params',
-      { params: { entryId: 'entry-id' } },
-      [{ id: 'entry-id', type: 'Entry' }]
-    );
+    getSlideInEntitiesTestFactory('returns state params', { params: { entryId: 'entry-id' } }, [
+      { id: 'entry-id', type: 'Entry' }
+    ]);
 
     getSlideInEntitiesTestFactory(
       'returns ids from query string',
@@ -114,7 +106,7 @@ describe('SlideInNavigator', () => {
       InfiniteNumberOfLevels: 2
     };
 
-    function willRedirect (
+    function willRedirect(
       message,
       {
         params = {
@@ -128,19 +120,16 @@ describe('SlideInNavigator', () => {
       },
       stateGoArgs
     ) {
-      it(message, function () {
+      it(message, function() {
         this.stateParams.returns(params);
         this.search.returns(search);
 
-        const result = this.slideInNavigator.goToSlideInEntity(
-          goToEntity,
-          featureFlagValue
-        );
+        const result = this.slideInNavigator.goToSlideInEntity(goToEntity, featureFlagValue);
 
         sinon.assert.calledWith(this.stateGo, ...stateGoArgs);
 
         if (featureFlagValue === FeatureFlagValue.InfiniteNumberOfLevels) {
-          const count = (ids) => [...ids].filter(char => char === ',').length;
+          const count = ids => [...ids].filter(char => char === ',').length;
           const currentSlideLevel = search.previousEntries ? count(search.previousEntries) + 1 : 0;
           const targetSlideLevel = count(stateGoArgs[1].previousEntries) + 1;
           expect(result).toEqual({ currentSlideLevel, targetSlideLevel });
@@ -155,10 +144,13 @@ describe('SlideInNavigator', () => {
       {
         featureFlagValue: FeatureFlagValue.Off
       },
-      ['^.^.entries.detail', {
-        entryId: 'entry-id',
-        previousEntries: ''
-      }]
+      [
+        '^.^.entries.detail',
+        {
+          entryId: 'entry-id',
+          previousEntries: ''
+        }
+      ]
     );
 
     willRedirect(
@@ -167,10 +159,13 @@ describe('SlideInNavigator', () => {
         featureFlagValue: FeatureFlagValue.Off,
         goToEntity: { id: 'asset-id', type: 'Asset' }
       },
-      ['^.^.assets.detail', {
-        assetId: 'asset-id',
-        previousEntries: ''
-      }]
+      [
+        '^.^.assets.detail',
+        {
+          assetId: 'asset-id',
+          previousEntries: ''
+        }
+      ]
     );
 
     willRedirect(
@@ -183,10 +178,13 @@ describe('SlideInNavigator', () => {
         search: {},
         goToEntity: { id: 'asset-id', type: 'Asset' }
       },
-      ['^.^.assets.detail', {
-        assetId: 'asset-id',
-        previousEntries: ''
-      }]
+      [
+        '^.^.assets.detail',
+        {
+          assetId: 'asset-id',
+          previousEntries: ''
+        }
+      ]
     );
 
     willRedirect(
@@ -201,10 +199,13 @@ describe('SlideInNavigator', () => {
         },
         goToEntity: { id: 'asset-id', type: 'Asset' }
       },
-      ['^.^.assets.detail', {
-        assetId: 'asset-id',
-        previousEntries: 'entry-id-1,entry-id-2,entry-id-3,entry-id-4,entry-id-5'
-      }]
+      [
+        '^.^.assets.detail',
+        {
+          assetId: 'asset-id',
+          previousEntries: 'entry-id-1,entry-id-2,entry-id-3,entry-id-4,entry-id-5'
+        }
+      ]
     );
 
     willRedirect(
@@ -219,10 +220,13 @@ describe('SlideInNavigator', () => {
         },
         goToEntity: { id: 'entry-id-2', type: 'Entry' }
       },
-      ['^.^.entries.detail', {
-        entryId: 'entry-id-2',
-        previousEntries: 'entry-id-1'
-      }]
+      [
+        '^.^.entries.detail',
+        {
+          entryId: 'entry-id-2',
+          previousEntries: 'entry-id-1'
+        }
+      ]
     );
   });
 });

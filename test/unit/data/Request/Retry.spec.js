@@ -2,7 +2,7 @@
 import * as sinon from 'helpers/sinon';
 
 describe('data/Request/Retry', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
 
     this.sandbox = sinon.sandbox.create();
@@ -16,26 +16,26 @@ describe('data/Request/Retry', () => {
 
     this.push = n => {
       if (n) {
-        return _.map(_.range(n)).forEach(i => wrapped({i: i}));
+        return _.map(_.range(n)).forEach(i => wrapped({ i: i }));
       } else {
         return wrapped({});
       }
     };
 
-    this.flush = function (t) {
+    this.flush = function(t) {
       this.$timeout.flush(t);
     };
 
-    this.expectCallCount = function (n) {
+    this.expectCallCount = function(n) {
       expect(this.requestStub.callCount).toBe(n);
     };
   });
 
-  afterEach(function () {
+  afterEach(function() {
     this.sandbox.restore();
   });
 
-  it('executes a request', function () {
+  it('executes a request', function() {
     const promise = this.push();
     const res = {};
     this.requestStub.resolves(res);
@@ -46,7 +46,7 @@ describe('data/Request/Retry', () => {
     });
   });
 
-  it('consumes the queue with a specific rate (7)', function () {
+  it('consumes the queue with a specific rate (7)', function() {
     this.requestStub.resolves({});
     this.push(15);
 
@@ -58,7 +58,7 @@ describe('data/Request/Retry', () => {
     this.expectCallCount(15);
   });
 
-  it('consumes queue at rate of 7 requests per second', function () {
+  it('consumes queue at rate of 7 requests per second', function() {
     this.requestStub.resolves({});
     this.push(15);
     this.flush(10);
@@ -73,11 +73,11 @@ describe('data/Request/Retry', () => {
     this.expectCallCount(15);
   });
 
-  it('retries with an exponential backoff for 429', function* () {
+  it('retries with an exponential backoff for 429', function*() {
     // We wait maximum number of times
     this.sandbox.stub(Math, 'random').returns(1);
 
-    this.requestStub.rejects({status: 429});
+    this.requestStub.rejects({ status: 429 });
     const requestPromise = this.push();
 
     this.flush(10);
@@ -105,8 +105,8 @@ describe('data/Request/Retry', () => {
     expect(requestRes).toBe(res);
   });
 
-  it('fails after 6 tries for 429', function* () {
-    this.requestStub.rejects({status: 429});
+  it('fails after 6 tries for 429', function*() {
+    this.requestStub.rejects({ status: 429 });
     const responsePromise = this.push();
 
     // This is the formula for the sum of exponentially increasing
@@ -117,8 +117,8 @@ describe('data/Request/Retry', () => {
     expect(response.status).toBe(429);
   });
 
-  it('retries 5 times for 502', function () {
-    this.requestStub.rejects({status: 502});
+  it('retries 5 times for 502', function() {
+    this.requestStub.rejects({ status: 502 });
     this.push();
 
     this.flush(10);
@@ -131,8 +131,8 @@ describe('data/Request/Retry', () => {
     this.expectCallCount(6);
   });
 
-  it('resolves when the request is eventually successful', function () {
-    this.requestStub.rejects({status: 502});
+  it('resolves when the request is eventually successful', function() {
+    this.requestStub.rejects({ status: 502 });
     const promise = this.push();
     const res = {};
 
@@ -145,11 +145,11 @@ describe('data/Request/Retry', () => {
     });
   });
 
-  it('rejects when all retries fail', function () {
+  it('rejects when all retries fail', function() {
     const onSuccess = sinon.stub();
     const onError = sinon.stub();
 
-    this.requestStub.rejects({status: 502});
+    this.requestStub.rejects({ status: 502 });
     const promise = this.push();
 
     this.flush(9000);

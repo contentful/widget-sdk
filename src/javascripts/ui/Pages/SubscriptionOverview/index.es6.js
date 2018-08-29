@@ -31,7 +31,7 @@ const SubscriptionOverview = createReactClass({
     orgId: PropTypes.string.isRequired
   },
 
-  getInitialState: function () {
+  getInitialState: function() {
     return {
       organization: {},
       basePlan: {},
@@ -41,12 +41,12 @@ const SubscriptionOverview = createReactClass({
     };
   },
 
-  componentWillMount: function () {
+  componentWillMount: function() {
     this.fetchData();
   },
 
-  fetchData: async function () {
-    const {orgId, onReady, onForbidden} = this.props;
+  fetchData: async function() {
+    const { orgId, onReady, onForbidden } = this.props;
 
     const resources = createResourceService(orgId, 'organization');
     const organization = await getOrganization(orgId);
@@ -71,17 +71,19 @@ const SubscriptionOverview = createReactClass({
       return;
     }
 
-    const basePlan = plans.items.find(({planType}) => planType === 'base');
+    const basePlan = plans.items.find(({ planType }) => planType === 'base');
     const spacePlans = plans.items
-      .filter(({planType}) => planType === 'space')
+      .filter(({ planType }) => planType === 'space')
       .sort((plan1, plan2) => {
-        const [name1, name2] = [plan1, plan2].map((plan) => get(plan, 'space.name', ''));
+        const [name1, name2] = [plan1, plan2].map(plan => get(plan, 'space.name', ''));
         return name1.localeCompare(name2);
       })
       // Set space.isAccessible to check if current user can go to space details.
-      .map((plan) => {
+      .map(plan => {
         if (plan.space) {
-          plan.space.isAccessible = !!accessibleSpaces.find((space) => space.sys.id === plan.space.sys.id);
+          plan.space.isAccessible = !!accessibleSpaces.find(
+            space => space.sys.id === plan.space.sys.id
+          );
         }
         return plan;
       });
@@ -95,12 +97,12 @@ const SubscriptionOverview = createReactClass({
       numMemberships
     });
 
-    this.setState({basePlan, spacePlans, grandTotal, usersMeta, organization});
+    this.setState({ basePlan, spacePlans, grandTotal, usersMeta, organization });
 
     onReady();
   },
 
-  spaceChanged (space, currentSpacePlan, newSpacePlan) {
+  spaceChanged(space, currentSpacePlan, newSpacePlan) {
     let notificationMsg = `Space ${space.name} successfully`;
 
     if (currentSpacePlan) {
@@ -123,11 +125,11 @@ const SubscriptionOverview = createReactClass({
     }, 6000);
   },
 
-  createSpace: function () {
+  createSpace: function() {
     showCreateSpaceModal(this.props.orgId);
   },
 
-  changeSpace: function (space, action) {
+  changeSpace: function(space, action) {
     return () => {
       showChangeSpaceModal({
         organizationId: this.props.orgId,
@@ -155,7 +157,7 @@ const SubscriptionOverview = createReactClass({
     };
   },
 
-  deleteSpace: function (space, plan) {
+  deleteSpace: function(space, plan) {
     if (plan.committed) {
       return () => openCommittedSpaceWarningDialog();
     }
@@ -168,19 +170,15 @@ const SubscriptionOverview = createReactClass({
     };
   },
 
-  render: function () {
-    const {basePlan, spacePlans, grandTotal, usersMeta, upgradedSpace, organization} = this.state;
-    const {orgId} = this.props;
+  render: function() {
+    const { basePlan, spacePlans, grandTotal, usersMeta, upgradedSpace, organization } = this.state;
+    const { orgId } = this.props;
 
     return (
-      <Workbench
-        title='Subscription'
-        icon='subscription'
-        testId='subscription-page'
-      >
+      <Workbench title="Subscription" icon="subscription" testId="subscription-page">
         <Workbench.Content>
-          <div style={{padding: '0px 2rem'}}>
-            <div className='header'>
+          <div style={{ padding: '0px 2rem' }}>
+            <div className="header">
               <BasePlan basePlan={basePlan} orgId={orgId} />
               <UsersForPlan usersMeta={usersMeta} orgId={orgId} />
             </div>

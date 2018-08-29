@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 
 export const name = 'react/anchor-tag-component';
 
-angular.module('contentful')
-  .factory(name, [() => {
-    const AnchorComponent = (props) => {
+angular.module('contentful').factory(name, [
+  () => {
+    const AnchorComponent = props => {
       const mergedProps = Object.assign(
         {},
         {
@@ -23,4 +23,5 @@ angular.module('contentful')
     };
 
     return AnchorComponent;
-  }]);
+  }
+]);

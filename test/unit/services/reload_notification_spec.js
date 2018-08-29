@@ -8,25 +8,25 @@ describe('ReloadNotification service', () => {
     $rootScope = $injector.get('$rootScope');
     ReloadNotification = $injector.get('ReloadNotification');
     open = sinon.stub($injector.get('modalDialog'), 'open');
-    open.returns({promise: $q.defer().promise});
+    open.returns({ promise: $q.defer().promise });
     ReloadNotification.apiErrorHandler.restore();
   }));
 
   describe('the apiErrorHandler', () => {
     it('should trigger the api error for 500eds', () => {
-      $q.reject({statusCode: 500}).catch(ReloadNotification.apiErrorHandler);
+      $q.reject({ statusCode: 500 }).catch(ReloadNotification.apiErrorHandler);
       $rootScope.$apply();
       sinon.assert.called(open);
     });
 
     it('should not trigger the api error for 502', () => {
-      $q.reject({statusCode: 502}).catch(ReloadNotification.apiErrorHandler);
+      $q.reject({ statusCode: 502 }).catch(ReloadNotification.apiErrorHandler);
       $rootScope.$apply();
       sinon.assert.notCalled(open);
     });
 
     it('should not trigger the api error for < 500eds', () => {
-      $q.reject({statusCode: 404}).catch(ReloadNotification.apiErrorHandler);
+      $q.reject({ statusCode: 404 }).catch(ReloadNotification.apiErrorHandler);
       $rootScope.$apply();
       sinon.assert.notCalled(open);
     });
@@ -49,13 +49,11 @@ describe('ReloadNotification service', () => {
       beforeEach(() => {
         successHandler = sinon.stub();
         errorHandler = sinon.stub();
-        error = {statusCode: 500};
+        error = { statusCode: 500 };
       });
 
-      function run (promise) {
-        promise
-        .catch(ReloadNotification.apiErrorHandler)
-        .then(successHandler, errorHandler);
+      function run(promise) {
+        promise.catch(ReloadNotification.apiErrorHandler).then(successHandler, errorHandler);
         $rootScope.$apply();
       }
 

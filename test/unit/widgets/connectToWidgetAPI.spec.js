@@ -5,7 +5,7 @@ import * as sinon from 'helpers/sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
 describe('connectToWidgetAPI', () => {
-  beforeEach(async function () {
+  beforeEach(async function() {
     module('contentful/test');
     this.system = createIsolatedSystem();
     this.system.set('entitySelector', {});
@@ -33,9 +33,7 @@ describe('connectToWidgetAPI', () => {
       field: this.widgetApi.field
     };
     this.widgetApi.fieldProperties.isDisabled$.set(true);
-    const { default: connectToWidgetAPI } = await this.system.import(
-      'app/widgets/WidgetApi'
-    );
+    const { default: connectToWidgetAPI } = await this.system.import('app/widgets/WidgetApi');
 
     this.Component = sinon.spy(() => null);
     const WithWidgetAPI = connectToWidgetAPI(this.Component);
@@ -43,13 +41,13 @@ describe('connectToWidgetAPI', () => {
     mount(<WithWidgetAPI {...this.props} />);
   });
 
-  it('updates the rendered component prop.value when field value changes', function () {
+  it('updates the rendered component prop.value when field value changes', function() {
     const newValue = 'hello world';
     this.widgetApi.fieldProperties.value$.set(newValue);
     expect(this.Component.lastCall.args[0].value).toEqual(newValue);
   });
 
-  it('ignores incoming changes when isDisabled = false', function () {
+  it('ignores incoming changes when isDisabled = false', function() {
     const value1 = 'hello world';
     const value2 = 'hello world!';
     this.widgetApi.fieldProperties.value$.set(value1);
@@ -58,7 +56,7 @@ describe('connectToWidgetAPI', () => {
     expect(this.Component.lastCall.args[0].value).toEqual(value1);
   });
 
-  it('updates the rendered component prop.isDisabled when field disabled state changes', function () {
+  it('updates the rendered component prop.isDisabled when field disabled state changes', function() {
     expect(this.Component.lastCall.args[0].isDisabled).toEqual(true);
   });
 });

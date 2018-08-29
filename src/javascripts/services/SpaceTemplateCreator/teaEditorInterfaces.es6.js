@@ -60,577 +60,585 @@ node process.js > processed-tea.json
  */
 
 export default {
-  "contentTypes": {
-    "category": {
-      "description": "Categories can be applied to Courses and Lessons. Assigning Multiple categories is also possible.",
-      "validations": {
-        "slug": [
+  contentTypes: {
+    category: {
+      description:
+        'Categories can be applied to Courses and Lessons. Assigning Multiple categories is also possible.',
+      validations: {
+        slug: [
           {
-            "unique": true
+            unique: true
           }
         ]
       }
     },
-    "lessonImage": {
-      "description": "An image to be used as a module in a lesson.",
-      "validations": {
-        "title": [
+    lessonImage: {
+      description: 'An image to be used as a module in a lesson.',
+      validations: {
+        title: [
           {
-            "regexp": {
-              "pattern": ".+>.+",
-              "flags": null
+            regexp: {
+              pattern: '.+>.+',
+              flags: null
             },
-            "message": "For module titles, please use the form parent > description as this title is internal only and helps to identify the module."
+            message:
+              'For module titles, please use the form parent > description as this title is internal only and helps to identify the module.'
           }
         ]
       }
     },
-    "lessonCopy": {
-      "description": "A markdown module to be used in a lesson.",
-      "validations": {
-        "title": [
+    lessonCopy: {
+      description: 'A markdown module to be used in a lesson.',
+      validations: {
+        title: [
           {
-            "regexp": {
-              "pattern": ".+>.+",
-              "flags": null
+            regexp: {
+              pattern: '.+>.+',
+              flags: null
             },
-            "message": "Use the title format \"Topic name > keyword description\"."
+            message: 'Use the title format "Topic name > keyword description".'
           }
         ]
       }
     },
-    "lesson": {
-      "description": "A educational lesson, representing one section of a course.",
-      "validations": {
-        "slug": [
+    lesson: {
+      description: 'A educational lesson, representing one section of a course.',
+      validations: {
+        slug: [
           {
-            "unique": true
+            unique: true
           }
         ]
       }
     },
-    "layout": {
-      "description": "A page consisting of freely configurable and rearrangeable content modules.",
-      "validations": {
-        "slug": [
+    layout: {
+      description: 'A page consisting of freely configurable and rearrangeable content modules.',
+      validations: {
+        slug: [
           {
-            "unique": true
+            unique: true
           }
         ]
       }
     },
-    "lessonCodeSnippets": {
-      "description": "A code snippet module supporting all platforms to be used in a lesson.",
-      "validations": {
-        "title": [
+    lessonCodeSnippets: {
+      description: 'A code snippet module supporting all platforms to be used in a lesson.',
+      validations: {
+        title: [
           {
-            "regexp": {
-              "pattern": ".+>.+",
-              "flags": null
+            regexp: {
+              pattern: '.+>.+',
+              flags: null
             },
-            "message": "Use the title format \"Topic name > keyword description\"."
+            message: 'Use the title format "Topic name > keyword description".'
           }
         ]
       }
     },
-    "course": {
-      "description": "A series of lessons designed to teach sets of concepts that enable students to master Contentful.",
-      "validations": {
-        "skillLevel": [
+    course: {
+      description:
+        'A series of lessons designed to teach sets of concepts that enable students to master Contentful.',
+      validations: {
+        skillLevel: [
           {
-            "in": [
-              "beginner",
-              "intermediate",
-              "advanced"
-            ]
+            in: ['beginner', 'intermediate', 'advanced']
           }
         ]
       }
     },
-    "layoutCopy": {
-      "description": "A block of text with a headline and a call to action to be shown on the landing page.",
-      "validations": {
-        "title": [
+    layoutCopy: {
+      description:
+        'A block of text with a headline and a call to action to be shown on the landing page.',
+      validations: {
+        title: [
           {
-            "regexp": {
-              "pattern": ".+>.+",
-              "flags": null
+            regexp: {
+              pattern: '.+>.+',
+              flags: null
             },
-            "message": "Use the title format \"Topic name > keyword description\"."
+            message: 'Use the title format "Topic name > keyword description".'
           }
         ],
-        "ctaTitle": [
+        ctaTitle: [
           {
-            "size": {
-              "min": 3,
-              "max": 25
+            size: {
+              min: 3,
+              max: 25
             }
           }
         ],
-        "ctaLink": [
+        ctaLink: [
           {
-            "regexp": {
-              "pattern": "^(ftp|http|https):\\/\\/(\\w+:{0,1}\\w*@)?(\\S+)(:[0-9]+)?(\\/|\\/([\\w#!:.?+=&%@!\\-\\/]))?$"
+            regexp: {
+              pattern:
+                '^(ftp|http|https):\\/\\/(\\w+:{0,1}\\w*@)?(\\S+)(:[0-9]+)?(\\/|\\/([\\w#!:.?+=&%@!\\-\\/]))?$'
             }
           }
         ],
-        "visualStyle": [
+        visualStyle: [
           {
-            "in": [
-              "Default",
-              "Emphasized"
-            ]
+            in: ['Default', 'Emphasized']
           }
         ]
       }
     },
-    "layoutHeroImage": {
-      "description": "A hero image and header text.",
-      "validations": {
-        "title": [
+    layoutHeroImage: {
+      description: 'A hero image and header text.',
+      validations: {
+        title: [
           {
-            "regexp": {
-              "pattern": ".+>.+",
-              "flags": null
+            regexp: {
+              pattern: '.+>.+',
+              flags: null
             },
-            "message": "Use the title format \"Topic name > keyword description\"."
+            message: 'Use the title format "Topic name > keyword description".'
           }
         ]
       }
     },
-    "layoutHighlightedCourse": {
-      "description": "A curated selection of highlighted courses.",
-      "validations": {
-        "title": [
+    layoutHighlightedCourse: {
+      description: 'A curated selection of highlighted courses.',
+      validations: {
+        title: [
           {
-            "regexp": {
-              "pattern": ".+>.+",
-              "flags": null
+            regexp: {
+              pattern: '.+>.+',
+              flags: null
             },
-            "message": "Use the title format \"Topic name > keyword description\"."
+            message: 'Use the title format "Topic name > keyword description".'
           }
         ],
-        "course": [
+        course: [
           {
-            "linkContentType": [
-              "course"
-            ]
+            linkContentType: ['course']
           }
         ]
       }
     }
   },
-  "editorInterfaces": [
+  editorInterfaces: [
     {
-      "sys": {
-        "id": "default",
-        "type": "EditorInterface",
-        "contentType": {
-          "sys": {
-            "id": "category",
-            "type": "Link",
-            "linkType": "ContentType"
+      sys: {
+        id: 'default',
+        type: 'EditorInterface',
+        contentType: {
+          sys: {
+            id: 'category',
+            type: 'Link',
+            linkType: 'ContentType'
           }
         }
       },
-      "controls": [
+      controls: [
         {
-          "fieldId": "title",
-          "settings": {
-            "helpText": "The name of the category; also the title for content editors to find entries in Contentful."
+          fieldId: 'title',
+          settings: {
+            helpText:
+              'The name of the category; also the title for content editors to find entries in Contentful.'
           },
-          "widgetId": "singleLine"
+          widgetId: 'singleLine'
         },
         {
-          "fieldId": "slug",
-          "settings": {
-            "helpText": "An autogenerated url-safe and human-readable identifier for this category."
+          fieldId: 'slug',
+          settings: {
+            helpText: 'An autogenerated url-safe and human-readable identifier for this category.'
           },
-          "widgetId": "slugEditor"
+          widgetId: 'slugEditor'
         }
       ]
     },
     {
-      "sys": {
-        "id": "default",
-        "type": "EditorInterface",
-        "contentType": {
-          "sys": {
-            "id": "lessonImage",
-            "type": "Link",
-            "linkType": "ContentType"
+      sys: {
+        id: 'default',
+        type: 'EditorInterface',
+        contentType: {
+          sys: {
+            id: 'lessonImage',
+            type: 'Link',
+            linkType: 'ContentType'
           }
         }
       },
-      "controls": [
+      controls: [
         {
-          "fieldId": "title",
-          "widgetId": "singleLine"
+          fieldId: 'title',
+          widgetId: 'singleLine'
         },
         {
-          "fieldId": "image",
-          "widgetId": "assetLinkEditor"
+          fieldId: 'image',
+          widgetId: 'assetLinkEditor'
         },
         {
-          "fieldId": "caption",
-          "widgetId": "singleLine"
+          fieldId: 'caption',
+          widgetId: 'singleLine'
         }
       ]
     },
     {
-      "sys": {
-        "id": "default",
-        "type": "EditorInterface",
-        "contentType": {
-          "sys": {
-            "id": "lessonCopy",
-            "type": "Link",
-            "linkType": "ContentType"
+      sys: {
+        id: 'default',
+        type: 'EditorInterface',
+        contentType: {
+          sys: {
+            id: 'lessonCopy',
+            type: 'Link',
+            linkType: 'ContentType'
           }
         }
       },
-      "controls": [
+      controls: [
         {
-          "fieldId": "title",
-          "widgetId": "singleLine"
+          fieldId: 'title',
+          widgetId: 'singleLine'
         },
         {
-          "fieldId": "copy",
-          "widgetId": "markdown"
+          fieldId: 'copy',
+          widgetId: 'markdown'
         }
       ]
     },
     {
-      "sys": {
-        "id": "default",
-        "type": "EditorInterface",
-        "contentType": {
-          "sys": {
-            "id": "lesson",
-            "type": "Link",
-            "linkType": "ContentType"
+      sys: {
+        id: 'default',
+        type: 'EditorInterface',
+        contentType: {
+          sys: {
+            id: 'lesson',
+            type: 'Link',
+            linkType: 'ContentType'
           }
         }
       },
-      "controls": [
+      controls: [
         {
-          "fieldId": "title",
-          "settings": {
-            "helpText": "The name of the lesson; also the title for content editors to find entries in Contentful."
+          fieldId: 'title',
+          settings: {
+            helpText:
+              'The name of the lesson; also the title for content editors to find entries in Contentful.'
           },
-          "widgetId": "singleLine"
+          widgetId: 'singleLine'
         },
         {
-          "fieldId": "slug",
-          "settings": {
-            "helpText": "An autogenerated url-safe and human-readable identifier for this lesson."
+          fieldId: 'slug',
+          settings: {
+            helpText: 'An autogenerated url-safe and human-readable identifier for this lesson.'
           },
-          "widgetId": "slugEditor"
+          widgetId: 'slugEditor'
         },
         {
-          "fieldId": "modules",
-          "settings": {
-            "helpText": "Rearrangeable modules that contain the content of this lesson.",
-            "bulkEditing": true
+          fieldId: 'modules',
+          settings: {
+            helpText: 'Rearrangeable modules that contain the content of this lesson.',
+            bulkEditing: true
           },
-          "widgetId": "entryLinksEditor"
+          widgetId: 'entryLinksEditor'
         }
       ]
     },
     {
-      "sys": {
-        "id": "default",
-        "type": "EditorInterface",
-        "contentType": {
-          "sys": {
-            "id": "layout",
-            "type": "Link",
-            "linkType": "ContentType"
+      sys: {
+        id: 'default',
+        type: 'EditorInterface',
+        contentType: {
+          sys: {
+            id: 'layout',
+            type: 'Link',
+            linkType: 'ContentType'
           }
         }
       },
-      "controls": [
+      controls: [
         {
-          "fieldId": "title",
-          "settings": {
-            "helpText": "The name of the landing page; also the title for content editors to find entries in Contentful."
+          fieldId: 'title',
+          settings: {
+            helpText:
+              'The name of the landing page; also the title for content editors to find entries in Contentful.'
           },
-          "widgetId": "singleLine"
+          widgetId: 'singleLine'
         },
         {
-          "fieldId": "slug",
-          "settings": {
-            "helpText": "An autogenerated url-safe and human-readable identifier for this landing page."
+          fieldId: 'slug',
+          settings: {
+            helpText:
+              'An autogenerated url-safe and human-readable identifier for this landing page.'
           },
-          "widgetId": "slugEditor"
+          widgetId: 'slugEditor'
         },
         {
-          "fieldId": "contentModules",
-          "settings": {
-            "helpText": "Rearrangeable content chunks representing the actual content of this landing page",
-            "bulkEditing": true
+          fieldId: 'contentModules',
+          settings: {
+            helpText:
+              'Rearrangeable content chunks representing the actual content of this landing page',
+            bulkEditing: true
           },
-          "widgetId": "entryLinksEditor"
+          widgetId: 'entryLinksEditor'
         }
       ]
     },
     {
-      "sys": {
-        "id": "default",
-        "type": "EditorInterface",
-        "contentType": {
-          "sys": {
-            "id": "lessonCodeSnippets",
-            "type": "Link",
-            "linkType": "ContentType"
+      sys: {
+        id: 'default',
+        type: 'EditorInterface',
+        contentType: {
+          sys: {
+            id: 'lessonCodeSnippets',
+            type: 'Link',
+            linkType: 'ContentType'
           }
         }
       },
-      "controls": [
+      controls: [
         {
-          "fieldId": "title",
-          "settings": {
-            "helpText": "The title for content editors to find entries in Contentful. It is not necessarily relevant for display in connected applications."
+          fieldId: 'title',
+          settings: {
+            helpText:
+              'The title for content editors to find entries in Contentful. It is not necessarily relevant for display in connected applications.'
           },
-          "widgetId": "singleLine"
+          widgetId: 'singleLine'
         },
         {
-          "fieldId": "curl",
-          "widgetId": "markdown"
+          fieldId: 'curl',
+          widgetId: 'markdown'
         },
         {
-          "fieldId": "dotNet",
-          "widgetId": "markdown"
+          fieldId: 'dotNet',
+          widgetId: 'markdown'
         },
         {
-          "fieldId": "javascript",
-          "widgetId": "markdown"
+          fieldId: 'javascript',
+          widgetId: 'markdown'
         },
         {
-          "fieldId": "java",
-          "widgetId": "markdown"
+          fieldId: 'java',
+          widgetId: 'markdown'
         },
         {
-          "fieldId": "javaAndroid",
-          "widgetId": "markdown"
+          fieldId: 'javaAndroid',
+          widgetId: 'markdown'
         },
         {
-          "fieldId": "php",
-          "widgetId": "markdown"
+          fieldId: 'php',
+          widgetId: 'markdown'
         },
         {
-          "fieldId": "python",
-          "widgetId": "markdown"
+          fieldId: 'python',
+          widgetId: 'markdown'
         },
         {
-          "fieldId": "ruby",
-          "widgetId": "markdown"
+          fieldId: 'ruby',
+          widgetId: 'markdown'
         },
         {
-          "fieldId": "swift",
-          "widgetId": "markdown"
+          fieldId: 'swift',
+          widgetId: 'markdown'
         }
       ]
     },
     {
-      "sys": {
-        "id": "default",
-        "type": "EditorInterface",
-        "contentType": {
-          "sys": {
-            "id": "course",
-            "type": "Link",
-            "linkType": "ContentType"
+      sys: {
+        id: 'default',
+        type: 'EditorInterface',
+        contentType: {
+          sys: {
+            id: 'course',
+            type: 'Link',
+            linkType: 'ContentType'
           }
         }
       },
-      "controls": [
+      controls: [
         {
-          "fieldId": "title",
-          "settings": {
-            "helpText": "The name of the course; also the title for content editors to find entries in Contentful."
+          fieldId: 'title',
+          settings: {
+            helpText:
+              'The name of the course; also the title for content editors to find entries in Contentful.'
           },
-          "widgetId": "singleLine"
+          widgetId: 'singleLine'
         },
         {
-          "fieldId": "slug",
-          "settings": {
-            "helpText": "An autogenerated url-safe and human-readable identifier for this course."
+          fieldId: 'slug',
+          settings: {
+            helpText: 'An autogenerated url-safe and human-readable identifier for this course.'
           },
-          "widgetId": "slugEditor"
+          widgetId: 'slugEditor'
         },
         {
-          "fieldId": "image",
-          "settings": {
-            "helpText": "This image will be used for teasing the content within the app itself, search engines and on social media."
+          fieldId: 'image',
+          settings: {
+            helpText:
+              'This image will be used for teasing the content within the app itself, search engines and on social media.'
           },
-          "widgetId": "assetLinkEditor"
+          widgetId: 'assetLinkEditor'
         },
         {
-          "fieldId": "shortDescription",
-          "settings": {
-            "helpText": "A condensed description, useful for displaying in list views."
+          fieldId: 'shortDescription',
+          settings: {
+            helpText: 'A condensed description, useful for displaying in list views.'
           },
-          "widgetId": "singleLine"
+          widgetId: 'singleLine'
         },
         {
-          "fieldId": "description",
-          "settings": {
-            "helpText": "The copy giving an overview of the course."
+          fieldId: 'description',
+          settings: {
+            helpText: 'The copy giving an overview of the course.'
           },
-          "widgetId": "markdown"
+          widgetId: 'markdown'
         },
         {
-          "fieldId": "duration",
-          "settings": {
-            "helpText": "The duration, in minutes, it takes to finish this course."
+          fieldId: 'duration',
+          settings: {
+            helpText: 'The duration, in minutes, it takes to finish this course.'
           },
-          "widgetId": "numberEditor"
+          widgetId: 'numberEditor'
         },
         {
-          "fieldId": "skillLevel",
-          "settings": {
-            "helpText": "The target audiences' level in the learning journey that this course is designed for."
+          fieldId: 'skillLevel',
+          settings: {
+            helpText:
+              "The target audiences' level in the learning journey that this course is designed for."
           },
-          "widgetId": "dropdown"
+          widgetId: 'dropdown'
         },
         {
-          "fieldId": "lessons",
-          "settings": {
-            "helpText": "The lessons this course consists of.",
-            "bulkEditing": false
+          fieldId: 'lessons',
+          settings: {
+            helpText: 'The lessons this course consists of.',
+            bulkEditing: false
           },
-          "widgetId": "entryLinksEditor"
+          widgetId: 'entryLinksEditor'
         },
         {
-          "fieldId": "categories",
-          "settings": {
-            "helpText": "Specify the categories the course belongs to.",
-            "bulkEditing": false
+          fieldId: 'categories',
+          settings: {
+            helpText: 'Specify the categories the course belongs to.',
+            bulkEditing: false
           },
-          "widgetId": "entryCardsEditor"
+          widgetId: 'entryCardsEditor'
         }
       ]
     },
     {
-      "sys": {
-        "id": "default",
-        "type": "EditorInterface",
-        "contentType": {
-          "sys": {
-            "id": "layoutCopy",
-            "type": "Link",
-            "linkType": "ContentType"
+      sys: {
+        id: 'default',
+        type: 'EditorInterface',
+        contentType: {
+          sys: {
+            id: 'layoutCopy',
+            type: 'Link',
+            linkType: 'ContentType'
           }
         }
       },
-      "controls": [
+      controls: [
         {
-          "fieldId": "title",
-          "settings": {
-            "helpText": "The title for content editors to find entries in Contentful. It is not necessarily relevant for display in connected applications."
+          fieldId: 'title',
+          settings: {
+            helpText:
+              'The title for content editors to find entries in Contentful. It is not necessarily relevant for display in connected applications.'
           },
-          "widgetId": "singleLine"
+          widgetId: 'singleLine'
         },
         {
-          "fieldId": "headline",
-          "settings": {
-            "helpText": "The short, emphasized headline of this copy module."
+          fieldId: 'headline',
+          settings: {
+            helpText: 'The short, emphasized headline of this copy module.'
           },
-          "widgetId": "singleLine"
+          widgetId: 'singleLine'
         },
         {
-          "fieldId": "copy",
-          "settings": {
-            "helpText": "The main textual content of this copy module."
+          fieldId: 'copy',
+          settings: {
+            helpText: 'The main textual content of this copy module.'
           },
-          "widgetId": "markdown"
+          widgetId: 'markdown'
         },
         {
-          "fieldId": "ctaTitle",
-          "settings": {
-            "helpText": "The title to be set on the Call to Action button."
+          fieldId: 'ctaTitle',
+          settings: {
+            helpText: 'The title to be set on the Call to Action button.'
           },
-          "widgetId": "singleLine"
+          widgetId: 'singleLine'
         },
         {
-          "fieldId": "ctaLink",
-          "settings": {
-            "helpText": "The link which the call to action directs your user to."
+          fieldId: 'ctaLink',
+          settings: {
+            helpText: 'The link which the call to action directs your user to.'
           },
-          "widgetId": "urlEditor"
+          widgetId: 'urlEditor'
         },
         {
-          "fieldId": "visualStyle",
-          "settings": {
-            "helpText": "The visual styling configuration for this module."
+          fieldId: 'visualStyle',
+          settings: {
+            helpText: 'The visual styling configuration for this module.'
           },
-          "widgetId": "dropdown"
+          widgetId: 'dropdown'
         }
       ]
     },
     {
-      "sys": {
-        "id": "default",
-        "type": "EditorInterface",
-        "contentType": {
-          "sys": {
-            "id": "layoutHeroImage",
-            "type": "Link",
-            "linkType": "ContentType"
+      sys: {
+        id: 'default',
+        type: 'EditorInterface',
+        contentType: {
+          sys: {
+            id: 'layoutHeroImage',
+            type: 'Link',
+            linkType: 'ContentType'
           }
         }
       },
-      "controls": [
+      controls: [
         {
-          "fieldId": "title",
-          "settings": {
-            "helpText": "The title for content editors to find entries in Contentful. It is not necessarily relevant for display in connected applications."
+          fieldId: 'title',
+          settings: {
+            helpText:
+              'The title for content editors to find entries in Contentful. It is not necessarily relevant for display in connected applications.'
           },
-          "widgetId": "singleLine"
+          widgetId: 'singleLine'
         },
         {
-          "fieldId": "headline",
-          "settings": {
-            "helpText": "The short, emphasized headline of this hero module. An optional field."
+          fieldId: 'headline',
+          settings: {
+            helpText: 'The short, emphasized headline of this hero module. An optional field.'
           },
-          "widgetId": "singleLine"
+          widgetId: 'singleLine'
         },
         {
-          "fieldId": "backgroundImage",
-          "settings": {
-            "helpText": "Full-size hero image displayed behind the headline."
+          fieldId: 'backgroundImage',
+          settings: {
+            helpText: 'Full-size hero image displayed behind the headline.'
           },
-          "widgetId": "assetLinkEditor"
+          widgetId: 'assetLinkEditor'
         }
       ]
     },
     {
-      "sys": {
-        "id": "default",
-        "type": "EditorInterface",
-        "contentType": {
-          "sys": {
-            "id": "layoutHighlightedCourse",
-            "type": "Link",
-            "linkType": "ContentType"
+      sys: {
+        id: 'default',
+        type: 'EditorInterface',
+        contentType: {
+          sys: {
+            id: 'layoutHighlightedCourse',
+            type: 'Link',
+            linkType: 'ContentType'
           }
         }
       },
-      "controls": [
+      controls: [
         {
-          "fieldId": "title",
-          "settings": {
-            "helpText": "The title for content editors to find entries in Contentful. It is not necessarily relevant for display in connected applications."
+          fieldId: 'title',
+          settings: {
+            helpText:
+              'The title for content editors to find entries in Contentful. It is not necessarily relevant for display in connected applications.'
           },
-          "widgetId": "singleLine"
+          widgetId: 'singleLine'
         },
         {
-          "fieldId": "course",
-          "settings": {
-            "helpText": "A curated selection of highlighted courses."
+          fieldId: 'course',
+          settings: {
+            helpText: 'A curated selection of highlighted courses.'
           },
-          "widgetId": "entryLinkEditor"
+          widgetId: 'entryLinkEditor'
         }
       ]
     }

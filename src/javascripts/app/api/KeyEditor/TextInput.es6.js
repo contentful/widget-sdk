@@ -9,44 +9,46 @@ const TextInput = createReactClass({
     onFocus: PropTypes.func,
     onBlur: PropTypes.func
   },
-  getDefaultProps () {
+  getDefaultProps() {
     return {
-      onChange () {},
-      onFocus () {},
-      onBlur () {}
+      onChange() {},
+      onFocus() {},
+      onBlur() {}
     };
   },
-  getInitialState () {
+  getInitialState() {
     return {
       isFocused: false,
       currentValue: this.props.value
     };
   },
-  handleChange (e) {
+  handleChange(e) {
     this.setState({ currentValue: e.target.value });
     this.props.onChange(e);
   },
-  handleFocus (e) {
+  handleFocus(e) {
     this.setState({ isFocused: true });
     this.props.onFocus(e);
   },
-  handleBlur (e) {
+  handleBlur(e) {
     this.setState({ isFocused: false });
     this.props.onBlur(e);
   },
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (!this.state.isFocused) {
       this.setState({ currentValue: nextProps.value });
     }
   },
-  render () {
-    return <input
-      {...this.props}
-      onChange={this.handleChange}
-      onFocus={this.handleFocus}
-      onBlur={this.handleBlur}
-      value={this.state.currentValue}
-    />;
+  render() {
+    return (
+      <input
+        {...this.props}
+        onChange={this.handleChange}
+        onFocus={this.handleFocus}
+        onBlur={this.handleBlur}
+        value={this.state.currentValue}
+      />
+    );
   }
 });
 

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import pluralize from 'pluralize';
 
-function Pluralized ({ text, count }) {
+function Pluralized({ text, count }) {
   const pluralizedText = pluralize(text, count, true);
 
   return <span>{pluralizedText}</span>;

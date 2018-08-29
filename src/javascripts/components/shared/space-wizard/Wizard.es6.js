@@ -26,13 +26,13 @@ const SpaceCreateSteps = [
   {
     id: Steps.SpaceCreateSteps.SpaceDetails,
     label: '2. Space details',
-    isEnabled: (props) => Boolean(props.selectedPlan),
+    isEnabled: props => Boolean(props.selectedPlan),
     component: SpaceDetails
   },
   {
     id: Steps.SpaceCreateSteps.Confirmation,
     label: '3. Confirmation',
-    isEnabled: (props) => Boolean(props.selectedPlan && props.newSpaceMeta.name),
+    isEnabled: props => Boolean(props.selectedPlan && props.newSpaceMeta.name),
     component: ConfirmScreen
   }
 ];
@@ -47,7 +47,7 @@ const SpaceChangeSteps = [
   {
     id: Steps.SpaceChangeSteps.Confirmation,
     label: '2. Confirmation',
-    isEnabled: (props) => Boolean(props.selectedPlan),
+    isEnabled: props => Boolean(props.selectedPlan),
     component: ConfirmScreen
   }
 ];
@@ -65,8 +65,8 @@ const Wizard = createReactClass({
     // Space data as defined in spaceContext.space.data
     space: PropTypes.object,
 
-    action: PropTypes.oneOf([ 'create', 'change' ]).isRequired,
-    wizardScope: PropTypes.oneOf([ 'space', 'organization' ]).isRequired,
+    action: PropTypes.oneOf(['create', 'change']).isRequired,
+    wizardScope: PropTypes.oneOf(['space', 'organization']).isRequired,
     onCancel: PropTypes.func.isRequired,
     onConfirm: PropTypes.func.isRequired,
     onSpaceCreated: PropTypes.func.isRequired,
@@ -100,7 +100,7 @@ const Wizard = createReactClass({
     partnershipMeta: propTypes.partnershipMeta
   },
 
-  componentDidMount () {
+  componentDidMount() {
     const { action, organization } = this.props;
     const steps = getSteps(action);
 
@@ -110,26 +110,30 @@ const Wizard = createReactClass({
     this.navigate(steps[0].id);
   },
 
-  componentWillReceiveProps ({ spaceCreation: { error } }) {
-    const { spaceCreation: { error: currentError } } = this.props;
+  componentWillReceiveProps({ spaceCreation: { error } }) {
+    const {
+      spaceCreation: { error: currentError }
+    } = this.props;
 
     const { action, onCancel, navigate } = this.props;
     const steps = getSteps(action);
 
     if (error && error !== currentError) {
-      logger.logServerWarn(`Could not ${action} space`, {error});
+      logger.logServerWarn(`Could not ${action} space`, { error });
       const serverValidationErrors = getFieldErrors(error);
 
       if (action === 'create' && Object.keys(serverValidationErrors).length) {
         navigate(steps[1].id);
       } else {
-        notification.error(`Could not ${action} your space. If the problem persists, get in touch with us.`);
+        notification.error(
+          `Could not ${action} your space. If the problem persists, get in touch with us.`
+        );
         onCancel(); // close modal without tracking 'cancel' event
       }
     }
   },
 
-  render () {
+  render() {
     const {
       space,
       action,
@@ -164,19 +168,16 @@ const Wizard = createReactClass({
 
     if (spaceCreation.success && template) {
       return (
-        <div className="modal-dialog" style={{width: '750px'}}>
+        <div className="modal-dialog" style={{ width: '750px' }}>
           <div className="modal-dialog__content">
-            <ProgressScreen
-              done={!spaceCreation.isPending}
-              onConfirm={this.confirm}
-            />
+            <ProgressScreen done={!spaceCreation.isPending} onConfirm={this.confirm} />
           </div>
         </div>
       );
     } else {
       const navigation = (
         <ul className="create-space-wizard__navigation">
-          {steps.map(({id, label, isEnabled}) => (
+          {steps.map(({ id, label, isEnabled }) => (
             <li
               key={id}
               data-test-id={`wizard-nav-${id}`}
@@ -189,9 +190,9 @@ const Wizard = createReactClass({
           ))}
         </ul>
       );
-      const closeButton = <button
-        className="create-space-wizard__close modal-dialog__close"
-        onClick={this.cancel} />;
+      const closeButton = (
+        <button className="create-space-wizard__close modal-dialog__close" onClick={this.cancel} />
+      );
 
       const stepProps = {
         organization,
@@ -225,21 +226,18 @@ const Wizard = createReactClass({
       };
 
       return (
-        <div className="modal-dialog create-space-wizard" style={{width: '780px'}}>
-          <div className="modal-dialog__header" style={{padding: 0}}>
+        <div className="modal-dialog create-space-wizard" style={{ width: '780px' }}>
+          <div className="modal-dialog__header" style={{ padding: 0 }}>
             {navigation}
             {closeButton}
           </div>
           <div className="modal-dialog__content">
-            {steps.map(({id, isEnabled, component}) => (
+            {steps.map(({ id, isEnabled, component }) => (
               <div
                 key={id}
-                className={classnames(
-                  'create-space-wizard__step',
-                  {
-                    'create-space-wizard__step--current': id === currentStepId
-                  }
-                )}>
+                className={classnames('create-space-wizard__step', {
+                  'create-space-wizard__step--current': id === currentStepId
+                })}>
                 {isEnabled(this.props) && React.createElement(component, stepProps)}
               </div>
             ))}
@@ -249,20 +247,20 @@ const Wizard = createReactClass({
     }
   },
 
-  cancel () {
+  cancel() {
     const { onCancel } = this.props;
 
     onCancel && onCancel();
     this.track('cancel');
   },
 
-  confirm () {
+  confirm() {
     const { onConfirm } = this.props;
 
     onConfirm && onConfirm();
   },
 
-  track (eventName, data = {}) {
+  track(eventName, data = {}) {
     const { track, action } = this.props;
 
     const requiredTrackingData = { action };
@@ -270,15 +268,15 @@ const Wizard = createReactClass({
     track(eventName, { ...data, ...requiredTrackingData });
   },
 
-  setStateData (stepData) {
-    this.setState(({data}) => ({
-      data: {...data, ...stepData},
+  setStateData(stepData) {
+    this.setState(({ data }) => ({
+      data: { ...data, ...stepData },
       isFormSubmitted: false,
       serverValidationErrors: null
     }));
   },
 
-  navigate (stepId) {
+  navigate(stepId) {
     const { navigate, currentStepId } = this.props;
 
     this.track('navigate', {
@@ -288,7 +286,7 @@ const Wizard = createReactClass({
     navigate(stepId);
   },
 
-  goForward () {
+  goForward() {
     const {
       currentStepId,
       action,
@@ -326,11 +324,11 @@ const Wizard = createReactClass({
     }
   },
 
-  handleError (error) {
+  handleError(error) {
     const { action, onCancel } = this.props;
     const steps = getSteps(action);
 
-    logger.logServerWarn(`Could not ${action} space`, {error});
+    logger.logServerWarn(`Could not ${action} space`, { error });
 
     const serverValidationErrors = getFieldErrors(error);
 
@@ -340,7 +338,9 @@ const Wizard = createReactClass({
         currentStepId: steps[1].id
       });
     } else {
-      notification.error(`Could not ${action} your space. If the problem persists, get in touch with us.`);
+      notification.error(
+        `Could not ${action} your space. If the problem persists, get in touch with us.`
+      );
       onCancel(); // close modal without tracking 'cancel' event
     }
   }
@@ -380,9 +380,12 @@ const mapDispatchToProps = {
 };
 
 export { Wizard };
-export default connect(mapStateToProps, mapDispatchToProps)(Wizard);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Wizard);
 
-function getSteps (action) {
+function getSteps(action) {
   if (action === 'create') {
     return SpaceCreateSteps;
   } else if (action === 'change') {
@@ -390,15 +393,15 @@ function getSteps (action) {
   }
 }
 
-function isLastStep (steps, stepId) {
+function isLastStep(steps, stepId) {
   return steps[steps.length - 1].id === stepId;
 }
 
-function getNextStep (steps, stepId) {
+function getNextStep(steps, stepId) {
   if (isLastStep(steps, stepId)) {
     return stepId;
   } else {
-    const index = steps.findIndex(({id}) => id === stepId);
+    const index = steps.findIndex(({ id }) => id === stepId);
     return steps[index + 1].id;
   }
 }

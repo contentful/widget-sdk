@@ -3,9 +3,11 @@
 describe('cfKnowledgeBase directive', () => {
   let el, scope;
 
-  function getLink () { return el.find('a').first(); }
+  function getLink() {
+    return el.find('a').first();
+  }
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test', environment => {
       environment.settings.marketingUrl = 'http://test.com';
     });
@@ -17,7 +19,7 @@ describe('cfKnowledgeBase directive', () => {
   });
 
   describe('points to knowledge base', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       el = this.$compile('<cf-knowledge-base target="entry" />');
       scope.$digest();
     });
@@ -30,7 +32,7 @@ describe('cfKnowledgeBase directive', () => {
   });
 
   describe('icon only', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       el = this.$compile('<cf-knowledge-base target="entry" />');
       scope.$digest();
     });
@@ -48,7 +50,7 @@ describe('cfKnowledgeBase directive', () => {
   });
 
   describe('link text', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       el = this.$compile('<cf-knowledge-base target="entry" text="testtext" />');
       scope.$digest();
     });

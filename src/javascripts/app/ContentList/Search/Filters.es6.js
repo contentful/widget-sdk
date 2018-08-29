@@ -139,7 +139,7 @@ const assetsFieldFilters = [
  * Takes a list of available content types as an argument. This is used
  * to contstruct the available options to select from.
  */
-export function contentTypeFilter (contentTypes) {
+export function contentTypeFilter(contentTypes) {
   let valueInputSelect = [...contentTypes.map(ct => [ct.sys.id, ct.name])];
 
   if (contentTypes.length !== 1) {
@@ -161,11 +161,11 @@ export function contentTypeFilter (contentTypes) {
  *
  * @returns {API.ContentType?}
  */
-export function getContentTypeById (contentTypes, contentTypeId) {
+export function getContentTypeById(contentTypes, contentTypeId) {
   return find(contentTypes, ct => ct.sys.id === contentTypeId);
 }
 
-export function getFiltersFromQueryKey ({
+export function getFiltersFromQueryKey({
   contentTypes,
   searchFilters,
   contentTypeId,
@@ -184,7 +184,7 @@ export function getFiltersFromQueryKey ({
   return setUserFieldsFilters(users, filters);
 }
 
-export function sanitizeSearchFilters (
+export function sanitizeSearchFilters(
   filters = [],
   contentTypes,
   contentTypeId,
@@ -196,12 +196,7 @@ export function sanitizeSearchFilters (
     if (contentType && isContentTypeField(queryKey)) {
       return getFieldByApiName(contentType, getApiName(queryKey)) !== undefined;
     } else {
-      return (
-        find(
-          getSysFilters(withAssets),
-          filter => filter.queryKey === queryKey
-        ) !== undefined
-      );
+      return find(getSysFilters(withAssets), filter => filter.queryKey === queryKey) !== undefined;
     }
   });
 }
@@ -215,11 +210,7 @@ export function sanitizeSearchFilters (
  *
  * @returns {FieldFilter}
  */
-export function buildFilterFieldByQueryKey (
-  contentType,
-  queryKey,
-  withAssets = false
-) {
+export function buildFilterFieldByQueryKey(contentType, queryKey, withAssets = false) {
   let filterField;
 
   if (contentType && isContentTypeField(queryKey)) {
@@ -228,10 +219,7 @@ export function buildFilterFieldByQueryKey (
       filterField = buildFilterField(contentType, field);
     }
   } else {
-    filterField = find(
-      getSysFilters(withAssets),
-      filter => filter.queryKey === queryKey
-    );
+    filterField = find(getSysFilters(withAssets), filter => filter.queryKey === queryKey);
   }
 
   return filterField;
@@ -245,7 +233,7 @@ export function buildFilterFieldByQueryKey (
  *
  * @returns {boolean}
  */
-export function isFieldFilterApplicableToContentType (contentType, queryKey) {
+export function isFieldFilterApplicableToContentType(contentType, queryKey) {
   if (isContentTypeField(queryKey)) {
     if (!contentType) {
       return false;
@@ -275,10 +263,7 @@ const allFilters = memoize((contentTypes, withAssets = false) => {
     }, filters);
   }, []);
 
-  const fields = concat(
-    getSysFilters(withAssets),
-    withAssets ? [] : ctFieldFilters
-  );
+  const fields = concat(getSysFilters(withAssets), withAssets ? [] : ctFieldFilters);
 
   return fields;
 });
@@ -296,20 +281,17 @@ const allFilters = memoize((contentTypes, withAssets = false) => {
  * @returns {Filter[]}
  */
 // Memoized to improve performance on huge lists (>1500 elements).
-export const getMatchingFilters = memoize((
-  searchString,
-  contentTypeId,
-  availableContentTypes,
-  withAssets
-) => {
-  let filters = allFilters(availableContentTypes, withAssets);
-  filters = filterByName(filters, searchString);
-  filters = filterByContentType(filters, contentTypeId);
+export const getMatchingFilters = memoize(
+  (searchString, contentTypeId, availableContentTypes, withAssets) => {
+    let filters = allFilters(availableContentTypes, withAssets);
+    filters = filterByName(filters, searchString);
+    filters = filterByContentType(filters, contentTypeId);
 
-  return withAssets ? filters : filterBySupportedTypes(filters);
-});
+    return withAssets ? filters : filterBySupportedTypes(filters);
+  }
+);
 
-function filterBySupportedTypes (filters) {
+function filterBySupportedTypes(filters) {
   return filters.filter(({ queryKey, type }) => {
     if (isContentTypeField(queryKey)) {
       return SUPPORTED_CT_FIELD_TYPES.indexOf(type) > -1;
@@ -318,7 +300,7 @@ function filterBySupportedTypes (filters) {
   });
 }
 
-function filterByName (filters, searchString = '') {
+function filterByName(filters, searchString = '') {
   searchString = searchString.trim().toLowerCase();
 
   return filters.filter(filter => {
@@ -326,7 +308,7 @@ function filterByName (filters, searchString = '') {
   });
 }
 
-function filterByContentType (filters, contentTypeId) {
+function filterByContentType(filters, contentTypeId) {
   if (contentTypeId) {
     // Remove all filters that do not apply to the given Content Type
     return filters.filter(field => {
@@ -341,19 +323,15 @@ function filterByContentType (filters, contentTypeId) {
   }
 }
 
-function setUserFieldsFilters (users, filters) {
-  const getName = (user) => user.firstName ? user.firstName : user.email;
+function setUserFieldsFilters(users, filters) {
+  const getName = user => (user.firstName ? user.firstName : user.email);
   const byName = (curr, prev) => getName(curr).localeCompare(getName(prev));
-  const usersOptions = users
-    .sort(byName)
-    .map(user => {
-      const label = user.firstName
-        ? `${user.firstName} ${user.lastName}`
-        : user.email;
-      const value = user.sys.id;
+  const usersOptions = users.sort(byName).map(user => {
+    const label = user.firstName ? `${user.firstName} ${user.lastName}` : user.email;
+    const value = user.sys.id;
 
-      return [value, label];
-    });
+    return [value, label];
+  });
 
   return filters.map(([filter, op, value]) => {
     const filterClone = cloneDeep(filter);
@@ -366,32 +344,30 @@ function setUserFieldsFilters (users, filters) {
   });
 }
 
-function isContentTypeField (queryKey) {
+function isContentTypeField(queryKey) {
   const [prefix] = queryKey.split('.');
 
   return prefix === CT_QUERY_KEY_PREFIX;
 }
 
-function getApiName (queryKey) {
+function getApiName(queryKey) {
   const [, apiName] = queryKey.split('.');
   return apiName;
 }
 
-function getFieldByApiName (contentType, apiName) {
+function getFieldByApiName(contentType, apiName) {
   return find(contentType.fields, field => field.apiName === apiName);
 }
 
-function getSysFilters (withAssets = false) {
-  return withAssets
-    ? [...sysFieldFilters, ...assetsFieldFilters]
-    : sysFieldFilters;
+function getSysFilters(withAssets = false) {
+  return withAssets ? [...sysFieldFilters, ...assetsFieldFilters] : sysFieldFilters;
 }
 
 /**
  * Given a content type and a content type field return the filter for
  * that field.
  */
-function buildFilterField (ct, ctField) {
+function buildFilterField(ct, ctField) {
   return {
     name: ctField.apiName,
     description: ctField.name,
@@ -406,19 +382,19 @@ function buildFilterField (ct, ctField) {
   };
 }
 
-function getQueryKey (ctField) {
+function getQueryKey(ctField) {
   const suffix = isReferenceField(ctField) ? '.sys.id' : '';
 
   return `${CT_QUERY_KEY_PREFIX}.${ctField.apiName}${suffix}`;
 }
 
-function getSysFieldQueryKey ({ name, type }) {
+function getSysFieldQueryKey({ name, type }) {
   const suffix = isUserField({ type }) ? '.sys.id' : '';
 
   return `sys.${name}${suffix}`;
 }
 
-function getAssetQueryKey ({ name, type }) {
+function getAssetQueryKey({ name, type }) {
   let queryKey = CT_QUERY_KEY_PREFIX;
 
   if (type === 'AssetDetails' || type === 'AssetDetailsSize') {
@@ -434,7 +410,7 @@ function getAssetQueryKey ({ name, type }) {
   return queryKey;
 }
 
-function getAssetDetailsQueryKey (name) {
+function getAssetDetailsQueryKey(name) {
   let prefix = 'fields.file.details';
 
   if (name === 'width' || name === 'height') {
@@ -444,12 +420,12 @@ function getAssetDetailsQueryKey (name) {
   return `${prefix}.${name}`;
 }
 
-function getAssetsFileFieldQueryKey (name) {
+function getAssetsFileFieldQueryKey(name) {
   return `fields.file.${name}`;
 }
 
 // TODO: implement control type resolution
-function getControlByType (ctField) {
+function getControlByType(ctField) {
   const type = getFieldType(ctField);
 
   if (type === 'Boolean') {
@@ -467,10 +443,7 @@ function getControlByType (ctField) {
   } else if (ctField.type === 'Date') {
     return ValueInput.Date();
   } else if (type === 'AssetType') {
-    const mimeTypes = map(mimetype.getGroupNames(), (label, value) => [
-      value,
-      label
-    ]);
+    const mimeTypes = map(mimetype.getGroupNames(), (label, value) => [value, label]);
     return ValueInput.Select(mimeTypes);
   } else if (type === 'AssetDetailsSize') {
     return ValueInput.AssetDetailsSize();
@@ -479,23 +452,22 @@ function getControlByType (ctField) {
   }
 }
 
-function isReferenceField ({ type, items = {} } = {}) {
+function isReferenceField({ type, items = {} } = {}) {
   return type === 'Link' || items.type === 'Link';
 }
 
-function isUserField ({ type }) {
+function isUserField({ type }) {
   return type === 'User';
 }
 
-function getPredefinedValues (ctField) {
+function getPredefinedValues(ctField) {
   const { validations = [] } = ctField.items || ctField;
-  const validationWithPredefinedValues =
-    find(validations, v => has(v, 'in')) || {};
+  const validationWithPredefinedValues = find(validations, v => has(v, 'in')) || {};
 
   return validationWithPredefinedValues.in;
 }
 
-function getFieldType (ctField) {
+function getFieldType(ctField) {
   let { type } = ctField;
   const isList = type === 'Array';
   const valuesType = get(ctField, ['items', 'type']) || type;

@@ -47,10 +47,10 @@ export default class EntryLinkToolbarIcon extends Component {
       // the user closes modal without selecting an entry
     }
   };
-  render () {
+  render() {
     return (
       <WidgetAPIContext.Consumer>
-        {({widgetAPI}) => (
+        {({ widgetAPI }) => (
           <Button
             disabled={this.props.disabled}
             extraClassNames="structured-text__entry-link-block-button"
@@ -58,8 +58,7 @@ export default class EntryLinkToolbarIcon extends Component {
             icon="Description"
             buttonType="muted"
             data-test-id={`toolbar-toggle-${BLOCKS.EMBEDDED_ENTRY}`}
-            onMouseDown={(event) => this.handleMouseDown(event, widgetAPI)}
-          >
+            onMouseDown={event => this.handleMouseDown(event, widgetAPI)}>
             Embed entry
           </Button>
         )}

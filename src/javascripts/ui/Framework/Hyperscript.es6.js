@@ -1,6 +1,6 @@
-import {omit, kebabCase, mapKeys, isPlainObject} from 'lodash';
+import { omit, kebabCase, mapKeys, isPlainObject } from 'lodash';
 import * as React from 'react';
-import {Hook} from './Hooks/Component';
+import { Hook } from './Hooks/Component';
 import * as VTree from './VTree';
 
 /**
@@ -15,7 +15,7 @@ import * as VTree from './VTree';
  * @param {VNode[]} children
  * @returns {VNode} children
  */
-export default function h (tag_, props_, children_) {
+export default function h(tag_, props_, children_) {
   if (typeof tag_ === 'function') {
     const children = children_ || [];
     return React.createElement(tag_, props_, children);
@@ -31,7 +31,7 @@ export default function h (tag_, props_, children_) {
   }
 }
 
-export function normalize (elSpec, props, children) {
+export function normalize(elSpec, props, children) {
   if (Array.isArray(props)) {
     children = props;
     props = {};
@@ -48,7 +48,7 @@ export function normalize (elSpec, props, children) {
     throw new TypeError('Element children must be an array');
   }
 
-  const {tag, id, classes} = parseElSpec(elSpec);
+  const { tag, id, classes } = parseElSpec(elSpec);
 
   if (id) {
     props.id = id;
@@ -76,27 +76,24 @@ export function normalize (elSpec, props, children) {
     }
   });
 
-  children = children
-    .filter((c) => !!c)
-    .map((c) => {
-      if (typeof c === 'string') {
-        return VTree.Text(c);
-      } else {
-        return c;
-      }
-    });
+  children = children.filter(c => !!c).map(c => {
+    if (typeof c === 'string') {
+      return VTree.Text(c);
+    } else {
+      return c;
+    }
+  });
   return [tag, props, children];
 }
-
 
 const TAG_RE = /^[^#.]+/;
 const ID_OR_CLASS_RE = /([#.][^#.]+)/g;
 
-function parseElSpec (elSpec) {
+function parseElSpec(elSpec) {
   elSpec = elSpec.trim();
   const tagMatch = elSpec.match(TAG_RE);
   const idOrClassMatches = elSpec.match(ID_OR_CLASS_RE) || [];
-  const result = {tag: 'div', classes: []};
+  const result = { tag: 'div', classes: [] };
 
   if (Array.isArray(tagMatch) && tagMatch[0]) {
     result.tag = tagMatch[0];

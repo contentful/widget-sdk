@@ -24,25 +24,31 @@ const incentivizeFlagName = 'feature-bv-06-2018-incentivize-upgrade';
 export default {
   name: 'environments',
   url: '/environments',
-  template: '<cf-component-store-bridge ng-if="environmentComponent" component="environmentComponent" />',
-  controller: ['$scope', 'spaceContext', ($scope, spaceContext) => {
-    const hasAccess = accessChecker.can('manage', 'Environments');
+  template:
+    '<cf-component-store-bridge ng-if="environmentComponent" component="environmentComponent" />',
+  controller: [
+    '$scope',
+    'spaceContext',
+    ($scope, spaceContext) => {
+      const hasAccess = accessChecker.can('manage', 'Environments');
 
-    if (!hasAccess) {
-      $state.go('spaces.detail');
-    }
+      if (!hasAccess) {
+        $state.go('spaces.detail');
+      }
 
-    $q.all([LD.getCurrentVariation(environmentsFlagName), LD.getCurrentVariation(incentivizeFlagName)])
-      .then(([environmentsEnabled, incentivizeUpgradeEnabled]) => {
+      $q.all([
+        LD.getCurrentVariation(environmentsFlagName),
+        LD.getCurrentVariation(incentivizeFlagName)
+      ]).then(([environmentsEnabled, incentivizeUpgradeEnabled]) => {
         if (environmentsEnabled) {
           $scope.environmentComponent = createComponent(spaceContext, incentivizeUpgradeEnabled);
         } else {
           $state.go('spaces.detail');
         }
       });
-  }]
+    }
+  ]
 };
-
 
 // Actions
 const Reload = makeCtor('Reload');
@@ -52,20 +58,18 @@ const OpenDeleteDialog = makeCtor('OpenDeleteDialog');
 const ReceiveResponse = makeCtor('ReceiveResponse');
 const OpenUpgradeSpaceDialog = makeCtor('OpenUpgradeSpaceDialog');
 
-
 const reduce = makeReducer({
   [Reload]: (state, _, { resourceEndpoint, resourceService, dispatch }) => {
-    C.runTask(function* () {
-      const result = yield C.tryP($q.all([
-        resourceEndpoint.getAll(),
-        resourceService.get('environment')
-      ]));
+    C.runTask(function*() {
+      const result = yield C.tryP(
+        $q.all([resourceEndpoint.getAll(), resourceService.get('environment')])
+      );
       dispatch(ReceiveResponse, result);
     });
     return assign(state, { isLoading: true });
   },
   [OpenCreateDialog]: (state, _, { resourceEndpoint, dispatch }) => {
-    C.runTask(function* () {
+    C.runTask(function*() {
       const created = yield openCreateDialog(resourceEndpoint.create);
       if (created) {
         dispatch(Reload);
@@ -74,7 +78,7 @@ const reduce = makeReducer({
     return state;
   },
   [OpenEditDialog]: (state, environment, { resourceEndpoint, dispatch }) => {
-    C.runTask(function* () {
+    C.runTask(function*() {
       const updated = yield openEditDialog(resourceEndpoint.update, environment.payload);
       if (updated) {
         dispatch(Reload);
@@ -83,7 +87,7 @@ const reduce = makeReducer({
     return state;
   },
   [OpenDeleteDialog]: (state, environment, { resourceEndpoint, dispatch }) => {
-    C.runTask(function* () {
+    C.runTask(function*() {
       const updated = yield openDeleteDialog(resourceEndpoint.remove, environment);
       if (updated) {
         dispatch(Reload);
@@ -126,14 +130,13 @@ const reduce = makeReducer({
           isLoading: false
         });
       },
-      [C.Failure]: () => assign(state, {loadingError: true})
+      [C.Failure]: () => assign(state, { loadingError: true })
     });
   }
 });
 
-
 // This is exported for testing purposes.
-export function createComponent (spaceContext, incentivizeUpgradeEnabled) {
+export function createComponent(spaceContext, incentivizeUpgradeEnabled) {
   const resourceEndpoint = SpaceEnvironmentRepo.create(spaceContext.endpoint, spaceContext.getId());
   const resourceService = createResourceService(spaceContext.getId(), 'space');
   const context = {
@@ -153,27 +156,26 @@ export function createComponent (spaceContext, incentivizeUpgradeEnabled) {
     incentivizeUpgradeEnabled
   };
 
-  const store = createStore(
-    initialState,
-    (action, state) => reduce(action, state, context)
-  );
+  const store = createStore(initialState, (action, state) => reduce(action, state, context));
 
   context.dispatch = store.dispatch;
 
   const actions = bindActions(store, {
-    OpenCreateDialog, OpenEditDialog, OpenDeleteDialog, OpenUpgradeSpaceDialog
+    OpenCreateDialog,
+    OpenEditDialog,
+    OpenDeleteDialog,
+    OpenUpgradeSpaceDialog
   });
 
   store.dispatch(Reload);
 
   return {
     store,
-    render: (state) => render(state, actions)
+    render: state => render(state, actions)
   };
 }
 
-
-function makeEnvironmentModel (environment) {
+function makeEnvironmentModel(environment) {
   const status = caseofEq(environment.sys.status.sys.id, [
     ['ready', () => 'ready'],
     ['failed', () => 'failed'],

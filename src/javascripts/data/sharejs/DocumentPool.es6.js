@@ -1,5 +1,5 @@
-import {create as createDoc} from 'app/entity_editor/Document';
-import {find, includes, isString, get as getAtPath} from 'lodash';
+import { create as createDoc } from 'app/entity_editor/Document';
+import { find, includes, isString, get as getAtPath } from 'lodash';
 
 /**
  * @ngdoc service
@@ -12,10 +12,10 @@ import {find, includes, isString, get as getAtPath} from 'lodash';
  * is destroyed.
  */
 
-export function create (docConnection, spaceEndpoint) {
+export function create(docConnection, spaceEndpoint) {
   const instances = {};
 
-  return {get, destroy};
+  return { get, destroy };
 
   /**
    * @method DocumentPool#get
@@ -28,7 +28,7 @@ export function create (docConnection, spaceEndpoint) {
    * @description
    * Gets a doc for an entity.
    */
-  function get (entity, contentType, user, lifeline$) {
+  function get(entity, contentType, user, lifeline$) {
     const key = prepareKey(getAtPath(entity, 'data.sys', {}));
     const instance = instances[key];
     let doc;
@@ -38,7 +38,7 @@ export function create (docConnection, spaceEndpoint) {
       instance.count += 1;
     } else {
       doc = createDoc(docConnection, entity, contentType, user, spaceEndpoint);
-      instances[key] = {key, doc, count: 1};
+      instances[key] = { key, doc, count: 1 };
     }
 
     lifeline$.onEnd(() => unref(doc));
@@ -46,8 +46,7 @@ export function create (docConnection, spaceEndpoint) {
     return doc;
   }
 
-
-  function prepareKey (sys) {
+  function prepareKey(sys) {
     if (includes(['Entry', 'Asset'], sys.type) && isString(sys.id)) {
       return [sys.type, sys.id].join('!');
     } else {
@@ -60,8 +59,8 @@ export function create (docConnection, spaceEndpoint) {
    * longer. Destroys an instance if it was the
    * last reference in use.
    */
-  function unref (doc) {
-    const result = find(instances, (item) => {
+  function unref(doc) {
+    const result = find(instances, item => {
       return item.doc === doc;
     });
 
@@ -79,8 +78,8 @@ export function create (docConnection, spaceEndpoint) {
    * @description
    * Destroys all the instances in the pool.
    */
-  function destroy () {
-    Object.keys(instances).forEach((key) => {
+  function destroy() {
+    Object.keys(instances).forEach(key => {
       const instance = instances[key];
       instance.doc.destroy();
       delete instances[key];

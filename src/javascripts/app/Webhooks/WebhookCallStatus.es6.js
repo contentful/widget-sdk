@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {STATUS} from './WebhookHealth';
+import { STATUS } from './WebhookHealth';
 
 const ERROR_NAMES = {
   TimeoutError: 'Timeout',
@@ -12,7 +12,7 @@ const ERROR_NAMES = {
   NameResolutionError: 'Name unresolvable'
 };
 
-function getStatus (code) {
+function getStatus(code) {
   const hasCode = typeof code === 'number';
 
   if (hasCode && code < 300) {
@@ -27,10 +27,10 @@ function getStatus (code) {
 export default class WebhookCallStatus extends React.Component {
   static propTypes = {
     call: PropTypes.object.isRequired
-  }
+  };
 
-  render () {
-    const {call} = this.props;
+  render() {
+    const { call } = this.props;
     const code = call.statusCode;
     const status = getStatus(code);
     const errorName = (call.errors || [])[0];

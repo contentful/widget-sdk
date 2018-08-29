@@ -1,9 +1,9 @@
-import {cloneDeep, get, sortBy} from 'lodash';
+import { cloneDeep, get, sortBy } from 'lodash';
 import notification from 'notification';
 import logger from 'logger';
 import $q from '$q';
 import Store from 'data/StreamHashSet';
-import {deepFreeze} from 'utils/Freeze';
+import { deepFreeze } from 'utils/Freeze';
 import * as K from 'utils/kefir';
 
 /**
@@ -21,7 +21,7 @@ import * as K from 'utils/kefir';
 /**
  * @param {Client.Space} space  Space instance from the client.
  */
-export function create (space) {
+export function create(space) {
   const store = Store.create();
 
   /**
@@ -33,10 +33,9 @@ export function create (space) {
    * - the items in the array will be deeply frozen to prevent mutation
    * - the items are sorted by CT name
    */
-  const items$ = store.items$.map(cts => sortBy(
-    cts.map(ct => deepFreeze(cloneDeep(ct.data))),
-    ct => ct.name && ct.name.toLowerCase()
-  ));
+  const items$ = store.items$.map(cts =>
+    sortBy(cts.map(ct => deepFreeze(cloneDeep(ct.data))), ct => ct.name && ct.name.toLowerCase())
+  );
 
   // requesting[id] holds a promise for the content type if we are
   // already requesting it.
@@ -66,7 +65,7 @@ export function create (space) {
    * @param {string} id
    * @returns {Client.ContentType?}
    */
-  function get (id) {
+  function get(id) {
     // TODO this is deprecated and only for legacy code. We should throw an
     // error instead.
     if (!id) {
@@ -95,7 +94,7 @@ export function create (space) {
    * @param {string} id
    * @returns {Promise<Client.ContentType?>}
    */
-  function fetch (id) {
+  function fetch(id) {
     const ct = store.get(id);
     if (ct) {
       return $q.resolve(ct);
@@ -120,12 +119,11 @@ export function create (space) {
    * @param {string} Client.ContentType
    * @returns {Promise<Client.ContentType>}
    */
-  function publish (contentType) {
-    return contentType.publish()
-      .then((published) => {
-        store.add(published);
-        return published;
-      });
+  function publish(contentType) {
+    return contentType.publish().then(published => {
+      store.add(published);
+      return published;
+    });
   }
 
   /**
@@ -137,9 +135,8 @@ export function create (space) {
    * @param {string} Client.ContentType
    * @returns {Promise<void>}
    */
-  function unpublish (contentType) {
-    return contentType.unpublish()
-      .then(store.remove);
+  function unpublish(contentType) {
+    return contentType.unpublish().then(store.remove);
   }
 
   /**
@@ -153,8 +150,8 @@ export function create (space) {
    *
    * @returns {Promise<API.ContentType[]>}
    */
-  function refreshBare () {
-    return refresh().then((cts) => cts.map((ct) => deepFreeze(cloneDeep(ct.data))));
+  function refreshBare() {
+    return refresh().then(cts => cts.map(ct => deepFreeze(cloneDeep(ct.data))));
   }
 
   /**
@@ -170,21 +167,20 @@ export function create (space) {
    */
   // TODO we should throttle this function so that multiple
   // subsequent calls to `fetch()` do not trigger multiple requests.
-  function refresh () {
-    return space.getPublishedContentTypes({limit: 1000})
-      .then((contentTypes) => {
-        contentTypes = removeDeleted(contentTypes);
-        store.reset(contentTypes);
-        return contentTypes;
-      }, handleReloadError);
+  function refresh() {
+    return space.getPublishedContentTypes({ limit: 1000 }).then(contentTypes => {
+      contentTypes = removeDeleted(contentTypes);
+      store.reset(contentTypes);
+      return contentTypes;
+    }, handleReloadError);
   }
 }
 
-function removeDeleted (contentTypes) {
-  return contentTypes.filter((ct) => !ct.isDeleted());
+function removeDeleted(contentTypes) {
+  return contentTypes.filter(ct => !ct.isDeleted());
 }
 
-function handleReloadError (err) {
+function handleReloadError(err) {
   const message = get(err, 'body.message');
   if (message) {
     notification.warn(message);

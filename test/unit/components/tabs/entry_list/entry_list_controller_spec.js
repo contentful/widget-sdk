@@ -17,17 +17,17 @@ describe('Entry List Controller', () => {
     }
   };
 
-  function createEntries (n) {
+  function createEntries(n) {
     const entries = _.map(new Array(n), () => ({
       isDeleted: _.constant(false),
       data: { fields: [] }
     }));
-    Object.defineProperty(entries, 'total', {value: n});
+    Object.defineProperty(entries, 'total', { value: n });
     return entries;
   }
 
-  beforeEach(function () {
-    module('contentful/test', ($provide) => {
+  beforeEach(function() {
+    module('contentful/test', $provide => {
       $provide.removeControllers('DisplayedFieldsController');
 
       $provide.value('analytics/Analytics', {
@@ -36,15 +36,15 @@ describe('Entry List Controller', () => {
 
       $provide.value('TheLocaleStore', {
         resetWithSpace: sinon.stub(),
-        getDefaultLocale: sinon.stub().returns({internal_code: 'en-US'})
+        getDefaultLocale: sinon.stub().returns({ internal_code: 'en-US' })
       });
 
-      const readStub = this.readStub = sinon.stub();
-      const promise = this.readPersistedViewPromise = new Promise((resolve) => {
+      const readStub = (this.readStub = sinon.stub());
+      const promise = (this.readPersistedViewPromise = new Promise(resolve => {
         this.resolveReadPersistedView = resolve;
-      });
+      }));
       $provide.value('data/ListViewPersistor', {
-        default: function () {
+        default: function() {
           return {
             save: sinon.stub().resolves({}),
             read: readStub.returns(promise)
@@ -65,7 +65,7 @@ describe('Entry List Controller', () => {
 
     const ct = {
       getId: _.constant(1),
-      data: {fields: [{id: 'fieldId'}], sys: {id: 1}}
+      data: { fields: [{ id: 'fieldId' }], sys: { id: 1 } }
     };
     spaceContext.publishedCTs.fetch.resolves(ct);
     spaceContext.publishedCTs.getAllBare.returns([]);
@@ -74,14 +74,14 @@ describe('Entry List Controller', () => {
 
     const $controller = this.$inject('$controller');
 
-    $controller('EntryListController', {$scope: scope});
+    $controller('EntryListController', { $scope: scope });
     scope.selection.updateList = sinon.stub();
 
     ListQuery = this.$inject('ListQuery');
   });
 
   describe('initially undefined view', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       ListQuery.getForEntries = this.getQuery = sinon.stub().resolves({});
       scope.$apply();
     });
@@ -90,11 +90,11 @@ describe('Entry List Controller', () => {
       expect(scope.context.view).toBe(undefined);
     });
 
-    it('does not trigger query', function () {
+    it('does not trigger query', function() {
       sinon.assert.notCalled(this.getQuery);
     });
 
-    it('triggers query after loading view', function* () {
+    it('triggers query after loading view', function*() {
       this.resolveReadPersistedView({});
       yield this.readPersistedViewPromise;
       scope.$apply();
@@ -105,7 +105,7 @@ describe('Entry List Controller', () => {
   });
 
   describe('#loadView()', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       ListQuery.getForEntries = this.getQuery = sinon.stub().resolves({});
       scope.loadView(VIEW);
     });
@@ -115,7 +115,7 @@ describe('Entry List Controller', () => {
       expect(scope.context.view).not.toBe(VIEW);
     });
 
-    it('resets entries', function () {
+    it('resets entries', function() {
       scope.$apply();
       sinon.assert.calledOnce(this.getQuery);
     });
@@ -154,11 +154,11 @@ describe('Entry List Controller', () => {
   });
 
   describe('page parameters change', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       ListQuery.getForEntries = this.getQuery = sinon.stub().resolves({});
     });
 
-    it('triggers no query on page change if no view is loaded', function () {
+    it('triggers no query on page change if no view is loaded', function() {
       scope.paginator.setPage(1);
       scope.$apply();
       sinon.assert.notCalled(this.getQuery);
@@ -170,25 +170,25 @@ describe('Entry List Controller', () => {
         scope.$apply();
       });
 
-      it('page', function () {
+      it('page', function() {
         scope.paginator.setPage(1);
         scope.$apply();
         sinon.assert.calledTwice(this.getQuery);
       });
 
-      it('`searchText`', function () {
+      it('`searchText`', function() {
         scope.context.view.searchText = 'thing';
         scope.$apply();
         sinon.assert.calledTwice(this.getQuery);
       });
 
-      it('`searchFilters`', function () {
+      it('`searchFilters`', function() {
         scope.context.view.searchFilters = ['__status', '', 'published'];
         scope.$apply();
         sinon.assert.calledTwice(this.getQuery);
       });
 
-      it('`contentTypeId`', function () {
+      it('`contentTypeId`', function() {
         scope.context.view = { contentTypeId: 'something' };
         scope.$apply();
         sinon.assert.calledTwice(this.getQuery);
@@ -256,21 +256,19 @@ describe('Entry List Controller', () => {
           spaceContext.publishedCTs.fetch.withArgs('CT').resolves({
             getId: _.constant('CT'),
             data: {
-              fields: [
-                {id: 'ORDER_FIELD'}
-              ]
+              fields: [{ id: 'ORDER_FIELD' }]
             }
           });
         });
 
         it('when the field exists', () => {
-          scope.context.view.order = {fieldId: 'ORDER_FIELD', direction: 'descending'};
+          scope.context.view.order = { fieldId: 'ORDER_FIELD', direction: 'descending' };
           scope.$apply();
           expect(spaceContext.space.getEntries.args[0][0].order).toEqual('-fields.ORDER_FIELD');
         });
 
         it('when the field does not exist', () => {
-          scope.context.view.order = {fieldId: 'deletedFieldId', direction: 'descending'};
+          scope.context.view.order = { fieldId: 'deletedFieldId', direction: 'descending' };
           scope.$apply();
           expect(spaceContext.space.getEntries.args[0][0].order).toEqual('-sys.updatedAt');
         });
@@ -308,7 +306,7 @@ describe('Entry List Controller', () => {
     it('is false when there is a search term', () => {
       // @todo dirty hack: need to satisfy other watch
       // search controller should be tested separately (and removed here)
-      scope.context.view.order = {fieldId: 'updatedAt'};
+      scope.context.view.order = { fieldId: 'updatedAt' };
       scope.context.view.displayedFieldIds = ['updatedAt'];
 
       scope.entries = null;
@@ -332,12 +330,12 @@ describe('Entry List Controller', () => {
   });
 
   describe('Api Errors', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.handler = this.$inject('ReloadNotification').apiErrorHandler;
-      spaceContext.space.getEntries.rejects({statusCode: 500});
+      spaceContext.space.getEntries.rejects({ statusCode: 500 });
     });
 
-    it('should cause updateEntries to show an error message', function () {
+    it('should cause updateEntries to show an error message', function() {
       scope.context.view = {};
       scope.updateEntries();
       scope.$apply();
@@ -348,61 +346,64 @@ describe('Entry List Controller', () => {
   describe('#hasArchivedEntries', () => {
     let entriesResponse;
 
-    beforeEach(function () {
+    beforeEach(function() {
       scope.showNoEntriesAdvice = _.constant(true);
       entriesResponse = this.$inject('$q').defer();
       spaceContext.space.getEntries.returns(entriesResponse.promise);
     });
 
-    it('is set to false when showNoEntriesAdvice() changes to true', function () {
+    it('is set to false when showNoEntriesAdvice() changes to true', function() {
       expect(scope.hasArchivedEntries).toBeUndefined();
       this.$apply();
       expect(scope.hasArchivedEntries).toBe(false);
     });
 
-    it('gets archived entries when showNoEntries() changes to true', function () {
+    it('gets archived entries when showNoEntries() changes to true', function() {
       this.$apply();
       const query = {
-        'limit': 1,
+        limit: 1,
         'sys.archivedAt[exists]': true
       };
       sinon.assert.calledWith(spaceContext.space.getEntries, query);
     });
 
-    it('is set to true when there are archived entries', function () {
+    it('is set to true when there are archived entries', function() {
       this.$apply();
       expect(scope.hasArchivedEntries).toBe(false);
-      entriesResponse.resolve({total: 1});
+      entriesResponse.resolve({ total: 1 });
       this.$apply();
       expect(scope.hasArchivedEntries).toBe(true);
     });
 
-    it('is set to false when there no are archived entries', function () {
+    it('is set to false when there no are archived entries', function() {
       this.$apply();
       expect(scope.hasArchivedEntries).toBe(false);
-      entriesResponse.resolve({total: 0});
+      entriesResponse.resolve({ total: 0 });
       this.$apply();
       expect(scope.hasArchivedEntries).toBe(false);
     });
   });
 
-  describe('Truncating title', function () {
-    it('should not change string shorter then 130 simbols', function () {
+  describe('Truncating title', function() {
+    it('should not change string shorter then 130 simbols', function() {
       this.$apply();
       const title = 'Title';
       scope.spaceContext.entryTitle.returns(title);
       expect(scope.entryTitle(title)).toBe(title);
     });
-    it('should not change string with 130 simbols', function () {
+    it('should not change string with 130 simbols', function() {
       this.$apply();
-      const title = 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penat';
+      const title =
+        'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penat';
       scope.spaceContext.entryTitle.returns(title);
       expect(scope.entryTitle(title)).toBe(title);
     });
-    it('should cut string longer then 130 simbols', function () {
+    it('should cut string longer then 130 simbols', function() {
       this.$apply();
-      const title = 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta.';
-      const truncatedTitle = 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa qu…';
+      const title =
+        'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta.';
+      const truncatedTitle =
+        'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa qu…';
       scope.spaceContext.entryTitle.returns(title);
       expect(scope.entryTitle(title)).toBe(truncatedTitle);
     });

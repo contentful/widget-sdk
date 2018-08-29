@@ -19,9 +19,9 @@ export class RecordsResourceUsage extends React.Component {
     getResource: PropTypes.func.isRequired,
     incentivizeUpgradeEnabled: PropTypes.bool.isRequired,
     resources: PropTypes.object.isRequired
-  }
+  };
 
-  componentDidUpdate (prevProps) {
+  componentDidUpdate(prevProps) {
     const { currentTotal: previousTotal } = prevProps;
     const { getResource, space, currentTotal } = this.props;
 
@@ -30,14 +30,14 @@ export class RecordsResourceUsage extends React.Component {
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const { getIncentivizingFlag, getResource, space } = this.props;
 
     getIncentivizingFlag();
     getResource({ spaceId: space.sys.id, resourceName: 'record' });
   }
 
-  resource () {
+  resource() {
     const { resources, space } = this.props;
     const spaceId = space.sys.id;
 
@@ -50,7 +50,7 @@ export class RecordsResourceUsage extends React.Component {
     return resourceMeta.value;
   }
 
-  upgradeSpace () {
+  upgradeSpace() {
     const { space } = this.props;
 
     showUpgradeSpaceDialog({
@@ -62,7 +62,7 @@ export class RecordsResourceUsage extends React.Component {
     });
   }
 
-  render () {
+  render() {
     const { incentivizeUpgradeEnabled } = this.props;
 
     // Explicitly don't show this until the feature flag is enabled
@@ -86,25 +86,20 @@ export class RecordsResourceUsage extends React.Component {
     const atLimit = usagePercentage >= 1;
 
     return (
-      <div className={classnames(
-        'resource-usage',
-        {
+      <div
+        className={classnames('resource-usage', {
           'resource-usage--warn': usage / limit >= warnThreshold && usage / limit < errorThreshold,
           'resource-usage--danger': usage / limit >= errorThreshold
-        }
-      )}>
-        {
-          atLimit &&
-          <span>You&apos;ve reached the limit of {limit} entries and assets.&#32;</span>
-        }
-        {
-          !atLimit &&
-          <span>Usage: {usage} / {limit} entries and assets&#32;</span>
-        }
-        {
-          usagePercentage >= warnThreshold &&
+        })}>
+        {atLimit && <span>You&apos;ve reached the limit of {limit} entries and assets.&#32;</span>}
+        {!atLimit && (
+          <span>
+            Usage: {usage} / {limit} entries and assets&#32;
+          </span>
+        )}
+        {usagePercentage >= warnThreshold && (
           <TextLink onClick={this.upgradeSpace.bind(this)}>Upgrade space</TextLink>
-        }
+        )}
       </div>
     );
   }
@@ -122,4 +117,7 @@ const mapDispatchToProps = {
   getResource: actionCreators.getResource
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(RecordsResourceUsage);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(RecordsResourceUsage);

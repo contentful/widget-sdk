@@ -25,18 +25,18 @@ const Menu = createReactClass({
     onSelect: PropTypes.func.isRequired,
     onClose: PropTypes.func
   },
-  getDefaultProps () {
+  getDefaultProps() {
     return {
       onClose: _.noop
     };
   },
-  getInitialState () {
+  getInitialState() {
     return {
       positionY: Position.BOTTOM,
       positionX: Position.LEFT
     };
   },
-  componentDidMount () {
+  componentDidMount() {
     const { top, left } = this.menu.getBoundingClientRect();
     const maxHeight = 600;
     const maxWidth = 450;
@@ -46,12 +46,12 @@ const Menu = createReactClass({
       positionX: left < maxWidth ? Position.LEFT : Position.RIGHT
     });
   },
-  handleStateChange (changes) {
+  handleStateChange(changes) {
     if (changes.type === Downshift.stateChangeTypes.keyDownEscape) {
       this.props.onClose();
     }
   },
-  getStateAndHelpers (downshift) {
+  getStateAndHelpers(downshift) {
     const { contentTypes, suggestedContentTypeId, onSelect } = this.props;
 
     return {
@@ -61,7 +61,7 @@ const Menu = createReactClass({
       onSelect
     };
   },
-  render () {
+  render() {
     const { onSelect } = this.props;
     const className = cn(
       'create-entry__menu',
@@ -78,14 +78,12 @@ const Menu = createReactClass({
         data-test-id="add-entry-menu"
         ref={menu => {
           this.menu = menu;
-        }}
-      >
+        }}>
         <Downshift
           onChange={onSelect}
           onStateChange={this.handleStateChange}
           isOpen
-          itemToString={ct => (_.isEmpty(ct) ? '' : ct.sys.id)}
-        >
+          itemToString={ct => (_.isEmpty(ct) ? '' : ct.sys.id)}>
           {downshift => renderMenu(this.getStateAndHelpers(downshift))}
         </Downshift>
       </div>
@@ -94,7 +92,7 @@ const Menu = createReactClass({
 });
 
 /* eslint-disable react/prop-types */
-function renderMenu ({
+function renderMenu({
   contentTypes,
   suggestedContentTypeId,
   onSelect,
@@ -104,21 +102,13 @@ function renderMenu ({
   highlightedIndex
 }) {
   /* eslint-enable react/prop-types */
-  const suggestedContentType = getContentTypeById(
-    contentTypes,
-    suggestedContentTypeId
-  );
+  const suggestedContentType = getContentTypeById(contentTypes, suggestedContentTypeId);
   const isSearchable = contentTypes.length > MAX_ITEMS_WITHOUT_SEARCH;
-  const filteredContentTypes = getFilteredContentTypesByInputValue(
-    contentTypes,
-    inputValue
-  );
+  const filteredContentTypes = getFilteredContentTypesByInputValue(contentTypes, inputValue);
 
   const hasSearchValue = inputValue.length > 0;
   const searchResultsTitle =
-    filteredContentTypes.length === 1
-      ? `1 result`
-      : `${filteredContentTypes.length} results`;
+    filteredContentTypes.length === 1 ? `1 result` : `${filteredContentTypes.length} results`;
 
   return (
     <div>
@@ -139,10 +129,7 @@ function renderMenu ({
             <React.Fragment>
               {suggestedContentType && (
                 <React.Fragment>
-                  <Group
-                    title="Suggested content type"
-                    testId="group-suggested"
-                  >
+                  <Group title="Suggested content type" testId="group-suggested">
                     <ContentTypeList
                       contentTypes={[suggestedContentType]}
                       getItemProps={getItemProps}
@@ -175,7 +162,7 @@ function renderMenu ({
 
 export default Menu;
 
-function ContentTypeList ({
+function ContentTypeList({
   contentTypes,
   getItemProps,
   highlightedIndex,
@@ -197,15 +184,15 @@ function ContentTypeList ({
   ));
 }
 
-function getContentTypeById (contentTypes, id) {
+function getContentTypeById(contentTypes, id) {
   return contentTypes.find(ct => ct.sys.id === id);
 }
 
-function getContentTypeName (contentType) {
+function getContentTypeName(contentType) {
   return contentType.name || 'Untitled';
 }
 
-function getFilteredContentTypesByInputValue (contentTypes, inputValue) {
+function getFilteredContentTypesByInputValue(contentTypes, inputValue) {
   return contentTypes.filter(
     contentType =>
       !inputValue ||

@@ -1,14 +1,14 @@
 /**
-* @ngdoc service
-* @name data/CMA/EntityResolver
-* @description
-* Load and cache the payload of entities for given IDs
-*
-* Used by the cfReferenceEditor and cfSnapshotPresentLink directives.
-*/
-import {caseof} from 'sum-types/caseof-eq';
+ * @ngdoc service
+ * @name data/CMA/EntityResolver
+ * @description
+ * Load and cache the payload of entities for given IDs
+ *
+ * Used by the cfReferenceEditor and cfSnapshotPresentLink directives.
+ */
+import { caseof } from 'sum-types/caseof-eq';
 import $q from '$q';
-import {chunk, uniq, flatten} from 'lodash';
+import { chunk, uniq, flatten } from 'lodash';
 
 const MAX_IN_IDS = 50;
 
@@ -22,14 +22,14 @@ const MAX_IN_IDS = 50;
  *   Same interface as defined by `data/ApiClient`
  * @returns {EntityResolver}
  */
-export function forType (type, space) {
+export function forType(type, space) {
   return caseof(type, [
     ['Entry', () => create(query => space.getEntries(query))],
     ['Asset', () => create(query => space.getAssets(query))]
   ]);
 }
 
-function create (fetch) {
+function create(fetch) {
   let entitiesById = {};
 
   /**
@@ -63,13 +63,16 @@ function create (fetch) {
    * @param {string[]} ids
    * @returns {Promise<[[string, API.Entity?]]>}
    */
-  function load (ids) {
-    const newIDs = ids.filter(id => // Entities that do not exist on the server have value
-    // 'undefined'. We do not want to refetch them.
-    !(id in entitiesById));
+  function load(ids) {
+    const newIDs = ids.filter(
+      (
+        id // Entities that do not exist on the server have value
+      ) =>
+        // 'undefined'. We do not want to refetch them.
+        !(id in entitiesById)
+    );
 
-    return getEntities(fetch, newIDs)
-    .then(entities => {
+    return getEntities(fetch, newIDs).then(entities => {
       entities.forEach(addEntity);
       return ids.map(id => [id, entitiesById[id]]);
     });
@@ -82,15 +85,14 @@ function create (fetch) {
    * Add an entity to the resolver cache. Subsequent `load()` calls will use
    * the added entity.
    */
-  function addEntity (entity) {
+  function addEntity(entity) {
     entitiesById[entity.sys.id] = entity;
   }
 
-  function reset () {
+  function reset() {
     entitiesById = {};
   }
 }
-
 
 /**
  * Accepts a list of IDs and fetches and returns the entity data for each of
@@ -108,20 +110,24 @@ function create (fetch) {
  *   List of entity IDs to query for
  * @returns {Promise<API.Entity[]>}
  */
-function getEntities (fetch, ids) {
-  const queries = chunk(uniq(ids), MAX_IN_IDS)
-  .map(ids => fetch({
-    'sys.id[in]': ids.join(','),
-    limit: MAX_IN_IDS
-  }).then((response) => {
-    return response.items;
-  }, (errorResponse) => {
-    if (errorResponse.status === 404) {
-      return [];
-    } else {
-      return $q.reject(errorResponse);
-    }
-  }));
+function getEntities(fetch, ids) {
+  const queries = chunk(uniq(ids), MAX_IN_IDS).map(ids =>
+    fetch({
+      'sys.id[in]': ids.join(','),
+      limit: MAX_IN_IDS
+    }).then(
+      response => {
+        return response.items;
+      },
+      errorResponse => {
+        if (errorResponse.status === 404) {
+          return [];
+        } else {
+          return $q.reject(errorResponse);
+        }
+      }
+    )
+  );
 
   return $q.all(queries).then(flatten);
 }

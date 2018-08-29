@@ -21,8 +21,16 @@ const SpacePlanItem = createReactClass({
     isCurrentPlan: PropTypes.bool,
     isRecommended: PropTypes.bool
   },
-  render: function () {
-    const {plan, isCurrentPlan, isSelected, isRecommended, freeSpacesResource, isPayingOrg, onSelect} = this.props;
+  render: function() {
+    const {
+      plan,
+      isCurrentPlan,
+      isSelected,
+      isRecommended,
+      freeSpacesResource,
+      isPayingOrg,
+      onSelect
+    } = this.props;
     const freeSpacesUsage = freeSpacesResource && freeSpacesResource.usage;
     const freeSpacesLimit = freeSpacesResource && freeSpacesResource.limits.maximum;
 
@@ -42,45 +50,47 @@ const SpacePlanItem = createReactClass({
           }
         )}
         onClick={() => !plan.disabled && onSelect(plan)}>
-
         <div className="space-plans-list__item__heading">
           <strong data-test-id="space-plan-name">{plan.name}</strong>
-          {(plan.price > 0) && <React.Fragment>
-            {' - '}
-            <span data-test-id="space-plan-price">{formatPrice(plan.price)}</span>
-            {' / month'}
-          </React.Fragment>}
-          {
-            plan.isFree && freeSpacesLimit &&
-            <Fragment>
-              {` - ${freeSpacesUsage}/${freeSpacesLimit} used`}
-              <HelpIcon tooltipWidth={400}>
-                You can have up to {freeSpacesLimit} free spaces for your organization.
-                If you delete a free space, another one can be created.
-              </HelpIcon>
-            </Fragment>
-        }
+          {plan.price > 0 && (
+            <React.Fragment>
+              {' - '}
+              <span data-test-id="space-plan-price">{formatPrice(plan.price)}</span>
+              {' / month'}
+            </React.Fragment>
+          )}
+          {plan.isFree &&
+            freeSpacesLimit && (
+              <Fragment>
+                {` - ${freeSpacesUsage}/${freeSpacesLimit} used`}
+                <HelpIcon tooltipWidth={400}>
+                  You can have up to {freeSpacesLimit} free spaces for your organization. If you
+                  delete a free space, another one can be created.
+                </HelpIcon>
+              </Fragment>
+            )}
         </div>
 
         <PlanFeatures resources={plan.includedResources} />
 
-        { isPayingOrg && plan.disabled && !isCurrentPlan &&
-          <Tooltip
-            style={{
-              position: 'absolute',
-              right: '19px',
-              bottom: '25px',
-              color: colors.elementDarkest
-            }}
-            width={800}
-            tooltip={unavailabilityTooltip}
-          >
-              <Icon name='question-mark' />
-          </Tooltip>
-        }
-        { (!isPayingOrg || !plan.disabled) &&
-          <Icon className="space-plans-list__item__chevron" name="dd-arrow-down"/>
-        }
+        {isPayingOrg &&
+          plan.disabled &&
+          !isCurrentPlan && (
+            <Tooltip
+              style={{
+                position: 'absolute',
+                right: '19px',
+                bottom: '25px',
+                color: colors.elementDarkest
+              }}
+              width={800}
+              tooltip={unavailabilityTooltip}>
+              <Icon name="question-mark" />
+            </Tooltip>
+          )}
+        {(!isPayingOrg || !plan.disabled) && (
+          <Icon className="space-plans-list__item__chevron" name="dd-arrow-down" />
+        )}
       </div>
     );
   }

@@ -8,9 +8,9 @@ describe('cfZenmode', () => {
   const apiMock = {
     registerChild: sinon.spy(),
     syncToParent: sinon.spy(),
-    getParent: function () {
+    getParent: function() {
       return {
-        tie: {editorToEditor: tieSpy},
+        tie: { editorToEditor: tieSpy },
         restoreCursor: sinon.stub(),
         setHistory: parentSetHistory
       };
@@ -19,7 +19,7 @@ describe('cfZenmode', () => {
     setHistory: sinon.spy()
   };
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test', $provide => {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
@@ -46,15 +46,15 @@ describe('cfZenmode', () => {
     sinon.assert.calledOnce(apiMock.syncToParent);
   });
 
-  it('shows preview by default', function () {
+  it('shows preview by default', function() {
     expect(this.scope.isPreviewActive).toEqual(true);
   });
 
-  it('remembers preview state for other instances', function () {
+  it('remembers preview state for other instances', function() {
     this.scope.showPreview(false);
     expect(this.scope.isPreviewActive).toEqual(false);
 
-    const otherZenMode = this.$compile('<cf-zenmode zen-api="zenApi">', {zenApi: apiMock});
+    const otherZenMode = this.$compile('<cf-zenmode zen-api="zenApi">', { zenApi: apiMock });
     const otherScope = otherZenMode.isolateScope();
     expect(otherScope.isPreviewActive).toEqual(false);
   });

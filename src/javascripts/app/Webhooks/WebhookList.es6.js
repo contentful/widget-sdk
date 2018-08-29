@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {get} from 'lodash';
+import { get } from 'lodash';
 
 import $state from '$state';
 import Icon from 'ui/Components/Icon';
@@ -16,10 +16,10 @@ export default class WebhookList extends React.Component {
     resource: PropTypes.object.isRequired,
     organization: PropTypes.object.isRequired,
     openTemplateDialog: PropTypes.func.isRequired
-  }
+  };
 
-  render () {
-    const {webhooks, webhookRepo} = this.props;
+  render() {
+    const { webhooks, webhookRepo } = this.props;
 
     return (
       <React.Fragment>
@@ -49,33 +49,35 @@ export default class WebhookList extends React.Component {
               <div className="table__body">
                 <table>
                   <tbody>
-                    {webhooks.length > 0 && webhooks.map(wh => {
-                      return (
-                        <tr
-                          className="x--clickable"
-                          key={wh.sys.id}
-                          onClick={() => $state.go('^.detail', { webhookId: wh.sys.id })}
-                        >
-                          <td className="x--medium-cell">
-                            <strong className="x--ellipsis">{wh.name}</strong>
-                          </td>
-                          <td className="x--large-cell">
-                            <code className="x--ellipsis">
-                              {get(wh, ['transformation', 'method'], 'POST')} {wh.url}
-                            </code>
-                          </td>
-                          <td className="x--small-cell">
-                            <WebhookHealth webhookId={wh.sys.id} webhookRepo={webhookRepo} />
-                          </td>
-                          <td className="x--medium-cell">
-                            <button className="text-link">
-                              View details
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                    {webhooks.length < 1 && <tr><td colSpan="4">Add a webhook, then manage it in this space.</td></tr>}
+                    {webhooks.length > 0 &&
+                      webhooks.map(wh => {
+                        return (
+                          <tr
+                            className="x--clickable"
+                            key={wh.sys.id}
+                            onClick={() => $state.go('^.detail', { webhookId: wh.sys.id })}>
+                            <td className="x--medium-cell">
+                              <strong className="x--ellipsis">{wh.name}</strong>
+                            </td>
+                            <td className="x--large-cell">
+                              <code className="x--ellipsis">
+                                {get(wh, ['transformation', 'method'], 'POST')} {wh.url}
+                              </code>
+                            </td>
+                            <td className="x--small-cell">
+                              <WebhookHealth webhookId={wh.sys.id} webhookRepo={webhookRepo} />
+                            </td>
+                            <td className="x--medium-cell">
+                              <button className="text-link">View details</button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    {webhooks.length < 1 && (
+                      <tr>
+                        <td colSpan="4">Add a webhook, then manage it in this space.</td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>

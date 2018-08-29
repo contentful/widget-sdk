@@ -50,7 +50,7 @@ export default class SpaceSettingsContainer extends React.Component {
     });
   };
 
-  render () {
+  render() {
     const space = this.props.getSpace();
     return (
       <div className="workbench space-settings">

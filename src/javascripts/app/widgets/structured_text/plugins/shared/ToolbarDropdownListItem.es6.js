@@ -22,7 +22,7 @@ export default class ToolbarDropdownListItem extends Component {
     this.props.onToggle(event);
   };
 
-  render () {
+  render() {
     const { isActive, title, type, children } = this.props;
     return (
       <DropdownListItem
@@ -30,8 +30,7 @@ export default class ToolbarDropdownListItem extends Component {
         isActive={isActive}
         data-test-id={`toolbar-toggle-${type}`}
         extraClassNames={`toolbar-toggle-${type}`}
-        onMouseDown={this.handleMouseDown}
-      >
+        onMouseDown={this.handleMouseDown}>
         {children}
       </DropdownListItem>
     );

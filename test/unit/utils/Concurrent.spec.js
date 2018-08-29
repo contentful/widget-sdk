@@ -1,4 +1,4 @@
-import {range} from 'lodash';
+import { range } from 'lodash';
 import * as sinon from 'helpers/sinon';
 import * as C from 'utils/Concurrent';
 import $q from '$q';
@@ -9,7 +9,7 @@ describe('utils/Concurrent', () => {
   });
 
   describe('.createSlot()', () => {
-    it('only resolves current promise', function* () {
+    it('only resolves current promise', function*() {
       const $q = this.$inject('$q');
       const onResult = sinon.spy();
       const put = C.createSlot(onResult);
@@ -25,7 +25,7 @@ describe('utils/Concurrent', () => {
       sinon.assert.calledOnceWith(onResult, C.Success('VAL B'));
     });
 
-    it('only rejects current promise', function* () {
+    it('only rejects current promise', function*() {
       const $q = this.$inject('$q');
       const onResult = sinon.spy();
       const put = C.createSlot(onResult);
@@ -44,13 +44,13 @@ describe('utils/Concurrent', () => {
   });
 
   describe('.createQueue()', () => {
-    it('works', function* () {
+    it('works', function*() {
       const calls = [];
       const q = C.createQueue();
 
       // We create a list of runner functions together with the
       // 'deferred' objects they resolve with
-      const [a, b, c] = range(4).map((i) => {
+      const [a, b, c] = range(4).map(i => {
         const deferred = $q.defer();
         return {
           deferred: deferred,
@@ -85,13 +85,15 @@ describe('utils/Concurrent', () => {
   });
 
   describe('.createExclusiveTask()', () => {
-    it('does not run multiple tasks concurrently', function* () {
+    it('does not run multiple tasks concurrently', function*() {
       let callCount = 0;
       const taskDone = C.createMVar();
-      const task = C.createExclusiveTask(C.wrapTask(function* () {
-        callCount++;
-        yield taskDone.read();
-      }));
+      const task = C.createExclusiveTask(
+        C.wrapTask(function*() {
+          callCount++;
+          yield taskDone.read();
+        })
+      );
 
       expect(callCount).toBe(0);
       task.call();
@@ -109,14 +111,16 @@ describe('utils/Concurrent', () => {
       expect(callCount).toBe(2);
     });
 
-    it('resets the task on errors', function* () {
+    it('resets the task on errors', function*() {
       let callCount = 0;
       const taskDone = C.createMVar();
-      const task = C.createExclusiveTask(C.wrapTask(function* () {
-        callCount++;
-        yield taskDone.read();
-        throw new Error();
-      }));
+      const task = C.createExclusiveTask(
+        C.wrapTask(function*() {
+          callCount++;
+          yield taskDone.read();
+          throw new Error();
+        })
+      );
 
       expect(callCount).toBe(0);
       const result = task.call().catch(() => null);
@@ -133,11 +137,13 @@ describe('utils/Concurrent', () => {
       expect(callCount).toBe(2);
     });
 
-    it('returns the functions results', function* () {
+    it('returns the functions results', function*() {
       const taskDone = C.createMVar();
-      const task = C.createExclusiveTask(C.wrapTask(function* () {
-        return yield taskDone.read();
-      }));
+      const task = C.createExclusiveTask(
+        C.wrapTask(function*() {
+          return yield taskDone.read();
+        })
+      );
 
       const r1 = task.call();
       const r2 = task.call();

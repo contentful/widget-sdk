@@ -1,20 +1,27 @@
 'use strict';
 
-angular.module('contentful')
-/**
- * @ngdoc directive
- * @name cfNavSidePanel
- *
- * This directive display the new navigation side panel.
- */
-.directive('cfNavSidepanelTrigger', ['require', require => {
-  var sidepanelTrigger = require('navigation/Sidepanel/Trigger').default;
-  return {
-    restrict: 'E',
-    template: '<cf-component-bridge component=sidepanelComponent>',
-    scope: {},
-    controller: ['$scope', $scope => {
-      $scope.sidepanelComponent = sidepanelTrigger();
-    }]
-  };
-}]);
+angular
+  .module('contentful')
+  /**
+   * @ngdoc directive
+   * @name cfNavSidePanel
+   *
+   * This directive display the new navigation side panel.
+   */
+  .directive('cfNavSidepanelTrigger', [
+    'require',
+    require => {
+      var sidepanelTrigger = require('navigation/Sidepanel/Trigger').default;
+      return {
+        restrict: 'E',
+        template: '<cf-component-bridge component=sidepanelComponent>',
+        scope: {},
+        controller: [
+          '$scope',
+          $scope => {
+            $scope.sidepanelComponent = sidepanelTrigger();
+          }
+        ]
+      };
+    }
+  ]);

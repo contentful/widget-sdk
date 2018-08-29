@@ -14,7 +14,7 @@ const Components = {
 
 describe('app/ContentList/Search/View', () => {
   let actions, render, view, system;
-  beforeEach(function* () {
+  beforeEach(function*() {
     system = createIsolatedSystem();
 
     system.set('entitySelector', {});
@@ -29,9 +29,7 @@ describe('app/ContentList/Search/View', () => {
       }
     });
 
-    const { default: searchComponent } = yield system.import(
-      'app/ContentList/Search/View'
-    );
+    const { default: searchComponent } = yield system.import('app/ContentList/Search/View');
     const Filters = yield system.import('app/ContentList/Search/Filters');
     this.contentTypeFilter = Filters.contentTypeFilter;
     this.getFiltersFromQueryKey = Filters.getFiltersFromQueryKey;
@@ -100,27 +98,19 @@ describe('app/ContentList/Search/View', () => {
     });
 
     it('Content Type filter has a selected Any', () => {
-      const contentTypeFilterValue = Components.contentFilterValue(view)
-        .element;
+      const contentTypeFilterValue = Components.contentFilterValue(view).element;
 
       expect(contentTypeFilterValue.value).toBe('');
       expect(contentTypeFilterValue.selectedOptions[0].label).toBe('Any');
     });
 
     it('Content Type filter has all possible content types', () => {
-      const contentTypeFilterValue = Components.contentFilterValue(view)
-        .element;
+      const contentTypeFilterValue = Components.contentFilterValue(view).element;
 
       const AnyOption = ['', 'Any'];
 
-      expect([
-        AnyOption,
-        ...contentTypes.map(({ name, sys: { id } }) => [id, name])
-      ]).toEqual(
-        _.map(contentTypeFilterValue.options, ({ label, value }) => [
-          value,
-          label
-        ])
+      expect([AnyOption, ...contentTypes.map(({ name, sys: { id } }) => [id, name])]).toEqual(
+        _.map(contentTypeFilterValue.options, ({ label, value }) => [value, label])
       );
     });
 
@@ -184,7 +174,7 @@ describe('app/ContentList/Search/View', () => {
   });
 
   describe('with filters', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       render({
         filters: this.getFiltersFromQueryKey({
           contentTypes,

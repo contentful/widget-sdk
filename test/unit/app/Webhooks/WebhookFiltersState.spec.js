@@ -5,8 +5,8 @@ import {
   transformListToFilters
 } from 'app/Webhooks/WebhookFiltersState';
 
-describe('WebhookFiltersState', function () {
-  it('transforms nested constraint objects to a flat list', function () {
+describe('WebhookFiltersState', function() {
+  it('transforms nested constraint objects to a flat list', function() {
     const transformed = transformFiltersToList([
       { equals: [{ doc: 'sys.id' }, '123'] },
       { not: { equals: [{ doc: 'sys.id' }, '123'] } },
@@ -47,7 +47,7 @@ describe('WebhookFiltersState', function () {
     expect(transformed[5].value).toBe('foobar');
   });
 
-  it('transforms flat list to constraint objects', function () {
+  it('transforms flat list to constraint objects', function() {
     const transformed = transformListToFilters([
       { constraint: 0, path: 'sys.id', value: '123' },
       { constraint: 1, path: 'sys.id', value: '123' },

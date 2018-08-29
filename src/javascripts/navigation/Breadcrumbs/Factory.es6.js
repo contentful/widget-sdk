@@ -1,5 +1,5 @@
-import {constant as constantly, extend} from 'lodash';
-import {deepFreeze} from 'utils/Freeze';
+import { constant as constantly, extend } from 'lodash';
+import { deepFreeze } from 'utils/Freeze';
 
 /**
  * @ngdoc service
@@ -16,7 +16,7 @@ import {deepFreeze} from 'utils/Freeze';
 export const Entry = EntryOrAsset;
 export const Asset = EntryOrAsset;
 
-function EntryOrAsset (sys, context) {
+function EntryOrAsset(sys, context) {
   const segment = sys.type === 'Asset' ? 'assets' : 'entries';
   const idParamName = sys.type === 'Asset' ? 'assetId' : 'entryId';
 
@@ -27,7 +27,7 @@ function EntryOrAsset (sys, context) {
   });
 }
 
-export function ContentTypeList () {
+export function ContentTypeList() {
   return base('ContentTypeList', {
     getTitle: constantly('Content model'),
     link: link('content_types.list'),
@@ -35,7 +35,7 @@ export function ContentTypeList () {
   });
 }
 
-export function ContentType (id, context) {
+export function ContentType(id, context) {
   return base('ContentType', id, {
     getTitle: titleFromContext(context),
     link: entityLink('content_types', 'contentTypeId', id),
@@ -43,7 +43,7 @@ export function ContentType (id, context) {
   });
 }
 
-export function EntryList () {
+export function EntryList() {
   return base('EntryList', {
     getTitle: constantly('Content'),
     link: link('entries.list'),
@@ -51,15 +51,15 @@ export function EntryList () {
   });
 }
 
-export function EntrySnapshot (id, context) {
+export function EntrySnapshot(id, context) {
   return base('EntrySnapshotComparison', {
     getTitle: titleFromContext(context),
-    link: link('entries.compare.withCurrent', {snapshotId: id}),
+    link: link('entries.compare.withCurrent', { snapshotId: id }),
     icon: 'entry'
   });
 }
 
-export function AssetList () {
+export function AssetList() {
   return base('AssetList', {
     getTitle: constantly('Media'),
     link: link('assets.list'),
@@ -67,63 +67,63 @@ export function AssetList () {
   });
 }
 
-export function CMAKeyList () {
+export function CMAKeyList() {
   return base('CMAKeyList', {
     getTitle: constantly('Content Management API Keys'),
     link: link('api.cma_keys')
   });
 }
 
-export function CDAKeyList () {
+export function CDAKeyList() {
   return base('CDAKeyList', {
     getTitle: constantly('Content Delivery API Keys'),
     link: link('api.keys.list')
   });
 }
 
-export function CDAKey (id, context) {
+export function CDAKey(id, context) {
   return base('CDAKey', id, {
     getTitle: titleFromContext(context),
     link: entityLink('api.keys', 'apiKeyId', id)
   });
 }
 
-export function LocaleList () {
+export function LocaleList() {
   return base('LocaleList', {
     getTitle: constantly('Locales'),
     link: link('settings.locales.list')
   });
 }
 
-export function Locale (id, context) {
+export function Locale(id, context) {
   return base('Locale', id, {
     getTitle: titleFromContext(context),
     link: entityLink('settings.locales', 'localeId', id)
   });
 }
 
-export function RoleList () {
+export function RoleList() {
   return base('RoleList', {
     getTitle: constantly('Roles'),
     link: link('settings.roles.list')
   });
 }
 
-export function Role (id, context) {
+export function Role(id, context) {
   return base('Role', id, {
     getTitle: titleFromContext(context),
     link: entityLink('settings.roles', 'roleId', id)
   });
 }
 
-export function PreviewEnvList () {
+export function PreviewEnvList() {
   return base('PreviewEnvList', {
     getTitle: constantly('Content Preview'),
     link: link('settings.content_preview.list')
   });
 }
 
-export function PreviewEnv (id, context) {
+export function PreviewEnv(id, context) {
   return base('PreviewEnv', id, {
     getTitle: titleFromContext(context),
     link: entityLink('settings.content_preview', 'contentPreviewId', id)
@@ -148,7 +148,7 @@ export function PreviewEnv (id, context) {
 /**
  * @returns {Breadcrumb}
  */
-function base (type, id, crumb) {
+function base(type, id, crumb) {
   if (arguments.length === 2) {
     crumb = id;
     id = undefined;
@@ -162,17 +162,17 @@ function base (type, id, crumb) {
 
   crumb.icon = crumb.icon || 'settings';
 
-  return deepFreeze(extend({type, id}, crumb));
+  return deepFreeze(extend({ type, id }, crumb));
 }
 
-function titleFromContext (context) {
-  context = context || {title: 'Untitled'};
-  return function getTitle () {
+function titleFromContext(context) {
+  context = context || { title: 'Untitled' };
+  return function getTitle() {
     return context.title + (context.dirty ? '*' : '');
   };
 }
 
-function entityLink (state, idParamName, id) {
+function entityLink(state, idParamName, id) {
   const params = {};
   if (id) {
     params[idParamName] = id;
@@ -181,7 +181,7 @@ function entityLink (state, idParamName, id) {
   return link([state, id ? 'detail' : 'new'].join('.'), params);
 }
 
-function link (state, params) {
+function link(state, params) {
   return {
     state: 'spaces.detail.' + state,
     params

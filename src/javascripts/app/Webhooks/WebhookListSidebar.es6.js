@@ -7,8 +7,15 @@ import * as ResourceUtils from 'utils/ResourceUtils';
 import WebhookSidebarDocumentation from './WebhookSidebarDocumentation';
 import WebhookSidebarTemplatesList from './WebhookSidebarTemplatesList';
 
-export default function WebhookListSidebar (props) {
-  const {webhooks, resource, organization, webhookRepo, templateContentTypes, openTemplateDialog} = props;
+export default function WebhookListSidebar(props) {
+  const {
+    webhooks,
+    resource,
+    organization,
+    webhookRepo,
+    templateContentTypes,
+    openTemplateDialog
+  } = props;
 
   // Currently, for Version 1 organizations, the usage comes
   // from the token, but this is unreliable as the token is
@@ -24,15 +31,14 @@ export default function WebhookListSidebar (props) {
       <h2 className="entity-sidebar__heading">Add Webhooks</h2>
       <p>
         Your space
-        {usage < 1 && ' isn\'t using any webhooks.'}
+        {usage < 1 && " isn't using any webhooks."}
         {usage === 1 && ' is using 1 webhook.'}
         {usage > 1 && ` is using ${usage} webhooks.`}
       </p>
       <button
         className="btn-action add-entity x--block"
         onClick={() => $state.go('^.new')}
-        data-test-id="add-webhook-button"
-      >
+        data-test-id="add-webhook-button">
         <i className="fa fa-plus-circle" /> Add Webhook
       </button>
       <WebhookSidebarDocumentation />

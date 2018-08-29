@@ -1,6 +1,6 @@
-import {isNumber} from 'lodash';
+import { isNumber } from 'lodash';
 import LazyLoader from 'LazyLoader';
-import {observeResize} from 'ui/ResizeDetector';
+import { observeResize } from 'ui/ResizeDetector';
 import * as K from 'utils/kefir';
 
 /**
@@ -9,30 +9,32 @@ import * as K from 'utils/kefir';
  *
  * This is used by the `cfLocationEditor` directive and uses its scope.
  */
-export function init (scope, mapSlotElement) {
+export function init(scope, mapSlotElement) {
   let destroyed = false;
   scope.$on('$destroy', () => {
     destroyed = true;
   });
 
   scope.isLoading = true;
-  LazyLoader.get('googleMaps')
-  .then(GMaps => {
-    if (!destroyed) {
+  LazyLoader.get('googleMaps').then(
+    GMaps => {
+      if (!destroyed) {
+        scope.isLoading = false;
+        initMap(scope, GMaps, mapSlotElement);
+      }
+    },
+    () => {
       scope.isLoading = false;
-      initMap(scope, GMaps, mapSlotElement);
+      scope.loadError = true;
     }
-  }, () => {
-    scope.isLoading = false;
-    scope.loadError = true;
-  });
+  );
 }
 
-function initMap (scope, GMaps, mapSlotElement) {
+function initMap(scope, GMaps, mapSlotElement) {
   let map = new GMaps.Map(mapSlotElement, {
     scrollwheel: false,
     zoom: 6,
-    center: {lat: 52.5018, lng: 13.41115439},
+    center: { lat: 52.5018, lng: 13.41115439 },
     mapTypeId: GMaps.MapTypeId.ROADMAP
   });
 
@@ -88,7 +90,7 @@ function initMap (scope, GMaps, mapSlotElement) {
   });
 }
 
-function fromLatLng (latLng) {
+function fromLatLng(latLng) {
   if (latLng) {
     return { lat: latLng.lat(), lon: latLng.lng() };
   } else {
@@ -96,9 +98,9 @@ function fromLatLng (latLng) {
   }
 }
 
-function toLatLng (location) {
+function toLatLng(location) {
   if (location && isNumber(location.lat) && isNumber(location.lon)) {
-    return {lat: location.lat, lng: location.lon};
+    return { lat: location.lat, lng: location.lon };
   } else {
     return null;
   }

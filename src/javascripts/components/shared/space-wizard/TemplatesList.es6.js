@@ -10,8 +10,8 @@ const TemplatesList = createReactClass({
     selectedTemplate: PropTypes.object,
     onSelect: PropTypes.func.isRequired
   },
-  render () {
-    const {templates, selectedTemplate, onSelect} = this.props;
+  render() {
+    const { templates, selectedTemplate, onSelect } = this.props;
 
     if (!templates) {
       return null;
@@ -20,33 +20,31 @@ const TemplatesList = createReactClass({
     return (
       <div className="create-new-space__templates__inner">
         <div className="create-new-space__templates__nav">
-          {
-            templates.map((template) => {
-              const isSelected = get(selectedTemplate, 'sys.id') === get(template, 'sys.id');
-              // TODO show template.svgicon
-              return (
-                <a
-                  key={get(template, 'sys.id')}
-                  className={`create-new-space__templates__navitem ${isSelected && 'selected'}`}
-                  data-test-id={`space-template-template.id`}
-                  onClick={() => onSelect(template)}>
-                  {template.name}
-                </a>
-              );
-            })
-          }
+          {templates.map(template => {
+            const isSelected = get(selectedTemplate, 'sys.id') === get(template, 'sys.id');
+            // TODO show template.svgicon
+            return (
+              <a
+                key={get(template, 'sys.id')}
+                className={`create-new-space__templates__navitem ${isSelected && 'selected'}`}
+                data-test-id={`space-template-template.id`}
+                onClick={() => onSelect(template)}>
+                {template.name}
+              </a>
+            );
+          })}
         </div>
-        {
-          selectedTemplate &&
+        {selectedTemplate && (
           <div className="create-new-space__templates__description">
             <img
               className="create-new-space__templates__image"
-              src={get(selectedTemplate, 'image.fields.file.url')} />
+              src={get(selectedTemplate, 'image.fields.file.url')}
+            />
             <div className="create-new-space__templates__text">
-              <div dangerouslySetInnerHTML={{__html: selectedTemplate.descriptionV2}} />
+              <div dangerouslySetInnerHTML={{ __html: selectedTemplate.descriptionV2 }} />
             </div>
           </div>
-        }
+        )}
       </div>
     );
   }

@@ -1,17 +1,17 @@
 import $controller from '$controller';
 import $rootScope from '$rootScope';
 
-import {deepFreeze} from 'utils/Freeze';
+import { deepFreeze } from 'utils/Freeze';
 import * as K from 'utils/kefir';
-import {truncate} from 'stringUtils';
-import {cloneDeep, find, constant} from 'lodash';
+import { truncate } from 'stringUtils';
+import { cloneDeep, find, constant } from 'lodash';
 
 import spaceContext from 'spaceContext';
 import notifications from 'notification';
 import localeStore from 'TheLocaleStore';
 import contextHistory from 'navigation/Breadcrumbs/History';
 import $state from '$state';
-import {user$} from 'services/TokenStore';
+import { user$ } from 'services/TokenStore';
 import logger from 'logger';
 
 import DataFields from 'EntityEditor/DataFields';
@@ -21,15 +21,13 @@ import * as crumbFactory from 'navigation/Breadcrumbs/Factory';
 import * as Validator from './Validator';
 import * as Focus from './Focus';
 import initDocErrorHandler from './DocumentErrorHandler';
-import {makeNotify} from './Notifications';
-import installTracking, {trackEntryView} from './Tracking';
-
+import { makeNotify } from './Notifications';
+import installTracking, { trackEntryView } from './Tracking';
 
 import { loadEntry } from 'app/entity_editor/DataLoader';
 import { onFeatureFlag } from 'utils/LaunchDarkly';
 
-const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG =
-  'feature-at-05-2018-sliding-entry-editor-multi-level';
+const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG = 'feature-at-05-2018-sliding-entry-editor-multi-level';
 
 /**
  * @ngdoc type
@@ -56,7 +54,7 @@ const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG =
  * @scope.requires {Data.FieldControl[]} formControls
  *   Passed to FormWidgetsController to render field controls
  */
-export default async function create ($scope, entryId) {
+export default async function create($scope, entryId) {
   $scope.context = {};
   let editorData;
   try {
@@ -76,8 +74,8 @@ export default async function create ($scope, entryId) {
   // add current state
   contextHistory.add(crumbFactory.Entry(editorData.entity.getSys(), $scope.context));
 
-  const editorContext = $scope.editorContext = {};
-  const entityInfo = editorContext.entityInfo = editorData.entityInfo;
+  const editorContext = ($scope.editorContext = {});
+  const entityInfo = (editorContext.entityInfo = editorData.entityInfo);
 
   const notify = makeNotify('Entry', () => '“' + $scope.title + '”');
 
@@ -90,8 +88,8 @@ export default async function create ($scope, entryId) {
   $scope.otDoc = doc;
   initDocErrorHandler($scope, doc.state.error$);
 
-  K.onValueScope($scope, doc.status$, (status) => {
-    $scope.props = {status, entityLabel: 'entry'};
+  K.onValueScope($scope, doc.status$, status => {
+    $scope.props = { status, entityLabel: 'entry' };
   });
 
   installTracking(entityInfo, doc, K.scopeLifeline($scope));
@@ -102,7 +100,9 @@ export default async function create ($scope, entryId) {
       currentSlideLevel: $scope.$parent.entities.length,
       locale: localeStore.getDefaultLocale().internal_code,
       editorType: $scope.$parent.entities.length > 1 ? 'slide_in_editor' : 'entry_editor',
-      customWidgets: (editorData.fieldControls.form || []).filter(w => w.custom).map(w => w.trackingData)
+      customWidgets: (editorData.fieldControls.form || [])
+        .filter(w => w.custom)
+        .map(w => w.trackingData)
     });
   } catch (error) {
     logger.logError(error);
@@ -143,21 +143,14 @@ export default async function create ($scope, entryId) {
     $scope.title = truncate(title, 50);
   });
 
-  $rootScope.$on(
-    '$stateChangeStart',
-    (_event, _toState, toParams, _fromState, fromParams) => {
-      if (
-        fromParams.bulkEditor &&
-        !toParams.bulkEditor &&
-        $scope.referenceContext
-      ) {
-        $scope.referenceContext.close();
-      }
+  $rootScope.$on('$stateChangeStart', (_event, _toState, toParams, _fromState, fromParams) => {
+    if (fromParams.bulkEditor && !toParams.bulkEditor && $scope.referenceContext) {
+      $scope.referenceContext.close();
     }
-  );
+  });
 
   editorContext.editReferences = (fieldApiName, locale, index, cb) => {
-    const bulkEditorParam = {bulkEditor: `${fieldApiName}:${locale}:${index}`};
+    const bulkEditorParam = { bulkEditor: `${fieldApiName}:${locale}:${index}` };
     const crumb = cloneDeep(crumbFactory.Entry(editorData.entity.data.sys, $scope.context));
     crumb.link.params = {
       ...crumb.link.params,
@@ -166,7 +159,7 @@ export default async function create ($scope, entryId) {
     $state.go('.', bulkEditorParam);
     contextHistory.add(crumb);
     $scope.referenceContext = createReferenceContext(fieldApiName, locale, index, () => {
-      $state.go('.', {bulkEditor: ''});
+      $state.go('.', { bulkEditor: '' });
       cb();
     });
   };
@@ -179,14 +172,14 @@ export default async function create ($scope, entryId) {
     $scope.inlineEditor = !$scope.inlineEditor;
   };
 
-  function createReferenceContext (fieldApiName, locale, index, cb) {
+  function createReferenceContext(fieldApiName, locale, index, cb) {
     // The links$ property should end when the editor is closed
-    const field = find(entityInfo.contentType.fields, {apiName: fieldApiName});
+    const field = find(entityInfo.contentType.fields, { apiName: fieldApiName });
     const lifeline = K.createBus();
     const links$ = K.endWith(
       doc.valuePropertyAt(['fields', field.id, locale]),
       lifeline.stream
-    ).map((links) => links || []);
+    ).map(links => links || []);
 
     notifications.clearSeen();
     return {
@@ -195,13 +188,13 @@ export default async function create ($scope, entryId) {
       editorSettings: deepFreeze(cloneDeep($scope.preferences)),
       parentId: entityInfo.id,
       field,
-      add: function (link) {
+      add: function(link) {
         return doc.pushValueAt(['fields', field.id, locale], link);
       },
-      remove: function (index) {
+      remove: function(index) {
         return doc.removeValueAt(['fields', field.id, locale, index]);
       },
-      close: function () {
+      close: function() {
         lifeline.end();
         $scope.referenceContext = null;
         notifications.clearSeen();
@@ -212,9 +205,8 @@ export default async function create ($scope, entryId) {
     };
   }
 
-
   $scope.$on('scroll-editor', (_ev, scrollTop) => {
-    contextHistory.extendCurrent({scroll: scrollTop});
+    contextHistory.extendCurrent({ scroll: scrollTop });
   });
 
   $scope.user = K.getValue(user$);
@@ -252,7 +244,7 @@ export default async function create ($scope, entryId) {
   $scope.fields = DataFields.create(fields, $scope.otDoc);
   $scope.transformedContentTypeData = ContentTypes.internalToPublic(contentTypeData);
 
-  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, (flagValue) => {
+  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, flagValue => {
     $scope.shouldShowBreadcrumbs = flagValue !== 2;
   });
 }

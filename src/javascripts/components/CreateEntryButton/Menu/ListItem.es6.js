@@ -3,7 +3,7 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import Highlighter from 'react-highlight-words';
 
-export default function ListItem ({
+export default function ListItem({
   contentType,
   index,
   isHighlighted,
@@ -18,8 +18,7 @@ export default function ListItem ({
       role="menuitem"
       className={`context-menu__list-item ${isHighlighted ? 'active' : ''}`}
       data-test-id="contentType"
-      onClick={() => onSelect(contentType)}
-    >
+      onClick={() => onSelect(contentType)}>
       <Highlighter
         searchWords={[searchTerm]}
         textToHighlight={label}

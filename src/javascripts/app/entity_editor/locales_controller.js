@@ -11,7 +11,7 @@ angular
    */
   .controller('entityEditor/LocalesController', [
     'require',
-    function (require) {
+    function(require) {
       const localeStore = require('TheLocaleStore');
       const modalDialog = require('modalDialog');
 
@@ -29,7 +29,7 @@ angular
        * Executing this command will open a dialog that allows the user to
        * select the active locales.
        */
-      controller.changeActive = function () {
+      controller.changeActive = function() {
         const locales = getLocalesWithActiveFlag(availableLocales);
         modalDialog
           .open({
@@ -39,7 +39,7 @@ angular
               locales: locales
             }
           })
-          .promise.then(function () {
+          .promise.then(function() {
             const active = _.filter(locales, 'active');
             localeStore.setActiveLocales(active);
             refreshActiveLocales();
@@ -63,10 +63,12 @@ angular
        *
        * @param {API.Locale} locale
        */
-      controller.buildPillProps = (locale) => ({
+      controller.buildPillProps = locale => ({
         label: locale.code,
         onClose: !locale.default
-          ? function () { controller.deactivate(locale); }
+          ? function() {
+              controller.deactivate(locale);
+            }
           : undefined
       });
 
@@ -87,7 +89,7 @@ angular
        * @name LocalesController#active
        * @type {API.Locale[]}
        */
-      function refreshActiveLocales () {
+      function refreshActiveLocales() {
         controller.active = localeStore.getActiveLocales();
       }
 
@@ -95,8 +97,8 @@ angular
        * Returns an array of copies of `locales` with an additional
        * `active` property.
        */
-      function getLocalesWithActiveFlag (locales) {
-        return _.map(locales, function (locale) {
+      function getLocalesWithActiveFlag(locales) {
+        return _.map(locales, function(locale) {
           return _.extend(
             {
               active: localeStore.isLocaleActive(locale)

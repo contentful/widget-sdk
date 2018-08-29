@@ -17,7 +17,7 @@ const TEA_SPACE_ID = environment.settings.contentful.TEASpaceId;
  * @param {object} template
  * @returns {object} - template with updated content types and editor interfaces
  */
-export function enrichTemplate (templateInfo, template) {
+export function enrichTemplate(templateInfo, template) {
   // we enrich only TEA for several reasons:
   // 1. TEA is created by default
   // 2. We plan to retire other templates in the future
@@ -38,7 +38,7 @@ export function enrichTemplate (templateInfo, template) {
  * @param {object} template
  *
  */
-function enrichTEA (template) {
+function enrichTEA(template) {
   return {
     ...template,
     contentTypes: template.contentTypes.map(contentType => {

@@ -15,9 +15,9 @@ export default class WebhookSegmentationTable extends React.Component {
   static propTypes = {
     values: PropTypes.object.isRequired,
     onChange: PropTypes.func.isRequired
-  }
+  };
 
-  renderCheckbox (entityType, action) {
+  renderCheckbox(entityType, action) {
     const key = `${entityType}.${action}`;
 
     if (isActionDisabled(entityType, action)) {
@@ -28,7 +28,7 @@ export default class WebhookSegmentationTable extends React.Component {
       );
     }
 
-    const {values, onChange} = this.props;
+    const { values, onChange } = this.props;
 
     return (
       <td key={key} className={entityType === '*' ? 'x--highlighted-cell' : ''}>
@@ -44,7 +44,7 @@ export default class WebhookSegmentationTable extends React.Component {
     );
   }
 
-  renderRow (entityType) {
+  renderRow(entityType) {
     return (
       <tr key={entityType}>
         {['*'].concat(ACTIONS).map(action => this.renderCheckbox(entityType, action))}
@@ -52,19 +52,21 @@ export default class WebhookSegmentationTable extends React.Component {
     );
   }
 
-  render () {
+  render() {
     return (
       <table className="webhook-editor__segmentation-table">
         <thead>
           <tr>
-            <th className="x--empty-cell"></th>
-            {ACTIONS.map(a => ACTION_LABELS[a]).map(a => <th key={a}>{a}</th>)}
+            <th className="x--empty-cell" />
+            {ACTIONS.map(a => ACTION_LABELS[a]).map(a => (
+              <th key={a}>{a}</th>
+            ))}
           </tr>
         </thead>
         <tbody>
           {ENTITY_TYPES.map(entityType => this.renderRow(entityType))}
           <tr>
-            <td className="x--empty-cell"></td>
+            <td className="x--empty-cell" />
             {ACTIONS.map(action => this.renderCheckbox('*', action))}
           </tr>
         </tbody>

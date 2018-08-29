@@ -15,6 +15,6 @@ export default addUserOrgSpace((eventName, data) => ({
   }
 }));
 
-function extractAction (eventName) {
+function extractAction(eventName) {
   return eventName.split(':')[1];
 }

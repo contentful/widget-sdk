@@ -2,13 +2,13 @@ import sinon from 'npm:sinon';
 import { map, uniq, find, filter, every } from 'lodash';
 
 describe('field factory', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     this.fieldFactory = this.$inject('fieldFactory');
   });
 
   describe('type descriptor', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.types = this.fieldFactory.types;
     });
 
@@ -29,7 +29,7 @@ describe('field factory', () => {
   });
 
   describe('#getLabel', () => {
-    it('returns single value labels from name', function () {
+    it('returns single value labels from name', function() {
       const fieldFactory = this.fieldFactory;
       fieldFactory.types.forEach(descriptor => {
         const field = fieldFactory.createTypeInfo(descriptor);
@@ -38,7 +38,7 @@ describe('field factory', () => {
       });
     });
 
-    it('returns list labels from name', function () {
+    it('returns list labels from name', function() {
       const fieldFactory = this.fieldFactory;
       const listFieldDescriptors = filter(fieldFactory.all, { hasListVariant: true });
       listFieldDescriptors.forEach(descriptor => {
@@ -50,7 +50,7 @@ describe('field factory', () => {
   });
 
   describe('#createTypeInfo', () => {
-    it('creates entry link info', function () {
+    it('creates entry link info', function() {
       const descriptor = find(this.fieldFactory.types, { name: 'Entry' });
       const typeInfo = this.fieldFactory.createTypeInfo(descriptor);
       expect(typeInfo).toEqual({
@@ -59,7 +59,7 @@ describe('field factory', () => {
       });
     });
 
-    it('creates entry list link info', function () {
+    it('creates entry list link info', function() {
       const descriptor = find(this.fieldFactory.types, { name: 'Entry' });
       const typeInfo = this.fieldFactory.createTypeInfo(descriptor, true);
       expect(typeInfo).toEqual({
@@ -71,7 +71,7 @@ describe('field factory', () => {
       });
     });
 
-    it('creates symbol list info', function () {
+    it('creates symbol list info', function() {
       const descriptor = find(this.fieldFactory.types, { name: 'Symbol' });
       const typeInfo = this.fieldFactory.createTypeInfo(descriptor, true);
       expect(typeInfo).toEqual({
@@ -84,32 +84,20 @@ describe('field factory', () => {
   });
 
   describe('#getTypeName()', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.getTypeName = this.fieldFactory.getTypeName;
     });
 
-    itResolves(
-      { type: 'Symbol' },
-      'Symbol'
-    );
+    itResolves({ type: 'Symbol' }, 'Symbol');
 
-    itResolves(
-      { type: 'Array', items: { type: 'Symbol' } },
-      'Symbols'
-    );
+    itResolves({ type: 'Array', items: { type: 'Symbol' } }, 'Symbols');
 
-    itResolves(
-      { type: 'Link', linkType: 'Asset' },
-      'Asset'
-    );
+    itResolves({ type: 'Link', linkType: 'Asset' }, 'Asset');
 
-    itResolves(
-      { type: 'Array', items: { type: 'Link', linkType: 'Asset' } },
-      'Assets'
-    );
+    itResolves({ type: 'Array', items: { type: 'Link', linkType: 'Asset' } }, 'Assets');
 
-    function itResolves (type, name) {
-      it('resolves "' + name + '"', function () {
+    function itResolves(type, name) {
+      it('resolves "' + name + '"', function() {
         const name = this.getTypeName(type);
         expect(name).toEqual(name);
       });
@@ -117,17 +105,16 @@ describe('field factory', () => {
   });
 
   describe('#getLocaleCodes()', () => {
-    it('returns default locale for non-localized field', function () {
+    it('returns default locale for non-localized field', function() {
       const LS = this.$inject('TheLocaleStore');
       LS.getDefaultLocale = sinon.stub().returns({ internal_code: 'DEF' });
       const codes = this.fieldFactory.getLocaleCodes({ localized: false });
       expect(codes).toEqual(['DEF']);
     });
 
-    it('returns all private locales for localized field', function () {
+    it('returns all private locales for localized field', function() {
       const LS = this.$inject('TheLocaleStore');
-      LS.getPrivateLocales = sinon.stub().returns(
-        [{ internal_code: 'A' }, { internal_code: 'B' }]);
+      LS.getPrivateLocales = sinon.stub().returns([{ internal_code: 'A' }, { internal_code: 'B' }]);
       const codes = this.fieldFactory.getLocaleCodes({ localized: true });
       expect(codes).toEqual(['A', 'B']);
     });

@@ -25,7 +25,7 @@ const SpaceWizardTransformer = addUserOrgSpace((eventName, data) => {
 
 export default SpaceWizardTransformer;
 
-export function getSpaceWizardData (action, data) {
+export function getSpaceWizardData(action, data) {
   return {
     // The current action the user is performing.
     //
@@ -65,22 +65,19 @@ export function getSpaceWizardData (action, data) {
 
   Ensures that the required properties are present and of the right type.
  */
-function validateSpaceWizardData (wizardData) {
+function validateSpaceWizardData(wizardData) {
   const requiredData = {
-    'intended_action': {
-      'type': 'string',
-      'enum': [
-        'create',
-        'change_space_type'
-      ]
+    intended_action: {
+      type: 'string',
+      enum: ['create', 'change_space_type']
     },
-    'current_step': {
-      'type': ['string', 'null'],
-      'maxLength': 32
+    current_step: {
+      type: ['string', 'null'],
+      maxLength: 32
     },
-    'action': {
-      'type': 'string',
-      'enum': [
+    action: {
+      type: 'string',
+      enum: [
         'open',
         'cancel',
         'confirm',
@@ -100,7 +97,7 @@ function validateSpaceWizardData (wizardData) {
     boolean: value => typeof value === 'boolean'
   };
 
-  function test (types, value) {
+  function test(types, value) {
     return types.reduce((anyPass, type) => {
       return anyPass || tests[type](value);
     }, false);

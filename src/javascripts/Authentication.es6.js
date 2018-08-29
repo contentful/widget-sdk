@@ -1,4 +1,4 @@
-import {get} from 'lodash';
+import { get } from 'lodash';
 import $location from '$location';
 import $window from '$window';
 import * as K from 'utils/kefir';
@@ -45,9 +45,8 @@ const localStore = getStore('local');
 
 const afterLoginPathStore = store.forKey('redirect_after_login');
 
-const tokenStore = Config.env === 'development'
-  ? store.forKey('token')
-  : sessionStore.forKey('token');
+const tokenStore =
+  Config.env === 'development' ? store.forKey('token') : sessionStore.forKey('token');
 /**
  * @description
  * Get the current token.
@@ -57,13 +56,12 @@ const tokenStore = Config.env === 'development'
  *
  * @returns {Promise<string>}
  */
-export function getToken () {
+export function getToken() {
   return tokenMVar.read();
 }
 
 const tokenBus = K.createPropertyBus(null);
 export const token$ = tokenBus.property;
-
 
 /**
  * @description
@@ -84,7 +82,7 @@ export const token$ = tokenBus.property;
 export const refreshToken = createExclusiveTask(() => {
   tokenStore.remove();
   tokenMVar.empty();
-  return fetchNewToken().then((token) => {
+  return fetchNewToken().then(token => {
     if (token) {
       tokenStore.set(token);
       updateToken(token);
@@ -94,7 +92,6 @@ export const refreshToken = createExclusiveTask(() => {
     }
   });
 }).call;
-
 
 /**
  * @description
@@ -112,7 +109,7 @@ export const refreshToken = createExclusiveTask(() => {
  *
  * This function is only called when the app is booted.
  */
-export function init () {
+export function init() {
   // We need to get token from location hash when running the app on localhost.
   // See https://github.com/contentful/user_interface#using-staging-and-production-apis
   if (Config.env === 'development') {
@@ -137,8 +134,7 @@ export function init () {
   localStore.externalChanges(LOGOUT_KEY).onValue(logout);
 }
 
-
-function refreshAndRedirect () {
+function refreshAndRedirect() {
   refreshToken();
 
   const afterLoginPath = afterLoginPathStore.get();
@@ -152,7 +148,6 @@ function refreshAndRedirect () {
   }
 }
 
-
 /**
  * @description
  * Revoke the current token and remove it from local storage. Redirect
@@ -160,8 +155,8 @@ function refreshAndRedirect () {
  *
  * @returns {Promise<void>}
  */
-export function logout () {
-  return runTask(function* () {
+export function logout() {
+  return runTask(function*() {
     const token = yield tokenMVar.take();
     tokenStore.remove();
     localStore.set(LOGOUT_KEY, true);
@@ -173,17 +168,15 @@ export function logout () {
   });
 }
 
-
 /**
  * @description
  * Cancels user by clearing browser storage and redirecting to 'goodbye' page.
  */
-export function cancelUser () {
+export function cancelUser() {
   tokenStore.remove();
   afterLoginPathStore.remove();
   setLocation(Config.websiteUrl('goodbye'));
 }
-
 
 /**
  * Redirect to the login page.
@@ -191,14 +184,13 @@ export function cancelUser () {
  * We store the path that was being opened so that we can redirect when
  * we return from the login page.
  */
-export function redirectToLogin () {
+export function redirectToLogin() {
   tokenStore.remove();
   afterLoginPathStore.set($location.url());
   setLocation(Config.authUrl('login'));
 }
 
-
-function updateToken (value) {
+function updateToken(value) {
   // We sync the token between windows using the 'storage' event. To
   // prevent unecessary updates we only update the stored value when it
   // has changed
@@ -209,26 +201,27 @@ function updateToken (value) {
   tokenMVar.put(value);
 }
 
-
-function setLocation (url) {
+function setLocation(url) {
   $window.location = url;
 }
-
 
 /**
  * Sends a request to Gatekeeper to revoke the given token.
  */
-function revokeToken (token) {
-  return postForm(Config.authUrl('oauth/revoke'), {
-    token,
-    client_id: OAUTH_CLIENT_ID
-  }, {
-    headers: {
-      'Authorization': `Bearer ${token}`
+function revokeToken(token) {
+  return postForm(
+    Config.authUrl('oauth/revoke'),
+    {
+      token,
+      client_id: OAUTH_CLIENT_ID
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     }
-  });
+  );
 }
-
 
 /**
  * Make a request to Gatekeeper’s OAuth endpoint to try to obtain a new
@@ -239,25 +232,30 @@ function revokeToken (token) {
  *
  * @returns {Promise<string?>}
  */
-function fetchNewToken () {
-  return postForm(Config.authUrl('oauth/token'), {
-    grant_type: 'password',
-    client_id: OAUTH_CLIENT_ID,
-    // redirect_uri: APP_HOST,
-    scope: TOKEN_SCOPE
-  }, {
-    // We include the cookies from the Gatekeeper domain in the
-    // request. This is used to authenticate and give us a new token.
-    withCredentials: true
-  })
-  .then((response) => {
-    return get(response, 'data.access_token');
-  }).catch(() => {
-    return null;
-  });
+function fetchNewToken() {
+  return postForm(
+    Config.authUrl('oauth/token'),
+    {
+      grant_type: 'password',
+      client_id: OAUTH_CLIENT_ID,
+      // redirect_uri: APP_HOST,
+      scope: TOKEN_SCOPE
+    },
+    {
+      // We include the cookies from the Gatekeeper domain in the
+      // request. This is used to authenticate and give us a new token.
+      withCredentials: true
+    }
+  )
+    .then(response => {
+      return get(response, 'data.access_token');
+    })
+    .catch(() => {
+      return null;
+    });
 }
 
-function loadTokenFromHash () {
+function loadTokenFromHash() {
   const match = $location.hash().match(/access_token=([\w-]+)/);
   const token = match && match[1];
   if (token) {

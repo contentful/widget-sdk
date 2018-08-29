@@ -7,22 +7,15 @@ angular.module('contentful').directive('cfBackNav', [
     const BackNav = require('app/entity_editor/Components/BackNav').default;
     const LD = require('utils/LaunchDarkly');
 
-    const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG =
-    'feature-at-05-2018-sliding-entry-editor-multi-level';
+    const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG = 'feature-at-05-2018-sliding-entry-editor-multi-level';
 
     return {
-      link: function link ($scope, elem) {
+      link: function link($scope, elem) {
         const state = {
           slideInFeatureFlagValue: 0
         };
-        function render (props) {
-          ReactDOM.render(
-            React.createElement(
-              BackNav,
-              _.extend({}, props)
-            ),
-            elem[0]
-          );
+        function render(props) {
+          ReactDOM.render(React.createElement(BackNav, _.extend({}, props)), elem[0]);
         }
 
         LD.onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, flagValue => {

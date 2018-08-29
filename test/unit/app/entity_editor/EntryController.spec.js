@@ -1,12 +1,12 @@
-import {create as createDocument} from 'helpers/mocks/entity_editor_document';
+import { create as createDocument } from 'helpers/mocks/entity_editor_document';
 import * as K from 'utils/kefir';
 
-describe('Entry Editor Controller', function () {
-  this.user = {firstName: 'John', lastName: 'Doe', sys: {id: '123'}};
+describe('Entry Editor Controller', function() {
+  this.user = { firstName: 'John', lastName: 'Doe', sys: { id: '123' } };
   const userBus = K.createPropertyBus(null);
 
-  beforeEach(function () {
-    module('contentful/test', ($provide) => {
+  beforeEach(function() {
+    module('contentful/test', $provide => {
       $provide.value('app/entity_editor/Tracking', sinon.stub());
       $provide.value('app/entity_editor/Validator', {
         createForEntry: sinon.stub()
@@ -57,7 +57,7 @@ describe('Entry Editor Controller', function () {
     contextHistory.set([{}]);
 
     this.spaceContext = _.extend(this.$inject('spaceContext'), {
-      entryTitle: function (entry) {
+      entryTitle: function(entry) {
         return _.get(entry, 'data.fields.title');
       }
     });
@@ -67,12 +67,12 @@ describe('Entry Editor Controller', function () {
     this.$apply();
   });
 
-  it('should expose the current user', function () {
+  it('should expose the current user', function() {
     expect(this.scope.user).toBe(this.user);
   });
 
   describe('when the entry title changes', () => {
-    it('should update the tab title', function () {
+    it('should update the tab title', function() {
       this.scope.otDoc.setValueAt(['fields', 'title'], 'foo');
       this.$apply();
       expect(this.scope.context.title).toEqual('foo');
@@ -83,7 +83,7 @@ describe('Entry Editor Controller', function () {
   });
 
   describe('scope.context.dirty', () => {
-    it('changes according to doc state', function () {
+    it('changes according to doc state', function() {
       this.scope.otDoc.state.isDirty$.set(true);
       this.$apply();
       expect(this.scope.context.dirty).toBe(true);

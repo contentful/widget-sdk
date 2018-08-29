@@ -1,17 +1,17 @@
 describe('Snowplow events service', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test', $provide => {
-      $provide.value('analytics/snowplow/transformers/Generic', _.constant({foo: 'bar'}));
+      $provide.value('analytics/snowplow/transformers/Generic', _.constant({ foo: 'bar' }));
     });
     this.Events = this.$inject('analytics/snowplow/Events');
   });
 
-  it('#transform()', function () {
+  it('#transform()', function() {
     const transformed = this.Events.transform('learn:language_selected', {});
-    expect(transformed).toEqual({foo: 'bar'});
+    expect(transformed).toEqual({ foo: 'bar' });
   });
 
-  it('#getSchema()', function () {
+  it('#getSchema()', function() {
     expect(this.Events.getSchema('learn:language_selected').name).toBe('generic');
   });
 });

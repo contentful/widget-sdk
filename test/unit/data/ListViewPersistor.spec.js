@@ -2,7 +2,7 @@ describe('ListViewPersistor', () => {
   let store, $location, qs, createPersistor, createViewMigrator;
   const STORE_KEY = 'lastFilterQueryString.testEntity.SPACE_ID';
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
 
     const getStore = this.$inject('TheStore').getStore;
@@ -17,22 +17,22 @@ describe('ListViewPersistor', () => {
   });
 
   describe('#read', () => {
-    it('reads data from query string by default', function* () {
+    it('reads data from query string by default', function*() {
       $location.search.returns({ fromSearch: true });
       expect((yield qs.read()).fromSearch).toBe(true);
     });
 
-    it('falls back to data from localStorage', function* () {
-      store.set(STORE_KEY, {test: true});
+    it('falls back to data from localStorage', function*() {
+      store.set(STORE_KEY, { test: true });
       expect((yield qs.read()).test).toBe(true);
     });
 
-    it('restores nested structure', function* () {
+    it('restores nested structure', function*() {
       $location.search.returns({ 'x.y': true });
       expect((yield qs.read()).x.y).toBe(true);
     });
 
-    it('handles boolean fields', function* () {
+    it('handles boolean fields', function*() {
       $location.search.returns({ contentTypeHidden: 'false' });
       expect((yield qs.read()).contentTypeHidden).toBe(false);
     });
@@ -46,15 +46,15 @@ describe('ListViewPersistor', () => {
         $location.search.returns({ searchTerm: 'some text' });
       });
 
-      it('removes `searchTerm`', function* () {
+      it('removes `searchTerm`', function*() {
         expect((yield qs.read()).searchTerm).toBe(undefined);
       });
 
-      it('adds `searchText`', function* () {
+      it('adds `searchText`', function*() {
         expect((yield qs.read()).searchText).toBe('some text');
       });
 
-      it('adds (empty) `searchFilters`', function* () {
+      it('adds (empty) `searchFilters`', function*() {
         expect((yield qs.read()).searchFilters).toEqual([]);
       });
     });
@@ -89,7 +89,7 @@ describe('ListViewPersistor', () => {
 
     it('puts last QS into the store', () => {
       qs.save({ test: true });
-      expect(store.get(STORE_KEY)).toEqual({test: true});
+      expect(store.get(STORE_KEY)).toEqual({ test: true });
     });
   });
 });

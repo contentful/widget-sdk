@@ -4,9 +4,10 @@
  * Provide a list of asset types and an `update` function to set the
  * asset type validation provided by the `ValidationDialogController`.
  */
-angular.module('contentful')
-.controller('ValidationAssetTypesController',
-  ['$scope', 'require', function ($scope, require) {
+angular.module('contentful').controller('ValidationAssetTypesController', [
+  '$scope',
+  'require',
+  function($scope, require) {
     const mimetype = require('mimetype');
     const controller = this;
 
@@ -21,7 +22,11 @@ angular.module('contentful')
       $scope.validate();
     };
 
-    function getSelectedGroups () {
-      return _(controller.types).filter('selected').map('name').value();
+    function getSelectedGroups() {
+      return _(controller.types)
+        .filter('selected')
+        .map('name')
+        .value();
     }
-  }]);
+  }
+]);

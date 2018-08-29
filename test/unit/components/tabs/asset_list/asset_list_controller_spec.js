@@ -7,16 +7,16 @@ describe('Asset List Controller', () => {
     scope = spaceContext = stubs = $q = getAssets = null;
   });
 
-  function createAssets (n) {
+  function createAssets(n) {
     const assets = _.map(new Array(n), () => ({
       isDeleted: _.constant(false),
       data: { fields: [] }
     }));
-    Object.defineProperty(assets, 'total', {value: n});
+    Object.defineProperty(assets, 'total', { value: n });
     return assets;
   }
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test', $provide => {
       stubs = $provide.makeStubs([
         'archived',
@@ -71,13 +71,12 @@ describe('Asset List Controller', () => {
 
     spaceContext = this.$inject('mocks/spaceContext').init();
     spaceContext.space = space;
-    spaceContext.publishedCTs = {getAllBare: () => []};
+    spaceContext.publishedCTs = { getAllBare: () => [] };
 
     const $controller = this.$inject('$controller');
-    $controller('AssetListController', {$scope: scope});
+    $controller('AssetListController', { $scope: scope });
     scope.selection.updateList = sinon.stub();
   });
-
 
   describe('on search change', () => {
     beforeEach(() => {
@@ -103,7 +102,6 @@ describe('Asset List Controller', () => {
       });
     });
   });
-
 
   describe('page parameters change trigger assets reset', () => {
     beforeEach(() => {
@@ -222,18 +220,18 @@ describe('Asset List Controller', () => {
   });
 
   describe('Api Errors', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.handler = this.$inject('ReloadNotification').apiErrorHandler;
-      stubs.getAssets.returns($q.reject({statusCode: 500}));
+      stubs.getAssets.returns($q.reject({ statusCode: 500 }));
     });
 
-    it('should cause resetAssets to show an error message', function () {
+    it('should cause resetAssets to show an error message', function() {
       scope.searchController.resetAssets();
       scope.$apply();
       sinon.assert.called(this.handler);
     });
 
-    it('should cause loadMore to show an error message', function () {
+    it('should cause loadMore to show an error message', function() {
       scope.searchController.loadMore();
       scope.$apply();
       sinon.assert.called(this.handler);
@@ -346,25 +344,37 @@ describe('Asset List Controller', () => {
   });
 
   describe('creating multiple assets', () => {
-    beforeEach(function () {
-      const files = [{fileName: 'x.jpg'}, {fileName: 'y.png'}];
+    beforeEach(function() {
+      const files = [{ fileName: 'x.jpg' }, { fileName: 'y.png' }];
       scope.searchController.resetAssets = sinon.stub().resolves();
       spaceContext.space.createAsset = sinon.stub();
       stubs.pickMultiple.returns($q.resolve(files));
       stubs.getVersion.returns(2);
-      const entity = {process: stubs.process, getVersion: stubs.getVersion, publish: stubs.publish};
+      const entity = {
+        process: stubs.process,
+        getVersion: stubs.getVersion,
+        publish: stubs.publish
+      };
 
       spaceContext.space.createAsset
-        .onCall(0).returns($q.resolve(entity))
-        .onCall(1).returns($q.resolve(entity));
+        .onCall(0)
+        .returns($q.resolve(entity))
+        .onCall(1)
+        .returns($q.resolve(entity));
       stubs.publish
-        .onCall(0).returns($q.resolve())
-        .onCall(1).returns($q.resolve());
+        .onCall(0)
+        .returns($q.resolve())
+        .onCall(1)
+        .returns($q.resolve());
       stubs.process
-        .onCall(0).returns($q.resolve())
-        .onCall(1).returns($q.resolve())
-        .onCall(2).returns($q.resolve())
-        .onCall(3).returns($q.resolve());
+        .onCall(0)
+        .returns($q.resolve())
+        .onCall(1)
+        .returns($q.resolve())
+        .onCall(2)
+        .returns($q.resolve())
+        .onCall(3)
+        .returns($q.resolve());
 
       scope.createMultipleAssets();
       this.$apply();
@@ -384,9 +394,9 @@ describe('Asset List Controller', () => {
   });
 
   describe('#showNoAssetsAdvice', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       scope.context.view = {};
-      this.assertShowNoAssetsAdvice = ({total, term, searching, expected}) => {
+      this.assertShowNoAssetsAdvice = ({ total, term, searching, expected }) => {
         scope.searchController.paginator.setTotal(total);
         scope.context.view.searchText = term;
         scope.context.isSearching = searching;
@@ -394,20 +404,20 @@ describe('Asset List Controller', () => {
       };
     });
 
-    it('is true when there are no entries, no search term and not searching', function () {
-      this.assertShowNoAssetsAdvice({total: 0, term: null, searching: false, expected: true});
+    it('is true when there are no entries, no search term and not searching', function() {
+      this.assertShowNoAssetsAdvice({ total: 0, term: null, searching: false, expected: true });
     });
 
-    it('is false when there are entries', function () {
-      this.assertShowNoAssetsAdvice({total: 1, term: '', searching: false, expected: false});
+    it('is false when there are entries', function() {
+      this.assertShowNoAssetsAdvice({ total: 1, term: '', searching: false, expected: false });
     });
 
-    it('is false when there is a search term', function () {
-      this.assertShowNoAssetsAdvice({total: 0, term: 'foo', searching: false, expected: false});
+    it('is false when there is a search term', function() {
+      this.assertShowNoAssetsAdvice({ total: 0, term: 'foo', searching: false, expected: false });
     });
 
-    it('is false when the view is loading', function () {
-      this.assertShowNoAssetsAdvice({total: 0, term: '', searching: true, expected: false});
+    it('is false when the view is loading', function() {
+      this.assertShowNoAssetsAdvice({ total: 0, term: '', searching: true, expected: false });
     });
   });
 });

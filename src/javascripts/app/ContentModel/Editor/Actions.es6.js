@@ -1,4 +1,4 @@
-import {noop, cloneDeep, assign, map, get} from 'lodash';
+import { noop, cloneDeep, assign, map, get } from 'lodash';
 import logger from 'logger';
 import $q from '$q';
 import modalDialog from 'modalDialog';
@@ -30,7 +30,7 @@ import * as Analytics from 'analytics/Analytics';
  *   A promise that resolves to all the used content type IDs. It is passed to
  *   the duplication dialog to verify new IDs.
  */
-export default function create ($scope, contentTypeIds) {
+export default function create($scope, contentTypeIds) {
   const controller = {};
 
   /**
@@ -39,22 +39,24 @@ export default function create ($scope, contentTypeIds) {
    * @type {Command}
    */
   controller.delete = Command.create(startDeleteFlow, {
-    available: function () {
-      const deletableState = !$scope.context.isNew && (
-        $scope.contentType.canUnpublish() ||
-        !$scope.contentType.isPublished()
-      );
-      const denied = accessChecker.shouldHide('deleteContentType') ||
-                   accessChecker.shouldHide('unpublishContentType');
+    available: function() {
+      const deletableState =
+        !$scope.context.isNew &&
+        ($scope.contentType.canUnpublish() || !$scope.contentType.isPublished());
+      const denied =
+        accessChecker.shouldHide('deleteContentType') ||
+        accessChecker.shouldHide('unpublishContentType');
       return deletableState && !denied;
     },
-    disabled: function () {
-      return accessChecker.shouldDisable('deleteContentType') ||
-             accessChecker.shouldDisable('unpublishContentType');
+    disabled: function() {
+      return (
+        accessChecker.shouldDisable('deleteContentType') ||
+        accessChecker.shouldDisable('unpublishContentType')
+      );
     }
   });
 
-  function startDeleteFlow () {
+  function startDeleteFlow() {
     return checkRemovable().then(status => {
       if (status.isRemovable) {
         return confirmRemoval(status.isPublished);
@@ -64,7 +66,7 @@ export default function create ($scope, contentTypeIds) {
     }, ReloadNotification.basicErrorHandler);
   }
 
-  function checkRemovable () {
+  function checkRemovable() {
     const isPublished = $scope.contentType.isPublished();
     const canRead = accessChecker.canPerformActionOnEntryOfType('read', $scope.contentType.getId());
 
@@ -72,20 +74,25 @@ export default function create ($scope, contentTypeIds) {
       return $q.resolve(createStatusObject(true));
     }
 
-    return spaceContext.space.getEntries({
-      content_type: $scope.contentType.getId()
-    }).then(res => {
-      const count = res.length;
-      return createStatusObject(canRead && count < 1, count);
-    }, res => {
-      if (res.statusCode === 404 && !canRead) {
-        return createStatusObject(false);
-      } else {
-        return $q.reject(res);
-      }
-    });
+    return spaceContext.space
+      .getEntries({
+        content_type: $scope.contentType.getId()
+      })
+      .then(
+        res => {
+          const count = res.length;
+          return createStatusObject(canRead && count < 1, count);
+        },
+        res => {
+          if (res.statusCode === 404 && !canRead) {
+            return createStatusObject(false);
+          } else {
+            return $q.reject(res);
+          }
+        }
+      );
 
-    function createStatusObject (isRemovable, entryCount) {
+    function createStatusObject(isRemovable, entryCount) {
       return {
         isPublished: isPublished,
         isRemovable: isRemovable,
@@ -94,12 +101,12 @@ export default function create ($scope, contentTypeIds) {
     }
   }
 
-  function remove (isPublished) {
+  function remove(isPublished) {
     const unpub = isPublished ? unpublish() : $q.resolve();
     return unpub.then(sendDeleteRequest);
   }
 
-  function forbidRemoval (count) {
+  function forbidRemoval(count) {
     return modalDialog.open({
       template: 'content_type_removal_forbidden_dialog',
       scopeData: {
@@ -109,26 +116,29 @@ export default function create ($scope, contentTypeIds) {
     });
   }
 
-  function confirmRemoval (isPublished) {
+  function confirmRemoval(isPublished) {
     return modalDialog.open({
       template: 'content_type_removal_confirm_dialog',
       persistOnNavigation: true,
-      controller (scope) {
+      controller(scope) {
         assign(scope, {
           input: {},
           contentTypeName: $scope.contentType.data.name,
-          delete: Command.create(() => remove(isPublished)
-          .finally(() => {
-            scope.dialog.confirm();
-          }), {
-            disabled: () => scope.input.contentTypeName !== scope.contentTypeName
-          })
+          delete: Command.create(
+            () =>
+              remove(isPublished).finally(() => {
+                scope.dialog.confirm();
+              }),
+            {
+              disabled: () => scope.input.contentTypeName !== scope.contentTypeName
+            }
+          )
         });
       }
     });
   }
 
-  function trackEnforcedButtonClick (err) {
+  function trackEnforcedButtonClick(err) {
     // If we get reason(s), that means an enforcement is present
     const reason = get(err, 'body.details.reasons', null);
 
@@ -141,19 +151,20 @@ export default function create ($scope, contentTypeIds) {
     return $q.reject(err);
   }
 
-  function unpublish () {
-    return spaceContext.publishedCTs.unpublish($scope.contentType)
-      .then(() => {
+  function unpublish() {
+    return spaceContext.publishedCTs.unpublish($scope.contentType).then(
+      () => {
         $scope.publishedContentType = null;
-      }, (err) => {
-        logger.logServerWarn('Error deactivating Content Type', {error: err});
+      },
+      err => {
+        logger.logServerWarn('Error deactivating Content Type', { error: err });
         return $q.reject(err);
-      });
+      }
+    );
   }
 
-  function sendDeleteRequest () {
-    return $scope.contentType.delete()
-    .then(() => {
+  function sendDeleteRequest() {
+    return $scope.contentType.delete().then(() => {
       notify.deleteSuccess();
       return closeState();
     }, notify.deleteFail);
@@ -164,13 +175,16 @@ export default function create ($scope, contentTypeIds) {
    * @name ContentTypeActionsController#scope#cancel
    * @type {Command}
    */
-  controller.cancel = Command.create(() => // X.detail.fields -> X.list
-  $state.go('^.^.list'), {
-    available: function () {
-      return $scope.context.isNew;
+  controller.cancel = Command.create(
+    () =>
+      // X.detail.fields -> X.list
+      $state.go('^.^.list'),
+    {
+      available: function() {
+        return $scope.context.isNew;
+      }
     }
-  });
-
+  );
 
   /**
    * @ngdoc property
@@ -178,13 +192,15 @@ export default function create ($scope, contentTypeIds) {
    * @type {Command}
    */
   controller.save = Command.create(() => save(true), {
-    disabled: function () {
-      const dirty = $scope.contentTypeForm.$dirty ||
-                  $scope.contentType.hasUnpublishedChanges() ||
-                  !$scope.contentType.getPublishedVersion();
+    disabled: function() {
+      const dirty =
+        $scope.contentTypeForm.$dirty ||
+        $scope.contentType.hasUnpublishedChanges() ||
+        !$scope.contentType.getPublishedVersion();
       const valid = !allFieldsInactive($scope.contentType);
-      const denied = accessChecker.shouldDisable('updateContentType') ||
-                   accessChecker.shouldDisable('publishContentType');
+      const denied =
+        accessChecker.shouldDisable('updateContentType') ||
+        accessChecker.shouldDisable('publishContentType');
 
       return !dirty || !valid || denied;
     }
@@ -195,7 +211,7 @@ export default function create ($scope, contentTypeIds) {
   // case.
   controller.saveAndClose = () => save(false);
 
-  function save (redirect) {
+  function save(redirect) {
     ctHelpers.assureDisplayField($scope.contentType.data);
 
     if (!$scope.validate()) {
@@ -204,46 +220,52 @@ export default function create ($scope, contentTypeIds) {
       return $q.reject();
     }
 
-    return $scope.contentType.save()
-    .then(publishContentType)
-    .then(published => {
-      $scope.publishedContentType = cloneDeep(published);
-      return published;
-    })
-    .then(saveEditingInterface)
-    .catch(trackEnforcedButtonClick)
-    .catch(triggerApiErrorNotification)
-    .then(setPristine)
-    .then(() => {
-      setPristine();
-      previewEnvironmentsCache.clearAll();
-      spaceContext.uiConfig.addOrEditCt($scope.contentType.data);
-      if (redirect && $scope.context.isNew) {
-        return goToDetails($scope.contentType);
-      }
-    })
-    // Need to do this _after_ redirecting so it is not automatically
-    // dismissed.
-    .then(notify.saveSuccess);
+    return (
+      $scope.contentType
+        .save()
+        .then(publishContentType)
+        .then(published => {
+          $scope.publishedContentType = cloneDeep(published);
+          return published;
+        })
+        .then(saveEditingInterface)
+        .catch(trackEnforcedButtonClick)
+        .catch(triggerApiErrorNotification)
+        .then(setPristine)
+        .then(() => {
+          setPristine();
+          previewEnvironmentsCache.clearAll();
+          spaceContext.uiConfig.addOrEditCt($scope.contentType.data);
+          if (redirect && $scope.context.isNew) {
+            return goToDetails($scope.contentType);
+          }
+        })
+        // Need to do this _after_ redirecting so it is not automatically
+        // dismissed.
+        .then(notify.saveSuccess)
+    );
   }
 
-  function publishContentType (contentType) {
-    return spaceContext.publishedCTs.publish(contentType)
-    .then(() => spaceContext.editingInterfaces.get(contentType.data)).then(editingInterface => {
-      // On publish the API also updates the editor interface
-      $scope.editingInterface.sys.version = editingInterface.sys.version;
-      return contentType;
-    });
+  function publishContentType(contentType) {
+    return spaceContext.publishedCTs
+      .publish(contentType)
+      .then(() => spaceContext.editingInterfaces.get(contentType.data))
+      .then(editingInterface => {
+        // On publish the API also updates the editor interface
+        $scope.editingInterface.sys.version = editingInterface.sys.version;
+        return contentType;
+      });
   }
 
-  function saveEditingInterface (contentType) {
-    return spaceContext.editingInterfaces.save(contentType.data, $scope.editingInterface)
-    .then(editingInterface => {
-      $scope.editingInterface = editingInterface;
-    });
+  function saveEditingInterface(contentType) {
+    return spaceContext.editingInterfaces
+      .save(contentType.data, $scope.editingInterface)
+      .then(editingInterface => {
+        $scope.editingInterface = editingInterface;
+      });
   }
 
-  function setPristine () {
+  function setPristine() {
     // Since this is called by asynchronously the scope data may have
     // already been removed.
     if ($scope.contentTypeForm) {
@@ -254,21 +276,21 @@ export default function create ($scope, contentTypeIds) {
     }
   }
 
-  function goToDetails (contentType) {
+  function goToDetails(contentType) {
     // X.detail.fields -> X.detail.fields with altered contentTypeId param
     return $state.go('^.^.detail.fields', {
       contentTypeId: contentType.getId()
     });
   }
 
-  function triggerApiErrorNotification (errOrErrContainer) {
+  function triggerApiErrorNotification(errOrErrContainer) {
     notify.saveFailure(errOrErrContainer, $scope.contentType);
     return $q.reject(errOrErrContainer);
   }
 
-  function allFieldsInactive (contentType) {
+  function allFieldsInactive(contentType) {
     const fields = contentType.data.fields || [];
-    return fields.every((field) => field.disabled || field.omitted);
+    return fields.every(field => field.disabled || field.omitted);
   }
 
   /**
@@ -276,51 +298,61 @@ export default function create ($scope, contentTypeIds) {
    * @name ContentTypeActionsController#duplicate
    * @type {Command}
    */
-  controller.duplicate = Command.create(() => metadataDialog
-  .openDuplicateDialog($scope.contentType, createDuplicate, contentTypeIds)
-  .then(askAboutRedirection)
-  .then(notify.duplicateSuccess), {
-    disabled: function () {
-      const isNew = $scope.context.isNew;
-      const isDenied = accessChecker.shouldDisable('updateContentType') ||
-                     accessChecker.shouldDisable('publishContentType');
-      const isDirty = $scope.contentTypeForm.$dirty ||
-                    !$scope.contentType.getPublishedVersion();
-      const isPublished = $scope.contentType.isPublished();
+  controller.duplicate = Command.create(
+    () =>
+      metadataDialog
+        .openDuplicateDialog($scope.contentType, createDuplicate, contentTypeIds)
+        .then(askAboutRedirection)
+        .then(notify.duplicateSuccess),
+    {
+      disabled: function() {
+        const isNew = $scope.context.isNew;
+        const isDenied =
+          accessChecker.shouldDisable('updateContentType') ||
+          accessChecker.shouldDisable('publishContentType');
+        const isDirty = $scope.contentTypeForm.$dirty || !$scope.contentType.getPublishedVersion();
+        const isPublished = $scope.contentType.isPublished();
 
-      return isNew || isDenied || isDirty || !isPublished;
+        return isNew || isDenied || isDirty || !isPublished;
+      }
     }
-  });
+  );
 
-  function createDuplicate (metadata) {
+  function createDuplicate(metadata) {
     const data = $scope.contentType.data;
     const duplicate = spaceContext.space.newContentType({
-      sys: {type: 'ContentType', id: metadata.id},
+      sys: { type: 'ContentType', id: metadata.id },
       name: metadata.name,
       description: metadata.description || '',
       fields: cloneDeep(data.fields),
       displayField: data.displayField
     });
 
-    return duplicate.save()
-    .then(publishContentType)
-    .then(ct => spaceContext.editingInterfaces.save(ct.data, $scope.editingInterface))
-    .then(() => duplicate, err => {
-      notify.duplicateError();
-      return $q.reject(err);
-    });
+    return duplicate
+      .save()
+      .then(publishContentType)
+      .then(ct => spaceContext.editingInterfaces.save(ct.data, $scope.editingInterface))
+      .then(
+        () => duplicate,
+        err => {
+          notify.duplicateError();
+          return $q.reject(err);
+        }
+      );
   }
 
-  function askAboutRedirection (duplicated) {
-    return modalDialog.open({
-      title: 'Duplicated content type',
-      message: 'Content type was successfully duplicated. What do you want to do now?',
-      confirmLabel: 'Go to the duplicated content type',
-      cancelLabel: null
-    }).promise.then(() => {
-      setPristine();
-      return goToDetails(duplicated);
-    }, noop);
+  function askAboutRedirection(duplicated) {
+    return modalDialog
+      .open({
+        title: 'Duplicated content type',
+        message: 'Content type was successfully duplicated. What do you want to do now?',
+        confirmLabel: 'Go to the duplicated content type',
+        cancelLabel: null
+      })
+      .promise.then(() => {
+        setPristine();
+        return goToDetails(duplicated);
+      }, noop);
   }
 
   return controller;

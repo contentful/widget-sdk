@@ -10,19 +10,21 @@ const STATUSES = ['Published', 'Changed', 'Draft', 'Archived'];
  * UiConfig.
  */
 
-export function getEntryViews (contentTypes) {
+export function getEntryViews(contentTypes) {
   return [
     {
       id: 'default',
       title: 'Views',
-      views: [{
-        id: random.id(),
-        title: 'All',
-        order: systemFields.getDefaultOrder(),
-        displayedFieldIds: systemFields.getDefaultFieldIds(),
-        searchText: '',
-        searchFilters: []
-      }]
+      views: [
+        {
+          id: random.id(),
+          title: 'All',
+          order: systemFields.getDefaultOrder(),
+          displayedFieldIds: systemFields.getDefaultFieldIds(),
+          searchText: '',
+          searchFilters: []
+        }
+      ]
     },
     {
       id: random.id(),
@@ -37,15 +39,17 @@ export function getEntryViews (contentTypes) {
   ];
 }
 
-export function getAssetViews () {
+export function getAssetViews() {
   return [
     {
       id: 'default',
       title: 'Views',
-      views: [{
-        id: random.id(),
-        title: 'All'
-      }]
+      views: [
+        {
+          id: random.id(),
+          title: 'All'
+        }
+      ]
     },
     {
       id: random.id(),
@@ -60,7 +64,7 @@ export function getAssetViews () {
   ];
 }
 
-function createStatusView (status) {
+function createStatusView(status) {
   return {
     title: status,
     searchText: '',
@@ -69,7 +73,7 @@ function createStatusView (status) {
   };
 }
 
-function createEntryStatusView (status) {
+function createEntryStatusView(status) {
   return extend(createStatusView(status), {
     contentTypeId: null,
     order: systemFields.getDefaultOrder(),
@@ -77,11 +81,11 @@ function createEntryStatusView (status) {
   });
 }
 
-function contentTypeViews (contentTypes) {
+function contentTypeViews(contentTypes) {
   return map(contentTypes, createContentTypeView);
 }
 
-export function createContentTypeView (ct) {
+export function createContentTypeView(ct) {
   return {
     title: ct.name,
     contentTypeId: ct.sys.id,
@@ -93,7 +97,7 @@ export function createContentTypeView (ct) {
   };
 }
 
-function fileTypeViews () {
+function fileTypeViews() {
   return map(mimetype.getGroupNames(), (title, label) => {
     return {
       title,
@@ -104,7 +108,7 @@ function fileTypeViews () {
   });
 }
 
-export function getPrivateViews (userId) {
+export function getPrivateViews(userId) {
   return [
     {
       id: 'default',

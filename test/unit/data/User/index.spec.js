@@ -2,7 +2,7 @@ import * as sinon from 'helpers/sinon';
 import * as K from 'helpers/mocks/kefir';
 
 describe('data/User', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     this.tokenStore = {
       organizations$: K.createMockProperty(null),
       user$: K.createMockProperty(null),
@@ -29,13 +29,16 @@ describe('data/User', () => {
       orgId: 1
     };
 
-    this.orgs = [{
-      role: 'owner',
-      organization: {sys: {id: 'org-owner'}}
-    }, {
-      role: 'member',
-      organization: {sys: {id: 'org-member'}}
-    }];
+    this.orgs = [
+      {
+        role: 'owner',
+        organization: { sys: { id: 'org-owner' } }
+      },
+      {
+        role: 'member',
+        organization: { sys: { id: 'org-member' } }
+      }
+    ];
 
     module('contentful/test', $provide => {
       $provide.value('services/TokenStore', this.tokenStore);
@@ -50,11 +53,11 @@ describe('data/User', () => {
   });
 
   describe('#userDataBus$', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.spy = sinon.spy();
       this.utils.userDataBus$.onValue(this.spy);
 
-      this.set = function (params) {
+      this.set = function(params) {
         const {
           user = K.getValue(this.tokenStore.user$),
           orgs = K.getValue(this.tokenStore.organizations$),
@@ -71,143 +74,172 @@ describe('data/User', () => {
         this.spaceContext.space.data = space;
         this.$stateParams.orgId = orgId;
         this.spaceContext.publishedCTs.items$.set(publishedCTs);
-        this.$rootScope.$broadcast('$stateChangeSuccess', null, {orgId});
+        this.$rootScope.$broadcast('$stateChangeSuccess', null, { orgId });
         this.tokenStore.user$.set(user);
         this.$apply();
       };
     });
-    it('should emit [user, org, spacesByOrg, space, contentPreviews, publishedCTs] where space, contentPreviews and publishedCTs are optional', function () {
-      const user = {email: 'a@b.c'};
-      const orgs = [{name: '1', sys: {id: 1}}, {name: '2', sys: {id: 2}}];
-      const org = {name: 'some org', sys: {id: 'some-org-1'}};
+    it('should emit [user, org, spacesByOrg, space, contentPreviews, publishedCTs] where space, contentPreviews and publishedCTs are optional', function() {
+      const user = { email: 'a@b.c' };
+      const orgs = [{ name: '1', sys: { id: 1 } }, { name: '2', sys: { id: 2 } }];
+      const org = { name: 'some org', sys: { id: 'some-org-1' } };
 
       sinon.assert.notCalled(this.spy);
 
-      this.set({user, orgs, spacesByOrg: {}, org: null, orgId: 1, publishedCTs: []});
+      this.set({ user, orgs, spacesByOrg: {}, org: null, orgId: 1, publishedCTs: [] });
       sinon.assert.calledOnce(this.spy);
 
-      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, this.spaceContext.space.data, {}, []]);
+      sinon.assert.calledWithExactly(this.spy, [
+        user,
+        orgs[0],
+        {},
+        this.spaceContext.space.data,
+        {},
+        []
+      ]);
 
       this.spy.reset();
-      this.set({org});
+      this.set({ org });
       sinon.assert.calledOnce(this.spy);
-      sinon.assert.calledWithExactly(
-        this.spy,
-        [user, org, {}, this.spaceContext.space.data, {}, []]
-      );
+      sinon.assert.calledWithExactly(this.spy, [
+        user,
+        org,
+        {},
+        this.spaceContext.space.data,
+        {},
+        []
+      ]);
 
       this.spy.reset();
-      this.set({org: null, space: {fields: [], sys: {id: 'space-1'}}});
+      this.set({ org: null, space: { fields: [], sys: { id: 'space-1' } } });
       sinon.assert.calledOnce(this.spy);
-      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, this.spaceContext.space.data, {}, []]);
+      sinon.assert.calledWithExactly(this.spy, [
+        user,
+        orgs[0],
+        {},
+        this.spaceContext.space.data,
+        {},
+        []
+      ]);
     });
-    it('should emit a value only when the user is valid and the org and spacesByOrg are not falsy', function () {
-      const orgs = [{name: '1', sys: {id: 1}}, {name: '2', sys: {id: 2}}];
-      const user = {email: 'a@b'};
+    it('should emit a value only when the user is valid and the org and spacesByOrg are not falsy', function() {
+      const orgs = [{ name: '1', sys: { id: 1 } }, { name: '2', sys: { id: 2 } }];
+      const user = { email: 'a@b' };
 
       // invalid user
-      this.set({user: null});
+      this.set({ user: null });
       sinon.assert.notCalled(this.spy);
 
       // valid user but org is falsy since org prop init val is null
-      this.set({user});
+      this.set({ user });
       sinon.assert.notCalled(this.spy);
 
       // spaces by org map is null
-      this.set({user, orgs, spacesByOrg: null, orgId: 1});
+      this.set({ user, orgs, spacesByOrg: null, orgId: 1 });
       sinon.assert.notCalled(this.spy);
 
       // all valid valus, hence spy must be called
-      this.set({user, orgs, spacesByOrg: {}, orgId: 1});
+      this.set({ user, orgs, spacesByOrg: {}, orgId: 1 });
       sinon.assert.calledOnce(this.spy);
       sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, {}, {}, []]);
     });
-    it('should skip duplicates', function () {
+    it('should skip duplicates', function() {
       const setter = this.set.bind(this, {
-        user: {email: 'a@b.c'},
-        org: {name: 'org-1', sys: {id: 1}},
+        user: { email: 'a@b.c' },
+        org: { name: 'org-1', sys: { id: 1 } },
         spacesByOrg: {},
-        space: {name: 'space-1', sys: {id: 'space-1'}},
+        space: { name: 'space-1', sys: { id: 'space-1' } },
         publishedCTs: []
       });
       setter();
       sinon.assert.calledOnce(this.spy);
       setter();
       sinon.assert.calledOnce(this.spy);
-      this.set({space: null});
+      this.set({ space: null });
       sinon.assert.calledTwice(this.spy);
     });
   });
 
   describe('#getOrgRole', () => {
-    it('should return the role the user has for a given orgId', function () {
+    it('should return the role the user has for a given orgId', function() {
       const role = 'some role';
       const orgId = 'org-1';
       const user = {
-        organizationMemberships: [{role, organization: {sys: {id: orgId}}}]
+        organizationMemberships: [{ role, organization: { sys: { id: orgId } } }]
       };
       const foundRole = this.utils.getOrgRole(user, orgId);
 
       expect(foundRole).toEqual(role);
     });
-    it('should return undefined when org with given org id is not found', function () {
-      const foundRole = this.utils.getOrgRole([
-        {role: 'potato', organization: {sys: {id: 1}}}
-      ], 2);
+    it('should return undefined when org with given org id is not found', function() {
+      const foundRole = this.utils.getOrgRole(
+        [{ role: 'potato', organization: { sys: { id: 1 } } }],
+        2
+      );
 
       expect(foundRole).toEqual(null);
     });
   });
 
   describe('#getUserAgeInDays', () => {
-    it('should get the user\'s age in days for older dates', function () {
+    it("should get the user's age in days for older dates", function() {
       const diff = 7;
       const creationDate = this.moment().subtract(diff, 'days');
 
-      expect(this.utils.getUserAgeInDays({sys: {createdAt: creationDate.toISOString()}})).toBe(diff);
+      expect(this.utils.getUserAgeInDays({ sys: { createdAt: creationDate.toISOString() } })).toBe(
+        diff
+      );
     });
-    it('should return null if the operation throws', function () {
-      expect(Number.isNaN(this.utils.getUserAgeInDays({sys: {createdAt: 'some wrong date'}}))).toBe(true);
+    it('should return null if the operation throws', function() {
+      expect(
+        Number.isNaN(this.utils.getUserAgeInDays({ sys: { createdAt: 'some wrong date' } }))
+      ).toBe(true);
     });
   });
 
   describe('#getUserCreationDateUnixTimestamp', () => {
-    it('should return the user creation date as a unix timestamp', function () {
+    it('should return the user creation date as a unix timestamp', function() {
       const creationDate = this.moment();
 
-      expect(this.utils.getUserCreationDateUnixTimestamp({
-        sys: { createdAt: creationDate.toISOString() }
-      })).toBe(creationDate.unix());
+      expect(
+        this.utils.getUserCreationDateUnixTimestamp({
+          sys: { createdAt: creationDate.toISOString() }
+        })
+      ).toBe(creationDate.unix());
     });
   });
 
   describe('#isNonPayingUser', () => {
-    beforeEach(function () {
-      this.checkIfUserIsNonpaying = function (subscriptionStatus, valToAssert) {
+    beforeEach(function() {
+      this.checkIfUserIsNonpaying = function(subscriptionStatus, valToAssert) {
         const isNonPayingUser = this.utils.isNonPayingUser({
-          organizationMemberships: [{
-            organization: {subscription: {status: subscriptionStatus}}
-          }]
+          organizationMemberships: [
+            {
+              organization: { subscription: { status: subscriptionStatus } }
+            }
+          ]
         });
 
         expect(isNonPayingUser).toBe(valToAssert);
       };
     });
 
-    it('should return true if any org a user belongs to is paying us and false otherwise', function () {
+    it('should return true if any org a user belongs to is paying us and false otherwise', function() {
       this.checkIfUserIsNonpaying('free', true);
       this.checkIfUserIsNonpaying('trial', true);
       this.checkIfUserIsNonpaying('paid', false);
       this.checkIfUserIsNonpaying('free_paid', false);
     });
 
-    it('should return false if the user has a V2 org', function () {
+    it('should return false if the user has a V2 org', function() {
       const isNonPayingUser = this.utils.isNonPayingUser({
-        organizationMemberships: [{
-          organization: {
-            pricingVersion: 'pricing_version_2'
+        organizationMemberships: [
+          {
+            organization: {
+              pricingVersion: 'pricing_version_2'
+            }
           }
-        }]
+        ]
       });
 
       expect(isNonPayingUser).toBe(false);
@@ -215,65 +247,76 @@ describe('data/User', () => {
   });
 
   describe('#hasAnOrgWithSpaces', () => {
-    it('should return true if any of the orgs user belongs to has one or more spaces', function () {
-      expect(this.utils.hasAnOrgWithSpaces({org1: [1, 2]})).toBe(true);
-      expect(this.utils.hasAnOrgWithSpaces({org1: [1, 2], org2: []})).toBe(true);
+    it('should return true if any of the orgs user belongs to has one or more spaces', function() {
+      expect(this.utils.hasAnOrgWithSpaces({ org1: [1, 2] })).toBe(true);
+      expect(this.utils.hasAnOrgWithSpaces({ org1: [1, 2], org2: [] })).toBe(true);
     });
-    it('should return false otherwise', function () {
+    it('should return false otherwise', function() {
       expect(this.utils.hasAnOrgWithSpaces({})).toBe(false);
-      expect(this.utils.hasAnOrgWithSpaces({org1: [], org2: []})).toBe(false);
+      expect(this.utils.hasAnOrgWithSpaces({ org1: [], org2: [] })).toBe(false);
     });
   });
 
   describe('#ownsAtleastOneOrg', () => {
-    it('should return true if user owns at least on org', function () {
-      expect(this.utils.ownsAtleastOneOrg({organizationMemberships: this.orgs})).toBe(true);
+    it('should return true if user owns at least on org', function() {
+      expect(this.utils.ownsAtleastOneOrg({ organizationMemberships: this.orgs })).toBe(true);
     });
-    it('should return false otherwise', function () {
-      expect(this.utils.ownsAtleastOneOrg({organizationMemberships: [this.orgs[1]]})).toBe(false);
-      expect(this.utils.ownsAtleastOneOrg({organizationMemberships: []})).toBe(false);
+    it('should return false otherwise', function() {
+      expect(this.utils.ownsAtleastOneOrg({ organizationMemberships: [this.orgs[1]] })).toBe(false);
+      expect(this.utils.ownsAtleastOneOrg({ organizationMemberships: [] })).toBe(false);
       expect(this.utils.ownsAtleastOneOrg({})).toBe(false);
     });
   });
 
   describe('#getOwnedOrgs', () => {
-    it('should return a list of orgs the user is an owner of', function () {
-      expect(this.utils.getOwnedOrgs({organizationMemberships: this.orgs})).toEqual([this.orgs[0]]);
+    it('should return a list of orgs the user is an owner of', function() {
+      expect(this.utils.getOwnedOrgs({ organizationMemberships: this.orgs })).toEqual([
+        this.orgs[0]
+      ]);
     });
-    it('should return an empty list if user owns no orgs', function () {
-      expect(this.utils.getOwnedOrgs({organizationMemberships: [this.orgs[1]]})).toEqual([]);
+    it('should return an empty list if user owns no orgs', function() {
+      expect(this.utils.getOwnedOrgs({ organizationMemberships: [this.orgs[1]] })).toEqual([]);
     });
   });
 
   describe('#getFirstOwnedOrgWithoutSpaces', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.testGetFirstOwnedOrgWithoutSpaces = (spacesByOrg, assertion) => {
-        const org = this.utils.getFirstOwnedOrgWithoutSpaces({
-          organizationMemberships: this.orgs
-        }, spacesByOrg);
+        const org = this.utils.getFirstOwnedOrgWithoutSpaces(
+          {
+            organizationMemberships: this.orgs
+          },
+          spacesByOrg
+        );
 
         assertion(org);
       };
     });
-    it('should return the first org the user owns that has no spaces', function () {
-      this.testGetFirstOwnedOrgWithoutSpaces({'org-owner': []}, org => expect(org).toBe(this.orgs[0].organization));
-      this.testGetFirstOwnedOrgWithoutSpaces({}, org => expect(org).toBe(this.orgs[0].organization));
+    it('should return the first org the user owns that has no spaces', function() {
+      this.testGetFirstOwnedOrgWithoutSpaces({ 'org-owner': [] }, org =>
+        expect(org).toBe(this.orgs[0].organization)
+      );
+      this.testGetFirstOwnedOrgWithoutSpaces({}, org =>
+        expect(org).toBe(this.orgs[0].organization)
+      );
     });
-    it('should return undefined otherwise', function () {
-      this.testGetFirstOwnedOrgWithoutSpaces({'org-owner': [1]}, org => expect(org).toBe(undefined));
+    it('should return undefined otherwise', function() {
+      this.testGetFirstOwnedOrgWithoutSpaces({ 'org-owner': [1] }, org =>
+        expect(org).toBe(undefined)
+      );
     });
   });
 
   describe('#isAutomationTestUser', () => {
-    beforeEach(function () {
-      this.assertOnEmails = function (emails, value) {
+    beforeEach(function() {
+      this.assertOnEmails = function(emails, value) {
         emails.forEach(email => {
           expect(this.utils.isAutomationTestUser({ email })).toEqual(value);
         });
       };
     });
 
-    it('should return true for users whose email matches the automation test user email pattern', function () {
+    it('should return true for users whose email matches the automation test user email pattern', function() {
       const userEmails = [
         'autotest+quirely_orgowner_worker1@contentful.com',
         'autotest+flinkly_orgowner_worker1@contentful.com',
@@ -285,7 +328,7 @@ describe('data/User', () => {
       this.assertOnEmails(userEmails, true);
     });
 
-    it('should return false for all non test automation users', function () {
+    it('should return false for all non test automation users', function() {
       const userEmails = [
         'potato@contentful.com',
         'autotest@contentful.com',
@@ -298,21 +341,25 @@ describe('data/User', () => {
   });
 
   describe('#isUserOrgCreator', () => {
-    it('should return true if the current org was created by the current user', function () {
-      expect(this.utils.isUserOrgCreator({sys: {id: 1}}, {sys: {createdBy: {sys: {id: 1}}}})).toEqual(true);
+    it('should return true if the current org was created by the current user', function() {
+      expect(
+        this.utils.isUserOrgCreator({ sys: { id: 1 } }, { sys: { createdBy: { sys: { id: 1 } } } })
+      ).toEqual(true);
     });
 
-    it('should return false if the current org was not created by the current user', function () {
-      expect(this.utils.isUserOrgCreator({sys: {id: 1}}, {sys: {createdBy: {sys: {id: 2}}}})).toEqual(false);
+    it('should return false if the current org was not created by the current user', function() {
+      expect(
+        this.utils.isUserOrgCreator({ sys: { id: 1 } }, { sys: { createdBy: { sys: { id: 2 } } } })
+      ).toEqual(false);
     });
 
-    it('should throw if user or org are malformed', function () {
+    it('should throw if user or org are malformed', function() {
       expect(this.utils.isUserOrgCreator.bind(this.utils)).toThrow();
     });
   });
 
   describe('#getUserSpaceRoles', () => {
-    it('should include "admin" in the array in case of admin', function () {
+    it('should include "admin" in the array in case of admin', function() {
       const space = {
         spaceMembership: {
           admin: true,
@@ -323,7 +370,7 @@ describe('data/User', () => {
       expect(roles).toContain('admin');
     });
 
-    it('should not include "admin" in the array in case of not admin', function () {
+    it('should not include "admin" in the array in case of not admin', function() {
       const space = {
         spaceMembership: {
           admin: false,
@@ -334,7 +381,7 @@ describe('data/User', () => {
       expect(roles).toEqual(['some']);
     });
 
-    it('should lowercase roles', function () {
+    it('should lowercase roles', function() {
       const space = {
         spaceMembership: {
           admin: false,

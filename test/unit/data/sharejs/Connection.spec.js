@@ -1,7 +1,7 @@
 import * as K from 'helpers/mocks/kefir';
 
 describe('data/sharejs/Connection', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     this.baseConnection = {
       socket: {},
       emit: _.noop,
@@ -13,7 +13,7 @@ describe('data/sharejs/Connection', () => {
       refreshAuth: sinon.stub()
     };
 
-    this.setState = (state) => {
+    this.setState = state => {
       this.baseConnection.state = state;
       this.baseConnection.emit();
       this.$apply();
@@ -29,12 +29,12 @@ describe('data/sharejs/Connection', () => {
       Connection: sinon.stub().returns(this.baseConnection)
     };
 
-    module('contentful/test', ($provide) => {
+    module('contentful/test', $provide => {
       $provide.constant('sharejs', this.sharejs);
     });
 
     const OtDoc = this.$inject('mocks/OtDoc');
-    this.resolveOpen = function () {
+    this.resolveOpen = function() {
       const doc = new OtDoc();
       doc.close.yields();
       this.baseConnection.open.yield(null, doc);
@@ -43,7 +43,7 @@ describe('data/sharejs/Connection', () => {
       return doc;
     };
 
-    this.rejectOpen = function (err) {
+    this.rejectOpen = function(err) {
       this.baseConnection.open.yield(err);
       this.baseConnection.open.reset();
       this.$apply();
@@ -56,22 +56,23 @@ describe('data/sharejs/Connection', () => {
     this.auth = {
       token$,
       getToken,
-      refreshToken: () => this.refreshToken().then((t) => {
-        token$.set(t);
-        return t;
-      })
+      refreshToken: () =>
+        this.refreshToken().then(t => {
+          token$.set(t);
+          return t;
+        })
     };
 
     this.create = this.$inject('data/sharejs/Connection').create;
     this.connection = this.create('//HOST', this.auth, 'SPACE', 'ENV');
   });
 
-  afterEach(function () {
+  afterEach(function() {
     this.connection.close();
   });
 
   describe('#create', () => {
-    it('passes URL and getToken() to base connection', function () {
+    it('passes URL and getToken() to base connection', function() {
       sinon.assert.calledWith(
         this.sharejs.Connection,
         '//HOST/spaces/SPACE/channel',
@@ -81,7 +82,7 @@ describe('data/sharejs/Connection', () => {
       );
     });
 
-    it('subscribes to auth token changes', function () {
+    it('subscribes to auth token changes', function() {
       this.setState('ok');
       this.auth.token$.set('NEW_TOKEN');
       sinon.assert.calledWith(this.baseConnection.refreshAuth, 'NEW_TOKEN');
@@ -91,15 +92,17 @@ describe('data/sharejs/Connection', () => {
   describe('#getDocLoader()', () => {
     let DocLoad;
 
-    beforeEach(function () {
+    beforeEach(function() {
       DocLoad = this.$inject('data/sharejs/Connection').DocLoad;
 
       this.entity = {
-        data: {sys: {
-          type: 'Entry',
-          id: 'ENTITY',
-          space: {sys: {id: 'SPACE'}}
-        }}
+        data: {
+          sys: {
+            type: 'Entry',
+            id: 'ENTITY',
+            space: { sys: { id: 'SPACE' } }
+          }
+        }
       };
 
       const shouldOpen$ = K.createMockProperty(true);
@@ -113,7 +116,7 @@ describe('data/sharejs/Connection', () => {
         return docLoader;
       };
 
-      this.setReadOnly = (val) => {
+      this.setReadOnly = val => {
         shouldOpen$.set(!val);
       };
 
@@ -135,21 +138,21 @@ describe('data/sharejs/Connection', () => {
       DocLoad = null;
     });
 
-    it('emits "DocLoad.Pending" when connecting', function () {
+    it('emits "DocLoad.Pending" when connecting', function() {
       this.setState('disconnected');
       const doc$ = this.getDocLoader().doc;
       this.setState('connecting');
       expect(K.getValue(doc$)).toBeInstanceOf(DocLoad.Pending);
     });
 
-    it('emits "DocLoad.Pending" when connection is pending is handshaking', function () {
+    it('emits "DocLoad.Pending" when connection is pending is handshaking', function() {
       this.setState('disconnected');
       const doc$ = this.getDocLoader().doc;
       this.setState('handshaking');
       expect(K.getValue(doc$)).toBeInstanceOf(DocLoad.Pending);
     });
 
-    it('opens a "DocLoad.Doc" when is connection state becomes "ok"', function () {
+    it('opens a "DocLoad.Doc" when is connection state becomes "ok"', function() {
       this.setState('disconnected');
       const doc$ = this.getDocLoader().doc;
       this.setState('handshaking');
@@ -163,7 +166,7 @@ describe('data/sharejs/Connection', () => {
       expect(K.getValue(doc$).doc).toBe(doc);
     });
 
-    it('emits "DocLoad.Doc" when opening succeeds', function () {
+    it('emits "DocLoad.Doc" when opening succeeds', function() {
       this.setState('ok');
       const doc$ = this.getDocLoader().doc;
       expect(K.getValue(doc$)).toBeInstanceOf(DocLoad.Pending);
@@ -173,7 +176,7 @@ describe('data/sharejs/Connection', () => {
       expect(K.getValue(doc$).doc).toBe(doc);
     });
 
-    it('emits "DocLoad.Error" when opening fails', function () {
+    it('emits "DocLoad.Error" when opening fails', function() {
       this.setState('ok');
       const doc$ = this.getDocLoader().doc;
       expect(K.getValue(doc$)).toBeInstanceOf(DocLoad.Pending);
@@ -183,7 +186,7 @@ describe('data/sharejs/Connection', () => {
       expect(K.getValue(doc$).error).toBe('ERROR');
     });
 
-    it('emits "DocLoad.Error" when disconnected', function () {
+    it('emits "DocLoad.Error" when disconnected', function() {
       const { docLoader } = this.openDoc();
 
       expect(K.getValue(docLoader.doc)).toBeInstanceOf(DocLoad.Doc);
@@ -193,7 +196,7 @@ describe('data/sharejs/Connection', () => {
       expect(K.getValue(docLoader.doc).error).toBe('disconnected');
     });
 
-    it('re-opens a document again after being disconnected', function () {
+    it('re-opens a document again after being disconnected', function() {
       const { docLoader } = this.openDoc();
 
       this.setState('disconnected');
@@ -205,14 +208,14 @@ describe('data/sharejs/Connection', () => {
       expect(K.getValue(docLoader.doc).doc).toBe(doc);
     });
 
-    it('emits "DocLoad.None" if set to read-only mode', function () {
+    it('emits "DocLoad.None" if set to read-only mode', function() {
       const { docLoader } = this.openDoc();
 
       this.setReadOnly(true);
       expect(K.getValue(docLoader.doc)).toBeInstanceOf(DocLoad.None);
     });
 
-    it('closes document when set to read-only mode', function () {
+    it('closes document when set to read-only mode', function() {
       const { docLoader, doc } = this.openDoc();
 
       expect(K.getValue(docLoader.doc)).toBeInstanceOf(DocLoad.Doc);
@@ -221,7 +224,7 @@ describe('data/sharejs/Connection', () => {
       expect(K.getValue(docLoader.doc)).toBeInstanceOf(DocLoad.None);
     });
 
-    it('ends stream when loader is destroyed', function () {
+    it('ends stream when loader is destroyed', function() {
       const { docLoader } = this.openDoc();
 
       const ended = sinon.spy();
@@ -231,14 +234,14 @@ describe('data/sharejs/Connection', () => {
       sinon.assert.calledOnce(ended);
     });
 
-    it('closes document when loader is destroyed', function () {
+    it('closes document when loader is destroyed', function() {
       const { docLoader, doc } = this.openDoc();
       docLoader.destroy();
       this.$apply();
       sinon.assert.calledOnce(doc.close);
     });
 
-    it('waits for closing to be acked before opening again from same loader', function () {
+    it('waits for closing to be acked before opening again from same loader', function() {
       const { docLoader, doc } = this.openDoc();
       doc.close = sinon.stub();
 
@@ -258,7 +261,7 @@ describe('data/sharejs/Connection', () => {
       sinon.assert.calledOnce(this.baseConnection.open);
     });
 
-    it('waits for closing to be acked before opening again from different loader', function () {
+    it('waits for closing to be acked before opening again from different loader', function() {
       // Open doc from first loader and initiate close
       const { docLoader, doc } = this.openDoc();
       doc.close = sinon.stub();
@@ -279,12 +282,12 @@ describe('data/sharejs/Connection', () => {
       expect(K.getValue(otherDocLoader.doc)).toBeInstanceOf(DocLoad.Doc);
     });
 
-    it('reapply pending ops if the connection was closed', function () {
+    it('reapply pending ops if the connection was closed', function() {
       const { doc } = this.openDoc();
 
-      const op1 = [{p: []}];
+      const op1 = [{ p: [] }];
       doc.pendingOp = op1;
-      const op2 = [{p: []}];
+      const op2 = [{ p: [] }];
       doc.inflightOp = op2;
 
       doc.close.yields();
@@ -297,22 +300,24 @@ describe('data/sharejs/Connection', () => {
   });
 
   describe('#open()', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       const entity = {
-        data: {sys: {
-          type: 'Entry',
-          id: 'ENTITY',
-          space: {sys: {id: 'SPACE'}}
-        }}
+        data: {
+          sys: {
+            type: 'Entry',
+            id: 'ENTITY',
+            space: { sys: { id: 'SPACE' } }
+          }
+        }
       };
 
-      this.open = function () {
+      this.open = function() {
         this.setState('connecting');
         return this.connection.open(entity);
       };
     });
 
-    it('resolves to opened document', async function () {
+    it('resolves to opened document', async function() {
       const open = this.open();
 
       this.setState('ok');
@@ -322,8 +327,8 @@ describe('data/sharejs/Connection', () => {
       expect(opened.doc).toBe(doc);
     });
 
-    it('it closes document when destroyed', function () {
-      this.open().then(({destroy}) => destroy());
+    it('it closes document when destroyed', function() {
+      this.open().then(({ destroy }) => destroy());
 
       this.setState('ok');
       const doc = this.resolveOpen();
@@ -333,13 +338,12 @@ describe('data/sharejs/Connection', () => {
   });
 
   describe('#close()', () => {
-    it('delegates to baseConnection.disconnect', function () {
+    it('delegates to baseConnection.disconnect', function() {
       this.connection.close();
       sinon.assert.calledOnce(this.baseConnection.disconnect);
     });
 
-
-    it('unsubscribes from auth token changes', function () {
+    it('unsubscribes from auth token changes', function() {
       this.setState('ok');
       this.connection.close();
       this.auth.token$.set('NEW_TOKEN');
@@ -348,34 +352,34 @@ describe('data/sharejs/Connection', () => {
   });
 
   describe('#refreshAuth()', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.setState('ok');
     });
 
-    it('calls connection.refreshAuth() with the new token', function* () {
+    it('calls connection.refreshAuth() with the new token', function*() {
       yield this.connection.refreshAuth();
       sinon.assert.calledOnce(this.baseConnection.refreshAuth.withArgs('NEW_TOKEN'));
     });
 
-    it('does not call connection.refreshAuth() if connection is closed', function* () {
+    it('does not call connection.refreshAuth() if connection is closed', function*() {
       this.setState('disconnected');
       yield this.connection.refreshAuth();
       sinon.assert.notCalled(this.baseConnection.refreshAuth);
     });
 
-    it('prevents concurrent calls', function () {
+    it('prevents concurrent calls', function() {
       const firstCallPromise = this.connection.refreshAuth();
       const secondCallPromise = this.connection.refreshAuth();
       expect(firstCallPromise).toEqual(secondCallPromise);
     });
 
-    it('makes a consequent call after previous one finishes', function* () {
+    it('makes a consequent call after previous one finishes', function*() {
       yield this.connection.refreshAuth();
       yield this.connection.refreshAuth();
       sinon.assert.calledTwice(this.baseConnection.refreshAuth);
     });
 
-    it('closes connection if auth refresh failed', function* () {
+    it('closes connection if auth refresh failed', function*() {
       const error = new Error();
       this.baseConnection.refreshAuth.throws(error);
 

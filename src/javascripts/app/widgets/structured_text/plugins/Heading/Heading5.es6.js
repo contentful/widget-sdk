@@ -5,7 +5,7 @@ import blockDecorator from '../shared/BlockSelectDecorator';
 import { blockTitles } from './HeadingDropdown';
 
 class Heading5 extends Component {
-  render () {
+  render() {
     return (
       <ToolbarDropdownListItem {...this.props} data-test-id={BLOCKS.HEADING_5}>
         Heading 5

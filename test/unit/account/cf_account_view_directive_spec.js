@@ -1,9 +1,9 @@
 import * as K from 'helpers/mocks/kefir';
 
 describe('Account View directive', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     this.handleGatekeeperMessage = sinon.spy();
-    module('contentful/test', ($provide) => {
+    module('contentful/test', $provide => {
       $provide.value('handleGatekeeperMessage', this.handleGatekeeperMessage);
     });
 
@@ -18,20 +18,20 @@ describe('Account View directive', () => {
     };
   });
 
-  it('calls "handleGatekeeperMessage" on message', function () {
+  it('calls "handleGatekeeperMessage" on message', function() {
     this.compile();
     this.messages$.emit('DATA');
     sinon.assert.calledOnce(this.handleGatekeeperMessage.withArgs('DATA'));
   });
 
-  it('marks as ready on the first iframe message', function () {
+  it('marks as ready on the first iframe message', function() {
     this.compile();
     this.messages$.emit({});
     expect(this.element.scope().context.ready).toBe(true);
   });
 
-  it('closes open modals on `update location` message', function () {
-    const message = {action: 'update', type: 'location'};
+  it('closes open modals on `update location` message', function() {
+    const message = { action: 'update', type: 'location' };
     const modalDialog = this.$inject('modalDialog');
     modalDialog.closeAll = sinon.stub();
     this.compile();
@@ -39,9 +39,14 @@ describe('Account View directive', () => {
     sinon.assert.calledOnce(modalDialog.closeAll);
   });
 
-  it('sets a source of the GK iframe using UrlSyncHelper', function () {
+  it('sets a source of the GK iframe using UrlSyncHelper', function() {
     this.UrlSyncHelper.getGatekeeperUrl.returns('http://blah/');
     this.compile();
-    expect(this.element.find('iframe').first().prop('src')).toBe('http://blah/');
+    expect(
+      this.element
+        .find('iframe')
+        .first()
+        .prop('src')
+    ).toBe('http://blah/');
   });
 });

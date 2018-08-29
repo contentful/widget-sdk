@@ -1,15 +1,15 @@
 import LD from 'launch-darkly-client';
 
-import {launchDarkly as config} from 'Config';
-import {assign, get, isNull, omitBy} from 'lodash';
-import {onValueScope, createPropertyBus} from 'utils/kefir';
+import { launchDarkly as config } from 'Config';
+import { assign, get, isNull, omitBy } from 'lodash';
+import { onValueScope, createPropertyBus } from 'utils/kefir';
 import getChangesObject from 'utils/ShallowObjectDiff';
-import {isOrgPlanEnterprise} from 'data/Org';
-import {getEnabledFlags, getDisabledFlags} from 'debug/EnforceFlags';
-import {createMVar} from 'utils/Concurrent';
+import { isOrgPlanEnterprise } from 'data/Org';
+import { getEnabledFlags, getDisabledFlags } from 'debug/EnforceFlags';
+import { createMVar } from 'utils/Concurrent';
 import logger from 'logger';
 
-import {isExampleSpace} from 'data/ContentPreview';
+import { isExampleSpace } from 'data/ContentPreview';
 import {
   getOrgRole,
   isUserOrgCreator,
@@ -37,7 +37,7 @@ let client, prevCtx, currCtx;
  * @description
  * Initializes a LaunchDarkly client.
  */
-export function init () {
+export function init() {
   // singleton
   if (client) {
     return;
@@ -72,7 +72,7 @@ export function init () {
  * @param {String} flagName
  * @returns {Promise<Variation>}
  */
-export function getCurrentVariation (flagName) {
+export function getCurrentVariation(flagName) {
   return LDContextChangeMVar.read().then(_ => {
     const variation = getVariation(flagName, UNINIT_VAL);
     if (variation === UNINIT_VAL) {
@@ -115,7 +115,7 @@ export function getCurrentVariation (flagName) {
  * flag as the first argument and changes in LaunchDarkly context as the second
  * argument.
  */
-export function onFeatureFlag ($scope, featureName, handler) {
+export function onFeatureFlag($scope, featureName, handler) {
   // we always start property bus with some value. However, in this situation
   // we don't want to do that - we want to emit only the first actual value
   const INITIAL_PROPERTY_VALUE = '$$__INITIAL_PROPERTY_VALUE';
@@ -154,10 +154,9 @@ export { onFeatureFlag as onABTest };
  * @param {utils/Kefir.property<Variation>} obs$
  * @returns {Function}
  */
-function getVariationSetter (flagName, obs$) {
+function getVariationSetter(flagName, obs$) {
   return _ => obs$.set(getVariation(flagName, UNINIT_VAL));
 }
-
 
 /**
  * @description
@@ -168,7 +167,7 @@ function getVariationSetter (flagName, obs$) {
  * @param {Any} defaultValue - default value to return if the flag is not found
  * @returns {Any}
  */
-function getVariation (flagName, defaultValue) {
+function getVariation(flagName, defaultValue) {
   const enabledFeatures = getEnabledFlags();
   const disabledFeatures = getDisabledFlags();
 
@@ -219,7 +218,7 @@ function getVariation (flagName, defaultValue) {
  *
  * @returns {Object} customData
  */
-function buildLDUser (user, currOrg, spacesByOrg, currSpace, contentPreviews, publishedCTs) {
+function buildLDUser(user, currOrg, spacesByOrg, currSpace, contentPreviews, publishedCTs) {
   const orgId = currOrg.sys.id;
 
   let customData = {
@@ -264,15 +263,15 @@ function buildLDUser (user, currOrg, spacesByOrg, currSpace, contentPreviews, pu
  *
  * @param {Object} user - An LD user with a key and custom properties
  */
-function setCurrCtx (user) {
+function setCurrCtx(user) {
   prevCtx = currCtx;
   currCtx = assign(
     {},
-    {key: user.key},
-    user.anonymous ? {anonymous: user.anonymous} : {},
-    user.custom);
+    { key: user.key },
+    user.anonymous ? { anonymous: user.anonymous } : {},
+    user.custom
+  );
 }
-
 
 /**
  * @description
@@ -283,7 +282,7 @@ function setCurrCtx (user) {
  * @param {Array} arr - An array containing a contentful user, current org
  * a map of spaces by org id and an optional current space
  */
-function changeUserContext ([user, currOrg, spacesByOrg, currSpace, contentPreviews, publishedCTs]) {
+function changeUserContext([user, currOrg, spacesByOrg, currSpace, contentPreviews, publishedCTs]) {
   const ldUser = buildLDUser(user, currOrg, spacesByOrg, currSpace, contentPreviews, publishedCTs);
   setCurrCtx(ldUser);
   // FIXME We need to handle the case where the LD service is not

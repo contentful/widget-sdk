@@ -9,7 +9,7 @@ describe('Asset List Actions Controller', () => {
     action1 = action2 = action3 = action4 = null;
   });
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test', $provide => {
       stubs = $provide.makeStubs([
         'track',
@@ -56,22 +56,22 @@ describe('Asset List Actions Controller', () => {
     };
 
     const spaceContext = this.$inject('mocks/spaceContext').init();
-    spaceContext.space = {createAsset: stubs.createAsset};
+    spaceContext.space = { createAsset: stubs.createAsset };
 
     accessChecker = this.$inject('access_control/AccessChecker');
     accessChecker.canPerformActionOnEntity = sinon.stub();
 
     const $controller = this.$inject('$controller');
-    $controller('AssetListActionsController', {$scope: scope});
+    $controller('AssetListActionsController', { $scope: scope });
   });
 
-  function makeEntity (action, stub) {
-    const entity = {data: {sys: {id: 'entityid'}}};
+  function makeEntity(action, stub) {
+    const entity = { data: { sys: { id: 'entityid' } } };
     entity[action] = stub;
     return entity;
   }
 
-  function makePerformTests (action, extraSpecs) {
+  function makePerformTests(action, extraSpecs) {
     describe(action + ' selected assets', () => {
       beforeEach(() => {
         stubs.size.returns(2);
@@ -144,7 +144,7 @@ describe('Asset List Actions Controller', () => {
   makePerformTests('archive');
   makePerformTests('unarchive');
 
-  function makePermissionTests (action) {
+  function makePermissionTests(action) {
     const methodName = 'show' + action.charAt(0).toUpperCase() + action.substr(1);
     const canMethodName = 'can' + action.charAt(0).toUpperCase() + action.substr(1);
 

@@ -11,20 +11,22 @@
  * The controller has a `units` object whose keys are labels for the
  * units and whose values are the unit factors.
  */
-angular.module('contentful')
-.controller('DataSizeScaleController',
-  ['$scope', '$attrs', 'require', function ($scope, $attrs, require) {
+angular.module('contentful').controller('DataSizeScaleController', [
+  '$scope',
+  '$attrs',
+  'require',
+  function($scope, $attrs, require) {
     const $parse = require('$parse');
     const controller = this;
 
     const getModelValue = _.partial($parse($attrs.model), $scope.$parent);
     const setModelValue = _.partial($parse($attrs.model).assign, $scope.$parent);
 
-    const units = controller.units = [
-    {label: 'Bytes', factor: 1},
-    {label: 'KB', factor: 1024},
-    {label: 'MB', factor: 1024 * 1024}
-    ];
+    const units = (controller.units = [
+      { label: 'Bytes', factor: 1 },
+      { label: 'KB', factor: 1024 },
+      { label: 'MB', factor: 1024 * 1024 }
+    ]);
 
     const unitFactors = _.map(units, 'factor');
 
@@ -36,22 +38,22 @@ angular.module('contentful')
 
     $scope.$on('ngModel:commit', updateModelValue);
 
-
-    function updateModelValue () {
+    function updateModelValue() {
       const raw = _.isFinite($scope.value) ? $scope.value * $scope.unitFactor : null;
       setModelValue(raw);
     }
 
-    function updateScaledValue (raw) {
+    function updateScaledValue(raw) {
       $scope.value = _.isFinite(raw) ? raw / $scope.unitFactor : null;
     }
 
-  /**
-   * Return the largest unit factor such that the scaled value is
-   * larger than 1.
-   */
-    function getUnitFactor (baseValue) {
+    /**
+     * Return the largest unit factor such that the scaled value is
+     * larger than 1.
+     */
+    function getUnitFactor(baseValue) {
       const factor = _.findLast(unitFactors, factor => baseValue / factor >= 1);
       return factor || unitFactors[0];
     }
-  }]);
+  }
+]);

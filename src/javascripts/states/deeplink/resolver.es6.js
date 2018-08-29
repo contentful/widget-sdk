@@ -1,9 +1,15 @@
 import spaceContext from 'spaceContext';
-import {runTask} from 'utils/Concurrent';
-import {getSpaceInfo, getOrg, checkSpaceApiAccess, checkOrgAccess, getOnboardingSpaceId} from './utils';
+import { runTask } from 'utils/Concurrent';
+import {
+  getSpaceInfo,
+  getOrg,
+  checkSpaceApiAccess,
+  checkOrgAccess,
+  getOnboardingSpaceId
+} from './utils';
 import logger from 'logger';
-import {isLegacyOrganization} from 'utils/ResourceUtils';
-import {getStoragePrefix} from 'createModernOnboarding';
+import { isLegacyOrganization } from 'utils/ResourceUtils';
+import { getStoragePrefix } from 'createModernOnboarding';
 import { getStore } from 'TheStore';
 
 const store = getStore();
@@ -19,9 +25,8 @@ const ONBOARDING_ERROR = 'modern onboarding space id does not exist';
  * @param {object} params - All queryParameters except `link`
  * @return {Promise<{path:string, params:Object}>} - promise with resolved path and params
  */
-export function resolveLink (link, params) {
-  return resolveParams(link, params)
-  .catch((e) => {
+export function resolveLink(link, params) {
+  return resolveParams(link, params).catch(e => {
     logger.logException(e, {
       data: {
         link
@@ -41,20 +46,20 @@ export function resolveLink (link, params) {
  * we assume this is a first page user is landed,
  * so nothing is available yet, so we download everything
  */
-function resolveParams (link, params) {
+function resolveParams(link, params) {
   // we map links from `link` queryParameter to resolve fn
   // keys are quoted for consistency, you can use special symbols
   //
   // Please document all possible links in the wiki
   // https://contentful.atlassian.net/wiki/spaces/PROD/pages/208765005/Deeplinking+in+the+Webapp
   const mappings = {
-    'home': resolveHome,
-    'api': resolveApi,
-    'extensions': resolveExtensions,
-    'invite': resolveInviteUser,
-    'users': resolveUsers,
-    'subscription': resolveSubscriptions,
-    'org': resolveOrganizationInfo,
+    home: resolveHome,
+    api: resolveApi,
+    extensions: resolveExtensions,
+    invite: resolveInviteUser,
+    users: resolveUsers,
+    subscription: resolveSubscriptions,
+    org: resolveOrganizationInfo,
     'onboarding-get-started': createOnboardingScreenResolver('getStarted'),
     'onboarding-copy': createOnboardingScreenResolver('copy'),
     'onboarding-explore': createOnboardingScreenResolver('explore'),
@@ -71,34 +76,35 @@ function resolveParams (link, params) {
   }
 }
 
-function createOnboardingScreenResolver (screen) {
-  return () => runTask(function* () {
-    const spaceId = yield* getOnboardingSpaceId();
+function createOnboardingScreenResolver(screen) {
+  return () =>
+    runTask(function*() {
+      const spaceId = yield* getOnboardingSpaceId();
 
-    if (spaceId) {
-      const currentStepKey = `${getStoragePrefix()}:currentStep`;
-      // we set current step flag in local storage, so if we click "skip"
-      // and resume the flow later, it opens the same step
-      store.set(currentStepKey, {
-        path: `spaces.detail.onboarding.${screen}`,
-        params: { spaceId }
-      });
-      return {
-        path: ['spaces', 'detail', 'onboarding', screen],
-        params: { spaceId }
-      };
-    } else {
-      throw new Error(ONBOARDING_ERROR);
-    }
-  });
+      if (spaceId) {
+        const currentStepKey = `${getStoragePrefix()}:currentStep`;
+        // we set current step flag in local storage, so if we click "skip"
+        // and resume the flow later, it opens the same step
+        store.set(currentStepKey, {
+          path: `spaces.detail.onboarding.${screen}`,
+          params: { spaceId }
+        });
+        return {
+          path: ['spaces', 'detail', 'onboarding', screen],
+          params: { spaceId }
+        };
+      } else {
+        throw new Error(ONBOARDING_ERROR);
+      }
+    });
 }
 
 // resolve Home page
 // always redirects directly to the home screen
 // if you just redirect to `/`, you might end up on the
 // content screen, this deeplink route solves it
-function resolveHome () {
-  return runTask(function* () {
+function resolveHome() {
+  return runTask(function*() {
     const { space, spaceId } = yield* getSpaceInfo();
     yield spaceContext.resetWithSpace(space);
 
@@ -112,8 +118,8 @@ function resolveHome () {
 // resolve API page
 // in case we have no keys, we show page there
 // users can add a new key
-function resolveApi () {
-  return runTask(function* () {
+function resolveApi() {
+  return runTask(function*() {
     const { space, spaceId } = yield* getSpaceInfo();
     yield spaceContext.resetWithSpace(space);
 
@@ -144,8 +150,8 @@ function resolveApi () {
   });
 }
 
-function resolveExtensions () {
-  return runTask(function* () {
+function resolveExtensions() {
+  return runTask(function*() {
     const { space, spaceId } = yield* getSpaceInfo();
     yield spaceContext.resetWithSpace(space);
     const isAdmin = !!spaceContext.getData('spaceMembership.admin', false);
@@ -161,8 +167,8 @@ function resolveExtensions () {
   });
 }
 
-function resolveInviteUser () {
-  return runTask(function* () {
+function resolveInviteUser() {
+  return runTask(function*() {
     const { orgId } = yield* getOrg();
     return yield* applyOrgAccess(orgId, {
       path: ['account', 'organizations', 'users', 'new'],
@@ -171,8 +177,8 @@ function resolveInviteUser () {
   });
 }
 
-function resolveUsers () {
-  return runTask(function* () {
+function resolveUsers() {
+  return runTask(function*() {
     const { orgId } = yield* getOrg();
     return yield* applyOrgAccess(orgId, {
       path: ['account', 'organizations', 'users', 'gatekeeper'],
@@ -181,8 +187,8 @@ function resolveUsers () {
   });
 }
 
-function resolveSubscriptions () {
-  return runTask(function* () {
+function resolveSubscriptions() {
+  return runTask(function*() {
     const { orgId, org } = yield* getOrg();
 
     const hasNewPricing = !isLegacyOrganization(org);
@@ -199,8 +205,8 @@ function resolveSubscriptions () {
   });
 }
 
-function resolveOrganizationInfo () {
-  return runTask(function* () {
+function resolveOrganizationInfo() {
+  return runTask(function*() {
     const { orgId } = yield* getOrg();
     return yield* applyOrgAccess(orgId, {
       path: ['account', 'organizations', 'edit'],
@@ -213,7 +219,7 @@ function resolveOrganizationInfo () {
 }
 
 // return result only if user has access to organization settings
-function* applyOrgAccess (orgId, successResult) {
+function* applyOrgAccess(orgId, successResult) {
   // user should be owner or admin to access this section
   const hasAccess = yield* checkOrgAccess(orgId);
 
@@ -224,8 +230,8 @@ function* applyOrgAccess (orgId, successResult) {
   return successResult;
 }
 
-function resolveWebhookTemplate ({ id }) {
-  return runTask(function* () {
+function resolveWebhookTemplate({ id }) {
+  return runTask(function*() {
     if (!id) {
       throw new Error(`Webhook Template ID was not specified in the URL you've used.`);
     }

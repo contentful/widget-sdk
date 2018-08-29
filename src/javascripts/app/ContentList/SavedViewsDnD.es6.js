@@ -1,6 +1,6 @@
-import {find, get as getAtPath, set as setAtPath} from 'lodash';
-import {map, filter, assign, findMap, insertAt, move} from 'utils/Collections';
-import {create as createStortable} from 'Sortable';
+import { find, get as getAtPath, set as setAtPath } from 'lodash';
+import { map, filter, assign, findMap, insertAt, move } from 'utils/Collections';
+import { create as createStortable } from 'Sortable';
 
 import random from 'random';
 
@@ -36,7 +36,7 @@ import random from 'random';
  * @returns {object}
  */
 
-export default function create (getFolders, saveFolders) {
+export default function create(getFolders, saveFolders) {
   // Each DnD instance has its own randomly generated view group ID.
   // This way it can be used in many places at the same time, but views can be
   // moved only between the same DnD.
@@ -44,11 +44,11 @@ export default function create (getFolders, saveFolders) {
 
   // A data struture holding references to DOM elements used to create the
   // current state of "libs/Sortable" instances.
-  const sortables = {folders: null, views: {}};
+  const sortables = { folders: null, views: {} };
 
-  return {forFolders, forViews};
+  return { forFolders, forViews };
 
-  function forFolders (el) {
+  function forFolders(el) {
     create(['folders'], el, {
       draggable: '.view-folder.-draggable',
       handle: '.view-folder__header',
@@ -57,7 +57,7 @@ export default function create (getFolders, saveFolders) {
     });
   }
 
-  function forViews (el, {id}) {
+  function forViews(el, { id }) {
     create(['views', id], el, {
       draggable: 'li',
       group: `views,${viewsGroupId}`,
@@ -74,11 +74,11 @@ export default function create (getFolders, saveFolders) {
     });
   }
 
-  function srcFolder ({from}) {
-    return findMap(sortables.views, (el, key) => el === from ? key : undefined);
+  function srcFolder({ from }) {
+    return findMap(sortables.views, (el, key) => (el === from ? key : undefined));
   }
 
-  function create (path, el, config) {
+  function create(path, el, config) {
     // Create a new instance only if there's a defined, changed element.
     if (el && getAtPath(sortables, path) !== el) {
       setAtPath(sortables, path, el);
@@ -87,11 +87,11 @@ export default function create (getFolders, saveFolders) {
   }
 }
 
-function moveFolder (foldersWithDefault, {oldIndex, newIndex}) {
+function moveFolder(foldersWithDefault, { oldIndex, newIndex }) {
   // The default folder is not draggable.
   // UiConfig may contain a persisted folder with the "default" ID.
   // `oldIndex` and `newIndex` are not aware of the default folder.
-  const defaultFolder = find(foldersWithDefault, {id: 'default'});
+  const defaultFolder = find(foldersWithDefault, { id: 'default' });
 
   // Remove the default folder from the array we're going to rearrange:
   const defaultFolderIndex = foldersWithDefault.indexOf(defaultFolder);
@@ -108,17 +108,17 @@ function moveFolder (foldersWithDefault, {oldIndex, newIndex}) {
   }
 }
 
-function moveView (folders, folderId, {oldIndex, newIndex}) {
+function moveView(folders, folderId, { oldIndex, newIndex }) {
   return map(folders, cur => {
     if (cur.id === folderId) {
-      return assign(cur, {views: move(cur.views, oldIndex, newIndex)});
+      return assign(cur, { views: move(cur.views, oldIndex, newIndex) });
     } else {
       return cur;
     }
   });
 }
 
-function moveViewBetween (folders, [srcFolderId, folderId], {oldIndex, newIndex}) {
+function moveViewBetween(folders, [srcFolderId, folderId], { oldIndex, newIndex }) {
   const view = findMap(folders, cur => {
     if (cur.id === srcFolderId) {
       return cur.views[oldIndex];
@@ -127,9 +127,9 @@ function moveViewBetween (folders, [srcFolderId, folderId], {oldIndex, newIndex}
 
   return map(folders, cur => {
     if (cur.id === srcFolderId) {
-      return assign(cur, {views: filter(cur.views, (_, i) => i !== oldIndex)});
+      return assign(cur, { views: filter(cur.views, (_, i) => i !== oldIndex) });
     } else if (cur.id === folderId) {
-      return assign(cur, {views: insertAt(cur.views, newIndex, view)});
+      return assign(cur, { views: insertAt(cur.views, newIndex, view) });
     } else {
       return cur;
     }

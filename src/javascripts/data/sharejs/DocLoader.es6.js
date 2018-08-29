@@ -1,6 +1,6 @@
 import * as K from 'utils/kefir';
-import {caseof, makeSum} from 'sum-types';
-import {constant} from 'lodash';
+import { caseof, makeSum } from 'sum-types';
+import { constant } from 'lodash';
 
 /**
  * @ngdoc service
@@ -56,7 +56,7 @@ export const DocLoad = makeSum({
  * @param {Property<boolean>} shouldOpen$
  *   Indicates wheter we want to establish a connection.
  */
-export function create (docWrapper, connectionState$, shouldOpen$) {
+export function create(docWrapper, connectionState$, shouldOpen$) {
   // The state of the current request for a document. Might be null in
   // case it does not exist yet.
   let currentDocRequest = null;
@@ -78,44 +78,47 @@ export function create (docWrapper, connectionState$, shouldOpen$) {
       connectionState,
       shouldOpen
     })
-  ).skipDuplicates().toProperty();
+  )
+    .skipDuplicates()
+    .toProperty();
 
   const dead = K.createBus();
 
-  const docLoad = requestOpenDoc.flatMapLatest(({connectionState, shouldOpen}) => {
-    // TODO we should separate this into two services: One that
-    // provides a document stream based on the connection state and
-    // another one, based on the former, that handles the 'shouldOpen'
-    // state.
-    if (connectionState === 'disconnected') {
-      pendingOps = [];
-      if (currentDoc && currentDoc.inflightOp) {
-        pendingOps.push(currentDoc.inflightOp);
+  const docLoad = requestOpenDoc
+    .flatMapLatest(({ connectionState, shouldOpen }) => {
+      // TODO we should separate this into two services: One that
+      // provides a document stream based on the connection state and
+      // another one, based on the former, that handles the 'shouldOpen'
+      // state.
+      if (connectionState === 'disconnected') {
+        pendingOps = [];
+        if (currentDoc && currentDoc.inflightOp) {
+          pendingOps.push(currentDoc.inflightOp);
+        }
+        if (currentDoc && currentDoc.pendingOp) {
+          pendingOps.push(currentDoc.pendingOp);
+        }
+        close();
+        return K.constant(DocLoad.Error('disconnected'));
       }
-      if (currentDoc && currentDoc.pendingOp) {
-        pendingOps.push(currentDoc.pendingOp);
+
+      if (!shouldOpen) {
+        close();
+        return K.constant(DocLoad.None());
       }
-      close();
-      return K.constant(DocLoad.Error('disconnected'));
-    }
 
-    if (!shouldOpen) {
-      close();
-      return K.constant(DocLoad.None());
-    }
-
-    if (connectionState === 'ok' || connectionState === 'handshaking') {
-      currentDocRequest = currentDocRequest || openDoc();
-      return currentDocRequest;
-    } else if (connectionState === 'connecting') {
-      return K.constant(DocLoad.Pending());
-    } else {
-      close();
-      return K.constant(DocLoad.None());
-    }
-  })
-  .toProperty(constant(DocLoad.None()))
-  .takeUntilBy(dead.stream);
+      if (connectionState === 'ok' || connectionState === 'handshaking') {
+        currentDocRequest = currentDocRequest || openDoc();
+        return currentDocRequest;
+      } else if (connectionState === 'connecting') {
+        return K.constant(DocLoad.Pending());
+      } else {
+        close();
+        return K.constant(DocLoad.None());
+      }
+    })
+    .toProperty(constant(DocLoad.None()))
+    .takeUntilBy(dead.stream);
 
   return {
     doc: docLoad,
@@ -123,38 +126,42 @@ export function create (docWrapper, connectionState$, shouldOpen$) {
     destroy: destroy
   };
 
-  function close () {
+  function close() {
     docWrapper.close();
     currentDocRequest = null;
     currentDoc = null;
   }
 
-  function destroy () {
+  function destroy() {
     pendingOps = null;
     close();
     dead.emit();
     dead.end();
   }
 
-  function openDoc () {
-    return K.promiseProperty(docWrapper.open())
-    .map(p => caseof(p, [
-      [K.PromiseStatus.Pending, () => DocLoad.Pending()],
-      [K.PromiseStatus.Resolved, x => {
-        currentDoc = x.value;
-        // There might be multiple doc loaders for a given doc. To
-        // avoid applying pending operations twice we check if the
-        // doc already has pending operations. These pending
-        // operations can only come from the code below because any
-        // code that would create an operation executes after the
-        // code below.
-        if (!currentDoc.pendingOp) {
-          pendingOps.forEach((op) => currentDoc.submitOp(op));
-        }
-        pendingOps = [];
-        return DocLoad.Doc(currentDoc);
-      }],
-      [K.PromiseStatus.Rejected, x => DocLoad.Error(x.error)]
-    ]));
+  function openDoc() {
+    return K.promiseProperty(docWrapper.open()).map(p =>
+      caseof(p, [
+        [K.PromiseStatus.Pending, () => DocLoad.Pending()],
+        [
+          K.PromiseStatus.Resolved,
+          x => {
+            currentDoc = x.value;
+            // There might be multiple doc loaders for a given doc. To
+            // avoid applying pending operations twice we check if the
+            // doc already has pending operations. These pending
+            // operations can only come from the code below because any
+            // code that would create an operation executes after the
+            // code below.
+            if (!currentDoc.pendingOp) {
+              pendingOps.forEach(op => currentDoc.submitOp(op));
+            }
+            pendingOps = [];
+            return DocLoad.Doc(currentDoc);
+          }
+        ],
+        [K.PromiseStatus.Rejected, x => DocLoad.Error(x.error)]
+      ])
+    );
   }
 }

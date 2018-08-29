@@ -1,7 +1,4 @@
-import {
-  getSlideInEntities,
-  goToSlideInEntity
-} from 'navigation/SlideInNavigator';
+import { getSlideInEntities, goToSlideInEntity } from 'navigation/SlideInNavigator';
 import { track } from 'analytics/Analytics';
 import { findIndex } from 'lodash';
 
@@ -9,13 +6,12 @@ import { onFeatureFlag } from 'utils/LaunchDarkly';
 
 const { setTimeout, clearTimeout } = window;
 
-const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG =
-  'feature-at-05-2018-sliding-entry-editor-multi-level';
+const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG = 'feature-at-05-2018-sliding-entry-editor-multi-level';
 const PEEK_IN_DELAY = 500;
 const PEEK_OUT_DELAY = 500;
 const PEEK_ANIMATION_DURATION = 200;
 
-export const getTimestamp = () => (new Date()).getTime();
+export const getTimestamp = () => new Date().getTime();
 
 export default ($scope, $state) => {
   let topPeekingLayerIndex = -1;
@@ -35,8 +31,7 @@ export default ($scope, $state) => {
 
   setEntities();
 
-  const isTopLayer = $scope.isTopLayer =
-    (index) => index + 1 === $scope.entities.length;
+  const isTopLayer = ($scope.isTopLayer = index => index + 1 === $scope.entities.length);
 
   $scope.getLayerClasses = index => {
     const currentlyPeekedLayerIndex = peekedLayerIndexes.slice(-1)[0];
@@ -70,9 +65,9 @@ export default ($scope, $state) => {
       topPeekingLayerIndex = index - 1;
 
       peekOutTimeoutID = scopeTimeout(PEEK_OUT_DELAY, () => {
-        clearPeekTimeoutID = scopeTimeout(PEEK_ANIMATION_DURATION,
-          () => { peekedLayerIndexes = []; }
-        );
+        clearPeekTimeoutID = scopeTimeout(PEEK_ANIMATION_DURATION, () => {
+          peekedLayerIndexes = [];
+        });
         peekedLayerIndexes.push(undefined);
       });
     }
@@ -86,9 +81,9 @@ export default ($scope, $state) => {
     }
     clearTimeout(peekOutTimeoutID);
     peekInTimeoutID = scopeTimeout(PEEK_IN_DELAY, () => {
-      clearPreviousPeekTimeoutID = scopeTimeout(PEEK_ANIMATION_DURATION,
-        () => { peekedLayerIndexes = isPeekable ? [index] : []; }
-      );
+      clearPreviousPeekTimeoutID = scopeTimeout(PEEK_ANIMATION_DURATION, () => {
+        peekedLayerIndexes = isPeekable ? [index] : [];
+      });
       if (isPeekable) {
         peekedLayerIndexes.push(index);
       }
@@ -103,16 +98,15 @@ export default ($scope, $state) => {
     clearTimeout(clearPreviousPeekTimeoutID);
   };
 
-  const unlistenStateChangeSuccess = $scope.$on('$locationChangeSuccess', () =>
-    setEntities()
-  );
+  const unlistenStateChangeSuccess = $scope.$on('$locationChangeSuccess', () => setEntities());
 
   const unlistenStateChangeStart = $scope.$on(
     '$stateChangeStart',
     (_event, toState, toParams, fromState, _fromParams, options) => {
       const preventControllerReload =
         $scope.isSlideinEntryEditorEnabled &&
-        isRelevantState(toState) && isRelevantState(fromState);
+        isRelevantState(toState) &&
+        isRelevantState(fromState);
       if (preventControllerReload) {
         options.notify = false;
         $state.params = { ...toParams };
@@ -126,13 +120,11 @@ export default ($scope, $state) => {
     clearTimeouts();
   });
 
-  function setEntities () {
+  function setEntities() {
     const previousEntities = $scope.entities;
-    const moreThanOneNewEntityAdded =
-      previousEntities.length + 1 < $scope.entities.length;
+    const moreThanOneNewEntityAdded = previousEntities.length + 1 < $scope.entities.length;
 
-    $scope.entities = getSlideInEntities()
-      .slice($scope.isSlideinEntryEditorEnabled ? 0 : -1);
+    $scope.entities = getSlideInEntities().slice($scope.isSlideinEntryEditorEnabled ? 0 : -1);
 
     // If there was more than one new entity added to the stack, we will have to
     // trigger loading for all those new entries, not just the one on top.
@@ -143,20 +135,20 @@ export default ($scope, $state) => {
       $scope.loaded = false;
       // TODO: Find a better way to get notified when all entity editors have been
       // fully loaded instead of giving each one 3s.
-      loaderTimeoutID = scopeTimeout($scope.entities.length * 3000,
-        () => { $scope.loaded = true; }
-      );
+      loaderTimeoutID = scopeTimeout($scope.entities.length * 3000, () => {
+        $scope.loaded = true;
+      });
     }
   }
 
-  function scopeTimeout (ms, fn) {
+  function scopeTimeout(ms, fn) {
     return setTimeout(() => {
       fn();
       $scope.$digest();
     }, ms);
   }
 
-  function clearTimeouts () {
+  function clearTimeouts() {
     [
       loaderTimeoutID,
       peekOutTimeoutID,
@@ -167,7 +159,6 @@ export default ($scope, $state) => {
   }
 };
 
-function isRelevantState ({ name }) {
-  return /^spaces\.detail(\.environment|)\.(entries|assets)\.detail$/
-    .test(name);
+function isRelevantState({ name }) {
+  return /^spaces\.detail(\.environment|)\.(entries|assets)\.detail$/.test(name);
 }

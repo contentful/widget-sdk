@@ -16,36 +16,32 @@ const QueryInput = createReactClass({
     onKeyDown: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired
   },
-  getInitialState () {
+  getInitialState() {
     return {
       value: this.props.value
     };
   },
-  componentDidUpdate () {
+  componentDidUpdate() {
     if (this.props.isFocused) {
       this.inputRef.focus();
     }
   },
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     this.setState(() => ({
       value: nextProps.value
     }));
   },
-  handleChange (e) {
-    const { target: { value } } = e;
+  handleChange(e) {
+    const {
+      target: { value }
+    } = e;
     this.props.onChange(value);
     this.setState(() => ({
       value
     }));
   },
-  render () {
-    const {
-      placeholder,
-      autoFocus,
-      onKeyDown,
-      onFocus,
-      onBlur
-    } = this.props;
+  render() {
+    const { placeholder, autoFocus, onKeyDown, onFocus, onBlur } = this.props;
     const { value } = this.state;
 
     // Replacing spaces with `|` to make the width of the shadow element equal
@@ -61,7 +57,9 @@ const QueryInput = createReactClass({
       h('input', {
         className: 'input-reset search-next__query-input',
         'data-test-id': 'queryInput',
-        ref: (input) => { this.inputRef = input; },
+        ref: input => {
+          this.inputRef = input;
+        },
         onFocus,
         onBlur,
         autoFocus,

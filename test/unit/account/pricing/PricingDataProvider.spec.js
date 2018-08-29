@@ -1,37 +1,47 @@
-import {createIsolatedSystem} from 'test/helpers/system-js';
+import { createIsolatedSystem } from 'test/helpers/system-js';
 
 describe('account/pricing/PricingDataProvider', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     this.PricingDataProvider = this.$inject('account/pricing/PricingDataProvider');
   });
 
   describe('#getPlansWithSpaces()', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.baseRatePlanChargeData = {
-        items: [{
-          productType: 'committed'
-        }]
+        items: [
+          {
+            productType: 'committed'
+          }
+        ]
       };
-      this.spacePlansData = {items: [
-        {sys: {id: 'plan1'}, gatekeeperKey: 'space1'},
-        {sys: {id: 'plan2'}, gatekeeperKey: 'space2'},
-        {sys: {id: 'plan3'}, gatekeeperKey: 'space3'},
-        {sys: {id: 'plan4'}}
-      ]};
-      this.spacesData = {items: [
-        {sys: {id: 'space1', createdBy: {sys: {id: 'user1'}}}},
-        {sys: {id: 'space2', createdBy: {sys: {id: 'user2'}}}},
-        {sys: {id: 'space3', createdBy: {sys: {id: 'user1'}}}},
-        {sys: {id: 'free_space', createdBy: {sys: {id: 'free_space_user'}}}}
-      ]};
-      this.usersData = {items: [{sys: {id: 'user1'}, email: 'user1@foo.com'}]};
+      this.spacePlansData = {
+        items: [
+          { sys: { id: 'plan1' }, gatekeeperKey: 'space1' },
+          { sys: { id: 'plan2' }, gatekeeperKey: 'space2' },
+          { sys: { id: 'plan3' }, gatekeeperKey: 'space3' },
+          { sys: { id: 'plan4' } }
+        ]
+      };
+      this.spacesData = {
+        items: [
+          { sys: { id: 'space1', createdBy: { sys: { id: 'user1' } } } },
+          { sys: { id: 'space2', createdBy: { sys: { id: 'user2' } } } },
+          { sys: { id: 'space3', createdBy: { sys: { id: 'user1' } } } },
+          { sys: { id: 'free_space', createdBy: { sys: { id: 'free_space_user' } } } }
+        ]
+      };
+      this.usersData = { items: [{ sys: { id: 'user1' }, email: 'user1@foo.com' }] };
 
       this.endpoint = sinon.stub().resolves();
-      this.endpoint.withArgs(sinon.match({path: ['plans']}), sinon.match.any).resolves(this.spacePlansData);
-      this.endpoint.withArgs(sinon.match({query: {plan_type: 'base'}}), sinon.match.any).resolves(this.baseRatePlanChargeData);
-      this.endpoint.withArgs(sinon.match({path: ['spaces']})).resolves(this.spacesData);
-      this.endpoint.withArgs(sinon.match({path: ['users']})).resolves(this.usersData);
+      this.endpoint
+        .withArgs(sinon.match({ path: ['plans'] }), sinon.match.any)
+        .resolves(this.spacePlansData);
+      this.endpoint
+        .withArgs(sinon.match({ query: { plan_type: 'base' } }), sinon.match.any)
+        .resolves(this.baseRatePlanChargeData);
+      this.endpoint.withArgs(sinon.match({ path: ['spaces'] })).resolves(this.spacesData);
+      this.endpoint.withArgs(sinon.match({ path: ['users'] })).resolves(this.usersData);
 
       this.getPlansWithSpaces = () => this.PricingDataProvider.getPlansWithSpaces(this.endpoint);
       this.expectSpacePlan = (plan, id, spaceId, email) => {
@@ -51,7 +61,7 @@ describe('account/pricing/PricingDataProvider', () => {
       };
     });
 
-    it('parses response data and sets spaces and users', function* () {
+    it('parses response data and sets spaces and users', function*() {
       const plans = yield this.getPlansWithSpaces();
 
       expect(plans.items.length).toBe(5);
@@ -62,7 +72,7 @@ describe('account/pricing/PricingDataProvider', () => {
       this.expectSpacePlan(plans.items[4], 'free-space-plan-1', 'free_space', null);
     });
 
-    it('fetches all spaces', function* () {
+    it('fetches all spaces', function*() {
       const fetchAll = sinon.stub().resolves(this.spacesData.items);
 
       // Create an isolated system to mock fetchAll()
@@ -76,17 +86,21 @@ describe('account/pricing/PricingDataProvider', () => {
       system.set('$window', {});
       system.set('$http', {});
 
-      system.set('data/CMA/FetchAll', {fetchAll});
-      system.set('utils/LaunchDarkly', {getCurrentVariation: () => Promise.resolve(false)});
+      system.set('data/CMA/FetchAll', { fetchAll });
+      system.set('utils/LaunchDarkly', { getCurrentVariation: () => Promise.resolve(false) });
       const PricingDataProvider = yield system.import('account/pricing/PricingDataProvider');
 
       yield PricingDataProvider.getPlansWithSpaces(this.endpoint);
       sinon.assert.calledWith(fetchAll, this.endpoint, ['spaces']);
     });
 
-    it('passes unique user ids to users endpoint', function* () {
+    it('passes unique user ids to users endpoint', function*() {
       yield this.getPlansWithSpaces();
-      sinon.assert.calledWith(this.endpoint, {method: 'GET', path: ['users'], query: {'sys.id': 'user1,user2,free_space_user'}});
+      sinon.assert.calledWith(this.endpoint, {
+        method: 'GET',
+        path: ['users'],
+        query: { 'sys.id': 'user1,user2,free_space_user' }
+      });
     });
   });
 });

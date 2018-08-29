@@ -1,12 +1,12 @@
 import sinon from 'npm:sinon';
 
 describe('cfFileEditor Directive', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test', $provide => {
       $provide.removeDirectives('cfFileDrop');
       $provide.value('services/Filestack', {
         makeDropPane: sinon.stub(),
-        pick: sinon.stub().resolves({fileName: 'x.jpg'})
+        pick: sinon.stub().resolves({ fileName: 'x.jpg' })
       });
     });
 
@@ -21,17 +21,21 @@ describe('cfFileEditor Directive', () => {
 
     const editorContext = this.$inject('mocks/entityEditor/Context').create();
 
-    this.el = this.$compile('<cf-file-editor />', {
-      editorData: {entity: {process: sinon.stub().resolves()}},
-      editorContext: editorContext,
-      fieldLocale: {access: {editable: true}},
-      locale: {internal_code: 'en-US'},
-      otDoc: {
-        getVersion: sinon.stub().returns(123),
-        getValueAt: sinon.stub(),
-        setValueAt: sinon.stub()
-      }
-    }, {cfWidgetApi});
+    this.el = this.$compile(
+      '<cf-file-editor />',
+      {
+        editorData: { entity: { process: sinon.stub().resolves() } },
+        editorContext: editorContext,
+        fieldLocale: { access: { editable: true } },
+        locale: { internal_code: 'en-US' },
+        otDoc: {
+          getVersion: sinon.stub().returns(123),
+          getValueAt: sinon.stub(),
+          setValueAt: sinon.stub()
+        }
+      },
+      { cfWidgetApi }
+    );
 
     this.el.appendTo('body');
     this.scope = this.el.scope();
@@ -44,41 +48,41 @@ describe('cfFileEditor Directive', () => {
     };
   });
 
-  afterEach(function () {
+  afterEach(function() {
     this.el.remove();
     this.scope.$destroy();
   });
 
   describe('scope.selectFile()', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.Filestack = this.$inject('services/Filestack');
       this.scope.selectFile();
       this.$apply();
     });
 
-    it('calls Filestack.pick', function () {
+    it('calls Filestack.pick', function() {
       sinon.assert.called(this.Filestack.pick);
     });
 
-    it('sets the file on the field API', function () {
+    it('sets the file on the field API', function() {
       sinon.assert.calledOnce(this.fieldApi.setValue);
-      sinon.assert.calledWithExactly(this.fieldApi.setValue, {fileName: 'x.jpg'});
+      sinon.assert.calledWithExactly(this.fieldApi.setValue, { fileName: 'x.jpg' });
     });
 
-    it('sets "scope.file" and validates', function () {
-      expect(this.scope.file).toEqual({fileName: 'x.jpg'});
+    it('sets "scope.file" and validates', function() {
+      expect(this.scope.file).toEqual({ fileName: 'x.jpg' });
       sinon.assert.called(this.scope.editorContext.validator.run);
     });
 
-    it('processes and validates asset', function () {
+    it('processes and validates asset', function() {
       this.assertProcessesAndValidatesAsset();
     });
 
-    it('sets the document title if it is not yet present', function () {
+    it('sets the document title if it is not yet present', function() {
       sinon.assert.calledWith(this.scope.otDoc.setValueAt, ['fields', 'title', 'en-US'], 'x');
     });
 
-    it('does not set the document title if it present', function () {
+    it('does not set the document title if it present', function() {
       this.scope.otDoc.getValueAt = sinon.stub();
       this.scope.otDoc.getValueAt.withArgs(['fields', 'title', 'en-US']).returns('title');
       this.scope.selectFile();
@@ -87,7 +91,7 @@ describe('cfFileEditor Directive', () => {
       sinon.assert.calledOnce(this.scope.otDoc.setValueAt);
     });
 
-    it('runs validations on file upload errors', function () {
+    it('runs validations on file upload errors', function() {
       this.Filestack.pick.rejects(new Error());
       this.scope.selectFile();
       this.$apply();
@@ -95,7 +99,7 @@ describe('cfFileEditor Directive', () => {
       sinon.assert.calledTwice(this.scope.editorContext.validator.run);
     });
 
-    it('removes value and shows error when asset processing fails', function () {
+    it('removes value and shows error when asset processing fails', function() {
       const notification = this.$inject('notification');
       notification.error = sinon.stub();
       this.scope.editorData.entity.process = sinon.stub().rejects();
@@ -108,26 +112,26 @@ describe('cfFileEditor Directive', () => {
   });
 
   describe('scope.deleteFile()', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.fieldApi.removeValue = sinon.stub().resolves();
       this.scope.deleteFile();
       this.$apply();
     });
 
-    it('removes the value from the field API', function () {
+    it('removes the value from the field API', function() {
       sinon.assert.calledOnce(this.fieldApi.removeValue);
     });
 
-    it('sets "scope.file" to "null"', function () {
+    it('sets "scope.file" to "null"', function() {
       expect(this.scope.file).toBe(null);
     });
 
-    it('it does not process asset', function () {
+    it('it does not process asset', function() {
       sinon.assert.notCalled(this.scope.editorData.entity.process);
     });
   });
 
-  it('shows spinner when image is loading', function () {
+  it('shows spinner when image is loading', function() {
     this.fieldApi.onValueChanged.yield({
       url: '//images.contentful.com',
       contentType: 'image/png'
@@ -142,7 +146,7 @@ describe('cfFileEditor Directive', () => {
     expect(loader.is(':visible')).toBe(false);
   });
 
-  it('processes unprocessed asset', function () {
+  it('processes unprocessed asset', function() {
     this.fieldApi.onValueChanged.yield({
       upload: '//images.contentful.com'
     });

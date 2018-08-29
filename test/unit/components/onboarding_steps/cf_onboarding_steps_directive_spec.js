@@ -3,11 +3,13 @@
 import * as K from 'test/helpers/mocks/kefir';
 
 describe('cfOnboardingSteps Directive', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     this.previews$ = K.createMockProperty([]);
-    this.organizations = [{
-      sys: { id: 'firstorg' }
-    }];
+    this.organizations = [
+      {
+        sys: { id: 'firstorg' }
+      }
+    ];
 
     this.createSpaceDialog = sinon.stub();
     this.contentPreviews = {
@@ -32,7 +34,7 @@ describe('cfOnboardingSteps Directive', () => {
       });
       $provide.value('services/TokenStore', {
         getOrganizations: sinon.stub().resolves(this.organizations),
-        user$: K.createMockProperty({sys: {id: 1}})
+        user$: K.createMockProperty({ sys: { id: 1 } })
       });
       $provide.value('services/CreateSpace', {
         showDialog: this.createSpaceDialog
@@ -56,7 +58,7 @@ describe('cfOnboardingSteps Directive', () => {
       });
     });
     this.$state = this.$inject('$state');
-    this.compile = function () {
+    this.compile = function() {
       this.element = this.$compile('<cf-onboarding-steps />');
       this.controller = this.element.isolateScope().onboarding;
       // Begin test code: test-ps-02-2018-tea-onboarding-steps
@@ -66,12 +68,12 @@ describe('cfOnboardingSteps Directive', () => {
       // End test code: test-ps-02-2018-tea-onboarding-steps
     };
 
-    this.assertCompletedSteps = function (num) {
+    this.assertCompletedSteps = function(num) {
       const completed = this.element.find('.onboarding-step__completed');
       expect(completed.length).toBe(num);
     };
 
-    this.assertActiveButton = function (cta) {
+    this.assertActiveButton = function(cta) {
       const selector = `button:contains("${cta}")`;
       const button = this.element.find(selector).get(0);
       expect(button.disabled).toBe(false);
@@ -79,21 +81,24 @@ describe('cfOnboardingSteps Directive', () => {
   });
 
   describe('app home page', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.$state.current.name = 'home';
       this.compile();
       const spaceContext = this.$inject('spaceContext');
-      spaceContext.publishedCTs = {getAllBare: () => [], items$: K.createMockProperty([])};
-      spaceContext.getData = sinon.stub().withArgs('activatedAt').returns(null);
+      spaceContext.publishedCTs = { getAllBare: () => [], items$: K.createMockProperty([]) };
+      spaceContext.getData = sinon
+        .stub()
+        .withArgs('activatedAt')
+        .returns(null);
       spaceContext.space = null;
     });
 
-    it('only create space button is active', function () {
+    it('only create space button is active', function() {
       this.assertCompletedSteps(0);
       this.assertActiveButton('Create space');
     });
 
-    it('opens the space creation dialog', function () {
+    it('opens the space creation dialog', function() {
       const button = this.element.find('button:contains("Create space")');
       button.click();
       this.$apply();
@@ -104,30 +109,39 @@ describe('cfOnboardingSteps Directive', () => {
 
   describe('space home page', () => {
     describe('not activated', () => {
-      beforeEach(function () {
+      beforeEach(function() {
         this.$state.current.name = 'spaces.detail.home';
         this.spaceContext = this.$inject('spaceContext');
-        this.spaceContext.publishedCTs = {getAllBare: () => [], items$: K.createMockProperty([])};
-        this.spaceContext.getData = sinon.stub().withArgs('activatedAt').returns(null);
+        this.spaceContext.publishedCTs = { getAllBare: () => [], items$: K.createMockProperty([]) };
+        this.spaceContext.getData = sinon
+          .stub()
+          .withArgs('activatedAt')
+          .returns(null);
         this.spaceContext.space = {};
       });
 
-      it('no content types yet', function () {
+      it('no content types yet', function() {
         this.compile();
         this.assertCompletedSteps(1);
         this.assertActiveButton('Create a content type');
       });
 
-      it('no entries yet', function () {
-        this.spaceContext.publishedCTs = {getAllBare: () => [{}], items$: K.createMockProperty([])};
+      it('no entries yet', function() {
+        this.spaceContext.publishedCTs = {
+          getAllBare: () => [{}],
+          items$: K.createMockProperty([])
+        };
         this.spaceContext.space.getEntries = sinon.stub().resolves([]);
         this.compile();
         this.assertCompletedSteps(2);
         this.assertActiveButton('Add an entry');
       });
 
-      it('content types and entries created', function () {
-        this.spaceContext.publishedCTs = {getAllBare: () => [{}], items$: K.createMockProperty([])};
+      it('content types and entries created', function() {
+        this.spaceContext.publishedCTs = {
+          getAllBare: () => [{}],
+          items$: K.createMockProperty([])
+        };
         this.spaceContext.space.getEntries = sinon.stub().resolves([{}]);
         this.compile();
         this.assertCompletedSteps(3);
@@ -136,37 +150,40 @@ describe('cfOnboardingSteps Directive', () => {
     });
 
     describe('activated', () => {
-      beforeEach(function () {
+      beforeEach(function() {
         this.$state.current.name = 'spaces.detail.home';
         this.spaceContext = this.$inject('spaceContext');
-        this.spaceContext.publishedCTs = {getAllBare: () => [{}], items$: K.createMockProperty([])};
+        this.spaceContext.publishedCTs = {
+          getAllBare: () => [{}],
+          items$: K.createMockProperty([])
+        };
         this.spaceContext.getData = sinon.stub();
         this.spaceContext.getData.withArgs('activatedAt').returns('2017-03-03T16:14:00Z');
         this.spaceContext.space = {};
         this.webhooks = sinon.stub().resolves([]);
-        this.spaceContext.webhookRepo = {getAll: this.webhooks};
-        this.spaceContext.endpoint = sinon.stub().resolves({items: []});
+        this.spaceContext.webhookRepo = { getAll: this.webhooks };
+        this.spaceContext.endpoint = sinon.stub().resolves({ items: [] });
         this.$inject('TheLocaleStore').getLocales = sinon.stub().returns([{}]);
       });
 
-      it('no completed steps', function () {
+      it('no completed steps', function() {
         this.compile();
         this.assertCompletedSteps(0);
       });
 
-      it('invited users', function () {
-        this.spaceContext.endpoint.resolves({items: [{}, {}]});
+      it('invited users', function() {
+        this.spaceContext.endpoint.resolves({ items: [{}, {}] });
         this.compile();
         this.assertCompletedSteps(1);
       });
 
-      it('has webhooks', function () {
+      it('has webhooks', function() {
         this.webhooks.resolves([{}]);
         this.compile();
         this.assertCompletedSteps(1);
       });
 
-      it('has additional locales', function () {
+      it('has additional locales', function() {
         this.$inject('TheLocaleStore').getLocales = sinon.stub().returns([{}, {}]);
         this.compile();
         this.assertCompletedSteps(1);

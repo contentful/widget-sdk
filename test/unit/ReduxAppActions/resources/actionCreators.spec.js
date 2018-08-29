@@ -1,5 +1,5 @@
-describe('App Resources action creators', function () {
-  beforeEach(function () {
+describe('App Resources action creators', function() {
+  beforeEach(function() {
     this.stubs = {
       ResourceService_getAll: sinon.stub().resolves([]),
       dispatch: sinon.stub()
@@ -28,12 +28,12 @@ describe('App Resources action creators', function () {
     this.actions = this.$inject('ReduxAppActions/resources/actions');
   });
 
-  describe('getResourcesForSpace', function () {
-    beforeEach(function () {
+  describe('getResourcesForSpace', function() {
+    beforeEach(function() {
       this.actionCreator = this.actionCreators.getResourcesForSpace;
     });
 
-    it('should dispatch 3 times on success', async function () {
+    it('should dispatch 3 times on success', async function() {
       await this.dispatch(this.actionCreator, this.spaceId);
 
       expect(this.stubs.dispatch.callCount).toBe(3);
@@ -54,7 +54,7 @@ describe('App Resources action creators', function () {
       });
     });
 
-    it('should dispatch 3 times on failure', async function () {
+    it('should dispatch 3 times on failure', async function() {
       const error = new Error('getAll failed');
 
       this.stubs.ResourceService_getAll.throws(error);

@@ -14,22 +14,22 @@ export default class WebhookRemovalDialog extends React.Component {
     remove: PropTypes.func.isRequired,
     confirm: PropTypes.func.isRequired,
     cancel: PropTypes.func.isRequired
-  }
+  };
 
-  constructor (props) {
+  constructor(props) {
     super(props);
-    this.state = {busy: false};
+    this.state = { busy: false };
     this.remove = this.remove.bind(this);
   }
 
-  remove () {
-    const {remove, confirm, cancel} = this.props;
-    this.setState({busy: true});
+  remove() {
+    const { remove, confirm, cancel } = this.props;
+    this.setState({ busy: true });
     return remove().then(confirm, cancel);
   }
 
-  render () {
-    const {webhookUrl, cancel} = this.props;
+  render() {
+    const { webhookUrl, cancel } = this.props;
 
     return (
       <div className="modal-dialog">
@@ -40,22 +40,16 @@ export default class WebhookRemovalDialog extends React.Component {
           <div className="modal-dialog__richtext">
             You are about to remove webhook calling the following URL:
             <div style={URL_STYLE}>{webhookUrl}</div>
-            After removal your external integrations may stop working properly. Do you want to proceed?
+            After removal your external integrations may stop working properly. Do you want to
+            proceed?
           </div>
         </div>
         <div className="modal-dialog__controls">
-          <button
-            className="btn-caution"
-            disabled={this.state.busy}
-            onClick={this.remove}
-          >
+          <button className="btn-caution" disabled={this.state.busy} onClick={this.remove}>
             Remove
           </button>
-          <button
-            className="btn-secondary-action"
-            onClick={cancel}
-          >
-            {'Don\'t remove'}
+          <button className="btn-secondary-action" onClick={cancel}>
+            {"Don't remove"}
           </button>
         </div>
       </div>

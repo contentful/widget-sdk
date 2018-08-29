@@ -24,17 +24,17 @@ import * as actions from './actions';
 
 const DEFAULT_LOCALE = 'en-US';
 
-export function reset () {
+export function reset() {
   return dispatch => dispatch(actions.spaceWizardReset());
 }
 
-export function setPartnershipFields (fields) {
+export function setPartnershipFields(fields) {
   return dispatch => {
     dispatch(actions.spacePartnershipFields(fields));
   };
 }
 
-export function sendPartnershipEmail ({ spaceId, fields }) {
+export function sendPartnershipEmail({ spaceId, fields }) {
   return async dispatch => {
     dispatch(actions.spacePartnershipEmailPending(true));
 
@@ -42,7 +42,7 @@ export function sendPartnershipEmail ({ spaceId, fields }) {
     try {
       await endpoint({
         method: 'POST',
-        path: [ 'partner_projects' ],
+        path: ['partner_projects'],
         data: fields
       });
     } catch (e) {
@@ -58,7 +58,7 @@ export function sendPartnershipEmail ({ spaceId, fields }) {
   };
 }
 
-export function fetchSpacePlans ({ organization, spaceId }) {
+export function fetchSpacePlans({ organization, spaceId }) {
   return async dispatch => {
     const resources = createResourceService(organization.sys.id, 'organization');
     const endpoint = createOrganizationEndpoint(organization.sys.id);
@@ -69,7 +69,7 @@ export function fetchSpacePlans ({ organization, spaceId }) {
     let freeSpacesResource;
 
     try {
-      [ rawSpaceRatePlans, freeSpacesResource ] = await Promise.all([
+      [rawSpaceRatePlans, freeSpacesResource] = await Promise.all([
         getSpaceRatePlans(endpoint, spaceId),
         resources.get('free_space')
       ]);
@@ -81,7 +81,7 @@ export function fetchSpacePlans ({ organization, spaceId }) {
     }
 
     const spaceRatePlans = rawSpaceRatePlans.map(plan => {
-      const isFree = (plan.productPlanType === 'free_space');
+      const isFree = plan.productPlanType === 'free_space';
       const includedResources = getIncludedResources(plan.productRatePlanCharges);
       let disabled = false;
 
@@ -93,7 +93,7 @@ export function fetchSpacePlans ({ organization, spaceId }) {
         disabled = true;
       }
 
-      return {...plan, isFree, includedResources, disabled};
+      return { ...plan, isFree, includedResources, disabled };
     });
 
     dispatch(actions.spacePlansSuccess(spaceRatePlans, freeSpacesResource));
@@ -101,7 +101,7 @@ export function fetchSpacePlans ({ organization, spaceId }) {
   };
 }
 
-export function fetchTemplates () {
+export function fetchTemplates() {
   return async dispatch => {
     dispatch(actions.spaceTemplatesPending(true));
 
@@ -126,7 +126,7 @@ export function fetchTemplates () {
   };
 }
 
-export function createSpace ({
+export function createSpace({
   organization,
   selectedPlan,
   newSpaceMeta,
@@ -153,7 +153,6 @@ export function createSpace ({
       dispatch(actions.spaceCreationFailure(error));
       dispatch(actions.spaceCreationPending(false));
 
-
       return;
     }
 
@@ -175,16 +174,17 @@ export function createSpace ({
     // This navigates to the new space
     onSpaceCreated(newSpace);
 
-    const spaceCreateEventData =
-      template
-      ? {templateName: template.name, entityAutomationScope: {scope: 'space_template'}}
-      : {templateName: 'Blank'};
+    const spaceCreateEventData = template
+      ? { templateName: template.name, entityAutomationScope: { scope: 'space_template' } }
+      : { templateName: 'Blank' };
 
     Analytics.track('space:create', spaceCreateEventData);
 
-    dispatch(track('space_create', {
-      action: 'create'
-    }));
+    dispatch(
+      track('space_create', {
+        action: 'create'
+      })
+    );
     dispatch(actions.spaceCreationSuccess());
 
     if (template) {
@@ -210,7 +210,7 @@ export function createSpace ({
   };
 }
 
-export function changeSpace ({ space, selectedPlan, onConfirm }) {
+export function changeSpace({ space, selectedPlan, onConfirm }) {
   return async dispatch => {
     dispatch(actions.spaceChangePending(true));
 
@@ -226,17 +226,18 @@ export function changeSpace ({ space, selectedPlan, onConfirm }) {
       return;
     }
 
-    dispatch(track('space_type_change', {
-      action: 'change'
-    }));
-
+    dispatch(
+      track('space_type_change', {
+        action: 'change'
+      })
+    );
 
     // We don't fire a "success" event since we close the modal directly
     onConfirm();
   };
 }
 
-export function fetchSubscriptionPrice ({ organization }) {
+export function fetchSubscriptionPrice({ organization }) {
   return async dispatch => {
     const orgId = organization.sys.id;
     const endpoint = createOrganizationEndpoint(orgId);
@@ -260,7 +261,7 @@ export function fetchSubscriptionPrice ({ organization }) {
   };
 }
 
-export function track (eventName, data) {
+export function track(eventName, data) {
   return dispatch => {
     const trackingData = createTrackingData(data);
 
@@ -270,19 +271,19 @@ export function track (eventName, data) {
   };
 }
 
-export function navigate (stepId) {
+export function navigate(stepId) {
   return dispatch => dispatch(actions.spaceWizardNavigate(stepId));
 }
 
-export function setNewSpaceName (name) {
+export function setNewSpaceName(name) {
   return dispatch => dispatch(actions.newSpaceName(name));
 }
 
-export function setNewSpaceTemplate (template) {
+export function setNewSpaceTemplate(template) {
   return dispatch => dispatch(actions.newSpaceTemplate(template));
 }
 
-export function selectPlan (currentPlan, selectedPlan) {
+export function selectPlan(currentPlan, selectedPlan) {
   return dispatch => {
     const { productType, productPlanType } = selectedPlan;
     const isPartnerSpace = productType === 'partner' && productPlanType === 'space';
@@ -297,12 +298,11 @@ export function selectPlan (currentPlan, selectedPlan) {
   };
 }
 
-
-async function createTemplate (templateInfo) {
+async function createTemplate(templateInfo) {
   const templateCreator = getTemplateCreator(
     spaceContext,
     // TODO add analytics tracking
-    {onItemSuccess: noop, onItemError: noop},
+    { onItemSuccess: noop, onItemError: noop },
     templateInfo,
     DEFAULT_LOCALE
   );
@@ -311,8 +311,8 @@ async function createTemplate (templateInfo) {
   return tryCreateTemplate(templateCreator, templateData);
 }
 
-async function tryCreateTemplate (templateCreator, templateData, retried) {
-  const {spaceSetup, contentCreated} = templateCreator.create(templateData);
+async function tryCreateTemplate(templateCreator, templateData, retried) {
+  const { spaceSetup, contentCreated } = templateCreator.create(templateData);
 
   try {
     await Promise.all([

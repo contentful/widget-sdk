@@ -1,6 +1,6 @@
 import require from 'require';
 import * as Config from 'Config';
-import {includes, mapValues} from 'lodash';
+import { includes, mapValues } from 'lodash';
 import * as UIVersionSwitcher from 'debug/UIVersionSwitcher';
 import * as MockApiToggle from 'debug/MockApiToggle';
 import * as EnforceFlags from 'debug/EnforceFlags';
@@ -13,7 +13,7 @@ const DEBUG_ENVS = ['development', 'preview', 'staging'];
  *
  * This function is called in the boot hook of the application prelude.
  */
-export function init (global) {
+export function init(global) {
   if (includes(DEBUG_ENVS, Config.env)) {
     initDevNotifications();
     global.cfDebug = create();
@@ -30,7 +30,7 @@ const modules = {
   http: 'debug/XHR'
 };
 
-function initDevNotifications () {
+function initDevNotifications() {
   UIVersionSwitcher.init();
   MockApiToggle.init();
   EnforceFlags.init();
@@ -44,8 +44,8 @@ function initDevNotifications () {
  * window.cfDebug.analytics.show()
  * ~~~~
  */
-function create () {
-  const initializers = mapValues(modules, (module) => {
+function create() {
+  const initializers = mapValues(modules, module => {
     return require(module).default;
   });
   return makeLazyObj(initializers);
@@ -64,7 +64,7 @@ function create () {
  * obj.foo  // => 'bar'
  * ~~~
  */
-function makeLazyObj (obj) {
+function makeLazyObj(obj) {
   const target = mapValues(obj, (fn, key) => {
     return () => {
       obj[key] = fn();

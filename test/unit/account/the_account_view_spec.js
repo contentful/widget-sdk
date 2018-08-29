@@ -2,7 +2,7 @@ import * as K from 'helpers/mocks/kefir';
 import * as sinon from 'helpers/sinon';
 
 describe('TheAccountView service', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     this.spaceContext = {
       publishedCTs: {
         items$: K.createMockProperty(null)
@@ -10,7 +10,7 @@ describe('TheAccountView service', () => {
       getId: sinon.stub(),
       getData: sinon.stub()
     };
-    this.setOrganizationForCurrentSpace = function (org) {
+    this.setOrganizationForCurrentSpace = function(org) {
       this.spaceContext.getData.withArgs('organization').returns(org);
     };
 
@@ -18,7 +18,7 @@ describe('TheAccountView service', () => {
       isOwnerOrAdmin: sinon.stub()
     };
 
-    module('contentful/test', ($provide) => {
+    module('contentful/test', $provide => {
       $provide.value('spaceContext', this.spaceContext);
       $provide.value('services/OrganizationRoles', this.OrganizationRoles);
       $provide.value('contentPreview', {
@@ -39,47 +39,47 @@ describe('TheAccountView service', () => {
 
   describe('#getOrganizationRef()', () => {
     const ORGS = [
-      {subscriptionState: 'active', sys: {id: 'ORG_0'}},
-      {subscriptionState: 'active', sys: {id: 'ORG_1'}},
-      {subscriptionState: 'active', sys: {id: 'ORG_2'}}
+      { subscriptionState: 'active', sys: { id: 'ORG_0' } },
+      { subscriptionState: 'active', sys: { id: 'ORG_1' } },
+      { subscriptionState: 'active', sys: { id: 'ORG_2' } }
     ];
 
-    beforeEach(function () {
+    beforeEach(function() {
       this.OrganizationRoles.isOwnerOrAdmin.returns(true);
     });
 
-    it('returns undefined when user is not an admin', function () {
+    it('returns undefined when user is not an admin', function() {
       this.OrganizationRoles.isOwnerOrAdmin.returns(false);
       expect(this.view.getOrganizationRef()).toBe(null);
     });
 
     describe('with at least one space', () => {
-      beforeEach(function () {
+      beforeEach(function() {
         this.setOrganizationForCurrentSpace(ORGS[0]);
       });
 
-      it('references space organization main page', function () {
+      it('references space organization main page', function() {
         const ref = this.view.getOrganizationRef();
         assertOrgRef(ref, ORGS[0], 'subscription');
       });
 
-      it('references space organization subpage', function () {
+      it('references space organization subpage', function() {
         const ref = this.view.getOrganizationRef('foo');
         assertOrgRef(ref, ORGS[0], 'foo');
       });
     });
 
     describe('without any space', () => {
-      beforeEach(function () {
+      beforeEach(function() {
         this.TokenStore.organizations$.set(ORGS);
       });
 
-      it('references the next best organization', function () {
+      it('references the next best organization', function() {
         const ref = this.view.getOrganizationRef('foo');
         assertOrgRef(ref, ORGS[0], 'foo');
       });
 
-      it('references the next best owned trial organization', function () {
+      it('references the next best owned trial organization', function() {
         this.OrganizationRoles.isOwnerOrAdmin.withArgs(ORGS[1]).returns(false);
         ORGS[1].subscriptionState = 'trial'; // Trial but not owned.
         ORGS[2].subscriptionState = 'trial';
@@ -88,7 +88,7 @@ describe('TheAccountView service', () => {
         assertOrgRef(ref, ORGS[2], 'foo');
       });
 
-      it('references the next best owned active organization', function () {
+      it('references the next best owned active organization', function() {
         this.OrganizationRoles.isOwnerOrAdmin.withArgs(ORGS[0]).returns(false);
         ORGS[1].subscriptionState = 'inactive';
 
@@ -96,7 +96,7 @@ describe('TheAccountView service', () => {
         assertOrgRef(ref, ORGS[2], 'foo');
       });
 
-      it('references the next best owned organization', function () {
+      it('references the next best owned organization', function() {
         this.OrganizationRoles.isOwnerOrAdmin.withArgs(ORGS[0]).returns(false);
         this.OrganizationRoles.isOwnerOrAdmin.withArgs(ORGS[2]).returns(false);
         ORGS[1].subscriptionState = 'inactive';
@@ -115,30 +115,35 @@ describe('TheAccountView service', () => {
 
   describeGoToMethod('goToUsers', 'users.gatekeeper', pricingV1Org);
 
-  function describeGoToMethod (name, subpage, org, comment = '') {
+  function describeGoToMethod(name, subpage, org, comment = '') {
     describe(`.${name}()${comment && ', ' + comment}`, () => {
       const RETURN_VALUE = {};
 
-      beforeEach(function () {
+      beforeEach(function() {
         this.setOrganizationForCurrentSpace(org);
         this.OrganizationRoles.isOwnerOrAdmin.returns(true);
         this.go.returns(RETURN_VALUE);
         this.returnValue = this.view[name]();
       });
 
-      it(`calls $state.go('${subpage}')`, function () {
+      it(`calls $state.go('${subpage}')`, function() {
         sinon.assert.calledOnce(this.go);
-        sinon.assert.calledWithExactly(this.go, `account.organizations.${subpage}`, { orgId: org.sys.id }, { reload: true });
+        sinon.assert.calledWithExactly(
+          this.go,
+          `account.organizations.${subpage}`,
+          { orgId: org.sys.id },
+          { reload: true }
+        );
       });
 
-      it('returns .goToOrganizations() returned promise', function () {
+      it('returns .goToOrganizations() returned promise', function() {
         expect(this.returnValue).toBe(RETURN_VALUE);
       });
     });
   }
 
   describe('getSubscriptionState()', () => {
-    it('returns state object for v1 org if user has permission', function () {
+    it('returns state object for v1 org if user has permission', function() {
       this.setOrganizationForCurrentSpace(pricingV1Org);
       this.OrganizationRoles.isOwnerOrAdmin.returns(true);
       const sref = {
@@ -149,7 +154,7 @@ describe('TheAccountView service', () => {
       expect(this.view.getSubscriptionState()).toEqual(sref);
     });
 
-    it('returns null for v1 and v2 orgs if user does not have access permission', function () {
+    it('returns null for v1 and v2 orgs if user does not have access permission', function() {
       this.OrganizationRoles.isOwnerOrAdmin.returns(false);
       this.setOrganizationForCurrentSpace(pricingV1Org);
       expect(this.view.getSubscriptionState()).toBe(null);
@@ -157,13 +162,13 @@ describe('TheAccountView service', () => {
       expect(this.view.getSubscriptionState()).toBe(null);
     });
 
-    it('returns null if no org in space context', function () {
+    it('returns null if no org in space context', function() {
       this.setOrganizationForCurrentSpace(null);
       this.OrganizationRoles.isOwnerOrAdmin.returns(true);
       expect(this.view.getSubscriptionState()).toBe(null);
     });
 
-    it('has path to new subscription page for v2 org', function () {
+    it('has path to new subscription page for v2 org', function() {
       this.setOrganizationForCurrentSpace(pricingV2Org);
       this.OrganizationRoles.isOwnerOrAdmin.returns(true);
       const sref = {
@@ -175,7 +180,7 @@ describe('TheAccountView service', () => {
     });
   });
 
-  function assertOrgRef (ref, org, subpage) {
+  function assertOrgRef(ref, org, subpage) {
     expect(ref).toEqual({
       path: ['account', 'organizations', subpage],
       params: {

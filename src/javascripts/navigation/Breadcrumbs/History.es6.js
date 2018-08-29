@@ -15,7 +15,7 @@ import { last, findIndex } from 'lodash';
 export default createBreadcrumbsHistory();
 
 // This is only exported for testing purposes
-export function createBreadcrumbsHistory () {
+export function createBreadcrumbsHistory() {
   let history = [];
   const crumbBus = K.createPropertyBus(history);
 
@@ -26,11 +26,13 @@ export function createBreadcrumbsHistory () {
     isEmpty: isEmpty,
     pop: pop,
     purge: purge,
-    getLast: function () { return last(history); },
+    getLast: function() {
+      return last(history);
+    },
     crumbs$: crumbBus.property
   };
 
-  function extendCurrent (props) {
+  function extendCurrent(props) {
     const current = last(history);
     // Object.assign will throw in case `current` is not an object
     if (current) {
@@ -39,7 +41,7 @@ export function createBreadcrumbsHistory () {
     crumbBus.set(history);
   }
 
-  function add (crumb) {
+  function add(crumb) {
     let old;
     const index = findIndex(history, historyCrumb => historyCrumb.id === crumb.id);
     if (index > -1) {
@@ -50,22 +52,22 @@ export function createBreadcrumbsHistory () {
     crumbBus.set(history);
   }
 
-  function set (newHistory) {
+  function set(newHistory) {
     history = newHistory;
     crumbBus.set(history);
   }
 
-  function isEmpty () {
+  function isEmpty() {
     return history.length === 0;
   }
 
-  function pop () {
+  function pop() {
     const popped = history.pop();
     crumbBus.set(history);
     return popped;
   }
 
-  function purge () {
+  function purge() {
     set([]);
   }
 }

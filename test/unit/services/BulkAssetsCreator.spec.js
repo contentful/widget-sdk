@@ -1,5 +1,5 @@
 import * as sinon from 'helpers/sinon';
-import {sortBy, map, max} from 'lodash';
+import { sortBy, map, max } from 'lodash';
 
 const VERSION_MISMATCH_ERROR = { status: 409 };
 const UNPROCESSABLE_ERROR = { status: 500 };
@@ -11,7 +11,7 @@ let $timeout;
 let lastId;
 
 describe('BulkAssetsCreator.tryToPublishProcessingAssets()', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     this.BulkAssetsCreator = this.$inject('services/BulkAssetsCreator');
     $timeout = this.$inject('$timeout');
@@ -23,20 +23,13 @@ describe('BulkAssetsCreator.tryToPublishProcessingAssets()', () => {
     $timeout = null;
   });
 
-  test('empty assets array', () => [
-  ]);
+  test('empty assets array', () => []);
 
-  test('one processed at one second', () => [
-    [newAssetProcessedAfter(1), PUBLISHABLE]
-  ]);
+  test('one processed at one second', () => [[newAssetProcessedAfter(1), PUBLISHABLE]]);
 
-  test('one processed at six seconds', () => [
-    [newAssetProcessedAfter(6), PUBLISHABLE]
-  ]);
+  test('one processed at six seconds', () => [[newAssetProcessedAfter(6), PUBLISHABLE]]);
 
-  test('one processed after six seconds', () => [
-    [newAssetProcessedAfter(6.1), UNPUBLISHABLE]
-  ]);
+  test('one processed after six seconds', () => [[newAssetProcessedAfter(6.1), UNPUBLISHABLE]]);
 
   test('last processed first', () => [
     [newAssetProcessedAfter(6), PUBLISHABLE],
@@ -109,9 +102,7 @@ describe('BulkAssetsCreator.tryToPublishProcessingAssets()', () => {
     [newAssetProcessedAfter(7), UNPUBLISHABLE]
   ]);
 
-  test('unprocessable asset', () => [
-    [newUnprocessableAsset(), UNPUBLISHABLE]
-  ]);
+  test('unprocessable asset', () => [[newUnprocessableAsset(), UNPUBLISHABLE]]);
 
   test('unprocessable asset is last', () => [
     [newAssetProcessedAfter(4), PUBLISHABLE],
@@ -129,8 +120,8 @@ describe('BulkAssetsCreator.tryToPublishProcessingAssets()', () => {
   ]);
 });
 
-function test (msg, buildAssetsAndExpectations) {
-  it(msg, function* () {
+function test(msg, buildAssetsAndExpectations) {
+  it(msg, function*() {
     const assets = [];
     const expectedPublishedAssets = [];
     const expectedUnpublishableAssets = [];
@@ -151,22 +142,22 @@ function test (msg, buildAssetsAndExpectations) {
     expect(sort(unpublishableAssets)).toEqual(sort(expectedUnpublishableAssets));
   });
 
-  function sort (assets) {
+  function sort(assets) {
     return sortBy(assets, '__id');
   }
 }
 
-function newAssetProcessedAfter (seconds) {
+function newAssetProcessedAfter(seconds) {
   return processedAfter(seconds, newUnprocessedAsset());
 }
 
-function newUnprocessableAsset () {
+function newUnprocessableAsset() {
   const asset = newUnprocessedAsset();
   asset.publish.rejects(UNPROCESSABLE_ERROR);
   return asset;
 }
 
-function newUnprocessedAsset () {
+function newUnprocessedAsset() {
   return {
     __id: lastId++, // ID for sorting and more meaningful diffs on test failure.
     publish: sinon.stub().rejects(VERSION_MISMATCH_ERROR),
@@ -174,14 +165,14 @@ function newUnprocessedAsset () {
   };
 }
 
-function processedAfter (seconds, asset) {
+function processedAfter(seconds, asset) {
   const ms = seconds * 1000;
   $timeout(ms).then(() => asset.publish.resolves(asset));
   asset.__processedAfter = ms;
   return asset;
 }
 
-function getTestTime (assets) {
+function getTestTime(assets) {
   const processingTime = max(map(assets, '__processedAfter')) || 6000;
   return max([2000, Math.ceil(processingTime / 1000) * 1000]);
 }

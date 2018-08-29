@@ -8,17 +8,17 @@ import * as K from 'test/helpers/mocks/kefir';
 describe('in DeploymentForm', () => {
   let DeploymentForm;
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test', $provide => {
       $provide.value('services/TokenStore', {
-        user$: K.createMockProperty({sys: {id: 1}})
+        user$: K.createMockProperty({ sys: { id: 1 } })
       });
     });
 
     DeploymentForm = this.$inject('DeploymentFormModule');
   });
 
-  afterEach(function () {
+  afterEach(function() {
     DeploymentForm = null;
   });
 

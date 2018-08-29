@@ -1,13 +1,13 @@
 import PolicyBuilder from 'PolicyBuilder';
 import CONFIG from 'PolicyBuilder/CONFIG';
-import {get, isString, identity} from 'lodash';
+import { get, isString, identity } from 'lodash';
 
 const policies = {
   entry: {
-    allowed: {flat: [], byContentType: {}},
-    denied: {flat: [], byContentType: {}}
+    allowed: { flat: [], byContentType: {} },
+    denied: { flat: [], byContentType: {} }
   },
-  asset: {allowed: [], denied: []}
+  asset: { allowed: [], denied: [] }
 };
 
 let isAdmin = false;
@@ -17,9 +17,9 @@ let fieldAccessCache = {};
 export const canAccessEntries = () => policies.entry.allowed.flat.length > 0;
 export const canAccessAssets = () => policies.asset.allowed.length > 0;
 
-export function setMembership (membership, spaceAuthContext) {
+export function setMembership(membership, spaceAuthContext) {
   const internals = get(membership, 'roles', [])
-    .map((role) => role && PolicyBuilder.toInternal(role))
+    .map(role => role && PolicyBuilder.toInternal(role))
     .filter(identity);
 
   isAdmin = get(membership, 'admin', false);
@@ -42,7 +42,7 @@ export function setMembership (membership, spaceAuthContext) {
 
 // TODO only pass field id and locale code
 // Separate method for assets
-export function canEditFieldLocale (contentTypeId, field, locale) {
+export function canEditFieldLocale(contentTypeId, field, locale) {
   const fieldId = field.apiName || field.id;
   const localeCode = locale.code;
 
@@ -67,31 +67,39 @@ export function canEditFieldLocale (contentTypeId, field, locale) {
   return result;
 }
 
-export function canUpdateEntriesOfType (contentTypeId) {
-  return performCheck(getAllowed(contentTypeId), getDenied(contentTypeId), anyUserUpdatePoliciesOnly);
+export function canUpdateEntriesOfType(contentTypeId) {
+  return performCheck(
+    getAllowed(contentTypeId),
+    getDenied(contentTypeId),
+    anyUserUpdatePoliciesOnly
+  );
 }
 
-export function canUpdateOwnEntries () {
-  return performCheck(policies.entry.allowed.flat, policies.entry.denied.flat, currentUserUpdatePoliciesOnly);
+export function canUpdateOwnEntries() {
+  return performCheck(
+    policies.entry.allowed.flat,
+    policies.entry.denied.flat,
+    currentUserUpdatePoliciesOnly
+  );
 }
 
-export function canUpdateAssets () {
+export function canUpdateAssets() {
   return performCheck(policies.asset.allowed, policies.asset.denied, anyUserUpdatePoliciesOnly);
 }
 
-export function canUpdateOwnAssets () {
+export function canUpdateOwnAssets() {
   return performCheck(policies.asset.allowed, policies.asset.denied, currentUserUpdatePoliciesOnly);
 }
 
-function reduceInternals (internals, path) {
+function reduceInternals(internals, path) {
   return internals.reduce((acc, internal) => acc.concat(get(internal, path, [])), []);
 }
 
-function groupByContentType (collectionName) {
+function groupByContentType(collectionName) {
   const collection = policies.entry[collectionName];
   collection.byContentType = {};
 
-  collection.flat.forEach((p) => {
+  collection.flat.forEach(p => {
     if (isString(p.contentType)) {
       collection.byContentType[p.contentType] = collection.byContentType[p.contentType] || [];
       collection.byContentType[p.contentType].push(p);
@@ -99,48 +107,47 @@ function groupByContentType (collectionName) {
   });
 }
 
-function groupByEntityId (type, collectionName) {
+function groupByEntityId(type, collectionName) {
   const collection = policies[type][collectionName];
 
-
-  collection.byId = collection.flat.filter((p) => isString(p.entityId));
+  collection.byId = collection.flat.filter(p => isString(p.entityId));
 }
 
-function getCached (ctId, fieldId, localeCode) {
+function getCached(ctId, fieldId, localeCode) {
   const result = fieldAccessCache[getCacheKey(ctId, fieldId, localeCode)];
 
-  return (result === true || result === false) ? result : null;
+  return result === true || result === false ? result : null;
 }
 
-function cacheResult (ctId, fieldId, localeCode, result) {
+function cacheResult(ctId, fieldId, localeCode, result) {
   fieldAccessCache[getCacheKey(ctId, fieldId, localeCode)] = result;
 }
 
-function getCacheKey (ctId, fieldId, localeCode) {
+function getCacheKey(ctId, fieldId, localeCode) {
   return [getCtCacheKey(ctId), fieldId, localeCode].join(',');
 }
 
-function getCtCacheKey (ctId) {
+function getCtCacheKey(ctId) {
   return ctId || '__cf_internal_ct_asset__';
 }
 
-function performCheck (c1, c2, fn) {
+function performCheck(c1, c2, fn) {
   return fn(c1).length > 0 && fn(withoutPathRules(c2)).length === 0;
 }
 
-function withoutPathRules (c) {
-  return c.filter((p) => !p.isPath);
+function withoutPathRules(c) {
+  return c.filter(p => !p.isPath);
 }
 
-function getAllowed (contentTypeId) {
+function getAllowed(contentTypeId) {
   return getCollection('allowed', contentTypeId);
 }
 
-function getDenied (contentTypeId) {
+function getDenied(contentTypeId) {
   return getCollection('denied', contentTypeId);
 }
 
-function getCollection (name, contentTypeId) {
+function getCollection(name, contentTypeId) {
   const ctGroups = policies.entry[name].byContentType;
   const ctSpecificItems = ctGroups[contentTypeId] || [];
   const generalItems = ctGroups[CONFIG.ALL_CTS] || [];
@@ -148,28 +155,28 @@ function getCollection (name, contentTypeId) {
   return [...ctSpecificItems, ...generalItems];
 }
 
-function getAllowedEntries () {
+function getAllowedEntries() {
   return policies.entry.allowed.byId;
 }
 
-function getDeniedEntries () {
+function getDeniedEntries() {
   return policies.entry.denied.byId;
 }
 
-function anyUserUpdatePoliciesOnly (c) {
-  return updatePoliciesOnly(c).filter((p) => p.scope !== 'user');
+function anyUserUpdatePoliciesOnly(c) {
+  return updatePoliciesOnly(c).filter(p => p.scope !== 'user');
 }
 
-function currentUserUpdatePoliciesOnly (c) {
-  return updatePoliciesOnly(c).filter((p) => p.scope === 'user');
+function currentUserUpdatePoliciesOnly(c) {
+  return updatePoliciesOnly(c).filter(p => p.scope === 'user');
 }
 
-function updatePoliciesOnly (collection) {
-  return collection.filter((p) => ['update', 'all'].includes(p.action));
+function updatePoliciesOnly(collection) {
+  return collection.filter(p => ['update', 'all'].includes(p.action));
 }
 
-function checkPolicyCollectionForPath (collection, fieldId, localeCode) {
-  return updatePoliciesOnly(collection).some((p) => {
+function checkPolicyCollectionForPath(collection, fieldId, localeCode) {
+  return updatePoliciesOnly(collection).some(p => {
     const noPath = !isString(p.field) && !isString(p.locale);
     const fieldOnlyPathMatched = matchField(p.field) && !isString(p.locale);
     const localeOnlyPathMatched = !isString(p.field) && matchLocale(p.locale);
@@ -178,11 +185,11 @@ function checkPolicyCollectionForPath (collection, fieldId, localeCode) {
     return noPath || fieldOnlyPathMatched || localeOnlyPathMatched || bothMatched;
   });
 
-  function matchField (field) {
+  function matchField(field) {
     return [CONFIG.ALL_FIELDS, fieldId].includes(field);
   }
 
-  function matchLocale (locale) {
+  function matchLocale(locale) {
     return [CONFIG.ALL_LOCALES, localeCode].includes(locale);
   }
 }

@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import {get} from 'lodash';
+import { get } from 'lodash';
 import spinner from 'ui/Components/Spinner';
-import {asReact} from 'ui/Framework/DOMRenderer';
+import { asReact } from 'ui/Framework/DOMRenderer';
 
 import TemplatesToggle from './TemplatesToggle';
 import TemplatesList from './TemplatesList';
@@ -15,29 +15,29 @@ class TemplateSelector extends React.Component {
     fetchTemplates: PropTypes.func.isRequired,
     templates: PropTypes.object.isRequired,
     formAlign: PropTypes.oneOf(['left', 'center'])
-  }
+  };
 
   state = {
     isShowingTemplates: false,
     selectedTemplate: null
-  }
+  };
 
-  componentDidMount () {
+  componentDidMount() {
     const { fetchTemplates } = this.props;
 
     // Select the first template after loading is finished
     fetchTemplates().then(this.setInitialTemplate.bind(this));
   }
 
-  render () {
+  render() {
     const { templates, formAlign } = this.props;
-    const {selectedTemplate, isShowingTemplates} = this.state;
+    const { selectedTemplate, isShowingTemplates } = this.state;
     const templatesListClassName = classnames(
       'modal-dialog__slice',
       'create-new-space__templates',
       {
-        'open': isShowingTemplates,
-        'close': !isShowingTemplates
+        open: isShowingTemplates,
+        close: !isShowingTemplates
       }
     );
 
@@ -47,44 +47,44 @@ class TemplateSelector extends React.Component {
       <div>
         <TemplatesToggle
           isShowingTemplates={isShowingTemplates}
-          onChange={(val) => this.toggle(val)}
+          onChange={val => this.toggle(val)}
           formAlign={formAlign}
         />
-        {
-          isPending &&
-            <div className={templatesListClassName}>
-              <div className="loader__container">
-                {asReact(spinner({diameter: '40px'}))}
-              </div>
-            </div>
-        }
-        {
-          !isPending && !error &&
+        {isPending && (
           <div className={templatesListClassName}>
-            <TemplatesList
-              templates={templatesList}
-              selectedTemplate={selectedTemplate}
-              onSelect={(template) => this.selectTemplate(template)}
-            />
+            <div className="loader__container">{asReact(spinner({ diameter: '40px' }))}</div>
           </div>
-        }
-        {
-          !isPending && error &&
-          <div className="note-box--warning">
-            <p>Could not fetch space templates.</p>
-          </div>
-        }
+        )}
+        {!isPending &&
+          !error && (
+            <div className={templatesListClassName}>
+              <TemplatesList
+                templates={templatesList}
+                selectedTemplate={selectedTemplate}
+                onSelect={template => this.selectTemplate(template)}
+              />
+            </div>
+          )}
+        {!isPending &&
+          error && (
+            <div className="note-box--warning">
+              <p>Could not fetch space templates.</p>
+            </div>
+          )}
       </div>
     );
   }
 
-  toggle (value) {
+  toggle(value) {
     const { onSelect, onToggle } = this.props;
     const { selectedTemplate } = this.state;
 
-    this.setState(() => ({ isShowingTemplates: value }), () => {
-      onToggle && onToggle();
-    });
+    this.setState(
+      () => ({ isShowingTemplates: value }),
+      () => {
+        onToggle && onToggle();
+      }
+    );
 
     // We set it directly in the parent so that it can persist in local component state
     // for visual representation
@@ -95,8 +95,10 @@ class TemplateSelector extends React.Component {
     }
   }
 
-  setInitialTemplate () {
-    const { templates: { templatesList } } = this.props;
+  setInitialTemplate() {
+    const {
+      templates: { templatesList }
+    } = this.props;
     const { isShowingTemplates } = this.state;
     const template = get(templatesList, '[0]');
 
@@ -109,10 +111,10 @@ class TemplateSelector extends React.Component {
     }
   }
 
-  selectTemplate (selectedTemplate) {
+  selectTemplate(selectedTemplate) {
     this.props.onSelect(selectedTemplate);
 
-    this.setState({selectedTemplate});
+    this.setState({ selectedTemplate });
   }
 }
 

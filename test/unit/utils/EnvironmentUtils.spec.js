@@ -1,7 +1,7 @@
 import * as EnvironmentUtils from 'utils/EnvironmentUtils';
 
 describe('utils/EnvironmentUtils', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
 
     this.spaceContext = this.$inject('spaceContext');
@@ -16,7 +16,7 @@ describe('utils/EnvironmentUtils', () => {
 
     this.spaceContext.space = this.space;
 
-    this.setEnvironment = (id) => {
+    this.setEnvironment = id => {
       this.space.environment = {
         sys: {
           id
@@ -26,13 +26,13 @@ describe('utils/EnvironmentUtils', () => {
   });
 
   describe('#isInsideMasterEnv', () => {
-    it('should return true if inside master environment', function () {
+    it('should return true if inside master environment', function() {
       const flag = EnvironmentUtils.isInsideMasterEnv(this.spaceContext);
 
       expect(flag).toBe(true);
     });
 
-    it('should return false if not inside master environment', function () {
+    it('should return false if not inside master environment', function() {
       this.setEnvironment('dev');
 
       const flag = EnvironmentUtils.isInsideMasterEnv(this.spaceContext);

@@ -39,7 +39,7 @@ export default ({ type, title, icon }) => Block => {
       onToggle(applyChange(change, type));
     };
 
-    render () {
+    render() {
       const { change } = this.props;
       return (
         <Block

@@ -17,7 +17,7 @@ export default ({
       onToggle(applyChange(change, type));
     };
 
-    render () {
+    render() {
       const { change, disabled } = this.props;
 
       return (

@@ -6,7 +6,7 @@ describe('cfAutocompleteResultsController', () => {
     controller = scope = null;
   });
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
 
     const $rootScope = this.$inject('$rootScope');
@@ -18,7 +18,7 @@ describe('cfAutocompleteResultsController', () => {
     const $controller = this.$inject('$controller');
     controller = $controller('CfAutocompleteResultsController', {
       $scope: scope,
-      $attrs: {cfAutocompleteResults: 'results'}
+      $attrs: { cfAutocompleteResults: 'results' }
     });
   });
 
@@ -94,12 +94,12 @@ describe('cfAutocompleteResultsController', () => {
   });
 
   it('should handle the event if canceling search', () => {
-    spyOn(scope, '$emit').and.returnValue({defaultPrevented: false});
+    spyOn(scope, '$emit').and.returnValue({ defaultPrevented: false });
     expect(controller.cancelAutocomplete()).toBe(true);
   });
 
-  it('should not handle the event if canceling search doesn\'t do anything', () => {
-    spyOn(scope, '$emit').and.returnValue({defaultPrevented: true});
+  it("should not handle the event if canceling search doesn't do anything", () => {
+    spyOn(scope, '$emit').and.returnValue({ defaultPrevented: true });
     expect(controller.cancelAutocomplete()).toBe(false);
   });
 

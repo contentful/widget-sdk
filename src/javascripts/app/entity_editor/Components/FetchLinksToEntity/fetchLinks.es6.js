@@ -15,8 +15,7 @@ const assertEntityTypeIsValid = entityType => {
 
 export default (id, type) => {
   assertEntityTypeIsValid(type);
-  const payloadKey =
-    type === EntityType.ENTRY ? 'links_to_entry' : 'links_to_asset';
+  const payloadKey = type === EntityType.ENTRY ? 'links_to_entry' : 'links_to_asset';
   const payload = {
     [payloadKey]: id
   };

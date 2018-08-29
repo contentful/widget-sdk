@@ -8,7 +8,7 @@ import { mount } from 'enzyme';
 describe('Navigation', () => {
   let Navigation, goStub;
 
-  beforeEach(function () {
+  beforeEach(function() {
     goStub = sinon.spy();
     module('contentful/test', $provide => {
       $provide.value('$state', {
@@ -20,14 +20,14 @@ describe('Navigation', () => {
         isOnboardingComplete: sinon.stub().returns(false)
       });
       $provide.value('services/TokenStore', {
-        user$: K.createMockProperty({sys: {id: 1}})
+        user$: K.createMockProperty({ sys: { id: 1 } })
       });
     });
 
     Navigation = this.$inject('stack-onboarding-navigation');
   });
 
-  afterEach(function () {
+  afterEach(function() {
     Navigation = goStub = null;
   });
 
@@ -38,17 +38,22 @@ describe('Navigation', () => {
     expect(activeElements.length).toEqual(2);
   });
 
-
   it('should call $state.go after clicking on the link', () => {
     const wrapper = mount(<Navigation active={2} />);
-    wrapper.find('.modern-stack-onboarding--navigation-circle__active').first().simulate('click');
+    wrapper
+      .find('.modern-stack-onboarding--navigation-circle__active')
+      .first()
+      .simulate('click');
 
     expect(goStub.calledOnce).toBe(true);
   });
 
   it('should not call $state.go after click on the next step', () => {
     const wrapper = mount(<Navigation active={2} />);
-    wrapper.find('.modern-stack-onboarding--navigation-circle').last().simulate('click');
+    wrapper
+      .find('.modern-stack-onboarding--navigation-circle')
+      .last()
+      .simulate('click');
     expect(goStub.notCalled).toBe(true);
   });
 });

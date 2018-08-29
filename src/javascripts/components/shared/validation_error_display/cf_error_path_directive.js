@@ -21,9 +21,11 @@ angular.module('contentful').directive('cfErrorPath', () => ({
   controllerAs: 'errors',
   require: 'cfErrorPath',
 
-  link: function (scope, elem, attrs) {
+  link: function(scope, elem, attrs) {
     scope.$watch('errors.hasErrors', hasErrors => {
-      if (!attrs['ngHide'] && !attrs['ngShow']) { elem.toggle(hasErrors); }
+      if (!attrs['ngHide'] && !attrs['ngShow']) {
+        elem.toggle(hasErrors);
+      }
     });
   }
 }));

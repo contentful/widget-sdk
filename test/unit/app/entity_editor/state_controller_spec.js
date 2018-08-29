@@ -1,12 +1,12 @@
 'use strict';
 import $q from '$q';
-import {create as createDocument} from 'helpers/mocks/entity_editor_document';
+import { create as createDocument } from 'helpers/mocks/entity_editor_document';
 
 describe('entityEditor/StateController', () => {
   const SLIDE_IN_EDITOR_FEATURE_FLAG_VALUE = 2; // Enabled with multiple levels.
 
-  beforeEach(function () {
-    const closeStateSpy = this.closeStateSpy = sinon.spy();
+  beforeEach(function() {
+    const closeStateSpy = (this.closeStateSpy = sinon.spy());
 
     module('contentful/test', $provide => {
       $provide.value('navigation/closeState', closeStateSpy);
@@ -25,7 +25,9 @@ describe('entityEditor/StateController', () => {
 
     this.spaceContext = this.$inject('spaceContext');
 
-    this.$inject('access_control/AccessChecker').canPerformActionOnEntity = sinon.stub().returns(true);
+    this.$inject('access_control/AccessChecker').canPerformActionOnEntity = sinon
+      .stub()
+      .returns(true);
 
     const dialogDefer = $q.defer();
     this.$inject('modalDialog').open = sinon.stub().returns({ promise: dialogDefer.promise });
@@ -33,8 +35,8 @@ describe('entityEditor/StateController', () => {
 
     const warnings = this.$inject('entityEditor/publicationWarnings');
     warnings.create = sinon.stub().returns({
-      register: this.registerWarningSpy = sinon.spy(),
-      show: this.showWarningsStub = sinon.stub().resolves()
+      register: (this.registerWarningSpy = sinon.spy()),
+      show: (this.showWarningsStub = sinon.stub().resolves())
     });
 
     this.analytics = this.$inject('analytics/Analytics');
@@ -44,7 +46,7 @@ describe('entityEditor/StateController', () => {
     this.Notification = N.Notification;
     this.notify = sinon.stub();
 
-    this.assertErrorNotification = function (action, error) {
+    this.assertErrorNotification = function(action, error) {
       sinon.assert.calledOnce(this.notify);
       const arg = this.notify.args[0][0];
       expect(arg).toBeInstanceOf(N.Notification.Error);
@@ -52,7 +54,7 @@ describe('entityEditor/StateController', () => {
       expect(arg.response).toBe(error);
     };
 
-    this.assertSuccessNotification = function (action) {
+    this.assertSuccessNotification = function(action) {
       sinon.assert.calledOnce(this.notify);
       const arg = this.notify.args[0][0];
       expect(arg).toBeInstanceOf(N.Notification.Success);
@@ -85,7 +87,7 @@ describe('entityEditor/StateController', () => {
   });
 
   describe('#delete command execution', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.scope.entityInfo = {
         id: 'abc',
         type: 'Entry'
@@ -96,7 +98,7 @@ describe('entityEditor/StateController', () => {
       };
     });
 
-    it('makes delete request', function () {
+    it('makes delete request', function() {
       this.controller.delete.execute();
       this.$apply();
       sinon.assert.calledWith(
@@ -109,13 +111,13 @@ describe('entityEditor/StateController', () => {
       );
     });
 
-    it('send success notification', function () {
+    it('send success notification', function() {
       this.controller.delete.execute();
       this.$apply();
       this.assertSuccessNotification('delete');
     });
 
-    it('sends failure notification with API error', function () {
+    it('sends failure notification with API error', function() {
       this.spaceEndpoint.rejects('ERROR');
       this.controller.delete.execute();
       this.$apply();
@@ -123,7 +125,7 @@ describe('entityEditor/StateController', () => {
     });
 
     it(`navigates to the previous slide-in entity or
-        closes the current state as a fallback`, function () {
+        closes the current state as a fallback`, function() {
       this.controller.delete.execute();
       this.$apply();
       sinon.assert.calledOnceWith(
@@ -136,7 +138,7 @@ describe('entityEditor/StateController', () => {
   });
 
   describe('in published state without changes', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.doc.setValueAt(['sys'], {
         id: 'EID',
         type: 'Entry',
@@ -146,24 +148,24 @@ describe('entityEditor/StateController', () => {
       this.$apply();
     });
 
-    it('sets current state to "published"', function () {
+    it('sets current state to "published"', function() {
       expect(this.controller.current).toEqual('published');
     });
 
-    it('has no primary action', function () {
+    it('has no primary action', function() {
       expect(this.controller.hidePrimary).toBe(true);
     });
 
-    it('has two secondary actions', function () {
+    it('has two secondary actions', function() {
       expect(this.controller.secondary.length).toEqual(2);
     });
 
     describe('the first secondary action', () => {
-      beforeEach(function () {
+      beforeEach(function() {
         this.action = this.controller.secondary[0];
       });
 
-      it('unpublishes and archives the entity', function () {
+      it('unpublishes and archives the entity', function() {
         this.action.execute();
         this.$apply();
         sinon.assert.calledWith(
@@ -186,11 +188,11 @@ describe('entityEditor/StateController', () => {
     });
 
     describe('the second secondary action', () => {
-      beforeEach(function () {
+      beforeEach(function() {
         this.action = this.controller.secondary[1];
       });
 
-      it('unpublishes the entity', function () {
+      it('unpublishes the entity', function() {
         this.action.execute();
         this.$apply();
         sinon.assert.calledWith(
@@ -206,12 +208,12 @@ describe('entityEditor/StateController', () => {
   });
 
   describe('in draft state', () => {
-    it('sets current state to "draft"', function () {
+    it('sets current state to "draft"', function() {
       expect(this.controller.current).toEqual('draft');
     });
 
     describe('primary action publish', () => {
-      it('publishes entity', function () {
+      it('publishes entity', function() {
         this.controller.primary.execute();
         this.$apply();
         sinon.assert.calledWith(
@@ -224,34 +226,37 @@ describe('entityEditor/StateController', () => {
         );
       });
 
-      it('notifies on success', function () {
+      it('notifies on success', function() {
         this.controller.primary.execute();
         this.$apply();
         this.assertSuccessNotification('publish');
       });
 
-      it('runs the validator', function () {
+      it('runs the validator', function() {
         this.controller.primary.execute();
         this.$apply();
         sinon.assert.calledOnce(this.validator.run);
       });
 
       describe('when the entity is an entry', () => {
-        beforeEach(function () {
+        beforeEach(function() {
           const contentTypeId = 'foo';
           this.scope.entityInfo = {
             type: 'Entry',
             contentTypeId: contentTypeId
           };
           this.spaceContext.publishedCTs = {
-            get: sinon.stub().withArgs(contentTypeId).returns({
-              data: { name: 'foo' }
-            })
+            get: sinon
+              .stub()
+              .withArgs(contentTypeId)
+              .returns({
+                data: { name: 'foo' }
+              })
           };
         });
 
         describe('when we are in the bulk editor', () => {
-          beforeEach(function () {
+          beforeEach(function() {
             this.scope.bulkEditorContext = {};
           });
 
@@ -259,33 +264,29 @@ describe('entityEditor/StateController', () => {
         });
 
         describe('when we are in the entry editor', () => {
-          beforeEach(function () {
+          beforeEach(function() {
             delete this.scope.bulkEditorContext;
           });
 
           itTracksThePublishEventWithOrigin('entry-editor');
         });
 
-        function itTracksThePublishEventWithOrigin (eventOrigin) {
-          it('tracks the publish event', function () {
+        function itTracksThePublishEventWithOrigin(eventOrigin) {
+          it('tracks the publish event', function() {
             this.controller.primary.execute();
             this.$apply();
-            sinon.assert.calledWithExactly(
-              this.analytics.track,
-              'entry:publish',
-              {
-                eventOrigin: eventOrigin,
-                contentType: { data: { name: 'foo' } },
-                response: { data: this.entity },
-                customWidgets: []
-              }
-            );
+            sinon.assert.calledWithExactly(this.analytics.track, 'entry:publish', {
+              eventOrigin: eventOrigin,
+              contentType: { data: { name: 'foo' } },
+              response: { data: this.entity },
+              customWidgets: []
+            });
           });
         }
       });
 
       describe('when the entity is not an entry', () => {
-        beforeEach(function () {
+        beforeEach(function() {
           const contentTypeId = 'foo';
           this.scope.entityInfo = {
             type: 'Asset',
@@ -296,7 +297,7 @@ describe('entityEditor/StateController', () => {
           };
         });
 
-        it('does not track the publish event', function () {
+        it('does not track the publish event', function() {
           this.controller.primary.execute();
           this.$apply();
           sinon.assert.notCalled(this.spaceContext.publishedCTs.get);
@@ -304,7 +305,7 @@ describe('entityEditor/StateController', () => {
         });
       });
 
-      it('sends notification if validation failed', function () {
+      it('sends notification if validation failed', function() {
         this.validator.run.returns(false);
         this.controller.primary.execute();
         this.$apply();
@@ -314,7 +315,7 @@ describe('entityEditor/StateController', () => {
         );
       });
 
-      it('does not publish if validation failed', function () {
+      it('does not publish if validation failed', function() {
         this.validator.run.returns(false);
 
         this.controller.primary.execute();
@@ -322,7 +323,7 @@ describe('entityEditor/StateController', () => {
         sinon.assert.notCalled(this.spaceEndpoint);
       });
 
-      it('sends notification on server error', function () {
+      it('sends notification on server error', function() {
         this.spaceEndpoint.rejects('ERROR');
         this.controller.primary.execute();
         this.$apply();
@@ -331,15 +332,15 @@ describe('entityEditor/StateController', () => {
     });
 
     describe('secondary action archive', () => {
-      beforeEach(function () {
+      beforeEach(function() {
         this.action = this.controller.secondary[0];
       });
 
-      it('has only one', function () {
+      it('has only one', function() {
         expect(this.controller.secondary.length).toEqual(1);
       });
 
-      it('archives entity', function () {
+      it('archives entity', function() {
         this.action.execute();
         this.$apply();
         sinon.assert.calledWith(
@@ -352,13 +353,13 @@ describe('entityEditor/StateController', () => {
         );
       });
 
-      it('notifies on success', function () {
+      it('notifies on success', function() {
         this.action.execute();
         this.$apply();
         this.assertSuccessNotification('archive');
       });
 
-      it('notifies on failure', function () {
+      it('notifies on failure', function() {
         this.spaceEndpoint.rejects('ERROR');
         this.action.execute();
         this.$apply();
@@ -368,7 +369,7 @@ describe('entityEditor/StateController', () => {
   });
 
   describe('#revertToPrevious command', () => {
-    it('is available iff document has changes and the document is editable', function () {
+    it('is available iff document has changes and the document is editable', function() {
       this.doc.reverter.hasChanges.returns(true);
       this.doc.state.canEdit$.set(true);
       expect(this.controller.revertToPrevious.isAvailable()).toBe(true);
@@ -382,7 +383,7 @@ describe('entityEditor/StateController', () => {
       expect(this.controller.revertToPrevious.isAvailable()).toBe(false);
     });
 
-    it('calls notification for successful execution', function () {
+    it('calls notification for successful execution', function() {
       this.doc.reverter.revert.resolves();
 
       sinon.assert.notCalled(this.doc.reverter.revert);
@@ -393,7 +394,7 @@ describe('entityEditor/StateController', () => {
       this.assertSuccessNotification('revert');
     });
 
-    it('calls notification for failed execution', function () {
+    it('calls notification for failed execution', function() {
       this.doc.reverter.revert.rejects('ERROR');
 
       sinon.assert.notCalled(this.doc.reverter.revert);
@@ -406,13 +407,13 @@ describe('entityEditor/StateController', () => {
   });
 
   describe('publication warnings', () => {
-    it('allows publication warnings registration', function () {
+    it('allows publication warnings registration', function() {
       const warning = {};
       this.controller.registerPublicationWarning(warning);
       sinon.assert.calledOnce(this.registerWarningSpy.withArgs(warning));
     });
 
-    it('shows publication warnings before actual action', function () {
+    it('shows publication warnings before actual action', function() {
       this.$apply();
       this.controller.primary.execute();
       sinon.assert.calledOnce(this.showWarningsStub);

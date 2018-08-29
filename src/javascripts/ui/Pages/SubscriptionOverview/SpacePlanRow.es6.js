@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import {joinAnd} from 'stringUtils';
+import { joinAnd } from 'stringUtils';
 
 import { get } from 'lodash';
 
@@ -15,13 +15,13 @@ import HelpIcon from 'ui/Components/HelpIcon';
 import Tooltip from 'ui/Components/Tooltip';
 import Price from 'ui/Components/Price';
 import ContextMenu from 'ui/Components/ContextMenu';
-import {byName} from 'Styles/Colors';
+import { byName } from 'Styles/Colors';
 
-function SpacePlanRow ({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }) {
+function SpacePlanRow({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }) {
   const space = plan.space;
   const enabledFeatures = getEnabledFeatures(plan);
   const hasAnyFeatures = enabledFeatures.length > 0;
-  const key = plan.sys.id || plan.space && plan.space.sys.id;
+  const key = plan.sys.id || (plan.space && plan.space.sys.id);
 
   let createdBy = '';
   let createdAt = '';
@@ -68,38 +68,41 @@ function SpacePlanRow ({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace 
 
   const className = upgraded ? 'x--success' : '';
 
-  return <tr className={className} key={key}>
-    <td>
-      <strong>{get(space, 'name', '-')}</strong>
-      { plan.committed &&
-        <Tooltip
-          style={{fontSize: '12px'}}
-          tooltip="This space is part of your Enterprise deal with Contentful"
-          className="help-icon"
-        >
-          <span style={{color: byName.orangeLight}}>★</span>
-        </Tooltip>
-      }
-    </td>
-    <td>
-      <strong>{plan.name}</strong>
-      { hasAnyFeatures &&
-        <HelpIcon>This space includes {joinAnd(enabledFeatures.map(({name}) => name))}</HelpIcon>
-      }
-      <br />
-      {!basePlan.committed && <Price value={plan.price} unit='month' />}
-    </td>
-    <td>{createdBy}</td>
-    <td>{createdAt}</td>
-    <td style={{textAlign: 'right', verticalAlign: 'middle'}}>
-      { space &&
-        <ContextMenu
-          data-test-id='subscription-page.spaces-list.space-context-menu'
-          items={contextMenuItems}
-        />
-      }
-    </td>
-  </tr>;
+  return (
+    <tr className={className} key={key}>
+      <td>
+        <strong>{get(space, 'name', '-')}</strong>
+        {plan.committed && (
+          <Tooltip
+            style={{ fontSize: '12px' }}
+            tooltip="This space is part of your Enterprise deal with Contentful"
+            className="help-icon">
+            <span style={{ color: byName.orangeLight }}>★</span>
+          </Tooltip>
+        )}
+      </td>
+      <td>
+        <strong>{plan.name}</strong>
+        {hasAnyFeatures && (
+          <HelpIcon>
+            This space includes {joinAnd(enabledFeatures.map(({ name }) => name))}
+          </HelpIcon>
+        )}
+        <br />
+        {!basePlan.committed && <Price value={plan.price} unit="month" />}
+      </td>
+      <td>{createdBy}</td>
+      <td>{createdAt}</td>
+      <td style={{ textAlign: 'right', verticalAlign: 'middle' }}>
+        {space && (
+          <ContextMenu
+            data-test-id="subscription-page.spaces-list.space-context-menu"
+            items={contextMenuItems}
+          />
+        )}
+      </td>
+    </tr>
+  );
 }
 
 SpacePlanRow.propTypes = {

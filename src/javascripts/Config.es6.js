@@ -1,6 +1,6 @@
 import qs from 'qs';
 import { getStore } from 'TheStore';
-import {settings} from 'environment';
+import { settings } from 'environment';
 import { sample } from 'lodash';
 
 /**
@@ -15,7 +15,6 @@ import { sample } from 'lodash';
  * everything here.
  */
 
-
 /**
  * @ngdoc method
  * @name Config#apiUrl
@@ -28,7 +27,7 @@ import { sample } from 'lodash';
  * @param {string} path
  * @returns {string}
  */
-export function apiUrl (path) {
+export function apiUrl(path) {
   const isUsingMockApi = getStore().get('use_mock_api');
   const baseUrl = isUsingMockApi ? settings.mockApiUrl : settings.apiUrl;
   return baseUrl + ensureLeadingSlash(path);
@@ -45,7 +44,7 @@ export function apiUrl (path) {
  * @param {object} params  Query parameters
  * @returns {string}
  */
-export function authUrl (path, params) {
+export function authUrl(path, params) {
   let base = settings.authUrl + ensureLeadingSlash(path);
   if (params) {
     base += '?' + qs.stringify(params);
@@ -62,7 +61,7 @@ export function authUrl (path, params) {
  * @param {string} path
  * @returns {string}
  */
-export function websiteUrl (path) {
+export function websiteUrl(path) {
   return settings.marketingUrl + ensureLeadingSlash(path);
 }
 
@@ -75,10 +74,9 @@ export function websiteUrl (path) {
  * @param {string} path
  * @returns {string}
  */
-export function accountUrl (path) {
+export function accountUrl(path) {
   return authUrl('/account' + ensureLeadingSlash(path));
 }
-
 
 /**
  * @ngdoc property
@@ -142,8 +140,7 @@ export const snowplow = settings.snowplow;
  */
 export const launchDarkly = settings.launchDarkly;
 
-
-export function toolsUrl (path, params) {
+export function toolsUrl(path, params) {
   let base = settings.toolsServiceUrl + ensureLeadingSlash(path.join('/'));
   if (params) {
     base += '?' + qs.stringify(params);
@@ -151,8 +148,7 @@ export function toolsUrl (path, params) {
   return base;
 }
 
-
-function ensureLeadingSlash (x = '') {
+function ensureLeadingSlash(x = '') {
   if (x.charAt(0) === '/') {
     return x;
   } else {

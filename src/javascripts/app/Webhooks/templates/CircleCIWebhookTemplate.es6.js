@@ -4,9 +4,7 @@ import CircleCILogo from './logos/CircleCILogo';
 // We had to sanitize the token to avoid uncaught exceptions.
 // Original source: https://developer.mozilla.org/en-US/docs/Web/API/WindowBase64/Base64_encoding_and_decoding#The_Unicode_Problem
 const sanitizedBase64 = input =>
-  btoa(
-    input.replace(/%([0-9A-F]{2})/g, (_, p1) => String.fromCharCode('0x' + p1))
-  );
+  btoa(input.replace(/%([0-9A-F]{2})/g, (_, p1) => String.fromCharCode('0x' + p1)));
 
 export default {
   id: 'circle-ci-trigger-build',
@@ -19,8 +17,8 @@ export default {
       <li>Triggered when an entry or asset is published or unpublished</li>
       <li>Scoped to events in the master environment</li>
       <li>
-        Passes entity ID, entity type, space ID and environment ID as build-time
-        environment variables
+        Passes entity ID, entity type, space ID and environment ID as build-time environment
+        variables
       </li>
     </ul>
   ),
@@ -55,11 +53,7 @@ export default {
       description: (
         <p>
           Can be found on the{' '}
-          <a
-            href="https://circleci.com/account/api"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href="https://circleci.com/account/api" target="_blank" rel="noopener noreferrer">
             CircleCI Dashboard
           </a>
           . This value can’t be revealed once stored.
@@ -71,12 +65,7 @@ export default {
     return {
       name,
       url: `https://circleci.com/api/v1.1/project/github/${githubOrg}/${githubRepo}/tree/${branch}`,
-      topics: [
-        'Entry.publish',
-        'Asset.publish',
-        'Entry.unpublish',
-        'Asset.unpublish'
-      ],
+      topics: ['Entry.publish', 'Asset.publish', 'Entry.unpublish', 'Asset.unpublish'],
       filters: [{ equals: [{ doc: 'sys.environment.sys.id' }, 'master'] }],
       headers: [
         {

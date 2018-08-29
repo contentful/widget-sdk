@@ -4,14 +4,14 @@ import { ToolbarIconPropTypes } from './PropTypes';
 
 export default ({ type, title, icon }) => Mark => {
   return class CommonToggleMark extends React.Component {
-    static propTypes = ToolbarIconPropTypes
+    static propTypes = ToolbarIconPropTypes;
     handleToggle = e => {
       const { change, onToggle } = this.props;
       e.preventDefault();
       onToggle(change.toggleMark(type));
     };
 
-    render () {
+    render() {
       const { change, disabled } = this.props;
       return (
         <Mark

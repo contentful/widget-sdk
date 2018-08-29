@@ -5,12 +5,12 @@ describe('access_control/Enforcements', () => {
   let organizationMock;
   let OrganizationRoles;
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
 
     enforcements = this.$inject('access_control/Enforcements');
     OrganizationRoles = this.$inject('services/OrganizationRoles');
-    OrganizationRoles.setUser({ sys: {id: 123} });
+    OrganizationRoles.setUser({ sys: { id: 123 } });
 
     organizationMock = {
       usage: {
@@ -64,7 +64,10 @@ describe('access_control/Enforcements', () => {
     describe('returns maintenance message with multiple reasons', () => {
       let enforcement;
       beforeEach(() => {
-        enforcement = enforcements.determineEnforcement(organizationMock, ['systemMaintenance', 'subscriptionUnsettled']);
+        enforcement = enforcements.determineEnforcement(organizationMock, [
+          'systemMaintenance',
+          'subscriptionUnsettled'
+        ]);
       });
 
       it('has an error', () => {
@@ -90,7 +93,11 @@ describe('access_control/Enforcements', () => {
     describe('returns usage exceeded', () => {
       let enforcement;
       beforeEach(() => {
-        enforcement = enforcements.determineEnforcement(organizationMock, ['usageExceeded'], 'ApiKey');
+        enforcement = enforcements.determineEnforcement(
+          organizationMock,
+          ['usageExceeded'],
+          'ApiKey'
+        );
       });
 
       it('has a tooltip but no message', () => {

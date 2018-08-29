@@ -4,7 +4,7 @@ import { stateName } from 'data/CMA/EntityState';
 import * as K from 'utils/kefir';
 import spaceContext from 'spaceContext';
 
-export default function install (entityInfo, document, lifeline$) {
+export default function install(entityInfo, document, lifeline$) {
   K.onValueWhile(lifeline$, document.resourceState.stateChange$, data => {
     track('entry_editor:state_changed', {
       fromState: stateName(data.from),
@@ -15,7 +15,7 @@ export default function install (entityInfo, document, lifeline$) {
   });
 }
 
-export async function trackEntryView ({
+export async function trackEntryView({
   editorData,
   entityInfo,
   editorType,
@@ -30,10 +30,13 @@ export async function trackEntryView ({
     ctId: entityInfo.contentTypeId,
     ctName: entityInfo.contentType.name,
     referencesCTMetadata: [
-      ...uniqBy(refCts.map(ct => ({
-        id: ct.data.sys.id,
-        name: ct.data.name
-      })), 'id')
+      ...uniqBy(
+        refCts.map(ct => ({
+          id: ct.data.sys.id,
+          name: ct.data.name
+        })),
+        'id'
+      )
     ],
     currentSlideLevel,
     editorType,
@@ -42,15 +45,13 @@ export async function trackEntryView ({
 }
 
 const isEntryReferenceField = ({ field }) =>
-  field.type === 'Array' &&
-  field.items.type === 'Link' &&
-  field.items.linkType === 'Entry';
+  field.type === 'Array' && field.items.type === 'Link' && field.items.linkType === 'Entry';
 
 const getFieldId = ctrl => ctrl.field.id;
 const getReferenceEntitiesIds = (id, locale, editorData) =>
   editorData.entity.data.fields[id][locale].map(entity => entity.sys.id);
 
-async function getReferencesContentTypes (editorData, locale) {
+async function getReferencesContentTypes(editorData, locale) {
   const referenceFieldsIds = editorData.fieldControls.form
     .filter(isEntryReferenceField)
     .map(getFieldId);

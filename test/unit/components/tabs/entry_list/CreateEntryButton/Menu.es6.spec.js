@@ -34,13 +34,9 @@ describe('CreateEntryMenu', () => {
     expect(wrapper.find(sel('group-all')).length).toEqual(1);
 
     contentTypes.forEach(item => {
-      const listItem = wrapper
-        .find(sel('contentType'))
-        .filterWhere(n => n.text() === item.name);
+      const listItem = wrapper.find(sel('contentType')).filterWhere(n => n.text() === item.name);
       expect(listItem.exists()).toBeTruthy();
-      expect(listItem.find('.context-menu__highlighted-text').length).toEqual(
-        0
-      );
+      expect(listItem.find('.context-menu__highlighted-text').length).toEqual(0);
     });
   });
 
@@ -49,9 +45,7 @@ describe('CreateEntryMenu', () => {
     const matchingQuery = contentTypes[1].name;
 
     expect(
-      wrapper
-        .find(sel('contentType'))
-        .filterWhere(n => n.text() === unmatchingQuery)
+      wrapper.find(sel('contentType')).filterWhere(n => n.text() === unmatchingQuery)
     ).toBeTruthy();
 
     wrapper
@@ -59,18 +53,14 @@ describe('CreateEntryMenu', () => {
       .simulate('change', { target: { value: matchingQuery } });
 
     expect(
-      wrapper
-        .find(sel('contentType'))
-        .filterWhere(n => n.text() === unmatchingQuery).length
+      wrapper.find(sel('contentType')).filterWhere(n => n.text() === unmatchingQuery).length
     ).toEqual(0);
     const matchingNode = wrapper
       .find(sel('contentType'))
       .filterWhere(n => n.text() === matchingQuery);
 
     expect(matchingNode.length).toEqual(1);
-    expect(matchingNode.find('.context-menu__highlighted-text').text()).toEqual(
-      matchingQuery
-    );
+    expect(matchingNode.find('.context-menu__highlighted-text').text()).toEqual(matchingQuery);
   });
 
   it('renders "Not found" message if there is no matching search query', () => {
@@ -92,7 +82,7 @@ describe('CreateEntryMenu', () => {
   });
 });
 
-function generateContentTypes (max) {
+function generateContentTypes(max) {
   return range(max).map(index => {
     const randomString = `${index}${Math.random().toString(36)}`;
     return {

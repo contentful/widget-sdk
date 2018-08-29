@@ -1,4 +1,4 @@
-import {env} from 'Config';
+import { env } from 'Config';
 
 /**
  * @description
@@ -10,7 +10,7 @@ import {env} from 'Config';
  *
  * @return {boolean}
  */
-export function isExampleSpace (contentPreviews, publishedCTs) {
+export function isExampleSpace(contentPreviews, publishedCTs) {
   return hasTEAContentPreviews(contentPreviews) && hasHighlightedCourseCT(publishedCTs);
 }
 
@@ -24,7 +24,7 @@ export function isExampleSpace (contentPreviews, publishedCTs) {
  *
  * @returns {boolean}
  */
-export function hasTEAContentPreviews (contentPreviews) {
+export function hasTEAContentPreviews(contentPreviews) {
   // Since TEAs are hosted on different domains for prod and staging
   const domain = env === 'production' ? 'contentful' : 'flinkly';
 
@@ -61,6 +61,6 @@ export function hasTEAContentPreviews (contentPreviews) {
  *
  * @return {boolean}
  */
-export function hasHighlightedCourseCT (publishedCTs = []) {
-  return publishedCTs.some(({sys: {id}}) => id === 'layoutHighlightedCourse');
+export function hasHighlightedCourseCT(publishedCTs = []) {
+  return publishedCTs.some(({ sys: { id } }) => id === 'layoutHighlightedCourse');
 }

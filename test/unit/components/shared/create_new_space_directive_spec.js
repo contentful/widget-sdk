@@ -6,8 +6,8 @@ describe('cfCreateNewSpace directive', () => {
     element = $scope = $rootScope = controller = stubs = null;
   });
 
-  beforeEach(function () {
-    this.org = {sys: {id: 'org_id'}};
+  beforeEach(function() {
+    this.org = { sys: { id: 'org_id' } };
 
     stubs = {
       spaceTemplateLoader: {
@@ -41,7 +41,7 @@ describe('cfCreateNewSpace directive', () => {
       },
       tokenStore: {
         refresh: sinon.stub(),
-        user$: createMockProperty({firstName: 'firstName'}),
+        user$: createMockProperty({ firstName: 'firstName' }),
         getOrganization: sinon.stub().resolves(this.org)
       },
       state: {
@@ -66,14 +66,14 @@ describe('cfCreateNewSpace directive', () => {
 
     this.spaceContext = this.$inject('mocks/spaceContext').init();
     this.spaceContext.getData = sinon.stub();
-    this.spaceContext.apiKeyRepo = {create: sinon.stub()};
+    this.spaceContext.apiKeyRepo = { create: sinon.stub() };
 
     stubs.spaceTemplateLoader.getTemplatesList.resolves(true);
 
     $rootScope = this.$inject('$rootScope');
     $q = this.$inject('$q');
 
-    this.setupDirective = function (organization) {
+    this.setupDirective = function(organization) {
       element = this.$compile('<cf-create-new-space>', {
         dialog: stubs.dialog,
         organization: organization || this.org
@@ -84,19 +84,19 @@ describe('cfCreateNewSpace directive', () => {
   });
 
   describe('on the default state', () => {
-    it('new space data has default locale', function () {
+    it('new space data has default locale', function() {
       this.setupDirective();
       expect(controller.newSpace.data.defaultLocale).toBe('en-US');
     });
 
-    it('selects given organization', function () {
+    it('selects given organization', function() {
       this.setupDirective();
       expect(controller.newSpace.organization).toBe(this.org);
     });
   });
 
   describe('creates a space in a legacy organization', () => {
-    it('asks if the space limits have been reached', function () {
+    it('asks if the space limits have been reached', function() {
       this.setupDirective();
       controller.requestSpaceCreation();
       $rootScope.$digest();
@@ -105,7 +105,7 @@ describe('cfCreateNewSpace directive', () => {
     });
 
     describe('if remote call fails with no specific error', () => {
-      beforeEach(function () {
+      beforeEach(function() {
         stubs.client.createSpace.rejects({
           body: {
             details: {
@@ -121,32 +121,33 @@ describe('cfCreateNewSpace directive', () => {
       });
 
       it('sends template selection analytics event', () => {
-        sinon.assert.calledWith(stubs.analytics.track, 'space:template_selected', {templateName: 'Blank'});
+        sinon.assert.calledWith(stubs.analytics.track, 'space:template_selected', {
+          templateName: 'Blank'
+        });
       });
 
       it('calls client lib with data', () => {
         expect(stubs.client.createSpace.args[0][0].name).toEqual('name');
       });
 
-      it('calls client lib with org id', function () {
+      it('calls client lib with org id', function() {
         expect(stubs.client.createSpace.args[0][1]).toEqual(this.org.sys.id);
       });
 
       it('displays and logs error', () => {
-        const error = 'Could not create Space. If the problem persists please get in contact with us.';
+        const error =
+          'Could not create Space. If the problem persists please get in contact with us.';
         expect(controller.newSpace.errors.form).toEqual(error);
         sinon.assert.called(stubs.logger.logServerWarn);
       });
     });
 
     describe('if remote call fails with a specific error', () => {
-      beforeEach(function () {
+      beforeEach(function() {
         stubs.client.createSpace.rejects({
           body: {
             details: {
-              errors: [
-                {path: 'name', name: 'length'}
-              ]
+              errors: [{ path: 'name', name: 'length' }]
             }
           }
         });
@@ -160,7 +161,7 @@ describe('cfCreateNewSpace directive', () => {
         expect(stubs.client.createSpace.args[0][0].name).toEqual('name');
       });
 
-      it('calls client lib with org id', function () {
+      it('calls client lib with org id', function() {
         expect(stubs.client.createSpace.args[0][1]).toEqual(this.org.sys.id);
       });
 
@@ -170,9 +171,9 @@ describe('cfCreateNewSpace directive', () => {
     });
 
     describe('if remote call succeeds', () => {
-      beforeEach(function () {
+      beforeEach(function() {
         stubs.tokenStore.refresh.resolves();
-        stubs.client.createSpace.resolves({sys: {id: 'spaceid'}, name: 'oldspace'});
+        stubs.client.createSpace.resolves({ sys: { id: 'spaceid' }, name: 'oldspace' });
         this.spaceContext.apiKeyRepo.create.resolves();
         stubs.spaceTemplateLoader.getTemplate.resolves();
         this.setupDirective();
@@ -198,7 +199,7 @@ describe('cfCreateNewSpace directive', () => {
           expect(stubs.client.createSpace.args[0][0].defaultLocale).toEqual('fr');
         });
 
-        it('calls client lib with org id', function () {
+        it('calls client lib with org id', function() {
           expect(stubs.client.createSpace.args[0][1]).toEqual(this.org.sys.id);
         });
 
@@ -207,16 +208,16 @@ describe('cfCreateNewSpace directive', () => {
         });
 
         it('selects space', () => {
-          sinon.assert.calledWith(stubs.state.go, 'spaces.detail', {spaceId: 'spaceid'});
+          sinon.assert.calledWith(stubs.state.go, 'spaces.detail', { spaceId: 'spaceid' });
         });
 
-        it('creates one API key', function () {
+        it('creates one API key', function() {
           sinon.assert.calledOnce(this.spaceContext.apiKeyRepo.create);
         });
       });
 
       describe('creating space from template', () => {
-        beforeEach(function () {
+        beforeEach(function() {
           stubs.spaceTemplateCreator.getCreator.returns({
             create: sinon.stub().returns({
               contentCreated: $q.resolve(),
@@ -225,7 +226,7 @@ describe('cfCreateNewSpace directive', () => {
           });
           controller.newSpace.data.name = 'name';
           controller.newSpace.useTemplate = true;
-          controller.newSpace.selectedTemplate = {name: 'Blog'};
+          controller.newSpace.selectedTemplate = { name: 'Blog' };
           controller.requestSpaceCreation();
           sinon.spy($rootScope, '$broadcast');
           this.$apply();
@@ -236,14 +237,13 @@ describe('cfCreateNewSpace directive', () => {
         });
 
         it('tracks analytics event', () => {
-          sinon.assert.calledWith(
-            stubs.analytics.track,
-            'space:create',
-            {templateName: 'Blog', entityAutomationScope: {scope: 'space_template'}}
-          );
+          sinon.assert.calledWith(stubs.analytics.track, 'space:create', {
+            templateName: 'Blog',
+            entityAutomationScope: { scope: 'space_template' }
+          });
         });
 
-        it('triggers a content type refresh', function () {
+        it('triggers a content type refresh', function() {
           sinon.assert.called(this.spaceContext.publishedCTs.refresh);
         });
 

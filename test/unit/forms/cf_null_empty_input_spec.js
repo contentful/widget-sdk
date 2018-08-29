@@ -3,7 +3,7 @@
 describe('cfNullEmptyInput directive', () => {
   beforeEach(module('contentful/test'));
 
-  it('empty string sets model value to null', function () {
+  it('empty string sets model value to null', function() {
     const $compile = this.$inject('$compile');
     const scope = this.$inject('$rootScope').$new();
 

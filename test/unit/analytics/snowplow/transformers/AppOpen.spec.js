@@ -1,10 +1,10 @@
 describe('App open transformer', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     this.transformer = this.$inject('analytics/snowplow/transformers/AppOpen').default;
   });
 
-  it('transforms data', function () {
+  it('transforms data', function() {
     const transformed = this.transformer('global:app_loaded', {
       userId: 'user-1',
       organizationId: 'org',
@@ -20,7 +20,7 @@ describe('App open transformer', () => {
     });
   });
 
-  it('omits undefined values', function () {
+  it('omits undefined values', function() {
     const transformed = this.transformer('global:app_loaded', {
       userId: 'user-1',
       organizationId: undefined,

@@ -1,10 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  ReferenceCard,
-  Card,
-  IconButton
-} from '@contentful/ui-component-library';
+import { ReferenceCard, Card, IconButton } from '@contentful/ui-component-library';
 
 import FetchEntry from './FetchEntry';
 import Thumbnail from './Thumbnail';
@@ -37,7 +33,7 @@ export default class LinkedEntryBlock extends React.Component {
     editor.change(change => change.removeNodeByKey(node.key));
   };
 
-  renderReferenceCard ({
+  renderReferenceCard({
     entry,
     entryTitle,
     entryDescription,
@@ -74,7 +70,7 @@ export default class LinkedEntryBlock extends React.Component {
     );
   }
 
-  renderMissingEntryReferenceCard () {
+  renderMissingEntryReferenceCard() {
     const { isSelected } = this.props;
 
     return (
@@ -86,8 +82,7 @@ export default class LinkedEntryBlock extends React.Component {
               fontSize: '.875rem', // Equal to 14px when browser text size is set to 100%
               lineHeight: 1.5,
               flex: '1 1 0'
-            }}
-          >
+            }}>
             Entity missing or inaccessible
           </h1>
           {this.renderDeleteButton()}
@@ -96,7 +91,7 @@ export default class LinkedEntryBlock extends React.Component {
     );
   }
 
-  renderDeleteButton () {
+  renderDeleteButton() {
     const isDisabled = this.props.editor.props.readOnly;
 
     return (
@@ -111,16 +106,16 @@ export default class LinkedEntryBlock extends React.Component {
     );
   }
 
-  render () {
+  render() {
     const { node } = this.props;
 
     return (
       <WidgetAPIContext.Consumer>
-        {({widgetAPI}) => (
+        {({ widgetAPI }) => (
           <FetchEntry
             node={node}
             currentUrl={widgetAPI.currentUrl}
-            render={(fetchEntryResult) => {
+            render={fetchEntryResult => {
               if (fetchEntryResult.entryIsMissing) {
                 return this.renderMissingEntryReferenceCard();
               } else {

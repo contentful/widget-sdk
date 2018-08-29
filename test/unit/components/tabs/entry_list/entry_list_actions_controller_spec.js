@@ -9,12 +9,9 @@ describe('Entry List Actions Controller', () => {
     action1 = action2 = action3 = action4 = null;
   });
 
-  beforeEach(function () {
+  beforeEach(function() {
     const duplicateOrPublishResults = {
-      succeeded: [
-        'foo',
-        'bar'
-      ].map((prefix) => ({
+      succeeded: ['foo', 'bar'].map(prefix => ({
         data: {
           sys: {
             id: prefix,
@@ -76,16 +73,14 @@ describe('Entry List Actions Controller', () => {
     };
 
     const spaceContext = this.$inject('mocks/spaceContext').init();
-    spaceContext.space = {createEntry: stubs.createEntry};
+    spaceContext.space = { createEntry: stubs.createEntry };
 
     accessChecker = this.$inject('access_control/AccessChecker');
     accessChecker.shouldHide = sinon.stub().returns(false);
     accessChecker.shouldDisable = sinon.stub().returns(false);
     accessChecker.canPerformActionOnEntity = sinon.stub();
 
-    scope.publishSelected = sinon.stub().returns(
-      $q.resolve(duplicateOrPublishResults)
-    );
+    scope.publishSelected = sinon.stub().returns($q.resolve(duplicateOrPublishResults));
 
     // Several of the tests below are coupled with ListActionsController and
     // rely upon its implementation (via batchPerformer instance methods)
@@ -108,7 +103,7 @@ describe('Entry List Actions Controller', () => {
     $controller('EntryListActionsController', { $scope: scope });
   });
 
-  function makeEntity (action, stub) {
+  function makeEntity(action, stub) {
     const entity = {
       data: {
         sys: {
@@ -125,7 +120,7 @@ describe('Entry List Actions Controller', () => {
     return entity;
   }
 
-  function makePerformTests (action, extraSpecs) {
+  function makePerformTests(action, extraSpecs) {
     describe(`${action} selected entries`, () => {
       beforeEach(() => {
         stubs.size.returns(2);
@@ -301,7 +296,7 @@ describe('Entry List Actions Controller', () => {
     expect(scope.showDuplicate()).toBeFalsy();
   });
 
-  function makePermissionTests (action) {
+  function makePermissionTests(action) {
     const methodName = 'show' + action.charAt(0).toUpperCase() + action.substr(1);
     const canMethodName = 'can' + action.charAt(0).toUpperCase() + action.substr(1);
 

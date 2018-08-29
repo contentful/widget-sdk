@@ -15,7 +15,7 @@ export const BoldPlugin = () => {
 };
 
 class Bold extends Component {
-  render () {
+  render() {
     return <ToolbarIcon {...this.props} />;
   }
 }

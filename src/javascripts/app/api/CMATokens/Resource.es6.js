@@ -1,6 +1,5 @@
 import * as Config from 'Config';
-import {create as createEndpoint} from 'data/Endpoint';
-
+import { create as createEndpoint } from 'data/Endpoint';
 
 /**
  * @ngdoc method
@@ -17,19 +16,19 @@ import {create as createEndpoint} from 'data/Endpoint';
  * documentation for details on the returned promises and the
  * `auth` argument.
  */
-export function create (auth) {
+export function create(auth) {
   const request = createEndpoint(Config.apiUrl('users/me/access_tokens'), auth);
 
   return { create, fetch, revoke };
 
-  function revoke (id) {
+  function revoke(id) {
     return request({
       method: 'PUT',
       path: [id, 'revoked']
     });
   }
 
-  function fetch (query) {
+  function fetch(query) {
     return request({
       method: 'GET',
       path: [],
@@ -37,7 +36,7 @@ export function create (auth) {
     });
   }
 
-  function create (name) {
+  function create(name) {
     return request({
       method: 'POST',
       path: [],

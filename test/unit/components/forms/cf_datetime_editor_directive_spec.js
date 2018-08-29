@@ -9,11 +9,13 @@ describe('DateTime Editor', () => {
   beforeEach(inject(($compile, $rootScope, _moment_) => {
     moment = _moment_;
     scope = $rootScope;
-    scope.widget = {settings: {
-      format: 'timeZ',
-      ampm: '24'
-    }};
-    scope.fieldData = {value: null};
+    scope.widget = {
+      settings: {
+        format: 'timeZ',
+        ampm: '24'
+      }
+    };
+    scope.fieldData = { value: null };
     element = $compile('<div cf-datetime-editor ng-model="fieldData.value"></div>')(scope);
     scope.$apply();
   }));
@@ -23,23 +25,26 @@ describe('DateTime Editor', () => {
     element = scope = moment = null;
   });
 
-  function enter (date, time, zone, ampm) {
+  function enter(date, time, zone, ampm) {
     /* jshint eqnull:true */
     if (date != null) {
-      element.find('.date')
+      element
+        .find('.date')
         .val(date)
         .trigger('input')
         .trigger('change')
         .trigger('blur');
     }
     if (time != null) {
-      element.find('.time')
+      element
+        .find('.time')
         .val(time)
         .trigger('input')
         .trigger('change');
     }
     if (ampm != null) {
-      element.find('.ampm')
+      element
+        .find('.ampm')
         .val(ampm)
         .trigger('change');
     }
@@ -48,26 +53,29 @@ describe('DateTime Editor', () => {
     }
   }
 
-  function selectValue ($select, label) {
-    const option = $select.find('option').filter(function () {
+  function selectValue($select, label) {
+    const option = $select.find('option').filter(function() {
       return $(this).text() === label;
     });
     const value = option.attr('value');
     $select.val(value).trigger('change');
   }
 
-  function expectScope (date, time, zone, ampm) {
+  function expectScope(date, time, zone, ampm) {
     if (date) expect(scope.localDate).toBe(date);
     if (time) expect(scope.localTime).toBe(time);
     if (zone) expect(scope.tzOffset).toBe(zone);
     if (ampm) expect(scope.ampm).toBe(ampm);
   }
 
-  function expectFields (date, time, zone, ampm) {
+  function expectFields(date, time, zone, ampm) {
     if (date) expect(element.find('.date').val()).toBe(date);
     if (time) expect(element.find('.time').val()).toBe(time);
     if (zone) {
-      const selected = element.find('.zone').val().substr('string:'.length);
+      const selected = element
+        .find('.zone')
+        .val()
+        .substr('string:'.length);
       expect(selected).toBe(zone);
     }
     if (ampm) expect(element.find('.ampm').val()).toBe(ampm);

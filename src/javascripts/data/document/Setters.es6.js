@@ -14,7 +14,7 @@ import * as StructuredTextFieldSetter from 'app/widgets/structured_text/Structur
  * `app/entity_editor/Document`. It is also tested in the entity editor
  * document tests.
  */
-export function create ({
+export function create({
   // Synchronously return an OtDoc instance or undefined
   getDoc,
   // Get the current document value at the given path
@@ -51,19 +51,19 @@ export function create ({
     destroy
   };
 
-  function destroy () {
+  function destroy() {
     localFieldChangesBus.end();
     errorBus.end();
   }
 
-  function setValueAt (path, value) {
+  function setValueAt(path, value) {
     return withRawDoc(path, doc => {
       maybeEmitLocalChange(path);
       return setValueAtRaw(doc, path, value);
     });
   }
 
-  function setValueAtRaw (doc, path, value) {
+  function setValueAtRaw(doc, path, value) {
     if (path.length === 3 && StringField.is(path[1], contentType)) {
       return StringField.setAt(doc, path, value);
     } else if (StructuredTextFieldSetter.is(path[1], contentType)) {
@@ -73,18 +73,18 @@ export function create ({
     }
   }
 
-  function removeValueAt (path) {
-    return withRawDoc(path, (doc) => {
+  function removeValueAt(path) {
+    return withRawDoc(path, doc => {
       maybeEmitLocalChange(path);
       return ShareJS.remove(doc, path);
     });
   }
 
-  function insertValueAt (path, i, x) {
-    return withRawDoc(path, (doc) => {
+  function insertValueAt(path, i, x) {
+    return withRawDoc(path, doc => {
       if (ShareJS.peek(doc, path)) {
         maybeEmitLocalChange(path);
-        return $q.denodeify((cb) => {
+        return $q.denodeify(cb => {
           doc.insertAt(path, i, x, cb);
         });
       } else if (i === 0) {
@@ -96,20 +96,19 @@ export function create ({
     });
   }
 
-  function pushValueAt (path, value) {
+  function pushValueAt(path, value) {
     const current = getValueAt(path);
     const pos = current ? current.length : 0;
     return insertValueAt(path, pos, value);
   }
 
-
-  function maybeEmitLocalChange (path) {
+  function maybeEmitLocalChange(path) {
     if (path.length >= 3 && path[0] === 'fields') {
       localFieldChangesBus.emit([path[1], path[2]]);
     }
   }
 
-  function withRawDoc (path, run) {
+  function withRawDoc(path, run) {
     let result;
     const doc = getDoc();
     if (doc) {
@@ -117,7 +116,7 @@ export function create ({
     } else {
       result = $q.reject(new Error('ShareJS document is not connected'));
     }
-    return result.catch((error) => {
+    return result.catch(error => {
       errorBus.emit({ path, error });
       return $q.reject(error);
     });

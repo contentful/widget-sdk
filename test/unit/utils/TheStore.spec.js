@@ -35,12 +35,12 @@ describe('TheStore', () => {
   });
 
   describe('utils', () => {
-    beforeEach(function* () {
+    beforeEach(function*() {
       this.primitives = {
         '1': 1,
         '1.1': 1.1,
-        'true': true,
-        'null': null
+        true: true,
+        null: null
       };
 
       this.storage = {
@@ -68,58 +68,58 @@ describe('TheStore', () => {
     });
 
     describe('#set', () => {
-      it('stores string as is', function () {
+      it('stores string as is', function() {
         this.storeUtils.set(this.storage, 'test', 'test-string');
 
         sinon.assert.calledOnce(this.storage.set.withArgs('test', 'test-string'));
       });
 
-      it('stores primitives stringified', function () {
-        Object.keys(this.primitives).forEach((str) => {
+      it('stores primitives stringified', function() {
+        Object.keys(this.primitives).forEach(str => {
           this.storeUtils.set(this.storage, 'test', this.primitives[str]);
           sinon.assert.called(this.storage.set.withArgs('test', str));
         });
       });
 
-      it('stores objects stringified', function () {
-        this.storeUtils.set(this.storage, 'test', {test: true});
+      it('stores objects stringified', function() {
+        this.storeUtils.set(this.storage, 'test', { test: true });
         sinon.assert.calledOnce(this.storage.set.withArgs('test', '{"test":true}'));
       });
     });
 
     describe('#get', () => {
-      it('returns null for non-existent value', function () {
+      it('returns null for non-existent value', function() {
         this.storage.get.returns(null);
         expect(this.storeUtils.get(this.storage, 'non-existent')).toEqual(null);
       });
 
-      it('returns string as is', function () {
+      it('returns string as is', function() {
         this.storage.get.returns('test-string');
         expect(this.storeUtils.get(this.storage, 'test')).toEqual('test-string');
       });
 
-      it('returns primitives parsed', function () {
-        Object.keys(this.primitives).forEach((str) => {
+      it('returns primitives parsed', function() {
+        Object.keys(this.primitives).forEach(str => {
           this.storage.get.returns(str);
           expect(this.storeUtils.get(this.storage, 'test')).toEqual(this.primitives[str]);
         });
       });
 
-      it('returns objects parsed', function () {
+      it('returns objects parsed', function() {
         this.storage.get.returns('{"test":true}');
-        expect(this.storeUtils.get(this.storage, 'test')).toEqual({test: true});
+        expect(this.storeUtils.get(this.storage, 'test')).toEqual({ test: true });
       });
     });
 
     describe('#remove', () => {
-      it('proxies to underlying remove function', function () {
+      it('proxies to underlying remove function', function() {
         this.storeUtils.remove(this.storage, 'test');
         sinon.assert.calledOnce(this.storage.remove.withArgs('test'));
       });
     });
 
     describe('#has', () => {
-      it('returns bool depending on #get result', function () {
+      it('returns bool depending on #get result', function() {
         this.storage.get.returns('test-string');
         expect(this.storeUtils.has(this.storage, 'test')).toEqual(true);
         sinon.assert.called(this.storage.get.withArgs('test'));
@@ -131,7 +131,7 @@ describe('TheStore', () => {
     });
 
     describe('#externalChanges', () => {
-      it('emits value on `storage` window event after setting in localthis. storage', function () {
+      it('emits value on `storage` window event after setting in localthis. storage', function() {
         this.storeUtils.set(this.storage, 'mykey', 'initial');
 
         const changes$ = this.storeUtils.externalChanges('mykey');
@@ -139,21 +139,22 @@ describe('TheStore', () => {
 
         changes$.onValue(emittedChange);
 
-        this.listeners.addEventListener.withArgs('storage').yield({key: 'mykey', newValue: 'newvalue'});
+        this.listeners.addEventListener
+          .withArgs('storage')
+          .yield({ key: 'mykey', newValue: 'newvalue' });
         sinon.assert.calledOnceWith(emittedChange, 'newvalue');
       });
     });
   });
 
-
   describe('TheStore/ClientStorageWrapper', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.SessionStorageWrapper = ClientStorageWrapper('session');
       this.LocalStorageWrapper = ClientStorageWrapper('local');
     });
 
-    it('exposes a simplified Local/Session Storage API', function () {
-      [ this.LocalStorageWrapper, this.SessionStorageWrapper ].forEach(wrapper => {
+    it('exposes a simplified Local/Session Storage API', function() {
+      [this.LocalStorageWrapper, this.SessionStorageWrapper].forEach(wrapper => {
         ['setItem', 'getItem', 'removeItem'].forEach(method => {
           expect(typeof wrapper[method]).toEqual('function');
         });
@@ -162,7 +163,7 @@ describe('TheStore', () => {
   });
 
   describe('TheStore/StorageStore', () => {
-    beforeEach(function* () {
+    beforeEach(function*() {
       this.stubs = {};
 
       this.stubs.setItem = sinon.stub();
@@ -187,7 +188,7 @@ describe('TheStore', () => {
       this.SessionStorage = this.ClientStorage('session');
     });
 
-    it('proxies its methods directly to the wrapper', function* () {
+    it('proxies its methods directly to the wrapper', function*() {
       this.LocalStorage.set();
       sinon.assert.calledOnce(this.stubs.setItem);
 
@@ -208,47 +209,47 @@ describe('TheStore', () => {
     });
 
     describe('#isSupported', () => {
-      beforeEach(function () {
+      beforeEach(function() {
         this.LocalStorage.set = sinon.stub();
         this.SessionStorage.set = sinon.stub();
       });
 
-      it('returns true when StorageStore.set does not throw', function () {
+      it('returns true when StorageStore.set does not throw', function() {
         this.LocalStorage.set.returns(undefined);
         this.SessionStorage.set.returns(undefined);
 
         expect(this.LocalStorage.isSupported()).toEqual(true);
         expect(this.SessionStorage.isSupported()).toEqual(true);
 
-        sinon.assert.calledOnce(this.LocalStorage.set.withArgs('test', {test: true}));
-        sinon.assert.calledOnce(this.SessionStorage.set.withArgs('test', {test: true}));
+        sinon.assert.calledOnce(this.LocalStorage.set.withArgs('test', { test: true }));
+        sinon.assert.calledOnce(this.SessionStorage.set.withArgs('test', { test: true }));
       });
 
-      it('returns false when StorageStore.set does throw', function () {
+      it('returns false when StorageStore.set does throw', function() {
         this.LocalStorage.set.throws('TypeError');
         this.SessionStorage.set.throws('TypeError');
 
         expect(this.LocalStorage.isSupported()).toEqual(false);
         expect(this.SessionStorage.isSupported()).toEqual(false);
 
-        sinon.assert.calledOnce(this.LocalStorage.set.withArgs('test', {test: true}));
-        sinon.assert.calledOnce(this.SessionStorage.set.withArgs('test', {test: true}));
+        sinon.assert.calledOnce(this.LocalStorage.set.withArgs('test', { test: true }));
+        sinon.assert.calledOnce(this.SessionStorage.set.withArgs('test', { test: true }));
       });
 
-      it('removes test key after successful test', function () {
+      it('removes test key after successful test', function() {
         this.LocalStorage.remove = sinon.stub();
         this.LocalStorage.set.returns(undefined);
         this.LocalStorage.isSupported();
 
-        sinon.assert.calledOnce(this.LocalStorage.set.withArgs('test', {test: true}));
+        sinon.assert.calledOnce(this.LocalStorage.set.withArgs('test', { test: true }));
         sinon.assert.calledOnce(this.LocalStorage.remove.withArgs('test'));
       });
     });
   });
 
   describe('TheStore/CookieStorage', () => {
-    beforeEach(function* () {
-      this.testSecureCookie = function (method, mode, expected) {
+    beforeEach(function*() {
+      this.testSecureCookie = function(method, mode, expected) {
         const stub = this.stubs[method];
 
         this.config.default.env = mode;
@@ -293,13 +294,13 @@ describe('TheStore', () => {
       this.CookieStorage = yield this.system.import('TheStore/CookieStorage');
     });
 
-    it('exposes an API that proxies to the backing Cookies storage', function () {
-      ['set', 'get', 'remove'].forEach((method) => {
+    it('exposes an API that proxies to the backing Cookies storage', function() {
+      ['set', 'get', 'remove'].forEach(method => {
         expect(typeof this.CookieStorage[method]).toEqual('function');
       });
     });
 
-    it('proxies to the Cookies storage directly', function () {
+    it('proxies to the Cookies storage directly', function() {
       ['set', 'get', 'remove'].forEach(method => {
         this.CookieStorage[method]();
 
@@ -307,20 +308,20 @@ describe('TheStore', () => {
       });
     });
 
-    it('exposes a type that directly states it is the CookieStorage', function () {
+    it('exposes a type that directly states it is the CookieStorage', function() {
       expect(this.CookieStorage.type).toBe('CookieStorage');
     });
 
     describe('#set', () => {
-      it('uses non-secure cookie for dev mode', function () {
+      it('uses non-secure cookie for dev mode', function() {
         this.testSecureCookie(this.stubs, 'set', 'development', false);
       });
 
-      it('uses secure cookie otherwise', function () {
+      it('uses secure cookie otherwise', function() {
         this.testSecureCookie(this.stubs, 'set', 'production', true);
       });
 
-      it('expires in distant future', function () {
+      it('expires in distant future', function() {
         this.CookieStorage.set('test', 'test');
 
         sinon.assert.calledOnce(this.stubs.set.withArgs('test', 'test'));
@@ -329,11 +330,11 @@ describe('TheStore', () => {
     });
 
     describe('#remove', () => {
-      it('uses non-secure cookie for dev mode', function () {
+      it('uses non-secure cookie for dev mode', function() {
         this.testSecureCookie('remove', 'development', false);
       });
 
-      it('uses secure cookie otherwise', function () {
+      it('uses secure cookie otherwise', function() {
         this.testSecureCookie('remove', 'production', true);
       });
     });

@@ -11,24 +11,19 @@ describe('data/editingInterfaces/transformer', () => {
   });
 
   describe('#fromAPI()', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       const Transformer = this.$inject('data/editingInterfaces/transformer');
       this.fromAPI = Transformer.fromAPI;
     });
 
-    it('adds default controls if control is missing', function () {
+    it('adds default controls if control is missing', function() {
       const contentType = {
-        fields: [
-          {apiName: 'MISSING'},
-          {apiName: 'AAA'}
-        ]
+        fields: [{ apiName: 'MISSING' }, { apiName: 'AAA' }]
       };
       const editingInterface = {
-        controls: [
-          {fieldId: 'AAA'}
-        ]
+        controls: [{ fieldId: 'AAA' }]
       };
-      getDefaultWidget.withArgs({apiName: 'MISSING'}).returns('DEF');
+      getDefaultWidget.withArgs({ apiName: 'MISSING' }).returns('DEF');
 
       const controls = this.fromAPI(contentType, editingInterface).controls;
       expect(controls.length).toBe(2);
@@ -36,15 +31,12 @@ describe('data/editingInterfaces/transformer', () => {
       expect(controls[0].fieldId).toEqual('MISSING');
     });
 
-    it('removes controls for missing fields', function () {
+    it('removes controls for missing fields', function() {
       const contentType = {
-        fields: [{apiName: 'AAA'}]
+        fields: [{ apiName: 'AAA' }]
       };
       const editingInterface = {
-        controls: [
-          { fieldId: 'MISSING' },
-          { fieldId: 'AAA' }
-        ]
+        controls: [{ fieldId: 'MISSING' }, { fieldId: 'AAA' }]
       };
 
       const controls = this.fromAPI(contentType, editingInterface).controls;
@@ -52,7 +44,7 @@ describe('data/editingInterfaces/transformer', () => {
       expect(controls[0].fieldId).toEqual('AAA');
     });
 
-    it('migrates deprecated widgets', function () {
+    it('migrates deprecated widgets', function() {
       const migrations = this.$inject('widgets/migrations/data');
       migrations.push({
         from: 'OLD',
@@ -71,15 +63,14 @@ describe('data/editingInterfaces/transformer', () => {
     });
 
     describe('field mapping', () => {
-      it('prefers the apiName over the field id', function () {
-        const contentType = {fields: [
-          { id: 'id2', apiName: 'apiName' },
-          { id: 'apiName', apiName: 'field2' }
-        ]};
+      it('prefers the apiName over the field id', function() {
+        const contentType = {
+          fields: [{ id: 'id2', apiName: 'apiName' }, { id: 'apiName', apiName: 'field2' }]
+        };
 
-        const editingInterface = {controls: [
-          { widgetId: 'W', fieldId: 'apiName' }
-        ]};
+        const editingInterface = {
+          controls: [{ widgetId: 'W', fieldId: 'apiName' }]
+        };
 
         const controls = this.fromAPI(contentType, editingInterface).controls;
         const fieldIds = _.map(controls, 'fieldId');
@@ -87,16 +78,14 @@ describe('data/editingInterfaces/transformer', () => {
         expect(controls[0].widgetId).toEqual('W');
       });
 
-      it('falls back on field id', function () {
-        const contentType = {fields: [
-          { id: 'id1' },
-          { id: 'id2', apiName: 'apiName2' }
-        ]};
+      it('falls back on field id', function() {
+        const contentType = {
+          fields: [{ id: 'id1' }, { id: 'id2', apiName: 'apiName2' }]
+        };
 
-        const editingInterface = {controls: [
-          { widgetId: 'A', fieldId: 'id1' },
-          { widgetId: 'B', fieldId: 'apiName2' }
-        ]};
+        const editingInterface = {
+          controls: [{ widgetId: 'A', fieldId: 'id1' }, { widgetId: 'B', fieldId: 'apiName2' }]
+        };
 
         const controls = this.fromAPI(contentType, editingInterface).controls;
         const fieldIds = _.map(controls, 'fieldId');

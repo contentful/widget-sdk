@@ -3,7 +3,7 @@ import createReactClass from 'create-react-class';
 
 const Loader = createReactClass({
   displayName: 'Loader',
-  render () {
+  render() {
     return h(
       'div',
       {

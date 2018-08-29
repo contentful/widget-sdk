@@ -21,11 +21,7 @@ export default {
       description: (
         <p>
           Can be found{' '}
-          <a
-            href="https://admin.pubnub.com"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href="https://admin.pubnub.com" target="_blank" rel="noopener noreferrer">
             in the PubNub Dashboard
           </a>
           .
@@ -48,11 +44,10 @@ export default {
           <a
             href="https://www.pubnub.com/developers/tech/key-concepts/publish-subscribe/channels/"
             target="_blank"
-            rel="noopener noreferrer"
-          >
+            rel="noopener noreferrer">
             Check documentation
-          </a>
-          {' '}for valid channel names.
+          </a>{' '}
+          for valid channel names.
         </p>
       )
     }
@@ -62,9 +57,7 @@ export default {
       name,
       url: `https://ps.pndsn.com/publish/${pubKey}/${subKey}/0/${channel}/0`,
       topics: ['*.*'],
-      filters: [
-        {equals: [{doc: 'sys.environment.sys.id'}, 'master']}
-      ],
+      filters: [{ equals: [{ doc: 'sys.environment.sys.id' }, 'master'] }],
       transformation: {
         contentType: 'application/json',
         body: JSON.stringify({

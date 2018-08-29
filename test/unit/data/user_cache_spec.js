@@ -3,10 +3,10 @@
 describe('data/userCache', () => {
   let userCache, fetchAll;
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('cf.data', $provide => {
       $provide.value('data/CMA/FetchAll', {
-        fetchAll: fetchAll = sinon.stub().resolves()
+        fetchAll: (fetchAll = sinon.stub().resolves())
       });
     });
 
@@ -15,8 +15,8 @@ describe('data/userCache', () => {
     userCache = createCache(endpoint);
   });
 
-  function makeUser (id) {
-    return {sys: {id: id}};
+  function makeUser(id) {
+    return { sys: { id: id } };
   }
 
   describe('#getAll()', () => {
@@ -31,13 +31,12 @@ describe('data/userCache', () => {
     it('it maps users by id', () => {
       const userResponse = [makeUser('0'), makeUser('1')];
       fetchAll.resolves(userResponse);
-      return userCache.getAll()
-      .then(users => {
+      return userCache.getAll().then(users => {
         expect(users).toEqual(userResponse);
       });
     });
 
-    it('it caches resulst', function () {
+    it('it caches resulst', function() {
       const userResponse = [makeUser('0'), makeUser('1')];
       fetchAll.resolves(userResponse);
       const handleUsers = sinon.stub();
@@ -60,8 +59,7 @@ describe('data/userCache', () => {
     it('it gets users by id', () => {
       const userResponse = [makeUser('0'), makeUser('1')];
       fetchAll.resolves(userResponse);
-      return userCache.get('1')
-      .then(user => {
+      return userCache.get('1').then(user => {
         expect(user).toEqual(userResponse[1]);
       });
     });
@@ -69,12 +67,12 @@ describe('data/userCache', () => {
     it('resuses response from call to "#getAll()"', () => {
       const userResponse = [makeUser('0'), makeUser('1')];
       fetchAll.resolves(userResponse);
-      return userCache.getAll()
-      .then(users => userCache.get('0')
-      .then(user => {
-        expect(user).toBe(users[0]);
-        sinon.assert.calledOnce(fetchAll);
-      }));
+      return userCache.getAll().then(users =>
+        userCache.get('0').then(user => {
+          expect(user).toBe(users[0]);
+          sinon.assert.calledOnce(fetchAll);
+        })
+      );
     });
   });
 });

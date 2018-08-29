@@ -3,10 +3,14 @@
 describe('CodeMirror wrapper', () => {
   let textarea, wrapper, cm, focusSpy, CodeMirror;
 
-  function assertHasFocused () { sinon.assert.called(focusSpy); }
-  function assertHasNotFocused () { sinon.assert.notCalled(focusSpy); }
+  function assertHasFocused() {
+    sinon.assert.called(focusSpy);
+  }
+  function assertHasNotFocused() {
+    sinon.assert.notCalled(focusSpy);
+  }
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     const Wrapper = this.$inject('markdown_editor/codemirror_wrapper');
     textarea = document.createElement('textarea');
@@ -152,7 +156,9 @@ describe('CodeMirror wrapper', () => {
   describe('Cursor movement methods', () => {
     const val = 'Some longer line.\nThe next one.';
 
-    beforeEach(() => { cm.setValue(val); });
+    beforeEach(() => {
+      cm.setValue(val);
+    });
 
     it('line jumping, end/beginning', () => {
       cm.setCursor({ line: 0, ch: 3 });

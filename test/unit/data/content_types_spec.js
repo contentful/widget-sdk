@@ -6,71 +6,83 @@ describe('data/ContentTypes', () => {
   });
 
   describe('#assureDisplayField', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.assureDisplayField = this.$inject('data/ContentTypes').assureDisplayField;
     });
 
-    it('does not change valid display field', function () {
+    it('does not change valid display field', function() {
       const ct = {
         displayField: 'ID',
-        fields: [{
-          id: 'ID',
-          type: 'Symbol'
-        }]
+        fields: [
+          {
+            id: 'ID',
+            type: 'Symbol'
+          }
+        ]
       };
       this.assureDisplayField(ct);
       expect(ct.displayField).toEqual('ID');
     });
 
-    it('removes display field if field type cannot be displayed', function () {
+    it('removes display field if field type cannot be displayed', function() {
       const ct = {
         displayField: 'ID',
-        fields: [{
-          id: 'ID',
-          type: 'non displayable'
-        }]
+        fields: [
+          {
+            id: 'ID',
+            type: 'non displayable'
+          }
+        ]
       };
       this.assureDisplayField(ct);
       expect(ct.displayField).toEqual(undefined);
     });
 
-    it('removes display field if it points to missing field', function () {
+    it('removes display field if it points to missing field', function() {
       const ct = {
         displayField: 'ID',
-        fields: [{
-          id: 'ANOTHER ID',
-          type: 'non displayable'
-        }]
+        fields: [
+          {
+            id: 'ANOTHER ID',
+            type: 'non displayable'
+          }
+        ]
       };
       this.assureDisplayField(ct);
       expect(ct.displayField).toEqual(undefined);
     });
 
-    it('changes invalid display field to first applicable field', function () {
+    it('changes invalid display field to first applicable field', function() {
       const ct = {
         displayField: 'ID',
-        fields: [{
-          id: 'FIRST ID',
-          type: 'non displayable'
-        }, {
-          id: 'SECOND ID',
-          type: 'Symbol'
-        }, {
-          id: 'THIRD ID',
-          type: 'Symbol'
-        }]
+        fields: [
+          {
+            id: 'FIRST ID',
+            type: 'non displayable'
+          },
+          {
+            id: 'SECOND ID',
+            type: 'Symbol'
+          },
+          {
+            id: 'THIRD ID',
+            type: 'Symbol'
+          }
+        ]
       };
       this.assureDisplayField(ct);
       expect(ct.displayField).toEqual('SECOND ID');
     });
 
-    it('retains null as value if no applicable field was found', function () {
+    it('retains null as value if no applicable field was found', function() {
       const ct = {
         displayField: null,
-        fields: [{
-          id: 'fieldid',
-          type: 'non-displayable'
-        }]
+        fields: [
+          {
+            id: 'fieldid',
+            type: 'non-displayable'
+          }
+        ]
       };
       this.assureDisplayField(ct);
       expect(ct.displayField).toEqual(null);
@@ -78,25 +90,25 @@ describe('data/ContentTypes', () => {
   });
 
   describe('#assureName', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.assureName = this.$inject('data/ContentTypes').assureName;
     });
 
-    it('sets missing name to "Untitled"', function () {
-      const ct = {name: ''};
+    it('sets missing name to "Untitled"', function() {
+      const ct = { name: '' };
       this.assureName(ct);
       expect(ct.name).toEqual('Untitled');
     });
 
-    it('retains existing name', function () {
-      const ct = {name: 'NAME'};
+    it('retains existing name', function() {
+      const ct = { name: 'NAME' };
       this.assureName(ct);
       expect(ct.name).toEqual('NAME');
     });
   });
 
   describe('#internalToPublic()', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.data = {
         name: 'apple',
         sys: {},
@@ -126,53 +138,49 @@ describe('data/ContentTypes', () => {
       };
     });
 
-    it('sets "displayField" to apiName of referenced field', function () {
+    it('sets "displayField" to apiName of referenced field', function() {
       const internalData = {
         displayField: 'internal',
-        fields: [
-          {id: 'internal', apiName: 'apiName'}
-        ]
+        fields: [{ id: 'internal', apiName: 'apiName' }]
       };
       const publicData = this.internalToPublic(internalData);
       expect(publicData.displayField).toEqual('apiName');
     });
 
-    it('has a description field', function () {
+    it('has a description field', function() {
       this.assertPublicProp({}, 'description');
     });
 
-    it('has a sys field', function () {
+    it('has a sys field', function() {
       this.assertPublicProp({}, 'sys');
     });
 
-    it('has a name field', function () {
+    it('has a name field', function() {
       this.assertPublicProp({}, 'name');
     });
 
-    it('has a fields array', function () {
+    it('has a fields array', function() {
       this.assertPublicProp({}, 'fields');
       const publicData = this.internalToPublic({});
       expect(Array.isArray(publicData.fields)).toBe(true);
     });
 
-    it('keeps internal "displayField" ID if apiName is not present', function () {
+    it('keeps internal "displayField" ID if apiName is not present', function() {
       const internalData = {
         displayField: 'internal',
-        fields: [
-          {id: 'internal'}
-        ]
+        fields: [{ id: 'internal' }]
       };
       const publicData = this.internalToPublic(internalData);
       expect(publicData.displayField).toEqual('internal');
     });
 
-    it('removes "apiName" property from all the fields', function () {
+    it('removes "apiName" property from all the fields', function() {
       this.ct.fields.forEach(field => {
         expect('apiName' in field).toEqual(false);
       });
     });
 
-    it('uses "apiName" as id if available', function () {
+    it('uses "apiName" as id if available', function() {
       this.ct.fields.forEach((field, i) => {
         const originalField = this.data.fields[i];
 
