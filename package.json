@@ -175,8 +175,8 @@
     "clean": "rm -rf node_modules",
     "precommit": "lint-staged",
     "bundle-analyzer": "node --max_old_space_size=4096 ./node_modules/webpack/bin/webpack.js --config ./tools/webpack.analyzer.config.js",
-    "prettier:debug": "prettier --config .prettierrc --no-editorconfig --debug-check {./src/javascripts/,./tools/,./test/,./bin/,./tasks/,./config/}**/*.js ./*.js",
-    "prettier": "prettier --config .prettierrc --no-editorconfig --write {./src/javascripts/,./tools/,./test/,./bin/,./tasks/,./config/}**/*.js ./*.js"
+    "prettier:debug": "prettier --config .prettierrc --no-editorconfig --debug-check {./src/javascripts/,./tools/,./test/,./bin/,./tasks/,./config/}**/*.{js,json} ./*.js",
+    "prettier": "prettier --config .prettierrc --no-editorconfig --write {./src/javascripts/,./tools/,./test/,./bin/,./tasks/,./config/}**/*.{js,json} ./*.js"
   },
   "lint-staged": {
     "*.js": [
