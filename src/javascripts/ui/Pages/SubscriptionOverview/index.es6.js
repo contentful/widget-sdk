@@ -41,7 +41,7 @@ const SubscriptionOverview = createReactClass({
     };
   },
 
-  componentWillMount: function() {
+  UNSAFE_componentWillMount: function() {
     this.fetchData();
   },
 

@@ -110,7 +110,7 @@ const Wizard = createReactClass({
     this.navigate(steps[0].id);
   },
 
-  componentWillReceiveProps({ spaceCreation: { error } }) {
+  UNSAFE_componentWillReceiveProps({ spaceCreation: { error } }) {
     const {
       spaceCreation: { error: currentError }
     } = this.props;

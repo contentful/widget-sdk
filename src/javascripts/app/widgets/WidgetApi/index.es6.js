@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -18,7 +20,7 @@ export default function connectToWidgetAPI(Component) {
       isDisabled: true,
       currentUrl: $location.absUrl()
     };
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       this.offDisabledState = this.props.field.onIsDisabledChanged(this.handleDisabledChanges);
       this.offValueChanged = this.props.field.onValueChanged(this.handleIncomingChanges);
 

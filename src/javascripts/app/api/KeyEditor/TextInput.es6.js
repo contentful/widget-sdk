@@ -34,7 +34,7 @@ const TextInput = createReactClass({
     this.setState({ isFocused: false });
     this.props.onBlur(e);
   },
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (!this.state.isFocused) {
       this.setState({ currentValue: nextProps.value });
     }

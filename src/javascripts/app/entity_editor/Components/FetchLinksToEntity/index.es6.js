@@ -29,7 +29,7 @@ const FetchLinksToEntity = createReactClass({
   componentDidMount() {
     this.fetchLinks(this.props);
   },
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (this.props.id !== nextProps.id) {
       this.fetchLinks(nextProps);
     }

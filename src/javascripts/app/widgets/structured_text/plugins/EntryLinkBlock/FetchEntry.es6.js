@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -28,7 +30,7 @@ export default class FetchEntry extends React.Component {
   componentDidMount() {
     this.fetchEntry(this.props);
   }
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (this.props.node !== nextProps.node || this.props.currentUrl !== nextProps.currentUrl) {
       this.fetchEntry(nextProps);
     }

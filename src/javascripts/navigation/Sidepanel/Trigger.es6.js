@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+
 import { h } from 'ui/Framework';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -20,7 +22,7 @@ export default class Trigger extends React.Component {
     onClick: PropTypes.func.isRequired
   };
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.offNavState = navState$.onValue(navState => {
       this.setState({ navState });
     });
