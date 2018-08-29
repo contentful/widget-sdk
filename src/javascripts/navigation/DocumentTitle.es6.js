@@ -1,7 +1,7 @@
 import $rootScope from '$rootScope';
 import $document from '$document';
 import $state from '$state';
-import {isString} from 'lodash';
+import { isString } from 'lodash';
 
 /**
  * @ngdoc service
@@ -11,7 +11,6 @@ import {isString} from 'lodash';
  * browser window's title.
  */
 
-
 /**
  * @ngdoc method
  * @name navigation/DocumentTitle#init
@@ -19,7 +18,7 @@ import {isString} from 'lodash';
  * Starts watching for a fallback state
  * label set in a state definition.
  */
-export function init () {
+export function init() {
   $rootScope.$watch(() => $state.current.label, setTitle);
 }
 
@@ -30,7 +29,7 @@ export function init () {
  * @description
  * Sets a title.
  */
-export function setTitle (title) {
+export function setTitle(title) {
   $document[0].title = title || 'Contentful';
 }
 
@@ -42,7 +41,7 @@ export function setTitle (title) {
  * If a provided arg is a valid title,
  * set it.
  */
-export function maybeOverride (title) {
+export function maybeOverride(title) {
   if (isString(title)) {
     setTitle(title);
   }

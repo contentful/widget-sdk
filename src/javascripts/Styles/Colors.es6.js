@@ -1,7 +1,7 @@
-import {State as EntityState} from 'data/CMA/EntityState';
-import {caseof as caseofEq} from 'sum-types/caseof-eq';
-import {constant} from 'lodash';
-export {default as Color} from 'color';
+import { State as EntityState } from 'data/CMA/EntityState';
+import { caseof as caseofEq } from 'sum-types/caseof-eq';
+import { constant } from 'lodash';
+export { default as Color } from 'color';
 
 /**
  * This module exports CSS color values.
@@ -11,7 +11,6 @@ export {default as Color} from 'color';
  *
  * For now this module needs to be kept in sync with the stylus files.
  */
-
 
 export const byName = {
   textDark: '#2A3039',
@@ -65,11 +64,10 @@ export const byName = {
   bgLight: '#E2E7EA'
 };
 
-
 /**
  * Given an entity state we return
  */
-export function entityStateColor (state) {
+export function entityStateColor(state) {
   return caseofEq(state, [
     [EntityState.Archived(), constant(byName.redLight)],
     [EntityState.Draft(), constant(byName.orangeLight)],

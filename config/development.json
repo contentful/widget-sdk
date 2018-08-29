@@ -2,7 +2,7 @@
   "environment": "development",
   "authUrl": "//be.joistio.com:8888",
   "apiUrl": "//api.joistio.com:8888",
-  "mockApiUrl" : "//mock-proxy.joistio.com:8888",
+  "mockApiUrl": "//mock-proxy.joistio.com:8888",
   "otUrl": ["//ot.joistio.com:8888"],
   "assetUrl": "//static.joistio.com:8888",
   "marketingUrl": "//www.joistio.com:8888",
@@ -35,10 +35,10 @@
     "app_id": "userInterfaceDev",
     "buffer_size": 1
   },
-  "google" : {
+  "google": {
     "maps_api_key": "AIzaSyB_jzGfB98k1d_CCwMacP1ovTfXYxXh11g"
   },
   "fonts_dot_com": {
-    "project_id" : "00000000-0000-0000-0000-000000000000"
+    "project_id": "00000000-0000-0000-0000-000000000000"
   }
 }

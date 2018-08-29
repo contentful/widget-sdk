@@ -24,7 +24,7 @@ const storage = LocalStorage.isSupported() ? LocalStorage : CookieStore;
  * @param  {String} storageType The storage type. Valid choices are local, session, and cookie
  * @return {StorageStore|CookieStore}
  */
-export function getStore (storageType) {
+export function getStore(storageType) {
   const validStorageTypes = {
     local: LocalStorage,
     session: SessionStorage,

@@ -23,19 +23,18 @@ import makePreviewRender from './PreviewRender';
  * @param {K.Property<string?>} markdown$
  * @returns {K.Property<PreviewData>}
  */
-export default function (markdown$) {
-  const markdownThrottled$ =
-    markdown$
+export default function(markdown$) {
+  const markdownThrottled$ = markdown$
     .throttle(250)
-    .map((src) => src || '')
+    .map(src => src || '')
     .skipDuplicates();
 
   const preview$ = makePreview$(makePreviewRender());
 
   // Given the loaded preview renderer we construct a stream that
   // applies it to the markdown source.
-  function makePreview$ (previewRender) {
-    return markdownThrottled$.map((markdown) => {
+  function makePreview$(previewRender) {
+    return markdownThrottled$.map(markdown => {
       try {
         const tree = previewRender(markdown);
         return {
@@ -49,7 +48,7 @@ export default function (markdown$) {
           }
         };
       } catch (_e) {
-        return {error: true};
+        return { error: true };
       }
     });
   }

@@ -1,7 +1,7 @@
-import {cloneDeep} from 'lodash';
+import { cloneDeep } from 'lodash';
 
 // Copied from cfIcon
-export default function scaleSvg (svg, scale = 1) {
+export default function scaleSvg(svg, scale = 1) {
   svg = cloneDeep(svg);
   const { width, height } = svg.props;
   const scaledWidth = parseInt(width) * scale;

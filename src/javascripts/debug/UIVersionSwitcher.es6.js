@@ -1,14 +1,14 @@
 /**
-* Switches the UI version if a `ui_version` query string parameter is specified.
-* It also displays the version in the UI and provides an easy way to clear it.
-*/
+ * Switches the UI version if a `ui_version` query string parameter is specified.
+ * It also displays the version in the UI and provides an easy way to clear it.
+ */
 import $window from '$window';
 import Cookies from 'Cookies';
-import {omit} from 'lodash';
+import { omit } from 'lodash';
 import moment from 'moment';
-import {gitRevision} from 'environment';
-import {createElement as h} from 'react';
-import {addNotification} from 'debug/DevNotifications';
+import { gitRevision } from 'environment';
+import { createElement as h } from 'react';
+import { addNotification } from 'debug/DevNotifications';
 import location from '$location';
 import qs from 'qs';
 
@@ -17,7 +17,7 @@ import qs from 'qs';
  * given ui version. Otherwise shows a notification, if ui version is set
  * with cookie.
  */
-export function init () {
+export function init() {
   const urlParams = location.search();
   const uiVersion = urlParams['ui_version'];
 
@@ -29,13 +29,15 @@ export function init () {
   addVersionNotification();
 }
 
-function setVersionCookie (uiVersion) {
+function setVersionCookie(uiVersion) {
   Cookies.set('ui_version', uiVersion, {
-    expires: moment().add(24, 'h').toDate()
+    expires: moment()
+      .add(24, 'h')
+      .toDate()
   });
 }
 
-function addVersionNotification () {
+function addVersionNotification() {
   // This cookie is set to hide version notification in automated test runs:
   // https://github.com/contentful/ui_integration_suite/blob/c57d378def523b782decff3d02d2b3507b541fa5/app/application.py#L283
   const isTestRun = !!Cookies.get('cf_test_run');
@@ -46,19 +48,25 @@ function addVersionNotification () {
   addNotification('Contentful UI Version:', renderVersionNotification(gitRevision));
 }
 
-function renderVersionNotification (gitRevision) {
-  return h('div', null,
-    h('a', {href: `?ui_version=${gitRevision}`}, gitRevision),
-    h('button', {
-      className: 'btn-link',
-      onClick: removeUiVersion,
-      dataCfUiVersionReload: true,
-      style: {marginLeft: '3px'}
-    }, 'Clear')
+function renderVersionNotification(gitRevision) {
+  return h(
+    'div',
+    null,
+    h('a', { href: `?ui_version=${gitRevision}` }, gitRevision),
+    h(
+      'button',
+      {
+        className: 'btn-link',
+        onClick: removeUiVersion,
+        dataCfUiVersionReload: true,
+        style: { marginLeft: '3px' }
+      },
+      'Clear'
+    )
   );
 }
 
-function removeUiVersion () {
+function removeUiVersion() {
   Cookies.remove('ui_version');
   $window.location.reload();
 }

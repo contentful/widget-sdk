@@ -7,12 +7,11 @@ var File = gUtil.File;
 var through = require('through2');
 var _ = require('lodash-node/modern');
 
-
-function pluginError (message) {
+function pluginError(message) {
   return new PluginError('./build-template', message);
 }
 
-function compile (file, renameKeys) {
+function compile(file, renameKeys) {
   var name = file.path.replace(new RegExp(renameKeys[0]), renameKeys[1]);
   var contents = String(file.contents);
 
@@ -25,7 +24,7 @@ function compile (file, renameKeys) {
 }
 
 function buildJSTString(files, renameKeys) {
-  function compileAndRender (file) {
+  function compileAndRender(file) {
     var template = compile(file, renameKeys);
     return '"' + template.name + '":' + template.fnSource;
   }
@@ -34,7 +33,7 @@ function buildJSTString(files, renameKeys) {
   return 'this.JST = {' + templates + '};';
 }
 
-module.exports = function jstConcat (fileName, _opts) {
+module.exports = function jstConcat(fileName, _opts) {
   if (!fileName) throw pluginError('Missing fileName');
 
   var defaults = { renameKeys: ['.*', '$&'] };
@@ -44,7 +43,7 @@ module.exports = function jstConcat (fileName, _opts) {
   var stream = through.obj(write, end);
   return stream;
 
-  function write (file, enc, done) {
+  function write(file, enc, done) {
     if (file.isStream()) {
       stream.emit('error', pluginError('Streaming not supported'));
     } else if (file.isBuffer()) {
@@ -53,13 +52,15 @@ module.exports = function jstConcat (fileName, _opts) {
     done();
   }
 
-  function end (done) {
+  function end(done) {
     var jstString = buildJSTString(files, opts.renameKeys);
 
-    stream.push(new File({
-      path: fileName,
-      contents: new Buffer(jstString)
-    }));
+    stream.push(
+      new File({
+        path: fileName,
+        contents: new Buffer(jstString)
+      })
+    );
 
     done();
   }

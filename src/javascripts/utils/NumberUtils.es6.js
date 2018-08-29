@@ -1,9 +1,10 @@
-function formatFloat (value, localize) {
+function formatFloat(value, localize) {
   return localize
     ? toLocaleString(value)
-    : value.toFixed(2)
-      // remove floating point if not necessary
-      .replace(/\.(0)*$|0*$/, '');
+    : value
+        .toFixed(2)
+        // remove floating point if not necessary
+        .replace(/\.(0)*$|0*$/, '');
 }
 
 /**
@@ -11,7 +12,7 @@ function formatFloat (value, localize) {
  * toLocaleString(1000); // "1,000"
  * @param {Number} number
  */
-export function toLocaleString (number) {
+export function toLocaleString(number) {
   return number.toLocaleString('en-US');
 }
 
@@ -23,10 +24,10 @@ export function toLocaleString (number) {
  * shorten(2550); // "2.55K"
  * shorten(150); // 150
  */
-export function shorten (number) {
+export function shorten(number) {
   const thousand = 1000;
   const million = 1000000;
-  const format = (divisor) => formatFloat((number / divisor));
+  const format = divisor => formatFloat(number / divisor);
 
   if (number < thousand) {
     return number;
@@ -45,17 +46,17 @@ export function shorten (number) {
  * @param {String} uom Unit of measure
  * @returns {String}
  */
-export function shortenStorageUnit (value, uom) {
+export function shortenStorageUnit(value, uom) {
   if (value <= 0) {
     return '0 B';
   }
 
   const units = ['PB', 'TB', 'GB', 'MB', 'KB', 'B'];
 
-  const getBigger = (unit) => units[units.indexOf(unit) - 1];
-  const getSmaller = (unit) => units[units.indexOf(unit) + 1];
-  const isBiggestUnit = (unit) => units.indexOf(unit) === 0;
-  const isSmallestUnit = (unit) => units.indexOf(unit) === units.length - 1;
+  const getBigger = unit => units[units.indexOf(unit) - 1];
+  const getSmaller = unit => units[units.indexOf(unit) + 1];
+  const isBiggestUnit = unit => units.indexOf(unit) === 0;
+  const isSmallestUnit = unit => units.indexOf(unit) === units.length - 1;
 
   const reduce = (number, unit) => {
     if (number < 0.99 && !isSmallestUnit(unit)) {
@@ -63,11 +64,11 @@ export function shortenStorageUnit (value, uom) {
     } else if (number >= 1000 && !isBiggestUnit(unit)) {
       return reduce(number / 1000, getBigger(unit));
     } else {
-      return {number, unit};
+      return { number, unit };
     }
   };
 
-  const {number, unit} = reduce(value, uom);
+  const { number, unit } = reduce(value, uom);
 
   return `${formatFloat(number)} ${unit}`;
 }

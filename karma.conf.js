@@ -4,26 +4,28 @@ const P = require('path');
 const root = P.resolve() + '/';
 const express = require('express');
 
-module.exports = function (config) {
+module.exports = function(config) {
   config.plugins.push(
     // Serve static files from root directory under /base
     // Using the files array is too much overhead for files that are
     // not loaded eagerly
-    {'middleware:static': ['factory', function () {
-      return express().use('/base', express.static(__dirname));
-    }]}
+    {
+      'middleware:static': [
+        'factory',
+        function() {
+          return express().use('/base', express.static(__dirname));
+        }
+      ]
+    }
   );
 
   config.set({
-
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '',
-
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
     frameworks: ['jasmine'],
-
 
     // list of files / patterns to load in the browser
     files: [
@@ -45,9 +47,7 @@ module.exports = function (config) {
     ].concat(testFiles),
 
     // list of files to exclude
-    exclude: [
-      'src/javascripts/libs/**/*.js'
-    ],
+    exclude: ['src/javascripts/libs/**/*.js'],
 
     middleware: ['static'],
 
@@ -68,9 +68,12 @@ module.exports = function (config) {
           ignore: ['test/prelude.js', 'test/system-config.js'],
           presets: ['react'],
           plugins: [
-            ['transform-es2015-modules-systemjs', {
-              systemGlobal: 'SystemTest'
-            }],
+            [
+              'transform-es2015-modules-systemjs',
+              {
+                systemGlobal: 'SystemTest'
+              }
+            ],
             'transform-object-rest-spread',
             'transform-class-properties'
           ]
@@ -99,22 +102,17 @@ module.exports = function (config) {
 
     browserNoActivityTimeout: 15000,
 
-
     // enable / disable colors in the output (reporters and logs)
     colors: true,
-
 
     // level of logging
     // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
     logLevel: config.LOG_INFO,
 
-
     // enable / disable watching file and executing tests whenever any file changes
     autoWatch: true,
 
-
     browsers: ['ChromeHeadless'],
-
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
@@ -123,7 +121,7 @@ module.exports = function (config) {
 };
 
 // Test file patterns common to the karma config and the development config
-var testFiles = module.exports.testFiles = [
+var testFiles = (module.exports.testFiles = [
   'node_modules/systemjs/dist/system.src.js',
   'test/system-config.js',
   'test/prelude.js',
@@ -131,9 +129,9 @@ var testFiles = module.exports.testFiles = [
   'test/helpers/**/*.js',
   'test/unit/**/*.js',
   'test/integration/**/*.js'
-];
+]);
 
-function stripRoot (path) {
+function stripRoot(path) {
   if (path.startsWith(root)) {
     return path.replace(root, '');
   } else {
@@ -141,6 +139,6 @@ function stripRoot (path) {
   }
 }
 
-function makeSourceFileName (karmaFile) {
+function makeSourceFileName(karmaFile) {
   return '/' + stripRoot(karmaFile.originalPath);
 }

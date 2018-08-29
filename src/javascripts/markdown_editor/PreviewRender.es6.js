@@ -1,6 +1,6 @@
-import {cloneDeep, extend, isString, isObject, isArray, isNull, includes} from 'lodash';
-import {htmlDecode} from 'encoder';
-import {getDomains} from 'services/TokenStore';
+import { cloneDeep, extend, isString, isObject, isArray, isNull, includes } from 'lodash';
+import { htmlDecode } from 'encoder';
+import { getDomains } from 'services/TokenStore';
 import MarkedAst from 'MarkedAst';
 import sanitize from 'sanitize-html';
 import * as React from 'react';
@@ -13,11 +13,9 @@ const HTML_TAGS_RE = /<\/?[^>]+(>|$)/g;
 const WHITESPACE_RE = /\s+/g;
 const IMAGES_API_DEFAULT_H = 200;
 
-
 // There's no value in trying to be permissive in the preview.
 // We're sanitizing all "js:", "vbs:" and "data:" hrefs.
 const FORBIDDEN_HREF_PREFIXES = ['javascript:', 'vbscript:', 'data:'];
-
 
 // Configuration for raw HTML sanitization
 //
@@ -54,21 +52,20 @@ SANITIZE_CONFIG.allowedClasses['a'] = ['embedly-card', 'markdown-block'];
 const NEWLINE_ENTITY_RE = new RegExp('&#10;', 'g');
 SANITIZE_CONFIG.textFilter = text => text.replace(NEWLINE_ENTITY_RE, '\n');
 
-
 /**
  * Returns a function that takes a Markdown string and produces preview
  * information. This information is an object with two properties:
  * - `root`: React element containing the root node of the preview
  * - `words`: an integer representing the number of words in the MD source
  */
-export default function create () {
+export default function create() {
   const rootKey = 'root/' + currentId;
   let conflicts = {};
   let words = 0;
 
   currentId += 1;
 
-  return function buildTree (source) {
+  return function buildTree(source) {
     const ast = MarkedAst._marked(source, {
       // use renderer with altered methods for links and images
       renderer: new MarkedAst.AstBuilder(),
@@ -87,30 +84,62 @@ export default function create () {
     return result;
   };
 
-  function buildLevel (level) {
-    return (level || [])
-      .map(processItem)
-      .filter(notNull);
+  function buildLevel(level) {
+    return (level || []).map(processItem).filter(notNull);
   }
 
-  function processItem (item, i) {
-    if (isString(item)) { return createFragmentEl(item); }
-    if (!isObject(item)) { return null; }
-    if (is(item, 'paragraph')) { return createParagraphEl(item, i); }
-    if (is(item, 'inline')) { return createInlineEl(item, i); }
-    if (is(item, 'heading')) { return createHeadingEl(item, i); }
-    if (is(item, 'image')) { return createImageEl(item, i); }
-    if (is(item, 'link')) { return createLinkEl(item, i); }
-    if (is(item, 'list')) { return createListEl(item, i); }
-    if (is(item, 'listitem')) { return createListItemEl(item, i); }
-    if (is(item, 'terminal')) { return createTerminalEl(item, i); }
-    if (is(item, 'blockquote')) { return createQuoteEl(item, i); }
-    if (is(item, 'code')) { return createCodeBlockEl(item, i); }
-    if (is(item, 'codespan')) { return createCodeSpanEl(item, i); }
-    if (is(item, 'table')) { return createTableEl(item, i); }
-    if (is(item, 'tablerow')) { return createTableRowEl(item, i); }
-    if (is(item, 'tablecell')) { return createTableCellEl(item, i); }
-    if (is(item, 'html')) { return createHtmlEl(item, i); }
+  function processItem(item, i) {
+    if (isString(item)) {
+      return createFragmentEl(item);
+    }
+    if (!isObject(item)) {
+      return null;
+    }
+    if (is(item, 'paragraph')) {
+      return createParagraphEl(item, i);
+    }
+    if (is(item, 'inline')) {
+      return createInlineEl(item, i);
+    }
+    if (is(item, 'heading')) {
+      return createHeadingEl(item, i);
+    }
+    if (is(item, 'image')) {
+      return createImageEl(item, i);
+    }
+    if (is(item, 'link')) {
+      return createLinkEl(item, i);
+    }
+    if (is(item, 'list')) {
+      return createListEl(item, i);
+    }
+    if (is(item, 'listitem')) {
+      return createListItemEl(item, i);
+    }
+    if (is(item, 'terminal')) {
+      return createTerminalEl(item, i);
+    }
+    if (is(item, 'blockquote')) {
+      return createQuoteEl(item, i);
+    }
+    if (is(item, 'code')) {
+      return createCodeBlockEl(item, i);
+    }
+    if (is(item, 'codespan')) {
+      return createCodeSpanEl(item, i);
+    }
+    if (is(item, 'table')) {
+      return createTableEl(item, i);
+    }
+    if (is(item, 'tablerow')) {
+      return createTableRowEl(item, i);
+    }
+    if (is(item, 'tablecell')) {
+      return createTableCellEl(item, i);
+    }
+    if (is(item, 'html')) {
+      return createHtmlEl(item, i);
+    }
     return null;
   }
 
@@ -118,48 +147,48 @@ export default function create () {
    * Creating elements for AST parts
    */
 
-  function createRootEl (ast) {
+  function createRootEl(ast) {
     return createReactEl('div', { key: rootKey }, buildLevel(ast));
   }
 
-  function createFragmentEl (item) {
+  function createFragmentEl(item) {
     return createLeafEl('div', item, { className: 'markdown-fragment' });
   }
 
-  function createParagraphEl (item, key) {
+  function createParagraphEl(item, key) {
     const props = { key: key, className: 'markdown-paragraph markdown-block' };
     return createParentEl('div', props, item.text);
   }
 
-  function createInlineEl (item, key) {
+  function createInlineEl(item, key) {
     const props = { key: key, className: 'markdown-fragment' };
     return createParentEl(item.type, props, item.text);
   }
 
-  function createHeadingEl (item, key) {
+  function createHeadingEl(item, key) {
     const headingType = 'h' + item.level;
     const props = { key: key, className: 'markdown-heading markdown-block' };
     return createParentEl(headingType, props, item.text);
   }
 
-  function createListEl (item, key) {
+  function createListEl(item, key) {
     const listType = item.ordered ? 'ol' : 'ul';
     const props = { key: key, className: 'markdown-list markdown-block' };
     return createParentEl(listType, props, item.body);
   }
 
-  function createListItemEl (item, key) {
+  function createListItemEl(item, key) {
     return createParentEl('li', { key: key }, item.text);
   }
 
-  function createImageEl (item, key) {
+  function createImageEl(item, key) {
     const src = isString(item.href) ? prepareImageSrc(item.href) : null;
     const imgEl = createReactEl('img', { src, title: item.title, alt: item.text });
     const props = { key: key, className: 'markdown-image-placeholder markdown-block' };
     return createReactEl('div', props, imgEl);
   }
 
-  function prepareImageSrc (src) {
+  function prepareImageSrc(src) {
     // AST contains an encoded URL.
     // React expects decoded one to handle on its own.
     src = htmlDecode(src);
@@ -168,7 +197,7 @@ export default function create () {
     return src.indexOf(domain) > -1 ? prepareImagesAPISrc(src) : src;
   }
 
-  function prepareImagesAPISrc (src) {
+  function prepareImagesAPISrc(src) {
     const qs = src.split('?')[1];
 
     if (isString(qs) && qs.length > 0) {
@@ -178,53 +207,57 @@ export default function create () {
     }
   }
 
-  function createLinkEl (item, key) {
-    return createParentEl('a', {
-      key: key,
-      href: getSafeHref(item),
-      title: item.title,
-      target: '_blank',
-      rel: 'noopener noreferrer'
-    }, item.text);
+  function createLinkEl(item, key) {
+    return createParentEl(
+      'a',
+      {
+        key: key,
+        href: getSafeHref(item),
+        title: item.title,
+        target: '_blank',
+        rel: 'noopener noreferrer'
+      },
+      item.text
+    );
   }
 
-  function createTerminalEl (item, key) {
+  function createTerminalEl(item, key) {
     return createReactEl(item.type, { key: key });
   }
 
-  function createQuoteEl (item, key) {
+  function createQuoteEl(item, key) {
     const props = { key: key, className: 'markdown-quote markdown-block' };
     return createParentEl('blockquote', props, item.quote);
   }
 
-  function createCodeBlockEl (item, key) {
+  function createCodeBlockEl(item, key) {
     const codeEl = createReactEl('code', null, item.code);
     const props = { key: key, className: 'markdown-code markdown-block' };
     return createReactEl('pre', props, codeEl);
   }
 
-  function createCodeSpanEl (item, key) {
+  function createCodeSpanEl(item, key) {
     const props = { key: key, className: 'markdown-fragment' };
     return createParentEl('code', props, item.text);
   }
 
-  function createTableEl (item, key) {
+  function createTableEl(item, key) {
     const headerEl = createReactEl('thead', { key: 'table/head/' + key }, buildLevel(item.header));
     const bodyEl = createReactEl('tbody', { key: 'table/body/' + key }, buildLevel(item.body));
     const props = { key: key, className: 'markdown-table markdown-block' };
     return createReactEl('table', props, [headerEl, bodyEl]);
   }
 
-  function createTableCellEl (item, key) {
+  function createTableCellEl(item, key) {
     const cellType = item.flags.header ? 'th' : 'td';
     return createParentEl(cellType, { key: key }, item.content);
   }
 
-  function createTableRowEl (item, key) {
+  function createTableRowEl(item, key) {
     return createParentEl('tr', { key: key }, item.content);
   }
 
-  function createHtmlEl (item, key) {
+  function createHtmlEl(item, key) {
     const props = { key: key, className: 'markdown-html markdown-block' };
 
     if (isString(item.html)) {
@@ -240,11 +273,15 @@ export default function create () {
    * Low-level React DOM functions
    */
 
-  function createLeafEl (tag, html, props) {
+  function createLeafEl(tag, html, props) {
     const isClean = html.indexOf('<') < 0;
 
-    if (!isClean) { html = sanitize(html, SANITIZE_CONFIG); }
-    if (!html.length) { return null; }
+    if (!isClean) {
+      html = sanitize(html, SANITIZE_CONFIG);
+    }
+    if (!html.length) {
+      return null;
+    }
 
     words += countWords(html, isClean);
     props = extend(props || {}, {
@@ -255,7 +292,7 @@ export default function create () {
     return createReactEl(tag, props);
   }
 
-  function createParentEl (tag, props, children) {
+  function createParentEl(tag, props, children) {
     children = prepareChildren(children);
     children = mergeTextNodes(children);
 
@@ -266,13 +303,13 @@ export default function create () {
     }
   }
 
-  function createReactEl (tag, props, children) {
+  function createReactEl(tag, props, children) {
     const args = [tag, props].concat(prepareChildren(children));
     return React.createElement(...args);
   }
 
   // using string hashing to get unique keys for React
-  function getKey (str, tag) {
+  function getKey(str, tag) {
     const hash = getHashCode(str);
     const conflictCount = conflicts[hash];
     let key = 'html/' + tag + '/' + hash;
@@ -292,23 +329,22 @@ export default function create () {
  * Context-free utilities
  */
 
-function is (item, type) {
+function is(item, type) {
   return (
-    (item.type === type) ||
+    item.type === type ||
     (type === 'terminal' && TERMINAL_TAGS.indexOf(item.type) > -1) ||
     (type === 'inline' && INLINE_TAGS.indexOf(item.type) > -1)
   );
 }
 
-function prepareChildren (nodes) {
+function prepareChildren(nodes) {
   nodes = nodes || [];
   nodes = isArray(nodes) ? nodes : [nodes];
 
   return nodes;
 }
 
-
-function getSafeHref ({href}) {
+function getSafeHref({ href }) {
   if (isString(href) && isHrefSafe(href)) {
     return href;
   } else {
@@ -323,9 +359,11 @@ function getSafeHref ({href}) {
 //
 // Safety check: unescape, decode, remove [^\w:], to lowercase, check if doesn't
 // start with a forbidden prefix. Also: catching an error means it's unsafe.
-function isHrefSafe (href) {
+function isHrefSafe(href) {
   try {
-    href = decodeURIComponent(unescape(href)).replace(/[^\w:]/g, '').toLowerCase();
+    href = decodeURIComponent(unescape(href))
+      .replace(/[^\w:]/g, '')
+      .toLowerCase();
     return FORBIDDEN_HREF_PREFIXES.every(p => href.indexOf(p) !== 0);
   } catch (e) {
     return false;
@@ -335,7 +373,7 @@ function isHrefSafe (href) {
 // `unescape` function is extracted from Marked:
 // https://github.com/chjj/marked/blob/master/lib/marked.js
 // It was adapted to our code style. No logic changes.
-function unescape (html) {
+function unescape(html) {
   return html.replace(/&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(?:\w+));?/g, (_, n) => {
     n = n.toLowerCase();
     if (n === 'colon') {
@@ -352,7 +390,7 @@ function unescape (html) {
   });
 }
 
-function countWords (html, isClean) {
+function countWords(html, isClean) {
   let clean = isClean ? html : html.replace(HTML_TAGS_RE, '');
   clean = isString(clean) ? clean : '';
   const words = clean.replace(WHITESPACE_RE, ' ').split(' ');
@@ -360,7 +398,7 @@ function countWords (html, isClean) {
   return words.filter(notEmpty).length;
 }
 
-function mergeTextNodes (nodes) {
+function mergeTextNodes(nodes) {
   return nodes.reduce((merged, node) => {
     let last = merged.length - 1;
     last = last >= 0 ? last : 0;
@@ -377,18 +415,18 @@ function mergeTextNodes (nodes) {
 }
 
 // DJB2 hashing algorithm
-export function getHashCode (str) {
-  return str.split('').reduce((a, b) => ((a << 5) + a) + b.charCodeAt(0), 5381);
+export function getHashCode(str) {
+  return str.split('').reduce((a, b) => (a << 5) + a + b.charCodeAt(0), 5381);
 }
 
-function notNull (x) {
+function notNull(x) {
   return !isNull(x);
 }
 
-function notEmpty (x) {
+function notEmpty(x) {
   return x.length > 0;
 }
 
-function accStrings (acc, x) {
-  return isString(x) ? (acc + x) : acc;
+function accStrings(acc, x) {
+  return isString(x) ? acc + x : acc;
 }

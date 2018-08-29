@@ -16,10 +16,14 @@
  * our analytics policy. I think they don't
  * care that much :)
  */
-angular.module('contentful')
+angular
+  .module('contentful')
 
-.factory('fontsDotCom', ['LazyLoader', LazyLoader => ({
-  enable: function () {
-    LazyLoader.get('fontsDotCom');
-  }
-})]);
+  .factory('fontsDotCom', [
+    'LazyLoader',
+    LazyLoader => ({
+      enable: function() {
+        LazyLoader.get('fontsDotCom');
+      }
+    })
+  ]);

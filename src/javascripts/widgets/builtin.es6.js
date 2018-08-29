@@ -5,7 +5,7 @@ import { range } from 'lodash';
  *
  * @returns {Widget.Descriptor[]}
  */
-export function create () {
+export function create() {
   const widgets = [];
 
   const COMMON_PARAMETERS = [
@@ -17,12 +17,9 @@ export function create () {
     }
   ];
 
-  function registerWidget (id, widgetDescriptor) {
+  function registerWidget(id, widgetDescriptor) {
     widgetDescriptor.id = id;
-    widgetDescriptor.parameters = [
-      ...COMMON_PARAMETERS,
-      ...(widgetDescriptor.parameters || [])
-    ];
+    widgetDescriptor.parameters = [...COMMON_PARAMETERS, ...(widgetDescriptor.parameters || [])];
     widgets.push(widgetDescriptor);
   }
 
@@ -164,10 +161,7 @@ export function create () {
         id: 'ampm',
         name: 'Time mode',
         type: 'Enum',
-        options: [
-          { '12': 'AM/PM' },
-          { '24': '24 Hour' }
-        ],
+        options: [{ '12': 'AM/PM' }, { '24': '24 Hour' }],
         default: '24',
         required: true
       }

@@ -1,21 +1,30 @@
 {
   "environment": "production",
-  "authUrl" : "//be.contentful.com",
-  "apiUrl" : "//api.contentful.com",
-  "mockApiUrl" : "",
-  "otUrl" : ["//ot1.contentful.com", "//ot2.contentful.com", "//ot3.contentful.com", "//ot4.contentful.com", "//ot5.contentful.com", "//ot6.contentful.com", "//ot7.contentful.com", "//ot8.contentful.com"],
-  "assetUrl" : "//static.contentful.com",
-  "marketingUrl" : "//www.contentful.com",
-  "main_domain" : "contentful.com",
+  "authUrl": "//be.contentful.com",
+  "apiUrl": "//api.contentful.com",
+  "mockApiUrl": "",
+  "otUrl": [
+    "//ot1.contentful.com",
+    "//ot2.contentful.com",
+    "//ot3.contentful.com",
+    "//ot4.contentful.com",
+    "//ot5.contentful.com",
+    "//ot6.contentful.com",
+    "//ot7.contentful.com",
+    "//ot8.contentful.com"
+  ],
+  "assetUrl": "//static.contentful.com",
+  "marketingUrl": "//www.contentful.com",
+  "main_domain": "contentful.com",
   "toolsServiceUrl": "https://tools.contentful.com",
-  "contentful" : {
-    "spaceTemplateEntryContentTypeId" : "17WjnjeALEOeSyuiMI4QOW",
-    "cdaApiUrl" : "cdn.contentful.com",
-    "apiUrl" : "api.contentful.com",
-    "previewApiUrl" : "preview.contentful.com",
-    "accessToken" : "0c783036ae7540a10db86150e1cb564c8c0bad53482794604f227dc199e6dde1",
-    "space" : "l1ay9bp8gv68",
-    "previewAccessToken" : "2fcfe1abd171477eabd73e64088fe1c1eb2578ac0158332902a1d8e5279356e4",
+  "contentful": {
+    "spaceTemplateEntryContentTypeId": "17WjnjeALEOeSyuiMI4QOW",
+    "cdaApiUrl": "cdn.contentful.com",
+    "apiUrl": "api.contentful.com",
+    "previewApiUrl": "preview.contentful.com",
+    "accessToken": "0c783036ae7540a10db86150e1cb564c8c0bad53482794604f227dc199e6dde1",
+    "space": "l1ay9bp8gv68",
+    "previewAccessToken": "2fcfe1abd171477eabd73e64088fe1c1eb2578ac0158332902a1d8e5279356e4",
     "TEASpaceId": "qz0n5cdakyl9"
   },
   "launchDarkly": {
@@ -26,19 +35,19 @@
     "policy": "eyJjYWxsIjpbInBpY2siLCJyZWFkIiwic3RhdCIsInN0b3JlIiwiY29udmVydCIsImV4aWYiXSwiZXhwaXJ5IjoyMjEyNjYwODAwfQ==",
     "signature": "de04bdf5a9ff607346aca16233b2637c955dca7900fc039161034f52d065d578"
   },
-  "embedly" : {
-    "api_key" : "5aba1269adbf42919bd1dd3308b84652"
+  "embedly": {
+    "api_key": "5aba1269adbf42919bd1dd3308b84652"
   },
-  "segment_io" : "9hgd0ujgqy",
+  "segment_io": "9hgd0ujgqy",
   "snowplow": {
     "collector_endpoint": "col.contentful.com",
     "app_id": "userInterface",
     "buffer_size": 1
   },
-  "google" : {
-    "maps_api_key" : "AIzaSyB_jzGfB98k1d_CCwMacP1ovTfXYxXh11g"
+  "google": {
+    "maps_api_key": "AIzaSyB_jzGfB98k1d_CCwMacP1ovTfXYxXh11g"
   },
-  "fonts_dot_com" : {
-    "project_id" : "c54b0359-6164-4243-960a-5105a2c3bfa4"
+  "fonts_dot_com": {
+    "project_id": "c54b0359-6164-4243-960a-5105a2c3bfa4"
   }
 }

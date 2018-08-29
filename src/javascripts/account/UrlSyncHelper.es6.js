@@ -13,10 +13,9 @@ import { extend, startsWith, endsWith } from 'lodash';
  * - `updateUrl(gkUrl)` updates the webapp url
  */
 
-export function getGatekeeperUrl () {
+export function getGatekeeperUrl() {
   const webappUrl = $location.url();
   const baseUrl = $state.href('account');
-
 
   if (!startsWith(webappUrl, baseUrl)) {
     return null;
@@ -40,16 +39,16 @@ export function getGatekeeperUrl () {
  *
  * @param {string} gkUrl
  */
-export function updateWebappUrl (gkUrl = '') {
+export function updateWebappUrl(gkUrl = '') {
   gkUrl = endsWith(gkUrl, '/') ? gkUrl.substr(0, gkUrl.length - 1) : gkUrl;
 
-  const baseUrl = $state.href($state.current.name, {pathSuffix: ''});
+  const baseUrl = $state.href($state.current.name, { pathSuffix: '' });
   const isCurrentState = startsWith(gkUrl, baseUrl);
 
   if (isCurrentState) {
     const pathSuffix = gkUrl.replace(baseUrl, '');
-    const params = extend($state.params, {pathSuffix: pathSuffix});
-    $state.go($state.current, params, {location: 'replace'});
+    const params = extend($state.params, { pathSuffix: pathSuffix });
+    $state.go($state.current, params, { location: 'replace' });
   } else {
     $location.url(gkUrl);
   }

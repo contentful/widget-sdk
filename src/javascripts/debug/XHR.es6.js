@@ -4,7 +4,7 @@ import $window from '$window';
 import { assign } from 'utils/Collections';
 import * as XhrMock from './XHR/Mocker';
 
-export default function init () {
+export default function init() {
   const xhrMock = XhrMock.create();
 
   const scope = $rootScope.$new(true);
@@ -16,7 +16,7 @@ export default function init () {
 
   return assign({ show }, xhrMock);
 
-  function show () {
+  function show() {
     scope.$applyAsync(() => {
       scope.isVisible = true;
     });

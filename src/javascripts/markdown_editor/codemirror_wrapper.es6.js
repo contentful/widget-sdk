@@ -1,10 +1,10 @@
 import throttle from 'throttle';
 import userAgent from 'userAgent';
-import {transform} from 'lodash';
-import {observeResize} from 'ui/ResizeDetector';
+import { transform } from 'lodash';
+import { observeResize } from 'ui/ResizeDetector';
 import * as K from 'utils/kefir';
 
-export function create (textarea, options, CodeMirror) {
+export function create(textarea, options, CodeMirror) {
   const { direction, fixedHeight, height } = options || {};
 
   // Set to true if `setValue()` has been called. This is to prevent
@@ -45,10 +45,11 @@ export function create (textarea, options, CodeMirror) {
   }
 
   cm.setOption('extraKeys', {
-    Tab: function () { replaceSelectedText(getIndentation()); },
+    Tab: function() {
+      replaceSelectedText(getIndentation());
+    },
     Enter: 'newlineAndIndentContinueMarkdownList'
   });
-
 
   // Whenever the markdown editor container is resized we must refresh
   // CodeMirror to display the content properly.
@@ -110,39 +111,49 @@ export function create (textarea, options, CodeMirror) {
     getScrollFraction: getScrollFraction
   };
 
-  function destroy () {
+  function destroy() {
     cm.toTextArea();
     unwatchResize();
   }
 
-  function disable () {
+  function disable() {
     cm.setOption('readOnly', 'nocursor');
   }
 
-  function enable () {
+  function enable() {
     cm.setOption('readOnly', false);
   }
 
-  function assureHeight () {
+  function assureHeight() {
     const current = cm.heightAtLine(cm.lastLine(), 'local') + EDITOR_SIZE.shift;
     let next = current;
-    if (current < EDITOR_SIZE.min) { next = EDITOR_SIZE.min; }
-    if (current > EDITOR_SIZE.max) { next = EDITOR_SIZE.max; }
+    if (current < EDITOR_SIZE.min) {
+      next = EDITOR_SIZE.min;
+    }
+    if (current > EDITOR_SIZE.max) {
+      next = EDITOR_SIZE.max;
+    }
     cm.setSize('100%', next);
   }
 
-  function attachEvent (name, fn, throttleInterval) {
+  function attachEvent(name, fn, throttleInterval) {
     if (throttleInterval) {
       fn = throttle(fn, throttleInterval);
     }
     cm.on(name, fn);
   }
 
-  function addKeyShortcuts (map) {
+  function addKeyShortcuts(map) {
     const ctrlKey = userAgent.getCtrlKey();
-    cm.addKeyMap(transform(map, (acc, value, key) => {
-      acc[ctrlKey + '-' + key] = value;
-    }, {}));
+    cm.addKeyMap(
+      transform(
+        map,
+        (acc, value, key) => {
+          acc[ctrlKey + '-' + key] = value;
+        },
+        {}
+      )
+    );
   }
 
   /**
@@ -160,7 +171,7 @@ export function create (textarea, options, CodeMirror) {
    * If called for the first time it will not record the change in
    * the history.
    */
-  function setValue (value) {
+  function setValue(value) {
     value = value || '';
     if (getValue() === value) {
       return;
@@ -182,16 +193,15 @@ export function create (textarea, options, CodeMirror) {
     }
   }
 
-  function cmd (name) {
+  function cmd(name) {
     cm.execCommand(name);
     cm.focus();
   }
 
-  function moveToLineBeginning (lineNumber) {
-    cm.setCursor({line: defaultToCurrentLineNumber(lineNumber), ch: 0});
+  function moveToLineBeginning(lineNumber) {
+    cm.setCursor({ line: defaultToCurrentLineNumber(lineNumber), ch: 0 });
     cm.focus();
   }
-
 
   /**
    * @ngdoc method
@@ -205,8 +215,10 @@ export function create (textarea, options, CodeMirror) {
    *
    * TODO rename this
    */
-  function moveIfNotEmpty () {
-    if (getCurrentLineLength() < 1) { return; }
+  function moveIfNotEmpty() {
+    if (getCurrentLineLength() < 1) {
+      return;
+    }
 
     const next = getCurrentLineNumber() + 1;
     if (cm.lastLine() < next) {
@@ -217,12 +229,16 @@ export function create (textarea, options, CodeMirror) {
     moveToLineBeginning(next);
   }
 
-  function restoreCursor (character, lineNumber, noFocus) {
-    cm.setCursor({ line: defaultToCurrentLineNumber(lineNumber), ch: character }, null, { scroll: !noFocus });
-    if (!noFocus) { cm.focus(); }
+  function restoreCursor(character, lineNumber, noFocus) {
+    cm.setCursor({ line: defaultToCurrentLineNumber(lineNumber), ch: character }, null, {
+      scroll: !noFocus
+    });
+    if (!noFocus) {
+      cm.focus();
+    }
   }
 
-  function moveToLineEnd (lineNumber) {
+  function moveToLineEnd(lineNumber) {
     cm.setCursor({
       line: defaultToCurrentLineNumber(lineNumber),
       ch: getCurrentLineLength()
@@ -230,30 +246,30 @@ export function create (textarea, options, CodeMirror) {
     cm.focus();
   }
 
-  function defaultToCurrentLineNumber (lineNumber) {
+  function defaultToCurrentLineNumber(lineNumber) {
     if (lineNumber === 0 || lineNumber > 0) {
       return lineNumber;
     }
     return getCurrentLineNumber();
   }
 
-  function usePrimarySelection () {
+  function usePrimarySelection() {
     cmd('singleSelection');
   }
 
-  function focus () {
+  function focus() {
     cm.focus();
   }
 
-  function select (from, to) {
+  function select(from, to) {
     cm.setSelection(from, to);
     cm.focus();
   }
 
-  function selectBackwards (skip, len) {
+  function selectBackwards(skip, len) {
     select(getPos(-skip - len), getPos(-skip));
 
-    function getPos (modifier) {
+    function getPos(modifier) {
       return {
         line: getCurrentLineNumber(),
         ch: getCurrentCharacter() + modifier
@@ -261,21 +277,21 @@ export function create (textarea, options, CodeMirror) {
     }
   }
 
-  function extendSelectionBy (modifier) {
+  function extendSelectionBy(modifier) {
     select(getPos('anchor', 0), getPos('head', modifier));
 
-    function getPos (prop, modifier) {
+    function getPos(prop, modifier) {
       const selection = getSelection();
-      return {line: selection[prop].line, ch: selection[prop].ch + modifier};
+      return { line: selection[prop].line, ch: selection[prop].ch + modifier };
     }
   }
 
-  function insertAtCursor (text) {
+  function insertAtCursor(text) {
     cm.replaceRange(text, cm.getCursor());
     cm.focus();
   }
 
-  function insertAtLineBeginning (text) {
+  function insertAtLineBeginning(text) {
     const initialCh = getCurrentCharacter();
     moveToLineBeginning();
     insertAtCursor(text);
@@ -283,20 +299,20 @@ export function create (textarea, options, CodeMirror) {
     cm.focus();
   }
 
-  function wrapSelection (wrapper) {
+  function wrapSelection(wrapper) {
     const replacement = wrapper + getSelectedText() + wrapper;
     const selection = getSelection();
     cm.replaceRange(replacement, selection.anchor, selection.head);
     cm.focus();
   }
 
-  function removeFromLineBeginning (charCount) {
+  function removeFromLineBeginning(charCount) {
     const lineNumber = getCurrentLineNumber();
-    cm.replaceRange('', {line: lineNumber, ch: 0}, {line: lineNumber, ch: charCount});
+    cm.replaceRange('', { line: lineNumber, ch: 0 }, { line: lineNumber, ch: charCount });
     cm.focus();
   }
 
-  function removeSelectedText () {
+  function removeSelectedText() {
     cm.replaceSelection('');
     cm.focus();
   }
@@ -318,7 +334,7 @@ export function create (textarea, options, CodeMirror) {
    * @param {string} replacement
    * @param {string?} select
    */
-  function replaceSelectedText (replacement, select) {
+  function replaceSelectedText(replacement, select) {
     cm.replaceSelection(replacement, select);
     cm.focus();
   }
@@ -327,15 +343,15 @@ export function create (textarea, options, CodeMirror) {
    *  low-level editor get/check functions
    */
 
-  function getCursor () {
+  function getCursor() {
     return cm.getCursor();
   }
 
-  function setCursor (cursor) {
+  function setCursor(cursor) {
     cm.setCursor(cursor);
   }
 
-  function getSelection () {
+  function getSelection() {
     const selections = cm.listSelections();
     if (!cm.somethingSelected() || !selections || selections.length < 1) {
       return null;
@@ -343,57 +359,59 @@ export function create (textarea, options, CodeMirror) {
     return selections[0];
   }
 
-  function getLine (lineNumber) {
+  function getLine(lineNumber) {
     return cm.getLine(lineNumber) || '';
   }
 
-  function isLineEmpty (lineNumber) {
+  function isLineEmpty(lineNumber) {
     const n = defaultToCurrentLineNumber(lineNumber);
     return n > -1 && getLine(n).length < 1 && n < cm.lineCount();
   }
 
-  function getSelectedText () {
+  function getSelectedText() {
     return getSelection() ? cm.getSelection() : '';
   }
 
-  function getSelectionLength () {
+  function getSelectionLength() {
     return getSelectedText().length;
   }
 
-  function getCurrentLine () {
+  function getCurrentLine() {
     return getLine(getCurrentLineNumber());
   }
 
-  function getCurrentLineNumber () {
+  function getCurrentLineNumber() {
     return cm.getCursor().line;
   }
 
-  function getCurrentCharacter () {
+  function getCurrentCharacter() {
     return cm.getCursor().ch;
   }
 
-  function getCurrentLineLength () {
+  function getCurrentLineLength() {
     return getCurrentLine().length;
   }
 
-  function lineStartsWith (text) {
+  function lineStartsWith(text) {
     return getCurrentLine().substring(0, text.length) === text;
   }
 
-  function getIndentation () {
+  function getIndentation() {
     return repeat(' ', cm.getOption('indentUnit'));
   }
 
-  function getNl (n) {
-    if (n < 1) { return ''; }
+  function getNl(n) {
+    if (n < 1) {
+      return '';
+    }
     return repeat(LF, n || 1);
   }
 
-  function getValue () {
+  function getValue() {
     return cm.getValue() || '';
   }
 
-  function getHistorySize (which) {
+  function getHistorySize(which) {
     const history = cm.historySize();
     return which ? history[which] : history;
   }
@@ -406,12 +424,12 @@ export function create (textarea, options, CodeMirror) {
    *
    * @returns {number}
    */
-  function getScrollFraction () {
+  function getScrollFraction() {
     const info = cm.getScrollInfo();
     return info.top / info.height;
   }
 
-  function repeat (what, n) {
+  function repeat(what, n) {
     return new Array(n + 1).join(what);
   }
 
@@ -424,7 +442,7 @@ export function create (textarea, options, CodeMirror) {
    *
    * @param {number} position
    */
-  function scrollToFraction (pos) {
+  function scrollToFraction(pos) {
     const height = cm.getScrollInfo().height;
     cm.scrollTo(null, pos * height);
   }

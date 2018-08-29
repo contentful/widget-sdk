@@ -32,15 +32,15 @@ export const canCreate = resource => !resourceMaximumLimitReached(resource);
  * @param  {string} resourceName
  * @return {Object|null}              Resource metadata object or null
  */
-export function getStoreResource (resources, spaceId, resourceName) {
+export function getStoreResource(resources, spaceId, resourceName) {
   return get(resources, `${spaceId}.${resourceName}`, null);
 }
 
-export function getStoreResources (resources, spaceId) {
+export function getStoreResources(resources, spaceId) {
   return get(resources, spaceId, null);
 }
 
-export function generateMessage (resource) {
+export function generateMessage(resource) {
   const resourceId = resource.sys.id;
   const humanResourceName = resourceHumanNameMap[resourceId];
 
@@ -59,7 +59,7 @@ export function generateMessage (resource) {
   };
 }
 
-export function getResourceLimits (resource) {
+export function getResourceLimits(resource) {
   if (!resource.parent && !resource.limits) {
     return {
       included: null,
@@ -82,7 +82,7 @@ export function getResourceLimits (resource) {
   legacy based on the feature flag. If the feature flag is
   enabled, we don't use legacy, otherwise we do.
  */
-export function useLegacy (organization) {
+export function useLegacy(organization) {
   if (isLegacyOrganization(organization)) {
     return getCurrentVariation(flagName).then(flagValue => !flagValue);
   } else {
@@ -97,7 +97,7 @@ export function useLegacy (organization) {
   Used in cases where the fact that the organization
   is legacy matters irrespective of the feature flag.
  */
-export function isLegacyOrganization (organization) {
+export function isLegacyOrganization(organization) {
   const pricingVersion = organization.pricingVersion;
 
   if (pricingVersion === 'pricing_version_2') {
@@ -114,8 +114,9 @@ export function isLegacyOrganization (organization) {
  * @param {Object} organization
  * @param {string} resourceType
  */
-export function getLegacyLimit (resourceType, organization) {
-  const allLimits = assign({},
+export function getLegacyLimit(resourceType, organization) {
+  const allLimits = assign(
+    {},
     organization.subscriptionPlan.limits.permanent,
     organization.subscriptionPlan.limits.period
   );
@@ -129,23 +130,20 @@ export function getLegacyLimit (resourceType, organization) {
  * @param {Object} organization
  * @param {string} resourceType
  */
-export function getLegacyUsage (resourceType, organization) {
-  const allUsages = assign({},
-    organization.usage.permanent,
-    organization.usage.period
-  );
+export function getLegacyUsage(resourceType, organization) {
+  const allUsages = assign({}, organization.usage.permanent, organization.usage.period);
 
   return allUsages[resourceType];
 }
 
-export function resourceIncludedLimitReached (resource) {
+export function resourceIncludedLimitReached(resource) {
   const limitIncluded = getResourceLimits(resource).included;
   const usage = resource.usage;
 
   return Boolean(limitIncluded && usage >= limitIncluded);
 }
 
-export function resourceMaximumLimitReached (resource) {
+export function resourceMaximumLimitReached(resource) {
   const limitMaximum = getResourceLimits(resource).maximum;
   const usage = resource.usage;
 

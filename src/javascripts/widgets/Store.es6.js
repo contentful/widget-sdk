@@ -2,7 +2,7 @@ import { get } from 'lodash';
 import { create as createBuiltinWidgetsList } from 'widgets/builtin';
 import fieldFactory from 'fieldFactory';
 
-export function create (cma) {
+export function create(cma) {
   let cache = [];
 
   return {
@@ -10,7 +10,7 @@ export function create (cma) {
     getAll: () => cache
   };
 
-  async function refresh () {
+  async function refresh() {
     let extensions;
     try {
       const res = await cma.getExtensions();
@@ -23,7 +23,7 @@ export function create (cma) {
   }
 }
 
-function prepareList (extensions) {
+function prepareList(extensions) {
   // Extension and built-in widget IDs may clash :(
   // Extensions used to "override" built-in widgets.
   // It's far from ideal but we retain this behavior for now.
@@ -37,7 +37,7 @@ function prepareList (extensions) {
   return [...filteredBuiltins, ...extensions];
 }
 
-function buildExtensionWidget (data) {
+function buildExtensionWidget(data) {
   const { src, srcdoc } = data.extension;
   const base = src ? { src } : { srcdoc };
   return {

@@ -1,7 +1,7 @@
 import require from 'require';
-import {isArray, get} from 'lodash';
-import {createSpaceEndpoint} from 'data/EndpointFactory';
-import {getSpace} from 'services/TokenStore';
+import { isArray, get } from 'lodash';
+import { createSpaceEndpoint } from 'data/EndpointFactory';
+import { getSpace } from 'services/TokenStore';
 
 const flagName = 'feature-bv-2018-08-enforcements-api';
 
@@ -10,7 +10,7 @@ const flagName = 'feature-bv-2018-08-enforcements-api';
 const ENFORCEMENT_INFO_REFRESH_INTERVAL = 30 * 1000;
 const enforcements = {};
 
-export function getEnforcements (spaceId) {
+export function getEnforcements(spaceId) {
   if (!spaceId) {
     return null;
   }
@@ -24,14 +24,17 @@ export function getEnforcements (spaceId) {
   Does NOT take care of teardown in case of spaceId change. This should be handled
   in the service(s) that initialize this.
  */
-export function init (spaceId) {
+export function init(spaceId) {
   // Call initial refresh
   refresh(spaceId);
 
   // set refreshing interval
-  const refreshInterval = window.setInterval(refresh.bind(this, spaceId), ENFORCEMENT_INFO_REFRESH_INTERVAL);
+  const refreshInterval = window.setInterval(
+    refresh.bind(this, spaceId),
+    ENFORCEMENT_INFO_REFRESH_INTERVAL
+  );
 
-  return function deinit () {
+  return function deinit() {
     window.clearInterval(refreshInterval);
     delete enforcements[spaceId];
   };
@@ -41,7 +44,7 @@ export function init (spaceId) {
  * Refresh enforcements info with space id, and sets enforcements for given `spaceId`
  * if the enforcements change.
  */
-export async function refresh (spaceId) {
+export async function refresh(spaceId) {
   const newEnforcements = await fetchEnforcements(spaceId);
   const currentEnforcements = get(enforcements, spaceId);
 
@@ -52,11 +55,11 @@ export async function refresh (spaceId) {
 
 let active = true;
 
-function onBlur () {
+function onBlur() {
   active = false;
 }
 
-function onFocus () {
+function onFocus() {
   active = true;
 }
 
@@ -67,9 +70,9 @@ window.onblur = onBlur;
 document.onfocusin = onFocus;
 document.onfocusout = onBlur;
 
-async function fetchEnforcements (spaceId) {
+async function fetchEnforcements(spaceId) {
   // To get around circular dep
-  const {getCurrentVariation} = require('utils/LaunchDarkly');
+  const { getCurrentVariation } = require('utils/LaunchDarkly');
   const useApi = await getCurrentVariation(flagName);
 
   if (active && useApi) {
@@ -87,7 +90,7 @@ async function fetchEnforcements (spaceId) {
   }
 }
 
-function enforcementsEqual (current, newEnforcements) {
+function enforcementsEqual(current, newEnforcements) {
   if (!isArray(current) || !isArray(newEnforcements)) {
     return current === newEnforcements;
   }

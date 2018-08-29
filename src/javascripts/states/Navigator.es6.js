@@ -21,7 +21,7 @@
  * Angular UI router does) we treat them as one value.
  */
 import $state from '$state';
-import {get} from 'lodash';
+import { get } from 'lodash';
 
 const ENTITY_PLURALS = {
   Entry: 'entries',
@@ -36,10 +36,9 @@ const ENTITY_PLURALS = {
  * @param {Navigator.Ref}
  * @returns {Promise<void>}
  */
-export function go (state) {
+export function go(state) {
   return $state.go(state.path.join('.'), state.params, state.options);
 }
-
 
 /**
  * @ngdoc method
@@ -49,7 +48,7 @@ export function go (state) {
  * @param {Navigator.Ref}
  * @returns {string}
  */
-export function href (state) {
+export function href(state) {
   if (!state) {
     state = {
       path: []
@@ -57,7 +56,6 @@ export function href (state) {
   }
   return $state.href(state.path.join('.'), state.params);
 }
-
 
 /**
  * @ngdoc method
@@ -68,14 +66,14 @@ export function href (state) {
  * @param {API.Entity|API.Link} entity}
  * @returns {Navigator.Ref}
  */
-export function makeEntityRef (entity) {
+export function makeEntityRef(entity) {
   return {
     path: makeEntityPath(entity),
     params: makeEntityParams(entity)
   };
 }
 
-function makeEntityPath (entity) {
+function makeEntityPath(entity) {
   const type = getType(entity);
   const typePlural = ENTITY_PLURALS[type];
   const spaceEnvId = get(entity, 'sys.environment.sys.id');
@@ -88,8 +86,8 @@ function makeEntityPath (entity) {
   }
 }
 
-function makeEntityParams (entity) {
-  const params = {addToContext: true, bulkEditor: ''};
+function makeEntityParams(entity) {
+  const params = { addToContext: true, bulkEditor: '' };
   const type = getType(entity);
   const entityIdKey = type.toLowerCase() + 'Id';
   params[entityIdKey] = entity.sys.id;
@@ -97,7 +95,7 @@ function makeEntityParams (entity) {
   return params;
 }
 
-function getType (entity) {
+function getType(entity) {
   if (entity.sys.type === 'Link') {
     return entity.sys.linkType;
   } else {

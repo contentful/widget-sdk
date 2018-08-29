@@ -25,23 +25,19 @@ const PER_PAGE = 100;
  * @description
  * Holds app context related to an organization.
  */
-export function create (organization) {
+export function create(organization) {
   if (get(organization, 'sys.type') !== 'Organization') {
     throw new Error('First argument expected to be an organization');
   }
 
-  const endpoint = createOrganizationEndpoint(
-    Config.apiUrl(),
-    organization.sys.id,
-    Authentication
-  );
+  const endpoint = createOrganizationEndpoint(Config.apiUrl(), organization.sys.id, Authentication);
 
   return {
     /**
      * @ngdoc property
      * @name OrganizationContext#getAllUsers
      */
-    getAllUsers: function (query) {
+    getAllUsers: function(query) {
       return fetchAll(endpoint, ['users'], PER_PAGE, query);
     },
     /**

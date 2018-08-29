@@ -1,4 +1,4 @@
-import {partial} from 'lodash';
+import { partial } from 'lodash';
 // TODO This module has global state :(
 import * as accessChecker from 'access_control/AccessChecker';
 
@@ -14,14 +14,7 @@ import * as accessChecker from 'access_control/AccessChecker';
  */
 
 // There are more actions but we only use these for now
-const ACTIONS = [
-  'update',
-  'delete',
-  'publish',
-  'unpublish',
-  'archive',
-  'unarchive'
-];
+const ACTIONS = ['update', 'delete', 'publish', 'unpublish', 'archive', 'unarchive'];
 
 /**
  * @ngdoc method
@@ -35,18 +28,18 @@ const ACTIONS = [
  * @param {API.EntitySys} sys
  * @returns {EntityPermissions}
  */
-export function create (entitySys) {
+export function create(entitySys) {
   return {
     can: partial(canPerformAction, entitySys),
     canEditFieldLocale: partial(canEditFieldLocale, entitySys)
   };
 }
 
-function canPerformAction (sys, action) {
+function canPerformAction(sys, action) {
   if (ACTIONS.indexOf(action) < 0) {
     throw new Error(`Unknown entity action "${action}"`);
   }
-  const entity = {data: {sys: sys}};
+  const entity = { data: { sys: sys } };
   if (action === 'update') {
     if (sys.type === 'Entry') {
       return accessChecker.canUpdateEntry(entity);
@@ -60,16 +53,14 @@ function canPerformAction (sys, action) {
   }
 }
 
-function canEditFieldLocale (entitySys, fieldId, localeCode) {
+function canEditFieldLocale(entitySys, fieldId, localeCode) {
   if (!canPerformAction(entitySys, 'update')) {
     return false;
   }
 
-  const ctId = entitySys.type === 'Entry'
-    ? entitySys.contentType.sys.id
-    : null;
-  const field = {apiName: fieldId};
-  const locale = {code: localeCode};
+  const ctId = entitySys.type === 'Entry' ? entitySys.contentType.sys.id : null;
+  const field = { apiName: fieldId };
+  const locale = { code: localeCode };
   if (field) {
     return accessChecker.canEditFieldLocale(ctId, field, locale);
   } else {

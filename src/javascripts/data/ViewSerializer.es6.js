@@ -1,5 +1,5 @@
 import flatten from 'flat';
-import {omitBy} from 'lodash';
+import { omitBy } from 'lodash';
 
 /**
  * Takes a `View` object and returns a flattened representation of it that can be
@@ -8,20 +8,20 @@ import {omitBy} from 'lodash';
  * @param {View} view
  * @returns {object} Serialized view.
  */
-export function serialize (view) {
+export function serialize(view) {
   const serializedView = omitBy(view, isNoValue);
 
   if (serializedView.searchFilters) {
     const filters = serializedView.searchFilters.map(([key, op, val]) => {
-      const filter = {key, op, val};
+      const filter = { key, op, val };
       return omitBy(filter, isNoValue);
     });
     if (filters.length) {
-      serializedView.filters = flatten(filters, {safe: false});
+      serializedView.filters = flatten(filters, { safe: false });
     }
     delete serializedView.searchFilters;
   }
-  return flatten(serializedView, {safe: true});
+  return flatten(serializedView, { safe: true });
 }
 
 /**
@@ -31,8 +31,8 @@ export function serialize (view) {
  * @param {object} serializedView
  * @returns {View}
  */
-export function unserialize (serializedView) {
-  const view = flatten.unflatten(serializedView, {safe: true});
+export function unserialize(serializedView) {
+  const view = flatten.unflatten(serializedView, { safe: true });
 
   if (view.filters || view.searchText !== undefined) {
     // `searchTerm` is legacy text search format. Having both formats does not make
@@ -40,7 +40,7 @@ export function unserialize (serializedView) {
     delete view.searchTerm;
   }
   if (view.filters) {
-    view.searchFilters = view.filters.map(({key, op, val}) => {
+    view.searchFilters = view.filters.map(({ key, op, val }) => {
       return [key || '', op || '', val || ''];
     });
     delete view.filters;
@@ -50,6 +50,6 @@ export function unserialize (serializedView) {
   return view;
 }
 
-function isNoValue (value) {
+function isNoValue(value) {
   return value === undefined || value === null || value === '';
 }

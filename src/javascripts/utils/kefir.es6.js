@@ -1,6 +1,6 @@
 import * as Kefir from 'kefir';
-import {noop, zipObject} from 'lodash';
-import {makeSum} from 'sum-types';
+import { noop, zipObject } from 'lodash';
+import { makeSum } from 'sum-types';
 
 /**
  * @ngdoc service
@@ -11,13 +11,11 @@ import {makeSum} from 'sum-types';
  */
 export * from 'kefir';
 
-
 export const PromiseStatus = makeSum({
   Pending: ['value'],
   Resolved: ['value'],
   Rejected: ['error']
 });
-
 
 /**
  * @ngdoc method
@@ -40,7 +38,7 @@ export const PromiseStatus = makeSum({
  * @param {Scope?} scope
  * @returns {utils/kefir.Bus}
  */
-export function createStreamBus (scope) {
+export function createStreamBus(scope) {
   let currentEmitter;
 
   const stream = Kefir.stream(emitter => {
@@ -61,21 +59,20 @@ export function createStreamBus (scope) {
     error
   };
 
-  function emit (value) {
+  function emit(value) {
     currentEmitter.emit(value);
   }
 
-  function error (value) {
+  function error(value) {
     currentEmitter.error(value);
   }
 
-  function end () {
+  function end() {
     currentEmitter.end();
   }
 }
 // Deprecated alias
-export {createStreamBus as createBus};
-
+export { createStreamBus as createBus };
 
 /**
  * @ngdoc method
@@ -102,7 +99,7 @@ export {createStreamBus as createBus};
  * @param {Scope?} scope
  * @returns {utils/kefir.PropertyBus}
  */
-export function createPropertyBus (initialValue, scope) {
+export function createPropertyBus(initialValue, scope) {
   const streamBus = createStreamBus(scope);
 
   const property = streamBus.stream.toProperty();
@@ -117,7 +114,6 @@ export function createPropertyBus (initialValue, scope) {
     set: streamBus.emit
   };
 }
-
 
 /**
  * @ngdoc method
@@ -139,7 +135,7 @@ export function createPropertyBus (initialValue, scope) {
  * @returns {function}
  *   Call this function to detach the callback
  */
-export function onValueScope (scope, stream, cb) {
+export function onValueScope(scope, stream, cb) {
   const lifeline = scopeLifeline(scope);
   const off = onValueWhile(lifeline, stream, value => {
     cb(value);
@@ -147,7 +143,6 @@ export function onValueScope (scope, stream, cb) {
   });
   return off;
 }
-
 
 /**
  * @ngdoc method
@@ -162,10 +157,10 @@ export function onValueScope (scope, stream, cb) {
  * @returns {function}
  *   Call this function to detach the callback
  */
-export function onValue (stream, cb) {
+export function onValue(stream, cb) {
   stream.onValue(cb);
 
-  return function off () {
+  return function off() {
     if (stream) {
       stream.offValue(cb);
       stream = cb = null;
@@ -187,12 +182,11 @@ export function onValue (stream, cb) {
  * @returns {function}
  *   Call this function to detach the callback
  */
-export function onValueWhile (lifeline, stream, cb) {
+export function onValueWhile(lifeline, stream, cb) {
   const off = onValue(stream, cb);
   lifeline.onEnd(off);
   return off;
 }
-
 
 /**
  * @ngdoc method
@@ -214,9 +208,9 @@ export function onValueWhile (lifeline, stream, cb) {
  * If true, multiple arguments passed to an event will be turned into
  * an array value in the stream.
  */
-export function fromScopeEvent (scope, event, uncurry) {
+export function fromScopeEvent(scope, event, uncurry) {
   return Kefir.stream(emitter => {
-    const offEvent = scope.$on(event, function (...args) {
+    const offEvent = scope.$on(event, function(...args) {
       let value;
       if (uncurry) {
         value = Array.prototype.slice.call(args, 1);
@@ -237,7 +231,6 @@ export function fromScopeEvent (scope, event, uncurry) {
   });
 }
 
-
 /**
  * @ngdoc method
  * @name utils/kefir#fromScopeValue
@@ -252,13 +245,12 @@ export function fromScopeEvent (scope, event, uncurry) {
  *   Function that takes the scope and returns the value
  * @returns {Property<T>}
  */
-export function fromScopeValue (scope, get) {
+export function fromScopeValue(scope, get) {
   const bus = createPropertyBus(get(scope));
   scope.$watch(get, bus.set);
   scope.$on('$destroy', bus.end);
   return bus.property;
 }
-
 
 /**
  * @ngdoc method
@@ -271,11 +263,10 @@ export function fromScopeValue (scope, get) {
  * @param {function} sampler
  * @returns {Property<any>}
  */
-export function sampleBy (obs, sampler) {
+export function sampleBy(obs, sampler) {
   // We need to pass `noop` to get an initial, undefined value.
   return obs.toProperty(noop).map(sampler);
 }
-
 
 /**
  * @ngdoc method
@@ -304,16 +295,18 @@ export function sampleBy (obs, sampler) {
  * @param {T?} pendingValue
  * @returns {Property<PromiseStatus<T>>}
  */
-export function promiseProperty (promise, pendingValue) {
+export function promiseProperty(promise, pendingValue) {
   const bus = createPropertyBus(PromiseStatus.Pending(pendingValue));
-  promise.then(value => {
-    bus.set(PromiseStatus.Resolved(value));
-  }, error => {
-    bus.set(PromiseStatus.Rejected(error));
-  });
+  promise.then(
+    value => {
+      bus.set(PromiseStatus.Resolved(value));
+    },
+    error => {
+      bus.set(PromiseStatus.Rejected(error));
+    }
+  );
   return bus.property;
 }
-
 
 /**
  * @ngdoc method
@@ -330,11 +323,10 @@ export function promiseProperty (promise, pendingValue) {
  * @param {function(): T} combinator
  * @returns {Property<T>}
  */
-export function combineProperties (props, combinator) {
+export function combineProperties(props, combinator) {
   props.forEach(assertIsProperty);
   return Kefir.combine(props, combinator).toProperty(() => {});
 }
-
 
 /**
  * @ngdoc method
@@ -356,17 +348,15 @@ export function combineProperties (props, combinator) {
  * @param {object} props
  * @returns {Property<object>}
  */
-export function combinePropertiesObject (props) {
+export function combinePropertiesObject(props) {
   const keys = Object.keys(props);
-  const values$ = keys.map((k) => {
+  const values$ = keys.map(k => {
     const prop = props[k];
     assertIsProperty(prop);
     return prop;
   });
-  return combineProperties(values$)
-    .map((values) => zipObject(keys, values));
+  return combineProperties(values$).map(values => zipObject(keys, values));
 }
-
 
 /**
  * @ngdoc method
@@ -381,7 +371,7 @@ export function combinePropertiesObject (props) {
  * @param {function(T): boolean} predicate
  * @returns {Kefir.Property<T>}
  */
-export function holdWhen (prop, predicate) {
+export function holdWhen(prop, predicate) {
   assertIsProperty(prop);
   let hold = false;
   return prop.withHandler((emitter, event) => {
@@ -404,7 +394,6 @@ export function holdWhen (prop, predicate) {
   });
 }
 
-
 /**
  * @ngdoc method
  * @name utils/kefir#getValue
@@ -417,10 +406,10 @@ export function holdWhen (prop, predicate) {
  * @param {Kefir.Property<T>} props
  * @returns {T}
  */
-export function getValue (prop) {
+export function getValue(prop) {
   let called = false;
   let value;
-  const off = onValue(prop, (x) => {
+  const off = onValue(prop, x => {
     value = x;
     called = true;
   });
@@ -432,7 +421,6 @@ export function getValue (prop) {
 
   return value;
 }
-
 
 /**
  * Returns a reference object to the current value of the property.
@@ -450,20 +438,21 @@ export function getValue (prop) {
  * unsubscribes from the property. In addition it cleans up the
  * reference deleting both the `value` and `dispose` properties.
  */
-export function getRef (prop) {
+export function getRef(prop) {
   assertIsProperty(prop);
-  const ref = {dispose};
+  const ref = { dispose };
 
-  const unsub = onValue(prop, (value) => { ref.value = value; });
+  const unsub = onValue(prop, value => {
+    ref.value = value;
+  });
   return ref;
 
-  function dispose () {
+  function dispose() {
     unsub();
     delete ref.value;
     delete ref.dispose;
   }
 }
-
 
 /**
  * @ngdoc method
@@ -473,22 +462,21 @@ export function getRef (prop) {
  * @params {Scope} scope
  * @returns {Kefir.Stream<void>}
  */
-export function scopeLifeline (scope) {
-  return Kefir.stream((emitter) => {
+export function scopeLifeline(scope) {
+  return Kefir.stream(emitter => {
     if (!scope || scope.$$destroyed) {
       return end();
     } else {
       return scope.$on('$destroy', end);
     }
 
-    function end () {
+    function end() {
       scope = null;
       emitter.end();
       return noop;
     }
   });
 }
-
 
 /**
  * @ngdoc method
@@ -502,7 +490,7 @@ export function scopeLifeline (scope) {
  * @params {Kefir.Stream<any>} lifeline
  * @returns {Kefir.Property<T>}
  */
-export function endWith (prop, lifeline) {
+export function endWith(prop, lifeline) {
   const bus = createPropertyBus();
 
   const propSub = prop.observe({
@@ -510,23 +498,19 @@ export function endWith (prop, lifeline) {
     end: end
   });
 
-  const lifelineSub = lifeline.observe({end});
+  const lifelineSub = lifeline.observe({ end });
 
   return bus.property;
 
-  function end () {
+  function end() {
     bus.end();
     propSub.unsubscribe();
     lifelineSub.unsubscribe();
   }
 }
 
-function assertIsProperty (prop) {
-  if (
-    !prop ||
-    typeof prop.getType !== 'function' ||
-    prop.getType() !== 'property'
-  ) {
+function assertIsProperty(prop) {
+  if (!prop || typeof prop.getType !== 'function' || prop.getType() !== 'property') {
     throw new TypeError('Object values must be properties');
   }
 }

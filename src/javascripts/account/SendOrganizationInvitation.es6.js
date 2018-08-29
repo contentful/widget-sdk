@@ -1,9 +1,9 @@
 import * as K from 'utils/kefir';
-import {get, entries} from 'lodash';
-import {runTask} from 'utils/Concurrent';
-import {create as createSpaceRepo} from 'access_control/SpaceMembershipRepository';
-import {createOrganizationEndpoint, createSpaceEndpoint} from 'data/EndpointFactory';
-import {invite as inviteToOrg} from 'access_control/OrganizationMembershipRepository';
+import { get, entries } from 'lodash';
+import { runTask } from 'utils/Concurrent';
+import { create as createSpaceRepo } from 'access_control/SpaceMembershipRepository';
+import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
+import { invite as inviteToOrg } from 'access_control/OrganizationMembershipRepository';
 
 const progressBus = K.createStreamBus();
 
@@ -31,45 +31,48 @@ export const progress$ = progressBus.stream;
  * @param {String} orgId
  * @returns {Promise}
  */
-export function invite ({emails, orgRole, spaceMemberships, suppressInvitation, orgId}) {
+export function invite({ emails, orgRole, spaceMemberships, suppressInvitation, orgId }) {
   const orgEndpoint = createOrganizationEndpoint(orgId);
 
   // If the org invitation succeeds (or if it fails with 422 [taken]),
   // invite the user to all selected spaces with the respective roles.
-  const sendInvitation = (email) => runTask(function* () {
-    try {
-      yield inviteToOrg(orgEndpoint, {email, role: orgRole, suppressInvitation});
-      yield inviteToSpaces(email, spaceMemberships);
-      progressBus.emit(email);
-    } catch (e) {
-      if (isTaken(e)) {
+  const sendInvitation = email =>
+    runTask(function*() {
+      try {
+        yield inviteToOrg(orgEndpoint, { email, role: orgRole, suppressInvitation });
         yield inviteToSpaces(email, spaceMemberships);
         progressBus.emit(email);
-      } else {
-        progressBus.error(email);
+      } catch (e) {
+        if (isTaken(e)) {
+          yield inviteToSpaces(email, spaceMemberships);
+          progressBus.emit(email);
+        } else {
+          progressBus.error(email);
+        }
       }
-    }
-  });
+    });
 
   return Promise.all(emails.map(sendInvitation));
 }
 
-function inviteToSpaces (email, spaceMemberships) {
+function inviteToSpaces(email, spaceMemberships) {
   const memberships = entries(spaceMemberships);
-  const invitations = memberships.map(([spaceId, roles]) => runTask(function* () {
-    const spaceEndpoint = createSpaceEndpoint(spaceId);
-    const inviteToSpace = createSpaceRepo(spaceEndpoint).invite;
-    try {
-      yield inviteToSpace(email, roles);
-    } catch (e) {
-      // ignore
-    }
-  }));
+  const invitations = memberships.map(([spaceId, roles]) =>
+    runTask(function*() {
+      const spaceEndpoint = createSpaceEndpoint(spaceId);
+      const inviteToSpace = createSpaceRepo(spaceEndpoint).invite;
+      try {
+        yield inviteToSpace(email, roles);
+      } catch (e) {
+        // ignore
+      }
+    })
+  );
 
   return Promise.all(invitations);
 }
 
-function isTaken (error) {
+function isTaken(error) {
   const status = get(error, 'statusCode');
   const errors = get(error, 'data.details.errors', []);
 

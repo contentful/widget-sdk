@@ -20,34 +20,37 @@
  * instantiated, so it might be not available if you call it immediately.
  */
 
-angular.module('contentful').factory('intercom', ['require', require => {
-  var $window = require('$window');
-  var isDisabled = false;
+angular.module('contentful').factory('intercom', [
+  'require',
+  require => {
+    var $window = require('$window');
+    var isDisabled = false;
 
-  var intercom = {
-    isLoaded: isLoaded,
-    isEnabled: isEnabled,
-    disable: disable,
-    open: openIntercom
-  };
+    var intercom = {
+      isLoaded: isLoaded,
+      isEnabled: isEnabled,
+      disable: disable,
+      open: openIntercom
+    };
 
-  function isLoaded () {
-    return !!$window.Intercom;
-  }
-
-  function isEnabled () {
-    return !isDisabled;
-  }
-
-  function disable () {
-    isDisabled = true;
-  }
-
-  function openIntercom () {
-    if (isLoaded()) {
-      $window.Intercom('showNewMessage');
+    function isLoaded() {
+      return !!$window.Intercom;
     }
-  }
 
-  return intercom;
-}]);
+    function isEnabled() {
+      return !isDisabled;
+    }
+
+    function disable() {
+      isDisabled = true;
+    }
+
+    function openIntercom() {
+      if (isLoaded()) {
+        $window.Intercom('showNewMessage');
+      }
+    }
+
+    return intercom;
+  }
+]);

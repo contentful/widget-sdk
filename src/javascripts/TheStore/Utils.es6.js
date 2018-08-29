@@ -17,7 +17,7 @@ import { partial, isString } from 'lodash';
  * @description
  * Stores the value under the key. Replaces current value, if already set.
  */
-export function set (storage, key, value) {
+export function set(storage, key, value) {
   value = isString(value) ? value : JSON.stringify(value);
   storage.set(key, value);
 }
@@ -31,7 +31,7 @@ export function set (storage, key, value) {
  * @description
  * Gets the value under the key. Returns null when value is not set.
  */
-export function get (storage, key) {
+export function get(storage, key) {
   const value = storage.get(key) || 'null';
 
   try {
@@ -49,7 +49,7 @@ export function get (storage, key) {
  * @description
  * Removes the values stored under the given key. Silent for non-existent keys.
  */
-export function remove (storage, key) {
+export function remove(storage, key) {
   storage.remove(key);
 }
 
@@ -62,7 +62,7 @@ export function remove (storage, key) {
  * @description
  * Returns boolean indicating value presence under the given key.
  */
-export function has (storage, key) {
+export function has(storage, key) {
   return get(storage, key) !== null;
 }
 
@@ -73,7 +73,7 @@ export function has (storage, key) {
  * @param  {string} key
  * @return {Kefir stream}
  */
-export function externalChanges (key) {
+export function externalChanges(key) {
   return K.fromEvents(window, 'storage')
     .filter(event => event.key === key)
     .map(event => event.newValue);
@@ -86,7 +86,7 @@ export function externalChanges (key) {
  * @param  {string} key
  * @return {Object}
  */
-export function forKey (storage, key) {
+export function forKey(storage, key) {
   return {
     get: partial(get, storage, key),
     set: partial(set, storage, key),
@@ -102,7 +102,7 @@ export function forKey (storage, key) {
  * @param  {Storage} storage
  * @return {Object}
  */
-export function forStorage (storage) {
+export function forStorage(storage) {
   return {
     get: partial(get, storage),
     set: partial(set, storage),

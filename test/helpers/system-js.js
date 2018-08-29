@@ -7,7 +7,7 @@ import $q from './$q';
  * from the global SystemJS.
  * @return {Object} Isolated System
  */
-export function createIsolatedSystem () {
+export function createIsolatedSystem() {
   const isolatedSystem = new SystemJS.constructor();
   const config = _.cloneDeep(SystemJS.getConfig());
 
@@ -16,31 +16,27 @@ export function createIsolatedSystem () {
   isolatedSystem.config(config);
 
   // Register each existing module onto our blank system canvas
-  window.AngularSystem.registry.forEach((args) => registerInIsolatedSystem(isolatedSystem, args));
+  window.AngularSystem.registry.forEach(args => registerInIsolatedSystem(isolatedSystem, args));
 
   // Also register special helper $q
-  registerInIsolatedSystem(isolatedSystem, [
-    'test/helpers/$q',
-    [],
-    createRegistrationWrapper($q)
-  ]);
+  registerInIsolatedSystem(isolatedSystem, ['test/helpers/$q', [], createRegistrationWrapper($q)]);
 
   return {
     [sysSymbol]: isolatedSystem,
-    set: function (path, module) {
+    set: function(path, module) {
       const newModule = isolatedSystem.newModule(module);
 
       isolatedSystem.delete(path);
 
       return isolatedSystem.set(path, newModule);
     },
-    import: function (path) {
+    import: function(path) {
       return isolatedSystem.import(path);
     }
   };
 }
 
-function registerInIsolatedSystem (isolatedSystem, item) {
+function registerInIsolatedSystem(isolatedSystem, item) {
   const moduleId = item[0];
 
   isolatedSystem.register(...item);
@@ -48,19 +44,19 @@ function registerInIsolatedSystem (isolatedSystem, item) {
   const path = moduleId.split('/');
   const last = path.pop();
   if (last === 'index') {
-    isolatedSystem.register(path.join('/'), [moduleId], ($export) => ({
+    isolatedSystem.register(path.join('/'), [moduleId], $export => ({
       setters: [$export]
     }));
   }
 }
 
-function createRegistrationWrapper (exports) {
+function createRegistrationWrapper(exports) {
   return export_ => {
     // const exports = moduleObj;
-    export_(Object.assign({default: exports}, exports));
+    export_(Object.assign({ default: exports }, exports));
     return {
       setters: [],
-      execute: function () {}
+      execute: function() {}
     };
   };
 }

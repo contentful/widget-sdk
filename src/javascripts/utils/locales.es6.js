@@ -10,5 +10,4 @@ const locales = localesList.map(({ code }) => code);
  * @param {string} localeCode
  * @returns {boolean}
  */
-export const isRtlLocale = localeCode =>
-  locales.includes(localeCode) && isRtlLang(localeCode);
+export const isRtlLocale = localeCode => locales.includes(localeCode) && isRtlLang(localeCode);

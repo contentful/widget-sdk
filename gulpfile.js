@@ -7,14 +7,17 @@ require('babel-register')({
   // this configuration is valid only for gulp tasks
   // so if it will be in `.babelrc`, it can create
   // confusion
-  'presets': [['env', {
-    'targets': {
-      'node': 'current'
-    }
-  }]],
-  plugins: [
-    'transform-object-rest-spread'
-  ]
+  presets: [
+    [
+      'env',
+      {
+        targets: {
+          node: 'current'
+        }
+      }
+    ]
+  ],
+  plugins: ['transform-object-rest-spread']
 });
 
 require('babel-polyfill');
@@ -48,7 +51,7 @@ process.env['PATH'] += ':./node_modules/.bin';
 // This workaround is not part of the public API and not documented so
 // it might stop working at some point.
 // Found it here: https://github.com/gulpjs/gulp/issues/105#issuecomment-40841985
-gulp.on('err', function (e) {
+gulp.on('err', function(e) {
   /* eslint no-console: off */
   console.error(e.err.stack);
 });

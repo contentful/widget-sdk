@@ -1,11 +1,4 @@
-const {
-  isPlainObject,
-  flatten,
-  filter,
-  kebabCase,
-  isString,
-  isNumber
-} = require('lodash');
+const { isPlainObject, flatten, filter, kebabCase, isString, isNumber } = require('lodash');
 
 const TAG_RE = /^[^#.]+/;
 const ID_OR_CLASS_RE = /([#.][^#.]+)/g;
@@ -40,7 +33,7 @@ module.exports.doctype = '<!doctype html>';
  * Usage is described in the guide:
  * docs/guides/hyperscript.md
  */
-module.exports.h = function h (elSpec, attrs, children) {
+module.exports.h = function h(elSpec, attrs, children) {
   if (!children && !isPlainObject(attrs)) {
     children = attrs;
     attrs = undefined;
@@ -50,7 +43,7 @@ module.exports.h = function h (elSpec, attrs, children) {
     throw new Error('Element children have to an array or undefined.');
   }
 
-  const {tag, id, classes} = parseElSpec(elSpec);
+  const { tag, id, classes } = parseElSpec(elSpec);
   attrs = attrs || {};
   attrs = mergeSpecWithAttrs(id, classes, attrs);
   attrs = rewriteCamelCaseAttrs(attrs);
@@ -59,11 +52,11 @@ module.exports.h = function h (elSpec, attrs, children) {
   return createHTMLString(tag, attrs, children);
 };
 
-function parseElSpec (elSpec) {
+function parseElSpec(elSpec) {
   elSpec = elSpec.trim();
   const tagMatch = elSpec.match(TAG_RE);
   const idOrClassMatches = elSpec.match(ID_OR_CLASS_RE) || [];
-  const result = {tag: 'div', classes: []};
+  const result = { tag: 'div', classes: [] };
 
   if (Array.isArray(tagMatch) && tagMatch[0]) {
     result.tag = tagMatch[0];
@@ -79,7 +72,7 @@ function parseElSpec (elSpec) {
   }, result);
 }
 
-function mergeSpecWithAttrs (id, classes, attrs) {
+function mergeSpecWithAttrs(id, classes, attrs) {
   if (id) {
     attrs.id = id;
   }
@@ -92,49 +85,53 @@ function mergeSpecWithAttrs (id, classes, attrs) {
   return attrs;
 }
 
-function rewriteCamelCaseAttrs (attrs) {
+function rewriteCamelCaseAttrs(attrs) {
   return Object.keys(attrs || {}).reduce((acc, attr) => {
     acc[kebabCase(attr)] = attrs[attr];
     return acc;
   }, {});
 }
 
-function rewriteStyles (attrs) {
+function rewriteStyles(attrs) {
   if (isPlainObject(attrs.style)) {
-    attrs.style = Object.keys(attrs.style).map((prop) => {
-      return `${kebabCase(prop)}: ${escape(attrs.style[prop])}`;
-    }).join(';');
+    attrs.style = Object.keys(attrs.style)
+      .map(prop => {
+        return `${kebabCase(prop)}: ${escape(attrs.style[prop])}`;
+      })
+      .join(';');
   }
   return attrs;
 }
 
-function createHTMLString (tag, attrs, children) {
+function createHTMLString(tag, attrs, children) {
   const isVoid = VOID_ELEMENTS.indexOf(tag) > -1;
   const closeTag = isVoid ? '' : `</${tag}>`;
 
   if (isVoid || !children) {
     children = '';
   } else {
-    children = filter(children, (child) => {
+    children = filter(children, child => {
       return isString(child) || isNumber(child);
     }).join('');
   }
 
-  attrs = Object.keys(attrs).map((attr) => {
-    const value = attrs[attr];
-    if (value === true) {
-      return attr;
-    } else {
-      return `${attr}="${escape(value)}"`;
-    }
-  }).join(' ');
+  attrs = Object.keys(attrs)
+    .map(attr => {
+      const value = attrs[attr];
+      if (value === true) {
+        return attr;
+      } else {
+        return `${attr}="${escape(value)}"`;
+      }
+    })
+    .join(' ');
 
   attrs = attrs.length > 0 ? ` ${attrs}` : '';
 
   return `<${tag}${attrs}>${children}${closeTag}`;
 }
 
-function escape (value) {
+function escape(value) {
   if (isString(value)) {
     return value.replace(DOUBLE_QUOTE_RE, '&quot;');
   } else {

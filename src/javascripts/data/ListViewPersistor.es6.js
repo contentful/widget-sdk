@@ -2,8 +2,8 @@ import qs from 'qs';
 import $q from '$q';
 import $location from '$location';
 import { getStore } from 'TheStore';
-import {omit, isEmpty, isObject} from 'lodash';
-import {serialize, unserialize} from 'data/ViewSerializer';
+import { omit, isEmpty, isObject } from 'lodash';
+import { serialize, unserialize } from 'data/ViewSerializer';
 
 /**
  * Create a persitory for entity views.
@@ -22,35 +22,35 @@ import {serialize, unserialize} from 'data/ViewSerializer';
  * @param {ViewMigrator?} viewMigrator
  * @returns {ListViewPersistor}
  */
-export default function create (spaceId, viewMigrator, entityType) {
+export default function create(spaceId, viewMigrator, entityType) {
   const key = `lastFilterQueryString.${entityType}.${spaceId}`;
   const localStorage = getStore().forKey(key);
 
-  return {read, save};
+  return { read, save };
 
-  function save (view) {
+  function save(view) {
     const viewData = serialize(omitUIConfigOnlyViewProperties(view));
     localStorage.set(viewData);
     $location.search(prepareQueryString(viewData));
     $location.replace();
   }
 
-  function read () {
+  function read() {
     const currentQS = $location.search();
     const qs = isEmpty(currentQS) ? getPreviousQS() : currentQS;
     return fromStorageFormat(qs);
   }
 
-  function getPreviousQS () {
+  function getPreviousQS() {
     return localStorage.get() || {};
   }
 
-  function fromStorageFormat (viewData) {
+  function fromStorageFormat(viewData) {
     const view = omitUIConfigOnlyViewProperties(unserialize(viewData));
     return viewMigrations(view);
   }
 
-  function viewMigrations (view) {
+  function viewMigrations(view) {
     if (!isObject(view)) {
       return $q.resolve({});
     }
@@ -81,11 +81,11 @@ export default function create (spaceId, viewMigrator, entityType) {
   }
 }
 
-function omitUIConfigOnlyViewProperties (view) {
+function omitUIConfigOnlyViewProperties(view) {
   return omit(view, ['title', '_legacySearchTerm']);
 }
 
-function prepareQueryString (viewData) {
+function prepareQueryString(viewData) {
   const qsObject = Object.keys(viewData)
     .filter(key => key.charAt(0) !== '_')
     .reduce((acc, key) => {
@@ -98,5 +98,5 @@ function prepareQueryString (viewData) {
   //
   // This format is used in entity list query strings
   // for historical reasons.
-  return qs.stringify(qsObject, {arrayFormat: 'repeat'});
+  return qs.stringify(qsObject, { arrayFormat: 'repeat' });
 }

@@ -20,45 +20,46 @@ export default class InputDialog extends React.Component {
     maxLength: undefined
   };
 
-  render () {
-    const {params, confirm, cancel, value, onChange, onKeyDown, maxLength, isInvalid} = this.props;
-    return <div className="modal-dialog">
-      <header className="modal-dialog__header">
-        <h1>{params.title}</h1>
-        <button
-          className="modal-dialog__close"
-          onClick={cancel}
-        />
-      </header>
-      <div className="modal-dialog__content">
-        <p
-          className="modal-dialog__richtext"
-          dangerouslySetInnerHTML={{__html: params.message}}
-        />
-        <input
-          className="cfnext-form__input--full-size"
-          type="text"
-          value={value}
-          onChange={onChange}
-          onKeyDown={onKeyDown}
-          maxLength={maxLength ? `${maxLength}` : ''}
-        />
+  render() {
+    const {
+      params,
+      confirm,
+      cancel,
+      value,
+      onChange,
+      onKeyDown,
+      maxLength,
+      isInvalid
+    } = this.props;
+    return (
+      <div className="modal-dialog">
+        <header className="modal-dialog__header">
+          <h1>{params.title}</h1>
+          <button className="modal-dialog__close" onClick={cancel} />
+        </header>
+        <div className="modal-dialog__content">
+          <p
+            className="modal-dialog__richtext"
+            dangerouslySetInnerHTML={{ __html: params.message }}
+          />
+          <input
+            className="cfnext-form__input--full-size"
+            type="text"
+            value={value}
+            onChange={onChange}
+            onKeyDown={onKeyDown}
+            maxLength={maxLength ? `${maxLength}` : ''}
+          />
+        </div>
+        <div className="modal-dialog__controls">
+          <button className="btn-primary-action" onClick={confirm} disabled={isInvalid}>
+            {params.confirmLabel || 'OK'}
+          </button>
+          <button className="btn-secondary-action" onClick={cancel}>
+            {params.cancelLabel || 'Cancel'}
+          </button>
+        </div>
       </div>
-      <div className="modal-dialog__controls">
-        <button
-          className="btn-primary-action"
-          onClick={confirm}
-          disabled={isInvalid}
-        >
-          {params.confirmLabel || 'OK'}
-        </button>
-        <button
-          className="btn-secondary-action"
-          onClick={cancel}
-        >
-          {params.cancelLabel || 'Cancel'}
-        </button>
-      </div>
-    </div>;
+    );
   }
 }

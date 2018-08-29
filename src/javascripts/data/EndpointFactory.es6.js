@@ -1,6 +1,6 @@
 import * as Endpoint from 'data/Endpoint';
 import * as auth from 'Authentication';
-import {apiUrl} from 'Config';
+import { apiUrl } from 'Config';
 
 /**
  * Wrapper for data/Endpoint to create space and organization endpoints with
@@ -22,7 +22,7 @@ import {apiUrl} from 'Config';
  * @param {string} orgId
  * @returns {function(): Promise<Object>}
  */
-export function createOrganizationEndpoint (orgId) {
+export function createOrganizationEndpoint(orgId) {
   return Endpoint.createOrganizationEndpoint(apiUrl(), orgId, auth);
 }
 
@@ -35,6 +35,6 @@ export function createOrganizationEndpoint (orgId) {
  *                         endpoints for applicable entities
  * @returns {function(): Promise<Object>}
  */
-export function createSpaceEndpoint (spaceId, envId) {
+export function createSpaceEndpoint(spaceId, envId) {
   return Endpoint.createSpaceEndpoint(apiUrl(), spaceId, auth, envId);
 }

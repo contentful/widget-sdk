@@ -4,21 +4,21 @@
 // we add them once globally they are removed later and the tests fail.
 beforeEach(() => {
   jasmine.addMatchers({
-
-    toLookEqual: function () {
+    toLookEqual: function() {
       return {
-        compare: function (actual, expected) {
+        compare: function(actual, expected) {
           return {
             pass: angular.equals(actual, expected),
-            message: 'Expected ' + JSON.stringify(actual) + ' to look equal to ' + JSON.stringify(expected)
+            message:
+              'Expected ' + JSON.stringify(actual) + ' to look equal to ' + JSON.stringify(expected)
           };
         }
       };
     },
 
-    toHaveClass: function () {
+    toHaveClass: function() {
       return {
-        compare: function (actual, expected) {
+        compare: function(actual, expected) {
           const pass = actual.hasClass(expected);
           const notText = pass ? 'not ' : '';
           return {
@@ -29,9 +29,9 @@ beforeEach(() => {
       };
     },
 
-    toBeNgHidden: function () {
+    toBeNgHidden: function() {
       return {
-        compare: function (actual) {
+        compare: function(actual) {
           const pass = actual.hasClass('ng-hide');
           const notText = pass ? 'not ' : '';
           return {
@@ -42,9 +42,9 @@ beforeEach(() => {
       };
     },
 
-    toHaveTagName: function () {
+    toHaveTagName: function() {
       return {
-        compare: function (actual, expected) {
+        compare: function(actual, expected) {
           let tag;
           if (actual.tagName) {
             tag = actual.tagName.toLowerCase();
@@ -55,41 +55,59 @@ beforeEach(() => {
           const notText = pass ? 'not ' : '';
           return {
             pass: pass,
-            message: 'Expected element with tag ' + tag + ' ' + notText + 'to have tag name ' + expected
+            message:
+              'Expected element with tag ' + tag + ' ' + notText + 'to have tag name ' + expected
           };
         }
       };
     },
 
-    toBeInstanceOf: function () {
+    toBeInstanceOf: function() {
       return {
-        compare: function (actual, expected) {
-          const pass = (actual instanceof expected);
+        compare: function(actual, expected) {
+          const pass = actual instanceof expected;
           const notText = pass ? ' not' : '';
 
           return {
             pass: pass,
-            message: 'Expected ' + actual.constructor.name + notText + ' to be an instance of ' + expected.name
+            message:
+              'Expected ' +
+              actual.constructor.name +
+              notText +
+              ' to be an instance of ' +
+              expected.name
           };
         }
       };
     },
 
-    toEqualObj: function () {
+    toEqualObj: function() {
       const KINDS = {
-        'N': 'newly added property/element',
-        'D': 'property/element was deleted',
-        'E': 'property/element was edited',
-        'A': 'change occurred within an array'
+        N: 'newly added property/element',
+        D: 'property/element was deleted',
+        E: 'property/element was edited',
+        A: 'change occurred within an array'
       };
 
-      function formatDiff (objdiff) {
-        return objdiff.map(diff => '\t' + diff.kind + ' at ' + diff.path.join('.') + '\n' +
-          '\t' + diff.actual + ' should be ' + diff.expected).join('\n\n');
+      function formatDiff(objdiff) {
+        return objdiff
+          .map(
+            diff =>
+              '\t' +
+              diff.kind +
+              ' at ' +
+              diff.path.join('.') +
+              '\n' +
+              '\t' +
+              diff.actual +
+              ' should be ' +
+              diff.expected
+          )
+          .join('\n\n');
       }
 
       return {
-        compare: function (actual, expected) {
+        compare: function(actual, expected) {
           /* global deepDiff */
           const objdiff = (deepDiff(expected, actual) || []).map(diff => ({
             kind: KINDS[diff.kind],
@@ -106,7 +124,6 @@ beforeEach(() => {
       };
     },
 
-
     /**
      * This matcher gets an args array from a sinon stub and composes the first
      * argument of each call into an array, which is then compared with the
@@ -114,16 +131,23 @@ beforeEach(() => {
      * This is used when a method is called repeatedly in a loop and we're
      * trying to understand if it was called with the right sequence of
      * arguments
-    */
-    toMatchMultipleCallsArgs: function () {
+     */
+    toMatchMultipleCallsArgs: function() {
       return {
-        compare: function (actual, expected) {
+        compare: function(actual, expected) {
           const flattenedArgs = _.flatten(actual);
           const pass = _.isEqual(flattenedArgs, expected);
           return {
             pass: pass,
-            message: pass ? 'Expected arguments ' + JSON.stringify(actual) + ' not to equal ' + JSON.stringify(expected)
-                          : 'Expected arguments ' + JSON.stringify(actual) + ' to equal ' + JSON.stringify(expected)
+            message: pass
+              ? 'Expected arguments ' +
+                JSON.stringify(actual) +
+                ' not to equal ' +
+                JSON.stringify(expected)
+              : 'Expected arguments ' +
+                JSON.stringify(actual) +
+                ' to equal ' +
+                JSON.stringify(expected)
           };
         }
       };

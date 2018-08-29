@@ -4,18 +4,26 @@ import * as Commands from 'markdown_editor/commands';
 import { isFunction } from 'lodash';
 import * as CodeMirror from 'codemirror';
 
-export function create (textarea, options) {
+export function create(textarea, options) {
   const editor = Wrapper.create(textarea, options, CodeMirror);
 
   const api = {
     actions: Commands.create(editor),
     history: {
-      hasUndo: function () { return editor.getHistorySize('undo') > 0; },
-      hasRedo: function () { return editor.getHistorySize('redo') > 0; }
+      hasUndo: function() {
+        return editor.getHistorySize('undo') > 0;
+      },
+      hasRedo: function() {
+        return editor.getHistorySize('redo') > 0;
+      }
     },
     events: {
-      onScroll: function (fn) { editor.attachEvent('scroll', fn, 150); },
-      onChange: function (fn) { editor.attachEvent('change', wrapChange(fn)); }
+      onScroll: function(fn) {
+        editor.attachEvent('scroll', fn, 150);
+      },
+      onChange: function(fn) {
+        editor.attachEvent('change', wrapChange(fn));
+      }
     },
     tie: {
       previewToEditor: tiePreviewToEditor,
@@ -30,12 +38,14 @@ export function create (textarea, options) {
     getSelectedText: editor.getSelectedText,
     usePrimarySelection: editor.usePrimarySelection,
     // TODO Remove this. We want to hide the low-level interface
-    getWrapper: function () { return editor; }
+    getWrapper: function() {
+      return editor;
+    }
   };
 
   editor.addKeyShortcuts({
-    'B': api.actions.bold,
-    'I': api.actions.italic,
+    B: api.actions.bold,
+    I: api.actions.italic,
     'Alt-1': api.actions.h1,
     'Alt-2': api.actions.h2,
     'Alt-3': api.actions.h3
@@ -43,13 +53,13 @@ export function create (textarea, options) {
 
   return api;
 
-  function wrapChange (fn) {
+  function wrapChange(fn) {
     return (e, ch) => {
       fn(editor.getValue(), e, ch);
     };
   }
 
-  function tiePreviewToEditor (el) {
+  function tiePreviewToEditor(el) {
     const fraction = editor.getScrollFraction();
 
     $timeout(() => {
@@ -58,7 +68,7 @@ export function create (textarea, options) {
     });
   }
 
-  function tieEditorToEditor (other) {
+  function tieEditorToEditor(other) {
     other = isFunction(other.getWrapper) ? other.getWrapper() : other;
     other.restoreCursor(editor.getCurrentCharacter(), editor.getCurrentLineNumber());
     other.setHistory(editor.getHistory());
@@ -68,7 +78,7 @@ export function create (textarea, options) {
    * Scroll the editor so that its scroll position matches that of the
    * given preview element.
    */
-  function tieEditorToPreview (previewElement) {
+  function tieEditorToPreview(previewElement) {
     // We use the scroll fraction because the scroll height of the editor
     // might differ from the scroll height of the preview element.
     const height = previewElement.get(0).scrollHeight;

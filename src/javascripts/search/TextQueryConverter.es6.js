@@ -1,10 +1,7 @@
 import $q from '$q';
-import {reduce, flatten} from 'lodash';
-import {parseTextQuery} from 'search/queryBuilder';
-import {
-  cmaQueryBuilderForField,
-  isRelativeDate
-} from 'searchQueryAutocompletions';
+import { reduce, flatten } from 'lodash';
+import { parseTextQuery } from 'search/queryBuilder';
+import { cmaQueryBuilderForField, isRelativeDate } from 'searchQueryAutocompletions';
 
 // Matches an API key and an optional operator, e.g. `fields.title[match]`.
 // In case of a match $1 is the key and $2 will be empty or the operator.
@@ -26,7 +23,7 @@ const DATE_OPERATORS = {
  * @param {string} textQuery Legacy text query.
  * @returns {Promise<object>}
  */
-export function textQueryToUISearch (space, contentType, textQuery) {
+export function textQueryToUISearch(space, contentType, textQuery) {
   const { filters, queryText = '' } = parseTextQuery(textQuery);
   const result = { searchText: queryText };
 
@@ -34,16 +31,15 @@ export function textQueryToUISearch (space, contentType, textQuery) {
     result.contentTypeId = contentType.getId();
   }
 
-  const searchFilters = filters.map(
-    convertFilter.bind(null, contentType, space));
+  const searchFilters = filters.map(convertFilter.bind(null, contentType, space));
 
-  return $q.all(searchFilters).then((searchFilters) => {
+  return $q.all(searchFilters).then(searchFilters => {
     result.searchFilters = flatten(searchFilters);
     return result;
   });
 }
 
-function convertFilter (contentType, space, filter) {
+function convertFilter(contentType, space, filter) {
   const [key, operator, value] = filter;
   const cmaQueryBuilder = cmaQueryBuilderForField(key, contentType, space);
 
@@ -56,20 +52,24 @@ function convertFilter (contentType, space, filter) {
   }
 }
 
-function convertCMAQuery (cmaQuery) {
-  return reduce(cmaQuery, (uiSearchFilters, value, keyAndOperator) => {
-    const match = keyAndOperator.match(API_KEY_AND_OPERATOR_REGEX);
-    if (match) {
-      const field = match[1];
-      const operator = match[2] || '';
-      value = typeof value === 'string' ? value : value.toString();
-      uiSearchFilters.push([field, operator, value]);
-    }
-    return uiSearchFilters;
-  }, []);
+function convertCMAQuery(cmaQuery) {
+  return reduce(
+    cmaQuery,
+    (uiSearchFilters, value, keyAndOperator) => {
+      const match = keyAndOperator.match(API_KEY_AND_OPERATOR_REGEX);
+      if (match) {
+        const field = match[1];
+        const operator = match[2] || '';
+        value = typeof value === 'string' ? value : value.toString();
+        uiSearchFilters.push([field, operator, value]);
+      }
+      return uiSearchFilters;
+    },
+    []
+  );
 }
 
-function convertDateFilter (context, [key, operator, value]) {
+function convertDateFilter(context, [key, operator, value]) {
   if (isRelativeDate(value)) {
     return [];
   }
@@ -82,14 +82,14 @@ function convertDateFilter (context, [key, operator, value]) {
 
 const DATE_SYS_FIELDS = ['updatedAt', 'createdAt', 'publishedAt', 'firstPublishedAt'];
 
-function isSysDateField (fieldName) {
+function isSysDateField(fieldName) {
   return DATE_SYS_FIELDS.indexOf(fieldName) > -1;
 }
 
-function isDateField (fieldName, context) {
+function isDateField(fieldName, context) {
   return isSysDateField(fieldName) || context.type === 'Date';
 }
 
-function uiSearchOperator (operator) {
+function uiSearchOperator(operator) {
   return DATE_OPERATORS[operator] || '';
 }

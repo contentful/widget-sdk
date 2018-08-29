@@ -1,16 +1,20 @@
-import {omit, pick, negate, trim, sortedUniq, isObject, get} from 'lodash';
-import {h} from 'ui/Framework';
-import {assign} from 'utils/Collections';
-import {getOrganization} from 'services/TokenStore';
-import {runTask} from 'utils/Concurrent';
-import {ADMIN_ROLE_ID} from 'access_control/SpaceMembershipRepository';
-import {createOrganizationEndpoint as createEndpoint} from 'data/EndpointFactory';
-import {getUsers, getAllSpaces, getAllRoles} from 'access_control/OrganizationMembershipRepository';
-import {makeCtor, match} from 'utils/TaggedValues';
-import {invite, progress$} from 'account/SendOrganizationInvitation';
-import {isValidEmail} from 'stringUtils';
-import {go} from 'states/Navigator';
-import {isOwner, isOwnerOrAdmin} from 'services/OrganizationRoles';
+import { omit, pick, negate, trim, sortedUniq, isObject, get } from 'lodash';
+import { h } from 'ui/Framework';
+import { assign } from 'utils/Collections';
+import { getOrganization } from 'services/TokenStore';
+import { runTask } from 'utils/Concurrent';
+import { ADMIN_ROLE_ID } from 'access_control/SpaceMembershipRepository';
+import { createOrganizationEndpoint as createEndpoint } from 'data/EndpointFactory';
+import {
+  getUsers,
+  getAllSpaces,
+  getAllRoles
+} from 'access_control/OrganizationMembershipRepository';
+import { makeCtor, match } from 'utils/TaggedValues';
+import { invite, progress$ } from 'account/SendOrganizationInvitation';
+import { isValidEmail } from 'stringUtils';
+import { go } from 'states/Navigator';
+import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import {
   header,
   sidebar,
@@ -24,7 +28,7 @@ import {
 import createResourceService from 'services/ResourceService';
 
 // Start: For Next Steps for a TEA space (a space created using the example space template)
-import {track, updateUserInSegment} from 'analytics/Analytics';
+import { track, updateUserInSegment } from 'analytics/Analytics';
 import $state from '$state';
 import { getStore } from 'TheStore';
 const GROUP_ID = 'tea_onboarding_steps';
@@ -45,7 +49,7 @@ const InProgress = makeCtor('inProgress');
 const Success = makeCtor('success');
 const Failure = makeCtor('failure');
 
-export default function ($scope) {
+export default function($scope) {
   let state = {
     spaces: [],
     emails: [],
@@ -83,7 +87,7 @@ export default function ($scope) {
     progress$.offError(onProgressError);
   });
 
-  runTask(function* () {
+  runTask(function*() {
     const org = yield getOrganization(orgId);
     const canAccess = isOwnerOrAdmin(org);
 
@@ -94,7 +98,7 @@ export default function ($scope) {
 
     // 1st step - get org and user info and render page without the spaces grid
     const organization = yield* getOrgInfo();
-    state = assign(state, {organization, isOwner: isOwner(org)});
+    state = assign(state, { organization, isOwner: isOwner(org) });
 
     rerender();
 
@@ -107,23 +111,22 @@ export default function ($scope) {
     rerender();
   });
 
-  function* getAllSpacesWithRoles () {
+  function* getAllSpacesWithRoles() {
     const sortByName = (role, previous) => role.name.localeCompare(previous.name);
     const allRoles = yield getAllRoles(orgEndpoint);
     // get a map of roles by spaceId
-    const rolesBySpace = allRoles
-      .reduce((acc, role) => {
-        const spaceId = role.sys.space.sys.id;
-        if (!acc[spaceId]) {
-          acc[spaceId] = [];
-        }
-        acc[spaceId].push({
-          name: role.name,
-          id: role.sys.id,
-          spaceId: role.sys.space.sys.id
-        });
-        return acc;
-      }, {});
+    const rolesBySpace = allRoles.reduce((acc, role) => {
+      const spaceId = role.sys.space.sys.id;
+      if (!acc[spaceId]) {
+        acc[spaceId] = [];
+      }
+      acc[spaceId].push({
+        name: role.name,
+        id: role.sys.id,
+        spaceId: role.sys.space.sys.id
+      });
+      return acc;
+    }, {});
     const allSpaces = yield getAllSpaces(orgEndpoint);
 
     return allSpaces
@@ -131,15 +134,12 @@ export default function ($scope) {
         id: space.sys.id,
         createdAt: space.sys.createdAt,
         name: space.name,
-        roles: rolesBySpace[space.sys.id]
-          ? rolesBySpace[space.sys.id]
-            .sort(sortByName)
-          : []
+        roles: rolesBySpace[space.sys.id] ? rolesBySpace[space.sys.id].sort(sortByName) : []
       }))
       .sort(sortByName);
   }
 
-  function updateSpaceRole (checked, role, spaceMemberships) {
+  function updateSpaceRole(checked, role, spaceMemberships) {
     const spaceRoles = spaceMemberships[role.spaceId] || [];
     let newSpaceRoles;
     let updatedMemberships;
@@ -166,7 +166,7 @@ export default function ($scope) {
     rerender();
   }
 
-  function updateOrgRole (checked, role) {
+  function updateOrgRole(checked, role) {
     if (checked) {
       state = assign(state, {
         orgRole: role
@@ -180,7 +180,7 @@ export default function ($scope) {
    * If the org invitation succeeds (or if it fails with 422 (taken), automatically
    * proceeds to invite the user to all selected spaces with respective roles
    */
-  function submitInvitations (evt) {
+  function submitInvitations(evt) {
     evt.preventDefault();
 
     let status;
@@ -194,16 +194,15 @@ export default function ($scope) {
       organization
     } = state;
 
-    let isInputValid = emails.length &&
-      emails.length <= maxNumberOfEmails &&
-      !invalidAddresses.length;
+    let isInputValid =
+      emails.length && emails.length <= maxNumberOfEmails && !invalidAddresses.length;
     if (isInputValid && organization.membershipLimit) {
-      const {membershipUsage, membershipLimit} = organization;
+      const { membershipUsage, membershipLimit } = organization;
       isInputValid = emails.length <= membershipLimit - membershipUsage;
     }
 
     if (isInputValid) {
-      runTask(function* () {
+      runTask(function*() {
         yield invite({
           emails,
           orgRole,
@@ -249,7 +248,7 @@ export default function ($scope) {
       status = Invalid();
     }
 
-    state = assign(state, {status});
+    state = assign(state, { status });
     rerender();
   }
 
@@ -258,7 +257,7 @@ export default function ($scope) {
    * This flag indicates whether or not we should send an email to the invited
    * users saying they were invited.
    */
-  function toggleInvitationEmailOption () {
+  function toggleInvitationEmailOption() {
     state = assign(state, {
       suppressInvitation: !state.suppressInvitation
     });
@@ -271,7 +270,7 @@ export default function ($scope) {
    * It also enables to restart with a given list of emails.
    * @param {Array<String>} emails
    */
-  function restart (emails = []) {
+  function restart(emails = []) {
     state = assign(state, {
       emails: emails,
       emailsInputValue: emails.join(', '),
@@ -290,7 +289,7 @@ export default function ($scope) {
   /**
    * Navigate to organization users list
    */
-  function goToList () {
+  function goToList() {
     go({
       path: ['account', 'organizations', 'users', 'gatekeeper']
     });
@@ -300,7 +299,7 @@ export default function ($scope) {
    * separated by comma and transforms it into
    * an array of emails.
    */
-  function updateEmails (emailsInputValue) {
+  function updateEmails(emailsInputValue) {
     const list = emailsInputValue
       .split(',')
       .map(trim)
@@ -318,20 +317,20 @@ export default function ($scope) {
   /**
    * Update state with invalid emails addresses
    */
-  function validateEmails () {
+  function validateEmails() {
     const invalidAddresses = state.emails.filter(negate(isValidEmail));
 
-    state = assign(state, {invalidAddresses});
+    state = assign(state, { invalidAddresses });
     rerender();
   }
 
-  function rerender (renderAsync = true) {
+  function rerender(renderAsync = true) {
     $scope.properties.context.ready = true;
     $scope.component = render(state, actions);
     renderAsync ? $scope.$applyAsync() : $scope.$apply();
   }
 
-  function denyAccess () {
+  function denyAccess() {
     $scope.properties.context.forbidden = true;
     $scope.$applyAsync();
   }
@@ -340,28 +339,26 @@ export default function ($scope) {
    * Add role id to the set of space roles that will be assigned to the users being invited
    * If the user is Admin, she/he cannot have other assigned roles, and vice-versa
    */
-  function addRole (role, spaceRoles) {
+  function addRole(role, spaceRoles) {
     if (role.id === adminRole.id) {
       return [role.id];
     } else {
-      return spaceRoles
-        .filter((roleId) => roleId !== adminRole.id)
-        .concat([role.id]);
+      return spaceRoles.filter(roleId => roleId !== adminRole.id).concat([role.id]);
     }
   }
 
-  function removeRole (role, spaceRoles) {
+  function removeRole(role, spaceRoles) {
     return spaceRoles.filter(id => id !== role.id);
   }
 
-  function onProgressValue (email) {
+  function onProgressValue(email) {
     state = assign(state, {
       successfulOrgInvitations: [...state.successfulOrgInvitations, email]
     });
     rerender();
   }
 
-  function onProgressError (email) {
+  function onProgressError(email) {
     state.failedOrgInvitations.push(email);
   }
 
@@ -371,7 +368,7 @@ export default function ($scope) {
    * This is a workaround for the token 15min cache that won't let
    * us get an updated number after an invitation request.
    */
-  function* getOrgInfo () {
+  function* getOrgInfo() {
     const org = yield getOrganization(orgId);
 
     const resourceService = createResourceService(orgId, 'organization');
@@ -381,7 +378,7 @@ export default function ($scope) {
     // We cannot rely on usage data from organization (token) since the cache
     // is not invalidated on user creation.
     // We should use resources API later when it's available for org memberships.
-    const users = yield getUsers(orgEndpoint, {limit: 0});
+    const users = yield getUsers(orgEndpoint, { limit: 0 });
     const membershipUsage = users.total;
 
     return assign(state.organization, {
@@ -392,42 +389,63 @@ export default function ($scope) {
   }
 }
 
-function render (state, actions) {
+function render(state, actions) {
   return h('.workbench', [
     header(),
-    h('form.workbench-main', {
-      dataTestId: 'organization-membership.form',
-      onSubmit: actions.submitInvitations
-    }, [
-      h('.workbench-main__content', {
-        style: { padding: '2rem 3.15rem' }
-      }, [
-        match(state.status, {
-          [Success]: () => successMessage(state.emails, state.successfulOrgInvitations, actions.restart, actions.goToList),
-          [Failure]: () => errorMessage(state.failedOrgInvitations, actions.restart),
-          [InProgress]: () => progressMessage(state.emails, state.successfulOrgInvitations),
-          _: () => h('', [
-            emailsInput(
-              maxNumberOfEmails,
-              Invalid,
-              pick(state, ['emails', 'emailsInputValue', 'invalidAddresses', 'organization', 'status']),
-              pick(actions, ['updateEmails', 'validateEmails'])
-            ),
-            organizationRole(state.orgRole, state.isOwner, actions.updateOrgRole),
-            accessToSpaces(
-              Loading,
-              adminRole,
-              pick(state, ['status', 'spaces', 'spaceMemberships']),
-              pick(actions, ['updateSpaceRole'])
-            )
-          ])
-        })
-      ]),
-      sidebar(
-        {Idle, Invalid},
-        pick(state, ['status', 'organization', 'suppressInvitation']),
-        pick(actions, ['toggleInvitationEmailOption'])
-      )
-    ])
+    h(
+      'form.workbench-main',
+      {
+        dataTestId: 'organization-membership.form',
+        onSubmit: actions.submitInvitations
+      },
+      [
+        h(
+          '.workbench-main__content',
+          {
+            style: { padding: '2rem 3.15rem' }
+          },
+          [
+            match(state.status, {
+              [Success]: () =>
+                successMessage(
+                  state.emails,
+                  state.successfulOrgInvitations,
+                  actions.restart,
+                  actions.goToList
+                ),
+              [Failure]: () => errorMessage(state.failedOrgInvitations, actions.restart),
+              [InProgress]: () => progressMessage(state.emails, state.successfulOrgInvitations),
+              _: () =>
+                h('', [
+                  emailsInput(
+                    maxNumberOfEmails,
+                    Invalid,
+                    pick(state, [
+                      'emails',
+                      'emailsInputValue',
+                      'invalidAddresses',
+                      'organization',
+                      'status'
+                    ]),
+                    pick(actions, ['updateEmails', 'validateEmails'])
+                  ),
+                  organizationRole(state.orgRole, state.isOwner, actions.updateOrgRole),
+                  accessToSpaces(
+                    Loading,
+                    adminRole,
+                    pick(state, ['status', 'spaces', 'spaceMemberships']),
+                    pick(actions, ['updateSpaceRole'])
+                  )
+                ])
+            })
+          ]
+        ),
+        sidebar(
+          { Idle, Invalid },
+          pick(state, ['status', 'organization', 'suppressInvitation']),
+          pick(actions, ['toggleInvitationEmailOption'])
+        )
+      ]
+    )
   ]);
 }

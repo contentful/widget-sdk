@@ -1,7 +1,7 @@
-import {env} from 'Config';
+import { env } from 'Config';
 import segment from 'analytics/segment';
 import * as Snowplow from 'analytics/snowplow/Snowplow';
-import {prepareUserData} from 'analytics/UserData';
+import { prepareUserData } from 'analytics/UserData';
 import * as analyticsConsole from 'analytics/console';
 import stringifySafe from 'stringifySafe';
 import _ from 'lodash';
@@ -30,7 +30,6 @@ import _ from 'lodash';
  * Once disabled, this service cannot be enabled
  * again.
  */
-
 
 const ANALYTICS_ENVS = ['production', 'staging', 'preview'];
 const VALUE_UNKNOWN = {};
@@ -66,7 +65,7 @@ export const enable = _.once(user => {
  * Stops event tracking, communication, cleans up
  * session data and blocks next `enable` calls.
  */
-export function disable () {
+export function disable() {
   segment.disable();
   Snowplow.disable();
   isDisabled = true;
@@ -84,7 +83,7 @@ export function disable () {
  * Gets session data. If `path` is provided then
  * extract specific nested value.
  */
-export function getSessionData (path, defaultValue) {
+export function getSessionData(path, defaultValue) {
   return _.get(session, path || [], defaultValue);
 }
 
@@ -97,7 +96,7 @@ export function getSessionData (path, defaultValue) {
  * Sends tracking event (with optionally provided data) to Segment and Snowplow
  * if it is on the valid events list.
  */
-export function track (event, data) {
+export function track(event, data) {
   data = _.isObject(data) ? _.cloneDeep(data) : {};
   data = removeCircularRefs(_.extend(data, getBasicPayload()));
 
@@ -121,7 +120,7 @@ export const updateUserInSegment = identify;
  * Sets or extends session user data. Identifying
  * data is also set on Segment's client.
  */
-function identify (extension) {
+function identify(extension) {
   session.user = session.user || {};
   const rawUserData = _.merge(session.user, extension || {});
 
@@ -163,7 +162,7 @@ function identify (extension) {
  * `null` must be explicitly passed to unset the current
  * space/org contexts.
  */
-export function trackContextChange (space, organization) {
+export function trackContextChange(space, organization) {
   if (space) {
     session.space = removeCircularRefs(space);
   } else if (space === null) {
@@ -193,32 +192,35 @@ export function trackContextChange (space, organization) {
  * handler. Current state is set as a page on
  * the Segment's client.
  */
-export function trackStateChange (state, params, from, fromParams) {
-  const data = session.navigation = removeCircularRefs({
+export function trackStateChange(state, params, from, fromParams) {
+  const data = (session.navigation = removeCircularRefs({
     state: state.name,
     params: params,
     fromState: from ? from.name : null,
     fromStateParams: fromParams || null
-  });
+  }));
 
   sendSessionDataToConsole();
   track('global:state_changed', data);
   segment.page(state.name, params);
 }
 
-function getBasicPayload () {
-  return _.pickBy({
-    userId: getSessionData('user.sys.id', VALUE_UNKNOWN),
-    spaceId: getSessionData('space.sys.id', VALUE_UNKNOWN),
-    organizationId: getSessionData('organization.sys.id', VALUE_UNKNOWN),
-    currentState: getSessionData('navigation.state', VALUE_UNKNOWN)
-  }, val => val !== VALUE_UNKNOWN);
+function getBasicPayload() {
+  return _.pickBy(
+    {
+      userId: getSessionData('user.sys.id', VALUE_UNKNOWN),
+      spaceId: getSessionData('space.sys.id', VALUE_UNKNOWN),
+      organizationId: getSessionData('organization.sys.id', VALUE_UNKNOWN),
+      currentState: getSessionData('navigation.state', VALUE_UNKNOWN)
+    },
+    val => val !== VALUE_UNKNOWN
+  );
 }
 
-function sendSessionDataToConsole () {
+function sendSessionDataToConsole() {
   analyticsConsole.setSessionData(session);
 }
 
-function removeCircularRefs (obj) {
+function removeCircularRefs(obj) {
   return JSON.parse(stringifySafe(obj));
 }

@@ -4,7 +4,7 @@
  * @param  {Number} options.numMemberships Number of users
  * @return {Number}                        The cost for this many users for this base plan
  */
-export function calculateUsersCost ({ basePlan, numMemberships }) {
+export function calculateUsersCost({ basePlan, numMemberships }) {
   const tiers = getUsersTiers(basePlan);
 
   return tiers.reduce((memo, tier) => {
@@ -38,14 +38,14 @@ export function calculateUsersCost ({ basePlan, numMemberships }) {
  * @param  {Number} options.numMemberships
  * @return {Object}                        The number of free & paid users plus the total
  */
-export function calcUsersMeta ({ basePlan, numMemberships }) {
+export function calcUsersMeta({ basePlan, numMemberships }) {
   const tiers = getUsersTiers(basePlan);
 
   // Should only be one free tier
   const freeTier = tiers.find(tier => tier.price === 0);
   const freeTierUsers = freeTier.endingUnit - freeTier.startingUnit;
   const numFree = numMemberships > freeTierUsers ? freeTierUsers : numMemberships;
-  const numPaid = numMemberships > freeTierUsers ? (numMemberships - freeTierUsers) : 0;
+  const numPaid = numMemberships > freeTierUsers ? numMemberships - freeTierUsers : 0;
   const cost = calculateUsersCost({ basePlan, numMemberships });
 
   return { numFree, numPaid, cost };
@@ -57,7 +57,7 @@ export function calcUsersMeta ({ basePlan, numMemberships }) {
  * @param  {Number} options.numMemberships Number of memberships
  * @return {Number}                        Total cost
  */
-export function calculateTotalPrice ({ allPlans, numMemberships }) {
+export function calculateTotalPrice({ allPlans, numMemberships }) {
   const basePlan = getBasePlan(allPlans);
 
   const plansCost = calculatePlansCost({ plans: allPlans });
@@ -71,8 +71,8 @@ export function calculateTotalPrice ({ allPlans, numMemberships }) {
  * @param  {Array}  options.ratePlanCharges Rate plan charges for this plan
  * @return {Array}                         Rate plan charges that are features
  */
-export function getEnabledFeatures ({ratePlanCharges = []}) {
-  return ratePlanCharges.filter(({unitType}) => unitType === 'feature');
+export function getEnabledFeatures({ ratePlanCharges = [] }) {
+  return ratePlanCharges.filter(({ unitType }) => unitType === 'feature');
 }
 
 /**
@@ -80,17 +80,17 @@ export function getEnabledFeatures ({ratePlanCharges = []}) {
  * @param  {Array} options.plans
  * @return {Number}               Total cost
  */
-export function calculatePlansCost ({ plans }) {
+export function calculatePlansCost({ plans }) {
   return plans.reduce((total, plan) => {
     return total + (parseInt(plan.price, 10) || 0);
   }, 0);
 }
 
-function getBasePlan (allPlans) {
+function getBasePlan(allPlans) {
   return allPlans.find(plan => plan.planType === 'base');
 }
 
-function getUsersTiers (basePlan) {
+function getUsersTiers(basePlan) {
   // shortform of Base rate plan charges
   const baseRPCs = basePlan.ratePlanCharges;
   const usersRPC = baseRPCs.find(rpc => rpc.name === 'Users');

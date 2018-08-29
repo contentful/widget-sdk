@@ -1,10 +1,10 @@
-import {fetchAll} from 'data/CMA/FetchAll';
-import {uniq, identity, chunk, flatten} from 'lodash';
+import { fetchAll } from 'data/CMA/FetchAll';
+import { uniq, identity, chunk, flatten } from 'lodash';
 
 const BATCH_LIMIT = 100;
 const USER_IDS_BATCH_LIMIT = 44;
 
-export function getAll (endpoint) {
+export function getAll(endpoint) {
   return endpoint({
     method: 'GET',
     path: ['organization_memberships']
@@ -16,7 +16,7 @@ export function getAll (endpoint) {
  * @param {function} endpoint - organization endpoint
  * @param {object?} query
  */
-export function getUsers (endpoint, query) {
+export function getUsers(endpoint, query) {
   return endpoint({
     method: 'GET',
     path: ['users'],
@@ -30,14 +30,11 @@ export function getUsers (endpoint, query) {
  * @param {Array<string>} params.userIds - array of user ids
  * @returns {Array<object>}
  */
-export function getUsersByIds (endpoint, userIds) {
+export function getUsersByIds(endpoint, userIds) {
   // Split into batches because of query string limitation of 1024 chars
   const batches = chunk(uniq(userIds).filter(identity), USER_IDS_BATCH_LIMIT);
-  return Promise.all(batches.map((ids) => getUsers(
-    endpoint,
-    {'sys.id': ids.join(',')}
-  )))
-    .then((responces) => responces.map(({items}) => items))
+  return Promise.all(batches.map(ids => getUsers(endpoint, { 'sys.id': ids.join(',') })))
+    .then(responces => responces.map(({ items }) => items))
     .then(flatten);
 }
 
@@ -46,7 +43,7 @@ export function getUsersByIds (endpoint, userIds) {
  * Opposed to the TokenStore that only lists the spaces that the current user is part of,
  * this enpoint will bring all spaces of the organization.
  */
-export function getSpaces (endpoint, params) {
+export function getSpaces(endpoint, params) {
   return endpoint({
     method: 'GET',
     path: ['spaces'],
@@ -54,11 +51,11 @@ export function getSpaces (endpoint, params) {
   });
 }
 
-export function getAllSpaces (endpoint, params) {
+export function getAllSpaces(endpoint, params) {
   return fetchAll(endpoint, ['spaces'], BATCH_LIMIT, params);
 }
 
-export function getRoles (endpoint, query) {
+export function getRoles(endpoint, query) {
   return endpoint({
     method: 'GET',
     path: ['roles'],
@@ -66,11 +63,11 @@ export function getRoles (endpoint, query) {
   });
 }
 
-export function getAllRoles (endpoint, params) {
+export function getAllRoles(endpoint, params) {
   return fetchAll(endpoint, ['roles'], BATCH_LIMIT, params);
 }
 
-export function invite (endpoint, {role, email, suppressInvitation}) {
+export function invite(endpoint, { role, email, suppressInvitation }) {
   return endpoint({
     method: 'POST',
     data: {

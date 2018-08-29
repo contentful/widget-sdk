@@ -1,6 +1,6 @@
 import $q from '$q';
-import {textQueryToUISearch} from 'search/TextQueryConverter';
-import {clone, cloneDeep, extend, omit, pick} from 'lodash';
+import { textQueryToUISearch } from 'search/TextQueryConverter';
+import { clone, cloneDeep, extend, omit, pick } from 'lodash';
 import assetContentType from 'assetContentType';
 import logger from 'logger';
 
@@ -11,7 +11,7 @@ const EMPTY_SEARCH = { searchText: '', searchFilters: [] };
  * @param {ContentTypesRepo} contentTypes
  * @returns {ViewMigrator}
  */
-export default function create (space, contentTypes) {
+export default function create(space, contentTypes) {
   return {
     migrateUIConfigViews,
     migrateViewsFolder,
@@ -24,25 +24,25 @@ export default function create (space, contentTypes) {
    * @param {UIConfig} uiConfig
    * @returns {Promise<Object>}
    */
-  function migrateUIConfigViews (uiConfig) {
+  function migrateUIConfigViews(uiConfig) {
     const migratedUIConfig = clone(uiConfig);
-    const {entryListViews, assetListViews} = uiConfig;
-    return $q.all([
-      $q.all((entryListViews || []).map((folder) => this.migrateViewsFolder(folder))),
-      $q.all((assetListViews || []).map(
-        (folder) => this.migrateViewsFolder(folder, true)))
-    ])
-    .then(([migratedEntryListViews, migratedAssetListViews]) => {
-      // Only set if not `undefined` initially. Don't even set to an empty array
-      // because in this case default views won't be used.
-      if (entryListViews) {
-        migratedUIConfig.entryListViews = migratedEntryListViews;
-      }
-      if (assetListViews) {
-        migratedUIConfig.assetListViews = migratedAssetListViews;
-      }
-      return migratedUIConfig;
-    });
+    const { entryListViews, assetListViews } = uiConfig;
+    return $q
+      .all([
+        $q.all((entryListViews || []).map(folder => this.migrateViewsFolder(folder))),
+        $q.all((assetListViews || []).map(folder => this.migrateViewsFolder(folder, true)))
+      ])
+      .then(([migratedEntryListViews, migratedAssetListViews]) => {
+        // Only set if not `undefined` initially. Don't even set to an empty array
+        // because in this case default views won't be used.
+        if (entryListViews) {
+          migratedUIConfig.entryListViews = migratedEntryListViews;
+        }
+        if (assetListViews) {
+          migratedUIConfig.assetListViews = migratedAssetListViews;
+        }
+        return migratedUIConfig;
+      });
   }
   /**
    * Takes a folder of views and returns a copy of it with all views migrated.
@@ -51,10 +51,14 @@ export default function create (space, contentTypes) {
    * @param {boolean?} isAssetsFolder
    * @returns {Promise<Object>}
    */
-  function migrateViewsFolder (folder, isAssetsFolder = false) {
-    return $q.all((folder.views || []).map((view) => {
-      return this.migrateView(view, isAssetsFolder);
-    })).then((views) => extend({}, folder, {views}));
+  function migrateViewsFolder(folder, isAssetsFolder = false) {
+    return $q
+      .all(
+        (folder.views || []).map(view => {
+          return this.migrateView(view, isAssetsFolder);
+        })
+      )
+      .then(views => extend({}, folder, { views }));
   }
 
   /**
@@ -69,17 +73,17 @@ export default function create (space, contentTypes) {
    * @param {boolean?} isAssetsView
    * @returns {Promise<Object>}
    */
-  function migrateView (view, isAssetsView = false) {
+  function migrateView(view, isAssetsView = false) {
     const searchTerm = view.searchTerm;
     const viewClone = cloneDeep(view);
 
     if (searchTerm) {
       const contentType = getViewContentTypeOrNull(view.contentTypeId);
       try {
-        return textQueryToUISearch(space, contentType, searchTerm)
-        .then(
+        return textQueryToUISearch(space, contentType, searchTerm).then(
           updateViewWithSearch.bind(null, viewClone),
-          handleTextQueryConverterError);
+          handleTextQueryConverterError
+        );
       } catch (error) {
         return handleTextQueryConverterError(error);
       }
@@ -87,7 +91,7 @@ export default function create (space, contentTypes) {
       return $q.resolve(view);
     }
 
-    function handleTextQueryConverterError (error) {
+    function handleTextQueryConverterError(error) {
       const viewEntityType = isAssetsView ? 'Asset' : 'Entry';
       // If `msg` and `groupingHash` were the same, only one event would be saved by
       // bugsnag within a certain timeframe - even if `data` would be different!
@@ -106,21 +110,17 @@ export default function create (space, contentTypes) {
       return $q.resolve(view);
     }
 
-    function getViewContentTypeOrNull (contentTypeId) {
+    function getViewContentTypeOrNull(contentTypeId) {
       if (isAssetsView) {
         return assetContentType;
       }
-      return contentTypeId
-        ? contentTypes.get(contentTypeId)
-        : null;
+      return contentTypeId ? contentTypes.get(contentTypeId) : null;
     }
   }
 }
 
-function updateViewWithSearch (view, search) {
-  return extend(
-    omit(view, ['searchTerm']),
-    pick(search, ['searchText', 'searchFilters']));
+function updateViewWithSearch(view, search) {
+  return extend(omit(view, ['searchTerm']), pick(search, ['searchText', 'searchFilters']));
 }
 
 /**
@@ -131,7 +131,7 @@ function updateViewWithSearch (view, search) {
  * @param {Object} uiConfig
  * @returns {boolean}
  */
-export function isUIConfigDataMigrated (data) {
+export function isUIConfigDataMigrated(data) {
   if (data._migrated) {
     return true;
   }
@@ -147,7 +147,7 @@ export function isUIConfigDataMigrated (data) {
  * @param {Object} migratedUIConfig
  * @returns {UIConfig}
  */
-export function normalizeMigratedUIConfigData (data) {
+export function normalizeMigratedUIConfigData(data) {
   const uiConfig = extend({}, data, data._migrated);
   delete uiConfig._migrated;
   return uiConfig;
@@ -159,7 +159,7 @@ export function normalizeMigratedUIConfigData (data) {
  * @param {UIConfig} uiConfig
  * @returns {Object}
  */
-export function prepareUIConfigForStorage (uiConfig) {
+export function prepareUIConfigForStorage(uiConfig) {
   const migrationFields = ['entryListViews', 'assetListViews'];
   const data = omit(uiConfig, migrationFields);
   data._migrated = pick(uiConfig, migrationFields);
@@ -173,13 +173,13 @@ export function prepareUIConfigForStorage (uiConfig) {
  * @param {UIConfig} uiConfig
  * @returns {Object} E.g. { migratedCount: 42, failedCount: 0 }
  */
-export function getMigrationSuccessCount (uiConfig) {
-  const {entryListViews = [], assetListViews = []} = uiConfig;
+export function getMigrationSuccessCount(uiConfig) {
+  const { entryListViews = [], assetListViews = [] } = uiConfig;
   return reduceCount(entryListViews, reduceCount(assetListViews));
 
-  function reduceCount (folders, count = { migratedCount: 0, failedCount: 0 }) {
+  function reduceCount(folders, count = { migratedCount: 0, failedCount: 0 }) {
     return folders.reduce((count, folder) => {
-      folder.views.forEach((view) => {
+      folder.views.forEach(view => {
         const key = hasFailedViewMigration(view) ? 'failedCount' : 'migratedCount';
         count[key] = count[key] + 1;
       });
@@ -188,6 +188,6 @@ export function getMigrationSuccessCount (uiConfig) {
   }
 }
 
-function hasFailedViewMigration (view) {
+function hasFailedViewMigration(view) {
   return view._legacySearchTerm !== undefined;
 }

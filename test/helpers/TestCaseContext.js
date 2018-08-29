@@ -1,5 +1,5 @@
-import {entries} from 'lodash';
-import {createUI} from 'helpers/DOM';
+import { entries } from 'lodash';
+import { createUI } from 'helpers/DOM';
 
 /**
  * This module defines the test case context. That is the methods
@@ -16,23 +16,22 @@ import {createUI} from 'helpers/DOM';
  *
  * The context is installed in 'test/helpers/boot'.
  */
-export default function install () {
-  beforeEach(function () {
+export default function install() {
+  beforeEach(function() {
     setupContext(this);
   });
-  afterEach(function () {
-    this._teardown.forEach((fn) => fn.call(this));
+  afterEach(function() {
+    this._teardown.forEach(fn => fn.call(this));
   });
 }
 
-
-function setupContext (ctx) {
+function setupContext(ctx) {
   mixin(ctx, {
     _teardown: [],
-    registerTeardown (fn) {
+    registerTeardown(fn) {
       ctx._teardown.push(fn);
     },
-    createUI (parameters) {
+    createUI(parameters) {
       const ui = createUI(parameters);
       this.registerTeardown(() => ui.destroy());
       return ui;
@@ -40,12 +39,11 @@ function setupContext (ctx) {
   });
 }
 
-
 /**
  * Adds all properties from `source` as read-only properties to
  * `target`.
  */
-function mixin (target, source) {
+function mixin(target, source) {
   entries(source).forEach(([key, value]) => {
     Object.defineProperty(target, key, {
       writable: false,

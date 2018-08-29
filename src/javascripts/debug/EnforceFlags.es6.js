@@ -1,8 +1,8 @@
 import $window from '$window';
-import {createElement as h} from 'react';
+import { createElement as h } from 'react';
 import { getStore } from 'TheStore';
-import {uniq, without, omit} from 'lodash';
-import {addNotification} from 'debug/DevNotifications';
+import { uniq, without, omit } from 'lodash';
+import { addNotification } from 'debug/DevNotifications';
 import location from '$location';
 import Cookies from 'Cookies';
 
@@ -16,7 +16,7 @@ const storeForDisable = getStore().forKey(DISABLE_FLAGS_KEY);
  * Stores enabled ui flags from url in local storage, and shows
  * a notification.
  */
-export function init () {
+export function init() {
   const urlParams = location.search();
   const enabledFlags = urlParams[ENABLE_FLAGS_KEY];
   const disabledFlags = urlParams[DISABLE_FLAGS_KEY];
@@ -33,31 +33,31 @@ export function init () {
 /**
  * Returns an array of ui flags enabled via query string param.
  */
-export function getEnabledFlags () {
+export function getEnabledFlags() {
   return storeForEnable.get() || [];
 }
 
-export function getDisabledFlags () {
+export function getDisabledFlags() {
   return storeForDisable.get() || [];
 }
 
-function setFromQuery (value = '', store) {
+function setFromQuery(value = '', store) {
   if (value.length > 0) {
     store.set(uniq(value.split(',')));
   }
 }
 
-function removeEnabledFlag (flagName) {
+function removeEnabledFlag(flagName) {
   const enabledFlags = without(getEnabledFlags(), flagName);
   storeForEnable.set(enabledFlags);
 }
 
-function removeDisabledFlag (flagName) {
+function removeDisabledFlag(flagName) {
   const disabledFlags = without(getDisabledFlags(), flagName);
   storeForDisable.set(disabledFlags);
 }
 
-function displayNotification () {
+function displayNotification() {
   // Do not show the notification for automated end to end tests
   // b/c it makes some UI elements inaccessible which causes the
   // tests to fail.
@@ -66,23 +66,33 @@ function displayNotification () {
   }
   const enabledFlags = getEnabledFlags();
   if (enabledFlags.length) {
-    addNotification('Enabled flags:', h('ul', null, enabledFlags.map(flag => renderFlagsListItem(flag, removeEnabledFlag))));
+    addNotification(
+      'Enabled flags:',
+      h('ul', null, enabledFlags.map(flag => renderFlagsListItem(flag, removeEnabledFlag)))
+    );
   }
 
   const disabledFlags = getDisabledFlags();
   if (disabledFlags.length) {
-    addNotification('Disabled flags:', h('ul', null, disabledFlags.map(flag => renderFlagsListItem(flag, removeDisabledFlag))));
+    addNotification(
+      'Disabled flags:',
+      h('ul', null, disabledFlags.map(flag => renderFlagsListItem(flag, removeDisabledFlag)))
+    );
   }
 }
 
-function renderFlagsListItem (flag, removeFn) {
-  const clearBtn = h('button', {
-    className: 'btn-link',
-    onClick: () => {
-      removeFn(flag);
-      $window.location.reload();
+function renderFlagsListItem(flag, removeFn) {
+  const clearBtn = h(
+    'button',
+    {
+      className: 'btn-link',
+      onClick: () => {
+        removeFn(flag);
+        $window.location.reload();
+      },
+      style: { float: 'right', marginLeft: '3px' }
     },
-    style: {float: 'right', marginLeft: '3px'}
-  }, 'Clear');
-  return h('li', {key: flag}, flag, clearBtn);
+    'Clear'
+  );
+  return h('li', { key: flag }, flag, clearBtn);
 }

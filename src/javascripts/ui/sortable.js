@@ -30,39 +30,41 @@
  *     | This cannot be dragged
  *     a(data-drag-handle)
  */
-angular.module('cf.ui')
-.directive('cfUiSortable', ['uiSortableDirective', uiSortableDirectives => {
-  var uiSortable = uiSortableDirectives[0];
+angular.module('cf.ui').directive('cfUiSortable', [
+  'uiSortableDirective',
+  uiSortableDirectives => {
+    var uiSortable = uiSortableDirectives[0];
 
-  var DEFAULTS = {
-    handle: '[data-drag-handle]',
-    item: '*:not([data-no-drag])',
-    items: '> *',
-    start: function (_event, ui) {
-      // Placeholder should have the width of the original element
-      ui.placeholder.css('width', ui.helper.outerWidth());
+    var DEFAULTS = {
+      handle: '[data-drag-handle]',
+      item: '*:not([data-no-drag])',
+      items: '> *',
+      start: function(_event, ui) {
+        // Placeholder should have the width of the original element
+        ui.placeholder.css('width', ui.helper.outerWidth());
 
-      // Do not force the height of the dragged item and be more
-      // generous with the width. This prevents issues when the
-      // width is a fraction of the pixel and would lead to text
-      // being broken into the next line
-      var width = parseFloat(ui.helper.css('width'));
-      ui.helper.css({
-        width: width + 1,
-        height: ''
-      });
-    },
-    forcePlaceholderSize: true,
-    placeholder: 'sortable-placeholder'
-  };
+        // Do not force the height of the dragged item and be more
+        // generous with the width. This prevents issues when the
+        // width is a fraction of the pixel and would lead to text
+        // being broken into the next line
+        var width = parseFloat(ui.helper.css('width'));
+        ui.helper.css({
+          width: width + 1,
+          height: ''
+        });
+      },
+      forcePlaceholderSize: true,
+      placeholder: 'sortable-placeholder'
+    };
 
-  return {
-    restrict: 'A',
-    require: '?ngModel',
-    scope: true,
-    link: function link (scope, element, attrs, ngModel) {
-      scope.uiSortable = _.defaults(scope.uiSortable || {}, DEFAULTS);
-      uiSortable.link(scope, element, attrs, ngModel);
-    }
-  };
-}]);
+    return {
+      restrict: 'A',
+      require: '?ngModel',
+      scope: true,
+      link: function link(scope, element, attrs, ngModel) {
+        scope.uiSortable = _.defaults(scope.uiSortable || {}, DEFAULTS);
+        uiSortable.link(scope, element, attrs, ngModel);
+      }
+    };
+  }
+]);

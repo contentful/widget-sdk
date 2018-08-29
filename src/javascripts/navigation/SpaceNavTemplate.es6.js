@@ -1,7 +1,7 @@
 import navBar from 'navigation/templates/NavBar';
 
-export default function spaceNavTemplate (useSpaceEnv, isMaster) {
-  const makeRef = (spaceRef) => {
+export default function spaceNavTemplate(useSpaceEnv, isMaster) {
+  const makeRef = spaceRef => {
     if (useSpaceEnv && !isMaster) {
       return `spaces.detail.environment.${spaceRef}`;
     } else {
@@ -119,19 +119,21 @@ export default function spaceNavTemplate (useSpaceEnv, isMaster) {
   ];
 
   return navBar([
-    (!useSpaceEnv || isMaster) ? {
-      if: 'nav.canNavigateTo("spaceHome")',
-      sref: 'spaces.detail.home',
-      dataViewType: 'space-home',
-      icon: 'nav-home',
-      title: 'Space home'
-    } : {
-      disabled: true,
-      tooltip: 'The space home is only available in the master environment.',
-      if: 'nav.canNavigateTo("spaceHome")',
-      icon: 'nav-home',
-      title: 'Space home'
-    },
+    !useSpaceEnv || isMaster
+      ? {
+          if: 'nav.canNavigateTo("spaceHome")',
+          sref: 'spaces.detail.home',
+          dataViewType: 'space-home',
+          icon: 'nav-home',
+          title: 'Space home'
+        }
+      : {
+          disabled: true,
+          tooltip: 'The space home is only available in the master environment.',
+          if: 'nav.canNavigateTo("spaceHome")',
+          icon: 'nav-home',
+          title: 'Space home'
+        },
     {
       if: 'nav.canNavigateTo("contentType")',
       sref: makeRef('content_types.list'),
@@ -157,7 +159,8 @@ export default function spaceNavTemplate (useSpaceEnv, isMaster) {
       title: 'Media'
     },
     {
-      if: 'nav.canNavigateTo("settings") || nav.canNavigateTo("apiKey") || nav.canNavigateTo("environments")',
+      if:
+        'nav.canNavigateTo("settings") || nav.canNavigateTo("apiKey") || nav.canNavigateTo("environments")',
       dataViewType: 'space-settings',
       rootSref: makeRef('settings'),
       icon: 'nav-settings',

@@ -16,28 +16,28 @@ const SHAREJS_VENDOR_SRC = assertFilesExist([
   'node_modules/@contentful/sharejs/lib/types/json-api.js'
 ]);
 
-gulp.task('js/sharejs', function () {
+gulp.task('js/sharejs', function() {
   return S.pipe([
     gulp.src(SHAREJS_VENDOR_SRC),
     babel({
       babelrc: false,
       presets: [
-        ['env', {
-          'targets': {
-            'browsers': supportedBrowsers
-          },
-          'loose': true,
-          'debug': true,
-          'modules': false
-        }]
+        [
+          'env',
+          {
+            targets: {
+              browsers: supportedBrowsers
+            },
+            loose: true,
+            debug: true,
+            modules: false
+          }
+        ]
       ],
-      plugins: [
-        'transform-object-rest-spread',
-        'transform-class-properties'
-      ]
+      plugins: ['transform-object-rest-spread', 'transform-class-properties']
     }),
     concat('sharejs-types.js'),
-    mapFileContents(function (contents) {
+    mapFileContents(function(contents) {
       return `(function() { var WEB=true; ${contents}; }).call(this);`;
     }),
     gulp.dest('./public/app/')

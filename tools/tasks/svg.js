@@ -12,25 +12,27 @@ const h = require('../lib/hyperscript').h;
  * The SVG files are put into 'public/app/svg'. Once can reference them
  * from stylesheets using `url("/app/svg/my-file.svg")`.
  */
-gulp.task('svg', async function () {
+gulp.task('svg', async function() {
   const targetDir = path.resolve('public', 'app', 'svg');
   await FS.mkdirsAsync(targetDir);
 
-  return Promise.all([
-    'chevron-blue',
-    'dd-arrow-down',
-    'dd-arrow-down-disabled',
-    'dotted-border',
-    'logo-label',
-    'note-info',
-    'note-success',
-    'note-warning'
-  ].map((icon) => {
-    const src = path.resolve('src', 'javascripts', 'svg', icon + '.es6.js');
-    const target = path.join(targetDir, icon + '.svg');
-    const output = proxyquire.noCallThru()(src, {
-      'ui/Framework': {h}
-    }).default;
-    return FS.writeFile(target, output, 'utf8');
-  }));
+  return Promise.all(
+    [
+      'chevron-blue',
+      'dd-arrow-down',
+      'dd-arrow-down-disabled',
+      'dotted-border',
+      'logo-label',
+      'note-info',
+      'note-success',
+      'note-warning'
+    ].map(icon => {
+      const src = path.resolve('src', 'javascripts', 'svg', icon + '.es6.js');
+      const target = path.join(targetDir, icon + '.svg');
+      const output = proxyquire.noCallThru()(src, {
+        'ui/Framework': { h }
+      }).default;
+      return FS.writeFile(target, output, 'utf8');
+    })
+  );
 });

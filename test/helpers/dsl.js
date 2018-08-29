@@ -4,7 +4,7 @@ import { runTask } from 'utils/Concurrent';
 
 _.extend(window, createDsl(window.jasmine.getEnv()));
 
-function createDsl (jasmineDsl) {
+function createDsl(jasmineDsl) {
   return {
     it: createCoroutineTestFactory(jasmineDsl.it),
     fit: createCoroutineTestFactory(jasmineDsl.fit),
@@ -15,40 +15,37 @@ function createDsl (jasmineDsl) {
   };
 }
 
-
-function createHookFactory (defineHook) {
+function createHookFactory(defineHook) {
   return runner => {
-    defineHook(function (done) {
+    defineHook(function(done) {
       Promise.resolve()
-      .then(() => {
-        const result = runner.call(this);
-        const $apply = this.$apply.bind(this);
-        if (isGenerator(result)) {
-          return runGenerator(result, $apply);
-        }
+        .then(() => {
+          const result = runner.call(this);
+          const $apply = this.$apply.bind(this);
+          if (isGenerator(result)) {
+            return runGenerator(result, $apply);
+          }
 
-        if (isThenable(result)) {
-          return runPromise(result, $apply);
-        }
-      })
-      .then(done, done.fail);
+          if (isThenable(result)) {
+            return runPromise(result, $apply);
+          }
+        })
+        .then(done, done.fail);
     });
   };
 }
 
-function isThenable (obj) {
-  return obj &&
-       typeof obj.then === 'function' &&
-       typeof obj.catch === 'function';
+function isThenable(obj) {
+  return obj && typeof obj.then === 'function' && typeof obj.catch === 'function';
 }
 
-function createCoroutineTestFactory (testFactory) {
+function createCoroutineTestFactory(testFactory) {
   return (desc, runner, before) => {
     if (!runner) {
       return testFactory(desc);
     }
 
-    return testFactory(desc, function (done) {
+    return testFactory(desc, function(done) {
       const $apply = this.$apply.bind(this);
       before = before || _.noop;
       const setup = this.setup || (() => Promise.resolve());
@@ -56,7 +53,7 @@ function createCoroutineTestFactory (testFactory) {
         .then(() => {
           return setup.call(this);
         })
-        .then((params) => {
+        .then(params => {
           const result = runner.call(this, params);
           if (isGenerator(result)) {
             return runGenerator(result, $apply);
@@ -72,7 +69,7 @@ function createCoroutineTestFactory (testFactory) {
   };
 }
 
-function isGenerator (g) {
+function isGenerator(g) {
   return g && typeof g.next === 'function' && typeof g.throw === 'function';
 }
 
@@ -89,13 +86,12 @@ const clearInterval = window.clearInterval;
  * will not be called until the next digest cycle. During testing we
  * must trigger digest cycles explicitly by calling `$apply`.
  */
-function runPromise (promise, $apply) {
+function runPromise(promise, $apply) {
   const runApply = setInterval($apply, 10);
   promise.finally(() => clearInterval(runApply));
 
   return promise;
 }
-
 
 /**
  * Run a generator yielding promises as a task. In addition,
@@ -107,8 +103,8 @@ function runPromise (promise, $apply) {
  * will not be called until the next digest cycle. During testing we
  * must trigger digest cycles explicitly by calling `$apply`.
  */
-function runGenerator (gen, $apply) {
-  return runTask(function* () {
+function runGenerator(gen, $apply) {
+  return runTask(function*() {
     const runApply = setInterval($apply, 10);
     try {
       yield* liftToNativePromise(gen);
@@ -137,7 +133,7 @@ function runGenerator (gen, $apply) {
  * digest loop. Calling `$apply()` in a digest loop throws an
  * exception.
  */
-function* liftToNativePromise (gen) {
+function* liftToNativePromise(gen) {
   let input, error, didThrow;
   while (true) {
     const result = didThrow ? gen.throw(error) : gen.next(input);

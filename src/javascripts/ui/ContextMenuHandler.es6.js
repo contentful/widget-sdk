@@ -1,4 +1,4 @@
-import {assign} from 'lodash';
+import { assign } from 'lodash';
 import $ from 'jquery';
 
 /**
@@ -43,15 +43,15 @@ const MENU_SELECTOR = '[cf-context-menu]';
 
 let currentOpenMenu = null;
 
-export default function attach ($document) {
+export default function attach($document) {
   $document.on('click', handleClick);
-  return function detach () {
+  return function detach() {
     $document.off('click', handleClick);
   };
 }
 
 // Close the open menu and open a menu if a menu trigger is clicked.
-function handleClick (event) {
+function handleClick(event) {
   const $trigger = getMenuTrigger($(event.target));
   let toOpen;
 
@@ -74,68 +74,72 @@ function handleClick (event) {
   currentOpenMenu = toOpen;
 }
 
-function closeMenu ($menu) {
+function closeMenu($menu) {
   // Close the menu itself and all the menues it is nested in
-  $menu.parents(MENU_SELECTOR).addBack()
-  // TODO remove this duplication if QA does not use the selector
-  .attr('data-menu-state', 'closed')
-  .data('menuOpen', false)
-  .hide();
+  $menu
+    .parents(MENU_SELECTOR)
+    .addBack()
+    // TODO remove this duplication if QA does not use the selector
+    .attr('data-menu-state', 'closed')
+    .data('menuOpen', false)
+    .hide();
 }
 
-function openMenu ($menu) {
+function openMenu($menu) {
   // Open the menu itself and all the menues it is nested in
-  $menu.parents(MENU_SELECTOR).addBack()
-  // TODO remove this duplication if QA does not use the selector
-  .attr('data-menu-state', 'opened')
-  .data('menuOpen', true)
-  .show();
+  $menu
+    .parents(MENU_SELECTOR)
+    .addBack()
+    // TODO remove this duplication if QA does not use the selector
+    .attr('data-menu-state', 'opened')
+    .data('menuOpen', true)
+    .show();
   repositionMenu($menu);
 }
 
-function getMenuTrigger ($el) {
+function getMenuTrigger($el) {
   return getElement($el.closest(TRIGGER_SELECTOR));
 }
 
-function getAttachedMenu ($trigger) {
+function getAttachedMenu($trigger) {
   return getElement($trigger.nextAll(MENU_SELECTOR));
 }
 
-function getElement ($el) {
+function getElement($el) {
   return $el && $el.length ? $el.first() : null;
 }
 
-function elementDisabled ($el) {
+function elementDisabled($el) {
   return $el.attr('aria-disabled') === 'true' || $el.prop('disabled');
 }
 
-
-function repositionMenu ($menu) {
+function repositionMenu($menu) {
   const position = $menu.attr('cf-context-menu');
   const $trigger = $menu.prevAll(TRIGGER_SELECTOR).first();
-  $menu.css({
-    top: '',
-    bottom: '',
-    left: '',
-    right: ''
-  }).position(
-    assign(getPositioning(position), {
-      of: $trigger
+  $menu
+    .css({
+      top: '',
+      bottom: '',
+      left: '',
+      right: ''
     })
-  );
+    .position(
+      assign(getPositioning(position), {
+        of: $trigger
+      })
+    );
 
-  const arrowClass = $menu.position().top < $trigger.position().top
-    ? 'x--arrow-down'
-    : 'x--arrow-up';
+  const arrowClass =
+    $menu.position().top < $trigger.position().top ? 'x--arrow-down' : 'x--arrow-up';
 
   $menu.removeClass('x--arrow-down x--arrow-up');
   $menu.addClass(arrowClass);
 }
 
-function getPositioning (position) {
+function getPositioning(position) {
   position = position || 'bottom';
   return {
-    'top': {
+    top: {
       my: 'center bottom',
       at: 'center top-13'
     },
@@ -143,7 +147,7 @@ function getPositioning (position) {
       my: 'left-20 bottom',
       at: 'left top-13'
     },
-    'bottom': {
+    bottom: {
       my: 'center top',
       at: 'center bottom+13'
     },
@@ -172,7 +176,7 @@ function getPositioning (position) {
       my: 'left top',
       at: 'left bottom'
     },
-    'left': {
+    left: {
       my: 'right top-10',
       at: 'left top'
     }
