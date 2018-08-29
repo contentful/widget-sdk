@@ -6,6 +6,21 @@ import { createIsolatedSystem } from 'test/helpers/system-js';
 
 import { BLOCKS, MARKS } from '@contentful/structured-text-types';
 
+const supportedToolbarIcons = [
+  MARKS.BOLD,
+  MARKS.ITALIC,
+  MARKS.UNDERLINE,
+  BLOCKS.UL_LIST,
+  BLOCKS.OL_LIST,
+  BLOCKS.EMBEDDED_ENTRY
+];
+
+const getHeadingDropdown = wrapper =>
+  wrapper.find(`[data-test-id="toolbar-heading-toggle"]`).first();
+
+const getToolbarIcon = (wrapper, iconName) =>
+  wrapper.find(`[data-test-id="toolbar-toggle-${iconName}"]`).first();
+
 describe('StructuredTextEditor', () => {
   beforeEach(async function () {
     module('contentful/test');
@@ -17,7 +32,7 @@ describe('StructuredTextEditor', () => {
     this.system.set('ui/cf/thumbnailHelpers', {});
     this.system.set('spaceContext', {
       cma: {
-        getEntry: sinon.stub().resolves()
+        getEntry: Promise.resolve([this.entity])
       }
     });
     this.system.set('states/EntityNavigationHelpers', {
@@ -34,7 +49,7 @@ describe('StructuredTextEditor', () => {
     };
     this.wrapper = mount(<StructuredTextEditor {...this.props} />);
 
-    this.expectIsEditorReadOnly = (expected) => {
+    this.expectIsEditorReadOnly = expected => {
       const el = this.wrapper.find('[data-test-id="editor"]');
       expect(el.props().readOnly).toBe(expected);
     };
@@ -49,36 +64,29 @@ describe('StructuredTextEditor', () => {
   });
 
   it('renders toolbar', function () {
-    const el = this.wrapper.first('[data-test-id="toolbar"]');
+    const el = this.wrapper.find('[data-test-id="toolbar"]').first();
     expect(el.length).toEqual(1);
   });
 
   it('renders the toolbar icons', function () {
-    const toolbarItems = [
-      MARKS.BOLD,
-      MARKS.ITALIC,
-      MARKS.UNDERLINE
-    ];
-    toolbarItems.forEach(item => {
-      const el = this.wrapper.first(`[data-test-id="toolbar-toggle-${item}"]`);
+    supportedToolbarIcons.forEach(iconName => {
+      const el = getToolbarIcon(this.wrapper, iconName);
+
       expect(el.length).toEqual(1);
+
       el.simulate('click');
       sinon.assert.calledOnce(this.wrapper.props().onChange);
     });
   });
 
   it('renders heading dropdown', function () {
-    const headingItems = [
-      BLOCKS.HEADING_1,
-      BLOCKS.HEADING_2
-    ];
+    const headingItems = [BLOCKS.HEADING_1, BLOCKS.HEADING_2];
 
-    const el = this.wrapper.first(`[data-test-id="toolbar-heading-toggle"]`);
-    expect(el).toBeDefined();
-    el.simulate('click');
+    const el = getHeadingDropdown(this.wrapper);
+    el.simulate('mouseDown');
 
-    headingItems.forEach(item => {
-      const el = this.wrapper.first(`[data-test-id="toolbar-toggle-${item}"]`);
+    headingItems.forEach(iconName => {
+      const el = getToolbarIcon(this.wrapper, iconName);
       expect(el.length).toEqual(1);
       el.simulate('click');
       sinon.assert.calledOnce(this.wrapper.props().onChange);
@@ -86,7 +94,7 @@ describe('StructuredTextEditor', () => {
   });
 
   it('renders the embed entry button', function () {
-    const el = this.wrapper.first(`[data-test-id="toolbar-toggle-${BLOCKS.EMBEDDED_ENTRY}"]`);
+    const el = getToolbarIcon(this.wrapper, BLOCKS.EMBEDDED_ENTRY);
     expect(el).toBeDefined();
     el.simulate('click');
     sinon.assert.calledOnce(this.wrapper.props().onChange);
@@ -101,9 +109,14 @@ describe('StructuredTextEditor', () => {
       this.expectIsEditorReadOnly(true);
     });
 
-    it('renders no toolbar', function () {
-      const el = this.wrapper.find('[data-test-id="toolbar"]');
-      expect(el.length).toEqual(0);
+    it('toolbar icons are disabled', function () {
+      supportedToolbarIcons.forEach(iconName => {
+        const el = getToolbarIcon(this.wrapper, iconName);
+        expect(el.props().disabled).toEqual(true);
+      });
+      const dropdown = getHeadingDropdown(this.wrapper);
+
+      expect(dropdown.props().disabled).toEqual(true);
     });
   });
 });

@@ -5,11 +5,13 @@ import { Value, Schema } from 'slate';
 import TrailingBlock from 'slate-trailing-block';
 import deepEqual from 'fast-deep-equal';
 
+import EditList from './plugins/List/EditListWrapper';
+
 import {
   toSlatejsDocument,
   toContentfulDocument
 } from '@contentful/contentful-slatejs-adapter';
-import { EditorToolbar } from '@contentful/ui-component-library';
+import { EditorToolbar, EditorToolbarDivider } from '@contentful/ui-component-library';
 
 import Bold, { BoldPlugin } from './plugins/Bold';
 import Italic, { ItalicPlugin } from './plugins/Italic';
@@ -35,6 +37,7 @@ import {
 
 import { ParagraphPlugin } from './plugins/Paragraph';
 import EntryLinkBlock, { EntryLinkBlockPlugin } from './plugins/EntryLinkBlock';
+import { ListPlugin, UnorderedList, OrderedList } from './plugins/List';
 
 import schemaJson from './constants/Schema';
 import emptyDoc from './constants/EmptyDoc';
@@ -52,6 +55,8 @@ const plugins = [
   Heading6Plugin(),
   ParagraphPlugin(),
   EntryLinkBlockPlugin(),
+  EditList(),
+  ListPlugin(),
   TrailingBlock()
 ];
 
@@ -59,7 +64,19 @@ const schema = Schema.fromJSON(schemaJson);
 const initialValue = Value.fromJSON(toSlatejsDocument(emptyDoc));
 // We do not want to change the `widgetApi.field` value when these
 // operations fire from Slatejs to not trigger unncessary saves.
-const ignoredOperations = ['set_value', 'set_node', 'set_selection'];
+const ignoredOperations = ['set_value', 'set_selection'];
+
+function validateOperation (op) {
+  // We want to allow "set_node" operations where the node
+  // type changes like quoting text.
+  if (op.type === 'set_node' && !op.properties.type) {
+    return false;
+  }
+  if (ignoredOperations.indexOf(op.type) > -1) {
+    return false;
+  }
+  return true;
+}
 
 export default class StructuredTextEditor extends React.Component {
   static propTypes = {
@@ -88,8 +105,9 @@ export default class StructuredTextEditor extends React.Component {
 
   onChange = ({ value, operations }) => {
     const lastOperations = operations
-      .filter(o => ignoredOperations.indexOf(o.type) === -1)
+      .filter(validateOperation)
       .toJS();
+
     this.setState({ value, lastOperations, headingMenuOpen: false });
   };
 
@@ -121,6 +139,7 @@ export default class StructuredTextEditor extends React.Component {
     return (
       <EditorToolbar
         extraClassNames="structured-text__toolbar"
+        data-test-id="toolbar"
       >
         <HeadingDropdown
           onToggle={this.toggleHeadingMenu}
@@ -143,10 +162,14 @@ export default class StructuredTextEditor extends React.Component {
           <Heading5 {...props} />
           <Heading6 {...props} />
         </HeadingDropdown>
+        <EditorToolbarDivider />
         <Bold {...props} />
         <Italic {...props} />
         <Underlined {...props} />
         <Code {...props} />
+        <EditorToolbarDivider />
+        <UnorderedList {...props} />
+        <OrderedList {...props} />
         <EntryLinkBlock {...props} />
       </EditorToolbar>
     );

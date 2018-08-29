@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '@contentful/ui-component-library';
 import { BLOCKS } from '@contentful/structured-text-types';
+import { haveTextInSomeBlocks } from '../shared/UtilHave';
 
-import WidgetAPIContext from 'app/widgets/WidgetAPIContext';
+import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext';
 
 export default class EntryLinkToolbarIcon extends Component {
   static propTypes = {
@@ -11,11 +12,10 @@ export default class EntryLinkToolbarIcon extends Component {
     onToggle: PropTypes.func.isRequired,
     disabled: PropTypes.bool.isRequired
   };
-  handleClick = async (event, widgetAPI) => {
+  handleMouseDown = async (event, widgetAPI) => {
     event.preventDefault();
     try {
       const [entry] = await widgetAPI.dialogs.selectSingleEntry();
-
       if (!entry) {
         return;
       }
@@ -36,10 +36,13 @@ export default class EntryLinkToolbarIcon extends Component {
       };
 
       const { change } = this.props;
-
-      change.insertBlock(linkedEntryBlock).collapseToStartOfNextBlock().focus();
-
-      this.props.onToggle(change);
+      let newChange = change;
+      if (change.value.blocks.size === 0 || haveTextInSomeBlocks(change)) {
+        newChange = change.insertBlock(linkedEntryBlock);
+      } else {
+        newChange = change.setBlocks(linkedEntryBlock);
+      }
+      this.props.onToggle(newChange.insertBlock(BLOCKS.PARAGRAPH).focus());
     } catch (error) {
       // the user closes modal without selecting an entry
     }
@@ -55,7 +58,7 @@ export default class EntryLinkToolbarIcon extends Component {
             icon="Description"
             buttonType="muted"
             data-test-id={`toolbar-toggle-${BLOCKS.EMBEDDED_ENTRY}`}
-            onMouseDown={(event) => this.handleClick(event, widgetAPI)}
+            onMouseDown={(event) => this.handleMouseDown(event, widgetAPI)}
           >
             Embed entry
           </Button>

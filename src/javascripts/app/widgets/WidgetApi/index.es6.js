@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import $rootScope from '$rootScope';
 import $location from '$location';
 import entitySelector from 'entitySelector';
-import WidgetAPIContext from './WidgetAPIContext';
+import WidgetAPIContext from './WidgetApiContext';
 
 export default function connectToWidgetAPI (Component) {
   return class extends React.Component {
@@ -18,9 +18,7 @@ export default function connectToWidgetAPI (Component) {
       isDisabled: true,
       currentUrl: $location.absUrl()
     };
-    constructor (props) {
-      super(props);
-
+    componentWillMount () {
       this.offDisabledState = this.props.field.onIsDisabledChanged(
         this.handleDisabledChanges
       );
@@ -32,7 +30,6 @@ export default function connectToWidgetAPI (Component) {
         this.setState({ currentUrl });
       });
     }
-
     componentWillUnmount () {
       this.offValueChanged();
       this.offDisabledState();
@@ -40,7 +37,7 @@ export default function connectToWidgetAPI (Component) {
     }
 
     handleDisabledChanges = isDisabled => {
-      if (this.state && this.state.isDisabled !== isDisabled) {
+      if (this.state.isDisabled !== isDisabled) {
         this.setState({ isDisabled });
       }
     };

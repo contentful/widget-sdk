@@ -14,5 +14,6 @@ export const NodePropTypes = {
 
 export const ToolbarIconPropTypes = {
   change: PropTypes.object.isRequired,
-  onToggle: PropTypes.func.isRequired
+  onToggle: PropTypes.func.isRequired,
+  disabled: PropTypes.bool.isRequired
 };

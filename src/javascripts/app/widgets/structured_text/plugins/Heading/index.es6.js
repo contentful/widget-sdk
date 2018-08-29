@@ -17,7 +17,7 @@ const plugin = (type, tagName, hotkey) => {
         const getCurrentblock = blocks.get(0);
 
         if (getCurrentblock.type === type) {
-          return change.splitBlock().setBlock(BLOCKS.PARAGRAPH);
+          return change.splitBlock().setBlocks(BLOCKS.PARAGRAPH);
         }
       } else if (isHotkey(hotkey, e)) {
         change.call(applyChange, type);

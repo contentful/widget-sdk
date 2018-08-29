@@ -3,7 +3,7 @@ import * as ShareJS from 'data/ShareJS/Utils';
 import logger from 'logger';
 import jsondiff from 'json0-ot-diff';
 import diffMatchPatch from 'diff-match-patch';
-import emptyDoc from 'app/widgets/structured_text/constants/EmptyDoc';
+import emptyDoc from './constants/EmptyDoc';
 
 /**
  * @description

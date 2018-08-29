@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+// TODO: move to the widgetAPI
 import spaceContext from 'spaceContext';
 import * as EntityState from 'data/CMA/EntityState';
 
@@ -73,7 +74,7 @@ function getEntryStatus (entry) {
   const state = EntityState.getState(entry.data.sys);
 
   // We do not show the state indicator for published assets
-  if (!(entry.data.sys.type === 'Asset' && state === EntityState.State.Published())) {
+  if (!state !== EntityState.State.Published()) {
     return EntityState.stateName(state);
   }
 }

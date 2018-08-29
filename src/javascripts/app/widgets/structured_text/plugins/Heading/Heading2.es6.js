@@ -6,7 +6,11 @@ import { blockTitles } from './HeadingDropdown';
 
 class Heading2 extends Component {
   render () {
-    return <ToolbarDropdownListItem {...this.props}>Heading 2</ToolbarDropdownListItem>;
+    return (
+      <ToolbarDropdownListItem {...this.props} data-test-id={BLOCKS.HEADING_2}>
+        Heading 2
+      </ToolbarDropdownListItem>
+    );
   }
 }
 

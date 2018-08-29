@@ -1,27 +1,60 @@
 import { BLOCKS } from '@contentful/structured-text-types';
 
+const TEXT = { object: ['text'] };
+
+const toTypeObj = (type) => ({ type });
+
+const TOP_LEVEL_BLOCKS = [
+  BLOCKS.PARAGRAPH,
+  BLOCKS.HEADING_1,
+  BLOCKS.HEADING_2,
+  BLOCKS.HEADING_3,
+  BLOCKS.HEADING_4,
+  BLOCKS.HEADING_5,
+  BLOCKS.HEADING_6,
+  BLOCKS.UL_LIST,
+  BLOCKS.OL_LIST,
+  BLOCKS.EMBEDDED_ENTRY
+];
+
 export default {
   document: {
     nodes: [
       {
-        types: [
-          BLOCKS.PARAGRAPH,
-          BLOCKS.HEADING_1,
-          BLOCKS.HEADING_2,
-          BLOCKS.EMBEDDED_ENTRY
-        ]
+        match: TOP_LEVEL_BLOCKS.map(type => toTypeObj(type))
       }
     ]
   },
   blocks: {
     [BLOCKS.PARAGRAPH]: {
-      nodes: [{ objects: ['text'] }]
+      nodes: [{ match: TEXT }]
     },
     [BLOCKS.HEADING_1]: {
-      nodes: [{ objects: ['text'] }]
+      nodes: [{ match: TEXT }]
     },
     [BLOCKS.HEADING_2]: {
-      nodes: [{ objects: ['text'] }]
+      nodes: [{ match: TEXT }]
+    },
+    [BLOCKS.HEADING_3]: {
+      nodes: [{ match: TEXT }]
+    },
+    [BLOCKS.HEADING_4]: {
+      nodes: [{ match: TEXT }]
+    },
+    [BLOCKS.HEADING_5]: {
+      nodes: [{ match: TEXT }]
+    },
+    [BLOCKS.HEADING_6]: {
+      nodes: [{ match: TEXT }]
+    },
+    [BLOCKS.UL_LIST]: {
+      nodes: [{ match: { type: BLOCKS.LIST_ITEM } }]
+    },
+    [BLOCKS.OL_LIST]: {
+      nodes: [{ match: { type: BLOCKS.LIST_ITEM } }]
+    },
+    [BLOCKS.LIST_ITEM]: {
+      nodes: [{match: [TEXT, ...TOP_LEVEL_BLOCKS]}]
     },
     [BLOCKS.EMBEDDED_ENTRY]: {
       isVoid: true

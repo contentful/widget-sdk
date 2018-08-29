@@ -59,3 +59,11 @@ export const haveDataKeyEqualValueInSomeBlocks = (
 
   return false;
 };
+
+export const haveTextInSomeBlocks = ({ value }) => {
+  if (value.blocks.size > 0) {
+    return value.blocks.some(
+      block => block.text
+    );
+  }
+};

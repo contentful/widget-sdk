@@ -95,5 +95,6 @@ window.libs = [
   ['redux', require('redux')],
   ['react-redux', require('react-redux')],
   ['redux-thunk', require('redux-thunk')],
-  ['create-react-context', require('create-react-context')]
+  ['create-react-context', require('create-react-context')],
+  ['slate-edit-list', require('slate-edit-list')]
 ];

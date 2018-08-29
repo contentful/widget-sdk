@@ -29,11 +29,13 @@ class HeadingDropdown extends Component {
     change: PropTypes.object
   };
 
-  getStyleNameForChange = () =>
-    Object.keys(blockTitles)
-      .filter(key =>
-        haveBlocks(this.props.change, key)
-      ).reduce((_, cur) => blockTitles[cur], undefined);
+  getStyleNameForChange = () => {
+    const currentStyle = Object.keys(blockTitles).find(key =>
+      haveBlocks(this.props.change, key)
+    );
+
+    return blockTitles[currentStyle] || blockTitles[blockTitles.PARAGRAPH];
+  };
 
   render () {
     const { onToggle, isOpen, onClose, children } = this.props;
@@ -48,7 +50,9 @@ class HeadingDropdown extends Component {
             buttonType="naked"
             size="small"
             disabled={this.props.disabled}
-          >{this.getStyleNameForChange()}</Button>
+          >
+            {this.getStyleNameForChange()}
+          </Button>
         }
         isOpen={isOpen}
         onClose={onClose}

@@ -14,8 +14,16 @@ export const EntryLinkBlockPlugin = () => {
         return <EntryLinkBlock {...props} />;
       }
     },
-    onKeyDown (_event, _change) {
-      // TODO: impement hotkey logic
+    onKeyDown (e, change) {
+      if (e.key === 'Enter') {
+        const { value } = change;
+        const { blocks } = value;
+        const getCurrentblock = blocks.get(0);
+
+        if (getCurrentblock.type === BLOCKS.EMBEDDED_ENTRY) {
+          return change.insertBlock(BLOCKS.PARAGRAPH).focus();
+        }
+      }
     }
   };
 };
