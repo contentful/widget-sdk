@@ -77,32 +77,30 @@
     color: #536171;
     border-radius: 2px;
 
-  .structured-text__editor
-    .cf-slate-paragraph
-      line-height: 1.5;
-      margin-bottom: 1.5em;
+.cf-slate-paragraph
+  line-height: 1.5;
+  margin-bottom: 1.5em;
 
-    .cf-slate-mark-bold
-      color: inherit;
+h1,h2,h3,h4,h5,h6
+  &.cf-slate-heading
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0 0 0.5em 0;
 
-    h1,h2,h3,h4,h5,h6
-      font-weight: 700;
-      line-height: 1.3;
-      margin: 0 0 0.5em 0;
+.cf-slate-heading
+// Major Second Progression
+  h1&
+    font-size: 1.602rem;
+  h2&
+    font-size: 1.424rem;
+  h3&
+    font-size: 1.266rem;
+  h4&
+    font-size: 1.125rem;
+  h5&
+    font-size: 1rem;
+  h6&
+    font-size: 0.889rem;
 
-    // Major Second Progression 
-    h1
-      font-size: 1.602rem;
-    h2
-      font-size: 1.424rem;
-    h3
-      font-size: 1.266rem;
-    h4
-      font-size: 1.125rem;
-    h5
-      font-size: 1rem;
-    h6
-      font-size: 0.889rem;
 
-  
-  
+
