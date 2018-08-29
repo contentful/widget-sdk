@@ -37,7 +37,7 @@ export default class EntryLinkToolbarIcon extends Component {
 
       const { change } = this.props;
 
-      change.insertBlock(linkedEntryBlock).collapseToStartOfNextBlock();
+      change.insertBlock(linkedEntryBlock).collapseToStartOfNextBlock().focus();
 
       this.props.onToggle(change);
     } catch (error) {
@@ -55,7 +55,7 @@ export default class EntryLinkToolbarIcon extends Component {
             icon="Description"
             buttonType="muted"
             data-test-id={`toolbar-toggle-${BLOCKS.EMBEDDED_ENTRY}`}
-            onClick={(event) => this.handleClick(event, widgetAPI)}
+            onMouseDown={(event) => this.handleClick(event, widgetAPI)}
           >
             Embed entry
           </Button>

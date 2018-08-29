@@ -43,7 +43,7 @@ include ../entity_editor/entity_editor.mixins.jade
         +editor-info-toggle
 
     .workbench-main
-      .workbench-main__content(ui-on-scroll="scroll-editor" ui-set-scroll="initialEditorScroll")
+      .workbench-main__content.sticky-parent(ui-on-scroll="scroll-editor" ui-set-scroll="initialEditorScroll")
         react-component(name="app/entity_editor/StatusNotification" props="props")
         .entity-editor-form
           cf-error-list.form-box-error(cf-error-path="['fields']")

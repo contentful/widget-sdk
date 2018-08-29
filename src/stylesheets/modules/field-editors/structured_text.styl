@@ -1,6 +1,15 @@
 @require '/variables/colors'
 
 .structured-text
+  position: relative;
+
+  &--enabled .structured-text__toolbar {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0px;
+    z-index: 99;
+  }
+
   &__editor {
     border-radius: 0 0 3px 3px;
     border: 1px solid $colors.element-dark;

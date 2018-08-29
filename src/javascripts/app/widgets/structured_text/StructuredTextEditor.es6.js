@@ -81,7 +81,8 @@ export default class StructuredTextEditor extends React.Component {
             object: 'value',
             document: toSlatejsDocument(this.props.value)
           })
-          : initialValue
+          : initialValue,
+      hasFocus: false
     };
   }
 
@@ -91,6 +92,7 @@ export default class StructuredTextEditor extends React.Component {
       .toJS();
     this.setState({ value, lastOperations, headingMenuOpen: false });
   };
+
   componentDidUpdate (prevProps) {
     const isIncomingChange = !deepEqual(this.props.value, prevProps.value);
     const contentIsUpdated = this.state.lastOperations.length > 0;
@@ -117,7 +119,9 @@ export default class StructuredTextEditor extends React.Component {
     };
 
     return (
-      <EditorToolbar>
+      <EditorToolbar
+        extraClassNames="structured-text__toolbar"
+      >
         <HeadingDropdown
           onToggle={this.toggleHeadingMenu}
           isToggleActive={true}
@@ -161,13 +165,20 @@ export default class StructuredTextEditor extends React.Component {
     });
 
   render () {
+    const classNames = `
+      structured-text
+      ${!this.props.isDisabled ? 'structured-text--enabled' : ''}
+    `;
+
     return (
-      <div className="structured-text">
+      <div className={classNames}>
         {this.renderToolbar()}
         <Editor
           data-test-id="editor"
           value={this.state.value}
           onChange={this.onChange}
+          onBlur={this.onBlur}
+          onFocus={this.onFocus}
           plugins={plugins}
           schema={schema}
           readOnly={this.props.isDisabled}
