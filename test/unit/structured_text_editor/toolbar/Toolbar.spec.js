@@ -71,7 +71,6 @@ describe('Toolbar', () => {
     this.widgetApi.fieldProperties.isDisabled$.set(false);
     this.widgetApi.fieldProperties.value$.set(mockDocument);
 
-
     this.props = {
       field: this.widgetApi.field,
       onChange: sinon.spy()
@@ -124,6 +123,13 @@ describe('Toolbar', () => {
           )
         );
       });
+    });
+  });
+
+  describe('Quote', function () {
+    it('renders the quote', async function () {
+      await triggerToolbarIcon(this.wrapper, BLOCKS.QUOTE);
+      expect(this.widgetApi.field.getValue()).toEqual(document(block(BLOCKS.QUOTE, {}, text())));
     });
   });
 });

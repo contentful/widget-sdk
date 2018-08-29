@@ -17,7 +17,7 @@ import Bold, { BoldPlugin } from './plugins/Bold';
 import Italic, { ItalicPlugin } from './plugins/Italic';
 import Underlined, { UnderlinedPlugin } from './plugins/Underlined';
 import Code, { CodePlugin } from './plugins/Code';
-
+import Quote, { QuotePlugin } from './plugins/Quote';
 import {
   Heading1,
   Heading2,
@@ -45,6 +45,7 @@ import emptyDoc from './constants/EmptyDoc';
 const plugins = [
   BoldPlugin(),
   ItalicPlugin(),
+  QuotePlugin(),
   UnderlinedPlugin(),
   CodePlugin(),
   Heading1Plugin(),
@@ -54,6 +55,8 @@ const plugins = [
   Heading5Plugin(),
   Heading6Plugin(),
   ParagraphPlugin(),
+  EditList(),
+  ListPlugin(),
   EntryLinkBlockPlugin(),
   EditList(),
   ListPlugin(),
@@ -170,6 +173,7 @@ export default class StructuredTextEditor extends React.Component {
         <EditorToolbarDivider />
         <UnorderedList {...props} />
         <OrderedList {...props} />
+        <Quote {...props} />
         <EntryLinkBlock {...props} />
       </EditorToolbar>
     );

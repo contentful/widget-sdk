@@ -58,6 +58,9 @@ export default {
     },
     [BLOCKS.EMBEDDED_ENTRY]: {
       isVoid: true
+    },
+    [BLOCKS.QUOTE]: {
+      nodes: [{ objects: ['text'] }]
     }
   }
 };

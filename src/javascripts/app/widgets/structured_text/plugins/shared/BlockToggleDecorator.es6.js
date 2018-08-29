@@ -3,23 +3,23 @@ import { BLOCKS } from '@contentful/structured-text-types';
 import { haveBlocks } from './UtilHave';
 import { ToolbarIconPropTypes } from './PropTypes';
 
-export const applyChange = (change, type, shouldToggle) => {
+export const applyChange = (change, type) => {
   const isActive = haveBlocks(change, type);
-  return change.setBlocks(isActive && shouldToggle ? BLOCKS.PARAGRAPH : type);
+  return change.setBlocks(isActive ? BLOCKS.PARAGRAPH : type);
 };
 
-export default ({ type, title, icon, shouldToggle = true }) => Block => {
+export default ({ type, title, icon }) => Block => {
   return class BlockDecorator extends React.Component {
     static propTypes = ToolbarIconPropTypes
     handleToggle = e => {
       const { change, onToggle } = this.props;
       e.preventDefault();
 
-      onToggle(applyChange(change, type, shouldToggle));
+      onToggle(applyChange(change, type));
     };
 
     render () {
-      const { change } = this.props;
+      const { change, disabled } = this.props;
 
       return (
         <Block
@@ -28,6 +28,7 @@ export default ({ type, title, icon, shouldToggle = true }) => Block => {
           title={title}
           onToggle={this.handleToggle}
           isActive={haveBlocks(change, type)}
+          disabled={disabled}
         />
       );
     }
