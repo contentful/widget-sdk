@@ -4,7 +4,7 @@ import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { canCreateSpaceInOrganization } from 'access_control/AccessChecker';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import notification from 'notification';
-import { getSpaceRatePlans, isPOCEnabled, customerTypes, getBasePlan } from 'account/pricing/PricingDataProvider';
+import { getSpaceRatePlans, isPOCEnabled, isEnterprisePlan, getBasePlan } from 'account/pricing/PricingDataProvider';
 
 /**
  * Displays the space creation dialog. The dialog type will depend on the
@@ -52,7 +52,7 @@ export async function showDialog(organizationId) {
         getSpaceRatePlans(orgEndpoint)
       ]);
       // org should create POC if it is Enterprise
-      shouldCreatePOC = basePlan.customerType === customerTypes.enterprise;
+      shouldCreatePOC = isEnterprisePlan(basePlan);
     }
 
     if (shouldCreatePOC) {

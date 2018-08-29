@@ -6,7 +6,7 @@ import modalDialog from 'modalDialog';
 import * as Intercom from 'intercom';
 import { supportUrl } from 'Config';
 
-export default class CommittedSpaceWarningModal extends React.Component {
+export default class POCSpaceWarningModal extends React.Component {
   static propTypes = {
     scope: PropTypes.object.isRequired
   };
@@ -24,9 +24,9 @@ export default class CommittedSpaceWarningModal extends React.Component {
   render () {
     return (
       <Dialog testId="committed-space-change-warning" size="small">
-        <Dialog.Header>Contact customer success to make this change</Dialog.Header>
+        <Dialog.Header>Upgrade space</Dialog.Header>
         <Dialog.Body>
-          <p>This space is part of your Enterprise plan with Contentful. To make any changes, please contact your customer success manager.</p>
+          <p>{`It seems like you're ready to launch a proof of concept space. Talk to us to make that happen as soon as possible.`}</p>
         </Dialog.Body>
         <Dialog.Controls>
             <button
@@ -48,8 +48,7 @@ export default class CommittedSpaceWarningModal extends React.Component {
 export function openModal () {
   return modalDialog.open({
     title: 'Create new space',
-    template:
-      '<react-component name="components/shared/space-wizard/CommittedSpaceWarningModal" class="modal-background" props="modalProps"></react-component>',
+    template: '<react-component name="components/shared/space-wizard/POCSpaceWarningModal" class="modal-background" props="modalProps"></react-component>',
     backgroundClose: true,
     persistOnNavigation: false,
     scopeData: {}

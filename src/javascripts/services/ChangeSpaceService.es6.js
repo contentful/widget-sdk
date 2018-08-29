@@ -1,7 +1,8 @@
 import modalDialog from 'modalDialog';
 import { getOrganization } from 'services/TokenStore';
 import { openModal as openCommittedSpaceWarningDialog } from 'components/shared/space-wizard/CommittedSpaceWarningModal';
-import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
+import { openModal as openPOCSpaceWarningDialog } from 'components/shared/space-wizard/POCSpaceWarningModal';
+import { getSingleSpacePlan, isPOCSpacePlan } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 
 /**
@@ -48,6 +49,8 @@ export async function showDialog({ organizationId, space, action, scope, onSubmi
 
   if (spacePlan && spacePlan.committed) {
     openCommittedSpaceWarningDialog();
+  } else if (isPOCSpacePlan(spacePlan)) {
+    openPOCSpaceWarningDialog();
   } else {
     modalDialog.open({
       title: 'Create new space',

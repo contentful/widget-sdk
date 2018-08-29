@@ -27,8 +27,8 @@ export function isFreeSpacePlan (plan) {
   return plan.planType === 'free_space';
 }
 
-export function isPOCSpaceplan (plan) {
-  return isEnterprisePlan(plan) && !isFreeSpacePlan(plan);
+export function isPOCSpacePlan (plan) {
+  return isEnterprisePlan(plan) && isFreeSpacePlan(plan);
 }
 
 /**
