@@ -158,6 +158,26 @@
         margin: 0;
         line-height: 1.5;
 
+    hr
+      height: 1rem;
+      background: transparent;
+      position: relative;
+      margin: 0 0 1.5rem;
+      &:hover
+        cursor pointer;
+      &:after
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 1px;
+        background: #d3dce0;
+        top: 50%;
+    
+    .hr--selected
+      background: #f7f9fa;
+      &:after
+        background: #b4c3ca;
+
   .structured-text__reference-card
     margin-bottom: 1.25rem;
 

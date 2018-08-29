@@ -2,7 +2,7 @@ import { BLOCKS } from '@contentful/structured-text-types';
 
 const TEXT = { object: ['text'] };
 
-const toTypeObj = (type) => ({ type });
+const toTypeObj = type => ({ type });
 
 const TOP_LEVEL_BLOCKS = [
   BLOCKS.PARAGRAPH,
@@ -14,6 +14,7 @@ const TOP_LEVEL_BLOCKS = [
   BLOCKS.HEADING_6,
   BLOCKS.UL_LIST,
   BLOCKS.OL_LIST,
+  BLOCKS.HR,
   BLOCKS.EMBEDDED_ENTRY
 ];
 
@@ -54,13 +55,16 @@ export default {
       nodes: [{ match: { type: BLOCKS.LIST_ITEM } }]
     },
     [BLOCKS.LIST_ITEM]: {
-      nodes: [{match: [TEXT, ...TOP_LEVEL_BLOCKS]}]
+      nodes: [{ match: [TEXT, ...TOP_LEVEL_BLOCKS] }]
+    },
+    [BLOCKS.HR]: {
+      isVoid: true
     },
     [BLOCKS.EMBEDDED_ENTRY]: {
       isVoid: true
     },
     [BLOCKS.QUOTE]: {
-      nodes: [{ objects: ['text'] }]
+      nodes: [{ match: TEXT }]
     }
   }
 };

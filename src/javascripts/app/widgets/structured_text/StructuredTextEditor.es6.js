@@ -38,6 +38,7 @@ import {
 import { ParagraphPlugin } from './plugins/Paragraph';
 import EntryLinkBlock, { EntryLinkBlockPlugin } from './plugins/EntryLinkBlock';
 import { ListPlugin, UnorderedList, OrderedList } from './plugins/List';
+import Hr, { HrPlugin } from './plugins/Hr';
 
 import schemaJson from './constants/Schema';
 import emptyDoc from './constants/EmptyDoc';
@@ -55,8 +56,7 @@ const plugins = [
   Heading5Plugin(),
   Heading6Plugin(),
   ParagraphPlugin(),
-  EditList(),
-  ListPlugin(),
+  HrPlugin(),
   EntryLinkBlockPlugin(),
   EditList(),
   ListPlugin(),
@@ -174,6 +174,7 @@ export default class StructuredTextEditor extends React.Component {
         <UnorderedList {...props} />
         <OrderedList {...props} />
         <Quote {...props} />
+        <Hr {...props} />
         <EntryLinkBlock {...props} />
       </EditorToolbar>
     );
