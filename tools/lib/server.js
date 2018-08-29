@@ -1,11 +1,11 @@
 const P = require('path');
-const {denodeify} = require('promise');
-const {watch} = require('chokidar');
-const {debounce, values} = require('lodash');
+const { denodeify } = require('promise');
+const { watch } = require('chokidar');
+const { debounce, values } = require('lodash');
 const anymatch = require('anymatch');
 const express = require('express');
 const runSequence = require('run-sequence');
-const {readJSON} = require('./utils');
+const { readJSON } = require('./utils');
 const middleware = require('webpack-dev-middleware');
 const webpack = require('webpack');
 const createWebpackConfig = require('../webpack.config');
@@ -27,7 +27,7 @@ const runSequenceP = denodeify(runSequence);
  *   'task' is the name of a gulp task to be run when any of the files matched
  *   by the pattern changes.
  */
-module.exports.serveWatch = function serveWatch (configName, watchFiles, patternTasks) {
+module.exports.serveWatch = function serveWatch(configName, watchFiles, patternTasks) {
   const buildList = createPromiseList();
   let watcher;
   if (watchFiles) {
@@ -38,7 +38,7 @@ module.exports.serveWatch = function serveWatch (configName, watchFiles, pattern
     });
   }
 
-  patternTasks.forEach(function ([pattern, tasks]) {
+  patternTasks.forEach(function([pattern, tasks]) {
     const match = anymatch(pattern);
 
     const addBuild = buildList.getSlot();
@@ -46,17 +46,18 @@ module.exports.serveWatch = function serveWatch (configName, watchFiles, pattern
     build();
 
     if (watcher) {
-      watcher.add(pattern)
-      .on('add', buildPath)
-      .on('change', buildPath)
-      .on('unlink', buildPath);
+      watcher
+        .add(pattern)
+        .on('add', buildPath)
+        .on('change', buildPath)
+        .on('unlink', buildPath);
     }
 
-    function buildImmediately () {
+    function buildImmediately() {
       addBuild(runSequenceP.apply(null, tasks));
     }
 
-    function buildPath (path) {
+    function buildPath(path) {
       if (match(path)) {
         build();
       }
@@ -79,7 +80,7 @@ module.exports.serveWatch = function serveWatch (configName, watchFiles, pattern
  *   Called whenever the index file is requested. The file is served only after
  *   the returned promise resolves.
  */
-function createServer (configName, getBuild) {
+function createServer(configName, getBuild) {
   const publicDir = P.resolve(P.resolve('public'));
   const docIndex = sendIndex(P.join(publicDir, 'docs'));
 
@@ -88,48 +89,53 @@ function createServer (configName, getBuild) {
   const compiler = webpack(config);
   const PORT = Number.parseInt(process.env.PORT, 10) || 3001;
 
-  app.use(middleware(compiler, {
-    publicPath: '/app/',
-    watchOptions: {
-      aggregateTimeout: 300,
-      poll: 1000
-    },
-    stats: {
-      colors: true,
-      modules: false,
-      providedExports: false,
-      usedExports: false
-    }
-  }));
+  app.use(
+    middleware(compiler, {
+      publicPath: '/app/',
+      watchOptions: {
+        aggregateTimeout: 300,
+        poll: 1000
+      },
+      stats: {
+        colors: true,
+        modules: false,
+        providedExports: false,
+        usedExports: false
+      }
+    })
+  );
 
   app.use(express.static(publicDir));
   app.use('/docs/', docIndex);
-  app.get('*', function (req, res, next) {
+  app.get('*', function(req, res, next) {
     if (!req.accepts('html')) {
       next();
       return;
     }
 
-    getBuild().then(function () {
-      return readJSON(`config/${configName}.json`)
-      .then(function (config) {
-        const index = IndexPage.renderDev(config);
-        res.status(200)
-        .type('html')
-        .end(index);
-      });
-    }, function (err) {
-      res
-      .status(500)
-      .type('text')
-      .send(err.message + '\n' + err.err.message)
-      .end();
-    });
+    getBuild().then(
+      function() {
+        return readJSON(`config/${configName}.json`).then(function(config) {
+          const index = IndexPage.renderDev(config);
+          res
+            .status(200)
+            .type('html')
+            .end(index);
+        });
+      },
+      function(err) {
+        res
+          .status(500)
+          .type('text')
+          .send(err.message + '\n' + err.err.message)
+          .end();
+      }
+    );
   });
-  app.use(function (_req, res) {
+  app.use(function(_req, res) {
     res.sendStatus(404).end();
   });
-  app.listen(PORT, (err) => {
+  app.listen(PORT, err => {
     if (err) {
       throw err;
     }
@@ -138,13 +144,12 @@ function createServer (configName, getBuild) {
   });
 }
 
-
 /**
  * Create a middleware that serves *all* GET requests that accept HTML
  * with `dir/index.html`.
  */
-function sendIndex (dir) {
-  return function (req, res, next) {
+function sendIndex(dir) {
+  return function(req, res, next) {
     if (req.method === 'GET' && req.accepts('html')) {
       res.sendFile(P.join(dir, 'index.html'));
     } else {
@@ -152,7 +157,6 @@ function sendIndex (dir) {
     }
   };
 }
-
 
 /**
  * Create an object which allows one to register work at a given slot and
@@ -169,7 +173,7 @@ function sendIndex (dir) {
  *   Resolves when 'promiseB' and 'promiseA2' resolve.
  * })
  */
-function createPromiseList () {
+function createPromiseList() {
   let nextId = 0;
   const promises = {};
   return {
@@ -177,14 +181,14 @@ function createPromiseList () {
     resolve: resolve
   };
 
-  function getSlot () {
+  function getSlot() {
     const id = nextId++;
-    return function (promise) {
+    return function(promise) {
       promises[id] = promise;
     };
   }
 
-  function resolve () {
+  function resolve() {
     return Promise.all(values(promises));
   }
 }

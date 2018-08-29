@@ -31,28 +31,33 @@ const urlsArraySchema = {
 };
 
 // For each item 'x' we require a property 'xUrl' that has a URL format.
-const URL_KEYS = [
-  'auth', 'api', 'asset', 'marketing', 'toolsService', 'mockApi'
-];
+const URL_KEYS = ['auth', 'api', 'asset', 'marketing', 'toolsService', 'mockApi'];
 
-module.exports = strictObject(Object.assign({
-  environment: {type: 'string'},
-  main_domain: hostSchema,
-  contentful: strictObject({
-    spaceTemplateEntryContentTypeId: alnumExact(22),
-    cdaApiUrl: subdomainHostSchema,
-    apiUrl: subdomainHostSchema,
-    previewApiUrl: subdomainHostSchema,
-    accessToken: hex(64),
-    space: alnumExact(12),
-    previewAccessToken: hex(64),
-    TEASpaceId: alnumExact(12)
-  })
-}, hosts(), integrations()), {
-  clientId: hex(64)
-});
+module.exports = strictObject(
+  Object.assign(
+    {
+      environment: { type: 'string' },
+      main_domain: hostSchema,
+      contentful: strictObject({
+        spaceTemplateEntryContentTypeId: alnumExact(22),
+        cdaApiUrl: subdomainHostSchema,
+        apiUrl: subdomainHostSchema,
+        previewApiUrl: subdomainHostSchema,
+        accessToken: hex(64),
+        space: alnumExact(12),
+        previewAccessToken: hex(64),
+        TEASpaceId: alnumExact(12)
+      })
+    },
+    hosts(),
+    integrations()
+  ),
+  {
+    clientId: hex(64)
+  }
+);
 
-function hosts () {
+function hosts() {
   const props = {};
   for (const key of URL_KEYS) {
     props[key + 'Url'] = urlSchema;
@@ -62,8 +67,7 @@ function hosts () {
   return props;
 }
 
-
-function integrations () {
+function integrations() {
   return {
     launchDarkly: strictObject({
       envId: alnumExact(24)
@@ -80,18 +84,18 @@ function integrations () {
       maps_api_key: alnumExact(39)
     }),
     fonts_dot_com: strictObject({
-      project_id: {type: 'string', format: 'uuid'}
+      project_id: { type: 'string', format: 'uuid' }
     }),
     segment_io: alnumExact(10),
     snowplow: strictObject({
-      collector_endpoint: {type: 'string'},
-      app_id: {type: 'string'},
-      buffer_size: {type: 'number'}
+      collector_endpoint: { type: 'string' },
+      app_id: { type: 'string' },
+      buffer_size: { type: 'number' }
     })
   };
 }
 
-function strictObject (props, optional) {
+function strictObject(props, optional) {
   return {
     type: 'object',
     additionalProperties: false,
@@ -100,24 +104,21 @@ function strictObject (props, optional) {
   };
 }
 
-
-function alnumExact (length) {
+function alnumExact(length) {
   return {
     type: 'string',
     pattern: `^[a-zA-Z0-9_]{${length}}$`
   };
 }
 
-
-function filestackPolicy () {
+function filestackPolicy() {
   return {
     type: 'string',
     pattern: `^[a-zA-Z0-9=]{1,256}$`
   };
 }
 
-
-function hex (length) {
+function hex(length) {
   return {
     type: 'string',
     pattern: `^[0-9a-f]{${length}}$`

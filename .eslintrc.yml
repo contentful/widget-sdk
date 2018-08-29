@@ -6,14 +6,13 @@ extends:
   - 'eslint:recommended'
   - 'standard'
   - 'plugin:react/recommended'
+  - 'prettier'
 
 env:
   browser: true
 parser: 'babel-eslint'
 rules:
   react/display-name: "off"
-  indent: "off"
-  indent-legacy: [2, 2, { "SwitchCase": 1 }]
   no-template-curly-in-string: "off"
 
   no-useless-return: "off"
@@ -28,8 +27,6 @@ rules:
   no-multiple-empty-lines: ["error", {max: 2, maxBOF: 0, maxEOF: 0}]
   no-unused-vars: ['error', {vars: 'all', varsIgnorePattern: '^_', args: 'all', argsIgnorePattern: '^_'}]
   eol-last: "error"
-  generator-star-spacing: ['error', {before: false, after: true}]
-  yield-star-spacing: ['error', {before: false, after: true}]
   require-yield: off
 
 overrides:

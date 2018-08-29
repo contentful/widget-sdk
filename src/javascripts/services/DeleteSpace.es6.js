@@ -1,16 +1,16 @@
-import {h} from 'utils/hyperscript';
-import {extend} from 'lodash';
+import { h } from 'utils/hyperscript';
+import { extend } from 'lodash';
 import $rootScope from '$rootScope';
 import modalDialog from 'modalDialog';
 import notification from 'notification';
 import ReloadNotification from 'ReloadNotification';
 import Command from 'command';
 import * as TokenStore from 'services/TokenStore';
-import {createSpaceEndpoint} from 'data/EndpointFactory';
+import { createSpaceEndpoint } from 'data/EndpointFactory';
 import ApiClient from 'data/ApiClient';
 import { openModal as openCommittedSpaceWarningDialog } from 'components/shared/space-wizard/CommittedSpaceWarningModal';
 
-export function openDeleteSpaceDialog ({space, plan, onSuccess}) {
+export function openDeleteSpaceDialog({ space, plan, onSuccess }) {
   if (plan && plan.committed) {
     return openCommittedSpaceWarningDialog();
   }
@@ -18,12 +18,15 @@ export function openDeleteSpaceDialog ({space, plan, onSuccess}) {
   const spaceName = space.name;
   const scope = extend($rootScope.$new(), {
     spaceName: spaceName,
-    input: {spaceName: ''},
+    input: { spaceName: '' },
     remove: Command.create(
-      () => remove(space)
-        .then(() => { scope.dialog.confirm(); })
-        .then(onSuccess),
-      {disabled: () => scope.input.spaceName !== spaceName}
+      () =>
+        remove(space)
+          .then(() => {
+            scope.dialog.confirm();
+          })
+          .then(onSuccess),
+      { disabled: () => scope.input.spaceName !== spaceName }
     )
   });
 
@@ -34,21 +37,25 @@ export function openDeleteSpaceDialog ({space, plan, onSuccess}) {
   });
 }
 
-function remove (space) {
+function remove(space) {
   const endpoint = createSpaceEndpoint(space.sys.id);
   const client = new ApiClient(endpoint);
 
-  return client.deleteSpace()
-  .then(TokenStore.refresh)
-  .then(() => { notification.info(`Space ${space.name} deleted successfully.`); })
-  .catch(ReloadNotification.basicErrorHandler);
+  return client
+    .deleteSpace()
+    .then(TokenStore.refresh)
+    .then(() => {
+      notification.info(`Space ${space.name} deleted successfully.`);
+    })
+    .catch(ReloadNotification.basicErrorHandler);
 }
 
-function removalConfirmation () {
+function removalConfirmation() {
   const content = [
     h('p', [
       'You are about to remove space ',
-      h('span.modal-dialog__highlight', {ngBind: 'spaceName'}), '.'
+      h('span.modal-dialog__highlight', { ngBind: 'spaceName' }),
+      '.'
     ]),
     h('p', [
       h('strong', [
@@ -57,12 +64,12 @@ function removalConfirmation () {
       ])
     ]),
     h('p', ['To confirm, type the name of the space in the field below:']),
-    h('input.cfnext-form__input--full-size', {ngModel: 'input.spaceName'})
+    h('input.cfnext-form__input--full-size', { ngModel: 'input.spaceName' })
   ];
 
   const controls = [
-    h('button.btn-caution', {uiCommand: 'remove'}, ['Remove']),
-    h('button.btn-secondary-action', {ngClick: 'dialog.cancel()'}, ['Don’t remove'])
+    h('button.btn-caution', { uiCommand: 'remove' }, ['Remove']),
+    h('button.btn-secondary-action', { ngClick: 'dialog.cancel()' }, ['Don’t remove'])
   ];
 
   return modalDialog.richtextLayout('Remove space', content, controls);

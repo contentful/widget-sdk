@@ -1,6 +1,6 @@
 import window from 'global/window';
 
-export default function createClientStorageWrapper (storageType) {
+export default function createClientStorageWrapper(storageType) {
   const wrapper = {};
   const methods = ['setItem', 'getItem', 'removeItem'];
   let storage;
@@ -14,7 +14,7 @@ export default function createClientStorageWrapper (storageType) {
   }
 
   methods.forEach(method => {
-    wrapper[method] = function () {
+    wrapper[method] = function() {
       const args = Array.prototype.slice.call(arguments);
 
       return storage[method](...args);

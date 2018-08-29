@@ -1,11 +1,10 @@
-import {isObjectLike, cloneDeep} from 'lodash';
+import { isObjectLike, cloneDeep } from 'lodash';
 
 /**
  * Export methods for freezing and cloning
  * - deepFreeze
  * - deepFreezeClone
  */
-
 
 /**
  * @ngdoc method
@@ -17,7 +16,7 @@ import {isObjectLike, cloneDeep} from 'lodash';
  * @param {object|array} target
  * @returns {object|array}
  */
-export function deepFreeze (o) {
+export function deepFreeze(o) {
   if (isFrozen(o)) {
     return o;
   }
@@ -43,7 +42,7 @@ export function deepFreeze (o) {
 
 export { deepFreeze as freeze };
 
-export function shallowFreeze (o) {
+export function shallowFreeze(o) {
   if (isFrozen(o)) {
     return o;
   }
@@ -57,8 +56,7 @@ export function shallowFreeze (o) {
   return o;
 }
 
-
-function isFrozen (o) {
+function isFrozen(o) {
   try {
     return Object.isFrozen(o);
   } catch (e) {
@@ -66,7 +64,6 @@ function isFrozen (o) {
     return true;
   }
 }
-
 
 /**
  * @ngdoc method
@@ -78,6 +75,6 @@ function isFrozen (o) {
  * @param {object|array} target
  * @returns {object|array}
  */
-export function deepFreezeClone (o) {
+export function deepFreezeClone(o) {
   return deepFreeze(cloneDeep(o));
 }

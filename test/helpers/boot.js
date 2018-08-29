@@ -5,7 +5,7 @@ Error.stackTraceLimit = 1000;
  * Note that it will fail with generic error rather than a failed test case
  * due to asynchronous event handling.
  */
-window.addEventListener('unhandledrejection', (ev) => {
+window.addEventListener('unhandledrejection', ev => {
   window.__karma__.error(`Unhandled rejection: ${ev.reason.stack}`);
 });
 

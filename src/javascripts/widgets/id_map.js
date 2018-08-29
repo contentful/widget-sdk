@@ -16,49 +16,55 @@
  * map.locale.toPublic[aLocale.internal_code]  // => aLocale.code
  * map.locale.toInternal[aLocale.code]  // => aLocale.internal_code
  */
-angular.module('contentful')
-.factory('widgets/IDMap', ['require', require => {
-  var TheLocaleStore = require('TheLocaleStore');
+angular.module('contentful').factory('widgets/IDMap', [
+  'require',
+  require => {
+    var TheLocaleStore = require('TheLocaleStore');
 
-  return createIDMap;
+    return createIDMap;
 
-  function createIDMap (fields) {
-    return {
-      field: createFieldMap(fields),
-      locale: createLocaleMap()
-    };
-  }
+    function createIDMap(fields) {
+      return {
+        field: createFieldMap(fields),
+        locale: createLocaleMap()
+      };
+    }
 
-  function createFieldMap (fields) {
-    var toPublic = _.transform(fields, (toPublic, field) => {
-      toPublic[field.id] = field.apiName;
-    });
-    var toInternal = _.invert(toPublic);
+    function createFieldMap(fields) {
+      var toPublic = _.transform(fields, (toPublic, field) => {
+        toPublic[field.id] = field.apiName;
+      });
+      var toInternal = _.invert(toPublic);
 
-    return {
-      toPublic: toPublic,
-      toInternal: toInternal
-    };
-  }
+      return {
+        toPublic: toPublic,
+        toInternal: toInternal
+      };
+    }
 
-  function createLocaleMap () {
-    var locales = TheLocaleStore.getPrivateLocales();
+    function createLocaleMap() {
+      var locales = TheLocaleStore.getPrivateLocales();
 
-    var toPublic = _.transform(locales, (toPublic, locale) => {
-      toPublic[locale.internal_code] = locale.code;
-    });
-    var toInternal = _.invert(toPublic);
+      var toPublic = _.transform(locales, (toPublic, locale) => {
+        toPublic[locale.internal_code] = locale.code;
+      });
+      var toInternal = _.invert(toPublic);
 
-    return {
-      toPublic: toPublic,
-      toInternal: toInternal,
-      valuesToPublic: valuesToPublic
-    };
+      return {
+        toPublic: toPublic,
+        toInternal: toInternal,
+        valuesToPublic: valuesToPublic
+      };
 
-    function valuesToPublic (localized) {
-      return _.transform(localized, (transformed, value, internalLocale) => {
-        transformed[toPublic[internalLocale]] = value;
-      }, {});
+      function valuesToPublic(localized) {
+        return _.transform(
+          localized,
+          (transformed, value, internalLocale) => {
+            transformed[toPublic[internalLocale]] = value;
+          },
+          {}
+        );
+      }
     }
   }
-}]);
+]);

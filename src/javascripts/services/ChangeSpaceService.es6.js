@@ -14,8 +14,8 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory';
  * @param {string} scope - The scope of the call (from a space or organization page). One of 'space', 'organization'.
  * @param {function} onSubmit
  */
-export async function showDialog ({ organizationId, space, action, scope, onSubmit }) {
-  const validActions = [ 'change', 'upgrade', 'downgrade' ];
+export async function showDialog({ organizationId, space, action, scope, onSubmit }) {
+  const validActions = ['change', 'upgrade', 'downgrade'];
 
   if (!organizationId) {
     throw new Error('organizationId not supplied for space creation');
@@ -36,7 +36,11 @@ export async function showDialog ({ organizationId, space, action, scope, onSubm
   }
 
   if (validActions.indexOf(action) === -1) {
-    throw new Error(`ChangeSpaceService.showDialog: action ${action} invalid, valid actions: ${validActions.join(', ')}`);
+    throw new Error(
+      `ChangeSpaceService.showDialog: action ${action} invalid, valid actions: ${validActions.join(
+        ', '
+      )}`
+    );
   }
 
   const orgEndpoint = createOrganizationEndpoint(organization.sys.id);

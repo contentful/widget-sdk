@@ -16,22 +16,26 @@
  * @usage[html]
  * <div cf-focus-ot-input="optionalExpression"></div>
  */
-angular.module('contentful')
-.directive('cfFocusOtInput', ['require', require => {
-  const K = require('utils/kefir');
-  const defer = require('defer');
+angular.module('contentful').directive('cfFocusOtInput', [
+  'require',
+  require => {
+    const K = require('utils/kefir');
+    const defer = require('defer');
 
-  return {
-    restrict: 'A',
-    link: function (scope, elem, attrs) {
-      if (scope.$eval(attrs.cfFocusOtInput) || _.isEmpty(attrs.cfFocusOtInput)) {
-        K.onValueScope(scope, scope.otDoc.state.loaded$, loaded => {
-          if (loaded) {
-            const input = elem.find('input').eq(0);
-            defer(() => { input.focus(); });
-          }
-        });
+    return {
+      restrict: 'A',
+      link: function(scope, elem, attrs) {
+        if (scope.$eval(attrs.cfFocusOtInput) || _.isEmpty(attrs.cfFocusOtInput)) {
+          K.onValueScope(scope, scope.otDoc.state.loaded$, loaded => {
+            if (loaded) {
+              const input = elem.find('input').eq(0);
+              defer(() => {
+                input.focus();
+              });
+            }
+          });
+        }
       }
-    }
-  };
-}]);
+    };
+  }
+]);

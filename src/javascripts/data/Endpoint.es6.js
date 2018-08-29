@@ -50,14 +50,14 @@ import shouldUseEnvEndpoint from './shouldUseEnvEndpoint';
  *                         endpoints for applicable entities
  * @returns {function(): Promise<Object>}
  */
-export function createSpaceEndpoint (baseUrl, spaceId, auth, envId) {
+export function createSpaceEndpoint(baseUrl, spaceId, auth, envId) {
   return create(withBaseUrl, auth);
 
-  function withBaseUrl (path) {
+  function withBaseUrl(path) {
     return joinPath([baseUrl, 'spaces', spaceId].concat(maybePrefixWithEnv(path)));
   }
 
-  function maybePrefixWithEnv (path) {
+  function maybePrefixWithEnv(path) {
     if (envId && shouldUseEnvEndpoint(path)) {
       return ['environments', envId].concat(path);
     } else {
@@ -91,7 +91,7 @@ export function createSpaceEndpoint (baseUrl, spaceId, auth, envId) {
  * @param {function(): Promise<string>} auth.refreshToken
  * @returns {function(): Promise<Object>}
  */
-export function createOrganizationEndpoint (baseUrl, organizationId, auth) {
+export function createOrganizationEndpoint(baseUrl, organizationId, auth) {
   const organizationBaseUrl = joinPath([baseUrl, 'organizations', organizationId]);
   return create(organizationBaseUrl, auth);
 }
@@ -147,7 +147,7 @@ export function createOrganizationEndpoint (baseUrl, organizationId, auth) {
  * @param {function(): Promise<string>} auth.refreshToken
  * @returns {function(): Promise<Object>}
  */
-export function create (baseUrl, auth) {
+export function create(baseUrl, auth) {
   const baseRequest = makeRequest(auth);
   let withBaseUrl = baseUrl;
 
@@ -155,7 +155,7 @@ export function create (baseUrl, auth) {
     withBaseUrl = path => joinPath([baseUrl].concat(path));
   }
 
-  return function request (config, headers) {
+  return function request(config, headers) {
     const url = withBaseUrl(config.path);
 
     const req = {
@@ -166,26 +166,32 @@ export function create (baseUrl, auth) {
       params: config.query
     };
 
-    return baseRequest(req).then(response => response.data, response => {
-      const status = parseInt(response.status, 10);
-      const error = extend(new Error('API request failed'), {
-        status: status,
-        // We duplicate this property because it is required by the
-        // request queue.
-        statusCode: status,
-        code: get(response, ['data', 'sys', 'id'], response.status),
-        data: response.data,
-        headers: response.headers,
-        request: req
-      });
-      return $q.reject(error);
-    });
+    return baseRequest(req).then(
+      response => response.data,
+      response => {
+        const status = parseInt(response.status, 10);
+        const error = extend(new Error('API request failed'), {
+          status: status,
+          // We duplicate this property because it is required by the
+          // request queue.
+          statusCode: status,
+          code: get(response, ['data', 'sys', 'id'], response.status),
+          data: response.data,
+          headers: response.headers,
+          request: req
+        });
+        return $q.reject(error);
+      }
+    );
   };
 
-  function makeHeaders (version, additional) {
-    const headers = extend({
-      'Content-Type': 'application/vnd.contentful.management.v1+json'
-    }, additional);
+  function makeHeaders(version, additional) {
+    const headers = extend(
+      {
+        'Content-Type': 'application/vnd.contentful.management.v1+json'
+      },
+      additional
+    );
     if (version) {
       headers['X-Contentful-Version'] = version;
     }
@@ -193,16 +199,18 @@ export function create (baseUrl, auth) {
   }
 }
 
-function joinPath (components) {
+function joinPath(components) {
   const startSlashRegex = /^\//;
   const endSlashRegex = /\/$/;
-  return filter(components).map((component, ix) => {
-    if (ix > 0) {
-      component = component.replace(startSlashRegex, '');
-    }
-    if (ix < components.length - 1) {
-      component = component.replace(endSlashRegex, '');
-    }
-    return component;
-  }).join('/');
+  return filter(components)
+    .map((component, ix) => {
+      if (ix > 0) {
+        component = component.replace(startSlashRegex, '');
+      }
+      if (ix < components.length - 1) {
+        component = component.replace(endSlashRegex, '');
+      }
+      return component;
+    })
+    .join('/');
 }

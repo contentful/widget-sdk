@@ -1,8 +1,8 @@
 import makeState from 'states/Base';
-import {h} from 'utils/hyperscript';
+import { h } from 'utils/hyperscript';
 import $location from '$location';
 import * as Navigator from 'states/Navigator';
-import {resolveLink} from './deeplink/resolver';
+import { resolveLink } from './deeplink/resolver';
 
 /**
  * @description deeplink route to point users to certain sections,
@@ -24,12 +24,15 @@ export default makeState({
   url: '/deeplink',
   template: createTemplate(),
   loadingText: 'Redirecting…',
-  controller: ['$scope', $scope => {
-    createController($scope);
-  }]
+  controller: [
+    '$scope',
+    $scope => {
+      createController($scope);
+    }
+  ]
 });
 
-export function createController ($scope) {
+export function createController($scope) {
   const { link, ...otherParams } = $location.search();
 
   return resolveLink(link, otherParams).then(({ path, params, onboarding }) => {
@@ -48,16 +51,20 @@ export function createController ($scope) {
   });
 }
 
-function createTemplate () {
+function createTemplate() {
   return h('.workbench', [
     createScreen({
       condition: 'status === "onboarding"',
       dataTestId: 'deeplink-onboarding-error',
       title: `Unfortunately, we didn't find your onboarding space.`,
       subtitle: [
-        h('a', {
-          uiSref: 'home'
-        }, ['Go to the main page']),
+        h(
+          'a',
+          {
+            uiSref: 'home'
+          },
+          ['Go to the main page']
+        ),
         '.'
       ]
     }),
@@ -67,45 +74,63 @@ function createTemplate () {
       title: 'The link you provided is broken or does not exist',
       subtitle: [
         'We are notified about it. You can contact our support or ',
-        h('a', {
-          uiSref: 'home'
-        }, ['go to the main page']),
+        h(
+          'a',
+          {
+            uiSref: 'home'
+          },
+          ['go to the main page']
+        ),
         '.'
       ]
     }),
-    h('div', {
-      ngShow: '!status'
-    }, [
-      'Redirecting…'
-    ])
+    h(
+      'div',
+      {
+        ngShow: '!status'
+      },
+      ['Redirecting…']
+    )
   ]);
 }
 
-function createScreen ({ condition, dataTestId, title, subtitle }) {
-  return h('div', {
-    ngShow: condition,
-    dataTestId,
-    style: {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: '100%'
-    }
-  }, [
-    h('h3', {
+function createScreen({ condition, dataTestId, title, subtitle }) {
+  return h(
+    'div',
+    {
+      ngShow: condition,
+      dataTestId,
       style: {
-        marginTop: 0,
-        marginBottom: '0.5em',
-        fontSize: '2em',
-        lineHeight: '1.2em'
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100%'
       }
-    }, [title]),
-    h('div', {
-      style: {
-        fontSize: '1.2em',
-        lineHeight: '1.2em'
-      }
-    }, subtitle)
-  ]);
+    },
+    [
+      h(
+        'h3',
+        {
+          style: {
+            marginTop: 0,
+            marginBottom: '0.5em',
+            fontSize: '2em',
+            lineHeight: '1.2em'
+          }
+        },
+        [title]
+      ),
+      h(
+        'div',
+        {
+          style: {
+            fontSize: '1.2em',
+            lineHeight: '1.2em'
+          }
+        },
+        subtitle
+      )
+    ]
+  );
 }

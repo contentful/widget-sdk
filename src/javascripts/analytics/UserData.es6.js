@@ -1,5 +1,5 @@
 import CookieStorage from 'TheStore/CookieStorage';
-import {pickBy, merge} from 'lodash';
+import { pickBy, merge } from 'lodash';
 
 /**
  * @ngdoc service
@@ -18,7 +18,7 @@ import {pickBy, merge} from 'lodash';
  * Sanitizes and extends user data with details
  * specific to the first visit.
  */
-export function prepareUserData (userData) {
+export function prepareUserData(userData) {
   if (userData.signInCount === 1) {
     // On first login, send referrer, campaign and A/B test data
     // if it has been set in marketing website cookie
@@ -28,17 +28,20 @@ export function prepareUserData (userData) {
   }
 }
 
-function getFirstVisitData () {
-  return pickBy({
-    firstReferrer: parseCookie('cf_first_visit', 'referer'),
-    campaignName: parseCookie('cf_first_visit', 'campaign_name'),
-    lastReferrer: parseCookie('cf_last_visit', 'referer'),
-    experimentId: parseCookie('cf_experiment', 'experiment_id'),
-    experimentVariationId: parseCookie('cf_experiment', 'variation_id')
-  }, val => val !== null && val !== undefined);
+function getFirstVisitData() {
+  return pickBy(
+    {
+      firstReferrer: parseCookie('cf_first_visit', 'referer'),
+      campaignName: parseCookie('cf_first_visit', 'campaign_name'),
+      lastReferrer: parseCookie('cf_last_visit', 'referer'),
+      experimentId: parseCookie('cf_experiment', 'experiment_id'),
+      experimentVariationId: parseCookie('cf_experiment', 'variation_id')
+    },
+    val => val !== null && val !== undefined
+  );
 }
 
-function parseCookie (cookieName, prop) {
+function parseCookie(cookieName, prop) {
   try {
     const cookie = CookieStorage.get(cookieName);
     return JSON.parse(cookie)[prop];

@@ -1,24 +1,33 @@
 {
   "environment": "development",
-  "authUrl" : "https://be.quirely.com",
-  "apiUrl" : "https://api.quirely.com",
-  "mockApiUrl" : "https://pcfjmbizecazdxcwy.stoplight-proxy.io",
-  "otUrl": ["https://ot1.quirely.com", "https://ot2.quirely.com", "https://ot3.quirely.com", "https://ot4.quirely.com", "https://ot5.quirely.com", "https://ot6.quirely.com", "https://ot7.quirely.com", "https://ot8.quirely.com"],
+  "authUrl": "https://be.quirely.com",
+  "apiUrl": "https://api.quirely.com",
+  "mockApiUrl": "https://pcfjmbizecazdxcwy.stoplight-proxy.io",
+  "otUrl": [
+    "https://ot1.quirely.com",
+    "https://ot2.quirely.com",
+    "https://ot3.quirely.com",
+    "https://ot4.quirely.com",
+    "https://ot5.quirely.com",
+    "https://ot6.quirely.com",
+    "https://ot7.quirely.com",
+    "https://ot8.quirely.com"
+  ],
   "assetUrl": "//localhost:3001",
-  "marketingUrl" : "https://www.quirely.com",
-  "main_domain" : "quirely.com",
+  "marketingUrl": "https://www.quirely.com",
+  "main_domain": "quirely.com",
   "toolsServiceUrl": "https://tools.flinkly.com",
-  "contentful" : {
-    "previewApiUrl" : "preview.contentful.com",
-    "space" : "l1ay9bp8gv68",
-    "cdaApiUrl" : "cdn.contentful.com",
-    "accessToken" : "0c783036ae7540a10db86150e1cb564c8c0bad53482794604f227dc199e6dde1",
-    "spaceTemplateEntryContentTypeId" : "17WjnjeALEOeSyuiMI4QOW",
-    "previewAccessToken" : "2fcfe1abd171477eabd73e64088fe1c1eb2578ac0158332902a1d8e5279356e4",
-    "apiUrl" : "api.contentful.com",
+  "contentful": {
+    "previewApiUrl": "preview.contentful.com",
+    "space": "l1ay9bp8gv68",
+    "cdaApiUrl": "cdn.contentful.com",
+    "accessToken": "0c783036ae7540a10db86150e1cb564c8c0bad53482794604f227dc199e6dde1",
+    "spaceTemplateEntryContentTypeId": "17WjnjeALEOeSyuiMI4QOW",
+    "previewAccessToken": "2fcfe1abd171477eabd73e64088fe1c1eb2578ac0158332902a1d8e5279356e4",
+    "apiUrl": "api.contentful.com",
     "TEASpaceId": "qz0n5cdakyl9"
   },
-  "launchDarkly":{
+  "launchDarkly": {
     "envId": "58ad6cfe5d8af80964c3e7db"
   },
   "filestack": {
@@ -26,19 +35,19 @@
     "policy": "eyJjYWxsIjpbInBpY2siLCJyZWFkIiwic3RhdCIsInN0b3JlIiwiY29udmVydCIsImV4aWYiXSwiZXhwaXJ5IjoyMjEyNjYwODAwfQ==",
     "signature": "a134af7d6801b50cc4106eb2ac315347f06ed51d031334b3b040a17b3dd59ed1"
   },
-  "embedly" : {
-    "api_key" : "5aba1269adbf42919bd1dd3308b84652"
+  "embedly": {
+    "api_key": "5aba1269adbf42919bd1dd3308b84652"
   },
-  "segment_io" : "2z8un4c6u4",
+  "segment_io": "2z8un4c6u4",
   "snowplow": {
     "collector_endpoint": "com-contentful.mini.snplow.net:443",
     "app_id": "userInterfacePreview",
     "buffer_size": 1
   },
-  "google" : {
-    "maps_api_key" : "AIzaSyB_jzGfB98k1d_CCwMacP1ovTfXYxXh11g"
+  "google": {
+    "maps_api_key": "AIzaSyB_jzGfB98k1d_CCwMacP1ovTfXYxXh11g"
   },
-  "fonts_dot_com" : {
-    "project_id" : "00000000-0000-0000-0000-000000000000"
+  "fonts_dot_com": {
+    "project_id": "00000000-0000-0000-0000-000000000000"
   }
 }

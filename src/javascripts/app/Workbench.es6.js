@@ -1,4 +1,4 @@
-import {h} from 'ui/Framework';
+import { h } from 'ui/Framework';
 import scaleSvg from 'utils/ScaleSvg';
 
 /**
@@ -16,17 +16,14 @@ import scaleSvg from 'utils/ScaleSvg';
  * @returns {VTree}
  */
 
-export function simple ({ title, icon, actions }, content) {
+export function simple({ title, icon, actions }, content) {
   return h('.workbench', [
     // Workaround for ie11 min-height bug
     // https://github.com/philipwalton/flexbugs#3-min-height-on-a-flex-container-wont-apply-to-its-flex-items
     header({ icon, title, actions, breadcrumbs: false }),
-    h('.workbench-main.x--content', [
-      h('.workbench-main__middle-content', content)
-    ])
+    h('.workbench-main.x--content', [h('.workbench-main__middle-content', content)])
   ]);
 }
-
 
 /**
  * @description
@@ -38,18 +35,15 @@ export function simple ({ title, icon, actions }, content) {
  * @param {VTree[]} .sidebar
  * @returns {VTree}
  */
-export function withSidebar ({ header, sidebar, content }) {
+export function withSidebar({ header, sidebar, content }) {
   return h('.workbench', [
     header,
     h('.workbench-main', [
       h('.workbench-main__content', [content]),
-      h('.workbench-main__sidebar', [
-        h('.entity-sidebar', sidebar)
-      ])
+      h('.workbench-main__sidebar', [h('.entity-sidebar', sidebar)])
     ])
   ]);
 }
-
 
 /**
  * @ngdoc method
@@ -67,11 +61,11 @@ export function withSidebar ({ header, sidebar, content }) {
  * @param {VTree?}    .afterTitle  Additional HTML that cose after the title
  * @returns {VTree}
  */
-export function header ({title, breadcrumbs = true, icon, actions, afterTitle = []}) {
+export function header({ title, breadcrumbs = true, icon, actions, afterTitle = [] }) {
   return h('.workbench-header__wrapper', [
     h('header.workbench-header', [
       breadcrumbs && h('cf-breadcrumbs'),
-      icon && h('.workbench-header__icon.cf-icon', [ scaleSvg(icon, 0.75) ]),
+      icon && h('.workbench-header__icon.cf-icon', [scaleSvg(icon, 0.75)]),
       h('h1.workbench-header__title', title),
       ...afterTitle,
       actions && h('.workbench-header__actions', actions)

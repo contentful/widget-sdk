@@ -1,7 +1,7 @@
 const URL = require('url');
 
-module.exports.create = function create (manifest, base) {
-  return function resolve (url) {
+module.exports.create = function create(manifest, base) {
+  return function resolve(url) {
     const urlObj = URL.parse(URL.resolve(base + '/', url));
     if (urlObj.protocol) {
       return url;

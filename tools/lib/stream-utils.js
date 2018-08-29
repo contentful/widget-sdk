@@ -1,8 +1,8 @@
 const through = require('through2');
 const Stream = require('stream');
 
-module.exports.map = function map (fn) {
-  return through.obj(function (value, _, push) {
+module.exports.map = function map(fn) {
+  return through.obj(function(value, _, push) {
     try {
       value = fn(value);
     } catch (error) {
@@ -18,10 +18,10 @@ module.exports.map = function map (fn) {
  *
  * Also forwards errors to the result stream.
  */
-module.exports.pipe = function pipe (streams) {
+module.exports.pipe = function pipe(streams) {
   const [first, ...rest] = streams;
   return rest.reduce((piped, stream) => {
-    piped.on('error', (e) => stream.emit('error', e));
+    piped.on('error', e => stream.emit('error', e));
     return piped.pipe(stream);
   }, first);
 };
@@ -30,7 +30,7 @@ module.exports.pipe = function pipe (streams) {
  * Join a list of stream so that all data from the first stream is
  * emitted before the second stream, etc.
  */
-module.exports.join = function join (streams) {
+module.exports.join = function join(streams) {
   let current;
 
   const out = new Stream.Readable({
@@ -42,26 +42,26 @@ module.exports.join = function join (streams) {
 
   return out;
 
-  function read () {
+  function read() {
     current.resume();
   }
 
-  function emitReadable () {
+  function emitReadable() {
     out.emit('readable');
   }
 
-  function pushData (data) {
+  function pushData(data) {
     const resume = out.push(data);
     if (!resume) {
       current.pause();
     }
   }
 
-  function emitError (err) {
+  function emitError(err) {
     out.emit('error', err);
   }
 
-  function readNextStream () {
+  function readNextStream() {
     if (current) {
       current.removeListener('readable', emitReadable);
       current.removeListener('data', pushData);

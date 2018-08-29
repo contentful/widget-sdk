@@ -17,25 +17,30 @@
  *
  */
 
-angular.module('contentful/test', ['contentful', 'contentful/mocks'])
+angular
+  .module('contentful/test', ['contentful', 'contentful/mocks'])
 
-.config(['$provide', 'environment', $provide => {
-  // We cannot provide the environment as a constant directly because
-  // changes to it would leak between tests.
-  $provide.constant('environment', {
-    settings: {
-      launchDarkly: { envId: 'launch-darkly-test-id' },
-      filestack: {},
-      google: {},
-      contentful: {},
-      snowplow: {},
-      authUrl: '//be.test.com',
-      apiUrl: '//api.test.com',
-      otUrl: '//ot.test.com',
-      assetUrl: '//static.test.com',
-      marketingUrl: '//www.test.com',
-      main_domain: 'test.com'
-    },
-    env: 'unittest'
-  });
-}]);
+  .config([
+    '$provide',
+    'environment',
+    $provide => {
+      // We cannot provide the environment as a constant directly because
+      // changes to it would leak between tests.
+      $provide.constant('environment', {
+        settings: {
+          launchDarkly: { envId: 'launch-darkly-test-id' },
+          filestack: {},
+          google: {},
+          contentful: {},
+          snowplow: {},
+          authUrl: '//be.test.com',
+          apiUrl: '//api.test.com',
+          otUrl: '//ot.test.com',
+          assetUrl: '//static.test.com',
+          marketingUrl: '//www.test.com',
+          main_domain: 'test.com'
+        },
+        env: 'unittest'
+      });
+    }
+  ]);

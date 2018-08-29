@@ -12,14 +12,12 @@ import { shallowFreeze } from 'utils/Freeze';
  *
  */
 
-
 /**
  * Pure version of `Object.assign` that returns frozen object.
  */
-export function assign (...objects) {
+export function assign(...objects) {
   return shallowFreeze(lodash.assign({}, ...objects));
 }
-
 
 /**
  * Apply a function to the value given by `path` and return a new collection
@@ -38,7 +36,7 @@ export function assign (...objects) {
  * @param {array|string|number} path
  * @param {function(value)} f
  */
-export function update (collection, path, f) {
+export function update(collection, path, f) {
   if (!Array.isArray(path)) {
     return update(collection, [path], f);
   }
@@ -53,7 +51,7 @@ export function update (collection, path, f) {
   }
 }
 
-function setFlat (container, key, value) {
+function setFlat(container, key, value) {
   if (Array.isArray(container)) {
     if (typeof key !== 'number') {
       throw new TypeError('Collection key for array must be a number');
@@ -73,7 +71,6 @@ function setFlat (container, key, value) {
   }
 }
 
-
 /**
  * Return a new collection with the value at the given path replaced by the
  * `value` argument.
@@ -81,10 +78,9 @@ function setFlat (container, key, value) {
  * This is convenience wrapper around `update`. In particular `path` follows the
  * same behavior as described there.
  */
-export function set (container, path, value) {
+export function set(container, path, value) {
   return update(container, path, () => value);
 }
-
 
 /**
  * Works just like `lodash.get()` with two differences.
@@ -93,7 +89,7 @@ export function set (container, path, value) {
  * - If `path` is not an array it is treated as a single key and not split on
  *   dots.
  */
-export function get (container, path, fallbackValue) {
+export function get(container, path, fallbackValue) {
   if (!Array.isArray(path)) {
     if (container && path in container) {
       return container[path];
@@ -109,33 +105,34 @@ export function get (container, path, fallbackValue) {
   }
 }
 
-
-export function push (as, a) {
+export function push(as, a) {
   return shallowFreeze([...as, a]);
 }
 
-export function map (collection, fn) {
+export function map(collection, fn) {
   return shallowFreeze(lodash.map(collection, fn));
 }
 
-export function filter (collection, fn) {
+export function filter(collection, fn) {
   return shallowFreeze(lodash.filter(collection, fn));
 }
 
-export function concat (...arrays) {
-  return shallowFreeze(arrays.reduce((concatted, array) => {
-    if (!Array.isArray(array)) {
-      throw new TypeError('Arguments to Collections.concat must be arrays');
-    }
-    return concatted.concat(array);
-  }));
+export function concat(...arrays) {
+  return shallowFreeze(
+    arrays.reduce((concatted, array) => {
+      if (!Array.isArray(array)) {
+        throw new TypeError('Arguments to Collections.concat must be arrays');
+      }
+      return concatted.concat(array);
+    })
+  );
 }
 
-export function slice (as, start, end) {
+export function slice(as, start, end) {
   return shallowFreeze(as.slice(start, end));
 }
 
-export function drop (as, n) {
+export function drop(as, n) {
   if (n > 0) {
     return shallowFreeze(as.slice(n));
   } else if (n < 0) {
@@ -145,15 +142,15 @@ export function drop (as, n) {
   }
 }
 
-export function unshift (as, a) {
+export function unshift(as, a) {
   return shallowFreeze([a, ...as]);
 }
 
-export function insertAt (arr, index, item) {
+export function insertAt(arr, index, item) {
   return shallowFreeze([...arr.slice(0, index), item, ...arr.slice(index)]);
 }
 
-export function move (arr, oldIndex, newIndex) {
+export function move(arr, oldIndex, newIndex) {
   if (!Array.isArray(arr) || typeof oldIndex !== 'number' || typeof newIndex !== 'number') {
     throw new TypeError('Arguments to Collections.move must be (array, number, number)');
   }
@@ -161,13 +158,10 @@ export function move (arr, oldIndex, newIndex) {
     throw new TypeError('Indexes provided to Collections.move should be in 0, arr.length-1 range');
   }
 
-  return oldIndex === newIndex ? arr : insertAt(
-    [...arr.slice(0, oldIndex), ...arr.slice(oldIndex + 1)],
-    newIndex,
-    arr[oldIndex]
-  );
+  return oldIndex === newIndex
+    ? arr
+    : insertAt([...arr.slice(0, oldIndex), ...arr.slice(oldIndex + 1)], newIndex, arr[oldIndex]);
 }
-
 
 /**
  * Applies `fn` to each element in the collection. We return the first
@@ -182,7 +176,7 @@ export function move (arr, oldIndex, newIndex) {
  *   For objects 'index' will be a string. For arrays 'index' will be a
  *   number.
  */
-export function findMap (collection, fn) {
+export function findMap(collection, fn) {
   let foundValue;
   lodash.find(collection, (value, index) => {
     foundValue = fn(value, index);

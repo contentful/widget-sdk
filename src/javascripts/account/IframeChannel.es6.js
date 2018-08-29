@@ -2,7 +2,6 @@ import $window from '$window';
 import userAgent from 'userAgent';
 import * as K from 'utils/kefir';
 
-
 /**
  * Create a stream of messages send with `window.postMessage` from the Iframe.
  *
@@ -11,9 +10,8 @@ import * as K from 'utils/kefir';
  * @param {DOM.Iframe} iframe
  * @returns {K.Stream<any>}
  */
-export default function create (iframe) {
-  return K.fromEvents($window, 'message')
-  .flatten((ev) => {
+export default function create(iframe) {
+  return K.fromEvents($window, 'message').flatten(ev => {
     if (iframe.contentWindow !== ev.source) {
       return [];
     }
@@ -28,7 +26,7 @@ export default function create (iframe) {
 
 // On IE we can only send strings. We need to parse the data in that case
 // The complementary code is in the Gatekeeper repository.
-function normalizeEvent (event) {
+function normalizeEvent(event) {
   if (userAgent.isIE()) {
     try {
       return {

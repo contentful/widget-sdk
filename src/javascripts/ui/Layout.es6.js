@@ -1,4 +1,4 @@
-import {h} from 'ui/Framework';
+import { h } from 'ui/Framework';
 
 /**
  * @module
@@ -11,7 +11,6 @@ import {h} from 'ui/Framework';
  *   - vspace, vspace_
  *   - hspace, hfill
  */
-
 
 /**
  * @ngdoc method
@@ -29,10 +28,9 @@ import {h} from 'ui/Framework';
  * @param {string[]} children  List of children for the container
  * @returns {string}
  */
-export function container (style, children) {
-  return h('div', {style}, children);
+export function container(style, children) {
+  return h('div', { style }, children);
 }
-
 
 /**
  * @ngdoc method
@@ -49,7 +47,7 @@ export function container (style, children) {
  * @param {number} key  Ranges from 1 to 8
  * @returns {VNode}
  */
-export function vspace (key) {
+export function vspace(key) {
   const height = vheight(key);
   return vspace_(`${height}px`);
 }
@@ -68,7 +66,7 @@ export function vspace (key) {
  * @param {number} key  Ranges from 1 to 8
  * @returns {VNode}
  */
-function vheight (key) {
+function vheight(key) {
   // Defined by the UI Design Principles
   const height = [4, 8, 14, 20, 28, 40, 60, 80][key - 1];
   if (!height) {
@@ -98,12 +96,11 @@ function vheight (key) {
  * @param {String} height  CSS value for the top margin
  * @returns {VNode}
  */
-export function vspace_ (height) {
+export function vspace_(height) {
   return container({
     marginTop: height
   });
 }
-
 
 /**
  * Create a container with a horizontal flex-box layout
@@ -121,16 +118,21 @@ export function vspace_ (height) {
  *     ])
  *
  */
-export function hbox (style, children) {
+export function hbox(style, children) {
   if (arguments.length < 2) {
     children = style;
     style = {};
   }
-  return container(Object.assign({
-    display: 'flex'
-  }, style), children);
+  return container(
+    Object.assign(
+      {
+        display: 'flex'
+      },
+      style
+    ),
+    children
+  );
 }
-
 
 /**
  * Create a container with a vertical flex-box layout
@@ -148,18 +150,20 @@ export function hbox (style, children) {
  *     ])
  *
  */
-export function vbox (style, children) {
+export function vbox(style, children) {
   if (arguments.length < 2) {
     children = style;
     style = {};
   }
-  return container({
-    display: 'flex',
-    flexDirection: 'column',
-    ...style
-  }, children);
+  return container(
+    {
+      display: 'flex',
+      flexDirection: 'column',
+      ...style
+    },
+    children
+  );
 }
-
 
 /**
  * @ngdoc method
@@ -182,23 +186,21 @@ export function vbox (style, children) {
  * @param {String} width  CSS value for the left margin
  * @returns {VNode}
  */
-export function hspace (width) {
+export function hspace(width) {
   return container({
     marginLeft: width
   });
 }
 
-
 /**
  * Just like `hspace` but the element has `display: 'inline-block`.
  */
-export function ihspace (width) {
+export function ihspace(width) {
   return container({
     display: 'inline-block',
     marginLeft: width
   });
 }
-
 
 /**
  * @ngdoc method
@@ -220,7 +222,7 @@ export function ihspace (width) {
  * @param {string} minWidth
  * @returns {VNode}
  */
-export function hfill (minWidth) {
+export function hfill(minWidth) {
   return container({
     marginLeft: 'auto',
     marginRight: minWidth

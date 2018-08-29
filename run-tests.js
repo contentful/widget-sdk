@@ -17,7 +17,10 @@
 
 const { once } = require('lodash');
 const { watch } = require('./tools/webpack-tasks');
-const { Server, config: { parseConfig } } = require('karma');
+const {
+  Server,
+  config: { parseConfig }
+} = require('karma');
 const { testFiles } = require('./karma.conf');
 const { resolve } = require('path');
 const { argv } = require('yargs');
@@ -41,10 +44,7 @@ if (prod) {
   // $ NODE_ENV=production gulp build/with-styleguide
   // you can run it locally as well, just execute the command above first
   config.set({
-    files: [
-      'build/app/**/*.js',
-      'build/app/**/*.css'
-    ].concat(testFiles),
+    files: ['build/app/**/*.js', 'build/app/**/*.css'].concat(testFiles),
 
     // Fix for https://crbug.com/638180: Running as root without --no-sandbox is not supported
     browsers: ['ChromeHeadlessNoSandbox'],
@@ -70,8 +70,8 @@ if (prod) {
   runTests();
 }
 
-function runTests () {
-  var server = new Server(config, (exitCode) => {
+function runTests() {
+  var server = new Server(config, exitCode => {
     console.log(`Karma has exited with ${exitCode}`);
     process.exit(exitCode);
   });

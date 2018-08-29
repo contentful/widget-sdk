@@ -1,7 +1,7 @@
-import {find} from 'lodash';
+import { find } from 'lodash';
 import makeState from 'states/Base';
 import $state from '$state';
-import {getSpaces} from 'services/TokenStore';
+import { getSpaces } from 'services/TokenStore';
 import { getStore } from 'TheStore';
 import template from 'app/home/HomeTemplate';
 
@@ -21,26 +21,29 @@ export default makeState({
   template: template(),
   loadingText: 'Loading…',
   resolve: {
-    spaces: function () {
-      return getSpaces().then((spaces) => {
+    spaces: function() {
+      return getSpaces().then(spaces => {
         if (spaces.length) {
           const space = getLastUsedSpace(spaces) || getLastUsedOrgSpace(spaces) || spaces[0];
-          $state.go('spaces.detail', {spaceId: space.sys.id});
+          $state.go('spaces.detail', { spaceId: space.sys.id });
         }
       });
 
-      function getLastUsedSpace (spaces) {
+      function getLastUsedSpace(spaces) {
         const spaceId = store.get('lastUsedSpace');
-        return spaceId && find(spaces, (space) => space.sys.id === spaceId);
+        return spaceId && find(spaces, space => space.sys.id === spaceId);
       }
 
-      function getLastUsedOrgSpace (spaces) {
+      function getLastUsedOrgSpace(spaces) {
         const orgId = store.get('lastUsedOrg');
-        return orgId && find(spaces, (space) => space.organization.sys.id === orgId);
+        return orgId && find(spaces, space => space.organization.sys.id === orgId);
       }
     }
   },
-  controller: ['$scope', $scope => {
-    $scope.context.ready = true;
-  }]
+  controller: [
+    '$scope',
+    $scope => {
+      $scope.context.ready = true;
+    }
+  ]
 });

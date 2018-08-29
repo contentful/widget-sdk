@@ -61,17 +61,19 @@ export const spacesByOrganization$ = spacesBus.property.map(spaces => {
   return spaces ? groupBy(spaces, s => s.organization.sys.id) : null;
 });
 
-export function getTokenLookup () { return tokenInfo; }
+export function getTokenLookup() {
+  return tokenInfo;
+}
 
 /**
  * Start refreshing the token data every five minutes and every time
  * the access token changes.
  */
-export function init () {
+export function init() {
   const offToken = K.onValue(auth.token$, refresh);
   const refreshInterval = $window.setInterval(refresh, TOKEN_INFO_REFRESH_INTERVAL);
 
-  return function deinit () {
+  return function deinit() {
     $window.clearInterval(refreshInterval);
     offToken();
   };
@@ -87,33 +89,38 @@ export function init () {
  *
  * Returns the response from the token endpoint.
  */
-export function refresh () {
+export function refresh() {
   if (!tokenInfoMVar.isEmpty()) {
     tokenInfoMVar.empty();
-    fetchInfo().then(newTokenInfo => {
-      tokenInfo = newTokenInfo;
-      tokenInfoMVar.put(newTokenInfo);
-      const user = newTokenInfo.sys.createdBy;
-      const organizations = map(user.organizationMemberships, 'organization');
-      OrganizationRoles.setUser(user);
-      userBus.set(user);
-      organizationsBus.set(organizations);
-      spacesBus.set(prepareSpaces(newTokenInfo.spaces));
-    }, () => {
-      ReloadNotification.trigger('The application was unable to authenticate with the server');
-    });
+    fetchInfo().then(
+      newTokenInfo => {
+        tokenInfo = newTokenInfo;
+        tokenInfoMVar.put(newTokenInfo);
+        const user = newTokenInfo.sys.createdBy;
+        const organizations = map(user.organizationMemberships, 'organization');
+        OrganizationRoles.setUser(user);
+        userBus.set(user);
+        organizationsBus.set(organizations);
+        spacesBus.set(prepareSpaces(newTokenInfo.spaces));
+      },
+      () => {
+        ReloadNotification.trigger('The application was unable to authenticate with the server');
+      }
+    );
   }
   return tokenInfoMVar.read();
 }
 
-function prepareSpaces (spaces) {
-  return cloneDeep(spaces)
-  .map(space => {
-    delete space.locales; // Do not expose token locales
-    return deepFreeze(space);
-  })
-  // Sort by name
-  .sort((a, b) => (a.name || '').localeCompare(b.name));
+function prepareSpaces(spaces) {
+  return (
+    cloneDeep(spaces)
+      .map(space => {
+        delete space.locales; // Do not expose token locales
+        return deepFreeze(space);
+      })
+      // Sort by name
+      .sort((a, b) => (a.name || '').localeCompare(b.name))
+  );
 }
 
 /**
@@ -124,7 +131,7 @@ function prepareSpaces (spaces) {
  * This method returns a promise of the list of spaces.
  * If some calls are in progress, we're waiting until these are done.
  */
-export function getSpaces () {
+export function getSpaces() {
   return tokenInfoMVar.read().then(() => K.getValue(spacesBus.property));
 }
 
@@ -138,14 +145,14 @@ export function getSpaces () {
  * If some calls are in progress, we're waiting until these are done.
  * Promise is rejected if space with a provided ID couldn't be found.
  */
-export function getSpace (id) {
+export function getSpace(id) {
   return getSpaces().then(spaces => {
-    const found = find(spaces, {sys: {id}});
+    const found = find(spaces, { sys: { id } });
     return found || Promise.reject(new Error('No space with given ID could be found.'));
   });
 }
 
-export function getDomains () {
+export function getDomains() {
   const domains = get(tokenInfo, 'domains', []);
   return domains.reduce((map, value) => {
     map[value.name] = value.domain;
@@ -163,7 +170,7 @@ export function getDomains () {
  * If some calls are in progress, we're waiting until these are done.
  * Promise is rejected if organization with a provided ID couldn't be found.
  */
-export function getOrganization (id) {
+export function getOrganization(id) {
   return getOrganizations().then(orgs => {
     const org = find(orgs, { sys: { id: id } });
     return org || $q.reject(new Error('No organization with given ID could be found.'));
@@ -179,6 +186,6 @@ export function getOrganization (id) {
  * If some calls are in progress, we're waiting until these are done.
  *
  */
-export function getOrganizations () {
+export function getOrganizations() {
   return tokenInfoMVar.read().then(() => deepFreezeClone(K.getValue(organizationsBus.property)));
 }

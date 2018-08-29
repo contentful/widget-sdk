@@ -1,4 +1,4 @@
-export function joinWithAnd (items, oxford = true) {
+export function joinWithAnd(items, oxford = true) {
   if (!Array.isArray(items)) {
     return null;
   }

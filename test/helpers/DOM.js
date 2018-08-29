@@ -2,7 +2,6 @@ import JQuery from 'jquery';
 import _createMountPoint from 'ui/Framework/DOMRenderer';
 import * as ReactTestUtils from 'react-dom/test-utils';
 
-
 /**
  * Create an object that allows you to render virtual DOM trees,
  * interact with the result and make assertions.
@@ -38,19 +37,18 @@ import * as ReactTestUtils from 'react-dom/test-utils';
  * be removed with `ui.destroy()`.
  *
  */
-export function createUI ({ createMountPoint = _createMountPoint } = {}) {
+export function createUI({ createMountPoint = _createMountPoint } = {}) {
   const sandbox = document.createElement('div');
   document.body.appendChild(sandbox);
   const view = createView(sandbox);
   const mountpoint = createMountPoint(sandbox);
   return Object.assign(view, mountpoint, {
-    destroy () {
+    destroy() {
       mountpoint.destroy();
       sandbox.remove();
     }
   });
 }
-
 
 /**
  * Create a high-level interface to interact with the DOM and make
@@ -81,11 +79,11 @@ export function createUI ({ createMountPoint = _createMountPoint } = {}) {
  *
  * TODO We should use the 'assert' library instead of `expect`.
  */
-export function createView (container) {
+export function createView(container) {
   return {
     element: container,
 
-    find (...ids) {
+    find(...ids) {
       return createElement(container, makeTestIdSelector(...ids));
     },
 
@@ -95,37 +93,37 @@ export function createView (container) {
      *
      * TODO Deprecated. Replace with `find(id).assertNonExistent()`.
      */
-    assertNotHasElement (...ids) {
+    assertNotHasElement(...ids) {
       assertNotHasSelector(container, makeTestIdSelector(...ids));
     }
   };
 }
 
-function makeTestIdSelector (...ids) {
-  return ids.map((id) => {
-    if (id.startsWith('.')) {
-      return `[data-test-id$="${id}"]`;
-    } else {
-      return `[data-test-id="${id}"]`;
-    }
-  }).join(' ');
+function makeTestIdSelector(...ids) {
+  return ids
+    .map(id => {
+      if (id.startsWith('.')) {
+        return `[data-test-id$="${id}"]`;
+      } else {
+        return `[data-test-id="${id}"]`;
+      }
+    })
+    .join(' ');
 }
 
-
 // TODO document
-export function setCheckbox (el, value) {
+export function setCheckbox(el, value) {
   if (el instanceof JQuery) {
     el = el.get(0);
   }
   // TODO assert input[type=checkbox]
   el.checked = value;
   // TODO explain click
-  el.dispatchEvent(new Event('click', {bubbles: true}));
-  el.dispatchEvent(new Event('change', {bubbles: true}));
+  el.dispatchEvent(new Event('click', { bubbles: true }));
+  el.dispatchEvent(new Event('change', { bubbles: true }));
   ReactTestUtils.Simulate.change(el);
   ReactTestUtils.Simulate.click(el);
 }
-
 
 /**
  * Returns an interface for controlling a DOM element and making
@@ -137,10 +135,10 @@ export function setCheckbox (el, value) {
  * Note that the element is computed lazily from the `container` and
  * `selector` argument so it need not exist at the time of creation.
  */
-function createElement (container, selector) {
+function createElement(container, selector) {
   // Most of these methods are functions bound to the defined element.
   return {
-    get element () {
+    get element() {
       return getElement();
     },
 
@@ -159,28 +157,27 @@ function createElement (container, selector) {
     assertIsSelected: bindEl(assertIsSelected),
     assertIsChecked: bindEl(assertIsChecked),
     assertIsVisible: bindEl(assertIsVisible),
-    assertNotVisible () {
+    assertNotVisible() {
       assertNotVisible(container, selector);
     },
     assertIsDisabled: bindEl(assertIsDisabled),
     assertHasText: bindEl(assertHasText),
-    assertNonExistent () {
+    assertNonExistent() {
       assertNotHasSelector(container, selector);
     }
   };
 
   // Bind a function that excepts an element as its first argument to
   // the lazily computed element of this interface.
-  function bindEl (fn) {
+  function bindEl(fn) {
     return (...args) => fn(getElement(), ...args);
   }
 
-  function getElement () {
+  function getElement() {
     const el = findOne(container, selector);
     return el;
   }
 }
-
 
 /**
  * Find and return exactly one element matched by the selector.
@@ -188,7 +185,7 @@ function createElement (container, selector) {
  * Throws if there is no element or more then one that is matched by
  * the selector.
  */
-function findOne (element, selector) {
+function findOne(element, selector) {
   const results = element.querySelectorAll(selector);
   if (results.length === 0) {
     throw new Error(`Cannot find element matching ${selector}`);
@@ -199,7 +196,6 @@ function findOne (element, selector) {
   }
 }
 
-
 /**
  * Return an element wrapper for the element that describes the given
  * element.
@@ -207,26 +203,24 @@ function findOne (element, selector) {
  * The descriptor element is determined by resolving the ID in the
  * 'aria-describedby' attribute of the given element.
  */
-function getDescriptor (element) {
+function getDescriptor(element) {
   const source = findOne(element, '[aria-describedby]');
   const id = source.getAttribute('aria-describedby');
   return createElement(document.body, `#${id}`);
 }
 
-
-export function setValue (element, value) {
+export function setValue(element, value) {
   // TODO extend to textarea, select
   if (element.tagName !== 'INPUT') {
     throw new Error(`Cannot set value of element ${element.tagName}`);
   }
   element.value = value;
-  element.dispatchEvent(new Event('input', {bubbles: true}));
-  element.dispatchEvent(new Event('change', {bubbles: true}));
+  element.dispatchEvent(new Event('input', { bubbles: true }));
+  element.dispatchEvent(new Event('change', { bubbles: true }));
   ReactTestUtils.Simulate.change(element);
 }
 
-
-function getValue (element) {
+function getValue(element) {
   // TODO extend to textarea, select
   if (element.tagName !== 'INPUT') {
     throw new Error(`Cannot get value of element ${element.tagName}`);
@@ -234,7 +228,7 @@ function getValue (element) {
   return element.value;
 }
 
-export function setNativeValue (element, value) {
+export function setNativeValue(element, value) {
   const valueSetter = Object.getOwnPropertyDescriptor(element, 'value').set;
   const prototype = Object.getPrototypeOf(element);
   const prototypeValueSetter = Object.getOwnPropertyDescriptor(prototype, 'value').set;
@@ -246,12 +240,11 @@ export function setNativeValue (element, value) {
   }
 }
 
-export function dispatchOnChange (domNode, value) {
+export function dispatchOnChange(domNode, value) {
   const event = new Event('input', { bubbles: true });
   setNativeValue(domNode, value);
   domNode.dispatchEvent(event);
 }
-
 
 /**
  * Trigger a 'keydown' event with the given keycode on an input
@@ -269,13 +262,15 @@ export function dispatchOnChange (domNode, value) {
  * [1]: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode
  * [2]: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
  */
-function keyDown (element, keyCode) {
+function keyDown(element, keyCode) {
   // TODO extend to textarea, elements with tabindex
   if (element.tagName !== 'INPUT') {
     throw new Error(`Cannot trigger keyboard event on element ${element.tagName}`);
   }
   if (typeof keyCode !== 'number') {
-    throw new Error('Only numerical `keyCode` arguments are supported for triggering keyboard events');
+    throw new Error(
+      'Only numerical `keyCode` arguments are supported for triggering keyboard events'
+    );
   }
   const eventProps = { bubbles: true, keyCode };
   const event = new KeyboardEvent('keydown', eventProps);
@@ -288,19 +283,17 @@ function keyDown (element, keyCode) {
   ReactTestUtils.Simulate.keyDown(eventProps);
 }
 
-
 /**
  * Asserts that the element has the `aria-invalid` attribute set
  * corresponding to the second argument.
  */
-function assertValid (element, valid) {
+function assertValid(element, valid) {
   if (valid) {
     expect(element.getAttribute('aria-invalid')).not.toBe('true');
   } else {
     expect(element.getAttribute('aria-invalid')).toBe('true');
   }
 }
-
 
 /**
  * Asserts that the given element has role "alert".
@@ -309,21 +302,19 @@ function assertValid (element, valid) {
  * make assertion on a `data-status-code` attribute to distinguish
  * alerts.
  */
-function assertIsAlert (element) {
+function assertIsAlert(element) {
   const role = element.getAttribute('role');
   expect(role).toBe('alert', `Element role "${role}" is not "alert"`);
 }
-
 
 /**
  * Asserts that the element’s value is the given value.
  *
  * Throws when the element does not support the `value` property.
  */
-function assertValue (element, value) {
+function assertValue(element, value) {
   expect(getValue(element)).toBe(value);
 }
-
 
 /**
  * Assert that the element is visible in the DOM.
@@ -334,18 +325,23 @@ function assertValue (element, value) {
  * - The 'visibility' style is not set to 'hidden'
  * - The opacity is not 0
  */
-function assertIsVisible (element) {
+function assertIsVisible(element) {
   let el = element;
   while (el) {
-    expect(el.getClientRects().length).not.toBe(0, 'Element is not rendered on the page. \'display\' style might be \'none\'');
+    expect(el.getClientRects().length).not.toBe(
+      0,
+      "Element is not rendered on the page. 'display' style might be 'none'"
+    );
     const { opacity, visibility } = window.getComputedStyle(el);
     expect(opacity).not.toBe(0, 'Element is not visible. Opacity is 0');
-    expect(visibility).not.toBe('hidden', 'Element is not visible. Visibility is \'hidden\'');
-    expect(element.getAttribute('aria-hidden')).not.toBe('true', 'Element is not visible. aria-hidden is \'true\'');
+    expect(visibility).not.toBe('hidden', "Element is not visible. Visibility is 'hidden'");
+    expect(element.getAttribute('aria-hidden')).not.toBe(
+      'true',
+      "Element is not visible. aria-hidden is 'true'"
+    );
     el = el.parentElement;
   }
 }
-
 
 /**
  * Assert that an element matching the selector is not visible or does
@@ -354,7 +350,7 @@ function assertIsVisible (element) {
  * This function also throws if the element selected by `selector` is
  * not unique.
  */
-function assertNotVisible (container, selector) {
+function assertNotVisible(container, selector) {
   const found = container.querySelectorAll(selector);
   expect(found.length <= 1).toBe(true, `Element selected by ${selector} is not unique`);
 
@@ -375,18 +371,14 @@ function assertNotVisible (container, selector) {
   throw new Error('Element is visible on page');
 }
 
-
 /**
  * Assert that the element’s 'aria-selected' attribute is set to
  * 'true'.
  */
-function assertIsSelected (element) {
-  const message =
-    'Expected element to be selected. ' +
-    '\'aria-selected\' attribute is not \'true\'';
+function assertIsSelected(element) {
+  const message = 'Expected element to be selected. ' + "'aria-selected' attribute is not 'true'";
   expect(element.getAttribute('aria-selected')).toBe('true', message);
 }
-
 
 /**
  * Asserts if an element is checked by either inspecting the `checked`
@@ -400,7 +392,7 @@ function assertIsSelected (element) {
  *     // Converse
  *     assertIsChecked(el, false)
  */
-function assertIsChecked (element, shouldBeChecked = true) {
+function assertIsChecked(element, shouldBeChecked = true) {
   if (element.tagName === 'INPUT' && element.type === 'checkbox') {
     expect(element.checked).toBe(shouldBeChecked);
   } else {
@@ -411,14 +403,13 @@ function assertIsChecked (element, shouldBeChecked = true) {
   }
 }
 
-
 /**
  * Assert that the text content of the element matches `text`.
  *
  * `text` maybe a regular expression or a string. In the latter case
  * substring matching is performed.
  */
-function assertHasText (element, text) {
+function assertHasText(element, text) {
   expect(element.textContent).toMatch(text);
 }
 
@@ -432,16 +423,15 @@ function assertHasText (element, text) {
  *     // Converse
  *     assertIsDisabled(el, false)
  */
-function assertIsDisabled (element, shouldBeDisabled = true) {
+function assertIsDisabled(element, shouldBeDisabled = true) {
   expect(element.disabled).toBe(shouldBeDisabled);
 }
-
 
 /**
  * Assert that the element does not have a descendant element that
  * matches the given selector.
  */
-function assertNotHasSelector (element, selector) {
+function assertNotHasSelector(element, selector) {
   const results = element.querySelectorAll(selector);
   expect(results.length).toBe(0, `Expected element not to have child matching ${selector}`);
 }

@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 const P = require('path');
 const URL = require('url');
-const {mapValues} = require('lodash');
+const { mapValues } = require('lodash');
 const U = require('./utils');
-const {render: renderIndexPage} = require('./index-page');
-const {validate: validateConfig} = require('./config-validator');
+const { render: renderIndexPage } = require('./index-page');
+const { validate: validateConfig } = require('./config-validator');
 
 const MANIFEST_PATHS = [
   'build/static-manifest.json',
@@ -13,7 +13,6 @@ const MANIFEST_PATHS = [
 ];
 
 module.exports.MANIFEST_PATHS = MANIFEST_PATHS;
-
 
 /**
  * @usage
@@ -39,7 +38,7 @@ module.exports.MANIFEST_PATHS = MANIFEST_PATHS;
  * @return {string}
  */
 
-module.exports = async function configure (revision, configPath, outPath) {
+module.exports = async function configure(revision, configPath, outPath) {
   const [manifest, config] = await Promise.all([
     U.readMergeJSON(MANIFEST_PATHS),
     U.readJSON(configPath)
@@ -49,7 +48,7 @@ module.exports = async function configure (revision, configPath, outPath) {
 
   validateConfig(config);
 
-  const manifestResolved = mapValues(manifest, (path) => URL.resolve(config.assetUrl, path));
+  const manifestResolved = mapValues(manifest, path => URL.resolve(config.assetUrl, path));
   const indexPage = renderIndexPage(revision, config, manifestResolved);
   await U.mkdirp(P.dirname(outPath));
   await U.FS.writeFileAsync(outPath, indexPage, 'utf8');

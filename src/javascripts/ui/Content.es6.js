@@ -1,5 +1,5 @@
-import {h} from 'ui/Framework';
-import {byName as Colors} from 'Styles/Colors';
+import { h } from 'ui/Framework';
+import { byName as Colors } from 'Styles/Colors';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import { monospaceFontFamily } from 'Styles';
 import $state from '$state';
@@ -13,7 +13,6 @@ import $state from '$state';
  *
  * [phrasing content]: https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Content_categories#Phrasing_content
  */
-
 
 /**
  * @ngdoc method
@@ -35,14 +34,13 @@ import $state from '$state';
  * @param {string} target  Article target key
  * @returns {VNode}
  */
-export function docsLink (text, target) {
+export function docsLink(text, target) {
   return KnowledgeBase({
     target,
     text,
     inlineText: 'true'
   });
 }
-
 
 /**
  * @ngdoc method
@@ -64,7 +62,7 @@ export function docsLink (text, target) {
  * @returns {VNode}
  */
 const AVAILABLE_MODIFIERS = ['', 'constructive', 'destructive'];
-export function linkOpen (content, url, modifier = '') {
+export function linkOpen(content, url, modifier = '') {
   if (!AVAILABLE_MODIFIERS.includes(modifier)) {
     throw new TypeError(`Unknown text link modifier ${modifier}`);
   }
@@ -73,13 +71,16 @@ export function linkOpen (content, url, modifier = '') {
     modifier = `--${modifier}`;
   }
 
-  return h(`a.text-link${modifier}`, {
-    href: url,
-    target: '_blank',
-    rel: 'noopener noreferrer'
-  }, content);
+  return h(
+    `a.text-link${modifier}`,
+    {
+      href: url,
+      target: '_blank',
+      rel: 'noopener noreferrer'
+    },
+    content
+  );
 }
-
 
 /**
  * @ngdoc method
@@ -99,21 +100,24 @@ export function linkOpen (content, url, modifier = '') {
  *                             If `params` are not provided `$stateParams` are used.
  * @returns {VNode}
  */
-export function stateLink (content, {path, params, options}) {
-  return h('a', {
-    href: $state.href(path, params),
-    onClick: e => {
-      if (e.shiftKey || e.ctrlKey || e.metaKey) {
-        // allow to open in a new tab/window normally
-      } else {
-        // perform Angular UI router transition only
-        e.preventDefault();
-        $state.go(path, params, options);
+export function stateLink(content, { path, params, options }) {
+  return h(
+    'a',
+    {
+      href: $state.href(path, params),
+      onClick: e => {
+        if (e.shiftKey || e.ctrlKey || e.metaKey) {
+          // allow to open in a new tab/window normally
+        } else {
+          // perform Angular UI router transition only
+          e.preventDefault();
+          $state.go(path, params, options);
+        }
       }
-    }
-  }, content);
+    },
+    content
+  );
 }
-
 
 /**
  * @ngdoc method
@@ -133,15 +137,18 @@ export function stateLink (content, {path, params, options}) {
  * @param {VNode[]} content  List of hyperscript nodes
  * @returns {VNode}
  */
-export function p (content) {
-  return h('p', {
-    style: {
-      lineHeight: '1.5',
-      color: Colors.textMid
-    }
-  }, content);
+export function p(content) {
+  return h(
+    'p',
+    {
+      style: {
+        lineHeight: '1.5',
+        color: Colors.textMid
+      }
+    },
+    content
+  );
 }
-
 
 /**
  * A span that styles the content as small, uppercased, spaced letters
@@ -149,38 +156,43 @@ export function p (content) {
  *
  * @param {string?} .color
  */
-export function badge ({
-  color = Colors.textLight
-}, children) {
-  return h('span', {
-    style: {
-      color,
-      fontSize: '11px',
-      fontWeight: '600',
-      letterSpacing: '1px',
-      textTransform: 'uppercase'
-    }
-  }, children);
+export function badge({ color = Colors.textLight }, children) {
+  return h(
+    'span',
+    {
+      style: {
+        color,
+        fontSize: '11px',
+        fontWeight: '600',
+        letterSpacing: '1px',
+        textTransform: 'uppercase'
+      }
+    },
+    children
+  );
 }
-
 
 /**
  * Styles the content as an inline code fragment
  */
-export function codeFragment (children) {
-  return h('span', {
-    style: {
-      display: 'inline-block',
-      color: Colors.textMid,
-      background: Colors.elementLightest,
-      border: `1px solid ${Colors.elementMid}`,
-      borderRadius: '2px',
-      fontFamily: monospaceFontFamily,
-      fontSize: '13px',
-      lineHeight: '22px',
-      padding: '0 5px',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis'
-    }
-  }, children);
+export function codeFragment(children) {
+  return h(
+    'span',
+    {
+      style: {
+        display: 'inline-block',
+        color: Colors.textMid,
+        background: Colors.elementLightest,
+        border: `1px solid ${Colors.elementMid}`,
+        borderRadius: '2px',
+        fontFamily: monospaceFontFamily,
+        fontSize: '13px',
+        lineHeight: '22px',
+        padding: '0 5px',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis'
+      }
+    },
+    children
+  );
 }

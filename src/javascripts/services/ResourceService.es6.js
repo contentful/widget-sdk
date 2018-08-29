@@ -1,17 +1,23 @@
 import { getSpace, getOrganization } from 'services/TokenStore';
-import { canCreate, generateMessage, useLegacy, getLegacyLimit, getLegacyUsage } from 'utils/ResourceUtils';
+import {
+  canCreate,
+  generateMessage,
+  useLegacy,
+  getLegacyLimit,
+  getLegacyUsage
+} from 'utils/ResourceUtils';
 import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/EndpointFactory';
 import { snakeCase, camelCase } from 'lodash';
 
-export default function createResourceService (id, type = 'space') {
+export default function createResourceService(id, type = 'space') {
   const endpoint = createEndpoint(id, type);
 
   return {
     get,
     getAll,
-    canCreate: (resourceType) => get(resourceType).then(canCreate),
-    messagesFor: (resourceType) => get(resourceType).then(generateMessage),
-    async messages () {
+    canCreate: resourceType => get(resourceType).then(canCreate),
+    messagesFor: resourceType => get(resourceType).then(generateMessage),
+    async messages() {
       const resources = await getAll();
       return resources.reduce((memo, resource) => {
         const resourceType = camelCase(resource.sys.id);
@@ -23,7 +29,7 @@ export default function createResourceService (id, type = 'space') {
     }
   };
 
-  async function get (resourceType) {
+  async function get(resourceType) {
     if (!resourceType) {
       throw new Error('resourceType not supplied to ResourceService.get');
     }
@@ -39,33 +45,39 @@ export default function createResourceService (id, type = 'space') {
     } else {
       const apiResourceType = snakeCase(resourceType);
 
-      return endpoint({
-        method: 'GET',
-        path: [ 'resources', apiResourceType ]
-      }, {
-        'x-contentful-enable-alpha-feature': 'subscriptions-api'
-      });
+      return endpoint(
+        {
+          method: 'GET',
+          path: ['resources', apiResourceType]
+        },
+        {
+          'x-contentful-enable-alpha-feature': 'subscriptions-api'
+        }
+      );
     }
   }
 
-  async function getAll () {
-    const raw = await endpoint({
-      method: 'GET',
-      path: [ 'resources' ]
-    }, {
-      'x-contentful-enable-alpha-feature': 'subscriptions-api'
-    });
+  async function getAll() {
+    const raw = await endpoint(
+      {
+        method: 'GET',
+        path: ['resources']
+      },
+      {
+        'x-contentful-enable-alpha-feature': 'subscriptions-api'
+      }
+    );
     return raw.items;
   }
 }
 
-function createEndpoint (id, type) {
+function createEndpoint(id, type) {
   const endpointFactory = type === 'space' ? createSpaceEndpoint : createOrganizationEndpoint;
 
   return endpointFactory(id);
 }
 
-function createResourceFromTokenData (resourceType, limit, usage) {
+function createResourceFromTokenData(resourceType, limit, usage) {
   return {
     usage,
     limits: {
@@ -79,7 +91,7 @@ function createResourceFromTokenData (resourceType, limit, usage) {
   };
 }
 
-async function getTokenOrganization (id, type) {
+async function getTokenOrganization(id, type) {
   if (type === 'space') {
     const space = await getSpace(id);
     return space.organization;

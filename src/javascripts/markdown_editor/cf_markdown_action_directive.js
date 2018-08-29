@@ -42,7 +42,7 @@ angular.module('contentful').directive('cfMarkdownAction', () => {
       mode: '@'
     },
     template: template,
-    link: function (scope) {
+    link: function(scope) {
       const descriptor = descriptors[scope.name];
       scope.tooltip = descriptor[0];
       scope.cssClass = descriptor[1];
@@ -63,20 +63,23 @@ angular.module('contentful').directive('cfMarkdownHeadingAction', () => ({
   template: JST['cf_markdown_heading_action']()
 }));
 
-angular.module('contentful').directive('cfMarkdownInsertMediaAction', ['require', require => {
-  const accessChecker = require('access_control/AccessChecker');
-  const templateString = require('markdown_editor/templates/InsertMediaAction').default;
+angular.module('contentful').directive('cfMarkdownInsertMediaAction', [
+  'require',
+  require => {
+    const accessChecker = require('access_control/AccessChecker');
+    const templateString = require('markdown_editor/templates/InsertMediaAction').default;
 
-  return {
-    restrict: 'E',
-    scope: {
-      actions: '=',
-      isDisabled: '=',
-      mode: '@'
-    },
-    template: templateString,
-    link: function (scope) {
-      scope.canUploadMultipleAssets = accessChecker.canUploadMultipleAssets;
-    }
-  };
-}]);
+    return {
+      restrict: 'E',
+      scope: {
+        actions: '=',
+        isDisabled: '=',
+        mode: '@'
+      },
+      template: templateString,
+      link: function(scope) {
+        scope.canUploadMultipleAssets = accessChecker.canUploadMultipleAssets;
+      }
+    };
+  }
+]);

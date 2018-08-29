@@ -4,8 +4,10 @@
  * deep-diff.
  * Licensed under the MIT License.
  */
-((() => {
-  let $scope; let conflict; let conflictResolution = [];
+(() => {
+  let $scope;
+  let conflict;
+  let conflictResolution = [];
   if (typeof global === 'object' && global) {
     $scope = global;
   } else if (typeof window !== 'undefined') {
@@ -15,17 +17,16 @@
   }
   conflict = $scope.DeepDiff;
   if (conflict) {
-    conflictResolution.push(
-      () => {
-        if (typeof conflict !== 'undefined' && $scope.DeepDiff === accumulateDiff) {
-          $scope.DeepDiff = conflict;
-          conflict = undefined;
-        }
-      });
+    conflictResolution.push(() => {
+      if (typeof conflict !== 'undefined' && $scope.DeepDiff === accumulateDiff) {
+        $scope.DeepDiff = conflict;
+        conflict = undefined;
+      }
+    });
   }
 
   // nodejs compatible on server side and in the browser.
-  function inherits (ctor, superCtor) {
+  function inherits(ctor, superCtor) {
     ctor.super_ = superCtor;
     ctor.prototype = Object.create(superCtor.prototype, {
       constructor: {
@@ -37,51 +38,53 @@
     });
   }
 
-  function Diff (kind, path) {
+  function Diff(kind, path) {
     Object.defineProperty(this, 'kind', { value: kind, enumerable: true });
     if (path && path.length) {
       Object.defineProperty(this, 'path', { value: path, enumerable: true });
     }
   }
 
-  function DiffEdit (path, origin, value) {
+  function DiffEdit(path, origin, value) {
     DiffEdit.super_.call(this, 'E', path);
     Object.defineProperty(this, 'lhs', { value: origin, enumerable: true });
     Object.defineProperty(this, 'rhs', { value: value, enumerable: true });
   }
   inherits(DiffEdit, Diff);
 
-  function DiffNew (path, value) {
+  function DiffNew(path, value) {
     DiffNew.super_.call(this, 'N', path);
     Object.defineProperty(this, 'rhs', { value: value, enumerable: true });
   }
   inherits(DiffNew, Diff);
 
-  function DiffDeleted (path, value) {
+  function DiffDeleted(path, value) {
     DiffDeleted.super_.call(this, 'D', path);
     Object.defineProperty(this, 'lhs', { value: value, enumerable: true });
   }
   inherits(DiffDeleted, Diff);
 
-  function DiffArray (path, index, item) {
+  function DiffArray(path, index, item) {
     DiffArray.super_.call(this, 'A', path);
     Object.defineProperty(this, 'index', { value: index, enumerable: true });
     Object.defineProperty(this, 'item', { value: item, enumerable: true });
   }
   inherits(DiffArray, Diff);
 
-  function arrayRemove (arr, from, to) {
+  function arrayRemove(arr, from, to) {
     const rest = arr.slice((to || from) + 1 || arr.length);
     arr.length = from < 0 ? arr.length + from : from;
     arr.push(...rest);
     return arr;
   }
 
-  function deepDiff (lhs, rhs, changes, prefilter, path, key, stack) {
+  function deepDiff(lhs, rhs, changes, prefilter, path, key, stack) {
     path = path || [];
     const currentPath = path.slice(0);
     if (typeof key !== 'undefined') {
-      if (prefilter && prefilter(currentPath, key)) { return; }
+      if (prefilter && prefilter(currentPath, key)) {
+        return;
+      }
       currentPath.push(key);
     }
     const ltype = typeof lhs;
@@ -94,7 +97,7 @@
       changes(new DiffDeleted(currentPath, lhs));
     } else if (ltype !== rtype) {
       changes(new DiffEdit(currentPath, lhs, rhs));
-    } else if (lhs instanceof Date && rhs instanceof Date && ((lhs - rhs) !== 0)) {
+    } else if (lhs instanceof Date && rhs instanceof Date && lhs - rhs !== 0) {
       changes(new DiffEdit(currentPath, lhs, rhs));
     } else if (ltype === 'object' && lhs !== null && rhs !== null) {
       stack = stack || [];
@@ -137,19 +140,22 @@
     }
   }
 
-  function accumulateDiff (lhs, rhs, prefilter, accum) {
+  function accumulateDiff(lhs, rhs, prefilter, accum) {
     accum = accum || [];
-    deepDiff(lhs, rhs,
+    deepDiff(
+      lhs,
+      rhs,
       diff => {
         if (diff) {
           accum.push(diff);
         }
       },
-      prefilter);
-    return (accum.length) ? accum : undefined;
+      prefilter
+    );
+    return accum.length ? accum : undefined;
   }
 
-  function applyArrayChange (arr, index, change) {
+  function applyArrayChange(arr, index, change) {
     if (change.path && change.path.length) {
       let it = arr[index];
       let i;
@@ -186,14 +192,14 @@
     return arr;
   }
 
-  function applyChange (target, source, change) {
+  function applyChange(target, source, change) {
     if (target && source && change && change.kind) {
       let it = target;
       let i = -1;
       const last = change.path.length - 1;
       while (++i < last) {
         if (typeof it[change.path[i]] === 'undefined') {
-          it[change.path[i]] = (typeof change.path[i] === 'number') ? [] : {};
+          it[change.path[i]] = typeof change.path[i] === 'number' ? [] : {};
         }
         it = it[change.path[i]];
       }
@@ -212,7 +218,7 @@
     }
   }
 
-  function revertArrayChange (arr, index, change) {
+  function revertArrayChange(arr, index, change) {
     if (change.path && change.path.length) {
       // the structure of the object at the index has changed...
       let it = arr[index];
@@ -256,7 +262,7 @@
     return arr;
   }
 
-  function revertChange (target, source, change) {
+  function revertChange(target, source, change) {
     if (target && source && change && change.kind) {
       let it = target;
       let i;
@@ -289,7 +295,7 @@
     }
   }
 
-  function applyDiff (target, source, filter) {
+  function applyDiff(target, source, filter) {
     if (target && source) {
       const onChange = change => {
         if (!filter || filter(target, source, change)) {
@@ -301,17 +307,23 @@
   }
 
   Object.defineProperties(accumulateDiff, {
-
     diff: { value: accumulateDiff, enumerable: true },
     observableDiff: { value: deepDiff, enumerable: true },
     applyDiff: { value: applyDiff, enumerable: true },
     applyChange: { value: applyChange, enumerable: true },
     revertChange: { value: revertChange, enumerable: true },
-    isConflict: { value: function () { return typeof conflict !== 'undefined'; }, enumerable: true },
+    isConflict: {
+      value: function() {
+        return typeof conflict !== 'undefined';
+      },
+      enumerable: true
+    },
     noConflict: {
-      value: function () {
+      value: function() {
         if (conflictResolution) {
-          conflictResolution.forEach(it => { it(); });
+          conflictResolution.forEach(it => {
+            it();
+          });
           conflictResolution = null;
         }
         return accumulateDiff;
@@ -321,4 +333,4 @@
   });
 
   window.deepDiff = accumulateDiff; // other... browser?
-})());
+})();

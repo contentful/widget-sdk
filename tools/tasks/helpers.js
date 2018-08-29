@@ -22,8 +22,8 @@ module.exports.mapSourceMapPaths = mapSourceMapPaths;
 module.exports.writeFile = writeFile;
 module.exports.removeSourceRoot = removeSourceRoot;
 
-function assertFilesExist (paths) {
-  paths.forEach(function (path) {
+function assertFilesExist(paths) {
+  paths.forEach(function(path) {
     const stat = fs.statSync(path);
     if (!stat.isFile()) {
       throw new Error(path + ' is not a file');
@@ -32,14 +32,14 @@ function assertFilesExist (paths) {
   return paths;
 }
 
-function passError (target) {
-  return function handleError (e) {
+function passError(target) {
+  return function handleError(e) {
     target.emit('error', e);
   };
 }
 
-function mapFileContents (fn) {
-  return S.map(function (file) {
+function mapFileContents(fn) {
+  return S.map(function(file) {
     let contents = file.contents.toString();
     contents = fn(contents, file);
     // eslint-disable-next-line node/no-deprecated-api
@@ -48,8 +48,8 @@ function mapFileContents (fn) {
   });
 }
 
-function changeBase (base) {
-  return S.map(function (file) {
+function changeBase(base) {
+  return S.map(function(file) {
     base = path.resolve(base);
     const filePath = path.join(base, file.relative);
     file.base = base;
@@ -58,28 +58,33 @@ function changeBase (base) {
   });
 }
 
-function buildStylus (sources, dest) {
+function buildStylus(sources, dest) {
   assertFilesExist([sources]);
   dest = gulp.dest(dest);
-  return gulp.src(sources)
+  return gulp
+    .src(sources)
     .pipe(sourceMaps.init())
-    .pipe(stylus({
-      use: nib(),
-      sourcemap: {inline: true}
-    }))
+    .pipe(
+      stylus({
+        use: nib(),
+        sourcemap: { inline: true }
+      })
+    )
     .on('error', passError(dest))
-    .pipe(mapSourceMapPaths(function (src) {
-      return path.join('src/stylesheets', src);
-    }))
-    .pipe(sourceMaps.write({sourceRoot: '/'}))
+    .pipe(
+      mapSourceMapPaths(function(src) {
+        return path.join('src/stylesheets', src);
+      })
+    )
+    .pipe(sourceMaps.write({ sourceRoot: '/' }))
     .pipe(dest);
 }
 
 /**
  * Stream transformer that for every file applies a function to all source map paths.
  */
-function mapSourceMapPaths (fn) {
-  return S.map(function (file) {
+function mapSourceMapPaths(fn) {
+  return S.map(function(file) {
     if (file.sourceMap) {
       file.sourceMap.sources = _.map(file.sourceMap.sources, fn);
     }
@@ -87,8 +92,8 @@ function mapSourceMapPaths (fn) {
   });
 }
 
-function writeFile () {
-  return gulp.dest(function (file) {
+function writeFile() {
+  return gulp.dest(function(file) {
     return file.base;
   });
 }
@@ -97,8 +102,8 @@ function writeFile () {
  * Stream transformer that removes the `sourceRoot` property from a
  * file’s source maps.
  */
-function removeSourceRoot () {
-  return S.map(function (file) {
+function removeSourceRoot() {
+  return S.map(function(file) {
     if (file.sourceMap) {
       file.sourceMap.sourceRoot = null;
     }

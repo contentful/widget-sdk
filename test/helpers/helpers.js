@@ -15,7 +15,7 @@ import * as sinon from 'helpers/sinon';
  * The methods exposed by this service are available on the `this`
  * object in the test runner.
  */
-beforeEach(function () {
+beforeEach(function() {
   /**
    * @ngdoc method
    * @name helpers#$inject
@@ -25,7 +25,7 @@ beforeEach(function () {
    * @param {string} service
    * @return {any}
    */
-  this.$inject = function (serviceName) {
+  this.$inject = function(serviceName) {
     if (!this.$injector) {
       const self = this;
       inject($injector => {
@@ -41,10 +41,9 @@ beforeEach(function () {
    * @description
    * Call `$apply` on the root scope.
    */
-  this.$apply = function () {
+  this.$apply = function() {
     this.$inject('$rootScope').$apply();
   };
-
 
   /**
    * @ngdoc method
@@ -53,7 +52,7 @@ beforeEach(function () {
    * Call `$apply` on the root scope and flush outstanding timeout
    * callbacks and mock HTTP responses.
    */
-  this.$flush = function () {
+  this.$flush = function() {
     const $http = this.$inject('$httpBackend');
     const $timeout = this.$inject('$timeout');
 
@@ -79,7 +78,6 @@ beforeEach(function () {
     });
   };
 
-
   /**
    * @ngdoc method
    * @name helpers#resolve
@@ -89,7 +87,7 @@ beforeEach(function () {
    * @param {any} value
    * @return {Promise<any>}
    */
-  this.resolve = function (val) {
+  this.resolve = function(val) {
     return this.$inject('$q').when(val);
   };
 
@@ -105,7 +103,7 @@ beforeEach(function () {
    * @param {Error} error
    * @return {Promise<any>}
    */
-  this.reject = function (err) {
+  this.reject = function(err) {
     return this.$inject('$q').reject(err);
   };
 
@@ -129,7 +127,7 @@ beforeEach(function () {
    *                 instances as values
    * @return {JQueryElement}
    */
-  this.$compile = function (template, scopeProperties, controllers) {
+  this.$compile = function(template, scopeProperties, controllers) {
     const $compile = this.$inject('$compile');
     const $rootScope = this.$inject('$rootScope');
     const scope = _.extend($rootScope.$new(true), scopeProperties);
@@ -167,7 +165,7 @@ beforeEach(function () {
    * @param {function} initScope
    * @return {JQueryElement}
    */
-  this.$compileWith = function (template, initScope) {
+  this.$compileWith = function(template, initScope) {
     const $compile = this.$inject('$compile');
     const $rootScope = this.$inject('$rootScope');
     const scope = $rootScope.$new(true);
@@ -199,7 +197,7 @@ beforeEach(function () {
    * @param {object?} extension
    * @return {object}
    */
-  this.mockService = function (name, extension) {
+  this.mockService = function(name, extension) {
     const service = this.$inject(name);
     // We cannot use sinon.mock() because it will not add the
     // sinon.stub helpers like 'resolve()' etc.
@@ -226,7 +224,11 @@ beforeEach(function () {
    * @param {Promise<any>} promise
    * @return {Promise<Error>}
    */
-  this.catchPromise = promise => promise.then(() => {
-    throw new Error('Unexpectedly resolved promise');
-  }, error => error);
+  this.catchPromise = promise =>
+    promise.then(
+      () => {
+        throw new Error('Unexpectedly resolved promise');
+      },
+      error => error
+    );
 });

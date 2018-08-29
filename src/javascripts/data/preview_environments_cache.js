@@ -4,8 +4,7 @@
  * @ngdoc service
  * @name data/previewEnvironmentsCache
  */
-angular.module('cf.data')
-.factory('data/previewEnvironmentsCache', () => {
+angular.module('cf.data').factory('data/previewEnvironmentsCache', () => {
   let previewEnvironmentsCache;
 
   return {
@@ -23,7 +22,7 @@ angular.module('cf.data')
    * @description
    * Returns the cached environments
    */
-  function getAll () {
+  function getAll() {
     return previewEnvironmentsCache;
   }
 
@@ -36,7 +35,7 @@ angular.module('cf.data')
    * @description
    * Updates the cache with the environments provided
    */
-  function setAll (environments) {
+  function setAll(environments) {
     previewEnvironmentsCache = environments;
     return previewEnvironmentsCache;
   }
@@ -50,7 +49,7 @@ angular.module('cf.data')
    * @description
    * Updates a single environment in environments cache
    */
-  function set (environment) {
+  function set(environment) {
     previewEnvironmentsCache = previewEnvironmentsCache || {};
     previewEnvironmentsCache[environment.sys.id] = environment;
     return environment;
@@ -64,7 +63,7 @@ angular.module('cf.data')
    * @description
    * Clear the cache
    */
-  function clearAll () {
+  function clearAll() {
     previewEnvironmentsCache = undefined;
   }
 });

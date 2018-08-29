@@ -1,9 +1,9 @@
 import $window from '$window';
-import {uncapitalize} from 'stringUtils';
+import { uncapitalize } from 'stringUtils';
 import trackPersistentNotification from 'analyticsEvents/persistentNotification';
 import * as OrganizationRoles from 'services/OrganizationRoles';
-import {go} from 'states/Navigator';
-import {merge, findKey, forEach, get} from 'lodash';
+import { go } from 'states/Navigator';
+import { merge, findKey, forEach, get } from 'lodash';
 import require from 'require';
 
 const USAGE_METRICS = {
@@ -21,18 +21,16 @@ const USAGE_METRICS = {
   contentDeliveryApiRequest: 'Content Delivery API Requests'
 };
 
-const PERIOD_USAGE_METRICS = [
-  'assetBandwidth',
-  'contentDeliveryApiRequest'
-];
+const PERIOD_USAGE_METRICS = ['assetBandwidth', 'contentDeliveryApiRequest'];
 
-export function determineEnforcement (organization, reasons, entityType) {
-  if (!reasons || reasons.length && reasons.length === 0) return null;
+export function determineEnforcement(organization, reasons, entityType) {
+  if (!reasons || (reasons.length && reasons.length === 0)) return null;
 
   const errorsByPriority = [
     {
       label: 'systemMaintenance',
-      message: '<strong>System under maintenance.</strong> The service is down for maintenance and accessible in read-only mode.',
+      message:
+        '<strong>System under maintenance.</strong> The service is down for maintenance and accessible in read-only mode.',
       actionMessage: 'Status',
       action: () => {
         trackPersistentNotification.action('Visit Status Page');
@@ -41,7 +39,8 @@ export function determineEnforcement (organization, reasons, entityType) {
     },
     {
       label: 'periodUsageExceeded',
-      message: '<strong>You have reached one of your limits.</strong> To check your current limits, go to your subscription page.',
+      message:
+        '<strong>You have reached one of your limits.</strong> To check your current limits, go to your subscription page.',
       actionMessage: upgradeActionMessage('Go to subscription'),
       action: upgradeAction
     },
@@ -55,8 +54,10 @@ export function determineEnforcement (organization, reasons, entityType) {
     }
   ];
 
-  const error = errorsByPriority.find(({label}) => reasons.indexOf(label) >= 0);
-  if (!error) { return null; }
+  const error = errorsByPriority.find(({ label }) => reasons.indexOf(label) >= 0);
+  if (!error) {
+    return null;
+  }
 
   if (typeof error.tooltip === 'function') {
     error.tooltip = entityType ? error.tooltip(entityType) : error.tooltip;
@@ -74,11 +75,11 @@ export function determineEnforcement (organization, reasons, entityType) {
 
   return error;
 
-  function upgradeActionMessage (text) {
-    return () => isOwner(organization) ? text : undefined;
+  function upgradeActionMessage(text) {
+    return () => (isOwner(organization) ? text : undefined);
   }
 
-  function upgradeAction () {
+  function upgradeAction() {
     trackPersistentNotification.action('Quota Increase');
     // using require to avoid circular dependency :(
     const isLegacyOrganization = require('utils/ResourceUtils').isLegacyOrganization;
@@ -93,39 +94,40 @@ export function determineEnforcement (organization, reasons, entityType) {
   }
 }
 
-export function getPeriodUsage (organization) {
+export function getPeriodUsage(organization) {
   if (!isOwner(organization) || isAdditionalUsageAllowed(organization)) return;
-  if (!PERIOD_USAGE_METRICS.find((metric) => computeUsageForOrganization(organization, metric))) return;
+  if (!PERIOD_USAGE_METRICS.find(metric => computeUsageForOrganization(organization, metric)))
+    return;
 
   return determineEnforcement(organization, ['periodUsageExceeded']);
 }
 
-export function computeUsageForOrganization (organization, filter) {
+export function computeUsageForOrganization(organization, filter) {
   if (!organization) return;
 
   if (filter) filter = uncapitalize(filter);
-  const usage = merge(
-    organization.usage.permanent,
-    organization.usage.period
-  );
+  const usage = merge(organization.usage.permanent, organization.usage.period);
   const limits = merge(
     organization.subscriptionPlan.limits.permanent,
     organization.subscriptionPlan.limits.period
   );
 
-  const metricKey = findKey(usage, (value, name) => (!filter || filter === name) && value >= limits[name]);
+  const metricKey = findKey(
+    usage,
+    (value, name) => (!filter || filter === name) && value >= limits[name]
+  );
 
   return metricKey ? getMetricMessage(metricKey) : undefined;
 }
 
-function getMetricMessage (metricKey) {
+function getMetricMessage(metricKey) {
   return `You have reached your ${USAGE_METRICS[uncapitalize(metricKey)]} limit`;
 }
 
-function isOwner (organization) {
+function isOwner(organization) {
   return OrganizationRoles.isOwner(organization);
 }
 
-function isAdditionalUsageAllowed (organization) {
+function isAdditionalUsageAllowed(organization) {
   return get(organization, 'subscription.additional_usage_allowed');
 }

@@ -14,16 +14,16 @@ import makeDetector from 'element-resize-detector';
  * @param {DOM.Element} element
  * @returns {K.Stream<void>}
  */
-export function observeResize (element) {
-  return K.stream((emitter) => {
-    const detector = makeDetector({strategy: 'scroll'});
+export function observeResize(element) {
+  return K.stream(emitter => {
+    const detector = makeDetector({ strategy: 'scroll' });
     detector.listenTo(element, listen);
 
     return () => {
       detector.uninstall(element);
     };
 
-    function listen () {
+    function listen() {
       emitter.emit();
     }
   });

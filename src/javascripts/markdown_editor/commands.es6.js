@@ -1,4 +1,4 @@
-import {range, min, max, times, repeat} from 'lodash';
+import { range, min, max, times, repeat } from 'lodash';
 
 const HEADER_CHAR = '#';
 const quoteToggleFn = createPrefixToggleFn('> ');
@@ -18,7 +18,7 @@ const codeToggleFn = createPrefixToggleFn('    ');
  * TODO add some commands from the actions service but cleanly separate
  * UI from code mirror stuff.
  */
-export function create (editor) {
+export function create(editor) {
   return {
     bold: wrapSelection(editor, '__', 'text in bold'),
     italic: wrapSelection(editor, '*', 'text in italic'),
@@ -31,8 +31,12 @@ export function create (editor) {
     h3: toggleHeader(editor, 3),
     ul: modifySelection(editor, ulToggleFn, true),
     ol: modifySelection(editor, olToggleFn, true),
-    undo: function () { editor.cmd('undo'); },
-    redo: function () { editor.cmd('redo'); },
+    undo: function() {
+      editor.cmd('undo');
+    },
+    redo: function() {
+      editor.cmd('redo');
+    },
     hr: hr,
     indent: indent,
     dedent: dedent,
@@ -45,7 +49,7 @@ export function create (editor) {
    * @description
    * Insert a line with `---` below the cursor.
    */
-  function hr () {
+  function hr() {
     editor.moveIfNotEmpty();
     const nl = editor.getNl();
     const markup = nl + '---' + nl + nl;
@@ -58,7 +62,7 @@ export function create (editor) {
    * @description
    * Indent the current line.
    */
-  function indent () {
+  function indent() {
     editor.insertAtLineBeginning(editor.getIndentation());
   }
 
@@ -68,7 +72,7 @@ export function create (editor) {
    * @description
    * Dedent the current line.
    */
-  function dedent () {
+  function dedent() {
     const indentation = editor.getIndentation();
     if (editor.lineStartsWith(indentation)) {
       editor.removeFromLineBeginning(indentation.length);
@@ -85,7 +89,7 @@ export function create (editor) {
    * @param {number} config.rows
    * @param {number} config.cols
    */
-  function table (config) {
+  function table(config) {
     const nl = editor.getNl();
     editor.moveIfNotEmpty();
     editor.insertAtCursor(nl);
@@ -94,7 +98,6 @@ export function create (editor) {
     editor.insertAtCursor(nl + nl);
     editor.restoreCursor(2, line);
   }
-
 
   /**
    * @ngdoc method
@@ -106,14 +109,12 @@ export function create (editor) {
    * @param {string?} text
    * @param {string?} title
    */
-  function link (url, text, title) {
+  function link(url, text, title) {
     editor.usePrimarySelection();
 
     const linkTitle = title ? ' "' + title + '"' : '';
 
-    const link = text
-      ? '[' + text + '](' + url + linkTitle + ')'
-      : '<' + url + '>';
+    const link = text ? '[' + text + '](' + url + linkTitle + ')' : '<' + url + '>';
 
     editor.replaceSelectedText(link, 'around');
   }
@@ -127,7 +128,7 @@ export function create (editor) {
  *
  * Used b the `bold`, `italic`, and `strike` commands.
  */
-function wrapSelection (editor, marker, emptyText) {
+function wrapSelection(editor, marker, emptyText) {
   return () => {
     editor.usePrimarySelection();
 
@@ -148,7 +149,7 @@ function wrapSelection (editor, marker, emptyText) {
  *
  * If there is no selection we just call `toggleFn(editor)`.
  */
-function modifySelection (editor, toggleFn, isList) {
+function modifySelection(editor, toggleFn, isList) {
   return () => {
     editor.usePrimarySelection();
 
@@ -180,7 +181,7 @@ function modifySelection (editor, toggleFn, isList) {
  * @param {CodeMirror.Selection} selection
  * param {function(number)} cb
  */
-function forLineIn (selection, cb) {
+function forLineIn(selection, cb) {
   // anchor/head depend on selection direction, so min & max have to be used
   const lines = [selection.anchor.line, selection.head.line];
   const lineRange = range(min(lines), max(lines) + 1);
@@ -190,7 +191,7 @@ function forLineIn (selection, cb) {
   });
 }
 
-function prepareListWhitespace (editor) {
+function prepareListWhitespace(editor) {
   const line = editor.getCurrentLineNumber();
   const isEmpty = editor.isLineEmpty();
   const emptyLines = countEmptyLines(editor);
@@ -202,26 +203,24 @@ function prepareListWhitespace (editor) {
   editor.restoreCursor(0, editor.getCurrentLineNumber() + 1);
 }
 
-
-function getListNumber (editor) {
+function getListNumber(editor) {
   const result = editor.getCurrentLine().match(/^(\d+\. )/);
   return result ? result[1] : null;
 }
 
-
-function countEmptyLines (editor) {
+function countEmptyLines(editor) {
   let line = editor.getCurrentLineNumber() + 1;
   let empty = 0;
 
   while (editor.isLineEmpty(line)) {
-    empty += 1; line += 1;
+    empty += 1;
+    line += 1;
   }
 
   return empty;
 }
 
-
-function createPrefixToggleFn (prefix) {
+function createPrefixToggleFn(prefix) {
   return editor => {
     if (editor.lineStartsWith(prefix)) {
       editor.removeFromLineBeginning(prefix.length);
@@ -231,26 +230,29 @@ function createPrefixToggleFn (prefix) {
   };
 }
 
-function ulToggleFn (editor) {
+function ulToggleFn(editor) {
   if (editor.lineStartsWith('- ')) {
     editor.removeFromLineBeginning(2);
   } else {
     const listNumber = getListNumber(editor);
-    if (listNumber) { editor.removeFromLineBeginning(listNumber.length); }
+    if (listNumber) {
+      editor.removeFromLineBeginning(listNumber.length);
+    }
     editor.insertAtLineBeginning('- ');
   }
 }
 
-function olToggleFn (editor, n) {
+function olToggleFn(editor, n) {
   const listNumber = getListNumber(editor);
   if (listNumber) {
     editor.removeFromLineBeginning(listNumber.length);
   } else {
-    if (editor.lineStartsWith('- ')) { editor.removeFromLineBeginning(2); }
+    if (editor.lineStartsWith('- ')) {
+      editor.removeFromLineBeginning(2);
+    }
     editor.insertAtLineBeginning((n || 1) + '. ');
   }
 }
-
 
 /**
  * From a table layout specification build a Markdown table template.
@@ -263,7 +265,7 @@ function olToggleFn (editor, n) {
  * @param {number} cols
  * @returns {string[]}
  */
-function tableTemplate (nrows, ncols) {
+function tableTemplate(nrows, ncols) {
   const cellWidth = new Array(11);
   const cell = ' ' + cellWidth.join(' ') + ' |';
   const separatorCell = ' ' + cellWidth.join('-') + ' |';
@@ -290,7 +292,7 @@ function tableTemplate (nrows, ncols) {
  * - Replaces the header if there is one of a different level
  * - Otherwise inserts the header
  */
-function toggleHeader (editor, level) {
+function toggleHeader(editor, level) {
   return () => {
     const initialCh = editor.getCurrentCharacter();
     const currentHeader = selectHeader(editor);
@@ -326,17 +328,19 @@ function toggleHeader (editor, level) {
  *
  * If the selection was successful return the selected string.
  */
-function selectHeader (editor) {
+function selectHeader(editor) {
   // TODO use the HEADER_CHAR constant
   const result = editor.getCurrentLine().match(/^( {0,3})(#{1,6}) /);
-  if (!result) { return null; }
+  if (!result) {
+    return null;
+  }
   const indentation = result[1];
   const header = result[2];
 
   editor.select(getPos(0), getPos(header.length));
   return editor.getSelection();
 
-  function getPos (modifier) {
+  function getPos(modifier) {
     return {
       line: editor.getCurrentLineNumber(),
       ch: indentation.length + modifier

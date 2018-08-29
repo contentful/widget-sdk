@@ -27,7 +27,7 @@
  *
  * This module is aliased to the module ID `$q` in `test/system-config.js`.
  */
-export default function $q (...args) {
+export default function $q(...args) {
   return get$q()(...args);
 }
 
@@ -36,12 +36,11 @@ $q.reject = wrap('reject');
 $q.defer = wrap('defer');
 $q.all = wrap('all');
 
-
-function wrap (method) {
+function wrap(method) {
   return (...args) => get$q()[method](...args);
 }
 
-function get$q () {
+function get$q() {
   let $q;
   inject(_$q_ => {
     $q = _$q_;

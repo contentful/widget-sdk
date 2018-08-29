@@ -1,5 +1,5 @@
-import {find} from 'lodash';
-import {shallowFreeze} from 'utils/Freeze';
+import { find } from 'lodash';
+import { shallowFreeze } from 'utils/Freeze';
 
 /**
  * This module provides functions for dealing with tagged values, also
@@ -73,10 +73,8 @@ import {shallowFreeze} from 'utils/Freeze';
  *
  */
 
-
 // Whenever we create a constructor we want it to use a unique tag.
 let nextTag = 0;
-
 
 /**
  * Create a constructor function for a new tagged value.
@@ -94,7 +92,7 @@ let nextTag = 0;
  * If the `fn` value is given the argument to the constructor is
  * transformed through that function.
  */
-export function makeCtor (name, fn) {
+export function makeCtor(name, fn) {
   if (typeof name === 'function') {
     fn = name;
     name = null;
@@ -103,9 +101,8 @@ export function makeCtor (name, fn) {
   const tag = `${nextTag}`;
   nextTag += 1;
 
-
-  function ctor (value) {
-    const obj = {tag};
+  function ctor(value) {
+    const obj = { tag };
     if (fn) {
       obj.value = fn(value);
     } else {
@@ -125,13 +122,11 @@ export function makeCtor (name, fn) {
   return ctor;
 }
 
-
-export function isTag (value, ctor) {
+export function isTag(value, ctor) {
   return value.tag === ctor.toString();
 }
 
-
-export function match (tagged, handlers, ...args) {
+export function match(tagged, handlers, ...args) {
   const handler = find(handlers, (_, tag) => {
     return tag === tagged.tag;
   });
@@ -145,7 +140,6 @@ export function match (tagged, handlers, ...args) {
   }
 }
 
-
-export function makeMatcher (handlers) {
+export function makeMatcher(handlers) {
   return (tagged, ...args) => match(tagged, handlers, ...args);
 }

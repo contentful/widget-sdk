@@ -13,7 +13,7 @@ export const get = key => Cookies.get(key);
 
 export const remove = key => Cookies.remove(key, getBaseAttrs());
 
-export function set (key, value) {
+export function set(key, value) {
   const attrs = extend({ expires: 365 }, getBaseAttrs());
 
   Cookies.set(key, value, attrs);

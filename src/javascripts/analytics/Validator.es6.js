@@ -60,13 +60,7 @@ export const validEvents = {
   ],
   content_preview: ['created', 'updated', 'deleted'],
   paywall: ['viewed', 'closed', 'upgrade_clicked'],
-  slide_in_editor: [
-    'peek_click',
-    'arrow_back',
-    'open',
-    'open_create',
-    'delete'
-  ],
+  slide_in_editor: ['peek_click', 'arrow_back', 'open', 'open_create', 'delete'],
   // https://contentful.atlassian.net/wiki/display/PRODBulk+references+editor+-+Tracking+specs
   bulk_editor: ['add', 'open', 'open_slide_in', 'close', 'status', 'action'],
   content_type: ['create'],
@@ -78,20 +72,9 @@ export const validEvents = {
   element: ['click'],
   // TODO: These should be merged with the reference_editor_action
   // schema.
-  reference_editor: [
-    'create_entry',
-    'edit_entry',
-    'toggle_inline_editor'
-  ],
-  markdown_editor: [
-    'action'
-  ],
-  reference_editor_action: [
-    'create',
-    'edit',
-    'delete',
-    'link'
-  ],
+  reference_editor: ['create_entry', 'edit_entry', 'toggle_inline_editor'],
+  markdown_editor: ['action'],
+  reference_editor_action: ['create', 'edit', 'delete', 'link'],
   incoming_links: [
     'dialog_open',
     'dialog_confirm',
@@ -99,23 +82,16 @@ export const validEvents = {
     'sidebar_link_click',
     'query'
   ],
-  extension: [
-    'save',
-    'install'
-  ],
-  entity_button: [
-    'click'
-  ],
-  ui_webhook_editor: [
-    'save'
-  ]
+  extension: ['save', 'install'],
+  entity_button: ['click'],
+  ui_webhook_editor: ['save']
 };
 
-export const validateEvent = (eventName) => {
+export const validateEvent = eventName => {
   if (!isString(eventName)) {
     return false;
   }
-  const [ namespace, event ] = eventName.split(':');
+  const [namespace, event] = eventName.split(':');
   const namespaceEvents = validEvents[namespace];
 
   return includes(namespaceEvents, event);

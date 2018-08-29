@@ -1,26 +1,22 @@
 import $q from '$q';
-import {makeCtor} from 'utils/TaggedValues';
+import { makeCtor } from 'utils/TaggedValues';
 
 /**
  * This modules exports control functions that help with concurrent and
  * asynchronous code.
  */
 
-
 export * from './Concurrent/MVar';
-
 
 // Constructors for promise results;
 export const Success = makeCtor('PromiseSuccess');
 export const Failure = makeCtor('PromiseFailure');
 
-
-export function sleep (t) {
-  return new Promise((resolve) => {
+export function sleep(t) {
+  return new Promise(resolve => {
     setTimeout(resolve, t);
   });
 }
-
 
 /**
  * Takes a promise and returns a promise with a result based on wether
@@ -44,13 +40,9 @@ export function sleep (t) {
  *       logError(error);
  *     }
  */
-export function tryP (promise) {
-  return promise.then(
-    (result) => Success(result),
-    (error) => Failure(error)
-  );
+export function tryP(promise) {
+  return promise.then(result => Success(result), error => Failure(error));
 }
-
 
 /**
  * Run a generator function that yields promises and return the final
@@ -66,12 +58,12 @@ export function tryP (promise) {
  * This is a small, extendable implementation of the well known
  * Bluebird.coroutine.
  */
-export function runTask (genFn, ...args) {
+export function runTask(genFn, ...args) {
   return new Promise((resolve, reject) => {
     const gen = genFn(...args);
     onFulfilled();
 
-    function onFulfilled (res) {
+    function onFulfilled(res) {
       try {
         next(gen.next(res));
       } catch (e) {
@@ -79,7 +71,7 @@ export function runTask (genFn, ...args) {
       }
     }
 
-    function onRejected (err) {
+    function onRejected(err) {
       try {
         next(gen.throw(err));
       } catch (e) {
@@ -87,7 +79,7 @@ export function runTask (genFn, ...args) {
       }
     }
 
-    function next ({done, value}) {
+    function next({ done, value }) {
       if (done) {
         resolve(value);
       } else {
@@ -101,12 +93,9 @@ export function runTask (genFn, ...args) {
   });
 }
 
-function isThenable (obj) {
-  return obj &&
-       typeof obj.then === 'function' &&
-       typeof obj.catch === 'function';
+function isThenable(obj) {
+  return obj && typeof obj.then === 'function' && typeof obj.catch === 'function';
 }
-
 
 /**
  * Takes a generator function and returns a function that when called
@@ -116,15 +105,14 @@ function isThenable (obj) {
  *     wrapTask(genFn)(...args)
  *     runTask(genFn, ...args)
  */
-export function wrapTask (genFn) {
-  return function (...args) {
+export function wrapTask(genFn) {
+  return function(...args) {
     const self = this;
-    return runTask(function* () {
+    return runTask(function*() {
       return yield* genFn.call(self, ...args);
     });
   };
 }
-
 
 /**
  * A slot attaches a callback to at most one promise at once.
@@ -157,25 +145,24 @@ export function wrapTask (genFn) {
  * A good use case is when a user action triggers an asynchronous
  * request which in turn updates a view.
  */
-export function createSlot (onResult) {
+export function createSlot(onResult) {
   let currentId = 0;
 
-  return function put (promise) {
+  return function put(promise) {
     currentId += 1;
     const id = currentId;
     promise.then(
-      (value) => onResultIfCurrent(id, Success(value)),
-      (error) => onResultIfCurrent(id, Failure(error))
+      value => onResultIfCurrent(id, Success(value)),
+      error => onResultIfCurrent(id, Failure(error))
     );
   };
 
-  function onResultIfCurrent (id, result) {
+  function onResultIfCurrent(id, result) {
     if (id === currentId) {
       onResult(result);
     }
   }
 }
-
 
 /**
  * Wrap an asynchronous function so that only one task is running at
@@ -198,12 +185,12 @@ export function createSlot (onResult) {
  * will return the previous result promise. After the result is
  * settled, `call()` will call `fn()` again.
  */
-export function createExclusiveTask (fn) {
+export function createExclusiveTask(fn) {
   let resultPromise;
 
   return { call };
 
-  function call () {
+  function call() {
     if (!resultPromise) {
       resultPromise = fn().finally(() => {
         resultPromise = false;
@@ -212,7 +199,6 @@ export function createExclusiveTask (fn) {
     return resultPromise;
   }
 }
-
 
 /**
  * Create a queue of asynchronous tasks that are run sequentially.
@@ -233,17 +219,17 @@ export function createExclusiveTask (fn) {
  *     // after 100ms done2 resolves and logs 3
  *
  */
-export function createQueue () {
+export function createQueue() {
   let running;
   const pending = [];
   return { push };
 
-  function push (run) {
+  function push(run) {
     if (typeof run !== 'function') {
       throw new Error('Can only push functions into queue');
     }
     const deferred = $q.defer();
-    pending.push({run, deferred});
+    pending.push({ run, deferred });
     if (!running) {
       shift();
     }
@@ -251,18 +237,21 @@ export function createQueue () {
     return deferred.promise;
   }
 
-  function shift () {
+  function shift() {
     const item = pending.shift();
     if (item) {
       const { run, deferred } = item;
       running = true;
-      run().then((value) => {
-        deferred.resolve(value);
-        shift();
-      }, (error) => {
-        deferred.reject(error);
-        shift();
-      });
+      run().then(
+        value => {
+          deferred.resolve(value);
+          shift();
+        },
+        error => {
+          deferred.reject(error);
+          shift();
+        }
+      );
     } else {
       running = false;
     }

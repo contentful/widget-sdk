@@ -27,7 +27,7 @@ sinon.addBehavior('rejects', (stub, value) => {
   stub.callsFake(() => $q.reject(value));
 });
 
-sinon.stub.defers = function () {
+sinon.stub.defers = function() {
   const deferred = $q.defer();
   this.returns(deferred.promise);
   this.resolve = deferred.resolve.bind(deferred);
@@ -35,7 +35,7 @@ sinon.stub.defers = function () {
   return this;
 };
 
-export function stubAll (object) {
+export function stubAll(object) {
   /* eslint prefer-const: off */
   for (let key in object) {
     if (typeof object[key] === 'function') {

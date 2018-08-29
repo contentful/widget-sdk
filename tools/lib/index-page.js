@@ -1,15 +1,9 @@
-const {h, doctype} = require('./hyperscript');
-const {create: createResolver} = require('./manifest-resolver');
+const { h, doctype } = require('./hyperscript');
+const { create: createResolver } = require('./manifest-resolver');
 
-const DEV_ENTRY_SCRIPTS = [
-  'vendor.js',
-  'templates.js',
-  'libs.js',
-  'components.js'
-];
+const DEV_ENTRY_SCRIPTS = ['vendor.js', 'templates.js', 'libs.js', 'components.js'];
 
 const DEFAULT_ENTRY_SCRIPTS = ['application.min.js'];
-
 
 /**
  * @usage
@@ -34,7 +28,7 @@ const DEFAULT_ENTRY_SCRIPTS = ['application.min.js'];
  * @param {object} config
  * @param {function} manifest
  */
-module.exports.render = function render (uiVersion, config, manifest) {
+module.exports.render = function render(uiVersion, config, manifest) {
   const resolve = createResolver(manifest, '/app');
   return renderPage(uiVersion, config, resolve, DEFAULT_ENTRY_SCRIPTS);
 };
@@ -53,20 +47,20 @@ module.exports.render = function render (uiVersion, config, manifest) {
  * - Instead of the '/app/application.min.js' main script multiple
  *   separate scripts are loaded. (See `DEV_ENTRY_SCRIPTS` above).
  */
-module.exports.renderDev = function renderDev (config) {
-  const resolve = (path) => `/app/${path}`;
+module.exports.renderDev = function renderDev(config) {
+  const resolve = path => `/app/${path}`;
   return renderPage(null, config, resolve, DEV_ENTRY_SCRIPTS);
 };
 
-function renderPage (...args) {
+function renderPage(...args) {
   return doctype + indexPage(...args);
 }
 
-function indexPage (uiVersion, config, resolve, entryScripts) {
+function indexPage(uiVersion, config, resolve, entryScripts) {
   return h('html', [
     h('head', [
-      h('meta', {charset: 'UTF-8'}),
-      h('meta', {httpEquiv: 'x-ua-compatible', content: 'ID=edge'}),
+      h('meta', { charset: 'UTF-8' }),
+      h('meta', { httpEquiv: 'x-ua-compatible', content: 'ID=edge' }),
       configMetaTag(uiVersion, config),
       h('title', ['Contentful']),
       stylesheet(resolve('vendor.css')),
@@ -84,21 +78,21 @@ function indexPage (uiVersion, config, resolve, entryScripts) {
         to { transform: rotate(360deg) }
       }`
     ]),
-    h('body', {
-      tabindex: '0',
-      ngApp: 'contentful/app',
-      ngCsp: 'no-inline-style;no-unsafe-eval',
-      ngController: 'ClientController'
-    }, [
-      h('.client', [
-        h('cf-app-container.app-container.ng-hide', {ngShow: 'user', cfRolesForWalkMe: ''}),
-        h('div', {ngIf: '!user'}, [
-          appLoader()
+    h(
+      'body',
+      {
+        tabindex: '0',
+        ngApp: 'contentful/app',
+        ngCsp: 'no-inline-style;no-unsafe-eval',
+        ngController: 'ClientController'
+      },
+      [
+        h('.client', [
+          h('cf-app-container.app-container.ng-hide', { ngShow: 'user', cfRolesForWalkMe: '' }),
+          h('div', { ngIf: '!user' }, [appLoader()])
         ])
-      ])
-    ].concat(
-      entryScripts.map((src) => scriptTag(resolve(src)))
-    ))
+      ].concat(entryScripts.map(src => scriptTag(resolve(src))))
+    )
   ]);
 }
 
@@ -108,51 +102,61 @@ function indexPage (uiVersion, config, resolve, entryScripts) {
  * The element is positioned absolutely and covers its whole container.
  * The loader is centered within this element.
  */
-function appLoader () {
-  return h('div', {
-    style: {
-      position: 'absolute',
-      top: '0',
-      right: '0',
-      bottom: '0',
-      left: '0',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center'
-    }
-  }, [
-    h('svg', {
-      width: '60',
-      height: '60',
+function appLoader() {
+  return h(
+    'div',
+    {
       style: {
-        transform: 'rotate(-45deg)'
+        position: 'absolute',
+        top: '0',
+        right: '0',
+        bottom: '0',
+        left: '0',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center'
       }
-    }, [
-      loaderSegment('M10,30 a20,20 0 0,0 20,20', '0', '#e0534e'),
-      loaderSegment('M30,10 a20,20 0 0,0 -20,20', '0.3s', '#faec28'),
-      loaderSegment('M50,30 a20,20 0 0,0 -20,-20', '.15s', '#56aed2')
-    ]),
-    h('div', {
-      style: {
-        // Font size should be the same as for the other page loaders
-        // in the app.
-        fontSize: '2em',
-        marginTop: '0.9em',
-        // better horizontal visual balance because of the hanging
-        // ellipsis
-        marginLeft: '28px'
-      }
-    }, [
-      'Loading Contentful…'
-    ])
-  ]);
+    },
+    [
+      h(
+        'svg',
+        {
+          width: '60',
+          height: '60',
+          style: {
+            transform: 'rotate(-45deg)'
+          }
+        },
+        [
+          loaderSegment('M10,30 a20,20 0 0,0 20,20', '0', '#e0534e'),
+          loaderSegment('M30,10 a20,20 0 0,0 -20,20', '0.3s', '#faec28'),
+          loaderSegment('M50,30 a20,20 0 0,0 -20,-20', '.15s', '#56aed2')
+        ]
+      ),
+      h(
+        'div',
+        {
+          style: {
+            // Font size should be the same as for the other page loaders
+            // in the app.
+            fontSize: '2em',
+            marginTop: '0.9em',
+            // better horizontal visual balance because of the hanging
+            // ellipsis
+            marginLeft: '28px'
+          }
+        },
+        ['Loading Contentful…']
+      )
+    ]
+  );
 }
 
 /**
  * One arc segment of the Contentful logo.
  */
-function loaderSegment (path, delay, color) {
+function loaderSegment(path, delay, color) {
   return h('path', {
     d: path,
     style: {
@@ -168,14 +172,14 @@ function loaderSegment (path, delay, color) {
   });
 }
 
-function configMetaTag (uiVersion, config) {
+function configMetaTag(uiVersion, config) {
   return h('meta', {
     name: 'external-config',
-    content: JSON.stringify({uiVersion, config})
+    content: JSON.stringify({ uiVersion, config })
   });
 }
 
-function stylesheet (href) {
+function stylesheet(href) {
   return h('link', {
     href: href,
     media: 'all',
@@ -184,7 +188,7 @@ function stylesheet (href) {
   });
 }
 
-function iconLink (rel, href) {
+function iconLink(rel, href) {
   return h('link', {
     href: href,
     rel: rel,
@@ -192,6 +196,6 @@ function iconLink (rel, href) {
   });
 }
 
-function scriptTag (src) {
-  return h('script', {src, type: 'text/javascript'});
+function scriptTag(src) {
+  return h('script', { src, type: 'text/javascript' });
 }

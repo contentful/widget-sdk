@@ -2,9 +2,15 @@
   "environment": "development",
   "authUrl": "https://be.flinkly.com",
   "apiUrl": "https://api.flinkly.com",
-  "mockApiUrl" : "",
+  "mockApiUrl": "",
   "assetUrl": "//localhost:3001",
-  "otUrl": ["https://ot.flinkly.com", "https://ot1.flinkly.com", "https://ot2.flinkly.com", "https://ot3.flinkly.com", "https://ot4.flinkly.com"],
+  "otUrl": [
+    "https://ot.flinkly.com",
+    "https://ot1.flinkly.com",
+    "https://ot2.flinkly.com",
+    "https://ot3.flinkly.com",
+    "https://ot4.flinkly.com"
+  ],
   "marketingUrl": "https://www.flinkly.com",
   "main_domain": "flinkly.com",
   "toolsServiceUrl": "https://tools.flinkly.com",
@@ -35,10 +41,10 @@
     "app_id": "userInterfaceDev",
     "buffer_size": 1
   },
-  "google" : {
+  "google": {
     "maps_api_key": "AIzaSyB_jzGfB98k1d_CCwMacP1ovTfXYxXh11g"
   },
   "fonts_dot_com": {
-    "project_id" : "00000000-0000-0000-0000-000000000000"
+    "project_id": "00000000-0000-0000-0000-000000000000"
   }
 }

@@ -1,10 +1,10 @@
 import modalDialog from 'modalDialog';
-import {getOrganization} from 'services/TokenStore';
-import {isLegacyOrganization} from 'utils/ResourceUtils';
-import {canCreateSpaceInOrganization} from 'access_control/AccessChecker';
-import {createOrganizationEndpoint} from 'data/EndpointFactory';
+import { getOrganization } from 'services/TokenStore';
+import { isLegacyOrganization } from 'utils/ResourceUtils';
+import { canCreateSpaceInOrganization } from 'access_control/AccessChecker';
+import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import notification from 'notification';
-import {getSpaceRatePlans, isPOCEnabled, productTypes} from 'account/pricing/PricingDataProvider';
+import { getSpaceRatePlans, isPOCEnabled, productTypes } from 'account/pricing/PricingDataProvider';
 /**
  * Displays the space creation dialog. The dialog type will depend on the
  * organization that the new space should belong to.
@@ -13,7 +13,7 @@ import {getSpaceRatePlans, isPOCEnabled, productTypes} from 'account/pricing/Pri
  *
  * @param {string} organizationId
  */
-export async function showDialog (organizationId) {
+export async function showDialog(organizationId) {
   if (!organizationId) {
     throw new Error('organizationId not supplied for space creation');
   }
@@ -24,7 +24,9 @@ export async function showDialog (organizationId) {
   // has no rights to do it.
   // See https://contentful.tpondemand.com/entity/18031-user-without-create-space-permission-can
   if (!organization || !canCreateSpaceInOrganization(organizationId)) {
-    notification.error('You don’t have rights to create a space, plase contact your organization’s administrator.');
+    notification.error(
+      'You don’t have rights to create a space, plase contact your organization’s administrator.'
+    );
   }
 
   if (isLegacyOrganization(organization)) {
@@ -33,7 +35,7 @@ export async function showDialog (organizationId) {
       template: '<cf-create-new-space class="modal-background"></cf-create-new-space>',
       backgroundClose: false,
       persistOnNavigation: true,
-      scopeData: {organization}
+      scopeData: { organization }
     });
   } else {
     // check if Proof of Concept spaces feature is on
@@ -64,8 +66,9 @@ export async function showDialog (organizationId) {
         }
       };
       modalDialog.open({
-        template: '<react-component name="components/shared/enterprise-space-wizard/EnterpriseSpaceWizard" class="modal-background" props="modalProps"></react-component>',
-        scopeData: {modalProps},
+        template:
+          '<react-component name="components/shared/enterprise-space-wizard/EnterpriseSpaceWizard" class="modal-background" props="modalProps"></react-component>',
+        scopeData: { modalProps },
         backgroundClose: false,
         persistOnNavigation: true
       });

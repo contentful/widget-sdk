@@ -1,6 +1,7 @@
-angular.module('cf.ui')
+angular
+  .module('cf.ui')
 
-/*
+  /*
  * @ngdoc directive
  * @name cfLoader
  * @description
@@ -21,75 +22,89 @@ angular.module('cf.ui')
  * cf-loader(is-shown="isLoading")
  * cf-loader(is-shown="somePropFromParentScope" loader-msg="Loading xyz…")
  */
-.directive('cfLoader', ['require', require => {
-  var h = require('utils/hyperscript').h;
-  var spinner = require('ui/Components/Spinner').default;
-  var Layout = require('ui/Layout');
-  var hspace = Layout.hspace;
-  var container = Layout.container;
+  .directive('cfLoader', [
+    'require',
+    require => {
+      var h = require('utils/hyperscript').h;
+      var spinner = require('ui/Components/Spinner').default;
+      var Layout = require('ui/Layout');
+      var hspace = Layout.hspace;
+      var container = Layout.container;
 
-  return {
-    restrict: 'E',
-    scope: {
-      isShown: '=?',
-      loaderMsg: '@',
-      watchStateChange: '@'
-    },
-    template: h('.loader', {
-      ngShow: 'isShown',
-      role: 'progressbar',
-      ariaBusy: '{{isShown}}',
-      ariaLabel: 'loader-interstitial'
-    }, [
-      h('.loader__container', [
-        spinner({ diameter: '36px' }),
-        hspace('10px'),
-        container({ fontSize: '2em' }, [
-          '{{loaderMsg}}'
-        ])
-      ])
-    ]),
-    controller: ['$scope', 'require', ($scope, require) => {
-      var $rootScope = require('$rootScope');
-      var $parse = require('$parse');
-
-      $scope.watchStateChange = $parse($scope.watchStateChange)();
-      $scope.loaderMsg = $scope.loaderMsg || 'Please hold on…';
-
-      if ($scope.watchStateChange) {
-        $scope.$on('$destroy', _.flow(
-          $rootScope.$on('$stateChangeStart', showLoader),
-          $rootScope.$on('$stateChangeSuccess', hideLoader),
-          $rootScope.$on('$stateChangeCancel', hideLoader),
-          $rootScope.$on('$stateNotFound', hideLoader),
-          $rootScope.$on('$stateChangeError', hideLoader)
-        ));
-      }
-
-      function showLoader (_event, _toState, _toParams, _fromState, _fromParams, options) {
-        // If `options.notify` gets set to `false` in another `$state...` event
-        // handler then above handlers triggering `hideLoader` would never fire.
-        // TODO: Use Proxy instead once we drop IE 11 support.
-        var notify = options.notify;
-        Object.defineProperty(options, 'notify', {
-          configurable: true,
-          enumerable: true,
-          set: function (value) {
-            (value ? showLoader : hideLoader)();
-            notify = value;
+      return {
+        restrict: 'E',
+        scope: {
+          isShown: '=?',
+          loaderMsg: '@',
+          watchStateChange: '@'
+        },
+        template: h(
+          '.loader',
+          {
+            ngShow: 'isShown',
+            role: 'progressbar',
+            ariaBusy: '{{isShown}}',
+            ariaLabel: 'loader-interstitial'
           },
-          get: function () { return notify; }
-        });
-        $scope.isShown = notify;
-      }
+          [
+            h('.loader__container', [
+              spinner({ diameter: '36px' }),
+              hspace('10px'),
+              container({ fontSize: '2em' }, ['{{loaderMsg}}'])
+            ])
+          ]
+        ),
+        controller: [
+          '$scope',
+          'require',
+          ($scope, require) => {
+            var $rootScope = require('$rootScope');
+            var $parse = require('$parse');
 
-      function hideLoader () {
-        $scope.isShown = false;
-      }
-    }]
-  };
-}])
-/*
+            $scope.watchStateChange = $parse($scope.watchStateChange)();
+            $scope.loaderMsg = $scope.loaderMsg || 'Please hold on…';
+
+            if ($scope.watchStateChange) {
+              $scope.$on(
+                '$destroy',
+                _.flow(
+                  $rootScope.$on('$stateChangeStart', showLoader),
+                  $rootScope.$on('$stateChangeSuccess', hideLoader),
+                  $rootScope.$on('$stateChangeCancel', hideLoader),
+                  $rootScope.$on('$stateNotFound', hideLoader),
+                  $rootScope.$on('$stateChangeError', hideLoader)
+                )
+              );
+            }
+
+            function showLoader(_event, _toState, _toParams, _fromState, _fromParams, options) {
+              // If `options.notify` gets set to `false` in another `$state...` event
+              // handler then above handlers triggering `hideLoader` would never fire.
+              // TODO: Use Proxy instead once we drop IE 11 support.
+              var notify = options.notify;
+              Object.defineProperty(options, 'notify', {
+                configurable: true,
+                enumerable: true,
+                set: function(value) {
+                  (value ? showLoader : hideLoader)();
+                  notify = value;
+                },
+                get: function() {
+                  return notify;
+                }
+              });
+              $scope.isShown = notify;
+            }
+
+            function hideLoader() {
+              $scope.isShown = false;
+            }
+          }
+        ]
+      };
+    }
+  ])
+  /*
  * @ngdoc directive
  * @name cfInlineLoader
  * @description
@@ -103,21 +118,26 @@ angular.module('cf.ui')
  *   input(type="text")
  *   cf-inline-loader(is-shown="isSearching")
  */
-.directive('cfInlineLoader', ['require', require => {
-  var h = require('utils/hyperscript').h;
+  .directive('cfInlineLoader', [
+    'require',
+    require => {
+      var h = require('utils/hyperscript').h;
 
-  return {
-    restrict: 'E',
-    scope: {
-      isShown: '='
-    },
-    template: h('.loader.loader--inline', {
-      ngShow: 'isShown',
-      role: 'progressbar',
-      ariaBusy: '{{isShown}}',
-      ariaLabel: 'loader-inline'
-    }, [
-      h('.loader__spinner--inline')
-    ])
-  };
-}]);
+      return {
+        restrict: 'E',
+        scope: {
+          isShown: '='
+        },
+        template: h(
+          '.loader.loader--inline',
+          {
+            ngShow: 'isShown',
+            role: 'progressbar',
+            ariaBusy: '{{isShown}}',
+            ariaLabel: 'loader-inline'
+          },
+          [h('.loader__spinner--inline')]
+        )
+      };
+    }
+  ]);

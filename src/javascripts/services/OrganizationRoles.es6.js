@@ -35,7 +35,7 @@ export const isOwner = createRoleChecker('owner');
  * @name OrganizationRoles#setUser
  * @param {API.User} user
  */
-export function setUser (user) {
+export function setUser(user) {
   currentUser = user;
 }
 
@@ -46,16 +46,15 @@ export function setUser (user) {
  * @description
  * Checks if the user is an owner or admin of the organization with the given ID.
  */
-export function isOwnerOrAdmin (organization) {
+export function isOwnerOrAdmin(organization) {
   return isOwner(organization) || isAdmin(organization);
 }
 
-
-function createRoleChecker (role) {
-  return function checkRole (organization) {
+function createRoleChecker(role) {
+  return function checkRole(organization) {
     const id = get(organization, 'sys.id');
     const memberships = get(currentUser, 'organizationMemberships', []);
-    const found = find(memberships, {organization: {sys: {id: id}}});
+    const found = find(memberships, { organization: { sys: { id: id } } });
     return role === get(found, 'role');
   };
 }

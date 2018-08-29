@@ -4,14 +4,14 @@ import specialCharacters from './markdown_special_characters';
 import LinkOrganizer from 'LinkOrganizer';
 import notification from 'notification';
 import entitySelector from 'entitySelector';
-import {defaults, isObject, get, mapValues} from 'lodash';
-import {fileNameToTitle, truncate} from 'stringUtils';
-import {trackMarkdownEditorAction} from 'analytics/MarkdownEditorActions';
-import {track} from 'analytics/Analytics';
+import { defaults, isObject, get, mapValues } from 'lodash';
+import { fileNameToTitle, truncate } from 'stringUtils';
+import { trackMarkdownEditorAction } from 'analytics/MarkdownEditorActions';
+import { track } from 'analytics/Analytics';
 import $state from '$state';
 import * as BulkAssetsCreator from 'services/BulkAssetsCreator';
 
-export function create (editor, locale, defaultLocaleCode, {zen}) {
+export function create(editor, locale, defaultLocaleCode, { zen }) {
   const {
     fallbackCode,
     internal_code: localeCode,
@@ -33,45 +33,41 @@ export function create (editor, locale, defaultLocaleCode, {zen}) {
     openHelp
   };
 
+  return mapValues(defaults(advancedActions, editor.actions), (handler, action) => (...args) => {
+    trackMarkdownEditorAction(action, { fullscreen: zen });
+    return handler(...args);
+  });
 
-  return mapValues(
-    defaults(advancedActions, editor.actions),
-    (handler, action) => (...args) => {
-      trackMarkdownEditorAction(
-        action,
-        {fullscreen: zen}
-      );
-      return handler(...args);
-    }
-  );
-
-  function link () {
+  function link() {
     editor.usePrimarySelection();
     const selectedText = editor.getSelectedText();
-    modalDialog.open({
-      scopeData: {
-        showLinkTextInput: !selectedText,
-        model: {
-          url: 'https://'
-        }
-      },
-      template: 'markdown_link_dialog'
-    }).promise.then(({url, text, title}) => {
-      editor.actions.link(url, selectedText || text, title);
-    });
+    modalDialog
+      .open({
+        scopeData: {
+          showLinkTextInput: !selectedText,
+          model: {
+            url: 'https://'
+          }
+        },
+        template: 'markdown_link_dialog'
+      })
+      .promise.then(({ url, text, title }) => {
+        editor.actions.link(url, selectedText || text, title);
+      });
   }
 
-  function existingAssets () {
-    entitySelector.openFromField({
-      type: 'Array',
-      itemLinkType: 'Asset',
-      locale: localeCode
-    })
-      .then((assets) => _insertAssetLinks(assets))
+  function existingAssets() {
+    entitySelector
+      .openFromField({
+        type: 'Array',
+        itemLinkType: 'Asset',
+        locale: localeCode
+      })
+      .then(assets => _insertAssetLinks(assets))
       .finally(editor.getWrapper().focus);
   }
 
-  function newAssets () {
+  function newAssets() {
     // Disable editor and remember cursor position as the user can still
     // select text (and therefore chagne cursor position) while disabled.
     const wrapper = editor.getWrapper();
@@ -80,32 +76,38 @@ export function create (editor, locale, defaultLocaleCode, {zen}) {
     wrapper.disable();
 
     BulkAssetsCreator.open(localeCode)
-    .then((assetObjects) => {
-      return BulkAssetsCreator.tryToPublishProcessingAssets(assetObjects)
-        .then((result) => {
-          const {publishedAssets, unpublishableAssets} = result;
+      .then(assetObjects => {
+        return BulkAssetsCreator.tryToPublishProcessingAssets(assetObjects).then(result => {
+          const { publishedAssets, unpublishableAssets } = result;
           if (publishedAssets.length && !unpublishableAssets.length) {
-            notification.info((publishedAssets.length === 1
-              ? 'The asset was' : `All ${publishedAssets.length} assets were`) +
-              ' just published');
+            notification.info(
+              (publishedAssets.length === 1
+                ? 'The asset was'
+                : `All ${publishedAssets.length} assets were`) + ' just published'
+            );
           } else if (unpublishableAssets.length) {
-            notification.warn(`Failed to publish ${unpublishableAssets.length === 1
-              ? 'the asset' : `${unpublishableAssets.length} assets`}`);
+            notification.warn(
+              `Failed to publish ${
+                unpublishableAssets.length === 1
+                  ? 'the asset'
+                  : `${unpublishableAssets.length} assets`
+              }`
+            );
           }
           wrapper.setCursor(cursor);
-          _insertAssetLinks(publishedAssets.map(({data}) => data));
+          _insertAssetLinks(publishedAssets.map(({ data }) => data));
         });
-    })
-    .catch(() => {
-      wrapper.setCursor(cursor);
-    })
-    .finally(() => {
-      wrapper.enable();
-      wrapper.focus();
-    });
+      })
+      .catch(() => {
+        wrapper.setCursor(cursor);
+      })
+      .finally(() => {
+        wrapper.enable();
+        wrapper.focus();
+      });
   }
 
-  function _insertAssetLinks (assets) {
+  function _insertAssetLinks(assets) {
     // check whether do we have some assets, which don't have
     // a version in this field's locale
     const otherLocales = assets.filter(asset => {
@@ -116,15 +118,15 @@ export function create (editor, locale, defaultLocaleCode, {zen}) {
       .map(_makeAssetLink)
       // remove empty links
       .filter(Boolean);
-    const links = linksWithMeta.map(({link}) => link).join(' ');
+    const links = linksWithMeta.map(({ link }) => link).join(' ');
 
     // if there have values from fallback/default locales, we need to
     // provide user a warning so we show him modal
     if (otherLocales.length > 0) {
       const text = linksWithMeta
-      // we don't want to warn about normally localized files
-        .filter(({isLocalized}) => !isLocalized)
-        .map(({title, isFallback, asset}) => {
+        // we don't want to warn about normally localized files
+        .filter(({ isLocalized }) => !isLocalized)
+        .map(({ title, isFallback, asset }) => {
           const localeText = isFallback
             ? `fallback locale (${fallbackCode})`
             : `default locale (${defaultLocaleCode})`;
@@ -138,32 +140,35 @@ export function create (editor, locale, defaultLocaleCode, {zen}) {
           };
         });
 
-      return modalDialog.open({
-        template: 'markdown_insert_link_confirmation',
-        scopeData: {
-          number: otherLocales.length,
-          text,
-          // which locale we are trying to use
-          locale: translationLocaleCode
-        }
-      }).promise.then(() => {
-        editor.insert(links);
-      }).catch(() => {
-      });
+      return modalDialog
+        .open({
+          template: 'markdown_insert_link_confirmation',
+          scopeData: {
+            number: otherLocales.length,
+            text,
+            // which locale we are trying to use
+            locale: translationLocaleCode
+          }
+        })
+        .promise.then(() => {
+          editor.insert(links);
+        })
+        .catch(() => {});
     } else {
       editor.insert(links);
       return Promise.resolve();
     }
   }
 
-  function _makeAssetLink (asset) {
+  function _makeAssetLink(asset) {
     const localizedFile = get(asset, ['fields', 'file', localeCode]);
     const fallbackFile = fallbackCode ? get(asset, ['fields', 'file', fallbackCode]) : null;
     const defaultFile = get(asset, ['fields', 'file', defaultLocaleCode]);
     const file = localizedFile || fallbackFile || defaultFile;
 
     if (isObject(file) && file.url) {
-      const title = get(asset, ['fields', 'title', localeCode]) ||
+      const title =
+        get(asset, ['fields', 'title', localeCode]) ||
         get(asset, ['fields', 'title', fallbackCode]) ||
         get(asset, ['fields', 'title', defaultLocaleCode]) ||
         fileNameToTitle(file.fileName);
@@ -184,42 +189,48 @@ export function create (editor, locale, defaultLocaleCode, {zen}) {
     }
   }
 
-  function special () {
+  function special() {
     const scopeData = {
       specialCharacters: specialCharacters,
-      model: {choice: specialCharacters[0]},
-      entity: function (x) {
+      model: { choice: specialCharacters[0] },
+      entity: function(x) {
         return '&' + x.id + ';';
       }
     };
 
-    modalDialog.open({
-      scopeData: scopeData,
-      template: 'markdown_special_character_dialog'
-    }).promise.then(editor.insert);
+    modalDialog
+      .open({
+        scopeData: scopeData,
+        template: 'markdown_special_character_dialog'
+      })
+      .promise.then(editor.insert);
   }
 
-  function table () {
-    modalDialog.open({
-      scopeData: {model: {rows: 2, cols: 2}},
-      template: 'markdown_table_dialog'
-    }).promise.then(editor.actions.table);
+  function table() {
+    modalDialog
+      .open({
+        scopeData: { model: { rows: 2, cols: 2 } },
+        template: 'markdown_table_dialog'
+      })
+      .promise.then(editor.actions.table);
   }
 
-  function embed () {
-    modalDialog.open({
-      scopeData: {
-        model: {value: 'https://', width: {px: 600, percent: 100}, widthSuffix: 'percent'},
-        urlStatus: 'invalid'
-      },
-      template: 'markdown_embed_dialog'
-    }).promise.then(data => {
-      editor.insert(_makeEmbedlyLink(data));
-    });
+  function embed() {
+    modalDialog
+      .open({
+        scopeData: {
+          model: { value: 'https://', width: { px: 600, percent: 100 }, widthSuffix: 'percent' },
+          urlStatus: 'invalid'
+        },
+        template: 'markdown_embed_dialog'
+      })
+      .promise.then(data => {
+        editor.insert(_makeEmbedlyLink(data));
+      });
   }
 
-  function _makeEmbedlyLink (data) {
-    const s = {percent: '%', px: 'px'};
+  function _makeEmbedlyLink(data) {
+    const s = { percent: '%', px: 'px' };
     return [
       '<a href="' + data.value + '" class="embedly-card" ',
       'data-card-width="' + data.width[data.widthSuffix] + s[data.widthSuffix] + '" ',
@@ -228,7 +239,7 @@ export function create (editor, locale, defaultLocaleCode, {zen}) {
     ].join('');
   }
 
-  function organizeLinks () {
+  function organizeLinks() {
     let text = editor.getContent();
     text = LinkOrganizer.convertInlineToRef(text);
     text = LinkOrganizer.rewriteRefs(text);
@@ -236,7 +247,7 @@ export function create (editor, locale, defaultLocaleCode, {zen}) {
     notification.info('All your links are now references at the bottom of your document.');
   }
 
-  function openHelp () {
+  function openHelp() {
     track('element:click', {
       elementId: 'markdown_help_dialog',
       groupId: 'editors_authors_help',

@@ -2,7 +2,7 @@ import { runTask } from 'utils/Concurrent';
 import spaceContext from 'spaceContext';
 import { get, reduce } from 'lodash';
 
-export function resolveReferences (params) {
+export function resolveReferences(params) {
   return runTask(resolveReferences_, params);
 }
 /**
@@ -18,7 +18,7 @@ export function resolveReferences (params) {
  * @param {string} params.defaultLocale
  * @returns {Promise<string>} - url with resolved references (if any)
  */
-function* resolveReferences_ ({url, entry, defaultLocale}) {
+function* resolveReferences_({ url, entry, defaultLocale }) {
   // Pattern that denotes usage of incoming links
   const REFERENCES_PATTERN = /linkedBy/g;
   // Pattern to strip out the placeholders from the url
@@ -75,7 +75,9 @@ function* resolveReferences_ ({url, entry, defaultLocale}) {
   }
 
   // Interpolate the placeholders with the actual data from the data object we just built
-  return url.replace(/\{entry\.(.+?)\}/g, (_match, path) => get(dataToInterpolate, path || '', path + '_ NOT_FOUND'));
+  return url.replace(/\{entry\.(.+?)\}/g, (_match, path) =>
+    get(dataToInterpolate, path || '', path + '_ NOT_FOUND')
+  );
 }
 
 /**
@@ -89,25 +91,32 @@ function* resolveReferences_ ({url, entry, defaultLocale}) {
  * @param {string} defaultLocale
  * @returns {Object}
  */
-function createInterpolationDataObject (entry, defaultLocale) {
-  const entryFields = reduce(entry.fields, (acc, fieldData, fieldName) => {
-    acc[fieldName] = fieldData[defaultLocale];
-    return acc;
-  }, {});
+function createInterpolationDataObject(entry, defaultLocale) {
+  const entryFields = reduce(
+    entry.fields,
+    (acc, fieldData, fieldName) => {
+      acc[fieldName] = fieldData[defaultLocale];
+      return acc;
+    },
+    {}
+  );
 
-  return Object.defineProperties({}, {
-    fields: {
-      enumerable: true,
-      value: entryFields
-    },
-    sys: {
-      enumerable: true,
-      value: entry.sys
-    },
-    linkedBy: {
-      enumerable: true,
-      value: null,
-      writable: true
+  return Object.defineProperties(
+    {},
+    {
+      fields: {
+        enumerable: true,
+        value: entryFields
+      },
+      sys: {
+        enumerable: true,
+        value: entry.sys
+      },
+      linkedBy: {
+        enumerable: true,
+        value: null,
+        writable: true
+      }
     }
-  });
+  );
 }

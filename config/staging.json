@@ -2,20 +2,26 @@
   "environment": "staging",
   "authUrl": "//be.flinkly.com",
   "apiUrl": "//api.flinkly.com",
-  "mockApiUrl" : "",
-  "otUrl": ["https://ot.flinkly.com", "https://ot1.flinkly.com", "https://ot2.flinkly.com", "https://ot3.flinkly.com", "https://ot4.flinkly.com"],
-  "assetUrl" : "//static.flinkly.com",
+  "mockApiUrl": "",
+  "otUrl": [
+    "https://ot.flinkly.com",
+    "https://ot1.flinkly.com",
+    "https://ot2.flinkly.com",
+    "https://ot3.flinkly.com",
+    "https://ot4.flinkly.com"
+  ],
+  "assetUrl": "//static.flinkly.com",
   "marketingUrl": "//www.flinkly.com",
-  "main_domain" : "flinkly.com",
+  "main_domain": "flinkly.com",
   "toolsServiceUrl": "https://tools.flinkly.com",
-  "contentful" : {
-    "apiUrl" : "api.contentful.com",
-    "cdaApiUrl" : "cdn.contentful.com",
-    "spaceTemplateEntryContentTypeId" : "17WjnjeALEOeSyuiMI4QOW",
-    "previewAccessToken" : "2fcfe1abd171477eabd73e64088fe1c1eb2578ac0158332902a1d8e5279356e4",
-    "previewApiUrl" : "preview.contentful.com",
-    "space" : "l1ay9bp8gv68",
-    "accessToken" : "0c783036ae7540a10db86150e1cb564c8c0bad53482794604f227dc199e6dde1",
+  "contentful": {
+    "apiUrl": "api.contentful.com",
+    "cdaApiUrl": "cdn.contentful.com",
+    "spaceTemplateEntryContentTypeId": "17WjnjeALEOeSyuiMI4QOW",
+    "previewAccessToken": "2fcfe1abd171477eabd73e64088fe1c1eb2578ac0158332902a1d8e5279356e4",
+    "previewApiUrl": "preview.contentful.com",
+    "space": "l1ay9bp8gv68",
+    "accessToken": "0c783036ae7540a10db86150e1cb564c8c0bad53482794604f227dc199e6dde1",
     "TEASpaceId": "qz0n5cdakyl9"
   },
   "launchDarkly": {
@@ -26,19 +32,19 @@
     "policy": "eyJjYWxsIjpbInBpY2siLCJyZWFkIiwic3RhdCIsInN0b3JlIiwiY29udmVydCIsImV4aWYiXSwiZXhwaXJ5IjoyMjEyNjYwODAwfQ==",
     "signature": "9c530ac9496000c478a5309321ea1b749740e998a0e28eed96222ba43f7376cc"
   },
-  "embedly" : {
-    "api_key" : "5aba1269adbf42919bd1dd3308b84652"
+  "embedly": {
+    "api_key": "5aba1269adbf42919bd1dd3308b84652"
   },
-  "segment_io" : "2z8un4c6u4",
+  "segment_io": "2z8un4c6u4",
   "snowplow": {
     "collector_endpoint": "com-contentful.mini.snplow.net:443",
     "app_id": "userInterfaceStaging",
     "buffer_size": 1
   },
-  "google" : {
-    "maps_api_key" : "AIzaSyB_jzGfB98k1d_CCwMacP1ovTfXYxXh11g"
+  "google": {
+    "maps_api_key": "AIzaSyB_jzGfB98k1d_CCwMacP1ovTfXYxXh11g"
   },
-  "fonts_dot_com" : {
-    "project_id" : "00000000-0000-0000-0000-000000000000"
+  "fonts_dot_com": {
+    "project_id": "00000000-0000-0000-0000-000000000000"
   }
 }

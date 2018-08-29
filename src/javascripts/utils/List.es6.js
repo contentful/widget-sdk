@@ -59,7 +59,7 @@
  * @param {T[]} items
  * @param {function(T): string} getHash
  */
-export function makeKeyed (items, getHash) {
+export function makeKeyed(items, getHash) {
   const hashCount = {};
   return items.map(item => {
     const hash = getHash(item);

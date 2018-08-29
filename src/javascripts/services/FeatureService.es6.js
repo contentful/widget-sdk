@@ -8,20 +8,20 @@ import { get, snakeCase } from 'lodash';
 
 const flagName = 'feature-bv-2018-01-features-api';
 
-export default function createFeatureService (id, type = 'space') {
+export default function createFeatureService(id, type = 'space') {
   const endpoint = createEndpoint(id, type);
 
   return { get, getAll };
 
-  async function get (featureId) {
+  async function get(featureId) {
     const organization = await getTokenOrganization(id, type);
     const apiFeatureId = snakeCase(featureId);
     const allFeatures = await getAll(organization);
 
-    return allFeatures.some((feature) => feature.sys.id === apiFeatureId && feature.enabled);
+    return allFeatures.some(feature => feature.sys.id === apiFeatureId && feature.enabled);
   }
 
-  async function getAll () {
+  async function getAll() {
     const organization = await getTokenOrganization(id, type);
     const legacy = await useLegacy(organization);
 
@@ -34,7 +34,7 @@ export default function createFeatureService (id, type = 'space') {
   }
 }
 
-function legacyGetAllFeatures (organization) {
+function legacyGetAllFeatures(organization) {
   const featuresHash = get(organization, 'subscriptionPlan.limits.features', {});
   const features = Object.keys(featuresHash).map(featureId => {
     return {
@@ -49,13 +49,13 @@ function legacyGetAllFeatures (organization) {
   return features;
 }
 
-function createEndpoint (id, type) {
+function createEndpoint(id, type) {
   const endpointFactory = type === 'space' ? createSpaceEndpoint : createOrganizationEndpoint;
 
   return endpointFactory(id);
 }
 
-async function getTokenOrganization (id, type) {
+async function getTokenOrganization(id, type) {
   if (type === 'space') {
     const space = await getSpace(id);
 
@@ -65,7 +65,7 @@ async function getTokenOrganization (id, type) {
   }
 }
 
-async function useLegacy (organization) {
+async function useLegacy(organization) {
   if (isLegacyOrganization(organization)) {
     return getCurrentVariation(flagName).then(flagValue => !flagValue);
   } else {

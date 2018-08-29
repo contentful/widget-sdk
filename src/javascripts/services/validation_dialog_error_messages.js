@@ -17,8 +17,7 @@
  *
  * [wiki-validations]: https://contentful.atlassian.net/wiki/display/PROD/Validations
  */
-angular.module('contentful')
-.factory('validationDialogErrorMessages', () => {
+angular.module('contentful').factory('validationDialogErrorMessages', () => {
   var sizeMessage = details => {
     if (details === 'Expected max >= min') {
       return 'Minimum value has to be smaller than maximum value';
@@ -28,9 +27,9 @@ angular.module('contentful')
   };
 
   var messages = {
-    'size': sizeMessage,
+    size: sizeMessage,
 
-    'range': function (details) {
+    range: function(details) {
       if (details === 'Expected max >= min') {
         return 'Minimum value has to be smaller than maximum value';
       } else {
@@ -38,7 +37,7 @@ angular.module('contentful')
       }
     },
 
-    'regexp': function (details) {
+    regexp: function(details) {
       if (details === 'Invalid regular expression') {
         return 'Please provide a valid regular expression with valid flags';
       } else {
@@ -46,23 +45,27 @@ angular.module('contentful')
       }
     },
 
-    'dateRange': function () {
+    dateRange: function() {
       return 'Please specify a date range by setting earliest date, latest date or both';
     },
 
-    'linkMimetypeGroup': function () {
+    linkMimetypeGroup: function() {
       return 'Please check at least one file type';
     },
 
-    'linkContentType': function () {
+    linkContentType: function() {
       return 'Please check at least one content type';
     },
 
-    'assetFileSize': sizeMessage,
-    'assetImageDimensions': sizeMessage
+    assetFileSize: sizeMessage,
+    assetImageDimensions: sizeMessage
   };
 
-  return function getErrorMessage (validationType, error) {
-    if (validationType in messages) { return messages[validationType](error.details); } else { return error.details; }
+  return function getErrorMessage(validationType, error) {
+    if (validationType in messages) {
+      return messages[validationType](error.details);
+    } else {
+      return error.details;
+    }
   };
 });

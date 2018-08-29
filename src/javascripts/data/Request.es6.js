@@ -11,6 +11,6 @@ import wrapWithAuth from 'data/Request/Auth';
  *
  * See the wrapper documentation for details.
  */
-export default function makeRequest (auth) {
+export default function makeRequest(auth) {
   return wrapWithAuth(auth, wrapWithRetry($http));
 }
