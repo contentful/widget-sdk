@@ -70,8 +70,8 @@ describe('entityEditor/StateController', () => {
     this.doc = createDocument(this.entity, this.spaceEndpoint);
     this.spaceEndpoint.resolves(this.doc.getData());
 
-    this.entityNavigationHelpers = this.$inject('states/EntityNavigationHelpers');
-    this.entityNavigationHelpers.goToPreviousSlideOrExit = sinon.stub();
+    this.slideInNavigator = this.$inject('navigation/SlideInNavigator');
+    this.slideInNavigator.goToPreviousSlideOrExit = sinon.stub();
 
     this.validator = this.scope.editorContext.validator;
 
@@ -127,7 +127,7 @@ describe('entityEditor/StateController', () => {
       this.controller.delete.execute();
       this.$apply();
       sinon.assert.calledOnceWith(
-        this.entityNavigationHelpers.goToPreviousSlideOrExit,
+        this.slideInNavigator.goToPreviousSlideOrExit,
         SLIDE_IN_EDITOR_FEATURE_FLAG_VALUE,
         'delete',
         this.closeStateSpy

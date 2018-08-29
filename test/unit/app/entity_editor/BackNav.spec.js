@@ -14,7 +14,7 @@ describe('BackNav', () => {
     this.closeState = this.sandbox.stub();
 
     this.system = createIsolatedSystem();
-    this.system.set('states/EntityNavigationHelpers', {
+    this.system.set('navigation/SlideInNavigator', {
       goToPreviousSlideOrExit: this.goToPreviousSlideOrExitStub
     });
     this.system.set('navigation/closeState', { default: this.closeState });

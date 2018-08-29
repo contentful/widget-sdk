@@ -1,7 +1,7 @@
 import {
   getSlideInEntities,
   goToSlideInEntity
-} from 'states/EntityNavigationHelpers';
+} from 'navigation/SlideInNavigator';
 import { track } from 'analytics/Analytics';
 import { findIndex } from 'lodash';
 

@@ -35,7 +35,7 @@ describe('StructuredTextEditor', () => {
         getEntry: Promise.resolve([this.entity])
       }
     });
-    this.system.set('states/EntityNavigationHelpers', {
+    this.system.set('navigation/SlideInNavigator', {
       goToSlideInEntity: sinon.stub()
     });
     const { default: StructuredTextEditor } = await this.system.import(

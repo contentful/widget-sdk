@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import createReactClass from 'create-react-class';
 import Icon from 'ui/Components/Icon';
-import { goToPreviousSlideOrExit } from 'states/EntityNavigationHelpers';
+import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 import closeState from 'navigation/closeState';
 
 const BackNav = createReactClass({

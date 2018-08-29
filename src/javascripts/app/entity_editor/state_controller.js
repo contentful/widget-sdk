@@ -23,7 +23,7 @@ angular.module('contentful')
   const spaceContext = require('spaceContext');
   const onFeatureFlag = require('utils/LaunchDarkly').onFeatureFlag;
   const goToPreviousSlideOrExit =
-    require('states/EntityNavigationHelpers').goToPreviousSlideOrExit;
+    require('navigation/SlideInNavigator').goToPreviousSlideOrExit;
 
   const permissions = otDoc.permissions;
   const reverter = otDoc.reverter;
