@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import $rootScope from '$rootScope';
+import $location from '$location';
 import entitySelector from 'entitySelector';
 import WidgetAPIContext from './WidgetAPIContext';
 
@@ -13,7 +15,8 @@ export default function connectToWidgetAPI (Component) {
 
     state = {
       value: this.props.field.getValue(),
-      isDisabled: true
+      isDisabled: true,
+      currentUrl: $location.absUrl()
     };
     constructor (props) {
       super(props);
@@ -24,11 +27,16 @@ export default function connectToWidgetAPI (Component) {
       this.offValueChanged = this.props.field.onValueChanged(
         this.handleIncomingChanges
       );
+
+      this.offLocationChanged = $rootScope.$on('$locationChangeSuccess', (_, currentUrl) => {
+        this.setState({ currentUrl });
+      });
     }
 
     componentWillUnmount () {
       this.offValueChanged();
       this.offDisabledState();
+      this.offLocationChanged();
     }
 
     handleDisabledChanges = isDisabled => {
@@ -57,7 +65,8 @@ export default function connectToWidgetAPI (Component) {
               dialogs: {
                 selectSingleEntry: () =>
                   entitySelector.openFromField(this.props.field, 0)
-              }
+              },
+              currentUrl: this.state.currentUrl
             }
           }}
         >

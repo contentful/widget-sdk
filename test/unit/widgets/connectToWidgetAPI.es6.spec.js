@@ -17,7 +17,16 @@ describe('connectToWidgetAPI', () => {
         getEntry: sinon.stub().resolves()
       }
     });
-
+    this.system.set('$rootScope', {
+      default: {
+        $on: sinon.stub()
+      }
+    });
+    this.system.set('$location', {
+      default: {
+        absUrl: () => 'abs-url'
+      }
+    });
     this.widgetApi = this.$inject('mocks/widgetApi').create();
     this.props = {
       field: this.widgetApi.field

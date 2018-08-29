@@ -7,6 +7,7 @@ import * as EntityState from 'data/CMA/EntityState';
 export default class FetchEntry extends React.Component {
   static propTypes = {
     node: PropTypes.object,
+    currentUrl: PropTypes.string,
     render: PropTypes.func.isRequired
   };
   state = {
@@ -27,7 +28,7 @@ export default class FetchEntry extends React.Component {
     this.fetchEntry(this.props);
   }
   componentWillReceiveProps (nextProps) {
-    if (this.props.node !== nextProps.node) {
+    if (this.props.node !== nextProps.node || this.props.currentUrl !== nextProps.currentUrl) {
       this.fetchEntry(nextProps);
     }
   }

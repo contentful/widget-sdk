@@ -5,6 +5,7 @@ import { ReferenceCard, Card, IconButton } from '@contentful/ui-component-librar
 import FetchEntry from './FetchEntry';
 import Thumbnail from './Thumbnail';
 import { goToSlideInEntity } from 'states/EntityNavigationHelpers';
+import WidgetAPIContext from 'app/widgets/WidgetAPIContext';
 
 export default class LinkedEntryBlock extends React.Component {
   static propTypes = {
@@ -35,16 +36,21 @@ export default class LinkedEntryBlock extends React.Component {
     const { node } = this.props;
 
     return (
-      <FetchEntry
-        node={node}
-        render={(fetchEntryResult) => {
-          if (fetchEntryResult.entryIsMissing) {
-            return this.renderMissingEntryReferenceCard();
-          } else {
-            return this.renderReferenceCard(fetchEntryResult);
-          }
-        }}
-      />
+      <WidgetAPIContext.Consumer>
+        {({widgetAPI}) => (
+          <FetchEntry
+            node={node}
+            currentUrl={widgetAPI.currentUrl}
+            render={(fetchEntryResult) => {
+              if (fetchEntryResult.entryIsMissing) {
+                return this.renderMissingEntryReferenceCard();
+              } else {
+                return this.renderReferenceCard(fetchEntryResult);
+              }
+            }}
+          />
+        )}
+      </WidgetAPIContext.Consumer>
     );
   }
 
@@ -74,6 +80,7 @@ export default class LinkedEntryBlock extends React.Component {
               label='Edit entry'
               onClick={event => this.handleEditClick(event, entry)}
               buttonType='muted'
+              testId="edit"
             />
             {this.renderDeleteButton()}
           </React.Fragment>
@@ -111,6 +118,7 @@ export default class LinkedEntryBlock extends React.Component {
         onClick={event => this.handleRemoveClick(event)}
         buttonType='muted'
         disabled={isDisabled}
+        testId="delete"
       />
     );
   }
