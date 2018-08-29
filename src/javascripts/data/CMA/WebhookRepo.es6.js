@@ -1,72 +1,75 @@
-import {get as getAtPath, cloneDeep} from 'lodash';
+import { get as getAtPath, cloneDeep } from 'lodash';
 
-export default function createWebhookRepo (space) {
-  const logs = {getCall, getCalls, getHealth};
-  return {getAll, get, save, remove, logs, hasValidBodyTransformation};
+export default function createWebhookRepo(space) {
+  const logs = { getCall, getCalls, getHealth };
+  return { getAll, get, save, remove, logs, hasValidBodyTransformation };
 
-  function getAll () {
+  function getAll() {
     return getBaseCall()
-    .payload({ limit: 100 })
-    .get()
-    .then(res => res.items.map(stringifyBodyTransformation));
+      .payload({ limit: 100 })
+      .get()
+      .then(res => res.items.map(stringifyBodyTransformation));
   }
 
-  function get (id) {
+  function get(id) {
     return getBaseCall(id)
-    .get()
-    .then(stringifyBodyTransformation);
+      .get()
+      .then(stringifyBodyTransformation);
   }
 
-  function getCall (webhookId, callId) {
+  function getCall(webhookId, callId) {
     return getLogsBaseCall(webhookId)
-    .paths(['calls', callId])
-    .get();
+      .paths(['calls', callId])
+      .get();
   }
 
-  function getCalls (webhookId) {
+  function getCalls(webhookId) {
     return getLogsBaseCall(webhookId)
-    .paths(['calls'])
-    .payload({ limit: 500 })
-    .get()
-    .then(res => res.items);
+      .paths(['calls'])
+      .payload({ limit: 500 })
+      .get()
+      .then(res => res.items);
   }
 
-  function getHealth (webhookId) {
+  function getHealth(webhookId) {
     return getLogsBaseCall(webhookId)
-    .paths(['health'])
-    .get();
+      .paths(['health'])
+      .get();
   }
 
-  function save (webhook) {
+  function save(webhook) {
     webhook = parseBodyTransformation(cloneDeep(webhook));
-    return createOrUpdate(webhook)
-    .then(stringifyBodyTransformation);
+    return createOrUpdate(webhook).then(stringifyBodyTransformation);
   }
 
-  function createOrUpdate (webhook) {
+  function createOrUpdate(webhook) {
     const id = getAtPath(webhook, ['sys', 'id']);
 
     if (id) {
-      return getBaseCall(id, webhook.sys.version).payload(webhook).put();
+      return getBaseCall(id, webhook.sys.version)
+        .payload(webhook)
+        .put();
     } else {
-      return getBaseCall().payload(webhook).post();
+      return getBaseCall()
+        .payload(webhook)
+        .post();
     }
   }
 
-  function remove (webhook) {
+  function remove(webhook) {
     return getBaseCall(webhook.sys.id).delete();
   }
 
-  function getBaseCall (id, version) {
-    const headers = typeof version !== 'undefined' ? {'X-Contentful-Version': version} : {};
+  function getBaseCall(id, version) {
+    const headers = typeof version !== 'undefined' ? { 'X-Contentful-Version': version } : {};
     return space.endpoint('webhook_definitions', id).headers(headers);
   }
 
-  function getLogsBaseCall (webhookId) {
+  function getLogsBaseCall(webhookId) {
     return space.endpoint('webhooks', webhookId);
   }
 
-  function stringifyBodyTransformation (webhook) {
+  function stringifyBodyTransformation(webhook) {
     const bodyTransformation = getBodyTransformation(webhook);
 
     if (typeof bodyTransformation !== 'undefined') {
@@ -76,7 +79,7 @@ export default function createWebhookRepo (space) {
     return webhook;
   }
 
-  function parseBodyTransformation (webhook) {
+  function parseBodyTransformation(webhook) {
     const bodyTransformation = getBodyTransformation(webhook);
 
     if (typeof bodyTransformation === 'string') {
@@ -86,7 +89,7 @@ export default function createWebhookRepo (space) {
     return webhook;
   }
 
-  function hasValidBodyTransformation (webhook) {
+  function hasValidBodyTransformation(webhook) {
     const bodyTransformation = getBodyTransformation(webhook);
 
     if (typeof bodyTransformation === 'undefined') {
@@ -97,13 +100,15 @@ export default function createWebhookRepo (space) {
       try {
         JSON.parse(bodyTransformation);
         return true;
-      } catch (err) { /* ignore */ } // eslint-disable-line no-empty
+      } catch (err) {
+        /* ignore */
+      } // eslint-disable-line no-empty
     }
 
     return false;
   }
 
-  function getBodyTransformation (webhook) {
+  function getBodyTransformation(webhook) {
     return getAtPath(webhook, ['transformation', 'body']);
   }
 }

@@ -5,9 +5,7 @@ describe('Promised loader service', () => {
 
   beforeEach(() => {
     module('contentful/test', $provide => {
-      stubs = $provide.makeStubs([
-        'method', 'success', 'error', 'success2', 'error2'
-      ]);
+      stubs = $provide.makeStubs(['method', 'success', 'error', 'success2', 'error2']);
     });
     inject($injector => {
       const PromisedLoader = $injector.get('PromisedLoader');
@@ -78,12 +76,14 @@ describe('Promised loader service', () => {
   });
 
   describe('attempt to load more than once simultaneously', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.first = $q.defer();
       this.second = $q.defer();
       stubs.method
-        .onCall(0).returns(this.first.promise)
-        .onCall(1).returns(this.second.promise);
+        .onCall(0)
+        .returns(this.first.promise)
+        .onCall(1)
+        .returns(this.second.promise);
       loader.loadPromise(stubs.method).then(stubs.success, stubs.error);
       loader._loadPromise.invokeDelayed();
       loader.loadPromise(stubs.method).then(stubs.success2, stubs.error2);

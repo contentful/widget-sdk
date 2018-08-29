@@ -24,23 +24,28 @@ const resourceTooltipPropTypes = {
   number: PropTypes.number.isRequired
 };
 
-function EnvironmentsTooltip ({number}) {
-  return <div>
-    <p>This space type includes 1 master and {pluralize('sandbox environment', number - 1, true)}.</p>
-    <p>
-      Environments allow you to create and
-      maintain multiple versions of the space-specific data, and make changes to them
-      in isolation.
-    </p>
-  </div>;
+function EnvironmentsTooltip({ number }) {
+  return (
+    <div>
+      <p>
+        This space type includes 1 master and {pluralize('sandbox environment', number - 1, true)}.
+      </p>
+      <p>
+        Environments allow you to create and maintain multiple versions of the space-specific data,
+        and make changes to them in isolation.
+      </p>
+    </div>
+  );
 }
 EnvironmentsTooltip.propTypes = resourceTooltipPropTypes;
 
-function RolesTooltip ({number}) {
-  return <Fragment>
-    This space type includes the admin role
-    { number === 1 ? ' only.' : ` and ${pluralize('additional role', number - 1, true)}.`}
-  </Fragment>;
+function RolesTooltip({ number }) {
+  return (
+    <Fragment>
+      This space type includes the admin role
+      {number === 1 ? ' only.' : ` and ${pluralize('additional role', number - 1, true)}.`}
+    </Fragment>
+  );
 }
 RolesTooltip.propTypes = resourceTooltipPropTypes;
 
@@ -68,7 +73,7 @@ export const RequestState = {
   ERROR: 'error'
 };
 
-export function formatPrice (value) {
+export function formatPrice(value) {
   if (!Number.isFinite(value)) {
     return null;
   }
@@ -81,7 +86,7 @@ export function formatPrice (value) {
   });
 }
 
-export function unavailabilityTooltipNode (plan) {
+export function unavailabilityTooltipNode(plan) {
   const reasonsMeta = {};
 
   if (!plan.unavailabilityReasons) {
@@ -103,12 +108,14 @@ export function unavailabilityTooltipNode (plan) {
   let resourceOverageNode;
 
   if (reasonsMeta.maximumLimitExceeded) {
-    const resourceOverageText = joinWithAnd(reasonsMeta.maximumLimitExceeded.map(ov => {
-      const additionalUsage = ov.usage - ov.maximumLimit;
-      const resourceName = lowerCase(ov.additionalInfo);
+    const resourceOverageText = joinWithAnd(
+      reasonsMeta.maximumLimitExceeded.map(ov => {
+        const additionalUsage = ov.usage - ov.maximumLimit;
+        const resourceName = lowerCase(ov.additionalInfo);
 
-      return `${additionalUsage} ${resourceName}`;
-    }));
+        return `${additionalUsage} ${resourceName}`;
+      })
+    );
 
     resourceOverageNode = (
       <p>
@@ -134,20 +141,18 @@ export function unavailabilityTooltipNode (plan) {
 
   return (
     <Fragment>
-      { resourceOverageNode && resourceOverageNode }
+      {resourceOverageNode && resourceOverageNode}
 
-      <p>
-        {upperFirst(joinWithAnd(mappedMeta))} before changing to this space type.
-      </p>
+      <p>{upperFirst(joinWithAnd(mappedMeta))} before changing to this space type.</p>
     </Fragment>
   );
 }
 
-export function getTooltip (type, number) {
-  return ResourceTooltips[type] && ResourceTooltips[type]({number});
+export function getTooltip(type, number) {
+  return ResourceTooltips[type] && ResourceTooltips[type]({ number });
 }
 
-export function getFieldErrors (error) {
+export function getFieldErrors(error) {
   const errors = get(error, 'body.details.errors') || [];
 
   return errors.reduce((acc, err) => {
@@ -166,7 +171,7 @@ export function getFieldErrors (error) {
   Returns the plan that would fulfill your resource usage, given a set of space rate plans and
   the current space resources (usage/limits).
  */
-export function getRecommendedPlan (spaceRatePlans = [], resources) {
+export function getRecommendedPlan(spaceRatePlans = [], resources) {
   // Valid plans are only ones that have no unavailablilty reasons
   const validPlans = spaceRatePlans.filter(plan => !get(plan, 'unavailabilityReasons'));
 
@@ -183,7 +188,7 @@ export function getRecommendedPlan (spaceRatePlans = [], resources) {
       return false;
     }
 
-    return statuses.reduce((fulfills, {reached}) => fulfills && !reached, true);
+    return statuses.reduce((fulfills, { reached }) => fulfills && !reached, true);
   });
 
   if (!recommendedPlan) {
@@ -219,7 +224,7 @@ export function getRecommendedPlan (spaceRatePlans = [], resources) {
   the limit, but would be near it and should be aware during the recommendation process.
 
  */
-export function getPlanResourceFulfillment (plan, spaceResources = []) {
+export function getPlanResourceFulfillment(plan, spaceResources = []) {
   const planIncludedResources = plan.includedResources;
 
   return planIncludedResources.reduce((fulfillments, planResource) => {
@@ -257,7 +262,7 @@ export function getPlanResourceFulfillment (plan, spaceResources = []) {
   }, {});
 }
 
-export function getIncludedResources (charges) {
+export function getIncludedResources(charges) {
   const ResourceTypes = {
     Environments: 'Environments',
     Roles: 'Roles',
@@ -266,8 +271,8 @@ export function getIncludedResources (charges) {
     Records: 'Records'
   };
 
-  return Object.values(ResourceTypes).map((type) => {
-    const charge = charges.find(({name}) => name === type);
+  return Object.values(ResourceTypes).map(type => {
+    const charge = charges.find(({ name }) => name === type);
     let number = get(charge, 'tiers[0].endingUnit');
 
     // Add "extra" environment and role to include `master` and `admin`
@@ -282,7 +287,7 @@ export function getIncludedResources (charges) {
 /*
   Returns tracking data for `feature_space_wizard` schema from the Wizard component properties.
  */
-export function createTrackingData (data) {
+export function createTrackingData(data) {
   const {
     action,
     paymentDetailsExist,
@@ -299,7 +304,7 @@ export function createTrackingData (data) {
     currentStep: currentStepId || null,
     targetStep: targetStepId || null,
     intendedAction: action,
-    paymentDetailsExist: (typeof paymentDetailsExist === 'boolean' ? paymentDetailsExist : null),
+    paymentDetailsExist: typeof paymentDetailsExist === 'boolean' ? paymentDetailsExist : null,
     targetSpaceType: get(selectedPlan, 'internalName', null),
     targetProductType: get(selectedPlan, 'productType', null),
     targetSpaceName: newSpaceName || null,

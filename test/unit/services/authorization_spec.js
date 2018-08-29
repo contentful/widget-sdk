@@ -5,9 +5,9 @@ describe('Authorization service', () => {
   let worfStub;
   let accessChecker;
 
-  beforeEach(function () {
+  beforeEach(function() {
     worfStub = sinon.stub();
-    accessChecker = {setAuthContext: sinon.stub()};
+    accessChecker = { setAuthContext: sinon.stub() };
 
     module('contentful/test', $provide => {
       $provide.constant('worf', worfStub);
@@ -33,10 +33,10 @@ describe('Authorization service', () => {
     let tokenLookup, space, enforcements, environmentId, authContext, spaceContext;
     beforeEach(() => {
       spaceContext = {};
-      authContext = {space: () => spaceContext, hasSpace: () => true};
-      tokenLookup = {tokenLookup: 0, spaces: [{sys: {id: '1234'}}]};
-      space = {name: 'space', getId: () => '1234'};
-      enforcements = [{sys: {id: 'E_1'}}];
+      authContext = { space: () => spaceContext, hasSpace: () => true };
+      tokenLookup = { tokenLookup: 0, spaces: [{ sys: { id: '1234' } }] };
+      space = { name: 'space', getId: () => '1234' };
+      enforcements = [{ sys: { id: 'E_1' } }];
       environmentId = 'master';
       worfStub.returns(authContext);
 
@@ -70,7 +70,7 @@ describe('Authorization service', () => {
       expect(authorization.spaceContext).toBe(null);
     });
 
-    it('patches the token with enforcements data', function () {
+    it('patches the token with enforcements data', function() {
       const worfToken = worfStub.firstCall.args[0];
 
       expect(worfToken.spaces[0].enforcements).toBe(enforcements);

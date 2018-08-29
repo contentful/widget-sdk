@@ -17,10 +17,7 @@ export default {
         const orgEndpoint = createOrganizationEndpoint(organization.sys.id);
         let plan;
         try {
-          plan = await getSingleSpacePlan(
-            orgEndpoint,
-            spaceContext.space.getId()
-          );
+          plan = await getSingleSpacePlan(orgEndpoint, spaceContext.space.getId());
         } catch (e) {
           // await getSingleSpacePlan throws for spaces on the old pricing
           // because they don't have a space plan. We catch it, dialog can handle lack of plan

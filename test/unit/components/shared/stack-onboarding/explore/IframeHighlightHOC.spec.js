@@ -7,7 +7,7 @@ import { shallow } from 'enzyme';
 describe('IframeHighlightHOC', () => {
   let IframeHighlightHOC, goStub;
 
-  beforeEach(function () {
+  beforeEach(function() {
     goStub = sinon.spy();
     module('contentful/test', $provide => {
       $provide.value('$state', {
@@ -18,7 +18,7 @@ describe('IframeHighlightHOC', () => {
     IframeHighlightHOC = this.$inject('onboarding-iframe-highlight-hoc');
   });
 
-  afterEach(function () {
+  afterEach(function() {
     IframeHighlightHOC = null;
   });
 

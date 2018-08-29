@@ -1,8 +1,8 @@
 const P = require('path');
-const {createServer} = require('http');
+const { createServer } = require('http');
 const express = require('express');
-const {render: renderIndex} = require('../../lib/index-page');
-const {readJSON, readMergeJSON} = require('../../lib/utils');
+const { render: renderIndex } = require('../../lib/index-page');
+const { readJSON, readMergeJSON } = require('../../lib/utils');
 
 // TODO unify with index configurator
 const MANIFEST_PATHS = [
@@ -16,7 +16,7 @@ const MANIFEST_PATHS = [
  *
  * The application is configured with config/development.json.
  */
-module.exports = async function serve () {
+module.exports = async function serve() {
   const assetsDir = P.resolve('build', 'app');
   const configPath = P.resolve('config', 'development.json');
   const [manifest, config] = await Promise.all([
@@ -26,7 +26,7 @@ module.exports = async function serve () {
 
   const app = express();
   app.use('/app', express.static(assetsDir));
-  app.get('*', function (req, res, next) {
+  app.get('*', function(req, res, next) {
     if (req.accepts('html')) {
       res.status(200);
       res.type('html');
@@ -38,12 +38,12 @@ module.exports = async function serve () {
   app.use((_, res) => res.sendStatus(404));
 
   const server = createServer(app);
-  await new Promise(function (resolve, reject) {
+  await new Promise(function(resolve, reject) {
     server.listen(3001, resolve);
     server.once('error', reject);
   });
 
-  const {address, port} = server.address();
+  const { address, port } = server.address();
   console.log(`Serving Contentful Web App at ${address}:${port}`);
   return () => server.close();
 };

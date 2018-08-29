@@ -31,10 +31,9 @@ import * as ShareJS from 'data/ShareJS/Utils';
 import * as Reverter from 'entityEditor/Document/Reverter';
 import * as PresenceHub from 'entityEditor/Document/PresenceHub';
 
-
 // TODO Instead of passing an entity instance provided by the client
 // library we should only pass the entity data.
-export function create (docConnection, entity, contentType, user, spaceEndpoint) {
+export function create(docConnection, entity, contentType, user, spaceEndpoint) {
   let currentDoc;
   const cleanupTasks = [];
 
@@ -51,7 +50,6 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
   const docEventsBus = K.createBus();
   cleanupTasks.push(docEventsBus.end);
 
-
   /**
    * @ngdoc property
    * @name Document#state.error$
@@ -66,20 +64,19 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
   const errorBus = K.createBus();
   cleanupTasks.push(errorBus.end);
 
-
   const docSetters = DocSetters.create({
     getDoc: () => currentDoc,
     getValueAt,
     contentType
   });
-  docSetters.error$.onValue(({error, path}) => {
+  docSetters.error$.onValue(({ error, path }) => {
     if (error === 'forbidden') {
-      docConnection.refreshAuth()
-        .catch(() => { errorBus.emit(DocError.SetValueForbidden(path)); });
+      docConnection.refreshAuth().catch(() => {
+        errorBus.emit(DocError.SetValueForbidden(path));
+      });
     }
   });
   cleanupTasks.push(docSetters.destroy);
-
 
   /**
    * @ngdoc property
@@ -92,7 +89,6 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
     return !!(currentDoc && (currentDoc.inflightOp || currentDoc.pendingOp));
   });
 
-
   /**
    * @ngdoc property
    * @module contentful
@@ -104,10 +100,9 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
    *
    * @type {Property<string[]>}
    */
-  const changes = docEventsBus.stream
-  .flatten((event) => {
+  const changes = docEventsBus.stream.flatten(event => {
     if (event.name === 'change') {
-      const paths = (event.data || []).map((error) => error.p);
+      const paths = (event.data || []).map(error => error.p);
       return [PathUtils.findCommonPrefix(paths)];
     } else if (event.name === 'open') {
       // Emit the path of length zero
@@ -116,7 +111,6 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
       return [];
     }
   });
-
 
   // Normalize snapshot.fields whenever the snapshot root or the
   // field container changes.
@@ -127,16 +121,20 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
   // change stream. Subsequent handlers will access the snapshot on
   // we need to make sure that we present them with the normalized
   // version.
-  changes.onValue((changePath) => {
+  changes.onValue(changePath => {
     if (PathUtils.isPrefix(changePath, ['fields']) && currentDoc) {
       const locales = TheLocaleStore.getPrivateLocales();
-      Normalizer.normalize({
-        getValueAt,
-        setValueAt: docSetters.setValueAt
-      }, currentDoc.snapshot, contentType, locales);
+      Normalizer.normalize(
+        {
+          getValueAt,
+          setValueAt: docSetters.setValueAt
+        },
+        currentDoc.snapshot,
+        contentType,
+        locales
+      );
     }
   });
-
 
   /**
    * @ngdoc property
@@ -155,11 +153,11 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
   const sysProperty = sysBus.property;
 
   let currentSys;
-  K.onValue(sysProperty, (sys) => {
+  K.onValue(sysProperty, sys => {
     currentSys = sys;
   });
 
-  docEventsBus.stream.onValue((event) => {
+  docEventsBus.stream.onValue(event => {
     const previousVersion = currentSys.version;
     const version = event.doc.version + (event.doc.compressed || 0);
 
@@ -177,7 +175,7 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
 
     const nextSys = cloneDeep(event.doc.snapshot.sys);
     if (version > previousVersion) {
-      nextSys.updatedAt = (new Date()).toISOString();
+      nextSys.updatedAt = new Date().toISOString();
     } else {
       nextSys.updatedAt = currentSys.updatedAt;
     }
@@ -185,13 +183,13 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
     sysBus.set(deepFreeze(nextSys));
   });
 
-
   // Holds true if the user is allowed to edit the entity
-  const isEditable$ = sysProperty.map((sys) => {
-    return !sys.archivedVersion && !sys.deletedVersion && permissions.can('update');
-  }).skipDuplicates();
+  const isEditable$ = sysProperty
+    .map(sys => {
+      return !sys.archivedVersion && !sys.deletedVersion && permissions.can('update');
+    })
+    .skipDuplicates();
   const docLoader = docConnection.getDocLoader(entity, isEditable$);
-
 
   /**
    * @ngdoc property
@@ -206,10 +204,8 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
    *
    * @type {Property<boolean>}
    */
-  const isDirty$ = sysProperty.map((sys) => {
-    return sys.publishedVersion
-      ? sys.version > sys.publishedVersion + 1
-      : true;
+  const isDirty$ = sysProperty.map(sys => {
+    return sys.publishedVersion ? sys.version > sys.publishedVersion + 1 : true;
   });
 
   /**
@@ -227,24 +223,23 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
    * @param {string[]} path
    * @returns {Property<any>}
    */
-  const memoizedValuePropertyAt = memoize(valuePropertyAt, (path) => path.join('!'));
+  const memoizedValuePropertyAt = memoize(valuePropertyAt, path => path.join('!'));
 
-  function valuePropertyAt (valuePath) {
-    return changes.filter((changePath) => {
-      return PathUtils.isAffecting(changePath, valuePath);
-    })
+  function valuePropertyAt(valuePath) {
+    return changes
+      .filter(changePath => {
+        return PathUtils.isAffecting(changePath, valuePath);
+      })
       .toProperty(() => undefined)
       .map(() => getValueAt(valuePath));
   }
 
   // Property<ShareJS.Document?>
-  const doc$ = docLoader.doc.map((doc) => {
-    return caseof(doc, [
-      [DocLoad.Doc, (d) => d.doc],
-      [null, () => null]
-    ]);
-  }).skipDuplicates();
-
+  const doc$ = docLoader.doc
+    .map(doc => {
+      return caseof(doc, [[DocLoad.Doc, d => d.doc], [null, () => null]]);
+    })
+    .skipDuplicates();
 
   /**
    * @ngdoc property
@@ -259,18 +254,13 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
    * - If the document is in read-only mode this is true
    * - If the document is unloaded later this is true
    */
-  const pending$ = docLoader.doc.map((d) => {
-    return caseof(d, [
-      [DocLoad.Pending, () => true],
-      [null, () => false]
-    ]);
-  }).skipDuplicates();
+  const pending$ = docLoader.doc
+    .map(d => {
+      return caseof(d, [[DocLoad.Pending, () => true], [null, () => false]]);
+    })
+    .skipDuplicates();
 
-  const loaded$ = K.holdWhen(
-    pending$.map((x) => !x),
-    (x) => x
-  );
-
+  const loaded$ = K.holdWhen(pending$.map(x => !x), x => x);
 
   const offDoc = K.onValue(doc$, setDoc);
   cleanupTasks.push(offDoc);
@@ -278,19 +268,15 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
   // Property<string?>
   // Is `null` if there is no error and the error code otherwise.
   // Known error codes are 'forbidden' and 'disconnected'.
-  const docLoadError$ = docLoader.doc.map((doc) => {
-    return caseof(doc, [
-      [DocLoad.Error, (e) => e.error],
-      [null, () => null]
-    ]);
+  const docLoadError$ = docLoader.doc.map(doc => {
+    return caseof(doc, [[DocLoad.Error, e => e.error], [null, () => null]]);
   });
 
-  docLoadError$.onValue((error) => {
+  docLoadError$.onValue(error => {
     if (error === 'forbidden') {
       errorBus.emit(DocError.OpenForbidden());
     }
   });
-
 
   /**
    * @ngdoc property
@@ -307,19 +293,13 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
    *
    * This property is used by 'cfEditorStatusNotifcation' directive.
    */
-  const status$ = Status.create(
-    sysProperty,
-    docLoadError$,
-    accessChecker.canUpdateEntity(entity)
-  );
-
+  const status$ = Status.create(sysProperty, docLoadError$, accessChecker.canUpdateEntity(entity));
 
   const presence = PresenceHub.create(user.sys.id, docEventsBus.stream, shout);
   cleanupTasks.push(presence.destroy);
 
-  const version$ = sysProperty.map((sys) => sys.version);
+  const version$ = sysProperty.map(sys => sys.version);
   const reverter = Reverter.create(getValueAt([]), version$, setFields);
-
 
   /**
    * @ngdoc property
@@ -328,11 +308,7 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
    * @description
    * Is true if the document is connected
    */
-  const isConnected$ =
-    doc$
-    .map((doc) => !!doc)
-    .skipDuplicates();
-
+  const isConnected$ = doc$.map(doc => !!doc).skipDuplicates();
 
   /**
    * @ngdoc property
@@ -353,7 +329,6 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
     [isEditable$, isConnected$],
     (isEditable, isConnected) => isEditable && isConnected
   );
-
 
   cleanupTasks.push(() => {
     forgetCurrentDoc();
@@ -386,7 +361,7 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
   // The entity instance is unique for the ID. Other views will share
   // the same instance and not necessarily load the data. This is why
   // we need to make sure that we keep it up date.
-  data$.onValue((data) => {
+  data$.onValue(data => {
     entity.data = data;
     if (data.sys.deletedVersion) {
       entity.setDeleted();
@@ -395,7 +370,6 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
       delete entity.data;
     }
   });
-
 
   /**
    * @ngdoc property
@@ -407,7 +381,6 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
    */
   const localFieldChangesBus = K.createBus();
   cleanupTasks.push(localFieldChangesBus.end);
-
 
   return {
     destroy,
@@ -490,11 +463,10 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
     resourceState
   };
 
-
   /**
    * Used by resource state manager
    */
-  function getData () {
+  function getData() {
     const data = {
       fields: getValueAt(['fields']),
       sys: cloneDeep(currentSys)
@@ -502,17 +474,17 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
     return deepFreeze(data);
   }
 
-  function destroy () {
-    cleanupTasks.forEach((task) => task());
+  function destroy() {
+    cleanupTasks.forEach(task => task());
   }
 
-  function shout (args) {
+  function shout(args) {
     if (currentDoc && currentDoc.state !== 'closed') {
       currentDoc.shout(args);
     }
   }
 
-  function getValueAt (path) {
+  function getValueAt(path) {
     if (currentDoc) {
       return cloneDeep(ShareJS.peek(currentDoc, path));
     } else if (Array.isArray(path) && path.length === 0) {
@@ -522,7 +494,7 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
     }
   }
 
-  function setDoc (doc) {
+  function setDoc(doc) {
     forgetCurrentDoc();
 
     if (doc) {
@@ -531,7 +503,7 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
     }
   }
 
-  function forgetCurrentDoc () {
+  function forgetCurrentDoc() {
     if (currentDoc) {
       currentDoc.emit = currentDoc._originalEmit;
       currentDoc = undefined;
@@ -540,9 +512,9 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
     }
   }
 
-  function plugDocEvents (doc) {
+  function plugDocEvents(doc) {
     doc._originalEmit = doc.emit;
-    doc.emit = function (name, data) {
+    doc.emit = function(name, data) {
       this._originalEmit(...arguments);
       docEventsBus.emit({ doc, name, data });
     };
@@ -550,12 +522,11 @@ export function create (docConnection, entity, contentType, user, spaceEndpoint)
   }
 
   // Passed to document reverter
-  function setFields (fields) {
-    return docSetters.setValueAt(['fields'], fields)
-    .then(getVersion);
+  function setFields(fields) {
+    return docSetters.setValueAt(['fields'], fields).then(getVersion);
   }
 
-  function getVersion () {
+  function getVersion() {
     return K.getValue(sysProperty).version;
   }
 }

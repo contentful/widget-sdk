@@ -8,9 +8,7 @@ export const haveMarks = ({ value }, type) => {
 
 export const haveBlocks = ({ value }, type) => {
   if (value.blocks.size > 0) {
-    return value.blocks.some(
-      node => node.type === type || node.type.indexOf(`${type}`) === 0
-    );
+    return value.blocks.some(node => node.type === type || node.type.indexOf(`${type}`) === 0);
   }
 
   return false;
@@ -36,24 +34,16 @@ export const haveDataKeyInSomeBlocks = ({ value }, dataKey) => {
 
 export const haveDataKeyInSomeMarks = ({ value }, dataKey) => {
   if (value.marks.size > 0) {
-    return value.marks.some(
-      mark => mark.get('data').has(dataKey) && mark.get('data').get(dataKey)
-    );
+    return value.marks.some(mark => mark.get('data').has(dataKey) && mark.get('data').get(dataKey));
   }
 
   return false;
 };
 
-export const haveDataKeyEqualValueInSomeBlocks = (
-  { value },
-  dataKey,
-  dataValue
-) => {
+export const haveDataKeyEqualValueInSomeBlocks = ({ value }, dataKey, dataValue) => {
   if (value.blocks.size > 0) {
     return value.blocks.some(
-      block =>
-        block.get('data').has(dataKey) &&
-        block.get('data').get(dataKey) === dataValue
+      block => block.get('data').has(dataKey) && block.get('data').get(dataKey) === dataValue
     );
   }
 
@@ -62,8 +52,6 @@ export const haveDataKeyEqualValueInSomeBlocks = (
 
 export const haveTextInSomeBlocks = ({ value }) => {
   if (value.blocks.size > 0) {
-    return value.blocks.some(
-      block => block.text
-    );
+    return value.blocks.some(block => block.text);
   }
 };

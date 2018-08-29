@@ -5,7 +5,7 @@ angular.module('contentful').directive('cfFieldAlert', () => ({
   replace: true,
   restrict: 'A',
 
-  link: function (_scope, elem, attr) {
+  link: function(_scope, elem, attr) {
     attr.$observe('cfFieldAlert', message => {
       attr.$set('tooltip', message);
       if (_.isEmpty(message)) {

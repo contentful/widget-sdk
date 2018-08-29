@@ -2,7 +2,7 @@ const { promisify } = require('util');
 const webpack = require('webpack');
 const createWebpackConfig = require('./webpack.config');
 
-function watch (done, callbacks) {
+function watch(done, callbacks) {
   // we don't wait until JS is bundles to not to block
   // other tasks which `serve` task might have
   done && done();
@@ -19,15 +19,15 @@ function watch (done, callbacks) {
   );
 }
 
-async function build () {
+async function build() {
   const config = createWebpackConfig({ dev: false });
   const compiler = webpack(config);
   const stats = await promisify(compiler.run.bind(compiler))();
 
-  const info = stats.toJson({chunks: false});
+  const info = stats.toJson({ chunks: false });
 
   if (stats.hasErrors()) {
-    info.errors.forEach((error) => {
+    info.errors.forEach(error => {
       console.error(error);
     });
     throw new Error('Webpack failed to compile');
@@ -40,7 +40,7 @@ async function build () {
   console.log(stats.toString(config.stats));
 }
 
-function handleCompileResults (err, stats, config, { onSuccess, onError } = {}) {
+function handleCompileResults(err, stats, config, { onSuccess, onError } = {}) {
   if (err) {
     console.error(err.stack || err);
     if (err.details) {
@@ -52,7 +52,7 @@ function handleCompileResults (err, stats, config, { onSuccess, onError } = {}) 
 
   onSuccess && onSuccess();
 
-  const info = stats.toJson({chunks: false});
+  const info = stats.toJson({ chunks: false });
   if (stats.hasErrors()) {
     console.error(info.errors);
   }

@@ -1,7 +1,7 @@
 import { h } from 'utils/hyperscript';
 import { byName } from 'Styles/Colors';
 
-export default function template () {
+export default function template() {
   return h('span', null, [
     renderDateControl(),
     renderTimeSection(),
@@ -16,7 +16,7 @@ export default function template () {
   ]);
 }
 
-function renderValidationIcon ({ ngShow, tooltip }) {
+function renderValidationIcon({ ngShow, tooltip }) {
   const style = {
     position: 'relative',
     top: '3px',
@@ -32,7 +32,7 @@ function renderValidationIcon ({ ngShow, tooltip }) {
   });
 }
 
-function renderDateControl () {
+function renderDateControl() {
   return h('span', null, [
     h('input.form-control.date', {
       type: 'text',
@@ -48,7 +48,7 @@ function renderDateControl () {
   ]);
 }
 
-function renderTimeSection () {
+function renderTimeSection() {
   return h('span', { ngShow: 'hasTime' }, [
     h('input.form-control.time', {
       type: 'text',
@@ -57,21 +57,24 @@ function renderTimeSection () {
       placeholder: 'eg. {{maxTime}}'
     }),
     h('i.fa.fa-clock-o'),
-    h('select.cfnext-select-box.ampm', {
-      ngShow: 'widget.settings.ampm == "12"',
-      ngModel: 'ampm'
-    }, [
-      h('option', { value: 'am' }, ['AM']),
-      h('option', { value: 'pm' }, ['PM'])
-    ]),
-    h('select.cfnext-select-box.zone', {
-      ngHide: '!localTime || !hasTimezone',
-      ngDisabled: '!enabled',
-      ngModel: 'tzOffset',
-      ngOptions: "offset as ('UTC'+offset) for offset in timezones",
-      tooltip: 'Timezone'
-    }, [
-      h('option', { value: '' }, ['(None)'])
-    ])
+    h(
+      'select.cfnext-select-box.ampm',
+      {
+        ngShow: 'widget.settings.ampm == "12"',
+        ngModel: 'ampm'
+      },
+      [h('option', { value: 'am' }, ['AM']), h('option', { value: 'pm' }, ['PM'])]
+    ),
+    h(
+      'select.cfnext-select-box.zone',
+      {
+        ngHide: '!localTime || !hasTimezone',
+        ngDisabled: '!enabled',
+        ngModel: 'tzOffset',
+        ngOptions: "offset as ('UTC'+offset) for offset in timezones",
+        tooltip: 'Timezone'
+      },
+      [h('option', { value: '' }, ['(None)'])]
+    )
   ]);
 }

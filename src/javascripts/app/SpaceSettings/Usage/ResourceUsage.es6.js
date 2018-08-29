@@ -1,15 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {ProgressBar} from './ProgressBar';
-import {getResourceLimits, resourceIncludedLimitReached, resourceHumanNameMap} from 'utils/ResourceUtils';
-import {shorten, shortenStorageUnit} from 'utils/NumberUtils';
+import { ProgressBar } from './ProgressBar';
+import {
+  getResourceLimits,
+  resourceIncludedLimitReached,
+  resourceHumanNameMap
+} from 'utils/ResourceUtils';
+import { shorten, shortenStorageUnit } from 'utils/NumberUtils';
 
-export const ResourceUsage = ({
-  resource,
-  description,
-  abbreviateLimit
-}) => {
-  const {usage, unitOfMeasure} = resource;
+export const ResourceUsage = ({ resource, description, abbreviateLimit }) => {
+  const { usage, unitOfMeasure } = resource;
   const limits = getResourceLimits(resource);
 
   // (1000) => "1 GB"
@@ -34,7 +34,9 @@ export const ResourceUsage = ({
         <div className="resource-list__item__column">
           <h3 className="resource-list__item__title">
             {resourceHumanNameMap[resource.sys.id]}
-            {description && <small className="resource-list__item__description"> {description}</small>}
+            {description && (
+              <small className="resource-list__item__description"> {description}</small>
+            )}
           </h3>
         </div>
 
@@ -47,13 +49,10 @@ export const ResourceUsage = ({
                 ? ` (${toResourceFormat(limits.included)} free +
                     ${toResourceFormat(usage - limits.included)} paid)`
                 : ` out of ${toResourceFormat(limits.included, abbreviateLimit)} included`
-              : ''
-          }
+              : ''}
         </span>
       </div>
-      {limits.maximum &&
-        <ProgressBar current={usage} maximum={limits.maximum} />
-      }
+      {limits.maximum && <ProgressBar current={usage} maximum={limits.maximum} />}
     </div>
   );
 };
@@ -63,10 +62,12 @@ ResourceUsage.propTypes = {
   abbreviateLimit: PropTypes.bool
 };
 
-export const ResourceUsageHighlight = ({resource, showMaximumLimit}) => {
+export const ResourceUsageHighlight = ({ resource, showMaximumLimit }) => {
   return (
     <div className="resource-list__item resource-list__item--highlight">
-      <div className="resource-list__item__usage">{`${resource.usage}${showMaximumLimit ? ` / ${getResourceLimits(resource).maximum}` : ''}`}</div>
+      <div className="resource-list__item__usage">{`${resource.usage}${
+        showMaximumLimit ? ` / ${getResourceLimits(resource).maximum}` : ''
+      }`}</div>
       <div className="resource-list__item__title">{resourceHumanNameMap[resource.sys.id]}</div>
     </div>
   );

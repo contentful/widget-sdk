@@ -1,5 +1,5 @@
 describe('cfThumbnailDirective', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
 
     const $compile = this.$inject('$compile');
@@ -21,7 +21,7 @@ describe('cfThumbnailDirective', () => {
   });
 
   describe('file without preview', () => {
-    it('does not render preview for non-images MIME types', function () {
+    it('does not render preview for non-images MIME types', function() {
       const el = this.compile({
         url: '//images.contentful.com/image.png',
         contentType: 'application/json'
@@ -29,7 +29,7 @@ describe('cfThumbnailDirective', () => {
       expect(el.find('img').get(0)).toBeUndefined();
     });
 
-    it('renders icon according to MIME type', function () {
+    it('renders icon according to MIME type', function() {
       const el = this.compile({
         url: 'url',
         contentType: 'video/h264'
@@ -41,7 +41,7 @@ describe('cfThumbnailDirective', () => {
   describe('file with image preview', () => {
     const imageUrl = 'https://images.contentful.com/path';
 
-    beforeEach(function () {
+    beforeEach(function() {
       const compile = this.compile;
       this.compile = attrs => {
         const file = {
@@ -52,18 +52,18 @@ describe('cfThumbnailDirective', () => {
       };
     });
 
-    it('does not render icon', function () {
+    it('does not render icon', function() {
       const el = this.compile();
       expect(el.find('i').get(0)).toBe(undefined);
     });
 
-    it('with size', function () {
-      const el = this.compile({size: '300'});
+    it('with size', function() {
+      const el = this.compile({ size: '300' });
       expect(el.find('img').attr('src')).toBe(`${imageUrl}?w=300&h=300`);
     });
 
-    it('with width and height', function () {
-      const el = this.compile({width: '300', height: '300'});
+    it('with width and height', function() {
+      const el = this.compile({ width: '300', height: '300' });
       expect(el.find('img').attr('src')).toBe(`${imageUrl}?w=300&h=300`);
     });
   });

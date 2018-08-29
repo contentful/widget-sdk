@@ -1,19 +1,22 @@
-import {isEmpty, omitBy} from 'lodash';
-import {addUserOrgSpace} from './Decorators';
+import { isEmpty, omitBy } from 'lodash';
+import { addUserOrgSpace } from './Decorators';
 import { getSchema } from 'analytics/snowplow/Schemas';
 
 // TODO: Update our snowplow integration to support contexts in a cleaner
 // and more abstracted manner. Basically, move em out from the transformers
 // into something more top level since it's common duplicated behaviour
-export default function (_, eventData) {
+export default function(_, eventData) {
   const data = addUserOrgSpace((_, data) => {
     return {
-      data: omitBy({
-        element_id: data.elementId, // required
-        group_id: data.groupId, // required
-        from_state: data.fromState, // required
-        to_state: data.toState // optional
-      }, isEmpty)
+      data: omitBy(
+        {
+          element_id: data.elementId, // required
+          group_id: data.groupId, // required
+          from_state: data.fromState, // required
+          to_state: data.toState // optional
+        },
+        isEmpty
+      )
     };
   })(_, eventData).data;
 
@@ -23,12 +26,15 @@ export default function (_, eventData) {
 
       return {
         schema: getSchema('content_preview').path,
-        data: omitBy({
-          preview_name: previewName,
-          preview_id: previewId,
-          content_type_name: contentTypeName,
-          content_type_id: contentTypeId
-        }, isEmpty)
+        data: omitBy(
+          {
+            preview_name: previewName,
+            preview_id: previewId,
+            content_type_name: contentTypeName,
+            content_type_id: contentTypeId
+          },
+          isEmpty
+        )
       };
     })(_, eventData);
 

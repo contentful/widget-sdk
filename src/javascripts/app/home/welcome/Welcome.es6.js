@@ -1,4 +1,4 @@
-import {createElement as h} from 'react';
+import { createElement as h } from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import moment from 'moment';
@@ -12,12 +12,12 @@ const Welcome = createReactClass({
       signInCount: PropTypes.number.isRequired
     }).isRequired
   },
-  scrollToDeveloperResources () {
-    $('cf-developer-resources').get(0).scrollIntoView(
-      {block: 'start', behavior: 'smooth'}
-    );
+  scrollToDeveloperResources() {
+    $('cf-developer-resources')
+      .get(0)
+      .scrollIntoView({ block: 'start', behavior: 'smooth' });
   },
-  render () {
+  render() {
     const { user } = this.props;
 
     const isNew = user && user.signInCount === 1;
@@ -25,16 +25,27 @@ const Welcome = createReactClass({
 
     const greeting = getGreeting(user);
 
-    const scrollToDeveloperResources = h('span', null,
+    const scrollToDeveloperResources = h(
+      'span',
+      null,
       'Get started with content creation in your space or get ',
-      h('a', {onClick: this.scrollToDeveloperResources}, 'SDKs, tools & tutorials below'),
+      h('a', { onClick: this.scrollToDeveloperResources }, 'SDKs, tools & tutorials below'),
       '.'
     );
 
-    return h('div', null,
-      h('section', {className: 'home-section'},
-        h('h2', {className: 'home-section__heading', 'data-test-id': 'greeting'}, greeting),
-        isNew && h('p', null, 'Looks like you\'re new here. Learn more about Contentful from the resources below.'),
+    return h(
+      'div',
+      null,
+      h(
+        'section',
+        { className: 'home-section' },
+        h('h2', { className: 'home-section__heading', 'data-test-id': 'greeting' }, greeting),
+        isNew &&
+          h(
+            'p',
+            null,
+            "Looks like you're new here. Learn more about Contentful from the resources below."
+          ),
         isOld && h('p', null, 'What will you build today?'),
         scrollToDeveloperResources,
         h(Icon, { name: 'home-welcome', className: 'home__welcome-image' })
@@ -45,7 +56,7 @@ const Welcome = createReactClass({
 
 export default Welcome;
 
-function getGreeting (user) {
+function getGreeting(user) {
   if (user) {
     const isNew = user.signInCount === 1;
     const name = user.firstName;
@@ -60,7 +71,7 @@ function getGreeting (user) {
   }
 }
 
-function getTimeOfDay () {
+function getTimeOfDay() {
   const hour = moment().hour();
   if (hour < 12) {
     return 'morning';

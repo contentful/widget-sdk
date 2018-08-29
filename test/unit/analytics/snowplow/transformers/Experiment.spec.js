@@ -1,8 +1,9 @@
 describe('Experiment transformer', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
 
-    const experimentTransformer = this.$inject('analytics/snowplow/transformers/Experiment').default;
+    const experimentTransformer = this.$inject('analytics/snowplow/transformers/Experiment')
+      .default;
 
     this.data = {
       experiment: {
@@ -14,22 +15,22 @@ describe('Experiment transformer', () => {
       spaceId: 'space',
       userId: 'user'
     };
-    this.experimentTransformer = function (action) {
+    this.experimentTransformer = function(action) {
       return experimentTransformer(action)(null, this.data);
     };
     this.transformedData = experimentTransformer('action')(null, this.data);
   });
 
-  it('should have an empty object for data', function () {
+  it('should have an empty object for data', function() {
     expect(this.transformedData.data).toEqual({});
   });
 
   describe('contexts array', () => {
-    it('should have one element', function () {
+    it('should have one element', function() {
       expect(Array.isArray(this.transformedData.contexts)).toBe(true);
       expect(this.transformedData.contexts.length).toBe(1);
     });
-    it('should contain an experiment object without interaction context', function () {
+    it('should contain an experiment object without interaction context', function() {
       const experiment = this.transformedData.contexts[0];
 
       expect(typeof experiment.schema).toBe('string');
@@ -42,7 +43,7 @@ describe('Experiment transformer', () => {
         space_id: this.data.spaceId
       });
     });
-    it('should contain an experiment object with interaction context', function () {
+    it('should contain an experiment object with interaction context', function() {
       const experiment = this.experimentTransformer('interaction').contexts[0];
 
       expect(typeof experiment.schema).toBe('string');

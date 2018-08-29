@@ -9,10 +9,12 @@ export default addUserOrgSpace((eventName, data) => ({
   }
 }));
 
-function extractAction (eventName) {
+function extractAction(eventName) {
   return eventName.split(':')[1];
 }
 
-function extractParentEntryId () {
-  return $state.params.previousEntries ? $state.params.previousEntries.split(',').pop() : $state.params.entryId;
+function extractParentEntryId() {
+  return $state.params.previousEntries
+    ? $state.params.previousEntries.split(',').pop()
+    : $state.params.entryId;
 }

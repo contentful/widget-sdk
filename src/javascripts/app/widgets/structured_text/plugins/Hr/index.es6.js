@@ -8,19 +8,14 @@ export const HrPlugin = () => {
   return {
     renderNode: props => {
       if (props.node.type === BLOCKS.HR) {
-        return (
-          <hr
-            className={props.isSelected ? 'hr--selected' : ''}
-            {...props.attributes}
-          />
-        );
+        return <hr className={props.isSelected ? 'hr--selected' : ''} {...props.attributes} />;
       }
     }
   };
 };
 
 class Hr extends Component {
-  render () {
+  render() {
     return <ToolbarIcon {...this.props} />;
   }
 }

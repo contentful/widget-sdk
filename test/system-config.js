@@ -6,14 +6,12 @@ SystemJS.config({
     // Load node module served by karma.
     'npm:': '/base/node_modules/',
     // Convenience alias
-    'helpers': 'test/helpers'
+    helpers: 'test/helpers'
   },
   map: {
-    '$q': 'test/helpers/$q'
+    $q: 'test/helpers/$q'
   },
-  packageConfigPaths: [
-    'npm:*/package.json'
-  ],
+  packageConfigPaths: ['npm:*/package.json'],
   packages: {
     'npm:sinon': {
       main: 'pkg/sinon',

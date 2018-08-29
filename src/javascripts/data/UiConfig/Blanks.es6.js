@@ -1,9 +1,9 @@
-import {assign} from 'utils/Collections';
+import { assign } from 'utils/Collections';
 
 import random from 'random';
 import systemFields from 'systemFields';
 
-export function getBlankEntryView () {
+export function getBlankEntryView() {
   return {
     id: random.id(),
     title: 'New view',
@@ -16,7 +16,7 @@ export function getBlankEntryView () {
   };
 }
 
-export function getBlankAssetView () {
+export function getBlankAssetView() {
   return {
     id: random.id(),
     title: 'New view',
@@ -24,10 +24,13 @@ export function getBlankAssetView () {
   };
 }
 
-export function makeBlankFolder (overrides) {
-  return assign({
-    id: random.id(),
-    title: 'New folder',
-    views: []
-  }, overrides);
+export function makeBlankFolder(overrides) {
+  return assign(
+    {
+      id: random.id(),
+      title: 'New folder',
+      views: []
+    },
+    overrides
+  );
 }

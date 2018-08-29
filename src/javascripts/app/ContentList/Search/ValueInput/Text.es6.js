@@ -3,7 +3,6 @@ import { createElement as h } from 'react';
 import PropTypes from 'prop-types';
 import createReactClass from 'create-react-class';
 
-
 /**
  * Renders text input in filter pill
  */
@@ -16,43 +15,41 @@ const TextValueInput = createReactClass({
     onChange: PropTypes.func,
     onClick: PropTypes.func
   },
-  getDefaultProps () {
+  getDefaultProps() {
     return {
       onChange: noop,
       onKeyDown: noop,
       onClick: noop
     };
   },
-  getInitialState () {
+  getInitialState() {
     return {
       value: this.props.value
     };
   },
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     this.setState(() => ({
       value: nextProps.value
     }));
   },
-  handleChange (e) {
-    const { target: { value } } = e;
+  handleChange(e) {
+    const {
+      target: { value }
+    } = e;
     this.props.onChange(value);
     this.setState(() => ({
       value
     }));
   },
-  render () {
-    const {
-      testId,
-      inputRef,
-      onKeyDown,
-      onClick
-    } = this.props;
+  render() {
+    const { testId, inputRef, onKeyDown, onClick } = this.props;
     const { value } = this.state;
     // In order to make the input field, we mirror the value of the input
     // in a span that pushes the parent div to grow.
     const shadowValue = value || '';
 
-    return h('fieldset',
+    return h(
+      'fieldset',
       { className: 'search__input-text' },
       h('input', {
         className: 'input-reset search__input',
@@ -64,9 +61,7 @@ const TextValueInput = createReactClass({
         onClick,
         tabIndex: '0'
       }),
-      h('span', { className: 'search__input-spacer' }, [
-        shadowValue.replace(/\s/g, '|')
-      ])
+      h('span', { className: 'search__input-spacer' }, [shadowValue.replace(/\s/g, '|')])
     );
   }
 });

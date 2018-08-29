@@ -1,5 +1,5 @@
-import {isPlainObject, forEach} from 'lodash';
-import {makeSum} from 'sum-types';
+import { isPlainObject, forEach } from 'lodash';
+import { makeSum } from 'sum-types';
 import React from 'react';
 
 /**
@@ -8,20 +8,17 @@ import React from 'react';
  */
 
 const VTree = makeSum({
-  Element (tag, props, children) {
+  Element(tag, props, children) {
     checkProps(props);
     checkChildren(children);
-    return {tag, props, children};
+    return { tag, props, children };
   },
-  Text (text) {
-    assert(
-      typeof text === 'string',
-      'Text node must be constructed with a string'
-    );
-    return {text};
+  Text(text) {
+    assert(typeof text === 'string', 'Text node must be constructed with a string');
+    return { text };
   },
-  Component (constructor, args) {
-    return {constructor, args};
+  Component(constructor, args) {
+    return { constructor, args };
   }
 });
 
@@ -31,31 +28,19 @@ export const Component = VTree.Component;
 
 // Type assertions for element properties
 
-function checkProps (props) {
-  assert(
-    isPlainObject(props),
-    'Element properties must be a plain object'
-  );
+function checkProps(props) {
+  assert(isPlainObject(props), 'Element properties must be a plain object');
   forEach(props, (value, key) => {
     if (value === undefined) {
       return;
     }
 
     if (key === 'style') {
-      assert(
-        isPlainObject(value),
-        'Style value must be a plain object'
-      );
+      assert(isPlainObject(value), 'Style value must be a plain object');
     } else if (key === 'ref') {
-      assert(
-        typeof value === 'function',
-        'Ref handler must be a function'
-      );
+      assert(typeof value === 'function', 'Ref handler must be a function');
     } else if (key === 'disabled' || key === 'checked' || key === 'autoFocus') {
-      assert(
-        typeof value === 'boolean',
-        `Element property "${key}" must be a boolean`
-      );
+      assert(typeof value === 'boolean', `Element property "${key}" must be a boolean`);
     } else if (key === 'dangerously-set-inner-html') {
       assert(
         isPlainObject(value) && typeof value.__html === 'string' && Object.keys(value).length === 1,
@@ -64,10 +49,7 @@ function checkProps (props) {
     } else if (key === 'focus') {
       throw new TypeError('"focus" property is not allowed');
     } else if (key.substr(0, 3) === 'on-') {
-      assert(
-        typeof value === 'function',
-        `Event handler ${key} must be a function`
-      );
+      assert(typeof value === 'function', `Event handler ${key} must be a function`);
     } else if (key === 'value') {
       // Any value is allowed
     } else {
@@ -79,19 +61,18 @@ function checkProps (props) {
   });
 }
 
-function checkChildren (children) {
-  assert(
-    Array.isArray(children),
-    'Element children must be an array'
-  );
-  children.forEach((value) => {
-    assert(value instanceof VTree || React.isValidElement(value), 'Element child must be a VTree or a valid React element');
+function checkChildren(children) {
+  assert(Array.isArray(children), 'Element children must be an array');
+  children.forEach(value => {
+    assert(
+      value instanceof VTree || React.isValidElement(value),
+      'Element child must be a VTree or a valid React element'
+    );
   });
 }
 
-
 // TODO at some point we should use an assertion library
-function assert (value, message) {
+function assert(value, message) {
   if (!value) {
     throw new Error(message);
   }

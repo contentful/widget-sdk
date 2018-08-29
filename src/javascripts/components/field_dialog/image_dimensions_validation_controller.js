@@ -17,21 +17,21 @@
  * - `bounds.max`
  * - `bounds.exact`
  */
-angular.module('contentful')
-.controller('ImageDimensionsValidationController',
-  ['$scope', function ($scope) {
+angular.module('contentful').controller('ImageDimensionsValidationController', [
+  '$scope',
+  function($scope) {
     const controller = this;
 
-  // Either 'width' or 'height';
+    // Either 'width' or 'height';
     const dimension = $scope.dimension;
 
     loadValidationSettings();
 
-  /**
-   * Save the view data on the scope to the settings of the
-   * `assetImageDimension` validation.
-   */
-    controller.update = function saveValidationSettings () {
+    /**
+     * Save the view data on the scope to the settings of the
+     * `assetImageDimension` validation.
+     */
+    controller.update = function saveValidationSettings() {
       const settings = $scope.validation.settings[dimension];
       if (!$scope.enabled) {
         settings.min = null;
@@ -56,12 +56,11 @@ angular.module('contentful')
       }
     };
 
-
-  /**
-   * Extract the bounds from the settings of the `assetImageDimension`
-   * validation and populate the scope with the corresponding data.
-   */
-    function loadValidationSettings () {
+    /**
+     * Extract the bounds from the settings of the `assetImageDimension`
+     * validation and populate the scope with the corresponding data.
+     */
+    function loadValidationSettings() {
       const bounds = $scope.validation.settings[dimension];
       const min = bounds.min;
       const max = bounds.max;
@@ -92,10 +91,11 @@ angular.module('contentful')
       }
     }
 
-  /**
-   * Return false if and only if the value is undefined or `null`.
-   */
-    function exists (value) {
-      return (typeof value !== 'undefined') && (value !== null);
+    /**
+     * Return false if and only if the value is undefined or `null`.
+     */
+    function exists(value) {
+      return typeof value !== 'undefined' && value !== null;
     }
-  }]);
+  }
+]);

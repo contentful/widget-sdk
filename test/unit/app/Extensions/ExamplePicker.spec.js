@@ -9,10 +9,7 @@ describe('ExamplePicker', () => {
   const mount = () => {
     const confirmStub = sinon.stub();
     const cancelStub = sinon.stub();
-    const wrapper = Enzyme.mount(<Picker
-      onConfirm={confirmStub}
-      onCancel={cancelStub}
-    />);
+    const wrapper = Enzyme.mount(<Picker onConfirm={confirmStub} onCancel={cancelStub} />);
 
     return [wrapper, confirmStub, cancelStub];
   };
@@ -24,7 +21,10 @@ describe('ExamplePicker', () => {
 
   it('blocks all installation buttons once clicked', () => {
     const [wrapper] = mount();
-    wrapper.find(BTN_SELECTOR).first().simulate('click');
+    wrapper
+      .find(BTN_SELECTOR)
+      .first()
+      .simulate('click');
     wrapper.find(BTN_SELECTOR).forEach(btn => {
       expect(btn.prop('disabled')).toBe(true);
     });
@@ -33,8 +33,11 @@ describe('ExamplePicker', () => {
   it('confirms dialog with fetched extension', () => {
     const [wrapper, confirmStub] = mount();
     const fetchStub = sinon.stub(Fetcher, 'fetchExtension');
-    fetchStub.returns({then: handle => handle({extension: true})});
-    wrapper.find(BTN_SELECTOR).first().simulate('click');
+    fetchStub.returns({ then: handle => handle({ extension: true }) });
+    wrapper
+      .find(BTN_SELECTOR)
+      .first()
+      .simulate('click');
     sinon.assert.calledOnce(confirmStub);
     sinon.assert.calledWith(confirmStub, {
       extension: { extension: true },
@@ -47,8 +50,11 @@ describe('ExamplePicker', () => {
   it('cancels dialog with fetch error', () => {
     const [wrapper, _, cancelStub] = mount();
     const fetchStub = sinon.stub(Fetcher, 'fetchExtension');
-    fetchStub.returns({then: (_, handle) => handle(new Error('error'))});
-    wrapper.find(BTN_SELECTOR).first().simulate('click');
+    fetchStub.returns({ then: (_, handle) => handle(new Error('error')) });
+    wrapper
+      .find(BTN_SELECTOR)
+      .first()
+      .simulate('click');
     sinon.assert.calledOnce(cancelStub);
     expect(cancelStub.lastCall.args[0].message).toBe('error');
     fetchStub.restore();

@@ -12,34 +12,38 @@
 
 'use strict';
 
-angular.module('contentful')
+angular
+  .module('contentful')
 
-.directive('cfTrackCopyEvent', ['require', require => {
-  const $document = require('$document');
-  const $window = require('$window');
-  const analyticsEvents = require('analytics/events/home');
+  .directive('cfTrackCopyEvent', [
+    'require',
+    require => {
+      const $document = require('$document');
+      const $window = require('$window');
+      const analyticsEvents = require('analytics/events/home');
 
-  return {
-    restrict: 'A',
-    scope: true,
-    link: function (scope, element) {
-      $document.on('keydown', handleKeydown);
+      return {
+        restrict: 'A',
+        scope: true,
+        link: function(scope, element) {
+          $document.on('keydown', handleKeydown);
 
-      scope.$on('$destroy', () => {
-        $document.off('keydown', handleKeydown);
-      });
+          scope.$on('$destroy', () => {
+            $document.off('keydown', handleKeydown);
+          });
 
-      function handleKeydown (event) {
-        if (event.key === 'c' && event.metaKey) {
-          const selection = $window.getSelection();
-          const selectedNode = _.get(selection, 'anchorNode.parentNode');
-          // Only track event if selected text is contained in this section
-          if ($.contains(element[0], selectedNode)) {
-            const language = scope.resources.selected;
-            analyticsEvents.commandCopied(language, selection.toString());
+          function handleKeydown(event) {
+            if (event.key === 'c' && event.metaKey) {
+              const selection = $window.getSelection();
+              const selectedNode = _.get(selection, 'anchorNode.parentNode');
+              // Only track event if selected text is contained in this section
+              if ($.contains(element[0], selectedNode)) {
+                const language = scope.resources.selected;
+                analyticsEvents.commandCopied(language, selection.toString());
+              }
+            }
           }
         }
-      }
+      };
     }
-  };
-}]);
+  ]);

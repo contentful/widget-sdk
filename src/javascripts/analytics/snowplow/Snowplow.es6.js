@@ -1,8 +1,8 @@
 import $window from '$window';
-import {once} from 'lodash';
-import {snowplow as snowplowConfig, domain} from 'Config';
+import { once } from 'lodash';
+import { snowplow as snowplowConfig, domain } from 'Config';
 import LazyLoader from 'LazyLoader';
-import {getSchema as getSchemaForEvent, transform} from 'analytics/snowplow/Events';
+import { getSchema as getSchemaForEvent, transform } from 'analytics/snowplow/Events';
 
 /**
  * @ngdoc service
@@ -12,18 +12,17 @@ import {getSchema as getSchemaForEvent, transform} from 'analytics/snowplow/Even
  * Cannot be re-enabled once the service is disabled.
  */
 
-const snowplow = {q: []};
+const snowplow = { q: [] };
 const namespace = 'snowplow';
 
 let isDisabled = false;
-
 
 // We push events to window.snowplow.q before the library loads.
 // When snowplow.js loads, it looks up the value in window.GlobalSnowplowNamespace,
 // which we've defined as 'snowplow'. It sends events buffered in
 // window['snowplow'].q. Finally it replaces window['snowplow'] with an object
 // {push: push}, where push is sends events to snowplow.
-function initSnowplow () {
+function initSnowplow() {
   $window.GlobalSnowplowNamespace = [namespace];
   $window[namespace] = snowplow;
   LazyLoader.get('snowplow');
@@ -56,7 +55,7 @@ export const enable = once(initSnowplow);
  * @description
  * Prevent further calls to `track` from being added to the queue
  */
-export function disable () {
+export function disable() {
   isDisabled = true;
 }
 
@@ -68,7 +67,7 @@ export function disable () {
  * @description
  * Sets current user id in Snowplow
  */
-export function identify (userId) {
+export function identify(userId) {
   snowplowSend('setUserId', userId);
 }
 
@@ -81,7 +80,7 @@ export function identify (userId) {
  * @description
  * Tracks an event in Snowplow if it is registered in the snowplow events service
  */
-export function track (eventName, data) {
+export function track(eventName, data) {
   const eventData = buildUnstructEventData(eventName, data);
 
   if (eventData) {
@@ -101,7 +100,7 @@ export function track (eventName, data) {
  * Snowplow are unstructured in Snowplow parlance.
  */
 
-export function buildUnstructEventData (eventName, data) {
+export function buildUnstructEventData(eventName, data) {
   const schema = getSchemaForEvent(eventName);
 
   if (schema) {
@@ -118,7 +117,7 @@ export function buildUnstructEventData (eventName, data) {
   }
 }
 
-function snowplowSend (...args) {
+function snowplowSend(...args) {
   if (!isDisabled) {
     snowplow.q.push(args);
   }

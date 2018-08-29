@@ -16,11 +16,10 @@
  *
  * This module is covered by the 'cfReferenceEditor' directive tests.
  */
-import {get} from 'utils/Collections';
+import { get } from 'utils/Collections';
 import * as K from 'utils/kefir';
 import * as EntityResolver from 'data/CMA/EntityResolver';
-import {isEqual, isString} from 'lodash';
-
+import { isEqual, isString } from 'lodash';
 
 /**
  * @param {object} field
@@ -34,15 +33,15 @@ import {isEqual, isString} from 'lodash';
  * @param {boolean} single
  *   If true, the field value stores a single link.
  */
-export function create (field, fieldValue$, space, type, single) {
+export function create(field, fieldValue$, space, type, single) {
   const store = EntityResolver.forType(type, space);
   const idsState = createIdsState(field, fieldValue$, single, type);
 
   const refreshBus = K.createPropertyBus();
 
-  const entities$ =
-    K.combine([idsState.ids$, refreshBus.property], (ids, _refreshed) => ids)
-    .flatMapLatest(ids => K.fromPromise(store.load(ids))).toProperty(() => null);
+  const entities$ = K.combine([idsState.ids$, refreshBus.property], (ids, _refreshed) => ids)
+    .flatMapLatest(ids => K.fromPromise(store.load(ids)))
+    .toProperty(() => null);
 
   return {
     /**
@@ -76,12 +75,12 @@ export function create (field, fieldValue$, space, type, single) {
     entities$: entities$
   };
 
-  function addEntities (entities) {
+  function addEntities(entities) {
     entities.forEach(store.addEntity);
-    idsState.add(entities.map((entity) => entity.sys.id));
+    idsState.add(entities.map(entity => entity.sys.id));
   }
 
-  function refreshEntities () {
+  function refreshEntities() {
     store.reset();
     refreshBus.set();
   }
@@ -92,7 +91,7 @@ export function create (field, fieldValue$, space, type, single) {
  *
  * TODO using the v3 API for field editor we should be able to simplify this.
  */
-function createIdsState (field, fieldValue$, single, type) {
+function createIdsState(field, fieldValue$, single, type) {
   const ids$ = fieldValue$.map(fromFieldValue);
 
   return {
@@ -106,7 +105,7 @@ function createIdsState (field, fieldValue$, single, type) {
     ids$: ids$
   };
 
-  function set (ids) {
+  function set(ids) {
     const current = fromFieldValue(field.getValue());
     if (isEqual(ids, current)) {
       return;
@@ -115,18 +114,18 @@ function createIdsState (field, fieldValue$, single, type) {
     setFieldValue(ids);
   }
 
-  function removeAt (index) {
+  function removeAt(index) {
     const current = fromFieldValue(field.getValue());
     current.splice(index, 1);
     set(current);
   }
 
-  function add (ids) {
+  function add(ids) {
     const current = fromFieldValue(field.getValue());
     set(current.concat(ids));
   }
 
-  function setFieldValue (ids) {
+  function setFieldValue(ids) {
     let links = ids.map(id => ({
       sys: {
         id: id,
@@ -143,13 +142,13 @@ function createIdsState (field, fieldValue$, single, type) {
     }
   }
 
-  function fromFieldValue (links) {
+  function fromFieldValue(links) {
     if (!links) {
       links = [];
     } else if (single) {
       links = [links];
     }
-    return links.map((link) => {
+    return links.map(link => {
       const id = get(link, ['sys', 'id']);
 
       return isString(id) ? id : null;

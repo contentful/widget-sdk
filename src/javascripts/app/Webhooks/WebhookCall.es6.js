@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {get} from 'lodash';
+import { get } from 'lodash';
 
 import $state from '$state';
 import Icon from 'ui/Components/Icon';
@@ -10,17 +10,19 @@ import WebhookCallStatus from './WebhookCallStatus';
 const parseJsonSafe = s => {
   try {
     return JSON.parse(s);
-  } catch (e) { /* ignore */ } // eslint-disable-line no-empty
+  } catch (e) {
+    /* ignore */
+  } // eslint-disable-line no-empty
 };
 
 export default class WebhookCall extends React.Component {
   static propTypes = {
     webhook: PropTypes.object.isRequired,
     call: PropTypes.object.isRequired
-  }
+  };
 
-  render () {
-    const {webhook, call} = this.props;
+  render() {
+    const { webhook, call } = this.props;
 
     const reqBody = get(call, ['request', 'body']);
     const reqBodyJson = parseJsonSafe(reqBody);
@@ -53,15 +55,11 @@ export default class WebhookCall extends React.Component {
           <div className="workbench-main__content">
             <div className="webhook-call__details">
               <div className="webhook-call__header">
-                <strong className="webhook-call__header-item x--ellipsis">
-                  {webhook.name}
-                </strong>
+                <strong className="webhook-call__header-item x--ellipsis">{webhook.name}</strong>
                 <code className="webhook-call__header-item x--ellipsis">
-                   {call.request.method} {call.url }
+                  {call.request.method} {call.url}
                 </code>
-                <span className="webhook-call__header-item x--nowrap">
-                  {call.requestAt}
-                </span>
+                <span className="webhook-call__header-item x--nowrap">{call.requestAt}</span>
                 <div className="webhook-call__header-item x--nowrap">
                   <WebhookCallStatus call={call} />
                 </div>

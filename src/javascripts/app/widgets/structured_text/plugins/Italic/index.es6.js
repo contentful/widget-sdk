@@ -15,7 +15,7 @@ export const ItalicPlugin = () => {
 };
 
 class Italic extends Component {
-  render () {
+  render() {
     return <ToolbarIcon {...this.props} />;
   }
 }

@@ -1,7 +1,7 @@
 import * as actions from './actions';
 import { get, set } from 'lodash';
 
-export function incentivizeUpgradeEnabled (state = false, action) {
+export function incentivizeUpgradeEnabled(state = false, action) {
   switch (action.type) {
     case actions.RECORDS_RESOURCE_INCENTIVIZE_ENABLED:
       return action.isEnabled;
@@ -10,14 +10,14 @@ export function incentivizeUpgradeEnabled (state = false, action) {
   }
 }
 
-export function resources (state = {}, action) {
+export function resources(state = {}, action) {
   const { spaceId, resourceName } = action;
 
   if (!spaceId || !resourceName) {
     return state;
   }
 
-  function setCurrentResourceState (update) {
+  function setCurrentResourceState(update) {
     const currentResourceState = get(state, `${spaceId}.${resourceName}`);
     const newResourceState = { ...currentResourceState, ...update };
     const copiedState = { ...state };

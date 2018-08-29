@@ -1,4 +1,4 @@
-import {h} from 'ui/Framework';
+import { h } from 'ui/Framework';
 import _ from 'lodash';
 
 // Number of pages to display in the paginator on either side of the
@@ -7,7 +7,6 @@ const NO_OF_NEIGHBORS = 2;
 
 // Number of pages to display, including first and last page
 const DISPLAY_PAGES = 3 + NO_OF_NEIGHBORS * 2;
-
 
 /**
  * Renders a paginator that shows the current page and allows the user
@@ -22,7 +21,7 @@ const DISPLAY_PAGES = 3 + NO_OF_NEIGHBORS * 2;
  * @param {number} pageCount
  * @returns {VTree}
  */
-export default function (select, page, pageCount) {
+export default function(select, page, pageCount) {
   if (pageCount < 2) {
     return;
   }
@@ -32,54 +31,71 @@ export default function (select, page, pageCount) {
   const pages = getLabels(getRange(pageCount, page + 1));
 
   // TODO inline styles
-  return h('div.search-results-paginator', {
-    dataTestId: 'paginator'
-  }, [
-    // TODO This should be a button so we do not select the previous
-    // page when it is disabled. For now we check `!atFirst` in the
-    // event handler.
-    h('span.search-results-paginator__prev', {
-      dataTestId: 'paginator.prev',
-      onClick: () => !atFirst && select(page - 1),
-      ariaDisabled: String(atFirst)
-    }, ['Previous']),
-    h('div', {
-      dataTestId: 'paginator.pages'
-    }, pages.map((value) => {
-      if (value === null) {
-        return h('span.search-results-paginator__page.x--dots', ['…']);
-      } else {
-        return h('span.search-results-paginator__page', {
-          dataTestId: `paginator.select.${value}`,
-          onClick: () => select(value),
-          ariaSelected: String(value === page),
-          class: value === page ? ['x--active-page'] : []
-        }, [`${value + 1}`]);
-      }
-    })),
-    h('span.search-results-paginator__next', {
-      dataTestId: 'paginator.next',
-      onClick: () => !atLast && select(page + 1),
-      ariaDisabled: String(atLast)
-    }, ['Next'])
-  ]);
+  return h(
+    'div.search-results-paginator',
+    {
+      dataTestId: 'paginator'
+    },
+    [
+      // TODO This should be a button so we do not select the previous
+      // page when it is disabled. For now we check `!atFirst` in the
+      // event handler.
+      h(
+        'span.search-results-paginator__prev',
+        {
+          dataTestId: 'paginator.prev',
+          onClick: () => !atFirst && select(page - 1),
+          ariaDisabled: String(atFirst)
+        },
+        ['Previous']
+      ),
+      h(
+        'div',
+        {
+          dataTestId: 'paginator.pages'
+        },
+        pages.map(value => {
+          if (value === null) {
+            return h('span.search-results-paginator__page.x--dots', ['…']);
+          } else {
+            return h(
+              'span.search-results-paginator__page',
+              {
+                dataTestId: `paginator.select.${value}`,
+                onClick: () => select(value),
+                ariaSelected: String(value === page),
+                class: value === page ? ['x--active-page'] : []
+              },
+              [`${value + 1}`]
+            );
+          }
+        })
+      ),
+      h(
+        'span.search-results-paginator__next',
+        {
+          dataTestId: 'paginator.next',
+          onClick: () => !atLast && select(page + 1),
+          ariaDisabled: String(atLast)
+        },
+        ['Next']
+      )
+    ]
+  );
 }
 
 // TODO This is to complicated. Rewrite it
-function getRange (pageCount, activePage) {
+function getRange(pageCount, activePage) {
   if (pageCount <= DISPLAY_PAGES) {
     return _.range(1, pageCount + 1);
   } else {
-    const neighbors = _.range(
-      activePage - NO_OF_NEIGHBORS,
-      activePage + NO_OF_NEIGHBORS + 1
-    );
+    const neighbors = _.range(activePage - NO_OF_NEIGHBORS, activePage + NO_OF_NEIGHBORS + 1);
     const range = _([1])
-        .concat(neighbors)
-        .concat(pageCount)
-        .filter(v => v > 0 && v <= pageCount)
-        .sortedUniq()
-        .value();
+      .concat(neighbors)
+      .concat(pageCount)
+      .filter(v => v > 0 && v <= pageCount)
+      .sortedUniq()
+      .value();
 
     if (range.length < DISPLAY_PAGES) {
       const mid = Math.ceil(pageCount / 2);
@@ -92,8 +108,8 @@ function getRange (pageCount, activePage) {
   }
 }
 
-function getLabels (list) {
-  list = list.map((i) => i - 1);
+function getLabels(list) {
+  list = list.map(i => i - 1);
 
   if (list.length === DISPLAY_PAGES) {
     if (list[DISPLAY_PAGES - 1] - list[DISPLAY_PAGES - 2] !== 1) {

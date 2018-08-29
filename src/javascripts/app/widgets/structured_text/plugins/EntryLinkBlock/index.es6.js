@@ -6,7 +6,6 @@ import { BLOCKS } from '@contentful/structured-text-types';
 
 export default ToolbarIcon;
 
-
 export const EntryLinkBlockPlugin = () => {
   return {
     renderNode: props => {
@@ -14,7 +13,7 @@ export const EntryLinkBlockPlugin = () => {
         return <EntryLinkBlock {...props} />;
       }
     },
-    onKeyDown (e, change) {
+    onKeyDown(e, change) {
       if (e.key === 'Enter') {
         const { value } = change;
         const { blocks } = value;

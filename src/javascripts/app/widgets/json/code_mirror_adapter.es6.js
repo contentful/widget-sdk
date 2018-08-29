@@ -1,4 +1,4 @@
-import {create as createSignal} from 'signal';
+import { create as createSignal } from 'signal';
 import debounce from 'debounce';
 import $ from 'jquery';
 import CodeMirror from 'codemirror';
@@ -28,7 +28,7 @@ import CodeMirror from 'codemirror';
 
 const CODE_MIRROR_CONFIG = {
   autoCloseBrackets: true,
-  mode: {name: 'javascript', json: true},
+  mode: { name: 'javascript', json: true },
   lineWrapping: true,
   viewportMargin: Infinity,
   indentUnit: 4,
@@ -37,7 +37,7 @@ const CODE_MIRROR_CONFIG = {
   theme: 'none'
 };
 
-export function create () {
+export function create() {
   const stateSignal = createSignal();
   let hasInitialValue = false;
   let currentValue;
@@ -52,24 +52,28 @@ export function create () {
 
   return {
     setValue: setValue,
-    redo: function () { cm.redo(); },
-    undo: function () { cm.undo(); },
+    redo: function() {
+      cm.redo();
+    },
+    undo: function() {
+      cm.undo();
+    },
     onStateChange: stateSignal.attach,
     attach: attach,
     destroy: destroy
   };
 
-  function attach ($el) {
+  function attach($el) {
     $el.append(element);
     cm.refresh();
   }
 
-  function destroy () {
+  function destroy() {
     // IE 11 does not support ChildNode.remove()
     $(element).remove();
   }
 
-  function validateAndSave (ev) {
+  function validateAndSave(ev) {
     const str = ev.getValue();
     if (currentValue !== str) {
       currentValue = str;
@@ -77,7 +81,7 @@ export function create () {
     }
   }
 
-  function setValue (value) {
+  function setValue(value) {
     const content = beautify(value);
     if (currentValue !== content) {
       cm.doc.setValue(content);
@@ -95,7 +99,7 @@ export function create () {
     updateHistorySize();
   }
 
-  function updateHistorySize () {
+  function updateHistorySize() {
     stateSignal.dispatch({
       undoable: cm.historySize().undo > 0,
       redoable: cm.historySize().redo > 0
@@ -103,7 +107,7 @@ export function create () {
   }
 }
 
-function parseJSON (str) {
+function parseJSON(str) {
   if (str === '') {
     return {
       value: undefined,
@@ -121,7 +125,7 @@ function parseJSON (str) {
   }
 }
 
-function isValidJson (str) {
+function isValidJson(str) {
   let parsed;
   try {
     parsed = JSON.parse(str);
@@ -136,7 +140,7 @@ function isValidJson (str) {
 }
 
 // Takes an object and returns a pretty-printed JSON string
-function beautify (obj) {
+function beautify(obj) {
   if (obj === null || obj === undefined) {
     return '';
   } else {

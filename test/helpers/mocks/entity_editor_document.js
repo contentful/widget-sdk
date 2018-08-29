@@ -1,7 +1,7 @@
 import * as sinon from 'helpers/sinon';
 import * as K from 'test/helpers/mocks/kefir';
 import $q from '$q';
-import {create as createResourceState} from 'data/document/ResourceStateManager';
+import { create as createResourceState } from 'data/document/ResourceStateManager';
 
 /**
  * @ngdoc service
@@ -14,7 +14,7 @@ import {create as createResourceState} from 'data/document/ResourceStateManager'
  * implementation with just the ShareJS Doc mock
  */
 
-export function create (initialData, spaceEndpoint) {
+export function create(initialData, spaceEndpoint) {
   let currentData;
   const data$ = K.createMockProperty(
     initialData || {
@@ -40,12 +40,7 @@ export function create (initialData, spaceEndpoint) {
 
   const sysProperty = valuePropertyAt(['sys']);
 
-  const resourceState = createResourceState(
-    sysProperty,
-    setSys,
-    getData,
-    spaceEndpoint
-  );
+  const resourceState = createResourceState(sysProperty, setSys, getData, spaceEndpoint);
 
   return {
     destroy: _.noop,
@@ -87,23 +82,23 @@ export function create (initialData, spaceEndpoint) {
     resourceState: resourceState
   };
 
-  function setSys (sys) {
+  function setSys(sys) {
     setValueAt(['sys'], sys);
   }
 
-  function getData () {
+  function getData() {
     return getValueAt([]);
   }
 
-  function getValueAt (path) {
+  function getValueAt(path) {
     return _.cloneDeep(getAtPath(currentData, path));
   }
 
-  function valuePropertyAt (path) {
+  function valuePropertyAt(path) {
     return data$.map(data => _.cloneDeep(getAtPath(data, path)));
   }
 
-  function getAtPath (obj, path) {
+  function getAtPath(obj, path) {
     if (Array.isArray(path) && path.length === 0) {
       return obj;
     } else {
@@ -111,21 +106,21 @@ export function create (initialData, spaceEndpoint) {
     }
   }
 
-  function insertValueAt (path, pos, val) {
+  function insertValueAt(path, pos, val) {
     const list = getValueAt(path);
     list.splice(pos, 0, val);
     setValueAt(path, list);
     return $q.resolve(val);
   }
 
-  function pushValueAt (path, val) {
+  function pushValueAt(path, val) {
     const list = getValueAt(path);
     list.push(val);
     setValueAt(path, list);
     return $q.resolve(val);
   }
 
-  function setValueAt (path, value) {
+  function setValueAt(path, value) {
     if (!path.length) {
       // If no path is specified, replace entire data object
       data$.set(_.cloneDeep(value));

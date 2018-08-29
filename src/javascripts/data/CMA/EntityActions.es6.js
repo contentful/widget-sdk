@@ -1,5 +1,5 @@
-import {constant, compact} from 'lodash';
-import {caseof} from 'sum-types/caseof-eq';
+import { constant, compact } from 'lodash';
+import { caseof } from 'sum-types/caseof-eq';
 
 /**
  * @ngdoc service
@@ -59,7 +59,6 @@ export const Action = {
   Delete: constant('delete')
 };
 
-
 /**
  * @ngdoc method
  * @name data/CMA/EntityActions#makePerform
@@ -77,19 +76,22 @@ export const Action = {
  * The call returns a promise that resolves with the response payload
  * or rejects with an HTTP error from the spaceEndpoint call.
  */
-export function makePerform (spaceEndpoint) {
-  return function perform (action, data) {
+export function makePerform(spaceEndpoint) {
+  return function perform(action, data) {
     const [method, path] = restArgs(action);
     const id = data.sys.id;
     const version = data.sys.version;
     const collection = getCollectionName(data.sys.type);
-    return spaceEndpoint({
-      method: method,
-      path: compact([collection, id, path]),
-      version: version
-    }, {
-      'X-Contentful-Skip-Transformation': 'true'
-    });
+    return spaceEndpoint(
+      {
+        method: method,
+        path: compact([collection, id, path]),
+        version: version
+      },
+      {
+        'X-Contentful-Skip-Transformation': 'true'
+      }
+    );
   };
 }
 
@@ -97,7 +99,7 @@ export function makePerform (spaceEndpoint) {
  * Returns a [method, path] tuple that specify which endpoint to call
  * with which method.
  */
-function restArgs (action) {
+function restArgs(action) {
   return caseof(action, [
     [Action.Publish(), constant(['PUT', 'published'])],
     [Action.Unpublish(), constant(['DELETE', 'published'])],
@@ -107,7 +109,7 @@ function restArgs (action) {
   ]);
 }
 
-function getCollectionName (type) {
+function getCollectionName(type) {
   if (type === 'Entry') {
     return 'entries';
   }

@@ -5,7 +5,7 @@ import { match, makeCtor } from 'utils/TaggedValues';
 import * as Environment from 'data/CMA/SpaceEnvironmentsRepo';
 
 import logger from 'logger';
-import {open as openDialog} from 'modalDialog';
+import { open as openDialog } from 'modalDialog';
 
 import { bindActions, createStore, makeReducer } from 'ui/Framework/Store';
 import { h, renderString } from 'ui/Framework';
@@ -20,9 +20,7 @@ const ID_EXISTS_ERROR_MESSAGE =
   'This ID already exists in your space. Please make sure it’s unique.';
 const INVALID_ID_CHARACTER_ERROR_MESSAGE =
   'Please use only letters, numbers, underscores, dashes and dots for the ID.';
-const EMPTY_FIELD_ERROR_MESSAGE =
-  'Please fill out this field.';
-
+const EMPTY_FIELD_ERROR_MESSAGE = 'Please fill out this field.';
 
 /**
  * Open the create dialog for a space environment.
@@ -33,7 +31,7 @@ const EMPTY_FIELD_ERROR_MESSAGE =
  * It returns a promise that resolves with a boolean that is true if
  * the environment was created.
  */
-export function openCreateDialog (createEnvironment) {
+export function openCreateDialog(createEnvironment) {
   const initialState = {
     fields: {
       id: { name: 'id', errors: [] }
@@ -41,13 +39,15 @@ export function openCreateDialog (createEnvironment) {
   };
 
   return openDialog({
-    template: renderString(h('.modal-background', [
-      h('.modal-dialog', { style: { width: '32em' } }, [
-        h('cf-component-store-bridge', { component: 'component' })
+    template: renderString(
+      h('.modal-background', [
+        h('.modal-dialog', { style: { width: '32em' } }, [
+          h('cf-component-store-bridge', { component: 'component' })
+        ])
       ])
-    ])),
-    controller: ($scope) => {
-      $scope.component = createComponent(initialState, {createEnvironment}, (value) => {
+    ),
+    controller: $scope => {
+      $scope.component = createComponent(initialState, { createEnvironment }, value => {
         $scope.dialog.confirm(value);
       });
     },
@@ -55,8 +55,7 @@ export function openCreateDialog (createEnvironment) {
   }).promise;
 }
 
-
-function createComponent (initialState, context, closeDialog) {
+function createComponent(initialState, context, closeDialog) {
   const store = createStore(
     initialState,
     // eslint-disable-next-line no-use-before-define
@@ -64,7 +63,9 @@ function createComponent (initialState, context, closeDialog) {
   );
 
   const actions = bindActions(store, {
-    SetFieldValue, Submit, ReceiveResult
+    SetFieldValue,
+    Submit,
+    ReceiveResult
   });
 
   Object.assign(actions, {
@@ -72,30 +73,29 @@ function createComponent (initialState, context, closeDialog) {
     ConfirmDialog: () => closeDialog(true)
   });
 
-  return { store, render: (state) => render(assign(state, actions)) };
+  return { store, render: state => render(assign(state, actions)) };
 }
 
-
 const reduce = makeReducer({
-  [SetFieldValue] (state, { name, value }) {
+  [SetFieldValue](state, { name, value }) {
     return set(state, ['fields', name, 'value'], value);
   },
-  [Submit] (state, _, context, actions) {
+  [Submit](state, _, context, actions) {
     state = update(state, 'fields', clearErrors);
     const fieldsWithErrors = validate(state.fields);
     if (fieldsWithErrors) {
       state = set(state, 'fields', fieldsWithErrors);
     } else {
-      C.runTask(function* () {
+      C.runTask(function*() {
         const id = get(state, ['fields', 'id', 'value']);
-        const result = yield context.createEnvironment({id, name: id});
+        const result = yield context.createEnvironment({ id, name: id });
         actions.ReceiveResult(result);
       });
       state = set(state, 'inProgress', true);
     }
     return state;
   },
-  [ReceiveResult] (state, result, _, actions) {
+  [ReceiveResult](state, result, _, actions) {
     state = set(state, 'inProgress', false);
     state = match(result, {
       [Environment.EnvironmentUpdated]: () => {
@@ -105,7 +105,7 @@ const reduce = makeReducer({
       [Environment.IdExistsError]: () => {
         return set(state, ['fields', 'id', 'errors'], [{ message: ID_EXISTS_ERROR_MESSAGE }]);
       },
-      [Environment.ServerError]: (error) => {
+      [Environment.ServerError]: error => {
         logger.logServerError(error);
         return set(state, 'serverFailure', true);
       }
@@ -114,10 +114,8 @@ const reduce = makeReducer({
   }
 });
 
-
 // Regular expression to validate IDs against
 const ID_REGEXP = /^[a-zA-Z0-9._-]{1,64}$/;
-
 
 /**
  * Object with validations for the different fields. The values are
@@ -125,7 +123,7 @@ const ID_REGEXP = /^[a-zA-Z0-9._-]{1,64}$/;
  * value is invalid.
  */
 const validations = {
-  id: (value) => {
+  id: value => {
     if (!value || !value.trim()) {
       return EMPTY_FIELD_ERROR_MESSAGE;
     }
@@ -135,14 +133,13 @@ const validations = {
   }
 };
 
-
 /**
  * Runs the validations defined above against the fields.
  *
  * Returns the fields with the errors set if any of the values is
  * invalid and returns `undefined` otherwise.
  */
-function validate (fields) {
+function validate(fields) {
   let hasErrors = false;
 
   const fieldsWithErrors = mapValues(fields, (field, name) => {
@@ -150,7 +147,7 @@ function validate (fields) {
     const errorMessage = validateField(field.value);
     if (errorMessage) {
       hasErrors = true;
-      return set(field, 'errors', [{message: errorMessage}]);
+      return set(field, 'errors', [{ message: errorMessage }]);
     } else {
       return field;
     }
@@ -163,7 +160,6 @@ function validate (fields) {
   }
 }
 
-
-function clearErrors (fields) {
-  return mapValues(fields, (fields) => set(fields, 'errors', []));
+function clearErrors(fields) {
+  return mapValues(fields, fields => set(fields, 'errors', []));
 }

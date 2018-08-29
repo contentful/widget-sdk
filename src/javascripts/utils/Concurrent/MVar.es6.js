@@ -1,6 +1,5 @@
 import $q from '$q';
 
-
 /**
  * @ngdoc method
  * @name utils/Concurrent/MVar#create
@@ -20,10 +19,9 @@ import $q from '$q';
  * @params {Object} value
  * @returns {utils/Concurrent/MVar}
  */
-export function createMVar (value) {
+export function createMVar(value) {
   return createBase(Promise, !arguments.length, value);
 }
-
 
 /**
  * @description
@@ -33,13 +31,13 @@ export function createMVar (value) {
  * the fact that handlers on $q trigger Angular digest cycles that
  * updated the application state.
  */
-export function createMVar$q (value) {
+export function createMVar$q(value) {
   return createBase($q, !arguments.length, value);
 }
 
 // `initialEmpty` is used to distinguish between providing `undefined` as an
 // initial value or no initial value at all.
-function createBase (PromiseImplementation, initialEmpty, value) {
+function createBase(PromiseImplementation, initialEmpty, value) {
   let readDeferred = makeDeferred(PromiseImplementation);
   let isEmpty = true;
 
@@ -52,28 +50,30 @@ function createBase (PromiseImplementation, initialEmpty, value) {
     take: take,
     empty: empty,
     put: put,
-    isEmpty: function () { return isEmpty; }
+    isEmpty: function() {
+      return isEmpty;
+    }
   };
 
-  function read () {
+  function read() {
     return readDeferred.promise;
   }
 
-  function take () {
+  function take() {
     return read().then(value => {
       empty();
       return value;
     });
   }
 
-  function empty () {
+  function empty() {
     if (!isEmpty) {
       readDeferred = makeDeferred(PromiseImplementation);
       isEmpty = true;
     }
   }
 
-  function put (value) {
+  function put(value) {
     if (isEmpty) {
       readDeferred.resolve(value);
     } else {
@@ -85,9 +85,8 @@ function createBase (PromiseImplementation, initialEmpty, value) {
   }
 }
 
-
 // TODO we should probably extract this
-function makeDeferred (PromiseImplementation) {
+function makeDeferred(PromiseImplementation) {
   let resolve, reject;
   // eslint-disable-next-line promise/param-name
   const promise = new PromiseImplementation((resolve_, reject_) => {

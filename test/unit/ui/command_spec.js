@@ -1,14 +1,14 @@
 'use strict';
 
 describe('command service', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('cf.ui');
     this.create = this.$inject('command').create;
     this.executions = this.$inject('command').executions;
   });
 
   describe('#execute', () => {
-    it('calls action', function () {
+    it('calls action', function() {
       const action = sinon.stub();
       const command = this.create(action);
 
@@ -16,7 +16,7 @@ describe('command service', () => {
       sinon.assert.calledOnce(action);
     });
 
-    it('resolves only when action resolve', function () {
+    it('resolves only when action resolve', function() {
       const deferred = this.$inject('$q').defer();
       const action = sinon.stub().returns(deferred.promise);
       const command = this.create(action);
@@ -34,7 +34,7 @@ describe('command service', () => {
       expect(executed).toBe(true);
     });
 
-    it('triggers #executions signal', function () {
+    it('triggers #executions signal', function() {
       const command = this.create(sinon.stub());
 
       const executed = sinon.stub();
@@ -47,7 +47,7 @@ describe('command service', () => {
   });
 
   describe('#isDisabled()', () => {
-    it('is "true" when command in progress', function () {
+    it('is "true" when command in progress', function() {
       const action = sinon.stub().resolves();
       const command = this.create(action);
 
@@ -60,7 +60,7 @@ describe('command service', () => {
   });
 
   describe('#inProgress()', () => {
-    it('is "true" when command in progress', function () {
+    it('is "true" when command in progress', function() {
       const action = sinon.stub().resolves();
       const command = this.create(action);
 

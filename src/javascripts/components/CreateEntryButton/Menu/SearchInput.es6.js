@@ -3,7 +3,7 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import { Icon } from '@contentful/ui-component-library';
 
-export default function SearchInput ({ getInputProps }) {
+export default function SearchInput({ getInputProps }) {
   return (
     <div>
       <input

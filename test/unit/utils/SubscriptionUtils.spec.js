@@ -1,8 +1,8 @@
 import * as SubscriptionUtils from 'utils/SubscriptionUtils';
 
 describe('utils/SubscriptionUtils', () => {
-  beforeEach(function () {
-    function createPlan (name, price, ratePlanCharges, isBase) {
+  beforeEach(function() {
+    function createPlan(name, price, ratePlanCharges, isBase) {
       return {
         name,
         price,
@@ -11,7 +11,7 @@ describe('utils/SubscriptionUtils', () => {
       };
     }
 
-    function createTier ({ price, startingUnit, endingUnit, priceFormat }) {
+    function createTier({ price, startingUnit, endingUnit, priceFormat }) {
       return {
         price,
         startingUnit,
@@ -20,7 +20,7 @@ describe('utils/SubscriptionUtils', () => {
       };
     }
 
-    function createRPC ({ name, unitType, tiers }) {
+    function createRPC({ name, unitType, tiers }) {
       return {
         name,
         unitType,
@@ -99,15 +99,11 @@ describe('utils/SubscriptionUtils', () => {
     this.microPlan = createPlan('Micro Plan', 14, microTiers);
     this.macroPlan = createPlan('Macro Plan', 99, macroTiers);
 
-    this.allPlans = [
-      this.basePlan,
-      this.microPlan,
-      this.macroPlan
-    ];
+    this.allPlans = [this.basePlan, this.microPlan, this.macroPlan];
   });
 
   describe('#calculateUsersCost', () => {
-    it('should calculate the cost for users depending on the tiers', function () {
+    it('should calculate the cost for users depending on the tiers', function() {
       // Free tier is users 0 - 10
       const basePlan = this.basePlan;
 
@@ -123,7 +119,7 @@ describe('utils/SubscriptionUtils', () => {
   });
 
   describe('#calcUsersMeta', () => {
-    it('should calculate the meta information correctly', function () {
+    it('should calculate the meta information correctly', function() {
       const basePlan = this.basePlan;
       // 0 - 10 are free, 11+ are paid
 
@@ -148,9 +144,9 @@ describe('utils/SubscriptionUtils', () => {
   });
 
   describe('#calculateTotalPrice', () => {
-    it('should be able to calculate the price based on just the base tier with given users', function () {
+    it('should be able to calculate the price based on just the base tier with given users', function() {
       const plansWithMemberships = {
-        allPlans: [ this.basePlan ]
+        allPlans: [this.basePlan]
       };
 
       plansWithMemberships.numMemberships = 3;
@@ -163,7 +159,7 @@ describe('utils/SubscriptionUtils', () => {
       expect(SubscriptionUtils.calculateTotalPrice(plansWithMemberships)).toBe(20);
     });
 
-    it('should calculate the cost of all spaces and users together', function () {
+    it('should calculate the cost of all spaces and users together', function() {
       const plansWithMemberships = {
         allPlans: this.allPlans
       };
@@ -177,11 +173,11 @@ describe('utils/SubscriptionUtils', () => {
   });
 
   describe('#getEnabledFeatures', () => {
-    it('should return an empty array if no features are present', function () {
+    it('should return an empty array if no features are present', function() {
       expect(SubscriptionUtils.getEnabledFeatures(this.microPlan).length).toBe(0);
     });
 
-    it('should return the feature RPCs if present', function () {
+    it('should return the feature RPCs if present', function() {
       expect(SubscriptionUtils.getEnabledFeatures(this.macroPlan).length).toBe(1);
       expect(SubscriptionUtils.getEnabledFeatures(this.basePlan).length).toBe(1);
     });
@@ -194,15 +190,13 @@ describe('utils/SubscriptionUtils', () => {
       expect(SubscriptionUtils.calculatePlansCost({ plans })).toBe(0);
     });
 
-    it('should return 0 if all the plan prices are 0', function () {
-      const plans = [
-        this.basePlan
-      ];
+    it('should return 0 if all the plan prices are 0', function() {
+      const plans = [this.basePlan];
 
       expect(SubscriptionUtils.calculatePlansCost({ plans })).toBe(0);
     });
 
-    it('should return the correct price for all plans given', function () {
+    it('should return the correct price for all plans given', function() {
       const plans = this.allPlans;
 
       expect(SubscriptionUtils.calculatePlansCost({ plans })).toBe(113);

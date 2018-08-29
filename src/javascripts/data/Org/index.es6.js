@@ -1,4 +1,4 @@
-import {get} from 'lodash';
+import { get } from 'lodash';
 
 // we put double \\, so in regexes they are parsed
 // correctly, with one \
@@ -20,7 +20,7 @@ const ENTERPRISE_NAMES = [
  * @param {Organization} org - organization to check subscription type
  * @returns {boolean} - enterprise subscription or not
  */
-export function isOrgPlanEnterprise (org) {
+export function isOrgPlanEnterprise(org) {
   const subscriptionPlanName = get(org, 'subscriptionPlan.name', '');
   return ENTERPRISE_NAMES.some(regexp => regexp.test(subscriptionPlanName));
 }

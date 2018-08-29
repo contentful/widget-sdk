@@ -5,25 +5,28 @@ const mixinPublishable = require('./publishable');
 const _ = require('lodash');
 const createResourceFactoryMethods = require('./resource_factory');
 
-const ContentType = function ContentType (data, persistenceContext) {
-  data = _.merge({
-    name: null,
-    fields: []
-  }, data);
+const ContentType = function ContentType(data, persistenceContext) {
+  data = _.merge(
+    {
+      name: null,
+      fields: []
+    },
+    data
+  );
   Entity.call(this, data, persistenceContext);
 };
 
 ContentType.prototype = Object.create(Entity.prototype);
 mixinPublishable(ContentType.prototype);
 
-ContentType.prototype.update = function (data) {
+ContentType.prototype.update = function(data) {
   if (this._publishedVersion === undefined && data) {
     this._publishedVersion = !!(data.sys && 'revision' in data.sys);
   }
   Entity.prototype.update.call(this, data);
 };
 
-ContentType.prototype.getIdentity = function () {
+ContentType.prototype.getIdentity = function() {
   const type = this.getType();
   const id = this.getId();
   if (this._publishedVersion && type && id) {
@@ -33,18 +36,17 @@ ContentType.prototype.getIdentity = function () {
   }
 };
 
-ContentType.prototype.endpoint = function (...args) {
+ContentType.prototype.endpoint = function(...args) {
   let endpoint = Entity.prototype.endpoint.apply(this, _.toArray(args));
   if (this.getVersion()) {
     // TODO it is not clear where this belongs. For subresources the
     // version header should be ommited
-    endpoint = endpoint.putHeaders({'X-Contentful-Version': this.getVersion()});
+    endpoint = endpoint.putHeaders({ 'X-Contentful-Version': this.getVersion() });
   }
   return endpoint;
 };
 
-
-ContentType.prototype.publish = function (version) {
+ContentType.prototype.publish = function(version) {
   const self = this;
   return this.endpoint('published')
     .headers({
@@ -53,22 +55,23 @@ ContentType.prototype.publish = function (version) {
       'X-Contentful-Enable-Alpha-Feature': 'structured_text_fields'
     })
     .put()
-    .then(function (response) {
+    .then(function(response) {
       self.update(response);
       return self._registerPublished();
     });
 };
 
-ContentType.prototype.unpublish = function () {
+ContentType.prototype.unpublish = function() {
   const self = this;
-  return this.endpoint('published').delete()
-    .then(function (response) {
+  return this.endpoint('published')
+    .delete()
+    .then(function(response) {
       self.update(response);
       return self.deletePublished();
     });
 };
 
-ContentType.prototype.canPublish = function () {
+ContentType.prototype.canPublish = function() {
   const fields = this.data && this.data.fields;
   const hasFields = fields && fields.length > 0;
   const isNew = !this.isPublished();
@@ -76,18 +79,19 @@ ContentType.prototype.canPublish = function () {
   return !this.isDeleted() && hasFields && (isNew || hasUpdates);
 };
 
-ContentType.prototype.getPublishedStatus = function () {
+ContentType.prototype.getPublishedStatus = function() {
   const persistenceContext = this.persistenceContext;
-  return this.endpoint('published').get()
-    .then(function (data) {
+  return this.endpoint('published')
+    .get()
+    .then(function(data) {
       const contentType = new ContentType(data, persistenceContext);
       return persistenceContext.store(contentType);
     });
 };
 
-ContentType.prototype._registerPublished = function () {
+ContentType.prototype._registerPublished = function() {
   let publishedData = _.cloneDeep(this.data);
-  publishedData = _.merge(publishedData, {sys: { revision: this.getVersion() }});
+  publishedData = _.merge(publishedData, { sys: { revision: this.getVersion() } });
 
   let published = new ContentType(publishedData, this.persistenceContext);
   published = this.persistenceContext.store(published);
@@ -95,13 +99,13 @@ ContentType.prototype._registerPublished = function () {
   return published;
 };
 
-ContentType.prototype.deletePublished = function () {
+ContentType.prototype.deletePublished = function() {
   const publishedContentType = this._registerPublished();
   publishedContentType.setDeleted();
   return publishedContentType;
 };
 
-ContentType.prototype.getName = function () {
+ContentType.prototype.getName = function() {
   const name = this.data && this.data.name;
   const EMPTY = /^\s*$/;
   if (name === null || name === undefined || EMPTY.test(name)) {
@@ -117,8 +121,10 @@ ContentType.factoryMethods = {
   newContentType: factoryMethods.new,
   createContentType: factoryMethods.create,
 
-  getPublishedContentTypes: function (query) {
-    return this.endpoint('public/content_types').payload(query).get()
+  getPublishedContentTypes: function(query) {
+    return this.endpoint('public/content_types')
+      .payload(query)
+      .get()
       .then(this.childResourceFactory(ContentType, 'content_types'));
   }
 };

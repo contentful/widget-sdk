@@ -2,22 +2,22 @@
 
 describe('Response Cache', () => {
   let cache, canStub;
-  const entry = {sys: {id: 'eid', type: 'Entry'}};
-  const asset = {sys: {id: 'aid', type: 'Asset'}};
+  const entry = { sys: { id: 'eid', type: 'Entry' } };
+  const asset = { sys: { id: 'aid', type: 'Asset' } };
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     cache = this.$inject('access_control/AccessChecker/ResponseCache');
     canStub = sinon.stub().returns(true);
-    cache.reset({can: canStub});
+    cache.reset({ can: canStub });
   });
 
-  function callTwice (action, entity) {
+  function callTwice(action, entity) {
     cache.getResponse(action, entity);
     cache.getResponse(action, entity);
   }
 
-  function callTwiceAssertOnce (action, entity) {
+  function callTwiceAssertOnce(action, entity) {
     callTwice(action, entity);
     sinon.assert.calledOnce(canStub.withArgs(action, entity));
   }
@@ -76,7 +76,7 @@ describe('Response Cache', () => {
 
   it('Does not cache when type is not given', () => {
     callTwice('read');
-    callTwice('read', {sys: {}});
+    callTwice('read', { sys: {} });
     sinon.assert.callCount(canStub, 4);
   });
 

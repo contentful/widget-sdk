@@ -19,11 +19,7 @@ export const CONSTRAINT_TYPES = [
   { name: CONSTRAINT_NAMES.REGEXP, negated: true }
 ];
 
-export const PATHS = [
-  PATH_VALUES.ENVIRONMENT,
-  PATH_VALUES.CONTENT_TYPE,
-  PATH_VALUES.ENTITY
-];
+export const PATHS = [PATH_VALUES.ENVIRONMENT, PATH_VALUES.CONTENT_TYPE, PATH_VALUES.ENTITY];
 
 export const DEFAULT_FILTER = {
   constraint: 0,
@@ -31,7 +27,7 @@ export const DEFAULT_FILTER = {
   value: 'master'
 };
 
-export function matchConstraintType (constraint) {
+export function matchConstraintType(constraint) {
   let name = Object.keys(constraint)[0];
   let negated = false;
 
@@ -40,10 +36,12 @@ export function matchConstraintType (constraint) {
     name = Object.keys(constraint[name])[0];
   }
 
-  return CONSTRAINT_TYPES.findIndex(constraint => constraint.name === name && !!constraint.negated === negated);
+  return CONSTRAINT_TYPES.findIndex(
+    constraint => constraint.name === name && !!constraint.negated === negated
+  );
 }
 
-export function normalizeValue (constraint, value) {
+export function normalizeValue(constraint, value) {
   if (constraint.name === CONSTRAINT_NAMES.IN) {
     const values = value.split(',').map(val => val.trim());
     return values.filter((val, i) => i === values.length - 1 || val.length > 0);
@@ -56,7 +54,7 @@ export function normalizeValue (constraint, value) {
   return value;
 }
 
-export function denormalizeValue (constraint, value) {
+export function denormalizeValue(constraint, value) {
   if (constraint.name === CONSTRAINT_NAMES.IN && Array.isArray(value)) {
     return value.join(',');
   }
@@ -68,7 +66,7 @@ export function denormalizeValue (constraint, value) {
   return typeof value === 'string' ? value : '';
 }
 
-export function transformFiltersToList (filters) {
+export function transformFiltersToList(filters) {
   if (!Array.isArray(filters)) return [DEFAULT_FILTER];
 
   return filters.map(filter => {
@@ -87,7 +85,7 @@ export function transformFiltersToList (filters) {
   });
 }
 
-export function transformListToFilters (list) {
+export function transformListToFilters(list) {
   return list.map(row => {
     const constraint = CONSTRAINT_TYPES[row.constraint];
     const filter = {

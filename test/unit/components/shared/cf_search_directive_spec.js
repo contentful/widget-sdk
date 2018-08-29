@@ -7,7 +7,7 @@ describe('cfSearch Directive', () => {
     element = scope = isolateScope = compileElement = null;
   });
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     const $compile = this.$inject('$compile');
     const $rootScope = this.$inject('$rootScope');
@@ -46,7 +46,7 @@ describe('cfSearch Directive', () => {
       });
 
       it('updates state with button trigger', () => {
-        sinon.assert.calledWith(isolateScope.update, {trigger: 'button'});
+        sinon.assert.calledWith(isolateScope.update, { trigger: 'button' });
       });
     });
 

@@ -3,13 +3,13 @@ import * as KMock from 'helpers/mocks/kefir';
 import * as sinon from 'helpers/sinon';
 
 describe('utils/kefir', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('ng');
     this.scope = this.$inject('$rootScope').$new();
   });
 
   describe('#fromScopeEvent()', () => {
-    it('emits value when event is fired', function () {
+    it('emits value when event is fired', function() {
       const stream = K.fromScopeEvent(this.scope, 'event');
       const cb = sinon.stub();
       stream.onValue(cb);
@@ -19,7 +19,7 @@ describe('utils/kefir', () => {
       sinon.assert.calledWithExactly(cb, 'ARG');
     });
 
-    it('emits value array when event is fired and curried', function () {
+    it('emits value array when event is fired and curried', function() {
       const stream = K.fromScopeEvent(this.scope, 'event', true);
       const cb = sinon.stub();
       stream.onValue(cb);
@@ -29,7 +29,7 @@ describe('utils/kefir', () => {
       sinon.assert.calledWithExactly(cb, ['A', 'B']);
     });
 
-    it('ends the stream when the scope is destroyed', function () {
+    it('ends the stream when the scope is destroyed', function() {
       const stream = K.fromScopeEvent(this.scope, 'event');
       const ended = sinon.stub();
       stream.onEnd(ended);
@@ -40,28 +40,28 @@ describe('utils/kefir', () => {
   });
 
   describe('#fromScopeValue()', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.$scope = this.$inject('$rootScope').$new();
     });
 
-    it('obtains initial value', function () {
-      this.$scope.value = {a: true};
-      const prop = K.fromScopeValue(this.$scope, (s) => s.value);
-      expect(K.getValue(prop)).toEqual({a: true});
+    it('obtains initial value', function() {
+      this.$scope.value = { a: true };
+      const prop = K.fromScopeValue(this.$scope, s => s.value);
+      expect(K.getValue(prop)).toEqual({ a: true });
     });
 
-    it('updates value', function () {
-      this.$scope.value = {a: true};
-      const prop = K.fromScopeValue(this.$scope, (s) => s.value);
+    it('updates value', function() {
+      this.$scope.value = { a: true };
+      const prop = K.fromScopeValue(this.$scope, s => s.value);
       this.$scope.value.a = false;
       this.$scope.$apply();
-      expect(K.getValue(prop)).toEqual({a: false});
+      expect(K.getValue(prop)).toEqual({ a: false });
     });
 
-    it('ends property when scope is destroyed', function () {
-      this.$scope.value = {a: true};
+    it('ends property when scope is destroyed', function() {
+      this.$scope.value = { a: true };
       const ended = sinon.spy();
-      K.fromScopeValue(this.$scope, (s) => s.value).onEnd(ended);
+      K.fromScopeValue(this.$scope, s => s.value).onEnd(ended);
       sinon.assert.notCalled(ended);
       this.$scope.$destroy();
       sinon.assert.calledOnce(ended);
@@ -90,7 +90,7 @@ describe('utils/kefir', () => {
   });
 
   describe('#onValueScope()', () => {
-    it('applies scope after calling callback when value changes', function () {
+    it('applies scope after calling callback when value changes', function() {
       const bus = K.createBus();
       const cb = sinon.spy();
       sinon.spy(this.scope, '$applyAsync');
@@ -100,7 +100,7 @@ describe('utils/kefir', () => {
       sinon.assert.calledOnce(this.scope.$applyAsync);
     });
 
-    it('removes callback when scope is destroyed', function () {
+    it('removes callback when scope is destroyed', function() {
       const bus = K.createBus();
       const cb = sinon.spy();
       K.onValueScope(this.scope, bus.stream, cb);
@@ -148,7 +148,7 @@ describe('utils/kefir', () => {
       sinon.assert.calledOnce(cb);
     });
 
-    it('ends when attached scope is destroyed', function () {
+    it('ends when attached scope is destroyed', function() {
       const bus = K.createBus(this.scope);
       const cb = sinon.spy();
       bus.stream.onEnd(cb);
@@ -190,7 +190,7 @@ describe('utils/kefir', () => {
   });
 
   describe('#promiseProperty', () => {
-    it('is set to "Pending" initially', function* () {
+    it('is set to "Pending" initially', function*() {
       const deferred = makeDeferred();
       const prop = K.promiseProperty(deferred.promise, 'PENDING');
       const values = KMock.extractValues(prop);
@@ -198,7 +198,7 @@ describe('utils/kefir', () => {
       expect(values[0].value).toBe('PENDING');
     });
 
-    it('is set to "Resolved" when promise resolves', function* () {
+    it('is set to "Resolved" when promise resolves', function*() {
       const deferred = makeDeferred();
       const prop = K.promiseProperty(deferred.promise, 'PENDING');
       const values = KMock.extractValues(prop);
@@ -209,7 +209,7 @@ describe('utils/kefir', () => {
       expect(values[0].value).toBe('SUCCESS');
     });
 
-    it('is set to "Resolved" when promise resolves', function* () {
+    it('is set to "Resolved" when promise resolves', function*() {
       const deferred = makeDeferred();
       const prop = K.promiseProperty(deferred.promise, 'PENDING');
       const values = KMock.extractValues(prop);
@@ -220,7 +220,7 @@ describe('utils/kefir', () => {
       expect(values[0].error).toBe('ERROR');
     });
 
-    function makeDeferred () {
+    function makeDeferred() {
       let _resolve, _reject;
       const promise = new Promise((resolve, reject) => {
         _resolve = resolve;
@@ -238,14 +238,14 @@ describe('utils/kefir', () => {
     it('combines the state as an object', () => {
       const a = KMock.createMockProperty('A1');
       const b = KMock.createMockProperty('B1');
-      const x = K.combinePropertiesObject({a, b});
-      KMock.assertCurrentValue(x, {a: 'A1', b: 'B1'});
+      const x = K.combinePropertiesObject({ a, b });
+      KMock.assertCurrentValue(x, { a: 'A1', b: 'B1' });
 
       b.set('B2');
-      KMock.assertCurrentValue(x, {a: 'A1', b: 'B2'});
+      KMock.assertCurrentValue(x, { a: 'A1', b: 'B2' });
 
       a.set('A2');
-      KMock.assertCurrentValue(x, {a: 'A2', b: 'B2'});
+      KMock.assertCurrentValue(x, { a: 'A2', b: 'B2' });
     });
   });
 
@@ -274,7 +274,7 @@ describe('utils/kefir', () => {
     it('emits values until predicate is true', () => {
       const prop = KMock.createMockProperty('A');
 
-      const hold = K.holdWhen(prop, (x) => x === 'X');
+      const hold = K.holdWhen(prop, x => x === 'X');
       KMock.assertCurrentValue(hold, 'A');
 
       prop.set('B');
@@ -289,7 +289,7 @@ describe('utils/kefir', () => {
 
     it('ends after predicate is true', () => {
       const prop = KMock.createMockProperty('A');
-      const hold = K.holdWhen(prop, (x) => x === 'X');
+      const hold = K.holdWhen(prop, x => x === 'X');
 
       const ended = sinon.spy();
       hold.onEnd(ended);
@@ -299,11 +299,11 @@ describe('utils/kefir', () => {
   });
 
   describe('#scopeLifeline', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.scope = this.$inject('$rootScope').$new();
     });
 
-    it('ends when subscribing before being destroyed', function () {
+    it('ends when subscribing before being destroyed', function() {
       const ended = sinon.spy();
       K.scopeLifeline(this.scope).onEnd(ended);
       sinon.assert.notCalled(ended);
@@ -311,7 +311,7 @@ describe('utils/kefir', () => {
       sinon.assert.called(ended);
     });
 
-    it('ends when subscribing after being destroyed', function () {
+    it('ends when subscribing after being destroyed', function() {
       const ended = sinon.spy();
       this.scope.$destroy();
       K.scopeLifeline(this.scope).onEnd(ended);
@@ -320,26 +320,26 @@ describe('utils/kefir', () => {
   });
 
   describe('#endWith', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.prop = KMock.createMockProperty('A');
       this.lifeline = KMock.createMockStream();
       this.result = K.endWith(this.prop, this.lifeline);
     });
 
-    it('holds original property values', function () {
+    it('holds original property values', function() {
       KMock.assertCurrentValue(this.result, 'A');
       this.prop.set('B');
       KMock.assertCurrentValue(this.result, 'B');
     });
 
-    it('ends when property ends', function () {
+    it('ends when property ends', function() {
       const ended = sinon.spy();
       this.result.onEnd(ended);
       this.prop.end();
       sinon.assert.called(ended);
     });
 
-    it('ends when lifeline ends', function () {
+    it('ends when lifeline ends', function() {
       const ended = sinon.spy();
       this.result.onEnd(ended);
       this.lifeline.end();

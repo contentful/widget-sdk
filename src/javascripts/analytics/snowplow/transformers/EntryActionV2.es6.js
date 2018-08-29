@@ -1,7 +1,7 @@
 import EntityAction from './EntityAction';
 import { get, upperFirst } from 'lodash';
 
-export default function (eventName, eventData) {
+export default function(eventName, eventData) {
   const [downcaseEntity, action] = eventName.split(':');
   const entity = upperFirst(downcaseEntity);
   const fullEventData = { ...eventData, actionData: { entity, action } };
@@ -10,7 +10,7 @@ export default function (eventName, eventData) {
   return trackingData;
 }
 
-function getData (eventData) {
+function getData(eventData) {
   const data = getBaseData(eventData);
   const { contentType, eventOrigin } = eventData;
   const entryId = get(eventData, 'response.data.sys.id');
@@ -22,24 +22,23 @@ function getData (eventData) {
     data['event_origin'] = eventOrigin;
   }
   if (contentType) {
-    data['entry_ct_entry_reference_fields_count'] =
-      countEntryReferenceFields(contentType);
+    data['entry_ct_entry_reference_fields_count'] = countEntryReferenceFields(contentType);
   }
   return data;
 }
 
-function countEntryReferenceFields (contentType) {
-  return contentType.data.fields.filter(({ items = {}, ...field }) =>
-    isEntryReferenceField(field) ||
-    (field.type === 'Array' && isEntryReferenceField(items))
+function countEntryReferenceFields(contentType) {
+  return contentType.data.fields.filter(
+    ({ items = {}, ...field }) =>
+      isEntryReferenceField(field) || (field.type === 'Array' && isEntryReferenceField(items))
   ).length;
 }
 
-function isEntryReferenceField ({ type, linkType }) {
+function isEntryReferenceField({ type, linkType }) {
   return type === 'Link' && linkType === 'Entry';
 }
 
-function getBaseData (eventData) {
+function getBaseData(eventData) {
   return {
     executing_user_id: eventData.userId,
     organization_id: eventData.organizationId,

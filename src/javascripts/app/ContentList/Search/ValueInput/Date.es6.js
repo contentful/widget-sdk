@@ -3,7 +3,6 @@ import { h } from 'ui/Framework';
 import * as H from 'ui/Framework/Hooks';
 import DatePicker from 'datepicker';
 
-
 const DATE_FORMAT = 'YYYY-MM-DD';
 
 const DatePickerHook = H.makeHook((el, datePicker, _prevOnChange, onChange) => {
@@ -12,8 +11,13 @@ const DatePickerHook = H.makeHook((el, datePicker, _prevOnChange, onChange) => {
       datePicker = DatePicker.create({
         field: el,
         container: el.parentElement,
-        yearRange: [1900, moment().add(10, 'years').year()],
-        onSelect: function () {
+        yearRange: [
+          1900,
+          moment()
+            .add(10, 'years')
+            .year()
+        ],
+        onSelect: function() {
           onChange(this.getMoment().format(DATE_FORMAT));
         },
         firstDay: 1,
@@ -26,32 +30,36 @@ const DatePickerHook = H.makeHook((el, datePicker, _prevOnChange, onChange) => {
   }
 });
 
-export default function filterValueDate ({ testId, value, inputRef, onChange, onKeyDown }) {
+export default function filterValueDate({ testId, value, inputRef, onChange, onKeyDown }) {
   const formattedDate = getFormattedDate(value);
 
-  return h('div', {
-    style: {
-      position: 'relative',
-      display: 'flex',
-      width: getWidth(formattedDate)
-    }
-  }, [
-    h('input.input-reset.search__input-text', {
-      dataTestId: testId,
-      hooks: [DatePickerHook(onChange), H.Ref(el => el && inputRef(el))],
-      onKeyDown,
-      value: formattedDate,
-      tabIndex: '0',
+  return h(
+    'div',
+    {
       style: {
-        width: getWidth(formattedDate),
-        paddingLeft: '10px'
-      },
-      readOnly: true
-    })
-  ]);
+        position: 'relative',
+        display: 'flex',
+        width: getWidth(formattedDate)
+      }
+    },
+    [
+      h('input.input-reset.search__input-text', {
+        dataTestId: testId,
+        hooks: [DatePickerHook(onChange), H.Ref(el => el && inputRef(el))],
+        onKeyDown,
+        value: formattedDate,
+        tabIndex: '0',
+        style: {
+          width: getWidth(formattedDate),
+          paddingLeft: '10px'
+        },
+        readOnly: true
+      })
+    ]
+  );
 }
 
-function getFormattedDate (value) {
+function getFormattedDate(value) {
   let date = '';
   if (value) {
     date = moment(value, moment.ISO_8601).format(DATE_FORMAT);
@@ -59,7 +67,7 @@ function getFormattedDate (value) {
   return date;
 }
 
-function getWidth (value) {
+function getWidth(value) {
   if (value) {
     return `calc(${value.length}ch + 20px)`;
   } else {

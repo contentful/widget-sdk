@@ -2,11 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Templates from './templates';
 
-const WebhookSidebarTemplatesList = ({
-  webhookRepo,
-  templateContentTypes,
-  openTemplateDialog
-}) => (
+const WebhookSidebarTemplatesList = ({ webhookRepo, templateContentTypes, openTemplateDialog }) => (
   <React.Fragment>
     <h2 className="entity-sidebar__heading">Webhook Templates</h2>
     {Templates.map(template => (
@@ -19,10 +15,7 @@ const WebhookSidebarTemplatesList = ({
         <div className="webhook-template-item__action">
           <button
             className="btn-link"
-            onClick={() =>
-              openTemplateDialog(template.id, webhookRepo, templateContentTypes)
-            }
-          >
+            onClick={() => openTemplateDialog(template.id, webhookRepo, templateContentTypes)}>
             Add
           </button>
         </div>

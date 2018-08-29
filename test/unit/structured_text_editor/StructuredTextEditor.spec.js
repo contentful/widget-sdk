@@ -22,7 +22,7 @@ const getToolbarIcon = (wrapper, iconName) =>
   wrapper.find(`[data-test-id="toolbar-toggle-${iconName}"]`).first();
 
 describe('StructuredTextEditor', () => {
-  beforeEach(async function () {
+  beforeEach(async function() {
     module('contentful/test');
     const mockDocument = {
       content: []
@@ -55,20 +55,20 @@ describe('StructuredTextEditor', () => {
     };
   });
 
-  it('renders the component', function () {
+  it('renders the component', function() {
     expect(this.wrapper).toBeDefined();
   });
 
-  it('can be focused', function () {
+  it('can be focused', function() {
     this.expectIsEditorReadOnly(false);
   });
 
-  it('renders toolbar', function () {
+  it('renders toolbar', function() {
     const el = this.wrapper.find('[data-test-id="toolbar"]').first();
     expect(el.length).toEqual(1);
   });
 
-  it('renders the toolbar icons', function () {
+  it('renders the toolbar icons', function() {
     supportedToolbarIcons.forEach(iconName => {
       const el = getToolbarIcon(this.wrapper, iconName);
 
@@ -79,7 +79,7 @@ describe('StructuredTextEditor', () => {
     });
   });
 
-  it('renders heading dropdown', function () {
+  it('renders heading dropdown', function() {
     const headingItems = [BLOCKS.HEADING_1, BLOCKS.HEADING_2];
 
     const el = getHeadingDropdown(this.wrapper);
@@ -93,23 +93,23 @@ describe('StructuredTextEditor', () => {
     });
   });
 
-  it('renders the embed entry button', function () {
+  it('renders the embed entry button', function() {
     const el = getToolbarIcon(this.wrapper, BLOCKS.EMBEDDED_ENTRY);
     expect(el).toBeDefined();
     el.simulate('click');
     sinon.assert.calledOnce(this.wrapper.props().onChange);
   });
 
-  describe('disabled `props.field`', function () {
-    beforeEach(function () {
+  describe('disabled `props.field`', function() {
+    beforeEach(function() {
       this.wrapper.setProps({ isDisabled: true });
     });
 
-    it('can not be focused', function () {
+    it('can not be focused', function() {
       this.expectIsEditorReadOnly(true);
     });
 
-    it('toolbar icons are disabled', function () {
+    it('toolbar icons are disabled', function() {
       supportedToolbarIcons.forEach(iconName => {
         const el = getToolbarIcon(this.wrapper, iconName);
         expect(el.props().disabled).toEqual(true);

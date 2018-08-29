@@ -2,7 +2,7 @@ import $q from '$q';
 import $rootScope from '$rootScope';
 import * as TokenStore from 'services/TokenStore';
 import * as K from 'utils/kefir';
-import {get, isString} from 'lodash';
+import { get, isString } from 'lodash';
 
 /**
  * TODO move from access checker or get rid of it entirely
@@ -14,7 +14,7 @@ import {get, isString} from 'lodash';
  * @param {object} context
  * @returns {function}
  */
-export function wasForbidden (context) {
+export function wasForbidden(context) {
   return res => {
     if ([403, 404].includes(parseInt(get(res, 'statusCode'), 10))) {
       context.forbidden = true;
@@ -30,7 +30,7 @@ export function wasForbidden (context) {
 /**
  * TODO move from access checker or get rid of it entirely
  */
-export function broadcastEnforcement (enforcement) {
+export function broadcastEnforcement(enforcement) {
   if (enforcement) {
     $rootScope.$broadcast('persistentNotification', {
       message: enforcement.message,
@@ -42,12 +42,12 @@ export function broadcastEnforcement (enforcement) {
 
 /**
  * Remove all persistent notifications
-*/
-export function resetEnforcements () {
+ */
+export function resetEnforcements() {
   $rootScope.$broadcast('resetPersistentNotification');
 }
 
-export function toType (entity) {
+export function toType(entity) {
   if (isString(entity)) {
     return entity;
   } else {
@@ -55,17 +55,17 @@ export function toType (entity) {
   }
 }
 
-export function isAuthor (entity) {
+export function isAuthor(entity) {
   const author = getAuthorIdFor(entity);
   const currentUser = K.getValue(TokenStore.user$);
 
   return author === get(currentUser, 'sys.id');
 }
 
-export function getContentTypeIdFor (entry) {
+export function getContentTypeIdFor(entry) {
   return get(entry, 'data.sys.contentType.sys.id');
 }
 
-function getAuthorIdFor (entry) {
+function getAuthorIdFor(entry) {
   return get(entry, 'data.sys.createdBy.sys.id');
 }

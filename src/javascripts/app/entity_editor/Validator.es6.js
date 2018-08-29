@@ -13,11 +13,7 @@
  *   for information on current errors
  */
 
-import {
-  constant, noop, isEmpty,
-  assign, get as getAtPath,
-  isEqual
-} from 'lodash';
+import { constant, noop, isEmpty, assign, get as getAtPath, isEqual } from 'lodash';
 import * as K from 'utils/kefir';
 import * as Path from 'utils/Path';
 
@@ -33,7 +29,7 @@ import * as Schema from 'validation';
  *
  * @returns {entityEditor/Validator}
  */
-export function createNoop () {
+export function createNoop() {
   return {
     errors$: K.constant([]),
     run: constant(true),
@@ -52,12 +48,11 @@ export function createNoop () {
  * @param {API.Locale[]} locales
  * @returns {entityEditor/Validator}
  */
-export function createForEntry (contentType, doc, publishedCTs, locales) {
+export function createForEntry(contentType, doc, publishedCTs, locales) {
   const schema = Schema.fromContentType(contentType, locales);
   const buildMessage = errorMessageBuilder(publishedCTs);
   return createBase(buildMessage, schema, doc);
 }
-
 
 /**
  * @ngdoc method
@@ -68,15 +63,14 @@ export function createForEntry (contentType, doc, publishedCTs, locales) {
  * @param {API.Locale[]} locales
  * @returns {entityEditor/Validator}
  */
-export function createForAsset (doc, locales) {
+export function createForAsset(doc, locales) {
   const schema = Schema.schemas.Asset(locales);
   const buildMessage = errorMessageBuilder.forAsset;
   return createBase(buildMessage, schema, doc);
 }
 
-
 // Only exported for tests
-export function createBase (buildMessage, schema, doc) {
+export function createBase(buildMessage, schema, doc) {
   const errorsBus = K.createPropertyBus([]);
   const errors$ = errorsBus.property;
 
@@ -123,7 +117,7 @@ export function createBase (buildMessage, schema, doc) {
    * @param {string} fieldId  internal field id
    * @return {boolean}
    */
-  function hasFieldError (fieldId) {
+  function hasFieldError(fieldId) {
     return K.getValue(errors$).some(error => Path.isPrefix(['fields', fieldId], error.path));
   }
 
@@ -138,8 +132,10 @@ export function createBase (buildMessage, schema, doc) {
    * @param {string} localeCode  internal locale code
    * @return {boolean}
    */
-  function hasFieldLocaleError (fieldId, localeCode) {
-    return K.getValue(errors$).some(error => Path.isPrefix(['fields', fieldId, localeCode], error.path));
+  function hasFieldLocaleError(fieldId, localeCode) {
+    return K.getValue(errors$).some(error =>
+      Path.isPrefix(['fields', fieldId, localeCode], error.path)
+    );
   }
 
   /**
@@ -151,7 +147,7 @@ export function createBase (buildMessage, schema, doc) {
    *
    * @return {boolean}
    */
-  function run () {
+  function run() {
     const errors = validate();
     errorsBus.set(errors);
     return isEmpty(errors);
@@ -167,7 +163,7 @@ export function createBase (buildMessage, schema, doc) {
    *
    * @param {Error[]} errors
    */
-  function setApiResponseErrors (response) {
+  function setApiResponseErrors(response) {
     const data = response.data || {};
     const errorId = getAtPath(data, ['sys', 'id']);
     const isValidationError =
@@ -197,11 +193,16 @@ export function createBase (buildMessage, schema, doc) {
    * @param {string} fieldId  internal field id
    * @param {string} localeCode  internal locale code
    */
-  function validateFieldLocale (fieldId, localeCode) {
+  function validateFieldLocale(fieldId, localeCode) {
     const errors = validate();
-    const fieldErrors = errors.filter(error => Path.isPrefix(['fields', fieldId, localeCode], error.path));
-    const otherErrors = K.getValue(errors$).filter((error) => {
-      return !Path.isPrefix(['fields', fieldId, localeCode], error.path) && !isEqual(['fields', fieldId], error.path);
+    const fieldErrors = errors.filter(error =>
+      Path.isPrefix(['fields', fieldId, localeCode], error.path)
+    );
+    const otherErrors = K.getValue(errors$).filter(error => {
+      return (
+        !Path.isPrefix(['fields', fieldId, localeCode], error.path) &&
+        !isEqual(['fields', fieldId], error.path)
+      );
     });
     const newErrors = fieldErrors.concat(otherErrors);
     errorsBus.set(newErrors);
@@ -211,9 +212,9 @@ export function createBase (buildMessage, schema, doc) {
    * Run validations fro the current entity data and return the
    * processed errors.
    */
-  function validate () {
+  function validate() {
     const entityData = K.getValue(doc.data$);
-    const rawErrors = schema.errors(entityData, {skipDeletedLocaleFieldValidation: true});
+    const rawErrors = schema.errors(entityData, { skipDeletedLocaleFieldValidation: true });
     return processErrors(rawErrors);
   }
 
@@ -223,10 +224,13 @@ export function createBase (buildMessage, schema, doc) {
    * This function is applied to errors coming from the validation
    * library or API responses.
    */
-  function processErrors (errors) {
-    return errors.filter(error => error && error.path).map(error => // TODO we should freeze this but duplicate errors modify this.
-    assign({}, error, {
-      message: buildMessage(error)
-    }));
+  function processErrors(errors) {
+    return errors.filter(error => error && error.path).map((
+      error // TODO we should freeze this but duplicate errors modify this.
+    ) =>
+      assign({}, error, {
+        message: buildMessage(error)
+      })
+    );
   }
 }

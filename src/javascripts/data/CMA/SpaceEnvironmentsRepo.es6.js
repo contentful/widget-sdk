@@ -13,7 +13,6 @@ export const IdExistsError = makeCtor('IdExistsError');
 export const NameExistsError = makeCtor('NameExistsError');
 export const ServerError = makeCtor('ServerError');
 
-
 /**
  * Create a repository to manage space environments through the CMA.
  *
@@ -24,18 +23,18 @@ export const ServerError = makeCtor('ServerError');
  * - remove(id)
  */
 
-export function create (spaceEndpoint) {
+export function create(spaceEndpoint) {
   return { getAll, create, remove, update };
 
   /**
    * Returns a list of all environments for the given space
    */
-  function getAll () {
+  function getAll() {
     return spaceEndpoint({
       method: 'GET',
       path: ['environments'],
       query: { limit: ENVIRONMENTS_LIMIT }
-    }).then((response) => response.items);
+    }).then(response => response.items);
   }
 
   /**
@@ -48,7 +47,7 @@ export function create (spaceEndpoint) {
    *
    * The `ServerError` result holds the original error as its value.
    */
-  function create ({id, name}) {
+  function create({ id, name }) {
     return spaceEndpoint({
       method: 'PUT',
       path: ['environments', id],
@@ -56,14 +55,12 @@ export function create (spaceEndpoint) {
     }).then(EnvironmentUpdated, mapCreateError);
   }
 
-
-  function remove (id) {
+  function remove(id) {
     return spaceEndpoint({
       method: 'DELETE',
       path: ['environments', id]
     });
   }
-
 
   /**
    * Create an environment with the given `id` and name and resolves to
@@ -75,7 +72,7 @@ export function create (spaceEndpoint) {
    *
    * The `ServerError` result holds the original error as its value.
    */
-  function update (env) {
+  function update(env) {
     return spaceEndpoint({
       method: 'PUT',
       path: ['environments', env.sys.id],
@@ -86,8 +83,7 @@ export function create (spaceEndpoint) {
   }
 }
 
-
-function mapCreateError (error) {
+function mapCreateError(error) {
   if (error.status === 409) {
     return IdExistsError();
   } else if (isNameExistsError(error)) {
@@ -97,8 +93,7 @@ function mapCreateError (error) {
   }
 }
 
-
-function mapUpdateError (error) {
+function mapUpdateError(error) {
   if (isNameExistsError(error)) {
     return NameExistsError();
   } else {
@@ -106,10 +101,6 @@ function mapUpdateError (error) {
   }
 }
 
-
-function isNameExistsError (error) {
-  return (
-    error.status === 400 &&
-    get(error, ['data', 'message'], '').match(/Name taken/)
-  );
+function isNameExistsError(error) {
+  return error.status === 400 && get(error, ['data', 'message'], '').match(/Name taken/);
 }

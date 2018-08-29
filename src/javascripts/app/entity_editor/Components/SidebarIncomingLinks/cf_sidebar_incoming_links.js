@@ -8,18 +8,15 @@ angular.module('contentful').directive('cfSidebarIncomingLinks', [
       .default;
 
     return {
-      link: function link ($scope, elem) {
+      link: function link($scope, elem) {
         const entityInfo = $scope.entityInfo;
         const defaultProps = {
           entityInfo: entityInfo
         };
 
-        function render (props) {
+        function render(props) {
           ReactDOM.render(
-            React.createElement(
-              SidebarIncomingLinks,
-              _.extend({}, defaultProps, props)
-            ),
+            React.createElement(SidebarIncomingLinks, _.extend({}, defaultProps, props)),
             elem[0]
           );
         }

@@ -4,9 +4,15 @@ describe('Space nav bar directive', () => {
   let container, scope, accessChecker, spaceContext;
   let compileElement;
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test', $provide => {
-      $provide.removeDirectives('otDocPresence', 'entryEditor', 'apiKeyEditor', 'entryList', 'cfIcon');
+      $provide.removeDirectives(
+        'otDocPresence',
+        'entryEditor',
+        'apiKeyEditor',
+        'entryList',
+        'cfIcon'
+      );
     });
 
     const $compile = this.$inject('$compile');
@@ -18,7 +24,7 @@ describe('Space nav bar directive', () => {
     accessChecker = this.$inject('access_control/AccessChecker');
     accessChecker.getSectionVisibility = sinon.stub().returns({});
 
-    spaceContext.organizationContext = {organization: {sys: {id: '123'}}};
+    spaceContext.organizationContext = { organization: { sys: { id: '123' } } };
 
     compileElement = () => {
       container = $('<cf-space-nav-bar></cf-space-nav-bar>');
@@ -32,7 +38,7 @@ describe('Space nav bar directive', () => {
     container = scope = accessChecker = compileElement = null;
   });
 
-  function makeNavbarItemTest (key, viewType) {
+  function makeNavbarItemTest(key, viewType) {
     describe('navbar item for ' + key, () => {
       const selector = 'a[data-view-type="' + viewType + '"]';
 
@@ -50,7 +56,7 @@ describe('Space nav bar directive', () => {
     });
   }
 
-  function getVisibility (key, value) {
+  function getVisibility(key, value) {
     const returnVal = {};
     returnVal[key] = value;
     return returnVal;

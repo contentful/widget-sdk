@@ -6,11 +6,11 @@ import { createIsolatedSystem } from 'test/helpers/system-js';
 
 import { BLOCKS } from '@contentful/structured-text-types';
 
-const getToolbarIcon = (wrapper) =>
+const getToolbarIcon = wrapper =>
   wrapper.find(`[data-test-id="toolbar-toggle-${BLOCKS.EMBEDDED_ENTRY}"]`);
 
 describe('EmbeddedEntryBlock', () => {
-  beforeEach(async function () {
+  beforeEach(async function() {
     module('contentful/test');
     const mockDocument = {
       content: []
@@ -40,7 +40,7 @@ describe('EmbeddedEntryBlock', () => {
     this.wrapper = mount(<StructuredTextEditor {...this.props} />);
   });
 
-  it('renders the component', function () {
+  it('renders the component', function() {
     expect(getToolbarIcon(this.wrapper)).toBeDefined();
   });
 });

@@ -1,9 +1,9 @@
-import {partial, size, noop} from 'lodash';
+import { partial, size, noop } from 'lodash';
 import * as Analytics from 'analytics/Analytics';
 import * as K from 'utils/kefir';
-import {stateName, State} from 'data/CMA/EntityState';
+import { stateName, State } from 'data/CMA/EntityState';
 
-export function create (parentEntryId, links$) {
+export function create(parentEntryId, links$) {
   const editedEntries = {};
   const publishedEntries = {};
 
@@ -17,13 +17,13 @@ export function create (parentEntryId, links$) {
     actions
   };
 
-  function open () {
+  function open() {
     track('open', {
       refCount: K.getValue(links$).length
     });
   }
 
-  function close () {
+  function close() {
     track('close', {
       refCount: K.getValue(links$).length,
       numEditedEntries: size(editedEntries),
@@ -31,32 +31,32 @@ export function create (parentEntryId, links$) {
     });
   }
 
-  function addExisting (num) {
+  function addExisting(num) {
     track('add', {
       refCount: K.getValue(links$).length + num,
       existing: true
     });
   }
 
-  function addNew () {
+  function addNew() {
     track('add', {
       refCount: K.getValue(links$).length + 1,
       existing: false
     });
   }
 
-  function actions (entryId) {
+  function actions(entryId) {
     return {
       unlink: partial(trackAction, 'unlink', entryId),
       navigate: partial(trackAction, 'navigate', entryId),
-      setExpansion (expanded) {
+      setExpansion(expanded) {
         const action = expanded ? 'expand' : 'collapse';
         trackAction(action, entryId);
       }
     };
   }
 
-  function trackAction (name, entryId) {
+  function trackAction(name, entryId) {
     track('action', {
       refCount: K.getValue(links$).length + 1,
       entryId: entryId,
@@ -64,7 +64,7 @@ export function create (parentEntryId, links$) {
     });
   }
 
-  function changeStatus (id, state) {
+  function changeStatus(id, state) {
     if (state === State.Published()) {
       publishedEntries[id] = true;
     }
@@ -74,15 +74,12 @@ export function create (parentEntryId, links$) {
     });
   }
 
-  function edited (id) {
+  function edited(id) {
     editedEntries[id] = true;
   }
 
-  function track (name, options) {
-    Analytics.track(
-      `bulk_editor:${name}`,
-      { parentEntryId, ...options }
-    );
+  function track(name, options) {
+    Analytics.track(`bulk_editor:${name}`, { parentEntryId, ...options });
   }
 }
 

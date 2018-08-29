@@ -32,7 +32,7 @@ describe('app/SpaceSettings/GeneralSettings', () => {
     deleteBtn: 'button[data-test-id="delete-space"]'
   };
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     SpaceSettingsContainer = this.$inject(
       'app/SpaceSettings/GeneralSettings/SpaceSettingsContainer'
@@ -70,9 +70,7 @@ describe('app/SpaceSettings/GeneralSettings', () => {
     const wrapper = mount({
       renameSpace: renameSpaceStub
     });
-    wrapper
-      .find(selectors.nameInput)
-      .simulate('change', { target: { value: 'new-value' } });
+    wrapper.find(selectors.nameInput).simulate('change', { target: { value: 'new-value' } });
     wrapper.find(selectors.saveBtn).simulate('click');
     // try double click
     wrapper.find(selectors.saveBtn).simulate('click');

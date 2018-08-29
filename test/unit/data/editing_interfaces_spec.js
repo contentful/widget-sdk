@@ -3,7 +3,7 @@
 describe('data/editingInterfaces', () => {
   let editingInterfaces, spaceEndpoint, contentType;
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test', $provide => {
       $provide.value('widgets/default', sinon.stub());
     });
@@ -14,9 +14,7 @@ describe('data/editingInterfaces', () => {
 
     contentType = {
       sys: {},
-      fields: [
-        {apiName: 'FIELD'}
-      ]
+      fields: [{ apiName: 'FIELD' }]
     };
   });
 
@@ -40,37 +38,38 @@ describe('data/editingInterfaces', () => {
       describe('with API response', () => {
         beforeEach(() => {
           spaceEndpoint.resolves({
-            controls: [{
-              fieldId: 'FIELD',
-              widgetId: 'WIDGET'
-            }]
+            controls: [
+              {
+                fieldId: 'FIELD',
+                widgetId: 'WIDGET'
+              }
+            ]
           });
         });
 
-        it('returns editing interface with widgets', () => editingInterfaces.get(contentType)
-        .then(ei => {
-          expect(ei.controls.length).toEqual(1);
-        }));
+        it('returns editing interface with widgets', () =>
+          editingInterfaces.get(contentType).then(ei => {
+            expect(ei.controls.length).toEqual(1);
+          }));
       });
 
-      it('resolves with the default interface if a 404 is returned', function () {
+      it('resolves with the default interface if a 404 is returned', function() {
         const getDefaultWidget = this.$inject('widgets/default');
         getDefaultWidget.returns('DEFAULT');
 
-        spaceEndpoint.rejects({status: 404});
-        return editingInterfaces.get(contentType)
-        .then(ei => {
+        spaceEndpoint.rejects({ status: 404 });
+        return editingInterfaces.get(contentType).then(ei => {
           expect(ei.controls[0].widgetId).toEqual('DEFAULT');
         });
       });
 
-      it('fails if API responds with an error', function () {
-        spaceEndpoint.rejects({status: 500});
+      it('fails if API responds with an error', function() {
+        spaceEndpoint.rejects({ status: 500 });
 
         const errorHandler = sinon.stub();
         editingInterfaces.get(contentType).catch(errorHandler);
         this.$apply();
-        sinon.assert.calledWithExactly(errorHandler, {status: 500});
+        sinon.assert.calledWithExactly(errorHandler, { status: 500 });
       });
     });
 
@@ -84,12 +83,11 @@ describe('data/editingInterfaces', () => {
         sinon.assert.notCalled(spaceEndpoint);
       });
 
-      it('resolves with the default interface', function () {
+      it('resolves with the default interface', function() {
         const getDefaultWidget = this.$inject('widgets/default');
         getDefaultWidget.returns('DEFAULT');
 
-        return editingInterfaces.get(contentType)
-        .then(ei => {
+        return editingInterfaces.get(contentType).then(ei => {
           expect(ei.controls[0].widgetId).toEqual('DEFAULT');
         });
       });
@@ -103,21 +101,22 @@ describe('data/editingInterfaces', () => {
 
     it('sends PUT request with version', () => {
       editingInterfaces.save(contentType, {
-        sys: {version: 'V'}
+        sys: { version: 'V' }
       });
-      sinon.assert.calledWith(spaceEndpoint, sinon.match({
-        method: 'PUT',
-        path: ['content_types', 'CTID', 'editor_interface'],
-        version: 'V'
-      }));
+      sinon.assert.calledWith(
+        spaceEndpoint,
+        sinon.match({
+          method: 'PUT',
+          path: ['content_types', 'CTID', 'editor_interface'],
+          version: 'V'
+        })
+      );
     });
 
     it('removes field property from request payload', () => {
       editingInterfaces.save(contentType, {
         sys: {},
-        controls: [
-          {fieldId: 'FIELD', field: {}}
-        ]
+        controls: [{ fieldId: 'FIELD', field: {} }]
       });
       const data = spaceEndpoint.args[0][0].data;
       expect(data.controls[0].field).toBe(undefined);
@@ -126,9 +125,7 @@ describe('data/editingInterfaces', () => {
     it('removes empty widget parameters from request payload', () => {
       editingInterfaces.save(contentType, {
         sys: {},
-        controls: [
-          {fieldId: 'FIELD', settings: {}}
-        ]
+        controls: [{ fieldId: 'FIELD', settings: {} }]
       });
       const data = spaceEndpoint.args[0][0].data;
       expect(data.controls[0].settings).toBe(undefined);

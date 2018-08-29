@@ -25,29 +25,18 @@ const path = require('path');
  * - `rev.manifest()` is a transformer that creates a json file that
  *   maps each non-fingerprinted file to its fingerprinted version.
  */
-gulp.task('build', function (done) {
-  runSequence(
-    'clean',
-    ['build/js', 'build/styles', 'build/static'],
-    done
-  );
+gulp.task('build', function(done) {
+  runSequence('clean', ['build/js', 'build/styles', 'build/static'], done);
 });
 
-gulp.task('build/with-styleguide', function (done) {
-  runSequence(
-    'build',
-    'styleguide',
-    'build/copy-styleguide',
-    done
-  );
+gulp.task('build/with-styleguide', function(done) {
+  runSequence('build', 'styleguide', 'build/copy-styleguide', done);
 });
 
-gulp.task('build/copy-styleguide', function () {
-  return gulp.src('public/styleguide/**/*')
-  .pipe(writeBuild('styleguide'));
+gulp.task('build/copy-styleguide', function() {
+  return gulp.src('public/styleguide/**/*').pipe(writeBuild('styleguide'));
 });
 
-
-function writeBuild (dir) {
+function writeBuild(dir) {
   return gulp.dest(path.join('build', dir || ''));
 }

@@ -1,5 +1,5 @@
 const P = require('path');
-const {FS} = require('../../lib/utils');
+const { FS } = require('../../lib/utils');
 const configureAndWriteIndex = require('../../lib/index-configure');
 
 /**
@@ -17,7 +17,7 @@ const configureAndWriteIndex = require('../../lib/index-configure');
  *
  * output/files/staging/index.html (served for request to app.flinkly.com)
  */
-module.exports = async function runTravis ({branch, pr, version}) {
+module.exports = async function runTravis({ branch, pr, version }) {
   console.log(`TRAVIS_BRANCH: ${branch}, TRAVIS_COMMIT: ${version}, TRAVIS_PULL_REQUEST: ${pr}`);
 
   // If `pr` is not 'false' this is the `travis-ci/pr` job. Since we don’t
@@ -76,7 +76,7 @@ module.exports = async function runTravis ({branch, pr, version}) {
  * @param env {string} env - Target environment. One of production, staging, preview
  * @param version {string} version - Git commit hash of the commit that's being built
  */
-async function createIndex (env, version) {
+async function createIndex(env, version) {
   const rootIndexPathForEnv = targetPath(env, 'index.html');
   const logMsg = `Creating root index file for "${env}"`;
 
@@ -85,7 +85,6 @@ async function createIndex (env, version) {
   // This generates output/files/${env}/index.html
   return configureAndWriteIndex(version, `config/${env}.json`, rootIndexPathForEnv);
 }
-
 
 /*
  * Creates a file distribution after gulp build.
@@ -105,7 +104,7 @@ async function createIndex (env, version) {
  * @param {string} branch
  * @param {boolean} options.includeStyleguide
  */
-async function createFileDist (env, version, branch, { includeStyleguide } = {}) {
+async function createFileDist(env, version, branch, { includeStyleguide } = {}) {
   console.log(`Creating file distribution for "${env}"`);
 
   // This directory contains all the files needed to run the app.
@@ -134,14 +133,14 @@ async function createFileDist (env, version, branch, { includeStyleguide } = {})
  * =>
  * /home/<username>/user_interface/output/files/staging/archive/COMMIT_HASH/index-compiled.html
  */
-function targetPath (...components) {
+function targetPath(...components) {
   // Destination directory for files that are uploaded to S3 buckets
   const FILE_DIST_DEST = P.resolve('./output/files');
 
   return P.join(FILE_DIST_DEST, ...components);
 }
 
-function copy (src, dest) {
+function copy(src, dest) {
   console.log('Copying %s -> %s', P.relative('', src), P.relative('', dest));
   return FS.copyAsync(src, dest);
 }

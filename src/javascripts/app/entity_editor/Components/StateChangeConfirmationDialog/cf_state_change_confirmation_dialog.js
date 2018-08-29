@@ -8,28 +8,22 @@ angular.module('contentful').directive('cfStateChangeConfirmationDialog', [
     const Dialog = require('app/entity_editor/Components/StateChangeConfirmationDialog').default;
 
     return {
-      link: function link ($scope, elem) {
+      link: function link($scope, elem) {
         const dialogSessionId = random.id(); // uuid
         const defaultProps = {
           dialogSessionId: dialogSessionId,
           entityInfo: $scope.entityInfo,
           action: $scope.action,
-          onConfirm: function () {
+          onConfirm: function() {
             $scope.dialog.confirm();
           },
-          onCancel: function () {
+          onCancel: function() {
             $scope.dialog.cancel();
           }
         };
 
-        function render (props) {
-          ReactDOM.render(
-            React.createElement(
-              Dialog,
-              _.extend({}, defaultProps, props)
-            ),
-            elem[0]
-          );
+        function render(props) {
+          ReactDOM.render(React.createElement(Dialog, _.extend({}, defaultProps, props)), elem[0]);
         }
 
         render();

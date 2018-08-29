@@ -12,9 +12,9 @@ export default class PartnershipForm extends React.Component {
     onFieldChange: PropTypes.func.isRequired,
     validation: PropTypes.object,
     template: PropTypes.object
-  }
+  };
 
-  constructor ({ onFieldChange }) {
+  constructor({ onFieldChange }) {
     super();
 
     // Set the initial date to today in the form
@@ -32,10 +32,10 @@ export default class PartnershipForm extends React.Component {
     onFieldChange('estimatedDeliveryDate')(estimatedDeliveryDate.toISOString());
   }
 
-  onChange (fieldName) {
+  onChange(fieldName) {
     const { onFieldChange } = this.props;
 
-    return (event) => {
+    return event => {
       const value = event.target.value;
 
       this.setState({ [fieldName]: value });
@@ -62,28 +62,26 @@ export default class PartnershipForm extends React.Component {
     };
   }
 
-  render () {
+  render() {
     const { organization, template, spaceName, validation } = this.props;
     const { estimatedDeliveryDate } = this.state;
 
     const months = moment.months();
     const daysInCurrentMonth = estimatedDeliveryDate.daysInMonth();
-    const currentYear = (new Date()).getFullYear();
-    const years = [
-      currentYear,
-      currentYear + 1,
-      currentYear + 2
-    ];
+    const currentYear = new Date().getFullYear();
+    const years = [currentYear, currentYear + 1, currentYear + 2];
 
     return (
       <Fragment>
-        You are about to create a space for the organization <em>{organization.name}</em>. The space’s name will be <em>{spaceName}</em>
-    {template && ', and we will fill it with example content'}
-    {'. '}
-        Before you do, please give us a few more details about this space. These details will be sent to your partnership manager.
-        <fieldset className='fieldset'>
+        You are about to create a space for the organization <em>{organization.name}</em>. The
+        space’s name will be <em>{spaceName}</em>
+        {template && ', and we will fill it with example content'}
+        {'. '}
+        Before you do, please give us a few more details about this space. These details will be
+        sent to your partnership manager.
+        <fieldset className="fieldset">
           <legend>Project information</legend>
-          <div className='field'>
+          <div className="field">
             <TextField
               labelText="Client name"
               name="clientName"
@@ -92,7 +90,7 @@ export default class PartnershipForm extends React.Component {
               onChange={this.onChange('clientName')}
             />
           </div>
-          <div className='field'>
+          <div className="field">
             <TextField
               labelText="Short project description"
               name="description"
@@ -102,53 +100,57 @@ export default class PartnershipForm extends React.Component {
             />
           </div>
 
-          <div className='field'>
-            <label className='label' htmlFor='estimatedDeliveryDateMonth'>Estimated Delivery Date</label>
+          <div className="field">
+            <label className="label" htmlFor="estimatedDeliveryDateMonth">
+              Estimated Delivery Date
+            </label>
             <div>
               <select
-                id='estimatedDeliveryDateMonth'
-                name='estimatedDeliveryDateMonth'
+                id="estimatedDeliveryDateMonth"
+                name="estimatedDeliveryDateMonth"
                 value={estimatedDeliveryDate.month()}
                 onChange={this.onChange('estimatedDeliveryDateMonth')}
                 className="cfnext-select-box"
-                aria-invalid={Boolean(validation.estimatedDeliveryDate)}
-              >
-                {
-                  months.map((name, i) => {
-                    return <option key={name} value={i}>{name}</option>;
-                  })
-                }
+                aria-invalid={Boolean(validation.estimatedDeliveryDate)}>
+                {months.map((name, i) => {
+                  return (
+                    <option key={name} value={i}>
+                      {name}
+                    </option>
+                  );
+                })}
               </select>
               <select
-                name='estimatedDeliveryDateDay'
+                name="estimatedDeliveryDateDay"
                 value={estimatedDeliveryDate.date()}
                 onChange={this.onChange('estimatedDeliveryDateDay')}
                 className="cfnext-select-box"
-                aria-invalid={Boolean(validation.estimatedDeliveryDate)}
-              >
-                {
-                  range(daysInCurrentMonth).map(day => {
-                    return <option key={day} value={day + 1}>{day + 1}</option>;
-                  })
-                }
+                aria-invalid={Boolean(validation.estimatedDeliveryDate)}>
+                {range(daysInCurrentMonth).map(day => {
+                  return (
+                    <option key={day} value={day + 1}>
+                      {day + 1}
+                    </option>
+                  );
+                })}
               </select>
               <select
-                name='estimatedDeliveryDateYear'
+                name="estimatedDeliveryDateYear"
                 value={estimatedDeliveryDate.year()}
                 onChange={this.onChange('estimatedDeliveryDateYear')}
                 className="cfnext-select-box"
-                aria-invalid={Boolean(validation.estimatedDeliveryDate)}
-              >
-                {
-                  years.map(year => {
-                    return <option key={year} value={year}>{year}</option>;
-                  })
-                }
+                aria-invalid={Boolean(validation.estimatedDeliveryDate)}>
+                {years.map(year => {
+                  return (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  );
+                })}
               </select>
 
-              {
-                validation.estimatedDeliveryDate &&
-                <div className='cfnext-form__field-error validation-error'>
+              {validation.estimatedDeliveryDate && (
+                <div className="cfnext-form__field-error validation-error">
                   <Icon
                     icon="ErrorCircle"
                     color="negative"
@@ -159,7 +161,7 @@ export default class PartnershipForm extends React.Component {
                   />
                   <span>{validation.estimatedDeliveryDate}</span>
                 </div>
-              }
+              )}
             </div>
           </div>
         </fieldset>

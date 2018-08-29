@@ -1,12 +1,12 @@
 import * as K from 'helpers/mocks/kefir';
 
 describe('account/IframeChannel', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     const $window = this.$inject('$window');
     const IframeChannel = this.$inject('account/IframeChannel');
 
-    const iframe = {contentWindow: {}};
+    const iframe = { contentWindow: {} };
 
     const messages$ = IframeChannel.default(iframe);
     this.messages = K.extractValues(messages$);
@@ -21,18 +21,18 @@ describe('account/IframeChannel', () => {
     };
   });
 
-  it('emits only messages from the iframe', function () {
+  it('emits only messages from the iframe', function() {
     this.postMessage('A');
     this.postMessage('B', {});
     this.postMessage('C');
     expect(this.messages).toEqual(['C', 'A']);
   });
 
-  it('parses data as JSON on IE', function () {
+  it('parses data as JSON on IE', function() {
     const UA = this.mockService('userAgent');
     UA.isIE.returns(true);
 
-    const data = {a: true};
+    const data = { a: true };
     this.postMessage(JSON.stringify(data));
     expect(this.messages[0]).toEqual(data);
   });

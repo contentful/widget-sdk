@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Tracking persistent notification', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     this.analytics = this.$inject('analytics/Analytics');
     sinon.stub(this.analytics, 'track');
@@ -9,7 +9,7 @@ describe('Tracking persistent notification', () => {
   });
 
   describe('without organization data available', () => {
-    it('tracks action', function () {
+    it('tracks action', function() {
       this.trackPersistenNotification.action('ACTION_NAME');
       sinon.assert.calledWith(this.analytics.track, sinon.match.string, {
         action: 'ACTION_NAME',
@@ -19,7 +19,7 @@ describe('Tracking persistent notification', () => {
   });
 
   describe('with organization data set', () => {
-    it('tracks action and contains current plan name', function () {
+    it('tracks action and contains current plan name', function() {
       const org = {};
       const planName = 'subscriptionPlanName';
       _.set(org, 'subscriptionPlan.name', planName);
@@ -27,10 +27,14 @@ describe('Tracking persistent notification', () => {
       this.analytics.trackContextChange(null, org);
       this.trackPersistenNotification.action('ACTION_NAME');
 
-      sinon.assert.calledWith(this.analytics.track, sinon.match.string, sinon.match({
-        action: 'ACTION_NAME',
-        currentPlan: planName
-      }));
+      sinon.assert.calledWith(
+        this.analytics.track,
+        sinon.match.string,
+        sinon.match({
+          action: 'ACTION_NAME',
+          currentPlan: planName
+        })
+      );
     });
   });
 });

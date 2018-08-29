@@ -1,13 +1,13 @@
 describe('data/Org', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
 
     this.orgUtils = this.$inject('data/Org');
   });
 
   describe('#isOrgPlanEnterprise', () => {
-    beforeEach(function () {
-      this.assertIfEnterprise = function (planNames, isEnterprise) {
+    beforeEach(function() {
+      this.assertIfEnterprise = function(planNames, isEnterprise) {
         planNames.forEach(planName => {
           const output = this.orgUtils.isOrgPlanEnterprise({
             subscriptionPlan: { name: planName }
@@ -18,7 +18,7 @@ describe('data/Org', () => {
       };
     });
 
-    it('should return true for org that is on an enterprise plan', function () {
+    it('should return true for org that is on an enterprise plan', function() {
       const planNames = [
         'enterprise',
         'Enterprise',
@@ -41,7 +41,7 @@ describe('data/Org', () => {
       this.assertIfEnterprise(planNames, true);
     });
 
-    it('should return false otherwise', function () {
+    it('should return false otherwise', function() {
       const planNames = [
         '',
         undefined,

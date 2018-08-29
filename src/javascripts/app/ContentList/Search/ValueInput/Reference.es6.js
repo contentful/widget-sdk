@@ -5,7 +5,7 @@ import { h } from 'ui/Framework';
 import keycodes from 'utils/keycodes';
 import entitySelector from 'entitySelector';
 
-export default function filterValueReference ({
+export default function filterValueReference({
   ctField = {},
   testId,
   value,
@@ -49,10 +49,6 @@ export default function filterValueReference ({
   });
 }
 
-function shouldOpenSelector ({ keyCode }) {
-  return (
-    keyCode === keycodes.DOWN ||
-    keyCode === keycodes.ENTER ||
-    keyCode === keycodes.SPACE
-  );
+function shouldOpenSelector({ keyCode }) {
+  return keyCode === keycodes.DOWN || keyCode === keycodes.ENTER || keyCode === keycodes.SPACE;
 }

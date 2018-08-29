@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {findKey, isObject, snakeCase} from 'lodash';
-import {name as ModifyContentStepModule} from './ModifyContentStep';
-import {name as SetupWebhooksStepModule} from './SetupWebhooksStep';
-import {name as NotAJSDeveloperStepModule} from './NotAJSDeveloperStep';
-import {name as CreateModernOnboardingModule} from '../../auto_create_new_space/CreateModernOnboarding';
+import { findKey, isObject, snakeCase } from 'lodash';
+import { name as ModifyContentStepModule } from './ModifyContentStep';
+import { name as SetupWebhooksStepModule } from './SetupWebhooksStep';
+import { name as NotAJSDeveloperStepModule } from './NotAJSDeveloperStep';
+import { name as CreateModernOnboardingModule } from '../../auto_create_new_space/CreateModernOnboarding';
 
 export const MODIFY_CONTENT = 'modifyContent';
 export const SETUP_WEBHOOK = 'setupWebhook';
@@ -12,24 +12,25 @@ export const NOT_A_JS_DEV = 'notJSDev';
 
 export const name = 'ms-isolated-dev-next-steps';
 
-angular.module('contentful')
-  .factory(name, ['require', require => {
+angular.module('contentful').factory(name, [
+  'require',
+  require => {
     const store = require('TheStore').getStore();
-    const {getStoragePrefix, getUser} = require(CreateModernOnboardingModule);
+    const { getStoragePrefix, getUser } = require(CreateModernOnboardingModule);
 
-    const {Progress, Header} = require('app/home/welcome/OnboardingWithTea');
+    const { Progress, Header } = require('app/home/welcome/OnboardingWithTea');
 
     const ModifyContentStep = require(ModifyContentStepModule);
     const SetupWebhooksStep = require(SetupWebhooksStepModule);
     const NotAJSDeveloperStep = require(NotAJSDeveloperStepModule);
 
     class DevNextSteps extends React.Component {
-      constructor (props) {
+      constructor(props) {
         super(props);
 
         const prefix = getStoragePrefix();
 
-        const onToggle = (key) => {
+        const onToggle = key => {
           const { expanded } = this.state;
           this.setState({
             // if we toggle currently open one, close it
@@ -37,7 +38,7 @@ angular.module('contentful')
           });
         };
 
-        const {track: _track, ...rest} = props;
+        const { track: _track, ...rest } = props;
 
         const state = {
           [MODIFY_CONTENT]: {
@@ -61,7 +62,7 @@ angular.module('contentful')
         };
       }
 
-      componentDidMount () {
+      componentDidMount() {
         if (!this.state[MODIFY_CONTENT].isDone) {
           const user = getUser();
           const isModifyStepDone =
@@ -73,24 +74,24 @@ angular.module('contentful')
         }
       }
 
-      getExpandedStep (state) {
-        const {expanded: _, ...rest} = state;
-        return findKey(rest, ({isDone}) => !isDone);
+      getExpandedStep(state) {
+        const { expanded: _, ...rest } = state;
+        return findKey(rest, ({ isDone }) => !isDone);
       }
 
-      setExpandedStep () {
+      setExpandedStep() {
         this.setState(state => ({
           expanded: this.getExpandedStep(state)
         }));
       }
 
-      getProgress () {
+      getProgress() {
         return Object.values(this.state)
           .filter(v => isObject(v))
-          .reduce((count, {isDone}) => count + Number(Boolean(isDone)), 0);
+          .reduce((count, { isDone }) => count + Number(Boolean(isDone)), 0);
       }
 
-      markAsDone (step) {
+      markAsDone(step) {
         const key = `${getStoragePrefix()}:devNextSteps:${step}`;
         const isStepDone = store.get(key);
 
@@ -110,27 +111,30 @@ angular.module('contentful')
         }
       }
 
-      render () {
-        const {expanded} = this.state;
+      render() {
+        const { expanded } = this.state;
 
         return (
-          <section className='home-section tea-onboarding'>
+          <section className="home-section tea-onboarding">
             <Header>
-              <h3 className='tea-onboarding__heading'>Next steps</h3>
+              <h3 className="tea-onboarding__heading">Next steps</h3>
               <Progress count={this.getProgress()} total={3} />
             </Header>
-            <div className='tea-onboarding__steps'>
+            <div className="tea-onboarding__steps">
               <ModifyContentStep
                 isExpanded={expanded === MODIFY_CONTENT}
                 track={key => this.props.track(`${snakeCase(MODIFY_CONTENT + 'Step')}:${key}`)}
-                {...this.state[MODIFY_CONTENT]} />
+                {...this.state[MODIFY_CONTENT]}
+              />
               <SetupWebhooksStep
                 isExpanded={expanded === SETUP_WEBHOOK}
                 markAsDone={_ => this.markAsDone(SETUP_WEBHOOK)}
-                {...this.state[SETUP_WEBHOOK]} />
+                {...this.state[SETUP_WEBHOOK]}
+              />
               <NotAJSDeveloperStep
                 markAsDone={_ => this.markAsDone(NOT_A_JS_DEV)}
-                {...this.state[NOT_A_JS_DEV]} />
+                {...this.state[NOT_A_JS_DEV]}
+              />
             </div>
           </section>
         );
@@ -145,4 +149,5 @@ angular.module('contentful')
     };
 
     return DevNextSteps;
-  }]);
+  }
+]);

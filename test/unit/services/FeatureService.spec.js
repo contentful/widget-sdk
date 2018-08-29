@@ -3,7 +3,7 @@ import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
 import { set } from 'lodash';
 
 describe('Feature Service', () => {
-  beforeEach(async function () {
+  beforeEach(async function() {
     this.flags = {
       'feature-bv-2018-01-features-api': false
     };
@@ -32,7 +32,7 @@ describe('Feature Service', () => {
     const system = createIsolatedSystem();
 
     system.set('utils/LaunchDarkly', {
-      getCurrentVariation: (flagName) => {
+      getCurrentVariation: flagName => {
         return Promise.resolve(this.flags[flagName]);
       }
     });
@@ -93,21 +93,21 @@ describe('Feature Service', () => {
     this.createFeatureService = (await system.import('services/FeatureService')).default;
   });
 
-  it('should use the space endpoint by default during instantiation', function () {
+  it('should use the space endpoint by default during instantiation', function() {
     this.createFeatureService('1234');
 
     expect(this.spies.createSpaceEndpoint.called).toBe(true);
     expect(this.stubs.createOrganizationEndpoint.called).toBe(false);
   });
 
-  it('should also allow instantiating with the organization type', function () {
+  it('should also allow instantiating with the organization type', function() {
     this.createFeatureService('1234', 'organization');
 
     expect(this.spies.createSpaceEndpoint.called).toBe(false);
     expect(this.stubs.createOrganizationEndpoint.called).toBe(true);
   });
 
-  it('should return the proper definition on instantiation', function () {
+  it('should return the proper definition on instantiation', function() {
     const FeatureService = this.createFeatureService('1234');
 
     expect(Object.keys(FeatureService).length).toBe(2);
@@ -116,11 +116,11 @@ describe('Feature Service', () => {
   });
 
   describe('#get', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.FeatureService = this.createFeatureService('1234');
     });
 
-    it('should return a Feature from the token if legacy and the feature flag is off', async function () {
+    it('should return a Feature from the token if legacy and the feature flag is off', async function() {
       this.flags['feature-bv-2018-01-features-api'] = false;
       this.mocks.legacyOrganization = true;
 
@@ -132,7 +132,7 @@ describe('Feature Service', () => {
       expect(feature).toEqual(true);
     });
 
-    it('should return a Feature from the endpoint if legacy and the feature flag is on', async function () {
+    it('should return a Feature from the endpoint if legacy and the feature flag is on', async function() {
       this.flags['feature-bv-2018-01-features-api'] = true;
       this.mocks.legacyOrganization = true;
 
@@ -141,7 +141,7 @@ describe('Feature Service', () => {
       expect(feature).toEqual(true);
     });
 
-    it('should return a Feature from the endpoint if not legacy', async function () {
+    it('should return a Feature from the endpoint if not legacy', async function() {
       let feature;
 
       this.mocks.legacyOrganization = false;
@@ -153,7 +153,7 @@ describe('Feature Service', () => {
       expect(feature).toEqual(false);
     });
 
-    it('should return false if the Feature is not found', async function () {
+    it('should return false if the Feature is not found', async function() {
       let feature;
 
       this.mocks.legacyOrganization = true;
@@ -174,11 +174,11 @@ describe('Feature Service', () => {
   });
 
   describe('#getAll', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.FeatureService = this.createFeatureService('1234');
     });
 
-    it('should return all Features from the token if legacy and the feature flag is off', async function () {
+    it('should return all Features from the token if legacy and the feature flag is off', async function() {
       this.mocks.legacyOrganization = true;
 
       const features = await this.FeatureService.getAll();
@@ -201,7 +201,7 @@ describe('Feature Service', () => {
       ]);
     });
 
-    it('should return all Features from the endpoint if legacy and the feature flag is on', async function () {
+    it('should return all Features from the endpoint if legacy and the feature flag is on', async function() {
       this.mocks.legacyOrganization = true;
       this.flags['feature-bv-2018-01-features-api'] = true;
 
@@ -235,7 +235,7 @@ describe('Feature Service', () => {
       ]);
     });
 
-    it('should return all Features from the endpoint if not legacy', async function () {
+    it('should return all Features from the endpoint if not legacy', async function() {
       this.mocks.legacyOrganization = false;
 
       const features = await this.FeatureService.getAll();

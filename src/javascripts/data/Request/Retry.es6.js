@@ -22,11 +22,11 @@ const GATEWAY_TIMEOUT = 504;
  * @param {function} request function ($http(...))
  * @returns {function} wrapped request function
  */
-export default function wrapWithRetry (requestFn) {
+export default function wrapWithRetry(requestFn) {
   let inFlight = 0;
   const queue = [];
 
-  return function push () {
+  return function push() {
     const deferred = $q.defer();
 
     queue.push({
@@ -40,7 +40,7 @@ export default function wrapWithRetry (requestFn) {
     return deferred.promise;
   };
 
-  function shift () {
+  function shift() {
     if (inFlight >= CALLS_IN_PERIOD || queue.length < 1) {
       return;
     }
@@ -50,23 +50,25 @@ export default function wrapWithRetry (requestFn) {
     inFlight += 1;
 
     $timeout(call.wait)
-    .then(() => requestFn(...call.args))
-    .then(handleSuccess, handleError)
-    .then(completePeriod)
-    .then(() => {
-      inFlight -= 1;
-      shift();
-    });
+      .then(() => requestFn(...call.args))
+      .then(handleSuccess, handleError)
+      .then(completePeriod)
+      .then(() => {
+        inFlight -= 1;
+        shift();
+      });
 
-    function handleSuccess (res) {
+    function handleSuccess(res) {
       call.deferred.resolve(res);
     }
 
-    function handleError (err) {
+    function handleError(err) {
       if (err.status === RATE_LIMIT_EXCEEDED && call.ttl > 0) {
         queue.unshift(backOff(call));
-      } else if ([BAD_GATEWAY, SERVICE_UNAVAILABLE, GATEWAY_TIMEOUT].indexOf(err.status) > -1 &&
-          call.ttl > 0) {
+      } else if (
+        [BAD_GATEWAY, SERVICE_UNAVAILABLE, GATEWAY_TIMEOUT].indexOf(err.status) > -1 &&
+        call.ttl > 0
+      ) {
         call.ttl -= 1;
         queue.unshift(call);
       } else {
@@ -74,7 +76,7 @@ export default function wrapWithRetry (requestFn) {
       }
     }
 
-    function completePeriod () {
+    function completePeriod() {
       const duration = now() - start;
       if (duration < PERIOD) {
         return $timeout(PERIOD - duration);
@@ -83,13 +85,13 @@ export default function wrapWithRetry (requestFn) {
   }
 }
 
-function backOff (call) {
+function backOff(call) {
   call.ttl -= 1;
   const attempt = DEFAULT_TTL - call.ttl;
   call.wait = Math.random() * Math.pow(2, attempt) * PERIOD;
   return call;
 }
 
-function now () {
+function now() {
   return moment().valueOf();
 }

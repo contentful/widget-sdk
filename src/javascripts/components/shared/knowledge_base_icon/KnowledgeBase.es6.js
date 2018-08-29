@@ -27,19 +27,23 @@ const items = {
   spaceEnvironments: 'developers/docs'
 };
 
-export default function ({ target, text = '', inlineText, cssClass }) {
+export default function({ target, text = '', inlineText, cssClass }) {
   const hasText = !text.length ? '.x--no-text' : '';
   const isInline = inlineText ? '.x--inline' : '';
 
-  return h(`a.knowledge-base-link${hasText}${isInline}`, {
-    class: cssClass,
-    target: '_blank',
-    rel: 'noopener noreferrer',
-    href: getKnowledgeBaseUrl(target)
-  }, [text, h('i.fa.fa-question-circle')]);
+  return h(
+    `a.knowledge-base-link${hasText}${isInline}`,
+    {
+      class: cssClass,
+      target: '_blank',
+      rel: 'noopener noreferrer',
+      href: getKnowledgeBaseUrl(target)
+    },
+    [text, h('i.fa.fa-question-circle')]
+  );
 }
 
-function getKnowledgeBaseUrl (name) {
+function getKnowledgeBaseUrl(name) {
   if (items[name]) {
     return websiteUrl(items[name]);
   }

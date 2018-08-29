@@ -1,6 +1,6 @@
 import * as actions from './actions';
 
-export function partnershipMeta (state = {}, action) {
+export function partnershipMeta(state = {}, action) {
   switch (action.type) {
     case actions.SPACE_WIZARD_RESET:
       return {};
@@ -19,7 +19,7 @@ export function partnershipMeta (state = {}, action) {
   }
 }
 
-export function spaceCreation (state = {}, action) {
+export function spaceCreation(state = {}, action) {
   switch (action.type) {
     case actions.SPACE_WIZARD_RESET:
       return {};
@@ -43,7 +43,7 @@ export function spaceCreation (state = {}, action) {
   }
 }
 
-export function spaceChange (state = {}, action) {
+export function spaceChange(state = {}, action) {
   switch (action.type) {
     case actions.SPACE_WIZARD_RESET:
       return {};
@@ -62,7 +62,7 @@ export function spaceChange (state = {}, action) {
   }
 }
 
-export function subscriptionPrice (state = {}, action) {
+export function subscriptionPrice(state = {}, action) {
   switch (action.type) {
     case actions.SPACE_WIZARD_RESET:
       return {};
@@ -86,7 +86,7 @@ export function subscriptionPrice (state = {}, action) {
   }
 }
 
-export function currentStep (state = '', action) {
+export function currentStep(state = '', action) {
   switch (action.type) {
     case actions.SPACE_WIZARD_RESET:
       return '';
@@ -97,7 +97,7 @@ export function currentStep (state = '', action) {
   }
 }
 
-export function newSpaceMeta (state = {}, action) {
+export function newSpaceMeta(state = {}, action) {
   switch (action.type) {
     case actions.SPACE_WIZARD_RESET:
       return {};
@@ -116,10 +116,13 @@ export function newSpaceMeta (state = {}, action) {
   }
 }
 
-export function spacePlans (state = {
-  spaceRatePlans: [],
-  freeSpacesResource: {}
-}, action) {
+export function spacePlans(
+  state = {
+    spaceRatePlans: [],
+    freeSpacesResource: {}
+  },
+  action
+) {
   const { spaceRatePlans, freeSpacesResource } = action;
 
   switch (action.type) {
@@ -149,7 +152,7 @@ export function spacePlans (state = {
   }
 }
 
-export function templates (state = {}, action) {
+export function templates(state = {}, action) {
   switch (action.type) {
     case actions.SPACE_WIZARD_RESET:
       return {};
@@ -174,7 +177,7 @@ export function templates (state = {}, action) {
   }
 }
 
-export function spacePlanSelected (state = {}, action) {
+export function spacePlanSelected(state = {}, action) {
   switch (action.type) {
     case actions.SPACE_WIZARD_RESET:
       return {};

@@ -1,7 +1,7 @@
 import * as K from 'helpers/mocks/kefir';
 
 describe('bulk editor', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test', $provide => {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
       $provide.removeDirectives('cfWidgetApi', 'cfWidgetRenderer');
@@ -9,10 +9,7 @@ describe('bulk editor', () => {
 
     const TheLocaleStore = this.$inject('TheLocaleStore');
     this.setLocales = TheLocaleStore.setLocales;
-    this.setLocales([
-      {code: 'DEF', name: 'Default'},
-      {code: 'EN', name: 'English'}
-    ]);
+    this.setLocales([{ code: 'DEF', name: 'Default' }, { code: 'EN', name: 'English' }]);
 
     const $q = this.$inject('$q');
 
@@ -20,14 +17,14 @@ describe('bulk editor', () => {
 
     this.spaceContext.space.getEntries = query => {
       const ids = query['sys.id[in]'].split(',');
-      const entities = ids.map((id) => makeEntry(id, 'CTID'));
+      const entities = ids.map(id => makeEntry(id, 'CTID'));
       return $q.resolve(entities);
     };
 
     this.spaceContext.publishedCTs.getAllBare = () => [];
     this.spaceContext.publishedCTs.fetch = id => $q.resolve(makeContentType(id));
 
-    this.compile = function (ids = []) {
+    this.compile = function(ids = []) {
       const referenceContext = {
         links$: K.createMockProperty(ids.map(makeLink)),
         close: sinon.spy()
@@ -41,34 +38,34 @@ describe('bulk editor', () => {
     };
   });
 
-  it('closes editor when clicking back button', function () {
+  it('closes editor when clicking back button', function() {
     const el = this.compile();
     el.find('[data-test-id="breadcrumbs-back-btn"]').click();
     sinon.assert.calledOnce(el.referenceContext.close);
   });
 
-  it('renders editor for each entry', function () {
+  it('renders editor for each entry', function() {
     const el = this.compile(['A', 'B']);
-    const entityIds =
-      el.find('[data-entity-id]')
+    const entityIds = el
+      .find('[data-entity-id]')
       .map((_, el) => el.getAttribute('data-entity-id'))
       .get();
     expect(entityIds).toEqual(['A', 'B']);
   });
 
-  function makeEntry (id, ctId) {
+  function makeEntry(id, ctId) {
     return {
       data: {
         sys: {
           id: id,
           type: 'Entry',
-          contentType: {sys: {id: ctId}}
+          contentType: { sys: { id: ctId } }
         }
       }
     };
   }
 
-  function makeLink (id) {
+  function makeLink(id) {
     return {
       sys: {
         id: id,
@@ -78,7 +75,7 @@ describe('bulk editor', () => {
     };
   }
 
-  function makeContentType (id) {
+  function makeContentType(id) {
     return {
       data: {
         sys: {

@@ -23,10 +23,10 @@ export const UnorderedList = listToggleDecorator({
   type: BLOCKS.UL_LIST,
   title: 'UL',
   icon: 'ListBulleted'
-})((props) => <ToolbarIcon {...props} />);
+})(props => <ToolbarIcon {...props} />);
 
 export const OrderedList = listToggleDecorator({
   type: BLOCKS.OL_LIST,
   title: 'OL',
   icon: 'ListNumbered'
-})((props) => <ToolbarIcon {...props} />);
+})(props => <ToolbarIcon {...props} />);

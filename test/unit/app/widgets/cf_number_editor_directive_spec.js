@@ -1,17 +1,21 @@
 'use strict';
 
 describe('Number widgets', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
 
     this.widgetApi = this.$inject('mocks/widgetApi').create();
 
     this.fieldApi = this.widgetApi.field;
 
-    this.compileElement = function () {
-      const el = this.$compile('<cf-number-editor />', {}, {
-        cfWidgetApi: this.widgetApi
-      });
+    this.compileElement = function() {
+      const el = this.$compile(
+        '<cf-number-editor />',
+        {},
+        {
+          cfWidgetApi: this.widgetApi
+        }
+      );
 
       const inputEl = el.find('input');
       const statusEl = el.find('[role=status]');
@@ -22,7 +26,7 @@ describe('Number widgets', () => {
           inputEl.val(val).trigger('input');
           this.$apply();
         },
-        isStatusVisible: function () {
+        isStatusVisible: function() {
           return statusEl.css('display') !== 'none';
         }
       });
@@ -30,12 +34,12 @@ describe('Number widgets', () => {
   });
 
   describe('Number widget', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.fieldApi.type = 'Number';
       this.el = this.compileElement();
     });
 
-    it('sets field value', function () {
+    it('sets field value', function() {
       this.el.setInput('0');
       sinon.assert.calledWith(this.fieldApi.setValue, 0);
 
@@ -46,7 +50,7 @@ describe('Number widgets', () => {
       sinon.assert.calledWith(this.fieldApi.setValue, 10.012);
     });
 
-    it('does not set field value for invalid input', function () {
+    it('does not set field value for invalid input', function() {
       this.fieldApi.setValue.reset();
       this.el.setInput('foo');
       sinon.assert.notCalled(this.fieldApi.setValue);
@@ -54,11 +58,11 @@ describe('Number widgets', () => {
   });
 
   describe('Integer widget', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.fieldApi.type = 'Integer';
       this.el = this.compileElement();
     });
-    it('does not set value for invalid input', function () {
+    it('does not set value for invalid input', function() {
       this.fieldApi.setValue.reset();
       this.el.setInput('6.0');
       this.el.setInput('112.1231');
@@ -71,7 +75,7 @@ describe('Number widgets', () => {
 describe('cfNumberEditor/parseNumber', () => {
   let parseNumber;
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     parseNumber = this.$inject('cfNumberEditor/parseNumber');
   });

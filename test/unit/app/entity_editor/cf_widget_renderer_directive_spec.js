@@ -1,10 +1,10 @@
 'use strict';
 
 describe('cfWidgetRenderer Directive', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('cf.app', $provide => {
       $provide.value('$state', {
-        href: function (_state, params) {
+        href: function(_state, params) {
           return '/spaceHref/' + params.contentTypeId;
         }
       });
@@ -20,7 +20,7 @@ describe('cfWidgetRenderer Directive', () => {
       revalidate: sinon.stub()
     };
 
-    this.compile = function () {
+    this.compile = function() {
       return this.$compile('<cf-widget-renderer>', {
         widget: this.widget,
         contentType: this.contentType,
@@ -29,28 +29,26 @@ describe('cfWidgetRenderer Directive', () => {
     };
   });
 
-  it('renders a widget template', function () {
+  it('renders a widget template', function() {
     this.widget.template = '<p class=foo>';
     const el = this.compile();
     expect(el.find('.foo').length).toBe(1);
   });
 
-  it('has scope#contentTypeStateRef property', function () {
+  it('has scope#contentTypeStateRef property', function() {
     this.widget.template = '<p>{{contentTypeHref}}</p>';
     const el = this.compile();
-    expect(el.find('p').text())
-    .toEqual('/spaceHref/CTID');
+    expect(el.find('p').text()).toEqual('/spaceHref/CTID');
   });
 
-  it('does not have scope#contentTypeStateRef property if there is no content type', function () {
+  it('does not have scope#contentTypeStateRef property if there is no content type', function() {
     this.widget.template = '<p>{{contentTypeHref}}</p>';
     this.contentType = {};
     const el = this.compile();
-    expect(el.find('p').text())
-    .toEqual('');
+    expect(el.find('p').text()).toEqual('');
   });
 
-  it('activates field locale when element is focused', function () {
+  it('activates field locale when element is focused', function() {
     this.widget.template = '<div>';
     const el = this.compile();
     el.trigger('focusin');
@@ -59,7 +57,7 @@ describe('cfWidgetRenderer Directive', () => {
     sinon.assert.calledWith(this.fieldLocale.setActive, true);
   });
 
-  it('deactivates field locale when element is unfocused', function () {
+  it('deactivates field locale when element is unfocused', function() {
     this.widget.template = '<div>';
     const el = this.compile();
     el.trigger('focusout');
@@ -68,7 +66,7 @@ describe('cfWidgetRenderer Directive', () => {
     sinon.assert.calledWith(this.fieldLocale.setActive, false);
   });
 
-  it('revalidates field locale when element is unfocused', function () {
+  it('revalidates field locale when element is unfocused', function() {
     this.widget.template = '<div>';
     const el = this.compile();
     el.trigger('focusout');

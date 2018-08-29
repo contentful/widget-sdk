@@ -1,12 +1,11 @@
-import {find, isPlainObject, cloneDeep, memoize} from 'lodash';
-import {runTask, wrapTask} from 'utils/Concurrent';
+import { find, isPlainObject, cloneDeep, memoize } from 'lodash';
+import { runTask, wrapTask } from 'utils/Concurrent';
 import assetEditorInterface from 'data/editingInterfaces/asset';
-import {caseof as caseofEq} from 'sum-types/caseof-eq';
-import {deepFreeze} from 'utils/Freeze';
+import { caseof as caseofEq } from 'sum-types/caseof-eq';
+import { deepFreeze } from 'utils/Freeze';
 import createPrefetchCache from 'data/CMA/EntityPrefetchCache';
 import TheLocaleStore from 'TheLocaleStore';
 import Widgets from 'widgets';
-
 
 /**
  * @ngdoc service
@@ -31,7 +30,6 @@ import Widgets from 'widgets';
  * 'mocks/app/entity_editor/DataLoader' module.
  */
 
-
 /**
  * @ngdoc method
  * @name app/entity_editor/DataLoader#loadEntry
@@ -42,7 +40,7 @@ import Widgets from 'widgets';
 // TODO we should accept a specialized object instead of the whole
 // space context.
 // TODO we should deep freeze all the data
-export function loadEntry (spaceContext, id) {
+export function loadEntry(spaceContext, id) {
   const loader = makeEntryLoader(spaceContext);
   return loadEditorData(loader, id);
 }
@@ -54,11 +52,10 @@ export function loadEntry (spaceContext, id) {
  * @param {string} id
  * @returns {object}
  */
-export function loadAsset (spaceContext, id) {
+export function loadAsset(spaceContext, id) {
   const loader = makeAssetLoader(spaceContext);
   return loadEditorData(loader, id);
 }
-
 
 /**
  * @ngdoc method
@@ -77,13 +74,13 @@ export function loadAsset (spaceContext, id) {
  * @param {SpaceContext} spaceContext
  * @param {K.Property<string[]>} ids$
  */
-export function makePrefetchEntryLoader (spaceContext, ids$) {
-  const cache = createPrefetchCache((query) => {
+export function makePrefetchEntryLoader(spaceContext, ids$) {
+  const cache = createPrefetchCache(query => {
     return spaceContext.space.getEntries(query);
   });
 
   const loader = makeEntryLoader(spaceContext);
-  loader.getEntity = function* getEntity (id) {
+  loader.getEntity = function* getEntity(id) {
     const entity = yield cache.get(id);
     if (entity) {
       return entity;
@@ -99,19 +96,18 @@ export function makePrefetchEntryLoader (spaceContext, ids$) {
 
   ids$.onValue(cache.set);
 
-  return function load (id) {
+  return function load(id) {
     return loadEditorData(loader, id);
   };
 }
-
 
 /**
  * Loads all the resources from the loader and builds the editor data.
  *
  * Loaders are created by `makeEntryLoader()` and `makeAssetLoader()`.
  */
-function loadEditorData (loader, id) {
-  return runTask(function* () {
+function loadEditorData(loader, id) {
+  return runTask(function*() {
     const entity = yield* loader.getEntity(id);
     const contentType = yield* loader.getContentType(entity);
     const fieldControls = yield loader.getFieldControls(contentType);
@@ -127,40 +123,41 @@ function loadEditorData (loader, id) {
   });
 }
 
-
 // Loaders provide a specialized interface to fetch the resources need
 // for the editor data.
 // They provide a bridge between the 'spaceContext' and the
 // `loadEditorData()` function.
-function makeEntryLoader (spaceContext) {
+function makeEntryLoader(spaceContext) {
   return {
-    getEntity (id) {
+    getEntity(id) {
       return fetchEntity(spaceContext, 'Entry', id);
     },
-    getContentType: function* (entity) {
+    getContentType: function*(entity) {
       const ctId = entity.data.sys.contentType.sys.id;
       return yield spaceContext.publishedCTs.fetch(ctId);
     },
     // We memoize the controls so that we do not fetch them multiple
     // times for the bulk editor
-    getFieldControls: memoize(wrapTask(function* (contentType) {
-      const ei = yield spaceContext.editingInterfaces.get(contentType.data);
-      return Widgets.buildRenderable(ei.controls, spaceContext.widgets.getAll());
-    })),
+    getFieldControls: memoize(
+      wrapTask(function*(contentType) {
+        const ei = yield spaceContext.editingInterfaces.get(contentType.data);
+        return Widgets.buildRenderable(ei.controls, spaceContext.widgets.getAll());
+      })
+    ),
     getOpenDoc: makeDocOpener(spaceContext)
   };
 }
 
-function makeAssetLoader (spaceContext) {
+function makeAssetLoader(spaceContext) {
   return {
-    getEntity: function (id) {
+    getEntity: function(id) {
       const entity = fetchEntity(spaceContext, 'Asset', id);
       return entity;
     },
-    getContentType: function* () {
+    getContentType: function*() {
       return null;
     },
-    getFieldControls: function () {
+    getFieldControls: function() {
       const renderable = Widgets.buildRenderable(
         assetEditorInterface.widgets,
         spaceContext.widgets.getAll()
@@ -171,22 +168,15 @@ function makeAssetLoader (spaceContext) {
   };
 }
 
-
-function makeDocOpener (spaceContext) {
-  return function getOpenDoc (entity, contentType) {
-    return function open (lifeline) {
-      return spaceContext.docPool.get(
-        entity,
-        contentType,
-        spaceContext.user,
-        lifeline
-      );
+function makeDocOpener(spaceContext) {
+  return function getOpenDoc(entity, contentType) {
+    return function open(lifeline) {
+      return spaceContext.docPool.get(entity, contentType, spaceContext.user, lifeline);
     };
   };
 }
 
-
-function makeEntityInfo (entity, contentType) {
+function makeEntityInfo(entity, contentType) {
   return deepFreeze({
     id: entity.data.sys.id,
     type: entity.data.sys.type,
@@ -199,10 +189,9 @@ function makeEntityInfo (entity, contentType) {
   });
 }
 
-
 // TODO instead of fetching a client entity object we should only fetch
 // the payload
-function* fetchEntity (spaceContext, type, id) {
+function* fetchEntity(spaceContext, type, id) {
   const space = spaceContext.space;
   const entity = yield caseofEq(type, [
     ['Entry', () => space.getEntry(id)],
@@ -212,7 +201,6 @@ function* fetchEntity (spaceContext, type, id) {
   return entity;
 }
 
-
 /**
  * Given an entry payload we make sure that the following holds.
  *
@@ -220,11 +208,11 @@ function* fetchEntity (spaceContext, type, id) {
  * - 'data.fields[fieldId]' is always an object
  * - The keys of 'data.fields[fieldId]' are all valid locales
  */
-function sanitizeEntityData (data, locales) {
+function sanitizeEntityData(data, locales) {
   if (!isPlainObject(data.fields)) {
     data.fields = {};
   }
-  Object.keys(data.fields).forEach((fieldId) => {
+  Object.keys(data.fields).forEach(fieldId => {
     const fieldValues = data.fields[fieldId];
     if (isPlainObject(fieldValues)) {
       deleteUnusedLocales(fieldValues, locales);
@@ -238,8 +226,8 @@ function sanitizeEntityData (data, locales) {
  * Given an object of {locale: value} mappings and a list of locales we
  * remove those properties from the object that are not valid locales.
  */
-function deleteUnusedLocales (fieldValues, locales) {
-  Object.keys(fieldValues).forEach((internalCode) => {
+function deleteUnusedLocales(fieldValues, locales) {
+  Object.keys(fieldValues).forEach(internalCode => {
     if (!find(locales, { internal_code: internalCode })) {
       delete fieldValues[internalCode];
     }

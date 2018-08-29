@@ -3,7 +3,7 @@
 describe('data/ApiClient', () => {
   let $http;
 
-  beforeEach(function () {
+  beforeEach(function() {
     $http = sinon.stub();
     module('contentful/test', $provide => {
       $provide.value('$http', $http);
@@ -27,187 +27,209 @@ describe('data/ApiClient', () => {
   });
 
   describe('single resource', () => {
-    const headers = (extraHeaders) => {
-      return _.extend({}, {
-        'Content-Type': 'application/vnd.contentful.management.v1+json',
-        Authorization: 'Bearer TOKEN'
-      }, extraHeaders);
+    const headers = extraHeaders => {
+      return _.extend(
+        {},
+        {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+          Authorization: 'Bearer TOKEN'
+        },
+        extraHeaders
+      );
     };
 
     beforeEach(() => {
-      $http.resolves({data: 'DATA'});
+      $http.resolves({ data: 'DATA' });
     });
 
-    it('getContentType(id)', function () {
-      return this.client.getContentType('ID')
-      .then(assertRequestResponse('DATA', {
-        method: 'GET',
-        url: '//api.test.local/spaces/SPACE/content_types/ID'
-      }));
+    it('getContentType(id)', function() {
+      return this.client.getContentType('ID').then(
+        assertRequestResponse('DATA', {
+          method: 'GET',
+          url: '//api.test.local/spaces/SPACE/content_types/ID'
+        })
+      );
     });
 
-    it('getEntry(id)', function () {
-      return this.client.getEntry('ID')
-      .then(assertRequestResponse('DATA', {
-        method: 'GET',
-        url: '//api.test.local/spaces/SPACE/entries/ID'
-      }));
+    it('getEntry(id)', function() {
+      return this.client.getEntry('ID').then(
+        assertRequestResponse('DATA', {
+          method: 'GET',
+          url: '//api.test.local/spaces/SPACE/entries/ID'
+        })
+      );
     });
 
-    it('getEntrySnapshot(entryId, snapshotId)', function () {
-      return this.client.getEntrySnapshot('EID', 'SID')
-      .then(assertRequestResponse('DATA', {
-        method: 'GET',
-        url: '//api.test.local/spaces/SPACE/entries/EID/snapshots/SID'
-      }));
+    it('getEntrySnapshot(entryId, snapshotId)', function() {
+      return this.client.getEntrySnapshot('EID', 'SID').then(
+        assertRequestResponse('DATA', {
+          method: 'GET',
+          url: '//api.test.local/spaces/SPACE/entries/EID/snapshots/SID'
+        })
+      );
     });
 
-    it('getAsset(id)', function () {
-      return this.client.getAsset('ID')
-      .then(assertRequestResponse('DATA', {
-        method: 'GET',
-        url: '//api.test.local/spaces/SPACE/assets/ID'
-      }));
+    it('getAsset(id)', function() {
+      return this.client.getAsset('ID').then(
+        assertRequestResponse('DATA', {
+          method: 'GET',
+          url: '//api.test.local/spaces/SPACE/assets/ID'
+        })
+      );
     });
 
-    it('createEntry(ctId, data)', function () {
-      const entry = {'fields': 'MY FIELDS'};
-      return this.client.createEntry('CTID', entry)
-      .then(assertRequestResponse('DATA', {
-        method: 'POST',
-        url: '//api.test.local/spaces/SPACE/entries',
-        data: entry,
-        headers: headers({'X-Contentful-Content-Type': 'CTID'})
-      }));
+    it('createEntry(ctId, data)', function() {
+      const entry = { fields: 'MY FIELDS' };
+      return this.client.createEntry('CTID', entry).then(
+        assertRequestResponse('DATA', {
+          method: 'POST',
+          url: '//api.test.local/spaces/SPACE/entries',
+          data: entry,
+          headers: headers({ 'X-Contentful-Content-Type': 'CTID' })
+        })
+      );
     });
 
-    it('#deleteSpace()', function () {
-      return this.client.deleteSpace()
-      .then(assertRequestResponse(undefined, {
-        method: 'DELETE',
-        url: '//api.test.local/spaces/SPACE'
-      }));
+    it('#deleteSpace()', function() {
+      return this.client.deleteSpace().then(
+        assertRequestResponse(undefined, {
+          method: 'DELETE',
+          url: '//api.test.local/spaces/SPACE'
+        })
+      );
     });
 
-    it('#renameSpace(newName, version)', function () {
-      return this.client.renameSpace('NEW NAME!!!', 2)
-      .then(assertRequestResponse('DATA', {
-        method: 'PUT',
-        url: '//api.test.local/spaces/SPACE',
-        data: {name: 'NEW NAME!!!'},
-        headers: headers({'X-Contentful-Version': 2})
-      }));
+    it('#renameSpace(newName, version)', function() {
+      return this.client.renameSpace('NEW NAME!!!', 2).then(
+        assertRequestResponse('DATA', {
+          method: 'PUT',
+          url: '//api.test.local/spaces/SPACE',
+          data: { name: 'NEW NAME!!!' },
+          headers: headers({ 'X-Contentful-Version': 2 })
+        })
+      );
     });
   });
 
   describe('resource list', () => {
     beforeEach(() => {
-      $http.resolves({data: 'DATA'});
+      $http.resolves({ data: 'DATA' });
     });
 
-    it('getContentTypes(query)', function () {
-      return this.client.getContentTypes('QUERY')
-      .then(assertRequestResponse('DATA', {
-        method: 'GET',
-        url: '//api.test.local/spaces/SPACE/content_types',
-        params: 'QUERY'
-      }));
+    it('getContentTypes(query)', function() {
+      return this.client.getContentTypes('QUERY').then(
+        assertRequestResponse('DATA', {
+          method: 'GET',
+          url: '//api.test.local/spaces/SPACE/content_types',
+          params: 'QUERY'
+        })
+      );
     });
 
-    it('getEntries(query)', function () {
-      return this.client.getEntries('QUERY')
-      .then(assertRequestResponse('DATA', {
-        method: 'GET',
-        url: '//api.test.local/spaces/SPACE/entries',
-        params: 'QUERY'
-      }));
+    it('getEntries(query)', function() {
+      return this.client.getEntries('QUERY').then(
+        assertRequestResponse('DATA', {
+          method: 'GET',
+          url: '//api.test.local/spaces/SPACE/entries',
+          params: 'QUERY'
+        })
+      );
     });
 
-    it('getEntrySnapshots(entryId, query)', function () {
-      return this.client.getEntrySnapshots('EID', 'QUERY')
-      .then(assertRequestResponse('DATA', {
-        method: 'GET',
-        url: '//api.test.local/spaces/SPACE/entries/EID/snapshots',
-        params: 'QUERY'
-      }));
+    it('getEntrySnapshots(entryId, query)', function() {
+      return this.client.getEntrySnapshots('EID', 'QUERY').then(
+        assertRequestResponse('DATA', {
+          method: 'GET',
+          url: '//api.test.local/spaces/SPACE/entries/EID/snapshots',
+          params: 'QUERY'
+        })
+      );
     });
 
-    it('getAssets(query)', function () {
-      return this.client.getAssets('QUERY')
-      .then(assertRequestResponse('DATA', {
-        method: 'GET',
-        url: '//api.test.local/spaces/SPACE/assets',
-        params: 'QUERY'
-      }));
+    it('getAssets(query)', function() {
+      return this.client.getAssets('QUERY').then(
+        assertRequestResponse('DATA', {
+          method: 'GET',
+          url: '//api.test.local/spaces/SPACE/assets',
+          params: 'QUERY'
+        })
+      );
     });
 
-    it('getPublishedAssets(query)', function () {
-      return this.client.getPublishedAssets('QUERY')
-      .then(assertRequestResponse('DATA', {
-        method: 'GET',
-        url: '//api.test.local/spaces/SPACE/public/assets',
-        params: 'QUERY'
-      }));
+    it('getPublishedAssets(query)', function() {
+      return this.client.getPublishedAssets('QUERY').then(
+        assertRequestResponse('DATA', {
+          method: 'GET',
+          url: '//api.test.local/spaces/SPACE/public/assets',
+          params: 'QUERY'
+        })
+      );
     });
 
-    it('getPublishedEntries(query)', function () {
-      return this.client.getPublishedEntries('QUERY')
-      .then(assertRequestResponse('DATA', {
-        method: 'GET',
-        url: '//api.test.local/spaces/SPACE/public/entries',
-        params: 'QUERY'
-      }));
+    it('getPublishedEntries(query)', function() {
+      return this.client.getPublishedEntries('QUERY').then(
+        assertRequestResponse('DATA', {
+          method: 'GET',
+          url: '//api.test.local/spaces/SPACE/public/entries',
+          params: 'QUERY'
+        })
+      );
     });
   });
 
   describe('Extensions', () => {
     beforeEach(() => {
-      $http.resolves({data: 'DATA'});
+      $http.resolves({ data: 'DATA' });
     });
 
-    it('getExtensions()', function () {
-      return this.client.getExtensions()
-      .then(assertRequestResponse('DATA', {
-        method: 'GET',
-        url: '//api.test.local/spaces/SPACE/extensions'
-      }));
+    it('getExtensions()', function() {
+      return this.client.getExtensions().then(
+        assertRequestResponse('DATA', {
+          method: 'GET',
+          url: '//api.test.local/spaces/SPACE/extensions'
+        })
+      );
     });
 
-    it('getExtension(id)', function () {
-      return this.client.getExtension('ID')
-      .then(assertRequestResponse('DATA', {
-        method: 'GET',
-        url: '//api.test.local/spaces/SPACE/extensions/ID'
-      }));
+    it('getExtension(id)', function() {
+      return this.client.getExtension('ID').then(
+        assertRequestResponse('DATA', {
+          method: 'GET',
+          url: '//api.test.local/spaces/SPACE/extensions/ID'
+        })
+      );
     });
 
-    it('createExtension(data)', function () {
-      return this.client.createExtension({})
-      .then(assertRequestResponse('DATA', {
-        method: 'POST',
-        url: '//api.test.local/spaces/SPACE/extensions'
-      }));
+    it('createExtension(data)', function() {
+      return this.client.createExtension({}).then(
+        assertRequestResponse('DATA', {
+          method: 'POST',
+          url: '//api.test.local/spaces/SPACE/extensions'
+        })
+      );
     });
 
-    it('updateExtension(data)', function () {
-      return this.client.updateExtension({sys: {id: 'ID', version: 2}})
-      .then(assertRequestResponse('DATA', {
-        method: 'PUT',
-        url: '//api.test.local/spaces/SPACE/extensions/ID',
-        headers: {
-          'Content-Type': 'application/vnd.contentful.management.v1+json',
-          'X-Contentful-Version': 2,
-          Authorization: 'Bearer TOKEN'
-        }
-      }));
+    it('updateExtension(data)', function() {
+      return this.client.updateExtension({ sys: { id: 'ID', version: 2 } }).then(
+        assertRequestResponse('DATA', {
+          method: 'PUT',
+          url: '//api.test.local/spaces/SPACE/extensions/ID',
+          headers: {
+            'Content-Type': 'application/vnd.contentful.management.v1+json',
+            'X-Contentful-Version': 2,
+            Authorization: 'Bearer TOKEN'
+          }
+        })
+      );
     });
 
-    it('deleteExtension(id)', function () {
-      return this.client.deleteExtension('ID')
-      .then(assertRequestResponse(undefined, {
-        method: 'DELETE',
-        url: '//api.test.local/spaces/SPACE/extensions/ID'
-      }));
+    it('deleteExtension(id)', function() {
+      return this.client.deleteExtension('ID').then(
+        assertRequestResponse(undefined, {
+          method: 'DELETE',
+          url: '//api.test.local/spaces/SPACE/extensions/ID'
+        })
+      );
     });
   });
 
@@ -215,7 +237,7 @@ describe('data/ApiClient', () => {
    * Returns a function that makes assertions on the value of it
    * parameter and on the argument `$http` has been called with
    */
-  function assertRequestResponse (resExp, reqExp) {
+  function assertRequestResponse(resExp, reqExp) {
     return res => {
       expect(res).toEqual(resExp);
       sinon.assert.calledOnce($http);

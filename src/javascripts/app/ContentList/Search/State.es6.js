@@ -8,7 +8,8 @@ import {
   isFieldFilterApplicableToContentType,
   getContentTypeById,
   buildFilterFieldByQueryKey,
-  ValueInput } from './Filters';
+  ValueInput
+} from './Filters';
 
 const CONTENT_TYPE_ALL = '';
 
@@ -57,7 +58,6 @@ export const initialState = ({
   // FIXME: Should be moved closer to the reducer responsible for the search.
   isSearching: false
 });
-
 
 // Emitted when the value of the search input changes. Holds the new
 // value.
@@ -122,7 +122,7 @@ export const Actions = {
   ShowSuggestions
 };
 
-export function makeReducer (dispatch, submitSearch) {
+export function makeReducer(dispatch, submitSearch) {
   // TODO: remove side-effects from the reducer and use actionCreators instead.
   // Reducer must not create side-effects e.g dispatch(UnsetTyping);
   // http://redux.js.org/docs/basics/Reducers.html#handling-actions
@@ -130,18 +130,18 @@ export function makeReducer (dispatch, submitSearch) {
   const putTyping = createSlot(() => dispatch(UnsetTyping));
 
   return Store.makeReducer({
-    [SetUsers] (state, users) {
+    [SetUsers](state, users) {
       return assign(state, {
         users
       });
     },
-    [SetIsSearching] (state, isSearching) {
+    [SetIsSearching](state, isSearching) {
       return assign(state, {
         isSearching
       });
     },
     [SetQueryInput]: setInput,
-    [SetBoxFocus] (state, hasFocus) {
+    [SetBoxFocus](state, hasFocus) {
       state = set(state, ['searchBoxHasFocus'], hasFocus);
       if (!hasFocus) {
         state = hideSuggestions(state);
@@ -151,24 +151,24 @@ export function makeReducer (dispatch, submitSearch) {
     [SelectFilterSuggestions]: selectFilterSuggestion,
     [SetFilterOperator]: setFilterOperator,
     [SetFilterValueInput]: setFilterValueInput,
-    [UnsetTyping] (state) {
+    [UnsetTyping](state) {
       state = set(state, ['isTyping'], false);
       state = triggerSearch(state);
       return state;
     },
     [TriggerSearch]: triggerSearch,
-    [ToggleSuggestions] (state) {
+    [ToggleSuggestions](state) {
       return update(state, ['isSuggestionOpen'], value => !value);
     },
-    [ShowSuggestions] (state) {
+    [ShowSuggestions](state) {
       return set(state, ['isSuggestionOpen'], true);
     },
-    [HideSuggestions] (state) {
+    [HideSuggestions](state) {
       return set(state, ['isSuggestionOpen'], false);
     },
     [SetContentType]: setContentType,
-    [RemoveFilter] (state, indexToRemove) {
-      state = update(state, ['filters'], (filters) => {
+    [RemoveFilter](state, indexToRemove) {
+      state = update(state, ['filters'], filters => {
         return filters.filter((_, index) => {
           return index !== indexToRemove;
         });
@@ -188,40 +188,32 @@ export function makeReducer (dispatch, submitSearch) {
     [SetFocusOnPrevSuggestion]: setFocusOnPrevSuggestion
   });
 
-  function setFilterOperator (state, [index, op]) {
-    state = update(
-      state,
-      ['filters', index],
-      ([queryKey, _op, value]) => [queryKey, op, value]
-    );
+  function setFilterOperator(state, [index, op]) {
+    state = update(state, ['filters', index], ([queryKey, _op, value]) => [queryKey, op, value]);
     state = triggerSearch(state);
     return state;
   }
 
-  function setFilterValueInput (state, [index, value]) {
+  function setFilterValueInput(state, [index, value]) {
     state = set(state, ['isTyping'], true);
     putTyping(sleep(1000));
-    return update(
-      state,
-      ['filters', index],
-      ([queryKey, op, _value]) => [queryKey, op, value]
-    );
+    return update(state, ['filters', index], ([queryKey, op, _value]) => [queryKey, op, value]);
   }
 
-  function showSuggestions (state) {
+  function showSuggestions(state) {
     return set(state, ['isSuggestionOpen'], true);
   }
 
-  function hideSuggestions (state) {
+  function hideSuggestions(state) {
     return set(state, ['isSuggestionOpen'], false);
   }
 
-  function setFocusOnFirstSuggestion (state) {
+  function setFocusOnFirstSuggestion(state) {
     state = resetFocus(state);
     return set(state, ['focus', 'suggestionsFocusIndex'], 0);
   }
 
-  function setFocusOnNextSuggestion (state) {
+  function setFocusOnNextSuggestion(state) {
     const idx = state.focus.suggestionsFocusIndex;
     const suggestions = getMatchingFilters(
       state.input,
@@ -240,7 +232,7 @@ export function makeReducer (dispatch, submitSearch) {
     return set(state, ['focus', 'suggestionsFocusIndex'], indexToFocus);
   }
 
-  function setFocusOnPrevSuggestion (state) {
+  function setFocusOnPrevSuggestion(state) {
     const idx = state.focus.suggestionsFocusIndex;
     state = resetFocus(state);
     let indexToFocus;
@@ -253,38 +245,38 @@ export function makeReducer (dispatch, submitSearch) {
     return state;
   }
 
-  function setFocusOnQueryInput (state) {
+  function setFocusOnQueryInput(state) {
     state = resetFocus(state);
     return set(state, ['focus', 'isQueryInputFocused'], true);
   }
 
-  function resetFocus (state) {
+  function resetFocus(state) {
     return set(state, ['focus'], defaultFocus);
   }
 
-  function setFocusOnPill (state, index) {
+  function setFocusOnPill(state, index) {
     state = resetFocus(state);
 
     return set(state, ['focus', 'index'], index);
   }
 
-  function setFocusOnPillValue (state, index) {
+  function setFocusOnPillValue(state, index) {
     state = setFocusOnPill(state, index);
 
     return set(state, ['focus', 'isValueFocused'], true);
   }
-  function setFocusOnLast (state) {
+  function setFocusOnLast(state) {
     const lastIndex = state.filters.length - 1;
     return setFocusOnPill(state, lastIndex);
   }
 
-  function setFocusOnLastValue (state) {
+  function setFocusOnLastValue(state) {
     const lastIndex = state.filters.length - 1;
 
     return setFocusOnPillValue(state, lastIndex);
   }
 
-  function setInput (state, input) {
+  function setInput(state, input) {
     if (input === state.input) {
       return state;
     }
@@ -304,17 +296,17 @@ export function makeReducer (dispatch, submitSearch) {
     return state;
   }
 
-  function setContentType (state, contentTypeId) {
+  function setContentType(state, contentTypeId) {
     state = set(state, ['contentTypeId'], contentTypeId);
     state = removeUnapplicableFilters(state);
     state = triggerSearch(state);
     return state;
   }
 
-  function tryGetValue (filterField) {
+  function tryGetValue(filterField) {
     let value;
     match(filterField.valueInput, {
-      [ValueInput.Select]: (options) => {
+      [ValueInput.Select]: options => {
         if (options.length === 1) {
           value = options[0][1];
         }
@@ -327,7 +319,7 @@ export function makeReducer (dispatch, submitSearch) {
     return value;
   }
 
-  function selectFilterSuggestion (state, filter) {
+  function selectFilterSuggestion(state, filter) {
     let contentType;
     if (filter.contentType) {
       state = setContentType(state, filter.contentType.id);
@@ -348,11 +340,11 @@ export function makeReducer (dispatch, submitSearch) {
     return state;
   }
 
-  function removeUnapplicableFilters (state) {
+  function removeUnapplicableFilters(state) {
     const { contentTypeId, contentTypes } = state;
 
     const contentType = getContentTypeById(contentTypes, contentTypeId);
-    state = update(state, ['filters'], (filters) => {
+    state = update(state, ['filters'], filters => {
       return filters.filter(([queryKey]) => {
         return isFieldFilterApplicableToContentType(contentType, queryKey);
       });
@@ -365,7 +357,7 @@ export function makeReducer (dispatch, submitSearch) {
    * Build the query object from the current filters and pass it to
    * `submitSearch`.
    */
-  function triggerSearch (state) {
+  function triggerSearch(state) {
     submitSearch({
       contentTypeId: state.contentTypeId,
       searchFilters: state.filters,

@@ -3,7 +3,7 @@
 describe('OrganizationRoles', () => {
   let OrganizationRoles, ORG_1, ORG_2, ORG_3;
 
-  function makeUser (organizations) {
+  function makeUser(organizations) {
     return {
       organizationMemberships: _.map(organizations, org => ({
         organization: org
@@ -11,7 +11,7 @@ describe('OrganizationRoles', () => {
     };
   }
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     OrganizationRoles = this.$inject('services/OrganizationRoles');
 
@@ -22,21 +22,18 @@ describe('OrganizationRoles', () => {
 
   describe('#isAdmin, #isOwner and #isOwnerOrAdmin', () => {
     beforeEach(() => {
-      const user = makeUser([ ORG_1, ORG_2, ORG_3 ]);
+      const user = makeUser([ORG_1, ORG_2, ORG_3]);
       user.organizationMemberships[0].role = 'member';
       user.organizationMemberships[1].role = 'admin';
       user.organizationMemberships[2].role = 'owner';
       OrganizationRoles.setUser(user);
     });
 
-    it('returns `false` if undefined is given',
-      () => returnsFalseWithArg(undefined));
+    it('returns `false` if undefined is given', () => returnsFalseWithArg(undefined));
 
-    it('returns `false` if null is given',
-      () => returnsFalseWithArg(null));
+    it('returns `false` if null is given', () => returnsFalseWithArg(null));
 
-    it('returns `false` for an unknown organization ID',
-      () => returnsFalseWithArg('unknown-id'));
+    it('returns `false` for an unknown organization ID', () => returnsFalseWithArg('unknown-id'));
 
     it('returns `false` if user is a normal member', () => {
       returnsFalseWithArg(ORG_1);
@@ -54,7 +51,7 @@ describe('OrganizationRoles', () => {
       expect(OrganizationRoles.isOwnerOrAdmin(ORG_3)).toBe(true);
     });
 
-    function returnsFalseWithArg (value) {
+    function returnsFalseWithArg(value) {
       expect(OrganizationRoles.isAdmin(value)).toBe(false);
       expect(OrganizationRoles.isOwner(value)).toBe(false);
       expect(OrganizationRoles.isOwnerOrAdmin(value)).toBe(false);

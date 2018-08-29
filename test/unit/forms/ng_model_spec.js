@@ -4,7 +4,7 @@ describe('ngModel directive', () => {
   beforeEach(module('cf.forms'));
 
   describe('aria-invalid attribute', () => {
-    it('is link to model errors', function () {
+    it('is link to model errors', function() {
       const $compile = this.$inject('$compile');
       const scope = this.$inject('$rootScope').$new();
 
@@ -24,7 +24,7 @@ describe('ngModel directive', () => {
   });
 
   describe('hideErrors property', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       const $compile = this.$inject('$compile');
       const scope = this.$inject('$rootScope').$new();
 
@@ -34,16 +34,19 @@ describe('ngModel directive', () => {
       this.formController = this.form.controller('form');
     });
 
-    it('is set to true initially', function () {
+    it('is set to true initially', function() {
       expect(this.modelController.hideErrors).toBe(true);
     });
 
-    it('is set to false after the input changed', function () {
-      this.form.find('input').val('jo').trigger('change');
+    it('is set to false after the input changed', function() {
+      this.form
+        .find('input')
+        .val('jo')
+        .trigger('change');
       expect(this.modelController.hideErrors).toBe(false);
     });
 
-    it('is set to false if the form forces errors', function () {
+    it('is set to false if the form forces errors', function() {
       this.formController.showErrors = true;
       this.$apply();
       expect(this.modelController.hideErrors).toBe(false);
@@ -51,7 +54,7 @@ describe('ngModel directive', () => {
   });
 
   describe('ngModel:update event', () => {
-    it('is emitted when view value changes', function () {
+    it('is emitted when view value changes', function() {
       const $compile = this.$inject('$compile');
       const scope = this.$inject('$rootScope').$new();
 
@@ -68,7 +71,7 @@ describe('ngModel directive', () => {
   });
 
   describe('ngModel:commit event', () => {
-    it('is emitted when input is blured', function () {
+    it('is emitted when input is blured', function() {
       const $compile = this.$inject('$compile');
       const scope = this.$inject('$rootScope').$new();
 

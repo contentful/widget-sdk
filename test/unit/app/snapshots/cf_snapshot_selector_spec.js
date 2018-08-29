@@ -1,10 +1,10 @@
 import * as K from 'helpers/mocks/kefir';
-import {create as createDocument} from 'helpers/mocks/entity_editor_document';
+import { create as createDocument } from 'helpers/mocks/entity_editor_document';
 
 describe('cfSnapshotSelector', () => {
   const PER_PAGE = 20; // page size
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
 
     const mockEntry = {
@@ -23,7 +23,7 @@ describe('cfSnapshotSelector', () => {
 
     spaceContext.cma = {
       getEntrySnapshots: sinon.stub().resolves({
-        items: Array.from({length: 50}).map(makeFakeSnapshots(50))
+        items: Array.from({ length: 50 }).map(makeFakeSnapshots(50))
       })
     };
 
@@ -38,7 +38,7 @@ describe('cfSnapshotSelector', () => {
     this.makeFakeSnapshot = makeFakeSnapshot;
     this.makeFakeSnapshots = makeFakeSnapshots;
 
-    this.toggleList = function (flag) {
+    this.toggleList = function(flag) {
       this.scope.showSnapshotSelector$.set(flag);
       this.$apply();
     };
@@ -49,22 +49,25 @@ describe('cfSnapshotSelector', () => {
       spaceContext.cma.getEntrySnapshots.reset();
     };
 
-    this.assertSnapshotsLength = function (count) {
+    this.assertSnapshotsLength = function(count) {
       expect(this.scope.snapshots.length).toEqual(count);
     };
 
-    function compile (scope) {
-      const $scope = _.extend({
-        showSnapshotSelector$: K.createMockProperty(false),
-        entityInfo: { id: 1 },
-        snapshot: makeFakeSnapshot(1),
-        otDoc: doc
-      }, scope);
+    function compile(scope) {
+      const $scope = _.extend(
+        {
+          showSnapshotSelector$: K.createMockProperty(false),
+          entityInfo: { id: 1 },
+          snapshot: makeFakeSnapshot(1),
+          otDoc: doc
+        },
+        scope
+      );
 
       return $compile('<cf-snapshot-selector />', $scope);
     }
 
-    function makeFakeSnapshots (count) {
+    function makeFakeSnapshots(count) {
       let map;
 
       return () => {
@@ -82,10 +85,12 @@ describe('cfSnapshotSelector', () => {
       };
     }
 
-    function makeFakeSnapshot (rand) {
+    function makeFakeSnapshot(rand) {
       return {
         sys: {
-          createdAt: moment().subtract(rand, 'days').format(),
+          createdAt: moment()
+            .subtract(rand, 'days')
+            .format(),
           createdBy: {
             sys: {
               id: 'xyz' + rand,
@@ -105,14 +110,16 @@ describe('cfSnapshotSelector', () => {
   });
 
   describe('lazy init', () => {
-    it('should load initial list of snapshots lazily', function () {
+    it('should load initial list of snapshots lazily', function() {
       this.assertSnapshotsLength(0);
 
       this.toggleList(true);
 
       this.assertLoadCalledAndReset();
       this.assertSnapshotsLength(PER_PAGE);
-      this.scope.snapshots.forEach(snapshot => expect(snapshot.sys.createdBy.authorName).toBeTruthy());
+      this.scope.snapshots.forEach(snapshot =>
+        expect(snapshot.sys.createdBy.authorName).toBeTruthy()
+      );
 
       // hide and show snapshots list
       this.toggleList(false);
@@ -121,10 +128,9 @@ describe('cfSnapshotSelector', () => {
     });
   });
 
-
   describe('pagination', () => {
-    beforeEach(function () {
-      this.assertLoadMoreBehaviour = function (isLoading, isAtLast) {
+    beforeEach(function() {
+      this.assertLoadMoreBehaviour = function(isLoading, isAtLast) {
         this.scope.isLoading = isLoading;
         this.scope.paginator.isAtLast = sinon.stub().returns(isAtLast);
         this.scope.paginator.next = sinon.spy();
@@ -139,7 +145,7 @@ describe('cfSnapshotSelector', () => {
       };
     });
 
-    it('should be called only when nothing is loading and we still have pages to show', function () {
+    it('should be called only when nothing is loading and we still have pages to show', function() {
       this.assertLoadMoreBehaviour(false, false);
       this.assertLoadMoreBehaviour(true, false);
       this.assertLoadMoreBehaviour(false, true);
@@ -147,16 +153,20 @@ describe('cfSnapshotSelector', () => {
   });
 
   describe('sorting', () => {
-    beforeEach(function () {
-      this.assertSort = function (sortMethod, sortedOnProp, transformFn) {
-        const testSortingOrder = this.testSortingOrder(sortMethod, sortedOnProp, transformFn || _.identity);
+    beforeEach(function() {
+      this.assertSort = function(sortMethod, sortedOnProp, transformFn) {
+        const testSortingOrder = this.testSortingOrder(
+          sortMethod,
+          sortedOnProp,
+          transformFn || _.identity
+        );
 
         this.toggleList(true);
         testSortingOrder(true); // true => ascending
         testSortingOrder(false);
       };
 
-      this.testSortingOrder = function (sortMethod, sortedOnProp, transformFn) {
+      this.testSortingOrder = function(sortMethod, sortedOnProp, transformFn) {
         const scope = this.scope;
 
         return isAscending => {
@@ -176,37 +186,39 @@ describe('cfSnapshotSelector', () => {
         };
       };
 
-      function isSortedAscending (arr) {
+      function isSortedAscending(arr) {
         return _.isEqual(arr, _.sortBy(arr));
       }
 
-      function isSortedDescending (arr) {
+      function isSortedDescending(arr) {
         return isSortedAscending(_.reverse(arr));
       }
     });
 
     describe('sort by last edited', () => {
-      it('should sort by snapshot.sys.createdAt', function () {
-        this.assertSort(this.scope.sortByLastEdited, 'sys.createdAt', dateString => new Date(dateString).getTime());
+      it('should sort by snapshot.sys.createdAt', function() {
+        this.assertSort(this.scope.sortByLastEdited, 'sys.createdAt', dateString =>
+          new Date(dateString).getTime()
+        );
       });
     });
 
     describe('sort by editor', () => {
-      it('should sort by sys.createdBy.authorName', function () {
+      it('should sort by sys.createdBy.authorName', function() {
         this.assertSort(this.scope.sortByEditor, 'sys.createdBy.authorName');
       });
     });
 
     describe('sort by status', () => {
-      it('should sort by sys.snapshotType', function () {
+      it('should sort by sys.snapshotType', function() {
         this.assertSort(this.scope.sortByStatus, 'sys.snapshotType');
       });
     });
   });
 
   describe('dont add duplicate snapshots', () => {
-    it('should only add unique snapshots to the list', function () {
-      const snapshotsArr = Array.from({length: PER_PAGE}).map(this.makeFakeSnapshots(PER_PAGE));
+    it('should only add unique snapshots to the list', function() {
+      const snapshotsArr = Array.from({ length: PER_PAGE }).map(this.makeFakeSnapshots(PER_PAGE));
 
       this.spaceContext.cma.getEntrySnapshots = sinon.stub().resolves({
         items: snapshotsArr

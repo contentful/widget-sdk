@@ -1,7 +1,7 @@
 import * as K from 'helpers/mocks/kefir';
 
 describe('Entry Actions Controller', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
 
     const $rootScope = this.$inject('$rootScope');
@@ -32,24 +32,27 @@ describe('Entry Actions Controller', () => {
     });
 
     spaceContext.publishedCTs = {
-      get: sinon.stub().withArgs(this.entityInfo).returns({
-        data: { name: 'foo' }
-      })
+      get: sinon
+        .stub()
+        .withArgs(this.entityInfo)
+        .returns({
+          data: { name: 'foo' }
+        })
     };
   });
 
   describe('#add and #duplicate', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.$state.go = sinon.stub();
     });
 
     ['add', 'duplicate'].forEach(itCreatesTheEntryWithReportingAndErrors);
 
-    function itCreatesTheEntryWithReportingAndErrors (action) {
+    function itCreatesTheEntryWithReportingAndErrors(action) {
       let executeActionAndApplyScope;
       const response = { getId: _.constant('NEW ID') };
 
-      beforeEach(function () {
+      beforeEach(function() {
         executeActionAndApplyScope = () => {
           this.controller[action].execute();
           this.$apply();
@@ -58,7 +61,7 @@ describe('Entry Actions Controller', () => {
 
       describe(`#${action}`, () => {
         if (action === 'add') {
-          it('tracks the entry_editor:created_with_same_ct event', function () {
+          it('tracks the entry_editor:created_with_same_ct event', function() {
             this.createEntry.resolves(response);
             executeActionAndApplyScope();
             const { contentTypeId, id: entryId } = this.entityInfo;
@@ -71,60 +74,45 @@ describe('Entry Actions Controller', () => {
         }
 
         describe('on success', () => {
-          beforeEach(function () {
+          beforeEach(function() {
             this.createEntry.resolves(response);
             executeActionAndApplyScope();
           });
 
           itCallsTheAction();
 
-          it('tracks the event', function () {
-            sinon.assert.calledWithExactly(
-              this.analytics.track,
-              'entry:create',
-              {
-                eventOrigin: (
-                  action === 'add'
-                    ? 'entry-editor'
-                    : 'entry-editor__duplicate'
-                ),
-                contentType: { data: { name: 'foo' } },
-                response: response
-              }
-            );
+          it('tracks the event', function() {
+            sinon.assert.calledWithExactly(this.analytics.track, 'entry:create', {
+              eventOrigin: action === 'add' ? 'entry-editor' : 'entry-editor__duplicate',
+              contentType: { data: { name: 'foo' } },
+              response: response
+            });
           });
 
-          it('opens the editor', function () {
-            sinon.assert.calledWith(
-              this.$state.go,
-              '^.detail',
-              {
-                entryId: 'NEW ID',
-                previousEntries: '',
-                addToContext: false
-              }
-            );
+          it('opens the editor', function() {
+            sinon.assert.calledWith(this.$state.go, '^.detail', {
+              entryId: 'NEW ID',
+              previousEntries: '',
+              addToContext: false
+            });
           });
         });
 
         describe('on error', () => {
-          beforeEach(function () {
+          beforeEach(function() {
             this.createEntry.rejects();
             executeActionAndApplyScope();
           });
 
           itCallsTheAction();
 
-          it('sends the error notification', function () {
-            sinon.assert.calledWith(
-              this.notify,
-              sinon.match({ action })
-            );
+          it('sends the error notification', function() {
+            sinon.assert.calledWith(this.notify, sinon.match({ action }));
           });
         });
 
-        function itCallsTheAction () {
-          it('calls the action', function () {
+        function itCallsTheAction() {
+          it('calls the action', function() {
             sinon.assert.calledWith(this.createEntry, 'CID');
           });
         }

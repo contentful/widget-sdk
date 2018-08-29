@@ -1,12 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {
-  CONSTRAINT_TYPES,
-  CONSTRAINT_NAMES,
-  PATH_VALUES,
-  PATHS
-} from './WebhookFiltersState';
+import { CONSTRAINT_TYPES, CONSTRAINT_NAMES, PATH_VALUES, PATHS } from './WebhookFiltersState';
 
 const PATH_TITLES = {
   [PATH_VALUES.ENVIRONMENT]: 'Environment ID',
@@ -14,16 +9,18 @@ const PATH_TITLES = {
   [PATH_VALUES.ENTITY]: 'Entity ID'
 };
 
-const NO_FILTERS_MSG = 'No filters defined. This webhook will trigger for any entity, based on your selection of triggering events.';
-const HAS_FILTERS_MSG = 'This webhook will trigger only for entities matching the filters defined below.';
+const NO_FILTERS_MSG =
+  'No filters defined. This webhook will trigger for any entity, based on your selection of triggering events.';
+const HAS_FILTERS_MSG =
+  'This webhook will trigger only for entities matching the filters defined below.';
 
 export default class WebhookFilters extends React.Component {
   static propTypes = {
     onChange: PropTypes.func.isRequired,
     filters: PropTypes.array.isRequired
-  }
+  };
 
-  componentDidUpdate () {
+  componentDidUpdate() {
     if (this.shouldFocus && this.el) {
       const inputs = this.el.querySelectorAll('input');
       inputs[inputs.length - 1].focus(); // focus the value of the last filter
@@ -31,28 +28,28 @@ export default class WebhookFilters extends React.Component {
     this.shouldFocus = false;
   }
 
-  addNew () {
+  addNew() {
     this.shouldFocus = true; // focus newly added filter when updated
-    const {filters, onChange} = this.props;
-    const newlyAdded = {constraint: 0, path: PATH_VALUES.ENVIRONMENT, value: ''};
+    const { filters, onChange } = this.props;
+    const newlyAdded = { constraint: 0, path: PATH_VALUES.ENVIRONMENT, value: '' };
     const updated = filters.concat([newlyAdded]);
     onChange(updated);
   }
 
-  updateByIndex (index, updateObj) {
-    const {filters, onChange} = this.props;
-    const updated = [ ...filters ];
-    updated[index] = {...updated[index], ...updateObj};
+  updateByIndex(index, updateObj) {
+    const { filters, onChange } = this.props;
+    const updated = [...filters];
+    updated[index] = { ...updated[index], ...updateObj };
     onChange(updated);
   }
 
-  removeByIndex (index) {
-    const {filters, onChange} = this.props;
+  removeByIndex(index) {
+    const { filters, onChange } = this.props;
     const updated = filters.slice(0, index).concat(filters.slice(index + 1));
     onChange(updated);
   }
 
-  renderConstraintOption (constraint, index) {
+  renderConstraintOption(constraint, index) {
     let caption = constraint.name;
     if (constraint.negated) {
       caption = 'not ' + constraint.name;
@@ -65,27 +62,34 @@ export default class WebhookFilters extends React.Component {
     );
   }
 
-  renderFilter (filter, index) {
+  renderFilter(filter, index) {
     return (
       <div key={index} className="webhook-editor__settings-row">
-        <select onChange={e => this.updateByIndex(index, { path: e.target.value })}
-                className="cfnext-select-box"
+        <select
+          onChange={e => this.updateByIndex(index, { path: e.target.value })}
+          className="cfnext-select-box"
           value={filter.path}>
-
-          {PATHS.map(p => <option key={p} value={p}>{PATH_TITLES[p]} ({p})</option>)}
+          {PATHS.map(p => (
+            <option key={p} value={p}>
+              {PATH_TITLES[p]} ({p})
+            </option>
+          ))}
         </select>
 
-        <select onChange={e => this.updateByIndex(index, { constraint: e.target.value })}
-                className="cfnext-select-box"
-                value={filter.constraint}>
+        <select
+          onChange={e => this.updateByIndex(index, { constraint: e.target.value })}
+          className="cfnext-select-box"
+          value={filter.constraint}>
           {CONSTRAINT_TYPES.map(this.renderConstraintOption)}
         </select>
 
-        <input onChange={e => this.updateByIndex(index, { value: e.target.value })}
-               placeholder={this.getPlaceholder(filter.constraint)}
-               className="cfnext-form__input"
-               type="text"
-               value={filter.value} />
+        <input
+          onChange={e => this.updateByIndex(index, { value: e.target.value })}
+          placeholder={this.getPlaceholder(filter.constraint)}
+          className="cfnext-form__input"
+          type="text"
+          value={filter.value}
+        />
 
         <button className="btn-link" onClick={() => this.removeByIndex(index)}>
           Remove
@@ -94,11 +98,15 @@ export default class WebhookFilters extends React.Component {
     );
   }
 
-  render () {
-    const {filters} = this.props;
+  render() {
+    const { filters } = this.props;
 
     return (
-      <div className="cfnext-form__field" ref={el => { this.el = el; }}>
+      <div
+        className="cfnext-form__field"
+        ref={el => {
+          this.el = el;
+        }}>
         <label>Filters</label>
         <p>{filters.length > 0 ? HAS_FILTERS_MSG : NO_FILTERS_MSG}</p>
 
@@ -111,7 +119,7 @@ export default class WebhookFilters extends React.Component {
     );
   }
 
-  getPlaceholder (constraint) {
+  getPlaceholder(constraint) {
     if (CONSTRAINT_TYPES[constraint].name === CONSTRAINT_NAMES.IN) {
       return 'comma separated values';
     }

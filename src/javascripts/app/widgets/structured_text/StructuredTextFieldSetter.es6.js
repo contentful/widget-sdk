@@ -20,9 +20,7 @@ export const is = (fieldId, contentType) => {
   if (!contentType) {
     return false;
   }
-  const fields = contentType.data
-    ? contentType.data.fields
-    : contentType.fields;
+  const fields = contentType.data ? contentType.data.fields : contentType.fields;
   const field = fields.find(f => f.id === fieldId);
   return field && field.type === 'StructuredText';
 };
@@ -41,13 +39,15 @@ export const is = (fieldId, contentType) => {
 export const setAt = (doc, fieldPath, nextFieldValue) => {
   const fieldValue = ShareJS.peek(doc, fieldPath);
   if (fieldValue === undefined) {
-    return ShareJS.setDeep(doc, fieldPath, emptyDoc).then(() => setValue(doc, fieldPath, emptyDoc, nextFieldValue));
+    return ShareJS.setDeep(doc, fieldPath, emptyDoc).then(() =>
+      setValue(doc, fieldPath, emptyDoc, nextFieldValue)
+    );
   }
 
   return setValue(doc, fieldPath, fieldValue, nextFieldValue);
 };
 
-function setValue (doc, fieldPath, fieldValue, nextFieldValue) {
+function setValue(doc, fieldPath, fieldValue, nextFieldValue) {
   const ops = jsondiff(fieldValue, nextFieldValue, diffMatchPatch).map(op => ({
     ...op,
     p: [...fieldPath, ...op.p]

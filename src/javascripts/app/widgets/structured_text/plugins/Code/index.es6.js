@@ -15,7 +15,7 @@ export const CodePlugin = () => {
 };
 
 class Code extends Component {
-  render () {
+  render() {
     return <ToolbarIcon {...this.props} />;
   }
 }

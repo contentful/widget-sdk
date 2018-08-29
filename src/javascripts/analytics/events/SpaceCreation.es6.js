@@ -1,19 +1,12 @@
-import {snakeCase, omitBy, isUndefined, includes} from 'lodash';
-import {track} from 'analytics/Analytics';
+import { snakeCase, omitBy, isUndefined, includes } from 'lodash';
+import { track } from 'analytics/Analytics';
 
-const EVENTS_TO_SEND = [
-  'content_type:create',
-  'entry:create',
-  'asset:create',
-  'api_key:create'
-];
-const EVENTS_WITH_ORIGIN_FIELD = [
-  'entry:create'
-];
+const EVENTS_TO_SEND = ['content_type:create', 'entry:create', 'asset:create', 'api_key:create'];
+const EVENTS_WITH_ORIGIN_FIELD = ['entry:create'];
 const TEMPLATED_CREATION_EVENT_ORIGIN = 'example-space-creation';
 const EMPTY_CREATION_EVENT_ORIGIN = 'space-creation';
 
-export function entityActionSuccess (_entityId, entityData, templateName) {
+export function entityActionSuccess(_entityId, entityData, templateName) {
   const eventName = getEventName(entityData.actionData);
 
   if (includes(EVENTS_TO_SEND, eventName)) {
@@ -27,6 +20,6 @@ export function entityActionSuccess (_entityId, entityData, templateName) {
   }
 }
 
-function getEventName (actionData) {
+function getEventName(actionData) {
   return `${snakeCase(actionData.entity)}:${actionData.action}`;
 }

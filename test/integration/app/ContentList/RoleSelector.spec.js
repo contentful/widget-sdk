@@ -3,7 +3,7 @@ import createSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
 import * as sinon from 'helpers/sinon';
 
 describe('app/RoleSelector', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     this.$client = $('<div class="client"/>');
     this.view = DOM.createView(this.$client.get(0));
@@ -29,11 +29,11 @@ describe('app/RoleSelector', () => {
     this.open = initialValue => openRoleSelector(endpoint.request, initialValue);
   });
 
-  afterEach(function () {
+  afterEach(function() {
     this.$client.remove();
   });
 
-  it('remove one role if it was visible to everybody', function* () {
+  it('remove one role if it was visible to everybody', function*() {
     const resultPromise = this.open(undefined);
 
     this.view.find('.roles.role-a').assertIsChecked(true);
@@ -46,7 +46,7 @@ describe('app/RoleSelector', () => {
     sinon.assert.calledOnce(this.notify);
   });
 
-  it('selects all roles', function* () {
+  it('selects all roles', function*() {
     const resultPromise = this.open(['role-a']);
 
     this.view.find('.roles.role-a').assertIsChecked(true);
@@ -59,7 +59,7 @@ describe('app/RoleSelector', () => {
     sinon.assert.calledOnce(this.notify);
   });
 
-  it('selects no roles', function* () {
+  it('selects no roles', function*() {
     const resultPromise = this.open(undefined);
 
     this.view.find('.unselect-all').click();

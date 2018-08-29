@@ -10,37 +10,39 @@
  *
  * TODO This service should be replaced by the 'Config' service
  */
-angular.module('contentful/environment')
-.constant('environment', ((() => {
-  const injected = extractInjectedConfig();
+angular.module('contentful/environment').constant(
+  'environment',
+  (() => {
+    const injected = extractInjectedConfig();
 
-  /**
-   * @ngdoc property
-   * @name environment#env
-   * @type {string}
-   * @description
-   * Current environment name.
-   *
-   * Possible values are `development`, `production`, and `staging` (used on the
-   * `quirely.com` and `flinkly.com` domains.
-   *
-   * The tests also use the `unittest` value.
-   */
-  return {
-    env: injected.config.environment,
-    settings: injected.config,
-    gitRevision: injected.uiVersion
-  };
+    /**
+     * @ngdoc property
+     * @name environment#env
+     * @type {string}
+     * @description
+     * Current environment name.
+     *
+     * Possible values are `development`, `production`, and `staging` (used on the
+     * `quirely.com` and `flinkly.com` domains.
+     *
+     * The tests also use the `unittest` value.
+     */
+    return {
+      env: injected.config.environment,
+      settings: injected.config,
+      gitRevision: injected.uiVersion
+    };
 
-  function extractInjectedConfig () {
-    // TODO Should throw when config is not injected, but currently required for tests
-    const defaultValue = {config: {environment: 'development'}};
-    const el = document.querySelector('meta[name="external-config"]');
+    function extractInjectedConfig() {
+      // TODO Should throw when config is not injected, but currently required for tests
+      const defaultValue = { config: { environment: 'development' } };
+      const el = document.querySelector('meta[name="external-config"]');
 
-    try {
-      return JSON.parse(el.getAttribute('content')) || defaultValue;
-    } catch (e) {
-      return defaultValue;
+      try {
+        return JSON.parse(el.getAttribute('content')) || defaultValue;
+      } catch (e) {
+        return defaultValue;
+      }
     }
-  }
-})()));
+  })()
+);

@@ -1,7 +1,7 @@
 'use strict';
 
 describe('cfRatingEditor directive', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('cf.app', $provide => {
       // Disable cfIcon directive
       $provide.value('cfIconDirective', {});
@@ -15,14 +15,18 @@ describe('cfRatingEditor directive', () => {
     });
     this.fieldApi = this.widgetApi.field;
 
-    this.compile = function () {
-      return this.$compile('<cf-rating-editor />', {}, {
-        cfWidgetApi: this.widgetApi
-      });
+    this.compile = function() {
+      return this.$compile(
+        '<cf-rating-editor />',
+        {},
+        {
+          cfWidgetApi: this.widgetApi
+        }
+      );
     };
   });
 
-  it('renders a number of stars according to the widget setting', function () {
+  it('renders a number of stars according to the widget setting', function() {
     this.widgetApi.settings.stars = 1;
     let el = this.compile();
     let stars = el.find('cf-icon[name="star"]');
@@ -34,7 +38,7 @@ describe('cfRatingEditor directive', () => {
     expect(stars.length).toEqual(11);
   });
 
-  it('activates no stars when value is not set', function () {
+  it('activates no stars when value is not set', function() {
     const el = this.compile();
     this.fieldApi.onValueChanged.yield(null);
     this.$apply();
@@ -42,7 +46,7 @@ describe('cfRatingEditor directive', () => {
     expect(active.length).toEqual(0);
   });
 
-  it('activates the number of stars that are set', function () {
+  it('activates the number of stars that are set', function() {
     const el = this.compile();
     this.fieldApi.onValueChanged.yield(3);
     this.$apply();
@@ -50,7 +54,7 @@ describe('cfRatingEditor directive', () => {
     expect(active.length).toEqual(3);
   });
 
-  it('sets rating value according to star clicked', function () {
+  it('sets rating value according to star clicked', function() {
     this.fieldApi.setValue = sinon.stub();
     const el = this.compile();
 
@@ -60,7 +64,7 @@ describe('cfRatingEditor directive', () => {
     sinon.assert.calledWithExactly(this.fieldApi.setValue, 3);
   });
 
-  it('does not set rating when field is disabled', function () {
+  it('does not set rating when field is disabled', function() {
     this.fieldApi.setValue = sinon.stub();
     const el = this.compile();
     this.$apply();
@@ -71,7 +75,7 @@ describe('cfRatingEditor directive', () => {
     sinon.assert.notCalled(this.fieldApi.setValue);
   });
 
-  it('removes value when "clear" button is clicked', function () {
+  it('removes value when "clear" button is clicked', function() {
     this.fieldApi.removeValue = sinon.stub();
     const el = this.compile();
 

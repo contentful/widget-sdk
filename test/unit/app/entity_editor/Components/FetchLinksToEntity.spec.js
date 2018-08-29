@@ -14,7 +14,7 @@ describe('FetchLinksToEntity', () => {
     origin: 'sidebar'
   };
 
-  beforeEach(function () {
+  beforeEach(function() {
     this.onFetchLinks = sinon.stub();
     const system = createIsolatedSystem();
     system.set('analytics/events/IncomingLinks', {
@@ -25,7 +25,7 @@ describe('FetchLinksToEntity', () => {
       }
     });
     this.system = system;
-    this.importModule = function* ({ fetchLinksStub }) {
+    this.importModule = function*({ fetchLinksStub }) {
       system.set('app/entity_editor/Components/FetchLinksToEntity/fetchLinks', {
         default: fetchLinksStub
       });
@@ -38,15 +38,15 @@ describe('FetchLinksToEntity', () => {
     };
   });
 
-  afterEach(function () {
+  afterEach(function() {
     delete this.system;
   });
 
-  function render (Component, props) {
+  function render(Component, props) {
     return mount(h(Component, _.extend({}, defaultProps, props)));
   }
 
-  it('passes pending state on initial render', function* () {
+  it('passes pending state on initial render', function*() {
     const fetchLinksStub = sinon.stub().returns(Promise.resolve([]));
     const Component = yield* this.importModule({ fetchLinksStub });
 
@@ -56,7 +56,7 @@ describe('FetchLinksToEntity', () => {
     sinon.assert.calledWith(renderFunc, { links: [], requestState: 'pending' });
   });
 
-  it('passes success state and links if api called returns data', function* () {
+  it('passes success state and links if api called returns data', function*() {
     const links = [{ a: 1 }, { b: 2 }];
     const fetchLinksStub = sinon
       .stub()
@@ -73,17 +73,14 @@ describe('FetchLinksToEntity', () => {
       links,
       requestState: 'success'
     });
-    sinon.assert.calledWithExactly(
-      this.onFetchLinks,
-      {
-        entityId: 'entry-id',
-        entityType: EntityType.ENTRY,
-        incomingLinksCount: 2
-      }
-    );
+    sinon.assert.calledWithExactly(this.onFetchLinks, {
+      entityId: 'entry-id',
+      entityType: EntityType.ENTRY,
+      incomingLinksCount: 2
+    });
   });
 
-  it('passes error state and empty links if api fails to return data', function* () {
+  it('passes error state and empty links if api fails to return data', function*() {
     const fetchLinksStub = sinon
       .stub()
       .withArgs(defaultProps.id, defaultProps.type)

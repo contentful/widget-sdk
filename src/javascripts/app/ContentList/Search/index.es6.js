@@ -15,7 +15,7 @@ import {
   sanitizeSearchFilters
 } from './Filters';
 
-export default function create ({
+export default function create({
   $scope,
   contentTypes = [],
   onSearchChange,
@@ -57,13 +57,9 @@ export default function create ({
       }
     );
 
-    const unsubscribeFromSearchStore = K.onValueScope(
-      $scope,
-      store.state$,
-      state => {
-        $scope.search = renderSearch(mapStateToProps(state, actions));
-      }
-    );
+    const unsubscribeFromSearchStore = K.onValueScope($scope, store.state$, state => {
+      $scope.search = renderSearch(mapStateToProps(state, actions));
+    });
 
     $scope.unsubscribeSearch = () => {
       unsubscribeSearchWidget();
@@ -71,7 +67,7 @@ export default function create ({
     };
 
     // eslint-disable-next-line no-inner-declarations
-    function dispatch (action, payload) {
+    function dispatch(action, payload) {
       store.dispatch(action, payload);
     }
   } catch (error) {
@@ -80,15 +76,8 @@ export default function create ({
   }
 }
 
-function mapStateToProps (state, actions) {
-  const {
-    contentTypeId,
-    filters,
-    contentTypes,
-    users,
-    isSearching,
-    withAssets
-  } = state;
+function mapStateToProps(state, actions) {
+  const { contentTypeId, filters, contentTypes, users, isSearching, withAssets } = state;
   const suggestions = getMatchingFilters(
     state.input,
     state.contentTypeId,

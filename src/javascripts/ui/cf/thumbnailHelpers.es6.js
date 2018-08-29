@@ -7,7 +7,7 @@ import * as HostnameTransformer from 'hostnameTransformer';
  * @params {string} fileContentType
  * @returns {boolean}
  */
-export function isValidImage (fileContentType) {
+export function isValidImage(fileContentType) {
   const validMimeTypes = [
     'image/bmp',
     'image/x-windows-bmp',
@@ -32,7 +32,7 @@ export function isValidImage (fileContentType) {
  * @params {string} url
  * @returns {string}
  */
-export function getExternalImageUrl (url) {
+export function getExternalImageUrl(url) {
   const domains = TokenStore.getDomains();
   const internalUrl = HostnameTransformer.toInternal(url, domains);
   domains.assets = domains.images;

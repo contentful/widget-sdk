@@ -1,5 +1,5 @@
 import $q from '$q';
-import {get as getAtPath} from 'lodash';
+import { get as getAtPath } from 'lodash';
 
 /**
  * @ngdoc method
@@ -13,7 +13,7 @@ import {get as getAtPath} from 'lodash';
  * Note: it assumes that all snapshots in the array belong to the same entry,
  * that is passed as first parameter.
  */
-export function withCurrent (entrySys, snapshots) {
+export function withCurrent(entrySys, snapshots) {
   if (!snapshots.length) {
     return snapshots;
   } else {
@@ -37,17 +37,16 @@ export function withCurrent (entrySys, snapshots) {
  * @description
  * Decorates snapshots setting snapshot.sys.createdBy.authorName value
  */
-export function withAuthorName (spaceContext, snapshots) {
+export function withAuthorName(spaceContext, snapshots) {
   const promises = snapshots.map(snapshot => {
     const userId = getAtPath(snapshot, 'sys.createdBy.sys.id');
 
-    return spaceContext.users.get(userId)
-      .then(user => {
-        const authorName = user ? (user.firstName + ' ' + user.lastName) : '';
+    return spaceContext.users.get(userId).then(user => {
+      const authorName = user ? user.firstName + ' ' + user.lastName : '';
 
-        snapshot.sys.createdBy.authorName = authorName;
-        return snapshot;
-      });
+      snapshot.sys.createdBy.authorName = authorName;
+      return snapshot;
+    });
   });
 
   return $q.all(promises);

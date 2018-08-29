@@ -15,7 +15,7 @@ describe('Section Access', () => {
     settings: true
   };
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
 
     sectionAccess = this.$inject('sectionAccess');
@@ -31,7 +31,7 @@ describe('Section Access', () => {
     });
 
     it('handles some-true scenario', () => {
-      visibilityStub.returns(_.extend({}, allTrue, {entry: false}));
+      visibilityStub.returns(_.extend({}, allTrue, { entry: false }));
       expect(sectionAccess.getFirstAccessibleSref()).toBe('.content_types.list');
     });
 
@@ -41,14 +41,14 @@ describe('Section Access', () => {
     });
 
     it('handles all-false scenario with extra key', () => {
-      visibilityStub.returns({extra: true});
+      visibilityStub.returns({ extra: true });
       expect(sectionAccess.getFirstAccessibleSref()).toBe(null);
     });
 
     it('returns home screen sref when not activated and admin', () => {
       spaceContext.space = {
         data: {
-          spaceMembership: {admin: true},
+          spaceMembership: { admin: true },
           activatedAt: null
         }
       };

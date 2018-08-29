@@ -1,11 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { BLOCKS } from '@contentful/structured-text-types';
-import {
-  Dropdown,
-  DropdownList,
-  Button
-} from '@contentful/ui-component-library';
+import { Dropdown, DropdownList, Button } from '@contentful/ui-component-library';
 import { haveBlocks } from '../shared/UtilHave';
 
 export const blockTitles = {
@@ -30,14 +26,12 @@ class HeadingDropdown extends Component {
   };
 
   getStyleNameForChange = () => {
-    const currentStyle = Object.keys(blockTitles).find(key =>
-      haveBlocks(this.props.change, key)
-    );
+    const currentStyle = Object.keys(blockTitles).find(key => haveBlocks(this.props.change, key));
 
     return blockTitles[currentStyle] || blockTitles[blockTitles.PARAGRAPH];
   };
 
-  render () {
+  render() {
     const { onToggle, isOpen, onClose, children } = this.props;
     return (
       <Dropdown
@@ -49,17 +43,13 @@ class HeadingDropdown extends Component {
             indicateDropdown
             buttonType="naked"
             size="small"
-            disabled={this.props.disabled}
-          >
+            disabled={this.props.disabled}>
             {this.getStyleNameForChange()}
           </Button>
         }
         isOpen={isOpen}
-        onClose={onClose}
-      >
-        <DropdownList extraClassNames="toolbar-heading-dropdown-list">
-          {children}
-        </DropdownList>
+        onClose={onClose}>
+        <DropdownList extraClassNames="toolbar-heading-dropdown-list">{children}</DropdownList>
       </Dropdown>
     );
   }

@@ -1,13 +1,13 @@
 'use strict';
 
 describe('cfLoaders', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
 
     this.$rootScope = this.$inject('$rootScope');
 
-    this.compile = (directive) => {
-      return function (isShownProp, isShown, loaderMsg, watchStateChange = true) {
+    this.compile = directive => {
+      return function(isShownProp, isShown, loaderMsg, watchStateChange = true) {
         let template = `<${directive} `;
 
         template += isShownProp ? `is-shown=${isShownProp} ` : '';
@@ -24,14 +24,14 @@ describe('cfLoaders', () => {
       };
     };
 
-    this.assertStateChangeVal = function (event, isShown, watchStateChange) {
+    this.assertStateChangeVal = function(event, isShown, watchStateChange) {
       const { scope } = this.compileLoader(undefined, isShown, '', watchStateChange);
       this.emitStateEvent(event);
       this.$apply();
       expect(scope.isShown).toBe(isShown);
     };
 
-    this.assertIsShownBinding = function (isShownProp, isShown, watchStateChange) {
+    this.assertIsShownBinding = function(isShownProp, isShown, watchStateChange) {
       const { scope } = this.compileLoader(isShownProp, isShown, 'Please wait…', watchStateChange);
       const tests = [true, 'WOOP', false];
 
@@ -44,7 +44,7 @@ describe('cfLoaders', () => {
       });
     };
 
-    this.assertAttrs = function (isShownProp, isShown, loaderMsg, watchStateChange) {
+    this.assertAttrs = function(isShownProp, isShown, loaderMsg, watchStateChange) {
       const { scope } = this.compileLoader(isShownProp, isShown, loaderMsg, watchStateChange);
       const defaultMsg = 'Please hold on…';
 
@@ -52,28 +52,28 @@ describe('cfLoaders', () => {
       expect(scope.loaderMsg).toEqual(loaderMsg || defaultMsg);
     };
 
-    this.testScopeAttrs = function () {
+    this.testScopeAttrs = function() {
       this.assertAttrs();
       this.assertAttrs('isLoading', true);
       this.assertAttrs('isLoading', false, 'Test');
     };
 
-    this.emitStateEvent = function (event) {
+    this.emitStateEvent = function(event) {
       const options = { notify: true };
       this.$rootScope.$emit(event, {}, {}, {}, {}, options);
     };
   });
 
   describe('cfLoader', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.compileLoader = this.compile('cf-loader');
     });
 
-    it('uses the attrs to populate scope properties', function () {
+    it('uses the attrs to populate scope properties', function() {
       this.testScopeAttrs();
     });
 
-    it('should update isShown based on the parent property it is bound to', function () {
+    it('should update isShown based on the parent property it is bound to', function() {
       const { scope } = this.compileLoader('isSearching', 'TEST', 'Please wait…');
 
       expect(scope.isShown).toBe('TEST');
@@ -82,7 +82,7 @@ describe('cfLoaders', () => {
       expect(scope.isShown).toBe(true);
     });
 
-    it('adds handlers for state change events when watchStateChange is true', function () {
+    it('adds handlers for state change events when watchStateChange is true', function() {
       // watchStateChange is true by default when the directive is compiled in these tests
       this.assertStateChangeVal('$stateChangeStart', true);
       this.assertStateChangeVal('$stateChangeSuccess', false);
@@ -91,7 +91,7 @@ describe('cfLoaders', () => {
       this.assertStateChangeVal('$stateChangeError', false);
     });
 
-    it('attaches handlers for state events when watchStateChange is false', function () {
+    it('attaches handlers for state events when watchStateChange is false', function() {
       this.assertStateChangeVal('$stateChangeStart', undefined, false);
       this.assertStateChangeVal('$stateChangeSuccess', undefined, false);
       this.assertStateChangeVal('$stateChangeCancel', undefined, false);
@@ -99,7 +99,7 @@ describe('cfLoaders', () => {
       this.assertStateChangeVal('$stateChangeError', undefined, false);
     });
 
-    it('hides the loader when `$stateChangeStart` event listener sets `notify: false`', function () {
+    it('hides the loader when `$stateChangeStart` event listener sets `notify: false`', function() {
       const isShown = true;
       const watchStateChange = true;
       const { scope } = this.compileLoader(undefined, isShown, '', watchStateChange);
@@ -116,11 +116,11 @@ describe('cfLoaders', () => {
   });
 
   describe('cfInlineLoader', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       this.compileLoader = this.compile('cf-inline-loader');
     });
 
-    it('binds `isShown` to scope', function () {
+    it('binds `isShown` to scope', function() {
       this.assertIsShownBinding('isSearching', 'INITVAL');
     });
   });

@@ -1,7 +1,7 @@
-import {get as getAtPath} from 'lodash';
-import {assign, filter} from 'utils/Collections';
-import {h} from 'ui/Framework';
-import {htmlEncode} from 'encoder';
+import { get as getAtPath } from 'lodash';
+import { assign, filter } from 'utils/Collections';
+import { h } from 'ui/Framework';
+import { htmlEncode } from 'encoder';
 
 import openRoleSelector from './RoleSelector';
 import openInputDialog from 'app/InputDialog';
@@ -9,9 +9,9 @@ import openInputDialog from 'app/InputDialog';
 import * as accessChecker from 'access_control/AccessChecker';
 import modalDialog from 'modalDialog';
 
-export default function render (folder, state, actions) {
-  const {canEdit, roleAssignment, tracking} = state;
-  const {UpdateFolder, DeleteFolder, UpdateView, DeleteView} = actions;
+export default function render(folder, state, actions) {
+  const { canEdit, roleAssignment, tracking } = state;
+  const { UpdateFolder, DeleteFolder, UpdateView, DeleteView } = actions;
   const views = filter(folder.views, view => isViewVisible(view, roleAssignment));
 
   // Do not render anything when:
@@ -26,109 +26,129 @@ export default function render (folder, state, actions) {
   const isClosed = state.folderStates[folder.id] === 'closed';
   const collapsed = isClosed ? '-collapsed' : '';
   const currentViewId = getAtPath(state.currentView, ['id']);
-  const active = view => view.id === currentViewId ? '-active' : '';
+  const active = view => (view.id === currentViewId ? '-active' : '');
 
-  return h('.view-folder', {key: folder.id, class: isNotDefault ? draggable : ''}, [
-    isNotDefault && h('header.view-folder__header', [
-      h('div.view-folder__title', [
-        `${folder.title} (${folder.views.length})`,
-        canEdit && h('.view-folder__actions', [
-          h('i.fa.fa-pencil', {onClick: () => renameFolder(folder, UpdateFolder)}),
-          h('i.fa.fa-close', {onClick: () => deleteFolder(folder, DeleteFolder)})
-        ])
-      ]),
-      h('i.view-folder__toggle', {
-        class: collapsed,
-        onClick: () => actions.ToggleOpened(folder)
-      }, ['▼'])
-    ]),
-    !isClosed && h('ul.view-folder__list', {
-      class: collapsed,
-      ref: el => state.dnd.forViews(el, folder),
-      style: {
-        minHeight: views.length === 0 ? '10px' : undefined,
-        marginBottom: views.length === 0 ? '0px' : undefined
-      }
-    }, views.map(view => {
-      return h('li.view-folder__item', {
-        key: view.id,
-        class: [active(view), draggable].join(' '),
-        onClick: () => actions.LoadView(view)
-      }, [
-        h('.view-folder__item-title', [
-          h('span', {title: view.title}, [view.title])
+  return h('.view-folder', { key: folder.id, class: isNotDefault ? draggable : '' }, [
+    isNotDefault &&
+      h('header.view-folder__header', [
+        h('div.view-folder__title', [
+          `${folder.title} (${folder.views.length})`,
+          canEdit &&
+            h('.view-folder__actions', [
+              h('i.fa.fa-pencil', { onClick: () => renameFolder(folder, UpdateFolder) }),
+              h('i.fa.fa-close', { onClick: () => deleteFolder(folder, DeleteFolder) })
+            ])
         ]),
-        canEdit && h('.view-folder__actions', [
-          roleAssignment && h('i.fa.fa-eye', {
-            onClick: doNotPropagate(() => editViewRoles(view, roleAssignment.endpoint, tracking, UpdateView))
-          }),
-          h('i.fa.fa-pencil', {
-            onClick: doNotPropagate(() => editViewTitle(view, tracking, UpdateView))
-          }),
-          h('i.fa.fa-close', {
-            onClick: doNotPropagate(() => deleteView(view, tracking, DeleteView))
-          })
-        ])
-      ]);
-    }))
+        h(
+          'i.view-folder__toggle',
+          {
+            class: collapsed,
+            onClick: () => actions.ToggleOpened(folder)
+          },
+          ['▼']
+        )
+      ]),
+    !isClosed &&
+      h(
+        'ul.view-folder__list',
+        {
+          class: collapsed,
+          ref: el => state.dnd.forViews(el, folder),
+          style: {
+            minHeight: views.length === 0 ? '10px' : undefined,
+            marginBottom: views.length === 0 ? '0px' : undefined
+          }
+        },
+        views.map(view => {
+          return h(
+            'li.view-folder__item',
+            {
+              key: view.id,
+              class: [active(view), draggable].join(' '),
+              onClick: () => actions.LoadView(view)
+            },
+            [
+              h('.view-folder__item-title', [h('span', { title: view.title }, [view.title])]),
+              canEdit &&
+                h('.view-folder__actions', [
+                  roleAssignment &&
+                    h('i.fa.fa-eye', {
+                      onClick: doNotPropagate(() =>
+                        editViewRoles(view, roleAssignment.endpoint, tracking, UpdateView)
+                      )
+                    }),
+                  h('i.fa.fa-pencil', {
+                    onClick: doNotPropagate(() => editViewTitle(view, tracking, UpdateView))
+                  }),
+                  h('i.fa.fa-close', {
+                    onClick: doNotPropagate(() => deleteView(view, tracking, DeleteView))
+                  })
+                ])
+            ]
+          );
+        })
+      )
   ]);
 }
 
-function renameFolder (folder, UpdateFolder) {
+function renameFolder(folder, UpdateFolder) {
   openInputDialog({
     title: 'Rename folder',
     confirmLabel: 'Rename folder',
     message: 'New name for the folder',
-    input: {value: folder.title, min: 1, max: 32}
-  }).promise.then(title => UpdateFolder(assign(folder, {title})));
+    input: { value: folder.title, min: 1, max: 32 }
+  }).promise.then(title => UpdateFolder(assign(folder, { title })));
 }
 
-function deleteFolder (folder, DeleteFolder) {
-  modalDialog.openConfirmDeleteDialog({
-    title: 'Delete folder',
-    confirmLabel: 'Delete folder',
-    message: `You are about to delete the folder
+function deleteFolder(folder, DeleteFolder) {
+  modalDialog
+    .openConfirmDeleteDialog({
+      title: 'Delete folder',
+      confirmLabel: 'Delete folder',
+      message: `You are about to delete the folder
       <span class="modal-dialog__highlight">${htmlEncode(folder.title)}</span>.
       Deleting this folder will also remove all the saved views inside. If you
       want to keep your views, please drag them into another folder before
       deleting the folder.`
-  }).promise.then(() => DeleteFolder(folder));
+    })
+    .promise.then(() => DeleteFolder(folder));
 }
 
-function editViewRoles (view, endpoint, tracking, UpdateView) {
-  openRoleSelector(endpoint, view.roles)
-    .then(roles => {
-      view = assign(view, {roles});
-      tracking.viewRolesEdited(view);
-      UpdateView(view);
-    });
+function editViewRoles(view, endpoint, tracking, UpdateView) {
+  openRoleSelector(endpoint, view.roles).then(roles => {
+    view = assign(view, { roles });
+    tracking.viewRolesEdited(view);
+    UpdateView(view);
+  });
 }
 
-function editViewTitle (view, tracking, UpdateView) {
+function editViewTitle(view, tracking, UpdateView) {
   openInputDialog({
     title: 'Rename view',
     message: 'New name for the view',
     confirmLabel: 'Rename view',
-    input: {value: view.title, min: 1, max: 32}
+    input: { value: view.title, min: 1, max: 32 }
   }).promise.then(title => {
-    view = assign(view, {title});
+    view = assign(view, { title });
     tracking.viewTitleEdited(view);
     UpdateView(view);
   });
 }
 
-function deleteView (view, tracking, DeleteView) {
-  modalDialog.openConfirmDeleteDialog({
-    title: 'Delete view',
-    message: `Do you really want to delete the view
+function deleteView(view, tracking, DeleteView) {
+  modalDialog
+    .openConfirmDeleteDialog({
+      title: 'Delete view',
+      message: `Do you really want to delete the view
       <span class="modal-dialog__highlight">${htmlEncode(view.title)}</span>?`
-  }).promise.then(() => {
-    tracking.viewDeleted(view);
-    DeleteView(view);
-  });
+    })
+    .promise.then(() => {
+      tracking.viewDeleted(view);
+      DeleteView(view);
+    });
 }
 
-function isViewVisible (view, roleAssignment) {
+function isViewVisible(view, roleAssignment) {
   if (!view) {
     return false;
   }
@@ -151,17 +171,19 @@ function isViewVisible (view, roleAssignment) {
  * We always return true if the user is an admin or if the view
  * does not have the `roles` property.
  */
-function isVisibleForAssignedRoles (view, membership) {
+function isVisibleForAssignedRoles(view, membership) {
   if (membership.admin) {
     return true;
   } else {
-    return view.roles ? view.roles.some(viewRoleId => {
-      return membership.roles.some(role => viewRoleId === role.sys.id);
-    }) : true;
+    return view.roles
+      ? view.roles.some(viewRoleId => {
+          return membership.roles.some(role => viewRoleId === role.sys.id);
+        })
+      : true;
   }
 }
 
-function isContentTypeReadable (contentTypeId) {
+function isContentTypeReadable(contentTypeId) {
   if (typeof contentTypeId === 'string') {
     const can = accessChecker.canPerformActionOnEntryOfType;
     const canRead = can('read', contentTypeId);
@@ -179,7 +201,7 @@ function isContentTypeReadable (contentTypeId) {
   }
 }
 
-function doNotPropagate (fn) {
+function doNotPropagate(fn) {
   return e => {
     e.stopPropagation();
     fn(e);

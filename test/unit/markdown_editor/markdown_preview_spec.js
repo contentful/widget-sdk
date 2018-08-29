@@ -1,7 +1,7 @@
 import * as K from 'helpers/mocks/kefir';
 
 describe('Markdown preview', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     this.markdown = K.createMockProperty('__test__');
 
@@ -9,7 +9,7 @@ describe('Markdown preview', () => {
     this.makePreview = () => PreviewGenerator.default(this.markdown);
   });
 
-  it('emits preview when markdown changes', function () {
+  it('emits preview when markdown changes', function() {
     const preview$ = this.makePreview();
     this.$apply();
     let preview;

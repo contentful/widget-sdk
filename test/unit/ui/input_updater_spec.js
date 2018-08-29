@@ -3,7 +3,7 @@
 describe('ui/inputControl', () => {
   let inputEl;
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
 
     const InputUpdater = this.$inject('ui/inputUpdater');
@@ -16,17 +16,17 @@ describe('ui/inputControl', () => {
     this.updateInput = InputUpdater.create(inputEl);
   });
 
-  function resetInputAndCaret (value, caretPosition) {
+  function resetInputAndCaret(value, caretPosition) {
     inputEl.value = value;
     inputEl.selectionStart = caretPosition;
   }
 
-  afterEach(function () {
+  afterEach(function() {
     this.$inputEl.remove();
     inputEl = null;
   });
 
-  it('moves caret when changing before current position', function () {
+  it('moves caret when changing before current position', function() {
     resetInputAndCaret('AABB', 2);
     this.updateInput('XAABB');
     expect(inputEl.selectionStart).toEqual(3);
@@ -52,7 +52,7 @@ describe('ui/inputControl', () => {
     expect(inputEl.selectionStart).toEqual(2);
   });
 
-  it('does not move caret when changing after current position', function () {
+  it('does not move caret when changing after current position', function() {
     resetInputAndCaret('AABB', 2);
     this.updateInput('AAB');
     expect(inputEl.selectionStart).toEqual(2);
@@ -66,7 +66,7 @@ describe('ui/inputControl', () => {
     expect(inputEl.selectionStart).toEqual(0);
   });
 
-  it('does not update the caret when the element is not focused', function () {
+  it('does not update the caret when the element is not focused', function() {
     this.$inputEl.blur();
     resetInputAndCaret('AABB', 2);
     this.updateInput('XAABB');

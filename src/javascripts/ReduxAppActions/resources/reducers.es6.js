@@ -1,10 +1,10 @@
 import * as actions from './actions';
 import { get, set } from 'lodash';
 
-export default function resources (state = {}, action) {
+export default function resources(state = {}, action) {
   const { spaceId } = action;
 
-  function setCurrentState (update) {
+  function setCurrentState(update) {
     const currentResourceState = get(state, `${spaceId}`);
     const newResourceState = { ...currentResourceState, ...update };
     const copiedState = { ...state };

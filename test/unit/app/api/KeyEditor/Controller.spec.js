@@ -1,12 +1,16 @@
 import ReactTestUtils from 'react-dom/test-utils';
 
 describe('app/api/KeyEditor/Controller', () => {
-  beforeEach(function () {
-    module('contentful/test', ($provide) => {
+  beforeEach(function() {
+    module('contentful/test', $provide => {
       $provide.value('navigation/closeState', sinon.spy());
       $provide.value('app/api/KeyEditor/BoilerplateCode', {
         get: sinon.stub().resolves([
-          {id: 'BP_ID', instructions: '', sourceUrl: sinon.stub().returns('https://downloadlink')}
+          {
+            id: 'BP_ID',
+            instructions: '',
+            sourceUrl: sinon.stub().returns('https://downloadlink')
+          }
         ])
       });
     });
@@ -27,16 +31,19 @@ describe('app/api/KeyEditor/Controller', () => {
     this.apiKeyRepo = this.spaceContext.apiKeyRepo;
 
     this.compile = apiKey => {
-      apiKey = _.assign({
-        sys: {
-          id: 'KEY_ID'
+      apiKey = _.assign(
+        {
+          sys: {
+            id: 'KEY_ID'
+          },
+          name: 'NAME',
+          accessToken: 'DELIVERY_TOKEN',
+          preview_api_key: {
+            accessToken: 'PREVIEW_TOKEN'
+          }
         },
-        name: 'NAME',
-        accessToken: 'DELIVERY_TOKEN',
-        preview_api_key: {
-          accessToken: 'PREVIEW_TOKEN'
-        }
-      }, apiKey);
+        apiKey
+      );
 
       const scope = $rootScope.$new();
       scope.context = {};
@@ -59,7 +66,7 @@ describe('app/api/KeyEditor/Controller', () => {
     };
   });
 
-  it('initializes input values', function () {
+  it('initializes input values', function() {
     this.spaceContext.getId.returns('SPACE_ID');
     const editor = this.compile();
     expect(editor.input.name.value).toBe('NAME');
@@ -69,7 +76,7 @@ describe('app/api/KeyEditor/Controller', () => {
   });
 
   describe('delete action', () => {
-    it('removes api key from repo', function () {
+    it('removes api key from repo', function() {
       const $state = this.$inject('$state');
       this.apiKeyRepo.remove = sinon.stub().resolves();
 
@@ -82,8 +89,8 @@ describe('app/api/KeyEditor/Controller', () => {
   });
 
   describe('save action', () => {
-    it('saves key to repo', function () {
-      this.apiKeyRepo.save = sinon.spy((data) => {
+    it('saves key to repo', function() {
+      this.apiKeyRepo.save = sinon.spy(data => {
         return this.$inject('$q').resolve(data);
       });
 
@@ -94,20 +101,23 @@ describe('app/api/KeyEditor/Controller', () => {
       this.$apply();
 
       editor.actions.save().click();
-      sinon.assert.calledWith(this.apiKeyRepo.save, sinon.match({
-        sys: {
-          id: 'KEY_ID'
-        },
-        name: 'NEW NAME'
-      }));
+      sinon.assert.calledWith(
+        this.apiKeyRepo.save,
+        sinon.match({
+          sys: {
+            id: 'KEY_ID'
+          },
+          name: 'NEW NAME'
+        })
+      );
     });
   });
 
-  function findInput (el, name) {
+  function findInput(el, name) {
     return el.querySelectorAll(`input[name="${name}"]`)[0];
   }
 
-  function findButton (el, testId) {
+  function findButton(el, testId) {
     return el.querySelectorAll(`button[data-test-id="${testId}"]`)[0];
   }
 });

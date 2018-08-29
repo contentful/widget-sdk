@@ -1,4 +1,4 @@
-import {h} from 'ui/Framework';
+import { h } from 'ui/Framework';
 import closeIcon from 'svg/close';
 import settingsIcon from 'svg/settings';
 import scaleSvg from 'utils/ScaleSvg';
@@ -6,8 +6,8 @@ import SidepanelOrgs from './SidepanelOrgs';
 import SidepanelSpaces from './SidepanelSpaces';
 import SidepanelNoOrgs from './SidepanelNoOrgs';
 
-export default function (props) {
-  const {sidePanelIsShown, orgDropdownIsShown, closeOrgsDropdown, closeSidePanel} = props;
+export default function(props) {
+  const { sidePanelIsShown, orgDropdownIsShown, closeOrgsDropdown, closeSidePanel } = props;
 
   return h('.nav-sidepanel-container', [
     h('div', {
@@ -18,7 +18,7 @@ export default function (props) {
   ]);
 }
 
-function renderSidepanel (props) {
+function renderSidepanel(props) {
   const {
     sidePanelIsShown,
     closeOrgsDropdown,
@@ -29,43 +29,61 @@ function renderSidepanel (props) {
     currOrg
   } = props;
 
-  return h('div', {
-    className: `nav-sidepanel ${sidePanelIsShown ? 'nav-sidepanel--is-active' : ''}`,
-    ariaHidden: sidePanelIsShown ? '' : 'true',
-    onClick: closeOrgsDropdown,
-    dataTestId: 'sidepanel'
-  }, [
-    currOrg && SidepanelOrgs(props),
-    currOrg && SidepanelSpaces(props),
-    !currOrg && SidepanelNoOrgs(props),
-    canGotoOrgSettings && renderOrgActions(gotoOrgSettings, viewingOrgSettings),
-    renderCloseBtn(closeSidePanel)
-  ]);
+  return h(
+    'div',
+    {
+      className: `nav-sidepanel ${sidePanelIsShown ? 'nav-sidepanel--is-active' : ''}`,
+      ariaHidden: sidePanelIsShown ? '' : 'true',
+      onClick: closeOrgsDropdown,
+      dataTestId: 'sidepanel'
+    },
+    [
+      currOrg && SidepanelOrgs(props),
+      currOrg && SidepanelSpaces(props),
+      !currOrg && SidepanelNoOrgs(props),
+      canGotoOrgSettings && renderOrgActions(gotoOrgSettings, viewingOrgSettings),
+      renderCloseBtn(closeSidePanel)
+    ]
+  );
 }
 
-function renderOrgActions (gotoOrgSettings, viewingOrgSettings) {
-  return h('.nav-sidepanel__org-actions', {
-    dataTestId: 'sidepanel-org-actions'
-  }, [
-    h('div.nav-sidepanel__org-actions-separator-container', [
-      h('div.nav-sidepanel__org-actions-separator')
-    ]),
-    h('div', {
-      className: `nav-sidepanel__org-actions-goto-settings ${viewingOrgSettings ? 'nav-sidepanel__org-actions-goto-settings--is-active' : ''}`,
-      onClick: gotoOrgSettings,
-      dataTestId: 'sidepanel-org-actions-settings'
-    }, [
-      h('.nav-sidepanel__org-title', [
-        h('.nav-sidepanel__org-icon', [settingsIcon]),
-        h('span', ['Organization settings'])
-      ])
-    ])
-  ]);
+function renderOrgActions(gotoOrgSettings, viewingOrgSettings) {
+  return h(
+    '.nav-sidepanel__org-actions',
+    {
+      dataTestId: 'sidepanel-org-actions'
+    },
+    [
+      h('div.nav-sidepanel__org-actions-separator-container', [
+        h('div.nav-sidepanel__org-actions-separator')
+      ]),
+      h(
+        'div',
+        {
+          className: `nav-sidepanel__org-actions-goto-settings ${
+            viewingOrgSettings ? 'nav-sidepanel__org-actions-goto-settings--is-active' : ''
+          }`,
+          onClick: gotoOrgSettings,
+          dataTestId: 'sidepanel-org-actions-settings'
+        },
+        [
+          h('.nav-sidepanel__org-title', [
+            h('.nav-sidepanel__org-icon', [settingsIcon]),
+            h('span', ['Organization settings'])
+          ])
+        ]
+      )
+    ]
+  );
 }
 
-function renderCloseBtn (closeSidePanel) {
-  return h('.nav-sidepanel__close-btn', {
-    onClick: closeSidePanel,
-    dataTestId: 'sidepanel-close-btn'
-  }, [scaleSvg(closeIcon, 0.8)]);
+function renderCloseBtn(closeSidePanel) {
+  return h(
+    '.nav-sidepanel__close-btn',
+    {
+      onClick: closeSidePanel,
+      dataTestId: 'sidepanel-close-btn'
+    },
+    [scaleSvg(closeIcon, 0.8)]
+  );
 }

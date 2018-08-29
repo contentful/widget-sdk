@@ -4,7 +4,7 @@ describe('widgets/default', () => {
     getDefault = field = null;
   });
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     field = {};
     getDefault = this.$inject('widgets/default');
@@ -17,7 +17,7 @@ describe('widgets/default', () => {
 
   describe('if validations exist but are different', () => {
     beforeEach(() => {
-      field.validations = [{'size': {max: 500, min: 0}}];
+      field.validations = [{ size: { max: 500, min: 0 } }];
     });
 
     it('for a type with a dropdown widget', () => {
@@ -33,7 +33,7 @@ describe('widgets/default', () => {
 
   describe('if validations exist', () => {
     beforeEach(() => {
-      field.validations = [{'in': ['123']}];
+      field.validations = [{ in: ['123'] }];
     });
 
     it('for a type with a dropdown widget', () => {
@@ -81,29 +81,29 @@ describe('widgets/default', () => {
 
   it('if field is a list of Assets', () => {
     field.type = 'Array';
-    field.items = {type: 'Link', linkType: 'Asset'};
+    field.items = { type: 'Link', linkType: 'Asset' };
     expect(getDefault(field, 'displayfieldid')).toBe('assetLinksEditor');
   });
 
   it('if field is a list of Entries', () => {
     field.type = 'Array';
-    field.items = {type: 'Link', linkType: 'Entry'};
+    field.items = { type: 'Link', linkType: 'Entry' };
     expect(getDefault(field, 'displayfieldid')).toBe('entryLinksEditor');
   });
 
-  it('returns builtin widget id for each type', function () {
+  it('returns builtin widget id for each type', function() {
     const fieldFactory = this.$inject('fieldFactory');
     const builtins = this.$inject('widgets/builtin').create();
 
     _.forEach(fieldFactory.types, typeDescriptor => {
       let field = fieldFactory.createTypeInfo(typeDescriptor);
       let widgetId = getDefault(field, 'displayfieldid');
-      expect(typeof _.find(builtins, {id: widgetId})).toBe('object');
+      expect(typeof _.find(builtins, { id: widgetId })).toBe('object');
 
       if (typeDescriptor.hasListVariant) {
         field = fieldFactory.createTypeInfo(typeDescriptor, true);
         widgetId = getDefault(field, 'displayfieldid');
-        expect(typeof _.find(builtins, {id: widgetId})).toBe('object');
+        expect(typeof _.find(builtins, { id: widgetId })).toBe('object');
       }
     });
   });

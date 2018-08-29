@@ -6,7 +6,7 @@ import $location from '$location';
 import entitySelector from 'entitySelector';
 import WidgetAPIContext from './WidgetApiContext';
 
-export default function connectToWidgetAPI (Component) {
+export default function connectToWidgetAPI(Component) {
   return class extends React.Component {
     displayName = `WithWidgetAPI(${getDisplayName(Component)})`;
     static propTypes = {
@@ -18,19 +18,15 @@ export default function connectToWidgetAPI (Component) {
       isDisabled: true,
       currentUrl: $location.absUrl()
     };
-    componentWillMount () {
-      this.offDisabledState = this.props.field.onIsDisabledChanged(
-        this.handleDisabledChanges
-      );
-      this.offValueChanged = this.props.field.onValueChanged(
-        this.handleIncomingChanges
-      );
+    componentWillMount() {
+      this.offDisabledState = this.props.field.onIsDisabledChanged(this.handleDisabledChanges);
+      this.offValueChanged = this.props.field.onValueChanged(this.handleIncomingChanges);
 
       this.offLocationChanged = $rootScope.$on('$locationChangeSuccess', (_, currentUrl) => {
         this.setState({ currentUrl });
       });
     }
-    componentWillUnmount () {
+    componentWillUnmount() {
       this.offValueChanged();
       this.offDisabledState();
       this.offLocationChanged();
@@ -54,19 +50,17 @@ export default function connectToWidgetAPI (Component) {
       this.props.field.setValue(nextValue);
     };
 
-    render () {
+    render() {
       return (
         <WidgetAPIContext.Provider
           value={{
             widgetAPI: {
               dialogs: {
-                selectSingleEntry: () =>
-                  entitySelector.openFromField(this.props.field, 0)
+                selectSingleEntry: () => entitySelector.openFromField(this.props.field, 0)
               },
               currentUrl: this.state.currentUrl
             }
-          }}
-        >
+          }}>
           <Component
             value={this.state.value}
             isDisabled={this.state.isDisabled}
@@ -78,6 +72,6 @@ export default function connectToWidgetAPI (Component) {
   };
 }
 
-function getDisplayName (WrappedComponent) {
+function getDisplayName(WrappedComponent) {
   return WrappedComponent.displayName || WrappedComponent.name || 'Component';
 }

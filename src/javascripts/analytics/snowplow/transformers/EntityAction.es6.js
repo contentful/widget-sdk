@@ -1,5 +1,5 @@
-import {get, extend, snakeCase} from 'lodash';
-import {getSchema} from 'analytics/snowplow/Schemas';
+import { get, extend, snakeCase } from 'lodash';
+import { getSchema } from 'analytics/snowplow/Schemas';
 
 /**
  * @ngdoc service
@@ -11,7 +11,7 @@ import {getSchema} from 'analytics/snowplow/Schemas';
  * on the user's behalf. For example, during auto space creation or when a space is
  * created using an example space template.
  */
-export default function (_eventName, eventData) {
+export default function(_eventName, eventData) {
   const contexts = [getEntityContext(eventData)];
   if (eventData.template) {
     contexts.push(getSpaceTemplateContext(eventData));
@@ -23,13 +23,13 @@ export default function (_eventName, eventData) {
   if (eventData.entityAutomationScope) {
     contexts.push({
       schema: getSchema('entity_automation_scope').path,
-      data: extend({scope: eventData.entityAutomationScope.scope}, getBaseData(eventData))
+      data: extend({ scope: eventData.entityAutomationScope.scope }, getBaseData(eventData))
     });
   }
 
   if (Array.isArray(eventData.customWidgets)) {
     const schema = getSchema('extension_render').path;
-    eventData.customWidgets.forEach(data => contexts.push({schema, data}));
+    eventData.customWidgets.forEach(data => contexts.push({ schema, data }));
   }
 
   return {
@@ -38,32 +38,32 @@ export default function (_eventName, eventData) {
   };
 }
 
-function getSpaceTemplateContext (eventData) {
+function getSpaceTemplateContext(eventData) {
   return {
     schema: getSchema('space_template').path,
-    data: Object.assign({'name': eventData.template}, getBaseData(eventData))
+    data: Object.assign({ name: eventData.template }, getBaseData(eventData))
   };
 }
 
-function getEntityContext (eventData) {
+function getEntityContext(eventData) {
   const schema = getSchema(snakeCase(eventData.actionData.entity));
   return {
     schema: schema.path,
-    data: Object.assign(
-      getBaseEntityData(eventData),
-      getEntitySpecificData(schema.name, eventData)
-    )
+    data: Object.assign(getBaseEntityData(eventData), getEntitySpecificData(schema.name, eventData))
   };
 }
 
-function getBaseEntityData (eventData) {
-  return Object.assign({
-    action: eventData.actionData.action,
-    version: eventData.response.data.sys.version
-  }, getBaseData(eventData));
+function getBaseEntityData(eventData) {
+  return Object.assign(
+    {
+      action: eventData.actionData.action,
+      version: eventData.response.data.sys.version
+    },
+    getBaseData(eventData)
+  );
 }
 
-function getEntitySpecificData (schemaName, eventData) {
+function getEntitySpecificData(schemaName, eventData) {
   const data = {};
   data[`${schemaName}_id`] = get(eventData, 'response.data.sys.id');
   // We track 2 additional fields on entries compared to all other entities
@@ -74,7 +74,7 @@ function getEntitySpecificData (schemaName, eventData) {
   return data;
 }
 
-function getBaseData (eventData) {
+function getBaseData(eventData) {
   return {
     executing_user_id: eventData.userId,
     organization_id: eventData.organizationId,

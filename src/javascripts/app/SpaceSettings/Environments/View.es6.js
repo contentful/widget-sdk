@@ -21,19 +21,21 @@ import Icon from 'ui/Components/Icon';
 import CopyIconButton from 'ui/Components/CopyIconButton';
 import { Tooltip } from 'react-tippy';
 
-export default function render (state, actions) {
+export default function render(state, actions) {
   return Workbench.withSidebar({
     header: Workbench.header({
-      title: [ 'Environments' ],
+      title: ['Environments'],
       icon: pageSettingsIcon
     }),
     sidebar: sidebar(state, actions),
-    content: container({
-      padding: '0em 1em'
-    }, [ environmentList(state, actions) ])
+    content: container(
+      {
+        padding: '0em 1em'
+      },
+      [environmentList(state, actions)]
+    )
   });
 }
-
 
 /**
  * Renders
@@ -42,41 +44,44 @@ export default function render (state, actions) {
  * - A paginator for the items
  * - A warning message if loading the items failed
  */
-function environmentList ({
-  isLoading,
-  loadingError,
-  items
-}, {
-  OpenDeleteDialog,
-  OpenEditDialog
-}) {
-  const environments = items.map((env) => assign(env, {
-    Delete: () => OpenDeleteDialog(env),
-    Edit: () => OpenEditDialog(env)
-  }));
+function environmentList({ isLoading, loadingError, items }, { OpenDeleteDialog, OpenEditDialog }) {
+  const environments = items.map(env =>
+    assign(env, {
+      Delete: () => OpenDeleteDialog(env),
+      Edit: () => OpenEditDialog(env)
+    })
+  );
 
   if (loadingError) {
     return h('.note-box--warning', [
       `The list of environments failed to load, try refreshing the page. If
-      the problem persists `, linkOpen(['contact support'], Config.supportUrl)
+      the problem persists `,
+      linkOpen(['contact support'], Config.supportUrl)
     ]);
   } else {
-    return h('div', {
-      dataTestId: 'environmentList',
-      ariaBusy: isLoading ? 'true' : 'false'
-    }, [
-      container({
-        position: 'relative',
-        minHeight: '6em'
-      }, [
-        isLoading &&
-          h('.loading-box--stretched', [
-            h('.loading-box__spinner'),
-            h('.loading-box__message', ['Loading'])
-          ]),
-        environmentTable(environments)
-      ])
-    ]);
+    return h(
+      'div',
+      {
+        dataTestId: 'environmentList',
+        ariaBusy: isLoading ? 'true' : 'false'
+      },
+      [
+        container(
+          {
+            position: 'relative',
+            minHeight: '6em'
+          },
+          [
+            isLoading &&
+              h('.loading-box--stretched', [
+                h('.loading-box__spinner'),
+                h('.loading-box__message', ['Loading'])
+              ]),
+            environmentTable(environments)
+          ]
+        )
+      ]
+    );
   }
 }
 
@@ -90,7 +95,7 @@ const FAILED_TOOLTIP = [
   'delete it and create it again, if that doesn’t work contact support.'
 ].join('');
 
-function environmentTable (environments) {
+function environmentTable(environments) {
   if (environments.length === 0) {
     return h('div');
   }
@@ -100,86 +105,95 @@ function environmentTable (environments) {
       th({ style: { width: '50%' } }, ['ID']),
       th({ style: { width: '30%' } }, ['Status']),
       th({ style: { width: '9em' } }, ['Actions'])
-    ], environments.map((environment) => {
-      return tr({
-        key: environment.id,
-        dataTestId: `environment.${environment.id}`
-      }, [
-        td([
-          hbox([
-            codeFragment([ environment.id ]),
-            ihspace('6px'),
-            h(CopyIconButton, { value: environment.id }),
-            ihspace('1.2em'),
-            environment.isMaster && badge({ color: Colors.textLight }, ['Default environment'])
-          ])
-        ]),
-        td([
-          caseofEq(environment.status, [
-            ['ready', () => badge({ color: Colors.greenDark }, ['Ready'])],
-            ['inProgress', () => {
-              return badge({ color: Colors.orangeDark }, [
-                'In progress',
-                questionMarkWithTooltip({tooltip: IN_PROGRESS_TOOLTIP})
-              ]);
-            }],
-            ['failed', () => {
-              return badge({ color: Colors.redDark }, [
-                'Failed to create',
-                questionMarkWithTooltip({tooltip: FAILED_TOOLTIP})
-              ]);
-            }]
-          ])
-        ]),
-        td([
-          deleteButton(environment)
-        ])
-      ]);
+    ],
+    environments.map(environment => {
+      return tr(
+        {
+          key: environment.id,
+          dataTestId: `environment.${environment.id}`
+        },
+        [
+          td([
+            hbox([
+              codeFragment([environment.id]),
+              ihspace('6px'),
+              h(CopyIconButton, { value: environment.id }),
+              ihspace('1.2em'),
+              environment.isMaster && badge({ color: Colors.textLight }, ['Default environment'])
+            ])
+          ]),
+          td([
+            caseofEq(environment.status, [
+              ['ready', () => badge({ color: Colors.greenDark }, ['Ready'])],
+              [
+                'inProgress',
+                () => {
+                  return badge({ color: Colors.orangeDark }, [
+                    'In progress',
+                    questionMarkWithTooltip({ tooltip: IN_PROGRESS_TOOLTIP })
+                  ]);
+                }
+              ],
+              [
+                'failed',
+                () => {
+                  return badge({ color: Colors.redDark }, [
+                    'Failed to create',
+                    questionMarkWithTooltip({ tooltip: FAILED_TOOLTIP })
+                  ]);
+                }
+              ]
+            ])
+          ]),
+          td([deleteButton(environment)])
+        ]
+      );
     })
   );
 }
 
-function questionMarkWithTooltip ({ tooltip }) {
-  return h('span', {
-    title: tooltip,
-    style: {
-      cursor: 'pointer'
-    }
-  }, [
-    ihspace('10px'),
-    questionMarkIcon()
-  ]);
+function questionMarkWithTooltip({ tooltip }) {
+  return h(
+    'span',
+    {
+      title: tooltip,
+      style: {
+        cursor: 'pointer'
+      }
+    },
+    [ihspace('10px'), questionMarkIcon()]
+  );
 }
 
-
-function deleteButton (environment) {
-  return h('button.text-link--destructive', {
-    dataTestId: 'openDeleteDialog',
-    disabled: environment.isMaster,
-    onClick: environment.Delete
-  }, [ 'Delete' ]);
+function deleteButton(environment) {
+  return h(
+    'button.text-link--destructive',
+    {
+      dataTestId: 'openDeleteDialog',
+      disabled: environment.isMaster,
+      onClick: environment.Delete
+    },
+    ['Delete']
+  );
 }
 
-
-function sidebar ({
-  canCreateEnv,
-  resource,
-  organizationId,
-  isLegacyOrganization,
-  canUpgradeSpace,
-  incentivizeUpgradeEnabled
-}, {
-  OpenCreateDialog,
-  OpenUpgradeSpaceDialog
-}) {
+function sidebar(
+  {
+    canCreateEnv,
+    resource,
+    organizationId,
+    isLegacyOrganization,
+    canUpgradeSpace,
+    incentivizeUpgradeEnabled
+  },
+  { OpenCreateDialog, OpenUpgradeSpaceDialog }
+) {
   // Master is not included in the api, display +1 usage and limit
   const usage = resource.usage + 1;
   const limit = get(resource, 'limits.maximum', -1) + 1;
 
   return [
-    h('h2.entity-sidebar__heading', [
-      'Usage'
-    ]),
+    h('h2.entity-sidebar__heading', ['Usage']),
     h('.entity-sidebar__text-profile', [
       h('p', { dataTestId: 'environmentsUsage' }, [
         `You are using ${usage} `,
@@ -191,46 +205,60 @@ function sidebar ({
         !isLegacyOrganization && usageTooltip({ resource })
       ]),
       // Don't show limits and upgrade info for v1 orgs
-      !canCreateEnv && !isLegacyOrganization && h('p', [
-        limit > 1 && 'Delete existing environments or ',
-        canUpgradeSpace && (limit > 1 ? 'change ' : 'Change '),
-        !canUpgradeSpace && `${limit > 1 ? 'ask' : 'Ask'} the administrator of your organization to change `,
-        'the space to add more.'
-      ])
+      !canCreateEnv &&
+        !isLegacyOrganization &&
+        h('p', [
+          limit > 1 && 'Delete existing environments or ',
+          canUpgradeSpace && (limit > 1 ? 'change ' : 'Change '),
+          !canUpgradeSpace &&
+            `${limit > 1 ? 'ask' : 'Ask'} the administrator of your organization to change `,
+          'the space to add more.'
+        ])
     ]),
     h('.entity-sidebar__widget', [
-      canCreateEnv && h('button.btn-action.x--block', {
-        dataTestId: 'openCreateDialog',
-        onClick: OpenCreateDialog
-      }, [ 'Add environment' ]),
-      !canCreateEnv && !isLegacyOrganization && canUpgradeSpace &&
+      canCreateEnv &&
+        h(
+          'button.btn-action.x--block',
+          {
+            dataTestId: 'openCreateDialog',
+            onClick: OpenCreateDialog
+          },
+          ['Add environment']
+        ),
+      !canCreateEnv &&
+        !isLegacyOrganization &&
+        canUpgradeSpace &&
         upgradeButton({ organizationId, incentivizeUpgradeEnabled }, { OpenUpgradeSpaceDialog })
     ]),
 
-    usage === 1 && h('h2.entity-sidebar__heading', [
-      'Documentation'
-    ]),
-    usage === 1 && h('.entity-sidebar__text-profile', [
-      h('p', [
-        `Environments allow you to modify the data in your space
+    usage === 1 && h('h2.entity-sidebar__heading', ['Documentation']),
+    usage === 1 &&
+      h('.entity-sidebar__text-profile', [
+        h('p', [
+          `Environments allow you to modify the data in your space
         without affecting the data in your master environment.`
-      ]),
-      h('ul', [
-        h('li', [
-          'Read more in the ',
-          h('a', {
-            href: 'http://ctf-doc-app-branch-environments.netlify.com/developers/docs/concepts/domain-model/',
-            target: '_blank',
-            rel: 'noopener'
-          }, ['Contentful domain model']),
-          ' document.'
+        ]),
+        h('ul', [
+          h('li', [
+            'Read more in the ',
+            h(
+              'a',
+              {
+                href:
+                  'http://ctf-doc-app-branch-environments.netlify.com/developers/docs/concepts/domain-model/',
+                target: '_blank',
+                rel: 'noopener'
+              },
+              ['Contentful domain model']
+            ),
+            ' document.'
+          ])
         ])
       ])
-    ])
   ];
 }
 
-function usageTooltip ({ resource }) {
+function usageTooltip({ resource }) {
   const limit = get(resource, 'limits.maximum');
   if (!limit) {
     return null;
@@ -239,7 +267,7 @@ function usageTooltip ({ resource }) {
   const tooltipContent = (
     <div>
       This space type includes {pluralize('sandbox environment', limit, true)}
-      <br/>
+      <br />
       additional to the master environment
     </div>
   );
@@ -255,7 +283,9 @@ function usageTooltip ({ resource }) {
       arrow
       duration={0}
       trigger="mouseenter">
-      <span data-test-id="environments-usage-tooltip"><Icon name='question-mark' /></span>
+      <span data-test-id="environments-usage-tooltip">
+        <Icon name="question-mark" />
+      </span>
     </Tooltip>
   );
 }
@@ -264,18 +294,26 @@ usageTooltip.propTypes = {
   resource: PropTypes.object.isRequired
 };
 
-function upgradeButton ({ organizationId, incentivizeUpgradeEnabled }, { OpenUpgradeSpaceDialog }) {
+function upgradeButton({ organizationId, incentivizeUpgradeEnabled }, { OpenUpgradeSpaceDialog }) {
   if (incentivizeUpgradeEnabled) {
-    return h('button.btn-action.x--block', {
-      dataTestId: 'openUpgradeDialog',
-      onClick: () => OpenUpgradeSpaceDialog()
-    }, [ 'Upgrade space' ]);
+    return h(
+      'button.btn-action.x--block',
+      {
+        dataTestId: 'openUpgradeDialog',
+        onClick: () => OpenUpgradeSpaceDialog()
+      },
+      ['Upgrade space']
+    );
   } else {
     return h('span', [
-      h('a.text-link', {
-        href: href(subscriptionState(organizationId, false)),
-        dataTestId: 'subscriptionLink'
-      }, ['Go to the subscription page']),
+      h(
+        'a.text-link',
+        {
+          href: href(subscriptionState(organizationId, false)),
+          dataTestId: 'subscriptionLink'
+        },
+        ['Go to the subscription page']
+      ),
       ' to upgrade'
     ]);
   }

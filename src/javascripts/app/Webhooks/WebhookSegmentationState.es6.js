@@ -2,10 +2,19 @@ import { cloneDeep } from 'lodash';
 
 // We introduce this special object to mark double asterisk "*.*" wildcard.
 // We check the reference with `===` in the component using this module.
-export const WILDCARD = {isDoubleAsteriskWildcard: true};
+export const WILDCARD = { isDoubleAsteriskWildcard: true };
 
 export const ENTITY_TYPES = ['ContentType', 'Entry', 'Asset'];
-export const ACTIONS = ['create', 'save', 'auto_save', 'archive', 'unarchive', 'publish', 'unpublish', 'delete'];
+export const ACTIONS = [
+  'create',
+  'save',
+  'auto_save',
+  'archive',
+  'unarchive',
+  'publish',
+  'unpublish',
+  'delete'
+];
 export const DISABLED = { ContentType: ['auto_save', 'archive', 'unarchive'] };
 
 export const TYPE_LABELS = {
@@ -32,12 +41,14 @@ export const ACTION_LABELS = {
 //   }
 // }
 //
-export function createMap (defaultValue) {
+export function createMap(defaultValue) {
   const map = {};
 
   ENTITY_TYPES.forEach(type => {
     map[type] = {};
-    ACTIONS.forEach(action => { map[type][action] = defaultValue; });
+    ACTIONS.forEach(action => {
+      map[type][action] = defaultValue;
+    });
   });
 
   return map;
@@ -45,7 +56,7 @@ export function createMap (defaultValue) {
 
 // Change value of specific action under given entity type.
 // This function is pure and returns a new object
-export function changeAction (map, entityType, action, checked) {
+export function changeAction(map, entityType, action, checked) {
   if (action === '*') {
     return changeAllActionsByEntityType(map, entityType, checked);
   }
@@ -61,26 +72,26 @@ export function changeAction (map, entityType, action, checked) {
 
 // Change value of all actions matching given entity type.
 // This function is pure and returns a new object
-export function changeAllActionsByEntityType (map, entityType, value) {
+export function changeAllActionsByEntityType(map, entityType, value) {
   const result = cloneDeep(map);
-  ACTIONS
-    .filter(a => !isActionDisabled(entityType, a))
-    .forEach(a => { result[entityType][a] = value; });
+  ACTIONS.filter(a => !isActionDisabled(entityType, a)).forEach(a => {
+    result[entityType][a] = value;
+  });
   return result;
 }
 
 // Change specific action under all types.
 // This function is pure and returns a new object
-export function changeAllTypesByAction (map, action, value) {
+export function changeAllTypesByAction(map, action, value) {
   const result = cloneDeep(map);
-  ENTITY_TYPES
-    .filter(t => !isActionDisabled(t, action))
-    .forEach(t => { result[t][action] = value; });
+  ENTITY_TYPES.filter(t => !isActionDisabled(t, action)).forEach(t => {
+    result[t][action] = value;
+  });
   return result;
 }
 
 // Return value of a specific action and entity type.
-export function isActionChecked (map, type, action) {
+export function isActionChecked(map, type, action) {
   if (type === '*') {
     return areAllEntityTypesChecked(map, action);
   }
@@ -92,17 +103,17 @@ export function isActionChecked (map, type, action) {
   return map[type][action];
 }
 
-export function isActionDisabled (type, action) {
+export function isActionDisabled(type, action) {
   return DISABLED[type] && DISABLED[type].includes(action);
 }
 
 // Is all actions *under given entity type* checked ?
-export function areAllActionsChecked (map, entityType) {
+export function areAllActionsChecked(map, entityType) {
   return ACTIONS.filter(a => !isActionDisabled(entityType, a)).every(a => map[entityType][a]);
 }
 
 // Is all types *matching given action* checked ?
-export function areAllEntityTypesChecked (map, action) {
+export function areAllEntityTypesChecked(map, action) {
   return ENTITY_TYPES.filter(t => !isActionDisabled(t, action)).every(t => map[t][action]);
 }
 
@@ -112,7 +123,7 @@ export function areAllEntityTypesChecked (map, action) {
 //   "ContentType.*",
 //   "Entry.Archive"
 // ]
-export function transformMapToTopics (map) {
+export function transformMapToTopics(map) {
   if (map === WILDCARD) {
     return ['*.*'];
   }
@@ -143,9 +154,8 @@ export function transformMapToTopics (map) {
   return result;
 }
 
-
 // Take a list of topics, convert them into a simple map of entity types and actions:
-export function transformTopicsToMap (topics) {
+export function transformTopicsToMap(topics) {
   if (!Array.isArray(topics) || topics.length < 1) {
     return createMap(false);
   }
@@ -157,14 +167,18 @@ export function transformTopicsToMap (topics) {
   const map = createMap(false);
 
   topics.forEach(topic => {
-    const [ entityType, action ] = topic.split('.');
+    const [entityType, action] = topic.split('.');
 
     if (entityType !== '*' && action !== '*') {
       map[entityType][action] = true;
     } else if (entityType === '*') {
-      ENTITY_TYPES.forEach(t => { map[t][action] = true; });
+      ENTITY_TYPES.forEach(t => {
+        map[t][action] = true;
+      });
     } else if (action === '*') {
-      ACTIONS.forEach(a => { map[entityType][a] = true; });
+      ACTIONS.forEach(a => {
+        map[entityType][a] = true;
+      });
     }
   });
 

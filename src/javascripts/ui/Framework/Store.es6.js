@@ -2,11 +2,9 @@ import { mapValues, memoize } from 'lodash';
 import * as K from 'utils/kefir';
 import { makeMatcher } from 'utils/TaggedValues';
 
-
 /**
  * This module exports functions to deal with reducer based stores.
  */
-
 
 /**
  * Create a Redux-like reducer store.
@@ -34,7 +32,7 @@ import { makeMatcher } from 'utils/TaggedValues';
  * - Exposes `$state` property instead of `subscribe`
  * - No `replaceReducer` method. Using it is an anti pattern.
  */
-export function createStore (initial, reduce) {
+export function createStore(initial, reduce) {
   const stateBus = K.createPropertyBus(initial);
   const state$ = stateBus.property;
 
@@ -43,11 +41,11 @@ export function createStore (initial, reduce) {
     dispatch
   };
 
-  function getState () {
+  function getState() {
     return K.getValue(state$);
   }
 
-  function dispatch (actionCtor, value) {
+  function dispatch(actionCtor, value) {
     const action = actionCtor(value);
     const nextState = reduce(action, getState());
     stateBus.set(nextState);
@@ -66,12 +64,11 @@ export function createStore (initial, reduce) {
  *
  * Similar to `bindActions` from redux.
  */
-export function bindActions (store, actions) {
-  return mapValues(actions, (ctor) => {
-    return (value) => store.dispatch(ctor, value);
+export function bindActions(store, actions) {
+  return mapValues(actions, ctor => {
+    return value => store.dispatch(ctor, value);
   });
 }
-
 
 /**
  * From an object that maps action tags to reducers create a function
@@ -87,12 +84,13 @@ export function bindActions (store, actions) {
  * This is similar to `utils/TaggedValues.match` but flips the
  * arguments in the handler.
  */
-export function makeReducer (handlers) {
-  return makeMatcher(mapValues(handlers, (handle) => {
-    return (value, state, ...args) => handle(state, value, ...args);
-  }));
+export function makeReducer(handlers) {
+  return makeMatcher(
+    mapValues(handlers, handle => {
+      return (value, state, ...args) => handle(state, value, ...args);
+    })
+  );
 }
-
 
 /**
  * WARNING -- This method is experimental and represents a temporary
@@ -122,11 +120,11 @@ export function makeReducer (handlers) {
  * - `substate.view` The result of calling the corresponding components
  *   render function with its current state.
  */
-export function combineStoreComponents (render, components) {
-  const statePropertiesMap = mapValues(components, (c) => {
+export function combineStoreComponents(render, components) {
+  const statePropertiesMap = mapValues(components, c => {
     const actions = bindActions(c.store, c.actions);
 
-    return c.store.state$.map((state) => {
+    return c.store.state$.map(state => {
       const memoizedRender = memoize(() => {
         if (c.render) {
           return c.render(state, actions);
@@ -137,11 +135,13 @@ export function combineStoreComponents (render, components) {
         state,
         actions,
         // We compute the view lazily
-        get view () { return memoizedRender(); }
+        get view() {
+          return memoizedRender();
+        }
       };
     });
   });
 
   const state$ = K.combinePropertiesObject(statePropertiesMap);
-  return {render, actions: {}, store: {state$}};
+  return { render, actions: {}, store: { state$ } };
 }

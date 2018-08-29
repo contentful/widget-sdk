@@ -1,6 +1,6 @@
-import {get, uniqueId} from 'lodash';
-import {getAllSpaces, getUsersByIds} from 'access_control/OrganizationMembershipRepository';
-import {getCurrentVariation} from 'utils/LaunchDarkly';
+import { get, uniqueId } from 'lodash';
+import { getAllSpaces, getUsersByIds } from 'access_control/OrganizationMembershipRepository';
+import { getCurrentVariation } from 'utils/LaunchDarkly';
 
 const alphaHeader = {
   'x-contentful-enable-alpha-feature': 'subscriptions-api'
@@ -21,12 +21,15 @@ export const productTypes = {
  * @returns {Promise<object>}
  *
  */
-export function getSubscriptionPlans (endpoint, params) {
-  return endpoint({
-    method: 'GET',
-    path: ['plans'],
-    query: params
-  }, alphaHeader);
+export function getSubscriptionPlans(endpoint, params) {
+  return endpoint(
+    {
+      method: 'GET',
+      path: ['plans'],
+      query: params
+    },
+    alphaHeader
+  );
 }
 
 /**
@@ -34,11 +37,13 @@ export function getSubscriptionPlans (endpoint, params) {
  * @param {object} endpoint an organization endpoint
  * @returns {Promise<object>} base plan object
  */
-export function getBasePlan (endpoint) {
-  return getSubscriptionPlans(endpoint, {plan_type: 'base'})
-    // although you can only have 1 base plan, the endpoint
-    // still returns a list
-    .then(data => data.items[0]);
+export function getBasePlan(endpoint) {
+  return (
+    getSubscriptionPlans(endpoint, { plan_type: 'base' })
+      // although you can only have 1 base plan, the endpoint
+      // still returns a list
+      .then(data => data.items[0])
+  );
 }
 
 /**
@@ -48,16 +53,18 @@ export function getBasePlan (endpoint) {
  * @param {object} endpoint an organization endpoint
  * @returns {Promise<object[]>} array of subscription plans w. spaces & users
  */
-export async function getPlansWithSpaces (endpoint) {
+export async function getPlansWithSpaces(endpoint) {
   const [baseRatePlan, plans, spaces, usePOC] = await Promise.all([
     getBaseRatePlan(endpoint),
     getSubscriptionPlans(endpoint),
     getAllSpaces(endpoint),
     isPOCEnabled()
   ]);
-  const findSpaceByPlan = plan => plan.gatekeeperKey && spaces.find(({sys}) => sys.id === plan.gatekeeperKey);
+  const findSpaceByPlan = plan =>
+    plan.gatekeeperKey && spaces.find(({ sys }) => sys.id === plan.gatekeeperKey);
   // Map spaces to space plans, create 'free plan' objects for spaces w/o plans
-  const isFreeSpace = space => !plans.items.find(({gatekeeperKey}) => space.sys.id === gatekeeperKey);
+  const isFreeSpace = space =>
+    !plans.items.find(({ gatekeeperKey }) => space.sys.id === gatekeeperKey);
   const freeSpaces = spaces.filter(isFreeSpace);
   // TODO: use subscription insted of product to extract the productType from
   // The product catalog can change and the subscription could be from a legacy product
@@ -67,48 +74,51 @@ export async function getPlansWithSpaces (endpoint) {
     plans,
     items: [
       // Space plans from the endpoint
-      ...plans.items.map((plan) => ({
+      ...plans.items.map(plan => ({
         ...plan,
         space: findSpaceByPlan(plan)
       })),
       // 'Free plan' objects for spaces w/o a space plan
-      ...freeSpaces.map((space) => ({
-        sys: {id: uniqueId('free-space-plan-')},
+      ...freeSpaces.map(space => ({
+        sys: { id: uniqueId('free-space-plan-') },
         gatekeeperKey: space.sys.id,
         planType: 'space',
-        name: (isEnterprise && usePOC) ? 'Proof of concept' : 'Free',
+        name: isEnterprise && usePOC ? 'Proof of concept' : 'Free',
         space
       }))
     ]
   };
 
   // Load `createdBy` users for all spaces
-  const userIds = plansWithSpaces.items.map(({space}) => get(space, 'sys.createdBy.sys.id'));
+  const userIds = plansWithSpaces.items.map(({ space }) => get(space, 'sys.createdBy.sys.id'));
   const users = await getUsersByIds(endpoint, userIds);
-    // Map users to spaces
+  // Map users to spaces
   return {
     ...plansWithSpaces,
-    items: plansWithSpaces.items.map((plan) => ({
+    items: plansWithSpaces.items.map(plan => ({
       ...plan,
       space: plan.space && {
         ...plan.space,
         sys: {
           ...plan.space.sys,
-          createdBy: users.find(({sys}) => sys.id === plan.space.sys.createdBy.sys.id)
+          createdBy: users.find(({ sys }) => sys.id === plan.space.sys.createdBy.sys.id)
         }
       }
     }))
   };
 }
 
-export function changeSpace (endpoint, planId) {
-  return endpoint({
-    method: 'PUT',
-    path: [],
-    data: {
-      productRatePlanId: planId
-    }
-  }, alphaHeader);
+export function changeSpace(endpoint, planId) {
+  return endpoint(
+    {
+      method: 'PUT',
+      path: [],
+      data: {
+        productRatePlanId: planId
+      }
+    },
+    alphaHeader
+  );
 }
 
 /**
@@ -117,41 +127,47 @@ export function changeSpace (endpoint, planId) {
  * @returns {Promise<object[]>} array of features in {name, internal_name}
  * format.
  */
-export function getEnabledFeatures (endpoint) {
-  return endpoint({
-    method: 'GET',
-    path: ['features']
-  }, alphaHeader).then(features => (features && features.items) || []);
+export function getEnabledFeatures(endpoint) {
+  return endpoint(
+    {
+      method: 'GET',
+      path: ['features']
+    },
+    alphaHeader
+  ).then(features => (features && features.items) || []);
 }
 
 /* Gets the space plan for the space with corresponding space id
  * @param {object} endpoint an organization endpoint
  * @returns {Promise<object>} space plan object
  */
-export function getSingleSpacePlan (endpoint, spaceId) {
+export function getSingleSpacePlan(endpoint, spaceId) {
   return getSubscriptionPlans(endpoint, {
-    plan_type: 'space', gatekeeper_key: spaceId
-  })
-    .then(data => data.items[0]);
+    plan_type: 'space',
+    gatekeeper_key: spaceId
+  }).then(data => data.items[0]);
 }
 
-export function getBaseRatePlan (endpoint) {
+export function getBaseRatePlan(endpoint) {
   const query = {
     plan_type: 'base'
   };
 
-  return endpoint({
-    method: 'GET',
-    path: ['product_rate_plans'],
-    query: query
-  }, alphaHeader).then((data) => data.items[0]);
+  return endpoint(
+    {
+      method: 'GET',
+      path: ['product_rate_plans'],
+      query: query
+    },
+    alphaHeader
+  ).then(data => data.items[0]);
 }
 
 /* Gets collection of space product rate plans.
  * @param {object} endpoint an organization endpoint
  * @returns {Promise<object[]>} product rate plans
  */
-export function getSpaceRatePlans (endpoint, spaceId) {
+export function getSpaceRatePlans(endpoint, spaceId) {
   const query = {
     plan_type: 'space'
   };
@@ -160,11 +176,14 @@ export function getSpaceRatePlans (endpoint, spaceId) {
     query.space_id = spaceId;
   }
 
-  return endpoint({
-    method: 'GET',
-    path: ['product_rate_plans'],
-    query: query
-  }, alphaHeader).then((data) => data.items);
+  return endpoint(
+    {
+      method: 'GET',
+      path: ['product_rate_plans'],
+      query: query
+    },
+    alphaHeader
+  ).then(data => data.items);
 }
 
 /**
@@ -172,17 +191,14 @@ export function getSpaceRatePlans (endpoint, spaceId) {
  * @param {object[]} subscriptionPlans
  * @returns {number}
  */
-export function calculateTotalPrice (subscriptionPlans) {
-  return subscriptionPlans.reduce(
-    (total, plan) => total + (parseInt(plan.price, 10) || 0),
-    0
-  );
+export function calculateTotalPrice(subscriptionPlans) {
+  return subscriptionPlans.reduce((total, plan) => total + (parseInt(plan.price, 10) || 0), 0);
 }
 
 /**
  * Check feature flag for Proof of Concept spaces in Enterprise orgs
  * @returns {Promise<Boolean>}
  */
-export function isPOCEnabled () {
+export function isPOCEnabled() {
   return getCurrentVariation('feature-bv-07-2018-enterprise-poc-spaces');
 }

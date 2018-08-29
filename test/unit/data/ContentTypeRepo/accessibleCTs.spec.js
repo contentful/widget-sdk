@@ -4,7 +4,7 @@ describe('data/ContentTypeRepo/accessibleCTs', () => {
   let accessibleCTs;
   const accessibleCTsIds = [1, 2, 3];
 
-  beforeEach(function* () {
+  beforeEach(function*() {
     this.system = createIsolatedSystem();
     this.system.set('access_control/AccessChecker', {
       canPerformActionOnEntryOfType: (_, id) => accessibleCTsIds.indexOf(id) > -1,
@@ -12,9 +12,7 @@ describe('data/ContentTypeRepo/accessibleCTs', () => {
         READ: 'read'
       }
     });
-    accessibleCTs = yield this.system.import(
-      'data/ContentTypeRepo/accessibleCTs'
-    );
+    accessibleCTs = yield this.system.import('data/ContentTypeRepo/accessibleCTs');
 
     accessibleCTs = accessibleCTs.default;
   });
@@ -47,13 +45,11 @@ describe('data/ContentTypeRepo/accessibleCTs', () => {
     testData.forEach(testData => {
       publishedCTs.getAllBare = () => testData.bareCTs;
 
-      expect(accessibleCTs(publishedCTs, testData.selectedCtId)).toEqual(
-        testData.expected
-      );
+      expect(accessibleCTs(publishedCTs, testData.selectedCtId)).toEqual(testData.expected);
     });
   });
 
-  function ctMock (ct) {
+  function ctMock(ct) {
     return {
       sys: { id: ct.id },
       displayField: ct.displayField,

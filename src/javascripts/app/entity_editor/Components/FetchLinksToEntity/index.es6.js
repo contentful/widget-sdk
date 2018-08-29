@@ -16,31 +16,25 @@ export const RequestState = {
 const FetchLinksToEntity = createReactClass({
   propTypes: {
     id: PropTypes.string.isRequired,
-    type: PropTypes.oneOf([
-      EntityType.ASSET,
-      EntityType.ENTRY
-    ]).isRequired,
-    origin: PropTypes.oneOf([
-      IncomingLinksOrigin.DIALOG,
-      IncomingLinksOrigin.SIDEBAR
-    ]),
+    type: PropTypes.oneOf([EntityType.ASSET, EntityType.ENTRY]).isRequired,
+    origin: PropTypes.oneOf([IncomingLinksOrigin.DIALOG, IncomingLinksOrigin.SIDEBAR]),
     render: PropTypes.func.isRequired
   },
-  getInitialState () {
+  getInitialState() {
     return {
       links: [],
       requestState: RequestState.PENDING
     };
   },
-  componentDidMount () {
+  componentDidMount() {
     this.fetchLinks(this.props);
   },
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (this.props.id !== nextProps.id) {
       this.fetchLinks(nextProps);
     }
   },
-  fetchLinks ({ id, type }) {
+  fetchLinks({ id, type }) {
     fetchLinks(id, type).then(
       links => {
         this.setState(() => ({
@@ -63,7 +57,7 @@ const FetchLinksToEntity = createReactClass({
       }
     );
   },
-  render () {
+  render() {
     return this.props.render(this.state);
   }
 });

@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 import { TEASteps, STEPS_KEYS } from './OnboardingWithTeaSteps';
 import { getStore } from 'TheStore';
 import spaceContext from 'spaceContext';
-import {track, updateUserInSegment} from 'analytics/Analytics';
+import { track, updateUserInSegment } from 'analytics/Analytics';
 import $state from '$state';
-import {findKey, omit, times} from 'lodash';
+import { findKey, omit, times } from 'lodash';
 
 const GROUP_ID = 'tea_onboarding_steps';
 
@@ -17,8 +17,8 @@ const store = getStore('local');
  * to `this` in the constructor (we don't have one).
  * So we create constants every time we need them
  * @returns {Object} - object with all constants
-*/
-function getProgressConstants () {
+ */
+function getProgressConstants() {
   const spaceId = spaceContext.getId();
 
   return {
@@ -30,7 +30,7 @@ function getProgressConstants () {
 }
 
 // function to generate progress names in unified way
-function createProgressConstant ({ spaceId, text }) {
+function createProgressConstant({ spaceId, text }) {
   return `ctfl:${spaceId}:progressTEA:${text}`;
 }
 
@@ -39,13 +39,12 @@ function createProgressConstant ({ spaceId, text }) {
  * @param {any} value - truthy/falsy value
  * @returns {Number} - 0/1, depending on the value
  */
-function boolToNumber (value) {
+function boolToNumber(value) {
   return Number(Boolean(value));
 }
 
-
 export const OnboardingWithTea = createReactClass({
-  getInitialState () {
+  getInitialState() {
     const constants = getProgressConstants();
     const state = {
       [STEPS_KEYS.VIEW_SAMPLE_CONTENT]: { isDone: store.get(constants.viewContent) || false },
@@ -59,24 +58,29 @@ export const OnboardingWithTea = createReactClass({
       ...state
     };
   },
-  componentDidMount () {
-    spaceContext.endpoint({
-      method: 'GET',
-      path: ['users']
-    }).then((res) => {
-      this.setState({
-        [STEPS_KEYS.INVITE_DEV]: { isDone: res.items.length > 1 }
+  componentDidMount() {
+    spaceContext
+      .endpoint({
+        method: 'GET',
+        path: ['users']
+      })
+      .then(res => {
+        this.setState({
+          [STEPS_KEYS.INVITE_DEV]: { isDone: res.items.length > 1 }
+        });
       });
-    });
   },
-  getOpenQuestion (state) {
-    return findKey(state, ({isDone}) => !isDone);
+  getOpenQuestion(state) {
+    return findKey(state, ({ isDone }) => !isDone);
   },
-  markAsDone (newState) {
-    const steps = omit({
-      ...this.state,
-      ...newState
-    }, 'expanded');
+  markAsDone(newState) {
+    const steps = omit(
+      {
+        ...this.state,
+        ...newState
+      },
+      'expanded'
+    );
     const stepToExpand = this.getOpenQuestion(steps);
 
     this.setState({
@@ -84,7 +88,7 @@ export const OnboardingWithTea = createReactClass({
       expanded: stepToExpand
     });
   },
-  countProgress () {
+  countProgress() {
     return [
       this.state[STEPS_KEYS.VIEW_SAMPLE_CONTENT].isDone,
       this.state[STEPS_KEYS.PREVIEW_USING_EXAMPLE_APP].isDone,
@@ -94,7 +98,7 @@ export const OnboardingWithTea = createReactClass({
       return acc + boolToNumber(value);
     }, 0);
   },
-  viewContent () {
+  viewContent() {
     const constants = getProgressConstants();
     track('element:click', {
       elementId: 'view_content',
@@ -114,7 +118,7 @@ export const OnboardingWithTea = createReactClass({
       [STEPS_KEYS.VIEW_SAMPLE_CONTENT]: { isDone: true }
     });
   },
-  viewPreview () {
+  viewPreview() {
     const constants = getProgressConstants();
     track('element:click', {
       elementId: 'view_preview',
@@ -130,7 +134,7 @@ export const OnboardingWithTea = createReactClass({
       [STEPS_KEYS.PREVIEW_USING_EXAMPLE_APP]: { isDone: true }
     });
   },
-  createEntry () {
+  createEntry() {
     const constants = getProgressConstants();
     track('element:click', {
       elementId: 'create_entry',
@@ -146,20 +150,20 @@ export const OnboardingWithTea = createReactClass({
       [STEPS_KEYS.CREATE_ENTRY]: { isDone: true }
     });
   },
-  inviteDev () {
+  inviteDev() {
     const orgId = spaceContext.space.getOrganizationId();
     const spaceId = spaceContext.space.getId();
     const inviteTrackingKey = `ctfl:${orgId}:progressTEA:inviteDevTracking`;
     store.set(inviteTrackingKey, { spaceId });
   },
-  toggleExpanding (key) {
+  toggleExpanding(key) {
     const { expanded } = this.state;
     this.setState({
       // if we toggle currently open one, just close it
       expanded: key === expanded ? null : key
     });
   },
-  render () {
+  render() {
     const progress = this.countProgress();
     const stepsProps = {
       state: this.state,
@@ -172,9 +176,9 @@ export const OnboardingWithTea = createReactClass({
       toggleExpanding: this.toggleExpanding
     };
     return (
-      <section className='home-section tea-onboarding'>
+      <section className="home-section tea-onboarding">
         <Header>
-          <h3 className='tea-onboarding__heading'>Explore the content of an Education App</h3>
+          <h3 className="tea-onboarding__heading">Explore the content of an Education App</h3>
           <Progress count={progress} total={4} />
         </Header>
         <TEASteps {...stepsProps} />
@@ -187,12 +191,8 @@ export const Header = createReactClass({
   propTypes: {
     children: PropTypes.node.isRequired
   },
-  render () {
-    return (
-      <div className='tea-onboarding__header'>
-        {this.props.children}
-      </div>
-    );
+  render() {
+    return <div className="tea-onboarding__header">{this.props.children}</div>;
   }
 });
 
@@ -201,19 +201,15 @@ export const Progress = createReactClass({
     count: PropTypes.number.isRequired,
     total: PropTypes.number.isRequired
   },
-  render () {
+  render() {
     const { count, total } = this.props;
     const pills = times(total, index => {
       const activeClass = index >= count ? '' : 'tea-onboarding__pill-active';
-      return (
-        <div key={index} className={`tea-onboarding__pill ${activeClass}`} />
-      );
+      return <div key={index} className={`tea-onboarding__pill ${activeClass}`} />;
     });
     return (
       <div className={'tea-onboarding__progress'}>
-        <div className={'tea-onboarding__pills'}>
-          {pills}
-        </div>
+        <div className={'tea-onboarding__pills'}>{pills}</div>
         {`${count}/${total} steps completed`}
       </div>
     );

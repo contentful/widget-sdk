@@ -2,42 +2,44 @@ import { createBreadcrumbsHistory } from 'navigation/Breadcrumbs/History';
 import * as K from 'utils/kefir';
 
 describe('navigation/Breadcrumbs/History', () => {
-  const e = id => { return {id: id}; };
+  const e = id => {
+    return { id: id };
+  };
 
-  beforeEach(function () {
+  beforeEach(function() {
     this.ctx = createBreadcrumbsHistory();
     this.assertCrumbCount = count => expect(K.getValue(this.ctx.crumbs$).length).toBe(count);
   });
 
   describe('after init (empty state)', () => {
-    it('is empty', function () {
+    it('is empty', function() {
       expect(this.ctx.isEmpty()).toBe(true);
     });
 
-    it('pop returns undefined', function () {
+    it('pop returns undefined', function() {
       expect(this.ctx.pop()).toBeUndefined();
     });
   });
 
   describe('adding entities', () => {
-    it('adds when empty and w/o addToContext flag', function () {
+    it('adds when empty and w/o addToContext flag', function() {
       this.ctx.add(e(1));
       this.assertCrumbCount(1);
     });
 
-    it('does not add when not empty and w/o addToContext flag', function () {
+    it('does not add when not empty and w/o addToContext flag', function() {
       this.ctx.add(e(1));
       this.ctx.add(e(1));
       expect(this.ctx.getLast().id).toBe(1);
     });
 
-    it('adds when not empty but with addToContext flag', function () {
+    it('adds when not empty but with addToContext flag', function() {
       this.ctx.add(e(1));
       this.ctx.add(e(2));
       this.assertCrumbCount(2);
     });
 
-    it('if adding already added entity, it is used as a new head', function () {
+    it('if adding already added entity, it is used as a new head', function() {
       [e(1), e(2), e(3), e(4)].forEach(this.ctx.add);
       this.assertCrumbCount(4);
       this.ctx.add(e(3));
@@ -47,11 +49,11 @@ describe('navigation/Breadcrumbs/History', () => {
   });
 
   describe('getters', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       [e(1), e(2), e(3)].forEach(this.ctx.add);
     });
 
-    it('crumbs$ property', function () {
+    it('crumbs$ property', function() {
       this.assertCrumbCount(3);
       const crumbs = K.getValue(this.ctx.crumbs$);
       expect(crumbs[0].id).toBe(1);
@@ -59,23 +61,23 @@ describe('navigation/Breadcrumbs/History', () => {
       expect(crumbs[2].id).toBe(3);
     });
 
-    it('#getLast', function () {
+    it('#getLast', function() {
       expect(this.ctx.getLast().id).toBe(3);
     });
   });
 
   describe('destructive operations', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       [e(1), e(2), e(3)].forEach(this.ctx.add);
     });
 
-    it('#pop', function () {
+    it('#pop', function() {
       this.assertCrumbCount(3);
       this.ctx.pop();
       this.assertCrumbCount(2);
     });
 
-    it('#purge', function () {
+    it('#purge', function() {
       this.assertCrumbCount(3);
       this.ctx.purge();
       this.assertCrumbCount(0);

@@ -30,8 +30,7 @@ export default {
           <a
             href="https://www.twilio.com/console/sms/getting-started/build"
             target="_blank"
-            rel="noopener noreferrer"
-          >
+            rel="noopener noreferrer">
             phone number with SMS capability
           </a>
           . Starts with <code>+</code> followed by digits.
@@ -42,7 +41,11 @@ export default {
       name: 'to',
       type: 'text',
       title: 'Phone number of the receiver',
-      description: <p>The phone number you plan to notify. (<code>+</code> area code)</p>
+      description: (
+        <p>
+          The phone number you plan to notify. (<code>+</code> area code)
+        </p>
+      )
     },
     {
       name: 'accountSid',
@@ -51,11 +54,7 @@ export default {
       description: (
         <p>
           Can be found on the{' '}
-          <a
-            href="https://www.twilio.com/console"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href="https://www.twilio.com/console" target="_blank" rel="noopener noreferrer">
             Twilio Dashboard
           </a>
           .
@@ -69,11 +68,7 @@ export default {
       description: (
         <p>
           Can be found on the{' '}
-          <a
-            href="https://www.twilio.com/console"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href="https://www.twilio.com/console" target="_blank" rel="noopener noreferrer">
             Twilio Dashboard
           </a>
           . This value can’t be revealed once stored.
@@ -92,8 +87,8 @@ export default {
       httpBasicPassword: authToken,
       topics: ['Entry.publish'],
       filters: [
-        {equals: [{doc: 'sys.environment.sys.id'}, 'master']},
-        {equals: [{doc: 'sys.contentType.sys.id'}, contentType.id]}
+        { equals: [{ doc: 'sys.environment.sys.id' }, 'master'] },
+        { equals: [{ doc: 'sys.contentType.sys.id' }, contentType.id] }
       ],
       transformation: {
         contentType: 'application/x-www-form-urlencoded',

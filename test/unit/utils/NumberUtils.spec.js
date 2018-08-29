@@ -1,7 +1,7 @@
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
 describe('NumberUtils', () => {
-  beforeEach(function* () {
+  beforeEach(function*() {
     const system = createIsolatedSystem();
     this.NumberUtils = yield system.import('utils/NumberUtils');
   });
@@ -9,11 +9,11 @@ describe('NumberUtils', () => {
   describe('toLocaleString', () => {
     let toLocaleString;
 
-    beforeEach(function () {
+    beforeEach(function() {
       toLocaleString = this.NumberUtils.toLocaleString;
     });
 
-    afterEach(function () {
+    afterEach(function() {
       toLocaleString = null;
     });
 
@@ -26,7 +26,7 @@ describe('NumberUtils', () => {
   describe('shorten', () => {
     let shorten;
 
-    beforeEach(function () {
+    beforeEach(function() {
       shorten = this.NumberUtils.shorten;
     });
 
@@ -71,7 +71,7 @@ describe('NumberUtils', () => {
   describe('shortenStorageUnit', () => {
     let shortenStorageUnit;
 
-    beforeEach(function () {
+    beforeEach(function() {
       shortenStorageUnit = this.NumberUtils.shortenStorageUnit;
     });
 

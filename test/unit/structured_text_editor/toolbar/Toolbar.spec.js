@@ -9,8 +9,7 @@ import { document, block, text, flushPromises } from './helpers';
 
 import { BLOCKS } from '@contentful/structured-text-types';
 
-const getWithId = (wrapper, testId) =>
-  wrapper.find(`[data-test-id="${testId}"]`).first();
+const getWithId = (wrapper, testId) => wrapper.find(`[data-test-id="${testId}"]`).first();
 
 const triggerToolbarIcon = async (wrapper, iconName) => {
   const toolbarIcon = getWithId(wrapper, `toolbar-toggle-${iconName}`);
@@ -19,7 +18,7 @@ const triggerToolbarIcon = async (wrapper, iconName) => {
 };
 
 describe('Toolbar', () => {
-  beforeEach(async function () {
+  beforeEach(async function() {
     module('contentful/test');
 
     const mockDocument = document(block(BLOCKS.PARAGRAPH, {}, text()));
@@ -40,20 +39,17 @@ describe('Toolbar', () => {
         absUrl: () => 'abs-url'
       }
     });
-    this.system.set(
-      'app/widgets/structured_text/plugins/EntryLinkBlock/FetchEntry',
-      {
-        default: ({ render }) => {
-          return render({
-            entry: this.entity,
-            entryTitle: 'title',
-            entryDescription: 'description',
-            entryStatus: 'status',
-            loading: { entry: false, thumbnail: true }
-          });
-        }
+    this.system.set('app/widgets/structured_text/plugins/EntryLinkBlock/FetchEntry', {
+      default: ({ render }) => {
+        return render({
+          entry: this.entity,
+          entryTitle: 'title',
+          entryDescription: 'description',
+          entryStatus: 'status',
+          loading: { entry: false, thumbnail: true }
+        });
       }
-    );
+    });
     this.system.set('navigation/SlideInNavigator', {
       goToSlideInEntity: sinon.stub()
     });
@@ -77,8 +73,8 @@ describe('Toolbar', () => {
     };
     this.wrapper = mount(<StructuredTextEditor {...this.props} />);
   });
-  xdescribe('EmbeddedEntryBlock', function () {
-    it('renders block', async function () {
+  xdescribe('EmbeddedEntryBlock', function() {
+    it('renders block', async function() {
       await triggerToolbarIcon(this.wrapper, BLOCKS.EMBEDDED_ENTRY);
 
       expect(this.widgetApi.field.getValue()).toEqual(
@@ -96,38 +92,31 @@ describe('Toolbar', () => {
       );
     });
   });
-  describe('List', function () {
-    [BLOCKS.OL_LIST, BLOCKS.UL_LIST].forEach(function (listType) {
-      it(`renders ${listType}`, async function () {
+  describe('List', function() {
+    [BLOCKS.OL_LIST, BLOCKS.UL_LIST].forEach(function(listType) {
+      it(`renders ${listType}`, async function() {
         await triggerToolbarIcon(this.wrapper, listType);
 
         expect(this.widgetApi.field.getValue()).toEqual(
           document(
-            block(
-              listType,
-              {},
-              block(BLOCKS.LIST_ITEM, {}, block(BLOCKS.PARAGRAPH, {}, text()))
-            ),
+            block(listType, {}, block(BLOCKS.LIST_ITEM, {}, block(BLOCKS.PARAGRAPH, {}, text()))),
             block(BLOCKS.PARAGRAPH, {}, text())
           )
         );
       });
 
-      it(`removes empty ${listType} after second click`, async function () {
+      it(`removes empty ${listType} after second click`, async function() {
         await triggerToolbarIcon(this.wrapper, listType);
         await triggerToolbarIcon(this.wrapper, listType);
         expect(this.widgetApi.field.getValue()).toEqual(
-          document(
-            block(BLOCKS.PARAGRAPH, {}, text()),
-            block(BLOCKS.PARAGRAPH, {}, text())
-          )
+          document(block(BLOCKS.PARAGRAPH, {}, text()), block(BLOCKS.PARAGRAPH, {}, text()))
         );
       });
     });
   });
 
-  describe('Quote', function () {
-    it('renders the quote', async function () {
+  describe('Quote', function() {
+    it('renders the quote', async function() {
       await triggerToolbarIcon(this.wrapper, BLOCKS.QUOTE);
       expect(this.widgetApi.field.getValue()).toEqual(document(block(BLOCKS.QUOTE, {}, text())));
     });

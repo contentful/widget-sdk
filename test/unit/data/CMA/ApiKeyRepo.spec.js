@@ -1,7 +1,7 @@
 import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
 
 describe('data/CMA/ApiKeyRepo', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     const endpoint = createMockSpaceEndpoint();
     this.deliveryStore = endpoint.stores.api_keys;
@@ -21,7 +21,7 @@ describe('data/CMA/ApiKeyRepo', () => {
   });
 
   describe('#get()', () => {
-    it('gets key with preview token for id', function* () {
+    it('gets key with preview token for id', function*() {
       const key = yield this.repo.get('ID');
       expect(key.accessToken).toBe('DELIVERY_TOKEN');
       expect(key.preview_api_key.accessToken).toBe('PREVIEW_TOKEN');
@@ -29,7 +29,7 @@ describe('data/CMA/ApiKeyRepo', () => {
   });
 
   describe('#save()', () => {
-    it('it saves key and returns updated key', function* () {
+    it('it saves key and returns updated key', function*() {
       const key = yield this.repo.get('ID');
       key.name = 'NEW NAME';
       const savedKey = yield this.repo.save(key);
@@ -39,7 +39,7 @@ describe('data/CMA/ApiKeyRepo', () => {
       expect(key2.name).toBe('NEW NAME');
     });
 
-    it('refreshes key list', function* () {
+    it('refreshes key list', function*() {
       const keysBefore = yield this.repo.getAll();
       expect(keysBefore[0].name).not.toBe('NEW NAME');
 
@@ -53,16 +53,16 @@ describe('data/CMA/ApiKeyRepo', () => {
   });
 
   describe('#getAll()', () => {
-    beforeEach(function () {
-      this.deliveryStore.ID2 = { sys: {id: 'ID2'} };
+    beforeEach(function() {
+      this.deliveryStore.ID2 = { sys: { id: 'ID2' } };
     });
 
-    it('gets all keys', function* () {
+    it('gets all keys', function*() {
       const keys = yield this.repo.getAll();
-      expect(keys.map((k) => k.sys.id)).toEqual(['ID', 'ID2']);
+      expect(keys.map(k => k.sys.id)).toEqual(['ID', 'ID2']);
     });
 
-    it('caches response until refresh()', function* () {
+    it('caches response until refresh()', function*() {
       yield this.repo.getAll();
       this.deliveryStore.ID2.name = 'NEW NAME';
       const keys = yield this.repo.getAll();
@@ -78,7 +78,7 @@ describe('data/CMA/ApiKeyRepo', () => {
   });
 
   describe('#remove()', () => {
-    it('removes key', function* () {
+    it('removes key', function*() {
       const keysBefore = yield this.repo.getAll();
       expect(keysBefore.length).toBe(1);
       yield this.repo.remove('ID');
@@ -87,7 +87,7 @@ describe('data/CMA/ApiKeyRepo', () => {
     });
   });
 
-  function makeLink (id, type) {
+  function makeLink(id, type) {
     return {
       sys: {
         id: id,

@@ -7,14 +7,20 @@ describe('encoder', () => {
   const ENCODED = 'HTML_ENCODED';
 
   const libraryMockInstance = {
-    htmlEncode: sinon.stub().withArgs(RAW).returns(ENCODED),
-    htmlDecode: sinon.stub().withArgs(ENCODED).returns(RAW)
+    htmlEncode: sinon
+      .stub()
+      .withArgs(RAW)
+      .returns(ENCODED),
+    htmlDecode: sinon
+      .stub()
+      .withArgs(ENCODED)
+      .returns(RAW)
   };
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('cf.utils', $provide => {
       $provide.constant('raw/htmlEncoder', {
-        Encoder: function () {
+        Encoder: function() {
           return libraryMockInstance;
         }
       });

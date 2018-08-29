@@ -1,16 +1,16 @@
 import * as sinon from 'helpers/sinon';
 import * as K from 'test/helpers/mocks/kefir';
-import {noop} from 'lodash';
+import { noop } from 'lodash';
 
 describe('states/deeplink/utils', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     this.storeGet = sinon.stub();
     this.storeSet = sinon.stub();
     this.getSpaces = sinon.stub();
     this.getOrganizations = sinon.stub();
     this.user$ = K.createMockProperty(null);
     this.modernStackName = 'modern stack name';
-    module('contentful/test', ($provide) => {
+    module('contentful/test', $provide => {
       $provide.value('TheStore', {
         getStore: () => {
           return {
@@ -38,7 +38,7 @@ describe('states/deeplink/utils', () => {
   });
 
   describe('#getOnboardingSpaceId', () => {
-    it('takes spaceId from local storage', function* () {
+    it('takes spaceId from local storage', function*() {
       this.getSpaces.resolves([{ sys: { id: 'some_id' } }]);
       this.user$.set({ sys: { id: 'user_id' } });
       this.storeGet.returns('some_id');
@@ -47,7 +47,7 @@ describe('states/deeplink/utils', () => {
       expect(spaceId).toBe('some_id');
     });
 
-    it('looks for spaces with modern stack onboarding name if no value in local storage', function* () {
+    it('looks for spaces with modern stack onboarding name if no value in local storage', function*() {
       this.getSpaces.resolves([{ sys: { id: 'another_id' }, name: this.modernStackName }]);
       this.user$.set({ sys: { id: 'user_id' } });
 
@@ -55,7 +55,7 @@ describe('states/deeplink/utils', () => {
       expect(spaceId).toBe('another_id');
     });
 
-    it('sets defaults to local storage if space id was not in local storage', function* () {
+    it('sets defaults to local storage if space id was not in local storage', function*() {
       this.getSpaces.resolves([{ sys: { id: 'another_id' }, name: this.modernStackName }]);
       this.user$.set({ sys: { id: 'user_id' } });
 
@@ -63,8 +63,10 @@ describe('states/deeplink/utils', () => {
       expect(this.storeSet.callCount).toBeGreaterThan(0);
     });
 
-    it('returns undefined if there is no space from local storage and no space with name', function* () {
-      this.getSpaces.resolves([{ sys: { id: 'another_id' }, name: `${this.modernStackName} and some text` }]);
+    it('returns undefined if there is no space from local storage and no space with name', function*() {
+      this.getSpaces.resolves([
+        { sys: { id: 'another_id' }, name: `${this.modernStackName} and some text` }
+      ]);
       this.user$.set({ sys: { id: 'user_id' } });
       this.storeGet.returns('some_id');
 
@@ -74,7 +76,7 @@ describe('states/deeplink/utils', () => {
   });
 
   describe('#getSpaceInfo', () => {
-    it('checks value in the store', function* () {
+    it('checks value in the store', function*() {
       this.storeGet.returns('some_id');
       this.getSpaces.resolves([{ sys: { id: 'some_id' } }]);
       yield* this.utils.getSpaceInfo();
@@ -82,7 +84,7 @@ describe('states/deeplink/utils', () => {
       expect(this.storeGet.calledOnce).toBe(true);
     });
 
-    it('returns spaceId from the store', function* () {
+    it('returns spaceId from the store', function*() {
       this.storeGet.returns('some_id');
       this.getSpaces.resolves([{ sys: { id: 'some_id' } }]);
       const { spaceId } = yield* this.utils.getSpaceInfo();
@@ -90,7 +92,7 @@ describe('states/deeplink/utils', () => {
       expect(spaceId).toBe('some_id');
     });
 
-    it('returns a new spaceId if we have invalid in the store', function* () {
+    it('returns a new spaceId if we have invalid in the store', function*() {
       this.storeGet.returns('some_id');
       this.getSpaces.resolves([{ sys: { id: 'new_id' } }]);
 
@@ -98,7 +100,7 @@ describe('states/deeplink/utils', () => {
       expect(spaceId).toBe('new_id');
     });
 
-    it('throws an error if there are no spaces', function* () {
+    it('throws an error if there are no spaces', function*() {
       this.getSpaces.resolves([]);
       let hasError = false;
 
@@ -115,7 +117,7 @@ describe('states/deeplink/utils', () => {
   });
 
   describe('#getOrg', () => {
-    it('returns orgId from the store', function* () {
+    it('returns orgId from the store', function*() {
       const returnedOrg = { sys: { id: 'some_org_id' }, pricing: 'old' };
       this.storeGet.returns(returnedOrg.sys.id);
 
@@ -126,14 +128,14 @@ describe('states/deeplink/utils', () => {
       expect(org).toBe(returnedOrg);
     });
 
-    it('returns org from the selected space', function* () {
-      const spaceOrg = {sys: {id: 'some_new_org_id'}};
+    it('returns org from the selected space', function*() {
+      const spaceOrg = { sys: { id: 'some_new_org_id' } };
       this.storeGet.returns('some_org_id');
       this.getOrganizations.resolves([]);
       this.getSpaces.resolves([
         {
           organization: spaceOrg,
-          sys: {id: 'some_space_id'}
+          sys: { id: 'some_space_id' }
         }
       ]);
       const { orgId, org } = yield* this.utils.getOrg();

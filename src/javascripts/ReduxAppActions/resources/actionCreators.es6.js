@@ -2,7 +2,7 @@ import createResourceService from 'services/ResourceService';
 
 import * as actions from './actions';
 
-export function getResourcesForSpace (spaceId) {
+export function getResourcesForSpace(spaceId) {
   return async dispatch => {
     const resourceService = createResourceService(spaceId);
     let resources;

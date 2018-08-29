@@ -43,23 +43,26 @@ const slideHelper = {
 };
 export default slideHelper;
 
-const slideStrategies = [{
-  TYPE: TYPES.ENTRY,
-  STATE_PATH: '^.^.entries.detail',
-  newFromStateParams: ({ entryId: id }) => id ? { id, type: TYPES.ENTRY } : null,
-  newFromQS: (string) => isId(string) ? { id: string, type: TYPES.ENTRY } : null,
-  toStateParams: ({ id: entryId }) => ({ entryId }),
-  toString: ({ id }) => id
-}, {
-  TYPE: TYPES.ASSET,
-  STATE_PATH: '^.^.assets.detail',
-  newFromStateParams: ({ assetId: id }) => id ? { id, type: TYPES.ASSET } : null,
-  newFromQS: (_string) => null, // Assets can't be in query string.
-  toStateParams: ({ id: assetId }) => ({ assetId }),
-  toString: ({ id }) => id
-}];
+const slideStrategies = [
+  {
+    TYPE: TYPES.ENTRY,
+    STATE_PATH: '^.^.entries.detail',
+    newFromStateParams: ({ entryId: id }) => (id ? { id, type: TYPES.ENTRY } : null),
+    newFromQS: string => (isId(string) ? { id: string, type: TYPES.ENTRY } : null),
+    toStateParams: ({ id: entryId }) => ({ entryId }),
+    toString: ({ id }) => id
+  },
+  {
+    TYPE: TYPES.ASSET,
+    STATE_PATH: '^.^.assets.detail',
+    newFromStateParams: ({ assetId: id }) => (id ? { id, type: TYPES.ASSET } : null),
+    newFromQS: _string => null, // Assets can't be in query string.
+    toStateParams: ({ id: assetId }) => ({ assetId }),
+    toString: ({ id }) => id
+  }
+];
 
-function getSlideStrageyFor (slide) {
+function getSlideStrageyFor(slide) {
   const helper = slideStrategies.find(({ TYPE }) => TYPE === slide.type);
   if (helper) {
     return helper;
@@ -67,11 +70,11 @@ function getSlideStrageyFor (slide) {
   throw new Error(`Unsupported slide type "${slide.type}`);
 }
 
-function newStrategyForSlideInvoker (fnName) {
-  return (slide) => getSlideStrageyFor(slide)[fnName](slide);
+function newStrategyForSlideInvoker(fnName) {
+  return slide => getSlideStrageyFor(slide)[fnName](slide);
 }
 
-function newFactoryStrategyInvoker (fnName) {
+function newFactoryStrategyInvoker(fnName) {
   return (...args) => {
     for (const slideStrategy of slideStrategies) {
       const result = slideStrategy[fnName](...args);
@@ -83,6 +86,6 @@ function newFactoryStrategyInvoker (fnName) {
   };
 }
 
-function isId (string) {
+function isId(string) {
   return /[^:. ]+/.test(string);
 }

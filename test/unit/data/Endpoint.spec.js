@@ -5,12 +5,12 @@ describe('data/Endpoint', () => {
 
   // These headers are set by `$http` by default
   const defaultHeaders = {
-    'Accept': 'application/json, text/plain, */*',
+    Accept: 'application/json, text/plain, */*',
     'If-Modified-Since': '0',
     'Cache-Control': 'no-cache'
   };
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
 
     const auth = {
@@ -21,7 +21,7 @@ describe('data/Endpoint', () => {
     this.$http = this.$inject('$httpBackend');
     this.$timeout = this.$inject('$timeout');
 
-    this.makeRequest = function (...args) {
+    this.makeRequest = function(...args) {
       const request = this.Endpoint.create(baseUrl, auth);
       const response = request(...args);
       this.$inject('$timeout').flush();
@@ -29,17 +29,16 @@ describe('data/Endpoint', () => {
     };
   });
 
-  afterEach(function () {
+  afterEach(function() {
     this.$http.verifyNoOutstandingExpectation();
     this.$http.verifyNoOutstandingRequest();
     this.Endpoint = null;
   });
 
-
-  it('sends GET request relative to resource', function () {
+  it('sends GET request relative to resource', function() {
     const url = `${baseUrl}/foo/bar`;
     const headers = assign(defaultHeaders, {
-      'Authorization': 'Bearer TOKEN'
+      Authorization: 'Bearer TOKEN'
     });
 
     this.$http.expectGET(url, headers).respond();
@@ -50,10 +49,9 @@ describe('data/Endpoint', () => {
     this.$http.flush();
   });
 
-  it('resolves the promise with response data', function () {
+  it('resolves the promise with response data', function() {
     const responseHandler = sinon.stub();
-    this.$http.expectGET(`${baseUrl}/foo/bar`)
-      .respond('DATA');
+    this.$http.expectGET(`${baseUrl}/foo/bar`).respond('DATA');
     this.makeRequest({
       method: 'GET',
       path: ['foo', 'bar']
@@ -62,13 +60,13 @@ describe('data/Endpoint', () => {
     sinon.assert.calledWithExactly(responseHandler, 'DATA');
   });
 
-  it('sends POST request without version header', function () {
+  it('sends POST request without version header', function() {
     const url = `${baseUrl}/foo/bar`;
     const headers = assign(defaultHeaders, {
       'Content-Type': 'application/vnd.contentful.management.v1+json',
-      'Authorization': 'Bearer TOKEN'
+      Authorization: 'Bearer TOKEN'
     });
-    const data = {foo: 42};
+    const data = { foo: 42 };
     this.$http.expectPOST(url, JSON.stringify(data), headers).respond();
     this.makeRequest({
       method: 'POST',
@@ -78,14 +76,14 @@ describe('data/Endpoint', () => {
     this.$http.flush();
   });
 
-  it('sends POST request with version header', function () {
+  it('sends POST request with version header', function() {
     const url = `${baseUrl}/foo/bar`;
     const headers = assign(defaultHeaders, {
       'Content-Type': 'application/vnd.contentful.management.v1+json',
-      'Authorization': 'Bearer TOKEN',
+      Authorization: 'Bearer TOKEN',
       'X-Contentful-Version': 3
     });
-    const data = {foo: 42};
+    const data = { foo: 42 };
     this.$http.expectPOST(url, JSON.stringify(data), headers).respond();
     this.makeRequest({
       method: 'POST',
@@ -97,7 +95,7 @@ describe('data/Endpoint', () => {
   });
 
   describe('error response', () => {
-    it('is an error object', function* () {
+    it('is an error object', function*() {
       this.$http.whenGET(/./).respond(500);
       const req = this.makeRequest({
         method: 'GET',
@@ -109,7 +107,7 @@ describe('data/Endpoint', () => {
       expect(error.message).toEqual('API request failed');
     });
 
-    it('has "request" object', function* () {
+    it('has "request" object', function*() {
       this.$http.whenGET(/./).respond(500);
       const req = this.makeRequest({
         method: 'GET',
@@ -121,7 +119,7 @@ describe('data/Endpoint', () => {
       expect(error.request.url).toBe(`${baseUrl}/foo`);
     });
 
-    it('has "response" properties', function* () {
+    it('has "response" properties', function*() {
       this.$http.whenGET(/./).respond(455, 'ERRORS');
       const req = this.makeRequest({
         method: 'GET',
@@ -138,12 +136,12 @@ describe('data/Endpoint', () => {
   describeCreateEndpoint('createOrganizationEndpoint', 'organizations');
 
   describe('.createSpaceEndpoint()', () => {
-    it('is aware of environment', function () {
+    it('is aware of environment', function() {
       const test = (envId, expected) => {
-        const auth = {getToken: sinon.stub().resolves('TOKEN')};
+        const auth = { getToken: sinon.stub().resolves('TOKEN') };
         this.$http.expectGET(expected).respond();
         const spaceEndpoint = this.Endpoint.createSpaceEndpoint(baseUrl, 'sid', auth, envId);
-        spaceEndpoint({method: 'GET', path: 'content_types'});
+        spaceEndpoint({ method: 'GET', path: 'content_types' });
         this.$timeout.flush();
         this.$http.flush();
       };
@@ -153,17 +151,17 @@ describe('data/Endpoint', () => {
     });
   });
 
-  function describeCreateEndpoint (methodName, endpointUrl) {
+  function describeCreateEndpoint(methodName, endpointUrl) {
     describe(`.${methodName}()`, () => {
-      beforeEach(function () {
+      beforeEach(function() {
         this.auth = {
           getToken: sinon.stub().resolves('TOKEN')
         };
         this.headers = assign(defaultHeaders, {
-          'Authorization': 'Bearer TOKEN',
-          'Accept': 'application/json, text/plain, */*'
+          Authorization: 'Bearer TOKEN',
+          Accept: 'application/json, text/plain, */*'
         });
-        this.expectGetRequest = function (baseUrl, resourceId, path, expectedUrl) {
+        this.expectGetRequest = function(baseUrl, resourceId, path, expectedUrl) {
           this.$http.expectGET(expectedUrl, this.headers).respond();
           const spaceEndpoint = this.Endpoint[methodName](baseUrl, resourceId, this.auth);
           spaceEndpoint({
@@ -175,12 +173,22 @@ describe('data/Endpoint', () => {
         };
       });
 
-      it(`sends request relative to ${endpointUrl} resource`, function () {
-        this.expectGetRequest('//test.io', 'ID', ['foo', 'bar'], `//test.io/${endpointUrl}/ID/foo/bar`);
+      it(`sends request relative to ${endpointUrl} resource`, function() {
+        this.expectGetRequest(
+          '//test.io',
+          'ID',
+          ['foo', 'bar'],
+          `//test.io/${endpointUrl}/ID/foo/bar`
+        );
       });
 
-      it('doesn\'t add extra slashes to url', function () {
-        this.expectGetRequest('//test.io/', 'ID', ['/foo/', '/bar/'], `//test.io/${endpointUrl}/ID/foo/bar/`);
+      it("doesn't add extra slashes to url", function() {
+        this.expectGetRequest(
+          '//test.io/',
+          'ID',
+          ['/foo/', '/bar/'],
+          `//test.io/${endpointUrl}/ID/foo/bar/`
+        );
       });
     });
   }

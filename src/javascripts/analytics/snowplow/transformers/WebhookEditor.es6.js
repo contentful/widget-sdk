@@ -6,5 +6,5 @@ import { omit } from 'lodash';
 const SEGMENT_PROPS = ['userId', 'spaceId', 'organizationId', 'currentState'];
 
 export default addUserOrgSpace((_, data) => {
-  return {data: omit(data, SEGMENT_PROPS)};
+  return { data: omit(data, SEGMENT_PROPS) };
 });

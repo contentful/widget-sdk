@@ -12,7 +12,7 @@
  * - `describeVersionedResource`
  */
 
-import {cloneDeep} from 'lodash';
+import { cloneDeep } from 'lodash';
 
 const serverData = Object.freeze({
   name: 'my resource',
@@ -26,15 +26,13 @@ const serverList = Object.freeze({
   items: [serverData]
 });
 
-
 /**
  * Describe `getResource(id)` and `getResources(query)` factory
  * methods.
  */
-export const describeGetResource =
-entityDescription('resource factory', (names) => {
-  describe('.getOne(id)', function () {
-    it('obtains resource from server', function* () {
+export const describeGetResource = entityDescription('resource factory', names => {
+  describe('.getOne(id)', function() {
+    it('obtains resource from server', function*() {
       this.request.respond(serverData);
       const resource = yield this.space[names.getOne]('43');
       expect(resource.data).toEqual(serverData);
@@ -44,7 +42,7 @@ entityDescription('resource factory', (names) => {
       });
     });
 
-    it('returns identical object', function* () {
+    it('returns identical object', function*() {
       this.request.respond(serverData);
       this.request.respond(serverData);
 
@@ -53,11 +51,11 @@ entityDescription('resource factory', (names) => {
       expect(resource1).toEqual(resource2);
     });
 
-    it('throws when id not given', function () {
+    it('throws when id not given', function() {
       expect(() => this.space[names.getOne]()).toThrow(new Error('No id provided'));
     });
 
-    it('rejects server error', function* () {
+    it('rejects server error', function*() {
       this.request.throw('server error');
 
       try {
@@ -70,8 +68,8 @@ entityDescription('resource factory', (names) => {
     });
   });
 
-  describe('.getAll(query)', function () {
-    it('obtains resource list from server', function* () {
+  describe('.getAll(query)', function() {
+    it('obtains resource list from server', function*() {
       this.request.respond(serverList);
       const [resource] = yield this.space[names.getAll]('myquery');
       expect(resource.data).toEqual(serverData);
@@ -82,13 +80,13 @@ entityDescription('resource factory', (names) => {
       });
     });
 
-    it('sets total on returned list', function* () {
+    it('sets total on returned list', function*() {
       this.request.respond(serverList);
       const entries = yield this.space[names.getAll]('myquery');
       expect(entries.total).toEqual(123);
     });
 
-    it('returns list with identitcal objects', function* () {
+    it('returns list with identitcal objects', function*() {
       this.request.respond(serverList);
       this.request.respond(serverList);
       const entries1 = yield this.space[names.getAll]('myquery');
@@ -99,14 +97,12 @@ entityDescription('resource factory', (names) => {
   });
 });
 
-
 /**
  * Describe `createResource(data)` factory method.
  */
-export const describeCreateResource =
-entityDescription('resource factory', (names) => {
-  describe('.createOne(data)', function () {
-    it('sends POST request without id', function* () {
+export const describeCreateResource = entityDescription('resource factory', names => {
+  describe('.createOne(data)', function() {
+    it('sends POST request without id', function*() {
       const newData = {
         name: 'my resource',
         fields: null
@@ -121,7 +117,7 @@ entityDescription('resource factory', (names) => {
       expect(resource.getId()).toEqual('43');
     });
 
-    it('sends PUT request with id', function* () {
+    it('sends PUT request with id', function*() {
       const newData = {
         sys: { id: '55' },
         name: 'my resource',
@@ -136,9 +132,9 @@ entityDescription('resource factory', (names) => {
       });
     });
 
-    it('identical object is retrieved by .getId()', function* () {
+    it('identical object is retrieved by .getId()', function*() {
       this.request.respond(serverData);
-      const resource1 = yield this.space[names.createOne]({name: 'my resource'});
+      const resource1 = yield this.space[names.createOne]({ name: 'my resource' });
       expect(resource1.getId()).toEqual('43');
 
       this.request.respond(serverData);
@@ -148,13 +144,11 @@ entityDescription('resource factory', (names) => {
   });
 });
 
-
 /**
  * Describe `newResource(data)` factory method.
  */
-export const describeNewResource =
-entityDescription('resource factory', (names) => {
-  it('.new(data)', function* () {
+export const describeNewResource = entityDescription('resource factory', names => {
+  it('.new(data)', function*() {
     // TODO this should be a promise for consistency
     const resource = this.space[names.new]();
     expect(resource.getId()).toBeUndefined();
@@ -171,86 +165,84 @@ entityDescription('resource factory', (names) => {
   });
 });
 
-
 /**
  * Describe methods specific to entities which hold content
  */
-export const describeContentEntity =
-entityDescription('content entity methods', (names, description) => {
-  if (description) description();
+export const describeContentEntity = entityDescription(
+  'content entity methods',
+  (names, description) => {
+    if (description) description();
 
-  describe('#getName()', function () {
-    it('returns id', function () {
-      this.entity.data.sys.id = 'myid';
-      expect(this.entity.getName()).toEqual('myid');
-    });
+    describe('#getName()', function() {
+      it('returns id', function() {
+        this.entity.data.sys.id = 'myid';
+        expect(this.entity.getName()).toEqual('myid');
+      });
 
-    it('returns undefined without data', function () {
-      delete this.entity.data;
-      expect(this.entity.getName()).toBeUndefined();
-    });
-  });
-
-  describe('#canPublish()', function () {
-    it('true if no published version', function () {
-      this.entity.setPublishedVersion(null);
-      expect(this.entity.canPublish()).toBe(true);
-    });
-
-    it('false if entity deleted', function () {
-      expect(this.entity.canPublish()).toBe(true);
-      delete this.entity.data;
-      expect(this.entity.canPublish()).toBe(false);
-    });
-
-    it('false if entity is archvied', function () {
-      expect(this.entity.canPublish()).toBe(true);
-      this.entity.data.sys.archivedVersion = 1;
-      expect(this.entity.canPublish()).toBe(false);
-    });
-
-    it('false if already published version', function () {
-      expect(this.entity.canPublish()).toBe(true);
-
-      const publishedVersion = 123;
-      this.entity.setVersion(publishedVersion + 1);
-      this.entity.setPublishedVersion(publishedVersion);
-      expect(this.entity.canPublish()).toBe(false);
-    });
-
-    it('true if entity is updated since publishing', function () {
-      const publishedVersion = 123;
-      this.entity.setVersion(publishedVersion + 1);
-      this.entity.setPublishedVersion(publishedVersion);
-      expect(this.entity.canPublish()).toBe(false);
-
-      this.entity.setVersion(publishedVersion + 2);
-      expect(this.entity.canPublish()).toBe(true);
-    });
-  });
-
-
-  describe('#unpublish', function () {
-    it('sends DELETE request', function* () {
-      this.entity.data.sys.id = 'eid';
-      this.request.respond(this.entity.data);
-      yield this.entity.unpublish();
-      sinon.assert.calledWith(this.request, {
-        method: 'DELETE',
-        url: `/spaces/42/${names.plural}/eid/published`
+      it('returns undefined without data', function() {
+        delete this.entity.data;
+        expect(this.entity.getName()).toBeUndefined();
       });
     });
-  });
-});
 
+    describe('#canPublish()', function() {
+      it('true if no published version', function() {
+        this.entity.setPublishedVersion(null);
+        expect(this.entity.canPublish()).toBe(true);
+      });
+
+      it('false if entity deleted', function() {
+        expect(this.entity.canPublish()).toBe(true);
+        delete this.entity.data;
+        expect(this.entity.canPublish()).toBe(false);
+      });
+
+      it('false if entity is archvied', function() {
+        expect(this.entity.canPublish()).toBe(true);
+        this.entity.data.sys.archivedVersion = 1;
+        expect(this.entity.canPublish()).toBe(false);
+      });
+
+      it('false if already published version', function() {
+        expect(this.entity.canPublish()).toBe(true);
+
+        const publishedVersion = 123;
+        this.entity.setVersion(publishedVersion + 1);
+        this.entity.setPublishedVersion(publishedVersion);
+        expect(this.entity.canPublish()).toBe(false);
+      });
+
+      it('true if entity is updated since publishing', function() {
+        const publishedVersion = 123;
+        this.entity.setVersion(publishedVersion + 1);
+        this.entity.setPublishedVersion(publishedVersion);
+        expect(this.entity.canPublish()).toBe(false);
+
+        this.entity.setVersion(publishedVersion + 2);
+        expect(this.entity.canPublish()).toBe(true);
+      });
+    });
+
+    describe('#unpublish', function() {
+      it('sends DELETE request', function*() {
+        this.entity.data.sys.id = 'eid';
+        this.request.respond(this.entity.data);
+        yield this.entity.unpublish();
+        sinon.assert.calledWith(this.request, {
+          method: 'DELETE',
+          url: `/spaces/42/${names.plural}/eid/published`
+        });
+      });
+    });
+  }
+);
 
 /**
  * Describe resource persistence methods `save` and `delete`.
  *
  * Sets up a new resource beforehand.
  */
-export const describeResource =
-entityDescription('resource', (names, description) => {
+export const describeResource = entityDescription('resource', (names, description) => {
   const contentTypeId = 'ctid';
   const serverData = Object.freeze({
     name: 'my resource',
@@ -261,16 +253,18 @@ entityDescription('resource', (names, description) => {
     })
   });
 
-  beforeEach(function* () {
+  beforeEach(function*() {
     this.request.respond(serverData);
     this.resource = yield this.space[names.getOne](contentTypeId);
     this[names.singular] = this.resource;
     this.request.reset();
   });
 
-  if (description) { description(serverData); }
+  if (description) {
+    description(serverData);
+  }
 
-  it('#delete()', function* () {
+  it('#delete()', function*() {
     this.request.respond(null);
     yield this.resource.delete();
     sinon.assert.calledWith(this.request, {
@@ -279,12 +273,12 @@ entityDescription('resource', (names, description) => {
     });
   });
 
-  describe('#save() without id', function () {
-    beforeEach(function () {
+  describe('#save() without id', function() {
+    beforeEach(function() {
       delete this.resource.data.sys.id;
     });
 
-    it('sends POST request', function* () {
+    it('sends POST request', function*() {
       const resourceData = cloneDeep(this.resource.data);
       this.request.respond(resourceData);
       yield this.resource.save();
@@ -295,14 +289,14 @@ entityDescription('resource', (names, description) => {
       });
     });
 
-    it('updates from server response', function* () {
-      const serverData = {name: 'server name'};
+    it('updates from server response', function*() {
+      const serverData = { name: 'server name' };
       this.request.respond(serverData);
       yield this.resource.save();
       expect(this.resource.data).toEqual(serverData);
     });
 
-    it('updates identity map', function* () {
+    it('updates identity map', function*() {
       this.request.respond(serverData);
       yield this.resource.save();
 
@@ -312,8 +306,8 @@ entityDescription('resource', (names, description) => {
     });
   });
 
-  describe('#save() with id', function () {
-    it('sends PUT request', function* () {
+  describe('#save() with id', function() {
+    it('sends PUT request', function*() {
       this.resource.data.name = 'my new resource';
       const resourceData = cloneDeep(this.resource.data);
       this.request.respond(resourceData);
@@ -326,14 +320,14 @@ entityDescription('resource', (names, description) => {
       });
     });
 
-    it('updates from server response', function* () {
-      const serverData = {name: 'server name'};
+    it('updates from server response', function*() {
+      const serverData = { name: 'server name' };
       this.request.respond(serverData);
       yield this.resource.save();
       expect(this.resource.data).toEqual(serverData);
     });
 
-    it('updates identity map', function* () {
+    it('updates identity map', function*() {
       this.request.respond(serverData);
       yield this.resource.save();
 
@@ -344,15 +338,13 @@ entityDescription('resource', (names, description) => {
   });
 });
 
-
 /**
  * Describe versioned resource persistence methods `save` and `delete`.
  *
  * The same as `describeResource` except that it checks for version
  * headers.
  */
-export const describeVersionedResource =
-entityDescription('resource', (names, description) => {
+export const describeVersionedResource = entityDescription('resource', (names, description) => {
   const serverData = Object.freeze({
     name: 'my resource',
     sys: {
@@ -362,16 +354,18 @@ entityDescription('resource', (names, description) => {
     }
   });
 
-  beforeEach(function* () {
+  beforeEach(function*() {
     this.request.respond(serverData);
     this.resource = yield this.space[names.getOne](serverData);
     this[names.singular] = this.resource;
     this.request.reset();
   });
 
-  if (description) { description(serverData); }
+  if (description) {
+    description(serverData);
+  }
 
-  it('#delete()', function* () {
+  it('#delete()', function*() {
     this.request.respond(null);
     yield this.resource.delete();
     sinon.assert.calledWith(this.request, {
@@ -380,8 +374,8 @@ entityDescription('resource', (names, description) => {
     });
   });
 
-  describe('#save()', function () {
-    it('sends put request with id', function* () {
+  describe('#save()', function() {
+    it('sends put request with id', function*() {
       this.resource.data.name = 'my new resource';
       const resourceData = cloneDeep(this.resource.data);
       this.request.respond(resourceData);
@@ -396,19 +390,21 @@ entityDescription('resource', (names, description) => {
   });
 });
 
-
-function entityDescription (label, descriptor) {
-  return function (names, extendedDescriptor) {
+function entityDescription(label, descriptor) {
+  return function(names, extendedDescriptor) {
     names = makeNames(names);
-    describe(`${names.singular} ${label}`, function () {
+    describe(`${names.singular} ${label}`, function() {
       descriptor(names, extendedDescriptor);
     });
   };
 }
 
-
-function makeNames (names) {
-  if (typeof names === 'string') { names = {singular: names}; } else { names = cloneDeep(names); }
+function makeNames(names) {
+  if (typeof names === 'string') {
+    names = { singular: names };
+  } else {
+    names = cloneDeep(names);
+  }
   names.plural = names.plural || names.singular + 's';
   names.slug = names.slug || names.plural;
   names.Plural = capitalize(names.plural);
@@ -420,14 +416,12 @@ function makeNames (names) {
   return names;
 }
 
-
-function capitalize (string) {
+function capitalize(string) {
   return string.substr(0, 1).toUpperCase() + string.substr(1);
 }
 
-
-function camelCase (input) {
-  return input.replace(/[-_](.)/g, function (_match, group1) {
+function camelCase(input) {
+  return input.replace(/[-_](.)/g, function(_match, group1) {
     return group1.toUpperCase();
   });
 }

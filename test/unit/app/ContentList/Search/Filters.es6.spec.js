@@ -2,7 +2,7 @@ import { contentTypes } from './helpers';
 
 describe('app/ContentList/Search/Filters', () => {
   let Filters;
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
 
     Filters = this.$inject('app/ContentList/Search/Filters');
@@ -10,9 +10,7 @@ describe('app/ContentList/Search/Filters', () => {
 
   const isApplicableMacro = (message, contentType, queryKey, expected) => {
     it(message, () => {
-      expect(
-        Filters.isFieldFilterApplicableToContentType(contentType, queryKey)
-      ).toEqual(expected);
+      expect(Filters.isFieldFilterApplicableToContentType(contentType, queryKey)).toEqual(expected);
     });
   };
 
@@ -21,11 +19,7 @@ describe('app/ContentList/Search/Filters', () => {
       isApplicableMacro(message, contentTypes[0], queryKey, expected);
 
     isApplicableMacroWithContentType('sys field', 'sys.id', true);
-    isApplicableMacroWithContentType(
-      'content type field',
-      'fields.companyName',
-      true
-    );
+    isApplicableMacroWithContentType('content type field', 'fields.companyName', true);
     isApplicableMacroWithContentType(
       'non-existent content type field',
       'fields.companyName1',
@@ -38,11 +32,7 @@ describe('app/ContentList/Search/Filters', () => {
       isApplicableMacro(message, null, queryKey, expected);
 
     isApplicableMacroWithoutContentType('sys field', 'sys.id', true);
-    isApplicableMacroWithoutContentType(
-      'content type field',
-      'fields.companyName',
-      false
-    );
+    isApplicableMacroWithoutContentType('content type field', 'fields.companyName', false);
     isApplicableMacroWithoutContentType(
       'non-existent content type field',
       'fields.companyName1',
@@ -52,17 +42,9 @@ describe('app/ContentList/Search/Filters', () => {
 
   describe('getMatchingFilters', () => {
     describe('without assets', () => {
-      const getMatchingFiltersMacro = (
-        message,
-        { searchQuery, contentType },
-        expected
-      ) => {
+      const getMatchingFiltersMacro = (message, { searchQuery, contentType }, expected) => {
         it(message, () => {
-          const filters = Filters.getMatchingFilters(
-            searchQuery,
-            contentType,
-            contentTypes
-          );
+          const filters = Filters.getMatchingFilters(searchQuery, contentType, contentTypes);
           const queryKeys = filters.map(({ queryKey }) => queryKey);
 
           expect(queryKeys).toEqual(expected);

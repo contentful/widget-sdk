@@ -1,5 +1,5 @@
 import $q from '$q';
-import {assign, clone} from 'lodash';
+import { assign, clone } from 'lodash';
 
 const UNAUTHORIZED = 401;
 
@@ -19,25 +19,23 @@ const UNAUTHORIZED = 401;
  *        {function(): Promise<string>} refreshToken
  * @param {function(object): Promise} request
  */
-export default function wrapWithAuth (auth, request) {
-  return params => auth.getToken()
-  .then((token) => {
-    return requestWithToken(params, token, 1);
-  });
+export default function wrapWithAuth(auth, request) {
+  return params =>
+    auth.getToken().then(token => {
+      return requestWithToken(params, token, 1);
+    });
 
-  function requestWithToken (params, token, retry) {
+  function requestWithToken(params, token, retry) {
     params = clone(params);
     params.headers = assign({}, params.headers, {
       Authorization: `Bearer ${token}`
     });
 
-    return request(params)
-    .catch((err) => {
+    return request(params).catch(err => {
       if (err.status === UNAUTHORIZED && retry > 0) {
-        return ensureNewToken(token)
-          .then((token) => {
-            return requestWithToken(params, token, retry - 1);
-          });
+        return ensureNewToken(token).then(token => {
+          return requestWithToken(params, token, retry - 1);
+        });
       } else {
         return $q.reject(err);
       }
@@ -46,14 +44,13 @@ export default function wrapWithAuth (auth, request) {
 
   // Instead of retrying immediately we get the current token again in
   // case some other thread has refreshed it in the mean time.
-  function ensureNewToken (oldToken) {
-    return auth.getToken()
-      .then((newToken) => {
-        if (newToken === oldToken) {
-          return auth.refreshToken();
-        } else {
-          return newToken;
-        }
-      });
+  function ensureNewToken(oldToken) {
+    return auth.getToken().then(newToken => {
+      if (newToken === oldToken) {
+        return auth.refreshToken();
+      } else {
+        return newToken;
+      }
+    });
   }
 }

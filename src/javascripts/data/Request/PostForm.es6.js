@@ -1,6 +1,6 @@
 import qs from 'qs';
 import $http from '$http';
-import {assign} from 'lodash';
+import { assign } from 'lodash';
 
 /**
  * @description
@@ -12,7 +12,7 @@ import {assign} from 'lodash';
  *   `$http` request method
  * @returns {Promise<Response>}
  */
-export default function postForm (url, data, config = {}) {
+export default function postForm(url, data, config = {}) {
   config.method = 'POST';
   config.url = url;
   config.data = qs.stringify(data);

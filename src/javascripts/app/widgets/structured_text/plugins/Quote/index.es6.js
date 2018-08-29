@@ -4,7 +4,7 @@ import ToolbarIcon from '../shared/ToolbarIcon';
 import blockDecorator from '../shared/BlockToggleDecorator';
 
 class Quote extends Component {
-  render () {
+  render() {
     return <ToolbarIcon {...this.props} />;
   }
 }

@@ -7,6 +7,6 @@ export const EDIT_LIST_OPTIONS = {
   typeDefault: BLOCKS.PARAGRAPH
 };
 
-export default (opt) => {
-  return EditList({...EDIT_LIST_OPTIONS, ...opt});
+export default opt => {
+  return EditList({ ...EDIT_LIST_OPTIONS, ...opt });
 };

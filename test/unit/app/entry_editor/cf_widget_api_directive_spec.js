@@ -1,7 +1,7 @@
 import * as K from 'helpers/mocks/kefir';
 
 describe('cfWidgetApi directive', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test', $provide => {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
       $provide.value('spaceContext', {
@@ -24,7 +24,7 @@ describe('cfWidgetApi directive', () => {
       }
     };
 
-    this.getWidgetApi = function () {
+    this.getWidgetApi = function() {
       _.extend(this.scope, {
         widget: this.widget,
         locale: {},
@@ -38,7 +38,7 @@ describe('cfWidgetApi directive', () => {
         editorContext: {},
         fields: {},
         transformedContentTypeData: {},
-        state: {registerPublicationWarning: _.noop}
+        state: { registerPublicationWarning: _.noop }
       });
 
       return $controller('WidgetApiController', {
@@ -51,10 +51,10 @@ describe('cfWidgetApi directive', () => {
 
   describe('#settings', () => {
     describe('helpText', () => {
-      it('should equal what has been set for the widget', function () {
+      it('should equal what has been set for the widget', function() {
         expect(this.widgetApi.settings.helpText).toEqual(this.widget.settings.helpText);
       });
-      it('should equal default help text if no help text is configured or the widget', function () {
+      it('should equal default help text if no help text is configured or the widget', function() {
         this.widget.defaultHelpText = 'wat';
         this.widget.settings.helpText = undefined;
 
@@ -62,7 +62,7 @@ describe('cfWidgetApi directive', () => {
 
         expect(widgetApi.settings.helpText).toEqual(this.widget.defaultHelpText);
       });
-      it('should default to undefined when no help text nor default help text is configured', function () {
+      it('should default to undefined when no help text nor default help text is configured', function() {
         this.widget.settings.helpText = undefined;
 
         const widgetApi = this.getWidgetApi();
@@ -74,14 +74,14 @@ describe('cfWidgetApi directive', () => {
 
   describe('#entry', () => {
     describe('#getSys()', () => {
-      it('returns sys data from entry object', function () {
+      it('returns sys data from entry object', function() {
         this.scope.fieldLocale.doc.sys.set('wat');
         expect(this.widgetApi.entry.getSys()).toEqual('wat');
       });
     });
 
     describe('#onSysChanged()', () => {
-      it('calls callback if "doc.sys" emits changes', function () {
+      it('calls callback if "doc.sys" emits changes', function() {
         const cb = sinon.spy();
         this.widgetApi.entry.onSysChanged(cb);
         cb.reset();
@@ -92,27 +92,25 @@ describe('cfWidgetApi directive', () => {
     });
   });
 
-
   describe('#space', () => {
-    it('exposes spaceContext.cma', function () {
+    it('exposes spaceContext.cma', function() {
       const spaceContext = this.$inject('spaceContext');
       expect(this.widgetApi.space).toEqual(spaceContext.cma);
     });
   });
 
-
   describe('#onIsDisabledChanged()', () => {
-    it('is dispatched with initial value', function () {
+    it('is dispatched with initial value', function() {
       const cb = sinon.spy();
-      this.scope.fieldLocale.access$.set({disabled: true});
+      this.scope.fieldLocale.access$.set({ disabled: true });
       this.widgetApi.field.onIsDisabledChanged(cb);
       sinon.assert.calledOnce(cb);
       sinon.assert.calledWithExactly(cb, true);
     });
 
-    it('is dispatched when value changes', function () {
+    it('is dispatched when value changes', function() {
       const cb = sinon.spy();
-      this.scope.fieldLocale.access$.set({disabled: true});
+      this.scope.fieldLocale.access$.set({ disabled: true });
       this.widgetApi.field.onIsDisabledChanged(cb);
       cb.reset();
 
@@ -123,7 +121,7 @@ describe('cfWidgetApi directive', () => {
   });
 
   describe('#onSchemaErrorsChanged()', () => {
-    it('emits errors when "fieldLocale.errors" changes', function () {
+    it('emits errors when "fieldLocale.errors" changes', function() {
       const cb = sinon.spy();
       this.widgetApi.field.onSchemaErrorsChanged(cb);
       this.$apply();
@@ -137,9 +135,9 @@ describe('cfWidgetApi directive', () => {
   });
 
   describe('#field.setInvalid()', () => {
-    it('delegates to $scope.fieldController with locale code', function () {
+    it('delegates to $scope.fieldController with locale code', function() {
       const setInvalid = sinon.stub();
-      this.scope.fieldController = {setInvalid: setInvalid};
+      this.scope.fieldController = { setInvalid: setInvalid };
       this.scope.locale.code = 'LC';
       this.widgetApi.field.setInvalid('VAL');
       sinon.assert.calledWith(setInvalid, 'LC', 'VAL');

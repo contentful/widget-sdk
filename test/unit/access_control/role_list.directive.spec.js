@@ -1,8 +1,8 @@
 describe('Role List Directive', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     this.getCurrentVariation = sinon.stub().resolves(false);
 
-    module('contentful/test', ($provide) => {
+    module('contentful/test', $provide => {
       $provide.value('utils/LaunchDarkly', {
         getCurrentVariation: this.getCurrentVariation
       });
@@ -14,22 +14,26 @@ describe('Role List Directive', () => {
     this.$inject('access_control/AccessChecker').canModifyRoles = this.canModifyRoles;
     this.$inject('utils/LaunchDarkly').onFeatureFlag = sinon.stub();
 
-    this.roles = [{
-      name: 'Editor',
-      sys: {
-        id: '123'
+    this.roles = [
+      {
+        name: 'Editor',
+        sys: {
+          id: '123'
+        }
+      },
+      {
+        name: 'Author',
+        sys: {
+          id: '321'
+        }
+      },
+      {
+        name: 'Developer',
+        sys: {
+          id: '213'
+        }
       }
-    }, {
-      name: 'Author',
-      sys: {
-        id: '321'
-      }
-    }, {
-      name: 'Developer',
-      sys: {
-        id: '213'
-      }
-    }];
+    ];
 
     this.rolesResource = {
       limits: {
@@ -45,7 +49,7 @@ describe('Role List Directive', () => {
     });
 
     this.mockService('TheAccountView', {
-      getSubscriptionState: sinon.stub().returns({path: ['stateref']})
+      getSubscriptionState: sinon.stub().returns({ path: ['stateref'] })
     });
 
     const UserListHandler = this.$inject('UserListHandler');
@@ -111,7 +115,7 @@ describe('Role List Directive', () => {
       getOrganizationId: sinon.stub().returns(this.organization.sys.id)
     };
 
-    this.compileElement = function () {
+    this.compileElement = function() {
       this.container = this.$compile('<cf-role-list />', { context: {} });
       this.$apply();
     };
@@ -134,13 +138,13 @@ describe('Role List Directive', () => {
     };
   });
 
-  afterEach(function () {
+  afterEach(function() {
     this.container.remove();
   });
 
   describe('the UX', () => {
     describe('for a user that cannot modify roles', () => {
-      it('should not show the Add Role button', function () {
+      it('should not show the Add Role button', function() {
         this.canModifyRoles.resolves(false);
 
         this.toggleLegacy(true);
@@ -156,7 +160,7 @@ describe('Role List Directive', () => {
     });
 
     describe('for a user that can modify roles', () => {
-      it('should show the Add Role button', function () {
+      it('should show the Add Role button', function() {
         this.canModifyRoles.resolves(true);
 
         this.toggleLegacy(true);
@@ -170,7 +174,7 @@ describe('Role List Directive', () => {
         expect(this.getButton().length).toBe(1);
       });
 
-      it('should show the usage and limits', function () {
+      it('should show the usage and limits', function() {
         let text;
 
         this.setUsageLimits(1, 3);
@@ -178,24 +182,30 @@ describe('Role List Directive', () => {
         this.toggleLegacy(true);
         this.compileElement();
 
-        text = this.container.find('.entity-sidebar > p').eq(0).text();
+        text = this.container
+          .find('.entity-sidebar > p')
+          .eq(0)
+          .text();
 
         expect(text).toBe('Your organization is using 1 out of 3 available roles.');
 
         this.toggleLegacy(false);
         this.compileElement();
 
-        text = this.container.find('.entity-sidebar > p').eq(0).text();
+        text = this.container
+          .find('.entity-sidebar > p')
+          .eq(0)
+          .text();
 
         expect(text).toBe('Your space is using 1 out of 3 available roles.');
       });
 
       describe('when hitting the limit', () => {
-        beforeEach(function () {
+        beforeEach(function() {
           this.setUsageLimits(3, 3);
         });
 
-        it('should show an upgrade button if the user is an org admin/owner', function () {
+        it('should show an upgrade button if the user is an org admin/owner', function() {
           let text;
 
           this.OrganizationRoles.isOwnerOrAdmin.returns(true);
@@ -203,19 +213,25 @@ describe('Role List Directive', () => {
           this.toggleLegacy(true);
           this.compileElement();
 
-          text = this.container.find('.entity-sidebar > p:eq(1) > span').eq(1).text();
+          text = this.container
+            .find('.entity-sidebar > p:eq(1) > span')
+            .eq(1)
+            .text();
 
           expect(text).toBe('Upgrade to add more roles, or delete an existing role.');
 
           this.toggleLegacy(false);
           this.compileElement();
 
-          text = this.container.find('.entity-sidebar > p:eq(1) > span').eq(1).text();
+          text = this.container
+            .find('.entity-sidebar > p:eq(1) > span')
+            .eq(1)
+            .text();
 
           expect(text).toBe('Upgrade to add more roles, or delete an existing role.');
         });
 
-        it('should tell the user to contact the org admin/owner if only a member', function () {
+        it('should tell the user to contact the org admin/owner if only a member', function() {
           let text;
 
           this.OrganizationRoles.isOwnerOrAdmin.returns(false);
@@ -223,19 +239,29 @@ describe('Role List Directive', () => {
           this.toggleLegacy(true);
           this.compileElement();
 
-          text = this.container.find('.entity-sidebar > p:eq(1) > span').eq(1).text();
+          text = this.container
+            .find('.entity-sidebar > p:eq(1) > span')
+            .eq(1)
+            .text();
 
-          expect(text).toBe('Contact the admin of this organization to upgrade the organization, or delete an existing role.');
+          expect(text).toBe(
+            'Contact the admin of this organization to upgrade the organization, or delete an existing role.'
+          );
 
           this.toggleLegacy(false);
           this.compileElement();
 
-          text = this.container.find('.entity-sidebar > p:eq(1) > span').eq(1).text();
+          text = this.container
+            .find('.entity-sidebar > p:eq(1) > span')
+            .eq(1)
+            .text();
 
-          expect(text).toBe('Contact the admin of this space to upgrade the space, or delete an existing role.');
+          expect(text).toBe(
+            'Contact the admin of this space to upgrade the space, or delete an existing role.'
+          );
         });
 
-        it('should not tell the user to delete an existing role if the limit is one', function () {
+        it('should not tell the user to delete an existing role if the limit is one', function() {
           let text;
 
           this.setUsageLimits(1, 1);
@@ -243,14 +269,20 @@ describe('Role List Directive', () => {
           this.toggleLegacy(true);
           this.compileElement();
 
-          text = this.container.find('.entity-sidebar > p:eq(1) > span').eq(1).text();
+          text = this.container
+            .find('.entity-sidebar > p:eq(1) > span')
+            .eq(1)
+            .text();
 
           expect(text).toBe('Contact the admin of this organization to upgrade the organization.');
 
           this.toggleLegacy(false);
           this.compileElement();
 
-          text = this.container.find('.entity-sidebar > p:eq(1) > span').eq(1).text();
+          text = this.container
+            .find('.entity-sidebar > p:eq(1) > span')
+            .eq(1)
+            .text();
 
           expect(text).toBe('Contact the admin of this space to upgrade the space.');
         });

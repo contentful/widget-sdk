@@ -1,6 +1,6 @@
-import {constant} from 'lodash';
+import { constant } from 'lodash';
 import ShareJS from 'sharejs';
-import {caseof, caseofEq} from 'sum-types';
+import { caseof, caseofEq } from 'sum-types';
 import * as K from 'utils/kefir';
 import $q from '$q';
 import * as DocLoader from 'data/sharejs/DocLoader';
@@ -22,7 +22,7 @@ export const DocLoad = DocLoader.DocLoad;
  * @param {Authorization} auth
  * @returns Connection
  */
-export function create (baseUrl, auth, spaceId, environmentId) {
+export function create(baseUrl, auth, spaceId, environmentId) {
   /**
    * `connection.state` may be
    * - 'connecting': The connection is being established
@@ -101,7 +101,7 @@ export function create (baseUrl, auth, spaceId, environmentId) {
    *   Indicates wheter we want to establish a connection.
    * @returns {Document.Loader}
    */
-  function getDocLoader (entity, shouldOpen$) {
+  function getDocLoader(entity, shouldOpen$) {
     const docWrapper = getDocWrapperForEntity(entity);
     return DocLoader.create(docWrapper, state$, shouldOpen$);
   }
@@ -113,17 +113,24 @@ export function create (baseUrl, auth, spaceId, environmentId) {
    *
    * @param {Client.Entity} entity
    */
-  function open (entity) {
+  function open(entity) {
     const shouldOpen = K.constant(true);
     const loader = getDocLoader(entity, shouldOpen);
 
     return loader.doc
-      .flatten(docLoad => caseof(docLoad, [
-      [DocLoad.Doc, d => [d.doc]],
-      [DocLoad.Error, e => { throw e.error; }],
-      [DocLoad.None, constant([])],
-      [DocLoad.Pending, constant([])]
-      ]))
+      .flatten(docLoad =>
+        caseof(docLoad, [
+          [DocLoad.Doc, d => [d.doc]],
+          [
+            DocLoad.Error,
+            e => {
+              throw e.error;
+            }
+          ],
+          [DocLoad.None, constant([])],
+          [DocLoad.Pending, constant([])]
+        ])
+      )
       .take(1)
       .toPromise($q)
       .then(doc => ({
@@ -137,12 +144,12 @@ export function create (baseUrl, auth, spaceId, environmentId) {
    * @module cf.data
    * @name data/ShareJS/Connection#close
    */
-  function close () {
+  function close() {
     connection.disconnect();
     unsubscribeAuthTokenChanges();
   }
 
-  function getDocWrapperForEntity (entity) {
+  function getDocWrapperForEntity(entity) {
     const key = entityMetadataToKey(environmentId, entity.data.sys);
     let docWrapper = docWrappers[key];
 
@@ -153,7 +160,7 @@ export function create (baseUrl, auth, spaceId, environmentId) {
     return docWrapper;
   }
 
-  function sendAuthToken (token) {
+  function sendAuthToken(token) {
     // connectin.state should be 'ok' to be able to send a new token
     if (connection.state === 'ok') {
       try {
@@ -170,27 +177,27 @@ export function create (baseUrl, auth, spaceId, environmentId) {
  * Patches the underlying ShareJS connection object so that events
  * are emitted to the returned stream
  */
-function getEventStream (connection) {
+function getEventStream(connection) {
   const eventBus = K.createBus();
 
   const connectionEmit = connection.emit;
-  connection.emit = function (name, data) {
-    eventBus.emit({name: name, data: data});
+  connection.emit = function(name, data) {
+    eventBus.emit({ name: name, data: data });
     return connectionEmit.apply(this, arguments);
   };
 
   return eventBus.stream;
 }
 
-function createBaseConnection (baseUrl, getToken, spaceId, environmentId) {
+function createBaseConnection(baseUrl, getToken, spaceId, environmentId) {
   const url = baseUrl + '/spaces/' + spaceId + '/channel';
   const connection = new ShareJS.Connection(url, getToken, spaceId, environmentId);
 
   // I’m not sure why we do this
-  connection.socket.send = function (message) {
+  connection.socket.send = function(message) {
     try {
       /* global angular */
-      return this.sendMap({JSON: angular.toJson(message)});
+      return this.sendMap({ JSON: angular.toJson(message) });
     } catch (error) {
       // Silently ignore the error as this is handled on ot_doc_for
     }
@@ -206,28 +213,30 @@ function createBaseConnection (baseUrl, getToken, spaceId, environmentId) {
  * @param {string} key
  * @returns {DocWrapper}
  */
-function createDocWrapper (connection, key) {
+function createDocWrapper(connection, key) {
   let rawDoc = null;
   let closePromise = $q.resolve();
 
-  const open = () => $q.denodeify((cb) => connection.open(key, 'json', cb));
-  const close = (doc) => $q.denodeify((cb) => {
-    try {
-      doc.close(cb);
-      // Because of a bug in ShareJS we also need to listen for the
-      // 'closed' event
-      doc.on('closed', () => cb());
-    } catch (e) {
-      // Always resolve and ignore errors on closing
-      cb();
-    }
-  });
+  const open = () => $q.denodeify(cb => connection.open(key, 'json', cb));
+  const close = doc =>
+    $q.denodeify(cb => {
+      try {
+        doc.close(cb);
+        // Because of a bug in ShareJS we also need to listen for the
+        // 'closed' event
+        doc.on('closed', () => cb());
+      } catch (e) {
+        // Always resolve and ignore errors on closing
+        cb();
+      }
+    });
 
   return {
-    open: () => closePromise.then(open).then((openedDoc) => {
-      rawDoc = openedDoc;
-      return rawDoc;
-    }),
+    open: () =>
+      closePromise.then(open).then(openedDoc => {
+        rawDoc = openedDoc;
+        return rawDoc;
+      }),
     close: () => {
       if (rawDoc) {
         closePromise = close(rawDoc);
@@ -237,11 +246,8 @@ function createDocWrapper (connection, key) {
   };
 }
 
-function entityMetadataToKey (environmentId, sys) {
-  const typeSegment = caseofEq(sys.type, [
-    ['Entry', () => 'entry'],
-    ['Asset', () => 'asset']
-  ]);
+function entityMetadataToKey(environmentId, sys) {
+  const typeSegment = caseofEq(sys.type, [['Entry', () => 'entry'], ['Asset', () => 'asset']]);
   return [sys.space.sys.id, environmentId, typeSegment, sys.id].join('!');
 }
 
@@ -260,12 +266,14 @@ function entityMetadataToKey (environmentId, sys) {
  * @param {function(): Promise} action
  * @returns {function(): Promise}
  */
-function wrapActionWithLock (action) {
+function wrapActionWithLock(action) {
   let actionPromise = null;
 
   return () => {
     if (!actionPromise) {
-      actionPromise = action().then(() => { actionPromise = null; });
+      actionPromise = action().then(() => {
+        actionPromise = null;
+      });
     }
 
     return actionPromise;

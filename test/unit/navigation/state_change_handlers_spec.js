@@ -11,8 +11,8 @@ describe('navigation/stateChangeHandlers', () => {
     logger = $rootScope = modalCloseStub = null;
   });
 
-  beforeEach(function () {
-    this.state = {go: sinon.stub()};
+  beforeEach(function() {
+    this.state = { go: sinon.stub() };
     this.spaceContext = {
       space: null,
       organizationContext: null,
@@ -21,7 +21,7 @@ describe('navigation/stateChangeHandlers', () => {
     this.tokenStore = { getOrganization: sinon.stub().resolves({}) };
     modalCloseStub = sinon.stub();
 
-    module('contentful/test', ($provide) => {
+    module('contentful/test', $provide => {
       $provide.value('$state', this.state);
       $provide.value('spaceContext', this.spaceContext);
       $provide.value('services/TokenStore', this.tokenStore);
@@ -46,7 +46,7 @@ describe('navigation/stateChangeHandlers', () => {
 
   describe('state change', () => {
     it('closes opened modal dialog', () => {
-      $rootScope.$emit('$stateChangeStart', {name: 'page1'}, {}, {name: 'page2'}, {});
+      $rootScope.$emit('$stateChangeStart', { name: 'page1' }, {}, { name: 'page2' }, {});
       sinon.assert.calledOnce(modalCloseStub);
     });
   });
@@ -63,7 +63,7 @@ describe('navigation/stateChangeHandlers', () => {
     it('logs servers errors encountered during routing', () => {
       logger.logServerError = sinon.stub();
 
-      const error = {statusCode: 500};
+      const error = { statusCode: 500 };
       $rootScope.$emit('$stateChangeError', {}, {}, {}, {}, error);
       sinon.assert.called(logger.logServerError);
     });
@@ -74,16 +74,16 @@ describe('navigation/stateChangeHandlers', () => {
       sinon.assert.notCalled(modalCloseStub);
     });
 
-    it('redirects if `redirectTo` property is provided', function () {
+    it('redirects if `redirectTo` property is provided', function() {
       this.state.go.returns();
-      const to = {name: 'spaces.detail.entries', redirectTo: 'spaces.detail.content_types'};
+      const to = { name: 'spaces.detail.entries', redirectTo: 'spaces.detail.content_types' };
       $rootScope.$emit('$stateChangeStart', to, {}, {}, {});
       sinon.assert.calledWith(this.state.go, to.redirectTo, {}, { relative: to });
     });
   });
 
   describe('leave confirmation', () => {
-    it('logs error when changing state during confirmation', function () {
+    it('logs error when changing state during confirmation', function() {
       const logger = this.$inject('logger');
       logger.logError = sinon.stub();
 
@@ -107,10 +107,10 @@ describe('navigation/stateChangeHandlers', () => {
     it('prevents transition when only "addToContext" has changed', () => {
       const change = $rootScope.$emit(
         '$stateChangeStart',
-        {name: 'A'},
-        {addToContext: true},
-        {name: 'A'},
-        {addToContext: false}
+        { name: 'A' },
+        { addToContext: true },
+        { name: 'A' },
+        { addToContext: false }
       );
       expect(change.defaultPrevented).toBe(true);
     });
@@ -118,10 +118,10 @@ describe('navigation/stateChangeHandlers', () => {
     it('does not prevent transition when "addToContext" is missing', () => {
       const change = $rootScope.$emit(
         '$stateChangeStart',
-        {name: 'A'},
-        {other: true},
-        {name: 'A'},
-        {other: true}
+        { name: 'A' },
+        { other: true },
+        { name: 'A' },
+        { other: true }
       );
       expect(change.defaultPrevented).toBe(false);
     });
@@ -129,33 +129,33 @@ describe('navigation/stateChangeHandlers', () => {
     it('does not prevent transition when name is different', () => {
       const change = $rootScope.$emit(
         '$stateChangeStart',
-        {name: 'A'},
-        {addToContext: true},
-        {name: 'B'},
-        {addToContext: false}
+        { name: 'A' },
+        { addToContext: true },
+        { name: 'B' },
+        { addToContext: false }
       );
       expect(change.defaultPrevented).toBe(false);
     });
   });
 
   describe('nav states', () => {
-    beforeEach(function () {
+    beforeEach(function() {
       logger.leaveBreadcrumb = () => {};
 
-      this.emitStateChange = function (stateName, params) {
+      this.emitStateChange = function(stateName, params) {
         this.state.params = params;
         $rootScope.$emit('$stateChangeSuccess', { name: stateName }, params);
       };
-      this.setSpaceContext = function (space, org) {
+      this.setSpaceContext = function(space, org) {
         this.spaceContext.space = { data: space };
         this.spaceContext.organizationContext = { organization: org };
       };
-      this.setOrgContext = function (org) {
+      this.setOrgContext = function(org) {
         this.tokenStore.getOrganization.resolves(org);
       };
-      this.expectNavState = function (state, props) {
+      this.expectNavState = function(state, props) {
         return Promise.resolve().then(() => {
-          const off = K.onValue(this.navState$.changes(), (currNavState) => {
+          const off = K.onValue(this.navState$.changes(), currNavState => {
             expect(currNavState instanceof state).toBe(true);
             for (const prop in props) {
               expect(currNavState[prop]).toEqual(props[prop]);
@@ -166,11 +166,11 @@ describe('navigation/stateChangeHandlers', () => {
       };
     });
 
-    it('starts with default state', function () {
+    it('starts with default state', function() {
       expect(K.getValue(this.navState$) instanceof this.NavStates.Default).toBe(true);
     });
 
-    it('sets space state', function* () {
+    it('sets space state', function*() {
       const space = { sys: { id: 'test-space-1' } };
       const org = { sys: { id: 'test-org-1' } };
       this.setSpaceContext(space, org);
@@ -178,24 +178,24 @@ describe('navigation/stateChangeHandlers', () => {
       yield this.expectNavState(this.NavStates.Space, { space, org });
     });
 
-    it('sets org settings state', function* () {
+    it('sets org settings state', function*() {
       const org = { sys: { id: 'test-org-1' } };
       this.setOrgContext(org);
       this.emitStateChange('account.organizations.detail', { orgId: org.sys.id });
       yield this.expectNavState(this.NavStates.OrgSettings, { org });
     });
 
-    it('sets new org state', function* () {
+    it('sets new org state', function*() {
       this.emitStateChange('account.organizations.new');
       yield this.expectNavState(this.NavStates.NewOrg);
     });
 
-    it('sets user profile state', function* () {
+    it('sets user profile state', function*() {
       this.emitStateChange('account.profile');
       yield this.expectNavState(this.NavStates.UserProfile);
     });
 
-    it('defaults to the Default state', function* () {
+    it('defaults to the Default state', function*() {
       this.emitStateChange('foo.bar');
       yield this.expectNavState(this.NavStates.Default);
     });

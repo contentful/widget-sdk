@@ -23,7 +23,7 @@ export default class ToolbarIcon extends Component {
     this.props.onToggle(event);
   };
 
-  render () {
+  render() {
     const { icon, isActive, disabled, title, type } = this.props;
 
     return (

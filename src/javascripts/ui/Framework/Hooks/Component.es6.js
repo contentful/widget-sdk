@@ -24,7 +24,7 @@ import * as VTree from '../VTree';
  * added or removed from the properties.
  */
 export class Hook extends React.Component {
-  constructor () {
+  constructor() {
     super();
     this.hooks = {
       prev: {},
@@ -32,31 +32,33 @@ export class Hook extends React.Component {
       state: {}
     };
   }
-  componentDidMount () {
+  componentDidMount() {
     this.hooks.next = hookMap(this.props.args.hooks);
     this.applyHooks();
   }
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     this.hooks.prev = this.hooks.next;
     this.hooks.next = hookMap(nextProps.args.hooks);
   }
-  componentWillUnmount () {
+  componentWillUnmount() {
     this.hooks.prev = this.hooks.next;
     this.hooks.next = {};
     this.hooks.el = null;
     this.applyHooks();
   }
 
-  componentWillUpdate () {
+  componentWillUpdate() {
     this.applyHooks();
   }
 
-  componentDidUpdate () {
+  componentDidUpdate() {
     this.applyHooks();
   }
 
-  render () {
-    const { args: { tag, props, children } } = this.props;
+  render() {
+    const {
+      args: { tag, props, children }
+    } = this.props;
     const propsWithoutHooks = omit(props, ['hooks']);
     const oldRef = props.ref;
     propsWithoutHooks.ref = el => {
@@ -66,7 +68,7 @@ export class Hook extends React.Component {
     return asReact(VTree.Element(tag, propsWithoutHooks, children));
   }
 
-  applyHooks () {
+  applyHooks() {
     const { next, prev, state, el } = this.hooks;
 
     // Previous hooks that are not in `next`.
@@ -76,12 +78,7 @@ export class Hook extends React.Component {
       const prevHook = prev[key];
       delete remove[key];
       const prevState = state[key];
-      state[key] = nextHook.run(
-        el,
-        prevState,
-        get(prevHook, 'content'),
-        get(nextHook, 'content')
-      );
+      state[key] = nextHook.run(el, prevState, get(prevHook, 'content'), get(nextHook, 'content'));
     });
 
     Object.keys(remove).forEach(key => {
@@ -97,7 +94,7 @@ export class Hook extends React.Component {
  * Take a list of hooks and return an object that maps hook tags to
  * hook values.
  */
-function hookMap (hooks) {
+function hookMap(hooks) {
   return hooks.reduce((hookMap, hook) => {
     return set(hookMap, hook.tag, hook.value);
   }, {});

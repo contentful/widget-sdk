@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {get} from 'lodash';
+import { get } from 'lodash';
 import notification from 'notification';
 
 import $state from '$state';
@@ -11,7 +11,7 @@ import WebhookSidebar from './WebhookSidebar';
 import * as WebhookEditorActions from './WebhookEditorActions';
 import WebhookActivityLog from './WebhookActivityLog';
 
-const TABS = {SETTINGS: 1, LOG: 2};
+const TABS = { SETTINGS: 1, LOG: 2 };
 
 const hasBasic = webhook => typeof webhook.httpBasicUsername === 'string';
 
@@ -22,9 +22,9 @@ export default class WebhookEditor extends React.Component {
     registerSaveAction: PropTypes.func.isRequired,
     setDirty: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired
-  }
+  };
 
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     // Entity is "fresh" if it's not saved.
@@ -49,21 +49,21 @@ export default class WebhookEditor extends React.Component {
     this.refreshLog = this.refreshLog.bind(this);
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.props.setDirty(this.state.dirty);
     this.props.registerSaveAction(this.save);
   }
 
-  propagateChange () {
+  propagateChange() {
     this.props.setDirty(this.state.dirty);
     this.props.onChange(this.state.webhook);
   }
 
-  onChange (change) {
+  onChange(change) {
     this.setState(
       s => ({
         ...s,
-        webhook: {...s.webhook, ...change},
+        webhook: { ...s.webhook, ...change },
         dirty: true,
         // we clear stored HTTP Basic Auth credentials when change contains
         // `httpBasicUsername` property set to `null`. Otherwise we use
@@ -74,62 +74,62 @@ export default class WebhookEditor extends React.Component {
     );
   }
 
-  onSave (webhook) {
+  onSave(webhook) {
     this.setState(
-      {webhook, dirty: false, hasHttpBasicStored: hasBasic(webhook), busy: false},
+      { webhook, dirty: false, hasHttpBasicStored: hasBasic(webhook), busy: false },
       () => this.propagateChange()
     );
   }
 
-  navigateToSaved (webhook) {
+  navigateToSaved(webhook) {
     this.props.setDirty(false);
-    return $state.go('^.detail', {webhookId: webhook.sys.id});
+    return $state.go('^.detail', { webhookId: webhook.sys.id });
   }
 
-  navigateToList (force = false) {
+  navigateToList(force = false) {
     force && this.props.setDirty(false);
     return $state.go('^.list');
   }
 
-  save () {
-    const {webhookRepo} = this.props;
-    const {webhook, fresh} = this.state;
+  save() {
+    const { webhookRepo } = this.props;
+    const { webhook, fresh } = this.state;
 
-    this.setState({busy: true});
+    this.setState({ busy: true });
 
     return WebhookEditorActions.save(webhookRepo, webhook).then(
-      saved => fresh ? this.navigateToSaved(saved) : this.onSave(saved),
-      (err) => {
+      saved => (fresh ? this.navigateToSaved(saved) : this.onSave(saved)),
+      err => {
         notification.error(err.message);
-        this.setState({busy: false});
+        this.setState({ busy: false });
       }
     );
   }
 
-  remove () {
-    const {webhookRepo} = this.props;
-    const {webhook} = this.state;
+  remove() {
+    const { webhookRepo } = this.props;
+    const { webhook } = this.state;
 
-    const notBusy = () => this.setState({busy: false});
-    this.setState({busy: true});
+    const notBusy = () => this.setState({ busy: false });
+    this.setState({ busy: true });
 
     return WebhookEditorActions.remove(webhookRepo, webhook).then(
-      ({removed}) => removed ? this.navigateToList(true) : notBusy(),
+      ({ removed }) => (removed ? this.navigateToList(true) : notBusy()),
       () => notBusy()
     );
   }
 
-  refreshLog () {
+  refreshLog() {
     if (typeof this.state.refreshLog === 'function') {
-      this.setState({busy: true});
+      this.setState({ busy: true });
       // `this.state.refreshLog()` always resolves when HTTP communication is done.
       // `WebhookActivityLog` handles failures internally.
-      this.state.refreshLog().then(() => this.setState({busy: false}));
+      this.state.refreshLog().then(() => this.setState({ busy: false }));
     }
   }
 
-  render () {
-    const {tab, webhook, fresh, dirty, hasHttpBasicStored, busy} = this.state;
+  render() {
+    const { tab, webhook, fresh, dirty, hasHttpBasicStored, busy } = this.state;
 
     return (
       <React.Fragment>
@@ -148,76 +148,81 @@ export default class WebhookEditor extends React.Component {
             </div>
 
             <h1 className="workbench-header__title">
-              Webhook: {webhook.name || 'Unnamed'}{dirty ? '*' : ''}
+              Webhook: {webhook.name || 'Unnamed'}
+              {dirty ? '*' : ''}
             </h1>
 
             <div className="workbench-header__actions">
-              {tab === TABS.SETTINGS && !fresh && <button
-                className="btn-secondary-action"
-                disabled={busy}
-                onClick={this.remove}
-              >
-                Remove
-              </button>}
+              {tab === TABS.SETTINGS &&
+                !fresh && (
+                  <button className="btn-secondary-action" disabled={busy} onClick={this.remove}>
+                    Remove
+                  </button>
+                )}
 
-              {tab === TABS.SETTINGS && <button
-                className="btn-primary-action"
-                disabled={!dirty || busy}
-                onClick={this.save}
-              >
-                Save
-              </button>}
+              {tab === TABS.SETTINGS && (
+                <button
+                  className="btn-primary-action"
+                  disabled={!dirty || busy}
+                  onClick={this.save}>
+                  Save
+                </button>
+              )}
 
-              {tab === TABS.LOG && <button
-                className="btn-secondary-action"
-                disabled={busy}
-                onClick={this.refreshLog}
-              >
-                Refresh log
-              </button>}
+              {tab === TABS.LOG && (
+                <button className="btn-secondary-action" disabled={busy} onClick={this.refreshLog}>
+                  Refresh log
+                </button>
+              )}
             </div>
           </header>
         </div>
 
-        {!fresh && <div className="workbench-nav">
-          <ul className="workbench-nav__tabs">
-            <li
-              role="tab" aria-selected={tab === TABS.SETTINGS}
-              onClick={() => this.setState({tab: TABS.SETTINGS})}
-            >
-              Webhook settings
-            </li>
-            <li
-              role="tab" aria-selected={tab === TABS.LOG}
-              onClick={() => this.setState({tab: TABS.LOG})}
-            >
-              Activity log
-            </li>
-          </ul>
-        </div>}
+        {!fresh && (
+          <div className="workbench-nav">
+            <ul className="workbench-nav__tabs">
+              <li
+                role="tab"
+                aria-selected={tab === TABS.SETTINGS}
+                onClick={() => this.setState({ tab: TABS.SETTINGS })}>
+                Webhook settings
+              </li>
+              <li
+                role="tab"
+                aria-selected={tab === TABS.LOG}
+                onClick={() => this.setState({ tab: TABS.LOG })}>
+                Activity log
+              </li>
+            </ul>
+          </div>
+        )}
 
-        {tab === TABS.SETTINGS && <div className="workbench-main">
-          <div className="workbench-main__content">
-            <WebhookForm
-              webhook={webhook}
-              hasHttpBasicStored={hasHttpBasicStored}
-              onChange={this.onChange}
-            />
+        {tab === TABS.SETTINGS && (
+          <div className="workbench-main">
+            <div className="workbench-main__content">
+              <WebhookForm
+                webhook={webhook}
+                hasHttpBasicStored={hasHttpBasicStored}
+                onChange={this.onChange}
+              />
+            </div>
+            <div className="workbench-main__sidebar">
+              <WebhookSidebar />
+            </div>
           </div>
-          <div className="workbench-main__sidebar">
-            <WebhookSidebar />
-          </div>
-        </div>}
+        )}
 
-        {tab === TABS.LOG && <div className="workbench-main">
-          <div className="workbench-main__content">
-            <WebhookActivityLog
-              webhookId={webhook.sys.id}
-              webhookRepo={this.props.webhookRepo}
-              registerLogRefreshAction={refreshLog => this.setState({refreshLog})}
-            />
+        {tab === TABS.LOG && (
+          <div className="workbench-main">
+            <div className="workbench-main__content">
+              <WebhookActivityLog
+                webhookId={webhook.sys.id}
+                webhookRepo={this.props.webhookRepo}
+                registerLogRefreshAction={refreshLog => this.setState({ refreshLog })}
+              />
+            </div>
           </div>
-        </div>}
+        )}
       </React.Fragment>
     );
   }

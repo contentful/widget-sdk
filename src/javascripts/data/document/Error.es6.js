@@ -1,5 +1,4 @@
-import {makeSum} from 'sum-types';
-
+import { makeSum } from 'sum-types';
 
 /**
  * This module exports error constructors emitted by the

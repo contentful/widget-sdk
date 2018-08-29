@@ -1,7 +1,7 @@
-import {makeApply, getState, Action, State} from 'data/CMA/EntityState';
+import { makeApply, getState, Action, State } from 'data/CMA/EntityState';
 import * as K from 'utils/kefir';
 
-export {Action, State};
+export { Action, State };
 
 /**
  * @ngdoc service
@@ -32,7 +32,7 @@ export {Action, State};
  * - `inProgress$` is a boolean property that is true whenever a state
  *   change is in progress.
  */
-export function create (sys$, setSys, getData, spaceEndpoint) {
+export function create(sys$, setSys, getData, spaceEndpoint) {
   const applyAction = makeApply(spaceEndpoint);
 
   const state$ = sys$.map(getState);
@@ -50,23 +50,23 @@ export function create (sys$, setSys, getData, spaceEndpoint) {
 
   return { apply, stateChange$, state$, inProgress$ };
 
-  function apply (action) {
+  function apply(action) {
     const previousState = currentState;
     inProgressBus.set(true);
     return applyAction(action, getData())
-    .then(data => {
-      // Deleting does not return any data.
-      if (data && data.sys) {
-        setSys(data.sys);
-        stateChangeBus.emit({
-          from: previousState,
-          to: getState(data.sys)
-        });
-      }
-      return data;
-    })
-    .finally(() => {
-      inProgressBus.set(false);
-    });
+      .then(data => {
+        // Deleting does not return any data.
+        if (data && data.sys) {
+          setSys(data.sys);
+          stateChangeBus.emit({
+            from: previousState,
+            to: getState(data.sys)
+          });
+        }
+        return data;
+      })
+      .finally(() => {
+        inProgressBus.set(false);
+      });
   }
 }

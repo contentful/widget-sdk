@@ -36,7 +36,7 @@ export const ranges = [
   [Operator.GTE, 'is greater than or equal to']
 ];
 
-export function getOperatorsByType (type) {
+export function getOperatorsByType(type) {
   /* eslint-disable no-restricted-syntax */
   switch (type) {
     case 'Symbol':

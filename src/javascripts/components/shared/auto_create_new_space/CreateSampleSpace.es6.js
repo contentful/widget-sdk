@@ -5,12 +5,12 @@ import modalDialog from 'modalDialog';
 import $state from '$state';
 import { runTask } from 'utils/Concurrent';
 
-import {getCreator} from 'services/SpaceTemplateCreator';
-import {track, updateUserInSegment} from 'analytics/Analytics';
-import {go as gotoState} from 'states/Navigator';
-import {entityActionSuccess} from 'analytics/events/SpaceCreation';
-import {find, noop} from 'lodash';
-import {getTemplate, getTemplatesList} from 'services/SpaceTemplateLoader';
+import { getCreator } from 'services/SpaceTemplateCreator';
+import { track, updateUserInSegment } from 'analytics/Analytics';
+import { go as gotoState } from 'states/Navigator';
+import { entityActionSuccess } from 'analytics/events/SpaceCreation';
+import { find, noop } from 'lodash';
+import { getTemplate, getTemplatesList } from 'services/SpaceTemplateLoader';
 import logger from 'logger';
 import autoCreateSpaceTemplate from './Template';
 import * as TokenStore from 'services/TokenStore';
@@ -28,7 +28,7 @@ const DEFAULT_LOCALE = 'en-US';
  *
  * @returns Promise<undefined>
  */
-export default function (org, templateName, modalTemplate = autoCreateSpaceTemplate) {
+export default function(org, templateName, modalTemplate = autoCreateSpaceTemplate) {
   /*
    * throws an error synchronously to differentiate it from
    * a rejected promise as a rejected promise stands for
@@ -47,7 +47,7 @@ export default function (org, templateName, modalTemplate = autoCreateSpaceTempl
   const startingMoment = Date.now();
 
   const scope = $rootScope.$new();
-  return runTask(function* () {
+  return runTask(function*() {
     let dialog = null;
 
     // TODO: Remove after feature-ps-11-2017-project-status
@@ -55,7 +55,7 @@ export default function (org, templateName, modalTemplate = autoCreateSpaceTempl
     // enable us to have two independent "screens" inside
     // the modal
     if (modalTemplate !== autoCreateSpaceTemplate) {
-      scope.onProjectStatusSelect = (elementId) => {
+      scope.onProjectStatusSelect = elementId => {
         track('element:click', {
           elementId,
           groupId: 'project_status',
@@ -106,16 +106,18 @@ export default function (org, templateName, modalTemplate = autoCreateSpaceTempl
   });
 }
 
-
 /**
  * Create a new space in the given org, reload the token and go to the
  * space home.
  */
-function* createSpace (org, templateName) {
-  const newSpace = yield client.createSpace({
-    name: 'The example project',
-    defaultLocale: DEFAULT_LOCALE
-  }, org.sys.id);
+function* createSpace(org, templateName) {
+  const newSpace = yield client.createSpace(
+    {
+      name: 'The example project',
+      defaultLocale: DEFAULT_LOCALE
+    },
+    org.sys.id
+  );
 
   yield TokenStore.refresh();
   yield gotoState({
@@ -132,20 +134,23 @@ function* createSpace (org, templateName) {
   return newSpace;
 }
 
-
 /**
  * Load the space contents for the template info and add it to the
  * current space.
  */
-function* applyTemplate (spaceContext, templateInfo) {
+function* applyTemplate(spaceContext, templateInfo) {
   const templateCreator = getCreator(
     spaceContext,
     {
       onItemSuccess: (entityId, entityData, templateName) => {
-        entityActionSuccess(entityId, {
-          ...entityData,
-          entityAutomationScope: {scope: 'auto_create'}
-        }, templateName);
+        entityActionSuccess(
+          entityId,
+          {
+            ...entityData,
+            entityAutomationScope: { scope: 'auto_create' }
+          },
+          templateName
+        );
       },
       onItemError: noop
     },
@@ -167,13 +172,12 @@ function* applyTemplate (spaceContext, templateInfo) {
   yield contentCreated;
 }
 
-
 /**
  * Try to load a template with the given name.
  *
  * Throws an error if no template with this name is found.
  */
-function* loadTemplate (name) {
+function* loadTemplate(name) {
   const templates = yield getTemplatesList();
   const template = find(templates, t => t.fields.name.toLowerCase() === name.toLowerCase());
 
@@ -188,8 +192,7 @@ function* loadTemplate (name) {
   }
 }
 
-
-function openDialog (scope, templateName, modalTemplate) {
+function openDialog(scope, templateName, modalTemplate) {
   return modalDialog.open({
     title: 'Space auto creation',
     template: modalTemplate(templateName.toLowerCase()),

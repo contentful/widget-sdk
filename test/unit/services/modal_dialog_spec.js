@@ -3,7 +3,7 @@ import * as sinon from 'helpers/sinon';
 describe('Modal dialog service', () => {
   let modalDialog, scope;
   let successStub, errorStub;
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     scope = this.$inject('$rootScope').$new();
     modalDialog = this.$inject('modalDialog');
@@ -20,8 +20,7 @@ describe('Modal dialog service', () => {
         message: 'dialog message',
         title: 'TITLE'
       });
-      dialog.promise.then(successStub)
-                    .catch(errorStub);
+      dialog.promise.then(successStub).catch(errorStub);
     });
 
     afterEach(() => {
@@ -46,7 +45,9 @@ describe('Modal dialog service', () => {
     });
 
     it('sets content', () => {
-      expect(dialog.domElement.find('.modal-dialog__content').html()).toMatch(dialog.params.message);
+      expect(dialog.domElement.find('.modal-dialog__content').html()).toMatch(
+        dialog.params.message
+      );
     });
 
     describe('closes by clicking on background', () => {
@@ -86,7 +87,7 @@ describe('Modal dialog service', () => {
 
       it('cancel is called with ESC key', () => {
         event.keyCode = 27;
-        event.target = {tagName: ''};
+        event.target = { tagName: '' };
         dialog._handleKeys(event);
         dialog.scope.$digest();
         sinon.assert.called(cancelStub);
@@ -94,7 +95,7 @@ describe('Modal dialog service', () => {
 
       it('confirm is called with Enter key', () => {
         event.keyCode = 13;
-        event.target = {tagName: ''};
+        event.target = { tagName: '' };
         dialog.params.ignoreEnter = false;
         dialog._handleKeys(event);
         dialog.scope.$digest();
@@ -104,14 +105,14 @@ describe('Modal dialog service', () => {
 
     describe('with a scope', () => {
       beforeEach(() => {
-        dialog.scope = {$apply: sinon.stub(), $destroy: sinon.stub()};
+        dialog.scope = { $apply: sinon.stub(), $destroy: sinon.stub() };
       });
 
       it('properly removes the global event listeners', () => {
         $(window).trigger('keyup');
         sinon.assert.called(dialog.scope.$apply);
         dialog.destroy();
-        dialog.scope = {$apply: sinon.stub(), $destroy: sinon.stub()};
+        dialog.scope = { $apply: sinon.stub(), $destroy: sinon.stub() };
         $(window).trigger('keyup');
         sinon.assert.notCalled(dialog.scope.$apply);
       });
@@ -119,7 +120,9 @@ describe('Modal dialog service', () => {
       it('confirms with values', () => {
         let result;
         dialog.confirm('foo');
-        dialog.promise.then(value => { result = value; });
+        dialog.promise.then(value => {
+          result = value;
+        });
         scope.$apply();
         expect(result).toBe('foo');
       });
@@ -127,7 +130,9 @@ describe('Modal dialog service', () => {
       it('cancels with values', () => {
         let result;
         dialog.cancel('bar');
-        dialog.promise.catch(value => { result = value; });
+        dialog.promise.catch(value => {
+          result = value;
+        });
         scope.$apply();
         expect(result).toBe('bar');
       });
@@ -142,7 +147,7 @@ describe('Modal dialog service', () => {
         expect($('.modal-background').length).toBe(1);
       });
 
-      it('calls the success stub', function* () {
+      it('calls the success stub', function*() {
         dialog.cancel().promise.finally(() => {
           sinon.assert.called(errorStub);
         });
@@ -159,11 +164,12 @@ describe('Modal dialog service', () => {
   describe('#closeAll()', () => {
     beforeEach(() => {
       _.times(2, () => {
-        modalDialog.open({
-          message: 'test'
-        }).promise
-        .then(() => {})
-        .catch(errorStub);
+        modalDialog
+          .open({
+            message: 'test'
+          })
+          .promise.then(() => {})
+          .catch(errorStub);
       });
     });
 
@@ -176,12 +182,13 @@ describe('Modal dialog service', () => {
     });
 
     it('does not close modals with `persistOnNavigation` =  true', () => {
-      modalDialog.open({
-        message: 'yo',
-        persistOnNavigation: true
-      }).promise
-      .then(() => {})
-      .catch(errorStub);
+      modalDialog
+        .open({
+          message: 'yo',
+          persistOnNavigation: true
+        })
+        .promise.then(() => {})
+        .catch(errorStub);
 
       expect(modalDialog.getOpened().length).toBe(3);
       modalDialog.closeAll();

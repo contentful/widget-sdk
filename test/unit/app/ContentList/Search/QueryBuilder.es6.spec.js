@@ -3,7 +3,7 @@ import { contentTypes } from './helpers';
 
 describe('app/ContentList/Search/QueryBuilder', () => {
   let buildQuery;
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
 
     buildQuery = this.$inject('app/ContentList/Search/QueryBuilder').buildQuery;
@@ -188,8 +188,12 @@ describe('app/ContentList/Search/QueryBuilder', () => {
         searchFilters: [['sys.createdAt', '', '2017-10-15']]
       },
       {
-        'sys.createdAt[gte]': moment('2017-10-15').startOf('day').toISOString(),
-        'sys.createdAt[lte]': moment('2017-10-15').endOf('day').toISOString()
+        'sys.createdAt[gte]': moment('2017-10-15')
+          .startOf('day')
+          .toISOString(),
+        'sys.createdAt[lte]': moment('2017-10-15')
+          .endOf('day')
+          .toISOString()
       }
     );
 
@@ -209,7 +213,9 @@ describe('app/ContentList/Search/QueryBuilder', () => {
         searchFilters: [['sys.createdAt', 'lte', '2017-10-15']]
       },
       {
-        'sys.createdAt[lte]': moment('2017-10-15').endOf('day').toISOString()
+        'sys.createdAt[lte]': moment('2017-10-15')
+          .endOf('day')
+          .toISOString()
       }
     );
 
@@ -219,7 +225,9 @@ describe('app/ContentList/Search/QueryBuilder', () => {
         searchFilters: [['sys.createdAt', 'gt', '2017-10-15']]
       },
       {
-        'sys.createdAt[gt]': moment('2017-10-15').endOf('day').toISOString()
+        'sys.createdAt[gt]': moment('2017-10-15')
+          .endOf('day')
+          .toISOString()
       }
     );
 

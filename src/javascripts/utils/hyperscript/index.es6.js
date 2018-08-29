@@ -1,6 +1,6 @@
-import {h as h_, renderString} from 'ui/Framework';
-import {constant} from 'lodash';
-import {caseofEq} from 'sum-types';
+import { h as h_, renderString } from 'ui/Framework';
+import { constant } from 'lodash';
+import { caseofEq } from 'sum-types';
 
 /**
  * @description
@@ -14,10 +14,9 @@ import {caseofEq} from 'sum-types';
  * @param {string[]} children
  * @returns {string}
  */
-export function h (elSpec, attrs, children) {
+export function h(elSpec, attrs, children) {
   return renderString(h_(elSpec, attrs, children));
 }
-
 
 /**
  * @ngdoc method
@@ -33,8 +32,8 @@ export function h (elSpec, attrs, children) {
  * @param {string} text
  * @returns {string}
  */
-export function text (t) {
-  return t.replace(/<|>|&/g, (c) => {
+export function text(t) {
+  return t.replace(/<|>|&/g, c => {
     return caseofEq(c, [
       ['<', constant('&lt;')],
       ['>', constant('&gt;')],

@@ -1,55 +1,54 @@
-angular.module('contentful/mocks')
+angular
+  .module('contentful/mocks')
 
-.value('debounce', _.identity)
-.value('throttle', _.identity)
+  .value('debounce', _.identity)
+  .value('throttle', _.identity)
 
-.value('defer', function (f) {
-  const args = _.tail(arguments);
-  f.apply(this, args);
-})
+  .value('defer', function(f) {
+    const args = _.tail(arguments);
+    f.apply(this, args);
+  })
 
-.value('delay', function (f) {
-  const args = _.drop(arguments, 2);
-  f.apply(this, args);
-})
+  .value('delay', function(f) {
+    const args = _.drop(arguments, 2);
+    f.apply(this, args);
+  })
 
-
-.constant('delayedInvocationStub', originalFunction => {
-  let result;
-  function delayedFunction (...args) {
-    delayedFunction.calls.push({
-      thisArg: this,
-      arguments: args
-    });
-    return result;
-  }
-  delayedFunction.calls = [];
-  delayedFunction.invokeDelayed = function () {
-    const call = this.calls.shift();
-    result = originalFunction.apply(call.thisArg, call.arguments);
-  };
-  delayedFunction.invokeAll = function () {
-    while (this.calls.length > 0) {
-      this.invokeDelayed();
+  .constant('delayedInvocationStub', originalFunction => {
+    let result;
+    function delayedFunction(...args) {
+      delayedFunction.calls.push({
+        thisArg: this,
+        arguments: args
+      });
+      return result;
     }
-  };
-  return delayedFunction;
-})
-
-
-.constant('createQueuedDebounce', () => {
-  function debounce (fn) {
-    return function (...args) {
-      debounce.queue.push({fn: fn, args: args});
+    delayedFunction.calls = [];
+    delayedFunction.invokeDelayed = function() {
+      const call = this.calls.shift();
+      result = originalFunction.apply(call.thisArg, call.arguments);
     };
-  }
+    delayedFunction.invokeAll = function() {
+      while (this.calls.length > 0) {
+        this.invokeDelayed();
+      }
+    };
+    return delayedFunction;
+  })
 
-  debounce.queue = [];
-  debounce.flush = () => {
-    debounce.queue.forEach(call => {
-      call.fn.apply(null, call.args);
-    });
-  };
+  .constant('createQueuedDebounce', () => {
+    function debounce(fn) {
+      return function(...args) {
+        debounce.queue.push({ fn: fn, args: args });
+      };
+    }
 
-  return debounce;
-});
+    debounce.queue = [];
+    debounce.flush = () => {
+      debounce.queue.forEach(call => {
+        call.fn.apply(null, call.args);
+      });
+    };
+
+    return debounce;
+  });

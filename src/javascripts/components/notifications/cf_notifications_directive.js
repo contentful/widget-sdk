@@ -5,23 +5,27 @@ angular.module('contentful').directive('cfNotifications', () => ({
   template: JST.cf_notifications(),
   scope: true,
 
-  controller: ['$scope', 'require', ($scope, require) => {
-    const notification = require('notification');
+  controller: [
+    '$scope',
+    'require',
+    ($scope, require) => {
+      const notification = require('notification');
 
-    $scope.markAsSeen = () => {
-      notification.markAsSeen();
-    };
+      $scope.markAsSeen = () => {
+        notification.markAsSeen();
+      };
 
-    $scope.$watch(() => !notification.message || notification.message.hidden, setHidden);
+      $scope.$watch(() => !notification.message || notification.message.hidden, setHidden);
 
-    $scope.$watch(() => notification.message, setMessage);
+      $scope.$watch(() => notification.message, setMessage);
 
-    function setHidden (hidden) {
-      $scope.hidden = hidden;
+      function setHidden(hidden) {
+        $scope.hidden = hidden;
+      }
+
+      function setMessage(message) {
+        $scope.message = message;
+      }
     }
-
-    function setMessage (message) {
-      $scope.message = message;
-    }
-  }]
+  ]
 }));

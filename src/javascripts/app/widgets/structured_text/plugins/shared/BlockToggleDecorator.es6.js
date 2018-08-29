@@ -10,7 +10,7 @@ export const applyChange = (change, type) => {
 
 export default ({ type, title, icon }) => Block => {
   return class BlockDecorator extends React.Component {
-    static propTypes = ToolbarIconPropTypes
+    static propTypes = ToolbarIconPropTypes;
     handleToggle = e => {
       const { change, onToggle } = this.props;
       e.preventDefault();
@@ -18,7 +18,7 @@ export default ({ type, title, icon }) => Block => {
       onToggle(applyChange(change, type));
     };
 
-    render () {
+    render() {
       const { change, disabled } = this.props;
 
       return (

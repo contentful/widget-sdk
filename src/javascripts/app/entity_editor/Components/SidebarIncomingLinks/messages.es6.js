@@ -9,8 +9,7 @@ export default {
       subtitle: 'There is one other entry that links to this entry:'
     },
     [NumberOfLinks.MANY]: {
-      subtitle:
-        'There are ${numberOfLinks} other entries that link to this entry:'
+      subtitle: 'There are ${numberOfLinks} other entries that link to this entry:'
     }
   },
   [EntityType.ASSET]: {

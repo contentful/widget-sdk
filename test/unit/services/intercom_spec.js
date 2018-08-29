@@ -3,7 +3,7 @@
 describe('Intercom service', () => {
   let $window, intercom, $windowIntercomStub;
 
-  function setGlobalIntercom (value) {
+  function setGlobalIntercom(value) {
     $windowIntercomStub = $window.Intercom = value;
 
     // eslint-disable-next-line no-unused-vars
@@ -12,7 +12,7 @@ describe('Intercom service', () => {
     });
   }
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     $window = this.$inject('$window');
   });

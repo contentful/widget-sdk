@@ -1,14 +1,14 @@
-import {getSpaces, getOrganizations, getOrganization, user$} from 'services/TokenStore';
+import { getSpaces, getOrganizations, getOrganization, user$ } from 'services/TokenStore';
 import { getStore } from 'TheStore';
 import * as accessChecker from 'access_control/AccessChecker';
-import {isOwnerOrAdmin} from 'services/OrganizationRoles';
-import {getValue, onValue} from 'utils/kefir';
-import {MODERN_STACK_ONBOARDING_SPACE_NAME, getStoragePrefix} from 'createModernOnboarding';
-import {getKey as getSpaceAutoCreatedKey} from 'components/shared/auto_create_new_space';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { getValue, onValue } from 'utils/kefir';
+import { MODERN_STACK_ONBOARDING_SPACE_NAME, getStoragePrefix } from 'createModernOnboarding';
+import { getKey as getSpaceAutoCreatedKey } from 'components/shared/auto_create_new_space';
 
 const store = getStore();
 
-function getUser () {
+function getUser() {
   // user$ is a property which starts with `null`
   // so it will never throw an error
   const user = getValue(user$);
@@ -27,11 +27,8 @@ function getUser () {
   });
 }
 
-export function* getOnboardingSpaceId () {
-  const [user, spaces] = yield Promise.all([
-    getUser(),
-    getSpaces()
-  ]);
+export function* getOnboardingSpaceId() {
+  const [user, spaces] = yield Promise.all([getUser(), getSpaces()]);
   const prefix = getStoragePrefix();
 
   const onboardingSpaceKey = `${prefix}:developerChoiceSpace`;
@@ -64,7 +61,7 @@ export function* getOnboardingSpaceId () {
  * if there is no last used space in the store,
  * first available space is used
  */
-export function* getSpaceInfo () {
+export function* getSpaceInfo() {
   const lastUsedId = store.get('lastUsedSpace');
   const spaces = yield getSpaces();
 
@@ -83,7 +80,7 @@ export function* getSpaceInfo () {
  * @description get current organization id
  * or organization of the first space
  */
-export function* getOrg () {
+export function* getOrg() {
   const lastUsedOrgId = store.get('lastUsedOrg');
   const orgs = yield getOrganizations();
 
@@ -104,7 +101,7 @@ export function* getOrg () {
  * using {spaceContext}, and only after you should
  * call this check
  */
-export function checkSpaceApiAccess () {
+export function checkSpaceApiAccess() {
   return accessChecker.canReadApiKeys();
 }
 
@@ -114,7 +111,7 @@ export function checkSpaceApiAccess () {
  * @param {string} orgId - selected organization id
  * @return {boolean} - has access or not
  */
-export function* checkOrgAccess (orgId) {
+export function* checkOrgAccess(orgId) {
   const org = yield getOrganization(orgId);
 
   return isOwnerOrAdmin(org);

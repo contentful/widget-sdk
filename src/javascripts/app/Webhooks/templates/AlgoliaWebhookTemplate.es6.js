@@ -25,8 +25,7 @@ export default {
           <a
             href="https://www.algolia.com/manage/applications"
             target="_blank"
-            rel="noopener noreferrer"
-          >
+            rel="noopener noreferrer">
             Algolia Dashboard
           </a>
           .
@@ -49,8 +48,7 @@ export default {
           <a
             href="https://www.algolia.com/manage/applications"
             target="_blank"
-            rel="noopener noreferrer"
-          >
+            rel="noopener noreferrer">
             Algolia Dashboard
           </a>
           . This value can’t be revealed once stored.
@@ -66,8 +64,8 @@ export default {
         topics: ['Entry.publish'],
         filters: [{ equals: [{ doc: 'sys.environment.sys.id' }, 'master'] }],
         headers: [
-          {key: 'X-Algolia-Application-Id', value: appId},
-          {key: 'X-Algolia-API-Key', value: apiKey, secret: true}
+          { key: 'X-Algolia-Application-Id', value: appId },
+          { key: 'X-Algolia-API-Key', value: apiKey, secret: true }
         ],
         transformation: {
           method: 'PUT',
@@ -82,8 +80,8 @@ export default {
         topics: ['Entry.unpublish'],
         filters: [{ equals: [{ doc: 'sys.environment.sys.id' }, 'master'] }],
         headers: [
-          {key: 'X-Algolia-Application-Id', value: appId},
-          {key: 'X-Algolia-API-Key', value: apiKey, secret: true}
+          { key: 'X-Algolia-Application-Id', value: appId },
+          { key: 'X-Algolia-API-Key', value: apiKey, secret: true }
         ],
         transformation: {
           method: 'DELETE'

@@ -31,7 +31,7 @@ const CopyIconButton = createReactClass({
     className: PropTypes.string
   },
 
-  getDefaultProps () {
+  getDefaultProps() {
     return {
       onCopy: () => undefined,
       tooltipPosition: 'bottom'
@@ -44,11 +44,11 @@ const CopyIconButton = createReactClass({
 
   // TODO This is an ugly workaround to prevent React warnings when the
   // component is unmounted.
-  componentWillUnmount () {
+  componentWillUnmount() {
     this.isUnmounted = true;
   },
 
-  copyToClipboard: wrapTask(function* () {
+  copyToClipboard: wrapTask(function*() {
     copyToClipboard(this.props.value);
     this.props.onCopy(this.props.value);
     this.setState({ showCopiedTooltip: true });
@@ -58,25 +58,24 @@ const CopyIconButton = createReactClass({
     }
   }),
 
-  render () {
-    const {tooltipPosition, className} = this.props;
+  render() {
+    const { tooltipPosition, className } = this.props;
     const self = this;
     return (
       <span
-        role='button'
-        data-test-id='clickToCopy'
+        role="button"
+        data-test-id="clickToCopy"
         onClick={this.copyToClipboard}
         style={{ cursor: 'pointer' }}
-        className={className || ''}
-      >
+        className={className || ''}>
         <Tippy.Tooltip
-          title='Copied!'
+          title="Copied!"
           open={this.state.showCopiedTooltip}
           position={tooltipPosition}
           arrow
-          trigger='manual'
+          trigger="manual"
           duration={0}
-          onShow={function () {
+          onShow={function() {
             // * We want the tooltip to be closed when the user clicks it.
             // * There is no need to remove the event listener because the
             //   element is destroyed when it is closed.

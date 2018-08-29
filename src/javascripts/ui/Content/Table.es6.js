@@ -1,10 +1,9 @@
-import {h} from 'ui/Framework';
-import {partial} from 'lodash';
+import { h } from 'ui/Framework';
+import { partial } from 'lodash';
 
 /**
  * This module exports function to build table components
  */
-
 
 /**
  * @ngdoc method
@@ -38,11 +37,8 @@ import {partial} from 'lodash';
  * @param {VNode} body
  * @returns {VNode}
  */
-export function table (head, body) {
-  return h('table.simple-table', [
-    h('thead', [h('tr', head)]),
-    h('tbody', body)
-  ]);
+export function table(head, body) {
+  return h('table.simple-table', [h('thead', [h('tr', head)]), h('tbody', body)]);
 }
 
 export const tr = partial(h, 'tr');

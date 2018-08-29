@@ -1,11 +1,7 @@
-import {caseof} from 'sum-types/caseof-eq';
-import {constant} from 'lodash';
+import { caseof } from 'sum-types/caseof-eq';
+import { constant } from 'lodash';
 import $q from '$q';
-import {
-  Action,
-  makePerform
-} from 'data/CMA/EntityActions';
-
+import { Action, makePerform } from 'data/CMA/EntityActions';
 
 /**
  * @ngdoc service
@@ -47,14 +43,13 @@ export const State = {
   Published: constant('__PUBLISHED__')
 };
 
-
 /**
  * @ngdoc method
  * @name data/CMA/EntityState#stateName
  * @param {data/CMA/EntityState.State} state
  * @returns {string}
  */
-export function stateName (state) {
+export function stateName(state) {
   return caseof(state, [
     [State.Deleted(), constant('deleted')],
     [State.Archived(), constant('archived')],
@@ -64,9 +59,7 @@ export function stateName (state) {
   ]);
 }
 
-
-export {Action};
-
+export { Action };
 
 /**
  * @ngdoc method
@@ -76,7 +69,7 @@ export {Action};
  * @param {API.Sys} sys
  * @returns {data/CMA/EntityState#State}
  */
-export function getState (sys) {
+export function getState(sys) {
   if (!sys || (sys.type !== 'Entry' && sys.type !== 'Asset')) {
     throw new TypeError('Invalid entity metadata object');
   }
@@ -113,10 +106,10 @@ export function getState (sys) {
  * 'spaceEndpoint' is a function to make the request to a space as defined in
  * the 'data/Endpoint' module.
  */
-export function makeApply (spaceEndpoint) {
+export function makeApply(spaceEndpoint) {
   const changeTo = makeChangeTo(spaceEndpoint);
 
-  return function applyAction (action, data) {
+  return function applyAction(action, data) {
     const targetState = caseof(action, [
       [Action.Publish(), State.Published],
       [Action.Unpublish(), State.Draft],
@@ -128,16 +121,15 @@ export function makeApply (spaceEndpoint) {
   };
 }
 
-
 /**
  * A curried function that takes a space endpiont, a target entity
  * state and the entity data. It performs an API request to change the
  * entity to the target state and returns the updated entity data.
  */
-function makeChangeTo (spaceEndpoint) {
+function makeChangeTo(spaceEndpoint) {
   const performAction = makePerform(spaceEndpoint);
 
-  return function changeTo (state, data) {
+  return function changeTo(state, data) {
     if (state === State.Changed()) {
       throw new Error('"Changed" is not a valid entity target state');
     }
@@ -152,17 +144,20 @@ function makeChangeTo (spaceEndpoint) {
       [State.Draft(), () => toDraft(data)],
       [State.Deleted(), () => performActionWithDraftEnsured(Action.Delete(), data)],
       [State.Archived(), () => performActionWithDraftEnsured(Action.Archive(), data)],
-      [State.Published(), () => {
-        if (currentState === State.Changed()) {
-          return performAction(Action.Publish(), data);
-        } else {
-          return performActionWithDraftEnsured(Action.Publish(), data);
+      [
+        State.Published(),
+        () => {
+          if (currentState === State.Changed()) {
+            return performAction(Action.Publish(), data);
+          } else {
+            return performActionWithDraftEnsured(Action.Publish(), data);
+          }
         }
-      }]
+      ]
     ]);
   };
 
-  function toDraft (data) {
+  function toDraft(data) {
     return caseof(getState(data.sys), [
       [State.Published(), () => performAction(Action.Unpublish(), data)],
       [State.Changed(), () => performAction(Action.Unpublish(), data)],
@@ -171,8 +166,7 @@ function makeChangeTo (spaceEndpoint) {
     ]);
   }
 
-  function performActionWithDraftEnsured (action, data) {
-    return toDraft(data)
-    .then((data) => performAction(action, data));
+  function performActionWithDraftEnsured(action, data) {
+    return toDraft(data).then(data => performAction(action, data));
   }
 }

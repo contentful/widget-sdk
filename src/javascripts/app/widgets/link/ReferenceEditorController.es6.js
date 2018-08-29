@@ -8,15 +8,15 @@ import createEntity from 'cfReferenceEditor/createEntity';
 import spaceContext from 'spaceContext';
 import { onFeatureFlag } from 'utils/LaunchDarkly';
 import { track } from 'analytics/Analytics';
-import { onEntryCreate as trackEntryCreate, onEntryEdit as trackEntryEdit } from 'analytics/events/ReferenceEditor';
+import {
+  onEntryCreate as trackEntryCreate,
+  onEntryEdit as trackEntryEdit
+} from 'analytics/events/ReferenceEditor';
 
 import $state from '$state';
 
 import * as State from './State';
-import {
-  canPerformActionOnEntryOfType,
-  Action
-} from 'access_control/AccessChecker';
+import { canPerformActionOnEntryOfType, Action } from 'access_control/AccessChecker';
 import { canLinkToContentType, getInlineEditingStoreKey } from './utils';
 import { getStore } from 'TheStore';
 
@@ -27,17 +27,17 @@ import {
 
 const FEATURE_LOTS_OF_CT_ADD_ENTRY_REDESIGN =
   'feature-at-11-2017-lots-of-cts-add-entry-and-link-reference';
-const INLINE_REFERENCE_FEATURE_FLAG =
-  'feature-at-02-2018-inline-reference-field';
-const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG =
-  'feature-at-05-2018-sliding-entry-editor-multi-level';
+const INLINE_REFERENCE_FEATURE_FLAG = 'feature-at-02-2018-inline-reference-field';
+const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG = 'feature-at-05-2018-sliding-entry-editor-multi-level';
 
-export default function create ($scope, widgetApi) {
+export default function create($scope, widgetApi) {
   const store = getStore();
   const {
     field,
     fieldProperties: { isDisabled$ },
-    contentType: { sys: { id: contentTypeId } }
+    contentType: {
+      sys: { id: contentTypeId }
+    }
   } = widgetApi;
   const state = State.create(
     field,
@@ -54,9 +54,8 @@ export default function create ($scope, widgetApi) {
   $scope.typePlural = { Entry: 'entries', Asset: 'assets' }[$scope.type];
   $scope.isAssetCard = is('Asset', 'card');
   $scope.referenceType = {};
-  $scope.$on(
-    'ct-expand-state:toggle',
-    (_event, [...args]) => handleInlineReferenceEditorToggle(...args)
+  $scope.$on('ct-expand-state:toggle', (_event, [...args]) =>
+    handleInlineReferenceEditorToggle(...args)
   );
 
   // Passed to cfEntityLink and cfAssetCard directive
@@ -71,11 +70,9 @@ export default function create ($scope, widgetApi) {
     $scope.config.draggable = !$scope.single && !isDisabled;
   });
 
-  onFeatureFlag($scope, FEATURE_LOTS_OF_CT_ADD_ENTRY_REDESIGN,
-    (isEnabled) => {
-      $scope.isNewAddAndLinkRefButtonEnabled = isEnabled;
-    }
-  );
+  onFeatureFlag($scope, FEATURE_LOTS_OF_CT_ADD_ENTRY_REDESIGN, isEnabled => {
+    $scope.isNewAddAndLinkRefButtonEnabled = isEnabled;
+  });
 
   // TODO: This is for inline reference editing
   // BETA release. Remove this once we are done with
@@ -88,7 +85,12 @@ export default function create ($scope, widgetApi) {
 
     if (isAsset) {
       $scope.referenceType = { asset: true };
-    } else if (widgetApi._internal.createReferenceContext && isEnabled && featureEnabledForField && isOneToOne) {
+    } else if (
+      widgetApi._internal.createReferenceContext &&
+      isEnabled &&
+      featureEnabledForField &&
+      isOneToOne
+    ) {
       $scope.referenceType = { inline: true };
     } else {
       $scope.referenceType = { link: true };
@@ -103,7 +105,7 @@ export default function create ($scope, widgetApi) {
     }
   });
 
-  function isInlineEditingEnabledForField () {
+  function isInlineEditingEnabledForField() {
     const ctExpandedStoreKey = getInlineEditingStoreKey(
       spaceContext.user.sys.id,
       contentTypeId,
@@ -128,26 +130,26 @@ export default function create ($scope, widgetApi) {
 
   K.onValueScope($scope, spaceContext.publishedCTs.items$, () => updateAccessibleCts());
 
-  function updateAccessibleCts () {
+  function updateAccessibleCts() {
     $scope.allowedCTs = spaceContext.publishedCTs
       .getAllBare()
       .filter(contentType => {
         return canPerformActionOnEntryOfType(Action.CREATE, contentType.sys.id);
       })
-      .filter((ct) => canLinkToContentType(field, ct));
+      .filter(ct => canLinkToContentType(field, ct));
   }
 
   // TODO: Legacy code to be removed with FEATURE_LOTS_OF_CT_ADD_ENTRY_REDESIGN
   $scope.addNew = event => {
     event.preventDefault();
     const contentType = spaceContext.publishedCTs.get($scope.type);
-    return createEntity($scope.type, field, widgetApi.space)
-      .then(makeNewEntityHandler(contentType));
+    return createEntity($scope.type, field, widgetApi.space).then(
+      makeNewEntityHandler(contentType)
+    );
   };
 
   $scope.addNewAsset = makeAddNewEntityHandler(() => {
-    return widgetApi.space.createAsset({})
-      .then(makeNewEntityHandler());
+    return widgetApi.space.createAsset({}).then(makeNewEntityHandler());
   });
 
   $scope.addNewEntry = makeAddNewEntityHandler(contentTypeId => {
@@ -173,7 +175,7 @@ export default function create ($scope, widgetApi) {
       });
   });
 
-  function makeAddNewEntityHandler (fn) {
+  function makeAddNewEntityHandler(fn) {
     let currentJob;
     return (...args) => {
       if (currentJob) {
@@ -183,22 +185,21 @@ export default function create ($scope, widgetApi) {
       currentJob = fn(...args).then(doneHandler, doneHandler);
       return currentJob;
     };
-    function doneHandler (result) {
+    function doneHandler(result) {
       $scope.canAddNew = true;
       currentJob = null;
       return result;
     }
   }
 
-  function makeNewEntityHandler (contentType) {
+  function makeNewEntityHandler(contentType) {
     return entity => {
       if ($scope.referenceType.inline) {
         $scope.isReady = true;
       }
       const numEntities = getSlideInEntities().length;
       const shouldTrackSlideInOpen =
-        slideInEditorEnabled &&
-        (!bulkEditorEnabled || numEntities > 1);
+        slideInEditorEnabled && (!bulkEditorEnabled || numEntities > 1);
 
       state.addEntities([entity]);
       editEntityAction(entity, -1);
@@ -225,9 +226,11 @@ export default function create ($scope, widgetApi) {
   $scope.addExisting = event => {
     event.preventDefault && event.preventDefault();
     const currentSize = $scope.entityModels.length;
-    entitySelector.openFromField(field, currentSize).then((entities) => {
+    entitySelector.openFromField(field, currentSize).then(entities => {
       if ($scope.type !== 'Asset') {
-        entities.map(entity => track('reference_editor_action:link', { ctId: get(entity, 'sys.contentType.sys.id') }));
+        entities.map(entity =>
+          track('reference_editor_action:link', { ctId: get(entity, 'sys.contentType.sys.id') })
+        );
       }
       state.addEntities(entities);
     });
@@ -273,15 +276,15 @@ export default function create ($scope, widgetApi) {
     unlistenLocationChangeSuccess();
   });
 
-  function is (type, style) {
+  function is(type, style) {
     return type === $scope.type && style === $scope.style;
   }
 
-  function hasUnpublishedReferences () {
+  function hasUnpublishedReferences() {
     return getUnpublishedReferences().length > 0;
   }
 
-  function handleInlineReferenceEditorToggle (id, locale, enableInlineEditing) {
+  function handleInlineReferenceEditorToggle(id, locale, enableInlineEditing) {
     if (id !== field.id || locale !== field.locale) {
       return;
     }
@@ -293,7 +296,7 @@ export default function create ($scope, widgetApi) {
     $scope.referenceType = { [type]: true };
   }
 
-  function getUnpublishedReferences () {
+  function getUnpublishedReferences() {
     const models = $scope.entityModels || [];
     return models.filter(item => {
       if (item.value.entity) {
@@ -304,28 +307,22 @@ export default function create ($scope, widgetApi) {
     });
   }
 
-  function getWarningData () {
+  function getWarningData() {
     const references = getUnpublishedReferences();
 
     return {
       fieldName: field.name + ' (' + field.locale + ')',
       count: references.length,
       linked: $scope.type,
-      type: (references.length > 1
-        ? $scope.typePlural
-        : $scope.type
-      ).toLowerCase()
+      type: (references.length > 1 ? $scope.typePlural : $scope.type).toLowerCase()
     };
   }
 
-  function showWarning (unpublishedRefs) {
+  function showWarning(unpublishedRefs) {
     unpublishedRefs = filter(unpublishedRefs, ref => ref && ref.count > 0);
 
     const counts = countBy(unpublishedRefs, 'linked');
-    const linkedEntityTypes = [
-      counts.Entry > 0 && 'entries',
-      counts.Asset > 0 && 'assets'
-    ];
+    const linkedEntityTypes = [counts.Entry > 0 && 'entries', counts.Asset > 0 && 'assets'];
 
     return modalDialog.open({
       template: 'unpublished_references_warning',
@@ -337,12 +334,11 @@ export default function create ($scope, widgetApi) {
   }
 
   // Build an object that is passed to the 'cfEntityLink' directive
-  function buildEntityModel (id, entity, index, isDisabled) {
+  function buildEntityModel(id, entity, index, isDisabled) {
     const version = entity ? entity.sys.version : '';
     const contentTypeId = get(entity, 'sys.contentType.sys.id');
     const hash = [id, version, isDisabled, contentTypeId].join('!');
-    const contentType =
-      contentTypeId && spaceContext.publishedCTs.fetch(contentTypeId);
+    const contentType = contentTypeId && spaceContext.publishedCTs.fetch(contentTypeId);
 
     // This is passed down to the bulk entity editor actions
     // to be able to unlink an entry when the bulk editor is
@@ -381,7 +377,7 @@ export default function create ($scope, widgetApi) {
     return entityModel;
   }
 
-  function prepareEditAction (entity, index, isDisabled) {
+  function prepareEditAction(entity, index, isDisabled) {
     if (entity && !isDisabled && !isCurrentEntry(entity) && bulkEditorEnabled) {
       return $event => {
         if ($event && $event.preventDefault) {
@@ -394,19 +390,17 @@ export default function create ($scope, widgetApi) {
     }
   }
 
-  function trackEdit (entity) {
+  function trackEdit(entity) {
     // only track for 1:1 entry references that will open in a new entry editor.
     if (entity.sys.type === 'Entry' && !!$scope.single && !isCurrentEntry(entity)) {
       trackEntryEdit({
-        contentType: spaceContext.publishedCTs.get(
-          entity.sys.contentType.sys.id
-        ),
+        contentType: spaceContext.publishedCTs.get(entity.sys.contentType.sys.id),
         isInlineEditingFeatureFlagEnabled: $scope.isInlineEditingEnabled
       });
     }
   }
 
-  function editEntityAction (entity, index) {
+  function editEntityAction(entity, index) {
     if ($scope.referenceType.inline) {
       return;
     } else if (bulkEditorEnabled) {
@@ -418,7 +412,7 @@ export default function create ($scope, widgetApi) {
     }
   }
 
-  function bulkEditorAction (entity, index) {
+  function bulkEditorAction(entity, index) {
     if (getSlideInEntities().length > 1) {
       trackOpenSlideIn();
       goToSlideInEntity(entity);
@@ -427,21 +421,18 @@ export default function create ($scope, widgetApi) {
     }
   }
 
-  function trackOpenSlideIn () {
+  function trackOpenSlideIn() {
     track('bulk_editor:open_slide_in', {
       parentEntryId: widgetApi.entry.getSys().id,
       refCount: $scope.entityModels.length
     });
   }
 
-  function goToSlideInEntity ({ sys: { id, type } }) {
-    return goToSlideInEntityBase(
-      { id, type },
-      $scope.isSlideinEntryEditorEnabled
-    );
+  function goToSlideInEntity({ sys: { id, type } }) {
+    return goToSlideInEntityBase({ id, type }, $scope.isSlideinEntryEditorEnabled);
   }
 
-  function maybeOpenBulkEditor () {
+  function maybeOpenBulkEditor() {
     const bulkEditorParam = $state.params.bulkEditor;
     if (bulkEditorParam) {
       const [fieldId, locale, index] = bulkEditorParam.split(':');
@@ -451,20 +442,28 @@ export default function create ($scope, widgetApi) {
     }
   }
 
-  function goToBulkEditor (referenceIndex) {
+  function goToBulkEditor(referenceIndex) {
     const fieldIndex = isNaN(Number(referenceIndex)) ? 0 : Number(referenceIndex);
-    widgetApi._internal.editReferences && widgetApi._internal.editReferences(fieldIndex, state.refreshEntities);
+    widgetApi._internal.editReferences &&
+      widgetApi._internal.editReferences(fieldIndex, state.refreshEntities);
   }
 
-  function prepareRemoveAction (index, isDisabled) {
+  function prepareRemoveAction(index, isDisabled) {
     if (isDisabled) {
       return null;
     } else {
       return () => {
         if ($scope.type !== 'Asset') {
           track('reference_editor_action:delete', {
-            ctId:
-              get($scope.entityModels, [index, 'value', 'entity', 'sys', 'contentType', 'sys', 'id'])
+            ctId: get($scope.entityModels, [
+              index,
+              'value',
+              'entity',
+              'sys',
+              'contentType',
+              'sys',
+              'id'
+            ])
           });
         }
         state.removeAt(index);
@@ -472,7 +471,7 @@ export default function create ($scope, widgetApi) {
     }
   }
 
-  function isCurrentEntry (entity) {
+  function isCurrentEntry(entity) {
     return entity.sys.id === widgetApi.entry.getSys().id;
   }
 }

@@ -1,7 +1,11 @@
-import {h} from 'ui/Framework';
+import { h } from 'ui/Framework';
 
-export default function render () {
-  return h('div', {
-    dataTestId: 'loader'
-  }, []);
+export default function render() {
+  return h(
+    'div',
+    {
+      dataTestId: 'loader'
+    },
+    []
+  );
 }

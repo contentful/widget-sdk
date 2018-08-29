@@ -1,6 +1,6 @@
-import {h} from 'utils/hyperscript';
+import { h } from 'utils/hyperscript';
 
-export default function () {
+export default function() {
   return [
     h('cf-persistent-notification', {
       role: 'banner'

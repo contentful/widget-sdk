@@ -1,5 +1,5 @@
 describe('app/entityEditor/Notifications', () => {
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     this.notification = this.mockService('notification');
     const N = this.$inject('app/entity_editor/Notifications');
@@ -17,85 +17,61 @@ describe('app/entityEditor/Notifications', () => {
       ['unpublish', 'unpublishing', 'unpublished']
     ];
 
-    it('handles success', function () {
+    it('handles success', function() {
       for (let [inf, _, present] of verbs) {
         this.notify(this.Notification.Success(inf));
-        sinon.assert.calledWith(
-          this.notification.info,
-          `TITLE ${present} successfully`
-        );
+        sinon.assert.calledWith(this.notification.info, `TITLE ${present} successfully`);
       }
     });
 
-    it('handles error', function () {
+    it('handles error', function() {
       for (let [inf, past, _] of verbs) {
         const error = makeErrorResponse('ERROR ID');
         this.notify(this.Notification.Error(inf, error));
-        sinon.assert.calledWith(
-          this.notification.error,
-          `Error ${past} TITLE (ERROR ID)`
-        );
+        sinon.assert.calledWith(this.notification.error, `Error ${past} TITLE (ERROR ID)`);
       }
     });
   });
 
   describe('reverting', () => {
-    it('handles success', function () {
+    it('handles success', function() {
       this.notify(this.Notification.Success('revert'));
-      sinon.assert.calledWith(
-        this.notification.info,
-        'Discarded changes of TITLE successfully'
-      );
+      sinon.assert.calledWith(this.notification.info, 'Discarded changes of TITLE successfully');
     });
 
-    it('handles error', function () {
+    it('handles error', function() {
       this.notify(this.Notification.Error('revert'));
-      sinon.assert.calledWith(
-        this.notification.error,
-        'Error discarding changes of TITLE'
-      );
+      sinon.assert.calledWith(this.notification.error, 'Error discarding changes of TITLE');
     });
   });
 
   describe('deleting', () => {
-    it('handles success', function () {
+    it('handles success', function() {
       this.notify(this.Notification.Success('delete'));
-      sinon.assert.calledWith(
-        this.notification.info,
-        'Entry deleted successfully'
-      );
+      sinon.assert.calledWith(this.notification.info, 'Entry deleted successfully');
     });
 
-    it('handles error', function () {
+    it('handles error', function() {
       const error = makeErrorResponse('ERROR');
       this.notify(this.Notification.Error('delete', error));
-      sinon.assert.calledWith(
-        this.notification.error,
-        'Error deleting TITLE (ERROR)'
-      );
+      sinon.assert.calledWith(this.notification.error, 'Error deleting TITLE (ERROR)');
     });
   });
 
   describe('duplicating', () => {
-    it('handles error', function () {
+    it('handles error', function() {
       this.notify(this.Notification.Error('duplicate'));
-      sinon.assert.calledWith(
-        this.notification.error,
-        'Could not duplicate entry'
-      );
+      sinon.assert.calledWith(this.notification.error, 'Could not duplicate entry');
     });
   });
 
   describe('publishing', () => {
-    it('handles success', function () {
+    it('handles success', function() {
       this.notify(this.Notification.Success('publish'));
-      sinon.assert.calledWith(
-        this.notification.info,
-        'TITLE published successfully'
-      );
+      sinon.assert.calledWith(this.notification.info, 'TITLE published successfully');
     });
 
-    it('handles validation failure', function () {
+    it('handles validation failure', function() {
       this.notify(this.Notification.ValidationError());
       sinon.assert.calledWith(
         this.notification.error,
@@ -103,7 +79,7 @@ describe('app/entityEditor/Notifications', () => {
       );
     });
 
-    it('handles "ValidationFailed" response', function () {
+    it('handles "ValidationFailed" response', function() {
       const error = makeErrorResponse('ValidationFailed');
       this.notify(this.Notification.Error('publish', error));
       sinon.assert.calledWith(
@@ -112,7 +88,7 @@ describe('app/entityEditor/Notifications', () => {
       );
     });
 
-    it('handles "VersionMismatch" response', function () {
+    it('handles "VersionMismatch" response', function() {
       const error = makeErrorResponse('VersionMismatch');
       this.notify(this.Notification.Error('publish', error));
       sinon.assert.calledWith(
@@ -121,7 +97,7 @@ describe('app/entityEditor/Notifications', () => {
       );
     });
 
-    it('handles "UnresolvedLinks" response', function () {
+    it('handles "UnresolvedLinks" response', function() {
       const error = makeErrorResponse('UnresolvedLinks');
       this.notify(this.Notification.Error('publish', error));
       sinon.assert.calledWith(
@@ -130,7 +106,7 @@ describe('app/entityEditor/Notifications', () => {
       );
     });
 
-    it('handles content type validation response', function () {
+    it('handles content type validation response', function() {
       const error = makeErrorResponse('InvalidEntry', 'Validation error', [
         {
           name: 'linkContentType',
@@ -138,13 +114,10 @@ describe('app/entityEditor/Notifications', () => {
         }
       ]);
       this.notify(this.Notification.Error('publish', error));
-      sinon.assert.calledWith(
-        this.notification.error,
-        'Error publishing TITLE: DETAIL'
-      );
+      sinon.assert.calledWith(this.notification.error, 'Error publishing TITLE: DETAIL');
     });
 
-    it('handles other "InvalidEntry" response', function () {
+    it('handles other "InvalidEntry" response', function() {
       const error = makeErrorResponse('InvalidEntry', 'Validation error');
       this.notify(this.Notification.Error('publish', error));
       sinon.assert.calledWith(
@@ -153,7 +126,7 @@ describe('app/entityEditor/Notifications', () => {
       );
     });
 
-    it('handles generic server error response', function () {
+    it('handles generic server error response', function() {
       const error = makeErrorResponse('Other');
       this.notify(this.Notification.Error('publish', error));
       sinon.assert.calledWith(
@@ -163,11 +136,10 @@ describe('app/entityEditor/Notifications', () => {
     });
   });
 
-
-  function makeErrorResponse (id, message, errors) {
+  function makeErrorResponse(id, message, errors) {
     return {
       data: {
-        sys: {id: id},
+        sys: { id: id },
         message: message,
         details: { errors: errors || [] }
       }

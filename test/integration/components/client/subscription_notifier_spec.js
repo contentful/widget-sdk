@@ -9,7 +9,7 @@
 describe('subscriptionNotifier', () => {
   let broadcastStub, openPaywallStub;
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test', $provide => {
       $provide.value('paywallOpener', {
         openPaywall: sinon.stub()
@@ -25,9 +25,9 @@ describe('subscriptionNotifier', () => {
     broadcastStub = sinon.stub($rootScope, '$broadcast').returns({});
     openPaywallStub = this.$inject('paywallOpener').openPaywall;
 
-    this.organization = {sys: {id: 42}};
-    const membership = {organization: this.organization};
-    OrganizationRoles.setUser({organizationMemberships: [membership]});
+    this.organization = { sys: { id: 42 } };
+    const membership = { organization: this.organization };
+    OrganizationRoles.setUser({ organizationMemberships: [membership] });
     dialogsInitController.init();
 
     this.setupOrganization = extension => {
@@ -35,14 +35,20 @@ describe('subscriptionNotifier', () => {
       spaceContext.space = {
         getId: _.constant('some-space-id')
       };
-      spaceContext.organizationContext = {organization: membership.organization};
+      spaceContext.organizationContext = { organization: membership.organization };
     };
 
-    this.makeOwner = () => { membership.role = 'owner'; };
-    this.makeAdmin = () => { membership.role = 'admin'; };
+    this.makeOwner = () => {
+      membership.role = 'owner';
+    };
+    this.makeAdmin = () => {
+      membership.role = 'admin';
+    };
 
-    this.trialHoursLeft = (hours) => {
-      this.organization.trialPeriodEndsAt = moment().add(hours, 'h').toISOString();
+    this.trialHoursLeft = hours => {
+      this.organization.trialPeriodEndsAt = moment()
+        .add(hours, 'h')
+        .toISOString();
     };
   });
 
@@ -62,7 +68,7 @@ describe('subscriptionNotifier', () => {
     });
 
     describe('for a trial subscription', () => {
-      beforeEach(function () {
+      beforeEach(function() {
         this.setupOrganization({
           subscription: {
             status: 'trial'
@@ -73,12 +79,12 @@ describe('subscriptionNotifier', () => {
       });
 
       describe('already ended', () => {
-        beforeEach(function () {
+        beforeEach(function() {
           this.trialHoursLeft(0);
         });
 
         describe('for user owning the organization', () => {
-          beforeEach(function () {
+          beforeEach(function() {
             this.makeOwner();
             this.$apply();
           });
@@ -87,7 +93,7 @@ describe('subscriptionNotifier', () => {
         });
 
         describe('for user not owning the organization', () => {
-          beforeEach(function () {
+          beforeEach(function() {
             this.$apply();
           });
 
@@ -96,7 +102,7 @@ describe('subscriptionNotifier', () => {
       });
 
       describe('ending in less than an hour', () => {
-        beforeEach(function () {
+        beforeEach(function() {
           this.trialHoursLeft(0.2);
           this.$apply();
         });
@@ -105,7 +111,7 @@ describe('subscriptionNotifier', () => {
       });
 
       describe('ending in less than a day', () => {
-        beforeEach(function () {
+        beforeEach(function() {
           this.trialHoursLeft(20);
           this.$apply();
         });
@@ -115,7 +121,7 @@ describe('subscriptionNotifier', () => {
     });
 
     describe('for a free subscription', () => {
-      beforeEach(function () {
+      beforeEach(function() {
         this.setupOrganization({
           subscription: {
             status: 'free'
@@ -132,32 +138,38 @@ describe('subscriptionNotifier', () => {
     });
   });
 
-  function itOpensPaywallForSettingUpPayment () {
+  function itOpensPaywallForSettingUpPayment() {
     itOpensPaywall();
 
     it('allows setting up payment', () => {
-      sinon.assert.calledWith(openPaywallStub,
-        sinon.match.any, sinon.match.has('offerPlanUpgrade', true));
+      sinon.assert.calledWith(
+        openPaywallStub,
+        sinon.match.any,
+        sinon.match.has('offerPlanUpgrade', true)
+      );
     });
   }
 
-  function itOpensPaywallToNotifyTheUser () {
+  function itOpensPaywallToNotifyTheUser() {
     itOpensPaywall();
 
     it('does not allow setting up payment', () => {
-      sinon.assert.neverCalledWith(openPaywallStub,
-        sinon.match.any, sinon.match.has('offerPlanUpgrade', true));
+      sinon.assert.neverCalledWith(
+        openPaywallStub,
+        sinon.match.any,
+        sinon.match.has('offerPlanUpgrade', true)
+      );
     });
   }
 
-  function itOpensPaywall () {
-    it('opens the paywall modal dialog for the test organization', function () {
+  function itOpensPaywall() {
+    it('opens the paywall modal dialog for the test organization', function() {
       sinon.assert.calledOnce(openPaywallStub);
       sinon.assert.calledWith(openPaywallStub, this.organization);
     });
   }
 
-  function itDoesNotOpenPaywall () {
+  function itDoesNotOpenPaywall() {
     it('does not open the paywall modal dialog', () => {
       sinon.assert.notCalled(openPaywallStub);
     });

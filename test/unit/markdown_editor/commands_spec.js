@@ -3,7 +3,7 @@
 describe('markdown_editor/commands', () => {
   let textarea, editor, commands, cm;
 
-  beforeEach(function () {
+  beforeEach(function() {
     module('contentful/test');
     const Commands = this.$inject('markdown_editor/commands');
     const Wrapper = this.$inject('markdown_editor/codemirror_wrapper');
@@ -163,9 +163,11 @@ describe('markdown_editor/commands', () => {
         cm.setValue(initialValue);
         cm.setSelection({ line: 0, ch: 0 }, { line: 2, ch: 5 });
         commands[marker]();
-        cm.getValue().split('\n').forEach(line => {
-          expect(line.substring(0, prefix.length)).toBe(prefix);
-        });
+        cm.getValue()
+          .split('\n')
+          .forEach(line => {
+            expect(line.substring(0, prefix.length)).toBe(prefix);
+          });
         expect(editor.getCurrentLineNumber()).toBe(2);
         expect(editor.getCurrentCharacter()).toBe(5 + prefix.length);
         cm.setSelection({ line: 0, ch: 0 }, { line: 2, ch: Infinity });
@@ -181,11 +183,17 @@ describe('markdown_editor/commands', () => {
     const lists = { ul: '- ', ol: '1. ' };
     const other = { ul: 'ol', ol: 'ul' };
     const lineCheckers = {
-      ul: function (line) { expect(line.substring(0, 2)).toBe('- '); },
-      ol: function (line, i) { expect(line.substring(0, 3)).toBe('' + (i + 1) + '. '); }
+      ul: function(line) {
+        expect(line.substring(0, 2)).toBe('- ');
+      },
+      ol: function(line, i) {
+        expect(line.substring(0, 3)).toBe('' + (i + 1) + '. ');
+      }
     };
 
-    function selectAll () { cm.setSelection({ line: 0, ch: 0 }, { line: 2, ch: Infinity }); }
+    function selectAll() {
+      cm.setSelection({ line: 0, ch: 0 }, { line: 2, ch: Infinity });
+    }
 
     _.forEach(lists, (prefix, list) => {
       it('for ' + list + ': inserts marker, surrounds with whitespace', () => {
@@ -207,7 +215,9 @@ describe('markdown_editor/commands', () => {
         cm.setValue(initialValue);
         selectAll();
         commands[list]();
-        cm.getValue().split('\n').forEach(lineCheckers[list]);
+        cm.getValue()
+          .split('\n')
+          .forEach(lineCheckers[list]);
         selectAll();
         commands[list]();
         expect(cm.getValue()).toBe(initialValue);
@@ -220,7 +230,9 @@ describe('markdown_editor/commands', () => {
         commands[list]();
         selectAll();
         commands[secondType]();
-        cm.getValue().split('\n').forEach(lineCheckers[secondType]);
+        cm.getValue()
+          .split('\n')
+          .forEach(lineCheckers[secondType]);
       });
     });
   });
@@ -238,35 +250,35 @@ describe('markdown_editor/commands', () => {
   describe('#link()', () => {
     it('inserts bracketed url at current cursor', () => {
       cm.setValue('AB');
-      cm.setCursor({line: 0, ch: 1});
+      cm.setCursor({ line: 0, ch: 1 });
       commands.link('https://example.com');
       expect(cm.getValue()).toBe('A<https://example.com>B');
     });
 
     it('inserts titled url at current cursor', () => {
       cm.setValue('AB');
-      cm.setCursor({line: 0, ch: 1});
+      cm.setCursor({ line: 0, ch: 1 });
       commands.link('https://example.com', 'title');
       expect(cm.getValue()).toBe('A[title](https://example.com)B');
     });
 
     it('replace selection with bracketed url', () => {
       cm.setValue('AXXB');
-      cm.setSelection({line: 0, ch: 1}, {line: 0, ch: 3});
+      cm.setSelection({ line: 0, ch: 1 }, { line: 0, ch: 3 });
       commands.link('https://example.com');
       expect(cm.getValue()).toBe('A<https://example.com>B');
     });
 
     it('replace selection with titled url', () => {
       cm.setValue('AXXB');
-      cm.setSelection({line: 0, ch: 1}, {line: 0, ch: 3});
+      cm.setSelection({ line: 0, ch: 1 }, { line: 0, ch: 3 });
       commands.link('https://example.com', 'title');
       expect(cm.getValue()).toBe('A[title](https://example.com)B');
     });
 
     it('inserts link with url, text and title at current cursor', () => {
       cm.setValue('AB');
-      cm.setCursor({line: 0, ch: 1});
+      cm.setCursor({ line: 0, ch: 1 });
       commands.link('https://example.com', 'link text', 'title');
       expect(cm.getValue()).toBe('A[link text](https://example.com "title")B');
     });

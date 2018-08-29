@@ -26,19 +26,19 @@ const CreateEntryButton = createReactClass({
     disabled: PropTypes.bool.isRequired,
     text: PropTypes.string
   },
-  getDefaultProps () {
+  getDefaultProps() {
     return {
       mode: Size.Normal,
       style: Style.Button
     };
   },
-  getInitialState () {
+  getInitialState() {
     return {
       isOpen: false,
       isHandlingOnSelect: false
     };
   },
-  handleClick () {
+  handleClick() {
     if (this.props.contentTypes.length === 1) {
       const onlyItem = this.props.contentTypes[0];
       this.handleSelect(onlyItem);
@@ -48,14 +48,13 @@ const CreateEntryButton = createReactClass({
       });
     }
   },
-  handleSelect (item) {
+  handleSelect(item) {
     this.setState({
       isOpen: false
     });
     const selectHandlerReturnValue = this.props.onSelect(item.sys.id);
     if (isPromise(selectHandlerReturnValue)) {
-      const setIsHandlingOnSelect =
-        (value) => this.setState({ isHandlingOnSelect: value });
+      const setIsHandlingOnSelect = value => this.setState({ isHandlingOnSelect: value });
       setIsHandlingOnSelect(true);
       selectHandlerReturnValue.then(
         () => setIsHandlingOnSelect(false),
@@ -63,23 +62,21 @@ const CreateEntryButton = createReactClass({
       );
     }
   },
-  handleClose () {
+  handleClose() {
     this.setState({
       isOpen: false
     });
   },
-  handleClickOutside () {
+  handleClickOutside() {
     this.setState({
       isOpen: false
     });
   },
-  getCtaText () {
+  getCtaText() {
     const { contentTypes, text } = this.props;
-    return (
-      text || `Add ${contentTypes.length === 1 ? contentTypes[0].name : 'entry'}`
-    );
+    return text || `Add ${contentTypes.length === 1 ? contentTypes[0].name : 'entry'}`;
   },
-  renderButton () {
+  renderButton() {
     const { contentTypes, size, disabled } = this.props;
 
     const className = cn('btn-action', 'u-truncate', {
@@ -91,8 +88,7 @@ const CreateEntryButton = createReactClass({
         className={className}
         onClick={this.handleClick}
         data-test-id="cta"
-        disabled={disabled}
-      >
+        disabled={disabled}>
         {this.getCtaText()}
         {contentTypes.length > 1 && (
           <Icon
@@ -106,7 +102,7 @@ const CreateEntryButton = createReactClass({
       </button>
     );
   },
-  renderLink () {
+  renderLink() {
     const { contentTypes } = this.props;
     const isIdle = this.state.isHandlingOnSelect;
     const linkProps = {
@@ -116,11 +112,9 @@ const CreateEntryButton = createReactClass({
     };
     return (
       <div>
-        {isIdle &&
-          <div className="create-entry-button__handling-select-spinner"
-            data-test-id="spinner"
-          />
-        }
+        {isIdle && (
+          <div className="create-entry-button__handling-select-spinner" data-test-id="spinner" />
+        )}
         <TextLink {...linkProps} data-test-id="cta">
           {this.getCtaText()}
           {contentTypes.length > 1 && (
@@ -135,7 +129,7 @@ const CreateEntryButton = createReactClass({
       </div>
     );
   },
-  renderMenu () {
+  renderMenu() {
     const { contentTypes, suggestedContentTypeId } = this.props;
     const { isOpen } = this.state;
 
@@ -152,7 +146,7 @@ const CreateEntryButton = createReactClass({
       return null;
     }
   },
-  render () {
+  render() {
     const { size } = this.props;
     return (
       <div
@@ -160,18 +154,15 @@ const CreateEntryButton = createReactClass({
         className={cn({
           'x--block': size === Size.Large
         })}
-        data-test-id="create-entry"
-      >
-        {this.props.style === Style.Button
-          ? this.renderButton()
-          : this.renderLink()}
+        data-test-id="create-entry">
+        {this.props.style === Style.Button ? this.renderButton() : this.renderLink()}
         {this.renderMenu()}
       </div>
     );
   }
 });
 
-function isPromise (value) {
+function isPromise(value) {
   return value && typeof value.then === 'function';
 }
 

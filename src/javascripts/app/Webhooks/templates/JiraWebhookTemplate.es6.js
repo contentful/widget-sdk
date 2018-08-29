@@ -24,7 +24,12 @@ export default {
       name: 'domain',
       type: 'text',
       title: 'Jira instance domain',
-      description: <p>Enter the domain without the protocol. For example: <code>your-domain.atlassian.com</code>.</p>
+      description: (
+        <p>
+          Enter the domain without the protocol. For example: <code>your-domain.atlassian.com</code>
+          .
+        </p>
+      )
     },
     {
       name: 'projectId',
@@ -36,11 +41,10 @@ export default {
           <a
             href="https://developer.atlassian.com/cloud/jira/platform/rest/#api-api-2-project-get"
             target="_blank"
-            rel="noopener noreferrer"
-          >
+            rel="noopener noreferrer">
             list all your projects
-          </a>
-          {' '}with the API.
+          </a>{' '}
+          with the API.
         </p>
       )
     },
@@ -50,12 +54,12 @@ export default {
       title: 'Issue type ID',
       description: (
         <p>
-          The issue type ID for the tasks which will be created. You can list issue types for a project{' '}
+          The issue type ID for the tasks which will be created. You can list issue types for a
+          project{' '}
           <a
             href="https://developer.atlassian.com/cloud/jira/platform/rest/#api-api-2-project-get"
             target="_blank"
-            rel="noopener noreferrer"
-          >
+            rel="noopener noreferrer">
             with the <code>expand</code> API parameter.
           </a>
           .
@@ -66,7 +70,9 @@ export default {
       name: 'username',
       type: 'text',
       title: 'Username',
-      description: <p>Tasks will be created using this user. Consider creating a service account.</p>
+      description: (
+        <p>Tasks will be created using this user. Consider creating a service account.</p>
+      )
     },
     {
       name: 'password',
@@ -86,18 +92,16 @@ export default {
       httpBasicPassword: password,
       topics: ['Entry.create'],
       filters: [
-        {equals: [{doc: 'sys.environment.sys.id'}, 'master']},
-        {equals: [{doc: 'sys.contentType.sys.id'}, contentType.id]}
+        { equals: [{ doc: 'sys.environment.sys.id' }, 'master'] },
+        { equals: [{ doc: 'sys.contentType.sys.id' }, contentType.id] }
       ],
-      headers: [
-        {key: 'Accept', value: 'application/json'}
-      ],
+      headers: [{ key: 'Accept', value: 'application/json' }],
       transformation: {
         contentType: 'application/json',
         body: JSON.stringify({
           fields: {
-            project: {id: projectId},
-            issuetype: {id: issueTypeId},
+            project: { id: projectId },
+            issuetype: { id: issueTypeId },
             summary: `Review a new ${contentType.name}`,
             description: `Click to open: ${contentType.appUrlPointers}`
           }

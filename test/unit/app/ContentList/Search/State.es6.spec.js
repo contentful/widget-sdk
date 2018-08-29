@@ -109,7 +109,7 @@ describe('app/ContentList/Search/State', () => {
   });
 });
 
-function getInitialState () {
+function getInitialState() {
   return {
     contentTypes: contentTypes,
     contentTypeId: '',
@@ -129,7 +129,7 @@ function getInitialState () {
   };
 }
 
-function getFocusForValue (index) {
+function getFocusForValue(index) {
   return {
     index,
     isValueFocused: true,
@@ -138,6 +138,6 @@ function getFocusForValue (index) {
   };
 }
 
-function buildFilter (filter, value = undefined) {
+function buildFilter(filter, value = undefined) {
   return [filter.queryKey, filter.operators[0][0], value];
 }

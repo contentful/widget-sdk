@@ -4,7 +4,7 @@ import { createIsolatedSystem } from 'test/helpers/system-js';
 import { EntityType } from 'app/entity_editor/Components/constants';
 
 describe('fetchLinks', () => {
-  beforeEach(function* () {
+  beforeEach(function*() {
     const system = createIsolatedSystem();
 
     this.spaceContext = {
@@ -43,20 +43,24 @@ describe('fetchLinks', () => {
     this.fetchLinks = fetchLinks;
   });
 
-  function itCallsApiAndProcessEntity (type) {
-    return function* () {
+  function itCallsApiAndProcessEntity(type) {
+    return function*() {
       const id = 'entity-id';
       const items = [
         { sys: { id: 'entity-id-0' } },
         { sys: { id: 'entity-id-1' } },
-        { sys: {
-          id: 'entity-id-2',
-          environment: { sys: { id: 'dev' } }
-        }},
-        { sys: {
-          id: 'entity-id-3',
-          environment: { sys: { id: 'master' } }
-        }}
+        {
+          sys: {
+            id: 'entity-id-2',
+            environment: { sys: { id: 'dev' } }
+          }
+        },
+        {
+          sys: {
+            id: 'entity-id-3',
+            environment: { sys: { id: 'master' } }
+          }
+        }
       ];
 
       this.spaceContext.cma.getEntries
@@ -66,9 +70,7 @@ describe('fetchLinks', () => {
         .returns(Promise.resolve({ items }));
 
       items.forEach((item, idx) => {
-        this.entityHelper.entityTitle
-          .withArgs(item)
-          .returns(Promise.resolve(`title-${idx}`));
+        this.entityHelper.entityTitle.withArgs(item).returns(Promise.resolve(`title-${idx}`));
         const ref = `ref-${idx}`;
         this.navigator.makeEntityRef.withArgs(item).returns(ref);
         this.navigator.href.withArgs(ref).returns(`href-${idx}`);
@@ -104,7 +106,7 @@ describe('fetchLinks', () => {
   it('calls api with given id for asset', itCallsApiAndProcessEntity(EntityType.ASSET));
   it('calls api with given id for entry', itCallsApiAndProcessEntity(EntityType.ENTRY));
 
-  it('throws if entity type neither Entry nor Asset', function* () {
+  it('throws if entity type neither Entry nor Asset', function*() {
     const id = 'entity-id';
     const type = 'ENTITY';
 

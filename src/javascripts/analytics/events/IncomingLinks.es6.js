@@ -5,7 +5,7 @@ export const Origin = {
   SIDEBAR: 'sidebar'
 };
 
-export function onIncomingLinkClick ({
+export function onIncomingLinkClick({
   entityId,
   entityType,
   incomingLinksCount,
@@ -38,19 +38,15 @@ export function onIncomingLinkClick ({
   );
 }
 
-export function onDialogOpen (options) {
+export function onDialogOpen(options) {
   trackDialogEvent('open', options);
 }
 
-export function onDialogConfirm (options) {
+export function onDialogConfirm(options) {
   trackDialogEvent('confirm', options);
 }
 
-export function onFetchLinks ({
-  entityId,
-  entityType,
-  incomingLinksCount
-}) {
+export function onFetchLinks({ entityId, entityType, incomingLinksCount }) {
   track('incoming_links:query', {
     entity_id: entityId,
     entity_type: entityType,
@@ -58,13 +54,10 @@ export function onFetchLinks ({
   });
 }
 
-function trackDialogEvent (type, {
-  entityId,
-  entityType,
-  incomingLinksCount,
-  dialogAction,
-  dialogSessionId
-}) {
+function trackDialogEvent(
+  type,
+  { entityId, entityType, incomingLinksCount, dialogAction, dialogSessionId }
+) {
   track(
     // incoming_links:dialog_open
     // incoming_links:dialog_confirm

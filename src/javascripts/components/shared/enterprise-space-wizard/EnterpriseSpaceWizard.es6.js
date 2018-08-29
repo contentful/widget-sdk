@@ -40,7 +40,7 @@ class EnterpriseSpaceWizard extends React.Component {
         reposition: PropTypes.func.isRequired
       })
     })
-  }
+  };
 
   static MAX_SPACE_NAME_LENGTH = 30;
 
@@ -50,28 +50,28 @@ class EnterpriseSpaceWizard extends React.Component {
     errorMessage: null
   };
 
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.plan = this.props.ratePlans.find(plan => plan.productPlanType === 'free_space');
     this.resources = getIncludedResources(this.plan.productRatePlanCharges);
   }
 
-  handleSpaceNameChange (value) {
+  handleSpaceNameChange(value) {
     const name = value.trim();
     this.validateName(name);
     this.props.setNewSpaceName(name);
   }
 
-  close () {
+  close() {
     this.props.scope.dialog.destroy();
     this.props.reset();
   }
 
-  reposition () {
+  reposition() {
     this.props.scope.dialog.reposition();
   }
 
-  handleSubmit () {
+  handleSubmit() {
     this.validateName(get(this.props, 'newSpaceMeta.name'));
 
     if (this.state.invalidName) return;
@@ -88,40 +88,35 @@ class EnterpriseSpaceWizard extends React.Component {
     });
   }
 
-  handleSpaceCreated (newSpace) {
-    const {template} = this.props.newSpaceMeta;
+  handleSpaceCreated(newSpace) {
+    const { template } = this.props.newSpaceMeta;
     template && this.reposition();
 
     return go({
       path: ['spaces', 'detail'],
-      params: {spaceId: newSpace.sys.id}
+      params: { spaceId: newSpace.sys.id }
     });
   }
 
-  handleTemplateCreated () {
+  handleTemplateCreated() {
     $rootScope.$broadcast('spaceTemplateCreated');
   }
 
-  validateName (name) {
+  validateName(name) {
     let errorMessage = null;
 
     if (!name || !name.length) {
       errorMessage = 'Name is required';
     }
 
-    this.setState({errorMessage});
+    this.setState({ errorMessage });
   }
 
-  render () {
-    const {
-      setNewSpaceTemplate,
-      templates,
-      fetchTemplates,
-      spaceCreation
-    } = this.props;
+  render() {
+    const { setNewSpaceTemplate, templates, fetchTemplates, spaceCreation } = this.props;
     const submitted = spaceCreation.isPending;
-    const {name, template} = this.props.newSpaceMeta;
-    const {errorMessage, invalidName} = this.state;
+    const { name, template } = this.props.newSpaceMeta;
+    const { errorMessage, invalidName } = this.state;
     // we show a more robust progress indicator for the
     // template creation that happens after the space has been
     // successfully created
@@ -130,72 +125,72 @@ class EnterpriseSpaceWizard extends React.Component {
     return (
       <Dialog testId="enterprise-space-creation-dialog" size="large">
         <Dialog.Header onCloseButtonClicked={() => this.close()}>Create a space</Dialog.Header>
-          {showProgress &&
-            <Dialog.Body>
-              <ProgressScreen
-                done={!spaceCreation.isPending}
-                onConfirm={() => this.close()}
-              />
-            </Dialog.Body>
-          }
-          {!showProgress &&
-            <Dialog.Body>
-              <p className="enterprise-space-wizard__info" style={{marginBottom: '30px'}}>
-                {`Use a proof of concept space to experiment or start new projects. Talk to us when you decide to launch. `}
-                <ContactUsButton noIcon={true} data-test-id='subscription-page.sidebar.contact-link'>Learn more</ContactUsButton>
-              </p>
-              <Plan resources={this.resources} />
-              <TextField
-                countCharacters
-                required
-                style={{marginBottom: '30px', display: 'inline-block'}}
-                value={name || ''}
-                name="spaceName"
-                id="spaceName"
-                labelText="Space name"
-                helpText="Can have up to 30 characters"
-                textInputProps={{
-                  maxLength: 30,
-                  width: 'large'
-                }}
-                onChange={(evt) => this.handleSpaceNameChange(evt.target.value)}
-                validationMessage={errorMessage}
-              />
-              {invalidName && <p className="cfnext-form__field-error">Invalid name</p>}
+        {showProgress && (
+          <Dialog.Body>
+            <ProgressScreen done={!spaceCreation.isPending} onConfirm={() => this.close()} />
+          </Dialog.Body>
+        )}
+        {!showProgress && (
+          <Dialog.Body>
+            <p className="enterprise-space-wizard__info" style={{ marginBottom: '30px' }}>
+              {`Use a proof of concept space to experiment or start new projects. Talk to us when you decide to launch. `}
+              <ContactUsButton noIcon={true} data-test-id="subscription-page.sidebar.contact-link">
+                Learn more
+              </ContactUsButton>
+            </p>
+            <Plan resources={this.resources} />
+            <TextField
+              countCharacters
+              required
+              style={{ marginBottom: '30px', display: 'inline-block' }}
+              value={name || ''}
+              name="spaceName"
+              id="spaceName"
+              labelText="Space name"
+              helpText="Can have up to 30 characters"
+              textInputProps={{
+                maxLength: 30,
+                width: 'large'
+              }}
+              onChange={evt => this.handleSpaceNameChange(evt.target.value)}
+              validationMessage={errorMessage}
+            />
+            {invalidName && <p className="cfnext-form__field-error">Invalid name</p>}
 
-              <TemplateSelector
-                onSelect={setNewSpaceTemplate}
-                onToggle={() => this.reposition()}
-                templates={templates}
-                fetchTemplates={fetchTemplates}
-                formAlign="left"
-              />
-            </Dialog.Body>
-          }
-          {!showProgress &&
-            <Dialog.Controls>
-              <button
-                className={`btn-action ${submitted ? 'is-loading' : ''}`}
-                onClick={this.handleSubmit.bind(this)}
-              >
-                Confirm and create space
-              </button>
-            </Dialog.Controls>
-          }
+            <TemplateSelector
+              onSelect={setNewSpaceTemplate}
+              onToggle={() => this.reposition()}
+              templates={templates}
+              fetchTemplates={fetchTemplates}
+              formAlign="left"
+            />
+          </Dialog.Body>
+        )}
+        {!showProgress && (
+          <Dialog.Controls>
+            <button
+              className={`btn-action ${submitted ? 'is-loading' : ''}`}
+              onClick={this.handleSubmit.bind(this)}>
+              Confirm and create space
+            </button>
+          </Dialog.Controls>
+        )}
       </Dialog>
     );
   }
 }
 
-function Plan ({resources}) {
+function Plan({ resources }) {
   return (
-    <div className="space-plans-list__item space-plans-list__item--proof-of-concept" style={{marginBottom: '30px'}}>
+    <div
+      className="space-plans-list__item space-plans-list__item--proof-of-concept"
+      style={{ marginBottom: '30px' }}>
       <div className="space-plans-list__item__heading">
         <strong data-test-id="space-plan-name">Proof of concept</strong>
         <span data-test-id="space-plan-price"> - Free</span>
       </div>
       <PlanFeatures resources={resources} />
-  </div>
+    </div>
   );
 }
 Plan.propTypes = {
@@ -222,4 +217,7 @@ const mapDispatchToProps = {
   reset: actionCreators.reset
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(EnterpriseSpaceWizard);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(EnterpriseSpaceWizard);

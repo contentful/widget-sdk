@@ -28,46 +28,50 @@ module.exports.supportedBrowsers = SUPPORTED_BROWSERS;
  *   Additional options to be merged into the base options.
  * @returns {object}
  */
-module.exports.createBabelOptions = function createBabelOptions (options = {}) {
-  const {
-    browserTargets = SUPPORTED_BROWSERS,
-    angularModules = true,
-    ...opts
-  } = options;
-  return Object.assign({
-    moduleIds: true,
-    babelrc: false,
+module.exports.createBabelOptions = function createBabelOptions(options = {}) {
+  const { browserTargets = SUPPORTED_BROWSERS, angularModules = true, ...opts } = options;
+  return Object.assign(
+    {
+      moduleIds: true,
+      babelrc: false,
 
-    presets: [
-      [require.resolve('babel-preset-env'), {
-        'targets': {
-          'browsers': browserTargets
-        },
-        'loose': true,
-        'debug': true,
-        'modules': false,
-        'useBuiltIns': false
-      }], require.resolve('babel-preset-react')
-    ],
-    plugins: [
-      angularModules && [require.resolve('babel-plugin-transform-es2015-modules-systemjs'), {
-        systemGlobal: 'AngularSystem'
-      }],
-      require.resolve('babel-plugin-transform-object-rest-spread'),
-      require.resolve('babel-plugin-transform-class-properties')
-    ].filter((p) => !!p),
+      presets: [
+        [
+          require.resolve('babel-preset-env'),
+          {
+            targets: {
+              browsers: browserTargets
+            },
+            loose: true,
+            debug: true,
+            modules: false,
+            useBuiltIns: false
+          }
+        ],
+        require.resolve('babel-preset-react')
+      ],
+      plugins: [
+        angularModules && [
+          require.resolve('babel-plugin-transform-es2015-modules-systemjs'),
+          {
+            systemGlobal: 'AngularSystem'
+          }
+        ],
+        require.resolve('babel-plugin-transform-object-rest-spread'),
+        require.resolve('babel-plugin-transform-class-properties')
+      ].filter(p => !!p),
 
-    getModuleId: angularModules ? getModuleIdInSrc : undefined
-  }, opts);
+      getModuleId: angularModules ? getModuleIdInSrc : undefined
+    },
+    opts
+  );
 
   // Get the SystemJS module ID from the source path
   // src/javascripts/a/b/x.es6.js -> a/b/x
-  function getModuleIdInSrc (path) {
+  function getModuleIdInSrc(path) {
     const absPath = P.resolve(path);
     if (absPath.startsWith(basePath)) {
-      return absPath
-        .replace(/\.es6$/, '')
-        .replace(basePath + '/', '');
+      return absPath.replace(/\.es6$/, '').replace(basePath + '/', '');
     } else {
       return path;
     }

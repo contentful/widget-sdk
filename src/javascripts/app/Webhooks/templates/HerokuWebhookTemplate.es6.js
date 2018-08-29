@@ -24,8 +24,7 @@ export default {
           <a
             href="https://devcenter.heroku.com/articles/using-the-cli#app-commands"
             target="_blank"
-            rel="noopener noreferrer"
-          >
+            rel="noopener noreferrer">
             Heroku CLI manual
           </a>{' '}
           for instructions.
@@ -42,8 +41,7 @@ export default {
           <a
             href="https://devcenter.heroku.com/articles/platform-api-quickstart#authentication"
             target="_blank"
-            rel="noopener noreferrer"
-          >
+            rel="noopener noreferrer">
             Heroku CLI manual
           </a>{' '}
           for instructions. This value can’t be revealed once stored.
@@ -74,19 +72,11 @@ export default {
       )
     }
   ],
-  mapParamsToDefinition: (
-    { appName, apiKey, githubOrg, githubRepo, branch },
-    name
-  ) => {
+  mapParamsToDefinition: ({ appName, apiKey, githubOrg, githubRepo, branch }, name) => {
     return {
       name,
       url: `https://api.heroku.com/apps/${appName}/builds`,
-      topics: [
-        'Entry.publish',
-        'Asset.publish',
-        'Entry.unpublish',
-        'Asset.unpublish'
-      ],
+      topics: ['Entry.publish', 'Asset.publish', 'Entry.unpublish', 'Asset.unpublish'],
       filters: [{ equals: [{ doc: 'sys.environment.sys.id' }, 'master'] }],
       headers: [
         { key: 'Accept', value: 'application/vnd.heroku+json; version=3' },
