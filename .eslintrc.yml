@@ -6,6 +6,7 @@ extends:
   - 'eslint:recommended'
   - 'standard'
   - 'plugin:react/recommended'
+  - 'prettier'
 
 env:
   browser: true
