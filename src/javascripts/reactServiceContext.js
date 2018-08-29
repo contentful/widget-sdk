@@ -44,20 +44,23 @@ export default function ServicesConsumer(...selectedServices) {
   };
 }
 
-angular.module('contentful').factory('ServicesProvider', function(require) {
-  const $state = require('$state');
+angular.module('contentful').factory('ServicesProvider', [
+  'require',
+  function(require) {
+    const $state = require('$state');
 
-  // all services which we expose to the react components are here
-  // if you need another one, just get it using angular `require`,
-  // and add to the object
-  const services = {
-    $state
-  };
-  const ProviderWrapper = props => <Provider value={services}>{props.children}</Provider>;
+    // all services which we expose to the react components are here
+    // if you need another one, just get it using angular `require`,
+    // and add to the object
+    const services = {
+      $state
+    };
+    const ProviderWrapper = props => <Provider value={services}>{props.children}</Provider>;
 
-  ProviderWrapper.propTypes = {
-    children: PropTypes.node
-  };
+    ProviderWrapper.propTypes = {
+      children: PropTypes.node
+    };
 
-  return ProviderWrapper;
-});
+    return ProviderWrapper;
+  }
+]);
