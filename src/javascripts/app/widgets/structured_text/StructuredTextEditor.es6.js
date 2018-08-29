@@ -204,8 +204,6 @@ export default class StructuredTextEditor extends React.Component {
           data-test-id="editor"
           value={this.state.value}
           onChange={this.onChange}
-          onBlur={this.onBlur}
-          onFocus={this.onFocus}
           plugins={plugins}
           schema={schema}
           readOnly={this.props.isDisabled}
