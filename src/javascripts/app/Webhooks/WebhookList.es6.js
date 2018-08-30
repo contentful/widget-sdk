@@ -7,6 +7,7 @@ import Icon from 'ui/Components/Icon';
 
 import WebhookHealth from './WebhookHealth';
 import WebhookListSidebar from './WebhookListSidebar';
+import WebhookForbiddenPage from './WebhookForbiddenPage';
 
 export default class WebhookList extends React.Component {
   static propTypes = {
@@ -15,11 +16,17 @@ export default class WebhookList extends React.Component {
     templateContentTypes: PropTypes.array.isRequired,
     resource: PropTypes.object.isRequired,
     organization: PropTypes.object.isRequired,
-    openTemplateDialog: PropTypes.func.isRequired
+    openTemplateDialog: PropTypes.func.isRequired,
+    isAdmin: PropTypes.bool,
+    templateId: PropTypes.string
   };
 
   render() {
-    const { webhooks, webhookRepo } = this.props;
+    const { webhooks, webhookRepo, isAdmin } = this.props;
+
+    if (!isAdmin) {
+      return <WebhookForbiddenPage templateId={this.props.templateId} />;
+    }
 
     return (
       <React.Fragment>

@@ -6,7 +6,7 @@ import $state from '$state';
 import Workbench from 'app/WorkbenchReact';
 import { track } from 'analytics/Analytics';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils';
-import { getExtensionParameterIds } from './Extensions';
+import getExtensionParameterIds from './getExtensionParameterIds';
 
 import { toInternalFieldType, toApiFieldType } from './FieldTypes';
 import ExtensionForm from './ExtensionForm';

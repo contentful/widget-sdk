@@ -16,6 +16,7 @@ describe('WebhookList', function() {
         templateContentTypes={[]}
         resource={resource}
         organization={organization}
+        isAdmin={true}
       />
     );
   };

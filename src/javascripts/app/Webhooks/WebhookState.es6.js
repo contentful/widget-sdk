@@ -57,11 +57,22 @@ const list = {
   name: 'list',
   url: '',
   resolve: {
-    webhooks: ['spaceContext', spaceContext => spaceContext.webhookRepo.getAll()],
+    isAdmin: [
+      'spaceContext',
+      spaceContext => !!spaceContext.getData('spaceMembership.admin', false)
+    ],
+    webhooks: [
+      'spaceContext',
+      'isAdmin',
+      (spaceContext, isAdmin) => (isAdmin ? spaceContext.webhookRepo.getAll() : Promise.resolve([]))
+    ],
     resource: [
       'spaceContext',
-      spaceContext => {
-        return createResourceService(spaceContext.getId()).get('webhookDefinition');
+      'isAdmin',
+      (spaceContext, isAdmin) => {
+        return isAdmin
+          ? createResourceService(spaceContext.getId()).get('webhookDefinition')
+          : Promise.resolve({});
       }
     ]
   },
@@ -76,12 +87,13 @@ const list = {
     '$stateParams',
     'webhooks',
     'resource',
-    ($scope, $stateParams, webhooks, resource) => {
+    'isAdmin',
+    ($scope, $stateParams, webhooks, resource, isAdmin) => {
       const { pricingVersion } = spaceContext.organizationContext.organization;
       const templateContentTypes = prepareContentTypesForTemplates();
       const webhookRepo = spaceContext.webhookRepo;
 
-      if ($stateParams.templateId) {
+      if (isAdmin && $stateParams.templateId) {
         openTemplateDialog($stateParams.templateId, webhookRepo, templateContentTypes);
       }
 
@@ -91,7 +103,9 @@ const list = {
         templateContentTypes,
         resource,
         openTemplateDialog,
-        organization: { pricingVersion }
+        organization: { pricingVersion },
+        isAdmin,
+        templateId: $stateParams.templateId
       };
     }
   ]

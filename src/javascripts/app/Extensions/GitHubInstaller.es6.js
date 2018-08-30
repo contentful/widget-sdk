@@ -1,27 +1,34 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
-
 import * as Fetcher from './GitHubFetcher';
 
-const Installer = createReactClass({
-  propTypes: {
+class Installer extends React.Component {
+  static propTypes = {
+    extensionUrl: PropTypes.string,
     onConfirm: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired
-  },
-  getInitialState() {
-    return { url: null, valid: false, fetching: false, err: null };
-  },
-  checkUrl(url) {
+  };
+
+  state = { url: null, valid: false, fetching: false, err: null };
+
+  componentDidMount() {
+    if (this.props.extensionUrl) {
+      this.checkUrl(this.props.extensionUrl);
+    }
+  }
+
+  checkUrl = url => {
     this.setState(() => ({ url, valid: Fetcher.isValidSource(url), err: null }));
-  },
-  install(url) {
+  };
+
+  install = url => {
     this.setState(state => ({ ...state, fetching: true }));
     Fetcher.fetchExtension(url).then(
       extension => this.props.onConfirm({ extension, url, type: 'github' }),
       err => this.setState(state => ({ ...state, fetching: false, err }))
     );
-  },
+  };
+
   render() {
     const { url, valid, fetching, err } = this.state;
     const { onCancel } = this.props;
@@ -71,6 +78,6 @@ const Installer = createReactClass({
       </div>
     );
   }
-});
+}
 
 export default Installer;

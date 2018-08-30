@@ -21,7 +21,7 @@ angular
           require('states/settings/roles'),
           require('app/Webhooks/WebhookState').default,
           require('states/settings/content_preview'),
-          require('states/settings/Extensions').default,
+          require('app/Extensions/ExtensionsState').default,
           require('app/SpaceSettings/Environments/State').default,
           require('app/SpaceSettings/Usage/SpaceUsageState').default,
           require('app/Functions/State').default

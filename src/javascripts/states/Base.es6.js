@@ -58,10 +58,10 @@ function wrapTemplate({ template, loadingText }) {
         ngShow: 'context.forbidden'
       },
       [
-        h('div.workbench-forbidden__headline', [`You don’t have permission to access this view`]),
+        h('div.workbench-forbidden__over-headline', ['Access forbidden (403)']),
+        h('div.workbench-forbidden__headline', [`You don’t have access to this page.`]),
         h('div.workbench-forbidden__message', [
-          `Get in touch with the person administering Contentful at your
-        company to learn more`
+          `Contact the administrator of this space to get access.`
         ])
       ]
     )

@@ -1,181 +1,211 @@
-import * as DOM from 'helpers/DOM';
-import attachContextMenuHandler from 'ui/ContextMenuHandler';
+import React from 'react';
+import Enzyme from 'enzyme';
+import { isBoolean } from 'lodash';
 
 describe('app/Extensions', () => {
+  let Extensions;
+
+  const mount = props => {
+    const extensions = props.extensions || [];
+    const refresh = props.refresh || sinon.stub.resolves({});
+    const isAdmin = isBoolean(props.isAdmin) ? props.isAdmin : true;
+    const extensionUrl = props.extensionUrl || null;
+    return Enzyme.mount(
+      <Extensions
+        extensions={extensions}
+        refresh={refresh}
+        isAdmin={isAdmin}
+        extensionUrl={extensionUrl}
+      />
+    );
+  };
+
+  const extensions = [
+    {
+      id: 'builtin',
+      name: 'Builtin',
+      fieldTypes: ['Boolean'],
+      parameters: ['one'],
+      installationParameters: { definitions: ['some'], values: {} }
+    },
+    {
+      custom: true,
+      src: 'http://localhost',
+      id: 'test',
+      name: 'Widget 1',
+      fieldTypes: ['Number'],
+      parameters: [],
+      installationParameters: { definitions: [], values: {} }
+    },
+    {
+      custom: true,
+      srcdoc: '<!doctype html',
+      id: 'test2',
+      name: 'Widget 2',
+      fieldTypes: ['Symbol', 'Text'],
+      parameters: [],
+      installationParameters: { definitions: [], values: {} }
+    }
+  ];
+
   beforeEach(function() {
     module('contentful/test', $provide => {
       $provide.value('$state', {
         href: () => 'href',
         go: sinon.stub()
       });
+      $provide.value('notification', {
+        info: sinon.stub(),
+        error: sinon.stub()
+      });
+      $provide.value('spaceContext', {
+        cma: {
+          createExtension: sinon.stub(),
+          deleteExtension: sinon.stub()
+        }
+      });
     });
 
-    const Extensions = this.$inject('app/Extensions/Extensions').default;
-
-    this.spaceContext = this.$inject('mocks/spaceContext').init();
-    this.spaceContext.cma = {
-      createExtension: sinon.stub(),
-      deleteExtension: sinon.stub()
-    };
-    this.spaceContext.widgets = { refresh: sinon.stub().resolves([]) };
-
-    this.notification = this.$inject('notification');
-    this.notification.info = sinon.stub();
-    this.notification.error = sinon.stub();
-
-    this.detachContextMenuHandler = attachContextMenuHandler(this.$inject('$document'));
-
-    this.init = function() {
-      const $el = this.$compileWith('<cf-component-bridge component="component" />', $scope => {
-        $scope.context = {};
-        Extensions($scope);
-      });
-      $el.appendTo('body');
-      this.container = DOM.createView($el.get(0));
-    };
+    Extensions = this.$inject('app/Extensions/Extensions').default;
   });
 
-  afterEach(function() {
-    $(this.container.element).remove();
-    this.detachContextMenuHandler();
+  describe('if user is not an Admin', () => {
+    it('shows forbidden view', () => {
+      const wrapper = mount({
+        isAdmin: false
+      });
+      expect(wrapper.exists("[data-test-id='extensions.forbidden']")).toEqual(true);
+
+      expect(
+        wrapper
+          .find('.workbench-forbidden__message')
+          .last()
+          .text()
+      ).toEqual('Contact the administrator of this space to get access.');
+    });
+
+    it('shows link if extensionUrl is passed', () => {
+      const wrapper = mount({
+        isAdmin: false,
+        extensionUrl:
+          'https://github.com/contentful/extensions/blob/master/samples/build-netlify/extension.json'
+      });
+
+      expect(wrapper.exists("[data-test-id='extensions.forbidden']")).toEqual(true);
+
+      expect(
+        wrapper
+          .find('.workbench-forbidden__message')
+          .last()
+          .text()
+      ).toEqual(
+        'Share this URL with your admin so they can install it for you.https://app.contentful.com/deeplink?link=install-extension&url=https://github.com/contentful/extensions/blob/master/samples/build-netlify/extension.json'
+      );
+    });
   });
 
   describe('no custom widgets', () => {
     it('shows empty message', function() {
-      this.spaceContext.widgets.refresh.resolves([]);
-      this.init();
-      this.container.find('extensions.empty').assertIsVisible();
+      const wrapper = mount({
+        extensions: [],
+        refresh: sinon.stub().resolves({})
+      });
+      expect(wrapper.exists("[data-test-id='extensions.empty']")).toEqual(true);
     });
   });
 
   describe('custom extensions exist', () => {
-    beforeEach(function() {
-      const params = {
-        parameters: [],
-        installationParameters: { definitions: [], values: {} }
-      };
-
-      this.spaceContext.widgets.refresh.resolves([
-        {
-          id: 'builtin',
-          name: 'Builtin',
-          fieldTypes: ['Boolean']
-        },
-        {
-          custom: true,
-          src: 'http://localhost',
-          id: 'test',
-          name: 'Widget 1',
-          fieldTypes: ['Number'],
-          ...params
-        },
-        {
-          custom: true,
-          srcdoc: '<!doctype html',
-          id: 'test2',
-          name: 'Widget 2',
-          fieldTypes: ['Symbol', 'Text'],
-          ...params
-        }
-      ]);
-    });
-
     it('lists extensions', function() {
-      this.init();
-      const list = this.container.find('extensions.list');
+      const wrapper = mount({
+        extensions: extensions,
+        refresh: sinon.stub.resolves({})
+      });
+      expect(wrapper.find("[data-test-id='extensions.list']").length).toEqual(1);
 
-      [
-        'Widget 1',
-        'Widget 2',
-        'Number',
-        'Symbol, Text',
-        'self-hosted',
-        'Contentful',
-        '0 definition',
-        '0 value'
-      ].forEach(word => list.assertHasText(word));
+      const rows = wrapper.find('table tbody tr');
+      expect(rows.length).toBe(3);
+
+      const firstRow = rows.find('tr').at(0);
+      const secondRow = rows.find('tr').at(1);
+      const thirdRow = rows.find('tr').at(2);
+
+      const getColText = (row, index) =>
+        row
+          .children()
+          .at(index)
+          .text();
+
+      // name
+      expect(getColText(firstRow, 0)).toEqual('Builtin');
+      expect(getColText(secondRow, 0)).toEqual('Widget 1');
+      expect(getColText(thirdRow, 0)).toEqual('Widget 2');
+
+      // fiels types
+      expect(getColText(firstRow, 2)).toEqual('Boolean');
+      expect(getColText(secondRow, 2)).toEqual('Number');
+      expect(getColText(thirdRow, 2)).toEqual('Symbol, Text');
+
+      // instance params
+      expect(getColText(firstRow, 3)).toEqual('1 definition(s)');
+      expect(getColText(secondRow, 3)).toEqual('0 definition(s)');
+      expect(getColText(thirdRow, 3)).toEqual('0 definition(s)');
+
+      // installation parameters
+      expect(getColText(firstRow, 4)).toEqual('1 definition(s)0 value(s)');
+      expect(getColText(secondRow, 4)).toEqual('0 definition(s)0 value(s)');
+      expect(getColText(thirdRow, 4)).toEqual('0 definition(s)0 value(s)');
     });
 
     it('navigates to single extension', function() {
-      this.init();
-      // click the first "Edit" link
-      this.container
-        .find('extensions.list')
-        .element.querySelector('a')
-        .click();
-      sinon.assert.calledWith(this.$inject('$state').go, '.detail', { extensionId: 'test' });
+      const wrapper = mount({
+        extensions,
+        refresh: sinon.stub.resolves({})
+      });
+      expect(this.$inject('$state').go.called).toBeFalsy();
+      wrapper
+        .find('a')
+        .first()
+        .simulate('click');
+      expect(this.$inject('$state').go.called).toBeTruthy();
     });
 
     describe('delete extension', () => {
-      beforeEach(function() {
-        this.delete = function(id) {
-          this.container.find(`extensions.delete.${id}`).click();
-          this.$flush();
-          this.container.find(`extensions.deleteConfirm.${id}`).click();
-          this.$flush();
-        };
-      });
-
       it('deletes an extension', function() {
-        this.spaceContext.cma.deleteExtension.resolves({});
-        this.init();
-        this.delete('test2');
-        sinon.assert.calledWith(this.notification.info, 'Your extension was successfully deleted.');
-        // (1) initial refresh (2) refresh after deletion
-        sinon.assert.calledTwice(this.spaceContext.widgets.refresh);
-      });
+        const wrapper = mount({
+          extensions,
+          refresh: sinon.stub().resolves()
+        });
 
-      it('handles failure', function() {
-        this.spaceContext.cma.deleteExtension.rejects({});
-        this.init();
-        this.delete('test2');
-        sinon.assert.calledWith(
-          this.notification.error,
-          'There was an error while deleting your extension.'
-        );
+        const deleteExtensionsStub = this.$inject('spaceContext').cma.deleteExtension.resolves({});
+
+        wrapper.find("[data-test-id='extensions.delete.test2']").simulate('click');
+        wrapper.find("[data-test-id='extensions.deleteConfirm.test2']").simulate('click');
+
+        sinon.assert.calledWith(deleteExtensionsStub, 'test2');
       });
     });
   });
 
   describe('create extension', () => {
-    beforeEach(function() {
-      this.create = function() {
-        this.container.find('extensions.add').click();
-        this.$flush();
-        this.container.find('extensions.add.new').click();
-        this.$flush();
-      };
-    });
-
     it('creates a new extension', function() {
-      this.spaceContext.cma.createExtension.resolves({ sys: { id: 'newly-created' } });
-      this.init();
-      this.create();
+      const wrapper = mount({
+        extensions,
+        refresh: sinon.stub().resolves()
+      });
 
-      sinon.assert.calledOnce(this.spaceContext.cma.createExtension);
-      const { extension } = this.spaceContext.cma.createExtension.lastCall.args[0];
+      const createExtensionStub = this.$inject('spaceContext').cma.createExtension.resolves({
+        sys: { id: 'newly-created' }
+      });
+
+      wrapper.find("[data-test-id='extensions.add']").simulate('click');
+      wrapper.find("[data-test-id='extensions.add.new']").simulate('click');
+
+      sinon.assert.calledOnce(createExtensionStub);
+      const { extension } = createExtensionStub.lastCall.args[0];
       expect(extension.name).toBe('New extension');
       expect(extension.fieldTypes).toEqual([{ type: 'Symbol' }]);
       expect(extension.srcdoc.includes('https://unpkg.com/contentful-ui-extensions-sdk@3')).toBe(
         true
-      );
-
-      sinon.assert.calledWith(this.$inject('$state').go, '.detail', {
-        extensionId: 'newly-created'
-      });
-      sinon.assert.calledWith(
-        this.notification.info,
-        'Your new extension was successfully created.'
-      );
-    });
-
-    it('handles failure', function() {
-      this.spaceContext.cma.createExtension.rejects({});
-      this.init();
-      this.create();
-      sinon.assert.calledWith(
-        this.notification.error,
-        'There was an error while creating your extension.'
       );
     });
   });

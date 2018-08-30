@@ -56,6 +56,7 @@ function resolveParams(link, params) {
     home: resolveHome,
     api: resolveApi,
     extensions: resolveExtensions,
+    'install-extension': resolveInstallExtension,
     invite: resolveInviteUser,
     users: resolveUsers,
     subscription: resolveSubscriptions,
@@ -154,16 +155,24 @@ function resolveExtensions() {
   return runTask(function*() {
     const { space, spaceId } = yield* getSpaceInfo();
     yield spaceContext.resetWithSpace(space);
-    const isAdmin = !!spaceContext.getData('spaceMembership.admin', false);
+    return {
+      path: ['spaces', 'detail', 'settings', 'extensions'],
+      params: { spaceId }
+    };
+  });
+}
 
-    if (isAdmin) {
-      return {
-        path: ['spaces', 'detail', 'settings', 'extensions'],
-        params: { spaceId }
-      };
-    } else {
-      throw new Error('user is not authorized');
+function resolveInstallExtension({ url }) {
+  return runTask(function*() {
+    if (!url) {
+      throw new Error(`Extension URL was not specified in the link you've used.`);
     }
+    const { space, spaceId } = yield* getSpaceInfo();
+    yield spaceContext.resetWithSpace(space);
+    return {
+      path: ['spaces', 'detail', 'settings', 'extensions'],
+      params: { spaceId, extensionUrl: url }
+    };
   });
 }
 

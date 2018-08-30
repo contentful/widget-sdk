@@ -1,5 +1,4 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 
 import * as Fetcher from './GitHubFetcher';
@@ -45,39 +44,14 @@ const EXAMPLES = [
   }
 ];
 
-const ExamplePicker = createReactClass({
-  propTypes: {
+class ExamplePicker extends React.Component {
+  static propTypes = {
     onConfirm: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired
-  },
-  getInitialState() {
-    return { fetching: false };
-  },
-  render() {
-    const { onCancel } = this.props;
+  };
 
-    return (
-      <div className="modal-dialog">
-        <header className="modal-dialog__header">
-          <h1>Install an example</h1>
-          <button className="modal-dialog__close" onClick={onCancel} />
-        </header>
-        <div className="modal-dialog__content">
-          <p className="modal-dialog__richtext">
-            You can install example UI Extensions we provide:
-          </p>
-          <div className="extension-examples">
-            {EXAMPLES.map(example => this.renderExample(example))}
-          </div>
-        </div>
-        <div className="modal-dialog__controls">
-          <button className="btn-secondary-action" onClick={onCancel}>
-            Close
-          </button>
-        </div>
-      </div>
-    );
-  },
+  state = { fetching: false };
+
   renderExample(example) {
     const { onConfirm, onCancel } = this.props;
     const { fetching } = this.state;
@@ -109,6 +83,32 @@ const ExamplePicker = createReactClass({
       </div>
     );
   }
-});
+
+  render() {
+    const { onCancel } = this.props;
+
+    return (
+      <div className="modal-dialog">
+        <header className="modal-dialog__header">
+          <h1>Install an example</h1>
+          <button className="modal-dialog__close" onClick={onCancel} />
+        </header>
+        <div className="modal-dialog__content">
+          <p className="modal-dialog__richtext">
+            You can install example UI Extensions we provide:
+          </p>
+          <div className="extension-examples">
+            {EXAMPLES.map(example => this.renderExample(example))}
+          </div>
+        </div>
+        <div className="modal-dialog__controls">
+          <button className="btn-secondary-action" onClick={onCancel}>
+            Close
+          </button>
+        </div>
+      </div>
+    );
+  }
+}
 
 export default ExamplePicker;
