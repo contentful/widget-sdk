@@ -12,6 +12,7 @@ import createResourceService from 'services/ResourceService.es6';
 import { getOrganization } from 'services/TokenStore.es6';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import Workbench from 'app/WorkbenchReact.es6';
+import { track } from 'analytics/Analytics';
 
 import OrganizationResourceUsageList from './non_commited/OrganizationResourceUsageList.es6';
 import OrganizationUsagePage from './commited/OrganizationUsagePage.es6';
@@ -95,6 +96,9 @@ export default class OrganizationUsage extends React.Component {
     const {
       sys: { id: periodId }
     } = periods[newIndex];
+    track('usage:period_selected', {
+      new_period: periodId
+    });
     const [org, cma, cda, cpa] = await Promise.all([
       getOrgUsage(orgId, periodId),
       ...['cma', 'cda', 'cpa'].map(api => getApiUsage(orgId, periodId, api))

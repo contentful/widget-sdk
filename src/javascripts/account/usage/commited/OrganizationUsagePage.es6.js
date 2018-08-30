@@ -4,6 +4,9 @@ import { map, sum } from 'lodash';
 
 import { Button } from '@contentful/ui-component-library';
 import * as Intercom from 'intercom';
+import { supportUrl } from 'Config';
+import { track } from 'analytics/Analytics';
+import $state from '$state';
 
 import OrganisationUsageChart from './OrganisationUsageChart';
 import ApiUsageSection from './ApiUsageSection';
@@ -32,6 +35,15 @@ export default class OrganizationUsagePage extends React.Component {
     }).isRequired,
     period: periodPropType,
     includedLimit: PropTypes.number.isRequired
+  };
+
+  onClickSupport = () => {
+    track('element:click', {
+      elementId: 'contact_sales_usage',
+      groupId: 'contact_sales',
+      fromState: $state.current.name
+    });
+    Intercom.isEnabled() && Intercom.isLoaded() ? Intercom.open() : window.open(supportUrl);
   };
 
   render() {
@@ -64,10 +76,9 @@ export default class OrganizationUsagePage extends React.Component {
             Plan overages help you handle traffic spikes or expand the team while keeping your
             expenses in check.
           </div>
-          <Button onClick={() => Intercom.open()}>Talk to support</Button>
+          <Button onClick={this.onClickSupport}>Talk to support</Button>
         </div>
         <OrganisationUsageChart
-          key="total"
           usage={org}
           includedLimit={includedLimit}
           period={period}
