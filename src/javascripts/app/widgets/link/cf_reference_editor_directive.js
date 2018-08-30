@@ -5,7 +5,7 @@ angular
   .directive('cfReferenceEditor', [
     'require',
     require => {
-      const createController = require('app/widgets/link/ReferenceEditorController').default;
+      const createController = require('app/widgets/link/ReferenceEditorController.es6').default;
 
       return {
         restrict: 'E',
@@ -36,7 +36,8 @@ angular
     'require',
     require => {
       const modalDialog = require('modalDialog');
-      const getAvailableContentTypes = require('app/widgets/link/utils').getAvailableContentTypes;
+      const getAvailableContentTypes = require('app/widgets/link/utils.es6')
+        .getAvailableContentTypes;
 
       return function createEntity(entityType, field, space) {
         if (entityType === 'Entry') {

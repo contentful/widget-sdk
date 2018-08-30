@@ -1,7 +1,7 @@
 import { makeSum } from 'sum-types';
 import { startsWith } from 'lodash';
-import * as K from 'utils/kefir';
-import { getOrganization } from 'services/TokenStore';
+import * as K from 'utils/kefir.es6';
+import { getOrganization } from 'services/TokenStore.es6';
 
 /**
  * Possible app states for navigation (as shown in sidepanel)

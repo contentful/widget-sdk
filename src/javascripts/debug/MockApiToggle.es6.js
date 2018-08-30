@@ -3,7 +3,7 @@ import { createElement as h } from 'react';
 import location from '$location';
 import { getStore } from 'TheStore';
 import { omit } from 'lodash';
-import { addNotification } from 'debug/DevNotifications';
+import { addNotification } from 'debug/DevNotifications.es6';
 import { settings } from 'environment';
 
 const store = getStore().forKey('use_mock_api');

@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { calculatePlansCost } from 'utils/SubscriptionUtils';
+import { calculatePlansCost } from 'utils/SubscriptionUtils.es6';
 
-import Pluralized from 'ui/Components/Pluralized';
-import Price from 'ui/Components/Price';
-import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
+import Pluralized from 'ui/Components/Pluralized.es6';
+import Price from 'ui/Components/Price.es6';
+import { isEnterprisePlan } from 'account/pricing/PricingDataProvider.es6';
 
-import SpacePlanRow from './SpacePlanRow';
+import SpacePlanRow from './SpacePlanRow.es6';
 
 function SpacePlans({
   basePlan,

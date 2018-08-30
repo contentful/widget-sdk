@@ -1,9 +1,9 @@
 import React from 'react';
 import { BLOCKS } from '@contentful/structured-text-types';
-import ToolbarIcon from '../shared/ToolbarIcon';
+import ToolbarIcon from '../shared/ToolbarIcon.es6';
 
-import commonNode from '../shared/NodeDecorator';
-import listToggleDecorator from './ToolbarDecorator';
+import commonNode from '../shared/NodeDecorator.es6';
+import listToggleDecorator from './ToolbarDecorator.es6';
 
 export const ListPlugin = () => {
   return {

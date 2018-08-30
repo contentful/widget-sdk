@@ -3,14 +3,14 @@ angular.module('contentful').directive('cfContactUsSpaceHome', [
   require => {
     const LD = require('utils/LaunchDarkly');
     const Intercom = require('intercom');
-    const Analytics = require('analytics/Analytics');
+    const Analytics = require('analytics/Analytics.es6');
     const $state = require('$state');
 
     const flagName = 'feature-ps-10-2017-contact-us-space-home';
 
     return {
       restrict: 'E',
-      template: '<react-component name="app/home/contactUs/Template" props="contact.props"/>',
+      template: '<react-component name="app/home/contactUs/Template.es6" props="contact.props"/>',
       controllerAs: 'contact',
       controller: [
         '$scope',

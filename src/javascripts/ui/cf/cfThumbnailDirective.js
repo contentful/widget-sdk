@@ -26,7 +26,7 @@ angular.module('contentful').directive('cfThumbnail', [
   require => {
     const mimetype = require('mimetype');
     const h = require('utils/hyperscript').h;
-    const { isValidImage, getExternalImageUrl } = require('ui/cf/thumbnailHelpers');
+    const { isValidImage, getExternalImageUrl } = require('ui/cf/thumbnailHelpers.es6');
 
     const groupToIconMap = {
       image: 'image',

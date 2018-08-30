@@ -1,23 +1,23 @@
 import { countBy, filter, get, isNaN } from 'lodash';
-import * as K from 'utils/kefir';
-import * as List from 'utils/List';
+import * as K from 'utils/kefir.es6';
+import * as List from 'utils/List.es6';
 
 import entitySelector from 'entitySelector';
 import modalDialog from 'modalDialog';
 import createEntity from 'cfReferenceEditor/createEntity';
 import spaceContext from 'spaceContext';
 import { onFeatureFlag } from 'utils/LaunchDarkly';
-import { track } from 'analytics/Analytics';
+import { track } from 'analytics/Analytics.es6';
 import {
   onEntryCreate as trackEntryCreate,
   onEntryEdit as trackEntryEdit
-} from 'analytics/events/ReferenceEditor';
+} from 'analytics/events/ReferenceEditor.es6';
 
 import $state from '$state';
 
-import * as State from './State';
+import * as State from './State.es6';
 import { canPerformActionOnEntryOfType, Action } from 'access_control/AccessChecker';
-import { canLinkToContentType, getInlineEditingStoreKey } from './utils';
+import { canLinkToContentType, getInlineEditingStoreKey } from './utils.es6';
 import { getStore } from 'TheStore';
 
 import {

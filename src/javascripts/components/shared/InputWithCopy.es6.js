@@ -1,7 +1,7 @@
 import { h } from 'ui/Framework';
 import { noop } from 'lodash';
-import { byName as colorByName } from 'Styles/Colors';
-import domCopy from 'utils/DomClipboardCopy';
+import { byName as colorByName } from 'Styles/Colors.es6';
+import domCopy from 'utils/DomClipboardCopy.es6';
 
 const copied = {};
 

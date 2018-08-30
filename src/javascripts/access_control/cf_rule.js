@@ -4,7 +4,7 @@ angular.module('contentful').directive('cfRule', [
   'require',
   require => {
     const spaceContext = require('spaceContext');
-    const K = require('utils/kefir');
+    const K = require('utils/kefir.es6');
     const CONFIG = require('PolicyBuilder/CONFIG');
 
     return {

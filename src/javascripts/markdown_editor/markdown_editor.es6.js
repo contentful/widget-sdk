@@ -1,6 +1,6 @@
 import $timeout from '$timeout';
-import * as Wrapper from 'markdown_editor/codemirror_wrapper';
-import * as Commands from 'markdown_editor/commands';
+import * as Wrapper from 'markdown_editor/codemirror_wrapper.es6';
+import * as Commands from 'markdown_editor/commands.es6';
 import { isFunction } from 'lodash';
 import * as CodeMirror from 'codemirror';
 

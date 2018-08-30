@@ -2,10 +2,10 @@ import React from 'react';
 
 import { TextLink } from '@contentful/ui-component-library';
 
-import { href } from 'states/Navigator';
-import { home, usage as spaceUsage } from 'ui/NavStates/Space';
+import { href } from 'states/Navigator.es6';
+import { home, usage as spaceUsage } from 'ui/NavStates/Space.es6';
 
-import Tooltip from 'ui/Components/Tooltip';
+import Tooltip from 'ui/Components/Tooltip.es6';
 
 export function getSpaceActionLinks(space, isOrgOwner, onDeleteSpace) {
   const actionLinkStyle = {

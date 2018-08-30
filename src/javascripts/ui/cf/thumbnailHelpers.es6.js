@@ -1,4 +1,4 @@
-import * as TokenStore from 'services/TokenStore';
+import * as TokenStore from 'services/TokenStore.es6';
 import * as HostnameTransformer from 'hostnameTransformer';
 
 /*

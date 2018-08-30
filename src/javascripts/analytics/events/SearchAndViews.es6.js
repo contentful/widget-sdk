@@ -1,6 +1,6 @@
 import { extend } from 'lodash';
-import { track as analyticsTrack } from 'analytics/Analytics';
-import { getMigrationSuccessCount } from 'data/ViewMigrator';
+import { track as analyticsTrack } from 'analytics/Analytics.es6';
+import { getMigrationSuccessCount } from 'data/ViewMigrator.es6';
 
 const PREFIX = 'search:';
 const track = (e, data) => analyticsTrack(PREFIX + e, data);

@@ -23,11 +23,11 @@ angular
       const $compile = require('$compile');
       const $rootScope = require('$rootScope');
       const moment = require('moment');
-      const K = require('utils/kefir');
-      const validateEvent = require('analytics/Validator').validateEvent;
+      const K = require('utils/kefir.es6');
+      const validateEvent = require('analytics/Validator.es6').validateEvent;
       const logger = require('logger');
-      const buildSnowplowEvent = require('analytics/snowplow/Snowplow').buildUnstructEventData;
-      const getSnowplowSchema = require('analytics/snowplow/Events').getSchema;
+      const buildSnowplowEvent = require('analytics/snowplow/Snowplow.es6').buildUnstructEventData;
+      const getSnowplowSchema = require('analytics/snowplow/Events.es6').getSchema;
 
       let isEnabled = false;
       let el = null;

@@ -8,12 +8,12 @@ import deepEqual from 'fast-deep-equal';
 import { toSlatejsDocument, toContentfulDocument } from '@contentful/contentful-slatejs-adapter';
 import { EditorToolbar, EditorToolbarDivider } from '@contentful/ui-component-library';
 
-import Bold, { BoldPlugin } from './plugins/Bold';
-import Italic, { ItalicPlugin } from './plugins/Italic';
-import Underlined, { UnderlinedPlugin } from './plugins/Underlined';
-import Code, { CodePlugin } from './plugins/Code';
-import Quote, { QuotePlugin } from './plugins/Quote';
-import Hyperlink, { HyperlinkPlugin } from './plugins/Hyperlink';
+import Bold, { BoldPlugin } from './plugins/Bold.es6';
+import Italic, { ItalicPlugin } from './plugins/Italic.es6';
+import Underlined, { UnderlinedPlugin } from './plugins/Underlined.es6';
+import Code, { CodePlugin } from './plugins/Code.es6';
+import Quote, { QuotePlugin } from './plugins/Quote.es6';
+import Hyperlink, { HyperlinkPlugin } from './plugins/Hyperlink.es6';
 import {
   Heading1,
   Heading2,
@@ -29,17 +29,17 @@ import {
   Heading5Plugin,
   Heading6Plugin,
   HeadingDropdown
-} from './plugins/Heading';
+} from './plugins/Heading.es6';
 
-import NewLinePlugin from './plugins/NewLinePlugin';
-import { ParagraphPlugin } from './plugins/Paragraph';
-import EntryLinkBlock, { EntryLinkBlockPlugin } from './plugins/EntryLinkBlock';
-import EditList from './plugins/List/EditListWrapper';
-import { ListPlugin, UnorderedList, OrderedList } from './plugins/List';
-import Hr, { HrPlugin } from './plugins/Hr';
+import NewLinePlugin from './plugins/NewLinePlugin.es6';
+import { ParagraphPlugin } from './plugins/Paragraph.es6';
+import EntryLinkBlock, { EntryLinkBlockPlugin } from './plugins/EntryLinkBlock.es6';
+import EditList from './plugins/List/EditListWrapper.es6';
+import { ListPlugin, UnorderedList, OrderedList } from './plugins/List.es6';
+import Hr, { HrPlugin } from './plugins/Hr.es6';
 
-import schemaJson from './constants/Schema';
-import emptyDoc from './constants/EmptyDoc';
+import schemaJson from './constants/Schema.es6';
+import emptyDoc from './constants/EmptyDoc.es6';
 
 const schema = Schema.fromJSON(schemaJson);
 const initialValue = Value.fromJSON(toSlatejsDocument(emptyDoc));
@@ -85,7 +85,7 @@ export default class StructuredTextEditor extends React.Component {
           : initialValue,
       hasFocus: false
     };
-    this.slatePlugins = buildPlugins(widgetAPI)
+    this.slatePlugins = buildPlugins(widgetAPI);
   }
 
   onChange = change => {

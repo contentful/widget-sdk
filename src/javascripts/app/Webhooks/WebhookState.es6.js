@@ -1,8 +1,8 @@
 import spaceContext from 'spaceContext';
-import createResourceService from 'services/ResourceService';
+import createResourceService from 'services/ResourceService.es6';
 import leaveConfirmator from 'navigation/confirmLeaveEditor';
 import TheLocaleStore from 'TheLocaleStore';
-import { domain } from 'Config';
+import { domain } from 'Config.es6';
 import modalDialog from 'modalDialog';
 import Templates from './templates';
 
@@ -18,7 +18,7 @@ export function openTemplateDialog(templateId, webhookRepo, templateContentTypes
     ignoreEsc: false,
     backgroundClose: false,
     template:
-      '<react-component class="modal-background" name="app/Webhooks/WebhookTemplateDialog" props="props" />',
+      '<react-component class="modal-background" name="app/Webhooks/WebhookTemplateDialog.es6" props="props" />',
     controller: $scope => {
       $scope.props = {
         templateId,
@@ -81,7 +81,7 @@ const list = {
     templateId: null
   },
   template:
-    '<react-component class="workbench webhook-list" name="app/Webhooks/WebhookList" props="props" />',
+    '<react-component class="workbench webhook-list" name="app/Webhooks/WebhookList.es6" props="props" />',
   controller: [
     '$scope',
     '$stateParams',
@@ -125,7 +125,7 @@ const call = {
     ]
   },
   template:
-    '<react-component class="workbench webhook-call" name="app/Webhooks/WebhookCall" props="props" />',
+    '<react-component class="workbench webhook-call" name="app/Webhooks/WebhookCall.es6" props="props" />',
   controller: [
     '$scope',
     'webhook',
@@ -137,7 +137,7 @@ const call = {
 };
 
 const editorTemplate =
-  '<react-component class="workbench webhook-editor" name="app/Webhooks/WebhookEditor" props="props" />';
+  '<react-component class="workbench webhook-editor" name="app/Webhooks/WebhookEditor.es6" props="props" />';
 
 const editorController = [
   '$scope',

@@ -1,5 +1,5 @@
 import lodash from 'lodash';
-import { shallowFreeze } from 'utils/Freeze';
+import { shallowFreeze } from 'utils/Freeze.es6';
 
 /**
  * This module exports functions that deal with objects and arrays.

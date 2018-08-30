@@ -7,7 +7,7 @@
 angular.module('contentful').directive('cfValidationValues', [
   'require',
   require => {
-    const KEYCODES = require('utils/keycodes').default;
+    const KEYCODES = require('utils/keycodes.es6').default;
     const normalizeWhiteSpace = require('stringUtils').normalizeWhiteSpace;
 
     const ERROR_MESSAGES = {

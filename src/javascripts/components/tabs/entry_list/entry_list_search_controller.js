@@ -14,12 +14,12 @@ angular
       const createRequestQueue = require('overridingRequestQueue');
       const spaceContext = require('spaceContext');
       const accessChecker = require('access_control/AccessChecker');
-      const Tracking = require('analytics/events/SearchAndViews');
-      const K = require('utils/kefir');
+      const Tracking = require('analytics/events/SearchAndViews.es6');
+      const K = require('utils/kefir.es6');
       const Kefir = require('kefir');
       const createSearchInput = require('app/ContentList/Search').default;
       const h = require('ui/Framework').h;
-      const getAccessibleCTs = require('data/ContentTypeRepo/accessibleCTs').default;
+      const getAccessibleCTs = require('data/ContentTypeRepo/accessibleCTs.es6').default;
 
       let initialized = false;
       let lastUISearchState = null;

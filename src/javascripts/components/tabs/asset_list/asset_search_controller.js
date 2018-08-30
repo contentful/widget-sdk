@@ -16,9 +16,9 @@ angular
       const spaceContext = require('spaceContext');
       const ListQuery = require('ListQuery');
       const systemFields = require('systemFields');
-      const Tracking = require('analytics/events/SearchAndViews');
+      const Tracking = require('analytics/events/SearchAndViews.es6');
       const Notification = require('notification');
-      const K = require('utils/kefir');
+      const K = require('utils/kefir.es6');
       const Kefir = require('kefir');
       const createSearchInput = require('app/ContentList/Search').default;
       const h = require('ui/Framework').h;

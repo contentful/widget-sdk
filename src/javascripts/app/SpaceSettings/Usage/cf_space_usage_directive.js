@@ -5,7 +5,7 @@ angular.module('contentful').directive('cfSpaceUsage', [
   require => {
     const React = require('react');
     const ReactDOM = require('react-dom');
-    const SpaceUsage = require('app/SpaceSettings/Usage/SpaceUsage').default;
+    const SpaceUsage = require('app/SpaceSettings/Usage/SpaceUsage.es6').default;
     const spaceContext = require('spaceContext');
 
     return {

@@ -30,7 +30,7 @@ angular.module('contentful').factory('modalDialog', [
     var $compile = require('$compile');
     var $q = require('$q');
     var $window = require('$window');
-    var keycodes = require('utils/keycodes').default;
+    var keycodes = require('utils/keycodes.es6').default;
     var $rootScope = require('$rootScope');
     var debounce = require('debounce');
     var $timeout = require('$timeout');

@@ -5,18 +5,18 @@ import { joinAnd } from 'stringUtils';
 
 import { get } from 'lodash';
 
-import { go } from 'states/Navigator';
+import { go } from 'states/Navigator.es6';
 
-import { getEnabledFeatures } from 'utils/SubscriptionUtils';
-import { getUserName } from 'utils/UserUtils';
+import { getEnabledFeatures } from 'utils/SubscriptionUtils.es6';
+import { getUserName } from 'utils/UserUtils.es6';
 
-import { home, usage as spaceUsage } from 'ui/NavStates/Space';
-import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
-import HelpIcon from 'ui/Components/HelpIcon';
-import Tooltip from 'ui/Components/Tooltip';
-import Price from 'ui/Components/Price';
-import ContextMenu from 'ui/Components/ContextMenu';
-import { byName } from 'Styles/Colors';
+import { home, usage as spaceUsage } from 'ui/NavStates/Space.es6';
+import { isEnterprisePlan } from 'account/pricing/PricingDataProvider.es6';
+import HelpIcon from 'ui/Components/HelpIcon.es6';
+import Tooltip from 'ui/Components/Tooltip.es6';
+import Price from 'ui/Components/Price.es6';
+import ContextMenu from 'ui/Components/ContextMenu.es6';
+import { byName } from 'Styles/Colors.es6';
 
 function SpacePlanRow({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }) {
   const space = plan.space;
@@ -71,33 +71,34 @@ function SpacePlanRow({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }
     <tr className={className} key={key}>
       <td>
         <strong>{get(space, 'name', '-')}</strong>
-        { plan.committed &&
+        {plan.committed && (
           <Tooltip
-            style={{fontSize: '12px'}}
+            style={{ fontSize: '12px' }}
             tooltip="This space is part of your Enterprise deal with Contentful"
-            className="help-icon"
-          >
-            <span style={{color: byName.orangeLight}}>★</span>
+            className="help-icon">
+            <span style={{ color: byName.orangeLight }}>★</span>
           </Tooltip>
-        }
+        )}
       </td>
       <td>
         <strong>{plan.name}</strong>
-        { hasAnyFeatures &&
-          <HelpIcon>This space includes {joinAnd(enabledFeatures.map(({name}) => name))}</HelpIcon>
-        }
+        {hasAnyFeatures && (
+          <HelpIcon>
+            This space includes {joinAnd(enabledFeatures.map(({ name }) => name))}
+          </HelpIcon>
+        )}
         <br />
-        {!isEnterprisePlan(basePlan) && <Price value={plan.price} unit='month' />}
+        {!isEnterprisePlan(basePlan) && <Price value={plan.price} unit="month" />}
       </td>
       <td>{createdBy}</td>
       <td>{createdAt}</td>
-      <td style={{textAlign: 'right', verticalAlign: 'middle'}}>
-        { space &&
+      <td style={{ textAlign: 'right', verticalAlign: 'middle' }}>
+        {space && (
           <ContextMenu
-            data-test-id='subscription-page.spaces-list.space-context-menu'
+            data-test-id="subscription-page.spaces-list.space-context-menu"
             items={contextMenuItems}
           />
-        }
+        )}
       </td>
     </tr>
   );

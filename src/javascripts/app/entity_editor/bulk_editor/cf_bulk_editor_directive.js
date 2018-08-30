@@ -4,15 +4,15 @@ angular
   .directive('cfBulkEditor', [
     'require',
     require => {
-      const K = require('utils/kefir');
+      const K = require('utils/kefir.es6');
       const accessChecker = require('access_control/AccessChecker');
       const spaceContext = require('spaceContext');
       const entitySelector = require('entitySelector');
-      const deepFreeze = require('utils/Freeze').deepFreeze;
-      const List = require('utils/List');
-      const Tracking = require('app/entity_editor/bulk_editor/Tracking');
-      const DataLoader = require('app/entity_editor/DataLoader');
-      const Analytics = require('analytics/Analytics');
+      const deepFreeze = require('utils/Freeze.es6').deepFreeze;
+      const List = require('utils/List.es6');
+      const Tracking = require('app/entity_editor/bulk_editor/Tracking.es6');
+      const DataLoader = require('app/entity_editor/DataLoader.es6');
+      const Analytics = require('analytics/Analytics.es6');
 
       return {
         scope: {

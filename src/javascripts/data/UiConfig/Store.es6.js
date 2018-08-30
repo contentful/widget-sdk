@@ -1,14 +1,14 @@
-import * as Defaults from './Defaults';
+import * as Defaults from './Defaults.es6';
 import logger from 'logger';
 import { findIndex, get as getPath } from 'lodash';
-import { update, concat } from 'utils/Collections';
-import { deepFreeze } from 'utils/Freeze';
+import { update, concat } from 'utils/Collections.es6';
+import { deepFreeze } from 'utils/Freeze.es6';
 import {
   isUIConfigDataMigrated,
   normalizeMigratedUIConfigData,
   prepareUIConfigForStorage
-} from 'data/ViewMigrator';
-import { searchTermsMigrated as trackSearchTermsMigrated } from 'analytics/events/SearchAndViews';
+} from 'data/ViewMigrator.es6';
+import { searchTermsMigrated as trackSearchTermsMigrated } from 'analytics/events/SearchAndViews.es6';
 
 const SHARED_VIEWS = 'shared';
 const PRIVATE_VIEWS = 'private';

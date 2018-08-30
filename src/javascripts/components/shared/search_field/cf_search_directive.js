@@ -3,13 +3,13 @@
 angular.module('contentful').directive('cfSearch', [
   'require',
   require => {
-    const keycodes = require('utils/keycodes').default;
+    const keycodes = require('utils/keycodes.es6').default;
     const debounce = require('debounce');
     const $timeout = require('$timeout');
     const h = require('utils/hyperscript').h;
-    const Colors = require('Styles/Colors').byName;
+    const Colors = require('Styles/Colors.es6').byName;
     const renderString = require('ui/Framework').renderString;
-    const searchIcon = renderString(require('svg/search').default);
+    const searchIcon = renderString(require('svg/search.es6').default);
 
     return {
       template: h(

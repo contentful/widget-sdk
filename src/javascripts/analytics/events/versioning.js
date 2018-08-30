@@ -6,7 +6,7 @@ angular
   .factory('analyticsEvents/versioning', [
     'require',
     require => {
-      const Analytics = require('analytics/Analytics');
+      const Analytics = require('analytics/Analytics.es6');
       const leaveConfirmator = require('navigation/confirmLeaveEditor');
 
       let data = {};

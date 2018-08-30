@@ -9,9 +9,9 @@
  * Subservices, "localStorageStore" and "cookieStore" implement storage-specific
  * logic. These are NOT intended to be used on their own.
  */
-import ClientStorage from 'TheStore/ClientStorage';
-import * as CookieStore from 'TheStore/CookieStorage';
-import { forStorage } from 'TheStore/Utils';
+import ClientStorage from 'TheStore/ClientStorage.es6';
+import * as CookieStore from 'TheStore/CookieStorage.es6';
+import { forStorage } from 'TheStore/Utils.es6';
 
 const LocalStorage = ClientStorage('local');
 const SessionStorage = ClientStorage('session');

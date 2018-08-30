@@ -1,7 +1,7 @@
 import { isNumber } from 'lodash';
 import LazyLoader from 'LazyLoader';
-import { observeResize } from 'ui/ResizeDetector';
-import * as K from 'utils/kefir';
+import { observeResize } from 'ui/ResizeDetector.es6';
+import * as K from 'utils/kefir.es6';
 
 /**
  * Create a Google Map inside an element and react to scope data

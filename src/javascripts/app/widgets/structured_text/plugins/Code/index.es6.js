@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import ToolbarIcon from '../shared/ToolbarIcon';
-import markPlugin from '../shared/MarkPlugin';
-import markToggleDecorator from '../shared/MarkToggleDecorator';
+import ToolbarIcon from '../shared/ToolbarIcon.es6';
+import markPlugin from '../shared/MarkPlugin.es6';
+import markToggleDecorator from '../shared/MarkToggleDecorator.es6';
 import { MARKS } from '@contentful/structured-text-types';
 
 export const CodePlugin = () => {

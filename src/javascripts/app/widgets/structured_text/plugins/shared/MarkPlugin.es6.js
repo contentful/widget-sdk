@@ -1,5 +1,5 @@
 import isHotkey from 'is-hotkey';
-import markDecorator from './MarkDecorator';
+import markDecorator from './MarkDecorator.es6';
 
 export default function({ type, tagName }, hotkey) {
   return {

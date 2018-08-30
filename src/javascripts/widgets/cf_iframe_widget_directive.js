@@ -41,10 +41,10 @@ angular
           var spaceContext = require('spaceContext');
           var $q = require('$q');
           var WidgetAPI = require('widgets/API');
-          var K = require('utils/kefir');
+          var K = require('utils/kefir.es6');
           var PathUtils = require('utils/Path');
 
-          var appDomain = 'app.' + require('Config').domain;
+          var appDomain = 'app.' + require('Config.es6').domain;
 
           var doc = scope.docImpl || scope.otDoc;
           var entityInfo = scope.entityInfo;

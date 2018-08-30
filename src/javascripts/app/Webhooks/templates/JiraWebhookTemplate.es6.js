@@ -1,5 +1,5 @@
 import React from 'react';
-import JiraLogo from './logos/JiraLogo';
+import JiraLogo from './logos/JiraLogo.es6';
 
 export default {
   id: 'jira-create-task',

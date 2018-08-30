@@ -1,9 +1,9 @@
-import { createOrganizationEndpoint } from 'data/Endpoint';
-import { fetchAll } from 'data/CMA/FetchAll';
-import * as Authentication from 'Authentication';
-import * as Config from 'Config';
+import { createOrganizationEndpoint } from 'data/Endpoint.es6';
+import { fetchAll } from 'data/CMA/FetchAll.es6';
+import * as Authentication from 'Authentication.es6';
+import * as Config from 'Config.es6';
 import { get } from 'lodash';
-import { deepFreezeClone } from 'utils/Freeze';
+import { deepFreezeClone } from 'utils/Freeze.es6';
 
 /**
  * @ngdoc module

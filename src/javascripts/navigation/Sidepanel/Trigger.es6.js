@@ -3,18 +3,18 @@
 import { h } from 'ui/Framework';
 import React from 'react';
 import PropTypes from 'prop-types';
-import { container, hspace, hbox, vbox } from 'ui/Layout';
-import { asReact } from 'ui/Framework/DOMRenderer';
+import { container, hspace, hbox, vbox } from 'ui/Layout.es6';
+import { asReact } from 'ui/Framework/DOMRenderer.es6';
 import { caseof } from 'sum-types';
 
-import { byName as colors } from 'Styles/Colors';
+import { byName as colors } from 'Styles/Colors.es6';
 import { oneLineTruncate } from 'Styles';
-import logo from 'svg/logo-label';
-import environmentIcon from 'svg/environment';
-import hamburger from 'svg/hamburger';
+import logo from 'svg/logo-label.es6';
+import environmentIcon from 'svg/environment.es6';
+import hamburger from 'svg/hamburger.es6';
 
-import { navState$, NavStates } from 'navigation/NavState';
-import * as TokenStore from 'services/TokenStore';
+import { navState$, NavStates } from 'navigation/NavState.es6';
+import * as TokenStore from 'services/TokenStore.es6';
 import * as accessChecker from 'access_control/AccessChecker';
 
 export default class Trigger extends React.Component {

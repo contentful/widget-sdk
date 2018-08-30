@@ -1,6 +1,6 @@
 import { h } from 'ui/Framework';
-import pageSettingsIcon from 'svg/page-settings';
-import * as Workbench from 'app/Workbench';
+import pageSettingsIcon from 'svg/page-settings.es6';
+import * as Workbench from 'app/Workbench.es6';
 
 export default function() {
   return h('div.workbench', [

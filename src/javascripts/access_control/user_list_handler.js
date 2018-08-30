@@ -6,9 +6,9 @@ angular.module('contentful').factory('UserListHandler', [
     const $q = require('$q');
     const spaceContext = require('spaceContext');
     const RoleRepository = require('RoleRepository');
-    const SpaceMembershipRepository = require('access_control/SpaceMembershipRepository');
-    const fetchAll = require('data/CMA/FetchAll').fetchAll;
-    const createResourceService = require('services/ResourceService').default;
+    const SpaceMembershipRepository = require('access_control/SpaceMembershipRepository.es6');
+    const fetchAll = require('data/CMA/FetchAll.es6').fetchAll;
+    const createResourceService = require('services/ResourceService.es6').default;
 
     const ADMIN_ROLE_ID = SpaceMembershipRepository.ADMIN_ROLE_ID;
     const ADMIN_ROLE_NAME = 'Administrator';

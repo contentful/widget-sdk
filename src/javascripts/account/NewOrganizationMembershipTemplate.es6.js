@@ -1,9 +1,9 @@
 import { includes, negate, isArray } from 'lodash';
 import { h } from 'ui/Framework';
-import { assign } from 'utils/Collections';
-import { match, isTag } from 'utils/TaggedValues';
-import { default as successIcon } from 'svg/checkmark-alt';
-import { default as errorIcon } from 'svg/error';
+import { assign } from 'utils/Collections.es6';
+import { match, isTag } from 'utils/TaggedValues.es6';
+import { default as successIcon } from 'svg/checkmark-alt.es6';
+import { default as errorIcon } from 'svg/error.es6';
 
 const orgRoles = [
   {

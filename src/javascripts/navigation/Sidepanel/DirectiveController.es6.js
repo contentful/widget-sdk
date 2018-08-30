@@ -1,18 +1,18 @@
-import { assign, get } from 'utils/Collections';
-import * as K from 'utils/kefir';
-import keycodes from 'utils/keycodes';
+import { assign, get } from 'utils/Collections.es6';
+import * as K from 'utils/kefir.es6';
+import keycodes from 'utils/keycodes.es6';
 
-import * as Navigator from 'states/Navigator';
+import * as Navigator from 'states/Navigator.es6';
 
-import { navState$, NavStates } from 'navigation/NavState';
-import * as TokenStore from 'services/TokenStore';
-import * as OrgRoles from 'services/OrganizationRoles';
-import * as CreateSpace from 'services/CreateSpace';
+import { navState$, NavStates } from 'navigation/NavState.es6';
+import * as TokenStore from 'services/TokenStore.es6';
+import * as OrgRoles from 'services/OrganizationRoles.es6';
+import * as CreateSpace from 'services/CreateSpace.es6';
 import * as AccessChecker from 'access_control/AccessChecker';
 import * as LD from 'utils/LaunchDarkly';
 import logger from 'logger';
 
-import renderSidepanel from './SidepanelView';
+import renderSidepanel from './SidepanelView.es6';
 
 const ENVIRONMENTS_FLAG_NAME = 'feature-dv-11-2017-environments';
 

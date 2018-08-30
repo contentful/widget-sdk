@@ -1,7 +1,7 @@
 import { partial, size, noop } from 'lodash';
-import * as Analytics from 'analytics/Analytics';
-import * as K from 'utils/kefir';
-import { stateName, State } from 'data/CMA/EntityState';
+import * as Analytics from 'analytics/Analytics.es6';
+import * as K from 'utils/kefir.es6';
+import { stateName, State } from 'data/CMA/EntityState.es6';
 
 export function create(parentEntryId, links$) {
   const editedEntries = {};

@@ -1,5 +1,5 @@
 import React from 'react';
-import GitlabLogo from './logos/GitlabLogo';
+import GitlabLogo from './logos/GitlabLogo.es6';
 
 export default {
   id: 'gitlab-trigger-pipeline',

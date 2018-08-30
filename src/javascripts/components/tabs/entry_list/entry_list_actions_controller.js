@@ -10,7 +10,7 @@ angular
       const accessChecker = require('access_control/AccessChecker');
       const $controller = require('$controller');
       const spaceContext = require('spaceContext');
-      const Analytics = require('analytics/Analytics');
+      const Analytics = require('analytics/Analytics.es6');
 
       const listActionsController = $controller('ListActionsController', {
         $scope: $scope,

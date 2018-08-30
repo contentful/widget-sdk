@@ -29,9 +29,9 @@ angular
       function loadAll() {
         load([
           require('states/account'),
-          require('states/Spaces').default,
-          require('states/Home').default,
-          require('states/Deeplink').default,
+          require('states/Spaces.es6').default,
+          require('states/Home.es6').default,
+          require('states/Deeplink.es6').default,
           {
             name: '_other',
             url: '/*path',

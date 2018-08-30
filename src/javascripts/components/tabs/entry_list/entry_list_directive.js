@@ -5,7 +5,7 @@ angular.module('contentful').directive('cfEntryList', [
   require => {
     const $timeout = require('$timeout');
     const spaceContext = require('spaceContext');
-    const K = require('utils/kefir');
+    const K = require('utils/kefir.es6');
 
     // Definitions for narrow/medium types in entry list controller
     const classToWidth = {

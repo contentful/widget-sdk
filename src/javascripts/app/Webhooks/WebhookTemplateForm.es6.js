@@ -7,7 +7,7 @@ import {
   Icon,
   ValidationMessage
 } from '@contentful/ui-component-library';
-import * as WebhookEditorActions from './WebhookEditorActions';
+import * as WebhookEditorActions from './WebhookEditorActions.es6';
 import { values, isString } from 'lodash';
 import $state from '$state';
 

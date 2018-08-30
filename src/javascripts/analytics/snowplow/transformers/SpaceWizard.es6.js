@@ -1,5 +1,5 @@
-import { addUserOrgSpace } from './Decorators';
-import { env } from 'Config';
+import { addUserOrgSpace } from './Decorators.es6';
+import { env } from 'Config.es6';
 import logger from 'logger';
 
 const SpaceWizardTransformer = addUserOrgSpace((eventName, data) => {

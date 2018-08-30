@@ -1,6 +1,6 @@
 import { h } from 'ui/Framework';
-import { byName as Colors } from 'Styles/Colors';
-import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
+import { byName as Colors } from 'Styles/Colors.es6';
+import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
 import { monospaceFontFamily } from 'Styles';
 import $state from '$state';
 

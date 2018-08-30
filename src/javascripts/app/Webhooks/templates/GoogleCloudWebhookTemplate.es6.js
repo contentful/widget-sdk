@@ -1,5 +1,5 @@
 import React from 'react';
-import GoogleCloudLogo from './logos/GoogleCloudLogo';
+import GoogleCloudLogo from './logos/GoogleCloudLogo.es6';
 
 export default {
   id: 'google-cloud-invoke-function',

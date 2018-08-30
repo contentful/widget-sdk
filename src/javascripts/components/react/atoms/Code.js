@@ -7,7 +7,7 @@ export const name = 'react/code-component';
 angular.module('contentful').factory(name, [
   'require',
   function(require) {
-    const CopyButton = require('ui/Components/CopyIconButton').default;
+    const CopyButton = require('ui/Components/CopyIconButton.es6').default;
 
     const Code = createReactClass({
       propTypes: {

@@ -1,7 +1,7 @@
 import { identity, isString } from 'lodash';
 import $q from '$q';
 import $timeout from '$timeout';
-import * as Filestack from 'services/Filestack';
+import * as Filestack from 'services/Filestack.es6';
 import logger from 'logger';
 import notification from 'notification';
 import stringUtils from 'stringUtils';

@@ -4,12 +4,12 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { kebabCase } from 'lodash';
 
-import HelpIcon from 'ui/Components/HelpIcon';
-import Tooltip from 'ui/Components/Tooltip';
-import Icon from 'ui/Components/Icon';
-import PlanFeatures from 'components/shared/space-wizard/PlanFeatures';
-import { formatPrice, unavailabilityTooltipNode } from './WizardUtils';
-import { byName as colors } from 'Styles/Colors';
+import HelpIcon from 'ui/Components/HelpIcon.es6';
+import Tooltip from 'ui/Components/Tooltip.es6';
+import Icon from 'ui/Components/Icon.es6';
+import PlanFeatures from 'components/shared/space-wizard/PlanFeatures.es6';
+import { formatPrice, unavailabilityTooltipNode } from './WizardUtils.es6';
+import { byName as colors } from 'Styles/Colors.es6';
 
 const SpacePlanItem = createReactClass({
   propTypes: {

@@ -1,4 +1,4 @@
-import { domain } from 'Config';
+import { domain } from 'Config.es6';
 
 export default function createBackend(spaceId) {
   const BASE = `https://h7i8nmq4u3.execute-api.us-east-1.amazonaws.com/alpha/spaces/${spaceId}/functions`;

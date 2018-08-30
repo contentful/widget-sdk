@@ -17,7 +17,7 @@ angular.module('contentful').directive('cfCopyToClipboard', [
     const h = require('utils/hyperscript').h;
     const $timeout = require('$timeout');
     const userAgent = require('userAgent');
-    const domCopy = require('utils/DomClipboardCopy').default;
+    const domCopy = require('utils/DomClipboardCopy.es6').default;
 
     const template = h('button', {
       class: [

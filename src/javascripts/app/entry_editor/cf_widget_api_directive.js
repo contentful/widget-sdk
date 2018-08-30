@@ -38,10 +38,10 @@ angular
     'require',
     function($scope, require) {
       const TheLocaleStore = require('TheLocaleStore');
-      const K = require('utils/kefir');
+      const K = require('utils/kefir.es6');
       const spaceContext = require('spaceContext');
       const EntityHelpers = require('EntityHelpers');
-      const Navigator = require('states/Navigator');
+      const Navigator = require('states/Navigator.es6');
 
       const fieldLocale = $scope.fieldLocale;
       const ctField = $scope.widget.field;

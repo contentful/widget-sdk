@@ -1,13 +1,13 @@
 import { find, isPlainObject } from 'lodash';
-import { update, assign, map, concat, filter } from 'utils/Collections';
-import { makeCtor } from 'utils/TaggedValues';
-import { createStore, makeReducer } from 'ui/Framework/Store';
+import { update, assign, map, concat, filter } from 'utils/Collections.es6';
+import { makeCtor } from 'utils/TaggedValues.es6';
+import { createStore, makeReducer } from 'ui/Framework/Store.es6';
 
-import ViewMenu from './ViewMenu';
-import createDnD from './SavedViewsDnD';
-import { makeBlankFolder } from 'data/UiConfig/Blanks';
+import ViewMenu from './ViewMenu.es6';
+import createDnD from './SavedViewsDnD.es6';
+import { makeBlankFolder } from 'data/UiConfig/Blanks.es6';
 
-import openRoleSelector from './RoleSelector';
+import openRoleSelector from './RoleSelector.es6';
 
 import { getStore } from 'TheStore';
 import notification from 'notification';

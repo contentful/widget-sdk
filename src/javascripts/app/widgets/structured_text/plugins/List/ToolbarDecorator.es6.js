@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { ToolbarIconPropTypes } from '../shared/PropTypes';
+import { ToolbarIconPropTypes } from '../shared/PropTypes.es6';
 
-import EditList from './EditListWrapper';
+import EditList from './EditListWrapper.es6';
 
 const applyChange = (change, currentType) => {
   const { utils, changes } = EditList();

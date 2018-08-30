@@ -24,7 +24,7 @@ angular
   .directive('cfComponentBridge', [
     'require',
     require => {
-      var createMountPoint = require('ui/Framework/DOMRenderer').default;
+      var createMountPoint = require('ui/Framework/DOMRenderer.es6').default;
       return {
         restrict: 'E',
         scope: { component: '=' },
@@ -82,9 +82,9 @@ angular
   .directive('cfComponentStoreBridge', [
     'require',
     require => {
-      var K = require('utils/kefir');
-      var bindActions = require('ui/Framework/Store').bindActions;
-      var createMountPoint = require('ui/Framework/DOMRenderer').default;
+      var K = require('utils/kefir.es6');
+      var bindActions = require('ui/Framework/Store.es6').bindActions;
+      var createMountPoint = require('ui/Framework/DOMRenderer.es6').default;
       return {
         restrict: 'E',
         scope: { component: '=' },

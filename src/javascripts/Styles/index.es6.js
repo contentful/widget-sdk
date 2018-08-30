@@ -1,4 +1,4 @@
-import { byName as colors } from 'Styles/Colors';
+import { byName as colors } from 'Styles/Colors.es6';
 
 /**
  * This module exports shared CSS styles

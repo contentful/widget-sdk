@@ -1,6 +1,6 @@
 import $q from '$q';
 import { reduce, flatten } from 'lodash';
-import { parseTextQuery } from 'search/queryBuilder';
+import { parseTextQuery } from 'search/queryBuilder.es6';
 import { cmaQueryBuilderForField, isRelativeDate } from 'searchQueryAutocompletions';
 
 // Matches an API key and an optional operator, e.g. `fields.title[match]`.

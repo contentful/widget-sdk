@@ -4,10 +4,10 @@ import PropTypes from 'prop-types';
 import createReactClass from 'create-react-class';
 import Downshift from 'downshift';
 import cn from 'classnames';
-import ListItem from './ListItem';
-import SearchInput from './SearchInput';
-import Group from './Group';
-import NoResults from './NoResults';
+import ListItem from './ListItem.es6';
+import SearchInput from './SearchInput.es6';
+import Group from './Group.es6';
+import NoResults from './NoResults.es6';
 
 const MAX_ITEMS_WITHOUT_SEARCH = 20;
 const SUGGESTION_GROUP_LENGTH = 1;

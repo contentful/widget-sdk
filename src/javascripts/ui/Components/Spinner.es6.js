@@ -1,6 +1,6 @@
 import { assign } from 'lodash';
 import { h } from 'ui/Framework';
-import { Color } from 'Styles/Colors';
+import { Color } from 'Styles/Colors.es6';
 
 /**
  * Creates a spinner element used to indicate a loading state.

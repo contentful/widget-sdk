@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Workbench from 'app/WorkbenchReact';
-import ExtensionsSidebar, { DocsLink } from './ExtensionsSidebar';
+import Workbench from 'app/WorkbenchReact.es6';
+import ExtensionsSidebar, { DocsLink } from './ExtensionsSidebar.es6';
 
-import EmptyExtensionIcon from './icons/EmptyExtensionIcon';
-import ExtensionsList from './ExtensionsList';
-import ExtensionsActions from './ExtensionsActions';
-import ExtensionsForbiddenPage from './ExtensionsForbiddenPage';
+import EmptyExtensionIcon from './icons/EmptyExtensionIcon.es6';
+import ExtensionsList from './ExtensionsList.es6';
+import ExtensionsActions from './ExtensionsActions.es6';
+import ExtensionsForbiddenPage from './ExtensionsForbiddenPage.es6';
 
 const EmptyState = () => (
   <div className="empty-state" data-test-id="extensions.empty">

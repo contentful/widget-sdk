@@ -15,13 +15,13 @@
 angular.module('cf.ui').directive('cfIcon', [
   'require',
   require => {
-    var createMountPoint = require('ui/Framework/DOMRenderer').default;
+    var createMountPoint = require('ui/Framework/DOMRenderer.es6').default;
 
     return {
       restrict: 'E',
       link: function(_scope, el, attrs) {
         var mountPoint = createMountPoint(el.get(0));
-        mountPoint.render(require('svg/' + attrs.name).default);
+        mountPoint.render(require('svg/' + attrs.name + '.es6').default);
 
         var iconElem = el.children().get(0);
         if (!iconElem) {

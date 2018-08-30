@@ -8,7 +8,7 @@ angular
     require => {
       const React = require('react');
       const ReactDOM = require('react-dom');
-      const OnboardingWithTea = require('app/home/welcome/OnboardingWithTea').default;
+      const OnboardingWithTea = require('app/home/welcome/OnboardingWithTea.es6').default;
 
       return {
         link: function($scope, el) {

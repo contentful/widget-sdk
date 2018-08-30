@@ -2,27 +2,27 @@
 /* eslint-disable react/prop-types */
 // TODO: add prop-types
 import { noop } from 'lodash';
-import { match } from 'utils/TaggedValues';
+import { match } from 'utils/TaggedValues.es6';
 import { truncate } from 'stringUtils';
 import * as React from 'react';
 import { h } from 'ui/Framework';
 import * as H from 'ui/Framework/Hooks';
-import { container, hspace } from 'ui/Layout';
-import spinner from 'ui/Components/Spinner';
-import { byName as colors } from 'Styles/Colors';
-import keycodes from 'utils/keycodes';
+import { container, hspace } from 'ui/Layout.es6';
+import spinner from 'ui/Components/Spinner.es6';
+import { byName as colors } from 'Styles/Colors.es6';
+import keycodes from 'utils/keycodes.es6';
 
-import filterIcon from 'svg/filter';
-import infoIcon from 'svg/info';
+import filterIcon from 'svg/filter.es6';
+import infoIcon from 'svg/info.es6';
 
-import renderLoader from './Loader';
-import { ValueInput } from './Filters';
-import filterValueDate from './ValueInput/Date';
-import filterValueReference from './ValueInput/Reference';
-import TextValueInput from './ValueInput/Text';
-import Select from './ValueInput/select';
-import QueryInput from './Components/QueryInput';
-import { IsOverflownY as IsOverflownYHook } from './Hooks/IsOverflown';
+import renderLoader from './Loader.es6';
+import { ValueInput } from './Filters.es6';
+import filterValueDate from './ValueInput/Date.es6';
+import filterValueReference from './ValueInput/Reference.es6';
+import TextValueInput from './ValueInput/Text.es6';
+import Select from './ValueInput/select.es6';
+import QueryInput from './Components/QueryInput.es6';
+import { IsOverflownY as IsOverflownYHook } from './Hooks/IsOverflown.es6';
 
 const Keys = {
   arrowUp: e => e.keyCode === keycodes.UP,

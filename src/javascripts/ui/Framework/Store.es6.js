@@ -1,6 +1,6 @@
 import { mapValues, memoize } from 'lodash';
-import * as K from 'utils/kefir';
-import { makeMatcher } from 'utils/TaggedValues';
+import * as K from 'utils/kefir.es6';
+import { makeMatcher } from 'utils/TaggedValues.es6';
 
 /**
  * This module exports functions to deal with reducer based stores.

@@ -8,7 +8,7 @@ angular.module('contentful').controller('ContentTypeListController', [
     const spaceContext = require('spaceContext');
     const accessChecker = require('access_control/AccessChecker');
     const ctHelpers = require('data/ContentTypes');
-    const createViewPersistor = require('data/ListViewPersistor').default;
+    const createViewPersistor = require('data/ListViewPersistor.es6').default;
     const $state = require('$state');
 
     const viewPersistor = createViewPersistor(spaceContext.getId(), null, 'contentTypes');

@@ -1,21 +1,21 @@
 import logger from 'logger';
-import * as TokenStore from 'services/TokenStore';
-import * as K from 'utils/kefir';
-import * as policyChecker from './PolicyChecker';
-import * as cache from './ResponseCache';
-import { create as createGKPermissionChecker } from './GKPermissionChecker';
+import * as TokenStore from 'services/TokenStore.es6';
+import * as K from 'utils/kefir.es6';
+import * as policyChecker from './PolicyChecker.es6';
+import * as cache from './ResponseCache.es6';
+import { create as createGKPermissionChecker } from './GKPermissionChecker.es6';
 import {
   broadcastEnforcement,
   resetEnforcements,
   toType,
   getContentTypeIdFor,
   isAuthor
-} from './Utils';
+} from './Utils.es6';
 import { capitalize, capitalizeFirst } from 'stringUtils';
 import { get, some, forEach, values } from 'lodash';
-import * as Enforcements from 'access_control/Enforcements';
+import * as Enforcements from 'access_control/Enforcements.es6';
 
-export { wasForbidden } from './Utils';
+export { wasForbidden } from './Utils.es6';
 
 /**
  * @name accessChecker

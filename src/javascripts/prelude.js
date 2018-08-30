@@ -67,22 +67,22 @@ angular
     'require',
     require => {
       var $document = require('$document');
-      var Config = require('Config');
+      var Config = require('Config.es6');
       if (Config.env === 'development') {
         Error.stackTraceLimit = 100;
       } else {
         Error.stackTraceLimit = 25;
       }
-      require('Debug').init(window);
-      require('Authentication').init();
-      require('services/TokenStore').init();
+      require('Debug.es6').init(window);
+      require('Authentication.es6').init();
+      require('services/TokenStore.es6').init();
       require('utils/LaunchDarkly').init();
       require('navigation/stateChangeHandlers').setup();
-      require('ui/ContextMenuHandler').default($document);
+      require('ui/ContextMenuHandler.es6').default($document);
       require('notification').setupClearMessageHooks();
       require('states').loadAll();
       require('dialogsInitController').init();
-      require('navigation/DocumentTitle').init();
+      require('navigation/DocumentTitle.es6').init();
       require('components/shared/auto_create_new_space').init();
     }
   ]);
@@ -255,7 +255,7 @@ angular
   function registerDirectoryAlias(moduleId) {
     var path = moduleId.split('/');
     var last = path.pop();
-    if (last === 'index') {
+    if (last === 'index.es6') {
       angular.module('cf.es6').factory(path.join('/'), [moduleId, id]);
     }
   }

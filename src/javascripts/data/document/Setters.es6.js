@@ -1,10 +1,10 @@
 import $q from '$q';
-import * as K from 'utils/kefir';
+import * as K from 'utils/kefir.es6';
 
 import * as StringField from 'entityEditor/Document/StringField';
 import * as ShareJS from 'data/ShareJS/Utils';
 
-import * as StructuredTextFieldSetter from 'app/widgets/structured_text/StructuredTextFieldSetter';
+import * as StructuredTextFieldSetter from 'app/widgets/structured_text/StructuredTextFieldSetter.es6';
 
 /**
  * Create an object that exposes all methods for changing values in a

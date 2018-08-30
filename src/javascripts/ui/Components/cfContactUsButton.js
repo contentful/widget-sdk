@@ -5,7 +5,7 @@ angular.module('contentful').directive('cfContactUsButton', [
   require => {
     var React = require('react');
     var ReactDOM = require('react-dom');
-    var ContactUsButton = require('ui/Components/ContactUsButton').default;
+    var ContactUsButton = require('ui/Components/ContactUsButton.es6').default;
 
     return {
       link: function($scope, el) {

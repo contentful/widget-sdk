@@ -5,18 +5,21 @@ angular.module('contentful').controller('ClientController', [
   'require',
   function ClientController($scope, require) {
     const $state = require('$state');
-    const K = require('utils/kefir');
+    const K = require('utils/kefir.es6');
     const features = require('features');
     const logger = require('logger');
     const spaceContext = require('spaceContext');
-    const TokenStore = require('services/TokenStore');
-    const Analytics = require('analytics/Analytics');
+    const TokenStore = require('services/TokenStore.es6');
+    const Analytics = require('analytics/Analytics.es6');
     const authorization = require('authorization');
     const fontsDotCom = require('fontsDotCom');
-    const CreateSpace = require('services/CreateSpace');
-    const refreshNavState = require('navigation/NavState').makeStateRefresher($state, spaceContext);
+    const CreateSpace = require('services/CreateSpace.es6');
+    const refreshNavState = require('navigation/NavState.es6').makeStateRefresher(
+      $state,
+      spaceContext
+    );
     const Intercom = require('intercom');
-    const EnforcementsService = require('services/EnforcementsService');
+    const EnforcementsService = require('services/EnforcementsService.es6');
 
     // TODO remove this eventually. All components should access it as a service
     $scope.spaceContext = spaceContext;

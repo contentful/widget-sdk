@@ -1,5 +1,5 @@
 import { get, uniqueId } from 'lodash';
-import { getAllSpaces, getUsersByIds } from 'access_control/OrganizationMembershipRepository';
+import { getAllSpaces, getUsersByIds } from 'access_control/OrganizationMembershipRepository.es6';
 import { getCurrentVariation } from 'utils/LaunchDarkly';
 
 const alphaHeader = {
@@ -11,15 +11,15 @@ export const customerTypes = {
   enterprise: 'Enterprise'
 };
 
-export function isSelfServicePlan (plan) {
+export function isSelfServicePlan(plan) {
   return plan.customerType === customerTypes.selfService;
 }
 
-export function isEnterprisePlan (plan) {
+export function isEnterprisePlan(plan) {
   return plan.customerType === customerTypes.enterprise;
 }
 
-export function isFreeSpacePlan (plan) {
+export function isFreeSpacePlan(plan) {
   // free plans do not have subscription plans
   // a plan object is created by the user interface
   // so `planType` is a hardcoded value.
@@ -27,7 +27,7 @@ export function isFreeSpacePlan (plan) {
   return plan.planType === 'free_space';
 }
 
-export function isPOCSpacePlan (plan) {
+export function isPOCSpacePlan(plan) {
   return isEnterprisePlan(plan) && isFreeSpacePlan(plan);
 }
 
@@ -205,12 +205,15 @@ export function getSpaceRatePlans(endpoint, spaceId) {
 
 /**
  * Get base and all space rate plans available for the organization
-*/
-export function getRatePlans (endpoint) {
-  return endpoint({
-    method: 'GET',
-    path: ['product_rate_plans']
-  }, alphaHeader).then((data) => data.items);
+ */
+export function getRatePlans(endpoint) {
+  return endpoint(
+    {
+      method: 'GET',
+      path: ['product_rate_plans']
+    },
+    alphaHeader
+  ).then(data => data.items);
 }
 
 /**

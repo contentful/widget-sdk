@@ -19,7 +19,7 @@ angular.module('contentful').factory(name, [
     const ContentFlowExplorer = require(ContentFlowExplorerModule);
     const WithLink = require(WithLinkModule);
     const ScreenHeader = require(ScreenHeaderModule);
-    const Icon = require('ui/Components/Icon').default;
+    const Icon = require('ui/Components/Icon.es6').default;
 
     const ExploreScreen = () => {
       const headerTitle = (

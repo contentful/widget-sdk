@@ -1,7 +1,7 @@
 import $rootScope from '$rootScope';
 import contentPreview from 'contentPreview';
-import * as Analytics from 'analytics/Analytics';
-import { runTask } from 'utils/Concurrent';
+import * as Analytics from 'analytics/Analytics.es6';
+import { runTask } from 'utils/Concurrent.es6';
 import * as _ from 'lodash';
 import qs from 'qs';
 import * as environment from 'environment';
@@ -9,9 +9,9 @@ import {
   TEA_MAIN_CONTENT_PREVIEW,
   TEA_CONTENT_PREVIEWS,
   DISCOVERY_APP_BASE_URL
-} from './contentPreviewConfig';
+} from './contentPreviewConfig.es6';
 import TheLocaleStore from 'TheLocaleStore';
-import { enrichTemplate } from './enrichTemplate';
+import { enrichTemplate } from './enrichTemplate.es6';
 
 const ASSET_PROCESSING_TIMEOUT = 60000;
 
@@ -481,7 +481,10 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
       );
     }
 
-    function createContentPreview ({ name, description, baseUrl, isMobile }, { cdaToken, cpaToken }) {
+    function createContentPreview(
+      { name, description, baseUrl, isMobile },
+      { cdaToken, cpaToken }
+    ) {
       const contentPreviewConfig = {
         name,
         description,
@@ -559,32 +562,36 @@ function mainPageConfig(params) {
   return makeTEAConfig(params);
 }
 
-function courseConfig (params) {
+function courseConfig(params) {
   const courseSlug = '{entry.fields.slug}';
   const urlParam = params.isMobile ? `?courses=${courseSlug}` : `/courses/${courseSlug}`;
 
   return makeTEAConfig(params, urlParam);
 }
 
-function categoryConfig (params) {
+function categoryConfig(params) {
   const categorySlug = '{entry.fields.slug}';
   const urlParam = params.isMobile ? `?courses=${categorySlug}` : `/courses/${categorySlug}`;
 
   return makeTEAConfig(params, urlParam);
 }
 
-function lessonConfig (params) {
+function lessonConfig(params) {
   const courseSlug = '{entry.linkedBy.fields.slug}';
   const lessonSlug = '{entry.fields.slug}';
-  const urlParams = params.isMobile ? `?courses=${courseSlug}&lessons=${lessonSlug}` : `/courses/${courseSlug}/lessons/${lessonSlug}`;
+  const urlParams = params.isMobile
+    ? `?courses=${courseSlug}&lessons=${lessonSlug}`
+    : `/courses/${courseSlug}/lessons/${lessonSlug}`;
 
   return makeTEAConfig(params, urlParams);
 }
 
-function lessonContentConfig (params) {
+function lessonContentConfig(params) {
   const courseSlug = '{entry.linkedBy.linkedBy.fields.slug}';
   const lessonSlug = '{entry.linkedBy.fields.slug}';
-  const urlParams = params.isMobile ? `?courses=${courseSlug}&lessons=${lessonSlug}` : `/courses/${courseSlug}/lessons/${lessonSlug}`;
+  const urlParams = params.isMobile
+    ? `?courses=${courseSlug}&lessons=${lessonSlug}`
+    : `/courses/${courseSlug}/lessons/${lessonSlug}`;
 
   return makeTEAConfig(params, urlParams);
 }

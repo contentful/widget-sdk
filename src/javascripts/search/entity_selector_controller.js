@@ -38,12 +38,12 @@ angular.module('contentful').controller('EntitySelectorController', [
     const Paginator = require('Paginator');
     const createQueue = require('overridingRequestQueue');
     const EntityHelpers = require('EntityHelpers');
-    const K = require('utils/kefir');
+    const K = require('utils/kefir.es6');
     const Kefir = require('kefir');
     const _ = require('lodash');
     const createSearchInput = require('app/ContentList/Search').default;
-    const getAccessibleCTs = require('data/ContentTypeRepo/accessibleCTs').default;
-    const { Operator } = require('app/ContentList/Search/Operators');
+    const getAccessibleCTs = require('data/ContentTypeRepo/accessibleCTs.es6').default;
+    const { Operator } = require('app/ContentList/Search/Operators.es6');
 
     const MIN_SEARCH_TRIGGERING_LEN = 1;
     const MODES = { AVAILABLE: 1, SELECTED: 2 };

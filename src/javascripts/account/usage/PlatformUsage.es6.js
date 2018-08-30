@@ -1,16 +1,16 @@
-import * as auth from 'Authentication';
-import { apiUrl } from 'Config';
-import { createOrganizationEndpoint } from 'data/Endpoint';
-import { getBasePlan } from 'account/pricing/PricingDataProvider';
+import * as auth from 'Authentication.es6';
+import { apiUrl } from 'Config.es6';
+import { createOrganizationEndpoint } from 'data/Endpoint.es6';
+import { getBasePlan } from 'account/pricing/PricingDataProvider.es6';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import { createElement as h } from 'react';
-import { runTask } from 'utils/Concurrent';
-import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-import { getOrganization } from 'services/TokenStore';
+import { runTask } from 'utils/Concurrent.es6';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
+import { getOrganization } from 'services/TokenStore.es6';
 import * as ReloadNotification from 'ReloadNotification';
-import { TiersTable } from 'account/pricing/TiersTable';
-import Workbench from 'app/WorkbenchReact';
+import { TiersTable } from 'account/pricing/TiersTable.es6';
+import Workbench from 'app/WorkbenchReact.es6';
 
 const PlatformUsage = createReactClass({
   propTypes: {

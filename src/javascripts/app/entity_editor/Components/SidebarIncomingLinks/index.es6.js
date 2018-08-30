@@ -2,16 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import createReactClass from 'create-react-class';
 
-import IncomingLinksList from '../IncomingLinksList';
-import IncomingLinksListError from '../IncomingLinksList/Error';
-import FetchLinksToEntity, { RequestState } from '../FetchLinksToEntity';
-import { EntityType, getNumberOfLinks } from '../constants';
-import messages from './messages';
+import IncomingLinksList from '../IncomingLinksList.es6';
+import IncomingLinksListError from '../IncomingLinksList/Error.es6';
+import FetchLinksToEntity, { RequestState } from '../FetchLinksToEntity.es6';
+import { EntityType, getNumberOfLinks } from '../constants.es6';
+import messages from './messages.es6';
 
 import {
   onIncomingLinkClick as trackIncomingLinkClick,
   Origin as IncomingLinksOrigin
-} from 'analytics/events/IncomingLinks';
+} from 'analytics/events/IncomingLinks.es6';
 
 const SidebarIncomingLinks = createReactClass({
   propTypes: {

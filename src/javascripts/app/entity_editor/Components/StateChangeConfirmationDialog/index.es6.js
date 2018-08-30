@@ -1,21 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import createReactClass from 'create-react-class';
-import { Action } from 'data/CMA/EntityActions';
-import Dialog from '../Dialog';
-import { EntityType, getNumberOfLinks } from '../constants';
-import FetchLinksToEntity, { RequestState } from '../FetchLinksToEntity';
+import { Action } from 'data/CMA/EntityActions.es6';
+import Dialog from '../Dialog.es6';
+import { EntityType, getNumberOfLinks } from '../constants.es6';
+import FetchLinksToEntity, { RequestState } from '../FetchLinksToEntity.es6';
 import {
   onDialogOpen as trackDialogOpen,
   onDialogConfirm as trackDialogConfirm,
   onIncomingLinkClick as trackIncomingLinkClick,
   Origin as IncomingLinksOrigin
-} from 'analytics/events/IncomingLinks';
+} from 'analytics/events/IncomingLinks.es6';
 
-import Loader from './Loader';
-import IncomingLinksList from '../IncomingLinksList';
-import IncomingLinksListError from '../IncomingLinksList/Error';
-import messages from './messages';
+import Loader from './Loader.es6';
+import IncomingLinksList from '../IncomingLinksList.es6';
+import IncomingLinksListError from '../IncomingLinksList/Error.es6';
+import messages from './messages.es6';
 
 const StateChangeConfirmation = createReactClass({
   propTypes: {

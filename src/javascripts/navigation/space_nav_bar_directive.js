@@ -9,9 +9,9 @@ angular
   .factory('makeNavBar', [
     'require',
     require => {
-      var template = require('navigation/SpaceNavTemplate').default;
+      var template = require('navigation/SpaceNavTemplate.es6').default;
       var spaceContext = require('spaceContext');
-      var TokenStore = require('services/TokenStore');
+      var TokenStore = require('services/TokenStore.es6');
       var accessChecker = require('access_control/AccessChecker');
 
       return (useSpaceEnv, isMaster) => ({

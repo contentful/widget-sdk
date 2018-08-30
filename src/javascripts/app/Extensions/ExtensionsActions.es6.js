@@ -3,9 +3,9 @@ import notification from 'notification';
 import spaceContext from 'spaceContext';
 import $state from '$state';
 import modalDialog from 'modalDialog';
-import { track } from 'analytics/Analytics';
-import { toInternalFieldType } from './FieldTypes';
-import getExtensionParameterIds from './getExtensionParameterIds';
+import { track } from 'analytics/Analytics.es6';
+import { toInternalFieldType } from './FieldTypes.es6';
+import getExtensionParameterIds from './getExtensionParameterIds.es6';
 
 const SDK_URL = 'https://unpkg.com/contentful-ui-extensions-sdk@3';
 
@@ -13,7 +13,7 @@ export function openExamplePicker() {
   return modalDialog
     .open({
       template:
-        '<react-component class="modal-background" name="app/Extensions/ExamplePicker" props="props" />',
+        '<react-component class="modal-background" name="app/Extensions/ExamplePicker.es6" props="props" />',
       controller: $scope => {
         $scope.props = {
           onConfirm: value => $scope.dialog.confirm(value),
@@ -29,7 +29,7 @@ export function openGitHubInstaller(extensionUrl) {
   return modalDialog
     .open({
       template:
-        '<react-component class="modal-background" name="app/Extensions/GitHubInstaller" props="props" />',
+        '<react-component class="modal-background" name="app/Extensions/GitHubInstaller.es6" props="props" />',
       controller: $scope => {
         $scope.props = {
           extensionUrl: extensionUrl || '',

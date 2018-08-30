@@ -1,4 +1,4 @@
-import { fetchAll } from 'data/CMA/FetchAll';
+import { fetchAll } from 'data/CMA/FetchAll.es6';
 import { uniq, identity, chunk, flatten } from 'lodash';
 
 const BATCH_LIMIT = 100;

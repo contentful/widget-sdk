@@ -2,17 +2,17 @@ import React, { Fragment } from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
-import { isOwner } from 'services/OrganizationRoles';
-import { go } from 'states/Navigator';
-import spinner from 'ui/Components/Spinner';
-import { asReact } from 'ui/Framework/DOMRenderer';
-import { getStoreResources } from 'utils/ResourceUtils';
-import { getRecommendedPlan } from './WizardUtils';
+import { isOwner } from 'services/OrganizationRoles.es6';
+import { go } from 'states/Navigator.es6';
+import spinner from 'ui/Components/Spinner.es6';
+import { asReact } from 'ui/Framework/DOMRenderer.es6';
+import { getStoreResources } from 'utils/ResourceUtils.es6';
+import { getRecommendedPlan } from './WizardUtils.es6';
 
-import SpacePlanItem from './SpacePlanItem';
-import BillingInfo from './BillingInfo';
-import NoMorePlans from './NoMorePlans';
-import ExplainRecommendation from './ExplainRecommendation';
+import SpacePlanItem from './SpacePlanItem.es6';
+import BillingInfo from './BillingInfo.es6';
+import NoMorePlans from './NoMorePlans.es6';
+import ExplainRecommendation from './ExplainRecommendation.es6';
 
 const SpacePlanSelector = createReactClass({
   propTypes: {

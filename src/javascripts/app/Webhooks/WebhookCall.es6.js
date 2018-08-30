@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 
-import Icon from 'ui/Components/Icon';
+import Icon from 'ui/Components/Icon.es6';
 
-import WebhookCallStatus from './WebhookCallStatus';
+import WebhookCallStatus from './WebhookCallStatus.es6';
 
 const ServicesConsumer = require('../../reactServiceContext').default;
 

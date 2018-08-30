@@ -2,7 +2,7 @@ import $window from '$window';
 import { createElement as h } from 'react';
 import { getStore } from 'TheStore';
 import { uniq, without, omit } from 'lodash';
-import { addNotification } from 'debug/DevNotifications';
+import { addNotification } from 'debug/DevNotifications.es6';
 import location from '$location';
 import Cookies from 'Cookies';
 

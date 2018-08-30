@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { BLOCKS } from '@contentful/structured-text-types';
 import { Dropdown, DropdownList, Button } from '@contentful/ui-component-library';
-import { haveBlocks } from '../shared/UtilHave';
+import { haveBlocks } from '../shared/UtilHave.es6';
 
 export const blockTitles = {
   [BLOCKS.HEADING_1]: 'Heading 1',

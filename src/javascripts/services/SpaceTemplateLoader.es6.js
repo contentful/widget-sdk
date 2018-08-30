@@ -1,7 +1,7 @@
 import { getCurrentVariation } from 'utils/LaunchDarkly';
 import contentfulClient from 'contentfulClient';
 import * as environment from 'environment';
-import { runTask } from 'utils/Concurrent';
+import { runTask } from 'utils/Concurrent.es6';
 import logger from 'logger';
 import _ from 'lodash';
 

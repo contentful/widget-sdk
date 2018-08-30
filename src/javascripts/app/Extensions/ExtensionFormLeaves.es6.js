@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import CodeMirror from 'react-codemirror';
 import { get } from 'lodash';
-import WidgetParametersForm from 'widgets/WidgetParametersForm';
-import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils';
+import WidgetParametersForm from 'widgets/WidgetParametersForm.es6';
+import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils.es6';
 
 const DEFAULT_CM_HEIGHT = '400px';
 

@@ -1,4 +1,4 @@
-import { addUserOrgSpace } from './Decorators';
+import { addUserOrgSpace } from './Decorators.es6';
 
 export const ClipboardCopyTransform = addUserOrgSpace((_ev, data) => {
   return {

@@ -1,8 +1,8 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
-import TemplateSelector from './TemplateSelector';
-import { formatPrice, getFieldErrors } from './WizardUtils';
+import TemplateSelector from './TemplateSelector.es6';
+import { formatPrice, getFieldErrors } from './WizardUtils.es6';
 
 const SpaceDetails = createReactClass({
   propTypes: {

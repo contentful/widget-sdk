@@ -71,7 +71,7 @@ module.exports.createBabelOptions = function createBabelOptions(options = {}) {
   function getModuleIdInSrc(path) {
     const absPath = P.resolve(path);
     if (absPath.startsWith(basePath)) {
-      return absPath.replace(/\.es6$/, '').replace(basePath + '/', '');
+      return absPath.replace(basePath + '/', '');
     } else {
       return path;
     }

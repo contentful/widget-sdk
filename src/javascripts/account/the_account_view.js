@@ -16,11 +16,11 @@ angular
     require => {
       const $q = require('$q');
       const spaceContext = require('spaceContext');
-      const OrganizationRoles = require('services/OrganizationRoles');
-      const TokenStore = require('services/TokenStore');
-      const K = require('utils/kefir');
-      const Navigator = require('states/Navigator');
-      const isLegacyOrganization = require('utils/ResourceUtils').isLegacyOrganization;
+      const OrganizationRoles = require('services/OrganizationRoles.es6');
+      const TokenStore = require('services/TokenStore.es6');
+      const K = require('utils/kefir.es6');
+      const Navigator = require('states/Navigator.es6');
+      const isLegacyOrganization = require('utils/ResourceUtils.es6').isLegacyOrganization;
 
       return {
         getSubscriptionState: getSubscriptionState,

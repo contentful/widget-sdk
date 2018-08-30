@@ -1,5 +1,5 @@
 import { h } from 'ui/Framework';
-import scaleSvg from 'utils/ScaleSvg';
+import scaleSvg from 'utils/ScaleSvg.es6';
 
 /**
  * Exports Workbench layouts.

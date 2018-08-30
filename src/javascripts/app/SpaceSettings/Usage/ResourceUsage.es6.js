@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ProgressBar } from './ProgressBar';
+import { ProgressBar } from './ProgressBar.es6';
 import {
   getResourceLimits,
   resourceIncludedLimitReached,
   resourceHumanNameMap
-} from 'utils/ResourceUtils';
-import { shorten, shortenStorageUnit } from 'utils/NumberUtils';
+} from 'utils/ResourceUtils.es6';
+import { shorten, shortenStorageUnit } from 'utils/NumberUtils.es6';
 
 export const ResourceUsage = ({ resource, description, abbreviateLimit }) => {
   const { usage, unitOfMeasure } = resource;

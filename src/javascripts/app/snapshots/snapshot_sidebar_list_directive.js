@@ -18,12 +18,13 @@ angular
   .directive('cfSnapshotSidebarList', [
     'require',
     require => {
-      const K = require('utils/kefir');
+      const K = require('utils/kefir.es6');
       const caseof = require('sum-types').caseof;
       const spaceContext = require('spaceContext');
-      const snapshotDecorator = require('app/snapshots/helpers/SnapshotDecorator');
-      const snapshotStatus = require('app/snapshots/helpers/SnapshotStatus');
-      const template = require('app/snapshots/SnapshotSidebarListTemplates').snapshotSidebarlist;
+      const snapshotDecorator = require('app/snapshots/helpers/SnapshotDecorator.es6');
+      const snapshotStatus = require('app/snapshots/helpers/SnapshotStatus.es6');
+      const template = require('app/snapshots/SnapshotSidebarListTemplates.es6')
+        .snapshotSidebarlist;
 
       return {
         restrict: 'E',

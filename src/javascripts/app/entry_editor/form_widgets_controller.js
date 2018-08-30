@@ -26,7 +26,7 @@ angular
     'require',
     'controls',
     ($scope, require, controls) => {
-      const K = require('utils/kefir');
+      const K = require('utils/kefir.es6');
       const trackCustomWidgets = require('analyticsEvents/customWidgets');
 
       // Widgets, which we need to instantiate, even despite

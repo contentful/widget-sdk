@@ -10,7 +10,7 @@ angular
   .factory('states/settings/users', [
     'require',
     require => {
-      var base = require('states/Base').default;
+      var base = require('states/Base.es6').default;
 
       var list = base({
         name: 'list',

@@ -1,10 +1,10 @@
 import { h } from 'ui/Framework';
-import closeIcon from 'svg/close';
-import settingsIcon from 'svg/settings';
-import scaleSvg from 'utils/ScaleSvg';
-import SidepanelOrgs from './SidepanelOrgs';
-import SidepanelSpaces from './SidepanelSpaces';
-import SidepanelNoOrgs from './SidepanelNoOrgs';
+import closeIcon from 'svg/close.es6';
+import settingsIcon from 'svg/settings.es6';
+import scaleSvg from 'utils/ScaleSvg.es6';
+import SidepanelOrgs from './SidepanelOrgs.es6';
+import SidepanelSpaces from './SidepanelSpaces.es6';
+import SidepanelNoOrgs from './SidepanelNoOrgs.es6';
 
 export default function(props) {
   const { sidePanelIsShown, orgDropdownIsShown, closeOrgsDropdown, closeSidePanel } = props;

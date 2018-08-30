@@ -32,7 +32,7 @@ angular
       const moment = require('moment');
       const debounce = require('debounce');
       const InputUpdater = require('ui/inputUpdater');
-      const K = require('utils/kefir');
+      const K = require('utils/kefir.es6');
 
       return {
         restrict: 'E',

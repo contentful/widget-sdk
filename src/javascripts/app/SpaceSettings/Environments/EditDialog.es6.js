@@ -1,15 +1,15 @@
 import { mapValues } from 'lodash';
-import { assign, get, set, update } from 'utils/Collections';
-import * as C from 'utils/Concurrent';
-import { match, makeCtor } from 'utils/TaggedValues';
-import * as Environment from 'data/CMA/SpaceEnvironmentsRepo';
+import { assign, get, set, update } from 'utils/Collections.es6';
+import * as C from 'utils/Concurrent.es6';
+import { match, makeCtor } from 'utils/TaggedValues.es6';
+import * as Environment from 'data/CMA/SpaceEnvironmentsRepo.es6';
 
 import logger from 'logger';
 import { open as openDialog } from 'modalDialog';
 
-import { bindActions, createStore, makeReducer } from 'ui/Framework/Store';
+import { bindActions, createStore, makeReducer } from 'ui/Framework/Store.es6';
 import { h, renderString } from 'ui/Framework';
-import render from './EditDialogView';
+import render from './EditDialogView.es6';
 
 // Actions
 const SetFieldValue = makeCtor('SetFieldValue');

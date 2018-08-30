@@ -1,23 +1,23 @@
 import { assign } from 'lodash';
-import { createSlot, Success, Failure } from 'utils/Concurrent';
+import { createSlot, Success, Failure } from 'utils/Concurrent.es6';
 import { truncate } from 'stringUtils';
-import { makeCtor, match } from 'utils/TaggedValues';
+import { makeCtor, match } from 'utils/TaggedValues.es6';
 
 import { h } from 'ui/Framework';
-import { createStore, bindActions, makeReducer } from 'ui/Framework/Store';
+import { createStore, bindActions, makeReducer } from 'ui/Framework/Store.es6';
 import { text } from 'utils/hyperscript';
-import { container, vspace } from 'ui/Layout';
-import { docsLink, linkOpen, p } from 'ui/Content';
-import { table, tr, td, th } from 'ui/Content/Table';
-import * as Workbench from '../Workbench';
+import { container, vspace } from 'ui/Layout.es6';
+import { docsLink, linkOpen, p } from 'ui/Content.es6';
+import { table, tr, td, th } from 'ui/Content/Table.es6';
+import * as Workbench from '../Workbench.es6';
 
-import * as Config from 'Config';
-import * as ResourceManager from './Resource';
-import openCreateDialog from './CreateDialog';
+import * as Config from 'Config.es6';
+import * as ResourceManager from './Resource.es6';
+import openCreateDialog from './CreateDialog.es6';
 import Notification from 'notification';
-import { track } from 'analytics/Analytics';
+import { track } from 'analytics/Analytics.es6';
 
-import renderPaginator from 'ui/Components/Paginator';
+import renderPaginator from 'ui/Components/Paginator.es6';
 
 // Number of tokens to fetch and show per page
 const PER_PAGE = 10;

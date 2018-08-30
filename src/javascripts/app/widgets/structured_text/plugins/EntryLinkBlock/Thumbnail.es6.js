@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 // TODO: move to the widgetAPI
-import { isValidImage, getExternalImageUrl } from 'ui/cf/thumbnailHelpers';
+import { isValidImage, getExternalImageUrl } from 'ui/cf/thumbnailHelpers.es6';
 
 const dimensions = { w: 70, h: 70 };
 

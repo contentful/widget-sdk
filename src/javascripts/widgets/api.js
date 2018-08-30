@@ -18,7 +18,7 @@ angular
       var createIDMap = require('widgets/IDMap');
       var $q = require('$q');
       var entitySelector = require('entitySelector');
-      var Analytics = require('analytics/Analytics');
+      var Analytics = require('analytics/Analytics.es6');
       var spaceContext = require('spaceContext');
 
       /**

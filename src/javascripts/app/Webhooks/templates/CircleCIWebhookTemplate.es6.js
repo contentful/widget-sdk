@@ -1,5 +1,5 @@
 import React from 'react';
-import CircleCILogo from './logos/CircleCILogo';
+import CircleCILogo from './logos/CircleCILogo.es6';
 
 // We had to sanitize the token to avoid uncaught exceptions.
 // Original source: https://developer.mozilla.org/en-US/docs/Web/API/WindowBase64/Base64_encoding_and_decoding#The_Unicode_Problem

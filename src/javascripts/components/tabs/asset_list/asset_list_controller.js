@@ -7,20 +7,20 @@ angular.module('contentful').controller('AssetListController', [
     const $controller = require('$controller');
     const createSelection = require('selection');
     const delay = require('delay');
-    const Analytics = require('analytics/Analytics');
+    const Analytics = require('analytics/Analytics.es6');
     const notification = require('notification');
     const spaceContext = require('spaceContext');
     const accessChecker = require('access_control/AccessChecker');
     const entityStatus = require('entityStatus');
     const debounce = require('debounce');
-    const getBlankView = require('data/UiConfig/Blanks').getBlankAssetView;
-    const createSavedViewsSidebar = require('app/ContentList/SavedViewsSidebar').default;
-    const BulkAssetsCreator = require('services/BulkAssetsCreator');
+    const getBlankView = require('data/UiConfig/Blanks.es6').getBlankAssetView;
+    const createSavedViewsSidebar = require('app/ContentList/SavedViewsSidebar.es6').default;
+    const BulkAssetsCreator = require('services/BulkAssetsCreator.es6');
     const TheLocaleStore = require('TheLocaleStore');
     const entityCreator = require('entityCreator');
     const $state = require('$state');
-    const ResourceUtils = require('utils/ResourceUtils');
-    const EnvironmentUtils = require('utils/EnvironmentUtils');
+    const ResourceUtils = require('utils/ResourceUtils.es6');
+    const EnvironmentUtils = require('utils/EnvironmentUtils.es6');
     const get = require('lodash').get;
 
     const searchController = $controller('AssetSearchController', { $scope: $scope });

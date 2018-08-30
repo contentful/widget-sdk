@@ -6,7 +6,7 @@ angular
   .directive('cfCreateNewSpace', [
     'require',
     require => {
-      const template = require('components/shared/create_new_space/Template').default;
+      const template = require('components/shared/create_new_space/Template.es6').default;
       return {
         restrict: 'E',
         template: template(),
@@ -25,18 +25,18 @@ angular.module('contentful').controller('createSpaceController', [
     const $rootScope = require('$rootScope');
     const client = require('client');
     const localesList = require('localesList');
-    const spaceTemplateLoader = require('services/SpaceTemplateLoader');
+    const spaceTemplateLoader = require('services/SpaceTemplateLoader.es6');
     const getTemplatesList = spaceTemplateLoader.getTemplatesList;
     const getTemplate = spaceTemplateLoader.getTemplate;
     const spaceTemplateCreator = require('services/SpaceTemplateCreator');
-    const TokenStore = require('services/TokenStore');
-    const enforcements = require('access_control/Enforcements');
+    const TokenStore = require('services/TokenStore.es6');
+    const enforcements = require('access_control/Enforcements.es6');
     const $state = require('$state');
     const logger = require('logger');
-    const Analytics = require('analytics/Analytics');
+    const Analytics = require('analytics/Analytics.es6');
     const spaceContext = require('spaceContext');
-    const spaceTemplateEvents = require('analytics/events/SpaceCreation');
-    const createResourceService = require('services/ResourceService').default;
+    const spaceTemplateEvents = require('analytics/events/SpaceCreation.es6');
+    const createResourceService = require('services/ResourceService.es6').default;
 
     const DEFAULT_LOCALE = 'en-US';
     const DEFAULT_ERROR_MESSAGE =

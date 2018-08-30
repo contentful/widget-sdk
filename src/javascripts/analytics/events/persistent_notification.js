@@ -6,7 +6,7 @@ angular
   .factory('analyticsEvents/persistentNotification', [
     'require',
     require => {
-      const Analytics = require('analytics/Analytics');
+      const Analytics = require('analytics/Analytics.es6');
 
       return { action: action };
 

@@ -9,7 +9,7 @@ angular.module('contentful').factory(name, [
   'require',
   require => {
     const { env } = require('environment');
-    const { Step } = require('app/home/welcome/OnboardingWithTeaSteps');
+    const { Step } = require('app/home/welcome/OnboardingWithTeaSteps.es6');
     const A = require(AnchorModule);
 
     const SetupWebhooksStep = props => {

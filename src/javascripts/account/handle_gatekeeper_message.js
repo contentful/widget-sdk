@@ -7,11 +7,11 @@ angular
     'require',
     require => {
       const $location = require('$location');
-      const Authentication = require('Authentication');
+      const Authentication = require('Authentication.es6');
       const notification = require('notification');
-      const TokenStore = require('services/TokenStore');
-      const CreateSpace = require('services/CreateSpace');
-      const UrlSyncHelper = require('account/UrlSyncHelper');
+      const TokenStore = require('services/TokenStore.es6');
+      const CreateSpace = require('services/CreateSpace.es6');
+      const UrlSyncHelper = require('account/UrlSyncHelper.es6');
       const modalDialog = require('modalDialog');
       const $state = require('$state');
 

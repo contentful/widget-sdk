@@ -1,8 +1,8 @@
 import $window from '$window';
 import { once } from 'lodash';
-import { snowplow as snowplowConfig, domain } from 'Config';
+import { snowplow as snowplowConfig, domain } from 'Config.es6';
 import LazyLoader from 'LazyLoader';
-import { getSchema as getSchemaForEvent, transform } from 'analytics/snowplow/Events';
+import { getSchema as getSchemaForEvent, transform } from 'analytics/snowplow/Events.es6';
 
 /**
  * @ngdoc service

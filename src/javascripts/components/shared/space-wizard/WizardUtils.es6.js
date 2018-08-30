@@ -1,10 +1,10 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { upperFirst, lowerCase, get } from 'lodash';
-import { joinWithAnd } from 'utils/StringUtils';
+import { joinWithAnd } from 'utils/StringUtils.es6';
 import pluralize from 'pluralize';
 
-import { resourceHumanNameMap } from 'utils/ResourceUtils';
+import { resourceHumanNameMap } from 'utils/ResourceUtils.es6';
 
 export const SpaceResourceTypes = {
   Environments: 'Environments',
@@ -39,7 +39,7 @@ function EnvironmentsTooltip({ number }) {
 }
 EnvironmentsTooltip.propTypes = resourceTooltipPropTypes;
 
-export function getRolesTooltip (limit, roleSet) {
+export function getRolesTooltip(limit, roleSet) {
   const roles = ['Admin', ...roleSet.roles];
   // all roles joined by comma and `and`
   const rolesString = joinWithAnd(roles, false);
@@ -48,18 +48,17 @@ export function getRolesTooltip (limit, roleSet) {
 
   // has many translator roles
   const translator = 'Translator';
-  const translatorRolesCount = roles
-    .filter(name => name.includes(translator))
-    .length;
-  const withoutTranslator = roles
-    .filter(name => !name.includes(translator))
-    .join(', ');
+  const translatorRolesCount = roles.filter(name => name.includes(translator)).length;
+  const withoutTranslator = roles.filter(name => !name.includes(translator)).join(', ');
   const hasMultipleTranslators = translatorRolesCount > 1;
 
   // has limits greater than number of roles in role set
   const hasCustomRoles = limit > roles.length;
   const customRolesNumber = limit - roles.length;
-  const customRolesString = `${customRolesNumber > 1 ? customRolesNumber : ''} ${pluralize('custom roles', customRolesNumber)}`;
+  const customRolesString = `${customRolesNumber > 1 ? customRolesNumber : ''} ${pluralize(
+    'custom roles',
+    customRolesNumber
+  )}`;
 
   const intro = 'This space type includes the';
 

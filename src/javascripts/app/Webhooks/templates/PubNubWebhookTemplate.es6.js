@@ -1,5 +1,5 @@
 import React from 'react';
-import PubNubLogo from './logos/PubNubLogo';
+import PubNubLogo from './logos/PubNubLogo.es6';
 
 export default {
   id: 'pubnub-publish-msg',

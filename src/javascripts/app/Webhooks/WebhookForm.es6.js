@@ -2,14 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 
-import WebhookFormSection from './WebhookFormSection';
-import WebhookSegmentation from './WebhookSegmentation';
-import { transformTopicsToMap, transformMapToTopics } from './WebhookSegmentationState';
-import WebhookFilters from './WebhookFilters';
-import { transformFiltersToList, transformListToFilters } from './WebhookFiltersState';
-import WebhookHeaders from './WebhookHeaders';
-import WebhookBasicAuth from './WebhookBasicAuth';
-import WebhookBodyTransformation from './WebhookBodyTransformation';
+import WebhookFormSection from './WebhookFormSection.es6';
+import WebhookSegmentation from './WebhookSegmentation.es6';
+import { transformTopicsToMap, transformMapToTopics } from './WebhookSegmentationState.es6';
+import WebhookFilters from './WebhookFilters.es6';
+import { transformFiltersToList, transformListToFilters } from './WebhookFiltersState.es6';
+import WebhookHeaders from './WebhookHeaders.es6';
+import WebhookBasicAuth from './WebhookBasicAuth.es6';
+import WebhookBodyTransformation from './WebhookBodyTransformation.es6';
 
 const METHODS = ['POST', 'GET', 'PUT', 'PATCH', 'DELETE'];
 

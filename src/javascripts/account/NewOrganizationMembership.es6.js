@@ -1,20 +1,20 @@
 import { omit, pick, negate, trim, sortedUniq, isObject, get } from 'lodash';
 import { h } from 'ui/Framework';
-import { assign } from 'utils/Collections';
-import { getOrganization } from 'services/TokenStore';
-import { runTask } from 'utils/Concurrent';
-import { ADMIN_ROLE_ID } from 'access_control/SpaceMembershipRepository';
-import { createOrganizationEndpoint as createEndpoint } from 'data/EndpointFactory';
+import { assign } from 'utils/Collections.es6';
+import { getOrganization } from 'services/TokenStore.es6';
+import { runTask } from 'utils/Concurrent.es6';
+import { ADMIN_ROLE_ID } from 'access_control/SpaceMembershipRepository.es6';
+import { createOrganizationEndpoint as createEndpoint } from 'data/EndpointFactory.es6';
 import {
   getUsers,
   getAllSpaces,
   getAllRoles
-} from 'access_control/OrganizationMembershipRepository';
-import { makeCtor, match } from 'utils/TaggedValues';
-import { invite, progress$ } from 'account/SendOrganizationInvitation';
+} from 'access_control/OrganizationMembershipRepository.es6';
+import { makeCtor, match } from 'utils/TaggedValues.es6';
+import { invite, progress$ } from 'account/SendOrganizationInvitation.es6';
 import { isValidEmail } from 'stringUtils';
-import { go } from 'states/Navigator';
-import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { go } from 'states/Navigator.es6';
+import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import {
   header,
   sidebar,
@@ -24,11 +24,11 @@ import {
   progressMessage,
   errorMessage,
   successMessage
-} from 'account/NewOrganizationMembershipTemplate';
-import createResourceService from 'services/ResourceService';
+} from 'account/NewOrganizationMembershipTemplate.es6';
+import createResourceService from 'services/ResourceService.es6';
 
 // Start: For Next Steps for a TEA space (a space created using the example space template)
-import { track, updateUserInSegment } from 'analytics/Analytics';
+import { track, updateUserInSegment } from 'analytics/Analytics.es6';
 import $state from '$state';
 import { getStore } from 'TheStore';
 const GROUP_ID = 'tea_onboarding_steps';

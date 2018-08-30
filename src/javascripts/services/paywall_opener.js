@@ -15,9 +15,9 @@ angular.module('contentful').factory('paywallOpener', [
     var modalDialog = require('modalDialog');
     var recommendPlan = require('subscriptionPlanRecommender').recommend;
     var intercom = require('intercom');
-    var Analytics = require('analytics/Analytics');
+    var Analytics = require('analytics/Analytics.es6');
     var TheAccountView = require('TheAccountView');
-    var Config = require('Config');
+    var Config = require('Config.es6');
     var $window = require('$window');
 
     var paywallIsOpen = false;

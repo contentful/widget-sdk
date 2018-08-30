@@ -1,16 +1,16 @@
 import { includes } from 'lodash';
-import { unshift, assign, update, set } from 'utils/Collections';
-import * as K from 'utils/kefir';
+import { unshift, assign, update, set } from 'utils/Collections.es6';
+import * as K from 'utils/kefir.es6';
 import { caseof } from 'sum-types';
-import { makeCtor } from 'utils/TaggedValues';
+import { makeCtor } from 'utils/TaggedValues.es6';
 
 import { h } from 'ui/Framework';
-import { createStore, makeReducer } from 'ui/Framework/Store';
-import { container, hfill, vspace_, vspace, hspace } from 'ui/Layout';
-import { byName as Colors } from 'Styles/Colors';
+import { createStore, makeReducer } from 'ui/Framework/Store.es6';
+import { container, hfill, vspace_, vspace, hspace } from 'ui/Layout.es6';
+import { byName as Colors } from 'Styles/Colors.es6';
 
 import Notification from 'notification';
-import { fetchAll } from 'data/CMA/FetchAll';
+import { fetchAll } from 'data/CMA/FetchAll.es6';
 import { open as openDialog } from 'modalDialog';
 
 /**

@@ -2,12 +2,12 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import * as ReloadNotification from 'ReloadNotification';
-import createResourceService from 'services/ResourceService';
+import createResourceService from 'services/ResourceService.es6';
 import { update, add, keyBy, flow, filter } from 'lodash/fp';
 
-import Workbench from 'app/WorkbenchReact';
-import ResourceUsageList from './ResourceUsageList';
-import SpaceUsageSidebar from './SpaceUsageSidebar';
+import Workbench from 'app/WorkbenchReact.es6';
+import ResourceUsageList from './ResourceUsageList.es6';
+import SpaceUsageSidebar from './SpaceUsageSidebar.es6';
 
 const addMasterEnvironment = flow(
   update(

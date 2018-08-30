@@ -1,7 +1,7 @@
 import $q from '$q';
 import $rootScope from '$rootScope';
-import * as TokenStore from 'services/TokenStore';
-import * as K from 'utils/kefir';
+import * as TokenStore from 'services/TokenStore.es6';
+import * as K from 'utils/kefir.es6';
 import { get, isString } from 'lodash';
 
 /**

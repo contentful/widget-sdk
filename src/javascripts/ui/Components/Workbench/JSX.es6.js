@@ -1,7 +1,7 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
-import Icon from 'ui/Components/Icon';
+import Icon from 'ui/Components/Icon.es6';
 
 const Workbench = createReactClass({
   propTypes: {

@@ -1,12 +1,12 @@
 import LD from 'launch-darkly-client';
 
-import { launchDarkly as config } from 'Config';
+import { launchDarkly as config } from 'Config.es6';
 import { assign, get, isNull, omitBy } from 'lodash';
-import { onValueScope, createPropertyBus } from 'utils/kefir';
-import getChangesObject from 'utils/ShallowObjectDiff';
+import { onValueScope, createPropertyBus } from 'utils/kefir.es6';
+import getChangesObject from 'utils/ShallowObjectDiff.es6';
 import { isOrgPlanEnterprise } from 'data/Org';
-import { getEnabledFlags, getDisabledFlags } from 'debug/EnforceFlags';
-import { createMVar } from 'utils/Concurrent';
+import { getEnabledFlags, getDisabledFlags } from 'debug/EnforceFlags.es6';
+import { createMVar } from 'utils/Concurrent.es6';
 import logger from 'logger';
 
 import { isExampleSpace } from 'data/ContentPreview';

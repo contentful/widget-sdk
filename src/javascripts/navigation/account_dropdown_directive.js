@@ -6,7 +6,7 @@ angular
   .directive('cfAccountDropdown', [
     'require',
     require => ({
-      template: require('navigation/templates/AccountDropdown.template').default(),
+      template: require('navigation/templates/AccountDropdown.template.es6').default(),
       restrict: 'E',
       scope: { user: '=' },
       controller: 'cfAccountDropdownController'
@@ -17,9 +17,9 @@ angular
     '$scope',
     'require',
     ($scope, require) => {
-      const Authentication = require('Authentication');
-      const Config = require('Config');
-      const Analytics = require('analytics/Analytics');
+      const Authentication = require('Authentication.es6');
+      const Config = require('Config.es6');
+      const Analytics = require('analytics/Analytics.es6');
       const intercom = require('intercom');
       const $state = require('$state');
 

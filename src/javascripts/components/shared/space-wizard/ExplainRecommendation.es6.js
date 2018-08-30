@@ -1,8 +1,8 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 
-import { getPlanResourceFulfillment } from './WizardUtils';
-import { joinWithAnd } from 'utils/StringUtils';
+import { getPlanResourceFulfillment } from './WizardUtils.es6';
+import { joinWithAnd } from 'utils/StringUtils.es6';
 
 export default function ExplainRecommendation({ currentPlan, recommendedPlan, resources }) {
   // The fulfillments object describes if the resource is near or has reached a limit

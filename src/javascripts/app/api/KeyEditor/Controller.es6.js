@@ -1,8 +1,8 @@
 import { assign, get, inRange, isEqual } from 'lodash';
 import Command from 'command';
 import { truncate } from 'stringUtils';
-import { deepFreeze } from 'utils/Freeze';
-import { concat } from 'utils/Collections';
+import { deepFreeze } from 'utils/Freeze.es6';
+import { concat } from 'utils/Collections.es6';
 
 import leaveConfirmator from 'navigation/confirmLeaveEditor';
 import spaceContext from 'spaceContext';
@@ -10,12 +10,12 @@ import logger from 'logger';
 import * as accessChecker from 'access_control/AccessChecker';
 import $state from '$state';
 import notification from 'notification';
-import { track } from 'analytics/Analytics';
+import { track } from 'analytics/Analytics.es6';
 import * as LD from 'utils/LaunchDarkly';
 import * as Intercom from 'intercom';
 
-import initKeyEditor from './KeyEditor';
-import { get as getBoilerplates } from './BoilerplateCode';
+import initKeyEditor from './KeyEditor.es6';
+import { get as getBoilerplates } from './BoilerplateCode.es6';
 
 const CONTACT_US_BOILERPLATE_FLAG_NAME = 'feature-ps-10-2017-contact-us-boilerplate';
 const ENVIRONMENTS_FLAG_NAME = 'feature-dv-11-2017-environments';

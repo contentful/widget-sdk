@@ -6,7 +6,7 @@
 angular.module('contentful').directive('cfKnowledgeBase', [
   'require',
   require => {
-    const KnowledgeBaseComponent = require('components/shared/knowledge_base_icon/KnowledgeBase')
+    const KnowledgeBaseComponent = require('components/shared/knowledge_base_icon/KnowledgeBase.es6')
       .default;
 
     return {

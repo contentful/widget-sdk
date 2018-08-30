@@ -6,14 +6,14 @@
  * This service is responsible for exposing data included in the user's token
  */
 import $q from '$q';
-import * as K from 'utils/kefir';
-import { createMVar } from 'utils/Concurrent';
-import * as auth from 'Authentication';
-import makeFetchWithAuth from 'data/CMA/TokenInfo';
+import * as K from 'utils/kefir.es6';
+import { createMVar } from 'utils/Concurrent.es6';
+import * as auth from 'Authentication.es6';
+import makeFetchWithAuth from 'data/CMA/TokenInfo.es6';
 import ReloadNotification from 'ReloadNotification';
-import * as OrganizationRoles from 'services/OrganizationRoles';
+import * as OrganizationRoles from 'services/OrganizationRoles.es6';
 import $window from '$window';
-import { deepFreezeClone, deepFreeze } from 'utils/Freeze';
+import { deepFreezeClone, deepFreeze } from 'utils/Freeze.es6';
 import { isEqual, groupBy, map, get, find, cloneDeep } from 'lodash';
 
 // Refresh token info every 5 minutes

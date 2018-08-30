@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { href } from 'states/Navigator';
-import { memberships as orgMemberships } from 'ui/NavStates/Org';
+import { href } from 'states/Navigator.es6';
+import { memberships as orgMemberships } from 'ui/NavStates/Org.es6';
 
-import Pluralized from 'ui/Components/Pluralized';
+import Pluralized from 'ui/Components/Pluralized.es6';
 
 function UsersForPlan({ usersMeta, orgId }) {
   const { numFree, numPaid, cost } = usersMeta;

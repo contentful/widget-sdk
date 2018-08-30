@@ -1,6 +1,6 @@
 import $rootScope from '$rootScope';
 import Command from 'command';
-import * as Adapter from './code_mirror_adapter';
+import * as Adapter from './code_mirror_adapter.es6';
 import { forEach, pick } from 'lodash';
 
 /**

@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-import { create as createBuiltinWidgetsList } from 'widgets/builtin';
+import { create as createBuiltinWidgetsList } from 'widgets/builtin.es6';
 import fieldFactory from 'fieldFactory';
 
 export function create(cma) {

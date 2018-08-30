@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { NodePropTypes } from './PropTypes';
+import { NodePropTypes } from './PropTypes.es6';
 
 export default function(Tag, tagProps = {}) {
   const CommonNode = ({ attributes, children }) => {

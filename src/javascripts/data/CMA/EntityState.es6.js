@@ -1,7 +1,7 @@
 import { caseof } from 'sum-types/caseof-eq';
 import { constant } from 'lodash';
 import $q from '$q';
-import { Action, makePerform } from 'data/CMA/EntityActions';
+import { Action, makePerform } from 'data/CMA/EntityActions.es6';
 
 /**
  * @ngdoc service

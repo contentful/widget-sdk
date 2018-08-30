@@ -1,7 +1,7 @@
 import require from 'require';
 import { isArray, get } from 'lodash';
-import { createSpaceEndpoint } from 'data/EndpointFactory';
-import { getSpace } from 'services/TokenStore';
+import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
+import { getSpace } from 'services/TokenStore.es6';
 
 const flagName = 'feature-bv-2018-08-enforcements-api';
 

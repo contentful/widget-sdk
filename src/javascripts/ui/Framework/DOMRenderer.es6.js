@@ -3,7 +3,7 @@ import { camelCase } from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { caseof } from 'sum-types';
-import * as VTree from './VTree';
+import * as VTree from './VTree.es6';
 
 /**
  * This module exports the function that renders a virtual DOM tree

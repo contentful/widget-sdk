@@ -53,7 +53,7 @@ angular
     'require',
     'createEntityLinkDirective',
     (require, create) => {
-      return create(require('app/widgets/link/AssetCardTemplate').default());
+      return create(require('app/widgets/link/AssetCardTemplate.es6').default());
     }
   ])
 
@@ -61,7 +61,7 @@ angular
     'require',
     'createEntityLinkDirective',
     (require, create) => {
-      return create(require('app/widgets/link/EntityLinkTemplate').default());
+      return create(require('app/widgets/link/EntityLinkTemplate.es6').default());
     }
   ])
 
@@ -74,7 +74,7 @@ angular
           // user to be rendered:
           user: '<'
         },
-        template: require('app/widgets/link/UserLinkTemplate').default()
+        template: require('app/widgets/link/UserLinkTemplate.es6').default()
       };
     }
   ])
@@ -84,11 +84,11 @@ angular
     '$scope',
     (require, $scope) => {
       const $state = require('$state');
-      const makeEntityRef = require('states/Navigator').makeEntityRef;
-      const EntityState = require('data/CMA/EntityState');
-      const entityStateColor = require('Styles/Colors').entityStateColor;
+      const makeEntityRef = require('states/Navigator.es6').makeEntityRef;
+      const EntityState = require('data/CMA/EntityState.es6');
+      const entityStateColor = require('Styles/Colors.es6').entityStateColor;
       const LD = require('utils/LaunchDarkly');
-      const Analytics = require('analytics/Analytics');
+      const Analytics = require('analytics/Analytics.es6');
       const _ = require('lodash');
 
       const INLINE_REFERENCE_FEATURE_FLAG = 'feature-at-02-2018-inline-reference-field';

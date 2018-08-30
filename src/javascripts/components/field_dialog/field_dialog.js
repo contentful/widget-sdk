@@ -56,7 +56,7 @@ angular
       const fieldDecorator = require('fieldDecorator');
       const trackCustomWidgets = require('analyticsEvents/customWidgets');
       const fieldFactory = require('fieldFactory');
-      const WidgetParametersUtils = require('widgets/WidgetParametersUtils');
+      const WidgetParametersUtils = require('widgets/WidgetParametersUtils.es6');
       const spaceContext = require('spaceContext');
       const $timeout = require('$timeout');
       const notification = require('notification');
@@ -337,7 +337,7 @@ angular
       const ReactDOM = require('react-dom');
       const React = require('react');
       const WidgetParametersUtils = require('widgets/WidgetParametersUtils');
-      const WidgetParametersForm = require('widgets/WidgetParametersForm').default;
+      const WidgetParametersForm = require('widgets/WidgetParametersForm.es6').default;
 
       return {
         restrict: 'E',

@@ -1,22 +1,22 @@
-import { assign } from 'utils/Collections';
-import { match, makeCtor } from 'utils/TaggedValues';
+import { assign } from 'utils/Collections.es6';
+import { match, makeCtor } from 'utils/TaggedValues.es6';
 import { caseofEq, otherwise } from 'sum-types';
-import * as C from 'utils/Concurrent';
-import { bindActions, createStore, makeReducer } from 'ui/Framework/Store';
+import * as C from 'utils/Concurrent.es6';
+import { bindActions, createStore, makeReducer } from 'ui/Framework/Store.es6';
 import * as LD from 'utils/LaunchDarkly';
 
 import * as accessChecker from 'access_control/AccessChecker';
-import createResourceService from 'services/ResourceService';
-import { isLegacyOrganization, canCreate } from 'utils/ResourceUtils';
-import { isOwnerOrAdmin } from 'services/OrganizationRoles';
+import createResourceService from 'services/ResourceService.es6';
+import { isLegacyOrganization, canCreate } from 'utils/ResourceUtils.es6';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import $state from '$state';
 import $q from '$q';
 
-import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo';
-import { openCreateDialog, openEditDialog } from './EditDialog';
-import { openDeleteDialog } from './DeleteDialog';
-import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService';
-import render from './View';
+import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo.es6';
+import { openCreateDialog, openEditDialog } from './EditDialog.es6';
+import { openDeleteDialog } from './DeleteDialog.es6';
+import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService.es6';
+import render from './View.es6';
 
 const environmentsFlagName = 'feature-dv-11-2017-environments';
 const incentivizeFlagName = 'feature-bv-06-2018-incentivize-upgrade';

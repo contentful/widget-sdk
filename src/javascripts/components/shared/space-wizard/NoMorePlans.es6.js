@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import ContactUsButton from 'ui/Components/ContactUsButton';
+import ContactUsButton from 'ui/Components/ContactUsButton.es6';
 
 export default function NoMorePlans({ canSetupBilling }) {
   return (

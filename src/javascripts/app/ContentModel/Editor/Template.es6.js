@@ -1,9 +1,9 @@
 import { range } from 'lodash';
 import { h } from 'ui/Framework';
-import { vspace, container } from 'ui/Layout';
-import { docsLink } from 'ui/Content';
-import * as Workbench from 'app/Workbench';
-import pageContentTypeIcon from 'svg/page-ct';
+import { vspace, container } from 'ui/Layout.es6';
+import { docsLink } from 'ui/Content.es6';
+import * as Workbench from 'app/Workbench.es6';
+import pageContentTypeIcon from 'svg/page-ct.es6';
 
 /**
  * This module exports the template for the content type editor.

@@ -26,8 +26,8 @@ angular
     'require',
     require => {
       var h = require('utils/hyperscript').h;
-      var spinner = require('ui/Components/Spinner').default;
-      var Layout = require('ui/Layout');
+      var spinner = require('ui/Components/Spinner.es6').default;
+      var Layout = require('ui/Layout.es6');
       var hspace = Layout.hspace;
       var container = Layout.container;
 

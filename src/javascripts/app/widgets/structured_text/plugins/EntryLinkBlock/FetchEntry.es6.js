@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 // TODO: move to the widgetAPI
 import spaceContext from 'spaceContext';
-import * as EntityState from 'data/CMA/EntityState';
+import * as EntityState from 'data/CMA/EntityState.es6';
 
 export default class FetchEntry extends React.Component {
   static propTypes = {

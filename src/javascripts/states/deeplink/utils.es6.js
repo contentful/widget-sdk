@@ -1,8 +1,8 @@
-import { getSpaces, getOrganizations, getOrganization, user$ } from 'services/TokenStore';
+import { getSpaces, getOrganizations, getOrganization, user$ } from 'services/TokenStore.es6';
 import { getStore } from 'TheStore';
 import * as accessChecker from 'access_control/AccessChecker';
-import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-import { getValue, onValue } from 'utils/kefir';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
+import { getValue, onValue } from 'utils/kefir.es6';
 import { MODERN_STACK_ONBOARDING_SPACE_NAME, getStoragePrefix } from 'createModernOnboarding';
 import { getKey as getSpaceAutoCreatedKey } from 'components/shared/auto_create_new_space';
 

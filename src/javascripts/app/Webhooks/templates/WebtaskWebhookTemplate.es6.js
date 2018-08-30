@@ -1,5 +1,5 @@
 import React from 'react';
-import WebtaskLogo from './logos/WebtaskLogo';
+import WebtaskLogo from './logos/WebtaskLogo.es6';
 
 export default {
   id: 'webtask-run-function',

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { haveBlocks } from './UtilHave';
-import { ToolbarIconPropTypes } from './PropTypes';
+import { haveBlocks } from './UtilHave.es6';
+import { ToolbarIconPropTypes } from './PropTypes.es6';
 
 export default ({
   type,

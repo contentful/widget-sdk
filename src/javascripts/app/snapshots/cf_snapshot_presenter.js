@@ -18,7 +18,7 @@ angular
       const RTL_SUPPORT_FEATURE_FLAG = 'feature-at-03-2018-rtl-support';
 
       const LD = require('utils/LaunchDarkly');
-      const isRtlLocale = require('utils/locales').isRtlLocale;
+      const isRtlLocale = require('utils/locales.es6').isRtlLocale;
 
       return {
         restrict: 'E',
@@ -69,8 +69,8 @@ angular
   .directive('cfSnapshotPresenterMarkdown', [
     'require',
     require => {
-      const generatePreview = require('markdown_editor/PreviewGenerator').default;
-      const K = require('utils/kefir');
+      const generatePreview = require('markdown_editor/PreviewGenerator.es6').default;
+      const K = require('utils/kefir.es6');
 
       return {
         restrict: 'E',
@@ -93,7 +93,7 @@ angular
     'require',
     require => {
       const spaceContext = require('spaceContext');
-      const EntityResolver = require('data/CMA/EntityResolver');
+      const EntityResolver = require('data/CMA/EntityResolver.es6');
       const EntityHelpers = require('EntityHelpers');
 
       return {

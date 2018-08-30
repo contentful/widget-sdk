@@ -1,5 +1,5 @@
 import React from 'react';
-import SlackLogo from './logos/SlackLogo';
+import SlackLogo from './logos/SlackLogo.es6';
 
 export default {
   id: 'slack-post-message',

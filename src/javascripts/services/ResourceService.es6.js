@@ -1,12 +1,12 @@
-import { getSpace, getOrganization } from 'services/TokenStore';
+import { getSpace, getOrganization } from 'services/TokenStore.es6';
 import {
   canCreate,
   generateMessage,
   useLegacy,
   getLegacyLimit,
   getLegacyUsage
-} from 'utils/ResourceUtils';
-import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/EndpointFactory';
+} from 'utils/ResourceUtils.es6';
+import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { snakeCase, camelCase } from 'lodash';
 
 export default function createResourceService(id, type = 'space') {

@@ -1,8 +1,8 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
-import { template } from '../template';
-import { Origin as IncomingLinksOrigin } from 'analytics/events/IncomingLinks';
+import { template } from '../template.es6';
+import { Origin as IncomingLinksOrigin } from 'analytics/events/IncomingLinks.es6';
 
 const IncomingLinksList = createReactClass({
   propTypes: {

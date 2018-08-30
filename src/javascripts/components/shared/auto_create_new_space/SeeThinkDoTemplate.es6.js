@@ -1,8 +1,8 @@
 import { h } from 'utils/hyperscript';
-import spinner from 'ui/Components/Spinner';
-import { byName } from 'Styles/Colors';
+import spinner from 'ui/Components/Spinner.es6';
+import { byName } from 'Styles/Colors.es6';
 import { genBoxShadow } from 'Styles';
-import { default as backgroundIcon } from 'svg/header-illustration-wide';
+import { default as backgroundIcon } from 'svg/header-illustration-wide.es6';
 
 export default function() {
   return h('.auto-create-space-modal.modal-background', [

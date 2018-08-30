@@ -1,6 +1,6 @@
-import createResourceService from 'services/ResourceService';
+import createResourceService from 'services/ResourceService.es6';
 
-import * as actions from './actions';
+import * as actions from './actions.es6';
 
 export function getResourcesForSpace(spaceId) {
   return async dispatch => {

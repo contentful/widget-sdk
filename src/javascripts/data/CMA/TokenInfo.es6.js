@@ -1,7 +1,7 @@
 import $q from '$q';
-import resolveTokenLinks from './resolveTokenLinks';
-import makeFetch from 'data/Request';
-import { apiUrl } from 'Config';
+import resolveTokenLinks from './resolveTokenLinks.es6';
+import makeFetch from 'data/Request.es6';
+import { apiUrl } from 'Config.es6';
 
 /**
  * @description

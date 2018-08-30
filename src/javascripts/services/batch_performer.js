@@ -5,7 +5,7 @@ angular.module('contentful').factory('batchPerformer', [
   require => {
     var $q = require('$q');
     var spaceContext = require('spaceContext');
-    var Analytics = require('analytics/Analytics');
+    var Analytics = require('analytics/Analytics.es6');
     var notification = require('notification');
 
     var ACTION_NAMES = {

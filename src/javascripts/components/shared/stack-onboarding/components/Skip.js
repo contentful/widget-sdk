@@ -12,7 +12,7 @@ angular.module('contentful').factory(name, [
     const $stateParams = require('$stateParams');
     const store = require('TheStore').getStore();
     const { getStoragePrefix, track } = require(CreateModernOnboardingModule);
-    const { updateUserInSegment } = require('analytics/Analytics');
+    const { updateUserInSegment } = require('analytics/Analytics.es6');
 
     const StackOnboardingSkip = createReactClass({
       propTypes: {

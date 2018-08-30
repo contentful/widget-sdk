@@ -1,5 +1,5 @@
 import React from 'react';
-import TravisCILogo from './logos/TravisCILogo';
+import TravisCILogo from './logos/TravisCILogo.es6';
 
 export default {
   id: 'travis-ci-trigger-build',

@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { ReferenceCard, Card, IconButton } from '@contentful/ui-component-library';
 
-import FetchEntry from './FetchEntry';
-import Thumbnail from './Thumbnail';
+import FetchEntry from './FetchEntry.es6';
+import Thumbnail from './Thumbnail.es6';
 // TODO: move closer to the widgetAPI
 import { goToSlideInEntity } from 'navigation/SlideInNavigator';
-import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext';
+import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
 
 export default class LinkedEntryBlock extends React.Component {
   static propTypes = {

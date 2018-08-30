@@ -1,6 +1,6 @@
 import { extend } from 'lodash';
 import $window from '$window';
-import * as K from 'utils/kefir';
+import * as K from 'utils/kefir.es6';
 
 /**
  * Create a XHR debugger.

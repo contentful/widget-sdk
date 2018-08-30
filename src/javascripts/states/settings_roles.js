@@ -10,9 +10,9 @@ angular
   .factory('states/settings/roles', [
     'require',
     require => {
-      var base = require('states/Base').default;
-      var contextHistory = require('navigation/Breadcrumbs/History').default;
-      var crumbFactory = require('navigation/Breadcrumbs/Factory');
+      var base = require('states/Base.es6').default;
+      var contextHistory = require('navigation/Breadcrumbs/History.es6').default;
+      var crumbFactory = require('navigation/Breadcrumbs/Factory.es6');
       var RoleRepository = require('RoleRepository');
 
       var list = base({

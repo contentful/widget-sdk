@@ -12,12 +12,13 @@ angular
     require => {
       var $state = require('$state');
       var trackVersioning = require('analyticsEvents/versioning');
-      var contextHistory = require('navigation/Breadcrumbs/History').default;
-      var crumbFactory = require('navigation/Breadcrumbs/Factory');
+      var contextHistory = require('navigation/Breadcrumbs/History.es6').default;
+      var crumbFactory = require('navigation/Breadcrumbs/Factory.es6');
 
-      var base = require('states/Base').default;
-      var loadEditorData = require('app/entity_editor/DataLoader').loadEntry;
-      var createEntityPageController = require('app/entity_editor/EntityPageController').default;
+      var base = require('states/Base.es6').default;
+      var loadEditorData = require('app/entity_editor/DataLoader.es6').loadEntry;
+      var createEntityPageController = require('app/entity_editor/EntityPageController.es6')
+        .default;
 
       var list = base({
         name: 'list',

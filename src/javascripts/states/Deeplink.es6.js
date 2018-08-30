@@ -1,8 +1,8 @@
-import makeState from 'states/Base';
+import makeState from 'states/Base.es6';
 import { h } from 'utils/hyperscript';
 import $location from '$location';
-import * as Navigator from 'states/Navigator';
-import { resolveLink } from './deeplink/resolver';
+import * as Navigator from 'states/Navigator.es6';
+import { resolveLink } from './deeplink/resolver.es6';
 
 /**
  * @description deeplink route to point users to certain sections,

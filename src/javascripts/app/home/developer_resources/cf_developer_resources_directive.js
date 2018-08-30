@@ -14,8 +14,8 @@ angular
     'require',
     function(require) {
       const controller = this;
-      const resources = require('app/home/developer_resources/DeveloperResources');
-      const analyticsEvents = require('analytics/events/home');
+      const resources = require('app/home/developer_resources/DeveloperResources.es6');
+      const analyticsEvents = require('analytics/events/home.es6');
 
       controller.languages = _.keys(resources.developerResources);
       controller.docsUrls = resources.apiDocsUrls;

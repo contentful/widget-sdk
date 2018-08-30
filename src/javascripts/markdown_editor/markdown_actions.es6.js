@@ -1,15 +1,15 @@
 import modalDialog from 'modalDialog';
 import assetUrl from 'assetUrlFilter';
-import specialCharacters from './markdown_special_characters';
+import specialCharacters from './markdown_special_characters.es6';
 import LinkOrganizer from 'LinkOrganizer';
 import notification from 'notification';
 import entitySelector from 'entitySelector';
 import { defaults, isObject, get, mapValues } from 'lodash';
 import { fileNameToTitle, truncate } from 'stringUtils';
-import { trackMarkdownEditorAction } from 'analytics/MarkdownEditorActions';
-import { track } from 'analytics/Analytics';
+import { trackMarkdownEditorAction } from 'analytics/MarkdownEditorActions.es6';
+import { track } from 'analytics/Analytics.es6';
 import $state from '$state';
-import * as BulkAssetsCreator from 'services/BulkAssetsCreator';
+import * as BulkAssetsCreator from 'services/BulkAssetsCreator.es6';
 
 export function create(editor, locale, defaultLocaleCode, { zen }) {
   const {

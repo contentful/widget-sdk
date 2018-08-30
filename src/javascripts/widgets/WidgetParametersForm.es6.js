@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
-import { byName as Colors } from 'Styles/Colors';
+import { byName as Colors } from 'Styles/Colors.es6';
 
 const handleStringChange = (onChange, e) => {
   const { value } = e.target;

@@ -1,6 +1,6 @@
 import { once } from 'lodash';
 import { newClient as createCfClient } from 'contentfulClient';
-import * as Config from 'Config';
+import * as Config from 'Config.es6';
 
 /**
  * @ngdoc service

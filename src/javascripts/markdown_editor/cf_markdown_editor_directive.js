@@ -11,16 +11,16 @@ angular.module('contentful').directive('cfMarkdownEditor', [
 
     const $timeout = require('$timeout');
     const LazyLoader = require('LazyLoader');
-    const MarkdownEditor = require('markdown_editor/markdown_editor');
-    const actions = require('markdown_editor/markdown_actions');
-    const makePreview = require('markdown_editor/PreviewGenerator').default;
+    const MarkdownEditor = require('markdown_editor/markdown_editor.es6');
+    const actions = require('markdown_editor/markdown_actions.es6');
+    const makePreview = require('markdown_editor/PreviewGenerator.es6').default;
     const notification = require('notification');
     const throttle = require('throttle');
     const LocaleStore = require('TheLocaleStore');
-    const isRtlLocale = require('utils/locales').isRtlLocale;
-    const K = require('utils/kefir');
+    const isRtlLocale = require('utils/locales.es6').isRtlLocale;
+    const K = require('utils/kefir.es6');
     const LD = require('utils/LaunchDarkly');
-    const { trackMarkdownEditorAction } = require('analytics/MarkdownEditorActions');
+    const { trackMarkdownEditorAction } = require('analytics/MarkdownEditorActions.es6');
 
     return {
       restrict: 'E',

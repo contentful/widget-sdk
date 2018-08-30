@@ -10,11 +10,11 @@ export const name = 'ms-dev-next-steps-modify-content';
 angular.module('contentful').factory(name, [
   'require',
   require => {
-    const { href } = require('states/Navigator');
+    const { href } = require('states/Navigator.es6');
     const { env } = require('environment');
     const { getUser } = require(CreateModernOnboardingModule);
 
-    const { Step } = require('app/home/welcome/OnboardingWithTeaSteps');
+    const { Step } = require('app/home/welcome/OnboardingWithTeaSteps.es6');
     const Code = require(CodeModule);
     const A = require(AnchorModule);
 

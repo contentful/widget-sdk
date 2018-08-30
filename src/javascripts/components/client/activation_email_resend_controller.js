@@ -6,7 +6,7 @@ angular.module('contentful').factory('activationEmailResendController', [
     const $timeout = require('$timeout');
     const $q = require('$q');
     const moment = require('moment');
-    const TokenStore = require('services/TokenStore');
+    const TokenStore = require('services/TokenStore.es6');
     const modalDialog = require('modalDialog');
     const resendActivationEmail = require('activationEmailResender').resend;
     const getStore = require('TheStore').getStore;

@@ -67,7 +67,7 @@ angular.module('contentful').directive('cfMarkdownInsertMediaAction', [
   'require',
   require => {
     const accessChecker = require('access_control/AccessChecker');
-    const templateString = require('markdown_editor/templates/InsertMediaAction').default;
+    const templateString = require('markdown_editor/templates/InsertMediaAction.es6').default;
 
     return {
       restrict: 'E',

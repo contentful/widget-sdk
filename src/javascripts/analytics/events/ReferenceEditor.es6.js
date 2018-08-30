@@ -1,4 +1,4 @@
-import { track } from 'analytics/Analytics';
+import { track } from 'analytics/Analytics.es6';
 import localeStore from 'TheLocaleStore';
 
 export function onEntryCreate({

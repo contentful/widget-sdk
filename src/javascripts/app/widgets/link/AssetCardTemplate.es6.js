@@ -1,5 +1,5 @@
 import { h } from 'utils/hyperscript';
-import { dragHandle, status, titleText, actions } from './TemplateCommons';
+import { dragHandle, status, titleText, actions } from './TemplateCommons.es6';
 
 export default function() {
   return h(

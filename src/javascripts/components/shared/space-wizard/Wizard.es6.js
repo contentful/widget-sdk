@@ -2,19 +2,19 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { Steps, getFieldErrors } from './WizardUtils';
-import SpacePlanSelector from './SpacePlanSelector';
-import SpaceDetails from './SpaceDetails';
-import ConfirmScreen from './ConfirmScreen';
-import ProgressScreen from './ProgressScreen';
+import { Steps, getFieldErrors } from './WizardUtils.es6';
+import SpacePlanSelector from './SpacePlanSelector.es6';
+import SpaceDetails from './SpaceDetails.es6';
+import ConfirmScreen from './ConfirmScreen.es6';
+import ProgressScreen from './ProgressScreen.es6';
 import notification from 'notification';
 import logger from 'logger';
 
 import { connect } from 'react-redux';
 
-import * as propTypes from './PropTypes';
-import * as actionCreators from './store/actionCreators';
-import * as resourceActionCreators from 'ReduxAppActions/resources/actionCreators';
+import * as propTypes from './PropTypes.es6';
+import * as actionCreators from './store/actionCreators.es6';
+import * as resourceActionCreators from 'ReduxAppActions/resources/actionCreators.es6';
 
 const SpaceCreateSteps = [
   {

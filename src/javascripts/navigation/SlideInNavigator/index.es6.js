@@ -1,8 +1,8 @@
 import $location from '$location';
 import $state from '$state';
 import { findIndex, get, isEqual, uniqWith } from 'lodash';
-import { track } from 'analytics/Analytics';
-import slideHelper from './slideHelper';
+import { track } from 'analytics/Analytics.es6';
+import slideHelper from './slideHelper.es6';
 
 const SLIDES_BELOW_QS = 'previousEntries';
 

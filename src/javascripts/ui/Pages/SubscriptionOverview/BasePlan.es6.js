@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 
 import { joinAnd } from 'stringUtils';
 
-import { href } from 'states/Navigator';
-import { getEnabledFeatures } from 'utils/SubscriptionUtils';
-import { usage as orgUsage } from 'ui/NavStates/Org';
+import { href } from 'states/Navigator.es6';
+import { getEnabledFeatures } from 'utils/SubscriptionUtils.es6';
+import { usage as orgUsage } from 'ui/NavStates/Org.es6';
 
 function BasePlan({ basePlan, orgId }) {
   const enabledFeaturesNames = getEnabledFeatures(basePlan).map(({ name }) => name);

@@ -1,19 +1,19 @@
 /* global window */
 import { assign } from 'lodash';
 import * as Kefir from 'kefir';
-import * as K from 'utils/kefir';
-import { createStore, bindActions } from 'ui/Framework/Store';
+import * as K from 'utils/kefir.es6';
+import { createStore, bindActions } from 'ui/Framework/Store.es6';
 import logger from 'logger';
 
-import renderSearch from './View';
+import renderSearch from './View.es6';
 
-import { initialState, makeReducer, Actions } from './State';
+import { initialState, makeReducer, Actions } from './State.es6';
 import {
   getMatchingFilters,
   contentTypeFilter,
   getFiltersFromQueryKey,
   sanitizeSearchFilters
-} from './Filters';
+} from './Filters.es6';
 
 export default function create({
   $scope,

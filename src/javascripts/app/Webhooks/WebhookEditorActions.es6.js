@@ -2,7 +2,7 @@ import { get } from 'lodash';
 import notification from 'notification';
 import modalDialog from 'modalDialog';
 import ReloadNotification from 'ReloadNotification';
-import * as Analytics from 'analytics/Analytics';
+import * as Analytics from 'analytics/Analytics.es6';
 
 const INVALID_BODY_TRANSFORMATION_ERROR_MSG =
   'Please make sure your custom payload is a valid JSON.';
@@ -66,7 +66,7 @@ function openRemovalDialog(webhookRepo, webhook) {
     ignoreEsc: true,
     backgroundClose: false,
     template:
-      '<react-component class="modal-background" name="app/Webhooks/WebhookRemovalDialog" props="props" />',
+      '<react-component class="modal-background" name="app/Webhooks/WebhookRemovalDialog.es6" props="props" />',
     controller: $scope => {
       $scope.props = {
         webhookUrl: webhook.url,

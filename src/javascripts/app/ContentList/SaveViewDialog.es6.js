@@ -6,7 +6,7 @@ export default function SaveViewDialog({
 }) {
   return modalDialog.open({
     template:
-      '<react-component class="modal-background" name="app/ContentList/SaveViewDialogComponent" props="props"/>',
+      '<react-component class="modal-background" name="app/ContentList/SaveViewDialogComponent.es6" props="props"/>',
     controller: function($scope) {
       $scope.props = {
         confirm: values => $scope.dialog.confirm(values),

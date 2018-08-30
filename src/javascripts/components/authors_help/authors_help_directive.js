@@ -17,15 +17,15 @@ angular.module('contentful').directive('cfAuthorsHelp', [
   'require',
   require => {
     const h = require('utils/hyperscript').h;
-    const helpModal = require('components/authors_help/helpModal');
+    const helpModal = require('components/authors_help/helpModal.es6');
     const LD = require('utils/LaunchDarkly');
-    const K = require('utils/kefir');
-    const TokenStore = require('services/TokenStore');
+    const K = require('utils/kefir.es6');
+    const TokenStore = require('services/TokenStore.es6');
     const getStore = require('TheStore').getStore;
     const store = getStore();
     const $state = require('$state');
-    const Analytics = require('analytics/Analytics');
-    const infoIcon = require('svg/icon-info').default;
+    const Analytics = require('analytics/Analytics.es6');
+    const infoIcon = require('svg/icon-info.es6').default;
 
     const authorHelpFlag = 'feature-ps-12-2017-author-onboarding-help';
 

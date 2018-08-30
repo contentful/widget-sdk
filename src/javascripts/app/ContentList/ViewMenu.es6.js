@@ -1,9 +1,9 @@
 import { get as getAtPath } from 'lodash';
 import { h } from 'ui/Framework';
 
-import ViewFolder from './ViewFolder';
-import openInputDialog from 'app/InputDialog';
-import addFolderIcon from 'svg/add-folder';
+import ViewFolder from './ViewFolder.es6';
+import openInputDialog from 'app/InputDialog.es6';
+import addFolderIcon from 'svg/add-folder.es6';
 
 export default function render(state, actions) {
   const { folders, canEdit } = state;

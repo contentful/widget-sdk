@@ -1,7 +1,7 @@
 import { h } from 'ui/Framework';
-import spaceIcon from 'svg/space';
-import folderIcon from 'svg/folder';
-import SpaceWithEnvironments from './SpaceWithEnvironments';
+import spaceIcon from 'svg/space.es6';
+import folderIcon from 'svg/folder.es6';
+import SpaceWithEnvironments from './SpaceWithEnvironments.es6';
 import * as accessChecker from 'access_control/AccessChecker';
 
 export default function(props) {

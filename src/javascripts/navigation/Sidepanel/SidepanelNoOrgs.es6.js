@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
-import Icon from 'ui/Components/Icon';
+import Icon from 'ui/Components/Icon.es6';
 
 export default function SidepanelNoOrgs(props) {
   const { createNewOrg } = props;

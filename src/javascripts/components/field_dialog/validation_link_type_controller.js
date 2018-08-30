@@ -9,7 +9,7 @@ angular.module('contentful').controller('ValidationLinkTypeController', [
   '$scope',
   (require, $scope) => {
     const spaceContext = require('spaceContext');
-    const K = require('utils/kefir');
+    const K = require('utils/kefir.es6');
 
     K.onValueScope($scope, spaceContext.publishedCTs.items$, cts => {
       $scope.contentTypes = cts.map(decorateContentType);

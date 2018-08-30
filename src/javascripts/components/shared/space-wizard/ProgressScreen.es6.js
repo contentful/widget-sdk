@@ -1,12 +1,12 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
-import { asReact } from 'ui/Framework/DOMRenderer';
-import CheckmarkIcon from 'svg/checkmark';
-import ContentTypeIcon from 'svg/page-ct';
-import ContentIcon from 'svg/page-content';
-import MediaIcon from 'svg/page-media';
-import APIsIcon from 'svg/page-apis';
+import { asReact } from 'ui/Framework/DOMRenderer.es6';
+import CheckmarkIcon from 'svg/checkmark.es6';
+import ContentTypeIcon from 'svg/page-ct.es6';
+import ContentIcon from 'svg/page-content.es6';
+import MediaIcon from 'svg/page-media.es6';
+import APIsIcon from 'svg/page-apis.es6';
 
 const infoItems = [
   {

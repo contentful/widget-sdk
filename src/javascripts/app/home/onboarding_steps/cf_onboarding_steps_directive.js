@@ -4,19 +4,19 @@ angular.module('contentful').directive('cfOnboardingSteps', [
   'require',
   function(require) {
     const $state = require('$state');
-    const Analytics = require('analytics/Analytics');
+    const Analytics = require('analytics/Analytics.es6');
     const spaceContext = require('spaceContext');
-    const CreateSpace = require('services/CreateSpace');
+    const CreateSpace = require('services/CreateSpace.es6');
     const caseofEq = require('sum-types').caseofEq;
     const TheLocaleStore = require('TheLocaleStore');
     const entityCreator = require('entityCreator');
     const LD = require('utils/LaunchDarkly');
-    const K = require('utils/kefir');
+    const K = require('utils/kefir.es6');
     const store = require('TheStore').getStore();
     const { isExampleSpace } = require('data/ContentPreview');
     const { getAll: getAllContentPreviews } = require('contentPreview');
-    const { getOrganizations } = require('services/TokenStore');
-    const { default: template } = require('app/home/onboarding_steps/OnboardingStepsTemplate');
+    const { getOrganizations } = require('services/TokenStore.es6');
+    const { default: template } = require('app/home/onboarding_steps/OnboardingStepsTemplate.es6');
     const { getKey: getSpaceAutoCreatedKey } = require('components/shared/auto_create_new_space');
     const {
       getStoragePrefix: getModernStackStoragePrefix,

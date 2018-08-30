@@ -1,5 +1,5 @@
 import { h } from 'ui/Framework';
-import { websiteUrl } from 'Config';
+import { websiteUrl } from 'Config.es6';
 
 const items = {
   space: 'faq/terminology/#what-is-a-space',

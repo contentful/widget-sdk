@@ -13,7 +13,7 @@ import { isFunction } from 'lodash';
  * @usage[js]
  * {
  *   template: `
- *     <react-component name="app/home/welcome/Welcome" props="myController.props"></react-component>
+ *     <react-component name="app/home/welcome/Welcome.es6" props="myController.props"></react-component>
  *     <react-component name="@ui-components-library/TextLink"></react-component>
  *   `
  * }
@@ -37,7 +37,7 @@ angular.module('contentful').directive('reactComponent', [
         var logger = require('logger');
 
         var reactComponent = getReactComponent(attrs.name, require, logger);
-        var store = require('ReduxStore/store').default;
+        var store = require('ReduxStore/store.es6').default;
 
         var renderMyComponent = () => {
           var scopeProps = $scope.$eval(attrs.props);

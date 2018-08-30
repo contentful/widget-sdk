@@ -19,13 +19,13 @@ angular
     require => {
       var $rootScope = require('$rootScope');
       var $state = require('$state');
-      var contextHistory = require('navigation/Breadcrumbs/History').default;
+      var contextHistory = require('navigation/Breadcrumbs/History.es6').default;
       var logger = require('logger');
       var modalDialog = require('modalDialog');
-      var Analytics = require('analytics/Analytics');
+      var Analytics = require('analytics/Analytics.es6');
       var spaceContext = require('spaceContext');
       var $location = require('$location');
-      var updateNavState = require('navigation/NavState').updateNavState;
+      var updateNavState = require('navigation/NavState.es6').updateNavState;
       var _ = require('lodash');
 
       // Result of confirmation dialog

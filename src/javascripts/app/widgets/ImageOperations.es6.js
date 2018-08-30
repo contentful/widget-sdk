@@ -1,7 +1,7 @@
 import { get } from 'lodash';
-import * as Filestack from 'services/Filestack';
-import openInputDialog from 'app/InputDialog';
-import * as TokenStore from 'services/TokenStore';
+import * as Filestack from 'services/Filestack.es6';
+import openInputDialog from 'app/InputDialog.es6';
+import * as TokenStore from 'services/TokenStore.es6';
 import * as HostnameTransformer from 'hostnameTransformer';
 
 const ratio = file => `${file.details.image.width}:${file.details.image.height}`;

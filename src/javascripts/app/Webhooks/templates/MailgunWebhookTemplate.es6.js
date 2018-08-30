@@ -1,5 +1,5 @@
 import React from 'react';
-import MailgunLogo from './logos/MailgunLogo';
+import MailgunLogo from './logos/MailgunLogo.es6';
 
 export default {
   id: 'mailgun-send-mail',

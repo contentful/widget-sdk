@@ -1,14 +1,14 @@
 import { assign } from 'lodash';
 import { h } from 'utils/hyperscript';
-import baseState from 'states/Base';
-import contextHistory from 'navigation/Breadcrumbs/History';
-import * as crumbFactory from 'navigation/Breadcrumbs/Factory';
-import * as Auth from 'Authentication';
+import baseState from 'states/Base.es6';
+import contextHistory from 'navigation/Breadcrumbs/History.es6';
+import * as crumbFactory from 'navigation/Breadcrumbs/Factory.es6';
+import * as Auth from 'Authentication.es6';
 
-import attachEditorController from './KeyEditor/Controller';
-import editorTemplate from './KeyEditor/Template';
-import * as CMATokensPage from './CMATokens/Page';
-import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo';
+import attachEditorController from './KeyEditor/Controller.es6';
+import editorTemplate from './KeyEditor/Template.es6';
+import * as CMATokensPage from './CMATokens/Page.es6';
+import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo.es6';
 
 /**
  * @ngdoc service

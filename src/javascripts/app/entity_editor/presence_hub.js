@@ -14,7 +14,7 @@ angular
     'require',
     require => {
       const $interval = require('$interval');
-      const K = require('utils/kefir');
+      const K = require('utils/kefir.es6');
       const FOCUS_THROTTLE = 10e3;
       const PING_TIMEOUT = 60e3;
 

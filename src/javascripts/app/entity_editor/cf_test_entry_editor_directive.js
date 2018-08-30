@@ -1,7 +1,7 @@
 angular.module('contentful').directive('cfTestEntryEditor', [
   'require',
   require => {
-    const createEditorController = require('app/entity_editor/EntryController').default;
+    const createEditorController = require('app/entity_editor/EntryController.es6').default;
 
     return {
       restrict: 'E',

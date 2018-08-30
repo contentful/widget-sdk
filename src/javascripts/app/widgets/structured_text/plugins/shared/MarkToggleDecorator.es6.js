@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { haveMarks } from './UtilHave';
-import { ToolbarIconPropTypes } from './PropTypes';
+import { haveMarks } from './UtilHave.es6';
+import { ToolbarIconPropTypes } from './PropTypes.es6';
 
 export default ({ type, title, icon }) => Mark => {
   return class CommonToggleMark extends React.Component {

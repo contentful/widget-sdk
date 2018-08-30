@@ -5,9 +5,9 @@ import spaceContext from 'spaceContext';
 
 import { contentPreviewsBus$ } from 'contentPreview';
 import { isEqual, find, get, includes } from 'lodash';
-import { organizations$, user$, spacesByOrganization$ } from 'services/TokenStore';
+import { organizations$, user$, spacesByOrganization$ } from 'services/TokenStore.es6';
 
-import { combine, onValue, getValue, createPropertyBus } from 'utils/kefir';
+import { combine, onValue, getValue, createPropertyBus } from 'utils/kefir.es6';
 
 /**
  * @description

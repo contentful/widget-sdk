@@ -1,26 +1,26 @@
 import { get as getAtPath, snakeCase } from 'lodash';
-import { getSchema as fetchSchema } from './Schemas';
+import { getSchema as fetchSchema } from './Schemas.es6';
 
-import EntityAction from './transformers/EntityAction';
-import EntryActionV2 from './transformers/EntryActionV2';
-import Generic from './transformers/Generic';
-import SpaceCreate from './transformers/SpaceCreate';
-import SpaceWizardTransformer from './transformers/SpaceWizard';
-import createExperimentTransformer from './transformers/Experiment';
-import PageViewTransform from './transformers/PageView';
-import { ClipboardCopyTransform, BoilerplateTransform } from './transformers/ApiKey';
-import AppOpen from './transformers/AppOpen';
-import BulkEditor from './transformers/BulkEditor';
-import SlideInEditor from './transformers/SlideInEditor';
-import Snapshot from './transformers/Snapshot';
-import InviteUserExperiment from './transformers/InviteUserExperiment';
-import SearchAndViews from './transformers/SearchAndViews';
-import ElementClickTransform from './transformers/ElementClick';
-import EntryViewTransform from './transformers/EntryView';
-import ReferenceEditorTransform from './transformers/ReferenceEditor';
-import ExtensionSaveTransform from './transformers/ExtensionSave';
-import ExtensionInstallTransform from './transformers/ExtensionInstall';
-import WebhookEditorTransform from './transformers/WebhookEditor';
+import EntityAction from './transformers/EntityAction.es6';
+import EntryActionV2 from './transformers/EntryActionV2.es6';
+import Generic from './transformers/Generic.es6';
+import SpaceCreate from './transformers/SpaceCreate.es6';
+import SpaceWizardTransformer from './transformers/SpaceWizard.es6';
+import createExperimentTransformer from './transformers/Experiment.es6';
+import PageViewTransform from './transformers/PageView.es6';
+import { ClipboardCopyTransform, BoilerplateTransform } from './transformers/ApiKey.es6';
+import AppOpen from './transformers/AppOpen.es6';
+import BulkEditor from './transformers/BulkEditor.es6';
+import SlideInEditor from './transformers/SlideInEditor.es6';
+import Snapshot from './transformers/Snapshot.es6';
+import InviteUserExperiment from './transformers/InviteUserExperiment.es6';
+import SearchAndViews from './transformers/SearchAndViews.es6';
+import ElementClickTransform from './transformers/ElementClick.es6';
+import EntryViewTransform from './transformers/EntryView.es6';
+import ReferenceEditorTransform from './transformers/ReferenceEditor.es6';
+import ExtensionSaveTransform from './transformers/ExtensionSave.es6';
+import ExtensionInstallTransform from './transformers/ExtensionInstall.es6';
+import WebhookEditorTransform from './transformers/WebhookEditor.es6';
 
 /**
  * @ngdoc module

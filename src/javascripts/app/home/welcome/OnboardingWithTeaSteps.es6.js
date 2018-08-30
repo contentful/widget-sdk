@@ -1,12 +1,12 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
-import Icon from 'ui/Components/Icon';
-import { href, go } from 'states/Navigator';
+import Icon from 'ui/Components/Icon.es6';
+import { href, go } from 'states/Navigator.es6';
 import spaceContext from 'spaceContext';
-import { runTask } from 'utils/Concurrent';
+import { runTask } from 'utils/Concurrent.es6';
 import entityCreator from 'entityCreator';
-import { env } from 'Config';
+import { env } from 'Config.es6';
 import qs from 'qs';
 
 const VIEW_SAMPLE_CONTENT = 'viewSampleContent';

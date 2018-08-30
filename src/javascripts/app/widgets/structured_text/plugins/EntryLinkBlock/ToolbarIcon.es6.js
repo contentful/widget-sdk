@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '@contentful/ui-component-library';
 import { BLOCKS } from '@contentful/structured-text-types';
-import { haveTextInSomeBlocks } from '../shared/UtilHave';
+import { haveTextInSomeBlocks } from '../shared/UtilHave.es6';
 
-import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext';
+import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
 
 export default class EntryLinkToolbarIcon extends Component {
   static propTypes = {

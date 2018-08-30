@@ -13,7 +13,7 @@ angular
   .factory('data/Document/Status', [
     'require',
     require => {
-      const K = require('utils/kefir');
+      const K = require('utils/kefir.es6');
       const Logger = require('logger');
 
       const Status = {

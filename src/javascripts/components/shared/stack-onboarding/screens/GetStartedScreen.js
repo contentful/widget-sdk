@@ -13,7 +13,7 @@ angular.module('contentful').factory(name, [
     const Button = require(ButtonModule);
     const Skip = require(SkipModule);
     const WithLink = require(WithLinkModule);
-    const Icon = require('ui/Components/Icon').default;
+    const Icon = require('ui/Components/Icon.es6').default;
 
     const icons = [
       'aws',

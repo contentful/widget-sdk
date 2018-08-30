@@ -1,8 +1,8 @@
 import { h } from 'ui/Framework';
-import { container } from 'ui/Layout';
-import * as Workbench from 'app/Workbench';
-import * as Colors from 'Styles/Colors';
-import pageApiIcon from 'svg/page-apis';
+import { container } from 'ui/Layout.es6';
+import * as Workbench from 'app/Workbench.es6';
+import * as Colors from 'Styles/Colors.es6';
+import pageApiIcon from 'svg/page-apis.es6';
 
 export default function() {
   const title = [
@@ -82,12 +82,15 @@ function main() {
           [
             h('div', { ngIf: 'boilerplateProps' }, [
               h('react-component', {
-                name: 'app/api/KeyEditor/Boilerplate',
+                name: 'app/api/KeyEditor/Boilerplate.es6',
                 props: 'boilerplateProps'
               })
             ]),
             h('div', { ngIf: 'contactUsProps' }, [
-              h('react-component', { name: 'app/api/KeyEditor/ContactUs', props: 'contactUsProps' })
+              h('react-component', {
+                name: 'app/api/KeyEditor/ContactUs.es6',
+                props: 'contactUsProps'
+              })
             ])
           ]
         )

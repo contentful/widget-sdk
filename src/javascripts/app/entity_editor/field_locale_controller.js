@@ -23,9 +23,9 @@ angular
     '$attrs',
     function(require, $scope, $attrs) {
       const spaceContext = require('spaceContext');
-      const K = require('utils/kefir');
-      const createFieldLocaleDoc = require('app/entity_editor/FieldLocaleDocument').default;
-      const Navigator = require('states/Navigator');
+      const K = require('utils/kefir.es6');
+      const createFieldLocaleDoc = require('app/entity_editor/FieldLocaleDocument.es6').default;
+      const Navigator = require('states/Navigator.es6');
 
       const controller = this;
       const field = $scope.widget.field;

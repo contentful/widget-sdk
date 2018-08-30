@@ -1,6 +1,6 @@
 import React from 'react';
 
-import WebhookSidebarDocumentation from './WebhookSidebarDocumentation';
+import WebhookSidebarDocumentation from './WebhookSidebarDocumentation.es6';
 
 export default function WebhookSidebar() {
   return (

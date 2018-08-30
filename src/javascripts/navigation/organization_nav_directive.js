@@ -7,7 +7,7 @@
 angular.module('contentful').directive('cfOrganizationNav', [
   'require',
   require => {
-    var navBar = require('navigation/templates/NavBar').default;
+    var navBar = require('navigation/templates/NavBar.es6').default;
 
     return {
       template: template(),
@@ -18,11 +18,11 @@ angular.module('contentful').directive('cfOrganizationNav', [
         '$scope',
         function($scope) {
           var $stateParams = require('$stateParams');
-          var TokenStore = require('services/TokenStore');
-          var OrganizationRoles = require('services/OrganizationRoles');
-          var K = require('utils/kefir');
+          var TokenStore = require('services/TokenStore.es6');
+          var OrganizationRoles = require('services/OrganizationRoles.es6');
+          var K = require('utils/kefir.es6');
 
-          var createFeatureService = require('services/FeatureService').default;
+          var createFeatureService = require('services/FeatureService.es6').default;
           var nav = this;
 
           // Prevent unnecesary calls from watchers

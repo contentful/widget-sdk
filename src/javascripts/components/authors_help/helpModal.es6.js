@@ -1,8 +1,8 @@
 import { h } from 'utils/hyperscript';
 import { open } from 'modalDialog';
-import { default as backgroundIcon } from 'svg/header-illustration-wide';
-import { default as thumbsDownIcon } from 'svg/icon-thumbs-down';
-import { default as thumbsUpIcon } from 'svg/icon-thumbs-up';
+import { default as backgroundIcon } from 'svg/header-illustration-wide.es6';
+import { default as thumbsDownIcon } from 'svg/icon-thumbs-down.es6';
+import { default as thumbsUpIcon } from 'svg/icon-thumbs-up.es6';
 
 const prefix = `authors-help`;
 

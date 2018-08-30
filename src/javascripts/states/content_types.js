@@ -10,10 +10,10 @@ angular
   .factory('states/contentTypes', [
     'require',
     require => {
-      var contextHistory = require('navigation/Breadcrumbs/History').default;
-      var crumbFactory = require('navigation/Breadcrumbs/Factory');
+      var contextHistory = require('navigation/Breadcrumbs/History.es6').default;
+      var crumbFactory = require('navigation/Breadcrumbs/Factory.es6');
 
-      var base = require('states/Base').default;
+      var base = require('states/Base.es6').default;
       var resolvers = require('states/resolvers');
 
       var list = base({

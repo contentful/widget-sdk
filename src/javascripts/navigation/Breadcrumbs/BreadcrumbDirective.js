@@ -12,10 +12,10 @@ angular.module('contentful').directive('cfBreadcrumbs', [
   require => {
     const $parse = require('$parse');
     const $state = require('$state');
-    const Analytics = require('analytics/Analytics');
-    const contextHistory = require('navigation/Breadcrumbs/History').default;
-    const documentTitle = require('navigation/DocumentTitle');
-    const K = require('utils/kefir');
+    const Analytics = require('analytics/Analytics.es6');
+    const contextHistory = require('navigation/Breadcrumbs/History.es6').default;
+    const documentTitle = require('navigation/DocumentTitle.es6');
+    const K = require('utils/kefir.es6');
 
     const backBtnSelector = '[aria-label="breadcrumbs-back-btn"]';
     const ancestorBtnSelector = '[aria-label="breadcrumbs-ancestor-btn"]';
@@ -25,7 +25,7 @@ angular.module('contentful').directive('cfBreadcrumbs', [
     const hintDismissBtnSelector = '[aria-label="ui-hint-dismiss-btn"]';
 
     const renderString = require('ui/Framework').renderString;
-    const template = require('navigation/Breadcrumbs/Template').template;
+    const template = require('navigation/Breadcrumbs/Template.es6').template;
 
     const analyticsData = {
       clickedOn: {
