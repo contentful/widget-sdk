@@ -8,8 +8,8 @@ describe('ListViewPersistor', () => {
     const getStore = this.$inject('TheStore').getStore;
 
     store = getStore();
-    createPersistor = this.$inject('data/ListViewPersistor').default;
-    createViewMigrator = this.$inject('data/ViewMigrator').default;
+    createPersistor = this.$inject('data/ListViewPersistor.es6').default;
+    createViewMigrator = this.$inject('data/ViewMigrator.es6').default;
     $location = this.$inject('$location');
 
     qs = createPersistor('SPACE_ID', null, 'testEntity');

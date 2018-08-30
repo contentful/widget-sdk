@@ -4,7 +4,7 @@ import {
   isActionChecked,
   transformMapToTopics,
   transformTopicsToMap
-} from 'app/Webhooks/WebhookSegmentationState';
+} from 'app/Webhooks/WebhookSegmentationState.es6';
 
 describe('WebhookSegmentationState', function() {
   describe('translating topics to selection', function() {

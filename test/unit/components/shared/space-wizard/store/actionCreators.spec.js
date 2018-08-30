@@ -68,7 +68,7 @@ describe('Space Wizard action creators', function() {
     };
 
     module('contentful/test', $provide => {
-      $provide.value('services/ResourceService', {
+      $provide.value('services/ResourceService.es6', {
         default: () => {
           return {
             get: this.stubs.ResourceService_get
@@ -76,12 +76,12 @@ describe('Space Wizard action creators', function() {
         }
       });
 
-      $provide.value('data/EndpointFactory', {
+      $provide.value('data/EndpointFactory.es6', {
         createOrganizationEndpoint: this.stubs.createOrganizationEndpoint,
         createSpaceEndpoint: this.stubs.createSpaceEndpoint
       });
 
-      $provide.value('account/pricing/PricingDataProvider', {
+      $provide.value('account/pricing/PricingDataProvider.es6', {
         getSpaceRatePlans: this.stubs.getSpaceRatePlans,
         changeSpace: this.stubs.changeSpace,
         getSubscriptionPlans: this.stubs.getSubscriptionPlans,
@@ -94,7 +94,7 @@ describe('Space Wizard action creators', function() {
         }
       });
 
-      $provide.value('data/CMA/ApiKeyRepo', {
+      $provide.value('data/CMA/ApiKeyRepo.es6', {
         default: () => {
           return {
             create: this.stubs.ApiKeyRepo_create
@@ -102,17 +102,17 @@ describe('Space Wizard action creators', function() {
         }
       });
 
-      $provide.value('services/SpaceTemplateLoader', {
+      $provide.value('services/SpaceTemplateLoader.es6', {
         getTemplatesList: this.stubs.getTemplatesList
       });
     });
 
-    this.mockService('services/TokenStore', {
+    this.mockService('services/TokenStore.es6', {
       refresh: this.stubs.TokenStore_refresh
     });
 
-    this.actionCreators = this.$inject('components/shared/space-wizard/store/actionCreators');
-    this.actions = this.$inject('components/shared/space-wizard/store/actions');
+    this.actionCreators = this.$inject('components/shared/space-wizard/store/actionCreators.es6');
+    this.actions = this.$inject('components/shared/space-wizard/store/actions.es6');
   });
 
   describe('fetchSpacePlans', function() {

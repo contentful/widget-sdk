@@ -8,7 +8,7 @@ describe('TextQueryConverter#textQueryToUISearch()', () => {
     this.space = {};
     this.contentType = null;
 
-    const convert = this.$inject('search/TextQueryConverter').textQueryToUISearch;
+    const convert = this.$inject('search/TextQueryConverter.es6').textQueryToUISearch;
 
     this.convert = function(textQuery) {
       return convert(this.space, this.contentType, textQuery);

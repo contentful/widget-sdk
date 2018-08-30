@@ -22,7 +22,7 @@ describe('The ApiKey list directive', () => {
       }
     };
 
-    this.ResourceService = this.$inject('services/ResourceService');
+    this.ResourceService = this.$inject('services/ResourceService.es6');
     this.ResourceService.default = sinon.stub().returns({
       get: sinon.stub().resolves(resource)
     });

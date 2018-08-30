@@ -1,4 +1,4 @@
-const PATH = 'analytics/snowplow/transformers/EntryActionV2';
+const PATH = 'analytics/snowplow/transformers/EntryActionV2.es6';
 
 describe(PATH, () => {
   const BASE_EVENT = {
@@ -10,7 +10,7 @@ describe(PATH, () => {
     this.EntityActionStub = sinon.stub();
 
     module('contentful/test', $provide => {
-      $provide.value('analytics/snowplow/transformers/EntityAction', this.EntityActionStub);
+      $provide.value('analytics/snowplow/transformers/EntityAction.es6', this.EntityActionStub);
     });
 
     const transformer = this.$inject(PATH).default;

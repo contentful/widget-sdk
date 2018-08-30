@@ -1,7 +1,7 @@
-describe('utils/List', () => {
+describe('utils/List.es6', () => {
   beforeEach(function() {
     module('contentful/test');
-    this.List = this.$inject('utils/List');
+    this.List = this.$inject('utils/List.es6');
   });
 
   // TODO use generative testing!

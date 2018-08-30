@@ -13,7 +13,7 @@ describe('OrganizationRoles', () => {
 
   beforeEach(function() {
     module('contentful/test');
-    OrganizationRoles = this.$inject('services/OrganizationRoles');
+    OrganizationRoles = this.$inject('services/OrganizationRoles.es6');
 
     ORG_1 = { sys: { id: 'org1' }, name: '1st ORG' };
     ORG_2 = { sys: { id: 'org2' }, name: '2nd ORG' };

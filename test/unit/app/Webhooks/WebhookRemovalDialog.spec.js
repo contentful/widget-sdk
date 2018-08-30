@@ -1,6 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import WebhookRemovalDialog from 'app/Webhooks/WebhookRemovalDialog';
+import WebhookRemovalDialog from 'app/Webhooks/WebhookRemovalDialog.es6';
 
 describe('WebhookRemovalDialog', function() {
   const mount = () => {

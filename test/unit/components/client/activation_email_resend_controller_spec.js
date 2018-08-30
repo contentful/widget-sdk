@@ -20,7 +20,7 @@ describe('activationEmailResendController', () => {
       resend: sinon.stub().resolves()
     });
 
-    const tokenStore = this.mockService('services/TokenStore', {
+    const tokenStore = this.mockService('services/TokenStore.es6', {
       user$: K.createMockProperty()
     });
     this.setUser = props => {

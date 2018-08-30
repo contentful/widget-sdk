@@ -7,7 +7,7 @@ describe('Gatekeeper Message Handler', () => {
       $provide.value('$window', this.window);
     });
     this.handle = this.$inject('handleGatekeeperMessage');
-    this.mockService('Config', {
+    this.mockService('Config.es6', {
       websiteUrl: function(path) {
         return 'website/' + path;
       }
@@ -22,14 +22,14 @@ describe('Gatekeeper Message Handler', () => {
     });
 
     it('opens the space creation dialog', function() {
-      const CreateSpace = this.$inject('services/CreateSpace');
+      const CreateSpace = this.$inject('services/CreateSpace.es6');
       CreateSpace.showDialog = sinon.stub();
       this.handle({ action: 'new', type: 'space', organizationId: 'orgId' });
       sinon.assert.calledOnce(CreateSpace.showDialog.withArgs('orgId'));
     });
 
     it('refreshes token when space is deleted', function() {
-      const refresh = (this.$inject('services/TokenStore').refresh = sinon.spy());
+      const refresh = (this.$inject('services/TokenStore.es6').refresh = sinon.spy());
 
       this.handle({ action: 'delete', type: 'space' });
       sinon.assert.calledOnce(refresh);
@@ -51,13 +51,13 @@ describe('Gatekeeper Message Handler', () => {
     });
 
     it('updates location', function() {
-      const urlSyncHelper = this.mockService('account/UrlSyncHelper');
+      const urlSyncHelper = this.mockService('account/UrlSyncHelper.es6');
       this.handle({ action: 'update', type: 'location', path: 'blah/blah' });
       sinon.assert.calledOnce(urlSyncHelper.updateWebappUrl.withArgs('blah/blah'));
     });
 
     it('refreshes token for any other message', function() {
-      const refresh = (this.$inject('services/TokenStore').refresh = sinon.spy());
+      const refresh = (this.$inject('services/TokenStore.es6').refresh = sinon.spy());
       this.handle({ blah: 'blah' });
       sinon.assert.calledOnce(refresh);
     });
@@ -97,7 +97,7 @@ describe('Gatekeeper Message Handler', () => {
       });
 
       it('redirects to login', function() {
-        const redirectToLogin = (this.$inject('Authentication').redirectToLogin = sinon.spy());
+        const redirectToLogin = (this.$inject('Authentication.es6').redirectToLogin = sinon.spy());
         this.handle({ type: 'error', status: 401 });
         sinon.assert.calledOnce(redirectToLogin);
       });

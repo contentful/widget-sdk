@@ -1,16 +1,16 @@
 import * as K from 'helpers/mocks/kefir';
 import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
 
-describe('data/document/ResourceStateManager', () => {
+describe('data/document/ResourceStateManager.es6', () => {
   beforeEach(function() {
     module('contentful/test');
 
-    const { Action, State } = this.$inject('data/document/ResourceStateManager');
+    const { Action, State } = this.$inject('data/document/ResourceStateManager.es6');
     this.Action = Action;
     this.State = State;
 
-    const DocLoad = this.$inject('data/sharejs/Connection').DocLoad;
-    const Doc = this.$inject('app/entity_editor/Document');
+    const DocLoad = this.$inject('data/sharejs/Connection.es6').DocLoad;
+    const Doc = this.$inject('app/entity_editor/Document.es6');
 
     const endpoint = createMockSpaceEndpoint();
     this.spaceEndpoint = sinon.spy(endpoint.request);

@@ -12,7 +12,7 @@ describe('Client Controller', () => {
     this.getEnforcements = sinon.stub();
 
     module('contentful/test', $provide => {
-      $provide.value('analytics/Analytics', {
+      $provide.value('analytics/Analytics.es6', {
         enable: sinon.stub(),
         disable: sinon.stub(),
         track: sinon.stub()
@@ -25,17 +25,17 @@ describe('Client Controller', () => {
         }
       };
       $provide.value('authorization', this.authorizationStubs);
-      $provide.value('services/EnforcementsService', {
+      $provide.value('services/EnforcementsService.es6', {
         getEnforcements: this.getEnforcements
       });
     });
-    this.tokenStore = this.$inject('services/TokenStore');
+    this.tokenStore = this.$inject('services/TokenStore.es6');
     this.tokenStore.refresh = sinon.stub().resolves();
     this.tokenStore.user$ = K.createMockProperty();
     this.tokenStore.getTokenLookup = sinon.stub().returns({});
 
     this.refreshNavState = sinon.stub();
-    this.$inject('navigation/NavState').makeStateRefresher = () => this.refreshNavState;
+    this.$inject('navigation/NavState.es6').makeStateRefresher = () => this.refreshNavState;
 
     const $rootScope = this.$inject('$rootScope');
     scope = $rootScope.$new();
@@ -162,7 +162,7 @@ describe('Client Controller', () => {
           this.tokenStore.user$.set(user);
         };
 
-        this.analytics = this.$inject('analytics/Analytics');
+        this.analytics = this.$inject('analytics/Analytics.es6');
         this.intercom = this.$inject('intercom');
         this.intercom.disable = sinon.stub();
       });

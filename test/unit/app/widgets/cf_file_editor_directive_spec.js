@@ -4,14 +4,14 @@ describe('cfFileEditor Directive', () => {
   beforeEach(function() {
     module('contentful/test', $provide => {
       $provide.removeDirectives('cfFileDrop');
-      $provide.value('services/Filestack', {
+      $provide.value('services/Filestack.es6', {
         makeDropPane: sinon.stub(),
         pick: sinon.stub().resolves({ fileName: 'x.jpg' })
       });
     });
 
     // This is needed to transform the image domain
-    const tokenStore = this.$inject('services/TokenStore');
+    const tokenStore = this.$inject('services/TokenStore.es6');
     tokenStore.getDomains = sinon.stub().returns({});
 
     const cfWidgetApi = this.$inject('mocks/widgetApi').create();
@@ -55,7 +55,7 @@ describe('cfFileEditor Directive', () => {
 
   describe('scope.selectFile()', () => {
     beforeEach(function() {
-      this.Filestack = this.$inject('services/Filestack');
+      this.Filestack = this.$inject('services/Filestack.es6');
       this.scope.selectFile();
       this.$apply();
     });

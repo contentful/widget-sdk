@@ -1,6 +1,6 @@
 import sinon from 'npm:sinon';
 
-describe('app/ContentModel/Editor/Actions', () => {
+describe('app/ContentModel/Editor/Actions.es6', () => {
   let controller, scope, $q, logger, notification, accessChecker, ReloadNotification, spaceContext;
   let space, contentType;
 
@@ -67,7 +67,7 @@ describe('app/ContentModel/Editor/Actions', () => {
     scope.contentType = contentType;
     scope.broadcastFromSpace = sinon.stub();
 
-    controller = this.$inject('app/ContentModel/Editor/Actions').default(scope);
+    controller = this.$inject('app/ContentModel/Editor/Actions.es6').default(scope);
   });
 
   describe('#delete command', () => {

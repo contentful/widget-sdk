@@ -11,11 +11,11 @@ describe('states/spaces', () => {
   beforeEach(function() {
     this.spaceData = { sys: { id: 'SPACE' } };
     this.spaceContext = this.$inject('mocks/spaceContext').init();
-    this.tokenStore = this.mockService('services/TokenStore');
+    this.tokenStore = this.mockService('services/TokenStore.es6');
     this.tokenStore.getSpace.resolves(this.spaceData);
 
     const states = this.$inject('states');
-    const spaceState = this.$inject('states/Spaces').default;
+    const spaceState = this.$inject('states/Spaces.es6').default;
     states.load([spaceState]);
 
     this.$state = this.$inject('$state');

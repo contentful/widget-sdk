@@ -1,8 +1,8 @@
-import * as C from 'utils/Collections';
-import { deepFreeze } from 'utils/Freeze';
+import * as C from 'utils/Collections.es6';
+import { deepFreeze } from 'utils/Freeze.es6';
 import { range } from 'lodash';
 
-describe('utils/Collections', () => {
+describe('utils/Collections.es6', () => {
   describe('.update', () => {
     it('deeply updates collection for array of keys', () => {
       const c = { x: [{}, { z: true }, {}] };

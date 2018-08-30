@@ -26,7 +26,7 @@ describe('Asset List Actions Controller', () => {
         'timeout'
       ]);
 
-      $provide.value('analytics/Analytics', {
+      $provide.value('analytics/Analytics.es6', {
         track: stubs.track
       });
 

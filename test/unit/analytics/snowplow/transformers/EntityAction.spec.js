@@ -1,4 +1,4 @@
-const PATH = 'analytics/snowplow/transformers/EntityAction';
+const PATH = 'analytics/snowplow/transformers/EntityAction.es6';
 
 describe(PATH, () => {
   beforeEach(function() {

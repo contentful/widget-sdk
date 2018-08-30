@@ -143,14 +143,14 @@ describe('ResourceService', () => {
 
     this.spies.createSpaceEndpoint = sinon.spy(createSpaceEndpoint);
     this.stubs.createOrganizationEndpoint = sinon.stub();
-    system.set('data/EndpointFactory', {
+    system.set('data/EndpointFactory.es6', {
       createSpaceEndpoint: this.spies.createSpaceEndpoint,
       createOrganizationEndpoint: this.stubs.createOrganizationEndpoint
     });
 
-    system.set('Authentication', {});
+    system.set('Authentication.es6', {});
 
-    system.set('services/TokenStore', {
+    system.set('services/TokenStore.es6', {
       getSpace: sinon.stub().resolves(this.mocks.space),
       getOrganization: sinon.stub().resolves(this.mocks.organization)
     });
@@ -165,7 +165,7 @@ describe('ResourceService', () => {
       }
     });
 
-    this.createResourceService = (yield system.import('services/ResourceService')).default;
+    this.createResourceService = (yield system.import('services/ResourceService.es6')).default;
     this.ResourceService = this.createResourceService('1234');
   });
 

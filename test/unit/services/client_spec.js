@@ -4,7 +4,7 @@ describe('Client', () => {
   beforeEach(function() {
     module('contentful/test');
     this.baseRequest = sinon.stub().resolves({ data: 'RESPONSE DATA' });
-    this.mockService('data/Request', {
+    this.mockService('data/Request.es6', {
       default: sinon.stub().returns(this.baseRequest)
     });
 

@@ -10,7 +10,7 @@ describe('in DeploymentForm', () => {
 
   beforeEach(function() {
     module('contentful/test', $provide => {
-      $provide.value('services/TokenStore', {
+      $provide.value('services/TokenStore.es6', {
         user$: K.createMockProperty({ sys: { id: 1 } })
       });
     });

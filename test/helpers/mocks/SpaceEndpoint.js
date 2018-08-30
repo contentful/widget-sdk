@@ -1,6 +1,6 @@
 import $q from '$q';
 import { cloneDeep, mapValues, values } from 'lodash';
-import { assign, update } from 'utils/Collections';
+import { assign, update } from 'utils/Collections.es6';
 
 /**
  * Mock implementation for the 'spaceEndpoint' that simulates a subset

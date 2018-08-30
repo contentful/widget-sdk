@@ -31,14 +31,14 @@ describe('Access Checker', () => {
 
   beforeEach(function() {
     module('contentful/test', $provide => {
-      $provide.value('data/EndpointFactory', {
+      $provide.value('data/EndpointFactory.es6', {
         createOrganizationEndpoint: () => mockOrgEndpoint,
         createSpaceEndpoint: () => mockSpaceEndpoint
       });
       $provide.value('utils/LaunchDarkly', {
         getCurrentVariation: sinon.stub().resolves(false)
       });
-      $provide.value('services/FeatureService', {
+      $provide.value('services/FeatureService.es6', {
         default: () => {
           return {
             get: () => {
@@ -49,16 +49,16 @@ describe('Access Checker', () => {
       });
     });
 
-    enforcements = this.$inject('access_control/Enforcements');
-    OrganizationRoles = this.$inject('services/OrganizationRoles');
-    TokenStore = this.$inject('services/TokenStore');
-    policyChecker = this.$inject('access_control/AccessChecker/PolicyChecker');
+    enforcements = this.$inject('access_control/Enforcements.es6');
+    OrganizationRoles = this.$inject('services/OrganizationRoles.es6');
+    TokenStore = this.$inject('services/TokenStore.es6');
+    policyChecker = this.$inject('access_control/AccessChecker/PolicyChecker.es6');
 
-    const acUtils = this.$inject('access_control/AccessChecker/Utils');
+    const acUtils = this.$inject('access_control/AccessChecker/Utils.es6');
     acUtils.broadcastEnforcement = broadcastStub = sinon.stub();
     acUtils.resetEnforcements = resetEnforcements = sinon.stub();
 
-    const responseCache = this.$inject('access_control/AccessChecker/ResponseCache');
+    const responseCache = this.$inject('access_control/AccessChecker/ResponseCache.es6');
     responseCache.getResponse = getResStub = sinon.stub().returns(false);
 
     reasonsDeniedStub = sinon.stub().returns([]);

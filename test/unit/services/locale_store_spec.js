@@ -27,7 +27,7 @@ describe('TheLocaleStore', () => {
     module('contentful/test');
     const getStore = this.$inject('TheStore').getStore;
     this.store = getStore();
-    this.clientStorageWrapper = this.$inject('TheStore/ClientStorageWrapper');
+    this.clientStorageWrapper = this.$inject('TheStore/ClientStorageWrapper.es6');
     this.theLocaleStore = this.$inject('TheLocaleStore');
     yield this.theLocaleStore.init(makeRepo(makeTestLocales()));
   });

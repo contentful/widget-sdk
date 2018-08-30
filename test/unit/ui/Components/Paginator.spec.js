@@ -1,8 +1,8 @@
 import * as sinon from 'helpers/sinon';
 import { h } from 'ui/Framework';
-import paginator from 'ui/Components/Paginator';
+import paginator from 'ui/Components/Paginator.es6';
 
-describe('ui/Components/Paginator', () => {
+describe('ui/Components/Paginator.es6', () => {
   beforeEach(function() {
     this.view = this.createUI();
     this.select = sinon.spy();

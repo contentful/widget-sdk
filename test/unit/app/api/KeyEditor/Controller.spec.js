@@ -1,10 +1,10 @@
 import ReactTestUtils from 'react-dom/test-utils';
 
-describe('app/api/KeyEditor/Controller', () => {
+describe('app/api/KeyEditor/Controller.es6', () => {
   beforeEach(function() {
     module('contentful/test', $provide => {
       $provide.value('navigation/closeState', sinon.spy());
-      $provide.value('app/api/KeyEditor/BoilerplateCode', {
+      $provide.value('app/api/KeyEditor/BoilerplateCode.es6', {
         get: sinon.stub().resolves([
           {
             id: 'BP_ID',
@@ -15,8 +15,8 @@ describe('app/api/KeyEditor/Controller', () => {
       });
     });
 
-    const attachController = this.$inject('app/api/KeyEditor/Controller').default;
-    const template = this.$inject('app/api/KeyEditor/Template').default();
+    const attachController = this.$inject('app/api/KeyEditor/Controller.es6').default;
+    const template = this.$inject('app/api/KeyEditor/Template.es6').default();
     const { renderString } = this.$inject('ui/Framework');
     const $compile = this.$inject('$compile');
     const $rootScope = this.$inject('$rootScope');

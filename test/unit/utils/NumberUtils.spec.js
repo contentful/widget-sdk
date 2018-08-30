@@ -3,7 +3,7 @@ import { createIsolatedSystem } from 'test/helpers/system-js';
 describe('NumberUtils', () => {
   beforeEach(function*() {
     const system = createIsolatedSystem();
-    this.NumberUtils = yield system.import('utils/NumberUtils');
+    this.NumberUtils = yield system.import('utils/NumberUtils.es6');
   });
 
   describe('toLocaleString', () => {

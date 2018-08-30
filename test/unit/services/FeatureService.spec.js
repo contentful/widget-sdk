@@ -37,7 +37,7 @@ describe('Feature Service', () => {
       }
     });
 
-    system.set('utils/ResourceUtils', {
+    system.set('utils/ResourceUtils.es6', {
       isLegacyOrganization: () => {
         return this.mocks.legacyOrganization;
       }
@@ -80,17 +80,17 @@ describe('Feature Service', () => {
     this.spies.createSpaceEndpoint = sinon.spy(createSpaceEndpoint);
     this.stubs.createOrganizationEndpoint = sinon.stub();
 
-    system.set('data/EndpointFactory', {
+    system.set('data/EndpointFactory.es6', {
       createSpaceEndpoint: this.spies.createSpaceEndpoint,
       createOrganizationEndpoint: this.stubs.createOrganizationEndpoint
     });
 
-    system.set('services/TokenStore', {
+    system.set('services/TokenStore.es6', {
       getSpace: sinon.stub().resolves(this.mocks.space),
       getOrganization: sinon.stub().resolves(this.mocks.organization)
     });
 
-    this.createFeatureService = (await system.import('services/FeatureService')).default;
+    this.createFeatureService = (await system.import('services/FeatureService.es6')).default;
   });
 
   it('should use the space endpoint by default during instantiation', function() {

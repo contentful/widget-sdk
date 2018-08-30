@@ -1,6 +1,6 @@
 'use strict';
 
-describe('markdown_editor/PreviewRender', () => {
+describe('markdown_editor/PreviewRender.es6', () => {
   let treeBuilder, buildTree;
 
   function getRoot(source, fn) {
@@ -21,7 +21,7 @@ describe('markdown_editor/PreviewRender', () => {
 
   beforeEach(function() {
     module('contentful/test');
-    treeBuilder = this.$inject('markdown_editor/PreviewRender');
+    treeBuilder = this.$inject('markdown_editor/PreviewRender.es6');
     buildTree = treeBuilder.default();
   });
 

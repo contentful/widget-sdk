@@ -1,9 +1,9 @@
 import { range } from 'lodash';
 import * as sinon from 'helpers/sinon';
-import * as C from 'utils/Concurrent';
+import * as C from 'utils/Concurrent.es6';
 import $q from '$q';
 
-describe('utils/Concurrent', () => {
+describe('utils/Concurrent.es6', () => {
   beforeEach(() => {
     module('contentful/test');
   });

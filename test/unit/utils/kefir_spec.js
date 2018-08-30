@@ -1,8 +1,8 @@
-import * as K from 'utils/kefir';
+import * as K from 'utils/kefir.es6';
 import * as KMock from 'helpers/mocks/kefir';
 import * as sinon from 'helpers/sinon';
 
-describe('utils/kefir', () => {
+describe('utils/kefir.es6', () => {
   beforeEach(function() {
     module('ng');
     this.scope = this.$inject('$rootScope').$new();

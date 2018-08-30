@@ -3,7 +3,7 @@ describe('Content Type Field Controller', () => {
   beforeEach(module('contentful/test'));
 
   beforeEach(function() {
-    const fieldsTemplate = this.$inject('app/ContentModel/Editor/Template').fields;
+    const fieldsTemplate = this.$inject('app/ContentModel/Editor/Template.es6').fields;
     const { renderString } = this.$inject('ui/Framework');
     this.ctEditorController = {
       openFieldDialog: sinon.stub()

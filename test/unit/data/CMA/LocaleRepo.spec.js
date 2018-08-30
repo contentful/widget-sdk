@@ -1,13 +1,13 @@
 describe('Locale Repo', () => {
   beforeEach(function() {
     module('contentful/test', $provide => {
-      $provide.value('data/CMA/FetchAll', {
+      $provide.value('data/CMA/FetchAll.es6', {
         fetchAll: sinon.stub().resolves([{}, {}, {}])
       });
     });
 
     this.endpoint = sinon.stub();
-    this.repo = this.$inject('data/CMA/LocaleRepo').default(this.endpoint);
+    this.repo = this.$inject('data/CMA/LocaleRepo.es6').default(this.endpoint);
   });
 
   it('gets all', function*() {

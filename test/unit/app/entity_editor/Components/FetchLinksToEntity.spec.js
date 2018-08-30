@@ -3,7 +3,7 @@ import { createElement as h } from 'react';
 import { mount } from 'enzyme';
 import sinon from 'npm:sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
-import { EntityType } from 'app/entity_editor/Components/constants';
+import { EntityType } from 'app/entity_editor/Components/constants.es6';
 
 import { flushPromises } from './helpers';
 
@@ -17,7 +17,7 @@ describe('FetchLinksToEntity', () => {
   beforeEach(function() {
     this.onFetchLinks = sinon.stub();
     const system = createIsolatedSystem();
-    system.set('analytics/events/IncomingLinks', {
+    system.set('analytics/events/IncomingLinks.es6', {
       onFetchLinks: this.onFetchLinks,
       Origin: {
         DIALOG: 'dialog',
@@ -26,7 +26,7 @@ describe('FetchLinksToEntity', () => {
     });
     this.system = system;
     this.importModule = function*({ fetchLinksStub }) {
-      system.set('app/entity_editor/Components/FetchLinksToEntity/fetchLinks', {
+      system.set('app/entity_editor/Components/FetchLinksToEntity/fetchLinks.es6', {
         default: fetchLinksStub
       });
 

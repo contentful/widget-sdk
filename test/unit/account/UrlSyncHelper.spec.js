@@ -1,10 +1,10 @@
-describe('account/UrlSyncHelper', () => {
+describe('account/UrlSyncHelper.es6', () => {
   beforeEach(function() {
     module('contentful/test');
     this.$state = this.mockService('$state');
     this.$state.go = sinon.spy();
     this.$location = this.mockService('$location');
-    this.UrlSyncHelper = this.$inject('account/UrlSyncHelper');
+    this.UrlSyncHelper = this.$inject('account/UrlSyncHelper.es6');
   });
 
   describe('.getGatekeeperUrl()', () => {

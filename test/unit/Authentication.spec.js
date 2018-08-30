@@ -1,6 +1,6 @@
 import * as K from 'helpers/mocks/kefir';
 
-describe('Authentication', () => {
+describe('Authentication.es6', () => {
   beforeEach(function() {
     this.$http = sinon.stub();
     this.window = {
@@ -16,7 +16,7 @@ describe('Authentication', () => {
     });
 
     this.$http.resolves({ data: { access_token: 'NEW TOKEN' } });
-    this.Auth = this.$inject('Authentication');
+    this.Auth = this.$inject('Authentication.es6');
     this.$q = this.$inject('$q');
 
     const getStore = this.$inject('TheStore').getStore;

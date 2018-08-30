@@ -1,11 +1,11 @@
 import { contentTypes } from './helpers';
 
-describe('app/ContentList/Search/Filters', () => {
+describe('app/ContentList/Search/Filters.es6', () => {
   let Filters;
   beforeEach(function() {
     module('contentful/test');
 
-    Filters = this.$inject('app/ContentList/Search/Filters');
+    Filters = this.$inject('app/ContentList/Search/Filters.es6');
   });
 
   const isApplicableMacro = (message, contentType, queryKey, expected) => {

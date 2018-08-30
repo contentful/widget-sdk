@@ -32,11 +32,11 @@ describe('cfOnboardingSteps Directive', () => {
       $provide.value('contentPreview', {
         contentPreviewsBus$: this.previews$
       });
-      $provide.value('services/TokenStore', {
+      $provide.value('services/TokenStore.es6', {
         getOrganizations: sinon.stub().resolves(this.organizations),
         user$: K.createMockProperty({ sys: { id: 1 } })
       });
-      $provide.value('services/CreateSpace', {
+      $provide.value('services/CreateSpace.es6', {
         showDialog: this.createSpaceDialog
       });
       $provide.value('contentPreview', {

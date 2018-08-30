@@ -2,7 +2,7 @@ describe('ViewSerializer', () => {
   beforeEach(function() {
     module('contentful/test');
 
-    const ViewSerializer = this.$inject('data/ViewSerializer');
+    const ViewSerializer = this.$inject('data/ViewSerializer.es6');
     this.serialize = ViewSerializer.serialize;
     this.unserialize = ViewSerializer.unserialize;
   });

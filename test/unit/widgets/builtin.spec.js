@@ -1,10 +1,10 @@
 import { uniq } from 'lodash';
 
-describe('widgets/builtin', () => {
+describe('widgets/builtin.es6', () => {
   beforeEach(function() {
     module('contentful/test');
 
-    this.create = this.$inject('widgets/builtin').create;
+    this.create = this.$inject('widgets/builtin.es6').create;
   });
 
   describe('create()', () => {

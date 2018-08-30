@@ -1,8 +1,8 @@
 import * as K from 'helpers/mocks/kefir';
 import { h } from 'ui/Framework';
-import { observeResize } from 'ui/ResizeDetector';
+import { observeResize } from 'ui/ResizeDetector.es6';
 
-describe('ui/ResizeDetector', () => {
+describe('ui/ResizeDetector.es6', () => {
   beforeEach(function() {
     const view = this.createUI();
     view.render(

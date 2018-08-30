@@ -8,7 +8,7 @@ describe('data/ContentPreview', () => {
   describe('#hasTEAContentPreviews', () => {
     beforeEach(function() {
       module('contentful/test', $provide => {
-        $provide.value('Config', this.environment);
+        $provide.value('Config.es6', this.environment);
       });
       this.hasTEAContentPreviews = function(...args) {
         const { hasTEAContentPreviews } = this.$inject('data/ContentPreview');
@@ -62,7 +62,7 @@ describe('data/ContentPreview', () => {
   describe('#hasHighlightedCourseCT', () => {
     beforeEach(function() {
       module('contentful/test', $provide => {
-        $provide.value('Config', this.environment);
+        $provide.value('Config.es6', this.environment);
       });
       this.hasHighlightedCourseCT = function(...args) {
         const { hasHighlightedCourseCT } = this.$inject('data/ContentPreview');

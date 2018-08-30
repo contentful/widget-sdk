@@ -1,11 +1,11 @@
 import * as K from 'helpers/mocks/kefir';
 import { create as createDocument } from 'helpers/mocks/entity_editor_document';
 
-describe('app/entity_editor/Validator', () => {
+describe('app/entity_editor/Validator.es6', () => {
   beforeEach(function() {
     module('contentful/test');
 
-    const Validator = this.$inject('app/entity_editor/Validator');
+    const Validator = this.$inject('app/entity_editor/Validator.es6');
     this.schemaErrors = sinon.stub();
     this.validator = Validator.createBase(
       _error => '',

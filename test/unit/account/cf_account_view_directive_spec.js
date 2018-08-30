@@ -9,8 +9,8 @@ describe('Account View directive', () => {
 
     this.messages$ = K.createMockStream();
 
-    this.UrlSyncHelper = this.mockService('account/UrlSyncHelper');
-    const IframeChannel = this.mockService('account/IframeChannel');
+    this.UrlSyncHelper = this.mockService('account/UrlSyncHelper.es6');
+    const IframeChannel = this.mockService('account/IframeChannel.es6');
     IframeChannel.default.returns(this.messages$);
 
     this.compile = () => {

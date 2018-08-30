@@ -15,7 +15,7 @@ angular
   .factory('mocks/entityEditor/Context', [
     'require',
     require => {
-      const Focus = require('app/entity_editor/Focus');
+      const Focus = require('app/entity_editor/Focus.es6');
 
       return { create: create };
 

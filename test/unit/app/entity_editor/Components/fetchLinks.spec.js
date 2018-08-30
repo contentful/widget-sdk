@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import sinon from 'npm:sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
-import { EntityType } from 'app/entity_editor/Components/constants';
+import { EntityType } from 'app/entity_editor/Components/constants.es6';
 
 describe('fetchLinks', () => {
   beforeEach(function*() {
@@ -34,10 +34,10 @@ describe('fetchLinks', () => {
     system.set('spaceContext', { default: this.spaceContext });
     system.set('EntityHelpers', { default: EntityHelpers });
     system.set('TheLocaleStore', { default: TheLocaleStore });
-    system.set('states/Navigator', this.navigator);
+    system.set('states/Navigator.es6', this.navigator);
 
     const { default: fetchLinks } = yield system.import(
-      'app/entity_editor/Components/FetchLinksToEntity/fetchLinks'
+      'app/entity_editor/Components/FetchLinksToEntity/fetchLinks.es6'
     );
 
     this.fetchLinks = fetchLinks;

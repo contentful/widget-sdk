@@ -11,7 +11,7 @@ describe('entityCreator', () => {
     module('contentful/test', $provide => {
       stubs = $provide.makeStubs(['computeUsage', 'enforcement', 'track']);
 
-      $provide.value('access_control/Enforcements', {
+      $provide.value('access_control/Enforcements.es6', {
         computeUsageForOrganization: stubs.computeUsage,
         determineEnforcement: stubs.enforcement
       });

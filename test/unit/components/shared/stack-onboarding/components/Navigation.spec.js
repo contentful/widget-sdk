@@ -19,7 +19,7 @@ describe('Navigation', () => {
         getStoragePrefix: sinon.stub().returns('prefix'),
         isOnboardingComplete: sinon.stub().returns(false)
       });
-      $provide.value('services/TokenStore', {
+      $provide.value('services/TokenStore.es6', {
         user$: K.createMockProperty({ sys: { id: 1 } })
       });
     });

@@ -12,7 +12,7 @@ describe('CodeMirror wrapper', () => {
 
   beforeEach(function() {
     module('contentful/test');
-    const Wrapper = this.$inject('markdown_editor/codemirror_wrapper');
+    const Wrapper = this.$inject('markdown_editor/codemirror_wrapper.es6');
     textarea = document.createElement('textarea');
     document.body.appendChild(textarea);
 

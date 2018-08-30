@@ -6,7 +6,7 @@ describe('cfMarkdownEditor', () => {
         getDefaultLocale: () => ({ code: 'some random locale' }),
         getLocales: () => [{ code: 'en-US' }]
       });
-      $provide.value('analytics/Analytics', this.analytics);
+      $provide.value('analytics/Analytics.es6', this.analytics);
     });
 
     this.widgetApi = this.$inject('mocks/widgetApi').create();

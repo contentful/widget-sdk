@@ -47,7 +47,7 @@ describe('Role List Controller', () => {
       getMembershipCounts: sinon.stub().returns({})
     });
 
-    this.OrganizationRoles = this.$inject('services/OrganizationRoles');
+    this.OrganizationRoles = this.$inject('services/OrganizationRoles.es6');
     this.OrganizationRoles.isOwnerOrAdmin = sinon.stub().returns(false);
 
     this.organization = {
@@ -81,7 +81,7 @@ describe('Role List Controller', () => {
       organization: this.organization
     };
 
-    this.mockService('services/TokenStore', {
+    this.mockService('services/TokenStore.es6', {
       getSpace: sinon.stub().resolves(this.space),
       getOrganization: sinon.stub().resolves(this.organization)
     });

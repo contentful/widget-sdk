@@ -3,7 +3,7 @@ import {
   CONSTRAINT_TYPES,
   transformFiltersToList,
   transformListToFilters
-} from 'app/Webhooks/WebhookFiltersState';
+} from 'app/Webhooks/WebhookFiltersState.es6';
 
 describe('WebhookFiltersState', function() {
   it('transforms nested constraint objects to a flat list', function() {

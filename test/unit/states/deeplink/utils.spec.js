@@ -2,7 +2,7 @@ import * as sinon from 'helpers/sinon';
 import * as K from 'test/helpers/mocks/kefir';
 import { noop } from 'lodash';
 
-describe('states/deeplink/utils', () => {
+describe('states/deeplink/utils.es6', () => {
   beforeEach(function() {
     this.storeGet = sinon.stub();
     this.storeSet = sinon.stub();
@@ -20,7 +20,7 @@ describe('states/deeplink/utils', () => {
           };
         }
       });
-      $provide.value('services/TokenStore', {
+      $provide.value('services/TokenStore.es6', {
         getSpaces: this.getSpaces,
         getOrganizations: this.getOrganizations,
         user$: this.user$
@@ -34,7 +34,7 @@ describe('states/deeplink/utils', () => {
       });
     });
 
-    this.utils = this.$inject('states/deeplink/utils');
+    this.utils = this.$inject('states/deeplink/utils.es6');
   });
 
   describe('#getOnboardingSpaceId', () => {

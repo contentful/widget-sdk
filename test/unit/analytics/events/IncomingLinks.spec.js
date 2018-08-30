@@ -10,9 +10,9 @@ describe('IncomingLinks', () => {
       track: sinon.stub()
     };
 
-    system.set('analytics/Analytics', this.analytics);
+    system.set('analytics/Analytics.es6', this.analytics);
 
-    this.incomingLinksEvents = yield system.import('analytics/events/IncomingLinks');
+    this.incomingLinksEvents = yield system.import('analytics/events/IncomingLinks.es6');
   });
 
   describe('onIncomingLinkClick', () => {

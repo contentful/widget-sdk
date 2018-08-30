@@ -6,7 +6,7 @@ describe('cfBreadcrumbsDirective spec', () => {
   beforeEach(function() {
     module('contentful/test');
 
-    const contextHistory = this.$inject('navigation/Breadcrumbs/History').default;
+    const contextHistory = this.$inject('navigation/Breadcrumbs/History.es6').default;
     this.$state = this.mockService('$state');
 
     const el = this.$compile('<cf-breadcrumbs />');

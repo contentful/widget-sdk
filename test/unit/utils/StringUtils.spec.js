@@ -1,4 +1,4 @@
-import { joinWithAnd } from 'utils/StringUtils';
+import { joinWithAnd } from 'utils/StringUtils.es6';
 
 describe('StringUtils', () => {
   describe('joinWithAnd', () => {

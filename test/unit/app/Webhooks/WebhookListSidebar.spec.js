@@ -13,7 +13,7 @@ describe('WebhookListSidebar', function() {
   // We inject instead of importing so UI Router's $state is available
   beforeEach(function() {
     module('contentful/test');
-    WebhookListSidebar = this.$inject('app/Webhooks/WebhookListSidebar').default;
+    WebhookListSidebar = this.$inject('app/Webhooks/WebhookListSidebar.es6').default;
   });
 
   const testText = (wrapper, expected) => {

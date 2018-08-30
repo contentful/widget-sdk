@@ -1,7 +1,7 @@
-describe('data/Request/Auth', () => {
+describe('data/Request/Auth.es6', () => {
   beforeEach(function() {
     module('contentful/test');
-    const wrapWithAuth = this.$inject('data/Request/Auth').default;
+    const wrapWithAuth = this.$inject('data/Request/Auth.es6').default;
 
     this.getToken = sinon.stub().resolves('TOKEN');
     this.refreshToken = sinon.stub().resolves('REFRESHED TOKEN');

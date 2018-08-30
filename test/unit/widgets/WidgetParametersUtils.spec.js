@@ -1,4 +1,4 @@
-import * as Utils from 'widgets/WidgetParametersUtils';
+import * as Utils from 'widgets/WidgetParametersUtils.es6';
 
 describe('WidgetParametersUtils', () => {
   describe('.filterDefinitions', () => {

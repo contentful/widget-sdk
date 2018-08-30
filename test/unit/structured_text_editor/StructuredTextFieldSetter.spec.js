@@ -15,13 +15,13 @@ describe('StructuredTextFieldSetter', () => {
     module('contentful/test', $provide => {
       $provide.value('data/ShareJS/Utils', this.ShareJS);
       $provide.value('logger', this.logger);
-      $provide.value('app/widgets/structured_text/constants/EmptyDoc', {
+      $provide.value('app/widgets/structured_text/constants/EmptyDoc.es6', {
         default: this.emptyDoc
       });
     });
 
     this.StructuredTextFieldSetter = this.$inject(
-      'app/widgets/structured_text/StructuredTextFieldSetter'
+      'app/widgets/structured_text/StructuredTextFieldSetter.es6'
     );
     this.OtDoc = this.$inject('mocks/OtDoc');
   });

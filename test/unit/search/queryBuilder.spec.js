@@ -2,7 +2,7 @@ describe('search#buildQuery()', () => {
   beforeEach(function() {
     module('contentful/test');
 
-    this.parseTextQuery = this.$inject('search/queryBuilder').parseTextQuery;
+    this.parseTextQuery = this.$inject('search/queryBuilder.es6').parseTextQuery;
 
     this.testFiltersAndText = async function(queryString, expected) {
       const result = await this.parseTextQuery(queryString);

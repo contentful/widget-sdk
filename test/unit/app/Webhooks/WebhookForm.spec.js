@@ -16,7 +16,7 @@ describe('WebhookForm', function() {
   // We inject instead of importing so modalDialog is available
   beforeEach(function() {
     module('contentful/test');
-    WebhookForm = this.$inject('app/Webhooks/WebhookForm').default;
+    WebhookForm = this.$inject('app/Webhooks/WebhookForm.es6').default;
   });
 
   it('renders and updates details', function() {

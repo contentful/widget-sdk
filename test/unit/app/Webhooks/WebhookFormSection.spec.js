@@ -1,6 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import WebhookFormSection from 'app/Webhooks/WebhookFormSection';
+import WebhookFormSection from 'app/Webhooks/WebhookFormSection.es6';
 
 describe('WebhookFormSection', function() {
   const mount = (title, collapsible) =>

@@ -1,13 +1,13 @@
 import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
 
-describe('data/CMA/ApiKeyRepo', () => {
+describe('data/CMA/ApiKeyRepo.es6', () => {
   beforeEach(function() {
     module('contentful/test');
     const endpoint = createMockSpaceEndpoint();
     this.deliveryStore = endpoint.stores.api_keys;
     this.previewStore = endpoint.stores.preview_api_keys;
     this.endpoint = sinon.spy(endpoint.request);
-    this.repo = this.$inject('data/CMA/ApiKeyRepo').default(this.endpoint);
+    this.repo = this.$inject('data/CMA/ApiKeyRepo.es6').default(this.endpoint);
 
     this.deliveryStore.ID = {
       sys: { id: 'ID' },

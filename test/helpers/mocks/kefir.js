@@ -1,6 +1,6 @@
-import * as Kefir from 'utils/kefir';
+import * as Kefir from 'utils/kefir.es6';
 
-export * from 'utils/kefir';
+export * from 'utils/kefir.es6';
 
 /**
  * Returns an array that dynamically updates when the stream or

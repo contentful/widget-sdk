@@ -43,7 +43,7 @@ describe('Locale List Controller', () => {
       organization: this.organization
     };
 
-    this.mockService('services/TokenStore', {
+    this.mockService('services/TokenStore.es6', {
       getSpace: sinon.stub().resolves(this.space),
       getOrganization: sinon.stub().resolves(this.organization)
     });

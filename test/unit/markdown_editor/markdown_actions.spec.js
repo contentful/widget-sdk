@@ -2,10 +2,10 @@ describe('markdown actions', function() {
   beforeEach(function() {
     this.analytics = { track: sinon.spy() };
     module('contentful/test', $provide => {
-      $provide.value('analytics/Analytics', this.analytics);
+      $provide.value('analytics/Analytics.es6', this.analytics);
     });
 
-    this.markdownActions = this.$inject('markdown_editor/markdown_actions');
+    this.markdownActions = this.$inject('markdown_editor/markdown_actions.es6');
 
     this.createActionsWithStubbedAction = (stubbedAction, zen) => {
       const editor = { actions: { [stubbedAction]: sinon.spy() } };

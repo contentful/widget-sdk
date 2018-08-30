@@ -30,7 +30,7 @@ describe('RecordsResourceUsage', function() {
     };
 
     module('contentful/test', $provide => {
-      $provide.value('services/ChangeSpaceService', {
+      $provide.value('services/ChangeSpaceService.es6', {
         showDialog: this.stubs.showDialog
       });
     });

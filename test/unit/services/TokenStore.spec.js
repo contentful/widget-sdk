@@ -7,7 +7,7 @@ describe('Token store service', () => {
       spaces: this.spaces
     });
     module('contentful/test', $provide => {
-      $provide.value('data/CMA/TokenInfo', {
+      $provide.value('data/CMA/TokenInfo.es6', {
         default: () => this.fetchWithAuth
       });
     });
@@ -18,8 +18,8 @@ describe('Token store service', () => {
       organization: { sys: { id: 'testorg' } }
     }));
 
-    this.tokenStore = this.$inject('services/TokenStore');
-    this.OrganizationRoles = this.$inject('services/OrganizationRoles');
+    this.tokenStore = this.$inject('services/TokenStore.es6');
+    this.OrganizationRoles = this.$inject('services/OrganizationRoles.es6');
 
     this.client = this.$inject('client');
     this.client.newSpace = sinon.stub();

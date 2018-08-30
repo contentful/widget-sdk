@@ -529,7 +529,7 @@ describe('Space Template loading service', () => {
     };
     this.contentfulClient = this.$inject('contentfulClient');
     this.contentfulClient.newClient.returns(this.client);
-    this.spaceTemplateLoader = this.$inject('services/SpaceTemplateLoader');
+    this.spaceTemplateLoader = this.$inject('services/SpaceTemplateLoader.es6');
   });
 
   afterEach(inject($log => {

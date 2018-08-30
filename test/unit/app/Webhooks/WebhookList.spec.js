@@ -24,7 +24,7 @@ describe('WebhookList', function() {
   // We inject instead of importing so UI Router's $state is available
   beforeEach(function() {
     module('contentful/test');
-    WebhookList = this.$inject('app/Webhooks/WebhookList').default;
+    WebhookList = this.$inject('app/Webhooks/WebhookList.es6').default;
   });
 
   it('renders empty list of webhooks', function() {

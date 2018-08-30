@@ -9,7 +9,7 @@ describe('ListViewsController', () => {
   beforeEach(function() {
     module('contentful/test');
     const $controller = this.$inject('$controller');
-    const ListViewPersistor = this.$inject('data/ListViewPersistor');
+    const ListViewPersistor = this.$inject('data/ListViewPersistor.es6');
 
     this.mockService('notification');
     this.$inject('mocks/spaceContext').init();

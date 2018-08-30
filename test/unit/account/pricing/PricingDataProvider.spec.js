@@ -1,9 +1,9 @@
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
-describe('account/pricing/PricingDataProvider', () => {
+describe('account/pricing/PricingDataProvider.es6', () => {
   beforeEach(function() {
     module('contentful/test');
-    this.PricingDataProvider = this.$inject('account/pricing/PricingDataProvider');
+    this.PricingDataProvider = this.$inject('account/pricing/PricingDataProvider.es6');
   });
 
   describe('#getPlansWithSpaces()', () => {
@@ -77,7 +77,7 @@ describe('account/pricing/PricingDataProvider', () => {
 
       // Create an isolated system to mock fetchAll()
       const system = createIsolatedSystem();
-      system.set('data/Endpoint', {});
+      system.set('data/Endpoint.es6', {});
 
       // Mocks for angular services in the dependencies tree, will get 'Not found'
       // errors if they are not set explicitly.
@@ -86,9 +86,9 @@ describe('account/pricing/PricingDataProvider', () => {
       system.set('$window', {});
       system.set('$http', {});
 
-      system.set('data/CMA/FetchAll', { fetchAll });
+      system.set('data/CMA/FetchAll.es6', { fetchAll });
       system.set('utils/LaunchDarkly', { getCurrentVariation: () => Promise.resolve(false) });
-      const PricingDataProvider = yield system.import('account/pricing/PricingDataProvider');
+      const PricingDataProvider = yield system.import('account/pricing/PricingDataProvider.es6');
 
       yield PricingDataProvider.getPlansWithSpaces(this.endpoint);
       sinon.assert.calledWith(fetchAll, this.endpoint, ['spaces']);

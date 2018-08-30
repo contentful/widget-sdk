@@ -1,7 +1,10 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import WebhookSegmentation from 'app/Webhooks/WebhookSegmentation';
-import { transformMapToTopics, transformTopicsToMap } from 'app/Webhooks/WebhookSegmentationState';
+import WebhookSegmentation from 'app/Webhooks/WebhookSegmentation.es6';
+import {
+  transformMapToTopics,
+  transformTopicsToMap
+} from 'app/Webhooks/WebhookSegmentationState.es6';
 
 describe('WebhookSegmentation', function() {
   const mount = topics => {

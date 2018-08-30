@@ -35,7 +35,7 @@ describe('app/SpaceSettings/GeneralSettings', () => {
   beforeEach(function() {
     module('contentful/test');
     SpaceSettingsContainer = this.$inject(
-      'app/SpaceSettings/GeneralSettings/SpaceSettingsContainer'
+      'app/SpaceSettings/GeneralSettings/SpaceSettingsContainer.es6'
     ).default;
   });
 

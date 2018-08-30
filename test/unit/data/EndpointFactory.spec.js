@@ -1,6 +1,6 @@
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
-describe('data/EndpointFactory', () => {
+describe('data/EndpointFactory.es6', () => {
   beforeEach(function*() {
     this.Authentication = {};
     this.Config = { apiUrl: sinon.stub().returns('API_URL') };
@@ -13,10 +13,10 @@ describe('data/EndpointFactory', () => {
 
     this.system = createIsolatedSystem();
 
-    this.system.set('Authentication', this.Authentication);
-    this.system.set('Config', this.Config);
-    this.system.set('data/Endpoint', this.Endpoint);
-    this.factory = yield this.system.import('data/EndpointFactory');
+    this.system.set('Authentication.es6', this.Authentication);
+    this.system.set('Config.es6', this.Config);
+    this.system.set('data/Endpoint.es6', this.Endpoint);
+    this.factory = yield this.system.import('data/EndpointFactory.es6');
   });
 
   describe('#createOrganizationEndpoint', () => {

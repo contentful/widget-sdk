@@ -4,7 +4,7 @@ describe('DocumentPool', () => {
   beforeEach(function() {
     module('contentful/test');
 
-    const Document = this.$inject('app/entity_editor/Document');
+    const Document = this.$inject('app/entity_editor/Document.es6');
     this.doc = {
       destroy: sinon.stub(),
       state: {
@@ -17,7 +17,7 @@ describe('DocumentPool', () => {
       return s.id === 'id' && s.type === 'Entry' ? this.doc : this.doc2;
     });
 
-    const createPool = this.$inject('data/sharejs/DocumentPool').create;
+    const createPool = this.$inject('data/sharejs/DocumentPool.es6').create;
     this.conn = {};
     this.pool = createPool(this.conn);
   });

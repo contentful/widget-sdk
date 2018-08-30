@@ -2,7 +2,7 @@ describe('app/entityEditor/Notifications', () => {
   beforeEach(function() {
     module('contentful/test');
     this.notification = this.mockService('notification');
-    const N = this.$inject('app/entity_editor/Notifications');
+    const N = this.$inject('app/entity_editor/Notifications.es6');
     this.Notification = N.Notification;
     this.notify = N.makeNotify('Entry', () => 'TITLE');
   });

@@ -1,5 +1,5 @@
 import JQuery from 'jquery';
-import _createMountPoint from 'ui/Framework/DOMRenderer';
+import _createMountPoint from 'ui/Framework/DOMRenderer.es6';
 import * as ReactTestUtils from 'react-dom/test-utils';
 
 /**

@@ -14,7 +14,7 @@ describe('SnapshotComparatorController/snapshotDoc', () => {
   beforeEach(function() {
     module('contentful/test');
     this.doc = this.$inject('SnapshotComparatorController/snapshotDoc').create(data);
-    this.K = this.$inject('utils/kefir');
+    this.K = this.$inject('utils/kefir.es6');
   });
 
   describe('#getValueAt', () => {

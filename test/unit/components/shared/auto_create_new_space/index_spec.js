@@ -16,9 +16,9 @@ describe('AutoCreateNewSpace/index', () => {
     };
 
     module('contentful/test', $provide => {
-      $provide.value('services/TokenStore', this.tokenStore);
+      $provide.value('services/TokenStore.es6', this.tokenStore);
       $provide.value(
-        'components/shared/auto_create_new_space/CreateSampleSpace',
+        'components/shared/auto_create_new_space/CreateSampleSpace.es6',
         this.createSampleSpace
       );
       $provide.value('TheStore', {
