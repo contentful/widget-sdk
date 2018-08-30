@@ -1,3 +1,55 @@
+.usage__period-selector
+  & > label
+    margin-right: 1rem
+
+$overage-color = #FCA013
+
+.usage-page
+  display: grid
+  grid-template-columns: 1fr 1fr
+  grid-column-gap: 2rem
+  max-width: 1100px
+  margin-left: auto
+  margin-right: auto
+  padding-left: 1rem
+  & > h2
+    margin-top: 3rem
+    grid-column-end: span 2
+    justify-self: start
+  &__org-section
+    display: flex
+    flex-direction: column
+    justify-content: space-evenly
+    align-items: flex-start
+  &__total-usage
+    font-size: 2.2rem
+    line-height: 3rem
+  &__limit
+    font-size: .9rem
+  &__included-limit
+    color: #abbbc2
+  &__overage
+    color: $overage-color
+  & h3
+    color #9AACC2
+    margin-top 0
+  &__api-table
+    margin-top: 3rem
+    margin-left: -2rem
+    border-spacing: 2rem
+    font-size: 0.9rem
+  &__space-usage
+    color: #8091A5
+
+.echart
+  display: flex
+  align-items: center
+  justify-content: center
+  outline: solid 1px transparent
+  transition: outline 1s linear
+  &--loading
+    outline-color #d0dade
+
 .resource-list
   margin: 40px
 
