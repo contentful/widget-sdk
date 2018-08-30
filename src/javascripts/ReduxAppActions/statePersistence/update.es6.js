@@ -44,6 +44,7 @@ export function update (args) {
     // however, right now this function will be called several
     // times, in case we need to do another update
     setPending(params);
+
     const newPromise = fetch(payload);
     updatingValues[key].promise = newPromise;
 

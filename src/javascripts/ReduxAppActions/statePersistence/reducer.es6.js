@@ -257,7 +257,7 @@ function envStateReducer (state = {}, action) {
         }
       });
     }
-    case actions.UPDATE_ENV_PENDING: {
+    case actions.UPDATE_ENV_STATE_PENDING: {
       return updateEnvState({
         state,
         payload: action.payload,
@@ -268,7 +268,7 @@ function envStateReducer (state = {}, action) {
         }
       });
     }
-    case actions.UPDATE_ENV_SUCCESS: {
+    case actions.UPDATE_ENV_STATE_SUCCESS: {
       return updateEnvState({
         state,
         payload: action.payload,
@@ -278,7 +278,7 @@ function envStateReducer (state = {}, action) {
         }
       });
     }
-    case actions.UPDATE_ENV_FAILURE: {
+    case actions.UPDATE_ENV_STATE_FAILURE: {
       return updateEnvState({
         state,
         payload: action.payload,

@@ -23,10 +23,10 @@ export function userStateFailure ({ key, error }) {
 }
 
 export const UPDATE_USER_STATE_PENDING = 'UPDATE_USER_STATE_PENDING';
-export function updateUserStatePending ({ key }) {
+export function updateUserStatePending ({ key, data }) {
   return {
     type: UPDATE_USER_STATE_PENDING,
-    payload: { key }
+    payload: { key, data }
   };
 }
 
@@ -119,10 +119,10 @@ export function envStateFailure ({ key, spaceId, envId, error }) {
 }
 
 export const UPDATE_ENV_STATE_PENDING = 'UPDATE_ENV_STATE_PENDING';
-export function updateEnvStatePending ({ key, spaceId, envId }) {
+export function updateEnvStatePending ({ key, spaceId, envId, data }) {
   return {
     type: UPDATE_ENV_STATE_PENDING,
-    payload: { key, spaceId, envId }
+    payload: { key, spaceId, envId, data }
   };
 }
 
