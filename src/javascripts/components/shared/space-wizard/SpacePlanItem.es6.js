@@ -71,7 +71,7 @@ const SpacePlanItem = createReactClass({
             )}
         </div>
 
-        <PlanFeatures resources={plan.includedResources} />
+        <PlanFeatures resources={plan.includedResources} roleSet={plan.roleSet} />
 
         {isPayingOrg &&
           plan.disabled &&

@@ -38,6 +38,32 @@ describe('WizardUtils', function() {
     });
   });
 
+  describe('getRolesTooltip', function() {
+    beforeEach(function () {
+      const intro = 'This space type includes the';
+      this.testRolesTooltip = function (number, roles, text) {
+        const tooltip = this.WizardUtils.getRolesTooltip(number, {roles});
+        return expect(tooltip).toBe(`${intro} ${text}`);
+      };
+    });
+
+    it('returns tooltip for a plan with the admin role only', function () {
+      this.testRolesTooltip(1, [], 'Admin role only');
+    });
+
+    it('returns the tooltip text for a plan with various roles', function () {
+      this.testRolesTooltip(3, ['Editor', 'Translator'], 'Admin, Editor and Translator roles');
+    });
+
+    it('returns the tooltip text for a plan with multiple translator roles', function () {
+      this.testRolesTooltip(5, ['Editor', 'Translator', 'Translator 2', 'Translator3'], 'Admin, Editor and 3 Translator roles');
+    });
+
+    it('returns the tooltip text for a plan with custom roles', function () {
+      this.testRolesTooltip(10, ['Editor', 'Translator'], 'Admin, Editor and Translator roles and an additional 7 custom roles');
+    });
+  });
+
   describe('unavailabilityTooltipNode', function() {
     beforeEach(function() {
       this.planAvailable = {
