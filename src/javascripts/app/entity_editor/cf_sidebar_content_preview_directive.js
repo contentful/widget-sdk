@@ -52,15 +52,16 @@ angular.module('contentful').directive('cfSidebarContentPreview', [
             contentPreview.setSelected(environment);
           };
 
-          $scope.trackClickedLink = () => {
-            if ($scope.isPreviewSetup) {
-              const contentTypeId = $scope.selectedEnvironment.contentType;
-              const contentTypeName = _.get(
-                spaceContext.publishedCTs.get(contentTypeId),
-                'data.name',
-                '<UNPUBLISHED CONTENT TYPE>'
-              );
-              const toState = $scope.selectedEnvironment.compiledUrl.replace(/\?.*$/, '');
+      $scope.trackClickedLink = () => {
+        // compiledUrl is assigned its value asynchronously, that's why we need to check if it's defined
+        if ($scope.isPreviewSetup && $scope.selectedEnvironment.compiledUrl) {
+          const contentTypeId = $scope.selectedEnvironment.contentType;
+          const contentTypeName = _.get(
+            spaceContext.publishedCTs.get(contentTypeId),
+            'data.name',
+            '<UNPUBLISHED CONTENT TYPE>'
+          );
+          const toState = $scope.selectedEnvironment.compiledUrl.replace(/\?.*$/, '');
 
               Analytics.track('element:click', {
                 elementId: 'openContentPreviewBtn',

@@ -58,5 +58,26 @@ export const TEA_CONTENT_PREVIEWS = [
       prod: 'https://the-example-app-java.contentful.com',
       staging: 'https://the-example-app-java.flinkly.com'
     }
+  },
+  // Swift(iOS) and Android have the same link because they lead to the page with QR-code that redirects to iOS and Android apps accordingly
+  {
+    name: 'The Swift example app',
+    description: 'The preview setup for an example app built using Swift',
+    baseUrl: {
+      // Please be careful with the trailing slash – doc app specifically requires them
+      // and if there is no trailing slash, it will add one, erasing all the query parameters
+      prod: 'https://www.contentful.com/developers/the-example-app-mobile/',
+      staging: 'https://www.flinkly.com/developers/the-example-app-mobile/'
+    },
+    isMobile: true
+  },
+  {
+    name: 'The Android example app',
+    description: 'The preview setup for an example app built using Android',
+    baseUrl: {
+      prod: 'https://www.contentful.com/developers/the-example-app-mobile/',
+      staging: 'https://www.flinkly.com/developers/the-example-app-mobile/'
+    },
+    isMobile: true
   }
 ];

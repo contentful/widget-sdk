@@ -481,7 +481,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
       );
     }
 
-    function createContentPreview({ name, description, baseUrl }, { cdaToken, cpaToken }) {
+    function createContentPreview ({ name, description, baseUrl, isMobile }, { cdaToken, cpaToken }) {
       const contentPreviewConfig = {
         name,
         description,
@@ -489,7 +489,9 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
           .map(ct => {
             const fn = createConfigFns[ct.sys.id];
             const url = environment.env === 'production' ? baseUrl.prod : baseUrl.staging;
-            return fn && fn({ ct, baseUrl: url, spaceId, cdaToken, cpaToken });
+            // We need 'isMobile' flag because mobile TEA link has the different format
+            // And that's because the mobile teas want all params as query params instead of a part the URL
+            return fn && fn({ ct, baseUrl: url, spaceId, cdaToken, cpaToken, isMobile });
           })
           // remove all content types without a preview
           .filter(Boolean)
@@ -557,23 +559,34 @@ function mainPageConfig(params) {
   return makeTEAConfig(params);
 }
 
-function courseConfig(params) {
-  return makeTEAConfig(params, '/courses/{entry.fields.slug}');
+function courseConfig (params) {
+  const courseSlug = '{entry.fields.slug}';
+  const urlParam = params.isMobile ? `?courses=${courseSlug}` : `/courses/${courseSlug}`;
+
+  return makeTEAConfig(params, urlParam);
 }
 
-function categoryConfig(params) {
-  return makeTEAConfig(params, '/courses/categories/{entry.fields.slug}');
+function categoryConfig (params) {
+  const categorySlug = '{entry.fields.slug}';
+  const urlParam = params.isMobile ? `?courses=${categorySlug}` : `/courses/${categorySlug}`;
+
+  return makeTEAConfig(params, urlParam);
 }
 
-function lessonConfig(params) {
-  const $ref1 = '{entry.linkedBy.fields.slug}';
-  return makeTEAConfig(params, `/courses/${$ref1}/lessons/{entry.fields.slug}`);
+function lessonConfig (params) {
+  const courseSlug = '{entry.linkedBy.fields.slug}';
+  const lessonSlug = '{entry.fields.slug}';
+  const urlParams = params.isMobile ? `?courses=${courseSlug}&lessons=${lessonSlug}` : `/courses/${courseSlug}/lessons/${lessonSlug}`;
+
+  return makeTEAConfig(params, urlParams);
 }
 
-function lessonContentConfig(params) {
-  const $ref1 = '{entry.linkedBy.linkedBy.fields.slug}';
-  const $ref2 = '{entry.linkedBy.fields.slug}';
-  return makeTEAConfig(params, `/courses/${$ref1}/lessons/${$ref2}`);
+function lessonContentConfig (params) {
+  const courseSlug = '{entry.linkedBy.linkedBy.fields.slug}';
+  const lessonSlug = '{entry.linkedBy.fields.slug}';
+  const urlParams = params.isMobile ? `?courses=${courseSlug}&lessons=${lessonSlug}` : `/courses/${courseSlug}/lessons/${lessonSlug}`;
+
+  return makeTEAConfig(params, urlParams);
 }
 
 function makeTEAConfig(params, url = '') {
@@ -602,7 +615,8 @@ function makeTEAUrl(params, url = '') {
     api: 'cpa'
   };
   const queryString = qs.stringify(queryParams);
-  return `${params.baseUrl}${url}${queryString ? '?' : ''}${queryString}`;
+
+  return `${params.baseUrl}${url}${params.isMobile ? '&' : '?'}${queryString}`;
 }
 
 function generateItemId(item, actionData) {
