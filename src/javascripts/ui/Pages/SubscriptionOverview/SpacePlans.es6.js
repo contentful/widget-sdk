@@ -33,7 +33,7 @@ function SpacePlans({
             <b>
               <Pluralized text="space" count={numSpaces} />
             </b>
-            .&#32;
+            {'. '}
           </span>
         )}
         {!isEnterprisePlan(basePlan) &&
