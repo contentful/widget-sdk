@@ -1,3 +1,5 @@
+import logger from 'logger';
+
 // We keep all references to the requests in progress
 // if they are in progress, we save new data
 // after original update requests are done, we take these new values
@@ -118,6 +120,10 @@ export function update(args) {
             payload: nextUpdatePayload
           });
         } else {
+          logger.logError('State Persistence Update', {
+            err: error,
+            msg: error.message
+          });
           // we need to write the latest data from the server to redux
           // this data can't be non-server, since this code is executed only by
           // the first updating request, not batching (all batching requests just give data).
