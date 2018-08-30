@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import { makeEnvKey } from './helpers';
 
 /**
  * Structure:
@@ -13,15 +14,13 @@ import { combineReducers } from 'redux';
  *     }
  *   },
  *   userEnv: {
- *     [spaceId]: {
- *       [envId]: {
- *         [key]: {
- *           isPending: false,
- *           error: null, // fetching error
- *           isUpdating: false,
- *           updatingError: null, // updating error
- *           data: {}
- *         }
+ *     [spaceId:envId]: {
+ *       [key]: {
+ *         isPending: false,
+ *         error: null, // fetching error
+ *         isUpdating: false,
+ *         updatingError: null, // updating error
+ *         data: {}
  *       }
  *     }
  *   },
@@ -138,19 +137,16 @@ function userStateReducer(state = {}, action) {
 // reducer structure, so they use this updater
 function updateEnvState({ state, payload, newData }) {
   const { key, spaceId, envId } = payload;
-  const currentSpaceData = state[spaceId] || {};
-  const currentEnvData = currentSpaceData[envId] || {};
-  const currentKeyData = currentEnvData[key];
+  const spaceEnvKey = makeEnvKey({ spaceId, envId });
+  const currentData = state[spaceEnvKey] || {};
+  const currentKeyData = currentData[key];
   return {
     ...state,
-    [spaceId]: {
-      ...currentSpaceData,
-      [envId]: {
-        ...currentEnvData,
-        [key]: {
-          ...currentKeyData,
-          ...newData
-        }
+    [spaceEnvKey]: {
+      ...currentData,
+      [key]: {
+        ...currentKeyData,
+        ...newData
       }
     }
   };
