@@ -12,6 +12,7 @@ import WebtaskWebhookTemplate from './WebtaskWebhookTemplate';
 import GitlabWebhookTemplate from './GitlabWebhookTemplate';
 import AlgoliaWebhookTemplate from './AlgoliaWebhookTemplate';
 import ElasticWebhookTemplate from './ElasticWebhookTemplate';
+import AwsLambdaWebhookTemplate from './AwsLambdaWebhookTemplate';
 import AwsS3WebhookTemplate from './AwsS3WebhookTemplate';
 import AwsSqsWebhookTemplate from './AwsSqsWebhookTemplate';
 
@@ -30,6 +31,7 @@ export default [
   AlgoliaWebhookTemplate,
   ElasticWebhookTemplate,
   JiraWebhookTemplate,
+  AwsLambdaWebhookTemplate,
   AwsS3WebhookTemplate,
   AwsSqsWebhookTemplate
 ];
