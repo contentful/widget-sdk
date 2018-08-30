@@ -96,8 +96,7 @@ export function createOrganizationEndpoint(baseUrl, organizationId, auth) {
   return create(organizationBaseUrl, auth);
 }
 
-
-export function createUsersEndpoint (baseUrl, auth) {
+export function createUsersEndpoint(baseUrl, auth) {
   const usersBaseUrl = joinPath([baseUrl, 'users', 'me']);
 
   return create(usersBaseUrl, auth);

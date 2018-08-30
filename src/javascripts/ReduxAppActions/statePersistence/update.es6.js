@@ -7,7 +7,7 @@ const updatingValues = {};
 
 // update state persistence API. if request is in progress, we'll save
 // the new data, and update once again after original request is done.
-export function update (args) {
+export function update(args) {
   const { params, setPending, setSuccess, setFailure, fetch, key, payload, fallbackData } = args;
 
   if (!updatingValues[key]) {
@@ -53,68 +53,71 @@ export function update (args) {
       updatingValues[key].promises = [];
     }
 
-    return newPromise.then(newValue => {
-      const { value, promises } = updatingValues[key];
+    return newPromise.then(
+      newValue => {
+        const { value, promises } = updatingValues[key];
 
-      // you can write only JSON to the service
-      // so value has to be an object
-      if (value) {
-        // we need to send new value, but `sys` was updated by the server
-        // so we need to take the new value – since we use optimistic updates
-        // it will include previously sent data in it, but we need an updates
-        // sys property. Value itself should always contain all changes
-        const valueWithSys = {
-          ...value,
-          sys: newValue.sys
-        };
+        // you can write only JSON to the service
+        // so value has to be an object
+        if (value) {
+          // we need to send new value, but `sys` was updated by the server
+          // so we need to take the new value – since we use optimistic updates
+          // it will include previously sent data in it, but we need an updates
+          // sys property. Value itself should always contain all changes
+          const valueWithSys = {
+            ...value,
+            sys: newValue.sys
+          };
 
-        // we need to remove value, since we are performing another request
-        // with this value. If new request will come up, we'll end up here again
-        // otherwise, we don't need it. All promises still have to be resolved
-        // after all values being pushed to the server
-        updatingValues[key].value = null;
-        // also new promise will be written next time.
-        updatingValues[key].promise = null;
+          // we need to remove value, since we are performing another request
+          // with this value. If new request will come up, we'll end up here again
+          // otherwise, we don't need it. All promises still have to be resolved
+          // after all values being pushed to the server
+          updatingValues[key].value = null;
+          // also new promise will be written next time.
+          updatingValues[key].promise = null;
 
-        return update({
-          ...args,
-          // we update fallbackData, since it is the latest data from the server
-          // so in case the next request fails, we will rollback to the latest
-          // reply from the server
-          fallbackData: newValue,
-          payload: valueWithSys
-        });
-      } else {
-        setSuccess(newValue);
-        promises.forEach(fn => fn(newValue));
+          return update({
+            ...args,
+            // we update fallbackData, since it is the latest data from the server
+            // so in case the next request fails, we will rollback to the latest
+            // reply from the server
+            fallbackData: newValue,
+            payload: valueWithSys
+          });
+        } else {
+          setSuccess(newValue);
+          promises.forEach(fn => fn(newValue));
 
-        // dump all data for this key
-        // next update will start it again
-        updatingValues[key] = null;
+          // dump all data for this key
+          // next update will start it again
+          updatingValues[key] = null;
 
-        return newValue;
+          return newValue;
+        }
+      },
+      error => {
+        const { value, promises } = updatingValues[key];
+
+        // even we have an error, it is fine – we can try to write the next data
+        // without changing sys property (since server failed to write an updated version)
+        if (value) {
+          updatingValues[key].value = null;
+          updatingValues[key].promise = null;
+          return update({
+            ...args,
+            payload: value
+          });
+        } else {
+          // we need to write the latest data from the server to redux
+          // this data can't be non-server, since this code is executed only by
+          // the first updating request, not batching (all batching requests just give data).
+          setFailure({ error, fallbackData });
+          promises.forEach(fn => fn(null));
+
+          updatingValues[key] = null;
+        }
       }
-    }, error => {
-      const { value, promises } = updatingValues[key];
-
-      // even we have an error, it is fine – we can try to write the next data
-      // without changing sys property (since server failed to write an updated version)
-      if (value) {
-        updatingValues[key].value = null;
-        updatingValues[key].promise = null;
-        return update({
-          ...args,
-          payload: value
-        });
-      } else {
-        // we need to write the latest data from the server to redux
-        // this data can't be non-server, since this code is executed only by
-        // the first updating request, not batching (all batching requests just give data).
-        setFailure({ error, fallbackData });
-        promises.forEach(fn => fn(null));
-
-        updatingValues[key] = null;
-      }
-    });
+    );
   }
 }

@@ -53,7 +53,7 @@ export default combineReducers({
   env: envStateReducer
 });
 
-function updateUserState ({ state, key, newData }) {
+function updateUserState({ state, key, newData }) {
   const currentData = state[key];
   return {
     ...state,
@@ -64,7 +64,7 @@ function updateUserState ({ state, key, newData }) {
   };
 }
 
-function userStateReducer (state = {}, action) {
+function userStateReducer(state = {}, action) {
   switch (action.type) {
     case actions.USER_STATE_PENDING: {
       return updateUserState({
@@ -136,7 +136,7 @@ function userStateReducer (state = {}, action) {
 
 // common envState and userEnvState share the same
 // reducer structure, so they use this updater
-function updateEnvState ({ state, payload, newData }) {
+function updateEnvState({ state, payload, newData }) {
   const { key, spaceId, envId } = payload;
   const currentSpaceData = state[spaceId] || {};
   const currentEnvData = currentSpaceData[envId] || {};
@@ -156,7 +156,7 @@ function updateEnvState ({ state, payload, newData }) {
   };
 }
 
-function userEnvStateReducer (state = {}, action) {
+function userEnvStateReducer(state = {}, action) {
   switch (action.type) {
     case actions.USER_ENV_STATE_PENDING: {
       return updateEnvState({
@@ -225,7 +225,7 @@ function userEnvStateReducer (state = {}, action) {
   }
 }
 
-function envStateReducer (state = {}, action) {
+function envStateReducer(state = {}, action) {
   switch (action.type) {
     case actions.ENV_STATE_PENDING: {
       return updateEnvState({

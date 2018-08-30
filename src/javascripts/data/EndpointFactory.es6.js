@@ -39,6 +39,6 @@ export function createSpaceEndpoint(spaceId, envId) {
   return Endpoint.createSpaceEndpoint(apiUrl(), spaceId, auth, envId);
 }
 
-export function createUsersEndpoint () {
+export function createUsersEndpoint() {
   return Endpoint.createUsersEndpoint(apiUrl(), auth);
 }

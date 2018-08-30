@@ -1,12 +1,12 @@
 import { noop } from 'lodash';
 
-describe('State persistence update function', function () {
-  beforeEach(function () {
+describe('State persistence update function', function() {
+  beforeEach(function() {
     module('contentful/test');
     this.update = this.$inject('ReduxAppActions/statePersistence/update').update;
   });
 
-  it('should resolve after first call is done if no other calls in the meantime', async function () {
+  it('should resolve after first call is done if no other calls in the meantime', async function() {
     const setSuccess = sinon.spy();
     const data = {
       some: '123'
@@ -26,7 +26,7 @@ describe('State persistence update function', function () {
     expect(setSuccess.calledWith(data)).toBe(true);
   });
 
-  it('should call `setFailure` in case fetch returns a rejected promise', async function () {
+  it('should call `setFailure` in case fetch returns a rejected promise', async function() {
     const setFailure = sinon.spy();
     const data = {
       some: '123'
@@ -46,7 +46,7 @@ describe('State persistence update function', function () {
     expect(setFailure.calledOnce).toBe(true);
   });
 
-  it('should call `setSuccess` with a latest value from the fetch function', async function () {
+  it('should call `setSuccess` with a latest value from the fetch function', async function() {
     const setSuccess = sinon.stub();
     const updatePromise = this.update({
       // params, setPending, setSuccess, setFailure, fetch, key, payload, fallbackData
@@ -60,7 +60,7 @@ describe('State persistence update function', function () {
         },
         someValue: true
       },
-      fetch: (payload) => {
+      fetch: payload => {
         const newPayload = {
           ...payload,
           sys: {
@@ -103,7 +103,7 @@ describe('State persistence update function', function () {
     });
   });
 
-  it('two updates should receive the same value in promise', async function () {
+  it('two updates should receive the same value in promise', async function() {
     const setSuccess = sinon.stub();
     const updatePromise = this.update({
       // params, setPending, setSuccess, setFailure, fetch, key, payload, fallbackData
@@ -117,7 +117,7 @@ describe('State persistence update function', function () {
         },
         someValue: true
       },
-      fetch: (payload) => {
+      fetch: payload => {
         const newPayload = {
           ...payload,
           sys: {
@@ -149,15 +149,12 @@ describe('State persistence update function', function () {
       fallbackData: {}
     });
 
-    const [data1, data2] = await Promise.all([
-      updatePromise,
-      secondUpdatePromise
-    ]);
+    const [data1, data2] = await Promise.all([updatePromise, secondUpdatePromise]);
 
     expect(data1).toBe(data2);
   });
 
-  it('should batch all updates while there is a pending request', async function () {
+  it('should batch all updates while there is a pending request', async function() {
     const setSuccess = sinon.stub();
     const updatePromise = this.update({
       // params, setPending, setSuccess, setFailure, fetch, key, payload, fallbackData
@@ -171,7 +168,7 @@ describe('State persistence update function', function () {
         },
         someValue: true
       },
-      fetch: (payload) => {
+      fetch: payload => {
         const newPayload = {
           ...payload,
           sys: {
@@ -235,7 +232,7 @@ describe('State persistence update function', function () {
     });
   });
 
-  it('should try to update even if the first call failed and during update another request came', async function () {
+  it('should try to update even if the first call failed and during update another request came', async function() {
     const setSuccess = sinon.stub();
     const updatePromise = this.update({
       // params, setPending, setSuccess, setFailure, fetch, key, payload, fallbackData
@@ -250,10 +247,12 @@ describe('State persistence update function', function () {
         },
         someValue: true
       },
-      fetch: (payload) => {
+      fetch: payload => {
         if (payload.sys.version === 15) {
           // eslint-disable-next-line no-unused-vars
-          return new Promise((resolve, reject) => setTimeout(reject, 100, new Error('something went wrong')));
+          return new Promise((resolve, reject) =>
+            setTimeout(reject, 100, new Error('something went wrong'))
+          );
         }
 
         const newPayload = {
@@ -320,7 +319,7 @@ describe('State persistence update function', function () {
     });
   });
 
-  it('should pass a fallbackValue to the `setFailure` handler', async function () {
+  it('should pass a fallbackValue to the `setFailure` handler', async function() {
     const setFailure = sinon.spy();
     const data = {
       some: '123'
@@ -341,7 +340,7 @@ describe('State persistence update function', function () {
     expect(setFailure.getCall(0).args[0]).toEqual({ error, fallbackData: data });
   });
 
-  it('should update a fallback value if first call (before batching) succeeded', async function () {
+  it('should update a fallback value if first call (before batching) succeeded', async function() {
     const setFailure = sinon.spy();
     const error = new Error('something');
     const updatePromise = this.update({
@@ -350,7 +349,7 @@ describe('State persistence update function', function () {
       setPending: noop,
       setSuccess: noop,
       setFailure,
-      fetch: (payload) => {
+      fetch: payload => {
         if (payload.sys.version === 2) {
           // eslint-disable-next-line no-unused-vars
           return new Promise((resolve, reject) => setTimeout(reject, 100, error));
