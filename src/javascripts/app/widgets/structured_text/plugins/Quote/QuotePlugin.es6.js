@@ -11,7 +11,7 @@ const plugin = (type, tagName, hotkey) => {
       }
     },
     onKeyDown: (e, change) => {
-      if (e.key === 'Enter') {
+      if (isHotkey('enter', e)) {
         const { value } = change;
         const { blocks } = value;
         const getCurrentblock = blocks.get(0);

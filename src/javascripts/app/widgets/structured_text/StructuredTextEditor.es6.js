@@ -32,6 +32,7 @@ import {
   HeadingDropdown
 } from './plugins/Heading';
 
+import NewLinePlugin from './plugins/NewLinePlugin';
 import { ParagraphPlugin } from './plugins/Paragraph';
 import EntryLinkBlock, { EntryLinkBlockPlugin } from './plugins/EntryLinkBlock';
 import { ListPlugin, UnorderedList, OrderedList } from './plugins/List';
@@ -57,7 +58,8 @@ const plugins = [
   EntryLinkBlockPlugin(),
   EditList(),
   ListPlugin(),
-  TrailingBlock()
+  TrailingBlock(),
+  NewLinePlugin()
 ];
 
 const schema = Schema.fromJSON(schemaJson);
