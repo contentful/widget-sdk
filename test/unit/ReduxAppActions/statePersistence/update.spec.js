@@ -17,7 +17,7 @@ describe('State persistence update function', function() {
       setPending: noop,
       setSuccess,
       setFailure: noop,
-      fetch: () => Promise.resolve(data),
+      makeRequest: () => Promise.resolve(data),
       key: 'some_random_key',
       payload: {},
       fallbackData: {}
@@ -37,7 +37,7 @@ describe('State persistence update function', function() {
       setPending: noop,
       setSuccess: noop,
       setFailure,
-      fetch: () => Promise.reject(data),
+      makeRequest: () => Promise.reject(data),
       key: 'some_random_key',
       payload: {},
       fallbackData: {}
@@ -60,7 +60,7 @@ describe('State persistence update function', function() {
         },
         someValue: true
       },
-      fetch: payload => {
+      makeRequest: payload => {
         const newPayload = {
           ...payload,
           sys: {
@@ -80,7 +80,7 @@ describe('State persistence update function', function() {
       setPending: noop,
       setSuccess: noop,
       setFailure: noop,
-      fetch: noop,
+      makeRequest: noop,
       key: 'some_random_key',
       payload: {
         sys: {
@@ -117,7 +117,7 @@ describe('State persistence update function', function() {
         },
         someValue: true
       },
-      fetch: payload => {
+      makeRequest: payload => {
         const newPayload = {
           ...payload,
           sys: {
@@ -137,7 +137,7 @@ describe('State persistence update function', function() {
       setPending: noop,
       setSuccess: noop,
       setFailure: noop,
-      fetch: noop,
+      makeRequest: noop,
       key: 'some_random_key',
       payload: {
         sys: {
@@ -168,7 +168,7 @@ describe('State persistence update function', function() {
         },
         someValue: true
       },
-      fetch: payload => {
+      makeRequest: payload => {
         const newPayload = {
           ...payload,
           sys: {
@@ -188,7 +188,7 @@ describe('State persistence update function', function() {
       setPending: noop,
       setSuccess: noop,
       setFailure: noop,
-      fetch: noop,
+      makeRequest: noop,
       key: 'some_random_key',
       payload: {
         sys: {
@@ -206,7 +206,7 @@ describe('State persistence update function', function() {
       setPending: noop,
       setSuccess: noop,
       setFailure: noop,
-      fetch: noop,
+      makeRequest: noop,
       key: 'some_random_key',
       payload: {
         sys: {
@@ -247,7 +247,7 @@ describe('State persistence update function', function() {
         },
         someValue: true
       },
-      fetch: payload => {
+      makeRequest: payload => {
         if (payload.sys.version === 15) {
           // eslint-disable-next-line no-unused-vars
           return new Promise((resolve, reject) =>
@@ -274,7 +274,7 @@ describe('State persistence update function', function() {
       setPending: noop,
       setSuccess: noop,
       setFailure: noop,
-      fetch: noop,
+      makeRequest: noop,
       key: 'some_random_key',
       payload: {
         sys: {
@@ -292,7 +292,7 @@ describe('State persistence update function', function() {
       setPending: noop,
       setSuccess: noop,
       setFailure: noop,
-      fetch: noop,
+      makeRequest: noop,
       key: 'some_random_key',
       payload: {
         sys: {
@@ -331,7 +331,7 @@ describe('State persistence update function', function() {
       setPending: noop,
       setSuccess: noop,
       setFailure,
-      fetch: () => Promise.reject(error),
+      makeRequest: () => Promise.reject(error),
       key: 'some_random_key',
       payload: {},
       fallbackData: data
@@ -349,7 +349,7 @@ describe('State persistence update function', function() {
       setPending: noop,
       setSuccess: noop,
       setFailure,
-      fetch: payload => {
+      makeRequest: payload => {
         if (payload.sys.version === 2) {
           // eslint-disable-next-line no-unused-vars
           return new Promise((resolve, reject) => setTimeout(reject, 100, error));
@@ -380,7 +380,7 @@ describe('State persistence update function', function() {
       setPending: noop,
       setSuccess: noop,
       setFailure,
-      fetch: () => Promise.reject(error),
+      makeRequest: () => Promise.reject(error),
       key: 'some_random_key',
       payload: {
         sys: {

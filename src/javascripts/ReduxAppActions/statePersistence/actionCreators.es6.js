@@ -3,6 +3,12 @@ import * as actions from './actions';
 import * as selectors from './selectors';
 import { update } from './update';
 
+// since it is an internal API, we require alpha headers
+// for all endpoints with state persistence
+const alphaHeaders = {
+  'x-contentful-enable-alpha-feature': 'state-persistence'
+};
+
 /**
  * @description State persistence action creators.
  * There is a lot of duplication, but abstracting might reduce
@@ -24,7 +30,7 @@ import { update } from './update';
 
 export function fetchUserState({ key }) {
   return async dispatch => {
-    dispatch(actions.userStatePending({ key }));
+    dispatch(actions.fetchUserStatePending({ key }));
 
     const endpoint = createUsersEndpoint();
 
@@ -34,16 +40,14 @@ export function fetchUserState({ key }) {
           method: 'GET',
           path: ['states', key]
         },
-        {
-          'x-contentful-enable-alpha-feature': 'user-state-persistence'
-        }
+        alphaHeaders
       );
 
-      dispatch(actions.userStateSuccess({ key, data }));
+      dispatch(actions.fetchUserStateSuccess({ key, data }));
 
       return data;
     } catch (error) {
-      dispatch(actions.userStateFailure({ key, error }));
+      dispatch(actions.fetchUserStateFailure({ key, error }));
     }
   };
 }
@@ -59,7 +63,7 @@ export function updateUserState(params) {
       setSuccess: data => dispatch(actions.updateUserStateSuccess({ key, data })),
       setFailure: ({ error, fallbackData }) =>
         dispatch(actions.updateUserStateFailure({ key, error, data: fallbackData })),
-      fetch: data => {
+      makeRequest: data => {
         const endpoint = createUsersEndpoint();
         return endpoint(
           {
@@ -67,9 +71,7 @@ export function updateUserState(params) {
             path: ['states', key],
             data
           },
-          {
-            'x-contentful-enable-alpha-feature': 'user-state-persistence'
-          }
+          alphaHeaders
         );
       },
       key: `user:${key}`,
@@ -80,7 +82,7 @@ export function updateUserState(params) {
 
 export function fetchUserEnvState({ key, spaceId, envId }) {
   return async dispatch => {
-    dispatch(actions.userEnvStatePending({ key, spaceId, envId }));
+    dispatch(actions.fetchUserEnvStatePending({ key, spaceId, envId }));
 
     const endpoint = createSpaceEndpoint(spaceId, envId);
 
@@ -90,16 +92,14 @@ export function fetchUserEnvState({ key, spaceId, envId }) {
           method: 'GET',
           path: ['user_states', key]
         },
-        {
-          'x-contentful-enable-alpha-feature': 'user-state-persistence'
-        }
+        alphaHeaders
       );
 
-      dispatch(actions.userEnvStateSuccess({ key, spaceId, envId, data }));
+      dispatch(actions.fetchUserEnvStateSuccess({ key, spaceId, envId, data }));
 
       return data;
     } catch (error) {
-      dispatch(actions.userEnvStateFailure({ key, spaceId, envId, error }));
+      dispatch(actions.fetchUserEnvStateFailure({ key, spaceId, envId, error }));
     }
   };
 }
@@ -119,7 +119,7 @@ export function updateUserEnvState(params) {
         dispatch(
           actions.updateUserEnvStateFailure({ key, spaceId, envId, error, data: fallbackData })
         ),
-      fetch: data => {
+      makeRequest: data => {
         const endpoint = createSpaceEndpoint(spaceId, envId);
         return endpoint(
           {
@@ -127,9 +127,7 @@ export function updateUserEnvState(params) {
             path: ['user_states', key],
             data
           },
-          {
-            'x-contentful-enable-alpha-feature': 'user-state-persistence'
-          }
+          alphaHeaders
         );
       },
       key: `user_env:${spaceId}:${envId}:${key}`,
@@ -140,7 +138,7 @@ export function updateUserEnvState(params) {
 
 export function fetchEnvState({ key, spaceId, envId }) {
   return async dispatch => {
-    dispatch(actions.envStatePending({ key, spaceId, envId }));
+    dispatch(actions.fetchEnvStatePending({ key, spaceId, envId }));
 
     try {
       const endpoint = createSpaceEndpoint(spaceId, envId);
@@ -150,16 +148,14 @@ export function fetchEnvState({ key, spaceId, envId }) {
           method: 'GET',
           path: ['user_states', key]
         },
-        {
-          'x-contentful-enable-alpha-feature': 'user-state-persistence'
-        }
+        alphaHeaders
       );
 
-      dispatch(actions.envStateSuccess({ key, spaceId, envId, data }));
+      dispatch(actions.fetchEnvStateSuccess({ key, spaceId, envId, data }));
 
       return data;
     } catch (error) {
-      dispatch(actions.envStateFailure({ key, spaceId, envId, error }));
+      dispatch(actions.fetchEnvStateFailure({ key, spaceId, envId, error }));
     }
   };
 }
@@ -176,7 +172,7 @@ export function updateEnvState(params) {
       setSuccess: data => dispatch(actions.updateEnvStateSuccess({ key, spaceId, envId, data })),
       setFailure: ({ error, fallbackData }) =>
         dispatch(actions.updateEnvStateFailure({ key, spaceId, envId, error, data: fallbackData })),
-      fetch: data => {
+      makeRequest: data => {
         const endpoint = createSpaceEndpoint(spaceId, envId);
         return endpoint(
           {
@@ -184,9 +180,7 @@ export function updateEnvState(params) {
             path: ['states', key],
             data
           },
-          {
-            'x-contentful-enable-alpha-feature': 'user-state-persistence'
-          }
+          alphaHeaders
         );
       },
       key: `env:${spaceId}:${envId}:${key}`,

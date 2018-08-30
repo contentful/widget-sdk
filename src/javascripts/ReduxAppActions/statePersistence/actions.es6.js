@@ -1,23 +1,23 @@
-export const USER_STATE_PENDING = 'USER_STATE_PENDING';
-export function userStatePending({ key }) {
+export const FETCH_USER_STATE_PENDING = 'FETCH_USER_STATE_PENDING';
+export function fetchUserStatePending({ key }) {
   return {
-    type: USER_STATE_PENDING,
+    type: FETCH_USER_STATE_PENDING,
     payload: { key }
   };
 }
 
-export const USER_STATE_SUCCESS = 'USER_STATE_SUCCESS';
-export function userStateSuccess({ key, data }) {
+export const FETCH_USER_STATE_SUCCESS = 'FETCH_USER_STATE_SUCCESS';
+export function fetchUserStateSuccess({ key, data }) {
   return {
-    type: USER_STATE_SUCCESS,
+    type: FETCH_USER_STATE_SUCCESS,
     payload: { key, data }
   };
 }
 
-export const USER_STATE_FAILURE = 'USER_STATE_FAILURE';
-export function userStateFailure({ key, error }) {
+export const FETCH_USER_STATE_FAILURE = 'FETCH_USER_STATE_FAILURE';
+export function fetchUserStateFailure({ key, error }) {
   return {
-    type: USER_STATE_FAILURE,
+    type: FETCH_USER_STATE_FAILURE,
     payload: { key, error }
   };
 }
@@ -46,26 +46,26 @@ export function updateUserStateFailure({ key, error, data }) {
   };
 }
 
-export const USER_ENV_STATE_PENDING = 'USER_ENV_STATE_PENDING';
-export function userEnvStatePending({ key, spaceId, envId }) {
+export const FETCH_USER_ENV_STATE_PENDING = 'FETCH_USER_ENV_STATE_PENDING';
+export function fetchUserEnvStatePending({ key, spaceId, envId }) {
   return {
-    type: USER_ENV_STATE_PENDING,
+    type: FETCH_USER_ENV_STATE_PENDING,
     payload: { key, spaceId, envId }
   };
 }
 
-export const USER_ENV_STATE_SUCCESS = 'USER_ENV_STATE_SUCCESS';
-export function userEnvStateSuccess({ key, spaceId, envId, data }) {
+export const FETCH_USER_ENV_STATE_SUCCESS = 'FETCH_USER_ENV_STATE_SUCCESS';
+export function fetchUserEnvStateSuccess({ key, spaceId, envId, data }) {
   return {
-    type: USER_ENV_STATE_SUCCESS,
+    type: FETCH_USER_ENV_STATE_SUCCESS,
     payload: { key, spaceId, envId, data }
   };
 }
 
-export const USER_ENV_STATE_FAILURE = 'USER_ENV_STATE_FAILURE';
-export function userEnvStateFailure({ key, spaceId, envId, error }) {
+export const FETCH_USER_ENV_STATE_FAILURE = 'FETCH_USER_ENV_STATE_FAILURE';
+export function fetchUserEnvStateFailure({ key, spaceId, envId, error }) {
   return {
-    type: USER_ENV_STATE_FAILURE,
+    type: FETCH_USER_ENV_STATE_FAILURE,
     payload: { key, spaceId, envId, error }
   };
 }
@@ -94,26 +94,26 @@ export function updateUserEnvStateFailure({ key, spaceId, envId, error, data }) 
   };
 }
 
-export const ENV_STATE_PENDING = 'ENV_STATE_PENDING';
-export function envStatePending({ key, spaceId, envId }) {
+export const FETCH_ENV_STATE_PENDING = 'FETCH_ENV_STATE_PENDING';
+export function fetchEnvStatePending({ key, spaceId, envId }) {
   return {
-    type: ENV_STATE_PENDING,
+    type: FETCH_ENV_STATE_PENDING,
     payload: { key, spaceId, envId }
   };
 }
 
-export const ENV_STATE_SUCCESS = 'ENV_STATE_SUCCESS';
-export function envStateSuccess({ key, spaceId, envId, data }) {
+export const FETCH_ENV_STATE_SUCCESS = 'FETCH_ENV_STATE_SUCCESS';
+export function fetchEnvStateSuccess({ key, spaceId, envId, data }) {
   return {
-    type: ENV_STATE_SUCCESS,
+    type: FETCH_ENV_STATE_SUCCESS,
     payload: { key, spaceId, envId, data }
   };
 }
 
-export const ENV_STATE_FAILURE = 'ENV_STATE_FAILURE';
-export function envStateFailure({ key, spaceId, envId, error }) {
+export const FETCH_ENV_STATE_FAILURE = 'FETCH_ENV_STATE_FAILURE';
+export function fetchEnvStateFailure({ key, spaceId, envId, error }) {
   return {
-    type: ENV_STATE_FAILURE,
+    type: FETCH_ENV_STATE_FAILURE,
     payload: { key, spaceId, envId, error }
   };
 }

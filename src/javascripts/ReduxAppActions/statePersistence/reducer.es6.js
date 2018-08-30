@@ -66,7 +66,7 @@ function updateUserState({ state, key, newData }) {
 
 function userStateReducer(state = {}, action) {
   switch (action.type) {
-    case actions.USER_STATE_PENDING: {
+    case actions.FETCH_USER_STATE_PENDING: {
       return updateUserState({
         key: action.payload.key,
         state,
@@ -76,7 +76,7 @@ function userStateReducer(state = {}, action) {
         }
       });
     }
-    case actions.USER_STATE_SUCCESS: {
+    case actions.FETCH_USER_STATE_SUCCESS: {
       return updateUserState({
         key: action.payload.key,
         state,
@@ -86,7 +86,7 @@ function userStateReducer(state = {}, action) {
         }
       });
     }
-    case actions.USER_STATE_FAILURE: {
+    case actions.FETCH_USER_STATE_FAILURE: {
       return updateUserState({
         key: action.payload.key,
         state,
@@ -158,7 +158,7 @@ function updateEnvState({ state, payload, newData }) {
 
 function userEnvStateReducer(state = {}, action) {
   switch (action.type) {
-    case actions.USER_ENV_STATE_PENDING: {
+    case actions.FETCH_USER_ENV_STATE_PENDING: {
       return updateEnvState({
         state,
         payload: action.payload,
@@ -168,7 +168,7 @@ function userEnvStateReducer(state = {}, action) {
         }
       });
     }
-    case actions.USER_ENV_STATE_SUCCESS: {
+    case actions.FETCH_USER_ENV_STATE_SUCCESS: {
       return updateEnvState({
         state,
         payload: action.payload,
@@ -178,7 +178,7 @@ function userEnvStateReducer(state = {}, action) {
         }
       });
     }
-    case actions.USER_ENV_STATE_FAILURE: {
+    case actions.FETCH_USER_ENV_STATE_FAILURE: {
       return updateEnvState({
         state,
         payload: action.payload,
@@ -227,7 +227,7 @@ function userEnvStateReducer(state = {}, action) {
 
 function envStateReducer(state = {}, action) {
   switch (action.type) {
-    case actions.ENV_STATE_PENDING: {
+    case actions.FETCH_ENV_STATE_PENDING: {
       return updateEnvState({
         state,
         payload: action.payload,
@@ -237,7 +237,7 @@ function envStateReducer(state = {}, action) {
         }
       });
     }
-    case actions.ENV_STATE_SUCCESS: {
+    case actions.FETCH_ENV_STATE_SUCCESS: {
       return updateEnvState({
         state,
         payload: action.payload,
@@ -247,7 +247,7 @@ function envStateReducer(state = {}, action) {
         }
       });
     }
-    case actions.ENV_STATE_FAILURE: {
+    case actions.FETCH_ENV_STATE_FAILURE: {
       return updateEnvState({
         state,
         payload: action.payload,
