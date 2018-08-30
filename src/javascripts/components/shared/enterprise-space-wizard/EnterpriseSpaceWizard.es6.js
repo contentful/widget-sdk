@@ -205,6 +205,12 @@ class Info extends React.Component {
     this.setState({ showingMore: !this.state.showingMore });
   }
 
+  onLearnMore() {
+    window.open(
+      'https://www.contentful.com/pricing/?faq_category=payments&faq=what-is-a-proof-of-concept-poc-space#what-is-a-proof-of-concept-poc-space'
+    );
+  }
+
   render() {
     return (
       <section style={{ marginBottom: '30px' }}>
@@ -220,11 +226,7 @@ class Info extends React.Component {
             <p style={{ marginBottom: '20px' }}>
               {`Proof of concept spaces share the same limits for API requests and asset bandwidth with the
                 other spaces in your organization. `}
-              <a
-                href="https://www.contentful.com/r/knowledgebase/fair-use/#poc-proof-of-concept-limited-use-case"
-                target="blank">
-                Learn more
-              </a>
+              <TextLink onClick={() => this.onLearnMore()}>Learn more</TextLink>
             </p>
           </div>
         )}
