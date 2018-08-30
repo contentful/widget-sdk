@@ -11,6 +11,7 @@ import TravisCIWebhookTemplate from './TravisCIWebhookTemplate';
 import WebtaskWebhookTemplate from './WebtaskWebhookTemplate';
 import GitlabWebhookTemplate from './GitlabWebhookTemplate';
 import AlgoliaWebhookTemplate from './AlgoliaWebhookTemplate';
+import ElasticWebhookTemplate from './ElasticWebhookTemplate';
 
 export default [
   NetlifyWebhookTemplate,
@@ -25,5 +26,6 @@ export default [
   MailgunWebhookTemplate,
   PubNubWebhookTemplate,
   AlgoliaWebhookTemplate,
+  ElasticWebhookTemplate,
   JiraWebhookTemplate
 ];
