@@ -39,8 +39,10 @@ export default class FetchEntry extends React.Component {
     try {
       this.setState({ pending: { entry: true, thumbnail: true } });
       const entry = await getEntry(props.node.data.get('target').sys.id);
+      const contentType = await getContentType(entry.data.sys.contentType.sys.id);
       this.setState({
         entry: entry.data,
+        contentTypeName: contentType.data.name,
         entryTitle: getEntryTitle(entry),
         entryDescription: getEntryDescription(entry),
         entryStatus: getEntryStatus(entry),
@@ -60,6 +62,10 @@ export default class FetchEntry extends React.Component {
   render() {
     return this.props.render(this.state);
   }
+}
+
+function getContentType(contentTypeId) {
+  return spaceContext.space.getContentType(contentTypeId);
 }
 
 function getEntryTitle(entry) {

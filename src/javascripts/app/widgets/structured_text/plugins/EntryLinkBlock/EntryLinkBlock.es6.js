@@ -36,6 +36,7 @@ export default class LinkedEntryBlock extends React.Component {
   renderReferenceCard({
     entry,
     entryTitle,
+    contentTypeName,
     entryDescription,
     entryThumbnail,
     entryStatus,
@@ -47,7 +48,7 @@ export default class LinkedEntryBlock extends React.Component {
       <ReferenceCard
         {...this.props.attributes}
         title={entryTitle}
-        contentType={entry.sys.contentType.sys.id}
+        contentType={contentTypeName}
         extraClassNames="structured-text__reference-card"
         description={entryDescription}
         selected={isSelected}
