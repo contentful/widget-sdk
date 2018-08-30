@@ -12,6 +12,9 @@ describe('statePersistence redux module', () => {
     const thunk = this.$inject('redux-thunk').default;
     const reducer = this.$inject('ReduxAppActions/statePersistence/reducer').default;
     this.actions = this.$inject('ReduxAppActions/statePersistence/actionCreators');
+    this.deleteEnvironmentSuccess = this.$inject(
+      'ReduxAppActions/environments/actions'
+    ).deleteEnvironmentSuccess;
     this.selectors = this.$inject('ReduxAppActions/statePersistence/selectors');
     this.store = createStore(
       combineReducers({
@@ -38,7 +41,8 @@ describe('statePersistence redux module', () => {
       params: {
         spaceId: 'w56asxg',
         envId: 'master'
-      }
+      },
+      environmentsTest: true
     },
     {
       name: 'env state module',
@@ -49,9 +53,10 @@ describe('statePersistence redux module', () => {
       params: {
         spaceId: 'w56asxg',
         envId: 'master'
-      }
+      },
+      environmentsTest: true
     }
-  ].map(({ name, endpoint, fetchAction, updateAction, selector, params }) => {
+  ].map(({ name, endpoint, fetchAction, updateAction, selector, params, environmentsTest }) => {
     describe(name, () => {
       afterEach(async function() {
         if (this.promise) {
@@ -59,7 +64,7 @@ describe('statePersistence redux module', () => {
         }
       });
 
-      it('fetch user state correctly', async function() {
+      it('fetch state correctly', async function() {
         const data = {
           sys: {
             version: 1
@@ -346,6 +351,32 @@ describe('statePersistence redux module', () => {
         expect(persistenceState1.data).toBe(data1);
         expect(persistenceState2.data).toBe(data2);
       });
+
+      if (environmentsTest) {
+        it('should update data after environment deletion', async function() {
+          const data = {
+            sys: {
+              version: 1
+            },
+            some: true
+          };
+          const key = 'my_key';
+          this[endpoint].returns(() => {
+            return Promise.resolve(data);
+          });
+          await this.store.dispatch(this.actions[fetchAction]({ key, ...params }));
+
+          this.store.dispatch(this.deleteEnvironmentSuccess(params));
+
+          const persistenceState = this.selectors[selector]({
+            state: this.store.getState(),
+            key,
+            ...params
+          });
+
+          expect(persistenceState).toEqual({});
+        });
+      }
     });
   });
 });

@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import { makeEnvKey } from './helpers';
+import { DELETE_ENVIRONMENT_SUCCESS } from '../environments/actions';
 
 /**
  * Structure:
@@ -216,6 +217,18 @@ function userEnvStateReducer(state = {}, action) {
         }
       });
     }
+    case DELETE_ENVIRONMENT_SUCCESS: {
+      const { spaceId, envId } = action.payload;
+
+      if (spaceId && envId) {
+        return {
+          ...state,
+          [makeEnvKey({ spaceId, envId })]: undefined
+        };
+      } else {
+        return state;
+      }
+    }
     default:
       return state;
   }
@@ -284,6 +297,18 @@ function envStateReducer(state = {}, action) {
           data: action.payload.data
         }
       });
+    }
+    case DELETE_ENVIRONMENT_SUCCESS: {
+      const { spaceId, envId } = action.payload;
+
+      if (spaceId && envId) {
+        return {
+          ...state,
+          [makeEnvKey({ spaceId, envId })]: undefined
+        };
+      } else {
+        return state;
+      }
     }
     default:
       return state;
