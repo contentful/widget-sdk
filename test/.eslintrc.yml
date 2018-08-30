@@ -32,3 +32,4 @@ globals:
   expect: false
   spyOn: false
   fail: false
+  global: false

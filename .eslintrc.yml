@@ -4,12 +4,17 @@
 root: true
 extends:
   - 'eslint:recommended'
-  - 'standard'
   - 'plugin:react/recommended'
   - 'prettier'
-
+  - 'prettier/react'
+settings:
+  react:
+    version: "16.2.0"
 env:
   browser: true
+globals:
+  setTimeout: false
+  Promise: false
 parser: 'babel-eslint'
 rules:
   react/display-name: "off"
@@ -18,15 +23,12 @@ rules:
   no-useless-return: "off"
   no-mixed-operators: "off"
 
-  padded-blocks: [2, "never"]
-
-  semi: ["error", "always"]
+  padded-blocks: ["warn", "never"]
 
   # Other
   no-use-before-define: [error, { functions: false, classes: false }]
-  no-multiple-empty-lines: ["error", {max: 2, maxBOF: 0, maxEOF: 0}]
   no-unused-vars: ['error', {vars: 'all', varsIgnorePattern: '^_', args: 'all', argsIgnorePattern: '^_'}]
-  eol-last: "error"
+  eol-last: "warn"
   require-yield: off
 
 overrides:
@@ -39,9 +41,6 @@ overrides:
     $: false
 - files: [ '*.es6.js' ]
   # Eslint configuration for files ending in .es6.js
-  globals:
-    setTimeout: false
-    Promise: false
   parserOptions:
     ecmaVersion: 2017
     sourceType: module

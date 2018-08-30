@@ -47,7 +47,7 @@ const IncomingLinksList = createReactClass({
                   className="incoming-links__link"
                   href={url}
                   target="_blank"
-                  rel="noopener"
+                  rel="noopener noreferrer"
                   title={title}
                   data-test-id="link"
                   onClick={() => this.handleClick(id)}>

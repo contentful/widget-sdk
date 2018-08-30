@@ -1,3 +1,5 @@
+/* global setImmediate */
+
 export const document = (...content) => ({
   nodeClass: 'document',
   nodeType: 'document',
