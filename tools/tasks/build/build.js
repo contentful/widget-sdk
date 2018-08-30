@@ -26,7 +26,7 @@ const path = require('path');
  *   maps each non-fingerprinted file to its fingerprinted version.
  */
 gulp.task('build', function(done) {
-  runSequence('clean', ['build/js', 'build/styles', 'build/static'], done);
+  runSequence('clean', ['build/js', 'build/styles', 'build/static'], 'build/chunks', done);
 });
 
 gulp.task('build/with-styleguide', function(done) {
