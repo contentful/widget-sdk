@@ -12,9 +12,8 @@ import TemplateSelector from 'components/shared/space-wizard/TemplateSelector.es
 import PlanFeatures from 'components/shared/space-wizard/PlanFeatures.es6';
 import ProgressScreen from 'components/shared/space-wizard/ProgressScreen.es6';
 import Dialog from 'app/entity_editor/Components/Dialog';
-import ContactUsButton from 'ui/Components/ContactUsButton.es6';
 
-import { TextField } from '@contentful/ui-component-library';
+import { TextField, TextLink } from '@contentful/ui-component-library';
 
 class EnterpriseSpaceWizard extends React.Component {
   static propTypes = {
@@ -132,12 +131,7 @@ class EnterpriseSpaceWizard extends React.Component {
         )}
         {!showProgress && (
           <Dialog.Body>
-            <p className="enterprise-space-wizard__info" style={{ marginBottom: '30px' }}>
-              {`Use a proof of concept space to experiment or start new projects. Talk to us when you decide to launch. `}
-              <ContactUsButton noIcon={true} data-test-id="subscription-page.sidebar.contact-link">
-                Learn more
-              </ContactUsButton>
-            </p>
+            <Info />
             <Plan resources={this.resources} roleSet={this.plan.roleSet} />
             <TextField
               countCharacters
@@ -197,6 +191,48 @@ Plan.propTypes = {
   resources: PropTypes.array.isRequired,
   roleSet: PropTypes.object.isRequired
 };
+
+class Info extends React.Component {
+  state = {
+    showingMore: false
+  };
+
+  get showMoreText() {
+    return this.state.showingMore ? 'Show less' : 'Show more';
+  }
+
+  onShowMore() {
+    this.setState({ showingMore: !this.state.showingMore });
+  }
+
+  render() {
+    return (
+      <section style={{ marginBottom: '30px' }}>
+        <p className="enterprise-space-wizard__info" style={{ display: 'inline' }}>
+          {`Use a proof of concept space to experiment or start new projects. Talk to us when you decide to launch. `}
+        </p>
+        {this.state.showingMore && (
+          <div style={{ marginTop: '20px' }}>
+            <p style={{ marginBottom: '20px' }}>
+              {`A proof of concept space is free of charge until you decide to use it for a live application.
+                We can then help you to convert it to a regular production space.`}
+            </p>
+            <p style={{ marginBottom: '20px' }}>
+              {`Proof of concept spaces share the same limits for API requests and asset bandwidth with the
+                other spaces in your organization. `}
+              <a
+                href="https://www.contentful.com/r/knowledgebase/fair-use/#poc-proof-of-concept-limited-use-case"
+                target="blank">
+                Learn more
+              </a>
+            </p>
+          </div>
+        )}
+        <TextLink onClick={() => this.onShowMore()}>{this.showMoreText}</TextLink>
+      </section>
+    );
+  }
+}
 
 const mapStateToProps = state => {
   return {
