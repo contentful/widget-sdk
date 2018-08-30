@@ -4,7 +4,8 @@ import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { canCreateSpaceInOrganization } from 'access_control/AccessChecker';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import notification from 'notification';
-import { getSpaceRatePlans, isPOCEnabled, productTypes } from 'account/pricing/PricingDataProvider';
+import { getSpaceRatePlans, isPOCEnabled, isEnterprisePlan, getBasePlan } from 'account/pricing/PricingDataProvider';
+
 /**
  * Displays the space creation dialog. The dialog type will depend on the
  * organization that the new space should belong to.
@@ -40,21 +41,18 @@ export async function showDialog(organizationId) {
   } else {
     // check if Proof of Concept spaces feature is on
     const canCreatePOC = await isPOCEnabled();
-    let shouldCreatePOC, ratePlans;
+    let shouldCreatePOC, basePlan, ratePlans;
 
     // TODO: implement a loading state for when we make
     // requests to check if the org is Enterprise
     if (canCreatePOC) {
       const orgEndpoint = createOrganizationEndpoint(organizationId);
-      // get all rate plans (a.k.a space types) available for the current org.
-      ratePlans = await getSpaceRatePlans(orgEndpoint);
-      // it's garanteed that every product contains a 'free_space' rate plan
-      const freeSpaceRatePlan = ratePlans.find(plan => plan.productPlanType === 'free_space');
-      // we use the free_space plan to find what's the product type for this org
-      const productType = freeSpaceRatePlan.productType;
-      // TODO: use base plan instead
+      [basePlan, ratePlans] = await Promise.all([
+        getBasePlan(orgEndpoint),
+        getSpaceRatePlans(orgEndpoint)
+      ]);
       // org should create POC if it is Enterprise
-      shouldCreatePOC = productType === productTypes.enterprise;
+      shouldCreatePOC = isEnterprisePlan(basePlan);
     }
 
     if (shouldCreatePOC) {
