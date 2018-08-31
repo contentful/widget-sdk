@@ -13,6 +13,7 @@ import { getOrganization } from 'services/TokenStore.es6';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import Workbench from 'app/WorkbenchReact.es6';
 import { track } from 'analytics/Analytics';
+import { getCurrentVariation } from 'utils/LaunchDarkly';
 
 import OrganizationResourceUsageList from './non_commited/OrganizationResourceUsageList.es6';
 import OrganizationUsagePage from './commited/OrganizationUsagePage.es6';
@@ -36,6 +37,7 @@ export default class OrganizationUsage extends React.Component {
   async componentDidMount() {
     const { onForbidden } = this.props;
 
+    await this.setState({ flagActive: await getCurrentVariation('feature-bizvel-09-2018-usage') });
     await this.checkPermissions();
     try {
       await this.fetchOrgData();
@@ -55,6 +57,7 @@ export default class OrganizationUsage extends React.Component {
 
   async fetchOrgData() {
     const { orgId, onReady } = this.props;
+    const { flagActive } = this.state;
     const endpoint = createOrganizationEndpoint(orgId);
     const service = createResourceService(orgId, 'organization');
 
@@ -62,7 +65,7 @@ export default class OrganizationUsage extends React.Component {
       const basePlan = await getBasePlan(endpoint);
       const commited = isEnterprisePlan(basePlan);
 
-      if (commited) {
+      if (commited && flagActive) {
         const [
           spaces,
           periods,
@@ -125,7 +128,8 @@ export default class OrganizationUsage extends React.Component {
       includedLimit,
       usage,
       commited,
-      resources
+      resources,
+      flagActive
     } = this.state;
     return (
       <Workbench
@@ -133,7 +137,7 @@ export default class OrganizationUsage extends React.Component {
         testId="organization.usage"
         title="Usage"
         actions={
-          commited ? (
+          commited && flagActive ? (
             !loading && periods ? (
               <PeriodSelector
                 periods={periods}
@@ -148,7 +152,7 @@ export default class OrganizationUsage extends React.Component {
           )
         }
         content={
-          commited ? (
+          commited && flagActive ? (
             typeof selectedPeriodIndex !== 'undefined' ? (
               <OrganizationUsagePage
                 period={periods[selectedPeriodIndex]}
