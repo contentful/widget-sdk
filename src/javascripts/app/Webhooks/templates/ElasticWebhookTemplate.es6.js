@@ -52,7 +52,7 @@ export default {
       title: 'User',
       description: (
         <p>
-          HTTP Basic auth username. If you use Elastic Cloud, it can be found on the{' '}
+          HTTP Basic Auth username. If you use Elastic Cloud, it can be found on the{' '}
           <a href="https://cloud.elastic.co/deployments" target="_blank" rel="noopener noreferrer">
             dashboard
           </a>
@@ -66,7 +66,7 @@ export default {
       title: 'Password',
       description: (
         <p>
-          HTTP Basic auth password. If you use Elastic Cloud, it can be found on the{' '}
+          HTTP Basic Auth password. If you use Elastic Cloud, it can be found on the{' '}
           <a href="https://cloud.elastic.co/deployments" target="_blank" rel="noopener noreferrer">
             dashboard
           </a>
