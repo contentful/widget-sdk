@@ -12,6 +12,7 @@ settings:
     version: "16.2.0"
 env:
   browser: true
+  node: true
 globals:
   setTimeout: false
   Promise: false
@@ -34,6 +35,9 @@ rules:
 overrides:
 - files: [ 'src/javascripts/**/*.js' ]
   excludedFiles: [ '*.es6.js' ]
+  env:
+    browser: true
+    node: false
   globals:
     angular: false
     _: false

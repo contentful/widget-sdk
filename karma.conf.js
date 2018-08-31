@@ -44,7 +44,7 @@ module.exports = function(config) {
       // it also means that this file should already exist, so you can either
       // build it in advance, or run with webpack in parallel
       'public/app/components.js'
-    ].concat(testFiles),
+    ].concat(testFiles), // eslint-disable-line
 
     // list of files to exclude
     exclude: ['src/javascripts/libs/**/*.js'],

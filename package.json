@@ -162,7 +162,7 @@
     "start": "gulp all serve",
     "test": "node run-tests.js",
     "test:once": "node run-tests.js --once",
-    "hint": "eslint src test tools",
+    "hint": "eslint src test tools tasks",
     "cloc": "cloc --read-lang-def .cloc.def src",
     "clean": "rm -rf node_modules",
     "precommit": "lint-staged",

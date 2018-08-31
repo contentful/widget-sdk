@@ -43,7 +43,7 @@ module.exports = function jstConcat(fileName, _opts) {
   var stream = through.obj(write, end);
   return stream;
 
-  function write(file, enc, done) {
+  function write(file, _enc, done) {
     if (file.isStream()) {
       stream.emit('error', pluginError('Streaming not supported'));
     } else if (file.isBuffer()) {
