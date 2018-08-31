@@ -46,8 +46,7 @@ export default class OrganisationUsageChart extends React.Component {
         }
       },
       visualMap: {
-        top: 0,
-        right: 0,
+        show: false,
         pieces: [
           {
             gt: 0,
