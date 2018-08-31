@@ -1,10 +1,6 @@
 import React from 'react';
 import CircleCILogo from './logos/CircleCILogo.es6';
-
-// We had to sanitize the token to avoid uncaught exceptions.
-// Original source: https://developer.mozilla.org/en-US/docs/Web/API/WindowBase64/Base64_encoding_and_decoding#The_Unicode_Problem
-const sanitizedBase64 = input =>
-  btoa(input.replace(/%([0-9A-F]{2})/g, (_, p1) => String.fromCharCode('0x' + p1)));
+import base64safe from '../base64safe.es6';
 
 export default {
   id: 'circle-ci-trigger-build',
@@ -70,7 +66,7 @@ export default {
       headers: [
         {
           key: 'Authorization',
-          value: 'Basic ' + sanitizedBase64(token),
+          value: 'Basic ' + base64safe(token),
           secret: true
         }
       ],
