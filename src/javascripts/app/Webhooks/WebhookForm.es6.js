@@ -38,6 +38,7 @@ export default class WebhookForm extends React.Component {
   render() {
     const { webhook } = this.props;
     const contentType = get(webhook, ['transformation', 'contentType'], CONTENT_TYPES[0]);
+    const includeContentLength = get(webhook, ['transformation', 'includeContentLength'], false);
 
     return (
       <div className="webhook-editor__settings">
@@ -129,6 +130,25 @@ export default class WebhookForm extends React.Component {
                 encoded form data.
               </p>
             )}
+          </div>
+          <div className="cfnext-form__field">
+            <label>Content length</label>
+            <label>
+              <input
+                type="checkbox"
+                checked={includeContentLength}
+                onChange={e =>
+                  this.props.onChange(
+                    this.updatedTransformation({ includeContentLength: e.target.checked })
+                  )
+                }
+              />{' '}
+              Automatically compute the value of the <code>Content-Length</code> header
+            </label>
+            <p className="entity-editor__field-hint">
+              If this option is selected, the byte size of the final request body will be computed
+              and used as the value of the <code>Content-Length</code> header.
+            </p>
           </div>
         </WebhookFormSection>
 
