@@ -26,7 +26,6 @@ const CONTENT_TYPES = [
 export default class WebhookForm extends React.Component {
   static propTypes = {
     webhook: PropTypes.object.isRequired,
-    hasHttpBasicStored: PropTypes.bool.isRequired,
     onChange: PropTypes.func.isRequired
   };
 
@@ -102,8 +101,6 @@ export default class WebhookForm extends React.Component {
           />
           <WebhookBasicAuth
             httpBasicUsername={webhook.httpBasicUsername}
-            httpBasicPassword={webhook.httpBasicPassword}
-            hasHttpBasicStored={this.props.hasHttpBasicStored}
             onChange={credentials => this.props.onChange(credentials)}
           />
           <div className="cfnext-form__field">

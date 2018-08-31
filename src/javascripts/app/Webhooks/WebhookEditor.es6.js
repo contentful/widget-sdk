@@ -13,8 +13,6 @@ import WebhookActivityLog from './WebhookActivityLog.es6';
 
 const TABS = { SETTINGS: 1, LOG: 2 };
 
-const hasBasic = webhook => typeof webhook.httpBasicUsername === 'string';
-
 export default class WebhookEditor extends React.Component {
   static propTypes = {
     initialWebhook: PropTypes.object.isRequired,
@@ -37,7 +35,6 @@ export default class WebhookEditor extends React.Component {
       fresh,
       // Entity is "dirty" when not saved or there were changes to the initially loaded version.
       dirty: fresh,
-      hasHttpBasicStored: hasBasic(props.initialWebhook),
       // Editor is "busy" if there's any HTTP request in flight.
       // All buttons triggering HTTP requests are disabled then.
       busy: false
@@ -59,21 +56,14 @@ export default class WebhookEditor extends React.Component {
       s => ({
         ...s,
         webhook: { ...s.webhook, ...change },
-        dirty: true,
-        // we clear stored HTTP Basic Auth credentials when change contains
-        // `httpBasicUsername` property set to `null`. Otherwise we use
-        // the previous value.
-        hasHttpBasicStored: change.httpBasicUsername === null ? false : s.hasHttpBasicStored
+        dirty: true
       }),
       () => this.propagateChange()
     );
   };
 
   onSave(webhook) {
-    this.setState(
-      { webhook, dirty: false, hasHttpBasicStored: hasBasic(webhook), busy: false },
-      () => this.propagateChange()
-    );
+    this.setState({ webhook, dirty: false, busy: false }, () => this.propagateChange());
   }
 
   navigateToSaved(webhook) {
@@ -124,7 +114,7 @@ export default class WebhookEditor extends React.Component {
   };
 
   render() {
-    const { tab, webhook, fresh, dirty, hasHttpBasicStored, busy } = this.state;
+    const { tab, webhook, fresh, dirty, busy } = this.state;
 
     return (
       <React.Fragment>
@@ -195,11 +185,7 @@ export default class WebhookEditor extends React.Component {
         {tab === TABS.SETTINGS && (
           <div className="workbench-main">
             <div className="workbench-main__content">
-              <WebhookForm
-                webhook={webhook}
-                hasHttpBasicStored={hasHttpBasicStored}
-                onChange={this.onChange}
-              />
+              <WebhookForm webhook={webhook} onChange={this.onChange} />
             </div>
             <div className="workbench-main__sidebar">
               <WebhookSidebar />
