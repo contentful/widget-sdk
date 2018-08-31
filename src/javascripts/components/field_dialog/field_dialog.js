@@ -336,7 +336,7 @@ angular
     require => {
       const ReactDOM = require('react-dom');
       const React = require('react');
-      const WidgetParametersUtils = require('widgets/WidgetParametersUtils');
+      const WidgetParametersUtils = require('widgets/WidgetParametersUtils.es6');
       const WidgetParametersForm = require('widgets/WidgetParametersForm.es6').default;
 
       return {

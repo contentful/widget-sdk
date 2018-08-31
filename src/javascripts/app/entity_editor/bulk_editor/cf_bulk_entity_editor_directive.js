@@ -187,7 +187,7 @@ angular
       const Validator = require('app/entity_editor/Validator.es6');
       const localeStore = require('TheLocaleStore');
       const Focus = require('app/entity_editor/Focus.es6');
-      const K = require('utils/kefir');
+      const K = require('utils/kefir.es6');
       const initDocErrorHandler = require('app/entity_editor/DocumentErrorHandler.es6').default;
 
       const editorData = $scope.editorData;
