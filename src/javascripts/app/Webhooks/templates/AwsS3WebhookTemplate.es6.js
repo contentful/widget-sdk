@@ -2,6 +2,7 @@ import React from 'react';
 import AwsLogo from './logos/AwsLogo';
 
 export default {
+  premium: true,
   id: 'aws-s3-store-entries',
   title: 'AWS S3',
   subtitle: 'Store entries',

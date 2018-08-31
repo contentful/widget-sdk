@@ -2,6 +2,7 @@ import React from 'react';
 import AwsLogo from './logos/AwsLogo';
 
 export default {
+  premium: true,
   id: 'aws-sqs-send-message',
   title: 'AWS SQS',
   subtitle: 'Send a message',

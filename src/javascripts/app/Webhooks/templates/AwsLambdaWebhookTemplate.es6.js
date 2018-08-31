@@ -2,6 +2,7 @@ import React from 'react';
 import AwsLogo from './logos/AwsLogo';
 
 export default {
+  premium: true,
   id: 'aws-lambda-call-function',
   title: 'AWS Lambda',
   subtitle: 'Invoke a function',
