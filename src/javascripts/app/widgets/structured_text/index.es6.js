@@ -1,4 +1,4 @@
-import connectToWidgetAPI from '../WidgetApi.es6';
+import connectToWidgetAPI from '../WidgetApi';
 import StructuredTextEditor from './StructuredTextEditor.es6';
 
 export default connectToWidgetAPI(StructuredTextEditor);

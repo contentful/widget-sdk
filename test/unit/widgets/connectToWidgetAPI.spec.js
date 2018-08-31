@@ -34,9 +34,7 @@ describe('connectToWidgetAPI', () => {
       field: this.widgetApi.field
     };
     this.widgetApi.fieldProperties.isDisabled$.set(true);
-    const { default: connectToWidgetAPI } = await this.system.import(
-      'app/widgets/WidgetApi/index.es6'
-    );
+    const { default: connectToWidgetAPI } = await this.system.import('app/widgets/WidgetApi');
 
     this.Component = sinon.spy(() => null);
     const WithWidgetAPI = connectToWidgetAPI(this.Component);

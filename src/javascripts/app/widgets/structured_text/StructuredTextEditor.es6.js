@@ -29,7 +29,7 @@ import {
   Heading5Plugin,
   Heading6Plugin,
   HeadingDropdown
-} from './plugins/Heading.es6';
+} from './plugins/Heading';
 
 import NewLinePlugin from './plugins/NewLinePlugin.es6';
 import { ParagraphPlugin } from './plugins/Paragraph.es6';

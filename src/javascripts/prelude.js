@@ -249,7 +249,7 @@ angular
   }
 
   /**
-   * If module ID matches 'a/b/index' then register a module 'a/b'
+   * If module ID matches 'a/b/index.es6' then register a module 'a/b'
    * that is an alias for the index module.
    */
   function registerDirectoryAlias(moduleId) {

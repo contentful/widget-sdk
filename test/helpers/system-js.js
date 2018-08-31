@@ -43,7 +43,7 @@ function registerInIsolatedSystem(isolatedSystem, item) {
 
   const path = moduleId.split('/');
   const last = path.pop();
-  if (last === 'index') {
+  if (last === 'index.es6') {
     isolatedSystem.register(path.join('/'), [moduleId], $export => ({
       setters: [$export]
     }));
