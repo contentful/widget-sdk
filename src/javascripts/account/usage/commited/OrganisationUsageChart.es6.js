@@ -45,16 +45,6 @@ export default class OrganisationUsageChart extends React.Component {
           formatter: formatNumber
         }
       },
-      toolbox: {
-        left: 'center',
-        feature: {
-          dataZoom: {
-            yAxisIndex: 'none'
-          },
-          saveAsImage: {}
-        },
-        showTitle: false
-      },
       visualMap: {
         top: 0,
         right: 0,

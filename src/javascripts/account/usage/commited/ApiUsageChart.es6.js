@@ -34,16 +34,6 @@ export default class ApiUsageChart extends React.Component {
           formatter: formatNumber
         }
       },
-      toolbox: {
-        left: 'center',
-        feature: {
-          dataZoom: {
-            yAxisIndex: 'none'
-          },
-          saveAsImage: {}
-        },
-        showTitle: false
-      },
       series: usage.map(({ usage, sys: { space: { sys: { id: spaceId } } } }, index) => ({
         name: spaceNames[spaceId],
         type: 'line',
