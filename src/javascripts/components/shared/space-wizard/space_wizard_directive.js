@@ -47,7 +47,7 @@ angular.module('contentful').directive('cfSpaceWizard', [
         };
       },
       template: `<react-component
-      name="components/shared/space-wizard/Wizard"
+      name="components/shared/space-wizard/Wizard.es6"
       props="props"
       on-scope-destroy="onScopeDestroy"
       watch-depth="reference"
