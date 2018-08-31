@@ -1,5 +1,5 @@
 import React from 'react';
-import AwsLogo from './logos/AwsLogo';
+import AwsLogo from './logos/AwsLogo.es6';
 
 export default {
   premium: true,
