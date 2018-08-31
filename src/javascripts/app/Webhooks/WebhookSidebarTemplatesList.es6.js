@@ -2,13 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Templates from './templates';
 
-const ImportantTemplates = Templates.slice(0, 5);
-const firstTemplateId = ImportantTemplates[0].id;
+// Premium templates are available only with a deeplink.
+// We don't display them on the list yet.
+const nonPremiumTemplates = Templates.filter(t => !t.premium);
+const firstTemplateId = nonPremiumTemplates[0].id;
 
 const WebhookSidebarTemplatesList = ({ webhookRepo, templateContentTypes, openTemplateDialog }) => (
   <React.Fragment>
     <h2 className="entity-sidebar__heading">Webhook Templates</h2>
-    {ImportantTemplates.map(template => (
+    {nonPremiumTemplates.slice(0, 5).map(template => (
       <div className="webhook-template-item" key={template.id}>
         <div className="webhook-template-item__logo">{template.logo}</div>
         <div className="webhook-template-item__title">
@@ -28,7 +30,7 @@ const WebhookSidebarTemplatesList = ({ webhookRepo, templateContentTypes, openTe
       <button
         className="btn-link"
         onClick={() => openTemplateDialog(firstTemplateId, webhookRepo, templateContentTypes)}>
-        See all {Templates.length} templates
+        See all {nonPremiumTemplates.length} templates
       </button>
     </div>
   </React.Fragment>

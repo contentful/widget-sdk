@@ -12,6 +12,9 @@ import WebtaskWebhookTemplate from './WebtaskWebhookTemplate';
 import GitlabWebhookTemplate from './GitlabWebhookTemplate';
 import AlgoliaWebhookTemplate from './AlgoliaWebhookTemplate';
 import ElasticWebhookTemplate from './ElasticWebhookTemplate';
+import AwsLambdaWebhookTemplate from './AwsLambdaWebhookTemplate';
+import AwsS3WebhookTemplate from './AwsS3WebhookTemplate';
+import AwsSqsWebhookTemplate from './AwsSqsWebhookTemplate';
 
 export default [
   NetlifyWebhookTemplate,
@@ -27,5 +30,8 @@ export default [
   PubNubWebhookTemplate,
   AlgoliaWebhookTemplate,
   ElasticWebhookTemplate,
-  JiraWebhookTemplate
+  JiraWebhookTemplate,
+  AwsLambdaWebhookTemplate,
+  AwsS3WebhookTemplate,
+  AwsSqsWebhookTemplate
 ];
