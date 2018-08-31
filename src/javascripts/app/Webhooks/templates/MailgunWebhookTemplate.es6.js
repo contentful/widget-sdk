@@ -1,5 +1,6 @@
 import React from 'react';
 import MailgunLogo from './logos/MailgunLogo.es6';
+import base64safe from '../base64safe.es6';
 
 export default {
   id: 'mailgun-send-mail',
@@ -74,12 +75,17 @@ export default {
     return {
       name,
       url: `https://api.mailgun.net/v3/${domain}/messages`,
-      httpBasicUsername: 'api',
-      httpBasicPassword: apiKey,
       topics: ['Entry.publish'],
       filters: [
         { equals: [{ doc: 'sys.environment.sys.id' }, 'master'] },
         { equals: [{ doc: 'sys.contentType.sys.id' }, contentType.id] }
+      ],
+      headers: [
+        {
+          key: 'Authorization',
+          value: 'Basic ' + base64safe(['api', apiKey].join(':')),
+          secret: true
+        }
       ],
       transformation: {
         contentType: 'application/x-www-form-urlencoded',

@@ -1,5 +1,6 @@
 import React from 'react';
 import JiraLogo from './logos/JiraLogo.es6';
+import base64safe from '../base64safe.es6';
 
 export default {
   id: 'jira-create-task',
@@ -67,7 +68,7 @@ export default {
       )
     },
     {
-      name: 'username',
+      name: 'user',
       type: 'text',
       title: 'Username',
       description: (
@@ -82,20 +83,28 @@ export default {
     }
   ],
   mapParamsToDefinition: (params, name, templateContentTypes) => {
-    const { contentTypeId, domain, projectId, issueTypeId, username, password } = params;
+    const { contentTypeId, domain, projectId, issueTypeId, user, password } = params;
     const contentType = templateContentTypes.find(ct => ct.id === contentTypeId);
 
     return {
       name,
       url: `https://${domain}/rest/api/2/issue`,
-      httpBasicUsername: username,
-      httpBasicPassword: password,
       topics: ['Entry.create'],
       filters: [
         { equals: [{ doc: 'sys.environment.sys.id' }, 'master'] },
         { equals: [{ doc: 'sys.contentType.sys.id' }, contentType.id] }
       ],
-      headers: [{ key: 'Accept', value: 'application/json' }],
+      headers: [
+        {
+          key: 'Accept',
+          value: 'application/json'
+        },
+        {
+          key: 'Authorization',
+          value: 'Basic ' + base64safe([user, password].join(':')),
+          secret: true
+        }
+      ],
       transformation: {
         contentType: 'application/json',
         body: JSON.stringify({
