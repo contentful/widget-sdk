@@ -22,7 +22,7 @@ export default class WebhookTemplateDialog extends React.Component {
     const { closeDialog, webhookRepo, templateContentTypes } = this.props;
     return (
       <React.Fragment>
-        <TabsList title="Templates">
+        <TabsList title={`Templates (${Templates.length})`}>
           {Templates.map(template => (
             <Tab key={template.id} template={template} {...getTabProps(template.id)} />
           ))}

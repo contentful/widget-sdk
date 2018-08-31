@@ -192,6 +192,7 @@
   display: flex
   flex-direction: row
   position: relative
+  min-height: 517px
   &__separator
     position: absolute
     width: 1px
@@ -202,7 +203,18 @@
   &__list
     width: 256px
     min-width: 256px
-    padding-bottom: 100px
+  &__scroll-container
+    position: relative
+    display: block
+    height: calc(100% - 38px)
+    overflow: hidden
+  &__scroll-container-inner
+    position: absolute
+    left: 0
+    top: 0
+    bottom: 0
+    right: 0
+    overflow-y: scroll
   &__list-title
     padding: 16px 20px 4px 20px
     font-size: 12px
@@ -253,6 +265,8 @@
   flex-direction: row
   align-items: center
   border-bottom: 1px solid $colors.element-light
+  &__see-all
+    justify-content: center
   &__logo
     width: 38px
     height: 38px

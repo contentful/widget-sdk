@@ -15,7 +15,7 @@ export function openTemplateDialog(templateId, webhookRepo, templateContentTypes
     return;
   }
   modalDialog.open({
-    ignoreEsc: true,
+    ignoreEsc: false,
     backgroundClose: false,
     template:
       '<react-component class="modal-background" name="app/Webhooks/WebhookTemplateDialog" props="props" />',

@@ -2,31 +2,48 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-export const Tab = ({ isActive, template, ...rest }) => {
-  const classes = classNames({
-    'webhook-template-item': true,
-    'webhook-template-item--active': isActive
-  });
-  return (
-    <div {...rest} className={classes}>
-      <div className="webhook-template-item__logo">{template.logo}</div>
-      <div className="webhook-template-item__title">
-        <strong>{template.title}</strong>
-        <small>{template.subtitle}</small>
-      </div>
-    </div>
-  );
-};
+export class Tab extends React.Component {
+  static propTypes = {
+    isActive: PropTypes.bool.isRequired,
+    template: PropTypes.object.isRequired
+  };
 
-Tab.propTypes = {
-  isActive: PropTypes.bool.isRequired,
-  template: PropTypes.object.isRequired
-};
+  componentDidMount() {
+    if (this.props.isActive) {
+      this.domRef.scrollIntoView();
+    }
+  }
+
+  render() {
+    const { isActive, template, ...rest } = this.props;
+
+    const classes = classNames({
+      'webhook-template-item': true,
+      'webhook-template-item--active': isActive
+    });
+    return (
+      <div
+        {...rest}
+        className={classes}
+        ref={ref => {
+          this.domRef = ref;
+        }}>
+        <div className="webhook-template-item__logo">{template.logo}</div>
+        <div className="webhook-template-item__title">
+          <strong>{template.title}</strong>
+          <small>{template.subtitle}</small>
+        </div>
+      </div>
+    );
+  }
+}
 
 export const TabsList = props => (
   <div className="webhook-templates-dialog-tabs__list">
     <div className="webhook-templates-dialog-tabs__list-title">{props.title}</div>
-    {props.children}
+    <div className="webhook-templates-dialog-tabs__scroll-container">
+      <div className="webhook-templates-dialog-tabs__scroll-container-inner">{props.children}</div>
+    </div>
   </div>
 );
 
