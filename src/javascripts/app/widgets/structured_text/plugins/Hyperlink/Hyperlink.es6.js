@@ -18,8 +18,8 @@ export default class Hyperlink extends React.Component {
     return (
       <span>
         <a data-tip={url} title={title}>
-         {children}
-         <Icon icon="ExternalLink" style={{ position: 'relative', top: '3px' }} />
+          {children}
+          <Icon icon="ExternalLink" style={{ position: 'relative', top: '3px' }} />
         </a>
         <Tooltip show={true} />
       </span>
