@@ -51,7 +51,15 @@ import shouldUseEnvEndpoint from './shouldUseEnvEndpoint';
  * @returns {function(): Promise<Object>}
  */
 export function createSpaceEndpoint(baseUrl, spaceId, auth, envId) {
-  return create(withBaseUrl, auth);
+  const spaceEndpoint = create(withBaseUrl, auth);
+
+  // spaceEndpoint is a function. we assign additional
+  // properties so we can detect in which environment we
+  // make these requests using only this function
+  spaceEndpoint.spaceId = spaceId;
+  spaceEndpoint.envId = envId;
+
+  return spaceEndpoint;
 
   function withBaseUrl(path) {
     return joinPath([baseUrl, 'spaces', spaceId].concat(maybePrefixWithEnv(path)));
@@ -94,6 +102,12 @@ export function createSpaceEndpoint(baseUrl, spaceId, auth, envId) {
 export function createOrganizationEndpoint(baseUrl, organizationId, auth) {
   const organizationBaseUrl = joinPath([baseUrl, 'organizations', organizationId]);
   return create(organizationBaseUrl, auth);
+}
+
+export function createUsersEndpoint(baseUrl, auth) {
+  const usersBaseUrl = joinPath([baseUrl, 'users', 'me']);
+
+  return create(usersBaseUrl, auth);
 }
 
 /*
