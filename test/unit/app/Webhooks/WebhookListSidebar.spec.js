@@ -4,9 +4,14 @@ import Enzyme from 'enzyme';
 describe('WebhookListSidebar', function() {
   let WebhookListSidebar;
 
-  const mount = (webhooks, resource = {}, organization = {}) => {
+  const mount = webhooks => {
     return Enzyme.mount(
-      <WebhookListSidebar webhooks={webhooks} resource={resource} organization={organization} />
+      <WebhookListSidebar
+        webhooks={webhooks}
+        webhookRepo={{}}
+        templateContentTypes={[]}
+        openTemplateDialog={() => {}}
+      />
     );
   };
 
@@ -24,16 +29,6 @@ describe('WebhookListSidebar', function() {
     expect(text).toBe(expected);
   };
 
-  it('uses number of fetched webhooks as the usage for v1 orgs', function() {
-    const wrapper = mount([{}, {}]);
-    testText(wrapper, 'Your space is using 2 webhooks.');
-  });
-
-  it('uses resource usage for v2 orgs', function() {
-    const wrapper = mount([{}, {}], { usage: 3 }, { pricingVersion: 'pricing_version_2' });
-    testText(wrapper, 'Your space is using 3 webhooks.');
-  });
-
   it('shows empty message', function() {
     const wrapper = mount([]);
     testText(wrapper, "Your space isn't using any webhooks.");
@@ -42,5 +37,10 @@ describe('WebhookListSidebar', function() {
   it('uses singular "webhook" for one webhook', function() {
     const wrapper = mount([{}]);
     testText(wrapper, 'Your space is using 1 webhook.');
+  });
+
+  it('uses plural "webhooks" for many webhooks', function() {
+    const wrapper = mount([{}, {}]);
+    testText(wrapper, 'Your space is using 2 webhooks.');
   });
 });

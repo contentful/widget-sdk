@@ -1,5 +1,4 @@
 import spaceContext from 'spaceContext';
-import createResourceService from 'services/ResourceService.es6';
 import leaveConfirmator from 'navigation/confirmLeaveEditor';
 import TheLocaleStore from 'TheLocaleStore';
 import { domain } from 'Config.es6';
@@ -65,15 +64,6 @@ const list = {
       'spaceContext',
       'isAdmin',
       (spaceContext, isAdmin) => (isAdmin ? spaceContext.webhookRepo.getAll() : Promise.resolve([]))
-    ],
-    resource: [
-      'spaceContext',
-      'isAdmin',
-      (spaceContext, isAdmin) => {
-        return isAdmin
-          ? createResourceService(spaceContext.getId()).get('webhookDefinition')
-          : Promise.resolve({});
-      }
     ]
   },
   params: {
@@ -86,10 +76,8 @@ const list = {
     '$scope',
     '$stateParams',
     'webhooks',
-    'resource',
     'isAdmin',
-    ($scope, $stateParams, webhooks, resource, isAdmin) => {
-      const { pricingVersion } = spaceContext.organizationContext.organization;
+    ($scope, $stateParams, webhooks, isAdmin) => {
       const templateContentTypes = prepareContentTypesForTemplates();
       const webhookRepo = spaceContext.webhookRepo;
 
@@ -101,9 +89,7 @@ const list = {
         webhooks,
         webhookRepo,
         templateContentTypes,
-        resource,
         openTemplateDialog,
-        organization: { pricingVersion },
         isAdmin,
         templateId: $stateParams.templateId
       };

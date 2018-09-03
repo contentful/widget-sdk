@@ -14,8 +14,6 @@ export default class WebhookList extends React.Component {
     webhooks: PropTypes.array.isRequired,
     webhookRepo: PropTypes.object.isRequired,
     templateContentTypes: PropTypes.array.isRequired,
-    resource: PropTypes.object.isRequired,
-    organization: PropTypes.object.isRequired,
     openTemplateDialog: PropTypes.func.isRequired,
     isAdmin: PropTypes.bool,
     templateId: PropTypes.string

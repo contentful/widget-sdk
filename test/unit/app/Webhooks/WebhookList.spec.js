@@ -5,8 +5,6 @@ describe('WebhookList', function() {
   let WebhookList;
 
   const webhookRepo = { logs: { getHealth: sinon.stub().rejects() } };
-  const resource = {};
-  const organization = {};
 
   const mount = webhooks => {
     return Enzyme.mount(
@@ -14,8 +12,6 @@ describe('WebhookList', function() {
         webhooks={webhooks}
         webhookRepo={webhookRepo}
         templateContentTypes={[]}
-        resource={resource}
-        organization={organization}
         isAdmin={true}
       />
     );
