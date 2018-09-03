@@ -1,11 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { last } from 'lodash';
+import moment from 'moment';
 
 import EChart from './EChart';
 import formatNumber from './formatNumber';
 import { periodPropType, organizationUsagePropType } from './propTypes';
 import periodToDates from './periodToDates';
+import EmptyChartPlaceholder from './EmptyChartPlaceholder';
 
 const accumulateUsage = usage =>
   usage.reduce((acc, value) => acc.concat(value + (last(acc) || 0)), []);
@@ -14,17 +16,16 @@ export default class OrganisationUsageChart extends React.Component {
   static propTypes = {
     usage: organizationUsagePropType.isRequired,
     includedLimit: PropTypes.number.isRequired,
-    period: periodPropType.isRequired,
-    width: PropTypes.string.isRequired
+    period: periodPropType.isRequired
   };
 
   render() {
     const {
       includedLimit,
       usage: { usage },
-      period,
-      width
+      period
     } = this.props;
+    const { startDate, endDate } = period;
     const accumulatedUsage = accumulateUsage(usage);
     const maxValue = last(accumulatedUsage);
     const options = {
@@ -78,6 +79,12 @@ export default class OrganisationUsageChart extends React.Component {
       }
     };
 
-    return <EChart width={width} height="300px" options={options} />;
+    return (
+      <EChart
+        options={options}
+        isEmpty={endDate === null && moment().diff(startDate, 'days') < 2}
+        EmptyPlaceholder={EmptyChartPlaceholder}
+      />
+    );
   }
 }

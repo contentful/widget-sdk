@@ -1,22 +1,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 
 import EChart from './EChart';
 import formatNumber from './formatNumber';
 import { organizationResourceUsagePropType, periodPropType } from './propTypes';
 import periodToDates from './periodToDates';
+import EmptyChartPlaceholder from './EmptyChartPlaceholder';
 
 export default class ApiUsageChart extends React.Component {
   static propTypes = {
     usage: PropTypes.arrayOf(organizationResourceUsagePropType).isRequired,
     colors: PropTypes.arrayOf(PropTypes.string).isRequired,
     period: periodPropType.isRequired,
-    width: PropTypes.string.isRequired,
     spaceNames: PropTypes.objectOf(PropTypes.string).isRequired
   };
 
   render() {
-    const { usage, colors, period, width, spaceNames } = this.props;
+    const { usage, colors, period, spaceNames } = this.props;
+    const { startDate, endDate } = period;
     const options = {
       tooltip: {
         trigger: 'axis'
@@ -53,6 +55,12 @@ export default class ApiUsageChart extends React.Component {
         showSymbol: false
       }))
     };
-    return <EChart width={width} height="300px" options={options} />;
+    return (
+      <EChart
+        options={options}
+        isEmpty={endDate === null && moment().diff(startDate, 'days') < 2}
+        EmptyPlaceholder={EmptyChartPlaceholder}
+      />
+    );
   }
 }

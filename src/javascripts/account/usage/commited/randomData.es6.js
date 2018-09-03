@@ -25,7 +25,7 @@ const createPreviousPeriods = currentPeriod =>
     .reverse();
 
 const periods = createPreviousPeriods({
-  start: moment().subtract(12, 'days'),
+  start: moment(),
   end: null,
   id: random.id()
 });

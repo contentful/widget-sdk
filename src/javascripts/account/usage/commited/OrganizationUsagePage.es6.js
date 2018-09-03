@@ -20,8 +20,6 @@ import {
 
 const apiUsagePropType = arrayPropType(organizationResourceUsagePropType);
 
-const chartWidth = '700px';
-
 export default class OrganizationUsagePage extends React.Component {
   static propTypes = {
     spaceNames: PropTypes.objectOf(PropTypes.string).isRequired,
@@ -78,12 +76,7 @@ export default class OrganizationUsagePage extends React.Component {
           </div>
           <Button onClick={this.onClickSupport}>Talk to support</Button>
         </div>
-        <OrganisationUsageChart
-          usage={org}
-          includedLimit={includedLimit}
-          period={period}
-          width={chartWidth}
-        />
+        <OrganisationUsageChart usage={org} includedLimit={includedLimit} period={period} />
         {map(apis, (usage, api) => (
           <ApiUsageSection
             key={api}
@@ -92,7 +85,6 @@ export default class OrganizationUsagePage extends React.Component {
             api={api}
             includedLimit={includedLimit}
             period={period}
-            chartWidth={chartWidth}
           />
         ))}
       </div>
