@@ -1,4 +1,4 @@
-import { BLOCKS } from '@contentful/structured-text-types';
+import { BLOCKS, INLINES } from '@contentful/structured-text-types';
 
 const TEXT = { object: ['text'] };
 
@@ -64,6 +64,11 @@ export default {
       isVoid: true
     },
     [BLOCKS.QUOTE]: {
+      nodes: [{ match: TEXT }]
+    }
+  },
+  inlines: {
+    [INLINES.HYPERLINK]: {
       nodes: [{ match: TEXT }]
     }
   }

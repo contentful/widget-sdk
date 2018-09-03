@@ -1,5 +1,4 @@
 import React from 'react';
-
 import ToolbarIcon from './ToolbarIcon';
 import EntryLinkBlock from './EntryLinkBlock';
 import { BLOCKS } from '@contentful/structured-text-types';

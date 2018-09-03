@@ -29,6 +29,7 @@ describe('Toolbar', () => {
 
     this.system.set('ui/cf/thumbnailHelpers', {});
     this.system.set('spaceContext', {});
+    this.system.set('modalDialog', { open: sinon.stub() });
     this.system.set('$rootScope', {
       default: {
         $on: sinon.stub()
@@ -69,7 +70,8 @@ describe('Toolbar', () => {
 
     this.props = {
       field: this.widgetApi.field,
-      onChange: sinon.spy()
+      onChange: sinon.spy(),
+      widgetAPI: { dialogs: {} }
     };
     this.wrapper = mount(<StructuredTextEditor {...this.props} />);
   });

@@ -35,7 +35,8 @@ describe('EmbeddedEntryBlock', () => {
     this.widgetApi.fieldProperties.value$.set(mockDocument);
 
     this.props = {
-      onChange: sinon.spy()
+      onChange: sinon.spy(),
+      widgetAPI: { dialogs: {} }
     };
     this.wrapper = mount(<StructuredTextEditor {...this.props} />);
   });

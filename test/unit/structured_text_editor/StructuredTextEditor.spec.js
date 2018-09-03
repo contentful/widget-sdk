@@ -45,7 +45,8 @@ describe('StructuredTextEditor', () => {
     this.props = {
       value: mockDocument,
       isDisabled: false,
-      onChange: sinon.spy()
+      onChange: sinon.spy(),
+      widgetAPI: { dialogs: {} }
     };
     this.wrapper = mount(<StructuredTextEditor {...this.props} />);
 

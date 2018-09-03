@@ -9,6 +9,7 @@ describe('connectToWidgetAPI', () => {
     module('contentful/test');
     this.system = createIsolatedSystem();
     this.system.set('entitySelector', {});
+    this.system.set('modalDialog', { open: sinon.stub() });
     this.system.set('navigation/SlideInNavigator', {
       goToSlideInEntity: sinon.stub()
     });

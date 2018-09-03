@@ -5,8 +5,6 @@ import { Value, Schema } from 'slate';
 import TrailingBlock from 'slate-trailing-block';
 import deepEqual from 'fast-deep-equal';
 
-import EditList from './plugins/List/EditListWrapper';
-
 import { toSlatejsDocument, toContentfulDocument } from '@contentful/contentful-slatejs-adapter';
 import { EditorToolbar, EditorToolbarDivider } from '@contentful/ui-component-library';
 
@@ -15,6 +13,7 @@ import Italic, { ItalicPlugin } from './plugins/Italic';
 import Underlined, { UnderlinedPlugin } from './plugins/Underlined';
 import Code, { CodePlugin } from './plugins/Code';
 import Quote, { QuotePlugin } from './plugins/Quote';
+import Hyperlink, { HyperlinkPlugin } from './plugins/Hyperlink';
 import {
   Heading1,
   Heading2,
@@ -35,37 +34,17 @@ import {
 import NewLinePlugin from './plugins/NewLinePlugin';
 import { ParagraphPlugin } from './plugins/Paragraph';
 import EntryLinkBlock, { EntryLinkBlockPlugin } from './plugins/EntryLinkBlock';
+import EditList from './plugins/List/EditListWrapper';
 import { ListPlugin, UnorderedList, OrderedList } from './plugins/List';
 import Hr, { HrPlugin } from './plugins/Hr';
 
 import schemaJson from './constants/Schema';
 import emptyDoc from './constants/EmptyDoc';
 
-const plugins = [
-  BoldPlugin(),
-  ItalicPlugin(),
-  QuotePlugin(),
-  UnderlinedPlugin(),
-  CodePlugin(),
-  Heading1Plugin(),
-  Heading2Plugin(),
-  Heading3Plugin(),
-  Heading4Plugin(),
-  Heading5Plugin(),
-  Heading6Plugin(),
-  ParagraphPlugin(),
-  HrPlugin(),
-  EntryLinkBlockPlugin(),
-  EditList(),
-  ListPlugin(),
-  TrailingBlock(),
-  NewLinePlugin()
-];
-
 const schema = Schema.fromJSON(schemaJson);
 const initialValue = Value.fromJSON(toSlatejsDocument(emptyDoc));
 // We do not want to change the `widgetApi.field` value when these
-// operations fire from Slatejs to not trigger unncessary saves.
+// operations fire from Slatejs to not trigger unnecessary saves.
 const ignoredOperations = ['set_value', 'set_selection'];
 
 function validateOperation(op) {
@@ -82,6 +61,7 @@ function validateOperation(op) {
 
 export default class StructuredTextEditor extends React.Component {
   static propTypes = {
+    widgetAPI: PropTypes.object.isRequired,
     value: PropTypes.object.isRequired,
     isDisabled: PropTypes.bool,
     onChange: PropTypes.func.isRequired
@@ -92,36 +72,43 @@ export default class StructuredTextEditor extends React.Component {
   constructor(props) {
     super(props);
 
+    const { value, widgetAPI } = this.props;
+
     this.state = {
       lastOperations: [],
       value:
-        this.props.value && this.props.value.nodeClass === 'document'
+        value && value.nodeClass === 'document'
           ? Value.fromJSON({
               object: 'value',
-              document: toSlatejsDocument(this.props.value)
+              document: toSlatejsDocument(value)
             })
           : initialValue,
       hasFocus: false
     };
+    this.slatePlugins = buildPlugins(widgetAPI)
   }
 
-  onChange = ({ value, operations }) => {
+  onChange = change => {
+    const { value, operations } = change;
     const lastOperations = operations.filter(validateOperation).toJS();
 
     this.setState({ value, lastOperations, headingMenuOpen: false });
   };
 
-  componentDidUpdate(prevProps) {
-    const isIncomingChange = !deepEqual(this.props.value, prevProps.value);
+  componentDidUpdate({ value: prevCfDoc }) {
+    const { value: cfDoc, isDisabled, onChange } = this.props;
+    const isIncomingChange = () => !deepEqual(cfDoc, prevCfDoc);
     const contentIsUpdated = this.state.lastOperations.length > 0;
-    if (!this.props.isDisabled && contentIsUpdated) {
+    if (!isDisabled && contentIsUpdated) {
       this.setState({ lastOperations: [] });
-      this.props.onChange(toContentfulDocument(this.state.value.document.toJSON()));
-    } else if (isIncomingChange) {
+      const slateDoc = this.state.value.document.toJSON();
+      const newCfDoc = toContentfulDocument(slateDoc);
+      onChange(newCfDoc);
+    } else if (isIncomingChange()) {
       this.setState({
         value: Value.fromJSON({
           object: 'value',
-          document: toSlatejsDocument(this.props.value)
+          document: toSlatejsDocument(cfDoc)
         })
       });
     }
@@ -157,6 +144,8 @@ export default class StructuredTextEditor extends React.Component {
         <Underlined {...props} />
         <Code {...props} />
         <EditorToolbarDivider />
+        <Hyperlink {...props} />
+        <EditorToolbarDivider />
         <UnorderedList {...props} />
         <OrderedList {...props} />
         <Quote {...props} />
@@ -191,7 +180,7 @@ export default class StructuredTextEditor extends React.Component {
           data-test-id="editor"
           value={this.state.value}
           onChange={this.onChange}
-          plugins={plugins}
+          plugins={this.slatePlugins}
           schema={schema}
           readOnly={this.props.isDisabled}
           className="structured-text__editor"
@@ -199,4 +188,31 @@ export default class StructuredTextEditor extends React.Component {
       </div>
     );
   }
+}
+
+function buildPlugins(widgetAPI) {
+  const HyperlinkOptions = {
+    createHyperlinkDialog: widgetAPI.dialogs.createHyperlink
+  };
+  return [
+    BoldPlugin(),
+    ItalicPlugin(),
+    QuotePlugin(),
+    UnderlinedPlugin(),
+    CodePlugin(),
+    HyperlinkPlugin(HyperlinkOptions),
+    Heading1Plugin(),
+    Heading2Plugin(),
+    Heading3Plugin(),
+    Heading4Plugin(),
+    Heading5Plugin(),
+    Heading6Plugin(),
+    ParagraphPlugin(),
+    HrPlugin(),
+    EntryLinkBlockPlugin(),
+    EditList(),
+    ListPlugin(),
+    TrailingBlock(),
+    NewLinePlugin()
+  ];
 }

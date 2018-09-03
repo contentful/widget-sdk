@@ -1,7 +1,8 @@
 .modal-background
   .modal-dialog.insert-link-dialog
     header.modal-dialog__header
-      h1 Insert link
+      h1(ng-if="!editLink") Insert link
+      h1(ng-if="editLink") Edit link
       button.modal-dialog__close(ng-click="dialog.cancel()")
     form.modal-dialog__content(name="linkForm")
       .cfnext-form__field(ng-if="showLinkTextInput")
