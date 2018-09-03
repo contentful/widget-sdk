@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
-import { makeEnvKey } from './helpers';
-import { DELETE_ENVIRONMENT_SUCCESS } from '../environments/actions';
+import { makeEnvKey } from './helpers.es6';
+import { DELETE_ENVIRONMENT_SUCCESS } from '../environments/actions.es6';
+import * as actions from './actions.es6';
 
 /**
  * Structure:
@@ -44,8 +45,6 @@ import { DELETE_ENVIRONMENT_SUCCESS } from '../environments/actions';
  *
  * This behaviour is correct for all types (user, userEnv, env)
  */
-
-import * as actions from './actions';
 
 export default combineReducers({
   user: userStateReducer,

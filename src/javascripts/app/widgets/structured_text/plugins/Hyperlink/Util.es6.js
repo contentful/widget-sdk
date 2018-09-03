@@ -1,5 +1,5 @@
 import { BLOCKS, INLINES } from '@contentful/structured-text-types';
-import { haveInlines } from '../shared/UtilHave';
+import { haveInlines } from '../shared/UtilHave.es6';
 
 const { HYPERLINK } = INLINES;
 

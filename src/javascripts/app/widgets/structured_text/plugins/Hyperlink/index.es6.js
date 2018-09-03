@@ -1,9 +1,9 @@
 import React from 'react';
 import isHotkey from 'is-hotkey';
 import { INLINES } from '@contentful/structured-text-types';
-import ToolbarIcon from './ToolbarIcon';
-import Hyperlink from './Hyperlink';
-import { editLink, mayEditLink, toggleLink } from './Util';
+import ToolbarIcon from './ToolbarIcon.es6';
+import Hyperlink from './Hyperlink.es6';
+import { editLink, mayEditLink, toggleLink } from './Util.es6';
 
 export default ToolbarIcon;
 
