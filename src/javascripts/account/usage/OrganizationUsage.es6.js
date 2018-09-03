@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { mapValues, flow, keyBy } from 'lodash/fp';
+import { mapValues, flow, keyBy, cond, constant, stubTrue } from 'lodash/fp';
 
 import { Spinner } from '@contentful/ui-component-library';
 
@@ -19,6 +19,7 @@ import OrganizationResourceUsageList from './non_commited/OrganizationResourceUs
 import OrganizationUsagePage from './commited/OrganizationUsagePage.es6';
 import { getPeriods, getOrgUsage, getApiUsage } from './commited/randomData.es6';
 import PeriodSelector from './commited/PeriodSelector.es6';
+import NoSpacesPlaceholder from './NoSpacesPlaceholder.es6';
 
 export default class OrganizationUsage extends React.Component {
   static propTypes = {
@@ -81,7 +82,12 @@ export default class OrganizationUsage extends React.Component {
           keyBy('sys.id'),
           mapValues('name')
         )(spaces);
-        this.setState({ spaceNames, periods: periods.items, includedLimit });
+        this.setState({
+          spaceNames,
+          periods: periods.items,
+          includedLimit,
+          hasSpaces: spaces.length !== 0
+        });
         await this.loadPeriodData(0);
       } else {
         this.setState({ resources: await service.getAll() });
@@ -129,31 +135,33 @@ export default class OrganizationUsage extends React.Component {
       usage,
       commited,
       resources,
-      flagActive
+      flagActive,
+      hasSpaces
     } = this.state;
     return (
       <Workbench
         icon="page-usage"
         testId="organization.usage"
         title="Usage"
-        actions={
-          commited && flagActive ? (
-            !isLoading && periods ? (
+        actions={cond([
+          [constant(isLoading), constant(<Spinner />)],
+          [
+            constant(hasSpaces && commited && flagActive && periods),
+            () => (
               <PeriodSelector
                 periods={periods}
                 selectedPeriodIndex={selectedPeriodIndex}
                 onChange={this.setPeriodIndex}
               />
-            ) : (
-              <Spinner />
             )
-          ) : (
-            undefined
-          )
-        }
-        content={
-          commited && flagActive ? (
-            typeof selectedPeriodIndex !== 'undefined' ? (
+          ],
+          [stubTrue, constant(undefined)]
+        ])()}
+        content={cond([
+          [constant(!hasSpaces), constant(<NoSpacesPlaceholder />)],
+          [
+            constant(commited && flagActive && typeof selectedPeriodIndex !== 'undefined'),
+            () => (
               <OrganizationUsagePage
                 period={periods[selectedPeriodIndex]}
                 spaceNames={spaceNames}
@@ -161,15 +169,14 @@ export default class OrganizationUsage extends React.Component {
                 includedLimit={includedLimit}
                 isLoading={isLoading}
               />
-            ) : (
-              <div />
             )
-          ) : typeof resources !== 'undefined' ? (
-            <OrganizationResourceUsageList resources={resources} />
-          ) : (
-            <div />
-          )
-        }
+          ],
+          [
+            constant(typeof resources !== 'undefined'),
+            () => <OrganizationResourceUsageList resources={resources} />
+          ],
+          [stubTrue, constant(<div />)]
+        ])()}
       />
     );
   }
