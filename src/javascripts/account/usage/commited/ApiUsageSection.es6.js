@@ -14,11 +14,12 @@ export default class ApiUsageSection extends React.Component {
     api: PropTypes.string.isRequired,
     spaceNames: PropTypes.objectOf(PropTypes.string).isRequired,
     usage: PropTypes.arrayOf(organizationResourceUsagePropType).isRequired,
-    period: periodPropType.isRequired
+    period: periodPropType.isRequired,
+    isLoading: PropTypes.bool.isRequired
   };
 
   render() {
-    const { api, spaceNames, usage, includedLimit, period } = this.props;
+    const { api, spaceNames, usage, includedLimit, period, isLoading } = this.props;
     return (
       <React.Fragment>
         <h2>{`${api.toUpperCase()} requests`}</h2>
@@ -50,7 +51,13 @@ export default class ApiUsageSection extends React.Component {
             </tbody>
           </table>
         </div>
-        <ApiUsageChart usage={usage} period={period} colors={colors} spaceNames={spaceNames} />
+        <ApiUsageChart
+          usage={usage}
+          period={period}
+          colors={colors}
+          spaceNames={spaceNames}
+          isLoading={isLoading}
+        />
       </React.Fragment>
     );
   }

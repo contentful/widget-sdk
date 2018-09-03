@@ -13,11 +13,12 @@ export default class ApiUsageChart extends React.Component {
     usage: PropTypes.arrayOf(organizationResourceUsagePropType).isRequired,
     colors: PropTypes.arrayOf(PropTypes.string).isRequired,
     period: periodPropType.isRequired,
-    spaceNames: PropTypes.objectOf(PropTypes.string).isRequired
+    spaceNames: PropTypes.objectOf(PropTypes.string).isRequired,
+    isLoading: PropTypes.bool.isRequired
   };
 
   render() {
-    const { usage, colors, period, spaceNames } = this.props;
+    const { usage, colors, period, spaceNames, isLoading } = this.props;
     const { startDate, endDate } = period;
     const options = {
       tooltip: {
@@ -60,6 +61,7 @@ export default class ApiUsageChart extends React.Component {
         options={options}
         isEmpty={endDate === null && moment().diff(startDate, 'days') < 2}
         EmptyPlaceholder={EmptyChartPlaceholder}
+        isLoading={isLoading}
       />
     );
   }

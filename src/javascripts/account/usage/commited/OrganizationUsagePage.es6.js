@@ -32,7 +32,8 @@ export default class OrganizationUsagePage extends React.Component {
       })
     }).isRequired,
     period: periodPropType,
-    includedLimit: PropTypes.number.isRequired
+    includedLimit: PropTypes.number.isRequired,
+    isLoading: PropTypes.bool.isRequired
   };
 
   onClickSupport = () => {
@@ -49,7 +50,8 @@ export default class OrganizationUsagePage extends React.Component {
       usage: { org, apis },
       includedLimit,
       spaceNames,
-      period
+      period,
+      isLoading
     } = this.props;
     const totalUsage = sum(org.usage);
 
@@ -76,7 +78,12 @@ export default class OrganizationUsagePage extends React.Component {
           </div>
           <Button onClick={this.onClickSupport}>Talk to support</Button>
         </div>
-        <OrganisationUsageChart usage={org} includedLimit={includedLimit} period={period} />
+        <OrganisationUsageChart
+          usage={org}
+          includedLimit={includedLimit}
+          period={period}
+          isLoading={isLoading}
+        />
         {map(apis, (usage, api) => (
           <ApiUsageSection
             key={api}
@@ -85,6 +92,7 @@ export default class OrganizationUsagePage extends React.Component {
             api={api}
             includedLimit={includedLimit}
             period={period}
+            isLoading={isLoading}
           />
         ))}
       </div>

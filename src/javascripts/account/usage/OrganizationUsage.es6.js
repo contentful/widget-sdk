@@ -29,7 +29,7 @@ export default class OrganizationUsage extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { loading: true };
+    this.state = { isLoading: true };
 
     this.setPeriodIndex = this.setPeriodIndex.bind(this);
   }
@@ -108,14 +108,14 @@ export default class OrganizationUsage extends React.Component {
     ]);
 
     this.setState({
-      loading: false,
+      isLoading: false,
       usage: { org, apis: { cma, cda, cpa } },
       selectedPeriodIndex: newIndex
     });
   }
 
   async setPeriodIndex(e) {
-    this.setState({ loading: true });
+    this.setState({ isLoading: true });
     await this.loadPeriodData(parseInt(e.target.value));
   }
 
@@ -123,7 +123,7 @@ export default class OrganizationUsage extends React.Component {
     const {
       spaceNames,
       selectedPeriodIndex,
-      loading,
+      isLoading,
       periods,
       includedLimit,
       usage,
@@ -138,7 +138,7 @@ export default class OrganizationUsage extends React.Component {
         title="Usage"
         actions={
           commited && flagActive ? (
-            !loading && periods ? (
+            !isLoading && periods ? (
               <PeriodSelector
                 periods={periods}
                 selectedPeriodIndex={selectedPeriodIndex}
@@ -159,6 +159,7 @@ export default class OrganizationUsage extends React.Component {
                 spaceNames={spaceNames}
                 usage={usage}
                 includedLimit={includedLimit}
+                isLoading={isLoading}
               />
             ) : (
               <div />

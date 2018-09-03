@@ -16,14 +16,16 @@ export default class OrganisationUsageChart extends React.Component {
   static propTypes = {
     usage: organizationUsagePropType.isRequired,
     includedLimit: PropTypes.number.isRequired,
-    period: periodPropType.isRequired
+    period: periodPropType.isRequired,
+    isLoading: PropTypes.bool.isRequired
   };
 
   render() {
     const {
       includedLimit,
       usage: { usage },
-      period
+      period,
+      isLoading
     } = this.props;
     const { startDate, endDate } = period;
     const accumulatedUsage = accumulateUsage(usage);
@@ -84,6 +86,7 @@ export default class OrganisationUsageChart extends React.Component {
         options={options}
         isEmpty={endDate === null && moment().diff(startDate, 'days') < 2}
         EmptyPlaceholder={EmptyChartPlaceholder}
+        isLoading={isLoading}
       />
     );
   }
