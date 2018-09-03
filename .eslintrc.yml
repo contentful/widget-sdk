@@ -16,6 +16,7 @@ env:
 globals:
   setTimeout: false
   Promise: false
+  require: false
 parser: 'babel-eslint'
 rules:
   react/display-name: "off"

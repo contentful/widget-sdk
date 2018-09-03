@@ -2,10 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 
-import $state from '$state';
 import Icon from 'ui/Components/Icon';
 
 import WebhookCallStatus from './WebhookCallStatus';
+
+const ServicesConsumer = require('../../reactServiceContext').default;
 
 const parseJsonSafe = s => {
   try {
@@ -15,14 +16,18 @@ const parseJsonSafe = s => {
   } // eslint-disable-line no-empty
 };
 
-export default class WebhookCall extends React.Component {
+class WebhookCall extends React.Component {
   static propTypes = {
     webhook: PropTypes.object.isRequired,
-    call: PropTypes.object.isRequired
+    call: PropTypes.object.isRequired,
+
+    $services: PropTypes.shape({
+      $state: PropTypes.object
+    }).isRequired
   };
 
   render() {
-    const { webhook, call } = this.props;
+    const { webhook, call, $services } = this.props;
 
     const reqBody = get(call, ['request', 'body']);
     const reqBodyJson = parseJsonSafe(reqBody);
@@ -38,7 +43,7 @@ export default class WebhookCall extends React.Component {
           <header className="workbench-header">
             <div className="breadcrumbs-widget">
               <div className="breadcrumbs-container">
-                <div className="btn btn__back" onClick={() => $state.go('^')}>
+                <div className="btn btn__back" onClick={() => $services.$state.go('^')}>
                   <Icon name="back" />
                 </div>
               </div>
@@ -89,3 +94,5 @@ export default class WebhookCall extends React.Component {
     );
   }
 }
+
+export default ServicesConsumer('$state')(WebhookCall);

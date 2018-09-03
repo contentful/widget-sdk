@@ -28,6 +28,7 @@ import { isFunction } from 'lodash';
 angular.module('contentful').directive('reactComponent', [
   'require',
   function(require) {
+    const ServicesProvider = require('ServicesProvider');
     return {
       restrict: 'E',
       replace: true,
@@ -41,7 +42,7 @@ angular.module('contentful').directive('reactComponent', [
         var renderMyComponent = () => {
           var scopeProps = $scope.$eval(attrs.props);
 
-          renderComponent(reactComponent, scopeProps, $scope, element, store);
+          renderComponent(reactComponent, scopeProps, $scope, element, store, ServicesProvider);
         };
 
         // If there are props, re-render when they change
@@ -66,13 +67,16 @@ angular.module('contentful').directive('reactComponent', [
   }
 ]);
 
-function renderComponent(Component, props, scope, elem, store) {
+// TODO refactor this function (6 arguments is too much)
+function renderComponent(Component, props, scope, elem, store, ServicesProvider) {
   scope.$evalAsync(() => {
     // this is the single place we mount all our components, so all
     // providers should be added here
     ReactDOM.render(
       <Provider store={store}>
-        <Component {...props} scope={scope} />
+        <ServicesProvider>
+          <Component {...props} scope={scope} />
+        </ServicesProvider>
       </Provider>,
       elem
     );

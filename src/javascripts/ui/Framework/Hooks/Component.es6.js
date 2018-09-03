@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-syntax, react/prop-types */
+/* eslint-disable no-restricted-syntax, react/prop-types, camelcase */
 import * as React from 'react';
 import { omit, clone, get } from 'lodash';
 import { set } from 'utils/Collections';
@@ -36,7 +36,7 @@ export class Hook extends React.Component {
     this.hooks.next = hookMap(this.props.args.hooks);
     this.applyHooks();
   }
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     this.hooks.prev = this.hooks.next;
     this.hooks.next = hookMap(nextProps.args.hooks);
   }
@@ -47,7 +47,7 @@ export class Hook extends React.Component {
     this.applyHooks();
   }
 
-  componentWillUpdate() {
+  UNSAFE_componentWillUpdate() {
     this.applyHooks();
   }
 

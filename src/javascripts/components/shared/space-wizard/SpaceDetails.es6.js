@@ -27,7 +27,7 @@ const SpaceDetails = createReactClass({
     state.validation = validateState(state);
     return state;
   },
-  componentWillReceiveProps: function({ spaceCreation: { error } }) {
+  UNSAFE_componentWillReceiveProps: function({ spaceCreation: { error } }) {
     const {
       spaceCreation: { error: currentError }
     } = this.props;
