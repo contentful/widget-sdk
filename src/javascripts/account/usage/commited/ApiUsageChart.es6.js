@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
-import EChart from './EChart';
-import formatNumber from './formatNumber';
-import { organizationResourceUsagePropType, periodPropType } from './propTypes';
-import periodToDates from './periodToDates';
-import EmptyChartPlaceholder from './EmptyChartPlaceholder';
+import EChart from './EChart.es6';
+import formatNumber from './formatNumber.es6';
+import { organizationResourceUsagePropType, periodPropType } from './propTypes.es6';
+import periodToDates from './periodToDates.es6';
+import EmptyChartPlaceholder from './EmptyChartPlaceholder.es6';
 
 export default class ApiUsageChart extends React.Component {
   static propTypes = {

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
-import { periodPropType } from './propTypes';
+import { periodPropType } from './propTypes.es6';
 
 const formatDate = date => moment(date).format('DD MMM');
 

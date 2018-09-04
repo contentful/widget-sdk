@@ -4,7 +4,7 @@ import { mapValues, flow, keyBy, cond, constant, stubTrue } from 'lodash/fp';
 
 import { Spinner } from '@contentful/ui-component-library';
 
-import * as ReloadNotification from 'ReloadNotification.es6';
+import * as ReloadNotification from 'ReloadNotification';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { getAllSpaces } from 'access_control/OrganizationMembershipRepository.es6';
 import { isEnterprisePlan, getBasePlan } from 'account/pricing/PricingDataProvider.es6';
@@ -12,8 +12,8 @@ import createResourceService from 'services/ResourceService.es6';
 import { getOrganization } from 'services/TokenStore.es6';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import Workbench from 'app/WorkbenchReact.es6';
-import { track } from 'analytics/Analytics';
-import { getCurrentVariation } from 'utils/LaunchDarkly';
+import { track } from 'analytics/Analytics.es6';
+import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 
 import OrganizationResourceUsageList from './non_commited/OrganizationResourceUsageList.es6';
 import OrganizationUsagePage from './commited/OrganizationUsagePage.es6';

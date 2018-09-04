@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import { last } from 'lodash';
 import moment from 'moment';
 
-import EChart from './EChart';
-import formatNumber from './formatNumber';
-import { periodPropType, organizationUsagePropType } from './propTypes';
-import periodToDates from './periodToDates';
-import EmptyChartPlaceholder from './EmptyChartPlaceholder';
+import EChart from './EChart.es6';
+import formatNumber from './formatNumber.es6';
+import { periodPropType, organizationUsagePropType } from './propTypes.es6';
+import periodToDates from './periodToDates.es6';
+import EmptyChartPlaceholder from './EmptyChartPlaceholder.es6';
 
 const accumulateUsage = usage =>
   usage.reduce((acc, value) => acc.concat(value + (last(acc) || 0)), []);

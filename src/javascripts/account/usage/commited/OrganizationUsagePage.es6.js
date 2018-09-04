@@ -1,22 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { map, sum } from 'lodash';
-
 import { Button } from '@contentful/ui-component-library';
-import * as Intercom from 'intercom';
-import { supportUrl } from 'Config';
-import { track } from 'analytics/Analytics';
-import $state from '$state';
 
-import OrganisationUsageChart from './OrganisationUsageChart';
-import ApiUsageSection from './ApiUsageSection';
-import formatNumber from './formatNumber';
+import * as Intercom from 'intercom';
+import $state from '$state';
+import { supportUrl } from 'Config.es6';
+import { track } from 'analytics/Analytics.es6';
+
+import OrganisationUsageChart from './OrganisationUsageChart.es6';
+import ApiUsageSection from './ApiUsageSection.es6';
+import formatNumber from './formatNumber.es6';
 import {
   organizationResourceUsagePropType,
   organizationUsagePropType,
   arrayPropType,
   periodPropType
-} from './propTypes';
+} from './propTypes.es6';
 
 const apiUsagePropType = arrayPropType(organizationResourceUsagePropType);
 

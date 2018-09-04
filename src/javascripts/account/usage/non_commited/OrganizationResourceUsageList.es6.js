@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 
 import { keyBy, property } from 'lodash';
-import { ResourceUsage } from 'app/SpaceSettings/Usage/ResourceUsage';
+import { ResourceUsage } from 'app/SpaceSettings/Usage/ResourceUsage.es6';
 
 export default class OrganizationResourceUsageList extends React.Component {
   static propTypes = {
