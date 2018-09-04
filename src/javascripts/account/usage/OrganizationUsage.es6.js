@@ -90,7 +90,7 @@ export default class OrganizationUsage extends React.Component {
         });
         await this.loadPeriodData(0);
       } else {
-        this.setState({ resources: await service.getAll() });
+        this.setState({ resources: await service.getAll(), isLoading: false });
       }
 
       this.setState({ commited }, onReady);
@@ -158,7 +158,11 @@ export default class OrganizationUsage extends React.Component {
           [stubTrue, constant(undefined)]
         ])()}
         content={cond([
-          [constant(!hasSpaces), constant(<NoSpacesPlaceholder />)],
+          [
+            constant((!commited || !flagActive) && typeof resources !== 'undefined'),
+            () => <OrganizationResourceUsageList resources={resources} />
+          ],
+          [constant(commited && flagActive && !hasSpaces), constant(<NoSpacesPlaceholder />)],
           [
             constant(commited && flagActive && typeof selectedPeriodIndex !== 'undefined'),
             () => (
@@ -170,10 +174,6 @@ export default class OrganizationUsage extends React.Component {
                 isLoading={isLoading}
               />
             )
-          ],
-          [
-            constant(typeof resources !== 'undefined'),
-            () => <OrganizationResourceUsageList resources={resources} />
           ],
           [stubTrue, constant(<div />)]
         ])()}
