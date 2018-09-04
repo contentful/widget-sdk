@@ -1,12 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import createReactClass from 'create-react-class';
 
 /**
  * Renders query input in search widget
  */
-const QueryInput = createReactClass({
-  propTypes: {
+class QueryInput extends React.Component {
+  static propTypes = {
     placeholder: PropTypes.string,
     autoFocus: PropTypes.bool,
     isFocused: PropTypes.bool,
@@ -15,23 +14,25 @@ const QueryInput = createReactClass({
     value: PropTypes.string,
     onKeyDown: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired
-  },
-  getInitialState() {
-    return {
-      value: this.props.value
-    };
-  },
+  };
+
+  state = {
+    value: this.props.value
+  };
+
   componentDidUpdate() {
     if (this.props.isFocused) {
       this.inputRef.focus();
     }
-  },
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  }
+
+  UNSAFE_componentWillReceiveProps = nextProps => {
     this.setState(() => ({
       value: nextProps.value
     }));
-  },
-  handleChange(e) {
+  };
+
+  handleChange = e => {
     const {
       target: { value }
     } = e;
@@ -39,7 +40,8 @@ const QueryInput = createReactClass({
     this.setState(() => ({
       value
     }));
-  },
+  };
+
   render() {
     const { placeholder, autoFocus, onKeyDown, onFocus, onBlur } = this.props;
     const { value } = this.state;
@@ -69,6 +71,6 @@ const QueryInput = createReactClass({
       </fieldset>
     );
   }
-});
+}
 
 export default QueryInput;

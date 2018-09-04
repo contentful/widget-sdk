@@ -1,5 +1,4 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import * as ReloadNotification from 'ReloadNotification';
 import createResourceService from 'services/ResourceService.es6';
@@ -42,35 +41,35 @@ OrganizationResourceUsageList.propTypes = {
   resources: PropTypes.arrayOf(PropTypes.object)
 };
 
-const OrganizationUsage = createReactClass({
-  propTypes: {
+class OrganizationUsage extends React.Component {
+  static propTypes = {
     orgId: PropTypes.string.isRequired,
     onReady: PropTypes.func.isRequired,
     onForbidden: PropTypes.func.isRequired
-  },
-  getInitialState() {
-    return {
-      resources: []
-    };
-  },
+  };
+
+  state = {
+    resources: []
+  };
+
   componentDidMount() {
     const { onForbidden } = this.props;
 
     this.checkPermissions()
       .then(this.fetchPlan)
       .catch(onForbidden);
-  },
+  }
 
-  async checkPermissions() {
+  checkPermissions = async () => {
     const { orgId } = this.props;
     const organization = await getOrganization(orgId);
 
     if (!isOwnerOrAdmin(organization)) {
       throw new Error('No permission');
     }
-  },
+  };
 
-  async fetchPlan() {
+  fetchPlan = async () => {
     const { orgId, onReady } = this.props;
     const service = createResourceService(orgId, 'organization');
     let resources;
@@ -82,7 +81,7 @@ const OrganizationUsage = createReactClass({
     } catch (e) {
       ReloadNotification.apiErrorHandler(e);
     }
-  },
+  };
 
   render() {
     const { resources } = this.state;
@@ -95,6 +94,6 @@ const OrganizationUsage = createReactClass({
       />
     );
   }
-});
+}
 
 export default OrganizationUsage;

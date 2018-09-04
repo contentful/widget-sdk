@@ -1,38 +1,37 @@
-import { noop } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
-import createReactClass from 'create-react-class';
+import { noop } from 'lodash';
 
 /**
  * Renders text input in filter pill
  */
-const TextValueInput = createReactClass({
-  propTypes: {
+class TextValueInput extends React.Component {
+  static propTypes = {
     testId: PropTypes.any,
     inputRef: PropTypes.func,
     value: PropTypes.string,
     onKeyDown: PropTypes.func,
     onChange: PropTypes.func,
     onClick: PropTypes.func
-  },
-  getDefaultProps() {
-    return {
-      onChange: noop,
-      onKeyDown: noop,
-      onClick: noop
-    };
-  },
-  getInitialState() {
-    return {
-      value: this.props.value
-    };
-  },
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  };
+
+  static defaultProps = {
+    onChange: noop,
+    onKeyDown: noop,
+    onClick: noop
+  };
+
+  state = {
+    value: this.props.value
+  };
+
+  UNSAFE_componentWillReceiveProps = nextProps => {
     this.setState(() => ({
       value: nextProps.value
     }));
-  },
-  handleChange(e) {
+  };
+
+  handleChange = e => {
     const {
       target: { value }
     } = e;
@@ -40,7 +39,8 @@ const TextValueInput = createReactClass({
     this.setState(() => ({
       value
     }));
-  },
+  };
+
   render() {
     const { testId, inputRef, onKeyDown, onClick } = this.props;
     const { value } = this.state;
@@ -64,6 +64,6 @@ const TextValueInput = createReactClass({
       </fieldset>
     );
   }
-});
+}
 
 export default TextValueInput;

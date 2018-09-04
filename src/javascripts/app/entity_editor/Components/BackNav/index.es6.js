@@ -1,17 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import createReactClass from 'create-react-class';
 import Icon from 'ui/Components/Icon.es6';
 import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 import closeState from 'navigation/closeState';
 
-const BackNav = createReactClass({
-  propTypes: {
+class BackNav extends React.Component {
+  static propTypes = {
     slideInFeatureFlagValue: PropTypes.number.isRequired
-  },
-  handleClick() {
+  };
+
+  handleClick = () => {
     goToPreviousSlideOrExit(this.props.slideInFeatureFlagValue, 'arrow_back', closeState);
-  },
+  };
+
   render() {
     return (
       <div className="breadcrumbs-widget">
@@ -26,6 +27,6 @@ const BackNav = createReactClass({
       </div>
     );
   }
-});
+}
 
 export default BackNav;

@@ -1,11 +1,10 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import { template } from '../template.es6';
 import { Origin as IncomingLinksOrigin } from 'analytics/events/IncomingLinks.es6';
 
-const IncomingLinksList = createReactClass({
-  propTypes: {
+class IncomingLinksList extends React.Component {
+  static propTypes = {
     links: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.string.isRequired,
@@ -17,20 +16,23 @@ const IncomingLinksList = createReactClass({
     origin: PropTypes.oneOf([IncomingLinksOrigin.DIALOG, IncomingLinksOrigin.SIDEBAR]).isRequired,
     onComponentMount: PropTypes.func,
     onClick: PropTypes.func
-  },
+  };
+
   componentDidMount() {
     if (this.props.onComponentMount) {
       this.props.onComponentMount();
     }
-  },
-  handleClick(linkEntityId) {
+  }
+
+  handleClick = linkEntityId => {
     if (this.props.onClick) {
       this.props.onClick({
         linkEntityId,
         incomingLinksCount: this.props.links.length
       });
     }
-  },
+  };
+
   render() {
     const { links, message } = this.props;
     return (
@@ -60,6 +62,6 @@ const IncomingLinksList = createReactClass({
       </div>
     );
   }
-});
+}
 
 export default IncomingLinksList;

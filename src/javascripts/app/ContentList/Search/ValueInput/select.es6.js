@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 // TODO: add prop-types
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { find } from 'lodash';
 
 function getSelectWidth(label) {
@@ -9,28 +8,26 @@ function getSelectWidth(label) {
   return Math.max(7, width) + 'ch';
 }
 
-const Select = createReactClass({
-  render() {
-    const { testId, options = [], value, inputRef, onChange, onKeyDown } = this.props;
-    const [_, label] = find(options, ([v]) => v === value) || ['', ''];
-    const width = getSelectWidth(label);
+const Select = props => {
+  const { testId, options = [], value, inputRef, onChange, onKeyDown } = props;
+  const [_, label] = find(options, ([v]) => v === value) || ['', ''];
+  const width = getSelectWidth(label);
 
-    return (
-      <select
-        className="input-reset search__select"
-        title={label}
-        data-test-id={testId}
-        value={value || ''}
-        ref={inputRef}
-        onChange={({ target: { value } }) => onChange(value)}
-        tabIndex="0"
-        onKeyDown={onKeyDown}
-        style={{ width }}>
-        {options.map(([value, label]) => SelectOption(value, label))}
-      </select>
-    );
-  }
-});
+  return (
+    <select
+      className="input-reset search__select"
+      title={label}
+      data-test-id={testId}
+      value={value || ''}
+      ref={inputRef}
+      onChange={({ target: { value } }) => onChange(value)}
+      tabIndex="0"
+      onKeyDown={onKeyDown}
+      style={{ width }}>
+      {options.map(([value, label]) => SelectOption(value, label))}
+    </select>
+  );
+};
 
 function SelectOption(value, label) {
   return (

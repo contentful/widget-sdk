@@ -242,7 +242,7 @@ function renderPills({
 function filterPill({
   filter,
   op = '',
-  value,
+  value = '',
   testId,
   isFocused = false,
   isValueFocused = false,

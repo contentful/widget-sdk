@@ -1,44 +1,46 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import createReactClass from 'create-react-class';
 
-const TextInput = createReactClass({
-  propTypes: {
+class TextInput extends React.Component {
+  static propTypes = {
     value: PropTypes.string,
     onChange: PropTypes.func,
     onFocus: PropTypes.func,
     onBlur: PropTypes.func
-  },
-  getDefaultProps() {
-    return {
-      onChange() {},
-      onFocus() {},
-      onBlur() {}
-    };
-  },
-  getInitialState() {
-    return {
-      isFocused: false,
-      currentValue: this.props.value
-    };
-  },
-  handleChange(e) {
+  };
+
+  static defaultProps = {
+    onChange() {},
+    onFocus() {},
+    onBlur() {}
+  };
+
+  state = {
+    isFocused: false,
+    currentValue: this.props.value
+  };
+
+  handleChange = e => {
     this.setState({ currentValue: e.target.value });
     this.props.onChange(e);
-  },
-  handleFocus(e) {
+  };
+
+  handleFocus = e => {
     this.setState({ isFocused: true });
     this.props.onFocus(e);
-  },
-  handleBlur(e) {
+  };
+
+  handleBlur = e => {
     this.setState({ isFocused: false });
     this.props.onBlur(e);
-  },
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  };
+
+  UNSAFE_componentWillReceiveProps = nextProps => {
     if (!this.state.isFocused) {
       this.setState({ currentValue: nextProps.value });
     }
-  },
+  };
+
   render() {
     return (
       <input
@@ -50,6 +52,6 @@ const TextInput = createReactClass({
       />
     );
   }
-});
+}
 
 export default TextInput;

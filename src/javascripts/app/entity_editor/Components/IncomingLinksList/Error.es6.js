@@ -1,8 +1,8 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 
-const Error = createReactClass({
-  displayName: 'Error',
+class Error extends React.Component {
+  static displayName = 'Error';
+
   render() {
     return (
       <div data-test-id="error">
@@ -17,6 +17,6 @@ const Error = createReactClass({
       </div>
     );
   }
-});
+}
 
 export default Error;
