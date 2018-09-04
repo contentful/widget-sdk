@@ -1,8 +1,8 @@
-describe('data/CMA/EntityPrefetchCache', () => {
+describe('data/CMA/EntityPrefetchCache.es6', () => {
   beforeEach(function() {
     module('contentful/test');
     const $q = this.$inject('$q');
-    const createCache = this.$inject('data/CMA/EntityPrefetchCache').default;
+    const createCache = this.$inject('data/CMA/EntityPrefetchCache.es6').default;
 
     this.queryEntities = sinon.spy(query => {
       const ids = query['sys.id[in]'].split(',');

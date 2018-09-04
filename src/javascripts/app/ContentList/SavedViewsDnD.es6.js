@@ -1,5 +1,5 @@
 import { find, get as getAtPath, set as setAtPath } from 'lodash';
-import { map, filter, assign, findMap, insertAt, move } from 'utils/Collections';
+import { map, filter, assign, findMap, insertAt, move } from 'utils/Collections.es6';
 import { create as createStortable } from 'Sortable';
 
 import random from 'random';

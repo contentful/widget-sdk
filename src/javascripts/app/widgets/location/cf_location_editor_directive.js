@@ -4,7 +4,7 @@ angular.module('cf.app').directive('cfLocationEditor', [
   'require',
   require => {
     const $controller = require('$controller');
-    const LocationMap = require('app/widgets/location/Map');
+    const LocationMap = require('app/widgets/location/Map.es6');
 
     return {
       restrict: 'E',

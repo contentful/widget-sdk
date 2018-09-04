@@ -1,6 +1,6 @@
 import * as K from 'helpers/mocks/kefir';
 
-describe('data/sharejs/Connection', () => {
+describe('data/sharejs/Connection.es6', () => {
   beforeEach(function() {
     this.baseConnection = {
       socket: {},
@@ -63,7 +63,7 @@ describe('data/sharejs/Connection', () => {
         })
     };
 
-    this.create = this.$inject('data/sharejs/Connection').create;
+    this.create = this.$inject('data/sharejs/Connection.es6').create;
     this.connection = this.create('//HOST', this.auth, 'SPACE', 'ENV');
   });
 
@@ -93,7 +93,7 @@ describe('data/sharejs/Connection', () => {
     let DocLoad;
 
     beforeEach(function() {
-      DocLoad = this.$inject('data/sharejs/Connection').DocLoad;
+      DocLoad = this.$inject('data/sharejs/Connection.es6').DocLoad;
 
       this.entity = {
         data: {

@@ -1,6 +1,6 @@
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
-describe('data/ContentTypeRepo/accessibleCTs', () => {
+describe('data/ContentTypeRepo/accessibleCTs.es6', () => {
   let accessibleCTs;
   const accessibleCTsIds = [1, 2, 3];
 
@@ -12,7 +12,7 @@ describe('data/ContentTypeRepo/accessibleCTs', () => {
         READ: 'read'
       }
     });
-    accessibleCTs = yield this.system.import('data/ContentTypeRepo/accessibleCTs');
+    accessibleCTs = yield this.system.import('data/ContentTypeRepo/accessibleCTs.es6');
 
     accessibleCTs = accessibleCTs.default;
   });

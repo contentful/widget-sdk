@@ -1,9 +1,9 @@
 import { constant } from 'lodash';
 import ShareJS from 'sharejs';
 import { caseof, caseofEq } from 'sum-types';
-import * as K from 'utils/kefir';
+import * as K from 'utils/kefir.es6';
 import $q from '$q';
-import * as DocLoader from 'data/sharejs/DocLoader';
+import * as DocLoader from 'data/sharejs/DocLoader.es6';
 
 export const DocLoad = DocLoader.DocLoad;
 

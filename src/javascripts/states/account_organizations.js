@@ -9,12 +9,12 @@ angular
   .factory('states/account/organizations', [
     'require',
     require => {
-      var base = require('states/Base').default;
+      var base = require('states/Base.es6').default;
       var h = require('ui/Framework').h;
-      var workbenchHeader = require('app/Workbench').header;
+      var workbenchHeader = require('app/Workbench.es6').header;
       var getStore = require('TheStore').getStore;
       var store = getStore();
-      var Analytics = require('analytics/Analytics');
+      var Analytics = require('analytics/Analytics.es6');
 
       // A list of states that have been changed
       // to be adapted to the new pricing model (V2).
@@ -174,9 +174,9 @@ angular
             'require',
             async ($state, $stateParams, require) => {
               var accessChecker = require('access_control/AccessChecker');
-              var useLegacy = require('utils/ResourceUtils').useLegacy;
-              var TokenStore = require('services/TokenStore');
-              var go = require('states/Navigator').go;
+              var useLegacy = require('utils/ResourceUtils.es6').useLegacy;
+              var TokenStore = require('services/TokenStore.es6');
+              var go = require('states/Navigator.es6').go;
 
               const org = await TokenStore.getOrganization($stateParams.orgId);
 

@@ -1,4 +1,4 @@
-import { assign } from 'utils/Collections';
+import { assign } from 'utils/Collections.es6';
 
 import random from 'random';
 import systemFields from 'systemFields';

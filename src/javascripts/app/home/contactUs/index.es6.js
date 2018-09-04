@@ -1,7 +1,7 @@
 import { createElement as h } from 'react';
 import createReactClass from 'create-react-class';
 import $state from '$state';
-import { track } from 'analytics/Analytics';
+import { track } from 'analytics/Analytics.es6';
 import Intercom from 'intercom';
 
 const prefix = 'space-home-page-contact-us';

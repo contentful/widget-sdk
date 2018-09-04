@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import * as Fetcher from './GitHubFetcher';
+import * as Fetcher from './GitHubFetcher.es6';
 
 const EXAMPLES = [
   {

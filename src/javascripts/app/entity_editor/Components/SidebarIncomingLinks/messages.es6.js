@@ -1,4 +1,4 @@
-import { EntityType, NumberOfLinks } from '../constants';
+import { EntityType, NumberOfLinks } from '../constants.es6';
 
 export default {
   [EntityType.ENTRY]: {

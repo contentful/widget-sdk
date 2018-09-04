@@ -4,12 +4,12 @@ import { get } from 'lodash';
 import notification from 'notification';
 
 import $state from '$state';
-import Icon from 'ui/Components/Icon';
+import Icon from 'ui/Components/Icon.es6';
 
-import WebhookForm from './WebhookForm';
-import WebhookSidebar from './WebhookSidebar';
-import * as WebhookEditorActions from './WebhookEditorActions';
-import WebhookActivityLog from './WebhookActivityLog';
+import WebhookForm from './WebhookForm.es6';
+import WebhookSidebar from './WebhookSidebar.es6';
+import * as WebhookEditorActions from './WebhookEditorActions.es6';
+import WebhookActivityLog from './WebhookActivityLog.es6';
 
 const TABS = { SETTINGS: 1, LOG: 2 };
 

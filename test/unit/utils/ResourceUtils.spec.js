@@ -75,7 +75,7 @@ describe('ResourceUtils', () => {
       }
     });
 
-    this.ResourceUtils = yield system.import('utils/ResourceUtils');
+    this.ResourceUtils = yield system.import('utils/ResourceUtils.es6');
   });
 
   describe('#canCreate', () => {

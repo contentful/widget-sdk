@@ -1,8 +1,8 @@
-import * as K from 'utils/kefir';
+import * as K from 'utils/kefir.es6';
 import { caseof } from 'sum-types';
 
 import { trigger as showReloadModal } from 'ReloadNotification';
-import { Error } from 'data/document/Error';
+import { Error } from 'data/document/Error.es6';
 
 export default function init($scope, docError$) {
   const forbidden = docError$.filter(error => {

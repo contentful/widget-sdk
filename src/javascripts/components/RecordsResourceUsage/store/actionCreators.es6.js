@@ -1,7 +1,7 @@
 import * as LD from 'utils/LaunchDarkly';
-import createResourceService from 'services/ResourceService';
+import createResourceService from 'services/ResourceService.es6';
 
-import * as actions from './actions';
+import * as actions from './actions.es6';
 
 export function getIncentivizingFlag() {
   return async dispatch => {

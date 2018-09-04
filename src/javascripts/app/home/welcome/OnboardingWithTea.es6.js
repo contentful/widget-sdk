@@ -1,10 +1,10 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
-import { TEASteps, STEPS_KEYS } from './OnboardingWithTeaSteps';
+import { TEASteps, STEPS_KEYS } from './OnboardingWithTeaSteps.es6';
 import { getStore } from 'TheStore';
 import spaceContext from 'spaceContext';
-import { track, updateUserInSegment } from 'analytics/Analytics';
+import { track, updateUserInSegment } from 'analytics/Analytics.es6';
 import $state from '$state';
 import { findKey, omit, times } from 'lodash';
 

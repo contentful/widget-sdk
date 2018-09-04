@@ -1,5 +1,5 @@
-import * as Config from 'Config';
-import { create as createEndpoint } from 'data/Endpoint';
+import * as Config from 'Config.es6';
+import { create as createEndpoint } from 'data/Endpoint.es6';
 
 /**
  * @ngdoc method

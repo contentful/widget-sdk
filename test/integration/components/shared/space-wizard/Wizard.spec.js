@@ -165,11 +165,11 @@ describe('Space Wizard', function() {
     };
 
     module('contentful/test', $provide => {
-      $provide.value('analytics/Analytics', {
+      $provide.value('analytics/Analytics.es6', {
         track: this.stubs.track
       });
 
-      $provide.value('services/ResourceService', {
+      $provide.value('services/ResourceService.es6', {
         default: () => {
           return {
             get: this.stubs.resourceService_get,
@@ -178,7 +178,7 @@ describe('Space Wizard', function() {
         }
       });
 
-      $provide.value('account/pricing/PricingDataProvider', {
+      $provide.value('account/pricing/PricingDataProvider.es6', {
         getSpaceRatePlans: this.stubs.getSpaceRatePlans,
         getSubscriptionRatePlans: this.stubs.getSubscriptionRatePlans,
         calculateTotalPrice: this.stubs.getTotalPrice,
@@ -189,7 +189,7 @@ describe('Space Wizard', function() {
         createSpace: this.stubs.createSpace
       });
 
-      $provide.value('data/CMA/ApiKeyRepo', {
+      $provide.value('data/CMA/ApiKeyRepo.es6', {
         default: () => {
           return {
             create: this.stubs.ApiKeyRepo_create
@@ -197,12 +197,12 @@ describe('Space Wizard', function() {
         }
       });
 
-      $provide.value('data/EndpointFactory', {
+      $provide.value('data/EndpointFactory.es6', {
         createSpaceEndpoint: this.stubs.createSpaceEndpoint,
         createOrganizationEndpoint: this.stubs.createOrganizationEndpoint
       });
 
-      $provide.value('services/SpaceTemplateLoader', {
+      $provide.value('services/SpaceTemplateLoader.es6', {
         getTemplatesList: this.stubs.getTemplatesList,
         getTemplate: this.stubs.getTemplate
       });
@@ -216,12 +216,12 @@ describe('Space Wizard', function() {
       });
     });
 
-    this.mockService('services/TokenStore', {
+    this.mockService('services/TokenStore.es6', {
       refresh: this.stubs.TokenStore_refresh
     });
 
-    const Wizard = this.$inject('components/shared/space-wizard/Wizard').default;
-    this.store = this.$inject('ReduxStore/store').default;
+    const Wizard = this.$inject('components/shared/space-wizard/Wizard.es6').default;
+    this.store = this.$inject('ReduxStore/store.es6').default;
 
     this.mountWithAction = function(action) {
       return mount(

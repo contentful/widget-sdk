@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import SpaceSettings from './SpaceSettings';
+import SpaceSettings from './SpaceSettings.es6';
 import { get } from 'lodash';
 import * as ReloadNotification from 'ReloadNotification';
 import $state from '$state';

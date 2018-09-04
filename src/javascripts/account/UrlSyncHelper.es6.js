@@ -1,6 +1,6 @@
 import $state from '$state';
 import $location from '$location';
-import { accountUrl } from 'Config';
+import { accountUrl } from 'Config.es6';
 import { extend, startsWith, endsWith } from 'lodash';
 
 /**

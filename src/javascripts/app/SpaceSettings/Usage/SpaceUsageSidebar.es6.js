@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import ContactUsButton from 'ui/Components/ContactUsButton';
-import { resourceMaximumLimitReached, resourceHumanNameMap } from 'utils/ResourceUtils';
+import ContactUsButton from 'ui/Components/ContactUsButton.es6';
+import { resourceMaximumLimitReached, resourceHumanNameMap } from 'utils/ResourceUtils.es6';
 
 // Return a list with the names of the resources that reached the limit
 const getLimitsReachedResources = resources => {

@@ -1,4 +1,4 @@
-import { create as createDoc } from 'app/entity_editor/Document';
+import { create as createDoc } from 'app/entity_editor/Document.es6';
 import { find, includes, isString, get as getAtPath } from 'lodash';
 
 /**

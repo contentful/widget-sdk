@@ -1,7 +1,7 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import * as Fetcher from 'app/Extensions/GitHubFetcher';
-import Installer from 'app/Extensions/GitHubInstaller';
+import * as Fetcher from 'app/Extensions/GitHubFetcher.es6';
+import Installer from 'app/Extensions/GitHubInstaller.es6';
 
 const VALID_URL = 'https://github.com/jelz/sample/blob/master/extension.json';
 const ERR_SELECTOR = '.cfnext-form__field-error';

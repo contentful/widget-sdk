@@ -1,7 +1,10 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import WebhookFilters from 'app/Webhooks/WebhookFilters';
-import { transformFiltersToList, transformListToFilters } from 'app/Webhooks/WebhookFiltersState';
+import WebhookFilters from 'app/Webhooks/WebhookFilters.es6';
+import {
+  transformFiltersToList,
+  transformListToFilters
+} from 'app/Webhooks/WebhookFiltersState.es6';
 
 describe('WebhookFilters', function() {
   const mount = filters => {

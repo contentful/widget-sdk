@@ -1,6 +1,6 @@
 import { h } from 'utils/hyperscript';
-import { dragHandle, actions } from './TemplateCommons';
-import LegacyEntityLinkTemplate from './LegacyEntityLinkTemplate';
+import { dragHandle, actions } from './TemplateCommons.es6';
+import LegacyEntityLinkTemplate from './LegacyEntityLinkTemplate.es6';
 
 /**
  * Creates the template for entity links used by the `cfEntityLink`

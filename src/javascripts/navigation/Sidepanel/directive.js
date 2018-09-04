@@ -12,7 +12,7 @@ angular
     'require',
     require => {
       var $window = require('$window');
-      var createController = require('navigation/Sidepanel/DirectiveController').default;
+      var createController = require('navigation/Sidepanel/DirectiveController.es6').default;
 
       return {
         restrict: 'E',

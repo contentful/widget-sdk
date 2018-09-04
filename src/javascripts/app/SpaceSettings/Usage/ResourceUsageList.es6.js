@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { ResourceUsageHighlight, ResourceUsage } from './ResourceUsage';
+import { ResourceUsageHighlight, ResourceUsage } from './ResourceUsage.es6';
 
 const ResourceUsageList = ({ resources }) =>
   resources ? (

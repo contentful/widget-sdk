@@ -1,5 +1,5 @@
 import { omit } from 'lodash';
-import { fetchAll } from './FetchAll';
+import { fetchAll } from './FetchAll.es6';
 
 /**
  * @name LocaleRepo.create

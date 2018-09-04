@@ -1,4 +1,4 @@
-import CookieStorage from 'TheStore/CookieStorage';
+import CookieStorage from 'TheStore/CookieStorage.es6';
 import { pickBy, merge } from 'lodash';
 
 /**

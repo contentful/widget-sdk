@@ -6,7 +6,7 @@ export const name = 'full-screen-component';
 angular.module('contentful').factory(name, [
   'require',
   function(require) {
-    const Icon = require('ui/Components/Icon').default;
+    const Icon = require('ui/Components/Icon.es6').default;
 
     const FullScreen = ({ children, close }) => {
       return (

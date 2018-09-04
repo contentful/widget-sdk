@@ -1,8 +1,8 @@
 import spaceContext from 'spaceContext';
 import EntityHelpers from 'EntityHelpers';
 import TheLocaleStore from 'TheLocaleStore';
-import { makeEntityRef, href } from 'states/Navigator';
-import { EntityType } from '../constants';
+import { makeEntityRef, href } from 'states/Navigator.es6';
+import { EntityType } from '../constants.es6';
 
 const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
 const entityHelpers = EntityHelpers.newForLocale(defaultLocaleCode);

@@ -5,7 +5,7 @@ angular.module('contentful').directive('cfExtensionEditor', [
   require => {
     const React = require('react');
     const ReactDOM = require('react-dom');
-    const ExtensionEditor = require('app/Extensions/ExtensionEditor').default;
+    const ExtensionEditor = require('app/Extensions/ExtensionEditor.es6').default;
     const leaveConfirmator = require('navigation/confirmLeaveEditor');
     const spaceContext = require('spaceContext');
     const notification = require('notification');

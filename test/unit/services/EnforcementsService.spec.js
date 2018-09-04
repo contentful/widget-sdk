@@ -12,11 +12,11 @@ describe('Enforcements Service', function() {
     this.getCurrentVariation = sinon.stub().resolves(true);
 
     module('contentful/test', $provide => {
-      $provide.value('data/EndpointFactory', {
+      $provide.value('data/EndpointFactory.es6', {
         createSpaceEndpoint: () => this.fetchEnforcements
       });
 
-      $provide.value('services/TokenStore', {
+      $provide.value('services/TokenStore.es6', {
         getSpace: this.getSpace
       });
 
@@ -24,7 +24,7 @@ describe('Enforcements Service', function() {
         getCurrentVariation: this.getCurrentVariation
       });
     });
-    this.EnforcementsService = this.$inject('services/EnforcementsService');
+    this.EnforcementsService = this.$inject('services/EnforcementsService.es6');
 
     this.setEnforcementsResp = enforcements => {
       this.fetchEnforcements.resolves({ items: enforcements });

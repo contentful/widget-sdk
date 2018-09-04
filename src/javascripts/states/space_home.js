@@ -9,9 +9,9 @@ angular
   .factory('states/space_home', [
     'require',
     require => {
-      var base = require('states/Base').default;
+      var base = require('states/Base.es6').default;
       var accessChecker = require('access_control/AccessChecker');
-      var template = require('app/home/HomeTemplate').default;
+      var template = require('app/home/HomeTemplate.es6').default;
 
       return base({
         name: 'home',

@@ -10,19 +10,17 @@ angular.module('contentful').factory(name, [
     const modalDialog = require('modalDialog');
     const $rootScope = require('$rootScope');
     const { getStore } = require('TheStore');
-    const { track } = require('analytics/Analytics');
+    const { track } = require('analytics/Analytics.es6');
 
     const client = require('client');
     const spaceContext = require('spaceContext');
     const $state = require('$state');
-    const { refresh } = require('services/TokenStore');
+    const { refresh, user$ } = require('services/TokenStore.es6');
     const Entries = require('data/Entries');
 
-    const Resource = require('app/api/CMATokens/Resource');
-    const auth = require('Authentication');
-
-    const { user$ } = require('services/TokenStore');
-    const { getValue } = require('utils/kefir');
+    const Resource = require('app/api/CMATokens/Resource.es6');
+    const auth = require('Authentication.es6');
+    const { getValue } = require('utils/kefir.es6');
 
     const store = getStore();
 

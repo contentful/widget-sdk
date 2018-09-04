@@ -10,7 +10,7 @@ describe('Enterprise Space Wizard', () => {
     };
 
     module('contentful/test', $provide => {
-      $provide.value('analytics/Analytics', {
+      $provide.value('analytics/Analytics.es6', {
         track: this.stubs.track
       });
     });
@@ -63,12 +63,12 @@ describe('Enterprise Space Wizard', () => {
       }
     ];
 
-    this.store = this.$inject('ReduxStore/store').default;
-    this.PlanFeatures = this.$inject('components/shared/space-wizard/PlanFeatures').default;
+    this.store = this.$inject('ReduxStore/store.es6').default;
+    this.PlanFeatures = this.$inject('components/shared/space-wizard/PlanFeatures.es6').default;
     this.TextField = this.$inject('@contentful/ui-component-library').TextField;
 
     const EnterpriseSpaceWizard = this.$inject(
-      'components/shared/enterprise-space-wizard/EnterpriseSpaceWizard'
+      'components/shared/enterprise-space-wizard/EnterpriseSpaceWizard.es6'
     ).default;
 
     this.createSpace = sinon.stub();

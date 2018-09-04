@@ -1,9 +1,9 @@
 describe('Snowplow events service', () => {
   beforeEach(function() {
     module('contentful/test', $provide => {
-      $provide.value('analytics/snowplow/transformers/Generic', _.constant({ foo: 'bar' }));
+      $provide.value('analytics/snowplow/transformers/Generic.es6', _.constant({ foo: 'bar' }));
     });
-    this.Events = this.$inject('analytics/snowplow/Events');
+    this.Events = this.$inject('analytics/snowplow/Events.es6');
   });
 
   it('#transform()', function() {

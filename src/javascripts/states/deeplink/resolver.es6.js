@@ -1,14 +1,14 @@
 import spaceContext from 'spaceContext';
-import { runTask } from 'utils/Concurrent';
+import { runTask } from 'utils/Concurrent.es6';
 import {
   getSpaceInfo,
   getOrg,
   checkSpaceApiAccess,
   checkOrgAccess,
   getOnboardingSpaceId
-} from './utils';
+} from './utils.es6';
 import logger from 'logger';
-import { isLegacyOrganization } from 'utils/ResourceUtils';
+import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
 import { getStoragePrefix } from 'createModernOnboarding';
 import { getStore } from 'TheStore';
 

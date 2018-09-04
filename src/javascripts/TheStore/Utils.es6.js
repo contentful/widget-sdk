@@ -1,4 +1,4 @@
-import * as K from 'utils/kefir';
+import * as K from 'utils/kefir.es6';
 import window from 'global/window';
 import { partial, isString } from 'lodash';
 

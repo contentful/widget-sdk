@@ -25,8 +25,8 @@ describe('Space Template creation service', () => {
         getAll: stubs.getContentPreview,
         create: stubs.createContentPreview
       });
-      $provide.value('analytics/Analytics', { track: _.noop });
-      $provide.value('services/SpaceTemplateCreator/enrichTemplate', {
+      $provide.value('analytics/Analytics.es6', { track: _.noop });
+      $provide.value('services/SpaceTemplateCreator/enrichTemplate.es6', {
         // we don't care about template info, because we describe enrichTemplate
         // function by ourselves
         enrichTemplate: (_templateInfo, template) => enrichTemplate(template)

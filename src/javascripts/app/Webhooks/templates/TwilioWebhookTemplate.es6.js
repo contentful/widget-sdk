@@ -1,5 +1,5 @@
 import React from 'react';
-import TwilioLogo from './logos/TwilioLogo';
+import TwilioLogo from './logos/TwilioLogo.es6';
 
 export default {
   id: 'twilio-send-sms',

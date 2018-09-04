@@ -12,10 +12,10 @@ angular.module('contentful').controller('EntryActionsController', [
     const Command = require('command');
     const spaceContext = require('spaceContext');
     const $state = require('$state');
-    const Analytics = require('analytics/Analytics');
+    const Analytics = require('analytics/Analytics.es6');
     const accessChecker = require('access_control/AccessChecker');
-    const K = require('utils/kefir');
-    const Notification = require('app/entity_editor/Notifications').Notification;
+    const K = require('utils/kefir.es6');
+    const Notification = require('app/entity_editor/Notifications.es6').Notification;
 
     let currentFields;
     K.onValueScope($scope, fields$, fields => {

@@ -6,10 +6,10 @@ angular.module('contentful').controller('ListViewsController', [
   'resetList',
   'preserveStateAs',
   ($scope, require, getBlankView, resetList, preserveStateAs) => {
-    const createViewMigrator = require('data/ViewMigrator').default;
-    const createViewPersistor = require('data/ListViewPersistor').default;
-    const { Status, statusQueryKey } = require('app/ContentList/Search/Filters');
-    const { Operator } = require('app/ContentList/Search/Operators');
+    const createViewMigrator = require('data/ViewMigrator.es6').default;
+    const createViewPersistor = require('data/ListViewPersistor.es6').default;
+    const { Status, statusQueryKey } = require('app/ContentList/Search/Filters.es6');
+    const { Operator } = require('app/ContentList/Search/Operators.es6');
     const spaceContext = require('spaceContext');
     const Notification = require('notification');
 

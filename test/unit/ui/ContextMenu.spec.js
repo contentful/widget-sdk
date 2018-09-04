@@ -1,4 +1,4 @@
-import setupContextMenuHandler from 'ui/ContextMenuHandler';
+import setupContextMenuHandler from 'ui/ContextMenuHandler.es6';
 import { h } from 'utils/hyperscript';
 
 describe('context menu', () => {

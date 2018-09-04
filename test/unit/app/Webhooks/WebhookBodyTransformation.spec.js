@@ -1,6 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import WebhookBodyTransformation from 'app/Webhooks/WebhookBodyTransformation';
+import WebhookBodyTransformation from 'app/Webhooks/WebhookBodyTransformation.es6';
 import CodeMirror from 'react-codemirror';
 
 describe('WebhookBodyTransformation', function() {

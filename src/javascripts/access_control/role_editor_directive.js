@@ -24,9 +24,9 @@ angular.module('contentful').controller('RoleEditorController', [
     const leaveConfirmator = require('navigation/confirmLeaveEditor');
     const notification = require('notification');
     const logger = require('logger');
-    const createFeatureService = require('services/FeatureService').default;
-    const createResourceService = require('services/ResourceService').default;
-    const ResourceUtils = require('utils/ResourceUtils');
+    const createFeatureService = require('services/FeatureService.es6').default;
+    const createResourceService = require('services/ResourceService.es6').default;
+    const ResourceUtils = require('utils/ResourceUtils.es6');
 
     const org = spaceContext.organizationContext.organization;
     const FeatureService = createFeatureService(spaceContext.getId());

@@ -25,7 +25,7 @@ describe('paywallOpener', () => {
     module('contentful/test', $provide => {
       $provide.value('modalDialog', self.modalDialog);
       $provide.value('subscriptionPlanRecommender', subscriptionPlanRecommender);
-      $provide.value('analytics/Analytics', self.analytics);
+      $provide.value('analytics/Analytics.es6', self.analytics);
       $provide.value('LazyLoader', self.LazyLoader);
       $provide.value('TheAccountView', self.TheAccountView);
     });

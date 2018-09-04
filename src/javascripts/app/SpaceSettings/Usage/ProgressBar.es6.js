@@ -1,7 +1,7 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
-import { byName as colors } from 'Styles/Colors';
+import { byName as colors } from 'Styles/Colors.es6';
 
 export const ProgressBar = createReactClass({
   propTypes: {

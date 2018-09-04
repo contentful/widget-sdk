@@ -1,7 +1,7 @@
 describe('ShallowObjectDiff', () => {
   beforeEach(function() {
     module('contentful/test');
-    this.shallowObjectDiff = this.$inject('utils/ShallowObjectDiff').default;
+    this.shallowObjectDiff = this.$inject('utils/ShallowObjectDiff.es6').default;
   });
 
   it('should return a shallow diff of input object', function() {

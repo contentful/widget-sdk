@@ -16,9 +16,9 @@
  *
  * This module is covered by the 'cfReferenceEditor' directive tests.
  */
-import { get } from 'utils/Collections';
-import * as K from 'utils/kefir';
-import * as EntityResolver from 'data/CMA/EntityResolver';
+import { get } from 'utils/Collections.es6';
+import * as K from 'utils/kefir.es6';
+import * as EntityResolver from 'data/CMA/EntityResolver.es6';
 import { isEqual, isString } from 'lodash';
 
 /**

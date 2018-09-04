@@ -25,7 +25,7 @@ angular
       const notification = require('notification');
       const logger = require('logger');
       const slugUtils = require('slug');
-      const Analytics = require('analytics/Analytics');
+      const Analytics = require('analytics/Analytics.es6');
 
       // Fetch content types and preview environment
       const getPreviewEnvironment = contentPreview.get($stateParams.contentPreviewId);

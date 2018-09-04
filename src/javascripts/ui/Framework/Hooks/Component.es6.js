@@ -1,10 +1,10 @@
 /* eslint-disable no-restricted-syntax, react/prop-types, camelcase */
 import * as React from 'react';
 import { omit, clone, get } from 'lodash';
-import { set } from 'utils/Collections';
+import { set } from 'utils/Collections.es6';
 
-import { asReact } from '../DOMRenderer';
-import * as VTree from '../VTree';
+import { asReact } from '../DOMRenderer.es6';
+import * as VTree from '../VTree.es6';
 
 /**
  * A React component that runs hooks.

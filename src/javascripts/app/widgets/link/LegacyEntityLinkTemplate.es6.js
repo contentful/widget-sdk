@@ -1,6 +1,6 @@
 import { h } from 'utils/hyperscript';
-import * as Colors from 'Styles/Colors';
-import { dragHandle, status, titleText, actions } from './TemplateCommons';
+import * as Colors from 'Styles/Colors.es6';
+import { dragHandle, status, titleText, actions } from './TemplateCommons.es6';
 
 /**
  * Creates the template for entity links used by the `cfEntityLink`

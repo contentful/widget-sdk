@@ -11,8 +11,8 @@ import ctHelpers from 'data/ContentTypes';
 import closeState from 'navigation/closeState';
 import metadataDialog from 'contentTypeEditor/metadataDialog';
 import previewEnvironmentsCache from 'data/previewEnvironmentsCache';
-import * as notify from './Notifications';
-import * as Analytics from 'analytics/Analytics';
+import * as notify from './Notifications.es6';
+import * as Analytics from 'analytics/Analytics.es6';
 
 /**
  * @description

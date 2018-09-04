@@ -1,5 +1,5 @@
-import { Action } from 'data/CMA/EntityActions';
-import { EntityType, NumberOfLinks } from '../constants';
+import { Action } from 'data/CMA/EntityActions.es6';
+import { EntityType, NumberOfLinks } from '../constants.es6';
 
 export default {
   [Action.Unpublish()]: {

@@ -1,4 +1,4 @@
-import * as K from 'utils/kefir';
+import * as K from 'utils/kefir.es6';
 
 export function create() {
   let focusedField = null;

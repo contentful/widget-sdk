@@ -21,9 +21,9 @@ describe('Welcome react component', () => {
       });
     });
 
-    this.tokenStore = this.$inject('services/TokenStore');
+    this.tokenStore = this.$inject('services/TokenStore.es6');
 
-    const Welcome = this.$inject('app/home/welcome/Welcome').default;
+    const Welcome = this.$inject('app/home/welcome/Welcome.es6').default;
 
     this.renderWelcomeElement = isNew => {
       this.ui = this.createUI();

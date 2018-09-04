@@ -1,6 +1,6 @@
 'use strict';
 
-describe('access_control/Enforcements', () => {
+describe('access_control/Enforcements.es6', () => {
   let enforcements;
   let organizationMock;
   let OrganizationRoles;
@@ -8,8 +8,8 @@ describe('access_control/Enforcements', () => {
   beforeEach(function() {
     module('contentful/test');
 
-    enforcements = this.$inject('access_control/Enforcements');
-    OrganizationRoles = this.$inject('services/OrganizationRoles');
+    enforcements = this.$inject('access_control/Enforcements.es6');
+    OrganizationRoles = this.$inject('services/OrganizationRoles.es6');
     OrganizationRoles.setUser({ sys: { id: 123 } });
 
     organizationMock = {

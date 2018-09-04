@@ -5,12 +5,12 @@ angular.module('contentful').directive('cfAccountView', [
   require => {
     const h = require('utils/hyperscript').h;
     const $timeout = require('$timeout');
-    const Authentication = require('Authentication');
+    const Authentication = require('Authentication.es6');
     const modalDialog = require('modalDialog');
-    const createChannel = require('account/IframeChannel').default;
-    const K = require('utils/kefir');
+    const createChannel = require('account/IframeChannel.es6').default;
+    const K = require('utils/kefir.es6');
     const handleGK = require('handleGatekeeperMessage');
-    const UrlSyncHelper = require('account/UrlSyncHelper');
+    const UrlSyncHelper = require('account/UrlSyncHelper.es6');
 
     return {
       template: template(),

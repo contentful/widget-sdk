@@ -1,13 +1,13 @@
-import { openDeleteSpaceDialog } from 'services/DeleteSpace';
-import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
-import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import * as TokenStore from 'services/TokenStore';
+import { openDeleteSpaceDialog } from 'services/DeleteSpace.es6';
+import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider.es6';
+import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
+import * as TokenStore from 'services/TokenStore.es6';
 
 export default {
   name: 'space',
   url: '/space',
   template:
-    '<react-component name="app/SpaceSettings/GeneralSettings/SpaceSettingsContainer" props="props" />',
+    '<react-component name="app/SpaceSettings/GeneralSettings/SpaceSettingsContainer.es6" props="props" />',
   controller: [
     'spaceContext',
     '$scope',

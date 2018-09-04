@@ -18,11 +18,11 @@ describe('app/SpaceSettings/Environments', () => {
     let incentivizeUpgradeEnabled = false;
 
     module('contentful/test', $provide => {
-      $provide.value('services/ResourceService', () => resourceService);
-      $provide.value('services/OrganizationRoles', { isOwnerOrAdmin });
+      $provide.value('services/ResourceService.es6', () => resourceService);
+      $provide.value('services/OrganizationRoles.es6', { isOwnerOrAdmin });
     });
 
-    const { createComponent } = this.$inject('app/SpaceSettings/Environments/State');
+    const { createComponent } = this.$inject('app/SpaceSettings/Environments/State.es6');
     const spaceContext = this.$inject('mocks/spaceContext').init();
     this.$inject('$state').href = () => 'href';
 

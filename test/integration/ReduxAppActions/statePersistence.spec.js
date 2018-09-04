@@ -3,19 +3,19 @@ describe('statePersistence redux module', () => {
     this.createUsersEndpoint = sinon.stub();
     this.createSpaceEndpoint = sinon.stub();
     module('contentful/test', $provide => {
-      $provide.value('data/EndpointFactory', {
+      $provide.value('data/EndpointFactory.es6', {
         createUsersEndpoint: this.createUsersEndpoint,
         createSpaceEndpoint: this.createSpaceEndpoint
       });
     });
     const { createStore, applyMiddleware, combineReducers } = this.$inject('redux');
     const thunk = this.$inject('redux-thunk').default;
-    const reducer = this.$inject('ReduxAppActions/statePersistence/reducer').default;
-    this.actions = this.$inject('ReduxAppActions/statePersistence/actionCreators');
+    const reducer = this.$inject('ReduxAppActions/statePersistence/reducer.es6').default;
+    this.actions = this.$inject('ReduxAppActions/statePersistence/actionCreators.es6');
     this.deleteEnvironmentSuccess = this.$inject(
-      'ReduxAppActions/environments/actions'
+      'ReduxAppActions/environments/actions.es6'
     ).deleteEnvironmentSuccess;
-    this.selectors = this.$inject('ReduxAppActions/statePersistence/selectors');
+    this.selectors = this.$inject('ReduxAppActions/statePersistence/selectors.es6');
     this.store = createStore(
       combineReducers({
         statePersistence: reducer

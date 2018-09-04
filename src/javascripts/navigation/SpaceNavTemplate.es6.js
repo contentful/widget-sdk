@@ -1,4 +1,4 @@
-import navBar from 'navigation/templates/NavBar';
+import navBar from 'navigation/templates/NavBar.es6';
 
 export default function spaceNavTemplate(useSpaceEnv, isMaster) {
   const makeRef = spaceRef => {

@@ -4,10 +4,10 @@ angular.module('contentful').factory('client', [
   'require',
   require => {
     var $q = require('$q');
-    var Config = require('Config');
+    var Config = require('Config.es6');
     var Client = require('legacy-client');
-    var auth = require('Authentication');
-    var makeRequest = require('data/Request').default;
+    var auth = require('Authentication.es6');
+    var makeRequest = require('data/Request.es6').default;
 
     var baseRequest = makeRequest(auth);
     var baseUrl = Config.apiUrl().slice(0, -1); // Remove trailing slash

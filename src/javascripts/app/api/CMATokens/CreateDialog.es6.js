@@ -1,8 +1,8 @@
 import { h } from 'utils/hyperscript';
-import { container, vspace, hfill } from 'ui/Layout';
+import { container, vspace, hfill } from 'ui/Layout.es6';
 import * as Command from 'command';
 import { open as openDialog } from 'modalDialog';
-import { track } from 'analytics/Analytics';
+import { track } from 'analytics/Analytics.es6';
 
 /**
  * Opens a dialog that for creating a personal access token.

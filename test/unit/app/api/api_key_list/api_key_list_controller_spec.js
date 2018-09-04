@@ -3,7 +3,7 @@ describe('API Key List Controller', () => {
   beforeEach(function() {
     module('contentful/test', $provide => {
       // TODO: truly mock this somewhere
-      $provide.value('services/ResourceService', {
+      $provide.value('services/ResourceService.es6', {
         default: () => {
           return {
             get: sinon.stub().resolves(this.resource)

@@ -1,6 +1,6 @@
 import $window from '$window';
 import userAgent from 'userAgent';
-import * as K from 'utils/kefir';
+import * as K from 'utils/kefir.es6';
 
 /**
  * Create a stream of messages send with `window.postMessage` from the Iframe.

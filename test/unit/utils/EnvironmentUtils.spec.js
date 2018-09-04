@@ -1,6 +1,6 @@
-import * as EnvironmentUtils from 'utils/EnvironmentUtils';
+import * as EnvironmentUtils from 'utils/EnvironmentUtils.es6';
 
-describe('utils/EnvironmentUtils', () => {
+describe('utils/EnvironmentUtils.es6', () => {
   beforeEach(function() {
     module('contentful/test');
 

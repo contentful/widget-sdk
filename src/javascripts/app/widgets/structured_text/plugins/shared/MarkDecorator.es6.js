@@ -1,5 +1,5 @@
 import React from 'react';
-import { MarkPropTypes } from './PropTypes';
+import { MarkPropTypes } from './PropTypes.es6';
 
 export default function(Tag, tagProps = {}) {
   const CommonMark = ({ attributes, children }) => {

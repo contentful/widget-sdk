@@ -11,21 +11,21 @@
  */
 
 import { get, memoize, cloneDeep } from 'lodash';
-import * as K from 'utils/kefir';
-import { deepFreeze } from 'utils/Freeze';
+import * as K from 'utils/kefir.es6';
+import { deepFreeze } from 'utils/Freeze.es6';
 import * as PathUtils from 'utils/Path';
 import { caseof } from 'sum-types';
 import * as logger from 'logger';
 import * as accessChecker from 'access_control/AccessChecker';
-import * as Permissions from 'access_control/EntityPermissions';
+import * as Permissions from 'access_control/EntityPermissions.es6';
 import * as TheLocaleStore from 'TheLocaleStore';
 
-import { Error as DocError } from 'data/document/Error';
-import * as Normalizer from 'data/document/Normalize';
-import * as ResourceStateManager from 'data/document/ResourceStateManager';
-import * as DocSetters from 'data/document/Setters';
+import { Error as DocError } from 'data/document/Error.es6';
+import * as Normalizer from 'data/document/Normalize.es6';
+import * as ResourceStateManager from 'data/document/ResourceStateManager.es6';
+import * as DocSetters from 'data/document/Setters.es6';
 import * as Status from 'data/Document/Status';
-import { DocLoad } from 'data/sharejs/Connection';
+import { DocLoad } from 'data/sharejs/Connection.es6';
 import * as ShareJS from 'data/ShareJS/Utils';
 
 import * as Reverter from 'entityEditor/Document/Reverter';

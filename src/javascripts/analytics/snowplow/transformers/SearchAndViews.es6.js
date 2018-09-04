@@ -1,4 +1,4 @@
-import { addUserOrgSpace } from './Decorators';
+import { addUserOrgSpace } from './Decorators.es6';
 import { get as getAtPath, omit, extend } from 'lodash';
 
 const ENTITY_TYPE_MAPPING = { entries: 'entry', assets: 'asset' };

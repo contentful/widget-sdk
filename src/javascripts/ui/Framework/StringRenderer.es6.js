@@ -1,5 +1,5 @@
 import { kebabCase, mapValues } from 'lodash';
-import * as VTree from './VTree';
+import * as VTree from './VTree.es6';
 import { caseof } from 'sum-types';
 
 /**

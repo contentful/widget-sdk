@@ -1,12 +1,12 @@
 import $q from '$q';
-import { makeCtor } from 'utils/TaggedValues';
+import { makeCtor } from 'utils/TaggedValues.es6';
 
 /**
  * This modules exports control functions that help with concurrent and
  * asynchronous code.
  */
 
-export * from './Concurrent/MVar';
+export * from './Concurrent/MVar.es6';
 
 // Constructors for promise results;
 export const Success = makeCtor('PromiseSuccess');

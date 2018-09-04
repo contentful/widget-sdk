@@ -19,23 +19,25 @@ describe('spaceContext', () => {
       $provide.value('data/userCache', sinon.stub());
       $provide.value('data/editingInterfaces', sinon.stub());
       $provide.value('Subscription', this.Subscription);
-      $provide.value('classes/OrganizationContext', this.OrganizationContext);
+      $provide.value('classes/OrganizationContext.es6', this.OrganizationContext);
       $provide.value('access_control/AccessChecker', this.AccessChecker);
-      $provide.value('data/Endpoint', {
+      $provide.value('data/Endpoint.es6', {
         createSpaceEndpoint: () => this.mockSpaceEndpoint.request
       });
-      $provide.value('data/UiConfig/Store', { default: sinon.stub().resolves({ store: true }) });
+      $provide.value('data/UiConfig/Store.es6', {
+        default: sinon.stub().resolves({ store: true })
+      });
       $provide.value('client', { newSpace: makeClientSpaceMock });
-      $provide.value('widgets/Store', {
+      $provide.value('widgets/Store.es6', {
         create: sinon.stub().returns({
           refresh: sinon.stub().resolves([])
         })
       });
-      $provide.value('services/EnforcementsService', {
+      $provide.value('services/EnforcementsService.es6', {
         init: this.initEnforcements
       });
     });
-    this.widgetStoreCreate = this.$inject('widgets/Store').create;
+    this.widgetStoreCreate = this.$inject('widgets/Store.es6').create;
     this.spaceContext = this.$inject('spaceContext');
     this.localeStore = this.mockService('TheLocaleStore');
     this.localeStore.init.resolves();
@@ -217,7 +219,7 @@ describe('spaceContext', () => {
       this.space = this.resetWithSpace();
       this.space.getDefaultLocale = sinon.stub().returns('en-US');
 
-      const CTRepo = this.$inject('data/ContentTypeRepo/Published');
+      const CTRepo = this.$inject('data/ContentTypeRepo/Published.es6');
       this.spaceContext.publishedCTs = sinon.stubAll(CTRepo.create());
     });
 
@@ -314,7 +316,7 @@ describe('spaceContext', () => {
 
   describe('#displayedFieldForType()', () => {
     beforeEach(function() {
-      const CTRepo = this.$inject('data/ContentTypeRepo/Published');
+      const CTRepo = this.$inject('data/ContentTypeRepo/Published.es6');
       this.spaceContext.publishedCTs = sinon.stubAll(CTRepo.create());
     });
 
@@ -380,7 +382,7 @@ describe('spaceContext', () => {
         }
       };
 
-      const CTRepo = this.$inject('data/ContentTypeRepo/Published');
+      const CTRepo = this.$inject('data/ContentTypeRepo/Published.es6');
       this.spaceContext.publishedCTs = sinon.stubAll(CTRepo.create());
       this.spaceContext.publishedCTs.get.withArgs('CTID').returns(this.ct);
     });
@@ -479,8 +481,8 @@ describe('spaceContext', () => {
 
   describe('#docConnection and #docPool', () => {
     beforeEach(function() {
-      const ShareJSConnection = this.$inject('data/sharejs/Connection');
-      const DocumentPool = this.$inject('data/sharejs/DocumentPool');
+      const ShareJSConnection = this.$inject('data/sharejs/Connection.es6');
+      const DocumentPool = this.$inject('data/sharejs/DocumentPool.es6');
       this.createConnection = ShareJSConnection.create = sinon.stub().returns({});
       this.createPool = DocumentPool.create = sinon.stub();
     });

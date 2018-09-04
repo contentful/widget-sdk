@@ -1,4 +1,4 @@
-import * as actions from './actions';
+import * as actions from './actions.es6';
 import { get, set } from 'lodash';
 
 export default function resources(state = {}, action) {

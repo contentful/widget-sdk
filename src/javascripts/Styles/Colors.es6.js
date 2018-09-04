@@ -1,4 +1,4 @@
-import { State as EntityState } from 'data/CMA/EntityState';
+import { State as EntityState } from 'data/CMA/EntityState.es6';
 import { caseof as caseofEq } from 'sum-types/caseof-eq';
 import { constant } from 'lodash';
 export { default as Color } from 'color';

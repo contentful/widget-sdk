@@ -1,21 +1,21 @@
 import $controller from '$controller';
 
-import * as K from 'utils/kefir';
+import * as K from 'utils/kefir.es6';
 import { truncate } from 'stringUtils';
 
 import spaceContext from 'spaceContext';
 import localeStore from 'TheLocaleStore';
-import contextHistory from 'navigation/Breadcrumbs/History';
+import contextHistory from 'navigation/Breadcrumbs/History.es6';
 
-import * as crumbFactory from 'navigation/Breadcrumbs/Factory';
+import * as crumbFactory from 'navigation/Breadcrumbs/Factory.es6';
 
-import * as Validator from './Validator';
-import * as Focus from './Focus';
-import initDocErrorHandler from './DocumentErrorHandler';
-import { makeNotify } from './Notifications';
-import installTracking from './Tracking';
+import * as Validator from './Validator.es6';
+import * as Focus from './Focus.es6';
+import initDocErrorHandler from './DocumentErrorHandler.es6';
+import { makeNotify } from './Notifications.es6';
+import installTracking from './Tracking.es6';
 
-import { loadAsset } from 'app/entity_editor/DataLoader';
+import { loadAsset } from 'app/entity_editor/DataLoader.es6';
 import { onFeatureFlag } from 'utils/LaunchDarkly';
 
 const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG = 'feature-at-05-2018-sliding-entry-editor-multi-level';

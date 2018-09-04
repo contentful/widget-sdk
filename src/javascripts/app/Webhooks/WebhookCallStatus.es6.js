@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { STATUS } from './WebhookHealth';
+import { STATUS } from './WebhookHealth.es6';
 
 const ERROR_NAMES = {
   TimeoutError: 'Timeout',

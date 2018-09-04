@@ -1,5 +1,5 @@
 import { h } from 'utils/hyperscript';
-import spinner from 'ui/Components/Spinner';
+import spinner from 'ui/Components/Spinner.es6';
 
 export default function() {
   return h('.auto-create-space-modal.modal-background', [

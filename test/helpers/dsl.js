@@ -1,6 +1,6 @@
 'use strict';
 
-import { runTask } from 'utils/Concurrent';
+import { runTask } from 'utils/Concurrent.es6';
 
 _.extend(window, createDsl(window.jasmine.getEnv()));
 

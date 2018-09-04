@@ -1,4 +1,4 @@
-import { normalize } from 'data/document/Normalize';
+import { normalize } from 'data/document/Normalize.es6';
 import { get, set } from 'lodash';
 
 describe('data/document/Normalize#normalize', () => {

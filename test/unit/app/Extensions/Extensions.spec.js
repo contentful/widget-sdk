@@ -66,7 +66,7 @@ describe('app/Extensions', () => {
       });
     });
 
-    Extensions = this.$inject('app/Extensions/Extensions').default;
+    Extensions = this.$inject('app/Extensions/Extensions.es6').default;
   });
 
   describe('if user is not an Admin', () => {

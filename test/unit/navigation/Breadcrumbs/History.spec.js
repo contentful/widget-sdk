@@ -1,7 +1,7 @@
-import { createBreadcrumbsHistory } from 'navigation/Breadcrumbs/History';
-import * as K from 'utils/kefir';
+import { createBreadcrumbsHistory } from 'navigation/Breadcrumbs/History.es6';
+import * as K from 'utils/kefir.es6';
 
-describe('navigation/Breadcrumbs/History', () => {
+describe('navigation/Breadcrumbs/History.es6', () => {
   const e = id => {
     return { id: id };
   };

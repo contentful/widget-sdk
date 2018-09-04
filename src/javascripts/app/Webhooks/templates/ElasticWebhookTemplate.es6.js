@@ -1,5 +1,5 @@
 import React from 'react';
-import ElasticLogo from './logos/ElasticLogo';
+import ElasticLogo from './logos/ElasticLogo.es6';
 
 export default {
   id: 'elasticsearch-index-entries',

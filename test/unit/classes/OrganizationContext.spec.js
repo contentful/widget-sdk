@@ -21,13 +21,13 @@ describe('OrganizationContext', () => {
     this.fetchAll = sinon.stub();
 
     module('contentful/test', $provide => {
-      $provide.value('data/Endpoint', this.Endpoint);
-      $provide.value('Authentication', this.authentication);
-      $provide.constant('Config', this.Config);
-      $provide.value('data/CMA/FetchAll', { fetchAll: this.fetchAll });
+      $provide.value('data/Endpoint.es6', this.Endpoint);
+      $provide.value('Authentication.es6', this.authentication);
+      $provide.constant('Config.es6', this.Config);
+      $provide.value('data/CMA/FetchAll.es6', { fetchAll: this.fetchAll });
     });
     this.fetchAll.resolves([]);
-    this.OrganizationContext = this.$inject('classes/OrganizationContext');
+    this.OrganizationContext = this.$inject('classes/OrganizationContext.es6');
   });
 
   describe('.create()', () => {

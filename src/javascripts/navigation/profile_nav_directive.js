@@ -7,7 +7,7 @@
 angular.module('contentful').directive('cfProfileNav', [
   'require',
   require => {
-    var navBar = require('navigation/templates/NavBar').default;
+    var navBar = require('navigation/templates/NavBar.es6').default;
 
     return {
       template: template(),

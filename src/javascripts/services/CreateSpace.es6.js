@@ -1,10 +1,15 @@
 import modalDialog from 'modalDialog';
-import { getOrganization } from 'services/TokenStore';
-import { isLegacyOrganization } from 'utils/ResourceUtils';
+import { getOrganization } from 'services/TokenStore.es6';
+import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
 import { canCreateSpaceInOrganization } from 'access_control/AccessChecker';
-import { createOrganizationEndpoint } from 'data/EndpointFactory';
+import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import notification from 'notification';
-import { getSpaceRatePlans, isPOCEnabled, isEnterprisePlan, getBasePlan } from 'account/pricing/PricingDataProvider';
+import {
+  getSpaceRatePlans,
+  isPOCEnabled,
+  isEnterprisePlan,
+  getBasePlan
+} from 'account/pricing/PricingDataProvider.es6';
 
 /**
  * Displays the space creation dialog. The dialog type will depend on the
@@ -65,7 +70,7 @@ export async function showDialog(organizationId) {
       };
       modalDialog.open({
         template:
-          '<react-component name="components/shared/enterprise-space-wizard/EnterpriseSpaceWizard" class="modal-background" props="modalProps"></react-component>',
+          '<react-component name="components/shared/enterprise-space-wizard/EnterpriseSpaceWizard.es6" class="modal-background" props="modalProps"></react-component>',
         scopeData: { modalProps },
         backgroundClose: false,
         persistOnNavigation: true

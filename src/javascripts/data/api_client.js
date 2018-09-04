@@ -21,7 +21,7 @@ angular
    *
    * @usage[js]
    * var APIClient = require('data/APIClient');
-   * var createSpaceEndpoint = require('data/Endpoint').createSpaceEndpoint;
+   * var createSpaceEndpoint = require('data/Endpoint.es6').createSpaceEndpoint;
    * var client = new APIClient(createSpaceEndpoint(...));
    * client.getEntries(query).then(handleResponses);
    */

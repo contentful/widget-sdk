@@ -56,14 +56,14 @@ describe('CreateSampleSpace service', () => {
     module('contentful/test', $provide => {
       $provide.value('client', this.client);
       $provide.value('modalDialog', this.modalDialog);
-      $provide.value('services/TokenStore', this.tokenStore);
+      $provide.value('services/TokenStore.es6', this.tokenStore);
       $provide.value('services/SpaceTemplateCreator', {
         getCreator: this.getCreator
       });
-      $provide.value('states/Navigator', {
+      $provide.value('states/Navigator.es6', {
         go: this.go
       });
-      $provide.value('services/SpaceTemplateLoader', this.spaceTemplateLoader);
+      $provide.value('services/SpaceTemplateLoader.es6', this.spaceTemplateLoader);
       $provide.value('spaceContext', this.spaceContext);
     });
 
@@ -71,7 +71,7 @@ describe('CreateSampleSpace service', () => {
     sinon.spy(this.$rootScope, '$broadcast');
 
     this.createSampleSpace = this.$inject(
-      'components/shared/auto_create_new_space/CreateSampleSpace'
+      'components/shared/auto_create_new_space/CreateSampleSpace.es6'
     ).default;
     this.getOrg = (orgId = 'owned-org') => {
       return {

@@ -69,12 +69,12 @@
   }
 
   /**
-   * If module ID matches 'a/b/index.js' then also register as 'a/b'.
+   * If module ID matches 'a/b/index.es6.js' then also register as 'a/b'.
    */
   function registerDirectoryAlias(moduleId) {
     const path = moduleId.split('/');
     const last = path.pop();
-    if (last === 'index') {
+    if (last === 'index.es6') {
       SystemJS.register(path.join('/'), [moduleId], $export => ({
         setters: [$export]
       }));

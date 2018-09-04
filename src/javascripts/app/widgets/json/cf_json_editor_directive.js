@@ -3,7 +3,7 @@
 angular.module('cf.app').directive('cfJsonEditor', [
   'require',
   require => {
-    const Editor = require('app/widgets/json/code_editor');
+    const Editor = require('app/widgets/json/code_editor.es6');
 
     return {
       restrict: 'E',

@@ -1,7 +1,7 @@
 import isHotkey from 'is-hotkey';
 import { BLOCKS } from '@contentful/structured-text-types';
-import { applyChange } from '../shared/BlockToggleDecorator';
-import CommonNode from '../shared/NodeDecorator';
+import { applyChange } from '../shared/BlockToggleDecorator.es6';
+import CommonNode from '../shared/NodeDecorator.es6';
 
 const plugin = (type, tagName, hotkey) => {
   return {
@@ -35,11 +35,11 @@ export const Heading4Plugin = (type = BLOCKS.HEADING_4) => plugin(type, 'h4', 'c
 export const Heading5Plugin = (type = BLOCKS.HEADING_5) => plugin(type, 'h5', 'cmd+opt+5');
 export const Heading6Plugin = (type = BLOCKS.HEADING_6) => plugin(type, 'h6', 'cmd+opt+6');
 
-export { default as Heading1 } from './Heading1';
-export { default as Heading2 } from './Heading2';
-export { default as Heading3 } from './Heading3';
-export { default as Heading4 } from './Heading4';
-export { default as Heading5 } from './Heading5';
-export { default as Heading6 } from './Heading6';
-export { default as Paragraph } from './Paragraph';
-export { default as HeadingDropdown } from './HeadingDropdown';
+export { default as Heading1 } from './Heading1.es6';
+export { default as Heading2 } from './Heading2.es6';
+export { default as Heading3 } from './Heading3.es6';
+export { default as Heading4 } from './Heading4.es6';
+export { default as Heading5 } from './Heading5.es6';
+export { default as Heading6 } from './Heading6.es6';
+export { default as Paragraph } from './Paragraph.es6';
+export { default as HeadingDropdown } from './HeadingDropdown.es6';

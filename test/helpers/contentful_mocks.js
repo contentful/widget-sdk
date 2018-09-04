@@ -18,7 +18,7 @@ angular
 angular
   .module('contentful/mocks', [])
 
-  .decorator('TheStore/ClientStorageWrapper', [
+  .decorator('TheStore/ClientStorageWrapper.es6', [
     '$delegate',
     'mocks/TheStore/ClientStorageWrapper',
     ($delegate, mock) =>
@@ -75,7 +75,7 @@ angular
         log: sinon.stub()
       }));
 
-      $provide.value('services/Filestack', {
+      $provide.value('services/Filestack.es6', {
         makeDropPane: sinon.stub(),
         pick: sinon.stub(),
         pickMultiple: sinon.stub(),

@@ -1,9 +1,9 @@
-import createBackend from './Backend';
+import createBackend from './Backend.es6';
 
 const detail = {
   name: 'detail',
   url: '/:fnId',
-  template: '<react-component name="app/Functions/FunctionEditor" props="props"/>',
+  template: '<react-component name="app/Functions/FunctionEditor.es6" props="props"/>',
   resolve: {
     fn: ['$stateParams', 'backend', ({ fnId }, backend) => backend.get(fnId)]
   },
@@ -20,7 +20,7 @@ const detail = {
 const list = {
   name: 'functions',
   url: '/functions',
-  template: '<react-component name="app/Functions/FunctionList" props="props"/>',
+  template: '<react-component name="app/Functions/FunctionList.es6" props="props"/>',
   resolve: {
     backend: ['spaceContext', spaceContext => createBackend(spaceContext.getId())],
     fns: ['backend', backend => backend.list().then(res => res.items)]

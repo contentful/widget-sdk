@@ -19,10 +19,10 @@ describe('Locale editor controller', () => {
     module('contentful/test', $provide => {
       $provide.value('logger', self.logger);
       $provide.value('notification', self.notification);
-      $provide.value('analytics/Analytics', self.analytics);
+      $provide.value('analytics/Analytics.es6', self.analytics);
       $provide.value('modalDialog', self.modalDialog);
       $provide.value('navigation/closeState', self.closeStateSpy);
-      $provide.value('analytics/events/SearchAndViews', {});
+      $provide.value('analytics/events/SearchAndViews.es6', {});
     });
 
     this.spaceContext = this.$inject('spaceContext');

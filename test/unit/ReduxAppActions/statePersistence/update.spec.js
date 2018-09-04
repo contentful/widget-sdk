@@ -3,7 +3,7 @@ import { noop } from 'lodash';
 describe('State persistence update function', function() {
   beforeEach(function() {
     module('contentful/test');
-    this.update = this.$inject('ReduxAppActions/statePersistence/update').update;
+    this.update = this.$inject('ReduxAppActions/statePersistence/update.es6').update;
   });
 
   it('should resolve after first call is done if no other calls in the meantime', async function() {

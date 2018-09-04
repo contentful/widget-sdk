@@ -1,6 +1,6 @@
 import { cloneDeep, extend, isString, isObject, isArray, isNull, includes } from 'lodash';
 import { htmlDecode } from 'encoder';
-import { getDomains } from 'services/TokenStore';
+import { getDomains } from 'services/TokenStore.es6';
 import MarkedAst from 'MarkedAst';
 import sanitize from 'sanitize-html';
 import * as React from 'react';

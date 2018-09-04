@@ -19,7 +19,7 @@ angular
   .factory('data/StreamHashSet', [
     'require',
     require => {
-      const K = require('utils/kefir');
+      const K = require('utils/kefir.es6');
 
       return {
         create: create

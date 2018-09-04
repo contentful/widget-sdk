@@ -1,6 +1,6 @@
 import * as K from 'helpers/mocks/kefir';
 
-describe('app/entity_editor/DataLoader', () => {
+describe('app/entity_editor/DataLoader.es6', () => {
   beforeEach(function() {
     module('contentful/test', $provide => {
       $provide.value('widgets', { buildRenderable: sinon.stub().returns({}) });
@@ -37,7 +37,7 @@ describe('app/entity_editor/DataLoader', () => {
     this.localeStore = this.$inject('TheLocaleStore');
     this.localeStore.getPrivateLocales = sinon.stub().returns([]);
 
-    const DataLoader = this.$inject('app/entity_editor/DataLoader');
+    const DataLoader = this.$inject('app/entity_editor/DataLoader.es6');
     this.loadEntry = _.partial(DataLoader.loadEntry, this.spaceContext);
     this.loadAsset = _.partial(DataLoader.loadAsset, this.spaceContext);
     this.makePrefetchEntryLoader = _.partial(DataLoader.makePrefetchEntryLoader, this.spaceContext);

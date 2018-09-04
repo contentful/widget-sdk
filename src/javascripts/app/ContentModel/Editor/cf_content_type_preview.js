@@ -12,7 +12,7 @@ angular
     'require',
     require => {
       const getContentTypePreview = require('contentTypePreview');
-      const template = require('app/ContentModel/Editor/ContentTypePreviewTemplate').default;
+      const template = require('app/ContentModel/Editor/ContentTypePreviewTemplate.es6').default;
 
       return {
         scope: true,

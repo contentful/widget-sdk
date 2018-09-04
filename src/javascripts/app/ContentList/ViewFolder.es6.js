@@ -1,10 +1,10 @@
 import { get as getAtPath } from 'lodash';
-import { assign, filter } from 'utils/Collections';
+import { assign, filter } from 'utils/Collections.es6';
 import { h } from 'ui/Framework';
 import { htmlEncode } from 'encoder';
 
-import openRoleSelector from './RoleSelector';
-import openInputDialog from 'app/InputDialog';
+import openRoleSelector from './RoleSelector.es6';
+import openInputDialog from 'app/InputDialog.es6';
 
 import * as accessChecker from 'access_control/AccessChecker';
 import modalDialog from 'modalDialog';

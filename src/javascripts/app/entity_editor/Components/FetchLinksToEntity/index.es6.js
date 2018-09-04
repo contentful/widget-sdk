@@ -1,11 +1,11 @@
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
-import { EntityType } from '../constants';
-import fetchLinks from 'app/entity_editor/Components/FetchLinksToEntity/fetchLinks';
+import { EntityType } from '../constants.es6';
+import fetchLinks from 'app/entity_editor/Components/FetchLinksToEntity/fetchLinks.es6';
 import {
   onFetchLinks as trackFetchLinks,
   Origin as IncomingLinksOrigin
-} from 'analytics/events/IncomingLinks';
+} from 'analytics/events/IncomingLinks.es6';
 
 export const RequestState = {
   PENDING: 'pending',

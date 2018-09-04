@@ -30,7 +30,7 @@ describe('Entry List Controller', () => {
     module('contentful/test', $provide => {
       $provide.removeControllers('DisplayedFieldsController');
 
-      $provide.value('analytics/Analytics', {
+      $provide.value('analytics/Analytics.es6', {
         track: sinon.stub()
       });
 
@@ -43,7 +43,7 @@ describe('Entry List Controller', () => {
       const promise = (this.readPersistedViewPromise = new Promise(resolve => {
         this.resolveReadPersistedView = resolve;
       }));
-      $provide.value('data/ListViewPersistor', {
+      $provide.value('data/ListViewPersistor.es6', {
         default: function() {
           return {
             save: sinon.stub().resolves({}),

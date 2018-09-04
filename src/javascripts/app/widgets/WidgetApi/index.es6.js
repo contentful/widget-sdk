@@ -6,8 +6,8 @@ import PropTypes from 'prop-types';
 import $rootScope from '$rootScope';
 import $location from '$location';
 import entitySelector from 'entitySelector';
-import WidgetAPIContext from './WidgetApiContext';
-import createHyperlinkDialog from './createHyperlinkDialog';
+import WidgetAPIContext from './WidgetApiContext.es6';
+import createHyperlinkDialog from './createHyperlinkDialog.es6';
 
 export default function connectToWidgetAPI(Component) {
   return class extends React.Component {

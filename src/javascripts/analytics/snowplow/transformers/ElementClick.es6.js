@@ -1,6 +1,6 @@
 import { isEmpty, omitBy } from 'lodash';
-import { addUserOrgSpace } from './Decorators';
-import { getSchema } from 'analytics/snowplow/Schemas';
+import { addUserOrgSpace } from './Decorators.es6';
+import { getSchema } from 'analytics/snowplow/Schemas.es6';
 
 // TODO: Update our snowplow integration to support contexts in a cleaner
 // and more abstracted manner. Basically, move em out from the transformers

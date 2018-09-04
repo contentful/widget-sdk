@@ -15,7 +15,7 @@ angular.module('contentful').factory(name, [
     const Button = require(ButtonModule);
     const store = require('TheStore').getStore();
     const { getStoragePrefix } = require(CreateModernOnboardingModule);
-    const { updateUserInSegment } = require('analytics/Analytics');
+    const { updateUserInSegment } = require('analytics/Analytics.es6');
 
     const ChoiceScreen = createReactClass({
       propTypes: {

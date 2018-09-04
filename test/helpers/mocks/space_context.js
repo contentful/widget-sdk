@@ -30,8 +30,8 @@ angular.module('contentful/mocks').factory('mocks/spaceContext', [
   require => {
     const cfStub = require('cfStub');
     const createEIRepo = require('data/editingInterfaces');
-    const createWidgetStore = require('widgets/Store').create;
-    const createApiKeyRepo = require('data/CMA/ApiKeyRepo').default;
+    const createWidgetStore = require('widgets/Store.es6').create;
+    const createApiKeyRepo = require('data/CMA/ApiKeyRepo.es6').default;
     const CMAClient = require('data/ApiClient');
 
     return {
@@ -41,7 +41,7 @@ angular.module('contentful/mocks').factory('mocks/spaceContext', [
     function init() {
       const spaceContext = sinon.stubAll(require('spaceContext'));
 
-      const CTRepo = require('data/ContentTypeRepo/Published');
+      const CTRepo = require('data/ContentTypeRepo/Published.es6');
       spaceContext.publishedCTs = sinon.stubAll(CTRepo.create());
 
       const space = cfStub.space('test');

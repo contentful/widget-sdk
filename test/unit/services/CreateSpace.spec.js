@@ -28,19 +28,19 @@ describe('CreateSpace', () => {
     this.isPOCEnabled = sinon.stub().returns(false);
 
     module('contentful/test', $provide => {
-      $provide.value('services/TokenStore', {
+      $provide.value('services/TokenStore.es6', {
         getOrganization: this.getOrganization
       });
       $provide.value('utils/LaunchDarkly', {});
       $provide.value('access_control/AccessChecker', this.accessChecker);
     });
-    this.PricingDataProvider = this.$inject('account/pricing/PricingDataProvider');
+    this.PricingDataProvider = this.$inject('account/pricing/PricingDataProvider.es6');
     this.PricingDataProvider.getSpaceRatePlans = this.getSpaceRatePlans;
-    this.PricingDataProvider.getBasePlan = sinon.stub().returns({customerType: 'Enterprise'});
+    this.PricingDataProvider.getBasePlan = sinon.stub().returns({ customerType: 'Enterprise' });
     this.PricingDataProvider.isPOCEnabled = this.isPOCEnabled;
     this.modalDialog = this.$inject('modalDialog');
     this.modalDialog.open = sinon.stub().returns({ promise: this.resolve() });
-    this.CreateSpace = this.$inject('services/CreateSpace');
+    this.CreateSpace = this.$inject('services/CreateSpace.es6');
   });
 
   describe('#showDialog', () => {

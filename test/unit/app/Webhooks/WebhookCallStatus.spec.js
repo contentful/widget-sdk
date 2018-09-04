@@ -1,6 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import WebhookCallStatus from 'app/Webhooks/WebhookCallStatus';
+import WebhookCallStatus from 'app/Webhooks/WebhookCallStatus.es6';
 
 describe('WebhookCallStatus', function() {
   const mount = (code, error) => {

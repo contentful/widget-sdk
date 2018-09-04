@@ -1,13 +1,13 @@
 'use strict';
 
-import { deepFreeze } from 'utils/Freeze';
+import { deepFreeze } from 'utils/Freeze.es6';
 
 describe('analytics/events/SpaceCreation#entityActionSuccess()', () => {
   beforeEach(function() {
     module('contentful/test');
-    this.analytics = this.$inject('analytics/Analytics');
+    this.analytics = this.$inject('analytics/Analytics.es6');
     this.analytics.track = sinon.stub();
-    this.SpaceCreation = this.$inject('analytics/events/SpaceCreation');
+    this.SpaceCreation = this.$inject('analytics/events/SpaceCreation.es6');
   });
 
   describeTrackingOf({

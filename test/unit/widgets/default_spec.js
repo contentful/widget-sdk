@@ -93,7 +93,7 @@ describe('widgets/default', () => {
 
   it('returns builtin widget id for each type', function() {
     const fieldFactory = this.$inject('fieldFactory');
-    const builtins = this.$inject('widgets/builtin').create();
+    const builtins = this.$inject('widgets/builtin.es6').create();
 
     _.forEach(fieldFactory.types, typeDescriptor => {
       let field = fieldFactory.createTypeInfo(typeDescriptor);

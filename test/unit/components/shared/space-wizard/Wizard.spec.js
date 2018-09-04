@@ -10,7 +10,7 @@ describe('Space Wizard', () => {
     };
 
     module('contentful/test', $provide => {
-      $provide.value('analytics/Analytics', {
+      $provide.value('analytics/Analytics.es6', {
         track: this.stubs.track
       });
     });
@@ -29,9 +29,9 @@ describe('Space Wizard', () => {
       }
     };
 
-    this.store = this.$inject('ReduxStore/store').default;
+    this.store = this.$inject('ReduxStore/store.es6').default;
 
-    this.Wizard = this.$inject('components/shared/space-wizard/Wizard').default;
+    this.Wizard = this.$inject('components/shared/space-wizard/Wizard.es6').default;
     this.create = action => {
       const props = {
         organization: this.organization,

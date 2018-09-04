@@ -1,7 +1,7 @@
 import * as sinon from 'helpers/sinon';
 import * as K from 'helpers/mocks/kefir';
 
-describe('data/ContentTypeRepo/Published', () => {
+describe('data/ContentTypeRepo/Published.es6', () => {
   let $q;
 
   afterEach(() => {
@@ -12,7 +12,7 @@ describe('data/ContentTypeRepo/Published', () => {
     module('contentful/test');
     $q = this.$inject('$q');
 
-    const CTRepo = this.$inject('data/ContentTypeRepo/Published');
+    const CTRepo = this.$inject('data/ContentTypeRepo/Published.es6');
     this.space = makeSpaceMock();
     this.repo = CTRepo.create(this.space);
 

@@ -53,13 +53,13 @@ describe('cfCreateNewSpace directive', () => {
     };
 
     module('contentful/test', $provide => {
-      $provide.value('services/SpaceTemplateLoader', stubs.spaceTemplateLoader);
+      $provide.value('services/SpaceTemplateLoader.es6', stubs.spaceTemplateLoader);
       $provide.value('services/SpaceTemplateCreator', stubs.spaceTemplateCreator);
-      $provide.value('analytics/Analytics', stubs.analytics);
+      $provide.value('analytics/Analytics.es6', stubs.analytics);
       $provide.value('logger', stubs.logger);
       $provide.value('client', stubs.client);
-      $provide.value('services/TokenStore', stubs.tokenStore);
-      $provide.value('services/ResourceService', stubs.resourceService);
+      $provide.value('services/TokenStore.es6', stubs.tokenStore);
+      $provide.value('services/ResourceService.es6', stubs.resourceService);
       $provide.value('$state', stubs.state);
       $provide.removeDirectives('cfIcon');
     });

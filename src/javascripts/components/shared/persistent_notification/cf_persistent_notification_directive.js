@@ -5,7 +5,7 @@ angular.module('contentful').directive('cfPersistentNotification', [
   require => {
     const $sce = require('$sce');
     const $timeout = require('$timeout');
-    const Analytics = require('analytics/Analytics');
+    const Analytics = require('analytics/Analytics.es6');
     const logger = require('logger');
 
     return {

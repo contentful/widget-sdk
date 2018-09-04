@@ -1,6 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import Form from 'app/Extensions/ExtensionForm';
+import Form from 'app/Extensions/ExtensionForm.es6';
 import CodeMirror from 'react-codemirror';
 
 const ERR_SELECTOR = '.cfnext-form__field-error';

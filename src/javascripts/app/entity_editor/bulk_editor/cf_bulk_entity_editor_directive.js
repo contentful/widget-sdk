@@ -35,11 +35,11 @@ angular
       const $q = require('$q');
       const $controller = require('$controller');
       const $timeout = require('$timeout');
-      const K = require('utils/kefir');
-      const Navigator = require('states/Navigator');
+      const K = require('utils/kefir.es6');
+      const Navigator = require('states/Navigator.es6');
       const caseof = require('sum-types').caseof;
       const spaceContext = require('spaceContext');
-      const trackEntryView = require('app/entity_editor/Tracking').trackEntryView;
+      const trackEntryView = require('app/entity_editor/Tracking.es6').trackEntryView;
       const localeStore = require('TheLocaleStore');
       const logger = require('logger');
 
@@ -178,17 +178,17 @@ angular
     '$scope',
     'require',
     function($scope, require) {
-      const makeNotify = require('app/entity_editor/Notifications').makeNotify;
+      const makeNotify = require('app/entity_editor/Notifications.es6').makeNotify;
       const $controller = require('$controller');
       const spaceContext = require('spaceContext');
       const truncate = require('stringUtils').truncate;
       const DataFields = require('EntityEditor/DataFields');
       const ContentTypes = require('data/ContentTypes');
-      const Validator = require('app/entity_editor/Validator');
+      const Validator = require('app/entity_editor/Validator.es6');
       const localeStore = require('TheLocaleStore');
-      const Focus = require('app/entity_editor/Focus');
-      const K = require('utils/kefir');
-      const initDocErrorHandler = require('app/entity_editor/DocumentErrorHandler').default;
+      const Focus = require('app/entity_editor/Focus.es6');
+      const K = require('utils/kefir.es6');
+      const initDocErrorHandler = require('app/entity_editor/DocumentErrorHandler.es6').default;
 
       const editorData = $scope.editorData;
       const entityInfo = (this.entityInfo = editorData.entityInfo);

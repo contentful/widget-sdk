@@ -1,10 +1,10 @@
-describe('Config', () => {
+describe('Config.es6', () => {
   beforeEach(function() {
     module('contentful/test');
     this.settings = this.$inject('environment').settings;
     this.settings.authUrl = '//basehost';
     this.settings.marketingUrl = 'https://website';
-    this.Config = this.$inject('Config');
+    this.Config = this.$inject('Config.es6');
   });
 
   it('provides authUrl with parameters', function() {

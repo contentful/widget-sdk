@@ -1,12 +1,12 @@
 'use strict';
 
-describe('markdown_editor/commands', () => {
+describe('markdown_editor/commands.es6', () => {
   let textarea, editor, commands, cm;
 
   beforeEach(function() {
     module('contentful/test');
-    const Commands = this.$inject('markdown_editor/commands');
-    const Wrapper = this.$inject('markdown_editor/codemirror_wrapper');
+    const Commands = this.$inject('markdown_editor/commands.es6');
+    const Wrapper = this.$inject('markdown_editor/codemirror_wrapper.es6');
     const CodeMirror = this.$inject('codemirror');
     textarea = document.createElement('textarea');
     document.body.appendChild(textarea);

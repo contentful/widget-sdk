@@ -103,7 +103,7 @@ angular
     'require',
     require => {
       var environment = require('environment');
-      var Config = require('Config');
+      var Config = require('Config.es6');
 
       /**
        * Options:

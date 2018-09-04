@@ -1,5 +1,5 @@
 import React from 'react';
-import HerokuLogo from './logos/HerokuLogo';
+import HerokuLogo from './logos/HerokuLogo.es6';
 
 export default {
   id: 'heroku-trigger-build',

@@ -1,4 +1,4 @@
-import { env } from 'Config';
+import { env } from 'Config.es6';
 
 /**
  * @description

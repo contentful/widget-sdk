@@ -100,7 +100,7 @@ export default class WebhookHeaders extends React.Component {
     modalDialog
       .open({
         template:
-          '<react-component class="modal-background" name="app/Webhooks/WebhookSecretHeaderDialog" props="props">',
+          '<react-component class="modal-background" name="app/Webhooks/WebhookSecretHeaderDialog.es6" props="props">',
         controller: $scope => {
           $scope.props = {
             confirm: val => $scope.dialog.confirm(val)

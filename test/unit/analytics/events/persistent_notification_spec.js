@@ -3,7 +3,7 @@
 describe('Tracking persistent notification', () => {
   beforeEach(function() {
     module('contentful/test');
-    this.analytics = this.$inject('analytics/Analytics');
+    this.analytics = this.$inject('analytics/Analytics.es6');
     sinon.stub(this.analytics, 'track');
     this.trackPersistenNotification = this.$inject('analyticsEvents/persistentNotification');
   });

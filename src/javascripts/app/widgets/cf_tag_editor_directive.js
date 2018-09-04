@@ -10,7 +10,7 @@ angular
   .directive('cfTagEditor', [
     'require',
     require => {
-      const KEYCODES = require('utils/keycodes').default;
+      const KEYCODES = require('utils/keycodes.es6').default;
 
       return {
         restrict: 'E',

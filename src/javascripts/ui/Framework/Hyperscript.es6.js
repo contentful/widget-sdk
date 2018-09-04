@@ -1,7 +1,7 @@
 import { omit, kebabCase, mapKeys, isPlainObject } from 'lodash';
 import * as React from 'react';
-import { Hook } from './Hooks/Component';
-import * as VTree from './VTree';
+import { Hook } from './Hooks/Component.es6';
+import * as VTree from './VTree.es6';
 
 /**
  * @description

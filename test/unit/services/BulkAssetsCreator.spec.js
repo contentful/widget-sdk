@@ -13,7 +13,7 @@ let lastId;
 describe('BulkAssetsCreator.tryToPublishProcessingAssets()', () => {
   beforeEach(function() {
     module('contentful/test');
-    this.BulkAssetsCreator = this.$inject('services/BulkAssetsCreator');
+    this.BulkAssetsCreator = this.$inject('services/BulkAssetsCreator.es6');
     $timeout = this.$inject('$timeout');
     lastId = 0;
   });

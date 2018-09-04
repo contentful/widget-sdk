@@ -1,13 +1,13 @@
-import * as OrganizationRoles from 'services/OrganizationRoles';
-import * as TokenStore from 'services/TokenStore';
-import * as K from 'utils/kefir';
+import * as OrganizationRoles from 'services/OrganizationRoles.es6';
+import * as TokenStore from 'services/TokenStore.es6';
+import * as K from 'utils/kefir.es6';
 import { get } from 'lodash';
 
 import require from 'require';
 // TODO prevent circular ref
 
 export function create({ space, organization }) {
-  const createFeatureService = require('services/FeatureService').default;
+  const createFeatureService = require('services/FeatureService.es6').default;
   const userQuota = {
     // TODO get from limits/usage endpoint
     limit: get(organization, 'subscriptionPlan.limits.permanent.organizationMembership', -1),

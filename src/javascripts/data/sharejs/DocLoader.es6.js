@@ -1,4 +1,4 @@
-import * as K from 'utils/kefir';
+import * as K from 'utils/kefir.es6';
 import { caseof, makeSum } from 'sum-types';
 import { constant } from 'lodash';
 

@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 
 import $state from '$state';
 
-import * as ResourceUtils from 'utils/ResourceUtils';
-import WebhookSidebarDocumentation from './WebhookSidebarDocumentation';
-import WebhookSidebarTemplatesList from './WebhookSidebarTemplatesList';
+import * as ResourceUtils from 'utils/ResourceUtils.es6';
+import WebhookSidebarDocumentation from './WebhookSidebarDocumentation.es6';
+import WebhookSidebarTemplatesList from './WebhookSidebarTemplatesList.es6';
 
 export default function WebhookListSidebar(props) {
   const {

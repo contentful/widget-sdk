@@ -33,7 +33,7 @@ angular
     'require',
     require => {
       const memoize = require('utils/memoize');
-      const fetchAll = require('data/CMA/FetchAll').fetchAll;
+      const fetchAll = require('data/CMA/FetchAll.es6').fetchAll;
 
       return function createCache(endpoint) {
         const getUserMap = createUserFetcher(endpoint);

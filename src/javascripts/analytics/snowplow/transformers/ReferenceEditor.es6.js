@@ -1,4 +1,4 @@
-import { addUserOrgSpace } from './Decorators';
+import { addUserOrgSpace } from './Decorators.es6';
 import $state from '$state';
 
 export default addUserOrgSpace((eventName, data) => ({

@@ -1,10 +1,10 @@
 import * as K from 'helpers/mocks/kefir';
 
-describe('account/IframeChannel', () => {
+describe('account/IframeChannel.es6', () => {
   beforeEach(function() {
     module('contentful/test');
     const $window = this.$inject('$window');
-    const IframeChannel = this.$inject('account/IframeChannel');
+    const IframeChannel = this.$inject('account/IframeChannel.es6');
 
     const iframe = { contentWindow: {} };
 

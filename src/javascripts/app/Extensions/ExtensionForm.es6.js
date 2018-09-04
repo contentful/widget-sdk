@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { FIELD_TYPES } from './FieldTypes';
-import { Label, Editor, ExtensionParameters } from './ExtensionFormLeaves';
+import { FIELD_TYPES } from './FieldTypes.es6';
+import { Label, Editor, ExtensionParameters } from './ExtensionFormLeaves.es6';
 
 const EXTENSION_URL_RE = /(^https:\/\/)|(^http:\/\/localhost(:[0-9]+)?(\/|$))/;
 

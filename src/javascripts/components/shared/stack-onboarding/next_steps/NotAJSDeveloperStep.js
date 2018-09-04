@@ -6,7 +6,7 @@ export const name = 'ms-dev-next-steps-not-a-js-dev';
 angular.module('contentful').factory(name, [
   'require',
   require => {
-    const { AltStep } = require('app/home/welcome/OnboardingWithTeaSteps');
+    const { AltStep } = require('app/home/welcome/OnboardingWithTeaSteps.es6');
 
     const NotAJSDeveloperStep = ({ markAsDone, isDone }) => {
       const scrollToSupportedPlatforms = () => {

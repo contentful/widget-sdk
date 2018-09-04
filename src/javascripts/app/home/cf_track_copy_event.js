@@ -20,7 +20,7 @@ angular
     require => {
       const $document = require('$document');
       const $window = require('$window');
-      const analyticsEvents = require('analytics/events/home');
+      const analyticsEvents = require('analytics/events/home.es6');
 
       return {
         restrict: 'A',

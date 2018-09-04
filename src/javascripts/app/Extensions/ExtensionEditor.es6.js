@@ -3,13 +3,13 @@ import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import { get, cloneDeep, isEqual, omit } from 'lodash';
 import $state from '$state';
-import Workbench from 'app/WorkbenchReact';
-import { track } from 'analytics/Analytics';
-import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils';
-import getExtensionParameterIds from './getExtensionParameterIds';
+import Workbench from 'app/WorkbenchReact.es6';
+import { track } from 'analytics/Analytics.es6';
+import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils.es6';
+import getExtensionParameterIds from './getExtensionParameterIds.es6';
 
-import { toInternalFieldType, toApiFieldType } from './FieldTypes';
-import ExtensionForm from './ExtensionForm';
+import { toInternalFieldType, toApiFieldType } from './FieldTypes.es6';
+import ExtensionForm from './ExtensionForm.es6';
 
 const ExtensionEditor = createReactClass({
   propTypes: {

@@ -2,14 +2,14 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import * as ReloadNotification from 'ReloadNotification';
-import createResourceService from 'services/ResourceService';
-import { getOrganization } from 'services/TokenStore';
-import { isOwnerOrAdmin } from 'services/OrganizationRoles';
+import createResourceService from 'services/ResourceService.es6';
+import { getOrganization } from 'services/TokenStore.es6';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import moment from 'moment';
 
 import { keyBy, property } from 'lodash';
-import Workbench from 'app/WorkbenchReact';
-import { ResourceUsage } from 'app/SpaceSettings/Usage/ResourceUsage';
+import Workbench from 'app/WorkbenchReact.es6';
+import { ResourceUsage } from 'app/SpaceSettings/Usage/ResourceUsage.es6';
 
 const OrganizationResourceUsageList = ({ resources }) => {
   if (!resources.length) return null;

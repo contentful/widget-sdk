@@ -1,5 +1,5 @@
 import $q from '$q';
-import { textQueryToUISearch } from 'search/TextQueryConverter';
+import { textQueryToUISearch } from 'search/TextQueryConverter.es6';
 import { clone, cloneDeep, extend, omit, pick } from 'lodash';
 import assetContentType from 'assetContentType';
 import logger from 'logger';

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { CONSTRAINT_TYPES, CONSTRAINT_NAMES, PATH_VALUES, PATHS } from './WebhookFiltersState';
+import { CONSTRAINT_TYPES, CONSTRAINT_NAMES, PATH_VALUES, PATHS } from './WebhookFiltersState.es6';
 
 const PATH_TITLES = {
   [PATH_VALUES.ENVIRONMENT]: 'Environment ID',

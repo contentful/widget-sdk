@@ -18,10 +18,10 @@ angular.module('contentful').controller('RoleListController', [
     const accessChecker = require('access_control/AccessChecker');
     const jumpToRoleMembers = require('UserListController/jumpToRole');
     const spaceContext = require('spaceContext');
-    const ADMIN_ROLE_ID = require('access_control/SpaceMembershipRepository').ADMIN_ROLE_ID;
-    const ResourceUtils = require('utils/ResourceUtils');
+    const ADMIN_ROLE_ID = require('access_control/SpaceMembershipRepository.es6').ADMIN_ROLE_ID;
+    const ResourceUtils = require('utils/ResourceUtils.es6');
     const TheAccountView = require('TheAccountView');
-    const isOwnerOrAdmin = require('services/OrganizationRoles').isOwnerOrAdmin;
+    const isOwnerOrAdmin = require('services/OrganizationRoles.es6').isOwnerOrAdmin;
     const AccessChecker = require('access_control/AccessChecker');
 
     const org = spaceContext.organizationContext.organization;

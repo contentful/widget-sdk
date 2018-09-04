@@ -1,11 +1,11 @@
 import { get } from 'lodash';
 import $location from '$location';
 import $window from '$window';
-import * as K from 'utils/kefir';
-import { createMVar$q, runTask, createExclusiveTask } from 'utils/Concurrent';
+import * as K from 'utils/kefir.es6';
+import { createMVar$q, runTask, createExclusiveTask } from 'utils/Concurrent.es6';
 import { getStore } from 'TheStore';
-import * as Config from 'Config';
-import postForm from 'data/Request/PostForm';
+import * as Config from 'Config.es6';
+import postForm from 'data/Request/PostForm.es6';
 
 /**
  * @name Authentication

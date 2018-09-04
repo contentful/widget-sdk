@@ -8,9 +8,9 @@ angular
     require => {
       const React = require('react');
       const ReactDOM = require('react-dom');
-      const Welcome = require('app/home/welcome/Welcome').default;
-      const K = require('utils/kefir');
-      const TokenStore = require('services/TokenStore');
+      const Welcome = require('app/home/welcome/Welcome.es6').default;
+      const K = require('utils/kefir.es6');
+      const TokenStore = require('services/TokenStore.es6');
 
       return {
         link: function($scope, el) {

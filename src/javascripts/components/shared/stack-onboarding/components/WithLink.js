@@ -11,7 +11,7 @@ angular.module('contentful').factory(name, [
     const spaceContext = require('spaceContext');
     const { track } = require(CreateModernOnboardingModule);
     const store = require('TheStore').getStore();
-    const { updateUserInSegment } = require('analytics/Analytics');
+    const { updateUserInSegment } = require('analytics/Analytics.es6');
 
     const { getStoragePrefix } = require(CreateModernOnboardingModule);
 

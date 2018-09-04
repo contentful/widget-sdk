@@ -1,12 +1,12 @@
 import { createElement as e } from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
-import { asReact } from 'ui/Framework/DOMRenderer';
+import { asReact } from 'ui/Framework/DOMRenderer.es6';
 import AnimateHeight from 'react-animate-height';
-import folderIcon from 'svg/folder';
-import environmentIcon from 'svg/environment';
-import { createSpaceEndpoint } from 'data/EndpointFactory';
-import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo';
+import folderIcon from 'svg/folder.es6';
+import environmentIcon from 'svg/environment.es6';
+import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
+import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo.es6';
 
 function EnvironmentList({ environments, isCurrSpace, currentEnvId, goToSpace, space }) {
   return e(

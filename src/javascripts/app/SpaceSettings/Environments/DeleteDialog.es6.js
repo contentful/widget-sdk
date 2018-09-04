@@ -1,10 +1,10 @@
 import { text } from 'utils/hyperscript';
-import { assign } from 'utils/Collections';
-import { makeCtor } from 'utils/TaggedValues';
+import { assign } from 'utils/Collections.es6';
+import { makeCtor } from 'utils/TaggedValues.es6';
 
-import { bindActions, createStore, makeReducer } from 'ui/Framework/Store';
+import { bindActions, createStore, makeReducer } from 'ui/Framework/Store.es6';
 import { h, renderString } from 'ui/Framework';
-import { hbox, hspace, vspace } from 'ui/Layout';
+import { hbox, hspace, vspace } from 'ui/Layout.es6';
 
 import ModalDialog from 'modalDialog';
 import Notification from 'notification';

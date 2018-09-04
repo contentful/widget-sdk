@@ -1,6 +1,6 @@
-import { createMVar, createMVar$q } from 'utils/Concurrent';
+import { createMVar, createMVar$q } from 'utils/Concurrent.es6';
 
-describe('utils/Concurrent/MVar', () => {
+describe('utils/Concurrent/MVar.es6', () => {
   beforeEach(() => {
     module('contentful/test');
   });

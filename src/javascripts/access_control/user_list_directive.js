@@ -17,7 +17,7 @@ angular.module('contentful').directive('cfUserList', [
 
     return {
       restrict: 'E',
-      template: renderString(require('access_control/templates/UserList').default()),
+      template: renderString(require('access_control/templates/UserList.es6').default()),
       controller: 'UserListController',
       link: link
     };
@@ -58,8 +58,8 @@ angular.module('contentful').controller('UserListController', [
     const spaceContext = require('spaceContext');
     const userListHandler = require('UserListHandler').create();
     const accessChecker = require('access_control/AccessChecker');
-    const TokenStore = require('services/TokenStore');
-    const UserListActions = require('access_control/UserListActions');
+    const TokenStore = require('services/TokenStore.es6');
+    const UserListActions = require('access_control/UserListActions.es6');
 
     const actions = UserListActions.create(spaceContext, userListHandler, TokenStore);
 

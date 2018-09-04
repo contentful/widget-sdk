@@ -2,7 +2,7 @@ import { createElement as h } from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import Icon from 'ui/Components/Icon';
+import Icon from 'ui/Components/Icon.es6';
 import $ from 'jquery';
 
 const Welcome = createReactClass({

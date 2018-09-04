@@ -5,10 +5,10 @@ import modalDialog from 'modalDialog';
 import notification from 'notification';
 import ReloadNotification from 'ReloadNotification';
 import Command from 'command';
-import * as TokenStore from 'services/TokenStore';
-import { createSpaceEndpoint } from 'data/EndpointFactory';
+import * as TokenStore from 'services/TokenStore.es6';
+import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import ApiClient from 'data/ApiClient';
-import { openModal as openCommittedSpaceWarningDialog } from 'components/shared/space-wizard/CommittedSpaceWarningModal';
+import { openModal as openCommittedSpaceWarningDialog } from 'components/shared/space-wizard/CommittedSpaceWarningModal.es6';
 
 export function openDeleteSpaceDialog({ space, plan, onSuccess }) {
   if (plan && plan.committed) {

@@ -91,7 +91,7 @@ angular
     ($scope, require) => {
       const spaceContext = require('spaceContext');
       const TheAccountView = require('TheAccountView');
-      const OrganizationRoles = require('services/OrganizationRoles');
+      const OrganizationRoles = require('services/OrganizationRoles.es6');
       const organization = spaceContext.organizationContext.organization;
 
       $scope.canInviteUsersToOrganization = () => OrganizationRoles.isOwnerOrAdmin(organization);

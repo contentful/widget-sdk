@@ -6,7 +6,7 @@ describe('App Resources action creators', function() {
     };
 
     module('contentful/test', $provide => {
-      $provide.value('services/ResourceService', {
+      $provide.value('services/ResourceService.es6', {
         default: () => {
           return {
             getAll: this.stubs.ResourceService_getAll
@@ -24,8 +24,8 @@ describe('App Resources action creators', function() {
     };
 
     this.spaceId = 'space_1234';
-    this.actionCreators = this.$inject('ReduxAppActions/resources/actionCreators');
-    this.actions = this.$inject('ReduxAppActions/resources/actions');
+    this.actionCreators = this.$inject('ReduxAppActions/resources/actionCreators.es6');
+    this.actions = this.$inject('ReduxAppActions/resources/actions.es6');
   });
 
   describe('getResourcesForSpace', function() {

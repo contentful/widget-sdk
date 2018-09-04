@@ -1,5 +1,5 @@
-import { getSchema } from 'analytics/snowplow/Schemas';
-import { getSpaceWizardData } from './SpaceWizard';
+import { getSchema } from 'analytics/snowplow/Schemas.es6';
+import { getSpaceWizardData } from './SpaceWizard.es6';
 
 /**
  * @ngdoc service

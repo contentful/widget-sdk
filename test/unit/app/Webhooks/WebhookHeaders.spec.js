@@ -16,7 +16,7 @@ describe('WebhookHeaders', function() {
   // We inject instead of importing so modalDialog is available
   beforeEach(function() {
     module('contentful/test');
-    WebhookHeaders = this.$inject('app/Webhooks/WebhookHeaders').default;
+    WebhookHeaders = this.$inject('app/Webhooks/WebhookHeaders.es6').default;
   });
 
   it('lists no headers when none defined', function() {

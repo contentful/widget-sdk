@@ -3,7 +3,7 @@
 describe('FetchAll', () => {
   beforeEach(function() {
     module('contentful/test');
-    this.fetchAll = this.$inject('data/CMA/FetchAll').fetchAll;
+    this.fetchAll = this.$inject('data/CMA/FetchAll.es6').fetchAll;
     this.query = { skip: 0, limit: 10 };
   });
 

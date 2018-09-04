@@ -1,5 +1,5 @@
 /* global document */
-import { makeCtor } from 'utils/TaggedValues';
+import { makeCtor } from 'utils/TaggedValues.es6';
 
 // TODO document
 

@@ -4,10 +4,10 @@ describe('Snowplow service', () => {
     this.$window = this.$inject('$window');
     this.LazyLoader = this.$inject('LazyLoader');
     this.LazyLoader.get = sinon.stub();
-    this.Events = this.$inject('analytics/snowplow/Events');
+    this.Events = this.$inject('analytics/snowplow/Events.es6');
     this.Events.getSchema = sinon.stub();
     this.Events.transform = sinon.stub();
-    this.Snowplow = this.$inject('analytics/snowplow/Snowplow');
+    this.Snowplow = this.$inject('analytics/snowplow/Snowplow.es6');
     this.getLastEvent = function() {
       return _.last(this.$window.snowplow.q);
     };

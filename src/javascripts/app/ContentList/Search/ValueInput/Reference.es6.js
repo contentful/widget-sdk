@@ -2,7 +2,7 @@
 import { cloneDeep } from 'lodash';
 
 import { h } from 'ui/Framework';
-import keycodes from 'utils/keycodes';
+import keycodes from 'utils/keycodes.es6';
 import entitySelector from 'entitySelector';
 
 export default function filterValueReference({

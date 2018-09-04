@@ -1,4 +1,4 @@
-import createWebhookRepo from 'data/CMA/WebhookRepo';
+import createWebhookRepo from 'data/CMA/WebhookRepo.es6';
 
 describe('Webhook Repo', function() {
   beforeEach(function() {

@@ -1,6 +1,6 @@
 import * as sinon from 'helpers/sinon';
 
-describe('states/deeplink/resolver', () => {
+describe('states/deeplink/resolver.es6', () => {
   beforeEach(function() {
     this.logException = sinon.stub();
     module('contentful/test', $provide => {
@@ -9,7 +9,7 @@ describe('states/deeplink/resolver', () => {
       });
     });
 
-    this.resolver = this.$inject('states/deeplink/resolver');
+    this.resolver = this.$inject('states/deeplink/resolver.es6');
   });
 
   describe('#resolveLink', () => {

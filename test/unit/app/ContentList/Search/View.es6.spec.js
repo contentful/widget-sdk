@@ -1,6 +1,6 @@
 import sinon from 'npm:sinon';
 import _ from 'lodash';
-import keycodes from 'utils/keycodes';
+import keycodes from 'utils/keycodes.es6';
 import { contentTypes } from './helpers';
 import ReactTestUtils from 'react-dom/test-utils';
 import { createIsolatedSystem } from 'test/helpers/system-js';
@@ -12,7 +12,7 @@ const Components = {
   contentFilterValue: view => view.find('contentTypeFilter', 'value')
 };
 
-describe('app/ContentList/Search/View', () => {
+describe('app/ContentList/Search/View.es6', () => {
   let actions, render, view, system;
   beforeEach(function*() {
     system = createIsolatedSystem();
@@ -29,14 +29,14 @@ describe('app/ContentList/Search/View', () => {
       }
     });
 
-    const { default: searchComponent } = yield system.import('app/ContentList/Search/View');
-    const Filters = yield system.import('app/ContentList/Search/Filters');
+    const { default: searchComponent } = yield system.import('app/ContentList/Search/View.es6');
+    const Filters = yield system.import('app/ContentList/Search/Filters.es6');
     this.contentTypeFilter = Filters.contentTypeFilter;
     this.getFiltersFromQueryKey = Filters.getFiltersFromQueryKey;
 
-    const { Actions } = yield system.import('app/ContentList/Search/State');
+    const { Actions } = yield system.import('app/ContentList/Search/State.es6');
 
-    const { default: createMountPoint } = yield system.import('ui/Framework/DOMRenderer');
+    const { default: createMountPoint } = yield system.import('ui/Framework/DOMRenderer.es6');
 
     actions = _.mapValues(Actions, () => {
       return sinon.spy();

@@ -1,6 +1,6 @@
-import * as SubscriptionUtils from 'utils/SubscriptionUtils';
+import * as SubscriptionUtils from 'utils/SubscriptionUtils.es6';
 
-describe('utils/SubscriptionUtils', () => {
+describe('utils/SubscriptionUtils.es6', () => {
   beforeEach(function() {
     function createPlan(name, price, ratePlanCharges, isBase) {
       return {

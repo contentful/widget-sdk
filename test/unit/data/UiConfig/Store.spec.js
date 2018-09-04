@@ -3,16 +3,16 @@ import { cloneDeep } from 'lodash';
 import * as sinon from 'helpers/sinon';
 import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
 
-describe('data/UiConfig/Store', () => {
+describe('data/UiConfig/Store.es6', () => {
   beforeEach(function() {
     module('contentful/test', $provide => {
       this.trackMigrationSpy = sinon.spy();
-      $provide.value('analytics/events/SearchAndViews', {
+      $provide.value('analytics/events/SearchAndViews.es6', {
         searchTermsMigrated: this.trackMigrationSpy
       });
     });
 
-    const createUiConfigStore = this.$inject('data/UiConfig/Store').default;
+    const createUiConfigStore = this.$inject('data/UiConfig/Store.es6').default;
     const endpoint = createMockSpaceEndpoint();
 
     this.store = endpoint.stores.ui_config;

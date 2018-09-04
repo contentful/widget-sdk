@@ -1,5 +1,5 @@
 import * as environment from 'environment';
-import teaConfig from './teaEditorInterfaces';
+import teaConfig from './teaEditorInterfaces.es6';
 
 // we need this id to enrich TEA specifically
 const TEA_SPACE_ID = environment.settings.contentful.TEASpaceId;

@@ -8,7 +8,7 @@ import { omit } from 'lodash';
 import moment from 'moment';
 import { gitRevision } from 'environment';
 import { createElement as h } from 'react';
-import { addNotification } from 'debug/DevNotifications';
+import { addNotification } from 'debug/DevNotifications.es6';
 import location from '$location';
 import qs from 'qs';
 

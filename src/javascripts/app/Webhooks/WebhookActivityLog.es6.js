@@ -4,7 +4,7 @@ import { range } from 'lodash';
 
 import $state from '$state';
 
-import WebhookCallStatus from './WebhookCallStatus';
+import WebhookCallStatus from './WebhookCallStatus.es6';
 
 const PER_PAGE = 30;
 

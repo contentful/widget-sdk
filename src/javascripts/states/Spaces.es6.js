@@ -1,15 +1,15 @@
 import { h } from 'utils/hyperscript';
 import { getStore } from 'TheStore';
 import sectionAccess from 'sectionAccess';
-import * as Analytics from 'analytics/Analytics';
+import * as Analytics from 'analytics/Analytics.es6';
 import * as accessChecker from 'access_control/AccessChecker';
 
-import contentTypes from './contentTypes';
-import entries from './entries';
-import assets from './assets';
-import api from 'app/api/State';
-import settings from './settings';
-import home from './space_home';
+import contentTypes from 'states/contentTypes';
+import entries from 'states/entries';
+import assets from 'states/assets';
+import api from 'app/api/State.es6';
+import settings from 'states/settings';
+import home from 'states/space_home';
 import stackOnboarding from 'states/stackOnboarding';
 
 const store = getStore();
@@ -40,7 +40,7 @@ const hibernation = {
 };
 
 const resolveSpaceData = [
-  'services/TokenStore',
+  'services/TokenStore.es6',
   '$stateParams',
   (TokenStore, $stateParams) => TokenStore.getSpace($stateParams.spaceId)
 ];

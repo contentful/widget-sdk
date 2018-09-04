@@ -5,7 +5,7 @@ angular.module('contentful').directive('cfPlatformUsage', [
   require => {
     const React = require('react');
     const ReactDOM = require('react-dom');
-    const OrganizationUsage = require('account/usage/OrganizationUsage').default;
+    const OrganizationUsage = require('account/usage/OrganizationUsage.es6').default;
 
     return {
       link: function($scope, el) {

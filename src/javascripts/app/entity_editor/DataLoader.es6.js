@@ -1,9 +1,9 @@
 import { find, isPlainObject, cloneDeep, memoize } from 'lodash';
-import { runTask, wrapTask } from 'utils/Concurrent';
+import { runTask, wrapTask } from 'utils/Concurrent.es6';
 import assetEditorInterface from 'data/editingInterfaces/asset';
 import { caseof as caseofEq } from 'sum-types/caseof-eq';
-import { deepFreeze } from 'utils/Freeze';
-import createPrefetchCache from 'data/CMA/EntityPrefetchCache';
+import { deepFreeze } from 'utils/Freeze.es6';
+import createPrefetchCache from 'data/CMA/EntityPrefetchCache.es6';
 import TheLocaleStore from 'TheLocaleStore';
 import Widgets from 'widgets';
 

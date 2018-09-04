@@ -21,7 +21,7 @@ angular.module('contentful').factory(name, [
     } = require(CreateModernOnboardingModule);
 
     const WithLink = require(WithLinkModule);
-    const Icon = require('ui/Components/Icon').default;
+    const Icon = require('ui/Components/Icon.es6').default;
 
     class Relaunch extends React.Component {
       state = { flag: false };

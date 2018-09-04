@@ -8,13 +8,13 @@ describe('Space Controller', () => {
       $provide.value('authorization', self.authorizationMock);
 
       self.enforcementsMock = { getPeriodUsage: sinon.stub() };
-      $provide.value('access_control/Enforcements', self.enforcementsMock);
+      $provide.value('access_control/Enforcements.es6', self.enforcementsMock);
 
       self.analyticsMock = { track: sinon.stub() };
-      $provide.value('analytics/Analytics', self.analyticsMock);
+      $provide.value('analytics/Analytics.es6', self.analyticsMock);
     });
 
-    this.tokenStore = this.mockService('services/TokenStore', {
+    this.tokenStore = this.mockService('services/TokenStore.es6', {
       getTokenLookup: sinon.stub()
     });
     this.$rootScope = this.$inject('$rootScope');

@@ -1,6 +1,6 @@
-import * as Endpoint from 'data/Endpoint';
-import * as auth from 'Authentication';
-import { apiUrl } from 'Config';
+import * as Endpoint from 'data/Endpoint.es6';
+import * as auth from 'Authentication.es6';
+import { apiUrl } from 'Config.es6';
 
 /**
  * Wrapper for data/Endpoint to create space and organization endpoints with

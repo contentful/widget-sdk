@@ -1,4 +1,4 @@
-import EntityAction from './EntityAction';
+import EntityAction from './EntityAction.es6';
 import { get, upperFirst } from 'lodash';
 
 export default function(eventName, eventData) {

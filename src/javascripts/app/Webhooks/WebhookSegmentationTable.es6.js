@@ -9,7 +9,7 @@ import {
   isActionChecked,
   isActionDisabled,
   changeAction
-} from './WebhookSegmentationState';
+} from './WebhookSegmentationState.es6';
 
 export default class WebhookSegmentationTable extends React.Component {
   static propTypes = {

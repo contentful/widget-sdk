@@ -1,13 +1,13 @@
 'use strict';
 import * as sinon from 'helpers/sinon';
 
-describe('data/Request/Retry', () => {
+describe('data/Request/Retry.es6', () => {
   beforeEach(function() {
     module('contentful/test');
 
     this.sandbox = sinon.sandbox.create();
 
-    const wrap = this.$inject('data/Request/Retry').default;
+    const wrap = this.$inject('data/Request/Retry.es6').default;
     this.$timeout = this.$inject('$timeout');
     this.$q = this.$inject('$q');
 

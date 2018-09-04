@@ -1,7 +1,7 @@
-import { makeCtor, match } from 'utils/TaggedValues';
-import * as Store from 'ui/Framework/Store';
-import { assign, update, set, push } from 'utils/Collections';
-import { createSlot, sleep } from 'utils/Concurrent';
+import { makeCtor, match } from 'utils/TaggedValues.es6';
+import * as Store from 'ui/Framework/Store.es6';
+import { assign, update, set, push } from 'utils/Collections.es6';
+import { createSlot, sleep } from 'utils/Concurrent.es6';
 
 import {
   getMatchingFilters,
@@ -9,7 +9,7 @@ import {
   getContentTypeById,
   buildFilterFieldByQueryKey,
   ValueInput
-} from './Filters';
+} from './Filters.es6';
 
 const CONTENT_TYPE_ALL = '';
 

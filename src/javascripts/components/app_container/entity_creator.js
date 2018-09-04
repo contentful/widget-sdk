@@ -5,7 +5,7 @@ angular.module('contentful').factory('entityCreator', [
   require => {
     const notification = require('notification');
     const logger = require('logger');
-    const enforcements = require('access_control/Enforcements');
+    const enforcements = require('access_control/Enforcements.es6');
     const spaceContext = require('spaceContext');
     const $q = require('$q');
 

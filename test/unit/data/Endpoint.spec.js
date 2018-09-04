@@ -1,6 +1,6 @@
-import { assign } from 'utils/Collections';
+import { assign } from 'utils/Collections.es6';
 
-describe('data/Endpoint', () => {
+describe('data/Endpoint.es6', () => {
   const baseUrl = '//test.io';
 
   // These headers are set by `$http` by default
@@ -17,7 +17,7 @@ describe('data/Endpoint', () => {
       getToken: sinon.stub().resolves('TOKEN')
     };
 
-    this.Endpoint = this.$inject('data/Endpoint');
+    this.Endpoint = this.$inject('data/Endpoint.es6');
     this.$http = this.$inject('$httpBackend');
     this.$timeout = this.$inject('$timeout');
 

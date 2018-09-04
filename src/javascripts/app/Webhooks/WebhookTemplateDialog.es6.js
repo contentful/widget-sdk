@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import WebhookTemplateDialogTabs, { Tab, TabPane, TabsList } from './WebhookTemplateDialogTabs';
-import WebhookTemplateForm from './WebhookTemplateForm';
+import WebhookTemplateDialogTabs, { Tab, TabPane, TabsList } from './WebhookTemplateDialogTabs.es6';
+import WebhookTemplateForm from './WebhookTemplateForm.es6';
 import Templates from './templates';
 import { getStore } from 'TheStore';
 

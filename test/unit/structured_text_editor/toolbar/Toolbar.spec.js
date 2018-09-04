@@ -27,7 +27,7 @@ describe('Toolbar', () => {
 
     this.entity = { sys: { type: 'Entry', id: 'testid2' } };
 
-    this.system.set('ui/cf/thumbnailHelpers', {});
+    this.system.set('ui/cf/thumbnailHelpers.es6', {});
     this.system.set('spaceContext', {});
     this.system.set('modalDialog', { open: sinon.stub() });
     this.system.set('$rootScope', {
@@ -40,7 +40,7 @@ describe('Toolbar', () => {
         absUrl: () => 'abs-url'
       }
     });
-    this.system.set('app/widgets/structured_text/plugins/EntryLinkBlock/FetchEntry', {
+    this.system.set('app/widgets/structured_text/plugins/EntryLinkBlock/FetchEntry.es6', {
       default: ({ render }) => {
         return render({
           entry: this.entity,

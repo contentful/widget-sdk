@@ -6,23 +6,23 @@ import { get } from 'lodash';
 
 import notification from 'notification';
 import * as ReloadNotification from 'ReloadNotification';
-import { getPlansWithSpaces } from 'account/pricing/PricingDataProvider';
-import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import createResourceService from 'services/ResourceService';
-import { showDialog as showCreateSpaceModal } from 'services/CreateSpace';
-import { showDialog as showChangeSpaceModal } from 'services/ChangeSpaceService';
-import { openDeleteSpaceDialog } from 'services/DeleteSpace';
-import { getSpaces, getOrganization } from 'services/TokenStore';
-import { isOwnerOrAdmin, isOwner } from 'services/OrganizationRoles';
-import { calcUsersMeta, calculateTotalPrice } from 'utils/SubscriptionUtils';
-import { openModal as openCommittedSpaceWarningDialog } from 'components/shared/space-wizard/CommittedSpaceWarningModal';
+import { getPlansWithSpaces } from 'account/pricing/PricingDataProvider.es6';
+import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
+import createResourceService from 'services/ResourceService.es6';
+import { showDialog as showCreateSpaceModal } from 'services/CreateSpace.es6';
+import { showDialog as showChangeSpaceModal } from 'services/ChangeSpaceService.es6';
+import { openDeleteSpaceDialog } from 'services/DeleteSpace.es6';
+import { getSpaces, getOrganization } from 'services/TokenStore.es6';
+import { isOwnerOrAdmin, isOwner } from 'services/OrganizationRoles.es6';
+import { calcUsersMeta, calculateTotalPrice } from 'utils/SubscriptionUtils.es6';
+import { openModal as openCommittedSpaceWarningDialog } from 'components/shared/space-wizard/CommittedSpaceWarningModal.es6';
 
-import Workbench from 'ui/Components/Workbench/JSX';
+import Workbench from 'ui/Components/Workbench/JSX.es6';
 
-import BasePlan from './BasePlan';
-import UsersForPlan from './UsersForPlan';
-import SpacePlans from './SpacePlans';
-import Sidebar from './Sidebar';
+import BasePlan from './BasePlan.es6';
+import UsersForPlan from './UsersForPlan.es6';
+import SpacePlans from './SpacePlans.es6';
+import Sidebar from './Sidebar.es6';
 
 const SubscriptionOverview = createReactClass({
   propTypes: {
@@ -73,7 +73,7 @@ const SubscriptionOverview = createReactClass({
 
     const basePlan = plans.items.find(({ planType }) => planType === 'base');
     const spacePlans = plans.items
-      .filter(({ planType }) => (['space', 'free_space'].includes(planType)))
+      .filter(({ planType }) => ['space', 'free_space'].includes(planType))
       .sort((plan1, plan2) => {
         const [name1, name2] = [plan1, plan2].map(plan => get(plan, 'space.name', ''));
         return name1.localeCompare(name2);

@@ -24,10 +24,10 @@ describe('navigation/stateChangeHandlers', () => {
     module('contentful/test', $provide => {
       $provide.value('$state', this.state);
       $provide.value('spaceContext', this.spaceContext);
-      $provide.value('services/TokenStore', this.tokenStore);
+      $provide.value('services/TokenStore.es6', this.tokenStore);
       $provide.value('logger', {});
       $provide.value('modalDialog', { closeAll: modalCloseStub });
-      $provide.value('navigation/Breadcrumbs/History', {
+      $provide.value('navigation/Breadcrumbs/History.es6', {
         default: {
           purge: sinon.stub()
         }
@@ -36,7 +36,7 @@ describe('navigation/stateChangeHandlers', () => {
 
     $rootScope = this.$inject('$rootScope');
     logger = this.$inject('logger');
-    const NavState = this.$inject('navigation/NavState');
+    const NavState = this.$inject('navigation/NavState.es6');
     this.NavStates = NavState.NavStates;
     this.navState$ = NavState.navState$;
 

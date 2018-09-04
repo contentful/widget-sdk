@@ -1,6 +1,6 @@
 import * as sinon from 'helpers/sinon';
 import * as DOM from 'helpers/DOM';
-import attachContextMenuHandler from 'ui/ContextMenuHandler';
+import attachContextMenuHandler from 'ui/ContextMenuHandler.es6';
 
 /**
  * Acceptance tests for personal CMA tokens
@@ -22,7 +22,7 @@ describe('app/api/CMATokens', () => {
     });
 
     // TODO build helper for HTTP mocking
-    const Config = this.$inject('Config');
+    const Config = this.$inject('Config.es6');
     const $http = this.$inject('$httpBackend');
     this.listTokenHandler = sinon.stub();
     $http
@@ -49,7 +49,7 @@ describe('app/api/CMATokens', () => {
       getToken: sinon.stub().resolves('TOKEN')
     };
 
-    const CMATokensPage = this.$inject('app/api/CMATokens/Page');
+    const CMATokensPage = this.$inject('app/api/CMATokens/Page.es6');
 
     this.init = function() {
       // TODO abstract this into DOM helper

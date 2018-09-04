@@ -5,7 +5,7 @@ describe('WizardUtils', function() {
   beforeEach(async function() {
     const system = createIsolatedSystem();
 
-    system.set('utils/ResourceUtils', {
+    system.set('utils/ResourceUtils.es6', {
       resourceHumanNameMap: {
         asset: 'Assets',
         content_type: 'Content Types',
@@ -16,7 +16,7 @@ describe('WizardUtils', function() {
       }
     });
 
-    this.WizardUtils = await system.import('components/shared/space-wizard/WizardUtils');
+    this.WizardUtils = await system.import('components/shared/space-wizard/WizardUtils.es6');
   });
 
   describe('formatPrice', function() {
@@ -39,28 +39,36 @@ describe('WizardUtils', function() {
   });
 
   describe('getRolesTooltip', function() {
-    beforeEach(function () {
+    beforeEach(function() {
       const intro = 'This space type includes the';
-      this.testRolesTooltip = function (number, roles, text) {
-        const tooltip = this.WizardUtils.getRolesTooltip(number, {roles});
+      this.testRolesTooltip = function(number, roles, text) {
+        const tooltip = this.WizardUtils.getRolesTooltip(number, { roles });
         return expect(tooltip).toBe(`${intro} ${text}`);
       };
     });
 
-    it('returns tooltip for a plan with the admin role only', function () {
+    it('returns tooltip for a plan with the admin role only', function() {
       this.testRolesTooltip(1, [], 'Admin role only');
     });
 
-    it('returns the tooltip text for a plan with various roles', function () {
+    it('returns the tooltip text for a plan with various roles', function() {
       this.testRolesTooltip(3, ['Editor', 'Translator'], 'Admin, Editor and Translator roles');
     });
 
-    it('returns the tooltip text for a plan with multiple translator roles', function () {
-      this.testRolesTooltip(5, ['Editor', 'Translator', 'Translator 2', 'Translator3'], 'Admin, Editor and 3 Translator roles');
+    it('returns the tooltip text for a plan with multiple translator roles', function() {
+      this.testRolesTooltip(
+        5,
+        ['Editor', 'Translator', 'Translator 2', 'Translator3'],
+        'Admin, Editor and 3 Translator roles'
+      );
     });
 
-    it('returns the tooltip text for a plan with custom roles', function () {
-      this.testRolesTooltip(10, ['Editor', 'Translator'], 'Admin, Editor and Translator roles and an additional 7 custom roles');
+    it('returns the tooltip text for a plan with custom roles', function() {
+      this.testRolesTooltip(
+        10,
+        ['Editor', 'Translator'],
+        'Admin, Editor and Translator roles and an additional 7 custom roles'
+      );
     });
   });
 

@@ -9,9 +9,9 @@ angular
   .factory('states/account/profile', [
     'require',
     require => {
-      var base = require('states/Base').default;
+      var base = require('states/Base.es6').default;
       var h = require('utils/hyperscript').h;
-      var workbenchHeader = require('app/Workbench').header;
+      var workbenchHeader = require('app/Workbench.es6').header;
 
       var user = userBase({
         name: 'user',

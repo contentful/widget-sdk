@@ -11,8 +11,8 @@ describe('DeleteSpace', () => {
     this.ReloadNotification = { basicErrorHandler: sinon.stub() };
 
     module('contentful/test', $provide => {
-      $provide.value('data/EndpointFactory', { createSpaceEndpoint: this.createEndpoint });
-      $provide.value('services/TokenStore', this.TokenStore);
+      $provide.value('data/EndpointFactory.es6', { createSpaceEndpoint: this.createEndpoint });
+      $provide.value('services/TokenStore.es6', this.TokenStore);
       $provide.value('notification', this.notification);
       $provide.value('ReloadNotification', this.ReloadNotification);
     });
@@ -22,7 +22,7 @@ describe('DeleteSpace', () => {
     sinon.spy(this.modalDialog, 'open');
     this.endpoint = sinon.stub().resolves();
     this.createEndpoint.returns(this.endpoint);
-    this.openDeleteSpaceDialog = this.$inject('services/DeleteSpace').openDeleteSpaceDialog;
+    this.openDeleteSpaceDialog = this.$inject('services/DeleteSpace.es6').openDeleteSpaceDialog;
 
     this.openDeleteSpaceDialog({ space: this.space, onSuccess: this.onSuccess });
     this.dialogScope = this.modalDialog.open.firstCall.args[0].scope;

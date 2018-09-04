@@ -18,7 +18,7 @@ angular.module('contentful').factory(name, [
     const store = require('TheStore').getStore();
     const { getStoragePrefix, getUser } = require(CreateModernOnboardingModule);
 
-    const { Progress, Header } = require('app/home/welcome/OnboardingWithTea');
+    const { Progress, Header } = require('app/home/welcome/OnboardingWithTea.es6');
 
     const ModifyContentStep = require(ModifyContentStepModule);
     const SetupWebhooksStep = require(SetupWebhooksStepModule);

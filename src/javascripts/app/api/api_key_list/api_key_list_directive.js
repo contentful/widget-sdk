@@ -20,8 +20,8 @@ angular
       const TheAccountView = require('TheAccountView');
       const $state = require('$state');
       const notification = require('notification');
-      const ResourceUtils = require('utils/ResourceUtils');
-      const createResourceService = require('services/ResourceService').default;
+      const ResourceUtils = require('utils/ResourceUtils.es6');
+      const createResourceService = require('services/ResourceService.es6').default;
       const $q = require('$q');
 
       const organization = spaceContext.organizationContext.organization;

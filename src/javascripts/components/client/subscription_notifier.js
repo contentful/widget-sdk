@@ -7,7 +7,7 @@
 angular.module('contentful').factory('subscriptionNotifier', [
   'require',
   require => {
-    const OrganizationRoles = require('services/OrganizationRoles');
+    const OrganizationRoles = require('services/OrganizationRoles.es6');
     const openPaywall = require('paywallOpener').openPaywall;
     const Subscription = require('Subscription');
 

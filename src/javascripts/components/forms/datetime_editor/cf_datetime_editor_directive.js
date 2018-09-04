@@ -30,7 +30,7 @@ angular.module('contentful').directive('cfDatetimeEditor', [
     // Please keep it in mind when rewriting to use widgetApi
     return {
       restrict: 'A',
-      template: require('components/forms/datetime_editor/cf_datetime_editor').default(),
+      template: require('components/forms/datetime_editor/cf_datetime_editor.es6').default(),
       require: 'ngModel',
       link: function(scope, elm, _attr, ngModelCtrl) {
         const dateController = elm.find('.date').controller('ngModel');

@@ -6,9 +6,9 @@ angular.module('contentful').controller('SpaceController', [
   function SpaceController($scope, require) {
     const $rootScope = require('$rootScope');
     const authorization = require('authorization');
-    const enforcements = require('access_control/Enforcements');
+    const enforcements = require('access_control/Enforcements.es6');
     const spaceContext = require('spaceContext');
-    const TokenStore = require('services/TokenStore');
+    const TokenStore = require('services/TokenStore.es6');
 
     $scope.sidePanelIsShown = false;
     $scope.toggleSidePanel = () => {

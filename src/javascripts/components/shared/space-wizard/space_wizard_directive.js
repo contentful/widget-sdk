@@ -5,8 +5,9 @@ angular.module('contentful').directive('cfSpaceWizard', [
   require => {
     const $state = require('$state');
     const $rootScope = require('$rootScope');
-    const ReduxStore = require('ReduxStore/store').default;
-    const resetActionCreator = require('components/shared/space-wizard/store/actionCreators').reset;
+    const ReduxStore = require('ReduxStore/store.es6').default;
+    const resetActionCreator = require('components/shared/space-wizard/store/actionCreators.es6')
+      .reset;
 
     return {
       link: function($scope) {
@@ -46,7 +47,7 @@ angular.module('contentful').directive('cfSpaceWizard', [
         };
       },
       template: `<react-component
-      name="components/shared/space-wizard/Wizard"
+      name="components/shared/space-wizard/Wizard.es6"
       props="props"
       on-scope-destroy="onScopeDestroy"
       watch-depth="reference"

@@ -10,7 +10,7 @@ describe('Entry Actions Controller', () => {
     this.notify = sinon.stub();
     this.fields$ = K.createMockProperty({});
 
-    this.analytics = this.$inject('analytics/Analytics');
+    this.analytics = this.$inject('analytics/Analytics.es6');
     this.analytics.track = sinon.stub();
 
     const $controller = this.$inject('$controller');

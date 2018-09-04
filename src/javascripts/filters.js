@@ -56,7 +56,7 @@ filters.filter('fileType', [
  */
 filters.filter('assetUrl', [
   'hostnameTransformer',
-  'services/TokenStore',
+  'services/TokenStore.es6',
   (hostnameTransformer, TokenStore) => assetOrUrl => {
     const domains = TokenStore.getDomains();
     if (domains) {

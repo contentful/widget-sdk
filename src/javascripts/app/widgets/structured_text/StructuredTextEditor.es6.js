@@ -34,12 +34,12 @@ import {
 import NewLinePlugin from './plugins/NewLinePlugin';
 import { ParagraphPlugin } from './plugins/Paragraph';
 import EntryLinkBlock, { EntryLinkBlockPlugin } from './plugins/EntryLinkBlock';
-import EditList from './plugins/List/EditListWrapper';
+import EditList from './plugins/List/EditListWrapper.es6';
 import { ListPlugin, UnorderedList, OrderedList } from './plugins/List';
 import Hr, { HrPlugin } from './plugins/Hr';
 
-import schemaJson from './constants/Schema';
-import emptyDoc from './constants/EmptyDoc';
+import schemaJson from './constants/Schema.es6';
+import emptyDoc from './constants/EmptyDoc.es6';
 
 const schema = Schema.fromJSON(schemaJson);
 const initialValue = Value.fromJSON(toSlatejsDocument(emptyDoc));
@@ -85,7 +85,7 @@ export default class StructuredTextEditor extends React.Component {
           : initialValue,
       hasFocus: false
     };
-    this.slatePlugins = buildPlugins(widgetAPI)
+    this.slatePlugins = buildPlugins(widgetAPI);
   }
 
   onChange = change => {

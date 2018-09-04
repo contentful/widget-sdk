@@ -39,12 +39,12 @@ angular
     '$scope',
     'require',
     ($scope, require) => {
-      const K = require('utils/kefir');
+      const K = require('utils/kefir.es6');
       const spaceContext = require('spaceContext');
       const moment = require('moment');
       const Paginator = require('Paginator');
-      const snapshotStatus = require('app/snapshots/helpers/SnapshotStatus');
-      const snapshotDecorator = require('app/snapshots/helpers/SnapshotDecorator');
+      const snapshotStatus = require('app/snapshots/helpers/SnapshotStatus.es6');
+      const snapshotDecorator = require('app/snapshots/helpers/SnapshotDecorator.es6');
 
       const PER_PAGE = 20;
 

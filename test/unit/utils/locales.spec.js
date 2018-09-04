@@ -1,6 +1,6 @@
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
-describe('utils/locales', () => {
+describe('utils/locales.es6', () => {
   beforeEach(function*() {
     const system = createIsolatedSystem();
 
@@ -12,7 +12,7 @@ describe('utils/locales', () => {
       isRtlLang: code => ['hr-BA', 'he-IL'].includes(code)
     });
 
-    this.localeUtils = yield system.import('utils/locales');
+    this.localeUtils = yield system.import('utils/locales.es6');
   });
 
   describe('#isRtlLocale()', () => {

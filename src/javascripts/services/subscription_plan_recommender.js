@@ -11,7 +11,7 @@
 angular.module('contentful').factory('subscriptionPlanRecommender', [
   'require',
   require => {
-    var Config = require('Config');
+    var Config = require('Config.es6');
     var $http = require('$http');
     var $q = require('$q');
 

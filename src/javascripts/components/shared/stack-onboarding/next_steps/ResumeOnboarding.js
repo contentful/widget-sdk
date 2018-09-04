@@ -9,7 +9,7 @@ angular.module('contentful').factory(name, [
   require => {
     const spaceContext = require('spaceContext');
     const $state = require('$state');
-    const CreateSpace = require('services/CreateSpace');
+    const CreateSpace = require('services/CreateSpace.es6');
     const store = require('TheStore').getStore();
     const { getStoragePrefix } = require(CreateModernOnboardingModule);
 

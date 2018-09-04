@@ -1,8 +1,8 @@
 import { getCurrentVariation } from 'utils/LaunchDarkly';
-import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/EndpointFactory';
-import { isLegacyOrganization } from 'utils/ResourceUtils';
-import { getSpace, getOrganization } from 'services/TokenStore';
-import { getEnabledFeatures } from 'account/pricing/PricingDataProvider';
+import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/EndpointFactory.es6';
+import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
+import { getSpace, getOrganization } from 'services/TokenStore.es6';
+import { getEnabledFeatures } from 'account/pricing/PricingDataProvider.es6';
 
 import { get, snakeCase } from 'lodash';
 

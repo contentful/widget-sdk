@@ -13,12 +13,12 @@ describe('ViewMigrator', () => {
     this.convertStub = sinon.stub();
 
     module('contentful/test', $provide => {
-      $provide.value('search/TextQueryConverter', {
+      $provide.value('search/TextQueryConverter.es6', {
         textQueryToUISearch: this.convertStub
       });
     });
 
-    ViewMigrator = this.$inject('data/ViewMigrator');
+    ViewMigrator = this.$inject('data/ViewMigrator.es6');
     const createViewMigrator = ViewMigrator.default;
 
     const contentTypesRepo = {

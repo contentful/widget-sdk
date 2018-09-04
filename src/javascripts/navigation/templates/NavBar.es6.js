@@ -1,6 +1,6 @@
 import { h } from 'utils/hyperscript';
 import { isBoolean } from 'lodash';
-import { byName as Colors } from 'Styles/Colors';
+import { byName as Colors } from 'Styles/Colors.es6';
 
 /**
  * @ngdoc method

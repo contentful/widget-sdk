@@ -39,10 +39,10 @@ describe('entityEditor/StateController', () => {
       show: (this.showWarningsStub = sinon.stub().resolves())
     });
 
-    this.analytics = this.$inject('analytics/Analytics');
+    this.analytics = this.$inject('analytics/Analytics.es6');
     this.analytics.track = sinon.stub();
 
-    const N = this.$inject('app/entity_editor/Notifications');
+    const N = this.$inject('app/entity_editor/Notifications.es6');
     this.Notification = N.Notification;
     this.notify = sinon.stub();
 

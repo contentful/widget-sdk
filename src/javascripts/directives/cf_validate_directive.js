@@ -27,7 +27,7 @@ angular
     'require',
     function ValidationController($scope, $attrs, require) {
       const $timeout = require('$timeout');
-      const K = require('utils/kefir');
+      const K = require('utils/kefir.es6');
       const controller = this;
 
       // Caches values for #hasError()

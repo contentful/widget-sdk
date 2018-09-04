@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import WebhookSegmentationTable from './WebhookSegmentationTable';
-import { WILDCARD, createMap } from './WebhookSegmentationState';
+import WebhookSegmentationTable from './WebhookSegmentationTable.es6';
+import { WILDCARD, createMap } from './WebhookSegmentationState.es6';
 
 export default class WebhookSegmentation extends React.Component {
   static propTypes = {

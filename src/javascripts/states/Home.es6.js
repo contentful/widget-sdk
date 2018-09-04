@@ -1,9 +1,9 @@
 import { find } from 'lodash';
-import makeState from 'states/Base';
+import makeState from 'states/Base.es6';
 import $state from '$state';
-import { getSpaces } from 'services/TokenStore';
+import { getSpaces } from 'services/TokenStore.es6';
 import { getStore } from 'TheStore';
-import template from 'app/home/HomeTemplate';
+import template from 'app/home/HomeTemplate.es6';
 
 const store = getStore();
 

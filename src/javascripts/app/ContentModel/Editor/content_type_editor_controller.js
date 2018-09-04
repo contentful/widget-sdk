@@ -27,8 +27,8 @@ angular.module('contentful').controller('ContentTypeEditorController', [
     const eiHelpers = require('editingInterfaces/helpers');
     const spaceContext = require('spaceContext');
     const editingInterfaces = spaceContext.editingInterfaces;
-    const Analytics = require('analytics/Analytics');
-    const createActions = require('app/ContentModel/Editor/Actions').default;
+    const Analytics = require('analytics/Analytics.es6');
+    const createActions = require('app/ContentModel/Editor/Actions.es6').default;
 
     const contentTypeIds = spaceContext.cma
       .getContentTypes()

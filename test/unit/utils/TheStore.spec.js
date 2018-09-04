@@ -1,6 +1,6 @@
 /* global window */
 
-import ClientStorageWrapper from 'TheStore/ClientStorageWrapper';
+import ClientStorageWrapper from 'TheStore/ClientStorageWrapper.es6';
 import { getStore } from 'TheStore';
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
@@ -64,7 +64,7 @@ describe('TheStore', () => {
         }
       });
 
-      this.storeUtils = yield this.system.import('TheStore/Utils');
+      this.storeUtils = yield this.system.import('TheStore/Utils.es6');
     });
 
     describe('#set', () => {
@@ -147,7 +147,7 @@ describe('TheStore', () => {
     });
   });
 
-  describe('TheStore/ClientStorageWrapper', () => {
+  describe('TheStore/ClientStorageWrapper.es6', () => {
     beforeEach(function() {
       this.SessionStorageWrapper = ClientStorageWrapper('session');
       this.LocalStorageWrapper = ClientStorageWrapper('local');
@@ -172,7 +172,7 @@ describe('TheStore', () => {
 
       this.system = createIsolatedSystem();
 
-      this.system.set('TheStore/ClientStorageWrapper', {
+      this.system.set('TheStore/ClientStorageWrapper.es6', {
         default: () => {
           return {
             setItem: this.stubs.setItem,
@@ -182,7 +182,7 @@ describe('TheStore', () => {
         }
       });
 
-      this.ClientStorage = (yield this.system.import('TheStore/ClientStorage')).default;
+      this.ClientStorage = (yield this.system.import('TheStore/ClientStorage.es6')).default;
 
       this.LocalStorage = this.ClientStorage('local');
       this.SessionStorage = this.ClientStorage('session');
@@ -247,7 +247,7 @@ describe('TheStore', () => {
     });
   });
 
-  describe('TheStore/CookieStorage', () => {
+  describe('TheStore/CookieStorage.es6', () => {
     beforeEach(function*() {
       this.testSecureCookie = function(method, mode, expected) {
         const stub = this.stubs[method];
@@ -291,7 +291,7 @@ describe('TheStore', () => {
 
       this.system.set('environment', this.config);
 
-      this.CookieStorage = yield this.system.import('TheStore/CookieStorage');
+      this.CookieStorage = yield this.system.import('TheStore/CookieStorage.es6');
     });
 
     it('exposes an API that proxies to the backing Cookies storage', function() {

@@ -1,9 +1,9 @@
 import { getStore } from 'TheStore';
-import { combine } from 'utils/kefir';
+import { combine } from 'utils/kefir.es6';
 import { getCurrentVariation } from 'utils/LaunchDarkly';
-import { user$, spacesByOrganization$ as spacesByOrg$ } from 'services/TokenStore';
-import createSampleSpace from './CreateSampleSpace';
-import seeThinkDoFeatureModalTemplate from './SeeThinkDoTemplate';
+import { user$, spacesByOrganization$ as spacesByOrg$ } from 'services/TokenStore.es6';
+import createSampleSpace from './CreateSampleSpace.es6';
+import seeThinkDoFeatureModalTemplate from './SeeThinkDoTemplate.es6';
 
 import { getFirstOwnedOrgWithoutSpaces, hasAnOrgWithSpaces, ownsAtleastOneOrg } from 'data/User';
 

@@ -6,7 +6,7 @@ describe('entityEditor/Document', () => {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
 
-    this.DocLoad = this.$inject('data/sharejs/Connection').DocLoad;
+    this.DocLoad = this.$inject('data/sharejs/Connection.es6').DocLoad;
     this.OtDoc = this.$inject('mocks/OtDoc');
 
     this.docLoader = {
@@ -62,7 +62,7 @@ describe('entityEditor/Document', () => {
     };
 
     this.createDoc = (type = 'Entry') => {
-      const Doc = this.$inject('app/entity_editor/Document');
+      const Doc = this.$inject('app/entity_editor/Document.es6');
 
       this.entity.data.sys.type = type;
 

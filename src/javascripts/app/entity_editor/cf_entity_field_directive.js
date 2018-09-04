@@ -32,15 +32,16 @@ angular
 
       const TheLocaleStore = require('TheLocaleStore');
       const $q = require('$q');
-      const K = require('utils/kefir');
+      const K = require('utils/kefir.es6');
       const getStore = require('TheStore').getStore;
       const spaceContext = require('spaceContext');
       const EntityHelpers = require('EntityHelpers');
       const LD = require('utils/LaunchDarkly');
-      const trackInlineEditorToggle = require('analytics/events/ReferenceEditor')
+      const trackInlineEditorToggle = require('analytics/events/ReferenceEditor.es6')
         .onToggleInlineEditor;
-      const getInlineEditingStoreKey = require('app/widgets/link/utils').getInlineEditingStoreKey;
-      const isRtlLocale = require('utils/locales').isRtlLocale;
+      const getInlineEditingStoreKey = require('app/widgets/link/utils.es6')
+        .getInlineEditingStoreKey;
+      const isRtlLocale = require('utils/locales.es6').isRtlLocale;
 
       return {
         restrict: 'E',

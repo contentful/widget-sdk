@@ -17,7 +17,7 @@ angular.module('contentful').factory('contentPreview', [
     var previewEnvironmentsCache = require('data/previewEnvironmentsCache');
     var getStore = require('TheStore').getStore;
     var store = getStore();
-    var resolveReferences = require('services/ContentPreviewHelper').resolveReferences;
+    var resolveReferences = require('services/ContentPreviewHelper.es6').resolveReferences;
     var internalToExternalFieldIds = require('data/Entries').internalToExternal;
 
     var ENTRY_ID_PATTERN = /\{\s*entry_id\s*\}/g;
@@ -46,7 +46,7 @@ angular.module('contentful').factory('contentPreview', [
     // every 2.5 seconds. This is ok for now since we cache content previews and hence
     // polling doesn't really cause unnecessary api calls.
     // Duplicates are skipped.
-    var K = require('utils/kefir');
+    var K = require('utils/kefir.es6');
 
     var contentPreviewsBus$ = K.withInterval(2500, emitter => {
       var emitValue = emitter.value.bind(emitter);

@@ -9,8 +9,8 @@ angular
   .factory('states/account', [
     'require',
     require => {
-      var base = require('states/Base').default;
-      var navBar = require('navigation/templates/NavBar').default;
+      var base = require('states/Base.es6').default;
+      var navBar = require('navigation/templates/NavBar.es6').default;
 
       return base({
         name: 'account',

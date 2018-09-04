@@ -1,7 +1,7 @@
 describe('Generic transformer', () => {
   beforeEach(function() {
     module('contentful/test');
-    this.transformer = this.$inject('analytics/snowplow/transformers/Generic').default;
+    this.transformer = this.$inject('analytics/snowplow/transformers/Generic.es6').default;
     this.baseObj = {
       userId: 'user-1',
       organizationId: 'org',

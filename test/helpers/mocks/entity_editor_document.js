@@ -1,7 +1,7 @@
 import * as sinon from 'helpers/sinon';
 import * as K from 'test/helpers/mocks/kefir';
 import $q from '$q';
-import { create as createResourceState } from 'data/document/ResourceStateManager';
+import { create as createResourceState } from 'data/document/ResourceStateManager.es6';
 
 /**
  * @ngdoc service

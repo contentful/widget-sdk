@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Workbench from 'app/WorkbenchReact';
+import Workbench from 'app/WorkbenchReact.es6';
 import $state from '$state';
 import CodeMirror from 'react-codemirror';
 import notification from 'notification';

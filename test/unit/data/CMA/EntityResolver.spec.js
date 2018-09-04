@@ -1,6 +1,6 @@
 'use strict';
 
-describe('data/CMA/EntityResolver', () => {
+describe('data/CMA/EntityResolver.es6', () => {
   beforeEach(function() {
     module('contentful/test');
     const $q = this.$inject('$q');
@@ -16,7 +16,7 @@ describe('data/CMA/EntityResolver', () => {
       return $q.resolve({ items: entities });
     });
     const space = { getEntries: this.getEntries };
-    this.store = this.$inject('data/CMA/EntityResolver').forType('Entry', space);
+    this.store = this.$inject('data/CMA/EntityResolver.es6').forType('Entry', space);
   });
 
   it('fetches each ID', function*() {
@@ -68,7 +68,7 @@ describe('data/CMA/EntityResolver', () => {
 
   it('returns empty list if response is 404', function*() {
     const space = { getEntries: sinon.stub().rejects({ status: 404 }) };
-    const store = this.$inject('data/CMA/EntityResolver').forType('Entry', space);
+    const store = this.$inject('data/CMA/EntityResolver.es6').forType('Entry', space);
     const results = yield store.load(['manual-1', 'a']);
     const entities = results.map(([_id, data]) => data);
     expect(entities).toEqual([undefined, undefined]);

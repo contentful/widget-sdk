@@ -1,6 +1,6 @@
 import { sortBy, filter, flow } from 'lodash/fp';
 import spaceContext from 'spaceContext';
-import { openGitHubInstaller } from './ExtensionsActions';
+import { openGitHubInstaller } from './ExtensionsActions.es6';
 
 const detail = {
   name: 'detail',
@@ -25,7 +25,7 @@ const detail = {
 export default {
   name: 'extensions',
   url: '/extensions',
-  template: '<react-component name="app/Extensions/Extensions" props="props" />',
+  template: '<react-component name="app/Extensions/Extensions.es6" props="props" />',
   resolve: {
     isAdmin: [
       'spaceContext',

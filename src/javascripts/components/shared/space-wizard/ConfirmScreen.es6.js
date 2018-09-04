@@ -3,13 +3,13 @@ import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import { get, trim } from 'lodash';
 import moment from 'moment';
-import spinner from 'ui/Components/Spinner';
-import { asReact } from 'ui/Framework/DOMRenderer';
-import { formatPrice } from './WizardUtils';
-import Price from 'ui/Components/Price';
+import spinner from 'ui/Components/Spinner.es6';
+import { asReact } from 'ui/Framework/DOMRenderer.es6';
+import { formatPrice } from './WizardUtils.es6';
+import Price from 'ui/Components/Price.es6';
 
-import * as propTypes from './PropTypes';
-import PartnershipForm from './PartnershipForm';
+import * as propTypes from './PropTypes.es6';
+import PartnershipForm from './PartnershipForm.es6';
 
 const ConfirmScreen = createReactClass({
   propTypes: {

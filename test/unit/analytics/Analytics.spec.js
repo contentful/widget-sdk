@@ -9,7 +9,7 @@ describe('Analytics', () => {
 
     // we want to simulate production environment
     // this way data hits the Segment and Snowplow services
-    const Config = this.$inject('Config');
+    const Config = this.$inject('Config.es6');
     const originalEnv = Config.env;
     Config.env = 'production';
     this.restoreEnv = () => {
@@ -21,12 +21,12 @@ describe('Analytics', () => {
       sinon.stub(this.segment, m);
     });
 
-    this.Snowplow = this.$inject('analytics/snowplow/Snowplow');
+    this.Snowplow = this.$inject('analytics/snowplow/Snowplow.es6');
     ['enable', 'disable', 'identify', 'track'].forEach(m => {
       sinon.stub(this.Snowplow, m);
     });
 
-    this.analytics = this.$inject('analytics/Analytics');
+    this.analytics = this.$inject('analytics/Analytics.es6');
 
     this.userData = {
       firstName: 'Hans',

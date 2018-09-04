@@ -14,10 +14,10 @@ describe('CreateModernOnboarding service', function() {
           create: this.createKey
         }
       });
-      $provide.value('services/TokenStore', {
+      $provide.value('services/TokenStore.es6', {
         user$: this.user$
       });
-      $provide.value('app/api/CMATokens/Resource', {
+      $provide.value('app/api/CMATokens/Resource.es6', {
         create: () => ({ create: this.createCMAKey })
       });
     });

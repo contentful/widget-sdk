@@ -1,9 +1,9 @@
 import moment from 'moment';
-import { assign } from 'utils/Collections';
+import { assign } from 'utils/Collections.es6';
 import logger from 'logger';
 
-import { buildFilterFieldByQueryKey } from './Filters';
-import { Operator, isValid as isValidOperator } from './Operators';
+import { buildFilterFieldByQueryKey } from './Filters.es6';
+import { Operator, isValid as isValidOperator } from './Operators.es6';
 
 /**
  * Takes an object representing the `Search` component's public state object and

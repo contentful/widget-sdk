@@ -1,4 +1,4 @@
-import { addUserOrgSpace } from './Decorators';
+import { addUserOrgSpace } from './Decorators.es6';
 import { omit } from 'lodash';
 
 // Props we send to Segment but want to omit from Snowplow payload.

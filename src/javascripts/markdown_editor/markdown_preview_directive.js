@@ -6,7 +6,7 @@ angular
   .directive('cfMarkdownPreview', [
     'require',
     require => {
-      const createMountPoint = require('ui/Framework/DOMRenderer').default;
+      const createMountPoint = require('ui/Framework/DOMRenderer.es6').default;
 
       return {
         restrict: 'E',

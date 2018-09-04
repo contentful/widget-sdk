@@ -4,9 +4,9 @@ angular.module('contentful').directive('cfZenmode', [
   'require',
   require => {
     const $window = require('$window');
-    const MarkdownEditor = require('markdown_editor/markdown_editor');
-    const actions = require('markdown_editor/markdown_actions');
-    const keycodes = require('utils/keycodes').default;
+    const MarkdownEditor = require('markdown_editor/markdown_editor.es6');
+    const actions = require('markdown_editor/markdown_actions.es6');
+    const keycodes = require('utils/keycodes.es6').default;
     const modalDialog = require('modalDialog');
     const win = $($window);
     const LocaleStore = require('TheLocaleStore');

@@ -2,23 +2,23 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import pluralize from 'pluralize';
 import { get } from 'lodash';
-import * as Config from 'Config';
-import { assign } from 'utils/Collections';
+import * as Config from 'Config.es6';
+import { assign } from 'utils/Collections.es6';
 import { caseofEq } from 'sum-types';
-import { href } from 'states/Navigator';
-import { subscription as subscriptionState } from 'ui/NavStates/Org';
+import { href } from 'states/Navigator.es6';
+import { subscription as subscriptionState } from 'ui/NavStates/Org.es6';
 
 import { h } from 'ui/Framework';
-import { linkOpen, badge, codeFragment } from 'ui/Content';
-import { table, tr, td, th } from 'ui/Content/Table';
-import { container, hbox, ihspace } from 'ui/Layout';
-import * as Workbench from 'app/Workbench';
-import { byName as Colors } from 'Styles/Colors';
+import { linkOpen, badge, codeFragment } from 'ui/Content.es6';
+import { table, tr, td, th } from 'ui/Content/Table.es6';
+import { container, hbox, ihspace } from 'ui/Layout.es6';
+import * as Workbench from 'app/Workbench.es6';
+import { byName as Colors } from 'Styles/Colors.es6';
 
-import pageSettingsIcon from 'svg/page-settings';
-import questionMarkIcon from 'svg/QuestionMarkIcon';
-import Icon from 'ui/Components/Icon';
-import CopyIconButton from 'ui/Components/CopyIconButton';
+import pageSettingsIcon from 'svg/page-settings.es6';
+import questionMarkIcon from 'svg/QuestionMarkIcon.es6';
+import Icon from 'ui/Components/Icon.es6';
+import CopyIconButton from 'ui/Components/CopyIconButton.es6';
 import { Tooltip } from 'react-tippy';
 
 export default function render(state, actions) {

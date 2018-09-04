@@ -1,7 +1,7 @@
 import isHotkey from 'is-hotkey';
 import { BLOCKS } from '@contentful/structured-text-types';
-import { applyChange } from '../shared/BlockToggleDecorator';
-import CommonNode from '../shared/NodeDecorator';
+import { applyChange } from '../shared/BlockToggleDecorator.es6';
+import CommonNode from '../shared/NodeDecorator.es6';
 
 const plugin = (type, tagName, tagProps, hotkey) => {
   return {

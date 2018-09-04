@@ -1,8 +1,8 @@
-describe('widgets/Store', () => {
+describe('widgets/Store.es6', () => {
   beforeEach(function() {
     module('contentful/test');
-    this.createStore = this.$inject('widgets/Store').create;
-    this.builtins = this.$inject('widgets/builtin').create();
+    this.createStore = this.$inject('widgets/Store.es6').create;
+    this.builtins = this.$inject('widgets/builtin.es6').create();
   });
 
   describe('#refresh()', () => {

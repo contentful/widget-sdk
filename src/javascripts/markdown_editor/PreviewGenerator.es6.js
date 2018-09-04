@@ -1,4 +1,4 @@
-import makePreviewRender from './PreviewRender';
+import makePreviewRender from './PreviewRender.es6';
 
 /**
  * Given a property containing the markdown source return a property

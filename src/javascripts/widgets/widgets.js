@@ -8,8 +8,8 @@ angular.module('contentful').factory('widgets', [
   'require',
   require => {
     var fieldFactory = require('fieldFactory');
-    var deepFreeze = require('utils/Freeze').deepFreeze;
-    var applyDefaultValues = require('widgets/WidgetParametersUtils').applyDefaultValues;
+    var deepFreeze = require('utils/Freeze.es6').deepFreeze;
+    var applyDefaultValues = require('widgets/WidgetParametersUtils.es6').applyDefaultValues;
 
     /**
      * @ngdoc type

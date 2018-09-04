@@ -1,7 +1,7 @@
 import * as K from 'helpers/mocks/kefir';
 import * as sinon from 'helpers/sinon';
 import moment from 'npm:moment';
-import { update, push } from 'utils/Collections';
+import { update, push } from 'utils/Collections.es6';
 
 describe('LaunchDarkly', () => {
   beforeEach(function() {
@@ -93,8 +93,8 @@ describe('LaunchDarkly', () => {
     module('contentful/test', $provide => {
       $provide.constant('launch-darkly-client', this.LD);
       $provide.value('data/User', userModule);
-      $provide.value('utils/ShallowObjectDiff', this.shallowObjectDiff);
-      $provide.value('debug/EnforceFlags', this.EnforceFlags);
+      $provide.value('utils/ShallowObjectDiff.es6', this.shallowObjectDiff);
+      $provide.value('debug/EnforceFlags.es6', this.EnforceFlags);
       $provide.value('logger', this.logger);
     });
 

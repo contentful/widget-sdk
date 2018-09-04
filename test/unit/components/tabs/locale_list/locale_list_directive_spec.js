@@ -73,7 +73,7 @@ describe('The Locale list directive', () => {
         })
       });
 
-      $provide.value('services/ResourceService', {
+      $provide.value('services/ResourceService.es6', {
         default: () => {
           return {
             get: this.stubs.ResourceService.get
@@ -81,7 +81,7 @@ describe('The Locale list directive', () => {
         }
       });
 
-      $provide.value('services/FeatureService', {
+      $provide.value('services/FeatureService.es6', {
         default: () => {
           return {
             get: sinon.stub().resolves({
@@ -95,18 +95,18 @@ describe('The Locale list directive', () => {
         }
       });
 
-      $provide.value('utils/EnvironmentUtils', {
+      $provide.value('utils/EnvironmentUtils.es6', {
         isInsideMasterEnv: () => {
           return this.environment.sys.id === 'master';
         }
       });
 
-      $provide.value('services/ChangeSpaceService', {
+      $provide.value('services/ChangeSpaceService.es6', {
         showDialog: this.showChangeSpaceDialog
       });
     });
 
-    const OrganizationRoles = this.$inject('services/OrganizationRoles');
+    const OrganizationRoles = this.$inject('services/OrganizationRoles.es6');
     OrganizationRoles.setUser(this.spaceUser);
 
     this.setUsageLimits = (usage, limit) => {
@@ -120,7 +120,7 @@ describe('The Locale list directive', () => {
       OrganizationRoles.setUser(this.spaceUser);
     };
 
-    this.mockService('services/TokenStore', {
+    this.mockService('services/TokenStore.es6', {
       getSpace: sinon.stub().resolves(this.space),
       getOrganization: sinon.stub().resolves(this.organization)
     });

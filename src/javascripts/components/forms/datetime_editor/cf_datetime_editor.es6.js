@@ -1,5 +1,5 @@
 import { h } from 'utils/hyperscript';
-import { byName } from 'Styles/Colors';
+import { byName } from 'Styles/Colors.es6';
 
 export default function template() {
   return h('span', null, [

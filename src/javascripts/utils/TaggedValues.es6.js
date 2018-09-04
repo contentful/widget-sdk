@@ -1,5 +1,5 @@
 import { find } from 'lodash';
-import { shallowFreeze } from 'utils/Freeze';
+import { shallowFreeze } from 'utils/Freeze.es6';
 
 /**
  * This module provides functions for dealing with tagged values, also

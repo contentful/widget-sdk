@@ -1,5 +1,5 @@
 import modalDialog from 'modalDialog';
-import keycodes from 'utils/keycodes';
+import keycodes from 'utils/keycodes.es6';
 
 /**
  * @ngdoc service
@@ -33,7 +33,7 @@ export default function open(params = {}) {
 
   return modalDialog.open({
     template:
-      '<react-component name="app/InputDialogComponent" props="props" class="modal-background">',
+      '<react-component name="app/InputDialogComponent.es6" props="props" class="modal-background">',
     controller: function($scope) {
       const { min, max, regex, value } = input;
       const onChange = e => render(e.target.value);

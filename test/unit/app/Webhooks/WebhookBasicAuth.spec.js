@@ -1,6 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import WebhookBasicAuth from 'app/Webhooks/WebhookBasicAuth';
+import WebhookBasicAuth from 'app/Webhooks/WebhookBasicAuth.es6';
 
 describe('WebhookBasicAuth', function() {
   const mount = (stored, user = null, pass = null) => {

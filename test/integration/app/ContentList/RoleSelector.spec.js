@@ -24,7 +24,7 @@ describe('app/RoleSelector', () => {
     const notification = this.$inject('notification');
     this.notify = sinon.stub(notification, 'info');
 
-    const openRoleSelector = this.$inject('app/ContentList/RoleSelector').default;
+    const openRoleSelector = this.$inject('app/ContentList/RoleSelector.es6').default;
 
     this.open = initialValue => openRoleSelector(endpoint.request, initialValue);
   });

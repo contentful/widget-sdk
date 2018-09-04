@@ -1,6 +1,6 @@
 import $http from '$http';
-import wrapWithRetry from 'data/Request/Retry';
-import wrapWithAuth from 'data/Request/Auth';
+import wrapWithRetry from 'data/Request/Retry.es6';
+import wrapWithAuth from 'data/Request/Auth.es6';
 
 /**
  * @description

@@ -5,9 +5,9 @@ import sinon from 'npm:sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
 import { assertElementExists, assertMessageEquals, getElement, flushPromises } from './helpers';
 
-import { Action } from 'data/CMA/EntityActions';
-import { EntityType, NumberOfLinks } from 'app/entity_editor/Components/constants';
-import messages from 'app/entity_editor/Components/StateChangeConfirmationDialog/messages';
+import { Action } from 'data/CMA/EntityActions.es6';
+import { EntityType, NumberOfLinks } from 'app/entity_editor/Components/constants.es6';
+import messages from 'app/entity_editor/Components/StateChangeConfirmationDialog/messages.es6';
 
 describe('StateChangeConfirmationDialog', () => {
   const defaultProps = {
@@ -24,7 +24,7 @@ describe('StateChangeConfirmationDialog', () => {
   beforeEach(function() {
     const system = createIsolatedSystem();
     this.system = system;
-    system.set('analytics/events/IncomingLinks', {
+    system.set('analytics/events/IncomingLinks.es6', {
       onFetchLinks: sinon.stub(),
       onDialogOpen: sinon.stub(),
       onDialogConfirm: sinon.stub(),
@@ -37,7 +37,7 @@ describe('StateChangeConfirmationDialog', () => {
     this.importModule = function* importModule(
       fetchLinksStub = sinon.stub().returns(Promise.resolve([]))
     ) {
-      system.set('app/entity_editor/Components/FetchLinksToEntity/fetchLinks', {
+      system.set('app/entity_editor/Components/FetchLinksToEntity/fetchLinks.es6', {
         default: fetchLinksStub
       });
 

@@ -1,7 +1,7 @@
-import * as Config from 'Config';
+import * as Config from 'Config.es6';
 import { h } from 'ui/Framework';
-import { hbox, vspace, hspace } from 'ui/Layout';
-import { linkOpen } from 'ui/Content';
+import { hbox, vspace, hspace } from 'ui/Layout.es6';
+import { linkOpen } from 'ui/Content.es6';
 
 export default function render({
   serverFailure,

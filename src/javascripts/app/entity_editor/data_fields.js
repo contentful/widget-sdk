@@ -10,7 +10,7 @@ angular
     'require',
     require => {
       const TheLocaleStore = require('TheLocaleStore');
-      const K = require('utils/kefir');
+      const K = require('utils/kefir.es6');
 
       return {
         create: buildFieldsApi

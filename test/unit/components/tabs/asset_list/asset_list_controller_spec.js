@@ -43,16 +43,16 @@ describe('Asset List Controller', () => {
         serverError: stubs.serverError
       });
 
-      $provide.value('services/Filestack', {
+      $provide.value('services/Filestack.es6', {
         pickMultiple: stubs.pickMultiple
       });
 
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
 
-      $provide.value('utils/ResourceUtils', {
+      $provide.value('utils/ResourceUtils.es6', {
         isLegacyOrganization: () => false
       });
-      $provide.value('utils/EnvironmentUtils', {
+      $provide.value('utils/EnvironmentUtils.es6', {
         isInsideMasterEnv: () => false
       });
     });

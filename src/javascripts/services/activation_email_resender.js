@@ -12,9 +12,9 @@ angular
     'require',
     require => {
       var $q = require('$q');
-      var Config = require('Config');
+      var Config = require('Config.es6');
       var logger = require('logger');
-      var postForm = require('data/Request/PostForm').default;
+      var postForm = require('data/Request/PostForm.es6').default;
 
       var ENDPOINT = Config.authUrl('confirmation');
 

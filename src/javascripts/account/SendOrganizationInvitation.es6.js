@@ -1,9 +1,9 @@
-import * as K from 'utils/kefir';
+import * as K from 'utils/kefir.es6';
 import { get, entries } from 'lodash';
-import { runTask } from 'utils/Concurrent';
-import { create as createSpaceRepo } from 'access_control/SpaceMembershipRepository';
-import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
-import { invite as inviteToOrg } from 'access_control/OrganizationMembershipRepository';
+import { runTask } from 'utils/Concurrent.es6';
+import { create as createSpaceRepo } from 'access_control/SpaceMembershipRepository.es6';
+import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory.es6';
+import { invite as inviteToOrg } from 'access_control/OrganizationMembershipRepository.es6';
 
 const progressBus = K.createStreamBus();
 

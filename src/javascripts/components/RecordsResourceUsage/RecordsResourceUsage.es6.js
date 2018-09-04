@@ -4,12 +4,12 @@ import { connect } from 'react-redux';
 
 import classnames from 'classnames';
 import { get } from 'lodash';
-import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService';
-import { getStoreResource } from 'utils/ResourceUtils';
+import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService.es6';
+import { getStoreResource } from 'utils/ResourceUtils.es6';
 
 import { TextLink } from '@contentful/ui-component-library';
 
-import * as actionCreators from './store/actionCreators';
+import * as actionCreators from './store/actionCreators.es6';
 
 export class RecordsResourceUsage extends React.Component {
   static propTypes = {

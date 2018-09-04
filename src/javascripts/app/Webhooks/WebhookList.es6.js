@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import { get } from 'lodash';
 
 import $state from '$state';
-import Icon from 'ui/Components/Icon';
+import Icon from 'ui/Components/Icon.es6';
 
-import WebhookHealth from './WebhookHealth';
-import WebhookListSidebar from './WebhookListSidebar';
-import WebhookForbiddenPage from './WebhookForbiddenPage';
+import WebhookHealth from './WebhookHealth.es6';
+import WebhookListSidebar from './WebhookListSidebar.es6';
+import WebhookForbiddenPage from './WebhookForbiddenPage.es6';
 
 export default class WebhookList extends React.Component {
   static propTypes = {

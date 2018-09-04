@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { find } from 'lodash';
-import { byName as Colors } from 'Styles/Colors';
+import { byName as Colors } from 'Styles/Colors.es6';
 import marked from 'marked';
 
 export default class Boilerplate extends React.Component {

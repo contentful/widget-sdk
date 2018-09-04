@@ -23,7 +23,7 @@ describe('cfReferenceEditorDirective', () => {
 
     module('contentful/test', $provide => {
       $provide.removeDirectives('cfEntityLink', 'cfAssetCard');
-      $provide.value('analytics/Analytics', this.analytics);
+      $provide.value('analytics/Analytics.es6', this.analytics);
       $provide.value('spaceContext', this.spaceContext);
     });
 

@@ -29,7 +29,7 @@ describe('StructuredTextEditor', () => {
     };
     this.system = createIsolatedSystem();
 
-    this.system.set('ui/cf/thumbnailHelpers', {});
+    this.system.set('ui/cf/thumbnailHelpers.es6', {});
     this.system.set('spaceContext', {
       cma: {
         getEntry: Promise.resolve([this.entity])
@@ -39,7 +39,7 @@ describe('StructuredTextEditor', () => {
       goToSlideInEntity: sinon.stub()
     });
     const { default: StructuredTextEditor } = await this.system.import(
-      'app/widgets/structured_text/StructuredTextEditor'
+      'app/widgets/structured_text/StructuredTextEditor.es6'
     );
 
     this.props = {

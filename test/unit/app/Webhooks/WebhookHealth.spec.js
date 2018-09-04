@@ -1,6 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import WebhookHealth from 'app/Webhooks/WebhookHealth';
+import WebhookHealth from 'app/Webhooks/WebhookHealth.es6';
 
 describe('WebhookHealth', function() {
   const mount = getStub => {

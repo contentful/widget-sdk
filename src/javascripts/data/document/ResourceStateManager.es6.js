@@ -1,5 +1,5 @@
-import { makeApply, getState, Action, State } from 'data/CMA/EntityState';
-import * as K from 'utils/kefir';
+import { makeApply, getState, Action, State } from 'data/CMA/EntityState.es6';
+import * as K from 'utils/kefir.es6';
 
 export { Action, State };
 

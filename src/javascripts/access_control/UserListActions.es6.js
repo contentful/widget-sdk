@@ -5,9 +5,9 @@ import ReloadNotification from 'ReloadNotification';
 import stringUtils from 'stringUtils';
 import ListQuery from 'ListQuery';
 import entitySelector from 'entitySelector';
-import { go } from 'states/Navigator';
+import { go } from 'states/Navigator.es6';
 import { get, includes, extend } from 'lodash';
-import UserSpaceInvitationDialog from 'access_control/templates/UserSpaceInvitationDialog';
+import UserSpaceInvitationDialog from 'access_control/templates/UserSpaceInvitationDialog.es6';
 
 const MODAL_OPTS_BASE = {
   noNewScope: true,

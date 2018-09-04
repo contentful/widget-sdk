@@ -1,7 +1,7 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import * as Fetcher from 'app/Extensions/GitHubFetcher';
-import Picker from 'app/Extensions/ExamplePicker';
+import * as Fetcher from 'app/Extensions/GitHubFetcher.es6';
+import Picker from 'app/Extensions/ExamplePicker.es6';
 
 const BTN_SELECTOR = '.btn-action';
 

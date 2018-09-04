@@ -16,7 +16,7 @@ describe('cfThumbnailDirective', () => {
     };
 
     // This is needed to transform the image domain
-    const tokenStore = this.$inject('services/TokenStore');
+    const tokenStore = this.$inject('services/TokenStore.es6');
     tokenStore.getDomains = sinon.stub().returns({});
   });
 

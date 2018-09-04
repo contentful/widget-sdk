@@ -1,9 +1,9 @@
 import require from 'require';
-import * as Config from 'Config';
+import * as Config from 'Config.es6';
 import { includes, mapValues } from 'lodash';
-import * as UIVersionSwitcher from 'debug/UIVersionSwitcher';
-import * as MockApiToggle from 'debug/MockApiToggle';
-import * as EnforceFlags from 'debug/EnforceFlags';
+import * as UIVersionSwitcher from 'debug/UIVersionSwitcher.es6';
+import * as MockApiToggle from 'debug/MockApiToggle.es6';
+import * as EnforceFlags from 'debug/EnforceFlags.es6';
 
 const DEBUG_ENVS = ['development', 'preview', 'staging'];
 
@@ -27,7 +27,7 @@ export function init(global) {
 // `global.cfDebug`.
 const modules = {
   analytics: 'analytics/console',
-  http: 'debug/XHR'
+  http: 'debug/XHR.es6'
 };
 
 function initDevNotifications() {

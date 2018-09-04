@@ -1,8 +1,8 @@
 import $window from '$window';
 import { uncapitalize } from 'stringUtils';
 import trackPersistentNotification from 'analyticsEvents/persistentNotification';
-import * as OrganizationRoles from 'services/OrganizationRoles';
-import { go } from 'states/Navigator';
+import * as OrganizationRoles from 'services/OrganizationRoles.es6';
+import { go } from 'states/Navigator.es6';
 import { merge, findKey, forEach, get } from 'lodash';
 import require from 'require';
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import createReactClass from 'create-react-class';
-import Icon from 'ui/Components/Icon';
+import Icon from 'ui/Components/Icon.es6';
 import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 import closeState from 'navigation/closeState';
 

@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { get } from 'lodash';
-import spinner from 'ui/Components/Spinner';
-import { asReact } from 'ui/Framework/DOMRenderer';
+import spinner from 'ui/Components/Spinner.es6';
+import { asReact } from 'ui/Framework/DOMRenderer.es6';
 
-import TemplatesToggle from './TemplatesToggle';
-import TemplatesList from './TemplatesList';
+import TemplatesToggle from './TemplatesToggle.es6';
+import TemplatesList from './TemplatesList.es6';
 
 class TemplateSelector extends React.Component {
   static propTypes = {

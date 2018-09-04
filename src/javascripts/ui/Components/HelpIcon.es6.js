@@ -1,10 +1,10 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
-import Tooltip from 'ui/Components/Tooltip';
-import { byName as colors } from 'Styles/Colors';
-import QuestionMarkIcon from 'svg/QuestionMarkIcon';
-import { asReact } from 'ui/Framework/DOMRenderer';
+import Tooltip from 'ui/Components/Tooltip.es6';
+import { byName as colors } from 'Styles/Colors.es6';
+import QuestionMarkIcon from 'svg/QuestionMarkIcon.es6';
+import { asReact } from 'ui/Framework/DOMRenderer.es6';
 
 const HelpIcon = createReactClass({
   propTypes: {

@@ -3,8 +3,8 @@ import notification from 'notification';
 import logger from 'logger';
 import $q from '$q';
 import Store from 'data/StreamHashSet';
-import { deepFreeze } from 'utils/Freeze';
-import * as K from 'utils/kefir';
+import { deepFreeze } from 'utils/Freeze.es6';
+import * as K from 'utils/kefir.es6';
 
 /**
  * @ngdoc type

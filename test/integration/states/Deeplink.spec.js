@@ -2,7 +2,7 @@ import * as sinon from 'helpers/sinon';
 import * as K from 'test/helpers/mocks/kefir';
 import { noop } from 'lodash';
 
-describe('states/Deeplink', () => {
+describe('states/Deeplink.es6', () => {
   beforeEach(function() {
     this.getFromStore = sinon.stub();
     this.getSpaces = sinon.stub();
@@ -26,7 +26,7 @@ describe('states/Deeplink', () => {
           getAll: this.apiKeys
         }
       });
-      $provide.value('services/TokenStore', {
+      $provide.value('services/TokenStore.es6', {
         getSpaces: this.getSpaces,
         getOrganizations: this.getOrganizations,
         getOrganization: this.getOrganization,
@@ -35,10 +35,10 @@ describe('states/Deeplink', () => {
       $provide.value('access_control/AccessChecker', {
         canReadApiKeys: this.canReadApiKeys
       });
-      $provide.value('services/OrganizationRoles', {
+      $provide.value('services/OrganizationRoles.es6', {
         isOwnerOrAdmin: this.isOwnerOrAdmin
       });
-      $provide.value('states/Navigator', {
+      $provide.value('states/Navigator.es6', {
         go: this.navigate
       });
       $provide.value('utils/LaunchDarkly', {
@@ -55,7 +55,7 @@ describe('states/Deeplink', () => {
 
     const getStore = this.$inject('TheStore').getStore;
     this.store = getStore();
-    this.createDeeplinkController = this.$inject('states/Deeplink').createController;
+    this.createDeeplinkController = this.$inject('states/Deeplink.es6').createController;
     this.$rootScope = this.$inject('$rootScope');
 
     this.createController = function() {

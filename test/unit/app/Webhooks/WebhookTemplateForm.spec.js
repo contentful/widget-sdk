@@ -62,7 +62,7 @@ describe('WebhookTemplateForm', function() {
   // We inject instead of importing so UI Router's $state is available
   beforeEach(function() {
     module('contentful/test');
-    WebhookTemplateForm = this.$inject('app/Webhooks/WebhookTemplateForm').default;
+    WebhookTemplateForm = this.$inject('app/Webhooks/WebhookTemplateForm.es6').default;
   });
 
   it('renders text field', function() {

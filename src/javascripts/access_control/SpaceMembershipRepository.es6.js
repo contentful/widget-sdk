@@ -1,4 +1,4 @@
-import { fetchAll } from 'data/CMA/FetchAll';
+import { fetchAll } from 'data/CMA/FetchAll.es6';
 import { omit, extend, includes } from 'lodash';
 
 export const ADMIN_ROLE_ID = '__cf_builtin_admin';

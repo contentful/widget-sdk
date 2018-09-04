@@ -1,15 +1,15 @@
 import { h } from 'ui/Framework';
-import { makeCtor } from 'utils/TaggedValues';
-import { assign } from 'utils/Collections';
-import { forScopedViews as trackingForScopedViews } from 'analytics/events/SearchAndViews';
+import { makeCtor } from 'utils/TaggedValues.es6';
+import { assign } from 'utils/Collections.es6';
+import { forScopedViews as trackingForScopedViews } from 'analytics/events/SearchAndViews.es6';
 
-import { createStore, makeReducer, combineStoreComponents } from 'ui/Framework/Store';
+import { createStore, makeReducer, combineStoreComponents } from 'ui/Framework/Store.es6';
 
-import initSavedViewsComponent from './SavedViewsComponent';
-import SaveCurrentViewDialog from './SaveViewDialog';
+import initSavedViewsComponent from './SavedViewsComponent.es6';
+import SaveCurrentViewDialog from './SaveViewDialog.es6';
 
-import { byName as colors } from 'Styles/Colors';
-import { container } from 'ui/Layout';
+import { byName as colors } from 'Styles/Colors.es6';
+import { container } from 'ui/Layout.es6';
 
 const Select = makeCtor('Select');
 

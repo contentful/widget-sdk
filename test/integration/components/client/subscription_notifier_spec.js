@@ -18,7 +18,7 @@ describe('subscriptionNotifier', () => {
 
     const dialogsInitController = this.$inject('dialogsInitController');
     const moment = this.$inject('moment');
-    const OrganizationRoles = this.$inject('services/OrganizationRoles');
+    const OrganizationRoles = this.$inject('services/OrganizationRoles.es6');
     const spaceContext = this.$inject('spaceContext');
     const $rootScope = this.$inject('$rootScope');
 

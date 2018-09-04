@@ -1,5 +1,5 @@
 import { getSlideInEntities, goToSlideInEntity } from 'navigation/SlideInNavigator';
-import { track } from 'analytics/Analytics';
+import { track } from 'analytics/Analytics.es6';
 import { findIndex } from 'lodash';
 
 import { onFeatureFlag } from 'utils/LaunchDarkly';

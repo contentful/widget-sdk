@@ -2,25 +2,25 @@ import client from 'client';
 import { get, noop } from 'lodash';
 
 import logger from 'logger';
-import createResourceService from 'services/ResourceService';
-import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
+import createResourceService from 'services/ResourceService.es6';
+import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import {
   getSpaceRatePlans,
   getSubscriptionPlans,
   calculateTotalPrice,
   changeSpace as changeSpaceApiCall
-} from 'account/pricing/PricingDataProvider';
-import createApiKeyRepo from 'data/CMA/ApiKeyRepo';
-import * as TokenStore from 'services/TokenStore';
-import * as Analytics from 'analytics/Analytics';
+} from 'account/pricing/PricingDataProvider.es6';
+import createApiKeyRepo from 'data/CMA/ApiKeyRepo.es6';
+import * as TokenStore from 'services/TokenStore.es6';
+import * as Analytics from 'analytics/Analytics.es6';
 import spaceContext from 'spaceContext';
 import { getCreator as getTemplateCreator } from 'services/SpaceTemplateCreator';
-import { getTemplatesList, getTemplate } from 'services/SpaceTemplateLoader';
-import { canCreate } from 'utils/ResourceUtils';
-import { createTrackingData } from '../WizardUtils';
-import { getIncludedResources } from 'components/shared/space-wizard/WizardUtils';
+import { getTemplatesList, getTemplate } from 'services/SpaceTemplateLoader.es6';
+import { canCreate } from 'utils/ResourceUtils.es6';
+import { createTrackingData } from '../WizardUtils.es6';
+import { getIncludedResources } from 'components/shared/space-wizard/WizardUtils.es6';
 
-import * as actions from './actions';
+import * as actions from './actions.es6';
 
 const DEFAULT_LOCALE = 'en-US';
 

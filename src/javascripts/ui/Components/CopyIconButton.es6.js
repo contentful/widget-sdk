@@ -3,12 +3,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import createReactClass from 'create-react-class';
 
-import copyToClipboard from 'utils/DomClipboardCopy';
-import { sleep, wrapTask } from 'utils/Concurrent';
+import copyToClipboard from 'utils/DomClipboardCopy.es6';
+import { sleep, wrapTask } from 'utils/Concurrent.es6';
 
-import { asReact } from 'ui/Framework/DOMRenderer';
-import copyIcon from 'svg/CopyIcon';
-import { byName as Colors } from 'Styles/Colors';
+import { asReact } from 'ui/Framework/DOMRenderer.es6';
+import copyIcon from 'svg/CopyIcon.es6';
+import { byName as Colors } from 'Styles/Colors.es6';
 
 /**
  * The `copyIconButton` component shows a copy icon and copies the

@@ -3,7 +3,7 @@
 angular.module('contentful').directive('cfAutocompleteResults', [
   'require',
   require => {
-    const keycodes = require('utils/keycodes').default;
+    const keycodes = require('utils/keycodes.es6').default;
     return {
       controller: 'CfAutocompleteResultsController',
       controllerAs: 'resultsController',

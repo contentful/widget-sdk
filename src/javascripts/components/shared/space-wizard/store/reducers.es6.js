@@ -1,4 +1,4 @@
-import * as actions from './actions';
+import * as actions from './actions.es6';
 
 export function partnershipMeta(state = {}, action) {
   switch (action.type) {

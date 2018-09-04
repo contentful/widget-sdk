@@ -9,7 +9,7 @@ describe('data/ApiClient', () => {
       $provide.value('$http', $http);
     });
 
-    const createSpaceEndpoint = this.$inject('data/Endpoint').createSpaceEndpoint;
+    const createSpaceEndpoint = this.$inject('data/Endpoint.es6').createSpaceEndpoint;
     const Client = this.$inject('data/ApiClient');
     const $timeout = this.$inject('$timeout');
 

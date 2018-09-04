@@ -1,5 +1,5 @@
 import { create as createDocument } from 'helpers/mocks/entity_editor_document';
-import * as K from 'utils/kefir';
+import * as K from 'utils/kefir.es6';
 
 describe('Entry Editor Controller', function() {
   this.user = { firstName: 'John', lastName: 'Doe', sys: { id: '123' } };
@@ -7,11 +7,11 @@ describe('Entry Editor Controller', function() {
 
   beforeEach(function() {
     module('contentful/test', $provide => {
-      $provide.value('app/entity_editor/Tracking', sinon.stub());
-      $provide.value('app/entity_editor/Validator', {
+      $provide.value('app/entity_editor/Tracking.es6', sinon.stub());
+      $provide.value('app/entity_editor/Validator.es6', {
         createForEntry: sinon.stub()
       });
-      $provide.value('app/entity_editor/DataLoader', {
+      $provide.value('app/entity_editor/DataLoader.es6', {
         loadEntry: () => ({
           entity: {
             data: {},
@@ -37,11 +37,11 @@ describe('Entry Editor Controller', function() {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
 
-    this.mockService('services/TokenStore', {
+    this.mockService('services/TokenStore.es6', {
       user$: userBus.property
     });
 
-    const createEntryController = this.$inject('app/entity_editor/EntryController').default;
+    const createEntryController = this.$inject('app/entity_editor/EntryController.es6').default;
 
     this.createController = () => {
       const $rootScope = this.$inject('$rootScope');
@@ -53,7 +53,7 @@ describe('Entry Editor Controller', function() {
       return scope;
     };
 
-    const contextHistory = this.$inject('navigation/Breadcrumbs/History').default;
+    const contextHistory = this.$inject('navigation/Breadcrumbs/History.es6').default;
     contextHistory.set([{}]);
 
     this.spaceContext = _.extend(this.$inject('spaceContext'), {

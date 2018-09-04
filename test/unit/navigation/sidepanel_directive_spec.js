@@ -34,16 +34,16 @@ describe('cfNavSidepanel directive', () => {
 
   beforeEach(function() {
     module('contentful/test', $provide => {
-      $provide.value('services/CreateSpace', CreateSpace);
-      $provide.value('states/Navigator', Navigator);
+      $provide.value('services/CreateSpace.es6', CreateSpace);
+      $provide.value('states/Navigator.es6', Navigator);
       $provide.value('access_control/AccessChecker', accessChecker);
-      $provide.value('services/OrganizationRoles', OrganizationRoles);
+      $provide.value('services/OrganizationRoles.es6', OrganizationRoles);
       $provide.value('utils/LaunchDarkly', { onFeatureFlag: sinon.stub() });
-      $provide.value('data/EndpointFactory', { createSpaceEndpoint: sinon.stub() });
-      $provide.value('data/CMA/SpaceEnvironmentsRepo', { create: () => environmentsRepo });
+      $provide.value('data/EndpointFactory.es6', { createSpaceEndpoint: sinon.stub() });
+      $provide.value('data/CMA/SpaceEnvironmentsRepo.es6', { create: () => environmentsRepo });
     });
 
-    const NavState = this.$inject('navigation/NavState');
+    const NavState = this.$inject('navigation/NavState.es6');
     NavState.navState$ = navState$;
     NavStates = NavState.NavStates;
     navState$.set(NavStates.Default());
@@ -92,7 +92,7 @@ describe('cfNavSidepanel directive', () => {
         });
       }, {});
 
-      const tokenStore = this.$inject('services/TokenStore');
+      const tokenStore = this.$inject('services/TokenStore.es6');
       tokenStore.organizations$ = K.createMockProperty(orgs);
       tokenStore.spacesByOrganization$ = K.createMockProperty(rewrittenSpaces);
 
@@ -226,8 +226,8 @@ describe('cfNavSidepanel directive', () => {
   it('fetches environments for admins', function() {
     const [container] = this.init(true);
     const spaceLink = container.find('sidepanel-space-link-0');
-    const createSpaceEndpoint = this.$inject('data/EndpointFactory').createSpaceEndpoint;
-    const repo = this.$inject('data/CMA/SpaceEnvironmentsRepo').create();
+    const createSpaceEndpoint = this.$inject('data/EndpointFactory.es6').createSpaceEndpoint;
+    const repo = this.$inject('data/CMA/SpaceEnvironmentsRepo.es6').create();
 
     spaceLink.click();
     this.$apply();

@@ -1,6 +1,7 @@
 import React from 'react';
-import ToolbarIcon from './ToolbarIcon';
-import EntryLinkBlock from './EntryLinkBlock';
+
+import ToolbarIcon from './ToolbarIcon.es6';
+import EntryLinkBlock from './EntryLinkBlock.es6';
 import { BLOCKS } from '@contentful/structured-text-types';
 
 export default ToolbarIcon;

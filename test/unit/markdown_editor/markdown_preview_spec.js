@@ -5,7 +5,7 @@ describe('Markdown preview', () => {
     module('contentful/test');
     this.markdown = K.createMockProperty('__test__');
 
-    const PreviewGenerator = this.$inject('markdown_editor/PreviewGenerator');
+    const PreviewGenerator = this.$inject('markdown_editor/PreviewGenerator.es6');
     this.makePreview = () => PreviewGenerator.default(this.markdown);
   });
 

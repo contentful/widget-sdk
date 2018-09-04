@@ -1,16 +1,16 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 
-import { href } from 'states/Navigator';
-import { byName as colors } from 'Styles/Colors';
-import { billing, invoices } from 'ui/NavStates/Org';
+import { href } from 'states/Navigator.es6';
+import { byName as colors } from 'Styles/Colors.es6';
+import { billing, invoices } from 'ui/NavStates/Org.es6';
 
-import Icon from 'ui/Components/Icon';
-import Price from 'ui/Components/Price';
-import ContactUsButton from 'ui/Components/ContactUsButton';
+import Icon from 'ui/Components/Icon.es6';
+import Price from 'ui/Components/Price.es6';
+import ContactUsButton from 'ui/Components/ContactUsButton.es6';
 
-import { hasAnyInaccessibleSpaces } from './utils';
-import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
+import { hasAnyInaccessibleSpaces } from './utils.es6';
+import { isEnterprisePlan } from 'account/pricing/PricingDataProvider.es6';
 
 function Sidebar({ grandTotal, spacePlans, orgId, isOrgOwner, isOrgBillable, basePlan }) {
   // TODO - add these styles to stylesheets

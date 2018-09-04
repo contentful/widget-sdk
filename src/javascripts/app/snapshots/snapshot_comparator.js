@@ -26,7 +26,7 @@ angular
     '$scope',
     (require, $scope) => {
       const $q = require('$q');
-      const K = require('utils/kefir');
+      const K = require('utils/kefir.es6');
       const spaceContext = require('spaceContext');
       const SnapshotDoc = require('SnapshotComparatorController/snapshotDoc');
       const DataFields = require('EntityEditor/DataFields');
@@ -37,8 +37,8 @@ angular
       const $stateParams = require('$stateParams');
       const notification = require('notification');
       const trackVersioning = require('analyticsEvents/versioning');
-      const Validator = require('app/entity_editor/Validator');
-      const Focus = require('app/entity_editor/Focus');
+      const Validator = require('app/entity_editor/Validator.es6');
+      const Focus = require('app/entity_editor/Focus.es6');
 
       $scope.versionPicker = require('SnapshotComparatorController/versionPicker').create();
       $scope.snapshotCount = $stateParams.snapshotCount;

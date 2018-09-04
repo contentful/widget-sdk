@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import createReactClass from 'create-react-class';
 
 import * as Intercom from 'intercom';
-import { supportUrl } from 'Config';
+import { supportUrl } from 'Config.es6';
 
 import { TextLink } from '@contentful/ui-component-library';
 

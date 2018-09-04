@@ -1,10 +1,10 @@
 import { times } from 'lodash';
 
-describe('access_control/OrganizationMembershipRepository', () => {
+describe('access_control/OrganizationMembershipRepository.es6', () => {
   beforeEach(function() {
     module('contentful/test');
     this.OrganizationMembershipRepository = this.$inject(
-      'access_control/OrganizationMembershipRepository'
+      'access_control/OrganizationMembershipRepository.es6'
     );
     this.endpoint = sinon.stub();
     this.makeUser = id => ({ sys: { id }, email: `${id}@foo.com` });

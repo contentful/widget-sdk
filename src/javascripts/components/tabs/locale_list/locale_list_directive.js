@@ -19,25 +19,25 @@ angular
       const TheAccountView = require('TheAccountView');
       const TheLocaleStore = require('TheLocaleStore');
       const notification = require('notification');
-      const enforcements = require('access_control/Enforcements');
+      const enforcements = require('access_control/Enforcements.es6');
       const $state = require('$state');
-      const ResourceUtils = require('utils/ResourceUtils');
-      const EnvironmentUtils = require('utils/EnvironmentUtils');
+      const ResourceUtils = require('utils/ResourceUtils.es6');
+      const EnvironmentUtils = require('utils/EnvironmentUtils.es6');
 
       const $q = require('$q');
 
-      const ResourceService = require('services/ResourceService').default;
-      const createFeatureService = require('services/FeatureService').default;
+      const ResourceService = require('services/ResourceService.es6').default;
+      const createFeatureService = require('services/FeatureService.es6').default;
 
       const organization = spaceContext.organizationContext.organization;
-      const canChangeSpace = require('services/OrganizationRoles').isOwnerOrAdmin(organization);
+      const canChangeSpace = require('services/OrganizationRoles.es6').isOwnerOrAdmin(organization);
 
       const resources = ResourceService(spaceContext.getId());
       let resource;
 
       const FeatureService = createFeatureService(spaceContext.getId());
 
-      const { showDialog: showSpaceModal } = require('services/ChangeSpaceService');
+      const { showDialog: showSpaceModal } = require('services/ChangeSpaceService.es6');
 
       // Start: incentivize upgrade (change) feature flag
       const LD = require('utils/LaunchDarkly');
