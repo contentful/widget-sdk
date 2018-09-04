@@ -1,7 +1,6 @@
 angular.module('contentful').directive('cfStateChangeConfirmationDialog', [
   'require',
   require => {
-    const _ = require('lodash');
     const React = require('react');
     const ReactDOM = require('react-dom');
     const random = require('random');
@@ -23,7 +22,7 @@ angular.module('contentful').directive('cfStateChangeConfirmationDialog', [
         };
 
         function render(props) {
-          ReactDOM.render(React.createElement(Dialog, _.extend({}, defaultProps, props)), elem[0]);
+          ReactDOM.render(<Dialog {...defaultProps} {...props} />, elem[0]);
         }
 
         render();

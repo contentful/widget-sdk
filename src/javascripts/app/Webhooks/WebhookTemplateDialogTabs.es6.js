@@ -81,26 +81,24 @@ export default class Tabs extends React.Component {
     this.state = {
       active: props.initialActive
     };
-    this.getTabProps = this.getTabProps.bind(this);
-    this.getPaneProps = this.getPaneProps.bind(this);
   }
 
   componentDidUpdate() {
     this.props.reposition();
   }
 
-  getTabProps(tabId) {
+  getTabProps = tabId => {
     return {
       onClick: () => this.setState({ active: tabId }),
       isActive: this.state.active === tabId
     };
-  }
+  };
 
-  getPaneProps(tabId) {
+  getPaneProps = tabId => {
     return {
       isActive: this.state.active === tabId
     };
-  }
+  };
 
   render() {
     return (

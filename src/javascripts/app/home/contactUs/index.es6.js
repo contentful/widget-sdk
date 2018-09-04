@@ -1,4 +1,4 @@
-import { createElement as h } from 'react';
+import React from 'react';
 import createReactClass from 'create-react-class';
 import $state from '$state';
 import { track } from 'analytics/Analytics.es6';
@@ -17,32 +17,21 @@ export default createReactClass({
     Intercom.open();
   },
   render() {
-    return h(
-      'div',
-      { className: `${prefix}__container` },
-      h(
-        'div',
-        null,
-        h('h3', { className: `${prefix}__title` }, 'A fast setup for your project'),
-        h(
-          'div',
-          { className: `${prefix}__description` },
-          'Most projects launch faster when they receive advice from our experts.'
-        ),
-        h(
-          'div',
-          null,
-          h(
-            'span',
-            {
-              className: 'button btn-action',
-              onClick: this.onClick
-            },
-            'Contact an expert'
-          )
-        )
-      ),
-      h('div', { className: `${prefix}__img` })
+    return (
+      <div className={`${prefix}__container`}>
+        <div>
+          <h3 className={`${prefix}__title`}>A fast setup for your project</h3>
+          <div className={`${prefix}__description`}>
+            Most projects launch faster when they receive advice from our experts.
+          </div>
+          <div>
+            <span className="button btn-action" onClick={this.onClick}>
+              Contact an expert
+            </span>
+          </div>
+        </div>
+        <div className={`${prefix}__img`} />
+      </div>
     );
   }
 });

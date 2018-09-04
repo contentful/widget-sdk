@@ -1,5 +1,5 @@
 import $window from '$window';
-import { createElement as h } from 'react';
+import React from 'react';
 import { getStore } from 'TheStore';
 import { uniq, without, omit } from 'lodash';
 import { addNotification } from 'debug/DevNotifications.es6';
@@ -68,7 +68,7 @@ function displayNotification() {
   if (enabledFlags.length) {
     addNotification(
       'Enabled flags:',
-      h('ul', null, enabledFlags.map(flag => renderFlagsListItem(flag, removeEnabledFlag)))
+      <ul>{enabledFlags.map(flag => renderFlagsListItem(flag, removeEnabledFlag))}</ul>
     );
   }
 
@@ -76,23 +76,27 @@ function displayNotification() {
   if (disabledFlags.length) {
     addNotification(
       'Disabled flags:',
-      h('ul', null, disabledFlags.map(flag => renderFlagsListItem(flag, removeDisabledFlag)))
+      <ul>{disabledFlags.map(flag => renderFlagsListItem(flag, removeDisabledFlag))}</ul>
     );
   }
 }
 
 function renderFlagsListItem(flag, removeFn) {
-  const clearBtn = h(
-    'button',
-    {
-      className: 'btn-link',
-      onClick: () => {
+  const clearBtn = (
+    <button
+      className="btn-link"
+      onClick={() => {
         removeFn(flag);
         $window.location.reload();
-      },
-      style: { float: 'right', marginLeft: '3px' }
-    },
-    'Clear'
+      }}
+      style={{ float: 'right', marginLeft: '3px' }}>
+      Clear
+    </button>
   );
-  return h('li', { key: flag }, flag, clearBtn);
+  return (
+    <li key={flag}>
+      {flag}
+      {clearBtn}
+    </li>
+  );
 }

@@ -1,7 +1,6 @@
 angular.module('contentful').directive('cfSidebarIncomingLinks', [
   'require',
   require => {
-    const _ = require('lodash');
     const React = require('react');
     const ReactDOM = require('react-dom');
     const SidebarIncomingLinks = require('app/entity_editor/Components/SidebarIncomingLinks')
@@ -15,10 +14,7 @@ angular.module('contentful').directive('cfSidebarIncomingLinks', [
         };
 
         function render(props) {
-          ReactDOM.render(
-            React.createElement(SidebarIncomingLinks, _.extend({}, defaultProps, props)),
-            elem[0]
-          );
+          ReactDOM.render(<SidebarIncomingLinks {...defaultProps} {...props} />, elem[0]);
         }
 
         render();

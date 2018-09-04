@@ -13,17 +13,17 @@ angular.module('contentful').directive('cfSubscriptionOverview', [
         var context = $scope.properties.context;
 
         ReactDOM.render(
-          React.createElement(SubscriptionOverview, {
-            orgId: $scope.properties.orgId,
-            onReady: function() {
+          <SubscriptionOverview
+            orgId={$scope.properties.orgId}
+            onReady={function() {
               context.ready = true;
               $scope.$applyAsync();
-            },
-            onForbidden: function() {
+            }}
+            onForbidden={function() {
               context.forbidden = true;
               $scope.$applyAsync();
-            }
-          }),
+            }}
+          />,
           host
         );
 

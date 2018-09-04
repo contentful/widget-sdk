@@ -7,7 +7,7 @@ import Cookies from 'Cookies';
 import { omit } from 'lodash';
 import moment from 'moment';
 import { gitRevision } from 'environment';
-import { createElement as h } from 'react';
+import React from 'react';
 import { addNotification } from 'debug/DevNotifications.es6';
 import location from '$location';
 import qs from 'qs';
@@ -49,20 +49,17 @@ function addVersionNotification() {
 }
 
 function renderVersionNotification(gitRevision) {
-  return h(
-    'div',
-    null,
-    h('a', { href: `?ui_version=${gitRevision}` }, gitRevision),
-    h(
-      'button',
-      {
-        className: 'btn-link',
-        onClick: removeUiVersion,
-        dataCfUiVersionReload: true,
-        style: { marginLeft: '3px' }
-      },
-      'Clear'
-    )
+  return (
+    <div>
+      <a href={`?ui_version=${gitRevision}`}>{gitRevision}</a>
+      <button
+        className="btn-link"
+        onClick={removeUiVersion}
+        dataCfUiVersionReload={true}
+        style={{ marginLeft: '3px' }}>
+        Clear
+      </button>
+    </div>
   );
 }
 

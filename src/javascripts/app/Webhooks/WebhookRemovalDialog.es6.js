@@ -19,14 +19,13 @@ export default class WebhookRemovalDialog extends React.Component {
   constructor(props) {
     super(props);
     this.state = { busy: false };
-    this.remove = this.remove.bind(this);
   }
 
-  remove() {
+  remove = () => {
     const { remove, confirm, cancel } = this.props;
     this.setState({ busy: true });
     return remove().then(confirm, cancel);
-  }
+  };
 
   render() {
     const { webhookUrl, cancel } = this.props;

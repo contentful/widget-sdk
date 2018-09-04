@@ -351,7 +351,7 @@ angular
             const widget = _.find(scope.availableWidgets, { id: scope.widgetSettings.id });
             if (widget) {
               ReactDOM.render(
-                React.createElement(WidgetParametersForm, prepareProps(widget)),
+                <WidgetParametersForm {...prepareProps(widget)} />,
                 el[0].querySelector('.mount-point')
               );
             }

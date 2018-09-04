@@ -1,4 +1,4 @@
-import { createElement as h } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import createReactClass from 'create-react-class';
 import { asReact } from 'ui/Framework/DOMRenderer.es6';
@@ -126,16 +126,15 @@ const Icon = createReactClass({
   render() {
     const { className, style } = this.props;
     const { Icon } = this.state;
-    return h(
-      'span',
-      {
-        className,
-        style,
-        ref: node => {
+    return (
+      <span
+        className={className}
+        style={style}
+        ref={node => {
           this.container = node;
-        }
-      },
-      asReact(Icon)
+        }}>
+        {asReact(Icon)}
+      </span>
     );
   }
 });

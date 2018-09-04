@@ -1,7 +1,6 @@
 angular.module('contentful').directive('cfBackNav', [
   'require',
   require => {
-    const _ = require('lodash');
     const React = require('react');
     const ReactDOM = require('react-dom');
     const BackNav = require('app/entity_editor/Components/BackNav').default;
@@ -15,7 +14,7 @@ angular.module('contentful').directive('cfBackNav', [
           slideInFeatureFlagValue: 0
         };
         function render(props) {
-          ReactDOM.render(React.createElement(BackNav, _.extend({}, props)), elem[0]);
+          ReactDOM.render(<BackNav {...props} />, elem[0]);
         }
 
         LD.onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, flagValue => {

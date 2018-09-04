@@ -18,7 +18,7 @@ angular
             ReactDOM.unmountComponentAtNode(root);
           });
 
-          ReactDOM.render(React.createElement(OnboardingWithTea), root);
+          ReactDOM.render(<OnboardingWithTea />, root);
         }
       };
     }

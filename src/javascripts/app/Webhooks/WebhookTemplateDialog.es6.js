@@ -18,7 +18,6 @@ export default class WebhookTemplateDialog extends React.Component {
 
   constructor(props) {
     super(props);
-    this.renderTabs = this.renderTabs.bind(this);
     this.templates = Templates;
 
     // Code below is for early access of premium (enterprise)
@@ -36,7 +35,7 @@ export default class WebhookTemplateDialog extends React.Component {
     }
   }
 
-  renderTabs({ getTabProps, getPaneProps }) {
+  renderTabs = ({ getTabProps, getPaneProps }) => {
     const { closeDialog, webhookRepo, templateContentTypes } = this.props;
 
     return (
@@ -58,7 +57,7 @@ export default class WebhookTemplateDialog extends React.Component {
         ))}
       </React.Fragment>
     );
-  }
+  };
 
   render() {
     return (

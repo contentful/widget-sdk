@@ -11,7 +11,7 @@ angular.module('contentful').directive('cfContactUsButton', [
       link: function($scope, el) {
         var host = el[0];
 
-        ReactDOM.render(React.createElement(ContactUsButton, {}), host);
+        ReactDOM.render(<ContactUsButton />, host);
 
         $scope.$on('$destroy', () => {
           ReactDOM.unmountComponentAtNode(host);

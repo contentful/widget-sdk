@@ -1,5 +1,5 @@
 import { noop } from 'lodash';
-import { createElement as h } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import createReactClass from 'create-react-class';
 
@@ -48,20 +48,20 @@ const TextValueInput = createReactClass({
     // in a span that pushes the parent div to grow.
     const shadowValue = value || '';
 
-    return h(
-      'fieldset',
-      { className: 'search__input-text' },
-      h('input', {
-        className: 'input-reset search__input',
-        'data-test-id': testId,
-        value: value !== null ? value : '',
-        ref: inputRef,
-        onChange: this.handleChange,
-        onKeyDown,
-        onClick,
-        tabIndex: '0'
-      }),
-      h('span', { className: 'search__input-spacer' }, [shadowValue.replace(/\s/g, '|')])
+    return (
+      <fieldset className="search__input-text">
+        <input
+          className="input-reset search__input"
+          data-test-id={testId}
+          value={value !== null ? value : ''}
+          ref={inputRef}
+          onChange={this.handleChange}
+          onKeyDown={onKeyDown}
+          onClick={onClick}
+          tabIndex="0"
+        />
+        <span className="search__input-spacer">{shadowValue.replace(/\s/g, '|')}</span>
+      </fieldset>
     );
   }
 });

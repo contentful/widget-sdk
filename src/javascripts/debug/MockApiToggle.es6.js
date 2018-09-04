@@ -1,5 +1,5 @@
 import $window from '$window';
-import { createElement as h } from 'react';
+import React from 'react';
 import location from '$location';
 import { getStore } from 'TheStore';
 import { omit } from 'lodash';
@@ -29,21 +29,13 @@ export function init() {
 
   if (store.get()) {
     addNotification(
-      h(
-        'h5',
-        null,
-        'Using mock API ',
-        h(
-          'button',
-          {
-            className: 'btn-link',
-            style: { display: 'inline' },
-            onClick: disableMockApi
-          },
-          'clear'
-        )
-      ),
-      h('a', { href: settings.mockApiUrl }, settings.mockApiUrl)
+      <h5>
+        {'Using mock API '}
+        <button className="btn-link" style={{ display: 'inline' }} onClick={disableMockApi}>
+          clear
+        </button>
+      </h5>,
+      <a href={settings.mockApiUrl}>{settings.mockApiUrl}</a>
     );
   }
 }

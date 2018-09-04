@@ -1,4 +1,4 @@
-import { createElement as h } from 'react';
+import React from 'react';
 
 describe('Welcome react component', () => {
   beforeEach(function() {
@@ -28,7 +28,7 @@ describe('Welcome react component', () => {
     this.renderWelcomeElement = isNew => {
       this.ui = this.createUI();
       this.ui.render(
-        h(Welcome, {
+        React.createElement(Welcome, {
           user: {
             firstName: 'Foo',
             signInCount: isNew ? 1 : 2

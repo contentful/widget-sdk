@@ -1,4 +1,4 @@
-import { createElement as h } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import createReactClass from 'create-react-class';
 import { uniqueId, isString } from 'lodash';
@@ -31,23 +31,16 @@ const DevNotifications = createReactClass({
     if (!notifications.length) {
       return null;
     }
-    return h(
-      'div',
-      {
-        className: isCollapsed ? 'cf-dev-notifications is-collapsed' : 'cf-dev-notifications'
-      },
-      h('button', { className: 'btn-link btn-toggle-collapsed', onClick: this.toggle }),
-      ...notifications.map(({ title, content, id }) => {
-        return h(
-          'div',
-          {
-            className: 'cf-dev-notification',
-            key: id
-          },
-          isString(title) ? h('h5', null, title) : title,
-          content
-        );
-      })
+    return (
+      <div className={isCollapsed ? 'cf-dev-notifications is-collapsed' : 'cf-dev-notifications'}>
+        <button className="btn-link btn-toggle-collapsed" onClick={this.toggle} />
+        {notifications.map(({ title, content, id }) => (
+          <div className="cf-dev-notification" key={id}>
+            {isString(title) ? <h5>{title}</h5> : title}
+            {content}
+          </div>
+        ))}
+      </div>
     );
   }
 });
@@ -68,5 +61,5 @@ export function addNotification(title, content) {
       .appendChild(document.createElement('div'));
   }
   notifications.push({ title, content, id: uniqueId() });
-  ReactDOM.render(h(DevNotifications, { notifications }), containerElement);
+  ReactDOM.render(<DevNotifications notifications={notifications} />, containerElement);
 }

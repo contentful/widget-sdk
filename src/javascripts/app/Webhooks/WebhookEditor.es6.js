@@ -42,11 +42,6 @@ export default class WebhookEditor extends React.Component {
       // All buttons triggering HTTP requests are disabled then.
       busy: false
     };
-
-    this.onChange = this.onChange.bind(this);
-    this.save = this.save.bind(this);
-    this.remove = this.remove.bind(this);
-    this.refreshLog = this.refreshLog.bind(this);
   }
 
   componentDidMount() {
@@ -59,7 +54,7 @@ export default class WebhookEditor extends React.Component {
     this.props.onChange(this.state.webhook);
   }
 
-  onChange(change) {
+  onChange = change => {
     this.setState(
       s => ({
         ...s,
@@ -72,7 +67,7 @@ export default class WebhookEditor extends React.Component {
       }),
       () => this.propagateChange()
     );
-  }
+  };
 
   onSave(webhook) {
     this.setState(
@@ -91,7 +86,7 @@ export default class WebhookEditor extends React.Component {
     return $state.go('^.list');
   }
 
-  save() {
+  save = () => {
     const { webhookRepo } = this.props;
     const { webhook, fresh } = this.state;
 
@@ -104,9 +99,9 @@ export default class WebhookEditor extends React.Component {
         this.setState({ busy: false });
       }
     );
-  }
+  };
 
-  remove() {
+  remove = () => {
     const { webhookRepo } = this.props;
     const { webhook } = this.state;
 
@@ -117,16 +112,16 @@ export default class WebhookEditor extends React.Component {
       ({ removed }) => (removed ? this.navigateToList(true) : notBusy()),
       () => notBusy()
     );
-  }
+  };
 
-  refreshLog() {
+  refreshLog = () => {
     if (typeof this.state.refreshLog === 'function') {
       this.setState({ busy: true });
       // `this.state.refreshLog()` always resolves when HTTP communication is done.
       // `WebhookActivityLog` handles failures internally.
       this.state.refreshLog().then(() => this.setState({ busy: false }));
     }
-  }
+  };
 
   render() {
     const { tab, webhook, fresh, dirty, hasHttpBasicStored, busy } = this.state;

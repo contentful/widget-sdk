@@ -19,11 +19,7 @@ angular.module('contentful').directive('cfExtensionEditor', [
         scope.context.requestLeaveConfirmation = leaveConfirmator(save);
 
         ReactDOM.render(
-          React.createElement(ExtensionEditor, {
-            entity: entity,
-            onChange: onChange,
-            save: save
-          }),
+          <ExtensionEditor entity={entity} onChange={onChange} save={save} />,
           el[0].querySelector('.mount-point')
         );
 

@@ -32,11 +32,9 @@ export default class WebhookTemplateForm extends React.Component {
         {}
       )
     };
-    this.updateFieldState = this.updateFieldState.bind(this);
-    this.onCreateClick = this.onCreateClick.bind(this);
   }
 
-  updateFieldState(fieldName, value) {
+  updateFieldState = (fieldName, value) => {
     this.setState(state => ({
       ...state,
       error: false,
@@ -45,7 +43,7 @@ export default class WebhookTemplateForm extends React.Component {
         [fieldName]: value
       }
     }));
-  }
+  };
 
   isFormValid(fields) {
     return values(fields).every(s => isString(s) && s.length > 0);
@@ -55,7 +53,7 @@ export default class WebhookTemplateForm extends React.Component {
     return $state.go('^.detail', { webhookId: webhook.sys.id });
   }
 
-  onCreateClick() {
+  onCreateClick = () => {
     const { webhookRepo, template, templateContentTypes } = this.props;
     const name = `${template.title} - ${template.subtitle}`;
 
@@ -77,7 +75,7 @@ export default class WebhookTemplateForm extends React.Component {
       ([firstSaved]) => this.navigateToSaved(firstSaved),
       err => this.setState({ busy: false, error: err.message })
     );
-  }
+  };
 
   render() {
     const { template, templateContentTypes } = this.props;

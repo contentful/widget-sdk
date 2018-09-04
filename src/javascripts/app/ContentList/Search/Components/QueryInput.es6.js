@@ -1,4 +1,4 @@
-import { createElement as h } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import createReactClass from 'create-react-class';
 
@@ -49,32 +49,24 @@ const QueryInput = createReactClass({
     const shadowValue = (this.state.value || placeholder || '').replace(/\s/g, '|');
 
     // TODO: extract shadow-resize and reuse in TextValueInput
-    return h(
-      'fieldset',
-      {
-        className: 'search-next__query-input-fieldset'
-      },
-      h('input', {
-        className: 'input-reset search-next__query-input',
-        'data-test-id': 'queryInput',
-        ref: input => {
-          this.inputRef = input;
-        },
-        onFocus,
-        onBlur,
-        autoFocus,
-        value,
-        onKeyDown,
-        onChange: this.handleChange,
-        placeholder
-      }),
-      h(
-        'span',
-        {
-          className: 'search__input-spacer'
-        },
-        shadowValue
-      )
+    return (
+      <fieldset className="search-next__query-input-fieldset">
+        <input
+          className="input-reset search-next__query-input"
+          data-test-id="queryInput"
+          ref={input => {
+            this.inputRef = input;
+          }}
+          onFocus={onFocus}
+          onBlur={onBlur}
+          autoFocus={autoFocus}
+          value={value}
+          onKeyDown={onKeyDown}
+          onChange={this.handleChange}
+          placeholder={placeholder}
+        />
+        <span className="search__input-spacer">{shadowValue}</span>
+      </fieldset>
     );
   }
 });

@@ -26,7 +26,7 @@ angular.module('contentful').directive('cfCreateEntryButton', [
               onSelect: $scope.$eval(attr.onSelect)
             });
 
-            ReactDOM.render(React.createElement(Menu, props), elem[0]);
+            ReactDOM.render(<Menu {...props} />, elem[0]);
           }
         );
 

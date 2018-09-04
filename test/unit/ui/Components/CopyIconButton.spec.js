@@ -1,4 +1,4 @@
-import { createElement as h } from 'react';
+import React from 'react';
 import * as sinon from 'test/helpers/sinon';
 import { sleep } from 'utils/Concurrent.es6';
 
@@ -12,12 +12,7 @@ describe('ui/Components/CopyIconButton.es6', () => {
     const CopyIconButton = this.$inject('ui/Components/CopyIconButton.es6').default;
 
     this.ui = this.createUI();
-    this.ui.render(
-      h(CopyIconButton, {
-        value: 'TEXT'
-      }),
-      this.container
-    );
+    this.ui.render(<CopyIconButton value="TEXT" />, this.container);
   });
 
   it('copies the value to the clipboard', function*() {

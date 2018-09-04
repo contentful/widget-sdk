@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { createElement as h } from 'react';
+import React from 'react';
 import { mount } from 'enzyme';
 import sinon from 'npm:sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
@@ -54,7 +54,7 @@ describe('StateChangeConfirmationDialog', () => {
   });
 
   function render(Component, props) {
-    return mount(h(Component, _.extend({}, defaultProps, props)));
+    return mount(<Component {...defaultProps} {...props} />);
   }
 
   it('renders the dialog with 0 links', function*() {

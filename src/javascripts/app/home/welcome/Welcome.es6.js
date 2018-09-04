@@ -1,4 +1,4 @@
-import { createElement as h } from 'react';
+import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import moment from 'moment';
@@ -25,31 +25,31 @@ const Welcome = createReactClass({
 
     const greeting = getGreeting(user);
 
-    const scrollToDeveloperResources = h(
-      'span',
-      null,
-      'Get started with content creation in your space or get ',
-      h('a', { onClick: this.scrollToDeveloperResources }, 'SDKs, tools & tutorials below'),
-      '.'
+    const scrollToDeveloperResources = (
+      <span>
+        {'Get started with content creation in your space or get '}
+        <a onClick={this.scrollToDeveloperResources}>SDKs, tools & tutorials below</a>.
+      </span>
     );
 
-    return h(
-      'div',
-      null,
-      h(
-        'section',
-        { className: 'home-section' },
-        h('h2', { className: 'home-section__heading', 'data-test-id': 'greeting' }, greeting),
-        isNew &&
-          h(
-            'p',
-            null,
-            "Looks like you're new here. Learn more about Contentful from the resources below."
-          ),
-        isOld && h('p', null, 'What will you build today?'),
-        scrollToDeveloperResources,
-        h(Icon, { name: 'home-welcome', className: 'home__welcome-image' })
-      )
+    return (
+      <div>
+        <section className="home-section">
+          <h2 className="home-section__heading" data-test-id="greeting">
+            {greeting}
+          </h2>
+          {isNew && (
+            <p>
+              Looks like you
+              {"'"}
+              re new here. Learn more about Contentful from the resources below.
+            </p>
+          )}
+          {isOld && <p>What will you build today?</p>}
+          {scrollToDeveloperResources}
+          <Icon name="home-welcome" className="home__welcome-image" />
+        </section>
+      </div>
     );
   }
 });

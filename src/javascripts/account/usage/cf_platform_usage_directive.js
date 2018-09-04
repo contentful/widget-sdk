@@ -13,15 +13,15 @@ angular.module('contentful').directive('cfPlatformUsage', [
         const context = $scope.properties.context;
 
         ReactDOM.render(
-          React.createElement(OrganizationUsage, {
-            orgId: $scope.properties.orgId,
-            onReady: function() {
+          <OrganizationUsage
+            orgId={$scope.properties.orgId}
+            onReady={function() {
               context.ready = true;
-            },
-            onForbidden: function() {
+            }}
+            onForbidden={function() {
               context.forbidden = true;
-            }
-          }),
+            }}
+          />,
           host
         );
 
