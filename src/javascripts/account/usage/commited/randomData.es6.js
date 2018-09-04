@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { range, keyBy, orderBy, tap, take } from 'lodash';
+import { range, keyBy, orderBy, tap, take, sum } from 'lodash';
 import moment from 'moment';
 import random from 'random';
 
@@ -73,12 +73,21 @@ export const getOrgUsage = (orgId, periodId) => {
 
 export const getApiUsage = (orgId, periodId, api) => {
   const duration = periodDuration(periodId);
-  const spaces = spaceIds.map(spaceId => ({
-    spaceId,
-    usage: range(duration).map(() =>
-      Math.round((Math.random() * orgLimit * 2) / 30 / 3 / spaceIds.length)
-    )
-  }));
+  const spaces = spaceIds.map((spaceId, index) => {
+    const factor = [100, 1, 5, 10, 20, 30][index];
+    return {
+      spaceId,
+      usage: range(duration).map(index =>
+        Math.round(
+          ((Math.random() + 0.5) * (index === 20 ? 200 : factor) * orgLimit) /
+            20 /
+            30 /
+            3 /
+            spaceIds.length
+        )
+      )
+    };
+  });
 
   return delayedPromise().then(() =>
     tap(
@@ -95,7 +104,7 @@ export const getApiUsage = (orgId, periodId, api) => {
               },
               usage
             })),
-            'totalUsage',
+            ({ usage }) => sum(usage),
             'desc'
           ),
           3
