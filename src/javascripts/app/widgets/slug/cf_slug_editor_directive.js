@@ -39,12 +39,8 @@ angular
         scope: {},
         require: '^cfWidgetApi',
         template: JST['cf_slug_editor'](),
-        link: function(scope, $el, _attrs, widgetApi) {
-          const field = widgetApi.field;
-          const entry = widgetApi.entry;
-          const space = widgetApi.space;
-          const locales = widgetApi.locales;
-          const contentType = widgetApi.contentType;
+        link: (scope, $el, _attrs, widgetApi) => {
+          const { field, entry, space, locales, contentType } = widgetApi;
 
           const $inputEl = $el.find('input');
           const updateInput = InputUpdater.create($inputEl.get(0));
@@ -72,17 +68,24 @@ angular
           // we need to update slug values from title only after
           // field becomes not disabled (sharejs connected)
           const titleUpdate$ = K.combine([disabledBus.stream, titleBus.stream]).filter(
-            function filterDisabled(values) {
-              const disabled = values[0];
-              return disabled === false;
-            }
+            ([disabled]) => disabled === false
           );
 
-          K.onValueScope(scope, titleUpdate$, values => {
-            const title = values[1];
-            const val = makeSlug(title);
-            updateInput(val);
-            field.setValue(val);
+          K.onValueScope(scope, titleUpdate$, ([, title]) => {
+            const slug = field.getValue();
+            if (
+              !_.isEmpty(trackingTitle) &&
+              !_.isEmpty(slug) &&
+              slug !== slugUtils.slugify(trackingTitle, field.locale)
+            ) {
+              // We don't want to overwrite the slug if the user has provided
+              // a custom one.
+              return;
+            } else {
+              const val = makeSlug(title);
+              updateInput(val);
+              field.setValue(val);
+            }
           });
 
           const detachOnFieldDisabledHandler = field.onPermissionChanged(disabledStatus => {

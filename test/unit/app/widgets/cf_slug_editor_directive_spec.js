@@ -64,8 +64,8 @@ describe('SlugEditor directive', () => {
 
     it('tracks the title if both fields have not diverged', function() {
       const $inputEl = this.compileElement().find('input');
-      $inputEl.val('this-is-the-first-title');
       this.title.onValueChanged.yield('This is the first title');
+      expect($inputEl.val()).toEqual('this-is-the-first-title');
       this.title.onValueChanged.yield('This is the second title');
       expect($inputEl.val()).toEqual('this-is-the-second-title');
     });
@@ -111,6 +111,22 @@ describe('SlugEditor directive', () => {
 
     sinon.assert.notCalled(this.cfWidgetApi.field.setValue);
     expect($inputEl.val()).toBe('INITIAL');
+  });
+
+  it('updates to a slugified title only when the user has not created a custom slug', function() {
+    const $inputEl = this.compileElement().find('input');
+    expect($inputEl.val()).toMatch('untitled-entry-');
+    $inputEl.val('slugified-title');
+    this.title.onValueChanged.yield('Slugified Title');
+    this.$apply();
+    expect($inputEl.val()).toEqual('slugified-title');
+    this.title.onValueChanged.yield('Slugified Title With More Text');
+    this.$apply();
+    expect($inputEl.val()).toEqual('slugified-title-with-more-text');
+    $inputEl.val('custom-slug');
+    this.title.onValueChanged.yield('Slugified Title With Different Text');
+    this.$apply();
+    expect($inputEl.val()).toEqual('custom-slug');
   });
 
   describe('#alreadyPublished', () => {
