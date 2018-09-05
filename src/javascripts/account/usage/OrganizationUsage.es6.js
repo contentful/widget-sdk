@@ -17,7 +17,7 @@ import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 
 import OrganizationResourceUsageList from './non_commited/OrganizationResourceUsageList.es6';
 import OrganizationUsagePage from './commited/OrganizationUsagePage.es6';
-import { getPeriods, getOrgUsage, getApiUsage } from './commited/randomData.es6';
+import { getPeriods, getOrgUsage, getApiUsage } from './UsageService.es6';
 import PeriodSelector from './commited/PeriodSelector.es6';
 import NoSpacesPlaceholder from './NoSpacesPlaceholder.es6';
 
@@ -59,11 +59,11 @@ export default class OrganizationUsage extends React.Component {
   async fetchOrgData() {
     const { orgId, onReady } = this.props;
     const { flagActive } = this.state;
-    const endpoint = createOrganizationEndpoint(orgId);
+    this.endpoint = createOrganizationEndpoint(orgId);
     const service = createResourceService(orgId, 'organization');
 
     try {
-      const basePlan = await getBasePlan(endpoint);
+      const basePlan = await getBasePlan(this.endpoint);
       const commited = isEnterprisePlan(basePlan);
 
       if (commited && flagActive) {
@@ -74,8 +74,8 @@ export default class OrganizationUsage extends React.Component {
             limits: { included: includedLimit }
           }
         ] = await Promise.all([
-          getAllSpaces(endpoint),
-          getPeriods(orgId),
+          getAllSpaces(this.endpoint),
+          getPeriods(this.endpoint),
           service.get('api_request')
         ]);
         const spaceNames = flow(
@@ -100,7 +100,6 @@ export default class OrganizationUsage extends React.Component {
   }
 
   async loadPeriodData(newIndex) {
-    const { orgId } = this.props;
     const { periods } = this.state;
     const {
       sys: { id: periodId }
@@ -109,8 +108,8 @@ export default class OrganizationUsage extends React.Component {
       new_period: periodId
     });
     const [org, cma, cda, cpa] = await Promise.all([
-      getOrgUsage(orgId, periodId),
-      ...['cma', 'cda', 'cpa'].map(api => getApiUsage(orgId, periodId, api))
+      getOrgUsage(this.endpoint, periodId),
+      ...['cma', 'cda', 'cpa'].map(api => getApiUsage(this.endpoint, periodId, api))
     ]);
 
     this.setState({

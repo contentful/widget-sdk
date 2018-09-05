@@ -1,5 +1,5 @@
-/* eslint-disable no-console */
-import { range, keyBy, orderBy, tap, take, sum } from 'lodash';
+/* eslint-disable no-unused-vars */
+import { range, keyBy, orderBy, take, sum } from 'lodash';
 import moment from 'moment';
 import random from 'random';
 
@@ -33,45 +33,35 @@ const periodsById = keyBy(periods, 'id');
 
 const delayedPromise = (duration = 1000) => new Promise(resolve => setTimeout(resolve, duration));
 
-export const getPeriods = orgId =>
-  delayedPromise().then(() =>
-    tap(
-      {
-        total: numberOfPreviousPeriods,
-        sys: { type: 'Array' },
-        items: periods.map(({ start, end, id }) => ({
-          sys: { type: 'UsagePeriod', id },
-          startDate: start.format(API_FORMAT),
-          endDate: end ? end.format(API_FORMAT) : end
-        }))
-      },
-      res => console.log(`[GET] /organizations/${orgId}/usage_periods`, res)
-    )
-  );
+const getPeriods = endpoint =>
+  delayedPromise().then(() => ({
+    total: numberOfPreviousPeriods,
+    sys: { type: 'Array' },
+    items: periods.map(({ start, end, id }) => ({
+      sys: { type: 'UsagePeriod', id },
+      startDate: start.format(API_FORMAT),
+      endDate: end ? end.format(API_FORMAT) : end
+    }))
+  }));
 
 const periodDuration = periodId => {
   const { start, end } = periodsById[periodId];
   return (end || moment()).diff(start, 'days') + 1;
 };
 
-export const getOrgUsage = (orgId, periodId) => {
+const getOrgUsage = (endpoint, periodId) => {
   const duration = periodDuration(periodId);
   const usage = range(duration).map(() => Math.round((Math.random() * orgLimit * 2) / 30));
-  return delayedPromise().then(() =>
-    tap(
-      {
-        sys: {
-          type: 'OrganizationUsage',
-          id: `usage-${periodId}`
-        },
-        usage
-      },
-      res => console.log(`[GET] /organizations/${orgId}/usage?usage_period=${periodId}`, res)
-    )
-  );
+  return delayedPromise().then(() => ({
+    sys: {
+      type: 'OrganizationUsage',
+      id: `usage-${periodId}`
+    },
+    usage
+  }));
 };
 
-export const getApiUsage = (orgId, periodId, api) => {
+const getApiUsage = (endpoint, periodId, api) => {
   const duration = periodDuration(periodId);
   const spaces = spaceIds.map((spaceId, index) => {
     const factor = [100, 1, 5, 10, 20, 30][index];
@@ -89,32 +79,25 @@ export const getApiUsage = (orgId, periodId, api) => {
     };
   });
 
-  return delayedPromise().then(() =>
-    tap(
-      {
-        total: Math.min(spaceIds.length, 3),
-        sys: { type: 'Array' },
-        items: take(
-          orderBy(
-            spaces.map(({ spaceId, usage }) => ({
-              sys: {
-                type: 'SpaceResourceUsage',
-                id: `${api}-${periodId}`,
-                space: { sys: { id: spaceId } }
-              },
-              usage
-            })),
-            ({ usage }) => sum(usage),
-            'desc'
-          ),
-          3
-        )
-      },
-      res =>
-        console.log(
-          `[GET] /organizations/${orgId}/resource_spaces_usage?usage_period=${periodId}&limit=3&skip=0&resource_type=${api}`,
-          res
-        )
+  return delayedPromise().then(() => ({
+    total: Math.min(spaceIds.length, 3),
+    sys: { type: 'Array' },
+    items: take(
+      orderBy(
+        spaces.map(({ spaceId, usage }) => ({
+          sys: {
+            type: 'SpaceResourceUsage',
+            id: `${api}-${periodId}`,
+            space: { sys: { id: spaceId } }
+          },
+          usage
+        })),
+        ({ usage }) => sum(usage),
+        'desc'
+      ),
+      3
     )
-  );
+  }));
 };
+
+export { getPeriods, getOrgUsage, getApiUsage };
