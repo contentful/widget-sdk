@@ -11,8 +11,7 @@ export default class HyperlinkDialog extends React.Component {
     }),
     value: PropTypes.shape({
       text: PropTypes.string,
-      uri: PropTypes.string,
-      title: PropTypes.string
+      uri: PropTypes.string
     }),
     hideText: PropTypes.bool,
     onConfirm: PropTypes.func.isRequired,
@@ -59,7 +58,7 @@ export default class HyperlinkDialog extends React.Component {
     // TODO: Use `Form` for spacing when available.
     const style = { marginBottom: '1.75rem' };
     const { hideText } = this.props;
-    const { uri, text, title } = this.state;
+    const { uri, text } = this.state;
     return (
       <React.Fragment>
         {hideText || (
@@ -81,15 +80,6 @@ export default class HyperlinkDialog extends React.Component {
           onChange={e => this.setState({ uri: e.target.value })}
           id="link-uri"
           name="link-uri"
-          style={style}
-        />
-        <TextField
-          labelText="Title of the link"
-          value={title || ''}
-          helpText="Optional, although commonly used to improve accessibility."
-          onChange={e => this.setState({ title: e.target.value })}
-          id="link-title"
-          name="link-title"
           style={style}
         />
       </React.Fragment>

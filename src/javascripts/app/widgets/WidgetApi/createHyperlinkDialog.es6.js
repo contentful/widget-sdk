@@ -1,6 +1,6 @@
 import modalDialog from 'modalDialog';
 
-const DEFAULT_VALUE = { uri: 'https://', text: '', title: '' };
+const DEFAULT_VALUE = { uri: 'https://', text: '' };
 
 /**
  * Opens a dialog for the user to construct a link and returns the
@@ -8,9 +8,8 @@ const DEFAULT_VALUE = { uri: 'https://', text: '', title: '' };
  *
  * @param {string?} options.value.uri
  * @param {string?} options.value.text
- * @param {string?} options.value.title
  * @param {boolean} options.showTextInput
- * @returns {Promise<{uri: string, text: string, title: string?}>}
+ * @returns {Promise<{uri: string, text: string?}>}
  */
 export default function({ showTextInput, value = {} }) {
   const component = 'app/widgets/WidgetApi/HyperlinkDialog.es6';
