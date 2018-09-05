@@ -1,5 +1,4 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 
 import { name as CreateModernOnboardingModule } from '../../auto_create_new_space/CreateModernOnboarding';
@@ -17,18 +16,18 @@ angular.module('contentful').factory(name, [
     const { getStoragePrefix } = require(CreateModernOnboardingModule);
     const { updateUserInSegment } = require('analytics/Analytics.es6');
 
-    const ChoiceScreen = createReactClass({
-      propTypes: {
+    class ChoiceScreen extends React.Component {
+      static propTypes = {
         onDefaultChoice: PropTypes.func.isRequired,
         createSpace: PropTypes.func
-      },
-      getInitialState() {
-        return {
-          isDevPathPending: false,
-          isDefaultPathPending: false
-        };
-      },
-      renderBlock({ title, text, button }) {
+      };
+
+      state = {
+        isDevPathPending: false,
+        isDefaultPathPending: false
+      };
+
+      renderBlock = ({ title, text, button }) => {
         return (
           <div className="modern-stack-onboarding--choice-block">
             <h3 className="modern-stack-onboarding--choice-block-title">{title}</h3>
@@ -36,8 +35,9 @@ angular.module('contentful').factory(name, [
             {button}
           </div>
         );
-      },
-      renderButton({ text, ...props }) {
+      };
+
+      renderButton = ({ text, ...props }) => {
         return (
           <div className="modern-stack-onboarding--block-button-wrapper">
             <Button className="modern-stack-onboarding--block-button" {...props}>
@@ -45,8 +45,9 @@ angular.module('contentful').factory(name, [
             </Button>
           </div>
         );
-      },
-      async createSpace() {
+      };
+
+      createSpace = async () => {
         this.setState({
           isDevPathPending: true
         });
@@ -57,12 +58,14 @@ angular.module('contentful').factory(name, [
             spaceId: newSpace.sys.id
           }
         });
-      },
-      setChoiceInIntercom(choice) {
+      };
+
+      setChoiceInIntercom = choice => {
         updateUserInSegment({
           onboardingChoice: choice
         });
-      },
+      };
+
       render() {
         const { isDefaultPathPending, isDevPathPending } = this.state;
         const { onDefaultChoice } = this.props;
@@ -114,7 +117,7 @@ angular.module('contentful').factory(name, [
           </FullScreen>
         );
       }
-    });
+    }
 
     return ChoiceScreen;
   }

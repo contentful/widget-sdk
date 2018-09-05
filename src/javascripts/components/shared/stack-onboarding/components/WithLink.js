@@ -1,4 +1,4 @@
-import createReactClass from 'create-react-class';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { name as CreateModernOnboardingModule } from '../../auto_create_new_space/CreateModernOnboarding';
 
@@ -15,13 +15,14 @@ angular.module('contentful').factory(name, [
 
     const { getStoragePrefix } = require(CreateModernOnboardingModule);
 
-    const WithLink = createReactClass({
-      propTypes: {
+    class WithLink extends React.Component {
+      static propTypes = {
         link: PropTypes.oneOf(['getStarted', 'copy', 'explore', 'deploy', 'spaceHome']),
         trackingElementId: PropTypes.string.isRequired,
         intercomKey: PropTypes.string,
         children: PropTypes.func.isRequired
-      },
+      };
+
       render() {
         const { children, trackingElementId, intercomKey } = this.props;
         const getStateParams = () => {
@@ -62,7 +63,7 @@ angular.module('contentful').factory(name, [
         };
         return children(move);
       }
-    });
+    }
 
     return WithLink;
   }

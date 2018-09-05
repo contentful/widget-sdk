@@ -1,5 +1,4 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 
 import { name as CodeModule } from '../../../react/atoms/Code';
@@ -16,20 +15,21 @@ angular.module('contentful').factory(name, [
     const { getDeliveryToken } = require(CreateModernOnboardingModule);
     const $stateParams = require('$stateParams');
 
-    const CodeSnippets = createReactClass({
-      propTypes: {
+    class CodeSnippets extends React.Component {
+      static propTypes = {
         active: PropTypes.string,
         onHover: PropTypes.func,
         onLeave: PropTypes.func
-      },
-      getInitialState() {
-        return {};
-      },
+      };
+
+      state = {};
+
       async componentDidMount() {
         const deliveryToken = await getDeliveryToken();
         this.setState({ deliveryToken });
-      },
-      renderSnippet({ title, subtitle, code, onHover, onLeave, active }) {
+      }
+
+      renderSnippet = ({ title, subtitle, code, onHover, onLeave, active }) => {
         return (
           <div>
             <h4 className={'modern-stack-onboarding--code-title'}>{title}</h4>
@@ -47,8 +47,9 @@ angular.module('contentful').factory(name, [
             </div>
           </div>
         );
-      },
-      renderBootstrapSnippet() {
+      };
+
+      renderBootstrapSnippet = () => {
         const { deliveryToken } = this.state;
         return this.renderSnippet({
           title: 'Bootstrap the Contentful JS SDK',
@@ -61,8 +62,9 @@ angular.module('contentful').factory(name, [
             '})'
           ]
         });
-      },
-      renderPeopleSnippet() {
+      };
+
+      renderPeopleSnippet = () => {
         const { onHover, onLeave, active } = this.props;
         return this.renderSnippet({
           title: 'Fetch all people',
@@ -78,8 +80,9 @@ angular.module('contentful').factory(name, [
           onLeave,
           active: active === 'person'
         });
-      },
-      renderPostsSnippet() {
+      };
+
+      renderPostsSnippet = () => {
         const { onHover, onLeave, active } = this.props;
         return this.renderSnippet({
           title: 'Fetch all blog posts',
@@ -95,8 +98,9 @@ angular.module('contentful').factory(name, [
           onLeave,
           active: active === 'articles'
         });
-      },
-      renderAllSnippet() {
+      };
+
+      renderAllSnippet = () => {
         const { onHover, onLeave, active } = this.props;
         return this.renderSnippet({
           title: 'Put it all together',
@@ -130,7 +134,8 @@ angular.module('contentful').factory(name, [
           onLeave,
           active: active === 'all'
         });
-      },
+      };
+
       render() {
         return (
           <div>
@@ -141,7 +146,7 @@ angular.module('contentful').factory(name, [
           </div>
         );
       }
-    });
+    }
 
     return IframeHighlightHOC(CodeSnippets);
   }

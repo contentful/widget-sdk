@@ -1,10 +1,9 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import Icon from 'ui/Components/Icon.es6';
 
-const Workbench = createReactClass({
-  propTypes: {
+class Workbench extends React.Component {
+  static propTypes = {
     title: PropTypes.node.isRequired,
     icon: PropTypes.string,
     testId: PropTypes.string,
@@ -39,7 +38,8 @@ const Workbench = createReactClass({
         );
       }
     }
-  },
+  };
+
   render() {
     const { title, icon, testId, children } = this.props;
     const content = React.Children.toArray(children).find(
@@ -68,28 +68,30 @@ const Workbench = createReactClass({
       </div>
     );
   }
-});
+}
 
-Workbench.Content = createReactClass({
-  propTypes: {
+Workbench.Content = class extends React.Component {
+  static propTypes = {
     children: PropTypes.oneOfType([PropTypes.array, PropTypes.element])
-  },
+  };
+
   render() {
     const { children } = this.props;
 
     return <div className="workbench-main__content">{children}</div>;
   }
-});
+};
 
-Workbench.Sidebar = createReactClass({
-  propTypes: {
+Workbench.Sidebar = class extends React.Component {
+  static propTypes = {
     children: PropTypes.oneOfType([PropTypes.array, PropTypes.element])
-  },
+  };
+
   render() {
     const { children } = this.props;
 
     return <div className="workbench-main__sidebar">{children}</div>;
   }
-});
+};
 
 export default Workbench;

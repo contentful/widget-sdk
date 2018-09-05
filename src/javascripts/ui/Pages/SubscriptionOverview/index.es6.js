@@ -1,5 +1,4 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 
 import { get } from 'lodash';
@@ -24,28 +23,26 @@ import UsersForPlan from './UsersForPlan.es6';
 import SpacePlans from './SpacePlans.es6';
 import Sidebar from './Sidebar.es6';
 
-const SubscriptionOverview = createReactClass({
-  propTypes: {
+class SubscriptionOverview extends React.Component {
+  static propTypes = {
     onReady: PropTypes.func.isRequired,
     onForbidden: PropTypes.func.isRequired,
     orgId: PropTypes.string.isRequired
-  },
+  };
 
-  getInitialState: function() {
-    return {
-      organization: {},
-      basePlan: {},
-      spacePlans: [],
-      grandTotal: 0,
-      usersMeta: {}
-    };
-  },
+  state = {
+    organization: {},
+    basePlan: {},
+    spacePlans: [],
+    grandTotal: 0,
+    usersMeta: {}
+  };
 
-  UNSAFE_componentWillMount: function() {
+  UNSAFE_componentWillMount = () => {
     this.fetchData();
-  },
+  };
 
-  fetchData: async function() {
+  fetchData = async () => {
     const { orgId, onReady, onForbidden } = this.props;
 
     const resources = createResourceService(orgId, 'organization');
@@ -100,9 +97,9 @@ const SubscriptionOverview = createReactClass({
     this.setState({ basePlan, spacePlans, grandTotal, usersMeta, organization });
 
     onReady();
-  },
+  };
 
-  spaceChanged(space, currentSpacePlan, newSpacePlan) {
+  spaceChanged = (space, currentSpacePlan, newSpacePlan) => {
     let notificationMsg = `Space ${space.name} successfully`;
 
     if (currentSpacePlan) {
@@ -123,13 +120,13 @@ const SubscriptionOverview = createReactClass({
         upgradedSpace: null
       });
     }, 6000);
-  },
+  };
 
-  createSpace: function() {
+  createSpace = () => {
     showCreateSpaceModal(this.props.orgId);
-  },
+  };
 
-  changeSpace: function(space, action) {
+  changeSpace = (space, action) => {
     return () => {
       showChangeSpaceModal({
         organizationId: this.props.orgId,
@@ -155,9 +152,9 @@ const SubscriptionOverview = createReactClass({
         }
       });
     };
-  },
+  };
 
-  deleteSpace: function(space, plan) {
+  deleteSpace = (space, plan) => {
     if (plan.committed) {
       return () => openCommittedSpaceWarningDialog();
     }
@@ -168,9 +165,9 @@ const SubscriptionOverview = createReactClass({
         onSuccess: this.fetchData
       });
     };
-  },
+  };
 
-  render: function() {
+  render() {
     const { basePlan, spacePlans, grandTotal, usersMeta, upgradedSpace, organization } = this.state;
     const { orgId } = this.props;
 
@@ -206,6 +203,6 @@ const SubscriptionOverview = createReactClass({
       </Workbench>
     );
   }
-});
+}
 
 export default SubscriptionOverview;

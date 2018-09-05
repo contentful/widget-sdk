@@ -1,5 +1,4 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 
 import { name as FullScreenModule } from '../../../react/molecules/FullScreen';
 import { name as SkipModule } from '../components/Skip';
@@ -26,25 +25,26 @@ angular.module('contentful').factory(name, [
     const WithLink = require(WithLinkModule);
     const ScreenHeader = require(ScreenHeaderModule);
 
-    const CopyScreen = createReactClass({
-      getInitialState() {
-        return {
-          pending: true
-        };
-      },
+    class CopyScreen extends React.Component {
+      state = {
+        pending: true
+      };
+
       async componentDidMount() {
         const { managementToken, deliveryToken } = await getCredentials();
 
         this.setState({ managementToken, deliveryToken, pending: false });
-      },
-      renderCodeLine(code) {
+      }
+
+      renderCodeLine = code => {
         return (
           <div className={'modern-stack-onboarding--copyscreen-snippet'}>
             <Code lineNumbers={false} copy code={code} tooltipPosition={'right'} />
           </div>
         );
-      },
-      getSetupLine() {
+      };
+
+      getSetupLine = () => {
         const { pending, managementToken, deliveryToken } = this.state;
 
         if (pending) {
@@ -56,8 +56,9 @@ angular.module('contentful').factory(name, [
         const CMA = `--managementToken ${managementToken}`;
 
         return `npm run setup -- ${space} ${CDA} ${CMA}`;
-      },
-      renderGitSteps() {
+      };
+
+      renderGitSteps = () => {
         return (
           <React.Fragment>
             {this.renderCodeLine('git clone https://github.com/contentful/starter-gatsby-blog.git')}
@@ -66,7 +67,8 @@ angular.module('contentful').factory(name, [
             {this.renderCodeLine(this.getSetupLine())}
           </React.Fragment>
         );
-      },
+      };
+
       render() {
         const headerTitle = (
           <React.Fragment>
@@ -112,7 +114,7 @@ angular.module('contentful').factory(name, [
           </FullScreen>
         );
       }
-    });
+    }
 
     return CopyScreen;
   }

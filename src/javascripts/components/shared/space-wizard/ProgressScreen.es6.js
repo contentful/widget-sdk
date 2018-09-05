@@ -1,5 +1,4 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import { asReact } from 'ui/Framework/DOMRenderer.es6';
 import CheckmarkIcon from 'svg/checkmark.es6';
@@ -35,11 +34,12 @@ const infoItems = [
   }
 ];
 
-const ProgressScreen = createReactClass({
-  propTypes: {
+class ProgressScreen extends React.Component {
+  static propTypes = {
     done: PropTypes.bool.isRequired,
     onConfirm: PropTypes.func.isRequired
-  },
+  };
+
   render() {
     const { done, onConfirm } = this.props;
 
@@ -80,6 +80,6 @@ const ProgressScreen = createReactClass({
       </div>
     );
   }
-});
+}
 
 export default ProgressScreen;

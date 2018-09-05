@@ -1,5 +1,4 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 
 import { name as IframeHighlightHOCModule } from './IframeHighlightHOC';
@@ -12,23 +11,25 @@ angular.module('contentful').factory(name, [
     const IframeHighlightHOC = require(IframeHighlightHOCModule);
     const Icon = require('ui/Components/Icon.es6').default;
 
-    const DataFlow = createReactClass({
-      propTypes: {
+    class DataFlow extends React.Component {
+      static propTypes = {
         onHover: PropTypes.func,
         onLeave: PropTypes.func,
         active: PropTypes.string
-      },
-      parseStyle(style) {
+      };
+
+      parseStyle = style => {
         return {
           top: parseFloat(style.top),
           left: parseFloat(style.left)
         };
-      },
+      };
+
       // this function renders lines between parents and children
       // it will automatically draw correct lines, so you can
       // play around with other boxes' position, without worrying
       // about connections
-      renderLine(style, parentStyle) {
+      renderLine = (style, parentStyle) => {
         if (parentStyle) {
           const numberedStyle = this.parseStyle(style);
           const numberedParentStyle = this.parseStyle(parentStyle);
@@ -73,8 +74,9 @@ angular.module('contentful').factory(name, [
             </React.Fragment>
           );
         }
-      },
-      renderElem(elem, { level = 0, position = 0 } = {}, parentStyle) {
+      };
+
+      renderElem = (elem, { level = 0, position = 0 } = {}, parentStyle) => {
         const { onHover, onLeave, active } = this.props;
         const titleClassName = 'modern-stack-onboarding--data-flow-elem-title';
         const modifier = level === 0 ? 1 : 1 / level;
@@ -121,7 +123,8 @@ angular.module('contentful').factory(name, [
               })}
           </React.Fragment>
         );
-      },
+      };
+
       render() {
         const JohnDoeBlock = {
           title: 'John Doe',
@@ -178,7 +181,7 @@ angular.module('contentful').factory(name, [
           </div>
         );
       }
-    });
+    }
 
     return IframeHighlightHOC(DataFlow);
   }

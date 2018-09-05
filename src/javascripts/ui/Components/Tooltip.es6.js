@@ -1,9 +1,8 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 
-const Tooltip = createReactClass({
-  propTypes: {
+class Tooltip extends React.Component {
+  static propTypes = {
     children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
     tooltip: PropTypes.node.isRequired,
     style: PropTypes.object,
@@ -11,7 +10,8 @@ const Tooltip = createReactClass({
     options: PropTypes.shape({
       width: PropTypes.number
     })
-  },
+  };
+
   render() {
     const { children, tooltip, className = '', style = {}, options = {} } = this.props;
     if (!options.width) {
@@ -35,6 +35,6 @@ const Tooltip = createReactClass({
       </div>
     );
   }
-});
+}
 
 export default Tooltip;

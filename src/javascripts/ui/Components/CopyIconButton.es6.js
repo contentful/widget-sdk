@@ -1,10 +1,8 @@
 import * as Tippy from 'react-tippy';
 import React from 'react';
 import PropTypes from 'prop-types';
-import createReactClass from 'create-react-class';
 
 import copyToClipboard from 'utils/DomClipboardCopy.es6';
-import { sleep, wrapTask } from 'utils/Concurrent.es6';
 
 import { asReact } from 'ui/Framework/DOMRenderer.es6';
 import copyIcon from 'svg/CopyIcon.es6';
@@ -21,42 +19,41 @@ import { byName as Colors } from 'Styles/Colors.es6';
  * The styles for the tooltip are defined in
  * `src/stylesheets/Components/TippyTooltipOveride.styl`.
  */
-const CopyIconButton = createReactClass({
-  displayName: 'CopyIconButton',
+class CopyIconButton extends React.Component {
+  static displayName = 'CopyIconButton';
 
-  propTypes: {
+  static propTypes = {
     tooltipPosition: PropTypes.oneOf(['top', 'bottom', 'left', 'right']),
     value: PropTypes.string.isRequired,
     onCopy: PropTypes.func,
     className: PropTypes.string
-  },
+  };
 
-  getDefaultProps() {
-    return {
-      onCopy: () => undefined,
-      tooltipPosition: 'bottom'
-    };
-  },
+  static defaultProps = {
+    onCopy: () => undefined,
+    tooltipPosition: 'bottom'
+  };
 
-  getInitialState: () => ({
+  state = {
     showCopiedTooltip: false
-  }),
+  };
 
   // TODO This is an ugly workaround to prevent React warnings when the
   // component is unmounted.
   componentWillUnmount() {
     this.isUnmounted = true;
-  },
+  }
 
-  copyToClipboard: wrapTask(function*() {
+  copyToClipboard = () => {
     copyToClipboard(this.props.value);
     this.props.onCopy(this.props.value);
     this.setState({ showCopiedTooltip: true });
-    yield sleep(1500);
-    if (!this.isUnmounted) {
-      this.setState({ showCopiedTooltip: false });
-    }
-  }),
+    window.setTimeout(() => {
+      if (!this.isUnmounted) {
+        this.setState({ showCopiedTooltip: false });
+      }
+    }, 1500);
+  };
 
   render() {
     const { tooltipPosition, className } = this.props;
@@ -89,6 +86,6 @@ const CopyIconButton = createReactClass({
       </span>
     );
   }
-});
+}
 
 export default CopyIconButton;

@@ -1,16 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import createReactClass from 'create-react-class';
 
 export const name = 'react/browser';
 
 angular.module('contentful').factory(name, [
   function() {
-    const BrowserTab = createReactClass({
-      propTypes: {
+    class BrowserTab extends React.Component {
+      static propTypes = {
         children: PropTypes.node.isRequired,
         className: PropTypes.string
-      },
+      };
+
       render() {
         const { children, className } = this.props;
         return (
@@ -28,7 +28,7 @@ angular.module('contentful').factory(name, [
           </div>
         );
       }
-    });
+    }
 
     return BrowserTab;
   }

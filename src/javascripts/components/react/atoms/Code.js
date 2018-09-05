@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import createReactClass from 'create-react-class';
 
 export const name = 'react/code-component';
 
@@ -9,8 +8,8 @@ angular.module('contentful').factory(name, [
   function(require) {
     const CopyButton = require('ui/Components/CopyIconButton.es6').default;
 
-    const Code = createReactClass({
-      propTypes: {
+    class Code extends React.Component {
+      static propTypes = {
         language: PropTypes.oneOf(['bash']),
         code: PropTypes.oneOfType([PropTypes.node, PropTypes.arrayOf(PropTypes.node)]),
         copy: PropTypes.bool,
@@ -18,14 +17,14 @@ angular.module('contentful').factory(name, [
         lineNumbers: PropTypes.bool,
         className: PropTypes.string,
         tooltipPosition: PropTypes.oneOf(['top', 'bottom', 'left', 'right'])
-      },
-      getDefaultProps() {
-        return {
-          lineNumbers: true,
-          className: ''
-        };
-      },
-      renderCode() {
+      };
+
+      static defaultProps = {
+        lineNumbers: true,
+        className: ''
+      };
+
+      renderCode = () => {
         const { code } = this.props;
         // it might be react object, so we can't check for string
         if (!Array.isArray(code)) {
@@ -38,7 +37,8 @@ angular.module('contentful').factory(name, [
           </span>
         ));
         return <React.Fragment>{codeMarkup}</React.Fragment>;
-      },
+      };
+
       render() {
         const {
           language,
@@ -70,7 +70,7 @@ angular.module('contentful').factory(name, [
           </div>
         );
       }
-    });
+    }
 
     return Code;
   }

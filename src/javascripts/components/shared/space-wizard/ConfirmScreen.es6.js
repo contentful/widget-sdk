@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import { get, trim } from 'lodash';
 import moment from 'moment';
@@ -11,8 +10,8 @@ import Price from 'ui/Components/Price.es6';
 import * as propTypes from './PropTypes.es6';
 import PartnershipForm from './PartnershipForm.es6';
 
-const ConfirmScreen = createReactClass({
-  propTypes: {
+class ConfirmScreen extends React.Component {
+  static propTypes = {
     currentPlan: PropTypes.object,
     selectedPlan: PropTypes.object.isRequired,
     space: PropTypes.object,
@@ -28,22 +27,20 @@ const ConfirmScreen = createReactClass({
     setPartnershipFields: PropTypes.func.isRequired,
     subscriptionPrice: PropTypes.object.isRequired,
     partnershipMeta: propTypes.partnershipMeta
-  },
+  };
 
-  getInitialState() {
-    return {
-      partnershipFields: {},
-      partnershipValidation: {}
-    };
-  },
+  state = {
+    partnershipFields: {},
+    partnershipValidation: {}
+  };
 
   componentDidMount() {
     const { organization, fetchSubscriptionPrice } = this.props;
 
     fetchSubscriptionPrice({ organization });
-  },
+  }
 
-  onPartnershipFieldChange(fieldName) {
+  onPartnershipFieldChange = fieldName => {
     return value => {
       const { setPartnershipFields } = this.props;
       const { partnershipFields } = this.state;
@@ -53,9 +50,9 @@ const ConfirmScreen = createReactClass({
       this.setState({ partnershipFields });
       setPartnershipFields(partnershipFields);
     };
-  },
+  };
 
-  onSubmit() {
+  onSubmit = () => {
     const { partnershipMeta, onSubmit, track } = this.props;
     const { partnershipFields } = this.state;
     const { isPartnerSpacePlan } = partnershipMeta;
@@ -92,7 +89,7 @@ const ConfirmScreen = createReactClass({
       track('confirm');
       onSubmit();
     }
-  },
+  };
 
   render() {
     const {
@@ -260,6 +257,6 @@ const ConfirmScreen = createReactClass({
       </div>
     );
   }
-});
+}
 
 export default ConfirmScreen;

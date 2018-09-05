@@ -1,5 +1,4 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { Steps, getFieldErrors } from './WizardUtils.es6';
@@ -52,8 +51,8 @@ const SpaceChangeSteps = [
   }
 ];
 
-const Wizard = createReactClass({
-  propTypes: {
+class Wizard extends React.Component {
+  static propTypes = {
     organization: PropTypes.shape({
       sys: PropTypes.shape({
         id: PropTypes.string.isRequired
@@ -98,7 +97,7 @@ const Wizard = createReactClass({
     currentPlan: PropTypes.object,
     selectedPlan: PropTypes.object,
     partnershipMeta: propTypes.partnershipMeta
-  },
+  };
 
   componentDidMount() {
     const { action, organization } = this.props;
@@ -108,9 +107,9 @@ const Wizard = createReactClass({
       paymentDetailsExist: Boolean(organization.isBillable)
     });
     this.navigate(steps[0].id);
-  },
+  }
 
-  UNSAFE_componentWillReceiveProps({ spaceCreation: { error } }) {
+  UNSAFE_componentWillReceiveProps = ({ spaceCreation: { error } }) => {
     const {
       spaceCreation: { error: currentError }
     } = this.props;
@@ -131,7 +130,7 @@ const Wizard = createReactClass({
         onCancel(); // close modal without tracking 'cancel' event
       }
     }
-  },
+  };
 
   render() {
     const {
@@ -245,38 +244,38 @@ const Wizard = createReactClass({
         </div>
       );
     }
-  },
+  }
 
-  cancel() {
+  cancel = () => {
     const { onCancel } = this.props;
 
     onCancel && onCancel();
     this.track('cancel');
-  },
+  };
 
-  confirm() {
+  confirm = () => {
     const { onConfirm } = this.props;
 
     onConfirm && onConfirm();
-  },
+  };
 
-  track(eventName, data = {}) {
+  track = (eventName, data = {}) => {
     const { track, action } = this.props;
 
     const requiredTrackingData = { action };
 
     track(eventName, { ...data, ...requiredTrackingData });
-  },
+  };
 
-  setStateData(stepData) {
+  setStateData = stepData => {
     this.setState(({ data }) => ({
       data: { ...data, ...stepData },
       isFormSubmitted: false,
       serverValidationErrors: null
     }));
-  },
+  };
 
-  navigate(stepId) {
+  navigate = stepId => {
     const { navigate, currentStepId } = this.props;
 
     this.track('navigate', {
@@ -284,9 +283,9 @@ const Wizard = createReactClass({
       targetStepId: stepId
     });
     navigate(stepId);
-  },
+  };
 
-  goForward() {
+  goForward = () => {
     const {
       currentStepId,
       action,
@@ -322,9 +321,9 @@ const Wizard = createReactClass({
 
       this.navigate(nextStepId);
     }
-  },
+  };
 
-  handleError(error) {
+  handleError = error => {
     const { action, onCancel } = this.props;
     const steps = getSteps(action);
 
@@ -343,8 +342,8 @@ const Wizard = createReactClass({
       );
       onCancel(); // close modal without tracking 'cancel' event
     }
-  }
-});
+  };
+}
 
 const mapStateToProps = state => {
   return {

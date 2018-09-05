@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { kebabCase } from 'lodash';
@@ -11,8 +10,10 @@ import PlanFeatures from 'components/shared/space-wizard/PlanFeatures.es6';
 import { formatPrice, unavailabilityTooltipNode } from './WizardUtils.es6';
 import { byName as colors } from 'Styles/Colors.es6';
 
-const SpacePlanItem = createReactClass({
-  propTypes: {
+class SpacePlanItem extends React.Component {
+  static displayName = 'SpacePlanItem';
+
+  static propTypes = {
     plan: PropTypes.object.isRequired,
     isSelected: PropTypes.bool.isRequired,
     freeSpacesResource: PropTypes.object,
@@ -20,8 +21,9 @@ const SpacePlanItem = createReactClass({
     isPayingOrg: PropTypes.bool.isRequired,
     isCurrentPlan: PropTypes.bool,
     isRecommended: PropTypes.bool
-  },
-  render: function() {
+  };
+
+  render() {
     const {
       plan,
       isCurrentPlan,
@@ -94,6 +96,6 @@ const SpacePlanItem = createReactClass({
       </div>
     );
   }
-});
+}
 
 export default SpacePlanItem;

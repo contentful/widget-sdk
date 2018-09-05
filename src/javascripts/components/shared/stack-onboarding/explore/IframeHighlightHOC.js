@@ -1,5 +1,4 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 
 export const name = 'onboarding-iframe-highlight-hoc';
@@ -7,17 +6,18 @@ export const name = 'onboarding-iframe-highlight-hoc';
 angular.module('contentful').factory(name, [
   function() {
     return Component => {
-      const IframeHightlightHOC = createReactClass({
-        propTypes: {
+      class IframeHightlightHOC extends React.Component {
+        static propTypes = {
           iframe: PropTypes.object
-        },
-        getInitialState() {
-          return { active: null };
-        },
+        };
+
+        state = { active: null };
+
         componentWillUnmount() {
           this.removeHighlight();
-        },
-        highlight(type) {
+        }
+
+        highlight = type => {
           this.removeHighlight();
           const { iframe } = this.props;
           this.setState({ active: type });
@@ -34,15 +34,18 @@ angular.module('contentful').factory(name, [
           } else {
             iframe.contentWindow.postMessage({ id: type, message: 'highlight' }, '*');
           }
-        },
-        onHover(type) {
+        };
+
+        onHover = type => {
           this.highlight(type);
-        },
-        onLeave() {
+        };
+
+        onLeave = () => {
           this.removeHighlight();
           this.setState({ active: null });
-        },
-        removeHighlight() {
+        };
+
+        removeHighlight = () => {
           const { iframe } = this.props;
           iframe.contentWindow.postMessage(
             { id: 'automate-with-webhooks', message: 'remove' },
@@ -55,7 +58,8 @@ angular.module('contentful').factory(name, [
           );
           iframe.contentWindow.postMessage({ id: 'person', message: 'remove' }, '*');
           iframe.contentWindow.postMessage({ id: 'all', message: 'remove' }, '*');
-        },
+        };
+
         render() {
           const { active } = this.state;
           const props = {
@@ -66,7 +70,7 @@ angular.module('contentful').factory(name, [
           };
           return <Component {...props} />;
         }
-      });
+      }
 
       return IframeHightlightHOC;
     };

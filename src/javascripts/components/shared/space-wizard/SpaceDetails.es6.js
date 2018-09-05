@@ -1,11 +1,10 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import TemplateSelector from './TemplateSelector.es6';
 import { formatPrice, getFieldErrors } from './WizardUtils.es6';
 
-const SpaceDetails = createReactClass({
-  propTypes: {
+class SpaceDetails extends React.Component {
+  static propTypes = {
     track: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired,
@@ -17,17 +16,20 @@ const SpaceDetails = createReactClass({
     templates: PropTypes.object.isRequired,
     fetchTemplates: PropTypes.func.isRequired,
     spaceCreation: PropTypes.object.isRequired
-  },
-  getInitialState: function() {
+  };
+
+  constructor(props) {
+    super(props);
     const state = {
       name: '',
       template: null,
       touched: false
     };
     state.validation = validateState(state);
-    return state;
-  },
-  UNSAFE_componentWillReceiveProps: function({ spaceCreation: { error } }) {
+    this.state = state;
+  }
+
+  UNSAFE_componentWillReceiveProps = ({ spaceCreation: { error } }) => {
     const {
       spaceCreation: { error: currentError }
     } = this.props;
@@ -37,8 +39,9 @@ const SpaceDetails = createReactClass({
 
       this.setState({ validation: fieldErrors });
     }
-  },
-  render: function() {
+  };
+
+  render() {
     const { selectedPlan, templates, fetchTemplates } = this.props;
     const { validation, touched } = this.state;
     const showValidationError = touched && !!validation.name;
@@ -86,8 +89,9 @@ const SpaceDetails = createReactClass({
         </div>
       </div>
     );
-  },
-  setName: function(name) {
+  }
+
+  setName = name => {
     const { setNewSpaceName } = this.props;
 
     const nameState = { name, touched: true };
@@ -95,14 +99,16 @@ const SpaceDetails = createReactClass({
 
     setNewSpaceName(name.trim());
     this.setState(nameState);
-  },
-  setTemplate: function(template) {
+  };
+
+  setTemplate = template => {
     const { setNewSpaceTemplate } = this.props;
 
     setNewSpaceTemplate(template);
     this.setState({ template, touched: true });
-  },
-  submit: function() {
+  };
+
+  submit = () => {
     const { onSubmit, track } = this.props;
 
     const validation = validateState(this.state);
@@ -117,8 +123,8 @@ const SpaceDetails = createReactClass({
       });
       onSubmit();
     }
-  }
-});
+  };
+}
 
 function validateState({ name = '' }) {
   const validation = {};

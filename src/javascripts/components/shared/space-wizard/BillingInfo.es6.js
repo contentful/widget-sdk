@@ -1,16 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import createReactClass from 'create-react-class';
 
 import { TextLink } from '@contentful/ui-component-library';
 
-const BillingInfo = createReactClass({
-  propTypes: {
+class BillingInfo extends React.Component {
+  static propTypes = {
     canSetupBilling: PropTypes.bool.isRequired,
     goToBilling: PropTypes.func.isRequired,
     action: PropTypes.string.isRequired
-  },
-  render: function() {
+  };
+
+  render() {
     const { canSetupBilling, goToBilling, action } = this.props;
 
     return (
@@ -37,6 +37,6 @@ const BillingInfo = createReactClass({
       </div>
     );
   }
-});
+}
 
 export default BillingInfo;

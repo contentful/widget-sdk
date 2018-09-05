@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import { isOwner } from 'services/OrganizationRoles.es6';
@@ -14,8 +13,8 @@ import BillingInfo from './BillingInfo.es6';
 import NoMorePlans from './NoMorePlans.es6';
 import ExplainRecommendation from './ExplainRecommendation.es6';
 
-const SpacePlanSelector = createReactClass({
-  propTypes: {
+class SpacePlanSelector extends React.Component {
+  static propTypes = {
     organization: PropTypes.object.isRequired,
     space: PropTypes.object,
     action: PropTypes.string.isRequired,
@@ -30,7 +29,7 @@ const SpacePlanSelector = createReactClass({
     spacePlans: PropTypes.object.isRequired,
     resources: PropTypes.object.isRequired,
     selectedPlan: PropTypes.object
-  },
+  };
 
   componentDidMount() {
     const {
@@ -49,7 +48,7 @@ const SpacePlanSelector = createReactClass({
     if (action === 'change' && wizardScope === 'space') {
       getResourcesForSpace(spaceId);
     }
-  },
+  }
 
   render() {
     const {
@@ -153,9 +152,9 @@ const SpacePlanSelector = createReactClass({
           )}
       </div>
     );
-  },
+  }
 
-  selectPlan(currentPlan, recommendedPlan) {
+  selectPlan = (currentPlan, recommendedPlan) => {
     const { selectPlan, track, onSubmit } = this.props;
 
     return selectedPlan => {
@@ -163,8 +162,9 @@ const SpacePlanSelector = createReactClass({
       track('select_plan', { currentPlan, selectedPlan, recommendedPlan });
       onSubmit && onSubmit();
     };
-  },
-  goToBilling() {
+  };
+
+  goToBilling = () => {
     const { organization, track, onCancel } = this.props;
     const orgId = organization.sys.id;
     go({
@@ -174,8 +174,8 @@ const SpacePlanSelector = createReactClass({
     });
     track('link_click');
     onCancel();
-  }
-});
+  };
+}
 
 function getCurrentPlan(spaceRatePlans) {
   return spaceRatePlans.find(plan => {

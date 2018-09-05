@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import createReactClass from 'create-react-class';
 import { asReact } from 'ui/Framework/DOMRenderer.es6';
 import $ from 'jquery';
 
@@ -86,19 +85,21 @@ const SVGS = {
   'relaunch-onboarding': RelaunchOnboardingIcon
 };
 
-const Icon = createReactClass({
-  propTypes: {
+class Icon extends React.Component {
+  static displayName = 'Icon';
+
+  static propTypes = {
     className: PropTypes.string,
     style: PropTypes.object,
     name: PropTypes.string.isRequired,
     scale: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     height: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-  },
-  getInitialState() {
-    return {
-      Icon: SVGS[this.props.name]
-    };
-  },
+  };
+
+  state = {
+    Icon: SVGS[this.props.name]
+  };
+
   componentDidMount() {
     const iconElem = $(this.container)
       .children()
@@ -122,7 +123,8 @@ const Icon = createReactClass({
     if (!isNaN(setHeight)) {
       iconElem.setAttribute('height', setHeight);
     }
-  },
+  }
+
   render() {
     const { className, style } = this.props;
     const { Icon } = this.state;
@@ -137,6 +139,6 @@ const Icon = createReactClass({
       </span>
     );
   }
-});
+}
 
 export default Icon;

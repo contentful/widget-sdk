@@ -1,5 +1,4 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 
 import { name as FullScreenModule } from '../../../react/molecules/FullScreen';
 import { name as SkipModule } from '../components/Skip';
@@ -22,7 +21,7 @@ angular.module('contentful').factory(name, [
     const DeploymentForm = require(DeploymentFormModule);
     const ScreenHeader = require(ScreenHeaderModule);
 
-    const DeployScreen = createReactClass({
+    class DeployScreen extends React.Component {
       render() {
         const headerTitle = (
           <React.Fragment>
@@ -63,7 +62,7 @@ angular.module('contentful').factory(name, [
           </FullScreen>
         );
       }
-    });
+    }
 
     return DeployScreen;
   }

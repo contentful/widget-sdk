@@ -1,17 +1,17 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import Tooltip from 'ui/Components/Tooltip.es6';
 import { byName as colors } from 'Styles/Colors.es6';
 import QuestionMarkIcon from 'svg/QuestionMarkIcon.es6';
 import { asReact } from 'ui/Framework/DOMRenderer.es6';
 
-const HelpIcon = createReactClass({
-  propTypes: {
+class HelpIcon extends React.Component {
+  static propTypes = {
     children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
     tooltipWidth: PropTypes.number
-  },
-  render: function() {
+  };
+
+  render() {
     const { children, tooltipWidth } = this.props;
     const questionMarkIcon = (
       <span className="help-icon__img">
@@ -25,6 +25,6 @@ const HelpIcon = createReactClass({
       </Tooltip>
     );
   }
-});
+}
 
 export default HelpIcon;

@@ -1,31 +1,28 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import enhanceWithClickOutside from 'react-click-outside';
 
-const ContextMenu = createReactClass({
-  propTypes: {
+class ContextMenu extends React.Component {
+  static propTypes = {
     items: PropTypes.array.isRequired,
     otherProps: PropTypes.object,
     style: PropTypes.object
-  },
+  };
 
-  getInitialState() {
-    return {
-      isOpen: false,
-      isDisabled: !(this.props.items && this.props.items.length)
-    };
-  },
+  state = {
+    isOpen: false,
+    isDisabled: !(this.props.items && this.props.items.length)
+  };
 
-  handleClickOutside() {
+  handleClickOutside = () => {
     this.setState({
       isOpen: false
     });
-  },
+  };
 
-  toggle() {
+  toggle = () => {
     this.setState({ isOpen: !this.state.isOpen });
-  },
+  };
 
   render() {
     const { isOpen, isDisabled } = this.state;
@@ -74,6 +71,6 @@ const ContextMenu = createReactClass({
       </div>
     );
   }
-});
+}
 
 export default enhanceWithClickOutside(ContextMenu);

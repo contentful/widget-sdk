@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import createReactClass from 'create-react-class';
 import { name as CreateModernOnboardingModule } from '../../auto_create_new_space/CreateModernOnboarding';
 
 export const name = 'stack-onboarding-skip';
@@ -14,11 +13,12 @@ angular.module('contentful').factory(name, [
     const { getStoragePrefix, track } = require(CreateModernOnboardingModule);
     const { updateUserInSegment } = require('analytics/Analytics.es6');
 
-    const StackOnboardingSkip = createReactClass({
-      propTypes: {
+    class StackOnboardingSkip extends React.Component {
+      static propTypes = {
         link: PropTypes.oneOf(['getStarted', 'copy', 'explore', 'deploy'])
-      },
-      onClick(onboardingStepsComplete) {
+      };
+
+      onClick = onboardingStepsComplete => {
         if (onboardingStepsComplete) {
           track(`close_from_${this.props.link}`);
         } else {
@@ -30,7 +30,8 @@ angular.module('contentful').factory(name, [
         $state.go('spaces.detail.home', {
           spaceId: $stateParams.spaceId
         });
-      },
+      };
+
       render() {
         const onboardingStepsComplete = store.get(`${getStoragePrefix()}:completed`);
 
@@ -42,7 +43,7 @@ angular.module('contentful').factory(name, [
           </div>
         );
       }
-    });
+    }
 
     return StackOnboardingSkip;
   }

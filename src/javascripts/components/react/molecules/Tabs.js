@@ -1,14 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import createReactClass from 'create-react-class';
 
 export const name = 'react/tabs-component';
 
 angular.module('contentful').factory(name, [
   'require',
   function() {
-    const Tabs = createReactClass({
-      propTypes: {
+    class Tabs extends React.Component {
+      static propTypes = {
         active: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         tabs: PropTypes.arrayOf(
           PropTypes.shape({
@@ -19,11 +18,13 @@ angular.module('contentful').factory(name, [
         ),
         onSelect: PropTypes.func,
         className: PropTypes.string
-      },
-      selectTab(tabId) {
+      };
+
+      selectTab = tabId => {
         this.props.onSelect(tabId);
-      },
-      renderTabs() {
+      };
+
+      renderTabs = () => {
         const { active, tabs, className } = this.props;
 
         const tabsMarkup = tabs.map(tab => {
@@ -36,14 +37,16 @@ angular.module('contentful').factory(name, [
         });
 
         return <ul className={`tab-list ${className || ''}`}>{tabsMarkup}</ul>;
-      },
-      renderContent() {
+      };
+
+      renderContent = () => {
         const { active, tabs } = this.props;
 
         const activeTab = tabs.find(tab => tab.id === active);
 
         return activeTab.content;
-      },
+      };
+
       render() {
         return (
           <div>
@@ -52,7 +55,7 @@ angular.module('contentful').factory(name, [
           </div>
         );
       }
-    });
+    }
 
     return Tabs;
   }

@@ -1,5 +1,4 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 
 import { name as TabsModule } from '../../../react/molecules/Tabs';
 import { name as CodeModule } from '../../../react/atoms/Code';
@@ -21,15 +20,18 @@ angular.module('contentful').factory(name, [
     } = require(CreateModernOnboardingModule);
     const spaceContext = require('spaceContext');
 
-    const DeploymentStrategies = createReactClass({
-      getInitialState() {
+    class DeploymentStrategies extends React.Component {
+      constructor(props) {
+        super(props);
         const wasDeployedWithHeroku = wasAppDeployedWithHeroku();
-        return {
+
+        this.state = {
           showOriginalHerokuSteps: !wasDeployedWithHeroku,
           showRedeployHerokuSteps: wasDeployedWithHeroku,
           active: getDeploymentProvider() || 'netlify'
         };
-      },
+      }
+
       async componentDidMount() {
         const spaceId = spaceContext.space && spaceContext.space.getSys().id;
         const { deliveryToken } = await getCredentials();
@@ -38,22 +40,26 @@ angular.module('contentful').factory(name, [
           spaceId,
           deliveryToken
         });
-      },
-      selectTab(tabId) {
+      }
+
+      selectTab = tabId => {
         this.setState({ active: tabId });
-      },
-      renderCode(code) {
+      };
+
+      renderCode = code => {
         return <Code lineNumbers={false} copy code={code} tooltipPosition="right" />;
-      },
-      renderList(steps) {
+      };
+
+      renderList = steps => {
         const stepsMarkup = steps.map((step, i) => (
           <li key={`step_${i}`} className="modern-stack-onboarding--deployment-list-elem">
             {step}
           </li>
         ));
         return <ul className="modern-stack-onboarding--deployment-list">{stepsMarkup}</ul>;
-      },
-      renderNetlifySteps() {
+      };
+
+      renderNetlifySteps = () => {
         /* eslint-disable react/jsx-key */
         const steps = [
           <div className="modern-stack-onboarding--deployment-list-text">
@@ -77,8 +83,9 @@ angular.module('contentful').factory(name, [
             {this.renderList(steps)}
           </div>
         );
-      },
-      renderHerokuSteps(spaceId, deliveryToken) {
+      };
+
+      renderHerokuSteps = (spaceId, deliveryToken) => {
         const { showOriginalHerokuSteps, showRedeployHerokuSteps } = this.state;
         const wasDeployedWithHeroku = wasAppDeployedWithHeroku();
 
@@ -186,7 +193,8 @@ angular.module('contentful').factory(name, [
             </div>
           );
         }
-      },
+      };
+
       render() {
         const { active, deliveryToken, spaceId } = this.state;
         const tabs = [
@@ -203,7 +211,7 @@ angular.module('contentful').factory(name, [
         ];
         return <Tabs tabs={tabs} active={active} onSelect={this.selectTab} />;
       }
-    });
+    }
 
     return DeploymentStrategies;
 

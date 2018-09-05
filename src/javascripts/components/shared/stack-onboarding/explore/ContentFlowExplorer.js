@@ -1,5 +1,4 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 
 import { name as TabsModule } from '../../../react/molecules/Tabs';
 import { name as BrowserModule } from '../../../react/molecules/Browser';
@@ -20,19 +19,19 @@ angular.module('contentful').factory(name, [
     const DataFlow = require(DataFlowModule);
     const Browser = require(BrowserModule);
 
-    const ContentFlowExplorer = createReactClass({
-      getInitialState() {
-        return {
-          active: 'code'
-        };
-      },
-      selectTab(tabId) {
+    class ContentFlowExplorer extends React.Component {
+      state = {
+        active: 'code'
+      };
+
+      selectTab = tabId => {
         this.setState({
           active: tabId,
           iframe: null
         });
-      },
-      renderContent(content) {
+      };
+
+      renderContent = content => {
         return (
           <div className="modern-stack-onboarding--content-explorer">
             <div className="modern-stack-onboarding--content-explorer-data">{content}</div>
@@ -41,8 +40,9 @@ angular.module('contentful').factory(name, [
             </div>
           </div>
         );
-      },
-      renderIframe() {
+      };
+
+      renderIframe = () => {
         const { iframe: stateIframe } = this.state;
         return (
           <Browser>
@@ -58,7 +58,8 @@ angular.module('contentful').factory(name, [
             />
           </Browser>
         );
-      },
+      };
+
       render() {
         const { active, iframe } = this.state;
 
@@ -84,7 +85,7 @@ angular.module('contentful').factory(name, [
           />
         );
       }
-    });
+    }
 
     return ContentFlowExplorer;
   }

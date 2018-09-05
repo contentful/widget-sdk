@@ -1,5 +1,4 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 
 import { name as CreateModernOnboardingModule } from '../../auto_create_new_space/CreateModernOnboarding';
@@ -27,20 +26,21 @@ angular.module('contentful').factory(name, [
       HEROKU: 'heroku'
     };
 
-    const DeploymentForm = createReactClass({
-      propTypes: {
+    class DeploymentForm extends React.Component {
+      static propTypes = {
         onComplete: PropTypes.func.isRequired
-      },
-      getInitialState() {
-        return {
-          url: store.get(`${getStoragePrefix()}:deployedTo`) || '',
-          error: false
-        };
-      },
-      isValidDeployedUrl(url) {
+      };
+
+      state = {
+        url: store.get(`${getStoragePrefix()}:deployedTo`) || '',
+        error: false
+      };
+
+      isValidDeployedUrl = url => {
         return Object.values(DEPLOYMENT_PROVIDERS).includes(this.getChosenDeploymentProvider(url));
-      },
-      getChosenDeploymentProvider(url) {
+      };
+
+      getChosenDeploymentProvider = url => {
         if (url.includes('netlify.com')) {
           return DEPLOYMENT_PROVIDERS.NETLIFY;
         }
@@ -48,21 +48,24 @@ angular.module('contentful').factory(name, [
         if (url.includes('herokuapp.com')) {
           return DEPLOYMENT_PROVIDERS.HEROKU;
         }
-      },
-      markAsInvalidUrl(url) {
+      };
+
+      markAsInvalidUrl = url => {
         this.setState({
           url,
           error: 'Please provide the Netlify or Heroku URL of your deployed application.'
         });
-      },
-      onChange(url) {
+      };
+
+      onChange = url => {
         if (!this.isValidDeployedUrl(url)) {
           this.markAsInvalidUrl(url);
         } else {
           this.setState({ url, error: false });
         }
-      },
-      onComplete(event) {
+      };
+
+      onComplete = event => {
         const { url } = this.state;
         const prefix = getStoragePrefix();
 
@@ -82,7 +85,8 @@ angular.module('contentful').factory(name, [
         } else {
           this.markAsInvalidUrl(url);
         }
-      },
+      };
+
       render() {
         const { url, error } = this.state;
         return (
@@ -115,7 +119,7 @@ angular.module('contentful').factory(name, [
           </div>
         );
       }
-    });
+    }
 
     return DeploymentForm;
   }

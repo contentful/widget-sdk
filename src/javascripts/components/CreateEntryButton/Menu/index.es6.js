@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import createReactClass from 'create-react-class';
 import Downshift from 'downshift';
 import cn from 'classnames';
 import ListItem from './ListItem.es6';
@@ -18,24 +17,23 @@ const Position = {
   LEFT: 'left'
 };
 
-const Menu = createReactClass({
-  propTypes: {
+class Menu extends React.Component {
+  static propTypes = {
     contentTypes: PropTypes.array.isRequired,
     suggestedContentTypeId: PropTypes.string,
     onSelect: PropTypes.func.isRequired,
     onClose: PropTypes.func
-  },
-  getDefaultProps() {
-    return {
-      onClose: _.noop
-    };
-  },
-  getInitialState() {
-    return {
-      positionY: Position.BOTTOM,
-      positionX: Position.LEFT
-    };
-  },
+  };
+
+  static defaultProps = {
+    onClose: _.noop
+  };
+
+  state = {
+    positionY: Position.BOTTOM,
+    positionX: Position.LEFT
+  };
+
   componentDidMount() {
     const { top, left } = this.menu.getBoundingClientRect();
     const maxHeight = 600;
@@ -45,13 +43,15 @@ const Menu = createReactClass({
       positionY: top < maxHeight ? Position.BOTTOM : Position.TOP,
       positionX: left < maxWidth ? Position.LEFT : Position.RIGHT
     });
-  },
-  handleStateChange(changes) {
+  }
+
+  handleStateChange = changes => {
     if (changes.type === Downshift.stateChangeTypes.keyDownEscape) {
       this.props.onClose();
     }
-  },
-  getStateAndHelpers(downshift) {
+  };
+
+  getStateAndHelpers = downshift => {
     const { contentTypes, suggestedContentTypeId, onSelect } = this.props;
 
     return {
@@ -60,7 +60,8 @@ const Menu = createReactClass({
       suggestedContentTypeId,
       onSelect
     };
-  },
+  };
+
   render() {
     const { onSelect } = this.props;
     const className = cn(
@@ -89,7 +90,7 @@ const Menu = createReactClass({
       </div>
     );
   }
-});
+}
 
 /* eslint-disable react/prop-types */
 function renderMenu({

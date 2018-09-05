@@ -1,15 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import createReactClass from 'create-react-class';
 
 import { get } from 'lodash';
 
-const TemplatesList = createReactClass({
-  propTypes: {
+class TemplatesList extends React.Component {
+  static displayName = 'TemplatesList';
+
+  static propTypes = {
     templates: PropTypes.array,
     selectedTemplate: PropTypes.object,
     onSelect: PropTypes.func.isRequired
-  },
+  };
+
   render() {
     const { templates, selectedTemplate, onSelect } = this.props;
 
@@ -48,6 +50,6 @@ const TemplatesList = createReactClass({
       </div>
     );
   }
-});
+}
 
 export default TemplatesList;
