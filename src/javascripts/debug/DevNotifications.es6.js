@@ -1,11 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import createReactClass from 'create-react-class';
 import { uniqueId, isString } from 'lodash';
 import PropTypes from 'prop-types';
 
-const DevNotifications = createReactClass({
-  propTypes: {
+class DevNotifications extends React.Component {
+  static propTypes = {
     notifications: PropTypes.arrayOf(
       PropTypes.shape({
         title: PropTypes.oneOfType([PropTypes.element, PropTypes.string]).isRequired,
@@ -13,19 +12,20 @@ const DevNotifications = createReactClass({
         id: PropTypes.string.isRequired
       })
     ).isRequired
-  },
-  getInitialState: function() {
-    return {
-      isCollapsed: false
-    };
-  },
-  toggle: function() {
+  };
+
+  state = {
+    isCollapsed: false
+  };
+
+  toggle = () => {
     const { isCollapsed } = this.state;
     this.setState({
       isCollapsed: !isCollapsed
     });
-  },
-  render: function() {
+  };
+
+  render() {
     const { notifications } = this.props;
     const { isCollapsed } = this.state;
     if (!notifications.length) {
@@ -43,7 +43,7 @@ const DevNotifications = createReactClass({
       </div>
     );
   }
-});
+}
 
 let containerElement;
 const notifications = [];

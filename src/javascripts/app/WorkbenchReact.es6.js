@@ -1,11 +1,10 @@
 import React from 'react';
 import cn from 'classnames';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import Icon from 'ui/Components/Icon.es6';
 
-const Workbench = createReactClass({
-  propTypes: {
+class Workbench extends React.Component {
+  static propTypes = {
     title: PropTypes.oneOfType([PropTypes.string, PropTypes.element]).isRequired,
     children: PropTypes.element,
     content: PropTypes.element.isRequired,
@@ -14,7 +13,8 @@ const Workbench = createReactClass({
     icon: PropTypes.string,
     testId: PropTypes.string,
     centerContent: PropTypes.bool
-  },
+  };
+
   render() {
     const { title, children, content, actions, sidebar, icon, testId, centerContent } = this.props;
 
@@ -43,6 +43,6 @@ const Workbench = createReactClass({
       </div>
     );
   }
-});
+}
 
 export default Workbench;

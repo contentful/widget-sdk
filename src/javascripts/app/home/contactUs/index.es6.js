@@ -1,13 +1,12 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 import $state from '$state';
 import { track } from 'analytics/Analytics.es6';
 import Intercom from 'intercom';
 
 const prefix = 'space-home-page-contact-us';
 
-export default createReactClass({
-  onClick() {
+export default class extends React.Component {
+  onClick = () => {
     track('element:click', {
       elementId: 'contact_sales_spacehome',
       groupId: 'contact_sales',
@@ -15,7 +14,8 @@ export default createReactClass({
     });
 
     Intercom.open();
-  },
+  };
+
   render() {
     return (
       <div className={`${prefix}__container`}>
@@ -34,4 +34,4 @@ export default createReactClass({
       </div>
     );
   }
-});
+}

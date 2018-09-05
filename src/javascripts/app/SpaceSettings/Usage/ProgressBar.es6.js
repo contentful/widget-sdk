@@ -1,23 +1,22 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import { byName as colors } from 'Styles/Colors.es6';
 
-export const ProgressBar = createReactClass({
-  propTypes: {
+export class ProgressBar extends React.Component {
+  static propTypes = {
     current: PropTypes.number.isRequired,
     maximum: PropTypes.number.isRequired
-  },
+  };
 
-  getPercentual() {
+  getPercentual = () => {
     return (100 / this.props.maximum) * this.props.current;
-  },
+  };
 
-  getWidth() {
+  getWidth = () => {
     return `${Math.min(this.getPercentual(), 100)}%`;
-  },
+  };
 
-  getColor() {
+  getColor = () => {
     const percentual = this.getPercentual();
 
     if (percentual >= 100) {
@@ -26,7 +25,7 @@ export const ProgressBar = createReactClass({
       return colors.orangeLight;
     }
     return colors.greenLight;
-  },
+  };
 
   render() {
     return (
@@ -41,4 +40,4 @@ export const ProgressBar = createReactClass({
       </div>
     );
   }
-});
+}

@@ -1,5 +1,4 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import Icon from 'ui/Components/Icon.es6';
 import { href, go } from 'states/Navigator.es6';
@@ -23,17 +22,19 @@ export const STEPS_KEYS = {
   INVITE_DEV
 };
 
-export const TEASteps = createReactClass({
-  propTypes: {
+export class TEASteps extends React.Component {
+  static propTypes = {
     state: PropTypes.object.isRequired,
     actions: PropTypes.object.isRequired,
     toggleExpanding: PropTypes.func.isRequired
-  },
-  markAsDone(step) {
+  };
+
+  markAsDone = step => {
     const action = this.props.actions[step];
 
     action && action();
-  },
+  };
+
   render() {
     const { state, toggleExpanding } = this.props;
 
@@ -61,25 +62,27 @@ export const TEASteps = createReactClass({
       </div>
     );
   }
-});
+}
 
 const VIEW_CONTENT_TYPE_ID = 'course';
 
-const ViewSampleContentStep = createReactClass({
-  propTypes: {
+class ViewSampleContentStep extends React.Component {
+  static propTypes = {
     markAsDone: PropTypes.func.isRequired,
     isExpanded: PropTypes.bool.isRequired,
     isDone: PropTypes.bool.isRequired,
     onToggle: PropTypes.func.isRequired
-  },
-  primaryCtaOnClick(e, urlParams) {
+  };
+
+  primaryCtaOnClick = (e, urlParams) => {
     e.preventDefault();
     this.props.markAsDone();
     // we do that for 2 reasons:
     // 1. angular ui-router prevents all callbacks on links with no `target="_blank"`
     // 2. we can't pass initial search parameters to entries list route :(
     go(urlParams);
-  },
+  };
+
   render() {
     const { isDone, isExpanded, onToggle } = this.props;
     const propsForStep = {
@@ -126,24 +129,25 @@ const ViewSampleContentStep = createReactClass({
       </Step>
     );
   }
-});
+}
 
-const PreviewUsingExampleAppStep = createReactClass({
-  propTypes: {
+class PreviewUsingExampleAppStep extends React.Component {
+  static propTypes = {
     markAsDone: PropTypes.func.isRequired,
     isExpanded: PropTypes.bool.isRequired,
     isDone: PropTypes.bool.isRequired,
     onToggle: PropTypes.func.isRequired
-  },
-  getInitialState() {
-    return {
-      cdaToken: null,
-      cpaToken: null
-    };
-  },
-  primaryCtaOnClick() {
+  };
+
+  state = {
+    cdaToken: null,
+    cpaToken: null
+  };
+
+  primaryCtaOnClick = () => {
     this.props.markAsDone();
-  },
+  };
+
   componentDidMount() {
     const self = this;
     runTask(function*() {
@@ -160,8 +164,9 @@ const PreviewUsingExampleAppStep = createReactClass({
         });
       }
     });
-  },
-  getPreviewUrl() {
+  }
+
+  getPreviewUrl = () => {
     const { cdaToken, cpaToken } = this.state;
     // we can retrieve this URL from content preview or construct it by ourselves
     // there is no direct links to /courses, so it means we'll need to modify some
@@ -187,7 +192,8 @@ const PreviewUsingExampleAppStep = createReactClass({
     return `https://the-example-app-nodejs.${domain}.com/courses${
       queryString ? '?' : ''
     }${queryString}`;
-  },
+  };
+
   render() {
     const { isDone, isExpanded, onToggle } = this.props;
     const propsForStep = {
@@ -226,21 +232,21 @@ const PreviewUsingExampleAppStep = createReactClass({
       </Step>
     );
   }
-});
+}
 
-const CreateEntryStep = createReactClass({
-  propTypes: {
+class CreateEntryStep extends React.Component {
+  static propTypes = {
     markAsDone: PropTypes.func.isRequired,
     isExpanded: PropTypes.bool.isRequired,
     isDone: PropTypes.bool.isRequired,
     onToggle: PropTypes.func.isRequired
-  },
-  getInitialState() {
-    return {
-      isLoading: false
-    };
-  },
-  findLesson(lessons) {
+  };
+
+  state = {
+    isLoading: false
+  };
+
+  findLesson = lessons => {
     const lesson = lessons.find(lesson => {
       const matchSlug = lesson.fields.slug['en-US'] === 'serve-localized-content';
       const matchTitle = lesson.fields.title['en-US'] === 'Serve localized content';
@@ -252,12 +258,14 @@ const CreateEntryStep = createReactClass({
     } else {
       return lessons[0];
     }
-  },
-  createNewLessonCopy() {
+  };
+
+  createNewLessonCopy = () => {
     const contentType = 'lessonCopy';
     return entityCreator.newEntry(contentType);
-  },
-  processNewEntry() {
+  };
+
+  processNewEntry = () => {
     const self = this;
     self.setState({
       isLoading: true
@@ -296,10 +304,12 @@ const CreateEntryStep = createReactClass({
         isLoading: false
       });
     });
-  },
-  primaryCtaOnClick() {
+  };
+
+  primaryCtaOnClick = () => {
     this.processNewEntry().then(this.props.markAsDone);
-  },
+  };
+
   render() {
     const { isLoading } = this.state;
     const { isDone, isExpanded, onToggle } = this.props;
@@ -336,20 +346,22 @@ const CreateEntryStep = createReactClass({
       </Step>
     );
   }
-});
+}
 
-const InviteADevStep = createReactClass({
-  propTypes: {
+class InviteADevStep extends React.Component {
+  static propTypes = {
     isDone: PropTypes.bool.isRequired,
     markAsDone: PropTypes.func.isRequired
-  },
-  handleClick(e, urlParams) {
+  };
+
+  handleClick = (e, urlParams) => {
     e.preventDefault();
     // we redirect user directly in order to be able to handle
     // this callback - otherwise ui-router will prevent its execution
     this.props.markAsDone();
     go(urlParams);
-  },
+  };
+
   render() {
     const props = {
       headerCopy: 'Invite a developer',
@@ -387,15 +399,16 @@ const InviteADevStep = createReactClass({
       </AltStep>
     );
   }
-});
+}
 
-export const AltStep = createReactClass({
-  propTypes: {
+export class AltStep extends React.Component {
+  static propTypes = {
     headerCopy: PropTypes.string.isRequired,
     headerIcon: PropTypes.string.isRequired,
     isDone: PropTypes.bool.isRequired,
     children: PropTypes.node.isRequired
-  },
+  };
+
   render() {
     const { headerCopy, headerIcon, isDone, children } = this.props;
 
@@ -421,10 +434,10 @@ export const AltStep = createReactClass({
       </div>
     );
   }
-});
+}
 
-export const Step = createReactClass({
-  propTypes: {
+export class Step extends React.Component {
+  static propTypes = {
     headerCopy: PropTypes.string.isRequired,
     headerIcon: PropTypes.string.isRequired,
     isExpanded: PropTypes.bool.isRequired,
@@ -432,11 +445,13 @@ export const Step = createReactClass({
     children: PropTypes.node.isRequired,
     onToggle: PropTypes.func.isRequired,
     stepKey: PropTypes.string.isRequired
-  },
-  toggle() {
+  };
+
+  toggle = () => {
     const { onToggle, stepKey } = this.props;
     onToggle && onToggle(stepKey);
-  },
+  };
+
   render() {
     const { isDone, headerIcon, headerCopy, children, isExpanded } = this.props;
 
@@ -471,4 +486,4 @@ export const Step = createReactClass({
       </div>
     );
   }
-});
+}

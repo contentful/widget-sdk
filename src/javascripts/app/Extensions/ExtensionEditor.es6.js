@@ -1,5 +1,4 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import { get, cloneDeep, isEqual, omit } from 'lodash';
 import $state from '$state';
@@ -11,14 +10,15 @@ import getExtensionParameterIds from './getExtensionParameterIds.es6';
 import { toInternalFieldType, toApiFieldType } from './FieldTypes.es6';
 import ExtensionForm from './ExtensionForm.es6';
 
-const ExtensionEditor = createReactClass({
-  propTypes: {
+class ExtensionEditor extends React.Component {
+  static propTypes = {
     entity: PropTypes.object.isRequired,
     onChange: PropTypes.func.isRequired,
     save: PropTypes.func.isRequired
-  },
+  };
+
   // TODO: use `getDerivedStateFromProps`
-  entityToFreshState(entity) {
+  entityToFreshState = entity => {
     const initial = cloneDeep(entity);
     initial.extension.fieldTypes = initial.extension.fieldTypes.map(toInternalFieldType);
     initial.parameters = WidgetParametersUtils.applyDefaultValues(
@@ -36,13 +36,14 @@ const ExtensionEditor = createReactClass({
       entity: cloneDeep(initial),
       saving: false
     };
-  },
-  getInitialState() {
-    return this.entityToFreshState(this.props.entity);
-  },
-  ignoredSrcProp() {
+  };
+
+  state = this.entityToFreshState(this.props.entity);
+
+  ignoredSrcProp = () => {
     return this.state.selfHosted ? 'srcdoc' : 'src';
-  },
+  };
+
   componentDidUpdate() {
     // Every time we update the component we want to call the `onChange`
     // prop to notify outside world about changes introduced to the entity;
@@ -52,12 +53,14 @@ const ExtensionEditor = createReactClass({
     entity.extension.fieldTypes = entity.extension.fieldTypes.map(toApiFieldType);
     delete entity.extension[this.ignoredSrcProp()];
     this.props.onChange({ entity, dirty: this.isDirty() });
-  },
-  isDirty() {
+  }
+
+  isDirty = () => {
     const { entity, initial } = this.state;
     const extension = omit(entity.extension, this.ignoredSrcProp());
     return !isEqual(initial, { ...entity, extension });
-  },
+  };
+
   render() {
     const dirty = this.isDirty();
 
@@ -69,8 +72,9 @@ const ExtensionEditor = createReactClass({
         actions={this.renderActions(dirty)}
       />
     );
-  },
-  renderContent() {
+  }
+
+  renderContent = () => {
     return (
       <div className="extension-form">
         <ExtensionForm
@@ -81,8 +85,9 @@ const ExtensionEditor = createReactClass({
         />
       </div>
     );
-  },
-  renderActions(dirty) {
+  };
+
+  renderActions = dirty => {
     return (
       <React.Fragment>
         <button className="btn-secondary-action" onClick={() => $state.go('.^')}>
@@ -96,8 +101,9 @@ const ExtensionEditor = createReactClass({
         </button>
       </React.Fragment>
     );
-  },
-  save() {
+  };
+
+  save = () => {
     this.setState({ saving: true });
     this.props
       .save() // `this.props.save()` takes care of displaying success/error messages
@@ -120,7 +126,7 @@ const ExtensionEditor = createReactClass({
         },
         () => this.setState({ saving: false })
       );
-  }
-});
+  };
+}
 
 export default ExtensionEditor;
