@@ -1,6 +1,6 @@
 import isHotkey from 'is-hotkey';
 import { BLOCKS } from '@contentful/structured-text-types';
-import { applyChange } from '../shared/BlockToggleDecorator.es6';
+import { applyChange } from './Util.es6';
 import commonNode from '../shared/NodeDecorator.es6';
 
 const plugin = (type, tagName, hotkey) => {
@@ -11,15 +11,7 @@ const plugin = (type, tagName, hotkey) => {
       }
     },
     onKeyDown: (e, change) => {
-      if (isHotkey('enter', e)) {
-        const { value } = change;
-        const { blocks } = value;
-        const getCurrentblock = blocks.get(0);
-
-        if (getCurrentblock.type === type) {
-          return change.splitBlock().setBlock(BLOCKS.PARAGRAPH);
-        }
-      } else if (isHotkey(hotkey, e)) {
+      if (isHotkey(hotkey, e)) {
         change.call(applyChange, type);
         return false;
       }

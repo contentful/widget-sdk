@@ -11,7 +11,7 @@
     "@contentful/hostname-transformer": "^1.2.7",
     "@contentful/mimetype": "^1.0.1",
     "@contentful/sharejs": "^2.0.0",
-    "@contentful/structured-text-types": "^2.2.0",
+    "@contentful/structured-text-types": "^2.4.0",
     "@contentful/validation": "^7.0.0",
     "@contentful/ui-component-library": "^3.15.0",
     "@contentful/widget-map": "^1.1.0",

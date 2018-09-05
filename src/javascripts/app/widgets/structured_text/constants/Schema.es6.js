@@ -1,75 +1,61 @@
-import { BLOCKS, INLINES } from '@contentful/structured-text-types';
+import { mapValues, fromPairs } from 'lodash';
+import {
+  BLOCKS,
+  INLINES,
+  TOP_LEVEL_BLOCKS,
+  VOID_BLOCKS,
+  CONTAINERS
+} from '@contentful/structured-text-types';
 
-const TEXT = { object: ['text'] };
+const slateTypeConstraint = type => ({ match: { type } });
+const TEXT_CONSTRAINT = { object: ['text'] };
+const VOID_CONSTRAINT = { isVoid: true };
+const INLINE_CONSTRAINTS = Object.values(INLINES).map(slateTypeConstraint);
 
-const toTypeObj = type => ({ type });
+const nodeTypeConstraint = whiteListedNodeTypes => {
+  return {
+    nodes: whiteListedNodeTypes.map(slateTypeConstraint)
+  };
+};
 
-const TOP_LEVEL_BLOCKS = [
-  BLOCKS.PARAGRAPH,
-  BLOCKS.HEADING_1,
-  BLOCKS.HEADING_2,
-  BLOCKS.HEADING_3,
-  BLOCKS.HEADING_4,
-  BLOCKS.HEADING_5,
-  BLOCKS.HEADING_6,
-  BLOCKS.UL_LIST,
-  BLOCKS.OL_LIST,
-  BLOCKS.HR,
-  BLOCKS.EMBEDDED_ENTRY
-];
+const mapContainers = containers => {
+  return mapValues(containers, nodeTypeConstraint);
+};
+
+const mapVoidTypes = nodeTypes => {
+  return fromPairs(nodeTypes.map(nodeType => [nodeType, VOID_CONSTRAINT]));
+};
 
 export default {
-  document: {
-    nodes: [
-      {
-        match: TOP_LEVEL_BLOCKS.map(type => toTypeObj(type))
-      }
-    ]
-  },
+  document: nodeTypeConstraint(TOP_LEVEL_BLOCKS),
   blocks: {
     [BLOCKS.PARAGRAPH]: {
-      nodes: [{ match: TEXT }]
+      nodes: [TEXT_CONSTRAINT, ...INLINE_CONSTRAINTS]
     },
     [BLOCKS.HEADING_1]: {
-      nodes: [{ match: TEXT }]
+      nodes: [TEXT_CONSTRAINT, ...INLINE_CONSTRAINTS]
     },
     [BLOCKS.HEADING_2]: {
-      nodes: [{ match: TEXT }]
+      nodes: [TEXT_CONSTRAINT, ...INLINE_CONSTRAINTS]
     },
     [BLOCKS.HEADING_3]: {
-      nodes: [{ match: TEXT }]
+      nodes: [TEXT_CONSTRAINT, ...INLINE_CONSTRAINTS]
     },
     [BLOCKS.HEADING_4]: {
-      nodes: [{ match: TEXT }]
+      nodes: [TEXT_CONSTRAINT, ...INLINE_CONSTRAINTS]
     },
     [BLOCKS.HEADING_5]: {
-      nodes: [{ match: TEXT }]
+      nodes: [TEXT_CONSTRAINT, ...INLINE_CONSTRAINTS]
     },
     [BLOCKS.HEADING_6]: {
-      nodes: [{ match: TEXT }]
+      nodes: [TEXT_CONSTRAINT, ...INLINE_CONSTRAINTS]
     },
-    [BLOCKS.UL_LIST]: {
-      nodes: [{ match: { type: BLOCKS.LIST_ITEM } }]
-    },
-    [BLOCKS.OL_LIST]: {
-      nodes: [{ match: { type: BLOCKS.LIST_ITEM } }]
-    },
-    [BLOCKS.LIST_ITEM]: {
-      nodes: [{ match: [TEXT, ...TOP_LEVEL_BLOCKS] }]
-    },
-    [BLOCKS.HR]: {
-      isVoid: true
-    },
-    [BLOCKS.EMBEDDED_ENTRY]: {
-      isVoid: true
-    },
-    [BLOCKS.QUOTE]: {
-      nodes: [{ match: TEXT }]
-    }
+    ...mapVoidTypes(VOID_BLOCKS),
+    ...mapContainers(CONTAINERS)
   },
   inlines: {
     [INLINES.HYPERLINK]: {
-      nodes: [{ match: TEXT }]
+      nodes: [TEXT_CONSTRAINT]
     }
   }
 };

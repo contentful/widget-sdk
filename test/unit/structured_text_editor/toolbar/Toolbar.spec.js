@@ -61,7 +61,7 @@ describe('Toolbar', () => {
       }
     });
     const { default: StructuredTextEditor } = await this.system.import(
-      'app/widgets/structured_text'
+      'app/widgets/structured_text/index.es6'
     );
 
     this.widgetApi = this.$inject('mocks/widgetApi').create();
@@ -120,7 +120,12 @@ describe('Toolbar', () => {
   describe('Quote', function() {
     it('renders the quote', async function() {
       await triggerToolbarIcon(this.wrapper, BLOCKS.QUOTE);
-      expect(this.widgetApi.field.getValue()).toEqual(document(block(BLOCKS.QUOTE, {}, text())));
+      expect(this.widgetApi.field.getValue()).toEqual(
+        document(
+          block(BLOCKS.QUOTE, {}, block(BLOCKS.PARAGRAPH, {}, text())),
+          block(BLOCKS.PARAGRAPH, {}, text())
+        )
+      );
     });
   });
 });
