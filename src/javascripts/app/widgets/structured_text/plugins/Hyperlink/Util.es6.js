@@ -34,7 +34,7 @@ async function insertLink(change, createHyperlinkDialog) {
   const showTextInput = !change.value.isExpanded || change.value.fragment.text.trim() === '';
 
   try {
-    const { url, text, title } = await createHyperlinkDialog({ showTextInput });
+    const { href: url, text, title } = await createHyperlinkDialog({ showTextInput });
     if (showTextInput) {
       if (change.value.blocks.last().isVoid) {
         change.insertBlock(BLOCKS.PARAGRAPH);
@@ -65,11 +65,11 @@ export async function editLink(change, createHyperlinkDialog) {
   if (!link) {
     throw new Error('Change object contains no link to be edited.');
   }
-  const linkData = link.data.toJSON();
+  const { url: oldUrl, title: oldTitle } = link.data.toJSON();
   try {
-    const { url, title } = await createHyperlinkDialog({
+    const { href: url, title } = await createHyperlinkDialog({
       showTextInput: false,
-      value: linkData
+      value: { href: oldUrl, title: oldTitle }
     });
     change.setInlines({ data: { url, title } });
   } catch (e) {
