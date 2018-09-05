@@ -11,7 +11,7 @@ export default class HyperlinkDialog extends React.Component {
     }),
     value: PropTypes.shape({
       text: PropTypes.string,
-      href: PropTypes.string,
+      uri: PropTypes.string,
       title: PropTypes.string
     }),
     hideText: PropTypes.bool,
@@ -34,8 +34,8 @@ export default class HyperlinkDialog extends React.Component {
 
   render() {
     const { labels, hideText, onConfirm, onCancel } = this.props;
-    const { href, text, title } = this.state;
-    const isValid = !!(hideText || text) && !!href;
+    const { uri, text } = this.state;
+    const isValid = !!(hideText || text) && !!uri;
     return (
       <Dialog testId="create-hyperlink-dialog">
         <Dialog.Header>{labels.title}</Dialog.Header>
@@ -59,7 +59,7 @@ export default class HyperlinkDialog extends React.Component {
     // TODO: Use `Form` for spacing when available.
     const style = { marginBottom: '1.75rem' };
     const { hideText } = this.props;
-    const { href, text, title } = this.state;
+    const { uri, text, title } = this.state;
     return (
       <React.Fragment>
         {hideText || (
@@ -75,12 +75,12 @@ export default class HyperlinkDialog extends React.Component {
         )}
         <TextField
           required
-          labelText="Target URL"
-          value={href || ''}
-          helpText="Please include protocol (e.g. https://)"
-          onChange={e => this.setState({ href: e.target.value })}
-          id="link-href"
-          name="link-href"
+          labelText="Link target"
+          value={uri || ''}
+          helpText="A protocol may be required, e.g. http://"
+          onChange={e => this.setState({ uri: e.target.value })}
+          id="link-uri"
+          name="link-uri"
           style={style}
         />
         <TextField

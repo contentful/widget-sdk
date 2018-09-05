@@ -34,14 +34,14 @@ async function insertLink(change, createHyperlinkDialog) {
   const showTextInput = !change.value.isExpanded || change.value.fragment.text.trim() === '';
 
   try {
-    const { href: url, text, title } = await createHyperlinkDialog({ showTextInput });
+    const { uri, text, title } = await createHyperlinkDialog({ showTextInput });
     if (showTextInput) {
       if (change.value.blocks.last().isVoid) {
         change.insertBlock(BLOCKS.PARAGRAPH);
       }
       change.insertText(text).extend(0 - text.length);
     }
-    change.call(wrapLink, { url, title });
+    change.call(wrapLink, { uri, title });
   } catch (e) {
     if (e) throw e;
     // User cancelled dialog.
@@ -65,13 +65,13 @@ export async function editLink(change, createHyperlinkDialog) {
   if (!link) {
     throw new Error('Change object contains no link to be edited.');
   }
-  const { url: oldUrl, title: oldTitle } = link.data.toJSON();
+  const { uri: oldUri, title: oldTitle } = link.data.toJSON();
   try {
-    const { href: url, title } = await createHyperlinkDialog({
+    const { uri, title } = await createHyperlinkDialog({
       showTextInput: false,
-      value: { href: oldUrl, title: oldTitle }
+      value: { uri: oldUri, title: oldTitle }
     });
-    change.setInlines({ data: { url, title } });
+    change.setInlines({ data: { uri, title } });
   } catch (e) {
     if (e) throw e;
     // User cancelled dialog.
