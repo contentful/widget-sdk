@@ -4,11 +4,12 @@ import PropTypes from 'prop-types';
 import * as Intercom from 'intercom';
 import { supportUrl } from 'Config.es6';
 
-import { TextLink } from '@contentful/ui-component-library';
+import { TextLink, Button } from '@contentful/ui-component-library';
 
 class ContactUsButton extends React.Component {
   static propTypes = {
     noIcon: PropTypes.bool,
+    buttonType: PropTypes.oneOf(['link', 'button']),
     children: PropTypes.node
   };
 
@@ -22,7 +23,10 @@ class ContactUsButton extends React.Component {
   };
 
   render() {
-    const { noIcon, children, ...otherProps } = this.props;
+    const { noIcon, buttonType, children, ...otherProps } = this.props;
+
+    const isLink = !buttonType || buttonType === 'link';
+    const ButtonComponent = isLink ? TextLink : Button;
 
     const props = {
       onClick: this.contactUs,
@@ -33,7 +37,7 @@ class ContactUsButton extends React.Component {
       props.icon = 'ChatBubble';
     }
 
-    return <TextLink {...props}>{children || `Get in touch with us`}</TextLink>;
+    return <ButtonComponent {...props}>{children || `Get in touch with us`}</ButtonComponent>;
   }
 }
 

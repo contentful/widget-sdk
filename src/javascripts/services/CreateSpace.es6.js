@@ -1,6 +1,7 @@
 import modalDialog from 'modalDialog';
 import { getOrganization } from 'services/TokenStore.es6';
 import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
+import createResourceService from 'services/ResourceService.es6';
 import { canCreateSpaceInOrganization } from 'access_control/AccessChecker';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import notification from 'notification';
@@ -10,6 +11,7 @@ import {
   isEnterprisePlan,
   getBasePlan
 } from 'account/pricing/PricingDataProvider.es6';
+import { openModal as showLoading } from 'components/shared/LoadingModal.es6';
 
 /**
  * Displays the space creation dialog. The dialog type will depend on the
@@ -44,25 +46,30 @@ export async function showDialog(organizationId) {
       scopeData: { organization }
     });
   } else {
+    const loadingModal = showLoading();
+
     // check if Proof of Concept spaces feature is on
     const canCreatePOC = await isPOCEnabled();
-    let shouldCreatePOC, basePlan, ratePlans;
+    const orgEndpoint = createOrganizationEndpoint(organizationId);
 
-    // TODO: implement a loading state for when we make
-    // requests to check if the org is Enterprise
+    let shouldCreatePOC;
+
     if (canCreatePOC) {
-      const orgEndpoint = createOrganizationEndpoint(organizationId);
-      [basePlan, ratePlans] = await Promise.all([
-        getBasePlan(orgEndpoint),
-        getSpaceRatePlans(orgEndpoint)
-      ]);
+      const basePlan = await getBasePlan(orgEndpoint);
       // org should create POC if it is Enterprise
       shouldCreatePOC = isEnterprisePlan(basePlan);
     }
 
     if (shouldCreatePOC) {
+      const resources = createResourceService(organizationId, 'organization');
+      const [freeSpaceResource, ratePlans] = await Promise.all([
+        resources.get('free_space'),
+        getSpaceRatePlans(orgEndpoint)
+      ]);
+      const freeSpaceRatePlan = ratePlans.find(plan => plan.productPlanType === 'free_space');
       const modalProps = {
-        ratePlans,
+        freeSpaceRatePlan,
+        freeSpaceResource,
         organization: {
           sys: organization.sys,
           name: organization.name
@@ -91,5 +98,7 @@ export async function showDialog(organizationId) {
         }
       });
     }
+
+    loadingModal.destroy();
   }
 }
