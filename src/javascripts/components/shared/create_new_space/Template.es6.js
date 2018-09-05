@@ -72,21 +72,9 @@ function renderCreateSpaceForm() {
 
 function renderSpaceNameInput() {
   return h('div.cfnext-form__field', [
-    h(
-      'label',
-      {
-        for: 'newspace-name'
-      },
-      [h('strong', ['Space name'])]
-    ),
-    h('input#newspace-name.cfnext-form__input', {
-      id: 'newspace-name',
-      ngModel: 'createSpace.newSpace.data.name',
-      ngRequired: 'required',
-      cfFocusOnRender: 'cf-focus-on-render',
-      type: 'text',
-      ngDisabled: 'createSpace.createSpaceInProgress',
-      ariaInvalid: '{{!!createSpace.newSpace.errors.fields.name}}'
+    h('react-component', {
+      name: '@contentful/ui-component-library/TextField',
+      props: 'createSpace.buildSpaceNameInputProps()'
     }),
     renderErrorLabel('createSpace.newSpace.errors.fields.name')
   ]);
@@ -99,13 +87,9 @@ function renderLanguageSelect() {
       ngStyle: '{ visibility: createSpace.newSpace.useTemplate === false ? "visible" : "hidden" }'
     },
     [
-      h('label', [h('strong', ['Language'])]),
-      h('select.cfnext-select-box', {
-        dataTestId: 'select-locale',
-        ngModel: 'createSpace.newSpace.data.defaultLocale',
-        ngOptions: 'opt.code as opt.displayName for opt in createSpace.localesList',
-        ngDisabled: 'createSpace.createSpaceInProgress',
-        ariaInvalid: '{{!!createSpace.newSpace.errors.fields.default_locale}}'
+      h('react-component', {
+        name: '@contentful/ui-component-library/SelectField',
+        props: 'createSpace.buildLanguageSelectProps()'
       }),
       renderErrorLabel('createSpace.newSpace.errors.fields.default_locale')
     ]

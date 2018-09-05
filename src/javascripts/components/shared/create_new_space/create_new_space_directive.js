@@ -37,6 +37,7 @@ angular.module('contentful').controller('createSpaceController', [
     const spaceContext = require('spaceContext');
     const spaceTemplateEvents = require('analytics/events/SpaceCreation.es6');
     const createResourceService = require('services/ResourceService.es6').default;
+    const React = require('react');
 
     const DEFAULT_LOCALE = 'en-US';
     const DEFAULT_ERROR_MESSAGE =
@@ -112,6 +113,41 @@ angular.module('contentful').controller('createSpaceController', [
           logger.logServerWarn('Could not fetch permissions', { error: error });
         });
     };
+
+    controller.buildLanguageSelectProps = () => ({
+      labelText: 'Language',
+      name: 'language-select',
+      value: controller.newSpace.data.defaultLocale,
+      validationMessage: controller.newSpace.errors.fields.default_locale,
+      children: controller.localesList.map(locale => (
+        <option key={locale.code} value={locale.code}>
+          {locale.displayName}
+        </option>
+      )),
+      testId: 'select-locale',
+      id: 'newspace-language',
+      onChange: e => {
+        controller.newSpace.data.defaultLocale = e.target.value;
+      },
+      selectProps: {
+        isDisabled: controller.createSpaceInProgress
+      }
+    });
+
+    controller.buildSpaceNameInputProps = () => ({
+      labelText: 'Space name',
+      id: 'newspace-name',
+      name: 'newspace-name',
+      validationMessage: controller.newSpace.errors.fields.name,
+      value: controller.newSpace.data.name || '',
+      required: true,
+      onChange: e => {
+        controller.newSpace.data.name = e.target.value;
+      },
+      textInputProps: {
+        disabled: controller.createSpaceInProgress
+      }
+    });
 
     function setupTemplates(templates) {
       // Don't need this once the `Blank` template gets removed from Contentful
