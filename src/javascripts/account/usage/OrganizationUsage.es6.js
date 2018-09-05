@@ -4,7 +4,7 @@ import { mapValues, flow, keyBy, cond, constant, stubTrue } from 'lodash/fp';
 
 import { Spinner } from '@contentful/ui-component-library';
 
-import * as ReloadNotification from 'ReloadNotification';
+import { trigger } from 'ReloadNotification';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { getAllSpaces } from 'access_control/OrganizationMembershipRepository.es6';
 import { isEnterprisePlan, getBasePlan } from 'account/pricing/PricingDataProvider.es6';
@@ -95,7 +95,7 @@ export default class OrganizationUsage extends React.Component {
 
       this.setState({ commited }, onReady);
     } catch (e) {
-      ReloadNotification.apiErrorHandler(e);
+      trigger();
     }
   }
 
@@ -107,16 +107,19 @@ export default class OrganizationUsage extends React.Component {
     track('usage:period_selected', {
       new_period: periodId
     });
-    const [org, cma, cda, cpa] = await Promise.all([
-      getOrgUsage(this.endpoint, periodId),
-      ...['cma', 'cda', 'cpa'].map(api => getApiUsage(this.endpoint, periodId, api))
-    ]);
-
-    this.setState({
-      isLoading: false,
-      usage: { org, apis: { cma, cda, cpa } },
-      selectedPeriodIndex: newIndex
-    });
+    try {
+      const [org, cma, cda, cpa] = await Promise.all([
+        getOrgUsage(this.endpoint, periodId),
+        ...['cma', 'cda', 'cpa'].map(api => getApiUsage(this.endpoint, periodId, api))
+      ]);
+      this.setState({
+        isLoading: false,
+        usage: { org, apis: { cma, cda, cpa } },
+        selectedPeriodIndex: newIndex
+      });
+    } catch (e) {
+      trigger();
+    }
   }
 
   async setPeriodIndex(e) {
