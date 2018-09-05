@@ -9,6 +9,14 @@ ARG CF_VERSION
 # output/files/${env}/archive/${version}/index-compiled.html
 COPY output/files /app
 
+# Make a folder under /app/{env}/archive/ called "live" and
+# put /app/{env}/archive/{hash of the commit that was built}/index-compiled.html there
+# It is then served as defined in cf-infra-stacks/kubeconfig_templates/types/traffic-mgmt/user-interface/configmap.yaml
+RUN ln -s /app/development/archive/${CF_VERSION} /app/development/archive/live
+RUN ln -s /app/preview/archive/${CF_VERSION} /app/preview/archive/live
+RUN ln -s /app/staging/archive/${CF_VERSION} /app/staging/archive/live
+RUN ln -s /app/production/archive/${CF_VERSION} /app/production/archive/live
+
 # Link environment to be served
 RUN ln -sf /app/${CF_ENV}/archive/${CF_VERSION}/index-compiled.html /usr/share/nginx/html/index.html
 RUN ln -sf /app/${CF_ENV}/app /usr/share/nginx/html/app
