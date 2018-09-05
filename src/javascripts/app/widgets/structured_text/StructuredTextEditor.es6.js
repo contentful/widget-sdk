@@ -43,21 +43,6 @@ import emptyDoc from './constants/EmptyDoc.es6';
 
 const schema = Schema.fromJSON(schemaJson);
 const initialValue = Value.fromJSON(toSlatejsDocument(emptyDoc));
-// We do not want to change the `widgetApi.field` value when these
-// operations fire from Slatejs to not trigger unnecessary saves.
-const ignoredOperations = ['set_value', 'set_selection'];
-
-function validateOperation(op) {
-  // We want to allow "set_node" operations where the node
-  // type changes like quoting text.
-  if (op.type === 'set_node' && !op.properties.type) {
-    return false;
-  }
-  if (ignoredOperations.indexOf(op.type) > -1) {
-    return false;
-  }
-  return true;
-}
 
 export default class StructuredTextEditor extends React.Component {
   static propTypes = {
@@ -90,7 +75,7 @@ export default class StructuredTextEditor extends React.Component {
 
   onChange = change => {
     const { value, operations } = change;
-    const lastOperations = operations.filter(validateOperation).toJS();
+    const lastOperations = operations.filter(isRelevantOperation).toJS();
 
     this.setState({ value, lastOperations, headingMenuOpen: false });
   };
@@ -188,6 +173,42 @@ export default class StructuredTextEditor extends React.Component {
       </div>
     );
   }
+}
+
+/**
+ * Returns whether a given operation is relevant enough to trigger a save.
+ *
+ * @param {slate.Operation} op
+ * @returns {boolean}
+ */
+function isRelevantOperation(op) {
+  if (op.type === 'set_node' && !op.properties.type) {
+    if (op.properties.type || op.properties.data) {
+      // Change of node type or data (e.g. quote or hyperlink)
+      return true;
+    } else if (op.properties.isVoid) {
+      // Triggered for embeds and hr, not an actual data change.
+      return false;
+    } else {
+      throw newUnhandledOpError(op);
+    }
+  } else if (op.type === 'set_value') {
+    if (op.properties.schema) {
+      return false;
+    } else {
+      throw newUnhandledOpError(op);
+    }
+  } else if (op.type === 'set_selection') {
+    return false;
+  }
+  return true;
+}
+
+function newUnhandledOpError(op) {
+  const properties = Object.keys(op.properties)
+  .map(v => `\`${v}\``)
+  .join(',');
+  return new Error(`Unhandled operation \`${op.type}\` with properties ${properties}`);
 }
 
 function buildPlugins(widgetAPI) {
