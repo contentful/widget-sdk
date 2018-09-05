@@ -1,5 +1,4 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import * as ReloadNotification from 'ReloadNotification';
 import createResourceService from 'services/ResourceService.es6';
@@ -20,21 +19,21 @@ const addMasterEnvironment = flow(
   update('usage', add(1))
 );
 
-const SpaceUsage = createReactClass({
-  propTypes: {
+class SpaceUsage extends React.Component {
+  static propTypes = {
     orgId: PropTypes.string.isRequired,
     spaceId: PropTypes.string.isRequired
-  },
-  getInitialState() {
-    return {
-      resources: undefined
-    };
-  },
+  };
+
+  state = {
+    resources: undefined
+  };
+
   componentDidMount() {
     this.fetchPlan();
-  },
+  }
 
-  async fetchPlan() {
+  fetchPlan = async () => {
     const { spaceId } = this.props;
     const service = createResourceService(spaceId);
     const isPermanent = resource => resource.kind === 'permanent';
@@ -50,7 +49,7 @@ const SpaceUsage = createReactClass({
     } catch (e) {
       ReloadNotification.apiErrorHandler(e);
     }
-  },
+  };
 
   render() {
     const { resources } = this.state;
@@ -64,6 +63,6 @@ const SpaceUsage = createReactClass({
       />
     );
   }
-});
+}
 
 export default SpaceUsage;

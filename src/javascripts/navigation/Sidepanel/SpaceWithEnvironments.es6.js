@@ -1,5 +1,4 @@
-import { createElement as e } from 'react';
-import createReactClass from 'create-react-class';
+import React, { createElement as e } from 'react';
 import PropTypes from 'prop-types';
 import { asReact } from 'ui/Framework/DOMRenderer.es6';
 import AnimateHeight from 'react-animate-height';
@@ -56,9 +55,10 @@ function EnvironmentList({ environments, isCurrSpace, currentEnvId, goToSpace, s
   );
 }
 
-export default createReactClass({
-  displayName: 'SpaceWithEnvironments',
-  propTypes: {
+export default class extends React.Component {
+  static displayName = 'SpaceWithEnvironments';
+
+  static propTypes = {
     openedSpaceId: PropTypes.string,
     space: PropTypes.object.isRequired,
     setOpenedSpaceId: PropTypes.func.isRequired,
@@ -66,15 +66,16 @@ export default createReactClass({
     index: PropTypes.number.isRequired,
     currentEnvId: PropTypes.string,
     isCurrSpace: PropTypes.bool
-  },
-  getInitialState() {
-    return { loading: false, environments: null };
-  },
-  isOpened() {
+  };
+
+  state = { loading: false, environments: null };
+
+  isOpened = () => {
     const { openedSpaceId, space } = this.props;
     return openedSpaceId === space.sys.id;
-  },
-  async toggleEnvironmentList() {
+  };
+
+  toggleEnvironmentList = async () => {
     if (this.isOpened()) {
       this.props.setOpenedSpaceId(null);
       return;
@@ -111,7 +112,8 @@ export default createReactClass({
         this.props.setOpenedSpaceId(this.props.space.sys.id);
       });
     }
-  },
+  };
+
   render() {
     const { index, space, currentEnvId, isCurrSpace, goToSpace } = this.props;
 
@@ -164,4 +166,4 @@ export default createReactClass({
       ]
     );
   }
-});
+}

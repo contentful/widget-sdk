@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import createReactClass from 'create-react-class';
 import { Action } from 'data/CMA/EntityActions.es6';
 import Dialog from '../Dialog';
 import { EntityType, getNumberOfLinks } from '../constants.es6';
@@ -17,8 +16,8 @@ import IncomingLinksList from '../IncomingLinksList';
 import IncomingLinksListError from '../IncomingLinksList/Error.es6';
 import messages from './messages.es6';
 
-const StateChangeConfirmation = createReactClass({
-  propTypes: {
+class StateChangeConfirmation extends React.Component {
+  static propTypes = {
     onCancel: PropTypes.func.isRequired,
     onConfirm: PropTypes.func.isRequired,
     action: PropTypes.oneOf([Action.Unpublish(), Action.Delete(), Action.Archive()]).isRequired,
@@ -27,8 +26,9 @@ const StateChangeConfirmation = createReactClass({
       type: PropTypes.oneOf([EntityType.ASSET, EntityType.ENTRY])
     }),
     dialogSessionId: PropTypes.string.isRequired
-  },
-  handleClick({ linkEntityId, incomingLinksCount }) {
+  };
+
+  handleClick = ({ linkEntityId, incomingLinksCount }) => {
     const { dialogSessionId, action: dialogAction } = this.props;
     trackIncomingLinkClick({
       linkEntityId,
@@ -39,8 +39,9 @@ const StateChangeConfirmation = createReactClass({
       dialogAction,
       dialogSessionId
     });
-  },
-  handleConfirm(incomingLinksCount) {
+  };
+
+  handleConfirm = incomingLinksCount => {
     const { action, dialogSessionId, entityInfo, onConfirm } = this.props;
     onConfirm();
     trackDialogConfirm({
@@ -50,8 +51,9 @@ const StateChangeConfirmation = createReactClass({
       dialogSessionId,
       incomingLinksCount
     });
-  },
-  handleDialogOpen(incomingLinksCount) {
+  };
+
+  handleDialogOpen = incomingLinksCount => {
     const { action, dialogSessionId, entityInfo } = this.props;
     trackDialogOpen({
       entityId: entityInfo.id,
@@ -60,7 +62,8 @@ const StateChangeConfirmation = createReactClass({
       dialogSessionId,
       incomingLinksCount
     });
-  },
+  };
+
   render() {
     const { action, entityInfo, onCancel } = this.props;
 
@@ -116,7 +119,7 @@ const StateChangeConfirmation = createReactClass({
       />
     );
   }
-});
+}
 
 function getMessages({ action, entityInfo, links }) {
   const numberOfLinks = getNumberOfLinks(links);

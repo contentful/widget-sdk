@@ -1,22 +1,23 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import Icon from 'ui/Components/Icon.es6';
 import $ from 'jquery';
 
-const Welcome = createReactClass({
-  propTypes: {
+class Welcome extends React.Component {
+  static propTypes = {
     user: PropTypes.shape({
       firstName: PropTypes.string.isRequired,
       signInCount: PropTypes.number.isRequired
     }).isRequired
-  },
-  scrollToDeveloperResources() {
+  };
+
+  scrollToDeveloperResources = () => {
     $('cf-developer-resources')
       .get(0)
       .scrollIntoView({ block: 'start', behavior: 'smooth' });
-  },
+  };
+
   render() {
     const { user } = this.props;
 
@@ -52,7 +53,7 @@ const Welcome = createReactClass({
       </div>
     );
   }
-});
+}
 
 export default Welcome;
 

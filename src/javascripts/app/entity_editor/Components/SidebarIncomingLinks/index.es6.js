@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import createReactClass from 'create-react-class';
 
 import IncomingLinksList from '../IncomingLinksList';
 import IncomingLinksListError from '../IncomingLinksList/Error.es6';
@@ -13,14 +12,15 @@ import {
   Origin as IncomingLinksOrigin
 } from 'analytics/events/IncomingLinks.es6';
 
-const SidebarIncomingLinks = createReactClass({
-  propTypes: {
+class SidebarIncomingLinks extends React.Component {
+  static propTypes = {
     entityInfo: PropTypes.shape({
       id: PropTypes.string,
       type: PropTypes.oneOf([EntityType.ASSET, EntityType.ENTRY])
     })
-  },
-  handleClick({ linkEntityId, incomingLinksCount }) {
+  };
+
+  handleClick = ({ linkEntityId, incomingLinksCount }) => {
     trackIncomingLinkClick({
       linkEntityId,
       origin: IncomingLinksOrigin.SIDEBAR,
@@ -28,7 +28,8 @@ const SidebarIncomingLinks = createReactClass({
       entityType: this.props.entityInfo.type,
       incomingLinksCount
     });
-  },
+  };
+
   render() {
     const { entityInfo } = this.props;
 
@@ -57,7 +58,7 @@ const SidebarIncomingLinks = createReactClass({
       />
     );
   }
-});
+}
 
 function getMessages({ entityInfo, links }) {
   const numberOfLinks = getNumberOfLinks(links);

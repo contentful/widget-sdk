@@ -1,5 +1,4 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import { TEASteps, STEPS_KEYS } from './OnboardingWithTeaSteps.es6';
 import { getStore } from 'TheStore';
@@ -43,8 +42,9 @@ function boolToNumber(value) {
   return Number(Boolean(value));
 }
 
-export const OnboardingWithTea = createReactClass({
-  getInitialState() {
+export class OnboardingWithTea extends React.Component {
+  constructor(props, context) {
+    super(props, context);
     const constants = getProgressConstants();
     const state = {
       [STEPS_KEYS.VIEW_SAMPLE_CONTENT]: { isDone: store.get(constants.viewContent) || false },
@@ -53,11 +53,13 @@ export const OnboardingWithTea = createReactClass({
       [STEPS_KEYS.INVITE_DEV]: { isDone: false }
     };
     const stepToExpand = this.getOpenQuestion(state);
-    return {
+
+    this.state = {
       expanded: stepToExpand,
       ...state
     };
-  },
+  }
+
   componentDidMount() {
     spaceContext
       .endpoint({
@@ -69,11 +71,13 @@ export const OnboardingWithTea = createReactClass({
           [STEPS_KEYS.INVITE_DEV]: { isDone: res.items.length > 1 }
         });
       });
-  },
-  getOpenQuestion(state) {
+  }
+
+  getOpenQuestion = state => {
     return findKey(state, ({ isDone }) => !isDone);
-  },
-  markAsDone(newState) {
+  };
+
+  markAsDone = newState => {
     const steps = omit(
       {
         ...this.state,
@@ -87,8 +91,9 @@ export const OnboardingWithTea = createReactClass({
       ...newState,
       expanded: stepToExpand
     });
-  },
-  countProgress() {
+  };
+
+  countProgress = () => {
     return [
       this.state[STEPS_KEYS.VIEW_SAMPLE_CONTENT].isDone,
       this.state[STEPS_KEYS.PREVIEW_USING_EXAMPLE_APP].isDone,
@@ -97,8 +102,9 @@ export const OnboardingWithTea = createReactClass({
     ].reduce((acc, value) => {
       return acc + boolToNumber(value);
     }, 0);
-  },
-  viewContent() {
+  };
+
+  viewContent = () => {
     const constants = getProgressConstants();
     track('element:click', {
       elementId: 'view_content',
@@ -117,8 +123,9 @@ export const OnboardingWithTea = createReactClass({
     this.markAsDone({
       [STEPS_KEYS.VIEW_SAMPLE_CONTENT]: { isDone: true }
     });
-  },
-  viewPreview() {
+  };
+
+  viewPreview = () => {
     const constants = getProgressConstants();
     track('element:click', {
       elementId: 'view_preview',
@@ -133,8 +140,9 @@ export const OnboardingWithTea = createReactClass({
     this.markAsDone({
       [STEPS_KEYS.PREVIEW_USING_EXAMPLE_APP]: { isDone: true }
     });
-  },
-  createEntry() {
+  };
+
+  createEntry = () => {
     const constants = getProgressConstants();
     track('element:click', {
       elementId: 'create_entry',
@@ -149,20 +157,23 @@ export const OnboardingWithTea = createReactClass({
     this.markAsDone({
       [STEPS_KEYS.CREATE_ENTRY]: { isDone: true }
     });
-  },
-  inviteDev() {
+  };
+
+  inviteDev = () => {
     const orgId = spaceContext.space.getOrganizationId();
     const spaceId = spaceContext.space.getId();
     const inviteTrackingKey = `ctfl:${orgId}:progressTEA:inviteDevTracking`;
     store.set(inviteTrackingKey, { spaceId });
-  },
-  toggleExpanding(key) {
+  };
+
+  toggleExpanding = key => {
     const { expanded } = this.state;
     this.setState({
       // if we toggle currently open one, just close it
       expanded: key === expanded ? null : key
     });
-  },
+  };
+
   render() {
     const progress = this.countProgress();
     const stepsProps = {
@@ -185,22 +196,24 @@ export const OnboardingWithTea = createReactClass({
       </section>
     );
   }
-});
+}
 
-export const Header = createReactClass({
-  propTypes: {
+export class Header extends React.Component {
+  static propTypes = {
     children: PropTypes.node.isRequired
-  },
+  };
+
   render() {
     return <div className="tea-onboarding__header">{this.props.children}</div>;
   }
-});
+}
 
-export const Progress = createReactClass({
-  propTypes: {
+export class Progress extends React.Component {
+  static propTypes = {
     count: PropTypes.number.isRequired,
     total: PropTypes.number.isRequired
-  },
+  };
+
   render() {
     const { count, total } = this.props;
     const pills = times(total, index => {
@@ -214,4 +227,4 @@ export const Progress = createReactClass({
       </div>
     );
   }
-});
+}
