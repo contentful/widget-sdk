@@ -12,12 +12,12 @@ export default class Hyperlink extends React.Component {
 
   render() {
     const { children, node } = this.props;
-    const url = node.data.get('url');
+    const uri = node.data.get('uri');
     const title = node.data.get('title');
 
     return (
       <span>
-        <a data-tip={url} title={title}>
+        <a data-tip={uri} title={title}>
           {children}
           <Icon icon="ExternalLink" style={{ position: 'relative', top: '3px' }} />
         </a>
@@ -27,7 +27,7 @@ export default class Hyperlink extends React.Component {
       //  apparently because of `display: inline-flex`.
       //  See bug report: https://github.com/ianstormtaylor/slate/issues/2148
       //
-      //<TextLink href="javascript:void(0)" disabled={false} data-tip={url}>
+      //<TextLink href="javascript:void(0)" disabled={false} data-tip={uri}>
       //  {children}
       //  <Icon icon="ExternalLink" />
       //</TextLink>
