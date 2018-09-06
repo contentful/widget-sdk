@@ -4,15 +4,8 @@ import Enzyme from 'enzyme';
 describe('WebhookListSidebar', function() {
   let WebhookListSidebar;
 
-  const mount = webhooks => {
-    return Enzyme.mount(
-      <WebhookListSidebar
-        webhooks={webhooks}
-        webhookRepo={{}}
-        templateContentTypes={[]}
-        openTemplateDialog={() => {}}
-      />
-    );
+  const mount = count => {
+    return Enzyme.mount(<WebhookListSidebar webhookCount={count} openTemplateDialog={() => {}} />);
   };
 
   // We inject instead of importing so UI Router's $state is available
@@ -30,17 +23,14 @@ describe('WebhookListSidebar', function() {
   };
 
   it('shows empty message', function() {
-    const wrapper = mount([]);
-    testText(wrapper, "Your space isn't using any webhooks.");
+    testText(mount(0), "Your space isn't using any webhooks.");
   });
 
   it('uses singular "webhook" for one webhook', function() {
-    const wrapper = mount([{}]);
-    testText(wrapper, 'Your space is using 1 webhook.');
+    testText(mount(1), 'Your space is using 1 webhook.');
   });
 
   it('uses plural "webhooks" for many webhooks', function() {
-    const wrapper = mount([{}, {}]);
-    testText(wrapper, 'Your space is using 2 webhooks.');
+    testText(mount(2), 'Your space is using 2 webhooks.');
   });
 });

@@ -1,18 +1,22 @@
+import React from 'react';
 import spaceContext from 'spaceContext';
 import leaveConfirmator from 'navigation/confirmLeaveEditor';
 import TheLocaleStore from 'TheLocaleStore';
 import { domain } from 'Config.es6';
 import modalDialog from 'modalDialog';
+
 import Templates from './templates';
+import WebhookForbiddenPage from './WebhookForbiddenPage.es6';
 
 const validTemplateIds = Templates.map(template => template.id);
 
 const isNonEmptyString = s => typeof s === 'string' && s.length > 0;
 
-export function openTemplateDialog(templateId, webhookRepo, templateContentTypes) {
+function openTemplateDialog(webhookRepo, templateContentTypes, templateId) {
   if (!validTemplateIds.includes(templateId)) {
     return;
   }
+
   modalDialog.open({
     ignoreEsc: false,
     backgroundClose: false,
@@ -77,21 +81,24 @@ const list = {
     '$stateParams',
     'webhooks',
     'isAdmin',
-    ($scope, $stateParams, webhooks, isAdmin) => {
+    ($scope, { templateId }, webhooks, isAdmin) => {
+      const { webhookRepo } = spaceContext;
       const templateContentTypes = prepareContentTypesForTemplates();
-      const webhookRepo = spaceContext.webhookRepo;
+      const openTemplateDialogBound = openTemplateDialog.bind(
+        null,
+        webhookRepo,
+        templateContentTypes
+      );
 
-      if (isAdmin && $stateParams.templateId) {
-        openTemplateDialog($stateParams.templateId, webhookRepo, templateContentTypes);
+      if (isAdmin && templateId) {
+        openTemplateDialogBound(templateId);
       }
 
       $scope.props = {
         webhooks,
         webhookRepo,
-        templateContentTypes,
-        openTemplateDialog,
-        isAdmin,
-        templateId: $stateParams.templateId
+        openTemplateDialog: openTemplateDialogBound,
+        forbidden: !isAdmin && <WebhookForbiddenPage templateId={templateId} />
       };
     }
   ]

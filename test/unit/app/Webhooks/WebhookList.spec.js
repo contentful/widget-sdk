@@ -6,13 +6,13 @@ describe('WebhookList', function() {
 
   const webhookRepo = { logs: { getHealth: sinon.stub().rejects() } };
 
-  const mount = webhooks => {
+  const mount = (webhooks, forbidden) => {
     return Enzyme.mount(
       <WebhookList
         webhooks={webhooks}
         webhookRepo={webhookRepo}
-        templateContentTypes={[]}
-        isAdmin={true}
+        openTemplateDialog={() => {}}
+        forbidden={forbidden}
       />
     );
   };
@@ -21,6 +21,13 @@ describe('WebhookList', function() {
   beforeEach(function() {
     module('contentful/test');
     WebhookList = this.$inject('app/Webhooks/WebhookList.es6').default;
+  });
+
+  it('renders "forbidden" view', function() {
+    const wrapper = mount([], <div id="forbidden-view" />);
+    const children = wrapper.children();
+    expect(children.length).toBe(1);
+    expect(children.first().prop('id')).toBe('forbidden-view');
   });
 
   it('renders empty list of webhooks', function() {
