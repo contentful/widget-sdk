@@ -7,11 +7,11 @@ export default class EnterpriseSpaceWizardInfo extends React.Component {
     showingMore: false
   };
 
-  get showMoreText() {
+  getToggleLabel() {
     return this.state.showingMore ? 'Show less' : 'Show more';
   }
 
-  onShowMore() {
+  toggleText() {
     this.setState({ showingMore: !this.state.showingMore });
   }
 
@@ -40,7 +40,7 @@ export default class EnterpriseSpaceWizardInfo extends React.Component {
             </p>
           </div>
         )}
-        <TextLink onClick={() => this.onShowMore()}>{this.showMoreText}</TextLink>
+        <TextLink onClick={() => this.toggleText()}>{this.getToggleLabel()}</TextLink>
       </section>
     );
   }

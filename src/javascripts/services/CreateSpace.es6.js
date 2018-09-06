@@ -62,11 +62,14 @@ export async function showDialog(organizationId) {
 
     if (shouldCreatePOC) {
       const resources = createResourceService(organizationId, 'organization');
+      const freeSpaceIdentifier = 'free_space';
       const [freeSpaceResource, ratePlans] = await Promise.all([
-        resources.get('free_space'),
+        resources.get(freeSpaceIdentifier),
         getSpaceRatePlans(orgEndpoint)
       ]);
-      const freeSpaceRatePlan = ratePlans.find(plan => plan.productPlanType === 'free_space');
+      const freeSpaceRatePlan = ratePlans.find(
+        plan => plan.productPlanType === freeSpaceIdentifier
+      );
       const modalProps = {
         freeSpaceRatePlan,
         freeSpaceResource,

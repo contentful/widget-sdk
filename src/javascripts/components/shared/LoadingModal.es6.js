@@ -3,9 +3,15 @@ import { Spinner, Card } from '@contentful/ui-component-library';
 import modalDialog from 'modalDialog';
 
 export default function LoadingModal() {
+  const spinnerStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100%'
+  };
+
   return (
-    <div
-      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+    <div style={spinnerStyle}>
       <Card padding="large">
         <Spinner size="large" />
       </Card>
