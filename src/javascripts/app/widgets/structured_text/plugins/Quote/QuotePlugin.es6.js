@@ -15,6 +15,18 @@ const plugin = (type, tagName, hotkey) => {
         change.call(applyChange, type);
         return false;
       }
+    },
+    validateNode: node => {
+      if (node.type !== BLOCKS.QUOTE) {
+        return undefined;
+      }
+
+      if (node.getBlocks().size === 0) {
+        return change => {
+          return change.removeNodeByKey(node.key, BLOCKS.PARAGRAPH);
+        };
+      }
+      return undefined;
     }
   };
 };

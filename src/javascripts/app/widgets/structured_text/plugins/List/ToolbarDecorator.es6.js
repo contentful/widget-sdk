@@ -17,7 +17,7 @@ const applyChange = (change, currentType) => {
     newChange = changes.wrapInList(change, currentType);
   }
 
-  return newChange;
+  return newChange.focus();
 };
 
 const isActive = (change, type) => {

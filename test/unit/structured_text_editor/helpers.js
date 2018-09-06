@@ -27,3 +27,17 @@ export const flushPromises = () =>
       resolve();
     });
   });
+
+export const setCaret = target => {
+  const range = window.document.createRange();
+  const sel = window.document.getSelection();
+  const nodes = target.childNodes;
+
+  const last = nodes[nodes.length - 1];
+
+  range.setStart(last, 0);
+  sel.removeAllRanges();
+  sel.addRange(range);
+};
+
+export const getWithId = (wrapper, testId) => wrapper.find(`[data-test-id="${testId}"]`).first();

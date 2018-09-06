@@ -1,15 +1,15 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import _ from 'lodash';
+import { toKeyCode } from 'is-hotkey';
+
+import { BLOCKS } from '@contentful/structured-text-types';
 
 import * as sinon from 'helpers/sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
-import { document, block, text, flushPromises } from './helpers';
-
-import { BLOCKS } from '@contentful/structured-text-types';
-
-const getWithId = (wrapper, testId) => wrapper.find(`[data-test-id="${testId}"]`).first();
+import { document, block, text, flushPromises, getWithId } from '../helpers';
+import { stubAll, setupWidgetApi, createSandbox } from '../setup';
 
 const triggerToolbarIcon = async (wrapper, iconName) => {
   const toolbarIcon = getWithId(wrapper, `toolbar-toggle-${iconName}`);
@@ -27,55 +27,29 @@ describe('Toolbar', () => {
 
     this.entity = { sys: { type: 'Entry', id: 'testid2' } };
 
-    this.system.set('ui/cf/thumbnailHelpers.es6', {});
-    this.system.set('spaceContext', {});
-    this.system.set('modalDialog', { open: sinon.stub() });
-    this.system.set('$rootScope', {
-      default: {
-        $on: sinon.stub()
-      }
-    });
-    this.system.set('$location', {
-      default: {
-        absUrl: () => 'abs-url'
-      }
-    });
-    this.system.set('app/widgets/structured_text/plugins/EntryLinkBlock/FetchEntry.es6', {
-      default: ({ render }) => {
-        return render({
-          entry: this.entity,
-          entryTitle: 'title',
-          entryDescription: 'description',
-          entryStatus: 'status',
-          loading: { entry: false, thumbnail: true }
-        });
-      }
-    });
-    this.system.set('navigation/SlideInNavigator', {
-      goToSlideInEntity: sinon.stub()
-    });
+    stubAll({ isolatedSystem: this.system, entities: [this.entity] });
 
-    this.system.set('entitySelector', {
-      default: {
-        openFromField: () => Promise.resolve([this.entity])
-      }
-    });
     const { default: StructuredTextEditor } = await this.system.import(
       'app/widgets/structured_text/index.es6'
     );
 
-    this.widgetApi = this.$inject('mocks/widgetApi').create();
-    this.widgetApi.fieldProperties.isDisabled$.set(false);
-    this.widgetApi.fieldProperties.value$.set(mockDocument);
+    this.widgetApi = setupWidgetApi(this.$inject('mocks/widgetApi'), mockDocument);
 
     this.props = {
       field: this.widgetApi.field,
       onChange: sinon.spy(),
       widgetAPI: { dialogs: {} }
     };
-    this.wrapper = mount(<StructuredTextEditor {...this.props} />);
+
+    this.sandbox = createSandbox(window);
+    this.wrapper = mount(<StructuredTextEditor {...this.props} />, { attachTo: this.sandbox });
   });
-  xdescribe('EmbeddedEntryBlock', function() {
+
+  afterEach(function() {
+    this.sandbox.remove();
+  });
+
+  describe('EmbeddedEntryBlock', function() {
     it('renders block', async function() {
       await triggerToolbarIcon(this.wrapper, BLOCKS.EMBEDDED_ENTRY);
 
@@ -89,7 +63,8 @@ describe('Toolbar', () => {
               }
             },
             text()
-          )
+          ),
+          block(BLOCKS.PARAGRAPH, {}, text())
         )
       );
     });
@@ -114,6 +89,31 @@ describe('Toolbar', () => {
           document(block(BLOCKS.PARAGRAPH, {}, text()), block(BLOCKS.PARAGRAPH, {}, text()))
         );
       });
+
+      it('inserts text into list-item', async function() {
+        const editor = getWithId(this.wrapper, 'editor');
+        editor.getDOMNode().click();
+        await triggerToolbarIcon(this.wrapper, listType);
+
+        editor.simulate('beforeinput', { data: 'a' });
+        editor.simulate('beforeinput', { data: 'b' });
+
+        editor.simulate('keydown', {
+          key: 'Enter',
+          keyCode: toKeyCode('enter')
+        });
+        expect(this.widgetApi.field.getValue()).toEqual(
+          document(
+            block(
+              listType,
+              {},
+              block(BLOCKS.LIST_ITEM, {}, block(BLOCKS.PARAGRAPH, {}, text('ab'))),
+              block(BLOCKS.LIST_ITEM, {}, block(BLOCKS.PARAGRAPH, {}, text('')))
+            ),
+            block(BLOCKS.PARAGRAPH, {}, text())
+          )
+        );
+      });
     });
   });
 
@@ -125,6 +125,28 @@ describe('Toolbar', () => {
           block(BLOCKS.QUOTE, {}, block(BLOCKS.PARAGRAPH, {}, text())),
           block(BLOCKS.PARAGRAPH, {}, text())
         )
+      );
+    });
+
+    it(`removes quote after second click`, async function() {
+      await triggerToolbarIcon(this.wrapper, BLOCKS.QUOTE);
+      await triggerToolbarIcon(this.wrapper, BLOCKS.QUOTE);
+      expect(this.widgetApi.field.getValue()).toEqual(
+        document(block(BLOCKS.PARAGRAPH, {}, text()), block(BLOCKS.PARAGRAPH, {}, text()))
+      );
+    });
+
+    it(`removes quote on Backspace`, async function() {
+      const editor = getWithId(this.wrapper, 'editor');
+      await triggerToolbarIcon(this.wrapper, BLOCKS.QUOTE);
+
+      editor.simulate('keydown', {
+        key: 'Backspace',
+        keyCode: toKeyCode('Backspace')
+      });
+
+      expect(this.widgetApi.field.getValue()).toEqual(
+        document(block(BLOCKS.PARAGRAPH, {}, text()))
       );
     });
   });

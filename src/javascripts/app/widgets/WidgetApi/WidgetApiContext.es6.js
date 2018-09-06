@@ -1,5 +1,5 @@
-import createReactContext from 'create-react-context';
+import { createContext } from 'react';
 
-const WidgetAPIContext = createReactContext({});
+const WidgetAPIContext = createContext({});
 
 export default WidgetAPIContext;

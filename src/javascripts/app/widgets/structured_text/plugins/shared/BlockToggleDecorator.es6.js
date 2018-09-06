@@ -8,7 +8,15 @@ export const toggleChange = (change, type) => {
   return change.setBlocks(isActive ? BLOCKS.PARAGRAPH : type);
 };
 
-export default ({ type, title, icon, applyChange = toggleChange }) => Block => {
+const isBlockActive = (change, type) => haveBlocks(change, type);
+
+export default ({
+  type,
+  title,
+  icon,
+  applyChange = toggleChange,
+  isActive = isBlockActive
+}) => Block => {
   return class BlockDecorator extends React.Component {
     static propTypes = ToolbarIconPropTypes;
     handleToggle = e => {
@@ -27,7 +35,7 @@ export default ({ type, title, icon, applyChange = toggleChange }) => Block => {
           icon={icon}
           title={title}
           onToggle={this.handleToggle}
-          isActive={haveBlocks(change, type)}
+          isActive={isActive(change, type)}
           disabled={disabled}
         />
       );

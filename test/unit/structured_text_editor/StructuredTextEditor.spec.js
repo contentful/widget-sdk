@@ -4,16 +4,12 @@ import { mount } from 'enzyme';
 import * as sinon from 'helpers/sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
-import { BLOCKS, MARKS } from '@contentful/structured-text-types';
+import { stubAll, setupWidgetApi, createSandbox } from './setup';
+import { document, block, text } from './helpers';
 
-const supportedToolbarIcons = [
-  MARKS.BOLD,
-  MARKS.ITALIC,
-  MARKS.UNDERLINE,
-  BLOCKS.UL_LIST,
-  BLOCKS.OL_LIST,
-  BLOCKS.EMBEDDED_ENTRY
-];
+import { BLOCKS } from '@contentful/structured-text-types';
+
+const supportedToolbarIcons = [BLOCKS.UL_LIST, BLOCKS.OL_LIST, BLOCKS.EMBEDDED_ENTRY, BLOCKS.QUOTE];
 
 const getHeadingDropdown = wrapper =>
   wrapper.find(`[data-test-id="toolbar-heading-toggle"]`).first();
@@ -21,39 +17,38 @@ const getHeadingDropdown = wrapper =>
 const getToolbarIcon = (wrapper, iconName) =>
   wrapper.find(`[data-test-id="toolbar-toggle-${iconName}"]`).first();
 
+const expectIsEditorReadOnly = (wrapper, expected) => {
+  const el = wrapper.find('[data-test-id="editor"]');
+  expect(el.props().readOnly).toBe(expected);
+};
+
 describe('StructuredTextEditor', () => {
   beforeEach(async function() {
     module('contentful/test');
-    const mockDocument = {
-      content: []
-    };
+    const mockDocument = document(block(BLOCKS.PARAGRAPH, {}, text()));
     this.system = createIsolatedSystem();
 
-    this.system.set('ui/cf/thumbnailHelpers.es6', {});
-    this.system.set('spaceContext', {
-      cma: {
-        getEntry: Promise.resolve([this.entity])
-      }
-    });
-    this.system.set('navigation/SlideInNavigator', {
-      goToSlideInEntity: sinon.stub()
-    });
+    stubAll({ isolatedSystem: this.system, entities: [this.entry] });
+
     const { default: StructuredTextEditor } = await this.system.import(
-      'app/widgets/structured_text/StructuredTextEditor.es6'
+      'app/widgets/structured_text/index.es6'
     );
 
+    this.widgetApi = setupWidgetApi(this.$inject('mocks/widgetApi'), mockDocument);
+
     this.props = {
-      value: mockDocument,
-      isDisabled: false,
+      field: this.widgetApi.field,
       onChange: sinon.spy(),
+      isDisabled: false,
       widgetAPI: { dialogs: {} }
     };
-    this.wrapper = mount(<StructuredTextEditor {...this.props} />);
 
-    this.expectIsEditorReadOnly = expected => {
-      const el = this.wrapper.find('[data-test-id="editor"]');
-      expect(el.props().readOnly).toBe(expected);
-    };
+    this.sandbox = createSandbox(window);
+    this.wrapper = mount(<StructuredTextEditor {...this.props} />, { attachTo: this.sandbox });
+  });
+
+  afterEach(function() {
+    this.sandbox.remove();
   });
 
   it('renders the component', function() {
@@ -61,7 +56,7 @@ describe('StructuredTextEditor', () => {
   });
 
   it('can be focused', function() {
-    this.expectIsEditorReadOnly(false);
+    expectIsEditorReadOnly(this.wrapper, false);
   });
 
   it('renders toolbar', function() {
@@ -69,45 +64,14 @@ describe('StructuredTextEditor', () => {
     expect(el.length).toEqual(1);
   });
 
-  it('renders the toolbar icons', function() {
-    supportedToolbarIcons.forEach(iconName => {
-      const el = getToolbarIcon(this.wrapper, iconName);
-
-      expect(el.length).toEqual(1);
-
-      el.simulate('click');
-      sinon.assert.calledOnce(this.wrapper.props().onChange);
-    });
-  });
-
-  it('renders heading dropdown', function() {
-    const headingItems = [BLOCKS.HEADING_1, BLOCKS.HEADING_2];
-
-    const el = getHeadingDropdown(this.wrapper);
-    el.simulate('mouseDown');
-
-    headingItems.forEach(iconName => {
-      const el = getToolbarIcon(this.wrapper, iconName);
-      expect(el.length).toEqual(1);
-      el.simulate('click');
-      sinon.assert.calledOnce(this.wrapper.props().onChange);
-    });
-  });
-
-  it('renders the embed entry button', function() {
-    const el = getToolbarIcon(this.wrapper, BLOCKS.EMBEDDED_ENTRY);
-    expect(el).toBeDefined();
-    el.simulate('click');
-    sinon.assert.calledOnce(this.wrapper.props().onChange);
-  });
-
   describe('disabled `props.field`', function() {
-    beforeEach(function() {
-      this.wrapper.setProps({ isDisabled: true });
+    beforeEach(async function() {
+      this.widgetApi.fieldProperties.isDisabled$.set(true);
+      this.wrapper.update();
     });
 
-    it('can not be focused', function() {
-      this.expectIsEditorReadOnly(true);
+    it('can not be focused', async function() {
+      expectIsEditorReadOnly(this.wrapper, true);
     });
 
     it('toolbar icons are disabled', function() {
