@@ -132,9 +132,10 @@ export default class WebhookForm extends React.Component {
             )}
           </div>
           <div className="cfnext-form__field">
-            <label>Content length</label>
-            <label>
+            <label htmlFor="webhook-content-length">Content length</label>
+            <label htmlFor="webhook-content-length">
               <input
+                id="webhook-content-length"
                 type="checkbox"
                 checked={includeContentLength}
                 onChange={e =>
