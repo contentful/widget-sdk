@@ -1,19 +1,22 @@
+import React from 'react';
 import spaceContext from 'spaceContext';
-import createResourceService from 'services/ResourceService.es6';
 import leaveConfirmator from 'navigation/confirmLeaveEditor';
 import TheLocaleStore from 'TheLocaleStore';
 import { domain } from 'Config.es6';
 import modalDialog from 'modalDialog';
+
 import Templates from './templates';
+import WebhookForbiddenPage from './WebhookForbiddenPage.es6';
 
 const validTemplateIds = Templates.map(template => template.id);
 
 const isNonEmptyString = s => typeof s === 'string' && s.length > 0;
 
-export function openTemplateDialog(templateId, webhookRepo, templateContentTypes) {
+function openTemplateDialog(webhookRepo, templateContentTypes, templateId) {
   if (!validTemplateIds.includes(templateId)) {
     return;
   }
+
   modalDialog.open({
     ignoreEsc: false,
     backgroundClose: false,
@@ -65,15 +68,6 @@ const list = {
       'spaceContext',
       'isAdmin',
       (spaceContext, isAdmin) => (isAdmin ? spaceContext.webhookRepo.getAll() : Promise.resolve([]))
-    ],
-    resource: [
-      'spaceContext',
-      'isAdmin',
-      (spaceContext, isAdmin) => {
-        return isAdmin
-          ? createResourceService(spaceContext.getId()).get('webhookDefinition')
-          : Promise.resolve({});
-      }
     ]
   },
   params: {
@@ -86,26 +80,25 @@ const list = {
     '$scope',
     '$stateParams',
     'webhooks',
-    'resource',
     'isAdmin',
-    ($scope, $stateParams, webhooks, resource, isAdmin) => {
-      const { pricingVersion } = spaceContext.organizationContext.organization;
+    ($scope, { templateId }, webhooks, isAdmin) => {
+      const { webhookRepo } = spaceContext;
       const templateContentTypes = prepareContentTypesForTemplates();
-      const webhookRepo = spaceContext.webhookRepo;
+      const openTemplateDialogBound = openTemplateDialog.bind(
+        null,
+        webhookRepo,
+        templateContentTypes
+      );
 
-      if (isAdmin && $stateParams.templateId) {
-        openTemplateDialog($stateParams.templateId, webhookRepo, templateContentTypes);
+      if (isAdmin && templateId) {
+        openTemplateDialogBound(templateId);
       }
 
       $scope.props = {
         webhooks,
         webhookRepo,
-        templateContentTypes,
-        resource,
-        openTemplateDialog,
-        organization: { pricingVersion },
-        isAdmin,
-        templateId: $stateParams.templateId
+        openTemplateDialog: openTemplateDialogBound,
+        forbidden: !isAdmin && <WebhookForbiddenPage templateId={templateId} />
       };
     }
   ]

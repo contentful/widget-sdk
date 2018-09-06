@@ -1,5 +1,6 @@
 import React from 'react';
 import TwilioLogo from './logos/TwilioLogo.es6';
+import base64safe from '../base64safe.es6';
 
 export default {
   id: 'twilio-send-sms',
@@ -83,12 +84,17 @@ export default {
     return {
       name,
       url: `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
-      httpBasicUsername: accountSid,
-      httpBasicPassword: authToken,
       topics: ['Entry.publish'],
       filters: [
         { equals: [{ doc: 'sys.environment.sys.id' }, 'master'] },
         { equals: [{ doc: 'sys.contentType.sys.id' }, contentType.id] }
+      ],
+      headers: [
+        {
+          key: 'Authorization',
+          value: 'Basic ' + base64safe([accountSid, authToken].join(':')),
+          secret: true
+        }
       ],
       transformation: {
         contentType: 'application/x-www-form-urlencoded',

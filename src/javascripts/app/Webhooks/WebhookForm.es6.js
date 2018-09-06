@@ -26,7 +26,6 @@ const CONTENT_TYPES = [
 export default class WebhookForm extends React.Component {
   static propTypes = {
     webhook: PropTypes.object.isRequired,
-    hasHttpBasicStored: PropTypes.bool.isRequired,
     onChange: PropTypes.func.isRequired
   };
 
@@ -39,6 +38,7 @@ export default class WebhookForm extends React.Component {
   render() {
     const { webhook } = this.props;
     const contentType = get(webhook, ['transformation', 'contentType'], CONTENT_TYPES[0]);
+    const includeContentLength = get(webhook, ['transformation', 'includeContentLength'], false);
 
     return (
       <div className="webhook-editor__settings">
@@ -102,8 +102,6 @@ export default class WebhookForm extends React.Component {
           />
           <WebhookBasicAuth
             httpBasicUsername={webhook.httpBasicUsername}
-            httpBasicPassword={webhook.httpBasicPassword}
-            hasHttpBasicStored={this.props.hasHttpBasicStored}
             onChange={credentials => this.props.onChange(credentials)}
           />
           <div className="cfnext-form__field">
@@ -132,6 +130,26 @@ export default class WebhookForm extends React.Component {
                 encoded form data.
               </p>
             )}
+          </div>
+          <div className="cfnext-form__field">
+            <label htmlFor="webhook-content-length">Content length</label>
+            <label htmlFor="webhook-content-length">
+              <input
+                id="webhook-content-length"
+                type="checkbox"
+                checked={includeContentLength}
+                onChange={e =>
+                  this.props.onChange(
+                    this.updatedTransformation({ includeContentLength: e.target.checked })
+                  )
+                }
+              />{' '}
+              Automatically compute the value of the <code>Content-Length</code> header
+            </label>
+            <p className="entity-editor__field-hint">
+              If this option is selected, the byte size of the final request body will be computed
+              and used as the value of the <code>Content-Length</code> header.
+            </p>
           </div>
         </WebhookFormSection>
 

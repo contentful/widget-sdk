@@ -6,9 +6,7 @@ describe('WebhookForm', function() {
 
   const mount = () => {
     const onChangeStub = sinon.stub();
-    const wrapper = Enzyme.mount(
-      <WebhookForm webhook={{}} hasHttpBasicStored={false} onChange={onChangeStub} />
-    );
+    const wrapper = Enzyme.mount(<WebhookForm webhook={{}} onChange={onChangeStub} />);
 
     return [wrapper, onChangeStub];
   };

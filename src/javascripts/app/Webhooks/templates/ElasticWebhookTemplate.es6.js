@@ -1,5 +1,6 @@
 import React from 'react';
 import ElasticLogo from './logos/ElasticLogo.es6';
+import base64safe from '../base64safe.es6';
 
 export default {
   id: 'elasticsearch-index-entries',
@@ -51,7 +52,7 @@ export default {
       title: 'User',
       description: (
         <p>
-          HTTP Basic auth username. If you use Elastic Cloud, it can be found on the{' '}
+          HTTP Basic Auth username. If you use Elastic Cloud, it can be found on the{' '}
           <a href="https://cloud.elastic.co/deployments" target="_blank" rel="noopener noreferrer">
             dashboard
           </a>
@@ -65,7 +66,7 @@ export default {
       title: 'Password',
       description: (
         <p>
-          HTTP Basic auth password. If you use Elastic Cloud, it can be found on the{' '}
+          HTTP Basic Auth password. If you use Elastic Cloud, it can be found on the{' '}
           <a href="https://cloud.elastic.co/deployments" target="_blank" rel="noopener noreferrer">
             dashboard
           </a>
@@ -83,8 +84,13 @@ export default {
         url: `${endpoint}/${index}/${type}/{ /payload/sys/id }`,
         topics: ['Entry.publish'],
         filters: [{ equals: [{ doc: 'sys.environment.sys.id' }, 'master'] }],
-        httpBasicUsername: user,
-        httpBasicPassword: password,
+        headers: [
+          {
+            key: 'Authorization',
+            value: 'Basic ' + base64safe([user, password].join(':')),
+            secret: true
+          }
+        ],
         transformation: {
           method: 'PUT',
           contentType: 'application/json; charset=utf-8'
@@ -99,8 +105,13 @@ export default {
         url: `${endpoint}/${index}/${type}/{ /payload/sys/id }`,
         topics: ['Entry.unpublish'],
         filters: [{ equals: [{ doc: 'sys.environment.sys.id' }, 'master'] }],
-        httpBasicUsername: user,
-        httpBasicPassword: password,
+        headers: [
+          {
+            key: 'Authorization',
+            value: 'Basic ' + base64safe([user, password].join(':')),
+            secret: true
+          }
+        ],
         transformation: {
           contentType: 'application/json; charset=utf-8',
           method: 'DELETE'

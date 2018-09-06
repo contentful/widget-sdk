@@ -1,69 +1,37 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const isNonEmptyString = s => typeof s === 'string' && s.length > 0;
-const nullifyEmpty = s => (isNonEmptyString(s) ? s : null);
+export default function WebhookBasicAuth({ httpBasicUsername, onChange }) {
+  const shouldHide = typeof httpBasicUsername !== 'string' || httpBasicUsername.length < 1;
 
-const hint = (
-  <p className="entity-editor__field-hint">
-    If HTTP basic auth credentials are provided we will automatically set{' '}
-    <code>Authorization: Basic...</code> header on all webhook calls. This overrides{' '}
-    <code>Authorization</code> custom header if defined.
-  </p>
-);
-
-export default class WebhookBasicAuth extends React.Component {
-  static propTypes = {
-    httpBasicUsername: PropTypes.string,
-    httpBasicPassword: PropTypes.string,
-    hasHttpBasicStored: PropTypes.bool.isRequired,
-    onChange: PropTypes.func.isRequired
-  };
-
-  render() {
-    const { httpBasicUsername, httpBasicPassword, hasHttpBasicStored, onChange } = this.props;
-
-    if (hasHttpBasicStored && isNonEmptyString(httpBasicUsername)) {
-      return (
-        <div className="cfnext-form__field">
-          <label>HTTP basic auth</label>
-          <div className="webhook-editor__settings-row">
-            <div>
-              Credentials for user <strong>{httpBasicUsername}</strong> stored.
-            </div>
-            <button
-              className="btn-link"
-              onClick={() => onChange({ httpBasicUsername: null, httpBasicPassword: null })}>
-              Remove credentials
-            </button>
-          </div>
-          {hint}
+  return shouldHide ? null : (
+    <div className="cfnext-form__field">
+      <label>HTTP Basic Auth</label>
+      <div className="webhook-editor__settings-row">
+        <div>
+          Credentials for user <strong>{httpBasicUsername}</strong> stored.
         </div>
-      );
-    } else {
-      return (
-        <div className="cfnext-form__field">
-          <label htmlFor="webhook-basic-user">HTTP basic auth</label>
-          <div className="webhook-editor__settings-row">
-            <input
-              type="text"
-              className="cfnext-form__input"
-              id="webhook-basic-user"
-              placeholder="Username"
-              value={httpBasicUsername || ''}
-              onChange={e => onChange({ httpBasicUsername: nullifyEmpty(e.target.value) })}
-            />
-            <input
-              type="password"
-              className="cfnext-form__input"
-              placeholder="Password"
-              value={httpBasicPassword || ''}
-              onChange={e => onChange({ httpBasicPassword: nullifyEmpty(e.target.value) })}
-            />
-          </div>
-          {hint}
-        </div>
-      );
-    }
-  }
+        <button
+          className="btn-link"
+          onClick={() => onChange({ httpBasicUsername: null, httpBasicPassword: null })}>
+          Remove stored credentials
+        </button>
+      </div>
+      <p className="entity-editor__field-hint">
+        If HTTP Basic Auth credentials are provided we will automatically set{' '}
+        <code>Authorization: Basic...</code> header on all webhook calls. This overrides{' '}
+        <code>Authorization</code> custom header if defined.
+      </p>
+      <p className="entity-editor__field-hint">
+        Please note setting HTTP Basic Auth credentials is deprecated. For new webhooks use the{' '}
+        {'"Add HTTP Basic Auth header"'} option above. Consider removing HTTP Basic Auth credentials
+        provided here and using the new, more secure option.
+      </p>
+    </div>
+  );
 }
+
+WebhookBasicAuth.propTypes = {
+  httpBasicUsername: PropTypes.string,
+  onChange: PropTypes.func.isRequired
+};

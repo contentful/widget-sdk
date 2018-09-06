@@ -7,28 +7,21 @@ import Icon from 'ui/Components/Icon.es6';
 
 import WebhookHealth from './WebhookHealth.es6';
 import WebhookListSidebar from './WebhookListSidebar.es6';
-import WebhookForbiddenPage from './WebhookForbiddenPage.es6';
 
 export default class WebhookList extends React.Component {
   static propTypes = {
     webhooks: PropTypes.array.isRequired,
     webhookRepo: PropTypes.object.isRequired,
-    templateContentTypes: PropTypes.array.isRequired,
-    resource: PropTypes.object.isRequired,
-    organization: PropTypes.object.isRequired,
     openTemplateDialog: PropTypes.func.isRequired,
-    isAdmin: PropTypes.bool,
-    templateId: PropTypes.string
+    forbidden: PropTypes.node
   };
 
   render() {
-    const { webhooks, webhookRepo, isAdmin } = this.props;
+    const { webhooks, webhookRepo, openTemplateDialog, forbidden } = this.props;
 
-    if (!isAdmin) {
-      return <WebhookForbiddenPage templateId={this.props.templateId} />;
-    }
-
-    return (
+    return forbidden ? (
+      forbidden
+    ) : (
       <React.Fragment>
         <div className="workbench-header__wrapper">
           <header className="workbench-header">
@@ -91,7 +84,10 @@ export default class WebhookList extends React.Component {
             </div>
           </div>
           <div className="workbench-main__sidebar">
-            <WebhookListSidebar {...this.props} />
+            <WebhookListSidebar
+              webhookCount={webhooks.length}
+              openTemplateDialog={openTemplateDialog}
+            />
           </div>
         </div>
       </React.Fragment>

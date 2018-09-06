@@ -7,7 +7,7 @@ import Templates from './templates';
 const nonPremiumTemplates = Templates.filter(t => !t.premium);
 const firstTemplateId = nonPremiumTemplates[0].id;
 
-const WebhookSidebarTemplatesList = ({ webhookRepo, templateContentTypes, openTemplateDialog }) => (
+const WebhookSidebarTemplatesList = ({ openTemplateDialog }) => (
   <React.Fragment>
     <h2 className="entity-sidebar__heading">Webhook Templates</h2>
     {nonPremiumTemplates.slice(0, 5).map(template => (
@@ -18,18 +18,14 @@ const WebhookSidebarTemplatesList = ({ webhookRepo, templateContentTypes, openTe
           <small>{template.subtitle}</small>
         </div>
         <div className="webhook-template-item__action">
-          <button
-            className="btn-link"
-            onClick={() => openTemplateDialog(template.id, webhookRepo, templateContentTypes)}>
+          <button className="btn-link" onClick={() => openTemplateDialog(template.id)}>
             Add
           </button>
         </div>
       </div>
     ))}
     <div className="webhook-template-item webhook-template-item__see-all">
-      <button
-        className="btn-link"
-        onClick={() => openTemplateDialog(firstTemplateId, webhookRepo, templateContentTypes)}>
+      <button className="btn-link" onClick={() => openTemplateDialog(firstTemplateId)}>
         See all {nonPremiumTemplates.length} templates
       </button>
     </div>
@@ -37,8 +33,6 @@ const WebhookSidebarTemplatesList = ({ webhookRepo, templateContentTypes, openTe
 );
 
 WebhookSidebarTemplatesList.propTypes = {
-  webhookRepo: PropTypes.object.isRequired,
-  templateContentTypes: PropTypes.array.isRequired,
   openTemplateDialog: PropTypes.func.isRequired
 };
 
