@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { TextField, Button } from '@contentful/ui-component-library';
-import base64safe from './base64safe';
+import base64safe from './base64safe.es6';
 
 export default class WebhookHttpBasicDialog extends React.Component {
   static propTypes = {
@@ -10,9 +10,18 @@ export default class WebhookHttpBasicDialog extends React.Component {
 
   state = {};
 
-  render() {
-    const { confirm } = this.props;
+  addHeader = () => {
+    const { user, password } = this.state;
+    this.props.confirm({
+      key: 'Authorization',
+      value: 'Basic ' + base64safe([user || '', password || ''].join(':')),
+      secret: true
+    });
+  };
 
+  cancel = () => this.props.confirm({});
+
+  render() {
     return (
       <div className="modal-dialog webhook-secret-header-dialog">
         <header className="modal-dialog__header">
@@ -50,19 +59,12 @@ export default class WebhookHttpBasicDialog extends React.Component {
         </div>
         <div className="modal-dialog__controls">
           <Button
-            onClick={() => {
-              const { user, password } = this.state;
-              confirm({
-                key: 'Authorization',
-                value: 'Basic ' + base64safe([user || '', password || ''].join(':')),
-                secret: true
-              });
-            }}
+            onClick={this.addHeader}
             disabled={!this.state.user && !this.state.password}
             buttonType="primary">
             Add HTTP Basic Auth header
           </Button>
-          <Button onClick={() => confirm({})} buttonType="muted">
+          <Button onClick={this.cancel} buttonType="muted">
             Cancel
           </Button>
         </div>

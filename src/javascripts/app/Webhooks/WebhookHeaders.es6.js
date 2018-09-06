@@ -91,20 +91,20 @@ export default class WebhookHeaders extends React.Component {
 
         <button
           className="btn-link webhook-header-action"
-          onClick={this.openHeaderDialog.bind(this, 'WebhookSecretHeaderDialog')}>
+          onClick={this.openSecretHeaderDialog.bind(this, 'WebhookSecretHeaderDialog')}>
           + Add secret header
         </button>
 
         <button
           className="btn-link webhook-header-action"
-          onClick={this.openHeaderDialog.bind(this, 'WebhookHttpBasicDialog')}>
+          onClick={this.openSecretHeaderDialog.bind(this, 'WebhookHttpBasicDialog')}>
           + Add HTTP Basic Auth header
         </button>
       </div>
     );
   }
 
-  openHeaderDialog = componentName => {
+  openSecretHeaderDialog(componentName) {
     modalDialog
       .open({
         template: `<react-component class="modal-background" name="app/Webhooks/${componentName}.es6" props="props">`,
@@ -119,5 +119,5 @@ export default class WebhookHeaders extends React.Component {
           this.add(header);
         }
       });
-  };
+  }
 }
