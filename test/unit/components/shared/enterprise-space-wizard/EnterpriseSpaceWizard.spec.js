@@ -52,16 +52,21 @@ describe('Enterprise Space Wizard', () => {
       }
     ];
 
-    this.ratePlans = [
-      {
-        productPlanType: 'free_space',
-        productRatePlanCharges: this.ratePlanCharges,
-        roleSet: {
-          name: 'lol',
-          roles: ['Wizard']
-        }
+    this.freeSpaceRatePlan = {
+      productPlanType: 'free_space',
+      productRatePlanCharges: this.ratePlanCharges,
+      roleSet: {
+        name: 'lol',
+        roles: ['Wizard']
       }
-    ];
+    };
+
+    this.freeSpaceResource = {
+      usage: 1,
+      limits: {
+        maximum: 5
+      }
+    };
 
     this.store = this.$inject('ReduxStore/store.es6').default;
     this.PlanFeatures = this.$inject('components/shared/space-wizard/PlanFeatures.es6').default;
@@ -76,7 +81,8 @@ describe('Enterprise Space Wizard', () => {
     this.component = mount(
       <EnterpriseSpaceWizard
         store={this.store}
-        ratePlans={this.ratePlans}
+        freeSpaceRatePlan={this.freeSpaceRatePlan}
+        freeSpaceResource={this.freeSpaceResource}
         organization={this.organization}
         setNewSpaceName={sinon.stub()}
         createSpace={this.createSpace}

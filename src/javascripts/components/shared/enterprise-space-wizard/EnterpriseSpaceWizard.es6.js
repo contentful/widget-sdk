@@ -4,21 +4,28 @@ import $rootScope from '$rootScope';
 import { connect } from 'react-redux';
 import { getIncludedResources } from 'components/shared/space-wizard/WizardUtils.es6';
 import { go } from 'states/Navigator.es6';
-import { get } from 'lodash';
 
 import * as actionCreators from '../space-wizard/store/actionCreators.es6';
 
 import TemplateSelector from 'components/shared/space-wizard/TemplateSelector.es6';
-import PlanFeatures from 'components/shared/space-wizard/PlanFeatures.es6';
 import ProgressScreen from 'components/shared/space-wizard/ProgressScreen.es6';
 import Dialog from 'app/entity_editor/Components/Dialog';
+
 import ContactUsButton from 'ui/Components/ContactUsButton.es6';
+import EnterpriseSpaceWizardPlan from './EnterpriseSpaceWizardPlan.es6';
+import EnterpriseSpaceWizardInfo from './EnterpriseSpaceWizardInfo.es6';
 
 import { TextField } from '@contentful/ui-component-library';
 
 class EnterpriseSpaceWizard extends React.Component {
   static propTypes = {
-    ratePlans: PropTypes.array.isRequired,
+    freeSpaceRatePlan: PropTypes.object.isRequired,
+    freeSpaceResource: PropTypes.shape({
+      usage: PropTypes.number.isRequired,
+      limits: PropTypes.shape({
+        maximum: PropTypes.number.isRequired
+      })
+    }),
     setNewSpaceName: PropTypes.func.isRequired,
     setNewSpaceTemplate: PropTypes.func.isRequired,
     createSpace: PropTypes.func.isRequired,
@@ -44,21 +51,13 @@ class EnterpriseSpaceWizard extends React.Component {
 
   static MAX_SPACE_NAME_LENGTH = 30;
 
-  plan = {};
-  resources = [];
   state = {
-    errorMessage: null
+    isValid: false
   };
-
-  constructor(props) {
-    super(props);
-    this.plan = this.props.ratePlans.find(plan => plan.productPlanType === 'free_space');
-    this.resources = getIncludedResources(this.plan.productRatePlanCharges);
-  }
 
   handleSpaceNameChange(value) {
     const name = value.trim();
-    this.validateName(name);
+    this.setState({ isValid: this.isValidName(name) });
     this.props.setNewSpaceName(name);
   }
 
@@ -72,20 +71,18 @@ class EnterpriseSpaceWizard extends React.Component {
   }
 
   handleSubmit() {
-    this.validateName(get(this.props, 'newSpaceMeta.name'));
-
-    if (this.state.invalidName) return;
-
-    this.props.createSpace({
-      action: 'create',
-      organization: this.props.organization,
-      currentStepId: 'confirmation',
-      selectedPlan: this.plan,
-      newSpaceMeta: this.props.newSpaceMeta,
-      onSpaceCreated: this.handleSpaceCreated.bind(this),
-      onTemplateCreated: this.handleTemplateCreated.bind(this),
-      onConfirm: this.close.bind(this)
-    });
+    if (this.state.isValid) {
+      this.props.createSpace({
+        action: 'create',
+        organization: this.props.organization,
+        currentStepId: 'confirmation',
+        selectedPlan: this.props.freeSpaceRatePlan,
+        newSpaceMeta: this.props.newSpaceMeta,
+        onSpaceCreated: this.handleSpaceCreated.bind(this),
+        onTemplateCreated: this.handleTemplateCreated.bind(this),
+        onConfirm: this.close.bind(this)
+      });
+    }
   }
 
   handleSpaceCreated(newSpace) {
@@ -102,73 +99,102 @@ class EnterpriseSpaceWizard extends React.Component {
     $rootScope.$broadcast('spaceTemplateCreated');
   }
 
-  validateName(name) {
-    let errorMessage = null;
-
-    if (!name || !name.length) {
-      errorMessage = 'Name is required';
-    }
-
-    this.setState({ errorMessage });
+  isValidName(name) {
+    return !!name && name.length;
   }
 
   render() {
-    const { setNewSpaceTemplate, templates, fetchTemplates, spaceCreation } = this.props;
+    const {
+      setNewSpaceTemplate,
+      templates,
+      fetchTemplates,
+      spaceCreation,
+      freeSpaceRatePlan
+    } = this.props;
     const submitted = spaceCreation.isPending;
     const { name, template } = this.props.newSpaceMeta;
-    const { errorMessage, invalidName } = this.state;
+    const { isValid } = this.state;
+    const usage = this.props.freeSpaceResource.usage;
+    const limit = this.props.freeSpaceResource.limits.maximum;
+    const isFeatureDisabled = this.props.freeSpaceResource.limits.maximum.limit === 0;
+    const reachedLimit =
+      this.props.freeSpaceResource.usage >= this.props.freeSpaceResource.limits.maximum;
+    const resources = getIncludedResources(this.props.freeSpaceRatePlan.productRatePlanCharges);
     // we show a more robust progress indicator for the
     // template creation that happens after the space has been
     // successfully created
-    const showProgress = spaceCreation.success && template;
+    const inProgress = spaceCreation.success && template;
+    const showForm = !isFeatureDisabled && !reachedLimit && !inProgress;
 
     return (
       <Dialog testId="enterprise-space-creation-dialog" size="large">
         <Dialog.Header onCloseButtonClicked={() => this.close()}>Create a space</Dialog.Header>
-        {showProgress && (
+        {inProgress && (
           <Dialog.Body>
             <ProgressScreen done={!spaceCreation.isPending} onConfirm={() => this.close()} />
           </Dialog.Body>
         )}
-        {!showProgress && (
-          <Dialog.Body>
-            <p className="enterprise-space-wizard__info" style={{ marginBottom: '30px' }}>
-              {`Use a proof of concept space to experiment or start new projects. Talk to us when you decide to launch. `}
-              <ContactUsButton noIcon={true} data-test-id="subscription-page.sidebar.contact-link">
-                Learn more
-              </ContactUsButton>
-            </p>
-            <Plan resources={this.resources} roleSet={this.plan.roleSet} />
-            <TextField
-              countCharacters
-              required
-              style={{ marginBottom: '30px', display: 'inline-block' }}
-              value={name || ''}
-              name="spaceName"
-              id="spaceName"
-              labelText="Space name"
-              helpText="Can have up to 30 characters"
-              textInputProps={{
-                maxLength: 30,
-                width: 'large'
-              }}
-              onChange={evt => this.handleSpaceNameChange(evt.target.value)}
-              validationMessage={errorMessage}
-            />
-            {invalidName && <p className="cfnext-form__field-error">Invalid name</p>}
 
-            <TemplateSelector
-              onSelect={setNewSpaceTemplate}
-              onToggle={() => this.reposition()}
-              templates={templates}
-              fetchTemplates={fetchTemplates}
-              formAlign="left"
+        {!inProgress && (
+          <Dialog.Body>
+            <EnterpriseSpaceWizardInfo />
+            <EnterpriseSpaceWizardPlan
+              resources={resources}
+              roleSet={freeSpaceRatePlan.roleSet}
+              reachedLimit={reachedLimit}
+              usage={usage}
+              limit={limit}
+              isDisabled={isFeatureDisabled}
             />
+            {showForm && (
+              <React.Fragment>
+                <TextField
+                  countCharacters
+                  required
+                  style={{ marginBottom: '30px', display: 'inline-block' }}
+                  value={name || ''}
+                  name="spaceName"
+                  id="spaceName"
+                  labelText="Space name"
+                  helpText="Can have up to 30 characters"
+                  textInputProps={{
+                    maxLength: 30,
+                    width: 'large'
+                  }}
+                  onChange={evt => this.handleSpaceNameChange(evt.target.value)}
+                />
+                <TemplateSelector
+                  onSelect={setNewSpaceTemplate}
+                  onToggle={() => this.reposition()}
+                  templates={templates}
+                  fetchTemplates={fetchTemplates}
+                  formAlign="left"
+                />
+              </React.Fragment>
+            )}
+            {!showForm && (
+              <React.Fragment>
+                {reachedLimit &&
+                  !isFeatureDisabled && (
+                    <p className="note-box--info">
+                      {`You've created ${limit} proof of concept spaces. Delete existing ones or talk to us if you need more.`}
+                    </p>
+                  )}
+                {isFeatureDisabled && (
+                  <p className="note-box--info">{`You can't create proof of concept spaces because they're not a part of your enterprise deal with Contentful.
+                  Get in touch with us if you want to create new spaces.`}</p>
+                )}
+                <ContactUsButton buttonType="button" noIcon>
+                  Talk to us
+                </ContactUsButton>
+              </React.Fragment>
+            )}
           </Dialog.Body>
         )}
-        {!showProgress && (
+        {showForm && (
           <Dialog.Controls>
             <button
+              disabled={reachedLimit || isFeatureDisabled || !isValid}
               className={`btn-action ${submitted ? 'is-loading' : ''}`}
               onClick={this.handleSubmit.bind(this)}>
               Confirm and create space
@@ -179,24 +205,6 @@ class EnterpriseSpaceWizard extends React.Component {
     );
   }
 }
-
-function Plan({ resources, roleSet }) {
-  return (
-    <div
-      className="space-plans-list__item space-plans-list__item--proof-of-concept"
-      style={{ marginBottom: '30px' }}>
-      <div className="space-plans-list__item__heading">
-        <strong data-test-id="space-plan-name">Proof of concept</strong>
-        <span data-test-id="space-plan-price"> - Free</span>
-      </div>
-      <PlanFeatures resources={resources} roleSet={roleSet} />
-    </div>
-  );
-}
-Plan.propTypes = {
-  resources: PropTypes.array.isRequired,
-  roleSet: PropTypes.object.isRequired
-};
 
 const mapStateToProps = state => {
   return {

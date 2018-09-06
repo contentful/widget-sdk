@@ -33,13 +33,26 @@ describe('CreateSpace', () => {
       });
       $provide.value('utils/LaunchDarkly', {});
       $provide.value('access_control/AccessChecker', this.accessChecker);
+      $provide.value('services/ResourceService.es6', () => ({
+        get: sinon.stub().returns(
+          Promise.resolve({
+            usage: 1,
+            limits: {
+              maximum: 5
+            }
+          })
+        )
+      }));
     });
     this.PricingDataProvider = this.$inject('account/pricing/PricingDataProvider.es6');
     this.PricingDataProvider.getSpaceRatePlans = this.getSpaceRatePlans;
     this.PricingDataProvider.getBasePlan = sinon.stub().returns({ customerType: 'Enterprise' });
     this.PricingDataProvider.isPOCEnabled = this.isPOCEnabled;
     this.modalDialog = this.$inject('modalDialog');
-    this.modalDialog.open = sinon.stub().returns({ promise: this.resolve() });
+    this.CreateSpace = this.$inject('services/CreateSpace.es6');
+    this.modalDialog.open = sinon
+      .stub()
+      .returns({ promise: this.resolve(), destroy: sinon.stub().returns(Promise.resolve()) });
     this.CreateSpace = this.$inject('services/CreateSpace.es6');
   });
 
@@ -54,10 +67,10 @@ describe('CreateSpace', () => {
 
     it('opens wizard with v2 org id', function*() {
       yield this.CreateSpace.showDialog('v2');
-      const modalArgs = this.modalDialog.open.firstCall.args[0];
+      const modalArgs = this.modalDialog.open.secondCall.args[0];
       expect(modalArgs.scopeData.organization.sys.id).toBe(this.v2Org.sys.id);
       expect(modalArgs.template).toContain('cf-space-wizard');
-      sinon.assert.calledOnce(this.modalDialog.open);
+      sinon.assert.calledTwice(this.modalDialog.open);
     });
 
     it('throws if no org id is passed', function*() {
@@ -79,10 +92,10 @@ describe('CreateSpace', () => {
       this.getSpaceRatePlans.returns([this.ratePlans.enterprise]);
       this.isPOCEnabled.returns(true);
       await this.CreateSpace.showDialog('v2');
-      const modalArgs = this.modalDialog.open.firstCall.args[0];
+      const modalArgs = this.modalDialog.open.secondCall.args[0];
       expect(modalArgs.scopeData.modalProps.organization.sys.id).toBe(this.v2Org.sys.id);
       expect(modalArgs.template).toContain('enterprise-space-wizard');
-      sinon.assert.calledOnce(this.modalDialog.open);
+      sinon.assert.calledTwice(this.modalDialog.open);
     });
   });
 });
