@@ -13,10 +13,10 @@ function replaceHCall(j) {
     }
     if (node.arguments.length > 1 && node.arguments[1].properties) {
       attributes = node.arguments[1].properties.map(
-        ({ key: { name: keyName, value: keyValue }, value: { value } }) =>
+        ({ key: { name: keyName, value: keyValue }, value: { value, name } }) =>
           j.jsxAttribute(
             j.jsxIdentifier(mapArgumentKey(keyName || keyValue)),
-            value ? j.literal(value) : j.jsxExpressionContainer(j.identifier(keyName))
+            value ? j.literal(value) : j.jsxExpressionContainer(j.identifier(name || keyName))
           )
       );
     }
