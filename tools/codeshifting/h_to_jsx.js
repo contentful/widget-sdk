@@ -1,6 +1,13 @@
-const { includes, cond, constant, stubTrue, camelCase, eq } = require('lodash');
+const { flow, includes, cond, constant, stubTrue, camelCase, identity } = require('lodash');
+const { get, eq } = require('lodash/fp');
 
 const mapArgumentKey = cond([[eq('xlink:href'), constant('xlinkHref')], [stubTrue, camelCase]]);
+
+const hasType = check =>
+  flow(
+    get('type'),
+    eq(check)
+  );
 
 function replaceHCall(j) {
   return node => {
@@ -13,10 +20,21 @@ function replaceHCall(j) {
     }
     if (node.arguments.length > 1 && node.arguments[1].properties) {
       attributes = node.arguments[1].properties.map(
-        ({ key: { name: keyName, value: keyValue }, value: { value, name } }) =>
+        ({ key: { name: keyName, value: keyValue }, value }) =>
           j.jsxAttribute(
             j.jsxIdentifier(mapArgumentKey(keyName || keyValue)),
-            value ? j.literal(value) : j.jsxExpressionContainer(j.identifier(name || keyName))
+            cond([
+              [hasType('ObjectExpression'), j.jsxExpressionContainer],
+              [hasType('Literal'), identity],
+              [
+                hasType('Identifier'),
+                flow(
+                  get('name'),
+                  j.identifier,
+                  j.jsxExpressionContainer
+                )
+              ]
+            ])(value)
           )
       );
     }
