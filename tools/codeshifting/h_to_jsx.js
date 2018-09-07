@@ -1,24 +1,32 @@
-const { includes, startsWith } = require('lodash');
+const { includes } = require('lodash');
 
 function replaceHCall(j) {
   return node => {
     let attributes = [];
     if (node.arguments.length > 1 && node.arguments[1].properties) {
-      attributes = node.arguments[1].properties.map(({ key: { name }, value: { value } }) =>
-        j.jsxAttribute(j.jsxIdentifier(name), j.literal(value))
+      attributes = node.arguments[1].properties.map(
+        ({ key: { name: keyName, value: keyValue }, value: { value } }) =>
+          j.jsxAttribute(j.jsxIdentifier(keyName || keyValue), j.literal(value))
       );
     }
     const hArgument = node.arguments[0].value;
     let tagName = hArgument;
-    if (includes(tagName, '.')) {
-      const classNames = hArgument.split('.').slice(1);
-      if (startsWith(hArgument, '.')) {
-        tagName = 'div';
-      } else {
-        tagName = hArgument.split('.')[0];
-      }
+    if (includes(hArgument, '#')) {
+      attributes.push(j.jsxAttribute(j.jsxIdentifier('id'), j.literal(hArgument.split('#')[1])));
+      tagName = hArgument.split('#')[0] || 'div';
+    }
+    if (includes(hArgument, '.')) {
+      tagName = hArgument.split('.')[0] || 'div';
       attributes.push(
-        j.jsxAttribute(j.jsxIdentifier('className'), j.literal(classNames.join(' ')))
+        j.jsxAttribute(
+          j.jsxIdentifier('className'),
+          j.literal(
+            hArgument
+              .split('.')
+              .slice(1)
+              .join(' ')
+          )
+        )
       );
     }
     if (node.arguments.length < 3 || !node.arguments[2].elements) {
