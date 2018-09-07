@@ -6,6 +6,9 @@ function replaceHCall(j) {
     if (node.type === 'Literal') {
       return j.jsxText(node.value);
     }
+    if (node.type === 'TemplateLiteral') {
+      return j.jsxExpressionContainer(node);
+    }
     if (node.arguments.length > 1 && node.arguments[1].properties) {
       attributes = node.arguments[1].properties.map(
         ({ key: { name: keyName, value: keyValue }, value: { value } }) =>
