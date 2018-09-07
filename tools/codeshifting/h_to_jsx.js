@@ -3,6 +3,9 @@ const { includes } = require('lodash');
 function replaceHCall(j) {
   return node => {
     let attributes = [];
+    if (node.type === 'Literal') {
+      return j.jsxText(node.value);
+    }
     if (node.arguments.length > 1 && node.arguments[1].properties) {
       attributes = node.arguments[1].properties.map(
         ({ key: { name: keyName, value: keyValue }, value: { value } }) =>
@@ -32,14 +35,19 @@ function replaceHCall(j) {
         )
       );
     }
-    if (node.arguments.length < 3 || !node.arguments[2].elements) {
-      return j.jsxElement(j.jsxOpeningElement(j.jsxIdentifier(tagName), attributes, true));
+    const children =
+      (node.arguments[1] && node.arguments[1].elements) ||
+      (node.arguments[2] && node.arguments[2].elements) ||
+      null;
+
+    if (children) {
+      return j.jsxElement(
+        j.jsxOpeningElement(j.jsxIdentifier(tagName), attributes),
+        j.jsxClosingElement(j.jsxIdentifier(tagName)),
+        children.map(replaceHCall(j))
+      );
     }
-    return j.jsxElement(
-      j.jsxOpeningElement(j.jsxIdentifier(tagName), attributes),
-      j.jsxClosingElement(j.jsxIdentifier(tagName)),
-      node.arguments[2].elements.map(replaceHCall(j))
-    );
+    return j.jsxElement(j.jsxOpeningElement(j.jsxIdentifier(tagName), attributes, true));
   };
 }
 
