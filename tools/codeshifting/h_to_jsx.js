@@ -6,7 +6,10 @@ function replaceHCall(j) {
     if (node.arguments.length > 1 && node.arguments[1].properties) {
       attributes = node.arguments[1].properties.map(
         ({ key: { name: keyName, value: keyValue }, value: { value } }) =>
-          j.jsxAttribute(j.jsxIdentifier(keyName || keyValue), j.literal(value))
+          j.jsxAttribute(
+            j.jsxIdentifier(keyName || keyValue),
+            value ? j.literal(value) : j.jsxExpressionContainer(j.identifier(keyName))
+          )
       );
     }
     const hArgument = node.arguments[0].value;
@@ -42,9 +45,13 @@ function replaceHCall(j) {
 
 module.exports = function(fileInfo, { jscodeshift: j }) {
   const ast = j(fileInfo.source);
+  let hasArguments = ast.find(j.ArrowFunctionExpression).length === 1;
   ast
     .find(j.CallExpression, { callee: { type: 'Identifier', name: 'h' } })
-    .replaceWith(({ node }) => j.arrowFunctionExpression([], replaceHCall(j)(node)));
+    .replaceWith(
+      ({ node }) =>
+        hasArguments ? replaceHCall(j)(node) : j.arrowFunctionExpression([], replaceHCall(j)(node))
+    );
   ast
     .find(j.ImportDeclaration, { specifiers: [{ imported: { name: 'h' } }] })
     .forEach(({ node }) => {
