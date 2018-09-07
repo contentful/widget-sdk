@@ -76,12 +76,15 @@ function replaceHCall(j) {
 
 module.exports = function(fileInfo, { jscodeshift: j }) {
   const ast = j(fileInfo.source);
-  let hasArguments = ast.find(j.ArrowFunctionExpression).length === 1;
+  let functionWrapper =
+    ast.find(j.ArrowFunctionExpression).length === 1 || ast.find(j.FunctionExpression).length === 1;
   ast
     .find(j.CallExpression, { callee: { type: 'Identifier', name: 'h' } })
     .replaceWith(
       ({ node }) =>
-        hasArguments ? replaceHCall(j)(node) : j.arrowFunctionExpression([], replaceHCall(j)(node))
+        functionWrapper
+          ? replaceHCall(j)(node)
+          : j.arrowFunctionExpression([], replaceHCall(j)(node))
     );
   ast
     .find(j.ImportDeclaration, { specifiers: [{ imported: { name: 'h' } }] })
