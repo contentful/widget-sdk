@@ -1,4 +1,6 @@
-const { includes } = require('lodash');
+const { includes, cond, constant, stubTrue, camelCase, eq } = require('lodash');
+
+const mapArgumentKey = cond([[eq('xlink:href'), constant('xlinkHref')], [stubTrue, camelCase]]);
 
 function replaceHCall(j) {
   return node => {
@@ -13,7 +15,7 @@ function replaceHCall(j) {
       attributes = node.arguments[1].properties.map(
         ({ key: { name: keyName, value: keyValue }, value: { value } }) =>
           j.jsxAttribute(
-            j.jsxIdentifier(keyName || keyValue),
+            j.jsxIdentifier(mapArgumentKey(keyName || keyValue)),
             value ? j.literal(value) : j.jsxExpressionContainer(j.identifier(keyName))
           )
       );
