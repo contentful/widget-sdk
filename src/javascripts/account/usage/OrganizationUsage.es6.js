@@ -1,13 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { mapValues, flow, keyBy, cond, constant, stubTrue } from 'lodash/fp';
+import { mapValues, flow, keyBy, cond, constant, stubTrue, get, eq } from 'lodash/fp';
 
 import { Spinner } from '@contentful/ui-component-library';
 
 import { trigger } from 'ReloadNotification';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { getAllSpaces } from 'access_control/OrganizationMembershipRepository.es6';
-import { isEnterprisePlan, getBasePlan } from 'account/pricing/PricingDataProvider.es6';
+import {
+  isEnterprisePlan,
+  getBasePlan,
+  getPlansWithSpaces
+} from 'account/pricing/PricingDataProvider.es6';
 import createResourceService from 'services/ResourceService.es6';
 import { getOrganization } from 'services/TokenStore.es6';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
@@ -69,12 +73,14 @@ export default class OrganizationUsage extends React.Component {
       if (commited && flagActive) {
         const [
           spaces,
+          plans,
           periods,
           {
             limits: { included: includedLimit }
           }
         ] = await Promise.all([
           getAllSpaces(this.endpoint),
+          getPlansWithSpaces(this.endpoint),
           getPeriods(this.endpoint),
           service.get('api_request')
         ]);
@@ -82,8 +88,18 @@ export default class OrganizationUsage extends React.Component {
           keyBy('sys.id'),
           mapValues('name')
         )(spaces);
+        const isPoC = flow(
+          keyBy('space.sys.id'),
+          mapValues(
+            flow(
+              get('name'),
+              eq('Proof of concept')
+            )
+          )
+        )(plans.items);
         this.setState({
           spaceNames,
+          isPoC,
           periods: periods.items,
           includedLimit,
           hasSpaces: spaces.length !== 0
@@ -130,6 +146,7 @@ export default class OrganizationUsage extends React.Component {
   render() {
     const {
       spaceNames,
+      isPoC,
       selectedPeriodIndex,
       isLoading,
       periods,
@@ -171,6 +188,7 @@ export default class OrganizationUsage extends React.Component {
               <OrganizationUsagePage
                 period={periods[selectedPeriodIndex]}
                 spaceNames={spaceNames}
+                isPoC={isPoC}
                 usage={usage}
                 includedLimit={includedLimit}
                 isLoading={isLoading}

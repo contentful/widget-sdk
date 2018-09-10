@@ -23,6 +23,7 @@ const apiUsagePropType = arrayPropType(organizationResourceUsagePropType);
 export default class OrganizationUsagePage extends React.Component {
   static propTypes = {
     spaceNames: PropTypes.objectOf(PropTypes.string).isRequired,
+    isPoC: PropTypes.objectOf(PropTypes.bool).isRequired,
     usage: PropTypes.shape({
       org: organizationUsagePropType,
       apis: PropTypes.shape({
@@ -51,7 +52,8 @@ export default class OrganizationUsagePage extends React.Component {
       includedLimit,
       spaceNames,
       period,
-      isLoading
+      isLoading,
+      isPoC
     } = this.props;
     const totalUsage = sum(org.usage);
 
@@ -83,6 +85,7 @@ export default class OrganizationUsagePage extends React.Component {
             key={api}
             usage={usage.items}
             spaceNames={spaceNames}
+            isPoC={isPoC}
             api={api}
             includedLimit={includedLimit}
             period={period}

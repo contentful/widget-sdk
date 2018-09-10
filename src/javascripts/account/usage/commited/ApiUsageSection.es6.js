@@ -5,6 +5,7 @@ import { sum } from 'lodash';
 import ApiUsageChart from './ApiUsageChart.es6';
 import { organizationResourceUsagePropType, periodPropType } from './propTypes.es6';
 import formatNumber from './formatNumber.es6';
+import Pill from './Pill.es6';
 
 const colors = ['#18a16c', '#d57d1f', '#824cb9'];
 
@@ -13,13 +14,14 @@ export default class ApiUsageSection extends React.Component {
     includedLimit: PropTypes.number.isRequired,
     api: PropTypes.string.isRequired,
     spaceNames: PropTypes.objectOf(PropTypes.string).isRequired,
+    isPoC: PropTypes.objectOf(PropTypes.bool).isRequired,
     usage: PropTypes.arrayOf(organizationResourceUsagePropType).isRequired,
     period: periodPropType.isRequired,
     isLoading: PropTypes.bool.isRequired
   };
 
   render() {
-    const { api, spaceNames, usage, includedLimit, period, isLoading } = this.props;
+    const { api, spaceNames, usage, includedLimit, period, isLoading, isPoC } = this.props;
     return (
       <React.Fragment>
         <div className="usage-page__api-usage-section">
@@ -40,7 +42,10 @@ export default class ApiUsageSection extends React.Component {
                   index
                 ) => (
                   <tr key={spaceId}>
-                    <td className="usage-page__space-name">{spaceNames[spaceId]}</td>
+                    <td className="usage-page__space-name">
+                      <span>{spaceNames[spaceId]}</span>
+                      {isPoC[spaceId] && <Pill text="POC" />}
+                    </td>
                     <td className="usage-page__space-usage">{formatNumber(sum(spaceUsage), 1)}</td>
                     <td style={{ color: colors[index] }}>
                       {`${Math.round((sum(spaceUsage) / includedLimit) * 100)}%`}
