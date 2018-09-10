@@ -24,17 +24,6 @@ export default class ApiUsageChart extends React.Component {
       tooltip: {
         trigger: 'axis'
       },
-      legend: {
-        data: usage.map(
-          ({
-            sys: {
-              space: {
-                sys: { id: spaceId }
-              }
-            }
-          }) => spaceNames[spaceId]
-        )
-      },
       xAxis: {
         data: periodToDates(period)
       },
