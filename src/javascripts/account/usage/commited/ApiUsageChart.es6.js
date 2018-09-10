@@ -25,22 +25,33 @@ export default class ApiUsageChart extends React.Component {
         trigger: 'axis'
       },
       xAxis: {
-        data: periodToDates(period)
+        data: periodToDates(period),
+        axisTick: { alignWithLabel: true, interval: 7 },
+        axisLabel: { interval: 7 }
       },
       yAxis: {
         type: 'value',
         splitLine: {
           show: false
         },
+        offset: 10,
         position: 'right',
         axisLabel: {
-          formatter: formatNumber
-        }
+          formatter: number => formatNumber(number, 1),
+          verticalAlign: 'bottom',
+          margin: 15
+        },
+        axisTick: { length: 8 },
+        axisLine: { show: false },
+        splitNumber: 4
       },
       series: usage.map(({ usage, sys: { space: { sys: { id: spaceId } } } }, index) => ({
         name: spaceNames[spaceId],
         type: 'line',
         itemStyle: { color: colors[index] },
+        lineStyle: {
+          width: 3
+        },
         data: usage,
         showSymbol: false
       }))

@@ -35,18 +35,26 @@ export default class OrganisationUsageChart extends React.Component {
         trigger: 'axis'
       },
       xAxis: {
-        data: periodToDates(period)
+        data: periodToDates(period),
+        axisTick: { alignWithLabel: true, interval: 7 },
+        axisLabel: { interval: 7 }
       },
       yAxis: {
         splitLine: {
           show: false
         },
         position: 'right',
+        offset: 10,
         min: 0,
         max: Math.max(maxValue, includedLimit),
         axisLabel: {
-          formatter: formatNumber
-        }
+          formatter: number => formatNumber(number, 1),
+          verticalAlign: 'bottom',
+          margin: 15
+        },
+        axisTick: { length: 8 },
+        axisLine: { show: false },
+        splitNumber: 4
       },
       visualMap: {
         show: false,
@@ -68,12 +76,15 @@ export default class OrganisationUsageChart extends React.Component {
         name: 'API requests',
         type: 'line',
         data: accumulatedUsage,
+        lineStyle: {
+          width: 3
+        },
         markLine: {
           silent: false,
           data: [{ yAxis: includedLimit, label: { show: false } }],
           lineStyle: {
             color: '#354351',
-            width: 2
+            width: 1.5
           },
           symbol: []
         },
