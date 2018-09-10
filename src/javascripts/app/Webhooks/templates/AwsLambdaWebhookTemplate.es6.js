@@ -68,11 +68,6 @@ export default {
           key: 'X-Contentful-AWS-Proxy-Secret',
           value: secretAccessKey,
           secret: true
-        },
-        {
-          key: 'X-Contentful-Enable-Alpha-Feature',
-          value: 'awsproxy-release-2018-08-30',
-          secret: true
         }
       ],
       transformation: {
