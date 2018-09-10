@@ -19,8 +19,7 @@ export class Tab extends React.Component {
 
     const classes = classNames({
       'webhook-template-item': true,
-      'webhook-template-item--active': isActive,
-      'webhook-template-item--3-lines': template.premium
+      'webhook-template-item--active': isActive
     });
     return (
       <div
@@ -33,7 +32,6 @@ export class Tab extends React.Component {
         <div className="webhook-template-item__title">
           <strong>{template.title}</strong>
           <small>{template.subtitle}</small>
-          {template.premium && <small>Early access</small>}
         </div>
       </div>
     );
