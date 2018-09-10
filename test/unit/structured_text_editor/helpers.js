@@ -13,11 +13,11 @@ export const block = (nodeType, data, ...content) => ({
   data
 });
 
-export const text = (value = '') => ({
+export const text = (value = '', marks = []) => ({
   nodeClass: 'text',
   nodeType: 'text',
   value,
-  marks: [],
+  marks,
   data: undefined
 });
 

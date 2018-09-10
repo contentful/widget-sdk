@@ -44,6 +44,6 @@ RUN \
 
 # Copy source files and build app
 COPY ./ ./
-RUN NODE_ENV=production ./node_modules/.bin/gulp build/with-styleguide
+RUN NODE_ENV=production node --max_old_space_size=8096 ./node_modules/.bin/gulp build/with-styleguide
 
 ENTRYPOINT ["bin/docker-entry"]

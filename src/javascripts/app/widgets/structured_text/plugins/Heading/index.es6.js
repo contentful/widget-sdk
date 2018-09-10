@@ -1,6 +1,6 @@
 import isHotkey from 'is-hotkey';
 import { BLOCKS } from '@contentful/structured-text-types';
-import { applyChange } from '../shared/BlockToggleDecorator.es6';
+import { toggleChange } from '../shared/BlockToggleDecorator.es6';
 import CommonNode from '../shared/NodeDecorator.es6';
 
 const plugin = (type, tagName, hotkey) => {
@@ -20,7 +20,7 @@ const plugin = (type, tagName, hotkey) => {
           return change.splitBlock().setBlocks(BLOCKS.PARAGRAPH);
         }
       } else if (isHotkey(hotkey, e)) {
-        change.call(applyChange, type);
+        change.call(toggleChange, type);
         return false;
       }
     }
