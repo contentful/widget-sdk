@@ -45,7 +45,6 @@ export function create(organization) {
      * @name OrganizationContext#organization
      * @type {Object}
      */
-    organization: deepFreezeClone(organization),
-    endpoint
+    organization: deepFreezeClone(organization)
   };
 }

@@ -11,11 +11,8 @@ export default {
     <ul>
       <li>Stores entries in an S3 bucket every time they are modified</li>
       <li>Scoped to events in the master environment</li>
-      <li>
-        Object key is the entry ID and with <code>.json</code> suffix
-      </li>
-      <li>Object contains JSON data with all topic, user ID and the entity itself</li>
-      <li>Should be used with a versioned bucket</li>
+      <li>Object key contains the entry ID and timestamp</li>
+      <li>Object contains the topic, user ID and the entity itself</li>
     </ul>
   ),
   fields: [
@@ -60,7 +57,7 @@ export default {
   mapParamsToDefinition: ({ region, bucket, accessKeyId, secretAccessKey }, name) => {
     return {
       name,
-      url: `https://${bucket}.s3.${region}.awsproxy.contentful.com/{ /payload/sys/id }.json`,
+      url: `https://${bucket}.s3.${region}.awsproxy.contentful.com/{ /payload/sys/id }-{ /payload/sys/updatedAt }.json`,
       topics: ['Entry.*'],
       filters: [{ equals: [{ doc: 'sys.environment.sys.id' }, 'master'] }],
       headers: [
@@ -71,6 +68,11 @@ export default {
         {
           key: 'X-Contentful-AWS-Proxy-Secret',
           value: secretAccessKey,
+          secret: true
+        },
+        {
+          key: 'X-Contentful-Enable-Alpha-Feature',
+          value: 'awsproxy-release-2018-08-30',
           secret: true
         }
       ],

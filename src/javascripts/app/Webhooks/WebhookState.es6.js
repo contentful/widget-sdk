@@ -1,13 +1,60 @@
 import React from 'react';
-import { get } from 'lodash';
-
 import spaceContext from 'spaceContext';
 import leaveConfirmator from 'navigation/confirmLeaveEditor';
 import TheLocaleStore from 'TheLocaleStore';
 import { domain } from 'Config.es6';
+import modalDialog from 'modalDialog';
 
+import Templates from './templates';
 import WebhookForbiddenPage from './WebhookForbiddenPage.es6';
-import createWebhookTemplateDialogOpener from './createWebhookTemplateDialogOpener.es6';
+
+const validTemplateIds = Templates.map(template => template.id);
+
+const isNonEmptyString = s => typeof s === 'string' && s.length > 0;
+
+function openTemplateDialog(webhookRepo, templateContentTypes, templateId) {
+  if (!validTemplateIds.includes(templateId)) {
+    return;
+  }
+
+  modalDialog.open({
+    ignoreEsc: false,
+    backgroundClose: false,
+    template:
+      '<react-component class="modal-background" name="app/Webhooks/WebhookTemplateDialog.es6" props="props" />',
+    controller: $scope => {
+      $scope.props = {
+        templateId,
+        webhookRepo,
+        templateContentTypes,
+        reposition: () => $scope.$emit('centerOn:reposition'),
+        closeDialog: () => $scope.dialog.confirm()
+      };
+    }
+  });
+}
+
+function prepareContentTypesForTemplates() {
+  const contentTypes = spaceContext.publishedCTs.getAllBare();
+  const defaultLocale = TheLocaleStore.getDefaultLocale();
+
+  return contentTypes
+    .filter(ct => isNonEmptyString(ct.displayField))
+    .map(ct => {
+      const displayField = ct.fields.find(f => f.id === ct.displayField);
+      return {
+        id: ct.sys.id,
+        name: ct.name,
+        displayFieldId: displayField && displayField.apiName
+      };
+    })
+    .filter(ct => isNonEmptyString(ct.displayFieldId))
+    .map(ct => ({
+      ...ct,
+      titlePointer: `/payload/fields/${ct.displayFieldId}/${defaultLocale.code}`,
+      appUrlPointers: `https://app.${domain}/spaces/{ /payload/sys/space/sys/id }/entries/{ /payload/sys/id }`
+    }));
+}
 
 const list = {
   name: 'list',
@@ -36,21 +83,23 @@ const list = {
     'isAdmin',
     ($scope, { templateId }, webhooks, isAdmin) => {
       const { webhookRepo } = spaceContext;
-
-      const openTemplateDialog = createWebhookTemplateDialogOpener({
+      const templateContentTypes = prepareContentTypesForTemplates();
+      const openTemplateDialogBound = openTemplateDialog.bind(
+        null,
         webhookRepo,
-        contentTypes: spaceContext.publishedCTs.getAllBare(),
-        defaultLocaleCode: get(TheLocaleStore.getDefaultLocale(), ['code'], 'en-US'),
-        domain
-      });
-
-      const forbidden = !isAdmin && <WebhookForbiddenPage templateId={templateId} />;
-
-      $scope.props = { webhooks, webhookRepo, openTemplateDialog, forbidden };
+        templateContentTypes
+      );
 
       if (isAdmin && templateId) {
-        openTemplateDialog(templateId);
+        openTemplateDialogBound(templateId);
       }
+
+      $scope.props = {
+        webhooks,
+        webhookRepo,
+        openTemplateDialog: openTemplateDialogBound,
+        forbidden: !isAdmin && <WebhookForbiddenPage templateId={templateId} />
+      };
     }
   ]
 };

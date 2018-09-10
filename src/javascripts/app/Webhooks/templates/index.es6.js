@@ -22,16 +22,16 @@ export default [
   TravisCIWebhookTemplate,
   CircleCIWebhookTemplate,
   GitlabWebhookTemplate,
-  AwsLambdaWebhookTemplate,
   GoogleCloudWebhookTemplate,
   WebtaskWebhookTemplate,
   SlackWebhookTemplate,
   TwilioWebhookTemplate,
   MailgunWebhookTemplate,
-  AwsSqsWebhookTemplate,
   PubNubWebhookTemplate,
-  AwsS3WebhookTemplate,
   AlgoliaWebhookTemplate,
   ElasticWebhookTemplate,
-  JiraWebhookTemplate
+  JiraWebhookTemplate,
+  AwsLambdaWebhookTemplate,
+  AwsS3WebhookTemplate,
+  AwsSqsWebhookTemplate
 ];
