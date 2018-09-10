@@ -3,7 +3,7 @@ import { range, keyBy, orderBy, take, sum } from 'lodash';
 import moment from 'moment';
 import random from 'random';
 
-const spaceIds = ['rsrelvblded6', 'dlom3mc1dekh', '934t3c7yth1l', '6liu3yrd45z3', '37ocojeopr4s'];
+const spaceIds = ['l9jbk9nwt9x1', 'p3tlis4g5nad', 'ayiun1vj8uqr', 'r5qk1zv92gqf', 'y5dmikaude1w'];
 const orgLimit = 2000000;
 const numberOfPreviousPeriods = 50;
 const API_FORMAT = 'YYYY-MM-DD';
