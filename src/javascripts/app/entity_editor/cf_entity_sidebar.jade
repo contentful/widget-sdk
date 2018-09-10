@@ -54,7 +54,7 @@
         | Last saved&nbsp;
         time(datetime="{{data.documentUpdatedAt}}" cf-relative-datetime)
     button.entity-sidebar__revert.btn-link(
-      ng-if="data.isEntry"
+      ng-if="data.isEntry && state.current === 'changes'"
       data-test-id="discard-changed-button"
       ui-command="state.revertToPrevious")
       | Discard changes
