@@ -24,7 +24,6 @@ angular
       const createResourceService = require('services/ResourceService.es6').default;
       const $q = require('$q');
 
-      const organization = spaceContext.organizationContext.organization;
       const resources = createResourceService(spaceContext.getId());
 
       const disableCreateApiKey = accessChecker.shouldDisable('createApiKey');
@@ -68,7 +67,7 @@ angular
       $q.all({
         apiKeys: spaceContext.apiKeyRepo.getAll(),
         resource: resources.get('apiKey'),
-        legacy: ResourceUtils.useLegacy(organization)
+        legacy: ResourceUtils.useLegacy(spaceContext.organization)
       })
         .then(result => {
           $scope.apiKeys = result.apiKeys;

@@ -24,7 +24,7 @@ angular
           '$stateParams',
           function($stateParams) {
             var controller = this;
-            var orgId = spaceContext.organizationContext.organization.sys.id;
+            var orgId = spaceContext.organization.sys.id;
 
             controller.spaceId = $stateParams.spaceId;
             controller.canNavigateTo = canNavigateTo;

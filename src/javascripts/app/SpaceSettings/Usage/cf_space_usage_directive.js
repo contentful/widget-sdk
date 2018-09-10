@@ -13,10 +13,7 @@ angular.module('contentful').directive('cfSpaceUsage', [
         const host = el[0];
 
         ReactDOM.render(
-          <SpaceUsage
-            spaceId={spaceContext.getId()}
-            orgId={spaceContext.organizationContext.organization.sys.id}
-          />,
+          <SpaceUsage spaceId={spaceContext.getId()} orgId={spaceContext.organization.sys.id} />,
           host
         );
 

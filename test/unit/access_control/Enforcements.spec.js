@@ -107,36 +107,6 @@ describe('access_control/Enforcements.es6', () => {
     });
   });
 
-  describe('gets period usage', () => {
-    describe('with space context', () => {
-      beforeEach(() => {
-        organizationMock.usage.period.assetBandwidth = 5;
-      });
-
-      it('has an error when user is an owner', () => {
-        sinon.stub(OrganizationRoles, 'isOwner').returns(true);
-        expect(enforcements.getPeriodUsage(organizationMock).message).toBeDefined();
-      });
-
-      it('has no error when user is not an owner', () => {
-        sinon.stub(OrganizationRoles, 'isOwner').returns(false);
-        expect(enforcements.getPeriodUsage(organizationMock)).toBeUndefined();
-      });
-
-      it('has no error when subscription has additional usage enabled', () => {
-        sinon.stub(OrganizationRoles, 'isOwner').returns(true);
-        organizationMock.subscription.additional_usage_allowed = true;
-        expect(enforcements.getPeriodUsage(organizationMock)).toBeUndefined();
-      });
-    });
-  });
-
-  describe('gets no period usage', () => {
-    it('has an error', () => {
-      expect(enforcements.getPeriodUsage(organizationMock)).toBeFalsy();
-    });
-  });
-
   describe('computes metrics usage', () => {
     it('for no exceeded usage metric returns no message', () => {
       expect(enforcements.computeUsageForOrganization(organizationMock)).toBeUndefined();

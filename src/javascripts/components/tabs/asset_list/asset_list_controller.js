@@ -54,9 +54,7 @@ angular.module('contentful').controller('AssetListController', [
     $scope.getAssetDimensions = getAssetDimensions;
     $scope.paginator = searchController.paginator;
 
-    const organization = spaceContext.organizationContext.organization;
-
-    $scope.isLegacyOrganization = ResourceUtils.isLegacyOrganization(organization);
+    $scope.isLegacyOrganization = ResourceUtils.isLegacyOrganization(spaceContext.organization);
     $scope.isInsideMasterEnv = EnvironmentUtils.isInsideMasterEnv(spaceContext);
 
     const trackEnforcedButtonClick = err => {

@@ -14,7 +14,7 @@ angular.module('contentful').factory(name, [
     const { getStoragePrefix } = require(CreateModernOnboardingModule);
 
     const ResumeOnboarding = ({ track }) => {
-      const currOrgId = spaceContext.organizationContext.organization.sys.id;
+      const currOrgId = spaceContext.organization.sys.id;
       // this is in render as we want this component to resume using what the latest value
       // in the localStorage is and not what the value was when it was mounted
       const handleResume = () => {

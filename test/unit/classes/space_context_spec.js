@@ -4,13 +4,7 @@ import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
 
 describe('spaceContext', () => {
   beforeEach(function() {
-    this.Subscription = {
-      newFromOrganization: sinon.stub()
-    };
     this.organization = { sys: { id: 'ORG_ID' } };
-    this.OrganizationContext = {
-      create: sinon.stub().returns({ organization: this.organization })
-    };
     this.AccessChecker = { setSpace: sinon.stub() };
     this.mockSpaceEndpoint = createMockSpaceEndpoint();
     this.initEnforcements = sinon.stub().returns(function() {});
@@ -18,8 +12,6 @@ describe('spaceContext', () => {
     module('contentful/test', $provide => {
       $provide.value('data/userCache', sinon.stub());
       $provide.value('data/editingInterfaces', sinon.stub());
-      $provide.value('Subscription', this.Subscription);
-      $provide.value('classes/OrganizationContext.es6', this.OrganizationContext);
       $provide.value('access_control/AccessChecker', this.AccessChecker);
       $provide.value('data/Endpoint.es6', {
         createSpaceEndpoint: () => this.mockSpaceEndpoint.request
@@ -116,38 +108,9 @@ describe('spaceContext', () => {
       expect(this.spaceContext.editingInterfaces).toEqual('EI');
     });
 
-    describe('updated `.subscription` value on context', () => {
-      let ORGANIZATION, SUBSCRIPTION;
-      beforeEach(function() {
-        ORGANIZATION = {};
-        SUBSCRIPTION = {};
-        this.Subscription.newFromOrganization.reset();
-        this.Subscription.newFromOrganization.withArgs(ORGANIZATION).returns(SUBSCRIPTION);
-      });
-
-      it('gets built from context `organization` data', function() {
-        this.space.data.organization = ORGANIZATION;
-        this.spaceContext.resetWithSpace(this.space.data);
-
-        sinon.assert.calledOnce(this.Subscription.newFromOrganization);
-        expect(this.spaceContext.subscription).toBe(SUBSCRIPTION);
-      });
-
-      it('is set to `null` if no organization is set on `data`', function() {
-        this.spaceContext.resetWithSpace(this.space.data);
-
-        sinon.assert.notCalled(this.Subscription.newFromOrganization);
-        expect(this.spaceContext.subscription).toBe(null);
-      });
-    });
-
     it('updates publishedCTs repo from refreshed CT list', function*() {
       yield this.result;
       expect(this.spaceContext.publishedCTs.getAllBare().map(ct => ct.sys.id)).toEqual(['A', 'B']);
-    });
-
-    it('inits organization context', function() {
-      expect(this.spaceContext.organizationContext.organization).toEqual(this.organization);
     });
 
     it('set `environments` property if environments are enabled', function*() {

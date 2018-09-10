@@ -4,11 +4,11 @@ import { launchDarkly as config } from 'Config.es6';
 import { assign, get, isNull, omitBy } from 'lodash';
 import { onValueScope, createPropertyBus } from 'utils/kefir.es6';
 import getChangesObject from 'utils/ShallowObjectDiff.es6';
-import { isOrgPlanEnterprise } from 'data/Org';
 import { getEnabledFlags, getDisabledFlags } from 'debug/EnforceFlags.es6';
 import { createMVar } from 'utils/Concurrent.es6';
 import logger from 'logger';
 
+import { isEnterpriseV1 } from 'data/isEnterprise.es6';
 import { isExampleSpace } from 'data/ContentPreview';
 import {
   getOrgRole,
@@ -220,11 +220,13 @@ function getVariation(flagName, defaultValue) {
  */
 function buildLDUser(user, currOrg, spacesByOrg, currSpace, contentPreviews, publishedCTs) {
   const orgId = currOrg.sys.id;
+  const v1 = currOrg.pricingVersion === 'pricing_version_1';
 
   let customData = {
     currentOrgId: orgId,
     currentOrgSubscriptionStatus: get(currOrg, 'subscription.status'),
-    currentOrgPlanIsEnterprise: isOrgPlanEnterprise(currOrg),
+    // checking for pricing v2 requires an API call:
+    currentOrgPlanIsEnterprise: v1 && isEnterpriseV1(currOrg),
     currentOrgHasSpace: !!get(spacesByOrg[orgId], 'length', 0),
     currentOrgPricingVersion: currOrg.pricingVersion,
 

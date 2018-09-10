@@ -50,9 +50,7 @@ describe('Locale List Controller', () => {
 
     const spaceContext = this.$inject('spaceContext');
 
-    spaceContext.organizationContext = {
-      organization: this.organization
-    };
+    spaceContext.organization = this.organization;
 
     spaceContext.space = {
       data: this.space,

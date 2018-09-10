@@ -55,7 +55,7 @@ describe('app/SpaceSettings/Environments', () => {
     };
 
     this.setPricing = pricingVersion => {
-      spaceContext.organizationContext.organization.pricingVersion = pricingVersion;
+      spaceContext.organization.pricingVersion = pricingVersion;
     };
 
     this.setIncentivizeFlag = value => {

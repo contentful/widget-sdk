@@ -37,7 +37,7 @@ export function updateNavState(state, params, spaceContext) {
   } else if (spaceContext.space) {
     const space = spaceContext.space.data;
     const env = spaceContext.space.environment;
-    const org = spaceContext.organizationContext.organization;
+    const org = spaceContext.organization;
     const availableEnvironments = spaceContext.environments;
     navStateBus.set(NavStates.Space(space, env, org, availableEnvironments));
   } else {

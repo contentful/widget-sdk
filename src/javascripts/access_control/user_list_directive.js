@@ -60,6 +60,7 @@ angular.module('contentful').controller('UserListController', [
     const accessChecker = require('access_control/AccessChecker');
     const TokenStore = require('services/TokenStore.es6');
     const UserListActions = require('access_control/UserListActions.es6');
+    const Subscription = require('Subscription');
 
     const actions = UserListActions.create(spaceContext, userListHandler, TokenStore);
 
@@ -84,8 +85,8 @@ angular.module('contentful').controller('UserListController', [
     }
 
     function canModifyUsers() {
-      const subscription = spaceContext.subscription;
-      const trialLockdown = subscription && subscription.isTrial() && subscription.hasTrialEnded();
+      const subscription = Subscription.newFromOrganization(spaceContext.organization);
+      const trialLockdown = subscription.isTrial() && subscription.hasTrialEnded();
 
       return accessChecker.canModifyUsers() && !trialLockdown;
     }

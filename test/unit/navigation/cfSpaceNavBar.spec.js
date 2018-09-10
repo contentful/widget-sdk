@@ -24,7 +24,7 @@ describe('Space nav bar directive', () => {
     accessChecker = this.$inject('access_control/AccessChecker');
     accessChecker.getSectionVisibility = sinon.stub().returns({});
 
-    spaceContext.organizationContext = { organization: { sys: { id: '123' } } };
+    spaceContext.organization = { sys: { id: '123' } };
 
     compileElement = () => {
       container = $('<cf-space-nav-bar></cf-space-nav-bar>');

@@ -35,7 +35,7 @@ describe('dialogsInitController', () => {
 
       beforeEach(function() {
         this.spaceContext.getId.returns('SPACE_ID');
-        this.spaceContext.organizationContext = { organization: ORGANIZATION };
+        this.spaceContext.organization = ORGANIZATION;
         this.$apply();
       });
 

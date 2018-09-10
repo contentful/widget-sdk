@@ -176,9 +176,7 @@ describe('The Locale list directive', () => {
 
     const spaceContext = this.$inject('spaceContext');
 
-    spaceContext.organizationContext = {
-      organization: this.organization
-    };
+    spaceContext.organization = this.organization;
 
     spaceContext.space = {
       data: this.space,

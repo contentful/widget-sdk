@@ -41,7 +41,7 @@ describe('The ApiKey list directive', () => {
     spaceContext.apiKeyRepo.getAll = sinon
       .stub()
       .resolves([{ sys: { id: 1 }, name: 'key1' }, { sys: { id: 2 }, name: 'key2' }]);
-    spaceContext.organizationContext.organization = this.organization;
+    spaceContext.organization = this.organization;
 
     this.setup = function() {
       this.container = this.$compile('<cf-api-key-list />', {
