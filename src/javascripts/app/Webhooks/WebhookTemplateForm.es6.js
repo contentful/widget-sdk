@@ -10,6 +10,12 @@ import {
 import * as WebhookEditorActions from './WebhookEditorActions.es6';
 import { values, isString } from 'lodash';
 import $state from '$state';
+import intercom from 'intercom';
+
+const openIntercom = e => {
+  e && e.preventDefault();
+  intercom.open();
+};
 
 export default class WebhookTemplateForm extends React.Component {
   static propTypes = {
@@ -79,12 +85,32 @@ export default class WebhookTemplateForm extends React.Component {
 
   render() {
     const { template, templateContentTypes } = this.props;
+    const canUseIntercom = intercom.isLoaded() && intercom.isEnabled();
 
     return (
       <div className="webhook-template-form">
         <h2 className="webhook-template-form__title">{template.title}</h2>
         {template.description && (
           <div className="webhook-template-form__description">{template.description}</div>
+        )}
+        {template.premium && (
+          <div className="webhook-template-form__error">
+            <ValidationMessage>
+              This is an early access version of AWS Webhook Templates.
+            </ValidationMessage>
+            <div className="entity-editor__field-hint">
+              AWS Webhook Templates and AWS Proxy for Webhooks are now available publicly and{' '}
+              {!canUseIntercom ? (
+                'open for feedback'
+              ) : (
+                <a href="" onClick={openIntercom}>
+                  open for feedback
+                </a>
+              )}
+              . Please note they may still be subject to change. Don’t use them for production
+              applications.
+            </div>
+          </div>
         )}
         {template.fields.map(field => {
           // We render forms for all templates and show only one of them with CSS.
