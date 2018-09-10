@@ -22,8 +22,8 @@ export default class ApiUsageSection extends React.Component {
     const { api, spaceNames, usage, includedLimit, period, isLoading } = this.props;
     return (
       <React.Fragment>
-        <h2>{`${api.toUpperCase()} requests`}</h2>
-        <div>
+        <div className="usage-page__api-usage-section">
+          <h2>{`${api.toUpperCase()} requests`}</h2>
           <h3>Top 3 spaces</h3>
           <table className="usage-page__api-table">
             <tbody>
