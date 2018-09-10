@@ -36,8 +36,12 @@ $overage-color = #FCA013
   &__api-table
     margin-top: 3rem
     margin-left: -2rem
-    border-spacing: 2rem
     font-size: 0.9rem
+    td
+      padding: 1rem
+    tr:not(:last-child)
+      td
+        border-bottom: solid 1px #E5EBED
   &__space-usage
     color: #8091A5
   &__no-spaces-placeholder
