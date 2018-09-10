@@ -90,7 +90,7 @@ export default class OrganizationUsage extends React.Component {
         });
         await this.loadPeriodData(0);
       } else {
-        this.setState({ resources: await service.getAll(), isLoading: false });
+        this.setState({ resources: await service.getAll(), isLoading: false }, onReady);
       }
 
       this.setState({ commited }, onReady);

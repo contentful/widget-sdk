@@ -8,7 +8,12 @@ export default class EChart extends React.Component {
     options: PropTypes.object.isRequired,
     isEmpty: PropTypes.bool,
     EmptyPlaceholder: PropTypes.func,
-    isLoading: PropTypes.bool.isRequired
+    isLoading: PropTypes.bool.isRequired,
+    additionalClassnames: PropTypes.string
+  };
+
+  static defaultProps = {
+    additionalClassnames: null
   };
 
   static defaultProps = {
@@ -45,7 +50,7 @@ export default class EChart extends React.Component {
   }
 
   render() {
-    const { EmptyPlaceholder, isEmpty } = this.props;
+    const { EmptyPlaceholder, isEmpty, additionalClassnames } = this.props;
     const isLoading = this.state.isLoading || this.props.isLoading;
     return (
       <React.Fragment>
@@ -55,7 +60,8 @@ export default class EChart extends React.Component {
           }}
           className={classnames('echart', {
             'echart--loading': isLoading,
-            'echart--empty': isEmpty
+            'echart--empty': isEmpty,
+            [additionalClassnames]: !!additionalClassnames
           })}
         />
         {!isLoading && isEmpty && <EmptyPlaceholder />}

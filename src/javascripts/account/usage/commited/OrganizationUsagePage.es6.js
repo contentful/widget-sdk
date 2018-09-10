@@ -57,24 +57,18 @@ export default class OrganizationUsagePage extends React.Component {
 
     return (
       <div className="usage-page">
-        <h2>Total number of API requests</h2>
         <div className="usage-page__org-section">
-          <div>
-            <div className="usage-page__total-usage">{totalUsage.toLocaleString('en-US')}</div>
-            <div className="usage-page__limit">
-              <span className="usage-page__included-limit">{`${formatNumber(
-                includedLimit
-              )} included`}</span>
-              {totalUsage > includedLimit && (
-                <span className="usage-page__overage">{` + ${(
-                  totalUsage - includedLimit
-                ).toLocaleString('en-US')} overage`}</span>
-              )}
-            </div>
-          </div>
-          <div className="usage-page__section">
-            Plan overages help you handle traffic spikes or expand the team while keeping your
-            expenses in check.
+          <h2>Total number of API requests</h2>
+          <div className="usage-page__total-usage">{totalUsage.toLocaleString('en-US')}</div>
+          <div className="usage-page__limit">
+            <span className="usage-page__included-limit">{`${formatNumber(
+              includedLimit
+            )} included`}</span>
+            {totalUsage > includedLimit && (
+              <span className="usage-page__overage">{` + ${(
+                totalUsage - includedLimit
+              ).toLocaleString('en-US')} overage`}</span>
+            )}
           </div>
           <Button onClick={this.onClickSupport}>Talk to support</Button>
         </div>

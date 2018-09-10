@@ -7,25 +7,22 @@ $overage-color = #FCA013
 .usage-page
   display: grid
   grid-template-columns: 1fr 1fr
-  grid-column-gap: 2rem
+  grid-row-gap: 5rem
   max-width: 1100px
   margin-left: auto
   margin-right: auto
   padding-left: 1rem
   & > h2
     margin-top: 3rem
-    grid-column-end: span 2
     justify-self: start
-  &__org-section
-    display: flex
-    flex-direction: column
-    justify-content: space-evenly
-    align-items: flex-start
   &__total-usage
     font-size: 2.2rem
     line-height: 3rem
+    margin-top 1rem
   &__limit
     font-size: .9rem
+  button
+    margin-top 2rem
   &__included-limit
     color: #abbbc2
   &__overage
@@ -43,11 +40,13 @@ $overage-color = #FCA013
     margin-top: 3rem
     font-size: 0.9rem
     td
-      padding: 1rem
+      padding: 1rem 3rem
       padding-left: 0
     tr:not(:last-child)
       td
         border-bottom: solid 1px #E5EBED
+  &__api-chart
+    margin-top -2rem
   &__space-usage
     color: #8091A5
   &__no-spaces-placeholder
@@ -61,6 +60,7 @@ $overage-color = #FCA013
     top: 40%
 
 .echart
+  margin-top: -1rem
   display: flex
   align-items: center
   justify-content: center
