@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { last } from 'lodash';
+import { last, merge } from 'lodash';
 import moment from 'moment';
 
 import EChart from './EChart.es6';
@@ -8,6 +8,7 @@ import formatNumber from './formatNumber.es6';
 import { periodPropType, organizationUsagePropType } from './propTypes.es6';
 import periodToDates from './periodToDates.es6';
 import EmptyChartPlaceholder from './EmptyChartPlaceholder.es6';
+import baseFormatting from './chartsBaseFormatting.es6';
 
 const accumulateUsage = usage =>
   usage.reduce((acc, value) => acc.concat(value + (last(acc) || 0)), []);
@@ -30,31 +31,13 @@ export default class OrganisationUsageChart extends React.Component {
     const { startDate, endDate } = period;
     const accumulatedUsage = accumulateUsage(usage);
     const maxValue = last(accumulatedUsage);
-    const options = {
-      tooltip: {
-        trigger: 'axis'
-      },
+    const options = merge({}, baseFormatting, {
       xAxis: {
-        data: periodToDates(period),
-        axisTick: { alignWithLabel: true, interval: 7 },
-        axisLabel: { interval: 7 }
+        data: periodToDates(period)
       },
       yAxis: {
-        splitLine: {
-          show: false
-        },
-        position: 'right',
-        offset: 10,
         min: 0,
-        max: Math.max(maxValue, includedLimit),
-        axisLabel: {
-          formatter: number => formatNumber(number, 1),
-          verticalAlign: 'bottom',
-          margin: 15
-        },
-        axisTick: { length: 8 },
-        axisLine: { show: false },
-        splitNumber: 4
+        max: Math.max(maxValue, includedLimit)
       },
       visualMap: {
         show: false,
@@ -90,7 +73,7 @@ export default class OrganisationUsageChart extends React.Component {
         },
         showSymbol: false
       }
-    };
+    });
 
     return (
       <EChart

@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import { merge } from 'lodash';
 
 import EChart from './EChart.es6';
-import formatNumber from './formatNumber.es6';
 import { organizationResourceUsagePropType, periodPropType } from './propTypes.es6';
 import periodToDates from './periodToDates.es6';
 import EmptyChartPlaceholder from './EmptyChartPlaceholder.es6';
+import baseFormatting from './chartsBaseFormatting.es6';
 
 export default class ApiUsageChart extends React.Component {
   static propTypes = {
@@ -20,30 +21,12 @@ export default class ApiUsageChart extends React.Component {
   render() {
     const { usage, colors, period, spaceNames, isLoading } = this.props;
     const { startDate, endDate } = period;
-    const options = {
-      tooltip: {
-        trigger: 'axis'
-      },
+    const options = merge({}, baseFormatting, {
       xAxis: {
-        data: periodToDates(period),
-        axisTick: { alignWithLabel: true, interval: 7 },
-        axisLabel: { interval: 7 }
+        data: periodToDates(period)
       },
       yAxis: {
-        type: 'value',
-        splitLine: {
-          show: false
-        },
-        offset: 10,
-        position: 'right',
-        axisLabel: {
-          formatter: number => formatNumber(number, 1),
-          verticalAlign: 'bottom',
-          margin: 15
-        },
-        axisTick: { length: 8 },
-        axisLine: { show: false },
-        splitNumber: 4
+        type: 'value'
       },
       series: usage.map(({ usage, sys: { space: { sys: { id: spaceId } } } }, index) => ({
         name: spaceNames[spaceId],
@@ -55,7 +38,7 @@ export default class ApiUsageChart extends React.Component {
         data: usage,
         showSymbol: false
       }))
-    };
+    });
     return (
       <EChart
         options={options}
