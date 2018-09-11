@@ -76,13 +76,19 @@ export default class OrganizationUsage extends React.Component {
           plans,
           periods,
           {
-            limits: { included: includedLimit }
+            limits: { included: apiRequestIncludedLimit }
+          },
+          {
+            usage: assetBandwidthUsage,
+            unitOfMeasure: assetBandwidthUOM,
+            limits: { included: assetBandwidthIncludedLimit }
           }
         ] = await Promise.all([
           getAllSpaces(this.endpoint),
           getPlansWithSpaces(this.endpoint),
           getPeriods(this.endpoint),
-          service.get('api_request')
+          service.get('api_request'),
+          service.get('asset_bandwidth')
         ]);
         const spaceNames = flow(
           keyBy('sys.id'),
@@ -101,7 +107,10 @@ export default class OrganizationUsage extends React.Component {
           spaceNames,
           isPoC,
           periods: periods.items,
-          includedLimit,
+          apiRequestIncludedLimit,
+          assetBandwidthUsage,
+          assetBandwidthIncludedLimit,
+          assetBandwidthUOM,
           hasSpaces: spaces.length !== 0
         });
         await this.loadPeriodData(0);
@@ -130,7 +139,7 @@ export default class OrganizationUsage extends React.Component {
       ]);
       this.setState({
         isLoading: false,
-        usage: { org, apis: { cma, cda, cpa } },
+        periodicUsage: { org, apis: { cma, cda, cpa } },
         selectedPeriodIndex: newIndex
       });
     } catch (e) {
@@ -150,8 +159,11 @@ export default class OrganizationUsage extends React.Component {
       selectedPeriodIndex,
       isLoading,
       periods,
-      includedLimit,
-      usage,
+      periodicUsage,
+      apiRequestIncludedLimit,
+      assetBandwidthUsage,
+      assetBandwidthIncludedLimit,
+      assetBandwidthUOM,
       commited,
       resources,
       flagActive,
@@ -189,8 +201,11 @@ export default class OrganizationUsage extends React.Component {
                 period={periods[selectedPeriodIndex]}
                 spaceNames={spaceNames}
                 isPoC={isPoC}
-                usage={usage}
-                includedLimit={includedLimit}
+                periodicUsage={periodicUsage}
+                apiRequestIncludedLimit={apiRequestIncludedLimit}
+                assetBandwidthUsage={assetBandwidthUsage}
+                assetBandwidthIncludedLimit={assetBandwidthIncludedLimit}
+                assetBandwidthUOM={assetBandwidthUOM}
                 isLoading={isLoading}
               />
             )

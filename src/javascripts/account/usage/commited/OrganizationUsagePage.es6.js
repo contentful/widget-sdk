@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { map, sum } from 'lodash';
+import { map, sum, partialRight } from 'lodash';
 import { Button } from '@contentful/ui-component-library';
 
 import * as Intercom from 'intercom';
 import $state from '$state';
 import { supportUrl } from 'Config.es6';
 import { track } from 'analytics/Analytics.es6';
+import { shortenStorageUnit } from 'utils/NumberUtils.es6';
 
 import OrganisationUsageChart from './OrganisationUsageChart.es6';
 import ApiUsageSection from './ApiUsageSection.es6';
@@ -24,7 +25,7 @@ export default class OrganizationUsagePage extends React.Component {
   static propTypes = {
     spaceNames: PropTypes.objectOf(PropTypes.string).isRequired,
     isPoC: PropTypes.objectOf(PropTypes.bool).isRequired,
-    usage: PropTypes.shape({
+    periodicUsage: PropTypes.shape({
       org: organizationUsagePropType,
       apis: PropTypes.shape({
         cma: apiUsagePropType,
@@ -33,7 +34,10 @@ export default class OrganizationUsagePage extends React.Component {
       })
     }).isRequired,
     period: periodPropType,
-    includedLimit: PropTypes.number.isRequired,
+    apiRequestIncludedLimit: PropTypes.number.isRequired,
+    assetBandwidthIncludedLimit: PropTypes.number.isRequired,
+    assetBandwidthUsage: PropTypes.number.isRequired,
+    assetBandwidthUOM: PropTypes.string.isRequired,
     isLoading: PropTypes.bool.isRequired
   };
 
@@ -48,14 +52,18 @@ export default class OrganizationUsagePage extends React.Component {
 
   render() {
     const {
-      usage: { org, apis },
-      includedLimit,
+      periodicUsage: { org, apis },
+      apiRequestIncludedLimit,
+      assetBandwidthIncludedLimit,
+      assetBandwidthUsage,
+      assetBandwidthUOM,
       spaceNames,
       period,
       isLoading,
       isPoC
     } = this.props;
     const totalUsage = sum(org.usage);
+    const withUnit = partialRight(shortenStorageUnit, assetBandwidthUOM);
 
     return (
       <div className="usage-page">
@@ -64,19 +72,19 @@ export default class OrganizationUsagePage extends React.Component {
           <div className="usage-page__total-usage">{totalUsage.toLocaleString('en-US')}</div>
           <div className="usage-page__limit">
             <span className="usage-page__included-limit">{`${formatNumber(
-              includedLimit
+              apiRequestIncludedLimit
             )} included`}</span>
-            {totalUsage > includedLimit && (
+            {totalUsage > apiRequestIncludedLimit && (
               <span className="usage-page__overage">{` + ${(
-                totalUsage - includedLimit
+                totalUsage - apiRequestIncludedLimit
               ).toLocaleString('en-US')} overage`}</span>
             )}
           </div>
-          <Button onClick={this.onClickSupport}>Talk to support</Button>
+          <Button onClick={this.onClickSupport}>Talk to us</Button>
         </div>
         <OrganisationUsageChart
           usage={org}
-          includedLimit={includedLimit}
+          includedLimit={apiRequestIncludedLimit}
           period={period}
           isLoading={isLoading}
         />
@@ -87,11 +95,26 @@ export default class OrganizationUsagePage extends React.Component {
             spaceNames={spaceNames}
             isPoC={isPoC}
             api={api}
-            includedLimit={includedLimit}
+            includedLimit={apiRequestIncludedLimit}
             period={period}
             isLoading={isLoading}
           />
         ))}
+        <div className="usage-page__org-section">
+          <h2>Total asset bandwidth</h2>
+          <div className="usage-page__total-usage">{withUnit(assetBandwidthUsage)}</div>
+          <div className="usage-page__limit">
+            <span className="usage-page__included-limit">{`${withUnit(
+              assetBandwidthIncludedLimit
+            )} included`}</span>
+            {assetBandwidthUsage > assetBandwidthIncludedLimit && (
+              <span className="usage-page__overage">{` + ${withUnit(
+                assetBandwidthUsage - assetBandwidthIncludedLimit
+              )} overage`}</span>
+            )}
+          </div>
+          <Button onClick={this.onClickSupport}>Talk to us</Button>
+        </div>
       </div>
     );
   }

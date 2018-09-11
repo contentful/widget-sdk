@@ -31,7 +31,7 @@ const periods = createPreviousPeriods({
 });
 const periodsById = keyBy(periods, 'id');
 
-const delayedPromise = (duration = 1000) => new Promise(resolve => setTimeout(resolve, duration));
+const delayedPromise = (duration = 0) => new Promise(resolve => setTimeout(resolve, duration));
 
 const getPeriods = endpoint =>
   delayedPromise().then(() => ({
