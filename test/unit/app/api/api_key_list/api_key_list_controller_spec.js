@@ -32,16 +32,14 @@ describe('API Key List Controller', () => {
       getData: _.constant(2),
       space: { getOrganizationId: _.constant(1), getId: _.constant('1234') },
       apiKeyRepo: { getAll: this.getApiKeys },
-      organizationContext: {
-        organization: {
-          subscriptionPlan: {
-            limits: {
-              permanent: this.resource.limits.maximum
-            }
-          },
-          usage: {
-            permanent: this.resource.usage
+      organization: {
+        subscriptionPlan: {
+          limits: {
+            permanent: this.resource.limits.maximum
           }
+        },
+        usage: {
+          permanent: this.resource.usage
         }
       }
     });

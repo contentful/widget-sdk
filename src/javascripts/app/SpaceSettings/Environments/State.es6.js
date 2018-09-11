@@ -144,7 +144,7 @@ export function createComponent(spaceContext, incentivizeUpgradeEnabled) {
     resourceService
   };
 
-  const organization = spaceContext.organizationContext.organization;
+  const organization = spaceContext.organization;
   const initialState = {
     items: [],
     canCreateEnv: true,

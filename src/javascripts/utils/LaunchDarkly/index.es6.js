@@ -4,10 +4,10 @@ import { launchDarkly as config } from 'Config.es6';
 import { assign, get, isNull, omitBy } from 'lodash';
 import { onValueScope, createPropertyBus } from 'utils/kefir.es6';
 import getChangesObject from 'utils/ShallowObjectDiff.es6';
-import { isOrgPlanEnterprise } from 'data/Org';
 import { getEnabledFlags, getDisabledFlags } from 'debug/EnforceFlags.es6';
 import { createMVar } from 'utils/Concurrent.es6';
 import logger from 'logger';
+import require from 'require';
 
 import { isExampleSpace } from 'data/ContentPreview';
 import {
@@ -221,10 +221,21 @@ function getVariation(flagName, defaultValue) {
 function buildLDUser(user, currOrg, spacesByOrg, currSpace, contentPreviews, publishedCTs) {
   const orgId = currOrg.sys.id;
 
+  // TODO start
+  // `isEnterprise` relies on `PricingDataProvider` which relies
+  // on `LaunchDarkly` (this service). We use `require` to prevent
+  // circular dependency.
+  const isEnterpriseV1 = require('data/isEnterprise.es6').isEnterpriseV1;
+  // Checking if pricing v2 organization is an enterprise requires
+  // an API call. For the time being we only check v1.
+  const v1 = currOrg.pricingVersion === 'pricing_version_1';
+  const currentOrgPlanIsEnterprise = v1 && isEnterpriseV1(currOrg);
+  // TODO end
+
   let customData = {
     currentOrgId: orgId,
     currentOrgSubscriptionStatus: get(currOrg, 'subscription.status'),
-    currentOrgPlanIsEnterprise: isOrgPlanEnterprise(currOrg),
+    currentOrgPlanIsEnterprise,
     currentOrgHasSpace: !!get(spacesByOrg[orgId], 'length', 0),
     currentOrgPricingVersion: currOrg.pricingVersion,
 

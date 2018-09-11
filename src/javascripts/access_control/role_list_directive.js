@@ -23,16 +23,17 @@ angular.module('contentful').controller('RoleListController', [
     const TheAccountView = require('TheAccountView');
     const isOwnerOrAdmin = require('services/OrganizationRoles.es6').isOwnerOrAdmin;
     const AccessChecker = require('access_control/AccessChecker');
+    const Subscription = require('Subscription');
 
-    const org = spaceContext.organizationContext.organization;
+    const organization = spaceContext.organization;
 
     $scope.loading = true;
     $q.all({
       canModifyRoles: AccessChecker.canModifyRoles(),
-      useLegacy: ResourceUtils.useLegacy(org)
+      useLegacy: ResourceUtils.useLegacy(organization)
     })
       .then(result => {
-        const subscription = spaceContext.subscription;
+        const subscription = Subscription.newFromOrganization(organization);
         const trialLockdown = subscription.isTrial() && subscription.hasTrialEnded();
 
         $scope.legacy = result.useLegacy;
@@ -47,7 +48,7 @@ angular.module('contentful').controller('RoleListController', [
     $scope.jumpToRoleMembers = jumpToRoleMembers;
     $scope.jumpToAdminRoleMembers = jumpToAdminRoleMembers;
     $scope.accountUpgradeState = TheAccountView.getSubscriptionState();
-    $scope.canUpgrade = isOwnerOrAdmin(org);
+    $scope.canUpgrade = isOwnerOrAdmin(organization);
 
     function isTranslator(role) {
       return /^Translator/.test(role.name);

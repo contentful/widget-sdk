@@ -13,8 +13,8 @@ export default {
     '$scope',
     (spaceContext, $scope) => {
       const getSpacePlan = async () => {
-        const organization = spaceContext.organizationContext.organization;
-        const orgEndpoint = createOrganizationEndpoint(organization.sys.id);
+        const orgId = spaceContext.organization.sys.id;
+        const orgEndpoint = createOrganizationEndpoint(orgId);
         let plan;
         try {
           plan = await getSingleSpacePlan(orgEndpoint, spaceContext.space.getId());

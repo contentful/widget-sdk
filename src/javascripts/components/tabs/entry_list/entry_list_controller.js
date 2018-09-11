@@ -56,9 +56,7 @@ angular
         }
       });
 
-      const organization = spaceContext.organizationContext.organization;
-
-      $scope.isLegacyOrganization = ResourceUtils.isLegacyOrganization(organization);
+      $scope.isLegacyOrganization = ResourceUtils.isLegacyOrganization(spaceContext.organization);
       $scope.isInsideMasterEnv = EnvironmentUtils.isInsideMasterEnv(spaceContext);
 
       $scope.entityStatus = entityStatus;

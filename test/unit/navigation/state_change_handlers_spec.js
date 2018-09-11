@@ -15,7 +15,7 @@ describe('navigation/stateChangeHandlers', () => {
     this.state = { go: sinon.stub() };
     this.spaceContext = {
       space: null,
-      organizationContext: null,
+      organization: null,
       purge: sinon.stub()
     };
     this.tokenStore = { getOrganization: sinon.stub().resolves({}) };
@@ -148,7 +148,7 @@ describe('navigation/stateChangeHandlers', () => {
       };
       this.setSpaceContext = function(space, org) {
         this.spaceContext.space = { data: space };
-        this.spaceContext.organizationContext = { organization: org };
+        this.spaceContext.organization = org;
       };
       this.setOrgContext = function(org) {
         this.tokenStore.getOrganization.resolves(org);

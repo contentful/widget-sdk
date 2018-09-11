@@ -27,8 +27,9 @@ angular.module('contentful').controller('RoleEditorController', [
     const createFeatureService = require('services/FeatureService.es6').default;
     const createResourceService = require('services/ResourceService.es6').default;
     const ResourceUtils = require('utils/ResourceUtils.es6');
+    const Subscription = require('Subscription');
 
-    const org = spaceContext.organizationContext.organization;
+    const organization = spaceContext.organization;
     const FeatureService = createFeatureService(spaceContext.getId());
 
     $scope.loading = true;
@@ -36,12 +37,12 @@ angular.module('contentful').controller('RoleEditorController', [
     $q.all({
       featureEnabled: FeatureService.get('customRoles'),
       resource: createResourceService(spaceContext.getId()).get('role'),
-      useLegacy: ResourceUtils.useLegacy(org)
+      useLegacy: ResourceUtils.useLegacy(organization)
     }).then(result => {
       const isNew = $scope.context.isNew;
-      const subscription = spaceContext.subscription;
-      const isTrial = subscription && subscription.isTrial();
-      const trialLockdown = isTrial && subscription.hasTrialEnded();
+
+      const subscription = Subscription.newFromOrganization(organization);
+      const trialLockdown = subscription.isTrial() && subscription.hasTrialEnded();
 
       $scope.legacy = result.useLegacy;
 

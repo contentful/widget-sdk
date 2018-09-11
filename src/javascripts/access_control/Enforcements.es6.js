@@ -3,7 +3,7 @@ import { uncapitalize } from 'stringUtils';
 import trackPersistentNotification from 'analyticsEvents/persistentNotification';
 import * as OrganizationRoles from 'services/OrganizationRoles.es6';
 import { go } from 'states/Navigator.es6';
-import { merge, findKey, forEach, get } from 'lodash';
+import { merge, findKey, forEach } from 'lodash';
 import require from 'require';
 
 const USAGE_METRICS = {
@@ -20,8 +20,6 @@ const USAGE_METRICS = {
   assetBandwidth: 'Asset Bandwidth',
   contentDeliveryApiRequest: 'Content Delivery API Requests'
 };
-
-const PERIOD_USAGE_METRICS = ['assetBandwidth', 'contentDeliveryApiRequest'];
 
 export function determineEnforcement(organization, reasons, entityType) {
   if (!reasons || (reasons.length && reasons.length === 0)) return null;
@@ -41,7 +39,11 @@ export function determineEnforcement(organization, reasons, entityType) {
       label: 'periodUsageExceeded',
       message:
         '<strong>You have reached one of your limits.</strong> To check your current limits, go to your subscription page.',
-      actionMessage: upgradeActionMessage('Go to subscription'),
+      actionMessage: () => {
+        if (OrganizationRoles.isOwner(organization)) {
+          return 'Go to subscription';
+        }
+      },
       action: upgradeAction
     },
     {
@@ -75,10 +77,6 @@ export function determineEnforcement(organization, reasons, entityType) {
 
   return error;
 
-  function upgradeActionMessage(text) {
-    return () => (isOwner(organization) ? text : undefined);
-  }
-
   function upgradeAction() {
     trackPersistentNotification.action('Quota Increase');
     // using require to avoid circular dependency :(
@@ -92,14 +90,6 @@ export function determineEnforcement(organization, reasons, entityType) {
       params: { orgId: organization.sys.id }
     });
   }
-}
-
-export function getPeriodUsage(organization) {
-  if (!isOwner(organization) || isAdditionalUsageAllowed(organization)) return;
-  if (!PERIOD_USAGE_METRICS.find(metric => computeUsageForOrganization(organization, metric)))
-    return;
-
-  return determineEnforcement(organization, ['periodUsageExceeded']);
 }
 
 export function computeUsageForOrganization(organization, filter) {
@@ -122,12 +112,4 @@ export function computeUsageForOrganization(organization, filter) {
 
 function getMetricMessage(metricKey) {
   return `You have reached your ${USAGE_METRICS[uncapitalize(metricKey)]} limit`;
-}
-
-function isOwner(organization) {
-  return OrganizationRoles.isOwner(organization);
-}
-
-function isAdditionalUsageAllowed(organization) {
-  return get(organization, 'subscription.additional_usage_allowed');
 }

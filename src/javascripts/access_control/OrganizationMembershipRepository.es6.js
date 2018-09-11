@@ -24,6 +24,10 @@ export function getUsers(endpoint, query) {
   });
 }
 
+export function getAllUsers(endpoint, params) {
+  return fetchAll(endpoint, ['users'], BATCH_LIMIT, params);
+}
+
 /**
  * Get organization's users with given ids from endpoint
  * @param {function} endpoint - organization endpoint

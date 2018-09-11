@@ -35,7 +35,7 @@ describe('subscriptionNotifier', () => {
       spaceContext.space = {
         getId: _.constant('some-space-id')
       };
-      spaceContext.organizationContext = { organization: membership.organization };
+      spaceContext.organization = membership.organization;
     };
 
     this.makeOwner = () => {

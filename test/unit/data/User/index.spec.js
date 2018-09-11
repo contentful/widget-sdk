@@ -17,9 +17,7 @@ describe('data/User', () => {
       publishedCTs: {
         items$: K.createMockProperty([])
       },
-      organizationContext: {
-        organization: {}
-      },
+      organization: {},
       space: {
         data: {}
       }
@@ -62,7 +60,7 @@ describe('data/User', () => {
           user = K.getValue(this.tokenStore.user$),
           orgs = K.getValue(this.tokenStore.organizations$),
           spacesByOrg = K.getValue(this.tokenStore.spacesByOrganization$),
-          org = this.spaceContext.organizationContext.organization,
+          org = this.spaceContext.organization,
           orgId,
           space = this.spaceContext.space.data,
           publishedCTs = []
@@ -70,7 +68,7 @@ describe('data/User', () => {
 
         this.tokenStore.organizations$.set(orgs);
         this.tokenStore.spacesByOrganization$.set(spacesByOrg);
-        this.spaceContext.organizationContext.organization = org;
+        this.spaceContext.organization = org;
         this.spaceContext.space.data = space;
         this.$stateParams.orgId = orgId;
         this.spaceContext.publishedCTs.items$.set(publishedCTs);

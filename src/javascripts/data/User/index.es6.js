@@ -257,11 +257,7 @@ function updateCurrOrgSpaceAndPublishedCTs(bus) {
 }
 
 function getCurrOrg(orgs, orgId) {
-  return (
-    getOrgById(orgs, orgId) ||
-    get(spaceContext, 'organizationContext.organization', null) ||
-    orgs[0]
-  );
+  return getOrgById(orgs, orgId) || get(spaceContext, ['organization'], null) || orgs[0];
 }
 
 function getCurrSpace() {

@@ -60,14 +60,6 @@ angular.module('contentful').factory('authorization', [
           authContext: this.authContext,
           spaceAuthContext: this.spaceContext
         });
-      },
-      isUpdated: function(tokenLookup, space) {
-        return (
-          this._tokenLookup &&
-          this._space &&
-          this._tokenLookup === tokenLookup &&
-          this._space === space
-        );
       }
     };
 

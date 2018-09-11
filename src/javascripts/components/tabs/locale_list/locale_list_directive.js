@@ -23,13 +23,14 @@ angular
       const $state = require('$state');
       const ResourceUtils = require('utils/ResourceUtils.es6');
       const EnvironmentUtils = require('utils/EnvironmentUtils.es6');
+      const _ = require('lodash');
 
       const $q = require('$q');
 
       const ResourceService = require('services/ResourceService.es6').default;
       const createFeatureService = require('services/FeatureService.es6').default;
 
-      const organization = spaceContext.organizationContext.organization;
+      const organization = spaceContext.organization;
       const canChangeSpace = require('services/OrganizationRoles.es6').isOwnerOrAdmin(organization);
 
       const resources = ResourceService(spaceContext.getId());
@@ -162,15 +163,15 @@ angular
       }
 
       function newLocale() {
-        const organization = spaceContext.organization;
-        const usage = enforcements.computeUsageForOrganization(organization, 'locale');
-
-        if (usage) {
-          return notification.error(usage);
-        } else {
-          // X.list -> X.new
-          $state.go('^.new');
+        if (ResourceUtils.isLegacyOrganization(organization)) {
+          const usage = enforcements.computeUsageForOrganization(organization, 'locale');
+          if (usage) {
+            return notification.error(usage);
+          }
         }
+
+        // X.list -> X.new
+        $state.go('^.new');
       }
 
       function getPlanResource() {
@@ -188,7 +189,7 @@ angular
       }
 
       function getSubscriptionPlanData(path) {
-        return spaceContext.getData(['organization', 'subscriptionPlan'].concat(path));
+        return _.get(organization, ['subscriptionPlan'].concat(path));
       }
     }
   ]);

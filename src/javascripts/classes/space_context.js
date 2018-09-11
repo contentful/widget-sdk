@@ -27,7 +27,6 @@ angular
       const createEIRepo = require('data/editingInterfaces');
       const ApiClient = require('data/ApiClient');
       const ShareJSConnection = require('data/sharejs/Connection.es6');
-      const Subscription = require('Subscription');
       const previewEnvironmentsCache = require('data/previewEnvironmentsCache');
       const PublishedCTRepo = require('data/ContentTypeRepo/Published.es6');
       const logger = require('logger');
@@ -37,7 +36,6 @@ angular
       const createApiKeyRepo = require('data/CMA/ApiKeyRepo.es6').default;
       const K = require('utils/kefir.es6');
       const Auth = require('Authentication.es6');
-      const OrganizationContext = require('classes/OrganizationContext.es6');
       const MembershipRepo = require('access_control/SpaceMembershipRepository.es6');
       const createUiConfigStore = require('data/UiConfig/Store.es6').default;
       const createViewMigrator = require('data/ViewMigrator.es6').default;
@@ -48,6 +46,7 @@ angular
       const createEnvironmentsRepo = require('data/CMA/SpaceEnvironmentsRepo.es6').create;
       const createWebhookRepo = require('data/CMA/WebhookRepo.es6').default;
       const deepFreeze = require('utils/Freeze.es6').deepFreeze;
+      const deepFreezeClone = require('utils/Freeze.es6').deepFreezeClone;
       const $rootScope = require('$rootScope');
 
       const publishedCTsBus$ = K.createPropertyBus([]);
@@ -115,9 +114,7 @@ angular
           self.webhookRepo = createWebhookRepo(space);
           self.editingInterfaces = createEIRepo(self.endpoint);
           self.localeRepo = createLocaleRepo(self.endpoint);
-          const organization = self.getData('organization') || null;
-          self.organizationContext = OrganizationContext.create(organization);
-          self.subscription = organization && Subscription.newFromOrganization(organization);
+          self.organization = deepFreezeClone(self.getData('organization'));
 
           // TODO: publicly accessible docConnection is
           // used only in a process of creating space out

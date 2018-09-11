@@ -88,13 +88,7 @@ describe('Role List Controller', () => {
 
     const spaceContext = this.$inject('spaceContext');
 
-    spaceContext.organizationContext = {
-      organization: this.organization
-    };
-    spaceContext.subscription = {
-      isTrial: sinon.stub().returns(false),
-      hasTrialEnded: sinon.stub().returns(false)
-    };
+    spaceContext.organization = this.organization;
 
     spaceContext.space = {
       data: this.space,
