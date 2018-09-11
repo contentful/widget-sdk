@@ -1,0 +1,89 @@
+#!/usr/bin/env groovy
+
+@Library('contentful-jenkins-lib@master') _
+
+pipeline {
+  agent {
+    kubernetes {
+      label buildId('sniffer')
+      containerTemplate {
+        name 'node'
+        image 'node:8-alpine'
+        ttyEnabled true
+        command 'cat'
+      }
+    }
+  }
+  parameters {
+    string(name: 'last', defaultValue: '50', description: 'Analyze number of commits')
+    string(name: 'jump', defaultValue: '1', description: '')
+  }
+  options {
+    timestamps()
+    timeout(time: 20, unit: 'MINUTES')
+    checkoutToSubdirectory('user_interface')
+    buildDiscarder(logRotator(numToKeepStr: '30', artifactNumToKeepStr: '30'))
+  }
+  stages {
+    stage('Checkout project-sniffer') {
+      steps {
+        sourceCodeCheckout('project-sniffer', 'master', 'project-sniffer')
+      }
+    }
+    stage('Install dependencies') {
+      steps {
+        container('node') {
+          sh 'apk add --no-cache git zip curl'
+        }
+        withCredentials([string(credentialsId: 'NPM_TOKEN', variable: 'NPM_TOKEN')]) {
+          sh 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > project-sniffer/dashboard/.npmrc'
+        }
+      }
+    }
+    stage('Build') {
+      steps {
+        container('node') {
+          dir('project-sniffer') {
+            sh 'npm install'
+            sh 'npm --prefix ./dashboard install ./dashboard'
+            sh "node source/cli.js ../user_interface/ src/javascripts --last ${params.last} --jump ${params.jump}"
+            sh 'npm --prefix ./dashboard run build ./dashboard'
+          }
+          withCredentials([usernamePassword(credentialsId: 'netlify-ui-sniffer', passwordVariable: 'BASIC_PWD', usernameVariable: 'BASIC_USER')]){
+            writeFile(file: '_headers', text: "/*\n  Basic-Auth: ${BASIC_USER}:${BASIC_PWD}")
+            sh 'cp _headers project-sniffer/dashboard/build/'
+          }
+          sh 'npm --prefix ./project-sniffer/dashboard run zip ./project-sniffer/dashboard'
+        }
+      }
+      post {
+        always {
+          container('node') {
+            archiveArtifacts(allowEmptyArchive: true, artifacts: 'project-sniffer/dashboard/build/**, project-sniffer/dashboard/build.zip')
+          }
+        }
+      }
+    }
+    stage('Publish to Netlify') {
+      steps {
+        container('node') {
+          withCredentials([string(credentialsId: 'NETLIFY_TOKEN', variable: 'NETLIFY_TOKEN')]) {
+            sh 'curl ' +
+            '-H "Content-Type: application/zip" ' +
+            '-H "Authorization: Bearer ${NETLIFY_TOKEN}" ' +
+            '--data-binary "@project-sniffer/dashboard/build.zip" ' +
+            '--url https://api.netlify.com/api/v1/sites/user-interface-sniffer.netlify.com/deploys'
+          }
+        }
+      }
+    }
+  }
+  post {
+    success {
+      slackSend(channel: '#dev-frontend-bots', color: 'good', message: 'DEPLOYED: *user_interface* project sniffer (https://user-interface-sniffer.netlify.com/)', tokenCredentialId: 'slack-notify')
+    }
+    failure {
+      slackSend(channel: '#dev-frontend-bots', color: 'danger', message: "FAILED: *user_interface* project sniffer (<${env.BUILD_URL}console|Console>)", tokenCredentialId: 'slack-notify')
+    }
+  }
+}
