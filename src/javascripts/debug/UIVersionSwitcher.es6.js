@@ -6,7 +6,6 @@ import $window from '$window';
 import Cookies from 'Cookies';
 import { omit } from 'lodash';
 import moment from 'moment';
-import { gitRevision } from 'environment';
 import React from 'react';
 import { addNotification } from 'debug/DevNotifications.es6';
 import location from '$location';
@@ -45,7 +44,7 @@ function addVersionNotification() {
   if (!uiVersion || isTestRun) {
     return;
   }
-  addNotification('Contentful UI Version:', renderVersionNotification(gitRevision));
+  addNotification('Contentful UI Version:', renderVersionNotification(uiVersion));
 }
 
 function renderVersionNotification(gitRevision) {
