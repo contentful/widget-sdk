@@ -33,7 +33,7 @@ angular.module('contentful').factory('dialogsInitController', [
       // Reset notification related to the previous space.
       $rootScope.$broadcast('persistentNotification', null);
 
-      subscriptionNotifier.notifyAbout(spaceContext.organization || {});
+      subscriptionNotifier.notifyAbout(spaceContext.organization);
     }
 
     function initSpaceWatcher() {

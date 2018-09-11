@@ -27,7 +27,6 @@ angular.module('contentful').controller('RoleEditorController', [
     const createFeatureService = require('services/FeatureService.es6').default;
     const createResourceService = require('services/ResourceService.es6').default;
     const ResourceUtils = require('utils/ResourceUtils.es6');
-    const Subscription = require('Subscription');
 
     const organization = spaceContext.organization;
     const FeatureService = createFeatureService(spaceContext.getId());
@@ -41,9 +40,6 @@ angular.module('contentful').controller('RoleEditorController', [
     }).then(result => {
       const isNew = $scope.context.isNew;
 
-      const subscription = Subscription.newFromOrganization(organization);
-      const trialLockdown = subscription.isTrial() && subscription.hasTrialEnded();
-
       $scope.legacy = result.useLegacy;
 
       if (!result.featureEnabled) {
@@ -52,9 +48,6 @@ angular.module('contentful').controller('RoleEditorController', [
       } else if (isNew && !ResourceUtils.canCreate(result.resource)) {
         notification.error('Your organization has reached the limit for custom roles.');
         $scope.hasCustomRolesFeature = true;
-        $scope.canModifyRoles = false;
-      } else if (trialLockdown) {
-        $scope.hasCustomRolesFeature = false;
         $scope.canModifyRoles = false;
       } else {
         $scope.hasCustomRolesFeature = true;

@@ -23,7 +23,6 @@ angular.module('contentful').controller('RoleListController', [
     const TheAccountView = require('TheAccountView');
     const isOwnerOrAdmin = require('services/OrganizationRoles.es6').isOwnerOrAdmin;
     const AccessChecker = require('access_control/AccessChecker');
-    const Subscription = require('Subscription');
 
     const organization = spaceContext.organization;
 
@@ -33,11 +32,8 @@ angular.module('contentful').controller('RoleListController', [
       useLegacy: ResourceUtils.useLegacy(organization)
     })
       .then(result => {
-        const subscription = Subscription.newFromOrganization(organization);
-        const trialLockdown = subscription.isTrial() && subscription.hasTrialEnded();
-
         $scope.legacy = result.useLegacy;
-        $scope.hasFeatureEnabled = !trialLockdown && result.canModifyRoles;
+        $scope.hasFeatureEnabled = result.canModifyRoles;
         $scope.loading = false;
       })
       .then(reload)

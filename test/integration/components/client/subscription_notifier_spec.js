@@ -4,7 +4,6 @@
  * @covers dialogsInitController
  * @covers subscriptionNotifier
  * @covers OrganizationRoles
- * @covers Subscription
  */
 describe('subscriptionNotifier', () => {
   let broadcastStub, openPaywallStub;
