@@ -67,53 +67,61 @@ export default class OrganizationUsagePage extends React.Component {
 
     return (
       <div className="usage-page">
-        <div className="usage-page__org-section">
-          <h2>Total number of API requests</h2>
-          <div className="usage-page__total-usage">{totalUsage.toLocaleString('en-US')}</div>
-          <div className="usage-page__limit">
-            <span className="usage-page__included-limit">{`${formatNumber(
-              apiRequestIncludedLimit
-            )} included`}</span>
-            {totalUsage > apiRequestIncludedLimit && (
-              <span className="usage-page__overage">{` + ${(
-                totalUsage - apiRequestIncludedLimit
-              ).toLocaleString('en-US')} overage`}</span>
-            )}
+        <div className="usage-page__section">
+          <div>
+            <h2>Total number of API requests</h2>
+            <div className="usage-page__total-usage">{totalUsage.toLocaleString('en-US')}</div>
+            <div className="usage-page__limit">
+              <span className="usage-page__included-limit">{`${formatNumber(
+                apiRequestIncludedLimit
+              )} included`}</span>
+              {totalUsage > apiRequestIncludedLimit && (
+                <span className="usage-page__overage">{` + ${(
+                  totalUsage - apiRequestIncludedLimit
+                ).toLocaleString('en-US')} overage`}</span>
+              )}
+            </div>
+            <Button onClick={this.onClickSupport}>Talk to us</Button>
           </div>
-          <Button onClick={this.onClickSupport}>Talk to us</Button>
+          <div>
+            <OrganisationUsageChart
+              usage={org}
+              includedLimit={apiRequestIncludedLimit}
+              period={period}
+              isLoading={isLoading}
+            />
+          </div>
         </div>
-        <OrganisationUsageChart
-          usage={org}
-          includedLimit={apiRequestIncludedLimit}
-          period={period}
-          isLoading={isLoading}
-        />
         {map(apis, (usage, api) => (
-          <ApiUsageSection
-            key={api}
-            usage={usage.items}
-            spaceNames={spaceNames}
-            isPoC={isPoC}
-            api={api}
-            includedLimit={apiRequestIncludedLimit}
-            period={period}
-            isLoading={isLoading}
-          />
-        ))}
-        <div className="usage-page__org-section">
-          <h2>Total asset bandwidth</h2>
-          <div className="usage-page__total-usage">{withUnit(assetBandwidthUsage)}</div>
-          <div className="usage-page__limit">
-            <span className="usage-page__included-limit">{`${withUnit(
-              assetBandwidthIncludedLimit
-            )} included`}</span>
-            {assetBandwidthUsage > assetBandwidthIncludedLimit && (
-              <span className="usage-page__overage">{` + ${withUnit(
-                assetBandwidthUsage - assetBandwidthIncludedLimit
-              )} overage`}</span>
-            )}
+          <div className="usage-page__section">
+            <ApiUsageSection
+              key={api}
+              usage={usage.items}
+              spaceNames={spaceNames}
+              isPoC={isPoC}
+              api={api}
+              includedLimit={apiRequestIncludedLimit}
+              period={period}
+              isLoading={isLoading}
+            />
           </div>
-          <Button onClick={this.onClickSupport}>Talk to us</Button>
+        ))}
+        <div className="usage-page__section usage-page__section-with-divider">
+          <div>
+            <h2>Total asset bandwidth</h2>
+            <div className="usage-page__total-usage">{withUnit(assetBandwidthUsage)}</div>
+            <div className="usage-page__limit">
+              <span className="usage-page__included-limit">{`${withUnit(
+                assetBandwidthIncludedLimit
+              )} included`}</span>
+              {assetBandwidthUsage > assetBandwidthIncludedLimit && (
+                <span className="usage-page__overage">{` + ${withUnit(
+                  assetBandwidthUsage - assetBandwidthIncludedLimit
+                )} overage`}</span>
+              )}
+            </div>
+            <Button onClick={this.onClickSupport}>Talk to us</Button>
+          </div>
         </div>
       </div>
     );

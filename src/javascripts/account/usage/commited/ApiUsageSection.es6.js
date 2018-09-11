@@ -58,13 +58,15 @@ export default class ApiUsageSection extends React.Component {
             </tbody>
           </table>
         </div>
-        <ApiUsageChart
-          usage={usage}
-          period={period}
-          colors={colors}
-          spaceNames={spaceNames}
-          isLoading={isLoading}
-        />
+        <div>
+          <ApiUsageChart
+            usage={usage}
+            period={period}
+            colors={colors}
+            spaceNames={spaceNames}
+            isLoading={isLoading}
+          />
+        </div>
       </React.Fragment>
     );
   }
