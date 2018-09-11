@@ -54,7 +54,7 @@ function renderVersionNotification(gitRevision) {
       <button
         className="btn-link"
         onClick={removeUiVersion}
-        dataCfUiVersionReload={true}
+        data-cf-ui-version-reload
         style={{ marginLeft: '3px' }}>
         Clear
       </button>
