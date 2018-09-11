@@ -163,7 +163,7 @@ angular
       }
 
       function newLocale() {
-        if (organization.pricingVersion === 'pricing_version_1') {
+        if (ResourceUtils.isLegacyOrganization(organization)) {
           const usage = enforcements.computeUsageForOrganization(organization, 'locale');
           if (usage) {
             return notification.error(usage);

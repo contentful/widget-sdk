@@ -1,11 +1,7 @@
 import { get, constant } from 'lodash';
 
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
-
-const PRICING_VERSION_TO_CHECK_MAP = {
-  pricing_version_1: isEnterpriseV1,
-  pricing_version_2: isEnterpriseV2
-};
+import * as PricingV2 from 'account/pricing/PricingDataProvider.es6';
 
 // These don't change too often so we cache them for the whole
 // user session. V2 needs to talk to the API so we prefer to
@@ -21,8 +17,14 @@ export default async function isEnterprise(organization) {
     return true;
   }
 
+  // Unknown pricing? it's not Enterprise for sure
+  const unknownPricing = constant(false);
+
   const checkIfEnterprise =
-    PRICING_VERSION_TO_CHECK_MAP[organization.pricingVersion] || constant(false); // Unknown pricing? it's not Enterprise for sure
+    {
+      pricing_version_1: isEnterpriseV1,
+      pricing_version_2: isEnterpriseV2
+    }[organization.pricingVersion] || unknownPricing;
 
   const status = await checkIfEnterprise(organization);
   enterpriseStatusCache[id] = status;
@@ -52,20 +54,8 @@ export async function isEnterpriseV2(organization) {
   const endpoint = createOrganizationEndpoint(organization.sys.id);
 
   try {
-    // Yes, it's still considered "alpha".
-    // Returns list of plans. Because of the query there'll
-    // be only one plan, the base plan with `customerType`
-    // property.
-    const [plans] = await endpoint(
-      {
-        method: 'GET',
-        path: ['plans'],
-        query: { plan_type: 'base' }
-      },
-      { 'x-contentful-enable-alpha-feature': 'subscriptions-api' }
-    );
-
-    return plans[0].customerType.toLowerCase() === 'enterprise';
+    const plan = await PricingV2.getBasePlan(endpoint);
+    return PricingV2.isEnterprisePlan(plan);
   } catch (err) {
     // Plan endpoints are 404 for all the things but valid V2.
     // If there was a network issue just continue as a non-enterprise.

@@ -9,7 +9,7 @@ import { go } from 'states/Navigator.es6';
 import { get, includes, extend } from 'lodash';
 import UserSpaceInvitationDialog from 'access_control/templates/UserSpaceInvitationDialog.es6';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
-import { fetchAll } from 'data/CMA/FetchAll.es6';
+import { getAllUsers } from 'access_control/OrganizationMembershipRepository.es6';
 
 const MODAL_OPTS_BASE = {
   noNewScope: true,
@@ -156,8 +156,7 @@ export function create(spaceContext, userListHandler, TokenStore) {
         .then(query => {
           const orgId = spaceContext.organization.sys.id;
           const endpoint = createOrganizationEndpoint(orgId);
-          // `GET /organizations/:id/users` endpoint returns a max of 100 items
-          return fetchAll(endpoint, ['users'], 100, query);
+          return getAllUsers(endpoint, query);
         })
         .then(organizationUsers => {
           const spaceUserIds = userListHandler.getUserIds();
