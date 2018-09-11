@@ -37,6 +37,7 @@ window.libs = [
   ['is-hotkey', require('is-hotkey')],
   ['slate', require('slate')],
   ['slate-react', require('slate-react')],
+  ['immutable', require('immutable')],
   ['@contentful/contentful-slatejs-adapter', require('@contentful/contentful-slatejs-adapter')],
   ['@contentful/structured-text-types', require('@contentful/structured-text-types')],
   ['slate-trailing-block', require('slate-trailing-block')],

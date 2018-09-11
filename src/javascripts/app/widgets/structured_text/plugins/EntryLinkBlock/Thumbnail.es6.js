@@ -1,31 +1,44 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-// TODO: move to the widgetAPI
-import { isValidImage, getExternalImageUrl } from 'ui/cf/thumbnailHelpers.es6';
+const ServicesConsumer = require('../../../../../reactServiceContext').default;
 
-const dimensions = { w: 70, h: 70 };
+const dimensions = { width: 70, height: 70 };
 
-export default class Thumbnail extends React.Component {
+class Thumbnail extends React.Component {
   static propTypes = {
-    entryThumbnail: PropTypes.shape({
+    thumbnail: PropTypes.shape({
       url: PropTypes.string,
       contentType: PropTypes.string
-    })
+    }),
+    $services: PropTypes.shape({
+      thumbnailHelpers: PropTypes.object
+    }).isRequired
   };
 
   static defaultProps = {
-    entryThumbnail: undefined
+    thumbnail: undefined
   };
 
   render() {
-    const { entryThumbnail } = this.props;
-    const valid = entryThumbnail && isValidImage(entryThumbnail.contentType);
+    const {
+      thumbnail,
+      $services: { thumbnailHelpers }
+    } = this.props;
+    const valid = thumbnail && thumbnailHelpers.isValidImage(thumbnail.contentType);
     if (!valid) {
       return null;
     }
-    const imgUrl = getExternalImageUrl(entryThumbnail.url);
-    const thumbnailUrl = `${imgUrl}?w=${dimensions.w}&h=${dimensions.h}&fit=thumb`;
-    return <img src={thumbnailUrl} height={`${dimensions.h}`} width={`${dimensions.w}`} />;
+    const imgUrl = thumbnailHelpers.getExternalImageUrl(thumbnail.url);
+
+    return (
+      <img
+        src={`${imgUrl}?w=${dimensions.width}&h=${dimensions.height}&fit=thumb`}
+        height={dimensions.height}
+        width={dimensions.width}
+      />
+    );
   }
 }
+
+export default ServicesConsumer('thumbnailHelpers')(Thumbnail);

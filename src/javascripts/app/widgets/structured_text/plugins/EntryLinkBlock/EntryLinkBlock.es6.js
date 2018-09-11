@@ -2,23 +2,27 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { ReferenceCard, Card, IconButton } from '@contentful/ui-component-library';
 
-import FetchEntry from './FetchEntry.es6';
+import RequestStatus from '../shared/RequestStatus.es6';
+import FetchEntry from '../shared/FetchEntry/index.es6';
+import FetchThumbnail from './FetchThumbnail/index.es6';
 import Thumbnail from './Thumbnail.es6';
-// TODO: move closer to the widgetAPI
-import { goToSlideInEntity } from 'navigation/SlideInNavigator';
+const ServicesConsumer = require('../../../../../reactServiceContext').default;
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
 
-export default class LinkedEntryBlock extends React.Component {
+class LinkedEntryBlock extends React.Component {
   static propTypes = {
     isSelected: PropTypes.bool.isRequired,
     attributes: PropTypes.object.isRequired,
     editor: PropTypes.object.isRequired,
-    node: PropTypes.object.isRequired
+    node: PropTypes.object.isRequired,
+    $services: PropTypes.shape({
+      slideInNavigator: PropTypes.object
+    }).isRequired
   };
 
   handleEditClick = (event, entry) => {
     event.stopPropagation();
-    goToSlideInEntity(
+    this.props.$services.slideInNavigator.goToSlideInEntity(
       {
         id: entry.sys.id,
         type: 'Entry'
@@ -33,15 +37,10 @@ export default class LinkedEntryBlock extends React.Component {
     editor.change(change => change.removeNodeByKey(node.key));
   };
 
-  renderReferenceCard({
-    entry,
-    entryTitle,
-    contentTypeName,
-    entryDescription,
-    entryThumbnail,
-    entryStatus,
-    loading
-  }) {
+  renderReferenceCard(
+    { entry, entryTitle, contentTypeName, entryDescription, entryStatus, requestStatus },
+    thumbnailResult
+  ) {
     const { isSelected } = this.props;
 
     return (
@@ -53,8 +52,8 @@ export default class LinkedEntryBlock extends React.Component {
         description={entryDescription}
         selected={isSelected}
         status={entryStatus}
-        thumbnailElement={<Thumbnail entryThumbnail={entryThumbnail} />}
-        loading={loading.entry || loading.thumbnail}
+        thumbnailElement={<Thumbnail thumbnail={thumbnailResult.thumbnail} />}
+        loading={requestStatus === RequestStatus.Pending}
         actionElements={
           <React.Fragment>
             <IconButton
@@ -117,10 +116,19 @@ export default class LinkedEntryBlock extends React.Component {
             node={node}
             currentUrl={widgetAPI.currentUrl}
             render={fetchEntryResult => {
-              if (fetchEntryResult.entryIsMissing) {
+              if (fetchEntryResult.requestStatus === RequestStatus.Error) {
                 return this.renderMissingEntryReferenceCard();
               } else {
-                return this.renderReferenceCard(fetchEntryResult);
+                return (
+                  <FetchThumbnail
+                    node={node}
+                    currentUrl={widgetAPI.currentUrl}
+                    entry={fetchEntryResult.entryWrapper}
+                    render={thumbnailResult => {
+                      return this.renderReferenceCard(fetchEntryResult, thumbnailResult);
+                    }}
+                  />
+                );
               }
             }}
           />
@@ -129,3 +137,5 @@ export default class LinkedEntryBlock extends React.Component {
     );
   }
 }
+
+export default ServicesConsumer('slideInNavigator')(LinkedEntryBlock);
