@@ -5,7 +5,7 @@ import moment from 'moment';
 
 import EChart from './EChart.es6';
 import formatNumber from './formatNumber.es6';
-import { periodPropType, organizationUsagePropType } from './propTypes.es6';
+import { periodPropType } from './propTypes.es6';
 import periodToDates from './periodToDates.es6';
 import EmptyChartPlaceholder from './EmptyChartPlaceholder.es6';
 import baseFormatting from './chartsBaseFormatting.es6';
@@ -15,19 +15,14 @@ const accumulateUsage = usage =>
 
 export default class OrganisationUsageChart extends React.Component {
   static propTypes = {
-    usage: organizationUsagePropType.isRequired,
+    usage: PropTypes.arrayOf(PropTypes.number).isRequired,
     includedLimit: PropTypes.number.isRequired,
     period: periodPropType.isRequired,
     isLoading: PropTypes.bool.isRequired
   };
 
   render() {
-    const {
-      includedLimit,
-      usage: { usage },
-      period,
-      isLoading
-    } = this.props;
+    const { includedLimit, usage, period, isLoading } = this.props;
     const { startDate, endDate } = period;
     const accumulatedUsage = accumulateUsage(usage);
     const maxValue = last(accumulatedUsage);

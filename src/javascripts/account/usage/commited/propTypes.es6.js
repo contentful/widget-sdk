@@ -18,15 +18,19 @@ const periodPropType = PropTypes.shape({
 
 const organizationUsagePropType = PropTypes.shape({
   sys: PropTypes.shape({
-    type: PropTypes.oneOf(['OrganizationUsage']),
+    type: PropTypes.oneOf(['Array']),
     id: PropTypes.string
   }),
-  usage: PropTypes.arrayOf(PropTypes.number)
+  items: PropTypes.arrayOf(
+    PropTypes.shape({
+      usage: PropTypes.arrayOf(PropTypes.number)
+    })
+  )
 });
 
 const organizationResourceUsagePropType = PropTypes.shape({
   sys: PropTypes.shape({
-    type: PropTypes.oneOf(['SpaceResourceUsage']),
+    type: PropTypes.oneOf(['cmaUsage', 'cpaUsage', 'cdaUsage']),
     id: PropTypes.string,
     space: PropTypes.shape({ sys: PropTypes.shape({ id: PropTypes.string }) })
   }),

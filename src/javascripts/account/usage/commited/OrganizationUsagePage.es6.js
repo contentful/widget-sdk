@@ -52,7 +52,12 @@ export default class OrganizationUsagePage extends React.Component {
 
   render() {
     const {
-      periodicUsage: { org, apis },
+      periodicUsage: {
+        org: {
+          items: [{ usage: orgUsage }]
+        },
+        apis
+      },
       apiRequestIncludedLimit,
       assetBandwidthIncludedLimit,
       assetBandwidthUsage,
@@ -62,7 +67,7 @@ export default class OrganizationUsagePage extends React.Component {
       isLoading,
       isPoC
     } = this.props;
-    const totalUsage = sum(org.usage);
+    const totalUsage = sum(orgUsage);
     const withUnit = partialRight(shortenStorageUnit, assetBandwidthUOM);
 
     return (
@@ -85,7 +90,7 @@ export default class OrganizationUsagePage extends React.Component {
           </div>
           <div>
             <OrganisationUsageChart
-              usage={org}
+              usage={orgUsage}
               includedLimit={apiRequestIncludedLimit}
               period={period}
               isLoading={isLoading}
@@ -93,9 +98,8 @@ export default class OrganizationUsagePage extends React.Component {
           </div>
         </div>
         {map(apis, (usage, api) => (
-          <div className="usage-page__section">
+          <div key={api} className="usage-page__section">
             <ApiUsageSection
-              key={api}
               usage={usage.items}
               spaceNames={spaceNames}
               isPoC={isPoC}
