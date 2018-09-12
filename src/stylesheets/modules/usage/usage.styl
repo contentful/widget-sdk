@@ -9,17 +9,15 @@ $overage-color = #FCA013
   flex-direction: column
   max-width: 1100px
   margin: 0 auto
+  &__section, &__asset-bandwidth-section
+    margin: 2rem
   &__section
     display: flex
     flex-direction: row
     justify-content: space-between
-    margin: 2rem
-    &--with-divider
-      border-top: solid 1px $colors.element-mid
-      padding-top: 59px
-  & > h2
-    margin-top: 3rem
-    justify-self: start
+  &__asset-bandwidth-section
+    border-top: solid 1px $colors.element-mid
+    padding-top: 59px
   &__total-usage
     font-size: 2.2rem
     line-height: 3rem
@@ -33,13 +31,13 @@ $overage-color = #FCA013
     margin-right: .2rem
   &__overage
     color: $overage-color
-  h3
-    color #9AACC2
-    margin-top 0
-    margin-left: 1rem
-  h3, h2
-    font-size: 21px
-    display: inline
+  &__api-chart-info
+    h3
+      color #9AACC2
+      margin-top 0
+      margin-left: 1rem
+    h3, h2
+      display: inline
 
   &__org-chart-tooltip
     border-radius: 2px

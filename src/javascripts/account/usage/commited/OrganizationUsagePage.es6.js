@@ -1,17 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { map, sum, partialRight } from 'lodash';
-import { Button, TextLink } from '@contentful/ui-component-library';
+import { map, sum } from 'lodash';
 
 import * as Intercom from 'intercom';
 import $state from '$state';
 import { supportUrl } from 'Config.es6';
 import { track } from 'analytics/Analytics.es6';
-import { shortenStorageUnit, shorten } from 'utils/NumberUtils.es6';
-
-import OrganisationUsageChart from './OrganisationUsageChart.es6';
-import ApiUsageInfo from './ApiUsageInfo.es6';
-import ApiUsageChart from './ApiUsageChart.es6';
 
 import {
   organizationResourceUsagePropType,
@@ -19,6 +13,11 @@ import {
   arrayPropType,
   periodPropType
 } from './propTypes.es6';
+import OrganizationUsageInfo from './OrganizationUsageInfo.es6';
+import AssetBandwidthSection from './AssetBandwidthSection.es6';
+import OrganisationUsageChart from './OrganisationUsageChart.es6';
+import ApiUsageInfo from './ApiUsageInfo.es6';
+import ApiUsageChart from './ApiUsageChart.es6';
 
 const apiUsagePropType = arrayPropType(organizationResourceUsagePropType);
 const apiSeriesColors = ['#3072BE', '#14D997', '#CD3F39'];
@@ -69,30 +68,14 @@ export default class OrganizationUsagePage extends React.Component {
       isLoading,
       isPoC
     } = this.props;
-    const totalUsage = sum(orgUsage);
-    const withUnit = partialRight(shortenStorageUnit, assetBandwidthUOM);
 
     return (
       <div className="usage-page">
         <div className="usage-page__section">
-          <div>
-            <h2>Total number of API requests</h2>
-            <div className="usage-page__total-usage">{totalUsage.toLocaleString('en-US')}</div>
-            <div className="usage-page__limit">
-              <span className="usage-page__included-limit">{`${shorten(
-                apiRequestIncludedLimit
-              )} included`}</span>
-              {totalUsage > apiRequestIncludedLimit && (
-                <span className="usage-page__overage">{` + ${(
-                  totalUsage - apiRequestIncludedLimit
-                ).toLocaleString('en-US')} overage`}</span>
-              )}{' '}
-              <TextLink href="https://www.contentful.com/r/knowledgebase/fair-use/" target="_blank">
-                Learn more
-              </TextLink>
-            </div>
-            <Button onClick={this.onClickSupport}>Talk to us</Button>
-          </div>
+          <OrganizationUsageInfo
+            totalUsage={sum(orgUsage)}
+            includedLimit={apiRequestIncludedLimit}
+          />
           <OrganisationUsageChart
             usage={orgUsage}
             includedLimit={apiRequestIncludedLimit}
@@ -119,28 +102,11 @@ export default class OrganizationUsagePage extends React.Component {
             />
           </div>
         ))}
-        <div className="usage-page__section usage-page__section--with-divider">
-          <div className="usage-page__chart-info">
-            <h2>Total asset bandwidth</h2>
-            <div className="usage-page__total-usage">{withUnit(assetBandwidthUsage)}</div>
-            <div className="usage-page__limit">
-              <span className="usage-page__included-limit">{`${withUnit(
-                assetBandwidthIncludedLimit
-              )} included`}</span>
-              {assetBandwidthUsage > assetBandwidthIncludedLimit && (
-                <React.Fragment>
-                  <span className="usage-page__overage">{` + ${withUnit(
-                    assetBandwidthUsage - assetBandwidthIncludedLimit
-                  )} overage`}</span>
-                </React.Fragment>
-              )}{' '}
-              <TextLink href="https://www.contentful.com/r/knowledgebase/fair-use/" target="_blank">
-                Learn more
-              </TextLink>
-            </div>
-            <Button onClick={this.onClickSupport}>Talk to us</Button>
-          </div>
-        </div>
+        <AssetBandwidthSection
+          assetBandwidthIncludedLimit={assetBandwidthIncludedLimit}
+          assetBandwidthUsage={assetBandwidthUsage}
+          assetBandwidthUOM={assetBandwidthUOM}
+        />
       </div>
     );
   }
