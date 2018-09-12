@@ -31,7 +31,10 @@ export default class ApiUsageInfo extends React.Component {
                   {isPoC[spaceId] && <Pill text="POC" />}
                 </td>
                 <td className="usage-page__space-usage">{formatNumber(sum(spaceUsage), 1)}</td>
-                <td style={{ color: colors[i] }} title="Percentage of total number of API requests">
+                <td
+                  className="usage-page__percentage-of-total-usage"
+                  style={{ color: colors[i] }}
+                  title="Percentage of total number of API requests">
                   {`${Math.round((sum(spaceUsage) / includedLimit) * 100)}%`}
                 </td>
               </tr>
