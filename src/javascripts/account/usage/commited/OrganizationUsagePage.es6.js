@@ -10,7 +10,9 @@ import { track } from 'analytics/Analytics.es6';
 import { shortenStorageUnit } from 'utils/NumberUtils.es6';
 
 import OrganisationUsageChart from './OrganisationUsageChart.es6';
-import ApiUsageSection from './ApiUsageSection.es6';
+import ApiUsageInfo from './ApiUsageInfo.es6';
+import ApiUsageChart from './ApiUsageChart.es6';
+
 import formatNumber from './formatNumber.es6';
 import {
   organizationResourceUsagePropType,
@@ -20,6 +22,7 @@ import {
 } from './propTypes.es6';
 
 const apiUsagePropType = arrayPropType(organizationResourceUsagePropType);
+const apiSeriesColors = ['#18a16c', '#d57d1f', '#824cb9'];
 
 export default class OrganizationUsagePage extends React.Component {
   static propTypes = {
@@ -73,7 +76,7 @@ export default class OrganizationUsagePage extends React.Component {
     return (
       <div className="usage-page">
         <div className="usage-page__section">
-          <div>
+          <div className="usage-page__chart-info">
             <h2>Total number of API requests</h2>
             <div className="usage-page__total-usage">{totalUsage.toLocaleString('en-US')}</div>
             <div className="usage-page__limit">
@@ -88,7 +91,7 @@ export default class OrganizationUsagePage extends React.Component {
             </div>
             <Button onClick={this.onClickSupport}>Talk to us</Button>
           </div>
-          <div>
+          <div className="usage-page__chart">
             <OrganisationUsageChart
               usage={orgUsage}
               includedLimit={apiRequestIncludedLimit}
@@ -99,19 +102,29 @@ export default class OrganizationUsagePage extends React.Component {
         </div>
         {map(apis, (usage, api) => (
           <div key={api} className="usage-page__section">
-            <ApiUsageSection
-              usage={usage.items}
-              spaceNames={spaceNames}
-              isPoC={isPoC}
-              api={api}
-              includedLimit={apiRequestIncludedLimit}
-              period={period}
-              isLoading={isLoading}
-            />
+            <div className="usage-page__chart-info">
+              <ApiUsageInfo
+                includedLimit={apiRequestIncludedLimit}
+                api={api}
+                spaceNames={spaceNames}
+                isPoC={isPoC}
+                usage={usage.items}
+                colors={apiSeriesColors}
+              />
+            </div>
+            <div className="usage-page__chart">
+              <ApiUsageChart
+                usage={usage.items}
+                period={period}
+                colors={apiSeriesColors}
+                spaceNames={spaceNames}
+                isLoading={isLoading}
+              />
+            </div>
           </div>
         ))}
-        <div className="usage-page__section usage-page__section-with-divider">
-          <div>
+        <div className="usage-page__section usage-page__section--with-divider">
+          <div className="usage-page__chart-info">
             <h2>Total asset bandwidth</h2>
             <div className="usage-page__total-usage">{withUnit(assetBandwidthUsage)}</div>
             <div className="usage-page__limit">

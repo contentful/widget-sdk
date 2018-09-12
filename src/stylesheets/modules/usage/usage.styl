@@ -5,13 +5,11 @@
 $overage-color = #FCA013
 
 .usage-page
-  display: grid
-  grid-template-columns: 1fr
-  max-width: 1100px
-  margin-left: auto
-  margin-right: auto
+  display: flex
+  flex-direction: column
+  margin: 0 auto 2rem
+  width: 60%
   padding-left: 1rem
-  margin-bottom: 2rem
 
   & > h2
     margin-top: 3rem
@@ -47,13 +45,20 @@ $overage-color = #FCA013
       td
         border-bottom: solid 1px #E5EBED
   &__section
-    display: grid
-    grid-template-columns: 1fr 1fr
+    display: flex
+    flex-direction: row
     margin-bottom: 1rem
     padding-top: 1rem
 
-  &__section-with-divider
-    border-top: solid 1px $colors.element-mid;
+    &--with-divider
+      border-top: solid 1px $colors.element-mid;
+
+  &__chart-info
+    width: 30%
+
+  &__chart
+    align-self: flex-end
+    width: 70%
 
   .pill
     border-radius: 2px
