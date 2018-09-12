@@ -3,12 +3,16 @@ import { uniq, identity, chunk, flatten } from 'lodash';
 
 const BATCH_LIMIT = 100;
 const USER_IDS_BATCH_LIMIT = 44;
+const ALPHA_HEADER = {
+  'x-contentful-enable-alpha-feature': 'organization-user-management-api'
+};
 
-export function getAll(endpoint) {
-  return endpoint({
-    method: 'GET',
-    path: ['organization_memberships']
-  });
+/**
+ * Get all organization memberships (not users) in the organization
+ * @param {endpoint} endpoint organization endpoint
+ */
+export function getAllMemberships(endpoint) {
+  return fetchAll(endpoint, ['organization_memberships'], BATCH_LIMIT, null, ALPHA_HEADER);
 }
 
 /**
