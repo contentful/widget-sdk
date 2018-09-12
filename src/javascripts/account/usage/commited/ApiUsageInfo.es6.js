@@ -28,7 +28,7 @@ export default class ApiUsageInfo extends React.Component {
               <tr key={spaceId}>
                 <td className="usage-page__space-name">
                   <span>{spaceNames[spaceId]}</span>
-                  {isPoC[spaceId] && <Pill text="POC" />}
+                  {isPoC[spaceId] && <Pill text="POC" tooltip="Proof of concept" />}
                 </td>
                 <td className="usage-page__space-usage">{formatNumber(sum(spaceUsage), 1)}</td>
                 <td
