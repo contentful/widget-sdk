@@ -172,7 +172,7 @@
         height: 1px;
         background: $colors.element-mid;
         top: 50%;
-    
+
     .hr--selected
       &:after
         background: $colors.blue-dark;
@@ -181,4 +181,17 @@
   .structured-text__reference-card
     margin-bottom: 1.25rem;
 
+.structured-text__hyperlink
+  display: inline;
 
+  &:hover,
+  &:focus
+    .structured-text__hyperlink-icon
+      fill: $colors.text-dark;
+
+.structured-text__hyperlink-icon
+  position: relative;
+  top: 4px;
+  height: 14px;
+  margin-left: 3px; // Optical alignment when using "trimmed" icon variant
+  transition: fill 100ms ease-in-out;
