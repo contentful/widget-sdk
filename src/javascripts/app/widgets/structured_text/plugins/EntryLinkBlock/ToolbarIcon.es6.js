@@ -55,7 +55,7 @@ export default class EntryLinkToolbarIcon extends Component {
             disabled={this.props.disabled}
             extraClassNames="structured-text__entry-link-block-button"
             size="small"
-            icon="Description"
+            icon="Entry"
             buttonType="muted"
             data-test-id={`toolbar-toggle-${BLOCKS.EMBEDDED_ENTRY}`}
             onMouseDown={event => this.handleMouseDown(event, widgetAPI)}>
