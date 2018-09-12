@@ -42,7 +42,7 @@ export default class OrganizationUsage extends React.Component {
   async componentDidMount() {
     const { onForbidden } = this.props;
 
-    await this.setState({ flagActive: await getCurrentVariation('feature-bizvel-09-2018-usage') });
+    this.setState({ flagActive: await getCurrentVariation('feature-bizvel-09-2018-usage') });
     await this.checkPermissions();
 
     try {
