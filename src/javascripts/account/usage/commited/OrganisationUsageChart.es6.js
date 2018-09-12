@@ -4,7 +4,7 @@ import { last, merge } from 'lodash';
 import moment from 'moment';
 
 import EChart from './EChart.es6';
-import formatNumber from './formatNumber.es6';
+import { shorten } from 'utils/NumberUtils.es6';
 import { periodPropType } from './propTypes.es6';
 import periodToDates from './periodToDates.es6';
 import EmptyChartPlaceholder from './EmptyChartPlaceholder.es6';
@@ -59,7 +59,7 @@ export default class OrganisationUsageChart extends React.Component {
           {
             gt: includedLimit,
             color: '#FDA31A',
-            label: `exceeding ${formatNumber(includedLimit)} limit`
+            label: `exceeding ${shorten(includedLimit)} limit`
           }
         ]
       },

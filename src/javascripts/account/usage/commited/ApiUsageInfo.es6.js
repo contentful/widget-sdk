@@ -2,8 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { sum } from 'lodash';
 
+import { shorten } from 'utils/NumberUtils.es6';
+
 import { organizationResourceUsagePropType } from './propTypes.es6';
-import formatNumber from './formatNumber.es6';
 import Pill from './Pill.es6';
 
 export default class ApiUsageInfo extends React.Component {
@@ -30,7 +31,7 @@ export default class ApiUsageInfo extends React.Component {
                   <span>{spaceNames[spaceId]}</span>
                   {isPoC[spaceId] && <Pill text="POC" tooltip="Proof of concept" />}
                 </td>
-                <td className="usage-page__space-usage">{formatNumber(sum(spaceUsage), 1)}</td>
+                <td className="usage-page__space-usage">{shorten(sum(spaceUsage))}</td>
                 <td
                   className="usage-page__percentage-of-total-usage"
                   style={{ color: colors[i] }}

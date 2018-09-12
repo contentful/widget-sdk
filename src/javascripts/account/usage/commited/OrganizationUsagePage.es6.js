@@ -7,13 +7,12 @@ import * as Intercom from 'intercom';
 import $state from '$state';
 import { supportUrl } from 'Config.es6';
 import { track } from 'analytics/Analytics.es6';
-import { shortenStorageUnit } from 'utils/NumberUtils.es6';
+import { shortenStorageUnit, shorten } from 'utils/NumberUtils.es6';
 
 import OrganisationUsageChart from './OrganisationUsageChart.es6';
 import ApiUsageInfo from './ApiUsageInfo.es6';
 import ApiUsageChart from './ApiUsageChart.es6';
 
-import formatNumber from './formatNumber.es6';
 import {
   organizationResourceUsagePropType,
   organizationUsagePropType,
@@ -80,7 +79,7 @@ export default class OrganizationUsagePage extends React.Component {
             <h2>Total number of API requests</h2>
             <div className="usage-page__total-usage">{totalUsage.toLocaleString('en-US')}</div>
             <div className="usage-page__limit">
-              <span className="usage-page__included-limit">{`${formatNumber(
+              <span className="usage-page__included-limit">{`${shorten(
                 apiRequestIncludedLimit
               )} included`}</span>
               {totalUsage > apiRequestIncludedLimit && (

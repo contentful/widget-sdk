@@ -1,4 +1,4 @@
-import formatNumber from './formatNumber.es6';
+import { shorten } from 'utils/NumberUtils.es6';
 
 export default {
   axisPointer: {
@@ -18,7 +18,7 @@ export default {
     position: 'right',
     offset: 10,
     axisLabel: {
-      formatter: number => formatNumber(number, 1),
+      formatter: shorten,
       verticalAlign: 'bottom',
       margin: 15
     },
