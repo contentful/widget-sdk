@@ -36,9 +36,12 @@ export default class OrganisationUsageChart extends React.Component {
       },
       tooltip: {
         padding: 0,
-        formatter: ([{ name, value }]) =>
+        formatter: ([{ name, value, color }]) =>
           `
-            <div class="usage-page__org-chart-tooltip">
+            <div 
+            class="usage-page__org-chart-tooltip" 
+            style="background-color: ${color}; color: ${color === '#263545' ? '#fff' : '#263545'};"
+            >
               <div class="date">${name}</div>
               <div class="value">${value.toLocaleString('en-US')}</div>
             </div>
@@ -50,12 +53,12 @@ export default class OrganisationUsageChart extends React.Component {
           {
             gte: 0,
             lt: includedLimit,
-            color: '#354351',
+            color: '#263545',
             label: 'includedLimit usage'
           },
           {
             gt: includedLimit,
-            color: '#fda41e',
+            color: '#FDA31A',
             label: `exceeding ${formatNumber(includedLimit)} limit`
           }
         ]
