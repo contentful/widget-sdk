@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { map, sum, partialRight } from 'lodash';
-import { Button } from '@contentful/ui-component-library';
+import { Button, TextLink } from '@contentful/ui-component-library';
 
 import * as Intercom from 'intercom';
 import $state from '$state';
@@ -87,7 +87,10 @@ export default class OrganizationUsagePage extends React.Component {
                 <span className="usage-page__overage">{` + ${(
                   totalUsage - apiRequestIncludedLimit
                 ).toLocaleString('en-US')} overage`}</span>
-              )}
+              )}{' '}
+              <TextLink href="https://www.contentful.com/r/knowledgebase/fair-use/" target="_blank">
+                Learn more
+              </TextLink>
             </div>
             <Button onClick={this.onClickSupport}>Talk to us</Button>
           </div>
@@ -132,10 +135,15 @@ export default class OrganizationUsagePage extends React.Component {
                 assetBandwidthIncludedLimit
               )} included`}</span>
               {assetBandwidthUsage > assetBandwidthIncludedLimit && (
-                <span className="usage-page__overage">{` + ${withUnit(
-                  assetBandwidthUsage - assetBandwidthIncludedLimit
-                )} overage`}</span>
-              )}
+                <React.Fragment>
+                  <span className="usage-page__overage">{` + ${withUnit(
+                    assetBandwidthUsage - assetBandwidthIncludedLimit
+                  )} overage`}</span>
+                </React.Fragment>
+              )}{' '}
+              <TextLink href="https://www.contentful.com/r/knowledgebase/fair-use/" target="_blank">
+                Learn more
+              </TextLink>
             </div>
             <Button onClick={this.onClickSupport}>Talk to us</Button>
           </div>
