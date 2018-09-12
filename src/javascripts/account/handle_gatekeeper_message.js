@@ -14,6 +14,7 @@ angular
       const UrlSyncHelper = require('account/UrlSyncHelper.es6');
       const modalDialog = require('modalDialog');
       const $state = require('$state');
+      const analytics = require('analytics/Analytics.es6');
 
       return function handleGatekeeperMessage(data) {
         const match = makeMessageMatcher(data);
@@ -24,6 +25,8 @@ angular
           CreateSpace.showDialog(data.organizationId);
         } else if (match('delete', 'space')) {
           TokenStore.refresh();
+        } else if (data.type === 'analytics') {
+          trackGKEvent(data);
         } else if (data.type === 'flash') {
           showNotification(data);
         } else if (match('navigate', 'location')) {
@@ -91,6 +94,18 @@ angular
 
         if (message) {
           notification[level](message);
+        }
+      }
+
+      function trackGKEvent({ event, data: eventData }) {
+        if (event && eventData) {
+          const newData = Object.assign({}, eventData);
+
+          if (newData.fromState === '$state.current.name') {
+            newData.fromState = $state.current.name;
+          }
+
+          analytics.track(event, newData);
         }
       }
     }

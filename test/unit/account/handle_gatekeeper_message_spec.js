@@ -44,6 +44,42 @@ describe('Gatekeeper Message Handler', () => {
       sinon.assert.calledOnce(notification.warn.withArgs('FAIL'));
     });
 
+    it('sends an analytics event', function() {
+      const analytics = this.mockService('analytics/Analytics.es6');
+
+      const data = {
+        elementId: 'someId',
+        groupId: 'someGroupId'
+      };
+      this.handle({ type: 'analytics', event: 'element:click', data });
+      expect(analytics.track.calledOnce).toBe(true);
+      const [event, eventData] = analytics.track.getCall(0).args;
+      expect(event).toBe('element:click');
+      expect(eventData).toEqual(data);
+    });
+
+    it('sends an analytics event with resolved fromState', function() {
+      const currentStateName = 'some.current.name';
+      const analytics = this.mockService('analytics/Analytics.es6');
+      this.mockService('$state', {
+        current: {
+          name: currentStateName
+        }
+      });
+
+      const data = {
+        elementId: 'someId',
+        groupId: 'someGroupId',
+        fromState: '$state.current.name'
+      };
+      this.handle({ type: 'analytics', event: 'element:click', data });
+      const [_, eventData] = analytics.track.getCall(0).args;
+      expect(eventData).toEqual({
+        ...data,
+        fromState: currentStateName
+      });
+    });
+
     it('changes URL when triggered', function() {
       const url = (this.$inject('$location').url = sinon.spy());
       this.handle({ action: 'navigate', type: 'location', path: 'blah/blah' });
