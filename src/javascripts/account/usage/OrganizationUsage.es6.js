@@ -44,6 +44,7 @@ export default class OrganizationUsage extends React.Component {
 
     await this.setState({ flagActive: await getCurrentVariation('feature-bizvel-09-2018-usage') });
     await this.checkPermissions();
+
     try {
       await this.fetchOrgData();
     } catch (ex) {
@@ -120,6 +121,11 @@ export default class OrganizationUsage extends React.Component {
 
       this.setState({ commited }, onReady);
     } catch (e) {
+      // Show the forbidden screen on 404 and 403
+      if ([404, 403].contains(e.status)) {
+        throw e;
+      }
+
       trigger();
     }
   }
