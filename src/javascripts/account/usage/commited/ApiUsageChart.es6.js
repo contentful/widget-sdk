@@ -30,6 +30,16 @@ export default class ApiUsageChart extends React.Component {
       yAxis: {
         type: 'value'
       },
+      tooltip: {
+        backgroundColor: '#192532',
+        padding: 8,
+        textStyle: {
+          fontFamily: 'Avenir Next W01',
+          fontSize: 14,
+          fontWeight: 600,
+          lineHeight: 20
+        }
+      },
       series: usage.map(({ usage, sys: { space: { sys: { id: spaceId } } } }, index) =>
         merge({}, seriesBaseFormatting, {
           name: spaceNames[spaceId],
