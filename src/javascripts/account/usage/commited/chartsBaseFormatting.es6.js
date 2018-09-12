@@ -24,3 +24,16 @@ export default {
     splitNumber: 4
   }
 };
+
+export const seriesBaseFormatting = {
+  type: 'line',
+  lineStyle: {
+    width: 2
+  },
+  itemStyle: {
+    borderColor: '#fff',
+    borderWidth: 2
+  },
+  symbolSize: 6,
+  showSymbol: false
+};

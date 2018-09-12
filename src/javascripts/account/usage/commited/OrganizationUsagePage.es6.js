@@ -22,7 +22,7 @@ import {
 } from './propTypes.es6';
 
 const apiUsagePropType = arrayPropType(organizationResourceUsagePropType);
-const apiSeriesColors = ['#18a16c', '#d57d1f', '#824cb9'];
+const apiSeriesColors = ['#3072BE', '#14D997', '#CD3F39'];
 
 export default class OrganizationUsagePage extends React.Component {
   static propTypes = {

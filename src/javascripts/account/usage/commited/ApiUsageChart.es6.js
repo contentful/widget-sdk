@@ -7,7 +7,9 @@ import EChart from './EChart.es6';
 import { organizationResourceUsagePropType, periodPropType } from './propTypes.es6';
 import periodToDates from './periodToDates.es6';
 import EmptyChartPlaceholder from './EmptyChartPlaceholder.es6';
-import baseFormatting from './chartsBaseFormatting.es6';
+import baseFormatting, { seriesBaseFormatting } from './chartsBaseFormatting.es6';
+
+const symbols = ['circle', 'rect', 'triangle'];
 
 export default class ApiUsageChart extends React.Component {
   static propTypes = {
@@ -28,16 +30,16 @@ export default class ApiUsageChart extends React.Component {
       yAxis: {
         type: 'value'
       },
-      series: usage.map(({ usage, sys: { space: { sys: { id: spaceId } } } }, index) => ({
-        name: spaceNames[spaceId],
-        type: 'line',
-        itemStyle: { color: colors[index] },
-        lineStyle: {
-          width: 3
-        },
-        data: usage,
-        showSymbol: false
-      }))
+      series: usage.map(({ usage, sys: { space: { sys: { id: spaceId } } } }, index) =>
+        merge({}, seriesBaseFormatting, {
+          name: spaceNames[spaceId],
+          data: usage,
+          symbol: symbols[index],
+          itemStyle: {
+            color: colors[index]
+          }
+        })
+      )
     });
     return (
       <EChart

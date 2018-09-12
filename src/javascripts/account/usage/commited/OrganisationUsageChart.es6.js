@@ -8,7 +8,7 @@ import formatNumber from './formatNumber.es6';
 import { periodPropType } from './propTypes.es6';
 import periodToDates from './periodToDates.es6';
 import EmptyChartPlaceholder from './EmptyChartPlaceholder.es6';
-import baseFormatting from './chartsBaseFormatting.es6';
+import baseFormatting, { seriesBaseFormatting } from './chartsBaseFormatting.es6';
 
 const accumulateUsage = usage =>
   usage.reduce((acc, value) => acc.concat(value + (last(acc) || 0)), []);
@@ -34,11 +34,21 @@ export default class OrganisationUsageChart extends React.Component {
         min: 0,
         max: Math.max(maxValue, includedLimit)
       },
+      tooltip: {
+        padding: 0,
+        formatter: ([{ name, value }]) =>
+          `
+            <div class="usage-page__org-chart-tooltip">
+              <div class="date">${name}</div>
+              <div class="value">${value.toLocaleString('en-US')}</div>
+            </div>
+          `
+      },
       visualMap: {
         show: false,
         pieces: [
           {
-            gt: 0,
+            gte: 0,
             lt: includedLimit,
             color: '#354351',
             label: 'includedLimit usage'
@@ -50,13 +60,10 @@ export default class OrganisationUsageChart extends React.Component {
           }
         ]
       },
-      series: {
+      series: merge({}, seriesBaseFormatting, {
         name: 'API requests',
-        type: 'line',
         data: accumulatedUsage,
-        lineStyle: {
-          width: 3
-        },
+        symbol: 'circle',
         markLine: {
           silent: false,
           data: [{ yAxis: includedLimit, label: { show: false } }],
@@ -65,9 +72,8 @@ export default class OrganisationUsageChart extends React.Component {
             width: 1.5
           },
           symbol: []
-        },
-        showSymbol: false
-      }
+        }
+      })
     });
 
     return (
