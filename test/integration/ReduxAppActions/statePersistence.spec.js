@@ -352,6 +352,53 @@ describe('statePersistence redux module', () => {
         expect(persistenceState2.data).toBe(data2);
       });
 
+      it('should update batched data only once', async function() {
+        const data1 = {
+          sys: { version: 1 },
+          some: 'data1'
+        };
+        const data2 = {
+          sys: { version: 1 },
+          some: 'data2'
+        };
+        const data3 = {
+          sys: { version: 1 },
+          some: 'data3'
+        };
+        const key = 'my_key';
+        this[endpoint].returns(({ data }) => {
+          const newPayload = {
+            ...data,
+            sys: {
+              ...data.sys,
+              version: data.sys.version + 1
+            }
+          };
+          return new Promise(resolve => {
+            return setTimeout(() => resolve(newPayload), 50);
+          });
+        });
+        await Promise.all([
+          this.store.dispatch(this.actions[updateAction]({ key, payload: data1, ...params })),
+          this.store.dispatch(this.actions[updateAction]({ key, payload: data2, ...params })),
+          this.store.dispatch(this.actions[updateAction]({ key, payload: data3, ...params }))
+        ]);
+
+        const persistenceState = this.selectors[selector]({
+          state: this.store.getState(),
+          key,
+          ...params
+        });
+
+        expect(this[endpoint].calledTwice).toBe(true);
+        expect(persistenceState.updatingError).toBe(null);
+        expect(persistenceState.isUpdating).toBe(false);
+        expect(persistenceState.data).toEqual({
+          sys: { version: 3 },
+          some: data3.some
+        });
+      });
+
       if (environmentsTest) {
         it('should update data after environment deletion', async function() {
           const data = {
