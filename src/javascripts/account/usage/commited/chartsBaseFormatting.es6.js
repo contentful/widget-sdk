@@ -1,6 +1,9 @@
 import formatNumber from './formatNumber.es6';
 
 export default {
+  axisPointer: {
+    zlevel: -1
+  },
   tooltip: {
     trigger: 'axis'
   },
