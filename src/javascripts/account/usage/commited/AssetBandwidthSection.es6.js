@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { partialRight } from 'lodash';
-import { Button, TextLink } from '@contentful/ui-component-library';
+import { TextLink } from '@contentful/ui-component-library';
 
 import { shortenStorageUnit } from 'utils/NumberUtils.es6';
 
@@ -34,7 +34,6 @@ export default class AssetBandwidthSection extends React.Component {
             Learn more
           </TextLink>
         </div>
-        <Button onClick={this.onClickSupport}>Talk to us</Button>
       </div>
     );
   }
