@@ -80,14 +80,53 @@ angular
       var usersGatekeeper = gatekeeperBase({
         name: 'gatekeeper',
         title: 'Organization users',
-        url: '{pathSuffix:PathSuffix}'
+        url: '/:orgId/organization_memberships/{pathSuffix:PathSuffix}'
+      });
+
+      var usersList = base({
+        name: 'users',
+        title: 'Organization users',
+        url: '/:orgId/organization_memberships',
+        controller: [
+          '$stateParams',
+          '$scope',
+          ($stateParams, $scope) => {
+            const LD = require('utils/LaunchDarkly');
+            LD.onFeatureFlag($scope, 'feature-bv-09-2018-new-org-membership-pages', function(
+              value
+            ) {
+              $scope.useNewView = value;
+            });
+            $scope.properties = {
+              orgId: $stateParams.orgId,
+              context: $scope.context
+            };
+          }
+        ],
+        template: [
+          h(
+            'div',
+            {
+              ngIf: 'useNewView === false'
+            },
+            [
+              workbenchHeader({ title: ['Organization users'] }),
+              h('cf-account-view', { context: 'context' })
+            ]
+          ),
+          h('react-component', {
+            name: 'app/OrganizationSettings/Users/UsersList/UsersList.es6',
+            props: 'properties',
+            ngIf: 'useNewView'
+          })
+        ]
       });
 
       var newUser = base({
         label: 'Organizations & Billing',
-        name: 'new',
+        name: 'newMembership',
         title: 'Organization users',
-        url: '/new',
+        url: '/:orgId/organization_memberships/new',
         controller: [
           '$stateParams',
           '$scope',
@@ -107,14 +146,6 @@ angular
             store.set('lastUsedOrg', $stateParams.orgId);
           }
         ]
-      });
-
-      var users = organizationsBase({
-        name: 'users',
-        title: 'Organization users',
-        url: '/:orgId/organization_memberships',
-        abstract: true,
-        children: [newUser, usersGatekeeper]
       });
 
       var spaces = gatekeeperBase({
@@ -231,7 +262,9 @@ angular
           subscriptionNew,
           subscriptionBilling,
           usage,
-          users,
+          usersList,
+          usersGatekeeper,
+          newUser,
           spaces,
           offsitebackup,
           billing
