@@ -19,7 +19,7 @@ export default class ApiUsageInfo extends React.Component {
   render() {
     const { api, spaceNames, usage, includedLimit, isPoC, colors } = this.props;
     return (
-      <React.Fragment>
+      <div className="usage-page__chart-info">
         <h2>{`${api.toUpperCase()} requests`}</h2>
         <h3>Top 3 spaces</h3>
         <table className="usage-page__api-table">
@@ -41,7 +41,7 @@ export default class ApiUsageInfo extends React.Component {
             ))}
           </tbody>
         </table>
-      </React.Fragment>
+      </div>
     );
   }
 }

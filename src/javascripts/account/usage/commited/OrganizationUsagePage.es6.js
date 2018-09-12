@@ -76,7 +76,7 @@ export default class OrganizationUsagePage extends React.Component {
     return (
       <div className="usage-page">
         <div className="usage-page__section">
-          <div className="usage-page__chart-info">
+          <div>
             <h2>Total number of API requests</h2>
             <div className="usage-page__total-usage">{totalUsage.toLocaleString('en-US')}</div>
             <div className="usage-page__limit">
@@ -94,36 +94,30 @@ export default class OrganizationUsagePage extends React.Component {
             </div>
             <Button onClick={this.onClickSupport}>Talk to us</Button>
           </div>
-          <div className="usage-page__chart">
-            <OrganisationUsageChart
-              usage={orgUsage}
-              includedLimit={apiRequestIncludedLimit}
-              period={period}
-              isLoading={isLoading}
-            />
-          </div>
+          <OrganisationUsageChart
+            usage={orgUsage}
+            includedLimit={apiRequestIncludedLimit}
+            period={period}
+            isLoading={isLoading}
+          />
         </div>
         {map(apis, (usage, api) => (
           <div key={api} className="usage-page__section">
-            <div className="usage-page__chart-info">
-              <ApiUsageInfo
-                includedLimit={apiRequestIncludedLimit}
-                api={api}
-                spaceNames={spaceNames}
-                isPoC={isPoC}
-                usage={usage.items}
-                colors={apiSeriesColors}
-              />
-            </div>
-            <div className="usage-page__chart">
-              <ApiUsageChart
-                usage={usage.items}
-                period={period}
-                colors={apiSeriesColors}
-                spaceNames={spaceNames}
-                isLoading={isLoading}
-              />
-            </div>
+            <ApiUsageInfo
+              includedLimit={apiRequestIncludedLimit}
+              api={api}
+              spaceNames={spaceNames}
+              isPoC={isPoC}
+              usage={usage.items}
+              colors={apiSeriesColors}
+            />
+            <ApiUsageChart
+              usage={usage.items}
+              period={period}
+              colors={apiSeriesColors}
+              spaceNames={spaceNames}
+              isLoading={isLoading}
+            />
           </div>
         ))}
         <div className="usage-page__section usage-page__section--with-divider">

@@ -7,10 +7,15 @@ $overage-color = #FCA013
 .usage-page
   display: flex
   flex-direction: column
-  margin: 0 auto 2rem
-  width: 60%
-  padding-left: 1rem
-
+  max-width: 1100px
+  margin: 0 auto
+  &__section
+    display: flex
+    flex-direction: row
+    justify-content: space-between
+    margin: 2rem
+    &--with-divider
+      border-top: solid 1px $colors.element-mid;
   & > h2
     margin-top: 3rem
     justify-self: start
@@ -44,21 +49,7 @@ $overage-color = #FCA013
     tr:not(:last-child)
       td
         border-bottom: solid 1px #E5EBED
-  &__section
-    display: flex
-    flex-direction: row
-    margin-bottom: 1rem
-    padding-top: 1rem
 
-    &--with-divider
-      border-top: solid 1px $colors.element-mid;
-
-  &__chart-info
-    width: 30%
-
-  &__chart
-    align-self: flex-end
-    width: 70%
   &__org-chart-tooltip
     border-radius: 2px
     font-family: "Avenir Next W01"
