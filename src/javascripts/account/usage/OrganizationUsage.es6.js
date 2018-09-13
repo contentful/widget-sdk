@@ -36,6 +36,7 @@ export default class OrganizationUsage extends React.Component {
     super(props);
     this.state = { isLoading: true };
 
+    this.endpoint = createOrganizationEndpoint(props.orgId);
     this.setPeriodIndex = this.setPeriodIndex.bind(this);
   }
 
@@ -64,7 +65,6 @@ export default class OrganizationUsage extends React.Component {
   async fetchOrgData() {
     const { orgId, onReady } = this.props;
     const { flagActive } = this.state;
-    this.endpoint = createOrganizationEndpoint(orgId);
     const service = createResourceService(orgId, 'organization');
 
     try {
@@ -122,7 +122,7 @@ export default class OrganizationUsage extends React.Component {
       this.setState({ commited }, onReady);
     } catch (e) {
       // Show the forbidden screen on 404 and 403
-      if ([404, 403].contains(e.status)) {
+      if ([404, 403].includes(e.status)) {
         throw e;
       }
 
