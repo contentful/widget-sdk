@@ -1,7 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { startCase } from 'lodash';
+import pluralize from 'pluralize';
+import {
+  Table,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+  Pill,
+  Button
+} from '@contentful/ui-component-library';
 import Workbench from 'ui/Components/Workbench/JSX.es6';
-import { Table, TableRow, TableHead, TableBody, TableCell } from '@contentful/ui-component-library';
+import createResourceService from 'services/ResourceService.es6';
+import { href } from 'states/Navigator.es6';
 import {
   getAllUsers,
   getAllMemberships
@@ -15,53 +27,88 @@ export default class UsersList extends React.Component {
   };
 
   state = {
-    usersList: []
+    usersList: [],
+    membershipsResource: null
   };
 
   async componentDidMount() {
-    const endpoint = createOrganizationEndpoint(this.props.orgId);
-    const [users, memberships] = await Promise.all([
+    const { orgId } = this.props;
+    const endpoint = createOrganizationEndpoint(orgId);
+    const resources = createResourceService(orgId, 'organization');
+    const [users, memberships, membershipsResource] = await Promise.all([
       getAllUsers(endpoint),
-      getAllMemberships(endpoint)
+      getAllMemberships(endpoint),
+      resources.get('organization_membership')
     ]);
+    const getMembershipUser = membership => {
+      return users.find(user => user.sys.id === membership.user.sys.id);
+    };
 
     const usersList = memberships.map(membership => ({
       ...membership,
-      user: users.find(user => user.sys.id === membership.user.sys.id)
+      user: getMembershipUser(membership)
     }));
 
     this.props.context.ready = true;
-    this.setState({ usersList });
+    this.setState({ usersList, membershipsResource });
+  }
+
+  getLinkToInvitation() {
+    return href({
+      path: ['account', 'organizations', 'users', 'new'],
+      params: { orgId: this.props.orgId }
+    });
   }
 
   render() {
-    const { usersList } = this.state;
+    const { usersList, membershipsResource } = this.state;
 
     if (!this.state.usersList.length) return '';
 
     return (
-      <Workbench title="Organization users" testId="organization-users-page">
+      <Workbench testId="organization-users-page">
+        <Workbench.Header>
+          <Workbench.Title>Organization users</Workbench.Title>
+          <div className="workbench-header__actions">
+            <Button icon="PlusCircle" href={this.getLinkToInvitation()}>
+              Invite users
+            </Button>
+          </div>
+        </Workbench.Header>
         <Workbench.Content>
-          <Table style={{ padding: '1em 2em 2em' }}>
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Organization role</TableCell>
-                <TableCell>Last activity</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {usersList.map(membership => (
-                <TableRow key={membership.sys.id}>
-                  <TableCell>{membership.user.firstName}</TableCell>
-                  <TableCell>{membership.user.email}</TableCell>
-                  <TableCell>{membership.role}</TableCell>
-                  <TableCell>July 27, 2019</TableCell>
+          <section style={{ padding: '1em 2em 2em' }}>
+            <p align="right">
+              There are {pluralize('users', membershipsResource.usage, true)} in this organization
+            </p>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Name</TableCell>
+                  <TableCell>Email</TableCell>
+                  <TableCell>Organization role</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHead>
+              <TableBody>
+                {usersList.map(membership => (
+                  <TableRow key={membership.sys.id}>
+                    <TableCell>
+                      {membership.user.firstName && (
+                        <img
+                          style={{ verticalAlign: 'middle', marginRight: '5px' }}
+                          src={membership.user.avatarUrl}
+                          width="32"
+                          height="32"
+                        />
+                      )}
+                      {membership.user.firstName || <Pill label="Invited" />}
+                    </TableCell>
+                    <TableCell>{membership.user.email}</TableCell>
+                    <TableCell>{startCase(membership.role)}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </section>
         </Workbench.Content>
       </Workbench>
     );

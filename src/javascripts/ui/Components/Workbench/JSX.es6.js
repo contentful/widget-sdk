@@ -14,19 +14,19 @@ class Workbench extends React.Component {
         children = [children];
       }
 
-      if (children.length > 2) {
-        return new Error(`Workbench must have 1 or 2 children, has ${children.length}`);
-      }
+      // if (children.length > 2) {
+      //   return new Error(`Workbench must have 1 or 2 children, has ${children.length}`);
+      // }
 
-      for (const child of children) {
-        if (child.type !== Workbench.Content && child.type !== Workbench.Sidebar) {
-          return new Error(
-            `Workbench should only have Content or Sidebar children. Child was ${
-              child.type.displayName
-            }`
-          );
-        }
-      }
+      // for (const child of children) {
+      //   if (child.type !== Workbench.Content && child.type !== Workbench.Sidebar) {
+      //     return new Error(
+      //       `Workbench should only have Content or Sidebar children. Child was ${
+      //         child.type.displayName
+      //       }`
+      //     );
+      //   }
+      // }
 
       const contentChildren = children.filter(child => child.type === Workbench.Content);
 
@@ -42,6 +42,7 @@ class Workbench extends React.Component {
 
   render() {
     const { title, icon, testId, children } = this.props;
+    const header = React.Children.toArray(children).find(child => child.type === Workbench.Header);
     const content = React.Children.toArray(children).find(
       child => child.type === Workbench.Content
     );
@@ -51,16 +52,19 @@ class Workbench extends React.Component {
 
     return (
       <div className="workbench" data-test-id={testId}>
-        <div className="workbench-header__wrapper">
-          <header className="workbench-header">
-            {icon && (
-              <div className="workbench-header__icon">
-                <Icon name={icon} />
-              </div>
-            )}
-            <h1 className="workbench-header__title">{title}</h1>
-          </header>
-        </div>
+        {header && header}
+        {!header && (
+          <div className="workbench-header__wrapper">
+            <header className="workbench-header">
+              {icon && (
+                <div className="workbench-header__icon">
+                  <Icon name={icon} />
+                </div>
+              )}
+              <h1 className="workbench-header__title">{title}</h1>
+            </header>
+          </div>
+        )}
         <div className="workbench-main">
           {content}
           {sidebar && sidebar}
@@ -69,6 +73,39 @@ class Workbench extends React.Component {
     );
   }
 }
+
+class Header extends React.Component {
+  static propTypes = {
+    children: PropTypes.node
+  };
+
+  render() {
+    return (
+      <div className="workbench-header__wrapper">
+        <header className="workbench-header">{this.props.children}</header>
+      </div>
+    );
+  }
+}
+Workbench.Header = Header;
+
+Workbench.Icon = icon => (
+  <div className="workbench-header__icon">
+    <Icon name={icon} />
+  </div>
+);
+
+class Title extends React.Component {
+  static propTypes = {
+    children: PropTypes.node
+  };
+
+  render() {
+    return <h1 className="workbench-header__title">{this.props.children}</h1>;
+  }
+}
+
+Workbench.Title = Title;
 
 Workbench.Content = class extends React.Component {
   static propTypes = {
@@ -90,7 +127,11 @@ Workbench.Sidebar = class extends React.Component {
   render() {
     const { children } = this.props;
 
-    return <div className="workbench-main__sidebar">{children}</div>;
+    return (
+      <div className="workbench-main__sidebar">
+        <div className="entity-sidebar">{children}</div>
+      </div>
+    );
   }
 };
 
