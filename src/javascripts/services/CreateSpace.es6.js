@@ -79,8 +79,14 @@ export async function showDialog(organizationId) {
         }
       };
       modalDialog.open({
-        template:
-          '<react-component name="components/shared/enterprise-space-wizard/EnterpriseSpaceWizard.es6" class="modal-background" props="modalProps"></react-component>',
+        template: `
+          <react-component
+            watch-depth="reference"
+            name="components/shared/enterprise-space-wizard/EnterpriseSpaceWizard.es6"
+            class="modal-background"
+            props="modalProps"
+          ></react-component>
+        `,
         scopeData: { modalProps },
         backgroundClose: false,
         persistOnNavigation: true
