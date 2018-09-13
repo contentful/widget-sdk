@@ -19,10 +19,10 @@ import Workbench from 'app/WorkbenchReact.es6';
 import { track } from 'analytics/Analytics.es6';
 import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 
-import OrganizationResourceUsageList from './non_commited/OrganizationResourceUsageList.es6';
-import OrganizationUsagePage from './commited/OrganizationUsagePage.es6';
+import OrganizationResourceUsageList from './non_committed/OrganizationResourceUsageList.es6';
+import OrganizationUsagePage from './committed/OrganizationUsagePage.es6';
 import { getPeriods, getOrgUsage, getApiUsage } from './UsageService.es6';
-import PeriodSelector from './commited/PeriodSelector.es6';
+import PeriodSelector from './committed/PeriodSelector.es6';
 import NoSpacesPlaceholder from './NoSpacesPlaceholder.es6';
 
 export default class OrganizationUsage extends React.Component {
@@ -69,9 +69,9 @@ export default class OrganizationUsage extends React.Component {
 
     try {
       const basePlan = await getBasePlan(this.endpoint);
-      const commited = isEnterprisePlan(basePlan);
+      const committed = isEnterprisePlan(basePlan);
 
-      if (commited && flagActive) {
+      if (committed && flagActive) {
         const [
           spaces,
           plans,
@@ -119,7 +119,7 @@ export default class OrganizationUsage extends React.Component {
         this.setState({ resources: await service.getAll(), isLoading: false }, onReady);
       }
 
-      this.setState({ commited }, onReady);
+      this.setState({ committed }, onReady);
     } catch (e) {
       // Show the forbidden screen on 404 and 403
       if ([404, 403].includes(e.status)) {
@@ -170,7 +170,7 @@ export default class OrganizationUsage extends React.Component {
       assetBandwidthUsage,
       assetBandwidthIncludedLimit,
       assetBandwidthUOM,
-      commited,
+      committed,
       resources,
       flagActive,
       hasSpaces
@@ -183,7 +183,7 @@ export default class OrganizationUsage extends React.Component {
         actions={
           isLoading ? (
             <Spinner />
-          ) : hasSpaces && commited && flagActive && periods ? (
+          ) : hasSpaces && committed && flagActive && periods ? (
             <PeriodSelector
               periods={periods}
               selectedPeriodIndex={selectedPeriodIndex}
@@ -194,11 +194,11 @@ export default class OrganizationUsage extends React.Component {
           )
         }
         content={
-          (!commited || !flagActive) && typeof resources !== 'undefined' ? (
+          (!committed || !flagActive) && typeof resources !== 'undefined' ? (
             <OrganizationResourceUsageList resources={resources} />
-          ) : commited && flagActive && !hasSpaces ? (
+          ) : committed && flagActive && !hasSpaces ? (
             <NoSpacesPlaceholder />
-          ) : commited && flagActive && typeof selectedPeriodIndex !== 'undefined' ? (
+          ) : committed && flagActive && typeof selectedPeriodIndex !== 'undefined' ? (
             <OrganizationUsagePage
               period={periods[selectedPeriodIndex]}
               spaceNames={spaceNames}
