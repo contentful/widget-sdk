@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { mapValues, flow, keyBy, cond, constant, stubTrue, get, eq } from 'lodash/fp';
+import { mapValues, flow, keyBy, get, eq } from 'lodash/fp';
 
 import { Spinner } from '@contentful/ui-component-library';
 
@@ -180,44 +180,40 @@ export default class OrganizationUsage extends React.Component {
         icon="page-usage"
         testId="organization.usage"
         title="Usage"
-        actions={cond([
-          [constant(isLoading), constant(<Spinner />)],
-          [
-            constant(hasSpaces && commited && flagActive && periods),
-            () => (
-              <PeriodSelector
-                periods={periods}
-                selectedPeriodIndex={selectedPeriodIndex}
-                onChange={this.setPeriodIndex}
-              />
-            )
-          ],
-          [stubTrue, constant(undefined)]
-        ])()}
-        content={cond([
-          [
-            constant((!commited || !flagActive) && typeof resources !== 'undefined'),
-            () => <OrganizationResourceUsageList resources={resources} />
-          ],
-          [constant(commited && flagActive && !hasSpaces), constant(<NoSpacesPlaceholder />)],
-          [
-            constant(commited && flagActive && typeof selectedPeriodIndex !== 'undefined'),
-            () => (
-              <OrganizationUsagePage
-                period={periods[selectedPeriodIndex]}
-                spaceNames={spaceNames}
-                isPoC={isPoC}
-                periodicUsage={periodicUsage}
-                apiRequestIncludedLimit={apiRequestIncludedLimit}
-                assetBandwidthUsage={assetBandwidthUsage}
-                assetBandwidthIncludedLimit={assetBandwidthIncludedLimit}
-                assetBandwidthUOM={assetBandwidthUOM}
-                isLoading={isLoading}
-              />
-            )
-          ],
-          [stubTrue, constant(<div />)]
-        ])()}
+        actions={
+          isLoading ? (
+            <Spinner />
+          ) : hasSpaces && commited && flagActive && periods ? (
+            <PeriodSelector
+              periods={periods}
+              selectedPeriodIndex={selectedPeriodIndex}
+              onChange={this.setPeriodIndex}
+            />
+          ) : (
+            undefined
+          )
+        }
+        content={
+          (!commited || !flagActive) && typeof resources !== 'undefined' ? (
+            <OrganizationResourceUsageList resources={resources} />
+          ) : commited && flagActive && !hasSpaces ? (
+            <NoSpacesPlaceholder />
+          ) : commited && flagActive && typeof selectedPeriodIndex !== 'undefined' ? (
+            <OrganizationUsagePage
+              period={periods[selectedPeriodIndex]}
+              spaceNames={spaceNames}
+              isPoC={isPoC}
+              periodicUsage={periodicUsage}
+              apiRequestIncludedLimit={apiRequestIncludedLimit}
+              assetBandwidthUsage={assetBandwidthUsage}
+              assetBandwidthIncludedLimit={assetBandwidthIncludedLimit}
+              assetBandwidthUOM={assetBandwidthUOM}
+              isLoading={isLoading}
+            />
+          ) : (
+            <div />
+          )
+        }
       />
     );
   }
