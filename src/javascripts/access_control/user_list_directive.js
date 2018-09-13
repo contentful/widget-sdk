@@ -60,7 +60,6 @@ angular.module('contentful').controller('UserListController', [
     const accessChecker = require('access_control/AccessChecker');
     const TokenStore = require('services/TokenStore.es6');
     const UserListActions = require('access_control/UserListActions.es6');
-    const Subscription = require('Subscription');
 
     const actions = UserListActions.create(spaceContext, userListHandler, TokenStore);
 
@@ -73,7 +72,7 @@ angular.module('contentful').controller('UserListController', [
       actions.openRemovalConfirmationDialog
     );
     $scope.openRoleChangeDialog = decorateWithReload(actions.openRoleChangeDialog);
-    $scope.canModifyUsers = canModifyUsers;
+    $scope.canModifyUsers = accessChecker.canModifyUsers;
     $scope.openSpaceInvitationDialog = openSpaceInvitationDialog;
 
     reload();
@@ -82,13 +81,6 @@ angular.module('contentful').controller('UserListController', [
       return function(...args) {
         return command(...args).then(reload);
       };
-    }
-
-    function canModifyUsers() {
-      const subscription = Subscription.newFromOrganization(spaceContext.organization);
-      const trialLockdown = subscription.isTrial() && subscription.hasTrialEnded();
-
-      return accessChecker.canModifyUsers() && !trialLockdown;
     }
 
     function openSpaceInvitationDialog() {
