@@ -61,7 +61,8 @@ angular.module('contentful').controller('EntitySelectorController', [
       entity => entity.sys.id
     );
 
-    _.assign($scope, MODES, {
+    Object.assign($scope, MODES, {
+      onChange: $scope.onChange || _.noop,
       spaceContext: spaceContext,
       view: { mode: MODES.AVAILABLE },
       paginator: Paginator.create(),
@@ -144,9 +145,9 @@ angular.module('contentful').controller('EntitySelectorController', [
     function getParams() {
       var params = {
         order: getOrder(),
-        paginator: $scope.paginator
+        paginator: $scope.paginator,
+        ...getSearch()
       };
-      _.assign(params, getSearch());
 
       if (config.entityType === 'Entry' && $scope.singleContentType) {
         params.contentTypeId = $scope.singleContentType.getId();
@@ -181,21 +182,23 @@ angular.module('contentful').controller('EntitySelectorController', [
       }
     }
 
-    var toggle = {
+    const onChange = () => $scope.onChange([...$scope.selected]);
+    const toggle = {
       select: function select(entity) {
         var index = _.findIndex($scope.selected, ['sys.id', entity.sys.id]);
-
+        $scope.selectedIds[entity.sys.id] = true;
         if (index === -1) {
           $scope.selected.push(entity);
+          onChange();
         }
-        $scope.selectedIds[entity.sys.id] = true;
       },
       deselect: function deselect(entity) {
         var index = _.findIndex($scope.selected, ['sys.id', entity.sys.id]);
+        delete $scope.selectedIds[entity.sys.id];
         if (index > -1) {
           $scope.selected.splice(index, 1);
+          onChange();
         }
-        delete $scope.selectedIds[entity.sys.id];
       }
     };
 
@@ -203,7 +206,7 @@ angular.module('contentful').controller('EntitySelectorController', [
     var lastToggled;
     function toggleSelection(entity, event) {
       if (!config.multiple) {
-        $scope.dialog.confirm([entity]);
+        $scope.onChange([entity]);
       } else {
         var toggleMethod;
         if (event && event.shiftKey && lastToggled) {

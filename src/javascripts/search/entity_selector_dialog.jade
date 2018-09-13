@@ -1,84 +1,16 @@
-mixin single-list-item
-  cf-entity-link(
-    ng-if="config.entityType === 'Entry'"
-    ng-click="toggleSelection(entity, $event)"
-    entity="entity"
-    content-type="getContentType(entity)"
-    entity-helpers="helpers"
-    config="{showDetails: true}")
-
-  cf-asset-card(
-    ng-if="config.entityType === 'Asset'"
-    ng-click="toggleSelection(entity, $event)"
-    entity="entity"
-    entity-helpers="helpers"
-    config="{asThumb: true, disableTooltip: true}")
-
-  cf-user-link(
-    ng-if="config.entityType === 'User'"
-    ng-click="toggleSelection(entity, $event)"
-    user="entity")
-
 .modal-background
   .modal-dialog.entity-selector-dialog(
-    ng-controller="EntitySelectorController"
     ng-class="'entity-selector-dialog--for-{{ config.entityType.toLowerCase() }}-entities'")
     header.modal-dialog__header
-      h1 {{ labels.title }}
+      h1 {{ entitySelector.labels.title }}
       button.modal-dialog__close(ng-click="dialog.cancel()")
 
     .modal-dialog__content(ng-if="!showCustomEmptyMessage()")
-      .entity-selector__input-label
-        p {{ labels.input }}
-        p.entity-selector__mode-switcher(ng-if="config.multiple")
-          a(href ng-click="view.mode = SELECTED" ng-if="view.mode === AVAILABLE")
-            | Show {{ labels.selected }} ({{ selected.length }})
-          a(href ng-click="view.mode = AVAILABLE" ng-if="view.mode === SELECTED")
-            | Hide {{ labels.selected }} ({{ selected.length }})
-
-      .entity-selector__search(ng-if="supportsAdvancedSearch")
-        cf-component-bridge(component="search")
-
-      .entity-selector__search(ng-if="!supportsAdvancedSearch")
-        input.cfnext-form__input--full-size(
-          ng-model="view.searchText"
-          placeholder="{{ getSearchPlaceholder() }}")
-
-      .entity-selector__item-list.endless-container(
-        ng-if="view.mode === AVAILABLE"
-        ng-style="{height: listHeight}"
-        ng-class="{'entity-selector__thumbnails': config.entityType === 'Asset', 'entity-selector__item-list--empty': !items.length}"
-        cf-endless-container
-        at-bottom="loadMore()"
-        num-elements="paginator.getPage()")
-        .entity-selector__item-list-placeholder(ng-if="!isLoading && items.length < 1")
-          | {{ labels.empty }} found
-          span(ng-if="!supportsAdvancedSearch && view.searchText.length > 0")
-            |  for <strong>{{ view.searchText }}</strong>
-
-        .entity-selector__item(
-          ng-repeat="entity in items track by entity.sys.id"
-          ng-class="{'x--selected': selectedIds[entity.sys.id],'entity-selector__last-item': $last && paginator.atLast()}")
-          +single-list-item
-
-        .loading(ng-if="isLoadingMore")
-
-      .entity-selector__item-list(
-        ng-if="view.mode === SELECTED"
-        ng-style="{height: listHeight}"
-        ng-class="{'entity-selector__thumbnails': config.linksAsset && selected.length > 0}")
-        .entity-selector__item-list-placeholder(ng-if="selected.length < 1")
-          | {{ labels.empty }} selected yet
-
-        .entity-selector__item.x--selected(ng-repeat="entity in selected track by entity.sys.id")
-          +single-list-item
-
-      .entity-selector__note.note-box.note-box--info(
-        ng-if="labels.info"
-        ng-bind="labels.info")
-      .entity-selector__note.note-box.note-box--info(
-        ng-if="labels.infoHtml"
-        bind-html-compile="labels.infoHtml")
+      cf-entity-selector(
+        config="config"
+        labels="labels"
+        list-height="listHeight"
+        on-change="onChange")
 
     .modal-dialog__content(
       ng-if="showCustomEmptyMessage()"

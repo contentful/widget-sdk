@@ -26,7 +26,7 @@ describe('EntitySelectorController', () => {
     this.fetch = sinon.stub().resolves({ items: [] });
 
     this.createController = function(config = {}, labels = {}, singleContentType) {
-      config = _.extend({ entityType: 'Entry', fetch: this.fetch }, config);
+      config = { entityType: 'Entry', fetch: this.fetch, ...config };
       this.scope = _.extend(scope, {
         config,
         labels,
@@ -228,10 +228,10 @@ describe('EntitySelectorController', () => {
 
     it('closes dialog with single entity', function() {
       this.createController({ multiple: false });
-      const confirm = sinon.spy();
-      this.scope.dialog = { confirm: confirm };
+      const onChange = sinon.spy();
+      this.scope.onChange = onChange;
       this.scope.toggleSelection(E1);
-      sinon.assert.calledOnce(confirm.withArgs([E1]));
+      sinon.assert.calledOnce(onChange.withArgs([E1]));
     });
 
     it('selects multiple entities', function() {
