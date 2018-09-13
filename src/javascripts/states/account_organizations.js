@@ -124,9 +124,9 @@ angular
 
       var newUser = base({
         label: 'Organizations & Billing',
-        name: 'newMembership',
+        name: 'users.new',
         title: 'Organization users',
-        url: '/:orgId/organization_memberships/new',
+        url: '/new',
         controller: [
           '$stateParams',
           '$scope',
@@ -262,9 +262,9 @@ angular
           subscriptionNew,
           subscriptionBilling,
           usage,
+          newUser,
           usersList,
           usersGatekeeper,
-          newUser,
           spaces,
           offsitebackup,
           billing
