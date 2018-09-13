@@ -6,11 +6,13 @@ import Hyperlink from './Hyperlink.es6';
 import { editLink, mayEditLink, toggleLink } from './Util.es6';
 import asyncChange from '../shared/AsyncChange.es6';
 
+const { HYPERLINK, ENTRY_HYPERLINK, ASSET_HYPERLINK } = INLINES;
+
 export default ToolbarIcon;
 
 export const HyperlinkPlugin = ({ createHyperlinkDialog }) => ({
   renderNode: props => {
-    if (props.node.type === INLINES.HYPERLINK) {
+    if (isHyperlink(props.node.type)) {
       return <Hyperlink {...props} />;
     }
   },
@@ -35,3 +37,7 @@ export const HyperlinkPlugin = ({ createHyperlinkDialog }) => ({
     }
   }
 });
+
+function isHyperlink(type) {
+  return [HYPERLINK, ENTRY_HYPERLINK, ASSET_HYPERLINK].indexOf(type) > -1;
+}

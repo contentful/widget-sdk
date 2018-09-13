@@ -1,7 +1,8 @@
 import { BLOCKS, INLINES } from '@contentful/structured-text-types';
 import { haveInlines } from '../shared/UtilHave.es6';
 
-const { HYPERLINK } = INLINES;
+const { HYPERLINK, ENTRY_HYPERLINK, ASSET_HYPERLINK } = INLINES;
+const HYPERLINK_TYPES = [HYPERLINK, ENTRY_HYPERLINK, ASSET_HYPERLINK];
 
 /**
  * Returns whether or not the current value selection would allow for a user
@@ -11,7 +12,17 @@ const { HYPERLINK } = INLINES;
  * @returns {boolean}
  */
 export function mayEditLink(value) {
-  return !value.isExpanded && haveInlines({ value }, HYPERLINK);
+  return !value.isExpanded && hasHyperlink(value);
+}
+
+/**
+ * Returns whether the given value has any hyperlink node.
+ *
+ * @param {slate.Value} value
+ * @returns {boolean}
+ */
+export function hasHyperlink(value) {
+  return !!HYPERLINK_TYPES.find(type => haveInlines({ value }, type));
 }
 
 /**
@@ -23,7 +34,7 @@ export function mayEditLink(value) {
  * @returns {Promise<void>}
  */
 export async function toggleLink(change, createHyperlinkDialog) {
-  if (haveInlines(change, HYPERLINK)) {
+  if (hasHyperlink(change.value)) {
     removeLink(change);
   } else {
     await insertLink(change, createHyperlinkDialog);
@@ -32,16 +43,15 @@ export async function toggleLink(change, createHyperlinkDialog) {
 
 async function insertLink(change, createHyperlinkDialog) {
   const showTextInput = !change.value.isExpanded || change.value.fragment.text.trim() === '';
-
   try {
-    const { uri, text } = await createHyperlinkDialog({ showTextInput });
+    const { text, type, uri, target } = await createHyperlinkDialog({ showTextInput });
     if (showTextInput) {
       if (change.value.blocks.last().isVoid) {
         change.insertBlock(BLOCKS.PARAGRAPH);
       }
       change.insertText(text).extend(0 - text.length);
     }
-    change.call(wrapLink, { uri });
+    change.call(wrapLink, type, { uri, target });
   } catch (e) {
     if (e) throw e;
     // User cancelled dialog.
@@ -50,7 +60,8 @@ async function insertLink(change, createHyperlinkDialog) {
 }
 
 function removeLink(change) {
-  change.unwrapInline(INLINES.HYPERLINK).focus();
+  HYPERLINK_TYPES.forEach(type => change.unwrapInline(type));
+  change.focus();
 }
 
 /**
@@ -65,13 +76,14 @@ export async function editLink(change, createHyperlinkDialog) {
   if (!link) {
     throw new Error('Change object contains no link to be edited.');
   }
-  const { uri: oldUri } = link.data.toJSON();
+  const { uri: oldUri, target: oldTarget } = link.data.toJSON();
   try {
-    const { uri } = await createHyperlinkDialog({
+    const { type, uri, target } = await createHyperlinkDialog({
       showTextInput: false,
-      value: { uri: oldUri }
+      value: oldTarget ? { target: oldTarget } : { uri: oldUri }
     });
-    change.setInlines({ data: { uri } });
+    const nodeType = linkTypeToNodeType(type);
+    change.setInlines({ type: nodeType, data: { uri, target } });
   } catch (e) {
     if (e) throw e;
     // User cancelled dialog.
@@ -79,10 +91,20 @@ export async function editLink(change, createHyperlinkDialog) {
   change.focus();
 }
 
-function wrapLink(change, data) {
+function wrapLink(change, linkType, data) {
   change.wrapInline({
-    type: HYPERLINK,
+    type: linkTypeToNodeType(linkType),
     data: data
   });
   change.moveToEnd();
+}
+
+function linkTypeToNodeType(linkType) {
+  switch (linkType) {
+    case 'Entry':
+      return ENTRY_HYPERLINK;
+    case 'Asset':
+      return ASSET_HYPERLINK;
+  }
+  return HYPERLINK;
 }

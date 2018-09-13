@@ -10,6 +10,7 @@ describe('connectToWidgetAPI', () => {
     this.system = createIsolatedSystem();
     this.system.set('entitySelector', {});
     this.system.set('search/config.es6', {});
+    this.system.set('AngularComponent', {});
     this.system.set('modalDialog', { open: sinon.stub() });
     this.system.set('navigation/SlideInNavigator', {
       goToSlideInEntity: sinon.stub()

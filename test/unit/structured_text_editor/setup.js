@@ -55,7 +55,7 @@ export const stubAll = async ({ isolatedSystem }) => {
   isolatedSystem.set('navigation/SlideInNavigator', {
     goToSlideInEntity: sinon.stub()
   });
-
+  isolatedSystem.set('search/config.es6', {});
   isolatedSystem.set('logger', {
     logException: sinon.stub()
   });
