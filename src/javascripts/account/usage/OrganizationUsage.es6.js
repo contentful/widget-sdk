@@ -193,27 +193,33 @@ export default class OrganizationUsage extends React.Component {
             undefined
           )
         }
-        content={
-          (!committed || !flagActive) && typeof resources !== 'undefined' ? (
-            <OrganizationResourceUsageList resources={resources} />
-          ) : committed && flagActive && !hasSpaces ? (
-            <NoSpacesPlaceholder />
-          ) : committed && flagActive && typeof selectedPeriodIndex !== 'undefined' ? (
-            <OrganizationUsagePage
-              period={periods[selectedPeriodIndex]}
-              spaceNames={spaceNames}
-              isPoC={isPoC}
-              periodicUsage={periodicUsage}
-              apiRequestIncludedLimit={apiRequestIncludedLimit}
-              assetBandwidthUsage={assetBandwidthUsage}
-              assetBandwidthIncludedLimit={assetBandwidthIncludedLimit}
-              assetBandwidthUOM={assetBandwidthUOM}
-              isLoading={isLoading}
-            />
-          ) : (
-            <div />
-          )
-        }
+        content={(function() {
+          if (committed && flagActive) {
+            if (!hasSpaces) {
+              return <NoSpacesPlaceholder />;
+            }
+            if (typeof selectedPeriodIndex !== 'undefined') {
+              return (
+                <OrganizationUsagePage
+                  period={periods[selectedPeriodIndex]}
+                  spaceNames={spaceNames}
+                  isPoC={isPoC}
+                  periodicUsage={periodicUsage}
+                  apiRequestIncludedLimit={apiRequestIncludedLimit}
+                  assetBandwidthUsage={assetBandwidthUsage}
+                  assetBandwidthIncludedLimit={assetBandwidthIncludedLimit}
+                  assetBandwidthUOM={assetBandwidthUOM}
+                  isLoading={isLoading}
+                />
+              );
+            }
+          } else {
+            if (typeof resources !== 'undefined') {
+              return <OrganizationResourceUsageList resources={resources} />;
+            }
+          }
+          return <div />;
+        })()}
       />
     );
   }
