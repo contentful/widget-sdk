@@ -2,7 +2,7 @@ const alphaHeader = {
   'x-contentful-enable-alpha-feature': 'usage-insights'
 };
 
-const getPeriods = endpoint =>
+export const getPeriods = endpoint =>
   endpoint(
     {
       method: 'GET',
@@ -11,7 +11,7 @@ const getPeriods = endpoint =>
     alphaHeader
   );
 
-const getOrgUsage = (endpoint, periodId) =>
+export const getOrgUsage = (endpoint, periodId) =>
   endpoint(
     {
       method: 'GET',
@@ -24,7 +24,7 @@ const getOrgUsage = (endpoint, periodId) =>
     alphaHeader
   );
 
-const getApiUsage = (endpoint, periodId, api) =>
+export const getApiUsage = (endpoint, periodId, api) =>
   endpoint(
     {
       method: 'GET',
@@ -38,5 +38,3 @@ const getApiUsage = (endpoint, periodId, api) =>
     },
     alphaHeader
   );
-
-export { getPeriods, getOrgUsage, getApiUsage };
