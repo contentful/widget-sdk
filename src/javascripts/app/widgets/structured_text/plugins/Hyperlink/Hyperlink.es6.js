@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icon, Tooltip, TextLink } from '@contentful/ui-component-library';
+import { Tooltip, TextLink } from '@contentful/ui-component-library';
 import PropTypes from 'prop-types';
 import { INLINES } from '@contentful/structured-text-types';
 
@@ -23,7 +23,8 @@ export default class Hyperlink extends React.Component {
     const { children, node } = this.props;
     const uri = node.data.get('uri');
     const title = node.data.get('title');
-    const icon = ICON_MAP[node.type];
+    // TODO: Use icon once we implement nicer cursor interaction with link.
+    const _icon = ICON_MAP[node.type];
 
     return (
       <span>
@@ -33,7 +34,7 @@ export default class Hyperlink extends React.Component {
           title={title}
           extraClassNames="structured-text__hyperlink">
           {children}
-          <Icon icon={icon} extraClassNames="structured-text__hyperlink-icon" />
+          {/*<Icon icon={icon} extraClassNames="structured-text__hyperlink-icon" />*/}
         </TextLink>
         <Tooltip show={true} />
       </span>
