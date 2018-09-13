@@ -13,6 +13,9 @@ import baseFormatting, { seriesBaseFormatting } from './chartsBaseFormatting.es6
 const accumulateUsage = usage =>
   usage.reduce((acc, value) => acc.concat(value + (last(acc) || 0)), []);
 
+const belowLimitColor = '#263545';
+const aboveLimitColor = '#FDA31A';
+
 export default class OrganisationUsageChart extends React.Component {
   static propTypes = {
     usage: PropTypes.arrayOf(PropTypes.number).isRequired,
@@ -40,7 +43,9 @@ export default class OrganisationUsageChart extends React.Component {
           `
             <div 
             class="usage-page__org-chart-tooltip" 
-            style="background-color: ${color}; color: ${color === '#263545' ? '#fff' : '#263545'};"
+            style="background-color: ${color}; color: ${
+            color === belowLimitColor ? '#fff' : belowLimitColor
+          };"
             >
               <div class="date">${name}</div>
               <div class="value">${value.toLocaleString('en-US')}</div>
@@ -53,12 +58,12 @@ export default class OrganisationUsageChart extends React.Component {
           {
             gte: 0,
             lt: includedLimit,
-            color: '#263545',
+            color: belowLimitColor,
             label: 'includedLimit usage'
           },
           {
             gt: includedLimit,
-            color: '#FDA31A',
+            color: aboveLimitColor,
             label: `exceeding ${shorten(includedLimit)} limit`
           }
         ]
