@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 
 describe('ReactDirective', () => {
-  let React, createReactClass;
+  let React;
   beforeEach(function() {
     let provide;
     module('contentful/test', $provide => {
@@ -10,7 +10,6 @@ describe('ReactDirective', () => {
     });
 
     React = this.$inject('react');
-    createReactClass = this.$inject('create-react-class');
 
     this.$rootScope = this.$inject('$rootScope');
 
@@ -26,7 +25,7 @@ describe('ReactDirective', () => {
   });
 
   afterEach(() => {
-    React = createReactClass = null;
+    React = null;
   });
 
   it('renders react component inside angular template', function() {
@@ -35,11 +34,11 @@ describe('ReactDirective', () => {
         <react-component name="react/hello"></react-component>
       </div>
     `;
-    const component = createReactClass({
+    const component = class X extends React.Component {
       render() {
         return React.createElement('div', { className: 'test-class' }, 'hello!');
       }
-    });
+    };
     const { $el } = this.compile({ template, component });
 
     expect($el.find('.test-class').text()).toBe('hello!');
@@ -51,11 +50,11 @@ describe('ReactDirective', () => {
         <react-component name="react/hello"></react-component>
       </div>
     `;
-    const component = createReactClass({
+    const component = class X extends React.Component {
       render() {
         return React.createElement('div', { className: 'test-class' }, 'hello!');
       }
-    });
+    };
     const { $el } = this.compile({ template, component: { default: component } });
 
     expect($el.find('.test-class').text()).toBe('hello!');
@@ -79,11 +78,11 @@ describe('ReactDirective', () => {
         <react-component name="react/hello" props="props"></react-component>
       </div>
     `;
-    const component = createReactClass({
+    const component = class X extends React.Component {
       render() {
         return React.createElement('div', { className: 'test-class' }, this.props.value);
       }
-    });
+    };
     const { $el } = this.compile({
       template,
       scopeProperties: {
@@ -103,11 +102,11 @@ describe('ReactDirective', () => {
         <react-component name="react/hello" props="props"></react-component>
       </div>
     `;
-    const component = createReactClass({
+    const component = class X extends React.Component {
       render() {
         return React.createElement('div', { className: 'test-class' }, this.props.value);
       }
-    });
+    };
     const { $el, scope } = this.compile({
       template,
       scopeProperties: {
@@ -130,11 +129,11 @@ describe('ReactDirective', () => {
         <react-component name="react/hello" props="props"></react-component>
       </div>
     `;
-    const component = createReactClass({
+    const component = class X extends React.Component {
       render() {
         return React.createElement('div', { className: 'test-class' }, this.props.fn());
       }
-    });
+    };
     const { $el } = this.compile({
       template,
       scopeProperties: {
@@ -154,11 +153,11 @@ describe('ReactDirective', () => {
       <react-component name="react/hello" props="props" watch-depth="reference"></react-component>
     </div>
     `;
-    const component = createReactClass({
+    const component = class X extends React.Component {
       render() {
         return React.createElement('div', { className: 'test-class' }, this.props.value);
       }
-    });
+    };
     const { $el, scope } = this.compile({
       template,
       scopeProperties: {
@@ -181,11 +180,11 @@ describe('ReactDirective', () => {
       <react-component name="react/hello" props="props" watch-depth="reference"></react-component>
     </div>
     `;
-    const component = createReactClass({
+    const component = class X extends React.Component {
       render() {
         return React.createElement('div', { className: 'test-class' }, this.props.value);
       }
-    });
+    };
     const { $el, scope } = this.compile({
       template,
       scopeProperties: {

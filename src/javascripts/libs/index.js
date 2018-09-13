@@ -59,7 +59,6 @@ window.libs = [
   ['enzyme', require('enzyme')],
   ['enzyme-adapter-react-16', require('enzyme-adapter-react-16')],
   ['downshift', require('downshift')],
-  ['create-react-class', require('create-react-class')],
   ['classnames', require('classnames')],
   ['codemirror', require('codemirror')],
   ['react-codemirror', require('react-codemirror')],
