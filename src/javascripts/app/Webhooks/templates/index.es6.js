@@ -15,6 +15,7 @@ import ElasticWebhookTemplate from './ElasticWebhookTemplate.es6';
 import AwsLambdaWebhookTemplate from './AwsLambdaWebhookTemplate.es6';
 import AwsS3WebhookTemplate from './AwsS3WebhookTemplate.es6';
 import AwsSqsWebhookTemplate from './AwsSqsWebhookTemplate.es6';
+import BitbucketWebhookTemplate from './BitbucketWebhookTemplate.es6';
 
 export default [
   NetlifyWebhookTemplate,
@@ -22,16 +23,17 @@ export default [
   TravisCIWebhookTemplate,
   CircleCIWebhookTemplate,
   GitlabWebhookTemplate,
+  BitbucketWebhookTemplate,
+  AwsLambdaWebhookTemplate,
   GoogleCloudWebhookTemplate,
   WebtaskWebhookTemplate,
   SlackWebhookTemplate,
   TwilioWebhookTemplate,
   MailgunWebhookTemplate,
+  AwsSqsWebhookTemplate,
   PubNubWebhookTemplate,
+  AwsS3WebhookTemplate,
   AlgoliaWebhookTemplate,
   ElasticWebhookTemplate,
-  JiraWebhookTemplate,
-  AwsLambdaWebhookTemplate,
-  AwsS3WebhookTemplate,
-  AwsSqsWebhookTemplate
+  JiraWebhookTemplate
 ];
