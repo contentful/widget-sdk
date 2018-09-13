@@ -25,11 +25,7 @@ angular
   .directive('cfLoader', [
     'require',
     require => {
-      var h = require('utils/hyperscript').h;
-      var spinner = require('ui/Components/Spinner.es6').default;
-      var Layout = require('ui/Layout.es6');
-      var hspace = Layout.hspace;
-      var container = Layout.container;
+      var h = require('utils/legacy-html-hyperscript').h;
 
       return {
         restrict: 'E',
@@ -48,9 +44,20 @@ angular
           },
           [
             h('.loader__container', [
-              spinner({ diameter: '36px' }),
-              hspace('10px'),
-              container({ fontSize: '2em' }, ['{{loaderMsg}}'])
+              h('react-component', {
+                name: 'ui/Components/Spinner.es6',
+                props: '{diameter: "36px", style: {display: "block"}}'
+              }),
+              h(
+                'div',
+                {
+                  style: {
+                    marginLeft: '10px',
+                    fontSize: '2em'
+                  }
+                },
+                ['{{loaderMsg}}']
+              )
             ])
           ]
         ),
@@ -121,7 +128,7 @@ angular
   .directive('cfInlineLoader', [
     'require',
     require => {
-      var h = require('utils/hyperscript').h;
+      var h = require('utils/legacy-html-hyperscript').h;
 
       return {
         restrict: 'E',

@@ -1,5 +1,5 @@
 import makeState from 'states/Base.es6';
-import { h } from 'utils/hyperscript';
+import { h } from 'utils/legacy-html-hyperscript';
 import $location from '$location';
 import * as Navigator from 'states/Navigator.es6';
 import { resolveLink } from './deeplink/resolver.es6';

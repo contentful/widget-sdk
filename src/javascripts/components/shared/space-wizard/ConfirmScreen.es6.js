@@ -2,8 +2,7 @@ import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { get, trim } from 'lodash';
 import moment from 'moment';
-import spinner from 'ui/Components/Spinner.es6';
-import { asReact } from 'ui/Framework/DOMRenderer.es6';
+import Spinner from 'ui/Components/Spinner.es6';
 import { formatPrice } from './WizardUtils.es6';
 import Price from 'ui/Components/Price.es6';
 
@@ -122,7 +121,9 @@ class ConfirmScreen extends React.Component {
     return (
       <div>
         {isPending && (
-          <div className="loader__container">{asReact(spinner({ diameter: '40px' }))}</div>
+          <div className="loader__container">
+            <Spinner diameter="40px" />
+          </div>
         )}
         {!isPending && (
           <div>

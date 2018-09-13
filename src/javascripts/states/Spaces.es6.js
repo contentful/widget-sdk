@@ -1,4 +1,4 @@
-import { h } from 'utils/hyperscript';
+import { h } from 'utils/legacy-html-hyperscript';
 import { getStore } from 'TheStore';
 import sectionAccess from 'sectionAccess';
 import * as Analytics from 'analytics/Analytics.es6';

@@ -1,4 +1,4 @@
-import { h } from 'utils/hyperscript';
+import { h } from 'utils/legacy-html-hyperscript';
 import { dragHandle, actions } from './TemplateCommons.es6';
 import LegacyEntityLinkTemplate from './LegacyEntityLinkTemplate.es6';
 

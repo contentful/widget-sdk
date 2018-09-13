@@ -45,7 +45,7 @@ export function container(style, children) {
  *     vspace_(vheight(key) + 'px')
  *
  * @param {number} key  Ranges from 1 to 8
- * @returns {VNode}
+ * @returns {React.Element}
  */
 export function vspace(key) {
   const height = vheight(key);
@@ -64,9 +64,9 @@ export function vspace(key) {
  * vertical rhythm. They are used by the `vspace()` function.
  *
  * @param {number} key  Ranges from 1 to 8
- * @returns {VNode}
+ * @returns {React.Element}
  */
-function vheight(key) {
+export function vheight(key) {
   // Defined by the UI Design Principles
   const height = [4, 8, 14, 20, 28, 40, 60, 80][key - 1];
   if (!height) {
@@ -94,7 +94,7 @@ function vheight(key) {
  * ~~~
  *
  * @param {String} height  CSS value for the top margin
- * @returns {VNode}
+ * @returns {React.Element}
  */
 export function vspace_(height) {
   return container({
@@ -184,7 +184,7 @@ export function vbox(style, children) {
  * ~~~
  *
  * @param {String} width  CSS value for the left margin
- * @returns {VNode}
+ * @returns {React.Element}
  */
 export function hspace(width) {
   return container({
@@ -220,7 +220,7 @@ export function ihspace(width) {
  * ~~~
  *
  * @param {string} minWidth
- * @returns {VNode}
+ * @returns {React.Element}
  */
 export function hfill(minWidth) {
   return container({

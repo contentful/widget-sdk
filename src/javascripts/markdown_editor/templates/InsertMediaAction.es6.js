@@ -1,12 +1,10 @@
-import { h, renderString } from 'ui/Framework';
+import { h } from 'utils/legacy-html-hyperscript';
 
 const TEST_ID_LINK_EXISTING = 'markdownEditor.linkExistingAssets';
 const TEST_ID_UPLOAD_AND_LINK = 'markdownEditor.uploadAssetsAndLink';
 const TEST_ID_DROPDOWN = 'markdownEditor.insertMediaDropdownTrigger';
 
-export default [SingleActionButton(), MultiActionButton(), ContextMenu()]
-  .map(renderString)
-  .join('');
+export default [SingleActionButton(), MultiActionButton(), ContextMenu()].join('');
 
 function SingleActionButton() {
   return InsertMediaButton(

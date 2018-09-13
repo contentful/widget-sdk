@@ -10,8 +10,7 @@ angular
     'require',
     require => {
       var base = require('states/Base.es6').default;
-      var h = require('ui/Framework').h;
-      var workbenchHeader = require('app/Workbench.es6').header;
+      var h = require('utils/legacy-html-hyperscript').h;
       var getStore = require('TheStore').getStore;
       var store = getStore();
       var Analytics = require('analytics/Analytics.es6');
@@ -36,9 +35,13 @@ angular
           'nav-bar@': { template: '' }
         },
         template: [
-          workbenchHeader({ title: ['Create new organization'] }),
+          h('.workbench-header__wrapper', [
+            h('header.workbench-header', [
+              h('h1.workbench-header__title', ['Create new organization'])
+            ])
+          ]),
           h('cf-account-view', { context: 'context' })
-        ]
+        ].join('')
       });
 
       var edit = gatekeeperBase({
@@ -95,7 +98,7 @@ angular
             };
           }
         ],
-        template: [h('cf-new-organization-membership', { properties: 'properties' })],
+        template: h('cf-new-organization-membership', { properties: 'properties' }),
         // this is duplicated code, but there's no way
         // we can get around it for now
         onEnter: [
@@ -138,12 +141,18 @@ angular
             pathSuffix: ''
           },
           template: [
-            !definition.hideHeader && workbenchHeader({ title: [definition.title] }),
+            definition.hideHeader
+              ? ''
+              : h('.workbench-header__wrapper', [
+                  h('header.workbench-header', [
+                    h('h1.workbench-header__title', [definition.title])
+                  ])
+                ]),
             h('cf-account-view', {
               context: 'context',
               hideHeader: definition.hideHeader ? 'true' : 'false'
             })
-          ]
+          ].join('')
         };
         return organizationsBase(_.extend(defaults, definition));
       }

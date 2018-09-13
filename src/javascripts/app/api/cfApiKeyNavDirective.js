@@ -3,7 +3,7 @@
 angular.module('contentful').directive('cfApiKeyNav', [
   'require',
   require => {
-    const h = require('utils/hyperscript').h;
+    const h = require('utils/legacy-html-hyperscript').h;
     const $state = require('$state');
 
     const template = h('header.workbench-header.x--with-nav', [

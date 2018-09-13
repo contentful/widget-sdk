@@ -7,7 +7,6 @@ angular.module('contentful').directive('cfUserList', [
     const $timeout = require('$timeout');
     const getStore = require('TheStore').getStore;
     const store = getStore().forKey('userListView');
-    const renderString = require('ui/Framework').renderString;
 
     const VIEW_BY_NAME = 'name';
     const VIEW_BY_ROLE = 'role';
@@ -17,7 +16,7 @@ angular.module('contentful').directive('cfUserList', [
 
     return {
       restrict: 'E',
-      template: renderString(require('access_control/templates/UserList.es6').default()),
+      template: require('access_control/templates/UserList.es6').default(),
       controller: 'UserListController',
       link: link
     };

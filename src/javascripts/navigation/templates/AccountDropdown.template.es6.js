@@ -1,4 +1,4 @@
-import { h } from 'utils/hyperscript';
+import { h } from 'utils/legacy-html-hyperscript';
 import { triangleDown } from 'Styles';
 import { extend, omit } from 'lodash';
 

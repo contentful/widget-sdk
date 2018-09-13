@@ -35,7 +35,7 @@ angular.module('contentful').factory('modalDialog', [
     var debounce = require('debounce');
     var $timeout = require('$timeout');
     var logger = require('logger');
-    var h = require('utils/hyperscript').h;
+    var h = require('utils/legacy-html-hyperscript').h;
 
     var opened = [];
 

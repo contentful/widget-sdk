@@ -1,4 +1,4 @@
-import { h } from 'utils/hyperscript';
+import { h } from 'utils/legacy-html-hyperscript';
 import { extend } from 'lodash';
 import $rootScope from '$rootScope';
 import modalDialog from 'modalDialog';

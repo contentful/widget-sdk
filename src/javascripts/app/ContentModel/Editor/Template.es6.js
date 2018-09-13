@@ -1,9 +1,6 @@
 import { range } from 'lodash';
-import { h } from 'ui/Framework';
-import { vspace, container } from 'ui/Layout.es6';
-import { docsLink } from 'ui/Content.es6';
-import * as Workbench from 'app/Workbench.es6';
-import pageContentTypeIcon from 'svg/page-ct.es6';
+import { h, icons } from 'utils/legacy-html-hyperscript';
+import { vheight } from 'ui/Layout.es6';
 
 /**
  * This module exports the template for the content type editor.
@@ -11,7 +8,7 @@ import pageContentTypeIcon from 'svg/page-ct.es6';
  * We split the template into a couple of functions
  *
  * - export default compose workbench with
- *   - header() uses `Workbench.header()`
+ *   - header()
  *     - Icon and title
  *     - descriptionAndEdit()  CT description and 'Edit' button
  *     - actions()  Save and actions dropdown with 'Delete' and
@@ -45,12 +42,14 @@ export default h('div.workbench', [
 ]);
 
 function header() {
-  return Workbench.header({
-    title: ['{{contentType.getName()}}'],
-    icon: pageContentTypeIcon,
-    actions: actions(),
-    afterTitle: descriptionAndEdit()
-  });
+  return h('.workbench-header__wrapper', [
+    h('header.workbench-header', [
+      h('.workbench-header__icon.cf-icon', [icons.pageContentTypes]),
+      h('h1.workbench-header__title', ['{{contentType.getName()}}']),
+      ...descriptionAndEdit(),
+      h('.workbench-header__actions', actions())
+    ])
+  ]);
 
   // TODO Wrap this in conditional instead of having `ngIf` on each
   // item. Does not work because CSS sets margin on each child
@@ -186,7 +185,9 @@ function tabPanel() {
       }
     },
     [
-      vspace(5),
+      h('div', {
+        style: { marginTop: `${vheight(5)}px` }
+      }),
       h(
         'div',
         {
@@ -209,10 +210,13 @@ function tabPanel() {
 }
 
 function noFieldsAdvice() {
-  return container(
+  return h(
+    'div',
     {
-      position: 'relative',
-      maxWidth: '50em'
+      style: {
+        position: 'relative',
+        maxWidth: '50em'
+      }
     },
     [
       h(
@@ -430,7 +434,9 @@ function sidebar() {
         ngIf: 'data.canEdit'
       },
       [
-        vspace(4),
+        h('div', {
+          style: { marginTop: `${vheight(4)}px` }
+        }),
         h(
           'button.btn-action.x--block',
           {
@@ -453,12 +459,19 @@ function sidebar() {
     h('ul', [
       h('li', [
         'Read more about content types in our ',
-        docsLink('guide to content modelling', 'contentModellingBasics'),
+        h('react-component', {
+          name: 'components/shared/knowledge_base_icon/KnowledgeBase.es6',
+          props:
+            '{target: "contentModellingBasics", text: "guide to content modelling", inlineText: "true"}'
+        }),
         '.'
       ]),
       h('li', [
         'To learn more about the various ways of disabling and deleting fields have a look at the ',
-        docsLink('field lifecycle', 'field_lifecycle'),
+        h('react-component', {
+          name: 'components/shared/knowledge_base_icon/KnowledgeBase.es6',
+          props: '{target: "field_lifecycle", text: "field lifecycle", inlineText: "true"}'
+        }),
         '.'
       ])
     ])

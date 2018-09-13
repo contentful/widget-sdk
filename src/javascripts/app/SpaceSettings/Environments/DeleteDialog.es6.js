@@ -1,9 +1,10 @@
-import { text } from 'utils/hyperscript';
+import { h as htmlH } from 'utils/legacy-html-hyperscript';
+import escape from 'utils/escape.es6';
 import { assign } from 'utils/Collections.es6';
 import { makeCtor } from 'utils/TaggedValues.es6';
 
 import { bindActions, createStore, makeReducer } from 'ui/Framework/Store.es6';
-import { h, renderString } from 'ui/Framework';
+import { h } from 'ui/Framework';
 import { hbox, hspace, vspace } from 'ui/Layout.es6';
 
 import ModalDialog from 'modalDialog';
@@ -29,7 +30,7 @@ const reduce = makeReducer({
     runDelete(environment.id).then(
       () => {
         Notification.info(
-          `The environment “${text(environment.id)}” has been successfully deleted.`
+          `The environment “${escape(environment.id)}” has been successfully deleted.`
         );
         closeDialog(true);
       },
@@ -52,13 +53,11 @@ const reduce = makeReducer({
  */
 export function openDeleteDialog(runDelete, environment) {
   return ModalDialog.open({
-    template: renderString(
-      h('.modal-background', [
-        h('.modal-dialog', { style: { width: '32em' } }, [
-          h('cf-component-store-bridge', { component: 'component' })
-        ])
+    template: htmlH('.modal-background', [
+      htmlH('.modal-dialog', { style: { width: '32em' } }, [
+        htmlH('cf-component-store-bridge', { component: 'component' })
       ])
-    ),
+    ]),
     controller: $scope => {
       const closeDialog = value => $scope.dialog.confirm(value);
       $scope.component = createComponent(runDelete, environment, closeDialog);

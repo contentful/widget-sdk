@@ -1,4 +1,4 @@
-import { h } from 'utils/hyperscript';
+import { h } from 'utils/legacy-html-hyperscript';
 import spinner from 'ui/Components/Spinner.es6';
 
 export default function() {

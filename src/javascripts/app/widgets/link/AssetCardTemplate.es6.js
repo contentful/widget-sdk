@@ -1,4 +1,4 @@
-import { h } from 'utils/hyperscript';
+import { h } from 'utils/legacy-html-hyperscript';
 import { dragHandle, status, titleText, actions } from './TemplateCommons.es6';
 
 export default function() {

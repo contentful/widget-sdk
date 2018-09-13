@@ -1,5 +1,5 @@
 import { assign } from 'lodash';
-import { h } from 'utils/hyperscript';
+import { h } from 'utils/legacy-html-hyperscript';
 import baseState from 'states/Base.es6';
 import contextHistory from 'navigation/Breadcrumbs/History.es6';
 import * as crumbFactory from 'navigation/Breadcrumbs/Factory.es6';
@@ -8,6 +8,7 @@ import * as Auth from 'Authentication.es6';
 import attachEditorController from './KeyEditor/Controller.es6';
 import editorTemplate from './KeyEditor/Template.es6';
 import * as CMATokensPage from './CMATokens/Page.es6';
+import CMATokensPageTemplate from './CMATokens/PageTemplate.es6';
 import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo.es6';
 
 /**
@@ -96,7 +97,7 @@ export default {
     {
       name: 'cma_tokens',
       url: '/cma_tokens',
-      template: CMATokensPage.template(),
+      template: CMATokensPageTemplate(),
       controller: [
         '$scope',
         $scope => {

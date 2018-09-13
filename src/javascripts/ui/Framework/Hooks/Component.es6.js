@@ -3,9 +3,6 @@ import * as React from 'react';
 import { omit, clone, get } from 'lodash';
 import { set } from 'utils/Collections.es6';
 
-import { asReact } from '../DOMRenderer.es6';
-import * as VTree from '../VTree.es6';
-
 /**
  * A React component that runs hooks.
  *
@@ -65,7 +62,7 @@ export class Hook extends React.Component {
       this.hooks.el = el;
       oldRef && oldRef(el);
     };
-    return asReact(VTree.Element(tag, propsWithoutHooks, children));
+    return React.createElement(tag, propsWithoutHooks, ...children);
   }
 
   applyHooks() {

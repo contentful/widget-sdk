@@ -17,7 +17,6 @@ describe('app/api/KeyEditor/Controller.es6', () => {
 
     const attachController = this.$inject('app/api/KeyEditor/Controller.es6').default;
     const template = this.$inject('app/api/KeyEditor/Template.es6').default();
-    const { renderString } = this.$inject('ui/Framework');
     const $compile = this.$inject('$compile');
     const $rootScope = this.$inject('$rootScope');
     const $state = this.$inject('$state');
@@ -48,7 +47,7 @@ describe('app/api/KeyEditor/Controller.es6', () => {
       const scope = $rootScope.$new();
       scope.context = {};
       attachController(scope, apiKey);
-      const el = $compile(renderString(template))(scope).get(0);
+      const el = $compile(template)(scope).get(0);
       scope.$apply();
       return {
         input: {

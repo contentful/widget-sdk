@@ -21,7 +21,7 @@
 angular.module('cf.ui').directive('cfUiSticky', [
   'require',
   require => {
-    var h = require('utils/hyperscript').h;
+    var h = require('utils/legacy-html-hyperscript').h;
     var _ = require('lodash');
 
     return {

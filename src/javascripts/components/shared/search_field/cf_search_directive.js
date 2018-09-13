@@ -6,10 +6,9 @@ angular.module('contentful').directive('cfSearch', [
     const keycodes = require('utils/keycodes.es6').default;
     const debounce = require('debounce');
     const $timeout = require('$timeout');
-    const h = require('utils/hyperscript').h;
+    const h = require('utils/legacy-html-hyperscript').h;
+    const icons = require('utils/legacy-html-hyperscript').icons;
     const Colors = require('Styles/Colors.es6').byName;
-    const renderString = require('ui/Framework').renderString;
-    const searchIcon = renderString(require('svg/search.es6').default);
 
     return {
       template: h(
@@ -44,7 +43,7 @@ angular.module('contentful').directive('cfSearch', [
               tabindex: '0',
               dataTestId: 'search-button'
             },
-            [searchIcon]
+            [icons.search]
           )
         ]
       ),

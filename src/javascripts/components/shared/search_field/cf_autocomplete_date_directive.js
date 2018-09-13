@@ -3,7 +3,7 @@ angular.module('contentful').directive('cfAutocompleteDate', [
   'require',
   require => {
     const moment = require('moment');
-    const h = require('utils/hyperscript').h;
+    const h = require('utils/legacy-html-hyperscript').h;
 
     const DATE_FORMAT = 'yy-mm-dd'; // datepicker format
     const DATE_FORMAT_INTERNAL = 'YYYY-MM-DD'; // moment.js format

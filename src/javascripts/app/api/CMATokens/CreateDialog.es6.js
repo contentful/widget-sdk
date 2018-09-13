@@ -1,5 +1,5 @@
-import { h } from 'utils/hyperscript';
-import { container, vspace, hfill } from 'ui/Layout.es6';
+import { h } from 'utils/legacy-html-hyperscript';
+import { vheight } from 'ui/Layout.es6';
 import * as Command from 'command';
 import { open as openDialog } from 'modalDialog';
 import { track } from 'analytics/Analytics.es6';
@@ -47,7 +47,7 @@ function initController(tokenResourceManager, $scope, successHandler) {
     value: $scope.state.token,
     name: 'tokenInput',
     'data-test-id': 'pat.create.tokenCopy',
-    'cf-select-all-input': true,
+    'cf-select-all-input': 'true',
     id: 'tokenInput',
     withCopyButton: true,
     disabled: true
@@ -114,9 +114,10 @@ function dialogTemplate() {
 
 function dialogContentTemplate() {
   return [
-    container(
+    h(
+      'div',
       {
-        width: '32em'
+        style: { width: '32em' }
       },
       [
         h('div', { ngIf: 'state.input' }, inputTemplate()),
@@ -136,12 +137,12 @@ function successTemplate() {
         new Personal Access Token. You won’t be able to see it again!`
       ])
     ]),
-    vspace(3),
+    h('div', { style: { marginTop: `${vheight(3)}px` } }),
     h('react-component', {
       name: '@contentful/ui-component-library/TextInput',
       props: 'buildTokenInputProps()'
     }),
-    vspace(3),
+    h('div', { style: { marginTop: `${vheight(3)}px` } }),
     h('button.btn-action', { ngClick: 'dialog.confirm()' }, ['Done'])
   ];
 }
@@ -162,10 +163,10 @@ function failureTemplate() {
         ])
       ]
     ),
-    vspace(3),
-    container({ display: 'flex' }, [
+    h('div', { style: { marginTop: `${vheight(3)}px` } }),
+    h('div', { style: { display: 'flex' } }, [
       h('button.btn-action', { uiCommand: 'createToken' }, ['Retry']),
-      hfill(),
+      h('div', { style: { marginLeft: 'auto' } }),
       h('button.btn-plain', { ngClick: 'dialog.confirm()' }, ['Close window'])
     ])
   ];

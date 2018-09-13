@@ -19,7 +19,7 @@ const DISPLAY_PAGES = 3 + NO_OF_NEIGHBORS * 2;
  *   Called when the user selects a page.
  * @param {number} page
  * @param {number} pageCount
- * @returns {VTree}
+ * @returns {React.Element}
  */
 export default function(select, page, pageCount) {
   if (pageCount < 2) {

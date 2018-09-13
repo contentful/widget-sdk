@@ -5,11 +5,10 @@ import { makeCtor, match } from 'utils/TaggedValues.es6';
 
 import { h } from 'ui/Framework';
 import { createStore, bindActions, makeReducer } from 'ui/Framework/Store.es6';
-import { text } from 'utils/hyperscript';
+import escape from 'utils/escape.es6';
 import { container, vspace } from 'ui/Layout.es6';
 import { docsLink, linkOpen, p } from 'ui/Content.es6';
 import { table, tr, td, th } from 'ui/Content/Table.es6';
-import * as Workbench from '../Workbench.es6';
 
 import * as Config from 'Config.es6';
 import * as ResourceManager from './Resource.es6';
@@ -57,7 +56,7 @@ export function initController($scope, auth) {
         () => {
           track('personal_access_token:action', { action: 'revoke', patId: id });
           Notification.info(
-            `The token “${text(truncate(token.name, 30))}” has been successfully revoked.`
+            `The token “${escape(truncate(token.name, 30))}” has been successfully revoked.`
           );
           actions.Reload();
         },
@@ -135,13 +134,6 @@ function render(state, actions) {
       padding: '2em 3em'
     },
     [oauthSection(), vspace(7), patSection(state, actions)]
-  );
-}
-
-export function template() {
-  return Workbench.withSidebar(
-    h('cf-component-store-bridge', { component: 'component' }),
-    sidebar()
   );
 }
 
@@ -319,22 +311,4 @@ function revokeButton(revoke, token) {
       )
     ]
   );
-}
-
-function sidebar() {
-  return [
-    h('h2.entity-sidebar__heading', ['Documentation']),
-    h('.entity-sidebar__text-profile', [
-      p([
-        `The Content Management API, unlike the Content Delivery API,
-        provides read and write access to your Contentful spaces. This
-        enables integrating content management to your development
-        workflow, perform automation operations…`
-      ]),
-      h('ul', [
-        h('li', [docsLink('Content Management API reference', 'management_api')]),
-        h('li', [docsLink('Other Contentful APIs', 'content_apis')])
-      ])
-    ])
-  ];
 }

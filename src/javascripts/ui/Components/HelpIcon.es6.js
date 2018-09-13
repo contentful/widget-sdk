@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import Tooltip from 'ui/Components/Tooltip.es6';
 import { byName as colors } from 'Styles/Colors.es6';
 import QuestionMarkIcon from 'svg/QuestionMarkIcon.es6';
-import { asReact } from 'ui/Framework/DOMRenderer.es6';
 
 class HelpIcon extends React.Component {
   static propTypes = {
@@ -15,7 +14,7 @@ class HelpIcon extends React.Component {
     const { children, tooltipWidth } = this.props;
     const questionMarkIcon = (
       <span className="help-icon__img">
-        {asReact(QuestionMarkIcon({ color: colors.textLight }))}
+        <QuestionMarkIcon color={colors.textLight} />
       </span>
     );
 

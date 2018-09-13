@@ -1,4 +1,4 @@
-import { h } from 'utils/hyperscript';
+import { h } from 'utils/legacy-html-hyperscript';
 
 export default function template() {
   return h('.home', { 'cf-ui-sticky-container': true }, [

@@ -3,7 +3,7 @@
 angular.module('contentful').directive('cfAccountView', [
   'require',
   require => {
-    const h = require('utils/hyperscript').h;
+    const h = require('utils/legacy-html-hyperscript').h;
     const $timeout = require('$timeout');
     const Authentication = require('Authentication.es6');
     const modalDialog = require('modalDialog');

@@ -1,6 +1,5 @@
 import React, { createElement as e } from 'react';
 import PropTypes from 'prop-types';
-import { asReact } from 'ui/Framework/DOMRenderer.es6';
 import AnimateHeight from 'react-animate-height';
 import folderIcon from 'svg/folder.es6';
 import environmentIcon from 'svg/environment.es6';
@@ -47,7 +46,7 @@ function EnvironmentList({ environments, isCurrSpace, currentEnvId, goToSpace, s
                 }
               }
             },
-            ...[asReact(environmentIcon({ display: 'inline' })), envId]
+            ...[environmentIcon({ display: 'inline' }), envId]
           )
         ]
       );
@@ -143,7 +142,7 @@ export default class extends React.Component {
           'div',
           { className: 'nav-sidepanel__space-title' },
           ...[
-            e('div', { className: 'nav-sidepanel__space-icon' }, asReact(folderIcon)),
+            e('div', { className: 'nav-sidepanel__space-icon' }, folderIcon),
             e('span', { className: spaceNameClassNames }, space.name),
             e('span', {
               className: this.state.loading

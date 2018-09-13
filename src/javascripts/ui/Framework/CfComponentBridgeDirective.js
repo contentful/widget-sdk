@@ -56,7 +56,7 @@ angular
    * - `component.actions` is an object that maps action names to action
    *   constructors. It is paseed to `ui/Framework/Store.bindActions`.
    * - `component.render` is a function that receives the stores current
-   *   state and the bound actions as arguments and produces a VTree.
+   *   state and the bound actions as arguments and produces a React.Element.
    *
    * ~~~js
    * {

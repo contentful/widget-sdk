@@ -1,4 +1,4 @@
-import { h } from 'utils/hyperscript';
+import { h } from 'utils/legacy-html-hyperscript';
 import { open } from 'modalDialog';
 import { default as backgroundIcon } from 'svg/header-illustration-wide.es6';
 import { default as thumbsDownIcon } from 'svg/icon-thumbs-down.es6';

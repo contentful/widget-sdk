@@ -12,7 +12,6 @@ import { h } from 'ui/Framework';
 import { linkOpen, badge, codeFragment } from 'ui/Content.es6';
 import { table, tr, td, th } from 'ui/Content/Table.es6';
 import { container, hbox, ihspace } from 'ui/Layout.es6';
-import * as Workbench from 'app/Workbench.es6';
 import { byName as Colors } from 'Styles/Colors.es6';
 
 import pageSettingsIcon from 'svg/page-settings.es6';
@@ -22,19 +21,25 @@ import CopyIconButton from 'ui/Components/CopyIconButton.es6';
 import { Tooltip } from 'react-tippy';
 
 export default function render(state, actions) {
-  return Workbench.withSidebar({
-    header: Workbench.header({
-      title: ['Environments'],
-      icon: pageSettingsIcon
-    }),
-    sidebar: sidebar(state, actions),
-    content: container(
-      {
-        padding: '0em 1em'
-      },
-      [environmentList(state, actions)]
-    )
-  });
+  return h('.workbench', [
+    h('.workbench-header__wrapper', [
+      h('header.workbench-header', [
+        h('.workbench-header__icon.cf-icon', [pageSettingsIcon]),
+        h('h1.workbench-header__title', ['Environments'])
+      ])
+    ]),
+    h('.workbench-main', [
+      h('.workbench-main__content', [
+        container(
+          {
+            padding: '0em 1em'
+          },
+          [environmentList(state, actions)]
+        )
+      ]),
+      h('.workbench-main__sidebar', [h('.entity-sidebar', sidebar(state, actions))])
+    ])
+  ]);
 }
 
 /**

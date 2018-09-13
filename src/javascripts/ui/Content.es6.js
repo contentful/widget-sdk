@@ -32,7 +32,7 @@ import $state from '$state';
  *
  * @param {string} text    Link text
  * @param {string} target  Article target key
- * @returns {VNode}
+ * @returns {React.Element}
  */
 export function docsLink(text, target) {
   return KnowledgeBase({
@@ -54,12 +54,12 @@ export function docsLink(text, target) {
  * ])
  * ~~~
  *
- * @param {VNode[]} content  List of hyperscript nodes
+ * @param {React.Element[]} content  List of React.Element
  * @param {string} url
  * @param {string?} modifier
  *   An optional string that changes the style of the link. Possible
  *   values are 'constructive' or 'destructive'
- * @returns {VNode}
+ * @returns {React.Element}
  */
 const AVAILABLE_MODIFIERS = ['', 'constructive', 'destructive'];
 export function linkOpen(content, url, modifier = '') {
@@ -95,10 +95,10 @@ export function linkOpen(content, url, modifier = '') {
  * ])
  * ~~~
  *
- * @param {VNode[]}  content   Array of child nodes
+ * @param {React.Element[]}  content   Array of child React.Element
  * @param {object}   stateRef  Object of `{path: 'x.y', params: {...}, options: {...}}` shape.
  *                             If `params` are not provided `$stateParams` are used.
- * @returns {VNode}
+ * @returns {React.Element}
  */
 export function stateLink(content, { path, params, options }) {
   return h(
@@ -134,8 +134,8 @@ export function stateLink(content, { path, params, options }) {
  * ])
  * ~~~
  *
- * @param {VNode[]} content  List of hyperscript nodes
- * @returns {VNode}
+ * @param {React.Element[]} content  List of React.Element
+ * @returns {React.Element}
  */
 export function p(content) {
   return h(

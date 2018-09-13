@@ -50,13 +50,14 @@ describe('app/api/CMATokens', () => {
     };
 
     const CMATokensPage = this.$inject('app/api/CMATokens/Page.es6');
+    const CMATokensPageTemplate = this.$inject('app/api/CMATokens/PageTemplate.es6').default;
 
     this.init = function() {
       // TODO abstract this into DOM helper
       this.container = DOM.createView($('<div class=client>').get(0));
       $(this.container.element).appendTo('body');
 
-      this.$compileWith(CMATokensPage.template(), $scope => {
+      this.$compileWith(CMATokensPageTemplate(), $scope => {
         CMATokensPage.initController($scope, auth);
       }).appendTo(this.container.element);
 

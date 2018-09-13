@@ -5,7 +5,7 @@ angular
   .directive('cfAddUsersToSpaceNote', [
     'require',
     require => {
-      const h = require('utils/hyperscript').h;
+      const h = require('utils/legacy-html-hyperscript').h;
 
       return {
         restrict: 'E',
@@ -49,7 +49,7 @@ angular
   .directive('cfNoUsersToAddToSpaceDialog', [
     'require',
     require => {
-      const h = require('utils/hyperscript').h;
+      const h = require('utils/legacy-html-hyperscript').h;
 
       return {
         restrict: 'E',

@@ -13,7 +13,7 @@ import { Color } from 'Styles/Colors.es6';
  *   lightened version of this color is added later. Defaults to 'black'.
  * @param {object?} .style
  *   Addtional CSS styles applied to the spinner.
- * @return {VTree}
+ * @return {React.Element}
  */
 export default function spinner({ diameter = '20px', color = 'black', style = {} } = {}) {
   const colorDark = Color(color || 'black');

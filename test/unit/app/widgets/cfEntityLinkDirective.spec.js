@@ -1,7 +1,7 @@
 describe('cfEntityLink directive', () => {
   beforeEach(function() {
     module('contentful/test');
-    this.h = this.$inject('utils/hyperscript').h;
+    this.h = this.$inject('utils/legacy-html-hyperscript').h;
 
     const $q = this.$inject('$q');
     this.compile = function(entity, actions, config) {

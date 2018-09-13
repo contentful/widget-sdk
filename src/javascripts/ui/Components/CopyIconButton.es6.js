@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 
 import copyToClipboard from 'utils/DomClipboardCopy.es6';
 
-import { asReact } from 'ui/Framework/DOMRenderer.es6';
 import copyIcon from 'svg/CopyIcon.es6';
 import { byName as Colors } from 'Styles/Colors.es6';
 
@@ -81,7 +80,7 @@ class CopyIconButton extends React.Component {
               self.setState({ showCopiedTooltip: false });
             });
           }}>
-          {asReact(copyIcon({ color: Colors.textLightest }))}
+          <copyIcon color={Colors.textLightest} />
         </Tippy.Tooltip>
       </span>
     );

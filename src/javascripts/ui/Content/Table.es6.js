@@ -33,9 +33,9 @@ import { partial } from 'lodash';
  * TODO extend this with bulk actions
  * TODO inline styles
  *
- * @param {VNode} head
- * @param {VNode} body
- * @returns {VNode}
+ * @param {React.Element} head
+ * @param {React.Element} body
+ * @returns {React.Element}
  */
 export function table(head, body) {
   return h('table.simple-table', [h('thead', [h('tr', head)]), h('tbody', body)]);

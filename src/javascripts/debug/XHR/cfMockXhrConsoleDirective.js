@@ -4,7 +4,7 @@ angular
   .directive('cfMockXhrConsole', [
     'require',
     require => {
-      const h = require('utils/hyperscript').h;
+      const h = require('utils/legacy-html-hyperscript').h;
 
       return {
         template: getTemplate(),

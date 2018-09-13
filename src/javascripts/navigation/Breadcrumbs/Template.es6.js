@@ -1,4 +1,4 @@
-import { h } from 'ui/Framework';
+import { h } from 'utils/legacy-html-hyperscript';
 
 export function template() {
   return h(

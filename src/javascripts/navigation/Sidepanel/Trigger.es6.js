@@ -4,7 +4,6 @@ import { h } from 'ui/Framework';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { container, hspace, hbox, vbox } from 'ui/Layout.es6';
-import { asReact } from 'ui/Framework/DOMRenderer.es6';
 import { caseof } from 'sum-types';
 
 import { byName as colors } from 'Styles/Colors.es6';
@@ -42,22 +41,20 @@ export default class Trigger extends React.Component {
         className="app-top-bar__sidepanel-trigger"
         onClick={onClick}
         data-test-id="sidepanel-trigger">
-        {asReact(logo)}
-        {asReact(hspace('15px'))}
-        {asReact(
-          vbox(
-            {
-              justifyContent: 'center',
-              alignSelf: 'stretch',
-              flexGrow: '1',
-              flexShrink: '1',
-              overflow: 'hidden'
-            },
-            renderContent(this.state)
-          )
+        {logo}
+        {hspace('15px')}
+        {vbox(
+          {
+            justifyContent: 'center',
+            alignSelf: 'stretch',
+            flexGrow: '1',
+            flexShrink: '1',
+            overflow: 'hidden'
+          },
+          renderContent(this.state)
         )}
-        {asReact(hspace('15px'))}
-        {asReact(hamburger({ fill: 'white' }))}
+        {hspace('15px')}
+        {hamburger({ fill: 'white' })}
       </div>
     );
   }

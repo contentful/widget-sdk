@@ -16,10 +16,6 @@ angular
   .provider('states/config', [
     '$stateProvider',
     $stateProvider => {
-      // Is assigned the `h` export from the `ui/Framework` module.
-      // This is necessary because we define a provider and not a factory.
-      var renderString;
-
       // Collection of registered services
       var states = [];
 
@@ -30,14 +26,7 @@ angular
       };
 
       return {
-        $get: [
-          'require',
-          require => {
-            renderString = require('ui/Framework').renderString;
-
-            return stateConfig;
-          }
-        ]
+        $get: [() => stateConfig]
       };
 
       /*
@@ -69,11 +58,6 @@ angular
         children.forEach(state => {
           state = useContentView(state);
 
-          _.forEach(state.views, view => {
-            provideScopeContext(view);
-            view.template = templateToString(view.template);
-          });
-
           var children = state.children;
           var name;
           if (parentName) {
@@ -81,6 +65,14 @@ angular
           } else {
             name = state.name;
           }
+
+          _.forEach(state.views, view => {
+            if (!['string', 'undefined'].includes(typeof view.template)) {
+              throw new Error(`${name}: template should be string or undefined`);
+            }
+
+            provideScopeContext(view);
+          });
 
           state = _.omit(state, ['children']);
           state.name = name;
@@ -127,16 +119,6 @@ angular
             return controllerFn.apply(this, args);
           }
         ]);
-      }
-
-      function templateToString(template) {
-        if (!template || typeof template === 'string') {
-          return template;
-        } else if (Array.isArray(template)) {
-          return template.map(renderString).join('');
-        } else {
-          return renderString(template);
-        }
       }
     }
   ]);

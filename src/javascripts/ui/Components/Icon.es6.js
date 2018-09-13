@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { asReact } from 'ui/Framework/DOMRenderer.es6';
 import $ from 'jquery';
 
 import HomeWelcomeIcon from 'svg/home-welcome.es6';
@@ -135,7 +134,7 @@ class Icon extends React.Component {
         ref={node => {
           this.container = node;
         }}>
-        {asReact(Icon)}
+        {Icon}
       </span>
     );
   }

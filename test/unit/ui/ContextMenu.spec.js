@@ -1,5 +1,5 @@
 import setupContextMenuHandler from 'ui/ContextMenuHandler.es6';
-import { h } from 'utils/hyperscript';
+import { h } from 'utils/legacy-html-hyperscript';
 
 describe('context menu', () => {
   beforeEach(function() {

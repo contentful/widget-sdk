@@ -1,8 +1,5 @@
-import { h } from 'ui/Framework';
-import { container } from 'ui/Layout.es6';
-import * as Workbench from 'app/Workbench.es6';
+import { h, icons } from 'utils/legacy-html-hyperscript';
 import * as Colors from 'Styles/Colors.es6';
-import pageApiIcon from 'svg/page-apis.es6';
 
 export default function() {
   const title = [
@@ -43,7 +40,14 @@ export default function() {
     )
   ];
   return h('.workbench', [
-    Workbench.header({ title, actions, icon: pageApiIcon }),
+    h('.workbench-header__wrapper', [
+      h('header.workbench-header', [
+        h('cf-breadcrumbs'),
+        h('.workbench-header__icon.cf-icon', [icons.pageApis]),
+        h('h1.workbench-header__title', title),
+        h('.workbench-header__actions', actions)
+      ])
+    ]),
     h('cf-loader', { watchStateChange: 'true' }),
     main()
   ]);
@@ -73,11 +77,14 @@ function main() {
         h('div', { ngIf: 'keyEditorComponent' }, [
           h('cf-component-bridge', { component: 'keyEditorComponent' })
         ]),
-        container(
+        h(
+          'div',
           {
-            marginLeft: '4em',
-            width: '30em',
-            flexShrink: 0
+            style: {
+              marginLeft: '4em',
+              width: '30em',
+              flexShrink: 0
+            }
           },
           [
             h('div', { ngIf: 'boilerplateProps' }, [

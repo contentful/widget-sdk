@@ -16,7 +16,7 @@
 angular.module('contentful').directive('cfAuthorsHelp', [
   'require',
   require => {
-    const h = require('utils/hyperscript').h;
+    const { h, icons } = require('utils/legacy-html-hyperscript');
     const helpModal = require('components/authors_help/helpModal.es6');
     const LD = require('utils/LaunchDarkly');
     const K = require('utils/kefir.es6');
@@ -25,7 +25,6 @@ angular.module('contentful').directive('cfAuthorsHelp', [
     const store = getStore();
     const $state = require('$state');
     const Analytics = require('analytics/Analytics.es6');
-    const infoIcon = require('svg/icon-info.es6').default;
 
     const authorHelpFlag = 'feature-ps-12-2017-author-onboarding-help';
 
@@ -43,7 +42,7 @@ angular.module('contentful').directive('cfAuthorsHelp', [
             {
               ngClick: 'help.openHelp()'
             },
-            [h('.authors-help__link-icon', [infoIcon]), 'Intro']
+            [h('.authors-help__link-icon', [icons.info]), 'Intro']
           )
         ]
       ),

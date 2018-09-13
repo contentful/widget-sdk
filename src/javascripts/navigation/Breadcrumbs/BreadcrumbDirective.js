@@ -24,7 +24,6 @@ angular.module('contentful').directive('cfBreadcrumbs', [
     const ancestorLinkSelector = ancestorMenuSelector + ' [role="link"]';
     const hintDismissBtnSelector = '[aria-label="ui-hint-dismiss-btn"]';
 
-    const renderString = require('ui/Framework').renderString;
     const template = require('navigation/Breadcrumbs/Template.es6').template;
 
     const analyticsData = {
@@ -47,7 +46,7 @@ angular.module('contentful').directive('cfBreadcrumbs', [
     };
 
     return {
-      template: renderString(template()),
+      template: template(),
       restrict: 'E',
       replace: true,
       scope: {},

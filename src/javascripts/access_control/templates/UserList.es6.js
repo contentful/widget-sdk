@@ -1,6 +1,4 @@
-import { h } from 'ui/Framework';
-import pageSettingsIcon from 'svg/page-settings.es6';
-import * as Workbench from 'app/Workbench.es6';
+import { h, icons } from 'utils/legacy-html-hyperscript';
 
 export default function() {
   return h('div.workbench', [
@@ -23,11 +21,13 @@ function header() {
     ])
   ];
 
-  return Workbench.header({
-    title: ['Users ({{ spaceUsersCount || 0 }})'],
-    icon: pageSettingsIcon,
-    actions
-  });
+  return h('.workbench-header__wrapper', [
+    h('header.workbench-header', [
+      h('.workbench-header__icon.cf-icon', [icons.pageSettings]),
+      h('h1.workbench-header__title', ['Users ({{ spaceUsersCount || 0 }})']),
+      h('.workbench-header__actions', actions)
+    ])
+  ]);
 }
 
 function userList() {

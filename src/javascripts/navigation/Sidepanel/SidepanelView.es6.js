@@ -1,7 +1,6 @@
 import { h } from 'ui/Framework';
 import closeIcon from 'svg/close.es6';
 import settingsIcon from 'svg/settings.es6';
-import scaleSvg from 'utils/ScaleSvg.es6';
 import SidepanelOrgs from './SidepanelOrgs.es6';
 import SidepanelSpaces from './SidepanelSpaces.es6';
 import SidepanelNoOrgs from './SidepanelNoOrgs.es6';
@@ -84,6 +83,6 @@ function renderCloseBtn(closeSidePanel) {
       onClick: closeSidePanel,
       dataTestId: 'sidepanel-close-btn'
     },
-    [scaleSvg(closeIcon, 0.8)]
+    [closeIcon]
   );
 }

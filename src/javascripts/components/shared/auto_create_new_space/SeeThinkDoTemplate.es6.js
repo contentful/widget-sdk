@@ -1,4 +1,4 @@
-import { h } from 'utils/hyperscript';
+import { h } from 'utils/legacy-html-hyperscript';
 import spinner from 'ui/Components/Spinner.es6';
 import { byName } from 'Styles/Colors.es6';
 import { genBoxShadow } from 'Styles';

@@ -10,8 +10,7 @@ angular
     'require',
     require => {
       var base = require('states/Base.es6').default;
-      var h = require('utils/hyperscript').h;
-      var workbenchHeader = require('app/Workbench.es6').header;
+      var h = require('utils/legacy-html-hyperscript').h;
 
       var user = userBase({
         name: 'user',
@@ -56,9 +55,11 @@ angular
             pathSuffix: ''
           },
           template: [
-            workbenchHeader({ title: [definition.title] }),
+            h('.workbench-header__wrapper', [
+              h('header.workbench-header', [h('h1.workbench-header__title', [definition.title])])
+            ]),
             h('cf-account-view', { context: 'context' })
-          ]
+          ].join('')
         };
 
         return base(_.extend(definition, defaults));

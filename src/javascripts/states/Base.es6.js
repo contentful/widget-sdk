@@ -1,4 +1,4 @@
-import { h } from 'ui/Framework';
+import { h } from 'utils/legacy-html-hyperscript';
 
 /**
  * Take an Angular UI router state definition and wrap its template to
@@ -32,9 +32,14 @@ function getLoadingText(stateDefinition) {
 }
 
 function wrapTemplate({ template, loadingText }) {
+  if (typeof template === 'undefined') {
+    template = [];
+  }
+
   if (!Array.isArray(template)) {
     template = [template];
   }
+
   return [
     h(
       'div',
@@ -65,5 +70,5 @@ function wrapTemplate({ template, loadingText }) {
         ])
       ]
     )
-  ];
+  ].join('');
 }

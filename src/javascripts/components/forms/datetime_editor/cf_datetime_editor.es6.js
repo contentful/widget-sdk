@@ -1,4 +1,4 @@
-import { h } from 'utils/hyperscript';
+import { h } from 'utils/legacy-html-hyperscript';
 import { byName } from 'Styles/Colors.es6';
 
 export default function template() {

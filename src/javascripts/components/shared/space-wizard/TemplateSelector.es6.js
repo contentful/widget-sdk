@@ -2,8 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { get } from 'lodash';
-import spinner from 'ui/Components/Spinner.es6';
-import { asReact } from 'ui/Framework/DOMRenderer.es6';
+import Spinner from 'ui/Components/Spinner.es6';
 
 import TemplatesToggle from './TemplatesToggle.es6';
 import TemplatesList from './TemplatesList.es6';
@@ -52,7 +51,9 @@ class TemplateSelector extends React.Component {
         />
         {isPending && (
           <div className={templatesListClassName}>
-            <div className="loader__container">{asReact(spinner({ diameter: '40px' }))}</div>
+            <div className="loader__container">
+              <Spinner diameter="40px" />
+            </div>
           </div>
         )}
         {!isPending &&

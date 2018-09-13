@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { asReact } from 'ui/Framework/DOMRenderer.es6';
 import CheckmarkIcon from 'svg/checkmark.es6';
 import ContentTypeIcon from 'svg/page-ct.es6';
 import ContentIcon from 'svg/page-content.es6';
@@ -49,7 +48,7 @@ class ProgressScreen extends React.Component {
           {!done && <div className="spinner" />}
           {done && (
             <div style={{ transform: 'scale(2)' }} data-test-id="create-space-create-done">
-              {asReact(CheckmarkIcon)}
+              {CheckmarkIcon}
             </div>
           )}
         </div>
@@ -60,7 +59,7 @@ class ProgressScreen extends React.Component {
         <div className="create-new-space__templates__entities">
           {infoItems.map(({ icon, title, description }) => (
             <div key={title} className="create-new-space__templates__entity">
-              <div>{asReact(icon)}</div>
+              <div>{icon}</div>
               <div className="create-new-space__templates__entity__description">
                 <h3>{title}</h3>
                 <p>{description}</p>

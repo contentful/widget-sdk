@@ -8,7 +8,7 @@ import logger from 'logger';
 import { open as openDialog } from 'modalDialog';
 
 import { bindActions, createStore, makeReducer } from 'ui/Framework/Store.es6';
-import { h, renderString } from 'ui/Framework';
+import { h } from 'utils/legacy-html-hyperscript';
 import render from './EditDialogView.es6';
 
 // Actions
@@ -39,13 +39,11 @@ export function openCreateDialog(createEnvironment) {
   };
 
   return openDialog({
-    template: renderString(
-      h('.modal-background', [
-        h('.modal-dialog', { style: { width: '32em' } }, [
-          h('cf-component-store-bridge', { component: 'component' })
-        ])
+    template: h('.modal-background', [
+      h('.modal-dialog', { style: { width: '32em' } }, [
+        h('cf-component-store-bridge', { component: 'component' })
       ])
-    ),
+    ]),
     controller: $scope => {
       $scope.component = createComponent(initialState, { createEnvironment }, value => {
         $scope.dialog.confirm(value);
