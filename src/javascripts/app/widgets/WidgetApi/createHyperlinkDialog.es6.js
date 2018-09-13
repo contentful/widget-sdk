@@ -37,6 +37,17 @@ export default async function({ value = {}, showTextInput, field }) {
         hideText: !showTextInput,
         onConfirm: value => dialog.confirm(value),
         onCancel: () => dialog.cancel(),
+        onRender: () => {
+          // TODO: Get rid of this hack to re-center modal dialog.
+          setTimeout(() => {
+            dialog._centerOnBackground();
+            // We apparently need this for the angular directive when
+            // switching from link type URI to e.g. Entry or Asset:
+            setTimeout(() => {
+              dialog._centerOnBackground();
+            }, 10);
+          }, 0);
+        },
         entitySelectorConfigs
       }
     }
