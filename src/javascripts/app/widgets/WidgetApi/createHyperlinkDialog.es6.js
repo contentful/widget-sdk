@@ -1,7 +1,7 @@
 import modalDialog from 'modalDialog';
 import { newConfigFromStructuredTextField } from 'search/EntitySelector/Config.es6';
 
-const DEFAULT_VALUE = { uri: 'https://', text: '' };
+const DEFAULT_VALUE = { uri: '', text: '' };
 
 /**
  * Opens a dialog for the user to construct a link and returns the relevant
