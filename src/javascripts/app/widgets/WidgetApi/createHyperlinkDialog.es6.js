@@ -1,5 +1,5 @@
 import modalDialog from 'modalDialog';
-import { newConfigFromStructuredTextField } from 'search/config.es6';
+import { newConfigFromStructuredTextField } from 'search/EntitySelector/Config.es6';
 
 const DEFAULT_VALUE = { uri: 'https://', text: '' };
 

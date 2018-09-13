@@ -16,7 +16,7 @@ angular.module('contentful').factory('entitySelector', [
       newConfigFromField,
       newConfigFromExtension,
       calculateIdealListHeight
-    } = require('search/config.es6');
+    } = require('search/EntitySelector/Config.es6');
 
     return {
       openFromField: openFromField,

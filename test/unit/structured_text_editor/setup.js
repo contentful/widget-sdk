@@ -37,7 +37,8 @@ export const getMockedSpaceContext = ({
 
 export const stubAll = async ({ isolatedSystem }) => {
   isolatedSystem.set('ui/cf/thumbnailHelpers.es6', {});
-
+  isolatedSystem.set('search/EntitySelector/Config.es6', {});
+  isolatedSystem.set('spaceContext', {});
   isolatedSystem.set('modalDialog', { open: sinon.stub() });
   isolatedSystem.set('$rootScope', {
     default: {

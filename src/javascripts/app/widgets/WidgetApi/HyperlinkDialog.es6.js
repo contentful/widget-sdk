@@ -13,7 +13,7 @@ import {
 import Dialog from 'app/entity_editor/Components/Dialog';
 import AngularComponent from 'AngularComponent';
 import { noop, values } from 'lodash';
-import { getLabels, calculateIdealListHeight } from 'search/config.es6';
+import { getLabels, calculateIdealListHeight } from 'search/EntitySelector/Config.es6';
 
 const LINK_TYPES = {
   URI: 'uri',
