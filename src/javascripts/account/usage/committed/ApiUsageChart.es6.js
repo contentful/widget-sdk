@@ -42,7 +42,7 @@ export default class ApiUsageChart extends React.Component {
       },
       series: usage.map(({ usage, sys: { space: { sys: { id: spaceId } } } }, index) =>
         merge({}, seriesBaseFormatting, {
-          name: spaceNames[spaceId],
+          name: spaceNames[spaceId] || 'deleted space',
           data: usage,
           symbol: symbols[index],
           itemStyle: {

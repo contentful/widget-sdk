@@ -28,7 +28,11 @@ export default class ApiUsageInfo extends React.Component {
             {usage.map(({ sys: { space: { sys: { id: spaceId } } }, usage: spaceUsage }, i) => (
               <tr key={spaceId}>
                 <td className="usage-page__space-name">
-                  <span>{spaceNames[spaceId]}</span>
+                  {spaceNames[spaceId] ? (
+                    <span>{spaceNames[spaceId]}</span>
+                  ) : (
+                    <em>deleted space</em>
+                  )}
                   {isPoC[spaceId] && <Pill text="POC" tooltip="Proof of concept" />}
                 </td>
                 <td className="usage-page__space-usage">{shorten(sum(spaceUsage))}</td>
