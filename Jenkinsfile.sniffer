@@ -46,7 +46,7 @@ pipeline {
           dir('project-sniffer') {
             sh 'npm install'
             sh 'npm --prefix ./dashboard install ./dashboard'
-            sh "node source/cli.js ../user_interface/ src/javascripts --last ${params.last} --jump ${params.jump}"
+            sh "node source/cli.js ../user_interface/ src/javascripts test --last ${params.last} --jump ${params.jump}"
             sh 'npm --prefix ./dashboard run build ./dashboard'
           }
           withCredentials([usernamePassword(credentialsId: 'netlify-ui-sniffer', passwordVariable: 'BASIC_PWD', usernameVariable: 'BASIC_USER')]){
