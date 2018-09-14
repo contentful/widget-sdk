@@ -24,17 +24,21 @@ export function toLocaleString(number) {
  * shorten(2550); // "2.55K"
  * shorten(150); // 150
  */
+const THOUSAND = 1000;
+const MILLION = THOUSAND * THOUSAND;
+const BILLION = THOUSAND * MILLION;
+
 export function shorten(number) {
-  const thousand = 1000;
-  const million = 1000000;
   const format = divisor => formatFloat(number / divisor);
 
-  if (number < thousand) {
+  if (number < THOUSAND) {
     return number;
-  } else if (number < million) {
-    return format(thousand) + 'K';
+  } else if (number < MILLION) {
+    return format(THOUSAND) + 'K';
+  } else if (number < BILLION) {
+    return format(MILLION) + 'M';
   } else {
-    return format(million) + 'M';
+    return format(BILLION) + 'B';
   }
 }
 

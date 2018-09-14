@@ -15,6 +15,9 @@ angular.module('contentful/environment').constant(
   (() => {
     const injected = extractInjectedConfig();
 
+    // define global method for code splitting with static subdomain
+    window.WebpackRequireFrom_getChunkURL = () => injected.config.assetUrl + '/app/';
+
     /**
      * @ngdoc property
      * @name environment#env

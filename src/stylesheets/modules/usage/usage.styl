@@ -1,3 +1,100 @@
+.usage__period-selector
+  & > label
+    margin-right: 1rem
+
+$overage-color = #FCA013
+
+.usage-page
+  display: flex
+  flex-direction: column
+  max-width: 1100px
+  margin: 0 auto
+  &__section, &__asset-bandwidth-section
+    margin: 2rem
+  &__section
+    display: flex
+    flex-direction: row
+    justify-content: space-between
+  &__asset-bandwidth-section
+    border-top: solid 1px $colors.element-mid
+    padding-top: 59px
+  &__total-usage
+    font-size: 2.2rem
+    line-height: 3rem
+    margin-top 1rem
+  &__limit
+    font-size: .9rem
+  &__included-limit
+    color: #abbbc2
+    margin-right: .2rem
+  &__overage
+    color: $overage-color
+  &__api-chart-info
+    h3
+      color #9AACC2
+      margin-top 0
+      margin-left: 1rem
+    h3, h2
+      display: inline
+
+  &__org-chart-tooltip
+    border-radius: 2px
+    font-family: "Avenir Next W01"
+    font-weight: 600
+    padding: 8px
+    .date
+      font-size: 12px
+      line-height: 12px
+    .value
+      font-size: 21px
+      line-height: 21px
+      margin-top: 12px
+
+  &__api-table
+    margin-top: 1.5rem
+    font-size: 0.9rem
+    td
+      padding: 1rem 1.5rem
+      padding-left: 0
+    tr:not(:last-child)
+      td
+        border-bottom: solid 1px #E5EBED
+  .pill
+    border-radius: 2px
+    background-color: #E5EBED
+    font-size: 0.7rem
+    font-weight: bold
+    letter-spacing: 1px
+    padding: 0.1rem 0.3rem
+    margin-left: 0.6rem
+  &__space-usage, &__space-name
+    color: #536171
+  &__percentage-of-total-usage
+    font-weight: bold
+  &__no-spaces-placeholder
+    grid-column-end: span 2
+    font-weight: 600
+    font-size: 2rem
+    line-height: 1.2em
+    width: 100%
+    text-align: center
+    position: absolute
+    top: 40%
+
+.echart
+  margin-top: -1rem
+  display: flex
+  align-items: center
+  justify-content: center
+  outline: solid 1px transparent
+  transition: outline 1s linear
+  width: 700px
+  height: 300px
+  &__spinner, &__empty-placeholder
+    outline-color #d0dade
+  &--empty, &--loading
+    display: none
+
 .resource-list
   margin: 40px
 
@@ -12,8 +109,7 @@
 
   &__item
     border: 1px solid $colors.element-mid
-    box-shadow: 0px 1px 2px 0px hsla(black, 0.1)
-    display: block
+    box-shadow: 0 1px 2px 0 hsla(black, 0.1)
     margin: 0 0 16px
     display: flex
     flex-direction: column

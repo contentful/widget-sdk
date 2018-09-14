@@ -17,6 +17,7 @@ angular.module('contentful').directive('cfPlatformUsage', [
             orgId={$scope.properties.orgId}
             onReady={function() {
               context.ready = true;
+              $scope.$applyAsync();
             }}
             onForbidden={function() {
               context.forbidden = true;

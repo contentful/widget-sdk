@@ -18,6 +18,7 @@ const webpack = require('webpack');
 const globSync = require('glob').sync;
 const P = require('path');
 const { createBabelOptions } = require('./app-babel-options');
+const WebpackRequireFrom = require('webpack-require-from');
 
 /**
  * @description webpack's configuration factory
@@ -70,7 +71,8 @@ module.exports = ({ dev = false } = {}) => ({
   output: {
     filename: '[name]',
     path: P.resolve(__dirname, '..', 'public', 'app'),
-    publicPath: '/app'
+    publicPath: '/app/',
+    chunkFilename: 'chunk_[name]_[hash].js'
   },
   module: {
     // sharejs is build by `js/sharejs` gulp task, so we don't touch it here
@@ -135,6 +137,9 @@ module.exports = ({ dev = false } = {}) => ({
     ]
   },
   plugins: [
+    new WebpackRequireFrom({
+      methodName: 'WebpackRequireFrom_getChunkURL'
+    }),
     new webpack.DefinePlugin({
       // variable to detect which environment we are in
       IS_PRODUCTION: !dev,

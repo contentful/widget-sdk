@@ -59,6 +59,8 @@ registerGenericEvent('incoming_links:dialog_link_click');
 registerGenericEvent('incoming_links:sidebar_link_click');
 registerGenericEvent('incoming_links:query');
 
+registerGenericEvent('usage:period_selected');
+
 registerBulkEditorEvent('bulk_editor:action');
 registerBulkEditorEvent('bulk_editor:add');
 registerBulkEditorEvent('bulk_editor:close');

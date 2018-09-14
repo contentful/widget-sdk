@@ -24,6 +24,7 @@ require('babel-polyfill');
 
 require('./tools/tasks/build/build');
 require('./tools/tasks/build/js');
+require('./tools/tasks/build/chunks');
 require('./tools/tasks/build/static');
 require('./tools/tasks/build/styles');
 
