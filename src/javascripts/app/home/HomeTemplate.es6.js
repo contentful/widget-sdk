@@ -5,6 +5,7 @@ export default function template() {
     h('.home__container', [
       h('.home__content', [
         h('cf-welcome'),
+        h('react-component', { name: 'app/home/UpgradePricing.es6' }),
         h('cf-onboarding-steps'),
         h('cf-developer-resources'),
         h('cf-contact-us-space-home')

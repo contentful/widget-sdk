@@ -41,6 +41,7 @@ import BrunchIcon from 'svg/brunch.es6';
 import GitBookIcon from 'svg/gitbook.es6';
 import StackOverviewIcon from 'svg/infographic.es6';
 import RelaunchOnboardingIcon from 'svg/icon-onboarding-relaunch.es6';
+import SpaceDiagram from 'svg/space-diagram.es6';
 
 const SVGS = {
   'home-welcome': HomeWelcomeIcon,
@@ -81,7 +82,8 @@ const SVGS = {
   brunch: BrunchIcon,
   gitbook: GitBookIcon,
   'stack-overview': StackOverviewIcon,
-  'relaunch-onboarding': RelaunchOnboardingIcon
+  'relaunch-onboarding': RelaunchOnboardingIcon,
+  'space-diagram': SpaceDiagram
 };
 
 class Icon extends React.Component {
@@ -127,6 +129,7 @@ class Icon extends React.Component {
   render() {
     const { className, style } = this.props;
     const { Icon } = this.state;
+
     return (
       <span
         className={className}
