@@ -21,7 +21,7 @@ const RESIZE_MODES = {
       Provided value will be used as a new width of your image.
       Its height will be automatically computed to maintain the original aspect ratio.
     `,
-    valueToUrl: value => url(file, `w=${value}`)
+    valueToUrl: value => url(file, `w=${value}&fit=scale`)
   }),
   height: file => ({
     initialValue: `${file.details.image.height}`,
@@ -32,7 +32,7 @@ const RESIZE_MODES = {
       Provided value will be used as a new height of your image.
       Its width will be automatically computed to maintain the original aspect ratio.
     `,
-    valueToUrl: value => url(file, `h=${value}`)
+    valueToUrl: value => url(file, `h=${value}&fit=scale`)
   }),
   scale: file => ({
     initialValue: ratio(file),
