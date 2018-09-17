@@ -54,7 +54,7 @@ export default class ApiUsageChart extends React.Component {
     return (
       <EChart
         options={options}
-        isEmpty={endDate === null && moment().diff(startDate, 'days') < 2}
+        isEmpty={endDate === null && moment().diff(startDate, 'days') < 3}
         EmptyPlaceholder={EmptyChartPlaceholder}
         isLoading={isLoading}
         additionalClassnames="usage-page__api-chart"
