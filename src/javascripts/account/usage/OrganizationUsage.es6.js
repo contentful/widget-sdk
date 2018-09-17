@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { mapValues, flow, keyBy, get, eq } from 'lodash/fp';
+import { mapValues, flow, keyBy, get, eq, isNumber } from 'lodash/fp';
 
 import { Spinner } from '@contentful/ui-component-library';
 
@@ -133,11 +133,18 @@ export default class OrganizationUsage extends React.Component {
   async loadPeriodData(newIndex) {
     const { periods } = this.state;
     const {
-      sys: { id: periodId }
+      sys: { id: periodId, startDate, endDate }
     } = periods[newIndex];
-    track('usage:period_selected', {
-      new_period: periodId
-    });
+    if (isNumber(this.state.selectedPeriodIndex)) {
+      const { sys: oldPeriod } = periods[this.state.selectedPeriodIndex];
+      track('usage:period_selected', {
+        old_period: {
+          start: oldPeriod.startDate,
+          end: oldPeriod.endDate
+        },
+        new_period: { startDate, endDate }
+      });
+    }
     try {
       const [org, cma, cda, cpa] = await Promise.all([
         getOrgUsage(this.endpoint, periodId),
