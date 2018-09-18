@@ -3,7 +3,7 @@ import { h } from 'ui/Framework';
 
 import ViewFolder from './ViewFolder.es6';
 import openInputDialog from 'app/InputDialog.es6';
-import addFolderIcon from 'svg/add-folder.es6';
+import AddFolderIcon from 'svg/add-folder.es6';
 
 export default function render(state, actions) {
   const { folders, canEdit } = state;
@@ -31,7 +31,7 @@ export default function render(state, actions) {
                   input: { min: 1, max: 32 }
                 }).promise.then(actions.CreateFolder)
             },
-            [h('i', { style: { marginRight: '5px' } }, [addFolderIcon]), 'Add folder']
+            [h('i', { style: { marginRight: '5px' } }, [h(AddFolderIcon)]), 'Add folder']
           )
         ])
     ])

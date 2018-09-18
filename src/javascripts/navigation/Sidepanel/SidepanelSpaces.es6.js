@@ -1,6 +1,6 @@
 import { h } from 'ui/Framework';
-import spaceIcon from 'svg/space.es6';
-import folderIcon from 'svg/folder.es6';
+import SpaceIcon from 'svg/space.es6';
+import FolderIcon from 'svg/folder.es6';
 import SpaceWithEnvironments from './SpaceWithEnvironments.es6';
 import * as accessChecker from 'access_control/AccessChecker';
 
@@ -73,7 +73,7 @@ function renderSpaceList(props) {
         },
         [
           h('.nav-sidepanel__space-title', [
-            h('div.nav-sidepanel__space-icon', [folderIcon]),
+            h('div.nav-sidepanel__space-icon', [h(FolderIcon)]),
             h(
               'span',
               {
@@ -92,7 +92,7 @@ function renderSpaceList(props) {
 
 function renderNoSpacesMsg(canCreateSpaceInCurrOrg, showCreateSpaceModal) {
   return h('.nav-sidepanel__no-spaces', { dataTestId: 'sidepanel-no-spaces' }, [
-    spaceIcon,
+    h(SpaceIcon),
     h('p.nav-sidepanel__no-spaces-heading', [
       canCreateSpaceInCurrOrg ? 'Let’s go - create your first space!' : 'Uh oh! Nothing to see here'
     ]),

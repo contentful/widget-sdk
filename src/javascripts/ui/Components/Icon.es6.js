@@ -43,10 +43,10 @@ import StackOverviewIcon from 'svg/infographic.es6';
 import RelaunchOnboardingIcon from 'svg/icon-onboarding-relaunch.es6';
 import SpaceDiagram from 'svg/space-diagram.es6';
 
-const SVGS = {
+const SVGs = {
   'home-welcome': HomeWelcomeIcon,
   'page-media': PageMediaIcon,
-  'question-mark': QuestionMarkIcon(),
+  'question-mark': QuestionMarkIcon,
   subscription: SubscriptionIcon,
   'content-structure-graph': ContentStructureGraphIcon,
   'tea-screenshot': TeaScreenshotIcon,
@@ -97,10 +97,6 @@ class Icon extends React.Component {
     height: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
   };
 
-  state = {
-    Icon: SVGS[this.props.name]
-  };
-
   componentDidMount() {
     const iconElem = $(this.container)
       .children()
@@ -127,8 +123,8 @@ class Icon extends React.Component {
   }
 
   render() {
-    const { className, style } = this.props;
-    const { Icon } = this.state;
+    const { className, style, name } = this.props;
+    const Icon = SVGs[name];
 
     return (
       <span
@@ -137,7 +133,7 @@ class Icon extends React.Component {
         ref={node => {
           this.container = node;
         }}>
-        {Icon}
+        <Icon />
       </span>
     );
   }

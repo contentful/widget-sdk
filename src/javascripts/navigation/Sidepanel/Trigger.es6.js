@@ -9,8 +9,8 @@ import { caseof } from 'sum-types';
 import { byName as colors } from 'Styles/Colors.es6';
 import { oneLineTruncate } from 'Styles';
 import logo from 'svg/logo-label.es6';
-import environmentIcon from 'svg/environment.es6';
-import hamburger from 'svg/hamburger.es6';
+import EnvironmentIcon from 'svg/environment.es6';
+import Hamburger from 'svg/hamburger.es6';
 
 import { navState$, NavStates } from 'navigation/NavState.es6';
 import * as TokenStore from 'services/TokenStore.es6';
@@ -54,7 +54,7 @@ export default class Trigger extends React.Component {
           renderContent(this.state)
         )}
         {hspace('15px')}
-        {hamburger({ fill: 'white' })}
+        <Hamburger fill={'white'} />
       </div>
     );
   }
@@ -133,7 +133,7 @@ function environmentLabel(env) {
       color: isMaster ? colors.greenLight : colors.orangeLight
     },
     [
-      environmentIcon({
+      h(EnvironmentIcon, {
         display: 'block',
         flexShrink: 0,
         fill: 'currentColor'
