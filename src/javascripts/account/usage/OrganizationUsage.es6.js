@@ -44,9 +44,9 @@ export default class OrganizationUsage extends React.Component {
     const { onForbidden } = this.props;
 
     this.setState({ flagActive: await getCurrentVariation('feature-bizvel-09-2018-usage') });
-    await this.checkPermissions();
 
     try {
+      await this.checkPermissions();
       await this.fetchOrgData();
     } catch (ex) {
       onForbidden(ex);

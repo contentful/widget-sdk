@@ -42,7 +42,7 @@ export default class ApiUsageChart extends React.Component {
       },
       series: usage.map(({ usage, sys: { space: { sys: { id: spaceId } } } }, index) =>
         merge({}, seriesBaseFormatting, {
-          name: spaceNames[spaceId],
+          name: spaceNames[spaceId] || 'deleted space',
           data: usage,
           symbol: symbols[index],
           itemStyle: {
@@ -54,7 +54,7 @@ export default class ApiUsageChart extends React.Component {
     return (
       <EChart
         options={options}
-        isEmpty={endDate === null && moment().diff(startDate, 'days') < 2}
+        isEmpty={endDate === null && moment().diff(startDate, 'days') < 3}
         EmptyPlaceholder={EmptyChartPlaceholder}
         isLoading={isLoading}
         additionalClassnames="usage-page__api-chart"

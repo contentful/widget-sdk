@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { sum } from 'lodash';
+import { Tooltip } from '@contentful/ui-component-library';
 
 import { shorten } from 'utils/NumberUtils.es6';
 
@@ -28,15 +29,19 @@ export default class ApiUsageInfo extends React.Component {
             {usage.map(({ sys: { space: { sys: { id: spaceId } } }, usage: spaceUsage }, i) => (
               <tr key={spaceId}>
                 <td className="usage-page__space-name">
-                  <span>{spaceNames[spaceId]}</span>
+                  {spaceNames[spaceId] ? (
+                    <span>{spaceNames[spaceId]}</span>
+                  ) : (
+                    <em>deleted space</em>
+                  )}
                   {isPoC[spaceId] && <Pill text="POC" tooltip="Proof of concept" />}
                 </td>
                 <td className="usage-page__space-usage">{shorten(sum(spaceUsage))}</td>
-                <td
-                  className="usage-page__percentage-of-total-usage"
-                  style={{ color: colors[i] }}
-                  title="Percentage of total number of API requests">
-                  {`${Math.round((sum(spaceUsage) / includedLimit) * 100)}%`}
+                <td className="usage-page__percentage-of-total-usage" style={{ color: colors[i] }}>
+                  <span data-tip="Percentage of total number of API requests">
+                    {`${Math.round((sum(spaceUsage) / includedLimit) * 100)}%`}
+                  </span>
+                  <Tooltip />
                 </td>
               </tr>
             ))}
