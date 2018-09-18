@@ -132,13 +132,15 @@ export default class HyperlinkDialog extends React.Component {
             <Button
               type="submit"
               buttonType="positive"
-              disabled={!this.isLinkComplete()}>
+              disabled={!this.isLinkComplete()}
+              data-test-id="confirm-cta">
               {labels.confirm}
             </Button>
             <Button
               type="button"
               onClick={onCancel}
-              buttonType="muted">
+              buttonType="muted"
+              data-test-id="cancel-cta">
               Cancel
             </Button>
           </Dialog.Controls>
@@ -152,6 +154,7 @@ export default class HyperlinkDialog extends React.Component {
     const style = { marginBottom: '1.75rem' };
     const { hideText, entitySelectorConfigs } = this.props;
     const { uri, text, type } = this.state;
+
     return (
       <React.Fragment>
         {hideText || (
@@ -162,6 +165,9 @@ export default class HyperlinkDialog extends React.Component {
             onChange={e => this.setState({ text: e.target.value })}
             id="link-text"
             name="link-text"
+            textInputProps={{
+              testId: 'link-text-input'
+            }}
             style={style}
           />
         )}
@@ -183,7 +189,7 @@ export default class HyperlinkDialog extends React.Component {
             required
             labelText="Link target"
             value={uri || ''}
-            textInputProps={{ placeholder: 'https://' }}
+            textInputProps={{ placeholder: 'https://', testId: 'link-uri-input' }}
             helpText="A protocol may be required, e.g. https://"
             onChange={e => this.setState({ uri: e.target.value })}
             id="link-uri"
