@@ -38,9 +38,9 @@ export default class ApiUsageInfo extends React.Component {
                 </td>
                 <td className="usage-page__space-usage">{shorten(sum(spaceUsage))}</td>
                 <td className="usage-page__percentage-of-total-usage" style={{ color: colors[i] }}>
-                  <span data-tip="Percentage of total number of API requests">{`${Math.round(
-                    (sum(spaceUsage) / includedLimit) * 100
-                  )}%`}</span>
+                  <span data-tip="Percentage of total number of API requests">
+                    {`${Math.round((sum(spaceUsage) / includedLimit) * 100)}%`}
+                  </span>
                   <Tooltip />
                 </td>
               </tr>
