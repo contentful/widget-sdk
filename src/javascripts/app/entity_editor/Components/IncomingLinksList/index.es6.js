@@ -43,6 +43,7 @@ class IncomingLinksList extends React.Component {
         <ul className="incoming-links__list">
           {links.map(({ id, url, ...link }) => {
             const title = link.title || 'Untitled';
+
             return (
               <li key={url} className="incoming-links__item">
                 <a

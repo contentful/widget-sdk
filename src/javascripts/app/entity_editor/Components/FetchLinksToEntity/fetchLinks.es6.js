@@ -24,10 +24,14 @@ export default (id, type) => {
     return Promise.all(
       items.map(entry => {
         const { id } = entry.sys;
+        // Remove query params of the current URL. This prevents
+        // opening slide-in editor when navigating to incoming links.
         return entityHelpers.entityTitle(entry).then(title => ({
           id,
           title,
           url: href(makeEntityRef(entry))
+            .split('?')
+            .shift()
         }));
       })
     );

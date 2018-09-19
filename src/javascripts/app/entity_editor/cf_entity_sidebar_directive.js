@@ -39,6 +39,10 @@ angular
               isMasterEnvironment: spaceContext.getEnvironmentId() === 'master'
             };
 
+            $scope.sidebarIncomingLinksProps = {
+              entityInfo: $scope.entityInfo
+            };
+
             // We make sure that we do not leak entity instances from the
             // editor controller into the current scope
             $scope.entity = null;
