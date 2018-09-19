@@ -13,6 +13,13 @@ export const block = (nodeType, data, ...content) => ({
   data
 });
 
+export const inline = (nodeType, data, ...content) => ({
+  nodeClass: 'inline',
+  nodeType,
+  content,
+  data
+});
+
 export const text = (value = '', marks = []) => ({
   nodeClass: 'text',
   nodeType: 'text',

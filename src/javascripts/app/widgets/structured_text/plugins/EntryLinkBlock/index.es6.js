@@ -10,7 +10,7 @@ export const EntryLinkBlockPlugin = () => {
   return {
     renderNode: props => {
       if (props.node.type === BLOCKS.EMBEDDED_ENTRY) {
-        return <EntryLinkBlock {...props} />;
+        return <EntryLinkBlock {...props} {...props.attributes} />;
       }
     },
     onKeyDown(e, change) {

@@ -67,6 +67,9 @@
     font-size: 0.875rem;
     font-weight: 700;
 
+  .toolbar-entry-dropdown
+    margin-left: auto
+
   .toolbar-heading-toggle
     width: 140px;
 
@@ -122,14 +125,14 @@
 
     // Un-Reset List Styles
     li ul, li ol {
-      margin:0 1.5rem;
+      margin:0 0 0 1.5rem;
     }
     li {
       list-style: inherit;
       margin: 0;
     }
     ul, ol {
-      margin: 0 1.25rem 1.25rem 1.25rem;
+      margin: 0 0 1.25rem 1.25rem;
     }
     ul {
       list-style-type: disc;
@@ -181,17 +184,23 @@
   .structured-text__reference-card
     margin-bottom: 1.25rem;
 
-.structured-text__hyperlink
-  display: inline!important;
+  .structured-text__inline-reference-card
+    margin: 0px 5px;
+    
+  .structured-text__inline-reference-card ul 
+    margin: 0px;
 
-  &:hover,
-  &:focus
-    .structured-text__hyperlink-icon
-      fill: $colors.text-dark;
+  .structured-text__hyperlink
+    display: inline!important;
 
-.structured-text__hyperlink-icon
-  position: relative;
-  top: 4px;
-  height: 14px;
-  margin-left: 3px; // Optical alignment when using "trimmed" icon variant
-  transition: fill 100ms ease-in-out;
+    &:hover,
+    &:focus
+      .structured-text__hyperlink-icon
+        fill: $colors.text-dark;
+
+  .structured-text__hyperlink-icon
+    position: relative;
+    top: 4px;
+    height: 14px;
+    margin-left: 3px; // Optical alignment when using "trimmed" icon variant
+    transition: fill 100ms ease-in-out;

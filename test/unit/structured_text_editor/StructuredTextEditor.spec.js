@@ -4,15 +4,12 @@ import { mount } from 'enzyme';
 import * as sinon from 'helpers/sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
-import { stubAll, setupWidgetApi, createSandbox } from './setup';
+import { stubAll, setupWidgetApi, createSandbox, ENTRY } from './setup';
 import { document, block, text } from './helpers';
 
 import { BLOCKS } from '@contentful/structured-text-types';
 
-const supportedToolbarIcons = [BLOCKS.UL_LIST, BLOCKS.OL_LIST, BLOCKS.EMBEDDED_ENTRY, BLOCKS.QUOTE];
-
-const getHeadingDropdown = wrapper =>
-  wrapper.find(`[data-test-id="toolbar-heading-toggle"]`).first();
+const supportedToolbarIcons = [BLOCKS.UL_LIST, BLOCKS.OL_LIST, BLOCKS.QUOTE];
 
 const getToolbarIcon = (wrapper, iconName) =>
   wrapper.find(`[data-test-id="toolbar-toggle-${iconName}"]`).first();
@@ -28,7 +25,14 @@ describe('StructuredTextEditor', () => {
     const mockDocument = document(block(BLOCKS.PARAGRAPH, {}, text()));
     this.system = createIsolatedSystem();
 
-    stubAll({ isolatedSystem: this.system, entities: [this.entry] });
+    this.entity = ENTRY;
+
+    this.system.set('entitySelector', {
+      default: {
+        openFromField: () => Promise.resolve([this.entity])
+      }
+    });
+    stubAll({ isolatedSystem: this.system });
 
     const { default: StructuredTextEditor } = await this.system.import(
       'app/widgets/structured_text/index.es6'
@@ -79,9 +83,6 @@ describe('StructuredTextEditor', () => {
         const el = getToolbarIcon(this.wrapper, iconName);
         expect(el.props().disabled).toEqual(true);
       });
-      const dropdown = getHeadingDropdown(this.wrapper);
-
-      expect(dropdown.props().disabled).toEqual(true);
     });
   });
 });

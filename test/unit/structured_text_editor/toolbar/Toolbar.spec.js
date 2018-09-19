@@ -3,17 +3,23 @@ import { mount } from 'enzyme';
 import _ from 'lodash';
 import { toKeyCode } from 'is-hotkey';
 
-import { BLOCKS, MARKS } from '@contentful/structured-text-types';
+import { BLOCKS, INLINES, MARKS } from '@contentful/structured-text-types';
 
 import * as sinon from 'helpers/sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
-import { document, block, text, flushPromises, getWithId } from '../helpers';
-import { stubAll, setupWidgetApi, createSandbox } from '../setup';
+import { document, block, inline, text, flushPromises, getWithId } from '../helpers';
+import { stubAll, setupWidgetApi, createSandbox, ENTRY } from '../setup';
 
 const triggerToolbarIcon = async (wrapper, iconName) => {
   const toolbarIcon = getWithId(wrapper, `toolbar-toggle-${iconName}`);
   toolbarIcon.simulate('mouseDown');
+  await flushPromises();
+};
+
+const triggerDropdownButton = async (wrapper, dataTestId) => {
+  const toolbarIcon = getWithId(wrapper, dataTestId);
+  toolbarIcon.find('button').simulate('mouseDown');
   await flushPromises();
 };
 
@@ -36,8 +42,13 @@ describe('Toolbar', () => {
 
     this.system = createIsolatedSystem();
 
-    this.entity = { sys: { type: 'Entry', id: 'testid2' } };
+    this.entity = ENTRY;
 
+    this.system.set('entitySelector', {
+      default: {
+        openFromField: () => Promise.resolve([this.entity])
+      }
+    });
     stubAll({ isolatedSystem: this.system, entities: [this.entity] });
 
     const { default: StructuredTextEditor } = await this.system.import(
@@ -49,21 +60,38 @@ describe('Toolbar', () => {
     this.props = {
       field: this.widgetApi.field,
       onChange: sinon.spy(),
-      widgetAPI: { dialogs: {} }
+      widgetAPI: { dialogs: {} },
+      features: { embedInlineEntry: true }
     };
-
     this.sandbox = createSandbox(window);
     this.wrapper = mount(<StructuredTextEditor {...this.props} />, { attachTo: this.sandbox });
   });
 
   afterEach(function() {
+    this.wrapper = null;
     this.sandbox.remove();
+  });
+
+  describe('Embed Dropdown', function() {
+    it('renders the embed dropdown', async function() {
+      await triggerDropdownButton(this.wrapper, 'toolbar-entry-dropdown-toggle');
+      expect(getWithId(this.wrapper, 'cf-ui-dropdown-list').getDOMNode()).toBeDefined();
+    });
+
+    it('renders the embed block button', async function() {
+      this.wrapper.setProps({ features: { embedInlineEntry: false } });
+      expect(
+        getWithId(this.wrapper, `toolbar-toggle-${BLOCKS.EMBEDDED_ENTRY}`).getDOMNode()
+      ).toBeDefined();
+    });
   });
 
   describe('EmbeddedEntryBlock', function() {
     it('renders block', async function() {
-      await triggerToolbarIcon(this.wrapper, BLOCKS.EMBEDDED_ENTRY);
-
+      const editor = getWithId(this.wrapper, 'editor');
+      await triggerDropdownButton(this.wrapper, 'toolbar-entry-dropdown-toggle');
+      await triggerDropdownButton(this.wrapper, 'toolbar-toggle-embedded-entry-block');
+      editor.getDOMNode().click();
       expect(this.widgetApi.field.getValue()).toEqual(
         document(
           block(
@@ -76,6 +104,34 @@ describe('Toolbar', () => {
             text()
           ),
           block(BLOCKS.PARAGRAPH, {}, text())
+        )
+      );
+    });
+  });
+
+  describe('EmbeddedEntryInline', function() {
+    it('renders inline entry', async function() {
+      const editor = getWithId(this.wrapper, 'editor');
+      await triggerDropdownButton(this.wrapper, 'toolbar-entry-dropdown-toggle');
+      await triggerDropdownButton(this.wrapper, 'toolbar-toggle-embedded-entry-inline');
+      editor.getDOMNode().click();
+      expect(this.widgetApi.field.getValue()).toEqual(
+        document(
+          block(
+            BLOCKS.PARAGRAPH,
+            {},
+            text(),
+            inline(
+              INLINES.EMBEDDED_ENTRY,
+              {
+                target: {
+                  sys: { id: 'testid2', type: 'Link', linkType: 'Entry' }
+                }
+              },
+              text()
+            ),
+            text()
+          )
         )
       );
     });
@@ -168,7 +224,9 @@ describe('Toolbar', () => {
         const editor = getWithId(this.wrapper, 'editor');
         editor.getDOMNode().click();
         await triggerToolbarIcon(this.wrapper, listType);
-        await triggerToolbarIcon(this.wrapper, BLOCKS.EMBEDDED_ENTRY);
+        await triggerDropdownButton(this.wrapper, 'toolbar-entry-dropdown-toggle');
+        await triggerDropdownButton(this.wrapper, 'toolbar-toggle-embedded-entry-block');
+        editor.getDOMNode().click();
 
         expect(this.widgetApi.field.getValue()).toEqual(
           document(
@@ -195,11 +253,50 @@ describe('Toolbar', () => {
         );
       });
 
+      it('inserts an inline entry into list-item', async function() {
+        const editor = getWithId(this.wrapper, 'editor');
+        editor.getDOMNode().click();
+        await triggerToolbarIcon(this.wrapper, listType);
+        await triggerDropdownButton(this.wrapper, 'toolbar-entry-dropdown-toggle');
+        await triggerDropdownButton(this.wrapper, 'toolbar-toggle-embedded-entry-inline');
+        editor.getDOMNode().click();
+
+        expect(this.widgetApi.field.getValue()).toEqual(
+          document(
+            block(
+              listType,
+              {},
+              block(
+                BLOCKS.LIST_ITEM,
+                {},
+                block(
+                  BLOCKS.PARAGRAPH,
+                  {},
+                  text(),
+                  inline(
+                    INLINES.EMBEDDED_ENTRY,
+                    {
+                      target: {
+                        sys: { id: 'testid2', type: 'Link', linkType: 'Entry' }
+                      }
+                    },
+                    text()
+                  ),
+                  text()
+                )
+              )
+            ),
+            block(BLOCKS.PARAGRAPH, {}, text())
+          )
+        );
+      });
+
       it('inserts quote inside a list-item', async function() {
         const editor = getWithId(this.wrapper, 'editor');
         editor.getDOMNode().click();
         await triggerToolbarIcon(this.wrapper, listType);
         await triggerToolbarIcon(this.wrapper, BLOCKS.QUOTE);
+        editor.getDOMNode().click();
 
         expect(this.widgetApi.field.getValue()).toEqual(
           document(

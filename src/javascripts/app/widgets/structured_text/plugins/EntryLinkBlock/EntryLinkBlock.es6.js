@@ -42,10 +42,8 @@ class LinkedEntryBlock extends React.Component {
     thumbnailResult
   ) {
     const { isSelected } = this.props;
-
     return (
       <ReferenceCard
-        {...this.props.attributes}
         title={entryTitle}
         contentType={contentTypeName}
         extraClassNames="structured-text__reference-card"
@@ -72,7 +70,6 @@ class LinkedEntryBlock extends React.Component {
 
   renderMissingEntryReferenceCard() {
     const { isSelected } = this.props;
-
     return (
       <Card selected={isSelected}>
         <div style={{ display: 'flex' }}>

@@ -8,12 +8,12 @@ import deepEqual from 'fast-deep-equal';
 import { toSlatejsDocument, toContentfulDocument } from '@contentful/contentful-slatejs-adapter';
 import { EditorToolbar, EditorToolbarDivider } from '@contentful/ui-component-library';
 
-import Bold, { BoldPlugin } from './plugins/Bold';
-import Italic, { ItalicPlugin } from './plugins/Italic';
-import Underlined, { UnderlinedPlugin } from './plugins/Underlined';
-import Code, { CodePlugin } from './plugins/Code';
-import Quote, { QuotePlugin } from './plugins/Quote';
-import Hyperlink, { HyperlinkPlugin } from './plugins/Hyperlink';
+import Bold, { BoldPlugin } from './plugins/Bold/index.es6';
+import Italic, { ItalicPlugin } from './plugins/Italic/index.es6';
+import Underlined, { UnderlinedPlugin } from './plugins/Underlined/index.es6';
+import Code, { CodePlugin } from './plugins/Code/index.es6';
+import Quote, { QuotePlugin } from './plugins/Quote/index.es6';
+import Hyperlink, { HyperlinkPlugin } from './plugins/Hyperlink/index.es6';
 import {
   Heading1,
   Heading2,
@@ -29,20 +29,34 @@ import {
   Heading5Plugin,
   Heading6Plugin,
   HeadingDropdown
-} from './plugins/Heading';
+} from './plugins/Heading/index.es6';
 
-import NewLinePlugin from './plugins/NewLinePlugin';
-import { ParagraphPlugin } from './plugins/Paragraph';
-import EntryLinkBlock, { EntryLinkBlockPlugin } from './plugins/EntryLinkBlock';
+import NewLinePlugin from './plugins/NewLinePlugin/index.es6';
+import { ParagraphPlugin } from './plugins/Paragraph/index.es6';
+import EntryLinkBlock, { EntryLinkBlockPlugin } from './plugins/EntryLinkBlock/index.es6';
+import EmbeddedEntryInline, {
+  EmbeddedEntryInlinePlugin
+} from './plugins/EmbeddedEntryInline/index.es6';
+import EntryEmbedDropdown from './plugins/EntryEmbedDropdown/index.es6';
 import EditList from './plugins/List/EditListWrapper.es6';
-import { ListPlugin, UnorderedList, OrderedList } from './plugins/List';
-import Hr, { HrPlugin } from './plugins/Hr';
+import { ListPlugin, UnorderedList, OrderedList } from './plugins/List/index.es6';
+import Hr, { HrPlugin } from './plugins/Hr/index.es6';
 
 import schemaJson from './constants/Schema.es6';
 import emptyDoc from './constants/EmptyDoc.es6';
 
 const schema = Schema.fromJSON(schemaJson);
-const initialValue = Value.fromJSON(toSlatejsDocument(emptyDoc));
+
+const createValue = document => {
+  const value = Value.fromJSON({
+    document: document,
+    schema: schema
+  });
+
+  return value;
+};
+
+const initialValue = createValue(toSlatejsDocument(emptyDoc));
 
 export default class StructuredTextEditor extends React.Component {
   static propTypes = {
@@ -54,19 +68,17 @@ export default class StructuredTextEditor extends React.Component {
   static defaultProps = {
     value: emptyDoc
   };
+
   constructor(props) {
     super(props);
-
     const { value, widgetAPI } = this.props;
 
     this.state = {
       lastOperations: [],
+      isEmbedDropdownOpen: false,
       value:
         value && value.nodeClass === 'document'
-          ? Value.fromJSON({
-              object: 'value',
-              document: toSlatejsDocument(value)
-            })
+          ? createValue(toSlatejsDocument(value))
           : initialValue,
       hasFocus: false
     };
@@ -91,13 +103,34 @@ export default class StructuredTextEditor extends React.Component {
       onChange(newCfDoc);
     } else if (isIncomingChange()) {
       this.setState({
-        value: Value.fromJSON({
-          object: 'value',
-          document: toSlatejsDocument(cfDoc)
-        })
+        value: createValue(toSlatejsDocument(cfDoc))
       });
     }
   }
+
+  toggleEmbedDropdown = () =>
+    this.setState({
+      isEmbedDropdownOpen: !this.isEmbedDropdownOpen
+    });
+
+  handleEmbedDropdownClose = () =>
+    this.setState({
+      isEmbedDropdownOpen: false
+    });
+
+  renderEmbeds = props =>
+    this.props.widgetAPI.features.embedInlineEntry ? (
+      <EntryEmbedDropdown
+        onToggle={this.toggleEmbedDropdown}
+        isOpen={this.state.isEmbedDropdownOpen}
+        disabled={props.disabled}
+        onClose={this.handleEmbedDropdownClose}>
+        <EntryLinkBlock {...props} />
+        <EmbeddedEntryInline {...props} />
+      </EntryEmbedDropdown>
+    ) : (
+      <EntryLinkBlock isButton {...props} />
+    );
 
   renderToolbar() {
     const props = {
@@ -135,7 +168,7 @@ export default class StructuredTextEditor extends React.Component {
         <OrderedList {...props} />
         <Quote {...props} />
         <Hr {...props} />
-        <EntryLinkBlock {...props} />
+        {this.renderEmbeds(props)}
       </EditorToolbar>
     );
   }
@@ -206,8 +239,8 @@ function isRelevantOperation(op) {
 
 function newUnhandledOpError(op) {
   const properties = Object.keys(op.properties)
-  .map(v => `\`${v}\``)
-  .join(',');
+    .map(v => `\`${v}\``)
+    .join(',');
   return new Error(`Unhandled operation \`${op.type}\` with properties ${properties}`);
 }
 
@@ -216,6 +249,7 @@ function buildPlugins(widgetAPI) {
     createHyperlinkDialog: widgetAPI.dialogs.createHyperlink
   };
   return [
+    EmbeddedEntryInlinePlugin(),
     BoldPlugin(),
     ItalicPlugin(),
     QuotePlugin(),
@@ -231,6 +265,7 @@ function buildPlugins(widgetAPI) {
     ParagraphPlugin(),
     HrPlugin(),
     EntryLinkBlockPlugin(),
+
     EditList(),
     ListPlugin(),
     TrailingBlock(),

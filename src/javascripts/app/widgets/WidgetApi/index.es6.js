@@ -58,6 +58,7 @@ export default function connectToWidgetAPI(Component) {
       return (
         <WidgetAPIContext.Provider value={{ widgetAPI }}>
           <Component
+            {...this.props}
             widgetAPI={widgetAPI}
             value={this.state.value}
             isDisabled={this.state.isDisabled}
@@ -73,7 +74,8 @@ export default function connectToWidgetAPI(Component) {
           selectSingleEntry: () => entitySelector.openFromField(this.props.field, 0),
           createHyperlink: createHyperlinkDialog
         },
-        currentUrl: this.state.currentUrl
+        currentUrl: this.state.currentUrl,
+        features: this.props.features
       };
     }
   };

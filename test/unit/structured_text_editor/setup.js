@@ -1,13 +1,50 @@
 import * as sinon from 'helpers/sinon';
 
-export const stubAll = async ({ isolatedSystem, entities }) => {
+export const ENTRY = {
+  sys: {
+    type: 'Entry',
+    id: 'testid2',
+    contentType: {
+      sys: {
+        id: 'ct-id'
+      }
+    }
+  }
+};
+
+export const CONTENT_TYPE_DATA_OBJECT = {
+  data: {
+    name: 'content-type-name'
+  }
+};
+
+export const getMockedSpaceContext = ({
+  selectedEntity = ENTRY,
+  contentType = CONTENT_TYPE_DATA_OBJECT,
+  thumbnail = null
+}) => {
+  return {
+    space: {
+      getEntry: sinon.spy(() => Promise.resolve({ data: selectedEntity })),
+      getContentType: sinon.spy(() => Promise.resolve(contentType))
+    },
+    entryImage: sinon.spy(() => Promise.resolve(thumbnail)),
+    entryTitle: sinon.spy(() => 'entry-title'),
+    entityDescription: sinon.spy(() => 'entry-description')
+  };
+};
+
+export const stubAll = async ({ isolatedSystem }) => {
   isolatedSystem.set('ui/cf/thumbnailHelpers.es6', {});
-  isolatedSystem.set('spaceContext', {});
+
   isolatedSystem.set('modalDialog', { open: sinon.stub() });
   isolatedSystem.set('$rootScope', {
     default: {
       $on: sinon.stub()
     }
+  });
+  isolatedSystem.set('utils/LaunchDarkly', {
+    onFeatureFlag: sinon.stub()
   });
   isolatedSystem.set('$location', {
     default: {
@@ -17,21 +54,9 @@ export const stubAll = async ({ isolatedSystem, entities }) => {
   isolatedSystem.set('navigation/SlideInNavigator', {
     goToSlideInEntity: sinon.stub()
   });
-  isolatedSystem.set('entitySelector', {
-    default: {
-      openFromField: () => Promise.resolve(entities)
-    }
-  });
-  isolatedSystem.set('app/widgets/structured_text/plugins/EntryLinkBlock/FetchEntry.es6', {
-    default: ({ render }) => {
-      return render({
-        entry: this.entity,
-        entryTitle: 'title',
-        entryDescription: 'description',
-        entryStatus: 'status',
-        loading: { entry: false, thumbnail: true }
-      });
-    }
+
+  isolatedSystem.set('logger', {
+    logException: sinon.stub()
   });
 };
 
