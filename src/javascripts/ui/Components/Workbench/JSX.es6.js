@@ -4,7 +4,7 @@ import Icon from 'ui/Components/Icon.es6';
 
 class Workbench extends React.Component {
   static propTypes = {
-    title: PropTypes.node.isRequired,
+    title: PropTypes.node,
     icon: PropTypes.string,
     testId: PropTypes.string,
     children: function(props, propName) {
@@ -13,20 +13,6 @@ class Workbench extends React.Component {
       if (!Array.isArray(children)) {
         children = [children];
       }
-
-      // if (children.length > 2) {
-      //   return new Error(`Workbench must have 1 or 2 children, has ${children.length}`);
-      // }
-
-      // for (const child of children) {
-      //   if (child.type !== Workbench.Content && child.type !== Workbench.Sidebar) {
-      //     return new Error(
-      //       `Workbench should only have Content or Sidebar children. Child was ${
-      //         child.type.displayName
-      //       }`
-      //     );
-      //   }
-      // }
 
       const contentChildren = children.filter(child => child.type === Workbench.Content);
 
