@@ -214,7 +214,9 @@ export default class HyperlinkDialog extends React.Component {
           Link target
         </FormLabel>
         {!isEntitySelectorVisible && (
-          <TextLink style={{ float: 'right' }} onClick={resetEntity}>
+          <TextLink
+            extraClassNames="entity-selector-dialog__change-selection-link"
+            onClick={resetEntity}>
             Change selection
           </TextLink>
         )}
