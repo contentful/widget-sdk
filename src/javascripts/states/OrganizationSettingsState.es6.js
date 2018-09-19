@@ -68,14 +68,51 @@ const usage = reactBase({
   componentName: 'cf-platform-usage'
 });
 
-const usersGatekeeper = gatekeeperBase({
-  name: 'gatekeeper',
+// const usersGatekeeper = gatekeeperBase({
+//   name: 'gatekeeper',
+//   title: 'Organization users',
+//   url: '/:orgId/organization_memberships/{pathSuffix:PathSuffix}'
+// });
+
+const userDetail = gatekeeperBase({
+  name: 'user',
+  params: {
+    userId: ''
+  },
   title: 'Organization users',
-  url: '/:orgId/organization_memberships/{pathSuffix:PathSuffix}'
+  url: '/:userId/edit',
+  featureFlag: 'feature-bv-09-2018-new-org-membership-pages',
+  reactComponentName: 'app/OrganizationSettings/Users/UserDetail/UserDetail.es6',
+  resolve: {
+    membership: [
+      'data/EndpointFactory.es6',
+      'access_control/OrganizationMembershipRepository.es6',
+      '$stateParams',
+      async (endpointFactory, repo, $stateParams) => {
+        const endpoint = endpointFactory.createOrganizationEndpoint($stateParams.orgId);
+        const membership = await repo.getMembership(endpoint, $stateParams.userId);
+        const user = await repo.getUser(endpoint, membership.sys.user.sys.id);
+
+        return { ...membership, sys: { ...membership.sys, user } };
+      }
+    ]
+  },
+  controller: [
+    '$scope',
+    'membership',
+    ($scope, membership) => {
+      setFeatureFlagInScope($scope, 'feature-bv-09-2018-new-org-membership-pages');
+      $scope.context.ready = true;
+      $scope.properties = {
+        membership
+      };
+    }
+  ]
 });
 
 const usersList = gatekeeperBase({
   name: 'users',
+  children: [userDetail],
   title: 'Organization users',
   url: '/:orgId/organization_memberships',
   featureFlag: 'feature-bv-09-2018-new-org-membership-pages',
@@ -260,7 +297,8 @@ export default Base({
     usage,
     newUser,
     usersList,
-    usersGatekeeper,
+    userDetail,
+    // usersGatekeeper,
     spaces,
     offsitebackup,
     billing
