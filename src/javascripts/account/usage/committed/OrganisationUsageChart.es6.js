@@ -32,11 +32,21 @@ export default class OrganisationUsageChart extends React.Component {
     const options = merge({}, baseFormatting, {
       xAxis: {
         data: periodToDates(period),
-        offset: 8
+        offset: 8,
+        axisLine: {
+          lineStyle: {
+            color: '#263545'
+          }
+        }
       },
       yAxis: {
         min: 0,
-        max: Math.max(maxValue, includedLimit)
+        max: Math.max(maxValue, includedLimit),
+        axisLine: {
+          lineStyle: {
+            color: '#263545'
+          }
+        }
       },
       tooltip: {
         padding: 0,

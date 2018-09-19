@@ -26,10 +26,20 @@ export default class ApiUsageChart extends React.Component {
     const options = merge({}, baseFormatting, {
       xAxis: {
         data: periodToDates(period),
-        offset: 8
+        offset: 8,
+        axisLine: {
+          lineStyle: {
+            color: '#263545'
+          }
+        }
       },
       yAxis: {
-        type: 'value'
+        type: 'value',
+        axisLine: {
+          lineStyle: {
+            color: '#263545'
+          }
+        }
       },
       tooltip: {
         backgroundColor: '#192532',
