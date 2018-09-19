@@ -75,7 +75,7 @@ const usage = reactBase({
 // });
 
 const userDetail = gatekeeperBase({
-  name: 'user',
+  name: 'detail',
   params: {
     userId: ''
   },

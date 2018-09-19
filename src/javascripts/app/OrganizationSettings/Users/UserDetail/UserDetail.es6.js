@@ -70,6 +70,7 @@ export default class UserDetail extends React.Component {
           <div style={{ padding: '1em 2em 2em' }}>
             <Card>
               <h1>{`${user.firstName} ${user.lastName}`}</h1>
+              <p>{user.email}</p>
               <Dropdown
                 isOpen={this.state.orgRoleDropdownIsOpen}
                 toggleElement={
