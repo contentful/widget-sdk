@@ -25,11 +25,11 @@ import _ from 'lodash';
  * @param {Object} params
  * @returns {array}
  */
-export function fetchAll(endpoint, path, batchLimit, params) {
+export function fetchAll(endpoint, path, batchLimit, params, headers) {
   const requestPromises = [];
   let query = _.extend({}, params, { skip: 0, limit: batchLimit });
 
-  return makeRequest(endpoint, path, query).then(response => {
+  return makeRequest(endpoint, path, query, headers).then(response => {
     const total = response.total;
     let skip = batchLimit;
 
@@ -50,10 +50,13 @@ export function fetchAll(endpoint, path, batchLimit, params) {
   });
 }
 
-function makeRequest(endpoint, path, query) {
-  return endpoint({
-    method: 'GET',
-    path: path,
-    query: query
-  });
+function makeRequest(endpoint, path, query, headers) {
+  return endpoint(
+    {
+      method: 'GET',
+      path: path,
+      query: query
+    },
+    headers
+  );
 }

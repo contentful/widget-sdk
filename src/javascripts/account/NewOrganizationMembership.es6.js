@@ -291,7 +291,7 @@ export default function($scope) {
    */
   function goToList() {
     go({
-      path: ['account', 'organizations', 'users', 'gatekeeper']
+      path: ['account', 'organizations', 'users']
     });
   }
   /**

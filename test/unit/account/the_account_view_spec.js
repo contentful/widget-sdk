@@ -113,7 +113,7 @@ describe('TheAccountView service', () => {
   describeGoToMethod('goToSubscription', 'subscription', pricingV1Org, 'pricing v1 org');
   describeGoToMethod('goToSubscription', 'subscription_new', pricingV2Org, 'pricing v2 org');
 
-  describeGoToMethod('goToUsers', 'users.gatekeeper', pricingV1Org);
+  describeGoToMethod('goToUsers', 'users', pricingV1Org);
 
   function describeGoToMethod(name, subpage, org, comment = '') {
     describe(`.${name}()${comment && ', ' + comment}`, () => {
