@@ -31,7 +31,8 @@ export default class OrganisationUsageChart extends React.Component {
     const maxValue = last(accumulatedUsage);
     const options = merge({}, baseFormatting, {
       xAxis: {
-        data: periodToDates(period)
+        data: periodToDates(period),
+        offset: 8
       },
       yAxis: {
         min: 0,
@@ -41,8 +42,8 @@ export default class OrganisationUsageChart extends React.Component {
         padding: 0,
         formatter: ([{ name, value, color }]) =>
           `
-            <div 
-            class="usage-page__org-chart-tooltip" 
+            <div
+            class="usage-page__org-chart-tooltip"
             style="background-color: ${color}; color: ${
             color === belowLimitColor ? '#fff' : belowLimitColor
           };"

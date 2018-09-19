@@ -25,7 +25,8 @@ export default class ApiUsageChart extends React.Component {
     const { startDate, endDate } = period;
     const options = merge({}, baseFormatting, {
       xAxis: {
-        data: periodToDates(period)
+        data: periodToDates(period),
+        offset: 8
       },
       yAxis: {
         type: 'value'
