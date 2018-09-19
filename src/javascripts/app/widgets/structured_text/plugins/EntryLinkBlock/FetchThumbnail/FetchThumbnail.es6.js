@@ -17,24 +17,24 @@ export default class FetchThumbnail extends React.Component {
     requestStatus: RequestStatus.Pending
   };
   componentDidMount() {
-    this.fetchThumbnail(this.props);
+    this.fetchThumbnail();
   }
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (this.props.currentUrl !== nextProps.currentUrl || this.props.entry !== nextProps.entry) {
-      this.fetchThumbnail(nextProps);
+  componentDidUpdate(prevProps) {
+    if (this.props.currentUrl !== prevProps.currentUrl || this.props.entry !== prevProps.entry) {
+      this.fetchThumbnail();
     }
   }
-  fetchThumbnail = async props => {
+  fetchThumbnail = async () => {
     try {
-      if (!props.entry) {
+      if (!this.props.entry) {
         return;
       }
-      const spaceContext = props.$services.spaceContext;
+      const spaceContext = this.props.$services.spaceContext;
       this.setState({
         thumbnail: null,
         requestStatus: RequestStatus.Pending
       });
-      const thumbnail = await spaceContext.entryImage(props.entry);
+      const thumbnail = await spaceContext.entryImage(this.props.entry);
       this.setState({
         thumbnail,
         requestStatus: RequestStatus.Success

@@ -29,8 +29,8 @@ export default class FetchEntry extends React.Component {
   componentDidMount() {
     this.fetchEntry();
   }
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (this.props.node !== nextProps.node || this.props.currentUrl !== nextProps.currentUrl) {
+  componentDidUpdate(prevProps) {
+    if (this.props.node !== prevProps.node || this.props.currentUrl !== prevProps.currentUrl) {
       this.fetchEntry();
     }
   }
