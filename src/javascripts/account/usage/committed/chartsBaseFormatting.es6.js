@@ -2,7 +2,10 @@ import { shorten } from 'utils/NumberUtils.es6';
 
 export default {
   axisPointer: {
-    zlevel: -1
+    zlevel: -1,
+    lineStyle: {
+      color: '#263545'
+    }
   },
   tooltip: {
     trigger: 'axis'
