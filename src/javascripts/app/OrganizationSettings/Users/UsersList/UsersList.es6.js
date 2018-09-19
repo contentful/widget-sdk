@@ -63,7 +63,7 @@ export default class UsersList extends React.Component {
   render() {
     const { usersList, membershipsResource } = this.state;
 
-    if (!this.state.usersList.length) return '';
+    if (!this.state.usersList.length) return null;
 
     return (
       <Workbench testId="organization-users-page">
