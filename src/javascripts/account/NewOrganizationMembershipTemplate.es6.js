@@ -290,7 +290,7 @@ export function progressMessage(emails, successfulOrgInvitations) {
       'ul.pill-list.u-separator--small',
       emails.map(email => {
         const className = isSuccessful(email) ? 'pill-item--success' : 'is-loading';
-        const icon = isSuccessful(email) ? SuccessIcon : '';
+        const icon = isSuccessful(email) ? h(SuccessIcon) : '';
         return h('li.pill-item', { class: className }, [email, icon]);
       })
     )
