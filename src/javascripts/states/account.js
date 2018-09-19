@@ -10,6 +10,7 @@ angular
     'require',
     require => {
       var base = require('states/Base.es6').default;
+      var orgSettings = require('states/OrganizationSettingsState.es6').default;
       var navBar = require('navigation/templates/NavBar.es6').default;
 
       return base({
@@ -17,7 +18,7 @@ angular
         url: '/account',
         abstract: true,
         views: { 'nav-bar@': { template: navBar() } },
-        children: [require('states/account/organizations'), require('states/account/profile')]
+        children: [orgSettings, require('states/account/profile')]
       });
     }
   ]);
