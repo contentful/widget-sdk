@@ -41,6 +41,12 @@ export default class ApiUsageChart extends React.Component {
           }
         }
       },
+      textStyle: {
+        fontFamily: 'Avenir Next W01',
+        fontSize: 11,
+        fontWeight: 600,
+        lineHeight: 15
+      },
       tooltip: {
         backgroundColor: '#192532',
         padding: 8,

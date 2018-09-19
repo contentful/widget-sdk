@@ -48,6 +48,12 @@ export default class OrganisationUsageChart extends React.Component {
           }
         }
       },
+      textStyle: {
+        fontFamily: 'Avenir Next W01',
+        fontSize: 11,
+        fontWeight: 600,
+        lineHeight: 15
+      },
       tooltip: {
         padding: 0,
         formatter: ([{ name, value, color }]) =>
