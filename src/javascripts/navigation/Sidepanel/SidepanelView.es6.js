@@ -1,6 +1,6 @@
 import { h } from 'ui/Framework';
 import CloseIcon from 'svg/close.es6';
-import settingsIcon from 'svg/settings.es6';
+import SettingsIcon from 'svg/settings.es6';
 import SidepanelOrgs from './SidepanelOrgs.es6';
 import SidepanelSpaces from './SidepanelSpaces.es6';
 import SidepanelNoOrgs from './SidepanelNoOrgs.es6';
@@ -67,7 +67,7 @@ function renderOrgActions(gotoOrgSettings, viewingOrgSettings) {
         },
         [
           h('.nav-sidepanel__org-title', [
-            h('.nav-sidepanel__org-icon', [h(settingsIcon)]),
+            h('.nav-sidepanel__org-icon', [h(SettingsIcon)]),
             h('span', ['Organization settings'])
           ])
         ]

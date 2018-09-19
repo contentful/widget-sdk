@@ -2,7 +2,7 @@ import React, { createElement as e } from 'react';
 import PropTypes from 'prop-types';
 import AnimateHeight from 'react-animate-height';
 import FolderIcon from 'svg/folder.es6';
-import environmentIcon from 'svg/environment.es6';
+import EnvironmentIcon from 'svg/environment.es6';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo.es6';
 
@@ -46,7 +46,7 @@ function EnvironmentList({ environments, isCurrSpace, currentEnvId, goToSpace, s
                 }
               }
             },
-            ...[environmentIcon({ display: 'inline' }), envId]
+            ...[e(EnvironmentIcon, { style: { display: 'inline' } }), envId]
           )
         ]
       );

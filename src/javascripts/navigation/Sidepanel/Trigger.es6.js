@@ -134,9 +134,11 @@ function environmentLabel(env) {
     },
     [
       h(EnvironmentIcon, {
-        display: 'block',
-        flexShrink: 0,
-        fill: 'currentColor'
+        style: {
+          display: 'block',
+          flexShrink: 0,
+          fill: 'currentColor'
+        }
       }),
       hspace('7px'),
       container(

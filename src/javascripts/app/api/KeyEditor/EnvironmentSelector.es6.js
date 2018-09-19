@@ -4,7 +4,7 @@ import { badge, stateLink, codeFragment } from 'ui/Content.es6';
 import { byName as Colors } from 'Styles/Colors.es6';
 import { find } from 'lodash';
 import { filter, concat } from 'utils/Collections.es6';
-import infoIcon from 'svg/info.es6';
+import InfoIcon from 'svg/info.es6';
 import copyButton from 'ui/Components/CopyIconButton.es6';
 
 function makeLink(env) {
@@ -38,7 +38,7 @@ function renderHint() {
       }
     },
     [
-      infoIcon,
+      h(InfoIcon),
       h(
         'p',
         {

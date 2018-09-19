@@ -48,7 +48,7 @@ class ProgressScreen extends React.Component {
           {!done && <div className="spinner" />}
           {done && (
             <div style={{ transform: 'scale(2)' }} data-test-id="create-space-create-done">
-              {CheckmarkIcon}
+              <CheckmarkIcon />
             </div>
           )}
         </div>
