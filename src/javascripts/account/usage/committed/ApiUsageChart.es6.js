@@ -9,7 +9,7 @@ import periodToDates from './periodToDates.es6';
 import EmptyChartPlaceholder from './EmptyChartPlaceholder.es6';
 import baseFormatting, { seriesBaseFormatting } from './chartsBaseFormatting.es6';
 
-const symbols = ['circle', 'rect', 'triangle'];
+const symbols = ['circle', 'diamond', 'triangle'];
 
 export default class ApiUsageChart extends React.Component {
   static propTypes = {
@@ -48,20 +48,30 @@ export default class ApiUsageChart extends React.Component {
         lineHeight: 15
       },
       tooltip: {
-        backgroundColor: '#192532',
-        padding: 8,
-        textStyle: {
-          fontFamily: 'Avenir Next W01',
-          fontSize: 14,
-          fontWeight: 600,
-          lineHeight: 20
-        }
+        padding: 0,
+        formatter: series =>
+          `
+            <div class="usage-page__api-chart-tooltip">
+              <div class="date">${series[0].name}</div>
+              ${series
+                .map(
+                  ({ value }, index) => `
+                  <div class="value">
+                    <img class="icon" src="/app/images/chart-symbol-${symbols[index]}.svg" />
+                    <span> ${value.toLocaleString('en-US')}</span>
+                  </div>
+                `
+                )
+                .join('')}
+            </div>
+          `
       },
       series: usage.map(({ usage, sys: { space: { sys: { id: spaceId } } } }, index) =>
         merge({}, seriesBaseFormatting, {
           name: spaceNames[spaceId] || 'deleted space',
           data: usage,
           symbol: symbols[index],
+          symbolSize: 8,
           itemStyle: {
             color: colors[index]
           }

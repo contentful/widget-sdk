@@ -37,18 +37,26 @@ $overage-color = #FCA013
     h3, h2
       display: inline
 
-  &__org-chart-tooltip
+  &__org-chart-tooltip, &__api-chart-tooltip
     border-radius: 2px
     font-family: "Avenir Next W01"
     font-weight: 600
-    padding: 8px
+    padding: 12.5px
+    font-size: 14px
     .date
-      font-size: 12px
-      line-height: 12px
+      margin-bottom: 12px
+  &__org-chart-tooltip .value
+    font-size: 21px
+    line-height: 21px
+  &__api-chart-tooltip
+    background-color: #263545
     .value
-      font-size: 21px
-      line-height: 21px
-      margin-top: 12px
+      font-size: 14px
+      line-height: 24px
+      display: flex
+      align-items: center
+    .icon
+      margin-right: 8.5px
 
   &__api-table
     margin-top: 1.5rem
