@@ -16,7 +16,7 @@ angular.module('contentful').factory(name, [
   'require',
   require => {
     const store = require('TheStore').getStore();
-    const { getStoragePrefix, getUser } = require(CreateModernOnboardingModule);
+    const { getStoragePrefix, getUser, getPerson } = require(CreateModernOnboardingModule);
 
     const { Progress, Header } = require('app/home/welcome/OnboardingWithTea.es6');
 
@@ -62,17 +62,31 @@ angular.module('contentful').factory(name, [
         };
       }
 
-      componentDidMount() {
-        if (!this.state[MODIFY_CONTENT].isDone) {
-          const user = getUser();
-          const isModifyStepDone =
-            this.props.entry.fields.name['en-US'] === `${user.firstName} ${user.lastName}`;
+      checkModifyStepIntervalId = undefined;
 
-          if (isModifyStepDone) {
-            this.markAsDone(MODIFY_CONTENT);
-          }
+      componentDidMount() {
+        if (!this.state[MODIFY_CONTENT].isDone && !this.checkModifyStepIntervalId) {
+          this.verifyModifyStep(this.props.entry);
         }
       }
+
+      componentWillUnmount() {
+        clearInterval(this.checkModifyStepIntervalId);
+      }
+
+      verifyModifyStep = async entryFromProps => {
+        // We need to get current entry to compare it to user data, this is how we can know if the user had modified content
+        const user = getUser();
+        const entry = entryFromProps || (await getPerson());
+        const isModifyStepDone =
+          entry.fields.name['en-US'] === `${user.firstName} ${user.lastName}`;
+
+        if (isModifyStepDone) {
+          this.markAsDone(MODIFY_CONTENT);
+          // If the step was done, we mark it as such and clear checkModifyStepIntervalId
+          clearInterval(this.checkModifyStepIntervalId);
+        }
+      };
 
       getExpandedStep(state) {
         const { expanded: _, ...rest } = state;
@@ -111,6 +125,20 @@ angular.module('contentful').factory(name, [
         }
       }
 
+      onCopy = key => {
+        // After user copies modify content command, we start an interval to check if the user executed the command
+        this.startModifyStepCheckInterval();
+        this.props.track(`${snakeCase(MODIFY_CONTENT + 'Step')}:${key}`);
+      };
+
+      startModifyStepCheckInterval = () => {
+        // We only start interval if modifyContentStepCompleted is false or absent
+        // and checkModifyStepIntervalId is undefined
+        if (!this.state[MODIFY_CONTENT].isDone && !this.checkModifyStepIntervalId) {
+          this.checkModifyStepIntervalId = setInterval(this.verifyModifyStep, 5000);
+        }
+      };
+
       render() {
         const { expanded } = this.state;
 
@@ -123,7 +151,7 @@ angular.module('contentful').factory(name, [
             <div className="tea-onboarding__steps">
               <ModifyContentStep
                 isExpanded={expanded === MODIFY_CONTENT}
-                track={key => this.props.track(`${snakeCase(MODIFY_CONTENT + 'Step')}:${key}`)}
+                onCopy={this.onCopy}
                 {...this.state[MODIFY_CONTENT]}
               />
               <SetupWebhooksStep

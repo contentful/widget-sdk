@@ -19,7 +19,7 @@ angular.module('contentful').factory(name, [
     const A = require(AnchorModule);
 
     const ModifyContentStep = props => {
-      const { isDone, isExpanded, onToggle, managementToken, entry, spaceId, track } = props;
+      const { isDone, isExpanded, onToggle, managementToken, entry, spaceId, onCopy } = props;
 
       const { firstName, lastName } = getUser();
       const updatedFields = {
@@ -83,7 +83,7 @@ angular.module('contentful').factory(name, [
               copy
               code={curlSnippets}
               tooltipPosition="right"
-              onCopy={_ => track('copy_curl_snippets')}
+              onCopy={_ => onCopy('copy_curl_snippets')}
               style="margin-top: 0"
             />
             <br />
@@ -106,7 +106,7 @@ angular.module('contentful').factory(name, [
       managementToken: PropTypes.string.isRequired,
       entry: PropTypes.object.isRequired,
       spaceId: PropTypes.string.isRequired,
-      track: PropTypes.func.isRequired
+      onCopy: PropTypes.func.isRequired
     };
 
     return ModifyContentStep;
