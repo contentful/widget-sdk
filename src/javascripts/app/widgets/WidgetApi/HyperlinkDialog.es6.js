@@ -31,6 +31,11 @@ export default class HyperlinkDialog extends React.Component {
     this.state = { ...this.props.value };
   }
 
+  handleSubmit = event => {
+    event.preventDefault();
+    this.props.onConfirm(normalizeValue(this.state));
+  };
+
   render() {
     const { labels, hideText, onConfirm, onCancel } = this.props;
     const { uri, text } = this.state;
@@ -38,18 +43,21 @@ export default class HyperlinkDialog extends React.Component {
     return (
       <Dialog testId="create-hyperlink-dialog">
         <Dialog.Header>{labels.title}</Dialog.Header>
-        <Dialog.Body>{this.renderFields()}</Dialog.Body>
-        <Dialog.Controls>
-          <Button
-            onClick={() => onConfirm(normalizeValue(this.state))}
-            buttonType="positive"
-            disabled={!isValid}>
-            Insert
-          </Button>
-          <Button onClick={() => onCancel()} buttonType="muted">
-            Cancel
-          </Button>
-        </Dialog.Controls>
+        <form onSubmit={this.handleSubmit}>
+          <Dialog.Body>{this.renderFields()}</Dialog.Body>
+          <Dialog.Controls>
+            <Button
+              type="submit"
+              onClick={() => onConfirm(normalizeValue(this.state))}
+              buttonType="positive"
+              disabled={!isValid}>
+              Insert
+            </Button>
+            <Button onClick={() => onCancel()} buttonType="muted">
+              Cancel
+            </Button>
+          </Dialog.Controls>
+        </form>
       </Dialog>
     );
   }
