@@ -73,7 +73,7 @@ angular
        * organization's users (memberships) page.
        */
       function goToUsers() {
-        return goToOrganizations('users.gatekeeper');
+        return goToOrganizations('users');
       }
 
       /**
