@@ -13,7 +13,8 @@ describe('entitySelector', () => {
       return promise;
     };
     this.getScope = () => this.openDialogStub.lastCall.args[0].scopeData;
-    this.getConfig = () => this.getScope().config;
+    this.getConfig = () => this.getScope().entitySelector.config;
+    this.getLabels = () => this.getScope().entitySelector.labels;
   });
 
   it('throws error if invalid entity type is provided', function() {
@@ -112,13 +113,13 @@ describe('entitySelector', () => {
 
   it('sets lables', async function() {
     await this.open({ linkType: 'Entry' });
-    expect(this.getScope().labels.title).toBe('Insert existing entry');
+    expect(this.getLabels().title).toBe('Insert existing entry');
     await this.open({ linkType: 'Entry', type: 'Array' });
-    expect(this.getScope().labels.title).toBe('Insert existing entries');
+    expect(this.getLabels().title).toBe('Insert existing entries');
     await this.open({ linkType: 'Asset' });
-    expect(this.getScope().labels.title).toBe('Insert existing asset');
+    expect(this.getLabels().title).toBe('Insert existing asset');
     await this.open({ linkType: 'Asset', type: 'Array' });
-    expect(this.getScope().labels.title).toBe('Insert existing assets');
+    expect(this.getLabels().title).toBe('Insert existing assets');
   });
 
   describe('single CT prefetching', () => {

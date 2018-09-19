@@ -1,28 +1,29 @@
 .modal-background
   .modal-dialog.entity-selector-dialog(
-    ng-class="'entity-selector-dialog--for-{{ config.entityType.toLowerCase() }}-entities'")
+    ng-class="'entity-selector-dialog--for-{{ entitySelector.config.entityType.toLowerCase() }}-entities'")
     header.modal-dialog__header
       h1 {{ entitySelector.labels.title }}
       button.modal-dialog__close(ng-click="dialog.cancel()")
 
-    .modal-dialog__content(ng-if="!showCustomEmptyMessage()")
+    .modal-dialog__content(ng-if="!showCustomEmptyMessage")
       cf-entity-selector(
-        config="config"
-        labels="labels"
-        list-height="listHeight"
-        on-change="onChange")
+        config="entitySelector.config"
+        labels="entitySelector.labels"
+        list-height="entitySelector.listHeight"
+        on-change="entitySelector.onChange"
+        on-no-entities="entitySelector.onNoEntities")
 
     .modal-dialog__content(
-      ng-if="showCustomEmptyMessage()"
-      bind-html-compile="labels.noEntitiesCustomHtml"
+      ng-if="showCustomEmptyMessage"
+      bind-html-compile="entitySelector.labels.noEntitiesCustomHtml"
       data-test-id="custom-empty-message")
 
-    .modal-dialog__controls(ng-if="config.multiple && !showCustomEmptyMessage()")
+    .modal-dialog__controls(ng-if="entitySelector.config.multiple && !showCustomEmptyMessage")
       button.btn-primary-action.modal-dialog__controls-confirm(
         type="button"
         ng-click="dialog.confirm(selected)"
-        ng-disabled="selected.length < config.min || selected.length > config.max")
-        | {{ labels.insert }}
+        ng-disabled="selected.length < entitySelector.config.min || selected.length > entitySelector.config.max")
+        | {{ entitySelector.labels.insert }}
         span(ng-if="selected.length > 0") &nbsp;({{ selected.length }})
       button.btn-secondary-action(type="button" ng-click="dialog.cancel()")
         | Cancel

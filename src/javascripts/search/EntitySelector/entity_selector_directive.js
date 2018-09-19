@@ -13,7 +13,8 @@ angular.module('contentful').directive('cfEntitySelector', [
       config: '=',
       labels: '=',
       listHeight: '=',
-      onChange: '='
+      onChange: '=',
+      onNoEntities: '='
     },
     controller: [
       '$scope',

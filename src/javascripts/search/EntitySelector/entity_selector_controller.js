@@ -63,6 +63,7 @@ angular.module('contentful').controller('EntitySelectorController', [
 
     Object.assign($scope, MODES, {
       onChange: $scope.onChange || _.noop,
+      onNoEntities: $scope.onNoEntities || _.noop,
       spaceContext: spaceContext,
       view: { mode: MODES.AVAILABLE },
       paginator: Paginator.create(),
@@ -72,7 +73,6 @@ angular.module('contentful').controller('EntitySelectorController', [
       toggleSelection: toggleSelection,
       loadMore: loadMore,
       getSearchPlaceholder: getSearchPlaceholder,
-      showCustomEmptyMessage: showCustomEmptyMessage,
       supportsAdvancedSearch: _.includes(['Entry', 'Asset'], config.entityType),
       helpers: getEntityHelpers(config),
       getContentType: getContentType
@@ -243,6 +243,9 @@ angular.module('contentful').controller('EntitySelectorController', [
     function handleResponse(res) {
       $scope.paginator.setTotal(res.total);
       $scope.items.push(...getItemsToAdd(res));
+      if (hasNoEntities()) {
+        $scope.onNoEntities();
+      }
       $timeout(() => {
         $scope.isLoading = false;
         $scope.isLoadingMore = false;
@@ -306,14 +309,15 @@ angular.module('contentful').controller('EntitySelectorController', [
       return placeholder;
     }
 
-    function showCustomEmptyMessage() {
-      var currentSearch = getSearch();
+    /**
+     * Returns whether there are any entities for the user to select (does NOT
+     * depend on current search filter).
+     * @returns {boolean}
+     */
+    function hasNoEntities() {
+      const currentSearch = getSearch();
       return (
-        $scope.labels.noEntitiesCustomHtml &&
-        !$scope.isLoading &&
-        $scope.items.length < 1 &&
-        !currentSearch.searchText &&
-        !currentSearch.searchFilters.length
+        $scope.items.length < 1 && !currentSearch.searchText && !currentSearch.searchFilters.length
       );
     }
   }

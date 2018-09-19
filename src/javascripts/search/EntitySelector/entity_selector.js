@@ -19,9 +19,9 @@ angular.module('contentful').factory('entitySelector', [
     } = require('search/EntitySelector/Config.es6');
 
     return {
-      openFromField: openFromField,
-      openFromExtension: openFromExtension,
-      open: open
+      openFromField,
+      openFromExtension,
+      open
     };
 
     /**
@@ -57,28 +57,43 @@ angular.module('contentful').factory('entitySelector', [
     function open(options) {
       let dialog;
       const config = _.omit(options, 'scope', 'labels');
+      const labels = _.extend(getLabels(options), options.labels);
+      const entitySelectorProps = {
+        config,
+        labels,
+        listHeight: calculateIdealListHeight(350),
+        onChange,
+        onNoEntities
+      };
       const scopeData = {
         ...options.scope,
-        config,
-        labels: _.extend(getLabels(options), options.labels),
-        listHeight: calculateIdealListHeight(350),
+        entitySelector: entitySelectorProps,
         selected: [],
-        onChange: entities => {
-          if (!config.multiple) {
-            dialog.confirm(entities);
-          } else {
-            dialog.scope.selected = entities;
-          }
-        }
+        showCustomEmptyMessage: false
       };
       dialog = modalDialog.open({
         template: 'entity_selector_dialog',
         backgroundClose: true,
         ignoreEsc: true,
         noNewScope: true,
-        scopeData: scopeData
+        scopeData
       });
       return dialog.promise;
+
+      function onChange(entities) {
+        if (!config.multiple) {
+          dialog.confirm(entities);
+        } else {
+          dialog.scope.selected = entities;
+        }
+      }
+      function onNoEntities() {
+        if (labels.noEntitiesCustomHtml) {
+          dialog.scope.showCustomEmptyMessage = true;
+          // hacky way to recenter the modal once it's resized
+          setTimeout(_ => dialog._centerOnBackground(), 0);
+        }
+      }
     }
 
     /**
