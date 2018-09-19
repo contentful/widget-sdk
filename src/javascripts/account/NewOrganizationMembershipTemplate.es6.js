@@ -2,8 +2,8 @@ import { includes, negate, isArray } from 'lodash';
 import { h } from 'ui/Framework';
 import { assign } from 'utils/Collections.es6';
 import { match, isTag } from 'utils/TaggedValues.es6';
-import { default as successIcon } from 'svg/checkmark-alt.es6';
-import { default as errorIcon } from 'svg/error.es6';
+import SuccessIcon from 'svg/checkmark-alt.es6';
+import ErrorIcon from 'svg/error.es6';
 
 const orgRoles = [
   {
@@ -290,7 +290,7 @@ export function progressMessage(emails, successfulOrgInvitations) {
       'ul.pill-list.u-separator--small',
       emails.map(email => {
         const className = isSuccessful(email) ? 'pill-item--success' : 'is-loading';
-        const icon = isSuccessful(email) ? successIcon : '';
+        const icon = isSuccessful(email) ? h(SuccessIcon) : '';
         return h('li.pill-item', { class: className }, [email, icon]);
       })
     )
@@ -320,7 +320,7 @@ export function errorMessage(failedEmails, restart) {
       failedEmails.map(email => {
         return h('li.pill-item.pill-item--warning', [
           h('span.pill-item__text', [email]),
-          errorIcon
+          h(ErrorIcon)
         ]);
       })
     )
@@ -358,7 +358,7 @@ export function successMessage(emails, successfulOrgInvitations, restart, goToLi
       successfulOrgInvitations.map(email => {
         return h('li.pill-item.pill-item--success', [
           h('span.pill-item__text', [email]),
-          successIcon
+          h(SuccessIcon)
         ]);
       })
     )

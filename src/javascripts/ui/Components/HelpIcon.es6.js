@@ -12,15 +12,12 @@ class HelpIcon extends React.Component {
 
   render() {
     const { children, tooltipWidth } = this.props;
-    const questionMarkIcon = (
-      <span className="help-icon__img">
-        <QuestionMarkIcon color={colors.textLight} />
-      </span>
-    );
 
     return (
       <Tooltip tooltip={children} options={{ width: tooltipWidth || 200 }} className="help-icon">
-        {questionMarkIcon}
+        <span className="help-icon__img">
+          <QuestionMarkIcon color={colors.textLight} />
+        </span>
       </Tooltip>
     );
   }

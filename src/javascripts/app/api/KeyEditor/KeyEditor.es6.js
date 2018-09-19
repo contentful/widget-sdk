@@ -6,7 +6,7 @@ import { assign } from 'utils/Collections.es6';
 import { container, vspace } from 'ui/Layout.es6';
 import { docsLink } from 'ui/Content.es6';
 import renderEnvironmentSelector from './EnvironmentSelector.es6';
-import copyIcon from 'svg/CopyIcon.es6';
+import CopyIcon from 'svg/CopyIcon.es6';
 import copyToClipboard from 'utils/DomClipboardCopy.es6';
 import TextInput from './TextInput.es6';
 
@@ -139,7 +139,7 @@ function inputWithCopy({ value, name, track }) {
         },
         style: { cursor: 'pointer', paddingTop: '3px' }
       },
-      [copyIcon()]
+      [h(CopyIcon)]
     )
   ]);
 }

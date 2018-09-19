@@ -1,8 +1,8 @@
 import React, { createElement as e } from 'react';
 import PropTypes from 'prop-types';
 import AnimateHeight from 'react-animate-height';
-import folderIcon from 'svg/folder.es6';
-import environmentIcon from 'svg/environment.es6';
+import FolderIcon from 'svg/folder.es6';
+import EnvironmentIcon from 'svg/environment.es6';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo.es6';
 
@@ -46,7 +46,7 @@ function EnvironmentList({ environments, isCurrSpace, currentEnvId, goToSpace, s
                 }
               }
             },
-            ...[environmentIcon({ display: 'inline' }), envId]
+            ...[e(EnvironmentIcon, { style: { display: 'inline' } }), envId]
           )
         ]
       );
@@ -142,7 +142,7 @@ export default class extends React.Component {
           'div',
           { className: 'nav-sidepanel__space-title' },
           ...[
-            e('div', { className: 'nav-sidepanel__space-icon' }, folderIcon),
+            e('div', { className: 'nav-sidepanel__space-icon' }, <FolderIcon />),
             e('span', { className: spaceNameClassNames }, space.name),
             e('span', {
               className: this.state.loading

@@ -4,7 +4,7 @@
 import { noop } from 'lodash';
 import { match } from 'utils/TaggedValues.es6';
 import { truncate } from 'stringUtils';
-import * as React from 'react';
+import React from 'react';
 import { h } from 'ui/Framework';
 import * as H from 'ui/Framework/Hooks';
 import { container, hspace } from 'ui/Layout.es6';
@@ -12,8 +12,8 @@ import spinner from 'ui/Components/Spinner.es6';
 import { byName as colors } from 'Styles/Colors.es6';
 import keycodes from 'utils/keycodes.es6';
 
-import filterIcon from 'svg/filter.es6';
-import infoIcon from 'svg/info.es6';
+import FilterIcon from 'svg/filter.es6';
+import InfoIcon from 'svg/info.es6';
 
 import renderLoader from './Loader.es6';
 import { ValueInput } from './Filters.es6';
@@ -177,7 +177,7 @@ export default function render({
                 [
                   // TODO we should be able to pass a `style` argument to
                   // `filterIcon`.
-                  container({ marginTop: '-3px' }, [filterIcon]),
+                  container({ marginTop: '-3px' }, [h(FilterIcon)]),
                   hspace('7px'),
                   'Filter'
                 ]
@@ -482,7 +482,7 @@ function searchHelpBanner() {
       padding: '15px 20px'
     },
     [
-      infoIcon,
+      h(InfoIcon),
       h(
         'p',
         {

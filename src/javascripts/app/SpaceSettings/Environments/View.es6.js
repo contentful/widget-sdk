@@ -14,8 +14,8 @@ import { table, tr, td, th } from 'ui/Content/Table.es6';
 import { container, hbox, ihspace } from 'ui/Layout.es6';
 import { byName as Colors } from 'Styles/Colors.es6';
 
-import pageSettingsIcon from 'svg/page-settings.es6';
-import questionMarkIcon from 'svg/QuestionMarkIcon.es6';
+import PageSettingsIcon from 'svg/page-settings.es6';
+import QuestionMarkIcon from 'svg/QuestionMarkIcon.es6';
 import Icon from 'ui/Components/Icon.es6';
 import CopyIconButton from 'ui/Components/CopyIconButton.es6';
 import { Tooltip } from 'react-tippy';
@@ -24,7 +24,7 @@ export default function render(state, actions) {
   return h('.workbench', [
     h('.workbench-header__wrapper', [
       h('header.workbench-header', [
-        h('.workbench-header__icon.cf-icon', [pageSettingsIcon]),
+        h('.workbench-header__icon.cf-icon', [h(PageSettingsIcon)]),
         h('h1.workbench-header__title', ['Environments'])
       ])
     ]),
@@ -166,7 +166,7 @@ function questionMarkWithTooltip({ tooltip }) {
         cursor: 'pointer'
       }
     },
-    [ihspace('10px'), questionMarkIcon()]
+    [ihspace('10px'), h(QuestionMarkIcon)]
   );
 }
 
