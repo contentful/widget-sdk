@@ -1,12 +1,12 @@
 describe('cfMarkdownEditor', () => {
   beforeEach(function() {
-    this.analytics = { track: sinon.spy() };
+    this.markdownEditorActions = { trackMarkdownEditorAction: sinon.stub() };
     module('contentful/test', $provide => {
       $provide.value('TheLocaleStore', {
         getDefaultLocale: () => ({ code: 'some random locale' }),
         getLocales: () => [{ code: 'en-US' }]
       });
-      $provide.value('analytics/Analytics.es6', this.analytics);
+      $provide.value('analytics/MarkdownEditorActions.es6', this.markdownEditorActions);
     });
 
     this.widgetApi = this.$inject('mocks/widgetApi').create();
@@ -28,6 +28,58 @@ describe('cfMarkdownEditor', () => {
 
     // can get CodeMirror instance from DOM node now:
     this.editor = elem.find('.CodeMirror').get(0).CodeMirror;
+
+    this.textarea = elem
+      .find('.CodeMirror')
+      .find('textarea')
+      .get(0);
+
+    this.sandbox = sinon.sandbox.create();
+    this.clock = this.sandbox.useFakeTimers();
+  });
+
+  afterEach(function() {
+    this.sandbox.restore();
+  });
+
+  describe('handling paste events', function() {
+    let range;
+    let element;
+
+    beforeEach(function() {
+      const node = document.createTextNode('A string with many characters');
+      element = document.createElement('div');
+      element.appendChild(node);
+      document.body.appendChild(element);
+      range = document.createRange();
+      range.setStart(element.firstChild, 0);
+      range.setEnd(element.firstChild, 15);
+      const selection = getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+    });
+
+    afterEach(function() {
+      getSelection().removeAllRanges();
+      document.body.removeChild(element);
+    });
+
+    it('tracks the character count data', function() {
+      const pastedValue = 'My Cool Pasted Data';
+      const pasteEvent = new ClipboardEvent('paste', {
+        clipboardData: new DataTransfer()
+      });
+      pasteEvent.clipboardData.setData('text/plain', pastedValue);
+      this.textarea.dispatchEvent(pasteEvent);
+      sinon.assert.notCalled(this.markdownEditorActions.trackMarkdownEditorAction);
+      this.clock.tick(1);
+      sinon.assert.calledOnceWith(this.markdownEditorActions.trackMarkdownEditorAction, 'paste', {
+        characterCountAfter: 4 + pastedValue.length,
+        characterCountBefore: 4,
+        characterCountSelection: 15,
+        fullscreen: false
+      });
+    });
   });
 
   it('Marks editor as ready when MD vendors are loaded', function() {
@@ -144,22 +196,28 @@ describe('cfMarkdownEditor', () => {
 
     it('tracks toggling zen mode on', function() {
       this.scope.zenApi.toggle();
-      sinon.assert.calledOnceWith(this.analytics.track, 'markdown_editor:action', {
-        action: 'toggleFullscreenMode',
-        new_value: true,
-        fullscreen: false
-      });
+      sinon.assert.calledOnceWith(
+        this.markdownEditorActions.trackMarkdownEditorAction,
+        'toggleFullscreenMode',
+        {
+          newValue: true,
+          fullscreen: false
+        }
+      );
     });
 
     it('tracks toggling zen mode off', function() {
       this.scope.zenApi.toggle();
-      this.analytics.track.reset();
+      this.markdownEditorActions.trackMarkdownEditorAction.reset();
       this.scope.zenApi.toggle();
-      sinon.assert.calledOnceWith(this.analytics.track, 'markdown_editor:action', {
-        action: 'toggleFullscreenMode',
-        new_value: false,
-        fullscreen: true
-      });
+      sinon.assert.calledOnceWith(
+        this.markdownEditorActions.trackMarkdownEditorAction,
+        'toggleFullscreenMode',
+        {
+          newValue: false,
+          fullscreen: true
+        }
+      );
     });
   });
 });
