@@ -1,6 +1,15 @@
 import React from 'react';
-import { Icon, Tooltip, TextLink } from '@contentful/ui-component-library';
+import { Tooltip, TextLink } from '@contentful/ui-component-library';
 import PropTypes from 'prop-types';
+import { INLINES } from '@contentful/structured-text-types';
+
+const { HYPERLINK, ENTRY_HYPERLINK, ASSET_HYPERLINK } = INLINES;
+
+const ICON_MAP = {
+  [HYPERLINK]: 'ExternalLink',
+  [ENTRY_HYPERLINK]: 'Entry',
+  [ASSET_HYPERLINK]: 'Asset'
+};
 
 export default class Hyperlink extends React.Component {
   static propTypes = {
@@ -14,6 +23,8 @@ export default class Hyperlink extends React.Component {
     const { children, node } = this.props;
     const uri = node.data.get('uri');
     const title = node.data.get('title');
+    // TODO: Use icon once we implement nicer cursor interaction with link.
+    const _icon = ICON_MAP[node.type];
 
     return (
       <span>
@@ -23,9 +34,8 @@ export default class Hyperlink extends React.Component {
           title={title}
           extraClassNames="structured-text__hyperlink">
           {children}
-          <Icon icon="ExternalLinkTrimmed" extraClassNames="structured-text__hyperlink-icon" />
+          {/*<Icon icon={icon} extraClassNames="structured-text__hyperlink-icon" />*/}
         </TextLink>
-
         <Tooltip show={true} />
       </span>
       // TODO: Add contentEditable={false} to tooltip to fix text cursor bug

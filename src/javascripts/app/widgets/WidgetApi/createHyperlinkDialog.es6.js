@@ -1,32 +1,67 @@
 import modalDialog from 'modalDialog';
+import { newConfigFromStructuredTextField } from 'search/EntitySelector/Config.es6';
 
-const DEFAULT_VALUE = { uri: 'https://', text: '' };
+const DEFAULT_VALUE = { uri: '', text: '' };
 
 /**
- * Opens a dialog for the user to construct a link and returns the
- * relevant properties.
+ * Opens a dialog for the user to construct a link and returns the relevant
+ * properties. Can be used to edit an existing link by passing either `url`
+ * or `target`.
  *
- * @param {string?} options.value.uri
+ * @param {Object} options.field Entry Field the dialog will be configured for.
+ * @param {boolean?} options.showTextInput Hides the text field if `false`.
  * @param {string?} options.value.text
- * @param {boolean} options.showTextInput
- * @returns {Promise<{uri: string, text: string?}>}
+ * @param {string?} options.value.uri
+ * @param {object?} options.value.target
+ * @param {string?} options.value.type One of "uri", "Entry", "Asset".
+ *  Will be overwritten accordingly if `url` or `target` are set.
+ * @returns {Promise<{uri: string?, target: object?, text: string?}>}
  */
-export default function({ showTextInput, value = {} }) {
+export default async function({ value = {}, showTextInput, field }) {
+  const entitySelectorConfigs = await newConfigsForField(field);
   const component = 'app/widgets/WidgetApi/HyperlinkDialog.es6';
   const template = `<react-component class="modal-background" name="${component}" props="props" />`;
+  const isNew = !(value.uri || value.target);
+
   const dialog = modalDialog.open({
     template,
+    backgroundClose: true,
+    ignoreEsc: true, // Ignore to allow ESC in search entity selector search.
     scopeData: {
       props: {
         labels: {
-          title: value.uri ? 'Edit link' : 'Insert link'
+          title: isNew ? 'Insert link' : 'Edit link',
+          confirm: isNew ? 'Insert link' : 'Update link'
         },
         value: { ...DEFAULT_VALUE, ...value },
         hideText: !showTextInput,
         onConfirm: value => dialog.confirm(value),
-        onCancel: () => dialog.cancel()
+        onCancel: () => dialog.cancel(),
+        onRender: () => {
+          // TODO: Get rid of this hack to re-center modal dialog.
+          setTimeout(() => {
+            dialog._centerOnBackground();
+            // We apparently need this for the angular directive when
+            // switching from link type URI to e.g. Entry or Asset:
+            setTimeout(() => {
+              dialog._centerOnBackground();
+            }, 10);
+          }, 0);
+        },
+        entitySelectorConfigs
       }
     }
   });
   return dialog.promise;
+}
+
+async function newConfigsForField(field) {
+  if (field.type === 'StructuredText') {
+    // TODO: Don't pass specific key if CT validation prohibits its type:
+    const config = {};
+    config.Entry = await newConfigFromStructuredTextField(field, 'entry-hyperlink');
+    config.Asset = await newConfigFromStructuredTextField(field, 'asset-hyperlink');
+    return config;
+  }
+  return {};
 }

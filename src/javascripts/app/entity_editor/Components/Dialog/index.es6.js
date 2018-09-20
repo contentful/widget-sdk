@@ -13,7 +13,8 @@ class Dialog extends React.Component {
   static propTypes = {
     testId: PropTypes.string,
     children: PropTypes.node,
-    size: PropTypes.oneOf(Object.keys(Dialog.sizes))
+    size: PropTypes.oneOf(Object.keys(Dialog.sizes)),
+    className: PropTypes.string
   };
 
   constructor(props) {
@@ -23,8 +24,9 @@ class Dialog extends React.Component {
   }
 
   render() {
+    const className = `${this.props.className || ''} modal-dialog`;
     return (
-      <div className="modal-dialog" data-test-id={this.props.testId} style={this.style}>
+      <div className={className} data-test-id={this.props.testId} style={this.style}>
         {this.props.children}
       </div>
     );

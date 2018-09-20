@@ -57,6 +57,12 @@ export default {
     [INLINES.HYPERLINK]: {
       nodes: [TEXT_CONSTRAINT]
     },
+    [INLINES.ENTRY_HYPERLINK]: {
+      nodes: [TEXT_CONSTRAINT]
+    },
+    [INLINES.ASSET_HYPERLINK]: {
+      nodes: [TEXT_CONSTRAINT]
+    },
     [INLINES.EMBEDDED_ENTRY]: {
       ...VOID_CONSTRAINT
     }

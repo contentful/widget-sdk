@@ -71,8 +71,11 @@ export default function connectToWidgetAPI(Component) {
     buildWidgetAPI() {
       return {
         dialogs: {
-          selectSingleEntry: () => entitySelector.openFromField(this.props.field, 0),
-          createHyperlink: createHyperlinkDialog
+          selectSingleEntry: () => entitySelector.openFromField(this.props.field),
+          createHyperlink: ({ showTextInput, value }) => {
+            const { field } = this.props;
+            return createHyperlinkDialog({ showTextInput, value, field });
+          }
         },
         currentUrl: this.state.currentUrl,
         features: this.props.features
