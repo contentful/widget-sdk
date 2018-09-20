@@ -1,11 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import modalDialog from 'modalDialog';
 
-export default class WebhookHeaders extends React.Component {
+const ServicesConsumer = require('../../reactServiceContext').default;
+
+export class WebhookHeaders extends React.Component {
   static propTypes = {
     headers: PropTypes.array,
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired,
+
+    $services: PropTypes.shape({
+      modalDialog: PropTypes.object.isRequired
+    }).isRequired
   };
 
   componentDidUpdate() {
@@ -104,8 +109,8 @@ export default class WebhookHeaders extends React.Component {
     );
   }
 
-  openSecretHeaderDialog(componentName) {
-    modalDialog
+  openSecretHeaderDialog = componentName => {
+    this.props.$services.modalDialog
       .open({
         template: `<react-component class="modal-background" name="app/Webhooks/${componentName}.es6" props="props">`,
         controller: $scope => {
@@ -119,5 +124,7 @@ export default class WebhookHeaders extends React.Component {
           this.add(header);
         }
       });
-  }
+  };
 }
+
+export default ServicesConsumer('modalDialog')(WebhookHeaders);

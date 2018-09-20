@@ -9,14 +9,22 @@ import {
 } from '@contentful/ui-component-library';
 import * as WebhookEditorActions from './WebhookEditorActions.es6';
 import { values, isString } from 'lodash';
-import $state from '$state';
+const ServicesConsumer = require('../../reactServiceContext').default;
 
-export default class WebhookTemplateForm extends React.Component {
+export class WebhookTemplateForm extends React.Component {
   static propTypes = {
     template: PropTypes.object.isRequired,
     closeDialog: PropTypes.func.isRequired,
     webhookRepo: PropTypes.object.isRequired,
-    templateContentTypes: PropTypes.array.isRequired
+    templateContentTypes: PropTypes.array.isRequired,
+
+    $services: PropTypes.shape({
+      $state: PropTypes.object.isRequired,
+      notification: PropTypes.object.isRequired,
+      modalDialog: PropTypes.object.isRequired,
+      ReloadNotification: PropTypes.object.isRequired,
+      Analytics: PropTypes.object.isRequired
+    }).isRequired
   };
 
   constructor(props) {
@@ -50,7 +58,7 @@ export default class WebhookTemplateForm extends React.Component {
   }
 
   navigateToSaved(webhook) {
-    return $state.go('^.detail', { webhookId: webhook.sys.id });
+    return this.props.$services.$state.go('^.detail', { webhookId: webhook.sys.id });
   }
 
   onCreateClick = () => {
@@ -68,7 +76,10 @@ export default class WebhookTemplateForm extends React.Component {
     return Promise.all(
       mappers.map(mapFn => {
         const webhook = mapFn(this.state.fields, name, templateContentTypes);
-        return WebhookEditorActions.save(webhookRepo, webhook, template.id);
+        return WebhookEditorActions.save(webhookRepo, webhook, template.id, {
+          notification: this.props.$services.notification,
+          Analytics: this.props.$services.Analytics
+        });
       })
     ).then(
       // We always navigate to the first saved webhook.
@@ -173,3 +184,8 @@ export default class WebhookTemplateForm extends React.Component {
     );
   }
 }
+
+export default ServicesConsumer('$state', 'notification', 'modalDialog', 'ReloadNotification', {
+  as: 'Analytics',
+  from: 'analytics/Analytics.es6'
+})(WebhookTemplateForm);

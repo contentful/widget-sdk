@@ -1,5 +1,5 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import Enzyme from 'enzyme';
 import _ from 'lodash';
 import { toKeyCode } from 'is-hotkey';
 
@@ -38,6 +38,8 @@ describe('Toolbar', () => {
   beforeEach(async function() {
     module('contentful/test');
 
+    const ServicesProvider = this.$inject('ServicesProvider');
+
     const mockDocument = document(block(BLOCKS.PARAGRAPH, {}, text()));
 
     this.system = createIsolatedSystem();
@@ -64,7 +66,16 @@ describe('Toolbar', () => {
       features: { embedInlineEntry: true }
     };
     this.sandbox = createSandbox(window);
-    this.wrapper = mount(<StructuredTextEditor {...this.props} />, { attachTo: this.sandbox });
+
+    this.mount = (props = this.props) => {
+      this.wrapper = Enzyme.mount(
+        <ServicesProvider>
+          <StructuredTextEditor {...props} />
+        </ServicesProvider>,
+        { attachTo: this.sandbox }
+      );
+    };
+    this.mount();
   });
 
   afterEach(function() {
@@ -79,7 +90,7 @@ describe('Toolbar', () => {
     });
 
     it('renders the embed block button', async function() {
-      this.wrapper.setProps({ features: { embedInlineEntry: false } });
+      this.mount({ ...this.props, features: { embedInlineEntry: false } });
       expect(
         getWithId(this.wrapper, `toolbar-toggle-${BLOCKS.EMBEDDED_ENTRY}`).getDOMNode()
       ).toBeDefined();

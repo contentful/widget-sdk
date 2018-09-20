@@ -2,6 +2,7 @@ import React from 'react';
 import Enzyme from 'enzyme';
 import { TextField, Button } from '@contentful/ui-component-library';
 import { cloneDeep } from 'lodash';
+import { WebhookTemplateForm } from 'app/Webhooks/WebhookTemplateForm.es6';
 
 const TEMPLATE = {
   id: 'test-template',
@@ -38,10 +39,15 @@ const TEMPLATE_CONTENT_TYPES = [
 ];
 
 describe('WebhookTemplateForm', function() {
-  let WebhookTemplateForm;
-
   const mount = () => {
-    const stubs = { cancel: sinon.stub(), save: sinon.stub(), map: sinon.stub() };
+    const stubs = {
+      cancel: sinon.stub(),
+      save: sinon.stub(),
+      map: sinon.stub(),
+      stateGo: sinon.stub(),
+      notificationInfo: sinon.stub(),
+      analyticsTrack: sinon.stub()
+    };
     const template = { ...cloneDeep(TEMPLATE), mapParamsToDefinition: stubs.map };
     const repo = { save: stubs.save, hasValidBodyTransformation: () => true };
 
@@ -51,6 +57,19 @@ describe('WebhookTemplateForm', function() {
         webhookRepo={repo}
         closeDialog={stubs.cancel}
         templateContentTypes={TEMPLATE_CONTENT_TYPES}
+        $services={{
+          $state: {
+            go: stubs.stateGo
+          },
+          notification: {
+            info: stubs.notificationInfo
+          },
+          Analytics: {
+            track: stubs.analyticsTrack
+          },
+          modalDialog: {},
+          ReloadNotification: {}
+        }}
       />
     );
 
@@ -58,12 +77,6 @@ describe('WebhookTemplateForm', function() {
   };
 
   const findField = (wrapper, i) => wrapper.find('.webhook-template-form__field').at(i);
-
-  // We inject instead of importing so UI Router's $state is available
-  beforeEach(function() {
-    module('contentful/test');
-    WebhookTemplateForm = this.$inject('app/Webhooks/WebhookTemplateForm.es6').default;
-  });
 
   it('renders text field', function() {
     const [wrapper] = mount();

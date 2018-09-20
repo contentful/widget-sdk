@@ -1,12 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
-import $state from '$state';
-
 import WebhookSidebarDocumentation from './WebhookSidebarDocumentation.es6';
 import WebhookSidebarTemplatesList from './WebhookSidebarTemplatesList.es6';
 
-export default function WebhookListSidebar({ webhookCount, openTemplateDialog }) {
+const ServicesConsumer = require('../../reactServiceContext').default;
+
+export function WebhookListSidebar({ webhookCount, openTemplateDialog, $services }) {
   return (
     <div className="entity-sidebar">
       <h2 className="entity-sidebar__heading">Add Webhooks</h2>
@@ -18,7 +17,7 @@ export default function WebhookListSidebar({ webhookCount, openTemplateDialog })
       </p>
       <button
         className="btn-action add-entity x--block"
-        onClick={() => $state.go('^.new')}
+        onClick={() => $services.$state.go('^.new')}
         data-test-id="add-webhook-button">
         <i className="fa fa-plus-circle" /> Add Webhook
       </button>
@@ -30,5 +29,10 @@ export default function WebhookListSidebar({ webhookCount, openTemplateDialog })
 
 WebhookListSidebar.propTypes = {
   webhookCount: PropTypes.number.isRequired,
-  openTemplateDialog: PropTypes.func.isRequired
+  openTemplateDialog: PropTypes.func.isRequired,
+  $services: PropTypes.shape({
+    $state: PropTypes.object.isRequired
+  }).isRequired
 };
+
+export default ServicesConsumer('$state')(WebhookListSidebar);

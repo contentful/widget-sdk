@@ -2,7 +2,7 @@
 
 This is a list of all the guides for developing the Contentful web application.
 
-## [A/B Testing](./a_b_testing.md)
+## [A/B Testing](./ab-testing.md)
 
 * How to write code for A/B tests
 * How the A/B test service is integrated

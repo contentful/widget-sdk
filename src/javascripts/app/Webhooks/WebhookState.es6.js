@@ -1,6 +1,6 @@
 import React from 'react';
 import { get } from 'lodash';
-
+import modalDialog from 'modalDialog';
 import spaceContext from 'spaceContext';
 import leaveConfirmator from 'navigation/confirmLeaveEditor';
 import TheLocaleStore from 'TheLocaleStore';
@@ -41,7 +41,8 @@ const list = {
         webhookRepo,
         contentTypes: spaceContext.publishedCTs.getAllBare(),
         defaultLocaleCode: get(TheLocaleStore.getDefaultLocale(), ['code'], 'en-US'),
-        domain
+        domain,
+        modalDialog
       });
 
       const forbidden = !isAdmin && <WebhookForbiddenPage templateId={templateId} />;

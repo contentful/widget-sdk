@@ -1,21 +1,26 @@
 import React from 'react';
 import Enzyme from 'enzyme';
+import WebhookForm from 'app/Webhooks/WebhookForm.es6';
 
 describe('WebhookForm', function() {
-  let WebhookForm;
-
-  const mount = () => {
-    const onChangeStub = sinon.stub();
-    const wrapper = Enzyme.mount(<WebhookForm webhook={{}} onChange={onChangeStub} />);
-
-    return [wrapper, onChangeStub];
-  };
+  let ServicesProvider;
 
   // We inject instead of importing so modalDialog is available
   beforeEach(function() {
     module('contentful/test');
-    WebhookForm = this.$inject('app/Webhooks/WebhookForm.es6').default;
+    ServicesProvider = this.$inject('ServicesProvider');
   });
+
+  const mount = () => {
+    const onChangeStub = sinon.stub();
+    const wrapper = Enzyme.mount(
+      <ServicesProvider>
+        <WebhookForm webhook={{}} onChange={onChangeStub} />
+      </ServicesProvider>
+    );
+
+    return [wrapper, onChangeStub];
+  };
 
   it('renders and updates details', function() {
     const [wrapper, onChangeStub] = mount();
@@ -44,7 +49,12 @@ describe('WebhookForm', function() {
 
     contentType.simulate('change', { target: { value: 'application/json' } });
     sinon.assert.calledWith(onChangeStub, { transformation: { contentType: 'application/json' } });
-    wrapper.setProps({ webhook: { transformation: { contentType: 'application/json' } } });
+
+    wrapper.setProps({
+      children: React.cloneElement(wrapper.props().children, {
+        webhook: { transformation: { contentType: 'application/json' } }
+      })
+    });
 
     method.simulate('change', { target: { value: 'GET' } });
     const finalWebhook = { transformation: { contentType: 'application/json', method: 'GET' } };

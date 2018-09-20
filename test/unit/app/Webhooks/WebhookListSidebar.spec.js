@@ -1,18 +1,21 @@
 import React from 'react';
 import Enzyme from 'enzyme';
+import { WebhookListSidebar } from 'app/Webhooks/WebhookListSidebar.es6';
 
 describe('WebhookListSidebar', function() {
-  let WebhookListSidebar;
-
   const mount = count => {
-    return Enzyme.mount(<WebhookListSidebar webhookCount={count} openTemplateDialog={() => {}} />);
+    return Enzyme.mount(
+      <WebhookListSidebar
+        webhookCount={count}
+        openTemplateDialog={() => {}}
+        $services={{
+          $state: {
+            go: () => {}
+          }
+        }}
+      />
+    );
   };
-
-  // We inject instead of importing so UI Router's $state is available
-  beforeEach(function() {
-    module('contentful/test');
-    WebhookListSidebar = this.$inject('app/Webhooks/WebhookListSidebar.es6').default;
-  });
 
   const testText = (wrapper, expected) => {
     const text = wrapper

@@ -5,5 +5,5 @@
 set -veo pipefail
 
 tools/bin/validate-config.js config/*.json
-NODE_ENV=production npm run test:once
 npm run hint
+NODE_ENV=production npm run test:once

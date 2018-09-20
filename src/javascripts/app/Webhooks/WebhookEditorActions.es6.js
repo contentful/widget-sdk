@@ -1,8 +1,4 @@
 import { get } from 'lodash';
-import notification from 'notification';
-import modalDialog from 'modalDialog';
-import ReloadNotification from 'ReloadNotification';
-import * as Analytics from 'analytics/Analytics.es6';
 
 const INVALID_BODY_TRANSFORMATION_ERROR_MSG =
   'Please make sure your custom payload is a valid JSON.';
@@ -21,14 +17,14 @@ const PATH_TO_ERROR_MSG = {
   http_basic_password: HTTP_BASIC_ERROR_MSG
 };
 
-export async function save(webhookRepo, webhook, templateId) {
+export async function save(webhookRepo, webhook, templateId = null, { notification, Analytics }) {
   if (!webhookRepo.hasValidBodyTransformation(webhook)) {
     throw new Error(INVALID_BODY_TRANSFORMATION_ERROR_MSG);
   }
 
   try {
     const saved = await webhookRepo.save(webhook);
-    trackSave(saved, templateId);
+    trackSave(Analytics, saved, templateId);
     notification.info(`Webhook "${saved.name}" saved successfully.`);
     return saved;
   } catch (err) {
@@ -46,9 +42,13 @@ function getSaveApiErrorMessage(err) {
   }
 }
 
-export async function remove(webhookRepo, webhook) {
+export async function remove(
+  webhookRepo,
+  webhook,
+  { modalDialog, notification, ReloadNotification }
+) {
   try {
-    await openRemovalDialog(webhookRepo, webhook);
+    await openRemovalDialog(webhookRepo, webhook, modalDialog);
     notification.info(`Webhook "${webhook.name}" deleted successfully.`);
     return { removed: true };
   } catch (err) {
@@ -61,7 +61,7 @@ export async function remove(webhookRepo, webhook) {
   }
 }
 
-function openRemovalDialog(webhookRepo, webhook) {
+function openRemovalDialog(webhookRepo, webhook, modalDialog) {
   return modalDialog.open({
     ignoreEsc: true,
     backgroundClose: false,
@@ -80,7 +80,7 @@ function openRemovalDialog(webhookRepo, webhook) {
   }).promise;
 }
 
-function trackSave(webhook, templateId = null) {
+function trackSave(Analytics, webhook, templateId = null) {
   const trackingData = {
     template_id: templateId,
     webhook_id: get(webhook, ['sys', 'id']),

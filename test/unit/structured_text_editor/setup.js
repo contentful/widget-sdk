@@ -1,4 +1,5 @@
 import * as sinon from 'helpers/sinon';
+import { noop } from 'lodash';
 
 export const ENTRY = {
   sys: {
@@ -40,7 +41,7 @@ export const stubAll = async ({ isolatedSystem }) => {
   isolatedSystem.set('modalDialog', { open: sinon.stub() });
   isolatedSystem.set('$rootScope', {
     default: {
-      $on: sinon.stub()
+      $on: sinon.spy(() => noop)
     }
   });
   isolatedSystem.set('utils/LaunchDarkly', {

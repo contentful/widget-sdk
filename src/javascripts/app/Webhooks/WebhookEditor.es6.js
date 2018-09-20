@@ -1,9 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
-import notification from 'notification';
-
-import $state from '$state';
 import Icon from 'ui/Components/Icon.es6';
 
 import WebhookForm from './WebhookForm.es6';
@@ -11,15 +8,25 @@ import WebhookSidebar from './WebhookSidebar.es6';
 import * as WebhookEditorActions from './WebhookEditorActions.es6';
 import WebhookActivityLog from './WebhookActivityLog.es6';
 
+const ServicesConsumer = require('../../reactServiceContext').default;
+
 const TABS = { SETTINGS: 1, LOG: 2 };
 
-export default class WebhookEditor extends React.Component {
+class WebhookEditor extends React.Component {
   static propTypes = {
     initialWebhook: PropTypes.object.isRequired,
     webhookRepo: PropTypes.object.isRequired,
     registerSaveAction: PropTypes.func.isRequired,
     setDirty: PropTypes.func.isRequired,
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired,
+
+    $services: PropTypes.shape({
+      notification: PropTypes.object.isRequired,
+      $state: PropTypes.object.isRequired,
+      Analytics: PropTypes.object.isRequired,
+      modalDialog: PropTypes.object.isRequired,
+      ReloadNotification: PropTypes.object.isRequired
+    }).isRequired
   };
 
   constructor(props) {
@@ -68,12 +75,12 @@ export default class WebhookEditor extends React.Component {
 
   navigateToSaved(webhook) {
     this.props.setDirty(false);
-    return $state.go('^.detail', { webhookId: webhook.sys.id });
+    return this.props.$services.$state.go('^.detail', { webhookId: webhook.sys.id });
   }
 
   navigateToList(force = false) {
     force && this.props.setDirty(false);
-    return $state.go('^.list');
+    return this.props.$services.$state.go('^.list');
   }
 
   save = () => {
@@ -82,10 +89,13 @@ export default class WebhookEditor extends React.Component {
 
     this.setState({ busy: true });
 
-    return WebhookEditorActions.save(webhookRepo, webhook).then(
+    return WebhookEditorActions.save(webhookRepo, webhook, null, {
+      notification: this.props.$services.notification,
+      Analytics: this.props.$services.Analytics
+    }).then(
       saved => (fresh ? this.navigateToSaved(saved) : this.onSave(saved)),
       err => {
-        notification.error(err.message);
+        this.props.$services.notification.error(err.message);
         this.setState({ busy: false });
       }
     );
@@ -98,10 +108,11 @@ export default class WebhookEditor extends React.Component {
     const notBusy = () => this.setState({ busy: false });
     this.setState({ busy: true });
 
-    return WebhookEditorActions.remove(webhookRepo, webhook).then(
-      ({ removed }) => (removed ? this.navigateToList(true) : notBusy()),
-      () => notBusy()
-    );
+    return WebhookEditorActions.remove(webhookRepo, webhook, {
+      notification: this.props.$services.notification,
+      ReloadNotification: this.props.$services.ReloadNotification,
+      modalDialog: this.props.$services.modalDialog
+    }).then(({ removed }) => (removed ? this.navigateToList(true) : notBusy()), () => notBusy());
   };
 
   refreshLog = () => {
@@ -208,3 +219,8 @@ export default class WebhookEditor extends React.Component {
     );
   }
 }
+
+export default ServicesConsumer('$state', 'notification', 'modalDialog', 'ReloadNotification', {
+  as: 'Analytics',
+  from: 'analytics/Analytics.es6'
+})(WebhookEditor);

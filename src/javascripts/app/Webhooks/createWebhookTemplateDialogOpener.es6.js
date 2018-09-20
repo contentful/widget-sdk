@@ -1,10 +1,9 @@
-import modalDialog from 'modalDialog';
 import Templates from './templates';
 
 const isNonEmptyString = s => typeof s === 'string' && s.length > 0;
 
 export default function createWebhookTemplateDialogOpener(config) {
-  const { webhookRepo, contentTypes, defaultLocaleCode, domain } = config;
+  const { webhookRepo, contentTypes, defaultLocaleCode, domain, modalDialog } = config;
 
   const validTemplateIds = Templates.map(template => template.id);
   const templateContentTypes = prepareContentTypesForTemplates(

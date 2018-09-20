@@ -88,4 +88,7 @@ class EmbeddedEntryInline extends React.Component {
   }
 }
 
-export default ServicesConsumer('slideInNavigator')(EmbeddedEntryInline);
+export default ServicesConsumer({
+  as: 'slideInNavigator',
+  from: 'navigation/SlideInNavigator'
+})(EmbeddedEntryInline);

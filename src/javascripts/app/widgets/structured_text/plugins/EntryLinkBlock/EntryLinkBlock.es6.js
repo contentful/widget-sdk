@@ -135,4 +135,7 @@ class LinkedEntryBlock extends React.Component {
   }
 }
 
-export default ServicesConsumer('slideInNavigator')(LinkedEntryBlock);
+export default ServicesConsumer({
+  as: 'slideInNavigator',
+  from: 'navigation/SlideInNavigator'
+})(LinkedEntryBlock);

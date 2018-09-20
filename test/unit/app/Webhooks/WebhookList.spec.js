@@ -1,33 +1,35 @@
 import React from 'react';
 import Enzyme from 'enzyme';
+import WebhookList from 'app/Webhooks/WebhookList.es6';
 
 describe('WebhookList', function() {
-  let WebhookList;
+  let ServicesProvider;
+
+  beforeEach(function() {
+    module('contentful/test');
+    ServicesProvider = this.$inject('ServicesProvider');
+  });
 
   const webhookRepo = { logs: { getHealth: sinon.stub().rejects() } };
 
   const mount = (webhooks, forbidden) => {
     return Enzyme.mount(
-      <WebhookList
-        webhooks={webhooks}
-        webhookRepo={webhookRepo}
-        openTemplateDialog={() => {}}
-        forbidden={forbidden}
-      />
+      <ServicesProvider>
+        <WebhookList
+          webhooks={webhooks}
+          webhookRepo={webhookRepo}
+          openTemplateDialog={() => {}}
+          forbidden={forbidden}
+        />
+      </ServicesProvider>
     );
   };
 
-  // We inject instead of importing so UI Router's $state is available
-  beforeEach(function() {
-    module('contentful/test');
-    WebhookList = this.$inject('app/Webhooks/WebhookList.es6').default;
-  });
-
   it('renders "forbidden" view', function() {
     const wrapper = mount([], <div id="forbidden-view" />);
-    const children = wrapper.children();
-    expect(children.length).toBe(1);
-    expect(children.first().prop('id')).toBe('forbidden-view');
+
+    expect(wrapper.find('#forbidden-view').exists()).toBe(true);
+    expect(wrapper.find('.table__body').exists()).toBe(false);
   });
 
   it('renders empty list of webhooks', function() {

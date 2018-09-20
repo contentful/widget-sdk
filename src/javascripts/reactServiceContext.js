@@ -1,28 +1,61 @@
 /**
- * @description This module exposes all angular modules to react components.
+ * @description This module exposes all angular services to react components.
+ * These react components don't have to exist in angular world, however – they
+ * are decoupled. In react world, you just import default export from this file
+ * (this file has nothing to do with angular, so webpack can build a bundle),
+ * and use it as a HoC for your component.
  *
- * It has two parts – consumer which is not angular specific, and provider,
- * which is angular-specific, since it injects all angular services.
+ * In order to make it work, you have to mount your components on a tree with
+ * a correct context, which is set up using <Provider>. However, you don't need
+ * to do it manually, since <react-component /> directive does it for you
+ * automatically, and there is no reason to render it outside of angular world.
  *
- * The goal is to be able to write react component without any dependency on
- * angular altogether.
- *
+ * This approach allows to write JS code which has 0 explicit dependencies on angular.
+ * There are implicit dependencies, but they are immediately visible, and allow you
+ * to benefit from webpack (separate tests and code splitting) without any issues from
+ * current angular setup process.
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const { Provider, Consumer } = React.createContext({});
+export const { Provider, Consumer } = React.createContext({});
+
+export const MockedProvider = ({ services, children }) => (
+  <Provider
+    value={{
+      get: name => {
+        return services[name] ? services[name] : undefined;
+      }
+    }}>
+    {children}
+  </Provider>
+);
+MockedProvider.propTypes = {
+  services: PropTypes.object.isRequired,
+  children: PropTypes.any
+};
 
 /**
  * @description function to create HoC to provide angular services to react
  * components. This can be used outside of angular world as long as you mount
  * your components using <react-component> directive.
  *
- * Also, please note that this is a regular function in regular .js file, so
- * you can import it using normal webpack's import/export functionality.
+ * You can also import <Consumer /> directly, but this function is used as HoC,
+ * so you have services as props, and also it resolves all dependencies automatically
+ * (otherwise you have to call `services.get('service_to_get'))` manually.
+ *
+ * @example
+ *
+ * ServicesConsumer('$state', 'spaceContext)(MyComponent);
+ * ServicesConsumer('$state', {
+ *   from: 'services/TokenStore.es6',
+ *   as: 'tokenStore'
+ * })(MyComponent);
  *
  * @param  {...string} selectedServices – list of services you want to pick
+ * @returns {function(Component: React.Component): React.Component} – function to
+ * create a react component which passes selected services as props to provided component.
  */
 export default function ServicesConsumer(...selectedServices) {
   return Component => {
@@ -32,10 +65,18 @@ export default function ServicesConsumer(...selectedServices) {
           {services => {
             // return only selected services
             // the reason to do so – we have better visibility what we depend on
-            const pickedServices = selectedServices.reduce((acc, serviceName) => {
-              acc[serviceName] = services[serviceName];
-              return acc;
-            }, {});
+            // so we can analyze it and know what to refactor
+            let pickedServices = {};
+            if (services) {
+              pickedServices = selectedServices.reduce((acc, serviceConfig) => {
+                if (typeof serviceConfig === 'string') {
+                  acc[serviceConfig] = services.get(serviceConfig);
+                } else {
+                  acc[serviceConfig.as] = services.get(serviceConfig.from);
+                }
+                return acc;
+              }, {});
+            }
             return <Component {...props} $services={pickedServices} />;
           }}
         </Consumer>
@@ -43,25 +84,3 @@ export default function ServicesConsumer(...selectedServices) {
     };
   };
 }
-
-angular.module('contentful').factory('ServicesProvider', [
-  'require',
-  function(require) {
-    // all services which we expose to the react components are here
-    // if you need another one, just get it using angular `require`,
-    // and add to the object
-    const services = {
-      $state: require('$state'),
-      spaceContext: require('spaceContext'),
-      slideInNavigator: require('navigation/SlideInNavigator'),
-      thumbnailHelpers: require('ui/cf/thumbnailHelpers.es6')
-    };
-    const ProviderWrapper = props => <Provider value={services}>{props.children}</Provider>;
-
-    ProviderWrapper.propTypes = {
-      children: PropTypes.node
-    };
-
-    return ProviderWrapper;
-  }
-]);

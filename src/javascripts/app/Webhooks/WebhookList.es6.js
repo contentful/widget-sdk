@@ -2,18 +2,23 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 
-import $state from '$state';
 import Icon from 'ui/Components/Icon.es6';
 
 import WebhookHealth from './WebhookHealth.es6';
 import WebhookListSidebar from './WebhookListSidebar.es6';
 
-export default class WebhookList extends React.Component {
+const ServicesConsumer = require('../../reactServiceContext').default;
+
+export class WebhookList extends React.Component {
   static propTypes = {
     webhooks: PropTypes.array.isRequired,
     webhookRepo: PropTypes.object.isRequired,
     openTemplateDialog: PropTypes.func.isRequired,
-    forbidden: PropTypes.node
+    forbidden: PropTypes.node,
+
+    $services: PropTypes.shape({
+      $state: PropTypes.object
+    }).isRequired
   };
 
   render() {
@@ -55,7 +60,9 @@ export default class WebhookList extends React.Component {
                           <tr
                             className="x--clickable"
                             key={wh.sys.id}
-                            onClick={() => $state.go('^.detail', { webhookId: wh.sys.id })}>
+                            onClick={() =>
+                              this.props.$services.$state.go('^.detail', { webhookId: wh.sys.id })
+                            }>
                             <td className="x--medium-cell">
                               <strong className="x--ellipsis">{wh.name}</strong>
                             </td>
@@ -94,3 +101,5 @@ export default class WebhookList extends React.Component {
     );
   }
 }
+
+export default ServicesConsumer('$state')(WebhookList);

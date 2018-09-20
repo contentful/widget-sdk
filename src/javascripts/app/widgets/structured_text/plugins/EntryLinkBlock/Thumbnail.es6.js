@@ -41,4 +41,7 @@ class Thumbnail extends React.Component {
   }
 }
 
-export default ServicesConsumer('thumbnailHelpers')(Thumbnail);
+export default ServicesConsumer({
+  as: 'thumbnailHelpers',
+  from: 'ui/cf/thumbnailHelpers.es6'
+})(Thumbnail);

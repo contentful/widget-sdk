@@ -1,23 +1,27 @@
 import React from 'react';
 import Enzyme from 'enzyme';
+import { WebhookHeaders } from 'app/Webhooks/WebhookHeaders.es6';
 
 describe('WebhookHeaders', function() {
-  let WebhookHeaders;
-
   const mount = headers => {
     const onChangeStub = sinon.stub();
-    const wrapper = Enzyme.mount(<WebhookHeaders headers={headers} onChange={onChangeStub} />);
+    const onOpenDialogStub = sinon.stub();
+    const wrapper = Enzyme.mount(
+      <WebhookHeaders
+        headers={headers}
+        onChange={onChangeStub}
+        $services={{
+          modalDialog: {
+            open: onOpenDialogStub
+          }
+        }}
+      />
+    );
 
-    return [wrapper, onChangeStub];
+    return [wrapper, onChangeStub, onOpenDialogStub];
   };
 
   const findHeaderRows = wrapper => wrapper.find('.webhook-editor__settings-row');
-
-  // We inject instead of importing so modalDialog is available
-  beforeEach(function() {
-    module('contentful/test');
-    WebhookHeaders = this.$inject('app/Webhooks/WebhookHeaders.es6').default;
-  });
 
   it('lists no headers when none defined', function() {
     const [wrapper] = mount([]);

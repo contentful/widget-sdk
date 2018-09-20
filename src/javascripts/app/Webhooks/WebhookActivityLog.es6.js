@@ -2,17 +2,21 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { range } from 'lodash';
 
-import $state from '$state';
-
 import WebhookCallStatus from './WebhookCallStatus.es6';
+
+const ServicesConsumer = require('../../reactServiceContext').default;
 
 const PER_PAGE = 30;
 
-export default class WebhookActivityLog extends React.Component {
+class WebhookActivityLog extends React.Component {
   static propTypes = {
     webhookId: PropTypes.string,
     webhookRepo: PropTypes.object.isRequired,
-    registerLogRefreshAction: PropTypes.func.isRequired
+    registerLogRefreshAction: PropTypes.func.isRequired,
+
+    $services: PropTypes.shape({
+      $state: PropTypes.object.isRequired
+    }).isRequired
   };
 
   constructor(props) {
@@ -74,7 +78,9 @@ export default class WebhookActivityLog extends React.Component {
                       <tr
                         className="x--clickable"
                         key={call.sys.id}
-                        onClick={() => $state.go('^.detail.call', { callId: call.sys.id })}>
+                        onClick={() =>
+                          this.props.$services.$state.go('^.detail.call', { callId: call.sys.id })
+                        }>
                         <td>{call.requestAt}</td>
                         <td className="x--large-cell">
                           <WebhookCallStatus call={call} />
@@ -139,3 +145,5 @@ export default class WebhookActivityLog extends React.Component {
     );
   }
 }
+
+export default ServicesConsumer('$state')(WebhookActivityLog);
