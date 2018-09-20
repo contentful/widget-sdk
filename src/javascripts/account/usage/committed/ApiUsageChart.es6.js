@@ -25,26 +25,7 @@ export default class ApiUsageChart extends React.Component {
     const { startDate, endDate } = period;
     const options = merge({}, baseFormatting, {
       xAxis: {
-        data: periodToDates(period),
-        offset: 8,
-        axisLine: {
-          lineStyle: {
-            color: '#263545'
-          }
-        }
-      },
-      yAxis: {
-        axisLine: {
-          lineStyle: {
-            color: '#263545'
-          }
-        }
-      },
-      textStyle: {
-        fontFamily: 'Avenir Next W01',
-        fontSize: 11,
-        fontWeight: 600,
-        lineHeight: 15
+        data: periodToDates(period)
       },
       tooltip: {
         padding: 0,

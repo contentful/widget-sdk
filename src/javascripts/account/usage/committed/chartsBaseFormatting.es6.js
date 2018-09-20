@@ -12,7 +12,13 @@ export default {
   },
   xAxis: {
     axisTick: { alignWithLabel: true, interval: 6 },
-    axisLabel: { interval: 6 }
+    axisLabel: { interval: 6 },
+    offset: 8,
+    axisLine: {
+      lineStyle: {
+        color: '#263545'
+      }
+    }
   },
   yAxis: {
     splitLine: {
@@ -26,8 +32,19 @@ export default {
       margin: 15
     },
     axisTick: { length: 8 },
-    axisLine: { show: false },
+    axisLine: {
+      show: false,
+      lineStyle: {
+        color: '#263545'
+      }
+    },
     splitNumber: 4
+  },
+  textStyle: {
+    fontFamily: 'Avenir Next W01',
+    fontSize: 11,
+    fontWeight: 600,
+    lineHeight: 15
   }
 };
 
