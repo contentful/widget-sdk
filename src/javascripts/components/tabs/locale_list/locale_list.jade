@@ -121,7 +121,7 @@ header.workbench-header
             | {{canChangeSpace ? 'Change' : 'change'}} the space to add more.
           p.entity-sidebar__widget(ng-if="canChangeSpace && showChangeSpaceIncentive")
             button.btn-action.change-space.x--block(data-test-id='locales-change' ng-click="changeSpacePlan()")
-              | Change space
+              | Upgrade space
           p(ng-if="canChangeSpace && !showChangeSpaceIncentive")
             a.text-link.upgrade-link(cf-sref="{{ accountSubscriptionSref }}")
               | Go to the subscription page
