@@ -34,7 +34,6 @@ export default class ApiUsageChart extends React.Component {
         }
       },
       yAxis: {
-        type: 'value',
         axisLine: {
           lineStyle: {
             color: '#263545'
