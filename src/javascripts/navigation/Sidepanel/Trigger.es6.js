@@ -8,7 +8,7 @@ import { caseof } from 'sum-types';
 
 import { byName as colors } from 'Styles/Colors.es6';
 import { oneLineTruncate } from 'Styles';
-import logo from 'svg/logo-label.es6';
+import Logo from 'svg/logo-label.es6';
 import EnvironmentIcon from 'svg/environment.es6';
 import Hamburger from 'svg/hamburger.es6';
 
@@ -41,7 +41,7 @@ export default class Trigger extends React.Component {
         className="app-top-bar__sidepanel-trigger"
         onClick={onClick}
         data-test-id="sidepanel-trigger">
-        {logo}
+        <Logo />
         {hspace('15px')}
         {vbox(
           {
