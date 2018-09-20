@@ -155,7 +155,6 @@
     "run-sequence": "~1.0.2",
     "sinon": "~4.1.4",
     "stylus": "^0.54.5",
-    "svgo": "^0.7.2",
     "systemjs": "^0.20.4",
     "uglify-es": "^3.3.9",
     "watchify": "^3.7.0",
