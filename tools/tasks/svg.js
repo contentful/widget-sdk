@@ -1,8 +1,12 @@
 const gulp = require('gulp');
 const path = require('path');
 const FS = require('../lib/utils').FS;
-const proxyquire = require('proxyquire');
-const h = require('../lib/hyperscript').h;
+const React = require('react');
+const ReactDOMServer = require('react-dom/server');
+require('babel-register')({
+  plugins: ['transform-es2015-modules-commonjs'],
+  presets: ['babel-preset-react']
+});
 
 /**
  * Render some of the SVGs defined as Hyperscript in
@@ -27,12 +31,14 @@ gulp.task('svg', async function() {
       'note-success',
       'note-warning'
     ].map(icon => {
-      const src = path.resolve('src', 'javascripts', 'svg', icon + '.es6.js');
+      const Component = require(path.resolve('src', 'javascripts', 'svg', icon + '.es6.js'))
+        .default;
       const target = path.join(targetDir, icon + '.svg');
-      const output = proxyquire.noCallThru()(src, {
-        'ui/Framework': { h }
-      }).default;
-      return FS.writeFile(target, output, 'utf8');
+      return FS.writeFile(
+        target,
+        ReactDOMServer.renderToString(React.createElement(Component)),
+        'utf8'
+      );
     })
   );
 });
