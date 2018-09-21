@@ -143,6 +143,12 @@ describe('HyperlinkDialog', () => {
     cancelCta.simulate('click');
 
     expect(mockOnCancel.called).toBe(true);
-    expect(mockOnConfirm.calledWith({type: 'uri', text: 'My updated text link', uri: 'https://app.contentful.com'})).toBe(true);
+    expect(
+      mockOnConfirm.calledWith({
+        type: 'uri',
+        text: 'My updated text link',
+        uri: 'https://app.contentful.com'
+      })
+    ).toBe(true);
   });
 });

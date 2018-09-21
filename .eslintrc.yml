@@ -35,7 +35,7 @@ rules:
 
 overrides:
 - files: [ 'src/javascripts/**/*.js' ]
-  excludedFiles: [ '*.es6.js' ]
+  excludedFiles: [ '*.es6.js', '*.spec.js' ]
   env:
     browser: true
     node: false
@@ -44,6 +44,31 @@ overrides:
     _: false
     JST: false
     $: false
+- files: ['src/**/*.spec.js']
+  plugins:
+    - jest
+  rules:
+    jest/no-disabled-tests: 'warn'
+    jest/no-focused-tests: 'error'
+    jest/no-identical-title: 'error'
+    jest/no-jest-import: 'warn'
+    jest/prefer-to-have-length: 'warn'
+    jest/valid-expect: 'error'
+    jest/consistent-test-it: 'warn'
+    jest/no-jasmine-globals: 'warn'
+    jest/no-test-prefixes: 'error'
+    jest/prefer-to-be-null: 'warn'
+    jest/prefer-to-be-undefined: 'warn'
+  parserOptions:
+    ecmaVersion: 2017
+    sourceType: module
+  globals:
+    describe: true
+    it: true
+    test: true
+    expect: true
+    jest: true
+    spy: true
 - files: [ '*.es6.js' ]
   # Eslint configuration for files ending in .es6.js
   parserOptions:

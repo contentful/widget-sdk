@@ -29,12 +29,17 @@ module.exports.supportedBrowsers = SUPPORTED_BROWSERS;
  * @returns {object}
  */
 module.exports.createBabelOptions = function createBabelOptions(options = {}) {
-  const { browserTargets = SUPPORTED_BROWSERS, angularModules = true, ...opts } = options;
+  const {
+    browserTargets = SUPPORTED_BROWSERS,
+    angularModules = true,
+    debug = true,
+    modules = false,
+    ...opts
+  } = options;
   return Object.assign(
     {
       moduleIds: true,
       babelrc: false,
-
       presets: [
         [
           require.resolve('babel-preset-env'),
@@ -43,8 +48,8 @@ module.exports.createBabelOptions = function createBabelOptions(options = {}) {
               browsers: browserTargets
             },
             loose: true,
-            debug: true,
-            modules: false,
+            debug: debug,
+            modules: modules,
             useBuiltIns: false
           }
         ],
@@ -60,7 +65,6 @@ module.exports.createBabelOptions = function createBabelOptions(options = {}) {
         require.resolve('babel-plugin-transform-object-rest-spread'),
         require.resolve('babel-plugin-transform-class-properties')
       ].filter(p => !!p),
-
       getModuleId: angularModules ? getModuleIdInSrc : undefined
     },
     opts

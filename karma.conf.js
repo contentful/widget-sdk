@@ -46,9 +46,6 @@ module.exports = function(config) {
       'public/app/components.js'
     ].concat(testFiles), // eslint-disable-line
 
-    // list of files to exclude
-    exclude: ['src/javascripts/libs/**/*.js'],
-
     middleware: ['static'],
 
     // preprocess matching files before serving them to the browser

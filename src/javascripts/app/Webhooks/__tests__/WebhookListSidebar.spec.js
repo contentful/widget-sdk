@@ -1,8 +1,8 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import { WebhookListSidebar } from 'app/Webhooks/WebhookListSidebar.es6';
+import { WebhookListSidebar } from '../WebhookListSidebar.es6';
 
-describe('WebhookListSidebar', function() {
+describe('WebhookListSidebar', () => {
   const mount = count => {
     return Enzyme.mount(
       <WebhookListSidebar
@@ -25,15 +25,15 @@ describe('WebhookListSidebar', function() {
     expect(text).toBe(expected);
   };
 
-  it('shows empty message', function() {
+  it('shows empty message', () => {
     testText(mount(0), "Your space isn't using any webhooks.");
   });
 
-  it('uses singular "webhook" for one webhook', function() {
+  it('uses singular "webhook" for one webhook', () => {
     testText(mount(1), 'Your space is using 1 webhook.');
   });
 
-  it('uses plural "webhooks" for many webhooks', function() {
+  it('uses plural "webhooks" for many webhooks', () => {
     testText(mount(2), 'Your space is using 2 webhooks.');
   });
 });

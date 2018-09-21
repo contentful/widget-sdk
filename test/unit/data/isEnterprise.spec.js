@@ -58,7 +58,7 @@ describe('data/isEnterprise', function() {
     });
   });
 
-  describe('#isEnterpriseV2', async function() {
+  describe('#isEnterpriseV2', function() {
     beforeEach(function() {
       this.assertIfEnterprise = async (expected, customerType) => {
         const endpointStub = sinon.stub().resolves({ items: [{ customerType }] });

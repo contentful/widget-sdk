@@ -10,6 +10,7 @@ vagrant_bootstrap.sh
 .vagrant
 run_vagrant_build.sh
 karma-specs.json
+.coverage/
 
 
 # Install artifacts
@@ -20,6 +21,6 @@ node_modules
 # Build artifacts
 /build/
 public/*
-.vscode/settings.json
+.vscode/
 *.ignore
 output/

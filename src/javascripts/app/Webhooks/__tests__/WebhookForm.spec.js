@@ -1,28 +1,28 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import WebhookForm from 'app/Webhooks/WebhookForm.es6';
+import sinon from 'sinon';
+import WebhookForm from '../WebhookForm.es6';
 
-describe('WebhookForm', function() {
-  let ServicesProvider;
+const MockedProvider = require('../../../reactServiceContext').MockedProvider;
 
-  // We inject instead of importing so modalDialog is available
-  beforeEach(function() {
-    module('contentful/test');
-    ServicesProvider = this.$inject('ServicesProvider');
-  });
-
+describe('WebhookForm', () => {
   const mount = () => {
     const onChangeStub = sinon.stub();
     const wrapper = Enzyme.mount(
-      <ServicesProvider>
+      <MockedProvider
+        services={{
+          modalDialog: {
+            open: () => {}
+          }
+        }}>
         <WebhookForm webhook={{}} onChange={onChangeStub} />
-      </ServicesProvider>
+      </MockedProvider>
     );
 
     return [wrapper, onChangeStub];
   };
 
-  it('renders and updates details', function() {
+  it('renders and updates details', () => {
     const [wrapper, onChangeStub] = mount();
 
     const name = wrapper.find('#webhook-name');
@@ -32,13 +32,13 @@ describe('WebhookForm', function() {
     expect(url.prop('value')).toBe('');
 
     name.simulate('change', { target: { value: 'webhook' } });
-    sinon.assert.calledWith(onChangeStub, { name: 'webhook' });
+    expect(onChangeStub.calledWith({ name: 'webhook' })).toBeTruthy();
 
     url.simulate('change', { target: { value: 'http://test.com' } });
-    sinon.assert.calledWith(onChangeStub, { url: 'http://test.com' });
+    expect(onChangeStub.calledWith({ url: 'http://test.com' })).toBeTruthy();
   });
 
-  it('renders and updates transformation properties', function() {
+  it('renders and updates transformation properties', () => {
     const [wrapper, onChangeStub] = mount();
 
     const method = wrapper.find('#webhook-method');
@@ -48,7 +48,11 @@ describe('WebhookForm', function() {
     expect(contentType.prop('value')).toBe('application/vnd.contentful.management.v1+json');
 
     contentType.simulate('change', { target: { value: 'application/json' } });
-    sinon.assert.calledWith(onChangeStub, { transformation: { contentType: 'application/json' } });
+    expect(
+      onChangeStub.calledWith({
+        transformation: { contentType: 'application/json' }
+      })
+    ).toBeTruthy();
 
     wrapper.setProps({
       children: React.cloneElement(wrapper.props().children, {
@@ -58,6 +62,6 @@ describe('WebhookForm', function() {
 
     method.simulate('change', { target: { value: 'GET' } });
     const finalWebhook = { transformation: { contentType: 'application/json', method: 'GET' } };
-    sinon.assert.calledWith(onChangeStub, finalWebhook);
+    expect(onChangeStub.calledWith(finalWebhook)).toBeTruthy();
   });
 });

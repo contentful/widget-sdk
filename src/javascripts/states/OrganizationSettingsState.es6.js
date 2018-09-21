@@ -29,9 +29,7 @@ const newOrg = Base({
   },
   template: [
     h('.workbench-header__wrapper', [
-      h('header.workbench-header', [
-        h('h1.workbench-header__title', ['Create new organization'])
-      ])
+      h('header.workbench-header', [h('h1.workbench-header__title', ['Create new organization'])])
     ]),
     h('cf-account-view', { context: 'context' })
   ]
@@ -180,9 +178,7 @@ function getIframeTemplate(title, hideHeader) {
     hideHeader
       ? ''
       : h('.workbench-header__wrapper', [
-          h('header.workbench-header', [
-            h('h1.workbench-header__title', [title])
-          ])
+          h('header.workbench-header', [h('h1.workbench-header__title', [title])])
         ]),
     h('cf-account-view', { context: 'context' })
   ];

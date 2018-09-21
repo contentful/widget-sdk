@@ -43,7 +43,11 @@ module.exports = ({ dev = false } = {}) => ({
       // 2. if you remove an existing file, webpack will break – you are not
       // supposed to remove entry files
       globSync('./src/javascripts/**/*.js', {
-        ignore: ['./src/javascripts/libs/*.js', './src/javascripts/prelude.js']
+        ignore: [
+          './src/javascripts/libs/*.js',
+          './src/javascripts/prelude.js',
+          './src/javascripts/**/*.spec.js'
+        ]
       })
     ),
     'libs.js': './src/javascripts/libs',

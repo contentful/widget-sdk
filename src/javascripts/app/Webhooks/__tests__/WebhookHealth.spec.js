@@ -1,8 +1,9 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import WebhookHealth from 'app/Webhooks/WebhookHealth.es6';
+import sinon from 'sinon';
+import WebhookHealth from '../WebhookHealth.es6';
 
-describe('WebhookHealth', function() {
+describe('WebhookHealth', () => {
   const mount = getStub => {
     const repo = { logs: { getHealth: getStub } };
     return Enzyme.mount(<WebhookHealth webhookId="whid" webhookRepo={repo} />);
@@ -13,17 +14,19 @@ describe('WebhookHealth', function() {
     return [mount(getStub), getStub];
   };
 
-  it('starts in the loading state', function() {
+  it('starts in the loading state', () => {
     const [wrapper] = stubAndMount();
     expect(wrapper.find('span').text()).toBe('Loading…');
   });
 
-  it('fetches health status when mounted', function() {
+  it('fetches health status when mounted', () => {
     const [_, getStub] = stubAndMount();
-    sinon.assert.calledOnce(getStub.withArgs('whid'));
+    expect(getStub.calledWith('whid')).toBe(true);
+    expect(getStub.calledOnce).toBe(true);
   });
 
-  it('displays "no data..." when fetching failed', async function() {
+  it('displays "no data..." when fetching failed', async () => {
+    expect.assertions(2);
     const ERROR = new Error('failed to fetch');
     const getStub = sinon.stub().rejects(ERROR);
     const wrapper = mount(getStub);
@@ -38,7 +41,8 @@ describe('WebhookHealth', function() {
     expect(wrapper.find('span').text()).toBe('No data collected yet');
   });
 
-  it('calculates percentage when fetched', async function() {
+  it('calculates percentage when fetched', async () => {
+    expect.assertions(1);
     const [wrapper, getStub] = stubAndMount({ total: 2, healthy: 1 });
     await getStub();
     wrapper.update();
@@ -51,6 +55,7 @@ describe('WebhookHealth', function() {
   });
 
   const testStatus = async (calls, expected) => {
+    expect.assertions(1);
     const [wrapper, getStub] = stubAndMount(calls);
     await getStub();
     wrapper.update();

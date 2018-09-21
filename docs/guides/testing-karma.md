@@ -1,4 +1,4 @@
-Testing
+(Legacy) Testing with Karma
 =======
 
 This guide describes the testing setup and helpers for the UI.
@@ -22,7 +22,7 @@ Deprecated Patterns
 This is a list of patterns used in old code but deprecated.
 
 * `this.$inject()` for ES6 modules. Use native `import X from 'Y'` instead.
-* Using the `$compile` service to compile directives. Use `this.$comile()`
+* Using the `$compile` service to compile directives. Use `this.$compile()`
   instead.
 * Global `sinon`. Use `import sinon from 'helpers/sinon'` instead.
 * `this.$inject('q')`. You can use `import $q from '$q'`.

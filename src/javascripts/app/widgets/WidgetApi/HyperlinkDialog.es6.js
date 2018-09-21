@@ -136,11 +136,7 @@ export default class HyperlinkDialog extends React.Component {
               data-test-id="confirm-cta">
               {labels.confirm}
             </Button>
-            <Button
-              type="button"
-              onClick={onCancel}
-              buttonType="muted"
-              data-test-id="cancel-cta">
+            <Button type="button" onClick={onCancel} buttonType="muted" data-test-id="cancel-cta">
               Cancel
             </Button>
           </Dialog.Controls>

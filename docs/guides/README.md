@@ -58,11 +58,6 @@ This is a list of all the guides for developing the Contentful web application.
 * What features are supported and how to add new ones
 * How the transpilation works
 
-## [UI](./ui.md)
-
-* How to build user facing components using virtual DOM
-* How to migrate legacy code
-
 ## [Routing](./routing.md)
 
 * How routing in the app works
@@ -74,7 +69,13 @@ This is a list of all the guides for developing the Contentful web application.
 * Code hotspots that need constant improvement
 * Deprecated programming patterns
 
-## [Testing](./testing.md)
+## [Testing with Jest](./testing-jest.md)
+
+* How to run tests
+* How to write tests
+* How to migrate from Karma to Jest
+
+## [(Legacy) Testing with Karma](./testing-karma.md)
 
 * How to run tests
 * How to write tests
