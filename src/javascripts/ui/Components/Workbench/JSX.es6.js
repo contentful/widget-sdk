@@ -9,12 +9,24 @@ class Workbench extends React.Component {
     testId: PropTypes.string,
     children: function(props, propName) {
       let children = props[propName];
-
       if (!Array.isArray(children)) {
         children = [children];
       }
+      const allowedTypes = [Workbench.Content, Workbench.Sidebar, Workbench.Header];
+      const typeNames = allowedTypes.map(type => type.displayName);
+      const filterByType = type => children.filter(child => child.type === type);
+      const validateSingleChildOfType = type => {
+        const childrenOfType = filterByType(type);
+        if (childrenOfType.length > 1) {
+          throw new Error(
+            `Workbench should have no more than 1 child with type ${type.displayName}, but it has ${
+              childrenOfType.length
+            }`
+          );
+        }
+      };
 
-      const contentChildren = children.filter(child => child.type === Workbench.Content);
+      const contentChildren = filterByType(Workbench.Content);
 
       if (contentChildren.length !== 1) {
         return new Error(
@@ -23,6 +35,17 @@ class Workbench extends React.Component {
           }`
         );
       }
+
+      for (const child of children) {
+        if (!allowedTypes.includes(child.type)) {
+          return new Error(
+            `Workbench should only have children of the types ${typeNames.join(', ')}`
+          );
+        }
+      }
+
+      validateSingleChildOfType(Workbench.Header);
+      validateSingleChildOfType(Workbench.Sidebar);
     }
   };
 
@@ -60,10 +83,12 @@ class Workbench extends React.Component {
   }
 }
 
-class Header extends React.Component {
+Workbench.Header = class Header extends React.Component {
   static propTypes = {
     children: PropTypes.node
   };
+
+  static displayName = 'Workbench.Header';
 
   render() {
     return (
@@ -72,8 +97,7 @@ class Header extends React.Component {
       </div>
     );
   }
-}
-Workbench.Header = Header;
+};
 
 Workbench.Icon = icon => (
   <div className="workbench-header__icon">
@@ -81,7 +105,7 @@ Workbench.Icon = icon => (
   </div>
 );
 
-class Title extends React.Component {
+Workbench.Title = class Title extends React.Component {
   static propTypes = {
     children: PropTypes.node
   };
@@ -89,14 +113,14 @@ class Title extends React.Component {
   render() {
     return <h1 className="workbench-header__title">{this.props.children}</h1>;
   }
-}
+};
 
-Workbench.Title = Title;
-
-Workbench.Content = class extends React.Component {
+Workbench.Content = class Content extends React.Component {
   static propTypes = {
     children: PropTypes.oneOfType([PropTypes.array, PropTypes.element])
   };
+
+  static displayName = 'Workbench.Content';
 
   render() {
     const { children } = this.props;
@@ -105,10 +129,12 @@ Workbench.Content = class extends React.Component {
   }
 };
 
-Workbench.Sidebar = class extends React.Component {
+Workbench.Sidebar = class Sidebar extends React.Component {
   static propTypes = {
     children: PropTypes.oneOfType([PropTypes.array, PropTypes.element])
   };
+
+  static displayName = 'Workbench.Sidebar';
 
   render() {
     const { children } = this.props;
