@@ -1,13 +1,15 @@
 .usage__period-selector
+  display: flex
   & > label
-    margin-right: 1rem
+    margin: 0.75rem 1rem 0 0
+
 
 $overage-color = #FCA013
 
 .usage-page
   display: flex
   flex-direction: column
-  max-width: 1100px
+  max-width: 1280px
   margin: 0 auto
   &__section, &__asset-bandwidth-section
     margin: 2rem
@@ -17,7 +19,7 @@ $overage-color = #FCA013
     justify-content: space-between
   &__asset-bandwidth-section
     border-top: solid 1px $colors.element-mid
-    padding-top: 59px
+    padding: 59px 0
   &__total-usage
     font-size: 2.2rem
     line-height: 3rem
@@ -26,10 +28,11 @@ $overage-color = #FCA013
     font-size: .9rem
   &__included-limit
     color: #abbbc2
-    margin-right: .2rem
   &__overage
     color: $overage-color
-  &__api-chart-info
+  &__learn-more-link
+    margin-left: 10px
+  &__chart-info
     h3
       color #9AACC2
       margin-top 0
@@ -37,18 +40,26 @@ $overage-color = #FCA013
     h3, h2
       display: inline
 
-  &__org-chart-tooltip
+  &__org-chart-tooltip, &__api-chart-tooltip
     border-radius: 2px
     font-family: "Avenir Next W01"
     font-weight: 600
-    padding: 8px
+    padding: 12.5px
+    font-size: 14px
     .date
-      font-size: 12px
-      line-height: 12px
+      margin-bottom: 12px
+  &__org-chart-tooltip .value
+    font-size: 21px
+    line-height: 21px
+  &__api-chart-tooltip
+    background-color: #263545
     .value
-      font-size: 21px
-      line-height: 21px
-      margin-top: 12px
+      font-size: 14px
+      line-height: 24px
+      display: flex
+      align-items: center
+    .icon
+      margin-right: 8.5px
 
   &__api-table
     margin-top: 1.5rem

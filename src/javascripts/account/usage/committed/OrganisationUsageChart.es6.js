@@ -41,8 +41,8 @@ export default class OrganisationUsageChart extends React.Component {
         padding: 0,
         formatter: ([{ name, value, color }]) =>
           `
-            <div 
-            class="usage-page__org-chart-tooltip" 
+            <div
+            class="usage-page__org-chart-tooltip"
             style="background-color: ${color}; color: ${
             color === belowLimitColor ? '#fff' : belowLimitColor
           };"

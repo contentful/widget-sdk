@@ -29,8 +29,11 @@ export default class AssetBandwidthSection extends React.Component {
             <span className="usage-page__overage">{` + ${withUnit(
               assetBandwidthUsage - assetBandwidthIncludedLimit
             )} overage`}</span>
-          )}{' '}
-          <TextLink href="https://www.contentful.com/r/knowledgebase/fair-use/" target="_blank">
+          )}
+          <TextLink
+            href="https://www.contentful.com/r/knowledgebase/fair-use/"
+            target="_blank"
+            extraClassNames="usage-page__learn-more-link">
             Learn more
           </TextLink>
         </div>

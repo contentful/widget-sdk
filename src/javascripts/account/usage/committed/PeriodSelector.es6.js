@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import { Select, Option } from '@contentful/ui-component-library';
 import { cond, constant, stubTrue } from 'lodash';
 
 import { periodPropType } from './propTypes.es6';
@@ -19,10 +20,12 @@ export default class PeriodSelector extends React.Component {
     return (
       <span className="usage__period-selector">
         <label>Usage period</label>
-        <select
-          className="cfnext-select-box"
+        <Select
           defaultValue={selectedPeriodIndex}
-          onChange={onChange}>
+          onChange={onChange}
+          width="auto"
+          name="period-selector"
+          id="period-selector">
           {periods.map(({ startDate, endDate }, index) => {
             const isCurrentPeriod = endDate === null;
             const start = moment(startDate);
@@ -32,15 +35,17 @@ export default class PeriodSelector extends React.Component {
                   .subtract(1, 'day')
               : moment(endDate);
 
+            const value = `${index}`;
+
             return (
-              <option key={index} value={index}>{`${formatDate(start)} – ${formatDate(end)} ${cond([
+              <Option key={index} value={value}>{`${formatDate(start)} – ${formatDate(end)} ${cond([
                 [constant(isCurrentPeriod), constant('(current)')],
                 [constant(end.year() === moment().year()), constant(`(${moment().to(start)})`)],
                 [constant(stubTrue), constant(end.year())]
-              ])()}`}</option>
+              ])()}`}</Option>
             );
           })}
-        </select>
+        </Select>
       </span>
     );
   }
