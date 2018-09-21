@@ -50,7 +50,9 @@ module.exports = ({ dev = false } = {}) => ({
         ]
       })
     ),
-    'libs.js': './src/javascripts/libs',
+    'libs.js': ['./src/javascripts/libs/prod.js'].concat(
+      dev ? ['./src/javascripts/libs/dev.js'] : []
+    ),
     // some of the vendor files provide some sort of shims
     // the reason – in some files we rely on globals, which is not really
     // how webpack was designed :)
