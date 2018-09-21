@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { InlineReferenceCard, DropdownListItem } from '@contentful/ui-component-library';
 
 import RequestStatus from '../shared/RequestStatus.es6';
-import FetchEntry from '../shared/FetchEntry/index.es6';
+import FetchEntity from '../shared/FetchEntity/index.es6';
 
 const ServicesConsumer = require('../../../../../reactServiceContext').default;
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
@@ -66,13 +66,14 @@ class EmbeddedEntryInline extends React.Component {
   }
 
   render() {
-    const { node } = this.props;
+    const entryId = this.props.node.data.get('target').sys.id;
 
     return (
       <WidgetAPIContext.Consumer>
         {({ widgetAPI }) => (
-          <FetchEntry
-            node={node}
+          <FetchEntity
+            entityId={entryId}
+            entityType="Entry"
             currentUrl={widgetAPI.currentUrl}
             render={fetchEntryResult => {
               if (fetchEntryResult.requestStatus === RequestStatus.Error) {

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const ServicesConsumer = require('../../../../../reactServiceContext').default;
+const ServicesConsumer = require('../../../../../../reactServiceContext').default;
 
 const dimensions = { width: 70, height: 70 };
 
@@ -41,6 +41,7 @@ class Thumbnail extends React.Component {
   }
 }
 
+// TODO: Use widgetApi instead!
 export default ServicesConsumer({
   as: 'thumbnailHelpers',
   from: 'ui/cf/thumbnailHelpers.es6'

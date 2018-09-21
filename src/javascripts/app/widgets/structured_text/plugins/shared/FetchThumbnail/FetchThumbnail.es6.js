@@ -1,14 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import RequestStatus from '../../shared/RequestStatus.es6';
+import RequestStatus from '../RequestStatus.es6';
 
 export default class FetchThumbnail extends React.Component {
   static propTypes = {
+    // TODO: Add `locale` prop.
     entry: PropTypes.object,
     currentUrl: PropTypes.string,
     render: PropTypes.func.isRequired,
     $services: PropTypes.shape({
+      // TODO: Use `widgetApi` and `EntityHelpers` instead.
       spaceContext: PropTypes.object
     }).isRequired
   };

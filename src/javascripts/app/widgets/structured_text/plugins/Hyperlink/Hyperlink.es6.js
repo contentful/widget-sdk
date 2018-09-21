@@ -27,7 +27,7 @@ export default class Hyperlink extends React.Component {
     const _icon = ICON_MAP[node.type];
 
     return (
-      <span>
+      <span {...this.props.attributes}>
         <TextLink
           href="javascript:void(0)"
           data-tip={uri}
