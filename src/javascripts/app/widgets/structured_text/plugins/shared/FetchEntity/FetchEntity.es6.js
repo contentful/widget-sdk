@@ -32,6 +32,9 @@ export default class FetchEntity extends React.Component {
   componentDidMount() {
     this.fetchEntity();
   }
+  componentWillUnmount() {
+    this._unmounting = true;
+  }
   componentDidUpdate(prevProps) {
     if (
       this.props.entityId !== prevProps.entityId ||
@@ -55,20 +58,24 @@ export default class FetchEntity extends React.Component {
       const contentTypeId = entity.data.sys.contentType.sys.id;
       contentType = await spaceContext.space.getContentType(contentTypeId);
     } catch (error) {
-      this.setState({
-        requestStatus: RequestStatus.Error
-      });
+      if (!this._unmounting) {
+        this.setState({
+          requestStatus: RequestStatus.Error
+        });
+      }
       return;
     }
-    this.setState({
-      entry: entity.data,
-      entryWrapper: entity, // TODO: Do not rely on wrapper, only use actual entity.
-      contentTypeName: contentType.data.name,
-      entryTitle: spaceContext.entryTitle(entity),
-      entryDescription: spaceContext.entityDescription(entity),
-      entryStatus: EntityState.stateName(EntityState.getState(entity.data.sys)),
-      requestStatus: RequestStatus.Success
-    });
+    if (!this._unmounting) {
+      this.setState({
+        entry: entity.data,
+        entryWrapper: entity, // TODO: Do not rely on wrapper, only use actual entity.
+        contentTypeName: contentType.data.name,
+        entryTitle: spaceContext.entryTitle(entity),
+        entryDescription: spaceContext.entityDescription(entity),
+        entryStatus: EntityState.stateName(EntityState.getState(entity.data.sys)),
+        requestStatus: RequestStatus.Success
+      });
+    }
   };
   render() {
     return this.props.render(this.state);

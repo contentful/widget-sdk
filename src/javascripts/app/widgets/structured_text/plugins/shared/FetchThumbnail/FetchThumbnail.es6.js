@@ -21,31 +21,33 @@ export default class FetchThumbnail extends React.Component {
   componentDidMount() {
     this.fetchThumbnail();
   }
+  componentWillUnmount() {
+    this._unmounting = true;
+  }
   componentDidUpdate(prevProps) {
     if (this.props.currentUrl !== prevProps.currentUrl || this.props.entry !== prevProps.entry) {
       this.fetchThumbnail();
     }
   }
   fetchThumbnail = async () => {
+    if (!this.props.entry || this._unmounting) {
+      return;
+    }
+    const spaceContext = this.props.$services.spaceContext;
+    this.setState({
+      thumbnail: null,
+      requestStatus: RequestStatus.Pending
+    });
+    let thumbnail, requestStatus;
     try {
-      if (!this.props.entry) {
-        return;
-      }
-      const spaceContext = this.props.$services.spaceContext;
-      this.setState({
-        thumbnail: null,
-        requestStatus: RequestStatus.Pending
-      });
-      const thumbnail = await spaceContext.entryImage(this.props.entry);
-      this.setState({
-        thumbnail,
-        requestStatus: RequestStatus.Success
-      });
+      thumbnail = await spaceContext.entryImage(this.props.entry);
+      requestStatus = RequestStatus.Success;
     } catch (error) {
-      this.setState({
-        thumbnail: null,
-        requestStatus: RequestStatus.Error
-      });
+      thumbnail = null;
+      requestStatus = RequestStatus.Error;
+    }
+    if (!this._unmounting) {
+      this.setState({ thumbnail, requestStatus });
     }
   };
   render() {
