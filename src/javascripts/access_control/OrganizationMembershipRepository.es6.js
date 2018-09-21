@@ -25,6 +25,16 @@ export function getMembership(endpoint, membershipId) {
   );
 }
 
+export function removeMembership(endpoint, membershipId) {
+  return endpoint(
+    {
+      method: 'DELETE',
+      path: ['organization_memberships', membershipId]
+    },
+    ALPHA_HEADER
+  );
+}
+
 /**
  * Get organization's users from endpoint
  * @param {function} endpoint - organization endpoint

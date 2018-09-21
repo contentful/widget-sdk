@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { startCase } from 'lodash';
+import { startCase, without } from 'lodash';
 import pluralize from 'pluralize';
 import {
   Table,
@@ -12,16 +12,23 @@ import {
   Button
 } from '@contentful/ui-component-library';
 import Workbench from 'ui/Components/Workbench/JSX.es6';
+import UserDropdown from './UserDropdown.es6';
 import createResourceService from 'services/ResourceService.es6';
 import { href, go } from 'states/Navigator.es6';
 import {
   getAllUsers,
-  getAllMemberships
+  getAllMemberships,
+  removeMembership
 } from 'access_control/OrganizationMembershipRepository.es6';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 
-export default class UsersList extends React.Component {
+const ServicesConsumer = require('../../../../reactServiceContext').default;
+
+class UsersList extends React.Component {
   static propTypes = {
+    $services: PropTypes.shape({
+      notification: PropTypes.object
+    }),
     orgId: PropTypes.string.isRequired,
     context: PropTypes.any
   };
@@ -31,13 +38,14 @@ export default class UsersList extends React.Component {
     membershipsResource: null
   };
 
+  endpoint = createOrganizationEndpoint(this.props.orgId);
+
   async componentDidMount() {
     const { orgId } = this.props;
-    const endpoint = createOrganizationEndpoint(orgId);
     const resources = createResourceService(orgId, 'organization');
     const [users, memberships, membershipsResource] = await Promise.all([
-      getAllUsers(endpoint),
-      getAllMemberships(endpoint),
+      getAllUsers(this.endpoint),
+      getAllMemberships(this.endpoint),
       resources.get('organization_membership')
     ]);
     const getMembershipUser = membership => {
@@ -71,6 +79,23 @@ export default class UsersList extends React.Component {
     });
   }
 
+  async handleMembershipRemove(membership) {
+    const { notification } = this.props.$services;
+    const { usersList } = this.state;
+    const { firstName } = membership.user;
+    const message = firstName
+      ? `${firstName} has been successfully removed from this organization`
+      : `Membership successfully removed`;
+
+    try {
+      await removeMembership(this.endpoint, membership.sys.id);
+      notification.info(message);
+      this.setState({ usersList: without(usersList, membership) });
+    } catch (e) {
+      notification.error(e.message);
+    }
+  }
+
   render() {
     const { usersList, membershipsResource } = this.state;
 
@@ -97,6 +122,7 @@ export default class UsersList extends React.Component {
                   <TableCell>Name</TableCell>
                   <TableCell>Email</TableCell>
                   <TableCell>Organization role</TableCell>
+                  <TableCell />
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -111,10 +137,20 @@ export default class UsersList extends React.Component {
                           height="32"
                         />
                       )}
-                      {membership.user.firstName || <Pill label="Invited" />}
+                      {membership.user.firstName ? (
+                        `${membership.user.firstName} ${membership.user.lastName}`
+                      ) : (
+                        <Pill label="Invited" />
+                      )}
                     </TableCell>
                     <TableCell>{membership.user.email}</TableCell>
                     <TableCell>{startCase(membership.role)}</TableCell>
+                    <TableCell align="right">
+                      <UserDropdown
+                        membership={membership}
+                        onMembershipRemove={() => this.handleMembershipRemove(membership)}
+                      />
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -125,3 +161,5 @@ export default class UsersList extends React.Component {
     );
   }
 }
+
+export default ServicesConsumer('notification')(UsersList);
