@@ -300,7 +300,7 @@ Use the following [`launch.json`](https://code.visualstudio.com/docs/editor/debu
 
 Good news. Migration to Jest should be easy.
 
-* Move file from 'test/**/*.spec.js' to 'src/**/__tests__/*.spec.js', so file that is being tests is located in parent folder.
+* Move file from `test/**/*.spec.js` to `src/**/__tests__/*.spec.js`, so file that is being tests is located in parent folder.
 * Import `sinon` directly as `import sinon from "sinon"` if it was used.
 * Fix all ESLint errors in the file.
 
