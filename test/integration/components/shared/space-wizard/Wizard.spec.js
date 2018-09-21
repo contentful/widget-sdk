@@ -470,7 +470,9 @@ describe('Space Wizard', function() {
           this.stubs.track,
           8,
           'space_wizard:space_create',
-          this.createTrackingData()
+          this.createTrackingData({
+            spaceId: this.newSpace.sys.id
+          })
         );
       });
 

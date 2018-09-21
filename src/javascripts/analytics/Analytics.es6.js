@@ -98,7 +98,7 @@ export function getSessionData(path, defaultValue) {
  */
 export function track(event, data) {
   data = _.isObject(data) ? _.cloneDeep(data) : {};
-  data = removeCircularRefs(_.extend(data, getBasicPayload()));
+  data = removeCircularRefs(Object.assign({}, getBasicPayload(), data));
 
   segment.track(event, data);
   Snowplow.track(event, data);
