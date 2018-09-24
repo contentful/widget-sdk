@@ -1,9 +1,9 @@
 'use strict';
 
 /*
-  This file is for libraries only for development, such as `enzyme`.
+  This file is for libraries only for tests, such as `enzyme`.
 
-  In development both these libraries and those listed in `prod.js` are loaded.
+  In development and testing, the `prod.js` libs plus these are loaded.
  */
 
 window.libs = window.libs.concat([

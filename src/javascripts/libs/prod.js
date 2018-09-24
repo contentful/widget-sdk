@@ -1,10 +1,10 @@
 'use strict';
 
 /*
-  This file is for the libraries loaded for the production application, e.g. no development libraries
+  This file is for the libraries loaded for the production application, e.g. no testing libraries
   like `enzyme`.
 
-  See `libs/dev.js` for those libraries.
+  See `libs/test.js` for those libraries.
  */
 
 require('babel-polyfill');
