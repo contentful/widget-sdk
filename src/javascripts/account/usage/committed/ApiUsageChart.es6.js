@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { merge } from 'lodash';
-import assetUrl from 'assetUrlFilter';
+import { settings } from 'environment';
 
 import EChart from './EChart.es6';
 import { organizationResourceUsagePropType, periodPropType } from './propTypes.es6';
@@ -38,9 +38,9 @@ export default class ApiUsageChart extends React.Component {
                 .map(
                   ({ value }, index) => `
                   <div class="value">
-                    <img class="icon" src="${assetUrl(
-                      `/app/images/chart-symbol-${symbols[index]}.svg`
-                    )}"" />
+                    <img class="icon" src="${`${settings.assetUrl}/app/images/chart-symbol-${
+                      symbols[index]
+                    }.svg`}" />
                     <span> ${value.toLocaleString('en-US')}</span>
                   </div>
                 `

@@ -27,6 +27,9 @@ gulp.task('svg', async function() {
       'dd-arrow-down-disabled',
       'dotted-border',
       'logo-label',
+      'chart-symbol-circle',
+      'chart-symbol-diamond',
+      'chart-symbol-triangle',
       'note-info',
       'note-success',
       'note-warning'
