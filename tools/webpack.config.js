@@ -56,8 +56,8 @@ module.exports = () => {
           ]
         })
       ),
-      'libs.js': ['./src/javascripts/libs/prod.js'].concat(
-        isTest || isDev ? ['./src/javascripts/libs/test.js'] : []
+      'libs.js': ['./src/javascripts/libs/env-prod.js'].concat(
+        isTest || isDev ? ['./src/javascripts/libs/env-test.js'] : []
       ),
       // some of the vendor files provide some sort of shims
       // the reason – in some files we rely on globals, which is not really
