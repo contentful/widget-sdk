@@ -3,7 +3,7 @@ import { mount } from 'enzyme';
 import _ from 'lodash';
 import Immutable from 'immutable';
 
-import FetchThumbnail from 'app/widgets/structured_text/plugins/EntryLinkBlock/FetchThumbnail/FetchThumbnail.es6';
+import FetchThumbnail from 'app/widgets/structured_text/plugins/shared/FetchThumbnail/FetchThumbnail.es6';
 import RequestStatus from 'app/widgets/structured_text/plugins/shared/RequestStatus.es6';
 import * as sinon from 'helpers/sinon';
 import { flushPromises } from '../helpers';

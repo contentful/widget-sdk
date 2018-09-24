@@ -1,9 +1,7 @@
 import React from 'react';
 import { mount } from 'enzyme';
-import _ from 'lodash';
-import Immutable from 'immutable';
 
-import FetchEntry from 'app/widgets/structured_text/plugins/shared/FetchEntry/FetchEntry.es6';
+import FetchEntry from 'app/widgets/structured_text/plugins/shared/FetchEntity/FetchEntity.es6';
 import RequestStatus from 'app/widgets/structured_text/plugins/shared/RequestStatus.es6';
 import * as sinon from 'helpers/sinon';
 import { flushPromises } from '../helpers';
@@ -44,18 +42,10 @@ describe('FetchEntry', () => {
     };
 
     this.thumbnail = {};
-    this.node = {
-      data: Immutable.Map({
-        target: {
-          sys: {
-            id: this.entity.sys.id
-          }
-        }
-      })
-    };
 
     this.props = {
-      node: this.node,
+      entityId: this.entity.sys.id,
+      entityType: 'Entry',
       currentUrl: '//current-url',
       render: sinon.spy(() => null),
       $services: getMockedServices(this.entity, this.contentType, this.thumbnail)
@@ -64,19 +54,16 @@ describe('FetchEntry', () => {
     this.wrapper = mount(<FetchEntry {...this.props} />);
   });
 
-  it('fetches entry with id from node target', async function() {
+  it('fetches entry with id from `entryId`', async function() {
     await flushPromises();
     const { render } = this.props;
     sinon.assert.callCount(render, 3);
-    sinon.assert.calledWith(render, {
+    expect(render.args[0][0]).toEqual({
       entry: { sys: { contentType: { sys: {} } }, fields: {} },
       requestStatus: RequestStatus.Pending
     });
-    sinon.assert.calledWith(render, {
-      entry: { sys: { contentType: { sys: {} } }, fields: {} },
-      requestStatus: RequestStatus.Pending
-    });
-    sinon.assert.calledWith(render, {
+    expect(render.args[1][0]).toEqual(render.args[0][0]);
+    sinon.assert.calledWithExactly(render, {
       entry: this.entity,
       requestStatus: RequestStatus.Success,
       entryWrapper: {
