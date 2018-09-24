@@ -62,18 +62,35 @@ angular.module('contentful').directive('cfSidebarContentPreview', [
                 '<UNPUBLISHED CONTENT TYPE>'
               );
               const toState = $scope.selectedEnvironment.compiledUrl.replace(/\?.*$/, '');
+              const stFields = $scope.entityInfo.contentType.fields.filter(
+                field => field.type === 'StructuredText'
+              );
+
+              let eventOptions = {};
+              if (stFields.length) {
+                const entryId = $scope.entityInfo.id;
+                eventOptions = {
+                  structuredTextEditor: {
+                    fields: stFields,
+                    locales: $scope.locales,
+                    contentTypeId,
+                    entryId
+                  }
+                };
+              }
 
               Analytics.track('element:click', {
                 elementId: 'openContentPreviewBtn',
                 groupId: 'entryEditor:contentPreview',
                 fromState: $state.current.name,
-                toState: toState,
+                toState,
                 contentPreview: {
                   previewName: $scope.selectedEnvironment.name,
                   previewId: $scope.selectedEnvironment.envId,
-                  contentTypeName: contentTypeName,
-                  contentTypeId: contentTypeId
-                }
+                  contentTypeName,
+                  contentTypeId
+                },
+                ...eventOptions
               });
             }
           };
