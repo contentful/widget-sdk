@@ -92,7 +92,7 @@ angular
       });
 
       $scope.buildValidationCheckboxProps = validation => ({
-        id: `field-validations--${validation.type}`,
+        id: `field-validations--${validation.type}${validation.onItems ? '.listElement' : ''}`,
         labelText: validation.name,
         checked: validation.enabled,
         helpText: validation.helpText,
