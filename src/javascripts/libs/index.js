@@ -51,6 +51,7 @@ window.libs = [
   ['react', require('react')],
   ['prop-types', require('prop-types')],
   ['react-dom', require('react-dom')],
+  ['react-dom/server', require('react-dom/server')],
   ['react-dom/test-utils', require('react-dom/test-utils')],
   ['react-click-outside', require('react-click-outside')],
   ['classnames', require('classnames')],
