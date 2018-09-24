@@ -182,7 +182,8 @@ export function createSpace({
 
     dispatch(
       track('space_create', {
-        action: 'create'
+        action: 'create',
+        spaceId: newSpace.sys.id
       })
     );
     dispatch(actions.spaceCreationSuccess());

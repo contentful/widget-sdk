@@ -323,10 +323,11 @@ export function createTrackingData(data) {
     currentPlan,
     recommendedPlan,
     newSpaceName,
-    newSpaceTemplate
+    newSpaceTemplate,
+    spaceId
   } = data;
 
-  return {
+  const trackingData = {
     currentStep: currentStepId || null,
     targetStep: targetStepId || null,
     intendedAction: action,
@@ -340,4 +341,10 @@ export function createTrackingData(data) {
     recommendedSpaceType: get(recommendedPlan, 'internalName', null),
     recommendedProductType: get(recommendedPlan, 'productType', null)
   };
+
+  if (spaceId) {
+    trackingData.spaceId = spaceId;
+  }
+
+  return trackingData;
 }

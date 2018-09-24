@@ -48,7 +48,7 @@ class SpacePlanItem extends React.Component {
             'space-plans-list__item--selected': isSelected,
             'space-plans-list__item--disabled': plan.disabled,
             'space-plans-list__item--current': isCurrentPlan,
-            'space-plans-list__item--recommended': isRecommended
+            'space-plans-list__item--recommended': isPayingOrg && isRecommended
           }
         )}
         onClick={() => !plan.disabled && onSelect(plan)}>

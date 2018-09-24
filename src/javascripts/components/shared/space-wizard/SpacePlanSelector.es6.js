@@ -93,13 +93,14 @@ class SpacePlanSelector extends React.Component {
                 />
               )}
               {atHighestPlan && <NoMorePlans canSetupBilling={isOwner(organization)} />}
-              {recommendedPlan && (
-                <ExplainRecommendation
-                  currentPlan={currentPlan}
-                  recommendedPlan={recommendedPlan}
-                  resources={resources}
-                />
-              )}
+              {payingOrg &&
+                recommendedPlan && (
+                  <ExplainRecommendation
+                    currentPlan={currentPlan}
+                    recommendedPlan={recommendedPlan}
+                    resources={resources}
+                  />
+                )}
               <h2 className="create-space-wizard__heading">Choose the space type</h2>
               {action === 'create' && (
                 <Fragment>
