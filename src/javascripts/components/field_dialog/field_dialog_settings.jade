@@ -3,32 +3,37 @@ div(
   cf-validate="field" show-errors cf-validate-form="field" ng-init="validator.run()"
   ng-controller="FieldDialogSettingsController")
 
-  div.cfnext-form__field
-    label Name
-    input.cfnext-form__input(
-      name="name" type="text" size="40"
-      ng-model="field.name"
-      cf-validate-model)
-    span.cfnext-form__field-suffix-error(cf-field-error-for="name")
+  div.cf-flex-grid 
+    div.cf-flex-grid-column
+      div.cfnext-form__field
+        label Name
+        input.cfnext-form__input(
+          name="name" type="text" size="40"
+          ng-model="field.name"
+          cf-validate-model)
+        span.cfnext-form__field-suffix-error(cf-field-error-for="name")
 
-  div.cfnext-form__field(ng-controller="ApiNameController as apiNameController")
-    label Field ID
-    div.cfnext-form__input-group
-      input.cfnext-form__input(
-        name="apiName" type="text" size="40"
-        ng-model="field.apiName"
-        cf-validate-model
-        ng-disabled="!apiNameController.isEditable()")
-      button.cfnext-form__icon-suffix.fa.fa-lock(
-        ng-if="!apiNameController.isEditable()"
-        ng-click="apiNameController.unlockEditing()")
-    span.cfnext-form__field-suffix-error(cf-field-error-for="apiName")
+      div.cfnext-form__field(ng-controller="ApiNameController as apiNameController")
+        label Field ID
+        div.cfnext-form__input-group
+          input.cfnext-form__input(
+            name="apiName" type="text" size="40"
+            ng-model="field.apiName"
+            cf-validate-model
+            ng-disabled="!apiNameController.isEditable()")
+          button.cfnext-form__icon-suffix.fa.fa-lock(
+            ng-if="!apiNameController.isEditable()"
+            ng-click="apiNameController.unlockEditing()")
+        span.cfnext-form__field-suffix-error(cf-field-error-for="apiName")
 
-  fieldset.cfnext-form__fieldset(ng-show="field.canBeTitle || field.canBeLocalized")
-    legend Field options
+      fieldset.cfnext-form__fieldset(ng-show="field.canBeTitle || field.canBeLocalized")
+        legend Field options
 
-    div.cfnext-form-option(ng-show="field.canBeTitle")
-      <react-component name="@contentful/ui-component-library/CheckboxField" props="buildTitleCheckboxProps()" />
+        div.cfnext-form-option(ng-show="field.canBeTitle")
+          <react-component name="@contentful/ui-component-library/CheckboxField" props="buildTitleCheckboxProps()" />
 
-    div.cfnext-form-option(ng-show="field.canBeLocalized")
-      <react-component name="@contentful/ui-component-library/CheckboxField" props="buildLocalisationCheckboxProps()" />
+        div.cfnext-form-option(ng-show="field.canBeLocalized")
+          <react-component name="@contentful/ui-component-library/CheckboxField" props="buildLocalisationCheckboxProps()" />
+
+    div.cf-flex-grid-column(ng-show="structuredTextFormattingOptionsEnabled&&field.isStructuredTextField")
+      <!-- Structured Text Settings -->

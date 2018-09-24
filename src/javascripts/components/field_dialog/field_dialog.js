@@ -51,7 +51,6 @@ angular
     'require',
     function FieldDialogController($scope, require) {
       const dialog = $scope.dialog;
-
       const validations = require('validationDecorator');
       const fieldDecorator = require('fieldDecorator');
       const trackCustomWidgets = require('analyticsEvents/customWidgets');
@@ -199,6 +198,10 @@ angular
       var buildMessage = require('fieldErrorMessageBuilder');
       var TheLocaleStore = require('TheLocaleStore');
       var joinAndTruncate = require('stringUtils').joinAndTruncate;
+      const LD = require('utils/LaunchDarkly');
+
+      const STRUCTURED_TEXT_FORMATTING_OPTIONS_FEATURE_FLAG =
+        'feature-at-09-structured-text-formatting-options';
 
       $scope.schema = {
         errors: function(decoratedField) {
@@ -248,6 +251,10 @@ angular
       });
 
       $scope.locales = _.map(TheLocaleStore.getPrivateLocales(), 'name');
+
+      LD.onFeatureFlag($scope, STRUCTURED_TEXT_FORMATTING_OPTIONS_FEATURE_FLAG, flag => {
+        $scope.structuredTextFormattingOptionsEnabled = flag;
+      });
     }
   ])
 
