@@ -16,8 +16,10 @@ describe('connectToWidgetAPI', () => {
       goToSlideInEntity: sinon.stub()
     });
     this.system.set('spaceContext', {
-      cma: {
-        getEntry: sinon.stub().resolves()
+      default: {
+        cma: {
+          getEntry: sinon.stub().resolves()
+        }
       }
     });
     this.system.set('$rootScope', {

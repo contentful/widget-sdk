@@ -1,11 +1,11 @@
 'use strict';
 
 /**
- * @ngdoc directive
- * @name cfWidgetApi
+ * @deprecated Use and extend the new `app/widgets/WidgetApi/buildWidgetApi.es6.js` instead.
  *
  * @description
- * Provides an interface similar to the new widget api.
+ * Provides an interface similar to the ui-extensions-sdk `extension` object:
+ * https://github.com/contentful/ui-extensions-sdk/blob/master/docs/ui-extensions-sdk-frontend.md#dialogsselectsingleentryoptions
  *
  * @scope.requires {object} entity
  * @scope.requires {object} locale

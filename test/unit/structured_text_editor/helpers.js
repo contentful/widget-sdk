@@ -31,9 +31,9 @@ export const text = (value = '', marks = []) => ({
 
 export const flushPromises = () =>
   new Promise(resolve => {
-    setImmediate(() => {
+    setTimeout(() => {
       resolve();
-    });
+    }, 50);
   });
 
 export const keyChord = (key, opts) => ({

@@ -22,7 +22,7 @@ export default class FetchThumbnail extends React.Component {
     this.fetchThumbnail();
   }
   componentWillUnmount() {
-    this._unmounting = true;
+    this.unmounting = true;
   }
   componentDidUpdate(prevProps) {
     if (this.props.currentUrl !== prevProps.currentUrl || this.props.entry !== prevProps.entry) {
@@ -30,7 +30,7 @@ export default class FetchThumbnail extends React.Component {
     }
   }
   fetchThumbnail = async () => {
-    if (!this.props.entry || this._unmounting) {
+    if (!this.props.entry || this.unmounting) {
       return;
     }
     const spaceContext = this.props.$services.spaceContext;
@@ -46,7 +46,7 @@ export default class FetchThumbnail extends React.Component {
       thumbnail = null;
       requestStatus = RequestStatus.Error;
     }
-    if (!this._unmounting) {
+    if (!this.unmounting) {
       this.setState({ thumbnail, requestStatus });
     }
   };

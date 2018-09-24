@@ -27,27 +27,49 @@ describe('EntityHelpers', () => {
     });
   });
 
-  itConvertsToEntityAndCallsMethod('entityTitle');
-  itConvertsToEntityAndCallsMethod('entityDescription');
-  itConvertsToEntityAndCallsMethod('entryImage');
+  itConvertsToEntryAndCallsMethod('entityTitle');
+  itConvertsToEntryAndCallsMethod('entityDescription');
+  itConvertsToEntryAndCallsMethod('entityFile', 'entryImage');
+  itConvertsToEntryAndCallsMethod('entryImage');
 
-  function itConvertsToEntityAndCallsMethod(methodName) {
-    it(`converts data to entity and calls #${methodName}`, function*() {
+  itConvertsToAssetAndCallsMethod('entityTitle');
+  itConvertsToAssetAndCallsMethod('entityDescription');
+
+  function itConvertsToEntryAndCallsMethod(methodName, spaceContextMethodName) {
+    spaceContextMethodName = spaceContextMethodName || methodName;
+
+    it(`#${methodName}() converts data to entry and calls spaceContext.${spaceContextMethodName}()`, async function() {
       this.spaceContext.publishedCTs.fetch.resolves({
-        data: { fields: [{ apiName: 'test', id: 'realid' }] }
+        data: { fields: [{ apiName: 'testField', id: 'realid' }] }
       });
 
-      yield this.helpers[methodName]({
+      await this.helpers[methodName]({
         sys: { type: 'Entry', contentType: { sys: { id: 'ctid' } } },
-        fields: { test: {} }
+        fields: { testField: {} }
       });
 
-      sinon.assert.calledOnce(this.spaceContext[methodName]);
-      const [entity, locale] = this.spaceContext[methodName].firstCall.args;
+      sinon.assert.calledOnce(this.spaceContext[spaceContextMethodName]);
+      const [entity, locale] = this.spaceContext[spaceContextMethodName].firstCall.args;
 
       expect(entity.data.fields).toEqual({ realid: {} });
       expect(entity.getType()).toBe('Entry');
       expect(entity.getContentTypeId()).toBe('ctid');
+      expect(locale).toBe('en-US');
+    });
+  }
+
+  function itConvertsToAssetAndCallsMethod(methodName, spaceContextMethodName) {
+    spaceContextMethodName = spaceContextMethodName || methodName;
+
+    it(`#${methodName}() converts data to asset and calls spaceContext.${spaceContextMethodName}()`, async function() {
+      await this.helpers[methodName]({
+        sys: { type: 'Asset' }
+      });
+
+      sinon.assert.calledOnce(this.spaceContext[spaceContextMethodName]);
+      const [asset, locale] = this.spaceContext[spaceContextMethodName].firstCall.args;
+
+      expect(asset.getType()).toBe('Asset');
       expect(locale).toBe('en-US');
     });
   }

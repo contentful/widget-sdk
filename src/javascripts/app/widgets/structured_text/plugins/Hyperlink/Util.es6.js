@@ -51,7 +51,8 @@ async function insertLink(change, createHyperlinkDialog) {
       }
       change.insertText(text).extend(0 - text.length);
     }
-    change.call(wrapLink, type, { uri, target });
+    const data = target ? { target } : { uri };
+    change.call(wrapLink, type, data);
   } catch (e) {
     if (e) throw e;
     // User cancelled dialog.
@@ -83,7 +84,8 @@ export async function editLink(change, createHyperlinkDialog) {
       value: oldTarget ? { target: oldTarget } : { uri: oldUri }
     });
     const nodeType = linkTypeToNodeType(type);
-    change.setInlines({ type: nodeType, data: { uri, target } });
+    const data = target ? { target } : { uri };
+    change.setInlines({ type: nodeType, data });
   } catch (e) {
     if (e) throw e;
     // User cancelled dialog.

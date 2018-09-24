@@ -46,24 +46,24 @@ class EmbeddedEntryInline extends React.Component {
     );
   }
 
-  renderNode(fetchEntryResult) {
+  renderNode({ requestStatus, contentTypeName, entity, entityTitle, entityStatus }) {
     return (
       <InlineReferenceCard
         testId={INLINES.EMBEDDED_ENTRY}
         selected={this.props.isSelected}
-        title={`${fetchEntryResult.contentTypeName}: ${fetchEntryResult.entryTitle}`}
-        status={fetchEntryResult.entryStatus}
+        title={`${contentTypeName}: ${entityTitle}`}
+        status={entityStatus}
         extraClassNames="structured-text__inline-reference-card"
-        isLoading={fetchEntryResult.requestStatus === RequestStatus.Pending}
+        isLoading={requestStatus === RequestStatus.Pending}
         dropdownListItemNodes={[
-          <DropdownListItem key="edit" onClick={() => this.handleEditClick(fetchEntryResult.entry)}>
+          <DropdownListItem key="edit" onClick={() => this.handleEditClick(entity)}>
             Edit
           </DropdownListItem>,
           <DropdownListItem key="remove" onClick={this.handleRemoveClick}>
             Remove
           </DropdownListItem>
         ]}>
-        {fetchEntryResult.entryTitle}
+        {entityTitle}
       </InlineReferenceCard>
     );
   }
@@ -75,14 +75,15 @@ class EmbeddedEntryInline extends React.Component {
       <WidgetAPIContext.Consumer>
         {({ widgetAPI }) => (
           <FetchEntity
+            widgetAPI={widgetAPI}
             entityId={entryId}
             entityType="Entry"
-            currentUrl={widgetAPI.currentUrl}
-            render={fetchEntryResult => {
-              if (fetchEntryResult.requestStatus === RequestStatus.Error) {
+            localeCode={widgetAPI.field.locale}
+            render={fetchEntityResult => {
+              if (fetchEntityResult.requestStatus === RequestStatus.Error) {
                 return this.renderMissingNode();
               } else {
-                return this.renderNode(fetchEntryResult);
+                return this.renderNode(fetchEntityResult);
               }
             }}
           />

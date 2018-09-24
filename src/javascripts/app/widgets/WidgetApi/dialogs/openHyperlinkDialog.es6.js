@@ -1,4 +1,7 @@
+import React from 'react';
 import modalDialog from 'modalDialog';
+import HyperlinkDialog from 'app/widgets/WidgetApi/dialogs/HyperlinkDialog.es6';
+import WidgetAPIContext from '../WidgetApiContext.es6';
 import { newConfigFromStructuredTextField } from 'search/EntitySelector/Config.es6';
 
 const DEFAULT_VALUE = { uri: '', text: '' };
@@ -17,39 +20,48 @@ const DEFAULT_VALUE = { uri: '', text: '' };
  *  Will be overwritten accordingly if `url` or `target` are set.
  * @returns {Promise<{uri: string?, target: object?, text: string?}>}
  */
-export default async function({ value = {}, showTextInput, field }) {
-  const entitySelectorConfigs = await newConfigsForField(field);
-  const component = 'app/widgets/WidgetApi/HyperlinkDialog.es6';
-  const template = `<react-component class="modal-background" name="${component}" props="props" />`;
+export default async function({ value = {}, showTextInput, widgetAPI }) {
+  let dialog;
+  const entitySelectorConfigs = await newConfigsForField(widgetAPI.field);
   const isNew = !(value.uri || value.target);
-
-  const dialog = modalDialog.open({
-    template,
+  const props = {
+    labels: {
+      title: isNew ? 'Insert link' : 'Edit link',
+      confirm: isNew ? 'Insert link' : 'Update link'
+    },
+    value: { ...DEFAULT_VALUE, ...value },
+    hideText: !showTextInput,
+    onConfirm: value => dialog.confirm(value),
+    onCancel: () => {
+      dialog.cancel();
+      dialog = null;
+    },
+    onRender: () => {
+      // TODO: Get rid of this hack to re-center modal dialog.
+      dialog &&
+        setTimeout(() => {
+          dialog._centerOnBackground();
+          // We apparently need this for the angular directive when
+          // switching from link type URI to e.g. Entry or Asset:
+          setTimeout(() => {
+            dialog._centerOnBackground();
+          }, 10);
+        }, 0);
+    },
+    entitySelectorConfigs
+  };
+  const jsx = (
+    <WidgetAPIContext.Provider value={{ widgetAPI }}>
+      <HyperlinkDialog {...props} />
+    </WidgetAPIContext.Provider>
+  );
+  dialog = modalDialog.open({
+    template: `<react-component class="modal-background" jsx="jsx" props="props" />`,
     backgroundClose: true,
     ignoreEsc: true, // Ignore to allow ESC in search entity selector search.
     scopeData: {
-      props: {
-        labels: {
-          title: isNew ? 'Insert link' : 'Edit link',
-          confirm: isNew ? 'Insert link' : 'Update link'
-        },
-        value: { ...DEFAULT_VALUE, ...value },
-        hideText: !showTextInput,
-        onConfirm: value => dialog.confirm(value),
-        onCancel: () => dialog.cancel(),
-        onRender: () => {
-          // TODO: Get rid of this hack to re-center modal dialog.
-          setTimeout(() => {
-            dialog._centerOnBackground();
-            // We apparently need this for the angular directive when
-            // switching from link type URI to e.g. Entry or Asset:
-            setTimeout(() => {
-              dialog._centerOnBackground();
-            }, 10);
-          }, 0);
-        },
-        entitySelectorConfigs
-      }
+      jsx,
+      props: {}
     }
   });
   return dialog.promise;

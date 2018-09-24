@@ -4,7 +4,6 @@ import { ReferenceCard, Card, IconButton } from '@contentful/ui-component-librar
 
 import RequestStatus from '../RequestStatus.es6';
 import FetchEntity from '../FetchEntity/index.es6';
-import FetchThumbnail from '../FetchThumbnail/index.es6';
 import Thumbnail from './Thumbnail.es6';
 const ServicesConsumer = require('../../../../../../reactServiceContext').default;
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
@@ -32,22 +31,16 @@ class FetchedReferenceCard extends React.Component {
       <WidgetAPIContext.Consumer>
         {({ widgetAPI }) => (
           <FetchEntity
+            widgetAPI={widgetAPI}
             entityId={this.props.entityId}
             entityType={this.props.entityType}
-            currentUrl={widgetAPI.currentUrl}
+            localeCode={widgetAPI.field.locale}
             render={fetchEntryResult => {
               if (fetchEntryResult.requestStatus === RequestStatus.Error) {
                 return this.renderMissingEntryReferenceCard();
               } else {
-                return (
-                  <FetchThumbnail
-                    entry={fetchEntryResult.entryWrapper}
-                    currentUrl={widgetAPI.currentUrl}
-                    render={thumbnailResult => {
-                      return this.renderReferenceCard(fetchEntryResult, thumbnailResult);
-                    }}
-                  />
-                );
+                // TODO: Render special asset card instead of using entry card.
+                return this.renderReferenceCard(fetchEntryResult);
               }
             }}
           />
@@ -56,20 +49,24 @@ class FetchedReferenceCard extends React.Component {
     );
   }
 
-  renderReferenceCard(
-    { entryTitle, contentTypeName, entryDescription, entryStatus, requestStatus },
-    thumbnailResult
-  ) {
+  renderReferenceCard({
+    entityTitle,
+    contentTypeName,
+    entityDescription,
+    entityStatus,
+    entityFile,
+    requestStatus
+  }) {
     const { extraClassNames, selected } = this.props;
     return (
       <ReferenceCard
-        title={entryTitle}
-        contentType={contentTypeName}
+        title={entityTitle || 'Untitled'}
+        contentType={contentTypeName || 'Asset'}
         extraClassNames={extraClassNames}
-        description={entryDescription}
+        description={entityDescription}
         selected={selected}
-        status={entryStatus}
-        thumbnailElement={<Thumbnail thumbnail={thumbnailResult.thumbnail} />}
+        status={entityStatus}
+        thumbnailElement={<Thumbnail thumbnail={entityFile} />}
         loading={requestStatus === RequestStatus.Pending}
         actionElements={
           <React.Fragment>

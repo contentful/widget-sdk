@@ -1,78 +1,147 @@
 import React from 'react';
 import { mount } from 'enzyme';
 
-import FetchEntry from 'app/widgets/structured_text/plugins/shared/FetchEntity/FetchEntity.es6';
+import FetchEntity from 'app/widgets/structured_text/plugins/shared/FetchEntity/FetchEntity.es6';
 import RequestStatus from 'app/widgets/structured_text/plugins/shared/RequestStatus.es6';
-import * as sinon from 'helpers/sinon';
+import sinon from 'npm:sinon';
 import { flushPromises } from '../helpers';
 
-const getMockedServices = (entry, contentType, thumbnail) => {
+const EMPTY_ENTITY = { sys: { contentType: { sys: {} } }, fields: {} };
+
+const newMockWidgetAPI = (entity, contentType) => {
   return {
-    spaceContext: {
-      space: {
-        getEntry: sinon.spy(() => Promise.resolve({ data: entry })),
-        getContentType: sinon.spy(() => Promise.resolve(contentType))
-      },
-      entryImage: sinon.spy(() => Promise.resolve(thumbnail)),
-      entryTitle: sinon.spy(() => 'entry-title'),
-      entityDescription: sinon.spy(() => 'entry-description')
+    space: {
+      getEntry: sinon
+        .stub()
+        .withArgs(entity.sys.id)
+        .resolves(entity),
+      getContentType: sinon
+        .stub()
+        .withArgs(contentType.sys.id)
+        .resolves(contentType)
     }
   };
 };
 
-describe('FetchEntry', () => {
+describe('FetchEntity', () => {
   beforeEach(async function() {
     module('contentful/test');
 
     this.entity = {
       sys: {
         type: 'Entry',
-        id: 'testid2',
+        id: 'ENTRY-ID',
         contentType: {
           sys: {
-            id: 'ct-id'
+            id: 'CT-ID'
           }
         }
       }
     };
     this.contentType = {
-      data: {
-        name: 'content-type-name'
-      }
+      sys: {
+        id: 'CT-ID'
+      },
+      name: 'CONTENT-TYPE-NAME'
     };
-
-    this.thumbnail = {};
 
     this.props = {
       entityId: this.entity.sys.id,
       entityType: 'Entry',
-      currentUrl: '//current-url',
+      localeCode: 'lo-LOCALE',
       render: sinon.spy(() => null),
-      $services: getMockedServices(this.entity, this.contentType, this.thumbnail)
+      widgetAPI: newMockWidgetAPI(this.entity, this.contentType),
+      $services: {
+        EntityHelpers: {
+          newForLocale: sinon
+            .stub()
+            .withArgs('lo-LOCALE')
+            .returns({
+              entityFile: sinon
+                .stub()
+                .withArgs(this.entity)
+                .resolves('FILE'),
+              entityTitle: sinon
+                .stub()
+                .withArgs(this.entity)
+                .resolves('TITLE'),
+              entityDescription: sinon
+                .stub()
+                .withArgs(this.entity)
+                .resolves('DESCRIPTION')
+            })
+        }
+      }
     };
 
-    this.wrapper = mount(<FetchEntry {...this.props} />);
+    this.mount = function() {
+      this.wrapper = mount(<FetchEntity {...this.props} />);
+    };
   });
 
-  it('fetches entry with id from `entryId`', async function() {
-    await flushPromises();
-    const { render } = this.props;
-    sinon.assert.callCount(render, 3);
-    expect(render.args[0][0]).toEqual({
-      entry: { sys: { contentType: { sys: {} } }, fields: {} },
-      requestStatus: RequestStatus.Pending
+  describe('(pending/error) props.render()', function() {
+    beforeEach(function() {
+      this.props.widgetAPI.space.getEntry.rejects();
+      this.mount();
     });
-    expect(render.args[1][0]).toEqual(render.args[0][0]);
-    sinon.assert.calledWithExactly(render, {
-      entry: this.entity,
-      requestStatus: RequestStatus.Success,
-      entryWrapper: {
-        data: this.entity
-      },
-      contentTypeName: 'content-type-name',
-      entryTitle: 'entry-title',
-      entryDescription: 'entry-description',
-      entryStatus: 'draft'
+
+    it('is called initially, while fetching entity', function() {
+      sinon.assert.calledOnceWith(this.props.render, {
+        entity: EMPTY_ENTITY,
+        requestStatus: RequestStatus.Pending
+      });
+    });
+
+    it('is called with `requestStatus: "error"`', async function() {
+      await flushPromises();
+      expect(this.props.render.args[1][0]).toEqual({
+        entity: EMPTY_ENTITY,
+        requestStatus: RequestStatus.Error
+      });
+    });
+  });
+
+  describe('(pending/success) props.render()', function() {
+    beforeEach(function() {
+      this.mount();
+    });
+
+    it('is called initially, while fetching entity', function() {
+      sinon.assert.calledOnceWith(this.props.render, {
+        entity: EMPTY_ENTITY,
+        requestStatus: RequestStatus.Pending
+      });
+    });
+
+    it('is called after entity got fetched, while waiting for `entityFile`', async function() {
+      await flushPromises();
+      expect(this.props.render.args[1][0]).toEqual({
+        entity: this.entity,
+        contentTypeName: 'CONTENT-TYPE-NAME',
+        entityTitle: 'TITLE',
+        entityDescription: 'DESCRIPTION',
+        entityStatus: 'draft',
+        entityFile: undefined,
+        requestStatus: RequestStatus.Pending
+      });
+    });
+
+    it('is called with fetched entity and `entityFile`', async function() {
+      await flushPromises();
+      expect(this.props.render.args[2][0]).toEqual({
+        entity: this.entity,
+        contentTypeName: 'CONTENT-TYPE-NAME',
+        entityTitle: 'TITLE',
+        entityDescription: 'DESCRIPTION',
+        entityStatus: 'draft',
+        entityFile: 'FILE',
+        requestStatus: RequestStatus.Success
+      });
+    });
+
+    it('is called thrice in total', async function() {
+      await flushPromises();
+      sinon.assert.callCount(this.props.render, 3);
     });
   });
 });

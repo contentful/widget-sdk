@@ -1,7 +1,7 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import _ from 'lodash';
 import { toKeyCode } from 'is-hotkey';
+import { forEach } from 'lodash';
 
 import { BLOCKS, INLINES, MARKS } from '@contentful/structured-text-types';
 
@@ -12,16 +12,15 @@ import { document, block, inline, text, flushPromises, getWithId, keyChord } fro
 import { stubAll, setupWidgetApi, createSandbox, ENTRY } from '../setup';
 
 const triggerToolbarIcon = async (wrapper, iconName) => {
+  await flushPromises();
   const toolbarIcon = getWithId(wrapper, `toolbar-toggle-${iconName}`);
   toolbarIcon.simulate('mouseDown');
-  await flushPromises();
 };
 
-
 const triggerDropdownButton = async (wrapper, dataTestId) => {
+  await flushPromises();
   const toolbarIcon = getWithId(wrapper, dataTestId);
   toolbarIcon.find('button').simulate('mouseDown');
-  await flushPromises();
 };
 
 const EMPTY_PARAGRAPH = block(BLOCKS.PARAGRAPH, {}, text());
@@ -36,25 +35,27 @@ describe('Toolbar', () => {
 
     this.system = createIsolatedSystem();
 
-    this.entity = ENTRY;
-
+    // TODO: Stub `buildWidgetApi.es6` instead.
     this.system.set('entitySelector', {
       default: {
-        openFromField: () => Promise.resolve([this.entity])
+        openFromField: () => Promise.resolve([ENTRY])
       }
     });
-    stubAll({ isolatedSystem: this.system, entities: [this.entity] });
+    this.hyperlinkData = {};
+    this.system.set('app/widgets/WidgetApi/dialogs/openHyperlinkDialog.es6', {
+      default: () => Promise.resolve(this.hyperlinkData)
+    });
+    stubAll({ isolatedSystem: this.system });
 
     const { default: StructuredTextEditor } = await this.system.import(
       'app/widgets/structured_text/index.es6'
     );
 
-    this.widgetApi = setupWidgetApi(this.$inject('mocks/widgetApi'), mockDocument);
+    this.field = setupWidgetApi(this.$inject('mocks/widgetApi'), mockDocument).field;
 
     this.props = {
-      field: this.widgetApi.field,
+      field: this.field,
       onChange: sinon.spy(),
-      widgetAPI: { dialogs: {} },
       features: { embedInlineEntry: true }
     };
     this.sandbox = createSandbox(window);
@@ -75,6 +76,59 @@ describe('Toolbar', () => {
     this.sandbox.remove();
   });
 
+  describe('Hyperlink', function() {
+    forEach(
+      {
+        [INLINES.HYPERLINK]: {
+          type: 'uri',
+          uri: 'https://foo.bar'
+        },
+        [INLINES.ASSET_HYPERLINK]: {
+          type: 'Asset',
+          target: {
+            sys: {
+              type: 'Link',
+              linkType: 'Asset',
+              id: 'ASSET-ID'
+            }
+          }
+        },
+        [INLINES.ENTRY_HYPERLINK]: {
+          type: 'Entry',
+          target: {
+            sys: {
+              type: 'Link',
+              linkType: 'Entry',
+              id: 'ASSET-ID'
+            }
+          }
+        }
+      },
+      itSupportsHyperlinkOfType
+    );
+  });
+
+  function itSupportsHyperlinkOfType(dialogData, linkType) {
+    it(`supports "${linkType}" type hyperlink `, async function() {
+      this.hyperlinkData = { text: 'a hyperlink', ...dialogData };
+      const { target, uri } = dialogData;
+      const expectedLinkData = target ? { target } : { uri };
+      await triggerToolbarIcon(this.wrapper, INLINES.HYPERLINK);
+      await flushPromises();
+      expect(this.field.getValue()).toEqual(
+        document(
+          block(
+            BLOCKS.PARAGRAPH,
+            {},
+            text(),
+            inline(linkType, expectedLinkData, text(this.hyperlinkData.text)),
+            text()
+          )
+        )
+      );
+    });
+  }
+
   describe('Embed Dropdown', function() {
     it('renders the embed dropdown', async function() {
       await triggerDropdownButton(this.wrapper, 'toolbar-entry-dropdown-toggle');
@@ -94,9 +148,7 @@ describe('Toolbar', () => {
       const editor = getWithId(this.wrapper, 'editor');
       await embedEntryBlock(this.wrapper);
       editor.getDOMNode().click();
-      expect(this.widgetApi.field.getValue()).toEqual(
-        document(embeddedEntryBlock(), EMPTY_PARAGRAPH)
-      );
+      expect(this.field.getValue()).toEqual(document(embeddedEntryBlock(), EMPTY_PARAGRAPH));
     });
   });
 
@@ -105,7 +157,7 @@ describe('Toolbar', () => {
       const editor = getWithId(this.wrapper, 'editor');
       await embedInlineEntry(this.wrapper);
       editor.getDOMNode().click();
-      expect(this.widgetApi.field.getValue()).toEqual(
+      expect(this.field.getValue()).toEqual(
         document(block(BLOCKS.PARAGRAPH, {}, text(), embeddedEntryInline(), text()))
       );
     });
@@ -116,7 +168,7 @@ describe('Toolbar', () => {
       it(`renders ${listType}`, async function() {
         await triggerToolbarIcon(this.wrapper, listType);
 
-        expect(this.widgetApi.field.getValue()).toEqual(
+        expect(this.field.getValue()).toEqual(
           document(
             block(listType, {}, block(BLOCKS.LIST_ITEM, {}, EMPTY_PARAGRAPH)),
             EMPTY_PARAGRAPH
@@ -127,7 +179,7 @@ describe('Toolbar', () => {
       it(`removes empty ${listType} after second click`, async function() {
         await triggerToolbarIcon(this.wrapper, listType);
         await triggerToolbarIcon(this.wrapper, listType);
-        expect(this.widgetApi.field.getValue()).toEqual(document(EMPTY_PARAGRAPH, EMPTY_PARAGRAPH));
+        expect(this.field.getValue()).toEqual(document(EMPTY_PARAGRAPH, EMPTY_PARAGRAPH));
       });
 
       it('inserts text into list-item', async function() {
@@ -142,7 +194,7 @@ describe('Toolbar', () => {
           key: 'Enter',
           keyCode: toKeyCode('enter')
         });
-        expect(this.widgetApi.field.getValue()).toEqual(
+        expect(this.field.getValue()).toEqual(
           document(
             block(
               listType,
@@ -171,7 +223,7 @@ describe('Toolbar', () => {
           keyCode: toKeyCode('tab')
         });
 
-        expect(this.widgetApi.field.getValue()).toEqual(
+        expect(this.field.getValue()).toEqual(
           document(
             block(
               listType,
@@ -195,7 +247,7 @@ describe('Toolbar', () => {
         await embedEntryBlock(this.wrapper);
         editor.getDOMNode().click();
 
-        expect(this.widgetApi.field.getValue()).toEqual(
+        expect(this.field.getValue()).toEqual(
           document(
             block(listType, {}, block(BLOCKS.LIST_ITEM, {}, embeddedEntryBlock(), EMPTY_PARAGRAPH)),
             EMPTY_PARAGRAPH
@@ -210,7 +262,7 @@ describe('Toolbar', () => {
         await embedInlineEntry(this.wrapper);
         editor.getDOMNode().click();
 
-        expect(this.widgetApi.field.getValue()).toEqual(
+        expect(this.field.getValue()).toEqual(
           document(
             block(
               listType,
@@ -236,7 +288,7 @@ describe('Toolbar', () => {
 
         editor.simulate('keyDown', keyChord('enter'));
 
-        expect(this.widgetApi.field.getValue()).toEqual(
+        expect(this.field.getValue()).toEqual(
           document(
             block(
               listType,
@@ -260,7 +312,7 @@ describe('Toolbar', () => {
         await triggerToolbarIcon(this.wrapper, BLOCKS.QUOTE);
         editor.getDOMNode().click();
 
-        expect(this.widgetApi.field.getValue()).toEqual(
+        expect(this.field.getValue()).toEqual(
           document(
             block(
               listType,
@@ -279,7 +331,7 @@ describe('Toolbar', () => {
         await triggerToolbarIcon(this.wrapper, MARKS.CODE);
         editor.simulate('beforeinput', { data: 'golang' });
 
-        expect(this.widgetApi.field.getValue()).toEqual(
+        expect(this.field.getValue()).toEqual(
           document(
             block(
               listType,
@@ -300,7 +352,7 @@ describe('Toolbar', () => {
   describe('Quote', function() {
     it('renders the quote', async function() {
       await triggerToolbarIcon(this.wrapper, BLOCKS.QUOTE);
-      expect(this.widgetApi.field.getValue()).toEqual(
+      expect(this.field.getValue()).toEqual(
         document(block(BLOCKS.QUOTE, {}, EMPTY_PARAGRAPH), EMPTY_PARAGRAPH)
       );
     });
@@ -311,7 +363,7 @@ describe('Toolbar', () => {
       editor.simulate('keyDown', keyChord('1', { metaKey: true, shiftKey: true }));
       editor.simulate('beforeinput', { data: 'a' });
 
-      expect(this.widgetApi.field.getValue()).toEqual(
+      expect(this.field.getValue()).toEqual(
         document(block(BLOCKS.QUOTE, {}, block(BLOCKS.PARAGRAPH, {}, text('a'))), EMPTY_PARAGRAPH)
       );
     });
@@ -319,7 +371,7 @@ describe('Toolbar', () => {
     it(`removes quote after second click`, async function() {
       await triggerToolbarIcon(this.wrapper, BLOCKS.QUOTE);
       await triggerToolbarIcon(this.wrapper, BLOCKS.QUOTE);
-      expect(this.widgetApi.field.getValue()).toEqual(document(EMPTY_PARAGRAPH, EMPTY_PARAGRAPH));
+      expect(this.field.getValue()).toEqual(document(EMPTY_PARAGRAPH, EMPTY_PARAGRAPH));
     });
 
     it(`removes quote on Backspace`, async function() {
@@ -331,7 +383,7 @@ describe('Toolbar', () => {
         keyCode: toKeyCode('Backspace')
       });
 
-      expect(this.widgetApi.field.getValue()).toEqual(document(EMPTY_PARAGRAPH));
+      expect(this.field.getValue()).toEqual(document(EMPTY_PARAGRAPH));
     });
   });
 
@@ -344,13 +396,13 @@ describe('Toolbar', () => {
       { mark: MARKS.UNDERLINE, event: { key: 'u', modifier } }
     ];
 
-    marks.forEach(function({ mark, event: { key, modifier } }) {
+    marks.forEach(({ mark, event: { key, modifier } }) => {
       it(`renders the ${mark} mark`, async function() {
         const editor = getWithId(this.wrapper, 'editor');
 
         await triggerToolbarIcon(this.wrapper, mark);
         editor.simulate('beforeinput', { data: 'a' });
-        expect(this.widgetApi.field.getValue()).toEqual(
+        expect(this.field.getValue()).toEqual(
           document(block(BLOCKS.PARAGRAPH, {}, text('a', [{ type: mark }])))
         );
       });
@@ -361,7 +413,7 @@ describe('Toolbar', () => {
         editor.simulate('keyDown', keyChord(key, modifier));
         editor.simulate('beforeinput', { data: 'a' });
 
-        expect(this.widgetApi.field.getValue()).toEqual(
+        expect(this.field.getValue()).toEqual(
           document(block(BLOCKS.PARAGRAPH, {}, text('a', [{ type: mark }])))
         );
       });
@@ -371,7 +423,7 @@ describe('Toolbar', () => {
   describe('HR', function() {
     it('renders the HR', async function() {
       await triggerToolbarIcon(this.wrapper, BLOCKS.HR);
-      expect(this.widgetApi.field.getValue()).toEqual(
+      expect(this.field.getValue()).toEqual(
         document(block(BLOCKS.HR, {}, text()), EMPTY_PARAGRAPH)
       );
     });
@@ -404,7 +456,7 @@ describe('Toolbar', () => {
         await flushPromises();
         editor.simulate('beforeinput', { data: 'a' });
 
-        expect(this.widgetApi.field.getValue()).toEqual(document(block(heading, {}, text('a'))));
+        expect(this.field.getValue()).toEqual(document(block(heading, {}, text('a'))));
       });
 
       it(`renders the ${heading} with shortcut`, async function() {
@@ -413,7 +465,7 @@ describe('Toolbar', () => {
         editor.simulate('keyDown', keyChord(key, modifier));
         editor.simulate('beforeinput', { data: 'a' });
 
-        expect(this.widgetApi.field.getValue()).toEqual(document(block(heading, {}, text('a'))));
+        expect(this.field.getValue()).toEqual(document(block(heading, {}, text('a'))));
       });
     });
   });
