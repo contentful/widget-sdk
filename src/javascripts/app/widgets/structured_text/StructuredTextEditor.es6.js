@@ -44,10 +44,15 @@ import Hr, { HrPlugin } from './plugins/Hr/index.es6';
 
 import schemaJson from './constants/Schema.es6';
 import emptyDoc from './constants/EmptyDoc.es6';
+import { BLOCKS } from '@contentful/structured-text-types';
 
 const schema = Schema.fromJSON(schemaJson);
 
-const createValue = document => {
+const createValue = contentfulDocument => {
+  const document = toSlatejsDocument({
+    document: contentfulDocument,
+    schema: schemaJson
+  });
   const value = Value.fromJSON({
     document: document,
     schema: schema
@@ -56,7 +61,7 @@ const createValue = document => {
   return value;
 };
 
-const initialValue = createValue(toSlatejsDocument(emptyDoc));
+const initialValue = createValue(emptyDoc);
 
 export default class StructuredTextEditor extends React.Component {
   static propTypes = {
@@ -76,10 +81,7 @@ export default class StructuredTextEditor extends React.Component {
     this.state = {
       lastOperations: [],
       isEmbedDropdownOpen: false,
-      value:
-        value && value.nodeClass === 'document'
-          ? createValue(toSlatejsDocument(value))
-          : initialValue,
+      value: value && value.nodeClass === 'document' ? createValue(value) : initialValue,
       hasFocus: false
     };
     this.slatePlugins = buildPlugins(widgetAPI);
@@ -93,24 +95,24 @@ export default class StructuredTextEditor extends React.Component {
   };
 
   componentDidUpdate({ value: prevCfDoc }) {
-    const { value: cfDoc, isDisabled, onChange } = this.props;
-    const isIncomingChange = () => !deepEqual(cfDoc, prevCfDoc);
+    const { value: contentfulDoc, isDisabled, onChange } = this.props;
+    const isIncomingChange = () => !deepEqual(contentfulDoc, prevCfDoc);
     const contentIsUpdated = this.state.lastOperations.length > 0;
     if (!isDisabled && contentIsUpdated) {
       this.setState({ lastOperations: [] });
       const slateDoc = this.state.value.document.toJSON();
-      const newCfDoc = toContentfulDocument(slateDoc);
-      onChange(newCfDoc);
+
+      onChange(toContentfulDocument(slateDoc));
     } else if (isIncomingChange()) {
       this.setState({
-        value: createValue(toSlatejsDocument(cfDoc))
+        value: createValue(contentfulDoc)
       });
     }
   }
 
   toggleEmbedDropdown = () =>
     this.setState({
-      isEmbedDropdownOpen: !this.isEmbedDropdownOpen
+      isEmbedDropdownOpen: !this.state.isEmbedDropdownOpen
     });
 
   handleEmbedDropdownClose = () =>
@@ -199,7 +201,6 @@ export default class StructuredTextEditor extends React.Component {
           value={this.state.value}
           onChange={this.onChange}
           plugins={this.slatePlugins}
-          schema={schema}
           readOnly={this.props.isDisabled}
           className="structured-text__editor"
         />
@@ -248,8 +249,12 @@ function buildPlugins(widgetAPI) {
   const HyperlinkOptions = {
     createHyperlinkDialog: widgetAPI.dialogs.createHyperlink
   };
+
+  const EntryOptions = {
+    widgetAPI
+  };
+
   return [
-    EmbeddedEntryInlinePlugin(),
     BoldPlugin(),
     ItalicPlugin(),
     QuotePlugin(),
@@ -264,11 +269,13 @@ function buildPlugins(widgetAPI) {
     Heading6Plugin(),
     ParagraphPlugin(),
     HrPlugin(),
+    EmbeddedEntryInlinePlugin(EntryOptions),
     EntryLinkBlockPlugin(),
 
     EditList(),
     ListPlugin(),
-    TrailingBlock(),
+
+    TrailingBlock({ type: BLOCKS.PARAGRAPH }),
     NewLinePlugin()
   ];
 }

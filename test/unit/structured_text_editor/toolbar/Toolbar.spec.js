@@ -340,11 +340,7 @@ describe('Toolbar', () => {
               block(
                 BLOCKS.LIST_ITEM,
                 {},
-                block(
-                  BLOCKS.PARAGRAPH,
-                  {},
-                  text('golang', [{ type: MARKS.CODE, object: 'mark', data: {} }])
-                )
+                block(BLOCKS.PARAGRAPH, {}, text('golang', [{ type: MARKS.CODE }]))
               )
             ),
             block(BLOCKS.PARAGRAPH, {}, text())
@@ -423,9 +419,7 @@ describe('Toolbar', () => {
         await triggerToolbarIcon(this.wrapper, mark);
         editor.simulate('beforeinput', { data: 'a' });
         expect(this.widgetApi.field.getValue()).toEqual(
-          document(
-            block(BLOCKS.PARAGRAPH, {}, text('a', [{ type: mark, object: 'mark', data: {} }]))
-          )
+          document(block(BLOCKS.PARAGRAPH, {}, text('a', [{ type: mark }])))
         );
       });
 
@@ -436,9 +430,7 @@ describe('Toolbar', () => {
         editor.simulate('beforeinput', { data: 'a' });
 
         expect(this.widgetApi.field.getValue()).toEqual(
-          document(
-            block(BLOCKS.PARAGRAPH, {}, text('a', [{ type: mark, object: 'mark', data: {} }]))
-          )
+          document(block(BLOCKS.PARAGRAPH, {}, text('a', [{ type: mark }])))
         );
       });
     });

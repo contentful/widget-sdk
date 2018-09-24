@@ -43,6 +43,7 @@ export default class EntryLinkToolbarIcon extends Component {
       };
 
       const { change } = this.props;
+
       let newChange = change;
       if (change.value.blocks.size === 0 || haveTextInSomeBlocks(change)) {
         newChange = change.insertBlock(linkedEntryBlock);

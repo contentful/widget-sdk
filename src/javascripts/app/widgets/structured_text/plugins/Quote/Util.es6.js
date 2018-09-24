@@ -1,6 +1,6 @@
 import { BLOCKS } from '@contentful/structured-text-types';
 
-const getCommonAncestor = change => {
+const getParent = change => {
   const range = change.value.selection;
 
   if (!range.startKey) {
@@ -8,13 +8,12 @@ const getCommonAncestor = change => {
   }
 
   const startBlock = change.value.document.getClosestBlock(range.startKey);
-  const endBlock = change.value.document.getClosestBlock(range.endKey);
 
-  return change.value.document.getCommonAncestor(startBlock.key, endBlock.key);
+  return change.value.document.getParent(startBlock.key);
 };
 
 export const isSelectionInQuote = change => {
-  const ancestor = getCommonAncestor(change);
+  const ancestor = getParent(change);
 
   if (!ancestor) {
     return false;

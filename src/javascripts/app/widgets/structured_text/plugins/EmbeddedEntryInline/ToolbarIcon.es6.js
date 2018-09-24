@@ -4,21 +4,7 @@ import { DropdownListItem } from '@contentful/ui-component-library';
 import { INLINES } from '@contentful/structured-text-types';
 
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
-
-export const createInlineNode = id => ({
-  type: INLINES.EMBEDDED_ENTRY,
-  object: 'inline',
-  isVoid: true,
-  data: {
-    target: {
-      sys: {
-        id,
-        type: 'Link',
-        linkType: 'Entry'
-      }
-    }
-  }
-});
+import { selectEntryAndApply } from './Utils.es6';
 
 export default class EntryLinkToolbarIcon extends Component {
   static propTypes = {
@@ -28,24 +14,8 @@ export default class EntryLinkToolbarIcon extends Component {
   };
   handleMouseDown = async (event, widgetAPI) => {
     event.preventDefault();
-    try {
-      const [entry] = await widgetAPI.dialogs.selectSingleEntry();
-      if (!entry) {
-        return;
-      }
-
-      const node = createInlineNode(entry.sys.id);
-
-      const { change } = this.props;
-      this.props.onToggle(
-        change
-          .insertInline(node)
-          .moveToStartOfNextText()
-          .focus()
-      );
-    } catch (error) {
-      // the user closes modal without selecting an entry
-    }
+    const newChange = await selectEntryAndApply(widgetAPI, this.props.change);
+    this.props.onToggle(newChange);
   };
   render() {
     return (

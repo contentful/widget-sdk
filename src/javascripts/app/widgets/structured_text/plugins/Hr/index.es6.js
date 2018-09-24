@@ -24,14 +24,19 @@ export default blockDecorator({
   type: BLOCKS.HR,
   title: 'HR',
   icon: 'HorizontalRule',
-  applyChange: (change, type) => {
-    let newChange;
+  applyChange: change => {
+    const hr = {
+      type: BLOCKS.HR,
+      object: 'block',
+      isVoid: true
+    };
+
     if (change.value.blocks.size === 0 || haveTextInSomeBlocks(change)) {
-      newChange = change.insertBlock(type);
+      change.insertBlock(hr);
     } else {
-      newChange = change.setBlocks(type);
+      change.setBlocks(hr);
     }
 
-    return newChange.insertBlock(BLOCKS.PARAGRAPH).focus();
+    return change.insertBlock(BLOCKS.PARAGRAPH).focus();
   }
 })(Hr);

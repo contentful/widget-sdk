@@ -48,6 +48,8 @@ class EmbeddedEntryInline extends React.Component {
   renderNode(fetchEntryResult) {
     return (
       <InlineReferenceCard
+        contentEditable={false}
+        selected={this.props.isSelected}
         title={`${fetchEntryResult.contentTypeName}: ${fetchEntryResult.entryTitle}`}
         status={fetchEntryResult.entryStatus}
         extraClassNames="structured-text__inline-reference-card"
