@@ -13,7 +13,7 @@ import {
 } from '@contentful/ui-component-library';
 import Workbench from 'ui/Components/Workbench/JSX.es6';
 import createResourceService from 'services/ResourceService.es6';
-import { href } from 'states/Navigator.es6';
+import { href, go } from 'states/Navigator.es6';
 import {
   getAllUsers,
   getAllMemberships
@@ -60,6 +60,17 @@ export default class UsersList extends React.Component {
     });
   }
 
+  // TODO: temporarily using the membership id instead of the user id
+  // as a route param.
+  // This should be changed after `include` is implemented in the backend
+  // so that we can get the linked membership from the user endpoint response
+  goToUser(user) {
+    go({
+      path: ['account', 'organizations', 'users', 'detail'],
+      params: { userId: user.sys.id }
+    });
+  }
+
   render() {
     const { usersList, membershipsResource } = this.state;
 
@@ -90,7 +101,7 @@ export default class UsersList extends React.Component {
               </TableHead>
               <TableBody>
                 {usersList.map(membership => (
-                  <TableRow key={membership.sys.id}>
+                  <TableRow key={membership.sys.id} onClick={() => this.goToUser(membership)}>
                     <TableCell>
                       {membership.user.firstName && (
                         <img
