@@ -20,6 +20,10 @@ if [[ -z "${NPM_TOKEN}" ]]; then
   exit 2
 fi
 
+if [[ -z "${NODE_ENV}" ]]; then
+  NODE_ENV=production
+fi
+
 if [[ ! -z "${CI}" ]]; then
   SSH_KEY=$(cat ~/.ssh/id_rsa)
 fi
@@ -30,4 +34,5 @@ docker build \
   --tag contentful/user-interface-ci \
   --build-arg "NPM_TOKEN=${NPM_TOKEN}" \
   --build-arg "SSH_KEY=${SSH_KEY}" \
+  --build-arg "NODE_ENV=${NODE_ENV}" \
   .

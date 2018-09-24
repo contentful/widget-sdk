@@ -35,15 +35,16 @@ RUN \
 COPY package.json package-lock.json ./
 
 ARG SSH_KEY
+ARG NODE_ENV
 RUN \
   ssh-keyscan github.com > ~/.ssh/known_hosts && \
   echo "$SSH_KEY" > ~/.ssh/id_rsa && \
   chmod 0600 ~/.ssh/id_rsa && \
-  npm install --no-optional --unsafe-perm && \
+  NODE_ENV=${NODE_ENV} npm install --no-optional --unsafe-perm && \
   rm -f ~/.ssh/id_rsa
 
 # Copy source files and build app
 COPY ./ ./
-RUN NODE_ENV=test node --max_old_space_size=8096 ./node_modules/.bin/gulp build
+RUN NODE_ENV=${NODE_ENV} node --max_old_space_size=8096 ./node_modules/.bin/gulp build
 
 ENTRYPOINT ["bin/docker-entry"]
