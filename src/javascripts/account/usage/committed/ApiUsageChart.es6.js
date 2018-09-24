@@ -2,15 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { merge } from 'lodash';
-import { settings } from 'environment';
+import { renderToStaticMarkup as jsxToHtmlString } from 'react-dom/server';
 
 import EChart from './EChart.es6';
 import { organizationResourceUsagePropType, periodPropType } from './propTypes.es6';
 import periodToDates from './periodToDates.es6';
 import EmptyChartPlaceholder from './EmptyChartPlaceholder.es6';
 import baseFormatting, { seriesBaseFormatting } from './chartsBaseFormatting.es6';
+import Circle from 'svg/chart-symbol-circle.es6';
+import Diamond from 'svg/chart-symbol-diamond.es6';
+import Triangle from 'svg/chart-symbol-triangle.es6';
 
-const symbols = ['circle', 'diamond', 'triangle'];
+const seriesLineSymbol = ['circle', 'diamond', 'triangle'];
+const tooltipSymbol = [Circle, Diamond, Triangle];
 
 export default class ApiUsageChart extends React.Component {
   static propTypes = {
@@ -31,29 +35,24 @@ export default class ApiUsageChart extends React.Component {
       tooltip: {
         padding: 0,
         formatter: series =>
-          `
-            <div class="usage-page__api-chart-tooltip">
-              <div class="date">${series[0].name}</div>
-              ${series
-                .map(
-                  ({ value }, index) => `
-                  <div class="value">
-                    <img class="icon" src="${`${settings.assetUrl}/app/images/chart-symbol-${
-                      symbols[index]
-                    }.svg`}" />
-                    <span> ${value.toLocaleString('en-US')}</span>
-                  </div>
-                `
-                )
-                .join('')}
+          // This should not normally be used on the client, but echarts needs an html string here
+          jsxToHtmlString(
+            <div className="usage-page__api-chart-tooltip">
+              <div className="date">{series[0].name}</div>
+              {series.map(({ value }, index) => (
+                <div className="value" key={index}>
+                  <span className="icon">{React.createElement(tooltipSymbol[index])}</span>
+                  <span>{value.toLocaleString('en-US')}</span>
+                </div>
+              ))}
             </div>
-          `
+          )
       },
       series: usage.map(({ usage, sys: { space: { sys: { id: spaceId } } } }, index) =>
         merge({}, seriesBaseFormatting, {
           name: spaceNames[spaceId] || 'deleted space',
           data: usage,
-          symbol: symbols[index],
+          symbol: seriesLineSymbol[index],
           symbolSize: 8,
           itemStyle: {
             color: colors[index]
