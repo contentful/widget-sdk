@@ -226,14 +226,22 @@ export default function create($scope, widgetApi) {
   $scope.addExisting = event => {
     event.preventDefault && event.preventDefault();
     const currentSize = $scope.entityModels.length;
-    entitySelector.openFromField(field, currentSize).then(entities => {
-      if ($scope.type !== 'Asset') {
-        entities.map(entity =>
-          track('reference_editor_action:link', { ctId: get(entity, 'sys.contentType.sys.id') })
-        );
+    entitySelector.openFromField(field, currentSize).then(
+      entities => {
+        if ($scope.type !== 'Asset') {
+          entities.map(entity =>
+            track('reference_editor_action:link', { ctId: get(entity, 'sys.contentType.sys.id') })
+          );
+        }
+        state.addEntities(entities);
+      },
+      e => {
+        if (e) {
+          return Promise.reject(e);
+        }
+        // User cancelled.
       }
-      state.addEntities(entities);
-    });
+    );
   };
 
   // Property that holds the items that are rendered with the
