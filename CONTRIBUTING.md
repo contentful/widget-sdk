@@ -21,8 +21,6 @@ If you have a small improvement suggestion, add it to the "Features Pool" in Tar
 ## <a name="switcher"></a> Version switcher
 You can run the code for a specific commit in the user interface by navigating to `https://app.quirely.com?ui_version={commithash}` in your browser.
 
-You can also view the styleguide for a specific commit by navigating to `https://static.quirely.com/styleguide/{branch}/index.html`.
-
 ## <a name="guidelines"></a> Code submission guidelines
 - Make your changes in a new git branch based off `master` or one of the release branches. We generally use the prefixes `fix`,`feature`, `refactor` or `release` for our branches.
 - More about our [git workflow](https://contentful.atlassian.net/wiki/display/ENG/Git+flow+and+release+flow+-+proposal) on the wiki.

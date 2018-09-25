@@ -65,18 +65,6 @@ If you run into them you’ll need to run the application in the Lab.
 
 ### Running a full Contentful Instance
 
-See the [Lab Readme][].
+See the [Lab Readme][https://github.com/contentful/lab/blob/master/README.md].
 
 [Lab]: https://github.com/contentful/lab/
-
-## Styleguide
-
-The styleguide is generated automatically when running `gulp serve` and
-is served by gulp at `/styleguide`.
-
-Styleguide is published on both preview and staging.
-
-If you wish to generate it manually, you can run `gulp
-generate-styleguide` and then check `public/styleguide`
-
-Don't forget to provide an appropriate commit message outlining the changes.
