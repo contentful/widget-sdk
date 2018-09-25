@@ -41,7 +41,7 @@ if (singleRun || prod) {
 if (prod) {
   // we need to extend config, because we run it in CI environment
   // in order to make it work, you need to build the application for production
-  // $ NODE_ENV=production gulp build/with-styleguide
+  // $ NODE_ENV=production gulp build
   // you can run it locally as well, just execute the command above first
   config.set({
     files: ['build/app/**/*.js', 'build/app/**/*.css'].concat(testFiles),
