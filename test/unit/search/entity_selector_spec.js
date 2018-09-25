@@ -122,41 +122,6 @@ describe('entitySelector', () => {
     expect(this.getLabels().title).toBe('Insert existing assets');
   });
 
-  describe('single CT prefetching', () => {
-    it('fetches CT if a field links to a single CT', async function() {
-      const spaceContext = this.$inject('mocks/spaceContext').init();
-
-      const ct = {};
-      const fetchStub = spaceContext.publishedCTs.fetch.resolves(ct);
-
-      let validation = { linkContentType: ['ctid1'] };
-      await this.open({ linkType: 'Entry', itemValidations: [validation] });
-
-      sinon.assert.calledOnce(fetchStub.withArgs('ctid1'));
-      expect(this.getScope().singleContentType).toBe(ct);
-
-      validation = { linkContentType: 'ctid2' };
-      await this.open({ linkType: 'Entry', itemValidations: [validation] });
-      sinon.assert.calledOnce(fetchStub.withArgs('ctid2'));
-    });
-
-    it('uses asset pseudo-CT for all assets', async function() {
-      await this.open({ linkType: 'Asset' });
-      expect(this.getScope().singleContentType).toBe(this.$inject('assetContentType'));
-    });
-
-    it('sets single CT to null if there is no such constraint', async function() {
-      await this.open({ linkType: 'Entry' });
-      expect(this.getScope().singleContentType).toBe(null);
-    });
-
-    it('sets single CT to null if there is constraint > 1', async function() {
-      const validation = { linkContentType: ['ctid1', 'ctid2'] };
-      await this.open({ linkType: 'Entry', itemValidations: [validation] });
-      expect(this.getScope().singleContentType).toBe(null);
-    });
-  });
-
   describe('opening from an extension', () => {
     beforeEach(function() {
       this.$inject('TheLocaleStore').getDefaultLocale = _.constant({ code: 'de-DE' });

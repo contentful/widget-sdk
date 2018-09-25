@@ -8,29 +8,22 @@ describe('EntitySelectorController', () => {
     const $controller = this.$inject('$controller');
     const $timeout = this.$inject('$timeout');
 
-    const spaceContext = this.$inject('mocks/spaceContext').init();
-    const scope = $rootScope.$new();
-    scope.spaceContext = spaceContext;
-
-    const ct = {
-      getId: _.constant(1),
-      data: { fields: [{ id: 'fieldId' }], sys: { id: 1 } }
-    };
-    spaceContext.publishedCTs.fetch.resolves(ct);
-    spaceContext.publishedCTs.getAllBare.returns([]);
-
-    spaceContext.space.getEntries.defers();
+    this.spaceContext = this.$inject('mocks/spaceContext').init();
+    this.spaceContext.publishedCTs.getAllBare.returns([]);
+    this.spaceContext.space.getEntries.defers();
 
     this.entitySelector = this.$inject('entitySelector');
 
     this.fetch = sinon.stub().resolves({ items: [] });
 
-    this.createController = function(config = {}, labels = {}, singleContentType) {
+    const scope = $rootScope.$new();
+    scope.spaceContext = this.spaceContext;
+
+    this.createController = function(config = {}, labels = {}) {
       config = { entityType: 'Entry', fetch: this.fetch, ...config };
       this.scope = _.extend(scope, {
         config,
-        labels,
-        singleContentType
+        labels
       });
       this.ctrl = $controller('EntitySelectorController', { $scope: this.scope });
       this.$apply();
@@ -192,30 +185,41 @@ describe('EntitySelectorController', () => {
 
   describe('single content type link', () => {
     beforeEach(function() {
-      this.ct = { getId: _.constant('ctid'), data: {} };
-      this.withData = data => {
-        this.createController({ entityType: 'Entry' }, {}, _.extend(this.ct, { data: data }));
+      const ctTemplate = { sys: { id: 'ctid' } };
+      this.withCtData = data => {
+        const ct = { ...ctTemplate, ...data };
+        this.spaceContext.publishedCTs.get.withArgs(ct.sys.id).returns({ data: ct });
+        this.createController(
+          {
+            linkedContentTypeIds: [ct.sys.id]
+          },
+          {}
+        );
       };
     });
 
     it('sets content type on query', function() {
-      this.createController({}, {}, this.ct);
+      this.withCtData({});
       expect(this.fetch.firstCall.args[0].contentTypeId).toBe('ctid');
     });
 
     it('uses Symbol display field for ordering', function() {
-      this.withData({ displayField: 'x', fields: [{ id: 'x', type: 'Symbol' }] });
-      this.withData({});
-      this.withData({ displayField: 'y', fields: [] });
-      this.withData({ displayField: 'x', fields: [{ id: 'x', type: 'Text' }] });
+      this.withCtData({ displayField: 'x', fields: [{ id: 'x', type: 'Symbol' }] });
 
-      expect(this.fetch.callCount).toBe(4);
-      expect(this.fetch.firstCall.args[0].order).toEqual({
+      sinon.assert.calledOnce(this.fetch);
+      expect(this.fetch.args[0][0].order).toEqual({
         fieldId: 'x',
         direction: 'ascending'
       });
+    });
 
-      this.fetch.args.slice(1).forEach(callArgs => {
+    it('does not use other display fields for ordering', function() {
+      this.withCtData({});
+      this.withCtData({ displayField: 'y', fields: [] });
+      this.withCtData({ displayField: 'x', fields: [{ id: 'x', type: 'Text' }] });
+
+      sinon.assert.calledThrice(this.fetch);
+      this.fetch.args.forEach(callArgs => {
         expect(callArgs[0].order).toBeUndefined();
       });
     });

@@ -1,6 +1,5 @@
 import { clone, find, isObject, isString, pick } from 'lodash';
 import ListQuery from 'ListQuery';
-import assetContentType from 'assetContentType';
 import mimetype from 'mimetype';
 import TheLocaleStore from 'TheLocaleStore';
 import spaceContext from 'spaceContext';
@@ -77,7 +76,6 @@ export function newConfigFromField(field = {}, currentSize = 0) {
   const max = (size.max || +Infinity) - currentSize;
 
   const config = {
-    scope: {},
     entityType,
     locale: field.locale,
     multiple: max !== min && field.type === 'Array',
@@ -91,17 +89,12 @@ export function newConfigFromField(field = {}, currentSize = 0) {
     // linkedImageDimensions: findValidation(field, 'assetImageDimensions', {})
   };
   config.fetch = makeFetch(config);
-
-  return getSingleContentType(config).then(singleContentType => {
-    config.scope.singleContentType = singleContentType;
-    return config;
-  });
+  return Promise.resolve(config); // TODO: No need for promise anymore.
 }
 
 export function newConfigFromStructuredTextField(field, nodeType) {
   const entityType = getEntityTypeFromStructuredTextNode(nodeType);
   const config = {
-    scope: {}, // TODO: Do we really need this?
     entityType,
     local: field.locale,
     multiple: false,
@@ -112,7 +105,7 @@ export function newConfigFromStructuredTextField(field, nodeType) {
     linkedMimetypeGroups: []
   };
   config.fetch = makeFetch(config);
-  return config;
+  return Promise.resolve(config);
 }
 
 function getEntityTypeFromStructuredTextNode(nodeType) {
@@ -135,17 +128,12 @@ function getEntityTypeFromStructuredTextNode(nodeType) {
 export function newConfigFromExtension(options = {}) {
   const config = {
     ...pick(options, ['multiple', 'min', 'max', 'entityType']),
-    scope: {},
     locale: options.locale || TheLocaleStore.getDefaultLocale().code,
     linkedContentTypeIds: options.contentTypes || [],
     linkedMimetypeGroups: []
   };
   config.fetch = makeFetch(config);
-
-  return getSingleContentType(config).then(singleContentType => {
-    config.scope.singleContentType = singleContentType;
-    return config;
-  });
+  return Promise.resolve(config);
 }
 
 /**
@@ -181,18 +169,6 @@ function findValidation({ validations = [], itemValidations = [] }, property, de
   const allValidations = [...validations, ...itemValidations];
   const found = find(allValidations, v => isObject(v[property]) || isString(v[property]));
   return (found && found[property]) || defaultValue;
-}
-
-function getSingleContentType(config) {
-  if (config.entityType === 'Asset') {
-    return Promise.resolve(assetContentType);
-  }
-  const linked = config.linkedContentTypeIds;
-  if (config.entityType === 'Entry' && linked.length === 1) {
-    return spaceContext.publishedCTs.fetch(linked[0]);
-  }
-
-  return Promise.resolve(null);
 }
 
 function prepareQueryExtension(config) {
