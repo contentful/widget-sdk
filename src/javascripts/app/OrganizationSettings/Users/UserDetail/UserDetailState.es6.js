@@ -21,11 +21,13 @@ export default {
   },
   controller: [
     '$scope',
+    '$stateParams',
     'membership',
-    ($scope, membership) => {
+    ($scope, $stateParams, membership) => {
       $scope.context.ready = true;
       $scope.properties = {
-        membership
+        membership,
+        orgId: $stateParams.orgId
       };
     }
   ],
