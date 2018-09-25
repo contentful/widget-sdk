@@ -27,7 +27,7 @@ before_install:
 
 install:
   # Build the application with test dependencies
-  - NODE_ENV=test bin/docker-build-ci
+  - bin/docker-build-ci
 
 script:
   - bin/docker-run-ci test
@@ -53,9 +53,6 @@ after_success:
   # example params received by jobs for PR#2444
   # travis-ci/pr -> master 178f0f7862a0f9b743e0af38479657fc3ef29aab 2444
   # travis-ci/push -> refactor/task-runner 3de3452722bcd82ca484ecc16db550f175f2937e false
-
-  # Rebuild the application with only production dependencies
-  - NODE_ENV=production bin/docker-build-ci
 
   # Copy the files to the output directory
   - bin/docker-run-ci travis --branch "${TRAVIS_BRANCH}" --version "${TRAVIS_COMMIT}" --pr "${TRAVIS_PULL_REQUEST}"

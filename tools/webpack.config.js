@@ -31,7 +31,6 @@ const WebpackRequireFrom = require('webpack-require-from');
 module.exports = () => {
   const currentEnv = process.env.NODE_ENV;
   const isDev = currentEnv === 'dev';
-  const isTest = currentEnv === 'test';
   const isProd = currentEnv === 'production';
 
   return {
@@ -56,9 +55,12 @@ module.exports = () => {
           ]
         })
       ),
-      'libs.js': ['./src/javascripts/libs/env-prod.js'].concat(
-        isTest || isDev ? ['./src/javascripts/libs/env-test.js'] : []
-      ),
+
+      // The main libraries file, used for the production build (see /tools/tasks/build/js.js)
+      'libs.js': ['./src/javascripts/libs/env-prod.js'],
+
+      // The libraries file used for our Karma tests, see karma.conf.js
+      'libs-test.js': ['./src/javascripts/libs/env-prod.js', './src/javascripts/libs/env-test.js'],
       // some of the vendor files provide some sort of shims
       // the reason – in some files we rely on globals, which is not really
       // how webpack was designed :)
