@@ -59,7 +59,12 @@ module.exports = () => {
       // The main libraries file, used for the production build (see /tools/tasks/build/js.js)
       'libs.js': ['./src/javascripts/libs/env-prod.js'],
 
-      // The libraries file used for our Karma tests, see karma.conf.js
+      // The libraries file used for our Karma tests
+      //
+      // See:
+      // - karma.conf.js
+      // - tools/tasks/build/js.js
+      // - run-tests.js
       'libs-test.js': ['./src/javascripts/libs/env-prod.js', './src/javascripts/libs/env-test.js'],
       // some of the vendor files provide some sort of shims
       // the reason – in some files we rely on globals, which is not really
