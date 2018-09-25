@@ -126,6 +126,20 @@ angular.module('contentful').directive('cfMarkdownEditor', [
 
           scope.isReady = true;
 
+          editor.events.onPaste(editor => {
+            const characterCountSelection = getSelection().toString().length;
+            const characterCountBefore = editor.getValue().length;
+            setTimeout(() => {
+              const characterCountAfter = editor.getValue().length;
+              trackMarkdownEditorAction('paste', {
+                characterCountAfter,
+                characterCountBefore,
+                characterCountSelection,
+                fullscreen: scope.zen
+              });
+            });
+          });
+
           if (!isReinit) {
             setupDestructorJobs();
           }

@@ -23,6 +23,9 @@ export function create(textarea, options) {
       },
       onChange: function(fn) {
         editor.attachEvent('change', wrapChange(fn));
+      },
+      onPaste: function(fn) {
+        editor.attachEvent('paste', fn);
       }
     },
     tie: {
