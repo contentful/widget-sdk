@@ -1,17 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { merge } from 'lodash';
 import { renderToStaticMarkup as jsxToHtmlString } from 'react-dom/server';
+import { LineChart } from '@contentful/ui-component-library';
 
-import EChart from './EChart.es6';
-import { organizationResourceUsagePropType, periodPropType } from './propTypes.es6';
-import periodToDates from './periodToDates.es6';
-import EmptyChartPlaceholder from './EmptyChartPlaceholder.es6';
-import baseFormatting, { seriesBaseFormatting } from './chartsBaseFormatting.es6';
 import Circle from 'svg/chart-symbol-circle.es6';
 import Diamond from 'svg/chart-symbol-diamond.es6';
 import Triangle from 'svg/chart-symbol-triangle.es6';
+import { shorten } from 'utils/NumberUtils.es6';
+
+import { organizationResourceUsagePropType, periodPropType } from './propTypes.es6';
+import periodToDates from './periodToDates.es6';
+import EmptyChartPlaceholder from './EmptyChartPlaceholder.es6';
 
 const seriesLineSymbol = ['circle', 'diamond', 'triangle'];
 const tooltipSymbol = [Circle, Diamond, Triangle];
@@ -28,14 +28,14 @@ export default class ApiUsageChart extends React.Component {
   render() {
     const { usage, colors, period, spaceNames, isLoading } = this.props;
     const { startDate, endDate } = period;
-    const options = merge({}, baseFormatting, {
+    const options = {
       xAxis: {
         data: periodToDates(period)
       },
       tooltip: {
         padding: 0,
         formatter: series =>
-          // This should not normally be used on the client, but echarts needs an html string here
+          // This should not normally be used on the client, but LineCharts needs an html string here
           jsxToHtmlString(
             <div className="usage-page__api-chart-tooltip">
               <div className="date">{series[0].name}</div>
@@ -48,25 +48,27 @@ export default class ApiUsageChart extends React.Component {
             </div>
           )
       },
-      series: usage.map(({ usage, sys: { space: { sys: { id: spaceId } } } }, index) =>
-        merge({}, seriesBaseFormatting, {
-          name: spaceNames[spaceId] || 'deleted space',
-          data: usage,
-          symbol: seriesLineSymbol[index],
-          symbolSize: 8,
-          itemStyle: {
-            color: colors[index]
-          }
-        })
-      )
-    });
+      yAxis: {
+        axisLabel: {
+          formatter: shorten
+        }
+      },
+      series: usage.map(({ usage, sys: { space: { sys: { id: spaceId } } } }, index) => ({
+        name: spaceNames[spaceId] || 'deleted space',
+        data: usage,
+        symbol: seriesLineSymbol[index],
+        symbolSize: 8,
+        itemStyle: {
+          color: colors[index]
+        }
+      }))
+    };
     return (
-      <EChart
+      <LineChart
         options={options}
-        isEmpty={endDate === null && moment().diff(startDate, 'days') < 3}
+        empty={endDate === null && moment().diff(startDate, 'days') < 3}
         EmptyPlaceholder={EmptyChartPlaceholder}
-        isLoading={isLoading}
-        additionalClassnames="usage-page__api-chart"
+        loading={isLoading}
       />
     );
   }
