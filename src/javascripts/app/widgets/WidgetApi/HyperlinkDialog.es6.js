@@ -56,7 +56,8 @@ export default class HyperlinkDialog extends React.Component {
       uri: 'https://'
     },
     hideText: false,
-    onRender: noop
+    onRender: noop,
+    entitySelectorConfigs: {}
   };
 
   constructor(props) {
@@ -174,6 +175,7 @@ export default class HyperlinkDialog extends React.Component {
             onChange={e => this.setState({ type: e.target.value })}
             name="link-type"
             id="link-type"
+            selectProps={{ testId: 'link-type-select' }}
             style={style}>
             <Option value={LINK_TYPES.URI}>URL</Option>
             {entitySelectorConfigs.Entry && <Option value={LINK_TYPES.ENTRY}>Entry</Option>}
