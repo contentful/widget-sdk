@@ -6,27 +6,35 @@ export default {
   title: 'Organization users',
   url: '/:userId',
   resolve: {
-    membership: [
+    props: [
       'data/EndpointFactory.es6',
       'access_control/OrganizationMembershipRepository.es6',
       '$stateParams',
       async (endpointFactory, repo, $stateParams) => {
         const endpoint = endpointFactory.createOrganizationEndpoint($stateParams.orgId);
         const membership = await repo.getMembership(endpoint, $stateParams.userId);
-        const user = await repo.getUser(endpoint, membership.sys.user.sys.id);
-        // TODO: fetch only the USER as soon as we have the membership as a link
-        return { ...membership, sys: { ...membership.sys, user } };
+        const [user, spaceMemberships] = await Promise.all([
+          repo.getUser(endpoint, membership.sys.user.sys.id),
+          repo.getSpaceMemberships(endpoint)
+        ]);
+
+        return {
+          membership: { ...membership, sys: { ...membership.sys, user } },
+          spaceMemberships: spaceMemberships.items
+        };
       }
     ]
   },
   controller: [
     '$scope',
     '$stateParams',
-    'membership',
-    ($scope, $stateParams, membership) => {
+    'props',
+    ($scope, $stateParams, props) => {
+      const { membership, spaceMemberships } = props;
       $scope.context.ready = true;
       $scope.properties = {
         membership,
+        spaceMemberships,
         orgId: $stateParams.orgId
       };
     }

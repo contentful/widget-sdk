@@ -11,10 +11,12 @@ import {
   DropdownListItem
 } from '@contentful/ui-component-library';
 
+import { SpaceMembership, OrganizationMembership } from '../PropTypes.es6';
 import { orgRoles } from './OrgRoles.es6';
 import { removeMembership } from 'access_control/OrganizationMembershipRepository.es6';
 
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
+import UserSpaceMemberships from './UserSpaceMemberships.es6';
 
 const ServicesConsumer = require('../../../../reactServiceContext').default;
 
@@ -23,20 +25,8 @@ class UserDetail extends React.Component {
     $services: PropTypes.shape({
       notification: PropTypes.object
     }),
-    membership: PropTypes.shape({
-      role: PropTypes.oneOf(orgRoles.map(role => role.value)),
-      sys: PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        user: PropTypes.shape({
-          firstName: PropTypes.string.isRequired,
-          lastName: PropTypes.string.isRequired,
-          avatarUrl: PropTypes.string.isRequired,
-          sys: PropTypes.shape({
-            id: PropTypes.string.isRequired
-          })
-        })
-      })
-    }).isRequired,
+    membership: OrganizationMembership.isRequired,
+    spaceMemberships: PropTypes.arrayOf(SpaceMembership).isRequired,
     orgId: PropTypes.string.isRequired
   };
 
@@ -81,7 +71,7 @@ class UserDetail extends React.Component {
   }
 
   render() {
-    const { membership } = this.props;
+    const { membership, spaceMemberships } = this.props;
     const { user } = membership.sys;
 
     return (
@@ -119,6 +109,8 @@ class UserDetail extends React.Component {
                 </DropdownList>
               </Dropdown>
             </Card>
+
+            <UserSpaceMemberships memberships={spaceMemberships} />
           </div>
         </Workbench.Content>
       </Workbench>
