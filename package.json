@@ -41,7 +41,6 @@
     "js-cookie": "^2.0.2",
     "json-stringify-safe": "~5.0.0",
     "kefir": "^3.7.1",
-    "kss": "^2.4.0",
     "ldclient-js": "^1.1.8",
     "lodash": "^4.14.2",
     "marked-ast": "^0.3.0",
