@@ -1,14 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { last, merge } from 'lodash';
+import { last } from 'lodash';
 import moment from 'moment';
 
-import EChart from './EChart.es6';
+import { LineChart } from '@contentful/ui-component-library';
 import { shorten } from 'utils/NumberUtils.es6';
+
 import { periodPropType } from './propTypes.es6';
 import periodToDates from './periodToDates.es6';
 import EmptyChartPlaceholder from './EmptyChartPlaceholder.es6';
-import baseFormatting, { seriesBaseFormatting } from './chartsBaseFormatting.es6';
 
 const accumulateUsage = usage =>
   usage.reduce((acc, value) => acc.concat(value + (last(acc) || 0)), []);
@@ -29,13 +29,16 @@ export default class OrganisationUsageChart extends React.Component {
     const { startDate, endDate } = period;
     const accumulatedUsage = accumulateUsage(usage);
     const maxValue = last(accumulatedUsage);
-    const options = merge({}, baseFormatting, {
+    const options = {
       xAxis: {
         data: periodToDates(period)
       },
       yAxis: {
         min: 0,
-        max: Math.max(maxValue, includedLimit)
+        max: Math.max(maxValue, includedLimit),
+        axisLabel: {
+          formatter: shorten
+        }
       },
       tooltip: {
         padding: 0,
@@ -68,7 +71,7 @@ export default class OrganisationUsageChart extends React.Component {
           }
         ]
       },
-      series: merge({}, seriesBaseFormatting, {
+      series: {
         name: 'API requests',
         data: accumulatedUsage,
         symbol: 'circle',
@@ -81,15 +84,15 @@ export default class OrganisationUsageChart extends React.Component {
           },
           symbol: []
         }
-      })
-    });
+      }
+    };
 
     return (
-      <EChart
+      <LineChart
         options={options}
-        isEmpty={endDate === null && moment().diff(startDate, 'days') < 3}
+        empty={endDate === null && moment().diff(startDate, 'days') < 3}
         EmptyPlaceholder={EmptyChartPlaceholder}
-        isLoading={isLoading}
+        loading={isLoading}
       />
     );
   }
