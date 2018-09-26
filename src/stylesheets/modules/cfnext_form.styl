@@ -1,40 +1,3 @@
-/**
- * CFNext Forms
- *
- * Build simple forms with labels, inputs, errors and option groups.
- *
- * Styleguide 30
- */
-
-/**
- * Inputs and labels
- *
- * Markup:
- * div.cfnext-form__field
- *   label Name
- *   input.cfnext-form__input(type="text" value="Name")
- * div.cfnext-form__field
- *   label Longer Name
- *   input.cfnext-form__input(type="text" size="50" value="Longer Name")
- * div.cfnext-form__field
- *   label Full Name
- *   input.cfnext-form__input--full-size(type="text" value="Full Name")
- * div.cfnext-form__field
- *   label 2.5
- *   input.cfnext-form__input--full-size(type="number" value="2.5" step="any" min="1" max="4")
- * div.cfnext-form__field
- *   label Bio
- *   textarea.cfnext-form__input
- * div.cfnext-form__field
- *   label Disabled input
- *   input.cfnext-form__input(disabled type="text" value="This field is disabled")
- * div.cfnext-form__field
- *   label Disabled textarea
- *   textarea.cfnext-form__input(disabled)
- *
- * Styleguide 30.1
- */
-
 .cfnext-form__field
   margin-bottom: $rhythm(1.5)
   > label
@@ -83,30 +46,6 @@ $cfnext-form-input()
   width: 100%;
   resize: vertical
 
-
-/**
- * Hints
- *
- * Markup:
- * div.cfnext-form__field
- *   label First Name
- *   input.cfnext-form__input(type="text")
- *   p.cfnext-form__hint
- *     | You have to provide your name here
- * div.cfnext-form__field
- *   label Last Name
- *   input.cfnext-form__input(type="text")
- *   p.cfnext-form__hint
- *     | You have to provide your last name here
- * div.cfnext-form__field
- *   label
- *     | Last Name
- *     span.cfnext-form__label-hint
- *       | a hint after the label
- *   input.cfnext-form__input(type="text")
- *
- * Styleguide 30.2
- */
 .cfnext-form__hint
   margin-top: $rhythm(0.5)
   margin-bottom: 0
@@ -124,42 +63,6 @@ $cfnext-form-input()
 
   &.x--invalid
     color: $colors.red-dark
-
-
-/**
- * Errors and warning
- *
- * Markup:
- * div.cfnext-form__field
- *   label Name
- *   input.cfnext-form__input(type="text" aria-invalid="true")
- *   p.cfnext-form__field-error
- *     | Something went wrong!
- * div.cfnext-form__field
- *   label Name
- *   input.cfnext-form__input(type="text" aria-invalid="true")
- *   .cfnext-form__field-warning
- *     | This is just a warning :)
- * div.cfnext-form__field
- *   label Name
- *   input.cfnext-form__input(type="text" aria-invalid="true")
- *   p.cfnext-form__field-suffix-error
- *     | Something went <strong>wrong!</strong>
- * div.cfnext-form__field
- *   label Name
- *   input.cfnext-form__input(type="text" aria-invalid="true")
- *   ul.cfnext-form__field-errors
- *     li This went wrong
- *     li And that
- * div.cfnext-form__field
- *   label
- *     | Name
- *     span.cfnext-form__label-hint.x--invalid
- *       | required
- *   input.cfnext-form__input(type="text" aria-invalid="true")
- *
- * Styleguide 30.3
- */
 
 .cfnext-form__field-error,
 .cfnext-form__field-errors,
@@ -187,32 +90,6 @@ $cfnext-form-input()
 .cfnext-form__field-warning
   color: $colors.orange-dark
 
-/**
- * Option set
- *
- * Markup:
- * fieldset.cfnext-form__fieldset
- *   legend A few options
- *   .cfnext-form-option
- *     input(type="checkbox" id="option-a")
- *     label(for="option-a") Check this
- *   .cfnext-form-option
- *     input(type="checkbox" id="option-b")
- *     .cfnext-form-option__desc
- *       label(for="option-b") Or check that
- *       p You also can check both
- *       p.text-dimmed This is a hint
- *   .cfnext-form-option
- *     input(type="radio" id="radio-a" name="selectme")
- *     label(for="radio-a") Select me
- *   .cfnext-form-option
- *     input(type="radio" id="radio-b" name="selectme")
- *     .cfnext-form-option__desc
- *       label(for="radio-b") Or me
- *       p This is radio
- *
- * Styleguide 30.4
- */
 $cfnext-form__fieldset()
   legend
     width: 100%
@@ -252,52 +129,11 @@ $cfnext-form__fieldset()
   display: inline-block;
   cursor: pointer
 
-/**
-Disabled options
-
-Markup:
-.cfnext-form-option
-  input(type="checkbox" id="option-d" disabled)
-  .cfnext-form-option__desc
-    label(for="option-d") This is disabled
-    p ...with more description
-.cfnext-form-option
-  input(type="checkbox" id="option-d" disabled)
-  label(for="option-d") This is disabled, too
-
-Styleguide 30.5
-*/
-
 .cfnext-form-option > input[type="checkbox"]:disabled
   & + .cfnext-form-option__desc,
   & + label
     color: $text-dimmed
 
-
-/**
- * Horizontal option set
- *
- * Note: don't use an actual fieldset tag with this class:
- * http://germanforblack.com/post/73295576875/flexbox-for-forms
- *
- * Markup:
- * .cfnext-form__fieldset--horizontal
- *   legend A few options
- *   .cfnext-form-option
- *     input(type="checkbox" id="option-a")
- *     label(for="option-a") Check this
- *   .cfnext-form-option
- *     input(type="checkbox" id="option-b")
- *     label(for="option-b") Or check that
- *   .cfnext-form-option
- *     input(type="radio" id="radio-a" name="selectme")
- *     label(for="radio-a") Select me
- *   .cfnext-form-option
- *     input(type="radio" id="radio-b" name="selectme")
- *     label(for="radio-b") Or me
- *
- * Styleguide 30.6
- */
 .cfnext-form__fieldset--horizontal
   $cfnext-form__fieldset()
   display: flex
@@ -307,24 +143,6 @@ Styleguide 30.5
     margin-right: $rhythm(2)
   .cfnext-form-option:last-child
     margin-right: 0
-
-/**
- * Form with icon
- *
- * Markup:
- * .cfnext-form__field
- *   label Regular input with icon suffix
- *   .cfnext-form__input-group
- *     input.cfnext-form__input(type="text")
- *     button.cfnext-form__icon-suffix.fa.fa-lock
- * .cfnext-form__field
- *   label Full size input with icon suffix
- *   .cfnext-form__input-group--full-size
- *     input.cfnext-form__input--full-size(type="text")
- *     button.cfnext-form__icon-suffix.fa.fa-lock
- *
- * Styleguide 30.7
- */
 
 .cfnext-form__input-group
   position: relative

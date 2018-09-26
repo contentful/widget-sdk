@@ -1,20 +1,5 @@
 @require '../mixins/spinner'
 
-/*
-Buttons
-
-Markup:
-script
-  | $(function () {
-  |   $('button.is-loading').on('click', function() {
-  |     $(this).toggleClass('is-loading');
-  |   });
-  | });
-
-
-Styleguide 4.0
-*/
-
 // Legacy classes for disabled buttons
 .transparent-button-layer
   background-color: transparent
@@ -127,38 +112,6 @@ $button-loading($text)
     +$spinner-active($text)
       margin-left: 5px
 
-
-/*
-Action/Secondary Button
-
-This button should be used for actions which are important, but not necessarily
-the most important action in the current view
-
-Markup:
-button.btn-action{{modifier_class}} Action
-button.btn-action{{modifier_class}}.pseudo-class-hover Action
-button.btn-action{{modifier_class}}.active Action
-button.btn-action{{modifier_class}}(disabled) Action
-button.btn-action{{modifier_class}}.is-loading Action
-button.btn-action{{modifier_class}}
-  cf-icon.btn-icon.inverted(name="plus")
-  | Action
-button.btn-action{{modifier_class}}.is-loading
-  cf-icon.btn-icon.inverted(name="plus")
-  | Action
-button.btn-action{{modifier_class}}
-  cf-icon.btn-dropdown-icon(name="dd-arrow-down")
-  | Action
-button.btn-action{{modifier_class}}
-  cf-icon.btn-icon.inverted(name="plus")
-  cf-icon.btn-dropdown-icon(name="dd-arrow-down")
-  | Action
-
---large - Large variation
-
-Styleguide 4.1
-*/
-
 $btn-action-bg = linear-gradient(to top, $colors.blue-dark, $colors.blue-light)
 $btn-action()
   $button($btn-action-bg, white)
@@ -173,37 +126,6 @@ $btn-action()
 
 .btn-action--large
   $button-large()
-
-
-/*
-Primary Action Button
-
-Used for the most important action in a given context
-
-Markup:
-button.btn-primary-action{{modifier_class}} Action
-button.btn-primary-action{{modifier_class}}.pseudo-class-hover Action
-button.btn-primary-action{{modifier_class}}.active Action
-button.btn-primary-action{{modifier_class}}(disabled) Action
-button.btn-primary-action{{modifier_class}}.is-loading Action
-button.btn-primary-action{{modifier_class}}
-  cf-icon.btn-icon.inverted(name="plus")
-  | Action
-button.btn-primary-action{{modifier_class}}.is-loading
-  cf-icon.btn-icon.inverted(name="plus")
-  | Action
-button.btn-primary-action{{modifier_class}}
-  cf-icon.btn-dropdown-icon(name="dd-arrow-down")
-  | Action
-button.btn-primary-action{{modifier_class}}
-  cf-icon.btn-icon.inverted(name="plus")
-  cf-icon.btn-dropdown-icon(name="dd-arrow-down")
-  | Action
-
---large - Large variation
-
-Styleguide 4.2
-*/
 
 $btn-primary-bg = linear-gradient(to top, $colors.green-dark, $colors.green-light)
 $btn-primary()
@@ -220,36 +142,6 @@ $btn-primary()
 .btn-primary-action--large
   $button-large()
 
-/*
-Secondary Action Button
-
-Used for actions that should complement primary actions or visually less
-important actions
-
-Markup:
-button.btn-secondary-action{{modifier_class}} Action
-button.btn-secondary-action{{modifier_class}}.pseudo-class-hover Action
-button.btn-secondary-action{{modifier_class}}.active Action
-button.btn-secondary-action{{modifier_class}}(disabled) Action
-button.btn-secondary-action{{modifier_class}}.is-loading Action
-button.btn-secondary-action{{modifier_class}}
-  cf-icon.btn-icon.inverted(name="plus")
-  | Action
-button.btn-secondary-action{{modifier_class}}.is-loading
-  cf-icon.btn-icon.inverted(name="plus")
-  | Action
-button.btn-secondary-action{{modifier_class}}
-  cf-icon.btn-dropdown-icon(name="dd-arrow-down")
-  | Action
-button.btn-secondary-action{{modifier_class}}
-  cf-icon.btn-icon.inverted(name="plus")
-  cf-icon.btn-dropdown-icon(name="dd-arrow-down")
-  | Action
-
---large - Large variation
-
-Styleguide 4.3
-*/
 $btn-secondary-text = $colors.text-mid
 $btn-secondary-bg = $colors.element-light
 $button-secondary-colors()
@@ -278,18 +170,6 @@ $button-secondary-colors()
 .btn-secondary-action--large
   $button-large()
 
-
-/**
-Caution button
-
-Markup:
-button.btn-caution Be Careful!
-button.btn-caution.pseudo-class-hover Be Careful!
-button.btn-caution.active Be Careful!
-button.btn-caution(disabled) Be Careful!
-
-Styleguide 4.4
-*/
 $btn-caution-bg = linear-gradient(to top, $colors.red-dark, $colors.red-light)
 .btn-caution
   $button($btn-caution-bg, white)
@@ -298,22 +178,6 @@ $btn-caution-bg = linear-gradient(to top, $colors.red-dark, $colors.red-light)
   &:hover
     border-color: $colors.red-darkest
 
-
-/**
-Plain Action Button
-
-TODO: Support `button.btn-plain.is-loading`, and `button.btn-plain(disabled)`
-
-Markup:
-button.btn-primary-action
-  | One
-button.btn-plain
-  | Two
-button.btn-action
-  | Three
-
-Styleguide 4.5
-*/
 $button-plain()
   background: none
   $button-layout()
@@ -324,41 +188,6 @@ $button-plain()
 
 .btn-plain
   $button-plain()
-
-/**
-Block button
-
-Markup:
-p
-  | Normal
-  button.btn-primary-action.x--block Action Button
-p
-  | Loading
-  button.btn-primary-action.x--block.is-loading Loading
-p
-  | Icon
-  button.btn-primary-action.x--block
-    cf-icon.btn-icon.inverted(name="plus")
-    | Action
-p
-  | Icon and loading
-  button.btn-primary-action.x--block.is-loading
-    cf-icon.btn-icon.inverted(name="plus")
-    | Action
-p
-  | Dropdown
-  button.btn-primary-action.x--block
-    cf-icon.btn-dropdown-icon(name="dd-arrow-down")
-    | Action
-p
-  | Icon and dropdown
-  button.btn-primary-action.x--block
-    cf-icon.btn-icon.inverted(name="plus")
-    cf-icon.btn-dropdown-icon(name="dd-arrow-down")
-    | Action
-
-Styleguide 4.6
-*/
 
 $x--block()
   display: block
@@ -392,24 +221,6 @@ $btn-inline()
 .btn-inline
   $btn-inline()
 
-
-/**
-Link Style Button
-
-Markup:
-button.btn-link
-  | Action
-button.btn-link(disabled)
-  | Disabled
-button.btn-link.is-loading
-  | Loading
-button.btn-link
-  cf-icon.btn-icon(name="plus")
-  | Action
-
-Styleguide 4.7
-*/
-
 .btn-link
   $button-reset();
   display: block
@@ -438,30 +249,10 @@ Styleguide 4.7
       fill: $colors.blue-dark
     /*
     Partial Reference that transpiles to .btn-link:hover .btn-link__icon
-    */  
+    */
     ^[0]:hover &
       > svg
         fill: $colors.text-dark
-
-/*
-Buttons with icons
-
-Markup:
-button.btn-action
-  cf-icon.btn-icon.inverted(name="plus")
-  | Action
-button.btn-secondary-action
-  cf-icon.btn-icon.inverted(name="plus")
-  | Action
-button.btn-plain
-  cf-icon.btn-icon(name="plus")
-  | Action
-button.btn-action--large-popout-icon
-  cf-icon(name="new-ct")
-  | Action
-
-Styleguide 4.8
-*/
 
 $btn-icon()
   display: inline-block
@@ -474,7 +265,7 @@ $btn-icon()
   $btn-icon()
 
 .btn-icon-left
-  
+
 
 
 $button--large-popout-icon()
@@ -490,63 +281,12 @@ $button--large-popout-icon()
   $btn-action()
   $button--large-popout-icon()
 
-
-/*
-Buttons with dropdowns
-
-Markup:
-button.btn-secondary-action
-  cf-icon.btn-dropdown-icon(name="dd-arrow-down")
-  | More
-button.btn-action
-  cf-icon.btn-dropdown-icon(name="dd-arrow-down")
-  | More
-button.btn-primary-action
-  cf-icon.btn-dropdown-icon(name="dd-arrow-down")
-  | More
-
-Styleguide 4.9
-*/
-
 .btn-dropdown-icon
   float: right
   margin-left: 0.4em
   margin-right: -0.2em
   svg
     display: inline-block
-
-/*
-Action Selector
-
-Click on the lower button to toggle the state. Click on the upper arrow to toggle the dropdown.
-
-Markup:
-div(style="width: 24em")
-  div.btn-action-select
-    button.btn-action-select__action.is-loading
-      | Publish
-    button.btn-action-select__selector(cf-context-menu-trigger)
-      span.btn-action-select__selector-label
-        | Change actions
-      cf-icon.btn-action-select__icon(name="dd-arrow-down")
-    .context-menu.x--arrow-right(cf-context-menu="bottom-right")
-      div(role="menuitem") Another action
-  p
-  div.btn-action-select.x--no-action
-    button.btn-action-select__action
-      | Publish
-    button.btn-action-select__selector
-      span.btn-action-select__selector-label
-        | Change actions
-      cf-icon.btn-action-select__icon(name="dd-arrow-down")
-script
-  | $('.btn-action-select.x--no-action').click(function () {
-  |   $(this).toggleClass('x--no-action')
-  | })
-
-Styleguide 4.10
-*/
-
 
 .btn-action-select
   display: flex

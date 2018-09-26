@@ -1,20 +1,3 @@
-/*
-Loading boxes
-
-Styleguide 17.0
-*/
-
-/*
-Loading Box
-
-Markup:
-.loading-box(style="height: 10em")
-  .loading-box__spinner
-  .loading-box__message
-    | Your content is being loaded
-
-Styleguide 17.1
-*/
 $loading-box()
   display: flex
   align-items: center
@@ -33,39 +16,9 @@ $loading-box()
 .loading-box__message
   color: $colors.text-light
 
-/*
-Full screen loading box
-
-Markup:
-div(style="display: flex;height:140px;")
-  .loading-box--full-screen
-    .loading-box__spinner
-    .loading-box__message
-      | Your content is being loaded
-
-Styleguide 17.2
-*/
-
 .loading-box--full-screen
   $loading-box()
   width: 100%
-
-/*
-Overlay loader
-
-Stretches over its parent container with white background.
-
-Fades in and out on `ngIf` animations.
-
-Markup:
-div(style="display: flex; height: 140px; position: relative")
-  .loading-box--stretched
-    .loading-box__spinner
-    .loading-box__message
-      | Your content is being loaded
-
-Styleguide 17.3
-*/
 
 .loading-box--stretched
   $loading-box()

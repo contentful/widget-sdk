@@ -4,28 +4,6 @@ $workbench-header-height = $tab-header-height
 $workbench-header-horizontal-padding = 2em
 $workbench-nav-height = 70px
 
-/**
-Workbench
-
-The `.workbench` is positioned absolutely and stretched to completely
-cover its offset parent.  The `.workbench-main` section will scroll if
-its content is too large to fit into the workbench.
-
-Markup:
-.styleguide-stretch-container--short
-  .workbench
-    .workbench-header
-      a(href="#kssref-9-4") Header
-    .workbench-nav
-      a(href="#kssref-9-5") Navigation
-    .workbench-main
-      | Main
-    .workbench-actions
-      | Actions
-
-Styleguide 9.0
-*/
-
 .workbench
   display: flex
   flex-direction: column
@@ -40,42 +18,6 @@ Styleguide 9.0
   align-items: center
   > *
     margin-left: 0.7rem
-
-/**
-Main content and sidebars
-
-Click the middle content with info sidebar to toggle it
-
-Markup:
-.workbench-header
-  | Header
-.workbench-main
-  .workbench-main__content
-    code __content
-  .workbench-main__info-sidebar.x--show
-    | <code>__info-sidebar</code> Click to slide
-.workbench-main
-  .workbench-main__content
-    code __content
-  .workbench-main__sidebar
-    code __sidebar
-.workbench-main
-  .workbench-main__left-sidebar.styleguide-filled-box1
-    code __left-sidebar
-  .workbench-main__right-content.styleguide-filled-box2
-    code __right-content
-.workbench-main
-  .workbench-main__right-content.styleguide-filled-box2
-    code __right-content
-.workbench-actions
-  | Actions
-script
-  | $('.workbench-main').click(function () {
-  |   $(this).find('.workbench-main__info-sidebar').toggleClass('x--show')
-  | })
-
-Styleguide 9.1
-*/
 
 $workbench-content()
   overflow-y: auto
@@ -279,36 +221,6 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
     > *:first-child
       width: 100%
 
-
-/*
-Header
-
-Markup:
-.workbench-header
-  img.workbench-header__icon(src="/app/svg/page-ct.svg")
-  h1.workbench-header__title Title
-  .workbench-header__description This is a description
-  button.btn-inline Edit
-  .workbench-header__actions
-    button.btn-secondary-action Actions
-    button.btn-action Save
-
-Styleguide 9.4
-*/
-
-
-/*
-Workbench Nav with tabs
-
-Markup:
-.workbench-nav
-  ul.workbench-nav__tabs
-    li(role="tab") First Tab
-    li(role="tab" aria-selected="true") Active Tab
-    li(role="tab") Last Tab
-
-Styleguide 9.5
-*/
 .workbench-nav
   display: flex
   align-items: center
@@ -322,44 +234,6 @@ Styleguide 9.5
   flex-grow: 0
   flex-basis: $workbench-content-width
   $tab-list()
-
-
-/*
-Workbench header with nav
-
-The `.x--with-nav` modifier allows subnavigation with tabs to be included
-underneath the page header section
-
-Markup:
-.workbench-header.x--with-nav
-  .page-header
-    cf-icon.workbench-header__icon(name="page-api")
-    h1.workbench-header__title Title
-  .workbench-nav
-    ul.workbench-nav__tabs
-      li(role="tab") First Tab
-      li(role="tab" aria-selected="true") Active Tab
-      li(role="tab") Last Tab
-
-Styleguide 9.6
-*/
-
-
-
-
-/**
-Loading Message
-
-Markup:
-.styleguide-stretch-container--short
-  div Breadcrumbs
-  .workbench.x--loading
-    .workbench-loading__spinner
-    .workbench-loading__message
-      | Loading entries...
-
-Styleguide 9.7
-*/
 
 @require "../mixins/spinner"
 

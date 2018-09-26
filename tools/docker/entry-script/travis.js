@@ -94,7 +94,6 @@ async function createIndex(env, version) {
  * build/app        -> output/files/${env}/app
  * build/index.html -> output/files/${env}/archive/${version}/index-compiled.html
  * build/index.html -> output/files/${env}/archive/${branch}/index-compiled.html
- * build/styleguide -> output/files/${env}/styleguide/${branch}
  * ~~~
  *
  * The index.html file is configured with `config/{env}.json`.
@@ -102,7 +101,6 @@ async function createIndex(env, version) {
  * @param {string} env
  * @param {string} version
  * @param {string} branch
- * @param {boolean} options.includeStyleguide
  */
 async function createFileDist(env, version, branch) {
   console.log(`Creating file distribution for "${env}"`);
