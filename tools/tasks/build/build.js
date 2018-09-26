@@ -1,6 +1,5 @@
 const gulp = require('gulp');
 const runSequence = require('run-sequence');
-const path = require('path');
 
 /**
  * Production Builds
@@ -28,15 +27,3 @@ const path = require('path');
 gulp.task('build', function(done) {
   runSequence('clean', ['build/js', 'build/styles', 'build/static'], 'build/chunks', done);
 });
-
-gulp.task('build/with-styleguide', function(done) {
-  runSequence('build', 'styleguide', 'build/copy-styleguide', done);
-});
-
-gulp.task('build/copy-styleguide', function() {
-  return gulp.src('public/styleguide/**/*').pipe(writeBuild('styleguide'));
-});
-
-function writeBuild(dir) {
-  return gulp.dest(path.join('build', dir || ''));
-}

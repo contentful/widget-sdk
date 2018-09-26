@@ -65,18 +65,12 @@ If you run into them you’ll need to run the application in the Lab.
 
 ### Running a full Contentful Instance
 
-See the [Lab Readme][].
+See the [Lab Readme][https://github.com/contentful/lab/blob/master/README.md].
 
 [Lab]: https://github.com/contentful/lab/
 
-## Styleguide
+## Styleguide and component library
 
-The styleguide is generated automatically when running `gulp serve` and
-is served by gulp at `/styleguide`.
+If you want to add a general component that will be used across the app, you can add it to the [UI Component Library](https://github.com/contentful/ui-component-library). See their documentation on how to get started, or message in the `#project-design-system` Slack channel.
 
-Styleguide is published on both preview and staging.
-
-If you wish to generate it manually, you can run `gulp
-generate-styleguide` and then check `public/styleguide`
-
-Don't forget to provide an appropriate commit message outlining the changes.
+Additionally, we have a legacy styleguide, [available here](https://ctf-legacy-ui-styleguide.netlify.com/), which you can use for additional reference beyond the component library.

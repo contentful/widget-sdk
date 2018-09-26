@@ -1,43 +1,3 @@
-/*
-Entry Editor Controls
-
-From controls used in the Entry and Asset Editors.
-
-Styleguide entry-editor-controls
-*/
-
-
-/*
-Single Line
-
-Uses `display: block` and `width: 100%`.
-
-Styles are also exported as the `$entry-editor__input()` mixin.
-
-Markup:
-h3 Placeholder
-input.entry-editor__input(type="text"
-  placeholder="Type something in here")
-h3 With value
-input.entry-editor__input(type="text"
-  value="8 Life Lessons From The Dalai Lama")
-h3 Invalid
-input.entry-editor__input(type="text"
-  value="8 Life Lessons From The Dalai Lama"
-  aria-invalid="true")
-h3 Disabled
-input.entry-editor__input(type="text"
-  value="8 Life Lessons From The Dalai Lama"
-  disabled)
-h3 With size property
-input.entry-editor__input(type="text" size="10")
-p
-  | We use <code>width: auto</code> and let the property determine the size.
-
-Styleguide entry-editor-controls.input
-*/
-
-
 $entry-editor__input-border()
   // Set both properties to fix some browser inconsistencies
   border-width: 0 0 1px 0
@@ -83,25 +43,6 @@ $entry-editor__input()
 .entry-editor__input
   $entry-editor__input()
 
-
-/*
-Textarea
-
-Styles are also exported as the `$entry-editor__textarea()` mixin.
-
-Default height is three lines.
-
-Markup:
-h3 Placeholder
-textarea.entry-editor__textarea(placeholder="Placeholder")
-h3 Invalid
-textarea.entry-editor__textarea(aria-invalid="true")
-h3 Disabled
-textarea.entry-editor__textarea(disabled)
-
-Styleguide entry-editor-controls.textarea
-*/
-
 $entry-editor__textarea()
   $entry-editor__input-base()
   padding-top: 0.2em
@@ -112,21 +53,6 @@ $entry-editor__textarea()
 
 .entry-editor__textarea
   $entry-editor__textarea()
-
-
-/*
-Single Line with Spinner
-
-Markup:
-div.entry-editor__input-group(style="width: 10em")
-  input(type="text" value="Input has padding to the right")
-  div.entry-editor__input-spinner
-div.entry-editor__input-group(style="width: 10em")
-  input(type="text" value="Input has padding to the right")
-  cf-icon(name="calendar" style="cursor: pointer")
-
-Styleguide entry-editor-controls.input-spinner
-*/
 
 @require '/mixins/spinner'
 
@@ -157,18 +83,6 @@ Styleguide entry-editor-controls.input-spinner
   $spinner-base()
   +$spinner-active(black, 18px)
     display: block
-
-
-/*
-Select
-
-Markup:
-select.entry-editor__select-control
-  option This is a value
-  option This is another value
-
-Styleguide entry-editor-controls.select
-*/
 
 @require '/objects/select_box'
 .entry-editor__select-control

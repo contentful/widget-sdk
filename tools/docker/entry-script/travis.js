@@ -50,7 +50,7 @@ module.exports = async function runTravis({ branch, pr, version }) {
   };
 
   await createFileDist(ENV.development, version, branch);
-  await createFileDist(ENV.preview, version, branch, { includeStyleguide: true });
+  await createFileDist(ENV.preview, version, branch);
   await createFileDist(ENV.staging, version, branch);
   await createFileDist(ENV.production, version, branch);
 
@@ -94,7 +94,6 @@ async function createIndex(env, version) {
  * build/app        -> output/files/${env}/app
  * build/index.html -> output/files/${env}/archive/${version}/index-compiled.html
  * build/index.html -> output/files/${env}/archive/${branch}/index-compiled.html
- * build/styleguide -> output/files/${env}/styleguide/${branch}
  * ~~~
  *
  * The index.html file is configured with `config/{env}.json`.
@@ -102,9 +101,8 @@ async function createIndex(env, version) {
  * @param {string} env
  * @param {string} version
  * @param {string} branch
- * @param {boolean} options.includeStyleguide
  */
-async function createFileDist(env, version, branch, { includeStyleguide } = {}) {
+async function createFileDist(env, version, branch) {
   console.log(`Creating file distribution for "${env}"`);
 
   // This directory contains all the files needed to run the app.
@@ -118,10 +116,6 @@ async function createFileDist(env, version, branch, { includeStyleguide } = {}) 
 
   const branchIndexPath = targetPath(env, 'archive', branch, 'index-compiled.html');
   await configureAndWriteIndex(version, `config/${env}.json`, branchIndexPath);
-
-  if (includeStyleguide) {
-    await copy(P.join(BUILD_SRC, 'styleguide'), targetPath(env, 'styleguide', branch));
-  }
 }
 
 /**

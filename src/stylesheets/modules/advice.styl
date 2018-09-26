@@ -1,36 +1,5 @@
-/*
-Advice
-
-Show advice to the user on empty views
-
-Styleguide 20.0
-*/
-
 @require 'Components/Notes'
 
-/*
-Empty list advice
-
-Markup:
-.cfnext-advice(style="min-height: 30em")
-  header.advice__title
-    | You have no assets yet
-  button.btn-action--large.ct-empty-list__action
-    cf-icon.btn-icon.inverted(name="plus")
-    cf-icon.btn-dropdown-icon(name="dd-arrow-down")
-    | Create an Asset
-  p.ct-empty-list__description
-    | Assets are external documents that you can link to your
-    | Entries. They can be any file you wish, from sounds to images or
-    | videos to text documents.
-  .advice__note
-    | You can lookup old assets in the <a href="#">Archive</a>
-  p.ct-empty-list__additional
-    | If you are not sure what content types and entries are, <br>
-    | consider reading the <a href="#">introduction to Contentful content model</a>
-
-Styleguide 20.1
-*/
 .cfnext-advice
   min-height: 70vh
   max-width: 65em
@@ -44,23 +13,6 @@ Styleguide 20.1
   align-items: center
   > *
     flex: 0 0 auto
-
-/*
-Advice box
-
-Markup:
-div(style="position:relative;height:300px;")
-  .cfnext-advice-box
-    .cfnext-advice-box__frame
-      h1.cfnext-advice-box__title
-        | Whoops, looks like you don't have any API keys yet
-      .cfnext-advice-box__sub-title
-        | Add your first key to get started delivering content.
-      button.btn-action
-        | OK
-
-Styleguide 20.2
-*/
 
 .cfnext-advice-box
   $stretch()

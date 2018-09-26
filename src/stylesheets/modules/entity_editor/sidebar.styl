@@ -1,16 +1,6 @@
 @require 'variables/colors'
 @require '../mixins/spinner'
 
-/*
-Sidebar
-
-Styles for the right-hand sidebar in the application workbench.
-
-TODO Use `.workbench-sidebar` prefix instead of `.entity-sidebar`.
-
-Styleguide sidebar
-*/
-
 $entity-sidebar-content()
   $stretch(0, 0, 0, 0)
   padding: $rhythm(1) 1.6rem
@@ -163,37 +153,6 @@ $entity-sidebar-content()
     margin: 0px 8px 8px 0px;
   }
 
-/*
-Translation selector
-
-Markup:
-h2.entity-sidebar__heading
-  | Translation
-.pill-list(style="width: 20em")
-  .entity-sidebar__translation-pill.x--default
-    | en-US
-  .entity-sidebar__translation-pill
-    | de-DE
-    button.entity-sidebar__translation-remove
-      cf-icon(name="close" scale="0.6")
-  .entity-sidebar__translation-pill
-    | pl-PL
-    button.entity-sidebar__translation-remove
-      cf-icon(name="close" scale="0.6")
-  .entity-sidebar__translation-pill
-    | hi-IN
-    button.entity-sidebar__translation-remove
-      cf-icon(name="close" scale="0.6")
-  .entity-sidebar__translation-pill
-    | en-AU
-    button.entity-sidebar__translation-remove
-      cf-icon(name="close" scale="0.6")
-  button.btn-link
-    | Change
-
-Styleguide sidebar.translations
-*/
-
 @require '../objects/pills'
 
 .entity-sidebar
@@ -208,25 +167,6 @@ Styleguide sidebar.translations
     &:hover path
       fill: $colors.text-dark
 
-
-/*
-Text profile
-
-Formats `<p>` and `<ul>` tags for display text.
-
-Markup:
-.entity-sidebar__text-profile(style="width: 45ex")
-  p A paragraph with bottom margin
-  ul
-    li This list
-    li has discs for
-    li every item.
-  p
-    | Another paragraph that is slightly longer to show case line
-    | wrapping and the line height
-
-Styleguide sidebar.text-profile
-*/
 .entity-sidebar__text-profile
   color: $colors.text-mid
   p, ul

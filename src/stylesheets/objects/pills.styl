@@ -1,58 +1,5 @@
 @require '../mixins/spinner'
 
-/*
-Pills
-
-Markup:
-ul.pill-list(style="width: 30em")
-  li.pill-item
-    button.pill-item__remove
-      cf-icon(name="close" scale="0.6")
-    | can be used
-  li.pill-item
-    | without close
-  li.pill-item
-    button.pill-item__remove
-      cf-icon(name="close" scale="0.6")
-    | for tagging
-  li.pill-item
-    button.pill-item__remove
-      cf-icon(name="close" scale="0.6")
-    | truncates very long, long, super long texts
-    | really well with some dots
-
-Styleguide: pills
-*/
-
-/*
-Draggable
-
-Markup:
-ul.pill-list(cf-ui-sortable)
-  li.pill-item.x--draggable
-    cf-icon.pill-item__drag-handle(data-drag-handle name="drag-handle-2" height="17")
-    button.pill-item__remove
-      cf-icon(name="close" scale="0.6")
-    | draggable
-  li.pill-item.x--draggable
-    cf-icon.pill-item__drag-handle(data-drag-handle name="drag-handle-2" height="17")
-    button.pill-item__remove
-      cf-icon(name="close" scale="0.6")
-    | can be used
-  li.pill-item.x--draggable
-    cf-icon.pill-item__drag-handle(data-drag-handle name="drag-handle-2" height="17")
-    button.pill-item__remove
-      cf-icon(name="close" scale="0.6")
-    | with pill
-  li.pill-item.x--draggable
-    cf-icon.pill-item__drag-handle(data-drag-handle name="drag-handle-2" height="17")
-    button.pill-item__remove
-      cf-icon(name="close" scale="0.6")
-    | lists
-
-Styleguide: pills.draggable
-*/
-
 .pill-list
   display: flex
   flex-wrap: wrap

@@ -1,74 +1,7 @@
-/**
-Icons
-
-Markup:
-style(type="text/css").
-  .styleguide-icon-list {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-  .styleguide-icon-list:hover {
-    background: #ffb0e9;
-  }
-  .styleguide-icon-list:active cf-icon {
-    outline: 1px solid #99ff76;
-  }
-  cf-icon {
-    position: relative;
-    padding: 5px;
-    color: #3C80CF;
-  }
-  cf-icon:hover {
-    color: #99ff76;
-  }
-  cf-icon:hover:before {
-    content: attr(name);
-    position: absolute;
-    z-index: 1;
-    top: -1.5em;
-    font-weight: bold;
-    white-space: nowrap;
-    color: #99ff76;
-    text-shadow: 0 0 2px black;
-  }
-
-Styleguide 25
-*/
-
 cf-icon, .cf-icon
   display: block
   > svg
     display: block
-
-
-/**
-Miscellaneous
-
-Markup:
-.styleguide-icon-list
-  cf-icon(name="arrow-up" scale="2")
-  cf-icon(name="checkmark" scale="2")
-  cf-icon(name="close" scale="2")
-  cf-icon(name="dd-arrow-down-disabled" scale="2")
-  cf-icon(name="dd-arrow-down" scale="2")
-  cf-icon(name="chevron-blue" scale="2")
-  cf-icon(name="drag-handle" scale="2")
-  cf-icon(name="fd-headings" scale="2")
-  cf-icon(name="fd-info-text" scale="2")
-  cf-icon(name="fd-separator" scale="2")
-  cf-icon(name="hint-arrow" scale="2")
-  cf-icon(name="info" scale="2")
-  cf-icon(name="lock" scale="2")
-  cf-icon(name="markdown" style="width: 40px")
-  cf-icon(name="new-ct" scale="2")
-  cf-icon(name="plus" scale="2")
-  cf-icon(name="plug" scale="2")
-  cf-icon(name="star" scale="2")
-  cf-icon(name="calendar" scale="2")
-
-Styleguide 25.1
-*/
 
 cf-icon[name="plus"],
 .cf-icon.cf-icon--plus
@@ -80,27 +13,6 @@ cf-icon[name="plus"],
       fill: white
     path
       stroke: $colors.blue-mid
-
-
-/**
-Navigation
-
-Markup:
-.styleguide-icon-list
-  cf-icon(name="nav-api" scale="2")
-  cf-icon(name="nav-ct" scale="2")
-  cf-icon(name="nav-entries" scale="2")
-  cf-icon(name="nav-media" scale="2")
-  cf-icon(name="nav-settings" scale="2")
-.styleguide-icon-list
-  cf-icon(name="page-api" scale="2")
-  cf-icon(name="page-ct" scale="2")
-  cf-icon(name="page-entries" scale="2")
-  cf-icon(name="page-media" scale="2")
-  cf-icon(name="page-settings" scale="2")
-
-Styleguide 25.2
-*/
 
 cf-icon[name="nav-home"],
 cf-icon[name="nav-ct"],
@@ -131,52 +43,3 @@ cf-icon[name="nav-usage"]
   .is-disabled &
     path
       fill: $colors.text-light
-
-
-/**
-Widgets
-
-Markup:
-.styleguide-icon-list
-  cf-icon(name="checkbox-widget" scale="2")
-  cf-icon(name="dropdown-widget" scale="2")
-  cf-icon(name="markdown-widget" scale="2")
-  cf-icon(name="media-previews-widget" scale="2")
-  cf-icon(name="media-preview-widget" scale="2")
-  cf-icon(name="media-references-widget" scale="2")
-  cf-icon(name="media-reference-widget" scale="2")
-  cf-icon(name="multipleline-widget" scale="2")
-  cf-icon(name="number-widget" scale="2")
-  cf-icon(name="preview-widget" scale="2")
-  cf-icon(name="radio-widget" scale="2")
-  cf-icon(name="rating-widget" scale="2")
-  cf-icon(name="reference-card-widget" scale="2")
-  cf-icon(name="references-card-widget" scale="2")
-  cf-icon(name="references-widget" scale="2")
-  cf-icon(name="reference-widget" scale="2")
-  cf-icon(name="singleline-widget" scale="2")
-  cf-icon(name="slug-widget" scale="2")
-  cf-icon(name="tags-widget" scale="2")
-  cf-icon(name="video-preview-widget" scale="2")
-  cf-icon(name="wysiwig-widget" scale="2")
-
-Styleguide 25.3
-*/
-
-/**
-Tiny
-
-Entry editor toolbar
-
-Markup:
-.styleguide-icon-list
-  cf-icon(name="plus-2" scale="1")
-  cf-icon(name="assets" scale="1")
-  cf-icon(name="entries" scale="1")
-  cf-icon(name="drag-handle-2" scale="1")
-  cf-icon(name="edit" scale="1")
-  cf-icon(name="download" scale="1")
-  cf-icon(name="delete" scale="1")
-
-Styleguide 25.4
-*/

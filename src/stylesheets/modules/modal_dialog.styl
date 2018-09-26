@@ -1,31 +1,3 @@
-/*
-Modal Dialog
-
-Styles for modal dialogs with optional controls.
-See the modal_dialog.jade template for a more complete base template for other dialogs
-
-Markup:
-// Commented out for demo purposes only
-// In normal usage, the .modal-dialog element should be a child of .modal-background
-//.modal-background
-.modal-dialog
-  header.modal-dialog__header
-    h1 Title
-    button.modal-dialog__close
-  .modal-dialog__content
-    p.modal-dialog__plaintext this is some plain text
-    .modal-dialog__richtext
-      p here is a paragraph<br>and a next line
-      p here is another one
-  .modal-dialog__controls
-    button.btn-primary-action
-      | Confirm
-    button.btn-secondary-action
-      | More
-
-Styleguide 12.0
-*/
-
 $modal-dialog-padding = 30px
 $modal-dialog-header-padding = 23px
 
@@ -142,25 +114,6 @@ $modal-dialog-chrome()
     color: $colors.text-dark
     font-weight: 600
 
-
-/*
-Confirm Deletion
-
-Markup:
-.modal-dialog
-  header.modal-dialog__header
-    h1 Warning
-    button.modal-dialog__close
-  .modal-dialog__content
-    .modal-dialog__richtext
-      p Watch out there
-  .modal-dialog__controls
-    button.btn-caution
-      | Okay
-
-Styleguide 12.2
-*/
-
 .modal-dialog
   &__hint
     color: $text-dimmed
@@ -171,28 +124,6 @@ Styleguide 12.2
     margin-bottom: $rhythm(0.5)
     margin-top: 0.1em
 
-
-/**
-Modal Dialog Slices
-
-Allows you to bleed background into the `modal-dialog__content`
-element. You can also use it with the `$modal-dialog-slice()` mixin.
-
-Markup:
-.modal-dialog
-  header.modal-dialog__header
-    h1 Title
-    button.modal-dialog__close
-  .modal-dialog__content
-    p Hello
-    .modal-dialog__slice.styleguide-filled-box1
-      p This has a background
-  .modal-dialog__controls
-    button.btn-primary-action
-      | Confirm
-
-Styleguide 12.4
-*/
 $modal-dialog-slice()
   $modal-dialog-horizontal-padding()
   margin-left: - $modal-dialog-padding
