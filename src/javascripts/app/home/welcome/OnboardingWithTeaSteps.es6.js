@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Icon from 'ui/Components/Icon.es6';
+import TeaScreenshot from './TeaScreenshot.es6';
 import { href, go } from 'states/Navigator.es6';
 import spaceContext from 'spaceContext';
 import { runTask } from 'utils/Concurrent.es6';
@@ -226,8 +227,8 @@ class PreviewUsingExampleAppStep extends React.Component {
             Preview content
           </a>
         </div>
-        <div>
-          <Icon className="tea-onboarding__step-graphic" name="tea-screenshot" />
+        <div className="tea-onboarding__step-graphic">
+          <TeaScreenshot />
         </div>
       </Step>
     );

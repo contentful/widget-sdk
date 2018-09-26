@@ -7,7 +7,6 @@ import QuestionMarkIcon from 'svg/QuestionMarkIcon.es6';
 import SubscriptionIcon from 'svg/subscription.es6';
 import PageMediaIcon from 'svg/page-media.es6';
 import ContentStructureGraphIcon from 'svg/content-structure-graph.es6';
-import TeaScreenshotIcon from 'svg/tea-screenshot.es6';
 import ContentGraphHighlightIcon from 'svg/content-graph-highlight.es6';
 import CheckmarkDoneIcon from 'svg/icon-checkmark-done.es6';
 import PageCTIcon from 'svg/page-ct.es6';
@@ -49,7 +48,6 @@ const SVGs = {
   'question-mark': QuestionMarkIcon,
   subscription: SubscriptionIcon,
   'content-structure-graph': ContentStructureGraphIcon,
-  'tea-screenshot': TeaScreenshotIcon,
   'content-graph-highlight': ContentGraphHighlightIcon,
   'icon-checkmark-done': CheckmarkDoneIcon,
   'page-ct': PageCTIcon,
