@@ -27,7 +27,6 @@
  *   searchPlaceholder: {String}
  * }
  * @scope.requires {number} listHeight
- * @scope.requires {ContentType?} singleContentType
  */
 angular.module('contentful').controller('EntitySelectorController', [
   'require',
@@ -49,6 +48,10 @@ angular.module('contentful').controller('EntitySelectorController', [
     const MODES = { AVAILABLE: 1, SELECTED: 2 };
 
     const config = $scope.config;
+    const singleContentTypeId =
+      config.linkedContentTypeIds && config.linkedContentTypeIds.length === 1
+        ? config.linkedContentTypeIds[0]
+        : null;
 
     initializeSearchUI();
 
@@ -92,22 +95,22 @@ angular.module('contentful').controller('EntitySelectorController', [
     }
 
     function initializeSearchUI() {
-      var withAssets = config.entityType === 'Asset';
-      var initialSearchState = {};
-      if ($scope.singleContentType) {
-        initialSearchState.contentTypeId = $scope.singleContentType.getId();
+      const withAssets = config.entityType === 'Asset';
+      const initialSearchState = {};
+      if (singleContentTypeId) {
+        initialSearchState.contentTypeId = singleContentTypeId;
       }
-      var isSearching$ = K.fromScopeValue(
+      const isSearching$ = K.fromScopeValue(
         $scope,
         $scope => $scope.isLoading && !$scope.isLoadingMore
       );
-      var accessibleContentType = getAccessibleCTs(
+      const accessibleContentTypes = getAccessibleCTs(
         spaceContext.publishedCTs,
         initialSearchState.contentTypeId
       );
-      var contentTypes = getValidContentTypes(
-        $scope.config.linkedContentTypeIds,
-        accessibleContentType
+      const contentTypes = getValidContentTypes(
+        config.linkedContentTypeIds,
+        accessibleContentTypes
       );
 
       createSearchInput({
@@ -149,8 +152,8 @@ angular.module('contentful').controller('EntitySelectorController', [
         ...getSearch()
       };
 
-      if (config.entityType === 'Entry' && $scope.singleContentType) {
-        params.contentTypeId = $scope.singleContentType.getId();
+      if (config.entityType === 'Entry' && singleContentTypeId) {
+        params.contentTypeId = singleContentTypeId;
       }
       if (config.entityType === 'Asset') {
         params.searchFilters = [
@@ -172,8 +175,7 @@ angular.module('contentful').controller('EntitySelectorController', [
     }
 
     function getOrder() {
-      var ct = $scope.singleContentType;
-
+      const ct = singleContentTypeId && spaceContext.publishedCTs.get(singleContentTypeId);
       if (ct) {
         var displayField = _.find(ct.data.fields, { id: ct.data.displayField });
         if (displayField && displayField.type === 'Symbol' && displayField.id) {

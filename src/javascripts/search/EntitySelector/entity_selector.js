@@ -37,7 +37,6 @@ angular.module('contentful').factory('entitySelector', [
      *   linkedContentTypeIds: {Array?},
      *   linkedMimetypeGroups: {Array?},
      *   fetch: {function(params): Promise<{items: {Array}, total: {Number}}>},
-     *   scope: {Object}, // other scope data that could be needed in custom html in `.labels`
      *   labels: {
      *     title: {String},
      *     input: {String},
@@ -66,7 +65,6 @@ angular.module('contentful').factory('entitySelector', [
         onNoEntities
       };
       const scopeData = {
-        ...options.scope,
         entitySelector: entitySelectorProps,
         selected: [],
         showCustomEmptyMessage: false
