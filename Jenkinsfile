@@ -112,8 +112,7 @@ pipeline {
       slackNotification('#dev-qa-bots, #dev-frontend-bots')
     }
     failure {
-      containerLog 'jnlp'
-      containerLog 'dind'
+      emailNotification()
     }
   }
 }
