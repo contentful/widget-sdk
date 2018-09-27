@@ -10,7 +10,7 @@ import { subscription as subscriptionState } from 'ui/NavStates/Org.es6';
 
 import { h } from 'ui/Framework';
 import { linkOpen, badge, codeFragment } from 'ui/Content.es6';
-import { table, tr, td, th } from 'ui/Content/Table.es6';
+import { Table, TableHead, TableRow, TableCell, TableBody } from '@contentful/ui-component-library';
 import { container, hbox, ihspace } from 'ui/Layout.es6';
 import { byName as Colors } from 'Styles/Colors.es6';
 
@@ -82,7 +82,7 @@ function environmentList({ isLoading, loadingError, items }, { OpenDeleteDialog,
                 h('.loading-box__spinner'),
                 h('.loading-box__message', ['Loading'])
               ]),
-            environmentTable(environments)
+            h(EnvironmentTable, { environments })
           ]
         )
       ]
@@ -100,62 +100,71 @@ const FAILED_TOOLTIP = [
   'delete it and create it again, if that doesn’t work contact support.'
 ].join('');
 
-function environmentTable(environments) {
+function EnvironmentTable({ environments }) {
   if (environments.length === 0) {
-    return h('div');
+    return <div />;
   }
 
-  return table(
-    [
-      th({ style: { width: '50%' } }, ['ID']),
-      th({ style: { width: '30%' } }, ['Status']),
-      th({ style: { width: '9em' } }, ['Actions'])
-    ],
-    environments.map(environment => {
-      return tr(
-        {
-          key: environment.id,
-          dataTestId: `environment.${environment.id}`
-        },
-        [
-          td([
-            hbox([
-              codeFragment([environment.id]),
-              ihspace('6px'),
-              h(CopyIconButton, { value: environment.id }),
-              ihspace('1.2em'),
-              environment.isMaster && badge({ color: Colors.textLight }, ['Default environment'])
-            ])
-          ]),
-          td([
-            caseofEq(environment.status, [
-              ['ready', () => badge({ color: Colors.greenDark }, ['Ready'])],
-              [
-                'inProgress',
-                () => {
-                  return badge({ color: Colors.orangeDark }, [
-                    'In progress',
-                    questionMarkWithTooltip({ tooltip: IN_PROGRESS_TOOLTIP })
-                  ]);
-                }
-              ],
-              [
-                'failed',
-                () => {
-                  return badge({ color: Colors.redDark }, [
-                    'Failed to create',
-                    questionMarkWithTooltip({ tooltip: FAILED_TOOLTIP })
-                  ]);
-                }
-              ]
-            ])
-          ]),
-          td([deleteButton(environment)])
-        ]
-      );
-    })
+  return (
+    <Table>
+      <TableHead>
+        <TableRow>
+          <TableCell style={{ width: '50%' }}>ID</TableCell>
+          <TableCell style={{ width: '30%' }}>Status</TableCell>
+          <TableCell style={{ width: '9em' }}>Actions</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {environments.map(environment => {
+          return (
+            <TableRow key={environment.id} data-test-id={`environment.${environment.id}`}>
+              <TableCell>
+                {hbox({ alignItems: 'center' }, [
+                  codeFragment([environment.id]),
+                  ihspace('6px'),
+                  h(CopyIconButton, { value: environment.id }),
+                  ihspace('1.2em'),
+                  environment.isMaster &&
+                    badge({ color: Colors.textLight, marginTop: 10 }, ['Default environment'])
+                ])}
+              </TableCell>
+              <TableCell>
+                {caseofEq(environment.status, [
+                  ['ready', () => badge({ color: Colors.greenDark }, ['Ready'])],
+                  [
+                    'inProgress',
+                    () => {
+                      return badge({ color: Colors.orangeDark }, [
+                        'In progress',
+                        questionMarkWithTooltip({ tooltip: IN_PROGRESS_TOOLTIP })
+                      ]);
+                    }
+                  ],
+                  [
+                    'failed',
+                    () => {
+                      return badge({ color: Colors.redDark }, [
+                        'Failed to create',
+                        questionMarkWithTooltip({ tooltip: FAILED_TOOLTIP })
+                      ]);
+                    }
+                  ]
+                ])}
+              </TableCell>
+              <TableCell>
+                <DeleteButton environment={environment} />
+              </TableCell>
+            </TableRow>
+          );
+        })}
+      </TableBody>
+    </Table>
   );
 }
+
+EnvironmentTable.propTypes = {
+  environments: PropTypes.array
+};
 
 function questionMarkWithTooltip({ tooltip }) {
   return h(
@@ -170,17 +179,21 @@ function questionMarkWithTooltip({ tooltip }) {
   );
 }
 
-function deleteButton(environment) {
-  return h(
-    'button.text-link--destructive',
-    {
-      dataTestId: 'openDeleteDialog',
-      disabled: environment.isMaster,
-      onClick: environment.Delete
-    },
-    ['Delete']
+function DeleteButton({ environment }) {
+  return (
+    <button
+      className="text-link--destructive"
+      data-test-id="openDeleteDialog"
+      disabled={environment.isMaster}
+      onClick={environment.Delete}>
+      Delete
+    </button>
   );
 }
+
+DeleteButton.propTypes = {
+  environment: PropTypes.object.isRequired
+};
 
 function sidebar(
   {

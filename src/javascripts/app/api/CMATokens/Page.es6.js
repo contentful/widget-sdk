@@ -1,14 +1,15 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import { assign } from 'lodash';
 import { createSlot, Success, Failure } from 'utils/Concurrent.es6';
 import { truncate } from 'stringUtils';
 import { makeCtor, match } from 'utils/TaggedValues.es6';
-
+import { Table, TableHead, TableRow, TableCell, TableBody } from '@contentful/ui-component-library';
 import { h } from 'ui/Framework';
 import { createStore, bindActions, makeReducer } from 'ui/Framework/Store.es6';
 import escape from 'utils/escape.es6';
 import { container, vspace } from 'ui/Layout.es6';
 import { docsLink, linkOpen, p } from 'ui/Content.es6';
-import { table, tr, td, th } from 'ui/Content/Table.es6';
 
 import * as Config from 'Config.es6';
 import * as ResourceManager from './Resource.es6';
@@ -222,7 +223,7 @@ function tokenList(
                   h('.loading-box__spinner'),
                   h('.loading-box__message', ['Loading'])
                 ]),
-              tokenTable(tokens, Revoke)
+              h(TokenTable, { tokens, revoke: Revoke })
             ]
           ),
           vspace(5),
@@ -235,84 +236,79 @@ function tokenList(
       );
 }
 
-function tokenTable(tokens, revoke) {
+function TokenTable({ tokens, revoke }) {
   if (tokens.length === 0) {
-    return h('div');
+    return <div />;
   }
 
-  return table(
-    [
-      th(['Name']),
-      th(['']) // Revoke action
-    ],
-    tokens.map(token => {
-      return tr(
-        {
-          dataTestId: `pat.tokenRow.${token.id}`
-        },
-        [
-          td(
-            {
-              style: {
+  return (
+    <Table>
+      <TableHead>
+        <TableRow>
+          <TableCell>Name</TableCell>
+          <TableCell> </TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {tokens.map(token => (
+          <TableRow key={token.id} data-test-id={`pat.tokenRow.${token.id}`}>
+            <TableCell
+              style={{
                 overflow: 'hidden',
                 whiteSpace: 'nowrap',
                 textOverflow: 'ellipsis'
-              }
-            },
-            [token.name]
-          ),
-          td(
-            {
-              style: {
+              }}>
+              {token.name}
+            </TableCell>
+            <TableCell
+              style={{
                 width: '7em',
                 textAlign: 'right'
-              }
-            },
-            [revokeButton(revoke, token)]
-          )
-        ]
-      );
-    })
+              }}>
+              <RevokeButton revoke={revoke} token={token} />
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 }
 
-function revokeButton(revoke, token) {
-  return h(
-    'div',
-    {
-      style: { textAlign: 'right' }
-    },
-    [
-      h(
-        'button.text-link--destructive',
-        {
-          cfContextMenuTrigger: true,
-          dataTestId: `pat.revoke.${token.id}.request`
-        },
-        ['Revoke']
-      ),
-      h(
-        '.delete-confirm.context-menu.x--arrow-right',
-        {
-          style: { display: 'none' },
-          cfContextMenu: 'bottom-right'
-        },
-        [
-          h('p', [
-            `This token won’t be available anymore, any application using
-        it might break. Do you confirm?`
-          ]),
-          h(
-            'button.btn-caution',
-            {
-              dataTestId: `pat.revoke.${token.id}.confirm`,
-              onClick: () => revoke(token)
-            },
-            ['Revoke']
-          ),
-          h('button.btn-secondary-action', ['Cancel'])
-        ]
-      )
-    ]
+TokenTable.propTypes = {
+  tokens: PropTypes.arrayOf(PropTypes.object).isRequired,
+  revoke: PropTypes.func.isRequired
+};
+
+function RevokeButton({ revoke, token }) {
+  return (
+    <div style={{ textAlign: 'right' }}>
+      <button
+        className="text-link--destructive"
+        cf-context-menu-trigger="true"
+        data-test-id={`pat.revoke.${token.id}.request`}>
+        Revoke
+      </button>
+      <div
+        className="delete-confirm context-menu x--arrow-right"
+        style={{ display: 'none' }}
+        cf-context-menu="bottom-right">
+        <p>
+          This token won’t be available anymore, any application using it might break. Do you
+          confirm?
+        </p>
+        <button
+          data-test-id={`pat.revoke.${token.id}.confirm`}
+          onClick={() => revoke(token)}
+          className="btn-caution">
+          Revoke
+        </button>
+        <button className="btn-secondary-action">Cancel</button>
+      </div>
+    </div>
   );
 }
+
+RevokeButton.propTypes = {
+  revoke: PropTypes.func.isRequired,
+  token: PropTypes.object.isRequired
+};
