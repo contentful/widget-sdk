@@ -15,7 +15,7 @@
     "@contentful/ui-component-library": "^3.23.0",
     "@contentful/validation": "^7.0.0",
     "@contentful/widget-map": "^1.1.0",
-    "@contentful/worf": "^3.11.0",
+    "@contentful/worf": "^3.12.0",
     "ajv": "^5.2.2",
     "angular": "~1.5.7",
     "angular-animate": "~1.5.7",
