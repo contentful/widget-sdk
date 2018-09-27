@@ -16,7 +16,8 @@ export const HyperlinkPlugin = ({ createHyperlinkDialog }) => ({
       return (
         <Hyperlink
           {...props}
-          onClick={() => {
+          onClick={event => {
+            event.preventDefault(); // Don't follow `href`.
             if (mayEditLink(props.editor.value)) {
               asyncChange(props.editor, newChange => editLink(newChange, createHyperlinkDialog));
             }
