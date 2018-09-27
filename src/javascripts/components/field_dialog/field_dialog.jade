@@ -33,7 +33,11 @@
       div(ui-tabpanel="validations"
         ng-form="fieldValidationsForm"
         ng-controller="FieldDialogValidationsController")
-        ul.validation-settings(role="listbox")
+
+        h3(ng-if="nodeValidationsEnabled" style="margin: 0 0 18px")
+          | General validations
+
+        ul.validation-settings.validation-settings__rich-text(role="listbox")
           li(aria-label="This field is required"
              role="option"
              data-validation-type="required")
@@ -45,6 +49,15 @@
              data-validation-type="{{validation.type}}{{field.type === 'Array' && !validation.onItems ?  '.listElement' : ''}}")
             cf-validation-setting.u-bce
 
+        div(ng-if="nodeValidationsEnabled" ng-repeat="nodeValidation in nodeValidations")
+          h3(ng-if="nodeValidationsEnabled" style="margin: 0 0 18px")
+            | {{nodeValidation.description}}
+          ul.validation-settings.validation-settings__rich-text(role="listbox")
+            li(ng-repeat="validation in nodeValidation.validations"
+               aria-label="{{validation.name}}"
+               role="option"
+               data-validation-type="{{validation.type}}{{field.type === 'Array' && !validation.onItems ?  '.listElement' : ''}}")
+              cf-validation-setting.u-bce
 
       div(ui-tabpanel="appearance")
         include ./field_dialog_appearance.jade

@@ -18,6 +18,7 @@ angular
       const { BLOCKS, MARKS, INLINES } = require('@contentful/rich-text-types');
 
       const validationName = createSchema.Validation.getName;
+      const nodeValidationName = createSchema.Validation.getNodeValidationName;
       const validationTypesForField = createSchema.Validation.forField;
 
       const validationSettings = {
@@ -33,17 +34,18 @@ angular
         assetImageDimensions: {
           width: { min: null, max: null },
           height: { min: null, max: null }
-        },
-        enabledNodeTypes: null,
-        enabledMarks: null,
-        nodes: { size: { min: null, max: null } }
+        }
       };
 
       const validationLabels = {
         size: {
           Text: 'Limit character count',
           Symbol: 'Limit character count',
-          Object: 'Limit number of properties'
+          Object: 'Limit number of properties',
+          RichText: 'Limit character count',
+          // TODO: Remove when we are no longer using the legacy
+          // `StructuredText` identifier
+          StructuredText: 'Limit character count'
         },
         range: 'Accept only specified number range',
         dateRange: 'Accept only specified date range',
@@ -53,16 +55,18 @@ angular
         linkContentType: 'Accept only specified entry type',
         linkMimetypeGroup: 'Accept only specified file types',
         assetFileSize: 'Accept only specified file size',
-        assetImageDimensions: 'Accept only specified image dimensions',
-        enabledNodeTypes: 'Accept only specified node types',
-        enabledMarks: 'Accept only specified marks'
+        assetImageDimensions: 'Accept only specified image dimensions'
       };
 
       const validationHelpText = {
         size: {
           Text: 'Specify a minimum and/or maximum allowed number of characters',
           Symbol: 'Specify a minimum and/or maximum allowed number of characters',
-          Object: 'Specify a minimum and/or maximum allowed number of properties'
+          Object: 'Specify a minimum and/or maximum allowed number of properties',
+          RichText: 'Specify a minimum and/or maximum allowed number of characters',
+          // TODO: Remove when we are no longer using the legacy
+          // `StructuredText` identifier
+          StructuredText: 'Specify a minimum and/or maximum allowed number of characters'
         },
         range: 'Specify a minimum and/or maximum allowed number for this field',
         dateRange: 'Specify an early and/or latest allowed date for this field',
@@ -75,9 +79,34 @@ angular
         linkContentType: 'Make this field only accept entries from specified content type(s)',
         linkMimetypeGroup: 'Make this field only accept specified file types',
         assetFileSize: 'Specify a minimum and/or maximum allowed file size',
-        assetImageDimensions: 'Specify a minimum and/or maximum allowed image dimension',
-        enabledNodeTypes: 'Make this field only accept nodes from specified node type(s)',
-        enabledMarks: 'Make this field only accept marks from specified mark type(s)'
+        assetImageDimensions: 'Specify a minimum and/or maximum allowed image dimension'
+      };
+
+      // Defines the rich text node validations that appear below the general
+      // validations in the 'Validations' tab for the field dialog template.
+      const validatedNodeTypes = {
+        [INLINES.ENTRY_HYPERLINK]: {
+          description: 'Link to entry',
+          validations: ['linkContentType']
+        },
+        [BLOCKS.EMBEDDED_ENTRY]: {
+          description: 'Embedded block entry',
+          validations: ['linkContentType', 'size']
+        },
+        [INLINES.EMBEDDED_ENTRY]: {
+          description: 'Embedded inline entry',
+          validations: ['linkContentType', 'size']
+        }
+      };
+
+      const nodeValidationLabels = {
+        size: 'Limit number of entries',
+        linkContentType: 'Accept only specified entry type'
+      };
+
+      const nodeValidationHelpText = {
+        size: 'Specify a minimum and/or maximum allowed number of entries',
+        linkContentType: 'Make this link type only accept entries from specified content type(s)'
       };
 
       const validationsOrder = [
@@ -89,13 +118,10 @@ angular
         'linkContentType',
         'linkMimeType',
         'assetFileSize',
-        'in',
-        'enabledNodeTypes',
-        'enabledMarks',
-        'nodes'
+        'in'
       ];
 
-      const structuredTextOptionsLabels = {
+      const richTextOptionsLabels = {
         [BLOCKS.HEADING_1]: 'Heading 1',
         [BLOCKS.HEADING_2]: 'Heading 2',
         [BLOCKS.HEADING_3]: 'Heading 3',
@@ -120,12 +146,14 @@ angular
       const schema = createSchema({ type: 'Validation' });
 
       return {
-        decorateFieldValidations: decorateFieldValidations,
-        extractAll: extractAll,
-        validate: validate,
-        validateAll: validateAll,
-        updateField: updateField,
-        addEnabledStructuredTextOptions: addEnabledStructuredTextOptions
+        decorateFieldValidations,
+        decorateNodeValidations,
+        extractFieldValidations,
+        getExtractedNodesValidation,
+        validate,
+        validateAll,
+        updateField,
+        addEnabledRichTextOptions
       };
 
       /**
@@ -135,24 +163,49 @@ angular
        * @returns {DecoratedValidation[]}
        */
       function decorateFieldValidations(field) {
-        const types = _.filter(validationTypesForField(field), t => t in validationSettings);
+        const validationTypes = _.filter(
+          validationTypesForField(field),
+          t => t in validationSettings
+        );
 
-        let fieldValidations = _.map(types, validationDecorator(field));
+        let fieldValidations = _.map(validationTypes, validationDecorator(field));
 
         if (field.items) {
-          let itemValidations = decorateFieldValidations(field.items);
-          _.each(itemValidations, v => {
-            v.onItems = true;
-          });
+          const itemValidations = _.chain(decorateFieldValidations(field.items))
+            .reject({ type: 'unique' })
+            .map(validation => ({ ...validation, onItems: true }))
+            .value();
 
-          // remove unique validation for items as we don't support
-          // it for items nor for the Array container type
-          itemValidations = _.filter(itemValidations, validation => validation.type !== 'unique');
-
-          fieldValidations = itemValidations.concat(fieldValidations);
+          fieldValidations = [...itemValidations, ...fieldValidations];
         }
 
         return _.sortBy(fieldValidations, validation => validationsOrder.indexOf(validation.type));
+      }
+
+      /**
+       * @ngdoc method
+       * @name validationDecorator#decorateNodeValidations
+       * @param {Node} nodeTypesWithValidations
+       * @returns {DecoratedNodeValidation[]}
+       */
+      function decorateNodeValidations(nodeTypesWithValidations) {
+        const decoratedNodeValidations = [];
+
+        for (const [nodeType, { description, validations }] of _.entries(validatedNodeTypes)) {
+          const node = {
+            type: nodeType,
+            validations: nodeTypesWithValidations[nodeType] || []
+          };
+
+          const nodeValidations = _.map(validations, nodeValidationDecorator(node));
+
+          decoratedNodeValidations.push({
+            description,
+            validations: _.sortBy(nodeValidations, ({ type }) => validationsOrder.indexOf(type))
+          });
+        }
+
+        return decoratedNodeValidations;
       }
 
       function validationDecorator(field) {
@@ -189,15 +242,71 @@ angular
         };
       }
 
+      function nodeValidationDecorator(node) {
+        return function decorateNodeValidation(type) {
+          const nodeValidation = findNodeValidationByType(node.validations, type);
+          let settings, enabled, message;
+
+          if (nodeValidation) {
+            enabled = true;
+            settings = nodeValidation[type];
+            message = nodeValidation.message;
+          } else {
+            enabled = false;
+            settings = validationSettings[type];
+            message = null;
+          }
+
+          const name = getValidationStringForType(nodeValidationLabels, node, type);
+          const views = validationViews.get(type);
+          const currentView = views && views[0].name;
+          const helpText = getValidationStringForType(nodeValidationHelpText, node, type);
+
+          return {
+            name,
+            helpText,
+            type,
+            onItems: false,
+            enabled,
+            message,
+            settings: _.cloneDeep(settings),
+            views,
+            currentView,
+            nodeType: node.type
+          };
+        };
+      }
+
       /**
        * @ngdoc method
-       * @name validationDecorator#extractAll
+       * @name validationDecorator#extractFieldValidations
        * @param {DecoratedValidation[]} decorated
        * @returns {Validation[]}
        */
-      function extractAll(decorated) {
-        const enabled = _.filter(decorated, 'enabled');
+      function extractFieldValidations(decorated) {
+        const enabled = _.filter(
+          decorated,
+          validation => validation.enabled && validation.type !== 'nodes'
+        );
+
         return _.map(enabled, extractOne);
+      }
+
+      /**
+       * @ngdoc method
+       * @name validationDecorator#getExtractedNodesValidation
+       * @param {DecoratedNodeValidation[]} decorated
+       * @returns {NodeValidation[]}
+       */
+      function getExtractedNodesValidation(decorated) {
+        return {
+          nodes: _.chain(decorated)
+            .flatMap('validations')
+            .filter('enabled')
+            .groupBy('nodeType')
+            .mapValues(values => _.map(values, extractOne))
+            .value()
+        };
       }
 
       function extractOne(decorated) {
@@ -216,15 +325,14 @@ angular
        * @return {Error[]}
        */
       function validate(validation) {
-        let errors = [];
-        if (validation.enabled) {
-          errors = schema.errors(extractOne(validation));
-        }
+        const { enabled, type } = validation;
+        const errors = enabled ? schema.errors(extractOne(validation)) : [];
 
-        return _.forEach(errors, error => {
-          error.path = [];
-          error.message = getErrorMessage(validation.type, error);
-        });
+        return _.map(errors, error => ({
+          ...error,
+          path: [],
+          message: getErrorMessage(type, error)
+        }));
       }
 
       /**
@@ -239,17 +347,24 @@ angular
        * @param {ContentType.Field} field
        * @param {DecoratedValdiation[]} validations
        */
-      function updateField(field, validations) {
-        const baseValidations = _.filter(validations, { onItems: false });
-        const itemValidations = _.filter(validations, { onItems: true });
+      function updateField(field, validations, nodeValidations) {
+        const { true: itemValidations, false: baseValidations } = _.groupBy(validations, 'onItems');
 
-        field.validations = extractAll(baseValidations);
+        if (nodeValidations) {
+          field.validations = [
+            ...extractFieldValidations(baseValidations),
+            getExtractedNodesValidation(nodeValidations)
+          ];
+        } else {
+          field.validations = extractFieldValidations(baseValidations);
+        }
+
         if (!_.isEmpty(itemValidations)) {
-          field.items.validations = extractAll(itemValidations);
+          field.items.validations = extractFieldValidations(itemValidations);
         }
       }
 
-      function addEnabledStructuredTextOptions(field, options) {
+      function addEnabledRichTextOptions(field, options) {
         const { enabledNodeTypes, enabledMarks } = options;
 
         const validationsCopy = field.validations.filter(
@@ -261,7 +376,7 @@ angular
             enabledMarks: enabledMarks,
             message: `Only the following mark(s) allowed: ${
               enabledMarks.length > 0
-                ? enabledMarks.map(mark => structuredTextOptionsLabels[mark]).join(', ')
+                ? enabledMarks.map(mark => richTextOptionsLabels[mark]).join(', ')
                 : 'none'
             }`
           });
@@ -271,7 +386,7 @@ angular
             enabledNodeTypes: enabledNodeTypes,
             message: `Only the following node(s) allowed: ${
               enabledNodeTypes.length > 0
-                ? enabledNodeTypes.map(node => structuredTextOptionsLabels[node]).join(', ')
+                ? enabledNodeTypes.map(node => richTextOptionsLabels[node]).join(', ')
                 : 'none'
             }`
           });
@@ -279,15 +394,19 @@ angular
         field.validations = validationsCopy;
       }
 
-      function validateAll(decoratedValidations) {
+      function validateAll(decoratedFieldValidations, decoratedNodeValidations) {
+        const decoratedValidations = decoratedNodeValidations
+          ? [...decoratedFieldValidations, getExtractedNodesValidation(decoratedNodeValidations)]
+          : decoratedFieldValidations;
         return _.reduce(
           decoratedValidations,
           (allErrors, validation, index) => {
             const errors = validate(validation);
-            _.forEach(errors, error => {
-              error.path = [index].concat(error.path);
-            });
-            return allErrors.concat(errors);
+            const errorsWithIndex = errors.map(error => ({
+              ...error,
+              path: [index, error.path]
+            }));
+            return [...allErrors, ...errorsWithIndex];
           },
           []
         );
@@ -299,6 +418,13 @@ angular
        */
       function findValidationByType(validations, name) {
         return _.find(validations, validation => validationName(validation) === name);
+      }
+
+      function findNodeValidationByType(nodeValidations, name) {
+        return _.find(
+          nodeValidations,
+          nodeValidation => nodeValidationName(nodeValidation) === name
+        );
       }
 
       function getValidationLabel(field, type) {
