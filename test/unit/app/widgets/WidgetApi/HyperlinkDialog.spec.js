@@ -30,7 +30,7 @@ describe('HyperlinkDialog', () => {
     });
 
     this.importModule = async function importModule() {
-      return (await system.import('app/widgets/WidgetApi/HyperlinkDialog.es6')).default;
+      return (await system.import('app/widgets/WidgetApi/dialogs/HyperlinkDialog.es6')).default;
     };
   });
 

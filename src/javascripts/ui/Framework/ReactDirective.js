@@ -35,8 +35,21 @@ angular.module('contentful').directive('reactComponent', [
       link: ($scope, $element, attrs) => {
         const element = $element[0];
         var logger = require('logger');
+        var reactComponent;
+        if (attrs.name) {
+          reactComponent = getReactComponent(attrs.name, require, logger);
+        } else if (attrs.component) {
+          reactComponent = $scope.$eval(attrs.component);
+        } else if (attrs.jsx) {
+          reactComponent = class Component extends React.Component {
+            render() {
+              return $scope.$eval(attrs.jsx);
+            }
+          };
+        } else {
+          throw new Error('Expect `component` or `name`');
+        }
 
-        var reactComponent = getReactComponent(attrs.name, require, logger);
         var store = require('ReduxStore/store.es6').default;
 
         var renderMyComponent = () => {

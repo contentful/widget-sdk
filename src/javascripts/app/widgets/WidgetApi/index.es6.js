@@ -5,9 +5,8 @@ import PropTypes from 'prop-types';
 
 import $rootScope from '$rootScope';
 import $location from '$location';
-import entitySelector from 'entitySelector';
+import buildWidgetApi from 'app/widgets/WidgetApi/buildWidgetApi.es6';
 import WidgetAPIContext from './WidgetApiContext.es6';
-import createHyperlinkDialog from './createHyperlinkDialog.es6';
 
 export default function connectToWidgetAPI(Component) {
   return class extends React.Component {
@@ -54,7 +53,9 @@ export default function connectToWidgetAPI(Component) {
     };
 
     render() {
-      const widgetAPI = this.buildWidgetAPI();
+      const { field, features } = this.props;
+      const { currentUrl } = this.state;
+      const widgetAPI = buildWidgetApi({ field, features, currentUrl });
       return (
         <WidgetAPIContext.Provider value={{ widgetAPI }}>
           <Component
@@ -66,20 +67,6 @@ export default function connectToWidgetAPI(Component) {
           />
         </WidgetAPIContext.Provider>
       );
-    }
-
-    buildWidgetAPI() {
-      return {
-        dialogs: {
-          selectSingleEntry: () => entitySelector.openFromField(this.props.field),
-          createHyperlink: ({ showTextInput, value }) => {
-            const { field } = this.props;
-            return createHyperlinkDialog({ showTextInput, value, field });
-          }
-        },
-        currentUrl: this.state.currentUrl,
-        features: this.props.features
-      };
     }
   };
 }

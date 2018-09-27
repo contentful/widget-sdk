@@ -2,18 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   Button,
-  IconButton,
   FormLabel,
   Option,
-  ReferenceCard,
   SelectField,
-  TextLink,
-  TextField
+  TextField,
+  TextLink
 } from '@contentful/ui-component-library';
+import FetchedReferenceCard from 'app/widgets/structured_text/plugins/shared/FetchedReferenceCard';
 import Dialog from 'app/entity_editor/Components/Dialog';
 import AngularComponent from 'AngularComponent';
 import { noop, values } from 'lodash';
-import { getLabels, calculateIdealListHeight } from 'search/EntitySelector/Config.es6';
+import { calculateIdealListHeight, getLabels } from 'search/EntitySelector/Config.es6';
 
 const LINK_TYPES = {
   URI: 'uri',
@@ -219,21 +218,12 @@ export default class HyperlinkDialog extends React.Component {
           </TextLink>
         )}
         {entityLink && (
-          <ReferenceCard
-            title={entityLink.sys.id}
-            description=""
-            status="published"
-            contentType=""
-            onClick={() => {}}
-            actionElements={
-              <IconButton
-                iconProps={{ icon: 'Close' }}
-                label={`Choose another ${type.toLowerCase()}`}
-                onClick={resetEntity}
-                buttonType="muted"
-              />
-            }
-            loading={false}
+          <FetchedReferenceCard
+            entityId={entityLink.sys.id}
+            entityType={entityLink.sys.linkType}
+            disabled={false}
+            selected={false}
+            onRemove={resetEntity}
           />
         )}
         {/* Keep all entity selectors in the DOM for super fast types switching ux.*/}

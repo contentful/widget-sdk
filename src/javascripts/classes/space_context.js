@@ -349,7 +349,7 @@ angular
          * @return {Promise<Object|null>}
          * @description
          * Gets a promise resolving with a localized asset image field representing a
-         * given entities image. The promise may resolve with null.
+         * given entities file. The promise may resolve with null.
          */
         entryImage: function(entry, localeCode) {
           const link = getValueForMatchedField(this, entry, localeCode, {
