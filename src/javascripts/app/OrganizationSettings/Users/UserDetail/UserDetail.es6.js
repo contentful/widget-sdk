@@ -3,13 +3,7 @@ import PropTypes from 'prop-types';
 
 import Workbench from 'ui/Components/Workbench/JSX.es6';
 import { go } from 'states/Navigator.es6';
-import {
-  Card,
-  Button,
-  Dropdown,
-  DropdownList,
-  DropdownListItem
-} from '@contentful/ui-component-library';
+import { TextField, SelectField, Option, Button } from '@contentful/ui-component-library';
 
 import { SpaceMembership, OrganizationMembership } from '../PropTypes.es6';
 import { orgRoles } from './OrgRoles.es6';
@@ -32,11 +26,6 @@ class UserDetail extends React.Component {
 
   endpoint = createOrganizationEndpoint(this.props.orgId);
 
-  state = {
-    orgRoleDropdownIsOpen: false,
-    orgRole: this.getOrgRole(this.props.membership.role)
-  };
-
   toggleOrgRoleDropdown() {
     this.setState({ orgRoleDropdownIsOpen: !this.state.orgRoleDropdownIsOpen });
   }
@@ -45,10 +34,7 @@ class UserDetail extends React.Component {
     return orgRoles.find(role => role.value === id);
   }
 
-  changeOrgRole(orgRole) {
-    this.setState({ orgRole });
-    this.toggleOrgRoleDropdown();
-  }
+  changeOrgRole = () => {};
 
   async removeMembership() {
     const { notification } = this.props.$services;
@@ -77,7 +63,7 @@ class UserDetail extends React.Component {
     return (
       <Workbench testId="organization-users-page">
         <Workbench.Header>
-          <Workbench.Title>Organization users</Workbench.Title>
+          <Workbench.Title>{`${user.firstName} ${user.lastName}`}</Workbench.Title>
           <div className="workbench-header__actions">
             <Button buttonType="negative" onClick={() => this.removeMembership()}>
               Remove membership
@@ -86,30 +72,40 @@ class UserDetail extends React.Component {
         </Workbench.Header>
         <Workbench.Content>
           <div style={{ padding: '1em 2em 2em' }}>
-            <Card>
-              <h1>{`${user.firstName} ${user.lastName}`}</h1>
-              <p>{user.email}</p>
-              <Dropdown
-                isOpen={this.state.orgRoleDropdownIsOpen}
-                toggleElement={
-                  <Button
-                    size="small"
-                    buttonType="muted"
-                    indicateDropdown
-                    onClick={() => this.toggleOrgRoleDropdown()}>
-                    {this.state.orgRole.name}
-                  </Button>
-                }>
-                <DropdownList>
-                  {orgRoles.map(role => (
-                    <DropdownListItem key={role.value} onClick={() => this.changeOrgRole(role)}>
-                      {role.name}
-                    </DropdownListItem>
-                  ))}
-                </DropdownList>
-              </Dropdown>
-            </Card>
+            <TextField
+              labelText="Email"
+              name="email"
+              id="email"
+              value={user.email}
+              textInputProps={{
+                width: 'large',
+                disabled: true
+              }}
+              style={{
+                marginBottom: 30
+              }}
+            />
+            <SelectField
+              id="role"
+              name="role"
+              onChange={this.changeOrgRole}
+              labelText="Organization role"
+              value={membership.role}
+              selectProps={{
+                name: 'role',
+                width: 'large'
+              }}
+              style={{
+                marginBottom: 60
+              }}>
+              {orgRoles.map(role => (
+                <Option key={role.value} value={role.value}>
+                  {role.name}
+                </Option>
+              ))}
+            </SelectField>
 
+            <h3 style={{ marginBottom: 30 }}>Space memberships</h3>
             <UserSpaceMemberships initialMemberships={spaceMemberships} user={user} orgId={orgId} />
           </div>
         </Workbench.Content>
