@@ -44,7 +44,12 @@ if (prod) {
   // $ NODE_ENV=production gulp build
   // you can run it locally as well, just execute the command above first
   config.set({
-    files: ['build/app/**/*.js', 'build/app/**/*.css'].concat(testFiles),
+    // We only care about the test bundle, not the main application, plus the chunks (like echarts)
+    files: [
+      'build/app/**/test-bundle-*.js',
+      'build/app/**/chunk_*.js',
+      'build/app/**/*.css'
+    ].concat(testFiles),
 
     // Fix for https://crbug.com/638180: Running as root without --no-sandbox is not supported
     browsers: ['ChromeHeadlessNoSandbox'],

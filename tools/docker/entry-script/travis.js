@@ -45,8 +45,7 @@ module.exports = async function runTravis({ branch, pr, version }) {
 
   // Maps branch names to environment names
   const BRANCH_ENV_MAP = {
-    production: ENV.production,
-    master: ENV.staging
+    master: ENV.production
   };
 
   await createFileDist(ENV.development, version, branch);

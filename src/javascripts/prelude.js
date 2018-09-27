@@ -136,7 +136,7 @@ angular
     set: set
   };
 
-  // Load the modules defined in `libs/index.js`
+  // Load the modules defined in `libs/`
   window.libs.forEach(lib => {
     set(lib[0], lib[1]);
   });

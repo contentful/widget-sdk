@@ -6,7 +6,7 @@ function watch(done, callbacks) {
   // we don't wait until JS is bundles to not to block
   // other tasks which `serve` task might have
   done && done();
-  const config = createWebpackConfig({ dev: true });
+  const config = createWebpackConfig();
   const compiler = webpack(config);
   compiler.watch(
     {
@@ -20,7 +20,7 @@ function watch(done, callbacks) {
 }
 
 async function build() {
-  const config = createWebpackConfig({ dev: false });
+  const config = createWebpackConfig();
   const compiler = webpack(config);
   const stats = await promisify(compiler.run.bind(compiler))();
 

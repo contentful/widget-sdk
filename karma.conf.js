@@ -38,7 +38,7 @@ module.exports = function(config) {
 
       'public/app/vendor.js',
       'public/app/templates.js',
-      'public/app/libs.js',
+      'public/app/libs-test.js',
       // we load bundled file, it is processed by webpack and contains all
       // modules. it allows us to use any custom loaders
       // it also means that this file should already exist, so you can either
