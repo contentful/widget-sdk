@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { INLINES } from '@contentful/structured-text-types';
 import ToolbarIcon from '../shared/ToolbarIcon.es6';
-import { hasHyperlink, toggleLink, hasNonHyperlinkInlines } from './Util.es6';
+import { hasHyperlink, toggleLink, hasOnlyHyperlinkInlines } from './Util.es6';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
 
 export default class HyperlinkToolbarIcon extends Component {
@@ -22,7 +22,7 @@ export default class HyperlinkToolbarIcon extends Component {
   render() {
     const { disabled, change } = this.props;
 
-    const isDisabled = disabled || hasNonHyperlinkInlines(change.value);
+    const isDisabled = disabled || !hasOnlyHyperlinkInlines(change.value);
     return (
       <WidgetAPIContext.Consumer>
         {({ widgetAPI }) => (

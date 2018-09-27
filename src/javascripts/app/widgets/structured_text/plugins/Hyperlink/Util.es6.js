@@ -28,12 +28,11 @@ export function hasHyperlink(value) {
 /**
  * Returns whether the given value has any inline node other than hyperlinks.
  *
- * @export
  * @param {slate.Value} value
  * @returns {boolean}
  */
-export function hasNonHyperlinkInlines(value) {
-  return value.inlines.some(inline => !HYPERLINK_TYPES.includes(inline.type));
+export function hasOnlyHyperlinkInlines(value) {
+  return value.inlines.every(inline => HYPERLINK_TYPES.includes(inline.type));
 }
 
 /**

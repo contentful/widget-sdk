@@ -50,6 +50,7 @@ class FetchedReferenceCard extends React.Component {
   }
 
   renderReferenceCard({
+    entity,
     entityTitle,
     contentTypeName,
     entityDescription,
@@ -58,6 +59,7 @@ class FetchedReferenceCard extends React.Component {
     requestStatus
   }) {
     const { extraClassNames, selected } = this.props;
+    const isLoading = requestStatus === RequestStatus.Pending && !entity.sys.id;
     return (
       <ReferenceCard
         title={entityTitle || 'Untitled'}
@@ -67,7 +69,7 @@ class FetchedReferenceCard extends React.Component {
         selected={selected}
         status={entityStatus}
         thumbnailElement={<Thumbnail thumbnail={entityFile} />}
-        loading={requestStatus === RequestStatus.Pending}
+        loading={isLoading}
         actionElements={
           <React.Fragment>
             {this.props.onEdit && this.renderEditButton()}
