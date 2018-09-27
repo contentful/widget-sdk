@@ -7,7 +7,10 @@ import { TextField, SelectField, Option, Button } from '@contentful/ui-component
 
 import { SpaceMembership, OrganizationMembership } from '../PropTypes.es6';
 import { orgRoles } from './OrgRoles.es6';
-import { removeMembership } from 'access_control/OrganizationMembershipRepository.es6';
+import {
+  removeMembership,
+  updateMembership
+} from 'access_control/OrganizationMembershipRepository.es6';
 
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import UserSpaceMemberships from './UserSpaceMemberships.es6';
@@ -19,9 +22,13 @@ class UserDetail extends React.Component {
     $services: PropTypes.shape({
       notification: PropTypes.object
     }),
-    membership: OrganizationMembership.isRequired,
+    initialMembership: OrganizationMembership.isRequired,
     spaceMemberships: PropTypes.arrayOf(SpaceMembership).isRequired,
     orgId: PropTypes.string.isRequired
+  };
+
+  state = {
+    membership: this.props.initialMembership
   };
 
   endpoint = createOrganizationEndpoint(this.props.orgId);
@@ -34,11 +41,39 @@ class UserDetail extends React.Component {
     return orgRoles.find(role => role.value === id);
   }
 
-  changeOrgRole = () => {};
+  changeOrgRole = async event => {
+    const role = event.target.value;
+    const { notification } = this.props.$services;
+    const oldMembership = this.state.membership;
+    const {
+      sys: { id, version }
+    } = oldMembership;
+    let updatedMembership;
+
+    try {
+      updatedMembership = await updateMembership(this.endpoint, { id, role, version });
+    } catch (e) {
+      notification.error(e.message);
+      return;
+    }
+
+    this.setState({
+      membership: {
+        role,
+        sys: {
+          ...oldMembership.sys,
+          version: updatedMembership.sys.version
+        }
+      }
+    });
+    notification.info(`
+      Role successfully changed to ${role}
+    `);
+  };
 
   async removeMembership() {
     const { notification } = this.props.$services;
-    const { id } = this.props.membership.sys;
+    const { id } = this.state.membership.sys;
 
     try {
       await removeMembership(this.endpoint, id);
@@ -57,7 +92,8 @@ class UserDetail extends React.Component {
   }
 
   render() {
-    const { membership, spaceMemberships, orgId } = this.props;
+    const { spaceMemberships, orgId } = this.props;
+    const { membership } = this.state;
     const { user } = membership.sys;
 
     return (

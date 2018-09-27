@@ -15,11 +15,13 @@ export default {
         const membership = await repo.getMembership(endpoint, $stateParams.userId);
         const [user, spaceMemberships] = await Promise.all([
           repo.getUser(endpoint, membership.sys.user.sys.id),
-          repo.getSpaceMemberships(endpoint)
+          repo.getSpaceMemberships(endpoint, {
+            include: ['sys.space', 'roles'].join()
+          })
         ]);
 
         return {
-          membership: { ...membership, sys: { ...membership.sys, user } },
+          initialMembership: { ...membership, sys: { ...membership.sys, user } },
           spaceMemberships: spaceMemberships.items.filter(membership => {
             return membership.user.sys.id === user.sys.id;
           })
@@ -32,10 +34,10 @@ export default {
     '$stateParams',
     'props',
     ($scope, $stateParams, props) => {
-      const { membership, spaceMemberships } = props;
+      const { initialMembership, spaceMemberships } = props;
       $scope.context.ready = true;
       $scope.properties = {
-        membership,
+        initialMembership,
         spaceMemberships,
         orgId: $stateParams.orgId
       };
