@@ -33,6 +33,12 @@ const EXAMPLES = [
     url: 'https://github.com/contentful/extensions/blob/master/samples/marketo-forms'
   },
   {
+    name: 'Wistia Videos',
+    description:
+      'This UI extension allows your editors to see a nice dropdown of all the videos in your Wistia account sorted by Projects. Your developers can then use this data to construct landing pages from the data.',
+    url: 'https://github.com/contentful/extensions/blob/master/samples/wistia-videos'
+  },
+  {
     name: 'Diff',
     description: 'Renders a diff of draft and published values below a field.',
     url: 'https://github.com/contentful/extensions/blob/master/samples/diff'
