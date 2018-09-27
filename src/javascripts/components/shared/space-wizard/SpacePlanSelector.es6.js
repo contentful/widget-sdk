@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import { isOwner } from 'services/OrganizationRoles.es6';
 import { go } from 'states/Navigator.es6';
-import Spinner from 'ui/Components/Spinner.es6';
+import { Spinner } from '@contentful/ui-component-library';
 import { getStoreResources } from 'utils/ResourceUtils.es6';
 import { getRecommendedPlan } from './WizardUtils.es6';
 
@@ -79,7 +79,7 @@ class SpacePlanSelector extends React.Component {
       <div>
         {isPending && (
           <div className="loader__container">
-            <Spinner diameter="40px" />
+            <Spinner size="large" />
           </div>
         )}
         {!isPending &&

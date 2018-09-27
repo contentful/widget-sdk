@@ -1,5 +1,4 @@
 import { h } from 'utils/legacy-html-hyperscript';
-import spinner from 'ui/Components/Spinner.es6';
 
 export default function() {
   return h('div.create-new-space-dialog.modal-dialog', [
@@ -195,7 +194,12 @@ function renderSpaceTemplates() {
               alignItems: 'center'
             }
           },
-          [spinner({ diameter: '32px', style: { display: 'block' } })]
+          [
+            h('react-component', {
+              name: '@contentful/ui-component-library/Spinner',
+              props: '{size: "large", style: {display: "block"}}'
+            })
+          ]
         ),
         h(
           'div',

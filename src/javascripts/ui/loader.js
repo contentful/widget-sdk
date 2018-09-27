@@ -45,8 +45,8 @@ angular
           [
             h('.loader__container', [
               h('react-component', {
-                name: 'ui/Components/Spinner.es6',
-                props: '{diameter: "36px", style: {display: "block"}}'
+                name: '@contentful/ui-component-library/Spinner',
+                props: '{size: "large", style: {display: "block"}}'
               }),
               h(
                 'div',

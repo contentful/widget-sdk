@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { get, trim } from 'lodash';
 import moment from 'moment';
-import Spinner from 'ui/Components/Spinner.es6';
+import { Spinner } from '@contentful/ui-component-library';
 import { formatPrice } from './WizardUtils.es6';
 import Price from 'ui/Components/Price.es6';
 
@@ -122,7 +122,7 @@ class ConfirmScreen extends React.Component {
       <div>
         {isPending && (
           <div className="loader__container">
-            <Spinner diameter="40px" />
+            <Spinner size="large" />
           </div>
         )}
         {!isPending && (

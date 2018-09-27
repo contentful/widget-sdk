@@ -1,5 +1,4 @@
 import { h } from 'utils/legacy-html-hyperscript';
-import spinner from 'ui/Components/Spinner.es6';
 import { byName } from 'Styles/Colors.es6';
 import { genBoxShadow } from 'Styles';
 import BackgroundIcon from 'svg/header-illustration-wide.es6';
@@ -56,7 +55,10 @@ export default function() {
                   },
                   [
                     h('div', { ngShow: 'isCreatingSpace' }, [
-                      spinner({ diameter: '32px', style: { display: 'block' } })
+                      h('react-component', {
+                        name: '@contentful/ui-component-library/Spinner',
+                        props: '{size: "large", style: {display: "block"}}'
+                      })
                     ]),
                     h('cf-icon', {
                       name: 'checkmark',
