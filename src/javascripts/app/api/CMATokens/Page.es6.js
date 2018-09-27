@@ -16,7 +16,7 @@ import openCreateDialog from './CreateDialog.es6';
 import Notification from 'notification';
 import { track } from 'analytics/Analytics.es6';
 
-import renderPaginator from 'ui/Components/Paginator.es6';
+import Paginator from 'ui/Components/Paginator.es6';
 
 // Number of tokens to fetch and show per page
 const PER_PAGE = 10;
@@ -226,7 +226,11 @@ function tokenList(
             ]
           ),
           vspace(5),
-          renderPaginator(SelectPage, currentPage, totalPages)
+          h(Paginator, {
+            select: SelectPage,
+            page: currentPage,
+            pageCount: totalPages
+          })
         ]
       );
 }

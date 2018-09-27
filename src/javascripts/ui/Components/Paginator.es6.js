@@ -1,4 +1,5 @@
-import { h } from 'ui/Framework';
+import React from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 // Number of pages to display in the paginator on either side of the
@@ -14,16 +15,11 @@ const DISPLAY_PAGES = 3 + NO_OF_NEIGHBORS * 2;
  *
  * Note that the page number is zero-based for both the `page` and
  * `select` argument.
- *
- * @param {function(number)} select
- *   Called when the user selects a page.
- * @param {number} page
- * @param {number} pageCount
- * @returns {React.Element}
  */
-export default function(select, page, pageCount) {
+
+function Paginator({ select, page, pageCount }) {
   if (pageCount < 2) {
-    return;
+    return null;
   }
 
   const atLast = page >= pageCount - 1;
@@ -31,56 +27,50 @@ export default function(select, page, pageCount) {
   const pages = getLabels(getRange(pageCount, page + 1));
 
   // TODO inline styles
-  return h(
-    'div.search-results-paginator',
-    {
-      dataTestId: 'paginator'
-    },
-    [
-      // TODO This should be a button so we do not select the previous
-      // page when it is disabled. For now we check `!atFirst` in the
-      // event handler.
-      h(
-        'span.search-results-paginator__prev',
-        {
-          dataTestId: 'paginator.prev',
-          onClick: () => !atFirst && select(page - 1),
-          ariaDisabled: String(atFirst)
-        },
-        ['Previous']
-      ),
-      h(
-        'div',
-        {
-          dataTestId: 'paginator.pages'
-        },
-        pages.map(value => {
+  // TODO This should be a button so we do not select the previous
+  // page when it is disabled. For now we check `!atFirst` in the
+  // event handler.
+  return (
+    <div className="search-results-paginator" data-test-id="paginator">
+      <span
+        aria-disabled={String(atFirst)}
+        data-test-id="paginator.prev"
+        className="search-results-paginator__prev"
+        onClick={() => !atFirst && select(page - 1)}>
+        Previous
+      </span>
+      <div data-test-id="paginator.pages">
+        {pages.map(value => {
           if (value === null) {
-            return h('span.search-results-paginator__page.x--dots', ['…']);
+            return (
+              <span key={`page-null`} className="search-results-paginator__page x--dots">
+                …
+              </span>
+            );
           } else {
-            return h(
-              'span.search-results-paginator__page',
-              {
-                dataTestId: `paginator.select.${value}`,
-                onClick: () => select(value),
-                ariaSelected: String(value === page),
-                class: value === page ? ['x--active-page'] : []
-              },
-              [`${value + 1}`]
+            return (
+              <span
+                key={`page-${value}`}
+                className={`search-results-paginator__page ${
+                  value === page ? 'x--active-page' : ''
+                }`}
+                data-test-id={`paginator.select.${value}`}
+                onClick={() => select(value)}
+                aria-selected={String(value === page)}>
+                {value + 1}
+              </span>
             );
           }
-        })
-      ),
-      h(
-        'span.search-results-paginator__next',
-        {
-          dataTestId: 'paginator.next',
-          onClick: () => !atLast && select(page + 1),
-          ariaDisabled: String(atLast)
-        },
-        ['Next']
-      )
-    ]
+        })}
+      </div>
+      <span
+        aria-disabled={String(atLast)}
+        data-test-id="paginator.next"
+        className="search-results-paginator__next"
+        onClick={() => !atLast && select(page + 1)}>
+        Next
+      </span>
+    </div>
   );
 }
 
@@ -122,3 +112,11 @@ function getLabels(list) {
 
   return list;
 }
+
+Paginator.propTypes = {
+  select: PropTypes.func.isRequired,
+  page: PropTypes.number.isRequired,
+  pageCount: PropTypes.number.isRequired
+};
+
+export default Paginator;

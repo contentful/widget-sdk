@@ -87,7 +87,11 @@ module.exports = {
         test: true,
         expect: true,
         jest: true,
-        spy: true
+        spy: true,
+        beforeEach: true,
+        afterEach: true,
+        beforeAll: true,
+        afterAll: true
       }
     },
     {
