@@ -1,4 +1,5 @@
 import { INLINES } from '@contentful/structured-text-types';
+import { haveAnyInlines, haveEveryInlineOfType, haveInlines } from '../shared/UtilHave.es6';
 
 const createInlineNode = id => ({
   type: INLINES.EMBEDDED_ENTRY,
@@ -16,11 +17,13 @@ const createInlineNode = id => ({
 });
 
 const insertInline = (change, entryId) => {
-  return change
-    .splitInline()
-    .insertInline(createInlineNode(entryId))
-    .moveToStartOfNextText()
-    .focus();
+  if (haveInlines(change, INLINES.EMBEDDED_ENTRY)) {
+    change.setInline(createInlineNode(entryId));
+  } else {
+    change.insertInline(createInlineNode(entryId));
+  }
+
+  return change.moveToStartOfNextText().focus();
 };
 
 export const hasOnlyInlineEntryInSelection = change => {
@@ -42,4 +45,8 @@ export const selectEntryAndInsert = async (widgetAPI, change) => {
   } catch (error) {
     // the user closes modal without selecting an entry
   }
+};
+
+export const canInsertInline = change => {
+  return !haveAnyInlines(change) || haveEveryInlineOfType(change, INLINES.EMBEDDED_ENTRY);
 };

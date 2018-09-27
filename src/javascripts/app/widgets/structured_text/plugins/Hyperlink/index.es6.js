@@ -3,9 +3,8 @@ import isHotkey from 'is-hotkey';
 import { INLINES } from '@contentful/structured-text-types';
 import ToolbarIcon from './ToolbarIcon.es6';
 import Hyperlink from './Hyperlink.es6';
-import { editLink, mayEditLink, toggleLink } from './Util.es6';
+import { editLink, mayEditLink, toggleLink, hasNonHyperlinkInlines } from './Util.es6';
 import asyncChange from '../shared/AsyncChange.es6';
-import { haveAnyInlines } from '../shared/UtilHave.es6';
 
 const { HYPERLINK, ENTRY_HYPERLINK, ASSET_HYPERLINK } = INLINES;
 
@@ -28,7 +27,7 @@ export const HyperlinkPlugin = ({ createHyperlinkDialog }) => ({
   },
 
   onKeyDown: (event, change, editor) => {
-    if (isHotkey('cmd+k', event) && !haveAnyInlines(change)) {
+    if (isHotkey('cmd+k', event) && !hasNonHyperlinkInlines(change.value)) {
       if (mayEditLink(change.value)) {
         asyncChange(editor, newChange => editLink(newChange, createHyperlinkDialog));
       } else {

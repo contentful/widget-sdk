@@ -22,7 +22,18 @@ export function mayEditLink(value) {
  * @returns {boolean}
  */
 export function hasHyperlink(value) {
-  return !!HYPERLINK_TYPES.find(type => haveInlines({ value }, type));
+  return HYPERLINK_TYPES.some(type => haveInlines({ value }, type));
+}
+
+/**
+ * Returns whether the given value has any inline node other than hyperlinks.
+ *
+ * @export
+ * @param {slate.Value} value
+ * @returns {boolean}
+ */
+export function hasNonHyperlinkInlines(value) {
+  return value.inlines.some(inline => !HYPERLINK_TYPES.includes(inline.type));
 }
 
 /**

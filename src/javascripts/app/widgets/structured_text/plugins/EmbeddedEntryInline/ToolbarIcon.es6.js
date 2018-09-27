@@ -4,8 +4,7 @@ import { DropdownListItem } from '@contentful/ui-component-library';
 import { INLINES } from '@contentful/structured-text-types';
 
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
-import { selectEntryAndInsert } from './Utils.es6';
-import { haveAnyInlines } from '../shared/UtilHave.es6';
+import { selectEntryAndInsert, canInsertInline } from './Utils.es6';
 
 export default class EntryLinkToolbarIcon extends Component {
   static propTypes = {
@@ -23,7 +22,7 @@ export default class EntryLinkToolbarIcon extends Component {
       <WidgetAPIContext.Consumer>
         {({ widgetAPI }) => (
           <DropdownListItem
-            isDisabled={this.props.disabled || haveAnyInlines(this.props.change)}
+            isDisabled={this.props.disabled || !canInsertInline(this.props.change)}
             extraClassNames="structured-text__entry-link-block-button"
             size="small"
             icon="Entry"
