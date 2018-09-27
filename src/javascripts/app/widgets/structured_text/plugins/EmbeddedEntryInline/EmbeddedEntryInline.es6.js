@@ -47,6 +47,7 @@ class EmbeddedEntryInline extends React.Component {
   }
 
   renderNode({ requestStatus, contentTypeName, entity, entityTitle, entityStatus }) {
+    const isLoading = requestStatus === RequestStatus.Pending && !entity.sys.id;
     return (
       <InlineReferenceCard
         testId={INLINES.EMBEDDED_ENTRY}
@@ -54,15 +55,17 @@ class EmbeddedEntryInline extends React.Component {
         title={`${contentTypeName}: ${entityTitle}`}
         status={entityStatus}
         extraClassNames="structured-text__inline-reference-card"
-        isLoading={requestStatus === RequestStatus.Pending}
-        dropdownListItemNodes={[
-          <DropdownListItem key="edit" onClick={() => this.handleEditClick(entity)}>
-            Edit
-          </DropdownListItem>,
-          <DropdownListItem key="remove" onClick={this.handleRemoveClick}>
-            Remove
-          </DropdownListItem>
-        ]}>
+        isLoading={isLoading}
+        dropdownListItemNodes={
+          <React.Fragment>
+            <DropdownListItem onClick={() => this.handleEditClick(entity)}>Edit</DropdownListItem>,
+            <DropdownListItem
+              onClick={this.handleRemoveClick}
+              isDisabled={this.props.editor.props.readOnly}>
+              Remove
+            </DropdownListItem>
+          </React.Fragment>
+        }>
         {entityTitle}
       </InlineReferenceCard>
     );
