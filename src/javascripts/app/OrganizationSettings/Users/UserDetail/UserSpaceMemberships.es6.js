@@ -2,22 +2,24 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
-import { SpaceMembership } from '../PropTypes.es6';
+import { SpaceMembership, User } from '../PropTypes.es6';
 
-import {
-  Table,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell
-  // Pill,
-  // Button
-} from '@contentful/ui-component-library';
+import SpaceMembershipEditor from './SpaceMembershipEditor.es6';
+import { Table, TableRow, TableHead, TableBody, TableCell } from '@contentful/ui-component-library';
 
-export default class UserSpaceMemberships extends React.Component {
+const ServicesConsumer = require('../../../../reactServiceContext').default;
+
+class UserSpaceMemberships extends React.Component {
   static propTypes = {
-    memberships: PropTypes.arrayOf(SpaceMembership)
+    $services: PropTypes.shape({
+      notification: PropTypes.object.isRequired
+    }).isRequired,
+    initialMemberships: PropTypes.arrayOf(SpaceMembership),
+    user: User.isRequired,
+    orgId: PropTypes.string
   };
+
+  state = { memberships: this.props.initialMemberships };
 
   getRolesInSpace(membership) {
     if (membership.admin) {
@@ -31,7 +33,21 @@ export default class UserSpaceMemberships extends React.Component {
     return moment(dateString, moment.ISO_8601).toISOString();
   }
 
+  handleMembershipCreated(membership) {
+    const { user, $services } = this.props;
+
+    this.setState({
+      memberships: [...this.state.memberships, membership]
+    });
+
+    $services.notification.info(`
+      ${user.firstName} has been successfully added to the space ${membership.sys.space.sys.id}
+    `);
+  }
+
   render() {
+    const { user, orgId } = this.props;
+    const { memberships } = this.state;
     return (
       <Table>
         <TableHead>
@@ -42,15 +58,22 @@ export default class UserSpaceMemberships extends React.Component {
           </TableRow>
         </TableHead>
         <TableBody>
-          {this.props.memberships.map(membership => (
+          {memberships.map(membership => (
             <TableRow key={membership.sys.id}>
               <TableCell>{membership.sys.space.sys.id}</TableCell>
               <TableCell>{this.getRolesInSpace(membership)}</TableCell>
               <TableCell>{this.getFormattedDate(membership.sys.createdAt)}</TableCell>
             </TableRow>
           ))}
+          <SpaceMembershipEditor
+            user={user}
+            orgId={orgId}
+            onMembershipCreated={membership => this.handleMembershipCreated(membership)}
+          />
         </TableBody>
       </Table>
     );
   }
 }
+
+export default ServicesConsumer('notification')(UserSpaceMemberships);

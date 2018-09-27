@@ -5,6 +5,7 @@ export const User = PropTypes.shape({
   firstName: PropTypes.string.isRequired,
   lastName: PropTypes.string.isRequired,
   avatarUrl: PropTypes.string.isRequired,
+  email: PropTypes.string.isRequired,
   sys: PropTypes.shape({
     id: PropTypes.string.isRequired
   })
@@ -15,8 +16,12 @@ export const SpaceMembership = PropTypes.shape({
   roles: PropTypes.array.isRequired,
   sys: PropTypes.shape({
     id: PropTypes.string.isRequired,
-    space: PropTypes.object.isRequired
-  })
+    space: PropTypes.shape({
+      sys: PropTypes.shape({
+        id: PropTypes.string.isRequired
+      }).isRequired
+    }).isRequired
+  }).isRequired
 });
 
 export const OrganizationMembership = PropTypes.shape({

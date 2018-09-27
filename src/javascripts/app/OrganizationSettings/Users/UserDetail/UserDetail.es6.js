@@ -71,7 +71,7 @@ class UserDetail extends React.Component {
   }
 
   render() {
-    const { membership, spaceMemberships } = this.props;
+    const { membership, spaceMemberships, orgId } = this.props;
     const { user } = membership.sys;
 
     return (
@@ -110,7 +110,7 @@ class UserDetail extends React.Component {
               </Dropdown>
             </Card>
 
-            <UserSpaceMemberships memberships={spaceMemberships} />
+            <UserSpaceMemberships initialMemberships={spaceMemberships} user={user} orgId={orgId} />
           </div>
         </Workbench.Content>
       </Workbench>

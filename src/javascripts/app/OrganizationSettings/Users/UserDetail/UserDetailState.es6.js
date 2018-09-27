@@ -20,7 +20,9 @@ export default {
 
         return {
           membership: { ...membership, sys: { ...membership.sys, user } },
-          spaceMemberships: spaceMemberships.items
+          spaceMemberships: spaceMemberships.items.filter(membership => {
+            return membership.user.sys.id === user.sys.id;
+          })
         };
       }
     ]
