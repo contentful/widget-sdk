@@ -4,6 +4,7 @@ const concat = require('gulp-concat');
 const uglifyes = require('uglify-es');
 const composer = require('gulp-uglify/composer');
 const rev = require('gulp-rev');
+const mergeStream = require('merge-stream');
 const { writeFile, changeBase } = require('../helpers');
 
 const uglify = composer(uglifyes, console);
@@ -14,20 +15,30 @@ const uglify = composer(uglifyes, console);
  */
 gulp.task('build/js', ['js', 'templates'], function() {
   // The main production application
-  generateBundleFromFiles('app/application.min.js', 'build/app-manifest.json', [
-    'public/app/templates.js',
-    'public/app/vendor.js',
-    'public/app/libs.js',
-    'public/app/components.js'
-  ]);
+  const prodBundleSteeam = generateBundleFromFiles(
+    'app/application.min.js',
+    'build/app-manifest.json',
+    [
+      'public/app/templates.js',
+      'public/app/vendor.js',
+      'public/app/libs.js',
+      'public/app/components.js'
+    ]
+  );
 
   // The "test" application, bundled with test dependencies
-  generateBundleFromFiles('app/test-bundle.min.js', 'build/test-manifest.json', [
-    'public/app/templates.js',
-    'public/app/vendor.js',
-    'public/app/libs-test.js',
-    'public/app/components.js'
-  ]);
+  const testBundleStream = generateBundleFromFiles(
+    'app/test-bundle.min.js',
+    'build/test-manifest.json',
+    [
+      'public/app/templates.js',
+      'public/app/vendor.js',
+      'public/app/libs-test.js',
+      'public/app/components.js'
+    ]
+  );
+
+  return mergeStream(prodBundleSteeam, testBundleStream);
 });
 
 function generateBundleFromFiles(bundlePath, manifestPath, files) {
