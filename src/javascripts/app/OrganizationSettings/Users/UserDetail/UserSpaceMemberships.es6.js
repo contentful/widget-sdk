@@ -25,7 +25,7 @@ class UserSpaceMemberships extends React.Component {
     if (membership.admin) {
       return 'Admin';
     } else {
-      return membership.roles.map(role => role.sys.id).join(', ');
+      return membership.roles.map(role => role.name).join(', ');
     }
   }
 
@@ -60,7 +60,7 @@ class UserSpaceMemberships extends React.Component {
         <TableBody>
           {memberships.map(membership => (
             <TableRow key={membership.sys.id}>
-              <TableCell>{membership.sys.space.sys.id}</TableCell>
+              <TableCell>{membership.sys.space.name}</TableCell>
               <TableCell>{this.getRolesInSpace(membership)}</TableCell>
               <TableCell>{this.getFormattedDate(membership.sys.createdAt)}</TableCell>
             </TableRow>

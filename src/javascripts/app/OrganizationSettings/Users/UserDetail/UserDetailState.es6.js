@@ -1,3 +1,5 @@
+import ResolveLinks from '../../LinkResolver.es6';
+
 export default {
   name: 'detail',
   params: {
@@ -11,18 +13,24 @@ export default {
       'access_control/OrganizationMembershipRepository.es6',
       '$stateParams',
       async (endpointFactory, repo, $stateParams) => {
+        const includePaths = ['roles', 'sys.space'];
         const endpoint = endpointFactory.createOrganizationEndpoint($stateParams.orgId);
         const membership = await repo.getMembership(endpoint, $stateParams.userId);
-        const [user, spaceMemberships] = await Promise.all([
+        const [user, spaceMembershipsResult] = await Promise.all([
           repo.getUser(endpoint, membership.sys.user.sys.id),
           repo.getSpaceMemberships(endpoint, {
-            include: ['sys.space', 'roles'].join()
+            include: includePaths.join()
           })
         ]);
 
+        const { items, includes } = spaceMembershipsResult;
+
+        // TODO: consider not mutating the data
+        ResolveLinks({ paths: includePaths, items, includes });
+
         return {
           initialMembership: { ...membership, sys: { ...membership.sys, user } },
-          spaceMemberships: spaceMemberships.items.filter(membership => {
+          spaceMemberships: items.filter(membership => {
             return membership.user.sys.id === user.sys.id;
           })
         };
