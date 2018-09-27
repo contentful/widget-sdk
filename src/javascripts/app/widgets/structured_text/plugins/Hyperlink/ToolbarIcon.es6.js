@@ -4,6 +4,7 @@ import { INLINES } from '@contentful/structured-text-types';
 import ToolbarIcon from '../shared/ToolbarIcon.es6';
 import { hasHyperlink, toggleLink } from './Util.es6';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
+import { haveAnyInlines } from '../shared/UtilHave.es6';
 
 export default class HyperlinkToolbarIcon extends Component {
   static propTypes = {
@@ -21,11 +22,13 @@ export default class HyperlinkToolbarIcon extends Component {
 
   render() {
     const { disabled, change } = this.props;
+
+    const isDisabled = disabled || haveAnyInlines(change);
     return (
       <WidgetAPIContext.Consumer>
         {({ widgetAPI }) => (
           <ToolbarIcon
-            disabled={disabled}
+            disabled={isDisabled}
             type={INLINES.HYPERLINK}
             icon="Link"
             title="Hyperlink"

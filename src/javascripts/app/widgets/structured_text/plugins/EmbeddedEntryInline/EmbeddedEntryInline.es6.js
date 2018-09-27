@@ -7,6 +7,7 @@ import FetchEntity from '../shared/FetchEntity/index.es6';
 
 const ServicesConsumer = require('../../../../../reactServiceContext').default;
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
+import { INLINES } from '@contentful/structured-text-types';
 
 class EmbeddedEntryInline extends React.Component {
   static propTypes = {
@@ -39,7 +40,7 @@ class EmbeddedEntryInline extends React.Component {
     const { isSelected } = this.props;
 
     return (
-      <InlineReferenceCard selected={isSelected}>
+      <InlineReferenceCard testId={INLINES.EMBEDDED_ENTRY} selected={isSelected}>
         Entity missing or inaccessible
       </InlineReferenceCard>
     );
@@ -48,14 +49,14 @@ class EmbeddedEntryInline extends React.Component {
   renderNode(fetchEntryResult) {
     return (
       <InlineReferenceCard
-        contentEditable={false}
+        testId={INLINES.EMBEDDED_ENTRY}
         selected={this.props.isSelected}
         title={`${fetchEntryResult.contentTypeName}: ${fetchEntryResult.entryTitle}`}
         status={fetchEntryResult.entryStatus}
         extraClassNames="structured-text__inline-reference-card"
         isLoading={fetchEntryResult.requestStatus === RequestStatus.Pending}
         dropdownListItemNodes={[
-          <DropdownListItem key="edit" onClick={_ => this.handleEditClick(fetchEntryResult.entry)}>
+          <DropdownListItem key="edit" onClick={() => this.handleEditClick(fetchEntryResult.entry)}>
             Edit
           </DropdownListItem>,
           <DropdownListItem key="remove" onClick={this.handleRemoveClick}>

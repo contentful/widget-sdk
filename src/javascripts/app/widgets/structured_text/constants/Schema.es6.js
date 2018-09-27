@@ -8,7 +8,7 @@ import {
 } from '@contentful/structured-text-types';
 
 const slateTypeConstraint = type => ({ type });
-const TEXT_CONSTRAINT = { object: ['text'] };
+const TEXT_CONSTRAINT = { object: 'text' };
 const VOID_CONSTRAINT = { isVoid: true };
 const INLINE_CONSTRAINTS = Object.values(INLINES).map(slateTypeConstraint);
 

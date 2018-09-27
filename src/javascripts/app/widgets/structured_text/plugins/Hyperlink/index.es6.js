@@ -5,6 +5,7 @@ import ToolbarIcon from './ToolbarIcon.es6';
 import Hyperlink from './Hyperlink.es6';
 import { editLink, mayEditLink, toggleLink } from './Util.es6';
 import asyncChange from '../shared/AsyncChange.es6';
+import { haveAnyInlines } from '../shared/UtilHave.es6';
 
 const { HYPERLINK, ENTRY_HYPERLINK, ASSET_HYPERLINK } = INLINES;
 
@@ -13,27 +14,35 @@ export default ToolbarIcon;
 export const HyperlinkPlugin = ({ createHyperlinkDialog }) => ({
   renderNode: props => {
     if (isHyperlink(props.node.type)) {
-      return <Hyperlink {...props} />;
+      return (
+        <Hyperlink
+          {...props}
+          onClick={() => {
+            if (mayEditLink(props.editor.value)) {
+              asyncChange(props.editor, newChange => editLink(newChange, createHyperlinkDialog));
+            }
+          }}
+        />
+      );
     }
   },
 
-  onKeyDown: (event, _change, editor) => {
-    if (isHotkey('cmd+k', event)) {
-      asyncChange(editor, async change => {
-        if (mayEditLink(change.value)) {
-          await editLink(change, createHyperlinkDialog);
-        } else {
-          await toggleLink(change, createHyperlinkDialog);
-        }
-      });
+  onKeyDown: (event, change, editor) => {
+    if (isHotkey('cmd+k', event) && !haveAnyInlines(change)) {
+      if (mayEditLink(change.value)) {
+        asyncChange(editor, newChange => editLink(newChange, createHyperlinkDialog));
+      } else {
+        asyncChange(editor, newChange => toggleLink(newChange, createHyperlinkDialog));
+      }
     }
   },
-
-  onClick(_event, change, editor) {
-    if (mayEditLink(change.value)) {
-      asyncChange(editor, async change => {
-        await editLink(change, createHyperlinkDialog);
-      });
+  validateNode: node => {
+    if (isHyperlink(node.type) && node.getInlines().size > 0) {
+      return change => {
+        node
+          .getInlines()
+          .forEach(inlineNode => change.unwrapInlineByKey(inlineNode.key, node.type));
+      };
     }
   }
 });

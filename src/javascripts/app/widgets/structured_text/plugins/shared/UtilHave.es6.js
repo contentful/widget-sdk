@@ -18,6 +18,10 @@ export const haveInlines = ({ value }, type) => {
   return false;
 };
 
+export function haveAnyInlines({ value }) {
+  return value.inlines.size > 0;
+}
+
 export const haveTextInSomeBlocks = ({ value }) => {
   if (value.blocks.size > 0) {
     return value.blocks.some(block => block.text);

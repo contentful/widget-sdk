@@ -15,27 +15,30 @@ const createInlineNode = id => ({
   }
 });
 
-const applyChange = (change, entryId) => {
+const insertInline = (change, entryId) => {
   return change
+    .splitInline()
     .insertInline(createInlineNode(entryId))
     .moveToStartOfNextText()
     .focus();
 };
 
 export const hasOnlyInlineEntryInSelection = change => {
-  if (change.value.inlines.size === 1) {
-    return change.value.inlines.get(0).type === INLINES.EMBEDDED_ENTRY;
+  const inlines = change.value.inlines;
+  const selection = change.value.selection;
+  if (inlines.size === 1 && selection.startKey === selection.endKey) {
+    return inlines.get(0).type === INLINES.EMBEDDED_ENTRY;
   }
 };
 
-export const selectEntryAndApply = async (widgetAPI, change) => {
+export const selectEntryAndInsert = async (widgetAPI, change) => {
   try {
     const [entry] = await widgetAPI.dialogs.selectSingleEntry();
     if (!entry) {
       return;
     }
 
-    return applyChange(change, entry.sys.id);
+    return insertInline(change, entry.sys.id);
   } catch (error) {
     // the user closes modal without selecting an entry
   }

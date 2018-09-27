@@ -16,7 +16,8 @@ export default class Hyperlink extends React.Component {
     attributes: PropTypes.object.isRequired,
     node: PropTypes.object.isRequired,
     children: PropTypes.node,
-    onClick: PropTypes.func
+    editor: PropTypes.object,
+    createHyperlinkDialog: PropTypes.func
   };
 
   render() {
@@ -27,7 +28,7 @@ export default class Hyperlink extends React.Component {
     const _icon = ICON_MAP[node.type];
 
     return (
-      <span {...this.props.attributes}>
+      <span {...this.props.attributes} onClick={this.props.onClick}>
         <TextLink
           href="javascript:void(0)"
           data-tip={uri}

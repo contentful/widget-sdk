@@ -1,4 +1,5 @@
 /* global setImmediate */
+import { toKeyCode } from 'is-hotkey';
 
 export const document = (...content) => ({
   nodeClass: 'document',
@@ -35,16 +36,15 @@ export const flushPromises = () =>
     });
   });
 
-export const setCaret = target => {
-  const range = window.document.createRange();
-  const sel = window.document.getSelection();
-  const nodes = target.childNodes;
-
-  const last = nodes[nodes.length - 1];
-
-  range.setStart(last, 0);
-  sel.removeAllRanges();
-  sel.addRange(range);
-};
+export const keyChord = (key, opts) => ({
+  key,
+  keyCode: toKeyCode(key),
+  which: toKeyCode(key),
+  metaKey: false,
+  altKey: false,
+  shiftKey: false,
+  ctrlKey: false,
+  ...opts
+});
 
 export const getWithId = (wrapper, testId) => wrapper.find(`[data-test-id="${testId}"]`).first();
