@@ -1,10 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import { without } from 'lodash';
 
 import { SpaceMembership, User } from '../PropTypes.es6';
 
+import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory.es6';
+import { create as createSpaceMembershipRepo } from 'access_control/SpaceMembershipRepository.es6';
+
 import SpaceMembershipEditor from './SpaceMembershipEditor.es6';
+import SpaceMembershipDropDown from './SpaceMembershipDropdown.es6';
 import { Table, TableRow, TableHead, TableBody, TableCell } from '@contentful/ui-component-library';
 
 const ServicesConsumer = require('../../../../reactServiceContext').default;
@@ -20,6 +25,7 @@ class UserSpaceMemberships extends React.Component {
   };
 
   state = { memberships: this.props.initialMemberships };
+  orgEndpoint = createOrganizationEndpoint(this.props.orgId);
 
   getRolesInSpace(membership) {
     if (membership.admin) {
@@ -45,16 +51,43 @@ class UserSpaceMemberships extends React.Component {
     `);
   }
 
+  handleMembershipRemove = async membership => {
+    const { memberships } = this.state;
+    const { user, $services } = this.props;
+    const { notification } = $services;
+    const { space } = membership.sys;
+    const spaceId = space.sys.id;
+    const spaceEndpoint = createSpaceEndpoint(spaceId);
+    const repo = createSpaceMembershipRepo(spaceEndpoint);
+
+    try {
+      await repo.remove(membership);
+    } catch (e) {
+      notification.error(e.message);
+      return;
+    }
+
+    this.setState({
+      memberships: without(memberships, membership)
+    });
+
+    notification.info(`
+      ${user.firstName} is no longer part of the space ${space.name}
+    `);
+  };
+
   render() {
     const { user, orgId } = this.props;
     const { memberships } = this.state;
+
     return (
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Space</TableCell>
-            <TableCell>Roles</TableCell>
-            <TableCell>Created at</TableCell>
+            <TableCell width="30%">Space</TableCell>
+            <TableCell width="40%">Roles</TableCell>
+            <TableCell width="25%">Created at</TableCell>
+            <TableCell />
           </TableRow>
         </TableHead>
         <TableBody>
@@ -63,6 +96,13 @@ class UserSpaceMemberships extends React.Component {
               <TableCell>{membership.sys.space.name}</TableCell>
               <TableCell>{this.getRolesInSpace(membership)}</TableCell>
               <TableCell>{this.getFormattedDate(membership.sys.createdAt)}</TableCell>
+              <TableCell align="right">
+                <SpaceMembershipDropDown
+                  membership={membership}
+                  onMembershipChange={() => {}}
+                  onMembershipRemove={this.handleMembershipRemove}
+                />
+              </TableCell>
             </TableRow>
           ))}
           <SpaceMembershipEditor

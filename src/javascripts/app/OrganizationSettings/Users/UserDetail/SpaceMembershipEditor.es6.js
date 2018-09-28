@@ -84,7 +84,7 @@ export default class SpaceMembershipEditor extends React.Component {
             ))}
           </Select>
         </TableCell>
-        <TableCell cols="2">
+        <TableCell colSpan="2">
           <Button
             style={{ marginRight: '10px' }}
             buttonType="positive"
