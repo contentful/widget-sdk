@@ -41,11 +41,12 @@ export default class Hyperlink extends React.Component {
 
   renderLink({ tooltip }) {
     const { children, node } = this.props;
-    const uri = node.data.get('uri');
     const title = node.data.get('title');
+    const uri = node.data.get('uri');
+    const href = isUrl(uri) ? uri : 'javascript:void(0)';
     return (
       <TextLink
-        href={uri || 'javascript:void(0)'} // Allows user to open link in new tab.
+        href={href} // Allows user to open link in new tab.
         data-tip={tooltip}
         title={title}
         extraClassNames="structured-text__hyperlink">
@@ -70,7 +71,7 @@ export default class Hyperlink extends React.Component {
                 tooltip = `${target.sys.linkType} missing or inaccessible`;
               } else if (requestStatus === RequestStatus.Success) {
                 tooltip = `${contentTypeName}: ${entityTitle ||
-                  'Untitled'} (${entityStatus.toUpperCase()})`;
+                'Untitled'} (${entityStatus.toUpperCase()})`;
               } else if (requestStatus === RequestStatus.Pending) {
                 tooltip = `Loading ${target.sys.linkType.toLowerCase()}...`;
               }
@@ -81,4 +82,8 @@ export default class Hyperlink extends React.Component {
       </WidgetAPIContext.Consumer>
     );
   }
+}
+
+function isUrl(string) {
+  return /^(?:[a-z]+:)?\/\//i.test(string) || /^mailto:/i.test(string);
 }
