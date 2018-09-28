@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
-
 import Icon from 'ui/Components/Icon.es6';
 
 import WebhookCallStatus from './WebhookCallStatus.es6';
@@ -16,13 +15,12 @@ const parseJsonSafe = s => {
   } // eslint-disable-line no-empty
 };
 
-class WebhookCall extends React.Component {
+export class WebhookCall extends React.Component {
   static propTypes = {
     webhook: PropTypes.object.isRequired,
     call: PropTypes.object.isRequired,
-
     $services: PropTypes.shape({
-      $state: PropTypes.object
+      $state: PropTypes.object.isRequired
     }).isRequired
   };
 
@@ -38,7 +36,7 @@ class WebhookCall extends React.Component {
     const resHeaders = get(call, ['response', 'headers']);
 
     return (
-      <React.Fragment>
+      <div className="workbench webhook-call">
         <div className="workbench-header__wrapper">
           <header className="workbench-header">
             <div className="breadcrumbs-widget">
@@ -90,7 +88,7 @@ class WebhookCall extends React.Component {
             </div>
           </div>
         </div>
-      </React.Fragment>
+      </div>
     );
   }
 }

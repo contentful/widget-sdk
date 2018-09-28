@@ -3,7 +3,7 @@ import Templates from './templates';
 const isNonEmptyString = s => typeof s === 'string' && s.length > 0;
 
 export default function createWebhookTemplateDialogOpener(config) {
-  const { webhookRepo, contentTypes, defaultLocaleCode, domain, modalDialog } = config;
+  const { webhookRepo, contentTypes, defaultLocaleCode, domain, modalDialog, onCreate } = config;
 
   const validTemplateIds = Templates.map(template => template.id);
   const templateContentTypes = prepareContentTypesForTemplates(
@@ -26,7 +26,8 @@ export default function createWebhookTemplateDialogOpener(config) {
           webhookRepo,
           templateContentTypes,
           reposition: () => $scope.$emit('centerOn:reposition'),
-          closeDialog: () => $scope.dialog.confirm()
+          closeDialog: () => $scope.dialog.confirm(),
+          onCreate
         };
       }
     });

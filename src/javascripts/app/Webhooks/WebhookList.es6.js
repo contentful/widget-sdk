@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
-
 import Icon from 'ui/Components/Icon.es6';
 
 import WebhookHealth from './WebhookHealth.es6';
@@ -14,20 +13,23 @@ export class WebhookList extends React.Component {
     webhooks: PropTypes.array.isRequired,
     webhookRepo: PropTypes.object.isRequired,
     openTemplateDialog: PropTypes.func.isRequired,
-    forbidden: PropTypes.node,
-
+    templateId: PropTypes.string,
     $services: PropTypes.shape({
-      $state: PropTypes.object
+      $state: PropTypes.object.isRequired
     }).isRequired
   };
 
-  render() {
-    const { webhooks, webhookRepo, openTemplateDialog, forbidden } = this.props;
+  componentDidMount() {
+    if (this.props.templateId) {
+      this.props.openTemplateDialog(this.props.templateId);
+    }
+  }
 
-    return forbidden ? (
-      forbidden
-    ) : (
-      <React.Fragment>
+  render() {
+    const { webhooks, webhookRepo, openTemplateDialog } = this.props;
+
+    return (
+      <div className="workbench webhook-list">
         <div className="workbench-header__wrapper">
           <header className="workbench-header">
             <div className="workbench-header__icon cf-icon">
@@ -60,9 +62,9 @@ export class WebhookList extends React.Component {
                           <tr
                             className="x--clickable"
                             key={wh.sys.id}
-                            onClick={() =>
-                              this.props.$services.$state.go('^.detail', { webhookId: wh.sys.id })
-                            }>
+                            onClick={() => {
+                              this.props.$services.$state.go('^.detail', { webhookId: wh.sys.id });
+                            }}>
                             <td className="x--medium-cell">
                               <strong className="x--ellipsis">{wh.name}</strong>
                             </td>
@@ -97,7 +99,7 @@ export class WebhookList extends React.Component {
             />
           </div>
         </div>
-      </React.Fragment>
+      </div>
     );
   }
 }

@@ -13,7 +13,8 @@ export default class WebhookTemplateDialog extends React.Component {
     webhookRepo: PropTypes.object.isRequired,
     templateContentTypes: PropTypes.array.isRequired,
     reposition: PropTypes.func.isRequired,
-    closeDialog: PropTypes.func.isRequired
+    closeDialog: PropTypes.func.isRequired,
+    onCreate: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -36,7 +37,7 @@ export default class WebhookTemplateDialog extends React.Component {
   }
 
   renderTabs = ({ getTabProps, getPaneProps }) => {
-    const { closeDialog, webhookRepo, templateContentTypes } = this.props;
+    const { closeDialog, webhookRepo, templateContentTypes, onCreate } = this.props;
 
     return (
       <React.Fragment>
@@ -52,6 +53,7 @@ export default class WebhookTemplateDialog extends React.Component {
               closeDialog={closeDialog}
               webhookRepo={webhookRepo}
               templateContentTypes={templateContentTypes}
+              onCreate={onCreate}
             />
           </TabPane>
         ))}

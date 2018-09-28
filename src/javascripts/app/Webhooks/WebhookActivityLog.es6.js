@@ -13,7 +13,6 @@ class WebhookActivityLog extends React.Component {
     webhookId: PropTypes.string,
     webhookRepo: PropTypes.object.isRequired,
     registerLogRefreshAction: PropTypes.func.isRequired,
-
     $services: PropTypes.shape({
       $state: PropTypes.object.isRequired
     }).isRequired

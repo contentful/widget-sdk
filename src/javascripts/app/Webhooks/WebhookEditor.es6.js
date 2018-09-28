@@ -18,7 +18,6 @@ class WebhookEditor extends React.Component {
     webhookRepo: PropTypes.object.isRequired,
     registerSaveAction: PropTypes.func.isRequired,
     setDirty: PropTypes.func.isRequired,
-    onChange: PropTypes.func.isRequired,
 
     $services: PropTypes.shape({
       notification: PropTypes.object.isRequired,
@@ -53,11 +52,6 @@ class WebhookEditor extends React.Component {
     this.props.registerSaveAction(this.save);
   }
 
-  propagateChange() {
-    this.props.setDirty(this.state.dirty);
-    this.props.onChange(this.state.webhook);
-  }
-
   onChange = change => {
     this.setState(
       s => ({
@@ -65,12 +59,12 @@ class WebhookEditor extends React.Component {
         webhook: { ...s.webhook, ...change },
         dirty: true
       }),
-      () => this.propagateChange()
+      () => this.props.setDirty(true)
     );
   };
 
   onSave(webhook) {
-    this.setState({ webhook, dirty: false, busy: false }, () => this.propagateChange());
+    this.setState({ webhook, dirty: false, busy: false }, () => this.props.setDirty(false));
   }
 
   navigateToSaved(webhook) {
@@ -128,7 +122,7 @@ class WebhookEditor extends React.Component {
     const { tab, webhook, fresh, dirty, busy } = this.state;
 
     return (
-      <React.Fragment>
+      <div className="workbench webhook-editor">
         <div className="workbench-header__wrapper">
           <header className="workbench-header">
             <div className="breadcrumbs-widget">
@@ -151,13 +145,18 @@ class WebhookEditor extends React.Component {
             <div className="workbench-header__actions">
               {tab === TABS.SETTINGS &&
                 !fresh && (
-                  <button className="btn-secondary-action" disabled={busy} onClick={this.remove}>
+                  <button
+                    data-test-id="webhook-remove"
+                    className="btn-secondary-action"
+                    disabled={busy}
+                    onClick={this.remove}>
                     Remove
                   </button>
                 )}
 
               {tab === TABS.SETTINGS && (
                 <button
+                  data-test-id="webhook-save"
                   className="btn-primary-action"
                   disabled={!dirty || busy}
                   onClick={this.save}>
@@ -166,7 +165,11 @@ class WebhookEditor extends React.Component {
               )}
 
               {tab === TABS.LOG && (
-                <button className="btn-secondary-action" disabled={busy} onClick={this.refreshLog}>
+                <button
+                  data-test-id="webhook-refresh-log"
+                  className="btn-secondary-action"
+                  disabled={busy}
+                  onClick={this.refreshLog}>
                   Refresh log
                 </button>
               )}
@@ -215,7 +218,7 @@ class WebhookEditor extends React.Component {
             </div>
           </div>
         )}
-      </React.Fragment>
+      </div>
     );
   }
 }

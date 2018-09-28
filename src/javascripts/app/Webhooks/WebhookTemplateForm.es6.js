@@ -17,9 +17,9 @@ export class WebhookTemplateForm extends React.Component {
     closeDialog: PropTypes.func.isRequired,
     webhookRepo: PropTypes.object.isRequired,
     templateContentTypes: PropTypes.array.isRequired,
+    onCreate: PropTypes.func.isRequired,
 
     $services: PropTypes.shape({
-      $state: PropTypes.object.isRequired,
       notification: PropTypes.object.isRequired,
       modalDialog: PropTypes.object.isRequired,
       ReloadNotification: PropTypes.object.isRequired,
@@ -57,10 +57,6 @@ export class WebhookTemplateForm extends React.Component {
     return values(fields).every(s => isString(s) && s.length > 0);
   }
 
-  navigateToSaved(webhook) {
-    return this.props.$services.$state.go('^.detail', { webhookId: webhook.sys.id });
-  }
-
   onCreateClick = () => {
     const { webhookRepo, template, templateContentTypes } = this.props;
     const name = `${template.title} - ${template.subtitle}`;
@@ -83,7 +79,9 @@ export class WebhookTemplateForm extends React.Component {
       })
     ).then(
       // We always navigate to the first saved webhook.
-      ([firstSaved]) => this.navigateToSaved(firstSaved),
+      webhooks => {
+        this.props.onCreate(webhooks);
+      },
       err => this.setState({ busy: false, error: err.message })
     );
   };
@@ -185,7 +183,7 @@ export class WebhookTemplateForm extends React.Component {
   }
 }
 
-export default ServicesConsumer('$state', 'notification', 'modalDialog', 'ReloadNotification', {
+export default ServicesConsumer('notification', 'modalDialog', 'ReloadNotification', {
   as: 'Analytics',
   from: 'analytics/Analytics.es6'
 })(WebhookTemplateForm);

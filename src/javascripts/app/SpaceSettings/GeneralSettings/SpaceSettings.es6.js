@@ -5,7 +5,7 @@ import { Button, TextField } from '@contentful/ui-component-library';
 
 export default class SpaceSettings extends React.Component {
   static propTypes = {
-    openRemovalDialog: PropTypes.func.isRequired,
+    onRemoveClick: PropTypes.func.isRequired,
     save: PropTypes.func.isRequired,
     spaceName: PropTypes.string.isRequired,
     spaceId: PropTypes.string.isRequired
@@ -26,18 +26,16 @@ export default class SpaceSettings extends React.Component {
   };
 
   onSaveNewName = () => {
-    if (!this.isSaveDisabled()) {
-      const newSpaceName = this.state.spaceName;
-      this.setState({ isSaving: true });
-      this.props
-        .save(newSpaceName)
-        .then(() => {
-          this.setState({ isSaving: false, initialSpaceName: newSpaceName });
-        })
-        .catch(() => {
-          this.setState({ isSaving: false });
-        });
-    }
+    const newSpaceName = this.state.spaceName;
+    this.setState({ isSaving: true });
+    this.props
+      .save(newSpaceName)
+      .then(() => {
+        this.setState({ isSaving: false, initialSpaceName: newSpaceName });
+      })
+      .catch(() => {
+        this.setState({ isSaving: false });
+      });
   };
 
   renderContent() {
@@ -69,7 +67,7 @@ export default class SpaceSettings extends React.Component {
       <React.Fragment>
         <Button
           buttonType="negative"
-          onClick={this.props.openRemovalDialog}
+          onClick={this.props.onRemoveClick}
           data-test-id="delete-space">
           Remove space and all its contents
         </Button>
@@ -87,13 +85,15 @@ export default class SpaceSettings extends React.Component {
 
   render() {
     return (
-      <Workbench
-        centerContent
-        title="Space settings"
-        icon="page-settings"
-        content={this.renderContent()}
-        actions={this.renderActions()}
-      />
+      <div className="workbench space-settings">
+        <Workbench
+          centerContent
+          title="Space settings"
+          icon="page-settings"
+          content={this.renderContent()}
+          actions={this.renderActions()}
+        />
+      </div>
     );
   }
 }

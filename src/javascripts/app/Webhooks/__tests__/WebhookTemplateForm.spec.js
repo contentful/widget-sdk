@@ -45,7 +45,7 @@ describe('WebhookTemplateForm', () => {
       cancel: sinon.stub(),
       save: sinon.stub(),
       map: sinon.stub(),
-      stateGo: sinon.stub(),
+      goToWebhookDetails: sinon.stub(),
       notificationInfo: sinon.stub(),
       analyticsTrack: sinon.stub()
     };
@@ -58,10 +58,8 @@ describe('WebhookTemplateForm', () => {
         webhookRepo={repo}
         closeDialog={stubs.cancel}
         templateContentTypes={TEMPLATE_CONTENT_TYPES}
+        onCreate={stubs.goToWebhookDetails}
         $services={{
-          $state: {
-            go: stubs.stateGo
-          },
           notification: {
             info: stubs.notificationInfo
           },
@@ -161,6 +159,6 @@ describe('WebhookTemplateForm', () => {
     expect(stubs.save.calledWith({ mapped: true })).toBe(true);
     expect(stubs.analyticsTrack.calledWith('ui_webhook_editor:save')).toBe(true);
     expect(stubs.notificationInfo.calledWith('Webhook "test-name" saved successfully.')).toBe(true);
-    expect(stubs.stateGo.calledWith('^.detail', { webhookId: 'test-id' })).toBe(true);
+    expect(stubs.goToWebhookDetails.calledOnce).toBe(true);
   });
 });

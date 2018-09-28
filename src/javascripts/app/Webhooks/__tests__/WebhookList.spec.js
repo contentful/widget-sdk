@@ -8,7 +8,7 @@ const MockedProvider = require('../../../reactServiceContext').MockedProvider;
 describe('WebhookList', () => {
   const webhookRepo = { logs: { getHealth: sinon.stub().rejects() } };
 
-  const mount = (webhooks, forbidden) => {
+  const mount = webhooks => {
     return Enzyme.mount(
       <MockedProvider
         services={{
@@ -19,21 +19,10 @@ describe('WebhookList', () => {
             isLegacyOrganization: () => false
           }
         }}>
-        <WebhookList
-          webhooks={webhooks}
-          webhookRepo={webhookRepo}
-          openTemplateDialog={() => {}}
-          forbidden={forbidden}
-        />
+        <WebhookList webhooks={webhooks} webhookRepo={webhookRepo} openTemplateDialog={() => {}} />
       </MockedProvider>
     );
   };
-
-  it('renders "forbidden" view', () => {
-    const wrapper = mount([], <div id="forbidden-view" />);
-    expect(wrapper.find('#forbidden-view')).toExist();
-    expect(wrapper.find('.table__body')).not.toExist();
-  });
 
   it('renders empty list of webhooks', () => {
     const wrapper = mount([]);

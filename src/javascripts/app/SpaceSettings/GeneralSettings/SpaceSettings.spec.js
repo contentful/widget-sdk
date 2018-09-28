@@ -1,30 +1,11 @@
 import React from 'react';
 import Enzyme from 'enzyme';
+import sinon from 'sinon';
 import { noop } from 'lodash';
 
-describe('app/SpaceSettings/GeneralSettings', () => {
-  let SpaceSettingsContainer;
+import SpaceSettings from './SpaceSettings.es6';
 
-  const mount = (props = {}) => {
-    return Enzyme.mount(
-      <SpaceSettingsContainer
-        getSpace={() => ({
-          data: {
-            name: 'test-name',
-            sys: {
-              version: 1
-            }
-          },
-          getId: () => 'test-id'
-        })}
-        renameSpace={noop}
-        getSpacePlan={noop}
-        openDeleteSpaceDialog={noop}
-        {...props}
-      />
-    );
-  };
-
+describe('SpaceSettings', () => {
   const selectors = {
     idInput: 'input[name="space-id"]',
     nameInput: 'input[name="space-name"]',
@@ -32,12 +13,17 @@ describe('app/SpaceSettings/GeneralSettings', () => {
     deleteBtn: 'button[data-test-id="delete-space"]'
   };
 
-  beforeEach(function() {
-    module('contentful/test');
-    SpaceSettingsContainer = this.$inject(
-      'app/SpaceSettings/GeneralSettings/SpaceSettingsContainer.es6'
-    ).default;
-  });
+  const mount = props => {
+    return Enzyme.mount(
+      <SpaceSettings
+        spaceName="test-name"
+        spaceId="test-id"
+        onRemoveClick={noop}
+        save={noop}
+        {...props}
+      />
+    );
+  };
 
   it('correct space data is present in the form', () => {
     const wrapper = mount();
@@ -49,7 +35,7 @@ describe('app/SpaceSettings/GeneralSettings', () => {
 
   it('save button is disabled by default', () => {
     const wrapper = mount();
-    expect(wrapper.find(selectors.saveBtn).prop('disabled')).toBe(true);
+    expect(wrapper.find(selectors.saveBtn)).toBeDisabled();
   });
 
   it('save button is enabled if name was changed, but disabled when it is empty', () => {
@@ -58,23 +44,33 @@ describe('app/SpaceSettings/GeneralSettings', () => {
     $nameInput.simulate('change', {
       target: { value: 'new-value' }
     });
-    expect(wrapper.find(selectors.saveBtn).prop('disabled')).toBe(false);
+    expect(wrapper.find(selectors.saveBtn)).not.toBeDisabled();
     $nameInput.simulate('change', {
       target: { value: '' }
     });
-    expect(wrapper.find(selectors.saveBtn).prop('disabled')).toBe(true);
+    expect(wrapper.find(selectors.saveBtn)).toBeDisabled();
   });
 
-  it('renameSpace is called when user clicks on save', () => {
-    const renameSpaceStub = sinon.stub().resolves();
+  it('save is called when user clicks on save and double click is handled', () => {
+    const saveStub = sinon.stub().resolves();
     const wrapper = mount({
-      renameSpace: renameSpaceStub
+      save: saveStub
     });
     wrapper.find(selectors.nameInput).simulate('change', { target: { value: 'new-value' } });
     wrapper.find(selectors.saveBtn).simulate('click');
     // try double click
     wrapper.find(selectors.saveBtn).simulate('click');
-    sinon.assert.calledOnce(renameSpaceStub);
-    sinon.assert.calledWith(renameSpaceStub, 'new-value', 1);
+    expect(saveStub.calledOnce).toBeTruthy();
+    expect(saveStub.calledWith('new-value')).toBeTruthy();
+  });
+
+  it('save is not called when user clicks on disable button', () => {
+    const saveStub = sinon.stub().resolves();
+    const wrapper = mount({
+      save: saveStub
+    });
+    wrapper.find(selectors.nameInput).simulate('change', { target: { value: '' } });
+    wrapper.find(selectors.saveBtn).simulate('click');
+    expect(saveStub.notCalled).toBeTruthy();
   });
 });
