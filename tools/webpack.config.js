@@ -110,13 +110,23 @@ module.exports = () => {
         },
         // The sharejs client is provided as a package of ESnext
         // modules. We also need to transpile it.
-        // We also need to transpile our first party (@contentful) dependencies,
-        // as many of these are shared between front-end/back-end and are liable
+        // We also need to transpile our (@contentful) dependencies
+        // and their @contentful dependencies.
+        // Many of these are shared between front-end/back-end and are liable
         // to be exported directly as node packages (complete with es6).
         {
           // TODO: consider transpiling all dependencies to avoid non-ES5 code, specially for IE
           test: /sharejs\/lib\/client|node_modules\/json0-ot-diff|node_modules\/@contentful.+.js$/,
-          exclude: /node_modules\/@contentful\/[^/]+\/node_modules/,
+          exclude: function(path) {
+            const isContentful = /node_modules\/@contentful/.test(path);
+            const isContentfulDependency = path.split('/@contentful/').length - 1 > 1;
+
+            if (isContentful && isContentfulDependency) {
+              return false;
+            }
+
+            return /node_modules\/@contentful\/[^/]+\/node_modules/.test(path);
+          },
           use: {
             loader: 'babel-loader',
             options: createBabelOptions({ angularModules: false })
