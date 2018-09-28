@@ -123,6 +123,9 @@ export function joinAndTruncate(list, maxLength, itemsName) {
 }
 
 /**
+ * Takes a string and ensures it does not exceed a given length.
+ *
+ * @usage[js]
  * truncate('Hello world', 5)
  * // => 'Hello…'
  *
@@ -226,6 +229,19 @@ export function isValidUrl(value) {
   return urlRegex.test(value);
 }
 
+/**
+ * Takes an array and joins with "," and "and".
+ *
+ * TODO: Do we really need/want the `oxford` parameter? It's not used anywhere.
+ *
+ * @usage[js]
+ * joinWithAnd(['one', 'two', 'three'])
+ * // => 'one, two and, three
+ *
+ * @param items
+ * @param oxford
+ * @returns {*}
+ */
 export function joinWithAnd(items, oxford = true) {
   if (!Array.isArray(items)) {
     return null;
