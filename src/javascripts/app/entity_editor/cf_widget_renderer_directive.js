@@ -28,7 +28,7 @@ angular.module('cf.app').directive('cfWidgetRenderer', [
           throw new Error('Widget template is required');
         }
 
-        scope.contentTypeHref = buildContentTypeHref(scope.contentType);
+        scope.contentTypeHref = buildContentTypeHref(scope.entityInfo.contentTypeId);
 
         const $widget = $(template);
         element.append($widget);
@@ -52,9 +52,9 @@ angular.module('cf.app').directive('cfWidgetRenderer', [
     // TODO We should replace this with a helper method that generates a state
     // reference. The template then should use the `ui-sref`
     // directive.
-    function buildContentTypeHref(contentType) {
-      if (contentType && contentType.getId) {
-        return $state.href('^.^.content_types.detail', { contentTypeId: contentType.getId() });
+    function buildContentTypeHref(contentTypeId) {
+      if (contentTypeId) {
+        return $state.href('^.^.content_types.detail', { contentTypeId });
       }
     }
   }

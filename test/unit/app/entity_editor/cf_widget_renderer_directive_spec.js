@@ -11,8 +11,9 @@ describe('cfWidgetRenderer Directive', () => {
     });
 
     this.widget = {};
-    this.contentType = {
-      getId: sinon.stub().returns('CTID')
+
+    this.entityInfo = {
+      contentTypeId: 'CTID'
     };
 
     this.fieldLocale = {
@@ -23,7 +24,7 @@ describe('cfWidgetRenderer Directive', () => {
     this.compile = function() {
       return this.$compile('<cf-widget-renderer>', {
         widget: this.widget,
-        contentType: this.contentType,
+        entityInfo: this.entityInfo,
         fieldLocale: this.fieldLocale
       });
     };
@@ -43,7 +44,7 @@ describe('cfWidgetRenderer Directive', () => {
 
   it('does not have scope#contentTypeStateRef property if there is no content type', function() {
     this.widget.template = '<p>{{contentTypeHref}}</p>';
-    this.contentType = {};
+    this.entityInfo = {};
     const el = this.compile();
     expect(el.find('p').text()).toEqual('');
   });
