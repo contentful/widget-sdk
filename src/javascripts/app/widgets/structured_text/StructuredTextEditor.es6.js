@@ -33,7 +33,9 @@ import {
 
 import NewLinePlugin from './plugins/NewLinePlugin/index.es6';
 import { ParagraphPlugin } from './plugins/Paragraph/index.es6';
-import EntryLinkBlock, { EntryLinkBlockPlugin } from './plugins/EntryLinkBlock/index.es6';
+import EmbeddedEntryBlock, {
+  EmbeddedEntryBlockPlugin
+} from './plugins/EmbeddedEntryBlock/index.es6';
 import EmbeddedEntryInline, {
   EmbeddedEntryInlinePlugin
 } from './plugins/EmbeddedEntryInline/index.es6';
@@ -127,11 +129,11 @@ export default class StructuredTextEditor extends React.Component {
         isOpen={this.state.isEmbedDropdownOpen}
         disabled={props.disabled}
         onClose={this.handleEmbedDropdownClose}>
-        <EntryLinkBlock {...props} />
+        <EmbeddedEntryBlock {...props} />
         <EmbeddedEntryInline {...props} />
       </EntryEmbedDropdown>
     ) : (
-      <EntryLinkBlock isButton {...props} />
+      <EmbeddedEntryBlock isButton {...props} />
     );
 
   renderToolbar() {
@@ -250,10 +252,6 @@ function buildPlugins(widgetAPI) {
     createHyperlinkDialog: widgetAPI.dialogs.createHyperlink
   };
 
-  const EntryOptions = {
-    widgetAPI
-  };
-
   return [
     BoldPlugin(),
     ItalicPlugin(),
@@ -269,8 +267,8 @@ function buildPlugins(widgetAPI) {
     Heading6Plugin(),
     ParagraphPlugin(),
     HrPlugin(),
-    EmbeddedEntryInlinePlugin(EntryOptions),
-    EntryLinkBlockPlugin(),
+    EmbeddedEntryInlinePlugin({ widgetAPI }),
+    EmbeddedEntryBlockPlugin({ widgetAPI }),
 
     EditList(),
     ListPlugin(),

@@ -14,8 +14,9 @@ export default class EntryLinkToolbarIcon extends Component {
   };
   handleMouseDown = async (event, widgetAPI) => {
     event.preventDefault();
-    const newChange = await selectEntryAndInsert(widgetAPI, this.props.change);
-    this.props.onToggle(newChange);
+    const change = this.props.change;
+    await selectEntryAndInsert(widgetAPI, change);
+    this.props.onToggle(change);
   };
   render() {
     return (

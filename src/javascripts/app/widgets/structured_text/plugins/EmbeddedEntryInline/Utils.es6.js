@@ -41,9 +41,13 @@ export const selectEntryAndInsert = async (widgetAPI, change) => {
       return;
     }
 
-    return insertInline(change, entry.sys.id);
+    insertInline(change, entry.sys.id);
   } catch (error) {
-    // the user closes modal without selecting an entry
+    if (error) {
+      throw error;
+    } else {
+      // the user closes modal without selecting an entry
+    }
   }
 };
 

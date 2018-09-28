@@ -2,10 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { DropdownListItem, Button } from '@contentful/ui-component-library';
 import { BLOCKS } from '@contentful/structured-text-types';
-import { haveTextInSomeBlocks } from '../shared/UtilHave.es6';
-import logger from 'logger';
 
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
+import { selectEntryAndInsert } from './Util.es6';
 
 export default class EntryLinkToolbarIcon extends Component {
   static propTypes = {
@@ -19,42 +18,13 @@ export default class EntryLinkToolbarIcon extends Component {
     isButton: false
   };
 
-  handleMouseDown = async (event, widgetAPI) => {
+  handleClick = async (event, widgetAPI) => {
     event.preventDefault();
-    try {
-      const [entry] = await widgetAPI.dialogs.selectSingleEntry();
-      if (!entry) {
-        return;
-      }
-
-      const linkedEntryBlock = {
-        type: BLOCKS.EMBEDDED_ENTRY,
-        object: 'block',
-        isVoid: true,
-        data: {
-          target: {
-            sys: {
-              id: entry.sys.id,
-              type: 'Link',
-              linkType: 'Entry'
-            }
-          }
-        }
-      };
-
-      const { change } = this.props;
-
-      let newChange = change;
-      if (change.value.blocks.size === 0 || haveTextInSomeBlocks(change)) {
-        newChange = change.insertBlock(linkedEntryBlock);
-      } else {
-        newChange = change.setBlocks(linkedEntryBlock);
-      }
-      this.props.onToggle(newChange.insertBlock(BLOCKS.PARAGRAPH).focus());
-    } catch (error) {
-      logger.logException(error);
-    }
+    const change = this.props.change;
+    await selectEntryAndInsert(widgetAPI, change);
+    this.props.onToggle(change);
   };
+
   render() {
     return (
       <WidgetAPIContext.Consumer>
@@ -64,7 +34,7 @@ export default class EntryLinkToolbarIcon extends Component {
               disabled={this.props.disabled}
               extraClassNames="structured-text__entry-link-block-button"
               size="small"
-              onMouseDown={event => this.handleMouseDown(event, widgetAPI)}
+              onClick={event => this.handleClick(event, widgetAPI)}
               icon="Entry"
               buttonType="muted"
               testId={`toolbar-toggle-${BLOCKS.EMBEDDED_ENTRY}`}>
@@ -75,7 +45,7 @@ export default class EntryLinkToolbarIcon extends Component {
               isDisabled={this.props.disabled}
               extraClassNames="structured-text__entry-link-block-list-item"
               size="small"
-              onMouseDown={event => this.handleMouseDown(event, widgetAPI)}
+              onMouseDown={event => this.handleClick(event, widgetAPI)}
               testId={`toolbar-toggle-${BLOCKS.EMBEDDED_ENTRY}`}>
               Embed block entry
             </DropdownListItem>
