@@ -68,7 +68,7 @@ class FetchedReferenceCard extends React.Component {
         description={entityDescription}
         selected={selected}
         status={entityStatus}
-        thumbnailElement={<Thumbnail thumbnail={entityFile} />}
+        thumbnailElement={entityFile && <Thumbnail thumbnail={entityFile} />}
         loading={isLoading}
         actionElements={
           <React.Fragment>
