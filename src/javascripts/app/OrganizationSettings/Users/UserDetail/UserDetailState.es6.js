@@ -24,13 +24,11 @@ export default {
         ]);
 
         const { items, includes } = spaceMembershipsResult;
-
-        // TODO: consider not mutating the data
-        ResolveLinks({ paths: includePaths, items, includes });
+        const spaceMemberships = ResolveLinks({ paths: includePaths, items, includes });
 
         return {
           initialMembership: { ...membership, sys: { ...membership.sys, user } },
-          spaceMemberships: items.filter(membership => {
+          spaceMemberships: spaceMemberships.filter(membership => {
             return membership.user.sys.id === user.sys.id;
           })
         };

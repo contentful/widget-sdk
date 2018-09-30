@@ -49,11 +49,13 @@ export default class SpaceMembershipEditor extends React.Component {
 
   async submit() {
     const { user, onMembershipCreated } = this.props;
-    const { selectedRole, selectedSpace } = this.state;
+    const { selectedRole, selectedSpace, spaces, roles } = this.state;
     const spaceEndpoint = createSpaceEndpoint(selectedSpace);
     const repo = createSpaceMembershipRepo(spaceEndpoint);
     const membership = await repo.invite(user.email, [selectedRole]);
-    onMembershipCreated(membership);
+    const space = spaces.find(space => space.sys.id === selectedSpace);
+    const role = roles.find(role => role.sys.id === selectedRole);
+    onMembershipCreated(membership, space, role);
   }
 
   render() {

@@ -7,6 +7,7 @@ import { SpaceMembership, User } from '../PropTypes.es6';
 
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import { create as createSpaceMembershipRepo } from 'access_control/SpaceMembershipRepository.es6';
+import ResolveLinks from '../../LinkResolver.es6';
 
 import SpaceMembershipEditor from './SpaceMembershipEditor.es6';
 import SpaceMembershipDropDown from './SpaceMembershipDropdown.es6';
@@ -39,17 +40,30 @@ class UserSpaceMemberships extends React.Component {
     return moment(dateString, moment.ISO_8601).toISOString();
   }
 
-  handleMembershipCreated(membership) {
+  handleMembershipCreated = (membership, space, role) => {
     const { user, $services } = this.props;
 
+    // In the list of memberships we show the space and the role names
+    // This is only possible because we include the space and role information
+    // in the GET API request. The same can't be done in a POST request.
+    // This is why we have to do it manually here.
+    const resolved = ResolveLinks({
+      paths: ['sys.space', 'roles'],
+      includes: {
+        Space: [space],
+        Role: [role]
+      },
+      items: [membership]
+    });
+
     this.setState({
-      memberships: [...this.state.memberships, membership]
+      memberships: [...this.state.memberships, resolved]
     });
 
     $services.notification.info(`
       ${user.firstName} has been successfully added to the space ${membership.sys.space.sys.id}
     `);
-  }
+  };
 
   handleMembershipRemove = async membership => {
     const { memberships } = this.state;
@@ -108,7 +122,7 @@ class UserSpaceMemberships extends React.Component {
           <SpaceMembershipEditor
             user={user}
             orgId={orgId}
-            onMembershipCreated={membership => this.handleMembershipCreated(membership)}
+            onMembershipCreated={this.handleMembershipCreated}
           />
         </TableBody>
       </Table>
