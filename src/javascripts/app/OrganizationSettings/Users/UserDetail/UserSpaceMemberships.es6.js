@@ -1,17 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { without } from 'lodash';
+import { without, findIndex } from 'lodash';
 
 import { SpaceMembership, User } from '../PropTypes.es6';
 
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory.es6';
-import { create as createSpaceMembershipRepo } from 'access_control/SpaceMembershipRepository.es6';
-import ResolveLinks from '../../LinkResolver.es6';
+import {
+  create as createSpaceMembershipRepo,
+  getMembershipRoles
+} from 'access_control/SpaceMembershipRepository.es6';
+import { getAllSpaces, getAllRoles } from 'access_control/OrganizationMembershipRepository.es6';
+import { joinWithAnd } from 'utils/StringUtils.es6';
 
 import SpaceMembershipEditor from './SpaceMembershipEditor.es6';
 import SpaceMembershipDropDown from './SpaceMembershipDropdown.es6';
-import { Table, TableRow, TableHead, TableBody, TableCell } from '@contentful/ui-component-library';
+import {
+  Table,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+  TextLink
+} from '@contentful/ui-component-library';
 
 const ServicesConsumer = require('../../../../reactServiceContext').default;
 
@@ -25,59 +36,70 @@ class UserSpaceMemberships extends React.Component {
     orgId: PropTypes.string
   };
 
-  state = { memberships: this.props.initialMemberships };
+  state = {
+    memberships: this.props.initialMemberships,
+    showingForm: false,
+    editingMembershipId: null,
+    spaces: [],
+    roles: []
+  };
+
   orgEndpoint = createOrganizationEndpoint(this.props.orgId);
 
-  getRolesInSpace(membership) {
-    if (membership.admin) {
-      return 'Admin';
-    } else {
-      return membership.roles.map(role => role.name).join(', ');
-    }
+  createRepoFromSpaceMembership(membership) {
+    const { space } = membership.sys;
+    const spaceId = space.sys.id;
+    const spaceEndpoint = createSpaceEndpoint(spaceId);
+    return createSpaceMembershipRepo(spaceEndpoint);
   }
+
+  fetchSpaceRoles = async spaceId => {
+    const allRoles = await getAllRoles(this.orgEndpoint);
+    const roles = allRoles.filter(role => role.sys.space.sys.id === spaceId);
+    this.setState({ roles });
+  };
 
   getFormattedDate(dateString) {
     return moment(dateString, moment.ISO_8601).toISOString();
   }
 
-  handleMembershipCreated = (membership, space, role) => {
-    const { user, $services } = this.props;
-
-    // In the list of memberships we show the space and the role names
-    // This is only possible because we include the space and role information
-    // in the GET API request. The same can't be done in a POST request.
-    // This is why we have to do it manually here.
-    const resolved = ResolveLinks({
-      paths: ['sys.space', 'roles'],
-      includes: {
-        Space: [space],
-        Role: [role]
-      },
-      items: [membership]
-    });
+  showSpaceMembershipEditor = async () => {
+    this.setState({ loadingSpaces: true });
+    const spaces = await getAllSpaces(this.orgEndpoint);
 
     this.setState({
-      memberships: [...this.state.memberships, resolved]
+      spaces,
+      showingForm: true,
+      loadingSpaces: false
+    });
+  };
+
+  hideSpaceMembershipEditor = () => {
+    this.setState({ showingForm: false, editingMembershipId: null });
+  };
+
+  handleMembershipCreated = membership => {
+    const { user, $services } = this.props;
+
+    this.setState({
+      memberships: [...this.state.memberships, membership]
     });
 
     $services.notification.info(`
-      ${user.firstName} has been successfully added to the space ${membership.sys.space.sys.id}
+      ${user.firstName} has been successfully added to the space ${membership.sys.space.name}
     `);
   };
 
   handleMembershipRemove = async membership => {
     const { memberships } = this.state;
     const { user, $services } = this.props;
-    const { notification } = $services;
     const { space } = membership.sys;
-    const spaceId = space.sys.id;
-    const spaceEndpoint = createSpaceEndpoint(spaceId);
-    const repo = createSpaceMembershipRepo(spaceEndpoint);
+    const repo = this.createRepoFromSpaceMembership(membership);
 
     try {
       await repo.remove(membership);
     } catch (e) {
-      notification.error(e.message);
+      $services.notification.error(e.message);
       return;
     }
 
@@ -85,47 +107,105 @@ class UserSpaceMemberships extends React.Component {
       memberships: without(memberships, membership)
     });
 
-    notification.info(`
+    $services.notification.info(`
       ${user.firstName} is no longer part of the space ${space.name}
     `);
   };
 
+  handleMembershipChange = async membership => {
+    const { user, $services } = this.props;
+    const { space } = membership.sys;
+    const memberships = [...this.state.memberships];
+    const roleNames = getMembershipRoles(membership).map(role => role.name);
+    const index = findIndex(memberships, item => item.sys.id === membership.sys.id);
+    memberships[index] = membership;
+
+    this.setState({
+      memberships,
+      editingMembershipId: null
+    });
+
+    $services.notification.info(`
+      ${user.firstName} is now ${joinWithAnd(roleNames)} in the the space ${space.name}
+    `);
+  };
+
+  renderMembershipRow(membership) {
+    return (
+      <TableRow key={membership.sys.id}>
+        <TableCell>{membership.sys.space.name}</TableCell>
+        <TableCell>
+          {getMembershipRoles(membership)
+            .map(role => role.name)
+            .join(', ')}
+        </TableCell>
+        <TableCell>{this.getFormattedDate(membership.sys.createdAt)}</TableCell>
+        <TableCell align="right">
+          <SpaceMembershipDropDown
+            membership={membership}
+            onMembershipChange={membership => {
+              this.setState({ editingMembershipId: membership.sys.id });
+            }}
+            onMembershipRemove={this.handleMembershipRemove}
+          />
+        </TableCell>
+      </TableRow>
+    );
+  }
+
   render() {
     const { user, orgId } = this.props;
-    const { memberships } = this.state;
+    const { memberships, showingForm, editingMembershipId, roles, spaces } = this.state;
 
     return (
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell width="30%">Space</TableCell>
-            <TableCell width="40%">Roles</TableCell>
-            <TableCell width="25%">Created at</TableCell>
-            <TableCell />
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {memberships.map(membership => (
-            <TableRow key={membership.sys.id}>
-              <TableCell>{membership.sys.space.name}</TableCell>
-              <TableCell>{this.getRolesInSpace(membership)}</TableCell>
-              <TableCell>{this.getFormattedDate(membership.sys.createdAt)}</TableCell>
-              <TableCell align="right">
-                <SpaceMembershipDropDown
-                  membership={membership}
-                  onMembershipChange={() => {}}
-                  onMembershipRemove={this.handleMembershipRemove}
-                />
-              </TableCell>
+      <section>
+        <Table style={{ marginBottom: 20 }}>
+          <TableHead>
+            <TableRow>
+              <TableCell width="30%">Space</TableCell>
+              <TableCell width="40%">Roles</TableCell>
+              <TableCell width="25%">Created at</TableCell>
+              <TableCell />
             </TableRow>
-          ))}
-          <SpaceMembershipEditor
-            user={user}
-            orgId={orgId}
-            onMembershipCreated={this.handleMembershipCreated}
-          />
-        </TableBody>
-      </Table>
+          </TableHead>
+          <TableBody>
+            {memberships.map(membership => {
+              if (editingMembershipId === membership.sys.id) {
+                return (
+                  <SpaceMembershipEditor
+                    user={user}
+                    orgId={orgId}
+                    initialMembership={membership}
+                    roles={roles}
+                    onSpaceSelected={this.fetchSpaceRoles}
+                    onMembershipChanged={this.handleMembershipChange}
+                    onCancel={this.hideSpaceMembershipEditor}
+                  />
+                );
+              } else {
+                return this.renderMembershipRow(membership);
+              }
+            })}
+            {showingForm && (
+              <SpaceMembershipEditor
+                spaces={spaces}
+                roles={roles}
+                user={user}
+                orgId={orgId}
+                onMembershipCreated={this.handleMembershipCreated}
+                onSpaceSelected={this.fetchSpaceRoles}
+                onCancel={this.hideSpaceMembershipEditor}
+              />
+            )}
+          </TableBody>
+        </Table>
+
+        {!showingForm && (
+          <TextLink icon="Plus" onClick={this.showSpaceMembershipEditor}>
+            Add to a space
+          </TextLink>
+        )}
+      </section>
     );
   }
 }

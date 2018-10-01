@@ -19,7 +19,9 @@ export default {
         const [user, spaceMembershipsResult] = await Promise.all([
           repo.getUser(endpoint, membership.sys.user.sys.id),
           repo.getSpaceMemberships(endpoint, {
-            include: includePaths.join()
+            include: includePaths.join(),
+            'sys.user.sys.id': membership.sys.user.sys.id,
+            limit: 100
           })
         ]);
 

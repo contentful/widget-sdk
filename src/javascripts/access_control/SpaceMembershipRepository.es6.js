@@ -3,6 +3,19 @@ import { omit, extend, includes } from 'lodash';
 
 export const ADMIN_ROLE_ID = '__cf_builtin_admin';
 
+export const ADMIN_ROLE = {
+  name: 'Admin',
+  sys: { id: ADMIN_ROLE_ID }
+};
+
+export function getMembershipRoles(membership) {
+  if (membership.admin) {
+    return [ADMIN_ROLE];
+  } else {
+    return membership.roles;
+  }
+}
+
 // `GET /spaces/:id/space_memberships` endpoint returns a max of 100 items
 const PER_PAGE = 100;
 
