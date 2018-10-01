@@ -55,6 +55,8 @@ export default class Hyperlink extends React.Component {
       <Tooltip content={tooltip} containerElement={HyperlinkTooltipContainer}>
         <TextLink
           href={href} // Allows user to open link in new tab.
+          rel="noopener noreferrer"
+          data-tip={tooltip}
           title={title}
           extraClassNames="rich-text__hyperlink">
           {children}
