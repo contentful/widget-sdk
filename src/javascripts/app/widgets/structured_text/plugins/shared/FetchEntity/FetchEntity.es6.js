@@ -4,15 +4,6 @@ import PropTypes from 'prop-types';
 import * as EntityState from '../../../../../../data/CMA/EntityState.es6';
 import RequestStatus from '../RequestStatus.es6';
 
-const DEFAULT_ENTITY = {
-  sys: {
-    contentType: {
-      sys: {}
-    }
-  },
-  fields: {}
-};
-
 export default class FetchEntity extends React.PureComponent {
   static propTypes = {
     widgetAPI: PropTypes.object.isRequired,
@@ -25,7 +16,6 @@ export default class FetchEntity extends React.PureComponent {
     }).isRequired
   };
   state = {
-    entity: DEFAULT_ENTITY,
     requestStatus: RequestStatus.Pending
   };
   componentDidMount() {

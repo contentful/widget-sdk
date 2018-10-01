@@ -59,7 +59,7 @@ class FetchedReferenceCard extends React.Component {
     requestStatus
   }) {
     const { extraClassNames, selected } = this.props;
-    const isLoading = requestStatus === RequestStatus.Pending && !entity.sys.id;
+    const isLoading = requestStatus === RequestStatus.Pending && !entity;
     return (
       <ReferenceCard
         title={entityTitle || 'Untitled'}

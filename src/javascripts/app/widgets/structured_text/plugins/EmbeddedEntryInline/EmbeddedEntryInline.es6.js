@@ -47,7 +47,7 @@ class EmbeddedEntryInline extends React.Component {
   }
 
   renderNode({ requestStatus, contentTypeName, entity, entityTitle, entityStatus }) {
-    const isLoading = requestStatus === RequestStatus.Pending && !entity.sys.id;
+    const isLoading = requestStatus === RequestStatus.Pending && !entity;
     return (
       <InlineReferenceCard
         testId={INLINES.EMBEDDED_ENTRY}

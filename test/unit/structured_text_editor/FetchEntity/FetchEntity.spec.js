@@ -6,8 +6,6 @@ import RequestStatus from 'app/widgets/structured_text/plugins/shared/RequestSta
 import sinon from 'npm:sinon';
 import { flushPromises } from '../helpers';
 
-const EMPTY_ENTITY = { sys: { contentType: { sys: {} } }, fields: {} };
-
 const newMockWidgetAPI = (entity, contentType) => {
   return {
     space: {
@@ -87,7 +85,6 @@ describe('FetchEntity', () => {
 
     it('is called initially, while fetching entity', function() {
       sinon.assert.calledOnceWith(this.props.render, {
-        entity: EMPTY_ENTITY,
         requestStatus: RequestStatus.Pending
       });
     });
@@ -95,7 +92,6 @@ describe('FetchEntity', () => {
     it('is called with `requestStatus: "error"`', async function() {
       await flushPromises();
       expect(this.props.render.args[1][0]).toEqual({
-        entity: EMPTY_ENTITY,
         requestStatus: RequestStatus.Error
       });
     });
@@ -108,7 +104,6 @@ describe('FetchEntity', () => {
 
     it('is called initially, while fetching entity', function() {
       sinon.assert.calledOnceWith(this.props.render, {
-        entity: EMPTY_ENTITY,
         requestStatus: RequestStatus.Pending
       });
     });
