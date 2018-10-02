@@ -272,7 +272,6 @@ function buildPlugins(widgetAPI) {
 
     EditList(),
     ListPlugin(),
-
     TrailingBlock({ type: BLOCKS.PARAGRAPH }),
     NewLinePlugin()
   ];

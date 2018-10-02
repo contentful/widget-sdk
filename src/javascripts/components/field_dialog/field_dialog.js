@@ -70,6 +70,13 @@ angular
 
       const initialWidgetId = $scope.widget.widgetId;
 
+      $scope.initialStructuredTextOptions = getInitialStructuredTextOptions();
+
+      $scope.structuredTextOptions = {};
+      $scope.onStructuredTextOptionsChange = options => {
+        $scope.structuredTextOptions = options;
+      };
+
       $scope.widgetSettings = {
         id: $scope.widget.widgetId,
         // Need to clone so we do not mutate data if we cancel the dialog
@@ -137,6 +144,10 @@ angular
         fieldDecorator.update($scope.decoratedField, $scope.field, contentTypeData);
         validations.updateField($scope.field, $scope.validations);
 
+        if ($scope.field.type === 'StructuredText') {
+          validations.addEnabledStructuredTextOptions($scope.field, $scope.structuredTextOptions);
+        }
+
         const selectedWidgetId = $scope.widgetSettings.id;
         const selectedWidget = _.find($scope.availableWidgets, { id: selectedWidgetId }) || {};
         let values = $scope.widgetSettings.params;
@@ -165,6 +176,17 @@ angular
 
         dialog.confirm();
       };
+
+      function getInitialStructuredTextOptions() {
+        return $scope.field.validations && $scope.field.validations.length
+          ? Object.assign.apply(
+              Object,
+              $scope.field.validations.filter(value => {
+                return value.enabledNodeTypes || value.enabledMarks;
+              })
+            )
+          : {};
+      }
 
       function isValid() {
         if (!$scope.fieldForm.$valid) {

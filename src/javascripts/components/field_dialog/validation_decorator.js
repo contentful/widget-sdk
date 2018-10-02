@@ -10,6 +10,7 @@ angular
   .factory('validationDecorator', [
     'require',
     require => {
+      const _ = require('lodash');
       const pluralize = require('pluralize');
       const validationViews = require('validationViews');
       const createSchema = require('validation');
@@ -31,7 +32,10 @@ angular
         assetImageDimensions: {
           width: { min: null, max: null },
           height: { min: null, max: null }
-        }
+        },
+        enabledNodeTypes: null,
+        enabledMarks: null,
+        nodes: { size: { min: null, max: null } }
       };
 
       const validationLabels = {
@@ -48,7 +52,9 @@ angular
         linkContentType: 'Accept only specified entry type',
         linkMimetypeGroup: 'Accept only specified file types',
         assetFileSize: 'Accept only specified file size',
-        assetImageDimensions: 'Accept only specified image dimensions'
+        assetImageDimensions: 'Accept only specified image dimensions',
+        enabledNodeTypes: 'Accept only specified node types',
+        enabledMarks: 'Accept only specified marks'
       };
 
       const validationHelpText = {
@@ -68,7 +74,9 @@ angular
         linkContentType: 'Make this field only accept entries from specified content type(s)',
         linkMimetypeGroup: 'Make this field only accept specified file types',
         assetFileSize: 'Specify a minimum and/or maximum allowed file size',
-        assetImageDimensions: 'Specify a minimum and/or maximum allowed image dimension'
+        assetImageDimensions: 'Specify a minimum and/or maximum allowed image dimension',
+        enabledNodeTypes: 'Make this field only accept nodes from specified node type(s)',
+        enabledMarks: 'Make this field only accept marks from specified mark type(s)'
       };
 
       const validationsOrder = [
@@ -80,7 +88,10 @@ angular
         'linkContentType',
         'linkMimeType',
         'assetFileSize',
-        'in'
+        'in',
+        'enabledNodeTypes',
+        'enabledMarks',
+        'nodes'
       ];
 
       const schema = createSchema({ type: 'Validation' });
@@ -90,7 +101,8 @@ angular
         extractAll: extractAll,
         validate: validate,
         validateAll: validateAll,
-        updateField: updateField
+        updateField: updateField,
+        addEnabledStructuredTextOptions: addEnabledStructuredTextOptions
       };
 
       /**
@@ -212,6 +224,32 @@ angular
         if (!_.isEmpty(itemValidations)) {
           field.items.validations = extractAll(itemValidations);
         }
+      }
+
+      function addEnabledStructuredTextOptions(field, options) {
+        const { enabledNodeTypes, enabledMarks } = options;
+
+        const validationsCopy = field.validations.filter(
+          validation => !(validation.enabledMarks || validation.enabledNodeTypes)
+        );
+
+        if (enabledMarks) {
+          validationsCopy.push({
+            enabledMarks: enabledMarks,
+            message: `Only the following mark(s) allowed: ${
+              enabledMarks ? enabledMarks.join(', ') : 'none'
+            }`
+          });
+        }
+        if (enabledNodeTypes) {
+          validationsCopy.push({
+            enabledNodeTypes: enabledNodeTypes,
+            message: `Only the following node(s) allowed: ${
+              enabledNodeTypes ? enabledNodeTypes.join(', ') : 'none'
+            }`
+          });
+        }
+        field.validations = validationsCopy;
       }
 
       function validateAll(decoratedValidations) {

@@ -36,4 +36,4 @@ div(
           <react-component name="@contentful/ui-component-library/CheckboxField" props="buildLocalisationCheckboxProps()" />
 
     div.cf-flex-grid-column(ng-show="structuredTextFormattingOptionsEnabled&&field.isStructuredTextField")
-      <!-- Structured Text Settings -->
+      <react-component name="components/field_dialog/StructuredTextOptions.es6" props="{onChange: onStructuredTextOptionsChange, enabledMarks: initialStructuredTextOptions.enabledMarks, enabledNodeTypes: initialStructuredTextOptions.enabledNodeTypes}" />
