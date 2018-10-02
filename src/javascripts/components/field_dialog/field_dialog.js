@@ -178,14 +178,14 @@ angular
       };
 
       function getInitialStructuredTextOptions() {
-        return $scope.field.validations && $scope.field.validations.length
-          ? Object.assign.apply(
-              Object,
-              $scope.field.validations.filter(value => {
-                return value.enabledNodeTypes || value.enabledMarks;
-              })
-            )
-          : {};
+        const validationsForEnabledNodeTypesOrMarks =
+          $scope.field.validations &&
+          $scope.field.validations.length &&
+          $scope.field.validations.filter(value => {
+            return value.enabledNodeTypes || value.enabledMarks;
+          });
+
+        return Object.assign({}, ...(validationsForEnabledNodeTypesOrMarks || []));
       }
 
       function isValid() {
