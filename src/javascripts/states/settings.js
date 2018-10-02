@@ -28,7 +28,6 @@ angular
           require('app/Extensions/ExtensionsState.es6').default,
           require('app/SpaceSettings/Environments/State.es6').default,
           require('app/SpaceSettings/Usage/SpaceUsageState.es6').default,
-          require('app/Functions/State.es6').default,
           // Note: app/api/State is in the "Settings" menu but is not a child here.
           require('app/Webhooks/Routes/index.es6').default
         ]
