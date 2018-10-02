@@ -132,9 +132,9 @@ export default class OrganizationUsage extends React.Component {
 
   async loadPeriodData(newIndex) {
     const { periods } = this.state;
-    const { sys: newPeriod } = periods[newIndex];
+    const newPeriod = periods[newIndex];
     if (isNumber(this.state.selectedPeriodIndex)) {
-      const { sys: oldPeriod } = periods[this.state.selectedPeriodIndex];
+      const oldPeriod = periods[this.state.selectedPeriodIndex];
       track('usage:period_selected', {
         oldPeriod: pick(['startDate', 'endDate'], oldPeriod),
         newPeriod: pick(['startDate', 'endDate'], newPeriod)
@@ -142,8 +142,8 @@ export default class OrganizationUsage extends React.Component {
     }
     try {
       const [org, cma, cda, cpa] = await Promise.all([
-        getOrgUsage(this.endpoint, newPeriod.id),
-        ...['cma', 'cda', 'cpa'].map(api => getApiUsage(this.endpoint, newPeriod.id, api))
+        getOrgUsage(this.endpoint, newPeriod.sys.id),
+        ...['cma', 'cda', 'cpa'].map(api => getApiUsage(this.endpoint, newPeriod.sys.id, api))
       ]);
       this.setState({
         isLoading: false,
