@@ -109,7 +109,7 @@ class UserSpaceMemberships extends React.Component {
     `);
   };
 
-  handleMembershipChange = async membership => {
+  handleMembershipChanged = async membership => {
     const { user, $services } = this.props;
     const { space } = membership.sys;
     const memberships = [...this.state.memberships];
@@ -174,7 +174,7 @@ class UserSpaceMemberships extends React.Component {
                       initialMembership={membership}
                       roles={roles}
                       onSpaceSelected={this.fetchSpaceRoles}
-                      onMembershipChanged={this.handleMembershipChange}
+                      onMembershipChanged={this.handleMembershipChanged}
                       onCancel={this.hideSpaceMembershipEditor}
                     />
                   );
