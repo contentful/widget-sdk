@@ -46,7 +46,7 @@
     "kefir": "^3.7.1",
     "ldclient-js": "^1.1.8",
     "lodash": "^4.17.10",
-    "marked-ast": "^0.3.0",
+    "marked-ast": "git@github.com:contentful/marked-ast.git#ace76245efcec825ec0e8bceb6f0800408b64588",
     "moment": "^2.19.3",
     "nib": "^1.0.3",
     "node-html-encoder": "0.0.2",
