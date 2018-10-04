@@ -30,7 +30,12 @@ class SpaceMembershipEditor extends React.Component {
     initialMembership: SpaceMembership
   };
 
+  isEditing = Boolean(this.props.initialMembership);
+
+  submitButtonLabel = this.isEditing ? 'Change role' : 'Add to space';
+
   state = {
+    busy: false,
     selectedSpace: null,
     // TODO: consider spliting edit and creation in two different components
     // TODO: support multiple roles
@@ -76,6 +81,8 @@ class SpaceMembershipEditor extends React.Component {
     const isEditing = Boolean(initialMembership);
     let membership;
 
+    this.setState({ busy: true });
+
     // updating
     if (isEditing) {
       try {
@@ -117,10 +124,12 @@ class SpaceMembershipEditor extends React.Component {
     } else {
       onMembershipCreated && onMembershipCreated(resolved);
     }
+
+    this.setState({ busy: false });
   }
 
   render() {
-    const { selectedSpace, selectedRole } = this.state;
+    const { selectedSpace, selectedRole, busy } = this.state;
     const { roles, spaces, initialMembership, onCancel } = this.props;
 
     return (
@@ -132,7 +141,8 @@ class SpaceMembershipEditor extends React.Component {
             <Select
               name="spaceId"
               onChange={evt => this.setSpace(evt.target.value)}
-              id="new-membership-space">
+              id="new-membership-space"
+              isDisabled={busy}>
               <Option>Select a space</Option>
               {spaces &&
                 spaces.map(space => (
@@ -146,7 +156,7 @@ class SpaceMembershipEditor extends React.Component {
         <TableCell>
           <Select
             name="roleId"
-            isDisabled={!this.state.selectedSpace}
+            isDisabled={!this.state.selectedSpace || busy}
             onChange={evt => this.setRole(evt.target.value)}
             id="new-membership-role"
             value={selectedRole}>
@@ -164,8 +174,9 @@ class SpaceMembershipEditor extends React.Component {
             style={{ marginRight: '10px' }}
             buttonType="positive"
             disabled={!selectedRole || !selectedSpace}
-            onClick={() => this.submit()}>
-            Add to space
+            onClick={() => this.submit()}
+            loading={busy}>
+            {this.submitButtonLabel}
           </Button>
           <Button buttonType="naked" onClick={onCancel}>
             Cancel

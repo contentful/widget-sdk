@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 import { without, findIndex } from 'lodash';
 
 import { SpaceMembership, User } from '../PropTypes.es6';
@@ -59,10 +58,6 @@ class UserSpaceMemberships extends React.Component {
     this.setState({ roles });
   };
 
-  getFormattedDate(dateString) {
-    return moment(dateString, moment.ISO_8601).toISOString();
-  }
-
   showSpaceMembershipEditor = async () => {
     this.setState({ loadingSpaces: true });
     const spaces = await getAllSpaces(this.orgEndpoint);
@@ -84,6 +79,8 @@ class UserSpaceMemberships extends React.Component {
     this.setState({
       memberships: [...this.state.memberships, membership]
     });
+
+    this.hideSpaceMembershipEditor();
 
     $services.notification.info(`
       ${user.firstName} has been successfully added to the space ${membership.sys.space.name}
@@ -139,7 +136,6 @@ class UserSpaceMemberships extends React.Component {
             .map(role => role.name)
             .join(', ')}
         </TableCell>
-        <TableCell>{this.getFormattedDate(membership.sys.createdAt)}</TableCell>
         <TableCell align="right">
           <SpaceMembershipDropDown
             membership={membership}
@@ -159,46 +155,47 @@ class UserSpaceMemberships extends React.Component {
 
     return (
       <section>
-        <Table style={{ marginBottom: 20 }}>
-          <TableHead>
-            <TableRow>
-              <TableCell width="30%">Space</TableCell>
-              <TableCell width="40%">Roles</TableCell>
-              <TableCell width="25%">Created at</TableCell>
-              <TableCell />
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {memberships.map(membership => {
-              if (editingMembershipId === membership.sys.id) {
-                return (
-                  <SpaceMembershipEditor
-                    user={user}
-                    orgId={orgId}
-                    initialMembership={membership}
-                    roles={roles}
-                    onSpaceSelected={this.fetchSpaceRoles}
-                    onMembershipChanged={this.handleMembershipChange}
-                    onCancel={this.hideSpaceMembershipEditor}
-                  />
-                );
-              } else {
-                return this.renderMembershipRow(membership);
-              }
-            })}
-            {showingForm && (
-              <SpaceMembershipEditor
-                spaces={spaces}
-                roles={roles}
-                user={user}
-                orgId={orgId}
-                onMembershipCreated={this.handleMembershipCreated}
-                onSpaceSelected={this.fetchSpaceRoles}
-                onCancel={this.hideSpaceMembershipEditor}
-              />
-            )}
-          </TableBody>
-        </Table>
+        {(!!memberships.length || showingForm) && (
+          <Table style={{ marginBottom: 20 }}>
+            <TableHead>
+              <TableRow>
+                <TableCell width="30%">Space</TableCell>
+                <TableCell width="45%">Roles</TableCell>
+                <TableCell />
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {memberships.map(membership => {
+                if (editingMembershipId === membership.sys.id) {
+                  return (
+                    <SpaceMembershipEditor
+                      user={user}
+                      orgId={orgId}
+                      initialMembership={membership}
+                      roles={roles}
+                      onSpaceSelected={this.fetchSpaceRoles}
+                      onMembershipChanged={this.handleMembershipChange}
+                      onCancel={this.hideSpaceMembershipEditor}
+                    />
+                  );
+                } else {
+                  return this.renderMembershipRow(membership);
+                }
+              })}
+              {showingForm && (
+                <SpaceMembershipEditor
+                  spaces={spaces}
+                  roles={roles}
+                  user={user}
+                  orgId={orgId}
+                  onMembershipCreated={this.handleMembershipCreated}
+                  onSpaceSelected={this.fetchSpaceRoles}
+                  onCancel={this.hideSpaceMembershipEditor}
+                />
+              )}
+            </TableBody>
+          </Table>
+        )}
 
         {!showingForm && (
           <TextLink icon="Plus" onClick={this.showSpaceMembershipEditor}>
