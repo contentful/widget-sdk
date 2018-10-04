@@ -58,7 +58,7 @@ class EmbeddedEntryInline extends React.Component {
         isLoading={isLoading}
         dropdownListItemNodes={
           <React.Fragment>
-            <DropdownListItem onClick={() => this.handleEditClick(entity)}>Edit</DropdownListItem>,
+            <DropdownListItem onClick={() => this.handleEditClick(entity)}>Edit</DropdownListItem>
             <DropdownListItem
               onClick={this.handleRemoveClick}
               isDisabled={this.props.editor.props.readOnly}>
