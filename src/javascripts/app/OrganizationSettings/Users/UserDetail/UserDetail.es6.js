@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 
 import Workbench from 'ui/Components/Workbench/JSX.es6';
 import { go } from 'states/Navigator.es6';
-import { TextField, SelectField, Option, Button } from '@contentful/ui-component-library';
+import { TextField, Button } from '@contentful/ui-component-library';
 
 import { SpaceMembership, OrganizationMembership } from '../PropTypes.es6';
-import { orgRoles } from './OrgRoles.es6';
+import { OrganizationRoleSelector } from './OrganizationRoleSelector.es6';
 import {
   removeMembership,
   updateMembership
@@ -37,12 +37,7 @@ class UserDetail extends React.Component {
     this.setState({ orgRoleDropdownIsOpen: !this.state.orgRoleDropdownIsOpen });
   }
 
-  getOrgRole(id) {
-    return orgRoles.find(role => role.value === id);
-  }
-
-  changeOrgRole = async event => {
-    const role = event.target.value;
+  changeOrgRole = async role => {
     const { notification } = this.props.$services;
     const oldMembership = this.state.membership;
     const {
@@ -121,25 +116,7 @@ class UserDetail extends React.Component {
                 marginBottom: 30
               }}
             />
-            <SelectField
-              id="role"
-              name="role"
-              onChange={this.changeOrgRole}
-              labelText="Organization role"
-              value={membership.role}
-              selectProps={{
-                name: 'role',
-                width: 'large'
-              }}
-              style={{
-                marginBottom: 60
-              }}>
-              {orgRoles.map(role => (
-                <Option key={role.value} value={role.value}>
-                  {role.name}
-                </Option>
-              ))}
-            </SelectField>
+            <OrganizationRoleSelector initialRole={membership.role} onChange={this.changeOrgRole} />
 
             <h3 style={{ marginBottom: 30 }}>Space memberships</h3>
             <UserSpaceMemberships initialMemberships={spaceMemberships} user={user} orgId={orgId} />
