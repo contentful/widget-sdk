@@ -3,17 +3,46 @@ import { haveTextInSomeBlocks } from '../shared/UtilHave.es6';
 import { newConfigFromStructuredTextField } from 'search/EntitySelector/Config.es6';
 
 /**
- * Returns the `nodeType` depending on the given entity type.
+ * Returns whether given value has a block of the given type.
+ * @param {slate.Change} change
  * @param {string} type
- * @returns {string}
+ * @returns {boolean}
  */
-export function getNodeType(type) {
-  // EMBEDDED_ENTRY or EMBEDDED_ASSET
-  return BLOCKS[`EMBEDDED_${type.toUpperCase()}`];
+export const hasBlockOfType = (change, type) => {
+  const blocks = change.value.blocks;
+  return blocks.get(0).type === type;
+};
+
+/**
+ * Invokes entity selector modal and inserts block.
+ * @param {String} nodeType
+ * @param {WidgetAPI} widgetAPI
+ * @param {slate.Change} change
+ */
+export async function selectEntityAndInsert(nodeType, widgetAPI, change) {
+  const baseConfig = await newConfigFromStructuredTextField(widgetAPI.field, nodeType);
+  const config = {
+    ...baseConfig,
+    max: 1
+  };
+  try {
+    // widgetAPI.dialogs.selectSingleEntry() or selectSingleAsset()
+    const [entity] = await widgetAPI.dialogs.selectEntities(config);
+    if (!entity) {
+      return;
+    }
+    insertBlock(change, nodeType, entity);
+  } catch (error) {
+    if (error) {
+      throw error;
+    } else {
+      // the user closes modal without selecting an entry
+    }
+  }
 }
 
-const createNode = entity => ({
-  type: getNodeType(entity.sys.type),
+const createNode = (nodeType, entity) => ({
+  type: nodeType,
   object: 'block',
   isVoid: true,
   data: {
@@ -27,48 +56,12 @@ const createNode = entity => ({
   }
 });
 
-const insertBlock = (change, entity) => {
-  const linkedEntityBlock = createNode(entity);
+function insertBlock(change, nodeType, entity) {
+  const linkedEntityBlock = createNode(nodeType, entity);
   if (change.value.blocks.size === 0 || haveTextInSomeBlocks(change)) {
     change.insertBlock(linkedEntityBlock);
   } else {
     change.setBlocks(linkedEntityBlock);
   }
   change.insertBlock(BLOCKS.PARAGRAPH).focus();
-};
-
-export const hasBlockOfType = (change, type) => {
-  const blocks = change.value.blocks;
-
-  return blocks.get(0).type === type;
-};
-
-/**
- * Invokes entity selector modal and inserts block.
- *
- * @param {String} type
- * @param {WidgetAPI} widgetAPI
- * @param {slate.Change} change
- */
-export const selectEntityAndInsert = async (type, widgetAPI, change) => {
-  const nodeType = getNodeType(type);
-  const baseConfig = await newConfigFromStructuredTextField(widgetAPI.field, nodeType);
-  const config = {
-    ...baseConfig,
-    max: 1
-  };
-  try {
-    // widgetAPI.dialogs.selectSingleEntry() or selectSingleAsset()
-    const [entity] = await widgetAPI.dialogs.selectEntities(config);
-    if (!entity) {
-      return;
-    }
-    insertBlock(change, entity);
-  } catch (error) {
-    if (error) {
-      throw error;
-    } else {
-      // the user closes modal without selecting an entry
-    }
-  }
-};
+}

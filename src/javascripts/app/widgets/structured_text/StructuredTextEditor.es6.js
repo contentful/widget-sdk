@@ -34,7 +34,8 @@ import {
 import NewLinePlugin from './plugins/NewLinePlugin/index.es6';
 import { ParagraphPlugin } from './plugins/Paragraph/index.es6';
 import EmbeddedEntityBlock, {
-  EmbeddedEntityBlockPlugin
+  EmbeddedEntryBlockPlugin,
+  EmbeddedAssetBlockPlugin
 } from './plugins/EmbeddedEntityBlock/index.es6';
 import EmbeddedEntryInline, {
   EmbeddedEntryInlinePlugin
@@ -125,18 +126,18 @@ export default class StructuredTextEditor extends React.Component {
 
   renderEmbeds = props => (
     <React.Fragment>
-      <EmbeddedEntityBlock type="Asset" isButton {...props} />
+      <EmbeddedEntityBlock nodeType={BLOCKS.EMBEDDED_ASSET} isButton {...props} />
       {this.props.widgetAPI.features.embedInlineEntry ? (
         <EntryEmbedDropdown
           onToggle={this.toggleEmbedDropdown}
           isOpen={this.state.isEmbedDropdownOpen}
           disabled={props.disabled}
           onClose={this.handleEmbedDropdownClose}>
-          <EmbeddedEntityBlock type="Entry" {...props} />
+          <EmbeddedEntityBlock nodeType={BLOCKS.EMBEDDED_ENTRY} {...props} />
           <EmbeddedEntryInline {...props} />
         </EntryEmbedDropdown>
       ) : (
-        <EmbeddedEntityBlock type="Entry" isButton {...props} />
+        <EmbeddedEntityBlock nodeType={BLOCKS.EMBEDDED_ENTRY} isButton {...props} />
       )}
     </React.Fragment>
   );
@@ -273,8 +274,8 @@ function buildPlugins(widgetAPI) {
     ParagraphPlugin(),
     HrPlugin(),
     EmbeddedEntryInlinePlugin({ widgetAPI }),
-    EmbeddedEntityBlockPlugin({ widgetAPI, type: 'Entry', hotkey: 'mod+shift+e' }),
-    EmbeddedEntityBlockPlugin({ widgetAPI, type: 'Asset', hotkey: 'mod+shift+a' }),
+    EmbeddedEntryBlockPlugin({ widgetAPI }),
+    EmbeddedAssetBlockPlugin({ widgetAPI }),
 
     EditList(),
     ListPlugin(),

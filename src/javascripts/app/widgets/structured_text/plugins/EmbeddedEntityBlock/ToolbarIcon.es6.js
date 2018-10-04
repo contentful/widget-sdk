@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import { DropdownListItem, Button } from '@contentful/ui-component-library';
 
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
-import { getNodeType, selectEntityAndInsert } from './Util.es6';
+import { selectEntityAndInsert } from './Util.es6';
 
 export default class EntryLinkToolbarIcon extends Component {
   static propTypes = {
-    type: PropTypes.oneOf(['Entry', 'Asset']).isRequired,
+    nodeType: PropTypes.string.isRequired,
     change: PropTypes.object.isRequired,
     onToggle: PropTypes.func.isRequired,
     disabled: PropTypes.bool.isRequired,
@@ -20,16 +20,16 @@ export default class EntryLinkToolbarIcon extends Component {
 
   handleClick = async (event, widgetAPI) => {
     event.preventDefault();
-    const { change, type } = this.props;
-    await selectEntityAndInsert(type, widgetAPI, change);
+    const { change, nodeType } = this.props;
+    await selectEntityAndInsert(nodeType, widgetAPI, change);
     this.props.onToggle(change);
   };
 
   render() {
-    const { type } = this.props;
+    const { nodeType } = this.props;
+    const type = getEntityTypeFromNodeType(nodeType);
     const typeName = type.toLowerCase();
-    const baseClass = `structured-text__${typeName}-link-block`;
-    const nodeType = getNodeType(type);
+    const baseClass = `structured-text__${nodeType}`;
     return (
       <WidgetAPIContext.Consumer>
         {({ widgetAPI }) =>
@@ -58,4 +58,20 @@ export default class EntryLinkToolbarIcon extends Component {
       </WidgetAPIContext.Consumer>
     );
   }
+}
+
+/**
+ * Returns the entity type depending on the given node type.
+ * @param {string} nodeType
+ * @returns {string}
+ */
+function getEntityTypeFromNodeType(nodeType) {
+  const words = nodeType.toLowerCase().split('-');
+  if (words.indexOf('entry') !== -1) {
+    return 'Entry';
+  }
+  if (words.indexOf('asset') !== -1) {
+    return 'Asset';
+  }
+  throw new Error(`Node type \`${nodeType}\` has no associated \`entityType\``);
 }
