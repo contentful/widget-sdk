@@ -38,8 +38,8 @@ const ValidatableTypes = {
 };
 
 /**
- * Component is responsible for the controlling enables formatting
- * options for the Structured Text field.
+ * This component is responsible for controlling
+ * the formatting options for the Structured text field.
  *
  * Both enabledMarks and enabledNodeTypes can have following values:
  * - undefined -- equivalent to enabling everything.
