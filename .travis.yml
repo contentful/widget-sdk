@@ -94,7 +94,8 @@ deploy:
     local-dir: output/files/production
     acl: public_read
     skip_cleanup: true
-    on: 'master'
+    on:
+      all_branches: true
   # Deploys package and image. This requires the assets to be available
   # already
   - provider: script
