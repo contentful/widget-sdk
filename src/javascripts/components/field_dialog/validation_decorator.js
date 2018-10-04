@@ -260,7 +260,7 @@ angular
           validationsCopy.push({
             enabledMarks: enabledMarks,
             message: `Only the following mark(s) allowed: ${
-              enabledMarks
+              enabledMarks.length > 0
                 ? enabledMarks.map(mark => structuredTextOptionsLabels[mark]).join(', ')
                 : 'none'
             }`
@@ -270,7 +270,7 @@ angular
           validationsCopy.push({
             enabledNodeTypes: enabledNodeTypes,
             message: `Only the following node(s) allowed: ${
-              enabledNodeTypes
+              enabledNodeTypes.length > 0
                 ? enabledNodeTypes.map(node => structuredTextOptionsLabels[node]).join(', ')
                 : 'none'
             }`
