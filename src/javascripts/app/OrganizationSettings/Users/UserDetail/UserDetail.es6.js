@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 
 import Workbench from 'ui/Components/Workbench/JSX.es6';
 import { go } from 'states/Navigator.es6';
@@ -32,6 +33,12 @@ class UserDetail extends React.Component {
   };
 
   endpoint = createOrganizationEndpoint(this.props.orgId);
+
+  getLastActiveDate() {
+    const dateString = this.state.membership.sys.lastActiveAt;
+
+    return dateString ? moment(dateString, moment.ISO_8601).fromNow() : 'Not available';
+  }
 
   toggleOrgRoleDropdown() {
     this.setState({ orgRoleDropdownIsOpen: !this.state.orgRoleDropdownIsOpen });
@@ -116,7 +123,20 @@ class UserDetail extends React.Component {
                 marginBottom: 30
               }}
             />
-            <OrganizationRoleSelector initialRole={membership.role} onChange={this.changeOrgRole} />
+
+            <section style={{ display: 'flex', marginBottom: 50 }}>
+              <div style={{ width: '31.6%' }}>
+                <h4>Organization role</h4>
+                <OrganizationRoleSelector
+                  initialRole={membership.role}
+                  onChange={this.changeOrgRole}
+                />
+              </div>
+              <div>
+                <h4>Last activity</h4>
+                <p>{this.getLastActiveDate()}</p>
+              </div>
+            </section>
 
             <h3 style={{ marginBottom: 30 }}>Space memberships</h3>
             <UserSpaceMemberships initialMemberships={spaceMemberships} user={user} orgId={orgId} />
