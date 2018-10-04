@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import FetechedReferenceCard from '../shared/FetchedReferenceCard/index.es6';
 const ServicesConsumer = require('../../../../../reactServiceContext').default;
 
-class LinkedEntryBlock extends React.Component {
+class LinkedEntityBlock extends React.Component {
   static propTypes = {
     isSelected: PropTypes.bool.isRequired,
     attributes: PropTypes.object.isRequired,
@@ -15,18 +15,16 @@ class LinkedEntryBlock extends React.Component {
     }).isRequired
   };
 
-  getEntryId() {
-    return this.props.node.data.get('target').sys.id;
+  getEntitySys() {
+    const data = this.props.node.data;
+    return {
+      id: data.get('target').sys.id,
+      type: data.get('target').sys.linkType
+    };
   }
 
   handleEditClick() {
-    this.props.$services.slideInNavigator.goToSlideInEntity(
-      {
-        id: this.getEntryId(),
-        type: 'Entry'
-      },
-      2
-    );
+    this.props.$services.slideInNavigator.goToSlideInEntity(this.getEntitySys(), 2);
   }
 
   handleRemoveClick() {
@@ -37,12 +35,12 @@ class LinkedEntryBlock extends React.Component {
   render() {
     const { editor, isSelected } = this.props;
     const isDisabled = editor.props.readOnly;
-
+    const { id: entityId, type: entityType } = this.getEntitySys();
     return (
       <div {...this.props.attributes}>
         <FetechedReferenceCard
-          entityId={this.getEntryId()}
-          entityType="Entry"
+          entityId={entityId}
+          entityType={entityType}
           disabled={isDisabled}
           editable={true}
           selected={isSelected}
@@ -55,7 +53,8 @@ class LinkedEntryBlock extends React.Component {
   }
 }
 
+// TODO: Add slideIn functionality to WidgetAPI.
 export default ServicesConsumer({
   as: 'slideInNavigator',
   from: 'navigation/SlideInNavigator'
-})(LinkedEntryBlock);
+})(LinkedEntityBlock);

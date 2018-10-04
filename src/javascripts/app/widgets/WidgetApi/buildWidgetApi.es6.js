@@ -39,12 +39,13 @@ export default function buildWidgetApi({ field, features, currentUrl }) {
      */
     dialogs: {
       /**
-       * TODO: Does currently not behave as specified by the ui-extensions-sdk as it
-       * configures the selector according to the current field.
+       * TODO: Add to ui-extensions-sdk when open sourcing the StructuredText widget.
        *
-       * @see https://github.com/contentful/ui-extensions-sdk/blob/master/docs/ui-extensions-sdk-frontend.md#dialogsselectsingleentryoptions
+       * Allows to use entity selector, fully configurable as in the web-app while
+       * the existing `.dialog.selectSingleEntry` and `selectSingleAsset` in the
+       * ui-extensions-sdk do only allow a very limited set of options.
        */
-      selectSingleEntry: () => entitySelector.openFromField(field),
+      selectEntities: config => entitySelector.open(config),
       /**
        * TODO: Add to ui-extensions-sdk when open sourcing the StructuredText widget.
        *

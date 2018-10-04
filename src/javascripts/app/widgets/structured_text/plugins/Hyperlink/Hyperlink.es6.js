@@ -71,7 +71,7 @@ export default class Hyperlink extends React.Component {
                 tooltip = `${target.sys.linkType} missing or inaccessible`;
               } else if (requestStatus === RequestStatus.Success) {
                 tooltip = `${contentTypeName}: ${entityTitle ||
-                'Untitled'} (${entityStatus.toUpperCase()})`;
+                  'Untitled'} (${entityStatus.toUpperCase()})`;
               } else if (requestStatus === RequestStatus.Pending) {
                 tooltip = `Loading ${target.sys.linkType.toLowerCase()}...`;
               }

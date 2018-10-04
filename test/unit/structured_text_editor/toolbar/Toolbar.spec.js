@@ -14,7 +14,11 @@ import { stubAll, setupWidgetApi, createSandbox, ENTRY } from '../setup';
 const triggerToolbarIcon = async (wrapper, iconName) => {
   await flushPromises();
   const toolbarIcon = getWithId(wrapper, `toolbar-toggle-${iconName}`);
-  toolbarIcon.simulate('mouseDown');
+  // TODO: EMBED_ASSET case only works with `click`.
+  toolbarIcon
+    .find('button')
+    .simulate('mouseDown')
+    .simulate('click');
 };
 
 const triggerDropdownButton = async (wrapper, dataTestId) => {
@@ -25,6 +29,13 @@ const triggerDropdownButton = async (wrapper, dataTestId) => {
 
 const EMPTY_PARAGRAPH = block(BLOCKS.PARAGRAPH, {}, text());
 
+export const ASSET = {
+  sys: {
+    type: 'Asset',
+    id: 'ASSET-TEST-ID'
+  }
+};
+
 describe('Toolbar', () => {
   beforeEach(async function() {
     module('contentful/test');
@@ -34,11 +45,12 @@ describe('Toolbar', () => {
     const mockDocument = document(block(BLOCKS.PARAGRAPH, {}, text()));
 
     this.system = createIsolatedSystem();
+    this.selectedEntity = null;
 
     // TODO: Stub `buildWidgetApi.es6` instead.
     this.system.set('entitySelector', {
       default: {
-        openFromField: () => Promise.resolve([ENTRY])
+        open: () => Promise.resolve([this.selectedEntity])
       }
     });
     this.hyperlinkData = {};
@@ -69,6 +81,23 @@ describe('Toolbar', () => {
       );
     };
     this.mount();
+
+    this.embedEntryBlock = async entity => {
+      this.selectedEntity = entity;
+      await triggerDropdownButton(this.wrapper, 'toolbar-entry-dropdown-toggle');
+      await triggerToolbarIcon(this.wrapper, BLOCKS.EMBEDDED_ENTRY);
+    };
+
+    this.embedAssetBlock = async asset => {
+      this.selectedEntity = asset;
+      await triggerToolbarIcon(this.wrapper, BLOCKS.EMBEDDED_ASSET);
+    };
+
+    this.embedInlineEntry = async entry => {
+      this.selectedEntity = entry;
+      await triggerDropdownButton(this.wrapper, 'toolbar-entry-dropdown-toggle');
+      await triggerToolbarIcon(this.wrapper, INLINES.EMBEDDED_ENTRY);
+    };
   });
 
   afterEach(function() {
@@ -145,20 +174,36 @@ describe('Toolbar', () => {
 
   describe('EmbeddedEntryBlock', function() {
     it('renders block', async function() {
+      await this.embedEntryBlock(ENTRY);
+
+      // TODO: Why do we need this, can we move it into a single descriptive fn in all tests?
       const editor = getWithId(this.wrapper, 'editor');
-      await embedEntryBlock(this.wrapper);
       editor.getDOMNode().click();
-      expect(this.field.getValue()).toEqual(document(embeddedEntryBlock(), EMPTY_PARAGRAPH));
+
+      expect(this.field.getValue()).toEqual(
+        document(newEmbeddedEntityBlock(ENTRY), EMPTY_PARAGRAPH)
+      );
+    });
+  });
+
+  describe('EmbeddedAssetBlock', function() {
+    it('renders block', async function() {
+      const editor = getWithId(this.wrapper, 'editor');
+      await this.embedAssetBlock(ASSET);
+      editor.getDOMNode().click();
+      expect(this.field.getValue()).toEqual(
+        document(newEmbeddedEntityBlock(ASSET), EMPTY_PARAGRAPH)
+      );
     });
   });
 
   describe('EmbeddedEntryInline', function() {
     it('renders inline entry', async function() {
       const editor = getWithId(this.wrapper, 'editor');
-      await embedInlineEntry(this.wrapper);
+      await this.embedInlineEntry(ENTRY);
       editor.getDOMNode().click();
       expect(this.field.getValue()).toEqual(
-        document(block(BLOCKS.PARAGRAPH, {}, text(), embeddedEntryInline(), text()))
+        document(block(BLOCKS.PARAGRAPH, {}, text(), newEmbeddedEntryInline(ENTRY), text()))
       );
     });
   });
@@ -244,12 +289,16 @@ describe('Toolbar', () => {
         const editor = getWithId(this.wrapper, 'editor');
         editor.getDOMNode().click();
         await triggerToolbarIcon(this.wrapper, listType);
-        await embedEntryBlock(this.wrapper);
+        await this.embedEntryBlock(ENTRY);
         editor.getDOMNode().click();
 
         expect(this.field.getValue()).toEqual(
           document(
-            block(listType, {}, block(BLOCKS.LIST_ITEM, {}, embeddedEntryBlock(), EMPTY_PARAGRAPH)),
+            block(
+              listType,
+              {},
+              block(BLOCKS.LIST_ITEM, {}, newEmbeddedEntityBlock(ENTRY), EMPTY_PARAGRAPH)
+            ),
             EMPTY_PARAGRAPH
           )
         );
@@ -259,7 +308,7 @@ describe('Toolbar', () => {
         const editor = getWithId(this.wrapper, 'editor');
         editor.getDOMNode().click();
         await triggerToolbarIcon(this.wrapper, listType);
-        await embedInlineEntry(this.wrapper);
+        await this.embedInlineEntry(ENTRY);
         editor.getDOMNode().click();
 
         expect(this.field.getValue()).toEqual(
@@ -270,7 +319,7 @@ describe('Toolbar', () => {
               block(
                 BLOCKS.LIST_ITEM,
                 {},
-                block(BLOCKS.PARAGRAPH, {}, text(), embeddedEntryInline(), text())
+                block(BLOCKS.PARAGRAPH, {}, text(), newEmbeddedEntryInline(ENTRY), text())
               )
             ),
             EMPTY_PARAGRAPH
@@ -282,7 +331,7 @@ describe('Toolbar', () => {
         const editor = getWithId(this.wrapper, 'editor');
         editor.getDOMNode().click();
         await triggerToolbarIcon(this.wrapper, listType);
-        await embedInlineEntry(this.wrapper);
+        await this.embedInlineEntry(ENTRY);
 
         getWithId(this.wrapper, INLINES.EMBEDDED_ENTRY).simulate('click');
 
@@ -296,7 +345,7 @@ describe('Toolbar', () => {
               block(
                 BLOCKS.LIST_ITEM,
                 {},
-                block(BLOCKS.PARAGRAPH, {}, text(), embeddedEntryInline(), text())
+                block(BLOCKS.PARAGRAPH, {}, text(), newEmbeddedEntryInline(ENTRY), text())
               ),
               block(BLOCKS.LIST_ITEM, {}, EMPTY_PARAGRAPH)
             ),
@@ -470,30 +519,23 @@ describe('Toolbar', () => {
     });
   });
 });
-function embeddedEntryBlock() {
+function newEmbeddedEntityBlock(entity) {
+  const { id, type: linkType } = entity.sys;
   const data = {
     target: {
-      sys: { id: 'testid2', type: 'Link', linkType: 'Entry' }
+      sys: { id, type: 'Link', linkType }
     }
   };
-  return block(BLOCKS.EMBEDDED_ENTRY, data, text());
+  const entityBlockName = 'EMBEDDED_' + linkType.toUpperCase();
+  return block(BLOCKS[entityBlockName], data, text());
 }
 
-function embeddedEntryInline() {
+function newEmbeddedEntryInline(entity) {
+  const { id } = entity.sys;
   const data = {
     target: {
-      sys: { id: 'testid2', type: 'Link', linkType: 'Entry' }
+      sys: { id, type: 'Link', linkType: 'Entry' }
     }
   };
   return inline(INLINES.EMBEDDED_ENTRY, data, text());
-}
-
-async function embedEntryBlock(wrapper) {
-  await triggerDropdownButton(wrapper, 'toolbar-entry-dropdown-toggle');
-  await triggerDropdownButton(wrapper, 'toolbar-toggle-embedded-entry-block');
-}
-
-async function embedInlineEntry(wrapper) {
-  await triggerDropdownButton(wrapper, 'toolbar-entry-dropdown-toggle');
-  await triggerDropdownButton(wrapper, 'toolbar-toggle-embedded-entry-inline');
 }
