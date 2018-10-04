@@ -93,6 +93,8 @@ export default class OrganisationUsageChart extends React.Component {
         empty={endDate === null && moment().diff(startDate, 'days') < 3}
         EmptyPlaceholder={EmptyChartPlaceholder}
         loading={isLoading}
+        width={700}
+        height={300}
       />
     );
   }
