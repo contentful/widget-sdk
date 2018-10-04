@@ -71,14 +71,26 @@ class StructuredTextOptions extends Component {
       validationOf: ValidationType.ENABLED_NODE_TYPES
     })),
     formattingOptions: [
-      { icon: 'FormatBoldTrimmed', id: MARKS.BOLD, validationOf: ValidationType.ENABLED_MARKS },
-      { icon: 'FormatItalicTrimmed', id: MARKS.ITALIC, validationOf: ValidationType.ENABLED_MARKS },
+      {
+        icon: 'FormatBoldTrimmed',
+        id: MARKS.BOLD,
+        validationOf: ValidationType.ENABLED_MARKS
+      },
+      {
+        icon: 'FormatItalicTrimmed',
+        id: MARKS.ITALIC,
+        validationOf: ValidationType.ENABLED_MARKS
+      },
       {
         icon: 'FormatUnderlinedTrimmed',
         id: MARKS.UNDERLINE,
         validationOf: ValidationType.ENABLED_MARKS
       },
-      { icon: 'CodeTrimmed', id: MARKS.CODE, validationOf: ValidationType.ENABLED_MARKS },
+      {
+        icon: 'CodeTrimmed',
+        id: MARKS.CODE,
+        validationOf: ValidationType.ENABLED_MARKS
+      },
       {
         icon: 'ListBulletedTrimmed',
         id: BLOCKS.UL_LIST,
@@ -89,7 +101,11 @@ class StructuredTextOptions extends Component {
         id: BLOCKS.OL_LIST,
         validationOf: ValidationType.ENABLED_NODE_TYPES
       },
-      { icon: 'QuoteTrimmed', id: BLOCKS.QUOTE, validationOf: ValidationType.ENABLED_NODE_TYPES },
+      {
+        icon: 'QuoteTrimmed',
+        id: BLOCKS.QUOTE,
+        validationOf: ValidationType.ENABLED_NODE_TYPES
+      },
       {
         icon: 'HorizontalRuleTrimmed',
         id: BLOCKS.HR,
@@ -202,12 +218,13 @@ class StructuredTextOptions extends Component {
     options.map(option => (
       <ToggleButton
         extraClassNames={`structured-text-option-toggle ${className}`}
-        key={option.id}
+        testId={`toggle-button-${option.id}`}
+        key={option.id + this.isOptionActive(option)}
         icon={option.icon}
         onToggle={() => this.toggleOption(option)}
         title={option.id}
         isActive={this.isOptionActive(option)}>
-        {option.title}
+        {option.title ? option.title : ''}
       </ToggleButton>
     ));
 
@@ -217,7 +234,7 @@ class StructuredTextOptions extends Component {
         <StructuredTextOptionsSection
           heading="Formatting options"
           actions={
-            <TextLink onClick={() => this.toggleAll()}>
+            <TextLink onClick={() => this.toggleAll()} testId="toggle-all-link">
               {this.isEveryOptionActive() ? 'Disable all' : 'Enable all'}
             </TextLink>
           }>

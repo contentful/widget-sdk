@@ -15,6 +15,7 @@ angular
       const validationViews = require('validationViews');
       const createSchema = require('validation');
       const getErrorMessage = require('validationDialogErrorMessages');
+      const { BLOCKS, MARKS, INLINES } = require('@contentful/structured-text-types');
 
       const validationName = createSchema.Validation.getName;
       const validationTypesForField = createSchema.Validation.forField;
@@ -93,6 +94,28 @@ angular
         'enabledMarks',
         'nodes'
       ];
+
+      const structuredTextOptionsLabels = {
+        [BLOCKS.HEADING_1]: 'Heading 1',
+        [BLOCKS.HEADING_2]: 'Heading 2',
+        [BLOCKS.HEADING_3]: 'Heading 3',
+        [BLOCKS.HEADING_4]: 'Heading 4',
+        [BLOCKS.HEADING_5]: 'Heading 5',
+        [BLOCKS.HEADING_6]: 'Heading 6',
+        [MARKS.BOLD]: 'Bold',
+        [MARKS.ITALIC]: 'Italic',
+        [MARKS.UNDERLINE]: 'Underline',
+        [MARKS.CODE]: 'Code',
+        [BLOCKS.UL_LIST]: 'Unordered list',
+        [BLOCKS.OL_LIST]: 'Ordered list',
+        [BLOCKS.QUOTE]: 'Quote',
+        [BLOCKS.HR]: 'Horizontal rule',
+        [BLOCKS.EMBEDDED_ENTRY]: 'Block Entry',
+        [INLINES.EMBEDDED_ENTRY]: 'Inline Entry',
+        [INLINES.HYPERLINK]: 'Link to Url',
+        [INLINES.ENTRY_HYPERLINK]: 'Link to entry',
+        [INLINES.ASSET_HYPERLINK]: 'Link to asset'
+      };
 
       const schema = createSchema({ type: 'Validation' });
 
@@ -237,7 +260,9 @@ angular
           validationsCopy.push({
             enabledMarks: enabledMarks,
             message: `Only the following mark(s) allowed: ${
-              enabledMarks ? enabledMarks.join(', ') : 'none'
+              enabledMarks
+                ? enabledMarks.map(mark => structuredTextOptionsLabels[mark]).join(', ')
+                : 'none'
             }`
           });
         }
@@ -245,7 +270,9 @@ angular
           validationsCopy.push({
             enabledNodeTypes: enabledNodeTypes,
             message: `Only the following node(s) allowed: ${
-              enabledNodeTypes ? enabledNodeTypes.join(', ') : 'none'
+              enabledNodeTypes
+                ? enabledNodeTypes.map(node => structuredTextOptionsLabels[node]).join(', ')
+                : 'none'
             }`
           });
         }
