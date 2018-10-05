@@ -4,7 +4,6 @@ import { mapValues, flow, keyBy, get, eq, isNumber, pick } from 'lodash/fp';
 
 import { Spinner } from '@contentful/ui-component-library';
 
-import { trigger } from 'ReloadNotification';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { getAllSpaces } from 'access_control/OrganizationMembershipRepository.es6';
 import {
@@ -19,210 +18,217 @@ import Workbench from 'app/WorkbenchReact.es6';
 import { track } from 'analytics/Analytics.es6';
 import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 
+const ServicesConsumer = require('../../reactServiceContext').default;
+
 import OrganizationResourceUsageList from './non_committed/OrganizationResourceUsageList.es6';
 import OrganizationUsagePage from './committed/OrganizationUsagePage.es6';
 import { getPeriods, getOrgUsage, getApiUsage } from './UsageService.es6';
 import PeriodSelector from './committed/PeriodSelector.es6';
 import NoSpacesPlaceholder from './NoSpacesPlaceholder.es6';
 
-export default class OrganizationUsage extends React.Component {
-  static propTypes = {
-    orgId: PropTypes.string.isRequired,
-    onReady: PropTypes.func.isRequired,
-    onForbidden: PropTypes.func.isRequired
-  };
+export default ServicesConsumer('ReloadNotification')(
+  class OrganizationUsage extends React.Component {
+    static propTypes = {
+      orgId: PropTypes.string.isRequired,
+      onReady: PropTypes.func.isRequired,
+      onForbidden: PropTypes.func.isRequired,
+      $services: PropTypes.shape({
+        ReloadNotification: PropTypes.object.isRequired
+      }).isRequired
+    };
 
-  constructor(props) {
-    super(props);
-    this.state = { isLoading: true };
+    constructor(props) {
+      super(props);
+      this.state = { isLoading: true };
 
-    this.endpoint = createOrganizationEndpoint(props.orgId);
-    this.setPeriodIndex = this.setPeriodIndex.bind(this);
-  }
-
-  async componentDidMount() {
-    const { onForbidden } = this.props;
-
-    this.setState({ flagActive: await getCurrentVariation('feature-bizvel-09-2018-usage') });
-
-    try {
-      await this.checkPermissions();
-      await this.fetchOrgData();
-    } catch (ex) {
-      onForbidden(ex);
+      this.endpoint = createOrganizationEndpoint(props.orgId);
+      this.setPeriodIndex = this.setPeriodIndex.bind(this);
     }
-  }
 
-  async checkPermissions() {
-    const { orgId } = this.props;
-    const organization = await getOrganization(orgId);
+    async componentDidMount() {
+      const { onForbidden } = this.props;
 
-    if (!isOwnerOrAdmin(organization)) {
-      throw new Error('No permission');
+      this.setState({ flagActive: await getCurrentVariation('feature-bizvel-09-2018-usage') });
+
+      try {
+        await this.checkPermissions();
+        await this.fetchOrgData();
+      } catch (ex) {
+        onForbidden(ex);
+      }
     }
-  }
 
-  async fetchOrgData() {
-    const { orgId, onReady } = this.props;
-    const { flagActive } = this.state;
-    const service = createResourceService(orgId, 'organization');
+    async checkPermissions() {
+      const { orgId } = this.props;
+      const organization = await getOrganization(orgId);
 
-    try {
-      const basePlan = await getBasePlan(this.endpoint);
-      const committed = isEnterprisePlan(basePlan);
+      if (!isOwnerOrAdmin(organization)) {
+        throw new Error('No permission');
+      }
+    }
 
-      if (committed && flagActive) {
-        const [
-          spaces,
-          plans,
-          periods,
-          {
-            limits: { included: apiRequestIncludedLimit }
-          },
-          {
-            usage: assetBandwidthUsage,
-            unitOfMeasure: assetBandwidthUOM,
-            limits: { included: assetBandwidthIncludedLimit }
-          }
-        ] = await Promise.all([
-          getAllSpaces(this.endpoint),
-          getPlansWithSpaces(this.endpoint),
-          getPeriods(this.endpoint),
-          service.get('api_request'),
-          service.get('asset_bandwidth')
-        ]);
-        const spaceNames = flow(
-          keyBy('sys.id'),
-          mapValues('name')
-        )(spaces);
-        const isPoC = flow(
-          keyBy('space.sys.id'),
-          mapValues(
-            flow(
-              get('name'),
-              eq('Proof of concept')
+    async fetchOrgData() {
+      const { orgId, onReady } = this.props;
+      const { flagActive } = this.state;
+      const service = createResourceService(orgId, 'organization');
+
+      try {
+        const basePlan = await getBasePlan(this.endpoint);
+        const committed = isEnterprisePlan(basePlan);
+
+        if (committed && flagActive) {
+          const [
+            spaces,
+            plans,
+            periods,
+            {
+              limits: { included: apiRequestIncludedLimit }
+            },
+            {
+              usage: assetBandwidthUsage,
+              unitOfMeasure: assetBandwidthUOM,
+              limits: { included: assetBandwidthIncludedLimit }
+            }
+          ] = await Promise.all([
+            getAllSpaces(this.endpoint),
+            getPlansWithSpaces(this.endpoint),
+            getPeriods(this.endpoint),
+            service.get('api_request'),
+            service.get('asset_bandwidth')
+          ]);
+          const spaceNames = flow(
+            keyBy('sys.id'),
+            mapValues('name')
+          )(spaces);
+          const isPoC = flow(
+            keyBy('space.sys.id'),
+            mapValues(
+              flow(
+                get('name'),
+                eq('Proof of concept')
+              )
             )
-          )
-        )(plans.items);
-        this.setState({
-          spaceNames,
-          isPoC,
-          periods: periods.items,
-          apiRequestIncludedLimit,
-          assetBandwidthUsage,
-          assetBandwidthIncludedLimit,
-          assetBandwidthUOM,
-          hasSpaces: spaces.length !== 0
-        });
-        await this.loadPeriodData(0);
-      } else {
-        this.setState({ resources: await service.getAll(), isLoading: false }, onReady);
-      }
-
-      this.setState({ committed }, onReady);
-    } catch (e) {
-      // Show the forbidden screen on 404 and 403
-      if ([404, 403].includes(e.status)) {
-        throw e;
-      }
-
-      trigger();
-    }
-  }
-
-  async loadPeriodData(newIndex) {
-    const { periods } = this.state;
-    const newPeriod = periods[newIndex];
-    if (isNumber(this.state.selectedPeriodIndex)) {
-      const oldPeriod = periods[this.state.selectedPeriodIndex];
-      track('usage:period_selected', {
-        oldPeriod: pick(['startDate', 'endDate'], oldPeriod),
-        newPeriod: pick(['startDate', 'endDate'], newPeriod)
-      });
-    }
-    try {
-      const [org, cma, cda, cpa] = await Promise.all([
-        getOrgUsage(this.endpoint, newPeriod.sys.id),
-        ...['cma', 'cda', 'cpa'].map(api => getApiUsage(this.endpoint, newPeriod.sys.id, api))
-      ]);
-      this.setState({
-        isLoading: false,
-        periodicUsage: { org, apis: { cma, cda, cpa } },
-        selectedPeriodIndex: newIndex
-      });
-    } catch (e) {
-      trigger();
-    }
-  }
-
-  async setPeriodIndex(e) {
-    this.setState({ isLoading: true });
-    await this.loadPeriodData(parseInt(e.target.value));
-  }
-
-  render() {
-    const {
-      spaceNames,
-      isPoC,
-      selectedPeriodIndex,
-      isLoading,
-      periods,
-      periodicUsage,
-      apiRequestIncludedLimit,
-      assetBandwidthUsage,
-      assetBandwidthIncludedLimit,
-      assetBandwidthUOM,
-      committed,
-      resources,
-      flagActive,
-      hasSpaces
-    } = this.state;
-    return (
-      <Workbench
-        icon="page-usage"
-        testId="organization.usage"
-        title="Usage"
-        actions={
-          isLoading ? (
-            <Spinner />
-          ) : hasSpaces && committed && flagActive && periods ? (
-            <PeriodSelector
-              periods={periods}
-              selectedPeriodIndex={selectedPeriodIndex}
-              onChange={this.setPeriodIndex}
-            />
-          ) : (
-            undefined
-          )
+          )(plans.items);
+          this.setState({
+            spaceNames,
+            isPoC,
+            periods: periods.items,
+            apiRequestIncludedLimit,
+            assetBandwidthUsage,
+            assetBandwidthIncludedLimit,
+            assetBandwidthUOM,
+            hasSpaces: spaces.length !== 0
+          });
+          await this.loadPeriodData(0);
+        } else {
+          this.setState({ resources: await service.getAll(), isLoading: false }, onReady);
         }
-        content={(function() {
-          if (committed && flagActive) {
-            if (!hasSpaces) {
-              return <NoSpacesPlaceholder />;
-            }
-            if (typeof selectedPeriodIndex !== 'undefined') {
-              return (
-                <OrganizationUsagePage
-                  period={periods[selectedPeriodIndex]}
-                  spaceNames={spaceNames}
-                  isPoC={isPoC}
-                  periodicUsage={periodicUsage}
-                  apiRequestIncludedLimit={apiRequestIncludedLimit}
-                  assetBandwidthUsage={assetBandwidthUsage}
-                  assetBandwidthIncludedLimit={assetBandwidthIncludedLimit}
-                  assetBandwidthUOM={assetBandwidthUOM}
-                  isLoading={isLoading}
-                />
-              );
-            }
-          } else {
-            if (typeof resources !== 'undefined') {
-              return <OrganizationResourceUsageList resources={resources} />;
-            }
+
+        this.setState({ committed }, onReady);
+      } catch (e) {
+        // Show the forbidden screen on 404 and 403
+        if ([404, 403].includes(e.status)) {
+          throw e;
+        }
+
+        this.props.$services.ReloadNotification.trigger();
+      }
+    }
+
+    async loadPeriodData(newIndex) {
+      const { periods } = this.state;
+      const newPeriod = periods[newIndex];
+      if (isNumber(this.state.selectedPeriodIndex)) {
+        const oldPeriod = periods[this.state.selectedPeriodIndex];
+        track('usage:period_selected', {
+          oldPeriod: pick(['startDate', 'endDate'], oldPeriod),
+          newPeriod: pick(['startDate', 'endDate'], newPeriod)
+        });
+      }
+      try {
+        const [org, cma, cda, cpa] = await Promise.all([
+          getOrgUsage(this.endpoint, newPeriod.sys.id),
+          ...['cma', 'cda', 'cpa'].map(api => getApiUsage(this.endpoint, newPeriod.sys.id, api))
+        ]);
+        this.setState({
+          isLoading: false,
+          periodicUsage: { org, apis: { cma, cda, cpa } },
+          selectedPeriodIndex: newIndex
+        });
+      } catch (e) {
+        this.props.$services.ReloadNotification.trigger();
+      }
+    }
+
+    async setPeriodIndex(e) {
+      this.setState({ isLoading: true });
+      await this.loadPeriodData(parseInt(e.target.value));
+    }
+
+    render() {
+      const {
+        spaceNames,
+        isPoC,
+        selectedPeriodIndex,
+        isLoading,
+        periods,
+        periodicUsage,
+        apiRequestIncludedLimit,
+        assetBandwidthUsage,
+        assetBandwidthIncludedLimit,
+        assetBandwidthUOM,
+        committed,
+        resources,
+        flagActive,
+        hasSpaces
+      } = this.state;
+      return (
+        <Workbench
+          icon="page-usage"
+          testId="organization.usage"
+          title="Usage"
+          actions={
+            isLoading ? (
+              <Spinner />
+            ) : hasSpaces && committed && flagActive && periods ? (
+              <PeriodSelector
+                periods={periods}
+                selectedPeriodIndex={selectedPeriodIndex}
+                onChange={this.setPeriodIndex}
+              />
+            ) : (
+              undefined
+            )
           }
-          return <div />;
-        })()}
-      />
-    );
+          content={(function() {
+            if (committed && flagActive) {
+              if (!hasSpaces) {
+                return <NoSpacesPlaceholder />;
+              }
+              if (typeof selectedPeriodIndex !== 'undefined') {
+                return (
+                  <OrganizationUsagePage
+                    period={periods[selectedPeriodIndex]}
+                    spaceNames={spaceNames}
+                    isPoC={isPoC}
+                    periodicUsage={periodicUsage}
+                    apiRequestIncludedLimit={apiRequestIncludedLimit}
+                    assetBandwidthUsage={assetBandwidthUsage}
+                    assetBandwidthIncludedLimit={assetBandwidthIncludedLimit}
+                    assetBandwidthUOM={assetBandwidthUOM}
+                    isLoading={isLoading}
+                  />
+                );
+              }
+            } else {
+              if (typeof resources !== 'undefined') {
+                return <OrganizationResourceUsageList resources={resources} />;
+              }
+            }
+            return <div />;
+          })()}
+        />
+      );
+    }
   }
-}
+);
