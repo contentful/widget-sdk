@@ -11,7 +11,7 @@ angular.module('contentful').controller('AssetListController', [
     const notification = require('notification');
     const spaceContext = require('spaceContext');
     const accessChecker = require('access_control/AccessChecker');
-    const entityStatus = require('entityStatus');
+    const entityStatus = require('app/entity_editor/EntityStatus.es6');
     const debounce = require('debounce');
     const getBlankView = require('data/UiConfig/Blanks.es6').getBlankAssetView;
     const createSavedViewsSidebar = require('app/ContentList/SavedViewsSidebar.es6').default;

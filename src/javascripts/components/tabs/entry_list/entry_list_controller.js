@@ -16,7 +16,7 @@ angular
       const createSelection = require('selection');
       const spaceContext = require('spaceContext');
       const accessChecker = require('access_control/AccessChecker');
-      const entityStatus = require('entityStatus');
+      const entityStatus = require('app/entity_editor/EntityStatus.es6');
       const getBlankView = require('data/UiConfig/Blanks.es6').getBlankEntryView;
       const createSavedViewsSidebar = require('app/ContentList/SavedViewsSidebar.es6').default;
       const Analytics = require('analytics/Analytics.es6');
