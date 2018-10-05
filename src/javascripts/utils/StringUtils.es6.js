@@ -220,6 +220,12 @@ export function isValidEmail(string) {
   return emailRegex.test(string);
 }
 
+export const urlRegex = /^(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-/]))?$/;
+
+export function isValidUrl(value) {
+  return urlRegex.test(value);
+}
+
 export function joinWithAnd(items, oxford = true) {
   if (!Array.isArray(items)) {
     return null;

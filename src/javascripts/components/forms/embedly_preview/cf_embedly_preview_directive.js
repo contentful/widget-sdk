@@ -5,7 +5,7 @@ angular.module('contentful').directive('cfEmbedlyPreview', [
   require => {
     const $timeout = require('$timeout');
     const debounce = require('debounce');
-    const urlUtils = require('urlUtils');
+    const isValidUrl = require('utils/StringUtils.es6').isValidUrl;
     const LazyLoader = require('LazyLoader');
 
     return {
@@ -54,7 +54,7 @@ angular.module('contentful').directive('cfEmbedlyPreview', [
             if (!value) {
               cancelCheck();
               changeStatus('ok');
-            } else if (urlUtils.isValid(value)) {
+            } else if (isValidUrl(value)) {
               changeStatus('loading');
               debouncedRequestPreview(value);
             } else {

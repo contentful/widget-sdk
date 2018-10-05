@@ -7,7 +7,7 @@
 angular.module('contentful').service('validationViews', [
   'require',
   require => {
-    var urlRegexp = require('urlUtils').regexp;
+    var urlRegex = require('utils/StringUtils.es6').urlRegex;
 
     /**
      * Map from validation types to input views.
@@ -36,7 +36,7 @@ angular.module('contentful').service('validationViews', [
         {
           name: 'url',
           label: 'URL',
-          pattern: urlRegexp.source
+          pattern: urlRegex.source
         },
         {
           name: 'date-us',
