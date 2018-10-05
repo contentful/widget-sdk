@@ -1,6 +1,6 @@
 import { h } from 'utils/legacy-html-hyperscript';
 import { getStore } from 'TheStore';
-import sectionAccess from 'sectionAccess';
+import { getFirstAccessibleSref } from 'access_control/SectionAccess.es6';
 import * as Analytics from 'analytics/Analytics.es6';
 import * as accessChecker from 'access_control/AccessChecker';
 
@@ -113,7 +113,7 @@ const spaceDetail = {
     '$state',
     'spaceData',
     ($scope, $state, spaceData) => {
-      const accessibleSref = sectionAccess.getFirstAccessibleSref();
+      const accessibleSref = getFirstAccessibleSref();
 
       if (isHibernated(spaceData)) {
         $state.go('.hibernation');
