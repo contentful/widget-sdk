@@ -6,7 +6,7 @@ module.exports = (resolve, rootDir, srcRoots, coverageDirectory) => {
   const toRelRootDir = f => '<rootDir>/' + path.relative(rootDir || '', f);
   const config = {
     setupTestFrameworkScriptFile: resolve('tools/testing/setup-tests.js'),
-    testMatch: ['**/__tests__/**/*.{js,jsx}', '**/?(*.)(spec|test).{js,jsx}'],
+    testMatch: ['**/?(*.)(spec|test).{js,jsx}'],
     // where to search for files/tests
     roots: srcRoots.map(toRelRootDir),
     collectCoverageFrom: ['**/*.js'],
@@ -14,7 +14,6 @@ module.exports = (resolve, rootDir, srcRoots, coverageDirectory) => {
     modulePaths: srcRoots.map(toRelRootDir),
     testEnvironment: 'jsdom',
     testURL: 'http://localhost',
-    testPathIgnorePatterns: ['helpers.js'],
     transform: {
       '^.+\\.(js|jsx)$': resolve('tools/testing/babel-transform.js'),
       '^(?!.*\\.(js|jsx|mjs|css|json)$)': resolve('tools/testing/file-transform.js')
