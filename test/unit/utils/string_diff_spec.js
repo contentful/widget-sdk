@@ -6,7 +6,7 @@ describe('utils/StringDiff', () => {
 
   beforeEach(function() {
     module('cf.utils');
-    diff = this.$inject('utils/StringDiff').diff;
+    diff = this.$inject('utils/StringDiff.es6').diff;
   });
 
   afterEach(() => {
