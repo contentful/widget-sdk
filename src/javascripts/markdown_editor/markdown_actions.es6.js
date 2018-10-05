@@ -5,7 +5,7 @@ import LinkOrganizer from 'LinkOrganizer';
 import notification from 'notification';
 import entitySelector from 'entitySelector';
 import { defaults, isObject, get, mapValues } from 'lodash';
-import { fileNameToTitle, truncate } from 'stringUtils';
+import { fileNameToTitle, truncate } from 'utils/StringUtils.es6';
 import { trackMarkdownEditorAction } from 'analytics/MarkdownEditorActions.es6';
 import { track } from 'analytics/Analytics.es6';
 import $state from '$state';

@@ -3,7 +3,7 @@ import $rootScope from '$rootScope';
 
 import { deepFreeze } from 'utils/Freeze.es6';
 import * as K from 'utils/kefir.es6';
-import { truncate } from 'stringUtils';
+import { truncate } from 'utils/StringUtils.es6';
 import { cloneDeep, find, constant } from 'lodash';
 
 import spaceContext from 'spaceContext';

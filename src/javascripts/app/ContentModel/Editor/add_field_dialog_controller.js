@@ -20,7 +20,7 @@ angular.module('contentful').controller('AddFieldDialogController', [
     const fieldFactory = require('fieldFactory');
     const fieldDecorator = require('fieldDecorator');
     const random = require('random');
-    const stringUtils = require('stringUtils');
+    const stringUtils = require('utils/StringUtils.es6');
     const buildMessage = require('fieldErrorMessageBuilder');
     const $q = require('$q');
     const $timeout = require('$timeout');

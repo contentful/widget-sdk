@@ -105,8 +105,11 @@ filters.filter('isDisplayableAsTitle', () => field =>
   field.type === 'Symbol' || field.type === 'Text'
 );
 
-filters.filter('truncate', ['stringUtils', stringUtils => stringUtils.truncate]);
+filters.filter('truncate', ['utils/StringUtils.es6', stringUtils => stringUtils.truncate]);
 
-filters.filter('truncateMiddle', ['stringUtils', stringUtils => stringUtils.truncateMiddle]);
+filters.filter('truncateMiddle', [
+  'utils/StringUtils.es6',
+  stringUtils => stringUtils.truncateMiddle
+]);
 
 filters = null;

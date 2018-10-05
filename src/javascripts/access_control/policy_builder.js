@@ -275,7 +275,7 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', [
 angular.module('contentful').factory('PolicyBuilder/toExternal', [
   'require',
   require => {
-    const capitalize = require('stringUtils').capitalize;
+    const capitalize = require('utils/StringUtils.es6').capitalize;
     const CONFIG = require('PolicyBuilder/CONFIG');
     const _ = require('lodash');
 

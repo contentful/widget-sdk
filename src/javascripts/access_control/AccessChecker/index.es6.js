@@ -11,7 +11,7 @@ import {
   getContentTypeIdFor,
   isAuthor
 } from './Utils.es6';
-import { capitalize, capitalizeFirst } from 'stringUtils';
+import { capitalize, capitalizeFirst } from 'utils/StringUtils.es6';
 import { get, some, forEach, values } from 'lodash';
 import * as Enforcements from 'access_control/Enforcements.es6';
 

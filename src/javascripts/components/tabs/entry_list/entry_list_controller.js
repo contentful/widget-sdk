@@ -27,7 +27,7 @@ angular
       const ResourceUtils = require('utils/ResourceUtils.es6');
       const EnvironmentUtils = require('utils/EnvironmentUtils.es6');
       const debounce = require('lodash').debounce;
-      const truncate = require('stringUtils').truncate;
+      const truncate = require('utils/StringUtils.es6').truncate;
       const get = require('lodash').get;
 
       const searchController = $controller('EntryListSearchController', { $scope: $scope });

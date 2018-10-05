@@ -22,7 +22,7 @@ describe('app/ContentList/Search/View.es6', () => {
     // TODO: remove after converting datepicker to es6 module.
     system.set('datepicker', {});
     system.set('moment', {});
-    system.set('stringUtils', {});
+    system.set('utils/StringUtils.es6', {});
     system.set('mimetype', {
       default: {
         getGroupNames: sinon.stub().returns([])

@@ -1,7 +1,7 @@
 import { first, get } from 'lodash';
 import logger from 'logger';
 import notification from 'notification';
-import { truncate } from 'stringUtils';
+import { truncate } from 'utils/StringUtils.es6';
 
 /**
  * This module exports functions that trigger notifications regarding the

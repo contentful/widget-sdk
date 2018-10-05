@@ -1,6 +1,6 @@
 import { assign, get, inRange, isEqual } from 'lodash';
 import Command from 'command';
-import { truncate } from 'stringUtils';
+import { truncate } from 'utils/StringUtils.es6';
 import { deepFreeze } from 'utils/Freeze.es6';
 import { concat } from 'utils/Collections.es6';
 

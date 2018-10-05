@@ -8,7 +8,7 @@ angular.module('contentful').directive('cfValidationValues', [
   'require',
   require => {
     const KEYCODES = require('utils/keycodes.es6').default;
-    const normalizeWhiteSpace = require('stringUtils').normalizeWhiteSpace;
+    const normalizeWhiteSpace = require('utils/StringUtils.es6').normalizeWhiteSpace;
 
     const ERROR_MESSAGES = {
       integerOutOfRange: 'Number is out of range.',

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { joinAnd } from 'stringUtils';
+import { joinAnd } from 'utils/StringUtils.es6';
 
 import { href } from 'states/Navigator.es6';
 import { getEnabledFeatures } from 'utils/SubscriptionUtils.es6';

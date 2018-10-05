@@ -12,7 +12,7 @@ import {
 } from 'access_control/OrganizationMembershipRepository.es6';
 import { makeCtor, match } from 'utils/TaggedValues.es6';
 import { invite, progress$ } from 'account/SendOrganizationInvitation.es6';
-import { isValidEmail } from 'stringUtils';
+import { isValidEmail } from 'utils/StringUtils.es6';
 import { go } from 'states/Navigator.es6';
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import {

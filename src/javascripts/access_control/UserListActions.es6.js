@@ -2,7 +2,7 @@ import modalDialog from 'modalDialog';
 import Command from 'command';
 import notification from 'notification';
 import ReloadNotification from 'ReloadNotification';
-import stringUtils from 'stringUtils';
+import * as stringUtils from 'utils/StringUtils.es6';
 import ListQuery from 'ListQuery';
 import entitySelector from 'entitySelector';
 import { go } from 'states/Navigator.es6';
