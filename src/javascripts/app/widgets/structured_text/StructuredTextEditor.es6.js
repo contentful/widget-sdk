@@ -47,6 +47,7 @@ import Hr, { HrPlugin } from './plugins/Hr/index.es6';
 import schemaJson from './constants/Schema.es6';
 import emptyDoc from './constants/EmptyDoc.es6';
 import { BLOCKS } from '@contentful/structured-text-types';
+import { PasteHtmlPlugin } from './plugins/PasteHtml/index.es6';
 
 const schema = Schema.fromJSON(schemaJson);
 
@@ -272,6 +273,7 @@ function buildPlugins(widgetAPI) {
 
     EditList(),
     ListPlugin(),
+    PasteHtmlPlugin(),
     TrailingBlock({ type: BLOCKS.PARAGRAPH }),
     NewLinePlugin()
   ];

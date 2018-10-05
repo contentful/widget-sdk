@@ -96,6 +96,7 @@ window.libs = [
   ['slate-edit-list', require('slate-edit-list')],
   ['slate-react', require('slate-react')],
   ['slate-trailing-block', require('slate-trailing-block')],
+  ['slate-html-serializer', require('slate-html-serializer')],
   ['Sortable', require('sortablejs')],
   ['speakingurl', require('speakingurl')],
   ['stringifySafe', require('json-stringify-safe')],

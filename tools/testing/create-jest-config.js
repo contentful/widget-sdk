@@ -14,6 +14,7 @@ module.exports = (resolve, rootDir, srcRoots, coverageDirectory) => {
     modulePaths: srcRoots.map(toRelRootDir),
     testEnvironment: 'jsdom',
     testURL: 'http://localhost',
+    testPathIgnorePatterns: ['helpers.js'],
     transform: {
       '^.+\\.(js|jsx)$': resolve('tools/testing/babel-transform.js'),
       '^(?!.*\\.(js|jsx|mjs|css|json)$)': resolve('tools/testing/file-transform.js')
