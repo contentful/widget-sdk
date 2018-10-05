@@ -1,4 +1,4 @@
-import React, { createElement as e } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import AnimateHeight from 'react-animate-height';
 import FolderIcon from 'svg/folder.es6';
@@ -7,36 +7,30 @@ import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo.es6';
 
 function EnvironmentList({ environments, isCurrSpace, currentEnvId, goToSpace, space }) {
-  return e(
-    'ul',
-    null,
-    (environments || []).map(env => {
-      const envId = env.sys.id;
-      const environmentClassNames = `
-      nav-sidepanel__environments-list-item
-      ${
-        isCurrSpace && envId === currentEnvId
-          ? 'nav-sidepanel__environments-list-item--is-active'
-          : ''
-      }
-    `;
+  return (
+    <ul>
+      {(environments || []).map(env => {
+        const envId = env.sys.id;
+        const environmentClassNames = `
+        nav-sidepanel__environments-list-item
+        ${
+          isCurrSpace && envId === currentEnvId
+            ? 'nav-sidepanel__environments-list-item--is-active'
+            : ''
+        }
+      `;
 
-      return e(
-        'li',
-        {
-          key: envId,
-          className: environmentClassNames,
-          onClick: e => {
-            e.stopPropagation();
-            goToSpace(space.sys.id, envId);
-          }
-        },
-        ...[
-          e(
-            'a',
-            {
-              href: `/spaces/${space.sys.id}${envId === 'master' ? '' : `/environments/${envId}`}`,
-              onClick: e => {
+        return (
+          <li
+            key={envId}
+            className={environmentClassNames}
+            onClick={e => {
+              e.stopPropagation();
+              goToSpace(space.sys.id, envId);
+            }}>
+            <a
+              href={`/spaces/${space.sys.id}${envId === 'master' ? '' : `/environments/${envId}`}`}
+              onClick={e => {
                 if (e.shiftKey || e.ctrlKey || e.metaKey) {
                   // allow to open in a new tab/window normally
                   e.stopPropagation();
@@ -44,17 +38,26 @@ function EnvironmentList({ environments, isCurrSpace, currentEnvId, goToSpace, s
                   // parent `li` click handler will navigate
                   e.preventDefault();
                 }
-              }
-            },
-            ...[e(EnvironmentIcon, { style: { display: 'inline' } }), envId]
-          )
-        ]
-      );
-    })
+              }}>
+              <EnvironmentIcon style={{ display: 'inline' }} />
+              {envId}
+            </a>
+          </li>
+        );
+      })}
+    </ul>
   );
 }
 
-export default class extends React.Component {
+EnvironmentList.propTypes = {
+  environments: PropTypes.arrayOf(PropTypes.object),
+  isCurrSpace: PropTypes.bool,
+  currentEnvId: PropTypes.string,
+  goToSpace: PropTypes.func.isRequired,
+  space: PropTypes.object.isRequired
+};
+
+export default class SpaceWithEnvironments extends React.Component {
   static displayName = 'SpaceWithEnvironments';
 
   static propTypes = {
@@ -128,41 +131,36 @@ export default class extends React.Component {
       ${isCurrSpace ? 'nav-sidepanel__space-name--is-active' : ''}
     `;
 
-    return e(
-      'li',
-      {
-        className: containerClassNames,
-        onClick: () => this.toggleEnvironmentList(),
-        'data-test-id': `sidepanel-space-link-${index}`,
-        'data-test-group-id': 'sidepanel-space-link',
-        'aria-selected': isCurrSpace ? 'true' : 'false'
-      },
-      ...[
-        e(
-          'div',
-          { className: 'nav-sidepanel__space-title' },
-          ...[
-            e('div', { className: 'nav-sidepanel__space-icon' }, <FolderIcon />),
-            e('span', { className: spaceNameClassNames }, space.name),
-            e('span', {
-              className: this.state.loading
+    return (
+      <li
+        className={containerClassNames}
+        onClick={() => this.toggleEnvironmentList()}
+        data-test-id={`sidepanel-space-link-${index}`}
+        data-test-group-id="sidepanel-space-link"
+        aria-selected={isCurrSpace ? 'true' : 'false'}>
+        <div className="nav-sidepanel__space-title">
+          <div className="nav-sidepanel__space-icon">
+            <FolderIcon />
+          </div>
+          <span className={spaceNameClassNames}>{space.name}</span>
+          <span
+            className={
+              this.state.loading
                 ? 'nav-sidepanel__space-spinner'
                 : 'nav-sidepanel__space-open-indicator'
-            })
-          ]
-        ),
-        e(
-          AnimateHeight,
-          { height: isOpened ? 'auto' : '0' },
-          e(EnvironmentList, {
-            environments: this.state.environments,
-            goToSpace,
-            isCurrSpace,
-            currentEnvId,
-            space
-          })
-        )
-      ]
+            }
+          />
+        </div>
+        <AnimateHeight height={isOpened ? 'auto' : '0'}>
+          <EnvironmentList
+            environments={this.state.environments}
+            goToSpace={goToSpace}
+            isCurrSpace={isCurrSpace}
+            currentEnvId={currentEnvId}
+            space={space}
+          />
+        </AnimateHeight>
+      </li>
     );
   }
 }

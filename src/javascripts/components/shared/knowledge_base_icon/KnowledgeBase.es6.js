@@ -1,4 +1,5 @@
-import { h } from 'ui/Framework';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { websiteUrl } from 'Config.es6';
 
 const items = {
@@ -27,22 +28,6 @@ const items = {
   spaceEnvironments: 'developers/docs'
 };
 
-export default function({ target, text = '', inlineText, cssClass }) {
-  const hasText = !text.length ? '.x--no-text' : '';
-  const isInline = inlineText ? '.x--inline' : '';
-
-  return h(
-    `a.knowledge-base-link${hasText}${isInline}`,
-    {
-      class: cssClass,
-      target: '_blank',
-      rel: 'noopener noreferrer',
-      href: getKnowledgeBaseUrl(target)
-    },
-    [text, h('i.fa.fa-question-circle')]
-  );
-}
-
 function getKnowledgeBaseUrl(name) {
   if (items[name]) {
     return websiteUrl(items[name]);
@@ -50,3 +35,28 @@ function getKnowledgeBaseUrl(name) {
 
   throw new Error('Incorrect Knowledge Base item "' + name + '".');
 }
+
+function KnowledgeBase({ target, text = '', inlineText, cssClass }) {
+  const hasText = !text.length ? 'x--no-text' : '';
+  const isInline = inlineText ? 'x--inline' : '';
+
+  return (
+    <a
+      className={`knowledge-base-link ${hasText} ${isInline} ${cssClass}`}
+      href={getKnowledgeBaseUrl(target)}
+      target="_blank"
+      rel="noopener noreferrer">
+      {text}
+      <i className="fa fa-question-circle" />
+    </a>
+  );
+}
+
+KnowledgeBase.propTypes = {
+  cssClass: PropTypes.string,
+  target: PropTypes.string,
+  text: PropTypes.string,
+  inlineText: PropTypes.any
+};
+
+export default KnowledgeBase;
