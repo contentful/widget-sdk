@@ -4,11 +4,14 @@ const PersistenceContext = require('./persistence_context');
 const Space = require('./space');
 const Request = require('./request');
 const mixinChildResourceMethods = require('./child_resources');
+const assetContentType = require('./asset_content_type');
 
 const Client = function Client(adapter) {
   const baseRequest = new Request(adapter);
   this.persistenceContext = new PersistenceContext(baseRequest);
 };
+
+Client.assetContentType = assetContentType;
 
 Client.prototype = {
   endpoint: function(...args) {

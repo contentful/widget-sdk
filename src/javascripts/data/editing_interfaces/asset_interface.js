@@ -6,7 +6,7 @@ angular
   .factory('data/editingInterfaces/asset', [
     'require',
     require => {
-      const assetFields = require('assetContentType').data.fields;
+      const assetFields = require('legacy-client').assetContentType.data.fields;
 
       const widgets = _.forEach(
         [

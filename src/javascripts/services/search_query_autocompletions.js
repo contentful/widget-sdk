@@ -29,7 +29,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', [
   require => {
     var $q = require('$q');
     var mimetype = require('mimetype');
-    var assetContentType = require('assetContentType');
+    var assetContentType = require('legacy-client').assetContentType;
     var moment = require('moment');
     var _ = require('lodash');
     var caseofEq = require('sum-types').caseofEq;

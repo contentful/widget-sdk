@@ -278,7 +278,7 @@ describe('TextQueryConverter#textQueryToUISearch()', () => {
 
   describe('for assets', () => {
     beforeEach(function() {
-      this.contentType = this.$inject('assetContentType');
+      this.contentType = this.$inject('legacy-client').assetContentType;
     });
 
     itConvertsFilters('"filename" filter', 'filename:"FN 1"', [

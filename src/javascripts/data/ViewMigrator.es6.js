@@ -1,7 +1,7 @@
 import $q from '$q';
 import { textQueryToUISearch } from 'search/TextQueryConverter.es6';
 import { clone, cloneDeep, extend, omit, pick } from 'lodash';
-import assetContentType from 'assetContentType';
+import { assetContentType } from 'legacy-client';
 import logger from 'logger';
 
 const EMPTY_SEARCH = { searchText: '', searchFilters: [] };
