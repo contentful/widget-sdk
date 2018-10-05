@@ -4,12 +4,6 @@ import { without, findIndex } from 'lodash';
 
 import { SpaceMembership, User } from '../PropTypes.es6';
 
-import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory.es6';
-import {
-  create as createSpaceMembershipRepo,
-  getMembershipRoles
-} from 'access_control/SpaceMembershipRepository.es6';
-import { getAllSpaces, getAllRoles } from 'access_control/OrganizationMembershipRepository.es6';
 import { joinWithAnd } from 'utils/StringUtils.es6';
 
 import SpaceMembershipEditor from './SpaceMembershipEditor.es6';
@@ -28,7 +22,10 @@ const ServicesConsumer = require('../../../../reactServiceContext').default;
 class UserSpaceMemberships extends React.Component {
   static propTypes = {
     $services: PropTypes.shape({
-      notification: PropTypes.object.isRequired
+      notification: PropTypes.object.isRequired,
+      EndpointFactory: PropTypes.object.isRequired,
+      OrganizationMembershipRepository: PropTypes.object.isRequired,
+      SpaceMembershipRepository: PropTypes.object.isRequired
     }).isRequired,
     initialMemberships: PropTypes.arrayOf(SpaceMembership),
     user: User.isRequired,
@@ -43,9 +40,11 @@ class UserSpaceMemberships extends React.Component {
     roles: []
   };
 
-  orgEndpoint = createOrganizationEndpoint(this.props.orgId);
+  orgEndpoint = this.props.$services.EndpointFactory.createOrganizationEndpoint(this.props.orgId);
 
   createRepoFromSpaceMembership(membership) {
+    const { createSpaceEndpoint } = this.props.$services.EndpointFactory;
+    const { create: createSpaceMembershipRepo } = this.props.$services.SpaceMembershipRepository;
     const { space } = membership.sys;
     const spaceId = space.sys.id;
     const spaceEndpoint = createSpaceEndpoint(spaceId);
@@ -53,12 +52,14 @@ class UserSpaceMemberships extends React.Component {
   }
 
   fetchSpaceRoles = async spaceId => {
+    const { getAllRoles } = this.props.$services.OrganizationMembershipRepository;
     const allRoles = await getAllRoles(this.orgEndpoint);
     const roles = allRoles.filter(role => role.sys.space.sys.id === spaceId);
     this.setState({ roles });
   };
 
   showSpaceMembershipEditor = async () => {
+    const { getAllSpaces } = this.props.$services.OrganizationMembershipRepository;
     this.setState({ loadingSpaces: true });
     const spaces = await getAllSpaces(this.orgEndpoint);
 
@@ -111,6 +112,7 @@ class UserSpaceMemberships extends React.Component {
 
   handleMembershipChanged = async membership => {
     const { user, $services } = this.props;
+    const { getMembershipRoles } = $services.SpaceMembershipRepository;
     const { space } = membership.sys;
     const memberships = [...this.state.memberships];
     const roleNames = getMembershipRoles(membership).map(role => role.name);
@@ -128,6 +130,8 @@ class UserSpaceMemberships extends React.Component {
   };
 
   renderMembershipRow(membership) {
+    const { getMembershipRoles } = this.props.$services.SpaceMembershipRepository;
+
     return (
       <TableRow key={membership.sys.id}>
         <TableCell>{membership.sys.space.name}</TableCell>
@@ -207,4 +211,18 @@ class UserSpaceMemberships extends React.Component {
   }
 }
 
-export default ServicesConsumer('notification')(UserSpaceMemberships);
+export default ServicesConsumer(
+  'notification',
+  {
+    as: 'EndpointFactory',
+    from: 'data/EndpointFactory.es6'
+  },
+  {
+    as: 'SpaceMembershipRepository',
+    from: 'access_control/SpaceMembershipRepository.es6'
+  },
+  {
+    as: 'OrganizationMembershipRepository',
+    from: 'access_control/OrganizationMembershipRepository.es6'
+  }
+)(UserSpaceMemberships);

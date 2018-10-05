@@ -2,12 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { User, SpaceMembership } from '../PropTypes.es6';
-import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory.es6';
-import {
-  create as createSpaceMembershipRepo,
-  ADMIN_ROLE_ID,
-  getMembershipRoles
-} from 'access_control/SpaceMembershipRepository.es6';
 import ResolveLinks from '../../LinkResolver.es6';
 
 import { TableRow, TableCell, Select, Option, Button } from '@contentful/ui-component-library';
@@ -17,7 +11,9 @@ const ServicesConsumer = require('../../../../reactServiceContext').default;
 class SpaceMembershipEditor extends React.Component {
   static propTypes = {
     $services: PropTypes.shape({
-      notification: PropTypes.object.isRequired
+      notification: PropTypes.object.isRequired,
+      EndpointFactory: PropTypes.object.isRequired,
+      SpaceMembershipRepository: PropTypes.object.isRequired
     }).isRequired,
     user: User.isRequired,
     onSpaceSelected: PropTypes.func,
@@ -40,11 +36,13 @@ class SpaceMembershipEditor extends React.Component {
     // TODO: consider spliting edit and creation in two different components
     // TODO: support multiple roles
     selectedRole: this.props.initialMembership
-      ? getMembershipRoles(this.props.initialMembership)[0].sys.id
-      : ADMIN_ROLE_ID
+      ? this.props.$services.SpaceMembershipRepository.getMembershipRoles(
+          this.props.initialMembership
+        )[0].sys.id
+      : this.props.$services.SpaceMembershipRepository.ADMIN_ROLE_ID
   };
 
-  orgEndpoint = createOrganizationEndpoint(this.props.orgId);
+  orgEndpoint = this.props.$services.EndpointFactory.createOrganizationEndpoint(this.props.orgId);
 
   async componentDidMount() {
     const { initialMembership } = this.props;
@@ -76,8 +74,8 @@ class SpaceMembershipEditor extends React.Component {
       roles
     } = this.props;
     const { selectedRole, selectedSpace } = this.state;
-    const spaceEndpoint = createSpaceEndpoint(selectedSpace);
-    const repo = createSpaceMembershipRepo(spaceEndpoint);
+    const spaceEndpoint = $services.EndpointFactory.createSpaceEndpoint(selectedSpace);
+    const repo = $services.SpaceMembershipRepository.create(spaceEndpoint);
     const isEditing = Boolean(initialMembership);
     let membership;
 
@@ -130,7 +128,8 @@ class SpaceMembershipEditor extends React.Component {
 
   render() {
     const { selectedSpace, selectedRole, busy } = this.state;
-    const { roles, spaces, initialMembership, onCancel } = this.props;
+    const { roles, spaces, initialMembership, onCancel, $services } = this.props;
+    const { ADMIN_ROLE_ID } = $services.SpaceMembershipRepository;
 
     return (
       <TableRow>
@@ -187,4 +186,14 @@ class SpaceMembershipEditor extends React.Component {
   }
 }
 
-export default ServicesConsumer('notification')(SpaceMembershipEditor);
+export default ServicesConsumer(
+  'notification',
+  {
+    as: 'EndpointFactory',
+    from: 'data/EndpointFactory.es6'
+  },
+  {
+    as: 'SpaceMembershipRepository',
+    from: 'access_control/SpaceMembershipRepository.es6'
+  }
+)(SpaceMembershipEditor);

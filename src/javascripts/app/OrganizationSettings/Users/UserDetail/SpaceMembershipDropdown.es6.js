@@ -13,7 +13,7 @@ export default class UserDropdown extends React.Component {
   static propTypes = {
     onMembershipRemove: PropTypes.func.isRequired,
     onMembershipChange: PropTypes.func.isRequired,
-    membership: SpaceMembership.isRequire
+    membership: SpaceMembership.isRequired
   };
 
   state = {
