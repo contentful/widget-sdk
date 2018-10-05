@@ -3,7 +3,7 @@ angular.module('contentful').directive('cfStateChangeConfirmationDialog', [
   require => {
     const React = require('react');
     const ReactDOM = require('react-dom');
-    const random = require('random');
+    const random = require('utils/Random.es6');
     const Dialog = require('app/entity_editor/Components/StateChangeConfirmationDialog').default;
 
     return {

@@ -10,7 +10,7 @@ angular
   .directive('cfRadioEditor', [
     'require',
     require => {
-      const random = require('random');
+      const random = require('utils/Random.es6');
       const selectionController = require('widgets/selectionController');
       return {
         restrict: 'E',

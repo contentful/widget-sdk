@@ -1,6 +1,6 @@
 import { assign } from 'utils/Collections.es6';
 
-import random from 'random';
+import * as random from 'utils/Random.es6';
 import systemFields from 'systemFields';
 
 export function getBlankEntryView() {

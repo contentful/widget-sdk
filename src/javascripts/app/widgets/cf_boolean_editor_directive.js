@@ -12,7 +12,7 @@ angular
     'require',
     require => {
       const selectionController = require('widgets/selectionController');
-      const Random = require('random');
+      const Random = require('utils/Random.es6');
 
       return {
         restrict: 'E',

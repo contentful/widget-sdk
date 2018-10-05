@@ -1,5 +1,5 @@
 import { extend, map } from 'lodash';
-import random from 'random';
+import * as random from 'utils/Random.es6';
 import mimetype from 'mimetype';
 import systemFields from 'systemFields';
 

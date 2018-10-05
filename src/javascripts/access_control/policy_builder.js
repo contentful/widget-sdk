@@ -21,7 +21,7 @@ angular.module('contentful').factory('PolicyBuilder', [
 angular.module('contentful').factory('PolicyBuilder/defaultRule', [
   'require',
   require => {
-    const random = require('random');
+    const random = require('utils/Random.es6');
     const _ = require('lodash');
     const ALL_CTS = require('PolicyBuilder/CONFIG').ALL_CTS;
 

@@ -11,7 +11,7 @@ import openRoleSelector from './RoleSelector.es6';
 
 import { getStore } from 'TheStore';
 import notification from 'notification';
-import random from 'random';
+import * as random from 'utils/Random.es6';
 
 const LoadView = makeCtor('LoadView');
 const ToggleOpened = makeCtor('ToggleOpened');

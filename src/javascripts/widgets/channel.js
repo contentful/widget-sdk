@@ -19,7 +19,7 @@ angular
     require => {
       var $window = require('$window');
       var $q = require('$q');
-      var random = require('random');
+      var random = require('utils/Random.es6');
       var $rootScope = require('$rootScope');
 
       /**
