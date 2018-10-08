@@ -4,7 +4,8 @@ import { toKeyCode } from 'is-hotkey';
 export const document = (...content) => ({
   nodeClass: 'document',
   nodeType: 'document',
-  content
+  content,
+  data: {}
 });
 
 export const block = (nodeType, data, ...content) => ({
@@ -26,7 +27,7 @@ export const text = (value = '', marks = []) => ({
   nodeType: 'text',
   value,
   marks,
-  data: undefined
+  data: {}
 });
 
 export const flushPromises = () =>
