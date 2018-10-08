@@ -21,7 +21,8 @@ const ServicesConsumer = require('../../../../reactServiceContext').default;
 class UserDetail extends React.Component {
   static propTypes = {
     $services: PropTypes.shape({
-      notification: PropTypes.object
+      notification: PropTypes.object,
+      confirm: PropTypes.object
     }),
     initialMembership: OrganizationMembership.isRequired,
     spaceMemberships: PropTypes.arrayOf(SpaceMembership).isRequired,
@@ -74,8 +75,28 @@ class UserDetail extends React.Component {
   };
 
   async removeMembership() {
-    const { notification } = this.props.$services;
-    const { id } = this.state.membership.sys;
+    const { notification, confirm } = this.props.$services;
+    const { id, user } = this.state.membership.sys;
+
+    const message = (
+      <React.Fragment>
+        <p>
+          You are about to remove {user.firstName} {user.lastName} from your organization.
+        </p>
+        <p>
+          After removal this user will not be able to access this organization in any way. Do you
+          want to proceed?
+        </p>
+      </React.Fragment>
+    );
+    const confirmation = await confirm.default({
+      title: 'Remove user from the organization',
+      message
+    });
+
+    if (!confirmation) {
+      return;
+    }
 
     try {
       await removeMembership(this.endpoint, id);
@@ -140,4 +161,7 @@ class UserDetail extends React.Component {
   }
 }
 
-export default ServicesConsumer('notification')(UserDetail);
+export default ServicesConsumer('notification', {
+  as: 'confirm',
+  from: 'app/ConfirmationDialog.es6'
+})(UserDetail);
