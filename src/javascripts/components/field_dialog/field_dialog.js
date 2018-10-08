@@ -70,9 +70,7 @@ angular
 
       const initialWidgetId = $scope.widget.widgetId;
 
-      $scope.initialStructuredTextOptions = getInitialStructuredTextOptions();
-
-      $scope.structuredTextOptions = {};
+      $scope.structuredTextOptions = getInitialStructuredTextOptions();
       $scope.onStructuredTextOptionsChange = options => {
         $scope.structuredTextOptions = options;
       };
