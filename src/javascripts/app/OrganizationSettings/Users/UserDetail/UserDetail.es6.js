@@ -4,7 +4,7 @@ import moment from 'moment';
 
 import Workbench from 'ui/Components/Workbench/JSX.es6';
 import { go } from 'states/Navigator.es6';
-import { TextField, Button } from '@contentful/ui-component-library';
+import { Button } from '@contentful/ui-component-library';
 
 import { SpaceMembership, OrganizationMembership } from '../PropTypes.es6';
 import { OrganizationRoleSelector } from './OrganizationRoleSelector.es6';
@@ -101,7 +101,7 @@ class UserDetail extends React.Component {
     return (
       <Workbench testId="organization-users-page">
         <Workbench.Header>
-          <Workbench.Title>{`${user.firstName} ${user.lastName}`}</Workbench.Title>
+          <Workbench.Title>Users</Workbench.Title>
           <div className="workbench-header__actions">
             <Button buttonType="negative" onClick={() => this.removeMembership()}>
               Remove membership
@@ -110,20 +110,13 @@ class UserDetail extends React.Component {
         </Workbench.Header>
         <Workbench.Content>
           <div style={{ padding: '1em 2em 2em' }}>
-            <TextField
-              labelText="Email"
-              name="email"
-              id="email"
-              value={user.email}
-              textInputProps={{
-                width: 'large',
-                disabled: true
-              }}
-              style={{
-                marginBottom: 30
-              }}
-            />
-
+            <section className="user-details__card">
+              <img src={user.avatarUrl} className="user-details__avatar" />
+              <div>
+                <h2>{`${user.firstName} ${user.lastName}`}</h2>
+                <p>{user.email}</p>
+              </div>
+            </section>
             <section style={{ display: 'flex', marginBottom: 50 }}>
               <div style={{ width: '31.6%' }}>
                 <h4>Organization role</h4>
