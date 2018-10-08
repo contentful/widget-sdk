@@ -1,3 +1,5 @@
+import ResolveLinks from '../../LinkResolver.es6';
+
 export default {
   name: 'detail',
   params: {
@@ -6,27 +8,45 @@ export default {
   title: 'Organization users',
   url: '/:userId',
   resolve: {
-    membership: [
+    props: [
       'data/EndpointFactory.es6',
       'access_control/OrganizationMembershipRepository.es6',
       '$stateParams',
       async (endpointFactory, repo, $stateParams) => {
+        const includePaths = ['roles', 'sys.space'];
         const endpoint = endpointFactory.createOrganizationEndpoint($stateParams.orgId);
         const membership = await repo.getMembership(endpoint, $stateParams.userId);
-        const user = await repo.getUser(endpoint, membership.sys.user.sys.id);
-        // TODO: fetch only the USER as soon as we have the membership as a link
-        return { ...membership, sys: { ...membership.sys, user } };
+        const [user, spaceMembershipsResult] = await Promise.all([
+          repo.getUser(endpoint, membership.sys.user.sys.id),
+          repo.getSpaceMemberships(endpoint, {
+            include: includePaths.join(),
+            'sys.user.sys.id': membership.sys.user.sys.id,
+            limit: 100
+          })
+        ]);
+
+        const { items, includes } = spaceMembershipsResult;
+        const spaceMemberships = ResolveLinks({ paths: includePaths, items, includes });
+
+        return {
+          initialMembership: { ...membership, sys: { ...membership.sys, user } },
+          spaceMemberships: spaceMemberships.filter(membership => {
+            return membership.user.sys.id === user.sys.id;
+          })
+        };
       }
     ]
   },
   controller: [
     '$scope',
     '$stateParams',
-    'membership',
-    ($scope, $stateParams, membership) => {
+    'props',
+    ($scope, $stateParams, props) => {
+      const { initialMembership, spaceMemberships } = props;
       $scope.context.ready = true;
       $scope.properties = {
-        membership,
+        initialMembership,
+        spaceMemberships,
         orgId: $stateParams.orgId
       };
     }

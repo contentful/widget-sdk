@@ -116,3 +116,28 @@ export function invite(endpoint, { role, email, suppressInvitation }) {
     path: ['organization_memberships']
   });
 }
+
+export function updateMembership(endpoint, { id, role, version }) {
+  return endpoint(
+    {
+      method: 'PUT',
+      data: {
+        role
+      },
+      version,
+      path: ['organization_memberships', id]
+    },
+    ALPHA_HEADER
+  );
+}
+
+export function getSpaceMemberships(endpoint, query) {
+  return endpoint(
+    {
+      method: 'GET',
+      query,
+      path: ['space_memberships']
+    },
+    ALPHA_HEADER
+  );
+}
