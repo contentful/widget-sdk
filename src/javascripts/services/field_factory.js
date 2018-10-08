@@ -9,7 +9,7 @@
 angular.module('contentful').factory('fieldFactory', [
   'require',
   require => {
-    const capitalize = require('stringUtils').capitalize;
+    const capitalize = require('utils/StringUtils.es6').capitalize;
     const TheLocaleStore = require('TheLocaleStore');
 
     /**

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { assign } from 'lodash';
 import { createSlot, Success, Failure } from 'utils/Concurrent.es6';
-import { truncate } from 'stringUtils';
+import { truncate } from 'utils/StringUtils.es6';
 import { makeCtor, match } from 'utils/TaggedValues.es6';
 import { Table, TableHead, TableRow, TableCell, TableBody } from '@contentful/ui-component-library';
 import { h } from 'ui/Framework';

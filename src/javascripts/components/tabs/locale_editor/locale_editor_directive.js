@@ -36,7 +36,7 @@ angular
       const leaveConfirmator = require('navigation/confirmLeaveEditor');
       const $state = require('$state');
       const closeState = require('navigation/closeState');
-      const localeList = require('data/localeList').create($scope.spaceLocales);
+      const localeList = require('data/LocaleList.es6').create($scope.spaceLocales);
       const notify = require('LocaleEditor/notifications');
 
       let formWasDirty = false;

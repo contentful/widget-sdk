@@ -1,5 +1,5 @@
 import $window from '$window';
-import { uncapitalize } from 'stringUtils';
+import { uncapitalize } from 'utils/StringUtils.es6';
 import trackPersistentNotification from 'analyticsEvents/persistentNotification';
 import * as OrganizationRoles from 'services/OrganizationRoles.es6';
 import { go } from 'states/Navigator.es6';

@@ -7,7 +7,7 @@ angular.module('contentful').directive('cfFileEditor', [
     const Filestack = require('services/Filestack.es6');
     const ImageOperations = require('app/widgets/ImageOperations.es6');
     const notification = require('notification');
-    const stringUtils = require('stringUtils');
+    const stringUtils = require('utils/StringUtils.es6');
     const mimetype = require('mimetype');
 
     let dropPaneMountCount = 0;

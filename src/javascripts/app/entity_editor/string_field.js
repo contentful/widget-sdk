@@ -14,7 +14,7 @@ angular
     'require',
     require => {
       const $q = require('$q');
-      const diff = require('utils/StringDiff').diff;
+      const diff = require('utils/StringDiff.es6').diff;
       const ShareJS = require('data/ShareJS/Utils');
 
       const STRING_FIELD_TYPES = ['Symbol', 'Text'];

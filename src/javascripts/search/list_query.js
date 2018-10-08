@@ -13,7 +13,7 @@ angular.module('contentful').factory('ListQuery', [
     var systemFields = require('systemFields');
     var spaceContext = require('spaceContext');
     var buildQueryFromUISearch = require('app/ContentList/Search/QueryBuilder.es6').buildQuery;
-    var assetContentType = require('assetContentType');
+    var assetContentType = require('legacy-client').assetContentType;
 
     var DEFAULT_ORDER = systemFields.getDefaultOrder();
 

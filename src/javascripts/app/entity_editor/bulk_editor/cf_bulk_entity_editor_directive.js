@@ -181,7 +181,7 @@ angular
       const makeNotify = require('app/entity_editor/Notifications.es6').makeNotify;
       const $controller = require('$controller');
       const spaceContext = require('spaceContext');
-      const truncate = require('stringUtils').truncate;
+      const truncate = require('utils/StringUtils.es6').truncate;
       const DataFields = require('EntityEditor/DataFields');
       const ContentTypes = require('data/ContentTypes');
       const Validator = require('app/entity_editor/Validator.es6');

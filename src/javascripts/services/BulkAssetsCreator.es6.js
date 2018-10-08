@@ -4,7 +4,7 @@ import $timeout from '$timeout';
 import * as Filestack from 'services/Filestack.es6';
 import logger from 'logger';
 import notification from 'notification';
-import stringUtils from 'stringUtils';
+import * as stringUtils from 'utils/StringUtils.es6';
 import spaceContext from 'spaceContext';
 
 /**

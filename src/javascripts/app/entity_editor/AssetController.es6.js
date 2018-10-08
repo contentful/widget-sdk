@@ -1,7 +1,7 @@
 import $controller from '$controller';
 
 import * as K from 'utils/kefir.es6';
-import { truncate } from 'stringUtils';
+import { truncate } from 'utils/StringUtils.es6';
 
 import spaceContext from 'spaceContext';
 import localeStore from 'TheLocaleStore';

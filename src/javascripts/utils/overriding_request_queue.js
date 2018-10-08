@@ -37,7 +37,7 @@ angular
     'require',
     require => {
       var $q = require('$q');
-      var random = require('random');
+      var random = require('utils/Random.es6');
 
       return function createQueue(requestFn, onceFn) {
         var deferred, requests, required, performed;

@@ -219,7 +219,7 @@ angular
       var fieldDecorator = require('fieldDecorator');
       var buildMessage = require('fieldErrorMessageBuilder');
       var TheLocaleStore = require('TheLocaleStore');
-      var joinAndTruncate = require('stringUtils').joinAndTruncate;
+      var joinAndTruncate = require('utils/StringUtils.es6').joinAndTruncate;
       const LD = require('utils/LaunchDarkly');
 
       const STRUCTURED_TEXT_FORMATTING_OPTIONS_FEATURE_FLAG =

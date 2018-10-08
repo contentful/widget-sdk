@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { joinAnd } from 'stringUtils';
+import { joinAnd } from 'utils/StringUtils.es6';
 
 import { get } from 'lodash';
 

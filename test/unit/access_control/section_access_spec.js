@@ -18,7 +18,7 @@ describe('Section Access', () => {
   beforeEach(function() {
     module('contentful/test');
 
-    sectionAccess = this.$inject('sectionAccess');
+    sectionAccess = this.$inject('access_control/SectionAccess.es6');
     accessChecker = this.$inject('access_control/AccessChecker');
     spaceContext = this.$inject('spaceContext');
 

@@ -40,7 +40,7 @@ angular
       this.hasQuery = hasQuery;
 
       this.paginator = Paginator.create();
-      $scope.assetContentType = require('assetContentType');
+      $scope.assetContentType = require('legacy-client').assetContentType;
 
       // TODO: Get rid of duplicate code in entry_list_search_controller.js
 

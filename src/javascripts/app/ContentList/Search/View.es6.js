@@ -3,7 +3,7 @@
 // TODO: add prop-types
 import { noop } from 'lodash';
 import { match } from 'utils/TaggedValues.es6';
-import { truncate } from 'stringUtils';
+import { truncate } from 'utils/StringUtils.es6';
 import React from 'react';
 import { h } from 'ui/Framework';
 import * as H from 'ui/Framework/Hooks';

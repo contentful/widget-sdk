@@ -129,7 +129,7 @@ angular
     '$scope',
     'require',
     ($scope, require) => {
-      const stringUtils = require('stringUtils');
+      const stringUtils = require('utils/StringUtils.es6');
       const ID_REGEXP = /^[a-zA-Z0-9-_.]*$/;
 
       const newContentTypeFormState = {

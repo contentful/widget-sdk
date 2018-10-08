@@ -16,7 +16,7 @@ angular
       const createSelection = require('selection');
       const spaceContext = require('spaceContext');
       const accessChecker = require('access_control/AccessChecker');
-      const entityStatus = require('entityStatus');
+      const entityStatus = require('app/entity_editor/EntityStatus.es6');
       const getBlankView = require('data/UiConfig/Blanks.es6').getBlankEntryView;
       const createSavedViewsSidebar = require('app/ContentList/SavedViewsSidebar.es6').default;
       const Analytics = require('analytics/Analytics.es6');
@@ -27,7 +27,7 @@ angular
       const ResourceUtils = require('utils/ResourceUtils.es6');
       const EnvironmentUtils = require('utils/EnvironmentUtils.es6');
       const debounce = require('lodash').debounce;
-      const truncate = require('stringUtils').truncate;
+      const truncate = require('utils/StringUtils.es6').truncate;
       const get = require('lodash').get;
 
       const searchController = $controller('EntryListSearchController', { $scope: $scope });
