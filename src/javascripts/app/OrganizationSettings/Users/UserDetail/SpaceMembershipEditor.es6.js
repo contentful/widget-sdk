@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { User, SpaceMembership } from '../PropTypes.es6';
+import { User as UserPropType, SpaceMembership as SpaceMembershipPropType } from '../PropTypes.es6';
 import ResolveLinks from '../../LinkResolver.es6';
 
 import { TableRow, TableCell, Select, Option, Button } from '@contentful/ui-component-library';
@@ -15,7 +15,7 @@ class SpaceMembershipEditor extends React.Component {
       EndpointFactory: PropTypes.object.isRequired,
       SpaceMembershipRepository: PropTypes.object.isRequired
     }).isRequired,
-    user: User.isRequired,
+    user: UserPropType.isRequired,
     onSpaceSelected: PropTypes.func,
     onMembershipCreated: PropTypes.func,
     onMembershipChanged: PropTypes.func,
@@ -23,7 +23,7 @@ class SpaceMembershipEditor extends React.Component {
     roles: PropTypes.array,
     onCancel: PropTypes.func,
     orgId: PropTypes.string,
-    initialMembership: SpaceMembership
+    initialMembership: SpaceMembershipPropType
   };
 
   isEditing = Boolean(this.props.initialMembership);
@@ -44,7 +44,7 @@ class SpaceMembershipEditor extends React.Component {
 
   orgEndpoint = this.props.$services.EndpointFactory.createOrganizationEndpoint(this.props.orgId);
 
-  async componentDidMount() {
+  componentDidMount() {
     const { initialMembership } = this.props;
 
     if (initialMembership) {
@@ -52,7 +52,7 @@ class SpaceMembershipEditor extends React.Component {
     }
   }
 
-  async setSpace(spaceId) {
+  setSpace(spaceId) {
     this.props.onSpaceSelected(spaceId);
     this.setState({
       selectedSpace: spaceId

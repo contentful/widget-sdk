@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { without, findIndex } from 'lodash';
 
-import { SpaceMembership, User } from '../PropTypes.es6';
+import { SpaceMembership as SpaceMembershipPropType, User as UserPropType } from '../PropTypes.es6';
 
 import { joinWithAnd } from 'utils/StringUtils.es6';
 
@@ -27,8 +27,8 @@ class UserSpaceMemberships extends React.Component {
       OrganizationMembershipRepository: PropTypes.object.isRequired,
       SpaceMembershipRepository: PropTypes.object.isRequired
     }).isRequired,
-    initialMemberships: PropTypes.arrayOf(SpaceMembership),
-    user: User.isRequired,
+    initialMemberships: PropTypes.arrayOf(SpaceMembershipPropType),
+    user: UserPropType.isRequired,
     orgId: PropTypes.string
   };
 
