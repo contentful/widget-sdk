@@ -6,17 +6,19 @@ import RequestStatus from 'app/widgets/structured_text/plugins/shared/RequestSta
 import sinon from 'npm:sinon';
 import { flushPromises } from '../helpers';
 
+const sandbox = sinon.sandbox.create();
+
 const newMockWidgetAPI = (entity, contentType) => {
   return {
     space: {
-      getEntry: sinon
+      getEntry: sandbox
         .stub()
         .withArgs(entity.sys.id)
-        .resolves(entity),
-      getContentType: sinon
+        .returns(Promise.resolve(entity)),
+      getContentType: sandbox
         .stub()
         .withArgs(contentType.sys.id)
-        .resolves(contentType)
+        .returns(Promise.resolve(contentType))
     }
   };
 };
@@ -47,26 +49,26 @@ describe('FetchEntity', () => {
       entityId: this.entity.sys.id,
       entityType: 'Entry',
       localeCode: 'lo-LOCALE',
-      render: sinon.spy(() => null),
+      render: sandbox.spy(() => null),
       widgetAPI: newMockWidgetAPI(this.entity, this.contentType),
       $services: {
         EntityHelpers: {
-          newForLocale: sinon
+          newForLocale: sandbox
             .stub()
             .withArgs('lo-LOCALE')
             .returns({
-              entityFile: sinon
+              entityFile: sandbox
                 .stub()
                 .withArgs(this.entity)
-                .resolves('FILE'),
-              entityTitle: sinon
+                .returns(Promise.resolve('FILE')),
+              entityTitle: sandbox
                 .stub()
                 .withArgs(this.entity)
-                .resolves('TITLE'),
-              entityDescription: sinon
+                .returns(Promise.resolve('TITLE')),
+              entityDescription: sandbox
                 .stub()
                 .withArgs(this.entity)
-                .resolves('DESCRIPTION')
+                .returns(Promise.resolve('DESCRIPTION'))
             })
         }
       }
@@ -77,14 +79,19 @@ describe('FetchEntity', () => {
     };
   });
 
+  afterEach(function() {
+    sandbox.restore();
+  });
+
   describe('(pending/error) props.render()', function() {
     beforeEach(function() {
-      this.props.widgetAPI.space.getEntry.rejects();
+      this.props.widgetAPI.space.getEntry.returns(Promise.reject(''));
       this.mount();
     });
 
-    it('is called initially, while fetching entity', function() {
-      sinon.assert.calledOnceWith(this.props.render, {
+    it('is called initially, while fetching entity', async function() {
+      await flushPromises();
+      expect(this.props.render.args[0][0]).toEqual({
         requestStatus: RequestStatus.Pending
       });
     });
@@ -102,8 +109,9 @@ describe('FetchEntity', () => {
       this.mount();
     });
 
-    it('is called initially, while fetching entity', function() {
-      sinon.assert.calledOnceWith(this.props.render, {
+    it('is called initially, while fetching entity', async function() {
+      await flushPromises();
+      expect(this.props.render.args[0][0]).toEqual({
         requestStatus: RequestStatus.Pending
       });
     });
@@ -136,7 +144,7 @@ describe('FetchEntity', () => {
 
     it('is called thrice in total', async function() {
       await flushPromises();
-      sinon.assert.callCount(this.props.render, 3);
+      sandbox.assert.callCount(this.props.render, 3);
     });
   });
 });
