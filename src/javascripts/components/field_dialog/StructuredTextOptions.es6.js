@@ -230,7 +230,7 @@ class StructuredTextOptions extends Component {
 
   render() {
     return (
-      <div className="structured-text-options">
+      <div className="structured-text-options" data-test-id="structured-text-options">
         <StructuredTextOptionsSection
           heading="Formatting options"
           actions={
