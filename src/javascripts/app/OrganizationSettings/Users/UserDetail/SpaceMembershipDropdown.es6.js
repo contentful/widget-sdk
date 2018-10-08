@@ -20,22 +20,22 @@ export default class UserDropdown extends React.Component {
     isOpen: false
   };
 
-  removeMembership(evt) {
-    evt.stopPropagation();
+  removeMembership = evt => {
+    evt && evt.stopPropagation();
     this.toggleDropdown();
     this.props.onMembershipRemove(this.props.membership);
-  }
+  };
 
-  changeMembership(evt) {
-    evt.stopPropagation();
+  changeMembership = evt => {
+    evt && evt.stopPropagation();
     this.toggleDropdown();
     this.props.onMembershipChange(this.props.membership);
-  }
+  };
 
-  toggleDropdown(evt) {
+  toggleDropdown = evt => {
     evt && evt.stopPropagation();
     this.setState({ isOpen: !this.state.isOpen });
-  }
+  };
 
   render() {
     return (
@@ -47,18 +47,14 @@ export default class UserDropdown extends React.Component {
             iconProps={{
               icon: 'MoreHorizontal'
             }}
-            onClick={this.toggleDropdown.bind(this)}
+            onClick={this.toggleDropdown}
           />
         }>
         <DropdownList>
-          <DropdownListItem onClick={this.changeMembership.bind(this)}>
-            Change role
-          </DropdownListItem>
+          <DropdownListItem onClick={this.changeMembership}>Change role</DropdownListItem>
         </DropdownList>
         <DropdownList border="top">
-          <DropdownListItem onClick={this.removeMembership.bind(this)}>
-            Remove membership
-          </DropdownListItem>
+          <DropdownListItem onClick={this.removeMembership}>Remove membership</DropdownListItem>
         </DropdownList>
       </Dropdown>
     );
