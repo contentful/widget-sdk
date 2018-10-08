@@ -4,19 +4,7 @@ import { mapValues, flow, keyBy, get, eq, isNumber, pick } from 'lodash/fp';
 
 import { Spinner } from '@contentful/ui-component-library';
 
-import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
-import { getAllSpaces } from 'access_control/OrganizationMembershipRepository.es6';
-import {
-  isEnterprisePlan,
-  getBasePlan,
-  getPlansWithSpaces
-} from 'account/pricing/PricingDataProvider.es6';
-import createResourceService from 'services/ResourceService.es6';
-import { getOrganization } from 'services/TokenStore.es6';
-import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import Workbench from 'app/WorkbenchReact.es6';
-import { track } from 'analytics/Analytics.es6';
-import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 
 const ServicesConsumer = require('../../reactServiceContext').default;
 
@@ -26,14 +14,56 @@ import { getPeriods, getOrgUsage, getApiUsage } from './UsageService.es6';
 import PeriodSelector from './committed/PeriodSelector.es6';
 import NoSpacesPlaceholder from './NoSpacesPlaceholder.es6';
 
-export default ServicesConsumer('ReloadNotification')(
+export default ServicesConsumer(
+  'ReloadNotification',
+  {
+    from: 'utils/LaunchDarkly/index.es6',
+    as: 'LaunchDarkly'
+  },
+  {
+    from: 'services/OrganizationRoles.es6',
+    as: 'OrganizationRoles'
+  },
+  {
+    from: 'services/ResourceService.es6',
+    as: 'ResourceService'
+  },
+  {
+    from: 'account/pricing/PricingDataProvider.es6',
+    as: 'PricingDataProvider'
+  },
+  {
+    from: 'access_control/OrganizationMembershipRepository.es6',
+    as: 'OrganizationMembershipRepository'
+  },
+  {
+    from: 'data/EndpointFactory.es6',
+    as: 'EndpointFactory'
+  },
+  {
+    from: 'services/TokenStore.es6',
+    as: 'TokenStore'
+  },
+  {
+    from: 'analytics/Analytics.es6',
+    as: 'Analytics'
+  }
+)(
   class OrganizationUsage extends React.Component {
     static propTypes = {
       orgId: PropTypes.string.isRequired,
       onReady: PropTypes.func.isRequired,
       onForbidden: PropTypes.func.isRequired,
       $services: PropTypes.shape({
-        ReloadNotification: PropTypes.object.isRequired
+        OrganizationRoles: PropTypes.object.isRequired,
+        PricingDataProvider: PropTypes.object.isRequired,
+        createResourceService: PropTypes.func.isRequired,
+        ReloadNotification: PropTypes.object.isRequired,
+        OrganizationMembershipRepository: PropTypes.object.isRequired,
+        EndpointFactory: PropTypes.object.isRequired,
+        Analytics: PropTypes.object.isRequired,
+        LaunchDarkly: PropTypes.object.isRequired,
+        TokenStore: PropTypes.object.isRequired
       }).isRequired
     };
 
@@ -41,12 +71,17 @@ export default ServicesConsumer('ReloadNotification')(
       super(props);
       this.state = { isLoading: true };
 
-      this.endpoint = createOrganizationEndpoint(props.orgId);
+      this.endpoint = this.props.$services.EndpointFactory.createOrganizationEndpoint(props.orgId);
       this.setPeriodIndex = this.setPeriodIndex.bind(this);
     }
 
     async componentDidMount() {
-      const { onForbidden } = this.props;
+      const {
+        onForbidden,
+        $services: {
+          LaunchDarkly: { getCurrentVariation }
+        }
+      } = this.props;
 
       this.setState({ flagActive: await getCurrentVariation('feature-bizvel-09-2018-usage') });
 
@@ -59,7 +94,13 @@ export default ServicesConsumer('ReloadNotification')(
     }
 
     async checkPermissions() {
-      const { orgId } = this.props;
+      const {
+        orgId,
+        $services: {
+          TokenStore: { getOrganization },
+          OrganizationRoles: { isOwnerOrAdmin }
+        }
+      } = this.props;
       const organization = await getOrganization(orgId);
 
       if (!isOwnerOrAdmin(organization)) {
@@ -68,11 +109,19 @@ export default ServicesConsumer('ReloadNotification')(
     }
 
     async fetchOrgData() {
-      const { orgId, onReady } = this.props;
+      const {
+        orgId,
+        onReady,
+        $services: {
+          OrganizationMembershipRepository: { getAllSpaces },
+          PricingDataProvider: { isEnterprisePlan, getBasePlan, getPlansWithSpaces },
+          ResourceService
+        }
+      } = this.props;
       const { flagActive } = this.state;
-      const service = createResourceService(orgId, 'organization');
 
       try {
+        const service = ResourceService.default(orgId, 'organization');
         const basePlan = await getBasePlan(this.endpoint);
         const committed = isEnterprisePlan(basePlan);
 
@@ -137,6 +186,11 @@ export default ServicesConsumer('ReloadNotification')(
 
     async loadPeriodData(newIndex) {
       const { periods } = this.state;
+      const {
+        $services: {
+          Analytics: { track }
+        }
+      } = this.props;
       const newPeriod = periods[newIndex];
       if (isNumber(this.state.selectedPeriodIndex)) {
         const oldPeriod = periods[this.state.selectedPeriodIndex];
