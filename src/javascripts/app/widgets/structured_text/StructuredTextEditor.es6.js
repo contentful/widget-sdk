@@ -33,9 +33,10 @@ import {
 
 import NewLinePlugin from './plugins/NewLinePlugin/index.es6';
 import { ParagraphPlugin } from './plugins/Paragraph/index.es6';
-import EmbeddedEntryBlock, {
-  EmbeddedEntryBlockPlugin
-} from './plugins/EmbeddedEntryBlock/index.es6';
+import EmbeddedEntityBlock, {
+  EmbeddedEntryBlockPlugin,
+  EmbeddedAssetBlockPlugin
+} from './plugins/EmbeddedEntityBlock/index.es6';
 import EmbeddedEntryInline, {
   EmbeddedEntryInlinePlugin
 } from './plugins/EmbeddedEntryInline/index.es6';
@@ -123,19 +124,23 @@ export default class StructuredTextEditor extends React.Component {
       isEmbedDropdownOpen: false
     });
 
-  renderEmbeds = props =>
-    this.props.widgetAPI.features.embedInlineEntry ? (
-      <EntryEmbedDropdown
-        onToggle={this.toggleEmbedDropdown}
-        isOpen={this.state.isEmbedDropdownOpen}
-        disabled={props.disabled}
-        onClose={this.handleEmbedDropdownClose}>
-        <EmbeddedEntryBlock {...props} />
-        <EmbeddedEntryInline {...props} />
-      </EntryEmbedDropdown>
-    ) : (
-      <EmbeddedEntryBlock isButton {...props} />
-    );
+  renderEmbeds = props => (
+    <React.Fragment>
+      <EmbeddedEntityBlock nodeType={BLOCKS.EMBEDDED_ASSET} isButton {...props} />
+      {this.props.widgetAPI.features.embedInlineEntry ? (
+        <EntryEmbedDropdown
+          onToggle={this.toggleEmbedDropdown}
+          isOpen={this.state.isEmbedDropdownOpen}
+          disabled={props.disabled}
+          onClose={this.handleEmbedDropdownClose}>
+          <EmbeddedEntityBlock nodeType={BLOCKS.EMBEDDED_ENTRY} {...props} />
+          <EmbeddedEntryInline {...props} />
+        </EntryEmbedDropdown>
+      ) : (
+        <EmbeddedEntityBlock nodeType={BLOCKS.EMBEDDED_ENTRY} isButton {...props} />
+      )}
+    </React.Fragment>
+  );
 
   renderToolbar() {
     const props = {
@@ -270,6 +275,7 @@ function buildPlugins(widgetAPI) {
     HrPlugin(),
     EmbeddedEntryInlinePlugin({ widgetAPI }),
     EmbeddedEntryBlockPlugin({ widgetAPI }),
+    EmbeddedAssetBlockPlugin({ widgetAPI }),
 
     EditList(),
     ListPlugin(),

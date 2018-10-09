@@ -1,5 +1,6 @@
 import { INLINES } from '@contentful/structured-text-types';
 import { haveAnyInlines, haveEveryInlineOfType, haveInlines } from '../shared/UtilHave.es6';
+import { newConfigFromStructuredTextField } from 'search/EntitySelector/Config.es6';
 
 const createInlineNode = id => ({
   type: INLINES.EMBEDDED_ENTRY,
@@ -35,8 +36,16 @@ export const hasOnlyInlineEntryInSelection = change => {
 };
 
 export const selectEntryAndInsert = async (widgetAPI, change) => {
+  const baseConfig = await newConfigFromStructuredTextField(
+    widgetAPI.field,
+    INLINES.EMBEDDED_ENTRY
+  );
+  const config = {
+    ...baseConfig,
+    max: 1
+  };
   try {
-    const [entry] = await widgetAPI.dialogs.selectSingleEntry();
+    const [entry] = await widgetAPI.dialogs.selectEntities(config);
     if (!entry) {
       return;
     }

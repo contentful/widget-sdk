@@ -27,8 +27,10 @@
       background: $colors.element-mid
       box-shadow: inset 0 1px 2px rgba(black, .12)
 
-  &__entry-link-block-button {
+  &__embedded-asset-block-button {
     margin-left: auto;
+    margin-right: 0.5rem;
+    visibility: hidden; // TODO: Remove when we want to enable feature.
   }
 
   [data-slate-editor]
@@ -66,9 +68,6 @@
   .toolbar-toggle-heading-6 button span
     font-size: 0.875rem;
     font-weight: 700;
-
-  .toolbar-entry-dropdown
-    margin-left: auto
 
   .toolbar-heading-toggle
     width: 140px;

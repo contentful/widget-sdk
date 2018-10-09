@@ -60,6 +60,11 @@ export function getLabels({ entityType = '', multiple }) {
 /**
  * Builds a config for #openFromField
  *
+ * TODO: Rename to `newConfigFromReferenceField` and remove deprecation note.
+ *
+ * @deprecated This does not work for `StructuredText` type fields, use
+ * `newConfigFromStructuredTextField` instead.
+ *
  * @param {API.Field} field
  * @param {number?} currentSize
  * @returns Promise<config> for #open
