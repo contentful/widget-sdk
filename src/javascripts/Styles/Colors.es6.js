@@ -1,6 +1,3 @@
-import { State as EntityState } from 'data/CMA/EntityState.es6';
-import { caseof as caseofEq } from 'sum-types/caseof-eq';
-import { constant } from 'lodash';
 export { default as Color } from 'color';
 
 /**
@@ -63,15 +60,3 @@ export const byName = {
 
   bgLight: '#E2E7EA'
 };
-
-/**
- * Given an entity state we return
- */
-export function entityStateColor(state) {
-  return caseofEq(state, [
-    [EntityState.Archived(), constant(byName.redLight)],
-    [EntityState.Draft(), constant(byName.orangeLight)],
-    [EntityState.Published(), constant(byName.greenLight)],
-    [EntityState.Changed(), constant(byName.blueLight)]
-  ]);
-}

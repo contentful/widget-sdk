@@ -51,7 +51,8 @@ module.exports = () => {
           ignore: [
             './src/javascripts/libs/*.js',
             './src/javascripts/prelude.js',
-            './src/javascripts/**/*.spec.js'
+            './src/javascripts/**/*.spec.js',
+            './src/javascripts/__mocks__/**'
           ]
         })
       ),

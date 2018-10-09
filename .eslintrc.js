@@ -75,7 +75,8 @@ module.exports = {
         'jest/prefer-to-be-null': 'warn',
         'jest/prefer-to-be-undefined': 'warn',
         'rulesdir/restrict-jest-fn': 'error',
-        'rulesdir/restrict-sinon-assert': 'error'
+        'rulesdir/restrict-sinon-assert': 'error',
+        'react/prop-types': 'off'
       },
       parserOptions: {
         ecmaVersion: 2017,

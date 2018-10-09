@@ -57,9 +57,9 @@ MockedProvider.propTypes = {
  * @returns {function(Component: React.Component): React.Component} – function to
  * create a react component which passes selected services as props to provided component.
  */
-export default function ServicesConsumer(...selectedServices) {
+export default function ServicesConsumerHOC(...selectedServices) {
   return Component => {
-    return props => {
+    const ServicesConsumer = props => {
       return (
         <Consumer>
           {services => {
@@ -82,5 +82,9 @@ export default function ServicesConsumer(...selectedServices) {
         </Consumer>
       );
     };
+
+    ServicesConsumer.displayName = 'ServicesConsumer';
+
+    return ServicesConsumer;
   };
 }

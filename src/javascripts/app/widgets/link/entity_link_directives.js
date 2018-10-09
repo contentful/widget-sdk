@@ -86,10 +86,23 @@ angular
       const $state = require('$state');
       const makeEntityRef = require('states/Navigator.es6').makeEntityRef;
       const EntityState = require('data/CMA/EntityState.es6');
-      const entityStateColor = require('Styles/Colors.es6').entityStateColor;
+      const colorsByName = require('Styles/Colors.es6').byName;
       const LD = require('utils/LaunchDarkly');
       const Analytics = require('analytics/Analytics.es6');
       const _ = require('lodash');
+      const caseofEq = require('sum-types').caseofEq;
+
+      /**
+       * Given an entity state we return
+       */
+      function entityStateColor(state) {
+        return caseofEq(state, [
+          [EntityState.State.Archived(), _.constant(colorsByName.redLight)],
+          [EntityState.State.Draft(), _.constant(colorsByName.orangeLight)],
+          [EntityState.State.Published(), _.constant(colorsByName.greenLight)],
+          [EntityState.State.Changed(), _.constant(colorsByName.blueLight)]
+        ]);
+      }
 
       const INLINE_REFERENCE_FEATURE_FLAG = 'feature-at-02-2018-inline-reference-field';
       const REFERENCE_CARD_REDESIGN_FEATURE_FLAG = 'feature-at-06-2018-reference-cards-redesign';
