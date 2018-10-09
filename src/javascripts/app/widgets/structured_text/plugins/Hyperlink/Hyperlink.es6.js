@@ -33,7 +33,6 @@ export default class Hyperlink extends React.Component {
     return (
       <span {...this.props.attributes} onClick={this.props.onClick}>
         {target ? this.renderEntityLink(target) : this.renderLink({ tooltip: uri })}
-        <Tooltip show={true} />
       </span>
       // TODO: Add contentEditable={false} to tooltip to fix text cursor bug
     );
@@ -45,14 +44,15 @@ export default class Hyperlink extends React.Component {
     const uri = node.data.get('uri');
     const href = isUrl(uri) ? uri : 'javascript:void(0)';
     return (
-      <TextLink
-        href={href} // Allows user to open link in new tab.
-        data-tip={tooltip}
-        title={title}
-        extraClassNames="structured-text__hyperlink">
-        {children}
-        {/*<Icon icon={icon} extraClassNames="structured-text__hyperlink-icon" />*/}
-      </TextLink>
+      <Tooltip isVisible content={tooltip}>
+        <TextLink
+          href={href} // Allows user to open link in new tab.
+          title={title}
+          extraClassNames="structured-text__hyperlink">
+          {children}
+          {/*<Icon icon={icon} extraClassNames="structured-text__hyperlink-icon" />*/}
+        </TextLink>
+      </Tooltip>
     );
   }
 

@@ -16,10 +16,9 @@ export default class Pill extends React.Component {
     const { text, tooltip } = this.props;
     return (
       <React.Fragment>
-        <span className="pill" data-tip={tooltip || ''}>
-          {text}
-        </span>
-        <Tooltip />
+        <Tooltip content={tooltip}>
+          <span className="pill">{text}</span>
+        </Tooltip>
       </React.Fragment>
     );
   }
