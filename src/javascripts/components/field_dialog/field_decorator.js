@@ -83,7 +83,7 @@ angular.module('contentful').factory('fieldDecorator', [
     }
 
     function isStructuredTextField(fieldType) {
-      return fieldType === 'StructuredText';
+      return fieldType === 'StructuredText' || fieldType === 'RichText';
     }
 
     function getDisplayFieldName(field) {

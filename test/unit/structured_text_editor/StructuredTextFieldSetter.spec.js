@@ -35,6 +35,14 @@ describe('StructuredTextFieldSetter', () => {
       expect(this.StructuredTextFieldSetter.is(fieldId, ct)).toBeTruthy();
     });
 
+    it('returns true if fieldId is of type `RichText`', function() {
+      const fieldId = 'abc';
+      const ct = {
+        fields: [{ id: fieldId, type: 'RichText' }]
+      };
+      expect(this.StructuredTextFieldSetter.is(fieldId, ct)).toBeTruthy();
+    });
+
     it('returns false if fieldId is not of type `StructuredText`', function() {
       const fieldId = 'abc';
       const ct = {
@@ -47,6 +55,14 @@ describe('StructuredTextFieldSetter', () => {
       const fieldId = 'abc';
       const ct = {
         fields: [{ id: 'cba', type: 'StructuredText' }]
+      };
+      expect(this.StructuredTextFieldSetter.is(fieldId, ct)).toBeFalsy();
+    });
+
+    it('returns false if contentType has no field with id `fieldId`', function() {
+      const fieldId = 'abc';
+      const ct = {
+        fields: [{ id: 'cba', type: 'RichText' }]
       };
       expect(this.StructuredTextFieldSetter.is(fieldId, ct)).toBeFalsy();
     });

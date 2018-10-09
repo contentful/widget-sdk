@@ -142,7 +142,7 @@ angular
         fieldDecorator.update($scope.decoratedField, $scope.field, contentTypeData);
         validations.updateField($scope.field, $scope.validations);
 
-        if ($scope.field.type === 'StructuredText') {
+        if ($scope.field.type === 'StructuredText' || $scope.field.type === 'RichText') {
           validations.addEnabledStructuredTextOptions($scope.field, $scope.structuredTextOptions);
         }
 

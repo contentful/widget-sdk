@@ -63,7 +63,7 @@ angular.module('contentful').directive('cfSidebarContentPreview', [
               );
               const toState = $scope.selectedEnvironment.compiledUrl.replace(/\?.*$/, '');
               const stFields = $scope.entityInfo.contentType.fields.filter(
-                field => field.type === 'StructuredText'
+                field => field.type === 'StructuredText' || field.type === 'RichText'
               );
 
               let eventOptions = {};

@@ -67,6 +67,11 @@ describe('widgets/default', () => {
     expect(getDefault(field, 'displayfieldid')).toBe('structuredTextEditor');
   });
 
+  it('if field is RichText', () => {
+    field.type = 'RichText';
+    expect(getDefault(field, 'displayfieldid')).toBe('richTextEditor');
+  });
+
   it('if field is Entry', () => {
     field.type = 'Link';
     field.linkType = 'Entry';

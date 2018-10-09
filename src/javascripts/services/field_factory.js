@@ -36,7 +36,7 @@ angular.module('contentful').factory('fieldFactory', [
       {
         name: 'StructuredText',
         label: 'Structured text',
-        icon: 'longtext' // TODO: Update icon.
+        icon: 'longtext'
       },
       {
         name: 'Integer',
@@ -68,11 +68,6 @@ angular.module('contentful').factory('fieldFactory', [
       {
         name: 'Object',
         label: 'JSON object',
-        icon: 'json'
-      },
-      {
-        name: 'StructuredText',
-        label: 'Structured text',
         icon: 'json'
       },
       {

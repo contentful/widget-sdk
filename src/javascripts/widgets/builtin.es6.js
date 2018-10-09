@@ -180,6 +180,13 @@ export function create() {
     template: '<cf-json-editor />'
   });
 
+  registerWidget('richTextEditor', {
+    fieldTypes: ['RichText'],
+    name: 'RichText',
+    icon: 'json',
+    template: '<cf-structured-text-editor />'
+  });
+
   registerWidget('structuredTextEditor', {
     fieldTypes: ['StructuredText'],
     name: 'StructuredText',
