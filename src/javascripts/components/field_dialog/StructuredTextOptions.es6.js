@@ -115,7 +115,7 @@ class StructuredTextOptions extends Component {
     linkOptions: [
       {
         icon: 'ExternalLinkTrimmed',
-        title: 'Link to Url',
+        title: 'Link to URL',
         id: INLINES.HYPERLINK,
         validationOf: ValidationType.ENABLED_NODE_TYPES
       },
@@ -135,13 +135,13 @@ class StructuredTextOptions extends Component {
     entryOptions: [
       {
         icon: 'EmbeddedEntryBlock',
-        title: 'Block Entry',
+        title: 'Block entry',
         id: BLOCKS.EMBEDDED_ENTRY,
         validationOf: ValidationType.ENABLED_NODE_TYPES
       },
       {
         icon: 'EmbeddedEntryInline',
-        title: 'Inline Entry',
+        title: 'Inline entry',
         id: INLINES.EMBEDDED_ENTRY,
         validationOf: ValidationType.ENABLED_NODE_TYPES
       }
@@ -244,7 +244,7 @@ class StructuredTextOptions extends Component {
         <StructuredTextOptionsSection heading="Links">
           {this.renderToggles(this.options.linkOptions)}
         </StructuredTextOptionsSection>
-        <StructuredTextOptionsSection heading="Entries">
+        <StructuredTextOptionsSection heading="Embedded entries">
           {this.renderToggles(this.options.entryOptions)}
         </StructuredTextOptionsSection>
       </div>
