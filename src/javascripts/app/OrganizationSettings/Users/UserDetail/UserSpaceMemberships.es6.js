@@ -23,7 +23,7 @@ class UserSpaceMemberships extends React.Component {
   static propTypes = {
     $services: PropTypes.shape({
       notification: PropTypes.object.isRequired,
-      confirm: PropTypes.object.isRequired,
+      ConfirmationDialog: PropTypes.object.isRequired,
       EndpointFactory: PropTypes.object.isRequired,
       OrganizationMembershipRepository: PropTypes.object.isRequired,
       SpaceMembershipRepository: PropTypes.object.isRequired
@@ -105,7 +105,7 @@ class UserSpaceMemberships extends React.Component {
         </p>
       </React.Fragment>
     );
-    const confirmation = await $services.confirm.default({
+    const confirmation = await $services.ConfirmationDialog.confirm({
       title: 'Remove user from a space',
       message
     });
@@ -246,7 +246,7 @@ export default ServicesConsumer(
     from: 'access_control/OrganizationMembershipRepository.es6'
   },
   {
-    as: 'confirm',
+    as: 'ConfirmationDialog',
     from: 'app/ConfirmationDialog.es6'
   }
 )(UserSpaceMemberships);

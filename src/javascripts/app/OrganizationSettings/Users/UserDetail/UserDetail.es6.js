@@ -22,7 +22,7 @@ class UserDetail extends React.Component {
   static propTypes = {
     $services: PropTypes.shape({
       notification: PropTypes.object,
-      confirm: PropTypes.object
+      ConfirmationDialog: PropTypes.object
     }),
     initialMembership: OrganizationMembership.isRequired,
     spaceMemberships: PropTypes.arrayOf(SpaceMembership).isRequired,
@@ -75,7 +75,7 @@ class UserDetail extends React.Component {
   };
 
   async removeMembership() {
-    const { notification, confirm } = this.props.$services;
+    const { notification, ConfirmationDialog } = this.props.$services;
     const { id, user } = this.state.membership.sys;
 
     const message = (
@@ -89,7 +89,7 @@ class UserDetail extends React.Component {
         </p>
       </React.Fragment>
     );
-    const confirmation = await confirm.default({
+    const confirmation = await ConfirmationDialog.confirm({
       title: 'Remove user from the organization',
       message
     });
@@ -162,6 +162,6 @@ class UserDetail extends React.Component {
 }
 
 export default ServicesConsumer('notification', {
-  as: 'confirm',
+  as: 'ConfirmationDialog',
   from: 'app/ConfirmationDialog.es6'
 })(UserDetail);

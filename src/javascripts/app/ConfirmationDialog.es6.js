@@ -1,6 +1,6 @@
 import modalDialog from 'modalDialog';
 
-export default function confirm({ title, message }) {
+export function confirm({ title, message }) {
   const dialog = modalDialog.open({
     title: 'Create new space',
     template:
