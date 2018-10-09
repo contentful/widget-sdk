@@ -36,8 +36,6 @@ export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrato
   const getPrivateViewsDefaults = () => Defaults.getPrivateViews(userId);
   const getEntryViewsDefaults = () => Defaults.getEntryViews(publishedCTs.getAllBare());
 
-  const isMigratedState = {};
-
   // TODO: `spaceEndpoint` is implemented with `$q` and other modules rely
   // on it. Wrapping with a native `Promise` for the time being.
   const spaceEndpoint = (...args) =>
@@ -111,13 +109,12 @@ export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrato
   }
 
   function setUiConfigOrMigrate(type, data) {
-    const isMigrated = isUIConfigDataMigrated(data);
-    isMigratedState[type] = isMigrated;
-    if (isMigrated) {
+    if (isUIConfigDataMigrated(data)) {
       const uiConfig = normalizeMigratedUIConfigData(data);
       return setUiConfig(type, uiConfig);
     } else {
       return viewMigrator.migrateUIConfigViews(data).then(migratedUIConfig => {
+        trackSearchTermsMigrated(migratedUIConfig, getEndpointPath(type).join('/'));
         return setUiConfig(type, migratedUIConfig);
       });
     }
@@ -139,7 +136,6 @@ export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrato
     setUiConfig(type, uiConfig);
 
     const data = prepareUIConfigForStorage(uiConfig);
-
     return spaceEndpoint(
       {
         method: 'PUT',
@@ -150,10 +146,6 @@ export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrato
       getEndpointHeaders(type)
     ).then(
       remoteData => {
-        if (!isMigratedState[type]) {
-          const endpointPath = getEndpointPath(type).join('/');
-          trackSearchTermsMigrated(uiConfig, endpointPath);
-        }
         return setUiConfigOrMigrate(type, remoteData);
       },
       error => {
