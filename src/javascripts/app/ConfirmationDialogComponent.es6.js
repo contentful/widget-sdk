@@ -24,14 +24,18 @@ export default class ConfirmationDialog extends React.Component {
     return (
       <Dialog testId="confirmation-dialog" size="small">
         {title && <Dialog.Header>{title}</Dialog.Header>}
-        <Dialog.Body>
-          <p>{message}</p>
-        </Dialog.Body>
+        <Dialog.Body>{message}</Dialog.Body>
         <Dialog.Controls>
-          <button onClick={this.confirm} className="btn-action">
+          <button
+            className="confirmation-dialog__confirm btn-action"
+            data-test-id="confirmation-dialog-confirm"
+            onClick={this.confirm}>
             Confirm
           </button>
-          <button className="btn-secondary-action" onClick={this.cancel}>
+          <button
+            data-test-id="confirmation-dialog-cancel"
+            className="confirmation-dialog__cancel btn-secondary-action"
+            onClick={this.cancel}>
             Cancel
           </button>
         </Dialog.Controls>
