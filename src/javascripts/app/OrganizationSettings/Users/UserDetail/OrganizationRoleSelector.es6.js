@@ -1,13 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, Dropdown, DropdownList, DropdownListItem } from '@contentful/ui-component-library';
+import { keyBy } from 'lodash';
 
 import { orgRoles } from './OrgRoles.es6';
 
 export class OrganizationRoleSelector extends React.Component {
   static propTypes = {
     initialRole: PropTypes.string.isRequired,
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired,
+    isSelf: PropTypes.bool,
+    disableOwnerRole: PropTypes.bool
   };
 
   state = {
@@ -35,7 +38,23 @@ export class OrganizationRoleSelector extends React.Component {
     );
   }
 
+  renderOption(role, disabled) {
+    return (
+      <DropdownListItem
+        key={role.value}
+        onClick={() => this.selectRole(role)}
+        isDisabled={disabled}>
+        <div style={{ width: 300, whiteSpace: 'normal' }}>
+          <h4 style={{ marginTop: 0 }}>{role.name}</h4>
+          <p>{role.description}</p>
+        </div>
+      </DropdownListItem>
+    );
+  }
+
   render() {
+    const roles = keyBy(orgRoles, 'value');
+
     return (
       <React.Fragment>
         <Dropdown
@@ -43,14 +62,9 @@ export class OrganizationRoleSelector extends React.Component {
           toggleElement={this.renderToggle()}
           isOpen={this.state.isOpen}>
           <DropdownList>
-            {orgRoles.map(role => (
-              <DropdownListItem key={role.value} onClick={() => this.selectRole(role)}>
-                <div style={{ width: 300, whiteSpace: 'normal' }}>
-                  <h4 style={{ marginTop: 0 }}>{role.name}</h4>
-                  <p>{role.description}</p>
-                </div>
-              </DropdownListItem>
-            ))}
+            {this.renderOption(roles.owner, this.props.disableOwnerRole)}
+            {this.renderOption(roles.admin)}
+            {this.renderOption(roles.member)}
           </DropdownList>
         </Dropdown>
         <p style={{ width: 360, marginTop: 20 }}>{this.getOrgRole().description}</p>
