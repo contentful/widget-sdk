@@ -92,7 +92,7 @@ class UsersList extends React.Component {
       notification.info(message);
       this.setState({ usersList: without(usersList, membership) });
     } catch (e) {
-      notification.error(e.message);
+      notification.error(e.data.message);
     }
   }
 

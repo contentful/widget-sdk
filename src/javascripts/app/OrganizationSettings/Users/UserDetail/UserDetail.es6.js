@@ -56,7 +56,7 @@ class UserDetail extends React.Component {
     try {
       updatedMembership = await updateMembership(this.endpoint, { id, role, version });
     } catch (e) {
-      notification.error(e.message);
+      notification.error(e.data.message);
       return;
     }
 
@@ -101,7 +101,7 @@ class UserDetail extends React.Component {
     try {
       await removeMembership(this.endpoint, id);
     } catch (e) {
-      notification.error(e.message);
+      notification.error(e.data.message);
       return;
     }
 

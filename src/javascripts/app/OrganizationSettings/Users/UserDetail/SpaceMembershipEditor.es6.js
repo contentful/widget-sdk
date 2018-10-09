@@ -86,7 +86,7 @@ class SpaceMembershipEditor extends React.Component {
       try {
         membership = await repo.changeRoleTo(initialMembership, [selectedRole]);
       } catch (e) {
-        $services.notification.error(e.message);
+        $services.notification.error(e.data.message);
         return;
       }
     } else {
@@ -94,7 +94,7 @@ class SpaceMembershipEditor extends React.Component {
       try {
         membership = await repo.invite(user.email, [selectedRole]);
       } catch (e) {
-        $services.notification.error(e.message);
+        $services.notification.error(e.data.message);
         return;
       }
     }
