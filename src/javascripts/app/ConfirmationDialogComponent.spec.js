@@ -10,27 +10,27 @@ describe('ConfirmationDialog', () => {
 
   it('renders a dialog component', () => {
     const output = shallow(
-      <ConfirmationDialog message="foobar" onConfirm={onConfirm} onCancel={onCancel} />
+      <ConfirmationDialog body="foobar" onConfirm={onConfirm} onCancel={onCancel} />
     );
     expect(output.find(Dialog)).not.toBeUndefined();
   });
 
-  it('renders the message', () => {
-    const message = (
+  it('renders the body', () => {
+    const body = (
       <div>
         <h2>Hello world</h2>
         <p>Foo.</p>
       </div>
     );
     const output = shallow(
-      <ConfirmationDialog message={message} onConfirm={onConfirm} onCancel={onCancel} />
+      <ConfirmationDialog body={body} onConfirm={onConfirm} onCancel={onCancel} />
     );
-    expect(output.find(Dialog.Body).contains(message)).toBe(true);
+    expect(output.find(Dialog.Body).contains(body)).toBe(true);
   });
 
   it('does not render the dialog header if there is no title', () => {
     const output = shallow(
-      <ConfirmationDialog message="foo" onConfirm={onConfirm} onCancel={onCancel} />
+      <ConfirmationDialog body="foo" onConfirm={onConfirm} onCancel={onCancel} />
     );
     expect(output.find(Dialog.Header)).toHaveLength(0);
   });
@@ -38,14 +38,14 @@ describe('ConfirmationDialog', () => {
   it('renders the dialog header if there is a title', () => {
     const title = 'Hello world';
     const output = shallow(
-      <ConfirmationDialog title={title} message="foo" onConfirm={onConfirm} onCancel={onCancel} />
+      <ConfirmationDialog title={title} body="foo" onConfirm={onConfirm} onCancel={onCancel} />
     );
     expect(output.find(Dialog.Header).contains(title)).toBe(true);
   });
 
   describe('events', () => {
     const output = shallow(
-      <ConfirmationDialog message="foo" onConfirm={onConfirm} onCancel={onCancel} />
+      <ConfirmationDialog body="foo" onConfirm={onConfirm} onCancel={onCancel} />
     );
 
     it('triggers onConfirm', () => {

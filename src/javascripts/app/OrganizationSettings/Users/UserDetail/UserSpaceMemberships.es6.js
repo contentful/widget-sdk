@@ -94,7 +94,7 @@ class UserSpaceMemberships extends React.Component {
     const { user, $services } = this.props;
     const { space } = membership.sys;
     const repo = this.createRepoFromSpaceMembership(membership);
-    const message = (
+    const body = (
       <React.Fragment>
         <p>
           You are about to remove {user.firstName} {user.lastName} from the space {space.name}.
@@ -107,7 +107,7 @@ class UserSpaceMemberships extends React.Component {
     );
     const confirmation = await $services.ConfirmationDialog.confirm({
       title: 'Remove user from a space',
-      message
+      body
     });
 
     if (!confirmation) {

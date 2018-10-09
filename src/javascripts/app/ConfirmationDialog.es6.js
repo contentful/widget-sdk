@@ -1,6 +1,6 @@
 import modalDialog from 'modalDialog';
 
-export function confirm({ title, message }) {
+export function confirm({ title, body }) {
   const dialog = modalDialog.open({
     title: 'Create new space',
     template:
@@ -10,7 +10,7 @@ export function confirm({ title, message }) {
     scopeData: {
       modalProps: {
         title,
-        message,
+        body,
         onConfirm,
         onCancel
       }

@@ -6,7 +6,7 @@ import Dialog from 'app/entity_editor/Components/Dialog';
 export default class ConfirmationDialog extends React.Component {
   static propTypes = {
     title: PropTypes.string,
-    message: PropTypes.node.isRequired,
+    body: PropTypes.node.isRequired,
     onConfirm: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired
   };
@@ -20,11 +20,11 @@ export default class ConfirmationDialog extends React.Component {
   };
 
   render() {
-    const { title, message } = this.props;
+    const { title, body } = this.props;
     return (
       <Dialog testId="confirmation-dialog" size="small">
         {title && <Dialog.Header>{title}</Dialog.Header>}
-        <Dialog.Body>{message}</Dialog.Body>
+        <Dialog.Body>{body}</Dialog.Body>
         <Dialog.Controls>
           <button
             className="confirmation-dialog__confirm btn-action"

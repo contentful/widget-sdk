@@ -78,7 +78,7 @@ class UserDetail extends React.Component {
     const { notification, ConfirmationDialog } = this.props.$services;
     const { id, user } = this.state.membership.sys;
 
-    const message = (
+    const body = (
       <React.Fragment>
         <p>
           You are about to remove {user.firstName} {user.lastName} from your organization.
@@ -91,7 +91,7 @@ class UserDetail extends React.Component {
     );
     const confirmation = await ConfirmationDialog.confirm({
       title: 'Remove user from the organization',
-      message
+      body
     });
 
     if (!confirmation) {
