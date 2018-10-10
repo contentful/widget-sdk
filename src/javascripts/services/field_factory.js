@@ -34,6 +34,11 @@ angular.module('contentful').factory('fieldFactory', [
         label: 'Long text'
       },
       {
+        name: 'RichText',
+        label: 'Rich text',
+        icon: 'longtext'
+      },
+      {
         name: 'StructuredText',
         label: 'Structured text',
         icon: 'longtext'
@@ -91,12 +96,20 @@ angular.module('contentful').factory('fieldFactory', [
         types: ['Symbol', 'Text']
       },
       {
+        name: 'rich-text',
+        icon: 'structuredtext',
+        label: 'Rich text',
+        description: 'Long form articles, documentation, news articles',
+        types: ['RichText']
+      },
+      {
         name: 'structured-text',
         icon: 'structuredtext',
         label: 'Structured text',
-        description: 'Long form articles, documentation, news articles',
+        description: 'Deprecated - Please use Rich Text instead',
         types: ['StructuredText']
       },
+
       {
         name: 'number',
         description: 'ID, order number, rating, quantity',
