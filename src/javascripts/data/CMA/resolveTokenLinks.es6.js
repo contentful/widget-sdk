@@ -38,7 +38,19 @@ export default function resolveTokenLinks(tokenData) {
   return root;
 
   function store(item) {
-    const { type, id } = item.sys;
+    const {
+      sys: { type, id }
+    } = item;
+
+    if (type === 'Role') {
+      const spaceId = item.sys.space.sys.id;
+      if (!getPath(lookup, [spaceId, type, id])) {
+        setPath(lookup, [spaceId, type, id], item);
+        return;
+      } else {
+        throw new Error(`Tuple ${spaceId},${type},${id} already stored.`);
+      }
+    }
 
     if (!getPath(lookup, [type, id])) {
       setPath(lookup, [type, id], item);
@@ -53,7 +65,7 @@ export default function resolveTokenLinks(tokenData) {
     });
   }
 
-  function resolve(item) {
+  function resolve(item, parent) {
     if (item.sys && alreadyVisited(item)) {
       return;
     }
@@ -63,16 +75,24 @@ export default function resolveTokenLinks(tokenData) {
       const shouldRecurse = isPlainObject(value) || Array.isArray(value);
 
       if (isLink(value)) {
-        replaceLink(item, key);
+        replaceLink(item, key, parent);
       } else if (shouldRecurse) {
-        resolve(value);
+        resolve(value, item);
       }
     });
   }
 
-  function replaceLink(item, key) {
-    const { linkType, id } = item[key].sys;
-    const target = getPath(lookup, [linkType, id]);
+  function replaceLink(item, key, parent) {
+    let target;
+    const {
+      sys: { linkType, id }
+    } = item[key];
+    if (linkType === 'Role') {
+      const spaceId = parent.sys.space.sys.id;
+      target = getPath(lookup, [spaceId, linkType, id]);
+    } else {
+      target = getPath(lookup, [linkType, id]);
+    }
 
     if (target) {
       item[key] = target;
