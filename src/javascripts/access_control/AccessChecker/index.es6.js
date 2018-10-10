@@ -275,6 +275,11 @@ export function canPerformActionOnEntity(action, entity) {
  * Returns true if an entry can be updated.
  */
 export function canUpdateEntry(entry) {
+  // Explicitly check if permission is denied for update on Entry first
+  if (spaceAuthContext.isPermissionDenied('update', 'Entry')) {
+    return false;
+  }
+
   const canUpdate = canPerformActionOnEntity('update', entry);
   const ctId = getContentTypeIdFor(entry);
   const canUpdateThisType = policyChecker.canUpdateEntriesOfType(ctId);
@@ -291,6 +296,11 @@ export function canUpdateEntry(entry) {
  * Returns true if an asset can be updated.
  */
 export function canUpdateAsset(asset) {
+  // Explicitly check if permission is denied for update on Asset first
+  if (spaceAuthContext.isPermissionDenied('update', 'Asset')) {
+    return false;
+  }
+
   const canUpdate = canPerformActionOnEntity('update', asset);
   const canUpdateWithPolicy = policyChecker.canUpdateAssets();
   const canUpdateOwn = policyChecker.canUpdateOwnAssets();

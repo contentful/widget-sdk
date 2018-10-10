@@ -53,6 +53,10 @@ export function determineEnforcement(organization, reasons, entityType) {
     {
       label: 'accessTokenScope',
       message: 'An unknown error occurred'
+    },
+    {
+      label: 'frozenSpace',
+      message: 'Your space is read-only. Please contact your administrator for more information.'
     }
   ];
 
