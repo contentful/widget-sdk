@@ -14,8 +14,8 @@ export class OrganizationRoleSelector extends React.Component {
     isOpen: false
   };
 
-  getOrgRole(id) {
-    return orgRoles.find(role => role.value === id);
+  getOrgRole() {
+    return orgRoles.find(role => role.value === this.props.initialRole);
   }
 
   selectRole(role) {
@@ -29,29 +29,32 @@ export class OrganizationRoleSelector extends React.Component {
 
   renderToggle() {
     return (
-      <Button buttonType="muted" indicateDropdown onClick={() => this.toggle()}>
-        {this.getOrgRole(this.props.initialRole).name}
+      <Button buttonType="muted" size="small" indicateDropdown onClick={() => this.toggle()}>
+        {this.getOrgRole().name}
       </Button>
     );
   }
 
   render() {
     return (
-      <Dropdown
-        onClose={this.toggle}
-        toggleElement={this.renderToggle()}
-        isOpen={this.state.isOpen}>
-        <DropdownList>
-          {orgRoles.map(role => (
-            <DropdownListItem key={role.value} onClick={() => this.selectRole(role)}>
-              <div style={{ width: 300, whiteSpace: 'normal' }}>
-                <h4 style={{ marginTop: 0 }}>{role.name}</h4>
-                <p>{role.description}</p>
-              </div>
-            </DropdownListItem>
-          ))}
-        </DropdownList>
-      </Dropdown>
+      <React.Fragment>
+        <Dropdown
+          onClose={this.toggle}
+          toggleElement={this.renderToggle()}
+          isOpen={this.state.isOpen}>
+          <DropdownList>
+            {orgRoles.map(role => (
+              <DropdownListItem key={role.value} onClick={() => this.selectRole(role)}>
+                <div style={{ width: 300, whiteSpace: 'normal' }}>
+                  <h4 style={{ marginTop: 0 }}>{role.name}</h4>
+                  <p>{role.description}</p>
+                </div>
+              </DropdownListItem>
+            ))}
+          </DropdownList>
+        </Dropdown>
+        <p style={{ width: 360, marginTop: 20 }}>{this.getOrgRole().description}</p>
+      </React.Fragment>
     );
   }
 }

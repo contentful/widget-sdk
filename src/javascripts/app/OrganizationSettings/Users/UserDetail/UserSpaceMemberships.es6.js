@@ -23,6 +23,7 @@ class UserSpaceMemberships extends React.Component {
   static propTypes = {
     $services: PropTypes.shape({
       notification: PropTypes.object.isRequired,
+      ConfirmationDialog: PropTypes.object.isRequired,
       EndpointFactory: PropTypes.object.isRequired,
       OrganizationMembershipRepository: PropTypes.object.isRequired,
       SpaceMembershipRepository: PropTypes.object.isRequired
@@ -93,6 +94,25 @@ class UserSpaceMemberships extends React.Component {
     const { user, $services } = this.props;
     const { space } = membership.sys;
     const repo = this.createRepoFromSpaceMembership(membership);
+    const body = (
+      <React.Fragment>
+        <p>
+          You are about to remove {user.firstName} {user.lastName} from the space {space.name}.
+        </p>
+        <p>
+          After removal this user will not be able to access this space in any way. Do you want to
+          proceed?
+        </p>
+      </React.Fragment>
+    );
+    const confirmation = await $services.ConfirmationDialog.confirm({
+      title: 'Remove user from a space',
+      body
+    });
+
+    if (!confirmation) {
+      return;
+    }
 
     try {
       await repo.remove(membership);
@@ -224,5 +244,9 @@ export default ServicesConsumer(
   {
     as: 'OrganizationMembershipRepository',
     from: 'access_control/OrganizationMembershipRepository.es6'
+  },
+  {
+    as: 'ConfirmationDialog',
+    from: 'app/ConfirmationDialog.es6'
   }
 )(UserSpaceMemberships);

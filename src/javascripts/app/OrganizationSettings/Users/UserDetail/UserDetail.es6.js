@@ -4,7 +4,7 @@ import moment from 'moment';
 
 import Workbench from 'ui/Components/Workbench/JSX.es6';
 import { go } from 'states/Navigator.es6';
-import { TextField, Button } from '@contentful/ui-component-library';
+import { Button } from '@contentful/ui-component-library';
 
 import { SpaceMembership, OrganizationMembership } from '../PropTypes.es6';
 import { OrganizationRoleSelector } from './OrganizationRoleSelector.es6';
@@ -21,7 +21,8 @@ const ServicesConsumer = require('../../../../reactServiceContext').default;
 class UserDetail extends React.Component {
   static propTypes = {
     $services: PropTypes.shape({
-      notification: PropTypes.object
+      notification: PropTypes.object,
+      ConfirmationDialog: PropTypes.object
     }),
     initialMembership: OrganizationMembership.isRequired,
     spaceMemberships: PropTypes.arrayOf(SpaceMembership).isRequired,
@@ -55,7 +56,7 @@ class UserDetail extends React.Component {
     try {
       updatedMembership = await updateMembership(this.endpoint, { id, role, version });
     } catch (e) {
-      notification.error(e.message);
+      notification.error(e.data.message);
       return;
     }
 
@@ -74,13 +75,33 @@ class UserDetail extends React.Component {
   };
 
   async removeMembership() {
-    const { notification } = this.props.$services;
-    const { id } = this.state.membership.sys;
+    const { notification, ConfirmationDialog } = this.props.$services;
+    const { id, user } = this.state.membership.sys;
+
+    const body = (
+      <React.Fragment>
+        <p>
+          You are about to remove {user.firstName} {user.lastName} from your organization.
+        </p>
+        <p>
+          After removal this user will not be able to access this organization in any way. Do you
+          want to proceed?
+        </p>
+      </React.Fragment>
+    );
+    const confirmation = await ConfirmationDialog.confirm({
+      title: 'Remove user from the organization',
+      body
+    });
+
+    if (!confirmation) {
+      return;
+    }
 
     try {
       await removeMembership(this.endpoint, id);
     } catch (e) {
-      notification.error(e.message);
+      notification.error(e.data.message);
       return;
     }
 
@@ -101,7 +122,7 @@ class UserDetail extends React.Component {
     return (
       <Workbench testId="organization-users-page">
         <Workbench.Header>
-          <Workbench.Title>{`${user.firstName} ${user.lastName}`}</Workbench.Title>
+          <Workbench.Title>Users</Workbench.Title>
           <div className="workbench-header__actions">
             <Button buttonType="negative" onClick={() => this.removeMembership()}>
               Remove membership
@@ -110,20 +131,13 @@ class UserDetail extends React.Component {
         </Workbench.Header>
         <Workbench.Content>
           <div style={{ padding: '1em 2em 2em' }}>
-            <TextField
-              labelText="Email"
-              name="email"
-              id="email"
-              value={user.email}
-              textInputProps={{
-                width: 'large',
-                disabled: true
-              }}
-              style={{
-                marginBottom: 30
-              }}
-            />
-
+            <section className="user-details__card">
+              <img src={user.avatarUrl} className="user-details__avatar" />
+              <div>
+                <h2>{`${user.firstName} ${user.lastName}`}</h2>
+                <p>{user.email}</p>
+              </div>
+            </section>
             <section style={{ display: 'flex', marginBottom: 50 }}>
               <div style={{ width: '31.6%' }}>
                 <h4>Organization role</h4>
@@ -147,4 +161,7 @@ class UserDetail extends React.Component {
   }
 }
 
-export default ServicesConsumer('notification')(UserDetail);
+export default ServicesConsumer('notification', {
+  as: 'ConfirmationDialog',
+  from: 'app/ConfirmationDialog.es6'
+})(UserDetail);
