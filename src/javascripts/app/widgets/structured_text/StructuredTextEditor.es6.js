@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Editor } from 'slate-react';
-import { Value, Schema } from 'slate';
+import { Value } from 'slate';
 import TrailingBlock from 'slate-trailing-block';
 import deepEqual from 'fast-deep-equal';
 
@@ -45,21 +45,19 @@ import EditList from './plugins/List/EditListWrapper.es6';
 import { ListPlugin, UnorderedList, OrderedList } from './plugins/List/index.es6';
 import Hr, { HrPlugin } from './plugins/Hr/index.es6';
 
-import schemaJson from './constants/Schema.es6';
+import schema from './constants/Schema.es6';
 import emptyDoc from './constants/EmptyDoc.es6';
 import { BLOCKS } from '@contentful/structured-text-types';
 import { PasteHtmlPlugin } from './plugins/PasteHtml/index.es6';
 
-const schema = Schema.fromJSON(schemaJson);
-
 const createValue = contentfulDocument => {
   const document = toSlatejsDocument({
     document: contentfulDocument,
-    schema: schemaJson
+    schema
   });
   const value = Value.fromJSON({
     document: document,
-    schema: schema
+    schema
   });
 
   return value;
@@ -210,6 +208,7 @@ export default class StructuredTextEditor extends React.Component {
           onChange={this.onChange}
           plugins={this.slatePlugins}
           readOnly={this.props.isDisabled}
+          schema={schema}
           className="structured-text__editor"
         />
       </div>

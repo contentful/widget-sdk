@@ -18,7 +18,7 @@ export const EmbeddedEntityBlockPlugin = ({ nodeType, hotkey, widgetAPI }) => {
     },
     onKeyDown(e, change, editor) {
       if (hotkey && isHotkey(hotkey, e)) {
-        asyncChange(editor, newChange => selectEntityAndInsert(widgetAPI, newChange));
+        asyncChange(editor, newChange => selectEntityAndInsert(nodeType, widgetAPI, newChange));
       }
       if (isHotkey('enter', e)) {
         if (hasBlockOfType(change, nodeType)) {

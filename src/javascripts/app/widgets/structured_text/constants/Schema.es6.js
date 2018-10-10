@@ -1,4 +1,5 @@
 import { mapValues, fromPairs } from 'lodash';
+import { Schema } from 'slate';
 import {
   BLOCKS,
   INLINES,
@@ -7,64 +8,130 @@ import {
   CONTAINERS
 } from '@contentful/structured-text-types';
 
-const slateTypeConstraint = type => ({ type });
-const TEXT_CONSTRAINT = { object: 'text' };
-const VOID_CONSTRAINT = { isVoid: true };
-const INLINE_CONSTRAINTS = Object.values(INLINES).map(slateTypeConstraint);
-
-const nodeTypeConstraint = whiteListedNodeTypes => {
-  return {
-    match: whiteListedNodeTypes.map(slateTypeConstraint)
-  };
-};
-
-const mapContainers = containers => {
-  return mapValues(containers, nodeTypeConstraint);
-};
-
 const mapVoidTypes = nodeTypes => {
-  return fromPairs(nodeTypes.map(nodeType => [nodeType, VOID_CONSTRAINT]));
+  return fromPairs(nodeTypes.map(nodeType => [nodeType, { isVoid: true }]));
 };
 
-export default {
-  document: nodeTypeConstraint(TOP_LEVEL_BLOCKS),
+export default Schema.fromJSON({
+  document: {
+    nodes: [
+      {
+        types: TOP_LEVEL_BLOCKS
+      }
+    ]
+  },
   blocks: {
     [BLOCKS.PARAGRAPH]: {
-      match: [TEXT_CONSTRAINT, ...INLINE_CONSTRAINTS]
+      nodes: [
+        {
+          types: Object.values(INLINES)
+        },
+        {
+          objects: ['text', 'inline']
+        }
+      ]
     },
     [BLOCKS.HEADING_1]: {
-      match: [TEXT_CONSTRAINT, ...INLINE_CONSTRAINTS]
+      nodes: [
+        {
+          types: Object.values(INLINES)
+        },
+        {
+          objects: ['text', 'inline']
+        }
+      ]
     },
     [BLOCKS.HEADING_2]: {
-      match: [TEXT_CONSTRAINT, ...INLINE_CONSTRAINTS]
+      nodes: [
+        {
+          types: Object.values(INLINES)
+        },
+        {
+          objects: ['text', 'inline']
+        }
+      ]
     },
     [BLOCKS.HEADING_3]: {
-      match: [TEXT_CONSTRAINT, ...INLINE_CONSTRAINTS]
+      nodes: [
+        {
+          types: Object.values(INLINES)
+        },
+        {
+          objects: ['text', 'inline']
+        }
+      ]
     },
     [BLOCKS.HEADING_4]: {
-      match: [TEXT_CONSTRAINT, ...INLINE_CONSTRAINTS]
+      nodes: [
+        {
+          types: Object.values(INLINES)
+        },
+        {
+          objects: ['text', 'inline']
+        }
+      ]
     },
     [BLOCKS.HEADING_5]: {
-      match: [TEXT_CONSTRAINT, ...INLINE_CONSTRAINTS]
+      nodes: [
+        {
+          types: Object.values(INLINES)
+        },
+        {
+          objects: ['text', 'inline']
+        }
+      ]
     },
     [BLOCKS.HEADING_6]: {
-      match: [TEXT_CONSTRAINT, ...INLINE_CONSTRAINTS]
+      nodes: [
+        {
+          types: Object.values(INLINES)
+        },
+        {
+          objects: ['text', 'inline']
+        }
+      ]
     },
     ...mapVoidTypes(VOID_BLOCKS),
-    ...mapContainers(CONTAINERS)
+    ...mapValues(CONTAINERS, (types, container) => ({
+      nodes: [
+        {
+          types
+        }
+      ],
+      normalize: (change, reason, context) => {
+        switch (reason) {
+          case 'child_type_invalid': {
+            change.unwrapBlockByKey(context.node.key, container);
+            return;
+          }
+        }
+      }
+    }))
   },
   inlines: {
     [INLINES.HYPERLINK]: {
-      match: [TEXT_CONSTRAINT]
+      nodes: [
+        {
+          objects: ['text']
+        }
+      ]
     },
     [INLINES.ENTRY_HYPERLINK]: {
-      match: [TEXT_CONSTRAINT]
+      nodes: [
+        {
+          objects: ['text']
+        }
+      ]
     },
     [INLINES.ASSET_HYPERLINK]: {
-      match: [TEXT_CONSTRAINT]
+      nodes: [
+        {
+          objects: ['text']
+        }
+      ]
     },
     [INLINES.EMBEDDED_ENTRY]: {
-      ...VOID_CONSTRAINT
+      isVoid: true
     }
   }
-};
+});
