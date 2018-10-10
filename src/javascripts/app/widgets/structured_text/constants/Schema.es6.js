@@ -1,4 +1,4 @@
-import { mapValues, fromPairs } from 'lodash';
+import { fromPairs } from 'lodash';
 import { Schema } from 'slate';
 import {
   BLOCKS,
@@ -92,21 +92,22 @@ export default Schema.fromJSON({
       ]
     },
     ...mapVoidTypes(VOID_BLOCKS),
-    ...mapValues(CONTAINERS, (types, container) => ({
+    // the schema for the lists and list-items is defined in the slate-edit-list plugin
+    [BLOCKS.QUOTE]: {
       nodes: [
         {
-          types
+          types: CONTAINERS[BLOCKS.QUOTE]
         }
       ],
       normalize: (change, reason, context) => {
         switch (reason) {
           case 'child_type_invalid': {
-            change.unwrapBlockByKey(context.node.key, container);
+            change.unwrapBlockByKey(context.node.key, BLOCKS.QUOTE);
             return;
           }
         }
       }
-    }))
+    }
   },
   inlines: {
     [INLINES.HYPERLINK]: {

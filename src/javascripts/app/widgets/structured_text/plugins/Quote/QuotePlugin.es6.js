@@ -1,7 +1,8 @@
 import isHotkey from 'is-hotkey';
 import { BLOCKS } from '@contentful/structured-text-types';
-import { applyChange } from './Util.es6';
+import { applyChange, isSelectionInQuote } from './Util.es6';
 import commonNode from '../shared/NodeDecorator.es6';
+import { haveTextInSomeBlocks } from '../shared/UtilHave.es6';
 
 const plugin = (type, tagName, hotkey) => {
   return {
@@ -15,18 +16,9 @@ const plugin = (type, tagName, hotkey) => {
         change.call(applyChange, type);
         return false;
       }
-    },
-    validateNode: node => {
-      if (node.type !== BLOCKS.QUOTE) {
-        return undefined;
+      if (isHotkey('Backspace', e) && isSelectionInQuote(change) && !haveTextInSomeBlocks(change)) {
+        change.unwrapBlock(BLOCKS.QUOTE);
       }
-
-      if (node.getBlocks().size === 0) {
-        return change => {
-          return change.removeNodeByKey(node.key, BLOCKS.PARAGRAPH);
-        };
-      }
-      return undefined;
     }
   };
 };

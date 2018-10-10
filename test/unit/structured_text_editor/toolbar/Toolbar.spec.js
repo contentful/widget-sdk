@@ -427,10 +427,7 @@ describe('Toolbar', () => {
       const editor = getWithId(this.wrapper, 'editor');
       await triggerToolbarIcon(this.wrapper, BLOCKS.QUOTE);
 
-      editor.simulate('keydown', {
-        key: 'Backspace',
-        keyCode: toKeyCode('Backspace')
-      });
+      editor.simulate('keydown', keyChord('backspace'));
 
       expect(this.field.getValue()).toEqual(document(EMPTY_PARAGRAPH));
     });
