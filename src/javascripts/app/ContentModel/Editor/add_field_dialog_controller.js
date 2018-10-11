@@ -137,7 +137,10 @@ angular.module('contentful').controller('AddFieldDialogController', [
     function setFieldGroupRows(scope, enableExperimentalStructuredText = false) {
       let fieldGroups = fieldFactory.groups;
       if (!enableExperimentalStructuredText) {
-        fieldGroups = _.filter(fieldGroups, fieldGroup => fieldGroup.name !== 'structured-text');
+        fieldGroups = _.filter(
+          fieldGroups,
+          fieldGroup => fieldGroup.name !== 'structured-text' && fieldGroup.name !== 'rich-text'
+        );
       }
       scope.fieldGroupRows = fieldGroupsToRows(fieldGroups);
     }
