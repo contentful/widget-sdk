@@ -26,8 +26,8 @@ angular
 
       const resources = createResourceService(spaceContext.getId());
 
-      const disableCreateApiKey = accessChecker.shouldDisable('createApiKey');
-      $scope.showCreateApiKey = !accessChecker.shouldHide('createApiKey');
+      const disableCreateApiKey = accessChecker.shouldDisable('create', 'apiKey');
+      $scope.showCreateApiKey = !accessChecker.shouldHide('create', 'apiKey');
 
       $scope.context.ready = false;
 

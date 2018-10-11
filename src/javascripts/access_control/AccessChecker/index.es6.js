@@ -12,7 +12,7 @@ import {
   isAuthor
 } from './Utils.es6';
 import { capitalize, capitalizeFirst } from 'utils/StringUtils.es6';
-import { get, some, forEach, values } from 'lodash';
+import { chain, get, set, some, forEach, values } from 'lodash';
 import * as Enforcements from 'access_control/Enforcements.es6';
 
 export { wasForbidden } from './Utils.es6';
@@ -115,12 +115,15 @@ export const shouldDisable = createResponseAttributeGetter('shouldDisable');
 export const getResponses = () => responses;
 
 /**
- * @name accessChecker#getResponseByActionName
+ * @name accessChecker#getResponseByActionAndEntity
  * @returns {object}
  * @description
- * Returns worf response for a given action name.
+ * Returns worf response for a given action name and entity.
+ *
+ * Sample usage: getResponseByActionAndEntity('create', 'entry')
  */
-export const getResponseByActionName = action => responses[action];
+export const getResponseByActionAndEntity = (action, entityType) =>
+  get(responses, `${action}.${entityType}`);
 
 /**
  * @name accessChecker#getSectionVisibility
@@ -212,7 +215,12 @@ function setContext(context) {
   collectSectionVisibility();
 
   const hasReasonsDenied = value => value.reasons && value.reasons.length;
-  const denied = values(responses).filter(hasReasonsDenied);
+  const denied = chain(responses)
+    .values()
+    .map(values)
+    .flatten()
+    .filter(hasReasonsDenied)
+    .value();
 
   resetEnforcements();
 
@@ -350,7 +358,7 @@ export function canUploadMultipleAssets() {
  * Returns true if API Keys can be modified.
  */
 export function canModifyApiKeys() {
-  return get(responses, 'createApiKey.can', false);
+  return get(responses, 'create.apiKey.can', false);
 }
 
 /**
@@ -360,7 +368,7 @@ export function canModifyApiKeys() {
  * Returns true if API Keys can be read.
  */
 export function canReadApiKeys() {
-  return get(responses, 'readApiKey.can', false);
+  return get(responses, 'read.apiKey.can', false);
 }
 /**
  * @name accessChecker#canCreateSpace
@@ -415,10 +423,11 @@ function collectResponses() {
   const replacement = {};
 
   forEach(ACTIONS_FOR_ENTITIES, (actions, entity) => {
-    entity = capitalizeFirst(entity);
-    actions.forEach(action => {
-      replacement[action + entity] = getPermissions(action, entity);
-    });
+    const entityCapitalized = capitalizeFirst(entity);
+
+    actions.forEach(action =>
+      set(replacement, `${action}.${entity}`, getPermissions(action, entityCapitalized))
+    );
   });
 
   responses = replacement;
@@ -426,26 +435,26 @@ function collectResponses() {
 
 function collectSectionVisibility() {
   sectionVisibility = {
-    contentType: can('manage', 'ContentType') || !shouldHide('readApiKey'),
-    entry: !shouldHide('readEntry') || policyChecker.canAccessEntries(),
-    asset: !shouldHide('readAsset') || policyChecker.canAccessAssets(),
-    apiKey: !shouldHide('readApiKey'),
-    settings: !shouldHide('updateSettings'),
-    locales: !shouldHide('updateSettings'),
-    extensions: !shouldHide('updateSettings'),
-    users: !shouldHide('updateSettings'),
-    roles: !shouldHide('updateSettings'),
+    contentType: can('manage', 'ContentType') || !shouldHide('read', 'apiKey'),
+    entry: !shouldHide('read', 'entry') || policyChecker.canAccessEntries(),
+    asset: !shouldHide('read', 'asset') || policyChecker.canAccessAssets(),
+    apiKey: !shouldHide('read', 'apiKey'),
+    settings: !shouldHide('update', 'settings'),
+    locales: !shouldHide('update', 'settings'),
+    extensions: !shouldHide('update', 'settings'),
+    users: !shouldHide('update', 'settings'),
+    roles: !shouldHide('update', 'settings'),
     environments: can('manage', 'Environments'),
-    usage: !shouldHide('updateSettings'),
-    previews: !shouldHide('updateSettings'),
-    webhooks: !shouldHide('updateSettings'),
+    usage: !shouldHide('update', 'settings'),
+    previews: !shouldHide('update', 'settings'),
+    webhooks: !shouldHide('update', 'settings'),
     spaceHome: get(space, 'spaceMembership.admin')
   };
 }
 
 function createResponseAttributeGetter(attrName) {
-  return actionName => {
-    const action = responses[actionName];
+  return (actionName, entity) => {
+    const action = get(responses, `${actionName}.${entity}`);
     return action && attrName in action ? action[attrName] : false;
   };
 }

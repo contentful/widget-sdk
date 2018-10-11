@@ -7,9 +7,9 @@
   .empty-state__action
     button.btn-action--large(
       cf-context-menu-trigger
-      ng-hide="shouldHide('createAsset')"
-      ng-disabled="shouldDisable('createAsset')"
-      cf-when-disabled="createAsset"
+      ng-hide="shouldHide('create', 'asset')"
+      ng-disabled="shouldDisable('create', 'asset')"
+      cf-when-disabled="create.asset"
       data-test-id="create-asset-menu-trigger")
       cf-icon.btn-dropdown-icon(name="dd-arrow-down")
       | Add asset(s)

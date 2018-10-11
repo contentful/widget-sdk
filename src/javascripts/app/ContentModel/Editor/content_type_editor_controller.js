@@ -170,8 +170,8 @@ angular.module('contentful').controller('ContentTypeEditorController', [
       {
         disabled: function() {
           return (
-            accessChecker.shouldDisable('updateContentType') ||
-            accessChecker.shouldDisable('publishContentType')
+            accessChecker.shouldDisable('update', 'contentType') ||
+            accessChecker.shouldDisable('publish', 'contentType')
           );
         }
       }
@@ -193,8 +193,8 @@ angular.module('contentful').controller('ContentTypeEditorController', [
       {
         disabled: function() {
           return (
-            accessChecker.shouldDisable('updateContentType') ||
-            accessChecker.shouldDisable('publishContentType')
+            accessChecker.shouldDisable('update', 'contentType') ||
+            accessChecker.shouldDisable('publish', 'contentType')
           );
         }
       }

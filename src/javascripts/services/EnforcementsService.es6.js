@@ -88,6 +88,54 @@ async function fetchEnforcements(spaceId) {
     const tokenSpace = await getSpace(spaceId);
     return get(tokenSpace, `enforcements`, []);
   }
+
+  // return [
+  //   {
+  //     additionalPolicies: [],
+  //     deniedPermissions: {
+  //       "ContentType": [
+  //         "create",
+  //         "update",
+  //         "delete",
+  //         "publish",
+  //         "unpublish"
+  //       ],
+  //       "Entry": [
+  //         "create",
+  //         "update",
+  //         "delete",
+  //         "publish",
+  //         "unpublish",
+  //         "archive",
+  //         "unarchive"
+  //       ],
+  //       "Asset": [
+  //         "create",
+  //         "update",
+  //         "delete",
+  //         "publish",
+  //         "unpublish",
+  //         "archive",
+  //         "unarchive"
+  //       ],
+  //       "Settings": [
+  //         'update'
+  //       ]
+  //     },
+  //     reason: "frozenSpace",
+  //     sys: {
+  //       type: "Enforcement",
+  //       id: "enforcement-3432ae1180cc7d8aab6b40448bf6fa5433850c04",
+  //       space: {
+  //         "sys": {
+  //           "type": "Link",
+  //           "linkType": "Space",
+  //           "id": "oe7midoqrjct"
+  //         }
+  //       }
+  //     }
+  //   }
+  // ]
 }
 
 function enforcementsEqual(current, newEnforcements) {

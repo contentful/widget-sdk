@@ -18,10 +18,10 @@ header.workbench-header
     ) Save as view
 
   .workbench-header__actions(
-    ng-show="!showNoAssetsAdvice() && !shouldHide('createAsset')")
+    ng-show="!showNoAssetsAdvice() && !shouldHide('create', 'asset')")
     button.btn-action(
       cf-context-menu-trigger
-      ng-disabled="shouldDisable('createAsset')"
+      ng-disabled="shouldDisable('create', 'asset')"
       data-test-id="add-asset-menu-trigger")
       cf-icon.btn-dropdown-icon(name="dd-arrow-down")
       | Add asset

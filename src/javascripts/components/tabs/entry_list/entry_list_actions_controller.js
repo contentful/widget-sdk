@@ -31,7 +31,8 @@ angular
 
       function showDuplicate() {
         return (
-          !accessChecker.shouldHide('createEntry') && !accessChecker.shouldDisable('createEntry')
+          !accessChecker.shouldHide('create', 'entry') &&
+          !accessChecker.shouldDisable('create', 'entry')
         );
       }
 

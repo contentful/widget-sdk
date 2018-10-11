@@ -21,8 +21,8 @@ header.workbench-header
   .workbench-header__actions(ng-show="contentTypes.length > 0")
     button.btn-action(
       ng-click="newContentType()"
-      ng-hide="shouldHide('createContentType')"
-      ng-disabled="shouldDisable('createContentType')"
+      ng-hide="shouldHide('create', 'contentType')"
+      ng-disabled="shouldDisable('create', 'contentType')"
       data-test-id="create-content-type")
       cf-icon.btn-icon.inverted(name="plus")
       | Add content type
@@ -38,8 +38,8 @@ header.workbench-header
       button.btn-action--large(
         type="button"
         ng-click="newContentType()"
-        ng-hide="shouldHide('createContentType')"
-        ng-disabled="shouldDisable('createContentType')"
+        ng-hide="shouldHide('create', 'contentType')"
+        ng-disabled="shouldDisable('create', 'contentType')"
         data-test-id="create-content-type-empty-state")
         cf-icon.btn-icon.inverted(name="plus")
         | Add content type

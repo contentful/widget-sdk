@@ -44,14 +44,14 @@ export default function create($scope, contentTypeIds) {
         !$scope.context.isNew &&
         ($scope.contentType.canUnpublish() || !$scope.contentType.isPublished());
       const denied =
-        accessChecker.shouldHide('deleteContentType') ||
-        accessChecker.shouldHide('unpublishContentType');
+        accessChecker.shouldHide('delete', 'contentType') ||
+        accessChecker.shouldHide('unpublish', 'contentType');
       return deletableState && !denied;
     },
     disabled: function() {
       return (
-        accessChecker.shouldDisable('deleteContentType') ||
-        accessChecker.shouldDisable('unpublishContentType')
+        accessChecker.shouldDisable('delete', 'contentType') ||
+        accessChecker.shouldDisable('unpublish', 'contentType')
       );
     }
   });
@@ -199,8 +199,8 @@ export default function create($scope, contentTypeIds) {
         !$scope.contentType.getPublishedVersion();
       const valid = !allFieldsInactive($scope.contentType);
       const denied =
-        accessChecker.shouldDisable('updateContentType') ||
-        accessChecker.shouldDisable('publishContentType');
+        accessChecker.shouldDisable('update', 'contentType') ||
+        accessChecker.shouldDisable('publish', 'contentType');
 
       return !dirty || !valid || denied;
     }
@@ -308,8 +308,8 @@ export default function create($scope, contentTypeIds) {
       disabled: function() {
         const isNew = $scope.context.isNew;
         const isDenied =
-          accessChecker.shouldDisable('updateContentType') ||
-          accessChecker.shouldDisable('publishContentType');
+          accessChecker.shouldDisable('update', 'contentType') ||
+          accessChecker.shouldDisable('publish', 'contentType');
         const isDirty = $scope.contentTypeForm.$dirty || !$scope.contentType.getPublishedVersion();
         const isPublished = $scope.contentType.isPublished();
 

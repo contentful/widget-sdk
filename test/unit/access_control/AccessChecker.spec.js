@@ -120,23 +120,17 @@ describe('Access Checker', () => {
         expect(ac.getResponses() === responses).toBe(false);
       });
 
-      it('contains keys for entity actions', () => {
+      it('contains keys for actions', () => {
         const responses = ac.getResponses();
-        const testKeys = [
-          'createContentType',
-          'readEntry',
-          'updateAsset',
-          'createApiKey',
-          'updateSettings'
-        ];
-        const intersection = _.intersection(_.keys(responses), testKeys);
-        expect(intersection.length).toBe(testKeys.length);
+        const keys = ['create', 'read', 'update'];
+        const intersection = _.intersection(_.keys(responses), keys);
+        expect(intersection.length).toBe(keys.length);
       });
 
       it('should not hide or disable when operation can be performed', () => {
         getResStub.withArgs('read', 'Entry').returns(true);
         triggerChange();
-        const response = ac.getResponses()['readEntry'];
+        const response = ac.getResponses()['read']['entry'];
         expect(response.can).toBe(true);
         expect(response.shouldHide).toBe(false);
         expect(response.shouldDisable).toBe(false);
@@ -145,7 +139,7 @@ describe('Access Checker', () => {
       it('should disable, but not hide when operation cannot be performed and reasons for denial are given', () => {
         reasonsDeniedStub.withArgs('read', 'Entry').returns(['DENIED!']);
         triggerChange();
-        const response = ac.getResponses()['readEntry'];
+        const response = ac.getResponses()['read']['entry'];
         expect(response.can).toBe(false);
         expect(response.shouldHide).toBe(false);
         expect(response.shouldDisable).toBe(true);
@@ -153,7 +147,7 @@ describe('Access Checker', () => {
       });
 
       it('should hide when operation cannot be performed and no reasons are given', () => {
-        const response = ac.getResponses()['readEntry'];
+        const response = ac.getResponses()['read']['entry'];
         expect(response.can).toBe(false);
         expect(response.shouldHide).toBe(true);
         expect(response.shouldDisable).toBe(false);
@@ -171,20 +165,26 @@ describe('Access Checker', () => {
         enforcements.determineEnforcement
           .withArgs(mockSpace.organization, reasons, 'Entry')
           .returns(enforcement);
+        // debugger;
         triggerChange();
         sinon.assert.calledOnce(broadcastStub.withArgs(enforcement));
       });
     });
 
-    describe('#getResponseByActionName', () => {
+    describe('#getResponseByActionAndEntity', () => {
       it('returns undefined for an unknown action', () => {
-        expect(ac.getResponseByActionName('unknown')).toBe(undefined);
+        expect(ac.getResponseByActionAndEntity('unknown')).toBe(undefined);
+      });
+
+      it('returns undefined for an unknown action and entity', () => {
+        expect(ac.getResponseByActionAndEntity('create', 'unknown')).toBe(undefined);
       });
 
       it('returns response for a known action', () => {
-        const n = 'readEntry';
-        const response = ac.getResponseByActionName(n);
-        expect(response).toBe(ac.getResponses()[n]);
+        const action = 'read';
+        const entityType = 'entry';
+        const response = ac.getResponseByActionAndEntity(action, entityType);
+        expect(response).toBe(ac.getResponses()[action][entityType]);
         expect(_.isObject(response) && response.can === false).toBe(true);
       });
     });
@@ -232,11 +232,11 @@ describe('Access Checker', () => {
       it('are shortcuts to response object properties', () => {
         getResStub.withArgs('read', 'Entry').returns(false);
         triggerChange();
-        const response = ac.getResponseByActionName('readEntry');
+        const response = ac.getResponseByActionAndEntity('read', 'entry');
         expect(response.shouldHide).toBe(true);
         expect(response.shouldDisable).toBe(false);
-        expect(ac.shouldHide('readEntry')).toBe(response.shouldHide);
-        expect(ac.shouldDisable('readEntry')).toBe(response.shouldDisable);
+        expect(ac.shouldHide('read', 'entry')).toBe(response.shouldHide);
+        expect(ac.shouldDisable('read', 'entry')).toBe(response.shouldDisable);
       });
 
       it('returns false for unknown actions', () => {
