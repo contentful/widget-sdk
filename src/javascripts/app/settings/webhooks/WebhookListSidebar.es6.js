@@ -4,7 +4,7 @@ import WebhookSidebarDocumentation from './WebhookSidebarDocumentation.es6';
 import WebhookSidebarTemplatesList from './WebhookSidebarTemplatesList.es6';
 import StateLink from 'app/common/StateLink.es6';
 
-export function WebhookListSidebar({ webhookCount, openTemplateDialog }) {
+function WebhookListSidebar({ webhookCount, openTemplateDialog }) {
   return (
     <div className="entity-sidebar">
       <h2 className="entity-sidebar__heading">Add Webhooks</h2>

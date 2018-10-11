@@ -5,6 +5,14 @@ import sinon from 'sinon';
 import $state from '$state';
 import spaceContext from 'spaceContext';
 
+jest.mock(
+  'data/isEnterprise.es6',
+  () => ({
+    isEnterpriseV2: () => Promise.resolve(false)
+  }),
+  { virtual: true }
+);
+
 describe('WebhookListRoute', () => {
   beforeEach(() => {
     $state.go.resetHistory();

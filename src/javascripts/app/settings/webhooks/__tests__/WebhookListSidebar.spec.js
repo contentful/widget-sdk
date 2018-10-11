@@ -1,20 +1,10 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import { WebhookListSidebar } from '../WebhookListSidebar.es6';
-import { MockedProvider } from '../../../../reactServiceContext';
+import WebhookListSidebar from '../WebhookListSidebar.es6';
 
 describe('WebhookListSidebar', () => {
   const mount = count => {
-    return Enzyme.mount(
-      <MockedProvider
-        services={{
-          $state: {
-            go: () => {}
-          }
-        }}>
-        <WebhookListSidebar webhookCount={count} openTemplateDialog={() => {}} />
-      </MockedProvider>
-    );
+    return Enzyme.mount(<WebhookListSidebar webhookCount={count} openTemplateDialog={() => {}} />);
   };
 
   const testText = (wrapper, expected) => {

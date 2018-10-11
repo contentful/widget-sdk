@@ -4,7 +4,7 @@ import modalDialog from 'modalDialog';
 const isNonEmptyString = s => typeof s === 'string' && s.length > 0;
 
 export default function createWebhookTemplateDialogOpener(config) {
-  const { webhookRepo, contentTypes, defaultLocaleCode, domain, onCreate } = config;
+  const { webhookRepo, contentTypes, defaultLocaleCode, domain, onCreate, hasAwsProxy } = config;
 
   const validTemplateIds = Templates.map(template => template.id);
   const templateContentTypes = prepareContentTypesForTemplates(
@@ -26,6 +26,7 @@ export default function createWebhookTemplateDialogOpener(config) {
           templateId,
           webhookRepo,
           templateContentTypes,
+          hasAwsProxy,
           reposition: () => $scope.$emit('centerOn:reposition'),
           closeDialog: () => $scope.dialog.confirm(),
           onCreate

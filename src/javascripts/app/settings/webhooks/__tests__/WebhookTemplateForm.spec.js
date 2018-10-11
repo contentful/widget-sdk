@@ -63,6 +63,7 @@ describe('WebhookTemplateForm', () => {
         webhookRepo={repo}
         closeDialog={stubs.cancel}
         templateContentTypes={TEMPLATE_CONTENT_TYPES}
+        hasAwsProxy={false}
         onCreate={stubs.goToWebhookDetails}
       />
     );

@@ -1,6 +1,9 @@
 import sinon from 'sinon';
 
 export default {
+  user: {
+    email: 'someone-from@contenful.com'
+  },
   cma: {
     createExtension: sinon.stub().resolves({}),
     deleteExtension: sinon.stub().resolves({}),

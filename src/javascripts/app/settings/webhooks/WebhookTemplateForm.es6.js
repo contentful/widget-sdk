@@ -16,7 +16,8 @@ export class WebhookTemplateForm extends React.Component {
     closeDialog: PropTypes.func.isRequired,
     webhookRepo: PropTypes.object.isRequired,
     templateContentTypes: PropTypes.array.isRequired,
-    onCreate: PropTypes.func.isRequired
+    onCreate: PropTypes.func.isRequired,
+    hasAwsProxy: PropTypes.bool.isRequired
   };
 
   constructor(props) {
@@ -76,13 +77,30 @@ export class WebhookTemplateForm extends React.Component {
   };
 
   render() {
-    const { template, templateContentTypes } = this.props;
+    const { template, templateContentTypes, hasAwsProxy } = this.props;
+    const notAvailable = template.aws && !hasAwsProxy;
 
     return (
       <div className="webhook-template-form">
         <h2 className="webhook-template-form__title">{template.title}</h2>
         {template.description && (
           <div className="webhook-template-form__description">{template.description}</div>
+        )}
+        {notAvailable && (
+          <div className="webhook-template-form__error">
+            <ValidationMessage>Not included in your pricing plan</ValidationMessage>
+            <div className="entity-editor__field-hint">
+              AWS Webhook Integration is available on our enterprise-grade Professional and Scale
+              platforms (via Committed, annual plans).{' '}
+              <a
+                href="https://www.contentful.com/support/?upgrade-pricing=true"
+                target="_blank"
+                rel="noopener noreferrer">
+                Contact us
+              </a>{' '}
+              if you are interested in learning more about this feature.
+            </div>
+          </div>
         )}
         {template.fields.map(field => {
           // We render forms for all templates and show only one of them with CSS.
@@ -104,7 +122,8 @@ export class WebhookTemplateForm extends React.Component {
                   labelText={field.title}
                   textInputProps={{
                     type: field.type,
-                    placeholder: field.placeholder
+                    placeholder: field.placeholder,
+                    disabled: notAvailable
                   }}
                 />
               )}
@@ -118,6 +137,7 @@ export class WebhookTemplateForm extends React.Component {
                       className="cfnext-select-box"
                       id={id}
                       value={this.state.fields[field.name] || ''}
+                      disabled={notAvailable}
                       onChange={e => this.updateFieldState(field.name, e.target.value)}>
                       <option value="">Select...</option>
                       {templateContentTypes.map(ct => (
@@ -158,7 +178,7 @@ export class WebhookTemplateForm extends React.Component {
         <div className="webhook-template-form__actions">
           <Button
             onClick={this.onCreateClick}
-            disabled={!this.isFormValid(this.state.fields)}
+            disabled={!this.isFormValid(this.state.fields) || notAvailable}
             loading={this.state.busy}
             buttonType="primary">
             Create webhook

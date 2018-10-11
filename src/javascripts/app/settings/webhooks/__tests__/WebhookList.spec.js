@@ -11,9 +11,6 @@ describe('WebhookList', () => {
     return Enzyme.mount(
       <MockedProvider
         services={{
-          $state: {
-            go: () => {}
-          },
           spaceContext: {
             webhookRepo
           },
@@ -21,7 +18,7 @@ describe('WebhookList', () => {
             isLegacyOrganization: () => false
           }
         }}>
-        <WebhookList webhooks={webhooks} openTemplateDialog={() => {}} />
+        <WebhookList webhooks={webhooks} hasAwsProxy={false} openTemplateDialog={() => {}} />
       </MockedProvider>
     );
   };
