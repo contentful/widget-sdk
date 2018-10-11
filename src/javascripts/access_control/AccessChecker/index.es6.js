@@ -93,7 +93,15 @@ export const isInitialized$ = isInitializedBus.property.skipDuplicates();
  * action and the ACLs does not provide a reason why. If the ACLs
  * give a reason this is false but `shouldDisable` is true.
  */
-export const shouldHide = createResponseAttributeGetter('shouldHide');
+export const shouldHide = (action, entityType) => {
+  // First, cherck to see if read permissions are explicitly denied
+  // for this entity. If they are denied, hide it.
+  if (isDenied('read', entityType)) {
+    return true;
+  }
+
+  return createResponseAttributeGetter('shouldHide')(action, entityType);
+};
 
 /**
  * @name accessChecker#shouldDisable
@@ -284,7 +292,7 @@ export function canPerformActionOnEntity(action, entity) {
  */
 export function canUpdateEntry(entry) {
   // Explicitly check if permission is denied for update on Entry first
-  if (spaceAuthContext.isPermissionDenied('update', 'Entry')) {
+  if (isDenied('update', 'entry')) {
     return false;
   }
 
@@ -305,7 +313,7 @@ export function canUpdateEntry(entry) {
  */
 export function canUpdateAsset(asset) {
   // Explicitly check if permission is denied for update on Asset first
-  if (spaceAuthContext.isPermissionDenied('update', 'Asset')) {
+  if (isDenied('update', 'asset')) {
     return false;
   }
 
@@ -438,18 +446,34 @@ function collectSectionVisibility() {
     contentType: can('manage', 'ContentType') || !shouldHide('read', 'apiKey'),
     entry: !shouldHide('read', 'entry') || policyChecker.canAccessEntries(),
     asset: !shouldHide('read', 'asset') || policyChecker.canAccessAssets(),
-    apiKey: !shouldHide('read', 'apiKey'),
+    apiKey: !isDenied('read', 'settings') && !shouldHide('read', 'apiKey'),
     settings: !shouldHide('update', 'settings'),
     locales: !shouldHide('update', 'settings'),
     extensions: !shouldHide('update', 'settings'),
     users: !shouldHide('update', 'settings'),
     roles: !shouldHide('update', 'settings'),
-    environments: can('manage', 'Environments'),
+    environments: !isDenied('read', 'settings') && can('manage', 'Environments'),
     usage: !shouldHide('update', 'settings'),
     previews: !shouldHide('update', 'settings'),
     webhooks: !shouldHide('update', 'settings'),
     spaceHome: get(space, 'spaceMembership.admin')
   };
+}
+
+/**
+ * Returns if the permission for `action` on `entityType` is explicitly
+ * denied.
+ * @param  {string} action
+ * @param  {string} entityType
+ * @return {Boolean}
+ */
+function isDenied(action, entityType) {
+  if (!spaceAuthContext) {
+    return false;
+  }
+
+  const entityTypeCapitalized = capitalizeFirst(entityType);
+  return spaceAuthContext.isPermissionDenied(action, entityTypeCapitalized);
 }
 
 function createResponseAttributeGetter(attrName) {

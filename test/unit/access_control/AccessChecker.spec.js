@@ -205,11 +205,35 @@ describe('Access Checker', () => {
         }
 
         [['read', 'entry'], ['read', 'asset'], ['read', 'apiKey'], ['update', 'settings']].forEach(
-          ([action, section]) => {
-            test(action, section, true);
-            test(action, section, false);
+          ([action, entityType]) => {
+            test(action, entityType, true);
+            test(action, entityType, false);
           }
         );
+      });
+
+      it('checks if the settings are readable to determine if apiKey is visible', () => {
+        getResStub.returns(true);
+        triggerChange();
+
+        expect(ac.getSectionVisibility()['apiKey']).toBe(true);
+
+        isPermissionDeniedStub.returns(true);
+        triggerChange();
+
+        expect(ac.getSectionVisibility()['apiKey']).toBe(false);
+      });
+
+      it('checks if the settings are readable to determine if environments is visible', () => {
+        getResStub.returns(true);
+        triggerChange();
+
+        expect(ac.getSectionVisibility()['environments']).toBe(true);
+
+        isPermissionDeniedStub.returns(true);
+        triggerChange();
+
+        expect(ac.getSectionVisibility()['environments']).toBe(false);
       });
 
       it('shows entries/assets section when it has "hide" flag, but policy checker grants access', () => {
@@ -242,6 +266,18 @@ describe('Access Checker', () => {
       it('returns false for unknown actions', () => {
         expect(ac.shouldHide('unknown')).toBe(false);
         expect(ac.shouldDisable('unknown')).toBe(false);
+      });
+    });
+
+    describe('#shouldHide', () => {
+      it('should return false if the read permission is denied, even if response.shouldHide is false', () => {
+        getResStub.returns(true);
+        isPermissionDeniedStub.returns(true);
+        triggerChange();
+
+        const response = ac.getResponseByActionAndEntity('read', 'entry');
+        expect(response.shouldHide).toBe(false);
+        expect(ac.shouldHide('read', 'entry')).toBe(true);
       });
     });
 

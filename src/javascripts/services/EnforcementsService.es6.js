@@ -119,7 +119,7 @@ async function fetchEnforcements(spaceId) {
   //         "unarchive"
   //       ],
   //       "Settings": [
-  //         'update'
+  //         'read'
   //       ]
   //     },
   //     reason: "frozenSpace",
