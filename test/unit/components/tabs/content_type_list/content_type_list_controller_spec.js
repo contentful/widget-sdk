@@ -17,6 +17,10 @@ describe('Content Type List Controller', () => {
     this.scope.$apply();
   });
 
+  it('fetches content types', function() {
+    sinon.assert.calledOnce(this.spaceContext.endpoint);
+  });
+
   it('getting number of fields from a content type', function() {
     expect(this.scope.numFields({ fields: [] })).toEqual(0);
     expect(this.scope.numFields({ fields: [{}] })).toEqual(1);
@@ -39,8 +43,16 @@ describe('Content Type List Controller', () => {
         expect(this.scope.context.list).toBe('all');
       });
 
-      it('content types are refreshed', function() {
-        sinon.assert.called(this.spaceContext.endpoint);
+      it('shows content types matched by the term', function() {
+        this.scope.contentTypes = [{ name: 'MA' }, { name: 'MATCH' }];
+
+        this.scope.context.searchTerm = 'MA';
+        this.$apply();
+        expect(this.scope.visibleContentTypes.map(ct => ct.name)).toEqual(['MA', 'MATCH']);
+
+        this.scope.context.searchTerm = 'MAT';
+        this.$apply();
+        expect(this.scope.visibleContentTypes.map(ct => ct.name)).toEqual(['MATCH']);
       });
     });
   });
@@ -53,50 +65,33 @@ describe('Content Type List Controller', () => {
       expect(this.scope.context.searchTerm).toBe('thing');
     });
 
-    it('refreshes content types', function() {
+    it('filters content types', function() {
+      this.scope.contentTypes = [
+        {
+          sys: {
+            version: 10,
+            publishedVersion: 2
+          },
+          name: 'updated'
+        },
+        {
+          sys: {
+            version: 1,
+            publishedVersion: 1
+          },
+          name: 'not updated'
+        }
+      ];
       this.scope.context.list = 'changed';
       this.$apply();
-      sinon.assert.called(this.spaceContext.endpoint);
-    });
-  });
-
-  describe('list of content types', () => {
-    it('only contains content types matched by the search', function() {
-      const matched = { name: 'MATCH' };
-      const unmatched = { name: 'MA' };
-      this.spaceContext.endpoint.resolves({ items: [matched, unmatched] });
-
-      this.scope.context.searchTerm = 'MA';
-      this.$apply();
-      expect(this.scope.visibleContentTypes.map(ct => ct.name)).toEqual(['MA', 'MATCH']);
-
-      this.scope.context.searchTerm = 'MAT';
-      this.$apply();
-      expect(this.scope.visibleContentTypes.map(ct => ct.name)).toEqual(['MATCH']);
-    });
-  });
-
-  describe('query check', () => {
-    it('has a query', function() {
-      this.scope.context.searchTerm = 'term';
-      expect(this.scope.hasQuery()).toBeTruthy();
-    });
-
-    it('has no query when term is null', function() {
-      this.scope.context.searchTerm = null;
-      expect(this.scope.hasQuery()).toBeFalsy();
-    });
-
-    it('has no query when term is empty string', function() {
-      this.scope.context.searchTerm = '';
-      expect(this.scope.hasQuery()).toBeFalsy();
+      expect(this.scope.visibleContentTypes.map(ct => ct.name)).toEqual(['updated']);
     });
   });
 
   describe('status class and label', () => {
     it('is updated', function() {
       const contentType = { sys: { publishedVersion: 1, version: 100 } };
-      expect(this.scope.statusClass(contentType)).toBe('updated');
+      expect(this.scope.statusClass(contentType)).toBe('entity-status--updated');
       expect(this.scope.statusLabel(contentType)).toBe('updated');
     });
 
@@ -108,7 +103,7 @@ describe('Content Type List Controller', () => {
 
     it('is draft', function() {
       const contentType = { sys: {} };
-      expect(this.scope.statusClass(contentType)).toBe('draft');
+      expect(this.scope.statusClass(contentType)).toBe('entity-status--draft');
       expect(this.scope.statusLabel(contentType)).toBe('draft');
     });
   });

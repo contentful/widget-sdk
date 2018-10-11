@@ -10,13 +10,15 @@ header.workbench-header
       cf-knowledge-base.workbench-header__kb-link(target="content_model")
 
   .workbench-header__search(
-    ng-if="context.ready && hasContentTypes()")
-    div(
-      cf-search="context.searchTerm"
-      is-searching="context.isSearching"
-      placeholder="Search for a content type")
+    ng-show="contentTypes.length > 0")
+    input.cfnext-form__input(
+      autofocus
+      style="border: 1px solid #4A90E2; border-radius: 2px; height: 40px; padding: 0 10px"
+      type="text"
+      placeholder="Search for a content type"
+      ng-model="context.searchTerm")
 
-  .workbench-header__actions(ng-hide="!hasContentTypes()")
+  .workbench-header__actions(ng-show="contentTypes.length > 0")
     button.btn-action(
       ng-click="newContentType()"
       ng-hide="shouldHide('createContentType')"
@@ -25,7 +27,7 @@ header.workbench-header
       cf-icon.btn-icon.inverted(name="plus")
       | Add content type
 
-.workbench-main.x--content(ng-show="!hasContentTypes()")
+.workbench-main.x--content(ng-show="contentTypes.length < 1")
   .empty-state
     cf-icon(name="empty-content-model" class="empty-state__icon")
     .empty-state__title
@@ -44,7 +46,7 @@ header.workbench-header
     .empty-state__additional
       | No clue what purpose the content model serves? Read our documentation on <cf-knowledge-base target="content_model" text="content modeling" inline-text="true" class="text-link--standard"></cf-knowledge-base>.
 
-.workbench-main(ng-show="hasContentTypes()")
+.workbench-main(ng-show="contentTypes.length > 0")
   .workbench-main__left-sidebar
     .view-folder
       header.view-folder__header
@@ -68,8 +70,8 @@ header.workbench-header
           .view-folder__item-title Active
 
   .workbench-main__right-content
-    +no-search-results("!hasQueryResults()")
-    .table(ng-show="hasQueryResults()")
+    +no-search-results("visibleContentTypes.length < 1")
+    .table(ng-show="visibleContentTypes.length > 0")
       .table__head
         table
           thead
