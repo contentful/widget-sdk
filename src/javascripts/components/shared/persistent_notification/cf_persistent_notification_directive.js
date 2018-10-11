@@ -5,7 +5,6 @@ angular.module('contentful').directive('cfPersistentNotification', [
   require => {
     const $sce = require('$sce');
     const $timeout = require('$timeout');
-    const Analytics = require('analytics/Analytics.es6');
     const logger = require('logger');
 
     return {
@@ -28,12 +27,6 @@ angular.module('contentful').directive('cfPersistentNotification', [
       let dismissed;
 
       resetNotification();
-
-      scope.dismissPersistentNotification = () => {
-        Analytics.track('global:top_banner_dismissed');
-        dismissed = true;
-        resetNotification();
-      };
 
       // TODO: Introduce a service with full control over a notification's
       //  lifecycle instead of abusing broadcast.

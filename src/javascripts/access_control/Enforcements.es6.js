@@ -5,6 +5,7 @@ import * as OrganizationRoles from 'services/OrganizationRoles.es6';
 import { go } from 'states/Navigator.es6';
 import { merge, findKey, forEach } from 'lodash';
 import require from 'require';
+import { supportUrl } from 'Config.es6';
 
 const USAGE_METRICS = {
   apiKey: 'API keys',
@@ -56,13 +57,29 @@ export function determineEnforcement(organization, reasons, entityType) {
     },
     {
       label: 'frozenSpace',
-      message: 'Your space is read-only. Please contact your administrator for more information.'
+      message: () => {
+        if (OrganizationRoles.isOwner(organization)) {
+          const talkToUsLink = `<a href='${supportUrl}?read-only-poc=true' target='_blank'>
+            Talk to us
+          </a>`;
+
+          return `This space is set to read-only. Contact us to continue work. ${talkToUsLink}`;
+        } else {
+          return 'This space is set to read-only. Contact your organization administrator to continue work.';
+        }
+      },
+      icon: 'info'
     }
   ];
 
   const error = errorsByPriority.find(({ label }) => reasons.indexOf(label) >= 0);
+
   if (!error) {
     return null;
+  }
+
+  if (typeof error.message === 'function') {
+    error.message = error.message(entityType);
   }
 
   if (typeof error.tooltip === 'function') {
