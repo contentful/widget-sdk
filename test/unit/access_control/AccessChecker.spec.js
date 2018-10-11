@@ -10,6 +10,7 @@ describe('Access Checker', () => {
     mockSpaceAuthContext,
     mockOrgEndpoint,
     mockSpaceEndpoint,
+    isPermissionDeniedStub,
     feature;
 
   function init() {
@@ -26,7 +27,7 @@ describe('Access Checker', () => {
   }
 
   afterEach(() => {
-    enforcements = OrganizationRoles = policyChecker = ac = getResStub = reasonsDeniedStub = broadcastStub = mockSpaceEndpoint = feature = null;
+    enforcements = OrganizationRoles = policyChecker = ac = getResStub = reasonsDeniedStub = isPermissionDeniedStub = broadcastStub = mockSpaceEndpoint = feature = null;
   });
 
   beforeEach(function() {
@@ -62,10 +63,14 @@ describe('Access Checker', () => {
     responseCache.getResponse = getResStub = sinon.stub().returns(false);
 
     reasonsDeniedStub = sinon.stub().returns([]);
+    isPermissionDeniedStub = sinon.stub().returns(false);
     enforcements.determineEnforcement = sinon.stub().returns(undefined);
 
     mockSpace = { sys: { id: '1234' }, organization: { sys: {} } };
-    mockSpaceAuthContext = { reasonsDenied: reasonsDeniedStub };
+    mockSpaceAuthContext = {
+      reasonsDenied: reasonsDeniedStub,
+      isPermissionDenied: isPermissionDeniedStub
+    };
     mockOrgEndpoint = sinon.stub();
     mockSpaceEndpoint = sinon.stub();
 
@@ -298,6 +303,14 @@ describe('Access Checker', () => {
         expect(ac.canUpdateEntry(entry)).toBe(true);
         sinon.assert.calledOnce(policyChecker.canUpdateEntriesOfType.withArgs('ctid'));
       });
+
+      it('returns false if permission is explicitly denied', () => {
+        isPermissionDeniedStub.returns(true);
+        getResStub.withArgs('update', entry.data).returns(true);
+        policyChecker.canUpdateEntriesOfType = sinon.stub().returns(true);
+
+        expect(ac.canUpdateEntry(entry)).toBe(false);
+      });
     });
 
     describe('#canUpdateAsset', () => {
@@ -320,6 +333,14 @@ describe('Access Checker', () => {
         policyChecker.canUpdateAssets = sinon.stub().returns(true);
         expect(ac.canUpdateAsset(asset)).toBe(true);
         sinon.assert.calledOnce(policyChecker.canUpdateAssets);
+      });
+
+      it('returns false if permission is explicitly denied', () => {
+        isPermissionDeniedStub.returns(true);
+        getResStub.withArgs('update', asset.data).returns(true);
+        policyChecker.canUpdateEntriesOfType = sinon.stub().returns(true);
+
+        expect(ac.canUpdateEntry(asset)).toBe(false);
       });
     });
 

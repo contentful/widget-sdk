@@ -3,7 +3,11 @@ import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
 
 describe('data/document/ResourceStateManager.es6', () => {
   beforeEach(function() {
-    module('contentful/test');
+    module('contentful/test', $provide => {
+      $provide.value('access_control/AccessChecker', {
+        canUpdateEntity: sinon.stub().returns(true)
+      });
+    });
 
     const { Action, State } = this.$inject('data/document/ResourceStateManager.es6');
     this.Action = Action;
