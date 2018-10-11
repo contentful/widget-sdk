@@ -47,7 +47,6 @@ describe('ExamplePicker', () => {
     expect(
       confirmStub.calledWith({
         extension: { extension: true },
-        type: 'github-example',
         url: 'https://github.com/contentful/extensions/blob/master/samples/template-vanilla'
       })
     ).toBeTruthy();

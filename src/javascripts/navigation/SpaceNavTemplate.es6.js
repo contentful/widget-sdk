@@ -19,7 +19,7 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
     },
     extensions: {
       if: 'nav.canNavigateTo("extensions")',
-      sref: makeRef('settings.extensions'),
+      sref: makeRef('settings.extensions.list'),
       dataViewType: 'spaces-settings-extensions',
       title: 'Extensions'
     },

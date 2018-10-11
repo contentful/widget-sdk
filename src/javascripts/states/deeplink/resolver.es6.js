@@ -162,7 +162,7 @@ function resolveExtensions() {
   });
 }
 
-function resolveInstallExtension({ url }) {
+function resolveInstallExtension({ url, referrer }) {
   return runTask(function*() {
     if (!url) {
       throw new Error(`Extension URL was not specified in the link you've used.`);
@@ -170,8 +170,12 @@ function resolveInstallExtension({ url }) {
     const { space, spaceId } = yield* getSpaceInfo();
     yield spaceContext.resetWithSpace(space);
     return {
-      path: ['spaces', 'detail', 'settings', 'extensions'],
-      params: { spaceId, extensionUrl: url }
+      path: ['spaces', 'detail', 'settings', 'extensions', 'list'],
+      params: {
+        spaceId,
+        extensionUrl: url,
+        referrer: referrer ? `deeplink-${referrer}` : 'deeplink'
+      }
     };
   });
 }

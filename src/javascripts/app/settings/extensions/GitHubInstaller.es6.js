@@ -24,7 +24,7 @@ class Installer extends React.Component {
   install = url => {
     this.setState(state => ({ ...state, fetching: true }));
     Fetcher.fetchExtension(url).then(
-      extension => this.props.onConfirm({ extension, url, type: 'github' }),
+      extension => this.props.onConfirm({ extension, url }),
       err => this.setState(state => ({ ...state, fetching: false, err }))
     );
   };

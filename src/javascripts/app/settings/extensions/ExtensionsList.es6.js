@@ -113,12 +113,13 @@ export class ExtensionsList extends React.Component {
   static propTypes = {
     extensions: PropTypes.arrayOf(PropTypes.object.isRequired).isRequired,
     refresh: PropTypes.func.isRequired,
-    extensionUrl: PropTypes.string
+    extensionUrl: PropTypes.string,
+    extensionUrlReferrer: PropTypes.string
   };
 
   componentDidMount() {
     if (this.props.extensionUrl) {
-      openGitHubInstaller(this.props.extensionUrl);
+      openGitHubInstaller(this.props.extensionUrl, this.props.extensionUrlReferrer);
     }
   }
 
@@ -132,7 +133,7 @@ export class ExtensionsList extends React.Component {
     const body = extensions.map(extension => (
       <tr key={extension.id}>
         <td>
-          <StateLink to=".detail" params={{ extensionId: extension.id }}>
+          <StateLink to="^.detail" params={{ extensionId: extension.id }}>
             {extension.name}
           </StateLink>
         </td>
@@ -154,7 +155,7 @@ export class ExtensionsList extends React.Component {
           } value(s)`}
         </td>
         <td className="x--small-cell">
-          <StateLink to=".detail" params={{ extensionId: extension.id }}>
+          <StateLink to="^.detail" params={{ extensionId: extension.id }}>
             <span style={{ textDecoration: 'underline' }}>Edit</span>
           </StateLink>
           <DeleteButton

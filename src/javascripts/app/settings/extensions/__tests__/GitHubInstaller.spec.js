@@ -50,7 +50,6 @@ describe('GitHubInstaller', () => {
         expect(
           confirmStub.calledWith({
             extension: { extension: true },
-            type: 'github',
             url: value
           })
         ).toBeTruthy();

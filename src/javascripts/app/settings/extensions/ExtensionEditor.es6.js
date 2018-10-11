@@ -114,7 +114,7 @@ class ExtensionEditor extends React.Component {
   renderActions = dirty => {
     return (
       <React.Fragment>
-        <StateLink to=".^">
+        <StateLink to="^.list">
           {({ onClick }) => (
             <button className="btn-secondary-action" onClick={onClick}>
               Close

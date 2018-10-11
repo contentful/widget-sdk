@@ -79,7 +79,6 @@ class ExamplePicker extends React.Component {
             Fetcher.fetchExtension(`${example.url}/extension.json`).then(extension => {
               return onConfirm({
                 extension,
-                type: 'github-example',
                 url: example.url
               });
             }, onCancel);

@@ -19,7 +19,8 @@ const ExtensionsFetcher = createFetcherComponent(() => {
 
 class ExtensionsListRoute extends React.Component {
   static propTypes = {
-    extensionUrl: PropTypes.string
+    extensionUrl: PropTypes.string,
+    extensionUrlReferrer: PropTypes.string
   };
 
   render() {
@@ -42,6 +43,7 @@ class ExtensionsListRoute extends React.Component {
             return (
               <ExtensionsList
                 extensionUrl={this.props.extensionUrl}
+                extensionUrlReferrer={this.props.extensionUrlReferrer}
                 extensions={data}
                 refresh={fetch}
               />

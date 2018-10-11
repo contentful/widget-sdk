@@ -13,7 +13,7 @@ const SDK_URL = 'https://unpkg.com/contentful-ui-extensions-sdk@3';
 function install({ extension, type, url }) {
   return spaceContext.cma
     .createExtension({ extension })
-    .then(res => $state.go('.detail', { extensionId: res.sys.id }))
+    .then(res => $state.go('^.detail', { extensionId: res.sys.id }))
     .then(() => {
       notification.info('Your new extension was successfully created.');
 
@@ -51,13 +51,18 @@ export function openExamplePicker() {
         };
       }
     })
-    .promise.then(data => install(data))
+    .promise.then(data =>
+      install({
+        ...data,
+        type: 'github-example'
+      })
+    )
     .catch(err => {
       handleInstallError(err);
     });
 }
 
-export function openGitHubInstaller(extensionUrl = null) {
+export function openGitHubInstaller(extensionUrl = null, extensionUrlReferrer = null) {
   return modalDialog
     .open({
       template:
@@ -70,7 +75,12 @@ export function openGitHubInstaller(extensionUrl = null) {
         };
       }
     })
-    .promise.then(data => install(data))
+    .promise.then(data =>
+      install({
+        ...data,
+        type: extensionUrlReferrer || 'github'
+      })
+    )
     .catch(err => {
       handleInstallError(err);
     });
@@ -145,7 +155,7 @@ class ExtensionsActions extends React.Component {
           </DropdownListItem>
           <DropdownListItem
             onClick={() => {
-              openGitHubInstaller(null);
+              openGitHubInstaller();
               this.close();
             }}>
             Install from Github
