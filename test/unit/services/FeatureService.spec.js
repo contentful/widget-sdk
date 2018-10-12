@@ -14,7 +14,7 @@ describe('Feature Service', () => {
         subscriptionPlan: {
           limits: {
             features: {
-              customRoles: false,
+              customRoles: true,
               multipleLocales: false
             }
           }
@@ -48,7 +48,6 @@ describe('Feature Service', () => {
     const mockedEndpoint = createMockSpaceEndpoint();
 
     set(mockedEndpoint.stores.features, 'custom_roles', {
-      enabled: true,
       name: 'Custom Roles',
       sys: {
         id: 'custom_roles',
@@ -56,18 +55,9 @@ describe('Feature Service', () => {
       }
     });
     set(mockedEndpoint.stores.features, 'multiple_locales', {
-      enabled: true,
       name: 'Multiple Locales',
       sys: {
         id: 'multiple_locales',
-        type: 'Feature'
-      }
-    });
-    set(mockedEndpoint.stores.features, 'sso', {
-      enabled: false,
-      name: 'Single Sign-On',
-      sys: {
-        id: 'sso',
         type: 'Feature'
       }
     });
@@ -124,11 +114,11 @@ describe('Feature Service', () => {
       this.flags['feature-bv-2018-01-features-api'] = false;
       this.mocks.legacyOrganization = true;
 
-      let feature = await this.FeatureService.get('customRoles');
+      let feature = await this.FeatureService.get('multipleLocales');
       expect(feature).toEqual(false);
 
-      this.mocks.organization.subscriptionPlan.limits.features.customRoles = true;
-      feature = await this.FeatureService.get('customRoles');
+      this.mocks.organization.subscriptionPlan.limits.features.multipleLocales = true;
+      feature = await this.FeatureService.get('multipleLocales');
       expect(feature).toEqual(true);
     });
 
@@ -136,7 +126,7 @@ describe('Feature Service', () => {
       this.flags['feature-bv-2018-01-features-api'] = true;
       this.mocks.legacyOrganization = true;
 
-      const feature = await this.FeatureService.get('customRoles');
+      const feature = await this.FeatureService.get('multipleLocales');
 
       expect(feature).toEqual(true);
     });
@@ -146,7 +136,7 @@ describe('Feature Service', () => {
 
       this.mocks.legacyOrganization = false;
 
-      feature = await this.FeatureService.get('customRoles');
+      feature = await this.FeatureService.get('multipleLocales');
       expect(feature).toEqual(true);
 
       feature = await this.FeatureService.get('sso');
@@ -178,23 +168,15 @@ describe('Feature Service', () => {
       this.FeatureService = this.createFeatureService('1234');
     });
 
-    it('should return all Features from the token if legacy and the feature flag is off', async function() {
+    it('should return all enabled Features from the token if legacy and the feature flag is off', async function() {
       this.mocks.legacyOrganization = true;
 
       const features = await this.FeatureService.getAll();
-      expect(features.length).toBe(2);
+      expect(features.length).toBe(1);
       expect(features).toEqual([
         {
-          enabled: false,
           sys: {
             id: 'custom_roles',
-            type: 'Feature'
-          }
-        },
-        {
-          enabled: false,
-          sys: {
-            id: 'multiple_locales',
             type: 'Feature'
           }
         }
@@ -206,10 +188,9 @@ describe('Feature Service', () => {
       this.flags['feature-bv-2018-01-features-api'] = true;
 
       const features = await this.FeatureService.getAll();
-      expect(features.length).toBe(3);
+      expect(features.length).toBe(2);
       expect(features).toEqual([
         {
-          enabled: true,
           name: 'Custom Roles',
           sys: {
             id: 'custom_roles',
@@ -217,18 +198,9 @@ describe('Feature Service', () => {
           }
         },
         {
-          enabled: true,
           name: 'Multiple Locales',
           sys: {
             id: 'multiple_locales',
-            type: 'Feature'
-          }
-        },
-        {
-          enabled: false,
-          name: 'Single Sign-On',
-          sys: {
-            id: 'sso',
             type: 'Feature'
           }
         }
@@ -239,10 +211,9 @@ describe('Feature Service', () => {
       this.mocks.legacyOrganization = false;
 
       const features = await this.FeatureService.getAll();
-      expect(features.length).toBe(3);
+      expect(features.length).toBe(2);
       expect(features).toEqual([
         {
-          enabled: true,
           name: 'Custom Roles',
           sys: {
             id: 'custom_roles',
@@ -250,18 +221,9 @@ describe('Feature Service', () => {
           }
         },
         {
-          enabled: true,
           name: 'Multiple Locales',
           sys: {
             id: 'multiple_locales',
-            type: 'Feature'
-          }
-        },
-        {
-          enabled: false,
-          name: 'Single Sign-On',
-          sys: {
-            id: 'sso',
             type: 'Feature'
           }
         }
