@@ -19,7 +19,8 @@
               aria-label="{{group.label}}"
               ng-click="selectFieldGroup(group)")
               cf-icon(name="field-{{group.icon}}")
-            h2 {{group.label}}
+            h2 {{group.label}} 
+              span.beta-tag(ng-if="group.isBeta") BETA
             p.add-field-dialog__description {{group.description}}
 
     div(ng-if="viewState.is('fieldConfiguration')")

@@ -99,6 +99,7 @@ angular.module('contentful').factory('fieldFactory', [
         name: 'rich-text',
         icon: 'structuredtext',
         label: 'Rich text',
+        isBeta: true,
         description: 'Long form articles, documentation, news articles',
         types: ['RichText']
       },
