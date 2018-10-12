@@ -17,8 +17,7 @@ export default function createFeatureService(id, type = 'space') {
     const organization = await getTokenOrganization(id, type);
     const apiFeatureId = snakeCase(featureId);
     const allFeatures = await getAll(organization);
-
-    return allFeatures.some(feature => feature.sys.id === apiFeatureId && feature.enabled);
+    return allFeatures.some(feature => feature.sys.id === apiFeatureId);
   }
 
   async function getAll() {
@@ -27,18 +26,18 @@ export default function createFeatureService(id, type = 'space') {
 
     if (legacy) {
       // Look at the Token
-      return legacyGetAllFeatures(organization);
+      return legacyGetFeatures(organization);
     } else {
       return getEnabledFeatures(endpoint);
     }
   }
 }
 
-function legacyGetAllFeatures(organization) {
+function legacyGetFeatures(organization) {
   const featuresHash = get(organization, 'subscriptionPlan.limits.features', {});
-  const features = Object.keys(featuresHash).map(featureId => {
+  const enabledFeatureIds = Object.keys(featuresHash).filter(featureId => featuresHash[featureId])
+  const features = enabledFeatureIds.map(featureId => {
     return {
-      enabled: featuresHash[featureId],
       sys: {
         type: 'Feature',
         id: snakeCase(featureId)
