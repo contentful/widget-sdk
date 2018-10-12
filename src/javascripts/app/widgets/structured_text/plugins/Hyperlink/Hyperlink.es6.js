@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tooltip, TextLink } from '@contentful/ui-component-library';
 import PropTypes from 'prop-types';
-import { INLINES } from '@contentful/structured-text-types';
+import { INLINES } from '@contentful/rich-text-types';
 import RequestStatus from '../shared/RequestStatus.es6';
 import FetchEntity from '../shared/FetchEntity/index.es6';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';

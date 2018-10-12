@@ -47,7 +47,7 @@ import Hr, { HrPlugin } from './plugins/Hr/index.es6';
 
 import schema from './constants/Schema.es6';
 import emptyDoc from './constants/EmptyDoc.es6';
-import { BLOCKS } from '@contentful/structured-text-types';
+import { BLOCKS } from '@contentful/rich-text-types';
 import { PasteHtmlPlugin } from './plugins/PasteHtml/index.es6';
 
 const createValue = contentfulDocument => {

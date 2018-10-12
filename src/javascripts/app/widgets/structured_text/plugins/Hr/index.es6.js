@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BLOCKS } from '@contentful/structured-text-types';
+import { BLOCKS } from '@contentful/rich-text-types';
 import ToolbarIcon from '../shared/ToolbarIcon.es6';
 import blockDecorator from '../shared/BlockSelectDecorator.es6';
 import { haveTextInSomeBlocks } from '../shared/UtilHave.es6';

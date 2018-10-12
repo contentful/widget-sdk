@@ -1,5 +1,5 @@
 import isHotkey from 'is-hotkey';
-import { BLOCKS } from '@contentful/structured-text-types';
+import { BLOCKS } from '@contentful/rich-text-types';
 import { toggleChange } from '../shared/BlockToggleDecorator.es6';
 import CommonNode from '../shared/NodeDecorator.es6';
 

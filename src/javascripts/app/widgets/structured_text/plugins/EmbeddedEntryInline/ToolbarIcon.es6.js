@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { DropdownListItem } from '@contentful/ui-component-library';
-import { INLINES } from '@contentful/structured-text-types';
+import { INLINES } from '@contentful/rich-text-types';
 
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
 import { selectEntryAndInsert, canInsertInline } from './Utils.es6';

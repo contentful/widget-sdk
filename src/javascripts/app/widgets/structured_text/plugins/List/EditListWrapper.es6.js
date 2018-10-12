@@ -1,4 +1,4 @@
-import { BLOCKS } from '@contentful/structured-text-types';
+import { BLOCKS } from '@contentful/rich-text-types';
 import EditList from 'slate-edit-list';
 
 export const EDIT_LIST_OPTIONS = {

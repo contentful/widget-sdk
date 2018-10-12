@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { INLINES } from '@contentful/structured-text-types';
+import { INLINES } from '@contentful/rich-text-types';
 import ToolbarIcon from '../shared/ToolbarIcon.es6';
 import { hasHyperlink, toggleLink, hasOnlyHyperlinkInlines } from './Util.es6';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';

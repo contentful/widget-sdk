@@ -3,7 +3,7 @@ import isHotkey from 'is-hotkey';
 
 import ToolbarIcon from './ToolbarIcon.es6';
 import EntityLinkBlock from './EmbeddedEntityBlock.es6';
-import { BLOCKS } from '@contentful/structured-text-types';
+import { BLOCKS } from '@contentful/rich-text-types';
 import { hasBlockOfType, selectEntityAndInsert } from './Util.es6';
 import asyncChange from '../shared/AsyncChange.es6';
 

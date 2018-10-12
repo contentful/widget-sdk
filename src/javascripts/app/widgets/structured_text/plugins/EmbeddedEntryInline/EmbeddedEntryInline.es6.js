@@ -7,7 +7,7 @@ import FetchEntity from '../shared/FetchEntity/index.es6';
 
 const ServicesConsumer = require('../../../../../reactServiceContext').default;
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
-import { INLINES } from '@contentful/structured-text-types';
+import { INLINES } from '@contentful/rich-text-types';
 
 class EmbeddedEntryInline extends React.Component {
   static propTypes = {

@@ -7,7 +7,7 @@ import { createIsolatedSystem } from 'test/helpers/system-js';
 import { stubAll, setupWidgetApi, createSandbox, ENTRY } from './setup';
 import { document, block, text } from './helpers';
 
-import { BLOCKS } from '@contentful/structured-text-types';
+import { BLOCKS } from '@contentful/rich-text-types';
 
 const supportedToolbarIcons = [BLOCKS.UL_LIST, BLOCKS.OL_LIST, BLOCKS.QUOTE];
 

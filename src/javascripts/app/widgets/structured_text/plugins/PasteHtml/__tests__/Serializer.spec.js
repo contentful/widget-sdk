@@ -1,6 +1,6 @@
 import serializer from '../Serializer.es6';
 import { document, block, inline, text, leaf, mark, emptyText } from './helpers';
-import { BLOCKS, MARKS, INLINES } from '@contentful/structured-text-types';
+import { BLOCKS, MARKS, INLINES } from '@contentful/rich-text-types';
 import _ from 'lodash';
 
 const testFactory = (message, input, expected) => {

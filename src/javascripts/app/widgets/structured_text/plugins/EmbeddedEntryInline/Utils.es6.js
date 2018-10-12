@@ -1,4 +1,4 @@
-import { INLINES } from '@contentful/structured-text-types';
+import { INLINES } from '@contentful/rich-text-types';
 import { haveAnyInlines, haveEveryInlineOfType, haveInlines } from '../shared/UtilHave.es6';
 import { newConfigFromStructuredTextField } from 'search/EntitySelector/Config.es6';
 

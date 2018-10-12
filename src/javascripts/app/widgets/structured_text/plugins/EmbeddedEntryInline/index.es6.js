@@ -1,6 +1,6 @@
 import React from 'react';
 import isHotkey from 'is-hotkey';
-import { INLINES } from '@contentful/structured-text-types';
+import { INLINES } from '@contentful/rich-text-types';
 import ToolbarIcon from './ToolbarIcon.es6';
 import EmbeddedEntryInline from './EmbeddedEntryInline.es6';
 import asyncChange from '../shared/AsyncChange.es6';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BLOCKS } from '@contentful/structured-text-types';
+import { BLOCKS } from '@contentful/rich-text-types';
 import ToolbarIcon from '../shared/ToolbarIcon.es6';
 
 import commonNode from '../shared/NodeDecorator.es6';

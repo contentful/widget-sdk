@@ -1,5 +1,5 @@
 import HtmlSerializer from 'slate-html-serializer';
-import { BLOCKS, MARKS, INLINES, VOID_BLOCKS } from '@contentful/structured-text-types';
+import { BLOCKS, MARKS, INLINES, VOID_BLOCKS } from '@contentful/rich-text-types';
 
 /**
  * Tags to block types mapping

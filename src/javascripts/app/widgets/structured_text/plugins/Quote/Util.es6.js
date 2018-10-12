@@ -1,4 +1,4 @@
-import { BLOCKS } from '@contentful/structured-text-types';
+import { BLOCKS } from '@contentful/rich-text-types';
 
 const getParent = change => {
   const range = change.value.selection;

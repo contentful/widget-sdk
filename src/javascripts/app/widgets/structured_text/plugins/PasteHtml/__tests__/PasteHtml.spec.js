@@ -10,7 +10,7 @@ import {
   createPasteEvent
 } from './helpers';
 
-import { BLOCKS, MARKS } from '@contentful/structured-text-types';
+import { BLOCKS, MARKS } from '@contentful/rich-text-types';
 import { List } from 'immutable';
 
 const emptyInitialValue = Value.create({

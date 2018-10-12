@@ -1,5 +1,5 @@
 import isHotkey from 'is-hotkey';
-import { BLOCKS } from '@contentful/structured-text-types';
+import { BLOCKS } from '@contentful/rich-text-types';
 import { applyChange, isSelectionInQuote } from './Util.es6';
 import commonNode from '../shared/NodeDecorator.es6';
 import { haveTextInSomeBlocks } from '../shared/UtilHave.es6';

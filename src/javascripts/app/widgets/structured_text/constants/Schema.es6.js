@@ -6,7 +6,7 @@ import {
   TOP_LEVEL_BLOCKS,
   VOID_BLOCKS,
   CONTAINERS
-} from '@contentful/structured-text-types';
+} from '@contentful/rich-text-types';
 
 const mapVoidTypes = nodeTypes => {
   return fromPairs(nodeTypes.map(nodeType => [nodeType, { isVoid: true }]));

@@ -15,7 +15,7 @@ angular
       const validationViews = require('validationViews');
       const createSchema = require('validation');
       const getErrorMessage = require('validationDialogErrorMessages');
-      const { BLOCKS, MARKS, INLINES } = require('@contentful/structured-text-types');
+      const { BLOCKS, MARKS, INLINES } = require('@contentful/rich-text-types');
 
       const validationName = createSchema.Validation.getName;
       const validationTypesForField = createSchema.Validation.forField;

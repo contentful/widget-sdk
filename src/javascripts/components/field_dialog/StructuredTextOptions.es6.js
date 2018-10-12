@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { ToggleButton, TextLink } from '@contentful/ui-component-library';
-import { BLOCKS, MARKS, INLINES, TOP_LEVEL_BLOCKS } from '@contentful/structured-text-types';
+import { BLOCKS, MARKS, INLINES, TOP_LEVEL_BLOCKS } from '@contentful/rich-text-types';
 
 const StructuredTextOptionsSection = ({ children, heading, actions }) => (
   <div className="structured-text-options__section">

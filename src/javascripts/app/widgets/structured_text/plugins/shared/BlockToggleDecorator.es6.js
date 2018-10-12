@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { BLOCKS } from '@contentful/structured-text-types';
+import { BLOCKS } from '@contentful/rich-text-types';
 import { haveBlocks } from './UtilHave.es6';
 import { ToolbarIconPropTypes } from './PropTypes.es6';
 

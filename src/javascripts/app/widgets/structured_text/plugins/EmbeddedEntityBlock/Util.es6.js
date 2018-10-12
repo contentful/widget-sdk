@@ -1,4 +1,4 @@
-import { BLOCKS } from '@contentful/structured-text-types';
+import { BLOCKS } from '@contentful/rich-text-types';
 import { haveTextInSomeBlocks } from '../shared/UtilHave.es6';
 import { newConfigFromStructuredTextField } from 'search/EntitySelector/Config.es6';
 

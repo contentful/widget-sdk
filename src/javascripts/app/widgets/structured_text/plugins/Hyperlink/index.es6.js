@@ -1,6 +1,6 @@
 import React from 'react';
 import isHotkey from 'is-hotkey';
-import { INLINES } from '@contentful/structured-text-types';
+import { INLINES } from '@contentful/rich-text-types';
 import ToolbarIcon from './ToolbarIcon.es6';
 import Hyperlink from './Hyperlink.es6';
 import { editLink, mayEditLink, toggleLink, hasOnlyHyperlinkInlines } from './Util.es6';

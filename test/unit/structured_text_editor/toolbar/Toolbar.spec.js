@@ -3,7 +3,7 @@ import Enzyme from 'enzyme';
 import { toKeyCode } from 'is-hotkey';
 import { forEach } from 'lodash';
 
-import { BLOCKS, INLINES, MARKS } from '@contentful/structured-text-types';
+import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types';
 
 import * as sinon from 'helpers/sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
