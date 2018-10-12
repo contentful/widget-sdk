@@ -1,5 +1,4 @@
 import modalDialog from 'modalDialog';
-import keycodes from 'utils/keycodes.es6';
 
 /**
  * @ngdoc service
@@ -36,23 +35,16 @@ export default function open(params = {}) {
       '<react-component name="app/InputDialogComponent.es6" props="props" class="modal-background">',
     controller: function($scope) {
       const { min, max, regex, value } = input;
-      const onChange = e => render(e.target.value);
-      const cancel = () => $scope.dialog.cancel({ cancelled: true });
+      const onCancel = () => $scope.dialog.cancel({ cancelled: true });
 
-      render(value);
-
-      function render(value) {
+      const onConfirm = value => {
         const trimmed = value.trim();
-        const isInvalid = !isValid(trimmed);
-        const confirm = () => !isInvalid && $scope.dialog.confirm(trimmed);
-        const onKeyDown = e => e.keyCode === keycodes.ENTER && confirm();
+        isValid(trimmed) && $scope.dialog.confirm(trimmed);
+      };
 
-        $scope.props = { params, confirm, cancel, value, onChange, onKeyDown, isInvalid };
-        if (isFinite(input.max)) {
-          $scope.props.maxLength = input.max;
-        }
-
-        $scope.$applyAsync();
+      $scope.props = { params, confirm, onCancel, initialValue: value, onConfirm, isValid };
+      if (isFinite(input.max)) {
+        $scope.props.maxLength = input.max;
       }
 
       function isValid(trimmed = '') {
