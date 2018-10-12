@@ -4,7 +4,7 @@ import { findIndex } from 'lodash';
 
 import SearchFilter from './SearchFilter.es6';
 
-export default class UserListFilters extends React.Component {
+export default class SearchFilterList extends React.Component {
   static propTypes = {
     filters: PropTypes.array.isRequired,
     onChange: PropTypes.func.isRequired
