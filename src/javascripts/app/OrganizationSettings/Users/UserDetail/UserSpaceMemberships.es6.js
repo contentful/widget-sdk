@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { without, findIndex } from 'lodash';
+import { without, findIndex, map } from 'lodash';
 
 import { SpaceMembership as SpaceMembershipPropType, User as UserPropType } from '../PropTypes.es6';
 
@@ -34,11 +34,13 @@ class UserSpaceMemberships extends React.Component {
   };
 
   state = {
-    memberships: this.props.initialMemberships,
+    memberships: this.props.initialMemberships || [],
     showingForm: false,
     editingMembershipId: null,
+    loadingSpaces: false,
     spaces: [],
-    roles: []
+    roles: [],
+    availableSpaces: []
   };
 
   orgEndpoint = this.props.$services.EndpointFactory.createOrganizationEndpoint(this.props.orgId);
@@ -61,36 +63,46 @@ class UserSpaceMemberships extends React.Component {
 
   showSpaceMembershipEditor = async () => {
     const { getAllSpaces } = this.props.$services.OrganizationMembershipRepository;
-    this.setState({ loadingSpaces: true });
-    const spaces = await getAllSpaces(this.orgEndpoint);
+    const { spaces, memberships } = this.state;
 
-    this.setState({
-      spaces,
-      showingForm: true,
-      loadingSpaces: false
-    });
+    // only load the first time
+    if (!spaces.length) {
+      this.setState({ loadingSpaces: true });
+      const allSpaces = await getAllSpaces(this.orgEndpoint);
+
+      this.setState({
+        spaces: allSpaces,
+        availableSpaces: this.getAvailableSpaces(allSpaces, memberships),
+        loadingSpaces: false
+      });
+    }
+
+    this.setState({ showingForm: true });
   };
 
   hideSpaceMembershipEditor = () => {
     this.setState({ showingForm: false, editingMembershipId: null });
   };
 
-  handleMembershipCreated = membership => {
+  handleMembershipCreated = newMembership => {
     const { user, $services } = this.props;
+    const { spaces, memberships } = this.state;
+    const updatedMemberships = [...memberships, newMembership];
 
     this.setState({
-      memberships: [...this.state.memberships, membership]
+      memberships: updatedMemberships,
+      availableSpaces: this.getAvailableSpaces(spaces, updatedMemberships)
     });
 
     this.hideSpaceMembershipEditor();
 
     $services.notification.info(`
-      ${user.firstName} has been successfully added to the space ${membership.sys.space.name}
+      ${user.firstName} has been successfully added to the space ${newMembership.sys.space.name}
     `);
   };
 
   handleMembershipRemove = async membership => {
-    const { memberships } = this.state;
+    const { spaces, memberships } = this.state;
     const { user, $services } = this.props;
     const { space } = membership.sys;
     const repo = this.createRepoFromSpaceMembership(membership);
@@ -121,8 +133,11 @@ class UserSpaceMemberships extends React.Component {
       return;
     }
 
+    const updatedMemberships = without(memberships, membership);
+
     this.setState({
-      memberships: without(memberships, membership)
+      memberships: updatedMemberships,
+      availableSpaces: this.getAvailableSpaces(spaces, updatedMemberships)
     });
 
     $services.notification.info(`
@@ -148,6 +163,16 @@ class UserSpaceMemberships extends React.Component {
       ${user.firstName} is now ${joinWithAnd(roleNames)} in the the space ${space.name}
     `);
   };
+
+  getAvailableSpaces(spaces, memberships) {
+    const membershipSpaceIds = map(memberships, 'sys.space.sys.id');
+
+    return spaces
+      .filter(space => {
+        return !membershipSpaceIds.includes(space.sys.id);
+      })
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }
 
   renderMembershipRow(membership) {
     const { getMembershipRoles } = this.props.$services.SpaceMembershipRepository;
@@ -175,7 +200,7 @@ class UserSpaceMemberships extends React.Component {
 
   render() {
     const { user, orgId } = this.props;
-    const { memberships, showingForm, editingMembershipId, roles, spaces } = this.state;
+    const { memberships, showingForm, editingMembershipId, roles, availableSpaces } = this.state;
 
     return (
       <section>
@@ -208,7 +233,7 @@ class UserSpaceMemberships extends React.Component {
               })}
               {showingForm && (
                 <SpaceMembershipEditor
-                  spaces={spaces}
+                  spaces={availableSpaces}
                   roles={roles}
                   user={user}
                   orgId={orgId}
