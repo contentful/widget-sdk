@@ -9,7 +9,7 @@ import { href } from 'states/Navigator.es6';
 import { subscription as subscriptionState } from 'ui/NavStates/Org.es6';
 
 import { h } from 'ui/Framework';
-import { linkOpen, badge, codeFragment } from 'ui/Content.es6';
+import { LinkOpen, Badge, CodeFragment } from 'ui/Content.es6';
 import { Table, TableHead, TableRow, TableCell, TableBody } from '@contentful/ui-component-library';
 import { container, hbox, ihspace } from 'ui/Layout.es6';
 import { byName as Colors } from 'Styles/Colors.es6';
@@ -61,7 +61,9 @@ function environmentList({ isLoading, loadingError, items }, { OpenDeleteDialog,
     return h('.note-box--warning', [
       `The list of environments failed to load, try refreshing the page. If
       the problem persists `,
-      linkOpen(['contact support'], Config.supportUrl)
+      <LinkOpen key="contact-support-link" url={Config.supportUrl}>
+        contact support
+      </LinkOpen>
     ]);
   } else {
     return h(
@@ -120,33 +122,36 @@ function EnvironmentTable({ environments }) {
             <TableRow key={environment.id} data-test-id={`environment.${environment.id}`}>
               <TableCell>
                 {hbox({ alignItems: 'center' }, [
-                  codeFragment([environment.id]),
+                  <CodeFragment key="environment-code-fragment">{environment.id}</CodeFragment>,
                   ihspace('6px'),
                   h(CopyIconButton, { value: environment.id }),
                   ihspace('1.2em'),
-                  environment.isMaster &&
-                    badge({ color: Colors.textLight, marginTop: 10 }, ['Default environment'])
+                  environment.isMaster && (
+                    <Badge color={Colors.textLight}>Default environment</Badge>
+                  )
                 ])}
               </TableCell>
               <TableCell>
                 {caseofEq(environment.status, [
-                  ['ready', () => badge({ color: Colors.greenDark }, ['Ready'])],
+                  ['ready', () => <Badge color={Colors.greenDark}>Ready</Badge>],
                   [
                     'inProgress',
                     () => {
-                      return badge({ color: Colors.orangeDark }, [
-                        'In progress',
-                        questionMarkWithTooltip({ tooltip: IN_PROGRESS_TOOLTIP })
-                      ]);
+                      return (
+                        <Badge color={Colors.orangeDark}>
+                          In progress {questionMarkWithTooltip({ tooltip: IN_PROGRESS_TOOLTIP })}
+                        </Badge>
+                      );
                     }
                   ],
                   [
                     'failed',
                     () => {
-                      return badge({ color: Colors.redDark }, [
-                        'Failed to create',
-                        questionMarkWithTooltip({ tooltip: FAILED_TOOLTIP })
-                      ]);
+                      return (
+                        <Badge color={Colors.redDark}>
+                          Failed to create {questionMarkWithTooltip({ tooltip: FAILED_TOOLTIP })}
+                        </Badge>
+                      );
                     }
                   ]
                 ])}

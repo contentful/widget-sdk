@@ -1,6 +1,8 @@
 import { h } from 'ui/Framework';
+import React from 'react';
 import { ihspace } from 'ui/Layout.es6';
-import { badge, stateLink, codeFragment } from 'ui/Content.es6';
+import StateLink from 'app/common/StateLink.es6';
+import { Badge, CodeFragment } from 'ui/Content.es6';
 import { byName as Colors } from 'Styles/Colors.es6';
 import { find } from 'lodash';
 import { filter, concat } from 'utils/Collections.es6';
@@ -50,7 +52,9 @@ function renderHint() {
         },
         [
           `You haven't set up any additional environments for this space. Head to the `,
-          stateLink(['environment settings'], { path: 'spaces.detail.settings.environments' }),
+          <StateLink key="state-link-environments" to="spaces.detail.settings.environments">
+            environment settings
+          </StateLink>,
           ' to learn more.'
         ]
       )
@@ -98,13 +102,13 @@ function renderList({ canEdit, spaceEnvironments, envs, updateEnvs }) {
                 disabled: !canEdit || spaceEnvironments.length < 2,
                 onChange: () => toggleEnvironmentSelection(env)
               }),
-              codeFragment([env.sys.id])
+              <CodeFragment key="env-code-fragment">{env.sys.id}</CodeFragment>
             ]
           ),
           ihspace('6px'),
           h(copyButton, { value: env.sys.id }),
           ihspace('2em'),
-          env.sys.id === 'master' && badge({}, ['Default environment'])
+          env.sys.id === 'master' && <Badge>Default environment</Badge>
         ]
       )
     )

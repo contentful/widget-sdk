@@ -1,8 +1,8 @@
-import { h } from 'ui/Framework';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { byName as Colors } from 'Styles/Colors.es6';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
 import { monospaceFontFamily } from 'Styles';
-import $state from '$state';
 
 /**
  * @ngdoc service
@@ -15,32 +15,24 @@ import $state from '$state';
  */
 
 /**
- * @ngdoc method
- * @name ui/Content#docsLink
- * @description
  * Create a link to a knowledgebase article.
  *
  * The target is specified by a key. You can look up the key to URL
  * mapping in the definition of the cfKnowledgeBase directive.
  *
- * ~~~js
- * p([
- *   'Find out more about the CMA in ',
- *   docsLink('our documentation', 'management_api')
- * ])
- * ~~~
- *
- * @param {string} text    Link text
- * @param {string} target  Article target key
  * @returns {React.Element}
  */
-export function docsLink(text, target) {
+export function DocsLink({ text, target }) {
   return KnowledgeBase({
     target,
     text,
     inlineText: 'true'
   });
 }
+DocsLink.propTypes = {
+  text: PropTypes.string,
+  target: PropTypes.string
+};
 
 /**
  * @ngdoc method
@@ -48,107 +40,35 @@ export function docsLink(text, target) {
  * @description
  * Create a link to a URL that opens in a new window
  *
- * ~~~js
- * p([
- *   'Open ', linkOpen(['Google'], '//google.com'), ' in a new tab'
- * ])
- * ~~~
- *
- * @param {React.Element[]} content  List of React.Element
- * @param {string} url
- * @param {string?} modifier
  *   An optional string that changes the style of the link. Possible
  *   values are 'constructive' or 'destructive'
  * @returns {React.Element}
  */
 const AVAILABLE_MODIFIERS = ['', 'constructive', 'destructive'];
-export function linkOpen(content, url, modifier = '') {
+export function LinkOpen({ children, url, modifier }) {
   if (!AVAILABLE_MODIFIERS.includes(modifier)) {
-    throw new TypeError(`Unknown text link modifier ${modifier}`);
+    throw new TypeError(`Unknown text link modifier ${modifier || ''}`);
   }
 
   if (modifier) {
     modifier = `--${modifier}`;
   }
 
-  return h(
-    `a.text-link${modifier}`,
-    {
-      href: url,
-      target: '_blank',
-      rel: 'noopener noreferrer'
-    },
-    content
+  return (
+    <a
+      className={`text-link${modifier || ''}`}
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer">
+      {children}
+    </a>
   );
 }
-
-/**
- * @ngdoc method
- * @name ui/Content#stateLink
- * @description
- * Create a link to an Angular UI Router state.
- *
- * ~~~js
- * p([
- *   'Go to ',
- *   stateLink('Home of some space', 'spaces.detail.home', {spaceId: 'lol'})
- * ])
- * ~~~
- *
- * @param {React.Element[]}  content   Array of child React.Element
- * @param {object}   stateRef  Object of `{path: 'x.y', params: {...}, options: {...}}` shape.
- *                             If `params` are not provided `$stateParams` are used.
- * @returns {React.Element}
- */
-export function stateLink(content, { path, params, options }) {
-  return h(
-    'a',
-    {
-      href: $state.href(path, params),
-      onClick: e => {
-        if (e.shiftKey || e.ctrlKey || e.metaKey) {
-          // allow to open in a new tab/window normally
-        } else {
-          // perform Angular UI router transition only
-          e.preventDefault();
-          $state.go(path, params, options);
-        }
-      }
-    },
-    content
-  );
-}
-
-/**
- * @ngdoc method
- * @name ui/Content#p
- * @description
- * Paragraph of text.
- *
- * Resets line height and color from bad global styles
- *
- * ~~~js
- * p([
- *   '...',
- *   '...'
- * ])
- * ~~~
- *
- * @param {React.Element[]} content  List of React.Element
- * @returns {React.Element}
- */
-export function p(content) {
-  return h(
-    'p',
-    {
-      style: {
-        lineHeight: '1.5',
-        color: Colors.textMid
-      }
-    },
-    content
-  );
-}
+LinkOpen.propTypes = {
+  children: PropTypes.node,
+  url: PropTypes.string.isRequired,
+  modifier: PropTypes.string
+};
 
 /**
  * A span that styles the content as small, uppercased, spaced letters
@@ -156,30 +76,32 @@ export function p(content) {
  *
  * @param {string?} .color
  */
-export function badge({ color = Colors.textLight }, children) {
-  return h(
-    'span',
-    {
-      style: {
+export function Badge({ color = Colors.textLight, children }) {
+  return (
+    <span
+      style={{
         color,
         fontSize: '11px',
         fontWeight: '600',
         letterSpacing: '1px',
         textTransform: 'uppercase'
-      }
-    },
-    children
+      }}>
+      {children}
+    </span>
   );
 }
+Badge.propTypes = {
+  color: PropTypes.string,
+  children: PropTypes.node
+};
 
 /**
  * Styles the content as an inline code fragment
  */
-export function codeFragment(children) {
-  return h(
-    'span',
-    {
-      style: {
+export function CodeFragment({ children }) {
+  return (
+    <span
+      style={{
         display: 'inline-block',
         color: Colors.textMid,
         background: Colors.elementLightest,
@@ -191,8 +113,11 @@ export function codeFragment(children) {
         padding: '0 5px',
         overflow: 'hidden',
         textOverflow: 'ellipsis'
-      }
-    },
-    children
+      }}>
+      {children}
+    </span>
   );
 }
+CodeFragment.propTypes = {
+  children: PropTypes.node
+};

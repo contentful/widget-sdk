@@ -4,7 +4,7 @@ import { h } from 'ui/Framework';
 import { byName as Colors } from 'Styles/Colors.es6';
 import { assign } from 'utils/Collections.es6';
 import { container, vspace } from 'ui/Layout.es6';
-import { docsLink } from 'ui/Content.es6';
+import { DocsLink } from 'ui/Content.es6';
 import renderEnvironmentSelector from './EnvironmentSelector.es6';
 import CopyIcon from 'svg/CopyIcon.es6';
 import copyToClipboard from 'utils/DomClipboardCopy.es6';
@@ -70,7 +70,7 @@ function renderForm({ data, model, update, trackCopy }) {
         title: 'Content Preview API - access token',
         description: [
           'Preview unpublished content using this API (i.e. content with “Draft” status). ',
-          docsLink('Read more.', 'content_preview')
+          <DocsLink key="content-preview-link" text="Read more" target="content_preview" />
         ]
       },
       [

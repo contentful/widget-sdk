@@ -1,6 +1,5 @@
 /* eslint-disable camelcase */
 
-import { h } from 'ui/Framework';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { container, hspace, hbox, vbox } from 'ui/Layout.es6';
@@ -90,34 +89,32 @@ function renderContent({ navState, showOrganization }) {
 }
 
 function stateTitle(title) {
-  return h(
-    'div',
-    {
-      dataTestId: 'sidepanel-trigger-text-title',
-      style: {
+  return (
+    <div
+      data-test-id="sidepanel-trigger-text-title"
+      style={{
         ...oneLineTruncate,
         color: '#fff',
         fontSize: '14px',
         lineHeight: '1.3'
-      }
-    },
-    [title]
+      }}>
+      {title}
+    </div>
   );
 }
 
 function organizationName(orgName) {
-  return h(
-    'div',
-    {
-      dataTestId: 'sidepanel-trigger-text-subtitle',
-      style: {
+  return (
+    <div
+      data-test-id="sidepanel-trigger-text-subtitle"
+      style={{
         ...oneLineTruncate,
         color: colors.textLight,
         fontSize: '12px',
         lineHeight: '1.5'
-      }
-    },
-    [orgName]
+      }}>
+      {orgName}
+    </div>
   );
 }
 
@@ -133,13 +130,14 @@ function environmentLabel(env) {
       color: isMaster ? colors.greenLight : colors.orangeLight
     },
     [
-      h(EnvironmentIcon, {
-        style: {
+      <EnvironmentIcon
+        key="environment-icon"
+        style={{
           display: 'block',
           flexShrink: 0,
           fill: 'currentColor'
-        }
-      }),
+        }}
+      />,
       hspace('7px'),
       container(
         {

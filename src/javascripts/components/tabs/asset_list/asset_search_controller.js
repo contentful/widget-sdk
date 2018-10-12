@@ -21,7 +21,7 @@ angular
       const K = require('utils/kefir.es6');
       const Kefir = require('kefir');
       const createSearchInput = require('app/ContentList/Search').default;
-      const h = require('ui/Framework').h;
+      const React = require('react');
 
       const assetLoader = new PromisedLoader();
 
@@ -35,7 +35,7 @@ angular
 
       // HACK: This makes sure that component bridge renders
       // somethings until search UI is initialized.
-      $scope.search = h('div');
+      $scope.search = React.createElement('div');
 
       this.hasQuery = hasQuery;
 

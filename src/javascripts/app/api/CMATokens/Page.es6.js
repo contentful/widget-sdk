@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { assign } from 'lodash';
+import { byName as Colors } from 'Styles/Colors.es6';
 import { createSlot, Success, Failure } from 'utils/Concurrent.es6';
 import { truncate } from 'utils/StringUtils.es6';
 import { makeCtor, match } from 'utils/TaggedValues.es6';
@@ -9,7 +10,7 @@ import { h } from 'ui/Framework';
 import { createStore, bindActions, makeReducer } from 'ui/Framework/Store.es6';
 import escape from 'utils/escape.es6';
 import { container, vspace } from 'ui/Layout.es6';
-import { docsLink, linkOpen, p } from 'ui/Content.es6';
+import { DocsLink, LinkOpen } from 'ui/Content.es6';
 
 import * as Config from 'Config.es6';
 import * as ResourceManager from './Resource.es6';
@@ -146,13 +147,16 @@ function patSection(state, actions) {
         display: 'flex'
       },
       [
-        p([
-          `As an alternative to OAuth applications, you can also leverage
-        Personal Access Tokens to use the Content Management API. These
-        tokens are always bound to your individual account, with the
-        same permissions you have on all of your spaces and
-        organizations.`
-        ]),
+        <p
+          key="pat-section-explanation"
+          style={{
+            lineHeight: '1.5',
+            color: Colors.textMid
+          }}>
+          As an alternative to OAuth applications, you can also leverage Personal Access Tokens to
+          use the Content Management API. These tokens are always bound to your individual account,
+          with the same permissions you have on all of your spaces and organizations.
+        </p>,
         container(
           {
             marginLeft: '1em',
@@ -184,7 +188,11 @@ function oauthSection() {
       ` and represent the user who granted access through this
       application. These tokens have the same rights as the owner of
       the account. You can `,
-      docsLink('learn more about OAuth applications in our documentation', 'createOAuthApp'),
+      <DocsLink
+        key="create-oauth-link"
+        text="learn more about OAuth applications in our documentation"
+        target="createOAuthApp"
+      />,
       '.'
     ])
   ]);
@@ -204,7 +212,9 @@ function tokenList(
     ? h('.note-box--warning', [
         `The list of tokens failed to load, try refreshing the page. If
       the problem persists `,
-        linkOpen(['contact support'], Config.supportUrl)
+        <LinkOpen key="contact-support-link" url={Config.supportUrl}>
+          contact support
+        </LinkOpen>
       ])
     : h(
         'div',

@@ -1,7 +1,8 @@
 import * as Config from 'Config.es6';
+import React from 'react';
 import { h } from 'ui/Framework';
 import { hbox, vspace, hspace } from 'ui/Layout.es6';
-import { linkOpen } from 'ui/Content.es6';
+import { LinkOpen } from 'ui/Content.es6';
 
 export default function render({
   serverFailure,
@@ -110,7 +111,9 @@ function displayServerError({ inProgress, CancelDialog, Submit }) {
       h('p', [
         `The creation of the environment has failed, probably due to a
         connection error. Please retry or `,
-        linkOpen(['contact support'], Config.supportUrl),
+        <LinkOpen key="contact-support-link" url={Config.supportUrl}>
+          contact support
+        </LinkOpen>,
         ' if the problem persists.'
       ])
     ]),

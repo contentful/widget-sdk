@@ -16,7 +16,7 @@ angular
    *     $scope.$watch('myData', render)
    *
    *     function render (data) {
-   *       $scope.myComponent = h('h1', ['Hello world'])
+   *       $scope.myComponent = '<h1>Hello world</h1>'
    *     }
    *   }
    * }

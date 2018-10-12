@@ -1,5 +1,3 @@
-import { h } from 'utils/legacy-html-hyperscript';
-
 export default {
   label: 'Organizations & Billing',
   name: 'new',
@@ -15,5 +13,5 @@ export default {
       };
     }
   ],
-  template: h('cf-new-organization-membership', { properties: 'properties' })
+  template: '<cf-new-organization-membership properties="properties" />'
 };

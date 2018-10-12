@@ -1,4 +1,3 @@
-import { h } from 'utils/legacy-html-hyperscript';
 import Base from 'states/Base.es6';
 import organizationBase from './OrganizationSettingsBaseState.es6';
 
@@ -18,8 +17,9 @@ export function reactBase(definition) {
         };
       }
     ],
-    template: h(definition.componentName, { properties: 'properties' })
+    template: `<${definition.componentName} properties="properties" />`
   };
+
   return organizationBase(Object.assign(defaults, definition));
 }
 
@@ -29,7 +29,7 @@ export default Base({
   abstract: true,
   views: {
     'nav-bar@': {
-      template: h('cf-organization-nav', { class: 'app-top-bar__child' })
+      template: '<cf-organization-nav class="app-top-bar__child" />'
     }
   },
   children: [reactBase(UsageState), reactBase(SubscriptionState), ...GatekeeperStates]
