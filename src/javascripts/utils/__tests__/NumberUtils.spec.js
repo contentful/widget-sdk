@@ -1,22 +1,7 @@
-import { createIsolatedSystem } from 'test/helpers/system-js';
+import { toLocaleString, shorten, shortenStorageUnit } from '../NumberUtils.es6';
 
 describe('NumberUtils', () => {
-  beforeEach(function*() {
-    const system = createIsolatedSystem();
-    this.NumberUtils = yield system.import('utils/NumberUtils.es6');
-  });
-
   describe('toLocaleString', () => {
-    let toLocaleString;
-
-    beforeEach(function() {
-      toLocaleString = this.NumberUtils.toLocaleString;
-    });
-
-    afterEach(function() {
-      toLocaleString = null;
-    });
-
     it('localizes a number, transforming it into a string', () => {
       expect(toLocaleString(1000)).toEqual('1,000');
       expect(toLocaleString(1000000)).toEqual('1,000,000');
@@ -24,16 +9,6 @@ describe('NumberUtils', () => {
   });
 
   describe('shorten', () => {
-    let shorten;
-
-    beforeEach(function() {
-      shorten = this.NumberUtils.shorten;
-    });
-
-    afterEach(() => {
-      shorten = null;
-    });
-
     it('does not change numbers lower than 1000', () => {
       expect(shorten(999)).toEqual(999);
     });
@@ -69,16 +44,6 @@ describe('NumberUtils', () => {
   });
 
   describe('shortenStorageUnit', () => {
-    let shortenStorageUnit;
-
-    beforeEach(function() {
-      shortenStorageUnit = this.NumberUtils.shortenStorageUnit;
-    });
-
-    afterEach(() => {
-      shortenStorageUnit = null;
-    });
-
     it('supports 0 as a number', () => {
       expect(shortenStorageUnit(0, 'MB')).toEqual('0 B');
     });

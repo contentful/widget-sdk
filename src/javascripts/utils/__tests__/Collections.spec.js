@@ -1,5 +1,5 @@
-import * as C from 'utils/Collections.es6';
-import { deepFreeze } from 'utils/Freeze.es6';
+import * as C from '../Collections.es6';
+import { deepFreeze } from '../Freeze.es6';
 import { range } from 'lodash';
 
 describe('utils/Collections.es6', () => {

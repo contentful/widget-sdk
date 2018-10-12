@@ -1,17 +1,10 @@
 'use string';
 
+import { diff } from '../StringDiff.es6';
+import _ from 'lodash';
+
 describe('utils/StringDiff', () => {
   const CHARS = '0123456789abcdefghijklmnopqvwxyzABCDEFGHIJKLMNOPQVWXYZ';
-  let diff;
-
-  beforeEach(function() {
-    module('cf.utils');
-    diff = this.$inject('utils/StringDiff.es6').diff;
-  });
-
-  afterEach(() => {
-    diff = null;
-  });
 
   it('diffs inserts', () => {
     _.times(1000, () => {

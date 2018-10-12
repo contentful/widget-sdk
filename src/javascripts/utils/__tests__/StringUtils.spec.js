@@ -1,4 +1,4 @@
-import * as utils from 'utils/StringUtils.es6';
+import * as utils from '../StringUtils.es6';
 
 describe('utils/StringUtils.es6', () => {
   describe('#joinAndTruncate()', () => {
@@ -73,7 +73,7 @@ describe('utils/StringUtils.es6', () => {
       expect(utils.truncateMiddle('abcd', 3, 1)).toEqual('ab…d');
     });
 
-    it('retains short string', function() {
+    it('retains short string 2', function() {
       expect(utils.truncateMiddle('abcd', 3, 3)).toEqual('…bcd');
     });
 
@@ -163,15 +163,17 @@ describe('utils/StringUtils.es6', () => {
   });
 
   describe('joinWithAnd', () => {
-    beforeEach(function() {
-      this.twoItems = ['two', 'items'];
-      this.threeItems = ['definitely', 'three', 'items'];
-      this.fourItems = ['absolutely', '100%', 'four', 'items'];
-    });
+    const getItems = () => {
+      return {
+        twoItems: ['two', 'items'],
+        threeItems: ['definitely', 'three', 'items'],
+        fourItems: ['absolutely', '100%', 'four', 'items']
+      };
+    };
 
     it('should return null if not given array', () => {
-      expect(utils.joinWithAnd('')).toBe(null);
-      expect(utils.joinWithAnd({})).toBe(null);
+      expect(utils.joinWithAnd('')).toBeNull();
+      expect(utils.joinWithAnd({})).toBeNull();
     });
 
     it('should return the first item if only one item given', () => {
@@ -180,15 +182,18 @@ describe('utils/StringUtils.es6', () => {
     });
 
     it('should return items joined with and if more than one item given', function() {
-      expect(utils.joinWithAnd(this.twoItems)).toBe('two, and items');
-      expect(utils.joinWithAnd(this.threeItems)).toBe('definitely, three, and items');
-      expect(utils.joinWithAnd(this.fourItems)).toBe('absolutely, 100%, four, and items');
+      const { twoItems, threeItems, fourItems } = getItems();
+      expect(utils.joinWithAnd(twoItems)).toBe('two, and items');
+      expect(utils.joinWithAnd(threeItems)).toBe('definitely, three, and items');
+      expect(utils.joinWithAnd(fourItems)).toBe('absolutely, 100%, four, and items');
     });
 
     it('should allow disabling oxford commas', function() {
-      expect(utils.joinWithAnd(this.twoItems, false)).toBe('two and items');
-      expect(utils.joinWithAnd(this.threeItems, false)).toBe('definitely, three and items');
-      expect(utils.joinWithAnd(this.fourItems, false)).toBe('absolutely, 100%, four and items');
+      const { twoItems, threeItems, fourItems } = getItems();
+
+      expect(utils.joinWithAnd(twoItems, false)).toBe('two and items');
+      expect(utils.joinWithAnd(threeItems, false)).toBe('definitely, three and items');
+      expect(utils.joinWithAnd(fourItems, false)).toBe('absolutely, 100%, four and items');
     });
   });
 });

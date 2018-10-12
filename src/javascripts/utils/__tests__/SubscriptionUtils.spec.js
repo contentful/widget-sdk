@@ -1,6 +1,11 @@
-import * as SubscriptionUtils from 'utils/SubscriptionUtils.es6';
+import * as SubscriptionUtils from '../SubscriptionUtils.es6';
 
 describe('utils/SubscriptionUtils.es6', () => {
+  let basePlan;
+  let microPlan;
+  let macroPlan;
+  let allPlans;
+
   beforeEach(function() {
     function createPlan(name, price, ratePlanCharges, isBase) {
       return {
@@ -95,18 +100,15 @@ describe('utils/SubscriptionUtils.es6', () => {
       }
     ].map(createRPC);
 
-    this.basePlan = createPlan('Basic Platform', 0, baseRPCs, true);
-    this.microPlan = createPlan('Micro Plan', 14, microTiers);
-    this.macroPlan = createPlan('Macro Plan', 99, macroTiers);
+    basePlan = createPlan('Basic Platform', 0, baseRPCs, true);
+    microPlan = createPlan('Micro Plan', 14, microTiers);
+    macroPlan = createPlan('Macro Plan', 99, macroTiers);
 
-    this.allPlans = [this.basePlan, this.microPlan, this.macroPlan];
+    allPlans = [basePlan, microPlan, macroPlan];
   });
 
   describe('#calculateUsersCost', () => {
     it('should calculate the cost for users depending on the tiers', function() {
-      // Free tier is users 0 - 10
-      const basePlan = this.basePlan;
-
       expect(SubscriptionUtils.calculateUsersCost({ basePlan, numMemberships: 3 })).toBe(0);
       expect(SubscriptionUtils.calculateUsersCost({ basePlan, numMemberships: 7 })).toBe(0);
       expect(SubscriptionUtils.calculateUsersCost({ basePlan, numMemberships: 10 })).toBe(0);
@@ -120,9 +122,7 @@ describe('utils/SubscriptionUtils.es6', () => {
 
   describe('#calcUsersMeta', () => {
     it('should calculate the meta information correctly', function() {
-      const basePlan = this.basePlan;
       // 0 - 10 are free, 11+ are paid
-
       expect(SubscriptionUtils.calcUsersMeta({ basePlan, numMemberships: 3 })).toEqual({
         numFree: 3,
         numPaid: 0,
@@ -146,7 +146,7 @@ describe('utils/SubscriptionUtils.es6', () => {
   describe('#calculateTotalPrice', () => {
     it('should be able to calculate the price based on just the base tier with given users', function() {
       const plansWithMemberships = {
-        allPlans: [this.basePlan]
+        allPlans: [basePlan]
       };
 
       plansWithMemberships.numMemberships = 3;
@@ -161,7 +161,7 @@ describe('utils/SubscriptionUtils.es6', () => {
 
     it('should calculate the cost of all spaces and users together', function() {
       const plansWithMemberships = {
-        allPlans: this.allPlans
+        allPlans: allPlans
       };
 
       plansWithMemberships.numMemberships = 3;
@@ -174,12 +174,12 @@ describe('utils/SubscriptionUtils.es6', () => {
 
   describe('#getEnabledFeatures', () => {
     it('should return an empty array if no features are present', function() {
-      expect(SubscriptionUtils.getEnabledFeatures(this.microPlan).length).toBe(0);
+      expect(SubscriptionUtils.getEnabledFeatures(microPlan)).toHaveLength(0);
     });
 
     it('should return the feature RPCs if present', function() {
-      expect(SubscriptionUtils.getEnabledFeatures(this.macroPlan).length).toBe(1);
-      expect(SubscriptionUtils.getEnabledFeatures(this.basePlan).length).toBe(1);
+      expect(SubscriptionUtils.getEnabledFeatures(macroPlan)).toHaveLength(1);
+      expect(SubscriptionUtils.getEnabledFeatures(basePlan)).toHaveLength(1);
     });
   });
 
@@ -191,13 +191,13 @@ describe('utils/SubscriptionUtils.es6', () => {
     });
 
     it('should return 0 if all the plan prices are 0', function() {
-      const plans = [this.basePlan];
+      const plans = [basePlan];
 
       expect(SubscriptionUtils.calculatePlansCost({ plans })).toBe(0);
     });
 
     it('should return the correct price for all plans given', function() {
-      const plans = this.allPlans;
+      const plans = allPlans;
 
       expect(SubscriptionUtils.calculatePlansCost({ plans })).toBe(113);
     });

@@ -1,4 +1,4 @@
-import { h } from 'utils/legacy-html-hyperscript';
+import { h } from '../index.es6';
 
 describe('hyperscript', () => {
   describe('generating HTML strings', () => {
