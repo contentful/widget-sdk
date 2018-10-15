@@ -50,7 +50,11 @@ angular
     '$scope',
     'require',
     function FieldDialogController($scope, require) {
+      // TODO: Remove this when there are no more API references to the legacy
+      // `StructuredText` field type.
+      const RICH_TEXT_FIELD_TYPES = ['RichText', 'StructuredText'];
       const dialog = $scope.dialog;
+      const _ = require('lodash');
       const validations = require('validationDecorator');
       const fieldDecorator = require('fieldDecorator');
       const trackCustomWidgets = require('analyticsEvents/customWidgets');
@@ -66,13 +70,19 @@ angular
 
       $scope.validations = validations.decorateFieldValidations($scope.field);
 
+      if (RICH_TEXT_FIELD_TYPES.includes($scope.field.type)) {
+        const validation = _.find($scope.field.validations, 'nodes');
+        const nodeValidations = validation ? validation.nodes : {};
+        $scope.nodeValidations = validations.decorateNodeValidations(nodeValidations);
+      }
+
       $scope.currentTitleField = getTitleField();
 
       const initialWidgetId = $scope.widget.widgetId;
 
-      $scope.structuredTextOptions = getInitialStructuredTextOptions();
-      $scope.onStructuredTextOptionsChange = options => {
-        $scope.structuredTextOptions = options;
+      $scope.richTextOptions = getInitialRichTextOptions();
+      $scope.onRichTextOptionsChange = options => {
+        $scope.richTextOptions = options;
       };
 
       $scope.widgetSettings = {
@@ -96,21 +106,28 @@ angular
         }
       });
 
-      $scope.buildValidationCheckboxProps = validation => ({
-        id: `field-validations--${validation.type}${validation.onItems ? '.listElement' : ''}`,
-        labelText: validation.name,
-        checked: validation.enabled,
-        helpText: validation.helpText,
-        extraClassNames: 'validation-checkboxfield',
-        checkboxProps: {
-          name: 'isthisenabled',
-          'aria-label': `${validation.enabled ? 'Disable' : 'Enable'} validation`
-        },
-        onChange: e => {
-          validation.enabled = e.target.checked;
-          $scope.$digest();
-        }
-      });
+      $scope.buildValidationCheckboxProps = validation => {
+        const { name, type, nodeType, onItems, enabled, helpText } = validation;
+        const checkboxId = `field-validations${nodeType ? `--${nodeType}` : ''}${`--${type}`}${
+          onItems ? '.listElement' : ''
+        }`;
+
+        return {
+          id: checkboxId,
+          labelText: name,
+          checked: enabled,
+          helpText,
+          extraClassNames: 'validation-checkboxfield',
+          checkboxProps: {
+            name: 'isthisenabled',
+            'aria-label': `${enabled ? 'Disable' : 'Enable'} validation`
+          },
+          onChange: e => {
+            validation.enabled = e.target.checked;
+            $scope.$digest();
+          }
+        };
+      };
 
       function reposition() {
         $timeout(() => {
@@ -140,10 +157,10 @@ angular
         }
 
         fieldDecorator.update($scope.decoratedField, $scope.field, contentTypeData);
-        validations.updateField($scope.field, $scope.validations);
+        validations.updateField($scope.field, $scope.validations, $scope.nodeValidations);
 
-        if ($scope.field.type === 'StructuredText' || $scope.field.type === 'RichText') {
-          validations.addEnabledStructuredTextOptions($scope.field, $scope.structuredTextOptions);
+        if (RICH_TEXT_FIELD_TYPES.includes($scope.field.type)) {
+          validations.addEnabledRichTextOptions($scope.field, $scope.richTextOptions);
         }
 
         const selectedWidgetId = $scope.widgetSettings.id;
@@ -175,7 +192,7 @@ angular
         dialog.confirm();
       };
 
-      function getInitialStructuredTextOptions() {
+      function getInitialRichTextOptions() {
         const validationsForEnabledNodeTypesOrMarks =
           $scope.field.validations &&
           $scope.field.validations.length &&
@@ -187,15 +204,10 @@ angular
       }
 
       function isValid() {
-        if (!$scope.fieldForm.$valid) {
-          return false;
-        }
-
-        if (!_.isEmpty(validations.validateAll($scope.validations))) {
-          return false;
-        }
-
-        return true;
+        return (
+          $scope.fieldForm.$valid &&
+          _.isEmpty(validations.validateAll($scope.validations, $scope.nodeValidations))
+        );
       }
 
       function getTitleField() {
@@ -220,7 +232,7 @@ angular
       var joinAndTruncate = require('utils/StringUtils.es6').joinAndTruncate;
       const LD = require('utils/LaunchDarkly');
 
-      const STRUCTURED_TEXT_FORMATTING_OPTIONS_FEATURE_FLAG =
+      const RICH_TEXT_FORMATTING_OPTIONS_FEATURE_FLAG =
         'feature-at-09-structured-text-formatting-options';
 
       $scope.schema = {
@@ -272,8 +284,8 @@ angular
 
       $scope.locales = _.map(TheLocaleStore.getPrivateLocales(), 'name');
 
-      LD.onFeatureFlag($scope, STRUCTURED_TEXT_FORMATTING_OPTIONS_FEATURE_FLAG, flag => {
-        $scope.structuredTextFormattingOptionsEnabled = flag;
+      LD.onFeatureFlag($scope, RICH_TEXT_FORMATTING_OPTIONS_FEATURE_FLAG, flag => {
+        $scope.richTextFormattingOptionsEnabled = flag;
       });
     }
   ])
@@ -289,7 +301,13 @@ angular
     '$scope',
     'require',
     ($scope, require) => {
+      // TODO: Remove this when there are no more API references to the legacy
+      // `StructuredText` field type.
+      const RICH_TEXT_FIELD_TYPES = ['RichText', 'StructuredText'];
       const validations = require('validationDecorator');
+      const LD = require('utils/LaunchDarkly');
+      const RICH_TEXT_FORMATTING_OPTIONS_FEATURE_FLAG =
+        'feature-at-09-structured-text-formatting-options';
 
       $scope.$watch('fieldValidationsForm.$invalid', isInvalid => {
         $scope.tab.invalid = isInvalid;
@@ -315,6 +333,12 @@ angular
         const availableIds = _.map(available, 'id');
         const properAvailable = _.intersection(availableIds, properWidgets).length;
         $scope.showPredefinedValueWidgetHint = !isProper && properAvailable;
+      });
+
+      LD.onFeatureFlag($scope, RICH_TEXT_FORMATTING_OPTIONS_FEATURE_FLAG, flag => {
+        if (flag && RICH_TEXT_FIELD_TYPES.includes($scope.field.type)) {
+          $scope.nodeValidationsEnabled = true;
+        }
       });
     }
   ])

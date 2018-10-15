@@ -3,7 +3,7 @@ div(
   cf-validate="field" show-errors cf-validate-form="field" ng-init="validator.run()"
   ng-controller="FieldDialogSettingsController")
 
-  div.cf-flex-grid 
+  div.cf-flex-grid
     div.cf-flex-grid-column
       div.cfnext-form__field
         label Name
@@ -35,5 +35,5 @@ div(
         div.cfnext-form-option(ng-show="field.canBeLocalized")
           <react-component name="@contentful/ui-component-library/CheckboxField" props="buildLocalisationCheckboxProps()" />
 
-    div.cf-flex-grid-column(ng-show="structuredTextFormattingOptionsEnabled&&field.isStructuredTextField")
-      <react-component name="components/field_dialog/StructuredTextOptions.es6" props="{onChange: onStructuredTextOptionsChange, enabledMarks: structuredTextOptions.enabledMarks, enabledNodeTypes: structuredTextOptions.enabledNodeTypes}" />
+    div.cf-flex-grid-column(ng-show="richTextFormattingOptionsEnabled&&field.isRichTextField")
+      <react-component name="components/field_dialog/StructuredTextOptions.es6" props="{onChange: onRichTextOptionsChange, enabledMarks: richTextOptions.enabledMarks, enabledNodeTypes: richTextOptions.enabledNodeTypes}" />
