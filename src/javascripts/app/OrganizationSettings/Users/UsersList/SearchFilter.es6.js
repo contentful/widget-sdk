@@ -21,11 +21,9 @@ export default class SearchFilter extends React.Component {
   handleChange = ({ target: { value } }) => {
     const { onChange, filter } = this.props;
 
-    onChange &&
-      onChange({
-        ...filter,
-        value
-      });
+    // we use Object.assign instead of spread to keep the reference
+    // to the getter properties of the filter definition
+    onChange && onChange(Object.assign(filter, { value }));
   };
 
   getSelectWidth() {
@@ -36,12 +34,17 @@ export default class SearchFilter extends React.Component {
 
   render() {
     const { label, filter, options } = this.props;
+    const classNames = `
+      search__filter-pill
+      users-search__filter-pill
+      ${filter.value ? 'search__filter-pill--active' : ''}
+    `;
     return (
-      <div className="search__filter-pill users-search__filter-pill">
+      <div className={classNames}>
         <div className="search__filter-pill-label users-search__filter-pill-label">{label}</div>
-        <div className="search__select-value">
+        <div className="search__select-value users-search__select-value">
           <select
-            className="search__select"
+            className="search__select users-search__select"
             value={filter.value}
             onChange={this.handleChange}
             style={{ width: this.getSelectWidth() }}>

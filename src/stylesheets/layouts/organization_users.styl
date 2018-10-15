@@ -1,3 +1,4 @@
+// Using !important until things go to the component library
 .user-details__card
   align-items: center
   display: flex
@@ -10,8 +11,49 @@
   width: 50px
 
 .users-search__filter-pill
+  background-color: #D3DCE0
+  margin: 0 10px 0 0!important
+
   &:hover
     box-shadow: none!important
+  .search__select-value
+    &::after
+      color: #536171!important
+    .users-search__select,
+    .users-search__select:focus,
+    .users-search__select:active
+      color: #536171
+      background-color: #D3DCE0
+      border: none
+      background-image: none
+      &:hover
+        background-color: #c3cCd0
+        background-image: none
+
 .users-search__filter-pill-label
+  color: #536171!important
   &:hover
     cursor: default
+
+.user-list__filters
+  display: flex
+  justify-content: space-between
+  margin-bottom: 30px
+
+.user-list__filters__column
+  align-items: center
+  color: #8091A5
+  display: flex
+
+.search__filter-pill--active
+  .search__select-value
+    &::after
+      color: white!important
+    .users-search__select,
+    .users-search__select:focus,
+    .users-search__select:active
+      background-color: #4a90e2!important
+      color: white!important
+
+.user-list__reset-button
+  margin-right: 20px;
