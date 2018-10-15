@@ -54,7 +54,7 @@ export function href(state) {
       path: []
     };
   }
-  return $state.href(state.path.join('.'), state.params);
+  return $state.href(state.path.join('.'), state.params, state.options);
 }
 
 /**
@@ -69,17 +69,16 @@ export function href(state) {
 export function makeEntityRef(entity) {
   return {
     path: makeEntityPath(entity),
-    params: makeEntityParams(entity)
+    params: makeEntityParams(entity),
+    options: { inherit: false }
   };
 }
 
 function makeEntityPath(entity) {
   const type = getType(entity);
   const typePlural = ENTITY_PLURALS[type];
-  const spaceEnvId = get(entity, 'sys.environment.sys.id');
-  const isMasterEnv = spaceEnvId === 'master';
 
-  if (spaceEnvId && !isMasterEnv) {
+  if (isNonMasterEnv(entity)) {
     return ['spaces', 'detail', 'environment', typePlural, 'detail'];
   } else {
     return ['spaces', 'detail', typePlural, 'detail'];
@@ -90,7 +89,13 @@ function makeEntityParams(entity) {
   const params = { addToContext: true, bulkEditor: '' };
   const type = getType(entity);
   const entityIdKey = type.toLowerCase() + 'Id';
+
   params[entityIdKey] = entity.sys.id;
+  params.spaceId = get(entity, 'sys.space.sys.id');
+
+  if (isNonMasterEnv(entity)) {
+    params.environmentId = get(entity, 'sys.environment.sys.id');
+  }
 
   return params;
 }
@@ -101,4 +106,11 @@ function getType(entity) {
   } else {
     return entity.sys.type;
   }
+}
+
+function isNonMasterEnv(entity) {
+  const spaceEnvId = get(entity, 'sys.environment.sys.id');
+  const isMasterEnv = spaceEnvId === 'master';
+
+  return spaceEnvId && !isMasterEnv;
 }

@@ -77,6 +77,9 @@ angular
                     sys: {
                       id: spaceContext.getEnvironmentId()
                     }
+                  },
+                  space: {
+                    sys: { id: spaceContext.getId() }
                   }
                 }
               })
