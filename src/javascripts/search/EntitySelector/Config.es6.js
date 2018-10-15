@@ -62,8 +62,8 @@ export function getLabels({ entityType = '', multiple }) {
  *
  * TODO: Rename to `newConfigFromReferenceField` and remove deprecation note.
  *
- * @deprecated This does not work for `StructuredText` type fields, use
- * `newConfigFromStructuredTextField` instead.
+ * @deprecated This does not work for `RichText` type fields, use
+ * `newConfigFromRichTextField` instead.
  *
  * @param {API.Field} field
  * @param {number?} currentSize
@@ -97,8 +97,8 @@ export function newConfigFromField(field = {}, currentSize = 0) {
   return Promise.resolve(config); // TODO: No need for promise anymore.
 }
 
-export function newConfigFromStructuredTextField(field, nodeType) {
-  const entityType = getEntityTypeFromStructuredTextNode(nodeType);
+export function newConfigFromRichTextField(field, nodeType) {
+  const entityType = getEntityTypeFromRichTextNode(nodeType);
   const config = {
     entityType,
     local: field.locale,
@@ -113,7 +113,7 @@ export function newConfigFromStructuredTextField(field, nodeType) {
   return Promise.resolve(config);
 }
 
-function getEntityTypeFromStructuredTextNode(nodeType) {
+function getEntityTypeFromRichTextNode(nodeType) {
   const words = nodeType.split('-');
   if (words.indexOf('entry') !== -1) {
     return 'Entry';
@@ -121,7 +121,7 @@ function getEntityTypeFromStructuredTextNode(nodeType) {
   if (words.indexOf('asset') !== -1) {
     return 'Asset';
   }
-  throw new Error(`StructuredText node type \`${nodeType}\` has no associated \`entityType\``);
+  throw new Error(`RichText node type \`${nodeType}\` has no associated \`entityType\``);
 }
 
 /**

@@ -62,11 +62,6 @@ describe('widgets/default', () => {
     });
   });
 
-  it('if field is StructuredText', () => {
-    field.type = 'StructuredText';
-    expect(getDefault(field, 'displayfieldid')).toBe('structuredTextEditor');
-  });
-
   it('if field is RichText', () => {
     field.type = 'RichText';
     expect(getDefault(field, 'displayfieldid')).toBe('richTextEditor');

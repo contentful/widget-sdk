@@ -65,7 +65,7 @@ const createValue = contentfulDocument => {
 
 const initialValue = createValue(emptyDoc);
 
-export default class StructuredTextEditor extends React.Component {
+export default class RichTextEditor extends React.Component {
   static propTypes = {
     widgetAPI: PropTypes.object.isRequired,
     value: PropTypes.object.isRequired,
@@ -148,7 +148,7 @@ export default class StructuredTextEditor extends React.Component {
     };
 
     return (
-      <EditorToolbar extraClassNames="structured-text__toolbar" data-test-id="toolbar">
+      <EditorToolbar extraClassNames="rich-text__toolbar" data-test-id="toolbar">
         <HeadingDropdown
           onToggle={this.toggleHeadingMenu}
           isToggleActive={true}
@@ -195,8 +195,8 @@ export default class StructuredTextEditor extends React.Component {
 
   render() {
     const classNames = `
-      structured-text
-      ${!this.props.isDisabled ? 'structured-text--enabled' : ''}
+      rich-text
+      ${!this.props.isDisabled ? 'rich-text--enabled' : ''}
     `;
 
     return (
@@ -209,7 +209,7 @@ export default class StructuredTextEditor extends React.Component {
           plugins={this.slatePlugins}
           readOnly={this.props.isDisabled}
           schema={schema}
-          className="structured-text__editor"
+          className="rich-text__editor"
         />
       </div>
     );

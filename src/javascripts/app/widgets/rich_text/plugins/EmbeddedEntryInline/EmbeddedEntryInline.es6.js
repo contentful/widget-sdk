@@ -54,7 +54,7 @@ class EmbeddedEntryInline extends React.Component {
         selected={this.props.isSelected}
         title={`${contentTypeName}: ${entityTitle}`}
         status={entityStatus}
-        extraClassNames="structured-text__inline-reference-card"
+        extraClassNames="rich-text__inline-reference-card"
         isLoading={isLoading}
         dropdownListItemNodes={
           <React.Fragment>

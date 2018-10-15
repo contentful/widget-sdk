@@ -184,14 +184,14 @@ export function create() {
     fieldTypes: ['RichText'],
     name: 'RichText',
     icon: 'json',
-    template: '<cf-structured-text-editor />'
+    template: '<cf-rich-text-editor />'
   });
 
   registerWidget('structuredTextEditor', {
     fieldTypes: ['StructuredText'],
     name: 'StructuredText',
     icon: 'json',
-    template: '<cf-structured-text-editor />'
+    template: '<cf-rich-text-editor />'
   });
 
   registerWidget('listInput', {

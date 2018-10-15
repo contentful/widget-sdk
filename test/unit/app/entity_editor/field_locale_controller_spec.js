@@ -200,10 +200,10 @@ describe('FieldLocaleController', () => {
       });
     });
 
-    it('is "disabled" and "occupied" for `StructuredText` field with collaborators', function() {
+    it('is "disabled" and "occupied" for `RichText` field with collaborators', function() {
       this.otDoc.collaboratorsFor.returns(K.createMockProperty([{}]));
       const scope = this.init(scope => {
-        scope.widget.field.type = 'StructuredText';
+        scope.widget.field.type = 'RichText';
       });
       this.$apply();
       expect(scope.fieldLocale.access).toEqual({

@@ -2,7 +2,7 @@ import React from 'react';
 import modalDialog from 'modalDialog';
 import HyperlinkDialog from 'app/widgets/WidgetApi/dialogs/HyperlinkDialog.es6';
 import WidgetAPIContext from '../WidgetApiContext.es6';
-import { newConfigFromStructuredTextField } from 'search/EntitySelector/Config.es6';
+import { newConfigFromRichTextField } from 'search/EntitySelector/Config.es6';
 
 const DEFAULT_VALUE = { uri: '', text: '' };
 
@@ -71,8 +71,8 @@ async function newConfigsForField(field) {
   if (field.type === 'StructuredText' || field.type === 'RichText') {
     // TODO: Don't pass specific key if CT validation prohibits its type:
     const config = {};
-    config.Entry = await newConfigFromStructuredTextField(field, 'entry-hyperlink');
-    config.Asset = await newConfigFromStructuredTextField(field, 'asset-hyperlink');
+    config.Entry = await newConfigFromRichTextField(field, 'entry-hyperlink');
+    config.Asset = await newConfigFromRichTextField(field, 'asset-hyperlink');
     return config;
   }
   return {};

@@ -1,8 +1,8 @@
 import React from 'react';
 import { mount } from 'enzyme';
 
-import FetchEntity from 'app/widgets/structured_text/plugins/shared/FetchEntity/FetchEntity.es6';
-import RequestStatus from 'app/widgets/structured_text/plugins/shared/RequestStatus.es6';
+import FetchEntity from 'app/widgets/rich_text/plugins/shared/FetchEntity/FetchEntity.es6';
+import RequestStatus from 'app/widgets/rich_text/plugins/shared/RequestStatus.es6';
 import sinon from 'npm:sinon';
 import { flushPromises } from '../helpers';
 

@@ -1,9 +1,9 @@
-angular.module('cf.app').directive('cfStructuredTextEditor', [
+angular.module('cf.app').directive('cfRichTextEditor', [
   () => {
     return {
       restrict: 'E',
       scope: {},
-      template: JST['cf_structured_text_editor'](),
+      template: JST['cf_rich_text_editor'](),
       require: '^cfWidgetApi',
       link: (scope, _$el, _attr, widgetApi) => {
         scope.slateEditorProps = {

@@ -59,9 +59,7 @@ describe('Toolbar', () => {
     });
     stubAll({ isolatedSystem: this.system });
 
-    const { default: StructuredTextEditor } = await this.system.import(
-      'app/widgets/structured_text/index.es6'
-    );
+    const { default: RichTextEditor } = await this.system.import('app/widgets/rich_text/index.es6');
 
     this.field = setupWidgetApi(this.$inject('mocks/widgetApi'), mockDocument).field;
 
@@ -75,7 +73,7 @@ describe('Toolbar', () => {
     this.mount = (props = this.props) => {
       this.wrapper = Enzyme.mount(
         <ServicesProvider>
-          <StructuredTextEditor {...props} />
+          <RichTextEditor {...props} />
         </ServicesProvider>,
         { attachTo: this.sandbox }
       );

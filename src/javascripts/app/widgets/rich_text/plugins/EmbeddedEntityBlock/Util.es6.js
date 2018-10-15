@@ -1,6 +1,6 @@
 import { BLOCKS } from '@contentful/rich-text-types';
 import { haveTextInSomeBlocks } from '../shared/UtilHave.es6';
-import { newConfigFromStructuredTextField } from 'search/EntitySelector/Config.es6';
+import { newConfigFromRichTextField } from 'search/EntitySelector/Config.es6';
 
 /**
  * Returns whether given value has a block of the given type.
@@ -20,7 +20,7 @@ export const hasBlockOfType = (change, type) => {
  * @param {slate.Change} change
  */
 export async function selectEntityAndInsert(nodeType, widgetAPI, change) {
-  const baseConfig = await newConfigFromStructuredTextField(widgetAPI.field, nodeType);
+  const baseConfig = await newConfigFromRichTextField(widgetAPI.field, nodeType);
   const config = {
     ...baseConfig,
     max: 1

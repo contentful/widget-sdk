@@ -97,7 +97,7 @@ angular.module('contentful').factory('fieldFactory', [
       },
       {
         name: 'rich-text',
-        icon: 'structuredtext',
+        icon: 'richtext',
         label: 'Rich text',
         isBeta: true,
         description: 'Long form articles, documentation, news articles',
@@ -105,12 +105,11 @@ angular.module('contentful').factory('fieldFactory', [
       },
       {
         name: 'structured-text',
-        icon: 'structuredtext',
+        icon: 'richtext',
         label: 'Structured text',
         description: 'Deprecated - Please use Rich Text instead',
         types: ['StructuredText']
       },
-
       {
         name: 'number',
         description: 'ID, order number, rating, quantity',

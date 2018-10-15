@@ -29,7 +29,7 @@ export default class EntryLinkToolbarIcon extends Component {
     const { nodeType } = this.props;
     const type = getEntityTypeFromNodeType(nodeType);
     const typeName = type.toLowerCase();
-    const baseClass = `structured-text__${nodeType}`;
+    const baseClass = `rich-text__${nodeType}`;
     return (
       <WidgetAPIContext.Consumer>
         {({ widgetAPI }) =>

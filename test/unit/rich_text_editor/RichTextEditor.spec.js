@@ -19,7 +19,7 @@ const expectIsEditorReadOnly = (wrapper, expected) => {
   expect(el.props().readOnly).toBe(expected);
 };
 
-describe('StructuredTextEditor', () => {
+describe('RichTextEditor', () => {
   beforeEach(async function() {
     module('contentful/test');
     const mockDocument = document(block(BLOCKS.PARAGRAPH, {}, text()));
@@ -34,9 +34,7 @@ describe('StructuredTextEditor', () => {
     });
     stubAll({ isolatedSystem: this.system });
 
-    const { default: StructuredTextEditor } = await this.system.import(
-      'app/widgets/structured_text/index.es6'
-    );
+    const { default: RichTextEditor } = await this.system.import('app/widgets/rich_text/index.es6');
 
     this.widgetApi = setupWidgetApi(this.$inject('mocks/widgetApi'), mockDocument);
 
@@ -48,7 +46,7 @@ describe('StructuredTextEditor', () => {
     };
 
     this.sandbox = createSandbox(window);
-    this.wrapper = mount(<StructuredTextEditor {...this.props} />, { attachTo: this.sandbox });
+    this.wrapper = mount(<RichTextEditor {...this.props} />, { attachTo: this.sandbox });
   });
 
   afterEach(function() {

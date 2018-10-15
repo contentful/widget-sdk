@@ -1,5 +1,5 @@
 # `feature_text_editor` event
-Context event for tracking previews on the structured text editor.
+Context event for tracking previews on the structured/rich text editor.
 
 ## Questions this event should allow us to answer:
 * How much time does it take to edit this field from first to last edit
@@ -13,7 +13,7 @@ Snowplow schema: [feature_text_editor/1.0.0.json](https://github.com/contentful/
 ## Usage
 
 * Click on "open preview" in the entry editor (when there is at least one
-  structured text field)
+  structured/rich text field)
   * **NB:** There may be multiple locales active for a given field. In this
     case, we fire a context event for _each_ locale. This means that simply
     counting the number of `feature_text_editor`/`contentPreview` actions that

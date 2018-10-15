@@ -46,7 +46,7 @@ class LinkedEntityBlock extends React.Component {
           selected={isSelected}
           onEdit={() => this.handleEditClick()}
           onRemove={() => this.handleRemoveClick()}
-          extraClassNames="structured-text__reference-card"
+          extraClassNames="rich-text__reference-card"
         />
       </div>
     );

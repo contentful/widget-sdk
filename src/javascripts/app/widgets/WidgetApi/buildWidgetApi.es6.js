@@ -39,7 +39,7 @@ export default function buildWidgetApi({ field, features, currentUrl }) {
      */
     dialogs: {
       /**
-       * TODO: Add to ui-extensions-sdk when open sourcing the StructuredText widget.
+       * TODO: Add to ui-extensions-sdk when open sourcing the RichText widget.
        *
        * Allows to use entity selector, fully configurable as in the web-app while
        * the existing `.dialog.selectSingleEntry` and `selectSingleAsset` in the
@@ -47,7 +47,7 @@ export default function buildWidgetApi({ field, features, currentUrl }) {
        */
       selectEntities: config => entitySelector.open(config),
       /**
-       * TODO: Add to ui-extensions-sdk when open sourcing the StructuredText widget.
+       * TODO: Add to ui-extensions-sdk when open sourcing the RichText widget.
        *
        * @see ./createHyperlinkDialog
        */
@@ -57,12 +57,12 @@ export default function buildWidgetApi({ field, features, currentUrl }) {
     },
 
     /**
-     * TODO: Add to ui-extensions-sdk when open sourcing the StructuredText widget.
+     * TODO: Add to ui-extensions-sdk when open sourcing the RichText widget.
      */
     currentUrl,
 
     /**
-     * TODO: Add to ui-extensions-sdk when open sourcing the StructuredText widget.
+     * TODO: Add to ui-extensions-sdk when open sourcing the RichText widget.
      */
     features
 

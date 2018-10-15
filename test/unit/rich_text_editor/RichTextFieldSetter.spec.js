@@ -1,7 +1,7 @@
 import { get } from 'lodash';
 import * as sinon from 'helpers/sinon';
 
-describe('StructuredTextFieldSetter', () => {
+describe('RichTextFieldSetter', () => {
   beforeEach(function() {
     this.ShareJS = {
       peek: (doc, filePath) => get(doc.snapshot, filePath),
@@ -15,24 +15,22 @@ describe('StructuredTextFieldSetter', () => {
     module('contentful/test', $provide => {
       $provide.value('data/ShareJS/Utils', this.ShareJS);
       $provide.value('logger', this.logger);
-      $provide.value('app/widgets/structured_text/constants/EmptyDoc.es6', {
+      $provide.value('app/widgets/rich_text/constants/EmptyDoc.es6', {
         default: this.emptyDoc
       });
     });
 
-    this.StructuredTextFieldSetter = this.$inject(
-      'app/widgets/structured_text/StructuredTextFieldSetter.es6'
-    );
+    this.RichTextFieldSetter = this.$inject('app/widgets/rich_text/RichTextFieldSetter.es6');
     this.OtDoc = this.$inject('mocks/OtDoc');
   });
 
   describe('#is()', function() {
-    it('returns true if fieldId is of type `StructuredText`', function() {
+    it('returns true if fieldId is of type `RichText`', function() {
       const fieldId = 'abc';
       const ct = {
-        fields: [{ id: fieldId, type: 'StructuredText' }]
+        fields: [{ id: fieldId, type: 'RichText' }]
       };
-      expect(this.StructuredTextFieldSetter.is(fieldId, ct)).toBeTruthy();
+      expect(this.RichTextFieldSetter.is(fieldId, ct)).toBeTruthy();
     });
 
     it('returns true if fieldId is of type `RichText`', function() {
@@ -40,23 +38,15 @@ describe('StructuredTextFieldSetter', () => {
       const ct = {
         fields: [{ id: fieldId, type: 'RichText' }]
       };
-      expect(this.StructuredTextFieldSetter.is(fieldId, ct)).toBeTruthy();
+      expect(this.RichTextFieldSetter.is(fieldId, ct)).toBeTruthy();
     });
 
-    it('returns false if fieldId is not of type `StructuredText`', function() {
+    it('returns false if fieldId is not of type `RichText`', function() {
       const fieldId = 'abc';
       const ct = {
         fields: [{ id: fieldId, type: 'Symbol' }]
       };
-      expect(this.StructuredTextFieldSetter.is(fieldId, ct)).toBeFalsy();
-    });
-
-    it('returns false if contentType has no field with id `fieldId`', function() {
-      const fieldId = 'abc';
-      const ct = {
-        fields: [{ id: 'cba', type: 'StructuredText' }]
-      };
-      expect(this.StructuredTextFieldSetter.is(fieldId, ct)).toBeFalsy();
+      expect(this.RichTextFieldSetter.is(fieldId, ct)).toBeFalsy();
     });
 
     it('returns false if contentType has no field with id `fieldId`', function() {
@@ -64,12 +54,20 @@ describe('StructuredTextFieldSetter', () => {
       const ct = {
         fields: [{ id: 'cba', type: 'RichText' }]
       };
-      expect(this.StructuredTextFieldSetter.is(fieldId, ct)).toBeFalsy();
+      expect(this.RichTextFieldSetter.is(fieldId, ct)).toBeFalsy();
+    });
+
+    it('returns false if contentType has no field with id `fieldId`', function() {
+      const fieldId = 'abc';
+      const ct = {
+        fields: [{ id: 'cba', type: 'RichText' }]
+      };
+      expect(this.RichTextFieldSetter.is(fieldId, ct)).toBeFalsy();
     });
 
     it('returns false if the contentType is not passed', function() {
       const fieldId = 'abc';
-      expect(this.StructuredTextFieldSetter.is(fieldId)).toBeFalsy();
+      expect(this.RichTextFieldSetter.is(fieldId)).toBeFalsy();
     });
   });
 
@@ -81,7 +79,7 @@ describe('StructuredTextFieldSetter', () => {
       };
       const fieldPath = ['fields', 'id', 'locale'];
       const nextValue = {};
-      this.StructuredTextFieldSetter.setAt(doc, fieldPath, nextValue).then(() => {
+      this.RichTextFieldSetter.setAt(doc, fieldPath, nextValue).then(() => {
         sinon.assert.called(doc.submitOp);
         sinon.assert.calledWith(this.ShareJS.setDeep, doc, fieldPath, this.emptyDoc);
       });
@@ -136,7 +134,7 @@ describe('StructuredTextFieldSetter', () => {
             }
           }
         });
-        this.StructuredTextFieldSetter.setAt(doc, fieldPath, nextValue);
+        this.RichTextFieldSetter.setAt(doc, fieldPath, nextValue);
 
         sinon.assert.notCalled(this.ShareJS.setDeep);
         sinon.assert.calledWith(doc.submitOp, sinon.match(ops));

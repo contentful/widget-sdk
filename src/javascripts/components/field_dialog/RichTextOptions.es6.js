@@ -4,23 +4,23 @@ import _ from 'lodash';
 import { ToggleButton, TextLink } from '@contentful/ui-component-library';
 import { BLOCKS, MARKS, INLINES, TOP_LEVEL_BLOCKS } from '@contentful/rich-text-types';
 
-const StructuredTextOptionsSection = ({ children, heading, actions }) => (
-  <div className="structured-text-options__section">
-    <div className="structured-text-options__section__header">
+const RichTextOptionsSection = ({ children, heading, actions }) => (
+  <div className="rich-text-options__section">
+    <div className="rich-text-options__section__header">
       <h3>{heading}</h3>
       {actions && actions}
     </div>
-    <div className="structured-text-options__section__inner-wrapper">{children}</div>
+    <div className="rich-text-options__section__inner-wrapper">{children}</div>
   </div>
 );
 
-StructuredTextOptionsSection.propTypes = {
+RichTextOptionsSection.propTypes = {
   children: PropTypes.node.isRequired,
   heading: PropTypes.string.isRequired,
   actions: PropTypes.node
 };
 
-StructuredTextOptionsSection.defaultProps = {
+RichTextOptionsSection.defaultProps = {
   actions: undefined
 };
 
@@ -47,7 +47,7 @@ const ValidatableTypes = {
  * - [] (empty array) -- nothing is enabled
  * - {Array} -- some features enabled
  */
-class StructuredTextOptions extends Component {
+class RichTextOptions extends Component {
   static propTypes = {
     enabledMarks: PropTypes.arrayOf(PropTypes.string),
     enabledNodeTypes: PropTypes.arrayOf(PropTypes.string),
@@ -217,7 +217,7 @@ class StructuredTextOptions extends Component {
   renderToggles = (options, className) =>
     options.map(option => (
       <ToggleButton
-        extraClassNames={`structured-text-option-toggle ${className}`}
+        extraClassNames={`rich-text-option-toggle ${className}`}
         testId={`toggle-button-${option.id}`}
         key={option.id + this.isOptionActive(option)}
         icon={option.icon}
@@ -230,8 +230,8 @@ class StructuredTextOptions extends Component {
 
   render() {
     return (
-      <div className="structured-text-options" data-test-id="structured-text-options">
-        <StructuredTextOptionsSection
+      <div className="rich-text-options" data-test-id="structured-text-options">
+        <RichTextOptionsSection
           heading="Formatting options"
           actions={
             <TextLink onClick={() => this.toggleAll()} testId="toggle-all-link">
@@ -240,16 +240,16 @@ class StructuredTextOptions extends Component {
           }>
           {this.renderToggles(this.options.headingOptions)}
           {this.renderToggles(this.options.formattingOptions, 'toggle-square')}
-        </StructuredTextOptionsSection>
-        <StructuredTextOptionsSection heading="Links">
+        </RichTextOptionsSection>
+        <RichTextOptionsSection heading="Links">
           {this.renderToggles(this.options.linkOptions)}
-        </StructuredTextOptionsSection>
-        <StructuredTextOptionsSection heading="Embedded entries">
+        </RichTextOptionsSection>
+        <RichTextOptionsSection heading="Embedded entries">
           {this.renderToggles(this.options.entryOptions)}
-        </StructuredTextOptionsSection>
+        </RichTextOptionsSection>
       </div>
     );
   }
 }
 
-export default StructuredTextOptions;
+export default RichTextOptions;

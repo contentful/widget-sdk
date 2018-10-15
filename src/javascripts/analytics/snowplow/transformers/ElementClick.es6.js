@@ -24,7 +24,7 @@ export default function(_, eventData) {
   }))(_, eventData);
 
   const stEventData = omit(eventData.structuredTextEditor, ['fields', 'locales']);
-  const createStructuredTextContextEvent = (field, locale) =>
+  const createRichTextContextEvent = (field, locale) =>
     addUserOrgSpace(() => ({
       schema: getSchema('feature_text_editor').path,
       data: {
@@ -45,10 +45,10 @@ export default function(_, eventData) {
     for (const field of fields) {
       if (field.localized) {
         for (const locale of activeLocales) {
-          contexts.push(createStructuredTextContextEvent(field, locale));
+          contexts.push(createRichTextContextEvent(field, locale));
         }
       } else {
-        contexts.push(createStructuredTextContextEvent(field, defaultLocale));
+        contexts.push(createRichTextContextEvent(field, defaultLocale));
       }
     }
   }

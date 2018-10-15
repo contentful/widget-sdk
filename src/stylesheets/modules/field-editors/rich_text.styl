@@ -1,9 +1,9 @@
 @require '/variables/colors'
 
-.structured-text
+.rich-text
   position: relative;
 
-  &--enabled .structured-text__toolbar {
+  &--enabled .rich-text__toolbar {
     position: -webkit-sticky;
     position: sticky;
     top: 0px;
@@ -108,7 +108,7 @@
   h6.cf-slate-heading
     font-size: 0.875rem;
 
-  .structured-text__editor
+  .rich-text__editor
     blockquote
       margin: 0 0 1.3125rem;
       border-left: 6px solid $colors.element-light;
@@ -180,31 +180,31 @@
         background: $colors.blue-dark;
         box-shadow: 0px 0px 5px $colors.blue-dark;
 
-  .structured-text__reference-card
+  .rich-text__reference-card
     margin-bottom: 1.25rem;
 
-  .structured-text__inline-reference-card
+  .rich-text__inline-reference-card
     margin: 0px 5px;
     font-size: inherit;
 
     span
       user-select: none
 
-  .structured-text__inline-reference-card ul
+  .rich-text__inline-reference-card ul
     margin: 0px;
 
-  .structured-text__hyperlink-container
+  .rich-text__hyperlink-container
     position relative
     
-  .structured-text__hyperlink
+  .rich-text__hyperlink
     display: inline!important;
 
     &:hover,
     &:focus
-      .structured-text__hyperlink-icon
+      .rich-text__hyperlink-icon
         fill: $colors.text-dark;
 
-  .structured-text__hyperlink-icon
+  .rich-text__hyperlink-icon
     position: relative;
     top: 4px;
     height: 14px;
@@ -212,10 +212,10 @@
     transition: fill 100ms ease-in-out;
 
 
-.structured-text-option-toggle
+.rich-text-option-toggle
   margin: 0px 8px 8px 0px;
   
-.structured-text-options
+.rich-text-options
   border-left: 1px solid #E5EBED;
   padding-left: 28px;
   &__section

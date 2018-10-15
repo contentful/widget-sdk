@@ -75,7 +75,6 @@ describe('cfSnapshotPresenter', () => {
       'Number',
       'Date',
       'Location',
-      'StructuredText',
       'RichText'
     ].forEach(type => {
       it(`recognizes ${type} type`, function() {

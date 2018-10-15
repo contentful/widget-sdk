@@ -10,7 +10,7 @@ import emptyDoc from './constants/EmptyDoc.es6';
  *  Verifies if the field matching `fieldId` is
  * a structured text field in the given content type.
  *
- * @name StructuredTextField#is
+ * @name RichTextField#is
  * @param {string} fieldId
  * @param {object} contentType
  *

@@ -2,9 +2,9 @@ import React from 'react';
 import { mount } from 'enzyme';
 import sinon from 'sinon';
 
-import StructuredTextOptions from '../StructuredTextOptions.es6';
+import RichTextOptions from '../RichTextOptions.es6';
 
-describe('StructuredTextOptions', () => {
+describe('RichTextOptions', () => {
   let wrapper;
   let props;
 
@@ -12,7 +12,7 @@ describe('StructuredTextOptions', () => {
     props = {
       onChange: sinon.spy()
     };
-    wrapper = mount(<StructuredTextOptions {...props} />);
+    wrapper = mount(<RichTextOptions {...props} />);
   });
 
   it('renders', () => {
@@ -31,7 +31,7 @@ describe('StructuredTextOptions', () => {
       enabledNodeTypes: ['ul-list'],
       enabledMarks: ['code']
     };
-    wrapper = mount(<StructuredTextOptions {...props} />);
+    wrapper = mount(<RichTextOptions {...props} />);
 
     wrapper.find('[data-test-id="toggle-button-*"]').forEach(opt => {
       if (opt.prop('title') === 'ul-list' || opt.prop('title') === 'code') {

@@ -39,7 +39,7 @@ angular.module('cf.app').factory('EntityHelpers', [
          * Entry: Value of the first Symbol or Text type field that
          *        is not the title field.
          *
-         * TODO: Consider `StructuredText` type fields as description.
+         * TODO: Consider `RichText` type fields as description.
          *
          * @param {object} entity
          * @param {string} locale
@@ -137,7 +137,7 @@ angular.module('cf.app').factory('EntityHelpers', [
      * validation restricting the allowed references to a set of content types.
      * Returns an empty array if there is no such restriction for the field.
      *
-     * TODO: Make this work with `StructuredText` fields.
+     * TODO: Make this work with `RichText` fields.
      *
      * @param {object} field
      * @returns {Array<string>}

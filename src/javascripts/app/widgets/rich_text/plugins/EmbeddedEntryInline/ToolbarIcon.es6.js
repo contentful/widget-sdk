@@ -24,7 +24,7 @@ export default class EntryLinkToolbarIcon extends Component {
         {({ widgetAPI }) => (
           <DropdownListItem
             isDisabled={this.props.disabled || !canInsertInline(this.props.change)}
-            extraClassNames="structured-text__entry-link-block-button"
+            extraClassNames="rich-text__entry-link-block-button"
             size="small"
             icon="Entry"
             buttonType="muted"

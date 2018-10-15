@@ -15,7 +15,7 @@ const ICON_MAP = {
 };
 
 const HyperlinkTooltipContainer = ({ children, ...otherProps }) => (
-  <span className="structured-text__hyperlink-container" {...otherProps}>
+  <span className="rich-text__hyperlink-container" {...otherProps}>
     {children}
   </span>
 );
@@ -55,9 +55,9 @@ export default class Hyperlink extends React.Component {
         <TextLink
           href={href} // Allows user to open link in new tab.
           title={title}
-          extraClassNames="structured-text__hyperlink">
+          extraClassNames="rich-text__hyperlink">
           {children}
-          {/*<Icon icon={icon} extraClassNames="structured-text__hyperlink-icon" />*/}
+          {/*<Icon icon={icon} extraClassNames="rich-text__hyperlink-icon" />*/}
         </TextLink>
       </Tooltip>
     );

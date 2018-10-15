@@ -8,7 +8,7 @@ import {
   TextField,
   TextLink
 } from '@contentful/ui-component-library';
-import FetchedReferenceCard from 'app/widgets/structured_text/plugins/shared/FetchedReferenceCard';
+import FetchedReferenceCard from 'app/widgets/rich_text/plugins/shared/FetchedReferenceCard';
 import Dialog from 'app/entity_editor/Components/Dialog';
 import AngularComponent from 'AngularComponent';
 import { noop, values } from 'lodash';

@@ -39,7 +39,7 @@ export const stubAll = async ({ isolatedSystem }) => {
   // TODO: Instead of stubbing all kind of services, stub `buildWidgetApi.es6`!
   isolatedSystem.set('ui/cf/thumbnailHelpers.es6', {});
   isolatedSystem.set('search/EntitySelector/Config.es6', {
-    newConfigFromStructuredTextField: sinon.stub().returns({})
+    newConfigFromRichTextField: sinon.stub().returns({})
   });
   isolatedSystem.set('app/widgets/WidgetApi/dialogs/HyperlinkDialog.es6', {});
   isolatedSystem.set('spaceContext', { default: {} });
