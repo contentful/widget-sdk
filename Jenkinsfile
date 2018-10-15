@@ -37,7 +37,7 @@ pipeline {
         script {
           labPrepare {
             labVersion = 'master'
-            dockerComposeVersion = '1.14.0'
+            dockerComposeVersion = '1.21.2'
           }
         }
       }
