@@ -57,7 +57,7 @@ export default ServicesConsumer(
       $services: PropTypes.shape({
         OrganizationRoles: PropTypes.object.isRequired,
         PricingDataProvider: PropTypes.object.isRequired,
-        createResourceService: PropTypes.func.isRequired,
+        ResourceService: PropTypes.func.isRequired,
         ReloadNotification: PropTypes.object.isRequired,
         OrganizationMembershipRepository: PropTypes.object.isRequired,
         EndpointFactory: PropTypes.object.isRequired,
