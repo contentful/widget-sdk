@@ -32,6 +32,7 @@ pipeline {
         GATEKEEPER_VERSION = 'production'
         CONTENT_API_VERSION = 'production'
         SHAREJS_VERSION = 'production'
+        STATE_PERSISTENCE_API_VERSION = 'master'
       }
       steps {
         script {
