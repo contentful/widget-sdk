@@ -1,11 +1,49 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+class Delayed extends React.Component {
+  static propTypes = {
+    delay: PropTypes.number.isRequired,
+    children: PropTypes.node
+  };
+
+  static defaultProps = {
+    delay: 300
+  };
+
+  state = {
+    display: false
+  };
+
+  constructor(props) {
+    super(props);
+    this.timer = setTimeout(this.display, props.delay);
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.timer);
+  }
+
+  display = () => {
+    this.setState({ display: true });
+  };
+
+  render() {
+    const { display } = this.state;
+    if (!display) {
+      return null;
+    }
+    return this.props.children;
+  }
+}
+
 export const FetcherLoading = ({ message }) => (
-  <div className="loading-box--stretched">
-    <div className="loading-box__spinner" />
-    <div className="loading-box__message">{message || 'Loading...'}</div>
-  </div>
+  <Delayed>
+    <div className="loading-box--stretched">
+      <div className="loading-box__spinner" />
+      <div className="loading-box__message">{message || 'Loading...'}</div>
+    </div>
+  </Delayed>
 );
 
 FetcherLoading.propTypes = {

@@ -27,18 +27,9 @@ describe('createFetcherComponent', () => {
 <FetcherLoading
   message="Loading test component..."
 >
-  <div
-    className="loading-box--stretched"
-  >
-    <div
-      className="loading-box__spinner"
-    />
-    <div
-      className="loading-box__message"
-    >
-      Loading test component...
-    </div>
-  </div>
+  <Delayed
+    delay={300}
+  />
 </FetcherLoading>
 `);
   });

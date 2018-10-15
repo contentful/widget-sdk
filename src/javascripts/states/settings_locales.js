@@ -10,16 +10,10 @@ angular
   .factory('states/settings/locales', [
     'require',
     require => {
-      var base = require('states/Base.es6').default;
       var contextHistory = require('navigation/Breadcrumbs/History.es6').default;
       var crumbFactory = require('navigation/Breadcrumbs/Factory.es6');
-
-      var list = base({
-        name: 'list',
-        url: '',
-        loadingText: 'Loading Locales…',
-        template: '<div cf-locale-list class="workbench locale-list entity-list"></div>'
-      });
+      const ChangeSpaceService = require('services/ChangeSpaceService.es6');
+      const Enforcements = require('access_control/Enforcements.es6');
 
       function localeEditorState(options, isNew) {
         return _.extend(
@@ -103,7 +97,39 @@ angular
         name: 'locales',
         url: '/locales',
         abstract: true,
-        children: [list, newLocale, detail]
+        children: [
+          {
+            name: 'list',
+            url: '',
+            template:
+              '<react-component name="app/settings/locales/routes/LocalesListRoute.es6" props="props" />',
+            controller: [
+              '$scope',
+              'spaceContext',
+              ($scope, spaceContext) => {
+                $scope.props = {
+                  showUpgradeSpaceDialog: ({ onSubmit }) => {
+                    ChangeSpaceService.showDialog({
+                      organizationId: spaceContext.organization.sys.id,
+                      space: spaceContext.space.data,
+                      action: 'change',
+                      scope: 'space',
+                      onSubmit
+                    });
+                  },
+                  getComputeLocalesUsageForOrganization: () => {
+                    return Enforcements.computeUsageForOrganization(
+                      spaceContext.organization,
+                      'locale'
+                    );
+                  }
+                };
+              }
+            ]
+          },
+          newLocale,
+          detail
+        ]
       };
     }
   ]);

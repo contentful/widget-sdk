@@ -63,7 +63,7 @@ window.libs = [
   ['json0-ot-diff', require('json0-ot-diff')],
   ['jquery', window.$],
   ['kefir', require('kefir')],
-  ['launch-darkly-client', require('ldclient-js')],
+  ['ldclient-js', require('ldclient-js')],
   ['legacy-client', require('./legacy_client/client.js')],
   ['localesList', require('./locales_list.json')],
   ['lodash', window._],

@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`app/settings/locales/LocalesListPricingTwo should match snapshot 1`] = `
+<Workbench
+  className="locale-list entity-list"
+  content={
+    <LocalesTable
+      locales={Array []}
+    />
+  }
+  icon="page-settings"
+  sidebar={
+    <LocalesListSidebar
+      canChangeSpace={true}
+      insideMasterEnv={true}
+      localeResource={
+        Object {
+          "limits": Object {
+            "maximum": 5,
+          },
+          "usage": 0,
+        }
+      }
+      subscriptionState={Object {}}
+      upgradeSpace={[Function]}
+    />
+  }
+  title={
+    <React.Fragment>
+      Locales
+      <span
+        className="workbench-header__kb-link"
+      >
+        <KnowledgeBase
+          target="locale"
+        />
+      </span>
+    </React.Fragment>
+  }
+/>
+`;

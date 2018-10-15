@@ -1,4 +1,4 @@
-import LD from 'launch-darkly-client';
+import LD from 'ldclient-js';
 
 import { launchDarkly as config } from 'Config.es6';
 import { assign, get, isNull, omitBy } from 'lodash';

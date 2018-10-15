@@ -167,7 +167,7 @@ export class ExtensionsList extends React.Component {
     ));
 
     return (
-      <div data-test-id="extensions.list" style={{ padding: '0 1em' }}>
+      <div data-test-id="extensions.list">
         <table className="simple-table">
           <thead>
             <tr>

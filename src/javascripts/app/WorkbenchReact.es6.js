@@ -12,14 +12,15 @@ class Workbench extends React.Component {
     sidebar: PropTypes.element,
     icon: PropTypes.string,
     testId: PropTypes.string,
-    centerContent: PropTypes.bool
+    centerContent: PropTypes.bool,
+    className: PropTypes.string
   };
 
   render() {
     const { title, children, content, actions, sidebar, icon, testId, centerContent } = this.props;
 
     return (
-      <div className="workbench" data-test-id={testId}>
+      <div className={`workbench ${this.props.className || ''}`} data-test-id={testId}>
         <div className="workbench-header__wrapper">
           <header className="workbench-header">
             {icon && (
