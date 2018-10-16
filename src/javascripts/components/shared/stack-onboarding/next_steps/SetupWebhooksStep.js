@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { SETUP_WEBHOOK } from './DevNextSteps';
-import { name as AnchorModule } from '../../../react/atoms/Anchor';
 
 export const name = 'ms-dev-next-steps-setup-webhook';
 
@@ -10,7 +9,7 @@ angular.module('contentful').factory(name, [
   require => {
     const { env } = require('environment');
     const { Step } = require('app/home/welcome/OnboardingWithTeaSteps.es6');
-    const A = require(AnchorModule);
+    const A = require('components/react/atoms/Anchor.es6').default;
 
     const SetupWebhooksStep = props => {
       const { isExpanded, isDone, onToggle, deploymentProvider, markAsDone } = props;

@@ -2,16 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { name as CreateModernOnboardingModule } from '../../auto_create_new_space/CreateModernOnboarding';
-import { name as FullScreenModule } from '../../../react/molecules/FullScreen';
-import { name as ButtonModule } from '../../../react/atoms/Button';
 
 export const name = 'choice-screen-component';
 
 angular.module('contentful').factory(name, [
   'require',
   function(require) {
-    const FullScreen = require(FullScreenModule);
-    const Button = require(ButtonModule);
+    const FullScreen = require('components/react/molecules/FullScreen.es6').default;
+    const Button = require('components/react/atoms/Button.es6').default;
     const store = require('TheStore').getStore();
     const { getStoragePrefix } = require(CreateModernOnboardingModule);
     const { updateUserInSegment } = require('analytics/Analytics.es6');

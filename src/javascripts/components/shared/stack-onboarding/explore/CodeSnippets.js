@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { name as CodeModule } from '../../../react/atoms/Code';
 import { name as IframeHighlightHOCModule } from './IframeHighlightHOC';
 import { name as CreateModernOnboardingModule } from '../../auto_create_new_space/CreateModernOnboarding';
 
@@ -10,7 +9,7 @@ export const name = 'code-snippets-component';
 angular.module('contentful').factory(name, [
   'require',
   function(require) {
-    const Code = require(CodeModule);
+    const Code = require('components/react/atoms/Code.es6').default;
     const IframeHighlightHOC = require(IframeHighlightHOCModule);
     const { getDeliveryToken } = require(CreateModernOnboardingModule);
     const $stateParams = require('$stateParams');

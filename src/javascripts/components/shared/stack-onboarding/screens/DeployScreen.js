@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { name as FullScreenModule } from '../../../react/molecules/FullScreen';
 import { name as SkipModule } from '../components/Skip';
 import { name as NavigationModule } from '../components/Navigation';
 import { name as DeploymentStrategiesModule } from '../deployment/DeploymentStrategies';
@@ -13,7 +12,7 @@ export const name = 'deploy-screen-onboarding';
 angular.module('contentful').factory(name, [
   'require',
   function(require) {
-    const FullScreen = require(FullScreenModule);
+    const FullScreen = require('components/react/molecules/FullScreen.es6').default;
     const Skip = require(SkipModule);
     const Navigation = require(NavigationModule);
     const DeploymentStrategies = require(DeploymentStrategiesModule);

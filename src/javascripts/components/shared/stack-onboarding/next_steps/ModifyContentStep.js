@@ -2,8 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { MODIFY_CONTENT } from './DevNextSteps';
 import { name as CreateModernOnboardingModule } from '../../auto_create_new_space/CreateModernOnboarding';
-import { name as CodeModule } from '../../../react/atoms/Code';
-import { name as AnchorModule } from '../../../react/atoms/Anchor';
 
 export const name = 'ms-dev-next-steps-modify-content';
 
@@ -15,8 +13,8 @@ angular.module('contentful').factory(name, [
     const { getUser } = require(CreateModernOnboardingModule);
 
     const { Step } = require('app/home/welcome/OnboardingWithTeaSteps.es6');
-    const Code = require(CodeModule);
-    const A = require(AnchorModule);
+    const Code = require('components/react/atoms/Code.es6').default;
+    const A = require('components/react/atoms/Anchor.es6').default;
 
     const ModifyContentStep = props => {
       const { isDone, isExpanded, onToggle, managementToken, entry, spaceId, onCopy } = props;

@@ -2,18 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { name as CreateModernOnboardingModule } from '../../auto_create_new_space/CreateModernOnboarding';
-import { name as InputModule } from '../../../react/atoms/Input';
-import { name as ButtonModule } from '../../../react/atoms/Button';
-import { name as FormModule } from '../../../react/atoms/Form';
 
 export const name = 'DeploymentFormModule';
 
 angular.module('contentful').factory(name, [
   'require',
   function(require) {
-    const Button = require(ButtonModule);
-    const Input = require(InputModule);
-    const Form = require(FormModule);
+    const Button = require('components/react/atoms/Button.es6').default;
+    const Input = require('components/react/atoms/Input.es6').default;
+    const Form = require('components/react/atoms/Form.es6').default;
     const store = require('TheStore').getStore();
     const {
       getStoragePrefix,

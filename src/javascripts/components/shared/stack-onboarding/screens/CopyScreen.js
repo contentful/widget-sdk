@@ -1,9 +1,6 @@
 import React from 'react';
 
-import { name as FullScreenModule } from '../../../react/molecules/FullScreen';
 import { name as SkipModule } from '../components/Skip';
-import { name as ButtonModule } from '../../../react/atoms/Button';
-import { name as CodeModule } from '../../../react/atoms/Code';
 import { name as NavigationModule } from '../components/Navigation';
 import { name as WithLinkModule } from '../components/WithLink';
 import { name as CreateModernOnboardingModule } from '../../auto_create_new_space/CreateModernOnboarding';
@@ -17,10 +14,10 @@ angular.module('contentful').factory(name, [
     const $stateParams = require('$stateParams');
     const { getCredentials } = require(CreateModernOnboardingModule);
 
-    const FullScreen = require(FullScreenModule);
+    const FullScreen = require('components/react/molecules/FullScreen.es6').default;
     const Skip = require(SkipModule);
-    const Button = require(ButtonModule);
-    const Code = require(CodeModule);
+    const Button = require('components/react/atoms/Button.es6').default;
+    const Code = require('components/react/atoms/Code.es6').default;
     const Navigation = require(NavigationModule);
     const WithLink = require(WithLinkModule);
     const ScreenHeader = require(ScreenHeaderModule);

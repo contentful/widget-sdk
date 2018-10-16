@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { name as TabsModule } from '../../../react/molecules/Tabs';
-import { name as BrowserModule } from '../../../react/molecules/Browser';
 import { name as CodeSnippetsModule } from './CodeSnippets';
 import { name as DataFlowModule } from './DataFlow';
 
@@ -14,10 +12,10 @@ const GATSBY_APP_URL = 'https://ctf-gatsby-contentful-starter.netlify.com/';
 angular.module('contentful').factory(name, [
   'require',
   function(require) {
-    const Tabs = require(TabsModule);
+    const Tabs = require('components/react/molecules/Tabs.es6').default;
     const CodeSnippets = require(CodeSnippetsModule);
     const DataFlow = require(DataFlowModule);
-    const Browser = require(BrowserModule);
+    const Browser = require('components/react/molecules/Browser.es6').default;
 
     class ContentFlowExplorer extends React.Component {
       state = {

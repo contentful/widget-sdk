@@ -1,6 +1,4 @@
 import React from 'react';
-import { name as FullScreenModule } from '../../../react/molecules/FullScreen';
-import { name as ButtonModule } from '../../../react/atoms/Button';
 import { name as SkipModule } from '../components/Skip';
 import { name as WithLinkModule } from '../components/WithLink';
 
@@ -9,8 +7,8 @@ export const name = 'get-started-component';
 angular.module('contentful').factory(name, [
   'require',
   function(require) {
-    const FullScreen = require(FullScreenModule);
-    const Button = require(ButtonModule);
+    const FullScreen = require('components/react/molecules/FullScreen.es6').default;
+    const Button = require('components/react/atoms/Button.es6').default;
     const Skip = require(SkipModule);
     const WithLink = require(WithLinkModule);
     const Icon = require('ui/Components/Icon.es6').default;

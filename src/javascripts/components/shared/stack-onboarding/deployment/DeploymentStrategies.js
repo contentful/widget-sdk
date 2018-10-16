@@ -1,18 +1,15 @@
 import React from 'react';
 
-import { name as TabsModule } from '../../../react/molecules/Tabs';
-import { name as CodeModule } from '../../../react/atoms/Code';
 import { name as CreateModernOnboardingModule } from '../../auto_create_new_space/CreateModernOnboarding';
-import { name as AnchorModule } from '../../../react/atoms/Anchor';
 
 export const name = 'deployment-strategies-onboarding';
 
 angular.module('contentful').factory(name, [
   'require',
   function(require) {
-    const Tabs = require(TabsModule);
-    const Code = require(CodeModule);
-    const A = require(AnchorModule);
+    const Tabs = require('components/react/molecules/Tabs.es6').default;
+    const Code = require('components/react/atoms/Code.es6').default;
+    const A = require('components/react/atoms/Anchor.es6').default;
     const {
       getCredentials,
       isOnboardingComplete,
