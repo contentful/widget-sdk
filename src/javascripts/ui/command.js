@@ -24,7 +24,7 @@ angular
   .factory('command', [
     'require',
     require => {
-      var createSignal = require('signal').create;
+      var createSignal = require('utils/signal.es6').create;
       var $q = require('$q');
 
       /**

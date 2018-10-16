@@ -1,4 +1,4 @@
-import { create as createSignal } from 'signal';
+import { create as createSignal } from 'utils/signal.es6';
 import debounce from 'debounce';
 import $ from 'jquery';
 import CodeMirror from 'codemirror';

@@ -5,9 +5,9 @@ angular.module('cf.app').controller('LocationEditorSearchController', [
   '$scope',
   function(require, $scope) {
     const $q = require('$q');
-    const memoize = require('utils/memoize');
+    const memoize = require('utils/memoize.es6').default;
     const LazyLoader = require('LazyLoader');
-    const Signal = require('signal');
+    const Signal = require('utils/signal.es6');
     const throttle = require('throttle');
 
     const controller = this;

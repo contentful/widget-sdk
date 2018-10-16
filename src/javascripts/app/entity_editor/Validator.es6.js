@@ -15,7 +15,7 @@
 
 import { constant, noop, isEmpty, assign, get as getAtPath, isEqual } from 'lodash';
 import * as K from 'utils/kefir.es6';
-import * as Path from 'utils/Path';
+import * as Path from 'utils/Path.es6';
 
 import errorMessageBuilder from 'errorMessageBuilder';
 import * as Schema from 'validation';

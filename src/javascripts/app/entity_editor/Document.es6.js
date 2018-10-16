@@ -13,7 +13,7 @@
 import { get, memoize, cloneDeep } from 'lodash';
 import * as K from 'utils/kefir.es6';
 import { deepFreeze } from 'utils/Freeze.es6';
-import * as PathUtils from 'utils/Path';
+import * as PathUtils from 'utils/Path.es6';
 import { caseof } from 'sum-types';
 import * as logger from 'logger';
 import * as accessChecker from 'access_control/AccessChecker';

@@ -42,7 +42,7 @@ angular
           var $q = require('$q');
           var WidgetAPI = require('widgets/API');
           var K = require('utils/kefir.es6');
-          var PathUtils = require('utils/Path');
+          var PathUtils = require('utils/Path.es6');
 
           var appDomain = 'app.' + require('Config.es6').domain;
 

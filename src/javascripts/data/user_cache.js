@@ -32,7 +32,7 @@ angular
   .factory('data/userCache', [
     'require',
     require => {
-      const memoize = require('utils/memoize');
+      const memoize = require('utils/memoize.es6').default;
       const fetchAll = require('data/CMA/FetchAll.es6').fetchAll;
 
       return function createCache(endpoint) {

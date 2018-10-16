@@ -1,19 +1,13 @@
-'use strict';
+import { create as createSignal, createMemoized } from '../signal.es6';
+import sinon from 'sinon';
+import _ from 'lodash';
 
-describe('signal', () => {
-  beforeEach(() => {
-    module('cf.utils');
-  });
-
+describe('utils/signal.es6', () => {
   describe('#create()', () => {
-    beforeEach(function() {
-      this.createSignal = this.$inject('signal').create;
-    });
-
     it('calls attached listeners on dispatch', function() {
       const listeners = _.map(_.range(1, 4), () => sinon.stub());
 
-      const signal = this.createSignal();
+      const signal = createSignal();
 
       _.forEach(listeners, listener => {
         signal.attach(listener);
@@ -22,53 +16,49 @@ describe('signal', () => {
       signal.dispatch('VALUE');
 
       _.forEach(listeners, l => {
-        sinon.assert.calledWith(l, 'VALUE');
+        expect(l.calledWith('VALUE')).toBeTruthy();
       });
     });
 
     it('does not call detached listeners', function() {
       const listener = sinon.stub();
-      const signal = this.createSignal();
+      const signal = createSignal();
       const detach = signal.attach(listener);
 
       signal.dispatch();
-      sinon.assert.calledOnce(listener);
+      expect(listener.calledOnce).toBe(true);
 
       detach();
       signal.dispatch();
-      sinon.assert.calledOnce(listener);
+      expect(listener.calledOnce).toBe(true);
     });
   });
 
   describe('#createMemoized()', () => {
-    beforeEach(function() {
-      this.createSignal = this.$inject('signal').createMemoized;
-    });
-
     it('sends initial value on attach with send option', function() {
-      const signal = this.createSignal('INITIAL');
+      const signal = createMemoized('INITIAL');
       const listener = sinon.stub();
 
       signal.attach(listener, true);
-      sinon.assert.calledWithExactly(listener, 'INITIAL');
+      expect(listener.calledWithExactly('INITIAL')).toBe(true);
     });
 
     it('sends last value on attach with send option', function() {
-      const signal = this.createSignal();
+      const signal = createMemoized();
       const listener = sinon.stub();
 
       signal.dispatch('VALUE');
       signal.attach(listener, true);
-      sinon.assert.calledWithExactly(listener, 'VALUE');
+      expect(listener.calledWithExactly('VALUE')).toBe(true);
     });
 
     it('overides initial value when dispatched', function() {
-      const signal = this.createSignal('INITIAL');
+      const signal = createMemoized('INITIAL');
       signal.dispatch('VALUE');
 
       const listener = sinon.stub();
       signal.attach(listener, true);
-      sinon.assert.calledWithExactly(listener, 'VALUE');
+      expect(listener.calledWithExactly('VALUE')).toBe(true);
     });
   });
 });
