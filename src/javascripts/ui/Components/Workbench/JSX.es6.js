@@ -115,6 +115,36 @@ Workbench.Title = class Title extends React.Component {
   }
 };
 
+Workbench.Header.Left = class HeaderLeft extends React.Component {
+  static propTypes = {
+    children: PropTypes.node
+  };
+
+  render() {
+    return <div className="workbench-header__left">{this.props.children}</div>;
+  }
+};
+
+Workbench.Header.Search = class HeaderSearch extends React.Component {
+  static propTypes = {
+    children: PropTypes.node
+  };
+
+  render() {
+    return <div className="workbench-header__search">{this.props.children}</div>;
+  }
+};
+
+Workbench.Header.Actions = class HeaderActions extends React.Component {
+  static propTypes = {
+    children: PropTypes.node
+  };
+
+  render() {
+    return <div className="workbench-header__actions">{this.props.children}</div>;
+  }
+};
+
 Workbench.Content = class Content extends React.Component {
   static propTypes = {
     children: PropTypes.oneOfType([PropTypes.array, PropTypes.element])
