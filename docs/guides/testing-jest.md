@@ -42,14 +42,11 @@ npm run jest:debug
 
 ## Filename Conventions
 
-Jest will look for test files with any of the following naming conventions:
-
-* Files with `.spec.js` suffix in `src/javascripts` folder
-* Files with `.spec.js` suffix in `src/javascripts/**/__tests__` folders.
+Jest will look for test files with `.spec.js` suffix in `src/javascripts` folder.
 
 The files can be located at any depth under the `src/javascripts` folder.
 
-It's recommended to put the test files (or __tests__ folders) next to the code they are testing so that relative imports appear shorter. For example, if `App.spec.js` and `App.js` are in the same folder, the test just needs to import App from './App' instead of a long relative path. Colocation also helps find tests more quickly in larger projects.
+It's recommended to put the test files next to the code they are testing so that relative imports appear shorter. For example, if `App.spec.js` and `App.js` are in the same folder, the test just needs to import App from './App' instead of a long relative path. Colocation also helps find tests more quickly in larger projects.
 
 ## About Enzyme and Jest
 
@@ -300,7 +297,7 @@ Use the following [`launch.json`](https://code.visualstudio.com/docs/editor/debu
 
 Good news. Migration to Jest should be easy.
 
-* Move file from `test/**/*.spec.js` to `src/**/__tests__/*.spec.js`, so file that is being tests is located in parent folder.
+* Move file from `test/**/*.spec.js` to `src/**/*.spec.js`, so file that is being tested is located in next to test file.
 * Import `sinon` directly as `import sinon from "sinon"` if it was used.
 * Fix all ESLint errors in the file.
 
