@@ -56,7 +56,7 @@ const createValue = contentfulDocument => {
     schema
   });
   const value = Value.fromJSON({
-    document: document,
+    document,
     schema
   });
 
@@ -83,7 +83,7 @@ export default class RichTextEditor extends React.Component {
     this.state = {
       lastOperations: [],
       isEmbedDropdownOpen: false,
-      value: value && value.nodeClass === 'document' ? createValue(value) : initialValue,
+      value: value && value.nodeType === BLOCKS.DOCUMENT ? createValue(value) : initialValue,
       hasFocus: false
     };
     this.slatePlugins = buildPlugins(widgetAPI);
@@ -104,7 +104,12 @@ export default class RichTextEditor extends React.Component {
       this.setState({ lastOperations: [] });
       const slateDoc = this.state.value.document.toJSON();
 
-      onChange(toContentfulDocument(slateDoc));
+      onChange(
+        toContentfulDocument({
+          document: slateDoc,
+          schema
+        })
+      );
     } else if (isIncomingChange()) {
       this.setState({
         value: createValue(contentfulDoc)

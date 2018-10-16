@@ -10,7 +10,7 @@ describe('RichTextFieldSetter', () => {
     this.logger = {
       logException: sinon.spy()
     };
-    this.emptyDoc = { content: [{}], nodeClass: 'document', nodeType: 'document' };
+    this.emptyDoc = { content: [{}], nodeType: 'document' };
 
     module('contentful/test', $provide => {
       $provide.value('data/ShareJS/Utils', this.ShareJS);

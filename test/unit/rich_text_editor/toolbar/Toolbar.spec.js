@@ -467,9 +467,7 @@ describe('Toolbar', () => {
   describe('HR', function() {
     it('renders the HR', async function() {
       await triggerToolbarIcon(this.wrapper, BLOCKS.HR);
-      expect(this.field.getValue()).toEqual(
-        document(block(BLOCKS.HR, {}, text()), EMPTY_PARAGRAPH)
-      );
+      expect(this.field.getValue()).toEqual(document(block(BLOCKS.HR, {}), EMPTY_PARAGRAPH));
     });
   });
 
@@ -522,7 +520,7 @@ function newEmbeddedEntityBlock(entity) {
     }
   };
   const entityBlockName = 'EMBEDDED_' + linkType.toUpperCase();
-  return block(BLOCKS[entityBlockName], data, text());
+  return block(BLOCKS[entityBlockName], data);
 }
 
 function newEmbeddedEntryInline(entity) {
@@ -532,5 +530,5 @@ function newEmbeddedEntryInline(entity) {
       sys: { id, type: 'Link', linkType: 'Entry' }
     }
   };
-  return inline(INLINES.EMBEDDED_ENTRY, data, text());
+  return inline(INLINES.EMBEDDED_ENTRY, data);
 }
