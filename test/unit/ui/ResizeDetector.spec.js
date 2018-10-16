@@ -1,22 +1,25 @@
 import * as K from 'helpers/mocks/kefir';
-import { h } from 'ui/Framework';
+import React from 'react';
 import { observeResize } from 'ui/ResizeDetector.es6';
 
 describe('ui/ResizeDetector.es6', () => {
   beforeEach(function() {
     const view = this.createUI();
     view.render(
-      h(
-        '#container',
-        {
-          style: {
-            display: 'flex',
-            width: '100px',
-            height: '100px'
-          }
-        },
-        [h('#inner', { style: { flexGrow: 1 } })]
-      )
+      <div
+        id="container"
+        style={{
+          display: 'flex',
+          width: '100px',
+          height: '100px'
+        }}>
+        <div
+          id="inner"
+          style={{
+            flexGrow: 1
+          }}
+        />
+      </div>
     );
 
     this.container = $(view.element).find('#container');

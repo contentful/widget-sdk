@@ -4,7 +4,7 @@ import * as K from 'utils/kefir.es6';
 import { caseof } from 'sum-types';
 import { makeCtor } from 'utils/TaggedValues.es6';
 
-import { h } from 'ui/Framework';
+import React from 'react';
 import { createStore, makeReducer } from 'ui/Framework/Store.es6';
 import { container, hfill, vspace_, vspace, hspace } from 'ui/Layout.es6';
 import { byName as Colors } from 'Styles/Colors.es6';
@@ -169,91 +169,79 @@ function selectAllButton(state, actions) {
   const disabled = !state.roles;
   const allSelected = (state.roles || []).every(role => role.selected);
   if (allSelected) {
-    return h(
-      'button.text-link',
-      {
-        dataTestId: testId('unselect-all'),
-        onClick: actions.UnselectAll,
-        disabled: disabled
-      },
-      ['Unselect all']
+    return (
+      <button
+        data-test-id={testId('unselect-all')}
+        onClick={actions.UnselectAll}
+        disabled={disabled}
+        className="text-link">
+        Unselect all
+      </button>
     );
   } else {
-    return h(
-      'button.text-link',
-      {
-        dataTestId: testId('select-all'),
-        onClick: actions.SelectAll,
-        disabled: disabled
-      },
-      ['Select all']
+    return (
+      <button
+        data-test-id={testId('select-all')}
+        onClick={actions.SelectAll}
+        disabled={disabled}
+        className="text-link">
+        Select all
+      </button>
     );
   }
 }
 
 function render(state, actions) {
-  return h(
-    '.modal-dialog',
-    {
-      dataTestId: testId(),
-      style: { maxWidth: '42em' }
-    },
-    [
-      h('header.modal-dialog__header', [
-        h('h1', ['Share this view']),
-        h('button.modal-dialog__close', {
-          onClick: actions.CancelSelection
-        })
-      ]),
-      h('.modal-dialog__only-content', [
-        h('p', { style: { lineHeight: '1.7' } }, [
-          `A view displays a list of entries you searched for.
+  return (
+    <div data-test-id={testId()} style={{ maxWidth: '42em' }} className="modal-dialog">
+      <header className="modal-dialog__header">
+        <h1>Share this view</h1>
+        <button onClick={actions.CancelSelection} className="modal-dialog__close" />
+      </header>
+      <div className="modal-dialog__only-content">
+        <p style={{ lineHeight: '1.7' }}>{`A view displays a list of entries you searched for.
         By sharing this view with people with other roles,
-        you are granting them access to view it.`
-        ]),
-        vspace(4),
-        container(
-          {
-            display: 'flex'
-          },
-          [h('strong', ['Select role(s)']), hfill(), selectAllButton(state, actions)]
-        ),
-        vspace(4),
-        renderRolesContainer(state, actions),
-        vspace(4),
-        h('.note-box--info', [
-          h('p', [
-            `This view might display different content depending on the role,
-          because different roles might have access to different content types.
-          Administrators have access to all shared views.`
-          ])
-        ]),
-        vspace(4),
-        container(
+        you are granting them access to view it.`}</p>
+        {vspace(4)}
+        {container(
           {
             display: 'flex'
           },
           [
-            h(
-              'button.btn-primary-action',
-              {
-                dataTestId: testId('apply-selection'),
-                onClick: actions.ConfirmSelection
-              },
-              ['Share this view']
-            ),
-            hspace('10px'),
-            h(
-              'button.btn-secondary-action',
-              {
-                onClick: actions.CancelSelection
-              },
-              ['Cancel']
-            )
+            <strong key="select-roles">Select role(s)</strong>,
+            hfill(),
+            selectAllButton(state, actions)
           ]
-        )
-      ])
-    ]
+        )}
+        {vspace(4)}
+        {renderRolesContainer(state, actions)}
+        {vspace(4)}
+        <div className="note-box--info">
+          <p>{`This view might display different content depending on the role,
+          because different roles might have access to different content types.
+          Administrators have access to all shared views.`}</p>
+        </div>
+        {vspace(4)}
+        {container(
+          {
+            display: 'flex'
+          },
+          [
+            <button
+              key="share-this-view"
+              data-test-id={testId('apply-selection')}
+              onClick={actions.ConfirmSelection}
+              className="btn-primary-action">
+              Share this view
+            </button>,
+            hspace('10px'),
+            <button key="cancel" onClick={actions.CancelSelection} className="btn-secondary-action">
+              Cancel
+            </button>
+          ]
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -277,20 +265,23 @@ function renderRolesContainer(state, actions) {
 }
 
 function fetchError() {
-  return h(
-    'p',
-    {
-      style: {
+  return (
+    <p
+      style={{
         padding: '80px 25px',
         textAlign: 'center'
-      }
-    },
-    ['There was an error while fetching the roles.']
+      }}>
+      There was an error while fetching the roles.
+    </p>
   );
 }
 
 function loader() {
-  return h('.loading-box--stretched', [h('.loading-box__spinner')]);
+  return (
+    <div className="loading-box--stretched">
+      <div className="loading-box__spinner" />
+    </div>
+  );
 }
 
 function renderRoles(roles, toggleSelection) {
@@ -299,32 +290,30 @@ function renderRoles(roles, toggleSelection) {
     container(
       {},
       roles.map(({ id, name, selected, disabled }, i) => {
-        return h(
-          'div',
-          {
-            class: [
+        return (
+          <div
+            key={`role-${id}`}
+            className={[
               'view-role-selector__role',
               selected ? 'x--selected' : '',
               disabled ? 'x--disabled' : ''
-            ].join(' '),
-            dataTestId: testId(`roles.${id}`),
-            role: 'button',
-            ariaDisabled: String(!!disabled),
-            ariaChecked: String(!!selected),
-            onClick: () => !disabled && toggleSelection(i)
-          },
-          [
-            name,
-            hfill('20px'),
-            container(
+            ].join(' ')}
+            data-test-id={testId(`roles.${id}`)}
+            role="button"
+            aria-disabled={String(!!disabled)}
+            aria-checked={String(!!selected)}
+            onClick={() => !disabled && toggleSelection(i)}>
+            {name}
+            {hfill('20px')}
+            {container(
               {
                 fontFamily: 'FontAwesome',
                 fontSize: '18px',
                 color: selected ? Colors.greenDark : Colors.textLightest
               },
               [selected ? '\uf058' : '\uf055']
-            )
-          ]
+            )}
+          </div>
         );
       })
     ),

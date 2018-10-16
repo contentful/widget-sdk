@@ -1,4 +1,4 @@
-import { h } from 'ui/Framework';
+import React from 'react';
 import { makeCtor } from 'utils/TaggedValues.es6';
 import { assign } from 'utils/Collections.es6';
 import { forScopedViews as trackingForScopedViews } from 'analytics/events/SearchAndViews.es6';
@@ -9,7 +9,6 @@ import initSavedViewsComponent from './SavedViewsComponent.es6';
 import SaveCurrentViewDialog from './SaveViewDialog.es6';
 
 import { byName as colors } from 'Styles/Colors.es6';
-import { container } from 'ui/Layout.es6';
 
 const Select = makeCtor('Select');
 
@@ -41,66 +40,59 @@ export default function({ entityFolders, loadView, getCurrentView, roleAssignmen
     actions: { Select }
   };
 
-  return assign(
-    { api: { saveCurrentView } },
-    combineStoreComponents(render, { selector, sharedViews, privateViews })
-  );
+  // eslint-disable-next-line react/prop-types
+  const Views = ({ selected, value, component }) => {
+    if (selected === value) {
+      // Use `key` so tree is not reused between shared and private views:
+      // it causes nasty DnD bugs
+      return <div key={value}>{component.view}</div>;
+    }
+    return null;
+  };
 
+  // eslint-disable-next-line react/prop-types
+  const TabButton = ({ selector, value, label }) => {
+    return (
+      <li
+        ariaSelected={`${selector.state === value}`}
+        role="tab"
+        style={{
+          fontSize: '14px',
+          fontWeight: 'normal',
+          color: selector.state === value ? colors.textDark : colors.textLight
+        }}
+        onClick={() => selector.actions.Select(value)}>
+        {label}
+      </li>
+    );
+  };
+
+  // eslint-disable-next-line react/prop-types
   function render({ selector, sharedViews, privateViews }) {
-    return h(
-      'div',
-      {
-        style: {
+    return (
+      <div
+        style={{
           backgroundColor: colors.elementLightest,
           height: '100vh',
           borderRight: `1px solid ${colors.elementDarkest}`,
           boxShadow: '1px 0 2px 0 rgba(0,0,0,0.09)'
-        }
-      },
-      [
-        container(
-          {
+        }}>
+        <div
+          style={{
             paddingTop: '1rem',
             paddingRight: '1.5rem',
             paddingLeft: '1.5rem',
             backgroundColor: colors.elementLightest,
             borderBottom: `1px solid ${colors.elementMid}`
-          },
-          [
-            h('ul.workbench-nav__tabs', [
-              button(selector, VIEWS_SHARED, 'Shared views'),
-              button(selector, VIEWS_PRIVATE, 'My views')
-            ])
-          ]
-        ),
-        views(selector.state, VIEWS_SHARED, sharedViews),
-        views(selector.state, VIEWS_PRIVATE, privateViews)
-      ]
-    );
-  }
-
-  function views(selected, value, component) {
-    if (selected === value) {
-      // Use `key` so tree is not reused between shared and private views:
-      // it causes nasty DnD bugs
-      return h('div', { key: value }, [component.view]);
-    }
-  }
-
-  function button({ state, actions }, value, label) {
-    return h(
-      'li',
-      {
-        ariaSelected: `${state === value}`,
-        role: 'tab',
-        style: {
-          fontSize: '14px',
-          fontWeight: 'normal',
-          color: state === value ? colors.textDark : colors.textLight
-        },
-        onClick: () => actions.Select(value)
-      },
-      [label]
+          }}>
+          <ul className="workbench-nav__tabs">
+            <TabButton selector={selector} value={VIEWS_SHARED} label="Shared views" />
+            <TabButton selector={selector} value={VIEWS_PRIVATE} label="My views" />
+          </ul>
+        </div>
+        <Views selected={selector.state} value={VIEWS_SHARED} component={sharedViews} />
+        <Views selected={selector.state} value={VIEWS_PRIVATE} component={privateViews} />
+      </div>
     );
   }
 
@@ -117,4 +109,9 @@ export default function({ entityFolders, loadView, getCurrentView, roleAssignmen
       selector.store.dispatch(selector.actions.Select, tab);
     });
   }
+
+  return assign(
+    { api: { saveCurrentView } },
+    combineStoreComponents(render, { selector, sharedViews, privateViews })
+  );
 }

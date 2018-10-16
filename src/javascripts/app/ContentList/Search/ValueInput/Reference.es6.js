@@ -1,11 +1,11 @@
 /* global requestAnimationFrame */
 import { cloneDeep } from 'lodash';
-
-import { h } from 'ui/Framework';
+import React from 'react';
+import PropTypes from 'prop-types';
 import keycodes from 'utils/keycodes.es6';
 import entitySelector from 'entitySelector';
 
-export default function filterValueReference({
+export default function FilterValueReference({
   ctField = {},
   testId,
   value,
@@ -33,21 +33,32 @@ export default function filterValueReference({
     }
   };
 
-  return h('input.input-reset.search__input-text.search__input-reference', {
-    dataTestId: testId,
-    value,
-    ref: inputRef,
-    onClick: event => {
-      event.stopPropagation();
-      event.preventDefault();
-      openSelector();
-    },
-    onChange: e => onChange(e.target.value),
-    onKeyDown: e => handleKeyDown(e),
-    tabIndex: '0',
-    placeholder: 'Click to select'
-  });
+  return (
+    <input
+      data-test-id={testId}
+      value={value}
+      ref={inputRef}
+      onClick={event => {
+        event.stopPropagation();
+        event.preventDefault();
+        openSelector();
+      }}
+      onChange={e => onChange(e.target.value)}
+      onKeyDown={e => handleKeyDown(e)}
+      tabIndex="0"
+      placeholder="Click to select"
+      className="input-reset search__input-text search__input-reference"
+    />
+  );
 }
+FilterValueReference.propTypes = {
+  ctField: PropTypes.object,
+  testId: PropTypes.string,
+  value: PropTypes.any,
+  inputRef: PropTypes.any,
+  onChange: PropTypes.func,
+  onKeyDown: PropTypes.func
+};
 
 function shouldOpenSelector({ keyCode }) {
   return keyCode === keycodes.DOWN || keyCode === keycodes.ENTER || keyCode === keycodes.SPACE;

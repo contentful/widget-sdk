@@ -1,6 +1,7 @@
 import { get as getAtPath } from 'lodash';
+import React from 'react';
+import classNames from 'classnames';
 import { assign, filter } from 'utils/Collections.es6';
-import { h } from 'ui/Framework';
 import { htmlEncode } from 'encoder';
 
 import openRoleSelector from './RoleSelector.es6';
@@ -28,67 +29,70 @@ export default function render(folder, state, actions) {
   const currentViewId = getAtPath(state.currentView, ['id']);
   const active = view => (view.id === currentViewId ? '-active' : '');
 
-  return h('.view-folder', { key: folder.id, class: isNotDefault ? draggable : '' }, [
-    isNotDefault &&
-      h('header.view-folder__header', [
-        h('div.view-folder__title', [
-          `${folder.title} (${folder.views.length})`,
-          canEdit &&
-            h('.view-folder__actions', [
-              h('i.fa.fa-pencil', { onClick: () => renameFolder(folder, UpdateFolder) }),
-              h('i.fa.fa-close', { onClick: () => deleteFolder(folder, DeleteFolder) })
-            ])
-        ]),
-        h(
-          'i.view-folder__toggle',
-          {
-            class: collapsed,
-            onClick: () => actions.ToggleOpened(folder)
-          },
-          ['▼']
-        )
-      ]),
-    !isClosed &&
-      h(
-        'ul.view-folder__list',
-        {
-          class: collapsed,
-          ref: el => state.dnd.forViews(el, folder),
-          style: {
+  return (
+    <div key={folder.id} className={classNames('view-folder', isNotDefault ? draggable : '')}>
+      {isNotDefault && (
+        <header className="view-folder__header">
+          <div className="view-folder__title">
+            {`${folder.title} (${folder.views.length})`}
+            {canEdit && (
+              <div className="view-folder__actions">
+                <i onClick={() => renameFolder(folder, UpdateFolder)} className="fa fa-pencil" />
+                <i onClick={() => deleteFolder(folder, DeleteFolder)} className="fa fa-close" />
+              </div>
+            )}
+          </div>
+          <i
+            onClick={() => actions.ToggleOpened(folder)}
+            className={classNames('view-folder__toggle', collapsed)}>
+            ▼
+          </i>
+        </header>
+      )}
+      {!isClosed && (
+        <ul
+          ref={el => state.dnd.forViews(el, folder)}
+          style={{
             minHeight: views.length === 0 ? '10px' : undefined,
             marginBottom: views.length === 0 ? '0px' : undefined
-          }
-        },
-        views.map(view => {
-          return h(
-            'li.view-folder__item',
-            {
-              key: view.id,
-              class: [active(view), draggable].join(' '),
-              onClick: () => actions.LoadView(view)
-            },
-            [
-              h('.view-folder__item-title', [h('span', { title: view.title }, [view.title])]),
-              canEdit &&
-                h('.view-folder__actions', [
-                  roleAssignment &&
-                    h('i.fa.fa-eye', {
-                      onClick: doNotPropagate(() =>
-                        editViewRoles(view, roleAssignment.endpoint, tracking, UpdateView)
-                      )
-                    }),
-                  h('i.fa.fa-pencil', {
-                    onClick: doNotPropagate(() => editViewTitle(view, tracking, UpdateView))
-                  }),
-                  h('i.fa.fa-close', {
-                    onClick: doNotPropagate(() => deleteView(view, tracking, DeleteView))
-                  })
-                ])
-            ]
-          );
-        })
-      )
-  ]);
+          }}
+          className={classNames('view-folder__list', collapsed)}>
+          {views.map(view => {
+            return (
+              <li
+                key={view.id}
+                onClick={() => actions.LoadView(view)}
+                className={classNames('view-folder__item', active(view), draggable)}>
+                <div className="view-folder__item-title">
+                  <span title={view.title}>{view.title}</span>
+                </div>
+                {canEdit && (
+                  <div className="view-folder__actions">
+                    {roleAssignment && (
+                      <i
+                        onClick={doNotPropagate(() =>
+                          editViewRoles(view, roleAssignment.endpoint, tracking, UpdateView)
+                        )}
+                        className="fa fa-eye"
+                      />
+                    )}
+                    <i
+                      onClick={doNotPropagate(() => editViewTitle(view, tracking, UpdateView))}
+                      className="fa fa-pencil"
+                    />
+                    <i
+                      onClick={doNotPropagate(() => deleteView(view, tracking, DeleteView))}
+                      className="fa fa-close"
+                    />
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
+  );
 }
 
 function renameFolder(folder, UpdateFolder) {

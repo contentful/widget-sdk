@@ -15,10 +15,9 @@ import keycodes from 'utils/keycodes.es6';
 import FilterIcon from 'svg/filter.es6';
 import InfoIcon from 'svg/info.es6';
 
-import renderLoader from './Loader.es6';
 import { ValueInput } from './Filters.es6';
 import filterValueDate from './ValueInput/Date.es6';
-import filterValueReference from './ValueInput/Reference.es6';
+import FilterValueReference from './ValueInput/Reference.es6';
 import TextValueInput from './ValueInput/Text.es6';
 import Select from './ValueInput/select.es6';
 import QueryInput from './Components/QueryInput.es6';
@@ -55,7 +54,13 @@ export default function render({
   const placeholder = hasFilters ? '' : 'Type to search for ' + (withAssets ? 'assets' : 'entries');
 
   if (!hasLoaded) {
-    return renderLoader();
+    return h(
+      'div',
+      {
+        dataTestId: 'loader'
+      },
+      []
+    );
   }
 
   return h(
@@ -368,7 +373,7 @@ function filterValue({ valueInput, value, isFocused, onChange, onRemove }) {
         onKeyDown: handleKeyDown
       }),
     [ValueInput.Reference]: ctField =>
-      filterValueReference({
+      React.createElement(FilterValueReference, {
         testId: valueTestId,
         ctField,
         value,
