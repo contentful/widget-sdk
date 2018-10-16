@@ -42,7 +42,7 @@ export default class EntryLinkToolbarIcon extends Component {
               icon={type}
               buttonType="muted"
               testId={`toolbar-toggle-${nodeType}`}>
-              {`Embed block ${typeName}`}
+              {`Embed ${typeName}`}
             </Button>
           ) : (
             <DropdownListItem
