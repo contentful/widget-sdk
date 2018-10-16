@@ -149,33 +149,35 @@ export default class RichTextEditor extends React.Component {
 
     return (
       <EditorToolbar extraClassNames="rich-text__toolbar" data-test-id="toolbar">
-        <HeadingDropdown
-          onToggle={this.toggleHeadingMenu}
-          isToggleActive={true}
-          isOpen={this.state.headingMenuOpen}
-          onClose={this.closeHeadingMenu}
-          change={props.change}
-          disabled={props.disabled}>
-          <Paragraph {...props} />
-          <Heading1 {...props} extraClassNames="toolbar-h1-toggle" />
-          <Heading2 {...props} />
-          <Heading3 {...props} />
-          <Heading4 {...props} />
-          <Heading5 {...props} />
-          <Heading6 {...props} />
-        </HeadingDropdown>
-        <EditorToolbarDivider />
-        <Bold {...props} />
-        <Italic {...props} />
-        <Underlined {...props} />
-        <Code {...props} />
-        <EditorToolbarDivider />
-        <Hyperlink {...props} />
-        <EditorToolbarDivider />
-        <UnorderedList {...props} />
-        <OrderedList {...props} />
-        <Quote {...props} />
-        <Hr {...props} />
+        <div className="rich-text__toolbar__action-wrapper">
+          <HeadingDropdown
+            onToggle={this.toggleHeadingMenu}
+            isToggleActive={true}
+            isOpen={this.state.headingMenuOpen}
+            onClose={this.closeHeadingMenu}
+            change={props.change}
+            disabled={props.disabled}>
+            <Paragraph {...props} />
+            <Heading1 {...props} extraClassNames="toolbar-h1-toggle" />
+            <Heading2 {...props} />
+            <Heading3 {...props} />
+            <Heading4 {...props} />
+            <Heading5 {...props} />
+            <Heading6 {...props} />
+          </HeadingDropdown>
+          <EditorToolbarDivider />
+          <Bold {...props} />
+          <Italic {...props} />
+          <Underlined {...props} />
+          <Code {...props} />
+          <EditorToolbarDivider />
+          <Hyperlink {...props} />
+          <EditorToolbarDivider />
+          <UnorderedList {...props} />
+          <OrderedList {...props} />
+          <Quote {...props} />
+          <Hr {...props} />
+        </div>
         {this.renderEmbeds(props)}
       </EditorToolbar>
     );

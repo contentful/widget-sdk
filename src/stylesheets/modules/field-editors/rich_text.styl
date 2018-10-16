@@ -30,8 +30,20 @@
   &__embedded-asset-block-button {
     margin-left: auto;
     margin-right: 0.5rem;
-    visibility: hidden; // TODO: Remove when we want to enable feature.
+    display: none; // TODO: Remove when we want to enable feature.
   }
+
+  &__toolbar
+    .toolbar-entry-dropdown {
+      align-self: flex-start;
+      margin-left: auto;
+    }
+
+    &__action-wrapper
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-right: 20px;
 
   [data-slate-editor]
     padding: 20px
@@ -237,3 +249,4 @@
 .toggle-square
   width: 33px;
   height: 33px;
+
