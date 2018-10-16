@@ -28,7 +28,7 @@ class EntryEmbedDropdown extends Component {
             icon="Entry"
             size="small"
             disabled={this.props.disabled}>
-            Embed Entry
+            Embed entry
           </Button>
         }
         isOpen={isOpen}
