@@ -159,7 +159,7 @@ angular
         fieldDecorator.update($scope.decoratedField, $scope.field, contentTypeData);
         validations.updateField($scope.field, $scope.validations, $scope.nodeValidations);
 
-        if (RICH_TEXT_FIELD_TYPES.includes($scope.field.type)) {
+        if ($scope.field.type === 'RichText') {
           validations.addEnabledRichTextOptions($scope.field, $scope.richTextOptions);
         }
 
@@ -376,8 +376,10 @@ angular
 
       function selectWidget(i) {
         const widget = $scope.availableWidgets[i];
-        $scope.selectedWidgetIndex = i;
-        $scope.widgetSettings.id = widget.id;
+        if (widget) {
+          $scope.selectedWidgetIndex = i;
+          $scope.widgetSettings.id = widget.id;
+        }
       }
     }
   ])

@@ -135,12 +135,13 @@ angular.module('contentful').controller('AddFieldDialogController', [
     }
 
     function setFieldGroupRows(scope, enableExperimentalRichText = false) {
-      let fieldGroups = fieldFactory.groups;
+      // We don't want to show the StructuredText field in the dialog but we cannot remove
+      // it from the fieldFactory.groups because we still want to show it in the content type editor
+      // view so users are able to delete/disable it.
+      let fieldGroups = fieldFactory.groups.filter(group => group.name !== 'structured-text');
+
       if (!enableExperimentalRichText) {
-        fieldGroups = _.filter(
-          fieldGroups,
-          fieldGroup => fieldGroup.name !== 'structured-text' && fieldGroup.name !== 'rich-text'
-        );
+        fieldGroups = _.filter(fieldGroups, fieldGroup => fieldGroup.name !== 'rich-text');
       }
       scope.fieldGroupRows = fieldGroupsToRows(fieldGroups);
     }

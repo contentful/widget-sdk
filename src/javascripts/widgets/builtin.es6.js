@@ -187,13 +187,6 @@ export function create() {
     template: '<cf-rich-text-editor />'
   });
 
-  registerWidget('structuredTextEditor', {
-    fieldTypes: ['StructuredText'],
-    name: 'StructuredText',
-    icon: 'json',
-    template: '<cf-rich-text-editor />'
-  });
-
   registerWidget('listInput', {
     fieldTypes: ['Symbols'],
     defaultHelpText: 'Insert comma separated values',

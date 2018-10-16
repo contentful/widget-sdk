@@ -33,7 +33,7 @@ angular.module('contentful').factory('fieldDecorator', [
         displayName: getDisplayFieldName(field),
         isTitle: isTitle,
         canBeTitle: isTitleType(field.type),
-        isRichTextField: isRichTextField(field.type),
+        isRichTextField: field.type === 'RichText',
         canBeLocalized: true,
         apiName: field.apiName || field.id
       });
@@ -80,10 +80,6 @@ angular.module('contentful').factory('fieldDecorator', [
 
     function isTitleType(fieldType) {
       return fieldType === 'Symbol' || fieldType === 'Text';
-    }
-
-    function isRichTextField(fieldType) {
-      return fieldType === 'StructuredText' || fieldType === 'RichText';
     }
 
     function getDisplayFieldName(field) {

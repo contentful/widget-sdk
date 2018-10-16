@@ -104,13 +104,6 @@ angular.module('contentful').factory('fieldFactory', [
         types: ['RichText']
       },
       {
-        name: 'structured-text',
-        icon: 'richtext',
-        label: 'Structured text',
-        description: 'Deprecated - Please use Rich Text instead',
-        types: ['StructuredText']
-      },
-      {
         name: 'number',
         description: 'ID, order number, rating, quantity',
         types: ['Integer', 'Number']

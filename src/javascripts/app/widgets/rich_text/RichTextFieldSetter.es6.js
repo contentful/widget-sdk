@@ -22,7 +22,7 @@ export const is = (fieldId, contentType) => {
   }
   const fields = contentType.data ? contentType.data.fields : contentType.fields;
   const field = fields.find(f => f.id === fieldId);
-  return field && (field.type === 'StructuredText' || field.type === 'RichText');
+  return field && field.type === 'RichText';
 };
 
 /**

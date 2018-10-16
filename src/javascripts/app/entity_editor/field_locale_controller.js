@@ -246,7 +246,7 @@ angular
       });
 
       function isCollaborativeEditingDisabledForFieldType(fieldType) {
-        return fieldType === 'StructuredText' || fieldType === 'RichText';
+        return fieldType === 'RichText';
       }
     }
   ]);

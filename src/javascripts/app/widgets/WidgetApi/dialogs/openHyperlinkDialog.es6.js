@@ -68,7 +68,7 @@ export default async function({ value = {}, showTextInput, widgetAPI }) {
 }
 
 async function newConfigsForField(field) {
-  if (field.type === 'StructuredText' || field.type === 'RichText') {
+  if (field.type === 'RichText') {
     // TODO: Don't pass specific key if CT validation prohibits its type:
     const config = {};
     config.Entry = await newConfigFromRichTextField(field, 'entry-hyperlink');

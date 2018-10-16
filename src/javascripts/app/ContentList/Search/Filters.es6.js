@@ -15,7 +15,6 @@ const SUPPORTED_CT_FIELD_TYPES = [
   'Boolean',
   'Array',
   'Link',
-  'StructuredText',
   'RichText'
 ];
 

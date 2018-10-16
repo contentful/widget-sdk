@@ -91,11 +91,11 @@ describe('widgets/default', () => {
     expect(getDefault(field, 'displayfieldid')).toBe('entryLinksEditor');
   });
 
-  it('returns builtin widget id for each type', function() {
+  it('returns builtin widget id for each type (except for StructuredText)', function() {
     const fieldFactory = this.$inject('fieldFactory');
     const builtins = this.$inject('widgets/builtin.es6').create();
 
-    _.forEach(fieldFactory.types, typeDescriptor => {
+    _.forEach(fieldFactory.types.filter(type => type.name !== 'StructuredText'), typeDescriptor => {
       let field = fieldFactory.createTypeInfo(typeDescriptor);
       let widgetId = getDefault(field, 'displayfieldid');
       expect(typeof _.find(builtins, { id: widgetId })).toBe('object');
