@@ -1,6 +1,7 @@
 import { BLOCKS } from '@contentful/rich-text-types';
 import { haveTextInSomeBlocks } from '../shared/UtilHave.es6';
 import { newConfigFromRichTextField } from 'search/EntitySelector/Config.es6';
+import getLinkedContentTypeIdsForNodeType from '../shared/GetLinkedContentTypeIdsForNodeType.es6';
 
 /**
  * Returns whether given value has a block of the given type.
@@ -21,8 +22,13 @@ export const hasBlockOfType = (change, type) => {
  */
 export async function selectEntityAndInsert(nodeType, widgetAPI, change) {
   const baseConfig = await newConfigFromRichTextField(widgetAPI.field, nodeType);
+  const linkedContentTypeIds = getLinkedContentTypeIdsForNodeType(
+    widgetAPI.field,
+    BLOCKS.EMBEDDED_ENTRY
+  );
   const config = {
     ...baseConfig,
+    linkedContentTypeIds,
     max: 1
   };
   try {
