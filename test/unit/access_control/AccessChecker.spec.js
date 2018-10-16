@@ -130,7 +130,7 @@ describe('Access Checker', () => {
       it('should not hide or disable when operation can be performed', () => {
         getResStub.withArgs('read', 'Entry').returns(true);
         triggerChange();
-        const response = ac.getResponses()['read']['entry'];
+        const response = ac.getResponses().read.entry;
         expect(response.can).toBe(true);
         expect(response.shouldHide).toBe(false);
         expect(response.shouldDisable).toBe(false);
@@ -139,7 +139,7 @@ describe('Access Checker', () => {
       it('should disable, but not hide when operation cannot be performed and reasons for denial are given', () => {
         reasonsDeniedStub.withArgs('read', 'Entry').returns(['DENIED!']);
         triggerChange();
-        const response = ac.getResponses()['read']['entry'];
+        const response = ac.getResponses().read.entry;
         expect(response.can).toBe(false);
         expect(response.shouldHide).toBe(false);
         expect(response.shouldDisable).toBe(true);
@@ -147,7 +147,7 @@ describe('Access Checker', () => {
       });
 
       it('should hide when operation cannot be performed and no reasons are given', () => {
-        const response = ac.getResponses()['read']['entry'];
+        const response = ac.getResponses().read.entry;
         expect(response.can).toBe(false);
         expect(response.shouldHide).toBe(true);
         expect(response.shouldDisable).toBe(false);
@@ -165,7 +165,6 @@ describe('Access Checker', () => {
         enforcements.determineEnforcement
           .withArgs(mockSpace.organization, reasons, 'Entry')
           .returns(enforcement);
-        // debugger;
         triggerChange();
         sinon.assert.calledOnce(broadcastStub.withArgs(enforcement));
       });
@@ -212,28 +211,36 @@ describe('Access Checker', () => {
         );
       });
 
-      it('checks if the settings are readable to determine if apiKey is visible', () => {
+      it('should return false for apiKey if settings is not readable (permission denied)', () => {
         getResStub.returns(true);
-        triggerChange();
-
-        expect(ac.getSectionVisibility()['apiKey']).toBe(true);
-
         isPermissionDeniedStub.returns(true);
         triggerChange();
 
-        expect(ac.getSectionVisibility()['apiKey']).toBe(false);
+        expect(ac.getSectionVisibility().apiKey).toBe(false);
       });
 
-      it('checks if the settings are readable to determine if environments is visible', () => {
+      it('should return true for apiKey if settings is readable (permission not denied)', () => {
         getResStub.returns(true);
+        isPermissionDeniedStub.returns(false);
         triggerChange();
 
-        expect(ac.getSectionVisibility()['environments']).toBe(true);
+        expect(ac.getSectionVisibility().apiKey).toBe(true);
+      });
 
+      it('should return false for environments if settings is not readable (permission denied)', () => {
+        getResStub.returns(true);
         isPermissionDeniedStub.returns(true);
         triggerChange();
 
-        expect(ac.getSectionVisibility()['environments']).toBe(false);
+        expect(ac.getSectionVisibility().environments).toBe(false);
+      });
+
+      it('should return true for environments if settings is readable (permission not denied)', () => {
+        getResStub.returns(true);
+        isPermissionDeniedStub.returns(false);
+        triggerChange();
+
+        expect(ac.getSectionVisibility().environments).toBe(true);
       });
 
       it('shows entries/assets section when it has "hide" flag, but policy checker grants access', () => {

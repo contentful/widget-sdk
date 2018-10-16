@@ -94,9 +94,9 @@ export const isInitialized$ = isInitializedBus.property.skipDuplicates();
  * give a reason this is false but `shouldDisable` is true.
  */
 export const shouldHide = (action, entityType) => {
-  // First, cherck to see if read permissions are explicitly denied
-  // for this entity. If they are denied, hide it.
-  if (isDenied('read', entityType)) {
+  // Explicitly hide if read permissions are denied, regardless of
+  // shouldDisable.
+  if (!isAllowed('read', entityType)) {
     return true;
   }
 
@@ -131,7 +131,7 @@ export const getResponses = () => responses;
  * Sample usage: getResponseByActionAndEntity('create', 'entry')
  */
 export const getResponseByActionAndEntity = (action, entityType) =>
-  get(responses, `${action}.${entityType}`);
+  get(responses, [action, entityType]);
 
 /**
  * @name accessChecker#getSectionVisibility
@@ -225,8 +225,7 @@ function setContext(context) {
   const hasReasonsDenied = value => value.reasons && value.reasons.length;
   const denied = chain(responses)
     .values()
-    .map(values)
-    .flatten()
+    .flatMap(values)
     .filter(hasReasonsDenied)
     .value();
 
@@ -276,8 +275,6 @@ export function canPerformActionOnEntryOfType(action, ctId) {
  * @returns {boolean}
  * @description
  * Returns true if action can be performed on entity.
- *
- * This method can be provided with an entity object or string `"Entry"` or `"Asset"`.
  */
 export function canPerformActionOnEntity(action, entity) {
   return getPermissions(action, entity.data).can;
@@ -292,7 +289,7 @@ export function canPerformActionOnEntity(action, entity) {
  */
 export function canUpdateEntry(entry) {
   // Explicitly check if permission is denied for update on Entry first
-  if (isDenied('update', 'entry')) {
+  if (!isAllowed('update', 'entry')) {
     return false;
   }
 
@@ -313,7 +310,7 @@ export function canUpdateEntry(entry) {
  */
 export function canUpdateAsset(asset) {
   // Explicitly check if permission is denied for update on Asset first
-  if (isDenied('update', 'asset')) {
+  if (!isAllowed('update', 'asset')) {
     return false;
   }
 
@@ -434,7 +431,7 @@ function collectResponses() {
     const entityCapitalized = capitalizeFirst(entity);
 
     actions.forEach(action =>
-      set(replacement, `${action}.${entity}`, getPermissions(action, entityCapitalized))
+      set(replacement, [action, entity], getPermissions(action, entityCapitalized))
     );
   });
 
@@ -446,13 +443,13 @@ function collectSectionVisibility() {
     contentType: can('manage', 'ContentType') || !shouldHide('read', 'apiKey'),
     entry: !shouldHide('read', 'entry') || policyChecker.canAccessEntries(),
     asset: !shouldHide('read', 'asset') || policyChecker.canAccessAssets(),
-    apiKey: !isDenied('read', 'settings') && !shouldHide('read', 'apiKey'),
+    apiKey: isAllowed('read', 'settings') && !shouldHide('read', 'apiKey'),
     settings: !shouldHide('update', 'settings'),
     locales: !shouldHide('update', 'settings'),
     extensions: !shouldHide('update', 'settings'),
     users: !shouldHide('update', 'settings'),
     roles: !shouldHide('update', 'settings'),
-    environments: !isDenied('read', 'settings') && can('manage', 'Environments'),
+    environments: isAllowed('read', 'settings') && can('manage', 'Environments'),
     usage: !shouldHide('update', 'settings'),
     previews: !shouldHide('update', 'settings'),
     webhooks: !shouldHide('update', 'settings'),
@@ -461,24 +458,24 @@ function collectSectionVisibility() {
 }
 
 /**
- * Returns if the permission for `action` on `entityType` is explicitly
+ * Returns if the permission for `action` on `entityType` is not explicitly
  * denied.
  * @param  {string} action
  * @param  {string} entityType
  * @return {Boolean}
  */
-function isDenied(action, entityType) {
+function isAllowed(action, entityType) {
   if (!spaceAuthContext) {
-    return false;
+    return true;
   }
 
   const entityTypeCapitalized = capitalizeFirst(entityType);
-  return spaceAuthContext.isPermissionDenied(action, entityTypeCapitalized);
+  return !spaceAuthContext.isPermissionDenied(action, entityTypeCapitalized);
 }
 
 function createResponseAttributeGetter(attrName) {
   return (actionName, entity) => {
-    const action = get(responses, `${actionName}.${entity}`);
+    const action = get(responses, [actionName, entity]);
     return action && attrName in action ? action[attrName] : false;
   };
 }
