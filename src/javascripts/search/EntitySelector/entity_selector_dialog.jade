@@ -1,6 +1,7 @@
 .modal-background
   .modal-dialog.entity-selector-dialog(
-    ng-class="'entity-selector-dialog--for-{{ entitySelector.config.entityType.toLowerCase() }}-entities'")
+    ng-class="'entity-selector-dialog--for-{{ entitySelector.config.entityType.toLowerCase() }}-entities'"
+    data-test-id="entity-selector-dialog")
     header.modal-dialog__header
       h1 {{ entitySelector.labels.title }}
       button.modal-dialog__close(ng-click="dialog.cancel()")
