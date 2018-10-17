@@ -1,3 +1,5 @@
+import React from 'react';
+import { renderToString } from 'react-dom/server';
 import { mapValues } from 'lodash';
 import { assign, get, set, update } from 'utils/Collections.es6';
 import * as C from 'utils/Concurrent.es6';
@@ -8,7 +10,6 @@ import logger from 'logger';
 import { open as openDialog } from 'modalDialog';
 
 import { bindActions, createStore, makeReducer } from 'ui/Framework/Store.es6';
-import { h } from 'utils/legacy-html-hyperscript';
 import render from './EditDialogView.es6';
 
 // Actions
@@ -39,11 +40,13 @@ export function openCreateDialog(createEnvironment) {
   };
 
   return openDialog({
-    template: h('.modal-background', [
-      h('.modal-dialog', { style: { width: '32em' } }, [
-        h('cf-component-store-bridge', { component: 'component' })
-      ])
-    ]),
+    template: renderToString(
+      <div className="modal-background">
+        <div className="modal-dialog" style={{ width: '32em' }}>
+          <cf-component-store-bridge component="component" />
+        </div>
+      </div>
+    ),
     controller: $scope => {
       $scope.component = createComponent(initialState, { createEnvironment }, value => {
         $scope.dialog.confirm(value);

@@ -16,7 +16,7 @@ import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo.es6';
 import { openCreateDialog, openEditDialog } from './EditDialog.es6';
 import { openDeleteDialog } from './DeleteDialog.es6';
 import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService.es6';
-import render from './View.es6';
+import View from './View.es6';
 
 const environmentsFlagName = 'feature-dv-11-2017-environments';
 const incentivizeFlagName = 'feature-bv-06-2018-incentivize-upgrade';
@@ -171,7 +171,7 @@ export function createComponent(spaceContext, incentivizeUpgradeEnabled) {
 
   return {
     store,
-    render: state => render(state, actions)
+    render: state => View({ state, actions })
   };
 }
 

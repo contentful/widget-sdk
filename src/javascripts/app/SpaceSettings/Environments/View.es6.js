@@ -7,40 +7,30 @@ import { assign } from 'utils/Collections.es6';
 import { caseofEq } from 'sum-types';
 import { href } from 'states/Navigator.es6';
 import { subscription as subscriptionState } from 'ui/NavStates/Org.es6';
-
-import { h } from 'ui/Framework';
+import Workbench from 'app/WorkbenchReact.es6';
 import { LinkOpen, Badge, CodeFragment } from 'ui/Content.es6';
 import { Table, TableHead, TableRow, TableCell, TableBody } from '@contentful/ui-component-library';
-import { container, hbox, ihspace } from 'ui/Layout.es6';
 import { byName as Colors } from 'Styles/Colors.es6';
 
-import PageSettingsIcon from 'svg/page-settings.es6';
 import QuestionMarkIcon from 'svg/QuestionMarkIcon.es6';
 import Icon from 'ui/Components/Icon.es6';
 import CopyIconButton from 'ui/Components/CopyIconButton.es6';
 import { Tooltip } from 'react-tippy';
 
-export default function render(state, actions) {
-  return h('.workbench', [
-    h('.workbench-header__wrapper', [
-      h('header.workbench-header', [
-        h('.workbench-header__icon.cf-icon', [h(PageSettingsIcon)]),
-        h('h1.workbench-header__title', ['Environments'])
-      ])
-    ]),
-    h('.workbench-main', [
-      h('.workbench-main__content', [
-        container(
-          {
-            padding: '0em 1em'
-          },
-          [environmentList(state, actions)]
-        )
-      ]),
-      h('.workbench-main__sidebar', [h('.entity-sidebar', sidebar(state, actions))])
-    ])
-  ]);
+export default function View({ state, actions }) {
+  return (
+    <Workbench
+      title={`Environments`}
+      icon="page-settings"
+      content={<EnvironmentList {...state} {...actions} />}
+      sidebar={<Sidebar {...state} {...actions} />}
+    />
+  );
 }
+View.propTypes = {
+  state: PropTypes.any.isRequired,
+  actions: PropTypes.any.isRequired
+};
 
 /**
  * Renders
@@ -49,7 +39,7 @@ export default function render(state, actions) {
  * - A paginator for the items
  * - A warning message if loading the items failed
  */
-function environmentList({ isLoading, loadingError, items }, { OpenDeleteDialog, OpenEditDialog }) {
+function EnvironmentList({ isLoading, loadingError, items, OpenDeleteDialog, OpenEditDialog }) {
   const environments = items.map(env =>
     assign(env, {
       Delete: () => OpenDeleteDialog(env),
@@ -58,39 +48,42 @@ function environmentList({ isLoading, loadingError, items }, { OpenDeleteDialog,
   );
 
   if (loadingError) {
-    return h('.note-box--warning', [
-      `The list of environments failed to load, try refreshing the page. If
-      the problem persists `,
-      <LinkOpen key="contact-support-link" url={Config.supportUrl}>
-        contact support
-      </LinkOpen>
-    ]);
-  } else {
-    return h(
-      'div',
-      {
-        dataTestId: 'environmentList',
-        ariaBusy: isLoading ? 'true' : 'false'
-      },
-      [
-        container(
-          {
-            position: 'relative',
-            minHeight: '6em'
-          },
-          [
-            isLoading &&
-              h('.loading-box--stretched', [
-                h('.loading-box__spinner'),
-                h('.loading-box__message', ['Loading'])
-              ]),
-            h(EnvironmentTable, { environments })
-          ]
-        )
-      ]
+    return (
+      <div className="note-box--warning">
+        The list of environments failed to load, try refreshing the page. If the problem persists{' '}
+        <LinkOpen key="contact-support-link" url={Config.supportUrl}>
+          contact support
+        </LinkOpen>
+      </div>
     );
   }
+  return (
+    <div data-test-id="environmentList" aria-busy={isLoading ? 'true' : 'false'}>
+      <div
+        style={{
+          position: 'relative',
+          minHeight: '6em'
+        }}>
+        {isLoading ? (
+          <div className="loading-box--stretched">
+            <div className="loading-box__spinner" />
+            <div className="loading-box__message">Loading</div>
+          </div>
+        ) : (
+          <EnvironmentTable environments={environments} />
+        )}
+      </div>
+    </div>
+  );
 }
+
+EnvironmentList.propTypes = {
+  isLoading: PropTypes.bool,
+  loadingError: PropTypes.any,
+  items: PropTypes.array,
+  OpenDeleteDialog: PropTypes.func,
+  OpenEditDialog: PropTypes.func
+};
 
 const IN_PROGRESS_TOOLTIP = [
   'This environment is currently being created, it will take a couple ',
@@ -121,15 +114,15 @@ function EnvironmentTable({ environments }) {
           return (
             <TableRow key={environment.id} data-test-id={`environment.${environment.id}`}>
               <TableCell>
-                {hbox({ alignItems: 'center' }, [
-                  <CodeFragment key="environment-code-fragment">{environment.id}</CodeFragment>,
-                  ihspace('6px'),
-                  h(CopyIconButton, { value: environment.id }),
-                  ihspace('1.2em'),
-                  environment.isMaster && (
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <CodeFragment key="environment-code-fragment">{environment.id}</CodeFragment>
+                  <div style={{ display: 'inline-block', marginLeft: '6px' }} />
+                  <CopyIconButton value={environment.id} />
+                  <div style={{ display: 'inline-block', marginLeft: '1.2em' }} />
+                  {environment.isMaster && (
                     <Badge color={Colors.textLight}>Default environment</Badge>
-                  )
-                ])}
+                  )}
+                </div>
               </TableCell>
               <TableCell>
                 {caseofEq(environment.status, [
@@ -139,7 +132,7 @@ function EnvironmentTable({ environments }) {
                     () => {
                       return (
                         <Badge color={Colors.orangeDark}>
-                          In progress {questionMarkWithTooltip({ tooltip: IN_PROGRESS_TOOLTIP })}
+                          In progress <QuestionMarkWithTooltip tooltip={IN_PROGRESS_TOOLTIP} />
                         </Badge>
                       );
                     }
@@ -149,7 +142,7 @@ function EnvironmentTable({ environments }) {
                     () => {
                       return (
                         <Badge color={Colors.redDark}>
-                          Failed to create {questionMarkWithTooltip({ tooltip: FAILED_TOOLTIP })}
+                          Failed to create <QuestionMarkWithTooltip tooltip={FAILED_TOOLTIP} />
                         </Badge>
                       );
                     }
@@ -171,18 +164,16 @@ EnvironmentTable.propTypes = {
   environments: PropTypes.array
 };
 
-function questionMarkWithTooltip({ tooltip }) {
-  return h(
-    'span',
-    {
-      title: tooltip,
-      style: {
-        cursor: 'pointer'
-      }
-    },
-    [ihspace('10px'), h(QuestionMarkIcon)]
+function QuestionMarkWithTooltip({ tooltip }) {
+  return (
+    <span title={tooltip} style={{ cursor: 'pointer', paddingLeft: '10px' }}>
+      <QuestionMarkIcon />
+    </span>
   );
 }
+QuestionMarkWithTooltip.propTypes = {
+  tooltip: PropTypes.string.isRequired
+};
 
 function DeleteButton({ environment }) {
   return (
@@ -195,93 +186,104 @@ function DeleteButton({ environment }) {
     </button>
   );
 }
-
 DeleteButton.propTypes = {
   environment: PropTypes.object.isRequired
 };
 
-function sidebar(
-  {
-    canCreateEnv,
-    resource,
-    organizationId,
-    isLegacyOrganization,
-    canUpgradeSpace,
-    incentivizeUpgradeEnabled
-  },
-  { OpenCreateDialog, OpenUpgradeSpaceDialog }
-) {
+function Sidebar({
+  canCreateEnv,
+  resource,
+  organizationId,
+  isLegacyOrganization,
+  canUpgradeSpace,
+  incentivizeUpgradeEnabled,
+  OpenCreateDialog,
+  OpenUpgradeSpaceDialog
+}) {
   // Master is not included in the api, display +1 usage and limit
   const usage = resource.usage + 1;
   const limit = get(resource, 'limits.maximum', -1) + 1;
 
-  return [
-    h('h2.entity-sidebar__heading', ['Usage']),
-    h('.entity-sidebar__text-profile', [
-      h('p', { dataTestId: 'environmentsUsage' }, [
-        `You are using ${usage} `,
-        limit && `out of ${limit} environments available `,
-        !limit && `${pluralize('environment', usage)} `,
-        'in this space.',
-        // Note: this results in semantically incorrect html (div within p)
-        // https://github.com/tvkhoa/react-tippy/pull/73 would fix it.
-        !isLegacyOrganization && usageTooltip({ resource })
-      ]),
-      // Don't show limits and upgrade info for v1 orgs
-      !canCreateEnv &&
-        !isLegacyOrganization &&
-        h('p', [
-          limit > 1 && 'Delete existing environments or ',
-          canUpgradeSpace && (limit > 1 ? 'change ' : 'Change '),
-          !canUpgradeSpace &&
-            `${limit > 1 ? 'ask' : 'Ask'} the administrator of your organization to change `,
-          'the space to add more.'
-        ])
-    ]),
-    h('.entity-sidebar__widget', [
-      canCreateEnv &&
-        h(
-          'button.btn-action.x--block',
-          {
-            dataTestId: 'openCreateDialog',
-            onClick: OpenCreateDialog
-          },
-          ['Add environment']
-        ),
-      !canCreateEnv &&
-        !isLegacyOrganization &&
-        canUpgradeSpace &&
-        upgradeButton({ organizationId, incentivizeUpgradeEnabled }, { OpenUpgradeSpaceDialog })
-    ]),
-
-    usage === 1 && h('h2.entity-sidebar__heading', ['Documentation']),
-    usage === 1 &&
-      h('.entity-sidebar__text-profile', [
-        h('p', [
-          `Environments allow you to modify the data in your space
-        without affecting the data in your master environment.`
-        ]),
-        h('ul', [
-          h('li', [
-            'Read more in the ',
-            h(
-              'a',
-              {
-                href:
-                  'http://ctf-doc-app-branch-environments.netlify.com/developers/docs/concepts/domain-model/',
-                target: '_blank',
-                rel: 'noopener'
-              },
-              ['Contentful domain model']
-            ),
-            ' document.'
-          ])
-        ])
-      ])
-  ];
+  return (
+    <div className="entity-sidebar">
+      <h2 className="entity-sidebar__heading">Usage</h2>
+      <div className="entity-sidebar__text-profile">
+        <p data-test-id="environmentsUsage">
+          You are using {usage}{' '}
+          {limit ? `out of ${limit} environments available ` : pluralize('environment', usage)} in
+          this space.
+          {/* Note: this results in semantically incorrect html (div within p) */}
+          {/* https://github.com/tvkhoa/react-tippy/pull/73 would fix it. */}
+          {!isLegacyOrganization && <UsageTooltip resource={resource} />}
+        </p>
+        {!canCreateEnv &&
+          !isLegacyOrganization && (
+            <p>
+              {limit > 1 && 'Delete existing environments or '}
+              {canUpgradeSpace &&
+                (limit > 1
+                  ? 'change the space to add more'
+                  : 'Change change the space to add more')}
+              {!canUpgradeSpace &&
+                `${
+                  limit > 1 ? 'ask' : 'Ask'
+                } the administrator of your organization to change the space to add more. `}
+            </p>
+          )}
+      </div>
+      <div className="entity-sidebar__widget">
+        {canCreateEnv && (
+          <button
+            data-test-id="openCreateDialog"
+            onClick={OpenCreateDialog}
+            className="btn-action x--block">
+            Add environment
+          </button>
+        )}
+        {!canCreateEnv &&
+          !isLegacyOrganization &&
+          canUpgradeSpace && (
+            <UpgradeButton
+              organizationId={organizationId}
+              incentivizeUpgradeEnabled={incentivizeUpgradeEnabled}
+              OpenUpgradeSpaceDialog={OpenUpgradeSpaceDialog}
+            />
+          )}
+      </div>
+      <h2 className="entity-sidebar__heading">Documentation</h2>
+      <div className="entity-sidebar__text-profile">
+        <p>
+          Environments allow you to modify the data in your space without affecting the data in your
+          master environment.
+        </p>
+        <ul>
+          <li>
+            Read more in the{' '}
+            <a
+              href="http://ctf-doc-app-branch-environments.netlify.com/developers/docs/concepts/domain-model/"
+              target="_blank"
+              rel="noopener noreferrer">
+              Contentful domain model
+            </a>{' '}
+            document
+          </li>
+        </ul>
+      </div>
+    </div>
+  );
 }
+Sidebar.propTypes = {
+  canCreateEnv: PropTypes.bool,
+  resource: PropTypes.object,
+  organizationId: PropTypes.string,
+  isLegacyOrganization: PropTypes.bool,
+  canUpgradeSpace: PropTypes.bool,
+  incentivizeUpgradeEnabled: PropTypes.bool,
+  OpenCreateDialog: PropTypes.func.isRequired,
+  OpenUpgradeSpaceDialog: PropTypes.func.isRequired
+};
 
-function usageTooltip({ resource }) {
+function UsageTooltip({ resource }) {
   const limit = get(resource, 'limits.maximum');
   if (!limit) {
     return null;
@@ -313,31 +315,36 @@ function usageTooltip({ resource }) {
   );
 }
 
-usageTooltip.propTypes = {
+UsageTooltip.propTypes = {
   resource: PropTypes.object.isRequired
 };
 
-function upgradeButton({ organizationId, incentivizeUpgradeEnabled }, { OpenUpgradeSpaceDialog }) {
+function UpgradeButton({ organizationId, incentivizeUpgradeEnabled, OpenUpgradeSpaceDialog }) {
   if (incentivizeUpgradeEnabled) {
-    return h(
-      'button.btn-action.x--block',
-      {
-        dataTestId: 'openUpgradeDialog',
-        onClick: () => OpenUpgradeSpaceDialog()
-      },
-      ['Upgrade space']
+    return (
+      <button
+        data-test-id="openUpgradeDialog"
+        onClick={() => OpenUpgradeSpaceDialog()}
+        className="btn-action x--block">
+        Upgrade space
+      </button>
     );
   } else {
-    return h('span', [
-      h(
-        'a.text-link',
-        {
-          href: href(subscriptionState(organizationId, false)),
-          dataTestId: 'subscriptionLink'
-        },
-        ['Go to the subscription page']
-      ),
-      ' to upgrade'
-    ]);
+    return (
+      <span>
+        <a
+          href={href(subscriptionState(organizationId, false))}
+          data-test-id="subscriptionLink"
+          className="text-link">
+          Go to the subscription page
+        </a>
+        to upgrade
+      </span>
+    );
   }
 }
+UpgradeButton.propTypes = {
+  organizationId: PropTypes.string,
+  incentivizeUpgradeEnabled: PropTypes.bool,
+  OpenUpgradeSpaceDialog: PropTypes.func.isRequired
+};

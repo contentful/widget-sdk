@@ -1,11 +1,11 @@
-import { h as htmlH } from 'utils/legacy-html-hyperscript';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { renderToString } from 'react-dom/server';
 import escape from 'utils/escape.es6';
 import { assign } from 'utils/Collections.es6';
 import { makeCtor } from 'utils/TaggedValues.es6';
 
 import { bindActions, createStore, makeReducer } from 'ui/Framework/Store.es6';
-import { h } from 'ui/Framework';
-import { hbox, hspace, vspace } from 'ui/Layout.es6';
 
 import ModalDialog from 'modalDialog';
 import Notification from 'notification';
@@ -53,11 +53,13 @@ const reduce = makeReducer({
  */
 export function openDeleteDialog(runDelete, environment) {
   return ModalDialog.open({
-    template: htmlH('.modal-background', [
-      htmlH('.modal-dialog', { style: { width: '32em' } }, [
-        htmlH('cf-component-store-bridge', { component: 'component' })
-      ])
-    ]),
+    template: renderToString(
+      <div className="modal-background">
+        <div className="modal-dialog" style={{ width: '32em' }}>
+          <cf-component-store-bridge component="component" />
+        </div>
+      </div>
+    ),
     controller: $scope => {
       const closeDialog = value => $scope.dialog.confirm(value);
       $scope.component = createComponent(runDelete, environment, closeDialog);
@@ -86,10 +88,10 @@ function createComponent(runDelete, environment, closeDialog) {
     ConfirmDialog: () => closeDialog(true)
   });
 
-  return { render: state => render(assign(state, actions)), store };
+  return { render: state => <SpaceEnvironmentsDeleteDialog {...assign(state, actions)} />, store };
 }
 
-function render({
+function SpaceEnvironmentsDeleteDialog({
   inputValue,
   inProgress,
   confirmationId,
@@ -98,66 +100,54 @@ function render({
   SetInputValue
 }) {
   const confirmable = inputValue === confirmationId;
-  return h(
-    'div',
-    {
-      dataTestId: 'spaceEnvironmentsDeleteDialog'
-    },
-    [
-      h('header.modal-dialog__header', [
-        h('h1', ['Delete environment']),
-        h('button.modal-dialog__close', {
-          onClick: () => CancelDialog()
-        })
-      ]),
-      h(
-        '.modal-dialog__content',
-        {
-          style: { paddingBottom: '30px' }
-        },
-        [
-          h('p', [
-            `You are about to delete the environment `,
-            h('strong', [confirmationId]),
-            `. All of the environment data, including the environment
-        itself, will be deleted. This operation cannot be undone.`
-          ]),
-          vspace(5),
-          h('.cfnext-form__field', [
-            h('label', { style: { fontWeight: '600' } }, [
-              'Type the ID of the environment to confirm'
-            ]),
-            h('input.cfnext-form__input--full-size', {
-              dataTestId: 'confirmId',
-              value: inputValue,
-              onInput: ev => SetInputValue(ev.target.value)
-            })
-          ]),
-          vspace(5),
-          hbox([
-            h(
-              'button.btn-caution',
-              {
-                class: inProgress && 'is-loading',
-                disabled: inProgress || !confirmable,
-                onClick: () => TriggerDelete(),
-                dataTestId: 'delete'
-              },
-              ['Delete environment']
-            ),
-            hspace('10px'),
-            h(
-              'button.btn-secondary-action',
-              {
-                type: 'button',
-                onClick: () => CancelDialog(),
-                dataTestId: 'cancel'
-              },
-              ['Cancel']
-            )
-          ])
-        ]
-      )
-    ]
+  return (
+    <div data-test-id="spaceEnvironmentsDeleteDialog">
+      <header className="modal-dialog__header">
+        <h1>Delete environment</h1>
+        <button onClick={() => CancelDialog()} className="modal-dialog__close" />
+      </header>
+      <div style={{ paddingBottom: '30px' }} className="modal-dialog__content">
+        <p>
+          {`You are about to delete the environment `}
+          <strong>{confirmationId}</strong>
+          {`. All of the environment data, including the environment
+      itself, will be deleted. This operation cannot be undone.`}
+        </p>
+        <div className="cfnext-form__field" style={{ marginTop: 28 }}>
+          <label style={{ fontWeight: '600' }}>Type the ID of the environment to confirm</label>
+          <input
+            data-test-id="confirmId"
+            value={inputValue}
+            onInput={ev => SetInputValue(ev.target.value)}
+            className="cfnext-form__input--full-size"
+          />
+        </div>
+        <div style={{ display: 'flex', marginTop: 5 }}>
+          <button
+            disabled={inProgress || !confirmable}
+            onClick={() => TriggerDelete()}
+            data-test-id="delete"
+            className={`btn-caution ${inProgress && 'is-loading'}`}>
+            Delete environment
+          </button>
+          <button
+            style={{ marginLeft: '10px' }}
+            type="button"
+            onClick={() => CancelDialog()}
+            data-test-id="cancel"
+            className="btn-secondary-action">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
+SpaceEnvironmentsDeleteDialog.propTypes = {
+  inputValue: PropTypes.string,
+  inProgress: PropTypes.bool,
+  confirmationId: PropTypes.string,
+  TriggerDelete: PropTypes.func,
+  CancelDialog: PropTypes.func,
+  SetInputValue: PropTypes.func
+};

@@ -72,9 +72,7 @@ angular
    *     }
    *
    *     function render (state, actions) {
-   *       return h('button', {
-   *         onClick: () => action.ActionA()
-   *       }, [ state.label ])
+   *       return <button onClick={() => action.ActionA()}>{state.label}</button>;
    *     }
    *   }
    * }
