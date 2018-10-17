@@ -5,6 +5,7 @@ export default function() {
   return h(
     '.asset-card',
     {
+      dataTestId: 'entity-link-content',
       style: {
         display: 'flex',
         flexDirection: 'column',
@@ -39,6 +40,7 @@ export default function() {
       h(
         '.asset-card__title',
         {
+          dataTestId: 'entity-link-title',
           ngClick: 'actions.edit()',
           role: '{{actions.edit && "button"}}'
         },
