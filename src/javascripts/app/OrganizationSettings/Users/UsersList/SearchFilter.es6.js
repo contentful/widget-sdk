@@ -8,14 +8,14 @@ export default class SearchFilter extends React.Component {
       key: PropTypes.string.isRequired,
       value: PropTypes.any,
       operator: PropTypes.string
-    }),
+    }).isRequired,
     options: PropTypes.arrayOf(
       PropTypes.shape({
         label: PropTypes.string.isRequired,
         value: PropTypes.any
       })
-    ),
-    onChange: PropTypes.func
+    ).isRequired,
+    onChange: PropTypes.func.isRequired
   };
 
   handleChange = ({ target: { value } }) => {
@@ -23,7 +23,7 @@ export default class SearchFilter extends React.Component {
 
     // we use Object.assign instead of spread to keep the reference
     // to the getter properties of the filter definition
-    onChange && onChange(Object.assign(filter, { value }));
+    onChange(Object.assign(filter, { value }));
   };
 
   getSelectWidth() {
