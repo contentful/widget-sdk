@@ -90,18 +90,18 @@ angular.module('contentful').factory('fieldFactory', [
 
     const fieldGroups = [
       {
-        name: 'text',
-        icon: 'longtext',
-        description: 'Titles, names, paragraphs, list of names',
-        types: ['Symbol', 'Text']
-      },
-      {
         name: 'rich-text',
         icon: 'richtext',
         label: 'Rich text',
         isBeta: true,
-        description: 'Long form articles, documentation, news articles',
+        description: 'Text formatting with references and media',
         types: ['RichText']
+      },
+      {
+        name: 'text',
+        icon: 'longtext',
+        description: 'Titles, names, paragraphs, list of names',
+        types: ['Symbol', 'Text']
       },
       {
         name: 'number',
