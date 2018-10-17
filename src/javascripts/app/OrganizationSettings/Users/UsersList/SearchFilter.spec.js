@@ -29,28 +29,18 @@ describe('SearchFilter', () => {
     );
   });
 
-  it('renders the label', () => {
-    const label = component.find('.search__filter-pill-label');
-
-    expect(label.text()).toBe('Fruit');
+  it('renders the component', () => {
+    expect(component).toMatchSnapshot();
   });
 
-  it('renders the value', () => {
-    const value = component.find('.search__select-value');
-
-    expect(value).toHaveLength(1);
-    expect(value.find('select').prop('value')).toBe('papaya');
-  });
-
-  it('renders the options', () => {
-    const optionElements = component.find('option');
-    expect(optionElements).toHaveLength(options.length);
-    expect(optionElements.map(option => option.text())).toEqual([
-      'Any',
-      'Papaya',
-      'Banana',
-      'Kiwi'
-    ]);
+  it('accepts empty values', () => {
+    component.setProps({
+      filters: {
+        key: 'foo',
+        value: null
+      }
+    });
+    expect(component).toMatchSnapshot();
   });
 
   it('calls the onChange callback with the updated filter', () => {
