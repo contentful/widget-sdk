@@ -1,10 +1,13 @@
 import Templates from './templates';
+import { get } from 'lodash';
 import modalDialog from 'modalDialog';
+import * as WebhookEditorActions from './WebhookEditorActions.es6';
+import $state from '$state';
 
 const isNonEmptyString = s => typeof s === 'string' && s.length > 0;
 
 export default function createWebhookTemplateDialogOpener(config) {
-  const { webhookRepo, contentTypes, defaultLocaleCode, domain, onCreate, hasAwsProxy } = config;
+  const { contentTypes, defaultLocaleCode, domain, hasAwsProxy, webhookRepo } = config;
 
   const validTemplateIds = Templates.map(template => template.id);
   const templateContentTypes = prepareContentTypesForTemplates(
@@ -13,7 +16,7 @@ export default function createWebhookTemplateDialogOpener(config) {
     domain
   );
 
-  return function openTemplateDialog(templateId) {
+  return function openTemplateDialog(templateId, templateIdReferrer) {
     templateId = validTemplateIds.includes(templateId) ? templateId : Templates[0].id;
 
     modalDialog.open({
@@ -24,12 +27,24 @@ export default function createWebhookTemplateDialogOpener(config) {
       controller: $scope => {
         $scope.props = {
           templateId,
-          webhookRepo,
           templateContentTypes,
           hasAwsProxy,
           reposition: () => $scope.$emit('centerOn:reposition'),
           closeDialog: () => $scope.dialog.confirm(),
-          onCreate
+          onCreate: (webhooks, templateId) =>
+            Promise.all(
+              webhooks.map(webhook => {
+                return WebhookEditorActions.save(
+                  webhookRepo,
+                  webhook,
+                  templateId,
+                  templateIdReferrer
+                );
+              })
+            ).then(webhooks => {
+              $state.go('^.detail', { webhookId: get(webhooks, '[0].sys.id') });
+              return webhooks;
+            })
         };
       }
     });

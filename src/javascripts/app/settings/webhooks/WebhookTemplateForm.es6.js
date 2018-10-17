@@ -7,14 +7,12 @@ import {
   Icon,
   ValidationMessage
 } from '@contentful/ui-component-library';
-import * as WebhookEditorActions from './WebhookEditorActions.es6';
 import { values, isString } from 'lodash';
 
 export class WebhookTemplateForm extends React.Component {
   static propTypes = {
     template: PropTypes.object.isRequired,
     closeDialog: PropTypes.func.isRequired,
-    webhookRepo: PropTypes.object.isRequired,
     templateContentTypes: PropTypes.array.isRequired,
     onCreate: PropTypes.func.isRequired,
     hasAwsProxy: PropTypes.bool.isRequired
@@ -51,7 +49,7 @@ export class WebhookTemplateForm extends React.Component {
   }
 
   onCreateClick = () => {
-    const { webhookRepo, template, templateContentTypes } = this.props;
+    const { template, templateContentTypes } = this.props;
     const name = `${template.title} - ${template.subtitle}`;
 
     // `mapParamsToDefinition` can be a function or an array of functions.
@@ -62,18 +60,19 @@ export class WebhookTemplateForm extends React.Component {
 
     this.setState({ busy: true });
 
-    return Promise.all(
-      mappers.map(mapFn => {
-        const webhook = mapFn(this.state.fields, name, templateContentTypes);
-        return WebhookEditorActions.save(webhookRepo, webhook, template.id);
+    this.props
+      .onCreate(
+        mappers.map(mapFn => {
+          return mapFn(this.state.fields, name, templateContentTypes);
+        }),
+        template.id
+      )
+      .then(() => {
+        this.setState({ busy: false });
       })
-    ).then(
-      // We always navigate to the first saved webhook.
-      webhooks => {
-        this.props.onCreate(webhooks);
-      },
-      err => this.setState({ busy: false, error: err.message })
-    );
+      .catch(err => {
+        this.setState({ busy: false, error: err.message });
+      });
   };
 
   render() {

@@ -13,14 +13,16 @@ const WebhookSidebarTemplatesList = ({ openTemplateDialog }) => (
           <small>{template.subtitle}</small>
         </div>
         <div className="webhook-template-item__action">
-          <button className="btn-link" onClick={() => openTemplateDialog(template.id)}>
+          <button
+            className="btn-link"
+            onClick={() => openTemplateDialog(template.id, 'webhook-view')}>
             Add
           </button>
         </div>
       </div>
     ))}
     <div className="webhook-template-item webhook-template-item__see-all">
-      <button className="btn-link" onClick={() => openTemplateDialog()}>
+      <button className="btn-link" onClick={() => openTemplateDialog(null, 'webhook-view')}>
         See all {Templates.length} templates
       </button>
     </div>

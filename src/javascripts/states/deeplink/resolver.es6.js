@@ -243,7 +243,7 @@ function* applyOrgAccess(orgId, successResult) {
   return successResult;
 }
 
-function resolveWebhookTemplate({ id }) {
+function resolveWebhookTemplate({ id, referrer }) {
   return runTask(function*() {
     if (!id) {
       throw new Error(`Webhook Template ID was not specified in the URL you've used.`);
@@ -251,7 +251,7 @@ function resolveWebhookTemplate({ id }) {
     const { spaceId } = yield* getSpaceInfo();
     return {
       path: ['spaces', 'detail', 'settings', 'webhooks', 'list'],
-      params: { spaceId, templateId: id }
+      params: { spaceId, templateId: id, referrer: referrer ? `deeplink-${referrer}` : 'deeplink' }
     };
   });
 }

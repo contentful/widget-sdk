@@ -27,16 +27,18 @@ export default {
       name: 'list',
       url: '',
       params: {
-        templateId: null
+        templateId: null,
+        referrer: null
       },
       template:
         '<react-component name="app/settings/webhooks/routes/WebhookListRoute.es6" props="props" />',
       controller: [
         '$scope',
         '$stateParams',
-        ($scope, { templateId }) => {
+        ($scope, $stateParams) => {
           $scope.props = {
-            templateId: templateId || null
+            templateId: $stateParams.templateId || null,
+            templateIdReferrer: $stateParams.referrer || null
           };
         }
       ]

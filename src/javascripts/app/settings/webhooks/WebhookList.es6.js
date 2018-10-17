@@ -11,12 +11,13 @@ export class WebhookList extends React.Component {
   static propTypes = {
     webhooks: PropTypes.array.isRequired,
     openTemplateDialog: PropTypes.func.isRequired,
-    templateId: PropTypes.string
+    templateId: PropTypes.string,
+    templateIdReferrer: PropTypes.string
   };
 
   componentDidMount() {
     if (this.props.templateId) {
-      this.props.openTemplateDialog(this.props.templateId);
+      this.props.openTemplateDialog(this.props.templateId, this.props.templateIdReferrer);
     }
   }
 

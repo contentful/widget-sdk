@@ -21,14 +21,14 @@ const PATH_TO_ERROR_MSG = {
   http_basic_password: HTTP_BASIC_ERROR_MSG
 };
 
-export async function save(webhookRepo, webhook, templateId = null) {
+export async function save(webhookRepo, webhook, templateId = null, templateIdReferrer = null) {
   if (!webhookRepo.hasValidBodyTransformation(webhook)) {
     throw new Error(INVALID_BODY_TRANSFORMATION_ERROR_MSG);
   }
 
   try {
     const saved = await webhookRepo.save(webhook);
-    trackSave(saved, templateId);
+    trackSave(saved, templateId, templateIdReferrer);
     notification.info(`Webhook "${saved.name}" saved successfully.`);
     return saved;
   } catch (err) {
@@ -80,9 +80,10 @@ function openRemovalDialog(webhookRepo, webhook) {
   }).promise;
 }
 
-function trackSave(webhook, templateId = null) {
+function trackSave(webhook, templateId = null, templateIdReferrer = null) {
   const trackingData = {
     template_id: templateId,
+    type: templateIdReferrer,
     webhook_id: get(webhook, ['sys', 'id']),
     version: get(webhook, ['sys', 'version']),
     method: get(webhook, ['transformation', 'method'], 'POST'),

@@ -50,21 +50,18 @@ describe('WebhookTemplateForm', () => {
   const mount = () => {
     const stubs = {
       cancel: sinon.stub(),
-      save: sinon.stub(),
       map: sinon.stub(),
-      goToWebhookDetails: sinon.stub()
+      onCreate: sinon.stub().resolves({})
     };
     const template = { ...cloneDeep(TEMPLATE), mapParamsToDefinition: stubs.map };
-    const repo = { save: stubs.save, hasValidBodyTransformation: () => true };
 
     const wrapper = Enzyme.mount(
       <WebhookTemplateForm
         template={template}
-        webhookRepo={repo}
         closeDialog={stubs.cancel}
         templateContentTypes={TEMPLATE_CONTENT_TYPES}
         hasAwsProxy={false}
-        onCreate={stubs.goToWebhookDetails}
+        onCreate={stubs.onCreate}
       />
     );
 
@@ -105,7 +102,7 @@ describe('WebhookTemplateForm', () => {
     expect(createBtn.prop('disabled')).toBe(true);
 
     createBtn.simulate('click');
-    expect(stubs.save.callCount).toBe(0);
+    expect(stubs.onCreate.callCount).toBe(0);
   });
 
   it('updates parameter values', () => {
@@ -131,19 +128,12 @@ describe('WebhookTemplateForm', () => {
     expect(createBtn.prop('disabled')).toBe(false);
   });
 
-  it('maps params to webhook and saves it', async () => {
-    expect.assertions(7);
+  it('maps params to webhook and calls onCreate callback', async () => {
     const [wrapper, stubs] = mount();
     wrapper.setState({ fields: VALID_FORM_VALUES });
 
     const createBtn = wrapper.find(Button).at(0);
     stubs.map.returns({ mapped: true });
-    stubs.save.resolves({
-      name: 'test-name',
-      sys: {
-        id: 'test-id'
-      }
-    });
 
     await createBtn.prop('onClick')();
 
@@ -151,10 +141,7 @@ describe('WebhookTemplateForm', () => {
     expect(
       stubs.map.calledWith(VALID_FORM_VALUES, 'Test Template - subtitle', TEMPLATE_CONTENT_TYPES)
     ).toBe(true);
-    expect(stubs.save.calledOnce).toBe(true);
-    expect(stubs.save.calledWith({ mapped: true })).toBe(true);
-    expect(stubs.goToWebhookDetails.calledOnce).toBe(true);
-    expect(track.calledWith('ui_webhook_editor:save')).toBe(true);
-    expect(notification.info.calledWith('Webhook "test-name" saved successfully.')).toBe(true);
+    expect(stubs.onCreate.calledOnce).toBe(true);
+    expect(stubs.onCreate.getCall(0).args).toEqual([[{ mapped: true }], 'test-template']);
   });
 });

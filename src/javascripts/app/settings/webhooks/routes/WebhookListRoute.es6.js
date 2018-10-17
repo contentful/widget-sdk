@@ -5,7 +5,6 @@ import WebhookForbiddenPage from '../WebhookForbiddenPage.es6';
 import WebhookList from '../WebhookList.es6';
 import createWebhookTemplateDialogOpener from '../createWebhookTemplateDialogOpener.es6';
 import AdminOnly from 'app/common/AdminOnly.es6';
-import $state from '$state';
 import * as Config from 'Config.es6';
 import TheLocaleStore from 'TheLocaleStore';
 import spaceContext from 'spaceContext';
@@ -26,7 +25,8 @@ const WebhooksFetcher = createFetcherComponent(() => {
 
 export class WebhookListRoute extends React.Component {
   static propTypes = {
-    templateId: PropTypes.string
+    templateId: PropTypes.string,
+    templateIdReferrer: PropTypes.string
   };
 
   setupTemplateOpener(hasAwsProxy = false) {
@@ -35,8 +35,7 @@ export class WebhookListRoute extends React.Component {
       contentTypes: spaceContext.publishedCTs.getAllBare(),
       defaultLocaleCode: get(TheLocaleStore.getDefaultLocale(), ['code'], 'en-US'),
       domain: Config.domain,
-      hasAwsProxy,
-      onCreate: ([firstSaved]) => $state.go('^.detail', { webhookId: firstSaved.sys.id })
+      hasAwsProxy
     });
   }
 
@@ -61,6 +60,7 @@ export class WebhookListRoute extends React.Component {
             return (
               <WebhookList
                 templateId={this.props.templateId}
+                templateIdReferrer={this.props.templateIdReferrer}
                 webhooks={webhooks}
                 openTemplateDialog={this.setupTemplateOpener(hasAwsProxy)}
               />

@@ -7,7 +7,6 @@ import Templates from './templates';
 export default class WebhookTemplateDialog extends React.Component {
   static propTypes = {
     templateId: PropTypes.string.isRequired,
-    webhookRepo: PropTypes.object.isRequired,
     templateContentTypes: PropTypes.array.isRequired,
     hasAwsProxy: PropTypes.bool.isRequired,
     reposition: PropTypes.func.isRequired,
@@ -16,7 +15,7 @@ export default class WebhookTemplateDialog extends React.Component {
   };
 
   renderTabs = ({ getTabProps, getPaneProps }) => {
-    const { closeDialog, webhookRepo, templateContentTypes, hasAwsProxy, onCreate } = this.props;
+    const { closeDialog, templateContentTypes, hasAwsProxy, onCreate } = this.props;
 
     return (
       <React.Fragment>
@@ -30,7 +29,6 @@ export default class WebhookTemplateDialog extends React.Component {
             <WebhookTemplateForm
               template={template}
               closeDialog={closeDialog}
-              webhookRepo={webhookRepo}
               templateContentTypes={templateContentTypes}
               hasAwsProxy={hasAwsProxy}
               onCreate={onCreate}
