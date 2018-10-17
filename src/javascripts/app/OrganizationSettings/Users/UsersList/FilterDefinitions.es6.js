@@ -1,5 +1,5 @@
 import { orgRoles } from '../UserDetail/OrgRoles.es6';
-import { uniqBy } from 'lodash';
+import { uniqBy, without } from 'lodash';
 
 /**
  * This module contains the definitions of the filters available in the (org) User list page.
@@ -7,7 +7,7 @@ import { uniqBy } from 'lodash';
  * API endpoint as a query string params
  */
 
-export function getFilterDefinitions(spaces = [], roles = []) {
+export function getFilterDefinitions({ spaceRoles = [], spaces = [], hasSsoEnabled }) {
   const order = {
     label: 'Sort by',
     filter: {
@@ -72,7 +72,7 @@ export function getFilterDefinitions(spaces = [], roles = []) {
       { label: 'Admin', value: 'true' },
       // Get all the roles form all spaces, reduced by unique
       // names and sorted alphabetically
-      ...uniqBy(roles, 'name')
+      ...uniqBy(spaceRoles, 'name')
         .sort((a, b) => a.name.localeCompare(b.name))
         .map(role => ({ label: role.name, value: role.name }))
     ]
@@ -92,5 +92,6 @@ export function getFilterDefinitions(spaces = [], roles = []) {
     ]
   };
 
-  return [order, orgRole, sso, spaceRole, space];
+  // removes the SSO filter if SSO is not available for the org
+  return without([order, orgRole, sso, space, spaceRole], hasSsoEnabled ? null : sso);
 }
