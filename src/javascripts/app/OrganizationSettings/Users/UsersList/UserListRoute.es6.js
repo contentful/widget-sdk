@@ -7,10 +7,8 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import createResourceService from 'services/ResourceService.es6';
 import { getAllSpaces, getAllRoles } from 'access_control/OrganizationMembershipRepository.es6';
-import $stateParams from '$stateParams';
 
-const UserListFetcher = createFetcherComponent(() => {
-  const orgId = $stateParams.orgId;
+const UserListFetcher = createFetcherComponent(({ orgId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
   const resources = createResourceService(orgId, 'organization');
   return Promise.all([
@@ -22,17 +20,21 @@ const UserListFetcher = createFetcherComponent(() => {
 
 export default class UserListRoute extends React.Component {
   static propTypes = {
+    orgId: PropTypes.string.isRequired,
     context: PropTypes.any
   };
 
   componentDidMount() {
+    // TODO: UGLY HACK AHEAD.
+    // Find a way to delegate the readiness of a route to the route component
     this.props.context.ready = true;
   }
 
   render() {
+    const { orgId } = this.props;
     return (
-      <OrgAdminOnly>
-        <UserListFetcher>
+      <OrgAdminOnly orgId={orgId}>
+        <UserListFetcher orgId={orgId}>
           {({ isLoading, isError, data }) => {
             if (isLoading) {
               return <FetcherLoading message="Loading users..." />;
@@ -44,12 +46,7 @@ export default class UserListRoute extends React.Component {
             const [resource, spaces, roles] = data;
 
             return (
-              <UserList
-                resource={resource}
-                spaces={spaces}
-                spaceRoles={roles}
-                orgId={$stateParams.orgId}
-              />
+              <UserList resource={resource} spaces={spaces} spaceRoles={roles} orgId={orgId} />
             );
           }}
         </UserListFetcher>

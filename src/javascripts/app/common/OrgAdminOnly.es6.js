@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import $stateParams from '$stateParams';
 import { getOrganization } from 'services/TokenStore.es6';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import ForbiddenState from './ForbiddenState.es6';
 
 export default class OrgAdminOnly extends React.Component {
   static propTypes = {
+    orgId: PropTypes.string.isRequired,
     children: PropTypes.any,
     render: PropTypes.func,
     redirect: PropTypes.string
@@ -18,14 +18,11 @@ export default class OrgAdminOnly extends React.Component {
     loading: true
   };
 
-  static displayName = 'OrgAdminOnly';
-
   async componentDidMount() {
-    const orgId = $stateParams.orgId;
     let organization;
 
     try {
-      organization = await getOrganization(orgId);
+      organization = await getOrganization(this.props.orgId);
       this.setState({ isAdmin: isOwnerOrAdmin(organization) });
     } catch (_) {
       // not a member or the org
