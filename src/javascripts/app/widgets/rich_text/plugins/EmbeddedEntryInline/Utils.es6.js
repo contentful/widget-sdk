@@ -1,7 +1,6 @@
 import { INLINES } from '@contentful/rich-text-types';
 import { haveAnyInlines, haveEveryInlineOfType, haveInlines } from '../shared/UtilHave.es6';
 import { newConfigFromRichTextField } from 'search/EntitySelector/Config.es6';
-import getLinkedContentTypeIdsForNodeType from '../shared/GetLinkedContentTypeIdsForNodeType.es6';
 
 const createInlineNode = id => ({
   type: INLINES.EMBEDDED_ENTRY,
@@ -44,15 +43,10 @@ export const hasOnlyInlineEntryInSelection = change => {
  */
 export const selectEntryAndInsert = async (widgetAPI, change, logAction) => {
   const nodeType = INLINES.EMBEDDED_ENTRY;
+  logAction('openCreateEmbedDialog', { nodeType });
+
   const baseConfig = await newConfigFromRichTextField(widgetAPI.field, nodeType);
-  const linkedContentTypeIds = getLinkedContentTypeIdsForNodeType(widgetAPI.field, nodeType);
-  const config = {
-    ...baseConfig,
-    linkedContentTypeIds,
-    max: 1,
-    withCreate: true
-  };
-  logAction(`openCreateEmbedDialog`, { nodeType });
+  const config = { ...baseConfig, max: 1, withCreate: true };
   try {
     const [entry] = await widgetAPI.dialogs.selectEntities(config);
     if (!entry) {
@@ -64,7 +58,7 @@ export const selectEntryAndInsert = async (widgetAPI, change, logAction) => {
     if (error) {
       throw error;
     } else {
-      logAction(`cancelCreateEmbedDialog`, { nodeType });
+      logAction('cancelCreateEmbedDialog', { nodeType });
     }
   }
 };

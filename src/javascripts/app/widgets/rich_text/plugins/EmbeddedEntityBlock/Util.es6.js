@@ -1,7 +1,6 @@
 import { BLOCKS } from '@contentful/rich-text-types';
 import { haveTextInSomeBlocks } from '../shared/UtilHave.es6';
 import { newConfigFromRichTextField } from 'search/EntitySelector/Config.es6';
-import getLinkedContentTypeIdsForNodeType from '../shared/GetLinkedContentTypeIdsForNodeType.es6';
 
 /**
  * Returns whether given value has a block of the given type.
@@ -22,18 +21,10 @@ export const hasBlockOfType = (change, type) => {
  * @param {function} logAction
  */
 export async function selectEntityAndInsert(nodeType, widgetAPI, change, logAction) {
+  logAction('openCreateEmbedDialog', { nodeType });
+
   const baseConfig = await newConfigFromRichTextField(widgetAPI.field, nodeType);
-  const linkedContentTypeIds = getLinkedContentTypeIdsForNodeType(
-    widgetAPI.field,
-    BLOCKS.EMBEDDED_ENTRY
-  );
-  const config = {
-    ...baseConfig,
-    linkedContentTypeIds,
-    max: 1,
-    withCreate: true
-  };
-  logAction(`openCreateEmbedDialog`, { nodeType });
+  const config = { ...baseConfig, max: 1, withCreate: true };
   try {
     // widgetAPI.dialogs.selectSingleEntry() or selectSingleAsset()
     const [entity] = await widgetAPI.dialogs.selectEntities(config);
@@ -46,7 +37,7 @@ export async function selectEntityAndInsert(nodeType, widgetAPI, change, logActi
     if (error) {
       throw error;
     } else {
-      logAction(`cancelCreateEmbedDialog`, { nodeType });
+      logAction('cancelCreateEmbedDialog', { nodeType });
     }
   }
 }
