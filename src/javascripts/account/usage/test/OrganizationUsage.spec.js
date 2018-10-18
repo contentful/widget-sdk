@@ -4,6 +4,7 @@ import { shallow } from 'enzyme';
 import { OrganizationUsage } from '../OrganizationUsage.es6';
 
 let defaultProps = null;
+let testOrg = null;
 const shallowRenderComponent = async props => {
   const wrapper = shallow(<OrganizationUsage {...props} />);
   // Need to wait for internal async logic to finish
@@ -16,6 +17,7 @@ const shallowRenderComponent = async props => {
 
 describe('OrganizationUsage', () => {
   beforeEach(() => {
+    testOrg = {};
     defaultProps = {
       orgId: '23423',
       onReady: jest.fn(),
@@ -28,7 +30,7 @@ describe('OrganizationUsage', () => {
           getPlansWithSpaces: jest.fn()
         },
         ResourceService: {
-          default: () => ({
+          default: jest.fn(() => ({
             get: jest
               .fn()
               .mockReturnValueOnce({ limits: { included: 1000000 } })
@@ -38,14 +40,14 @@ describe('OrganizationUsage', () => {
                 limits: { included: 2000 }
               }),
             getAll: jest.fn()
-          })
+          }))
         },
         ReloadNotification: { trigger: jest.fn() },
         OrganizationMembershipRepository: { getAllSpaces: jest.fn() },
         EndpointFactory: { createOrganizationEndpoint: jest.fn() },
         Analytics: { track: jest.fn() },
         LaunchDarkly: { getCurrentVariation: jest.fn() },
-        TokenStore: { getOrganization: jest.fn() }
+        TokenStore: { getOrganization: jest.fn(() => testOrg) }
       }
     };
   });
@@ -68,7 +70,69 @@ describe('OrganizationUsage', () => {
     it('should call `onForbidden`', async () => {
       await shallowRenderComponent(defaultProps);
 
+      expect(defaultProps.$services.TokenStore.getOrganization).toHaveBeenCalledWith(
+        defaultProps.orgId
+      );
+      expect(defaultProps.$services.OrganizationRoles.isOwnerOrAdmin).toHaveBeenCalledWith(testOrg);
       expect(defaultProps.onForbidden).toHaveBeenCalledWith(new Error('No permission'));
+    });
+  });
+
+  describe('fetching org data fails with 404', () => {
+    const error404 = new Error('Test error');
+    error404.status = 404;
+
+    beforeEach(() => {
+      defaultProps.$services.ResourceService.default.mockImplementation(
+        jest.fn(() => ({
+          getAll: () => Promise.reject(error404)
+        }))
+      );
+    });
+
+    it('should call `onForbidden`', async () => {
+      await shallowRenderComponent(defaultProps);
+
+      expect(defaultProps.onForbidden).toHaveBeenCalledWith(error404);
+    });
+  });
+
+  describe('fetching org data fails with 403', () => {
+    const error403 = new Error('Test error');
+    error403.status = 403;
+
+    beforeEach(() => {
+      defaultProps.$services.ResourceService.default.mockImplementation(
+        jest.fn(() => ({
+          getAll: () => Promise.reject(error403)
+        }))
+      );
+    });
+
+    it('should call `onForbidden`', async () => {
+      await shallowRenderComponent(defaultProps);
+
+      expect(defaultProps.onForbidden).toHaveBeenCalledWith(error403);
+    });
+  });
+
+  describe('fetching org data fails with 400', () => {
+    const error400 = new Error('Test error');
+    error400.status = 400;
+
+    beforeEach(() => {
+      defaultProps.$services.ResourceService.default.mockImplementation(
+        jest.fn(() => ({
+          getAll: () => Promise.reject(error400)
+        }))
+      );
+    });
+
+    it('should trigger reload notification', async () => {
+      await shallowRenderComponent(defaultProps);
+
+      expect(defaultProps.onForbidden).not.toHaveBeenCalled();
+      expect(defaultProps.$services.ReloadNotification.trigger).toHaveBeenCalled();
     });
   });
 });
