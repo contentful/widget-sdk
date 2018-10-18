@@ -8,5 +8,5 @@ export default {
   title: 'Organization users',
   url: '/:orgId/organization_memberships',
   featureFlag: 'feature-bv-09-2018-new-org-membership-pages',
-  reactComponentName: 'app/OrganizationSettings/Users/UsersList/UsersList.es6'
+  reactComponentName: 'app/OrganizationSettings/Users/UsersList/UserListRoute.es6'
 };

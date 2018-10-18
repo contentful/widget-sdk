@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Space as SpacePropType } from '../PropTypes.es6';
 import { startCase, without } from 'lodash';
 import pluralize from 'pluralize';
 import {
@@ -11,16 +12,18 @@ import {
   Pill,
   Button
 } from '@contentful/ui-component-library';
+import { formatQuery } from './QueryBuilder.es6';
+import ResolveLinks from '../../LinkResolver.es6';
 import Workbench from 'ui/Components/Workbench/JSX.es6';
 import UserDropdown from './UserDropdown.es6';
-import createResourceService from 'services/ResourceService.es6';
+import UserListFilters from './UserListFilters.es6';
 import { href, go } from 'states/Navigator.es6';
 import {
-  getAllUsers,
-  getAllMemberships,
+  getMemberships,
   removeMembership
 } from 'access_control/OrganizationMembershipRepository.es6';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
+import { getFilterDefinitions } from './FilterDefinitions.es6';
 
 const ServicesConsumer = require('../../../../reactServiceContext').default;
 
@@ -30,35 +33,43 @@ class UsersList extends React.Component {
       notification: PropTypes.object
     }),
     orgId: PropTypes.string.isRequired,
-    context: PropTypes.any
+    spaceRoles: PropTypes.array,
+    spaces: PropTypes.arrayOf(SpacePropType),
+    resource: PropTypes.shape({
+      usage: PropTypes.number,
+      limits: PropTypes.shape({
+        maximum: PropTypes.number
+      })
+    })
   };
 
   state = {
+    queryTotal: 0,
     usersList: [],
-    membershipsResource: null
+    filters: getFilterDefinitions(this.props.spaces, this.props.spaceRoles)
   };
 
   endpoint = createOrganizationEndpoint(this.props.orgId);
 
-  async componentDidMount() {
-    const { orgId } = this.props;
-    const resources = createResourceService(orgId, 'organization');
-    const [users, memberships, membershipsResource] = await Promise.all([
-      getAllUsers(this.endpoint),
-      getAllMemberships(this.endpoint),
-      resources.get('organization_membership')
-    ]);
-    const getMembershipUser = membership => {
-      return users.find(user => user.sys.id === membership.user.sys.id);
+  componentDidMount() {
+    this.fetch();
+  }
+
+  async fetch() {
+    const { filters } = this.state;
+    const filterQuery = formatQuery(filters.map(item => item.filter));
+    const includePaths = ['sys.user'];
+    const query = {
+      ...filterQuery,
+      include: includePaths
     };
+    const { total, items, includes } = await getMemberships(this.endpoint, query);
+    const resolved = ResolveLinks({ paths: includePaths, items, includes });
 
-    const usersList = memberships.map(membership => ({
-      ...membership,
-      user: getMembershipUser(membership)
-    }));
-
-    this.props.context.ready = true;
-    this.setState({ usersList, membershipsResource });
+    this.setState({
+      usersList: resolved,
+      queryTotal: total
+    });
   }
 
   getLinkToInvitation() {
@@ -82,7 +93,7 @@ class UsersList extends React.Component {
   async handleMembershipRemove(membership) {
     const { notification } = this.props.$services;
     const { usersList } = this.state;
-    const { firstName } = membership.user;
+    const { firstName } = membership.sys.user;
     const message = firstName
       ? `${firstName} has been successfully removed from this organization`
       : `Membership successfully removed`;
@@ -96,16 +107,25 @@ class UsersList extends React.Component {
     }
   }
 
-  render() {
-    const { usersList, membershipsResource } = this.state;
+  updateFilters = filters => {
+    this.setState({ filters }, this.fetch);
+  };
 
-    if (!this.state.usersList.length) return null;
+  resetFilters = () => {
+    const filters = getFilterDefinitions(this.props.spaces, this.props.spaceRoles);
+    this.updateFilters(filters);
+  };
+
+  render() {
+    const { queryTotal, usersList, filters } = this.state;
+    const { resource } = this.props;
 
     return (
       <Workbench testId="organization-users-page">
         <Workbench.Header>
           <Workbench.Title>Organization users</Workbench.Title>
           <div className="workbench-header__actions">
+            {`${pluralize('users', resource.usage, true)} in your organization`}
             <Button icon="PlusCircle" href={this.getLinkToInvitation()}>
               Invite users
             </Button>
@@ -113,9 +133,12 @@ class UsersList extends React.Component {
         </Workbench.Header>
         <Workbench.Content>
           <section style={{ padding: '1em 2em 2em' }}>
-            <p align="right">
-              There are {pluralize('users', membershipsResource.usage, true)} in this organization
-            </p>
+            <UserListFilters
+              queryTotal={queryTotal}
+              onChange={this.updateFilters}
+              filters={filters}
+              onReset={this.resetFilters}
+            />
             <Table>
               <TableHead>
                 <TableRow>
@@ -129,21 +152,21 @@ class UsersList extends React.Component {
                 {usersList.map(membership => (
                   <TableRow key={membership.sys.id} onClick={() => this.goToUser(membership)}>
                     <TableCell>
-                      {membership.user.firstName && (
+                      {membership.sys.user.firstName && (
                         <img
                           style={{ verticalAlign: 'middle', marginRight: '5px' }}
-                          src={membership.user.avatarUrl}
+                          src={membership.sys.user.avatarUrl}
                           width="32"
                           height="32"
                         />
                       )}
-                      {membership.user.firstName ? (
-                        `${membership.user.firstName} ${membership.user.lastName}`
+                      {membership.sys.user.firstName ? (
+                        `${membership.sys.user.firstName} ${membership.sys.user.lastName}`
                       ) : (
                         <Pill label="Invited" />
                       )}
                     </TableCell>
-                    <TableCell>{membership.user.email}</TableCell>
+                    <TableCell>{membership.sys.user.email}</TableCell>
                     <TableCell>{startCase(membership.role)}</TableCell>
                     <TableCell align="right">
                       <UserDropdown

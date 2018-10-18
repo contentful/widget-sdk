@@ -15,6 +15,17 @@ export function getAllMemberships(endpoint) {
   return fetchAll(endpoint, ['organization_memberships'], BATCH_LIMIT, null, ALPHA_HEADER);
 }
 
+export function getMemberships(endpoint, query) {
+  return endpoint(
+    {
+      method: 'GET',
+      path: ['organization_memberships'],
+      query
+    },
+    ALPHA_HEADER
+  );
+}
+
 export function getMembership(endpoint, membershipId) {
   return endpoint(
     {

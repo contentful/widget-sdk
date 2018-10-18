@@ -11,16 +11,19 @@ export const User = PropTypes.shape({
   })
 });
 
+export const Space = PropTypes.shape({
+  name: PropTypes.string.isRequired,
+  sys: PropTypes.shape({
+    id: PropTypes.string.isRequired
+  }).isRequired
+});
+
 export const SpaceMembership = PropTypes.shape({
   admin: PropTypes.bool.isRequired,
   roles: PropTypes.array.isRequired,
   sys: PropTypes.shape({
     id: PropTypes.string.isRequired,
-    space: PropTypes.shape({
-      sys: PropTypes.shape({
-        id: PropTypes.string.isRequired
-      }).isRequired
-    }).isRequired
+    space: Space.isRequired
   }).isRequired
 });
 
@@ -30,4 +33,26 @@ export const OrganizationMembership = PropTypes.shape({
     id: PropTypes.string.isRequired,
     user: User.isRequired
   })
+});
+
+export const FilterOption = PropTypes.shape({
+  label: PropTypes.string.isRequired,
+  value: PropTypes.any
+});
+
+export const Filter = PropTypes.shape({
+  label: PropTypes.string.isRequired,
+  filter: PropTypes.shape({
+    key: PropTypes.string.isRequired,
+    operator: PropTypes.string,
+    value: PropTypes.any
+  }).isRequired,
+  options: PropTypes.arrayOf(FilterOption)
+});
+
+export const SpaceRole = PropTypes.shape({
+  name: PropTypes.string.isRequired,
+  sys: PropTypes.shape({
+    id: PropTypes.string.isRequired
+  }).isRequired
 });

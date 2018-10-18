@@ -1,0 +1,181 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SearchFilter accepts empty values 1`] = `
+<SearchFilter
+  filter={
+    Object {
+      "key": "fruit",
+      "operator": null,
+      "value": "papaya",
+    }
+  }
+  filters={
+    Object {
+      "key": "foo",
+      "value": null,
+    }
+  }
+  label="Fruit"
+  onChange={[Function]}
+  options={
+    Array [
+      Object {
+        "label": "Any",
+        "value": "",
+      },
+      Object {
+        "label": "Papaya",
+        "value": "papaya",
+      },
+      Object {
+        "label": "Banana",
+        "value": "banana",
+      },
+      Object {
+        "label": "Kiwi",
+        "value": "kiwi",
+      },
+    ]
+  }
+>
+  <div
+    className="
+      search__filter-pill
+      users-search__filter-pill
+      search__filter-pill--active
+    "
+  >
+    <div
+      className="search__filter-pill-label users-search__filter-pill-label"
+    >
+      Fruit
+    </div>
+    <div
+      className="search__select-value users-search__select-value"
+    >
+      <select
+        className="search__select users-search__select"
+        onChange={[Function]}
+        style={
+          Object {
+            "width": "calc(6ch + 40px)",
+          }
+        }
+        value="papaya"
+      >
+        <option
+          key=""
+          value=""
+        >
+          Any
+        </option>
+        <option
+          key="papaya"
+          value="papaya"
+        >
+          Papaya
+        </option>
+        <option
+          key="banana"
+          value="banana"
+        >
+          Banana
+        </option>
+        <option
+          key="kiwi"
+          value="kiwi"
+        >
+          Kiwi
+        </option>
+      </select>
+    </div>
+  </div>
+</SearchFilter>
+`;
+
+exports[`SearchFilter renders the component 1`] = `
+<SearchFilter
+  filter={
+    Object {
+      "key": "fruit",
+      "operator": null,
+      "value": "papaya",
+    }
+  }
+  label="Fruit"
+  onChange={[Function]}
+  options={
+    Array [
+      Object {
+        "label": "Any",
+        "value": "",
+      },
+      Object {
+        "label": "Papaya",
+        "value": "papaya",
+      },
+      Object {
+        "label": "Banana",
+        "value": "banana",
+      },
+      Object {
+        "label": "Kiwi",
+        "value": "kiwi",
+      },
+    ]
+  }
+>
+  <div
+    className="
+      search__filter-pill
+      users-search__filter-pill
+      search__filter-pill--active
+    "
+  >
+    <div
+      className="search__filter-pill-label users-search__filter-pill-label"
+    >
+      Fruit
+    </div>
+    <div
+      className="search__select-value users-search__select-value"
+    >
+      <select
+        className="search__select users-search__select"
+        onChange={[Function]}
+        style={
+          Object {
+            "width": "calc(6ch + 40px)",
+          }
+        }
+        value="papaya"
+      >
+        <option
+          key=""
+          value=""
+        >
+          Any
+        </option>
+        <option
+          key="papaya"
+          value="papaya"
+        >
+          Papaya
+        </option>
+        <option
+          key="banana"
+          value="banana"
+        >
+          Banana
+        </option>
+        <option
+          key="kiwi"
+          value="kiwi"
+        >
+          Kiwi
+        </option>
+      </select>
+    </div>
+  </div>
+</SearchFilter>
+`;
