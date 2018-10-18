@@ -10,7 +10,9 @@ angular
   .factory('states/settings', [
     'require',
     require => {
-      return {
+      const SpaceSettingsBase = require('states/SpaceSettingsBase.es6').default;
+
+      return SpaceSettingsBase({
         name: 'settings',
         url: '/settings',
         abstract: true,
@@ -30,6 +32,6 @@ angular
           require('app/settings/extensions/routes/index.es6').default,
           require('app/settings/webhooks/routes/index.es6').default
         ]
-      };
+      });
     }
   ]);

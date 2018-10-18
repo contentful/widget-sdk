@@ -10,6 +10,7 @@ import editorTemplate from './KeyEditor/Template.es6';
 import * as CMATokensPage from './CMATokens/Page.es6';
 import CMATokensPageTemplate from './CMATokens/PageTemplate.es6';
 import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo.es6';
+import { redirectReadOnlySpace } from 'states/SpaceSettingsBase.es6';
 
 /**
  * @ngdoc service
@@ -77,7 +78,11 @@ export default {
   abstract: true,
   onEnter: [
     'spaceContext',
-    spaceContext => {
+    '$stateParams',
+    async (spaceContext, $stateParams) => {
+      const spaceId = $stateParams.spaceId;
+
+      await redirectReadOnlySpace(spaceId);
       spaceContext.apiKeyRepo.refresh();
     }
   ],
