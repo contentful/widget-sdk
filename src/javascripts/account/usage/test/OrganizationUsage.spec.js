@@ -1,7 +1,13 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import { OrganizationUsage } from '../OrganizationUsage.es6';
+import { Spinner } from '@contentful/ui-component-library';
+
+import { OrganizationUsage, WorkbenchContent, WorkbenchActions } from '../OrganizationUsage.es6';
+import PeriodSelector from '../committed/PeriodSelector.es6';
+import NoSpacesPlaceholder from '../NoSpacesPlaceholder.es6';
+import OrganizationUsagePage from '../committed/OrganizationUsagePage.es6';
+import OrganizationResourceUsageList from 'account/usage/non_committed/OrganizationResourceUsageList.es6';
 
 let defaultProps = null;
 let testOrg = null;
@@ -116,7 +122,7 @@ describe('OrganizationUsage', () => {
     });
   });
 
-  describe('fetching org data fails with 400', () => {
+  describe('fetching org data fails with different error code', () => {
     const error400 = new Error('Test error');
     error400.status = 400;
 
@@ -133,6 +139,175 @@ describe('OrganizationUsage', () => {
 
       expect(defaultProps.onForbidden).not.toHaveBeenCalled();
       expect(defaultProps.$services.ReloadNotification.trigger).toHaveBeenCalled();
+    });
+  });
+});
+
+describe('WorkbenchActions', () => {
+  describe('isLoading', () => {
+    it('should render a spinner', () => {
+      const wrapper = shallow(<WorkbenchActions isLoading />);
+
+      expect(wrapper.find(Spinner)).toHaveLength(1);
+
+      expect(wrapper.find(PeriodSelector)).toHaveLength(0);
+    });
+  });
+
+  describe('org is committed, flag is set and periods received', () => {
+    it('should render the PeriodSelector', () => {
+      const wrapper = shallow(
+        <WorkbenchActions
+          hasSpaces
+          committed
+          flagActive
+          periods={[]}
+          selectedPeriodIndex={0}
+          setPeriodIndex={() => {}}
+        />
+      );
+
+      expect(wrapper.find(PeriodSelector)).toHaveLength(1);
+    });
+  });
+
+  describe('org is not committed', () => {
+    it('should render nothing', () => {
+      const wrapper = shallow(
+        <WorkbenchActions
+          hasSpaces
+          flagActive
+          periods={[]}
+          selectedPeriodIndex={0}
+          setPeriodIndex={() => {}}
+        />
+      );
+
+      expect(wrapper.find(PeriodSelector)).toHaveLength(0);
+      expect(wrapper.find(Spinner)).toHaveLength(0);
+    });
+  });
+
+  describe('org has no spaces', () => {
+    it('should render nothing', () => {
+      const wrapper = shallow(
+        <WorkbenchActions
+          committed
+          flagActive
+          periods={[]}
+          selectedPeriodIndex={0}
+          setPeriodIndex={() => {}}
+        />
+      );
+
+      expect(wrapper.find(PeriodSelector)).toHaveLength(0);
+      expect(wrapper.find(Spinner)).toHaveLength(0);
+    });
+  });
+
+  describe('feature flag not set', () => {
+    it('should render nothing', () => {
+      const wrapper = shallow(
+        <WorkbenchActions
+          hasSpaces
+          committed
+          periods={[]}
+          selectedPeriodIndex={0}
+          setPeriodIndex={() => {}}
+        />
+      );
+
+      expect(wrapper.find(PeriodSelector)).toHaveLength(0);
+      expect(wrapper.find(Spinner)).toHaveLength(0);
+    });
+  });
+});
+
+describe('WorkbenchContent', () => {
+  let defaultProps = null;
+
+  beforeEach(() => {
+    defaultProps = {
+      committed: true,
+      flagActive: true,
+      hasSpaces: true,
+      selectedPeriodIndex: 0,
+      spaceNames: { space1: 'Space1', space2: 'Space2' },
+      isPoC: true,
+      periodicUsage: {},
+      apiRequestIncludedLimit: 1000,
+      assetBandwidthUsage: 100,
+      assetBandwidthIncludedLimit: 50,
+      assetBandwidthUOM: 'GB',
+      isLoading: false,
+      periods: [],
+      resources: []
+    };
+  });
+
+  describe('org is committed, flag is active and there are spaces', () => {
+    it('should render the OrganizationUsagePage', () => {
+      const wrapper = shallow(<WorkbenchContent {...defaultProps} />);
+
+      expect(wrapper.find(OrganizationUsagePage)).toHaveLength(1);
+
+      expect(wrapper.find(NoSpacesPlaceholder)).toHaveLength(0);
+      expect(wrapper.find(OrganizationResourceUsageList)).toHaveLength(0);
+    });
+  });
+
+  describe('org has no spaces', () => {
+    it('should render NoSpacePlaceholder', () => {
+      const wrapper = shallow(
+        <WorkbenchContent {...{ ...defaultProps, ...{ hasSpaces: false } }} />
+      );
+
+      expect(wrapper.find(NoSpacesPlaceholder)).toHaveLength(1);
+
+      expect(wrapper.find(OrganizationUsagePage)).toHaveLength(0);
+      expect(wrapper.find(OrganizationResourceUsageList)).toHaveLength(0);
+    });
+  });
+
+  describe('org is not committed', () => {
+    beforeEach(() => {
+      defaultProps.committed = false;
+    });
+
+    it('should render OrganizationResourceUsageList', () => {
+      const wrapper = shallow(<WorkbenchContent {...defaultProps} />);
+
+      expect(wrapper.find(OrganizationResourceUsageList)).toHaveLength(1);
+
+      expect(wrapper.find(OrganizationUsagePage)).toHaveLength(0);
+      expect(wrapper.find(NoSpacesPlaceholder)).toHaveLength(0);
+    });
+
+    describe('no resources given', () => {
+      beforeEach(() => {
+        defaultProps.resources = undefined;
+      });
+
+      it('should render nothing', () => {
+        const wrapper = shallow(<WorkbenchContent {...defaultProps} />);
+
+        expect(wrapper.find(OrganizationResourceUsageList)).toHaveLength(0);
+        expect(wrapper.find(OrganizationUsagePage)).toHaveLength(0);
+        expect(wrapper.find(NoSpacesPlaceholder)).toHaveLength(0);
+      });
+    });
+  });
+
+  describe('feature flag is not active', () => {
+    it('should render OrganizationResourceUsageList', () => {
+      const wrapper = shallow(
+        <WorkbenchContent {...{ ...defaultProps, ...{ flagActive: false } }} />
+      );
+
+      expect(wrapper.find(OrganizationResourceUsageList)).toHaveLength(1);
+
+      expect(wrapper.find(OrganizationUsagePage)).toHaveLength(0);
+      expect(wrapper.find(NoSpacesPlaceholder)).toHaveLength(0);
     });
   });
 });
