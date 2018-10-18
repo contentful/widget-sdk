@@ -146,8 +146,8 @@ class RichTextOptions extends Component {
         validationOf: ValidationType.ENABLED_NODE_TYPES
       },
       {
-        icon: 'EmbeddedEntryBlock',
-        title: 'Block asset',
+        icon: 'AssetTrimmed',
+        title: 'Asset',
         id: BLOCKS.EMBEDDED_ASSET,
         validationOf: ValidationType.ENABLED_NODE_TYPES
       }
@@ -250,7 +250,7 @@ class RichTextOptions extends Component {
         <RichTextOptionsSection heading="Links">
           {this.renderToggles(this.options.linkOptions)}
         </RichTextOptionsSection>
-        <RichTextOptionsSection heading="Embeds">
+        <RichTextOptionsSection heading="Embedded entries & assets">
           {this.renderToggles(this.options.entryOptions)}
         </RichTextOptionsSection>
       </div>

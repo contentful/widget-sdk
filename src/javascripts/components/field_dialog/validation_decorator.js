@@ -138,7 +138,7 @@ angular
         [BLOCKS.QUOTE]: 'quote',
         [BLOCKS.HR]: 'horizontal rule',
         [BLOCKS.EMBEDDED_ENTRY]: 'block entry',
-        [BLOCKS.EMBEDDED_ASSET]: 'block asset',
+        [BLOCKS.EMBEDDED_ASSET]: 'asset',
         [INLINES.EMBEDDED_ENTRY]: 'inline entry',
         [INLINES.HYPERLINK]: 'link to Url',
         [INLINES.ENTRY_HYPERLINK]: 'link to entry',
@@ -387,7 +387,7 @@ angular
         }
         field.validations = validationsCopy;
 
-        function makeMessage (kindPlural, enabledTypes) {
+        function makeMessage(kindPlural, enabledTypes) {
           const list = joinWithAnd(enabledTypes.map(name => richTextOptionsLabels[name]));
           return list.length > 0
             ? `Only ${list} ${kindPlural} are allowed`
