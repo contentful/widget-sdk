@@ -1,6 +1,7 @@
 import React from 'react';
 import { Tooltip, TextLink } from '@contentful/ui-component-library';
 import PropTypes from 'prop-types';
+import { truncate } from 'utils/StringUtils.es6';
 import { INLINES } from '@contentful/rich-text-types';
 import RequestStatus from '../shared/RequestStatus.es6';
 import FetchEntity from '../shared/FetchEntity/index.es6';
@@ -54,6 +55,8 @@ export default class Hyperlink extends React.Component {
       <Tooltip content={tooltip} containerElement={HyperlinkTooltipContainer}>
         <TextLink
           href={href} // Allows user to open link in new tab.
+          rel="noopener noreferrer"
+          data-tip={tooltip}
           title={title}
           extraClassNames="rich-text__hyperlink">
           {children}
@@ -73,12 +76,12 @@ export default class Hyperlink extends React.Component {
             entityType={target.sys.linkType}
             localeCode={widgetAPI.field.locale}
             render={({ requestStatus, entityTitle, entityStatus, contentTypeName = 'Asset' }) => {
+              const title = truncate(entityTitle, 60) || 'Untitled';
               let tooltip = '';
               if (requestStatus === RequestStatus.Error) {
                 tooltip = `${target.sys.linkType} missing or inaccessible`;
               } else if (requestStatus === RequestStatus.Success) {
-                tooltip = `${contentTypeName}: ${entityTitle ||
-                  'Untitled'} (${entityStatus.toUpperCase()})`;
+                tooltip = `${contentTypeName}: ${title} (${entityStatus.toUpperCase()})`;
               } else if (requestStatus === RequestStatus.Pending) {
                 tooltip = `Loading ${target.sys.linkType.toLowerCase()}...`;
               }
