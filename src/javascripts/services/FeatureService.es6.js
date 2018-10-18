@@ -35,7 +35,7 @@ export default function createFeatureService(id, type = 'space') {
 
 function legacyGetFeatures(organization) {
   const featuresHash = get(organization, 'subscriptionPlan.limits.features', {});
-  const enabledFeatureIds = Object.keys(featuresHash).filter(featureId => featuresHash[featureId])
+  const enabledFeatureIds = Object.keys(featuresHash).filter(featureId => featuresHash[featureId]);
   const features = enabledFeatureIds.map(featureId => {
     return {
       sys: {
