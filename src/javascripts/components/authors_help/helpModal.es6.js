@@ -1,8 +1,5 @@
 import { h } from 'utils/legacy-html-hyperscript';
 import { open } from 'modalDialog';
-import BackgroundIcon from 'svg/header-illustration-wide.es6';
-import ThumbsDownIcon from 'svg/icon-thumbs-down.es6';
-import ThumbsUpIcon from 'svg/icon-thumbs-up.es6';
 
 const prefix = `authors-help`;
 
@@ -11,7 +8,9 @@ export function openHelp(scope) {
     scope,
     template: h('.modal-background', [
       h(`.modal-dialog.${prefix}__modal`, [
-        h(`.${prefix}__banner`, [h(BackgroundIcon)]),
+        h(`.${prefix}__banner`, [
+          h('react-component', { name: 'svg/header-illustration-wide.es6' })
+        ]),
         h(`.${prefix}__container`, [
           h(`h3.${prefix}__title`, ['Hi {{ name }}. Welcome to Contentful.']),
           h(`.${prefix}__description`, ['Your place to create and manage content collaboratively']),
@@ -83,14 +82,14 @@ function renderFeedback() {
           {
             ngClick: 'chooseFeedback("negative")'
           },
-          [h(ThumbsUpIcon)]
+          [h('react-component', { name: 'svg/icon-thumbs-up.es6' })]
         ),
         h(
           `.${prefix}__feedback-choice`,
           {
             ngClick: 'chooseFeedback("positive")'
           },
-          [h(ThumbsDownIcon)]
+          [h('react-component', { name: 'svg/icon-thumbs-down.es6' })]
         )
       ]
     ),
