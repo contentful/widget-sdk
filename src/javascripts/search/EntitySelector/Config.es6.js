@@ -3,6 +3,7 @@ import ListQuery from 'ListQuery';
 import mimetype from 'mimetype';
 import TheLocaleStore from 'TheLocaleStore';
 import spaceContext from 'spaceContext';
+import getLinkedContentTypeIdsForNodeType from 'app/widgets/rich_text/plugins/shared/GetLinkedContentTypeIdsForNodeType.es6';
 
 const LABELS = {
   entry_single: {
@@ -105,8 +106,7 @@ export function newConfigFromRichTextField(field, nodeType) {
     multiple: false,
     min: 1,
     max: Infinity,
-    // TODO: Reflect CT validations.
-    linkedContentTypeIds: [],
+    linkedContentTypeIds: getLinkedContentTypeIdsForNodeType(field, nodeType),
     linkedMimetypeGroups: []
   };
   config.fetch = makeFetch(config);
