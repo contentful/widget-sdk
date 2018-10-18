@@ -128,7 +128,7 @@ export default class RichTextEditor extends React.Component {
     });
 
   renderEmbeds = props => (
-    <React.Fragment>
+    <div className="rich-text__toolbar__embed-actions-wrapper">
       <EmbeddedEntityBlock nodeType={BLOCKS.EMBEDDED_ASSET} isButton {...props} />
       {this.props.widgetAPI.features.embedInlineEntry ? (
         <EntryEmbedDropdown
@@ -142,7 +142,7 @@ export default class RichTextEditor extends React.Component {
       ) : (
         <EmbeddedEntityBlock nodeType={BLOCKS.EMBEDDED_ENTRY} isButton {...props} />
       )}
-    </React.Fragment>
+    </div>
   );
 
   renderToolbar() {
@@ -154,7 +154,7 @@ export default class RichTextEditor extends React.Component {
 
     return (
       <EditorToolbar extraClassNames="rich-text__toolbar" data-test-id="toolbar">
-        <div className="rich-text__toolbar__action-wrapper">
+        <div className="rich-text__toolbar__formatting-options-wrapper">
           <HeadingDropdown
             onToggle={this.toggleHeadingMenu}
             isToggleActive={true}

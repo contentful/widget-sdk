@@ -184,7 +184,7 @@ describe('Toolbar', () => {
     });
   });
 
-  xdescribe('EmbeddedAssetBlock', function() {
+  describe('EmbeddedAssetBlock', function() {
     it('renders block', async function() {
       const editor = getWithId(this.wrapper, 'editor');
       await this.embedAssetBlock(ASSET);
