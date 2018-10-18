@@ -14,6 +14,106 @@ import { getPeriods, getOrgUsage, getApiUsage } from './UsageService.es6';
 import PeriodSelector from './committed/PeriodSelector.es6';
 import NoSpacesPlaceholder from './NoSpacesPlaceholder.es6';
 
+export class WorkbenchContent extends React.Component {
+  static propTypes = {
+    committed: PropTypes.bool,
+    flagActive: PropTypes.bool,
+    hasSpaces: PropTypes.bool,
+    selectedPeriodIndex: PropTypes.number,
+    spaceNames: PropTypes.objectOf(PropTypes.string),
+    isPoC: PropTypes.bool,
+    periodicUsage: PropTypes.object,
+    apiRequestIncludedLimit: PropTypes.number,
+    assetBandwidthUsage: PropTypes.number,
+    assetBandwidthIncludedLimit: PropTypes.number,
+    assetBandwidthUOM: PropTypes.string,
+    isLoading: PropTypes.bool,
+    periods: PropTypes.arrayOf(PropTypes.object),
+    resources: PropTypes.arrayOf(PropTypes.object)
+  };
+
+  render() {
+    const {
+      committed,
+      flagActive,
+      hasSpaces,
+      selectedPeriodIndex,
+      spaceNames,
+      isPoC,
+      periodicUsage,
+      apiRequestIncludedLimit,
+      assetBandwidthUsage,
+      assetBandwidthIncludedLimit,
+      assetBandwidthUOM,
+      isLoading,
+      periods,
+      resources
+    } = this.props;
+
+    if (committed && flagActive) {
+      if (!hasSpaces) {
+        return <NoSpacesPlaceholder />;
+      }
+      if (typeof selectedPeriodIndex !== 'undefined') {
+        return (
+          <OrganizationUsagePage
+            {...{
+              period: periods[selectedPeriodIndex],
+              spaceNames,
+              isPoC,
+              periodicUsage,
+              apiRequestIncludedLimit,
+              assetBandwidthUsage,
+              assetBandwidthIncludedLimit,
+              assetBandwidthUOM,
+              isLoading
+            }}
+          />
+        );
+      }
+    } else {
+      if (typeof resources !== 'undefined') {
+        return <OrganizationResourceUsageList resources={resources} />;
+      }
+    }
+    return <div />;
+  }
+}
+
+export class WorkbenchActions extends React.Component {
+  static propTypes = {
+    isLoading: PropTypes.bool,
+    hasSpaces: PropTypes.bool,
+    committed: PropTypes.bool,
+    flagActive: PropTypes.bool,
+    periods: PropTypes.array,
+    selectedPeriodIndex: PropTypes.number,
+    setPeriodIndex: PropTypes.func
+  };
+
+  render() {
+    const {
+      isLoading,
+      hasSpaces,
+      committed,
+      flagActive,
+      periods,
+      selectedPeriodIndex,
+      setPeriodIndex
+    } = this.props;
+
+    return isLoading ? (
+      <Spinner />
+    ) : hasSpaces && committed && flagActive && periods ? (
+      <PeriodSelector
+        periods={periods}
+        selectedPeriodIndex={selectedPeriodIndex}
+        onChange={setPeriodIndex}
+      />
+    ) : null;
+  }
+}
+
 export class OrganizationUsage extends React.Component {
   static propTypes = {
     orgId: PropTypes.string.isRequired,
@@ -208,45 +308,38 @@ export class OrganizationUsage extends React.Component {
         testId="organization.usage"
         title="Usage"
         actions={
-          isLoading ? (
-            <Spinner />
-          ) : hasSpaces && committed && flagActive && periods ? (
-            <PeriodSelector
-              periods={periods}
-              selectedPeriodIndex={selectedPeriodIndex}
-              onChange={this.setPeriodIndex}
-            />
-          ) : (
-            undefined
-          )
+          <WorkbenchActions
+            {...{
+              isLoading,
+              hasSpaces,
+              committed,
+              flagActive,
+              periods,
+              selectedPeriodIndex,
+              setPeriodIndex: this.setPeriodIndex
+            }}
+          />
         }
-        content={(function() {
-          if (committed && flagActive) {
-            if (!hasSpaces) {
-              return <NoSpacesPlaceholder />;
-            }
-            if (typeof selectedPeriodIndex !== 'undefined') {
-              return (
-                <OrganizationUsagePage
-                  period={periods[selectedPeriodIndex]}
-                  spaceNames={spaceNames}
-                  isPoC={isPoC}
-                  periodicUsage={periodicUsage}
-                  apiRequestIncludedLimit={apiRequestIncludedLimit}
-                  assetBandwidthUsage={assetBandwidthUsage}
-                  assetBandwidthIncludedLimit={assetBandwidthIncludedLimit}
-                  assetBandwidthUOM={assetBandwidthUOM}
-                  isLoading={isLoading}
-                />
-              );
-            }
-          } else {
-            if (typeof resources !== 'undefined') {
-              return <OrganizationResourceUsageList resources={resources} />;
-            }
-          }
-          return <div />;
-        })()}
+        content={
+          <WorkbenchContent
+            {...{
+              committed,
+              flagActive,
+              hasSpaces,
+              selectedPeriodIndex,
+              spaceNames,
+              isPoC,
+              periodicUsage,
+              apiRequestIncludedLimit,
+              assetBandwidthUsage,
+              assetBandwidthIncludedLimit,
+              assetBandwidthUOM,
+              isLoading,
+              periods,
+              resources
+            }}
+          />
+        }
       />
     );
   }
