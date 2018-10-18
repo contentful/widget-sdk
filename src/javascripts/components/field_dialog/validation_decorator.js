@@ -136,8 +136,9 @@ angular
         [BLOCKS.OL_LIST]: 'Ordered list',
         [BLOCKS.QUOTE]: 'Quote',
         [BLOCKS.HR]: 'Horizontal rule',
-        [BLOCKS.EMBEDDED_ENTRY]: 'Block Entry',
-        [INLINES.EMBEDDED_ENTRY]: 'Inline Entry',
+        [BLOCKS.EMBEDDED_ENTRY]: 'Block entry',
+        [BLOCKS.EMBEDDED_ASSET]: 'Block asset',
+        [INLINES.EMBEDDED_ENTRY]: 'Inline entry',
         [INLINES.HYPERLINK]: 'Link to Url',
         [INLINES.ENTRY_HYPERLINK]: 'Link to entry',
         [INLINES.ASSET_HYPERLINK]: 'Link to asset'
