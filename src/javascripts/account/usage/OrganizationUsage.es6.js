@@ -21,7 +21,7 @@ export class WorkbenchContent extends React.Component {
     hasSpaces: PropTypes.bool,
     selectedPeriodIndex: PropTypes.number,
     spaceNames: PropTypes.objectOf(PropTypes.string),
-    isPoC: PropTypes.bool,
+    isPoC: PropTypes.objectOf(PropTypes.bool),
     periodicUsage: PropTypes.object,
     apiRequestIncludedLimit: PropTypes.number,
     assetBandwidthUsage: PropTypes.number,
