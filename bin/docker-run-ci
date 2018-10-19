@@ -9,5 +9,6 @@ docker run \
   -t \
   --rm \
   -v $(pwd)/output:/app/output \
+  -e CODECOV_TOKEN=${CODECOV_TOKEN} \
   contentful/user-interface-ci \
   "$@"
