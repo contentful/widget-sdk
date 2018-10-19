@@ -5,30 +5,6 @@ import { getSpace } from 'services/TokenStore.es6';
 
 const flagName = 'feature-bv-2018-08-enforcements-api';
 
-const genFrozenSpaceEnforcement = spaceId => {
-  return {
-    additionalPolicies: [],
-    deniedPermissions: {
-      ContentType: ['create', 'update', 'delete', 'publish', 'unpublish'],
-      Entry: ['create', 'update', 'delete', 'publish', 'unpublish', 'archive', 'unarchive'],
-      Asset: ['create', 'update', 'delete', 'publish', 'unpublish', 'archive', 'unarchive'],
-      Settings: ['read']
-    },
-    reason: 'frozenSpace',
-    sys: {
-      type: 'Enforcement',
-      id: 'enforcement-3432ae1180cc7d8aab6b40448bf6fa5433850c04',
-      space: {
-        sys: {
-          type: 'Link',
-          linkType: 'Space',
-          id: spaceId
-        }
-      }
-    }
-  };
-};
-
 // 30 seconds
 // This is the Varnish caching time for this endpoint
 const ENFORCEMENT_INFO_REFRESH_INTERVAL = 30 * 1000;
@@ -98,11 +74,6 @@ async function fetchEnforcements(spaceId) {
   // To get around circular dep
   const { getCurrentVariation } = require('utils/LaunchDarkly');
   const useApi = await getCurrentVariation(flagName);
-  const useFrozenSpaceEnf = await getCurrentVariation('frozen-space-test');
-
-  if (useFrozenSpaceEnf) {
-    return [genFrozenSpaceEnforcement(spaceId)];
-  }
 
   if (active && useApi) {
     const endpoint = createSpaceEndpoint(spaceId);
