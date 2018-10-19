@@ -1,5 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
+import { isEqual } from 'lodash';
+import moment from 'moment';
 
 import { Spinner } from '@contentful/ui-component-library';
 
@@ -11,6 +13,8 @@ import OrganizationResourceUsageList from 'account/usage/non_committed/Organizat
 
 let defaultProps = null;
 let testOrg = null;
+let endpoint = null;
+let resourceService = null;
 const shallowRenderComponent = async props => {
   const wrapper = shallow(<OrganizationUsage {...props} />);
   // Need to wait for internal async logic to finish
@@ -24,6 +28,41 @@ const shallowRenderComponent = async props => {
 describe('OrganizationUsage', () => {
   beforeEach(() => {
     testOrg = {};
+    endpoint = jest.fn(({ method, path }) => {
+      if (method === 'GET' && isEqual(path, ['usage_periods'])) {
+        const startDate = moment().subtract(12, 'days');
+        return {
+          items: [
+            {
+              startDate: startDate.toISOString(),
+              endDate: null,
+              sys: { type: 'UsagePeriod', id: '0' }
+            },
+            {
+              startDate: moment(startDate)
+                .subtract(1, 'day')
+                .subtract(1, 'month')
+                .toISOString(),
+              endDate: moment(startDate)
+                .subtract(1, 'day')
+                .toISOString(),
+              sys: { type: 'UsagePeriod', id: '1' }
+            }
+          ]
+        };
+      }
+    });
+    resourceService = {
+      get: jest
+        .fn()
+        .mockReturnValueOnce({ limits: { included: 1000000 } })
+        .mockReturnValueOnce({
+          usage: 200,
+          unitOfMeasure: 'MB',
+          limits: { included: 2000 }
+        }),
+      getAll: jest.fn()
+    };
     defaultProps = {
       orgId: '23423',
       onReady: jest.fn(),
@@ -33,26 +72,26 @@ describe('OrganizationUsage', () => {
         PricingDataProvider: {
           isEnterprisePlan: jest.fn(() => true),
           getBasePlan: jest.fn(),
-          getPlansWithSpaces: jest.fn()
-        },
-        ResourceService: {
-          default: jest.fn(() => ({
-            get: jest
-              .fn()
-              .mockReturnValueOnce({ limits: { included: 1000000 } })
-              .mockReturnValueOnce({
-                usage: 200,
-                unitOfMeasure: 'MB',
-                limits: { included: 2000 }
-              }),
-            getAll: jest.fn()
+          getPlansWithSpaces: jest.fn(() => ({
+            items: [
+              { name: 'Test plan', space: { sys: { id: 'space1' } } },
+              { name: 'Proof of concept', space: { sys: { id: 'space2' } } }
+            ]
           }))
         },
+        ResourceService: {
+          default: jest.fn(() => resourceService)
+        },
         ReloadNotification: { trigger: jest.fn() },
-        OrganizationMembershipRepository: { getAllSpaces: jest.fn() },
-        EndpointFactory: { createOrganizationEndpoint: jest.fn() },
+        OrganizationMembershipRepository: {
+          getAllSpaces: jest.fn(() => [
+            { name: 'Test1', sys: { id: 'test1' } },
+            { name: 'Test2', sys: { id: 'test2' } }
+          ])
+        },
+        EndpointFactory: { createOrganizationEndpoint: jest.fn(() => endpoint) },
         Analytics: { track: jest.fn() },
-        LaunchDarkly: { getCurrentVariation: jest.fn() },
+        LaunchDarkly: { getCurrentVariation: jest.fn(() => true) },
         TokenStore: { getOrganization: jest.fn(() => testOrg) }
       }
     };
@@ -67,6 +106,73 @@ describe('OrganizationUsage', () => {
 
     expect(defaultProps.onReady).toHaveBeenCalled();
   });
+
+  it('should request data', async () => {
+    await shallowRenderComponent(defaultProps);
+
+    expect(endpoint).toHaveBeenCalledWith(
+      {
+        method: 'GET',
+        path: ['usage_periods']
+      },
+      { 'x-contentful-enable-alpha-feature': 'usage-insights' }
+    );
+    expect(endpoint).toHaveBeenCalledWith(
+      {
+        method: 'GET',
+        path: ['usages', 'organization'],
+        query: {
+          'filters[metric]': 'allApis',
+          'filters[usagePeriod]': '0'
+        }
+      },
+      { 'x-contentful-enable-alpha-feature': 'usage-insights' }
+    );
+    expect(endpoint).toHaveBeenCalledWith(
+      {
+        method: 'GET',
+        path: ['usages', 'space'],
+        query: {
+          'filters[metric]': 'cpa',
+          'filters[usagePeriod]': '0',
+          'orderBy[metricUsage]': 'desc',
+          limit: 3
+        }
+      },
+      { 'x-contentful-enable-alpha-feature': 'usage-insights' }
+    );
+    expect(endpoint).toHaveBeenCalledWith(
+      {
+        method: 'GET',
+        path: ['usages', 'space'],
+        query: {
+          'filters[metric]': 'cda',
+          'filters[usagePeriod]': '0',
+          'orderBy[metricUsage]': 'desc',
+          limit: 3
+        }
+      },
+      { 'x-contentful-enable-alpha-feature': 'usage-insights' }
+    );
+    expect(endpoint).toHaveBeenCalledWith(
+      {
+        method: 'GET',
+        path: ['usages', 'space'],
+        query: {
+          'filters[metric]': 'cma',
+          'filters[usagePeriod]': '0',
+          'orderBy[metricUsage]': 'desc',
+          limit: 3
+        }
+      },
+      { 'x-contentful-enable-alpha-feature': 'usage-insights' }
+    );
+  });
+
+  // describe('usage period was changed', async () => {
+  //   const wrapper = await shallowRenderComponent(defaultProps);
+  //
+  // });
 
   describe('user is not owner or admin', () => {
     beforeEach(() => {
@@ -89,10 +195,8 @@ describe('OrganizationUsage', () => {
     error404.status = 404;
 
     beforeEach(() => {
-      defaultProps.$services.ResourceService.default.mockImplementation(
-        jest.fn(() => ({
-          getAll: () => Promise.reject(error404)
-        }))
+      defaultProps.$services.OrganizationMembershipRepository.getAllSpaces.mockReturnValue(
+        Promise.reject(error404)
       );
     });
 
@@ -108,10 +212,8 @@ describe('OrganizationUsage', () => {
     error403.status = 403;
 
     beforeEach(() => {
-      defaultProps.$services.ResourceService.default.mockImplementation(
-        jest.fn(() => ({
-          getAll: () => Promise.reject(error403)
-        }))
+      defaultProps.$services.OrganizationMembershipRepository.getAllSpaces.mockReturnValue(
+        Promise.reject(error403)
       );
     });
 
@@ -127,10 +229,8 @@ describe('OrganizationUsage', () => {
     error400.status = 400;
 
     beforeEach(() => {
-      defaultProps.$services.ResourceService.default.mockImplementation(
-        jest.fn(() => ({
-          getAll: () => Promise.reject(error400)
-        }))
+      defaultProps.$services.OrganizationMembershipRepository.getAllSpaces.mockReturnValue(
+        Promise.reject(error400)
       );
     });
 
@@ -233,7 +333,7 @@ describe('WorkbenchContent', () => {
       hasSpaces: true,
       selectedPeriodIndex: 0,
       spaceNames: { space1: 'Space1', space2: 'Space2' },
-      isPoC: true,
+      isPoC: { space1: false, space2: true },
       periodicUsage: {},
       apiRequestIncludedLimit: 1000,
       assetBandwidthUsage: 100,
