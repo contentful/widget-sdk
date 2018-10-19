@@ -4,8 +4,7 @@ const arrayPropType = itemType =>
   PropTypes.shape({
     total: PropTypes.number.isRequired,
     sys: PropTypes.shape({
-      type: PropTypes.oneOf(['Array']).isRequired,
-      id: PropTypes.string.isRequired
+      type: PropTypes.oneOf(['Array']).isRequired
     }).isRequired,
     items: PropTypes.arrayOf(itemType).isRequired
   });
@@ -27,7 +26,7 @@ const organizationUsagePropType = arrayPropType(
 
 const organizationResourceUsagePropType = PropTypes.shape({
   sys: PropTypes.shape({
-    type: PropTypes.oneOf(['cmaUsage', 'cpaUsage', 'cdaUsage']).isRequired,
+    type: PropTypes.oneOf(['ApiUsage']).isRequired,
     id: PropTypes.string.isRequired,
     space: PropTypes.shape({ sys: PropTypes.shape({ id: PropTypes.string.isRequired }) }).isRequired
   }),

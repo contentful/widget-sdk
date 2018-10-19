@@ -86,7 +86,7 @@ function SpaceList(props) {
 
 SpaceList.propTypes = {
   spaces: PropTypes.arrayOf(PropTypes.object),
-  currentSpaceId: PropTypes.stirng,
+  currentSpaceId: PropTypes.string,
   currentEnvId: PropTypes.string,
   goToSpace: PropTypes.func,
   openedSpaceId: PropTypes.string,
