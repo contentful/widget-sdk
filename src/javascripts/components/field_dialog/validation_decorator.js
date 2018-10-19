@@ -12,6 +12,7 @@ angular
     require => {
       const _ = require('lodash');
       const pluralize = require('pluralize');
+      const { capitalize, joinWithAnd } = require('utils/StringUtils.es6');
       const validationViews = require('validationViews');
       const createSchema = require('validation');
       const getErrorMessage = require('validationDialogErrorMessages');
@@ -122,25 +123,26 @@ angular
       ];
 
       const richTextOptionsLabels = {
-        [BLOCKS.HEADING_1]: 'Heading 1',
-        [BLOCKS.HEADING_2]: 'Heading 2',
-        [BLOCKS.HEADING_3]: 'Heading 3',
-        [BLOCKS.HEADING_4]: 'Heading 4',
-        [BLOCKS.HEADING_5]: 'Heading 5',
-        [BLOCKS.HEADING_6]: 'Heading 6',
-        [MARKS.BOLD]: 'Bold',
-        [MARKS.ITALIC]: 'Italic',
-        [MARKS.UNDERLINE]: 'Underline',
-        [MARKS.CODE]: 'Code',
-        [BLOCKS.UL_LIST]: 'Unordered list',
-        [BLOCKS.OL_LIST]: 'Ordered list',
-        [BLOCKS.QUOTE]: 'Quote',
-        [BLOCKS.HR]: 'Horizontal rule',
-        [BLOCKS.EMBEDDED_ENTRY]: 'Block Entry',
-        [INLINES.EMBEDDED_ENTRY]: 'Inline Entry',
-        [INLINES.HYPERLINK]: 'Link to Url',
-        [INLINES.ENTRY_HYPERLINK]: 'Link to entry',
-        [INLINES.ASSET_HYPERLINK]: 'Link to asset'
+        [BLOCKS.HEADING_1]: 'heading 1',
+        [BLOCKS.HEADING_2]: 'heading 2',
+        [BLOCKS.HEADING_3]: 'heading 3',
+        [BLOCKS.HEADING_4]: 'heading 4',
+        [BLOCKS.HEADING_5]: 'heading 5',
+        [BLOCKS.HEADING_6]: 'heading 6',
+        [MARKS.BOLD]: 'bold',
+        [MARKS.ITALIC]: 'italic',
+        [MARKS.UNDERLINE]: 'underline',
+        [MARKS.CODE]: 'code',
+        [BLOCKS.UL_LIST]: 'unordered list',
+        [BLOCKS.OL_LIST]: 'ordered list',
+        [BLOCKS.QUOTE]: 'quote',
+        [BLOCKS.HR]: 'horizontal rule',
+        [BLOCKS.EMBEDDED_ENTRY]: 'block entry',
+        [BLOCKS.EMBEDDED_ASSET]: 'asset',
+        [INLINES.EMBEDDED_ENTRY]: 'inline entry',
+        [INLINES.HYPERLINK]: 'link to Url',
+        [INLINES.ENTRY_HYPERLINK]: 'link to entry',
+        [INLINES.ASSET_HYPERLINK]: 'link to asset'
       };
 
       const schema = createSchema({ type: 'Validation' });
@@ -374,24 +376,23 @@ angular
         if (enabledMarks) {
           validationsCopy.push({
             enabledMarks: enabledMarks,
-            message: `Only the following mark(s) allowed: ${
-              enabledMarks.length > 0
-                ? enabledMarks.map(mark => richTextOptionsLabels[mark]).join(', ')
-                : 'none'
-            }`
+            message: makeMessage('marks', enabledMarks)
           });
         }
         if (enabledNodeTypes) {
           validationsCopy.push({
             enabledNodeTypes: enabledNodeTypes,
-            message: `Only the following node(s) allowed: ${
-              enabledNodeTypes.length > 0
-                ? enabledNodeTypes.map(node => richTextOptionsLabels[node]).join(', ')
-                : 'none'
-            }`
+            message: makeMessage('nodes', enabledNodeTypes)
           });
         }
         field.validations = validationsCopy;
+
+        function makeMessage(kindPlural, enabledTypes) {
+          const list = joinWithAnd(enabledTypes.map(name => richTextOptionsLabels[name]));
+          return list.length > 0
+            ? `Only ${list} ${kindPlural} are allowed`
+            : `${capitalize(kindPlural)} are not allowed`;
+        }
       }
 
       function validateAll(decoratedFieldValidations, decoratedNodeValidations) {

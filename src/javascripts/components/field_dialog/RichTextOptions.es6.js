@@ -144,6 +144,12 @@ class RichTextOptions extends Component {
         title: 'Inline entry',
         id: INLINES.EMBEDDED_ENTRY,
         validationOf: ValidationType.ENABLED_NODE_TYPES
+      },
+      {
+        icon: 'AssetTrimmed',
+        title: 'Asset',
+        id: BLOCKS.EMBEDDED_ASSET,
+        validationOf: ValidationType.ENABLED_NODE_TYPES
       }
     ]
   };
@@ -244,7 +250,7 @@ class RichTextOptions extends Component {
         <RichTextOptionsSection heading="Links">
           {this.renderToggles(this.options.linkOptions)}
         </RichTextOptionsSection>
-        <RichTextOptionsSection heading="Embedded entries">
+        <RichTextOptionsSection heading="Embedded entries & assets">
           {this.renderToggles(this.options.entryOptions)}
         </RichTextOptionsSection>
       </div>
