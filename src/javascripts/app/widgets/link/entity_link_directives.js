@@ -201,6 +201,38 @@ angular
         }
       };
 
+      const buildTagPropsFromState = entityState => {
+        let children;
+        let tagType;
+
+        switch (entityState) {
+          case 'archived':
+            children = 'archived';
+            tagType = 'negative';
+            break;
+
+          case 'changed':
+            children = 'changed';
+            tagType = 'primary';
+            break;
+
+          case 'published':
+            children = 'published';
+            tagType = 'positive';
+            break;
+
+          default:
+            children = 'draft';
+            tagType = 'warning';
+        }
+
+        return {
+          children,
+          tagType,
+          'data-entity-state': entityState
+        };
+      };
+
       const getEntityState = () => {
         if ($scope.config.link) {
           $scope.stateRef = makeEntityRef(data);
@@ -211,6 +243,7 @@ angular
         // We do not show the state indicator for published assets
         if (!(data.sys.type === 'Asset' && state === EntityState.State.Published())) {
           $scope.entityState = EntityState.stateName(state);
+          $scope.tagProps = buildTagPropsFromState($scope.entityState);
         }
 
         $scope.statusDotStyle = {

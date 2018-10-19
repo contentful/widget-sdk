@@ -66,11 +66,10 @@ function entityCardMinimized() {
           h('div.ReferenceCard__title', { dataTestId: 'entity-link-title' }, [
             '{{(title | truncate:255) || "Untitled"}}'
           ]),
-          h(
-            'div.ReferenceCard__status.ReferenceCard__status--{{entityState}}',
-            { dataEntityState: '{{entityState}}' },
-            ['{{ entityState }}']
-          )
+          h('react-component', {
+            name: '@contentful/ui-component-library/Tag',
+            props: 'tagProps'
+          })
         ])
       ])
     ]
@@ -102,11 +101,10 @@ function entityCard() {
             h('div.ReferenceCard__content-type', { ngIf: 'contentTypeName' }, [
               '{{contentTypeName}}'
             ]),
-            h(
-              'div.ReferenceCard__status.ReferenceCard__status--{{entityState}}',
-              { dataEntityState: '{{entityState}}' },
-              ['{{ entityState }}']
-            )
+            h('react-component', {
+              name: '@contentful/ui-component-library/Tag',
+              props: 'tagProps'
+            })
           ]
         ),
         h('div.ReferenceCard__content', [

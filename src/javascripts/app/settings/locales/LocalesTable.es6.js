@@ -1,7 +1,14 @@
 import React from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-import { Table, TableHead, TableRow, TableCell, TableBody } from '@contentful/ui-component-library';
+import {
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Tag
+} from '@contentful/ui-component-library';
 import StateLink from 'app/common/StateLink.es6';
 
 function groupLocaleNamesByCode(locales) {
@@ -46,7 +53,11 @@ export default class LocalesTable extends React.Component {
                 <TableRow onClick={onClick} style={{ cursor: 'pointer' }}>
                   <TableCell aria-label="cell-name">
                     {locale.name} ({locale.code})
-                    {locale.default && <span className="entity-list-badge">Default</span>}
+                    {locale.default && (
+                      <span className="entity-list-badge">
+                        <Tag tagType="muted">Default</Tag>
+                      </span>
+                    )}
                   </TableCell>
                   <TableCell data-test-id="locale-list-fallback-column">
                     {locale.fallbackCode

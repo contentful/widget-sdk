@@ -91,19 +91,19 @@ describe('Content Type List Controller', () => {
   describe('status class and label', () => {
     it('is updated', function() {
       const contentType = { sys: { publishedVersion: 1, version: 100 } };
-      expect(this.scope.statusClass(contentType)).toBe('entity-status--updated');
+      expect(this.scope.statusType(contentType)).toBe('primary');
       expect(this.scope.statusLabel(contentType)).toBe('updated');
     });
 
     it('is published', function() {
       const contentType = { sys: { publishedVersion: 1, version: 2 } };
-      expect(this.scope.statusClass(contentType)).toBe('entity-status--published');
+      expect(this.scope.statusType(contentType)).toBe('positive');
       expect(this.scope.statusLabel(contentType)).toBe('active');
     });
 
     it('is draft', function() {
       const contentType = { sys: {} };
-      expect(this.scope.statusClass(contentType)).toBe('entity-status--draft');
+      expect(this.scope.statusType(contentType)).toBe('warning');
       expect(this.scope.statusLabel(contentType)).toBe('draft');
     });
   });

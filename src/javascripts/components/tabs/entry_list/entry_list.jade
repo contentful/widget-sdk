@@ -148,11 +148,10 @@ header.workbench-header
                 ui-sref="{{linkToEntry}}"
                 ng-repeat="field in displayedFields track by field.id")
                 cf-field-display
-              +td.entity-status.x--small-cell(
+              +td.x--small-cell(
                 ui-sref="{{linkToEntry}}"
                 aria-label="cell-status")
-                span(ng-class="entityStatus.getClassname(entry)")
-                  | {{entityStatus.getLabel(entry) || '&nbsp;'}}
+                  <react-component name="@contentful/ui-component-library/Tag" props="entityStatus.getProps(entry)"></react-component>
 
     cf-search-results-paginator(paginator="paginator" pages="7" ng-show="hasPage()")
 

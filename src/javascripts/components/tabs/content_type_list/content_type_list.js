@@ -39,7 +39,7 @@ angular
       $scope.visibleContentTypes = [];
 
       $scope.numFields = ct => (ct.fields || []).length;
-      $scope.statusClass = ct => 'entity-status--' + getStatusLabel(ct);
+      $scope.statusType = ct => getStatusType(ct);
       $scope.statusLabel = ct => {
         const label = getStatusLabel(ct);
         // Historically we call published content types "active".
@@ -122,6 +122,20 @@ angular
         } else {
           return 'draft';
         }
+      }
+
+      function getStatusType(ct) {
+        let statusType;
+
+        if (isPublishedAndUpdated(ct)) {
+          statusType = 'primary';
+        } else if (isPublished(ct)) {
+          statusType = 'positive';
+        } else {
+          statusType = 'warning';
+        }
+
+        return statusType;
       }
 
       function isPublished(entity) {

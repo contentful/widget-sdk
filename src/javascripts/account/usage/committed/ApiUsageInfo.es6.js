@@ -1,12 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { sum } from 'lodash';
-import { Tooltip } from '@contentful/ui-component-library';
+import { Tooltip, Tag } from '@contentful/ui-component-library';
 
 import { shorten } from 'utils/NumberUtils.es6';
 
 import { organizationResourceUsagePropType } from './propTypes.es6';
-import Pill from './Pill.es6';
 
 export default class ApiUsageInfo extends React.Component {
   static propTypes = {
@@ -34,7 +33,13 @@ export default class ApiUsageInfo extends React.Component {
                   ) : (
                     <em>deleted space</em>
                   )}
-                  {isPoC[spaceId] && <Pill text="POC" tooltip="Proof of concept" />}
+                  {isPoC[spaceId] && (
+                    <Tooltip content="Proof of concept">
+                      <Tag tagType="muted" style={{ marginLeft: '10px' }}>
+                        POC
+                      </Tag>
+                    </Tooltip>
+                  )}
                 </td>
                 <td className="usage-page__space-usage">{shorten(sum(spaceUsage))}</td>
                 <td className="usage-page__percentage-of-total-usage" style={{ color: colors[i] }}>

@@ -111,8 +111,7 @@ header.workbench-header
                 data-test-id="cell-created-by")
                 span(cf-user link="contentType.sys.updatedBy" as="updater")
                   | {{updater | userNameDisplay:user}}
-              +td.entity-status.x--small-cell(aria-label="cell-status"
+              +td.x--small-cell(aria-label="cell-status"
                 ui-sref="{{linkToCt}}"
                 data-test-id="cell-status")
-                span(ng-class="statusClass(contentType)")
-                  | {{statusLabel(contentType) || '&nbsp;'}}
+                <react-component name="@contentful/ui-component-library/Tag" props="{children: statusLabel(contentType), tagType: statusType(contentType)}"></react-component>

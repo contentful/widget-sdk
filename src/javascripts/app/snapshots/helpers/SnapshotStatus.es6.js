@@ -1,21 +1,20 @@
-const DEFAULT_PREFIX = 'entity-status--';
+export function getProps(snapshot) {
+  let label;
+  let type;
 
-const STATES = {
-  Published: 'published',
-  Current: 'current',
-  Other: 'other'
-};
-
-export function getLabel(snapshot) {
   if (snapshot.sys.isCurrent) {
-    return STATES.Current;
+    label = 'current';
+    type = 'secondary';
   } else if (snapshot.sys.snapshotType === 'publish') {
-    return STATES.Published;
+    label = 'published';
+    type = 'positive';
   } else {
-    return STATES.Other;
+    label = 'other';
+    type = 'warning';
   }
-}
 
-export function getClassname(snapshot, prefix) {
-  return (prefix || DEFAULT_PREFIX) + getLabel(snapshot);
+  return {
+    children: label,
+    tagType: type
+  };
 }

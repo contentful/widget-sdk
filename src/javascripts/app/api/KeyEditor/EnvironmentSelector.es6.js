@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import StateLink from 'app/common/StateLink.es6';
-import { Badge, CodeFragment } from 'ui/Content.es6';
+import { CodeFragment } from 'ui/Content.es6';
 import { byName as Colors } from 'Styles/Colors.es6';
 import { find } from 'lodash';
 import { filter, concat } from 'utils/Collections.es6';
 import InfoIcon from 'svg/info.es6';
 import CopyButton from 'ui/Components/CopyIconButton.es6';
+import { Tag } from '@contentful/ui-component-library';
 
 function makeLink(env) {
   return {
@@ -93,7 +94,7 @@ function List({ canEdit, spaceEnvironments, envs, updateEnvs }) {
           <div style={{ display: 'inline-block', marginLeft: '6px' }} />
           <CopyButton value={env.sys.id} />
           <div style={{ display: 'inline-block', marginLeft: '2em' }} />
-          {env.sys.id === 'master' && <Badge>Default environment</Badge>}
+          {env.sys.id === 'master' && <Tag tagType="muted">Default environment</Tag>}
         </div>
       ))}
     </div>

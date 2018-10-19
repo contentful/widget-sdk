@@ -1,15 +1,20 @@
-const PREFIX = 'entity-status--';
+export function getProps(entity) {
+  let label;
+  let type;
 
-export function getClassname(entity) {
-  return PREFIX + getLabel(entity);
-}
-
-export function getLabel(entity) {
   if (entity.isPublished()) {
-    return entity.hasUnpublishedChanges() ? 'updated' : 'published';
+    label = entity.hasUnpublishedChanges() ? 'updated' : 'published';
+    type = entity.hasUnpublishedChanges() ? 'primary' : 'positive';
   } else if (entity.isArchived()) {
-    return 'archived';
+    label = 'archived';
+    type = 'negative';
   } else {
-    return 'draft';
+    label = 'draft';
+    type = 'warning';
   }
+
+  return {
+    children: label,
+    tagType: type
+  };
 }

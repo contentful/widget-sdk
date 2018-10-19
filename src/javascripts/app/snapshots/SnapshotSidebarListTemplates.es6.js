@@ -13,14 +13,6 @@ const styles = {
   },
   radio: {
     'vertical-align': 'baseline'
-  },
-  statusLabel: {
-    display: 'block',
-    'text-transform': 'uppercase',
-    'letter-spacing': '1px',
-    'text-align': 'right',
-    'font-size': '80%',
-    'vertical-align': 'baseline'
   }
 };
 
@@ -74,14 +66,10 @@ function snapshotsList() {
           })
         ]),
         h('td', { style: styles.cell }, [
-          h(
-            'span',
-            {
-              style: styles.statusLabel,
-              class: '{{snapshotStatus.getClassname(snapshot)}}'
-            },
-            ['{{snapshotStatus.getLabel(snapshot)}}']
-          )
+          h('react-component', {
+            name: '@contentful/ui-component-library/Tag',
+            props: '{{snapshotStatus.getProps(snapshot)}}'
+          })
         ])
       ])
     ]

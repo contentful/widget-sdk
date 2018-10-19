@@ -22,9 +22,8 @@ include ./snapshot.mixin.jade
             +snapshot-dt
           td
             | {{ snapshot.sys.createdBy.authorName }}
-          td.snapshot-selector__item-status(
-            class="{{ snapshotStatus.getClassname(snapshot) }}")
-            | {{ snapshotStatus.getLabel(snapshot) }}
+          td.snapshot-selector__item-status
+            <react-component name="@contentful/ui-component-library/Tag" props="snapshotStatus.getProps(snapshot)"></react-component>
 
     .snapshot-selector__item-list-placeholder(
       ng-if="!isLoading && snapshots.length < 1")

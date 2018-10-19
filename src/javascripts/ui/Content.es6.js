@@ -71,31 +71,6 @@ LinkOpen.propTypes = {
 };
 
 /**
- * A span that styles the content as small, uppercased, spaced letters
- * with the given color.
- *
- * @param {string?} .color
- */
-export function Badge({ color = Colors.textLight, children }) {
-  return (
-    <span
-      style={{
-        color,
-        fontSize: '11px',
-        fontWeight: '600',
-        letterSpacing: '1px',
-        textTransform: 'uppercase'
-      }}>
-      {children}
-    </span>
-  );
-}
-Badge.propTypes = {
-  color: PropTypes.string,
-  children: PropTypes.node
-};
-
-/**
  * Styles the content as an inline code fragment
  */
 export function CodeFragment({ children }) {

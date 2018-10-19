@@ -136,11 +136,10 @@ header.workbench-header
                 ui-sref="{{linkToAsset}}")
                 span(cf-user link="asset.getUpdatedBy()" as="updater")
                   | {{updater | userNameDisplay:user}}
-              +td.entity-status.x--small-cell(
+              +td.x--small-cell(
                 aria-label="cell-status"
                 ui-sref="{{linkToAsset}}")
-                span(ng-class="entityStatus.getClassname(asset)")
-                  | {{entityStatus.getLabel(asset) || '&nbsp;'}}
+                <react-component name="@contentful/ui-component-library/Tag" props="entityStatus.getProps(asset)"></react-component>
 
     cf-search-results-paginator(paginator="paginator" pages="7")
 

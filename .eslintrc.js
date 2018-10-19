@@ -106,7 +106,6 @@ module.exports = {
         'no-var': 'error',
         'no-restricted-syntax': [
           'error',
-          'BreakStatement',
           'ContinueStatement',
           'DebuggerStatement',
           'EmptyStatement',

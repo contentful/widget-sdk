@@ -8,8 +8,15 @@ import { caseofEq } from 'sum-types';
 import { href } from 'states/Navigator.es6';
 import { subscription as subscriptionState } from 'ui/NavStates/Org.es6';
 import Workbench from 'app/WorkbenchReact.es6';
-import { LinkOpen, Badge, CodeFragment } from 'ui/Content.es6';
-import { Table, TableHead, TableRow, TableCell, TableBody } from '@contentful/ui-component-library';
+import { LinkOpen, CodeFragment } from 'ui/Content.es6';
+import {
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Tag
+} from '@contentful/ui-component-library';
 import { byName as Colors } from 'Styles/Colors.es6';
 
 import QuestionMarkIcon from 'svg/QuestionMarkIcon.es6';
@@ -119,21 +126,19 @@ function EnvironmentTable({ environments }) {
                   <div style={{ display: 'inline-block', marginLeft: '6px' }} />
                   <CopyIconButton value={environment.id} />
                   <div style={{ display: 'inline-block', marginLeft: '1.2em' }} />
-                  {environment.isMaster && (
-                    <Badge color={Colors.textLight}>Default environment</Badge>
-                  )}
+                  {environment.isMaster && <Tag tagType="muted">Default environment</Tag>}
                 </div>
               </TableCell>
               <TableCell>
                 {caseofEq(environment.status, [
-                  ['ready', () => <Badge color={Colors.greenDark}>Ready</Badge>],
+                  ['ready', () => <Tag tagType="positive">Ready</Tag>],
                   [
                     'inProgress',
                     () => {
                       return (
-                        <Badge color={Colors.orangeDark}>
-                          In progress <QuestionMarkWithTooltip tooltip={IN_PROGRESS_TOOLTIP} />
-                        </Badge>
+                        <Tag tagType="warning">
+                          In progress {QuestionMarkWithTooltip({ tooltip: IN_PROGRESS_TOOLTIP })}
+                        </Tag>
                       );
                     }
                   ],
@@ -141,9 +146,9 @@ function EnvironmentTable({ environments }) {
                     'failed',
                     () => {
                       return (
-                        <Badge color={Colors.redDark}>
-                          Failed to create <QuestionMarkWithTooltip tooltip={FAILED_TOOLTIP} />
-                        </Badge>
+                        <Tag tagType="negative">
+                          Failed to create {QuestionMarkWithTooltip({ tooltip: FAILED_TOOLTIP })}
+                        </Tag>
                       );
                     }
                   ]
