@@ -88,8 +88,7 @@ export default function describeContentType() {
           method: 'PUT',
           url: '/spaces/42/content_types/ctid/published',
           headers: {
-            'X-Contentful-Version': 4,
-            'X-Contentful-Enable-Alpha-Feature': 'structured_text_fields'
+            'X-Contentful-Version': 4
           }
         });
       });

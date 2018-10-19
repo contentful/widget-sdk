@@ -50,9 +50,7 @@ ContentType.prototype.publish = function(version) {
   const self = this;
   return this.endpoint('published')
     .headers({
-      'X-Contentful-Version': version,
-      // TODO: remove this for structured text beta release
-      'X-Contentful-Enable-Alpha-Feature': 'structured_text_fields'
+      'X-Contentful-Version': version
     })
     .put()
     .then(function(response) {
