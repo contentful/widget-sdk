@@ -52,7 +52,7 @@ export default class UserListFilters extends React.Component {
             </TextLink>
           )}
           {Object.values(otherFilters).map(filter => (
-            <SearchFilter key={filter.key} {...filter} onChange={this.updateFilters} />
+            <SearchFilter key={filter.filter.key} {...filter} onChange={this.updateFilters} />
           ))}
         </section>
       </section>

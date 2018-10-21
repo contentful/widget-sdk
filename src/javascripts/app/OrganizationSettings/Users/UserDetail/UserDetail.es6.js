@@ -14,7 +14,7 @@ import {
 } from 'access_control/OrganizationMembershipRepository.es6';
 
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
-import UserSpaceMemberships from './UserSpaceMemberships.es6';
+import UserSpaceMemberships from './UserSpaceMemberships/UserSpaceMemberships.es6';
 
 const ServicesConsumer = require('../../../../reactServiceContext').default;
 

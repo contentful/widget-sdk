@@ -1,0 +1,756 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SpaceRoleEditor renders the component 1`] = `
+<MockedProvider
+  services={
+    Object {
+      "access_control/SpaceMembershipRepository.es6": Object {
+        "ADMIN_ROLE": Object {
+          "name": "Admin",
+          "sys": Object {
+            "id": "admin",
+          },
+        },
+        "ADMIN_ROLE_ID": "admin",
+      },
+    }
+  }
+>
+  <ServicesConsumer
+    onChange={[Function]}
+    options={
+      Array [
+        Object {
+          "name": "Police officer",
+          "sys": Object {
+            "id": "police",
+          },
+        },
+        Object {
+          "name": "Thief",
+          "sys": Object {
+            "id": "thief",
+          },
+        },
+      ]
+    }
+    value={Array []}
+  >
+    <SpaceRoleEditor
+      $services={
+        Object {
+          "SpaceMembershipRepository": Object {
+            "ADMIN_ROLE": Object {
+              "name": "Admin",
+              "sys": Object {
+                "id": "admin",
+              },
+            },
+            "ADMIN_ROLE_ID": "admin",
+          },
+        }
+      }
+      onChange={[Function]}
+      options={
+        Array [
+          Object {
+            "name": "Police officer",
+            "sys": Object {
+              "id": "police",
+            },
+          },
+          Object {
+            "name": "Thief",
+            "sys": Object {
+              "id": "thief",
+            },
+          },
+        ]
+      }
+      value={Array []}
+    >
+      <Dropdown
+        isOpen={false}
+        onClose={[Function]}
+        position="top-left"
+        style={
+          Object {
+            "maxWidth": "100%",
+          }
+        }
+        testId="cf-ui-dropdown"
+        toggleElement={
+          <Button
+            buttonType="naked"
+            disabled={false}
+            extraClassNames="select-button"
+            indicateDropdown={true}
+            isFullWidth={false}
+            loading={false}
+            onClick={[Function]}
+            testId="cf-ui-button"
+          >
+            Select a role
+          </Button>
+        }
+      >
+        <div
+          className="
+      Dropdown__Dropdown___1qyn8
+      
+    "
+          data-test-id="cf-ui-dropdown"
+          onClose={[Function]}
+          position="top-left"
+          style={
+            Object {
+              "maxWidth": "100%",
+            }
+          }
+        >
+          <Button
+            buttonType="naked"
+            disabled={false}
+            extraClassNames="select-button"
+            indicateDropdown={true}
+            isFullWidth={false}
+            loading={false}
+            onClick={[Function]}
+            testId="cf-ui-button"
+          >
+            <button
+              className="
+      Button__Button___1ZfFj a11y__focus-border--default___60AXp
+      
+      
+      
+      Button__Button--naked___mB6LS
+      select-button
+    "
+              data-test-id="cf-ui-button"
+              disabled={false}
+              onBlur={[Function]}
+              onClick={[Function]}
+            >
+              <TabFocusTrap
+                extraClassNames="Button__Button__inner-wrapper___3qrNC"
+              >
+                <span
+                  className="
+      TabFocusTrap__TabFocusTrap___39Vty
+      Button__Button__inner-wrapper___3qrNC
+    "
+                  tabIndex="-1"
+                >
+                  <span
+                    className="Button__Button__label___3tcOj"
+                  >
+                    Select a role
+                  </span>
+                  <Icon
+                    color="secondary"
+                    icon="ArrowDown"
+                    size="small"
+                    testId="cf-ui-icon"
+                  >
+                    <ArrowDown
+                      className="
+      Icon__Icon___38Epv
+      Icon__Icon--small___1yGZK
+      Icon__Icon--secondary___1ztcw
+      
+      
+    "
+                      data-test-id="cf-ui-icon"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      width="24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <svg
+                        className="
+      Icon__Icon___38Epv
+      Icon__Icon--small___1yGZK
+      Icon__Icon--secondary___1ztcw
+      
+      
+    "
+                        data-test-id="cf-ui-icon"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        width="24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M7 10l5 5 5-5z"
+                        />
+                        <path
+                          d="M0 0h24v24H0z"
+                          fill="none"
+                        />
+                      </svg>
+                    </ArrowDown>
+                  </Icon>
+                  <CSSTransition
+                    classNames={
+                      Object {
+                        "enter": "Button__Button--spinner--enter___1qgg7",
+                        "enterActive": "Button__Button--spinner-active___EEKjQ",
+                        "exit": "Button__Button--spinner--exit___2RUI-",
+                        "exitActive": "Button__Button--spinner-exit-active___3HXa7",
+                      }
+                    }
+                    in={false}
+                    mountOnEnter={true}
+                    timeout={1000}
+                    unmountOnExit={true}
+                  >
+                    <Transition
+                      appear={false}
+                      enter={true}
+                      exit={true}
+                      in={false}
+                      mountOnEnter={true}
+                      onEnter={[Function]}
+                      onEntered={[Function]}
+                      onEntering={[Function]}
+                      onExit={[Function]}
+                      onExited={[Function]}
+                      onExiting={[Function]}
+                      timeout={1000}
+                      unmountOnExit={true}
+                    />
+                  </CSSTransition>
+                </span>
+              </TabFocusTrap>
+            </button>
+          </Button>
+        </div>
+      </Dropdown>
+    </SpaceRoleEditor>
+  </ServicesConsumer>
+</MockedProvider>
+`;
+
+exports[`SpaceRoleEditor shows a list of options 1`] = `
+<MockedProvider
+  services={
+    Object {
+      "access_control/SpaceMembershipRepository.es6": Object {
+        "ADMIN_ROLE": Object {
+          "name": "Admin",
+          "sys": Object {
+            "id": "admin",
+          },
+        },
+        "ADMIN_ROLE_ID": "admin",
+      },
+    }
+  }
+>
+  <ServicesConsumer
+    onChange={[Function]}
+    options={
+      Array [
+        Object {
+          "name": "Police officer",
+          "sys": Object {
+            "id": "police",
+          },
+        },
+        Object {
+          "name": "Thief",
+          "sys": Object {
+            "id": "thief",
+          },
+        },
+      ]
+    }
+    value={Array []}
+  >
+    <SpaceRoleEditor
+      $services={
+        Object {
+          "SpaceMembershipRepository": Object {
+            "ADMIN_ROLE": Object {
+              "name": "Admin",
+              "sys": Object {
+                "id": "admin",
+              },
+            },
+            "ADMIN_ROLE_ID": "admin",
+          },
+        }
+      }
+      onChange={[Function]}
+      options={
+        Array [
+          Object {
+            "name": "Police officer",
+            "sys": Object {
+              "id": "police",
+            },
+          },
+          Object {
+            "name": "Thief",
+            "sys": Object {
+              "id": "thief",
+            },
+          },
+        ]
+      }
+      value={Array []}
+    >
+      <Dropdown
+        isOpen={true}
+        onClose={[Function]}
+        position="top-left"
+        style={
+          Object {
+            "maxWidth": "100%",
+          }
+        }
+        testId="cf-ui-dropdown"
+        toggleElement={
+          <Button
+            buttonType="naked"
+            disabled={false}
+            extraClassNames="select-button"
+            indicateDropdown={true}
+            isFullWidth={false}
+            loading={false}
+            onClick={[Function]}
+            testId="cf-ui-button"
+          >
+            Select a role
+          </Button>
+        }
+      >
+        <div
+          className="
+      Dropdown__Dropdown___1qyn8
+      
+    "
+          data-test-id="cf-ui-dropdown"
+          onClose={[Function]}
+          position="top-left"
+          style={
+            Object {
+              "maxWidth": "100%",
+            }
+          }
+        >
+          <Button
+            buttonType="naked"
+            disabled={false}
+            extraClassNames="select-button"
+            indicateDropdown={true}
+            isFullWidth={false}
+            loading={false}
+            onClick={[Function]}
+            testId="cf-ui-button"
+          >
+            <button
+              className="
+      Button__Button___1ZfFj a11y__focus-border--default___60AXp
+      
+      
+      
+      Button__Button--naked___mB6LS
+      select-button
+    "
+              data-test-id="cf-ui-button"
+              disabled={false}
+              onBlur={[Function]}
+              onClick={[Function]}
+            >
+              <TabFocusTrap
+                extraClassNames="Button__Button__inner-wrapper___3qrNC"
+              >
+                <span
+                  className="
+      TabFocusTrap__TabFocusTrap___39Vty
+      Button__Button__inner-wrapper___3qrNC
+    "
+                  tabIndex="-1"
+                >
+                  <span
+                    className="Button__Button__label___3tcOj"
+                  >
+                    Select a role
+                  </span>
+                  <Icon
+                    color="secondary"
+                    icon="ArrowDown"
+                    size="small"
+                    testId="cf-ui-icon"
+                  >
+                    <ArrowDown
+                      className="
+      Icon__Icon___38Epv
+      Icon__Icon--small___1yGZK
+      Icon__Icon--secondary___1ztcw
+      
+      
+    "
+                      data-test-id="cf-ui-icon"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      width="24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <svg
+                        className="
+      Icon__Icon___38Epv
+      Icon__Icon--small___1yGZK
+      Icon__Icon--secondary___1ztcw
+      
+      
+    "
+                        data-test-id="cf-ui-icon"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        width="24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M7 10l5 5 5-5z"
+                        />
+                        <path
+                          d="M0 0h24v24H0z"
+                          fill="none"
+                        />
+                      </svg>
+                    </ArrowDown>
+                  </Icon>
+                  <CSSTransition
+                    classNames={
+                      Object {
+                        "enter": "Button__Button--spinner--enter___1qgg7",
+                        "enterActive": "Button__Button--spinner-active___EEKjQ",
+                        "exit": "Button__Button--spinner--exit___2RUI-",
+                        "exitActive": "Button__Button--spinner-exit-active___3HXa7",
+                      }
+                    }
+                    in={false}
+                    mountOnEnter={true}
+                    timeout={1000}
+                    unmountOnExit={true}
+                  >
+                    <Transition
+                      appear={false}
+                      enter={true}
+                      exit={true}
+                      in={false}
+                      mountOnEnter={true}
+                      onEnter={[Function]}
+                      onEntered={[Function]}
+                      onEntering={[Function]}
+                      onExit={[Function]}
+                      onExited={[Function]}
+                      onExiting={[Function]}
+                      timeout={1000}
+                      unmountOnExit={true}
+                    />
+                  </CSSTransition>
+                </span>
+              </TabFocusTrap>
+            </button>
+          </Button>
+          <div
+            className="
+      Dropdown__Dropdown__container___1wpIB
+      Dropdown__Dropdown__container-position--top-left___3OKuO
+    "
+            onFocus={[Function]}
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+            position="top-left"
+          >
+            <DropdownList
+              testId="cf-ui-dropdown-list"
+            >
+              <ul
+                className="
+      DropdownList__DropdownList___2EMLM
+      
+      
+    "
+                data-test-id="cf-ui-dropdown-list"
+                style={
+                  Object {
+                    "height": "auto",
+                    "overflowY": "visible",
+                  }
+                }
+              >
+                <DropdownListItem
+                  isActive={false}
+                  isDisabled={false}
+                  isTitle={false}
+                  onEnter={[Function]}
+                  onLeave={[Function]}
+                  testId="cf-ui-dropdown-list-item"
+                >
+                  <li
+                    className="
+      DropdownListItem__DropdownListItem___LOUnP
+      
+      
+      
+      
+      
+    "
+                    data-test-id="cf-ui-dropdown-list-item"
+                  >
+                    <CheckboxField
+                      checked={false}
+                      id="admin"
+                      labelText="Admin"
+                      light={true}
+                      onChange={[Function]}
+                      testId="cf-ui-checkbox-field"
+                    >
+                      <div
+                        className="
+      CheckboxField__CheckboxField___1p65B
+      
+      
+    "
+                        data-test-id="cf-ui-checkbox-field"
+                      >
+                        <Checkbox
+                          checked={false}
+                          disabled={false}
+                          extraClassNames="CheckboxField__CheckboxField__checkbox___13OYI"
+                          id="admin"
+                          labelText="Admin"
+                          onChange={[Function]}
+                          required={false}
+                          testId="cf-ui-checkbox"
+                        >
+                          <input
+                            aria-label="Admin"
+                            checked={false}
+                            className="
+      Checkbox__Checkbox___1KCp1
+      
+      CheckboxField__CheckboxField__checkbox___13OYI
+    "
+                            data-test-id="cf-ui-checkbox"
+                            disabled={false}
+                            id="admin"
+                            onChange={[Function]}
+                            required={false}
+                            type="checkbox"
+                          />
+                        </Checkbox>
+                        <div>
+                          <FormLabel
+                            extraClassNames="CheckboxField__CheckboxField__label___2bUrb CheckboxField__CheckboxField__label--light___5EmPH"
+                            htmlFor="admin"
+                            required={false}
+                            requiredText="required"
+                            testId="cf-ui-form-label"
+                          >
+                            <label
+                              className="
+      FormLabel__FormLabel___3d6zQ
+      CheckboxField__CheckboxField__label___2bUrb CheckboxField__CheckboxField__label--light___5EmPH
+    "
+                              data-test-id="cf-ui-form-label"
+                              htmlFor="admin"
+                            >
+                              Admin
+                            </label>
+                          </FormLabel>
+                        </div>
+                      </div>
+                    </CheckboxField>
+                  </li>
+                </DropdownListItem>
+                <DropdownListItem
+                  isActive={false}
+                  isDisabled={false}
+                  isTitle={false}
+                  key="police"
+                  onEnter={[Function]}
+                  onLeave={[Function]}
+                  testId="cf-ui-dropdown-list-item"
+                >
+                  <li
+                    className="
+      DropdownListItem__DropdownListItem___LOUnP
+      
+      
+      
+      
+      
+    "
+                    data-test-id="cf-ui-dropdown-list-item"
+                  >
+                    <CheckboxField
+                      checked={false}
+                      id="police"
+                      labelText="Police officer"
+                      light={true}
+                      onChange={[Function]}
+                      testId="cf-ui-checkbox-field"
+                      value="police"
+                    >
+                      <div
+                        className="
+      CheckboxField__CheckboxField___1p65B
+      
+      
+    "
+                        data-test-id="cf-ui-checkbox-field"
+                        value="police"
+                      >
+                        <Checkbox
+                          checked={false}
+                          disabled={false}
+                          extraClassNames="CheckboxField__CheckboxField__checkbox___13OYI"
+                          id="police"
+                          labelText="Police officer"
+                          onChange={[Function]}
+                          required={false}
+                          testId="cf-ui-checkbox"
+                        >
+                          <input
+                            aria-label="Police officer"
+                            checked={false}
+                            className="
+      Checkbox__Checkbox___1KCp1
+      
+      CheckboxField__CheckboxField__checkbox___13OYI
+    "
+                            data-test-id="cf-ui-checkbox"
+                            disabled={false}
+                            id="police"
+                            onChange={[Function]}
+                            required={false}
+                            type="checkbox"
+                          />
+                        </Checkbox>
+                        <div>
+                          <FormLabel
+                            extraClassNames="CheckboxField__CheckboxField__label___2bUrb CheckboxField__CheckboxField__label--light___5EmPH"
+                            htmlFor="police"
+                            required={false}
+                            requiredText="required"
+                            testId="cf-ui-form-label"
+                          >
+                            <label
+                              className="
+      FormLabel__FormLabel___3d6zQ
+      CheckboxField__CheckboxField__label___2bUrb CheckboxField__CheckboxField__label--light___5EmPH
+    "
+                              data-test-id="cf-ui-form-label"
+                              htmlFor="police"
+                            >
+                              Police officer
+                            </label>
+                          </FormLabel>
+                        </div>
+                      </div>
+                    </CheckboxField>
+                  </li>
+                </DropdownListItem>
+                <DropdownListItem
+                  isActive={false}
+                  isDisabled={false}
+                  isTitle={false}
+                  key="thief"
+                  onEnter={[Function]}
+                  onLeave={[Function]}
+                  testId="cf-ui-dropdown-list-item"
+                >
+                  <li
+                    className="
+      DropdownListItem__DropdownListItem___LOUnP
+      
+      
+      
+      
+      
+    "
+                    data-test-id="cf-ui-dropdown-list-item"
+                  >
+                    <CheckboxField
+                      checked={false}
+                      id="thief"
+                      labelText="Thief"
+                      light={true}
+                      onChange={[Function]}
+                      testId="cf-ui-checkbox-field"
+                      value="thief"
+                    >
+                      <div
+                        className="
+      CheckboxField__CheckboxField___1p65B
+      
+      
+    "
+                        data-test-id="cf-ui-checkbox-field"
+                        value="thief"
+                      >
+                        <Checkbox
+                          checked={false}
+                          disabled={false}
+                          extraClassNames="CheckboxField__CheckboxField__checkbox___13OYI"
+                          id="thief"
+                          labelText="Thief"
+                          onChange={[Function]}
+                          required={false}
+                          testId="cf-ui-checkbox"
+                        >
+                          <input
+                            aria-label="Thief"
+                            checked={false}
+                            className="
+      Checkbox__Checkbox___1KCp1
+      
+      CheckboxField__CheckboxField__checkbox___13OYI
+    "
+                            data-test-id="cf-ui-checkbox"
+                            disabled={false}
+                            id="thief"
+                            onChange={[Function]}
+                            required={false}
+                            type="checkbox"
+                          />
+                        </Checkbox>
+                        <div>
+                          <FormLabel
+                            extraClassNames="CheckboxField__CheckboxField__label___2bUrb CheckboxField__CheckboxField__label--light___5EmPH"
+                            htmlFor="thief"
+                            required={false}
+                            requiredText="required"
+                            testId="cf-ui-form-label"
+                          >
+                            <label
+                              className="
+      FormLabel__FormLabel___3d6zQ
+      CheckboxField__CheckboxField__label___2bUrb CheckboxField__CheckboxField__label--light___5EmPH
+    "
+                              data-test-id="cf-ui-form-label"
+                              htmlFor="thief"
+                            >
+                              Thief
+                            </label>
+                          </FormLabel>
+                        </div>
+                      </div>
+                    </CheckboxField>
+                  </li>
+                </DropdownListItem>
+              </ul>
+            </DropdownList>
+          </div>
+        </div>
+      </Dropdown>
+    </SpaceRoleEditor>
+  </ServicesConsumer>
+</MockedProvider>
+`;
