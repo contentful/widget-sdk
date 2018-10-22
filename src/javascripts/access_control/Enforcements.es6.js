@@ -56,19 +56,25 @@ export function determineEnforcement(organization, reasons, entityType) {
       message: 'An unknown error occurred'
     },
     {
-      label: 'frozenSpace',
+      label: 'readOnlySpace',
       message: () => {
         if (OrganizationRoles.isOwner(organization)) {
-          const talkToUsLink = `<a href='${supportUrl}?read-only-poc=true' target='_blank'>
-            Talk to us
-          </a>`;
-
-          return `This space is set to read-only. Contact us to continue work. ${talkToUsLink}`;
+          return `This space is set to read-only. Contact us to continue work.`;
         } else {
           return 'This space is set to read-only. Contact your organization administrator to continue work.';
         }
       },
-      icon: 'info'
+      icon: 'info',
+      link: () => {
+        const talkToUsHref = `${supportUrl}?read-only-poc=true`;
+
+        if (OrganizationRoles.isOwner(organization)) {
+          return {
+            text: 'Talk to us',
+            href: talkToUsHref
+          };
+        }
+      }
     }
   ];
 
@@ -88,6 +94,10 @@ export function determineEnforcement(organization, reasons, entityType) {
 
   if (typeof error.tooltip !== 'string') {
     error.tooltip = error.message;
+  }
+
+  if (typeof error.link === 'function') {
+    error.link = error.link(entityType);
   }
 
   forEach(error, (value, key) => {

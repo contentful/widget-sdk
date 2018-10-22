@@ -36,7 +36,8 @@ export function broadcastEnforcement(enforcement) {
       message: enforcement.message,
       actionMessage: enforcement.actionMessage,
       action: enforcement.action,
-      icon: enforcement.icon
+      icon: enforcement.icon,
+      link: enforcement.link
     });
   }
 }

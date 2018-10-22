@@ -4,14 +4,26 @@
   width: 100%
   // FIXME: this should notbe necessary. See comment in app_container.styl
   height: 45px
-  padding: 8px
-  background-color: $colors.ice-mid
-  &__message
-    margin-right: 10px
+  padding: 8px 16px
+  background-color: $colors.blue-dark
+  color: white
+
+  &__link
+    & > a
+      color: white
+      margin-left: 1rem
+      text-decoration: underline
+
+      &:hover
+        color: white
+        text-decoration: none
+
   &__action
     margin-bottom: 0px
     padding: 0.4rem 1rem 0.3rem
     &:active
       padding: 0.5rem 1rem 0.2rem
   &__icon
-    margin-right: 8px
+    margin-right: 1rem
+    & svg > path
+      fill: white
