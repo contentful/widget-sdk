@@ -169,11 +169,6 @@ describe('OrganizationUsage', () => {
     );
   });
 
-  // describe('usage period was changed', async () => {
-  //   const wrapper = await shallowRenderComponent(defaultProps);
-  //
-  // });
-
   describe('user is not owner or admin', () => {
     beforeEach(() => {
       defaultProps.$services.OrganizationRoles.isOwnerOrAdmin.mockReturnValue(false);
