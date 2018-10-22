@@ -49,8 +49,6 @@ class EnterpriseSpaceWizard extends React.Component {
     })
   };
 
-  static MAX_SPACE_NAME_LENGTH = 30;
-
   state = {
     isValid: false
   };
