@@ -50,12 +50,13 @@ class EnterpriseSpaceWizard extends React.Component {
   };
 
   state = {
-    isValid: false
+    isValid: false,
+    isPending: false
   };
 
   handleSpaceNameChange(value) {
     const name = value.trim();
-    this.setState({ isValid: this.isValidName(name) });
+    this.setState({ isValid: EnterpriseSpaceWizard.isValidName(name) });
     this.props.setNewSpaceName(name);
   }
 
@@ -70,6 +71,7 @@ class EnterpriseSpaceWizard extends React.Component {
 
   handleSubmit() {
     if (this.state.isValid) {
+      this.setState({ isPending: true });
       this.props.createSpace({
         action: 'create',
         organization: this.props.organization,
@@ -77,7 +79,7 @@ class EnterpriseSpaceWizard extends React.Component {
         selectedPlan: this.props.freeSpaceRatePlan,
         newSpaceMeta: this.props.newSpaceMeta,
         onSpaceCreated: this.handleSpaceCreated.bind(this),
-        onTemplateCreated: this.handleTemplateCreated.bind(this),
+        onTemplateCreated: EnterpriseSpaceWizard.handleTemplateCreated.bind(this),
         onConfirm: this.close.bind(this)
       });
     }
@@ -93,11 +95,11 @@ class EnterpriseSpaceWizard extends React.Component {
     });
   }
 
-  handleTemplateCreated() {
+  static handleTemplateCreated() {
     $rootScope.$broadcast('spaceTemplateCreated');
   }
 
-  isValidName(name) {
+  static isValidName(name) {
     return !!name && name.length;
   }
 
@@ -111,7 +113,7 @@ class EnterpriseSpaceWizard extends React.Component {
     } = this.props;
     const submitted = spaceCreation.isPending;
     const { name, template } = this.props.newSpaceMeta;
-    const { isValid } = this.state;
+    const { isValid, isPending } = this.state;
     const usage = this.props.freeSpaceResource.usage;
     const limit = this.props.freeSpaceResource.limits.maximum;
     const isFeatureDisabled = this.props.freeSpaceResource.limits.maximum.limit === 0;
@@ -126,7 +128,9 @@ class EnterpriseSpaceWizard extends React.Component {
 
     return (
       <Dialog testId="enterprise-space-creation-dialog" size="large">
-        <Dialog.Header onCloseButtonClicked={() => this.close()}>Create a space</Dialog.Header>
+        <Dialog.Header onCloseButtonClicked={isPending ? undefined : () => this.close()}>
+          Create a space
+        </Dialog.Header>
         {inProgress && (
           <Dialog.Body>
             <ProgressScreen done={!spaceCreation.isPending} onConfirm={() => this.close()} />
