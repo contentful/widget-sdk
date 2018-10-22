@@ -128,9 +128,11 @@ class EnterpriseSpaceWizard extends React.Component {
 
     return (
       <Dialog testId="enterprise-space-creation-dialog" size="large">
-        <Dialog.Header onCloseButtonClicked={isPending ? undefined : () => this.close()}>
-          Create a space
-        </Dialog.Header>
+        {!inProgress && (
+          <Dialog.Header onCloseButtonClicked={isPending ? undefined : () => this.close()}>
+            Create a space
+          </Dialog.Header>
+        )}
         {inProgress && (
           <Dialog.Body>
             <ProgressScreen done={!spaceCreation.isPending} onConfirm={() => this.close()} />
