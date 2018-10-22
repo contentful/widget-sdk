@@ -69,13 +69,12 @@ export default class OrganizationUsagePage extends React.Component {
       isPoC
     } = this.props;
 
+    const totalUsage = sum(orgUsage);
+
     return (
       <div className="usage-page">
         <div className="usage-page__section">
-          <OrganizationUsageInfo
-            totalUsage={sum(orgUsage)}
-            includedLimit={apiRequestIncludedLimit}
-          />
+          <OrganizationUsageInfo totalUsage={totalUsage} includedLimit={apiRequestIncludedLimit} />
           <OrganisationUsageChart
             usage={orgUsage}
             includedLimit={apiRequestIncludedLimit}
@@ -86,7 +85,7 @@ export default class OrganizationUsagePage extends React.Component {
         {map(apis, (usage, api) => (
           <div key={api} className="usage-page__section">
             <ApiUsageInfo
-              includedLimit={apiRequestIncludedLimit}
+              totalUsage={totalUsage}
               api={api}
               spaceNames={spaceNames}
               isPoC={isPoC}
