@@ -18,7 +18,7 @@ describe('ApiUsageChart', () => {
       {
         sys: {
           id: '1',
-          type: 'cmaUsage',
+          type: 'ApiUsage',
           space: { sys: { id: 'space1' } }
         },
         usage: [1, 2, 3]
@@ -26,7 +26,7 @@ describe('ApiUsageChart', () => {
       {
         sys: {
           id: '2',
-          type: 'cmaUsage',
+          type: 'ApiUsage',
           space: { sys: { id: 'space2' } }
         },
         usage: [0, 1, 2]
