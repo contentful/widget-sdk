@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PeriodSelector should render 1`] = `
+<span
+  className="usage__period-selector"
+>
+  <label>
+    Usage period
+  </label>
+  <Select
+    defaultValue={0}
+    hasError={false}
+    id="period-selector"
+    isDisabled={false}
+    name="period-selector"
+    onBlur={[Function]}
+    onChange={[MockFunction]}
+    onFocus={[Function]}
+    required={false}
+    testId="cf-ui-select"
+    width="auto"
+  >
+    <Option
+      key="0"
+      value="0"
+    >
+      10 Oct – 09 Nov (current)
+    </Option>
+    <Option
+      key="1"
+      value="1"
+    >
+      09 Sep – 09 Oct (a month ago)
+    </Option>
+  </Select>
+</span>
+`;

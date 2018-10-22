@@ -1,0 +1,89 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ApiUsageChart should render line chart and not throw errors 1`] = `
+<LineChart
+  EmptyPlaceholder={[Function]}
+  empty={false}
+  extraClassNames={null}
+  height={300}
+  loading={false}
+  options={
+    Object {
+      "series": Array [
+        Object {
+          "data": Array [
+            1,
+            2,
+            3,
+          ],
+          "itemStyle": Object {
+            "color": "#000",
+          },
+          "name": "test space",
+          "symbol": "circle",
+          "symbolSize": 8,
+        },
+        Object {
+          "data": Array [
+            0,
+            1,
+            2,
+          ],
+          "itemStyle": Object {
+            "color": undefined,
+          },
+          "name": "deleted space",
+          "symbol": "diamond",
+          "symbolSize": 8,
+        },
+      ],
+      "tooltip": Object {
+        "formatter": [Function],
+        "padding": 0,
+      },
+      "xAxis": Object {
+        "data": Array [
+          "19 Oct",
+          "20 Oct",
+          "21 Oct",
+          "22 Oct",
+          "23 Oct",
+          "24 Oct",
+          "25 Oct",
+          "26 Oct",
+          "27 Oct",
+          "28 Oct",
+          "29 Oct",
+          "30 Oct",
+          "31 Oct",
+          "1 Nov",
+          "2 Nov",
+          "3 Nov",
+          "4 Nov",
+          "5 Nov",
+          "6 Nov",
+          "7 Nov",
+          "8 Nov",
+          "9 Nov",
+          "10 Nov",
+          "11 Nov",
+          "12 Nov",
+          "13 Nov",
+          "14 Nov",
+          "15 Nov",
+          "16 Nov",
+          "17 Nov",
+          "18 Nov",
+        ],
+      },
+      "yAxis": Object {
+        "axisLabel": Object {
+          "formatter": [Function],
+        },
+      },
+    }
+  }
+  require={null}
+  width={700}
+/>
+`;

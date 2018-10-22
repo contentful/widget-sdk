@@ -23,7 +23,10 @@ describe('OrganizationUsageChart', () => {
     );
 
   it('should render line chart and not throw errors', () => {
-    expect(renderChart().find(LineChart)).toHaveLength(1);
+    const chart = renderChart();
+    expect(chart.find(LineChart)).toHaveLength(1);
+
+    expect(chart).toMatchSnapshot();
   });
 
   it('should not show chart as loading', () => {

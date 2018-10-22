@@ -34,6 +34,10 @@ describe('PeriodSelector', () => {
     wrapper = shallow(<PeriodSelector {...props} />);
   });
 
+  it('should render', () => {
+    expect(wrapper).toMatchSnapshot();
+  });
+
   it('should call onChange when select was used', () => {
     expect(props.onChange).not.toHaveBeenCalled();
     wrapper.find(Select).simulate('change', { target: { value: 1 } });

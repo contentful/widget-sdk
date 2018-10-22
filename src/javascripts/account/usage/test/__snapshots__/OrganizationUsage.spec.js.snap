@@ -1,0 +1,119 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OrganizationUsage should render page without errors 1`] = `
+<Workbench
+  actions={
+    <WorkbenchActions
+      committed={true}
+      flagActive={true}
+      hasSpaces={true}
+      isLoading={false}
+      periods={
+        Array [
+          Object {
+            "endDate": null,
+            "startDate": "2018-10-10T14:38:09.278Z",
+            "sys": Object {
+              "id": "0",
+              "type": "UsagePeriod",
+            },
+          },
+          Object {
+            "endDate": "2018-10-09T14:38:09.278Z",
+            "startDate": "2018-09-09T14:38:09.278Z",
+            "sys": Object {
+              "id": "1",
+              "type": "UsagePeriod",
+            },
+          },
+        ]
+      }
+      selectedPeriodIndex={0}
+      setPeriodIndex={[Function]}
+    />
+  }
+  content={
+    <WorkbenchContent
+      apiRequestIncludedLimit={1000000}
+      assetBandwidthIncludedLimit={2000}
+      assetBandwidthUOM="MB"
+      assetBandwidthUsage={200}
+      committed={true}
+      flagActive={true}
+      hasSpaces={true}
+      isLoading={false}
+      isPoC={
+        Object {
+          "space1": false,
+          "space2": true,
+        }
+      }
+      periodicUsage={
+        Object {
+          "apis": Object {
+            "cda": undefined,
+            "cma": undefined,
+            "cpa": undefined,
+          },
+          "org": undefined,
+        }
+      }
+      periods={
+        Array [
+          Object {
+            "endDate": null,
+            "startDate": "2018-10-10T14:38:09.278Z",
+            "sys": Object {
+              "id": "0",
+              "type": "UsagePeriod",
+            },
+          },
+          Object {
+            "endDate": "2018-10-09T14:38:09.278Z",
+            "startDate": "2018-09-09T14:38:09.278Z",
+            "sys": Object {
+              "id": "1",
+              "type": "UsagePeriod",
+            },
+          },
+        ]
+      }
+      selectedPeriodIndex={0}
+      spaceNames={
+        Object {
+          "test1": "Test1",
+          "test2": "Test2",
+        }
+      }
+    />
+  }
+  icon="page-usage"
+  testId="organization.usage"
+  title="Usage"
+/>
+`;
+
+exports[`WorkbenchActions should render 1`] = `""`;
+
+exports[`WorkbenchContent should render 1`] = `
+<ServicesConsumer
+  apiRequestIncludedLimit={1000}
+  assetBandwidthIncludedLimit={50}
+  assetBandwidthUOM="GB"
+  assetBandwidthUsage={100}
+  isLoading={false}
+  isPoC={
+    Object {
+      "space1": false,
+      "space2": true,
+    }
+  }
+  periodicUsage={Object {}}
+  spaceNames={
+    Object {
+      "space1": "Space1",
+      "space2": "Space2",
+    }
+  }
+/>
+`;

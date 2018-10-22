@@ -98,7 +98,9 @@ describe('OrganizationUsage', () => {
   });
 
   it('should render page without errors', async () => {
-    await shallowRenderComponent(defaultProps);
+    const wrapper = await shallowRenderComponent(defaultProps);
+
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('should call `onReady`', async () => {
@@ -239,6 +241,12 @@ describe('OrganizationUsage', () => {
 });
 
 describe('WorkbenchActions', () => {
+  it('should render', () => {
+    const wrapper = shallow(<WorkbenchActions />);
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
   describe('isLoading', () => {
     it('should render a spinner', () => {
       const wrapper = shallow(<WorkbenchActions isLoading />);
@@ -338,6 +346,12 @@ describe('WorkbenchContent', () => {
       periods: [],
       resources: []
     };
+  });
+
+  it('should render', () => {
+    const wrapper = shallow(<WorkbenchContent {...defaultProps} />);
+
+    expect(wrapper).toMatchSnapshot();
   });
 
   describe('org is committed, flag is active and there are spaces', () => {

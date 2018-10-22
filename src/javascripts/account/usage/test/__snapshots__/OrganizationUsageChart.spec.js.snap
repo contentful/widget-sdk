@@ -1,0 +1,104 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OrganizationUsageChart should render line chart and not throw errors 1`] = `
+<LineChart
+  EmptyPlaceholder={[Function]}
+  empty={false}
+  extraClassNames={null}
+  height={300}
+  loading={false}
+  options={
+    Object {
+      "series": Object {
+        "data": Array [
+          1,
+          3,
+          6,
+        ],
+        "markLine": Object {
+          "data": Array [
+            Object {
+              "label": Object {
+                "show": false,
+              },
+              "yAxis": 2000,
+            },
+          ],
+          "lineStyle": Object {
+            "color": "#354351",
+            "width": 1.5,
+          },
+          "silent": false,
+          "symbol": Array [],
+        },
+        "name": "API requests",
+        "symbol": "circle",
+      },
+      "tooltip": Object {
+        "formatter": [Function],
+        "padding": 0,
+      },
+      "visualMap": Object {
+        "pieces": Array [
+          Object {
+            "color": "#263545",
+            "gte": 0,
+            "label": "includedLimit usage",
+            "lt": 2000,
+          },
+          Object {
+            "color": "#FDA31A",
+            "gt": 2000,
+            "label": "exceeding 2K limit",
+          },
+        ],
+        "show": false,
+      },
+      "xAxis": Object {
+        "data": Array [
+          "19 Oct",
+          "20 Oct",
+          "21 Oct",
+          "22 Oct",
+          "23 Oct",
+          "24 Oct",
+          "25 Oct",
+          "26 Oct",
+          "27 Oct",
+          "28 Oct",
+          "29 Oct",
+          "30 Oct",
+          "31 Oct",
+          "1 Nov",
+          "2 Nov",
+          "3 Nov",
+          "4 Nov",
+          "5 Nov",
+          "6 Nov",
+          "7 Nov",
+          "8 Nov",
+          "9 Nov",
+          "10 Nov",
+          "11 Nov",
+          "12 Nov",
+          "13 Nov",
+          "14 Nov",
+          "15 Nov",
+          "16 Nov",
+          "17 Nov",
+          "18 Nov",
+        ],
+      },
+      "yAxis": Object {
+        "axisLabel": Object {
+          "formatter": [Function],
+        },
+        "max": 2000,
+        "min": 0,
+      },
+    }
+  }
+  require={null}
+  width={700}
+/>
+`;
