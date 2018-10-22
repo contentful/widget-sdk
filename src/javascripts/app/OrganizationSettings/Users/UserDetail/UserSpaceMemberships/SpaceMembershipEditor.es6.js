@@ -38,9 +38,7 @@ class SpaceMembershipEditor extends React.Component {
     busy: false,
     selectedSpace: null,
     // TODO: consider spliting edit and creation in two different components
-    selectedRoles: this.isEditing
-      ? this.getInitialRoleIds()
-      : [this.props.$services.SpaceMembershipRepository.ADMIN_ROLE_ID]
+    selectedRoles: this.getInitialRoleIds()
   };
 
   orgEndpoint = this.props.$services.EndpointFactory.createOrganizationEndpoint(this.props.orgId);
@@ -77,17 +75,6 @@ class SpaceMembershipEditor extends React.Component {
   setRoles = selectedRoles => {
     this.setState({ selectedRoles });
   };
-
-  addRole(roleId) {
-    const ADMIN_ROLE_ID = this.props.$services.SpaceMembershipRepository.ADMIN_ROLE_ID;
-    let selectedRoles = [...this.state.selectedRoles];
-    if (roleId === ADMIN_ROLE_ID) {
-      selectedRoles = [ADMIN_ROLE_ID];
-    } else {
-      selectedRoles.push(roleId);
-    }
-    this.setState({ selectedRoles });
-  }
 
   async submit() {
     const {

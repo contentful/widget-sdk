@@ -94,7 +94,7 @@ class SpaceRoleEditor extends React.Component {
             {selectedNames || 'Select a role'}
           </Button>
         }>
-        <DropdownList>
+        <DropdownList maxHeight={300}>
           <DropdownListItem>
             <CheckboxField
               light
