@@ -215,7 +215,7 @@ const mapStateToProps = state => {
     error: state.spaceWizard.error,
     success: state.spaceWizard.success,
     spaceCreation: state.spaceWizard.spaceCreation,
-    spaceCreationTempalte: state.spaceWizard.spaceCreationTemplate
+    spaceCreationTemplate: state.spaceWizard.spaceCreationTemplate
   };
 };
 
