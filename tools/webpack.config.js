@@ -30,7 +30,7 @@ const WebpackRequireFrom = require('webpack-require-from');
  */
 module.exports = () => {
   const currentEnv = process.env.NODE_ENV;
-  const isDev = /^(dev|development)$/.test(currentEnv);
+  const isDev = /^(dev|development)$/.test(currentEnv) || !currentEnv;
   const isProd = currentEnv === 'production';
 
   return {
@@ -175,7 +175,7 @@ module.exports = () => {
         IS_PRODUCTION: isProd,
         // a lot of libraries rely on this env variable in order to cut warnings, checks,
         // development features, etc. e.g. for react: https://reactjs.org/docs/optimizing-performance.html#webpack
-        'process.env.NODE_ENV': JSON.stringify(isDev ? 'development' : 'production')
+        'process.env.NODE_ENV': JSON.stringify(isProd ? 'production' : 'development')
       })
     ].concat(
       // The locales are loaded in development, but ignored in testing and prod
