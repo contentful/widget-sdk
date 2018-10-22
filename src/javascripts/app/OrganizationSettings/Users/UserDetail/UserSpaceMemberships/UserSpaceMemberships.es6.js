@@ -17,7 +17,8 @@ import {
   TableHead,
   TableBody,
   TableCell,
-  TextLink
+  TextLink,
+  Tooltip
 } from '@contentful/ui-component-library';
 
 const ServicesConsumer = require('../../../../../reactServiceContext').default;
@@ -177,6 +178,19 @@ class UserSpaceMemberships extends React.Component {
       .sort((a, b) => a.name.localeCompare(b.name));
   }
 
+  getUnavailabilityReason() {
+    const { user } = this.props;
+    const { spaces, availableSpaces } = this.state;
+
+    if (spaces.length === 0) {
+      return 'There are no spaces available. Please create a space first';
+    } else if (availableSpaces.length === 0) {
+      return `${user.firstName} is already a member of all spaces`;
+    }
+
+    return null;
+  }
+
   renderMembershipRow(membership) {
     const { getMembershipRoles } = this.props.$services.SpaceMembershipRepository;
 
@@ -204,6 +218,7 @@ class UserSpaceMemberships extends React.Component {
   render() {
     const { user, orgId } = this.props;
     const { memberships, showingForm, editingMembershipId, roles, availableSpaces } = this.state;
+    const unavailabilityReason = this.getUnavailabilityReason();
 
     return (
       <section>
@@ -250,9 +265,14 @@ class UserSpaceMemberships extends React.Component {
         )}
 
         {!showingForm && (
-          <TextLink icon="Plus" onClick={this.showSpaceMembershipEditor}>
-            Add to a space
-          </TextLink>
+          <Tooltip content={unavailabilityReason} place="right">
+            <TextLink
+              icon="Plus"
+              disabled={!!unavailabilityReason}
+              onClick={this.showSpaceMembershipEditor}>
+              Add to a space
+            </TextLink>
+          </Tooltip>
         )}
       </section>
     );
