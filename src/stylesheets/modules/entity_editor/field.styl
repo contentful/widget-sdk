@@ -1,6 +1,8 @@
 // Width of left-hand main content.
 // We only show the field collaborators on the right
-$entity-editor__field-width = 80%
+$entity-editor__field-width--small = 100%
+$entity-editor__field-width--large = 80%
+$entity-editor__breakpoint = 1281px
 
 .entity-editor__field-group
   display: block
@@ -31,7 +33,7 @@ $entity-editor__field-width = 80%
   font-size: 14px
   line-height: 24px
   color: $colors.text-light
-  width: $entity-editor__field-width
+  width: $entity-editor__field-width--small
 
   label
     display: flex
@@ -67,10 +69,9 @@ $entity-editor__field-width = 80%
 
 .entity-editor__control-group
   display: flex
-  justify-content: space-between
 
 .entity-editor__control
-  width: $entity-editor__field-width
+  width: $entity-editor__field-width--small
 
 .entity-editor__control-error
   list-style-type: disc
@@ -88,17 +89,16 @@ $entity-editor__field-width = 80%
     top: 1px
 
 .entity-editor__field-hint
-  width: $entity-editor__field-width
   color: $colors.text-lightest
   margin: $rhythm(0.5) 0
   font-style: italic
-
+  width: $entity-editor__field-width--small
 
 .entity-editor__field-collaborators
   margin: 0 0 0 2em
-  margin-left: $form-offset
+  margin-left: 14px
   display: flex
-  flex-wrap: wrap
+  flex-wrap: nowrap
   > li
     $image-size = 30px
     overflow: hidden
@@ -109,3 +109,7 @@ $entity-editor__field-width = 80%
     > img
       display: block
       height: $image-size
+
+@media(min-width $entity-editor__breakpoint)
+   .entity-editor__control, .entity-editor__field-heading, .entity-editor__field-hint
+     width: $entity-editor__field-width--large
