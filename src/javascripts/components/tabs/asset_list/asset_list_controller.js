@@ -5,7 +5,7 @@ angular.module('contentful').controller('AssetListController', [
   'require',
   function AssetListController($scope, require) {
     const $controller = require('$controller');
-    const createSelection = require('selection');
+    const createSelection = require('classes/Selection.es6').createSelection;
     const delay = require('delay');
     const Analytics = require('analytics/Analytics.es6');
     const notification = require('notification');

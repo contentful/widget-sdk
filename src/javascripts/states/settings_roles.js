@@ -13,7 +13,7 @@ angular
       var base = require('states/Base.es6').default;
       var contextHistory = require('navigation/Breadcrumbs/History.es6').default;
       var crumbFactory = require('navigation/Breadcrumbs/Factory.es6');
-      var RoleRepository = require('RoleRepository');
+      var RoleRepository = require('access_control/RoleRepository.es6').default;
 
       var list = base({
         name: 'list',
@@ -59,7 +59,7 @@ angular
         url: '/:roleId',
         resolve: {
           role: [
-            'RoleRepository',
+            'access_control/RoleRepository.es6',
             'spaceContext',
             '$stateParams',
             (RoleRepository, spaceContext, $stateParams) =>

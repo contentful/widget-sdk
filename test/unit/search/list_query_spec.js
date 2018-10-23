@@ -16,7 +16,7 @@ describe('ListQuery service', () => {
     module('contentful/test');
 
     ListQuery = this.$inject('ListQuery');
-    paginator = this.$inject('Paginator').create();
+    paginator = this.$inject('classes/Paginator.es6').default.create();
 
     const spaceContext = this.$inject('mocks/spaceContext').init();
     spaceContext.publishedCTs.fetch.resolves({

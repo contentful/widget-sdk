@@ -42,7 +42,7 @@ angular
       const K = require('utils/kefir.es6');
       const spaceContext = require('spaceContext');
       const moment = require('moment');
-      const Paginator = require('Paginator');
+      const Paginator = require('classes/Paginator.es6').default;
       const snapshotStatus = require('app/snapshots/helpers/SnapshotStatus.es6');
       const snapshotDecorator = require('app/snapshots/helpers/SnapshotDecorator.es6');
 

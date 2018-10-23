@@ -1,46 +1,48 @@
 'use strict';
 
-describe('Paginator', () => {
+import * as Paginator from './Paginator.es6';
+
+describe('classes/Paginator.es6', () => {
+  let paginator;
+
   beforeEach(function() {
-    module('contentful/test');
-    this.create = this.$inject('Paginator').create;
-    this.p = this.create();
+    paginator = Paginator.create();
   });
 
   describe('#next/#prev', () => {
     it('increments/decrements page counter', function() {
-      this.p.next();
-      this.p.next();
-      expect(this.p.getPage()).toBe(2);
-      this.p.prev();
-      expect(this.p.getPage()).toBe(1);
-      this.p.setPage(123);
-      this.p.next();
-      this.p.prev();
-      expect(this.p.getPage()).toBe(123);
+      paginator.next();
+      paginator.next();
+      expect(paginator.getPage()).toBe(2);
+      paginator.prev();
+      expect(paginator.getPage()).toBe(1);
+      paginator.setPage(123);
+      paginator.next();
+      paginator.prev();
+      expect(paginator.getPage()).toBe(123);
     });
   });
 
   describe('#getPerPage', () => {
     it('defaults to 40', function() {
-      expect(this.p.getPerPage()).toBe(40);
+      expect(paginator.getPerPage()).toBe(40);
     });
 
     it('can be overridden with constructor', function() {
-      const p = this.create(123);
+      const p = Paginator.create(123);
       expect(p.getPerPage()).toBe(123);
     });
   });
 
   describe('#getSkipParam', () => {
     it('returns number of items to skip in query', function() {
-      expect(this.p.getSkipParam()).toBe(0);
-      this.p.setPage(5);
-      expect(this.p.getSkipParam()).toBe(200);
+      expect(paginator.getSkipParam()).toBe(0);
+      paginator.setPage(5);
+      expect(paginator.getSkipParam()).toBe(200);
     });
 
     it('handles non-standard page length', function() {
-      const p = this.create(10);
+      const p = Paginator.create(10);
       expect(p.getSkipParam()).toBe(0);
       p.next();
       expect(p.getSkipParam()).toBe(10);
@@ -49,22 +51,22 @@ describe('Paginator', () => {
 
   describe('#getPageCount', () => {
     it('defaults to 0', function() {
-      expect(this.p.getPageCount()).toBe(0);
+      expect(paginator.getPageCount()).toBe(0);
     });
 
     it('calculates number of pages', function() {
-      this.p.setTotal(10);
-      expect(this.p.getPageCount()).toBe(1);
-      this.p.setTotal(40);
-      expect(this.p.getPageCount()).toBe(1);
-      this.p.setTotal(50);
-      expect(this.p.getPageCount()).toBe(2);
-      this.p.setTotal(170);
-      expect(this.p.getPageCount()).toBe(5);
+      paginator.setTotal(10);
+      expect(paginator.getPageCount()).toBe(1);
+      paginator.setTotal(40);
+      expect(paginator.getPageCount()).toBe(1);
+      paginator.setTotal(50);
+      expect(paginator.getPageCount()).toBe(2);
+      paginator.setTotal(170);
+      expect(paginator.getPageCount()).toBe(5);
     });
 
     it('handles non-standard page length', function() {
-      const p = this.create(13);
+      const p = Paginator.create(13);
       p.setTotal(13);
       expect(p.getPageCount()).toBe(1);
       p.setTotal(30);
@@ -74,33 +76,33 @@ describe('Paginator', () => {
 
   describe('#isAtFirst', () => {
     it('returns true when no of page is 0', function() {
-      expect(this.p.isAtLast()).toBe(true);
+      expect(paginator.isAtLast()).toBe(true);
     });
 
     it('returns true iff on the first page', function() {
-      this.p.setPage(0);
-      this.p.setTotal(10);
+      paginator.setPage(0);
+      paginator.setTotal(10);
 
-      expect(this.p.isAtFirst()).toBe(true);
+      expect(paginator.isAtFirst()).toBe(true);
 
-      this.p.setPage(5);
-      expect(this.p.isAtFirst()).toBe(false);
+      paginator.setPage(5);
+      expect(paginator.isAtFirst()).toBe(false);
     });
   });
 
   describe('#isAtLast', () => {
     it('returns true by default', function() {
-      expect(this.p.isAtLast()).toBe(true);
+      expect(paginator.isAtLast()).toBe(true);
     });
 
     it('returns true when on the last page or past the last page', function() {
-      this.p.setTotal(50);
-      expect(this.p.isAtLast()).toBe(false);
-      testLastAndNext(this.p);
+      paginator.setTotal(50);
+      expect(paginator.isAtLast()).toBe(false);
+      testLastAndNext(paginator);
     });
 
     it('handles non-standard page length', function() {
-      const p = this.create(13);
+      const p = Paginator.create(13);
       p.setTotal(26);
       expect(p.isAtLast()).toBe(false);
       testLastAndNext(p);
@@ -124,31 +126,31 @@ describe('Paginator', () => {
 
     describe(`#${name} getter/setter`, () => {
       it('is initialized with 0', function() {
-        expect(this.p[getter]()).toBe(0);
+        expect(paginator[getter]()).toBe(0);
       });
 
       it('sets positive numeric value', function() {
-        this.p[setter](123);
-        expect(this.p[getter]()).toBe(123);
+        paginator[setter](123);
+        expect(paginator[getter]()).toBe(123);
 
-        this.p[setter](-1);
-        expect(this.p[getter]()).toBe(123);
+        paginator[setter](-1);
+        expect(paginator[getter]()).toBe(123);
       });
 
       it('sets positive value with function', function() {
         const val = 123;
 
-        this.p[setter](val);
+        paginator[setter](val);
 
         // this should not cause page/total to updated
-        this.p[setter](currVal => {
+        paginator[setter](currVal => {
           expect(currVal).toBe(val);
           return -currVal;
         });
-        expect(this.p[getter]()).toBe(val);
+        expect(paginator[getter]()).toBe(val);
 
-        this.p[setter](_ => 0);
-        expect(this.p[getter]()).toBe(0);
+        paginator[setter](_ => 0);
+        expect(paginator[getter]()).toBe(0);
       });
     });
   }

@@ -9,7 +9,7 @@ angular
     function($scope, require) {
       const controller = this;
       const $q = require('$q');
-      const Paginator = require('Paginator');
+      const Paginator = require('classes/Paginator.es6').default;
       const PromisedLoader = require('PromisedLoader');
       const ReloadNotification = require('ReloadNotification');
       const logger = require('logger');

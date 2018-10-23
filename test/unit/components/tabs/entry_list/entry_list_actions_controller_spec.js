@@ -65,7 +65,7 @@ describe('Entry List Actions Controller', () => {
 
     scope = this.$inject('$rootScope').$new();
 
-    scope.paginator = this.$inject('Paginator').create();
+    scope.paginator = this.$inject('classes/Paginator.es6').default.create();
     scope.selection = {
       size: stubs.size,
       getSelected: stubs.getSelected.returns([]),

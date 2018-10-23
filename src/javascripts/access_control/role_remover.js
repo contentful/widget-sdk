@@ -10,7 +10,7 @@ angular.module('contentful').factory('createRoleRemover', [
     const notification = require('notification');
     const Command = require('command');
     const spaceContext = require('spaceContext');
-    const roleRepo = require('RoleRepository').getInstance(spaceContext.space);
+    const roleRepo = require('access_control/RoleRepository.es6').getInstance(spaceContext.space);
 
     return function createRoleRemover(listHandler, doneFn) {
       return function removeRole(role) {

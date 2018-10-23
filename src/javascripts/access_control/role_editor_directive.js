@@ -16,7 +16,7 @@ angular.module('contentful').controller('RoleEditorController', [
     const spaceContext = require('spaceContext');
     const TheLocaleStore = require('TheLocaleStore');
     const space = spaceContext.space;
-    const roleRepo = require('RoleRepository').getInstance(space);
+    const roleRepo = require('access_control/RoleRepository.es6').getInstance(space);
     const listHandler = require('UserListHandler').create();
     const createRoleRemover = require('createRoleRemover');
     const PolicyBuilder = require('PolicyBuilder');

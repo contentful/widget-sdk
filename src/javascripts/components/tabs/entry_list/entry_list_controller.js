@@ -12,8 +12,8 @@ angular
     function EntryListController($scope, require) {
       const $controller = require('$controller');
       const EntityListCache = require('EntityListCache');
-      const Paginator = require('Paginator');
-      const createSelection = require('selection');
+      const Paginator = require('classes/Paginator.es6').default;
+      const createSelection = require('classes/Selection.es6').createSelection;
       const spaceContext = require('spaceContext');
       const accessChecker = require('access_control/AccessChecker');
       const entityStatus = require('app/entity_editor/EntityStatus.es6');

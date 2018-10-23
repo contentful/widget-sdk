@@ -28,7 +28,7 @@ import * as Status from 'data/Document/Status';
 import { DocLoad } from 'data/sharejs/Connection.es6';
 import * as ShareJS from 'data/ShareJS/Utils';
 
-import * as Reverter from 'entityEditor/Document/Reverter';
+import * as Reverter from './document/Reverter.es6';
 import * as PresenceHub from 'entityEditor/Document/PresenceHub';
 
 // TODO Instead of passing an entity instance provided by the client

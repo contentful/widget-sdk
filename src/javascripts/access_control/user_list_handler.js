@@ -5,7 +5,7 @@ angular.module('contentful').factory('UserListHandler', [
   require => {
     const $q = require('$q');
     const spaceContext = require('spaceContext');
-    const RoleRepository = require('RoleRepository');
+    const RoleRepository = require('access_control/RoleRepository.es6').default;
     const SpaceMembershipRepository = require('access_control/SpaceMembershipRepository.es6');
     const fetchAll = require('data/CMA/FetchAll.es6').fetchAll;
     const createResourceService = require('services/ResourceService.es6').default;

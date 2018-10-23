@@ -19,7 +19,7 @@ angular
     require => {
       const $window = require('$window');
       const $q = require('$q');
-      const CallBuffer = require('utils/CallBuffer');
+      const CallBuffer = require('utils/CallBuffer.es6');
       const LazyLoader = require('LazyLoader');
       const logger = require('logger');
 

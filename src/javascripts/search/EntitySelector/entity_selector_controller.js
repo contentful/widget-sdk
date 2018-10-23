@@ -34,7 +34,7 @@ angular.module('contentful').controller('EntitySelectorController', [
   function EntitySelectorController(require, $scope) {
     const $timeout = require('$timeout');
     const spaceContext = require('spaceContext');
-    const Paginator = require('Paginator');
+    const Paginator = require('classes/Paginator.es6').default;
     const createQueue = require('overridingRequestQueue');
     const EntityHelpers = require('EntityHelpers');
     const K = require('utils/kefir.es6');

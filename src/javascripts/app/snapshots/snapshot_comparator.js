@@ -40,7 +40,7 @@ angular
       const Validator = require('app/entity_editor/Validator.es6');
       const Focus = require('app/entity_editor/Focus.es6');
 
-      $scope.versionPicker = require('SnapshotComparatorController/versionPicker').create();
+      $scope.versionPicker = require('app/snapshots/VersionPicker.es6').create();
       $scope.snapshotCount = $stateParams.snapshotCount;
 
       $scope.context.ready = true;

@@ -9,7 +9,7 @@
 angular.module('contentful').factory('bugsnag', [
   'require',
   require => {
-    const CallBuffer = require('utils/CallBuffer');
+    const CallBuffer = require('utils/CallBuffer.es6');
     const environment = require('environment');
 
     // TODO this should be stored in the environment configuration. Need
