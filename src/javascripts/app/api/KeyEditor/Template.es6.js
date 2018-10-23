@@ -34,7 +34,7 @@ export default function() {
       {
         uiCommand: 'apiKeyEditor.save',
         dataTestId: 'apiKey.save',
-        cfWhenDisabled: 'createApiKey'
+        cfWhenDisabled: 'create.apiKey'
       },
       ['Save']
     )

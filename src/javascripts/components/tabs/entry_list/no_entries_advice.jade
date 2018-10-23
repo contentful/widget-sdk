@@ -8,9 +8,9 @@
     button.btn-action--large(
       type="button"
       ng-click="newContentType()"
-      ng-hide="shouldHide('createContentType')"
-      ng-disabled="shouldDisable('createContentType')"
-      cf-when-disabled="createContentType")
+      ng-hide="shouldHide('create', 'contentType')"
+      ng-disabled="shouldDisable('create', 'contentType')"
+      cf-when-disabled="create.contentType")
       cf-icon.btn-icon.inverted(name="plus")
       | Add content type
   .empty-state__additional

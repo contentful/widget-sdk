@@ -38,8 +38,13 @@ angular.module('contentful').directive('cfWhenDisabled', [
     return {
       restrict: 'A',
       link: function(scope, elem, attrs) {
+        if (!attrs.cfWhenDisabled) {
+          return;
+        }
+        const [actionName, entityType] = attrs.cfWhenDisabled.split('.');
+
         scope.$watch(
-          () => accessChecker.getResponseByActionName(attrs.cfWhenDisabled),
+          () => accessChecker.getResponseByActionAndEntity(actionName, entityType),
           addTooltip,
           true
         );

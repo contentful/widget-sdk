@@ -10,6 +10,7 @@ describe('Access Checker', () => {
     mockSpaceAuthContext,
     mockOrgEndpoint,
     mockSpaceEndpoint,
+    isPermissionDeniedStub,
     feature;
 
   function init() {
@@ -26,7 +27,7 @@ describe('Access Checker', () => {
   }
 
   afterEach(() => {
-    enforcements = OrganizationRoles = policyChecker = ac = getResStub = reasonsDeniedStub = broadcastStub = mockSpaceEndpoint = feature = null;
+    enforcements = OrganizationRoles = policyChecker = ac = getResStub = reasonsDeniedStub = isPermissionDeniedStub = broadcastStub = mockSpaceEndpoint = feature = null;
   });
 
   beforeEach(function() {
@@ -62,10 +63,14 @@ describe('Access Checker', () => {
     responseCache.getResponse = getResStub = sinon.stub().returns(false);
 
     reasonsDeniedStub = sinon.stub().returns([]);
+    isPermissionDeniedStub = sinon.stub().returns(false);
     enforcements.determineEnforcement = sinon.stub().returns(undefined);
 
     mockSpace = { sys: { id: '1234' }, organization: { sys: {} } };
-    mockSpaceAuthContext = { reasonsDenied: reasonsDeniedStub };
+    mockSpaceAuthContext = {
+      reasonsDenied: reasonsDeniedStub,
+      isPermissionDenied: isPermissionDeniedStub
+    };
     mockOrgEndpoint = sinon.stub();
     mockSpaceEndpoint = sinon.stub();
 
@@ -115,23 +120,17 @@ describe('Access Checker', () => {
         expect(ac.getResponses() === responses).toBe(false);
       });
 
-      it('contains keys for entity actions', () => {
+      it('contains keys for actions', () => {
         const responses = ac.getResponses();
-        const testKeys = [
-          'createContentType',
-          'readEntry',
-          'updateAsset',
-          'createApiKey',
-          'updateSettings'
-        ];
-        const intersection = _.intersection(_.keys(responses), testKeys);
-        expect(intersection.length).toBe(testKeys.length);
+        const keys = ['create', 'read', 'update'];
+        const intersection = _.intersection(_.keys(responses), keys);
+        expect(intersection.length).toBe(keys.length);
       });
 
       it('should not hide or disable when operation can be performed', () => {
         getResStub.withArgs('read', 'Entry').returns(true);
         triggerChange();
-        const response = ac.getResponses()['readEntry'];
+        const response = ac.getResponses().read.entry;
         expect(response.can).toBe(true);
         expect(response.shouldHide).toBe(false);
         expect(response.shouldDisable).toBe(false);
@@ -140,7 +139,7 @@ describe('Access Checker', () => {
       it('should disable, but not hide when operation cannot be performed and reasons for denial are given', () => {
         reasonsDeniedStub.withArgs('read', 'Entry').returns(['DENIED!']);
         triggerChange();
-        const response = ac.getResponses()['readEntry'];
+        const response = ac.getResponses().read.entry;
         expect(response.can).toBe(false);
         expect(response.shouldHide).toBe(false);
         expect(response.shouldDisable).toBe(true);
@@ -148,7 +147,7 @@ describe('Access Checker', () => {
       });
 
       it('should hide when operation cannot be performed and no reasons are given', () => {
-        const response = ac.getResponses()['readEntry'];
+        const response = ac.getResponses().read.entry;
         expect(response.can).toBe(false);
         expect(response.shouldHide).toBe(true);
         expect(response.shouldDisable).toBe(false);
@@ -171,15 +170,20 @@ describe('Access Checker', () => {
       });
     });
 
-    describe('#getResponseByActionName', () => {
+    describe('#getResponseByActionAndEntity', () => {
       it('returns undefined for an unknown action', () => {
-        expect(ac.getResponseByActionName('unknown')).toBe(undefined);
+        expect(ac.getResponseByActionAndEntity('unknown')).toBe(undefined);
+      });
+
+      it('returns undefined for an unknown action and entity', () => {
+        expect(ac.getResponseByActionAndEntity('create', 'unknown')).toBe(undefined);
       });
 
       it('returns response for a known action', () => {
-        const n = 'readEntry';
-        const response = ac.getResponseByActionName(n);
-        expect(response).toBe(ac.getResponses()[n]);
+        const action = 'read';
+        const entityType = 'entry';
+        const response = ac.getResponseByActionAndEntity(action, entityType);
+        expect(response).toBe(ac.getResponses()[action][entityType]);
         expect(_.isObject(response) && response.can === false).toBe(true);
       });
     });
@@ -200,11 +204,43 @@ describe('Access Checker', () => {
         }
 
         [['read', 'entry'], ['read', 'asset'], ['read', 'apiKey'], ['update', 'settings']].forEach(
-          ([action, section]) => {
-            test(action, section, true);
-            test(action, section, false);
+          ([action, entityType]) => {
+            test(action, entityType, true);
+            test(action, entityType, false);
           }
         );
+      });
+
+      it('should return false for apiKey if settings is not readable (permission denied)', () => {
+        getResStub.returns(true);
+        isPermissionDeniedStub.returns(true);
+        triggerChange();
+
+        expect(ac.getSectionVisibility().apiKey).toBe(false);
+      });
+
+      it('should return true for apiKey if settings is readable (permission not denied)', () => {
+        getResStub.returns(true);
+        isPermissionDeniedStub.returns(false);
+        triggerChange();
+
+        expect(ac.getSectionVisibility().apiKey).toBe(true);
+      });
+
+      it('should return false for environments if settings is not readable (permission denied)', () => {
+        getResStub.returns(true);
+        isPermissionDeniedStub.returns(true);
+        triggerChange();
+
+        expect(ac.getSectionVisibility().environments).toBe(false);
+      });
+
+      it('should return true for environments if settings is readable (permission not denied)', () => {
+        getResStub.returns(true);
+        isPermissionDeniedStub.returns(false);
+        triggerChange();
+
+        expect(ac.getSectionVisibility().environments).toBe(true);
       });
 
       it('shows entries/assets section when it has "hide" flag, but policy checker grants access', () => {
@@ -227,16 +263,28 @@ describe('Access Checker', () => {
       it('are shortcuts to response object properties', () => {
         getResStub.withArgs('read', 'Entry').returns(false);
         triggerChange();
-        const response = ac.getResponseByActionName('readEntry');
+        const response = ac.getResponseByActionAndEntity('read', 'entry');
         expect(response.shouldHide).toBe(true);
         expect(response.shouldDisable).toBe(false);
-        expect(ac.shouldHide('readEntry')).toBe(response.shouldHide);
-        expect(ac.shouldDisable('readEntry')).toBe(response.shouldDisable);
+        expect(ac.shouldHide('read', 'entry')).toBe(response.shouldHide);
+        expect(ac.shouldDisable('read', 'entry')).toBe(response.shouldDisable);
       });
 
       it('returns false for unknown actions', () => {
         expect(ac.shouldHide('unknown')).toBe(false);
         expect(ac.shouldDisable('unknown')).toBe(false);
+      });
+    });
+
+    describe('#shouldHide', () => {
+      it('should return false if the read permission is denied, even if response.shouldHide is false', () => {
+        getResStub.returns(true);
+        isPermissionDeniedStub.returns(true);
+        triggerChange();
+
+        const response = ac.getResponseByActionAndEntity('read', 'entry');
+        expect(response.shouldHide).toBe(false);
+        expect(ac.shouldHide('read', 'entry')).toBe(true);
       });
     });
 
@@ -298,6 +346,14 @@ describe('Access Checker', () => {
         expect(ac.canUpdateEntry(entry)).toBe(true);
         sinon.assert.calledOnce(policyChecker.canUpdateEntriesOfType.withArgs('ctid'));
       });
+
+      it('returns false if permission is explicitly denied', () => {
+        isPermissionDeniedStub.returns(true);
+        getResStub.withArgs('update', entry.data).returns(true);
+        policyChecker.canUpdateEntriesOfType = sinon.stub().returns(true);
+
+        expect(ac.canUpdateEntry(entry)).toBe(false);
+      });
     });
 
     describe('#canUpdateAsset', () => {
@@ -320,6 +376,14 @@ describe('Access Checker', () => {
         policyChecker.canUpdateAssets = sinon.stub().returns(true);
         expect(ac.canUpdateAsset(asset)).toBe(true);
         sinon.assert.calledOnce(policyChecker.canUpdateAssets);
+      });
+
+      it('returns false if permission is explicitly denied', () => {
+        isPermissionDeniedStub.returns(true);
+        getResStub.withArgs('update', asset.data).returns(true);
+        policyChecker.canUpdateEntriesOfType = sinon.stub().returns(true);
+
+        expect(ac.canUpdateEntry(asset)).toBe(false);
       });
     });
 

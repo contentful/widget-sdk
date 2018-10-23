@@ -136,7 +136,7 @@ function mountKeyEditor($scope, apiKey, spaceEnvironments) {
   function isSaveDisabled() {
     return (
       !inRange(model.name.length, 1, 256) ||
-      accessChecker.shouldDisable('createApiKey') ||
+      accessChecker.shouldDisable('create', 'apiKey') ||
       !$scope.context.dirty
     );
   }

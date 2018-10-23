@@ -136,7 +136,7 @@ angular.module('contentful').factory('widgets', [
       return JST.editor_control_warning({
         label: widgetId,
         message: message,
-        canUpdateContentTypes: !accessChecker.shouldHide('updateContentType')
+        canUpdateContentTypes: !accessChecker.shouldHide('update', 'contentType')
       });
     }
 

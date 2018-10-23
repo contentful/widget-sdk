@@ -1,7 +1,11 @@
 .persistent-notification(ng-if="persistentNotification && (message || actionMessage)")
+  cf-icon.persistent-notification__icon(ng-if="icon" name="{{icon}}")
   .persistent-notification__message(
     ng-show="message"
     ng-bind-html="message"
     data-test-id="message")
+  .persistent-notification__link(
+    ng-if="link"
+  )
+    a(href="{{link.href}}") {{link.text}}
   button.persistent-notification__action.btn-action(ng-show="actionMessage" ng-click="action()") {{actionMessage}}
-  a.persistent-notification__dismiss(ng-click="dismissPersistentNotification()" ng-href="#") x

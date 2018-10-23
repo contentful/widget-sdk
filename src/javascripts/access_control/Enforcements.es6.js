@@ -5,6 +5,7 @@ import * as OrganizationRoles from 'services/OrganizationRoles.es6';
 import { go } from 'states/Navigator.es6';
 import { merge, findKey, forEach } from 'lodash';
 import require from 'require';
+import { supportUrl } from 'Config.es6';
 
 const USAGE_METRICS = {
   apiKey: 'API keys',
@@ -53,12 +54,38 @@ export function determineEnforcement(organization, reasons, entityType) {
     {
       label: 'accessTokenScope',
       message: 'An unknown error occurred'
+    },
+    {
+      label: 'readOnlySpace',
+      message: () => {
+        if (OrganizationRoles.isOwner(organization)) {
+          return `This space is set to read-only. Contact us to continue work.`;
+        } else {
+          return 'This space is set to read-only. Contact your organization administrator to continue work.';
+        }
+      },
+      icon: 'info',
+      link: () => {
+        const talkToUsHref = `${supportUrl}?read-only-poc=true`;
+
+        if (OrganizationRoles.isOwner(organization)) {
+          return {
+            text: 'Talk to us',
+            href: talkToUsHref
+          };
+        }
+      }
     }
   ];
 
   const error = errorsByPriority.find(({ label }) => reasons.indexOf(label) >= 0);
+
   if (!error) {
     return null;
+  }
+
+  if (typeof error.message === 'function') {
+    error.message = error.message(entityType);
   }
 
   if (typeof error.tooltip === 'function') {
@@ -67,6 +94,10 @@ export function determineEnforcement(organization, reasons, entityType) {
 
   if (typeof error.tooltip !== 'string') {
     error.tooltip = error.message;
+  }
+
+  if (typeof error.link === 'function') {
+    error.link = error.link(entityType);
   }
 
   forEach(error, (value, key) => {

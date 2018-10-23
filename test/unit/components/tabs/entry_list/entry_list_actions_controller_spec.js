@@ -292,7 +292,7 @@ describe('Entry List Actions Controller', () => {
   });
 
   it('cannot show duplicate action', () => {
-    accessChecker.shouldHide.withArgs('createEntry').returns(true);
+    accessChecker.shouldHide.withArgs('create', 'entry').returns(true);
     expect(scope.showDuplicate()).toBeFalsy();
   });
 
@@ -313,7 +313,7 @@ describe('Entry List Actions Controller', () => {
     });
 
     it('cannot show delete ' + action + ' because no general permission', () => {
-      accessChecker.shouldHide.withArgs(action + 'Entry').returns(true);
+      accessChecker.shouldHide.withArgs(action, 'entry').returns(true);
       stubs.action1.returns(true);
       stubs.action2.returns(true);
       accessChecker.canPerformActionOnEntity.returns(false);

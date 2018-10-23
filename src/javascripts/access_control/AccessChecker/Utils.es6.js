@@ -35,7 +35,9 @@ export function broadcastEnforcement(enforcement) {
     $rootScope.$broadcast('persistentNotification', {
       message: enforcement.message,
       actionMessage: enforcement.actionMessage,
-      action: enforcement.action
+      action: enforcement.action,
+      icon: enforcement.icon,
+      link: enforcement.link
     });
   }
 }
