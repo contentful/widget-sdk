@@ -12,7 +12,25 @@ export default function template() {
       ])
     ]),
     h('.home__container .home__container-read-only', { ngIf: 'readOnlySpace' }, [
-      h('.home__content', [h('div', ['Your space is read only!'])])
+      h('.home__content', [
+        h('.home__content-title', ['You’re viewing a read-only space 🛋']),
+        h('.home__content-body', [
+          h('p', [
+            'All of your existing content is saved, but you canʼt add or edit anything. ',
+            h('span', { ngIf: 'orgOwner' }, ['Get in touch with us to continue work.']),
+            h('span', { ngIf: '!orgOwner' }, ['Weʼve informed your Contentful admin about it.'])
+          ]),
+          h(
+            'a.btn-action',
+            {
+              ngIf: 'orgOwner',
+              target: '_blank',
+              href: '{{supportUrl}}'
+            },
+            ['Talk to support']
+          )
+        ])
+      ])
     ])
   ]);
 }

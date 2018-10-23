@@ -13,6 +13,8 @@ angular
       var accessChecker = require('access_control/AccessChecker');
       var template = require('app/home/HomeTemplate.es6').default;
       var spaceResolver = require('states/Resolvers.es6').spaceResolver;
+      var OrganizationRoles = require('services/OrganizationRoles.es6');
+      var Config = require('Config.es6');
 
       return base({
         name: 'home',
@@ -30,6 +32,14 @@ angular
             $scope.context.ready = true;
             $scope.context.forbidden = !accessChecker.getSectionVisibility().spaceHome;
             $scope.readOnlySpace = Boolean(space.readOnlyAt);
+
+            const spaceId = space.sys.id;
+            const spaceName = space.name;
+            $scope.supportUrl = `${
+              Config.supportUrl
+            }?read-only-space=true&space-id=${spaceId}&space-name=${spaceName}`;
+
+            $scope.orgOwner = OrganizationRoles.isOwner(space.organization);
           }
         ]
       });
