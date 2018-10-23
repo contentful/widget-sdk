@@ -2,7 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { without, findIndex, map } from 'lodash';
 
-import { SpaceMembership as SpaceMembershipPropType, User as UserPropType } from '../PropTypes.es6';
+import {
+  SpaceMembership as SpaceMembershipPropType,
+  User as UserPropType
+} from '../../PropTypes.es6';
 
 import { joinWithAnd } from 'utils/StringUtils.es6';
 
@@ -17,7 +20,7 @@ import {
   TextLink
 } from '@contentful/ui-component-library';
 
-const ServicesConsumer = require('../../../../reactServiceContext').default;
+const ServicesConsumer = require('../../../../../reactServiceContext').default;
 
 class UserSpaceMemberships extends React.Component {
   static propTypes = {
@@ -205,7 +208,7 @@ class UserSpaceMemberships extends React.Component {
     return (
       <section>
         {(!!memberships.length || showingForm) && (
-          <Table style={{ marginBottom: 20 }}>
+          <Table style={{ marginBottom: 20, tableLayout: 'fixed' }}>
             <TableHead>
               <TableRow>
                 <TableCell width="30%">Space</TableCell>

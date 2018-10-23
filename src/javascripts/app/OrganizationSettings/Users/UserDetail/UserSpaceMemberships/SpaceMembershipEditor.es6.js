@@ -1,12 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { User as UserPropType, SpaceMembership as SpaceMembershipPropType } from '../PropTypes.es6';
-import ResolveLinks from '../../LinkResolver.es6';
+import {
+  User as UserPropType,
+  SpaceMembership as SpaceMembershipPropType
+} from '../../PropTypes.es6';
+import ResolveLinks from '../../../LinkResolver.es6';
 
 import { TableRow, TableCell, Select, Option, Button } from '@contentful/ui-component-library';
+import SpaceRoleEditor from './SpaceRoleEditor.es6';
 
-const ServicesConsumer = require('../../../../reactServiceContext').default;
+const ServicesConsumer = require('../../../../../reactServiceContext').default;
 
 class SpaceMembershipEditor extends React.Component {
   static propTypes = {
@@ -34,12 +38,7 @@ class SpaceMembershipEditor extends React.Component {
     busy: false,
     selectedSpace: null,
     // TODO: consider spliting edit and creation in two different components
-    // TODO: support multiple roles
-    selectedRole: this.props.initialMembership
-      ? this.props.$services.SpaceMembershipRepository.getMembershipRoles(
-          this.props.initialMembership
-        )[0].sys.id
-      : this.props.$services.SpaceMembershipRepository.ADMIN_ROLE_ID
+    selectedRoles: this.getInitialRoleIds()
   };
 
   orgEndpoint = this.props.$services.EndpointFactory.createOrganizationEndpoint(this.props.orgId);
@@ -52,6 +51,20 @@ class SpaceMembershipEditor extends React.Component {
     }
   }
 
+  /**
+   * If editing a membership, return a list of the role ids.
+   * Otherwise, return an array containing a fake admin role id
+   */
+  getInitialRoleIds() {
+    const { initialMembership, $services } = this.props;
+    if (this.isEditing) {
+      return $services.SpaceMembershipRepository.getMembershipRoles(initialMembership).map(
+        role => role.sys.id
+      );
+    }
+    return [$services.SpaceMembershipRepository.ADMIN_ROLE_ID];
+  }
+
   setSpace(spaceId) {
     this.props.onSpaceSelected(spaceId);
     this.setState({
@@ -59,9 +72,9 @@ class SpaceMembershipEditor extends React.Component {
     });
   }
 
-  setRole(roleId) {
-    this.setState({ selectedRole: roleId });
-  }
+  setRoles = selectedRoles => {
+    this.setState({ selectedRoles });
+  };
 
   async submit() {
     const {
@@ -73,7 +86,7 @@ class SpaceMembershipEditor extends React.Component {
       initialMembership,
       roles
     } = this.props;
-    const { selectedRole, selectedSpace } = this.state;
+    const { selectedRoles, selectedSpace } = this.state;
     const spaceEndpoint = $services.EndpointFactory.createSpaceEndpoint(selectedSpace);
     const repo = $services.SpaceMembershipRepository.create(spaceEndpoint);
     const isEditing = Boolean(initialMembership);
@@ -84,7 +97,7 @@ class SpaceMembershipEditor extends React.Component {
     // updating
     if (isEditing) {
       try {
-        membership = await repo.changeRoleTo(initialMembership, [selectedRole]);
+        membership = await repo.changeRoleTo(initialMembership, selectedRoles);
       } catch (e) {
         $services.notification.error(e.data.message);
         this.setState({ busy: false });
@@ -93,7 +106,7 @@ class SpaceMembershipEditor extends React.Component {
     } else {
       // creating
       try {
-        membership = await repo.invite(user.email, [selectedRole]);
+        membership = await repo.invite(user.email, selectedRoles);
       } catch (e) {
         $services.notification.error(e.data.message);
         this.setState({ busy: false });
@@ -104,7 +117,7 @@ class SpaceMembershipEditor extends React.Component {
     const space = isEditing
       ? initialMembership.sys.space
       : spaces.find(space => space.sys.id === selectedSpace);
-    const role = roles.find(role => role.sys.id === selectedRole);
+    const membershipRoles = roles.filter(role => selectedRoles.includes(role.sys.id));
 
     // In the list of memberships we show the space and the role names
     // This is only possible because we include the space and role information
@@ -114,7 +127,7 @@ class SpaceMembershipEditor extends React.Component {
       paths: ['sys.space', 'roles'],
       includes: {
         Space: [space],
-        Role: [role]
+        Role: membershipRoles
       },
       items: [membership]
     });
@@ -129,9 +142,8 @@ class SpaceMembershipEditor extends React.Component {
   }
 
   render() {
-    const { selectedSpace, selectedRole, busy } = this.state;
-    const { roles, spaces, initialMembership, onCancel, $services } = this.props;
-    const { ADMIN_ROLE_ID } = $services.SpaceMembershipRepository;
+    const { selectedSpace, selectedRoles, busy } = this.state;
+    const { roles, spaces, initialMembership, onCancel } = this.props;
 
     return (
       <TableRow>
@@ -144,7 +156,7 @@ class SpaceMembershipEditor extends React.Component {
               onChange={evt => this.setSpace(evt.target.value)}
               id="new-membership-space"
               isDisabled={busy}>
-              <Option>Select a space</Option>
+              <Option value={''}>Select a space</Option>
               {spaces &&
                 spaces.map(space => (
                   <Option key={space.sys.id} value={space.sys.id}>
@@ -155,26 +167,18 @@ class SpaceMembershipEditor extends React.Component {
           )}
         </TableCell>
         <TableCell>
-          <Select
-            name="roleId"
-            isDisabled={!this.state.selectedSpace || busy}
-            onChange={evt => this.setRole(evt.target.value)}
-            id="new-membership-role"
-            value={selectedRole}>
-            <Option value={ADMIN_ROLE_ID}>Admin</Option>
-            {roles &&
-              roles.map(role => (
-                <Option key={role.sys.id} value={role.sys.id}>
-                  {role.name}
-                </Option>
-              ))}
-          </Select>
+          <SpaceRoleEditor
+            isDisabled={!selectedSpace}
+            options={roles}
+            value={selectedRoles}
+            onChange={this.setRoles}
+          />
         </TableCell>
-        <TableCell colSpan="2">
+        <TableCell align="right">
           <Button
             style={{ marginRight: '10px' }}
             buttonType="positive"
-            disabled={!selectedRole || !selectedSpace}
+            disabled={!selectedSpace || !selectedRoles.length}
             onClick={() => this.submit()}
             loading={busy}>
             {this.submitButtonLabel}

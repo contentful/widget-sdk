@@ -7,7 +7,7 @@ import {
   DropdownList,
   DropdownListItem
 } from '@contentful/ui-component-library';
-import { SpaceMembership } from '../PropTypes.es6';
+import { SpaceMembership } from '../../PropTypes.es6';
 
 export default class UserDropdown extends React.Component {
   static propTypes = {

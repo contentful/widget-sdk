@@ -4,6 +4,7 @@ import { assign } from 'utils/Collections.es6';
 import { match, isTag } from 'utils/TaggedValues.es6';
 import SuccessIcon from 'svg/checkmark-alt.es6';
 import ErrorIcon from 'svg/error.es6';
+import pluralize from 'pluralize';
 
 const orgRoles = [
   {
@@ -46,7 +47,7 @@ export function sidebar(
   const { membershipUsage, membershipLimit } = organization;
   const usersCountMsg = membershipLimit
     ? `Your organization is using ${membershipUsage} out of ${membershipLimit} users.`
-    : `Your organization is using ${membershipUsage} users.`;
+    : `Your organization is using ${membershipUsage} ${pluralize('users', membershipUsage)}.`;
 
   return h('.workbench-main__entity-sidebar', [
     h('.entity-sidebar', [
@@ -131,9 +132,16 @@ function emailInputErrors({
 
     if (emails.length > remainingInvitations) {
       errors.push(`
-        You are trying to add ${emails.length} users but you only have ${remainingInvitations}
-        more available under your plan. Please remove ${emails.length -
-          remainingInvitations} users to proceed.
+        You are trying to add ${pluralize(
+          'users',
+          emails.length,
+          true
+        )} but you only have ${remainingInvitations}
+        more available under your plan. Please remove ${pluralize(
+          'users',
+          emails.length - remainingInvitations,
+          true
+        )} to proceed.
         You can upgrade your plan if you need to add more users.
       `);
     }
