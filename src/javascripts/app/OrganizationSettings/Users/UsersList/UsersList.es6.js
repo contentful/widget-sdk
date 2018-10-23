@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Space as SpacePropType } from '../PropTypes.es6';
-import { startCase, without } from 'lodash';
+import { startCase, without, debounce } from 'lodash';
 import pluralize from 'pluralize';
 import {
   Table,
@@ -10,7 +10,8 @@ import {
   TableBody,
   TableCell,
   Pill,
-  Button
+  Button,
+  TextInput
 } from '@contentful/ui-component-library';
 import { formatQuery } from './QueryBuilder.es6';
 import ResolveLinks from '../../LinkResolver.es6';
@@ -46,7 +47,8 @@ class UsersList extends React.Component {
   state = {
     queryTotal: 0,
     usersList: [],
-    filters: getFilterDefinitions(this.props.spaces, this.props.spaceRoles)
+    filters: getFilterDefinitions(this.props.spaces, this.props.spaceRoles),
+    searchTerm: ''
   };
 
   endpoint = createOrganizationEndpoint(this.props.orgId);
@@ -56,11 +58,12 @@ class UsersList extends React.Component {
   }
 
   async fetch() {
-    const { filters } = this.state;
+    const { filters, searchTerm } = this.state;
     const filterQuery = formatQuery(filters.map(item => item.filter));
     const includePaths = ['sys.user'];
     const query = {
       ...filterQuery,
+      query: searchTerm,
       include: includePaths
     };
     const { total, items, includes } = await getMemberships(this.endpoint, query);
@@ -116,6 +119,14 @@ class UsersList extends React.Component {
     this.updateFilters(filters);
   };
 
+  updateSearch = e => {
+    this.debouncedUpdatedSearch(e.target.value);
+  };
+
+  debouncedUpdatedSearch = debounce(searchTerm => {
+    this.setState({ searchTerm }, this.fetch);
+  }, 500);
+
   render() {
     const { queryTotal, usersList, filters } = this.state;
     const { resource } = this.props;
@@ -123,13 +134,23 @@ class UsersList extends React.Component {
     return (
       <Workbench testId="organization-users-page">
         <Workbench.Header>
-          <Workbench.Title>Organization users</Workbench.Title>
-          <div className="workbench-header__actions">
+          <Workbench.Header.Left>
+            <Workbench.Title>Organization users</Workbench.Title>
+          </Workbench.Header.Left>
+          <Workbench.Header.Search>
+            <TextInput
+              autoFocus
+              type="search"
+              placeholder="Search by first name, last name, email or user ID"
+              onChange={this.updateSearch}
+            />
+          </Workbench.Header.Search>
+          <Workbench.Header.Actions>
             {`${pluralize('users', resource.usage, true)} in your organization`}
             <Button icon="PlusCircle" href={this.getLinkToInvitation()}>
               Invite users
             </Button>
-          </div>
+          </Workbench.Header.Actions>
         </Workbench.Header>
         <Workbench.Content>
           <section style={{ padding: '1em 2em 2em' }}>
