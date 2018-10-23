@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 
-const arrayPropType = itemType =>
+const arrayPropType = itemPropType =>
   PropTypes.shape({
     total: PropTypes.number.isRequired,
     sys: PropTypes.shape({
       type: PropTypes.oneOf(['Array']).isRequired
     }).isRequired,
-    items: PropTypes.arrayOf(itemType).isRequired
+    items: PropTypes.arrayOf(itemPropType).isRequired
   });
 
 const periodPropType = PropTypes.shape({

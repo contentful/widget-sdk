@@ -181,7 +181,8 @@ export class OrganizationUsage extends React.Component {
       $services: {
         OrganizationMembershipRepository: { getAllSpaces },
         PricingDataProvider: { isEnterprisePlan, getBasePlan, getPlansWithSpaces },
-        ResourceService
+        ResourceService,
+        ReloadNotification
       }
     } = this.props;
     const { flagActive } = this.state;
@@ -246,7 +247,7 @@ export class OrganizationUsage extends React.Component {
         throw e;
       }
 
-      this.props.$services.ReloadNotification.trigger();
+      ReloadNotification.trigger();
     }
   }
 
@@ -254,7 +255,8 @@ export class OrganizationUsage extends React.Component {
     const { periods } = this.state;
     const {
       $services: {
-        Analytics: { track }
+        Analytics: { track },
+        ReloadNotification
       }
     } = this.props;
     const newPeriod = periods[newIndex];
@@ -276,7 +278,7 @@ export class OrganizationUsage extends React.Component {
         selectedPeriodIndex: newIndex
       });
     } catch (e) {
-      this.props.$services.ReloadNotification.trigger();
+      ReloadNotification.trigger();
     }
   }
 

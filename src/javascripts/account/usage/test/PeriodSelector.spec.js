@@ -39,7 +39,7 @@ describe('PeriodSelector', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('should call onChange when select was used', () => {
+  it('should call onChange when option is selected', () => {
     expect(props.onChange.called).toBe(false);
     wrapper.find(Select).simulate('change', { target: { value: 1 } });
     expect(props.onChange.calledWith({ target: { value: 1 } })).toBe(true);

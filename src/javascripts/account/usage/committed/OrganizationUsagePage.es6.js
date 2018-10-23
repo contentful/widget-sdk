@@ -95,44 +95,48 @@ export default ServicesConsumer(
         isPoC
       } = this.props;
 
-    const totalUsage = sum(orgUsage);
+      const totalUsage = sum(orgUsage);
 
-    return (
-      <div className="usage-page">
-        <div className="usage-page__section">
-          <OrganizationUsageInfo totalUsage={totalUsage} includedLimit={apiRequestIncludedLimit} />
-          <OrganisationUsageChart
-            usage={orgUsage}
-            includedLimit={apiRequestIncludedLimit}
-            period={period}
-            isLoading={isLoading}
-          />
-        </div>
-        {map(apis, (usage, api) => (
-          <div key={api} className="usage-page__section">
-            <ApiUsageInfo
+      return (
+        <div className="usage-page">
+          <div className="usage-page__section">
+            <OrganizationUsageInfo
               totalUsage={totalUsage}
-              api={api}
-              spaceNames={spaceNames}
-              isPoC={isPoC}
-              usage={usage.items}
-              colors={apiSeriesColors}
+              includedLimit={apiRequestIncludedLimit}
             />
-            <ApiUsageChart
-              usage={usage.items}
+            <OrganisationUsageChart
+              usage={orgUsage}
+              includedLimit={apiRequestIncludedLimit}
               period={period}
-              colors={apiSeriesColors}
-              spaceNames={spaceNames}
               isLoading={isLoading}
             />
           </div>
-        ))}
-        <AssetBandwidthSection
-          assetBandwidthIncludedLimit={assetBandwidthIncludedLimit}
-          assetBandwidthUsage={assetBandwidthUsage}
-          assetBandwidthUOM={assetBandwidthUOM}
-        />
-      </div>
-    );
+          {map(apis, (usage, api) => (
+            <div key={api} className="usage-page__section">
+              <ApiUsageInfo
+                totalUsage={totalUsage}
+                api={api}
+                spaceNames={spaceNames}
+                isPoC={isPoC}
+                usage={usage.items}
+                colors={apiSeriesColors}
+              />
+              <ApiUsageChart
+                usage={usage.items}
+                period={period}
+                colors={apiSeriesColors}
+                spaceNames={spaceNames}
+                isLoading={isLoading}
+              />
+            </div>
+          ))}
+          <AssetBandwidthSection
+            assetBandwidthIncludedLimit={assetBandwidthIncludedLimit}
+            assetBandwidthUsage={assetBandwidthUsage}
+            assetBandwidthUOM={assetBandwidthUOM}
+          />
+        </div>
+      );
+    }
   }
-}
+);
