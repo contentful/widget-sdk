@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import { isEqual } from 'lodash';
 import moment from 'moment';
+import sinon from 'sinon';
 
 import { Spinner } from '@contentful/ui-component-library';
 
@@ -28,71 +28,84 @@ const shallowRenderComponent = async props => {
 describe('OrganizationUsage', () => {
   beforeEach(() => {
     testOrg = {};
-    endpoint = jest.fn(({ method, path }) => {
-      if (method === 'GET' && isEqual(path, ['usage_periods'])) {
-        const startDate = moment().subtract(12, 'days');
-        return {
-          items: [
-            {
-              startDate: startDate.toISOString(),
-              endDate: null,
-              sys: { type: 'UsagePeriod', id: '0' }
-            },
-            {
-              startDate: moment(startDate)
-                .subtract(1, 'day')
-                .subtract(1, 'month')
-                .toISOString(),
-              endDate: moment(startDate)
-                .subtract(1, 'day')
-                .toISOString(),
-              sys: { type: 'UsagePeriod', id: '1' }
-            }
-          ]
-        };
-      }
+    endpoint = sinon.stub();
+    const startDate = moment('2018-12-01').subtract(12, 'days');
+
+    endpoint.withArgs({ method: 'GET', path: ['usage_periods'] }).returns({
+      items: [
+        {
+          startDate: startDate.toISOString(),
+          endDate: null,
+          sys: { type: 'UsagePeriod', id: '0' }
+        },
+        {
+          startDate: moment(startDate)
+            .subtract(1, 'day')
+            .subtract(1, 'month')
+            .toISOString(),
+          endDate: moment(startDate)
+            .subtract(1, 'day')
+            .toISOString(),
+          sys: { type: 'UsagePeriod', id: '1' }
+        }
+      ]
     });
+
+    const isEnterprisePlan = sinon.stub();
+    isEnterprisePlan.returns(true);
+    const isOwnerOrAdmin = sinon.stub();
+    isOwnerOrAdmin.returns(true);
+    const getPlansWithSpaces = sinon.stub();
+    getPlansWithSpaces.returns({
+      items: [
+        { name: 'Test plan', space: { sys: { id: 'space1' } } },
+        { name: 'Proof of concept', space: { sys: { id: 'space2' } } }
+      ]
+    });
+
     resourceService = {
-      get: jest
-        .fn()
-        .mockReturnValueOnce({ limits: { included: 1000000 } })
-        .mockReturnValueOnce({
-          usage: 200,
-          unitOfMeasure: 'MB',
-          limits: { included: 2000 }
-        }),
-      getAll: jest.fn()
+      get: sinon.stub(),
+      getAll: sinon.stub()
     };
+    resourceService.get.withArgs('api_request').returns({ limits: { included: 1000000 } });
+    resourceService.get.withArgs('asset_bandwidth').returns({
+      usage: 200,
+      unitOfMeasure: 'MB',
+      limits: { included: 2000 }
+    });
+    const ResourceService = { default: () => resourceService };
+
+    const getAllSpaces = sinon.stub();
+    getAllSpaces.returns([
+      { name: 'Test1', sys: { id: 'test1' } },
+      { name: 'Test2', sys: { id: 'test2' } }
+    ]);
+
+    const getCurrentVariation = sinon.stub();
+    getCurrentVariation.withArgs('feature-bizvel-09-2018-usage').returns(true);
+    getCurrentVariation.returns(false);
+
+    const getOrganization = sinon.stub();
+    getOrganization.returns(testOrg);
+
     defaultProps = {
       orgId: '23423',
-      onReady: jest.fn(),
-      onForbidden: jest.fn(),
+      onReady: sinon.stub(),
+      onForbidden: sinon.stub(),
       $services: {
-        OrganizationRoles: { isOwnerOrAdmin: jest.fn(() => true) },
+        OrganizationRoles: { isOwnerOrAdmin },
         PricingDataProvider: {
-          isEnterprisePlan: jest.fn(() => true),
-          getBasePlan: jest.fn(),
-          getPlansWithSpaces: jest.fn(() => ({
-            items: [
-              { name: 'Test plan', space: { sys: { id: 'space1' } } },
-              { name: 'Proof of concept', space: { sys: { id: 'space2' } } }
-            ]
-          }))
+          isEnterprisePlan,
+          getBasePlan: sinon.stub(),
+          getPlansWithSpaces
         },
-        ResourceService: {
-          default: jest.fn(() => resourceService)
-        },
-        ReloadNotification: { trigger: jest.fn() },
-        OrganizationMembershipRepository: {
-          getAllSpaces: jest.fn(() => [
-            { name: 'Test1', sys: { id: 'test1' } },
-            { name: 'Test2', sys: { id: 'test2' } }
-          ])
-        },
-        EndpointFactory: { createOrganizationEndpoint: jest.fn(() => endpoint) },
-        Analytics: { track: jest.fn() },
-        LaunchDarkly: { getCurrentVariation: jest.fn(() => true) },
-        TokenStore: { getOrganization: jest.fn(() => testOrg) }
+        ResourceService,
+        ReloadNotification: { trigger: sinon.stub() },
+        OrganizationMembershipRepository: { getAllSpaces },
+        EndpointFactory: { createOrganizationEndpoint: () => endpoint },
+        Analytics: { track: sinon.stub() },
+        LaunchDarkly: { getCurrentVariation },
+        TokenStore: { getOrganization }
       }
     };
   });
@@ -105,85 +118,98 @@ describe('OrganizationUsage', () => {
 
   it('should call `onReady`', async () => {
     await shallowRenderComponent(defaultProps);
-
-    expect(defaultProps.onReady).toHaveBeenCalled();
+    expect(defaultProps.onReady.called).toBe(true);
   });
 
   it('should request data', async () => {
     await shallowRenderComponent(defaultProps);
 
-    expect(endpoint).toHaveBeenCalledWith(
-      {
-        method: 'GET',
-        path: ['usage_periods']
-      },
-      { 'x-contentful-enable-alpha-feature': 'usage-insights' }
-    );
-    expect(endpoint).toHaveBeenCalledWith(
-      {
-        method: 'GET',
-        path: ['usages', 'organization'],
-        query: {
-          'filters[metric]': 'allApis',
-          'filters[usagePeriod]': '0'
-        }
-      },
-      { 'x-contentful-enable-alpha-feature': 'usage-insights' }
-    );
-    expect(endpoint).toHaveBeenCalledWith(
-      {
-        method: 'GET',
-        path: ['usages', 'space'],
-        query: {
-          'filters[metric]': 'cpa',
-          'filters[usagePeriod]': '0',
-          'orderBy[metricUsage]': 'desc',
-          limit: 3
-        }
-      },
-      { 'x-contentful-enable-alpha-feature': 'usage-insights' }
-    );
-    expect(endpoint).toHaveBeenCalledWith(
-      {
-        method: 'GET',
-        path: ['usages', 'space'],
-        query: {
-          'filters[metric]': 'cda',
-          'filters[usagePeriod]': '0',
-          'orderBy[metricUsage]': 'desc',
-          limit: 3
-        }
-      },
-      { 'x-contentful-enable-alpha-feature': 'usage-insights' }
-    );
-    expect(endpoint).toHaveBeenCalledWith(
-      {
-        method: 'GET',
-        path: ['usages', 'space'],
-        query: {
-          'filters[metric]': 'cma',
-          'filters[usagePeriod]': '0',
-          'orderBy[metricUsage]': 'desc',
-          limit: 3
-        }
-      },
-      { 'x-contentful-enable-alpha-feature': 'usage-insights' }
-    );
+    expect(
+      endpoint.calledWith(
+        {
+          method: 'GET',
+          path: ['usage_periods']
+        },
+        { 'x-contentful-enable-alpha-feature': 'usage-insights' }
+      )
+    ).toBe(true);
+    expect(
+      endpoint.calledWith(
+        {
+          method: 'GET',
+          path: ['usages', 'organization'],
+          query: {
+            'filters[metric]': 'allApis',
+            'filters[usagePeriod]': '0'
+          }
+        },
+        { 'x-contentful-enable-alpha-feature': 'usage-insights' }
+      )
+    ).toBe(true);
+    expect(
+      endpoint.calledWith(
+        {
+          method: 'GET',
+          path: ['usages', 'space'],
+          query: {
+            'filters[metric]': 'cpa',
+            'filters[usagePeriod]': '0',
+            'orderBy[metricUsage]': 'desc',
+            limit: 3
+          }
+        },
+        { 'x-contentful-enable-alpha-feature': 'usage-insights' }
+      )
+    ).toBe(true);
+    expect(
+      endpoint.calledWith(
+        {
+          method: 'GET',
+          path: ['usages', 'space'],
+          query: {
+            'filters[metric]': 'cda',
+            'filters[usagePeriod]': '0',
+            'orderBy[metricUsage]': 'desc',
+            limit: 3
+          }
+        },
+        { 'x-contentful-enable-alpha-feature': 'usage-insights' }
+      )
+    ).toBe(true);
+    expect(
+      endpoint.calledWith(
+        {
+          method: 'GET',
+          path: ['usages', 'space'],
+          query: {
+            'filters[metric]': 'cma',
+            'filters[usagePeriod]': '0',
+            'orderBy[metricUsage]': 'desc',
+            limit: 3
+          }
+        },
+        { 'x-contentful-enable-alpha-feature': 'usage-insights' }
+      )
+    ).toBe(true);
   });
 
   describe('user is not owner or admin', () => {
     beforeEach(() => {
-      defaultProps.$services.OrganizationRoles.isOwnerOrAdmin.mockReturnValue(false);
+      defaultProps.$services.OrganizationRoles.isOwnerOrAdmin.returns(false);
     });
 
     it('should call `onForbidden`', async () => {
       await shallowRenderComponent(defaultProps);
 
-      expect(defaultProps.$services.TokenStore.getOrganization).toHaveBeenCalledWith(
-        defaultProps.orgId
+      expect(defaultProps.$services.TokenStore.getOrganization.calledWith(defaultProps.orgId)).toBe(
+        true
       );
-      expect(defaultProps.$services.OrganizationRoles.isOwnerOrAdmin).toHaveBeenCalledWith(testOrg);
-      expect(defaultProps.onForbidden).toHaveBeenCalledWith(new Error('No permission'));
+      expect(defaultProps.$services.OrganizationRoles.isOwnerOrAdmin.calledWith(testOrg)).toBe(
+        true
+      );
+      const errArg = defaultProps.onForbidden.firstCall.args[0];
+      expect(errArg).toBeInstanceOf(Error);
+      expect(errArg.message).toBe('No permission');
     });
   });
 
@@ -192,7 +218,7 @@ describe('OrganizationUsage', () => {
     error404.status = 404;
 
     beforeEach(() => {
-      defaultProps.$services.OrganizationMembershipRepository.getAllSpaces.mockReturnValue(
+      defaultProps.$services.OrganizationMembershipRepository.getAllSpaces.returns(
         Promise.reject(error404)
       );
     });
@@ -200,7 +226,7 @@ describe('OrganizationUsage', () => {
     it('should call `onForbidden`', async () => {
       await shallowRenderComponent(defaultProps);
 
-      expect(defaultProps.onForbidden).toHaveBeenCalledWith(error404);
+      expect(defaultProps.onForbidden.calledWith(error404)).toBe(true);
     });
   });
 
@@ -209,7 +235,7 @@ describe('OrganizationUsage', () => {
     error403.status = 403;
 
     beforeEach(() => {
-      defaultProps.$services.OrganizationMembershipRepository.getAllSpaces.mockReturnValue(
+      defaultProps.$services.OrganizationMembershipRepository.getAllSpaces.returns(
         Promise.reject(error403)
       );
     });
@@ -217,7 +243,7 @@ describe('OrganizationUsage', () => {
     it('should call `onForbidden`', async () => {
       await shallowRenderComponent(defaultProps);
 
-      expect(defaultProps.onForbidden).toHaveBeenCalledWith(error403);
+      expect(defaultProps.onForbidden.calledWith(error403)).toBe(true);
     });
   });
 
@@ -226,7 +252,7 @@ describe('OrganizationUsage', () => {
     error400.status = 400;
 
     beforeEach(() => {
-      defaultProps.$services.OrganizationMembershipRepository.getAllSpaces.mockReturnValue(
+      defaultProps.$services.OrganizationMembershipRepository.getAllSpaces.returns(
         Promise.reject(error400)
       );
     });
@@ -234,8 +260,8 @@ describe('OrganizationUsage', () => {
     it('should trigger reload notification', async () => {
       await shallowRenderComponent(defaultProps);
 
-      expect(defaultProps.onForbidden).not.toHaveBeenCalled();
-      expect(defaultProps.$services.ReloadNotification.trigger).toHaveBeenCalled();
+      expect(defaultProps.onForbidden.called).toBe(false);
+      expect(defaultProps.$services.ReloadNotification.trigger.called).toBe(true);
     });
   });
 });

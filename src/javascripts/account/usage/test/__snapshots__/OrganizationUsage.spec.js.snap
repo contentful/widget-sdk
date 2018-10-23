@@ -12,15 +12,15 @@ exports[`OrganizationUsage should render page without errors 1`] = `
         Array [
           Object {
             "endDate": null,
-            "startDate": "2018-10-10T14:38:09.278Z",
+            "startDate": "2018-11-18T23:00:00.000Z",
             "sys": Object {
               "id": "0",
               "type": "UsagePeriod",
             },
           },
           Object {
-            "endDate": "2018-10-09T14:38:09.278Z",
-            "startDate": "2018-09-09T14:38:09.278Z",
+            "endDate": "2018-11-17T23:00:00.000Z",
+            "startDate": "2018-10-17T22:00:00.000Z",
             "sys": Object {
               "id": "1",
               "type": "UsagePeriod",
@@ -62,15 +62,15 @@ exports[`OrganizationUsage should render page without errors 1`] = `
         Array [
           Object {
             "endDate": null,
-            "startDate": "2018-10-10T14:38:09.278Z",
+            "startDate": "2018-11-18T23:00:00.000Z",
             "sys": Object {
               "id": "0",
               "type": "UsagePeriod",
             },
           },
           Object {
-            "endDate": "2018-10-09T14:38:09.278Z",
-            "startDate": "2018-09-09T14:38:09.278Z",
+            "endDate": "2018-11-17T23:00:00.000Z",
+            "startDate": "2018-10-17T22:00:00.000Z",
             "sys": Object {
               "id": "1",
               "type": "UsagePeriod",

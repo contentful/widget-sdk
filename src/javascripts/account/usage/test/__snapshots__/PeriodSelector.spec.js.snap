@@ -14,7 +14,7 @@ exports[`PeriodSelector should render 1`] = `
     isDisabled={false}
     name="period-selector"
     onBlur={[Function]}
-    onChange={[MockFunction]}
+    onChange={[Function]}
     onFocus={[Function]}
     required={false}
     testId="cf-ui-select"
@@ -24,13 +24,13 @@ exports[`PeriodSelector should render 1`] = `
       key="0"
       value="0"
     >
-      10 Oct – 09 Nov (current)
+      19 Nov – 18 Dec (current)
     </Option>
     <Option
       key="1"
       value="1"
     >
-      09 Sep – 09 Oct (a month ago)
+      18 Oct – 18 Nov (6 days ago)
     </Option>
   </Select>
 </span>
