@@ -171,6 +171,11 @@ angular.module('contentful').directive('cfMarkdownEditor', [
         }
 
         function handleStateChange(isDisabled) {
+          // to avoid unwanted flips to the editor mode
+          // we ignore if the value has not changed
+          if (scope.isDisabled === isDisabled) {
+            return;
+          }
           scope.isDisabled = isDisabled;
           if (isDisabled) {
             setMode('preview');
