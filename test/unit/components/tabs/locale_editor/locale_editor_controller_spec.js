@@ -189,9 +189,6 @@ describe('Locale editor controller', () => {
       this.$apply();
 
       sinon.assert.calledOnce(this.modalDialog.open);
-      const data = this.modalDialog.open.firstCall.args[0].scopeData;
-      const codes = data.availableLocales.map(l => l.code);
-      expect(codes).toEqual(['en-US']);
 
       const updated = _.extend(this.scope.spaceLocales[2], { fallbackCode: 'en-US' });
       sinon.assert.calledOnce(this.spaceContext.localeRepo.save.withArgs(updated));

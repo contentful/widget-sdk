@@ -1,0 +1,89 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`locales/components/LocaleRemovalConfirmDialog should match snapshot 1`] = `
+<div
+  className="modal-dialog"
+>
+  <header
+    className="modal-dialog__header"
+  >
+    <h1>
+      You’re about to delete the
+       
+      <em>
+        English
+         (
+        uk
+        )
+      </em>
+       
+      locale.
+    </h1>
+    <button
+      className="modal-dialog__close"
+      data-test-id="modal-dialog-close"
+      onClick={[Function]}
+    />
+  </header>
+  <div
+    className="modal-dialog__content"
+  >
+    <div
+      className="modal-dialog__richtext"
+    >
+      <p>
+        This will break any API clients that rely on 
+        <code>
+          uk
+        </code>
+         existing.
+      </p>
+      <p>
+        <strong>
+          Please note that this action is permanent and you cannot undo it.
+        </strong>
+      </p>
+      <p>
+        Please type the locale code below to confirm this change:
+      </p>
+      <TextInput
+        disabled={false}
+        id="localeInput"
+        name="localeInput"
+        onChange={[Function]}
+        required={false}
+        testId="repeat-locale-input"
+        value=""
+        width="medium"
+        withCopyButton={false}
+      />
+    </div>
+  </div>
+  <div
+    className="modal-dialog__controls"
+  >
+    <Button
+      buttonType="negative"
+      disabled={true}
+      indicateDropdown={false}
+      isFullWidth={false}
+      loading={false}
+      onClick={[Function]}
+      testId="delete-locale-confirm"
+    >
+      Delete
+    </Button>
+    <Button
+      buttonType="muted"
+      disabled={false}
+      indicateDropdown={false}
+      isFullWidth={false}
+      loading={false}
+      onClick={[Function]}
+      testId="delete-locale-cancel"
+    >
+      Don’t delete
+    </Button>
+  </div>
+</div>
+`;

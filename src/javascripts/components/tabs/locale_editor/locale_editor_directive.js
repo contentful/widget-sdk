@@ -115,9 +115,18 @@ angular
       }
 
       function openConfirmationDialog() {
+        const locale = $scope.locale;
         return modalDialog.openConfirmDialog({
-          template: 'locale_removal_confirm_dialog',
-          scopeData: { locale: $scope.locale }
+          template:
+            '<react-component class="modal-background" name="app/settings/locales/dialogs/LocaleRemovalConfirmDialog.es6" props="props" />',
+          controller: modalScope => {
+            modalScope.props = {
+              locale,
+              onConfirm: value => modalScope.dialog.confirm(value),
+              onCancel: err =>
+                modalScope.dialog.cancel(err instanceof Error ? err : { cancelled: true })
+            };
+          }
         });
       }
 
@@ -130,17 +139,21 @@ angular
       }
 
       function openFallbackLocaleChangeDialog() {
-        const code = $scope.locale.code;
-        const dependantLocales = localeList.getDependantLocales(code);
-
+        const locale = $scope.locale;
+        const dependantLocales = localeList.getDependantLocales(locale.code);
         return modalDialog
           .open({
-            template: 'choose_new_fallback_dialog',
-            scopeData: {
-              locale: $scope.locale,
-              model: { newFallbackCode: null },
-              dependantLocaleNames: prepareDependantLocaleNames(dependantLocales),
-              availableLocales: localeList.getAvailableFallbackLocales(code)
+            template:
+              '<react-component class="modal-background" name="app/settings/locales/dialogs/ChooseNewFallbackLocaleDialog.es6" props="props" />',
+            controller: modalScope => {
+              modalScope.props = {
+                locale,
+                dependantLocaleNames: prepareDependantLocaleNames(dependantLocales),
+                availableLocales: localeList.getAvailableFallbackLocales(locale.code),
+                onConfirm: value => modalScope.dialog.confirm(value),
+                onCancel: err =>
+                  modalScope.dialog.cancel(err instanceof Error ? err : { cancelled: true })
+              };
             }
           })
           .promise.then(newFallbackCode => {
@@ -260,12 +273,22 @@ angular
 
       function confirmCodeChange() {
         if (wasLocaleCodeChanged()) {
+          const locale = $scope.locale;
+          const previousLocale = {
+            code: persistedLocaleCode,
+            name: findLocale(persistedLocaleCode).name
+          };
           return modalDialog.openConfirmDialog({
-            template: 'locale_code_change_confirm_dialog',
-            scopeData: {
-              locale: $scope.locale,
-              persistedLocaleName: findLocale(persistedLocaleCode).name,
-              persistedLocaleCode: persistedLocaleCode
+            template:
+              '<react-component class="modal-background" name="app/settings/locales/dialogs/LocaleCodeChangeConfirmDialog.es6" props="props" />',
+            controller: modalScope => {
+              modalScope.props = {
+                locale,
+                previousLocale,
+                onConfirm: value => modalScope.dialog.confirm(value),
+                onCancel: err =>
+                  modalScope.dialog.cancel(err instanceof Error ? err : { cancelled: true })
+              };
             }
           });
         } else {
