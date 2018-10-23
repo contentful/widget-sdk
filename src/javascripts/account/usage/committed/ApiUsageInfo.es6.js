@@ -9,16 +9,16 @@ import { organizationResourceUsagePropType } from './propTypes.es6';
 
 export default class ApiUsageInfo extends React.Component {
   static propTypes = {
-    includedLimit: PropTypes.number.isRequired,
     api: PropTypes.string.isRequired,
     spaceNames: PropTypes.objectOf(PropTypes.string).isRequired,
     isPoC: PropTypes.objectOf(PropTypes.bool).isRequired,
+    totalUsage: PropTypes.number.isRequired,
     usage: PropTypes.arrayOf(organizationResourceUsagePropType).isRequired,
     colors: PropTypes.arrayOf(PropTypes.string).isRequired
   };
 
   render() {
-    const { api, spaceNames, usage, includedLimit, isPoC, colors } = this.props;
+    const { api, spaceNames, usage, totalUsage, isPoC, colors } = this.props;
     return (
       <div className="usage-page__chart-info">
         <h2>{`${api.toUpperCase()} requests`}</h2>
@@ -44,7 +44,7 @@ export default class ApiUsageInfo extends React.Component {
                 <td className="usage-page__space-usage">{shorten(sum(spaceUsage))}</td>
                 <td className="usage-page__percentage-of-total-usage" style={{ color: colors[i] }}>
                   <Tooltip content="Percentage of total number of API requests">
-                    <span>{`${Math.round((sum(spaceUsage) / includedLimit) * 100)}%`}</span>
+                    <span>{`${Math.round((sum(spaceUsage) / totalUsage) * 100)}%`}</span>
                   </Tooltip>
                 </td>
               </tr>
