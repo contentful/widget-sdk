@@ -67,7 +67,9 @@ export function determineEnforcement(space, reasons, entityType) {
       },
       icon: 'info',
       link: () => {
-        const talkToUsHref = `${supportUrl}?read-only-poc=true`;
+        const spaceId = space.sys.id;
+        const spaceName = space.name;
+        const talkToUsHref = `${supportUrl}?read-only-space=true&space-id=${spaceId}&space-name=${spaceName}`;
 
         if (OrganizationRoles.isOwner(organization)) {
           return {

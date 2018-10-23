@@ -337,7 +337,7 @@ angular.module('contentful').controller('createSpaceController', [
 
     function handleUsageWarning(usage) {
       const enforcement = enforcements.determineEnforcement(
-        spaceContext,
+        spaceContext.space,
         ['usageExceeded'],
         'space'
       );
