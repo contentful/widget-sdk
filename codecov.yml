@@ -1,0 +1,10 @@
+codecov:
+  notify:
+    require_ci_to_pass: no
+comment:
+  require_changes: yes
+coverage:
+  status:
+    project: no
+    patch: no
+    changes: no
