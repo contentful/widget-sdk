@@ -4,7 +4,7 @@ import { mount } from 'enzyme';
 import FetchEntity from 'app/widgets/rich_text/plugins/shared/FetchEntity/FetchEntity.es6';
 import RequestStatus from 'app/widgets/rich_text/plugins/shared/RequestStatus.es6';
 import sinon from 'npm:sinon';
-import { flushPromises } from '../helpers';
+import flushPromises from '../../../helpers/flushPromises';
 
 const sandbox = sinon.sandbox.create();
 
@@ -52,6 +52,10 @@ describe('FetchEntity', () => {
       render: sandbox.spy(() => null),
       widgetAPI: newMockWidgetAPI(this.entity, this.contentType),
       $services: {
+        EntityState: {
+          stateName: sandbox.stub().returns('draft'),
+          getState: sandbox.stub()
+        },
         EntityHelpers: {
           newForLocale: sandbox
             .stub()

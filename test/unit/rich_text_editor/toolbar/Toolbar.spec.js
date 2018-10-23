@@ -8,8 +8,9 @@ import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types';
 import * as sinon from 'helpers/sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
-import { document, block, inline, text, flushPromises, getWithId, keyChord } from '../helpers';
+import { document, block, inline, text, getWithId, keyChord } from '../helpers';
 import { stubAll, setupWidgetApi, createSandbox, ENTRY } from '../setup';
+import flushPromises from '../../../helpers/flushPromises';
 
 const triggerToolbarIcon = async (wrapper, iconName) => {
   await flushPromises();

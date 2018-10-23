@@ -27,13 +27,6 @@ describe('CreateEntryButton', () => {
         dropdownIcon: this.findDropdownIcon()
       };
     };
-    this.flushPromises = () =>
-      new Promise(resolve => {
-        setTimeout(() => {
-          resolve();
-          this.wrapper = this.wrapper.update();
-        }, 50);
-      });
   });
 
   describe('with multiple content types', function() {
@@ -153,9 +146,23 @@ describe('CreateEntryButton', () => {
         });
       });
 
+      describe('on pending promise', function() {
+        beforeEach(function() {
+          this.onSelect.returns(new Promise(() => {}));
+          this.setup();
+          this.findCta().simulate('click');
+        });
+        it('does not emit onSelect on subsequent click', function() {
+          this.findCta().simulate('click');
+          this.findCta().simulate('click');
+
+          sinon.assert.calledOnce(this.onSelect);
+        });
+      });
+
       describe('with `onSelect` returning a promise', function() {
         beforeEach(function() {
-          this.onSelect.resolves();
+          this.onSelect.returns(Promise.resolve());
           this.setup();
           this.findCta().simulate('click');
         });
@@ -166,15 +173,9 @@ describe('CreateEntryButton', () => {
           this.assertEmittedOnSelect();
         });
 
-        it('does not emit onSelect on subsequent click', function() {
-          this.onSelect.reset();
-          this.findCta().simulate('click');
-          sinon.assert.notCalled(this.onSelect);
-        });
-
         describe('after resolving promise', function() {
           beforeEach(async function() {
-            await this.flushPromises();
+            this.wrapper.update();
           });
 
           itDisablesLinkIs(false);

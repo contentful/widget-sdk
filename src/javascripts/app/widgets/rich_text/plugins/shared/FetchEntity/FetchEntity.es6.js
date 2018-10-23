@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import * as EntityState from '../../../../../../data/CMA/EntityState.es6';
 import RequestStatus from '../RequestStatus.es6';
 
 export default class FetchEntity extends React.PureComponent {
@@ -12,7 +11,8 @@ export default class FetchEntity extends React.PureComponent {
     localeCode: PropTypes.string.isRequired,
     render: PropTypes.func.isRequired,
     $services: PropTypes.shape({
-      EntityHelpers: PropTypes.object // TODO: Move this to `widgetAPI`.
+      EntityHelpers: PropTypes.object, // TODO: Move this to `widgetAPI`.
+      EntityState: PropTypes.object
     }).isRequired
   };
   state = {
@@ -35,7 +35,7 @@ export default class FetchEntity extends React.PureComponent {
   }
   fetchEntity = async () => {
     const { widgetAPI, entityId, entityType, localeCode } = this.props;
-    const { EntityHelpers } = this.props.$services;
+    const { EntityHelpers, EntityState } = this.props.$services;
     const entityHelpers = EntityHelpers.newForLocale(localeCode);
     const getEntity = id => widgetAPI.space[`get${entityType}`](id);
 

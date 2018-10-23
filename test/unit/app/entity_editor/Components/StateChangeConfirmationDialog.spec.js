@@ -3,11 +3,12 @@ import React from 'react';
 import { mount } from 'enzyme';
 import sinon from 'npm:sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
-import { assertElementExists, assertMessageEquals, getElement, flushPromises } from './helpers';
+import { assertElementExists, assertMessageEquals, getElement } from './helpers';
 
 import { Action } from 'data/CMA/EntityActions.es6';
 import { EntityType, NumberOfLinks } from 'app/entity_editor/Components/constants.es6';
 import messages from 'app/entity_editor/Components/StateChangeConfirmationDialog/messages.es6';
+import flushPromises from '../../../../helpers/flushPromises';
 
 describe('StateChangeConfirmationDialog', () => {
   const defaultProps = {

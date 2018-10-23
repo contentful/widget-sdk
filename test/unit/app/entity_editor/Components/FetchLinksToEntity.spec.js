@@ -4,8 +4,7 @@ import { mount } from 'enzyme';
 import sinon from 'npm:sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
 import { EntityType } from 'app/entity_editor/Components/constants.es6';
-
-import { flushPromises } from './helpers';
+import flushPromises from '../../../../helpers/flushPromises';
 
 describe('FetchLinksToEntity', () => {
   const defaultProps = {

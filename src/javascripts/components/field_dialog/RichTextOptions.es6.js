@@ -2,7 +2,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { ToggleButton, TextLink } from '@contentful/ui-component-library';
-import { BLOCKS, MARKS, INLINES, TOP_LEVEL_BLOCKS } from '@contentful/rich-text-types';
+import { BLOCKS, MARKS, INLINES } from '@contentful/rich-text-types';
+import ValidationType, {
+  VALIDATABLE_NODE_TYPES,
+  VALIDATABLE_MARKS
+} from './RichTextValidationType.es6';
 
 const RichTextOptionsSection = ({ children, heading, actions }) => (
   <div className="rich-text-options__section">
@@ -24,17 +28,9 @@ RichTextOptionsSection.defaultProps = {
   actions: undefined
 };
 
-const ValidationType = {
-  ENABLED_MARKS: 'enabledMarks',
-  ENABLED_NODE_TYPES: 'enabledNodeTypes'
-};
-
 const ValidatableTypes = {
-  [ValidationType.ENABLED_NODE_TYPES]: [
-    ...TOP_LEVEL_BLOCKS.filter(type => type !== BLOCKS.PARAGRAPH),
-    ...Object.values(INLINES)
-  ],
-  [ValidationType.ENABLED_MARKS]: Object.values(MARKS)
+  [ValidationType.ENABLED_NODE_TYPES]: VALIDATABLE_NODE_TYPES,
+  [ValidationType.ENABLED_MARKS]: VALIDATABLE_MARKS
 };
 
 /**

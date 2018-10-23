@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Visible doesn't render children if condition is falsy 1`] = `
+<Visible
+  if={false}
+/>
+`;
+
+exports[`Visible renders children if condition is truthy 1`] = `
+<Visible
+  if={true}
+>
+  Works
+</Visible>
+`;

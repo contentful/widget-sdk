@@ -26,13 +26,6 @@ export const text = (value = '', marks = []) => ({
   data: {}
 });
 
-export const flushPromises = () =>
-  new Promise(resolve => {
-    setImmediate(() => {
-      resolve();
-    });
-  });
-
 export const keyChord = (key, opts) => ({
   key,
   keyCode: toKeyCode(key),

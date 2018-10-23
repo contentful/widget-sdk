@@ -113,7 +113,9 @@ describe('entityEditor/StateController', () => {
 
     it('send success notification', function() {
       this.controller.delete.execute();
+
       this.$apply();
+
       this.assertSuccessNotification('delete');
     });
 
@@ -168,6 +170,7 @@ describe('entityEditor/StateController', () => {
       it('unpublishes and archives the entity', function() {
         this.action.execute();
         this.$apply();
+
         sinon.assert.calledWith(
           this.spaceEndpoint,
           sinon.match({
@@ -195,6 +198,7 @@ describe('entityEditor/StateController', () => {
       it('unpublishes the entity', function() {
         this.action.execute();
         this.$apply();
+
         sinon.assert.calledWith(
           this.spaceEndpoint,
           sinon.match({
@@ -216,6 +220,7 @@ describe('entityEditor/StateController', () => {
       it('publishes entity', function() {
         this.controller.primary.execute();
         this.$apply();
+
         sinon.assert.calledWith(
           this.spaceEndpoint,
           sinon.match({
@@ -229,12 +234,14 @@ describe('entityEditor/StateController', () => {
       it('notifies on success', function() {
         this.controller.primary.execute();
         this.$apply();
+
         this.assertSuccessNotification('publish');
       });
 
       it('runs the validator', function() {
         this.controller.primary.execute();
         this.$apply();
+
         sinon.assert.calledOnce(this.validator.run);
       });
 
@@ -275,6 +282,7 @@ describe('entityEditor/StateController', () => {
           it('tracks the publish event', function() {
             this.controller.primary.execute();
             this.$apply();
+
             sinon.assert.calledWithExactly(this.analytics.track, 'entry:publish', {
               eventOrigin: eventOrigin,
               contentType: { data: { name: 'foo' } },
@@ -300,6 +308,7 @@ describe('entityEditor/StateController', () => {
         it('does not track the publish event', function() {
           this.controller.primary.execute();
           this.$apply();
+
           sinon.assert.notCalled(this.spaceContext.publishedCTs.get);
           sinon.assert.notCalled(this.analytics.track);
         });
@@ -309,6 +318,7 @@ describe('entityEditor/StateController', () => {
         this.validator.run.returns(false);
         this.controller.primary.execute();
         this.$apply();
+
         sinon.assert.calledWith(
           this.notify,
           sinon.match.instanceOf(this.Notification.ValidationError)
@@ -320,6 +330,7 @@ describe('entityEditor/StateController', () => {
 
         this.controller.primary.execute();
         this.$apply();
+
         sinon.assert.notCalled(this.spaceEndpoint);
       });
 
@@ -327,6 +338,7 @@ describe('entityEditor/StateController', () => {
         this.spaceEndpoint.rejects('ERROR');
         this.controller.primary.execute();
         this.$apply();
+
         this.assertErrorNotification('publish', 'ERROR');
       });
     });
@@ -343,6 +355,7 @@ describe('entityEditor/StateController', () => {
       it('archives entity', function() {
         this.action.execute();
         this.$apply();
+
         sinon.assert.calledWith(
           this.spaceEndpoint,
           sinon.match({
@@ -356,6 +369,7 @@ describe('entityEditor/StateController', () => {
       it('notifies on success', function() {
         this.action.execute();
         this.$apply();
+
         this.assertSuccessNotification('archive');
       });
 
@@ -363,6 +377,7 @@ describe('entityEditor/StateController', () => {
         this.spaceEndpoint.rejects('ERROR');
         this.action.execute();
         this.$apply();
+
         this.assertErrorNotification('archive', 'ERROR');
       });
     });

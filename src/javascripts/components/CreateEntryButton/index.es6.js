@@ -52,6 +52,8 @@ class CreateEntryButton extends React.Component {
       isOpen: false
     });
     const selectHandlerReturnValue = this.props.onSelect(item.sys.id);
+
+    // TODO: Convert to controllable component.
     if (isPromise(selectHandlerReturnValue)) {
       const setIsHandlingOnSelect = value => this.setState({ isHandlingOnSelect: value });
       setIsHandlingOnSelect(true);

@@ -53,7 +53,7 @@ MockedProvider.propTypes = {
  *   as: 'tokenStore'
  * })(MyComponent);
  *
- * @param  {...string} selectedServices – list of services you want to pick
+ * @param  {...string|Object} selectedServices – list of services you want to pick
  * @returns {function(Component: React.Component): React.Component} – function to
  * create a react component which passes selected services as props to provided component.
  */

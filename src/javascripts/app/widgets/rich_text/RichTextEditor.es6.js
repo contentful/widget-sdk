@@ -6,49 +6,40 @@ import TrailingBlock from 'slate-trailing-block';
 import deepEqual from 'fast-deep-equal';
 
 import { toSlatejsDocument, toContentfulDocument } from '@contentful/contentful-slatejs-adapter';
-import { EditorToolbar, EditorToolbarDivider } from '@contentful/ui-component-library';
 
-import Bold, { BoldPlugin } from './plugins/Bold/index.es6';
-import Italic, { ItalicPlugin } from './plugins/Italic/index.es6';
-import Underlined, { UnderlinedPlugin } from './plugins/Underlined/index.es6';
-import Code, { CodePlugin } from './plugins/Code/index.es6';
-import Quote, { QuotePlugin } from './plugins/Quote/index.es6';
-import Hyperlink, { HyperlinkPlugin } from './plugins/Hyperlink/index.es6';
+import { BoldPlugin } from './plugins/Bold/index.es6';
+import { ItalicPlugin } from './plugins/Italic/index.es6';
+import { UnderlinedPlugin } from './plugins/Underlined/index.es6';
+import { CodePlugin } from './plugins/Code/index.es6';
+import { QuotePlugin } from './plugins/Quote/index.es6';
+import { HyperlinkPlugin } from './plugins/Hyperlink/index.es6';
 import {
-  Heading1,
-  Heading2,
-  Heading3,
-  Heading4,
-  Heading5,
-  Heading6,
-  Paragraph,
   Heading1Plugin,
   Heading2Plugin,
   Heading3Plugin,
   Heading4Plugin,
   Heading5Plugin,
-  Heading6Plugin,
-  HeadingDropdown
+  Heading6Plugin
 } from './plugins/Heading/index.es6';
 
 import NewLinePlugin from './plugins/NewLinePlugin/index.es6';
 import { ParagraphPlugin } from './plugins/Paragraph/index.es6';
-import EmbeddedEntityBlock, {
+import {
   EmbeddedEntryBlockPlugin,
   EmbeddedAssetBlockPlugin
 } from './plugins/EmbeddedEntityBlock/index.es6';
-import EmbeddedEntryInline, {
-  EmbeddedEntryInlinePlugin
-} from './plugins/EmbeddedEntryInline/index.es6';
-import EntryEmbedDropdown from './plugins/EntryEmbedDropdown/index.es6';
+import { EmbeddedEntryInlinePlugin } from './plugins/EmbeddedEntryInline/index.es6';
+
 import EditList from './plugins/List/EditListWrapper.es6';
-import { ListPlugin, UnorderedList, OrderedList } from './plugins/List/index.es6';
-import Hr, { HrPlugin } from './plugins/Hr/index.es6';
+import { ListPlugin } from './plugins/List/index.es6';
+import { HrPlugin } from './plugins/Hr/index.es6';
 
 import schema from './constants/Schema.es6';
 import emptyDoc from './constants/EmptyDoc.es6';
 import { BLOCKS } from '@contentful/rich-text-types';
 import { PasteHtmlPlugin } from './plugins/PasteHtml/index.es6';
+
+import Toolbar from './Toolbar/index.es6';
 
 const createValue = contentfulDocument => {
   const document = toSlatejsDocument({
@@ -93,7 +84,7 @@ export default class RichTextEditor extends React.Component {
     const { value, operations } = change;
     const lastOperations = operations.filter(isRelevantOperation).toJS();
 
-    this.setState({ value, lastOperations, headingMenuOpen: false });
+    this.setState({ value, lastOperations });
   };
 
   componentDidUpdate({ value: prevCfDoc }) {
@@ -117,89 +108,6 @@ export default class RichTextEditor extends React.Component {
     }
   }
 
-  toggleEmbedDropdown = () =>
-    this.setState({
-      isEmbedDropdownOpen: !this.state.isEmbedDropdownOpen
-    });
-
-  handleEmbedDropdownClose = () =>
-    this.setState({
-      isEmbedDropdownOpen: false
-    });
-
-  renderEmbeds = props => (
-    <div className="rich-text__toolbar__embed-actions-wrapper">
-      <EmbeddedEntityBlock nodeType={BLOCKS.EMBEDDED_ASSET} isButton {...props} />
-      {this.props.widgetAPI.features.embedInlineEntry ? (
-        <EntryEmbedDropdown
-          onToggle={this.toggleEmbedDropdown}
-          isOpen={this.state.isEmbedDropdownOpen}
-          disabled={props.disabled}
-          onClose={this.handleEmbedDropdownClose}>
-          <EmbeddedEntityBlock nodeType={BLOCKS.EMBEDDED_ENTRY} {...props} />
-          <EmbeddedEntryInline {...props} />
-        </EntryEmbedDropdown>
-      ) : (
-        <EmbeddedEntityBlock nodeType={BLOCKS.EMBEDDED_ENTRY} isButton {...props} />
-      )}
-    </div>
-  );
-
-  renderToolbar() {
-    const props = {
-      change: this.state.value.change(),
-      onToggle: this.onChange,
-      disabled: this.props.isDisabled
-    };
-
-    return (
-      <EditorToolbar extraClassNames="rich-text__toolbar" data-test-id="toolbar">
-        <div className="rich-text__toolbar__formatting-options-wrapper">
-          <HeadingDropdown
-            onToggle={this.toggleHeadingMenu}
-            isToggleActive={true}
-            isOpen={this.state.headingMenuOpen}
-            onClose={this.closeHeadingMenu}
-            change={props.change}
-            disabled={props.disabled}>
-            <Paragraph {...props} />
-            <Heading1 {...props} extraClassNames="toolbar-h1-toggle" />
-            <Heading2 {...props} />
-            <Heading3 {...props} />
-            <Heading4 {...props} />
-            <Heading5 {...props} />
-            <Heading6 {...props} />
-          </HeadingDropdown>
-          <EditorToolbarDivider />
-          <Bold {...props} />
-          <Italic {...props} />
-          <Underlined {...props} />
-          <Code {...props} />
-          <EditorToolbarDivider />
-          <Hyperlink {...props} />
-          <EditorToolbarDivider />
-          <UnorderedList {...props} />
-          <OrderedList {...props} />
-          <Quote {...props} />
-          <Hr {...props} />
-        </div>
-        {this.renderEmbeds(props)}
-      </EditorToolbar>
-    );
-  }
-
-  toggleHeadingMenu = event => {
-    event.preventDefault();
-    this.setState({
-      headingMenuOpen: !this.state.headingMenuOpen
-    });
-  };
-
-  closeHeadingMenu = () =>
-    this.setState({
-      headingMenuOpen: false
-    });
-
   render() {
     const classNames = `
       rich-text
@@ -208,7 +116,12 @@ export default class RichTextEditor extends React.Component {
 
     return (
       <div className={classNames}>
-        {this.renderToolbar()}
+        <Toolbar
+          change={this.state.value.change()}
+          onChange={this.onChange}
+          isDisabled={this.props.isDisabled}
+          widgetAPI={this.props.widgetAPI}
+        />
         <Editor
           data-test-id="editor"
           value={this.state.value}

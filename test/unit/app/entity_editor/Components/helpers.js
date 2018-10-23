@@ -11,10 +11,3 @@ export const assertElementExists = (wrapper, id) =>
 
 export const assertMessageEquals = (text, message, args) =>
   expect(text).toEqual(_.template(message)(args));
-
-export const flushPromises = () =>
-  new Promise(resolve => {
-    setImmediate(() => {
-      resolve();
-    });
-  });

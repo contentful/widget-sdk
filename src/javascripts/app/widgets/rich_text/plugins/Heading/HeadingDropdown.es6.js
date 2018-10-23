@@ -28,7 +28,7 @@ class HeadingDropdown extends Component {
   getStyleNameForChange = () => {
     const currentStyle = Object.keys(blockTitles).find(key => haveBlocks(this.props.change, key));
 
-    return blockTitles[currentStyle] || blockTitles[blockTitles.PARAGRAPH];
+    return blockTitles[currentStyle] || blockTitles[BLOCKS.PARAGRAPH];
   };
 
   render() {
