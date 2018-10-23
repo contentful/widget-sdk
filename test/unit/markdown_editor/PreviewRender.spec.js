@@ -40,15 +40,15 @@ describe('markdown_editor/PreviewRender.es6', () => {
     const content = 'simple paragraph';
     const root = getRoot(content);
     const child = getChildren(root);
-    expect(child.key).toBe('html/div/' + hash(content));
+    expect(child.key).toBe('html/p/' + hash(content));
   });
 
   it('Handle hash conflicts (for repeated fragments of text)', () => {
     const paras = ['test', 'test2', 'test'];
     const root = getRoot(paras.join('\n\n'));
     const children = getChildren(root);
-    expect(children[0].key).toBe('html/div/' + hash(paras[0]));
-    expect(children[2].key).toBe('html/div/' + hash(paras[0]) + '/1');
+    expect(children[0].key).toBe('html/p/' + hash(paras[0]));
+    expect(children[2].key).toBe('html/p/' + hash(paras[0]) + '/1');
   });
 
   it('Uses incremental key for single level blocks', () => {
