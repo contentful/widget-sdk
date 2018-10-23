@@ -41,13 +41,14 @@ class UsersList extends React.Component {
       limits: PropTypes.shape({
         maximum: PropTypes.number
       })
-    })
+    }),
+    hasSsoEnabled: PropTypes.bool
   };
 
   state = {
     queryTotal: 0,
     usersList: [],
-    filters: getFilterDefinitions(this.props.spaces, this.props.spaceRoles),
+    filters: this.getInitialFilters(),
     searchTerm: ''
   };
 
@@ -115,9 +116,14 @@ class UsersList extends React.Component {
   };
 
   resetFilters = () => {
-    const filters = getFilterDefinitions(this.props.spaces, this.props.spaceRoles);
+    const filters = this.getInitialFilters();
     this.updateFilters(filters);
   };
+
+  getInitialFilters() {
+    const { spaceRoles, spaces, hasSsoEnabled } = this.props;
+    return getFilterDefinitions({ spaceRoles, spaces, hasSsoEnabled });
+  }
 
   updateSearch = e => {
     this.debouncedUpdatedSearch(e.target.value);

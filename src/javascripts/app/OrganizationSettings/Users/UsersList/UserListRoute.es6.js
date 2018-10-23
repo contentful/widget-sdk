@@ -7,6 +7,7 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import createResourceService from 'services/ResourceService.es6';
 import { getAllSpaces, getAllRoles } from 'access_control/OrganizationMembershipRepository.es6';
+import { getOrganization } from 'services/TokenStore.es6';
 
 const UserListFetcher = createFetcherComponent(({ orgId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
@@ -14,7 +15,8 @@ const UserListFetcher = createFetcherComponent(({ orgId }) => {
   return Promise.all([
     resources.get('organization_membership'),
     getAllSpaces(endpoint),
-    getAllRoles(endpoint)
+    getAllRoles(endpoint),
+    getOrganization(orgId)
   ]);
 });
 
@@ -43,10 +45,16 @@ export default class UserListRoute extends React.Component {
               return <StateRedirect to="spaces.detail.entries.list" />;
             }
 
-            const [resource, spaces, roles] = data;
+            const [resource, spaces, roles, org] = data;
 
             return (
-              <UserList resource={resource} spaces={spaces} spaceRoles={roles} orgId={orgId} />
+              <UserList
+                resource={resource}
+                spaces={spaces}
+                spaceRoles={roles}
+                orgId={orgId}
+                hasSsoEnabled={org.hasSsoEnabled}
+              />
             );
           }}
         </UserListFetcher>
