@@ -3,7 +3,7 @@ import { uncapitalize } from 'utils/StringUtils.es6';
 import trackPersistentNotification from 'analyticsEvents/persistentNotification';
 import * as OrganizationRoles from 'services/OrganizationRoles.es6';
 import { go } from 'states/Navigator.es6';
-import { merge, findKey, forEach } from 'lodash';
+import { get, merge, findKey, forEach } from 'lodash';
 import require from 'require';
 import { supportUrl } from 'Config.es6';
 
@@ -22,9 +22,10 @@ const USAGE_METRICS = {
   contentDeliveryApiRequest: 'Content Delivery API Requests'
 };
 
-export function determineEnforcement(organization, reasons, entityType) {
+export function determineEnforcement(space, reasons, entityType) {
   if (!reasons || (reasons.length && reasons.length === 0)) return null;
 
+  const organization = get(space, 'organization');
   const errorsByPriority = [
     {
       label: 'systemMaintenance',

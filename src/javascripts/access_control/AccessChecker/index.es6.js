@@ -522,8 +522,7 @@ function checkIfCanCreateSpace(context) {
 }
 
 function determineEnforcement(reasonsDenied, entityType) {
-  const org = get(space, 'organization');
-  return Enforcements.determineEnforcement(org, reasonsDenied, entityType);
+  return Enforcements.determineEnforcement(space, reasonsDenied, entityType);
 }
 
 // Creates a function that invokes named method on gkPermissionChecker if it's
