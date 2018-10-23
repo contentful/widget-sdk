@@ -10,6 +10,8 @@ import editorTemplate from './KeyEditor/Template.es6';
 import * as CMATokensPage from './CMATokens/Page.es6';
 import CMATokensPageTemplate from './CMATokens/PageTemplate.es6';
 import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo.es6';
+import { redirectReadOnlySpace } from 'states/SpaceSettingsBase.es6';
+import { spaceResolver } from 'states/Resolvers.es6';
 
 /**
  * @ngdoc service
@@ -75,9 +77,14 @@ export default {
   name: 'api',
   url: '/api',
   abstract: true,
+  resolve: {
+    space: spaceResolver
+  },
   onEnter: [
     'spaceContext',
-    spaceContext => {
+    'space',
+    async (spaceContext, space) => {
+      redirectReadOnlySpace(space);
       spaceContext.apiKeyRepo.refresh();
     }
   ],
