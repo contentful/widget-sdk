@@ -3,12 +3,25 @@ import { shallow } from 'enzyme';
 import moment from 'moment';
 import { LineChart } from '@contentful/ui-component-library';
 import { shorten } from 'utils/NumberUtils.es6';
+import sinon from 'sinon';
 
 import ApiUsageChart from '../committed/ApiUsageChart.es6';
 import EmptyChartPlaceholder from '../committed/EmptyChartPlaceholder.es6';
 
 describe('ApiUsageChart', () => {
-  const testStartDate = moment().subtract(3, 'days');
+  let clock = null;
+  let testStartDate = null;
+
+  beforeAll(() => {
+    // set fixed date for stable snapshots
+    clock = sinon.useFakeTimers(moment('2017-12-01').unix());
+    testStartDate = moment().subtract(3, 'days');
+  });
+
+  afterAll(() => {
+    clock.restore();
+  });
+
   const renderChart = (
     startDate = testStartDate,
     isLoading = false,
