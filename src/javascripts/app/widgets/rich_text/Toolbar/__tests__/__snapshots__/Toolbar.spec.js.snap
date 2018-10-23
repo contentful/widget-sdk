@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Toolbar hides embeds dropdown when no embeds enabled 1`] = `
+exports[`Toolbar renders no icons if no formatting options enabled 1`] = `
 <Toolbar
   change={
     Object {
@@ -22,26 +22,271 @@ exports[`Toolbar hides embeds dropdown when no embeds enabled 1`] = `
       "field": Object {
         "validations": Array [
           Object {
-            "enabledNodeTypes": Array [
-              Array [
-                "heading-1",
-                "heading-2",
-                "heading-3",
-                "heading-4",
-                "heading-5",
-                "heading-6",
-                "ordered-list",
-                "unordered-list",
-                "hr",
-                "blockquote",
-                "hyperlink",
-                "entry-hyperlink",
-                "asset-hyperlink",
-              ],
-            ],
+            "enabledNodeTypes": Array [],
+          },
+          Object {
+            "enabledMarks": Array [],
           },
         ],
       },
+    }
+  }
+>
+  <EditorToolbar
+    data-test-id="toolbar"
+    extraClassNames="rich-text__toolbar"
+    testId="cf-ui-editor-toolbar"
+  >
+    <div
+      className="
+      EditorToolbar__EditorToolbar___1zyWM
+      rich-text__toolbar
+    "
+      data-test-id="cf-ui-editor-toolbar"
+    >
+      <div
+        className="rich-text__toolbar__formatting-options-wrapper"
+      >
+        <HeadingDropdown
+          change={
+            Object {
+              "value": Object {
+                "activeMarks": Array [],
+                "blocks": Array [],
+                "inlines": Array [],
+                "selection": Object {},
+              },
+            }
+          }
+          disabled={false}
+          isOpen={false}
+          isToggleActive={true}
+          onClose={[Function]}
+          onToggle={[Function]}
+        >
+          <Dropdown
+            isOpen={false}
+            onClose={[Function]}
+            position="bottom-left"
+            testId="cf-ui-dropdown"
+            toggleElement={
+              <Button
+                buttonType="naked"
+                data-test-id="toolbar-heading-toggle"
+                disabled={false}
+                extraClassNames="toolbar-heading-toggle"
+                indicateDropdown={true}
+                isFullWidth={false}
+                loading={false}
+                onMouseDown={[Function]}
+                size="small"
+                testId="cf-ui-button"
+              >
+                Normal Text
+              </Button>
+            }
+          >
+            <div
+              className="
+      Dropdown__Dropdown___1qyn8
+      
+    "
+              data-test-id="cf-ui-dropdown"
+              onClose={[Function]}
+              position="bottom-left"
+            >
+              <Button
+                buttonType="naked"
+                data-test-id="toolbar-heading-toggle"
+                disabled={false}
+                extraClassNames="toolbar-heading-toggle"
+                indicateDropdown={true}
+                isFullWidth={false}
+                loading={false}
+                onMouseDown={[Function]}
+                size="small"
+                testId="cf-ui-button"
+              >
+                <button
+                  className="
+      Button__Button___1ZfFj a11y__focus-border--default___60AXp
+      
+      Button__Button--small___3yyrk
+      
+      Button__Button--naked___mB6LS
+      toolbar-heading-toggle
+    "
+                  data-test-id="toolbar-heading-toggle"
+                  disabled={false}
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onMouseDown={[Function]}
+                >
+                  <TabFocusTrap
+                    extraClassNames="Button__Button__inner-wrapper___3qrNC"
+                  >
+                    <span
+                      className="
+      TabFocusTrap__TabFocusTrap___39Vty
+      Button__Button__inner-wrapper___3qrNC
+    "
+                      tabIndex="-1"
+                    >
+                      <span
+                        className="Button__Button__label___3tcOj"
+                      >
+                        Normal Text
+                      </span>
+                      <Icon
+                        color="secondary"
+                        icon="ArrowDown"
+                        size="small"
+                        testId="cf-ui-icon"
+                      >
+                        <ArrowDown
+                          className="
+      Icon__Icon___38Epv
+      Icon__Icon--small___1yGZK
+      Icon__Icon--secondary___1ztcw
+      
+      
+    "
+                          data-test-id="cf-ui-icon"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          width="24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <svg
+                            className="
+      Icon__Icon___38Epv
+      Icon__Icon--small___1yGZK
+      Icon__Icon--secondary___1ztcw
+      
+      
+    "
+                            data-test-id="cf-ui-icon"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            width="24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M7 10l5 5 5-5z"
+                            />
+                            <path
+                              d="M0 0h24v24H0z"
+                              fill="none"
+                            />
+                          </svg>
+                        </ArrowDown>
+                      </Icon>
+                      <CSSTransition
+                        classNames={
+                          Object {
+                            "enter": "Button__Button--spinner--enter___1qgg7",
+                            "enterActive": "Button__Button--spinner-active___EEKjQ",
+                            "exit": "Button__Button--spinner--exit___2RUI-",
+                            "exitActive": "Button__Button--spinner-exit-active___3HXa7",
+                          }
+                        }
+                        in={false}
+                        mountOnEnter={true}
+                        timeout={1000}
+                        unmountOnExit={true}
+                      >
+                        <Transition
+                          appear={false}
+                          enter={true}
+                          exit={true}
+                          in={false}
+                          mountOnEnter={true}
+                          onEnter={[Function]}
+                          onEntered={[Function]}
+                          onEntering={[Function]}
+                          onExit={[Function]}
+                          onExited={[Function]}
+                          onExiting={[Function]}
+                          timeout={1000}
+                          unmountOnExit={true}
+                        />
+                      </CSSTransition>
+                    </span>
+                  </TabFocusTrap>
+                </button>
+              </Button>
+            </div>
+          </Dropdown>
+        </HeadingDropdown>
+        <Visible
+          if={false}
+        />
+        <Visible
+          if={false}
+        />
+        <Visible
+          if={false}
+        />
+        <Visible
+          if={false}
+        />
+        <Visible
+          if={false}
+        />
+        <Visible
+          if={false}
+        />
+        <Visible
+          if={false}
+        />
+        <Visible
+          if={false}
+        />
+        <Visible
+          if={false}
+        />
+        <Visible
+          if={false}
+        />
+        <Visible
+          if={false}
+        />
+      </div>
+      <div
+        className="rich-text__toolbar__embed-actions-wrapper"
+      >
+        <Visible
+          if={false}
+        />
+        <Visible
+          if={false}
+        />
+      </div>
+    </div>
+  </EditorToolbar>
+</Toolbar>
+`;
+
+exports[`Toolbar renders toolbar icons 1`] = `
+<Toolbar
+  change={
+    Object {
+      "value": Object {
+        "activeMarks": Array [],
+        "blocks": Array [],
+        "inlines": Array [],
+        "selection": Object {},
+      },
+    }
+  }
+  isDisabled={false}
+  onChange={[Function]}
+  widgetAPI={
+    Object {
+      "features": Object {
+        "embedInlineEntry": true,
+      },
+      "field": Object {},
     }
   }
 >
@@ -939,1223 +1184,6 @@ exports[`Toolbar hides embeds dropdown when no embeds enabled 1`] = `
           </CommonToggleMark>
         </Visible>
         <Visible
-          if={false}
-        />
-        <Visible
-          if={false}
-        />
-        <Visible
-          if={false}
-        />
-        <Visible
-          if={false}
-        />
-        <Visible
-          if={false}
-        />
-        <Visible
-          if={false}
-        />
-      </div>
-      <div
-        className="rich-text__toolbar__embed-actions-wrapper"
-      >
-        <Visible
-          if={false}
-        />
-        <Visible
-          if={false}
-        />
-      </div>
-    </div>
-  </EditorToolbar>
-</Toolbar>
-`;
-
-exports[`Toolbar renders no icons if no formatting options enabled 1`] = `
-<Toolbar
-  change={
-    Object {
-      "value": Object {
-        "activeMarks": Array [],
-        "blocks": Array [],
-        "inlines": Array [],
-        "selection": Object {},
-      },
-    }
-  }
-  isDisabled={false}
-  onChange={[Function]}
-  widgetAPI={
-    Object {
-      "features": Object {
-        "embedInlineEntry": true,
-      },
-      "field": Object {
-        "validations": Array [
-          Object {
-            "enabledNodeTypes": Array [],
-          },
-          Object {
-            "enabledMarks": Array [],
-          },
-        ],
-      },
-    }
-  }
->
-  <EditorToolbar
-    data-test-id="toolbar"
-    extraClassNames="rich-text__toolbar"
-    testId="cf-ui-editor-toolbar"
-  >
-    <div
-      className="
-      EditorToolbar__EditorToolbar___1zyWM
-      rich-text__toolbar
-    "
-      data-test-id="cf-ui-editor-toolbar"
-    >
-      <div
-        className="rich-text__toolbar__formatting-options-wrapper"
-      >
-        <HeadingDropdown
-          change={
-            Object {
-              "value": Object {
-                "activeMarks": Array [],
-                "blocks": Array [],
-                "inlines": Array [],
-                "selection": Object {},
-              },
-            }
-          }
-          disabled={false}
-          isOpen={false}
-          isToggleActive={true}
-          onClose={[Function]}
-          onToggle={[Function]}
-        >
-          <Dropdown
-            isOpen={false}
-            onClose={[Function]}
-            position="bottom-left"
-            testId="cf-ui-dropdown"
-            toggleElement={
-              <Button
-                buttonType="naked"
-                data-test-id="toolbar-heading-toggle"
-                disabled={false}
-                extraClassNames="toolbar-heading-toggle"
-                indicateDropdown={true}
-                isFullWidth={false}
-                loading={false}
-                onMouseDown={[Function]}
-                size="small"
-                testId="cf-ui-button"
-              >
-                Normal Text
-              </Button>
-            }
-          >
-            <div
-              className="
-      Dropdown__Dropdown___1qyn8
-      
-    "
-              data-test-id="cf-ui-dropdown"
-              onClose={[Function]}
-              position="bottom-left"
-            >
-              <Button
-                buttonType="naked"
-                data-test-id="toolbar-heading-toggle"
-                disabled={false}
-                extraClassNames="toolbar-heading-toggle"
-                indicateDropdown={true}
-                isFullWidth={false}
-                loading={false}
-                onMouseDown={[Function]}
-                size="small"
-                testId="cf-ui-button"
-              >
-                <button
-                  className="
-      Button__Button___1ZfFj a11y__focus-border--default___60AXp
-      
-      Button__Button--small___3yyrk
-      
-      Button__Button--naked___mB6LS
-      toolbar-heading-toggle
-    "
-                  data-test-id="toolbar-heading-toggle"
-                  disabled={false}
-                  onBlur={[Function]}
-                  onClick={[Function]}
-                  onMouseDown={[Function]}
-                >
-                  <TabFocusTrap
-                    extraClassNames="Button__Button__inner-wrapper___3qrNC"
-                  >
-                    <span
-                      className="
-      TabFocusTrap__TabFocusTrap___39Vty
-      Button__Button__inner-wrapper___3qrNC
-    "
-                      tabIndex="-1"
-                    >
-                      <span
-                        className="Button__Button__label___3tcOj"
-                      >
-                        Normal Text
-                      </span>
-                      <Icon
-                        color="secondary"
-                        icon="ArrowDown"
-                        size="small"
-                        testId="cf-ui-icon"
-                      >
-                        <ArrowDown
-                          className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      Icon__Icon--secondary___1ztcw
-      
-      
-    "
-                          data-test-id="cf-ui-icon"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          width="24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <svg
-                            className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      Icon__Icon--secondary___1ztcw
-      
-      
-    "
-                            data-test-id="cf-ui-icon"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            width="24"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M7 10l5 5 5-5z"
-                            />
-                            <path
-                              d="M0 0h24v24H0z"
-                              fill="none"
-                            />
-                          </svg>
-                        </ArrowDown>
-                      </Icon>
-                      <CSSTransition
-                        classNames={
-                          Object {
-                            "enter": "Button__Button--spinner--enter___1qgg7",
-                            "enterActive": "Button__Button--spinner-active___EEKjQ",
-                            "exit": "Button__Button--spinner--exit___2RUI-",
-                            "exitActive": "Button__Button--spinner-exit-active___3HXa7",
-                          }
-                        }
-                        in={false}
-                        mountOnEnter={true}
-                        timeout={1000}
-                        unmountOnExit={true}
-                      >
-                        <Transition
-                          appear={false}
-                          enter={true}
-                          exit={true}
-                          in={false}
-                          mountOnEnter={true}
-                          onEnter={[Function]}
-                          onEntered={[Function]}
-                          onEntering={[Function]}
-                          onExit={[Function]}
-                          onExited={[Function]}
-                          onExiting={[Function]}
-                          timeout={1000}
-                          unmountOnExit={true}
-                        />
-                      </CSSTransition>
-                    </span>
-                  </TabFocusTrap>
-                </button>
-              </Button>
-            </div>
-          </Dropdown>
-        </HeadingDropdown>
-        <Visible
-          if={false}
-        />
-        <Visible
-          if={false}
-        />
-        <Visible
-          if={false}
-        />
-        <Visible
-          if={false}
-        />
-        <Visible
-          if={false}
-        />
-        <Visible
-          if={false}
-        />
-        <Visible
-          if={false}
-        />
-        <Visible
-          if={false}
-        />
-        <Visible
-          if={false}
-        />
-        <Visible
-          if={false}
-        />
-        <Visible
-          if={false}
-        />
-      </div>
-      <div
-        className="rich-text__toolbar__embed-actions-wrapper"
-      >
-        <Visible
-          if={false}
-        />
-        <Visible
-          if={false}
-        />
-      </div>
-    </div>
-  </EditorToolbar>
-</Toolbar>
-`;
-
-exports[`Toolbar renders toolbar icons 1`] = `
-<Toolbar
-  change={
-    Object {
-      "value": Object {
-        "activeMarks": Array [],
-        "blocks": Array [],
-        "inlines": Array [],
-        "selection": Object {},
-      },
-    }
-  }
-  isDisabled={false}
-  onChange={[Function]}
-  widgetAPI={
-    Object {
-      "features": Object {
-        "embedInlineEntry": true,
-      },
-      "field": Object {},
-    }
-  }
->
-  <EditorToolbar
-    data-test-id="toolbar"
-    extraClassNames="rich-text__toolbar"
-    testId="cf-ui-editor-toolbar"
-  >
-    <div
-      className="
-      EditorToolbar__EditorToolbar___1zyWM
-      rich-text__toolbar
-    "
-      data-test-id="cf-ui-editor-toolbar"
-    >
-      <div
-        className="rich-text__toolbar__formatting-options-wrapper"
-      >
-        <HeadingDropdown
-          change={
-            Object {
-              "value": Object {
-                "activeMarks": Array [],
-                "blocks": Array [],
-                "inlines": Array [],
-                "selection": Object {},
-              },
-            }
-          }
-          disabled={false}
-          isOpen={false}
-          isToggleActive={true}
-          onClose={[Function]}
-          onToggle={[Function]}
-        >
-          <Dropdown
-            isOpen={false}
-            onClose={[Function]}
-            position="bottom-left"
-            testId="cf-ui-dropdown"
-            toggleElement={
-              <Button
-                buttonType="naked"
-                data-test-id="toolbar-heading-toggle"
-                disabled={false}
-                extraClassNames="toolbar-heading-toggle"
-                indicateDropdown={true}
-                isFullWidth={false}
-                loading={false}
-                onMouseDown={[Function]}
-                size="small"
-                testId="cf-ui-button"
-              >
-                Normal Text
-              </Button>
-            }
-          >
-            <div
-              className="
-      Dropdown__Dropdown___1qyn8
-      
-    "
-              data-test-id="cf-ui-dropdown"
-              onClose={[Function]}
-              position="bottom-left"
-            >
-              <Button
-                buttonType="naked"
-                data-test-id="toolbar-heading-toggle"
-                disabled={false}
-                extraClassNames="toolbar-heading-toggle"
-                indicateDropdown={true}
-                isFullWidth={false}
-                loading={false}
-                onMouseDown={[Function]}
-                size="small"
-                testId="cf-ui-button"
-              >
-                <button
-                  className="
-      Button__Button___1ZfFj a11y__focus-border--default___60AXp
-      
-      Button__Button--small___3yyrk
-      
-      Button__Button--naked___mB6LS
-      toolbar-heading-toggle
-    "
-                  data-test-id="toolbar-heading-toggle"
-                  disabled={false}
-                  onBlur={[Function]}
-                  onClick={[Function]}
-                  onMouseDown={[Function]}
-                >
-                  <TabFocusTrap
-                    extraClassNames="Button__Button__inner-wrapper___3qrNC"
-                  >
-                    <span
-                      className="
-      TabFocusTrap__TabFocusTrap___39Vty
-      Button__Button__inner-wrapper___3qrNC
-    "
-                      tabIndex="-1"
-                    >
-                      <span
-                        className="Button__Button__label___3tcOj"
-                      >
-                        Normal Text
-                      </span>
-                      <Icon
-                        color="secondary"
-                        icon="ArrowDown"
-                        size="small"
-                        testId="cf-ui-icon"
-                      >
-                        <ArrowDown
-                          className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      Icon__Icon--secondary___1ztcw
-      
-      
-    "
-                          data-test-id="cf-ui-icon"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          width="24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <svg
-                            className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      Icon__Icon--secondary___1ztcw
-      
-      
-    "
-                            data-test-id="cf-ui-icon"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            width="24"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M7 10l5 5 5-5z"
-                            />
-                            <path
-                              d="M0 0h24v24H0z"
-                              fill="none"
-                            />
-                          </svg>
-                        </ArrowDown>
-                      </Icon>
-                      <CSSTransition
-                        classNames={
-                          Object {
-                            "enter": "Button__Button--spinner--enter___1qgg7",
-                            "enterActive": "Button__Button--spinner-active___EEKjQ",
-                            "exit": "Button__Button--spinner--exit___2RUI-",
-                            "exitActive": "Button__Button--spinner-exit-active___3HXa7",
-                          }
-                        }
-                        in={false}
-                        mountOnEnter={true}
-                        timeout={1000}
-                        unmountOnExit={true}
-                      >
-                        <Transition
-                          appear={false}
-                          enter={true}
-                          exit={true}
-                          in={false}
-                          mountOnEnter={true}
-                          onEnter={[Function]}
-                          onEntered={[Function]}
-                          onEntering={[Function]}
-                          onExit={[Function]}
-                          onExited={[Function]}
-                          onExiting={[Function]}
-                          timeout={1000}
-                          unmountOnExit={true}
-                        />
-                      </CSSTransition>
-                    </span>
-                  </TabFocusTrap>
-                </button>
-              </Button>
-            </div>
-          </Dropdown>
-        </HeadingDropdown>
-        <Visible
-          if={true}
-        >
-          <EditorToolbarDivider
-            testId="mark-divider"
-          >
-            <span
-              className="
-      EditorToolbarDivider__EditorToolbarDivider___22NLC
-      
-    "
-              testId="mark-divider"
-            />
-          </EditorToolbarDivider>
-        </Visible>
-        <Visible
-          if={true}
-        >
-          <CommonToggleMark
-            change={
-              Object {
-                "value": Object {
-                  "activeMarks": Array [],
-                  "blocks": Array [],
-                  "inlines": Array [],
-                  "selection": Object {},
-                },
-              }
-            }
-            disabled={false}
-            onToggle={[Function]}
-          >
-            <Bold
-              disabled={false}
-              icon="FormatBold"
-              isActive={false}
-              onToggle={[Function]}
-              title="Bold"
-              type="bold"
-            >
-              <ToolbarIcon
-                disabled={false}
-                icon="FormatBold"
-                isActive={false}
-                onToggle={[Function]}
-                title="Bold"
-                type="bold"
-              >
-                <EditorToolbarButton
-                  data-test-id="toolbar-toggle-bold"
-                  disabled={false}
-                  icon="FormatBold"
-                  isActive={false}
-                  label="Bold"
-                  onMouseDown={[Function]}
-                  testId="cf-ui-editor-toolbar-button"
-                  tooltip="Bold"
-                  withDropdown={false}
-                >
-                  <Tooltip
-                    content="Bold"
-                    isVisible={false}
-                    onBlur={[Function]}
-                    onFocus={[Function]}
-                    onMouseLeave={[Function]}
-                    onMouseOver={[Function]}
-                    place="top"
-                    testId="cf-ui-tooltip"
-                  >
-                    <TooltipContainer
-                      onBlur={[Function]}
-                      onFocus={[Function]}
-                      onMouseLeave={[Function]}
-                      onMouseOver={[Function]}
-                    >
-                      <div
-                        className="Tooltip__TooltipContainer___3YlPf"
-                        onBlur={[Function]}
-                        onFocus={[Function]}
-                        onMouseLeave={[Function]}
-                        onMouseOver={[Function]}
-                      >
-                        <IconButton
-                          buttonType="secondary"
-                          data-test-id="toolbar-toggle-bold"
-                          disabled={false}
-                          extraClassNames="
-      EditorToolbarButton__EditorToolbarButton___2t--R
-      
-      
-    "
-                          iconProps={
-                            Object {
-                              "icon": "FormatBold",
-                            }
-                          }
-                          label="Bold"
-                          onMouseDown={[Function]}
-                          testId="cf-ui-editor-toolbar-button"
-                          withDropdown={false}
-                        >
-                          <button
-                            className="
-      IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1
-      
-      EditorToolbarButton__EditorToolbarButton___2t--R
-      
-      
-    
-      
-      IconButton__IconButton--secondary___3Gc3d
-    "
-                            data-test-id="toolbar-toggle-bold"
-                            disabled={false}
-                            onMouseDown={[Function]}
-                          >
-                            <TabFocusTrap
-                              extraClassNames="IconButton__IconButton__inner___3fnmT"
-                            >
-                              <span
-                                className="
-      TabFocusTrap__TabFocusTrap___39Vty
-      IconButton__IconButton__inner___3fnmT
-    "
-                                tabIndex="-1"
-                              >
-                                <Icon
-                                  color="primary"
-                                  extraClassNames="IconButton__IconButton__icon___3yZQN"
-                                  icon="FormatBold"
-                                  size="small"
-                                  testId="cf-ui-icon"
-                                >
-                                  <FormatBold
-                                    className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      undefined
-      
-      IconButton__IconButton__icon___3yZQN
-    "
-                                    data-test-id="cf-ui-icon"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    width="24"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <svg
-                                      className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      undefined
-      
-      IconButton__IconButton__icon___3yZQN
-    "
-                                      data-test-id="cf-ui-icon"
-                                      height="24"
-                                      viewBox="0 0 24 24"
-                                      width="24"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                      <path
-                                        d="M15.6 10.79c.97-.67 1.65-1.77 1.65-2.79 0-2.26-1.75-4-4-4H7v14h7.04c2.09 0 3.71-1.7 3.71-3.79 0-1.52-.86-2.82-2.15-3.42zM10 6.5h3c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-3v-3zm3.5 9H10v-3h3.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5z"
-                                      />
-                                      <path
-                                        d="M0 0h24v24H0z"
-                                        fill="none"
-                                      />
-                                    </svg>
-                                  </FormatBold>
-                                </Icon>
-                                <span
-                                  className="IconButton__IconButton__label___1kp5y helpers__sr-only___3Kv3z"
-                                >
-                                  Bold
-                                </span>
-                              </span>
-                            </TabFocusTrap>
-                          </button>
-                        </IconButton>
-                      </div>
-                    </TooltipContainer>
-                  </Tooltip>
-                </EditorToolbarButton>
-              </ToolbarIcon>
-            </Bold>
-          </CommonToggleMark>
-        </Visible>
-        <Visible
-          if={true}
-        >
-          <CommonToggleMark
-            change={
-              Object {
-                "value": Object {
-                  "activeMarks": Array [],
-                  "blocks": Array [],
-                  "inlines": Array [],
-                  "selection": Object {},
-                },
-              }
-            }
-            disabled={false}
-            onToggle={[Function]}
-          >
-            <Italic
-              disabled={false}
-              icon="FormatItalic"
-              isActive={false}
-              onToggle={[Function]}
-              title="Italic"
-              type="italic"
-            >
-              <ToolbarIcon
-                disabled={false}
-                icon="FormatItalic"
-                isActive={false}
-                onToggle={[Function]}
-                title="Italic"
-                type="italic"
-              >
-                <EditorToolbarButton
-                  data-test-id="toolbar-toggle-italic"
-                  disabled={false}
-                  icon="FormatItalic"
-                  isActive={false}
-                  label="Italic"
-                  onMouseDown={[Function]}
-                  testId="cf-ui-editor-toolbar-button"
-                  tooltip="Italic"
-                  withDropdown={false}
-                >
-                  <Tooltip
-                    content="Italic"
-                    isVisible={false}
-                    onBlur={[Function]}
-                    onFocus={[Function]}
-                    onMouseLeave={[Function]}
-                    onMouseOver={[Function]}
-                    place="top"
-                    testId="cf-ui-tooltip"
-                  >
-                    <TooltipContainer
-                      onBlur={[Function]}
-                      onFocus={[Function]}
-                      onMouseLeave={[Function]}
-                      onMouseOver={[Function]}
-                    >
-                      <div
-                        className="Tooltip__TooltipContainer___3YlPf"
-                        onBlur={[Function]}
-                        onFocus={[Function]}
-                        onMouseLeave={[Function]}
-                        onMouseOver={[Function]}
-                      >
-                        <IconButton
-                          buttonType="secondary"
-                          data-test-id="toolbar-toggle-italic"
-                          disabled={false}
-                          extraClassNames="
-      EditorToolbarButton__EditorToolbarButton___2t--R
-      
-      
-    "
-                          iconProps={
-                            Object {
-                              "icon": "FormatItalic",
-                            }
-                          }
-                          label="Italic"
-                          onMouseDown={[Function]}
-                          testId="cf-ui-editor-toolbar-button"
-                          withDropdown={false}
-                        >
-                          <button
-                            className="
-      IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1
-      
-      EditorToolbarButton__EditorToolbarButton___2t--R
-      
-      
-    
-      
-      IconButton__IconButton--secondary___3Gc3d
-    "
-                            data-test-id="toolbar-toggle-italic"
-                            disabled={false}
-                            onMouseDown={[Function]}
-                          >
-                            <TabFocusTrap
-                              extraClassNames="IconButton__IconButton__inner___3fnmT"
-                            >
-                              <span
-                                className="
-      TabFocusTrap__TabFocusTrap___39Vty
-      IconButton__IconButton__inner___3fnmT
-    "
-                                tabIndex="-1"
-                              >
-                                <Icon
-                                  color="primary"
-                                  extraClassNames="IconButton__IconButton__icon___3yZQN"
-                                  icon="FormatItalic"
-                                  size="small"
-                                  testId="cf-ui-icon"
-                                >
-                                  <FormatItalic
-                                    className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      undefined
-      
-      IconButton__IconButton__icon___3yZQN
-    "
-                                    data-test-id="cf-ui-icon"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    width="24"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <svg
-                                      className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      undefined
-      
-      IconButton__IconButton__icon___3yZQN
-    "
-                                      data-test-id="cf-ui-icon"
-                                      height="24"
-                                      viewBox="0 0 24 24"
-                                      width="24"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                      <path
-                                        d="M0 0h24v24H0z"
-                                        fill="none"
-                                      />
-                                      <path
-                                        d="M10 4v3h2.21l-3.42 8H6v3h8v-3h-2.21l3.42-8H18V4z"
-                                      />
-                                    </svg>
-                                  </FormatItalic>
-                                </Icon>
-                                <span
-                                  className="IconButton__IconButton__label___1kp5y helpers__sr-only___3Kv3z"
-                                >
-                                  Italic
-                                </span>
-                              </span>
-                            </TabFocusTrap>
-                          </button>
-                        </IconButton>
-                      </div>
-                    </TooltipContainer>
-                  </Tooltip>
-                </EditorToolbarButton>
-              </ToolbarIcon>
-            </Italic>
-          </CommonToggleMark>
-        </Visible>
-        <Visible
-          if={true}
-        >
-          <CommonToggleMark
-            change={
-              Object {
-                "value": Object {
-                  "activeMarks": Array [],
-                  "blocks": Array [],
-                  "inlines": Array [],
-                  "selection": Object {},
-                },
-              }
-            }
-            disabled={false}
-            onToggle={[Function]}
-          >
-            <Underlined
-              disabled={false}
-              icon="FormatUnderlined"
-              isActive={false}
-              onToggle={[Function]}
-              title="Underline"
-              type="underline"
-            >
-              <ToolbarIcon
-                disabled={false}
-                icon="FormatUnderlined"
-                isActive={false}
-                onToggle={[Function]}
-                title="Underline"
-                type="underline"
-              >
-                <EditorToolbarButton
-                  data-test-id="toolbar-toggle-underline"
-                  disabled={false}
-                  icon="FormatUnderlined"
-                  isActive={false}
-                  label="Underline"
-                  onMouseDown={[Function]}
-                  testId="cf-ui-editor-toolbar-button"
-                  tooltip="Underline"
-                  withDropdown={false}
-                >
-                  <Tooltip
-                    content="Underline"
-                    isVisible={false}
-                    onBlur={[Function]}
-                    onFocus={[Function]}
-                    onMouseLeave={[Function]}
-                    onMouseOver={[Function]}
-                    place="top"
-                    testId="cf-ui-tooltip"
-                  >
-                    <TooltipContainer
-                      onBlur={[Function]}
-                      onFocus={[Function]}
-                      onMouseLeave={[Function]}
-                      onMouseOver={[Function]}
-                    >
-                      <div
-                        className="Tooltip__TooltipContainer___3YlPf"
-                        onBlur={[Function]}
-                        onFocus={[Function]}
-                        onMouseLeave={[Function]}
-                        onMouseOver={[Function]}
-                      >
-                        <IconButton
-                          buttonType="secondary"
-                          data-test-id="toolbar-toggle-underline"
-                          disabled={false}
-                          extraClassNames="
-      EditorToolbarButton__EditorToolbarButton___2t--R
-      
-      
-    "
-                          iconProps={
-                            Object {
-                              "icon": "FormatUnderlined",
-                            }
-                          }
-                          label="Underline"
-                          onMouseDown={[Function]}
-                          testId="cf-ui-editor-toolbar-button"
-                          withDropdown={false}
-                        >
-                          <button
-                            className="
-      IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1
-      
-      EditorToolbarButton__EditorToolbarButton___2t--R
-      
-      
-    
-      
-      IconButton__IconButton--secondary___3Gc3d
-    "
-                            data-test-id="toolbar-toggle-underline"
-                            disabled={false}
-                            onMouseDown={[Function]}
-                          >
-                            <TabFocusTrap
-                              extraClassNames="IconButton__IconButton__inner___3fnmT"
-                            >
-                              <span
-                                className="
-      TabFocusTrap__TabFocusTrap___39Vty
-      IconButton__IconButton__inner___3fnmT
-    "
-                                tabIndex="-1"
-                              >
-                                <Icon
-                                  color="primary"
-                                  extraClassNames="IconButton__IconButton__icon___3yZQN"
-                                  icon="FormatUnderlined"
-                                  size="small"
-                                  testId="cf-ui-icon"
-                                >
-                                  <FormatUnderlined
-                                    className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      undefined
-      
-      IconButton__IconButton__icon___3yZQN
-    "
-                                    data-test-id="cf-ui-icon"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    width="24"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <svg
-                                      className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      undefined
-      
-      IconButton__IconButton__icon___3yZQN
-    "
-                                      data-test-id="cf-ui-icon"
-                                      height="24"
-                                      viewBox="0 0 24 24"
-                                      width="24"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                      <path
-                                        d="M0 0h24v24H0z"
-                                        fill="none"
-                                      />
-                                      <path
-                                        d="M12 17c3.31 0 6-2.69 6-6V3h-2.5v8c0 1.93-1.57 3.5-3.5 3.5S8.5 12.93 8.5 11V3H6v8c0 3.31 2.69 6 6 6zm-7 2v2h14v-2H5z"
-                                      />
-                                    </svg>
-                                  </FormatUnderlined>
-                                </Icon>
-                                <span
-                                  className="IconButton__IconButton__label___1kp5y helpers__sr-only___3Kv3z"
-                                >
-                                  Underline
-                                </span>
-                              </span>
-                            </TabFocusTrap>
-                          </button>
-                        </IconButton>
-                      </div>
-                    </TooltipContainer>
-                  </Tooltip>
-                </EditorToolbarButton>
-              </ToolbarIcon>
-            </Underlined>
-          </CommonToggleMark>
-        </Visible>
-        <Visible
-          if={true}
-        >
-          <CommonToggleMark
-            change={
-              Object {
-                "value": Object {
-                  "activeMarks": Array [],
-                  "blocks": Array [],
-                  "inlines": Array [],
-                  "selection": Object {},
-                },
-              }
-            }
-            disabled={false}
-            onToggle={[Function]}
-          >
-            <Code
-              disabled={false}
-              icon="Code"
-              isActive={false}
-              onToggle={[Function]}
-              title="Code"
-              type="code"
-            >
-              <ToolbarIcon
-                disabled={false}
-                icon="Code"
-                isActive={false}
-                onToggle={[Function]}
-                title="Code"
-                type="code"
-              >
-                <EditorToolbarButton
-                  data-test-id="toolbar-toggle-code"
-                  disabled={false}
-                  icon="Code"
-                  isActive={false}
-                  label="Code"
-                  onMouseDown={[Function]}
-                  testId="cf-ui-editor-toolbar-button"
-                  tooltip="Code"
-                  withDropdown={false}
-                >
-                  <Tooltip
-                    content="Code"
-                    isVisible={false}
-                    onBlur={[Function]}
-                    onFocus={[Function]}
-                    onMouseLeave={[Function]}
-                    onMouseOver={[Function]}
-                    place="top"
-                    testId="cf-ui-tooltip"
-                  >
-                    <TooltipContainer
-                      onBlur={[Function]}
-                      onFocus={[Function]}
-                      onMouseLeave={[Function]}
-                      onMouseOver={[Function]}
-                    >
-                      <div
-                        className="Tooltip__TooltipContainer___3YlPf"
-                        onBlur={[Function]}
-                        onFocus={[Function]}
-                        onMouseLeave={[Function]}
-                        onMouseOver={[Function]}
-                      >
-                        <IconButton
-                          buttonType="secondary"
-                          data-test-id="toolbar-toggle-code"
-                          disabled={false}
-                          extraClassNames="
-      EditorToolbarButton__EditorToolbarButton___2t--R
-      
-      
-    "
-                          iconProps={
-                            Object {
-                              "icon": "Code",
-                            }
-                          }
-                          label="Code"
-                          onMouseDown={[Function]}
-                          testId="cf-ui-editor-toolbar-button"
-                          withDropdown={false}
-                        >
-                          <button
-                            className="
-      IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1
-      
-      EditorToolbarButton__EditorToolbarButton___2t--R
-      
-      
-    
-      
-      IconButton__IconButton--secondary___3Gc3d
-    "
-                            data-test-id="toolbar-toggle-code"
-                            disabled={false}
-                            onMouseDown={[Function]}
-                          >
-                            <TabFocusTrap
-                              extraClassNames="IconButton__IconButton__inner___3fnmT"
-                            >
-                              <span
-                                className="
-      TabFocusTrap__TabFocusTrap___39Vty
-      IconButton__IconButton__inner___3fnmT
-    "
-                                tabIndex="-1"
-                              >
-                                <Icon
-                                  color="primary"
-                                  extraClassNames="IconButton__IconButton__icon___3yZQN"
-                                  icon="Code"
-                                  size="small"
-                                  testId="cf-ui-icon"
-                                >
-                                  <Code
-                                    className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      undefined
-      
-      IconButton__IconButton__icon___3yZQN
-    "
-                                    data-test-id="cf-ui-icon"
-                                    height="18"
-                                    viewBox="0 0 24 24"
-                                    width="18"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <svg
-                                      className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      undefined
-      
-      IconButton__IconButton__icon___3yZQN
-    "
-                                      data-test-id="cf-ui-icon"
-                                      height="18"
-                                      viewBox="0 0 24 24"
-                                      width="18"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                      <path
-                                        d="M0 0h24v24H0V0z"
-                                        fill="none"
-                                      />
-                                      <path
-                                        d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"
-                                      />
-                                    </svg>
-                                  </Code>
-                                </Icon>
-                                <span
-                                  className="IconButton__IconButton__label___1kp5y helpers__sr-only___3Kv3z"
-                                >
-                                  Code
-                                </span>
-                              </span>
-                            </TabFocusTrap>
-                          </button>
-                        </IconButton>
-                      </div>
-                    </TooltipContainer>
-                  </Tooltip>
-                </EditorToolbarButton>
-              </ToolbarIcon>
-            </Code>
-          </CommonToggleMark>
-        </Visible>
-        <Visible
           if={true}
         >
           <EditorToolbarDivider
@@ -2166,7 +1194,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
       EditorToolbarDivider__EditorToolbarDivider___22NLC
       
     "
-              testId="hyperlink-divider"
+              data-test-id="hyperlink-divider"
             />
           </EditorToolbarDivider>
           <HyperlinkToolbarIcon
@@ -2341,7 +1369,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
       EditorToolbarDivider__EditorToolbarDivider___22NLC
       
     "
-              testId="list-divider"
+              data-test-id="list-divider"
             />
           </EditorToolbarDivider>
         </Visible>
