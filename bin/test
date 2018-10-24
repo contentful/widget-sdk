@@ -6,5 +6,6 @@ set -veo pipefail
 
 tools/bin/validate-config.js config/*.json
 npm run hint
-NODE_ENV=production CI=true npm run jest:coverage && npm run coverage-report
+NODE_ENV=production CI=true npm run jest:coverage
+npm run codecov
 NODE_ENV=production npm run test:once

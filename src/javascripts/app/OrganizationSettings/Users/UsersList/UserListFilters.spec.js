@@ -8,7 +8,7 @@ import UserListFilters from './UserListFilters.es6';
 import { TextLink } from '@contentful/ui-component-library';
 
 describe('UserListFilters', () => {
-  const filters = getFilterDefinitions();
+  const filters = getFilterDefinitions({});
   const activeFilters = cloneDeep(filters);
   activeFilters[1].filter.value = 'foo';
 
