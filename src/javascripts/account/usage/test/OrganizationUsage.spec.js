@@ -11,6 +11,8 @@ import NoSpacesPlaceholder from '../NoSpacesPlaceholder.es6';
 import OrganizationUsagePage from '../committed/OrganizationUsagePage.es6';
 import OrganizationResourceUsageList from 'account/usage/non_committed/OrganizationResourceUsageList.es6';
 
+const DATE_FORMAT = 'YYYY-MM-DD';
+
 let defaultProps = null;
 let testOrg = null;
 let endpoint = null;
@@ -26,15 +28,26 @@ const shallowRenderComponent = async props => {
 };
 
 describe('OrganizationUsage', () => {
+  let clock = null;
+
+  beforeAll(() => {
+    // set fixed date for stable snapshots
+    clock = sinon.useFakeTimers(moment('2017-12-01').unix());
+  });
+
+  afterAll(() => {
+    clock.restore();
+  });
+
   beforeEach(() => {
     testOrg = {};
     endpoint = sinon.stub();
-    const startDate = moment('2018-12-01').subtract(12, 'days');
+    const startDate = moment().subtract(12, 'days');
 
     endpoint.withArgs({ method: 'GET', path: ['usage_periods'] }).returns({
       items: [
         {
-          startDate: startDate.toISOString(),
+          startDate: startDate.format(DATE_FORMAT),
           endDate: null,
           sys: { type: 'UsagePeriod', id: '0' }
         },
@@ -42,10 +55,10 @@ describe('OrganizationUsage', () => {
           startDate: moment(startDate)
             .subtract(1, 'day')
             .subtract(1, 'month')
-            .toISOString(),
+            .format(DATE_FORMAT),
           endDate: moment(startDate)
             .subtract(1, 'day')
-            .toISOString(),
+            .format(DATE_FORMAT),
           sys: { type: 'UsagePeriod', id: '1' }
         }
       ]

@@ -8,6 +8,8 @@ import sinon from 'sinon';
 import ApiUsageChart from '../committed/ApiUsageChart.es6';
 import EmptyChartPlaceholder from '../committed/EmptyChartPlaceholder.es6';
 
+const DATE_FORMAT = 'YYYY-MM-DD';
+
 describe('ApiUsageChart', () => {
   let clock = null;
   let testStartDate = null;
@@ -49,7 +51,7 @@ describe('ApiUsageChart', () => {
     shallow(
       <ApiUsageChart
         period={{
-          startDate: startDate.toISOString(),
+          startDate: startDate.format(DATE_FORMAT),
           endDate: null
         }}
         usage={usage}

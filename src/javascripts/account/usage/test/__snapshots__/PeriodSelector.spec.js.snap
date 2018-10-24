@@ -24,13 +24,13 @@ exports[`PeriodSelector should render 1`] = `
       key="0"
       value="0"
     >
-      19 Nov – 18 Dec (current)
+      06 Jan – 05 Feb (current)
     </Option>
     <Option
       key="1"
       value="1"
     >
-      18 Oct – 18 Nov (6 days ago)
+      05 Dec – 05 Jan (a month ago)
     </Option>
   </Select>
 </span>

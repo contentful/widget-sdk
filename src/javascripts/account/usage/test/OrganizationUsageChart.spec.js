@@ -8,6 +8,8 @@ import sinon from 'sinon';
 import OrganisationUsageChart from '../committed/OrganisationUsageChart.es6';
 import EmptyChartPlaceholder from '../committed/EmptyChartPlaceholder.es6';
 
+const DATE_FORMAT = 'YYYY-MM-DD';
+
 describe('OrganizationUsageChart', () => {
   let clock = null;
   let testStartDate = null;
@@ -26,7 +28,7 @@ describe('OrganizationUsageChart', () => {
     shallow(
       <OrganisationUsageChart
         period={{
-          startDate: testStartDate.toISOString(),
+          startDate: testStartDate.format(DATE_FORMAT),
           endDate: null
         }}
         usage={[1, 2, 3]}
@@ -115,7 +117,7 @@ describe('OrganizationUsageChart', () => {
           period={{
             startDate: moment()
               .subtract(2, 'days')
-              .toISOString(),
+              .format(DATE_FORMAT),
             endDate: null
           }}
           usage={[]}
@@ -145,7 +147,7 @@ describe('OrganizationUsageChart', () => {
           period={{
             startDate: moment()
               .subtract(12, 'days')
-              .toISOString(),
+              .format(DATE_FORMAT),
             endDate: null
           }}
           usage={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]}

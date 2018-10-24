@@ -6,16 +6,31 @@ import { Select } from '@contentful/ui-component-library';
 
 import PeriodSelector from '../committed/PeriodSelector.es6';
 
+const DATE_FORMAT = 'YYYY-MM-DD';
+
 let wrapper = null;
 let props = null;
 describe('PeriodSelector', () => {
+  let clock = null;
+
+  beforeAll(() => {
+    // set fixed date for stable snapshots
+    clock = sinon.useFakeTimers(moment('2017-12-01').unix());
+  });
+
+  afterAll(() => {
+    clock.restore();
+  });
+
   beforeEach(() => {
-    const startDate = moment('2018-12-01').subtract(12, 'days');
+    const startDate = moment()
+      .startOf('day')
+      .subtract(12, 'days');
     props = {
       periods: [
         {
           sys: { type: 'UsagePeriod', id: 'period1' },
-          startDate: startDate.toISOString(),
+          startDate: startDate.format(DATE_FORMAT),
           endDate: null
         },
         {
@@ -23,10 +38,10 @@ describe('PeriodSelector', () => {
           startDate: moment(startDate)
             .subtract(1, 'day')
             .subtract(1, 'month')
-            .toISOString(),
+            .format(DATE_FORMAT),
           endDate: moment(startDate)
             .subtract(1, 'day')
-            .toISOString()
+            .format(DATE_FORMAT)
         }
       ],
       selectedPeriodIndex: 0,
