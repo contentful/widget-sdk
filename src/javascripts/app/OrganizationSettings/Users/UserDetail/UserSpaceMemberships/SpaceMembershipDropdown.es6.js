@@ -44,6 +44,7 @@ export default class UserDropdown extends React.Component {
         isOpen={this.state.isOpen}
         toggleElement={
           <IconButton
+            label="Actions"
             iconProps={{
               icon: 'MoreHorizontal'
             }}

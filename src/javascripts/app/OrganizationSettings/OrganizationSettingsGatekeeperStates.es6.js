@@ -2,7 +2,7 @@ import { flow } from 'lodash/fp';
 
 import { h } from 'utils/legacy-html-hyperscript';
 import { onFeatureFlag } from 'utils/LaunchDarkly';
-import UsersState from './Users/UsersState.es6';
+import usersState, { userDetailState } from './Users/UsersState.es6';
 import organizationBase from './OrganizationSettingsBaseState.es6';
 
 const newOrg = {
@@ -73,7 +73,12 @@ function gatekeeperBase(definition) {
 
         $scope.properties = {
           orgId: $stateParams.orgId,
-          context: $scope.context
+          userId: $stateParams.userId,
+          context: $scope.context,
+          onReady: () => {
+            $scope.context.ready = true;
+            $scope.$applyAsync();
+          }
         };
       }
     ],
@@ -118,7 +123,8 @@ function getIframeTemplate(title, hideHeader) {
 }
 
 export default [
-  UsersState,
+  usersState,
+  userDetailState,
   newOrg,
   spaces,
   offsitebackup,

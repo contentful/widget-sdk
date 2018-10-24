@@ -7,7 +7,7 @@ import Workbench from 'ui/Components/Workbench/JSX.es6';
 import { go } from 'states/Navigator.es6';
 import { Button } from '@contentful/ui-component-library';
 
-import { SpaceMembership, OrganizationMembership } from '../PropTypes.es6';
+import { SpaceMembership, OrganizationMembership, Space, SpaceRole } from '../PropTypes.es6';
 import { OrganizationRoleSelector } from './OrganizationRoleSelector.es6';
 import {
   removeMembership,
@@ -29,6 +29,8 @@ class UserDetail extends React.Component {
     }),
     initialMembership: OrganizationMembership.isRequired,
     spaceMemberships: PropTypes.arrayOf(SpaceMembership).isRequired,
+    spaces: PropTypes.arrayOf(Space).isRequired,
+    roles: PropTypes.arrayOf(SpaceRole).isRequired,
     orgId: PropTypes.string.isRequired
   };
 
@@ -136,7 +138,7 @@ class UserDetail extends React.Component {
   }
 
   render() {
-    const { spaceMemberships, orgId } = this.props;
+    const { spaceMemberships, spaces, roles, orgId } = this.props;
     const { membership, disableOwnerRole } = this.state;
     const { user } = membership.sys;
 
@@ -176,7 +178,13 @@ class UserDetail extends React.Component {
             </section>
 
             <h3 style={{ marginBottom: 30 }}>Space memberships</h3>
-            <UserSpaceMemberships initialMemberships={spaceMemberships} user={user} orgId={orgId} />
+            <UserSpaceMemberships
+              initialMemberships={spaceMemberships}
+              user={user}
+              spaces={spaces}
+              roles={roles}
+              orgId={orgId}
+            />
           </div>
         </Workbench.Content>
       </Workbench>
