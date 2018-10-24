@@ -13,7 +13,7 @@ const UserListFetcher = createFetcherComponent(({ orgId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
   const resources = createResourceService(orgId, 'organization');
   return Promise.all([
-    resources.get('organization_membership'),
+    resources.get('organizationMembership'),
     getAllSpaces(endpoint),
     getAllRoles(endpoint),
     getOrganization(orgId)
