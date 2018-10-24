@@ -18,6 +18,7 @@ import ResolveLinks from '../../LinkResolver.es6';
 import Workbench from 'ui/Components/Workbench/JSX.es6';
 import UserDropdown from './UserDropdown.es6';
 import UserListFilters from './UserListFilters.es6';
+import UserCard from '../Common/UserCard.es6';
 import { href, go } from 'states/Navigator.es6';
 import {
   getMemberships,
@@ -179,16 +180,8 @@ class UsersList extends React.Component {
                 {usersList.map(membership => (
                   <TableRow key={membership.sys.id} onClick={() => this.goToUser(membership)}>
                     <TableCell>
-                      {membership.sys.user.firstName && (
-                        <img
-                          style={{ verticalAlign: 'middle', marginRight: '5px' }}
-                          src={membership.sys.user.avatarUrl}
-                          width="32"
-                          height="32"
-                        />
-                      )}
                       {membership.sys.user.firstName ? (
-                        `${membership.sys.user.firstName} ${membership.sys.user.lastName}`
+                        <UserCard user={membership.sys.user} />
                       ) : (
                         <Pill label="Invited" />
                       )}
