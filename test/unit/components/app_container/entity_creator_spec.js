@@ -64,12 +64,7 @@ describe('entityCreator', () => {
       });
 
       it('determines enforcements', function() {
-        sinon.assert.calledWith(
-          stubs.enforcement,
-          this.spaceContext.space.organization,
-          [],
-          'entry'
-        );
+        sinon.assert.calledWith(stubs.enforcement, this.spaceContext.space, [], 'entry');
       });
 
       it('notifies of the error', function() {
@@ -111,12 +106,7 @@ describe('entityCreator', () => {
       });
 
       it('determines enforcements', function() {
-        sinon.assert.calledWith(
-          stubs.enforcement,
-          this.spaceContext.space.organization,
-          [],
-          'asset'
-        );
+        sinon.assert.calledWith(stubs.enforcement, this.spaceContext.space, [], 'asset');
       });
 
       it('notifies of the error', function() {

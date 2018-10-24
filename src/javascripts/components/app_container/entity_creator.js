@@ -31,7 +31,7 @@ angular.module('contentful').factory('entityCreator', [
 
         if (_.get(err, 'body.details.reasons')) {
           const enforcement = enforcements.determineEnforcement(
-            spaceContext.organization,
+            spaceContext.space,
             err.body.details.reasons,
             entityType
           );

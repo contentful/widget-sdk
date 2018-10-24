@@ -163,7 +163,7 @@ describe('Access Checker', () => {
         const enforcement = { message: 'ENFORCEMENT MSG' };
         reasonsDeniedStub.withArgs('read', 'Entry').returns(reasons);
         enforcements.determineEnforcement
-          .withArgs(mockSpace.organization, reasons, 'Entry')
+          .withArgs(mockSpace, reasons, 'Entry')
           .returns(enforcement);
         triggerChange();
         sinon.assert.calledOnce(broadcastStub.withArgs(enforcement));
@@ -304,11 +304,7 @@ describe('Access Checker', () => {
         getResStub.withArgs('update', entity.data).returns(false);
         ac.canPerformActionOnEntity('update', entity);
         sinon.assert.calledOnce(
-          enforcements.determineEnforcement.withArgs(
-            mockSpace.organization,
-            reasons,
-            entity.data.sys.type
-          )
+          enforcements.determineEnforcement.withArgs(mockSpace, reasons, entity.data.sys.type)
         );
       });
     });
@@ -617,7 +613,7 @@ describe('Access Checker', () => {
         canStub.returns(false);
         reasonsDeniedStub.withArgs('create', 'Space').returns(reasons);
         enforcements.determineEnforcement
-          .withArgs(mockSpace.organization, reasons, 'Space')
+          .withArgs(mockSpace, reasons, 'Space')
           .returns(enforcement);
         expect(ac.canCreateSpace()).toBe(false);
         sinon.assert.calledOnce(broadcastStub.withArgs(enforcement));
