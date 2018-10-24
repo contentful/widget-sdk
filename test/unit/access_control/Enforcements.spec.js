@@ -39,6 +39,9 @@ describe('access_control/Enforcements.es6', () => {
             }
           }
         }
+      },
+      sys: {
+        id: 'space_1234'
       }
     };
   });
