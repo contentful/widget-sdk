@@ -4,20 +4,9 @@ import { mapValues, flow, keyBy, get, eq, isNumber, pick } from 'lodash/fp';
 
 import { Spinner } from '@contentful/ui-component-library';
 
-import { trigger } from 'ReloadNotification';
-import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
-import { getAllSpaces } from 'access_control/OrganizationMembershipRepository.es6';
-import {
-  isEnterprisePlan,
-  getBasePlan,
-  getPlansWithSpaces
-} from 'account/pricing/PricingDataProvider.es6';
-import createResourceService from 'services/ResourceService.es6';
-import { getOrganization } from 'services/TokenStore.es6';
-import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import Workbench from 'app/WorkbenchReact.es6';
-import { track } from 'analytics/Analytics.es6';
-import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
+
+const ServicesConsumer = require('../../reactServiceContext').default;
 
 import OrganizationResourceUsageList from './non_committed/OrganizationResourceUsageList.es6';
 import OrganizationUsagePage from './committed/OrganizationUsagePage.es6';
@@ -25,23 +14,140 @@ import { getPeriods, getOrgUsage, getApiUsage } from './UsageService.es6';
 import PeriodSelector from './committed/PeriodSelector.es6';
 import NoSpacesPlaceholder from './NoSpacesPlaceholder.es6';
 
-export default class OrganizationUsage extends React.Component {
+export class WorkbenchContent extends React.Component {
+  static propTypes = {
+    committed: PropTypes.bool,
+    flagActive: PropTypes.bool,
+    hasSpaces: PropTypes.bool,
+    selectedPeriodIndex: PropTypes.number,
+    spaceNames: PropTypes.objectOf(PropTypes.string),
+    isPoC: PropTypes.objectOf(PropTypes.bool),
+    periodicUsage: PropTypes.object,
+    apiRequestIncludedLimit: PropTypes.number,
+    assetBandwidthUsage: PropTypes.number,
+    assetBandwidthIncludedLimit: PropTypes.number,
+    assetBandwidthUOM: PropTypes.string,
+    isLoading: PropTypes.bool,
+    periods: PropTypes.arrayOf(PropTypes.object),
+    resources: PropTypes.arrayOf(PropTypes.object)
+  };
+
+  render() {
+    const {
+      committed,
+      flagActive,
+      hasSpaces,
+      selectedPeriodIndex,
+      spaceNames,
+      isPoC,
+      periodicUsage,
+      apiRequestIncludedLimit,
+      assetBandwidthUsage,
+      assetBandwidthIncludedLimit,
+      assetBandwidthUOM,
+      isLoading,
+      periods,
+      resources
+    } = this.props;
+
+    if (committed && flagActive) {
+      if (!hasSpaces) {
+        return <NoSpacesPlaceholder />;
+      }
+      if (typeof selectedPeriodIndex !== 'undefined') {
+        return (
+          <OrganizationUsagePage
+            {...{
+              period: periods[selectedPeriodIndex],
+              spaceNames,
+              isPoC,
+              periodicUsage,
+              apiRequestIncludedLimit,
+              assetBandwidthUsage,
+              assetBandwidthIncludedLimit,
+              assetBandwidthUOM,
+              isLoading
+            }}
+          />
+        );
+      }
+    } else {
+      if (typeof resources !== 'undefined') {
+        return <OrganizationResourceUsageList resources={resources} />;
+      }
+    }
+    return <div />;
+  }
+}
+
+export class WorkbenchActions extends React.Component {
+  static propTypes = {
+    isLoading: PropTypes.bool,
+    hasSpaces: PropTypes.bool,
+    committed: PropTypes.bool,
+    flagActive: PropTypes.bool,
+    periods: PropTypes.array,
+    selectedPeriodIndex: PropTypes.number,
+    setPeriodIndex: PropTypes.func
+  };
+
+  render() {
+    const {
+      isLoading,
+      hasSpaces,
+      committed,
+      flagActive,
+      periods,
+      selectedPeriodIndex,
+      setPeriodIndex
+    } = this.props;
+
+    return isLoading ? (
+      <Spinner />
+    ) : hasSpaces && committed && flagActive && periods ? (
+      <PeriodSelector
+        periods={periods}
+        selectedPeriodIndex={selectedPeriodIndex}
+        onChange={setPeriodIndex}
+      />
+    ) : null;
+  }
+}
+
+export class OrganizationUsage extends React.Component {
   static propTypes = {
     orgId: PropTypes.string.isRequired,
     onReady: PropTypes.func.isRequired,
-    onForbidden: PropTypes.func.isRequired
+    onForbidden: PropTypes.func.isRequired,
+    $services: PropTypes.shape({
+      OrganizationRoles: PropTypes.object.isRequired,
+      PricingDataProvider: PropTypes.object.isRequired,
+      ResourceService: PropTypes.object.isRequired,
+      ReloadNotification: PropTypes.object.isRequired,
+      OrganizationMembershipRepository: PropTypes.object.isRequired,
+      EndpointFactory: PropTypes.object.isRequired,
+      Analytics: PropTypes.object.isRequired,
+      LaunchDarkly: PropTypes.object.isRequired,
+      TokenStore: PropTypes.object.isRequired
+    }).isRequired
   };
 
   constructor(props) {
     super(props);
+
     this.state = { isLoading: true };
 
-    this.endpoint = createOrganizationEndpoint(props.orgId);
+    this.endpoint = this.props.$services.EndpointFactory.createOrganizationEndpoint(props.orgId);
     this.setPeriodIndex = this.setPeriodIndex.bind(this);
   }
 
   async componentDidMount() {
-    const { onForbidden } = this.props;
+    const {
+      onForbidden,
+      $services: {
+        LaunchDarkly: { getCurrentVariation }
+      }
+    } = this.props;
 
     this.setState({ flagActive: await getCurrentVariation('feature-bizvel-09-2018-usage') });
 
@@ -54,7 +160,13 @@ export default class OrganizationUsage extends React.Component {
   }
 
   async checkPermissions() {
-    const { orgId } = this.props;
+    const {
+      orgId,
+      $services: {
+        TokenStore: { getOrganization },
+        OrganizationRoles: { isOwnerOrAdmin }
+      }
+    } = this.props;
     const organization = await getOrganization(orgId);
 
     if (!isOwnerOrAdmin(organization)) {
@@ -63,11 +175,20 @@ export default class OrganizationUsage extends React.Component {
   }
 
   async fetchOrgData() {
-    const { orgId, onReady } = this.props;
+    const {
+      orgId,
+      onReady,
+      $services: {
+        OrganizationMembershipRepository: { getAllSpaces },
+        PricingDataProvider: { isEnterprisePlan, getBasePlan, getPlansWithSpaces },
+        ResourceService,
+        ReloadNotification
+      }
+    } = this.props;
     const { flagActive } = this.state;
-    const service = createResourceService(orgId, 'organization');
 
     try {
+      const service = ResourceService.default(orgId, 'organization');
       const basePlan = await getBasePlan(this.endpoint);
       const committed = isEnterprisePlan(basePlan);
 
@@ -126,12 +247,18 @@ export default class OrganizationUsage extends React.Component {
         throw e;
       }
 
-      trigger();
+      ReloadNotification.trigger();
     }
   }
 
   async loadPeriodData(newIndex) {
     const { periods } = this.state;
+    const {
+      $services: {
+        Analytics: { track },
+        ReloadNotification
+      }
+    } = this.props;
     const newPeriod = periods[newIndex];
     if (isNumber(this.state.selectedPeriodIndex)) {
       const oldPeriod = periods[this.state.selectedPeriodIndex];
@@ -151,7 +278,7 @@ export default class OrganizationUsage extends React.Component {
         selectedPeriodIndex: newIndex
       });
     } catch (e) {
-      trigger();
+      ReloadNotification.trigger();
     }
   }
 
@@ -183,46 +310,75 @@ export default class OrganizationUsage extends React.Component {
         testId="organization.usage"
         title="Usage"
         actions={
-          isLoading ? (
-            <Spinner />
-          ) : hasSpaces && committed && flagActive && periods ? (
-            <PeriodSelector
-              periods={periods}
-              selectedPeriodIndex={selectedPeriodIndex}
-              onChange={this.setPeriodIndex}
-            />
-          ) : (
-            undefined
-          )
+          <WorkbenchActions
+            {...{
+              isLoading,
+              hasSpaces,
+              committed,
+              flagActive,
+              periods,
+              selectedPeriodIndex,
+              setPeriodIndex: this.setPeriodIndex
+            }}
+          />
         }
-        content={(function() {
-          if (committed && flagActive) {
-            if (!hasSpaces) {
-              return <NoSpacesPlaceholder />;
-            }
-            if (typeof selectedPeriodIndex !== 'undefined') {
-              return (
-                <OrganizationUsagePage
-                  period={periods[selectedPeriodIndex]}
-                  spaceNames={spaceNames}
-                  isPoC={isPoC}
-                  periodicUsage={periodicUsage}
-                  apiRequestIncludedLimit={apiRequestIncludedLimit}
-                  assetBandwidthUsage={assetBandwidthUsage}
-                  assetBandwidthIncludedLimit={assetBandwidthIncludedLimit}
-                  assetBandwidthUOM={assetBandwidthUOM}
-                  isLoading={isLoading}
-                />
-              );
-            }
-          } else {
-            if (typeof resources !== 'undefined') {
-              return <OrganizationResourceUsageList resources={resources} />;
-            }
-          }
-          return <div />;
-        })()}
+        content={
+          <WorkbenchContent
+            {...{
+              committed,
+              flagActive,
+              hasSpaces,
+              selectedPeriodIndex,
+              spaceNames,
+              isPoC,
+              periodicUsage,
+              apiRequestIncludedLimit,
+              assetBandwidthUsage,
+              assetBandwidthIncludedLimit,
+              assetBandwidthUOM,
+              isLoading,
+              periods,
+              resources
+            }}
+          />
+        }
       />
     );
   }
 }
+
+export default ServicesConsumer(
+  'ReloadNotification',
+  {
+    from: 'utils/LaunchDarkly/index.es6',
+    as: 'LaunchDarkly'
+  },
+  {
+    from: 'services/OrganizationRoles.es6',
+    as: 'OrganizationRoles'
+  },
+  {
+    from: 'services/ResourceService.es6',
+    as: 'ResourceService'
+  },
+  {
+    from: 'account/pricing/PricingDataProvider.es6',
+    as: 'PricingDataProvider'
+  },
+  {
+    from: 'access_control/OrganizationMembershipRepository.es6',
+    as: 'OrganizationMembershipRepository'
+  },
+  {
+    from: 'data/EndpointFactory.es6',
+    as: 'EndpointFactory'
+  },
+  {
+    from: 'services/TokenStore.es6',
+    as: 'TokenStore'
+  },
+  {
+    from: 'analytics/Analytics.es6',
+    as: 'Analytics'
+  }
+)(OrganizationUsage);

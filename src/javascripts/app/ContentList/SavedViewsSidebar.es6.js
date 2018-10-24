@@ -54,7 +54,7 @@ export default function({ entityFolders, loadView, getCurrentView, roleAssignmen
   const TabButton = ({ selector, value, label }) => {
     return (
       <li
-        ariaSelected={`${selector.state === value}`}
+        aria-selected={`${selector.state === value}`}
         role="tab"
         style={{
           fontSize: '14px',

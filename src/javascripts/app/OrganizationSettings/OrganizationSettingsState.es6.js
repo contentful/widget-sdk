@@ -32,5 +32,5 @@ export default Base({
       template: '<cf-organization-nav class="app-top-bar__child" />'
     }
   },
-  children: [reactBase(UsageState), reactBase(SubscriptionState), ...GatekeeperStates]
+  children: [UsageState, reactBase(SubscriptionState), ...GatekeeperStates]
 });
