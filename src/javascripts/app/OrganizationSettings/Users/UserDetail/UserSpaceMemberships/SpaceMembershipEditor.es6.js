@@ -132,13 +132,13 @@ class SpaceMembershipEditor extends React.Component {
       items: [membership]
     });
 
-    if (isEditing) {
-      onMembershipChanged && onMembershipChanged(resolved);
-    } else {
-      onMembershipCreated && onMembershipCreated(resolved);
-    }
-
-    this.setState({ busy: false });
+    this.setState({ busy: false }, () => {
+      if (isEditing) {
+        onMembershipChanged && onMembershipChanged(resolved);
+      } else {
+        onMembershipCreated && onMembershipCreated(resolved);
+      }
+    });
   }
 
   render() {

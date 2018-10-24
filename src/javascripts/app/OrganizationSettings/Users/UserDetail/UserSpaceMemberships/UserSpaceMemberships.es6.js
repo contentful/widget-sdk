@@ -4,7 +4,9 @@ import { without, findIndex, map } from 'lodash';
 
 import {
   SpaceMembership as SpaceMembershipPropType,
-  User as UserPropType
+  User as UserPropType,
+  SpaceRole as SpaceRolePropType,
+  Space as SpacePropType
 } from '../../PropTypes.es6';
 
 import { joinWithAnd } from 'utils/StringUtils.es6';
@@ -34,7 +36,9 @@ class UserSpaceMemberships extends React.Component {
     }).isRequired,
     initialMemberships: PropTypes.arrayOf(SpaceMembershipPropType),
     user: UserPropType.isRequired,
-    orgId: PropTypes.string
+    orgId: PropTypes.string,
+    roles: PropTypes.arrayOf(SpaceRolePropType),
+    spaces: PropTypes.arrayOf(SpacePropType)
   };
 
   state = {
@@ -42,9 +46,7 @@ class UserSpaceMemberships extends React.Component {
     showingForm: false,
     editingMembershipId: null,
     loadingSpaces: false,
-    spaces: [],
-    roles: [],
-    availableSpaces: []
+    availableSpaces: this.getAvailableSpaces(this.props.initialMemberships)
   };
 
   orgEndpoint = this.props.$services.EndpointFactory.createOrganizationEndpoint(this.props.orgId);
@@ -65,23 +67,10 @@ class UserSpaceMemberships extends React.Component {
     this.setState({ roles });
   };
 
-  showSpaceMembershipEditor = async () => {
-    const { getAllSpaces } = this.props.$services.OrganizationMembershipRepository;
-    const { spaces, memberships } = this.state;
-
-    // only load the first time
-    if (!spaces.length) {
-      this.setState({ loadingSpaces: true });
-      const allSpaces = await getAllSpaces(this.orgEndpoint);
-
-      this.setState({
-        spaces: allSpaces,
-        availableSpaces: this.getAvailableSpaces(allSpaces, memberships),
-        loadingSpaces: false
-      });
-    }
-
-    this.setState({ showingForm: true });
+  showSpaceMembershipEditor = () => {
+    this.setState({
+      showingForm: true
+    });
   };
 
   hideSpaceMembershipEditor = () => {
@@ -90,14 +79,13 @@ class UserSpaceMemberships extends React.Component {
 
   handleMembershipCreated = newMembership => {
     const { user, $services } = this.props;
-    const { spaces, memberships } = this.state;
+    const { memberships } = this.state;
     const updatedMemberships = [...memberships, newMembership];
 
     this.setState({
       memberships: updatedMemberships,
-      availableSpaces: this.getAvailableSpaces(spaces, updatedMemberships)
+      availableSpaces: this.getAvailableSpaces(updatedMemberships)
     });
-
     this.hideSpaceMembershipEditor();
 
     $services.notification.info(`
@@ -106,7 +94,7 @@ class UserSpaceMemberships extends React.Component {
   };
 
   handleMembershipRemove = async membership => {
-    const { spaces, memberships } = this.state;
+    const { memberships } = this.state;
     const { user, $services } = this.props;
     const { space } = membership.sys;
     const repo = this.createRepoFromSpaceMembership(membership);
@@ -141,7 +129,7 @@ class UserSpaceMemberships extends React.Component {
 
     this.setState({
       memberships: updatedMemberships,
-      availableSpaces: this.getAvailableSpaces(spaces, updatedMemberships)
+      availableSpaces: this.getAvailableSpaces(updatedMemberships)
     });
 
     $services.notification.info(`
@@ -168,7 +156,8 @@ class UserSpaceMemberships extends React.Component {
     `);
   };
 
-  getAvailableSpaces(spaces, memberships) {
+  getAvailableSpaces(memberships) {
+    const { spaces } = this.props;
     const membershipSpaceIds = map(memberships, 'sys.space.sys.id');
 
     return spaces
@@ -179,8 +168,8 @@ class UserSpaceMemberships extends React.Component {
   }
 
   getUnavailabilityReason() {
-    const { user } = this.props;
-    const { spaces, availableSpaces } = this.state;
+    const { spaces, user } = this.props;
+    const { availableSpaces } = this.state;
 
     if (spaces.length === 0) {
       return 'There are no spaces available. Please create a space first';
