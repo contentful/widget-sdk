@@ -17,13 +17,15 @@ export default function template() {
         h('.home__content-body', [
           h('p', [
             'All of your existing content is saved, but you canʼt add or edit anything. ',
-            h('span', { ngIf: 'orgOwner' }, ['Get in touch with us to continue work.']),
-            h('span', { ngIf: '!orgOwner' }, ['Weʼve informed your Contentful admin about it.'])
+            h('span', { ngIf: 'orgOwnerOrAdmin' }, ['Get in touch with us to continue work.']),
+            h('span', { ngIf: '!orgOwnerOrAdmin' }, [
+              'Weʼve informed your Contentful admin about it.'
+            ])
           ]),
           h(
             'a.btn-action',
             {
-              ngIf: 'orgOwner',
+              ngIf: 'orgOwnerOrAdmin',
               target: '_blank',
               href: '{{supportUrl}}'
             },

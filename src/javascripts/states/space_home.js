@@ -39,7 +39,7 @@ angular
               Config.supportUrl
             }?read-only-space=true&space-id=${spaceId}&space-name=${spaceName}`;
 
-            $scope.orgOwner = OrganizationRoles.isOwner(space.organization);
+            $scope.orgOwnerOrAdmin = OrganizationRoles.isOwnerOrAdmin(space.organization);
           }
         ]
       });
