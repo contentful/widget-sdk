@@ -52,6 +52,9 @@ export const Filter = PropTypes.shape({
 
 export const SpaceRole = PropTypes.shape({
   name: PropTypes.string.isRequired,
+  description: PropTypes.string,
+  permissions: PropTypes.object,
+  policies: PropTypes.array,
   sys: PropTypes.shape({
     id: PropTypes.string.isRequired
   }).isRequired
