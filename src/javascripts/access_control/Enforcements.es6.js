@@ -59,7 +59,7 @@ export function determineEnforcement(space, reasons, entityType) {
     {
       label: 'readOnlySpace',
       message: () => {
-        if (OrganizationRoles.isOwner(organization)) {
+        if (OrganizationRoles.isOwnerOrAdmin(organization)) {
           return `This space is set to read-only. Contact us to continue work.`;
         } else {
           return 'This space is set to read-only. Contact your organization administrator to continue work.';
@@ -71,7 +71,7 @@ export function determineEnforcement(space, reasons, entityType) {
         const spaceName = space.name;
         const talkToUsHref = `${supportUrl}?read-only-space=true&space-id=${spaceId}&space-name=${spaceName}`;
 
-        if (OrganizationRoles.isOwner(organization)) {
+        if (OrganizationRoles.isOwnerOrAdmin(organization)) {
           return {
             text: 'Talk to us',
             href: talkToUsHref
