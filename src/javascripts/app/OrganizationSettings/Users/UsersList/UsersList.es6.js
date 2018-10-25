@@ -26,6 +26,7 @@ import {
 } from 'access_control/OrganizationMembershipRepository.es6';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { getFilterDefinitions } from './FilterDefinitions.es6';
+import { getLastActivityDate } from '../Common/LastActivityDate.es6';
 
 const ServicesConsumer = require('../../../../reactServiceContext').default;
 
@@ -170,10 +171,9 @@ class UsersList extends React.Component {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Email</TableCell>
-                  <TableCell>Organization role</TableCell>
-                  <TableCell />
+                  <TableCell width="50">User</TableCell>
+                  <TableCell width="200">Organization role</TableCell>
+                  <TableCell colSpan="2">Last active</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -186,8 +186,8 @@ class UsersList extends React.Component {
                         <Pill label="Invited" />
                       )}
                     </TableCell>
-                    <TableCell>{membership.sys.user.email}</TableCell>
                     <TableCell>{startCase(membership.role)}</TableCell>
+                    <TableCell>{getLastActivityDate(membership)}</TableCell>
                     <TableCell align="right">
                       <UserDropdown
                         membership={membership}
