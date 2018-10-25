@@ -51,6 +51,10 @@ This is a list of all the guides for developing the Contentful web application.
 * How to write JS code documentation
 * How to browse the documentation
 
+## [Interop between React and Angular](./react-angular-interop.md)
+* How to use React components in Angular
+* Best practice to use Angular services in React components (Caveat!)
+
 ## [Writing ES6](./es6.md)
 
 * How to write ES6 code for Angular
