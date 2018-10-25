@@ -12,7 +12,8 @@ export const blockTitles = {
   [BLOCKS.HEADING_5]: 'Heading 5',
   [BLOCKS.HEADING_6]: 'Heading 6',
   [BLOCKS.PARAGRAPH]: 'Normal Text',
-  [BLOCKS.EMBEDDED_ENTRY]: 'Embedded Entry'
+  [BLOCKS.EMBEDDED_ENTRY]: 'Embedded Entry',
+  [BLOCKS.EMBEDDED_ASSET]: 'Embedded Asset'
 };
 
 class HeadingDropdown extends Component {
