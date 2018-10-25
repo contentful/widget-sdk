@@ -16,7 +16,7 @@ export default function template() {
         h('.home__content-title', ['You’re viewing a read-only space 🛋']),
         h('.home__content-body', [
           h('p', [
-            'All of your existing content is saved, but you canʼt add or edit anything. ',
+            'All of your existing content is saved, but you canʼt create or edit anything. ',
             h('span', { ngIf: 'orgOwnerOrAdmin' }, ['Get in touch with us to continue work.']),
             h('span', { ngIf: '!orgOwnerOrAdmin' }, [
               'Weʼve informed your Contentful admin about it.'

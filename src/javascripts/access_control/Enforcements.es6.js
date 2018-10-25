@@ -59,10 +59,12 @@ export function determineEnforcement(space, reasons, entityType) {
     {
       label: 'readOnlySpace',
       message: () => {
+        const baseMessage =
+          'You’re viewing a read-only space. All of your existing content is saved, but you canʼt create or edit anything. ';
         if (OrganizationRoles.isOwnerOrAdmin(organization)) {
-          return `This space is set to read-only. Contact us to continue work.`;
+          return `${baseMessage}Get in touch with us to continue work.`;
         } else {
-          return 'This space is set to read-only. Contact your organization administrator to continue work.';
+          return `${baseMessage}Weʼve informed your Contentful admin about it.`;
         }
       },
       icon: 'info',
@@ -73,7 +75,7 @@ export function determineEnforcement(space, reasons, entityType) {
 
         if (OrganizationRoles.isOwnerOrAdmin(organization)) {
           return {
-            text: 'Talk to us',
+            text: 'Talk to support',
             href: talkToUsHref
           };
         }
