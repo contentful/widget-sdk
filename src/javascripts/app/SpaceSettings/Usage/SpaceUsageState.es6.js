@@ -3,13 +3,22 @@ import { can } from 'access_control/AccessChecker';
 export default {
   name: 'usage',
   url: '/usage',
-  template: '<cf-space-usage />',
+  template: '<react-component name="app/SpaceSettings/Usage/SpaceUsage.es6" props="props" />',
   controller: [
     '$state',
-    $state => {
+    '$scope',
+    'require',
+    ($state, $scope, require) => {
+      const spaceContext = require('spaceContext');
+
       const hasAccess = can('update', 'settings');
       if (!hasAccess) {
         $state.go('spaces.detail');
+      } else {
+        $scope.props = {
+          spaceId: spaceContext.getId(),
+          orgId: spaceContext.organization.sys.id
+        };
       }
     }
   ]
