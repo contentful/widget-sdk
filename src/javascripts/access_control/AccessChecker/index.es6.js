@@ -36,7 +36,8 @@ export const Action = {
   PUBLISH: 'publish',
   UNPUBLISH: 'unpublish',
   ARCHIVE: 'archive',
-  UNARCHIVE: 'unarchive'
+  UNARCHIVE: 'unarchive',
+  MANAGE: 'manage'
 };
 
 const ACTIONS_FOR_ENTITIES = {
@@ -96,7 +97,7 @@ export const isInitialized$ = isInitializedBus.property.skipDuplicates();
 export const shouldHide = (action, entityType) => {
   // Explicitly hide if read permissions are denied, regardless of
   // shouldDisable.
-  if (!isAllowed('read', entityType)) {
+  if (!isAllowed(Action.READ, entityType)) {
     return true;
   }
 
@@ -289,11 +290,11 @@ export function canPerformActionOnEntity(action, entity) {
  */
 export function canUpdateEntry(entry) {
   // Explicitly check if permission is denied for update on Entry first
-  if (!isAllowed('update', 'entry')) {
+  if (!isAllowed(Action.UPDATE, 'entry')) {
     return false;
   }
 
-  const canUpdate = canPerformActionOnEntity('update', entry);
+  const canUpdate = canPerformActionOnEntity(Action.UPDATE, entry);
   const ctId = getContentTypeIdFor(entry);
   const canUpdateThisType = policyChecker.canUpdateEntriesOfType(ctId);
   const canUpdateOwn = policyChecker.canUpdateOwnEntries();
@@ -310,11 +311,11 @@ export function canUpdateEntry(entry) {
  */
 export function canUpdateAsset(asset) {
   // Explicitly check if permission is denied for update on Asset first
-  if (!isAllowed('update', 'asset')) {
+  if (!isAllowed(Action.UPDATE, 'asset')) {
     return false;
   }
 
-  const canUpdate = canPerformActionOnEntity('update', asset);
+  const canUpdate = canPerformActionOnEntity(Action.UPDATE, asset);
   const canUpdateWithPolicy = policyChecker.canUpdateAssets();
   const canUpdateOwn = policyChecker.canUpdateOwnAssets();
 
@@ -343,14 +344,24 @@ export function canUpdateEntity(entity) {
 }
 
 /**
+ * @name accessChecker#canCreateAsset
+ * @returns {boolean}
+ * @description
+ * Returns true if the user can create assets.
+ */
+export function canCreateAsset() {
+  return canPerformActionOnType(Action.CREATE, 'asset');
+}
+
+/**
  * @name accessChecker#canUploadMultipleAssets
  * @returns {boolean}
  * @description
  * Returns true if multiple assets can be uploaded.
  */
 export function canUploadMultipleAssets() {
-  const canCreate = canPerformActionOnType('create', 'asset');
-  const canUpdate = canPerformActionOnType('update', 'asset');
+  const canCreate = canPerformActionOnType(Action.CREATE, 'asset');
+  const canUpdate = canPerformActionOnType(Action.UPDATE, 'asset');
   const canUpdateWithPolicy = policyChecker.canUpdateAssets() || policyChecker.canUpdateOwnAssets();
 
   return canCreate && (canUpdate || canUpdateWithPolicy);
@@ -388,7 +399,7 @@ export function canCreateSpace() {
 
   const response = checkIfCanCreateSpace(authContext);
   if (!response) {
-    broadcastEnforcement(getEnforcement('create', 'Space'));
+    broadcastEnforcement(getEnforcement(Action.CREATE, 'Space'));
   }
 
   return response;
@@ -440,19 +451,19 @@ function collectResponses() {
 
 function collectSectionVisibility() {
   sectionVisibility = {
-    contentType: can('manage', 'ContentType') || !shouldHide('read', 'apiKey'),
-    entry: !shouldHide('read', 'entry') || policyChecker.canAccessEntries(),
-    asset: !shouldHide('read', 'asset') || policyChecker.canAccessAssets(),
-    apiKey: isAllowed('read', 'settings') && !shouldHide('read', 'apiKey'),
-    settings: !shouldHide('update', 'settings'),
-    locales: !shouldHide('update', 'settings'),
-    extensions: !shouldHide('update', 'settings'),
-    users: !shouldHide('update', 'settings'),
-    roles: !shouldHide('update', 'settings'),
-    environments: isAllowed('read', 'settings') && can('manage', 'Environments'),
-    usage: !shouldHide('update', 'settings'),
-    previews: !shouldHide('update', 'settings'),
-    webhooks: !shouldHide('update', 'settings'),
+    contentType: can(Action.MANAGE, 'ContentType') || !shouldHide(Action.READ, 'apiKey'),
+    entry: !shouldHide(Action.READ, 'entry') || policyChecker.canAccessEntries(),
+    asset: !shouldHide(Action.READ, 'asset') || policyChecker.canAccessAssets(),
+    apiKey: isAllowed(Action.READ, 'settings') && !shouldHide(Action.READ, 'apiKey'),
+    settings: !shouldHide(Action.UPDATE, 'settings'),
+    locales: !shouldHide(Action.UPDATE, 'settings'),
+    extensions: !shouldHide(Action.UPDATE, 'settings'),
+    users: !shouldHide(Action.UPDATE, 'settings'),
+    roles: !shouldHide(Action.UPDATE, 'settings'),
+    environments: isAllowed(Action.READ, 'settings') && can(Action.MANAGE, 'Environments'),
+    usage: !shouldHide(Action.UPDATE, 'settings'),
+    previews: !shouldHide(Action.UPDATE, 'settings'),
+    webhooks: !shouldHide(Action.UPDATE, 'settings'),
     spaceHome: get(space, 'spaceMembership.admin')
   };
 }
@@ -514,7 +525,7 @@ function canPerformActionOnType(action, type) {
 function checkIfCanCreateSpace(context) {
   let response = false;
   try {
-    response = context.can('create', 'Space');
+    response = context.can(Action.CREATE, 'Space');
   } catch (e) {
     logger.logError('Worf exception - can create new space?', e);
   }

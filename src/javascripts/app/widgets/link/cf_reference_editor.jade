@@ -44,7 +44,7 @@ div(ng-show="!isReady")
 
   .link-editor__feature-at-11-2017-lots-of-cts-add-entry-and-link-reference(ng-if="isNewAddAndLinkRefButtonEnabled && !isDisabled && (!single || !entityModels.length)")
     cf-create-entry-button(
-      ng-if="type === 'Entry'"
+      ng-if="type === 'Entry' && isCreateActionEnabled"
       content-types="allowedCTs"
       on-select="addNewEntry"
       style="link"
@@ -52,15 +52,15 @@ div(ng-show="!isReady")
 
     button.btn-link(
       data-test-id="create-asset"
-      ng-if="type === 'Asset'"
+      ng-if="type === 'Asset' && isCreateActionEnabled"
       ng-click="isNewAddAndLinkRefButtonEnabled ? addNewAsset() : addNew($event)"
       type="button"
-      ng-disabled="!canAddNew")
+      ng-disabled="!isAssetCreationInProgress")
       cf-icon.btn-link__icon(
         name="add"
-        ng-if="canAddNew")
+        ng-if="isAssetCreationInProgress")
       .link-editor__create-asset-loading-spinner(
-        ng-if="!canAddNew")
+        ng-if="!isAssetCreationInProgress")
       | Create new asset and link
 
     button.btn-link(
