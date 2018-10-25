@@ -103,4 +103,32 @@ describe('account/pricing/PricingDataProvider.es6', () => {
       });
     });
   });
+
+  describe('#isSelfServicePlan', () => {
+    it('should return true for customer type "Self-service"', function() {
+      const plan = {
+        customerType: 'Self-service'
+      };
+
+      expect(this.PricingDataProvider.isSelfServicePlan(plan)).toBe(true);
+    });
+  });
+
+  describe('#isEnterprisePlan', () => {
+    it('should return true for customer type "Enterprise"', function() {
+      const plan = {
+        customerType: 'Enterprise'
+      };
+
+      expect(this.PricingDataProvider.isEnterprisePlan(plan)).toBe(true);
+    });
+
+    it('should return true for customer type "Enterprise Trial"', function() {
+      const plan = {
+        customerType: 'Enterprise Trial'
+      };
+
+      expect(this.PricingDataProvider.isEnterprisePlan(plan)).toBe(true);
+    });
+  });
 });
