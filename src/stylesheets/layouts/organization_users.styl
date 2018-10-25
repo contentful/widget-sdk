@@ -85,3 +85,17 @@
 .user-card__email,
 .user-card__name
   color: $colors.text-mid
+
+.membership-list__item__menu__button,
+.membership-list__item__menu__button:link
+  transition: none
+  margin-left: 10px
+  visibility: hidden
+.membership-list__item__menu__icon
+  display: inline-block
+
+.membership-list__item:hover
+  .membership-list__item__menu__button
+    visibility: visible
+  .membership-list__item__menu__icon
+    display: none
