@@ -181,7 +181,9 @@ class UsersList extends React.Component {
                   <TableRow key={membership.sys.id} className="membership-list__item">
                     <TableCell>
                       {membership.sys.user.firstName ? (
-                        <UserCard user={membership.sys.user} />
+                        <a href={this.getLinkToUser(membership)}>
+                          <UserCard user={membership.sys.user} />
+                        </a>
                       ) : (
                         <Pill label="Invited" />
                       )}
