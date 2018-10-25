@@ -67,7 +67,7 @@ export default function ServicesConsumerHOC(...selectedServices) {
             // the reason to do so – we have better visibility what we depend on
             // so we can analyze it and know what to refactor
             let pickedServices = {};
-            if (services) {
+            if (services && services.get) {
               pickedServices = selectedServices.reduce((acc, serviceConfig) => {
                 if (typeof serviceConfig === 'string') {
                   acc[serviceConfig] = services.get(serviceConfig);
@@ -76,6 +76,10 @@ export default function ServicesConsumerHOC(...selectedServices) {
                 }
                 return acc;
               }, {});
+            } else {
+              throw Error(
+                'ServicesConsumer cannot get services. Make sure ServicesConsumer is only used on descendants of a react-component directive.'
+              );
             }
             return <Component {...props} $services={pickedServices} />;
           }}
