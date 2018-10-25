@@ -152,12 +152,12 @@ export default function create() {
   }
 
   function createFragmentEl(item) {
-    return createLeafEl('div', item, { className: 'markdown-fragment' });
+    return createLeafEl('span', item, { className: 'markdown-fragment' });
   }
 
   function createParagraphEl(item, key) {
     const props = { key: key, className: 'markdown-paragraph markdown-block' };
-    return createParentEl('div', props, item.text);
+    return createParentEl('p', props, item.text);
   }
 
   function createInlineEl(item, key) {
