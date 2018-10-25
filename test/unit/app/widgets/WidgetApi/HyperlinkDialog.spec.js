@@ -11,13 +11,14 @@ describe('HyperlinkDialog', () => {
     linkTextInput: 'input[data-test-id="link-text-input"]',
     linkUriInput: 'input[data-test-id="link-uri-input"]',
     linkTypeSelect: 'select[data-test-id="link-type-select"]',
-    linkTypeSelectOptions: 'select[data-test-id="link-type-select"] option'
+    linkTypeSelectOptions: 'select[data-test-id="link-type-select"] option',
+    entitySelector: '[data-test-id="entity-selector-container"]',
+    fetchedEntityCard: '[data-test-id="cf-ui-reference-card"]'
   };
 
   beforeEach(function() {
     const system = createIsolatedSystem();
 
-    system.set('AngularComponent', { default: {} });
     system.set('search/EntitySelector/Config.es6', {
       getLabels: () => ({
         title: '',
@@ -27,6 +28,10 @@ describe('HyperlinkDialog', () => {
         searchPlaceholder: ''
       }),
       calculateIdealListHeight: () => 200
+    });
+
+    system.set('AngularComponent', {
+      default: () => <div />
     });
 
     this.importModule = async function importModule() {
@@ -152,15 +157,12 @@ describe('HyperlinkDialog', () => {
     );
 
     expect(wrapper.find(selectors.linkTypeSelect).exists()).toBe(true);
-    wrapper.find(selectors.linkTypeSelectOptions).map((element, index) => {
-      if (index === 0) {
-        // The first link type is hardcoded as "URL"
-        expect(element.text()).toEqual('URL');
-      } else {
-        // The following link types are dynamic based on entity selector configs
-        expect(element.text()).toEqual(Object.keys(entitySelectorConfigs)[index - 1]);
-      }
-    });
+    expect(
+      wrapper
+        .find(selectors.linkTypeSelectOptions)
+        .map(element => element.text())
+        .sort()
+    ).toEqual(['Asset', 'Entry', 'URL'].sort());
     expect(wrapper.find(selectors.linkTypeSelectOptions).length).toEqual(3);
   });
 
@@ -181,6 +183,54 @@ describe('HyperlinkDialog', () => {
 
     expect(wrapper.find(selectors.linkTypeSelect).exists()).toBe(false);
     expect(wrapper.find(selectors.linkTypeSelectOptions).length).toEqual(0);
+  });
+
+  it('does not render "url" option in link type field if not passed url in entity configs', async function() {
+    const Component = await this.importModule();
+    const allowedHyperlinkTypes = ['Asset', 'Entry'];
+    const entitySelectorConfigs = {
+      Entry: {},
+      Asset: {}
+    };
+
+    const wrapper = mount(
+      <Component
+        onConfirm={() => {}}
+        onCancel={() => {}}
+        allowedHyperlinkTypes={allowedHyperlinkTypes}
+        entitySelectorConfigs={entitySelectorConfigs}
+      />
+    );
+
+    expect(wrapper.find(selectors.linkTypeSelect).exists()).toBe(true);
+    expect(wrapper.find(selectors.linkTypeSelectOptions).length).toEqual(2);
+    expect(
+      wrapper
+        .find(selectors.linkTypeSelectOptions)
+        .map(element => element.text())
+        .sort()
+    ).toEqual(['Asset', 'Entry'].sort());
+  });
+
+  it('renders entity selector by default if link type is not URL', async function() {
+    const Component = await this.importModule();
+    const allowedHyperlinkTypes = ['Asset', 'Entry'];
+    const entitySelectorConfigs = {
+      Entry: {},
+      Asset: {}
+    };
+
+    const wrapper = mount(
+      <Component
+        onConfirm={() => {}}
+        onCancel={() => {}}
+        value={{}}
+        allowedHyperlinkTypes={allowedHyperlinkTypes}
+        entitySelectorConfigs={entitySelectorConfigs}
+      />
+    );
+
+    expect(wrapper.find(selectors.entitySelector).exists()).toBe(true);
   });
 
   it('calls an onRender function', async function() {

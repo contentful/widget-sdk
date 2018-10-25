@@ -11,15 +11,15 @@ import {
 import FetchedReferenceCard from 'app/widgets/rich_text/plugins/shared/FetchedReferenceCard';
 import Dialog from 'app/entity_editor/Components/Dialog';
 import AngularComponent from 'AngularComponent';
-import { noop, values } from 'lodash';
+import { noop, values, includes } from 'lodash';
 import { calculateIdealListHeight, getLabels } from 'search/EntitySelector/Config.es6';
+import Visible from '../../../../components/shared/Visible/index.es6';
 
-const LINK_TYPES = {
+export const LINK_TYPES = {
   URI: 'uri',
   ENTRY: 'Entry',
   ASSET: 'Asset'
 };
-
 export default class HyperlinkDialog extends React.Component {
   static propTypes = {
     labels: PropTypes.shape({
@@ -38,6 +38,9 @@ export default class HyperlinkDialog extends React.Component {
       type: PropTypes.oneOf(values(LINK_TYPES))
     }),
     entitySelectorConfigs: PropTypes.object,
+    allowedHyperlinkTypes: PropTypes.arrayOf(
+      PropTypes.oneOf([LINK_TYPES.ENTRY, LINK_TYPES.ASSET, LINK_TYPES.URI])
+    ),
     hideText: PropTypes.bool,
     onConfirm: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
@@ -50,31 +53,34 @@ export default class HyperlinkDialog extends React.Component {
       title: 'Insert link',
       confirm: 'Insert link'
     },
-    value: {
-      type: LINK_TYPES.URI,
-      uri: 'https://'
-    },
+    value: {},
     hideText: false,
     onRender: noop,
-    entitySelectorConfigs: {}
+    entitySelectorConfigs: {},
+    allowedHyperlinkTypes: [LINK_TYPES.ENTRY, LINK_TYPES.ASSET, LINK_TYPES.URI]
   };
 
   constructor(props) {
     super(props);
 
-    const { text, type: maybeType, uri, target } = {
-      ...HyperlinkDialog.defaultProps.value,
-      ...props.value
-    };
-    const type = target ? target.sys.linkType : maybeType;
+    const { text, type, uri, target } = props.value;
+    const isEntityLink = Boolean(target);
     const entityLinks = {
       [LINK_TYPES.ENTRY]: null,
       [LINK_TYPES.ASSET]: null
     };
-    if (target) {
-      entityLinks[type] = target;
+    let linkType = type;
+
+    if (isEntityLink) {
+      linkType = target.sys.linkType;
+      entityLinks[linkType] = target;
+    } else if (includes(props.allowedHyperlinkTypes, LINK_TYPES.URI)) {
+      linkType = LINK_TYPES.URI;
+    } else {
+      linkType = props.allowedHyperlinkTypes[0];
     }
-    this.state = { text, uri, entityLinks, type };
+
+    this.state = { text, uri, entityLinks, type: linkType };
   }
 
   setTargetEntity(type, entity) {
@@ -148,7 +154,7 @@ export default class HyperlinkDialog extends React.Component {
   renderFields() {
     // TODO: Use `Form` for spacing once available in component library.
     const style = { marginBottom: '1.75rem' };
-    const { hideText, entitySelectorConfigs } = this.props;
+    const { hideText, allowedHyperlinkTypes } = this.props;
     const { uri, text, type } = this.state;
 
     return (
@@ -167,7 +173,7 @@ export default class HyperlinkDialog extends React.Component {
             style={style}
           />
         )}
-        {this.isFeaturingEntitySelector() > 0 && (
+        {this.isFeaturingEntitySelector() && (
           <SelectField
             labelText="Link type"
             value={type}
@@ -176,9 +182,21 @@ export default class HyperlinkDialog extends React.Component {
             id="link-type"
             selectProps={{ testId: 'link-type-select' }}
             style={style}>
-            <Option value={LINK_TYPES.URI}>URL</Option>
-            {entitySelectorConfigs.Entry && <Option value={LINK_TYPES.ENTRY}>Entry</Option>}
-            {entitySelectorConfigs.Asset && <Option value={LINK_TYPES.ASSET}>Asset</Option>}
+            {/* Show the option if the link type is allowed or the current link is of type that is no longer valid */}
+            <Visible
+              if={includes(allowedHyperlinkTypes, LINK_TYPES.URI) || type === LINK_TYPES.URI}>
+              <Option value={LINK_TYPES.URI}>URL</Option>
+            </Visible>
+
+            <Visible
+              if={includes(allowedHyperlinkTypes, LINK_TYPES.ENTRY) || type === LINK_TYPES.ENTRY}>
+              <Option value={LINK_TYPES.ENTRY}>Entry</Option>
+            </Visible>
+
+            <Visible
+              if={includes(allowedHyperlinkTypes, LINK_TYPES.ASSET) || type === LINK_TYPES.ASSET}>
+              <Option value={LINK_TYPES.ASSET}>Asset</Option>
+            </Visible>
           </SelectField>
         )}
         {type === LINK_TYPES.URI ? (
@@ -201,9 +219,9 @@ export default class HyperlinkDialog extends React.Component {
   }
 
   renderEntityField() {
-    const { type } = this.state;
+    const { type, entityLinks } = this.state;
     const resetEntity = () => this.setTargetEntity(type, null);
-    const entityLink = this.state.entityLinks[type];
+    const entityLink = entityLinks[type];
     const isEntitySelectorVisible = !entityLink;
     return (
       <div>
@@ -244,7 +262,9 @@ export default class HyperlinkDialog extends React.Component {
     const onChange = ([entity]) => this.setTargetEntity(type, entity);
     const isForCurrentType = this.state.type === type;
     return (
-      <div style={{ display: isForCurrentType && isVisible ? 'block' : 'none' }}>
+      <div
+        style={{ display: isForCurrentType && isVisible ? 'block' : 'none' }}
+        data-test-id="entity-selector-container">
         <AngularComponent
           template={`<cf-entity-selector config="config" labels="labels" list-height="listHeight" on-change="onChange" />`}
           scope={{ config, labels, listHeight, onChange }}

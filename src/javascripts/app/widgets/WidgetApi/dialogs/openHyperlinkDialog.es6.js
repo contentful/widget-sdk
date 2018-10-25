@@ -1,10 +1,16 @@
 import React from 'react';
+import { INLINES } from '@contentful/rich-text-types';
 import modalDialog from 'modalDialog';
-import HyperlinkDialog from 'app/widgets/WidgetApi/dialogs/HyperlinkDialog.es6';
+import HyperlinkDialog, { LINK_TYPES } from 'app/widgets/WidgetApi/dialogs/HyperlinkDialog.es6';
 import WidgetAPIContext from '../WidgetApiContext.es6';
 import { newConfigFromRichTextField } from 'search/EntitySelector/Config.es6';
+import { isNodeTypeEnabled } from '../../rich_text/validations/index.es6';
 
-const DEFAULT_VALUE = { uri: '', text: '' };
+const nodeToHyperlinkType = {
+  [INLINES.ENTRY_HYPERLINK]: LINK_TYPES.ENTRY,
+  [INLINES.ASSET_HYPERLINK]: LINK_TYPES.ASSET,
+  [INLINES.HYPERLINK]: LINK_TYPES.URI
+};
 
 /**
  * Opens a dialog for the user to construct a link and returns the relevant
@@ -29,7 +35,7 @@ export default async function({ value = {}, showTextInput, widgetAPI }) {
       title: isNew ? 'Insert link' : 'Edit link',
       confirm: isNew ? 'Insert link' : 'Update link'
     },
-    value: { ...DEFAULT_VALUE, ...value },
+    value,
     hideText: !showTextInput,
     onConfirm: value => dialog.confirm(value),
     onCancel: () => {
@@ -48,7 +54,8 @@ export default async function({ value = {}, showTextInput, widgetAPI }) {
           }, 10);
         }, 0);
     },
-    entitySelectorConfigs
+    entitySelectorConfigs,
+    allowedHyperlinkTypes: getAllowedHyperlinkTypes(widgetAPI.field)
   };
   const jsx = (
     <WidgetAPIContext.Provider value={{ widgetAPI }}>
@@ -71,9 +78,25 @@ async function newConfigsForField(field) {
   if (field.type === 'RichText') {
     // TODO: Don't pass specific key if CT validation prohibits its type:
     const config = {};
-    config.Entry = await newConfigFromRichTextField(field, 'entry-hyperlink');
-    config.Asset = await newConfigFromRichTextField(field, 'asset-hyperlink');
+    if (isNodeTypeEnabled(field, INLINES.ENTRY_HYPERLINK)) {
+      config.Entry = await newConfigFromRichTextField(field, 'entry-hyperlink');
+    }
+    if (isNodeTypeEnabled(field, INLINES.ASSET_HYPERLINK)) {
+      config.Asset = await newConfigFromRichTextField(field, 'asset-hyperlink');
+    }
+
     return config;
   }
   return {};
+}
+
+function getAllowedHyperlinkTypes(field) {
+  const hyperlinkTypes = [INLINES.ENTRY_HYPERLINK, INLINES.ASSET_HYPERLINK, INLINES.HYPERLINK];
+  if (field.type === 'RichText') {
+    return hyperlinkTypes
+      .filter(nodeType => isNodeTypeEnabled(field, nodeType))
+      .map(nodeType => nodeToHyperlinkType[nodeType]);
+  }
+
+  return hyperlinkTypes;
 }

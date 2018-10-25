@@ -31,7 +31,7 @@ import { BLOCKS, MARKS, INLINES } from '@contentful/rich-text-types';
 
 import { isNodeTypeEnabled, isMarkEnabled } from '../validations/index.es6';
 
-import Visible from '../Visible/index.es6';
+import Visible from '../../../../components/shared/Visible/index.es6';
 
 export default class Toolbar extends React.Component {
   static propTypes = {

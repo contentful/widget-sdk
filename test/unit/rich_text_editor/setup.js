@@ -41,7 +41,9 @@ export const stubAll = async ({ isolatedSystem }) => {
   isolatedSystem.set('search/EntitySelector/Config.es6', {
     newConfigFromRichTextField: sinon.stub().returns({})
   });
-  isolatedSystem.set('app/widgets/WidgetApi/dialogs/HyperlinkDialog.es6', {});
+  isolatedSystem.set('app/widgets/WidgetApi/dialogs/HyperlinkDialog.es6', {
+    LINK_TYPES: {}
+  });
   isolatedSystem.set('spaceContext', { default: {} });
   isolatedSystem.set('modalDialog', { open: sinon.stub() });
   isolatedSystem.set('$rootScope', {
