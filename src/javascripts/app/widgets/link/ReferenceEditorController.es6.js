@@ -16,7 +16,11 @@ import {
 import $state from '$state';
 
 import * as State from './State.es6';
-import { canPerformActionOnEntryOfType, Action } from 'access_control/AccessChecker';
+import {
+  canPerformActionOnEntryOfType,
+  canCreateAsset,
+  Action
+} from 'access_control/AccessChecker';
 import { canLinkToContentType, getInlineEditingStoreKey } from './utils.es6';
 import { getStore } from 'TheStore';
 
@@ -50,7 +54,8 @@ export default function create($scope, widgetApi) {
   let slideInEditorEnabled = false;
   const canEditReferences = !!widgetApi._internal.editReferences;
   const bulkEditorEnabled = canEditReferences && widgetApi.settings.bulkEditing;
-  $scope.canAddNew = true;
+  $scope.isCreateActionEnabled = canCreateAsset();
+  $scope.isAssetCreationInProgress = true;
   $scope.typePlural = { Entry: 'entries', Asset: 'assets' }[$scope.type];
   $scope.isAssetCard = is('Asset', 'card');
   $scope.referenceType = {};
@@ -181,12 +186,12 @@ export default function create($scope, widgetApi) {
       if (currentJob) {
         return currentJob;
       }
-      $scope.canAddNew = false;
+      $scope.isAssetCreationInProgress = false;
       currentJob = fn(...args).then(doneHandler, doneHandler);
       return currentJob;
     };
     function doneHandler(result) {
-      $scope.canAddNew = true;
+      $scope.isAssetCreationInProgress = true;
       currentJob = null;
       return result;
     }
