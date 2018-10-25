@@ -7,16 +7,16 @@ const alphaHeader = {
 };
 
 export const customerTypes = {
-  selfService: 'Self-service',
-  enterprise: 'Enterprise'
+  selfService: ['Self-service'],
+  enterprise: ['Enterprise', 'Enterprise Trial']
 };
 
 export function isSelfServicePlan(plan) {
-  return plan.customerType === customerTypes.selfService;
+  return customerTypes.selfService.includes(plan.customerType);
 }
 
 export function isEnterprisePlan(plan) {
-  return plan.customerType === customerTypes.enterprise;
+  return customerTypes.enterprise.includes(plan.customerType);
 }
 
 export function isFreeSpacePlan(plan) {
