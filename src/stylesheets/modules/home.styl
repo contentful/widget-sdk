@@ -11,11 +11,33 @@ $home-width = 820px
     background-size: 1280px auto
     background-repeat: repeat-x
 
+    &-read-only
+      background: $colors.white
+      height: 100%
+      padding: 240px 0
+      text-align: center
+
+      & > div
+        width: 450px
+
   &__content
     position: relative
     padding-top: $rhythm(1)
     width: $home-width
     margin: 0 auto
+
+    &-title
+      font-size: 27px
+      font-weight: 700
+      margin-bottom: 55px
+
+    &-body
+      font-size: 14px
+      line-height: 1.5
+      color: $colors.text-mid
+
+      & > p
+        margin-bottom: 25px
 
   &__welcome-image
     position: absolute
