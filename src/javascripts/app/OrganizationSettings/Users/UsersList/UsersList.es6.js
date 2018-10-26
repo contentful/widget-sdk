@@ -18,7 +18,7 @@ import { formatQuery } from './QueryBuilder.es6';
 import ResolveLinks from '../../LinkResolver.es6';
 import Workbench from 'ui/Components/Workbench/JSX.es6';
 import UserListFilters from './UserListFilters.es6';
-import UserCard from '../Common/UserCard.es6';
+import UserCard from '../UserCard.es6';
 import { href } from 'states/Navigator.es6';
 import {
   getMemberships,
@@ -26,7 +26,7 @@ import {
 } from 'access_control/OrganizationMembershipRepository.es6';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { getFilterDefinitions } from './FilterDefinitions.es6';
-import { getLastActivityDate } from '../Common/LastActivityDate.es6';
+import { getLastActivityDate } from '../UserUtils.es6';
 
 const ServicesConsumer = require('../../../../reactServiceContext').default;
 

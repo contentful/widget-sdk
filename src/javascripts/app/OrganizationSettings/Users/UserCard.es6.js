@@ -1,5 +1,5 @@
 import React from 'react';
-import { User as UserPropType } from '../PropTypes.es6';
+import { User as UserPropType } from './PropTypes.es6';
 
 export default class UserCard extends React.Component {
   static propTypes = {

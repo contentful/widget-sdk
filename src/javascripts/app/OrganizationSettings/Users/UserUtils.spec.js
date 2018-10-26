@@ -1,7 +1,7 @@
 import moment from 'moment';
-import { getLastActivityDate } from './LastActivityDate.es6';
+import { getLastActivityDate } from './UserUtils.es6';
 
-describe('LastActivityDate', () => {
+describe('UserUtils', () => {
   function getMembership(amount, unit) {
     const date = moment()
       .subtract(amount, unit)
