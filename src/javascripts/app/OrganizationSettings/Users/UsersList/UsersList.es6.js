@@ -11,20 +11,22 @@ import {
   TableCell,
   Pill,
   Button,
-  TextInput
+  TextInput,
+  Icon
 } from '@contentful/ui-component-library';
 import { formatQuery } from './QueryBuilder.es6';
 import ResolveLinks from '../../LinkResolver.es6';
 import Workbench from 'ui/Components/Workbench/JSX.es6';
-import UserDropdown from './UserDropdown.es6';
 import UserListFilters from './UserListFilters.es6';
-import { href, go } from 'states/Navigator.es6';
+import UserCard from '../UserCard.es6';
+import { href } from 'states/Navigator.es6';
 import {
   getMemberships,
   removeMembership
 } from 'access_control/OrganizationMembershipRepository.es6';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { getFilterDefinitions } from './FilterDefinitions.es6';
+import { getLastActivityDate } from '../UserUtils.es6';
 
 const ServicesConsumer = require('../../../../reactServiceContext').default;
 
@@ -87,14 +89,14 @@ class UsersList extends React.Component {
   // as a route param.
   // This should be changed after `include` is implemented in the backend
   // so that we can get the linked membership from the user endpoint response
-  goToUser(user) {
-    go({
+  getLinkToUser(user) {
+    return href({
       path: ['account', 'organizations', 'users', 'detail'],
       params: { userId: user.sys.id }
     });
   }
 
-  async handleMembershipRemove(membership) {
+  handleMembershipRemove = membership => async () => {
     const { notification } = this.props.$services;
     const { usersList } = this.state;
     const { firstName } = membership.sys.user;
@@ -109,7 +111,7 @@ class UsersList extends React.Component {
     } catch (e) {
       notification.error(e.data.message);
     }
-  }
+  };
 
   updateFilters = filters => {
     this.setState({ filters }, this.fetch);
@@ -169,37 +171,46 @@ class UsersList extends React.Component {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Email</TableCell>
-                  <TableCell>Organization role</TableCell>
-                  <TableCell />
+                  <TableCell width="50">User</TableCell>
+                  <TableCell width="200">Organization role</TableCell>
+                  <TableCell colSpan="2">Last active</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {usersList.map(membership => (
-                  <TableRow key={membership.sys.id} onClick={() => this.goToUser(membership)}>
+                  <TableRow key={membership.sys.id} className="membership-list__item">
                     <TableCell>
-                      {membership.sys.user.firstName && (
-                        <img
-                          style={{ verticalAlign: 'middle', marginRight: '5px' }}
-                          src={membership.sys.user.avatarUrl}
-                          width="32"
-                          height="32"
-                        />
-                      )}
                       {membership.sys.user.firstName ? (
-                        `${membership.sys.user.firstName} ${membership.sys.user.lastName}`
+                        <a href={this.getLinkToUser(membership)}>
+                          <UserCard user={membership.sys.user} />
+                        </a>
                       ) : (
                         <Pill label="Invited" />
                       )}
                     </TableCell>
-                    <TableCell>{membership.sys.user.email}</TableCell>
                     <TableCell>{startCase(membership.role)}</TableCell>
+                    <TableCell>{getLastActivityDate(membership)}</TableCell>
                     <TableCell align="right">
-                      <UserDropdown
-                        membership={membership}
-                        onMembershipRemove={() => this.handleMembershipRemove(membership)}
-                      />
+                      <div className="membership-list__item__menu">
+                        <Button
+                          buttonType="muted"
+                          size="small"
+                          onClick={this.handleMembershipRemove(membership)}
+                          extraClassNames="membership-list__item__menu__button">
+                          Remove
+                        </Button>
+                        <Button
+                          buttonType="muted"
+                          size="small"
+                          href={this.getLinkToUser(membership)}
+                          extraClassNames="membership-list__item__menu__button">
+                          Edit
+                        </Button>
+                        <Icon
+                          icon="MoreHorizontal"
+                          extraClassNames="membership-list__item__menu__icon"
+                        />
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
