@@ -28,6 +28,8 @@ describe('Entry List Controller', () => {
 
   beforeEach(function() {
     module('contentful/test', $provide => {
+      $provide.value('notifications/bus', () => ({ error: sinon.stub() }));
+
       $provide.removeControllers('DisplayedFieldsController');
 
       $provide.value('analytics/Analytics.es6', {
@@ -331,15 +333,80 @@ describe('Entry List Controller', () => {
 
   describe('Api Errors', () => {
     beforeEach(function() {
-      this.handler = this.$inject('ReloadNotification').apiErrorHandler;
-      spaceContext.space.getEntries.rejects({ statusCode: 500 });
+      this.reloadNotificationHandler = this.$inject('ReloadNotification').apiErrorHandler;
+      this.errorNotificationHandler = this.$inject('notification').error;
     });
 
-    it('should cause updateEntries to show an error message', function() {
+    it('shows reload notification on 500 err', function() {
+      spaceContext.space.getEntries.rejects({ statusCode: 500 });
       scope.context.view = {};
       scope.updateEntries();
       scope.$apply();
-      sinon.assert.called(this.handler);
+      sinon.assert.called(this.reloadNotificationHandler);
+    });
+
+    it('shows error notification on 400 err', function() {
+      spaceContext.space.getEntries.rejects({ statusCode: 400 });
+      scope.context.view = {};
+      scope.updateEntries();
+      scope.$apply();
+      expect(
+        this.errorNotificationHandler.calledWith(
+          'We detected an invalid search query. Please try again.'
+        )
+      ).toBe(true);
+    });
+
+    it('shows error notification on invalid content type', function() {
+      const defaultQuery = {
+        order: '-sys.updatedAt',
+        limit: 40,
+        skip: 0,
+        'sys.archivedAt[exists]': 'false'
+      };
+      spaceContext.space.getEntries.onCall(0).rejects({
+        statusCode: 400,
+        body: {
+          details: {
+            errors: [
+              {
+                name: 'unknownContentType',
+                value: 'DOESNOTEXIST'
+              }
+            ]
+          }
+        }
+      });
+
+      spaceContext.space.getEntries.onCall(1).resolves({
+        statusCode: 200
+      });
+
+      scope.context.view = {
+        contentTypeId: 'x',
+        anyOtherField: 1
+      };
+      scope.updateEntries();
+      scope.$apply();
+      expect(
+        this.errorNotificationHandler.calledWith(
+          `Provided Content Type "x" does not exist. The content type filter has been reset to "Any"`
+        )
+      ).toBe(true);
+
+      expect(scope.context.view).toEqual({
+        contentTypeId: undefined,
+        anyOtherField: 1
+      });
+
+      expect(
+        spaceContext.space.getEntries.calledWith({
+          ...defaultQuery,
+          content_type: 'x'
+        })
+      ).toBe(true);
+
+      expect(spaceContext.space.getEntries.calledWith(defaultQuery)).toBe(true);
     });
   });
 

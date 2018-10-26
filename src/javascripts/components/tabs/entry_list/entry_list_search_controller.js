@@ -20,6 +20,7 @@ angular
       const createSearchInput = require('app/ContentList/Search').default;
       const React = require('react');
       const getAccessibleCTs = require('data/ContentTypeRepo/accessibleCTs.es6').default;
+      const _ = require('lodash');
 
       let initialized = false;
       let lastUISearchState = null;
@@ -214,9 +215,27 @@ angular
             // invalid search query, let's reset the view...
             $scope.loadView({});
           }
-          // ...and let it request assets again after notifing a user
-          Notification.error('We detected an invalid search query. Please try again.');
+
+          if (isUnkownContentTypeError(err)) {
+            Notification.error(
+              `Provided Content Type "${getViewItem(
+                'contentTypeId'
+              )}" does not exist. The content type filter has been reset to "Any"`
+            );
+            setViewItem('contentTypeId', undefined);
+            requestEntries();
+          } else {
+            Notification.error('We detected an invalid search query. Please try again.');
+          }
         }
+      }
+
+      function isUnkownContentTypeError(err) {
+        const errors = _.get(err, ['body', 'details', 'errors']);
+
+        return _.some(errors, ({ name, value }) => {
+          return name === 'unknownContentType' && value === 'DOESNOTEXIST';
+        });
       }
 
       function isInvalidQueryError(err) {
@@ -274,6 +293,11 @@ angular
       function getViewItem(path) {
         path = _.isString(path) ? path.split('.') : path;
         return _.get($scope, ['context', 'view'].concat(path));
+      }
+
+      function setViewItem(path, value) {
+        path = _.isString(path) ? path.split('.') : path;
+        return _.set($scope, ['context', 'view'].concat(path), value);
       }
     }
   ]);
