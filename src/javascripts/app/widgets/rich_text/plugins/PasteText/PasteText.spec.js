@@ -1,16 +1,15 @@
-import { PasteHtmlPlugin } from './index.es6';
+import { PasteTextPlugin } from './index.es6';
 import { Value, Document, Block, Text } from 'slate';
 import {
   document,
   block,
   text,
   leaf,
-  mark,
   createPasteHtmlEvent,
   createPasteEvent
 } from './../shared/PasteTestHelpers';
 
-import { BLOCKS, MARKS } from '@contentful/rich-text-types';
+import { BLOCKS } from '@contentful/rich-text-types';
 import { List } from 'immutable';
 
 const emptyInitialValue = Value.create({
@@ -24,26 +23,26 @@ const emptyInitialValue = Value.create({
   })
 });
 
-describe('PasteHtml Plugin', () => {
+describe('PasteText Plugin', () => {
   let plugin;
 
   beforeEach(() => {
-    plugin = PasteHtmlPlugin();
+    plugin = PasteTextPlugin();
   });
 
-  it('parses html', () => {
-    const event = createPasteHtmlEvent('<b>Text</b>');
+  it('parses raw text', () => {
+    const event = createPasteEvent('text/plain', 'I am a plain old text');
     const change = emptyInitialValue.change();
     const result = plugin.onPaste(event, change);
 
     expect(result).toBeTruthy();
     expect(change.value.document.toJSON()).toEqual(
-      document({}, block(BLOCKS.PARAGRAPH, {}, text({}, leaf(`Text`, mark(MARKS.BOLD)))))
+      document({}, block(BLOCKS.PARAGRAPH, {}, text({}, leaf('I am a plain old text'))))
     );
   });
 
-  it('ignores raw text', () => {
-    const event = createPasteEvent('text/plain', 'text');
+  it('ignores HTML', () => {
+    const event = createPasteHtmlEvent('<marquee>I sure am some fancy HTML</marquee>');
     const change = emptyInitialValue.change();
     const result = plugin.onPaste(event, change);
 

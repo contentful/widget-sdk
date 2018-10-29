@@ -38,6 +38,7 @@ import schema from './constants/Schema.es6';
 import emptyDoc from './constants/EmptyDoc.es6';
 import { BLOCKS } from '@contentful/rich-text-types';
 import { PasteHtmlPlugin } from './plugins/PasteHtml/index.es6';
+import { PasteTextPlugin } from './plugins/PasteText/index.es6';
 
 import Toolbar from './Toolbar/index.es6';
 
@@ -198,6 +199,7 @@ function buildPlugins(richTextAPI) {
     EmbeddedAssetBlockPlugin({ richTextAPI }),
     ListPlugin({ richTextAPI }),
     PasteHtmlPlugin(),
+    PasteTextPlugin(),
     TrailingBlock({ type: BLOCKS.PARAGRAPH }),
     NewLinePlugin()
   ];
