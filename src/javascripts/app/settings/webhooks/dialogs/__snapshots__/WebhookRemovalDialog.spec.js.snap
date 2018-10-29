@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`webhooks/dialogs/WebhookRemovalDialog should match snapshot 1`] = `
+<ModalConfirm
+  cancelLabel="Don't remove"
+  cancelTestId="remove-webhook-cancel"
+  confirmLabel="Remove"
+  confirmTestId="remove-webhook-confirm"
+  intent="negative"
+  isConfirmDisabled={false}
+  isConfirmLoading={false}
+  isShown={true}
+  onCancel={[Function]}
+  onConfirm={[Function]}
+  shouldCloseOnEscapePress={true}
+  shouldCloseOnOverlayClick={true}
+  size="medium"
+  testId="cf-ui-modal-confirm"
+  title="Remove Webhook"
+>
+  <p>
+    You are about to remove webhook calling the following URL:
+  </p>
+  <div
+    style={
+      Object {
+        "fontFamily": "monospace",
+        "fontSize": ".9em",
+        "margin": "10px 0",
+        "wordWrap": "break-word",
+      }
+    }
+  >
+    https://test.com
+  </div>
+  <p>
+    After removal your external integrations may stop working properly. Do you want to proceed?
+  </p>
+</ModalConfirm>
+`;

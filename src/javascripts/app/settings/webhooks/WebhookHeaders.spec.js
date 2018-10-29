@@ -6,20 +6,9 @@ import { WebhookHeaders } from './WebhookHeaders.es6';
 describe('WebhookHeaders', () => {
   const shallow = headers => {
     const onChangeStub = sinon.stub();
-    const onOpenDialogStub = sinon.stub();
-    const wrapper = Enzyme.shallow(
-      <WebhookHeaders
-        headers={headers}
-        onChange={onChangeStub}
-        $services={{
-          modalDialog: {
-            open: onOpenDialogStub
-          }
-        }}
-      />
-    );
+    const wrapper = Enzyme.shallow(<WebhookHeaders headers={headers} onChange={onChangeStub} />);
 
-    return [wrapper, onChangeStub, onOpenDialogStub];
+    return [wrapper, onChangeStub];
   };
 
   const findHeaderRows = wrapper => wrapper.find('.webhook-editor__settings-row');

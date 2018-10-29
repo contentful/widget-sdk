@@ -480,8 +480,8 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                 data-test-id="cf-ui-dropdown-list"
                 style={
                   Object {
-                    "height": 300,
-                    "overflowY": "scroll",
+                    "maxHeight": 300,
+                    "overflowY": "auto",
                   }
                 }
               >

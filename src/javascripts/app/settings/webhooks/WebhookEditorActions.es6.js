@@ -1,7 +1,6 @@
 import { get } from 'lodash';
 import { track } from 'analytics/Analytics.es6';
 import notification from 'notification';
-import modalDialog from 'modalDialog';
 import ReloadNotification from 'ReloadNotification';
 
 const INVALID_BODY_TRANSFORMATION_ERROR_MSG =
@@ -48,7 +47,7 @@ function getSaveApiErrorMessage(err) {
 
 export async function remove(webhookRepo, webhook) {
   try {
-    await openRemovalDialog(webhookRepo, webhook);
+    await webhookRepo.remove(webhook);
     notification.info(`Webhook "${webhook.name}" deleted successfully.`);
     return { removed: true };
   } catch (err) {
@@ -59,25 +58,6 @@ export async function remove(webhookRepo, webhook) {
       return { cancelled: true };
     }
   }
-}
-
-function openRemovalDialog(webhookRepo, webhook) {
-  return modalDialog.open({
-    ignoreEsc: true,
-    backgroundClose: false,
-    template:
-      '<react-component class="modal-background" name="app/settings/webhooks/WebhookRemovalDialog.es6" props="props" />',
-    controller: $scope => {
-      $scope.props = {
-        webhookUrl: webhook.url,
-        remove: () => webhookRepo.remove(webhook),
-        // `modalScope.dialog` is not available right away
-        // so we pass wrapped invocations to the component.
-        confirm: () => $scope.dialog.confirm(),
-        cancel: err => $scope.dialog.cancel(err)
-      };
-    }
-  }).promise;
 }
 
 function trackSave(webhook, templateId = null, templateIdReferrer = null) {

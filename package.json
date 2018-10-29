@@ -16,7 +16,7 @@
     "@contentful/mimetype": "^1.0.1",
     "@contentful/rich-text-types": "^5.0.0",
     "@contentful/sharejs": "^2.2.0",
-    "@contentful/ui-component-library": "^5.4.0",
+    "@contentful/ui-component-library": "^5.8.0",
     "@contentful/validation": "^7.9.0",
     "@contentful/widget-map": "^1.2.3",
     "@contentful/worf": "^3.13.0",

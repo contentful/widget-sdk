@@ -6,6 +6,7 @@ import notification from 'notification';
 import WebhookForm from './WebhookForm.es6';
 import WebhookSidebar from './WebhookSidebar.es6';
 import * as WebhookEditorActions from './WebhookEditorActions.es6';
+import WebhookRemovalDialog from './dialogs/WebhookRemovalDialog.es6';
 import spaceContext from 'spaceContext';
 import $state from '$state';
 import WebhookActivityLog from './WebhookActivityLog.es6';
@@ -34,7 +35,8 @@ class WebhookEditor extends React.Component {
       dirty: fresh,
       // Editor is "busy" if there's any HTTP request in flight.
       // All buttons triggering HTTP requests are disabled then.
-      busy: false
+      busy: false,
+      isDeleteDialogShown: false
     };
   }
 
@@ -133,8 +135,9 @@ class WebhookEditor extends React.Component {
                   <button
                     data-test-id="webhook-remove"
                     className="btn-secondary-action"
-                    disabled={busy}
-                    onClick={this.remove}>
+                    onClick={() => {
+                      this.setState({ isDeleteDialogShown: true });
+                    }}>
                     Remove
                   </button>
                 )}
@@ -203,6 +206,16 @@ class WebhookEditor extends React.Component {
             </div>
           </div>
         )}
+
+        <WebhookRemovalDialog
+          isShown={this.state.isDeleteDialogShown}
+          webhookUrl={this.state.webhook.url}
+          isConfirmLoading={busy}
+          onConfirm={this.remove}
+          onCancel={() => {
+            this.setState({ isDeleteDialogShown: false });
+          }}
+        />
       </div>
     );
   }

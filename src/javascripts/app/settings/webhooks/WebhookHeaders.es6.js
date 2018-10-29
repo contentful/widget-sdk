@@ -1,11 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import modalDialog from 'modalDialog';
+import WebhookSecretHeaderDialog from './dialogs/WebhookSecretHeaderDialog.es6';
+import WebhookHttpBasicDialog from './dialogs/WebhookHttpBasicDialog.es6';
 
 export class WebhookHeaders extends React.Component {
   static propTypes = {
     headers: PropTypes.array,
     onChange: PropTypes.func.isRequired
+  };
+
+  state = {
+    isSecretHeaderModalShown: false,
+    isHTTPBasicModalShown: false
   };
 
   componentDidUpdate() {
@@ -91,35 +97,40 @@ export class WebhookHeaders extends React.Component {
 
         <button
           className="btn-link webhook-header-action"
-          onClick={this.openSecretHeaderDialog.bind(this, 'WebhookSecretHeaderDialog')}>
+          onClick={() => this.setState({ isSecretHeaderModalShown: true })}>
           + Add secret header
         </button>
 
         <button
           className="btn-link webhook-header-action"
-          onClick={this.openSecretHeaderDialog.bind(this, 'WebhookHttpBasicDialog')}>
+          onClick={() => this.setState({ isHTTPBasicModalShown: true })}>
           + Add HTTP Basic Auth header
         </button>
+
+        <WebhookHttpBasicDialog
+          isShown={this.state.isHTTPBasicModalShown}
+          onCancel={() => {
+            this.setState({ isHTTPBasicModalShown: false });
+          }}
+          onConfirm={({ key, value }) => {
+            this.setState({ isHTTPBasicModalShown: false });
+            this.add({ key, value, secret: true });
+          }}
+        />
+
+        <WebhookSecretHeaderDialog
+          isShown={this.state.isSecretHeaderModalShown}
+          onCancel={() => {
+            this.setState({ isSecretHeaderModalShown: false });
+          }}
+          onConfirm={({ key, value }) => {
+            this.setState({ isSecretHeaderModalShown: false });
+            this.add({ key, value, secret: true });
+          }}
+        />
       </div>
     );
   }
-
-  openSecretHeaderDialog = componentName => {
-    modalDialog
-      .open({
-        template: `<react-component class="modal-background" name="app/settings/webhooks/${componentName}.es6" props="props">`,
-        controller: $scope => {
-          $scope.props = {
-            confirm: val => $scope.dialog.confirm(val)
-          };
-        }
-      })
-      .promise.then(header => {
-        if (['key', 'value', 'secret'].every(key => header[key])) {
-          this.add(header);
-        }
-      });
-  };
 }
 
 export default WebhookHeaders;
