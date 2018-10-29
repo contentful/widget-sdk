@@ -4,13 +4,11 @@ import { DropdownListItem, Button } from '@contentful/ui-component-library';
 
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
 import { selectEntityAndInsert } from './Util.es6';
+import { actionOrigin, TOOLBAR_PLUGIN_PROP_TYPES } from '../shared/PluginApi.es6';
 
 export default class EntryLinkToolbarIcon extends Component {
   static propTypes = {
-    nodeType: PropTypes.string.isRequired,
-    change: PropTypes.object.isRequired,
-    onToggle: PropTypes.func.isRequired,
-    disabled: PropTypes.bool.isRequired,
+    ...TOOLBAR_PLUGIN_PROP_TYPES,
     isButton: PropTypes.bool
   };
 
@@ -20,8 +18,14 @@ export default class EntryLinkToolbarIcon extends Component {
 
   handleClick = async (event, widgetAPI) => {
     event.preventDefault();
-    const { change, nodeType } = this.props;
-    await selectEntityAndInsert(nodeType, widgetAPI, change);
+    const {
+      change,
+      nodeType,
+      richTextAPI: { logAction }
+    } = this.props;
+    const logToolbarAction = (name, data) =>
+      logAction(name, { origin: actionOrigin.TOOLBAR, ...data });
+    await selectEntityAndInsert(nodeType, widgetAPI, change, logToolbarAction);
     this.props.onToggle(change);
   };
 

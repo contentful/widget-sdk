@@ -5,35 +5,41 @@ import ToolbarIcon from './ToolbarIcon.es6';
 import Hyperlink from './Hyperlink.es6';
 import { editLink, mayEditLink, toggleLink, hasOnlyHyperlinkInlines } from './Util.es6';
 import asyncChange from '../shared/AsyncChange.es6';
+import { actionOrigin } from '../shared/PluginApi.es6';
 
 const { HYPERLINK, ENTRY_HYPERLINK, ASSET_HYPERLINK } = INLINES;
 
 export default ToolbarIcon;
 
-export const HyperlinkPlugin = ({ createHyperlinkDialog }) => ({
+export const HyperlinkPlugin = ({ richTextAPI: { widgetAPI, logAction } }) => ({
   renderNode: props => {
     if (isHyperlink(props.node.type)) {
       return (
         <Hyperlink
           {...props}
           onClick={event => {
+            const { editor } = props;
             event.preventDefault(); // Don't follow `href`.
-            if (mayEditLink(props.editor.value)) {
-              asyncChange(props.editor, newChange => editLink(newChange, createHyperlinkDialog));
+            if (mayEditLink(editor.value)) {
+              const logViewportAction = (name, data) =>
+                logAction(name, { origin: actionOrigin.VIEWPORT, ...data });
+              asyncChange(editor, newChange =>
+                editLink(newChange, widgetAPI.dialogs.createHyperlink, logViewportAction)
+              );
             }
           }}
         />
       );
     }
   },
-
   onKeyDown: (event, change, editor) => {
     if (isHotkey('cmd+k', event) && hasOnlyHyperlinkInlines(change.value)) {
-      if (mayEditLink(change.value)) {
-        asyncChange(editor, newChange => editLink(newChange, createHyperlinkDialog));
-      } else {
-        asyncChange(editor, newChange => toggleLink(newChange, createHyperlinkDialog));
-      }
+      const logShortcutAction = (name, data) =>
+        logAction(name, { origin: actionOrigin.SHORTCUT, ...data });
+      const changeFn = mayEditLink(change.value) ? editLink : toggleLink;
+      asyncChange(editor, newChange =>
+        changeFn(newChange, widgetAPI.dialogs.createHyperlink, logShortcutAction)
+      );
     }
   },
   validateNode: node => {

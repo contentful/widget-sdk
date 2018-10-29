@@ -6,10 +6,15 @@ import EntityLinkBlock from './EmbeddedEntityBlock.es6';
 import { BLOCKS } from '@contentful/rich-text-types';
 import { hasBlockOfType, selectEntityAndInsert } from './Util.es6';
 import asyncChange from '../shared/AsyncChange.es6';
+import { actionOrigin } from '../shared/PluginApi.es6';
 
 export default ToolbarIcon;
 
-export const EmbeddedEntityBlockPlugin = ({ nodeType, hotkey, widgetAPI }) => {
+export const EmbeddedEntityBlockPlugin = ({
+  richTextAPI: { widgetAPI, logAction },
+  nodeType,
+  hotkey
+}) => {
   return {
     renderNode: props => {
       if (props.node.type === nodeType) {
@@ -18,7 +23,11 @@ export const EmbeddedEntityBlockPlugin = ({ nodeType, hotkey, widgetAPI }) => {
     },
     onKeyDown(e, change, editor) {
       if (hotkey && isHotkey(hotkey, e)) {
-        asyncChange(editor, newChange => selectEntityAndInsert(nodeType, widgetAPI, newChange));
+        const logShortcutAction = (name, data) =>
+          logAction(name, { origin: actionOrigin.SHORTCUT, ...data });
+        asyncChange(editor, newChange =>
+          selectEntityAndInsert(nodeType, widgetAPI, newChange, logShortcutAction)
+        );
       }
       if (isHotkey('enter', e)) {
         if (hasBlockOfType(change, nodeType)) {
@@ -29,18 +38,18 @@ export const EmbeddedEntityBlockPlugin = ({ nodeType, hotkey, widgetAPI }) => {
   };
 };
 
-export const EmbeddedEntryBlockPlugin = ({ widgetAPI }) => {
+export const EmbeddedEntryBlockPlugin = ({ type = BLOCKS.EMBEDDED_ENTRY, richTextAPI }) => {
   return EmbeddedEntityBlockPlugin({
-    widgetAPI,
-    nodeType: BLOCKS.EMBEDDED_ENTRY,
-    hotkey: 'mod+shift+e'
+    richTextAPI,
+    nodeType: type,
+    hotkey: 'cmd+shift+e'
   });
 };
 
-export const EmbeddedAssetBlockPlugin = ({ widgetAPI }) => {
+export const EmbeddedAssetBlockPlugin = ({ type = BLOCKS.EMBEDDED_ASSET, richTextAPI }) => {
   return EmbeddedEntityBlockPlugin({
-    widgetAPI,
-    nodeType: BLOCKS.EMBEDDED_ASSET,
-    hotkey: 'mod+shift+a'
+    richTextAPI,
+    nodeType: type,
+    hotkey: 'cmd+shift+a'
   });
 };

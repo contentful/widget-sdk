@@ -1,41 +1,38 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { INLINES } from '@contentful/rich-text-types';
 import ToolbarIcon from '../shared/ToolbarIcon.es6';
+import { TOOLBAR_PLUGIN_PROP_TYPES } from '../shared/PluginApi.es6';
+import { actionOrigin } from '../shared/PluginApi.es6';
 import { hasHyperlink, toggleLink, hasOnlyHyperlinkInlines } from './Util.es6';
-import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
 
 export default class HyperlinkToolbarIcon extends Component {
-  static propTypes = {
-    change: PropTypes.object.isRequired,
-    onToggle: PropTypes.func.isRequired,
-    disabled: PropTypes.bool.isRequired
-  };
+  static propTypes = TOOLBAR_PLUGIN_PROP_TYPES;
 
-  handleClick = async (event, createHyperlinkDialog) => {
+  handleClick = async event => {
     event.preventDefault();
-    const { onToggle, change } = this.props;
-    await toggleLink(change, createHyperlinkDialog);
+    const {
+      onToggle,
+      change,
+      richTextAPI: { widgetAPI, logAction }
+    } = this.props;
+    const logToolbarAction = (name, data) =>
+      logAction(name, { origin: actionOrigin.TOOLBAR, ...data });
+    await toggleLink(change, widgetAPI.dialogs.createHyperlink, logToolbarAction);
     onToggle(change);
   };
 
   render() {
     const { disabled, change } = this.props;
-
     const isDisabled = disabled || !hasOnlyHyperlinkInlines(change.value);
     return (
-      <WidgetAPIContext.Consumer>
-        {({ widgetAPI }) => (
-          <ToolbarIcon
-            disabled={isDisabled}
-            type={INLINES.HYPERLINK}
-            icon="Link"
-            title="Hyperlink"
-            onToggle={event => this.handleClick(event, widgetAPI.dialogs.createHyperlink)}
-            isActive={hasHyperlink(change.value)}
-          />
-        )}
-      </WidgetAPIContext.Consumer>
+      <ToolbarIcon
+        disabled={isDisabled}
+        type={INLINES.HYPERLINK}
+        icon="Link"
+        title="Hyperlink"
+        onToggle={event => this.handleClick(event)}
+        isActive={hasHyperlink(change.value)}
+      />
     );
   }
 }

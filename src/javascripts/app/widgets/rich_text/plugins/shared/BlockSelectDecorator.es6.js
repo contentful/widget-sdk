@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { haveBlocks } from './UtilHave.es6';
-import { ToolbarIconPropTypes } from './PropTypes.es6';
+import { actionOrigin, TOOLBAR_PLUGIN_PROP_TYPES } from './PluginApi.es6';
 
 export default ({
   type,
@@ -8,13 +8,20 @@ export default ({
   icon,
   applyChange = (change, type) => change.setBlocks(type)
 }) => Block => {
-  return class BlockDecorator extends React.Component {
-    static propTypes = ToolbarIconPropTypes;
+  return class BlockSelectDecorator extends React.Component {
+    static propTypes = TOOLBAR_PLUGIN_PROP_TYPES;
+
     handleSelect = e => {
-      const { change, onToggle } = this.props;
+      const {
+        change,
+        onToggle,
+        richTextAPI: { logAction }
+      } = this.props;
       e.preventDefault();
 
-      onToggle(applyChange(change, type));
+      applyChange(change, type);
+      onToggle(change);
+      logAction('insert', { origin: actionOrigin.TOOLBAR, nodeType: type });
     };
 
     render() {

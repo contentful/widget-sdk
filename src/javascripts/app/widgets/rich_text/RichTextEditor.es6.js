@@ -5,8 +5,9 @@ import { Value } from 'slate';
 import TrailingBlock from 'slate-trailing-block';
 import deepEqual from 'fast-deep-equal';
 
-import { toSlatejsDocument, toContentfulDocument } from '@contentful/contentful-slatejs-adapter';
+import { toContentfulDocument, toSlatejsDocument } from '@contentful/contentful-slatejs-adapter';
 
+import { newPluginAPI } from './plugins/shared/PluginApi.es6';
 import { BoldPlugin } from './plugins/Bold/index.es6';
 import { ItalicPlugin } from './plugins/Italic/index.es6';
 import { UnderlinedPlugin } from './plugins/Underlined/index.es6';
@@ -25,12 +26,11 @@ import {
 import NewLinePlugin from './plugins/NewLinePlugin/index.es6';
 import { ParagraphPlugin } from './plugins/Paragraph/index.es6';
 import {
-  EmbeddedEntryBlockPlugin,
-  EmbeddedAssetBlockPlugin
+  EmbeddedAssetBlockPlugin,
+  EmbeddedEntryBlockPlugin
 } from './plugins/EmbeddedEntityBlock/index.es6';
 import { EmbeddedEntryInlinePlugin } from './plugins/EmbeddedEntryInline/index.es6';
 
-import EditList from './plugins/List/EditListWrapper.es6';
 import { ListPlugin } from './plugins/List/index.es6';
 import { HrPlugin } from './plugins/Hr/index.es6';
 
@@ -40,6 +40,8 @@ import { BLOCKS } from '@contentful/rich-text-types';
 import { PasteHtmlPlugin } from './plugins/PasteHtml/index.es6';
 
 import Toolbar from './Toolbar/index.es6';
+
+const noop = () => {};
 
 const createValue = contentfulDocument => {
   const document = toSlatejsDocument({
@@ -61,15 +63,18 @@ export default class RichTextEditor extends React.Component {
     widgetAPI: PropTypes.object.isRequired,
     value: PropTypes.object.isRequired,
     isDisabled: PropTypes.bool,
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func,
+    onAction: PropTypes.func
   };
   static defaultProps = {
-    value: emptyDoc
+    value: emptyDoc,
+    onChange: noop,
+    onAction: noop
   };
 
   constructor(props) {
     super(props);
-    const { value, widgetAPI } = this.props;
+    const { value } = this.props;
 
     this.state = {
       lastOperations: [],
@@ -77,7 +82,7 @@ export default class RichTextEditor extends React.Component {
       value: value && value.nodeType === BLOCKS.DOCUMENT ? createValue(value) : initialValue,
       hasFocus: false
     };
-    this.slatePlugins = buildPlugins(widgetAPI);
+    this.slatePlugins = buildPlugins(newPluginAPI(this.props));
   }
 
   onChange = change => {
@@ -120,7 +125,7 @@ export default class RichTextEditor extends React.Component {
           change={this.state.value.change()}
           onChange={this.onChange}
           isDisabled={this.props.isDisabled}
-          widgetAPI={this.props.widgetAPI}
+          richTextAPI={newPluginAPI(this.props)}
         />
         <Editor
           data-test-id="editor"
@@ -172,32 +177,26 @@ function newUnhandledOpError(op) {
   return new Error(`Unhandled operation \`${op.type}\` with properties ${properties}`);
 }
 
-function buildPlugins(widgetAPI) {
-  const HyperlinkOptions = {
-    createHyperlinkDialog: widgetAPI.dialogs.createHyperlink
-  };
-
+function buildPlugins(richTextAPI) {
   return [
-    BoldPlugin(),
-    ItalicPlugin(),
-    QuotePlugin(),
-    UnderlinedPlugin(),
-    CodePlugin(),
-    HyperlinkPlugin(HyperlinkOptions),
-    Heading1Plugin(),
-    Heading2Plugin(),
-    Heading3Plugin(),
-    Heading4Plugin(),
-    Heading5Plugin(),
-    Heading6Plugin(),
+    BoldPlugin({ richTextAPI }),
+    ItalicPlugin({ richTextAPI }),
+    UnderlinedPlugin({ richTextAPI }),
+    CodePlugin({ richTextAPI }),
+    QuotePlugin({ richTextAPI }),
+    HyperlinkPlugin({ richTextAPI }),
+    Heading1Plugin({ richTextAPI }),
+    Heading2Plugin({ richTextAPI }),
+    Heading3Plugin({ richTextAPI }),
+    Heading4Plugin({ richTextAPI }),
+    Heading5Plugin({ richTextAPI }),
+    Heading6Plugin({ richTextAPI }),
     ParagraphPlugin(),
-    HrPlugin(),
-    EmbeddedEntryInlinePlugin({ widgetAPI }),
-    EmbeddedEntryBlockPlugin({ widgetAPI }),
-    EmbeddedAssetBlockPlugin({ widgetAPI }),
-
-    EditList(),
-    ListPlugin(),
+    HrPlugin({ richTextAPI }),
+    EmbeddedEntryInlinePlugin({ richTextAPI }),
+    EmbeddedEntryBlockPlugin({ richTextAPI }),
+    EmbeddedAssetBlockPlugin({ richTextAPI }),
+    ListPlugin({ richTextAPI }),
     PasteHtmlPlugin(),
     TrailingBlock({ type: BLOCKS.PARAGRAPH }),
     NewLinePlugin()

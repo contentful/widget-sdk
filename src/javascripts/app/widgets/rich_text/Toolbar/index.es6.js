@@ -35,7 +35,7 @@ import Visible from '../../../../components/shared/Visible/index.es6';
 
 export default class Toolbar extends React.Component {
   static propTypes = {
-    widgetAPI: PropTypes.object.isRequired,
+    richTextAPI: PropTypes.object.isRequired,
     isDisabled: PropTypes.bool.isRequired,
     change: PropTypes.object.isRequired,
     onChange: PropTypes.func.isRequired
@@ -61,13 +61,14 @@ export default class Toolbar extends React.Component {
     });
 
   renderEmbeds = props => {
-    const { field } = this.props.widgetAPI;
+    const { widgetAPI } = this.props.richTextAPI;
+    const { field } = widgetAPI;
     return (
       <div className="rich-text__toolbar__embed-actions-wrapper">
         <Visible if={isNodeTypeEnabled(field, BLOCKS.EMBEDDED_ASSET)}>
           <EmbeddedEntityBlock nodeType={BLOCKS.EMBEDDED_ASSET} isButton {...props} />
         </Visible>
-        {this.props.widgetAPI.features.embedInlineEntry ? (
+        {widgetAPI.features.embedInlineEntry ? (
           <Visible
             if={
               isNodeTypeEnabled(field, BLOCKS.EMBEDDED_ENTRY) ||
@@ -94,7 +95,7 @@ export default class Toolbar extends React.Component {
   };
 
   getValidationInfo() {
-    const { field } = this.props.widgetAPI;
+    const { field } = this.props.richTextAPI.widgetAPI;
     const isAnyMarkEnabled =
       isMarkEnabled(field, MARKS.BOLD) ||
       isMarkEnabled(field, MARKS.ITALIC) ||
@@ -131,14 +132,14 @@ export default class Toolbar extends React.Component {
     });
 
   render() {
+    const { change, isDisabled, richTextAPI } = this.props;
     const props = {
-      change: this.props.change,
+      change,
       onToggle: this.onChange,
-      disabled: this.props.isDisabled
+      disabled: isDisabled,
+      richTextAPI
     };
-
-    const { field } = this.props.widgetAPI;
-
+    const { field } = richTextAPI.widgetAPI;
     const { isAnyHyperlinkEnabled, isAnyListEnabled, isAnyMarkEnabled } = this.getValidationInfo();
 
     return (

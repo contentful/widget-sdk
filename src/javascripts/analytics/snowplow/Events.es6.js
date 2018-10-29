@@ -21,6 +21,7 @@ import ReferenceEditorTransform from './transformers/ReferenceEditor.es6';
 import ExtensionSaveTransform from './transformers/ExtensionSave.es6';
 import ExtensionInstallTransform from './transformers/ExtensionInstall.es6';
 import WebhookEditorTransform from './transformers/WebhookEditor.es6';
+import FeatureTextEditorTransform from './transformers/FeatureTextEditor.es6';
 
 /**
  * @ngdoc module
@@ -142,6 +143,8 @@ registerEvent(
 registerEvent('reference_editor_action:link', 'feature_reference_action', ReferenceEditorTransform);
 
 registerEvent('ui_webhook_editor:save', 'ui_webhook_editor_save', WebhookEditorTransform);
+
+registerEvent('text_editor:action', FeatureTextEditorTransform);
 
 /**
  * Registers an event to be tracked by snowplow.

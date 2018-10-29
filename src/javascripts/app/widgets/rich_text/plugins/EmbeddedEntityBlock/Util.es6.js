@@ -15,12 +15,13 @@ export const hasBlockOfType = (change, type) => {
 };
 
 /**
- * Invokes entity selector modal and inserts block.
- * @param {String} nodeType
+ * Invokes entity selector modal and inserts block embed.
+ * @param {string} nodeType
  * @param {WidgetAPI} widgetAPI
  * @param {slate.Change} change
+ * @param {function} logAction
  */
-export async function selectEntityAndInsert(nodeType, widgetAPI, change) {
+export async function selectEntityAndInsert(nodeType, widgetAPI, change, logAction) {
   const baseConfig = await newConfigFromRichTextField(widgetAPI.field, nodeType);
   const linkedContentTypeIds = getLinkedContentTypeIdsForNodeType(
     widgetAPI.field,
@@ -31,6 +32,7 @@ export async function selectEntityAndInsert(nodeType, widgetAPI, change) {
     linkedContentTypeIds,
     max: 1
   };
+  logAction(`openCreateEmbedDialog`, { nodeType });
   try {
     // widgetAPI.dialogs.selectSingleEntry() or selectSingleAsset()
     const [entity] = await widgetAPI.dialogs.selectEntities(config);
@@ -38,11 +40,12 @@ export async function selectEntityAndInsert(nodeType, widgetAPI, change) {
       return;
     }
     insertBlock(change, nodeType, entity);
+    logAction('insert', { nodeType });
   } catch (error) {
     if (error) {
       throw error;
     } else {
-      // the user closes modal without selecting an entry
+      logAction(`cancelCreateEmbedDialog`, { nodeType });
     }
   }
 }

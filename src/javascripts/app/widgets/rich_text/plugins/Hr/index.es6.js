@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { BLOCKS } from '@contentful/rich-text-types';
 import ToolbarIcon from '../shared/ToolbarIcon.es6';
-import blockDecorator from '../shared/BlockSelectDecorator.es6';
+import blockSelectDecorator from '../shared/BlockSelectDecorator.es6';
 import { haveTextInSomeBlocks } from '../shared/UtilHave.es6';
 
 export const HrPlugin = () => {
@@ -20,13 +20,13 @@ class Hr extends Component {
   }
 }
 
-export default blockDecorator({
+export default blockSelectDecorator({
   type: BLOCKS.HR,
   title: 'HR',
   icon: 'HorizontalRule',
-  applyChange: change => {
+  applyChange: (change, type) => {
     const hr = {
-      type: BLOCKS.HR,
+      type,
       object: 'block',
       isVoid: true
     };
@@ -37,6 +37,6 @@ export default blockDecorator({
       change.setBlocks(hr);
     }
 
-    return change.insertBlock(BLOCKS.PARAGRAPH).focus();
+    change.insertBlock(BLOCKS.PARAGRAPH).focus();
   }
 })(Hr);

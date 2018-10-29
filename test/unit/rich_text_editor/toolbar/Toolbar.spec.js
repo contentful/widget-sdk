@@ -60,6 +60,7 @@ describe('Toolbar', () => {
     });
     stubAll({ isolatedSystem: this.system });
 
+    // TODO: Test RichTextEditor without any HOCs here and test HOC separately.
     const { default: RichTextEditor } = await this.system.import('app/widgets/rich_text/index.es6');
 
     this.field = setupWidgetApi(this.$inject('mocks/widgetApi'), mockDocument).field;
@@ -67,6 +68,7 @@ describe('Toolbar', () => {
     this.props = {
       field: this.field,
       onChange: sinon.spy(),
+      onAction: sinon.spy(),
       features: { embedInlineEntry: true }
     };
     this.sandbox = createSandbox(window);

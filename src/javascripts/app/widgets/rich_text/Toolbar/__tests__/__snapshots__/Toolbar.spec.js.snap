@@ -14,20 +14,23 @@ exports[`Toolbar renders no icons if no formatting options enabled 1`] = `
   }
   isDisabled={false}
   onChange={[Function]}
-  widgetAPI={
+  richTextAPI={
     Object {
-      "features": Object {
-        "embedInlineEntry": true,
-      },
-      "field": Object {
-        "validations": Array [
-          Object {
-            "enabledNodeTypes": Array [],
-          },
-          Object {
-            "enabledMarks": Array [],
-          },
-        ],
+      "logAction": [Function],
+      "widgetAPI": Object {
+        "features": Object {
+          "embedInlineEntry": true,
+        },
+        "field": Object {
+          "validations": Array [
+            Object {
+              "enabledNodeTypes": Array [],
+            },
+            Object {
+              "enabledMarks": Array [],
+            },
+          ],
+        },
       },
     }
   }
@@ -281,12 +284,15 @@ exports[`Toolbar renders toolbar icons 1`] = `
   }
   isDisabled={false}
   onChange={[Function]}
-  widgetAPI={
+  richTextAPI={
     Object {
-      "features": Object {
-        "embedInlineEntry": true,
+      "logAction": [Function],
+      "widgetAPI": Object {
+        "features": Object {
+          "embedInlineEntry": true,
+        },
+        "field": Object {},
       },
-      "field": Object {},
     }
   }
 >
@@ -507,6 +513,17 @@ exports[`Toolbar renders toolbar icons 1`] = `
             }
             disabled={false}
             onToggle={[Function]}
+            richTextAPI={
+              Object {
+                "logAction": [Function],
+                "widgetAPI": Object {
+                  "features": Object {
+                    "embedInlineEntry": true,
+                  },
+                  "field": Object {},
+                },
+              }
+            }
           >
             <Bold
               disabled={false}
@@ -680,6 +697,17 @@ exports[`Toolbar renders toolbar icons 1`] = `
             }
             disabled={false}
             onToggle={[Function]}
+            richTextAPI={
+              Object {
+                "logAction": [Function],
+                "widgetAPI": Object {
+                  "features": Object {
+                    "embedInlineEntry": true,
+                  },
+                  "field": Object {},
+                },
+              }
+            }
           >
             <Italic
               disabled={false}
@@ -853,6 +881,17 @@ exports[`Toolbar renders toolbar icons 1`] = `
             }
             disabled={false}
             onToggle={[Function]}
+            richTextAPI={
+              Object {
+                "logAction": [Function],
+                "widgetAPI": Object {
+                  "features": Object {
+                    "embedInlineEntry": true,
+                  },
+                  "field": Object {},
+                },
+              }
+            }
           >
             <Underlined
               disabled={false}
@@ -1026,6 +1065,17 @@ exports[`Toolbar renders toolbar icons 1`] = `
             }
             disabled={false}
             onToggle={[Function]}
+            richTextAPI={
+              Object {
+                "logAction": [Function],
+                "widgetAPI": Object {
+                  "features": Object {
+                    "embedInlineEntry": true,
+                  },
+                  "field": Object {},
+                },
+              }
+            }
           >
             <Code
               disabled={false}
@@ -1210,6 +1260,17 @@ exports[`Toolbar renders toolbar icons 1`] = `
             }
             disabled={false}
             onToggle={[Function]}
+            richTextAPI={
+              Object {
+                "logAction": [Function],
+                "widgetAPI": Object {
+                  "features": Object {
+                    "embedInlineEntry": true,
+                  },
+                  "field": Object {},
+                },
+              }
+            }
           >
             <ToolbarIcon
               disabled={false}
@@ -1389,6 +1450,17 @@ exports[`Toolbar renders toolbar icons 1`] = `
             }
             disabled={false}
             onToggle={[Function]}
+            richTextAPI={
+              Object {
+                "logAction": [Function],
+                "widgetAPI": Object {
+                  "features": Object {
+                    "embedInlineEntry": true,
+                  },
+                  "field": Object {},
+                },
+              }
+            }
           >
             <Component
               disabled={false}
@@ -1562,6 +1634,17 @@ exports[`Toolbar renders toolbar icons 1`] = `
             }
             disabled={false}
             onToggle={[Function]}
+            richTextAPI={
+              Object {
+                "logAction": [Function],
+                "widgetAPI": Object {
+                  "features": Object {
+                    "embedInlineEntry": true,
+                  },
+                  "field": Object {},
+                },
+              }
+            }
           >
             <Component
               disabled={false}
@@ -1722,7 +1805,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
         <Visible
           if={true}
         >
-          <BlockDecorator
+          <BlockToggleDecorator
             change={
               Object {
                 "value": Object {
@@ -1735,13 +1818,35 @@ exports[`Toolbar renders toolbar icons 1`] = `
             }
             disabled={false}
             onToggle={[Function]}
+            richTextAPI={
+              Object {
+                "logAction": [Function],
+                "widgetAPI": Object {
+                  "features": Object {
+                    "embedInlineEntry": true,
+                  },
+                  "field": Object {},
+                },
+              }
+            }
           >
-            <Quote
+            <Blockquote
               disabled={false}
               icon="Quote"
               isActive={false}
               onToggle={[Function]}
-              title="Quote"
+              richTextAPI={
+                Object {
+                  "logAction": [Function],
+                  "widgetAPI": Object {
+                    "features": Object {
+                      "embedInlineEntry": true,
+                    },
+                    "field": Object {},
+                  },
+                }
+              }
+              title="Blockquote"
               type="blockquote"
             >
               <ToolbarIcon
@@ -1749,7 +1854,18 @@ exports[`Toolbar renders toolbar icons 1`] = `
                 icon="Quote"
                 isActive={false}
                 onToggle={[Function]}
-                title="Quote"
+                richTextAPI={
+                  Object {
+                    "logAction": [Function],
+                    "widgetAPI": Object {
+                      "features": Object {
+                        "embedInlineEntry": true,
+                      },
+                      "field": Object {},
+                    },
+                  }
+                }
+                title="Blockquote"
                 type="blockquote"
               >
                 <EditorToolbarButton
@@ -1757,14 +1873,14 @@ exports[`Toolbar renders toolbar icons 1`] = `
                   disabled={false}
                   icon="Quote"
                   isActive={false}
-                  label="Quote"
+                  label="Blockquote"
                   onMouseDown={[Function]}
                   testId="cf-ui-editor-toolbar-button"
-                  tooltip="Quote"
+                  tooltip="Blockquote"
                   withDropdown={false}
                 >
                   <Tooltip
-                    content="Quote"
+                    content="Blockquote"
                     isVisible={false}
                     onBlur={[Function]}
                     onFocus={[Function]}
@@ -1800,7 +1916,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                               "icon": "Quote",
                             }
                           }
-                          label="Quote"
+                          label="Blockquote"
                           onMouseDown={[Function]}
                           testId="cf-ui-editor-toolbar-button"
                           withDropdown={false}
@@ -1878,7 +1994,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                                 <span
                                   className="IconButton__IconButton__label___1kp5y helpers__sr-only___3Kv3z"
                                 >
-                                  Quote
+                                  Blockquote
                                 </span>
                               </span>
                             </TabFocusTrap>
@@ -1889,13 +2005,13 @@ exports[`Toolbar renders toolbar icons 1`] = `
                   </Tooltip>
                 </EditorToolbarButton>
               </ToolbarIcon>
-            </Quote>
-          </BlockDecorator>
+            </Blockquote>
+          </BlockToggleDecorator>
         </Visible>
         <Visible
           if={true}
         >
-          <BlockDecorator
+          <BlockSelectDecorator
             change={
               Object {
                 "value": Object {
@@ -1908,6 +2024,17 @@ exports[`Toolbar renders toolbar icons 1`] = `
             }
             disabled={false}
             onToggle={[Function]}
+            richTextAPI={
+              Object {
+                "logAction": [Function],
+                "widgetAPI": Object {
+                  "features": Object {
+                    "embedInlineEntry": true,
+                  },
+                  "field": Object {},
+                },
+              }
+            }
           >
             <Hr
               disabled={false}
@@ -2063,7 +2190,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                 </EditorToolbarButton>
               </ToolbarIcon>
             </Hr>
-          </BlockDecorator>
+          </BlockSelectDecorator>
         </Visible>
       </div>
       <div
@@ -2087,6 +2214,17 @@ exports[`Toolbar renders toolbar icons 1`] = `
             isButton={true}
             nodeType="embedded-asset-block"
             onToggle={[Function]}
+            richTextAPI={
+              Object {
+                "logAction": [Function],
+                "widgetAPI": Object {
+                  "features": Object {
+                    "embedInlineEntry": true,
+                  },
+                  "field": Object {},
+                },
+              }
+            }
           >
             <Button
               buttonType="muted"

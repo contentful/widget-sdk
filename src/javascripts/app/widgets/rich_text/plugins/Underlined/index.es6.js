@@ -4,14 +4,13 @@ import markPlugin from '../shared/MarkPlugin.es6';
 import markToggleDecorator from '../shared/MarkToggleDecorator.es6';
 import { MARKS } from '@contentful/rich-text-types';
 
-export const UnderlinedPlugin = () => {
-  return markPlugin(
-    {
-      type: MARKS.UNDERLINE,
-      tagName: 'u'
-    },
-    'cmd+u'
-  );
+export const UnderlinedPlugin = ({ richTextAPI: { logAction } }) => {
+  return markPlugin({
+    type: MARKS.UNDERLINE,
+    tagName: 'u',
+    hotkey: 'cmd+u',
+    logAction
+  });
 };
 
 class Underlined extends Component {

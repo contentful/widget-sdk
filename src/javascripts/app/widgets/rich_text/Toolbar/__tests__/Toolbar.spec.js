@@ -19,11 +19,14 @@ const fakeProps = () => ({
     }
   },
   onChange: sinon.spy(),
-  widgetAPI: {
-    features: {
-      embedInlineEntry: true
-    },
-    field: {}
+  richTextAPI: {
+    logAction: sinon.spy(),
+    widgetAPI: {
+      features: {
+        embedInlineEntry: true
+      },
+      field: {}
+    }
   }
 });
 
@@ -35,7 +38,7 @@ describe('Toolbar', () => {
 
   it('renders no icons if no formatting options enabled', () => {
     const props = fakeProps();
-    props.widgetAPI.field.validations = [
+    props.richTextAPI.widgetAPI.field.validations = [
       { [ValidationType.ENABLED_NODE_TYPES]: [] },
       { [ValidationType.ENABLED_MARKS]: [] }
     ];
@@ -45,14 +48,14 @@ describe('Toolbar', () => {
 
   it('hides group separator if no marks enabled', () => {
     const props = fakeProps();
-    props.widgetAPI.field.validations = [{ [ValidationType.ENABLED_MARKS]: [] }];
+    props.richTextAPI.widgetAPI.field.validations = [{ [ValidationType.ENABLED_MARKS]: [] }];
     const toolbar = Enzyme.mount(<Toolbar {...props} />);
     expect(toolbar.find('[data-test-id="mark-divider"]')).toHaveLength(0);
   });
 
   it('hides group separator if no lists, quotes, or hr enabled', () => {
     const props = fakeProps();
-    props.widgetAPI.field.validations = [
+    props.richTextAPI.widgetAPI.field.validations = [
       {
         [ValidationType.ENABLED_NODE_TYPES]: [
           VALIDATABLE_NODE_TYPES.filter(
@@ -68,7 +71,7 @@ describe('Toolbar', () => {
 
   it('hides group separator if no hyperinks enabled', () => {
     const props = fakeProps();
-    props.widgetAPI.field.validations = [
+    props.richTextAPI.widgetAPI.field.validations = [
       {
         [ValidationType.ENABLED_NODE_TYPES]: [
           VALIDATABLE_NODE_TYPES.filter(
@@ -86,7 +89,7 @@ describe('Toolbar', () => {
 
   it('hides embeds dropdown when no embeds enabled', () => {
     const props = fakeProps();
-    props.widgetAPI.field.validations = [
+    props.richTextAPI.widgetAPI.field.validations = [
       {
         [ValidationType.ENABLED_NODE_TYPES]: [
           VALIDATABLE_NODE_TYPES.filter(

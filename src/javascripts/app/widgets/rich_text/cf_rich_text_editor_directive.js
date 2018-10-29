@@ -7,9 +7,10 @@ angular.module('cf.app').directive('cfRichTextEditor', [
       require: '^cfWidgetApi',
       link: (scope, _$el, _attr, widgetApi) => {
         scope.slateEditorProps = {
+          entry: widgetApi.entry,
           field: {
             ...widgetApi.field,
-            linkType: 'Entry'
+            linkType: 'Entry' // TODO: Do we really need this?
           }
         };
       }

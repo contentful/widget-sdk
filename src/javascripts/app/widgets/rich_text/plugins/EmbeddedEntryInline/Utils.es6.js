@@ -36,29 +36,34 @@ export const hasOnlyInlineEntryInSelection = change => {
   }
 };
 
-export const selectEntryAndInsert = async (widgetAPI, change) => {
-  const baseConfig = await newConfigFromRichTextField(widgetAPI.field, INLINES.EMBEDDED_ENTRY);
-  const linkedContentTypeIds = getLinkedContentTypeIdsForNodeType(
-    widgetAPI.field,
-    INLINES.EMBEDDED_ENTRY
-  );
+/**
+ * Invokes entity selector modal and inserts inline embed.
+ * @param {WidgetAPI} widgetAPI
+ * @param {slate.Change} change
+ * @param {function} logAction
+ */
+export const selectEntryAndInsert = async (widgetAPI, change, logAction) => {
+  const nodeType = INLINES.EMBEDDED_ENTRY;
+  const baseConfig = await newConfigFromRichTextField(widgetAPI.field, nodeType);
+  const linkedContentTypeIds = getLinkedContentTypeIdsForNodeType(widgetAPI.field, nodeType);
   const config = {
     ...baseConfig,
     linkedContentTypeIds,
     max: 1
   };
+  logAction(`openCreateEmbedDialog`, { nodeType });
   try {
     const [entry] = await widgetAPI.dialogs.selectEntities(config);
     if (!entry) {
       return;
     }
-
     insertInline(change, entry.sys.id);
+    logAction('insert', { nodeType });
   } catch (error) {
     if (error) {
       throw error;
     } else {
-      // the user closes modal without selecting an entry
+      logAction(`cancelCreateEmbedDialog`, { nodeType });
     }
   }
 };

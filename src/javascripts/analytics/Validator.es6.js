@@ -85,7 +85,8 @@ export const validEvents = {
   extension: ['save', 'install'],
   entity_button: ['click'],
   ui_webhook_editor: ['save'],
-  usage: ['period_selected']
+  usage: ['period_selected'],
+  text_editor: ['action']
 };
 
 export const validateEvent = eventName => {

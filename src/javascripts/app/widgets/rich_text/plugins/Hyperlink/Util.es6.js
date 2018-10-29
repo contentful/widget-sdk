@@ -41,20 +41,23 @@ export function hasOnlyHyperlinkInlines(value) {
  * the user.
  *
  * @param {slate.Change} change Will be mutated with the required operations.
+ * @param {function} createHyperlinkDialog
+ * @param {function} logAction
  * @returns {Promise<void>}
  */
-export async function toggleLink(change, createHyperlinkDialog) {
+export async function toggleLink(change, createHyperlinkDialog, logAction) {
   if (hasHyperlink(change.value)) {
-    removeLink(change);
+    removeLinks(change, logAction);
   } else {
-    await insertLink(change, createHyperlinkDialog);
+    await insertLink(change, createHyperlinkDialog, logAction);
   }
 }
 
-async function insertLink(change, createHyperlinkDialog) {
+async function insertLink(change, createHyperlinkDialog, logAction) {
+  logAction('openCreateHyperlinkDialog');
   const showTextInput = !change.value.isExpanded || change.value.fragment.text.trim() === '';
   try {
-    const { text, type, uri, target } = await createHyperlinkDialog({ showTextInput });
+    const { text, type: linkType, uri, target } = await createHyperlinkDialog({ showTextInput });
     if (showTextInput) {
       if (change.value.blocks.last().isVoid) {
         change.insertBlock(BLOCKS.PARAGRAPH);
@@ -62,17 +65,20 @@ async function insertLink(change, createHyperlinkDialog) {
       change.insertText(text).extend(0 - text.length);
     }
     const data = target ? { target } : { uri };
-    change.call(wrapLink, type, data);
+    change.call(wrapLink, linkType, data);
+    const nodeType = linkTypeToNodeType(linkType);
+    logAction('insert', { nodeType, linkType });
   } catch (e) {
     if (e) throw e;
-    // User cancelled dialog.
+    logAction('cancelCreateHyperlinkDialog');
   }
   change.focus();
 }
 
-function removeLink(change) {
+function removeLinks(change, logAction) {
   HYPERLINK_TYPES.forEach(type => change.unwrapInline(type));
   change.focus();
+  logAction('unlinkHyperlinks');
 }
 
 /**
@@ -80,25 +86,29 @@ function removeLink(change) {
  * a dialog and applying the change.
  *
  * @param {slate.Change} change Will be mutated with the required operations.
+ * @param {function} createHyperlinkDialog
+ * @param {function} logAction
  * @returns {Promise<void>}
  */
-export async function editLink(change, createHyperlinkDialog) {
+export async function editLink(change, createHyperlinkDialog, logAction) {
   const link = change.value.inlines.get(0);
   if (!link) {
     throw new Error('Change object contains no link to be edited.');
   }
+  logAction('openEditHyperlinkDialog');
   const { uri: oldUri, target: oldTarget } = link.data.toJSON();
   try {
-    const { type, uri, target } = await createHyperlinkDialog({
+    const { type: linkType, uri, target } = await createHyperlinkDialog({
       showTextInput: false,
       value: oldTarget ? { target: oldTarget } : { uri: oldUri }
     });
-    const nodeType = linkTypeToNodeType(type);
+    const nodeType = linkTypeToNodeType(linkType);
     const data = target ? { target } : { uri };
     change.setInlines({ type: nodeType, data });
+    logAction('edit', { nodeType, linkType });
   } catch (e) {
     if (e) throw e;
-    // User cancelled dialog.
+    logAction('cancelEditHyperlinkDialog');
   }
   change.focus();
 }

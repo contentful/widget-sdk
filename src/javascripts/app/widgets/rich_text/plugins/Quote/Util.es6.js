@@ -22,11 +22,19 @@ export const isSelectionInQuote = change => {
   return ancestor.type === BLOCKS.QUOTE;
 };
 
+/**
+ * Toggles formatting between block quote and a plain paragraph.
+ *
+ * @param {slate.Change} change
+ * @param {stirng} type
+ * @returns {boolean} New toggle state after the change.
+ */
 export const applyChange = change => {
   const isActive = isSelectionInQuote(change);
   if (isActive) {
-    return change.unwrapBlock(BLOCKS.QUOTE);
+    change.unwrapBlock(BLOCKS.QUOTE);
+  } else {
+    change.setBlocks(BLOCKS.PARAGRAPH).wrapBlock(BLOCKS.QUOTE);
   }
-
-  return change.setBlocks(BLOCKS.PARAGRAPH).wrapBlock(BLOCKS.QUOTE);
+  return !isActive;
 };

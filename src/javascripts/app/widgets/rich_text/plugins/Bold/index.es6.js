@@ -4,14 +4,13 @@ import markPlugin from '../shared/MarkPlugin.es6';
 import markToggleDecorator from '../shared/MarkToggleDecorator.es6';
 import { MARKS } from '@contentful/rich-text-types';
 
-export const BoldPlugin = () => {
-  return markPlugin(
-    {
-      type: MARKS.BOLD,
-      tagName: 'b'
-    },
-    'cmd+b'
-  );
+export const BoldPlugin = ({ richTextAPI: { logAction } }) => {
+  return markPlugin({
+    type: MARKS.BOLD,
+    tagName: 'b',
+    hotkey: 'cmd+b',
+    logAction
+  });
 };
 
 class Bold extends Component {

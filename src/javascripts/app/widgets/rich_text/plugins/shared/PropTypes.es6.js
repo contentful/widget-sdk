@@ -11,9 +11,3 @@ export const NodePropTypes = {
   children: PropTypes.node.isRequired,
   type: PropTypes.string.isRequired
 };
-
-export const ToolbarIconPropTypes = {
-  change: PropTypes.object.isRequired,
-  onToggle: PropTypes.func.isRequired,
-  disabled: PropTypes.bool.isRequired
-};

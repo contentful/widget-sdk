@@ -1,11 +1,19 @@
 import * as React from 'react';
 import { BLOCKS } from '@contentful/rich-text-types';
 import { haveBlocks } from './UtilHave.es6';
-import { ToolbarIconPropTypes } from './PropTypes.es6';
+import { actionOrigin, TOOLBAR_PLUGIN_PROP_TYPES } from './PluginApi.es6';
 
+/**
+ * Toggles formatting between a given node type and a plain paragraph.
+ *
+ * @param {slate.Change} change
+ * @param {stirng} type
+ * @returns {boolean} New toggle state after the change.
+ */
 export const toggleChange = (change, type) => {
   const isActive = haveBlocks(change, type);
-  return change.setBlocks(isActive ? BLOCKS.PARAGRAPH : type);
+  change.setBlocks(isActive ? BLOCKS.PARAGRAPH : type);
+  return !isActive;
 };
 
 const isBlockActive = (change, type) => haveBlocks(change, type);
@@ -17,17 +25,25 @@ export default ({
   applyChange = toggleChange,
   isActive = isBlockActive
 }) => Block => {
-  return class BlockDecorator extends React.Component {
-    static propTypes = ToolbarIconPropTypes;
+  return class BlockToggleDecorator extends React.Component {
+    static propTypes = TOOLBAR_PLUGIN_PROP_TYPES;
+
     handleToggle = e => {
-      const { change, onToggle } = this.props;
+      const {
+        change,
+        onToggle,
+        richTextAPI: { logAction }
+      } = this.props;
       e.preventDefault();
 
-      onToggle(applyChange(change, type));
+      const isActive = applyChange(change, type);
+      const actionName = isActive ? 'insert' : 'remove';
+      onToggle(change);
+      logAction(actionName, { origin: actionOrigin.TOOLBAR, nodeType: type });
     };
 
     render() {
-      const { change, disabled } = this.props;
+      const { change, disabled, richTextAPI } = this.props;
 
       return (
         <Block
@@ -37,6 +53,7 @@ export default ({
           onToggle={this.handleToggle}
           isActive={isActive(change, type)}
           disabled={disabled}
+          richTextAPI={richTextAPI}
         />
       );
     }

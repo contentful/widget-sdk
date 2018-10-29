@@ -53,9 +53,9 @@ export default function connectToWidgetAPI(Component) {
     };
 
     render() {
-      const { field, features } = this.props;
+      const { entry, field, features } = this.props;
       const { currentUrl } = this.state;
-      const widgetAPI = buildWidgetApi({ field, features, currentUrl });
+      const widgetAPI = buildWidgetApi({ entry, field, features, currentUrl });
       return (
         <WidgetAPIContext.Provider value={{ widgetAPI }}>
           <Component

@@ -29,6 +29,7 @@ export default function(_, eventData) {
       schema: getSchema('feature_text_editor').path,
       data: {
         action: 'contentPreview',
+        action_origin: 'entry-editor-content-preview-button',
         editor_name: 'StructuredText',
         field_locale: locale.internal_code,
         field_id: field.id,

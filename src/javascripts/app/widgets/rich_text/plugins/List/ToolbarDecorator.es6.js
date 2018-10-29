@@ -1,23 +1,29 @@
 import * as React from 'react';
-import { ToolbarIconPropTypes } from '../shared/PropTypes.es6';
-
+import { actionOrigin, TOOLBAR_PLUGIN_PROP_TYPES } from '../shared/PluginApi.es6';
 import EditList from './EditListWrapper.es6';
 
-const applyChange = (change, currentType) => {
-  const { utils, changes } = EditList();
-  let newChange;
+const applyChange = (change, type, logAction) => {
+  const {
+    utils,
+    changes: { unwrapList, wrapInList }
+  } = EditList();
+  const log = name => logAction(name, { origin: actionOrigin.TOOLBAR, nodeType: type });
 
   if (utils.isSelectionInList(change.value)) {
-    if (utils.getCurrentList(change.value).type !== currentType) {
-      newChange = change.setNodeByKey(utils.getCurrentList(change.value).key, currentType);
+    if (utils.getCurrentList(change.value).type !== type) {
+      const currentList = utils.getCurrentList(change.value);
+      change.setNodeByKey(currentList.key, type);
+      log('insert');
     } else {
-      newChange = changes.unwrapList(change);
+      unwrapList(change);
+      log('remove');
     }
   } else {
-    newChange = changes.wrapInList(change, currentType);
+    wrapInList(change, type);
+    log('insert');
   }
 
-  return newChange.focus();
+  return change.focus();
 };
 
 const isActive = (change, type) => {
@@ -31,12 +37,17 @@ const isActive = (change, type) => {
 
 export default ({ type, title, icon }) => Block => {
   return class ToolbarDecorator extends React.Component {
-    static propTypes = ToolbarIconPropTypes;
-    handleToggle = e => {
-      const { change, onToggle } = this.props;
-      e.preventDefault();
+    static propTypes = TOOLBAR_PLUGIN_PROP_TYPES;
 
-      onToggle(applyChange(change, type));
+    handleToggle = e => {
+      const {
+        change,
+        onToggle,
+        richTextAPI: { logAction }
+      } = this.props;
+      e.preventDefault();
+      applyChange(change, type, logAction);
+      onToggle(change);
     };
 
     render() {

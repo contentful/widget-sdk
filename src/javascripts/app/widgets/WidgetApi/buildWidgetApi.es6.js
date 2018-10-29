@@ -22,12 +22,17 @@ import openHyperlinkDialog from 'app/widgets/WidgetApi/dialogs/openHyperlinkDial
  * @param {string} currentUrl
  * @returns {Object}
  */
-export default function buildWidgetApi({ field, features, currentUrl }) {
+export default function buildWidgetApi({ field, entry, features, currentUrl }) {
   const widgetAPI = {
     /**
      * @see https://github.com/contentful/ui-extensions-sdk/blob/master/docs/ui-extensions-sdk-frontend.md#extensionfield
      */
     field,
+
+    /**
+     *
+     */
+    entry,
 
     /**
      * @see https://github.com/contentful/ui-extensions-sdk/blob/master/docs/ui-extensions-sdk-frontend.md#extensionspace
@@ -66,7 +71,6 @@ export default function buildWidgetApi({ field, features, currentUrl }) {
      */
     features
 
-    // TODO: .entry
     // TODO: .locales
     // TODO: .user
     // TODO: .window

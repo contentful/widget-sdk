@@ -4,14 +4,13 @@ import markPlugin from '../shared/MarkPlugin.es6';
 import markToggleDecorator from '../shared/MarkToggleDecorator.es6';
 import { MARKS } from '@contentful/rich-text-types';
 
-export const CodePlugin = () => {
-  return markPlugin(
-    {
-      type: MARKS.CODE,
-      tagName: 'code'
-    },
-    'cmd+/'
-  );
+export const CodePlugin = ({ richTextAPI: { logAction } }) => {
+  return markPlugin({
+    type: MARKS.CODE,
+    tagName: 'code',
+    hotkey: 'cmd+/',
+    logAction
+  });
 };
 
 class Code extends Component {
