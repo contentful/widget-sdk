@@ -37,7 +37,7 @@ export const ResourceUsage = ServicesConsumer({
     }
 
     return (
-      <div className="resource-list__item">
+      <div className="resource-list__item" data-test-id="resource-usage-list-item">
         <div className="resource-list__item__content">
           <div className="resource-list__item__column">
             <h3 className="resource-list__item__title">
