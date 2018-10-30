@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import enhanceWithClickOutside from 'react-click-outside';
 import cn from 'classnames';
-import Menu from './Menu';
+import Menu from './Menu/index.es6';
 import { Icon, TextLink } from '@contentful/ui-component-library';
 
 export const Size = {

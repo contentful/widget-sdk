@@ -59,6 +59,11 @@ function CreateEntry(props) {
   const allowedContentTypes = props.contentTypes.filter(ct =>
     accessChecker.canPerformActionOnEntryOfType(accessChecker.Action.CREATE, ct.sys.id)
   );
+
+  const text =
+    allowedContentTypes.length === 1
+      ? `Create new ${allowedContentTypes[0].name}`
+      : 'Create new entry';
   return (
     allowedContentTypes.length > 0 && (
       <CreateEntryButton
@@ -66,7 +71,7 @@ function CreateEntry(props) {
         disabled={false}
         contentTypes={allowedContentTypes}
         onSelect={contentTypeId => onSelectHandler(contentTypeId, props.$services, props.onSelect)}
-        text="Create new entry"
+        text={text}
         hasPlusIcon={props.hasPlusIcon}
         suggestedContentTypeId={props.suggestedContentTypeId}
       />
