@@ -144,7 +144,7 @@ registerEvent('reference_editor_action:link', 'feature_reference_action', Refere
 
 registerEvent('ui_webhook_editor:save', 'ui_webhook_editor_save', WebhookEditorTransform);
 
-registerEvent('text_editor:action', FeatureTextEditorTransform);
+registerEvent('text_editor:action', 'feature_text_editor', FeatureTextEditorTransform);
 
 /**
  * Registers an event to be tracked by snowplow.

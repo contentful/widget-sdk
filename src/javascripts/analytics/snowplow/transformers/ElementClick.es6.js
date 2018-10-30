@@ -23,34 +23,31 @@ export default function(_, eventData) {
     })
   }))(_, eventData);
 
-  const stEventData = omit(eventData.structuredTextEditor, ['fields', 'locales']);
-  const createRichTextContextEvent = (field, locale) =>
+  const rtEventData = toSnakeCase(omit(eventData.richTextEditor, ['fields', 'locales']));
+  const createRichTextContextEvent = (field, locales) =>
     addUserOrgSpace(() => ({
       schema: getSchema('feature_text_editor').path,
       data: {
-        action: 'contentPreview',
-        action_origin: 'entry-editor-content-preview-button',
-        editor_name: 'StructuredText',
-        field_locale: locale.internal_code,
+        editor_name: 'RichText',
+        field_locale: null,
         field_id: field.id,
         is_fullscreen: false,
-        ...toSnakeCase(stEventData)
+        ...rtEventData,
+        additional_data: {
+          ...toSnakeCase(rtEventData.additional_data),
+          active_locales: locales.map(locale => locale.internal_code)
+        }
       }
     }))(_, eventData);
 
-  if (eventData.structuredTextEditor) {
-    const { fields, locales } = eventData.structuredTextEditor;
+  if (eventData.richTextEditor) {
+    const { fields, locales } = eventData.richTextEditor;
     const activeLocales = Array.isArray(locales) ? locales : locales.active;
     const defaultLocale = find(activeLocales, 'default');
 
     for (const field of fields) {
-      if (field.localized) {
-        for (const locale of activeLocales) {
-          contexts.push(createRichTextContextEvent(field, locale));
-        }
-      } else {
-        contexts.push(createRichTextContextEvent(field, defaultLocale));
-      }
+      const locales = field.localized ? activeLocales : [defaultLocale];
+      contexts.push(createRichTextContextEvent(field, locales));
     }
   }
 

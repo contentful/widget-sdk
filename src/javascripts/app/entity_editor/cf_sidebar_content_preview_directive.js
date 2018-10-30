@@ -70,7 +70,9 @@ angular.module('contentful').directive('cfSidebarContentPreview', [
               if (stFields.length) {
                 const entryId = $scope.entityInfo.id;
                 eventOptions = {
-                  structuredTextEditor: {
+                  richTextEditor: {
+                    action: 'contentPreview',
+                    action_origin: 'entry-editor-content-preview-button',
                     fields: stFields,
                     locales: $scope.locales,
                     contentTypeId,
