@@ -19,6 +19,7 @@ import * as State from './State.es6';
 import {
   canPerformActionOnEntryOfType,
   canCreateAsset,
+  canCreateEntry,
   Action
 } from 'access_control/AccessChecker';
 import { canLinkToContentType, getInlineEditingStoreKey } from './utils.es6';
@@ -54,7 +55,8 @@ export default function create($scope, widgetApi) {
   let slideInEditorEnabled = false;
   const canEditReferences = !!widgetApi._internal.editReferences;
   const bulkEditorEnabled = canEditReferences && widgetApi.settings.bulkEditing;
-  $scope.isCreateActionEnabled = canCreateAsset();
+  $scope.canCreateAsset = canCreateAsset();
+  $scope.canCreateEntry = canCreateEntry();
   $scope.isAssetCreationInProgress = true;
   $scope.typePlural = { Entry: 'entries', Asset: 'assets' }[$scope.type];
   $scope.isAssetCard = is('Asset', 'card');
