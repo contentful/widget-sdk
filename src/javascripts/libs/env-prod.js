@@ -97,6 +97,7 @@ window.libs = [
   ['slate-react', require('slate-react')],
   ['slate-trailing-block', require('slate-trailing-block')],
   ['slate-html-serializer', require('slate-html-serializer')],
+  ['slate-plain-serializer', require('slate-plain-serializer')],
   ['Sortable', require('sortablejs')],
   ['speakingurl', require('speakingurl')],
   ['stringifySafe', require('json-stringify-safe')],

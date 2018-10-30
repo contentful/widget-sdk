@@ -1,5 +1,5 @@
 import serializer from './Serializer.es6';
-import { document, block, inline, text, leaf, mark, emptyText } from './helpers';
+import { document, block, inline, text, leaf, mark, emptyText } from './../shared/PasteTestHelpers';
 import { BLOCKS, MARKS, INLINES } from '@contentful/rich-text-types';
 import _ from 'lodash';
 
