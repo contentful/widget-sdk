@@ -16,7 +16,7 @@ const servicesShape = PropTypes.shape({
   accessChecker: PropTypes.object,
   logger: PropTypes.object,
   entityCreator: PropTypes.object
-}).isRequired;
+});
 
 /**
  * Renders a create entry/asset button/link and triggers entity creation
@@ -35,31 +35,29 @@ export default withServicesConsumer(
   }
 )(CreateEntity);
 
-function CreateEntity({ type, contentTypes, suggestedContentTypeId, onSelect, $services }) {
+function CreateEntity(props) {
+  const { type, ...otherProps } = props;
   if (type === entityTypes.Entry) {
-    return CreateEntry({ contentTypes, suggestedContentTypeId, onSelect, $services });
+    return <CreateEntry {...otherProps} />;
   }
 
   if (type === entityTypes.Asset) {
-    return CreateAsset({ onSelect, $services });
+    return <CreateAsset onSelect={props.onSelect} $services={props.$services} />;
   }
-
-  throw new Error(`Unknown entity type ${type}`);
 }
 
 CreateEntity.propTypes = {
-  type: PropTypes.oneOf([entityTypes.Entry, entityTypes.Asset]),
+  type: PropTypes.oneOf([entityTypes.Entry, entityTypes.Asset]).isRequired,
+  $services: servicesShape.isRequired,
   contentTypes: PropTypes.array,
   suggestedContentTypeId: PropTypes.string,
-  $services: servicesShape
+  hasPlusIcon: PropTypes.bool
 };
 
 function CreateEntry(props) {
+  const accessChecker = props.$services.accessChecker;
   const allowedContentTypes = props.contentTypes.filter(ct =>
-    props.$services.accessChecker.canPerformActionOnEntryOfType(
-      props.$services.accessChecker.Action.CREATE,
-      ct.sys.id
-    )
+    accessChecker.canPerformActionOnEntryOfType(accessChecker.Action.CREATE, ct.sys.id)
   );
   return (
     allowedContentTypes.length > 0 && (
@@ -69,6 +67,7 @@ function CreateEntry(props) {
         contentTypes={allowedContentTypes}
         onSelect={contentTypeId => onSelectHandler(contentTypeId, props.$services, props.onSelect)}
         text="Create new entry"
+        hasPlusIcon={props.hasPlusIcon}
         suggestedContentTypeId={props.suggestedContentTypeId}
       />
     )
@@ -76,9 +75,10 @@ function CreateEntry(props) {
 }
 
 CreateEntry.propTypes = {
-  contentTypes: PropTypes.array,
-  onSelect: PropTypes.func,
-  $services: servicesShape
+  contentTypes: PropTypes.array.isRequired,
+  onSelect: PropTypes.func.isRequired,
+  $services: servicesShape.isRequired,
+  hasPlusIcon: PropTypes.bool
 };
 
 function CreateAsset(props) {
@@ -96,8 +96,8 @@ function CreateAsset(props) {
 }
 
 CreateAsset.propTypes = {
-  onSelect: PropTypes.func,
-  $services: servicesShape
+  onSelect: PropTypes.func.isRequired,
+  $services: servicesShape.isRequired
 };
 
 async function onSelectHandler(contentTypeId, $services, cb) {

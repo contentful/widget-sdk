@@ -93,6 +93,8 @@ angular.module('contentful').controller('EntitySelectorController', [
         type: config.entityType,
         suggestedContentTypeId: getSearch().contentTypeId
       };
+
+      $scope.createEntityInlineProps = { ...$scope.createEntityProps, hasPlusIcon: false };
     }
 
     $scope.$watch('view.searchText', handleTermChange);

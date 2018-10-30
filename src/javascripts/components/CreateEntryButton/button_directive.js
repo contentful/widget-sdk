@@ -18,6 +18,7 @@ angular.module('contentful').directive('cfCreateEntryButton', [
               size: attr.size,
               style: attr.style,
               text: attr.text,
+              hasPlusIcon: attr.hasPlusIcon,
               disabled
             };
           },

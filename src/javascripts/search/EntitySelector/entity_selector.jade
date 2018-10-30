@@ -47,7 +47,9 @@ mixin single-list-item
     at-bottom="loadMore()"
     num-elements="paginator.getPage()")
     .entity-selector__item-list-placeholder(ng-if="!isLoading && items.length < 1")
-      | {{ labels.empty }} found
+      | {{ labels.empty }} found. 
+      span(ng-if="!isLoading && items.length < 1 && config.withCreate")
+        <react-component name="search/EntitySelector/CreateEntity" props="createEntityInlineProps"/>
       span(ng-if="!supportsAdvancedSearch && view.searchText.length > 0")
         |  for <strong>{{ view.searchText }}</strong>
 

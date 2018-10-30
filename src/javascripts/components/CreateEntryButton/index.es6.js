@@ -23,12 +23,14 @@ class CreateEntryButton extends React.Component {
     size: PropTypes.oneOf([Size.Large, Size.Normal]),
     style: PropTypes.oneOf([Style.Button, Style.Link]),
     disabled: PropTypes.bool.isRequired,
+    hasPlusIcon: PropTypes.bool,
     text: PropTypes.string
   };
 
   static defaultProps = {
     mode: Size.Normal,
-    style: Style.Button
+    style: Style.Button,
+    hasPlusIcon: true
   };
 
   state = {
@@ -109,17 +111,17 @@ class CreateEntryButton extends React.Component {
   };
 
   renderLink = () => {
-    const { contentTypes } = this.props;
+    const { contentTypes, hasPlusIcon } = this.props;
     const isIdle = this.state.isHandlingOnSelect;
     const linkProps = {
       onClick: this.handleClick,
       disabled: isIdle,
-      icon: isIdle ? null : 'Plus'
+      icon: isIdle || !hasPlusIcon ? null : 'Plus'
     };
     return (
-      <div>
+      <React.Fragment>
         {isIdle && (
-          <div className="create-entry-button__handling-select-spinner" data-test-id="spinner" />
+          <span className="create-entry-button__handling-select-spinner" data-test-id="spinner" />
         )}
         <TextLink {...linkProps} testId="cta">
           {this.getCtaText()}
@@ -132,7 +134,7 @@ class CreateEntryButton extends React.Component {
             />
           )}
         </TextLink>
-      </div>
+      </React.Fragment>
     );
   };
 
@@ -157,7 +159,7 @@ class CreateEntryButton extends React.Component {
   render() {
     const { size } = this.props;
     return (
-      <div
+      <span
         style={{ position: 'relative' }}
         className={cn({
           'x--block': size === Size.Large
@@ -165,7 +167,7 @@ class CreateEntryButton extends React.Component {
         data-test-id="create-entry">
         {this.props.style === Style.Button ? this.renderButton() : this.renderLink()}
         {this.renderMenu()}
-      </div>
+      </span>
     );
   }
 }
