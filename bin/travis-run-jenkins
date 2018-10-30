@@ -53,3 +53,11 @@ URL="https://jenkins.contentful.org/job/$JOB/buildWithParameters?$QUERY"
 
 echo "POST $URL"
 curl -X POST -i -u "$AUTH" --header "$JENKINS_CRUMB" --url "$URL"
+
+# trigger cross-browser job for master only
+if [[ "$TRAVIS_BRANCH" = "master" ]]; then
+   curl -i -X POST \
+   -u "$AUTH" \
+   --header "$JENKINS_CRUMB" \
+   --url "https://jenkins.contentful.org/job/cross-browser-job/buildWithParameters?$QUERY"
+fi
