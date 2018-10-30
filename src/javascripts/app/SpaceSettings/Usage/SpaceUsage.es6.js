@@ -57,7 +57,6 @@ class SpaceUsage extends React.Component {
       <Workbench
         title="Space usage"
         icon="page-usage"
-        testId="space.usage"
         content={<ResourceUsageList resources={resources} />}
         sidebar={<SpaceUsageSidebar resources={resources} />}
       />
