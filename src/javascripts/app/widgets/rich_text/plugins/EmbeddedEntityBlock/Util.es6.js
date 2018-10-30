@@ -30,7 +30,8 @@ export async function selectEntityAndInsert(nodeType, widgetAPI, change, logActi
   const config = {
     ...baseConfig,
     linkedContentTypeIds,
-    max: 1
+    max: 1,
+    withCreate: true
   };
   logAction(`openCreateEmbedDialog`, { nodeType });
   try {

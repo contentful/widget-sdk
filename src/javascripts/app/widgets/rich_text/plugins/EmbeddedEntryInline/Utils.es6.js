@@ -49,7 +49,8 @@ export const selectEntryAndInsert = async (widgetAPI, change, logAction) => {
   const config = {
     ...baseConfig,
     linkedContentTypeIds,
-    max: 1
+    max: 1,
+    withCreate: true
   };
   logAction(`openCreateEmbedDialog`, { nodeType });
   try {

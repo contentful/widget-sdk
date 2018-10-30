@@ -121,7 +121,7 @@ class CreateEntryButton extends React.Component {
         {isIdle && (
           <div className="create-entry-button__handling-select-spinner" data-test-id="spinner" />
         )}
-        <TextLink {...linkProps} data-test-id="cta">
+        <TextLink {...linkProps} testId="cta">
           {this.getCtaText()}
           {contentTypes.length > 1 && (
             <Icon

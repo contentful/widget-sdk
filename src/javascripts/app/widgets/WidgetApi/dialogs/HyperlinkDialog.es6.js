@@ -254,13 +254,14 @@ export default class HyperlinkDialog extends React.Component {
   renderEntitySelector(type, isVisible) {
     const config = this.props.entitySelectorConfigs[type];
     if (!config) {
-      return <React.Fragment />;
+      return null;
     }
     const labels = getCustomizedLabels(config);
     const otherElementsHeight = this.props.hideText ? 520 : 600;
     const listHeight = calculateIdealListHeight(otherElementsHeight);
     const onChange = ([entity]) => this.setTargetEntity(type, entity);
     const isForCurrentType = this.state.type === type;
+    config.withCreate = false;
     return (
       <div
         style={{ display: isForCurrentType && isVisible ? 'block' : 'none' }}

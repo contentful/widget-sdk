@@ -22,6 +22,9 @@ mixin single-list-item
 .entity-selector(ng-controller="EntitySelectorController")
   .entity-selector__input-label
     p(ng-if="labels.input") {{ labels.input }}
+    should
+    p.entity-selector__mode-switcher(ng-if="config.withCreate")
+      <react-component name="search/EntitySelector/CreateEntity" props="createEntityProps"></react-component>
     p.entity-selector__mode-switcher(ng-if="config.multiple")
       a(href ng-click="view.mode = SELECTED" ng-if="view.mode === AVAILABLE")
         | Show {{ labels.selected }} ({{ selected.length }})

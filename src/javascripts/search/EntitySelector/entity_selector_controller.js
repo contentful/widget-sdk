@@ -81,6 +81,20 @@ angular.module('contentful').controller('EntitySelectorController', [
       getContentType: getContentType
     });
 
+    if (config.withCreate) {
+      $scope.createEntityProps = {
+        contentTypes: getValidContentTypes(
+          config.linkedContentTypeIds,
+          spaceContext.publishedCTs.getAllBare()
+        ),
+        onSelect: entity => {
+          $scope.onChange([entity]);
+        },
+        type: config.entityType,
+        suggestedContentTypeId: getSearch().contentTypeId
+      };
+    }
+
     $scope.$watch('view.searchText', handleTermChange);
     $scope.$on('forceSearch', resetAndLoad);
 
@@ -122,21 +136,20 @@ angular.module('contentful').controller('EntitySelectorController', [
         users$: Kefir.fromPromise(spaceContext.users.getAll()),
         withAssets: withAssets
       });
-
-      function getValidContentTypes(linkedContentTypeIds, contentTypes) {
-        var acceptsOnlySpecificContentType =
-          linkedContentTypeIds && linkedContentTypeIds.length > 0;
-
-        if (acceptsOnlySpecificContentType) {
-          contentTypes = contentTypes.filter(ct => linkedContentTypeIds.indexOf(ct.sys.id) > -1);
-        }
-
-        return contentTypes;
-      }
     }
 
+    function getValidContentTypes(linkedContentTypeIds, contentTypes) {
+      var acceptsOnlySpecificContentType = linkedContentTypeIds && linkedContentTypeIds.length > 0;
+
+      if (acceptsOnlySpecificContentType) {
+        contentTypes = contentTypes.filter(ct => linkedContentTypeIds.indexOf(ct.sys.id) > -1);
+      }
+
+      return contentTypes;
+    }
     function onSearchChange(newSearchState) {
       _.assign($scope.view, newSearchState);
+      $scope.createEntityProps.suggestedContentTypeId = newSearchState.contentTypeId;
       resetAndLoad();
     }
 

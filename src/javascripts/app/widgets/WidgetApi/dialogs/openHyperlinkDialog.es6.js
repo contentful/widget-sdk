@@ -75,19 +75,17 @@ export default async function({ value = {}, showTextInput, widgetAPI }) {
 }
 
 async function newConfigsForField(field) {
+  const config = {};
   if (field.type === 'RichText') {
     // TODO: Don't pass specific key if CT validation prohibits its type:
-    const config = {};
     if (isNodeTypeEnabled(field, INLINES.ENTRY_HYPERLINK)) {
       config.Entry = await newConfigFromRichTextField(field, 'entry-hyperlink');
     }
     if (isNodeTypeEnabled(field, INLINES.ASSET_HYPERLINK)) {
       config.Asset = await newConfigFromRichTextField(field, 'asset-hyperlink');
     }
-
-    return config;
   }
-  return {};
+  return config;
 }
 
 function getAllowedHyperlinkTypes(field) {
