@@ -353,10 +353,6 @@ export function canCreateAsset() {
   return canPerformActionOnType(Action.CREATE, 'asset');
 }
 
-export function canCreateEntry() {
-  return canPerformActionOnType(Action.CREATE, 'entry');
-}
-
 /**
  * @name accessChecker#canUploadMultipleAssets
  * @returns {boolean}
