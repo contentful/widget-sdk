@@ -56,9 +56,9 @@ export default function withTracking(Component) {
         fieldLocale: locale,
         fieldId: fieldId,
         isFullscreen: false,
-        characterCountBefore: null,
-        characterCountAfter: null,
-        characterCountSelection: null,
+        characterCountBefore: data.characterCountBefore || null,
+        characterCountAfter: data.characterCountAfter || null,
+        characterCountSelection: data.characterCountSelection || null,
         additionalData: data
       });
     }

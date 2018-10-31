@@ -38,6 +38,7 @@ import { HrPlugin } from './plugins/Hr/index.es6';
 import schema from './constants/Schema.es6';
 import emptyDoc from './constants/EmptyDoc.es6';
 import { BLOCKS } from '@contentful/rich-text-types';
+import { PastePlugin } from './plugins/Paste/index.es6';
 import { PasteHtmlPlugin } from './plugins/PasteHtml/index.es6';
 import { PasteTextPlugin } from './plugins/PasteText/index.es6';
 
@@ -68,6 +69,7 @@ export default class RichTextEditor extends React.Component {
     onChange: PropTypes.func,
     onAction: PropTypes.func
   };
+
   static defaultProps = {
     value: emptyDoc,
     onChange: noop,
@@ -100,11 +102,9 @@ export default class RichTextEditor extends React.Component {
     const contentIsUpdated = this.state.lastOperations.length > 0;
     if (!isDisabled && contentIsUpdated) {
       this.setState({ lastOperations: [] });
-      const slateDoc = this.state.value.document.toJSON();
-
       onChange(
         toContentfulDocument({
-          document: slateDoc,
+          document: this.state.value.document.toJSON(),
           schema
         })
       );
@@ -132,6 +132,7 @@ export default class RichTextEditor extends React.Component {
           data-test-id="editor"
           value={this.state.value}
           onChange={this.onChange}
+          onPaste={this.onPaste}
           plugins={this.slatePlugins}
           readOnly={this.props.isDisabled}
           schema={schema}
@@ -198,6 +199,7 @@ function buildPlugins(richTextAPI) {
     EmbeddedEntryBlockPlugin({ richTextAPI }),
     EmbeddedAssetBlockPlugin({ richTextAPI }),
     ListPlugin({ richTextAPI }),
+    PastePlugin({ richTextAPI }),
     PasteHtmlPlugin(),
     PasteTextPlugin(),
     TrailingBlock({ type: BLOCKS.PARAGRAPH }),
