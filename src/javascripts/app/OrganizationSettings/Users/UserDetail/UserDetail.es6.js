@@ -6,8 +6,16 @@ import Workbench from 'app/common/Workbench.es6';
 import { go } from 'states/Navigator.es6';
 import { Button, ModalConfirm } from '@contentful/ui-component-library';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
+import UserCard from '../UserCard.es6';
+import { orgRoles } from './OrgRoles.es6';
 
-import { SpaceMembership, OrganizationMembership, Space, SpaceRole } from '../PropTypes.es6';
+import {
+  SpaceMembership,
+  OrganizationMembership,
+  Space,
+  SpaceRole,
+  User as UserPropType
+} from '../PropTypes.es6';
 import { OrganizationRoleSelector } from './OrganizationRoleSelector.es6';
 import {
   removeMembership,
@@ -27,6 +35,7 @@ class UserDetail extends React.Component {
       OrganizationRoles: PropTypes.object
     }),
     initialMembership: OrganizationMembership.isRequired,
+    createdBy: UserPropType.isRequired,
     spaceMemberships: PropTypes.arrayOf(SpaceMembership).isRequired,
     spaces: PropTypes.arrayOf(Space).isRequired,
     roles: PropTypes.arrayOf(SpaceRole).isRequired,
@@ -140,7 +149,7 @@ class UserDetail extends React.Component {
   }
 
   render() {
-    const { spaceMemberships, spaces, roles, orgId } = this.props;
+    const { spaceMemberships, createdBy, spaces, roles, orgId } = this.props;
     const { membership, disableOwnerRole } = this.state;
     const { user } = membership.sys;
 
@@ -155,38 +164,47 @@ class UserDetail extends React.Component {
           </div>
         </Workbench.Header>
         <Workbench.Content>
-          <div style={{ padding: '1em 2em 2em' }}>
-            <section className="user-details__card">
-              <img src={user.avatarUrl} className="user-details__avatar" />
-              <div>
-                <h2>{`${user.firstName} ${user.lastName}`}</h2>
-                <p>{user.email}</p>
-              </div>
-            </section>
-            <section style={{ display: 'flex', marginBottom: 50 }}>
-              <div style={{ width: '31.6%' }}>
-                <h4>Organization role</h4>
-                <OrganizationRoleSelector
-                  isSelf={this.isSelf()}
-                  disableOwnerRole={disableOwnerRole}
-                  initialRole={membership.role}
-                  onChange={this.changeOrgRole}
-                />
-              </div>
-              <div>
-                <h4>Last activity</h4>
-                <p>{this.getLastActiveDate()}</p>
-              </div>
-            </section>
-
-            <h3 style={{ marginBottom: 30 }}>Space memberships</h3>
-            <UserSpaceMemberships
-              initialMemberships={spaceMemberships}
-              user={user}
-              spaces={spaces}
-              roles={roles}
-              orgId={orgId}
-            />
+          <div className="user-details">
+            <div className="user-details__sidebar">
+              <section className="user-details__profile-section">
+                <UserCard user={membership.sys.user} size="large" />
+              </section>
+              <section className="user-details__profile-section">
+                <dl className="definition-list">
+                  <dt>Last activity</dt>
+                  <dd>{this.getLastActiveDate()}</dd>
+                  <dt>Member since</dt>
+                  <dd>{membership.sys.createdAt}</dd>
+                  <dt>Invited by</dt>
+                  <dd>{`${createdBy.firstName} ${createdBy.lastName}`}</dd>
+                </dl>
+              </section>
+              <section className="user-details__profile-section">
+                <dd className="definition-list">
+                  <dt>Organization role</dt>
+                  <dd>
+                    <OrganizationRoleSelector
+                      style={{ marginTop: '-5px' }}
+                      isSelf={this.isSelf()}
+                      disableOwnerRole={disableOwnerRole}
+                      initialRole={membership.role}
+                      onChange={this.changeOrgRole}
+                    />
+                  </dd>
+                </dd>
+                <p>{orgRoles.find(r => r.value === membership.role).description}</p>
+              </section>
+            </div>
+            <div className="user-details__content">
+              <h3 style={{ marginBottom: 30 }}>Space memberships</h3>
+              <UserSpaceMemberships
+                initialMemberships={spaceMemberships}
+                user={user}
+                spaces={spaces}
+                roles={roles}
+                orgId={orgId}
+              />
+            </div>
           </div>
         </Workbench.Content>
       </Workbench>

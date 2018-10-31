@@ -18,8 +18,9 @@ const UserDetailFetcher = createFetcherComponent(async ({ orgId, userId }) => {
 
   const includePaths = ['roles', 'sys.space'];
   const membership = await getMembership(endpoint, userId);
-  const [user, spaceMembershipsResult, spaces, roles] = await Promise.all([
+  const [user, createdBy, spaceMembershipsResult, spaces, roles] = await Promise.all([
     getUser(endpoint, membership.sys.user.sys.id),
+    getUser(endpoint, membership.sys.createdBy.sys.id),
     getSpaceMemberships(endpoint, {
       include: includePaths.join(),
       'sys.user.sys.id': membership.sys.user.sys.id,
@@ -34,6 +35,7 @@ const UserDetailFetcher = createFetcherComponent(async ({ orgId, userId }) => {
 
   return {
     initialMembership: { ...membership, sys: { ...membership.sys, user } },
+    createdBy,
     spaceMemberships,
     spaces,
     roles
