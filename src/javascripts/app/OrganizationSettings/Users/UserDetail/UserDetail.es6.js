@@ -4,7 +4,7 @@ import moment from 'moment';
 import { getValue } from 'utils/kefir.es6';
 import Workbench from 'app/common/Workbench.es6';
 import { go } from 'states/Navigator.es6';
-import { Button, ModalConfirm } from '@contentful/ui-component-library';
+import { Button, ModalConfirm, Icon, Tooltip } from '@contentful/ui-component-library';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import UserCard from '../UserCard.es6';
 import { orgRoles } from './OrgRoles.es6';
@@ -70,6 +70,11 @@ class UserDetail extends React.Component {
     const dateString = this.state.membership.sys.lastActiveAt;
 
     return dateString ? moment(dateString, moment.ISO_8601).fromNow() : 'Not available';
+  }
+
+  getRoleDescription() {
+    const { membership } = this.state;
+    return orgRoles.find(role => role.value === membership.role).description;
   }
 
   toggleOrgRoleDropdown() {
@@ -148,6 +153,52 @@ class UserDetail extends React.Component {
     });
   }
 
+  renderSsoInfo() {
+    const { initialMembership } = this.props;
+    const { sso } = initialMembership.sys;
+    const userName = initialMembership.sys.user.firstName;
+    const exemptionReasonsMap = {
+      userIsOwner: `${userName} is an owner of this organization`,
+      userHasMultipleOrganizationMemberships: `${userName} is member of one or more different organizations in Contentful`,
+      userIsManuallyExempt: `${userName} has been manually marked as exempt from SSO`
+    };
+
+    if (!sso) {
+      return null;
+    }
+
+    const {
+      isExemptFromRestrictedMode,
+      lastSignInAt,
+      exemptionReasons
+    } = this.props.initialMembership.sys.sso;
+
+    const reasons = (
+      <ul>
+        {exemptionReasons.map(reason => (
+          <li key={reason}>{exemptionReasonsMap[reason]}</li>
+        ))}
+      </ul>
+    );
+
+    return (
+      <dl className="definition-list">
+        <dt>Last SSO login</dt>
+        <dd>{lastSignInAt ? lastSignInAt : 'Never'}</dd>
+        <dt>Exempt from SSO</dt>
+        <dd>
+          {isExemptFromRestrictedMode ? (
+            <Tooltip content={reasons}>
+              Yes <Icon icon="HelpCircle" color="secondary" style={{ verticalAlign: 'bottom' }} />
+            </Tooltip>
+          ) : (
+            'No'
+          )}
+        </dd>
+      </dl>
+    );
+  }
+
   render() {
     const { spaceMemberships, createdBy, spaces, roles, orgId } = this.props;
     const { membership, disableOwnerRole } = this.state;
@@ -179,8 +230,9 @@ class UserDetail extends React.Component {
                   <dd>{`${createdBy.firstName} ${createdBy.lastName}`}</dd>
                 </dl>
               </section>
+              <section className="user-details__profile-section">{this.renderSsoInfo()}</section>
               <section className="user-details__profile-section">
-                <dd className="definition-list">
+                <dl className="definition-list">
                   <dt>Organization role</dt>
                   <dd>
                     <OrganizationRoleSelector
@@ -191,12 +243,11 @@ class UserDetail extends React.Component {
                       onChange={this.changeOrgRole}
                     />
                   </dd>
-                </dd>
-                <p>{orgRoles.find(r => r.value === membership.role).description}</p>
+                </dl>
+                <p style={{ marginTop: 10 }}>{this.getRoleDescription()}</p>
               </section>
             </div>
             <div className="user-details__content">
-              <h3 style={{ marginBottom: 30 }}>Space memberships</h3>
               <UserSpaceMemberships
                 initialMemberships={spaceMemberships}
                 user={user}

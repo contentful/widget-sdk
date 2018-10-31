@@ -146,7 +146,7 @@ class SpaceMembershipEditor extends React.Component {
     const { roles, spaces, initialMembership, onCancel } = this.props;
 
     return (
-      <TableRow>
+      <TableRow extraClassNames="space-membership-editor">
         <TableCell>
           {initialMembership ? (
             initialMembership.sys.space.name

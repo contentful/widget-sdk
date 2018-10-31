@@ -19,9 +19,9 @@ import {
   TableHead,
   TableBody,
   TableCell,
-  TextLink,
   Tooltip,
-  ModalConfirm
+  ModalConfirm,
+  Button
 } from '@contentful/ui-component-library';
 
 const ServicesConsumer = require('../../../../../reactServiceContext').default;
@@ -81,7 +81,7 @@ class UserSpaceMemberships extends React.Component {
   handleMembershipCreated = newMembership => {
     const { user, $services } = this.props;
     const { memberships } = this.state;
-    const updatedMemberships = [...memberships, newMembership];
+    const updatedMemberships = [newMembership, ...memberships];
 
     this.setState({
       memberships: updatedMemberships,
@@ -216,20 +216,47 @@ class UserSpaceMemberships extends React.Component {
 
     return (
       <section>
+        <header
+          style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+          <h3 style={{ marginBottom: 30 }}>Space memberships</h3>
+          {!showingForm && (
+            <Tooltip content={unavailabilityReason} place="right">
+              <Button
+                size="small"
+                buttonType="primary"
+                disabled={!!unavailabilityReason}
+                onClick={this.showSpaceMembershipEditor}>
+                Add to space
+              </Button>
+            </Tooltip>
+          )}
+        </header>
         {(!!memberships.length || showingForm) && (
           <Table style={{ marginBottom: 20, tableLayout: 'fixed' }}>
             <TableHead>
               <TableRow>
                 <TableCell width="30%">Space</TableCell>
-                <TableCell width="45%">Roles</TableCell>
-                <TableCell />
+                <TableCell>Roles</TableCell>
+                <TableCell width="40%" />
               </TableRow>
             </TableHead>
             <TableBody>
+              {showingForm && (
+                <SpaceMembershipEditor
+                  spaces={availableSpaces}
+                  roles={roles}
+                  user={user}
+                  orgId={orgId}
+                  onMembershipCreated={this.handleMembershipCreated}
+                  onSpaceSelected={this.fetchSpaceRoles}
+                  onCancel={this.hideSpaceMembershipEditor}
+                />
+              )}
               {memberships.map(membership => {
                 if (editingMembershipId === membership.sys.id) {
                   return (
                     <SpaceMembershipEditor
+                      key={membership.sys.id}
                       user={user}
                       orgId={orgId}
                       initialMembership={membership}
@@ -243,30 +270,8 @@ class UserSpaceMemberships extends React.Component {
                   return this.renderMembershipRow(membership);
                 }
               })}
-              {showingForm && (
-                <SpaceMembershipEditor
-                  spaces={availableSpaces}
-                  roles={roles}
-                  user={user}
-                  orgId={orgId}
-                  onMembershipCreated={this.handleMembershipCreated}
-                  onSpaceSelected={this.fetchSpaceRoles}
-                  onCancel={this.hideSpaceMembershipEditor}
-                />
-              )}
             </TableBody>
           </Table>
-        )}
-
-        {!showingForm && (
-          <Tooltip content={unavailabilityReason} place="right">
-            <TextLink
-              icon="Plus"
-              disabled={!!unavailabilityReason}
-              onClick={this.showSpaceMembershipEditor}>
-              Add to a space
-            </TextLink>
-          </Tooltip>
         )}
       </section>
     );
