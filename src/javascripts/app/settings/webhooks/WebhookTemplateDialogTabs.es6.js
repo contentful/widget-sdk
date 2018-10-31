@@ -74,8 +74,7 @@ export class TabPane extends React.Component {
 export default class Tabs extends React.Component {
   static propTypes = {
     initialActive: PropTypes.string.isRequired,
-    renderTabs: PropTypes.func.isRequired,
-    reposition: PropTypes.func.isRequired
+    renderTabs: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -83,10 +82,6 @@ export default class Tabs extends React.Component {
     this.state = {
       active: props.initialActive
     };
-  }
-
-  componentDidUpdate() {
-    this.props.reposition();
   }
 
   getTabProps = tabId => {

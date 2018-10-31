@@ -49,7 +49,7 @@ describe('WebhookTemplateForm', () => {
 
   const mount = () => {
     const stubs = {
-      cancel: sinon.stub(),
+      onClose: sinon.stub(),
       map: sinon.stub(),
       onCreate: sinon.stub().resolves({})
     };
@@ -58,7 +58,7 @@ describe('WebhookTemplateForm', () => {
     const wrapper = Enzyme.mount(
       <WebhookTemplateForm
         template={template}
-        closeDialog={stubs.cancel}
+        onClose={stubs.onClose}
         templateContentTypes={TEMPLATE_CONTENT_TYPES}
         hasAwsProxy={false}
         onCreate={stubs.onCreate}
@@ -93,7 +93,7 @@ describe('WebhookTemplateForm', () => {
     const [wrapper, stubs] = mount();
     const cancelBtn = wrapper.find(Button).at(1);
     cancelBtn.simulate('click');
-    expect(stubs.cancel.calledOnce).toBe(true);
+    expect(stubs.onClose.calledOnce).toBe(true);
   });
 
   it('disables create button if not all values are provided', () => {

@@ -1,21 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Modal } from '@contentful/ui-component-library';
 import WebhookTemplateDialogTabs, { Tab, TabPane, TabsList } from './WebhookTemplateDialogTabs.es6';
 import WebhookTemplateForm from './WebhookTemplateForm.es6';
 import Templates from './templates';
 
 export default class WebhookTemplateDialog extends React.Component {
   static propTypes = {
+    isShown: PropTypes.bool.isRequired,
     templateId: PropTypes.string.isRequired,
     templateContentTypes: PropTypes.array.isRequired,
     hasAwsProxy: PropTypes.bool.isRequired,
-    reposition: PropTypes.func.isRequired,
-    closeDialog: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
     onCreate: PropTypes.func.isRequired
   };
 
   renderTabs = ({ getTabProps, getPaneProps }) => {
-    const { closeDialog, templateContentTypes, hasAwsProxy, onCreate } = this.props;
+    const { onClose, templateContentTypes, hasAwsProxy, onCreate } = this.props;
 
     return (
       <React.Fragment>
@@ -28,7 +29,7 @@ export default class WebhookTemplateDialog extends React.Component {
           <TabPane key={template.id} {...getPaneProps(template.id)}>
             <WebhookTemplateForm
               template={template}
-              closeDialog={closeDialog}
+              onClose={onClose}
               templateContentTypes={templateContentTypes}
               hasAwsProxy={hasAwsProxy}
               onCreate={onCreate}
@@ -41,17 +42,17 @@ export default class WebhookTemplateDialog extends React.Component {
 
   render() {
     return (
-      <div className="modal-dialog webhook-templates-dialog">
-        <header className="modal-dialog__header">
-          <h1>Webhook Templates</h1>
-          <button className="modal-dialog__close" onClick={this.props.closeDialog} />
-        </header>
-        <WebhookTemplateDialogTabs
-          initialActive={this.props.templateId}
-          renderTabs={this.renderTabs}
-          reposition={this.props.reposition}
-        />
-      </div>
+      <Modal size="800px" isShown={this.props.isShown} onClose={this.props.onClose}>
+        {() => (
+          <React.Fragment>
+            <Modal.Header title="Webhook Templates" onClose={this.props.onClose} />
+            <WebhookTemplateDialogTabs
+              initialActive={this.props.templateId}
+              renderTabs={this.renderTabs}
+            />
+          </React.Fragment>
+        )}
+      </Modal>
     );
   }
 }

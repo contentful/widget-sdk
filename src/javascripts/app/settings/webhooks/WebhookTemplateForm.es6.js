@@ -12,7 +12,7 @@ import { values, isString } from 'lodash';
 export class WebhookTemplateForm extends React.Component {
   static propTypes = {
     template: PropTypes.object.isRequired,
-    closeDialog: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
     templateContentTypes: PropTypes.array.isRequired,
     onCreate: PropTypes.func.isRequired,
     hasAwsProxy: PropTypes.bool.isRequired
@@ -182,7 +182,7 @@ export class WebhookTemplateForm extends React.Component {
             buttonType="primary">
             Create webhook
           </Button>
-          <Button onClick={this.props.closeDialog} buttonType="muted">
+          <Button onClick={this.props.onClose} buttonType="muted">
             Cancel
           </Button>
         </div>

@@ -1,7 +1,9 @@
 import Templates from './templates';
+import React from 'react';
 import { get } from 'lodash';
-import modalDialog from 'modalDialog';
+import ModalLauncher from 'app/common/ModalLauncher.es6';
 import * as WebhookEditorActions from './WebhookEditorActions.es6';
+import WebhookTemplateDialog from './WebhookTemplateDialog.es6';
 import $state from '$state';
 
 const isNonEmptyString = s => typeof s === 'string' && s.length > 0;
@@ -19,35 +21,31 @@ export default function createWebhookTemplateDialogOpener(config) {
   return function openTemplateDialog(templateId, templateIdReferrer) {
     templateId = validTemplateIds.includes(templateId) ? templateId : Templates[0].id;
 
-    modalDialog.open({
-      ignoreEsc: false,
-      backgroundClose: false,
-      template:
-        '<react-component class="modal-background" name="app/settings/webhooks/WebhookTemplateDialog.es6" props="props" />',
-      controller: $scope => {
-        $scope.props = {
-          templateId,
-          templateContentTypes,
-          hasAwsProxy,
-          reposition: () => $scope.$emit('centerOn:reposition'),
-          closeDialog: () => $scope.dialog.confirm(),
-          onCreate: (webhooks, templateId) =>
-            Promise.all(
-              webhooks.map(webhook => {
-                return WebhookEditorActions.save(
-                  webhookRepo,
-                  webhook,
-                  templateId,
-                  templateIdReferrer
-                );
-              })
-            ).then(webhooks => {
-              $state.go('^.detail', { webhookId: get(webhooks, '[0].sys.id') });
-              return webhooks;
+    ModalLauncher.open(({ onClose, isShown }) => (
+      <WebhookTemplateDialog
+        isShown={isShown}
+        onClose={onClose}
+        templateId={templateId}
+        templateContentTypes={templateContentTypes}
+        hasAwsProxy={hasAwsProxy}
+        onCreate={(webhooks, templateId) =>
+          Promise.all(
+            webhooks.map(webhook => {
+              return WebhookEditorActions.save(
+                webhookRepo,
+                webhook,
+                templateId,
+                templateIdReferrer
+              );
             })
-        };
-      }
-    });
+          ).then(webhooks => {
+            onClose();
+            $state.go('^.detail', { webhookId: get(webhooks, '[0].sys.id') });
+            return webhooks;
+          })
+        }
+      />
+    ));
   };
 }
 
