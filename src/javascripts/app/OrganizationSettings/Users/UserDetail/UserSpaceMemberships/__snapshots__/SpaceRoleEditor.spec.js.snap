@@ -95,10 +95,7 @@ exports[`SpaceRoleEditor renders the component 1`] = `
         }
       >
         <div
-          className="
-      Dropdown__Dropdown___1qyn8
-      
-    "
+          className="Dropdown__Dropdown___1qyn8"
           data-test-id="cf-ui-dropdown"
           onClose={[Function]}
           position="top-left"
@@ -119,14 +116,7 @@ exports[`SpaceRoleEditor renders the component 1`] = `
             testId="cf-ui-button"
           >
             <button
-              className="
-      Button__Button___1ZfFj a11y__focus-border--default___60AXp
-      
-      
-      
-      Button__Button--naked___mB6LS
-      select-button
-    "
+              className="Button__Button___1ZfFj a11y__focus-border--default___60AXp select-button Button__Button--naked___mB6LS"
               data-test-id="cf-ui-button"
               disabled={false}
               onBlur={[Function]}
@@ -136,11 +126,8 @@ exports[`SpaceRoleEditor renders the component 1`] = `
                 extraClassNames="Button__Button__inner-wrapper___3qrNC"
               >
                 <span
-                  className="
-      TabFocusTrap__TabFocusTrap___39Vty
-      Button__Button__inner-wrapper___3qrNC
-    "
-                  tabIndex="-1"
+                  className="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
+                  tabIndex={-1}
                 >
                   <span
                     className="Button__Button__label___3tcOj"
@@ -154,13 +141,7 @@ exports[`SpaceRoleEditor renders the component 1`] = `
                     testId="cf-ui-icon"
                   >
                     <ArrowDown
-                      className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      Icon__Icon--secondary___1ztcw
-      
-      
-    "
+                      className="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
                       data-test-id="cf-ui-icon"
                       height="24"
                       viewBox="0 0 24 24"
@@ -168,13 +149,7 @@ exports[`SpaceRoleEditor renders the component 1`] = `
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <svg
-                        className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      Icon__Icon--secondary___1ztcw
-      
-      
-    "
+                        className="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
                         data-test-id="cf-ui-icon"
                         height="24"
                         viewBox="0 0 24 24"
@@ -327,10 +302,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
         }
       >
         <div
-          className="
-      Dropdown__Dropdown___1qyn8
-      
-    "
+          className="Dropdown__Dropdown___1qyn8"
           data-test-id="cf-ui-dropdown"
           onClose={[Function]}
           position="top-left"
@@ -351,14 +323,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
             testId="cf-ui-button"
           >
             <button
-              className="
-      Button__Button___1ZfFj a11y__focus-border--default___60AXp
-      
-      
-      
-      Button__Button--naked___mB6LS
-      select-button
-    "
+              className="Button__Button___1ZfFj a11y__focus-border--default___60AXp select-button Button__Button--naked___mB6LS"
               data-test-id="cf-ui-button"
               disabled={false}
               onBlur={[Function]}
@@ -368,11 +333,8 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                 extraClassNames="Button__Button__inner-wrapper___3qrNC"
               >
                 <span
-                  className="
-      TabFocusTrap__TabFocusTrap___39Vty
-      Button__Button__inner-wrapper___3qrNC
-    "
-                  tabIndex="-1"
+                  className="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
+                  tabIndex={-1}
                 >
                   <span
                     className="Button__Button__label___3tcOj"
@@ -386,13 +348,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                     testId="cf-ui-icon"
                   >
                     <ArrowDown
-                      className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      Icon__Icon--secondary___1ztcw
-      
-      
-    "
+                      className="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
                       data-test-id="cf-ui-icon"
                       height="24"
                       viewBox="0 0 24 24"
@@ -400,13 +356,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <svg
-                        className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      Icon__Icon--secondary___1ztcw
-      
-      
-    "
+                        className="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
                         data-test-id="cf-ui-icon"
                         height="24"
                         viewBox="0 0 24 24"
@@ -458,296 +408,250 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
             </button>
           </Button>
           <div
-            className="
-      Dropdown__Dropdown__container___1wpIB
-      Dropdown__Dropdown__container-position--top-left___3OKuO
-    "
+            className="Dropdown__Dropdown__container___1wpIB Dropdown__Dropdown__container-position--top-left___3OKuO"
             onFocus={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
             position="top-left"
           >
-            <DropdownList
-              maxHeight={300}
-              testId="cf-ui-dropdown-list"
+            <InViewport
+              offset={0}
+              onOverflowBottom={[Function]}
+              onOverflowLeft={[Function]}
+              onOverflowRight={[Function]}
+              onOverflowTop={[Function]}
+              testId="cf-ui-in-viewport"
             >
-              <ul
-                className="
-      DropdownList__DropdownList___2EMLM
-      
-      
-    "
-                data-test-id="cf-ui-dropdown-list"
-                style={
-                  Object {
-                    "maxHeight": 300,
-                    "overflowY": "auto",
-                  }
-                }
+              <div
+                className="InViewport__InViewport___2o6g4"
+                data-test-id="cf-ui-in-viewport"
+                offset={0}
               >
-                <DropdownListItem
-                  isActive={false}
-                  isDisabled={false}
-                  isTitle={false}
-                  onEnter={[Function]}
-                  onLeave={[Function]}
-                  testId="cf-ui-dropdown-list-item"
+                <DropdownList
+                  maxHeight={300}
+                  testId="cf-ui-dropdown-list"
                 >
-                  <li
-                    className="
-      DropdownListItem__DropdownListItem___LOUnP
-      
-      
-      
-      
-      
-    "
-                    data-test-id="cf-ui-dropdown-list-item"
+                  <ul
+                    className="DropdownList__DropdownList___2EMLM"
+                    data-test-id="cf-ui-dropdown-list"
+                    style={
+                      Object {
+                        "maxHeight": 300,
+                        "overflowY": "auto",
+                      }
+                    }
                   >
-                    <CheckboxField
-                      checked={false}
-                      id="admin"
-                      labelText="Admin"
-                      light={true}
-                      onChange={[Function]}
-                      testId="cf-ui-checkbox-field"
+                    <DropdownListItem
+                      isActive={false}
+                      isDisabled={false}
+                      isTitle={false}
+                      onEnter={[Function]}
+                      onLeave={[Function]}
+                      testId="cf-ui-dropdown-list-item"
                     >
-                      <div
-                        className="
-      CheckboxField__CheckboxField___1p65B
-      
-      
-    "
-                        data-test-id="cf-ui-checkbox-field"
+                      <li
+                        className="DropdownListItem__DropdownListItem___LOUnP"
+                        data-test-id="cf-ui-dropdown-list-item"
                       >
-                        <Checkbox
+                        <CheckboxField
                           checked={false}
-                          disabled={false}
-                          extraClassNames="CheckboxField__CheckboxField__checkbox___13OYI"
                           id="admin"
                           labelText="Admin"
+                          light={true}
                           onChange={[Function]}
-                          required={false}
-                          testId="cf-ui-checkbox"
+                          testId="cf-ui-checkbox-field"
                         >
-                          <input
-                            aria-label="Admin"
-                            checked={false}
-                            className="
-      Checkbox__Checkbox___1KCp1
-      
-      CheckboxField__CheckboxField__checkbox___13OYI
-    "
-                            data-test-id="cf-ui-checkbox"
-                            disabled={false}
-                            id="admin"
-                            onChange={[Function]}
-                            required={false}
-                            type="checkbox"
-                          />
-                        </Checkbox>
-                        <div>
-                          <FormLabel
-                            extraClassNames="CheckboxField__CheckboxField__label___2bUrb CheckboxField__CheckboxField__label--light___5EmPH"
-                            htmlFor="admin"
-                            required={false}
-                            requiredText="required"
-                            testId="cf-ui-form-label"
+                          <div
+                            className="CheckboxField__CheckboxField___1p65B"
+                            data-test-id="cf-ui-checkbox-field"
                           >
-                            <label
-                              className="
-      FormLabel__FormLabel___3d6zQ
-      CheckboxField__CheckboxField__label___2bUrb CheckboxField__CheckboxField__label--light___5EmPH
-    "
-                              data-test-id="cf-ui-form-label"
-                              htmlFor="admin"
+                            <Checkbox
+                              checked={false}
+                              disabled={false}
+                              extraClassNames="CheckboxField__CheckboxField__checkbox___13OYI"
+                              id="admin"
+                              labelText="Admin"
+                              onChange={[Function]}
+                              required={false}
+                              testId="cf-ui-checkbox"
                             >
-                              Admin
-                            </label>
-                          </FormLabel>
-                        </div>
-                      </div>
-                    </CheckboxField>
-                  </li>
-                </DropdownListItem>
-                <DropdownListItem
-                  isActive={false}
-                  isDisabled={false}
-                  isTitle={false}
-                  key="police"
-                  onEnter={[Function]}
-                  onLeave={[Function]}
-                  testId="cf-ui-dropdown-list-item"
-                >
-                  <li
-                    className="
-      DropdownListItem__DropdownListItem___LOUnP
-      
-      
-      
-      
-      
-    "
-                    data-test-id="cf-ui-dropdown-list-item"
-                  >
-                    <CheckboxField
-                      checked={false}
-                      id="police"
-                      labelText="Police officer"
-                      light={true}
-                      onChange={[Function]}
-                      testId="cf-ui-checkbox-field"
-                      value="police"
+                              <input
+                                aria-label="Admin"
+                                checked={false}
+                                className="Checkbox__Checkbox___1KCp1 CheckboxField__CheckboxField__checkbox___13OYI"
+                                data-test-id="cf-ui-checkbox"
+                                disabled={false}
+                                id="admin"
+                                onChange={[Function]}
+                                required={false}
+                                type="checkbox"
+                              />
+                            </Checkbox>
+                            <div>
+                              <FormLabel
+                                extraClassNames="CheckboxField__CheckboxField__label___2bUrb CheckboxField__CheckboxField__label--light___5EmPH"
+                                htmlFor="admin"
+                                required={false}
+                                requiredText="required"
+                                testId="cf-ui-form-label"
+                              >
+                                <label
+                                  className="FormLabel__FormLabel___3d6zQ CheckboxField__CheckboxField__label___2bUrb CheckboxField__CheckboxField__label--light___5EmPH"
+                                  data-test-id="cf-ui-form-label"
+                                  htmlFor="admin"
+                                >
+                                  Admin
+                                </label>
+                              </FormLabel>
+                            </div>
+                          </div>
+                        </CheckboxField>
+                      </li>
+                    </DropdownListItem>
+                    <DropdownListItem
+                      isActive={false}
+                      isDisabled={false}
+                      isTitle={false}
+                      key="police"
+                      onEnter={[Function]}
+                      onLeave={[Function]}
+                      testId="cf-ui-dropdown-list-item"
                     >
-                      <div
-                        className="
-      CheckboxField__CheckboxField___1p65B
-      
-      
-    "
-                        data-test-id="cf-ui-checkbox-field"
-                        value="police"
+                      <li
+                        className="DropdownListItem__DropdownListItem___LOUnP"
+                        data-test-id="cf-ui-dropdown-list-item"
                       >
-                        <Checkbox
+                        <CheckboxField
                           checked={false}
-                          disabled={false}
-                          extraClassNames="CheckboxField__CheckboxField__checkbox___13OYI"
                           id="police"
                           labelText="Police officer"
+                          light={true}
                           onChange={[Function]}
-                          required={false}
-                          testId="cf-ui-checkbox"
+                          testId="cf-ui-checkbox-field"
+                          value="police"
                         >
-                          <input
-                            aria-label="Police officer"
-                            checked={false}
-                            className="
-      Checkbox__Checkbox___1KCp1
-      
-      CheckboxField__CheckboxField__checkbox___13OYI
-    "
-                            data-test-id="cf-ui-checkbox"
-                            disabled={false}
-                            id="police"
-                            onChange={[Function]}
-                            required={false}
-                            type="checkbox"
-                          />
-                        </Checkbox>
-                        <div>
-                          <FormLabel
-                            extraClassNames="CheckboxField__CheckboxField__label___2bUrb CheckboxField__CheckboxField__label--light___5EmPH"
-                            htmlFor="police"
-                            required={false}
-                            requiredText="required"
-                            testId="cf-ui-form-label"
+                          <div
+                            className="CheckboxField__CheckboxField___1p65B"
+                            data-test-id="cf-ui-checkbox-field"
+                            value="police"
                           >
-                            <label
-                              className="
-      FormLabel__FormLabel___3d6zQ
-      CheckboxField__CheckboxField__label___2bUrb CheckboxField__CheckboxField__label--light___5EmPH
-    "
-                              data-test-id="cf-ui-form-label"
-                              htmlFor="police"
+                            <Checkbox
+                              checked={false}
+                              disabled={false}
+                              extraClassNames="CheckboxField__CheckboxField__checkbox___13OYI"
+                              id="police"
+                              labelText="Police officer"
+                              onChange={[Function]}
+                              required={false}
+                              testId="cf-ui-checkbox"
                             >
-                              Police officer
-                            </label>
-                          </FormLabel>
-                        </div>
-                      </div>
-                    </CheckboxField>
-                  </li>
-                </DropdownListItem>
-                <DropdownListItem
-                  isActive={false}
-                  isDisabled={false}
-                  isTitle={false}
-                  key="thief"
-                  onEnter={[Function]}
-                  onLeave={[Function]}
-                  testId="cf-ui-dropdown-list-item"
-                >
-                  <li
-                    className="
-      DropdownListItem__DropdownListItem___LOUnP
-      
-      
-      
-      
-      
-    "
-                    data-test-id="cf-ui-dropdown-list-item"
-                  >
-                    <CheckboxField
-                      checked={false}
-                      id="thief"
-                      labelText="Thief"
-                      light={true}
-                      onChange={[Function]}
-                      testId="cf-ui-checkbox-field"
-                      value="thief"
+                              <input
+                                aria-label="Police officer"
+                                checked={false}
+                                className="Checkbox__Checkbox___1KCp1 CheckboxField__CheckboxField__checkbox___13OYI"
+                                data-test-id="cf-ui-checkbox"
+                                disabled={false}
+                                id="police"
+                                onChange={[Function]}
+                                required={false}
+                                type="checkbox"
+                              />
+                            </Checkbox>
+                            <div>
+                              <FormLabel
+                                extraClassNames="CheckboxField__CheckboxField__label___2bUrb CheckboxField__CheckboxField__label--light___5EmPH"
+                                htmlFor="police"
+                                required={false}
+                                requiredText="required"
+                                testId="cf-ui-form-label"
+                              >
+                                <label
+                                  className="FormLabel__FormLabel___3d6zQ CheckboxField__CheckboxField__label___2bUrb CheckboxField__CheckboxField__label--light___5EmPH"
+                                  data-test-id="cf-ui-form-label"
+                                  htmlFor="police"
+                                >
+                                  Police officer
+                                </label>
+                              </FormLabel>
+                            </div>
+                          </div>
+                        </CheckboxField>
+                      </li>
+                    </DropdownListItem>
+                    <DropdownListItem
+                      isActive={false}
+                      isDisabled={false}
+                      isTitle={false}
+                      key="thief"
+                      onEnter={[Function]}
+                      onLeave={[Function]}
+                      testId="cf-ui-dropdown-list-item"
                     >
-                      <div
-                        className="
-      CheckboxField__CheckboxField___1p65B
-      
-      
-    "
-                        data-test-id="cf-ui-checkbox-field"
-                        value="thief"
+                      <li
+                        className="DropdownListItem__DropdownListItem___LOUnP"
+                        data-test-id="cf-ui-dropdown-list-item"
                       >
-                        <Checkbox
+                        <CheckboxField
                           checked={false}
-                          disabled={false}
-                          extraClassNames="CheckboxField__CheckboxField__checkbox___13OYI"
                           id="thief"
                           labelText="Thief"
+                          light={true}
                           onChange={[Function]}
-                          required={false}
-                          testId="cf-ui-checkbox"
+                          testId="cf-ui-checkbox-field"
+                          value="thief"
                         >
-                          <input
-                            aria-label="Thief"
-                            checked={false}
-                            className="
-      Checkbox__Checkbox___1KCp1
-      
-      CheckboxField__CheckboxField__checkbox___13OYI
-    "
-                            data-test-id="cf-ui-checkbox"
-                            disabled={false}
-                            id="thief"
-                            onChange={[Function]}
-                            required={false}
-                            type="checkbox"
-                          />
-                        </Checkbox>
-                        <div>
-                          <FormLabel
-                            extraClassNames="CheckboxField__CheckboxField__label___2bUrb CheckboxField__CheckboxField__label--light___5EmPH"
-                            htmlFor="thief"
-                            required={false}
-                            requiredText="required"
-                            testId="cf-ui-form-label"
+                          <div
+                            className="CheckboxField__CheckboxField___1p65B"
+                            data-test-id="cf-ui-checkbox-field"
+                            value="thief"
                           >
-                            <label
-                              className="
-      FormLabel__FormLabel___3d6zQ
-      CheckboxField__CheckboxField__label___2bUrb CheckboxField__CheckboxField__label--light___5EmPH
-    "
-                              data-test-id="cf-ui-form-label"
-                              htmlFor="thief"
+                            <Checkbox
+                              checked={false}
+                              disabled={false}
+                              extraClassNames="CheckboxField__CheckboxField__checkbox___13OYI"
+                              id="thief"
+                              labelText="Thief"
+                              onChange={[Function]}
+                              required={false}
+                              testId="cf-ui-checkbox"
                             >
-                              Thief
-                            </label>
-                          </FormLabel>
-                        </div>
-                      </div>
-                    </CheckboxField>
-                  </li>
-                </DropdownListItem>
-              </ul>
-            </DropdownList>
+                              <input
+                                aria-label="Thief"
+                                checked={false}
+                                className="Checkbox__Checkbox___1KCp1 CheckboxField__CheckboxField__checkbox___13OYI"
+                                data-test-id="cf-ui-checkbox"
+                                disabled={false}
+                                id="thief"
+                                onChange={[Function]}
+                                required={false}
+                                type="checkbox"
+                              />
+                            </Checkbox>
+                            <div>
+                              <FormLabel
+                                extraClassNames="CheckboxField__CheckboxField__label___2bUrb CheckboxField__CheckboxField__label--light___5EmPH"
+                                htmlFor="thief"
+                                required={false}
+                                requiredText="required"
+                                testId="cf-ui-form-label"
+                              >
+                                <label
+                                  className="FormLabel__FormLabel___3d6zQ CheckboxField__CheckboxField__label___2bUrb CheckboxField__CheckboxField__label--light___5EmPH"
+                                  data-test-id="cf-ui-form-label"
+                                  htmlFor="thief"
+                                >
+                                  Thief
+                                </label>
+                              </FormLabel>
+                            </div>
+                          </div>
+                        </CheckboxField>
+                      </li>
+                    </DropdownListItem>
+                  </ul>
+                </DropdownList>
+              </div>
+            </InViewport>
           </div>
         </div>
       </Dropdown>

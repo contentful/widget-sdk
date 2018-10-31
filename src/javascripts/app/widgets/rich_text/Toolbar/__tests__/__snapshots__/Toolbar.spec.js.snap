@@ -41,10 +41,7 @@ exports[`Toolbar renders no icons if no formatting options enabled 1`] = `
     testId="cf-ui-editor-toolbar"
   >
     <div
-      className="
-      EditorToolbar__EditorToolbar___1zyWM
-      rich-text__toolbar
-    "
+      className="EditorToolbar__EditorToolbar___1zyWM rich-text__toolbar"
       data-test-id="cf-ui-editor-toolbar"
     >
       <div
@@ -90,10 +87,7 @@ exports[`Toolbar renders no icons if no formatting options enabled 1`] = `
             }
           >
             <div
-              className="
-      Dropdown__Dropdown___1qyn8
-      
-    "
+              className="Dropdown__Dropdown___1qyn8"
               data-test-id="cf-ui-dropdown"
               onClose={[Function]}
               position="bottom-left"
@@ -111,14 +105,7 @@ exports[`Toolbar renders no icons if no formatting options enabled 1`] = `
                 testId="cf-ui-button"
               >
                 <button
-                  className="
-      Button__Button___1ZfFj a11y__focus-border--default___60AXp
-      
-      Button__Button--small___3yyrk
-      
-      Button__Button--naked___mB6LS
-      toolbar-heading-toggle
-    "
+                  className="Button__Button___1ZfFj a11y__focus-border--default___60AXp toolbar-heading-toggle Button__Button--naked___mB6LS Button__Button--small___3yyrk"
                   data-test-id="toolbar-heading-toggle"
                   disabled={false}
                   onBlur={[Function]}
@@ -129,11 +116,8 @@ exports[`Toolbar renders no icons if no formatting options enabled 1`] = `
                     extraClassNames="Button__Button__inner-wrapper___3qrNC"
                   >
                     <span
-                      className="
-      TabFocusTrap__TabFocusTrap___39Vty
-      Button__Button__inner-wrapper___3qrNC
-    "
-                      tabIndex="-1"
+                      className="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
+                      tabIndex={-1}
                     >
                       <span
                         className="Button__Button__label___3tcOj"
@@ -147,13 +131,7 @@ exports[`Toolbar renders no icons if no formatting options enabled 1`] = `
                         testId="cf-ui-icon"
                       >
                         <ArrowDown
-                          className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      Icon__Icon--secondary___1ztcw
-      
-      
-    "
+                          className="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
                           data-test-id="cf-ui-icon"
                           height="24"
                           viewBox="0 0 24 24"
@@ -161,13 +139,7 @@ exports[`Toolbar renders no icons if no formatting options enabled 1`] = `
                           xmlns="http://www.w3.org/2000/svg"
                         >
                           <svg
-                            className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      Icon__Icon--secondary___1ztcw
-      
-      
-    "
+                            className="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
                             data-test-id="cf-ui-icon"
                             height="24"
                             viewBox="0 0 24 24"
@@ -302,10 +274,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
     testId="cf-ui-editor-toolbar"
   >
     <div
-      className="
-      EditorToolbar__EditorToolbar___1zyWM
-      rich-text__toolbar
-    "
+      className="EditorToolbar__EditorToolbar___1zyWM rich-text__toolbar"
       data-test-id="cf-ui-editor-toolbar"
     >
       <div
@@ -351,10 +320,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
             }
           >
             <div
-              className="
-      Dropdown__Dropdown___1qyn8
-      
-    "
+              className="Dropdown__Dropdown___1qyn8"
               data-test-id="cf-ui-dropdown"
               onClose={[Function]}
               position="bottom-left"
@@ -372,14 +338,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                 testId="cf-ui-button"
               >
                 <button
-                  className="
-      Button__Button___1ZfFj a11y__focus-border--default___60AXp
-      
-      Button__Button--small___3yyrk
-      
-      Button__Button--naked___mB6LS
-      toolbar-heading-toggle
-    "
+                  className="Button__Button___1ZfFj a11y__focus-border--default___60AXp toolbar-heading-toggle Button__Button--naked___mB6LS Button__Button--small___3yyrk"
                   data-test-id="toolbar-heading-toggle"
                   disabled={false}
                   onBlur={[Function]}
@@ -390,11 +349,8 @@ exports[`Toolbar renders toolbar icons 1`] = `
                     extraClassNames="Button__Button__inner-wrapper___3qrNC"
                   >
                     <span
-                      className="
-      TabFocusTrap__TabFocusTrap___39Vty
-      Button__Button__inner-wrapper___3qrNC
-    "
-                      tabIndex="-1"
+                      className="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
+                      tabIndex={-1}
                     >
                       <span
                         className="Button__Button__label___3tcOj"
@@ -408,13 +364,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                         testId="cf-ui-icon"
                       >
                         <ArrowDown
-                          className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      Icon__Icon--secondary___1ztcw
-      
-      
-    "
+                          className="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
                           data-test-id="cf-ui-icon"
                           height="24"
                           viewBox="0 0 24 24"
@@ -422,13 +372,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           xmlns="http://www.w3.org/2000/svg"
                         >
                           <svg
-                            className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      Icon__Icon--secondary___1ztcw
-      
-      
-    "
+                            className="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
                             data-test-id="cf-ui-icon"
                             height="24"
                             viewBox="0 0 24 24"
@@ -489,10 +433,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
             testId="mark-divider"
           >
             <span
-              className="
-      EditorToolbarDivider__EditorToolbarDivider___22NLC
-      
-    "
+              className="EditorToolbarDivider__EditorToolbarDivider___22NLC"
               data-test-id="mark-divider"
             />
           </EditorToolbarDivider>
@@ -579,11 +520,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           buttonType="secondary"
                           data-test-id="toolbar-toggle-bold"
                           disabled={false}
-                          extraClassNames="
-      EditorToolbarButton__EditorToolbarButton___2t--R
-      
-      
-    "
+                          extraClassNames="EditorToolbarButton__EditorToolbarButton___2t--R"
                           iconProps={
                             Object {
                               "icon": "FormatBold",
@@ -595,16 +532,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           withDropdown={false}
                         >
                           <button
-                            className="
-      IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1
-      
-      EditorToolbarButton__EditorToolbarButton___2t--R
-      
-      
-    
-      
-      IconButton__IconButton--secondary___3Gc3d
-    "
+                            className="IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1 EditorToolbarButton__EditorToolbarButton___2t--R IconButton__IconButton--secondary___3Gc3d"
                             data-test-id="toolbar-toggle-bold"
                             disabled={false}
                             onMouseDown={[Function]}
@@ -613,11 +541,8 @@ exports[`Toolbar renders toolbar icons 1`] = `
                               extraClassNames="IconButton__IconButton__inner___3fnmT"
                             >
                               <span
-                                className="
-      TabFocusTrap__TabFocusTrap___39Vty
-      IconButton__IconButton__inner___3fnmT
-    "
-                                tabIndex="-1"
+                                className="TabFocusTrap__TabFocusTrap___39Vty IconButton__IconButton__inner___3fnmT"
+                                tabIndex={-1}
                               >
                                 <Icon
                                   color="primary"
@@ -627,13 +552,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                                   testId="cf-ui-icon"
                                 >
                                   <FormatBold
-                                    className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      undefined
-      
-      IconButton__IconButton__icon___3yZQN
-    "
+                                    className="Icon__Icon___38Epv IconButton__IconButton__icon___3yZQN Icon__Icon--small___1yGZK undefined"
                                     data-test-id="cf-ui-icon"
                                     height="24"
                                     viewBox="0 0 24 24"
@@ -641,13 +560,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                                     xmlns="http://www.w3.org/2000/svg"
                                   >
                                     <svg
-                                      className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      undefined
-      
-      IconButton__IconButton__icon___3yZQN
-    "
+                                      className="Icon__Icon___38Epv IconButton__IconButton__icon___3yZQN Icon__Icon--small___1yGZK undefined"
                                       data-test-id="cf-ui-icon"
                                       height="24"
                                       viewBox="0 0 24 24"
@@ -763,11 +676,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           buttonType="secondary"
                           data-test-id="toolbar-toggle-italic"
                           disabled={false}
-                          extraClassNames="
-      EditorToolbarButton__EditorToolbarButton___2t--R
-      
-      
-    "
+                          extraClassNames="EditorToolbarButton__EditorToolbarButton___2t--R"
                           iconProps={
                             Object {
                               "icon": "FormatItalic",
@@ -779,16 +688,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           withDropdown={false}
                         >
                           <button
-                            className="
-      IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1
-      
-      EditorToolbarButton__EditorToolbarButton___2t--R
-      
-      
-    
-      
-      IconButton__IconButton--secondary___3Gc3d
-    "
+                            className="IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1 EditorToolbarButton__EditorToolbarButton___2t--R IconButton__IconButton--secondary___3Gc3d"
                             data-test-id="toolbar-toggle-italic"
                             disabled={false}
                             onMouseDown={[Function]}
@@ -797,11 +697,8 @@ exports[`Toolbar renders toolbar icons 1`] = `
                               extraClassNames="IconButton__IconButton__inner___3fnmT"
                             >
                               <span
-                                className="
-      TabFocusTrap__TabFocusTrap___39Vty
-      IconButton__IconButton__inner___3fnmT
-    "
-                                tabIndex="-1"
+                                className="TabFocusTrap__TabFocusTrap___39Vty IconButton__IconButton__inner___3fnmT"
+                                tabIndex={-1}
                               >
                                 <Icon
                                   color="primary"
@@ -811,13 +708,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                                   testId="cf-ui-icon"
                                 >
                                   <FormatItalic
-                                    className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      undefined
-      
-      IconButton__IconButton__icon___3yZQN
-    "
+                                    className="Icon__Icon___38Epv IconButton__IconButton__icon___3yZQN Icon__Icon--small___1yGZK undefined"
                                     data-test-id="cf-ui-icon"
                                     height="24"
                                     viewBox="0 0 24 24"
@@ -825,13 +716,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                                     xmlns="http://www.w3.org/2000/svg"
                                   >
                                     <svg
-                                      className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      undefined
-      
-      IconButton__IconButton__icon___3yZQN
-    "
+                                      className="Icon__Icon___38Epv IconButton__IconButton__icon___3yZQN Icon__Icon--small___1yGZK undefined"
                                       data-test-id="cf-ui-icon"
                                       height="24"
                                       viewBox="0 0 24 24"
@@ -947,11 +832,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           buttonType="secondary"
                           data-test-id="toolbar-toggle-underline"
                           disabled={false}
-                          extraClassNames="
-      EditorToolbarButton__EditorToolbarButton___2t--R
-      
-      
-    "
+                          extraClassNames="EditorToolbarButton__EditorToolbarButton___2t--R"
                           iconProps={
                             Object {
                               "icon": "FormatUnderlined",
@@ -963,16 +844,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           withDropdown={false}
                         >
                           <button
-                            className="
-      IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1
-      
-      EditorToolbarButton__EditorToolbarButton___2t--R
-      
-      
-    
-      
-      IconButton__IconButton--secondary___3Gc3d
-    "
+                            className="IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1 EditorToolbarButton__EditorToolbarButton___2t--R IconButton__IconButton--secondary___3Gc3d"
                             data-test-id="toolbar-toggle-underline"
                             disabled={false}
                             onMouseDown={[Function]}
@@ -981,11 +853,8 @@ exports[`Toolbar renders toolbar icons 1`] = `
                               extraClassNames="IconButton__IconButton__inner___3fnmT"
                             >
                               <span
-                                className="
-      TabFocusTrap__TabFocusTrap___39Vty
-      IconButton__IconButton__inner___3fnmT
-    "
-                                tabIndex="-1"
+                                className="TabFocusTrap__TabFocusTrap___39Vty IconButton__IconButton__inner___3fnmT"
+                                tabIndex={-1}
                               >
                                 <Icon
                                   color="primary"
@@ -995,13 +864,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                                   testId="cf-ui-icon"
                                 >
                                   <FormatUnderlined
-                                    className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      undefined
-      
-      IconButton__IconButton__icon___3yZQN
-    "
+                                    className="Icon__Icon___38Epv IconButton__IconButton__icon___3yZQN Icon__Icon--small___1yGZK undefined"
                                     data-test-id="cf-ui-icon"
                                     height="24"
                                     viewBox="0 0 24 24"
@@ -1009,13 +872,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                                     xmlns="http://www.w3.org/2000/svg"
                                   >
                                     <svg
-                                      className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      undefined
-      
-      IconButton__IconButton__icon___3yZQN
-    "
+                                      className="Icon__Icon___38Epv IconButton__IconButton__icon___3yZQN Icon__Icon--small___1yGZK undefined"
                                       data-test-id="cf-ui-icon"
                                       height="24"
                                       viewBox="0 0 24 24"
@@ -1131,11 +988,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           buttonType="secondary"
                           data-test-id="toolbar-toggle-code"
                           disabled={false}
-                          extraClassNames="
-      EditorToolbarButton__EditorToolbarButton___2t--R
-      
-      
-    "
+                          extraClassNames="EditorToolbarButton__EditorToolbarButton___2t--R"
                           iconProps={
                             Object {
                               "icon": "Code",
@@ -1147,16 +1000,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           withDropdown={false}
                         >
                           <button
-                            className="
-      IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1
-      
-      EditorToolbarButton__EditorToolbarButton___2t--R
-      
-      
-    
-      
-      IconButton__IconButton--secondary___3Gc3d
-    "
+                            className="IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1 EditorToolbarButton__EditorToolbarButton___2t--R IconButton__IconButton--secondary___3Gc3d"
                             data-test-id="toolbar-toggle-code"
                             disabled={false}
                             onMouseDown={[Function]}
@@ -1165,11 +1009,8 @@ exports[`Toolbar renders toolbar icons 1`] = `
                               extraClassNames="IconButton__IconButton__inner___3fnmT"
                             >
                               <span
-                                className="
-      TabFocusTrap__TabFocusTrap___39Vty
-      IconButton__IconButton__inner___3fnmT
-    "
-                                tabIndex="-1"
+                                className="TabFocusTrap__TabFocusTrap___39Vty IconButton__IconButton__inner___3fnmT"
+                                tabIndex={-1}
                               >
                                 <Icon
                                   color="primary"
@@ -1179,13 +1020,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                                   testId="cf-ui-icon"
                                 >
                                   <Code
-                                    className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      undefined
-      
-      IconButton__IconButton__icon___3yZQN
-    "
+                                    className="Icon__Icon___38Epv IconButton__IconButton__icon___3yZQN Icon__Icon--small___1yGZK undefined"
                                     data-test-id="cf-ui-icon"
                                     height="18"
                                     viewBox="0 0 24 24"
@@ -1193,13 +1028,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                                     xmlns="http://www.w3.org/2000/svg"
                                   >
                                     <svg
-                                      className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      undefined
-      
-      IconButton__IconButton__icon___3yZQN
-    "
+                                      className="Icon__Icon___38Epv IconButton__IconButton__icon___3yZQN Icon__Icon--small___1yGZK undefined"
                                       data-test-id="cf-ui-icon"
                                       height="18"
                                       viewBox="0 0 24 24"
@@ -1240,10 +1069,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
             testId="hyperlink-divider"
           >
             <span
-              className="
-      EditorToolbarDivider__EditorToolbarDivider___22NLC
-      
-    "
+              className="EditorToolbarDivider__EditorToolbarDivider___22NLC"
               data-test-id="hyperlink-divider"
             />
           </EditorToolbarDivider>
@@ -1318,11 +1144,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                         buttonType="secondary"
                         data-test-id="toolbar-toggle-hyperlink"
                         disabled={false}
-                        extraClassNames="
-      EditorToolbarButton__EditorToolbarButton___2t--R
-      
-      
-    "
+                        extraClassNames="EditorToolbarButton__EditorToolbarButton___2t--R"
                         iconProps={
                           Object {
                             "icon": "Link",
@@ -1334,16 +1156,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                         withDropdown={false}
                       >
                         <button
-                          className="
-      IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1
-      
-      EditorToolbarButton__EditorToolbarButton___2t--R
-      
-      
-    
-      
-      IconButton__IconButton--secondary___3Gc3d
-    "
+                          className="IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1 EditorToolbarButton__EditorToolbarButton___2t--R IconButton__IconButton--secondary___3Gc3d"
                           data-test-id="toolbar-toggle-hyperlink"
                           disabled={false}
                           onMouseDown={[Function]}
@@ -1352,11 +1165,8 @@ exports[`Toolbar renders toolbar icons 1`] = `
                             extraClassNames="IconButton__IconButton__inner___3fnmT"
                           >
                             <span
-                              className="
-      TabFocusTrap__TabFocusTrap___39Vty
-      IconButton__IconButton__inner___3fnmT
-    "
-                              tabIndex="-1"
+                              className="TabFocusTrap__TabFocusTrap___39Vty IconButton__IconButton__inner___3fnmT"
+                              tabIndex={-1}
                             >
                               <Icon
                                 color="primary"
@@ -1366,13 +1176,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                                 testId="cf-ui-icon"
                               >
                                 <Link
-                                  className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      undefined
-      
-      IconButton__IconButton__icon___3yZQN
-    "
+                                  className="Icon__Icon___38Epv IconButton__IconButton__icon___3yZQN Icon__Icon--small___1yGZK undefined"
                                   data-test-id="cf-ui-icon"
                                   height="18"
                                   viewBox="0 0 24 24"
@@ -1380,13 +1184,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                                   xmlns="http://www.w3.org/2000/svg"
                                 >
                                   <svg
-                                    className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      undefined
-      
-      IconButton__IconButton__icon___3yZQN
-    "
+                                    className="Icon__Icon___38Epv IconButton__IconButton__icon___3yZQN Icon__Icon--small___1yGZK undefined"
                                     data-test-id="cf-ui-icon"
                                     height="18"
                                     viewBox="0 0 24 24"
@@ -1426,10 +1224,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
             testId="list-divider"
           >
             <span
-              className="
-      EditorToolbarDivider__EditorToolbarDivider___22NLC
-      
-    "
+              className="EditorToolbarDivider__EditorToolbarDivider___22NLC"
               data-test-id="list-divider"
             />
           </EditorToolbarDivider>
@@ -1516,11 +1311,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           buttonType="secondary"
                           data-test-id="toolbar-toggle-unordered-list"
                           disabled={false}
-                          extraClassNames="
-      EditorToolbarButton__EditorToolbarButton___2t--R
-      
-      
-    "
+                          extraClassNames="EditorToolbarButton__EditorToolbarButton___2t--R"
                           iconProps={
                             Object {
                               "icon": "ListBulleted",
@@ -1532,16 +1323,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           withDropdown={false}
                         >
                           <button
-                            className="
-      IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1
-      
-      EditorToolbarButton__EditorToolbarButton___2t--R
-      
-      
-    
-      
-      IconButton__IconButton--secondary___3Gc3d
-    "
+                            className="IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1 EditorToolbarButton__EditorToolbarButton___2t--R IconButton__IconButton--secondary___3Gc3d"
                             data-test-id="toolbar-toggle-unordered-list"
                             disabled={false}
                             onMouseDown={[Function]}
@@ -1550,11 +1332,8 @@ exports[`Toolbar renders toolbar icons 1`] = `
                               extraClassNames="IconButton__IconButton__inner___3fnmT"
                             >
                               <span
-                                className="
-      TabFocusTrap__TabFocusTrap___39Vty
-      IconButton__IconButton__inner___3fnmT
-    "
-                                tabIndex="-1"
+                                className="TabFocusTrap__TabFocusTrap___39Vty IconButton__IconButton__inner___3fnmT"
+                                tabIndex={-1}
                               >
                                 <Icon
                                   color="primary"
@@ -1564,13 +1343,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                                   testId="cf-ui-icon"
                                 >
                                   <ListBulleted
-                                    className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      undefined
-      
-      IconButton__IconButton__icon___3yZQN
-    "
+                                    className="Icon__Icon___38Epv IconButton__IconButton__icon___3yZQN Icon__Icon--small___1yGZK undefined"
                                     data-test-id="cf-ui-icon"
                                     height="18"
                                     viewBox="0 0 24 24"
@@ -1578,13 +1351,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                                     xmlns="http://www.w3.org/2000/svg"
                                   >
                                     <svg
-                                      className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      undefined
-      
-      IconButton__IconButton__icon___3yZQN
-    "
+                                      className="Icon__Icon___38Epv IconButton__IconButton__icon___3yZQN Icon__Icon--small___1yGZK undefined"
                                       data-test-id="cf-ui-icon"
                                       height="18"
                                       viewBox="0 0 24 24"
@@ -1700,11 +1467,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           buttonType="secondary"
                           data-test-id="toolbar-toggle-ordered-list"
                           disabled={false}
-                          extraClassNames="
-      EditorToolbarButton__EditorToolbarButton___2t--R
-      
-      
-    "
+                          extraClassNames="EditorToolbarButton__EditorToolbarButton___2t--R"
                           iconProps={
                             Object {
                               "icon": "ListNumbered",
@@ -1716,16 +1479,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           withDropdown={false}
                         >
                           <button
-                            className="
-      IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1
-      
-      EditorToolbarButton__EditorToolbarButton___2t--R
-      
-      
-    
-      
-      IconButton__IconButton--secondary___3Gc3d
-    "
+                            className="IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1 EditorToolbarButton__EditorToolbarButton___2t--R IconButton__IconButton--secondary___3Gc3d"
                             data-test-id="toolbar-toggle-ordered-list"
                             disabled={false}
                             onMouseDown={[Function]}
@@ -1734,11 +1488,8 @@ exports[`Toolbar renders toolbar icons 1`] = `
                               extraClassNames="IconButton__IconButton__inner___3fnmT"
                             >
                               <span
-                                className="
-      TabFocusTrap__TabFocusTrap___39Vty
-      IconButton__IconButton__inner___3fnmT
-    "
-                                tabIndex="-1"
+                                className="TabFocusTrap__TabFocusTrap___39Vty IconButton__IconButton__inner___3fnmT"
+                                tabIndex={-1}
                               >
                                 <Icon
                                   color="primary"
@@ -1748,13 +1499,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                                   testId="cf-ui-icon"
                                 >
                                   <ListNumbered
-                                    className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      undefined
-      
-      IconButton__IconButton__icon___3yZQN
-    "
+                                    className="Icon__Icon___38Epv IconButton__IconButton__icon___3yZQN Icon__Icon--small___1yGZK undefined"
                                     data-test-id="cf-ui-icon"
                                     height="18"
                                     viewBox="0 0 24 24"
@@ -1762,13 +1507,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                                     xmlns="http://www.w3.org/2000/svg"
                                   >
                                     <svg
-                                      className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      undefined
-      
-      IconButton__IconButton__icon___3yZQN
-    "
+                                      className="Icon__Icon___38Epv IconButton__IconButton__icon___3yZQN Icon__Icon--small___1yGZK undefined"
                                       data-test-id="cf-ui-icon"
                                       height="18"
                                       viewBox="0 0 24 24"
@@ -1906,11 +1645,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           buttonType="secondary"
                           data-test-id="toolbar-toggle-blockquote"
                           disabled={false}
-                          extraClassNames="
-      EditorToolbarButton__EditorToolbarButton___2t--R
-      
-      
-    "
+                          extraClassNames="EditorToolbarButton__EditorToolbarButton___2t--R"
                           iconProps={
                             Object {
                               "icon": "Quote",
@@ -1922,16 +1657,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           withDropdown={false}
                         >
                           <button
-                            className="
-      IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1
-      
-      EditorToolbarButton__EditorToolbarButton___2t--R
-      
-      
-    
-      
-      IconButton__IconButton--secondary___3Gc3d
-    "
+                            className="IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1 EditorToolbarButton__EditorToolbarButton___2t--R IconButton__IconButton--secondary___3Gc3d"
                             data-test-id="toolbar-toggle-blockquote"
                             disabled={false}
                             onMouseDown={[Function]}
@@ -1940,11 +1666,8 @@ exports[`Toolbar renders toolbar icons 1`] = `
                               extraClassNames="IconButton__IconButton__inner___3fnmT"
                             >
                               <span
-                                className="
-      TabFocusTrap__TabFocusTrap___39Vty
-      IconButton__IconButton__inner___3fnmT
-    "
-                                tabIndex="-1"
+                                className="TabFocusTrap__TabFocusTrap___39Vty IconButton__IconButton__inner___3fnmT"
+                                tabIndex={-1}
                               >
                                 <Icon
                                   color="primary"
@@ -1954,13 +1677,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                                   testId="cf-ui-icon"
                                 >
                                   <Quote
-                                    className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      undefined
-      
-      IconButton__IconButton__icon___3yZQN
-    "
+                                    className="Icon__Icon___38Epv IconButton__IconButton__icon___3yZQN Icon__Icon--small___1yGZK undefined"
                                     data-test-id="cf-ui-icon"
                                     height="18"
                                     viewBox="0 0 24 24"
@@ -1968,13 +1685,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                                     xmlns="http://www.w3.org/2000/svg"
                                   >
                                     <svg
-                                      className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      undefined
-      
-      IconButton__IconButton__icon___3yZQN
-    "
+                                      className="Icon__Icon___38Epv IconButton__IconButton__icon___3yZQN Icon__Icon--small___1yGZK undefined"
                                       data-test-id="cf-ui-icon"
                                       height="18"
                                       viewBox="0 0 24 24"
@@ -2090,11 +1801,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           buttonType="secondary"
                           data-test-id="toolbar-toggle-hr"
                           disabled={false}
-                          extraClassNames="
-      EditorToolbarButton__EditorToolbarButton___2t--R
-      
-      
-    "
+                          extraClassNames="EditorToolbarButton__EditorToolbarButton___2t--R"
                           iconProps={
                             Object {
                               "icon": "HorizontalRule",
@@ -2106,16 +1813,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           withDropdown={false}
                         >
                           <button
-                            className="
-      IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1
-      
-      EditorToolbarButton__EditorToolbarButton___2t--R
-      
-      
-    
-      
-      IconButton__IconButton--secondary___3Gc3d
-    "
+                            className="IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1 EditorToolbarButton__EditorToolbarButton___2t--R IconButton__IconButton--secondary___3Gc3d"
                             data-test-id="toolbar-toggle-hr"
                             disabled={false}
                             onMouseDown={[Function]}
@@ -2124,11 +1822,8 @@ exports[`Toolbar renders toolbar icons 1`] = `
                               extraClassNames="IconButton__IconButton__inner___3fnmT"
                             >
                               <span
-                                className="
-      TabFocusTrap__TabFocusTrap___39Vty
-      IconButton__IconButton__inner___3fnmT
-    "
-                                tabIndex="-1"
+                                className="TabFocusTrap__TabFocusTrap___39Vty IconButton__IconButton__inner___3fnmT"
+                                tabIndex={-1}
                               >
                                 <Icon
                                   color="primary"
@@ -2138,13 +1833,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                                   testId="cf-ui-icon"
                                 >
                                   <HorizontalRule
-                                    className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      undefined
-      
-      IconButton__IconButton__icon___3yZQN
-    "
+                                    className="Icon__Icon___38Epv IconButton__IconButton__icon___3yZQN Icon__Icon--small___1yGZK undefined"
                                     data-test-id="cf-ui-icon"
                                     height="18"
                                     viewBox="0 0 24 24"
@@ -2152,13 +1841,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                                     xmlns="http://www.w3.org/2000/svg"
                                   >
                                     <svg
-                                      className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      undefined
-      
-      IconButton__IconButton__icon___3yZQN
-    "
+                                      className="Icon__Icon___38Epv IconButton__IconButton__icon___3yZQN Icon__Icon--small___1yGZK undefined"
                                       data-test-id="cf-ui-icon"
                                       height="18"
                                       viewBox="0 0 24 24"
@@ -2239,14 +1922,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
               testId="toolbar-toggle-embedded-asset-block"
             >
               <button
-                className="
-      Button__Button___1ZfFj a11y__focus-border--default___60AXp
-      
-      Button__Button--small___3yyrk
-      
-      Button__Button--muted___2Wair
-      rich-text__embedded-asset-block-button
-    "
+                className="Button__Button___1ZfFj a11y__focus-border--default___60AXp rich-text__embedded-asset-block-button Button__Button--muted___2Wair Button__Button--small___3yyrk"
                 data-test-id="toolbar-toggle-embedded-asset-block"
                 disabled={false}
                 onBlur={[Function]}
@@ -2256,11 +1932,8 @@ exports[`Toolbar renders toolbar icons 1`] = `
                   extraClassNames="Button__Button__inner-wrapper___3qrNC"
                 >
                   <span
-                    className="
-      TabFocusTrap__TabFocusTrap___39Vty
-      Button__Button__inner-wrapper___3qrNC
-    "
-                    tabIndex="-1"
+                    className="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
+                    tabIndex={-1}
                   >
                     <Icon
                       color="secondary"
@@ -2270,13 +1943,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                       testId="cf-ui-icon"
                     >
                       <Asset
-                        className="
-      Icon__Icon___38Epv
-      Icon__Icon--tiny___V4Pr9
-      Icon__Icon--secondary___1ztcw
-      
-      Button__Button__icon___2YX5-
-    "
+                        className="Icon__Icon___38Epv Button__Button__icon___2YX5- Icon__Icon--tiny___V4Pr9 Icon__Icon--secondary___1ztcw"
                         data-test-id="cf-ui-icon"
                         height="24"
                         viewBox="0 0 24 24"
@@ -2284,13 +1951,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <svg
-                          className="
-      Icon__Icon___38Epv
-      Icon__Icon--tiny___V4Pr9
-      Icon__Icon--secondary___1ztcw
-      
-      Button__Button__icon___2YX5-
-    "
+                          className="Icon__Icon___38Epv Button__Button__icon___2YX5- Icon__Icon--tiny___V4Pr9 Icon__Icon--secondary___1ztcw"
                           data-test-id="cf-ui-icon"
                           height="24"
                           viewBox="0 0 24 24"
@@ -2386,10 +2047,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
               }
             >
               <div
-                className="
-      Dropdown__Dropdown___1qyn8
-      toolbar-entry-dropdown
-    "
+                className="Dropdown__Dropdown___1qyn8 toolbar-entry-dropdown"
                 data-test-id="cf-ui-dropdown"
                 onClose={[Function]}
                 position="bottom-right"
@@ -2408,14 +2066,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                   testId="cf-ui-button"
                 >
                   <button
-                    className="
-      Button__Button___1ZfFj a11y__focus-border--default___60AXp
-      
-      Button__Button--small___3yyrk
-      
-      Button__Button--muted___2Wair
-      toolbar-entry-dropdown-toggle
-    "
+                    className="Button__Button___1ZfFj a11y__focus-border--default___60AXp toolbar-entry-dropdown-toggle Button__Button--muted___2Wair Button__Button--small___3yyrk"
                     data-test-id="toolbar-entry-dropdown-toggle"
                     disabled={false}
                     onBlur={[Function]}
@@ -2426,11 +2077,8 @@ exports[`Toolbar renders toolbar icons 1`] = `
                       extraClassNames="Button__Button__inner-wrapper___3qrNC"
                     >
                       <span
-                        className="
-      TabFocusTrap__TabFocusTrap___39Vty
-      Button__Button__inner-wrapper___3qrNC
-    "
-                        tabIndex="-1"
+                        className="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
+                        tabIndex={-1}
                       >
                         <Icon
                           color="secondary"
@@ -2440,13 +2088,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           testId="cf-ui-icon"
                         >
                           <Entry
-                            className="
-      Icon__Icon___38Epv
-      Icon__Icon--tiny___V4Pr9
-      Icon__Icon--secondary___1ztcw
-      
-      Button__Button__icon___2YX5-
-    "
+                            className="Icon__Icon___38Epv Button__Button__icon___2YX5- Icon__Icon--tiny___V4Pr9 Icon__Icon--secondary___1ztcw"
                             data-test-id="cf-ui-icon"
                             height="24"
                             viewBox="0 0 24 24"
@@ -2454,13 +2096,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                             xmlns="http://www.w3.org/2000/svg"
                           >
                             <svg
-                              className="
-      Icon__Icon___38Epv
-      Icon__Icon--tiny___V4Pr9
-      Icon__Icon--secondary___1ztcw
-      
-      Button__Button__icon___2YX5-
-    "
+                              className="Icon__Icon___38Epv Button__Button__icon___2YX5- Icon__Icon--tiny___V4Pr9 Icon__Icon--secondary___1ztcw"
                               data-test-id="cf-ui-icon"
                               height="24"
                               viewBox="0 0 24 24"
@@ -2492,13 +2128,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           testId="cf-ui-icon"
                         >
                           <ArrowDown
-                            className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      Icon__Icon--secondary___1ztcw
-      
-      
-    "
+                            className="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
                             data-test-id="cf-ui-icon"
                             height="24"
                             viewBox="0 0 24 24"
@@ -2506,13 +2136,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                             xmlns="http://www.w3.org/2000/svg"
                           >
                             <svg
-                              className="
-      Icon__Icon___38Epv
-      Icon__Icon--small___1yGZK
-      Icon__Icon--secondary___1ztcw
-      
-      
-    "
+                              className="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
                               data-test-id="cf-ui-icon"
                               height="24"
                               viewBox="0 0 24 24"
