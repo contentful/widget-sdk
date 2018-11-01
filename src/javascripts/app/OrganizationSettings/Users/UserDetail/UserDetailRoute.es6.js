@@ -18,9 +18,8 @@ const UserDetailFetcher = createFetcherComponent(async ({ orgId, userId }) => {
 
   const includePaths = ['roles', 'sys.space'];
   const membership = await getMembership(endpoint, userId);
-  const [user, createdBy, spaceMembershipsResult, spaces, roles] = await Promise.all([
+  const [user, spaceMembershipsResult, spaces, roles] = await Promise.all([
     getUser(endpoint, membership.sys.user.sys.id),
-    getUser(endpoint, membership.sys.createdBy.sys.id),
     getSpaceMemberships(endpoint, {
       include: includePaths.join(),
       'sys.user.sys.id': membership.sys.user.sys.id,
@@ -29,6 +28,18 @@ const UserDetailFetcher = createFetcherComponent(async ({ orgId, userId }) => {
     getAllSpaces(endpoint),
     getAllRoles(endpoint)
   ]);
+  let createdBy;
+  try {
+    createdBy = await getUser(endpoint, membership.sys.createdBy.sys.id);
+  } catch (e) {
+    createdBy = {
+      firstName: '',
+      lastName: '',
+      avatarUrl: '',
+      email: '',
+      sys: { id: membership.sys.createdBy.sys.id }
+    };
+  }
 
   const { items, includes } = spaceMembershipsResult;
   const spaceMemberships = ResolveLinks({ paths: includePaths, items, includes });

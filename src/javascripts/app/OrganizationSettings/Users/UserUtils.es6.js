@@ -16,3 +16,7 @@ export function getLastActivityDate(membership) {
       : 'Less than an hour ago'
     : 'Not available';
 }
+
+export function getUserName({ firstName, lastName }) {
+  return `${firstName} ${lastName}`;
+}

@@ -8,6 +8,7 @@ import { Button } from '@contentful/ui-component-library';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import UserCard from '../UserCard.es6';
 import { orgRoles } from './OrgRoles.es6';
+import { getUserName } from '../UserUtils.es6';
 
 import {
   SpaceMembership,
@@ -26,6 +27,7 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import UserSpaceMemberships from './UserSpaceMemberships/UserSpaceMemberships.es6';
 import UserSsoInfo from './SSO/UserSsoInfo.es6';
 import RemoveOrgMemberDialog from '../RemoveUserDialog.es6';
+import UnknownUser from './UnknownUser.es6';
 
 const ServicesConsumer = require('../../../../reactServiceContext').default;
 
@@ -162,14 +164,22 @@ class UserDetail extends React.Component {
                   <dt>Last activity</dt>
                   <dd>{this.getLastActiveDate()}</dd>
                   <dt>Member since</dt>
-                  <dd>{membership.sys.createdAt}</dd>
+                  <dd>{moment(membership.sys.createdAt).format('MMMM Do YYYY')}</dd>
                   <dt>Invited by</dt>
-                  <dd>{`${createdBy.firstName} ${createdBy.lastName}`}</dd>
+                  <dd>
+                    {createdBy.firstName ? (
+                      getUserName(createdBy)
+                    ) : (
+                      <UnknownUser id={createdBy.sys.id} />
+                    )}
+                  </dd>
                 </dl>
               </section>
-              <section className="user-details__profile-section">
-                <UserSsoInfo membership={membership} />
-              </section>
+              {membership.sys.sso && (
+                <section className="user-details__profile-section">
+                  <UserSsoInfo membership={membership} />
+                </section>
+              )}
               <section className="user-details__profile-section">
                 <dl className="definition-list">
                   <dt>Organization role</dt>
