@@ -1,3 +1,1 @@
-import sinon from 'sinon';
-
-export const track = sinon.stub();
+export const track = jest.fn();

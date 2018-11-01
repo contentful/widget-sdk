@@ -1,6 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import sinon from 'sinon';
+
 import Form from './ExtensionForm.es6';
 import CodeMirror from 'react-codemirror';
 
@@ -8,8 +8,8 @@ const ERR_SELECTOR = '.cfnext-form__field-error';
 
 describe('ExtensionForm', () => {
   const mount = (entity, selfHosted) => {
-    const updateEntityStub = sinon.stub();
-    const setSelfHostedStub = sinon.stub();
+    const updateEntityStub = jest.fn();
+    const setSelfHostedStub = jest.fn();
     const wrapper = Enzyme.mount(
       <Form
         entity={entity}
@@ -55,13 +55,13 @@ describe('ExtensionForm', () => {
     const inputs = wrapper.find('input');
 
     inputs.at(0).simulate('change', { target: { value: 'new-name' } });
-    expect(updateEntityStub.calledWith({ extension: { ...basic, name: 'new-name' } })).toBeTruthy();
-    updateEntityStub.reset();
+    expect(updateEntityStub).toHaveBeenCalledWith({ extension: { ...basic, name: 'new-name' } });
+    updateEntityStub.mockReset();
 
     inputs.at(1).simulate('change', { target: { checked: true } });
-    expect(
-      updateEntityStub.calledWith({ extension: { ...basic, fieldTypes: ['Text', 'Symbol'] } })
-    ).toBeTruthy();
+    expect(updateEntityStub).toHaveBeenCalledWith({
+      extension: { ...basic, fieldTypes: ['Text', 'Symbol'] }
+    });
   });
 
   it('renders and validates self-hosted URL', () => {
@@ -104,9 +104,9 @@ describe('ExtensionForm', () => {
     const [wrapper, _, setSelfHostedStub] = mount({ extension: basic }, true);
     const radios = wrapper.find('input[type="radio"]');
     radios.at(1).simulate('change', { value: { checked: true } });
-    expect(setSelfHostedStub.calledWith(false)).toBeTruthy();
+    expect(setSelfHostedStub).toHaveBeenCalledWith(false);
     radios.at(0).simulate('change', { value: { checked: true } });
-    expect(setSelfHostedStub.calledWith(true)).toBeTruthy();
+    expect(setSelfHostedStub).toHaveBeenLastCalledWith(true);
   });
 
   it('renders installation and updates parameters form', () => {
@@ -120,7 +120,7 @@ describe('ExtensionForm', () => {
     const input = wrapper.find('input[name="test"]');
     expect(input.prop('value')).toBe('hello world');
     input.simulate('change', { target: { value: 'poop' } });
-    expect(updateEntityStub.calledWith({ extension, parameters: { test: 'poop' } })).toBeTruthy();
+    expect(updateEntityStub).toHaveBeenCalledWith({ extension, parameters: { test: 'poop' } });
   });
 
   it('renders parameter definitions', () => {

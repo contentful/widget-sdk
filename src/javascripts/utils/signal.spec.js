@@ -1,11 +1,10 @@
 import { create as createSignal, createMemoized } from './signal.es6';
-import sinon from 'sinon';
 import _ from 'lodash';
 
 describe('utils/signal.es6', () => {
   describe('#create()', () => {
     it('calls attached listeners on dispatch', function() {
-      const listeners = _.map(_.range(1, 4), () => sinon.stub());
+      const listeners = _.map(_.range(1, 4), () => jest.fn());
 
       const signal = createSignal();
 
@@ -16,49 +15,49 @@ describe('utils/signal.es6', () => {
       signal.dispatch('VALUE');
 
       _.forEach(listeners, l => {
-        expect(l.calledWith('VALUE')).toBeTruthy();
+        expect(l).toHaveBeenCalledWith('VALUE');
       });
     });
 
     it('does not call detached listeners', function() {
-      const listener = sinon.stub();
+      const listener = jest.fn();
       const signal = createSignal();
       const detach = signal.attach(listener);
 
       signal.dispatch();
-      expect(listener.calledOnce).toBe(true);
+      expect(listener).toHaveBeenCalledTimes(1);
 
       detach();
       signal.dispatch();
-      expect(listener.calledOnce).toBe(true);
+      expect(listener).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('#createMemoized()', () => {
     it('sends initial value on attach with send option', function() {
       const signal = createMemoized('INITIAL');
-      const listener = sinon.stub();
+      const listener = jest.fn();
 
       signal.attach(listener, true);
-      expect(listener.calledWithExactly('INITIAL')).toBe(true);
+      expect(listener).toHaveBeenLastCalledWith('INITIAL');
     });
 
     it('sends last value on attach with send option', function() {
       const signal = createMemoized();
-      const listener = sinon.stub();
+      const listener = jest.fn();
 
       signal.dispatch('VALUE');
       signal.attach(listener, true);
-      expect(listener.calledWithExactly('VALUE')).toBe(true);
+      expect(listener).toHaveBeenCalledWith('VALUE');
     });
 
     it('overides initial value when dispatched', function() {
       const signal = createMemoized('INITIAL');
       signal.dispatch('VALUE');
 
-      const listener = sinon.stub();
+      const listener = jest.fn();
       signal.attach(listener, true);
-      expect(listener.calledWithExactly('VALUE')).toBe(true);
+      expect(listener).toHaveBeenCalledWith('VALUE');
     });
   });
 });

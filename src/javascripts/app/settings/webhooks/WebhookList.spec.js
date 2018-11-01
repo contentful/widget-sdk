@@ -1,25 +1,20 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import sinon from 'sinon';
 import WebhookList from './WebhookList.es6';
-import { MockedProvider } from '../../../reactServiceContext';
+import spaceContextMocked from 'spaceContext';
 
 describe('WebhookList', () => {
-  const webhookRepo = { logs: { getHealth: sinon.stub().rejects() } };
-
+  beforeEach(() => {
+    spaceContextMocked.webhookRepo.logs.getHealth.mockReset().mockResolvedValue({
+      calls: {
+        healthy: 50,
+        total: 100
+      }
+    });
+  });
   const mount = webhooks => {
     return Enzyme.mount(
-      <MockedProvider
-        services={{
-          spaceContext: {
-            webhookRepo
-          },
-          'utils/ResourceUtils.es6': {
-            isLegacyOrganization: () => false
-          }
-        }}>
-        <WebhookList webhooks={webhooks} hasAwsProxy={false} openTemplateDialog={() => {}} />
-      </MockedProvider>
+      <WebhookList webhooks={webhooks} hasAwsProxy={false} openTemplateDialog={() => {}} />
     );
   };
 

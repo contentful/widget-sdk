@@ -1,5 +1,3 @@
-import sinon from 'sinon';
-
 export default {
-  getDefaultLocale: sinon.stub().returns({ code: 'en-US' })
+  getDefaultLocale: jest.fn().mockReturnValue({ code: 'en-US' })
 };

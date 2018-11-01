@@ -1,7 +1,7 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import $state from '$state';
-import notification from 'notification';
+import $stateMocked from '$state';
+import notificationMocked from 'notification';
 import LocalesListPricingOne, { AddLocaleButton, LocalesAdvice } from './LocalesListPricingOne.es6';
 
 describe('app/settings/locales/LocalesListPricingOne', () => {
@@ -28,16 +28,16 @@ describe('app/settings/locales/LocalesListPricingOne', () => {
 
   describe('AddLocaleButton', () => {
     beforeEach(() => {
-      $state.go.resetHistory();
-      notification.error.resetHistory();
+      $stateMocked.go.mockClear();
+      notificationMocked.error.mockClear();
     });
     it('if getComputeLocalesUsageForOrganization returns positive value than notification should be shown', () => {
       const wrapper = Enzyme.mount(
         <AddLocaleButton getComputeLocalesUsageForOrganization={() => true} />
       );
       wrapper.find('button').simulate('click');
-      expect(notification.error.calledWith(true)).toBeTruthy();
-      expect($state.go.called).toBeFalsy();
+      expect(notificationMocked.error).toHaveBeenCalledWith(true);
+      expect($stateMocked.go).not.toHaveBeenCalled();
     });
 
     it('if getComputeLocalesUsageForOrganization returns negative value than $state.go should be called', () => {
@@ -45,14 +45,14 @@ describe('app/settings/locales/LocalesListPricingOne', () => {
         <AddLocaleButton getComputeLocalesUsageForOrganization={() => false} />
       );
       wrapper.find('button').simulate('click');
-      expect(notification.error.called).toBeFalsy();
-      expect($state.go.calledWith('^.new')).toBeTruthy();
+      expect(notificationMocked.error).not.toHaveBeenCalled();
+      expect($stateMocked.go).toHaveBeenCalledWith('^.new', undefined, undefined);
     });
   });
 
   describe('LocalesAdvice', () => {
     beforeEach(() => {
-      $state.href.resetHistory();
+      $stateMocked.href.mockClear();
     });
 
     const mount = props => {
@@ -154,8 +154,11 @@ describe('app/settings/locales/LocalesListPricingOne', () => {
       expect(cannotChangeSpaceWrapper.find('[data-test-id="locales-advice"]')).toIncludeText(
         'Please ask your organization owner to upgrade if you need more locales or delete some of the existing ones'
       );
-      expect($state.href.lastCall.args).toEqual(['account.organization.subscription', undefined]);
-      expect($state.href.callCount).toEqual(1);
+      expect($stateMocked.href).toHaveBeenCalledTimes(1);
+      expect($stateMocked.href).toHaveBeenCalledWith(
+        'account.organization.subscription',
+        undefined
+      );
     });
 
     it('should show correct message if status is LocalesUsageStatus.NO_MULTIPLE_LOCALES', () => {
@@ -192,8 +195,11 @@ describe('app/settings/locales/LocalesListPricingOne', () => {
       expect(cannotChangeSpaceWrapper.find('[data-test-id="locales-advice"]')).toIncludeText(
         'Please ask your organization owner to upgrade to a plan that includes locales to benefit from this feature'
       );
-      expect($state.href.callCount).toEqual(1);
-      expect($state.href.lastCall.args).toEqual(['account.organization.subscription', undefined]);
+      expect($stateMocked.href).toHaveBeenCalledTimes(1);
+      expect($stateMocked.href).toHaveBeenCalledWith(
+        'account.organization.subscription',
+        undefined
+      );
     });
   });
 });

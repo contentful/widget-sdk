@@ -1,4 +1,3 @@
-import sinon from 'sinon';
 import * as versionPicker from './VersionPicker.es6';
 
 describe('snapshots/VersionPicker', () => {
@@ -27,14 +26,14 @@ describe('snapshots/VersionPicker', () => {
     });
 
     it('registers "restoring" function', function() {
-      const fn1 = sinon.spy();
-      const fn2 = sinon.spy();
+      const fn1 = jest.fn();
+      const fn2 = jest.fn();
       picker.registerPath({ restoreFn: fn1 });
       picker.registerPath({ restoreFn: fn2 });
       picker.registerPath({ restoreFn: undefined });
       picker.restoreAll();
-      expect(fn1.calledOnce).toBe(true);
-      expect(fn2.calledOnce).toBe(true);
+      expect(fn1).toHaveBeenCalledTimes(1);
+      expect(fn2).toHaveBeenCalledTimes(1);
     });
   });
 

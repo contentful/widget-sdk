@@ -60,7 +60,7 @@ module.exports = {
       }
     },
     {
-      files: ['src/**/*.spec.js'],
+      files: ['src/**/*.spec.js', 'src/javascripts/__mocks__/**/*.js'],
       plugins: ['jest', 'rulesdir'],
       rules: {
         'jest/no-disabled-tests': 'warn',
@@ -74,8 +74,7 @@ module.exports = {
         'jest/no-test-prefixes': 'error',
         'jest/prefer-to-be-null': 'warn',
         'jest/prefer-to-be-undefined': 'warn',
-        'rulesdir/restrict-jest-fn': 'error',
-        'rulesdir/restrict-sinon-assert': 'error',
+        'rulesdir/restrict-sinon': 'error',
         'react/prop-types': 'off'
       },
       parserOptions: {

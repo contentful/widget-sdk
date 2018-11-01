@@ -1,12 +1,12 @@
 import React from 'react';
 import Enzyme from 'enzyme';
 import StateLink from './StateLink.es6';
-import $state from '$state';
+import $stateMocked from '$state';
 
 describe('StateLink', () => {
   beforeEach(() => {
-    $state.go.resetHistory();
-    $state.href.resetHistory();
+    $stateMocked.go.mockClear();
+    $stateMocked.href.mockClear();
   });
 
   it('should render <a>', () => {
@@ -18,8 +18,8 @@ describe('StateLink', () => {
 />
 `);
     wrapper.find('a').simulate('click');
-    expect($state.href.calledWith('home.list')).toBeTruthy();
-    expect($state.go.calledWith('home.list')).toBeTruthy();
+    expect($stateMocked.href).toHaveBeenCalledWith('home.list', undefined);
+    expect($stateMocked.go).toHaveBeenCalledWith('home.list', undefined, undefined);
   });
 
   it('should pass all params to $state.go', () => {
@@ -27,8 +27,8 @@ describe('StateLink', () => {
       <StateLink to="home.list" params={{ foo: 'bar' }} options={{ replace: true }} />
     );
     wrapper.find('a').simulate('click');
-    expect($state.href.calledWith('home.list', { foo: 'bar' })).toBeTruthy();
-    expect($state.go.calledWith('home.list', { foo: 'bar' }, { replace: true })).toBeTruthy();
+    expect($stateMocked.href).toHaveBeenCalledWith('home.list', { foo: 'bar' });
+    expect($stateMocked.go).toHaveBeenCalledWith('home.list', { foo: 'bar' }, { replace: true });
   });
 
   it('can be used as render prop and pass down onClick function', () => {
@@ -38,7 +38,7 @@ describe('StateLink', () => {
       </StateLink>
     );
     wrapper.find('button').simulate('click');
-    expect($state.href.called).toBeFalsy();
-    expect($state.go.calledWith('home.list', { foo: 'bar' })).toBeTruthy();
+    expect($stateMocked.href).not.toHaveBeenCalled();
+    expect($stateMocked.go).toHaveBeenCalledWith('home.list', { foo: 'bar' }, undefined);
   });
 });

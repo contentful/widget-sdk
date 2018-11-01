@@ -1,6 +1,5 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import sinon from 'sinon';
 import WebhookSecretHeaderDialog from './WebhookSecretHeaderDialog.es6';
 
 describe('webhooks/dialogs/WebhookSecretHeaderDialog', () => {
@@ -13,8 +12,8 @@ describe('webhooks/dialogs/WebhookSecretHeaderDialog', () => {
 
   const render = () => {
     const stubs = {
-      onConfirm: sinon.stub(),
-      onCancel: sinon.stub()
+      onConfirm: jest.fn(),
+      onCancel: jest.fn()
     };
     const wrapper = Enzyme.mount(
       <WebhookSecretHeaderDialog isShown onCancel={stubs.onCancel} onConfirm={stubs.onConfirm} />
@@ -26,7 +25,7 @@ describe('webhooks/dialogs/WebhookSecretHeaderDialog', () => {
     const { wrapper, stubs } = render();
     expect(wrapper.find(selectors.confirm)).toBeDisabled();
     wrapper.find(selectors.cancel).simulate('click');
-    expect(stubs.onCancel.calledOnce).toBe(true);
+    expect(stubs.onCancel).toHaveBeenCalledTimes(1);
   });
 
   it('confirm is enabled when values are provided', () => {
@@ -41,12 +40,10 @@ describe('webhooks/dialogs/WebhookSecretHeaderDialog', () => {
 
     wrapper.find(selectors.confirm).simulate('click');
 
-    expect(
-      stubs.onConfirm.calledWith({
-        key,
-        value
-      })
-    ).toBe(true);
+    expect(stubs.onConfirm).toHaveBeenCalledWith({
+      key,
+      value
+    });
   });
 
   it('has correct text', () => {

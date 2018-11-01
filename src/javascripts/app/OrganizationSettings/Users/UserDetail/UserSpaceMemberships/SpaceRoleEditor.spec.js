@@ -1,7 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import SpaceRoleEditor from './SpaceRoleEditor.es6';
-import sinon from 'sinon';
 
 const MockedProvider = require('../../../../../reactServiceContext').MockedProvider;
 
@@ -20,7 +19,7 @@ describe('SpaceRoleEditor', () => {
   ];
 
   const render = props => {
-    changeCb = sinon.stub();
+    changeCb = jest.fn();
     const defaultProps = {
       options: roleOptions,
       value: [],
@@ -63,7 +62,7 @@ describe('SpaceRoleEditor', () => {
       .find('input')
       .at(1)
       .simulate('change', { target: { checked: true } });
-    expect(changeCb.getCall(0).args[0]).toEqual(['police']);
+    expect(changeCb).toHaveBeenCalledWith(['police']);
   });
 
   it('removes any other role if admin is selected', () => {
@@ -74,7 +73,7 @@ describe('SpaceRoleEditor', () => {
       .find('input')
       .at(0)
       .simulate('change', { target: { checked: true } });
-    expect(changeCb.getCall(0).args[0]).toEqual(['admin']);
+    expect(changeCb).toHaveBeenCalledWith(['admin']);
   });
 
   it('allows multiple roles', () => {
@@ -84,6 +83,6 @@ describe('SpaceRoleEditor', () => {
       .find('input')
       .at(2)
       .simulate('change', { target: { checked: true } });
-    expect(changeCb.getCall(0).args[0]).toEqual(expect.arrayContaining(['police', 'thief']));
+    expect(changeCb).toHaveBeenCalledWith(['police', 'thief']);
   });
 });

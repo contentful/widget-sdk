@@ -1,11 +1,10 @@
 import React from 'react';
-import sinon from 'sinon';
 import Enzyme from 'enzyme';
 import Paginator from './Paginator.es6';
 
 describe('ui/Components/Paginator.es6', () => {
   const shallow = ({ page, pageCount }) => {
-    const onSelectStub = sinon.stub();
+    const onSelectStub = jest.fn();
     const wrapper = Enzyme.shallow(
       <Paginator select={onSelectStub} page={page} pageCount={pageCount} />
     );
@@ -19,7 +18,7 @@ describe('ui/Components/Paginator.es6', () => {
     });
 
     wrapper.find({ 'data-test-id': 'paginator.prev' }).simulate('click');
-    expect(onSelectStub.calledWith(2)).toBe(true);
+    expect(onSelectStub).toHaveBeenCalledWith(2);
   });
 
   it('selects next page', function() {
@@ -29,7 +28,7 @@ describe('ui/Components/Paginator.es6', () => {
     });
 
     wrapper.find({ 'data-test-id': 'paginator.next' }).simulate('click');
-    expect(onSelectStub.calledWith(4)).toBe(true);
+    expect(onSelectStub).toHaveBeenCalledWith(4);
   });
 
   it('selects first page', function() {
@@ -38,7 +37,7 @@ describe('ui/Components/Paginator.es6', () => {
       pageCount: 100
     });
     wrapper.find({ 'data-test-id': 'paginator.select.0' }).simulate('click');
-    expect(onSelectStub.calledWith(0)).toBe(true);
+    expect(onSelectStub).toHaveBeenCalledWith(0);
   });
 
   it('selects last page', function() {
@@ -47,7 +46,7 @@ describe('ui/Components/Paginator.es6', () => {
       pageCount: 100
     });
     wrapper.find({ 'data-test-id': 'paginator.select.99' }).simulate('click');
-    expect(onSelectStub.calledWith(99)).toBe(true);
+    expect(onSelectStub).toHaveBeenCalledWith(99);
   });
 
   it('selects current page page', function() {

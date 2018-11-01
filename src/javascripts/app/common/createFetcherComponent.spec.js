@@ -1,11 +1,10 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import sinon from 'sinon';
 import createFetcherComponent, { FetcherLoading } from './createFetcherComponent';
 
 describe('createFetcherComponent', () => {
   it('should create fetcher component and renders LoadingComponent', () => {
-    const promiseStub = sinon.stub().returns(new Promise(() => {}));
+    const promiseStub = jest.fn().mockResolvedValue({});
 
     const Component = createFetcherComponent(({ param1, param2 }) => {
       return promiseStub(param1, param2);
@@ -22,7 +21,7 @@ describe('createFetcherComponent', () => {
       </Component>
     );
 
-    expect(promiseStub.calledOnceWith('1', '2')).toBeTruthy();
+    expect(promiseStub).toHaveBeenCalledWith('1', '2');
     expect(wrapper.childAt(0)).toMatchInlineSnapshot(`
 <FetcherLoading
   message="Loading test component..."

@@ -1,22 +1,22 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import spaceContext from 'spaceContext';
 import ExtensionsListRoute from './ExtensionsListRoute.es6';
-import sinon from 'sinon';
-import $state from '$state';
+import spaceContextMocked from 'spaceContext';
+import $stateMocked from '$state';
 
 describe('ExtensionsListRoute', () => {
   beforeEach(() => {
-    $state.go.resetHistory();
-    spaceContext.widgets.refresh.resetHistory();
-    spaceContext.getData.reset();
+    $stateMocked.go.mockClear();
+    spaceContextMocked.widgets.refresh.mockClear();
+    spaceContextMocked.getData.mockReset();
   });
 
   const setAdmin = isAdmin => {
-    spaceContext.getData = sinon
-      .stub()
-      .withArgs(['spaceMembership.admin'])
-      .returns(isAdmin);
+    spaceContextMocked.getData.mockImplementation(name => {
+      if (name === 'spaceMembership.admin') {
+        return isAdmin;
+      }
+    });
   };
 
   const selectors = {
@@ -27,9 +27,13 @@ describe('ExtensionsListRoute', () => {
     expect.assertions(3);
     setAdmin(false);
     Enzyme.mount(<ExtensionsListRoute />);
-    expect($state.go.calledOnce).toBeTruthy();
-    expect($state.go.calledWith('spaces.detail.entries.list')).toBeTruthy();
-    expect(spaceContext.widgets.refresh.called).toBeFalsy();
+    expect($stateMocked.go).toHaveBeenCalledTimes(1);
+    expect($stateMocked.go).toHaveBeenCalledWith(
+      'spaces.detail.entries.list',
+      undefined,
+      undefined
+    );
+    expect(spaceContextMocked.widgets.refresh).not.toHaveBeenCalled();
   });
 
   it('should show ExtensionsForbiddenPage if non-admin reaches page via deeplink extensionUrl', () => {
@@ -38,8 +42,8 @@ describe('ExtensionsListRoute', () => {
     const wrapper = Enzyme.mount(
       <ExtensionsListRoute extensionUrl="https://github.com/contentful/extensions/blob/master/samples/build-netlify/extension.json" />
     );
-    expect($state.go.called).toBeFalsy();
-    expect(spaceContext.widgets.refresh.called).toBeFalsy();
+    expect($stateMocked.go).not.toHaveBeenCalled();
+    expect(spaceContextMocked.widgets.refresh).not.toHaveBeenCalled();
     expect(wrapper.find(selectors.forbiddenPage)).toExist();
 
     expect(
@@ -56,8 +60,8 @@ describe('ExtensionsListRoute', () => {
     expect.assertions(3);
     setAdmin(true);
     const wrapper = Enzyme.mount(<ExtensionsListRoute />);
-    expect($state.go.called).toBeFalsy();
-    expect(spaceContext.widgets.refresh.called).toBeTruthy();
+    expect($stateMocked.go).not.toHaveBeenCalled();
+    expect(spaceContextMocked.widgets.refresh).toHaveBeenCalledTimes(1);
     expect(wrapper.find(selectors.forbiddenPage)).not.toExist();
   });
 });

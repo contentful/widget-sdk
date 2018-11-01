@@ -1,7 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import SearchFilter from './SearchFilter.es6';
-import sinon from 'sinon';
 
 describe('SearchFilter', () => {
   const options = [
@@ -14,7 +13,7 @@ describe('SearchFilter', () => {
   let onChangeCb, component;
 
   beforeEach(() => {
-    onChangeCb = sinon.stub();
+    onChangeCb = jest.fn();
     component = mount(
       <SearchFilter
         label="Fruit"
@@ -46,12 +45,10 @@ describe('SearchFilter', () => {
   it('calls the onChange callback with the updated filter', () => {
     const select = component.find('select');
     select.simulate('change', { target: { value: '' } });
-    expect(onChangeCb.getCall(0).args).toEqual([
-      {
-        key: 'fruit',
-        operator: null,
-        value: ''
-      }
-    ]);
+    expect(onChangeCb).toHaveBeenCalledWith({
+      key: 'fruit',
+      operator: null,
+      value: ''
+    });
   });
 });

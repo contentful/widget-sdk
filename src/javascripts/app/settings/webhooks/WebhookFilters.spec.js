@@ -1,12 +1,11 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import sinon from 'sinon';
 import WebhookFilters from './WebhookFilters.es6';
 import { transformFiltersToList, transformListToFilters } from './WebhookFiltersState.es6';
 
 describe('WebhookFilters', () => {
   const shallow = filters => {
-    const onChangeStub = sinon.stub();
+    const onChangeStub = jest.fn();
     const wrapper = Enzyme.shallow(
       <WebhookFilters
         filters={transformFiltersToList(filters)}
@@ -67,7 +66,7 @@ describe('WebhookFilters', () => {
       .find('button')
       .first();
     removeBtn.simulate('click');
-    expect(onChangeStub.calledWith([filters[1]])).toBeTruthy();
+    expect(onChangeStub).toHaveBeenCalledWith([filters[1]]);
   });
 
   it('adds a new filter', () => {
@@ -82,8 +81,9 @@ describe('WebhookFilters', () => {
 
     const addBtn = wrapper.find('.cfnext-form__field > button').first();
     addBtn.simulate('click');
-    expect(
-      onChangeStub.calledWith([...filters, { equals: [{ doc: 'sys.environment.sys.id' }, ''] }])
-    ).toBeTruthy();
+    expect(onChangeStub).toHaveBeenCalledWith([
+      ...filters,
+      { equals: [{ doc: 'sys.environment.sys.id' }, ''] }
+    ]);
   });
 });

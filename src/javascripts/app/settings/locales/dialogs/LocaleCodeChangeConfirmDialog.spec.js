@@ -1,5 +1,4 @@
 import React from 'react';
-import sinon from 'sinon';
 import { shallow, mount } from 'enzyme';
 import LocaleCodeChangeConfirmDialog from './LocaleCodeChangeConfirmDialog.es6';
 
@@ -39,7 +38,7 @@ describe('locales/components/LocaleCodeChangeConfirmDialog', () => {
 
   it('it is possible to invoke cancel by clicking on two buttons', () => {
     const stubs = {
-      onCancel: sinon.stub()
+      onCancel: jest.fn()
     };
     const wrapper = mount(
       renderComponent({
@@ -49,13 +48,13 @@ describe('locales/components/LocaleCodeChangeConfirmDialog', () => {
 
     wrapper.find(selectors.cancelChangeLocale).simulate('click');
     wrapper.find(selectors.modalDialogClose).simulate('click');
-    expect(stubs.onCancel.callCount).toBe(2);
+    expect(stubs.onCancel).toHaveBeenCalledTimes(2);
   });
 
   it('confirm button should be enabled when user types locale code in input', () => {
     const stubs = {
-      onConfirm: sinon.stub(),
-      onCancel: sinon.stub()
+      onConfirm: jest.fn(),
+      onCancel: jest.fn()
     };
 
     const wrapper = mount(
@@ -72,6 +71,6 @@ describe('locales/components/LocaleCodeChangeConfirmDialog', () => {
     expect(wrapper.find(selectors.confirmChangeLocale)).toBeDisabled();
     wrapper.find(selectors.confirmChangeLocale).simulate('click');
 
-    expect(stubs.onConfirm.callCount).toBe(1);
+    expect(stubs.onConfirm).toHaveBeenCalledTimes(1);
   });
 });

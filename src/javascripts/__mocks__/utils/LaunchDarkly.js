@@ -1,9 +1,7 @@
-import sinon from 'sinon';
+export const init = jest.fn();
 
-export const init = sinon.spy();
+export const getCurrentVariation = jest.fn().mockResolvedValue(true);
 
-export const getCurrentVariation = sinon.stub().resolves(true);
+export const onFeatureFlag = jest.fn();
 
-export const onFeatureFlag = sinon.spy();
-
-export const onABTest = sinon.spy();
+export const onABTest = jest.fn();

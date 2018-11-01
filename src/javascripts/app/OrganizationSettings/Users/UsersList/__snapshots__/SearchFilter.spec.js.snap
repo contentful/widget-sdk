@@ -16,7 +16,7 @@ exports[`SearchFilter accepts empty values 1`] = `
     }
   }
   label="Fruit"
-  onChange={[Function]}
+  onChange={[MockFunction]}
   options={
     Array [
       Object {
@@ -103,7 +103,7 @@ exports[`SearchFilter renders the component 1`] = `
     }
   }
   label="Fruit"
-  onChange={[Function]}
+  onChange={[MockFunction]}
   options={
     Array [
       Object {

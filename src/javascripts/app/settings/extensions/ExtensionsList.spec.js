@@ -1,17 +1,16 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import sinon from 'sinon';
 import ExtensionsList from './ExtensionsList.es6';
-import $state from '$state';
+import $stateMocked from '$state';
 
 describe('app/settings/extensions/Extensions', () => {
   beforeEach(() => {
-    $state.go.resetHistory();
+    $stateMocked.go.mockClear();
   });
 
   const mount = props => {
     const extensions = props.extensions || [];
-    const refresh = props.refresh || sinon.stub().resolves({});
+    const refresh = props.refresh || jest.fn().mockResolvedValue({});
     const extensionUrl = props.extensionUrl || null;
     const wrapper = Enzyme.mount(
       <ExtensionsList extensions={extensions} refresh={refresh} extensionUrl={extensionUrl} />
@@ -51,7 +50,7 @@ describe('app/settings/extensions/Extensions', () => {
     expect.assertions(1);
     const wrapper = mount({
       extensions: [],
-      refresh: sinon.stub().resolves({})
+      refresh: jest.fn().mockResolvedValue({})
     });
     expect(wrapper.exists("[data-test-id='extensions.empty']")).toEqual(true);
   });
@@ -61,21 +60,21 @@ describe('app/settings/extensions/Extensions', () => {
 
     const wrapper = mount({
       extensions,
-      refresh: sinon.stub.resolves({})
+      refresh: jest.fn().mockResolvedValue({})
     });
 
-    expect($state.go.called).toBeFalsy();
+    expect($stateMocked.go).not.toHaveBeenCalled();
     wrapper
       .find('a')
       .first()
       .simulate('click');
-    expect($state.go.called).toBeTruthy();
+    expect($stateMocked.go).toHaveBeenCalled();
   });
 
   it('lists extensions', function() {
     const wrapper = mount({
       extensions: extensions,
-      refresh: sinon.stub.resolves({})
+      refresh: jest.fn().mockResolvedValue({})
     });
     expect(wrapper.find("[data-test-id='extensions.list']")).toHaveLength(1);
 

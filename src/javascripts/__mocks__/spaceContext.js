@@ -1,27 +1,30 @@
-import sinon from 'sinon';
-
 export default {
   user: {
     email: 'someone-from@contenful.com'
   },
   cma: {
-    createExtension: sinon.stub().resolves({}),
-    deleteExtension: sinon.stub().resolves({}),
-    getExtension: sinon.stub().resolves({})
+    createExtension: jest.fn().mockResolvedValue({}),
+    deleteExtension: jest.fn().mockResolvedValue({}),
+    getExtension: jest.fn().mockResolvedValue({})
   },
   webhookRepo: {
-    getAll: sinon.stub().resolves([]),
-    get: sinon.stub().resolves({}),
+    getAll: jest.fn().mockResolvedValue([]),
+    get: jest.fn().mockResolvedValue({}),
     logs: {
-      getCall: sinon.stub().resolves({}),
-      getHealth: sinon.stub().resolves({})
+      getCall: jest.fn().mockResolvedValue({}),
+      getHealth: jest.fn().mockResolvedValue({
+        calls: {
+          health: 50,
+          total: 100
+        }
+      })
     }
   },
   publishedCTs: {
-    getAllBare: sinon.stub().returns([])
+    getAllBare: jest.fn().mockReturnValue([])
   },
   widgets: {
-    refresh: sinon.stub().resolves([])
+    refresh: jest.fn().mockResolvedValue([])
   },
-  getData: sinon.stub()
+  getData: jest.fn()
 };

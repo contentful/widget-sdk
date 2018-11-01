@@ -1,9 +1,8 @@
 import React from 'react';
 import Enzyme from 'enzyme';
 import WebhookListRoute from './WebhookListRoute.es6';
-import sinon from 'sinon';
-import $state from '$state';
-import spaceContext from 'spaceContext';
+import $stateMocked from '$state';
+import spaceContextMocked from 'spaceContext';
 
 jest.mock(
   'data/isEnterprise.es6',
@@ -15,17 +14,14 @@ jest.mock(
 
 describe('WebhookListRoute', () => {
   beforeEach(() => {
-    $state.go.resetHistory();
-    spaceContext.getData.reset();
-    spaceContext.webhookRepo.getAll.resetHistory();
-    spaceContext.publishedCTs.getAllBare.resetHistory();
+    $stateMocked.go.mockClear();
+    spaceContextMocked.getData.mockReset();
+    spaceContextMocked.webhookRepo.getAll.mockClear();
+    spaceContextMocked.publishedCTs.getAllBare.mockClear();
   });
 
   const setAdmin = isAdmin => {
-    spaceContext.getData = sinon
-      .stub()
-      .withArgs(['spaceMembership.admin'])
-      .returns(isAdmin);
+    spaceContextMocked.getData.mockReturnValue(isAdmin);
   };
 
   const selectors = {
@@ -36,9 +32,13 @@ describe('WebhookListRoute', () => {
     expect.assertions(3);
     setAdmin(false);
     Enzyme.mount(<WebhookListRoute />);
-    expect($state.go.calledOnce).toBeTruthy();
-    expect($state.go.calledWith('spaces.detail.entries.list')).toBeTruthy();
-    expect(spaceContext.webhookRepo.getAll.called).toBeFalsy();
+    expect($stateMocked.go).toHaveBeenCalledTimes(1);
+    expect($stateMocked.go).toHaveBeenCalledWith(
+      'spaces.detail.entries.list',
+      undefined,
+      undefined
+    );
+    expect(spaceContextMocked.webhookRepo.getAll).not.toHaveBeenCalled();
   });
 
   it('should show WebhookForbiddenPage if non-admin reaches page via deeplink templateId', () => {
@@ -47,8 +47,8 @@ describe('WebhookListRoute', () => {
 
     const wrapper = Enzyme.mount(<WebhookListRoute templateId="algolia-index-entries" />);
 
-    expect($state.go.called).toBeFalsy();
-    expect(spaceContext.webhookRepo.getAll.called).toBeFalsy();
+    expect($stateMocked.go).not.toHaveBeenCalled();
+    expect(spaceContextMocked.webhookRepo.getAll).not.toHaveBeenCalled();
     expect(wrapper.find(selectors.forbiddenPage)).toExist();
   });
 
@@ -56,8 +56,8 @@ describe('WebhookListRoute', () => {
     expect.assertions(3);
     setAdmin(true);
     const wrapper = Enzyme.mount(<WebhookListRoute />);
-    expect($state.go.called).toBeFalsy();
-    expect(spaceContext.webhookRepo.getAll.calledOnce).toBeTruthy();
+    expect($stateMocked.go).not.toHaveBeenCalled();
+    expect(spaceContextMocked.webhookRepo.getAll).toHaveBeenCalledTimes(1);
     expect(wrapper.find(selectors.forbiddenPage)).not.toExist();
   });
 });

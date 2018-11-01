@@ -1,6 +1,5 @@
 import React from 'react';
 import { mount } from 'enzyme';
-import sinon from 'sinon';
 import { merge } from 'lodash';
 
 import CreateEntity, { entityTypes } from '../index.es6';
@@ -12,19 +11,19 @@ const getFakeServices = args =>
   merge(
     {
       'access_control/AccessChecker': {
-        can: sinon.stub(),
-        canPerformActionOnEntryOfType: sinon.stub(),
+        can: jest.fn(),
+        canPerformActionOnEntryOfType: jest.fn(),
         Action: { CREATE: 'Create' }
       },
       entityCreator: {
-        newEntry: sinon.stub().returns(Promise.resolve({})),
-        newAsset: sinon.stub().returns(Promise.resolve({}))
+        newEntry: jest.fn().mockResolvedValue({}),
+        newAsset: jest.fn().mockResolvedValue({})
       },
       logger: {
-        logError: sinon.stub()
+        logError: jest.fn()
       },
       'navigation/SlideInNavigator': {
-        goToSlideInEntity: sinon.stub()
+        goToSlideInEntity: jest.fn()
       }
     },
     args
@@ -45,7 +44,9 @@ describe('CreateEntity', () => {
       onSelect: () => {}
     };
     const wrapper = mountComponent(props, {
-      'access_control/AccessChecker': { canPerformActionOnEntryOfType: sinon.stub().returns(true) }
+      'access_control/AccessChecker': {
+        canPerformActionOnEntryOfType: jest.fn().mockReturnValue(true)
+      }
     });
 
     expect(wrapper.find('[data-test-id="create-entry"]')).toHaveLength(1);
@@ -58,7 +59,7 @@ describe('CreateEntity', () => {
       onSelect: () => {}
     };
     const wrapper = mountComponent(props, {
-      'access_control/AccessChecker': { can: sinon.stub().returns(true) }
+      'access_control/AccessChecker': { can: jest.fn().mockReturnValue(true) }
     });
 
     expect(wrapper.find('[data-test-id="create-asset"]')).toHaveLength(1);
@@ -90,14 +91,14 @@ describe('CreateEntity', () => {
     const props = {
       type: entityTypes.Entry,
       contentTypes: [{ sys: { id: 'abs' } }],
-      onSelect: sinon.stub()
+      onSelect: jest.fn()
     };
     const entry = { data: { sys: { id: '1', type: entityTypes.Entry } } };
-    const newEntrySpy = sinon.stub().returns(Promise.resolve(entry));
-    const goToSlideInEntity = sinon.stub();
+    const newEntrySpy = jest.fn().mockResolvedValue(entry);
+    const goToSlideInEntity = jest.fn();
     const wrapper = mountComponent(props, {
       'access_control/AccessChecker': {
-        canPerformActionOnEntryOfType: sinon.stub().returns(true)
+        canPerformActionOnEntryOfType: jest.fn().mockResolvedValue(true)
       },
       entityCreator: { newEntry: newEntrySpy },
       'navigation/SlideInNavigator': {
@@ -108,21 +109,22 @@ describe('CreateEntity', () => {
     wrapper.find('[data-test-id="cta"]').simulate('click');
 
     await flushPromises();
-    expect(newEntrySpy.calledOnceWith('abs')).toBe(true);
-    expect(props.onSelect.calledOnceWith(entry.data)).toBe(true);
-    expect(goToSlideInEntity.calledWith({ id: '1', type: entityTypes.Entry }, true)).toBe(true);
+    expect(newEntrySpy).toHaveBeenCalledWith('abs');
+    expect(props.onSelect).toHaveBeenCalledTimes(1);
+    expect(props.onSelect).toHaveBeenCalledWith(entry.data);
+    expect(goToSlideInEntity).toHaveBeenCalledWith({ id: '1', type: entityTypes.Entry }, true);
   });
 
   it('creates an asset when "create asset" link is clicked and opens slide in editor', async () => {
     const props = {
       type: entityTypes.Asset,
-      onSelect: sinon.stub()
+      onSelect: jest.fn()
     };
     const asset = { data: { sys: { id: '1', type: entityTypes.Asset } } };
-    const newAssetSpy = sinon.stub().returns(Promise.resolve(asset));
-    const goToSlideInEntity = sinon.stub();
+    const newAssetSpy = jest.fn().mockResolvedValue(asset);
+    const goToSlideInEntity = jest.fn();
     const wrapper = mountComponent(props, {
-      'access_control/AccessChecker': { can: sinon.stub().returns(true) },
+      'access_control/AccessChecker': { can: jest.fn().mockReturnValue(true) },
       entityCreator: { newAsset: newAssetSpy },
       'navigation/SlideInNavigator': {
         goToSlideInEntity
@@ -132,8 +134,9 @@ describe('CreateEntity', () => {
     wrapper.find('[data-test-id="create-asset"]').simulate('click');
 
     await flushPromises();
-    expect(newAssetSpy.calledOnce).toBe(true);
-    expect(props.onSelect.calledOnceWith(asset.data)).toBe(true);
-    expect(goToSlideInEntity.calledOnceWith({ id: '1', type: entityTypes.Asset }, true)).toBe(true);
+    expect(newAssetSpy).toHaveBeenCalledTimes(1);
+    expect(props.onSelect).toHaveBeenCalledTimes(1);
+    expect(props.onSelect).toHaveBeenCalledWith(asset.data);
+    expect(goToSlideInEntity).toHaveBeenLastCalledWith({ id: '1', type: entityTypes.Asset }, true);
   });
 });

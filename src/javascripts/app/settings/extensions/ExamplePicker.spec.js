@@ -1,6 +1,5 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import sinon from 'sinon';
 import * as Fetcher from './GitHubFetcher.es6';
 import Picker from './ExamplePicker.es6';
 
@@ -8,8 +7,8 @@ const BTN_SELECTOR = '.btn-action';
 
 describe('ExamplePicker', () => {
   const mount = () => {
-    const confirmStub = sinon.stub();
-    const cancelStub = sinon.stub();
+    const confirmStub = jest.fn();
+    const cancelStub = jest.fn();
     const wrapper = Enzyme.mount(<Picker onConfirm={confirmStub} onCancel={cancelStub} />);
 
     return [wrapper, confirmStub, cancelStub];
@@ -22,8 +21,8 @@ describe('ExamplePicker', () => {
 
   it('blocks all installation buttons once clicked', () => {
     const [wrapper] = mount();
-    const fetchStub = sinon.stub(Fetcher, 'fetchExtension');
-    fetchStub.returns({ then: handle => handle({ extension: true }) });
+    const fetchStub = jest.spyOn(Fetcher, 'fetchExtension');
+    fetchStub.mockReturnValue({ then: handle => handle({ extension: true }) });
     wrapper
       .find(BTN_SELECTOR)
       .first()
@@ -31,38 +30,36 @@ describe('ExamplePicker', () => {
     wrapper.find(BTN_SELECTOR).forEach(btn => {
       expect(btn.prop('disabled')).toBe(true);
     });
-    fetchStub.restore();
+    fetchStub.mockRestore();
   });
 
   it('confirms dialog with fetched extension', () => {
     expect.assertions(2);
     const [wrapper, confirmStub] = mount();
-    const fetchStub = sinon.stub(Fetcher, 'fetchExtension');
-    fetchStub.returns({ then: handle => handle({ extension: true }) });
+    const fetchStub = jest.spyOn(Fetcher, 'fetchExtension');
+    fetchStub.mockReturnValue({ then: handle => handle({ extension: true }) });
     wrapper
       .find(BTN_SELECTOR)
       .first()
       .simulate('click');
-    expect(confirmStub.calledOnce).toBeTruthy();
-    expect(
-      confirmStub.calledWith({
-        extension: { extension: true },
-        url: 'https://github.com/contentful/extensions/blob/master/samples/template-vanilla'
-      })
-    ).toBeTruthy();
-    fetchStub.restore();
+    expect(confirmStub).toHaveBeenCalledTimes(1);
+    expect(confirmStub).toHaveBeenCalledWith({
+      extension: { extension: true },
+      url: 'https://github.com/contentful/extensions/blob/master/samples/template-vanilla'
+    });
+    fetchStub.mockRestore();
   });
 
   it('cancels dialog with fetch error', () => {
     const [wrapper, _, cancelStub] = mount();
-    const fetchStub = sinon.stub(Fetcher, 'fetchExtension');
-    fetchStub.returns({ then: (_, handle) => handle(new Error('error')) });
+    const fetchStub = jest.spyOn(Fetcher, 'fetchExtension');
+    fetchStub.mockReturnValue({ then: (_, handle) => handle(new Error('error')) });
     wrapper
       .find(BTN_SELECTOR)
       .first()
       .simulate('click');
-    expect(cancelStub.calledOnce).toBeTruthy();
-    expect(cancelStub.lastCall.args[0].message).toBe('error');
-    fetchStub.restore();
+    expect(cancelStub).toHaveBeenCalledTimes(1);
+    expect(cancelStub.mock.calls[0][0].message).toBe('error');
+    fetchStub.mockRestore();
   });
 });

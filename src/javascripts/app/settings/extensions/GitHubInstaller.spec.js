@@ -1,6 +1,5 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import sinon from 'sinon';
 import * as Fetcher from './GitHubFetcher.es6';
 import Installer from './GitHubInstaller.es6';
 
@@ -10,7 +9,7 @@ const BTN_SELECTOR = '.btn-primary-action';
 
 describe('GitHubInstaller', () => {
   const mount = () => {
-    const confirmStub = sinon.stub();
+    const confirmStub = jest.fn();
     const wrapper = Enzyme.mount(<Installer onConfirm={confirmStub} onCancel={() => {}} />);
 
     return [wrapper, confirmStub];
@@ -23,7 +22,7 @@ describe('GitHubInstaller', () => {
     const installBtn = wrapper.find(BTN_SELECTOR);
     expect(installBtn.prop('disabled')).toBe(true);
     installBtn.simulate('click');
-    expect(confirmStub.called).toBeFalsy();
+    expect(confirmStub).not.toHaveBeenCalled();
   });
 
   it('renders error message and disallows installation when invalid URL is provided', () => {
@@ -43,17 +42,15 @@ describe('GitHubInstaller', () => {
         const installBtn = wrapper.find(BTN_SELECTOR);
         expect(installBtn.prop('disabled')).toBe(false);
 
-        const fetchStub = sinon.stub(Fetcher, 'fetchExtension');
-        fetchStub.returns({ then: handle => handle({ extension: true }) });
+        const fetchStub = jest.spyOn(Fetcher, 'fetchExtension');
+        fetchStub.mockReturnValue({ then: handle => handle({ extension: true }) });
         installBtn.simulate('click');
-        expect(fetchStub.calledWith(value)).toBeTruthy();
-        expect(
-          confirmStub.calledWith({
-            extension: { extension: true },
-            url: value
-          })
-        ).toBeTruthy();
-        fetchStub.restore();
+        expect(fetchStub).toHaveBeenCalledWith(value);
+        expect(confirmStub).toHaveBeenCalledWith({
+          extension: { extension: true },
+          url: value
+        });
+        fetchStub.mockRestore();
       }
     );
   });
@@ -65,10 +62,11 @@ describe('GitHubInstaller', () => {
     const installBtn = wrapper.find(BTN_SELECTOR);
     expect(installBtn.prop('disabled')).toBe(false);
 
-    const fetchStub = sinon.stub(Fetcher, 'fetchExtension').resolves();
+    const fetchStub = jest.spyOn(Fetcher, 'fetchExtension');
+    fetchStub.mockResolvedValue();
     installBtn.simulate('click');
     expect(wrapper.find(BTN_SELECTOR).prop('disabled')).toBe(true);
-    fetchStub.restore();
+    fetchStub.mockRestore();
   });
 
   it('renders fetch error and unblocks button', () => {
@@ -78,11 +76,11 @@ describe('GitHubInstaller', () => {
     const installBtn = wrapper.find(BTN_SELECTOR);
     expect(installBtn.prop('disabled')).toBe(false);
 
-    const fetchStub = sinon.stub(Fetcher, 'fetchExtension');
-    fetchStub.returns({ then: (_, handle) => handle(new Error('x')) });
+    const fetchStub = jest.spyOn(Fetcher, 'fetchExtension');
+    fetchStub.mockReturnValue({ then: (_, handle) => handle(new Error('x')) });
     installBtn.simulate('click');
     expect(wrapper.find(ERR_SELECTOR).text()).toBe('x');
     expect(wrapper.find(BTN_SELECTOR).prop('disabled')).toBe(false);
-    fetchStub.restore();
+    fetchStub.mockRestore();
   });
 });

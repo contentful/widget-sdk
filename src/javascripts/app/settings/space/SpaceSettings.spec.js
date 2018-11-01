@@ -1,6 +1,5 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import sinon from 'sinon';
 import { noop } from 'lodash';
 
 import SpaceSettings from './SpaceSettings.es6';
@@ -52,7 +51,7 @@ describe('SpaceSettings', () => {
   });
 
   it('save is called when user clicks on save and double click is handled', () => {
-    const saveStub = sinon.stub().resolves();
+    const saveStub = jest.fn().mockResolvedValue();
     const wrapper = mount({
       save: saveStub
     });
@@ -60,17 +59,17 @@ describe('SpaceSettings', () => {
     wrapper.find(selectors.saveBtn).simulate('click');
     // try double click
     wrapper.find(selectors.saveBtn).simulate('click');
-    expect(saveStub.calledOnce).toBeTruthy();
-    expect(saveStub.calledWith('new-value')).toBeTruthy();
+    expect(saveStub).toHaveBeenCalledTimes(1);
+    expect(saveStub).toHaveBeenCalledWith('new-value');
   });
 
   it('save is not called when user clicks on disable button', () => {
-    const saveStub = sinon.stub().resolves();
+    const saveStub = jest.fn().mockResolvedValue();
     const wrapper = mount({
       save: saveStub
     });
     wrapper.find(selectors.nameInput).simulate('change', { target: { value: '' } });
     wrapper.find(selectors.saveBtn).simulate('click');
-    expect(saveStub.notCalled).toBeTruthy();
+    expect(saveStub).not.toHaveBeenCalled();
   });
 });

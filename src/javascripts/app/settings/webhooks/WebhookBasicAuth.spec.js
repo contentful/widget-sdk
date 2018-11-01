@@ -1,11 +1,10 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import sinon from 'sinon';
 import WebhookBasicAuth from './WebhookBasicAuth.es6';
 
 describe('WebhookBasicAuth', () => {
   const shallow = user => {
-    const onChangeStub = sinon.stub();
+    const onChangeStub = jest.fn();
     const wrapper = Enzyme.shallow(
       <WebhookBasicAuth httpBasicUsername={user} onChange={onChangeStub} />
     );
@@ -31,12 +30,10 @@ describe('WebhookBasicAuth', () => {
   it('allows to forget credentials if stored', () => {
     const [wrapper, onChangeStub] = shallow('jakub');
     wrapper.find('button').simulate('click');
-    expect(
-      onChangeStub.calledWith({
-        httpBasicPassword: null,
-        httpBasicUsername: null
-      })
-    ).toBeTruthy();
-    expect(onChangeStub.calledOnce).toBeTruthy();
+    expect(onChangeStub).toHaveBeenCalledWith({
+      httpBasicPassword: null,
+      httpBasicUsername: null
+    });
+    expect(onChangeStub).toHaveBeenCalledTimes(1);
   });
 });

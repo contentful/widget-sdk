@@ -17,7 +17,7 @@ exports[`SpaceRoleEditor renders the component 1`] = `
   }
 >
   <ServicesConsumer
-    onChange={[Function]}
+    onChange={[MockFunction]}
     options={
       Array [
         Object {
@@ -50,7 +50,7 @@ exports[`SpaceRoleEditor renders the component 1`] = `
           },
         }
       }
-      onChange={[Function]}
+      onChange={[MockFunction]}
       options={
         Array [
           Object {
@@ -224,7 +224,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
   }
 >
   <ServicesConsumer
-    onChange={[Function]}
+    onChange={[MockFunction]}
     options={
       Array [
         Object {
@@ -257,7 +257,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
           },
         }
       }
-      onChange={[Function]}
+      onChange={[MockFunction]}
       options={
         Array [
           Object {

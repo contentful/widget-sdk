@@ -1,7 +1,6 @@
 import React from 'react';
 import { cloneDeep } from 'lodash';
 import { shallow } from 'enzyme';
-import sinon from 'sinon';
 import { getFilterDefinitions } from './FilterDefinitions.es6';
 import SearchFilter from './SearchFilter.es6';
 import UserListFilters from './UserListFilters.es6';
@@ -22,8 +21,8 @@ describe('UserListFilters', () => {
   }
 
   beforeEach(() => {
-    onChangeCb = sinon.stub();
-    onResetCb = sinon.stub();
+    onChangeCb = jest.fn();
+    onResetCb = jest.fn();
     component = shallow(
       <UserListFilters
         filters={filters}
@@ -44,8 +43,8 @@ describe('UserListFilters', () => {
       value: 'sys.createdAt'
     };
     simulateChange(filter);
-    expect(onChangeCb.getCall(0).args[0]).toHaveLength(filters.length);
-    expect(onChangeCb.getCall(0).args[0][0]).toHaveProperty(['filter'], filter);
+    expect(onChangeCb.mock.calls[0][0]).toHaveLength(filters.length);
+    expect(onChangeCb.mock.calls[0][0][0]).toHaveProperty(['filter'], filter);
   });
 
   it('should not show the reset button if no filters are active', () => {
@@ -60,6 +59,6 @@ describe('UserListFilters', () => {
   it('triggers the reset callback', () => {
     component.setProps({ filters: activeFilters });
     component.find(TextLink).simulate('click');
-    expect(onResetCb.called).toBe(true);
+    expect(onResetCb).toHaveBeenCalledTimes(1);
   });
 });

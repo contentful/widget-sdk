@@ -1,7 +1,6 @@
 import { shallow } from 'enzyme';
 import React from 'react';
 import moment from 'moment';
-import sinon from 'sinon';
 import { Select } from '@contentful/ui-component-library';
 
 import PeriodSelector from '../committed/PeriodSelector.es6';
@@ -11,15 +10,14 @@ const DATE_FORMAT = 'YYYY-MM-DD';
 let wrapper = null;
 let props = null;
 describe('PeriodSelector', () => {
-  let clock = null;
-
   beforeAll(() => {
     // set fixed date for stable snapshots
-    clock = sinon.useFakeTimers(moment('2017-12-01').unix());
+    // moment('2017-12-01').unix() = 1512082800
+    jest.spyOn(Date, 'now').mockImplementation(() => 1512082800);
   });
 
   afterAll(() => {
-    clock.restore();
+    Date.now.mockRestore();
   });
 
   beforeEach(() => {
@@ -45,7 +43,7 @@ describe('PeriodSelector', () => {
         }
       ],
       selectedPeriodIndex: 0,
-      onChange: sinon.stub()
+      onChange: jest.fn()
     };
     wrapper = shallow(<PeriodSelector {...props} />);
   });
@@ -55,8 +53,8 @@ describe('PeriodSelector', () => {
   });
 
   it('should call onChange when option is selected', () => {
-    expect(props.onChange.called).toBe(false);
+    expect(props.onChange).not.toHaveBeenCalled();
     wrapper.find(Select).simulate('change', { target: { value: 1 } });
-    expect(props.onChange.calledWith({ target: { value: 1 } })).toBe(true);
+    expect(props.onChange).toHaveBeenCalledWith({ target: { value: 1 } });
   });
 });

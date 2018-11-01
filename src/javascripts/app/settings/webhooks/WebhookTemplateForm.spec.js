@@ -1,11 +1,10 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import sinon from 'sinon';
 import { TextField, Button } from '@contentful/ui-component-library';
 import { cloneDeep } from 'lodash';
 import { WebhookTemplateForm } from './WebhookTemplateForm.es6';
-import { track } from 'analytics/Analytics.es6';
-import notification from 'notification';
+import * as AnalyticsMocked from 'analytics/Analytics.es6';
+import notificationMocked from 'notification';
 
 const TEMPLATE = {
   id: 'test-template',
@@ -43,15 +42,15 @@ const TEMPLATE_CONTENT_TYPES = [
 
 describe('WebhookTemplateForm', () => {
   beforeEach(() => {
-    track.resetHistory();
-    notification.info.resetHistory();
+    AnalyticsMocked.track.mockClear();
+    notificationMocked.info.mockClear();
   });
 
   const mount = () => {
     const stubs = {
-      onClose: sinon.stub(),
-      map: sinon.stub(),
-      onCreate: sinon.stub().resolves({})
+      onClose: jest.fn(),
+      map: jest.fn(),
+      onCreate: jest.fn().mockResolvedValue({})
     };
     const template = { ...cloneDeep(TEMPLATE), mapParamsToDefinition: stubs.map };
 
@@ -93,7 +92,7 @@ describe('WebhookTemplateForm', () => {
     const [wrapper, stubs] = mount();
     const cancelBtn = wrapper.find(Button).at(1);
     cancelBtn.simulate('click');
-    expect(stubs.onClose.calledOnce).toBe(true);
+    expect(stubs.onClose).toHaveBeenCalledTimes(1);
   });
 
   it('disables create button if not all values are provided', () => {
@@ -102,7 +101,7 @@ describe('WebhookTemplateForm', () => {
     expect(createBtn.prop('disabled')).toBe(true);
 
     createBtn.simulate('click');
-    expect(stubs.onCreate.callCount).toBe(0);
+    expect(stubs.onCreate).not.toHaveBeenCalled();
   });
 
   it('updates parameter values', () => {
@@ -133,15 +132,17 @@ describe('WebhookTemplateForm', () => {
     wrapper.setState({ fields: VALID_FORM_VALUES });
 
     const createBtn = wrapper.find(Button).at(0);
-    stubs.map.returns({ mapped: true });
+    stubs.map.mockReset().mockReturnValue({ mapped: true });
 
     await createBtn.prop('onClick')();
 
-    expect(stubs.map.calledOnce).toBe(true);
-    expect(
-      stubs.map.calledWith(VALID_FORM_VALUES, 'Test Template - subtitle', TEMPLATE_CONTENT_TYPES)
-    ).toBe(true);
-    expect(stubs.onCreate.calledOnce).toBe(true);
-    expect(stubs.onCreate.getCall(0).args).toEqual([[{ mapped: true }], 'test-template']);
+    expect(stubs.map).toHaveBeenCalledTimes(1);
+    expect(stubs.map).toHaveBeenCalledWith(
+      VALID_FORM_VALUES,
+      'Test Template - subtitle',
+      TEMPLATE_CONTENT_TYPES
+    );
+    expect(stubs.onCreate).toHaveBeenCalledTimes(1);
+    expect(stubs.onCreate).toHaveBeenCalledWith([{ mapped: true }], 'test-template');
   });
 });

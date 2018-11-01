@@ -1,21 +1,17 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import sinon from 'sinon';
-import spaceContext from 'spaceContext';
+import spaceContextMocked from 'spaceContext';
+import $stateMocked from '$state';
 import AdminOnly from './AdminOnly.es6';
-import $state from '$state';
 
 describe('AdminOnly', () => {
   beforeEach(() => {
-    $state.go.resetHistory();
-    spaceContext.getData.reset();
+    $stateMocked.go.mockClear();
+    spaceContextMocked.getData.mockReset();
   });
 
   const setAdmin = isAdmin => {
-    spaceContext.getData = sinon
-      .stub()
-      .withArgs('spaceMembership.admin', false)
-      .returns(isAdmin);
+    spaceContextMocked.getData.mockReturnValue(isAdmin);
   };
 
   describe('if isAdmin is true', () => {
@@ -41,7 +37,11 @@ describe('AdminOnly', () => {
         </AdminOnly>
       );
       expect(wrapper).not.toHaveText('This is visible only for admins');
-      expect($state.go.calledWith('spaces.detail.entries.list')).toBeTruthy();
+      expect($stateMocked.go).toHaveBeenCalledWith(
+        'spaces.detail.entries.list',
+        undefined,
+        undefined
+      );
     });
 
     it('should render StateRedirect with custom "to" if "redirect" is passed', () => {
@@ -53,7 +53,7 @@ describe('AdminOnly', () => {
         </AdminOnly>
       );
       expect(wrapper).not.toHaveText('This is visible only for admins');
-      expect($state.go.calledWith('^.home')).toBeTruthy();
+      expect($stateMocked.go).toHaveBeenCalledWith('^.home', undefined, undefined);
     });
 
     it('can use conditional rendering for more complex scenarios', () => {
@@ -66,7 +66,7 @@ describe('AdminOnly', () => {
       );
       expect(wrapper).not.toHaveText('This is visible only for admins');
       expect(wrapper).toHaveText('You have no access to see this page');
-      expect($state.go.called).toBeFalsy();
+      expect($stateMocked.go).not.toHaveBeenCalled();
     });
   });
 });

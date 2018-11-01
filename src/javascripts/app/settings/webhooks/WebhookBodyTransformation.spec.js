@@ -1,12 +1,11 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import sinon from 'sinon';
 import WebhookBodyTransformation from './WebhookBodyTransformation.es6';
 import CodeMirror from 'react-codemirror';
 
 describe('WebhookBodyTransformation', () => {
   const mount = body => {
-    const onChangeStub = sinon.stub();
+    const onChangeStub = jest.fn();
     const wrapper = Enzyme.mount(<WebhookBodyTransformation body={body} onChange={onChangeStub} />);
 
     return [wrapper, onChangeStub];
@@ -48,7 +47,7 @@ describe('WebhookBodyTransformation', () => {
     const checkboxes = findCheckboxes(wrapper);
     checkboxes.at(1).simulate('change', { target: { checked: true } });
 
-    expect(onChangeStub.calledWith('')).toBeTruthy();
+    expect(onChangeStub).toHaveBeenCalledWith('');
     wrapper.setProps({ body: '' });
     assertCheckboxes(wrapper, [false, true]);
   });
@@ -58,7 +57,7 @@ describe('WebhookBodyTransformation', () => {
     const checkboxes = findCheckboxes(wrapper);
     checkboxes.at(0).simulate('change', { target: { checked: true } });
 
-    expect(onChangeStub.calledWith(undefined)).toBeTruthy();
+    expect(onChangeStub).toHaveBeenCalledWith(undefined);
     wrapper.setProps({ body: undefined });
     assertCheckboxes(wrapper, [true, false]);
   });
@@ -72,19 +71,19 @@ describe('WebhookBodyTransformation', () => {
 
     const selectNoCustomBody = () => {
       checkboxes.at(0).simulate('change', { target: { checked: true } });
-      expect(onChangeStub.calledWith(undefined)).toBeTruthy();
+      expect(onChangeStub).toHaveBeenCalledWith(undefined);
       wrapper.setProps({ body: undefined });
     };
 
     const selectCustomBodyAndExpect = expectedValue => {
       checkboxes.at(1).simulate('change', { target: { checked: true } });
-      expect(onChangeStub.calledWith(expectedValue)).toBeTruthy();
+      expect(onChangeStub).toHaveBeenCalledWith(expectedValue);
       wrapper.setProps({ body: expectedValue });
     };
 
     const changeBody = body => {
       findEditor(wrapper).prop('onChange')(body);
-      expect(onChangeStub.calledWith(body)).toBeTruthy();
+      expect(onChangeStub).toHaveBeenCalledWith(body);
       wrapper.setProps({ body });
     };
 

@@ -2,11 +2,10 @@ import ConfirmationDialog from './ConfirmationDialogComponent.es6';
 import Dialog from 'app/entity_editor/Components/Dialog';
 import React from 'react';
 import { shallow } from 'enzyme';
-import sinon from 'sinon';
 
 describe('ConfirmationDialog', () => {
-  const onConfirm = sinon.stub();
-  const onCancel = sinon.stub();
+  const onConfirm = jest.fn();
+  const onCancel = jest.fn();
 
   it('renders a dialog component', () => {
     const output = shallow(
@@ -51,14 +50,13 @@ describe('ConfirmationDialog', () => {
     it('triggers onConfirm', () => {
       const confirmBtn = output.find('.confirmation-dialog__confirm');
       confirmBtn.simulate('click');
-      expect(onConfirm.called).toBe(true);
+      expect(onConfirm).toHaveBeenCalled();
     });
 
     it('triggers onCancel', () => {
       const cancelBtn = output.find('.confirmation-dialog__cancel');
       cancelBtn.simulate('click');
-
-      expect(onCancel.called).toBe(true);
+      expect(onCancel).toHaveBeenCalled();
     });
   });
 });

@@ -1,5 +1,4 @@
 import React from 'react';
-import sinon from 'sinon';
 import { shallow, mount } from 'enzyme';
 import ChooseNewFallbackLocaleDialog from './ChooseNewFallbackLocaleDialog.es6';
 
@@ -41,7 +40,7 @@ describe('locales/components/ChooseNewFallbackLocaleDialog', () => {
 
   it('it is possible to invoke cancel by clicking on two buttons', () => {
     const stubs = {
-      onCancel: sinon.stub()
+      onCancel: jest.fn()
     };
     const wrapper = mount(
       renderComponent({
@@ -51,12 +50,12 @@ describe('locales/components/ChooseNewFallbackLocaleDialog', () => {
 
     wrapper.find(selectors.cancelChangeLocale).simulate('click');
     wrapper.find(selectors.modalDialogClose).simulate('click');
-    expect(stubs.onCancel.callCount).toBe(2);
+    expect(stubs.onCancel).toHaveBeenCalledTimes(2);
   });
 
   it('click on submit sends current selected code to the callback', () => {
     const stubs = {
-      onConfirm: sinon.stub()
+      onConfirm: jest.fn()
     };
     const wrapper = mount(
       renderComponent({
@@ -65,11 +64,11 @@ describe('locales/components/ChooseNewFallbackLocaleDialog', () => {
     );
     // click with 'none' selected
     wrapper.find(selectors.confirmChangeLocale).simulate('click');
-    expect(stubs.onConfirm.calledWith('')).toBe(true);
+    expect(stubs.onConfirm).toHaveBeenCalledWith('');
     // select 'en' and click again
     wrapper.find(selectors.chooseLocaleSelect).simulate('change', { target: { value: 'en' } });
     wrapper.find(selectors.confirmChangeLocale).simulate('click');
-    expect(stubs.onConfirm.calledWith('en')).toBe(true);
-    expect(stubs.onConfirm.callCount).toBe(2);
+    expect(stubs.onConfirm).toHaveBeenCalledWith('en');
+    expect(stubs.onConfirm).toHaveBeenCalledTimes(2);
   });
 });

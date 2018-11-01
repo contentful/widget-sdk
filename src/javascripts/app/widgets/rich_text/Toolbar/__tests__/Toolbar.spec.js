@@ -1,6 +1,5 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import sinon from 'sinon';
 
 import Toolbar from '../index.es6';
 import ValidationType, {
@@ -18,9 +17,9 @@ const fakeProps = () => ({
       selection: {}
     }
   },
-  onChange: sinon.spy(),
+  onChange: jest.fn(),
   richTextAPI: {
-    logAction: sinon.spy(),
+    logAction: jest.fn(),
     widgetAPI: {
       features: {
         embedInlineEntry: true

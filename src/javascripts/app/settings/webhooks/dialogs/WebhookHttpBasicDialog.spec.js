@@ -1,6 +1,5 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import sinon from 'sinon';
 import WebhookHttpBasicDialog from './WebhookHttpBasicDialog.es6';
 import base64safe from '../base64safe.es6';
 
@@ -14,8 +13,8 @@ describe('webhooks/dialogs/WebhookHttpBasicDialog', () => {
 
   const render = () => {
     const stubs = {
-      onConfirm: sinon.stub(),
-      onCancel: sinon.stub()
+      onConfirm: jest.fn(),
+      onCancel: jest.fn()
     };
     const wrapper = Enzyme.mount(
       <WebhookHttpBasicDialog isShown onCancel={stubs.onCancel} onConfirm={stubs.onConfirm} />
@@ -27,7 +26,7 @@ describe('webhooks/dialogs/WebhookHttpBasicDialog', () => {
     const { wrapper, stubs } = render();
     expect(wrapper.find(selectors.confirm)).toBeDisabled();
     wrapper.find(selectors.cancel).simulate('click');
-    expect(stubs.onCancel.calledOnce).toBe(true);
+    expect(stubs.onCancel).toHaveBeenCalledTimes(1);
   });
 
   it('confirm is enabled when values are provided', () => {
@@ -42,12 +41,10 @@ describe('webhooks/dialogs/WebhookHttpBasicDialog', () => {
 
     wrapper.find(selectors.confirm).simulate('click');
 
-    expect(stubs.onConfirm.getCall(0).args).toEqual([
-      {
-        key: 'Authorization',
-        value: 'Basic ' + base64safe([user || '', password || ''].join(':'))
-      }
-    ]);
+    expect(stubs.onConfirm).toHaveBeenCalledWith({
+      key: 'Authorization',
+      value: 'Basic ' + base64safe([user || '', password || ''].join(':'))
+    });
   });
 
   it('has correct text', () => {

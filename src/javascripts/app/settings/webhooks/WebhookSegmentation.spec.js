@@ -1,12 +1,11 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import sinon from 'sinon';
 import WebhookSegmentation from './WebhookSegmentation.es6';
 import { transformMapToTopics, transformTopicsToMap } from './WebhookSegmentationState.es6';
 
 describe('WebhookSegmentation', () => {
   const mount = topics => {
-    const onChangeStub = sinon.stub();
+    const onChangeStub = jest.fn();
     const wrapper = Enzyme.mount(
       <WebhookSegmentation
         values={transformTopicsToMap(topics)}
@@ -61,7 +60,7 @@ describe('WebhookSegmentation', () => {
     const entryRow = wrapper.find('tr').at(2);
     const entryWildcardCheckbox = entryRow.find('input').first();
     entryWildcardCheckbox.simulate('change', { target: { checked: true } });
-    expect(onChangeStub.calledWith(['Entry.*'])).toBe(true);
+    expect(onChangeStub).toHaveBeenCalledWith(['Entry.*']);
   });
 
   it('selects all vertical checkboxes for action wildcard and stores selection', () => {
@@ -70,6 +69,6 @@ describe('WebhookSegmentation', () => {
     const lastRow = rows.last();
     const createWildcardCheckbox = lastRow.find('input').first();
     createWildcardCheckbox.simulate('change', { target: { checked: true } });
-    expect(onChangeStub.calledWith(['*.create'])).toBe(true);
+    expect(onChangeStub).toHaveBeenCalledWith(['*.create']);
   });
 });

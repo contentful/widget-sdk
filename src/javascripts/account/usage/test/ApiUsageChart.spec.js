@@ -3,7 +3,6 @@ import { shallow } from 'enzyme';
 import moment from 'moment';
 import { LineChart } from '@contentful/ui-component-library';
 import { shorten } from 'utils/NumberUtils.es6';
-import sinon from 'sinon';
 
 import ApiUsageChart from '../committed/ApiUsageChart.es6';
 import EmptyChartPlaceholder from '../committed/EmptyChartPlaceholder.es6';
@@ -11,17 +10,17 @@ import EmptyChartPlaceholder from '../committed/EmptyChartPlaceholder.es6';
 const DATE_FORMAT = 'YYYY-MM-DD';
 
 describe('ApiUsageChart', () => {
-  let clock = null;
   let testStartDate = null;
 
   beforeAll(() => {
     // set fixed date for stable snapshots
-    clock = sinon.useFakeTimers(moment('2017-12-01').unix());
+    // moment('2017-12-01').unix() = 1512082800
+    jest.spyOn(Date, 'now').mockImplementation(() => 1512082800);
     testStartDate = moment().subtract(3, 'days');
   });
 
   afterAll(() => {
-    clock.restore();
+    Date.now.mockRestore();
   });
 
   const renderChart = (

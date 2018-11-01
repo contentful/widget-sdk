@@ -1,17 +1,16 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import sinon from 'sinon';
-import spaceContext from 'spaceContext';
+import spaceContextMocked from 'spaceContext';
 import WebhookHealth from './WebhookHealth.es6';
 
 describe('WebhookHealth', () => {
   beforeEach(() => {
-    spaceContext.webhookRepo.logs.getHealth.reset;
+    spaceContextMocked.webhookRepo.logs.getHealth.mockReset();
   });
 
   const stubAndMount = (calls = {}) => {
-    const getStub = sinon.stub().resolves({ calls });
-    spaceContext.webhookRepo.logs.getHealth = getStub;
+    const getStub = jest.fn().mockResolvedValue({ calls });
+    spaceContextMocked.webhookRepo.logs.getHealth = getStub;
     return [Enzyme.mount(<WebhookHealth webhookId="whid" />), getStub];
   };
 
@@ -22,15 +21,15 @@ describe('WebhookHealth', () => {
 
   it('fetches health status when mounted', () => {
     const [_, getStub] = stubAndMount();
-    expect(getStub.calledWith('whid')).toBe(true);
-    expect(getStub.calledOnce).toBe(true);
+    expect(getStub).toHaveBeenCalledTimes(1);
+    expect(getStub).toHaveBeenCalledWith('whid');
   });
 
   it('displays "no data..." when fetching failed', async () => {
     expect.assertions(2);
     const ERROR = new Error('failed to fetch');
-    const getStub = sinon.stub().rejects(ERROR);
-    spaceContext.webhookRepo.logs.getHealth = getStub;
+    const getStub = jest.fn().mockRejectedValue(ERROR);
+    spaceContextMocked.webhookRepo.logs.getHealth = getStub;
     const wrapper = Enzyme.mount(<WebhookHealth webhookId="whid" />);
 
     try {

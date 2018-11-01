@@ -1,6 +1,5 @@
 import React from 'react';
 import { mount } from 'enzyme';
-import sinon from 'sinon';
 
 import RichTextOptions from './RichTextOptions.es6';
 
@@ -10,7 +9,7 @@ describe('RichTextOptions', () => {
 
   beforeEach(() => {
     props = {
-      onChange: sinon.spy()
+      onChange: jest.fn()
     };
     wrapper = mount(<RichTextOptions {...props} />);
   });
@@ -48,7 +47,7 @@ describe('RichTextOptions', () => {
       .find('button')
       .simulate('click');
 
-    const args = props.onChange.getCall(0).args[0];
+    const args = props.onChange.mock.calls[0][0];
 
     expect(args.enabledNodeTypes).toBeUndefined();
     expect(args.enabledMarks).not.toContain('code');
@@ -59,7 +58,7 @@ describe('RichTextOptions', () => {
       .find(`[data-test-id="toggle-button-entry-hyperlink"]`)
       .find('button')
       .simulate('click');
-    const args = props.onChange.getCall(0).args[0];
+    const args = props.onChange.mock.calls[0][0];
 
     expect(args.enabledNodeTypes).not.toContain('entry-hyperlink');
     expect(args.enabledMarks).toBeUndefined();
@@ -68,11 +67,12 @@ describe('RichTextOptions', () => {
   it('toggles all formatting options when `enable all` is clicked', () => {
     wrapper.find(`[data-test-id="toggle-all-link"]`).simulate('click');
 
-    expect(props.onChange.calledWith({ enabledNodeTypes: [], enabledMarks: [] })).toBeTruthy();
+    expect(props.onChange).toHaveBeenCalledWith({ enabledNodeTypes: [], enabledMarks: [] });
 
     wrapper.find(`[data-test-id="toggle-all-link"]`).simulate('click');
-    expect(
-      props.onChange.calledWith({ enabledNodeTypes: undefined, enabledMarks: undefined })
-    ).toBeTruthy();
+    expect(props.onChange).toHaveBeenCalledWith({
+      enabledNodeTypes: undefined,
+      enabledMarks: undefined
+    });
   });
 });

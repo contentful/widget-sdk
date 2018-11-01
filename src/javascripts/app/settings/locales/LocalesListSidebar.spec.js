@@ -1,18 +1,17 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import sinon from 'sinon';
 import LocalesListSidebar from './LocalesListSidebar.es6';
-import $state from '$state';
-import * as LaunchDarkly from 'utils/LaunchDarkly';
+import $stateMocked from '$state';
+import * as LaunchDarklyMocked from 'utils/LaunchDarkly';
 
 describe('settings/locales/LocalesListSidebar', () => {
   beforeEach(() => {
-    $state.go.resetHistory();
-    LaunchDarkly.getCurrentVariation.resetHistory();
+    $stateMocked.go.mockClear();
+    LaunchDarklyMocked.getCurrentVariation.mockClear();
   });
 
   const setShowChangeSpaceIncentive = value => {
-    LaunchDarkly.getCurrentVariation = sinon.stub().resolves(value);
+    LaunchDarklyMocked.getCurrentVariation.mockResolvedValue(value);
   };
 
   const selectors = {
@@ -25,7 +24,7 @@ describe('settings/locales/LocalesListSidebar', () => {
 
   const mount = props => {
     const stubs = {
-      upgradeSpace: sinon.stub()
+      upgradeSpace: jest.fn()
     };
     const wrapper = Enzyme.mount(
       <LocalesListSidebar
@@ -42,8 +41,8 @@ describe('settings/locales/LocalesListSidebar', () => {
   };
 
   beforeEach(() => {
-    $state.go.resetHistory();
-    $state.href.resetHistory();
+    $stateMocked.go.mockClear();
+    $stateMocked.href.mockClear();
   });
 
   describe('if environment is not "master"', () => {
@@ -65,14 +64,14 @@ describe('settings/locales/LocalesListSidebar', () => {
       expect(wrapper.find(selectors.upgradeSpaceButton)).not.toExist();
 
       wrapper.find(selectors.addLocaleButton).simulate('click');
-      expect($state.go.calledOnceWith('^.new')).toBeTruthy();
+      expect($stateMocked.go).toHaveBeenCalledWith('^.new', undefined, undefined);
     });
   });
 
   describe('if environment is "master"', () => {
     describe('if limit is not reached', () => {
       it('all sections and texts are shown correctly', () => {
-        expect.assertions(6);
+        expect.assertions(7);
         const { wrapper } = mount({
           insideMasterEnv: true,
           canChangeSpace: false,
@@ -92,7 +91,8 @@ describe('settings/locales/LocalesListSidebar', () => {
         expect(wrapper.find(selectors.upgradeSpaceButton)).not.toExist();
 
         wrapper.find(selectors.addLocaleButton).simulate('click');
-        expect($state.go.calledOnceWith('^.new')).toBeTruthy();
+        expect($stateMocked.go).toHaveBeenCalledTimes(1);
+        expect($stateMocked.go).toHaveBeenCalledWith('^.new', undefined, undefined);
       });
     });
 
@@ -156,9 +156,9 @@ describe('settings/locales/LocalesListSidebar', () => {
             }
           }
         });
-        expect(
-          LaunchDarkly.getCurrentVariation.calledWith('feature-bv-06-2018-incentivize-upgrade')
-        ).toBeTruthy();
+        expect(LaunchDarklyMocked.getCurrentVariation).toHaveBeenCalledWith(
+          'feature-bv-06-2018-incentivize-upgrade'
+        );
         // there was an async setState in the component
         // so we need to use process.nextTick to make sure
         // that all assertions are applied after async update
@@ -169,7 +169,7 @@ describe('settings/locales/LocalesListSidebar', () => {
             'Go to the subscription page to change'
           );
           wrapper.find(selectors.upgradeSpaceButton).simulate('click');
-          expect(stubs.upgradeSpace.called).toBeTruthy();
+          expect(stubs.upgradeSpace).toHaveBeenCalled();
           done();
         });
       });
@@ -188,9 +188,9 @@ describe('settings/locales/LocalesListSidebar', () => {
             }
           }
         });
-        expect(
-          LaunchDarkly.getCurrentVariation.calledWith('feature-bv-06-2018-incentivize-upgrade')
-        ).toBeTruthy();
+        expect(LaunchDarklyMocked.getCurrentVariation).toHaveBeenCalledWith(
+          'feature-bv-06-2018-incentivize-upgrade'
+        );
         // there was an async setState in the component
         // so we need to use process.nextTick to make sure
         // that all assertions are applied after async update
@@ -200,7 +200,7 @@ describe('settings/locales/LocalesListSidebar', () => {
           expect(wrapper.find(selectors.changeSpaceSection)).toIncludeText(
             'Go to the subscription page to change'
           );
-          expect($state.href.called).toBeTruthy();
+          expect($stateMocked.href).toHaveBeenCalled();
           done();
         });
       });

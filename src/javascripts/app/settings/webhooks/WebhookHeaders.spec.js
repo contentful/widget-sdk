@@ -1,11 +1,10 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import sinon from 'sinon';
 import { WebhookHeaders } from './WebhookHeaders.es6';
 
 describe('WebhookHeaders', () => {
   const shallow = headers => {
-    const onChangeStub = sinon.stub();
+    const onChangeStub = jest.fn();
     const wrapper = Enzyme.shallow(<WebhookHeaders headers={headers} onChange={onChangeStub} />);
 
     return [wrapper, onChangeStub];
@@ -42,18 +41,18 @@ describe('WebhookHeaders', () => {
     const addBtn = wrapper.find('.cfnext-form__field > button').first();
     addBtn.simulate('click');
     const withNew = [header, {}];
-    expect(onChangeStub.calledWith(withNew)).toBeTruthy();
+    expect(onChangeStub).toHaveBeenCalledWith(withNew);
     wrapper.setProps({ headers: withNew });
 
     const inputs = wrapper.find('input');
     inputs.at(2).simulate('change', { target: { value: 'test-key' } });
     const withNewKey = [header, { key: 'test-key' }];
-    expect(onChangeStub.calledWith(withNewKey)).toBeTruthy();
+    expect(onChangeStub).toHaveBeenCalledWith(withNewKey);
     wrapper.setProps({ headers: withNewKey });
 
     inputs.at(3).simulate('change', { target: { value: 'test-value' } });
     const withNewKeyAndValue = [header, { key: 'test-key', value: 'test-value' }];
-    expect(onChangeStub.calledWith(withNewKeyAndValue)).toBeTruthy();
+    expect(onChangeStub).toHaveBeenCalledWith(withNewKeyAndValue);
   });
 
   it('removes a header', () => {
@@ -71,7 +70,7 @@ describe('WebhookHeaders', () => {
       .find('button')
       .first();
     removeBtn.simulate('click');
-    expect(onChangeStub.calledWith([headers[0]])).toBeTruthy();
+    expect(onChangeStub).toHaveBeenCalledWith([headers[0]]);
   });
 
   it('renders secret headers disabled not exposing value', () => {

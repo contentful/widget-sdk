@@ -13,10 +13,10 @@ exports[`Toolbar renders no icons if no formatting options enabled 1`] = `
     }
   }
   isDisabled={false}
-  onChange={[Function]}
+  onChange={[MockFunction]}
   richTextAPI={
     Object {
-      "logAction": [Function],
+      "logAction": [MockFunction],
       "widgetAPI": Object {
         "features": Object {
           "embedInlineEntry": true,
@@ -258,10 +258,10 @@ exports[`Toolbar renders toolbar icons 1`] = `
     }
   }
   isDisabled={false}
-  onChange={[Function]}
+  onChange={[MockFunction]}
   richTextAPI={
     Object {
-      "logAction": [Function],
+      "logAction": [MockFunction],
       "widgetAPI": Object {
         "features": Object {
           "embedInlineEntry": true,
@@ -459,7 +459,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
             onToggle={[Function]}
             richTextAPI={
               Object {
-                "logAction": [Function],
+                "logAction": [MockFunction],
                 "widgetAPI": Object {
                   "features": Object {
                     "embedInlineEntry": true,
@@ -615,7 +615,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
             onToggle={[Function]}
             richTextAPI={
               Object {
-                "logAction": [Function],
+                "logAction": [MockFunction],
                 "widgetAPI": Object {
                   "features": Object {
                     "embedInlineEntry": true,
@@ -771,7 +771,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
             onToggle={[Function]}
             richTextAPI={
               Object {
-                "logAction": [Function],
+                "logAction": [MockFunction],
                 "widgetAPI": Object {
                   "features": Object {
                     "embedInlineEntry": true,
@@ -927,7 +927,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
             onToggle={[Function]}
             richTextAPI={
               Object {
-                "logAction": [Function],
+                "logAction": [MockFunction],
                 "widgetAPI": Object {
                   "features": Object {
                     "embedInlineEntry": true,
@@ -1091,7 +1091,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
             onToggle={[Function]}
             richTextAPI={
               Object {
-                "logAction": [Function],
+                "logAction": [MockFunction],
                 "widgetAPI": Object {
                   "features": Object {
                     "embedInlineEntry": true,
@@ -1250,7 +1250,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
             onToggle={[Function]}
             richTextAPI={
               Object {
-                "logAction": [Function],
+                "logAction": [MockFunction],
                 "widgetAPI": Object {
                   "features": Object {
                     "embedInlineEntry": true,
@@ -1406,7 +1406,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
             onToggle={[Function]}
             richTextAPI={
               Object {
-                "logAction": [Function],
+                "logAction": [MockFunction],
                 "widgetAPI": Object {
                   "features": Object {
                     "embedInlineEntry": true,
@@ -1562,7 +1562,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
             onToggle={[Function]}
             richTextAPI={
               Object {
-                "logAction": [Function],
+                "logAction": [MockFunction],
                 "widgetAPI": Object {
                   "features": Object {
                     "embedInlineEntry": true,
@@ -1579,7 +1579,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
               onToggle={[Function]}
               richTextAPI={
                 Object {
-                  "logAction": [Function],
+                  "logAction": [MockFunction],
                   "widgetAPI": Object {
                     "features": Object {
                       "embedInlineEntry": true,
@@ -1598,7 +1598,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                 onToggle={[Function]}
                 richTextAPI={
                   Object {
-                    "logAction": [Function],
+                    "logAction": [MockFunction],
                     "widgetAPI": Object {
                       "features": Object {
                         "embedInlineEntry": true,
@@ -1740,7 +1740,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
             onToggle={[Function]}
             richTextAPI={
               Object {
-                "logAction": [Function],
+                "logAction": [MockFunction],
                 "widgetAPI": Object {
                   "features": Object {
                     "embedInlineEntry": true,

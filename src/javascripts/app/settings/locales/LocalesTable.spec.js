@@ -1,11 +1,11 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import $state from '$state';
+import $stateMocked from '$state';
 import LocalesTable from './LocalesTable.es6';
 
 describe('app/settings/locales/LocalesTable', () => {
   beforeEach(() => {
-    $state.go.resetHistory();
+    $stateMocked.go.mockClear();
   });
 
   const locales = [
@@ -100,8 +100,8 @@ describe('app/settings/locales/LocalesTable', () => {
 
     const { rows } = mount();
     rows.at(0).simulate('click');
-    expect($state.go.calledWith('^.detail', { localeId: 1 })).toBeTruthy();
+    expect($stateMocked.go).toHaveBeenCalledWith('^.detail', { localeId: 1 }, undefined);
     rows.at(3).simulate('click');
-    expect($state.go.calledWith('^.detail', { localeId: 4 })).toBeTruthy();
+    expect($stateMocked.go).toHaveBeenCalledWith('^.detail', { localeId: 4 }, undefined);
   });
 });
