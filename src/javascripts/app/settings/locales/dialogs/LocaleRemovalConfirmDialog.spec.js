@@ -6,12 +6,12 @@ describe('locales/components/LocaleRemovalConfirmDialog', () => {
   const selectors = {
     repeatLocaleInput: 'input[data-test-id="repeat-locale-input"]',
     confirmDeleteLocale: '[data-test-id="delete-locale-confirm"]',
-    cancelDeleteLocale: '[data-test-id="delete-locale-cancel"]',
-    modalDialogClose: '[data-test-id="modal-dialog-close"]'
+    cancelDeleteLocale: '[data-test-id="delete-locale-cancel"]'
   };
 
   const renderComponent = props => (
     <LocaleRemovalConfirmDialog
+      isShown
       onConfirm={() => {}}
       onCancel={() => {}}
       locale={{
@@ -43,8 +43,7 @@ describe('locales/components/LocaleRemovalConfirmDialog', () => {
     );
 
     wrapper.find(selectors.cancelDeleteLocale).simulate('click');
-    wrapper.find(selectors.modalDialogClose).simulate('click');
-    expect(stubs.onCancel).toHaveBeenCalledTimes(2);
+    expect(stubs.onCancel).toHaveBeenCalledTimes(1);
   });
 
   it('confirm button should be enabled when user types locale code in input', () => {

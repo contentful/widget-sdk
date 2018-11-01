@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { getValue } from '../../../../utils/kefir.es6';
-
+import { getValue } from 'utils/kefir.es6';
 import Workbench from 'ui/Components/Workbench/JSX.es6';
 import { go } from 'states/Navigator.es6';
-import { Button } from '@contentful/ui-component-library';
+import { Button, ModalConfirm } from '@contentful/ui-component-library';
+import ModalLauncher from 'app/common/ModalLauncher.es6';
 
 import { SpaceMembership, OrganizationMembership, Space, SpaceRole } from '../PropTypes.es6';
 import { OrganizationRoleSelector } from './OrganizationRoleSelector.es6';
@@ -23,7 +23,6 @@ class UserDetail extends React.Component {
   static propTypes = {
     $services: PropTypes.shape({
       notification: PropTypes.object,
-      ConfirmationDialog: PropTypes.object,
       TokenStore: PropTypes.object,
       OrganizationRoles: PropTypes.object
     }),
@@ -98,24 +97,27 @@ class UserDetail extends React.Component {
   };
 
   async removeMembership() {
-    const { notification, ConfirmationDialog } = this.props.$services;
+    const { notification } = this.props.$services;
     const { id, user } = this.state.membership.sys;
 
-    const body = (
-      <React.Fragment>
-        <p>
-          You are about to remove {user.firstName} {user.lastName} from your organization.
-        </p>
-        <p>
-          After removal this user will not be able to access this organization in any way. Do you
-          want to proceed?
-        </p>
-      </React.Fragment>
-    );
-    const confirmation = await ConfirmationDialog.confirm({
-      title: 'Remove user from the organization',
-      body
-    });
+    const confirmation = await ModalLauncher.open(({ isShown, onClose }) => (
+      <ModalConfirm
+        title="Remove user from the organization"
+        intent="negative"
+        isShown={isShown}
+        onConfirm={() => onClose(true)}
+        onCancel={() => onClose(false)}>
+        <React.Fragment>
+          <p>
+            You are about to remove {user.firstName} {user.lastName} from your organization.
+          </p>
+          <p>
+            After removal this user will not be able to access this organization in any way. Do you
+            want to proceed?
+          </p>
+        </React.Fragment>
+      </ModalConfirm>
+    ));
 
     if (!confirmation) {
       return;
@@ -194,10 +196,6 @@ class UserDetail extends React.Component {
 
 export default ServicesConsumer(
   'notification',
-  {
-    as: 'ConfirmationDialog',
-    from: 'app/ConfirmationDialog.es6'
-  },
   {
     from: 'services/TokenStore.es6',
     as: 'TokenStore'

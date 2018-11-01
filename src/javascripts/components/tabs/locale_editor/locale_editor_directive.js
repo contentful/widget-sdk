@@ -38,6 +38,10 @@ angular
       const closeState = require('navigation/closeState');
       const localeList = require('data/LocaleList.es6').create($scope.spaceLocales);
       const notify = require('LocaleEditor/notifications');
+      const React = require('react');
+      const ModalLauncher = require('app/common/ModalLauncher.es6');
+      const LocaleRemovalConfirmDialog = require('app/settings/locales/dialogs/LocaleRemovalConfirmDialog.es6')
+        .default;
 
       let formWasDirty = false;
       let persistedLocaleCode = null;
@@ -116,18 +120,18 @@ angular
 
       function openConfirmationDialog() {
         const locale = $scope.locale;
-        return modalDialog.openConfirmDialog({
-          template:
-            '<react-component class="modal-background" name="app/settings/locales/dialogs/LocaleRemovalConfirmDialog.es6" props="props" />',
-          controller: modalScope => {
-            modalScope.props = {
-              locale,
-              onConfirm: value => modalScope.dialog.confirm(value),
-              onCancel: err =>
-                modalScope.dialog.cancel(err instanceof Error ? err : { cancelled: true })
-            };
-          }
-        });
+        return ModalLauncher.open(({ isShown, onClose }) => (
+          <LocaleRemovalConfirmDialog
+            isShown={isShown}
+            locale={locale}
+            onConfirm={() => {
+              onClose({ confirmed: true });
+            }}
+            onCancel={() => {
+              onClose({ cancelled: true });
+            }}
+          />
+        ));
       }
 
       function maybeOpenFallbackLocaleChangeDialog() {

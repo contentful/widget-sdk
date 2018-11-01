@@ -8,7 +8,7 @@ import {
   SpaceRole as SpaceRolePropType,
   Space as SpacePropType
 } from '../../PropTypes.es6';
-
+import ModalLauncher from 'app/common/ModalLauncher.es6';
 import { joinWithAnd } from 'utils/StringUtils.es6';
 
 import SpaceMembershipEditor from './SpaceMembershipEditor.es6';
@@ -20,7 +20,8 @@ import {
   TableBody,
   TableCell,
   TextLink,
-  Tooltip
+  Tooltip,
+  ModalConfirm
 } from '@contentful/ui-component-library';
 
 const ServicesConsumer = require('../../../../../reactServiceContext').default;
@@ -29,7 +30,7 @@ class UserSpaceMemberships extends React.Component {
   static propTypes = {
     $services: PropTypes.shape({
       notification: PropTypes.object.isRequired,
-      ConfirmationDialog: PropTypes.object.isRequired,
+
       EndpointFactory: PropTypes.object.isRequired,
       OrganizationMembershipRepository: PropTypes.object.isRequired,
       SpaceMembershipRepository: PropTypes.object.isRequired
@@ -98,21 +99,25 @@ class UserSpaceMemberships extends React.Component {
     const { user, $services } = this.props;
     const { space } = membership.sys;
     const repo = this.createRepoFromSpaceMembership(membership);
-    const body = (
-      <React.Fragment>
-        <p>
-          You are about to remove {user.firstName} {user.lastName} from the space {space.name}.
-        </p>
-        <p>
-          After removal this user will not be able to access this space in any way. Do you want to
-          proceed?
-        </p>
-      </React.Fragment>
-    );
-    const confirmation = await $services.ConfirmationDialog.confirm({
-      title: 'Remove user from a space',
-      body
-    });
+
+    const confirmation = await ModalLauncher.open(({ isShown, onClose }) => (
+      <ModalConfirm
+        title="Remove user from a space"
+        intent="negative"
+        isShown={isShown}
+        onConfirm={() => onClose(true)}
+        onCancel={() => onClose(false)}>
+        <React.Fragment>
+          <p>
+            You are about to remove {user.firstName} {user.lastName} from the space {space.name}.
+          </p>
+          <p>
+            After removal this user will not be able to access this space in any way. Do you want to
+            proceed?
+          </p>
+        </React.Fragment>
+      </ModalConfirm>
+    ));
 
     if (!confirmation) {
       return;
@@ -281,9 +286,5 @@ export default ServicesConsumer(
   {
     as: 'OrganizationMembershipRepository',
     from: 'access_control/OrganizationMembershipRepository.es6'
-  },
-  {
-    as: 'ConfirmationDialog',
-    from: 'app/ConfirmationDialog.es6'
   }
 )(UserSpaceMemberships);

@@ -12,21 +12,24 @@ const getRoot = () => {
 };
 
 export function open(componentRenderer) {
-  let currentConfig = { onClose, isShown: true };
+  return new Promise(resolve => {
+    let currentConfig = { onClose, isShown: true };
 
-  function render({ onClose, isShown }) {
-    ReactDOM.render(componentRenderer({ onClose, isShown }), getRoot());
-  }
+    function render({ onClose, isShown }) {
+      ReactDOM.render(componentRenderer({ onClose, isShown }), getRoot());
+    }
 
-  function onClose() {
-    currentConfig = {
-      ...currentConfig,
-      isShown: false
-    };
+    function onClose(...args) {
+      currentConfig = {
+        ...currentConfig,
+        isShown: false
+      };
+      render(currentConfig);
+      resolve(...args);
+    }
+
     render(currentConfig);
-  }
-
-  render(currentConfig);
+  });
 }
 
 export default {

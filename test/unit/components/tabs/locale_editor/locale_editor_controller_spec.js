@@ -14,6 +14,9 @@ describe('Locale editor controller', () => {
       openConfirmDialog: sinon.stub(),
       open: sinon.stub()
     };
+    this.ModalLauncher = {
+      open: sinon.stub()
+    };
     this.closeStateSpy = sinon.spy();
 
     module('contentful/test', $provide => {
@@ -21,6 +24,7 @@ describe('Locale editor controller', () => {
       $provide.value('notification', self.notification);
       $provide.value('analytics/Analytics.es6', self.analytics);
       $provide.value('modalDialog', self.modalDialog);
+      $provide.value('app/common/ModalLauncher.es6', self.ModalLauncher);
       $provide.value('navigation/closeState', self.closeStateSpy);
       $provide.value('analytics/events/SearchAndViews.es6', {});
     });
@@ -130,7 +134,7 @@ describe('Locale editor controller', () => {
 
     describe('with confirmation', () => {
       beforeEach(function() {
-        this.modalDialog.openConfirmDialog.resolves({ confirmed: true });
+        this.ModalLauncher.open.resolves({ confirmed: true });
         this.controller.delete.execute();
         this.$apply();
       });
@@ -151,7 +155,7 @@ describe('Locale editor controller', () => {
 
     describe('with no confirmation', () => {
       beforeEach(function() {
-        this.modalDialog.openConfirmDialog.resolves({});
+        this.ModalLauncher.open.resolves({ cancelled: true });
         this.controller.delete.execute();
         this.$apply();
       });
@@ -177,7 +181,7 @@ describe('Locale editor controller', () => {
       ];
       this.init(); // grab another set of space locales
 
-      this.modalDialog.openConfirmDialog.resolves({ confirmed: true });
+      this.ModalLauncher.open.resolves({ confirmed: true });
       this.modalDialog.open.returns({
         promise: this.$q.resolve('en-US')
       });
@@ -211,7 +215,7 @@ describe('Locale editor controller', () => {
     beforeEach(function() {
       this.scope.localeForm.$dirty = true;
       this.spaceContext.localeRepo.remove.rejects(error);
-      this.modalDialog.openConfirmDialog.resolves({ confirmed: true });
+      this.ModalLauncher.open.resolves({ confirmed: true });
       this.controller.delete.execute();
       this.$apply();
     });
