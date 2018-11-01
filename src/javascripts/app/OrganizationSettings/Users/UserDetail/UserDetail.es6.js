@@ -4,7 +4,7 @@ import moment from 'moment';
 import { getValue } from 'utils/kefir.es6';
 import Workbench from 'app/common/Workbench.es6';
 import { go } from 'states/Navigator.es6';
-import { Button, ModalConfirm } from '@contentful/ui-component-library';
+import { Button } from '@contentful/ui-component-library';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import UserCard from '../UserCard.es6';
 import { orgRoles } from './OrgRoles.es6';
@@ -25,6 +25,7 @@ import {
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import UserSpaceMemberships from './UserSpaceMemberships/UserSpaceMemberships.es6';
 import UserSsoInfo from './SSO/UserSsoInfo.es6';
+import RemoveOrgMemberDialog from '../RemoveUserDialog.es6';
 
 const ServicesConsumer = require('../../../../reactServiceContext').default;
 
@@ -117,22 +118,7 @@ class UserDetail extends React.Component {
     const { id, user } = this.state.membership.sys;
 
     const confirmation = await ModalLauncher.open(({ isShown, onClose }) => (
-      <ModalConfirm
-        title="Remove user from the organization"
-        intent="negative"
-        isShown={isShown}
-        onConfirm={() => onClose(true)}
-        onCancel={() => onClose(false)}>
-        <React.Fragment>
-          <p>
-            You are about to remove {user.firstName} {user.lastName} from your organization.
-          </p>
-          <p>
-            After removal this user will not be able to access this organization in any way. Do you
-            want to proceed?
-          </p>
-        </React.Fragment>
-      </ModalConfirm>
+      <RemoveOrgMemberDialog isShown={isShown} onClose={onClose} user={user} />
     ));
 
     if (!confirmation) {
@@ -164,11 +150,6 @@ class UserDetail extends React.Component {
       <Workbench testId="organization-users-page">
         <Workbench.Header>
           <Workbench.Title>Users</Workbench.Title>
-          <div className="workbench-header__actions">
-            <Button buttonType="negative" onClick={() => this.removeMembership()}>
-              Remove membership
-            </Button>
-          </div>
         </Workbench.Header>
         <Workbench.Content>
           <div className="user-details">
@@ -204,6 +185,9 @@ class UserDetail extends React.Component {
                 </dl>
                 <p style={{ marginTop: 10 }}>{this.getRoleDescription()}</p>
               </section>
+              <Button buttonType="negative" size="small" onClick={() => this.removeMembership()}>
+                Remove membership
+              </Button>
             </div>
             <div className="user-details__content">
               <UserSpaceMemberships
