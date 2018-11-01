@@ -63,7 +63,7 @@ export function getFilterDefinitions({ spaceRoles = [], spaces = [], hasSsoEnabl
         if (this.value === 'true') {
           return 'sys.spaceMemberships.admin';
         }
-        return 'sys.spaceMemberships[?(@.sys.admin==true)].roles.name';
+        return 'sys.spaceMemberships.roles.name';
       },
       value: ''
     },
