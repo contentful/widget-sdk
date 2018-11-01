@@ -36,16 +36,20 @@ export default class SseExemptionModal extends React.Component {
               rel="noopener noreferrer"
               target="_blank">
               Restricted Mode
-            </a>
-            is enabled if they fall into one or more of the conditions below:
+            </a>{' '}
+            is enabled if they fall into one or more of the following conditions:
           </p>
           <ul>
-            {Object.keys(exemptionReasonsMap).map(reason => (
-              <li key={reason} style={{ opacity: includesReason(reason) ? '1' : '0.5' }}>
-                • {exemptionReasonsMap[reason]}{' '}
-                {includesReason(reason) && <Icon icon="CheckCircle" />}
-              </li>
-            ))}
+            {Object.keys(exemptionReasonsMap)
+              .sort((a, b) => {
+                return exemptionReasons.indexOf(b) - exemptionReasons.indexOf(a);
+              })
+              .map(reason => (
+                <li key={reason} style={{ opacity: includesReason(reason) ? '1' : '0.5' }}>
+                  • {exemptionReasonsMap[reason]}{' '}
+                  {includesReason(reason) && <Icon icon="CheckCircle" />}
+                </li>
+              ))}
           </ul>
           <p>
             <a href="https://www.contentful.com/faq/sso/" rel="noopener noreferrer" target="_blank">
