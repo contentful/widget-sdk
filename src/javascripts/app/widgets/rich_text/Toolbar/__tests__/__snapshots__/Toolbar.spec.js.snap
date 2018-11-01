@@ -236,6 +236,9 @@ exports[`Toolbar renders no icons if no formatting options enabled 1`] = `
         <Visible
           if={false}
         />
+        <Visible
+          if={false}
+        />
       </div>
     </div>
   </EditorToolbar>
@@ -1879,255 +1882,122 @@ exports[`Toolbar renders toolbar icons 1`] = `
       <div
         className="rich-text__toolbar__embed-actions-wrapper"
       >
-        <Visible
-          if={true}
+        <EntryEmbedDropdown
+          disabled={false}
+          onClose={[Function]}
+          onToggle={[Function]}
         >
-          <EntryLinkToolbarIcon
-            change={
-              Object {
-                "value": Object {
-                  "activeMarks": Array [],
-                  "blocks": Array [],
-                  "inlines": Array [],
-                  "selection": Object {},
-                },
-              }
-            }
-            disabled={false}
-            isButton={true}
-            nodeType="embedded-asset-block"
-            onToggle={[Function]}
-            richTextAPI={
-              Object {
-                "logAction": [Function],
-                "widgetAPI": Object {
-                  "features": Object {
-                    "embedInlineEntry": true,
-                  },
-                  "field": Object {},
-                },
-              }
+          <Dropdown
+            extraClassNames="toolbar-entry-dropdown"
+            isOpen={false}
+            onClose={[Function]}
+            position="bottom-right"
+            testId="cf-ui-dropdown"
+            toggleElement={
+              <Button
+                buttonType="muted"
+                data-test-id="toolbar-entry-dropdown-toggle"
+                disabled={false}
+                extraClassNames="toolbar-entry-dropdown-toggle"
+                icon="Plus"
+                indicateDropdown={true}
+                isFullWidth={false}
+                loading={false}
+                onMouseDown={[Function]}
+                size="small"
+                testId="cf-ui-button"
+              >
+                Embed
+              </Button>
             }
           >
-            <Button
-              buttonType="muted"
-              disabled={false}
-              extraClassNames="rich-text__embedded-asset-block-button"
-              icon="Asset"
-              indicateDropdown={false}
-              isFullWidth={false}
-              loading={false}
-              onClick={[Function]}
-              size="small"
-              testId="toolbar-toggle-embedded-asset-block"
+            <div
+              className="Dropdown__Dropdown___1qyn8 toolbar-entry-dropdown"
+              data-test-id="cf-ui-dropdown"
+              onClose={[Function]}
+              position="bottom-right"
             >
-              <button
-                className="Button__Button___1ZfFj a11y__focus-border--default___60AXp rich-text__embedded-asset-block-button Button__Button--muted___2Wair Button__Button--small___3yyrk"
-                data-test-id="toolbar-toggle-embedded-asset-block"
+              <Button
+                buttonType="muted"
+                data-test-id="toolbar-entry-dropdown-toggle"
                 disabled={false}
-                onBlur={[Function]}
-                onClick={[Function]}
+                extraClassNames="toolbar-entry-dropdown-toggle"
+                icon="Plus"
+                indicateDropdown={true}
+                isFullWidth={false}
+                loading={false}
+                onMouseDown={[Function]}
+                size="small"
+                testId="cf-ui-button"
               >
-                <TabFocusTrap
-                  extraClassNames="Button__Button__inner-wrapper___3qrNC"
+                <button
+                  className="Button__Button___1ZfFj a11y__focus-border--default___60AXp toolbar-entry-dropdown-toggle Button__Button--muted___2Wair Button__Button--small___3yyrk"
+                  data-test-id="toolbar-entry-dropdown-toggle"
+                  disabled={false}
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onMouseDown={[Function]}
                 >
-                  <span
-                    className="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
-                    tabIndex={-1}
+                  <TabFocusTrap
+                    extraClassNames="Button__Button__inner-wrapper___3qrNC"
                   >
-                    <Icon
-                      color="secondary"
-                      extraClassNames="Button__Button__icon___2YX5-"
-                      icon="Asset"
-                      size="tiny"
-                      testId="cf-ui-icon"
+                    <span
+                      className="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
+                      tabIndex={-1}
                     >
-                      <Asset
-                        className="Icon__Icon___38Epv Button__Button__icon___2YX5- Icon__Icon--tiny___V4Pr9 Icon__Icon--secondary___1ztcw"
-                        data-test-id="cf-ui-icon"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        width="24"
-                        xmlns="http://www.w3.org/2000/svg"
+                      <Icon
+                        color="secondary"
+                        extraClassNames="Button__Button__icon___2YX5-"
+                        icon="Plus"
+                        size="tiny"
+                        testId="cf-ui-icon"
                       >
-                        <svg
+                        <Plus
                           className="Icon__Icon___38Epv Button__Button__icon___2YX5- Icon__Icon--tiny___V4Pr9 Icon__Icon--secondary___1ztcw"
+                          data-test-id="cf-ui-icon"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          width="18"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <svg
+                            className="Icon__Icon___38Epv Button__Button__icon___2YX5- Icon__Icon--tiny___V4Pr9 Icon__Icon--secondary___1ztcw"
+                            data-test-id="cf-ui-icon"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            width="18"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
+                            />
+                            <path
+                              d="M0 0h24v24H0z"
+                              fill="none"
+                            />
+                          </svg>
+                        </Plus>
+                      </Icon>
+                      <span
+                        className="Button__Button__label___3tcOj"
+                      >
+                        Embed
+                      </span>
+                      <Icon
+                        color="secondary"
+                        icon="ArrowDown"
+                        size="small"
+                        testId="cf-ui-icon"
+                      >
+                        <ArrowDown
+                          className="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
                           data-test-id="cf-ui-icon"
                           height="24"
                           viewBox="0 0 24 24"
                           width="24"
                           xmlns="http://www.w3.org/2000/svg"
                         >
-                          <path
-                            d="M0 0h24v24H0V0z"
-                            fill="none"
-                          />
-                          <g>
-                            <path
-                              d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
-                            />
-                            <path
-                              d="M14.14 11.86l-3 3.87L9 13.14 6 17h12l-3.86-5.14z"
-                            />
-                          </g>
-                        </svg>
-                      </Asset>
-                    </Icon>
-                    <span
-                      className="Button__Button__label___3tcOj"
-                    >
-                      Embed asset
-                    </span>
-                    <CSSTransition
-                      classNames={
-                        Object {
-                          "enter": "Button__Button--spinner--enter___1qgg7",
-                          "enterActive": "Button__Button--spinner-active___EEKjQ",
-                          "exit": "Button__Button--spinner--exit___2RUI-",
-                          "exitActive": "Button__Button--spinner-exit-active___3HXa7",
-                        }
-                      }
-                      in={false}
-                      mountOnEnter={true}
-                      timeout={1000}
-                      unmountOnExit={true}
-                    >
-                      <Transition
-                        appear={false}
-                        enter={true}
-                        exit={true}
-                        in={false}
-                        mountOnEnter={true}
-                        onEnter={[Function]}
-                        onEntered={[Function]}
-                        onEntering={[Function]}
-                        onExit={[Function]}
-                        onExited={[Function]}
-                        onExiting={[Function]}
-                        timeout={1000}
-                        unmountOnExit={true}
-                      />
-                    </CSSTransition>
-                  </span>
-                </TabFocusTrap>
-              </button>
-            </Button>
-          </EntryLinkToolbarIcon>
-        </Visible>
-        <Visible
-          if={true}
-        >
-          <EntryEmbedDropdown
-            disabled={false}
-            onClose={[Function]}
-            onToggle={[Function]}
-          >
-            <Dropdown
-              extraClassNames="toolbar-entry-dropdown"
-              isOpen={false}
-              onClose={[Function]}
-              position="bottom-right"
-              testId="cf-ui-dropdown"
-              toggleElement={
-                <Button
-                  buttonType="muted"
-                  data-test-id="toolbar-entry-dropdown-toggle"
-                  disabled={false}
-                  extraClassNames="toolbar-entry-dropdown-toggle"
-                  icon="Entry"
-                  indicateDropdown={true}
-                  isFullWidth={false}
-                  loading={false}
-                  onMouseDown={[Function]}
-                  size="small"
-                  testId="cf-ui-button"
-                >
-                  Embed entry
-                </Button>
-              }
-            >
-              <div
-                className="Dropdown__Dropdown___1qyn8 toolbar-entry-dropdown"
-                data-test-id="cf-ui-dropdown"
-                onClose={[Function]}
-                position="bottom-right"
-              >
-                <Button
-                  buttonType="muted"
-                  data-test-id="toolbar-entry-dropdown-toggle"
-                  disabled={false}
-                  extraClassNames="toolbar-entry-dropdown-toggle"
-                  icon="Entry"
-                  indicateDropdown={true}
-                  isFullWidth={false}
-                  loading={false}
-                  onMouseDown={[Function]}
-                  size="small"
-                  testId="cf-ui-button"
-                >
-                  <button
-                    className="Button__Button___1ZfFj a11y__focus-border--default___60AXp toolbar-entry-dropdown-toggle Button__Button--muted___2Wair Button__Button--small___3yyrk"
-                    data-test-id="toolbar-entry-dropdown-toggle"
-                    disabled={false}
-                    onBlur={[Function]}
-                    onClick={[Function]}
-                    onMouseDown={[Function]}
-                  >
-                    <TabFocusTrap
-                      extraClassNames="Button__Button__inner-wrapper___3qrNC"
-                    >
-                      <span
-                        className="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
-                        tabIndex={-1}
-                      >
-                        <Icon
-                          color="secondary"
-                          extraClassNames="Button__Button__icon___2YX5-"
-                          icon="Entry"
-                          size="tiny"
-                          testId="cf-ui-icon"
-                        >
-                          <Entry
-                            className="Icon__Icon___38Epv Button__Button__icon___2YX5- Icon__Icon--tiny___V4Pr9 Icon__Icon--secondary___1ztcw"
-                            data-test-id="cf-ui-icon"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            width="24"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <svg
-                              className="Icon__Icon___38Epv Button__Button__icon___2YX5- Icon__Icon--tiny___V4Pr9 Icon__Icon--secondary___1ztcw"
-                              data-test-id="cf-ui-icon"
-                              height="24"
-                              viewBox="0 0 24 24"
-                              width="24"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M0 0h24v24H0V0z"
-                                fill="none"
-                              />
-                              <path
-                                d="M8 16h8v2H8zM8 12h8v2H8z"
-                              />
-                              <path
-                                d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"
-                              />
-                            </svg>
-                          </Entry>
-                        </Icon>
-                        <span
-                          className="Button__Button__label___3tcOj"
-                        >
-                          Embed entry
-                        </span>
-                        <Icon
-                          color="secondary"
-                          icon="ArrowDown"
-                          size="small"
-                          testId="cf-ui-icon"
-                        >
-                          <ArrowDown
+                          <svg
                             className="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
                             data-test-id="cf-ui-icon"
                             height="24"
@@ -2135,62 +2005,53 @@ exports[`Toolbar renders toolbar icons 1`] = `
                             width="24"
                             xmlns="http://www.w3.org/2000/svg"
                           >
-                            <svg
-                              className="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
-                              data-test-id="cf-ui-icon"
-                              height="24"
-                              viewBox="0 0 24 24"
-                              width="24"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M7 10l5 5 5-5z"
-                              />
-                              <path
-                                d="M0 0h24v24H0z"
-                                fill="none"
-                              />
-                            </svg>
-                          </ArrowDown>
-                        </Icon>
-                        <CSSTransition
-                          classNames={
-                            Object {
-                              "enter": "Button__Button--spinner--enter___1qgg7",
-                              "enterActive": "Button__Button--spinner-active___EEKjQ",
-                              "exit": "Button__Button--spinner--exit___2RUI-",
-                              "exitActive": "Button__Button--spinner-exit-active___3HXa7",
-                            }
+                            <path
+                              d="M7 10l5 5 5-5z"
+                            />
+                            <path
+                              d="M0 0h24v24H0z"
+                              fill="none"
+                            />
+                          </svg>
+                        </ArrowDown>
+                      </Icon>
+                      <CSSTransition
+                        classNames={
+                          Object {
+                            "enter": "Button__Button--spinner--enter___1qgg7",
+                            "enterActive": "Button__Button--spinner-active___EEKjQ",
+                            "exit": "Button__Button--spinner--exit___2RUI-",
+                            "exitActive": "Button__Button--spinner-exit-active___3HXa7",
                           }
+                        }
+                        in={false}
+                        mountOnEnter={true}
+                        timeout={1000}
+                        unmountOnExit={true}
+                      >
+                        <Transition
+                          appear={false}
+                          enter={true}
+                          exit={true}
                           in={false}
                           mountOnEnter={true}
+                          onEnter={[Function]}
+                          onEntered={[Function]}
+                          onEntering={[Function]}
+                          onExit={[Function]}
+                          onExited={[Function]}
+                          onExiting={[Function]}
                           timeout={1000}
                           unmountOnExit={true}
-                        >
-                          <Transition
-                            appear={false}
-                            enter={true}
-                            exit={true}
-                            in={false}
-                            mountOnEnter={true}
-                            onEnter={[Function]}
-                            onEntered={[Function]}
-                            onEntering={[Function]}
-                            onExit={[Function]}
-                            onExited={[Function]}
-                            onExiting={[Function]}
-                            timeout={1000}
-                            unmountOnExit={true}
-                          />
-                        </CSSTransition>
-                      </span>
-                    </TabFocusTrap>
-                  </button>
-                </Button>
-              </div>
-            </Dropdown>
-          </EntryEmbedDropdown>
-        </Visible>
+                        />
+                      </CSSTransition>
+                    </span>
+                  </TabFocusTrap>
+                </button>
+              </Button>
+            </div>
+          </Dropdown>
+        </EntryEmbedDropdown>
       </div>
     </div>
   </EditorToolbar>

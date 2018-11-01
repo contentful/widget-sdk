@@ -62,33 +62,44 @@ export default class Toolbar extends React.Component {
 
   renderEmbeds = props => {
     const { widgetAPI } = this.props.richTextAPI;
-    const { field } = widgetAPI;
+    const { field, features } = widgetAPI;
+
+    const amountOfEnabledEmbeds = [
+      isNodeTypeEnabled(field, BLOCKS.EMBEDDED_ENTRY),
+      isNodeTypeEnabled(field, BLOCKS.EMBEDDED_ASSET),
+      isNodeTypeEnabled(field, INLINES.EMBEDDED_ENTRY) && features.embedInlineEntry
+    ].filter(feature => feature).length;
+
     return (
       <div className="rich-text__toolbar__embed-actions-wrapper">
-        <Visible if={isNodeTypeEnabled(field, BLOCKS.EMBEDDED_ASSET)}>
-          <EmbeddedEntityBlock nodeType={BLOCKS.EMBEDDED_ASSET} isButton {...props} />
-        </Visible>
-        {widgetAPI.features.embedInlineEntry ? (
-          <Visible
-            if={
-              isNodeTypeEnabled(field, BLOCKS.EMBEDDED_ENTRY) ||
-              isNodeTypeEnabled(field, INLINES.EMBEDDED_ENTRY)
-            }>
-            <EntryEmbedDropdown
-              onToggle={this.toggleEmbedDropdown}
-              isOpen={this.state.isEmbedDropdownOpen}
-              disabled={props.disabled}
-              onClose={this.handleEmbedDropdownClose}>
-              <Visible if={isNodeTypeEnabled(field, BLOCKS.EMBEDDED_ENTRY)}>
-                <EmbeddedEntityBlock nodeType={BLOCKS.EMBEDDED_ENTRY} {...props} />
-              </Visible>
-              <Visible if={isNodeTypeEnabled(field, INLINES.EMBEDDED_ENTRY)}>
-                <EmbeddedEntryInline {...props} />
-              </Visible>
-            </EntryEmbedDropdown>
-          </Visible>
+        {amountOfEnabledEmbeds > 1 ? (
+          <EntryEmbedDropdown
+            onToggle={this.toggleEmbedDropdown}
+            isOpen={this.state.isEmbedDropdownOpen}
+            disabled={props.disabled}
+            onClose={this.handleEmbedDropdownClose}>
+            <Visible if={isNodeTypeEnabled(field, BLOCKS.EMBEDDED_ENTRY)}>
+              <EmbeddedEntityBlock nodeType={BLOCKS.EMBEDDED_ENTRY} {...props} />
+            </Visible>
+            <Visible if={isNodeTypeEnabled(field, INLINES.EMBEDDED_ENTRY)}>
+              <EmbeddedEntryInline {...props} />
+            </Visible>
+            <Visible if={isNodeTypeEnabled(field, BLOCKS.EMBEDDED_ASSET)}>
+              <EmbeddedEntityBlock nodeType={BLOCKS.EMBEDDED_ASSET} {...props} />
+            </Visible>
+          </EntryEmbedDropdown>
         ) : (
-          <EmbeddedEntityBlock nodeType={BLOCKS.EMBEDDED_ENTRY} isButton {...props} />
+          <React.Fragment>
+            <Visible if={isNodeTypeEnabled(field, BLOCKS.EMBEDDED_ENTRY)}>
+              <EmbeddedEntityBlock nodeType={BLOCKS.EMBEDDED_ENTRY} isButton {...props} />
+            </Visible>
+            <Visible if={isNodeTypeEnabled(field, INLINES.EMBEDDED_ENTRY)}>
+              <EmbeddedEntryInline isButton {...props} />
+            </Visible>
+            <Visible if={isNodeTypeEnabled(field, BLOCKS.EMBEDDED_ASSET)}>
+              <EmbeddedEntityBlock nodeType={BLOCKS.EMBEDDED_ASSET} isButton {...props} />
+            </Visible>
+          </React.Fragment>
         )}
       </div>
     );

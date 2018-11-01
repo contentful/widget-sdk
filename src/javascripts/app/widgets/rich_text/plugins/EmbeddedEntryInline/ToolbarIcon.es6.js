@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { DropdownListItem } from '@contentful/ui-component-library';
+import { DropdownListItem, Icon, Button } from '@contentful/ui-component-library';
 import { INLINES } from '@contentful/rich-text-types';
 
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
@@ -9,6 +9,9 @@ import { actionOrigin, TOOLBAR_PLUGIN_PROP_TYPES } from '../shared/PluginApi.es6
 export default class EntryLinkToolbarIcon extends Component {
   static propTypes = TOOLBAR_PLUGIN_PROP_TYPES;
 
+  static defaultProps = {
+    isButton: false
+  };
   handleMouseDown = async (event, widgetAPI) => {
     event.preventDefault();
     const {
@@ -23,18 +26,38 @@ export default class EntryLinkToolbarIcon extends Component {
   render() {
     return (
       <WidgetAPIContext.Consumer>
-        {({ widgetAPI }) => (
-          <DropdownListItem
-            isDisabled={this.props.disabled || !canInsertInline(this.props.change)}
-            extraClassNames="rich-text__entry-link-block-button"
-            size="small"
-            icon="Entry"
-            buttonType="muted"
-            testId={`toolbar-toggle-${INLINES.EMBEDDED_ENTRY}`}
-            onMouseDown={event => this.handleMouseDown(event, widgetAPI)}>
-            Embed inline entry
-          </DropdownListItem>
-        )}
+        {({ widgetAPI }) =>
+          this.props.isButton ? (
+            <Button
+              disabled={this.props.disabled}
+              extraClassNames={`${INLINES.EMBEDDED_ENTRY}-button`}
+              size="small"
+              onClick={event => this.handleClick(event, widgetAPI)}
+              icon="EmbeddedEntryInline"
+              buttonType="muted"
+              testId={`toolbar-toggle-${INLINES.EMBEDDED_ENTRY}`}>
+              Embed inline entry
+            </Button>
+          ) : (
+            <DropdownListItem
+              isDisabled={this.props.disabled || !canInsertInline(this.props.change)}
+              extraClassNames="rich-text__entry-link-block-button"
+              size="small"
+              icon="Entry"
+              buttonType="muted"
+              testId={`toolbar-toggle-${INLINES.EMBEDDED_ENTRY}`}
+              onMouseDown={event => this.handleMouseDown(event, widgetAPI)}>
+              <div className="cf-flex-grid">
+                <Icon
+                  icon="EmbeddedEntryInline"
+                  color="secondary"
+                  extraClassNames="rich-text__embedded-entry-list-icon"
+                />
+                Inline entry
+              </div>
+            </DropdownListItem>
+          )
+        }
       </WidgetAPIContext.Consumer>
     );
   }

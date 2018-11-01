@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { DropdownListItem, Button } from '@contentful/ui-component-library';
+import { DropdownListItem, Button, Icon } from '@contentful/ui-component-library';
 
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
 import { selectEntityAndInsert } from './Util.es6';
@@ -32,7 +32,6 @@ export default class EntryLinkToolbarIcon extends Component {
   render() {
     const { nodeType } = this.props;
     const type = getEntityTypeFromNodeType(nodeType);
-    const typeName = type.toLowerCase();
     const baseClass = `rich-text__${nodeType}`;
     return (
       <WidgetAPIContext.Consumer>
@@ -43,10 +42,10 @@ export default class EntryLinkToolbarIcon extends Component {
               extraClassNames={`${baseClass}-button`}
               size="small"
               onClick={event => this.handleClick(event, widgetAPI)}
-              icon={type}
+              icon={type === 'Asset' ? 'Asset' : 'EmbeddedEntryBlock'}
               buttonType="muted"
               testId={`toolbar-toggle-${nodeType}`}>
-              {`Embed ${typeName}`}
+              {`Embed ${type.toLowerCase()}`}
             </Button>
           ) : (
             <DropdownListItem
@@ -55,7 +54,14 @@ export default class EntryLinkToolbarIcon extends Component {
               size="small"
               onMouseDown={event => this.handleClick(event, widgetAPI)}
               testId={`toolbar-toggle-${nodeType}`}>
-              {`Embed block ${typeName}`}
+              <div className="cf-flex-grid">
+                <Icon
+                  icon={type === 'Asset' ? 'Asset' : 'EmbeddedEntryBlock'}
+                  extraClassNames="rich-text__embedded-entry-list-icon"
+                  color="secondary"
+                />
+                {type}
+              </div>
             </DropdownListItem>
           )
         }

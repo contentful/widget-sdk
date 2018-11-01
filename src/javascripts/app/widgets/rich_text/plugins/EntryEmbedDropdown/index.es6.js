@@ -25,10 +25,10 @@ class EntryEmbedDropdown extends Component {
             extraClassNames="toolbar-entry-dropdown-toggle"
             indicateDropdown
             buttonType="muted"
-            icon="Entry"
             size="small"
+            icon="Plus"
             disabled={this.props.disabled}>
-            Embed entry
+            Embed
           </Button>
         }
         isOpen={isOpen}

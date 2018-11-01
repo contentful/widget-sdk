@@ -131,7 +131,7 @@ class RichTextOptions extends Component {
     entryOptions: [
       {
         icon: 'EmbeddedEntryBlock',
-        title: 'Block entry',
+        title: 'Entry',
         id: BLOCKS.EMBEDDED_ENTRY,
         validationOf: ValidationType.ENABLED_NODE_TYPES
       },
@@ -224,7 +224,7 @@ class RichTextOptions extends Component {
         key={option.id + this.isOptionActive(option)}
         icon={option.icon}
         onToggle={() => this.toggleOption(option)}
-        title={option.id}
+        title={option.title}
         isActive={this.isOptionActive(option)}>
         {option.title ? option.title : ''}
       </ToggleButton>

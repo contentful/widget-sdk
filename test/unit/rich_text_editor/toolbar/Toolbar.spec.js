@@ -91,6 +91,7 @@ describe('Toolbar', () => {
 
     this.embedAssetBlock = async asset => {
       this.selectedEntity = asset;
+      await triggerDropdownButton(this.wrapper, 'toolbar-entry-dropdown-toggle');
       await triggerToolbarIcon(this.wrapper, BLOCKS.EMBEDDED_ASSET);
     };
 
@@ -166,10 +167,12 @@ describe('Toolbar', () => {
     });
 
     it('renders the embed block button', async function() {
+      this.props.field.validations = [{ enabledNodeTypes: ['embedded-entry-block'] }];
       this.mount({ ...this.props, features: { embedInlineEntry: false } });
       expect(
         getWithId(this.wrapper, `toolbar-toggle-${BLOCKS.EMBEDDED_ENTRY}`).getDOMNode()
       ).toBeDefined();
+      this.props.field.validations = undefined;
     });
   });
 
