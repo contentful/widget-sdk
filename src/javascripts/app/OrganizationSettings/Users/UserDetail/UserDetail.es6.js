@@ -4,7 +4,7 @@ import moment from 'moment';
 import { getValue } from 'utils/kefir.es6';
 import Workbench from 'app/common/Workbench.es6';
 import { go } from 'states/Navigator.es6';
-import { Button, ModalConfirm, Icon, Tooltip } from '@contentful/ui-component-library';
+import { Button, ModalConfirm } from '@contentful/ui-component-library';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import UserCard from '../UserCard.es6';
 import { orgRoles } from './OrgRoles.es6';
@@ -24,6 +24,7 @@ import {
 
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import UserSpaceMemberships from './UserSpaceMemberships/UserSpaceMemberships.es6';
+import UserSsoInfo from './SSO/UserSsoInfo.es6';
 
 const ServicesConsumer = require('../../../../reactServiceContext').default;
 
@@ -101,6 +102,7 @@ class UserDetail extends React.Component {
         role,
         sys: {
           ...oldMembership.sys,
+          sso: updatedMembership.sys.sso,
           version: updatedMembership.sys.version
         }
       }
@@ -153,52 +155,6 @@ class UserDetail extends React.Component {
     });
   }
 
-  renderSsoInfo() {
-    const { initialMembership } = this.props;
-    const { sso } = initialMembership.sys;
-    const userName = initialMembership.sys.user.firstName;
-    const exemptionReasonsMap = {
-      userIsOwner: `${userName} is an owner of this organization`,
-      userHasMultipleOrganizationMemberships: `${userName} is member of one or more different organizations in Contentful`,
-      userIsManuallyExempt: `${userName} has been manually marked as exempt from SSO`
-    };
-
-    if (!sso) {
-      return null;
-    }
-
-    const {
-      isExemptFromRestrictedMode,
-      lastSignInAt,
-      exemptionReasons
-    } = this.props.initialMembership.sys.sso;
-
-    const reasons = (
-      <ul>
-        {exemptionReasons.map(reason => (
-          <li key={reason}>{exemptionReasonsMap[reason]}</li>
-        ))}
-      </ul>
-    );
-
-    return (
-      <dl className="definition-list">
-        <dt>Last SSO login</dt>
-        <dd>{lastSignInAt ? lastSignInAt : 'Never'}</dd>
-        <dt>Exempt from SSO</dt>
-        <dd>
-          {isExemptFromRestrictedMode ? (
-            <Tooltip content={reasons}>
-              Yes <Icon icon="HelpCircle" color="secondary" style={{ verticalAlign: 'bottom' }} />
-            </Tooltip>
-          ) : (
-            'No'
-          )}
-        </dd>
-      </dl>
-    );
-  }
-
   render() {
     const { spaceMemberships, createdBy, spaces, roles, orgId } = this.props;
     const { membership, disableOwnerRole } = this.state;
@@ -230,7 +186,9 @@ class UserDetail extends React.Component {
                   <dd>{`${createdBy.firstName} ${createdBy.lastName}`}</dd>
                 </dl>
               </section>
-              <section className="user-details__profile-section">{this.renderSsoInfo()}</section>
+              <section className="user-details__profile-section">
+                <UserSsoInfo membership={membership} />
+              </section>
               <section className="user-details__profile-section">
                 <dl className="definition-list">
                   <dt>Organization role</dt>
