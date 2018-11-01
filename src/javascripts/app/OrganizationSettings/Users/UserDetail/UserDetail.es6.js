@@ -147,6 +147,7 @@ class UserDetail extends React.Component {
     const { spaceMemberships, createdBy, spaces, roles, orgId } = this.props;
     const { membership, disableOwnerRole } = this.state;
     const { user } = membership.sys;
+    const isPending = userObj => !userObj.firstName;
 
     return (
       <Workbench testId="organization-users-page">
@@ -161,16 +162,20 @@ class UserDetail extends React.Component {
               </section>
               <section className="user-details__profile-section">
                 <dl className="definition-list">
-                  <dt>Last activity</dt>
-                  <dd>{this.getLastActiveDate()}</dd>
-                  <dt>Member since</dt>
+                  {!isPending(user) && (
+                    <React.Fragment>
+                      <dt>Last activity</dt>
+                      <dd>{this.getLastActiveDate()}</dd>
+                    </React.Fragment>
+                  )}
+                  <dt>{isPending(user) ? 'Invited at' : 'Member since'}</dt>
                   <dd>{moment(membership.sys.createdAt).format('MMMM Do YYYY')}</dd>
                   <dt>Invited by</dt>
                   <dd>
-                    {createdBy.firstName ? (
-                      getUserName(createdBy)
-                    ) : (
+                    {isPending(createdBy) ? (
                       <UnknownUser id={createdBy.sys.id} />
+                    ) : (
+                      getUserName(createdBy)
                     )}
                   </dd>
                 </dl>
