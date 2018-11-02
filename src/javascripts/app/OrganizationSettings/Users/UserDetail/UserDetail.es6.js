@@ -51,6 +51,9 @@ class UserDetail extends React.Component {
     disableOwnerRole: false
   };
 
+  currentUser = getValue(this.props.$services.TokenStore.user$);
+  isSelf = this.currentUser && this.currentUser.sys.id === this.props.initialMembership.sys.id;
+
   endpoint = createOrganizationEndpoint(this.props.orgId);
 
   async componentDidMount() {
@@ -62,11 +65,6 @@ class UserDetail extends React.Component {
     const { TokenStore, OrganizationRoles } = this.props.$services;
     const org = await TokenStore.getOrganization(this.props.orgId);
     return !OrganizationRoles.isOwner(org);
-  }
-
-  isSelf() {
-    const currentUser = getValue(this.props.$services.TokenStore.user$);
-    return currentUser && currentUser.sys.id === this.state.membership.sys.user.sys.id;
   }
 
   getLastActiveDate() {
@@ -184,7 +182,7 @@ class UserDetail extends React.Component {
                   <dd>
                     <OrganizationRoleSelector
                       style={{ marginTop: '-5px' }}
-                      isSelf={this.isSelf()}
+                      isSelf={this.isSelf}
                       disableOwnerRole={disableOwnerRole}
                       initialRole={membership.role}
                       onChange={this.changeOrgRole}
@@ -201,6 +199,7 @@ class UserDetail extends React.Component {
               <UserSpaceMemberships
                 initialMemberships={spaceMemberships}
                 user={user}
+                currentUser={this.currentUser}
                 spaces={spaces}
                 roles={roles}
                 orgId={orgId}

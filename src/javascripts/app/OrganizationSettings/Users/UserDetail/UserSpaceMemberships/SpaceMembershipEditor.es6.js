@@ -5,7 +5,6 @@ import {
   User as UserPropType,
   SpaceMembership as SpaceMembershipPropType
 } from '../../PropTypes.es6';
-import ResolveLinks from '../../../LinkResolver.es6';
 
 import { TableRow, TableCell, Select, Option, Button } from '@contentful/ui-component-library';
 import SpaceRoleEditor from './SpaceRoleEditor.es6';
@@ -20,6 +19,7 @@ class SpaceMembershipEditor extends React.Component {
       SpaceMembershipRepository: PropTypes.object.isRequired
     }).isRequired,
     user: UserPropType.isRequired,
+    currentUser: UserPropType.isRequired,
     onSpaceSelected: PropTypes.func,
     onMembershipCreated: PropTypes.func,
     onMembershipChanged: PropTypes.func,
@@ -79,6 +79,7 @@ class SpaceMembershipEditor extends React.Component {
   async submit() {
     const {
       user,
+      currentUser,
       spaces,
       onMembershipCreated,
       $services,
@@ -90,12 +91,13 @@ class SpaceMembershipEditor extends React.Component {
     const spaceEndpoint = $services.EndpointFactory.createSpaceEndpoint(selectedSpace);
     const repo = $services.SpaceMembershipRepository.create(spaceEndpoint);
     const isEditing = Boolean(initialMembership);
+    const createdBy = isEditing ? initialMembership.sys.createdBy : currentUser;
     let membership;
 
     this.setState({ busy: true });
 
-    // updating
     if (isEditing) {
+      // updating
       try {
         membership = await repo.changeRoleTo(initialMembership, selectedRoles);
       } catch (e) {
@@ -119,24 +121,15 @@ class SpaceMembershipEditor extends React.Component {
       : spaces.find(space => space.sys.id === selectedSpace);
     const membershipRoles = roles.filter(role => selectedRoles.includes(role.sys.id));
 
-    // In the list of memberships we show the space and the role names
-    // This is only possible because we include the space and role information
-    // in the GET API request. The same can't be done in a POST request.
-    // This is why we have to do it manually here.
-    const [resolved] = ResolveLinks({
-      paths: ['sys.space', 'roles'],
-      includes: {
-        Space: [space],
-        Role: membershipRoles
-      },
-      items: [membership]
-    });
+    membership.sys.space = space;
+    membership.roles = membershipRoles;
+    membership.sys.createdBy = createdBy;
 
     this.setState({ busy: false }, () => {
       if (isEditing) {
-        onMembershipChanged && onMembershipChanged(resolved);
+        onMembershipChanged && onMembershipChanged(membership);
       } else {
-        onMembershipCreated && onMembershipCreated(resolved);
+        onMembershipCreated && onMembershipCreated(membership);
       }
     });
   }

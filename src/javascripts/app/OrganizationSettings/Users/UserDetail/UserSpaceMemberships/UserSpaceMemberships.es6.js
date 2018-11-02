@@ -39,6 +39,7 @@ class UserSpaceMemberships extends React.Component {
     }).isRequired,
     initialMemberships: PropTypes.arrayOf(SpaceMembershipPropType),
     user: UserPropType.isRequired,
+    currentUser: UserPropType,
     orgId: PropTypes.string,
     roles: PropTypes.arrayOf(SpaceRolePropType),
     spaces: PropTypes.arrayOf(SpacePropType)
@@ -214,7 +215,7 @@ class UserSpaceMemberships extends React.Component {
   }
 
   render() {
-    const { user, orgId } = this.props;
+    const { user, currentUser, orgId } = this.props;
     const { memberships, showingForm, editingMembershipId, roles, availableSpaces } = this.state;
     const unavailabilityReason = this.getUnavailabilityReason();
 
@@ -251,6 +252,7 @@ class UserSpaceMemberships extends React.Component {
                 <SpaceMembershipEditor
                   spaces={availableSpaces}
                   roles={roles}
+                  currentUser={currentUser}
                   user={user}
                   orgId={orgId}
                   onMembershipCreated={this.handleMembershipCreated}
@@ -264,6 +266,7 @@ class UserSpaceMemberships extends React.Component {
                     <SpaceMembershipEditor
                       key={membership.sys.id}
                       user={user}
+                      currentUser={currentUser}
                       orgId={orgId}
                       initialMembership={membership}
                       roles={roles}
