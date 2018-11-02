@@ -151,7 +151,11 @@ angular.module('contentful').controller('EntitySelectorController', [
     }
     function onSearchChange(newSearchState) {
       _.assign($scope.view, newSearchState);
-      $scope.createEntityProps.suggestedContentTypeId = newSearchState.contentTypeId;
+
+      if ($scope.createEntityProps) {
+        $scope.createEntityProps.suggestedContentTypeId = newSearchState.contentTypeId;
+      }
+
       resetAndLoad();
     }
 
