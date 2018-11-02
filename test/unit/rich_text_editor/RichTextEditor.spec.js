@@ -32,6 +32,9 @@ describe('RichTextEditor', () => {
         openFromField: () => Promise.resolve([this.entity])
       }
     });
+    this.system.set('app/widgets/rich_text/withTracking.es6', {
+      default: component => component
+    });
     stubAll({ isolatedSystem: this.system });
 
     const { default: RichTextEditor } = await this.system.import('app/widgets/rich_text/index.es6');

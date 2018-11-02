@@ -58,6 +58,10 @@ describe('Toolbar', () => {
     this.system.set('app/widgets/WidgetApi/dialogs/openHyperlinkDialog.es6', {
       default: this.openHyperlinkDialog
     });
+    this.system.set('analytics/Analytics.es6', {
+      track: sinon.stub()
+    });
+
     stubAll({ isolatedSystem: this.system });
 
     // TODO: Test RichTextEditor without any HOCs here and test HOC separately.
@@ -67,6 +71,12 @@ describe('Toolbar', () => {
 
     this.props = {
       field: this.field,
+      entry: {
+        getSys: sinon.stub().returns({
+          id: 'ENTRY_ID',
+          contentType: { sys: { id: 'CT_Id' } }
+        })
+      },
       onChange: sinon.spy(),
       onAction: sinon.spy(),
       features: { embedInlineEntry: true }
