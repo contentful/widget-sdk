@@ -27,6 +27,7 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import UserSpaceMemberships from './UserSpaceMemberships/UserSpaceMemberships.es6';
 import UserSsoInfo from './SSO/UserSsoInfo.es6';
 import RemoveOrgMemberDialog from '../RemoveUserDialog.es6';
+import ChangeOwnRoleConfirmation from './ChangeOwnRoleConfirmation.es6';
 
 const ServicesConsumer = require('../../../../reactServiceContext').default;
 
@@ -52,7 +53,8 @@ class UserDetail extends React.Component {
   };
 
   currentUser = getValue(this.props.$services.TokenStore.user$);
-  isSelf = this.currentUser && this.currentUser.sys.id === this.props.initialMembership.sys.id;
+  isSelf =
+    this.currentUser && this.currentUser.sys.id === this.props.initialMembership.sys.user.sys.id;
 
   endpoint = createOrganizationEndpoint(this.props.orgId);
 
@@ -89,6 +91,27 @@ class UserDetail extends React.Component {
       sys: { id, version }
     } = oldMembership;
     let updatedMembership;
+
+    // role is not changing
+    if (oldMembership.role === role) {
+      return;
+    }
+
+    // user is changing their own role
+    if (this.isSelf) {
+      const confirmation = await ModalLauncher.open(({ isShown, onClose }) => (
+        <ChangeOwnRoleConfirmation
+          isShown={isShown}
+          onClose={onClose}
+          newRole={role}
+          oldRole={oldMembership.role}
+        />
+      ));
+
+      if (!confirmation) {
+        return;
+      }
+    }
 
     try {
       updatedMembership = await updateMembership(this.endpoint, { id, role, version });
@@ -166,7 +189,7 @@ class UserDetail extends React.Component {
                     </React.Fragment>
                   )}
                   <dt>{isPending(user) ? 'Invited at' : 'Member since'}</dt>
-                  <dd>{moment(membership.sys.createdAt).format('MMMM Do YYYY')}</dd>
+                  <dd>{moment(membership.sys.createdAt).format('MMMM DD, YYYY')}</dd>
                   <dt>Invited by</dt>
                   <dd>{getUserName(createdBy)}</dd>
                 </dl>

@@ -200,7 +200,7 @@ class UserSpaceMemberships extends React.Component {
             .join(', ')}
         </TableCell>
         <TableCell>{getUserName(membership.sys.createdBy)}</TableCell>
-        <TableCell>{moment(membership.sys.createdAt).format('MMMM Do YYYY')}</TableCell>
+        <TableCell>{moment(membership.sys.createdAt).format('MMMM DD, YYYY')}</TableCell>
         <TableCell align="right">
           <SpaceMembershipDropDown
             membership={membership}
