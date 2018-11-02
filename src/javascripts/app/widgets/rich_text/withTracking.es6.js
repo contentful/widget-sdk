@@ -30,7 +30,8 @@ export default function withTracking(Component) {
         isFullscreen: false,
         characterCountBefore: null,
         characterCountAfter: null,
-        characterCountSelection: null
+        characterCountSelection: null,
+        additionalData: data
       });
     }
 
