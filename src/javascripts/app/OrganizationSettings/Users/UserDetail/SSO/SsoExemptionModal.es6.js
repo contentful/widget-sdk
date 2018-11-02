@@ -14,7 +14,7 @@ export default class SseExemptionModal extends React.Component {
   render() {
     const { membership, isShown, onClose } = this.props;
     const { exemptionReasons } = membership.sys.sso;
-    const userName = membership.sys.user.firstName;
+    const user = membership.sys.user;
     const exemptionReasonsMap = {
       userIsOwner: `The user is an owner of the organization`,
       userHasMultipleOrganizationMemberships: `The user belongs to more than one Contentful organization`,
@@ -27,10 +27,11 @@ export default class SseExemptionModal extends React.Component {
     return (
       <Modal isShown={isShown} onClose={onClose} title="SSO exemption">
         <div>
-          <p>{`We can't enforce ${userName} to login via SSO`}</p>
           <p>
-            Users can continue logging into Contentful via email and third-party services even when
-            the{' '}
+            {`We can't enforce login via SSO on ${user.firstName ? user.firstName : user.email}`}.
+          </p>
+          <p>
+            Users can continue logging into Contentful via email and third-party services even when{' '}
             <a
               href="https://www.contentful.com/faq/sso/#how-does-sso-restricted-mode-work"
               rel="noopener noreferrer"
@@ -39,7 +40,7 @@ export default class SseExemptionModal extends React.Component {
             </a>{' '}
             is enabled if they fall into one or more of the following conditions:
           </p>
-          <ul>
+          <ul style={{ marginBottom: 20 }}>
             {Object.keys(exemptionReasonsMap)
               .sort((a, b) => {
                 return exemptionReasons.indexOf(b) - exemptionReasons.indexOf(a);
@@ -47,7 +48,13 @@ export default class SseExemptionModal extends React.Component {
               .map(reason => (
                 <li key={reason} style={{ opacity: includesReason(reason) ? '1' : '0.5' }}>
                   • {exemptionReasonsMap[reason]}{' '}
-                  {includesReason(reason) && <Icon icon="CheckCircle" />}
+                  {includesReason(reason) && (
+                    <Icon
+                      icon="CheckCircle"
+                      color="positive"
+                      style={{ verticalAlign: 'text-bottom' }}
+                    />
+                  )}
                 </li>
               ))}
           </ul>

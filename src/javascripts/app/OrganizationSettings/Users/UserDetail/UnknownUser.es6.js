@@ -9,10 +9,10 @@ export default class UnknownUser extends React.Component {
   render() {
     return (
       <Tooltip content={`This user is no longer a member of your organization`}>
-        <React.Fragment>
+        <span style={{ whiteSpace: 'nowrap' }}>
           <Icon icon="ErrorCircle" color="muted" style={{ verticalAlign: 'bottom' }} />{' '}
           <Tag tagType="muted">{this.props.id}</Tag>
-        </React.Fragment>
+        </span>
       </Tooltip>
     );
   }

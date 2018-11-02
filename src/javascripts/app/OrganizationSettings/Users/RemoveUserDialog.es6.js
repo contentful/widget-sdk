@@ -19,15 +19,14 @@ export default class RemoveUserDialog extends React.Component {
         title="Remove user from the organization"
         intent="negative"
         isShown={isShown}
+        confirmLabel="Remove"
         onConfirm={() => onClose(true)}
         onCancel={() => onClose(false)}>
         <React.Fragment>
           <p>
-            You are about to remove {user.firstName} {user.lastName} from your organization.
-          </p>
-          <p>
-            After removal this user will not be able to access this organization in any way. Do you
-            want to proceed?
+            Are you sure you want to remove{' '}
+            {user.firstName ? `${user.firstName} ${user.lastName}` : user.email} from the
+            organization?
           </p>
         </React.Fragment>
       </ModalConfirm>

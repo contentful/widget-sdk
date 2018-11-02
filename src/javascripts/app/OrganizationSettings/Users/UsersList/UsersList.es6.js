@@ -9,7 +9,6 @@ import {
   TableHead,
   TableBody,
   TableCell,
-  Pill,
   Button,
   TextInput,
   Icon
@@ -180,13 +179,9 @@ class UsersList extends React.Component {
                 {usersList.map(membership => (
                   <TableRow key={membership.sys.id} className="membership-list__item">
                     <TableCell>
-                      {membership.sys.user.firstName ? (
-                        <a href={this.getLinkToUser(membership)}>
-                          <UserCard user={membership.sys.user} />
-                        </a>
-                      ) : (
-                        <Pill label="Invited" />
-                      )}
+                      <a href={this.getLinkToUser(membership)}>
+                        <UserCard user={membership.sys.user} />
+                      </a>
                     </TableCell>
                     <TableCell>{startCase(membership.role)}</TableCell>
                     <TableCell>{getLastActivityDate(membership)}</TableCell>

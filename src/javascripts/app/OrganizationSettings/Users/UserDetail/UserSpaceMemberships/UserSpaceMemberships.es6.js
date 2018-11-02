@@ -23,6 +23,8 @@ import {
   ModalConfirm,
   Button
 } from '@contentful/ui-component-library';
+import { getUserName } from '../../UserUtils.es6';
+import moment from 'moment';
 
 const ServicesConsumer = require('../../../../../reactServiceContext').default;
 
@@ -179,7 +181,7 @@ class UserSpaceMemberships extends React.Component {
     if (spaces.length === 0) {
       return 'There are no spaces available. Please create a space first';
     } else if (availableSpaces.length === 0) {
-      return `${user.firstName} is already a member of all spaces`;
+      return `${user.firstName ? user.firstName : user.email} is already a member of all spaces`;
     }
 
     return null;
@@ -196,6 +198,8 @@ class UserSpaceMemberships extends React.Component {
             .map(role => role.name)
             .join(', ')}
         </TableCell>
+        <TableCell>{getUserName(membership.sys.createdBy)}</TableCell>
+        <TableCell>{moment(membership.sys.createdAt).format('MMMM Do YYYY')}</TableCell>
         <TableCell align="right">
           <SpaceMembershipDropDown
             membership={membership}
@@ -235,9 +239,11 @@ class UserSpaceMemberships extends React.Component {
           <Table style={{ marginBottom: 20, tableLayout: 'fixed' }}>
             <TableHead>
               <TableRow>
-                <TableCell width="30%">Space</TableCell>
-                <TableCell>Roles</TableCell>
-                <TableCell width="40%" />
+                <TableCell>Space</TableCell>
+                <TableCell>Space roles</TableCell>
+                <TableCell>Created by</TableCell>
+                <TableCell>Created at</TableCell>
+                <TableCell width="200px" />
               </TableRow>
             </TableHead>
             <TableBody>

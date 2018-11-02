@@ -1,4 +1,6 @@
+import React from 'react';
 import moment from 'moment';
+import UnknownUser from './UserDetail/UnknownUser.es6';
 
 /**
  * Return a relative time since the last activity of an
@@ -17,6 +19,10 @@ export function getLastActivityDate(membership) {
     : 'Not available';
 }
 
-export function getUserName({ firstName, lastName }) {
-  return `${firstName} ${lastName}`;
+export function getUserName({ firstName, lastName, sys }) {
+  if (firstName) {
+    return `${firstName} ${lastName}`;
+  } else {
+    return <UnknownUser id={sys.id} />;
+  }
 }

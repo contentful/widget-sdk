@@ -27,7 +27,6 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import UserSpaceMemberships from './UserSpaceMemberships/UserSpaceMemberships.es6';
 import UserSsoInfo from './SSO/UserSsoInfo.es6';
 import RemoveOrgMemberDialog from '../RemoveUserDialog.es6';
-import UnknownUser from './UnknownUser.es6';
 
 const ServicesConsumer = require('../../../../reactServiceContext').default;
 
@@ -171,13 +170,7 @@ class UserDetail extends React.Component {
                   <dt>{isPending(user) ? 'Invited at' : 'Member since'}</dt>
                   <dd>{moment(membership.sys.createdAt).format('MMMM Do YYYY')}</dd>
                   <dt>Invited by</dt>
-                  <dd>
-                    {isPending(createdBy) ? (
-                      <UnknownUser id={createdBy.sys.id} />
-                    ) : (
-                      getUserName(createdBy)
-                    )}
-                  </dd>
+                  <dd>{getUserName(createdBy)}</dd>
                 </dl>
               </section>
               {membership.sys.sso && (
