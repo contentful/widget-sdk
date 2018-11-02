@@ -1,14 +1,14 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import { toKeyCode } from 'is-hotkey';
-import { forEach } from 'lodash';
+import { parseHotkey } from 'is-hotkey';
+import { mapValues, forEach, upperFirst } from 'lodash';
 
 import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types';
 
 import * as sinon from 'helpers/sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
-import { document, block, inline, text, getWithId, keyChord } from '../helpers';
+import { document, block, inline, text, getWithId } from '../helpers';
 import { stubAll, setupWidgetApi, createSandbox, ENTRY } from '../setup';
 import flushPromises from '../../../helpers/flushPromises';
 
@@ -54,9 +54,9 @@ describe('Toolbar', () => {
         open: () => Promise.resolve([this.selectedEntity])
       }
     });
-    this.hyperlinkData = {};
+    this.openHyperlinkDialog = sinon.stub();
     this.system.set('app/widgets/WidgetApi/dialogs/openHyperlinkDialog.es6', {
-      default: () => Promise.resolve(this.hyperlinkData)
+      default: this.openHyperlinkDialog
     });
     stubAll({ isolatedSystem: this.system });
 
@@ -83,22 +83,44 @@ describe('Toolbar', () => {
     };
     this.mount();
 
-    this.embedEntryBlock = async entity => {
-      this.selectedEntity = entity;
-      await triggerDropdownButton(this.wrapper, 'toolbar-entry-dropdown-toggle');
-      await triggerToolbarIcon(this.wrapper, BLOCKS.EMBEDDED_ENTRY);
-    };
+    this.setup = () => {
+      let api = {};
+      const editorNode = getWithId(this.wrapper, 'editor');
+      const promises = [];
+      const chainableApiFn = fn => (...args) => {
+        let lastPromise = promises[promises.length - 1] || Promise.resolve();
+        lastPromise = lastPromise.then(() => {
+          return fn(...args);
+        });
+        promises.push(lastPromise);
+        return Object.assign(Promise.all(promises), api);
+      };
+      const embedEntity = async (entity, nodeType) => {
+        this.selectedEntity = entity;
+        await triggerDropdownButton(this.wrapper, 'toolbar-entry-dropdown-toggle');
+        await triggerToolbarIcon(this.wrapper, nodeType);
+      };
 
-    this.embedAssetBlock = async asset => {
-      this.selectedEntity = asset;
-      await triggerDropdownButton(this.wrapper, 'toolbar-entry-dropdown-toggle');
-      await triggerToolbarIcon(this.wrapper, BLOCKS.EMBEDDED_ASSET);
-    };
+      api.focus = () => editorNode.getDOMNode().click();
+      api.clickIcon = async type => await triggerToolbarIcon(this.wrapper, type);
+      api.embedEntryBlock = entry => embedEntity(entry, BLOCKS.EMBEDDED_ENTRY);
+      api.embedInlineEntry = entry => embedEntity(entry, INLINES.EMBEDDED_ENTRY);
+      api.embedAssetBlock = asset => embedEntity(asset, BLOCKS.EMBEDDED_ASSET);
+      api.typeText = text => editorNode.simulate('beforeinput', { data: text });
+      api.pressKeys = keys => {
+        const event = {
+          ...parseHotkey(keys, { byKey: true }),
+          ...parseHotkey(keys)
+        };
+        event.key = upperFirst(event.key);
+        editorNode.simulate('keyDown', event);
+      };
+      api.pressEnter = api.pressKeys.bind(null, 'enter');
+      api.pressTab = api.pressKeys.bind(null, 'tab');
+      api.pressBackspace = api.pressKeys.bind(null, 'backspace');
 
-    this.embedInlineEntry = async entry => {
-      this.selectedEntity = entry;
-      await triggerDropdownButton(this.wrapper, 'toolbar-entry-dropdown-toggle');
-      await triggerToolbarIcon(this.wrapper, INLINES.EMBEDDED_ENTRY);
+      api = mapValues(api, fn => chainableApiFn(fn));
+      return { editor: api };
     };
   });
 
@@ -107,7 +129,7 @@ describe('Toolbar', () => {
     this.sandbox.remove();
   });
 
-  describe('Hyperlink', function() {
+  describe('Hyperlink', () => {
     forEach(
       {
         [INLINES.HYPERLINK]: {
@@ -140,19 +162,21 @@ describe('Toolbar', () => {
   });
 
   function itSupportsHyperlinkOfType(dialogData, linkType) {
-    it(`supports "${linkType}" type hyperlink `, async function() {
-      this.hyperlinkData = { text: 'a hyperlink', ...dialogData };
+    it(`supports "${linkType}" type hyperlink `, async function({ editor }) {
+      this.openHyperlinkDialog.returns(Promise.resolve({ text: 'a hyperlink', ...dialogData }));
       const { target, uri } = dialogData;
       const expectedLinkData = target ? { target } : { uri };
-      await triggerToolbarIcon(this.wrapper, INLINES.HYPERLINK);
+
+      await editor.clickIcon(INLINES.HYPERLINK);
       await flushPromises();
+
       expect(this.field.getValue()).toEqual(
         document(
           block(
             BLOCKS.PARAGRAPH,
             {},
             text(),
-            inline(linkType, expectedLinkData, text(this.hyperlinkData.text)),
+            inline(linkType, expectedLinkData, text('a hyperlink')),
             text()
           )
         )
@@ -160,13 +184,13 @@ describe('Toolbar', () => {
     });
   }
 
-  describe('Embed Dropdown', function() {
+  describe('Embed Dropdown', () => {
     it('renders the embed dropdown', async function() {
       await triggerDropdownButton(this.wrapper, 'toolbar-entry-dropdown-toggle');
       expect(getWithId(this.wrapper, 'cf-ui-dropdown-list').getDOMNode()).toBeDefined();
     });
 
-    it('renders the embed block button', async function() {
+    it('inserts the embed block button', async function() {
       this.props.field.validations = [{ enabledNodeTypes: ['embedded-entry-block'] }];
       this.mount({ ...this.props, features: { embedInlineEntry: false } });
       expect(
@@ -176,13 +200,9 @@ describe('Toolbar', () => {
     });
   });
 
-  describe('EmbeddedEntryBlock', function() {
-    it('renders block', async function() {
-      await this.embedEntryBlock(ENTRY);
-
-      // TODO: Why do we need this, can we move it into a single descriptive fn in all tests?
-      const editor = getWithId(this.wrapper, 'editor');
-      editor.getDOMNode().click();
+  describe('EmbeddedEntryBlock', () => {
+    it('inserts block', async function({ editor }) {
+      await editor.embedEntryBlock(ENTRY);
 
       expect(this.field.getValue()).toEqual(
         document(newEmbeddedEntityBlock(ENTRY), EMPTY_PARAGRAPH)
@@ -190,32 +210,30 @@ describe('Toolbar', () => {
     });
   });
 
-  describe('EmbeddedAssetBlock', function() {
-    it('renders block', async function() {
-      const editor = getWithId(this.wrapper, 'editor');
-      await this.embedAssetBlock(ASSET);
-      editor.getDOMNode().click();
+  describe('EmbeddedAssetBlock', () => {
+    it('inserts block', async function({ editor }) {
+      await editor.embedAssetBlock(ASSET);
+
       expect(this.field.getValue()).toEqual(
         document(newEmbeddedEntityBlock(ASSET), EMPTY_PARAGRAPH)
       );
     });
   });
 
-  describe('EmbeddedEntryInline', function() {
-    it('renders inline entry', async function() {
-      const editor = getWithId(this.wrapper, 'editor');
-      await this.embedInlineEntry(ENTRY);
-      editor.getDOMNode().click();
+  describe('EmbeddedEntryInline', () => {
+    it('inserts inline entry', async function({ editor }) {
+      await editor.embedInlineEntry(ENTRY);
+
       expect(this.field.getValue()).toEqual(
         document(block(BLOCKS.PARAGRAPH, {}, text(), newEmbeddedEntryInline(ENTRY), text()))
       );
     });
   });
 
-  describe('List', function() {
+  describe('List', () => {
     [BLOCKS.OL_LIST, BLOCKS.UL_LIST].forEach(function(listType) {
-      it(`renders ${listType}`, async function() {
-        await triggerToolbarIcon(this.wrapper, listType);
+      it(`inserts ${listType}`, async function({ editor }) {
+        await editor.clickIcon(listType);
 
         expect(this.field.getValue()).toEqual(
           document(
@@ -225,24 +243,19 @@ describe('Toolbar', () => {
         );
       });
 
-      it(`removes empty ${listType} after second click`, async function() {
-        await triggerToolbarIcon(this.wrapper, listType);
-        await triggerToolbarIcon(this.wrapper, listType);
+      it(`removes empty ${listType} after second click`, async function({ editor }) {
+        await editor.clickIcon(listType).clickIcon(listType);
+
         expect(this.field.getValue()).toEqual(document(EMPTY_PARAGRAPH, EMPTY_PARAGRAPH));
       });
 
-      it('inserts text into list-item', async function() {
-        const editor = getWithId(this.wrapper, 'editor');
-        editor.getDOMNode().click();
-        await triggerToolbarIcon(this.wrapper, listType);
+      it('inserts text into list-item', async function({ editor }) {
+        await editor
+          .clickIcon(listType)
+          .typeText('a')
+          .typeText('b')
+          .pressEnter();
 
-        editor.simulate('beforeinput', { data: 'a' });
-        editor.simulate('beforeinput', { data: 'b' });
-
-        editor.simulate('keydown', {
-          key: 'Enter',
-          keyCode: toKeyCode('enter')
-        });
         expect(this.field.getValue()).toEqual(
           document(
             block(
@@ -256,21 +269,12 @@ describe('Toolbar', () => {
         );
       });
 
-      it('inserts nested list-item when tab is pressed', async function() {
-        const editor = getWithId(this.wrapper, 'editor');
-        editor.getDOMNode().click();
-        await triggerToolbarIcon(this.wrapper, listType);
-
-        editor.simulate('beforeinput', { data: 'a' });
-        editor.simulate('keydown', {
-          key: 'Enter',
-          keyCode: toKeyCode('enter')
-        });
-
-        editor.simulate('keydown', {
-          key: 'Tab',
-          keyCode: toKeyCode('tab')
-        });
+      it('inserts nested list-item when tab is pressed', async function({ editor }) {
+        await editor
+          .clickIcon(listType)
+          .typeText('a')
+          .pressEnter()
+          .pressTab();
 
         expect(this.field.getValue()).toEqual(
           document(
@@ -289,12 +293,8 @@ describe('Toolbar', () => {
         );
       });
 
-      it('inserts an embedded entry into list-item', async function() {
-        const editor = getWithId(this.wrapper, 'editor');
-        editor.getDOMNode().click();
-        await triggerToolbarIcon(this.wrapper, listType);
-        await this.embedEntryBlock(ENTRY);
-        editor.getDOMNode().click();
+      it('inserts an embedded entry into list-item', async function({ editor }) {
+        await editor.clickIcon(listType).embedEntryBlock(ENTRY);
 
         expect(this.field.getValue()).toEqual(
           document(
@@ -308,12 +308,8 @@ describe('Toolbar', () => {
         );
       });
 
-      it('inserts an inline entry into list-item', async function() {
-        const editor = getWithId(this.wrapper, 'editor');
-        editor.getDOMNode().click();
-        await triggerToolbarIcon(this.wrapper, listType);
-        await this.embedInlineEntry(ENTRY);
-        editor.getDOMNode().click();
+      it('inserts an inline entry into list-item', async function({ editor }) {
+        await editor.clickIcon(listType).embedInlineEntry(ENTRY);
 
         expect(this.field.getValue()).toEqual(
           document(
@@ -331,15 +327,16 @@ describe('Toolbar', () => {
         );
       });
 
-      xit("doesn't duplicate inline entry on the next line", async function() {
-        const editor = getWithId(this.wrapper, 'editor');
-        editor.getDOMNode().click();
-        await triggerToolbarIcon(this.wrapper, listType);
-        await this.embedInlineEntry(ENTRY);
+      // TODO: Why is this test disabled?
+      xit("doesn't duplicate inline entry on the next line", async function({ editor }) {
+        await editor
+          .focus()
+          .clickIcon(listType)
+          .embedInlineEntry(ENTRY);
 
         getWithId(this.wrapper, INLINES.EMBEDDED_ENTRY).simulate('click');
 
-        editor.simulate('keyDown', keyChord('enter'));
+        await editor.pressEnter();
 
         expect(this.field.getValue()).toEqual(
           document(
@@ -358,12 +355,8 @@ describe('Toolbar', () => {
         );
       });
 
-      it('inserts quote inside a list-item', async function() {
-        const editor = getWithId(this.wrapper, 'editor');
-        editor.getDOMNode().click();
-        await triggerToolbarIcon(this.wrapper, listType);
-        await triggerToolbarIcon(this.wrapper, BLOCKS.QUOTE);
-        editor.getDOMNode().click();
+      it('inserts quote inside a list-item', async function({ editor }) {
+        await editor.clickIcon(listType).clickIcon(BLOCKS.QUOTE);
 
         expect(this.field.getValue()).toEqual(
           document(
@@ -377,12 +370,11 @@ describe('Toolbar', () => {
         );
       });
 
-      it('inserts a mark inside a list-item', async function() {
-        const editor = getWithId(this.wrapper, 'editor');
-        editor.getDOMNode().click();
-        await triggerToolbarIcon(this.wrapper, listType);
-        await triggerToolbarIcon(this.wrapper, MARKS.CODE);
-        editor.simulate('beforeinput', { data: 'golang' });
+      it('inserts a mark inside a list-item', async function({ editor }) {
+        await editor
+          .clickIcon(listType)
+          .clickIcon(MARKS.CODE)
+          .typeText('golang');
 
         expect(this.field.getValue()).toEqual(
           document(
@@ -402,66 +394,54 @@ describe('Toolbar', () => {
     });
   });
 
-  describe('Quote', function() {
-    it('renders the quote', async function() {
-      await triggerToolbarIcon(this.wrapper, BLOCKS.QUOTE);
+  describe('Quote', () => {
+    it('inserts the quote', async function({ editor }) {
+      await editor.clickIcon(BLOCKS.QUOTE);
       expect(this.field.getValue()).toEqual(
         document(block(BLOCKS.QUOTE, {}, EMPTY_PARAGRAPH), EMPTY_PARAGRAPH)
       );
     });
 
-    it('renders the quote with shortcuts', async function() {
-      const editor = getWithId(this.wrapper, 'editor');
-
-      editor.simulate('keyDown', keyChord('1', { metaKey: true, shiftKey: true }));
-      editor.simulate('beforeinput', { data: 'a' });
+    it('inserts the quote with shortcuts', async function({ editor }) {
+      await editor.pressKeys('cmd+shift+1').typeText('a');
 
       expect(this.field.getValue()).toEqual(
         document(block(BLOCKS.QUOTE, {}, block(BLOCKS.PARAGRAPH, {}, text('a'))), EMPTY_PARAGRAPH)
       );
     });
 
-    it(`removes quote after second click`, async function() {
-      await triggerToolbarIcon(this.wrapper, BLOCKS.QUOTE);
-      await triggerToolbarIcon(this.wrapper, BLOCKS.QUOTE);
+    it(`removes quote after second click`, async function({ editor }) {
+      await editor.clickIcon(BLOCKS.QUOTE).clickIcon(BLOCKS.QUOTE);
+
       expect(this.field.getValue()).toEqual(document(EMPTY_PARAGRAPH, EMPTY_PARAGRAPH));
     });
 
-    it(`removes quote on Backspace`, async function() {
-      const editor = getWithId(this.wrapper, 'editor');
-      await triggerToolbarIcon(this.wrapper, BLOCKS.QUOTE);
-
-      editor.simulate('keydown', keyChord('backspace'));
+    it(`removes quote on Backspace`, async function({ editor }) {
+      await editor.clickIcon(BLOCKS.QUOTE).pressBackspace();
 
       expect(this.field.getValue()).toEqual(document(EMPTY_PARAGRAPH));
     });
   });
 
-  describe('Marks', function() {
-    const modifier = { metaKey: true };
+  describe('Marks', () => {
     const marks = [
-      { mark: MARKS.BOLD, event: { key: 'b', modifier } },
-      { mark: MARKS.CODE, event: { key: '/', modifier } },
-      { mark: MARKS.ITALIC, event: { key: 'i', modifier } },
-      { mark: MARKS.UNDERLINE, event: { key: 'u', modifier } }
+      { mark: MARKS.BOLD, shortcut: 'cmd+b' },
+      { mark: MARKS.CODE, shortcut: 'cmd+/' },
+      { mark: MARKS.ITALIC, shortcut: 'cmd+i' },
+      { mark: MARKS.UNDERLINE, shortcut: 'cmd+u' }
     ];
 
-    marks.forEach(({ mark, event: { key, modifier } }) => {
-      it(`renders the ${mark} mark`, async function() {
-        const editor = getWithId(this.wrapper, 'editor');
+    marks.forEach(({ mark, shortcut }) => {
+      it(`inserts the ${mark} mark`, async function({ editor }) {
+        await editor.clickIcon(mark).typeText('a');
 
-        await triggerToolbarIcon(this.wrapper, mark);
-        editor.simulate('beforeinput', { data: 'a' });
         expect(this.field.getValue()).toEqual(
           document(block(BLOCKS.PARAGRAPH, {}, text('a', [{ type: mark }])))
         );
       });
 
-      it(`renders the ${mark} with shortcut`, async function() {
-        const editor = getWithId(this.wrapper, 'editor');
-
-        editor.simulate('keyDown', keyChord(key, modifier));
-        editor.simulate('beforeinput', { data: 'a' });
+      it(`inserts the ${mark} with shortcut`, async function({ editor }) {
+        await editor.pressKeys(shortcut).typeText('a');
 
         expect(this.field.getValue()).toEqual(
           document(block(BLOCKS.PARAGRAPH, {}, text('a', [{ type: mark }])))
@@ -470,54 +450,46 @@ describe('Toolbar', () => {
     });
   });
 
-  describe('HR', function() {
-    it('renders the HR', async function() {
-      await triggerToolbarIcon(this.wrapper, BLOCKS.HR);
+  describe('HR', () => {
+    it('inserts the HR', async function({ editor }) {
+      await editor.clickIcon(BLOCKS.HR);
       expect(this.field.getValue()).toEqual(document(block(BLOCKS.HR, {}), EMPTY_PARAGRAPH));
     });
   });
 
-  describe('headings', function() {
-    const modifier = {
-      metaKey: true,
-      altKey: true
-    };
+  describe('headings', () => {
     const headings = [
-      { heading: BLOCKS.HEADING_1, event: { key: '1', modifier } },
-      { heading: BLOCKS.HEADING_2, event: { key: '2', modifier } },
-      { heading: BLOCKS.HEADING_3, event: { key: '3', modifier } },
-      { heading: BLOCKS.HEADING_4, event: { key: '4', modifier } },
-      { heading: BLOCKS.HEADING_5, event: { key: '5', modifier } },
-      { heading: BLOCKS.HEADING_6, event: { key: '6', modifier } }
+      { heading: BLOCKS.HEADING_1, shortcut: 'cmd+opt+1' },
+      { heading: BLOCKS.HEADING_2, shortcut: 'cmd+opt+2' },
+      { heading: BLOCKS.HEADING_3, shortcut: 'cmd+opt+3' },
+      { heading: BLOCKS.HEADING_4, shortcut: 'cmd+opt+4' },
+      { heading: BLOCKS.HEADING_5, shortcut: 'cmd+opt+5' },
+      { heading: BLOCKS.HEADING_6, shortcut: 'cmd+opt+6' }
     ];
 
-    headings.forEach(function({ heading, event: { key, modifier } }, index) {
-      it(`renders ${heading}`, async function() {
-        const editor = getWithId(this.wrapper, 'editor');
+    headings.forEach(function({ heading, shortcut }, index) {
+      it(`inserts ${heading}`, async function({ editor }) {
         const dropdown = getWithId(this.wrapper, 'toolbar-heading-toggle');
-
         dropdown.simulate('mousedown');
         getWithId(this.wrapper, `heading-${index + 1}`)
           .find('[data-test-id="cf-ui-dropdown-list-item-button"]')
           .first()
           .simulate('mousedown');
         await flushPromises();
-        editor.simulate('beforeinput', { data: 'a' });
+        await editor.typeText('a');
 
         expect(this.field.getValue()).toEqual(document(block(heading, {}, text('a'))));
       });
 
-      it(`renders the ${heading} with shortcut`, async function() {
-        const editor = getWithId(this.wrapper, 'editor');
-
-        editor.simulate('keyDown', keyChord(key, modifier));
-        editor.simulate('beforeinput', { data: 'a' });
+      it(`inserts ${heading} with shortcut`, async function({ editor }) {
+        await editor.pressKeys(shortcut).typeText('a');
 
         expect(this.field.getValue()).toEqual(document(block(heading, {}, text('a'))));
       });
     });
   });
 });
+
 function newEmbeddedEntityBlock(entity) {
   const { id, type: linkType } = entity.sys;
   const data = {
