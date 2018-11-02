@@ -166,7 +166,7 @@ class SpaceMembershipEditor extends React.Component {
             </Select>
           )}
         </TableCell>
-        <TableCell>
+        <TableCell colSpan="2">
           <SpaceRoleEditor
             isDisabled={!selectedSpace}
             options={roles}
@@ -174,7 +174,7 @@ class SpaceMembershipEditor extends React.Component {
             onChange={this.setRoles}
           />
         </TableCell>
-        <TableCell align="right">
+        <TableCell align="right" colSpan="2">
           <Button
             style={{ marginRight: '10px' }}
             buttonType="positive"
