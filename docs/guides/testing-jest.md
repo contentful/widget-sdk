@@ -133,12 +133,12 @@ That's enought for most non-interactive components:
 import { shallow } from 'enzyme';
 
 describe('Label component', () => {
-  it('render a label', () => {
+  it('renders a label', () => {
     const wrapper = shallow(<Label>Hello Jest!</Label>);
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('render a small render', () => {
+  it('renders a small label', () => {
     const wrapper = shallow(<Label small>Hello Jest!</Label>);
     expect(wrapper).toMatchSnapshot();
   });
@@ -150,7 +150,7 @@ describe('Label component', () => {
 You can simulate an event like click or change and then compare component to a snapshot:
 
 ```js
-it('render Markdown in preview mode', () => {
+it('renders Markdown in preview mode', () => {
   const wrapper = shallow(<MarkdownEditor value="*Hello* Jest!" />);
 
   expect(wrapper).toMatchSnapshot();
@@ -166,7 +166,7 @@ it('render Markdown in preview mode', () => {
 Similar to events testing but instead of testing component’s rendered output with a snapshot use Jest’s mock function to test an event handler itself:
 
 ```js
-it('pass a selected value to the onChange handler', () => {
+it('passes a selected value to the onChange handler', () => {
   const value = '2';
   const onChange = jest.fn();
   const wrapper = shallow(<Select items={ITEMS} onChange={onChange} />);
@@ -210,7 +210,7 @@ Refer [Jest Cheet sheet](https://github.com/sapegin/jest-cheat-sheet#async-tests
 [Mock functions docs](https://jestjs.io/docs/en/mock-function-api)
 
 ```js
-it('call the callback', () => {
+it('calls the callback', () => {
   const callback = jest.fn();
   fn(callback);
   expect(callback).toBeCalled();
@@ -231,14 +231,14 @@ Don’t run these tests:
 
 ```js
 describe.skip('makePoniesPink'...
-it.skip('make each pony pink'...
+it.skip('makes each pony pink'...
 ```
 
 Run only these tests:
 
 ```js
 describe.only('makePoniesPink'...
-it.only('make each pony pink'...
+it.only('makes each pony pink'...
 ```
 
 ## Debugging tests

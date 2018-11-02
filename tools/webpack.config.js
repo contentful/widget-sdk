@@ -192,6 +192,7 @@ module.exports = () => {
             // new UglifyJsPlugin({ sourceMap: true })
           ]
     ),
+    // Production:
     // We are using `inline-source-map` instead of `source-map` because
     // the latter fails to produce source maps for some files.
     //
@@ -202,7 +203,11 @@ module.exports = () => {
     // Note that the bundle size for production is unaffected by using
     // inline source maps since the gulp task extracts and removes the
     // inline comments and creates a separate source map file.
-    devtool: isDev ? 'eval-source-map' : 'inline-source-map',
+    //
+    // Development:
+    // We are using `cheap-module-source-map` as this allows us to see
+    // errors and stack traces with Karma rather than just "Script error".
+    devtool: isDev ? 'cheap-module-source-map' : 'inline-source-map',
     stats: {
       // Set the maximum number of modules to be shown
       maxModules: 1
