@@ -221,7 +221,7 @@ registerSchema({
 
 registerSchema({
   name: 'feature_text_editor',
-  version: '2-0-0'
+  version: '2-0-1'
 });
 
 function registerSchema(schema) {
