@@ -82,7 +82,6 @@ class SpaceRoleEditor extends React.Component {
       <Dropdown
         isOpen={this.state.isOpen}
         onClose={this.closeDropdown}
-        position="top-left"
         style={{ maxWidth: '100%' }}
         toggleElement={
           <Button
