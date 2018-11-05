@@ -191,7 +191,7 @@ class ConfirmScreen extends React.Component {
                 <p className="create-space-wizard__info">
                   <span>
                     You&apos;re about to change the space <em>{space.name}</em> from a{' '}
-                    {currentPlan.name} to a {selectedPlan.name} space type.&#32;
+                    {currentPlan.name} to a {selectedPlan.name} space type.{' '}
                   </span>
 
                   {currentPlan.price === 0 && (
@@ -232,7 +232,8 @@ class ConfirmScreen extends React.Component {
                       </Fragment>
                     )}
                   <span>
-                    &#32;the total price of the spaces in your organization to{' '}
+                    {' '}
+                    the total price of the spaces in your organization to{' '}
                     <strong>
                       <Price
                         unit="month"

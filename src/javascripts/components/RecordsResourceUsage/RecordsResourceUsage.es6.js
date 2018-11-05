@@ -91,10 +91,10 @@ export class RecordsResourceUsage extends React.Component {
           'resource-usage--warn': usage / limit >= warnThreshold && usage / limit < errorThreshold,
           'resource-usage--danger': usage / limit >= errorThreshold
         })}>
-        {atLimit && <span>You&apos;ve reached the limit of {limit} entries and assets.&#32;</span>}
+        {atLimit && <span>You&apos;ve reached the limit of {limit} entries and assets. </span>}
         {!atLimit && (
           <span>
-            Usage: {usage} / {limit} entries and assets&#32;
+            Usage: {usage} / {limit} entries and assets{' '}
           </span>
         )}
         {usagePercentage >= warnThreshold && (

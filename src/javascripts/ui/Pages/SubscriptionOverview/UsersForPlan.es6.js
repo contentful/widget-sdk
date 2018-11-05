@@ -19,12 +19,12 @@ function UsersForPlan({ usersMeta, orgId }) {
           <b>
             <Pluralized text="user" count={numTotal} />
           </b>
-          .&#32;
+          .{' '}
         </span>
         {numPaid > 0 && (
           <span>
             You are exceeding the limit of <Pluralized text="free user" count={numFree} /> by{' '}
-            <Pluralized text="user" count={numPaid} />. That is <b>${cost}</b> per month.&#32;
+            <Pluralized text="user" count={numPaid} />. That is <b>${cost}</b> per month.{' '}
           </span>
         )}
         <a
