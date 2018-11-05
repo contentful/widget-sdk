@@ -11,11 +11,11 @@ export default function SidepanelNoOrgs(props) {
       <p className="nav-sidepanel__no-orgs-heading">Uh oh! Nothing to see here</p>
 
       <p>
-        <Fragment>Seems like you aren&apos;t part of any organization.&#32;</Fragment>
+        <Fragment>Seems like you aren&apos;t part of any organization. </Fragment>
         <a className="text-link" onClick={createNewOrg}>
           Create an organization
         </a>
-        <Fragment>&#32;in the settings.</Fragment>
+        <Fragment> in the settings.</Fragment>
       </p>
     </div>
   );

@@ -10,7 +10,7 @@ export default function NoMorePlans({ canSetupBilling }) {
         <span>You&apos;re using the largest space available.</span>
         {canSetupBilling && (
           <span>
-            &#32;
+            {' '}
             <ContactUsButton noIcon /> if you need higher limits.
           </span>
         )}

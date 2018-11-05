@@ -43,7 +43,7 @@ function SpacePlans({
               <b>
                 <Price value={totalCost} />
               </b>{' '}
-              per month.&#32;
+              per month.{' '}
             </span>
           )}
         <a className="text-link" onClick={onCreateSpace}>
@@ -62,7 +62,7 @@ function SpacePlans({
                 </th>
                 <th style={{ width: '25%' }}>Created by</th>
                 <th style={{ width: '15%' }}>Created on</th>
-                <th>&#32;</th>
+                <th> </th>
               </tr>
             </thead>
             <tbody className="table__body">

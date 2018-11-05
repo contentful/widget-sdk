@@ -97,7 +97,7 @@ function Sidebar({ grandTotal, spacePlans, orgId, isOrgOwner, isOrgBillable, bas
           <p>
             {isOrgBillable && 'Do you need to upgrade or downgrade your spaces?'}
             {!isOrgBillable && 'Do you have any questions about our pricing?'}
-            <Fragment>&#32;Don&apos;t hesitate to talk to our customer success team.</Fragment>
+            <Fragment> Don&apos;t hesitate to talk to our customer success team.</Fragment>
           </p>
           <p>
             <ContactUsButton data-test-id="subscription-page.sidebar.contact-link" />
