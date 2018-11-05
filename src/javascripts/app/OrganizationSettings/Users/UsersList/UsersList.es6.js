@@ -49,6 +49,7 @@ class UsersList extends React.Component {
   };
 
   state = {
+    loading: false,
     queryTotal: 0,
     usersList: [],
     filters: this.getInitialFilters(),
@@ -76,12 +77,16 @@ class UsersList extends React.Component {
       skip: pagination.skip,
       limit: pagination.limit
     };
+
+    this.setState({ loading: true });
+
     const { total, items, includes } = await getMemberships(this.endpoint, query);
     const resolved = ResolveLinks({ paths: includePaths, items, includes });
 
     this.setState({
       usersList: resolved,
-      queryTotal: total
+      queryTotal: total,
+      loading: false
     });
   }
 
@@ -147,7 +152,7 @@ class UsersList extends React.Component {
   };
 
   render() {
-    const { queryTotal, usersList, filters, pagination } = this.state;
+    const { queryTotal, usersList, filters, pagination, loading } = this.state;
     const { resource } = this.props;
 
     return (
@@ -231,7 +236,12 @@ class UsersList extends React.Component {
               </TableBody>
             </Table>
 
-            <Pagination {...pagination} total={queryTotal} onChange={this.handlePaginationChange} />
+            <Pagination
+              {...pagination}
+              total={queryTotal}
+              loading={loading}
+              onChange={this.handlePaginationChange}
+            />
           </section>
         </Workbench.Content>
       </Workbench>
