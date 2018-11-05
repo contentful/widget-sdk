@@ -20,12 +20,10 @@ export default class ChangeOwnRoleConfirmation extends React.Component {
         confirmLabel="Change"
         onConfirm={() => onClose(true)}
         onCancel={() => onClose(false)}>
-        <React.Fragment>
-          <p>
-            You are changing your own role from {oldRole} to {newRole}.
-          </p>
-          <p>Are you sure you want to proceed?</p>
-        </React.Fragment>
+        <p>
+          You are changing your own role from {oldRole} to {newRole}.
+        </p>
+        <p>Are you sure you want to proceed?</p>
       </ModalConfirm>
     );
   }

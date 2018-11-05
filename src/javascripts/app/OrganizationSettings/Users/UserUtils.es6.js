@@ -21,7 +21,7 @@ export function getLastActivityDate(membership) {
 
 export function getUserName({ firstName, lastName, sys }) {
   if (firstName) {
-    return `${firstName} ${lastName}`;
+    return <span>{`${firstName} ${lastName}`}</span>;
   } else {
     return <UnknownUser id={sys.id} />;
   }

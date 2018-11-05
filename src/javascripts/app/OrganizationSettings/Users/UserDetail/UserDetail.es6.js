@@ -11,10 +11,10 @@ import { orgRoles } from './OrgRoles.es6';
 import { getUserName } from '../UserUtils.es6';
 
 import {
-  SpaceMembership,
-  OrganizationMembership,
-  Space,
-  SpaceRole,
+  SpaceMembership as SpaceMembershipPropType,
+  OrganizationMembership as OrganizationMembershipPropType,
+  Space as SpacePropType,
+  SpaceRole as SpaceRolePropType,
   User as UserPropType
 } from '../PropTypes.es6';
 import { OrganizationRoleSelector } from './OrganizationRoleSelector.es6';
@@ -38,11 +38,11 @@ class UserDetail extends React.Component {
       TokenStore: PropTypes.object,
       OrganizationRoles: PropTypes.object
     }),
-    initialMembership: OrganizationMembership.isRequired,
+    initialMembership: OrganizationMembershipPropType.isRequired,
     createdBy: UserPropType.isRequired,
-    spaceMemberships: PropTypes.arrayOf(SpaceMembership).isRequired,
-    spaces: PropTypes.arrayOf(Space).isRequired,
-    roles: PropTypes.arrayOf(SpaceRole).isRequired,
+    spaceMemberships: PropTypes.arrayOf(SpaceMembershipPropType).isRequired,
+    spaces: PropTypes.arrayOf(SpacePropType).isRequired,
+    roles: PropTypes.arrayOf(SpaceRolePropType).isRequired,
     orgId: PropTypes.string.isRequired
   };
 

@@ -22,13 +22,11 @@ export default class RemoveUserDialog extends React.Component {
         confirmLabel="Remove"
         onConfirm={() => onClose(true)}
         onCancel={() => onClose(false)}>
-        <React.Fragment>
-          <p>
-            Are you sure you want to remove{' '}
-            {user.firstName ? `${user.firstName} ${user.lastName}` : user.email} from the
-            organization?
-          </p>
-        </React.Fragment>
+        <p>
+          Are you sure you want to remove{' '}
+          {user.firstName ? `${user.firstName} ${user.lastName}` : user.email} from the
+          organization?
+        </p>
       </ModalConfirm>
     );
   }
