@@ -6,7 +6,10 @@ Error.stackTraceLimit = 1000;
  * due to asynchronous event handling.
  */
 window.addEventListener('unhandledrejection', ev => {
-  window.__karma__.error(`Unhandled rejection: ${ev.reason.stack}`);
+  // Without this check there will be an error in async tests using `Promise.reject()`
+  if (ev.reason) {
+    window.__karma__.error(`Unhandled rejection: ${ev.reason.stack}`);
+  }
 });
 
 // We import all these modules which have side effects.

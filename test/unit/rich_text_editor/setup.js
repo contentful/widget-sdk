@@ -36,10 +36,6 @@ export const getMockedSpaceContext = ({
 };
 
 export const stubAll = async ({ isolatedSystem }) => {
-  isolatedSystem.set('app/widgets/rich_text/withTracking.es6', {
-    default: component => component
-  });
-
   // TODO: Instead of stubbing all kind of services, stub `buildWidgetApi.es6`!
   isolatedSystem.set('ui/cf/thumbnailHelpers.es6', {});
   isolatedSystem.set('search/EntitySelector/Config.es6', {

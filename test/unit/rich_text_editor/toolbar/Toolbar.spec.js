@@ -4,6 +4,7 @@ import { parseHotkey } from 'is-hotkey';
 import { mapValues, forEach, upperFirst } from 'lodash';
 
 import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types';
+import { actionOrigin } from 'app/widgets/rich_text/plugins/shared/PluginApi.es6';
 
 import * as sinon from 'helpers/sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
@@ -91,11 +92,37 @@ describe('Toolbar', () => {
         { attachTo: this.sandbox }
       );
     };
-    this.mount();
+
+    const embedEntity = async (entity, nodeType) => {
+      this.selectedEntity = entity;
+      await triggerDropdownButton(this.wrapper, 'toolbar-entry-dropdown-toggle');
+      await triggerToolbarIcon(this.wrapper, nodeType);
+    };
+
+    this.editorApi = {};
+    this.editorApi.focus = () => this.editorNode.getDOMNode().click();
+    this.editorApi.clickIcon = async type => await triggerToolbarIcon(this.wrapper, type);
+    this.editorApi.embedEntryBlock = entry => embedEntity(entry, BLOCKS.EMBEDDED_ENTRY);
+    this.editorApi.embedInlineEntry = entry => embedEntity(entry, INLINES.EMBEDDED_ENTRY);
+    this.editorApi.embedAssetBlock = asset => embedEntity(asset, BLOCKS.EMBEDDED_ASSET);
+    this.editorApi.typeText = text => this.editorNode.simulate('beforeinput', { data: text });
+    this.editorApi.pressKeys = async keys => {
+      await flushPromises();
+      const event = {
+        ...parseHotkey(keys, { byKey: true }),
+        ...parseHotkey(keys)
+      };
+      event.key = upperFirst(event.key);
+      this.editorNode.simulate('keyDown', event);
+    };
+    this.editorApi.pressEnter = this.editorApi.pressKeys.bind(null, 'enter');
+    this.editorApi.pressTab = this.editorApi.pressKeys.bind(null, 'tab');
+    this.editorApi.pressBackspace = this.editorApi.pressKeys.bind(null, 'backspace');
 
     this.setup = () => {
-      let api = {};
-      const editorNode = getWithId(this.wrapper, 'editor');
+      this.mount();
+      this.editorNode = getWithId(this.wrapper, 'editor');
+      let editorApi = {};
       const promises = [];
       const chainableApiFn = fn => (...args) => {
         let lastPromise = promises[promises.length - 1] || Promise.resolve();
@@ -103,34 +130,10 @@ describe('Toolbar', () => {
           return fn(...args);
         });
         promises.push(lastPromise);
-        return Object.assign(Promise.all(promises), api);
+        return Object.assign(Promise.all(promises), editorApi);
       };
-      const embedEntity = async (entity, nodeType) => {
-        this.selectedEntity = entity;
-        await triggerDropdownButton(this.wrapper, 'toolbar-entry-dropdown-toggle');
-        await triggerToolbarIcon(this.wrapper, nodeType);
-      };
-
-      api.focus = () => editorNode.getDOMNode().click();
-      api.clickIcon = async type => await triggerToolbarIcon(this.wrapper, type);
-      api.embedEntryBlock = entry => embedEntity(entry, BLOCKS.EMBEDDED_ENTRY);
-      api.embedInlineEntry = entry => embedEntity(entry, INLINES.EMBEDDED_ENTRY);
-      api.embedAssetBlock = asset => embedEntity(asset, BLOCKS.EMBEDDED_ASSET);
-      api.typeText = text => editorNode.simulate('beforeinput', { data: text });
-      api.pressKeys = keys => {
-        const event = {
-          ...parseHotkey(keys, { byKey: true }),
-          ...parseHotkey(keys)
-        };
-        event.key = upperFirst(event.key);
-        editorNode.simulate('keyDown', event);
-      };
-      api.pressEnter = api.pressKeys.bind(null, 'enter');
-      api.pressTab = api.pressKeys.bind(null, 'tab');
-      api.pressBackspace = api.pressKeys.bind(null, 'backspace');
-
-      api = mapValues(api, fn => chainableApiFn(fn));
-      return { editor: api };
+      editorApi = mapValues(this.editorApi, fn => chainableApiFn(fn));
+      return { editor: editorApi };
     };
   });
 
@@ -167,12 +170,12 @@ describe('Toolbar', () => {
           }
         }
       },
-      itSupportsHyperlinkOfType
+      testHyperlink
     );
   });
 
-  function itSupportsHyperlinkOfType(dialogData, linkType) {
-    it(`supports "${linkType}" type hyperlink `, async function({ editor }) {
+  function testHyperlink(dialogData, nodeType) {
+    it(`supports "${nodeType}" type hyperlink `, async function({ editor }) {
       this.openHyperlinkDialog.returns(Promise.resolve({ text: 'a hyperlink', ...dialogData }));
       const { target, uri } = dialogData;
       const expectedLinkData = target ? { target } : { uri };
@@ -186,11 +189,43 @@ describe('Toolbar', () => {
             BLOCKS.PARAGRAPH,
             {},
             text(),
-            inline(linkType, expectedLinkData, text('a hyperlink')),
+            inline(nodeType, expectedLinkData, text('a hyperlink')),
             text()
           )
         )
       );
+    });
+
+    it('logs opening the dialog', async function({ editor }) {
+      this.openHyperlinkDialog.returns(new Promise(() => {}));
+
+      await editor.clickIcon(INLINES.HYPERLINK);
+
+      sinon.assert.calledOnceWith(this.props.onAction, 'openCreateHyperlinkDialog', {
+        origin: 'toolbar-icon'
+      });
+    });
+
+    it('logs dialog cancellation', async function({ editor }) {
+      this.openHyperlinkDialog.returns(Promise.reject());
+
+      await editor.clickIcon(INLINES.HYPERLINK);
+
+      sinon.assert.calledWith(this.props.onAction, 'cancelCreateHyperlinkDialog', {
+        origin: 'toolbar-icon'
+      });
+    });
+
+    it('logs `insert` action on dialog confirmation', async function({ editor }) {
+      this.openHyperlinkDialog.returns(Promise.resolve({ text: 'a hyperlink', ...dialogData }));
+
+      await editor.clickIcon(INLINES.HYPERLINK);
+
+      sinon.assert.calledWith(this.props.onAction, 'insert', {
+        origin: 'toolbar-icon',
+        linkType: dialogData.type,
+        nodeType
+      });
     });
   }
 
@@ -405,25 +440,47 @@ describe('Toolbar', () => {
   });
 
   describe('Quote', () => {
-    it('inserts the quote', async function({ editor }) {
-      await editor.clickIcon(BLOCKS.QUOTE);
-      expect(this.field.getValue()).toEqual(
-        document(block(BLOCKS.QUOTE, {}, EMPTY_PARAGRAPH), EMPTY_PARAGRAPH)
+    const config = {
+      forToolbarIcon: BLOCKS.QUOTE,
+      forShortcut: 'cmd+shift+1'
+    };
+
+    describeAction(`insert quote`, config, ({ actionOrigin }) => {
+      beforeEach(async function() {
+        await this.setup()
+          .editor.triggerAction()
+          .typeText('a quote');
+      });
+
+      itUpdatesFieldValue(
+        document(
+          block(BLOCKS.QUOTE, {}, block(BLOCKS.PARAGRAPH, {}, text('a quote'))),
+          EMPTY_PARAGRAPH
+        )
       );
+
+      itLogsAction('insert', {
+        origin: actionOrigin,
+        nodeType: BLOCKS.QUOTE
+      });
     });
 
-    it('inserts the quote with shortcuts', async function({ editor }) {
-      await editor.pressKeys('cmd+shift+1').typeText('a');
+    describeAction(`remove quote`, config, ({ actionOrigin }) => {
+      beforeEach(async function() {
+        const { editor } = this.setup();
+        await editor.triggerAction();
 
-      expect(this.field.getValue()).toEqual(
-        document(block(BLOCKS.QUOTE, {}, block(BLOCKS.PARAGRAPH, {}, text('a'))), EMPTY_PARAGRAPH)
-      );
-    });
+        this.props.onAction.reset();
 
-    it(`removes quote after second click`, async function({ editor }) {
-      await editor.clickIcon(BLOCKS.QUOTE).clickIcon(BLOCKS.QUOTE);
+        await editor.triggerAction();
+      });
 
-      expect(this.field.getValue()).toEqual(document(EMPTY_PARAGRAPH, EMPTY_PARAGRAPH));
+      itUpdatesFieldValue(document(EMPTY_PARAGRAPH, EMPTY_PARAGRAPH));
+
+      itLogsAction('remove', {
+        origin: actionOrigin,
+        nodeType: BLOCKS.QUOTE
+      });
     });
 
     it(`removes quote on Backspace`, async function({ editor }) {
@@ -434,31 +491,53 @@ describe('Toolbar', () => {
   });
 
   describe('Marks', () => {
-    const marks = [
+    [
       { mark: MARKS.BOLD, shortcut: 'cmd+b' },
       { mark: MARKS.CODE, shortcut: 'cmd+/' },
       { mark: MARKS.ITALIC, shortcut: 'cmd+i' },
       { mark: MARKS.UNDERLINE, shortcut: 'cmd+u' }
-    ];
+    ].forEach(testMark);
+  });
 
-    marks.forEach(({ mark, shortcut }) => {
-      it(`inserts the ${mark} mark`, async function({ editor }) {
-        await editor.clickIcon(mark).typeText('a');
+  function testMark({ mark, shortcut }) {
+    const config = {
+      forToolbarIcon: mark,
+      forShortcut: shortcut
+    };
 
-        expect(this.field.getValue()).toEqual(
-          document(block(BLOCKS.PARAGRAPH, {}, text('a', [{ type: mark }])))
-        );
+    describeAction(`mark as ${mark}`, config, ({ actionOrigin }) => {
+      beforeEach(async function() {
+        await this.setup()
+          .editor.triggerAction()
+          .typeText('a text');
       });
 
-      it(`inserts the ${mark} with shortcut`, async function({ editor }) {
-        await editor.pressKeys(shortcut).typeText('a');
+      itUpdatesFieldValue(document(block(BLOCKS.PARAGRAPH, {}, text('a text', [{ type: mark }]))));
 
-        expect(this.field.getValue()).toEqual(
-          document(block(BLOCKS.PARAGRAPH, {}, text('a', [{ type: mark }])))
-        );
+      itLogsAction('mark', {
+        origin: actionOrigin,
+        markType: mark
       });
     });
-  });
+
+    describeAction(`unmark ${mark}`, config, ({ actionOrigin }) => {
+      beforeEach(async function() {
+        const { editor } = this.setup();
+        await editor.triggerAction();
+
+        this.props.onAction.reset();
+
+        await editor.triggerAction().typeText('a text');
+      });
+
+      itUpdatesFieldValue(document(block(BLOCKS.PARAGRAPH, {}, text('a text', []))));
+
+      itLogsAction('unmark', {
+        origin: actionOrigin,
+        markType: mark
+      });
+    });
+  }
 
   describe('HR', () => {
     it('inserts the HR', async function({ editor }) {
@@ -519,4 +598,32 @@ function newEmbeddedEntryInline(entity) {
     }
   };
   return inline(INLINES.EMBEDDED_ENTRY, data);
+}
+
+function describeAction(description, { forShortcut, forToolbarIcon }, setupTests) {
+  describe(`${description} via toolbar icon`, () => {
+    beforeEach(function() {
+      this.editorApi.triggerAction = () => this.editorApi.clickIcon(forToolbarIcon);
+    });
+    setupTests({ actionOrigin: actionOrigin.TOOLBAR });
+  });
+
+  describe(`${description} via shortcut ${forShortcut}`, () => {
+    beforeEach(function() {
+      this.editorApi.triggerAction = () => this.editorApi.pressKeys(forShortcut);
+    });
+    setupTests({ actionOrigin: actionOrigin.SHORTCUT });
+  });
+}
+
+function itUpdatesFieldValue(expectedValue) {
+  it('updates field value', async function() {
+    expect(this.field.getValue()).toEqual(expectedValue);
+  });
+}
+
+function itLogsAction(action, data) {
+  it('invokes `props.onAction`', async function() {
+    sinon.assert.calledOnceWith(this.props.onAction, action, data);
+  });
 }
