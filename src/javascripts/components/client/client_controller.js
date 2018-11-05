@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('contentful').controller('ClientController', [
   '$scope',
   'require',
@@ -20,6 +18,9 @@ angular.module('contentful').controller('ClientController', [
     );
     const Intercom = require('intercom');
     const EnforcementsService = require('services/EnforcementsService.es6');
+    const syncToRedux = require('ReduxAppActions/syncWithAngular/scopeWatcher.es6').default;
+
+    syncToRedux($scope);
 
     // TODO remove this eventually. All components should access it as a service
     $scope.spaceContext = spaceContext;
