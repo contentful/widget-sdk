@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { get, cloneDeep, isEqual, omit } from 'lodash';
 import spaceContext from 'spaceContext';
 import notification from 'notification';
-import Workbench from 'app/WorkbenchReact.es6';
+import Workbench from 'app/common/Workbench.es6';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils.es6';
 import getExtensionParameterIds from './getExtensionParameterIds.es6';
 import StateLink from 'app/common/StateLink.es6';
@@ -135,12 +135,17 @@ class ExtensionEditor extends React.Component {
     const dirty = this.isDirty();
 
     return (
-      <Workbench
-        title={`Extension: ${this.state.initial.extension.name}${dirty ? '*' : ''}`}
-        icon="page-settings"
-        content={this.renderContent()}
-        actions={this.renderActions(dirty)}
-      />
+      <Workbench>
+        <Workbench.Header>
+          <Workbench.Icon icon="page-settings" />
+          <Workbench.Title>
+            Extension: {this.state.initial.extension.name}
+            {dirty ? '*' : ''}
+          </Workbench.Title>
+          <Workbench.Header.Actions>{this.renderActions(dirty)}</Workbench.Header.Actions>
+        </Workbench.Header>
+        <Workbench.Content>{this.renderContent()}</Workbench.Content>
+      </Workbench>
     );
   }
 }

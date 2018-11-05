@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import Icon from 'ui/Components/Icon.es6';
 
 class Workbench extends React.Component {
@@ -7,6 +8,7 @@ class Workbench extends React.Component {
     title: PropTypes.node,
     icon: PropTypes.string,
     testId: PropTypes.string,
+    className: PropTypes.string,
     children: function(props, propName) {
       let children = props[propName];
       if (!Array.isArray(children)) {
@@ -50,7 +52,7 @@ class Workbench extends React.Component {
   };
 
   render() {
-    const { title, icon, testId, children } = this.props;
+    const { title, icon, testId, children, className } = this.props;
     const header = React.Children.toArray(children).find(child => child.type === Workbench.Header);
     const content = React.Children.toArray(children).find(
       child => child.type === Workbench.Content
@@ -60,7 +62,7 @@ class Workbench extends React.Component {
     );
 
     return (
-      <div className="workbench" data-test-id={testId}>
+      <div className={classNames('workbench', className)} data-test-id={testId}>
         {header && header}
         {!header && (
           <div className="workbench-header__wrapper">
@@ -83,36 +85,30 @@ class Workbench extends React.Component {
   }
 }
 
-Workbench.Header = class Header extends React.Component {
-  static propTypes = {
-    children: PropTypes.node
-  };
-
-  static displayName = 'Workbench.Header';
-
-  render() {
-    return (
-      <div className="workbench-header__wrapper">
-        <header className="workbench-header">{this.props.children}</header>
-      </div>
-    );
-  }
-};
-
-Workbench.Icon = icon => (
-  <div className="workbench-header__icon">
-    <Icon name={icon} />
+Workbench.Header = ({ children }) => (
+  <div className="workbench-header__wrapper">
+    <header className="workbench-header">{children}</header>
   </div>
 );
+Workbench.Header.displayName = 'Workbench.Header';
+Workbench.Header.propTypes = {
+  children: PropTypes.node
+};
 
-Workbench.Title = class Title extends React.Component {
-  static propTypes = {
-    children: PropTypes.node
-  };
+Workbench.Icon = ({ icon }) => (
+  <div className="workbench-header__icon">
+    <Icon name={icon} scale="0.75" />
+  </div>
+);
+Workbench.Icon.displayName = 'Workbench.Icon';
+Workbench.Icon.propTypes = {
+  icon: PropTypes.string.isRequired
+};
 
-  render() {
-    return <h1 className="workbench-header__title">{this.props.children}</h1>;
-  }
+Workbench.Title = ({ children }) => <h1 className="workbench-header__title">{children}</h1>;
+Workbench.Title.displayName = 'Workbench.Title';
+Workbench.Title.propTypes = {
+  children: PropTypes.node
 };
 
 Workbench.Header.Left = class HeaderLeft extends React.Component {
@@ -147,15 +143,25 @@ Workbench.Header.Actions = class HeaderActions extends React.Component {
 
 Workbench.Content = class Content extends React.Component {
   static propTypes = {
+    noSidebar: PropTypes.bool,
+    style: PropTypes.object,
     children: PropTypes.oneOfType([PropTypes.array, PropTypes.element])
   };
 
   static displayName = 'Workbench.Content';
 
   render() {
-    const { children } = this.props;
-
-    return <div className="workbench-main__content">{children}</div>;
+    return (
+      <div
+        style={this.props.style}
+        className={
+          this.props.noSidebar === true
+            ? 'workbench-main__middle-content'
+            : 'workbench-main__content'
+        }>
+        {this.props.children}
+      </div>
+    );
   }
 };
 

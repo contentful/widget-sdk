@@ -3,13 +3,28 @@
 exports[`app/settings/locales/LocalesListPricingTwo should match snapshot 1`] = `
 <Workbench
   className="locale-list entity-list"
-  content={
+>
+  <Workbench.Header>
+    <Workbench.Icon
+      icon="page-settings"
+    />
+    <Workbench.Title>
+      Locales
+      <span
+        className="workbench-header__kb-link"
+      >
+        <KnowledgeBase
+          target="locale"
+        />
+      </span>
+    </Workbench.Title>
+  </Workbench.Header>
+  <Workbench.Content>
     <LocalesTable
       locales={Array []}
     />
-  }
-  icon="page-settings"
-  sidebar={
+  </Workbench.Content>
+  <Workbench.Sidebar>
     <LocalesListSidebar
       canChangeSpace={true}
       insideMasterEnv={true}
@@ -24,18 +39,6 @@ exports[`app/settings/locales/LocalesListPricingTwo should match snapshot 1`] = 
       subscriptionState={Object {}}
       upgradeSpace={[Function]}
     />
-  }
-  title={
-    <React.Fragment>
-      Locales
-      <span
-        className="workbench-header__kb-link"
-      >
-        <KnowledgeBase
-          target="locale"
-        />
-      </span>
-    </React.Fragment>
-  }
-/>
+  </Workbench.Sidebar>
+</Workbench>
 `;

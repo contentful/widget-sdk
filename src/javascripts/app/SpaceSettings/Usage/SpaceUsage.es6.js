@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import * as ReloadNotification from 'ReloadNotification';
 import createResourceService from 'services/ResourceService.es6';
 import { update, add, keyBy, flow, filter } from 'lodash/fp';
-
-import Workbench from 'app/WorkbenchReact.es6';
+import Workbench from 'app/common/Workbench.es6';
 import ResourceUsageList from './ResourceUsageList.es6';
 import SpaceUsageSidebar from './SpaceUsageSidebar.es6';
 
@@ -54,12 +53,18 @@ class SpaceUsage extends React.Component {
   render() {
     const { resources } = this.state;
     return (
-      <Workbench
-        title="Space usage"
-        icon="page-usage"
-        content={<ResourceUsageList resources={resources} />}
-        sidebar={<SpaceUsageSidebar resources={resources} />}
-      />
+      <Workbench>
+        <Workbench.Header>
+          <Workbench.Icon icon="page-usage" />
+          <Workbench.Title>Space usage</Workbench.Title>
+        </Workbench.Header>
+        <Workbench.Content>
+          <ResourceUsageList resources={resources} />
+        </Workbench.Content>
+        <Workbench.Sidebar>
+          <SpaceUsageSidebar resources={resources} />
+        </Workbench.Sidebar>
+      </Workbench>
     );
   }
 }

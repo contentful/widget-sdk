@@ -7,7 +7,7 @@ import { assign } from 'utils/Collections.es6';
 import { caseofEq } from 'sum-types';
 import { href } from 'states/Navigator.es6';
 import { subscription as subscriptionState } from 'ui/NavStates/Org.es6';
-import Workbench from 'app/WorkbenchReact.es6';
+import Workbench from 'app/common/Workbench.es6';
 import { LinkOpen, CodeFragment } from 'ui/Content.es6';
 import {
   Table,
@@ -26,12 +26,18 @@ import { Tooltip } from 'react-tippy';
 
 export default function View({ state, actions }) {
   return (
-    <Workbench
-      title={`Environments`}
-      icon="page-settings"
-      content={<EnvironmentList {...state} {...actions} />}
-      sidebar={<Sidebar {...state} {...actions} />}
-    />
+    <Workbench>
+      <Workbench.Header>
+        <Workbench.Icon icon="page-settings" />
+        <Workbench.Title>Environments</Workbench.Title>
+      </Workbench.Header>
+      <Workbench.Content>
+        <EnvironmentList {...state} {...actions} />
+      </Workbench.Content>
+      <Workbench.Sidebar>
+        <Sidebar {...state} {...actions} />
+      </Workbench.Sidebar>
+    </Workbench>
   );
 }
 View.propTypes = {

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Workbench from 'app/WorkbenchReact.es6';
+import Workbench from 'app/common/Workbench.es6';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
 import LocalesListSidebar from './LocalesListSidebar.es6';
 import LocalesTable from './LocalesTable.es6';
@@ -28,12 +28,15 @@ class LocalesListPricingTwo extends React.Component {
 
   render() {
     return (
-      <Workbench
-        className="locale-list entity-list"
-        title={this.renderTitle()}
-        icon="page-settings"
-        content={<LocalesTable locales={this.props.locales} />}
-        sidebar={
+      <Workbench className="locale-list entity-list">
+        <Workbench.Header>
+          <Workbench.Icon icon="page-settings" />
+          <Workbench.Title>{this.renderTitle()}</Workbench.Title>
+        </Workbench.Header>
+        <Workbench.Content>
+          <LocalesTable locales={this.props.locales} />
+        </Workbench.Content>
+        <Workbench.Sidebar>
           <LocalesListSidebar
             insideMasterEnv={this.props.insideMasterEnv}
             localeResource={this.props.localeResource}
@@ -41,8 +44,8 @@ class LocalesListPricingTwo extends React.Component {
             subscriptionState={this.props.subscriptionState}
             upgradeSpace={this.props.upgradeSpace}
           />
-        }
-      />
+        </Workbench.Sidebar>
+      </Workbench>
     );
   }
 }

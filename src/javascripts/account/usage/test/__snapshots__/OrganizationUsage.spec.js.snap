@@ -2,37 +2,47 @@
 
 exports[`OrganizationUsage should render page without errors 1`] = `
 <Workbench
-  actions={
-    <WorkbenchActions
-      committed={true}
-      flagActive={true}
-      hasSpaces={true}
-      isLoading={false}
-      periods={
-        Array [
-          Object {
-            "endDate": null,
-            "startDate": "1970-01-06",
-            "sys": Object {
-              "id": "0",
-              "type": "UsagePeriod",
-            },
-          },
-          Object {
-            "endDate": "1970-01-05",
-            "startDate": "1969-12-05",
-            "sys": Object {
-              "id": "1",
-              "type": "UsagePeriod",
-            },
-          },
-        ]
-      }
-      selectedPeriodIndex={0}
-      setPeriodIndex={[Function]}
+  testId="organization.usage"
+>
+  <Workbench.Header>
+    <Workbench.Icon
+      icon="page-usage"
     />
-  }
-  content={
+    <Workbench.Title>
+      Usage
+    </Workbench.Title>
+    <HeaderActions>
+      <WorkbenchActions
+        committed={true}
+        flagActive={true}
+        hasSpaces={true}
+        isLoading={false}
+        periods={
+          Array [
+            Object {
+              "endDate": null,
+              "startDate": "1970-01-06",
+              "sys": Object {
+                "id": "0",
+                "type": "UsagePeriod",
+              },
+            },
+            Object {
+              "endDate": "1970-01-05",
+              "startDate": "1969-12-05",
+              "sys": Object {
+                "id": "1",
+                "type": "UsagePeriod",
+              },
+            },
+          ]
+        }
+        selectedPeriodIndex={0}
+        setPeriodIndex={[Function]}
+      />
+    </HeaderActions>
+  </Workbench.Header>
+  <Workbench.Content>
     <WorkbenchContent
       apiRequestIncludedLimit={1000000}
       assetBandwidthIncludedLimit={2000}
@@ -86,11 +96,8 @@ exports[`OrganizationUsage should render page without errors 1`] = `
         }
       }
     />
-  }
-  icon="page-usage"
-  testId="organization.usage"
-  title="Usage"
-/>
+  </Workbench.Content>
+</Workbench>
 `;
 
 exports[`WorkbenchActions should render 1`] = `""`;

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import notification from 'notification';
 import { Button } from '@contentful/ui-component-library';
-import Workbench from 'app/WorkbenchReact.es6';
+import Workbench from 'app/common/Workbench.es6';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
 import LocalesTable from './LocalesTable.es6';
 import StateLink from 'app/common/StateLink.es6';
@@ -165,34 +165,30 @@ LocalesAdvice.propTypes = LocalesListPropTypes;
 class LocalesListPricingOne extends React.Component {
   static propTypes = LocalesListPropTypes;
 
-  renderTitle() {
-    return (
-      <React.Fragment>
-        Locales
-        <span className="workbench-header__kb-link">
-          <KnowledgeBase target="locale" />
-        </span>
-      </React.Fragment>
-    );
-  }
   render() {
     return (
-      <Workbench
-        className="locale-list entity-list"
-        title={this.renderTitle()}
-        icon="page-settings"
-        actions={
-          <AddLocaleButton
-            getComputeLocalesUsageForOrganization={this.props.getComputeLocalesUsageForOrganization}
-          />
-        }
-        content={
-          <React.Fragment>
-            <LocalesTable locales={this.props.locales} />
-            <LocalesAdvice {...this.props} />
-          </React.Fragment>
-        }
-      />
+      <Workbench className="locale-list entity-list">
+        <Workbench.Header>
+          <Workbench.Icon icon="page-settings" />
+          <Workbench.Title>
+            Locales
+            <span className="workbench-header__kb-link">
+              <KnowledgeBase target="locale" />
+            </span>
+          </Workbench.Title>
+          <Workbench.Header.Actions>
+            <AddLocaleButton
+              getComputeLocalesUsageForOrganization={
+                this.props.getComputeLocalesUsageForOrganization
+              }
+            />
+          </Workbench.Header.Actions>
+        </Workbench.Header>
+        <Workbench.Content>
+          <LocalesTable locales={this.props.locales} />
+          <LocalesAdvice {...this.props} />
+        </Workbench.Content>
+      </Workbench>
     );
   }
 }

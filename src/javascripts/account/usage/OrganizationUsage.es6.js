@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import { mapValues, flow, keyBy, get, eq, isNumber, pick } from 'lodash/fp';
 
 import { Spinner } from '@contentful/ui-component-library';
-
-import Workbench from 'app/WorkbenchReact.es6';
+import Workbench from 'app/common/Workbench.es6';
 
 const ServicesConsumer = require('../../reactServiceContext').default;
 
@@ -305,24 +304,25 @@ export class OrganizationUsage extends React.Component {
       hasSpaces
     } = this.state;
     return (
-      <Workbench
-        icon="page-usage"
-        testId="organization.usage"
-        title="Usage"
-        actions={
-          <WorkbenchActions
-            {...{
-              isLoading,
-              hasSpaces,
-              committed,
-              flagActive,
-              periods,
-              selectedPeriodIndex,
-              setPeriodIndex: this.setPeriodIndex
-            }}
-          />
-        }
-        content={
+      <Workbench testId="organization.usage">
+        <Workbench.Header>
+          <Workbench.Icon icon="page-usage" />
+          <Workbench.Title>Usage</Workbench.Title>
+          <Workbench.Header.Actions>
+            <WorkbenchActions
+              {...{
+                isLoading,
+                hasSpaces,
+                committed,
+                flagActive,
+                periods,
+                selectedPeriodIndex,
+                setPeriodIndex: this.setPeriodIndex
+              }}
+            />
+          </Workbench.Header.Actions>
+        </Workbench.Header>
+        <Workbench.Content>
           <WorkbenchContent
             {...{
               committed,
@@ -341,8 +341,8 @@ export class OrganizationUsage extends React.Component {
               resources
             }}
           />
-        }
-      />
+        </Workbench.Content>
+      </Workbench>
     );
   }
 }

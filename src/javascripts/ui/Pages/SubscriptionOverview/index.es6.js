@@ -16,7 +16,7 @@ import { isOwnerOrAdmin, isOwner } from 'services/OrganizationRoles.es6';
 import { calcUsersMeta, calculateTotalPrice } from 'utils/SubscriptionUtils.es6';
 import { openModal as openCommittedSpaceWarningDialog } from 'components/shared/space-wizard/CommittedSpaceWarningModal.es6';
 
-import Workbench from 'ui/Components/Workbench/JSX.es6';
+import Workbench from 'app/common/Workbench.es6';
 
 import BasePlan from './BasePlan.es6';
 import UsersForPlan from './UsersForPlan.es6';

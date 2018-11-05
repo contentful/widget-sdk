@@ -2,39 +2,13 @@
 
 exports[`app/settings/locales/LocalesListPricingOne should match snapshot 1`] = `
 <Workbench
-  actions={
-    <AddLocaleButton
-      getComputeLocalesUsageForOrganization={[Function]}
-    />
-  }
   className="locale-list entity-list"
-  content={
-    <React.Fragment>
-      <LocalesTable
-        locales={Array []}
-      />
-      <LocalesAdvice
-        canChangeSpace={true}
-        canCreateMultipleLocales={true}
-        getComputeLocalesUsageForOrganization={[Function]}
-        insideMasterEnv={true}
-        localeResource={
-          Object {
-            "limits": Object {
-              "maximum": 5,
-            },
-            "usage": 0,
-          }
-        }
-        locales={Array []}
-        subscriptionPlanName="some subscription plan name"
-        subscriptionState={Object {}}
-      />
-    </React.Fragment>
-  }
-  icon="page-settings"
-  title={
-    <React.Fragment>
+>
+  <Workbench.Header>
+    <Workbench.Icon
+      icon="page-settings"
+    />
+    <Workbench.Title>
       Locales
       <span
         className="workbench-header__kb-link"
@@ -43,7 +17,34 @@ exports[`app/settings/locales/LocalesListPricingOne should match snapshot 1`] = 
           target="locale"
         />
       </span>
-    </React.Fragment>
-  }
-/>
+    </Workbench.Title>
+    <HeaderActions>
+      <AddLocaleButton
+        getComputeLocalesUsageForOrganization={[Function]}
+      />
+    </HeaderActions>
+  </Workbench.Header>
+  <Workbench.Content>
+    <LocalesTable
+      locales={Array []}
+    />
+    <LocalesAdvice
+      canChangeSpace={true}
+      canCreateMultipleLocales={true}
+      getComputeLocalesUsageForOrganization={[Function]}
+      insideMasterEnv={true}
+      localeResource={
+        Object {
+          "limits": Object {
+            "maximum": 5,
+          },
+          "usage": 0,
+        }
+      }
+      locales={Array []}
+      subscriptionPlanName="some subscription plan name"
+      subscriptionState={Object {}}
+    />
+  </Workbench.Content>
+</Workbench>
 `;

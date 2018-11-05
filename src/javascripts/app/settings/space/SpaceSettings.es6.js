@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Workbench from 'app/WorkbenchReact.es6';
+import Workbench from 'app/common/Workbench.es6';
 import { Button, TextField } from '@contentful/ui-component-library';
 
 export default class SpaceSettings extends React.Component {
@@ -38,62 +38,49 @@ export default class SpaceSettings extends React.Component {
       });
   };
 
-  renderContent() {
-    return (
-      <React.Fragment>
-        <TextField
-          name="space-id"
-          id="space-id"
-          labelText="Space ID:"
-          value={this.props.spaceId}
-          textInputProps={{
-            disabled: true
-          }}
-          style={{ marginBottom: 20 }}
-        />
-        <TextField
-          name="space-name"
-          id="space-name"
-          labelText="Space name:"
-          value={this.state.spaceName}
-          onChange={this.onChangeSpaceName}
-        />
-      </React.Fragment>
-    );
-  }
-
-  renderActions() {
-    return (
-      <React.Fragment>
-        <Button
-          buttonType="negative"
-          onClick={this.props.onRemoveClick}
-          data-test-id="delete-space">
-          Remove space and all its contents
-        </Button>
-        <Button
-          disabled={this.isSaveDisabled()}
-          onClick={this.onSaveNewName}
-          buttonType="positive"
-          loading={this.state.isSaving}
-          data-test-id="update-space">
-          Save
-        </Button>
-      </React.Fragment>
-    );
-  }
-
   render() {
     return (
-      <div className="workbench space-settings">
-        <Workbench
-          centerContent
-          title="Space settings"
-          icon="page-settings"
-          content={this.renderContent()}
-          actions={this.renderActions()}
-        />
-      </div>
+      <Workbench className="space-settings">
+        <Workbench.Header>
+          <Workbench.Icon icon="page-settings" />
+          <Workbench.Title>Space settings</Workbench.Title>
+          <Workbench.Header.Actions>
+            <Button
+              buttonType="negative"
+              onClick={this.props.onRemoveClick}
+              data-test-id="delete-space">
+              Remove space and all its contents
+            </Button>
+            <Button
+              disabled={this.isSaveDisabled()}
+              onClick={this.onSaveNewName}
+              buttonType="positive"
+              loading={this.state.isSaving}
+              data-test-id="update-space">
+              Save
+            </Button>
+          </Workbench.Header.Actions>
+        </Workbench.Header>
+        <Workbench.Content noSidebar style={{ marginTop: 10 }}>
+          <TextField
+            name="space-id"
+            id="space-id"
+            labelText="Space ID:"
+            value={this.props.spaceId}
+            textInputProps={{
+              disabled: true
+            }}
+            style={{ marginBottom: 20 }}
+          />
+          <TextField
+            name="space-name"
+            id="space-name"
+            labelText="Space name:"
+            value={this.state.spaceName}
+            onChange={this.onChangeSpaceName}
+          />
+        </Workbench.Content>
+      </Workbench>
     );
   }
 }

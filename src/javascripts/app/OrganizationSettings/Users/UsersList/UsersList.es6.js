@@ -16,7 +16,7 @@ import {
 } from '@contentful/ui-component-library';
 import { formatQuery } from './QueryBuilder.es6';
 import ResolveLinks from '../../LinkResolver.es6';
-import Workbench from 'ui/Components/Workbench/JSX.es6';
+import Workbench from 'app/common/Workbench.es6';
 import UserListFilters from './UserListFilters.es6';
 import UserCard from '../UserCard.es6';
 import { href } from 'states/Navigator.es6';

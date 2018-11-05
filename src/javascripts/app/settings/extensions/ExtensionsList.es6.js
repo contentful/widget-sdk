@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import { Button, Dropdown, DropdownList } from '@contentful/ui-component-library';
 import StateLink from 'app/common/StateLink.es6';
-import Workbench from 'app/WorkbenchReact.es6';
+import Workbench from 'app/common/Workbench.es6';
 import spaceContext from 'spaceContext';
 import notification from 'notification';
 import ExtensionsSidebar, { DocsLink } from './ExtensionsSidebar.es6';
@@ -187,13 +187,19 @@ export class ExtensionsList extends React.Component {
 
   render() {
     return (
-      <Workbench
-        title={`Extensions (${this.props.extensions.length})`}
-        icon="page-settings"
-        content={this.renderList()}
-        actions={<ExtensionsActions />}
-        sidebar={<ExtensionsSidebar />}
-      />
+      <Workbench>
+        <Workbench.Header>
+          <Workbench.Icon icon="page-settings" />
+          <Workbench.Title>Extensions ({this.props.extensions.length})</Workbench.Title>
+          <Workbench.Header.Actions>
+            <ExtensionsActions />
+          </Workbench.Header.Actions>
+        </Workbench.Header>
+        <Workbench.Content>{this.renderList()}</Workbench.Content>
+        <Workbench.Sidebar>
+          <ExtensionsSidebar />
+        </Workbench.Sidebar>
+      </Workbench>
     );
   }
 }

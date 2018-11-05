@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { getValue } from 'utils/kefir.es6';
-import Workbench from 'ui/Components/Workbench/JSX.es6';
+import Workbench from 'app/common/Workbench.es6';
 import { go } from 'states/Navigator.es6';
 import { Button, ModalConfirm } from '@contentful/ui-component-library';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
