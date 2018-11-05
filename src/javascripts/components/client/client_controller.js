@@ -18,9 +18,36 @@ angular.module('contentful').controller('ClientController', [
     );
     const Intercom = require('intercom');
     const EnforcementsService = require('services/EnforcementsService.es6');
-    const syncToRedux = require('ReduxAppActions/syncWithAngular/scopeWatcher.es6').default;
+    const store = require('ReduxStore/store.es6').default;
 
-    syncToRedux($scope);
+    $scope.$watchCollection('user', user => {
+      if (user) {
+        store.dispatch({ type: 'ANGULAR_SCOPE_UPDATE', payload: { user } });
+      }
+    });
+
+    $scope.$watchCollection('spaceContext', spaceContext => {
+      if (spaceContext && spaceContext.space) {
+        store.dispatch({
+          type: 'ANGULAR_SCOPE_UPDATE',
+          payload: {
+            organization: spaceContext.organization,
+            environments: spaceContext.environments,
+            space: spaceContext.space.data // redux actions and state only allow serializable properties
+          }
+        });
+      }
+    });
+
+    $scope.$watchGroup(['spaceContext.space', 'user'], ([space, user]) => {
+      if (!space) {
+        store.dispatch({
+          type: 'ANGULAR_SCOPE_UPDATE',
+          payload: { space: null, environments: null, organization: null }
+        });
+      }
+      store.dispatch({ type: 'ANGULAR_SCOPE_UPDATE', payload: { user } });
+    });
 
     // TODO remove this eventually. All components should access it as a service
     $scope.spaceContext = spaceContext;
