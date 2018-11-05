@@ -72,7 +72,7 @@ exports[`SpaceRoleEditor renders the component 1`] = `
       <Dropdown
         isOpen={false}
         onClose={[Function]}
-        position="top-left"
+        position="bottom-left"
         style={
           Object {
             "maxWidth": "100%",
@@ -98,7 +98,7 @@ exports[`SpaceRoleEditor renders the component 1`] = `
           className="Dropdown__Dropdown___1qyn8"
           data-test-id="cf-ui-dropdown"
           onClose={[Function]}
-          position="top-left"
+          position="bottom-left"
           style={
             Object {
               "maxWidth": "100%",
@@ -279,7 +279,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
       <Dropdown
         isOpen={true}
         onClose={[Function]}
-        position="top-left"
+        position="bottom-left"
         style={
           Object {
             "maxWidth": "100%",
@@ -305,7 +305,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
           className="Dropdown__Dropdown___1qyn8"
           data-test-id="cf-ui-dropdown"
           onClose={[Function]}
-          position="top-left"
+          position="bottom-left"
           style={
             Object {
               "maxWidth": "100%",
@@ -408,11 +408,11 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
             </button>
           </Button>
           <div
-            className="Dropdown__Dropdown__container___1wpIB Dropdown__Dropdown__container-position--top-left___3OKuO"
+            className="Dropdown__Dropdown__container___1wpIB Dropdown__Dropdown__container-position--bottom-left___jqo6Y"
             onFocus={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
-            position="top-left"
+            position="bottom-left"
           >
             <InViewport
               offset={0}

@@ -10,7 +10,8 @@ export class OrganizationRoleSelector extends React.Component {
     initialRole: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
     isSelf: PropTypes.bool,
-    disableOwnerRole: PropTypes.bool
+    disableOwnerRole: PropTypes.bool,
+    style: PropTypes.object
   };
 
   state = {
@@ -54,21 +55,20 @@ export class OrganizationRoleSelector extends React.Component {
 
   render() {
     const roles = keyBy(orgRoles, 'value');
+    const { style } = this.props;
 
     return (
-      <React.Fragment>
-        <Dropdown
-          onClose={this.toggle}
-          toggleElement={this.renderToggle()}
-          isOpen={this.state.isOpen}>
-          <DropdownList>
-            {this.renderOption(roles.owner, this.props.disableOwnerRole)}
-            {this.renderOption(roles.admin)}
-            {this.renderOption(roles.member)}
-          </DropdownList>
-        </Dropdown>
-        <p style={{ width: 360, marginTop: 20 }}>{this.getOrgRole().description}</p>
-      </React.Fragment>
+      <Dropdown
+        onClose={this.toggle}
+        toggleElement={this.renderToggle()}
+        isOpen={this.state.isOpen}
+        style={style}>
+        <DropdownList>
+          {this.renderOption(roles.owner, this.props.disableOwnerRole)}
+          {this.renderOption(roles.admin)}
+          {this.renderOption(roles.member)}
+        </DropdownList>
+      </Dropdown>
     );
   }
 }

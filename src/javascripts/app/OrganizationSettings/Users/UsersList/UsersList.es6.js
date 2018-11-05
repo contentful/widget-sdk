@@ -9,7 +9,6 @@ import {
   TableHead,
   TableBody,
   TableCell,
-  Pill,
   Button,
   TextInput,
   Icon
@@ -199,13 +198,9 @@ class UsersList extends React.Component {
                     className="membership-list__item"
                     data-test-id="organization-membership-list-row">
                     <TableCell>
-                      {membership.sys.user.firstName ? (
-                        <a href={this.getLinkToUser(membership)}>
-                          <UserCard user={membership.sys.user} />
-                        </a>
-                      ) : (
-                        <Pill label="Invited" />
-                      )}
+                      <a href={this.getLinkToUser(membership)}>
+                        <UserCard user={membership.sys.user} />
+                      </a>
                     </TableCell>
                     <TableCell>{startCase(membership.role)}</TableCell>
                     <TableCell>{getLastActivityDate(membership)}</TableCell>

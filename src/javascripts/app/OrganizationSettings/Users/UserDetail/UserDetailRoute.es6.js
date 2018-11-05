@@ -16,7 +16,7 @@ import ResolveLinks from '../../LinkResolver.es6';
 const UserDetailFetcher = createFetcherComponent(async ({ orgId, userId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
 
-  const includePaths = ['roles', 'sys.space'];
+  const includePaths = ['roles', 'sys.space', 'sys.createdBy'];
   const membership = await getMembership(endpoint, userId);
   const [user, spaceMembershipsResult, spaces, roles] = await Promise.all([
     getUser(endpoint, membership.sys.user.sys.id),
@@ -28,12 +28,25 @@ const UserDetailFetcher = createFetcherComponent(async ({ orgId, userId }) => {
     getAllSpaces(endpoint),
     getAllRoles(endpoint)
   ]);
+  let createdBy;
+  try {
+    createdBy = await getUser(endpoint, membership.sys.createdBy.sys.id);
+  } catch (e) {
+    createdBy = {
+      firstName: '',
+      lastName: '',
+      avatarUrl: '',
+      email: '',
+      sys: { id: membership.sys.createdBy.sys.id }
+    };
+  }
 
   const { items, includes } = spaceMembershipsResult;
   const spaceMemberships = ResolveLinks({ paths: includePaths, items, includes });
 
   return {
     initialMembership: { ...membership, sys: { ...membership.sys, user } },
+    createdBy,
     spaceMemberships,
     spaces,
     roles

@@ -19,10 +19,12 @@ import {
   TableHead,
   TableBody,
   TableCell,
-  TextLink,
   Tooltip,
-  ModalConfirm
+  ModalConfirm,
+  Button
 } from '@contentful/ui-component-library';
+import { getUserName } from '../../UserUtils.es6';
+import moment from 'moment';
 
 const ServicesConsumer = require('../../../../../reactServiceContext').default;
 
@@ -37,6 +39,7 @@ class UserSpaceMemberships extends React.Component {
     }).isRequired,
     initialMemberships: PropTypes.arrayOf(SpaceMembershipPropType),
     user: UserPropType.isRequired,
+    currentUser: UserPropType,
     orgId: PropTypes.string,
     roles: PropTypes.arrayOf(SpaceRolePropType),
     spaces: PropTypes.arrayOf(SpacePropType)
@@ -81,7 +84,7 @@ class UserSpaceMemberships extends React.Component {
   handleMembershipCreated = newMembership => {
     const { user, $services } = this.props;
     const { memberships } = this.state;
-    const updatedMemberships = [...memberships, newMembership];
+    const updatedMemberships = [newMembership, ...memberships];
 
     this.setState({
       memberships: updatedMemberships,
@@ -179,7 +182,7 @@ class UserSpaceMemberships extends React.Component {
     if (spaces.length === 0) {
       return 'There are no spaces available. Please create a space first';
     } else if (availableSpaces.length === 0) {
-      return `${user.firstName} is already a member of all spaces`;
+      return `${user.firstName ? user.firstName : user.email} is already a member of all spaces`;
     }
 
     return null;
@@ -196,6 +199,8 @@ class UserSpaceMemberships extends React.Component {
             .map(role => role.name)
             .join(', ')}
         </TableCell>
+        <TableCell>{getUserName(membership.sys.createdBy)}</TableCell>
+        <TableCell>{moment(membership.sys.createdAt).format('MMMM DD, YYYY')}</TableCell>
         <TableCell align="right">
           <SpaceMembershipDropDown
             membership={membership}
@@ -210,27 +215,58 @@ class UserSpaceMemberships extends React.Component {
   }
 
   render() {
-    const { user, orgId } = this.props;
+    const { user, currentUser, orgId } = this.props;
     const { memberships, showingForm, editingMembershipId, roles, availableSpaces } = this.state;
     const unavailabilityReason = this.getUnavailabilityReason();
 
     return (
       <section>
+        <header
+          style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+          <h3 style={{ marginBottom: 30 }}>Space memberships</h3>
+          {!showingForm && (
+            <Tooltip content={unavailabilityReason} place="right">
+              <Button
+                size="small"
+                buttonType="primary"
+                disabled={!!unavailabilityReason}
+                onClick={this.showSpaceMembershipEditor}>
+                Add to space
+              </Button>
+            </Tooltip>
+          )}
+        </header>
         {(!!memberships.length || showingForm) && (
           <Table style={{ marginBottom: 20, tableLayout: 'fixed' }}>
             <TableHead>
               <TableRow>
-                <TableCell width="30%">Space</TableCell>
-                <TableCell width="45%">Roles</TableCell>
-                <TableCell />
+                <TableCell>Space</TableCell>
+                <TableCell>Space roles</TableCell>
+                <TableCell>Created by</TableCell>
+                <TableCell>Created at</TableCell>
+                <TableCell width="200px" />
               </TableRow>
             </TableHead>
             <TableBody>
+              {showingForm && (
+                <SpaceMembershipEditor
+                  spaces={availableSpaces}
+                  roles={roles}
+                  currentUser={currentUser}
+                  user={user}
+                  orgId={orgId}
+                  onMembershipCreated={this.handleMembershipCreated}
+                  onSpaceSelected={this.fetchSpaceRoles}
+                  onCancel={this.hideSpaceMembershipEditor}
+                />
+              )}
               {memberships.map(membership => {
                 if (editingMembershipId === membership.sys.id) {
                   return (
                     <SpaceMembershipEditor
+                      key={membership.sys.id}
                       user={user}
+                      currentUser={currentUser}
                       orgId={orgId}
                       initialMembership={membership}
                       roles={roles}
@@ -243,30 +279,8 @@ class UserSpaceMemberships extends React.Component {
                   return this.renderMembershipRow(membership);
                 }
               })}
-              {showingForm && (
-                <SpaceMembershipEditor
-                  spaces={availableSpaces}
-                  roles={roles}
-                  user={user}
-                  orgId={orgId}
-                  onMembershipCreated={this.handleMembershipCreated}
-                  onSpaceSelected={this.fetchSpaceRoles}
-                  onCancel={this.hideSpaceMembershipEditor}
-                />
-              )}
             </TableBody>
           </Table>
-        )}
-
-        {!showingForm && (
-          <Tooltip content={unavailabilityReason} place="right">
-            <TextLink
-              icon="Plus"
-              disabled={!!unavailabilityReason}
-              onClick={this.showSpaceMembershipEditor}>
-              Add to a space
-            </TextLink>
-          </Tooltip>
         )}
       </section>
     );

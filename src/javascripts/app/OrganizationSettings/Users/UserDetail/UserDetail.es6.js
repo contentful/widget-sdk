@@ -4,10 +4,19 @@ import moment from 'moment';
 import { getValue } from 'utils/kefir.es6';
 import Workbench from 'app/common/Workbench.es6';
 import { go } from 'states/Navigator.es6';
-import { Button, ModalConfirm } from '@contentful/ui-component-library';
+import { Button } from '@contentful/ui-component-library';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
+import UserCard from '../UserCard.es6';
+import { orgRoles } from './OrgRoles.es6';
+import { getUserName } from '../UserUtils.es6';
 
-import { SpaceMembership, OrganizationMembership, Space, SpaceRole } from '../PropTypes.es6';
+import {
+  SpaceMembership as SpaceMembershipPropType,
+  OrganizationMembership as OrganizationMembershipPropType,
+  Space as SpacePropType,
+  SpaceRole as SpaceRolePropType,
+  User as UserPropType
+} from '../PropTypes.es6';
 import { OrganizationRoleSelector } from './OrganizationRoleSelector.es6';
 import {
   removeMembership,
@@ -16,6 +25,9 @@ import {
 
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import UserSpaceMemberships from './UserSpaceMemberships/UserSpaceMemberships.es6';
+import UserSsoInfo from './SSO/UserSsoInfo.es6';
+import RemoveOrgMemberDialog from '../RemoveUserDialog.es6';
+import ChangeOwnRoleConfirmation from './ChangeOwnRoleConfirmation.es6';
 
 const ServicesConsumer = require('../../../../reactServiceContext').default;
 
@@ -26,10 +38,11 @@ class UserDetail extends React.Component {
       TokenStore: PropTypes.object,
       OrganizationRoles: PropTypes.object
     }),
-    initialMembership: OrganizationMembership.isRequired,
-    spaceMemberships: PropTypes.arrayOf(SpaceMembership).isRequired,
-    spaces: PropTypes.arrayOf(Space).isRequired,
-    roles: PropTypes.arrayOf(SpaceRole).isRequired,
+    initialMembership: OrganizationMembershipPropType.isRequired,
+    createdBy: UserPropType.isRequired,
+    spaceMemberships: PropTypes.arrayOf(SpaceMembershipPropType).isRequired,
+    spaces: PropTypes.arrayOf(SpacePropType).isRequired,
+    roles: PropTypes.arrayOf(SpaceRolePropType).isRequired,
     orgId: PropTypes.string.isRequired
   };
 
@@ -38,6 +51,10 @@ class UserDetail extends React.Component {
     // Only org owners can create other owners
     disableOwnerRole: false
   };
+
+  currentUser = getValue(this.props.$services.TokenStore.user$);
+  isSelf =
+    this.currentUser && this.currentUser.sys.id === this.props.initialMembership.sys.user.sys.id;
 
   endpoint = createOrganizationEndpoint(this.props.orgId);
 
@@ -52,15 +69,15 @@ class UserDetail extends React.Component {
     return !OrganizationRoles.isOwner(org);
   }
 
-  isSelf() {
-    const currentUser = getValue(this.props.$services.TokenStore.user$);
-    return currentUser && currentUser.sys.id === this.state.membership.sys.user.sys.id;
-  }
-
   getLastActiveDate() {
     const dateString = this.state.membership.sys.lastActiveAt;
 
     return dateString ? moment(dateString, moment.ISO_8601).fromNow() : 'Not available';
+  }
+
+  getRoleDescription() {
+    const { membership } = this.state;
+    return orgRoles.find(role => role.value === membership.role).description;
   }
 
   toggleOrgRoleDropdown() {
@@ -75,6 +92,27 @@ class UserDetail extends React.Component {
     } = oldMembership;
     let updatedMembership;
 
+    // role is not changing
+    if (oldMembership.role === role) {
+      return;
+    }
+
+    // user is changing their own role
+    if (this.isSelf) {
+      const confirmation = await ModalLauncher.open(({ isShown, onClose }) => (
+        <ChangeOwnRoleConfirmation
+          isShown={isShown}
+          onClose={onClose}
+          newRole={role}
+          oldRole={oldMembership.role}
+        />
+      ));
+
+      if (!confirmation) {
+        return;
+      }
+    }
+
     try {
       updatedMembership = await updateMembership(this.endpoint, { id, role, version });
     } catch (e) {
@@ -87,6 +125,7 @@ class UserDetail extends React.Component {
         role,
         sys: {
           ...oldMembership.sys,
+          sso: updatedMembership.sys.sso,
           version: updatedMembership.sys.version
         }
       }
@@ -101,22 +140,7 @@ class UserDetail extends React.Component {
     const { id, user } = this.state.membership.sys;
 
     const confirmation = await ModalLauncher.open(({ isShown, onClose }) => (
-      <ModalConfirm
-        title="Remove user from the organization"
-        intent="negative"
-        isShown={isShown}
-        onConfirm={() => onClose(true)}
-        onCancel={() => onClose(false)}>
-        <React.Fragment>
-          <p>
-            You are about to remove {user.firstName} {user.lastName} from your organization.
-          </p>
-          <p>
-            After removal this user will not be able to access this organization in any way. Do you
-            want to proceed?
-          </p>
-        </React.Fragment>
-      </ModalConfirm>
+      <RemoveOrgMemberDialog isShown={isShown} onClose={onClose} user={user} />
     ));
 
     if (!confirmation) {
@@ -140,53 +164,70 @@ class UserDetail extends React.Component {
   }
 
   render() {
-    const { spaceMemberships, spaces, roles, orgId } = this.props;
+    const { spaceMemberships, createdBy, spaces, roles, orgId } = this.props;
     const { membership, disableOwnerRole } = this.state;
     const { user } = membership.sys;
+    const isPending = userObj => !userObj.firstName;
 
     return (
       <Workbench testId="organization-users-page">
         <Workbench.Header>
           <Workbench.Title>Users</Workbench.Title>
-          <div className="workbench-header__actions">
-            <Button buttonType="negative" onClick={() => this.removeMembership()}>
-              Remove membership
-            </Button>
-          </div>
         </Workbench.Header>
         <Workbench.Content>
-          <div style={{ padding: '1em 2em 2em' }}>
-            <section className="user-details__card">
-              <img src={user.avatarUrl} className="user-details__avatar" />
-              <div>
-                <h2>{`${user.firstName} ${user.lastName}`}</h2>
-                <p>{user.email}</p>
-              </div>
-            </section>
-            <section style={{ display: 'flex', marginBottom: 50 }}>
-              <div style={{ width: '31.6%' }}>
-                <h4>Organization role</h4>
-                <OrganizationRoleSelector
-                  isSelf={this.isSelf()}
-                  disableOwnerRole={disableOwnerRole}
-                  initialRole={membership.role}
-                  onChange={this.changeOrgRole}
-                />
-              </div>
-              <div>
-                <h4>Last activity</h4>
-                <p>{this.getLastActiveDate()}</p>
-              </div>
-            </section>
-
-            <h3 style={{ marginBottom: 30 }}>Space memberships</h3>
-            <UserSpaceMemberships
-              initialMemberships={spaceMemberships}
-              user={user}
-              spaces={spaces}
-              roles={roles}
-              orgId={orgId}
-            />
+          <div className="user-details">
+            <div className="user-details__sidebar">
+              <section className="user-details__profile-section">
+                <UserCard user={membership.sys.user} size="large" />
+              </section>
+              <section className="user-details__profile-section">
+                <dl className="definition-list">
+                  {!isPending(user) && (
+                    <React.Fragment>
+                      <dt>Last activity</dt>
+                      <dd>{this.getLastActiveDate()}</dd>
+                    </React.Fragment>
+                  )}
+                  <dt>{isPending(user) ? 'Invited at' : 'Member since'}</dt>
+                  <dd>{moment(membership.sys.createdAt).format('MMMM DD, YYYY')}</dd>
+                  <dt>Invited by</dt>
+                  <dd>{getUserName(createdBy)}</dd>
+                </dl>
+              </section>
+              {membership.sys.sso && (
+                <section className="user-details__profile-section">
+                  <UserSsoInfo membership={membership} />
+                </section>
+              )}
+              <section className="user-details__profile-section">
+                <dl className="definition-list">
+                  <dt>Organization role</dt>
+                  <dd>
+                    <OrganizationRoleSelector
+                      style={{ marginTop: '-5px' }}
+                      isSelf={this.isSelf}
+                      disableOwnerRole={disableOwnerRole}
+                      initialRole={membership.role}
+                      onChange={this.changeOrgRole}
+                    />
+                  </dd>
+                </dl>
+                <p style={{ marginTop: 10 }}>{this.getRoleDescription()}</p>
+              </section>
+              <Button buttonType="negative" size="small" onClick={() => this.removeMembership()}>
+                Remove membership
+              </Button>
+            </div>
+            <div className="user-details__content">
+              <UserSpaceMemberships
+                initialMemberships={spaceMemberships}
+                user={user}
+                currentUser={this.currentUser}
+                spaces={spaces}
+                roles={roles}
+                orgId={orgId}
+              />
+            </div>
           </div>
         </Workbench.Content>
       </Workbench>

@@ -1,14 +1,16 @@
-// Using !important until things go to the component library
-.user-details__card
-  align-items: center
+.user-details
+  padding: 1em 2em 2em
   display: flex
-  margin-bottom: 30px
+.user-details__sidebar
+  margin-right: 25px
+  width: 400px
+.user-details__content
+  flex: 1
 
-.user-details__avatar
-  border-radius: 100%
-  height: 50px
-  margin-right: 20px
-  width: 50px
+.user-details__profile-section
+  border-bottom: 1px solid $colors.element-light
+  padding-bottom: 20px
+  margin-bottom: 20px
 
 .users-search__filter-pill
   background-color: #D3DCE0
@@ -73,15 +75,22 @@
   display: flex
   align-content: center
   align-items: center
+
 .user-card__avatar
   margin-right: 20px
-  width: 32px
-  height: 32px
   border-radius: 100%
   background: $colors.text-mid
+  width: 50px
+  height: 50px
+.user-card--small .user-card__avatar
+  width: 32px
+  height: 32px
+
 .user-card__name
-  font-size: 14px
   margin: 0
+.user-card--small .user-card__name
+  font-size: 14px
+
 .user-card__email,
 .user-card__name
   color: $colors.text-mid
@@ -91,6 +100,7 @@
   transition: none
   margin-left: 10px
   visibility: hidden
+
 .membership-list__item__menu__icon
   display: inline-block
 
@@ -99,3 +109,23 @@
     visibility: visible
   .membership-list__item__menu__icon
     display: none
+
+.definition-list
+  &::after
+    content: ''
+    display: block
+    clear: both
+
+  dt
+    clear: left
+    float: left
+    font-weight: 600
+    margin-right: 10px
+  dd
+    float: left
+    margin-bottom: 10px
+    &:last-child
+      margin-bottom: 0
+
+.space-membership-editor:hover
+  background: none
