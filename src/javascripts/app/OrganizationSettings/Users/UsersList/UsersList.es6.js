@@ -19,6 +19,7 @@ import ResolveLinks from '../../LinkResolver.es6';
 import Workbench from 'app/common/Workbench.es6';
 import UserListFilters from './UserListFilters.es6';
 import UserCard from '../UserCard.es6';
+import Pagination from 'app/common/Pagination.es6';
 import { href } from 'states/Navigator.es6';
 import {
   getMemberships,
@@ -48,10 +49,15 @@ class UsersList extends React.Component {
   };
 
   state = {
+    loading: false,
     queryTotal: 0,
     usersList: [],
     filters: this.getInitialFilters(),
-    searchTerm: ''
+    searchTerm: '',
+    pagination: {
+      skip: 0,
+      limit: 10
+    }
   };
 
   endpoint = createOrganizationEndpoint(this.props.orgId);
@@ -61,20 +67,26 @@ class UsersList extends React.Component {
   }
 
   async fetch() {
-    const { filters, searchTerm } = this.state;
+    const { filters, searchTerm, pagination } = this.state;
     const filterQuery = formatQuery(filters.map(item => item.filter));
     const includePaths = ['sys.user'];
     const query = {
       ...filterQuery,
       query: searchTerm,
-      include: includePaths
+      include: includePaths,
+      skip: pagination.skip,
+      limit: pagination.limit
     };
+
+    this.setState({ loading: true });
+
     const { total, items, includes } = await getMemberships(this.endpoint, query);
     const resolved = ResolveLinks({ paths: includePaths, items, includes });
 
     this.setState({
       usersList: resolved,
-      queryTotal: total
+      queryTotal: total,
+      loading: false
     });
   }
 
@@ -114,7 +126,7 @@ class UsersList extends React.Component {
   };
 
   updateFilters = filters => {
-    this.setState({ filters }, this.fetch);
+    this.setState({ filters, pagination: { ...this.state.pagination, skip: 0 } }, this.fetch);
   };
 
   resetFilters = () => {
@@ -132,11 +144,15 @@ class UsersList extends React.Component {
   };
 
   debouncedUpdatedSearch = debounce(searchTerm => {
-    this.setState({ searchTerm }, this.fetch);
+    this.setState({ searchTerm, pagination: { ...this.state.pagination, skip: 0 } }, this.fetch);
   }, 500);
 
+  handlePaginationChange = ({ skip, limit }) => {
+    this.setState({ pagination: { ...this.state.pagination, skip, limit } }, this.fetch);
+  };
+
   render() {
-    const { queryTotal, usersList, filters } = this.state;
+    const { queryTotal, usersList, filters, pagination, loading } = this.state;
     const { resource } = this.props;
 
     return (
@@ -168,7 +184,7 @@ class UsersList extends React.Component {
               filters={filters}
               onReset={this.resetFilters}
             />
-            <Table>
+            <Table data-test-id="organization-membership-list">
               <TableHead>
                 <TableRow>
                   <TableCell width="50">User</TableCell>
@@ -178,7 +194,10 @@ class UsersList extends React.Component {
               </TableHead>
               <TableBody>
                 {usersList.map(membership => (
-                  <TableRow key={membership.sys.id} className="membership-list__item">
+                  <TableRow
+                    key={membership.sys.id}
+                    className="membership-list__item"
+                    data-test-id="organization-membership-list-row">
                     <TableCell>
                       {membership.sys.user.firstName ? (
                         <a href={this.getLinkToUser(membership)}>
@@ -216,6 +235,13 @@ class UsersList extends React.Component {
                 ))}
               </TableBody>
             </Table>
+
+            <Pagination
+              {...pagination}
+              total={queryTotal}
+              loading={loading}
+              onChange={this.handlePaginationChange}
+            />
           </section>
         </Workbench.Content>
       </Workbench>

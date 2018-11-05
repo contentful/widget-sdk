@@ -1,0 +1,436 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Pagination disables the Next and Previous buttons there is loading 1`] = `
+<div
+  className="pagination"
+>
+  <nav
+    className="pagination__nav"
+  >
+    <p
+      className="pagination__text"
+    >
+      View
+    </p>
+    <Select
+      extraClassNames="pagination__limit-selector"
+      hasError={false}
+      isDisabled={false}
+      onBlur={[Function]}
+      onChange={[Function]}
+      onFocus={[Function]}
+      required={false}
+      testId="cf-ui-select"
+      value="10"
+      width="small"
+    >
+      <Option
+        value="10"
+      >
+        10
+      </Option>
+      <Option
+        value="25"
+      >
+        25
+      </Option>
+      <Option
+        value="50"
+      >
+        50
+      </Option>
+      <Option
+        value="100"
+      >
+        100
+      </Option>
+    </Select>
+  </nav>
+  <nav
+    className="pagination__nav"
+  >
+    <p
+      className="pagination__text"
+    >
+      Showing 
+      21 - 30
+       of 
+      100
+    </p>
+     
+    <Button
+      buttonType="muted"
+      disabled={true}
+      extraClassNames="pagination__button"
+      indicateDropdown={false}
+      isFullWidth={false}
+      loading={false}
+      onClick={[Function]}
+      testId="cf-ui-button"
+    >
+      Previous
+    </Button>
+     
+    <Button
+      buttonType="muted"
+      disabled={true}
+      extraClassNames="pagination__button"
+      indicateDropdown={false}
+      isFullWidth={false}
+      loading={false}
+      onClick={[Function]}
+      testId="cf-ui-button"
+    >
+      Next
+    </Button>
+  </nav>
+</div>
+`;
+
+exports[`Pagination disables the Next and Previous buttons there is only one avialable page 1`] = `
+<div
+  className="pagination"
+>
+  <nav
+    className="pagination__nav"
+  >
+    <p
+      className="pagination__text"
+    >
+      View
+    </p>
+    <Select
+      extraClassNames="pagination__limit-selector"
+      hasError={false}
+      isDisabled={false}
+      onBlur={[Function]}
+      onChange={[Function]}
+      onFocus={[Function]}
+      required={false}
+      testId="cf-ui-select"
+      value="10"
+      width="small"
+    >
+      <Option
+        value="10"
+      >
+        10
+      </Option>
+      <Option
+        value="25"
+      >
+        25
+      </Option>
+      <Option
+        value="50"
+      >
+        50
+      </Option>
+      <Option
+        value="100"
+      >
+        100
+      </Option>
+    </Select>
+  </nav>
+  <nav
+    className="pagination__nav"
+  >
+    <p
+      className="pagination__text"
+    >
+      Showing 
+      1 - 10
+       of 
+      10
+    </p>
+     
+    <Button
+      buttonType="muted"
+      disabled={true}
+      extraClassNames="pagination__button"
+      indicateDropdown={false}
+      isFullWidth={false}
+      loading={false}
+      onClick={[Function]}
+      testId="cf-ui-button"
+    >
+      Previous
+    </Button>
+     
+    <Button
+      buttonType="muted"
+      disabled={true}
+      extraClassNames="pagination__button"
+      indicateDropdown={false}
+      isFullWidth={false}
+      loading={false}
+      onClick={[Function]}
+      testId="cf-ui-button"
+    >
+      Next
+    </Button>
+  </nav>
+</div>
+`;
+
+exports[`Pagination disables the Next button if it is the last page 1`] = `
+<div
+  className="pagination"
+>
+  <nav
+    className="pagination__nav"
+  >
+    <p
+      className="pagination__text"
+    >
+      View
+    </p>
+    <Select
+      extraClassNames="pagination__limit-selector"
+      hasError={false}
+      isDisabled={false}
+      onBlur={[Function]}
+      onChange={[Function]}
+      onFocus={[Function]}
+      required={false}
+      testId="cf-ui-select"
+      value="10"
+      width="small"
+    >
+      <Option
+        value="10"
+      >
+        10
+      </Option>
+      <Option
+        value="25"
+      >
+        25
+      </Option>
+      <Option
+        value="50"
+      >
+        50
+      </Option>
+      <Option
+        value="100"
+      >
+        100
+      </Option>
+    </Select>
+  </nav>
+  <nav
+    className="pagination__nav"
+  >
+    <p
+      className="pagination__text"
+    >
+      Showing 
+      91 - 100
+       of 
+      100
+    </p>
+     
+    <Button
+      buttonType="muted"
+      disabled={false}
+      extraClassNames="pagination__button"
+      indicateDropdown={false}
+      isFullWidth={false}
+      loading={false}
+      onClick={[Function]}
+      testId="cf-ui-button"
+    >
+      Previous
+    </Button>
+     
+    <Button
+      buttonType="muted"
+      disabled={true}
+      extraClassNames="pagination__button"
+      indicateDropdown={false}
+      isFullWidth={false}
+      loading={false}
+      onClick={[Function]}
+      testId="cf-ui-button"
+    >
+      Next
+    </Button>
+  </nav>
+</div>
+`;
+
+exports[`Pagination disables the Previous button if it is the first page 1`] = `
+<div
+  className="pagination"
+>
+  <nav
+    className="pagination__nav"
+  >
+    <p
+      className="pagination__text"
+    >
+      View
+    </p>
+    <Select
+      extraClassNames="pagination__limit-selector"
+      hasError={false}
+      isDisabled={false}
+      onBlur={[Function]}
+      onChange={[Function]}
+      onFocus={[Function]}
+      required={false}
+      testId="cf-ui-select"
+      value="10"
+      width="small"
+    >
+      <Option
+        value="10"
+      >
+        10
+      </Option>
+      <Option
+        value="25"
+      >
+        25
+      </Option>
+      <Option
+        value="50"
+      >
+        50
+      </Option>
+      <Option
+        value="100"
+      >
+        100
+      </Option>
+    </Select>
+  </nav>
+  <nav
+    className="pagination__nav"
+  >
+    <p
+      className="pagination__text"
+    >
+      Showing 
+      1 - 10
+       of 
+      100
+    </p>
+     
+    <Button
+      buttonType="muted"
+      disabled={true}
+      extraClassNames="pagination__button"
+      indicateDropdown={false}
+      isFullWidth={false}
+      loading={false}
+      onClick={[Function]}
+      testId="cf-ui-button"
+    >
+      Previous
+    </Button>
+     
+    <Button
+      buttonType="muted"
+      disabled={false}
+      extraClassNames="pagination__button"
+      indicateDropdown={false}
+      isFullWidth={false}
+      loading={false}
+      onClick={[Function]}
+      testId="cf-ui-button"
+    >
+      Next
+    </Button>
+  </nav>
+</div>
+`;
+
+exports[`Pagination enables the Previous and Next buttons if it is not the first page or last pages 1`] = `
+<div
+  className="pagination"
+>
+  <nav
+    className="pagination__nav"
+  >
+    <p
+      className="pagination__text"
+    >
+      View
+    </p>
+    <Select
+      extraClassNames="pagination__limit-selector"
+      hasError={false}
+      isDisabled={false}
+      onBlur={[Function]}
+      onChange={[Function]}
+      onFocus={[Function]}
+      required={false}
+      testId="cf-ui-select"
+      value="10"
+      width="small"
+    >
+      <Option
+        value="10"
+      >
+        10
+      </Option>
+      <Option
+        value="25"
+      >
+        25
+      </Option>
+      <Option
+        value="50"
+      >
+        50
+      </Option>
+      <Option
+        value="100"
+      >
+        100
+      </Option>
+    </Select>
+  </nav>
+  <nav
+    className="pagination__nav"
+  >
+    <p
+      className="pagination__text"
+    >
+      Showing 
+      11 - 20
+       of 
+      100
+    </p>
+     
+    <Button
+      buttonType="muted"
+      disabled={false}
+      extraClassNames="pagination__button"
+      indicateDropdown={false}
+      isFullWidth={false}
+      loading={false}
+      onClick={[Function]}
+      testId="cf-ui-button"
+    >
+      Previous
+    </Button>
+     
+    <Button
+      buttonType="muted"
+      disabled={false}
+      extraClassNames="pagination__button"
+      indicateDropdown={false}
+      isFullWidth={false}
+      loading={false}
+      onClick={[Function]}
+      testId="cf-ui-button"
+    >
+      Next
+    </Button>
+  </nav>
+</div>
+`;
