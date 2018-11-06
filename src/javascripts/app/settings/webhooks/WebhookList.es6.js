@@ -32,12 +32,12 @@ export class WebhookList extends React.Component {
           <Workbench.Title>Webhooks ({webhooks.length})</Workbench.Title>
         </Workbench.Header>
         <Workbench.Content>
-          <Table>
+          <Table style={{ tableLayout: 'fixed' }}>
             <TableHead>
               <TableRow>
                 <TableCell style={{ width: '25%' }}>Webhook name</TableCell>
-                <TableCell style={{ width: '30%' }}>URL</TableCell>
-                <TableCell style={{ width: '25%' }}>% of successful calls</TableCell>
+                <TableCell style={{ width: '40%' }}>URL</TableCell>
+                <TableCell style={{ width: '20%' }}>% of successful calls</TableCell>
                 <TableCell style={{ width: '20%' }}>Actions</TableCell>
               </TableRow>
             </TableHead>
