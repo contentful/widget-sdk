@@ -2,24 +2,45 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import pluralize from 'pluralize';
 import { findIndex, keyBy, isNil } from 'lodash';
-import { Filter as FilterPropType } from '../PropTypes.es6';
 import { TextLink } from '@contentful/ui-component-library';
 
+import userListFiltersMiddleware from './UserListFiltersMiddleware.es6';
+
+import {
+  Filter as FilterPropType,
+  Space as SpacePropType,
+  SpaceRole as SpaceRolePropType
+} from '../PropTypes.es6';
 import SearchFilter from './SearchFilter.es6';
 
 export default class UserListFilters extends React.Component {
   static propTypes = {
     filters: PropTypes.arrayOf(FilterPropType),
+    spaces: PropTypes.arrayOf(SpacePropType),
+    spaceRoles: PropTypes.arrayOf(SpaceRolePropType),
     queryTotal: PropTypes.number.isRequired,
     onChange: PropTypes.func.isRequired,
     onReset: PropTypes.func.isRequired
   };
 
+  static defaultProps = {
+    filters: [],
+    spaces: [],
+    spaceRoles: []
+  };
+
+  filterMiddleware = userListFiltersMiddleware(this.props.spaceRoles);
+
   updateFilters = filter => {
-    const filters = [...this.props.filters];
+    const { filters } = this.props;
+
+    const clone = JSON.parse(JSON.stringify(filters)); // god, forgive me
     const index = findIndex(filters, f => f.filter.key === filter.key);
-    filters[index] = { ...filters[index], filter };
-    this.props.onChange(filters);
+
+    clone[index] = { ...clone[index], filter };
+
+    this.filterMiddleware.update(filters, clone);
+    this.props.onChange(clone);
   };
 
   hasActiveFilters(filters) {

@@ -9,6 +9,7 @@ import { uniqBy, without } from 'lodash';
 
 export function getFilterDefinitions({ spaceRoles = [], spaces = [], hasSsoEnabled }) {
   const order = {
+    id: 'sort',
     label: 'Sort by',
     filter: {
       key: 'order',
@@ -27,6 +28,7 @@ export function getFilterDefinitions({ spaceRoles = [], spaces = [], hasSsoEnabl
   };
 
   const orgRole = {
+    id: 'orgRole',
     label: 'Organization role',
     filter: {
       key: 'role',
@@ -39,9 +41,10 @@ export function getFilterDefinitions({ spaceRoles = [], spaces = [], hasSsoEnabl
   };
 
   const sso = {
+    id: 'ssoLogin',
     label: 'SSO',
     filter: {
-      key: 'sys.sso.lastSignedInAt',
+      key: 'sys.sso.lastSignInAt',
       operator: 'exists',
       value: ''
     },
@@ -53,18 +56,10 @@ export function getFilterDefinitions({ spaceRoles = [], spaces = [], hasSsoEnabl
   };
 
   const spaceRole = {
+    id: 'spaceRole',
     label: 'Space role',
     filter: {
-      get key() {
-        // Value 'true' means that the selected option is Admin.
-        // Unfortunately, Admin is not a real role but a boolean
-        // in the space membership object. That's why the key
-        // name has to be changed when Admin is selected.
-        if (this.value === 'true') {
-          return 'sys.spaceMemberships.admin';
-        }
-        return 'sys.spaceMemberships.roles.name';
-      },
+      key: 'sys.spaceMemberships.roles.name',
       value: ''
     },
     options: [
@@ -79,6 +74,7 @@ export function getFilterDefinitions({ spaceRoles = [], spaces = [], hasSsoEnabl
   };
 
   const space = {
+    id: 'space',
     label: 'Space',
     filter: {
       key: 'sys.spaceMemberships.sys.space.sys.id',

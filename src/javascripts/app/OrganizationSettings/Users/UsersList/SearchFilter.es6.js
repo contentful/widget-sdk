@@ -20,10 +20,7 @@ export default class SearchFilter extends React.Component {
 
   handleChange = ({ target: { value } }) => {
     const { onChange, filter } = this.props;
-
-    // we use Object.assign instead of spread to keep the reference
-    // to the getter properties of the filter definition
-    onChange(Object.assign(filter, { value }));
+    onChange({ ...filter, value });
   };
 
   getSelectWidth() {

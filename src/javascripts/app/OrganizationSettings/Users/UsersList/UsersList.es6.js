@@ -165,7 +165,7 @@ class UsersList extends React.Component {
 
   render() {
     const { queryTotal, usersList, filters, pagination, loading } = this.state;
-    const { resource } = this.props;
+    const { resource, spaces, spaceRoles } = this.props;
 
     return (
       <Workbench testId="organization-users-page">
@@ -193,6 +193,8 @@ class UsersList extends React.Component {
             <UserListFilters
               queryTotal={queryTotal}
               onChange={this.updateFilters}
+              spaces={spaces}
+              spaceRoles={spaceRoles}
               filters={filters}
               onReset={this.resetFilters}
             />
