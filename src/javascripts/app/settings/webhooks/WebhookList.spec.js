@@ -20,7 +20,7 @@ describe('WebhookList', () => {
 
   it('renders empty list of webhooks', () => {
     const wrapper = mount([]);
-    const rows = wrapper.find('.table__body tbody tr');
+    const rows = wrapper.find('table tbody tr');
     expect(rows).toHaveLength(1);
     expect(rows.find('td')).toHaveText('Add a webhook, then manage it in this space.');
   });
@@ -35,7 +35,7 @@ describe('WebhookList', () => {
     };
     const wrapper = mount([wh1, wh2]);
 
-    const rows = wrapper.find('.table__body tbody tr');
+    const rows = wrapper.find('table tbody tr');
     expect(rows).toHaveLength(2);
     expect(rows.find('td').first()).toHaveText('wh1');
 

@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import WebhookSidebarDocumentation from './WebhookSidebarDocumentation.es6';
 import WebhookSidebarTemplatesList from './WebhookSidebarTemplatesList.es6';
+import { Button } from '@contentful/ui-component-library';
 import StateLink from 'app/common/StateLink.es6';
 
 function WebhookListSidebar({ webhookCount, openTemplateDialog }) {
@@ -16,12 +17,9 @@ function WebhookListSidebar({ webhookCount, openTemplateDialog }) {
       </p>
       <StateLink to="^.new">
         {({ onClick }) => (
-          <button
-            className="btn-action add-entity x--block"
-            onClick={onClick}
-            data-test-id="add-webhook-button">
-            <i className="fa fa-plus-circle" /> Add Webhook
-          </button>
+          <Button testId="add-webhook-button" icon="PlusCircle" isFullWidth onClick={onClick}>
+            Add Webhook
+          </Button>
         )}
       </StateLink>
       <WebhookSidebarDocumentation />

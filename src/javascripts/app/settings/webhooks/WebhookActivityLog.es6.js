@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { range } from 'lodash';
+import { Table, TableBody, TableHead, TableRow, TableCell } from '@contentful/ui-component-library';
 import StateLink from 'app/common/StateLink.es6';
 import WebhookCallStatus from './WebhookCallStatus.es6';
 
@@ -50,60 +51,52 @@ class WebhookActivityLog extends React.Component {
 
     return (
       <React.Fragment>
-        <div className="table">
-          <div className="table__head">
-            <table>
-              <thead>
-                <tr>
-                  <th>Webhook called at</th>
-                  <th className="x--large-cell">Call result</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-            </table>
-          </div>
-          <div className="table__body">
-            <table>
-              <tbody>
-                {!loading &&
-                  pageCalls.length > 0 &&
-                  pageCalls.map(call => {
-                    return (
-                      <StateLink
-                        to="^.detail.call"
-                        params={{
-                          callId: call.sys.id
-                        }}
-                        key={call.sys.id}>
-                        {({ onClick }) => (
-                          <tr className="x--clickable" onClick={onClick}>
-                            <td>{call.requestAt}</td>
-                            <td className="x--large-cell">
-                              <WebhookCallStatus call={call} />
-                            </td>
-                            <td>
-                              <button className="text-link">View details</button>
-                            </td>
-                          </tr>
-                        )}
-                      </StateLink>
-                    );
-                  })}
-                {!loading &&
-                  pageCalls.length < 1 && (
-                    <tr>
-                      <td colSpan="3">No webhook calls yet!</td>
-                    </tr>
-                  )}
-                {loading && (
-                  <tr>
-                    <td colSpan="3">Loading logs…</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell style={{ width: '35%' }}>Webhook called at</TableCell>
+              <TableCell style={{ width: '20%' }}>Call result</TableCell>
+              <TableCell style={{ width: '45%' }}>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {loading && (
+              <TableRow>
+                <TableCell colSpan="3">Loading logs…</TableCell>
+              </TableRow>
+            )}
+            {!loading &&
+              pageCalls.length < 1 && (
+                <TableRow>
+                  <TableCell colSpan="3">No webhook calls yet!</TableCell>
+                </TableRow>
+              )}
+            {!loading &&
+              pageCalls.length > 0 &&
+              pageCalls.map(call => {
+                return (
+                  <StateLink
+                    to="^.detail.call"
+                    params={{
+                      callId: call.sys.id
+                    }}
+                    key={call.sys.id}>
+                    {({ onClick }) => (
+                      <TableRow style={{ cursor: 'pointer' }} onClick={onClick}>
+                        <TableCell>{call.requestAt}</TableCell>
+                        <TableCell>
+                          <WebhookCallStatus call={call} />
+                        </TableCell>
+                        <TableCell>
+                          <button className="text-link">View details</button>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </StateLink>
+                );
+              })}
+          </TableBody>
+        </Table>
         {!loading && pages.length > 1 && this.renderPaginator(page, pages)}
       </React.Fragment>
     );

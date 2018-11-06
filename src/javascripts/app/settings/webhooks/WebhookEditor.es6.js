@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import Icon from 'ui/Components/Icon.es6';
+import { Button } from '@contentful/ui-component-library';
+import Workbench from 'app/common/Workbench.es6';
 import notification from 'notification';
 import WebhookForm from './WebhookForm.es6';
 import WebhookSidebar from './WebhookSidebar.es6';
@@ -109,104 +111,97 @@ class WebhookEditor extends React.Component {
     const { tab, webhook, fresh, dirty, busy } = this.state;
 
     return (
-      <div className="workbench webhook-editor">
-        <div className="workbench-header__wrapper">
-          <header className="workbench-header">
+      <React.Fragment>
+        <Workbench className="webhook-editor">
+          <Workbench.Header>
             <div className="breadcrumbs-widget">
               <div className="breadcrumbs-container">
-                <div className="btn btn__back" onClick={() => this.navigateToList()}>
+                <div
+                  data-test-id="webhook-back"
+                  className="btn btn__back"
+                  onClick={() => this.navigateToList()}>
                   <Icon name="back" />
                 </div>
               </div>
             </div>
-
-            <div className="workbench-header__icon cf-icon">
-              <Icon name="page-settings" scale="0.75" />
-            </div>
-
-            <h1 className="workbench-header__title">
+            <Workbench.Icon icon="page-settings" />
+            <Workbench.Title>
               Webhook: {webhook.name || 'Unnamed'}
               {dirty ? '*' : ''}
-            </h1>
-
-            <div className="workbench-header__actions">
+            </Workbench.Title>
+            <Workbench.Header.Actions>
               {tab === TABS.SETTINGS &&
                 !fresh && (
-                  <button
-                    data-test-id="webhook-remove"
-                    className="btn-secondary-action"
+                  <Button
+                    testId="webhook-remove"
+                    buttonType="muted"
                     onClick={() => {
                       this.setState({ isDeleteDialogShown: true });
                     }}>
                     Remove
-                  </button>
+                  </Button>
                 )}
 
               {tab === TABS.SETTINGS && (
-                <button
-                  data-test-id="webhook-save"
-                  className="btn-primary-action"
-                  disabled={!dirty || busy}
+                <Button
+                  testId="webhook-save"
+                  buttonType="positive"
+                  disabled={!dirty}
+                  loading={busy}
                   onClick={this.save}>
                   Save
-                </button>
+                </Button>
               )}
 
               {tab === TABS.LOG && (
-                <button
-                  data-test-id="webhook-refresh-log"
-                  className="btn-secondary-action"
-                  disabled={busy}
+                <Button
+                  testId="webhook-refresh-log"
+                  buttonType="muted"
+                  loading={busy}
                   onClick={this.refreshLog}>
                   Refresh log
-                </button>
+                </Button>
               )}
-            </div>
-          </header>
-        </div>
-
-        {!fresh && (
-          <div className="workbench-nav">
-            <ul className="workbench-nav__tabs">
-              <li
-                role="tab"
-                aria-selected={tab === TABS.SETTINGS}
-                onClick={() => this.setState({ tab: TABS.SETTINGS })}>
-                Webhook settings
-              </li>
-              <li
-                role="tab"
-                aria-selected={tab === TABS.LOG}
-                onClick={() => this.setState({ tab: TABS.LOG })}>
-                Activity log
-              </li>
-            </ul>
-          </div>
-        )}
-
-        {tab === TABS.SETTINGS && (
-          <div className="workbench-main">
-            <div className="workbench-main__content">
+            </Workbench.Header.Actions>
+          </Workbench.Header>
+          {!fresh && (
+            <Workbench.Nav>
+              <ul className="workbench-nav__tabs">
+                <li
+                  role="tab"
+                  aria-selected={tab === TABS.SETTINGS}
+                  onClick={() => this.setState({ tab: TABS.SETTINGS })}>
+                  Webhook settings
+                </li>
+                <li
+                  role="tab"
+                  aria-selected={tab === TABS.LOG}
+                  onClick={() => this.setState({ tab: TABS.LOG })}>
+                  Activity log
+                </li>
+              </ul>
+            </Workbench.Nav>
+          )}
+          {tab === TABS.SETTINGS && (
+            <Workbench.Content>
               <WebhookForm webhook={webhook} onChange={this.onChange} />
-            </div>
-            <div className="workbench-main__sidebar">
-              <WebhookSidebar />
-            </div>
-          </div>
-        )}
-
-        {tab === TABS.LOG && (
-          <div className="workbench-main">
-            <div className="workbench-main__content">
+            </Workbench.Content>
+          )}
+          {tab === TABS.LOG && (
+            <Workbench.Content>
               <WebhookActivityLog
                 webhookId={webhook.sys.id}
                 webhookRepo={spaceContext.webhookRepo}
                 registerLogRefreshAction={refreshLog => this.setState({ refreshLog })}
               />
-            </div>
-          </div>
-        )}
-
+            </Workbench.Content>
+          )}
+          {tab === TABS.SETTINGS && (
+            <Workbench.Sidebar>
+              <WebhookSidebar />
+            </Workbench.Sidebar>
+          )}
+        </Workbench>
         <WebhookRemovalDialog
           isShown={this.state.isDeleteDialogShown}
           webhookUrl={this.state.webhook.url}
@@ -216,7 +211,7 @@ class WebhookEditor extends React.Component {
             this.setState({ isDeleteDialogShown: false });
           }}
         />
-      </div>
+      </React.Fragment>
     );
   }
 }
