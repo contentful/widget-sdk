@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Editor } from 'slate-react';
 import { Value } from 'slate';
+import cn from 'classnames';
 import TrailingBlock from 'slate-trailing-block';
 import deepEqual from 'fast-deep-equal';
 
@@ -115,10 +116,9 @@ export default class RichTextEditor extends React.Component {
   }
 
   render() {
-    const classNames = `
-      rich-text
-      ${!this.props.isDisabled ? 'rich-text--enabled' : ''}
-    `;
+    const classNames = cn('rich-text', {
+      'rich-text--enabled': !this.props.isDisabled
+    });
 
     return (
       <div className={classNames}>

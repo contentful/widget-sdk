@@ -14,6 +14,18 @@
     border-radius: 0 0 3px 3px;
     border: 1px solid $colors.element-dark;
     border-top: 0;
+    background: $colors.element-lightest;
+    // Show not allowed cursor if field is disabled
+    a span, a span:hover {
+      cursor: not-allowed
+    }
+  }
+
+  &--enabled .rich-text__editor {
+    background: $colors.white;
+    a span, a span:hover {
+      cursor: pointer
+    }
   }
 
   &__button
