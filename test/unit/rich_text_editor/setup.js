@@ -63,9 +63,6 @@ export const stubAll = async ({ isolatedSystem }) => {
     goToSlideInEntity: sinon.stub()
   });
   isolatedSystem.set('search/config.es6', {});
-  isolatedSystem.set('logger', {
-    logException: sinon.stub()
-  });
 };
 
 export const setupWidgetApi = (mockApi, mockDocument) => {

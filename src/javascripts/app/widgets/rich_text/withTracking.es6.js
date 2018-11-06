@@ -2,7 +2,20 @@ import { reduce, without, camelCase } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { track } from 'analytics/Analytics.es6';
+import logger from 'logger';
 
+/**
+ * HOC for rich text editor to add CF web-app specific actions tracking.
+ *
+ * Uses the RichTextEditor component's `onAction` callback to listen to
+ * all actions and log them to `analytics.track()`.
+ * There's an internal white list of event names. If a unknown action is
+ * dispatched, e.g. because of a new feature introduced or an existing one
+ * changed in RichTextEditor, then we log a warning to Bugsnag.
+ *
+ * @param {React.Component} Component
+ * @returns {React.Component}
+ */
 export default function withTracking(Component) {
   return class extends React.Component {
     static propTypes = {
@@ -14,14 +27,29 @@ export default function withTracking(Component) {
     };
 
     actionsTrackingHandler(name, { origin, ...data }) {
+      const actionName = getActionName(name, data);
+
+      if (!isKnownAction(actionName)) {
+        logger.logWarn(`Unexpected rich text tracking action \`${actionName}\``, {
+          groupingHash: 'UnexpectedRichTextTrackingAction',
+          data: {
+            trackingActionName: actionName,
+            originalActionName: name,
+            originalActionData: { origin, ...data }
+          }
+        });
+        return;
+      }
+
       const { widgetAPI } = this.props;
       const entrySys = widgetAPI.entry.getSys();
       const entryId = entrySys.id;
       const ctId = entrySys.contentType.sys.id;
       const { locale, id: fieldId } = widgetAPI.field;
+
       track('text_editor:action', {
         editorName: 'RichText',
-        action: getActionName(name, data),
+        action: actionName,
         actionOrigin: origin || null,
         entryId: entryId,
         contentTypeId: ctId,
@@ -95,6 +123,10 @@ const ALLOWED_EVENTS = reduce(
   []
 );
 
+function isKnownAction(name) {
+  return ALLOWED_EVENTS.includes(name);
+}
+
 function getActionName(name, { nodeType, markType }) {
   let action = name;
   if (name === 'mark' || name === 'unmark') {
@@ -102,9 +134,5 @@ function getActionName(name, { nodeType, markType }) {
   } else if (nodeType) {
     action = `${name}-${nodeType}`;
   }
-  const actionName = camelCase(action);
-  if (!ALLOWED_EVENTS.includes(actionName)) {
-    throw new Error(`Unexpected rich text action ${actionName}`);
-  }
-  return actionName;
+  return camelCase(action);
 }

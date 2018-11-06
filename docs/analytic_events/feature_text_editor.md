@@ -10,10 +10,13 @@ Context event for tracking previews on the rich text editor.
 ## Schema
 Snowplow schema: [feature_text_editor/2.0.0.json](https://github.com/contentful/com.contentful-schema-registry/blob/master/schemas/com.contentful/feature_text_editor/jsonschema/2-0-0)
 
-## Usage
+## Covered use-cases
 
-* Click on "open preview" in the entry editor (when there is at least one
-  structured/rich text field)
+* Rich text editor actions
+  * Click on any of the editor toolbar actions
+  * Triggering a toolbar action via shortcut
+
+* Click on "open preview" in the entry editor (when there is at least one rich text field)
   * **NB:** There may be multiple fields on any given entry. In this
     case, we fire a context event for _each_ field. This means that simply
     counting the number of `feature_text_editor`/`contentPreview` actions that
