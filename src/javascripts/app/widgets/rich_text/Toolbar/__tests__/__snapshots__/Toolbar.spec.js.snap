@@ -511,6 +511,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                       onFocus={[Function]}
                       onMouseLeave={[Function]}
                       onMouseOver={[Function]}
+                      setRef={[Function]}
                     >
                       <div
                         className="Tooltip__TooltipContainer___3YlPf"
@@ -589,6 +590,171 @@ exports[`Toolbar renders toolbar icons 1`] = `
                             </TabFocusTrap>
                           </button>
                         </IconButton>
+                        <Portal
+                          containerInfo={
+                            <body>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Bold
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Italic
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Underline
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Code
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Hyperlink
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  UL
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  OL
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Blockquote
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  HR
+                                </div>
+                              </div>
+                            </body>
+                          }
+                        >
+                          <div
+                            className="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                            contentEditable={false}
+                            data-test-id="cf-ui-tooltip"
+                            onFocus={[Function]}
+                            onMouseOver={[Function]}
+                            style={
+                              Object {
+                                "left": null,
+                                "opacity": 0,
+                                "top": null,
+                                "visibility": "hidden",
+                              }
+                            }
+                          >
+                            <InViewport
+                              offset={0}
+                              onOverflowBottom={[Function]}
+                              onOverflowLeft={[Function]}
+                              onOverflowRight={[Function]}
+                              onOverflowTop={[Function]}
+                              testId="cf-ui-in-viewport"
+                            >
+                              <div
+                                className="InViewport__InViewport___2o6g4"
+                                data-test-id="cf-ui-in-viewport"
+                                offset={0}
+                              >
+                                Bold
+                              </div>
+                            </InViewport>
+                          </div>
+                        </Portal>
                       </div>
                     </TooltipContainer>
                   </Tooltip>
@@ -667,6 +833,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                       onFocus={[Function]}
                       onMouseLeave={[Function]}
                       onMouseOver={[Function]}
+                      setRef={[Function]}
                     >
                       <div
                         className="Tooltip__TooltipContainer___3YlPf"
@@ -745,6 +912,171 @@ exports[`Toolbar renders toolbar icons 1`] = `
                             </TabFocusTrap>
                           </button>
                         </IconButton>
+                        <Portal
+                          containerInfo={
+                            <body>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Bold
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Italic
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Underline
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Code
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Hyperlink
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  UL
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  OL
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Blockquote
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  HR
+                                </div>
+                              </div>
+                            </body>
+                          }
+                        >
+                          <div
+                            className="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                            contentEditable={false}
+                            data-test-id="cf-ui-tooltip"
+                            onFocus={[Function]}
+                            onMouseOver={[Function]}
+                            style={
+                              Object {
+                                "left": null,
+                                "opacity": 0,
+                                "top": null,
+                                "visibility": "hidden",
+                              }
+                            }
+                          >
+                            <InViewport
+                              offset={0}
+                              onOverflowBottom={[Function]}
+                              onOverflowLeft={[Function]}
+                              onOverflowRight={[Function]}
+                              onOverflowTop={[Function]}
+                              testId="cf-ui-in-viewport"
+                            >
+                              <div
+                                className="InViewport__InViewport___2o6g4"
+                                data-test-id="cf-ui-in-viewport"
+                                offset={0}
+                              >
+                                Italic
+                              </div>
+                            </InViewport>
+                          </div>
+                        </Portal>
                       </div>
                     </TooltipContainer>
                   </Tooltip>
@@ -823,6 +1155,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                       onFocus={[Function]}
                       onMouseLeave={[Function]}
                       onMouseOver={[Function]}
+                      setRef={[Function]}
                     >
                       <div
                         className="Tooltip__TooltipContainer___3YlPf"
@@ -901,6 +1234,171 @@ exports[`Toolbar renders toolbar icons 1`] = `
                             </TabFocusTrap>
                           </button>
                         </IconButton>
+                        <Portal
+                          containerInfo={
+                            <body>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Bold
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Italic
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Underline
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Code
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Hyperlink
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  UL
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  OL
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Blockquote
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  HR
+                                </div>
+                              </div>
+                            </body>
+                          }
+                        >
+                          <div
+                            className="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                            contentEditable={false}
+                            data-test-id="cf-ui-tooltip"
+                            onFocus={[Function]}
+                            onMouseOver={[Function]}
+                            style={
+                              Object {
+                                "left": null,
+                                "opacity": 0,
+                                "top": null,
+                                "visibility": "hidden",
+                              }
+                            }
+                          >
+                            <InViewport
+                              offset={0}
+                              onOverflowBottom={[Function]}
+                              onOverflowLeft={[Function]}
+                              onOverflowRight={[Function]}
+                              onOverflowTop={[Function]}
+                              testId="cf-ui-in-viewport"
+                            >
+                              <div
+                                className="InViewport__InViewport___2o6g4"
+                                data-test-id="cf-ui-in-viewport"
+                                offset={0}
+                              >
+                                Underline
+                              </div>
+                            </InViewport>
+                          </div>
+                        </Portal>
                       </div>
                     </TooltipContainer>
                   </Tooltip>
@@ -979,6 +1477,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                       onFocus={[Function]}
                       onMouseLeave={[Function]}
                       onMouseOver={[Function]}
+                      setRef={[Function]}
                     >
                       <div
                         className="Tooltip__TooltipContainer___3YlPf"
@@ -1057,6 +1556,171 @@ exports[`Toolbar renders toolbar icons 1`] = `
                             </TabFocusTrap>
                           </button>
                         </IconButton>
+                        <Portal
+                          containerInfo={
+                            <body>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Bold
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Italic
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Underline
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Code
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Hyperlink
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  UL
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  OL
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Blockquote
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  HR
+                                </div>
+                              </div>
+                            </body>
+                          }
+                        >
+                          <div
+                            className="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                            contentEditable={false}
+                            data-test-id="cf-ui-tooltip"
+                            onFocus={[Function]}
+                            onMouseOver={[Function]}
+                            style={
+                              Object {
+                                "left": null,
+                                "opacity": 0,
+                                "top": null,
+                                "visibility": "hidden",
+                              }
+                            }
+                          >
+                            <InViewport
+                              offset={0}
+                              onOverflowBottom={[Function]}
+                              onOverflowLeft={[Function]}
+                              onOverflowRight={[Function]}
+                              onOverflowTop={[Function]}
+                              testId="cf-ui-in-viewport"
+                            >
+                              <div
+                                className="InViewport__InViewport___2o6g4"
+                                data-test-id="cf-ui-in-viewport"
+                                offset={0}
+                              >
+                                Code
+                              </div>
+                            </InViewport>
+                          </div>
+                        </Portal>
                       </div>
                     </TooltipContainer>
                   </Tooltip>
@@ -1135,6 +1799,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                     onFocus={[Function]}
                     onMouseLeave={[Function]}
                     onMouseOver={[Function]}
+                    setRef={[Function]}
                   >
                     <div
                       className="Tooltip__TooltipContainer___3YlPf"
@@ -1213,6 +1878,171 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           </TabFocusTrap>
                         </button>
                       </IconButton>
+                      <Portal
+                        containerInfo={
+                          <body>
+                            <div
+                              class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                              contenteditable="false"
+                              data-test-id="cf-ui-tooltip"
+                              style="visibility: hidden; opacity: 0;"
+                            >
+                              <div
+                                class="InViewport__InViewport___2o6g4"
+                                data-test-id="cf-ui-in-viewport"
+                                offset="0"
+                              >
+                                Bold
+                              </div>
+                            </div>
+                            <div
+                              class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                              contenteditable="false"
+                              data-test-id="cf-ui-tooltip"
+                              style="visibility: hidden; opacity: 0;"
+                            >
+                              <div
+                                class="InViewport__InViewport___2o6g4"
+                                data-test-id="cf-ui-in-viewport"
+                                offset="0"
+                              >
+                                Italic
+                              </div>
+                            </div>
+                            <div
+                              class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                              contenteditable="false"
+                              data-test-id="cf-ui-tooltip"
+                              style="visibility: hidden; opacity: 0;"
+                            >
+                              <div
+                                class="InViewport__InViewport___2o6g4"
+                                data-test-id="cf-ui-in-viewport"
+                                offset="0"
+                              >
+                                Underline
+                              </div>
+                            </div>
+                            <div
+                              class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                              contenteditable="false"
+                              data-test-id="cf-ui-tooltip"
+                              style="visibility: hidden; opacity: 0;"
+                            >
+                              <div
+                                class="InViewport__InViewport___2o6g4"
+                                data-test-id="cf-ui-in-viewport"
+                                offset="0"
+                              >
+                                Code
+                              </div>
+                            </div>
+                            <div
+                              class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                              contenteditable="false"
+                              data-test-id="cf-ui-tooltip"
+                              style="visibility: hidden; opacity: 0;"
+                            >
+                              <div
+                                class="InViewport__InViewport___2o6g4"
+                                data-test-id="cf-ui-in-viewport"
+                                offset="0"
+                              >
+                                Hyperlink
+                              </div>
+                            </div>
+                            <div
+                              class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                              contenteditable="false"
+                              data-test-id="cf-ui-tooltip"
+                              style="visibility: hidden; opacity: 0;"
+                            >
+                              <div
+                                class="InViewport__InViewport___2o6g4"
+                                data-test-id="cf-ui-in-viewport"
+                                offset="0"
+                              >
+                                UL
+                              </div>
+                            </div>
+                            <div
+                              class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                              contenteditable="false"
+                              data-test-id="cf-ui-tooltip"
+                              style="visibility: hidden; opacity: 0;"
+                            >
+                              <div
+                                class="InViewport__InViewport___2o6g4"
+                                data-test-id="cf-ui-in-viewport"
+                                offset="0"
+                              >
+                                OL
+                              </div>
+                            </div>
+                            <div
+                              class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                              contenteditable="false"
+                              data-test-id="cf-ui-tooltip"
+                              style="visibility: hidden; opacity: 0;"
+                            >
+                              <div
+                                class="InViewport__InViewport___2o6g4"
+                                data-test-id="cf-ui-in-viewport"
+                                offset="0"
+                              >
+                                Blockquote
+                              </div>
+                            </div>
+                            <div
+                              class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                              contenteditable="false"
+                              data-test-id="cf-ui-tooltip"
+                              style="visibility: hidden; opacity: 0;"
+                            >
+                              <div
+                                class="InViewport__InViewport___2o6g4"
+                                data-test-id="cf-ui-in-viewport"
+                                offset="0"
+                              >
+                                HR
+                              </div>
+                            </div>
+                          </body>
+                        }
+                      >
+                        <div
+                          className="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                          contentEditable={false}
+                          data-test-id="cf-ui-tooltip"
+                          onFocus={[Function]}
+                          onMouseOver={[Function]}
+                          style={
+                            Object {
+                              "left": null,
+                              "opacity": 0,
+                              "top": null,
+                              "visibility": "hidden",
+                            }
+                          }
+                        >
+                          <InViewport
+                            offset={0}
+                            onOverflowBottom={[Function]}
+                            onOverflowLeft={[Function]}
+                            onOverflowRight={[Function]}
+                            onOverflowTop={[Function]}
+                            testId="cf-ui-in-viewport"
+                          >
+                            <div
+                              className="InViewport__InViewport___2o6g4"
+                              data-test-id="cf-ui-in-viewport"
+                              offset={0}
+                            >
+                              Hyperlink
+                            </div>
+                          </InViewport>
+                        </div>
+                      </Portal>
                     </div>
                   </TooltipContainer>
                 </Tooltip>
@@ -1302,6 +2132,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                       onFocus={[Function]}
                       onMouseLeave={[Function]}
                       onMouseOver={[Function]}
+                      setRef={[Function]}
                     >
                       <div
                         className="Tooltip__TooltipContainer___3YlPf"
@@ -1380,6 +2211,171 @@ exports[`Toolbar renders toolbar icons 1`] = `
                             </TabFocusTrap>
                           </button>
                         </IconButton>
+                        <Portal
+                          containerInfo={
+                            <body>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Bold
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Italic
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Underline
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Code
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Hyperlink
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  UL
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  OL
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Blockquote
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  HR
+                                </div>
+                              </div>
+                            </body>
+                          }
+                        >
+                          <div
+                            className="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                            contentEditable={false}
+                            data-test-id="cf-ui-tooltip"
+                            onFocus={[Function]}
+                            onMouseOver={[Function]}
+                            style={
+                              Object {
+                                "left": null,
+                                "opacity": 0,
+                                "top": null,
+                                "visibility": "hidden",
+                              }
+                            }
+                          >
+                            <InViewport
+                              offset={0}
+                              onOverflowBottom={[Function]}
+                              onOverflowLeft={[Function]}
+                              onOverflowRight={[Function]}
+                              onOverflowTop={[Function]}
+                              testId="cf-ui-in-viewport"
+                            >
+                              <div
+                                className="InViewport__InViewport___2o6g4"
+                                data-test-id="cf-ui-in-viewport"
+                                offset={0}
+                              >
+                                UL
+                              </div>
+                            </InViewport>
+                          </div>
+                        </Portal>
                       </div>
                     </TooltipContainer>
                   </Tooltip>
@@ -1458,6 +2454,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                       onFocus={[Function]}
                       onMouseLeave={[Function]}
                       onMouseOver={[Function]}
+                      setRef={[Function]}
                     >
                       <div
                         className="Tooltip__TooltipContainer___3YlPf"
@@ -1536,6 +2533,171 @@ exports[`Toolbar renders toolbar icons 1`] = `
                             </TabFocusTrap>
                           </button>
                         </IconButton>
+                        <Portal
+                          containerInfo={
+                            <body>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Bold
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Italic
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Underline
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Code
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Hyperlink
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  UL
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  OL
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Blockquote
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  HR
+                                </div>
+                              </div>
+                            </body>
+                          }
+                        >
+                          <div
+                            className="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                            contentEditable={false}
+                            data-test-id="cf-ui-tooltip"
+                            onFocus={[Function]}
+                            onMouseOver={[Function]}
+                            style={
+                              Object {
+                                "left": null,
+                                "opacity": 0,
+                                "top": null,
+                                "visibility": "hidden",
+                              }
+                            }
+                          >
+                            <InViewport
+                              offset={0}
+                              onOverflowBottom={[Function]}
+                              onOverflowLeft={[Function]}
+                              onOverflowRight={[Function]}
+                              onOverflowTop={[Function]}
+                              testId="cf-ui-in-viewport"
+                            >
+                              <div
+                                className="InViewport__InViewport___2o6g4"
+                                data-test-id="cf-ui-in-viewport"
+                                offset={0}
+                              >
+                                OL
+                              </div>
+                            </InViewport>
+                          </div>
+                        </Portal>
                       </div>
                     </TooltipContainer>
                   </Tooltip>
@@ -1636,6 +2798,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                       onFocus={[Function]}
                       onMouseLeave={[Function]}
                       onMouseOver={[Function]}
+                      setRef={[Function]}
                     >
                       <div
                         className="Tooltip__TooltipContainer___3YlPf"
@@ -1714,6 +2877,171 @@ exports[`Toolbar renders toolbar icons 1`] = `
                             </TabFocusTrap>
                           </button>
                         </IconButton>
+                        <Portal
+                          containerInfo={
+                            <body>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Bold
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Italic
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Underline
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Code
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Hyperlink
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  UL
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  OL
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Blockquote
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  HR
+                                </div>
+                              </div>
+                            </body>
+                          }
+                        >
+                          <div
+                            className="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                            contentEditable={false}
+                            data-test-id="cf-ui-tooltip"
+                            onFocus={[Function]}
+                            onMouseOver={[Function]}
+                            style={
+                              Object {
+                                "left": null,
+                                "opacity": 0,
+                                "top": null,
+                                "visibility": "hidden",
+                              }
+                            }
+                          >
+                            <InViewport
+                              offset={0}
+                              onOverflowBottom={[Function]}
+                              onOverflowLeft={[Function]}
+                              onOverflowRight={[Function]}
+                              onOverflowTop={[Function]}
+                              testId="cf-ui-in-viewport"
+                            >
+                              <div
+                                className="InViewport__InViewport___2o6g4"
+                                data-test-id="cf-ui-in-viewport"
+                                offset={0}
+                              >
+                                Blockquote
+                              </div>
+                            </InViewport>
+                          </div>
+                        </Portal>
                       </div>
                     </TooltipContainer>
                   </Tooltip>
@@ -1792,6 +3120,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                       onFocus={[Function]}
                       onMouseLeave={[Function]}
                       onMouseOver={[Function]}
+                      setRef={[Function]}
                     >
                       <div
                         className="Tooltip__TooltipContainer___3YlPf"
@@ -1870,6 +3199,171 @@ exports[`Toolbar renders toolbar icons 1`] = `
                             </TabFocusTrap>
                           </button>
                         </IconButton>
+                        <Portal
+                          containerInfo={
+                            <body>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Bold
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Italic
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Underline
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Code
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Hyperlink
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  UL
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  OL
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Blockquote
+                                </div>
+                              </div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="visibility: hidden; opacity: 0;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  HR
+                                </div>
+                              </div>
+                            </body>
+                          }
+                        >
+                          <div
+                            className="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW"
+                            contentEditable={false}
+                            data-test-id="cf-ui-tooltip"
+                            onFocus={[Function]}
+                            onMouseOver={[Function]}
+                            style={
+                              Object {
+                                "left": null,
+                                "opacity": 0,
+                                "top": null,
+                                "visibility": "hidden",
+                              }
+                            }
+                          >
+                            <InViewport
+                              offset={0}
+                              onOverflowBottom={[Function]}
+                              onOverflowLeft={[Function]}
+                              onOverflowRight={[Function]}
+                              onOverflowTop={[Function]}
+                              testId="cf-ui-in-viewport"
+                            >
+                              <div
+                                className="InViewport__InViewport___2o6g4"
+                                data-test-id="cf-ui-in-viewport"
+                                offset={0}
+                              >
+                                HR
+                              </div>
+                            </InViewport>
+                          </div>
+                        </Portal>
                       </div>
                     </TooltipContainer>
                   </Tooltip>
