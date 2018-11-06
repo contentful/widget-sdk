@@ -20,7 +20,8 @@ export default addUserOrgSpace((_eventName, data) => {
       is_fullscreen: data.isFullscreen,
       character_count_before: data.characterCountBefore || null,
       character_count_after: data.characterCountAfter || null,
-      character_count_selection: data.characterCountSelection || null
+      character_count_selection: data.characterCountSelection || null,
+      additional_data: data.additionalData || {}
     }
   };
 });
