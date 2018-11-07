@@ -1,11 +1,19 @@
 import { getStore } from 'TheStore';
-import { combine } from 'utils/kefir.es6';
+import { combine, getValue } from 'utils/kefir.es6';
 import { getCurrentVariation } from 'utils/LaunchDarkly';
 import { user$, spacesByOrganization$ as spacesByOrg$ } from 'services/TokenStore.es6';
 import createSampleSpace from './CreateSampleSpace.es6';
 import seeThinkDoFeatureModalTemplate from './SeeThinkDoTemplate.es6';
+import $stateParams from '$stateParams';
+import { organizations$ } from 'services/TokenStore.es6';
 
-import { getFirstOwnedOrgWithoutSpaces, hasAnOrgWithSpaces, ownsAtleastOneOrg } from 'data/User';
+import {
+  getFirstOwnedOrgWithoutSpaces,
+  hasAnOrgWithSpaces,
+  ownsAtleastOneOrg,
+  getCurrOrg,
+  isUserOrgCreator
+} from 'data/User';
 
 import { create } from 'createModernOnboarding';
 
@@ -95,8 +103,19 @@ export function init() {
 
 function qualifyUser(user, spacesByOrg) {
   return (
-    !attemptedSpaceAutoCreation(user) && !hasAnOrgWithSpaces(spacesByOrg) && ownsAtleastOneOrg(user)
+    !attemptedSpaceAutoCreation(user) && // no auto space creation was attempted
+    currentUserIsCurrentOrgCreator(user) && // current user created the current org aka Pioneer User
+    !hasAnOrgWithSpaces(spacesByOrg) && // user has no space memberships in any org that they are a member of
+    ownsAtleastOneOrg(user) // user owns atleast one org
   );
+}
+
+function currentUserIsCurrentOrgCreator(user) {
+  const orgId = $stateParams.orgId;
+  const orgs = getValue(organizations$);
+  const currOrg = getCurrOrg(orgs, orgId);
+
+  return isUserOrgCreator(user, currOrg);
 }
 
 function attemptedSpaceAutoCreation(user) {

@@ -256,7 +256,16 @@ function updateCurrOrgSpaceAndPublishedCTs(bus) {
   };
 }
 
-function getCurrOrg(orgs, orgId) {
+/**
+ * @description
+ * Get the current organization the user is in the context of
+ *
+ * @param {Array<Object>} orgs
+ * @param {string} orgId
+ *
+ * @return {Object} org
+ */
+export function getCurrOrg(orgs, orgId) {
   return getOrgById(orgs, orgId) || get(spaceContext, ['organization'], null) || orgs[0];
 }
 
