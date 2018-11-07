@@ -1,13 +1,13 @@
 const gulp = require('gulp');
 const sourceMaps = require('gulp-sourcemaps');
 const concat = require('gulp-concat');
-const uglifyes = require('uglify-es');
+const terser = require('terser');
 const composer = require('gulp-uglify/composer');
 const rev = require('gulp-rev');
 const mergeStream = require('merge-stream');
 const { writeFile, changeBase } = require('../helpers');
 
-const uglify = composer(uglifyes, console);
+const uglify = composer(terser, console);
 
 /**
  * Concatenates and minifies application JS files to

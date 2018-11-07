@@ -1,9 +1,9 @@
 const gulp = require('gulp');
-const uglifyes = require('uglify-es');
+const terser = require('terser');
 const composer = require('gulp-uglify/composer');
 const { writeFile, changeBase } = require('../helpers');
 
-const uglify = composer(uglifyes, console);
+const uglify = composer(terser, console);
 
 gulp.task('build/chunks', [], function() {
   return gulp
