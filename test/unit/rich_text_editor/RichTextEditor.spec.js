@@ -27,12 +27,16 @@ describe('RichTextEditor', () => {
 
     this.entity = ENTRY;
 
+    stubAll({ isolatedSystem: this.system });
+
     this.system.set('entitySelector', {
       default: {
         openFromField: () => Promise.resolve([this.entity])
       }
     });
-    stubAll({ isolatedSystem: this.system });
+    this.system.set('app/widgets/rich_text/withTracking.es6', {
+      default: component => component
+    });
 
     const { default: RichTextEditor } = await this.system.import('app/widgets/rich_text/index.es6');
 
