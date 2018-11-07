@@ -49,9 +49,7 @@ export default function createMiddleware(spaceRoles) {
       const selectedRoleValue = spaceRoleFilter.filter.value;
       const isSpaceSelected = isActiveFilter(spaceFilter);
       const wasSpaceSelected = isActiveFilter(oldSpaceFilter);
-      // const wasRoleSelected = isActiveFilter(oldSpaceRoleFilter);
       const isRoleSelected = isActiveFilter(spaceRoleFilter);
-      // const wasAdminSelected = oldSpaceRoleFilter.filter.value === 'true';
       const oldSelectedSpaceValue = oldSpaceFilter.filter.value;
       const oldSelectedRoleValue = oldSpaceRoleFilter.filter.value;
       const oldOptions = oldSpaceRoleFilter.options;
@@ -59,8 +57,6 @@ export default function createMiddleware(spaceRoles) {
       const selectedRoleOption = spaceRoleFilter.options.find(o => o.value === selectedRoleValue);
       const isAdminSelected = isRoleSelected && selectedRoleOption.label === 'Admin'; // TODO: refine this definition
       const conditions = {
-        // NONE: !isSpaceSelected && !isRoleSelected,
-        // JUST_SPACE: isSpaceSelected && !isRoleSelected,
         JUST_ROLE: isRoleSelected && !isAdminSelected && !isSpaceSelected,
         ROLE_IN_SPACE: isRoleSelected && !isAdminSelected && isSpaceSelected,
         ADMIN_IN_SPACE: isAdminSelected && isSpaceSelected,
@@ -72,11 +68,6 @@ export default function createMiddleware(spaceRoles) {
         CHANGED_SPACE:
           wasSpaceSelected && isSpaceSelected && oldSelectedSpaceValue !== selectedSpaceValue,
         DESELECTED_SPACE: wasSpaceSelected && !isSpaceSelected
-        // SELECTED_ROLE: !wasRoleSelected && isRoleSelected,
-        // CHANGED_ROLE: wasRoleSelected && isRoleSelected && oldSelectedRoleValue !== selectedRoleValue,
-        // DESELECTED_ROLE: wasRoleSelected && !isRoleSelected,
-        // SELECTED_ADMIN: !wasAdminSelected && isAdminSelected,
-        // DESELECTED_ADMIN: wasAdminSelected && !isAdminSelected
       };
 
       let key;
