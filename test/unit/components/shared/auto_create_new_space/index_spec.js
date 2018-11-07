@@ -31,7 +31,7 @@ describe('AutoCreateNewSpace/index', () => {
 
     const init = this.$inject('components/shared/auto_create_new_space').init;
 
-    this.user = {
+    const user = {
       sys: { id: 'user', createdAt: new Date().toISOString() },
       organizationMemberships: [
         {
@@ -48,7 +48,13 @@ describe('AutoCreateNewSpace/index', () => {
         }
       ]
     };
+    this.user = user;
     this.spacesByOrg = {};
+    const org = {
+      sys: {
+        createdBy: user
+      }
+    };
 
     this.init = _ => {
       init();
@@ -57,6 +63,7 @@ describe('AutoCreateNewSpace/index', () => {
 
     // set data to qualify user
     this.tokenStore.spacesByOrganization$.set(this.spacesByOrg);
+    this.tokenStore.organizations$.set([org]);
     this.tokenStore.user$.set(this.user);
     this.store.get.returns(false);
   });
