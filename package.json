@@ -195,7 +195,8 @@
     "precommit": "lint-staged",
     "bundle-analyzer": "node --max_old_space_size=4096 ./node_modules/webpack/bin/webpack.js --config ./tools/webpack.analyzer.config.js",
     "prettier:debug": "prettier --config .prettierrc --no-editorconfig --debug-check \"./*.js\" \"{./src/javascripts,./tools,./test,./bin,./tasks,./config}/**/*.{js,json}\"",
-    "prettier": "prettier --config .prettierrc --no-editorconfig --write \"./*.js\" \"{./src/javascripts,./tools,./test,./bin,./tasks,./config}/**/*.{js,json}\""
+    "prettier": "prettier --config .prettierrc --no-editorconfig --write \"./*.js\" \"{./src/javascripts,./tools,./test,./bin,./tasks,./config}/**/*.{js,json}\"",
+    "postshrinkwrap": "if [ \"`uname`\" = \"Darwin\" ]; then sed -i '' 's/http:\\/\\//https:\\/\\//g' package-lock.json; else sed -i 's/http:\\/\\//https:\\/\\//g' package-lock.json; fi"
   },
   "lint-staged": {
     "*.js": [
