@@ -32,6 +32,7 @@ angular
           require('states/Spaces.es6').default,
           require('states/Home.es6').default,
           require('states/Deeplink.es6').default,
+          require('states/UserInvitationState.es6').default,
           {
             name: '_other',
             url: '/*path',
