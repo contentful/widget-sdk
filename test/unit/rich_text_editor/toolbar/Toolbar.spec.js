@@ -147,6 +147,7 @@ describe('Toolbar', () => {
   });
 
   afterEach(function() {
+    this.wrapper.unmount();
     this.wrapper = null;
     this.sandbox.remove();
   });

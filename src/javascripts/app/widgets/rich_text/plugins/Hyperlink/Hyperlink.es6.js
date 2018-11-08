@@ -15,12 +15,6 @@ const ICON_MAP = {
   [ASSET_HYPERLINK]: 'Asset'
 };
 
-const HyperlinkTooltipContainer = ({ children, ...otherProps }) => (
-  <span className="rich-text__hyperlink-container" {...otherProps}>
-    {children}
-  </span>
-);
-
 export default class Hyperlink extends React.Component {
   static propTypes = {
     attributes: PropTypes.object.isRequired,
@@ -52,11 +46,10 @@ export default class Hyperlink extends React.Component {
     const href = isUrl(uri) ? uri : 'javascript:void(0)';
 
     return (
-      <Tooltip content={tooltip} containerElement={HyperlinkTooltipContainer}>
+      <Tooltip content={tooltip} extraClassNames="rich-text__hyperlink-container" maxWidth="auto">
         <TextLink
           href={href} // Allows user to open link in new tab.
           rel="noopener noreferrer"
-          data-tip={tooltip}
           title={title}
           extraClassNames="rich-text__hyperlink">
           {children}

@@ -497,8 +497,10 @@ exports[`Toolbar renders toolbar icons 1`] = `
                   withDropdown={false}
                 >
                   <Tooltip
+                    containerElement="span"
                     content="Bold"
                     isVisible={false}
+                    maxWidth={360}
                     onBlur={[Function]}
                     onFocus={[Function]}
                     onMouseLeave={[Function]}
@@ -507,12 +509,14 @@ exports[`Toolbar renders toolbar icons 1`] = `
                     testId="cf-ui-tooltip"
                   >
                     <TooltipContainer
+                      containerElement="span"
                       onBlur={[Function]}
                       onFocus={[Function]}
                       onMouseLeave={[Function]}
                       onMouseOver={[Function]}
+                      setRef={[Function]}
                     >
-                      <div
+                      <span
                         className="Tooltip__TooltipContainer___3YlPf"
                         onBlur={[Function]}
                         onFocus={[Function]}
@@ -589,7 +593,59 @@ exports[`Toolbar renders toolbar icons 1`] = `
                             </TabFocusTrap>
                           </button>
                         </IconButton>
-                      </div>
+                        <Portal
+                          containerInfo={
+                            <div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="max-width: 360px;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Bold
+                                </div>
+                              </div>
+                            </div>
+                          }
+                        >
+                          <div
+                            className="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
+                            contentEditable={false}
+                            data-test-id="cf-ui-tooltip"
+                            onFocus={[Function]}
+                            onMouseOver={[Function]}
+                            style={
+                              Object {
+                                "left": null,
+                                "maxWidth": 360,
+                                "top": null,
+                              }
+                            }
+                          >
+                            <InViewport
+                              offset={0}
+                              onOverflowBottom={[Function]}
+                              onOverflowLeft={[Function]}
+                              onOverflowRight={[Function]}
+                              onOverflowTop={[Function]}
+                              testId="cf-ui-in-viewport"
+                            >
+                              <div
+                                className="InViewport__InViewport___2o6g4"
+                                data-test-id="cf-ui-in-viewport"
+                                offset={0}
+                              >
+                                Bold
+                              </div>
+                            </InViewport>
+                          </div>
+                        </Portal>
+                      </span>
                     </TooltipContainer>
                   </Tooltip>
                 </EditorToolbarButton>
@@ -653,8 +709,10 @@ exports[`Toolbar renders toolbar icons 1`] = `
                   withDropdown={false}
                 >
                   <Tooltip
+                    containerElement="span"
                     content="Italic"
                     isVisible={false}
+                    maxWidth={360}
                     onBlur={[Function]}
                     onFocus={[Function]}
                     onMouseLeave={[Function]}
@@ -663,12 +721,14 @@ exports[`Toolbar renders toolbar icons 1`] = `
                     testId="cf-ui-tooltip"
                   >
                     <TooltipContainer
+                      containerElement="span"
                       onBlur={[Function]}
                       onFocus={[Function]}
                       onMouseLeave={[Function]}
                       onMouseOver={[Function]}
+                      setRef={[Function]}
                     >
-                      <div
+                      <span
                         className="Tooltip__TooltipContainer___3YlPf"
                         onBlur={[Function]}
                         onFocus={[Function]}
@@ -745,7 +805,59 @@ exports[`Toolbar renders toolbar icons 1`] = `
                             </TabFocusTrap>
                           </button>
                         </IconButton>
-                      </div>
+                        <Portal
+                          containerInfo={
+                            <div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="max-width: 360px;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Italic
+                                </div>
+                              </div>
+                            </div>
+                          }
+                        >
+                          <div
+                            className="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
+                            contentEditable={false}
+                            data-test-id="cf-ui-tooltip"
+                            onFocus={[Function]}
+                            onMouseOver={[Function]}
+                            style={
+                              Object {
+                                "left": null,
+                                "maxWidth": 360,
+                                "top": null,
+                              }
+                            }
+                          >
+                            <InViewport
+                              offset={0}
+                              onOverflowBottom={[Function]}
+                              onOverflowLeft={[Function]}
+                              onOverflowRight={[Function]}
+                              onOverflowTop={[Function]}
+                              testId="cf-ui-in-viewport"
+                            >
+                              <div
+                                className="InViewport__InViewport___2o6g4"
+                                data-test-id="cf-ui-in-viewport"
+                                offset={0}
+                              >
+                                Italic
+                              </div>
+                            </InViewport>
+                          </div>
+                        </Portal>
+                      </span>
                     </TooltipContainer>
                   </Tooltip>
                 </EditorToolbarButton>
@@ -809,8 +921,10 @@ exports[`Toolbar renders toolbar icons 1`] = `
                   withDropdown={false}
                 >
                   <Tooltip
+                    containerElement="span"
                     content="Underline"
                     isVisible={false}
+                    maxWidth={360}
                     onBlur={[Function]}
                     onFocus={[Function]}
                     onMouseLeave={[Function]}
@@ -819,12 +933,14 @@ exports[`Toolbar renders toolbar icons 1`] = `
                     testId="cf-ui-tooltip"
                   >
                     <TooltipContainer
+                      containerElement="span"
                       onBlur={[Function]}
                       onFocus={[Function]}
                       onMouseLeave={[Function]}
                       onMouseOver={[Function]}
+                      setRef={[Function]}
                     >
-                      <div
+                      <span
                         className="Tooltip__TooltipContainer___3YlPf"
                         onBlur={[Function]}
                         onFocus={[Function]}
@@ -901,7 +1017,59 @@ exports[`Toolbar renders toolbar icons 1`] = `
                             </TabFocusTrap>
                           </button>
                         </IconButton>
-                      </div>
+                        <Portal
+                          containerInfo={
+                            <div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="max-width: 360px;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Underline
+                                </div>
+                              </div>
+                            </div>
+                          }
+                        >
+                          <div
+                            className="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
+                            contentEditable={false}
+                            data-test-id="cf-ui-tooltip"
+                            onFocus={[Function]}
+                            onMouseOver={[Function]}
+                            style={
+                              Object {
+                                "left": null,
+                                "maxWidth": 360,
+                                "top": null,
+                              }
+                            }
+                          >
+                            <InViewport
+                              offset={0}
+                              onOverflowBottom={[Function]}
+                              onOverflowLeft={[Function]}
+                              onOverflowRight={[Function]}
+                              onOverflowTop={[Function]}
+                              testId="cf-ui-in-viewport"
+                            >
+                              <div
+                                className="InViewport__InViewport___2o6g4"
+                                data-test-id="cf-ui-in-viewport"
+                                offset={0}
+                              >
+                                Underline
+                              </div>
+                            </InViewport>
+                          </div>
+                        </Portal>
+                      </span>
                     </TooltipContainer>
                   </Tooltip>
                 </EditorToolbarButton>
@@ -965,8 +1133,10 @@ exports[`Toolbar renders toolbar icons 1`] = `
                   withDropdown={false}
                 >
                   <Tooltip
+                    containerElement="span"
                     content="Code"
                     isVisible={false}
+                    maxWidth={360}
                     onBlur={[Function]}
                     onFocus={[Function]}
                     onMouseLeave={[Function]}
@@ -975,12 +1145,14 @@ exports[`Toolbar renders toolbar icons 1`] = `
                     testId="cf-ui-tooltip"
                   >
                     <TooltipContainer
+                      containerElement="span"
                       onBlur={[Function]}
                       onFocus={[Function]}
                       onMouseLeave={[Function]}
                       onMouseOver={[Function]}
+                      setRef={[Function]}
                     >
-                      <div
+                      <span
                         className="Tooltip__TooltipContainer___3YlPf"
                         onBlur={[Function]}
                         onFocus={[Function]}
@@ -1057,7 +1229,59 @@ exports[`Toolbar renders toolbar icons 1`] = `
                             </TabFocusTrap>
                           </button>
                         </IconButton>
-                      </div>
+                        <Portal
+                          containerInfo={
+                            <div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="max-width: 360px;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Code
+                                </div>
+                              </div>
+                            </div>
+                          }
+                        >
+                          <div
+                            className="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
+                            contentEditable={false}
+                            data-test-id="cf-ui-tooltip"
+                            onFocus={[Function]}
+                            onMouseOver={[Function]}
+                            style={
+                              Object {
+                                "left": null,
+                                "maxWidth": 360,
+                                "top": null,
+                              }
+                            }
+                          >
+                            <InViewport
+                              offset={0}
+                              onOverflowBottom={[Function]}
+                              onOverflowLeft={[Function]}
+                              onOverflowRight={[Function]}
+                              onOverflowTop={[Function]}
+                              testId="cf-ui-in-viewport"
+                            >
+                              <div
+                                className="InViewport__InViewport___2o6g4"
+                                data-test-id="cf-ui-in-viewport"
+                                offset={0}
+                              >
+                                Code
+                              </div>
+                            </InViewport>
+                          </div>
+                        </Portal>
+                      </span>
                     </TooltipContainer>
                   </Tooltip>
                 </EditorToolbarButton>
@@ -1121,8 +1345,10 @@ exports[`Toolbar renders toolbar icons 1`] = `
                 withDropdown={false}
               >
                 <Tooltip
+                  containerElement="span"
                   content="Hyperlink"
                   isVisible={false}
+                  maxWidth={360}
                   onBlur={[Function]}
                   onFocus={[Function]}
                   onMouseLeave={[Function]}
@@ -1131,12 +1357,14 @@ exports[`Toolbar renders toolbar icons 1`] = `
                   testId="cf-ui-tooltip"
                 >
                   <TooltipContainer
+                    containerElement="span"
                     onBlur={[Function]}
                     onFocus={[Function]}
                     onMouseLeave={[Function]}
                     onMouseOver={[Function]}
+                    setRef={[Function]}
                   >
-                    <div
+                    <span
                       className="Tooltip__TooltipContainer___3YlPf"
                       onBlur={[Function]}
                       onFocus={[Function]}
@@ -1213,7 +1441,59 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           </TabFocusTrap>
                         </button>
                       </IconButton>
-                    </div>
+                      <Portal
+                        containerInfo={
+                          <div>
+                            <div
+                              class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
+                              contenteditable="false"
+                              data-test-id="cf-ui-tooltip"
+                              style="max-width: 360px;"
+                            >
+                              <div
+                                class="InViewport__InViewport___2o6g4"
+                                data-test-id="cf-ui-in-viewport"
+                                offset="0"
+                              >
+                                Hyperlink
+                              </div>
+                            </div>
+                          </div>
+                        }
+                      >
+                        <div
+                          className="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
+                          contentEditable={false}
+                          data-test-id="cf-ui-tooltip"
+                          onFocus={[Function]}
+                          onMouseOver={[Function]}
+                          style={
+                            Object {
+                              "left": null,
+                              "maxWidth": 360,
+                              "top": null,
+                            }
+                          }
+                        >
+                          <InViewport
+                            offset={0}
+                            onOverflowBottom={[Function]}
+                            onOverflowLeft={[Function]}
+                            onOverflowRight={[Function]}
+                            onOverflowTop={[Function]}
+                            testId="cf-ui-in-viewport"
+                          >
+                            <div
+                              className="InViewport__InViewport___2o6g4"
+                              data-test-id="cf-ui-in-viewport"
+                              offset={0}
+                            >
+                              Hyperlink
+                            </div>
+                          </InViewport>
+                        </div>
+                      </Portal>
+                    </span>
                   </TooltipContainer>
                 </Tooltip>
               </EditorToolbarButton>
@@ -1288,8 +1568,10 @@ exports[`Toolbar renders toolbar icons 1`] = `
                   withDropdown={false}
                 >
                   <Tooltip
+                    containerElement="span"
                     content="UL"
                     isVisible={false}
+                    maxWidth={360}
                     onBlur={[Function]}
                     onFocus={[Function]}
                     onMouseLeave={[Function]}
@@ -1298,12 +1580,14 @@ exports[`Toolbar renders toolbar icons 1`] = `
                     testId="cf-ui-tooltip"
                   >
                     <TooltipContainer
+                      containerElement="span"
                       onBlur={[Function]}
                       onFocus={[Function]}
                       onMouseLeave={[Function]}
                       onMouseOver={[Function]}
+                      setRef={[Function]}
                     >
-                      <div
+                      <span
                         className="Tooltip__TooltipContainer___3YlPf"
                         onBlur={[Function]}
                         onFocus={[Function]}
@@ -1380,7 +1664,59 @@ exports[`Toolbar renders toolbar icons 1`] = `
                             </TabFocusTrap>
                           </button>
                         </IconButton>
-                      </div>
+                        <Portal
+                          containerInfo={
+                            <div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="max-width: 360px;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  UL
+                                </div>
+                              </div>
+                            </div>
+                          }
+                        >
+                          <div
+                            className="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
+                            contentEditable={false}
+                            data-test-id="cf-ui-tooltip"
+                            onFocus={[Function]}
+                            onMouseOver={[Function]}
+                            style={
+                              Object {
+                                "left": null,
+                                "maxWidth": 360,
+                                "top": null,
+                              }
+                            }
+                          >
+                            <InViewport
+                              offset={0}
+                              onOverflowBottom={[Function]}
+                              onOverflowLeft={[Function]}
+                              onOverflowRight={[Function]}
+                              onOverflowTop={[Function]}
+                              testId="cf-ui-in-viewport"
+                            >
+                              <div
+                                className="InViewport__InViewport___2o6g4"
+                                data-test-id="cf-ui-in-viewport"
+                                offset={0}
+                              >
+                                UL
+                              </div>
+                            </InViewport>
+                          </div>
+                        </Portal>
+                      </span>
                     </TooltipContainer>
                   </Tooltip>
                 </EditorToolbarButton>
@@ -1444,8 +1780,10 @@ exports[`Toolbar renders toolbar icons 1`] = `
                   withDropdown={false}
                 >
                   <Tooltip
+                    containerElement="span"
                     content="OL"
                     isVisible={false}
+                    maxWidth={360}
                     onBlur={[Function]}
                     onFocus={[Function]}
                     onMouseLeave={[Function]}
@@ -1454,12 +1792,14 @@ exports[`Toolbar renders toolbar icons 1`] = `
                     testId="cf-ui-tooltip"
                   >
                     <TooltipContainer
+                      containerElement="span"
                       onBlur={[Function]}
                       onFocus={[Function]}
                       onMouseLeave={[Function]}
                       onMouseOver={[Function]}
+                      setRef={[Function]}
                     >
-                      <div
+                      <span
                         className="Tooltip__TooltipContainer___3YlPf"
                         onBlur={[Function]}
                         onFocus={[Function]}
@@ -1536,7 +1876,59 @@ exports[`Toolbar renders toolbar icons 1`] = `
                             </TabFocusTrap>
                           </button>
                         </IconButton>
-                      </div>
+                        <Portal
+                          containerInfo={
+                            <div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="max-width: 360px;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  OL
+                                </div>
+                              </div>
+                            </div>
+                          }
+                        >
+                          <div
+                            className="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
+                            contentEditable={false}
+                            data-test-id="cf-ui-tooltip"
+                            onFocus={[Function]}
+                            onMouseOver={[Function]}
+                            style={
+                              Object {
+                                "left": null,
+                                "maxWidth": 360,
+                                "top": null,
+                              }
+                            }
+                          >
+                            <InViewport
+                              offset={0}
+                              onOverflowBottom={[Function]}
+                              onOverflowLeft={[Function]}
+                              onOverflowRight={[Function]}
+                              onOverflowTop={[Function]}
+                              testId="cf-ui-in-viewport"
+                            >
+                              <div
+                                className="InViewport__InViewport___2o6g4"
+                                data-test-id="cf-ui-in-viewport"
+                                offset={0}
+                              >
+                                OL
+                              </div>
+                            </InViewport>
+                          </div>
+                        </Portal>
+                      </span>
                     </TooltipContainer>
                   </Tooltip>
                 </EditorToolbarButton>
@@ -1622,8 +2014,10 @@ exports[`Toolbar renders toolbar icons 1`] = `
                   withDropdown={false}
                 >
                   <Tooltip
+                    containerElement="span"
                     content="Blockquote"
                     isVisible={false}
+                    maxWidth={360}
                     onBlur={[Function]}
                     onFocus={[Function]}
                     onMouseLeave={[Function]}
@@ -1632,12 +2026,14 @@ exports[`Toolbar renders toolbar icons 1`] = `
                     testId="cf-ui-tooltip"
                   >
                     <TooltipContainer
+                      containerElement="span"
                       onBlur={[Function]}
                       onFocus={[Function]}
                       onMouseLeave={[Function]}
                       onMouseOver={[Function]}
+                      setRef={[Function]}
                     >
-                      <div
+                      <span
                         className="Tooltip__TooltipContainer___3YlPf"
                         onBlur={[Function]}
                         onFocus={[Function]}
@@ -1714,7 +2110,59 @@ exports[`Toolbar renders toolbar icons 1`] = `
                             </TabFocusTrap>
                           </button>
                         </IconButton>
-                      </div>
+                        <Portal
+                          containerInfo={
+                            <div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="max-width: 360px;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  Blockquote
+                                </div>
+                              </div>
+                            </div>
+                          }
+                        >
+                          <div
+                            className="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
+                            contentEditable={false}
+                            data-test-id="cf-ui-tooltip"
+                            onFocus={[Function]}
+                            onMouseOver={[Function]}
+                            style={
+                              Object {
+                                "left": null,
+                                "maxWidth": 360,
+                                "top": null,
+                              }
+                            }
+                          >
+                            <InViewport
+                              offset={0}
+                              onOverflowBottom={[Function]}
+                              onOverflowLeft={[Function]}
+                              onOverflowRight={[Function]}
+                              onOverflowTop={[Function]}
+                              testId="cf-ui-in-viewport"
+                            >
+                              <div
+                                className="InViewport__InViewport___2o6g4"
+                                data-test-id="cf-ui-in-viewport"
+                                offset={0}
+                              >
+                                Blockquote
+                              </div>
+                            </InViewport>
+                          </div>
+                        </Portal>
+                      </span>
                     </TooltipContainer>
                   </Tooltip>
                 </EditorToolbarButton>
@@ -1778,8 +2226,10 @@ exports[`Toolbar renders toolbar icons 1`] = `
                   withDropdown={false}
                 >
                   <Tooltip
+                    containerElement="span"
                     content="HR"
                     isVisible={false}
+                    maxWidth={360}
                     onBlur={[Function]}
                     onFocus={[Function]}
                     onMouseLeave={[Function]}
@@ -1788,12 +2238,14 @@ exports[`Toolbar renders toolbar icons 1`] = `
                     testId="cf-ui-tooltip"
                   >
                     <TooltipContainer
+                      containerElement="span"
                       onBlur={[Function]}
                       onFocus={[Function]}
                       onMouseLeave={[Function]}
                       onMouseOver={[Function]}
+                      setRef={[Function]}
                     >
-                      <div
+                      <span
                         className="Tooltip__TooltipContainer___3YlPf"
                         onBlur={[Function]}
                         onFocus={[Function]}
@@ -1870,7 +2322,59 @@ exports[`Toolbar renders toolbar icons 1`] = `
                             </TabFocusTrap>
                           </button>
                         </IconButton>
-                      </div>
+                        <Portal
+                          containerInfo={
+                            <div>
+                              <div
+                                class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
+                                contenteditable="false"
+                                data-test-id="cf-ui-tooltip"
+                                style="max-width: 360px;"
+                              >
+                                <div
+                                  class="InViewport__InViewport___2o6g4"
+                                  data-test-id="cf-ui-in-viewport"
+                                  offset="0"
+                                >
+                                  HR
+                                </div>
+                              </div>
+                            </div>
+                          }
+                        >
+                          <div
+                            className="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
+                            contentEditable={false}
+                            data-test-id="cf-ui-tooltip"
+                            onFocus={[Function]}
+                            onMouseOver={[Function]}
+                            style={
+                              Object {
+                                "left": null,
+                                "maxWidth": 360,
+                                "top": null,
+                              }
+                            }
+                          >
+                            <InViewport
+                              offset={0}
+                              onOverflowBottom={[Function]}
+                              onOverflowLeft={[Function]}
+                              onOverflowRight={[Function]}
+                              onOverflowTop={[Function]}
+                              testId="cf-ui-in-viewport"
+                            >
+                              <div
+                                className="InViewport__InViewport___2o6g4"
+                                data-test-id="cf-ui-in-viewport"
+                                offset={0}
+                              >
+                                HR
+                              </div>
+                            </InViewport>
+                          </div>
+                        </Portal>
+                      </span>
                     </TooltipContainer>
                   </Tooltip>
                 </EditorToolbarButton>

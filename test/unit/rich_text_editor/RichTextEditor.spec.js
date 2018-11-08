@@ -54,6 +54,7 @@ describe('RichTextEditor', () => {
   });
 
   afterEach(function() {
+    this.wrapper.unmount();
     this.sandbox.remove();
   });
 
