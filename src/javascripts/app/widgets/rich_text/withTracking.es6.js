@@ -130,6 +130,9 @@ function isKnownAction(name) {
 }
 
 function getActionName(name, { nodeType, markType }) {
+  if (isKnownAction(name)) {
+    return name;
+  }
   let action = name;
   if (name === 'mark' || name === 'unmark') {
     action = `${name}-${markType}`;
