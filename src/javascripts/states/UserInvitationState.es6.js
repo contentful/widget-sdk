@@ -1,8 +1,8 @@
 import makeState from 'states/Base.es6';
 
 export default makeState({
-  name: 'home',
-  url: '/invitation/:invitationToken',
+  name: 'invitations',
+  url: '/invitations/:invitationToken',
   template:
     '<react-component name="components/shared/UserInvitation.es6" props="props"></react-component>',
   loadingText: 'Loading your invitation...',
@@ -19,7 +19,10 @@ export default makeState({
           invitation = await new Promise((resolve, reject) => {
             if (invitationToken === '1234') {
               return resolve({
-                orgName: 'Pizza Org'
+                orgName: 'Pizza',
+                orgRole: 'member',
+                inviterName: 'John Adams',
+                ssoEnabled: true
               });
             } else {
               return reject(new Error('Could not retrieve invitation'));
@@ -45,7 +48,7 @@ export default makeState({
       if (error) {
         $scope.props.error = error.message;
       } else {
-        $scope.props.title = `You have been invited to ${invitation.orgName}.`;
+        $scope.props.invitation = invitation;
       }
     }
   ]
