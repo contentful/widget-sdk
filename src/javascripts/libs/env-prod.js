@@ -39,6 +39,10 @@ window.libs = [
 
   ['@contentful/ui-component-library', require('@contentful/ui-component-library')],
   ['@contentful/contentful-slatejs-adapter', require('@contentful/contentful-slatejs-adapter')],
+  [
+    '@contentful/rich-text-plain-text-renderer',
+    require('@contentful/rich-text-plain-text-renderer')
+  ],
   ['@contentful/rich-text-types', require('@contentful/rich-text-types')],
   ['editors', require('@contentful/field-editors')],
   ['hostnameTransformer', require('@contentful/hostname-transformer')],
