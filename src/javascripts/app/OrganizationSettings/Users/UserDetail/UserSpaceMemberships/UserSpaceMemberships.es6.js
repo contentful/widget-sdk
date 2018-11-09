@@ -237,7 +237,7 @@ class UserSpaceMemberships extends React.Component {
           )}
         </header>
         {(!!memberships.length || showingForm) && (
-          <Table style={{ marginBottom: 20, tableLayout: 'fixed' }}>
+          <Table style={{ marginBottom: 20, tableLayout: 'fixed' }} testId="user-memberships-table">
             <TableHead>
               <TableRow>
                 <TableCell>Space</TableCell>
