@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import { track } from 'analytics/Analytics.es6';
 import logger from 'logger';
 
+const getCountOrNull = count => (typeof count === 'number' ? count : null);
+
 /**
  * HOC for rich text editor to add CF web-app specific actions tracking.
  *
@@ -56,9 +58,9 @@ export default function withTracking(Component) {
         fieldLocale: locale,
         fieldId: fieldId,
         isFullscreen: false,
-        characterCountBefore: data.characterCountBefore || null,
-        characterCountAfter: data.characterCountAfter || null,
-        characterCountSelection: data.characterCountSelection || null,
+        characterCountBefore: getCountOrNull(data.characterCountBefore),
+        characterCountAfter: getCountOrNull(data.characterCountAfter),
+        characterCountSelection: getCountOrNull(data.characterCountSelection),
         additionalData: data
       });
     }
