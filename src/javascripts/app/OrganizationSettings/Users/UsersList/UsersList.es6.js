@@ -1,9 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Space as SpacePropType } from '../PropTypes.es6';
-import { startCase, without, debounce } from 'lodash';
-import classnames from 'classnames';
+import { startCase, without, debounce, flow } from 'lodash';
+import { set, isEqual } from 'lodash/fp';
 import pluralize from 'pluralize';
+import classnames from 'classnames';
+import { connect } from 'react-redux';
 import {
   Table,
   TableRow,
@@ -29,11 +31,23 @@ import {
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import RemoveOrgMemberDialog from '../RemoveUserDialog.es6';
-import { getFilterDefinitions } from './FilterDefinitions.es6';
 import EmptyPlaceholder from './EmptyPlaceholder.es6';
+import { getFilters, getSearchTerm } from 'selectors/filters.es6';
 import { getLastActivityDate } from '../UserUtils.es6';
 
 const ServicesConsumer = require('../../../../reactServiceContext').default;
+
+import { getFilterDefinitions } from './FilterDefinitions.es6';
+import { Filter as FilterPropType } from '../PropTypes.es6';
+
+const mergeFilterDefinitionsWithValues = (definitions, values) =>
+  definitions.map(definition => {
+    const definitionKey = definition.filter.key;
+    if (definitionKey in values) {
+      return set(['filter', 'value'], values[definitionKey], definition);
+    }
+    return definition;
+  });
 
 class UsersList extends React.Component {
   static propTypes = {
@@ -49,6 +63,9 @@ class UsersList extends React.Component {
         maximum: PropTypes.number
       })
     }),
+    filters: PropTypes.arrayOf(FilterPropType),
+    searchTerm: PropTypes.string.isRequired,
+    updateSearchTerm: PropTypes.func.isRequired,
     hasSsoEnabled: PropTypes.bool
   };
 
@@ -56,8 +73,6 @@ class UsersList extends React.Component {
     loading: false,
     queryTotal: 0,
     usersList: [],
-    filters: this.getInitialFilters(),
-    searchTerm: '',
     pagination: {
       skip: 0,
       limit: 10
@@ -70,8 +85,18 @@ class UsersList extends React.Component {
     this.fetch();
   }
 
-  async fetch() {
-    const { filters, searchTerm, pagination } = this.state;
+  componentDidUpdate(prevProps) {
+    if (
+      !isEqual(prevProps.filters, this.props.filters) ||
+      prevProps.searchTerm !== this.props.searchTerm
+    ) {
+      this.fetch();
+    }
+  }
+
+  fetch = debounce(async () => {
+    const { filters, searchTerm } = this.props;
+    const { pagination } = this.state;
     const filterQuery = formatQuery(filters.map(item => item.filter));
     const includePaths = ['sys.user'];
     const query = {
@@ -92,7 +117,7 @@ class UsersList extends React.Component {
       queryTotal: total,
       loading: false
     });
-  }
+  }, 500);
 
   getLinkToInvitation() {
     return href({
@@ -137,35 +162,13 @@ class UsersList extends React.Component {
     }
   };
 
-  updateFilters = filters => {
-    this.setState({ filters, pagination: { ...this.state.pagination, skip: 0 } }, this.fetch);
-  };
-
-  resetFilters = () => {
-    const filters = this.getInitialFilters();
-    this.updateFilters(filters);
-  };
-
-  getInitialFilters() {
-    const { spaceRoles, spaces, hasSsoEnabled } = this.props;
-    return getFilterDefinitions({ spaceRoles, spaces, hasSsoEnabled });
-  }
-
-  updateSearch = e => {
-    this.debouncedUpdatedSearch(e.target.value);
-  };
-
-  debouncedUpdatedSearch = debounce(searchTerm => {
-    this.setState({ searchTerm, pagination: { ...this.state.pagination, skip: 0 } }, this.fetch);
-  }, 500);
-
   handlePaginationChange = ({ skip, limit }) => {
     this.setState({ pagination: { ...this.state.pagination, skip, limit } }, this.fetch);
   };
 
   render() {
-    const { queryTotal, usersList, filters, pagination, loading } = this.state;
-    const { resource, spaces, spaceRoles } = this.props;
+    const { queryTotal, usersList, pagination, loading } = this.state;
+    const { resource, spaces, spaceRoles, filters } = this.props;
 
     return (
       <Workbench testId="organization-users-page">
@@ -192,11 +195,9 @@ class UsersList extends React.Component {
           <section style={{ padding: '1em 2em 2em' }}>
             <UserListFilters
               queryTotal={queryTotal}
-              onChange={this.updateFilters}
               spaces={spaces}
               spaceRoles={spaceRoles}
               filters={filters}
-              onReset={this.resetFilters}
             />
             {usersList.length > 0 ? (
               <React.Fragment>
@@ -271,4 +272,21 @@ class UsersList extends React.Component {
   }
 }
 
-export default ServicesConsumer('notification')(UsersList);
+export default flow(
+  connect(
+    (state, { spaceRoles, spaces, hasSsoEnabled }) => {
+      const filterDefinitions = getFilterDefinitions({ spaceRoles, spaces, hasSsoEnabled });
+      const filterValues = getFilters(state);
+
+      return {
+        filters: mergeFilterDefinitionsWithValues(filterDefinitions, filterValues),
+        searchTerm: getSearchTerm(state)
+      };
+    },
+    dispatch => ({
+      updateSearchTerm: e =>
+        dispatch({ type: 'UPDATE_SEARCH_TERM', payload: { newSearchTerm: e.target.value } })
+    })
+  ),
+  ServicesConsumer('notification')
+)(UsersList);

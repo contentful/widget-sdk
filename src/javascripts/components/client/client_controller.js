@@ -18,6 +18,16 @@ angular.module('contentful').controller('ClientController', [
     );
     const Intercom = require('intercom');
     const EnforcementsService = require('services/EnforcementsService.es6');
+    const store = require('ReduxStore/store.es6').default;
+    const $rootScope = require('$rootScope');
+    const { pick } = require('lodash');
+
+    $rootScope.$on('$locationChangeSuccess', function() {
+      store.dispatch({
+        type: 'LOCATION_CHANGED',
+        payload: { location: pickSerializable(window.location) }
+      });
+    });
 
     // TODO remove this eventually. All components should access it as a service
     $scope.spaceContext = spaceContext;
@@ -44,6 +54,20 @@ angular.module('contentful').controller('ClientController', [
     K.onValueScope($scope, TokenStore.user$, handleUser);
 
     $scope.showCreateSpaceDialog = CreateSpace.showDialog;
+
+    function pickSerializable(location) {
+      return pick(location, [
+        'hash',
+        'host',
+        'hostname',
+        'href',
+        'origin',
+        'pathname',
+        'port',
+        'protocol',
+        'search'
+      ]);
+    }
 
     function spaceAndTokenWatchHandler({ tokenLookup, space, enforcements }) {
       if (!tokenLookup) {

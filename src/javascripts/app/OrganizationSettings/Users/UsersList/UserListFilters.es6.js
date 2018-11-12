@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import pluralize from 'pluralize';
 import { findIndex, keyBy, isNil } from 'lodash';
+import { connect } from 'react-redux';
 import { TextLink } from '@contentful/ui-component-library';
 
 import userListFiltersMiddleware from './UserListFiltersMiddleware.es6';
@@ -13,7 +14,7 @@ import {
 } from '../PropTypes.es6';
 import SearchFilter from './SearchFilter.es6';
 
-export default class UserListFilters extends React.Component {
+class UserListFilters extends React.Component {
   static propTypes = {
     filters: PropTypes.arrayOf(FilterPropType),
     spaces: PropTypes.arrayOf(SpacePropType),
@@ -50,12 +51,8 @@ export default class UserListFilters extends React.Component {
     });
   }
 
-  reset = () => {
-    this.props.onReset();
-  };
-
   render() {
-    const { filters, queryTotal } = this.props;
+    const { filters, queryTotal, onReset } = this.props;
     const byKey = keyBy(filters, 'filter.key');
     const { order, ...otherFilters } = byKey;
     const showResetButton = this.hasActiveFilters(Object.values(otherFilters));
@@ -68,7 +65,7 @@ export default class UserListFilters extends React.Component {
         </div>
         <section className="user-list__filters__column">
           {showResetButton && (
-            <TextLink onClick={this.reset} extraClassNames="user-list__reset-button">
+            <TextLink onClick={onReset} extraClassNames="user-list__reset-button">
               Clear filters
             </TextLink>
           )}
@@ -80,3 +77,11 @@ export default class UserListFilters extends React.Component {
     );
   }
 }
+
+export default connect(
+  null,
+  dispatch => ({
+    onChange: newFilters => dispatch({ type: 'CHANGE_FILTERS', payload: { newFilters } }),
+    onReset: () => dispatch({ type: 'RESET_FILTERS' })
+  })
+)(UserListFilters);
