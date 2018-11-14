@@ -100,6 +100,10 @@ class UsersList extends React.Component {
     }
   }
 
+  componentWillUnmount() {
+    this.fetch.cancel();
+  }
+
   fetch = debounce(async () => {
     const { filters, searchTerm } = this.props;
     const { pagination } = this.state;
