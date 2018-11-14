@@ -136,7 +136,7 @@ class UsersList extends React.Component {
   // as a route param.
   // This should be changed after `include` is implemented in the backend
   // so that we can get the linked membership from the user endpoint response
-  getLinkToUser(user) {
+  static getLinkToUser(user) {
     return href({
       path: ['account', 'organizations', 'users', 'detail'],
       params: { userId: user.sys.id }
