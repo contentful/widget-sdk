@@ -46,6 +46,12 @@ const mergeFilterDefinitionsWithValues = (definitions, values) =>
     if (definitionKey in values) {
       return set(['filter', 'value'], values[definitionKey], definition);
     }
+    if (
+      definitionKey === 'sys.spaceMemberships.roles.name' &&
+      'sys.spaceMemberships.admin' in values
+    ) {
+      return set(['filter', 'value'], 'Admin', definition);
+    }
     return definition;
   });
 

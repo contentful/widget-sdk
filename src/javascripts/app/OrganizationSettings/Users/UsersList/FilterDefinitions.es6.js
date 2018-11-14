@@ -64,7 +64,7 @@ export function getFilterDefinitions({ spaceRoles = [], spaces = [], hasSsoEnabl
     },
     options: [
       { label: 'Any', value: '' },
-      { label: 'Admin', value: 'true' },
+      { label: 'Admin', value: 'Admin' },
       // Get all the roles form all spaces, reduced by unique
       // names and sorted alphabetically
       ...uniqBy(spaceRoles, 'name')
