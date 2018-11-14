@@ -3,7 +3,7 @@ import { cloneDeep } from 'lodash';
 import { shallow } from 'enzyme';
 import { getFilterDefinitions } from './FilterDefinitions.es6';
 import SearchFilter from './SearchFilter.es6';
-import UserListFilters from './UserListFilters.es6';
+import { UserListFilters } from './UserListFilters.es6';
 import { TextLink } from '@contentful/ui-component-library';
 
 describe('UserListFilters', () => {

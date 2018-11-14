@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import pluralize from 'pluralize';
-import { findIndex, keyBy, isNil } from 'lodash';
 import { connect } from 'react-redux';
+import { keyBy, isNil } from 'lodash';
 import { TextLink } from '@contentful/ui-component-library';
 
-import userListFiltersMiddleware from './UserListFiltersMiddleware.es6';
+import { updateDependentFilterDefs } from './UserListFiltersHelpers.es6';
 
 import {
   Filter as FilterPropType,
@@ -14,7 +14,7 @@ import {
 } from '../PropTypes.es6';
 import SearchFilter from './SearchFilter.es6';
 
-class UserListFilters extends React.Component {
+export class UserListFilters extends React.Component {
   static propTypes = {
     filters: PropTypes.arrayOf(FilterPropType),
     spaces: PropTypes.arrayOf(SpacePropType),
@@ -30,18 +30,10 @@ class UserListFilters extends React.Component {
     spaceRoles: []
   };
 
-  filterMiddleware = userListFiltersMiddleware(this.props.spaceRoles);
-
-  updateFilters = filter => {
-    const { filters } = this.props;
-
-    const clone = JSON.parse(JSON.stringify(filters)); // god, forgive me
-    const index = findIndex(filters, f => f.filter.key === filter.key);
-
-    clone[index] = { ...clone[index], filter };
-
-    this.filterMiddleware.update(filters, clone);
-    this.props.onChange(clone);
+  updateFilters = updatedFilter => {
+    const { spaceRoles, filters } = this.props;
+    const newFilterDefs = updateDependentFilterDefs(spaceRoles, filters, updatedFilter);
+    this.props.onChange(newFilterDefs);
   };
 
   hasActiveFilters(filters) {
