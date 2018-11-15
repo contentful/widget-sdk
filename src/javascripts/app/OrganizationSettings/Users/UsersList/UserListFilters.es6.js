@@ -52,7 +52,7 @@ export class UserListFilters extends React.Component {
     return (
       <section className="user-list__filters">
         <div className="user-list__filters__column">
-          <SearchFilter key={order.filter.key} {...order} onChange={this.updateFilters} />
+          <SearchFilter key={order.id} {...order} onChange={this.updateFilters} />
           {`${pluralize('users', queryTotal, true)} found`}
         </div>
         <section className="user-list__filters__column">
@@ -62,7 +62,7 @@ export class UserListFilters extends React.Component {
             </TextLink>
           )}
           {Object.values(otherFilters).map(filter => (
-            <SearchFilter key={filter.filter.key} {...filter} onChange={this.updateFilters} />
+            <SearchFilter key={filter.id} {...filter} onChange={this.updateFilters} />
           ))}
         </section>
       </section>

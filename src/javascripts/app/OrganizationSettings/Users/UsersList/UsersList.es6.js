@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Space as SpacePropType } from '../PropTypes.es6';
 import { startCase, without, debounce, flow } from 'lodash';
-import { set, isEqual } from 'lodash/fp';
+import { isEqual } from 'lodash/fp';
 import pluralize from 'pluralize';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
@@ -37,23 +37,8 @@ import { getLastActivityDate } from '../UserUtils.es6';
 
 const ServicesConsumer = require('../../../../reactServiceContext').default;
 
-import { getFilterDefinitions } from './FilterDefinitions.es6';
+import { generateFilterDefinitions } from './FilterDefinitions.es6';
 import { Filter as FilterPropType } from '../PropTypes.es6';
-
-const mergeFilterDefinitionsWithValues = (definitions, values) =>
-  definitions.map(definition => {
-    const definitionKey = definition.filter.key;
-    if (definitionKey in values) {
-      return set(['filter', 'value'], values[definitionKey], definition);
-    }
-    if (
-      definitionKey === 'sys.spaceMemberships.roles.name' &&
-      'sys.spaceMemberships.admin' in values
-    ) {
-      return set(['filter', 'value'], 'Admin', definition);
-    }
-    return definition;
-  });
 
 class UsersList extends React.Component {
   static propTypes = {
@@ -285,11 +270,16 @@ class UsersList extends React.Component {
 export default flow(
   connect(
     (state, { spaceRoles, spaces, hasSsoEnabled }) => {
-      const filterDefinitions = getFilterDefinitions({ spaceRoles, spaces, hasSsoEnabled });
       const filterValues = getFilters(state);
+      const filterDefinitions = generateFilterDefinitions({
+        spaceRoles,
+        spaces,
+        hasSsoEnabled,
+        filterValues
+      });
 
       return {
-        filters: mergeFilterDefinitionsWithValues(filterDefinitions, filterValues),
+        filters: filterDefinitions,
         searchTerm: getSearchTerm(state)
       };
     },

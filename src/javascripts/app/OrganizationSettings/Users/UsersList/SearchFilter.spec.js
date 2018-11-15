@@ -16,6 +16,7 @@ describe('SearchFilter', () => {
     onChangeCb = jest.fn();
     component = mount(
       <SearchFilter
+        id="fruit"
         label="Fruit"
         filter={{
           key: 'fruit',
@@ -46,6 +47,7 @@ describe('SearchFilter', () => {
     const select = component.find('select');
     select.simulate('change', { target: { value: '' } });
     expect(onChangeCb).toHaveBeenCalledWith({
+      id: 'fruit',
       key: 'fruit',
       operator: null,
       value: ''

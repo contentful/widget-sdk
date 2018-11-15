@@ -1,5 +1,6 @@
 import { orgRoles } from '../UserDetail/OrgRoles.es6';
-import { uniqBy, without } from 'lodash';
+import { without, set, cloneDeep } from 'lodash';
+import { getRoleOptions, getSpaceRoleOptions } from './UserListFiltersHelpers.es6';
 
 /**
  * This module contains the definitions of the filters available in the (org) User list page.
@@ -7,14 +8,68 @@ import { uniqBy, without } from 'lodash';
  * API endpoint as a query string params
  */
 
-export function getFilterDefinitions({ spaceRoles = [], spaces = [], hasSsoEnabled }) {
+const idMap = {
+  sort: ['order'],
+  orgRole: ['role'],
+  space: ['sys.spaceMemberships.sys.space.sys.id'],
+  ssoLogin: ['sys.sso.lastSignInAt'],
+  spaceRole: [
+    'sys.spaceMemberships.admin',
+    'is_admin_of_space',
+    'sys.spaceMemberships.roles.name',
+    'sys.spaceMemberships.roles.sys.id'
+  ]
+};
+
+const defaultFiltersById = {
+  sort: {
+    key: 'order',
+    value: '-sys.createdAt'
+  },
+  orgRole: {
+    key: 'role',
+    value: ''
+  },
+  ssoLogin: {
+    key: 'sys.sso.lastSignInAt',
+    operator: 'exists',
+    value: ''
+  },
+  space: {
+    key: 'sys.spaceMemberships.sys.space.sys.id',
+    value: ''
+  },
+  spaceRole: {
+    key: 'sys.spaceMemberships.roles.name',
+    value: ''
+  }
+};
+
+const normalizeFilterValues = filterValues => {
+  return filterValues.reduce((memo, [key, value]) => {
+    const [id] = Object.entries(idMap).find(([_, filterKeys]) => filterKeys.includes(key)) || [];
+
+    if (id) {
+      set(memo, [id, 'key'], key);
+      set(memo, [id, 'value'], value);
+    }
+
+    return memo;
+  }, cloneDeep(defaultFiltersById));
+};
+
+export function generateFilterDefinitions({
+  spaceRoles = [],
+  spaces = [],
+  hasSsoEnabled,
+  filterValues = {}
+}) {
+  const normalized = normalizeFilterValues(Object.entries(filterValues));
+
   const order = {
     id: 'sort',
     label: 'Sort by',
-    filter: {
-      key: 'order',
-      value: '-sys.createdAt'
-    },
+    filter: normalized.sort,
     options: [
       { label: 'Newest', value: '-sys.createdAt' },
       { label: 'Oldest', value: 'sys.createdAt' },
@@ -30,10 +85,7 @@ export function getFilterDefinitions({ spaceRoles = [], spaces = [], hasSsoEnabl
   const orgRole = {
     id: 'orgRole',
     label: 'Organization role',
-    filter: {
-      key: 'role',
-      value: ''
-    },
+    filter: normalized.orgRole,
     options: [
       { label: 'Any', value: '' },
       ...orgRoles.map(({ name, value }) => ({ label: name, value }))
@@ -43,11 +95,7 @@ export function getFilterDefinitions({ spaceRoles = [], spaces = [], hasSsoEnabl
   const sso = {
     id: 'ssoLogin',
     label: 'SSO',
-    filter: {
-      key: 'sys.sso.lastSignInAt',
-      operator: 'exists',
-      value: ''
-    },
+    filter: normalized.ssoLogin,
     options: [
       { label: 'Any', value: '' },
       { label: 'Has logged in', value: 'true' },
@@ -55,37 +103,26 @@ export function getFilterDefinitions({ spaceRoles = [], spaces = [], hasSsoEnabl
     ]
   };
 
-  const spaceRole = {
-    id: 'spaceRole',
-    label: 'Space role',
-    filter: {
-      key: 'sys.spaceMemberships.roles.name',
-      value: ''
-    },
-    options: [
-      { label: 'Any', value: '' },
-      { label: 'Admin', value: 'Admin' },
-      // Get all the roles form all spaces, reduced by unique
-      // names and sorted alphabetically
-      ...uniqBy(spaceRoles, 'name')
-        .sort((a, b) => a.name.localeCompare(b.name))
-        .map(role => ({ label: role.name, value: role.name }))
-    ]
-  };
-
   const space = {
     id: 'space',
     label: 'Space',
-    filter: {
-      key: 'sys.spaceMemberships.sys.space.sys.id',
-      value: ''
-    },
+    filter: normalized.space,
     options: [
       { label: 'Any', value: '' },
       ...spaces
         .sort((a, b) => a.name.localeCompare(b.name))
         .map(space => ({ label: space.name, value: space.sys.id }))
     ]
+  };
+
+  const spaceFilterValue = space.filter.value;
+  const spaceRole = {
+    id: 'spaceRole',
+    label: 'Space role',
+    filter: normalized.spaceRole,
+    options: spaceFilterValue
+      ? getSpaceRoleOptions(spaceRoles, spaceFilterValue)
+      : getRoleOptions(spaceRoles)
   };
 
   // removes the SSO filter if SSO is not available for the org

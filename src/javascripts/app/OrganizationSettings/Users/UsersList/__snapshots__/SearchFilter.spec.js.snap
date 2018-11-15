@@ -15,6 +15,7 @@ exports[`SearchFilter accepts empty values 1`] = `
       "value": null,
     }
   }
+  id="fruit"
   label="Fruit"
   onChange={[MockFunction]}
   options={
@@ -102,6 +103,7 @@ exports[`SearchFilter renders the component 1`] = `
       "value": "papaya",
     }
   }
+  id="fruit"
   label="Fruit"
   onChange={[MockFunction]}
   options={

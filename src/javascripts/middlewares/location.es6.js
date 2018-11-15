@@ -12,7 +12,7 @@ export default store => {
     if (oldQuery !== newQuery) {
       if (['RESET_FILTERS', 'CHANGE_FILTERS', 'UPDATE_SEARCH_TERM'].includes(action.type)) {
         updateQuery('replaceState', newQuery);
-      } else {
+      } else if (action.type !== 'LOCATION_CHANGED') {
         updateQuery('pushState', newQuery);
       }
     }

@@ -29,7 +29,7 @@ const defaultRoleOptions = (options, spaceId) => {
   ].concat(options);
 };
 
-const getRoleOptions = roles => {
+export const getRoleOptions = roles => {
   const options = uniqBy(roles, 'name')
     .sort((a, b) => a.name.localeCompare(b.name))
     .map(role => ({ label: role.name, value: role.name }));
@@ -37,7 +37,7 @@ const getRoleOptions = roles => {
   return defaultRoleOptions(options);
 };
 
-const getSpaceRoleOptions = (roles, spaceId) => {
+export const getSpaceRoleOptions = (roles, spaceId) => {
   const options = roles
     .filter(role => role.sys.space.sys.id === spaceId)
     .sort((a, b) => a.name.localeCompare(b.name))
@@ -112,10 +112,6 @@ function handleUpdatedSpaceFilter({ allSpaceRoles, filterDefs, updatedFilter }) 
     const roleFilterRole = allSpaceRoles.find(r => r.sys.id === roleFilterDef.filter.value);
     roleFilterDef.filter.value = roleFilterRole ? roleFilterRole.name : '';
   }
-
-  // Set the options last so that the option searching that happens above happens on the existing
-  // options, not the new ones
-  roleFilterDef.options = roleFilterOptions;
 
   return { allSpaceRoles, filterDefs, updatedFilter };
 }
