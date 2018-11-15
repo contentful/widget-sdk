@@ -115,12 +115,12 @@ angular.module('contentful').factory('batchPerformer', [
         var entityName = ENTITY_PLURAL_NAMES[config.entityType];
 
         if (results.succeeded.length > 0) {
-          notification.info(
+          notification.success(
             results.succeeded.length + ' ' + entityName + ' ' + actionName + ' successfully'
           );
         }
         if (results.failed.length > 0) {
-          notification.warn(
+          notification.error(
             results.failed.length + ' ' + entityName + ' could not be ' + actionName
           );
         }

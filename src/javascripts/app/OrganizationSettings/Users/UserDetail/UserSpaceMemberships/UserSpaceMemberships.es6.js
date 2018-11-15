@@ -92,7 +92,7 @@ class UserSpaceMemberships extends React.Component {
     });
     this.hideSpaceMembershipEditor();
 
-    $services.notification.info(`
+    $services.notification.success(`
       ${user.firstName} has been successfully added to the space ${newMembership.sys.space.name}
     `);
   };
@@ -140,7 +140,7 @@ class UserSpaceMemberships extends React.Component {
       availableSpaces: this.getAvailableSpaces(updatedMemberships)
     });
 
-    $services.notification.info(`
+    $services.notification.success(`
       ${user.firstName} is no longer part of the space ${space.name}
     `);
   };
@@ -159,7 +159,7 @@ class UserSpaceMemberships extends React.Component {
       editingMembershipId: null
     });
 
-    $services.notification.info(`
+    $services.notification.success(`
       ${user.firstName} is now ${joinWithAnd(roleNames)} in the the space ${space.name}
     `);
   };

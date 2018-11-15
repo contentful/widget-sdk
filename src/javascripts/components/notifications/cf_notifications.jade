@@ -6,7 +6,10 @@
     p(
       role="alert"
       aria-hidden="{{!message}}"
-      data-alert-severity="{{message.severity}}")
+      data-test-id="cf-ui-notification"
+      data-intent="{{message.severity}}")
       | {{message.body}}
-    span.app-notification__dismiss
+    span.app-notification__dismiss(
+      data-test-id="cf-ui-notification-close"
+    )
       | Dismiss

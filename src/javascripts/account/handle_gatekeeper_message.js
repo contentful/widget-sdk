@@ -88,12 +88,12 @@ angular
           return;
         }
 
-        if (level.match(/error/)) {
-          level = 'warn';
-        }
-
         if (message) {
-          notification[level](message);
+          if (level.match(/error/)) {
+            notification.error(message);
+          } else {
+            notification.success(message);
+          }
         }
       }
 

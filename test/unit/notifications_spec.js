@@ -29,21 +29,21 @@ describe('notifications', () => {
       expect(this.notify.message.severity).toEqual('error');
     });
 
-    it('sets info message', function() {
-      this.notify.info('MESSAGE');
+    it('sets success message', function() {
+      this.notify.success('MESSAGE');
       expect(this.notify.message.body).toEqual('MESSAGE');
-      expect(this.notify.message.severity).toEqual('info');
+      expect(this.notify.message.severity).toEqual('success');
     });
 
     it('clears any message', function() {
-      this.notify.info('MESSAGE');
+      this.notify.success('MESSAGE');
       expect(this.notify.message).not.toBe(null);
       this.notify.clear();
       expect(this.notify.message).toBe(null);
     });
 
     it('marks messages seen by default after a delay has elapsed', function() {
-      this.notify.info('MESSAGE');
+      this.notify.success('MESSAGE');
 
       this.clock.tick(this.clearTimeoutMs - 1);
       sinon.assert.notCalled(this.notify.markAsSeen);
@@ -61,7 +61,7 @@ describe('notifications', () => {
     });
 
     it('does not automatically mark as seen after the delay', function() {
-      this.notify.info('MESSAGE');
+      this.notify.success('MESSAGE');
       this.notify.markAsSeen();
       this.clock.tick(this.clearTimeoutMs);
       sinon.assert.calledOnce(this.notify.markAsSeen);
@@ -75,13 +75,13 @@ describe('notifications', () => {
     });
 
     it('shows a message', function() {
-      this.notify.info('MESSAGE');
+      this.notify.success('MESSAGE');
       this.$apply();
       expect(this.element.text()).toMatch('MESSAGE');
     });
 
     it('clears a message', function() {
-      this.notify.info('MESSAGE');
+      this.notify.success('MESSAGE');
       this.$apply();
       expect(this.element.text()).toMatch('MESSAGE');
       this.notify.clear();

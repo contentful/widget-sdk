@@ -4,7 +4,6 @@ import { TextField, Button } from '@contentful/ui-component-library';
 import { cloneDeep } from 'lodash';
 import { WebhookTemplateForm } from './WebhookTemplateForm.es6';
 import * as AnalyticsMocked from 'analytics/Analytics.es6';
-import notificationMocked from 'notification';
 
 const TEMPLATE = {
   id: 'test-template',
@@ -43,7 +42,6 @@ const TEMPLATE_CONTENT_TYPES = [
 describe('WebhookTemplateForm', () => {
   beforeEach(() => {
     AnalyticsMocked.track.mockClear();
-    notificationMocked.info.mockClear();
   });
 
   const mount = () => {

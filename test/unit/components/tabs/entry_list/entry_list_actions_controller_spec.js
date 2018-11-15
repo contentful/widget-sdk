@@ -28,8 +28,8 @@ describe('Entry List Actions Controller', () => {
     module('contentful/test', $provide => {
       stubs = $provide.makeStubs([
         'track',
-        'info',
-        'warn',
+        'success',
+        'error',
         'size',
         'createEntry',
         'getSelected',
@@ -46,8 +46,8 @@ describe('Entry List Actions Controller', () => {
       });
 
       $provide.value('notification', {
-        info: stubs.info,
-        warn: stubs.warn
+        success: stubs.success,
+        error: stubs.error
       });
 
       $provide.value('$timeout', stubs.timeout);
@@ -158,19 +158,19 @@ describe('Entry List Actions Controller', () => {
       });
 
       it('calls success notification', () => {
-        sinon.assert.calledOnce(stubs.info);
+        sinon.assert.calledOnce(stubs.success);
       });
 
       it('success notification shown for 3 items', () => {
-        expect(stubs.info.args[0][0]).toMatch(/^2*/);
+        expect(stubs.success.args[0][0]).toMatch(/^2*/);
       });
 
-      it('calls warn notification', () => {
-        sinon.assert.calledOnce(stubs.warn);
+      it('calls error notification', () => {
+        sinon.assert.calledOnce(stubs.error);
       });
 
-      it('warn notification shown for 1 item', () => {
-        expect(stubs.warn.args[0][0]).toMatch(/^2*/);
+      it('error notification shown for 1 item', () => {
+        expect(stubs.error.args[0][0]).toMatch(/^2*/);
       });
 
       it('clears selection', () => {
@@ -267,11 +267,11 @@ describe('Entry List Actions Controller', () => {
     });
 
     it('calls success notification', () => {
-      sinon.assert.calledOnce(stubs.info);
+      sinon.assert.calledOnce(stubs.success);
     });
 
-    it('calls warn notification', () => {
-      sinon.assert.calledOnce(stubs.warn);
+    it('calls error notification', () => {
+      sinon.assert.calledOnce(stubs.error);
     });
 
     it('clears selection', () => {

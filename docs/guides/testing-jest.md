@@ -221,8 +221,8 @@ it('calls the callback', () => {
 #### Mock modules
 
 ```js
-jest.mock('lodash/memoize', () => a => a) // The original lodash/memoize should exist
-jest.mock('lodash/memoize', () => a => a, { virtual: true }) // The original lodash/memoize isn’t required
+jest.mock('lodash/memoize', () => a => a); // The original lodash/memoize should exist
+jest.mock('lodash/memoize', () => a => a, { virtual: true }); // The original lodash/memoize isn’t required
 ```
 
 ## Skipping tests
@@ -245,11 +245,12 @@ it.only('makes each pony pink'...
 
 There are various ways to setup a debugger for your Jest tests. We cover debugging in Chrome and [Visual Studio Code](https://code.visualstudio.com/).
 
->Note: debugging tests requires Node 8 or higher.
+> Note: debugging tests requires Node 8 or higher.
 
 ### Debugging Tests in Chrome
 
 Place `debugger;` statements in any test and run:
+
 ```bash
 $ npm run jest:debug
 ```
@@ -257,6 +258,7 @@ $ npm run jest:debug
 This will start running your Jest tests, but pause before executing to allow a debugger to attach to the process.
 
 Open the following in Chrome
+
 ```
 about:inspect
 ```
@@ -268,6 +270,7 @@ After opening that link, the Chrome Developer Tools will be displayed. Select `i
 Debugging Jest tests is supported out of the box for [Visual Studio Code](https://code.visualstudio.com).
 
 Use the following [`launch.json`](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations) configuration file:
+
 ```
 {
   "version": "0.2.0",
@@ -297,9 +300,9 @@ Use the following [`launch.json`](https://code.visualstudio.com/docs/editor/debu
 
 Good news. Migration to Jest should be easy.
 
-* Move file from `test/**/*.spec.js` to `src/**/*.spec.js`, so file that is being tested is located in next to test file.
-* Import `sinon` directly as `import sinon from "sinon"` if it was used.
-* Fix all ESLint errors in the file.
+- Move file from `test/**/*.spec.js` to `src/**/*.spec.js`, so file that is being tested is located in next to test file.
+- Import `sinon` directly as `import sinon from "sinon"` if it was used.
+- Fix all ESLint errors in the file.
 
 ### If your tests have Angular dependencies and use injection
 
@@ -307,17 +310,17 @@ Do all steps from the previous chapter.
 
 #### Proper way
 
-* Provide all Angular dependencies to React component using `ServicesConsumer`.
-* Get rid of `module('contentful/test')` and `$provide` in tests and inject all mocks using `MockedProvider`.
+- Provide all Angular dependencies to React component using `ServicesConsumer`.
+- Get rid of `module('contentful/test')` and `$provide` in tests and inject all mocks using `MockedProvider`.
 
 #### Quick way
 
 We have to get rid of injection and use `jest.mock` to mock all imports of Angular modules.
 
-Let's say that some React component imports `notification` Angular service.
+Let's say that some React component imports `$state` Angular service.
 
 ```js
-import notification from 'notification';
+import $state from '$state';
 
 export default class TestedComponent extends React.Component {}
 ```
@@ -327,11 +330,14 @@ By using `jest.mock` with `virtual: true` we can mock import of the module and d
 ```js
 import TestedComponent from '../TestedComponent';
 
-jest.mock('notification', () => {
-    show: jest.fn()
-}, { virtual: true });
+jest.mock(
+  '$state',
+  () => {
+    go: jest.fn();
+  },
+  { virtual: true }
+);
 ```
-
 
 ## Resources
 

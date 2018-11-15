@@ -117,7 +117,7 @@ class UsersList extends React.Component {
 
     try {
       await removeMembership(this.endpoint, membership.sys.id);
-      notification.info(message);
+      notification.success(message);
       this.setState({ usersList: without(usersList, membership) });
     } catch (e) {
       notification.error(e.data.message);

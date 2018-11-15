@@ -153,7 +153,7 @@ angular.module('contentful').controller('RoleEditorController', [
     }
 
     function handleRole(role) {
-      notification.info(role.name + ' role saved successfully');
+      notification.success(role.name + ' role saved successfully');
 
       if ($scope.context.isNew) {
         $scope.context.dirty = false;

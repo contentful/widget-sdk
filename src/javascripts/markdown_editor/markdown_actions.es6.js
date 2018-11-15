@@ -80,13 +80,13 @@ export function create(editor, locale, defaultLocaleCode, { zen }) {
         return BulkAssetsCreator.tryToPublishProcessingAssets(assetObjects).then(result => {
           const { publishedAssets, unpublishableAssets } = result;
           if (publishedAssets.length && !unpublishableAssets.length) {
-            notification.info(
+            notification.success(
               (publishedAssets.length === 1
                 ? 'The asset was'
                 : `All ${publishedAssets.length} assets were`) + ' just published'
             );
           } else if (unpublishableAssets.length) {
-            notification.warn(
+            notification.error(
               `Failed to publish ${
                 unpublishableAssets.length === 1
                   ? 'the asset'
@@ -244,7 +244,7 @@ export function create(editor, locale, defaultLocaleCode, { zen }) {
     text = LinkOrganizer.convertInlineToRef(text);
     text = LinkOrganizer.rewriteRefs(text);
     editor.setContent(text);
-    notification.info('All your links are now references at the bottom of your document.');
+    notification.success('All your links are now references at the bottom of your document.');
   }
 
   function openHelp() {

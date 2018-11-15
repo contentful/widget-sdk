@@ -73,7 +73,7 @@ function createRoleSelector(dialog, spaceEndpoint, initialAssignedRoles) {
       } else {
         dialog.confirm(selectedIDs);
       }
-      Notification.info('View successfully shared');
+      Notification.success('View successfully shared');
       return state;
     },
 

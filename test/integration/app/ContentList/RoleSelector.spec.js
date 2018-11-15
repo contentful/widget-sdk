@@ -22,7 +22,7 @@ describe('app/RoleSelector', () => {
     };
 
     const notification = this.$inject('notification');
-    this.notify = sinon.stub(notification, 'info');
+    this.notify = sinon.stub(notification, 'success');
 
     const openRoleSelector = this.$inject('app/ContentList/RoleSelector.es6').default;
 

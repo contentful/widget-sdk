@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import SpaceSettings from './SpaceSettings.es6';
+import { Notification } from '@contentful/ui-component-library';
 
 const ServicesConsumer = require('../../../reactServiceContext').default;
 
@@ -14,7 +15,6 @@ export class SpaceSettingsRoute extends React.Component {
       PricingDataProvider: PropTypes.object.isRequired,
       EndpointFactory: PropTypes.object.isRequired,
       $state: PropTypes.object.isRequired,
-      notification: PropTypes.object.isRequired,
       ReloadNotification: PropTypes.object.isRequired
     })
   };
@@ -34,11 +34,11 @@ export class SpaceSettingsRoute extends React.Component {
   };
 
   handleSaveError = err => {
-    const { notification, ReloadNotification } = this.props.$services;
+    const { ReloadNotification } = this.props.$services;
     if (get(err, ['data', 'details', 'errors'], []).length > 0) {
-      notification.error('Please provide a valid space name.');
+      Notification.error('Please provide a valid space name.');
     } else if (get(err, ['data', 'sys', 'id']) === 'Conflict') {
-      notification.error(
+      Notification.error(
         'Unable to update space: Your data is outdated. Please reload and try again'
       );
     } else {
@@ -47,7 +47,7 @@ export class SpaceSettingsRoute extends React.Component {
   };
 
   save = newName => {
-    const { spaceContext, TokenStore, notification } = this.props.$services;
+    const { spaceContext, TokenStore } = this.props.$services;
     const space = spaceContext.space;
     return spaceContext.cma
       .renameSpace(newName, space.data.sys.version)
@@ -59,7 +59,7 @@ export class SpaceSettingsRoute extends React.Component {
       .then(() => {
         // re-render view with new space object
         this.forceUpdate();
-        notification.info(`Space renamed to ${newName} successfully.`);
+        Notification.success(`Space renamed to ${newName} successfully.`);
       })
       .catch(this.handleSaveError);
   };
@@ -91,7 +91,6 @@ export class SpaceSettingsRoute extends React.Component {
 export default ServicesConsumer(
   'spaceContext',
   '$state',
-  'notification',
   'ReloadNotification',
   {
     from: 'services/TokenStore.es6',

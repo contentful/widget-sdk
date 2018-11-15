@@ -25,8 +25,8 @@ describe('Asset List Controller', () => {
         'then',
         'logError',
         'pickMultiple',
-        'warn',
-        'info',
+        'error',
+        'success',
         'serverError',
         'process',
         'getVersion',
@@ -38,8 +38,8 @@ describe('Asset List Controller', () => {
       });
 
       $provide.value('notification', {
-        info: stubs.info,
-        warn: stubs.warn,
+        success: stubs.success,
+        error: stubs.error,
         serverError: stubs.serverError
       });
 

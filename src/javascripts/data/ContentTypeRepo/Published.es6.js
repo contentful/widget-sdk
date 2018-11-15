@@ -183,9 +183,9 @@ function removeDeleted(contentTypes) {
 function handleReloadError(err) {
   const message = get(err, 'body.message');
   if (message) {
-    notification.warn(message);
+    notification.error(message);
   } else {
-    notification.warn('Could not get published content types');
+    notification.error('Could not get published content types');
     logger.logServerError('Could not get published Content Types', { error: err });
   }
   return $q.reject(err);

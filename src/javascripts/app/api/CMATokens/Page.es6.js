@@ -57,7 +57,7 @@ export function initController($scope, auth) {
       tokenResourceManager.revoke(id).then(
         () => {
           track('personal_access_token:action', { action: 'revoke', patId: id });
-          Notification.info(
+          Notification.success(
             `The token “${escape(truncate(token.name, 30))}” has been successfully revoked.`
           );
           actions.Reload();

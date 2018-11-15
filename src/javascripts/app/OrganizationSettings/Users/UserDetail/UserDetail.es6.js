@@ -130,7 +130,7 @@ class UserDetail extends React.Component {
         }
       }
     });
-    notification.info(`
+    notification.success(`
       Role successfully changed to ${role}
     `);
   };

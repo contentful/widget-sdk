@@ -150,10 +150,10 @@ describe('Batch performer service', () => {
       this.actionStubs[1].rejects('boom!');
 
       return this.performer[action]().then(() => {
-        sinon.assert.calledOnce(this.notification.info);
-        expect(this.notification.info.args[0][0]).toMatch(isEntry ? /^2 Entries/ : /^2 Assets/);
-        sinon.assert.calledOnce(this.notification.warn);
-        expect(this.notification.warn.args[0][0]).toMatch(isEntry ? /^1 Entries/ : /^1 Assets/);
+        sinon.assert.calledOnce(this.notification.success);
+        expect(this.notification.success.args[0][0]).toMatch(isEntry ? /^2 Entries/ : /^2 Assets/);
+        sinon.assert.calledOnce(this.notification.error);
+        expect(this.notification.error.args[0][0]).toMatch(isEntry ? /^1 Entries/ : /^1 Assets/);
       });
     });
   }

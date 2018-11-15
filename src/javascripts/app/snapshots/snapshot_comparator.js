@@ -113,7 +113,7 @@ angular
             }
           }, handleSaveError)
           .then(() => {
-            notification.info('Entry successfully restored.');
+            notification.success('Entry successfully restored.');
           });
       }
 

@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { get, cloneDeep, isEqual, omit } from 'lodash';
+import { Notification } from '@contentful/ui-component-library';
 import spaceContext from 'spaceContext';
-import notification from 'notification';
 import Workbench from 'app/common/Workbench.es6';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils.es6';
 import getExtensionParameterIds from './getExtensionParameterIds.es6';
@@ -85,10 +85,10 @@ class ExtensionEditor extends React.Component {
             });
           }
         );
-        notification.info('Your extension was updated successfully.');
+        Notification.success('Your extension was updated successfully.');
       })
       .catch(() => {
-        notification.error(
+        Notification.error(
           [
             'There was an error while saving your extension.',
             'See validation errors for more details.'

@@ -2,7 +2,7 @@ import { h } from 'utils/legacy-html-hyperscript';
 import { extend } from 'lodash';
 import $rootScope from '$rootScope';
 import modalDialog from 'modalDialog';
-import notification from 'notification';
+import { Notification } from '@contentful/ui-component-library';
 import ReloadNotification from 'ReloadNotification';
 import Command from 'command';
 import * as TokenStore from 'services/TokenStore.es6';
@@ -45,7 +45,7 @@ function remove(space) {
     .deleteSpace()
     .then(TokenStore.refresh)
     .then(() => {
-      notification.info(`Space ${space.name} deleted successfully.`);
+      Notification.success(`Space ${space.name} deleted successfully.`);
     })
     .catch(ReloadNotification.basicErrorHandler);
 }

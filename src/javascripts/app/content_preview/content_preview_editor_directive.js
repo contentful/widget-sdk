@@ -116,7 +116,7 @@ angular
       }
 
       function showMissingRequiredFieldNotification() {
-        notification.warn('Failed to save: please fill out all required fields.');
+        notification.error('Failed to save: please fill out all required fields.');
       }
 
       function handleSuccessResponse(responses) {
@@ -153,7 +153,7 @@ angular
         const action = $scope.context.isNew ? 'create' : 'update';
         return contentPreview[action]($scope.previewEnvironment).then(
           env => {
-            notification.info('Content preview "' + env.name + '" saved successfully');
+            notification.success('Content preview "' + env.name + '" saved successfully');
             $scope.previewEnvironment.version = env.sys.version;
             $scope.contentPreviewForm.$setPristine();
             $scope.context.dirty = false;
@@ -172,7 +172,7 @@ angular
           err => {
             const defaultMessage = 'Could not save Preview Environment';
             const serverMessage = _.first(_.split(_.get(err, 'body.message'), '\n'));
-            notification.warn(serverMessage || defaultMessage);
+            notification.error(serverMessage || defaultMessage);
           }
         );
       }
@@ -182,13 +182,13 @@ angular
 
         return contentPreview.remove(env).then(
           () => {
-            notification.info('Content preview was deleted successfully');
+            notification.success('Content preview was deleted successfully');
             $scope.context.dirty = false;
             track('deleted', { name: env.name, sys: { id: env.id } });
             return $state.go('^.list');
           },
           () => {
-            notification.warn('An error occurred');
+            notification.error('An error occurred');
           }
         );
       }

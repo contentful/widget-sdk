@@ -29,7 +29,7 @@ const reduce = makeReducer({
   [TriggerDelete](state, _, { runDelete, environment, closeDialog, dispatch }) {
     runDelete(environment.id).then(
       () => {
-        Notification.info(
+        Notification.success(
           `The environment “${escape(environment.id)}” has been successfully deleted.`
         );
         closeDialog(true);

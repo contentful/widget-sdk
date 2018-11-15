@@ -100,7 +100,7 @@ export function makeNotify(Type, getTitle) {
     }
 
     if (template) {
-      Notifier.info(renderTemplate(template));
+      Notifier.success(renderTemplate(template));
     }
   }
 

@@ -2,9 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import Icon from 'ui/Components/Icon.es6';
-import { Button } from '@contentful/ui-component-library';
+import { Button, Notification } from '@contentful/ui-component-library';
 import Workbench from 'app/common/Workbench.es6';
-import notification from 'notification';
 import WebhookForm from './WebhookForm.es6';
 import WebhookSidebar from './WebhookSidebar.es6';
 import * as WebhookEditorActions from './WebhookEditorActions.es6';
@@ -80,7 +79,7 @@ class WebhookEditor extends React.Component {
     return WebhookEditorActions.save(spaceContext.webhookRepo, webhook, null).then(
       saved => (fresh ? this.navigateToSaved(saved) : this.onSave(saved)),
       err => {
-        notification.error(err.message);
+        Notification.error(err.message);
         this.setState({ busy: false });
       }
     );

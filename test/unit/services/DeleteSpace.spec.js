@@ -7,17 +7,17 @@ describe('DeleteSpace', () => {
 
     this.createEndpoint = sinon.stub();
     this.TokenStore = { refresh: sinon.stub() };
-    this.notification = { info: sinon.stub() };
     this.ReloadNotification = { basicErrorHandler: sinon.stub() };
 
     module('contentful/test', $provide => {
       $provide.value('data/EndpointFactory.es6', { createSpaceEndpoint: this.createEndpoint });
       $provide.value('services/TokenStore.es6', this.TokenStore);
-      $provide.value('notification', this.notification);
       $provide.value('ReloadNotification', this.ReloadNotification);
     });
 
     this.modalDialog = this.$inject('modalDialog');
+    this.ComponentLibrary = this.$inject('@contentful/ui-component-library');
+    this.ComponentLibrary.Notification.success = sinon.stub();
     this.modalDialog.richtextLayout = () => 'TEMPLATE';
     sinon.spy(this.modalDialog, 'open');
     this.endpoint = sinon.stub().resolves();
@@ -67,7 +67,8 @@ describe('DeleteSpace', () => {
   it('notifies about success and failure', function*() {
     this.setSpaceNameInput('Space name');
     yield this.dialogScope.remove.execute();
-    sinon.assert.calledOnce(this.notification.info);
+
+    sinon.assert.calledOnce(this.ComponentLibrary.Notification.success);
 
     this.endpoint.rejects();
     yield this.dialogScope.remove.execute();

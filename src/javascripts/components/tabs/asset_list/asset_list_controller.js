@@ -168,7 +168,7 @@ angular.module('contentful').controller('AssetListController', [
         // asset's `process` endpoint doesn't give us the final `url`.
         delay(() => {
           searchController.resetAssets().then(() => {
-            notification.info('Updated asset list');
+            notification.success('Updated asset list');
           });
         }, 5000);
       });

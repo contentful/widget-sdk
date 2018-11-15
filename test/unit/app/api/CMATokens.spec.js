@@ -188,7 +188,7 @@ describe('app/api/CMATokens', () => {
       this.container.find('pat.revoke.TOKEN-ID.confirm').click();
       this.$flush();
       sinon.assert.calledOnceWith(this.revokeToken, 'TOKEN-ID');
-      sinon.assert.calledOnceWith(this.notification.info, sinon.match('successfully revoked'));
+      sinon.assert.calledOnceWith(this.notification.success, sinon.match('successfully revoked'));
       this.container.assertNotHasElement('pat.tokenRow.TOKEN-ID');
     });
 

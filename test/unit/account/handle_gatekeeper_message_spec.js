@@ -40,8 +40,8 @@ describe('Gatekeeper Message Handler', () => {
 
       this.handle({ type: 'flash', resource: { message: 'OK', type: 'info' } });
       this.handle({ type: 'flash', resource: { message: 'FAIL', type: 'error' } });
-      sinon.assert.calledOnce(notification.info.withArgs('OK'));
-      sinon.assert.calledOnce(notification.warn.withArgs('FAIL'));
+      sinon.assert.calledOnce(notification.success.withArgs('OK'));
+      sinon.assert.calledOnce(notification.error.withArgs('FAIL'));
     });
 
     it('sends an analytics event', function() {

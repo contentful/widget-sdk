@@ -20,7 +20,7 @@ describe('app/entityEditor/Notifications', () => {
     it('handles success', function() {
       for (let [inf, _, present] of verbs) {
         this.notify(this.Notification.Success(inf));
-        sinon.assert.calledWith(this.notification.info, `TITLE ${present} successfully`);
+        sinon.assert.calledWith(this.notification.success, `TITLE ${present} successfully`);
       }
     });
 
@@ -36,7 +36,7 @@ describe('app/entityEditor/Notifications', () => {
   describe('reverting', () => {
     it('handles success', function() {
       this.notify(this.Notification.Success('revert'));
-      sinon.assert.calledWith(this.notification.info, 'Discarded changes of TITLE successfully');
+      sinon.assert.calledWith(this.notification.success, 'Discarded changes of TITLE successfully');
     });
 
     it('handles error', function() {
@@ -48,7 +48,7 @@ describe('app/entityEditor/Notifications', () => {
   describe('deleting', () => {
     it('handles success', function() {
       this.notify(this.Notification.Success('delete'));
-      sinon.assert.calledWith(this.notification.info, 'Entry deleted successfully');
+      sinon.assert.calledWith(this.notification.success, 'Entry deleted successfully');
     });
 
     it('handles error', function() {
@@ -68,7 +68,7 @@ describe('app/entityEditor/Notifications', () => {
   describe('publishing', () => {
     it('handles success', function() {
       this.notify(this.Notification.Success('publish'));
-      sinon.assert.calledWith(this.notification.info, 'TITLE published successfully');
+      sinon.assert.calledWith(this.notification.success, 'TITLE published successfully');
     });
 
     it('handles validation failure', function() {

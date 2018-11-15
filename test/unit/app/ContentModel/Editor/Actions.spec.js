@@ -121,7 +121,7 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
       it('shows notification', function() {
         controller.delete.execute();
         this.$apply();
-        sinon.assert.called(notification.info);
+        sinon.assert.called(notification.success);
       });
 
       it('closes state', function() {

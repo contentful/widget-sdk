@@ -53,7 +53,7 @@ export function create(spaceContext, userListHandler, TokenStore) {
             spaceContext.memberships
               .remove(user.membership)
               .then(() => {
-                notification.info('User successfully removed from this space.');
+                notification.success('User successfully removed from this space.');
                 if (isCurrentUser) {
                   TokenStore.refresh().then(() => go({ path: ['home'] }));
                 }
@@ -91,7 +91,7 @@ export function create(spaceContext, userListHandler, TokenStore) {
             spaceContext.memberships
               .changeRoleTo(user.membership, [scope.input.id])
               .then(() => {
-                notification.info('User role successfully changed.');
+                notification.success('User role successfully changed.');
               })
               .catch(ReloadNotification.basicErrorHandler)
               .finally(() => {
@@ -148,7 +148,7 @@ export function create(spaceContext, userListHandler, TokenStore) {
         }
       })
       .then(() => {
-        notification.info('Invitations successfully sent.');
+        notification.success('Invitations successfully sent.');
       });
 
     function fetchUsers(params) {

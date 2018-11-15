@@ -109,7 +109,7 @@ class SubscriptionOverview extends React.Component {
       notificationMsg = `${notificationMsg} changed.`;
     }
 
-    notification.info(notificationMsg);
+    notification.success(notificationMsg);
 
     this.setState({
       upgradedSpace: space.sys.id

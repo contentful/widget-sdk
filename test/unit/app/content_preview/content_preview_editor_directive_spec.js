@@ -6,8 +6,8 @@ describe('cfContentPreviewEditor directive', () => {
 
   beforeEach(function() {
     notification = {
-      info: sinon.stub().returns(),
-      warn: sinon.stub().returns()
+      success: sinon.stub().returns(),
+      error: sinon.stub().returns()
     };
     module('contentful/test', $provide => {
       $provide.value('access_control/AccessChecker', { wasForbidden: sinon.stub().returns(false) });
@@ -126,7 +126,7 @@ describe('cfContentPreviewEditor directive', () => {
       this.updateName('My PE');
       this.clickSave();
       sinon.assert.calledWith(contentPreview.create, this.scope.previewEnvironment);
-      sinon.assert.calledWith(notification.warn, 'Could not save Preview Environment');
+      sinon.assert.calledWith(notification.error, 'Could not save Preview Environment');
     });
 
     it('shows error if name is not present on save', function() {
@@ -166,7 +166,7 @@ describe('cfContentPreviewEditor directive', () => {
     it('shows notification and resets form when saved successfully', function() {
       this.updateName('name');
       this.clickSave();
-      sinon.assert.calledOnce(notification.info);
+      sinon.assert.calledOnce(notification.success);
       expect(this.scope.context.dirty).toBe(false);
       expect(this.elements.save.attr('aria-disabled')).toBe('true');
     });
@@ -228,14 +228,17 @@ describe('cfContentPreviewEditor directive', () => {
       contentPreview.update.resolves({ name: 'New name', sys: { id: 'foo' } });
       this.updateName('New name');
       this.clickSave();
-      sinon.assert.calledWith(notification.info, 'Content preview "New name" saved successfully');
+      sinon.assert.calledWith(
+        notification.success,
+        'Content preview "New name" saved successfully'
+      );
     });
 
     it('displays error when fails', function() {
       contentPreview.update.rejects();
       this.updateName('New name');
       this.clickSave();
-      sinon.assert.calledWith(notification.warn, 'Could not save Preview Environment');
+      sinon.assert.calledWith(notification.error, 'Could not save Preview Environment');
     });
   });
 });

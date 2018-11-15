@@ -1,5 +1,5 @@
-import notification from 'notification';
 import logger from 'logger';
+import { Notification } from '@contentful/ui-component-library';
 import { get } from 'lodash';
 
 const NOT_RENAMEABLE_MESSAGE =
@@ -26,32 +26,32 @@ const ERROR_CHECKS = [
 ];
 
 function deleteSuccess() {
-  notification.info('Locale deleted successfully');
+  Notification.success('Locale deleted successfully');
 }
 
 function saveSuccess() {
-  notification.info('Locale saved successfully');
+  Notification.success('Locale saved successfully');
 }
 
 function notRenameable() {
-  notification.error(NOT_RENAMEABLE_MESSAGE);
+  Notification.error(NOT_RENAMEABLE_MESSAGE);
 }
 
 function codeChangeError() {
-  notification.error('New fallback code could not be saved');
+  Notification.error('New fallback code could not be saved');
 }
 
 function deleteError(err) {
-  notification.error('Locale could not be deleted: ' + err.body.message);
+  Notification.error('Locale could not be deleted: ' + err.body.message);
   logger.logServerWarn('Locale could not be deleted', { error: err });
 }
 
 function saveError(err) {
   const message = getErrorMessage(err);
   if (message) {
-    notification.error('Locale could not be saved: ' + message);
+    Notification.error('Locale could not be saved: ' + message);
   } else {
-    notification.error('Locale could not be saved');
+    Notification.error('Locale could not be saved');
     logger.logServerWarn('Locale could not be saved', { error: err });
   }
 }

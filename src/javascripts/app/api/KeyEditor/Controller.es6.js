@@ -166,7 +166,7 @@ function mountKeyEditor($scope, apiKey, spaceEnvironments) {
 function makeNotifier(title) {
   return {
     saveSuccess: function() {
-      notification.info(`“${title}” saved successfully`);
+      notification.success(`“${title}” saved successfully`);
     },
 
     saveFail: function(error) {
@@ -182,7 +182,7 @@ function makeNotifier(title) {
     },
 
     deleteSuccess: function() {
-      notification.info(`“${title}” deleted successfully`);
+      notification.success(`“${title}” deleted successfully`);
     },
 
     deleteFail: function(error) {

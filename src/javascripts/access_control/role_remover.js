@@ -31,7 +31,7 @@ angular.module('contentful').factory('createRoleRemover', [
             .remove(role)
             .then(doneFn)
             .then(() => {
-              notification.info('Role successfully deleted.');
+              notification.success('Role successfully deleted.');
             })
             .catch(ReloadNotification.basicErrorHandler);
         }

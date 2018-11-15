@@ -38,15 +38,15 @@ export function open(localeCode) {
     return $q.all(files.map(createAssetForFile)).then(
       assets => {
         assets = assets.filter(identity);
-        notification.info('Assets uploaded. Processing…');
+        notification.success('Assets uploaded. Processing…');
         return $q
           .all(assets.map(processAssetForFile))
           .then(() => {
-            notification.info('Assets processed. Updating…');
+            notification.success('Assets processed. Updating…');
             return assets;
           })
           .catch(error => {
-            notification.warn('Some assets failed to process');
+            notification.error('Some assets failed to process');
             return $q.reject(error);
           });
       },

@@ -25,7 +25,7 @@ const messages = {
 };
 
 export function deleteSuccess() {
-  notification.info('Content type deleted successfully');
+  notification.success('Content type deleted successfully');
 }
 
 export function deleteFail(err) {
@@ -75,7 +75,7 @@ export function saveFailure(errData, contentType) {
 }
 
 export function saveSuccess() {
-  notification.info(messages.save.success);
+  notification.success(messages.save.success);
 }
 
 export function saveInvalidError(error, contentType) {
@@ -95,7 +95,7 @@ export function saveOutdatedError(error, contentType) {
 }
 
 export function saveIdExists() {
-  notification.warn(messages.create.exists);
+  notification.error(messages.create.exists);
 }
 
 export function saveApiError(errData) {
@@ -105,7 +105,7 @@ export function saveApiError(errData) {
 }
 
 export function duplicateSuccess() {
-  notification.info(messages.duplicate.success);
+  notification.success(messages.duplicate.success);
 }
 
 export function duplicateError(errData) {

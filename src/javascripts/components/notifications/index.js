@@ -53,12 +53,8 @@ angular
             this._notify(body, 'error');
           },
 
-          warn: function(body) {
-            this.error(body);
-          },
-
-          info: function(body) {
-            this._notify(body, 'info');
+          success: function(body) {
+            this._notify(body, 'success');
           },
 
           markAsSeen: function() {

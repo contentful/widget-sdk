@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import { track } from 'analytics/Analytics.es6';
-import notification from 'notification';
+import { Notification } from '@contentful/ui-component-library';
 import ReloadNotification from 'ReloadNotification';
 
 const INVALID_BODY_TRANSFORMATION_ERROR_MSG =
@@ -28,7 +28,7 @@ export async function save(webhookRepo, webhook, templateId = null, templateIdRe
   try {
     const saved = await webhookRepo.save(webhook);
     trackSave(saved, templateId, templateIdReferrer);
-    notification.info(`Webhook "${saved.name}" saved successfully.`);
+    Notification.success(`Webhook "${saved.name}" saved successfully.`);
     return saved;
   } catch (err) {
     throw new Error(getSaveApiErrorMessage(err));
@@ -48,7 +48,7 @@ function getSaveApiErrorMessage(err) {
 export async function remove(webhookRepo, webhook) {
   try {
     await webhookRepo.remove(webhook);
-    notification.info(`Webhook "${webhook.name}" deleted successfully.`);
+    Notification.success(`Webhook "${webhook.name}" deleted successfully.`);
     return { removed: true };
   } catch (err) {
     if (err instanceof Error) {

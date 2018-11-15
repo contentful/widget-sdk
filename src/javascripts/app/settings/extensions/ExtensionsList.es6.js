@@ -1,11 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
-import { Button, Dropdown, DropdownList } from '@contentful/ui-component-library';
+import { Button, Dropdown, DropdownList, Notification } from '@contentful/ui-component-library';
 import StateLink from 'app/common/StateLink.es6';
 import Workbench from 'app/common/Workbench.es6';
 import spaceContext from 'spaceContext';
-import notification from 'notification';
 import ExtensionsSidebar, { DocsLink } from './ExtensionsSidebar.es6';
 
 import EmptyExtensionIcon from './icons/EmptyExtensionIcon.es6';
@@ -18,9 +17,9 @@ function deleteExtension(id, refresh) {
     .deleteExtension(id)
     .then(refresh)
     .then(
-      () => notification.info('Your extension was successfully deleted.'),
+      () => Notification.success('Your extension was successfully deleted.'),
       err => {
-        notification.error('There was an error while deleting your extension.');
+        Notification.error('There was an error while deleting your extension.');
         return Promise.reject(err);
       }
     );

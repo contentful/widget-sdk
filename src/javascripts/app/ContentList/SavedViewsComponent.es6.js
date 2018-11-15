@@ -126,7 +126,7 @@ export default function({ scopedFolders, loadView, getCurrentView, roleAssignmen
     // We display this notification w/o confirming changes were successfully
     // persisted. If it fails, consecutive notification is presented and the
     // state is reverted.
-    notification.info('View(s) updated successfully.');
+    notification.success('View(s) updated successfully.');
 
     scopedFolders.set(updated).catch(() => {
       notification.error('Error while updating saved views. Your changes were reverted.');

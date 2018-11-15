@@ -1,9 +1,14 @@
 import React from 'react';
 import spaceContext from 'spaceContext';
 import $state from '$state';
-import notification from 'notification';
 import modalDialog from 'modalDialog';
-import { Dropdown, Button, DropdownList, DropdownListItem } from '@contentful/ui-component-library';
+import {
+  Dropdown,
+  Button,
+  DropdownList,
+  DropdownListItem,
+  Notification
+} from '@contentful/ui-component-library';
 import { toInternalFieldType } from './FieldTypes.es6';
 import getExtensionParameterIds from './getExtensionParameterIds.es6';
 import { track } from 'analytics/Analytics.es6';
@@ -15,7 +20,7 @@ function install({ extension, type, url }) {
     .createExtension({ extension })
     .then(res => $state.go('^.detail', { extensionId: res.sys.id }))
     .then(() => {
-      notification.info('Your new extension was successfully created.');
+      Notification.success('Your new extension was successfully created.');
 
       if (type && url) {
         track('extension:install', {
@@ -34,7 +39,7 @@ function handleInstallError(err) {
   const wasCancelled = err && Object.keys(err).length === 1 && err.cancelled === true;
 
   if (err && !wasCancelled) {
-    notification.error('There was an error while creating your extension.');
+    Notification.error('There was an error while creating your extension.');
     return Promise.reject(err);
   }
 }
