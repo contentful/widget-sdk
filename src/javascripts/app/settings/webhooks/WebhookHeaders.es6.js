@@ -88,6 +88,7 @@ export class WebhookHeaders extends React.Component {
 
         <button
           className="btn-link webhook-header-action"
+          data-test-id="add-custom-header"
           onClick={() => {
             this.shouldFocus = true; // mark to be focused when the component updates next time
             this.add();
@@ -97,12 +98,14 @@ export class WebhookHeaders extends React.Component {
 
         <button
           className="btn-link webhook-header-action"
+          data-test-id="add-secret-header"
           onClick={() => this.setState({ isSecretHeaderModalShown: true })}>
           + Add secret header
         </button>
 
         <button
           className="btn-link webhook-header-action"
+          data-test-id="add-http-basic-url-header"
           onClick={() => this.setState({ isHTTPBasicModalShown: true })}>
           + Add HTTP Basic Auth header
         </button>

@@ -112,7 +112,10 @@ export default class WebhookFilters extends React.Component {
 
         {filters.map((f, i) => this.renderFilter(f, i))}
 
-        <button className="btn-link" onClick={() => this.addNew()}>
+        <button
+          className="btn-link"
+          data-test-id="add-webhook-filter"
+          onClick={() => this.addNew()}>
           + Add filter
         </button>
       </div>
