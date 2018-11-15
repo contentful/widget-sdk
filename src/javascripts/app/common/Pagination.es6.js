@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Select, Option, Button } from '@contentful/ui-component-library';
+import { Select, Option, Button, Spinner } from '@contentful/ui-component-library';
 
 export default class Pagination extends React.Component {
   static propTypes = {
@@ -59,6 +59,8 @@ export default class Pagination extends React.Component {
             <Option value="100">100</Option>
           </Select>
         </nav>
+
+        {loading ? <Spinner size="large" /> : null}
 
         <nav className="pagination__nav">
           <p className="pagination__text">

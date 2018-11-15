@@ -183,7 +183,9 @@ class UsersList extends React.Component {
               filters={filters}
               onReset={this.resetFilters}
             />
-            <Table data-test-id="organization-membership-list">
+            <Table
+              data-test-id="organization-membership-list"
+              extraClassNames={loading ? 'organization-membership-list--loading' : ''}>
               <TableHead>
                 <TableRow>
                   <TableCell width="50">User</TableCell>
