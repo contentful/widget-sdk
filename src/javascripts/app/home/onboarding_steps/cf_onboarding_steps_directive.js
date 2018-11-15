@@ -8,7 +8,6 @@ angular.module('contentful').directive('cfOnboardingSteps', [
     const spaceContext = require('spaceContext');
     const CreateSpace = require('services/CreateSpace.es6');
     const caseofEq = require('sum-types').caseofEq;
-    const TheLocaleStore = require('TheLocaleStore');
     const entityCreator = require('entityCreator');
     const LD = require('utils/LaunchDarkly');
     const K = require('utils/kefir.es6');
@@ -336,7 +335,9 @@ angular.module('contentful').directive('cfOnboardingSteps', [
           }
 
           function setAdvancedStepsCompletion() {
-            advancedSteps[1].completed = TheLocaleStore.getLocales().length > 1;
+            spaceContext.localeRepo.getAll().then(locales => {
+              controller.steps[1].completed = locales.length > 1;
+            });
 
             spaceContext
               .endpoint({

@@ -161,9 +161,10 @@ describe('cfOnboardingSteps Directive', () => {
         this.spaceContext.getData.withArgs('activatedAt').returns('2017-03-03T16:14:00Z');
         this.spaceContext.space = {};
         this.webhooks = sinon.stub().resolves([]);
+        this.locales = sinon.stub().resolves([{}]);
         this.spaceContext.webhookRepo = { getAll: this.webhooks };
         this.spaceContext.endpoint = sinon.stub().resolves({ items: [] });
-        this.$inject('TheLocaleStore').getLocales = sinon.stub().returns([{}]);
+        this.spaceContext.localeRepo = { getAll: this.locales };
       });
 
       it('no completed steps', function() {
@@ -184,7 +185,7 @@ describe('cfOnboardingSteps Directive', () => {
       });
 
       it('has additional locales', function() {
-        this.$inject('TheLocaleStore').getLocales = sinon.stub().returns([{}, {}]);
+        this.locales.resolves([{}, {}]);
         this.compile();
         this.assertCompletedSteps(1);
       });

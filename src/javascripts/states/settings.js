@@ -22,7 +22,7 @@ angular
             url: '/space',
             template: '<react-component name="app/settings/space/SpaceSettingsRoute.es6" />'
           },
-          require('states/settings/locales'),
+          require('app/settings/locales/routes/index.es6').default,
           require('states/settings/users'),
           require('states/settings/roles'),
           require('states/settings/content_preview'),

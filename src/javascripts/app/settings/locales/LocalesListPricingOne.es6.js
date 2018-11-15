@@ -25,6 +25,7 @@ export const AddLocaleButton = ({ getComputeLocalesUsageForOrganization }) => (
     {({ onClick }) => (
       <Button
         icon="PlusCircle"
+        testId="add-locales-button"
         buttonType="primary"
         onClick={() => {
           const usage = getComputeLocalesUsageForOrganization();

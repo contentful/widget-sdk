@@ -1,85 +1,53 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`locales/components/LocaleCodeChangeConfirmDialog should match snapshot 1`] = `
-<div
-  className="modal-dialog"
+<ModalConfirm
+  cancelLabel="No, I need some more time"
+  cancelTestId="change-locale-cancel"
+  confirmLabel="Got it, change locale"
+  confirmTestId="change-locale-confirm"
+  intent="positive"
+  isConfirmDisabled={true}
+  isConfirmLoading={false}
+  isShown={true}
+  onCancel={[Function]}
+  onConfirm={[Function]}
+  shouldCloseOnEscapePress={true}
+  shouldCloseOnOverlayClick={true}
+  size="medium"
+  testId="cf-ui-modal-confirm"
+  title="Are you sure?"
 >
-  <header
-    className="modal-dialog__header"
-  >
-    <h1>
-      Changing a locale might break things
-    </h1>
-    <button
-      className="modal-dialog__close"
-      data-test-id="modal-dialog-close"
-      onClick={[Function]}
-    />
-  </header>
-  <div
-    className="modal-dialog__content"
-  >
-    <div
-      className="modal-dialog__richtext"
-    >
-      <p>
-        You’re about to change 
-        <strong>
-          Russian
-        </strong>
-         to
-         
-        <strong>
-          German
-        </strong>
-        , which might break localisation in your apps. If you’re using the locale code 
-        <code>
-          ru
-        </code>
-         in your API clients, make sure you update it to 
-        <code>
-          de
-        </code>
-        . You can revert these changes afterwards. Please type the old locale code below:
-      </p>
-      <TextInput
-        disabled={false}
-        id="localeInput"
-        name="localeInput"
-        onChange={[Function]}
-        required={false}
-        testId="repeat-locale-input"
-        value=""
-        width="medium"
-        withCopyButton={false}
-      />
-    </div>
-  </div>
-  <div
-    className="modal-dialog__controls"
-  >
-    <Button
-      buttonType="positive"
-      disabled={true}
-      indicateDropdown={false}
-      isFullWidth={false}
-      loading={false}
-      onClick={[Function]}
-      testId="change-locale-confirm"
-    >
-      Got it, change locale
-    </Button>
-    <Button
-      buttonType="muted"
-      disabled={false}
-      indicateDropdown={false}
-      isFullWidth={false}
-      loading={false}
-      onClick={[Function]}
-      testId="change-locale-cancel"
-    >
-      No, I need some more time
-    </Button>
-  </div>
-</div>
+  <p>
+    You’re about to change 
+    <strong>
+      Russian
+    </strong>
+     to
+     
+    <strong>
+      German
+    </strong>
+    , which might break localisation in your apps. If you’re using the locale code 
+    <code>
+      ru
+    </code>
+     in your API clients, make sure you update it to 
+    <code>
+      de
+    </code>
+    . You can revert these changes afterwards. Please type the old locale code below:
+  </p>
+  <TextInput
+    disabled={false}
+    id="localeInput"
+    name="localeInput"
+    onChange={[Function]}
+    required={false}
+    testId="repeat-locale-input"
+    value=""
+    width="medium"
+    withCopyButton={false}
+  />
+</ModalConfirm>
 `;

@@ -134,6 +134,16 @@ Workbench.Header.Search = class HeaderSearch extends React.Component {
   }
 };
 
+Workbench.Header.Description = class HeaderDescription extends React.Component {
+  static propTypes = {
+    children: PropTypes.node
+  };
+
+  render() {
+    return <div className="workbench-header__description">{this.props.children}</div>;
+  }
+};
+
 Workbench.Header.Actions = class HeaderActions extends React.Component {
   static propTypes = {
     children: PropTypes.node

@@ -6,12 +6,12 @@ describe('locales/components/LocaleCodeChangeConfirmDialog', () => {
   const selectors = {
     repeatLocaleInput: 'input[data-test-id="repeat-locale-input"]',
     confirmChangeLocale: '[data-test-id="change-locale-confirm"]',
-    cancelChangeLocale: '[data-test-id="change-locale-cancel"]',
-    modalDialogClose: '[data-test-id="modal-dialog-close"]'
+    cancelChangeLocale: '[data-test-id="change-locale-cancel"]'
   };
 
   const renderComponent = props => (
     <LocaleCodeChangeConfirmDialog
+      isShown
       onConfirm={() => {}}
       onCancel={() => {}}
       locale={{
@@ -47,8 +47,7 @@ describe('locales/components/LocaleCodeChangeConfirmDialog', () => {
     );
 
     wrapper.find(selectors.cancelChangeLocale).simulate('click');
-    wrapper.find(selectors.modalDialogClose).simulate('click');
-    expect(stubs.onCancel).toHaveBeenCalledTimes(2);
+    expect(stubs.onCancel).toHaveBeenCalledTimes(1);
   });
 
   it('confirm button should be enabled when user types locale code in input', () => {

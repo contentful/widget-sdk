@@ -6,19 +6,28 @@ describe('locales/components/ChooseNewFallbackLocaleDialog', () => {
   const selectors = {
     confirmChangeLocale: '[data-test-id="choose-locale-confirm"]',
     cancelChangeLocale: '[data-test-id="choose-locale-cancel"]',
-    modalDialogClose: '[data-test-id="modal-dialog-close"]',
     chooseLocaleSelect: '[data-test-id="choose-fallback-locale-select"]'
   };
 
   const renderComponent = props => (
     <ChooseNewFallbackLocaleDialog
+      isShown
       onConfirm={() => {}}
       onCancel={() => {}}
       locale={{
         name: 'German',
         code: 'de'
       }}
-      dependantLocaleNames="pl, fr, zh"
+      dependantLocales={[
+        {
+          name: 'Polish',
+          code: 'pl'
+        },
+        {
+          name: 'French',
+          code: 'fr'
+        }
+      ]}
       availableLocales={[
         {
           name: 'Russian',
@@ -49,8 +58,7 @@ describe('locales/components/ChooseNewFallbackLocaleDialog', () => {
     );
 
     wrapper.find(selectors.cancelChangeLocale).simulate('click');
-    wrapper.find(selectors.modalDialogClose).simulate('click');
-    expect(stubs.onCancel).toHaveBeenCalledTimes(2);
+    expect(stubs.onCancel).toHaveBeenCalledTimes(1);
   });
 
   it('click on submit sends current selected code to the callback', () => {

@@ -12,7 +12,6 @@ const ServicesConsumer = require('../../../../reactServiceContext').default;
 
 const LocalesFetcher = ServicesConsumer(
   'spaceContext',
-  'TheLocaleStore',
   {
     from: 'utils/ResourceUtils.es6',
     as: 'ResourceUtils'
@@ -32,17 +31,11 @@ const LocalesFetcher = ServicesConsumer(
   'TheAccountView'
 )(
   createFetcherComponent(props => {
-    const {
-      TheLocaleStore,
-      spaceContext,
-      ResourceUtils,
-      OrganizationRoles,
-      TheAccountView
-    } = props.$services;
+    const { spaceContext, ResourceUtils, OrganizationRoles, TheAccountView } = props.$services;
     const createResourceService = props.$services.ResourceService.default;
     const createFeatureService = props.$services.FeatureService.default;
     return Promise.all([
-      TheLocaleStore.refresh(),
+      spaceContext.localeRepo.getAll(),
       ResourceUtils.useLegacy(spaceContext.organization),
       createResourceService(spaceContext.getId()).get('locale'),
       createFeatureService(spaceContext.getId()).get('multipleLocales'),

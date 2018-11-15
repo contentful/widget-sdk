@@ -14,6 +14,12 @@ export default class LocaleRemovalConfirmDialog extends React.Component {
     typedLocaleCode: ''
   };
 
+  componentDidUpdate(nextProps) {
+    if (nextProps.isShown === false) {
+      this.setState({ typedLocaleCode: '' });
+    }
+  }
+
   render() {
     const { locale } = this.props;
     return (

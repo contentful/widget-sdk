@@ -1,98 +1,64 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`locales/components/ChooseNewFallbackLocaleDialog should match snapshot 1`] = `
-<div
-  className="modal-dialog"
+<ModalConfirm
+  cancelLabel="Don’t delete"
+  cancelTestId="choose-locale-cancel"
+  confirmLabel="OK, delete German and update affected locales"
+  confirmTestId="choose-locale-confirm"
+  intent="positive"
+  isConfirmDisabled={false}
+  isConfirmLoading={false}
+  isShown={true}
+  onCancel={[Function]}
+  onConfirm={[Function]}
+  shouldCloseOnEscapePress={true}
+  shouldCloseOnOverlayClick={true}
+  size="large"
+  testId="cf-ui-modal-confirm"
+  title="You’re deleting a locale used as fallback"
 >
-  <header
-    className="modal-dialog__header"
-  >
-    <h1>
-      You’re deleting a locale used as fallback
-    </h1>
-    <button
-      className="modal-dialog__close"
-      data-test-id="modal-dialog-close"
-      onClick={[Function]}
-    />
-  </header>
-  <div
-    className="modal-dialog__content"
-  >
-    <div
-      className="modal-dialog__richtext"
-    >
-      <p>
-        <strong>
-          German
-        </strong>
-         is used as fallback for
-         
-        <code>
-          pl, fr, zh
-        </code>
-        . After deleting it, the affected locales will fallback to:
-      </p>
-      <Select
-        hasError={false}
-        id="newFallbackLocale"
-        isDisabled={false}
-        name="newFallbackLocale"
-        onBlur={[Function]}
-        onChange={[Function]}
-        onFocus={[Function]}
-        required={false}
-        testId="choose-fallback-locale-select"
-        value=""
-        width="full"
-      >
-        <Option
-          value=""
-        >
-          None (no fallback)
-        </Option>
-        <Option
-          key="ru"
-          value="ru"
-        >
-          Russian
-        </Option>
-        <Option
-          key="en"
-          value="en"
-        >
-          English
-        </Option>
-      </Select>
-    </div>
-  </div>
-  <div
-    className="modal-dialog__controls"
-  >
-    <Button
-      buttonType="positive"
-      disabled={false}
-      indicateDropdown={false}
-      isFullWidth={false}
-      loading={false}
-      onClick={[Function]}
-      testId="choose-locale-confirm"
-    >
-      OK, delete 
+  <p>
+    <strong>
       German
-       and update affected locales
-    </Button>
-    <Button
-      buttonType="muted"
-      disabled={false}
-      indicateDropdown={false}
-      isFullWidth={false}
-      loading={false}
-      onClick={[Function]}
-      testId="choose-locale-cancel"
+    </strong>
+     is used as fallback for
+     
+    <code>
+      Polish, French
+    </code>
+    . After deleting it, the affected locales will fallback to:
+  </p>
+  <Select
+    hasError={false}
+    id="newFallbackLocale"
+    isDisabled={false}
+    name="newFallbackLocale"
+    onBlur={[Function]}
+    onChange={[Function]}
+    onFocus={[Function]}
+    required={false}
+    testId="choose-fallback-locale-select"
+    value=""
+    width="full"
+  >
+    <Option
+      value=""
     >
-      Don’t delete
-    </Button>
-  </div>
-</div>
+      None (no fallback)
+    </Option>
+    <Option
+      key="ru"
+      value="ru"
+    >
+      Russian
+    </Option>
+    <Option
+      key="en"
+      value="en"
+    >
+      English
+    </Option>
+  </Select>
+</ModalConfirm>
 `;
