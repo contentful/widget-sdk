@@ -62,7 +62,7 @@ export default class Pagination extends React.Component {
 
         <nav className="pagination__nav">
           <p className="pagination__text">
-            Showing {`${skip + 1} - ${Math.min(skip + limit, total)}`} of {total}
+            Showing {`${Math.min(skip + 1, total)} - ${Math.min(skip + limit, total)}`} of {total}
           </p>{' '}
           <Button
             disabled={isFirstPage || loading}

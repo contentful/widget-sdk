@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Space as SpacePropType } from '../PropTypes.es6';
 import { startCase, without, debounce } from 'lodash';
+import classnames from 'classnames';
 import pluralize from 'pluralize';
 import {
   Table,
@@ -11,7 +12,8 @@ import {
   TableCell,
   Button,
   TextInput,
-  Icon
+  Icon,
+  Spinner
 } from '@contentful/ui-component-library';
 import { formatQuery } from './QueryBuilder.es6';
 import ResolveLinks from '../../LinkResolver.es6';
@@ -26,6 +28,7 @@ import {
 } from 'access_control/OrganizationMembershipRepository.es6';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { getFilterDefinitions } from './FilterDefinitions.es6';
+import EmptyPlaceholder from './EmptyPlaceholder.es6';
 import { getLastActivityDate } from '../UserUtils.es6';
 
 const ServicesConsumer = require('../../../../reactServiceContext').default;
@@ -183,60 +186,72 @@ class UsersList extends React.Component {
               filters={filters}
               onReset={this.resetFilters}
             />
-            <Table data-test-id="organization-membership-list">
-              <TableHead>
-                <TableRow>
-                  <TableCell width="50">User</TableCell>
-                  <TableCell width="200">Organization role</TableCell>
-                  <TableCell colSpan="2">Last active</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {usersList.map(membership => (
-                  <TableRow
-                    key={membership.sys.id}
-                    className="membership-list__item"
-                    data-test-id="organization-membership-list-row">
-                    <TableCell>
-                      <a href={this.getLinkToUser(membership)}>
-                        <UserCard user={membership.sys.user} />
-                      </a>
-                    </TableCell>
-                    <TableCell>{startCase(membership.role)}</TableCell>
-                    <TableCell>{getLastActivityDate(membership)}</TableCell>
-                    <TableCell align="right">
-                      <div className="membership-list__item__menu">
-                        <Button
-                          buttonType="muted"
-                          size="small"
-                          onClick={this.handleMembershipRemove(membership)}
-                          extraClassNames="membership-list__item__menu__button">
-                          Remove
-                        </Button>
-                        <Button
-                          buttonType="muted"
-                          size="small"
-                          href={this.getLinkToUser(membership)}
-                          extraClassNames="membership-list__item__menu__button">
-                          Edit
-                        </Button>
-                        <Icon
-                          icon="MoreHorizontal"
-                          extraClassNames="membership-list__item__menu__icon"
-                        />
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-
-            <Pagination
-              {...pagination}
-              total={queryTotal}
-              loading={loading}
-              onChange={this.handlePaginationChange}
-            />
+            {usersList.length > 0 ? (
+              <React.Fragment>
+                <Table
+                  data-test-id="organization-membership-list"
+                  extraClassNames={classnames('organization-membership-list', {
+                    'organization-membership-list--loading': loading
+                  })}>
+                  {loading ? (
+                    <Spinner size="large" extraClassNames="organization-users-page__spinner" />
+                  ) : null}
+                  <TableHead>
+                    <TableRow>
+                      <TableCell width="50">User</TableCell>
+                      <TableCell width="200">Organization role</TableCell>
+                      <TableCell colSpan="2">Last active</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {usersList.map(membership => (
+                      <TableRow
+                        key={membership.sys.id}
+                        className="membership-list__item"
+                        data-test-id="organization-membership-list-row">
+                        <TableCell>
+                          <a href={this.getLinkToUser(membership)}>
+                            <UserCard user={membership.sys.user} />
+                          </a>
+                        </TableCell>
+                        <TableCell>{startCase(membership.role)}</TableCell>
+                        <TableCell>{getLastActivityDate(membership)}</TableCell>
+                        <TableCell align="right">
+                          <div className="membership-list__item__menu">
+                            <Button
+                              buttonType="muted"
+                              size="small"
+                              onClick={this.handleMembershipRemove(membership)}
+                              extraClassNames="membership-list__item__menu__button">
+                              Remove
+                            </Button>
+                            <Button
+                              buttonType="muted"
+                              size="small"
+                              href={this.getLinkToUser(membership)}
+                              extraClassNames="membership-list__item__menu__button">
+                              Edit
+                            </Button>
+                            <Icon
+                              icon="MoreHorizontal"
+                              extraClassNames="membership-list__item__menu__icon"
+                            />
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+                <Pagination
+                  {...pagination}
+                  total={queryTotal}
+                  loading={loading}
+                  onChange={this.handlePaginationChange}
+                />
+              </React.Fragment>
+            ) : (
+              <EmptyPlaceholder loading={loading} />
+            )}
           </section>
         </Workbench.Content>
       </Workbench>
