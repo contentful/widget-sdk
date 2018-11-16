@@ -271,7 +271,7 @@ function Sidebar({
           <li>
             Read more in the{' '}
             <a
-              href="http://ctf-doc-app-branch-environments.netlify.com/developers/docs/concepts/domain-model/"
+              href="https://www.contentful.com/developers/docs/concepts/domain-model/"
               target="_blank"
               rel="noopener noreferrer">
               Contentful domain model
