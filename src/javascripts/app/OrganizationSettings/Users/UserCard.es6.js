@@ -40,7 +40,7 @@ export default class UserCard extends React.Component {
           <h2 className="user-card__name">
             {firstName ? `${firstName} ${lastName}` : <Tag tagType="warning">Invited</Tag>}
           </h2>
-          <span className="user-card__email ">{email}</span>
+          <span className="user-card__email">{email}</span>
         </div>
       </div>
     );
