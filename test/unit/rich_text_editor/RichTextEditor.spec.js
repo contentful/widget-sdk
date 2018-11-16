@@ -34,6 +34,9 @@ describe('RichTextEditor', () => {
         openFromField: () => Promise.resolve([this.entity])
       }
     });
+    this.system.set('detect-browser', {
+      detect: () => ({ name: 'ie' })
+    });
     this.system.set('app/widgets/rich_text/withTracking.es6', {
       default: component => component
     });

@@ -3,13 +3,6 @@
 .rich-text
   position: relative;
 
-  &--enabled .rich-text__toolbar {
-    position: -webkit-sticky;
-    position: sticky;
-    top: 0px;
-    z-index: 2;
-  }
-
   &__editor {
     border-radius: 0 0 3px 3px;
     border: 1px solid $colors.element-dark;
@@ -67,6 +60,14 @@
       display: flex
       align-self: flex-start
       margin-left: auto
+
+  .sticky-wrapper
+    transform: none !important;
+  
+  &--enabled .native-sticky
+    position: sticky;
+    top: 0;
+    z-index: 2;
 
   &__embedded-entry-list-icon
     margin-right: 5px;

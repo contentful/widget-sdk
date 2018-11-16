@@ -106,5 +106,7 @@ window.libs = [
   ['speakingurl', require('speakingurl')],
   ['stringifySafe', require('json-stringify-safe')],
   ['sum-types', require('sum-types')],
-  ['sum-types/caseof-eq', require('sum-types/caseof-eq')]
+  ['sum-types/caseof-eq', require('sum-types/caseof-eq')],
+  ['react-sticky-el', require('react-sticky-el')],
+  ['detect-browser', require('detect-browser')]
 ];

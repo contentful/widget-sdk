@@ -5,6 +5,8 @@ import { Value } from 'slate';
 import cn from 'classnames';
 import TrailingBlock from 'slate-trailing-block';
 import deepEqual from 'fast-deep-equal';
+import Sticky from 'react-sticky-el';
+import { detect as detectBrowser } from 'detect-browser';
 
 import { toContentfulDocument, toSlatejsDocument } from '@contentful/contentful-slatejs-adapter';
 
@@ -60,6 +62,25 @@ const createValue = contentfulDocument => {
 };
 
 const initialValue = createValue(emptyDoc);
+
+const StickyToolbarWrapper = ({ children, isDisabled }) =>
+  detectBrowser().name === 'ie' ? (
+    <Sticky
+      className="sticky-wrapper"
+      boundaryElement=".rich-text"
+      scrollElement=".sticky-parent"
+      stickyStyle={{ zIndex: 2 }}
+      disabled={isDisabled}>
+      {children}
+    </Sticky>
+  ) : (
+    <div className="native-sticky">{children}</div>
+  );
+
+StickyToolbarWrapper.propTypes = {
+  children: PropTypes.node,
+  isDisabled: PropTypes.bool
+};
 
 export default class RichTextEditor extends React.Component {
   static propTypes = {
@@ -122,12 +143,14 @@ export default class RichTextEditor extends React.Component {
 
     return (
       <div className={classNames}>
-        <Toolbar
-          change={this.state.value.change()}
-          onChange={this.onChange}
-          isDisabled={this.props.isDisabled}
-          richTextAPI={newPluginAPI(this.props)}
-        />
+        <StickyToolbarWrapper isDisabled={this.props.isDisabled}>
+          <Toolbar
+            change={this.state.value.change()}
+            onChange={this.onChange}
+            isDisabled={this.props.isDisabled}
+            richTextAPI={newPluginAPI(this.props)}
+          />
+        </StickyToolbarWrapper>
         <Editor
           data-test-id="editor"
           value={this.state.value}

@@ -152,7 +152,6 @@ export default class Toolbar extends React.Component {
     };
     const { field } = richTextAPI.widgetAPI;
     const { isAnyHyperlinkEnabled, isAnyListEnabled, isAnyMarkEnabled } = this.getValidationInfo();
-
     return (
       <EditorToolbar extraClassNames="rich-text__toolbar" data-test-id="toolbar">
         <div className="rich-text__toolbar__formatting-options-wrapper">

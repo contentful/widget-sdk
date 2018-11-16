@@ -75,6 +75,7 @@ export const setupWidgetApi = (mockApi, mockDocument) => {
 
 export const createSandbox = window => {
   const el = window.document.createElement('div');
+  el.className = 'sticky-parent';
   window.document.body.appendChild(el);
   return el;
 };
