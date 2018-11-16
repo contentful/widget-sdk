@@ -12,14 +12,27 @@ const newPlugin = (defaultType, tagName, hotkey) => ({ type = defaultType, richT
   },
   onKeyDown: (e, change) => {
     if (isHotkey('enter', e)) {
-      const { value } = change;
-      const { blocks } = value;
-      const getCurrentblock = blocks.get(0);
-
-      if (getCurrentblock.type === type) {
-        return change.splitBlock().setBlocks(BLOCKS.PARAGRAPH);
+      const currentBlock = change.value.blocks.get(0);
+      if (currentBlock.type === type) {
+        return handleReturnKey();
       }
     } else if (isHotkey(hotkey, e)) {
+      return handleHotkey();
+    }
+
+    function handleReturnKey () {
+      const { value } = change;
+
+      if (value.selection.startOffset === 0) {
+        const initialRange = value.selection;
+        change.splitBlock().setBlocksAtRange(initialRange, BLOCKS.PARAGRAPH);
+      } else {
+        change.splitBlock().setBlocks(BLOCKS.PARAGRAPH);
+      }
+      return change;
+    }
+
+    function handleHotkey() {
       const isActive = toggleChange(change, type);
       const actionName = isActive ? 'insert' : 'remove';
       richTextAPI.logAction(actionName, { origin: actionOrigin.SHORTCUT, nodeType: type });
