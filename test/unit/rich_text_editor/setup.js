@@ -63,6 +63,9 @@ export const stubAll = async ({ isolatedSystem }) => {
     goToSlideInEntity: sinon.stub()
   });
   isolatedSystem.set('search/config.es6', {});
+  isolatedSystem.set('detect-browser', {
+    detect: () => ({ name: 'chrome' })
+  });
 };
 
 export const setupWidgetApi = (mockApi, mockDocument) => {

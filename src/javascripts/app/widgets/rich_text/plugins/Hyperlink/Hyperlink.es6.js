@@ -6,6 +6,7 @@ import { INLINES } from '@contentful/rich-text-types';
 import RequestStatus from '../shared/RequestStatus.es6';
 import FetchEntity from '../shared/FetchEntity/index.es6';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
+import { detect as detectBrowser } from 'detect-browser';
 
 const { HYPERLINK, ENTRY_HYPERLINK, ASSET_HYPERLINK } = INLINES;
 
@@ -44,17 +45,20 @@ export default class Hyperlink extends React.Component {
     const title = node.data.get('title');
     const uri = node.data.get('uri');
     const href = isUrl(uri) ? uri : 'javascript:void(0)';
-
     return (
       <Tooltip content={tooltip} extraClassNames="rich-text__hyperlink-container" maxWidth="auto">
-        <TextLink
-          href={href} // Allows user to open link in new tab.
-          rel="noopener noreferrer"
-          title={title}
-          extraClassNames="rich-text__hyperlink">
-          {children}
-          {/*<Icon icon={icon} extraClassNames="rich-text__hyperlink-icon" />*/}
-        </TextLink>
+        {hasRealHyperlinkInSlateSupport() ? (
+          <TextLink
+            href={href} // Allows user to open uri link in new tab.
+            rel="noopener noreferrer"
+            title={title}
+            extraClassNames="rich-text__hyperlink">
+            {children}
+            {/*<Icon icon={icon} extraClassNames="rich-text__hyperlink-icon" />*/}
+          </TextLink>
+        ) : (
+          <span className="rich-text__hyperlink rich-text__hyperlink--ie-fallback">{children}</span>
+        )}
       </Tooltip>
     );
   }
@@ -106,3 +110,9 @@ export default class Hyperlink extends React.Component {
 function isUrl(string) {
   return /^(?:[a-z]+:)?\/\//i.test(string) || /^mailto:/i.test(string);
 }
+
+function hasRealHyperlinkInSlateSupport () {
+  // The <a/> element as an inline node causes buggy behavior in IE11/Edge.
+  return !['ie', 'edge'].includes(detectBrowser().name);
+}
+

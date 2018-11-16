@@ -241,7 +241,10 @@
     position relative
 
   .rich-text__hyperlink
-    display: inline!important;
+    display: inline!important; // inline-block causing issues in Slate
+    &--ie-fallback
+      color: $blue-link;
+      text-decoration: underline;
 
     &:hover,
     &:focus
