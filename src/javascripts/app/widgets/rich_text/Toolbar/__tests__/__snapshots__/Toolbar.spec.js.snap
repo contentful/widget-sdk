@@ -597,9 +597,11 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           containerInfo={
                             <div>
                               <div
+                                aria-hidden="true"
                                 class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
                                 contenteditable="false"
                                 data-test-id="cf-ui-tooltip"
+                                role="tooltip"
                                 style="max-width: 360px;"
                               >
                                 <div
@@ -614,11 +616,13 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           }
                         >
                           <div
+                            aria-hidden="true"
                             className="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
                             contentEditable={false}
                             data-test-id="cf-ui-tooltip"
                             onFocus={[Function]}
                             onMouseOver={[Function]}
+                            role="tooltip"
                             style={
                               Object {
                                 "left": null,
@@ -809,9 +813,11 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           containerInfo={
                             <div>
                               <div
+                                aria-hidden="true"
                                 class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
                                 contenteditable="false"
                                 data-test-id="cf-ui-tooltip"
+                                role="tooltip"
                                 style="max-width: 360px;"
                               >
                                 <div
@@ -826,11 +832,13 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           }
                         >
                           <div
+                            aria-hidden="true"
                             className="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
                             contentEditable={false}
                             data-test-id="cf-ui-tooltip"
                             onFocus={[Function]}
                             onMouseOver={[Function]}
+                            role="tooltip"
                             style={
                               Object {
                                 "left": null,
@@ -1021,9 +1029,11 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           containerInfo={
                             <div>
                               <div
+                                aria-hidden="true"
                                 class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
                                 contenteditable="false"
                                 data-test-id="cf-ui-tooltip"
+                                role="tooltip"
                                 style="max-width: 360px;"
                               >
                                 <div
@@ -1038,11 +1048,13 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           }
                         >
                           <div
+                            aria-hidden="true"
                             className="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
                             contentEditable={false}
                             data-test-id="cf-ui-tooltip"
                             onFocus={[Function]}
                             onMouseOver={[Function]}
+                            role="tooltip"
                             style={
                               Object {
                                 "left": null,
@@ -1233,9 +1245,11 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           containerInfo={
                             <div>
                               <div
+                                aria-hidden="true"
                                 class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
                                 contenteditable="false"
                                 data-test-id="cf-ui-tooltip"
+                                role="tooltip"
                                 style="max-width: 360px;"
                               >
                                 <div
@@ -1250,11 +1264,13 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           }
                         >
                           <div
+                            aria-hidden="true"
                             className="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
                             contentEditable={false}
                             data-test-id="cf-ui-tooltip"
                             onFocus={[Function]}
                             onMouseOver={[Function]}
+                            role="tooltip"
                             style={
                               Object {
                                 "left": null,
@@ -1445,9 +1461,11 @@ exports[`Toolbar renders toolbar icons 1`] = `
                         containerInfo={
                           <div>
                             <div
+                              aria-hidden="true"
                               class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
                               contenteditable="false"
                               data-test-id="cf-ui-tooltip"
+                              role="tooltip"
                               style="max-width: 360px;"
                             >
                               <div
@@ -1462,11 +1480,13 @@ exports[`Toolbar renders toolbar icons 1`] = `
                         }
                       >
                         <div
+                          aria-hidden="true"
                           className="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
                           contentEditable={false}
                           data-test-id="cf-ui-tooltip"
                           onFocus={[Function]}
                           onMouseOver={[Function]}
+                          role="tooltip"
                           style={
                             Object {
                               "left": null,
@@ -1668,9 +1688,11 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           containerInfo={
                             <div>
                               <div
+                                aria-hidden="true"
                                 class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
                                 contenteditable="false"
                                 data-test-id="cf-ui-tooltip"
+                                role="tooltip"
                                 style="max-width: 360px;"
                               >
                                 <div
@@ -1685,11 +1707,13 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           }
                         >
                           <div
+                            aria-hidden="true"
                             className="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
                             contentEditable={false}
                             data-test-id="cf-ui-tooltip"
                             onFocus={[Function]}
                             onMouseOver={[Function]}
+                            role="tooltip"
                             style={
                               Object {
                                 "left": null,
@@ -1880,9 +1904,11 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           containerInfo={
                             <div>
                               <div
+                                aria-hidden="true"
                                 class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
                                 contenteditable="false"
                                 data-test-id="cf-ui-tooltip"
+                                role="tooltip"
                                 style="max-width: 360px;"
                               >
                                 <div
@@ -1897,11 +1923,13 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           }
                         >
                           <div
+                            aria-hidden="true"
                             className="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
                             contentEditable={false}
                             data-test-id="cf-ui-tooltip"
                             onFocus={[Function]}
                             onMouseOver={[Function]}
+                            role="tooltip"
                             style={
                               Object {
                                 "left": null,
@@ -2114,9 +2142,11 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           containerInfo={
                             <div>
                               <div
+                                aria-hidden="true"
                                 class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
                                 contenteditable="false"
                                 data-test-id="cf-ui-tooltip"
+                                role="tooltip"
                                 style="max-width: 360px;"
                               >
                                 <div
@@ -2131,11 +2161,13 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           }
                         >
                           <div
+                            aria-hidden="true"
                             className="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
                             contentEditable={false}
                             data-test-id="cf-ui-tooltip"
                             onFocus={[Function]}
                             onMouseOver={[Function]}
+                            role="tooltip"
                             style={
                               Object {
                                 "left": null,
@@ -2326,9 +2358,11 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           containerInfo={
                             <div>
                               <div
+                                aria-hidden="true"
                                 class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
                                 contenteditable="false"
                                 data-test-id="cf-ui-tooltip"
+                                role="tooltip"
                                 style="max-width: 360px;"
                               >
                                 <div
@@ -2343,11 +2377,13 @@ exports[`Toolbar renders toolbar icons 1`] = `
                           }
                         >
                           <div
+                            aria-hidden="true"
                             className="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
                             contentEditable={false}
                             data-test-id="cf-ui-tooltip"
                             onFocus={[Function]}
                             onMouseOver={[Function]}
+                            role="tooltip"
                             style={
                               Object {
                                 "left": null,
