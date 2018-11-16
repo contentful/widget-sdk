@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Space as SpacePropType } from '../PropTypes.es6';
 import { startCase, without, debounce } from 'lodash';
+import classnames from 'classnames';
 import pluralize from 'pluralize';
 import {
   Table,
@@ -11,7 +12,8 @@ import {
   TableCell,
   Button,
   TextInput,
-  Icon
+  Icon,
+  Spinner
 } from '@contentful/ui-component-library';
 import { formatQuery } from './QueryBuilder.es6';
 import ResolveLinks from '../../LinkResolver.es6';
@@ -184,11 +186,16 @@ class UsersList extends React.Component {
               filters={filters}
               onReset={this.resetFilters}
             />
-            {usersList.length > 0 || loading ? (
+            {usersList.length > 0 ? (
               <React.Fragment>
                 <Table
                   data-test-id="organization-membership-list"
-                  extraClassNames={loading ? 'organization-membership-list--loading' : ''}>
+                  extraClassNames={classnames('organization-membership-list', {
+                    'organization-membership-list--loading': loading
+                  })}>
+                  {loading ? (
+                    <Spinner size="large" extraClassNames="organization-users-page__spinner" />
+                  ) : null}
                   <TableHead>
                     <TableRow>
                       <TableCell width="50">User</TableCell>
@@ -243,7 +250,7 @@ class UsersList extends React.Component {
                 />
               </React.Fragment>
             ) : (
-              <EmptyPlaceholder />
+              <EmptyPlaceholder loading={loading} />
             )}
           </section>
         </Workbench.Content>
