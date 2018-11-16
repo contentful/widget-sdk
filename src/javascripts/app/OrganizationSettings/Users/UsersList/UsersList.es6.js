@@ -27,6 +27,8 @@ import {
   removeMembership
 } from 'access_control/OrganizationMembershipRepository.es6';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
+import ModalLauncher from 'app/common/ModalLauncher.es6';
+import RemoveOrgMemberDialog from '../RemoveUserDialog.es6';
 import { getFilterDefinitions } from './FilterDefinitions.es6';
 import EmptyPlaceholder from './EmptyPlaceholder.es6';
 import { getLastActivityDate } from '../UserUtils.es6';
@@ -113,10 +115,18 @@ class UsersList extends React.Component {
   handleMembershipRemove = membership => async () => {
     const { notification } = this.props.$services;
     const { usersList } = this.state;
-    const { firstName } = membership.sys.user;
-    const message = firstName
-      ? `${firstName} has been successfully removed from this organization`
+    const user = membership.sys.user;
+    const message = user.firstName
+      ? `${user.firstName} has been successfully removed from this organization`
       : `Membership successfully removed`;
+
+    const confirmation = await ModalLauncher.open(({ isShown, onClose }) => (
+      <RemoveOrgMemberDialog isShown={isShown} onClose={onClose} user={user} />
+    ));
+
+    if (!confirmation) {
+      return;
+    }
 
     try {
       await removeMembership(this.endpoint, membership.sys.id);
