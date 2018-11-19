@@ -169,6 +169,7 @@ describe('withTracking() returned hoc', () => {
     );
 
     describe.each([
+      'paste',
       'unlinkHyperlinks',
 
       'openCreateHyperlinkDialog',
