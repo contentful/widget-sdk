@@ -85,41 +85,30 @@ class UsersList extends React.Component {
     }
   }
 
-  componentWillUnmount() {
-    this.fetch.cancel();
-  }
+  fetch = async () => {
+    const { filters, searchTerm } = this.props;
+    const { pagination } = this.state;
+    const filterQuery = formatQuery(filters.map(item => item.filter));
+    const includePaths = ['sys.user'];
+    const query = {
+      ...filterQuery,
+      query: searchTerm,
+      include: includePaths,
+      skip: pagination.skip,
+      limit: pagination.limit
+    };
 
-  fetch = debounce(
-    async () => {
-      const { filters, searchTerm } = this.props;
-      const { pagination } = this.state;
-      const filterQuery = formatQuery(filters.map(item => item.filter));
-      const includePaths = ['sys.user'];
-      const query = {
-        ...filterQuery,
-        query: searchTerm,
-        include: includePaths,
-        skip: pagination.skip,
-        limit: pagination.limit
-      };
+    this.setState({ loading: true });
 
-      this.setState({ loading: true });
+    const { total, items, includes } = await getMemberships(this.endpoint, query);
+    const resolved = ResolveLinks({ paths: includePaths, items, includes });
 
-      const { total, items, includes } = await getMemberships(this.endpoint, query);
-      const resolved = ResolveLinks({ paths: includePaths, items, includes });
-
-      this.setState({
-        usersList: resolved,
-        queryTotal: total,
-        loading: false
-      });
-    },
-    500,
-    {
-      leading: true,
-      trailing: true
-    }
-  );
+    this.setState({
+      usersList: resolved,
+      queryTotal: total,
+      loading: false
+    });
+  };
 
   getLinkToInvitation() {
     return href({
@@ -168,9 +157,21 @@ class UsersList extends React.Component {
     this.setState({ pagination: { ...this.state.pagination, skip, limit } }, this.fetch);
   };
 
+  search = e => {
+    const newSearchTerm = e.target.value;
+
+    this.debouncedSearch(newSearchTerm);
+  };
+
+  debouncedSearch = debounce(newSearchTerm => {
+    const { updateSearchTerm } = this.props;
+
+    updateSearchTerm(newSearchTerm);
+  }, 500);
+
   render() {
     const { queryTotal, usersList, pagination, loading } = this.state;
-    const { resource, spaces, spaceRoles, filters } = this.props;
+    const { searchTerm, resource, spaces, spaceRoles, filters } = this.props;
 
     return (
       <Workbench testId="organization-users-page">
@@ -183,7 +184,8 @@ class UsersList extends React.Component {
               autoFocus
               type="search"
               placeholder="Search by first name, last name, email or user ID"
-              onChange={this.updateSearch}
+              onChange={this.search}
+              value={searchTerm}
             />
           </Workbench.Header.Search>
           <Workbench.Header.Actions>
@@ -291,8 +293,8 @@ export default flow(
       };
     },
     dispatch => ({
-      updateSearchTerm: e =>
-        dispatch({ type: 'UPDATE_SEARCH_TERM', payload: { newSearchTerm: e.target.value } })
+      updateSearchTerm: newSearchTerm =>
+        dispatch({ type: 'UPDATE_SEARCH_TERM', payload: { newSearchTerm } })
     })
   ),
   ServicesConsumer('notification')
