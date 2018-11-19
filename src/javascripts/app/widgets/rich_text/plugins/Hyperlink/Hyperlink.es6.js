@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tooltip, TextLink } from '@contentful/ui-component-library';
+import { Tooltip, TextLink, Tag } from '@contentful/ui-component-library';
 import PropTypes from 'prop-types';
 import { truncate } from 'utils/StringUtils.es6';
 import { INLINES } from '@contentful/rich-text-types';
@@ -59,6 +59,22 @@ export default class Hyperlink extends React.Component {
     );
   }
 
+  renderEntityTooltipContent = (contentTypeName, title, entityStatus) => {
+    const statusTagTypeMapping = {
+      published: 'positive',
+      draft: 'warning',
+      archived: 'negative',
+      changed: 'primary'
+    };
+    return (
+      <div className="rich-text__entity-tooltip-content">
+        <span className="rich-text__entity-tooltip-content__content-type">{contentTypeName}</span>
+        <span className="rich-text__entity-tooltip-content__title">{title}</span>
+        <Tag tagType={statusTagTypeMapping[entityStatus]}>{entityStatus.toUpperCase()}</Tag>
+      </div>
+    );
+  };
+
   renderEntityLink(target) {
     return (
       <WidgetAPIContext.Consumer>
@@ -74,7 +90,7 @@ export default class Hyperlink extends React.Component {
               if (requestStatus === RequestStatus.Error) {
                 tooltip = `${target.sys.linkType} missing or inaccessible`;
               } else if (requestStatus === RequestStatus.Success) {
-                tooltip = `${contentTypeName}: ${title} (${entityStatus.toUpperCase()})`;
+                tooltip = this.renderEntityTooltipContent(contentTypeName, title, entityStatus);
               } else if (requestStatus === RequestStatus.Pending) {
                 tooltip = `Loading ${target.sys.linkType.toLowerCase()}...`;
               }

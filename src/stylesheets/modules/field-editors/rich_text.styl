@@ -254,6 +254,15 @@
     margin: 0 -2px 0 -1px; // Optical alignment when using "trimmed" icon variant
     transition: fill 100ms ease-in-out;
 
+  &__entity-tooltip-content
+    &__content-type
+      color: $colors.text-lightest;
+      margin-right: 7.5px;
+      &:after {
+        content: ':';
+      }
+    &__title
+      margin-right: 7.5px;
 
 .rich-text-option-toggle
   margin: 0px 8px 8px 0px;
