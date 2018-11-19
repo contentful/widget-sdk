@@ -412,7 +412,6 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
             onFocus={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
-            position="bottom-left"
           >
             <InViewport
               offset={0}

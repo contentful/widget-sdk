@@ -8,7 +8,7 @@ import {
   TextField,
   TextLink
 } from '@contentful/ui-component-library';
-import FetchedReferenceCard from 'app/widgets/rich_text/plugins/shared/FetchedReferenceCard';
+import FetchedEntityCard from 'app/widgets/rich_text/plugins/shared/FetchedEntityCard';
 import Dialog from 'app/entity_editor/Components/Dialog';
 import AngularComponent from 'AngularComponent';
 import { noop, values, includes } from 'lodash';
@@ -236,7 +236,7 @@ export default class HyperlinkDialog extends React.Component {
           </TextLink>
         )}
         {entityLink && (
-          <FetchedReferenceCard
+          <FetchedEntityCard
             entityId={entityLink.sys.id}
             entityType={entityLink.sys.linkType}
             disabled={false}

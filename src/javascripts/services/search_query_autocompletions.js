@@ -28,7 +28,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', [
   'require',
   require => {
     var $q = require('$q');
-    var mimetype = require('mimetype');
+    var mimetype = require('@contentful/mimetype');
     var assetContentType = require('legacy-client').assetContentType;
     var moment = require('moment');
     var _ = require('lodash');

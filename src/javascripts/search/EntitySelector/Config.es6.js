@@ -1,6 +1,6 @@
 import { clone, find, isObject, isString, pick } from 'lodash';
 import ListQuery from 'ListQuery';
-import mimetype from 'mimetype';
+import mimetype from '@contentful/mimetype';
 import TheLocaleStore from 'TheLocaleStore';
 import spaceContext from 'spaceContext';
 import getLinkedContentTypeIdsForNodeType from 'app/widgets/rich_text/plugins/shared/GetLinkedContentTypeIdsForNodeType.es6';

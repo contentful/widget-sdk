@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import FetechedReferenceCard from '../shared/FetchedReferenceCard/index.es6';
+import FetchedEntityCard from '../shared/FetchedEntityCard/index.es6';
 const ServicesConsumer = require('../../../../../reactServiceContext').default;
 
 class LinkedEntityBlock extends React.Component {
@@ -44,7 +44,7 @@ class LinkedEntityBlock extends React.Component {
     const { id: entityId, type: entityType } = this.getEntitySys();
     return (
       <div {...this.props.attributes}>
-        <FetechedReferenceCard
+        <FetchedEntityCard
           entityId={entityId}
           entityType={entityType}
           disabled={isDisabled}

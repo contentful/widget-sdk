@@ -46,7 +46,7 @@ window.libs = [
   ['@contentful/rich-text-types', require('@contentful/rich-text-types')],
   ['editors', require('@contentful/field-editors')],
   ['hostnameTransformer', require('@contentful/hostname-transformer')],
-  ['mimetype', require('@contentful/mimetype')],
+  ['@contentful/mimetype', require('@contentful/mimetype')],
   ['sharejs', require('@contentful/sharejs/lib/client')],
   ['validation', require('@contentful/validation')],
   ['widgetMap', require('@contentful/widget-map')],

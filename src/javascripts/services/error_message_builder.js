@@ -150,7 +150,7 @@ angular
     require => {
       var moment = require('moment');
       var joinAnd = require('utils/StringUtils.es6').joinAnd;
-      var mimetypeGroupNames = require('mimetype').getGroupNames();
+      var mimetypeGroupNames = require('@contentful/mimetype').getGroupNames();
       var buildBaseErrorMessage = require('baseErrorMessageBuilder');
 
       var messages = {

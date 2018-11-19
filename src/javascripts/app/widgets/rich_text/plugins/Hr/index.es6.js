@@ -8,7 +8,12 @@ export const HrPlugin = () => {
   return {
     renderNode: props => {
       if (props.node.type === BLOCKS.HR) {
-        return <hr className={props.isSelected ? 'hr--selected' : ''} {...props.attributes} />;
+        return (
+          <hr
+            className={props.isSelected ? 'cf-slate-hr cf-slate-hr--selected' : 'cf-slate-hr'}
+            {...props.attributes}
+          />
+        );
       }
     }
   };

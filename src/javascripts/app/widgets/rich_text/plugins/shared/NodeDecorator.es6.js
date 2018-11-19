@@ -4,7 +4,11 @@ import { NodePropTypes } from './PropTypes.es6';
 export default function(Tag, tagProps = {}) {
   const CommonNode = ({ attributes, children, node }) => {
     return (
-      <Tag data-test-id={node.type} {...tagProps} {...attributes}>
+      <Tag
+        className={`cf-slate-${node.type}`}
+        data-test-id={node.type}
+        {...tagProps}
+        {...attributes}>
         {children}
       </Tag>
     );

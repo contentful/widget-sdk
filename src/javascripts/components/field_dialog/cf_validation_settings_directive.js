@@ -2,7 +2,7 @@
 angular.module('contentful').directive('cfValidationSetting', [
   'require',
   require => {
-    const mimetype = require('mimetype');
+    const mimetype = require('@contentful/mimetype');
     const validationViews = require('validationViews');
 
     return {

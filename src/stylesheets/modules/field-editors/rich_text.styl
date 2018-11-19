@@ -63,7 +63,7 @@
 
   .sticky-wrapper
     transform: none !important;
-  
+
   &--enabled .native-sticky
     position: sticky;
     top: 0;
@@ -149,81 +149,85 @@
   h6.cf-slate-heading
     font-size: 1rem;
 
+
   .rich-text__editor
     font-size: 1rem;
 
-    blockquote
-      margin: 0 0 1.3125rem;
-      border-left: 6px solid $colors.element-light;
-      padding-left: 0.875rem;
+  .cf-slate-blockquote
+    margin: 0 0 1.3125rem;
+    border-left: 6px solid $colors.element-light;
+    padding-left: 0.875rem;
+    font-style: normal;
 
-    code
-      background: $colors.element-light;
-      padding: 0px;
-      color: $colors.text-mid;
-      border-radius: 2px;
-    a code
-      color: inherit;
+  .cf-slate-code
+    background: $colors.element-light;
+    padding: 0px;
+    color: $colors.text-mid;
+    border-radius: 2px;
 
-    // Un-Reset List Styles
-    li ul, li ol {
-      margin:0 0 0 1.5rem;
-    }
-    li {
-      list-style: inherit;
+  a .cf-slate-blockquote
+    color: inherit;
+
+  // Un-Reset List Styles
+  .cf-slate-list-item .cf-slate-unordered-list, .cf-slate-list-item .cf-slate-ordered-list {
+    margin:0 0 0 1.5rem;
+  }
+  .cf-slate-list-item {
+    list-style: inherit;
+    margin: 0;
+  }
+  .cf-slate-unordered-list, .cf-slate-ordered-list {
+    margin: 0 0 1.25rem 1.25rem;
+  }
+  .cf-slate-unordered-list {
+    list-style-type: disc;
+  }
+  .cf-slate-unordered-list .cf-slate-unordered-list {
+    list-style-type: circle;
+  }
+  .cf-slate-unordered-list .cf-slate-unordered-list .cf-slate-unordered-list {
+    list-style-type: square;
+  }
+  .cf-slate-ordered-list {
+    list-style-type: decimal;
+  }
+  .cf-slate-ordered-list .cf-slate-ordered-list {
+    list-style: upper-alpha;
+  }
+  .cf-slate-ordered-list .cf-slate-ordered-list .cf-slate-ordered-list {
+    list-style: lower-roman;
+  }
+  .cf-slate-ordered-list .cf-slate-ordered-list .cf-slate-ordered-list .cf-slate-ordered-list {
+    list-style: lower-alpha;
+  }
+
+  .cf-slate-unordered-list, .cf-slate-ordered-list
+    .cf-slate-paragraph
       margin: 0;
-    }
-    ul, ol {
-      margin: 0 0 1.25rem 1.25rem;
-    }
-    ul {
-      list-style-type: disc;
-    }
-    ul ul {
-      list-style-type: circle;
-    }
-    ul ul ul {
-      list-style-type: square;
-    }
-    ol {
-      list-style-type: decimal;
-    }
-    ol ol {
-      list-style: upper-alpha;
-    }
-    ol ol ol {
-      list-style: lower-roman;
-    }
-    ol ol ol ol {
-      list-style: lower-alpha;
-    }
+      line-height: 1.5;
 
-    ul, ol
-      .cf-slate-paragraph, span
-        margin: 0;
-        line-height: 1.5;
+  .cf-slate-hr
+    height: 1rem;
+    background: transparent;
+    position: relative;
+    margin: 0 0 1.5rem;
+    &:hover
+      cursor pointer;
+    &:after
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 1px;
+      background: $colors.element-mid;
+      top: 50%;
 
-    hr
-      height: 1rem;
-      background: transparent;
-      position: relative;
-      margin: 0 0 1.5rem;
-      &:hover
-        cursor pointer;
-      &:after
-        content: '';
-        position: absolute;
-        width: 100%;
-        height: 1px;
-        background: $colors.element-mid;
-        top: 50%;
+  .cf-slate-hr--selected
+    &:after
+      background: $colors.blue-dark;
+      box-shadow: 0px 0px 5px $colors.blue-dark;
 
-    .hr--selected
-      &:after
-        background: $colors.blue-dark;
-        box-shadow: 0px 0px 5px $colors.blue-dark;
-
-  .rich-text__reference-card
+  .rich-text__reference-card,
+  .rich-text__asset-card
     margin-bottom: 1.25rem;
 
   .rich-text__inline-reference-card
@@ -233,12 +237,9 @@
     span
       user-select: none
 
-  .rich-text__inline-reference-card ul
-    margin: 0px;
-
   .rich-text__hyperlink-container
     position relative
-    
+
   .rich-text__hyperlink
     display: inline!important;
 
@@ -266,7 +267,7 @@
 
 .rich-text-option-toggle
   margin: 0px 8px 8px 0px;
-  
+
 .rich-text-options
   border-left: 1px solid #E5EBED;
   padding-left: 28px;

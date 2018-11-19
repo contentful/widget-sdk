@@ -8,7 +8,7 @@ angular.module('contentful').controller('ValidationAssetTypesController', [
   '$scope',
   'require',
   function($scope, require) {
-    const mimetype = require('mimetype');
+    const mimetype = require('@contentful/mimetype');
     const controller = this;
 
     controller.types = _.map(mimetype.getGroupNames(), (label, name) => ({

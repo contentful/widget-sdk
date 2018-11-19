@@ -2,7 +2,7 @@ import { cloneDeep, startsWith, find, get, has, map, memoize } from 'lodash';
 import { makeCtor } from 'utils/TaggedValues.es6';
 import { assign, push, concat } from 'utils/Collections.es6';
 import { getOperatorsByType, equality as equalityOperator } from './Operators.es6';
-import mimetype from 'mimetype';
+import mimetype from '@contentful/mimetype';
 
 const CT_QUERY_KEY_PREFIX = 'fields';
 

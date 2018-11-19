@@ -23,7 +23,7 @@ describe('app/ContentList/Search/View.es6', () => {
     system.set('datepicker', {});
     system.set('moment', {});
     system.set('utils/StringUtils.es6', {});
-    system.set('mimetype', {
+    system.set('@contentful/mimetype', {
       default: {
         getGroupNames: sinon.stub().returns([])
       }

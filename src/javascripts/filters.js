@@ -24,7 +24,7 @@ filters.filter('fileSize', [
 ]);
 
 filters.filter('mimeGroup', [
-  'mimetype',
+  '@contentful/mimetype',
   mimetype => file => {
     if (file) {
       return mimetype.getGroupName({
@@ -36,7 +36,7 @@ filters.filter('mimeGroup', [
 ]);
 
 filters.filter('fileType', [
-  'mimetype',
+  '@contentful/mimetype',
   mimetype => file => {
     if (file) {
       return mimetype.getGroupName({
@@ -68,7 +68,7 @@ filters.filter('assetUrl', [
 ]);
 
 filters.filter('fileExtension', [
-  'mimetype',
+  '@contentful/mimetype',
   mimetype => file => {
     if (file) {
       const ext = mimetype.getExtension(file.fileName);
