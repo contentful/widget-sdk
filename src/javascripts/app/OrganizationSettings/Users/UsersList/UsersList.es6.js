@@ -89,30 +89,37 @@ class UsersList extends React.Component {
     this.fetch.cancel();
   }
 
-  fetch = debounce(async () => {
-    const { filters, searchTerm } = this.props;
-    const { pagination } = this.state;
-    const filterQuery = formatQuery(filters.map(item => item.filter));
-    const includePaths = ['sys.user'];
-    const query = {
-      ...filterQuery,
-      query: searchTerm,
-      include: includePaths,
-      skip: pagination.skip,
-      limit: pagination.limit
-    };
+  fetch = debounce(
+    async () => {
+      const { filters, searchTerm } = this.props;
+      const { pagination } = this.state;
+      const filterQuery = formatQuery(filters.map(item => item.filter));
+      const includePaths = ['sys.user'];
+      const query = {
+        ...filterQuery,
+        query: searchTerm,
+        include: includePaths,
+        skip: pagination.skip,
+        limit: pagination.limit
+      };
 
-    this.setState({ loading: true });
+      this.setState({ loading: true });
 
-    const { total, items, includes } = await getMemberships(this.endpoint, query);
-    const resolved = ResolveLinks({ paths: includePaths, items, includes });
+      const { total, items, includes } = await getMemberships(this.endpoint, query);
+      const resolved = ResolveLinks({ paths: includePaths, items, includes });
 
-    this.setState({
-      usersList: resolved,
-      queryTotal: total,
-      loading: false
-    });
-  }, 500);
+      this.setState({
+        usersList: resolved,
+        queryTotal: total,
+        loading: false
+      });
+    },
+    500,
+    {
+      leading: true,
+      trailing: true
+    }
+  );
 
   getLinkToInvitation() {
     return href({
@@ -218,7 +225,7 @@ class UsersList extends React.Component {
                         className="membership-list__item"
                         data-test-id="organization-membership-list-row">
                         <TableCell>
-                          <a href={this.getLinkToUser(membership)}>
+                          <a href={UsersList.getLinkToUser(membership)}>
                             <UserCard user={membership.sys.user} />
                           </a>
                         </TableCell>
@@ -236,7 +243,7 @@ class UsersList extends React.Component {
                             <Button
                               buttonType="muted"
                               size="small"
-                              href={this.getLinkToUser(membership)}
+                              href={UsersList.getLinkToUser(membership)}
                               extraClassNames="membership-list__item__menu__button">
                               Edit
                             </Button>

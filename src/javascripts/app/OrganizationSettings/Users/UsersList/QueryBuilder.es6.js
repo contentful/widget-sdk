@@ -19,11 +19,8 @@ export function formatQuery(filters = []) {
   return filters
     .filter(({ value }) => !isNilOrEmpty(value))
     .reduce((memo, { key, operator, value }) => {
-      if (key === 'sys.spaceMemberships.roles.name' && value === 'Admin') {
-        memo[`sys.spaceMemberships.admin${operator ? `[${operator}]` : ''}`] = 'true';
-      } else {
-        memo[`${key}${operator ? `[${operator}]` : ''}`] = value;
-      }
+      memo[`${key}${operator ? `[${operator}]` : ''}`] = value;
+
       return memo;
     }, {});
 }

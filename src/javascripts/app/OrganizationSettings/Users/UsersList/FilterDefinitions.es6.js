@@ -1,6 +1,6 @@
 import { orgRoles } from '../UserDetail/OrgRoles.es6';
 import { without, set, cloneDeep } from 'lodash';
-import { getRoleOptions, getSpaceRoleOptions } from './UserListFiltersHelpers.es6';
+import { getRoleOptions, getSpaceRoleOptions, SPACE_ROLE_FILTER_KEYS } from './UserListFiltersHelpers.es6';
 
 /**
  * This module contains the definitions of the filters available in the (org) User list page.
@@ -13,12 +13,7 @@ const idMap = {
   orgRole: ['role'],
   space: ['sys.spaceMemberships.sys.space.sys.id'],
   ssoLogin: ['sys.sso.lastSignInAt'],
-  spaceRole: [
-    'sys.spaceMemberships.admin',
-    'is_admin_of_space',
-    'sys.spaceMemberships.roles.name',
-    'sys.spaceMemberships.roles.sys.id'
-  ]
+  spaceRole: SPACE_ROLE_FILTER_KEYS
 };
 
 const defaultFiltersById = {
@@ -45,6 +40,25 @@ const defaultFiltersById = {
   }
 };
 
+/*
+  Normalizes an object that has a filterKey: filterValue mapping and
+  normalizes it to the id of the filter definition.
+
+  E.g.
+
+  {
+    'sys.spaceMemberships.sys.space.sys.id': 'space_1234'
+  }
+
+  becomes
+
+  {
+    space: {
+      key: 'sys.spaceMemberships.sys.space.sys.id',
+      value: 'space_1234'
+    }
+  }
+ */
 const normalizeFilterValues = filterValues => {
   return filterValues.reduce((memo, [key, value]) => {
     const [id] = Object.entries(idMap).find(([_, filterKeys]) => filterKeys.includes(key)) || [];

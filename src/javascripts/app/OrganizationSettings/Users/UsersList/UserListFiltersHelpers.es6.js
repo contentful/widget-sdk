@@ -5,7 +5,7 @@ const SPACE_FILTER_KEYS = ['sys.spaceMemberships.sys.space.sys.id'];
 
 const SPACE_ROLE_FILTER_ADMIN_KEYS = ['sys.spaceMemberships.admin', 'is_admin_of_space'];
 
-const SPACE_ROLE_FILTER_KEYS = [
+export const SPACE_ROLE_FILTER_KEYS = [
   'sys.spaceMemberships.roles.name',
   'sys.spaceMemberships.roles.sys.id'
 ].concat(SPACE_ROLE_FILTER_ADMIN_KEYS);
