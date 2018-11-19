@@ -85,7 +85,9 @@ function handleUpdatedSpaceFilter({ allSpaceRoles, filterDefs, updatedFilter }) 
   if (updatedFilterHasValue && !roleFilterKeyIsAdmin) {
     roleFilterDef.filter.key = 'sys.spaceMemberships.roles.sys.id';
 
-    const newRoleOption = find(roleFilterOptions, o => o.label === roleFilterDef.filter.value);
+    const selectedOption = find(roleFilterDef.options, o => o.value === roleFilterDef.filter.value);
+    const newRoleOption = find(roleFilterOptions, o => o.label === selectedOption.label);
+
     roleFilterDef.filter.value = newRoleOption ? newRoleOption.value : '';
   }
 
