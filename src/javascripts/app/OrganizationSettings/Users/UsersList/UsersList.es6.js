@@ -56,7 +56,7 @@ class UsersList extends React.Component {
 
   state = {
     loading: false,
-    firstLoad: true,
+    initialLoad: true,
     queryTotal: 0,
     usersList: [],
     pagination: {
@@ -69,7 +69,7 @@ class UsersList extends React.Component {
 
   async componentDidMount() {
     await this.loadInitialData();
-    this.setState({ firstLoad: false });
+    this.setState({ initialLoad: false });
   }
 
   componentDidUpdate(prevProps) {
@@ -195,7 +195,14 @@ class UsersList extends React.Component {
   }, 500);
 
   render() {
-    const { queryTotal, usersList, pagination, loading, invitedUsersCount, firstLoad } = this.state;
+    const {
+      queryTotal,
+      usersList,
+      pagination,
+      loading,
+      invitedUsersCount,
+      initialLoad
+    } = this.state;
     const {
       searchTerm,
       numberOrgMemberships,
@@ -243,7 +250,7 @@ class UsersList extends React.Component {
               spaceRoles={spaceRoles}
               filters={filters}
             />
-            {firstLoad || queryTotal > 0 ? (
+            {initialLoad || queryTotal > 0 ? (
               <div style={{ position: 'relative' }}>
                 {loading ? (
                   <Spinner size="large" extraClassNames="organization-users-page__spinner" />
