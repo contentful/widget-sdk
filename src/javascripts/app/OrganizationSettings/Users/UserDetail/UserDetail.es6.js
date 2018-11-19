@@ -155,6 +155,12 @@ class UserDetail extends React.Component {
     }
 
     this.goToUserList();
+
+    const message = user.firstName
+      ? `${user.firstName} has been successfully removed from this organization`
+      : `Membership successfully removed`;
+
+    notification.success(message);
   }
 
   goToUserList() {
