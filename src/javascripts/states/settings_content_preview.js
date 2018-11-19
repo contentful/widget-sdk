@@ -14,21 +14,6 @@ angular
       var contextHistory = require('navigation/Breadcrumbs/History.es6').default;
       var crumbFactory = require('navigation/Breadcrumbs/Factory.es6');
 
-      var list = base({
-        name: 'list',
-        url: '',
-        loadingText: 'Loading content preview…',
-        template: '<cf-content-preview-list class="workbench entity-list" />',
-        controller: [
-          '$scope',
-          'require',
-          ($scope, require) => {
-            var accessChecker = require('access_control/AccessChecker');
-            $scope.context.forbidden = !accessChecker.getSectionVisibility().settings;
-          }
-        ]
-      });
-
       function editorBase(options, isNew) {
         var contentPreviewEditorState = base({
           template: '<cf-content-preview-editor class="workbench">',
@@ -72,7 +57,16 @@ angular
         name: 'content_preview',
         url: '/content_preview',
         abstract: true,
-        children: [list, newContentPreview, detail]
+        children: [
+          {
+            name: 'list',
+            url: '',
+            template:
+              '<react-component name="app/settings/content_preview/routes/ContentPreviewListRoute.es6" />'
+          },
+          newContentPreview,
+          detail
+        ]
       };
     }
   ]);

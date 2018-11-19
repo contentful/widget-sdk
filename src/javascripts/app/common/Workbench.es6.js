@@ -186,16 +186,17 @@ Workbench.Content = class Content extends React.Component {
 
 Workbench.Sidebar = class Sidebar extends React.Component {
   static propTypes = {
+    className: PropTypes.string,
     children: PropTypes.oneOfType([PropTypes.array, PropTypes.element])
   };
 
   static displayName = 'Workbench.Sidebar';
 
   render() {
-    const { children } = this.props;
+    const { children, className } = this.props;
 
     return (
-      <div className="workbench-main__sidebar">
+      <div className={classNames('workbench-main__sidebar', className)}>
         <div className="entity-sidebar">{children}</div>
       </div>
     );
