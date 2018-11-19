@@ -56,6 +56,7 @@ class UsersList extends React.Component {
 
   state = {
     loading: false,
+    firstLoad: true,
     queryTotal: 0,
     usersList: [],
     pagination: {
@@ -66,8 +67,9 @@ class UsersList extends React.Component {
 
   endpoint = createOrganizationEndpoint(this.props.orgId);
 
-  componentDidMount() {
-    this.loadInitialData();
+  async componentDidMount() {
+    await this.loadInitialData();
+    this.setState({ firstLoad: false });
   }
 
   componentDidUpdate(prevProps) {
@@ -193,7 +195,7 @@ class UsersList extends React.Component {
   }, 500);
 
   render() {
-    const { queryTotal, usersList, pagination, loading, invitedUsersCount } = this.state;
+    const { queryTotal, usersList, pagination, loading, invitedUsersCount, firstLoad } = this.state;
     const {
       searchTerm,
       numberOrgMemberships,
@@ -241,16 +243,16 @@ class UsersList extends React.Component {
               spaceRoles={spaceRoles}
               filters={filters}
             />
-            {usersList.length > 0 ? (
-              <React.Fragment>
+            {firstLoad || queryTotal > 0 ? (
+              <div style={{ position: 'relative' }}>
+                {loading ? (
+                  <Spinner size="large" extraClassNames="organization-users-page__spinner" />
+                ) : null}
                 <Table
                   data-test-id="organization-membership-list"
                   extraClassNames={classnames('organization-membership-list', {
                     'organization-membership-list--loading': loading
                   })}>
-                  {loading ? (
-                    <Spinner size="large" extraClassNames="organization-users-page__spinner" />
-                  ) : null}
                   <TableHead>
                     <TableRow>
                       <TableCell width="50">User</TableCell>
@@ -303,7 +305,7 @@ class UsersList extends React.Component {
                   loading={loading}
                   onChange={this.handlePaginationChange}
                 />
-              </React.Fragment>
+              </div>
             ) : (
               <EmptyPlaceholder loading={loading} />
             )}
