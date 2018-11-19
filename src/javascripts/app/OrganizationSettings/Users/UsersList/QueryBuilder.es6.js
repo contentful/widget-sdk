@@ -1,4 +1,5 @@
 import { isNil } from 'lodash';
+
 /**
  * Transforms a list of filter objects into a query string
  *
@@ -19,6 +20,7 @@ export function formatQuery(filters = []) {
     .filter(({ value }) => !isNilOrEmpty(value))
     .reduce((memo, { key, operator, value }) => {
       memo[`${key}${operator ? `[${operator}]` : ''}`] = value;
+
       return memo;
     }, {});
 }

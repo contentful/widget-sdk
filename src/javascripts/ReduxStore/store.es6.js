@@ -3,11 +3,16 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import { onValue } from '../utils/kefir.es6';
 
+import locationMiddleware from '../middlewares/location.es6';
+
 import combinedReducers from './reducers.es6';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-const store = createStore(combinedReducers, composeEnhancers(applyMiddleware(thunk)));
+const store = createStore(
+  combinedReducers,
+  composeEnhancers(applyMiddleware(thunk, locationMiddleware))
+);
 
 if (user$ && organizations$ && spacesByOrganization$) {
   onValue(user$, user =>

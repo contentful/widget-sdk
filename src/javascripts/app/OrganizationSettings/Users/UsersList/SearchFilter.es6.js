@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 export default class SearchFilter extends React.Component {
   static propTypes = {
+    id: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
     filter: PropTypes.shape({
       key: PropTypes.string.isRequired,
@@ -19,11 +20,9 @@ export default class SearchFilter extends React.Component {
   };
 
   handleChange = ({ target: { value } }) => {
-    const { onChange, filter } = this.props;
+    const { onChange, filter, id } = this.props;
 
-    // we use Object.assign instead of spread to keep the reference
-    // to the getter properties of the filter definition
-    onChange(Object.assign(filter, { value }));
+    onChange({ ...filter, id, value });
   };
 
   getSelectWidth() {

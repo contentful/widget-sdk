@@ -1,9 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Space as SpacePropType } from '../PropTypes.es6';
-import { startCase, without, debounce } from 'lodash';
-import classnames from 'classnames';
+import { startCase, without, debounce, flow } from 'lodash';
+import { isEqual } from 'lodash/fp';
 import pluralize from 'pluralize';
+import classnames from 'classnames';
+import { connect } from 'react-redux';
 import {
   Table,
   TableRow,
@@ -29,11 +31,14 @@ import {
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import RemoveOrgMemberDialog from '../RemoveUserDialog.es6';
-import { getFilterDefinitions } from './FilterDefinitions.es6';
 import EmptyPlaceholder from './EmptyPlaceholder.es6';
+import { getFilters, getSearchTerm } from 'selectors/filters.es6';
 import { getLastActivityDate } from '../UserUtils.es6';
 
 const ServicesConsumer = require('../../../../reactServiceContext').default;
+
+import { generateFilterDefinitions } from './FilterDefinitions.es6';
+import { Filter as FilterPropType } from '../PropTypes.es6';
 
 class UsersList extends React.Component {
   static propTypes = {
@@ -49,6 +54,9 @@ class UsersList extends React.Component {
         maximum: PropTypes.number
       })
     }),
+    filters: PropTypes.arrayOf(FilterPropType),
+    searchTerm: PropTypes.string.isRequired,
+    updateSearchTerm: PropTypes.func.isRequired,
     hasSsoEnabled: PropTypes.bool
   };
 
@@ -56,8 +64,6 @@ class UsersList extends React.Component {
     loading: false,
     queryTotal: 0,
     usersList: [],
-    filters: this.getInitialFilters(),
-    searchTerm: '',
     pagination: {
       skip: 0,
       limit: 10
@@ -70,8 +76,18 @@ class UsersList extends React.Component {
     this.fetch();
   }
 
-  async fetch() {
-    const { filters, searchTerm, pagination } = this.state;
+  componentDidUpdate(prevProps) {
+    if (
+      !isEqual(prevProps.filters, this.props.filters) ||
+      prevProps.searchTerm !== this.props.searchTerm
+    ) {
+      this.fetch();
+    }
+  }
+
+  fetch = async () => {
+    const { filters, searchTerm } = this.props;
+    const { pagination } = this.state;
     const filterQuery = formatQuery(filters.map(item => item.filter));
     const includePaths = ['sys.user'];
     const query = {
@@ -92,7 +108,7 @@ class UsersList extends React.Component {
       queryTotal: total,
       loading: false
     });
-  }
+  };
 
   getLinkToInvitation() {
     return href({
@@ -105,7 +121,7 @@ class UsersList extends React.Component {
   // as a route param.
   // This should be changed after `include` is implemented in the backend
   // so that we can get the linked membership from the user endpoint response
-  getLinkToUser(user) {
+  static getLinkToUser(user) {
     return href({
       path: ['account', 'organizations', 'users', 'detail'],
       params: { userId: user.sys.id }
@@ -137,35 +153,25 @@ class UsersList extends React.Component {
     }
   };
 
-  updateFilters = filters => {
-    this.setState({ filters, pagination: { ...this.state.pagination, skip: 0 } }, this.fetch);
-  };
-
-  resetFilters = () => {
-    const filters = this.getInitialFilters();
-    this.updateFilters(filters);
-  };
-
-  getInitialFilters() {
-    const { spaceRoles, spaces, hasSsoEnabled } = this.props;
-    return getFilterDefinitions({ spaceRoles, spaces, hasSsoEnabled });
-  }
-
-  updateSearch = e => {
-    this.debouncedUpdatedSearch(e.target.value);
-  };
-
-  debouncedUpdatedSearch = debounce(searchTerm => {
-    this.setState({ searchTerm, pagination: { ...this.state.pagination, skip: 0 } }, this.fetch);
-  }, 500);
-
   handlePaginationChange = ({ skip, limit }) => {
     this.setState({ pagination: { ...this.state.pagination, skip, limit } }, this.fetch);
   };
 
+  search = e => {
+    const newSearchTerm = e.target.value;
+
+    this.debouncedSearch(newSearchTerm);
+  };
+
+  debouncedSearch = debounce(newSearchTerm => {
+    const { updateSearchTerm } = this.props;
+
+    updateSearchTerm(newSearchTerm);
+  }, 500);
+
   render() {
-    const { queryTotal, usersList, filters, pagination, loading } = this.state;
-    const { resource } = this.props;
+    const { queryTotal, usersList, pagination, loading } = this.state;
+    const { searchTerm, resource, spaces, spaceRoles, filters } = this.props;
 
     return (
       <Workbench testId="organization-users-page">
@@ -178,7 +184,8 @@ class UsersList extends React.Component {
               autoFocus
               type="search"
               placeholder="Search by first name, last name, email or user ID"
-              onChange={this.updateSearch}
+              onChange={this.search}
+              value={searchTerm}
             />
           </Workbench.Header.Search>
           <Workbench.Header.Actions>
@@ -192,9 +199,9 @@ class UsersList extends React.Component {
           <section style={{ padding: '1em 2em 2em' }}>
             <UserListFilters
               queryTotal={queryTotal}
-              onChange={this.updateFilters}
+              spaces={spaces}
+              spaceRoles={spaceRoles}
               filters={filters}
-              onReset={this.resetFilters}
             />
             {usersList.length > 0 ? (
               <React.Fragment>
@@ -220,7 +227,7 @@ class UsersList extends React.Component {
                         className="membership-list__item"
                         data-test-id="organization-membership-list-row">
                         <TableCell>
-                          <a href={this.getLinkToUser(membership)}>
+                          <a href={UsersList.getLinkToUser(membership)}>
                             <UserCard user={membership.sys.user} />
                           </a>
                         </TableCell>
@@ -238,7 +245,7 @@ class UsersList extends React.Component {
                             <Button
                               buttonType="muted"
                               size="small"
-                              href={this.getLinkToUser(membership)}
+                              href={UsersList.getLinkToUser(membership)}
                               extraClassNames="membership-list__item__menu__button">
                               Edit
                             </Button>
@@ -269,4 +276,26 @@ class UsersList extends React.Component {
   }
 }
 
-export default ServicesConsumer('notification')(UsersList);
+export default flow(
+  connect(
+    (state, { spaceRoles, spaces, hasSsoEnabled }) => {
+      const filterValues = getFilters(state);
+      const filterDefinitions = generateFilterDefinitions({
+        spaceRoles,
+        spaces,
+        hasSsoEnabled,
+        filterValues
+      });
+
+      return {
+        filters: filterDefinitions,
+        searchTerm: getSearchTerm(state)
+      };
+    },
+    dispatch => ({
+      updateSearchTerm: newSearchTerm =>
+        dispatch({ type: 'UPDATE_SEARCH_TERM', payload: { newSearchTerm } })
+    })
+  ),
+  ServicesConsumer('notification')
+)(UsersList);
