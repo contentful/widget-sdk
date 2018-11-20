@@ -115,7 +115,7 @@ function currentUserIsCurrentOrgCreator(user) {
   const orgs = getValue(organizations$);
   const currOrg = getCurrOrg(orgs, orgId);
 
-  return isUserOrgCreator(user, currOrg);
+  return !!currOrg && isUserOrgCreator(user, currOrg);
 }
 
 function attemptedSpaceAutoCreation(user) {
