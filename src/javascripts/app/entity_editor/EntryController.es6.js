@@ -95,8 +95,8 @@ export default async function create($scope, entryId) {
   installTracking(entityInfo, doc, K.scopeLifeline($scope));
   try {
     trackEntryView({
-      editorData: editorData,
-      entityInfo: entityInfo,
+      editorData,
+      entityInfo,
       currentSlideLevel: $scope.$parent.entities.length,
       locale: localeStore.getDefaultLocale().internal_code,
       editorType: $scope.$parent.entities.length > 1 ? 'slide_in_editor' : 'entry_editor',
@@ -116,18 +116,18 @@ export default async function create($scope, entryId) {
   );
 
   $scope.state = $controller('entityEditor/StateController', {
-    $scope: $scope,
+    $scope,
     entity: editorData.entity,
-    notify: notify,
+    notify,
     validator: editorContext.validator,
     otDoc: $scope.otDoc
   });
 
   $scope.actions = $controller('EntryActionsController', {
-    $scope: $scope,
-    notify: notify,
+    $scope,
+    notify,
     fields$: doc.valuePropertyAt(['fields']),
-    entityInfo: entityInfo,
+    entityInfo,
     preferences: $scope.preferences
   });
 
@@ -137,7 +137,7 @@ export default async function create($scope, entryId) {
   K.onValueScope($scope, doc.valuePropertyAt([]), data => {
     const title = spaceContext.entryTitle({
       getContentTypeId: constant(entityInfo.contentTypeId),
-      data: data
+      data
     });
     $scope.context.title = title;
     $scope.title = truncate(title, 50);
@@ -183,7 +183,7 @@ export default async function create($scope, entryId) {
 
     notifications.clearSeen();
     return {
-      links$: links$,
+      links$,
       focusIndex: index,
       editorSettings: deepFreeze(cloneDeep($scope.preferences)),
       parentId: entityInfo.id,
@@ -227,7 +227,7 @@ export default async function create($scope, entryId) {
 
   // Building the form
   $controller('FormWidgetsController', {
-    $scope: $scope,
+    $scope,
     controls: editorData.fieldControls.form
   });
 

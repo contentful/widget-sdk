@@ -101,6 +101,7 @@ module.exports = {
         sourceType: 'module'
       },
       rules: {
+        'object-shorthand': ['warn', 'properties'],
         'prefer-const': 'error',
         'no-var': 'error',
         'no-restricted-syntax': [

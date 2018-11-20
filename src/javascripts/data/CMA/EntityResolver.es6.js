@@ -39,9 +39,9 @@ function create(fetch) {
    * Resolve entity payloads for IDs with builtin caching
    */
   return {
-    load: load,
-    addEntity: addEntity,
-    reset: reset
+    load,
+    addEntity,
+    reset
   };
 
   /**

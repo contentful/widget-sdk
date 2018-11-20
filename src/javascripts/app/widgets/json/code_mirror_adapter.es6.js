@@ -51,7 +51,7 @@ export function create() {
   y();
 
   return {
-    setValue: setValue,
+    setValue,
     redo: function() {
       cm.redo();
     },
@@ -59,8 +59,8 @@ export function create() {
       cm.undo();
     },
     onStateChange: stateSignal.attach,
-    attach: attach,
-    destroy: destroy
+    attach,
+    destroy
   };
 
   function attach($el) {

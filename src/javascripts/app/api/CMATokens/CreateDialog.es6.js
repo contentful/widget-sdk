@@ -57,7 +57,7 @@ function initController(tokenResourceManager, $scope, successHandler) {
     $scope.state = {
       success: true,
       tokenName: name,
-      token: token
+      token
     };
   }
 

@@ -32,7 +32,7 @@ export function create(auth) {
     return request({
       method: 'GET',
       path: [],
-      query: query
+      query
     });
   }
 
@@ -41,7 +41,7 @@ export function create(auth) {
       method: 'POST',
       path: [],
       data: {
-        name: name,
+        name,
         scopes: ['content_management_manage']
       }
     });

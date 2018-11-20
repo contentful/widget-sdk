@@ -174,7 +174,7 @@ export function create(baseUrl, auth) {
 
     const req = {
       method: config.method,
-      url: url,
+      url,
       headers: makeHeaders(config.version, headers),
       data: config.data,
       params: config.query
@@ -185,7 +185,7 @@ export function create(baseUrl, auth) {
       response => {
         const status = parseInt(response.status, 10);
         const error = extend(new Error('API request failed'), {
-          status: status,
+          status,
           // We duplicate this property because it is required by the
           // request queue.
           statusCode: status,

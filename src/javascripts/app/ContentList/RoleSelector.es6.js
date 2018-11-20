@@ -105,7 +105,7 @@ function createRoleSelector(dialog, spaceEndpoint, initialAssignedRoles) {
               selected: true
             });
             return assign(state, {
-              roles: roles,
+              roles,
               rolesFetchStatus: status
             });
           }

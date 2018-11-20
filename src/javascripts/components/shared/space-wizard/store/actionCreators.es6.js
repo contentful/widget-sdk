@@ -139,7 +139,7 @@ export function createSpace({
     const { name, template } = newSpaceMeta;
     const spaceData = {
       defaultLocale: 'en-US',
-      name: name,
+      name,
       productRatePlanId: get(selectedPlan, 'sys.id')
     };
 

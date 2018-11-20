@@ -94,9 +94,9 @@ export default function create($scope, contentTypeIds) {
 
     function createStatusObject(isRemovable, entryCount) {
       return {
-        isPublished: isPublished,
-        isRemovable: isRemovable,
-        entryCount: entryCount
+        isPublished,
+        isRemovable,
+        entryCount
       };
     }
   }

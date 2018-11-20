@@ -59,7 +59,7 @@ export function create(parentEntryId, links$) {
   function trackAction(name, entryId) {
     track('action', {
       refCount: K.getValue(links$).length + 1,
-      entryId: entryId,
+      entryId,
       action: name
     });
   }

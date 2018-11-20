@@ -25,7 +25,7 @@ export function create(editor) {
     strike: wrapSelection(editor, '~~', 'striked out'),
     quote: modifySelection(editor, quoteToggleFn),
     code: modifySelection(editor, codeToggleFn),
-    link: link,
+    link,
     h1: toggleHeader(editor, 1),
     h2: toggleHeader(editor, 2),
     h3: toggleHeader(editor, 3),
@@ -37,10 +37,10 @@ export function create(editor) {
     redo: function() {
       editor.cmd('redo');
     },
-    hr: hr,
-    indent: indent,
-    dedent: dedent,
-    table: table
+    hr,
+    indent,
+    dedent,
+    table
   };
 
   /**

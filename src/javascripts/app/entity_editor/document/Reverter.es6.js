@@ -13,8 +13,8 @@ export function create(snapshot, version$, setFields) {
   });
 
   return {
-    hasChanges: hasChanges,
-    revert: revert
+    hasChanges,
+    revert
   };
 
   /**

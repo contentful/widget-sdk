@@ -5,13 +5,13 @@ export function createSelection() {
   let selected = [];
 
   return {
-    add: add,
-    remove: remove,
-    toggle: toggle,
-    toggleList: toggleList,
-    isSelected: isSelected,
-    updateList: updateList,
-    clear: clear,
+    add,
+    remove,
+    toggle,
+    toggleList,
+    isSelected,
+    updateList,
+    clear,
     size: function() {
       return _.size(selected);
     },

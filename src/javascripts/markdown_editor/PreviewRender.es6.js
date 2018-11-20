@@ -78,7 +78,7 @@ export default function create() {
       sanitize: false
     });
 
-    const result = { root: createRootEl(ast), words: words };
+    const result = { root: createRootEl(ast), words };
     conflicts = {};
     words = 0;
     return result;
@@ -156,35 +156,35 @@ export default function create() {
   }
 
   function createParagraphEl(item, key) {
-    const props = { key: key, className: 'markdown-paragraph markdown-block' };
+    const props = { key, className: 'markdown-paragraph markdown-block' };
     return createParentEl('p', props, item.text);
   }
 
   function createInlineEl(item, key) {
-    const props = { key: key, className: 'markdown-fragment' };
+    const props = { key, className: 'markdown-fragment' };
     return createParentEl(item.type, props, item.text);
   }
 
   function createHeadingEl(item, key) {
     const headingType = 'h' + item.level;
-    const props = { key: key, className: 'markdown-heading markdown-block' };
+    const props = { key, className: 'markdown-heading markdown-block' };
     return createParentEl(headingType, props, item.text);
   }
 
   function createListEl(item, key) {
     const listType = item.ordered ? 'ol' : 'ul';
-    const props = { key: key, className: 'markdown-list markdown-block' };
+    const props = { key, className: 'markdown-list markdown-block' };
     return createParentEl(listType, props, item.body);
   }
 
   function createListItemEl(item, key) {
-    return createParentEl('li', { key: key }, item.text);
+    return createParentEl('li', { key }, item.text);
   }
 
   function createImageEl(item, key) {
     const src = isString(item.href) ? prepareImageSrc(item.href) : null;
     const imgEl = createReactEl('img', { src, title: item.title, alt: item.text });
-    const props = { key: key, className: 'markdown-image-placeholder markdown-block' };
+    const props = { key, className: 'markdown-image-placeholder markdown-block' };
     return createReactEl('div', props, imgEl);
   }
 
@@ -211,7 +211,7 @@ export default function create() {
     return createParentEl(
       'a',
       {
-        key: key,
+        key,
         href: getSafeHref(item),
         title: item.title,
         target: '_blank',
@@ -222,43 +222,43 @@ export default function create() {
   }
 
   function createTerminalEl(item, key) {
-    return createReactEl(item.type, { key: key });
+    return createReactEl(item.type, { key });
   }
 
   function createQuoteEl(item, key) {
-    const props = { key: key, className: 'markdown-quote markdown-block' };
+    const props = { key, className: 'markdown-quote markdown-block' };
     return createParentEl('blockquote', props, item.quote);
   }
 
   function createCodeBlockEl(item, key) {
     const codeEl = createReactEl('code', null, item.code);
-    const props = { key: key, className: 'markdown-code markdown-block' };
+    const props = { key, className: 'markdown-code markdown-block' };
     return createReactEl('pre', props, codeEl);
   }
 
   function createCodeSpanEl(item, key) {
-    const props = { key: key, className: 'markdown-fragment' };
+    const props = { key, className: 'markdown-fragment' };
     return createParentEl('code', props, item.text);
   }
 
   function createTableEl(item, key) {
     const headerEl = createReactEl('thead', { key: 'table/head/' + key }, buildLevel(item.header));
     const bodyEl = createReactEl('tbody', { key: 'table/body/' + key }, buildLevel(item.body));
-    const props = { key: key, className: 'markdown-table markdown-block' };
+    const props = { key, className: 'markdown-table markdown-block' };
     return createReactEl('table', props, [headerEl, bodyEl]);
   }
 
   function createTableCellEl(item, key) {
     const cellType = item.flags.header ? 'th' : 'td';
-    return createParentEl(cellType, { key: key }, item.content);
+    return createParentEl(cellType, { key }, item.content);
   }
 
   function createTableRowEl(item, key) {
-    return createParentEl('tr', { key: key }, item.content);
+    return createParentEl('tr', { key }, item.content);
   }
 
   function createHtmlEl(item, key) {
-    const props = { key: key, className: 'markdown-html markdown-block' };
+    const props = { key, className: 'markdown-html markdown-block' };
 
     if (isString(item.html)) {
       return createLeafEl('div', item.html, props);

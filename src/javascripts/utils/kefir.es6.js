@@ -109,7 +109,7 @@ export function createPropertyBus(initialValue, scope) {
   streamBus.emit(initialValue);
 
   return {
-    property: property,
+    property,
     end: streamBus.end,
     set: streamBus.emit
   };
@@ -495,7 +495,7 @@ export function endWith(prop, lifeline) {
 
   const propSub = prop.observe({
     value: bus.set,
-    end: end
+    end
   });
 
   const lifelineSub = lifeline.observe({ end });

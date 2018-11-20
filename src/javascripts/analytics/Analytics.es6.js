@@ -195,7 +195,7 @@ export function trackContextChange(space, organization) {
 export function trackStateChange(state, params, from, fromParams) {
   const data = (session.navigation = removeCircularRefs({
     state: state.name,
-    params: params,
+    params,
     fromState: from ? from.name : null,
     fromStateParams: fromParams || null
   }));

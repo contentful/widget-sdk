@@ -117,15 +117,15 @@ export function makeNotify(Type, getTitle) {
     }
 
     const error = getAtPath(apiResponse, 'data.sys.id');
-    return renderTemplate(template, { error: error });
+    return renderTemplate(template, { error });
   }
 
   function renderTemplate(template, env) {
     return template(
       assign(
         {
-          Type: Type,
-          type: type,
+          Type,
+          type,
           title: getTitle()
         },
         env

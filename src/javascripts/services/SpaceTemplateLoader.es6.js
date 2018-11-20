@@ -24,9 +24,8 @@ export function getTemplatesList() {
       tesFeatureFlagPromise
     ]);
 
-    const orderedTemplates = _.sortBy(
-      templates,
-      template => (_.isFinite(template.fields.order) ? template.fields.order : 99)
+    const orderedTemplates = _.sortBy(templates, template =>
+      _.isFinite(template.fields.order) ? template.fields.order : 99
     );
 
     return orderedTemplates.filter(template => {
@@ -76,7 +75,7 @@ function getSpaceClient(templateInfo) {
 function getClientParams(space, accessToken, previewAccessToken) {
   const isProduction = environment.env === 'production';
   const params = {
-    space: space,
+    space,
     accessToken: isProduction ? accessToken : previewAccessToken,
     host: isProduction ? contentfulConfig.cdaApiUrl : contentfulConfig.previewApiUrl
   };
@@ -244,10 +243,10 @@ function parseAssetFields(fields) {
       } catch (exp) {
         logger.logError('No localizedField available', {
           data: {
-            exp: exp,
-            localizedField: localizedField,
-            field: field,
-            fieldName: fieldName
+            exp,
+            localizedField,
+            field,
+            fieldName
           }
         });
       }

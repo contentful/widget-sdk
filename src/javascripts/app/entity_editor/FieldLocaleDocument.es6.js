@@ -70,17 +70,17 @@ export default function create(doc, fieldId, localeCode) {
 
   return {
     sys: doc.sysProperty,
-    set: set,
+    set,
     get: getValue,
     remove: bindToPath('removeValueAt'),
-    removeAt: removeAt,
+    removeAt,
     push: bindToPath('pushValueAt'),
     insert: bindToPath('insertValueAt'),
-    value$: value$,
-    valueProperty: valueProperty,
+    value$,
+    valueProperty,
     collaborators: doc.collaboratorsFor(fieldId, localeCode),
-    notifyFocus: notifyFocus,
-    localChanges$: localChanges$
+    notifyFocus,
+    localChanges$
   };
 
   function notifyFocus() {

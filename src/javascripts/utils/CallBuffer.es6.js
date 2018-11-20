@@ -24,9 +24,9 @@ export function create() {
   let service = null;
 
   return {
-    call: call,
-    resolve: resolve,
-    disable: disable
+    call,
+    resolve,
+    disable
   };
 
   /**

@@ -17,7 +17,7 @@ export function openDeleteSpaceDialog({ space, plan, onSuccess }) {
 
   const spaceName = space.name;
   const scope = extend($rootScope.$new(), {
-    spaceName: spaceName,
+    spaceName,
     input: { spaceName: '' },
     remove: Command.create(
       () =>
@@ -33,7 +33,7 @@ export function openDeleteSpaceDialog({ space, plan, onSuccess }) {
   return modalDialog.open({
     template: removalConfirmation(),
     noNewScope: true,
-    scope: scope
+    scope
   });
 }
 

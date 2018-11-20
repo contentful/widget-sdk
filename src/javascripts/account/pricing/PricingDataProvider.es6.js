@@ -174,7 +174,7 @@ export function getBaseRatePlan(endpoint) {
     {
       method: 'GET',
       path: ['product_rate_plans'],
-      query: query
+      query
     },
     alphaHeader
   ).then(data => data.items[0]);
@@ -197,7 +197,7 @@ export function getSpaceRatePlans(endpoint, spaceId) {
     {
       method: 'GET',
       path: ['product_rate_plans'],
-      query: query
+      query
     },
     alphaHeader
   ).then(data => data.items);

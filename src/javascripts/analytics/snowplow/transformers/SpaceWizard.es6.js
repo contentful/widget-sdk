@@ -30,7 +30,7 @@ export function getSpaceWizardData(action, data) {
     // The current action the user is performing.
     //
     // See below in the validation function for enum
-    action: action,
+    action,
 
     // The intent of the user, e.g. creation or changing
     intended_action: data.intendedAction === 'change' ? 'change_space_type' : 'create',

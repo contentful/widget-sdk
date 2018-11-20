@@ -30,7 +30,7 @@ export default function wrapWithRetry(requestFn) {
     const deferred = $q.defer();
 
     queue.push({
-      deferred: deferred,
+      deferred,
       args: Array.prototype.slice.call(arguments),
       ttl: DEFAULT_TTL,
       wait: 0

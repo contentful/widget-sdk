@@ -26,8 +26,8 @@ export default function createController($scope, $window) {
   let navState;
   let state = {
     sidePanelIsShown: false,
-    closeSidePanel: closeSidePanel,
-    gotoOrgSettings: gotoOrgSettings,
+    closeSidePanel,
+    gotoOrgSettings,
     canGotoOrgSettings: false,
     viewingOrgSettings: false,
     spacesByOrg: null,
@@ -35,17 +35,17 @@ export default function createController($scope, $window) {
     currentSpaceId: null,
     currentEnvId: null,
     orgs: null,
-    goToSpace: goToSpace,
+    goToSpace,
     canCreateSpaceInCurrOrg: false,
-    showCreateSpaceModal: showCreateSpaceModal,
-    openOrgsDropdown: openOrgsDropdown,
-    setCurrOrg: setCurrOrg,
+    showCreateSpaceModal,
+    openOrgsDropdown,
+    setCurrOrg,
     orgDropdownIsShown: false,
-    closeOrgsDropdown: closeOrgsDropdown,
+    closeOrgsDropdown,
     canCreateOrg: false,
-    createNewOrg: createNewOrg,
+    createNewOrg,
     openedSpaceId: null,
-    setOpenedSpaceId: setOpenedSpaceId,
+    setOpenedSpaceId,
     environmentsEnabled: false
   };
 
@@ -57,7 +57,7 @@ export default function createController($scope, $window) {
   render();
 
   $scope.$watch('sidePanelIsShown', sidePanelIsShown => {
-    state = assign(state, { sidePanelIsShown: sidePanelIsShown });
+    state = assign(state, { sidePanelIsShown });
     render();
   });
 
@@ -113,9 +113,9 @@ export default function createController($scope, $window) {
 
     closeSidePanel();
     Navigator.go({
-      path: path,
+      path,
       params: {
-        spaceId: spaceId,
+        spaceId,
         environmentId: envId
       },
       options: { reload: true }

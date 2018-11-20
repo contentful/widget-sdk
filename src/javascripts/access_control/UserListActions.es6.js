@@ -26,9 +26,9 @@ const MODAL_OPTS_BASE = {
  */
 export function create(spaceContext, userListHandler, TokenStore) {
   return {
-    openRemovalConfirmationDialog: openRemovalConfirmationDialog,
-    openRoleChangeDialog: openRoleChangeDialog,
-    openSpaceInvitationDialog: openSpaceInvitationDialog
+    openRemovalConfirmationDialog,
+    openRoleChangeDialog,
+    openSpaceInvitationDialog
   };
 
   /**
@@ -46,7 +46,7 @@ export function create(spaceContext, userListHandler, TokenStore) {
 
     function controller(scope) {
       extend(scope, {
-        user: user,
+        user,
         input: {},
         removeUser: Command.create(
           () =>
@@ -82,7 +82,7 @@ export function create(spaceContext, userListHandler, TokenStore) {
 
     function controller(scope) {
       extend(scope, {
-        user: user,
+        user,
         startsWithVowel: stringUtils.startsWithVowel,
         input: {},
         roleOptions: userListHandler.getRoleOptions(),
@@ -126,7 +126,7 @@ export function create(spaceContext, userListHandler, TokenStore) {
         multiple: true,
         min: 1,
         max: Infinity,
-        labels: labels,
+        labels,
         // since in `fetchUsers` we download all existing users
         // for the current query, there is no need to fetch more
         // after we reach bottom of the page
@@ -173,8 +173,8 @@ export function create(spaceContext, userListHandler, TokenStore) {
     return modalDialog.open(
       extend(
         {
-          template: template,
-          controller: controller
+          template,
+          controller
         },
         MODAL_OPTS_BASE
       )

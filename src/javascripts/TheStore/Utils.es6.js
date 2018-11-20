@@ -108,7 +108,7 @@ export function forStorage(storage) {
     set: partial(set, storage),
     remove: partial(remove, storage),
     has: partial(has, storage),
-    externalChanges: externalChanges,
+    externalChanges,
     forKey: partial(forKey, storage)
   };
 }

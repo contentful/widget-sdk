@@ -43,7 +43,7 @@ function initMap(scope, GMaps, mapSlotElement) {
   });
 
   let marker = new GMaps.Marker({
-    map: map,
+    map,
     position: map.getCenter(),
     draggable: true,
     visible: true

@@ -16,11 +16,11 @@ const PERMISSION_GROUP_NAME_MAP = {
 
 export function getInstance(space) {
   return {
-    getAll: getAll,
-    get: get,
-    create: create,
-    save: save,
-    remove: remove
+    getAll,
+    get,
+    create,
+    save,
+    remove
   };
 
   function getAll() {
@@ -31,7 +31,7 @@ export function getInstance(space) {
   }
 
   function get(id) {
-    return getBaseCall({ id: id })
+    return getBaseCall({ id })
       .get()
       .then(handleRole);
   }

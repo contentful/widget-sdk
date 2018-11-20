@@ -96,7 +96,7 @@ function mapStateToProps(state, actions) {
     suggestions: state.isSuggestionOpen ? suggestions : [],
     focus: state.focus,
     contentTypeId: state.contentTypeId,
-    isSearching: isSearching,
+    isSearching,
     hasLoaded: users.length > 0,
     input: state.input,
     searchBoxHasFocus: state.searchBoxHasFocus,

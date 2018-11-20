@@ -47,7 +47,7 @@ export function updateWebappUrl(gkUrl = '') {
 
   if (isCurrentState) {
     const pathSuffix = gkUrl.replace(baseUrl, '');
-    const params = extend($state.params, { pathSuffix: pathSuffix });
+    const params = extend($state.params, { pathSuffix });
     $state.go($state.current, params, { location: 'replace' });
   } else {
     $location.url(gkUrl);

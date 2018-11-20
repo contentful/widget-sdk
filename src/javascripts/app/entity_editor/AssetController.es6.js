@@ -65,9 +65,9 @@ export default async function create($scope, assetId) {
   editorContext.focus = Focus.create();
 
   $scope.state = $controller('entityEditor/StateController', {
-    $scope: $scope,
+    $scope,
     entity: editorData.entity,
-    notify: notify,
+    notify,
     validator: editorContext.validator,
     otDoc: $scope.otDoc
   });
@@ -75,7 +75,7 @@ export default async function create($scope, assetId) {
   K.onValueScope($scope, $scope.otDoc.valuePropertyAt([]), data => {
     const title = spaceContext.assetTitle({
       getContentTypeId: () => {},
-      data: data
+      data
     });
     $scope.context.title = title;
     $scope.title = truncate(title, 50);
@@ -87,7 +87,7 @@ export default async function create($scope, assetId) {
 
   // Building the form
   $controller('FormWidgetsController', {
-    $scope: $scope,
+    $scope,
     controls: editorData.fieldControls.form
   });
 

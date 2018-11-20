@@ -6,13 +6,13 @@ export function create() {
   let differenceCount = 0;
 
   return {
-    keep: keep,
-    keepAll: keepAll,
-    restore: restore,
-    registerPath: registerPath,
-    restoreAll: restoreAll,
-    getPathsToRestore: getPathsToRestore,
-    getDifferenceCount: getDifferenceCount
+    keep,
+    keepAll,
+    restore,
+    registerPath,
+    restoreAll,
+    getPathsToRestore,
+    getDifferenceCount
   };
 
   /**

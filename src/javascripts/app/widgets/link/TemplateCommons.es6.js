@@ -11,7 +11,7 @@ export function dragHandle(style) {
     ngIf: 'config.draggable',
     dataDragHandle: true,
     name: 'drag-handle-2',
-    style: style
+    style
   });
 }
 

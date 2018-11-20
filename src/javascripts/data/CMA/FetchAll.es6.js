@@ -34,7 +34,7 @@ export function fetchAll(endpoint, path, batchLimit, params, headers) {
     let skip = batchLimit;
 
     while (skip < total) {
-      query = _.extend({}, params, { skip: skip, limit: batchLimit });
+      query = _.extend({}, params, { skip, limit: batchLimit });
       requestPromises.push(makeRequest(endpoint, path, query));
       skip += batchLimit;
     }
@@ -54,8 +54,8 @@ function makeRequest(endpoint, path, query, headers) {
   return endpoint(
     {
       method: 'GET',
-      path: path,
-      query: query
+      path,
+      query
     },
     headers
   );

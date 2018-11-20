@@ -57,12 +57,12 @@ export function create(field, fieldValue$, space, type, single) {
      * API.
      * @param {API.Entity[]} entities
      */
-    addEntities: addEntities,
+    addEntities,
     /**
      * @description
      * Reload the entitiy data and reemit it to entities$
      */
-    refreshEntities: refreshEntities,
+    refreshEntities,
     /**
      * @description
      * Remove the link at the given index.
@@ -72,7 +72,7 @@ export function create(field, fieldValue$, space, type, single) {
     /**
      * @type {Property<[string, API.Entity?]>}
      */
-    entities$: entities$
+    entities$
   };
 
   function addEntities(entities) {
@@ -96,13 +96,13 @@ function createIdsState(field, fieldValue$, single, type) {
 
   return {
     // string[] -> void
-    set: set,
+    set,
     // string[] -> void
-    add: add,
+    add,
     // number -> void
-    removeAt: removeAt,
+    removeAt,
     // Property<string[]>
-    ids$: ids$
+    ids$
   };
 
   function set(ids) {
@@ -128,7 +128,7 @@ function createIdsState(field, fieldValue$, single, type) {
   function setFieldValue(ids) {
     let links = ids.map(id => ({
       sys: {
-        id: id,
+        id,
         linkType: type,
         type: 'Link'
       }

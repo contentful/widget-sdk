@@ -46,10 +46,10 @@ function createBase(PromiseImplementation, initialEmpty, value) {
   }
 
   return {
-    read: read,
-    take: take,
-    empty: empty,
-    put: put,
+    read,
+    take,
+    empty,
+    put,
     isEmpty: function() {
       return isEmpty;
     }

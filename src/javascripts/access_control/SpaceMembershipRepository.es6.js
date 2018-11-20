@@ -27,10 +27,10 @@ const PER_PAGE = 100;
  */
 export function create(spaceEndpoint) {
   return {
-    getAll: getAll,
-    invite: invite,
-    changeRoleTo: changeRoleTo,
-    remove: remove
+    getAll,
+    invite,
+    changeRoleTo,
+    remove
   };
 
   function invite(email, roleIds) {
@@ -74,7 +74,7 @@ export function create(spaceEndpoint) {
 
 function newMembership(email, roleIds) {
   const membership = {
-    email: email,
+    email,
     admin: includes(roleIds, ADMIN_ROLE_ID)
   };
   if (!membership.admin) {
@@ -94,5 +94,5 @@ function prepareRoleMembership(membership, roleIds) {
 }
 
 function getRoleLinks(roleIds) {
-  return roleIds.map(id => ({ type: 'Link', linkType: 'Role', id: id }));
+  return roleIds.map(id => ({ type: 'Link', linkType: 'Role', id }));
 }

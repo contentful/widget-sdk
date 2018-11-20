@@ -20,12 +20,12 @@ export function createBreadcrumbsHistory() {
   const crumbBus = K.createPropertyBus(history);
 
   return {
-    add: add,
-    set: set,
-    extendCurrent: extendCurrent,
-    isEmpty: isEmpty,
-    pop: pop,
-    purge: purge,
+    add,
+    set,
+    extendCurrent,
+    isEmpty,
+    pop,
+    purge,
     getLast: function() {
       return last(history);
     },

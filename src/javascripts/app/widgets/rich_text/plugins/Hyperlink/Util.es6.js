@@ -116,7 +116,7 @@ export async function editLink(change, createHyperlinkDialog, logAction) {
 function wrapLink(change, linkType, data) {
   change.wrapInline({
     type: linkTypeToNodeType(linkType),
-    data: data
+    data
   });
   change.moveToEnd();
 }

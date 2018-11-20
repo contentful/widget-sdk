@@ -122,8 +122,8 @@ export function create(docWrapper, connectionState$, shouldOpen$) {
 
   return {
     doc: docLoad,
-    close: close,
-    destroy: destroy
+    close,
+    destroy
   };
 
   function close() {

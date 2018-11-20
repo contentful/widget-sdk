@@ -191,7 +191,7 @@ export function create(editor, locale, defaultLocaleCode, { zen }) {
 
   function special() {
     const scopeData = {
-      specialCharacters: specialCharacters,
+      specialCharacters,
       model: { choice: specialCharacters[0] },
       entity: function(x) {
         return '&' + x.id + ';';
@@ -200,7 +200,7 @@ export function create(editor, locale, defaultLocaleCode, { zen }) {
 
     modalDialog
       .open({
-        scopeData: scopeData,
+        scopeData,
         template: 'markdown_special_character_dialog'
       })
       .promise.then(editor.insert);

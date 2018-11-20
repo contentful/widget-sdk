@@ -34,7 +34,7 @@ export default function(_eventName, eventData) {
 
   return {
     data: {},
-    contexts: contexts
+    contexts
   };
 }
 

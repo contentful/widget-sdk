@@ -172,7 +172,7 @@ export function getDomains() {
  */
 export function getOrganization(id) {
   return getOrganizations().then(orgs => {
-    const org = find(orgs, { sys: { id: id } });
+    const org = find(orgs, { sys: { id } });
     return org || $q.reject(new Error('No organization with given ID could be found.'));
   });
 }

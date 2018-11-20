@@ -219,7 +219,7 @@ export default function create($scope, widgetApi) {
       if (entity.sys.type === 'Entry') {
         track('entry:create', {
           eventOrigin: 'reference-editor',
-          contentType: contentType,
+          contentType,
           response: { data: entity }
         });
       }
@@ -340,7 +340,7 @@ export default function create($scope, widgetApi) {
     return modalDialog.open({
       template: 'unpublished_references_warning',
       scopeData: {
-        unpublishedRefs: unpublishedRefs,
+        unpublishedRefs,
         linkedEntityTypes: filter(linkedEntityTypes).join(' and ')
       }
     }).promise;

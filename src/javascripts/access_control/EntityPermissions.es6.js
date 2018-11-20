@@ -39,7 +39,7 @@ function canPerformAction(sys, action) {
   if (ACTIONS.indexOf(action) < 0) {
     throw new Error(`Unknown entity action "${action}"`);
   }
-  const entity = { data: { sys: sys } };
+  const entity = { data: { sys } };
   if (action === 'update') {
     if (sys.type === 'Entry') {
       return accessChecker.canUpdateEntry(entity);

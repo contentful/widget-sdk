@@ -87,7 +87,7 @@ export function initController($scope, auth) {
                 name: token.name
               })),
               loadingTokens: false,
-              totalPages: totalPages
+              totalPages
             });
           }
         },

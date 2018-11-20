@@ -72,7 +72,7 @@ export default function create(spaceEndpoint) {
       method: 'PUT',
       path: ['api_keys', id],
       data: payload,
-      version: version
+      version
     }).then(data => {
       refresh();
       return resolvePreviewKey(data);

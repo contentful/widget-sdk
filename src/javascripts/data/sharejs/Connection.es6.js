@@ -85,10 +85,10 @@ export function create(baseUrl, auth, spaceId, environmentId) {
   const unsubscribeAuthTokenChanges = K.onValue(auth.token$, sendAuthToken);
 
   return {
-    getDocLoader: getDocLoader,
-    open: open,
-    close: close,
-    refreshAuth: refreshAuth
+    getDocLoader,
+    open,
+    close,
+    refreshAuth
   };
 
   /**
@@ -134,7 +134,7 @@ export function create(baseUrl, auth, spaceId, environmentId) {
       .take(1)
       .toPromise($q)
       .then(doc => ({
-        doc: doc,
+        doc,
         destroy: loader.destroy
       }));
   }
@@ -182,7 +182,7 @@ function getEventStream(connection) {
 
   const connectionEmit = connection.emit;
   connection.emit = function(name, data) {
-    eventBus.emit({ name: name, data: data });
+    eventBus.emit({ name, data });
     return connectionEmit.apply(this, arguments);
   };
 

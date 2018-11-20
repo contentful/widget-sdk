@@ -100,12 +100,12 @@ export function createBase(buildMessage, schema, doc) {
      *
      * @type {Property<Error[]>}
      */
-    errors$: errors$,
-    run: run,
-    validateFieldLocale: validateFieldLocale,
-    hasFieldError: hasFieldError,
-    hasFieldLocaleError: hasFieldLocaleError,
-    setApiResponseErrors: setApiResponseErrors
+    errors$,
+    run,
+    validateFieldLocale,
+    hasFieldError,
+    hasFieldLocaleError,
+    setApiResponseErrors
   };
 
   /**
@@ -225,12 +225,14 @@ export function createBase(buildMessage, schema, doc) {
    * library or API responses.
    */
   function processErrors(errors) {
-    return errors.filter(error => error && error.path).map((
-      error // TODO we should freeze this but duplicate errors modify this.
-    ) =>
-      assign({}, error, {
-        message: buildMessage(error)
-      })
-    );
+    return errors
+      .filter(error => error && error.path)
+      .map((
+        error // TODO we should freeze this but duplicate errors modify this.
+      ) =>
+        assign({}, error, {
+          message: buildMessage(error)
+        })
+      );
   }
 }

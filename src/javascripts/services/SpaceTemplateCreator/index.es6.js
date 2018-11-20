@@ -155,11 +155,10 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
 
       const publishedEntries = yield publishEntries(createdEntries);
 
-      const createContentPreviewPromise = Promise.all([apiKeyPromise, publishedEntries]).then(
-        () =>
-          templateInfo.spaceId === TEA_SPACE_ID
-            ? runTask(createTEAContentPreview, template.contentTypes)
-            : createContentPreview(template.contentTypes)
+      const createContentPreviewPromise = Promise.all([apiKeyPromise, publishedEntries]).then(() =>
+        templateInfo.spaceId === TEA_SPACE_ID
+          ? runTask(createTEAContentPreview, template.contentTypes)
+          : createContentPreview(template.contentTypes)
       );
 
       allPromises.push(publishAssetsPromise, createContentPreviewPromise);
@@ -190,7 +189,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
     if (!(itemKey in handledItems)) {
       handledItems[itemKey] = {
         performedActions: [],
-        response: response
+        response
       };
     }
     if (!_.includes(handledItems[itemKey].performedActions, actionData.action)) {
@@ -217,9 +216,9 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
       itemHandlers.onItemSuccess(
         generateItemId(item, actionData),
         {
-          item: item,
-          actionData: actionData,
-          response: response
+          item,
+          actionData,
+          response
         },
         templateName
       );
@@ -235,9 +234,9 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
         } on entityId: ${getItemId(item)}`
       );
       itemHandlers.onItemError(generateItemId(item, actionData), {
-        item: item,
-        actionData: actionData,
-        error: error
+        item,
+        actionData,
+        error
       });
       // not rejecting the promise (see comment on create method)
       return null;
@@ -245,7 +244,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
   }
 
   function makeHandlers(item, action, entity) {
-    const data = { action: action, entity: entity };
+    const data = { action, entity };
     item = item.data || item;
     return {
       success: makeItemSuccessHandler(item, data),

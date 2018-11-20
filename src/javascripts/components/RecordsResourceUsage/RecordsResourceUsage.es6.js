@@ -55,7 +55,7 @@ export class RecordsResourceUsage extends React.Component {
 
     showUpgradeSpaceDialog({
       organizationId: space.organization.sys.id,
-      space: space,
+      space,
       action: 'change',
       scope: 'space',
       onSubmit: this.updateUsage

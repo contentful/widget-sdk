@@ -54,7 +54,7 @@ function createRoleChecker(role) {
   return function checkRole(organization) {
     const id = get(organization, 'sys.id');
     const memberships = get(currentUser, 'organizationMemberships', []);
-    const found = find(memberships, { organization: { sys: { id: id } } });
+    const found = find(memberships, { organization: { sys: { id } } });
     return role === get(found, 'role');
   };
 }

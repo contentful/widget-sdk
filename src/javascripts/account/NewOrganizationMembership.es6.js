@@ -272,7 +272,7 @@ export default function($scope) {
    */
   function restart(emails = []) {
     state = assign(state, {
-      emails: emails,
+      emails,
       emailsInputValue: emails.join(', '),
       status: Idle(),
       failedOrgInvitations: [],

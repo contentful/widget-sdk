@@ -9,7 +9,7 @@ export function create(spaceLocales) {
     prepareLocaleList: asListItems(prepareLocaleList),
     prepareFallbackList: asListItems(prepareFallbackList),
     getDependantLocales: asListItems(getDependantLocales),
-    hasDependantLocales: hasDependantLocales,
+    hasDependantLocales,
     getAvailableFallbackLocales: asListItems(getAvailableFallbackLocales)
   };
 
