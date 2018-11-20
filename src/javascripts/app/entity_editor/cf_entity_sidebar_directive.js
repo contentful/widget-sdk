@@ -25,8 +25,6 @@ angular
     'require',
     require => {
       const K = require('utils/kefir.es6');
-      const $state = require('$state');
-      const { throttle } = require('lodash');
       const spaceContext = require('spaceContext');
 
       return {
@@ -44,32 +42,6 @@ angular
             $scope.sidebarIncomingLinksProps = {
               entityInfo: $scope.entityInfo
             };
-
-            $scope.sidebarContentPreviewProps = {
-              entry: null,
-              contentType: $scope.entityInfo.contentType,
-              getDataForTracking: () => ({
-                locales: $scope.locales,
-                fromState: $state.current.name,
-                entryId: $scope.entityInfo.id
-              })
-            };
-
-            // updating props on every quick change of model
-            // (while user is typing) isn't performant,
-            // so we throttle update by 300ms
-            // (it's hard to move focus from intput to preview button quicker)
-            const updateSidebarProps = throttle(entry => {
-              $scope.sidebarContentPreviewProps = {
-                ...$scope.sidebarContentPreviewProps,
-                entry
-              };
-              $scope.$applyAsync();
-            }, 300);
-
-            K.onValueScope($scope, $scope.otDoc.data$, entry => {
-              updateSidebarProps(entry);
-            });
 
             // We make sure that we do not leak entity instances from the
             // editor controller into the current scope
