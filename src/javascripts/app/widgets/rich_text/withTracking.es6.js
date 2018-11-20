@@ -117,12 +117,13 @@ const DICTIONARY = {
   open: [...DIALOGS],
   cancel: [...DIALOGS]
 };
+const OTHER_ACTIONS = [
+  'paste'
+];
 const ALLOWED_EVENTS = reduce(
   DICTIONARY,
-  (result, names, category) => {
-    return [...result, ...names.map(name => category + name)];
-  },
-  []
+  (result, names, category) => [...result, ...names.map(name => category + name)],
+  OTHER_ACTIONS
 );
 
 function isKnownAction(name) {
@@ -130,6 +131,9 @@ function isKnownAction(name) {
 }
 
 function getActionName(name, { nodeType, markType }) {
+  if (isKnownAction(name)) {
+    return name;
+  }
   let action = name;
   if (name === 'mark' || name === 'unmark') {
     action = `${name}-${markType}`;

@@ -332,9 +332,9 @@ import TestedComponent from '../TestedComponent';
 
 jest.mock(
   '$state',
-  () => {
+  () => ({
     go: jest.fn();
-  },
+  }),
   { virtual: true }
 );
 ```
