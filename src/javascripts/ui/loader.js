@@ -2,26 +2,26 @@ angular
   .module('cf.ui')
 
   /*
- * @ngdoc directive
- * @name cfLoader
- * @description
- * This directive will insert a loader that can be controlled by the parent
- * It optionally activates on state change events if configured to do so using
- * the `watch-state-change` boolean attribute.
- * The `is-shown` attribute accepts a property from the parent scope. The loader
- * is toggled based on this property.
- * The `loader-msg` attribute can be used to configure a custom loading message.
- *
- * @usage[jade]
- * div
- *   header
- *   cf-loader(is-shown="isLoading", watch-state-change="true", loader-msg="Loading…")
- *
- * cf-loader(watch-state-change="true") //- this adds only a state change loader
- * cf-loader(loader-msg="Please wait…")
- * cf-loader(is-shown="isLoading")
- * cf-loader(is-shown="somePropFromParentScope" loader-msg="Loading xyz…")
- */
+   * @ngdoc directive
+   * @name cfLoader
+   * @description
+   * This directive will insert a loader that can be controlled by the parent
+   * It optionally activates on state change events if configured to do so using
+   * the `watch-state-change` boolean attribute.
+   * The `is-shown` attribute accepts a property from the parent scope. The loader
+   * is toggled based on this property.
+   * The `loader-msg` attribute can be used to configure a custom loading message.
+   *
+   * @usage[jade]
+   * div
+   *   header
+   *   cf-loader(is-shown="isLoading", watch-state-change="true", loader-msg="Loading…")
+   *
+   * cf-loader(watch-state-change="true") //- this adds only a state change loader
+   * cf-loader(loader-msg="Please wait…")
+   * cf-loader(is-shown="isLoading")
+   * cf-loader(is-shown="somePropFromParentScope" loader-msg="Loading xyz…")
+   */
   .directive('cfLoader', [
     'require',
     require => {
@@ -112,19 +112,19 @@ angular
     }
   ])
   /*
- * @ngdoc directive
- * @name cfInlineLoader
- * @description
- * This directive inserts an inline loader.
- *
- * The `is-shown` attribute accepts a property from the parent scope. The loader
- * is toggled based on this property.
- *
- * @usage[jade]
- * .search
- *   input(type="text")
- *   cf-inline-loader(is-shown="isSearching")
- */
+   * @ngdoc directive
+   * @name cfInlineLoader
+   * @description
+   * This directive inserts an inline loader.
+   *
+   * The `is-shown` attribute accepts a property from the parent scope. The loader
+   * is toggled based on this property.
+   *
+   * @usage[jade]
+   * .search
+   *   input(type="text")
+   *   cf-inline-loader(is-shown="isSearching")
+   */
   .directive('cfInlineLoader', [
     'require',
     require => {

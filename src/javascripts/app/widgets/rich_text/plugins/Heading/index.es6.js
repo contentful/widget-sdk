@@ -20,7 +20,7 @@ const newPlugin = (defaultType, tagName, hotkey) => ({ type = defaultType, richT
       return handleHotkey();
     }
 
-    function handleReturnKey () {
+    function handleReturnKey() {
       const { value } = change;
 
       if (value.selection.startOffset === 0) {

@@ -227,20 +227,17 @@ function Sidebar({
           {/* https://github.com/tvkhoa/react-tippy/pull/73 would fix it. */}
           {!isLegacyOrganization && <UsageTooltip resource={resource} />}
         </p>
-        {!canCreateEnv &&
-          !isLegacyOrganization && (
-            <p>
-              {limit > 1 && 'Delete existing environments or '}
-              {canUpgradeSpace &&
-                (limit > 1
-                  ? 'change the space to add more'
-                  : 'Change change the space to add more')}
-              {!canUpgradeSpace &&
-                `${
-                  limit > 1 ? 'ask' : 'Ask'
-                } the administrator of your organization to change the space to add more. `}
-            </p>
-          )}
+        {!canCreateEnv && !isLegacyOrganization && (
+          <p>
+            {limit > 1 && 'Delete existing environments or '}
+            {canUpgradeSpace &&
+              (limit > 1 ? 'change the space to add more' : 'Change change the space to add more')}
+            {!canUpgradeSpace &&
+              `${
+                limit > 1 ? 'ask' : 'Ask'
+              } the administrator of your organization to change the space to add more. `}
+          </p>
+        )}
       </div>
       <div className="entity-sidebar__widget">
         {canCreateEnv && (
@@ -251,15 +248,13 @@ function Sidebar({
             Add environment
           </button>
         )}
-        {!canCreateEnv &&
-          !isLegacyOrganization &&
-          canUpgradeSpace && (
-            <UpgradeButton
-              organizationId={organizationId}
-              incentivizeUpgradeEnabled={incentivizeUpgradeEnabled}
-              OpenUpgradeSpaceDialog={OpenUpgradeSpaceDialog}
-            />
-          )}
+        {!canCreateEnv && !isLegacyOrganization && canUpgradeSpace && (
+          <UpgradeButton
+            organizationId={organizationId}
+            incentivizeUpgradeEnabled={incentivizeUpgradeEnabled}
+            OpenUpgradeSpaceDialog={OpenUpgradeSpaceDialog}
+          />
+        )}
       </div>
       <h2 className="entity-sidebar__heading">Documentation</h2>
       <div className="entity-sidebar__text-profile">

@@ -129,17 +129,16 @@ class WebhookEditor extends React.Component {
               {dirty ? '*' : ''}
             </Workbench.Title>
             <Workbench.Header.Actions>
-              {tab === TABS.SETTINGS &&
-                !fresh && (
-                  <Button
-                    testId="webhook-remove"
-                    buttonType="muted"
-                    onClick={() => {
-                      this.setState({ isDeleteDialogShown: true });
-                    }}>
-                    Remove
-                  </Button>
-                )}
+              {tab === TABS.SETTINGS && !fresh && (
+                <Button
+                  testId="webhook-remove"
+                  buttonType="muted"
+                  onClick={() => {
+                    this.setState({ isDeleteDialogShown: true });
+                  }}>
+                  Remove
+                </Button>
+              )}
 
               {tab === TABS.SETTINGS && (
                 <Button

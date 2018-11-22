@@ -105,8 +105,9 @@ angular.module('contentful').factory(name, [
               <div className="modern-stack-onboarding--data-flow-elem-subtitle">
                 {elem.subtitle}
               </div>
-              {elem.item &&
-                elem.item === active && <div className={'modern-stack-onboarding--active-data'} />}
+              {elem.item && elem.item === active && (
+                <div className={'modern-stack-onboarding--active-data'} />
+              )}
             </div>
             {elem.children &&
               elem.children.map((child, i) => {

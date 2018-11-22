@@ -59,9 +59,9 @@ class Installer extends React.Component {
             value={url || ''}
             onChange={e => this.checkUrl(e.target.value)}
           />
-          {!err &&
-            hasInput &&
-            !valid && <p className="cfnext-form__field-error">Please provide a valid GitHub URL</p>}
+          {!err && hasInput && !valid && (
+            <p className="cfnext-form__field-error">Please provide a valid GitHub URL</p>
+          )}
           {err && <p className="cfnext-form__field-error">{err.message}</p>}
         </div>
         <div className="modal-dialog__controls">

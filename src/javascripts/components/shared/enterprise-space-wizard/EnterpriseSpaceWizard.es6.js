@@ -178,12 +178,11 @@ class EnterpriseSpaceWizard extends React.Component {
             )}
             {!showForm && (
               <React.Fragment>
-                {reachedLimit &&
-                  !isFeatureDisabled && (
-                    <p className="note-box--info">
-                      {`You've created ${limit} proof of concept spaces. Delete existing ones or talk to us if you need more.`}
-                    </p>
-                  )}
+                {reachedLimit && !isFeatureDisabled && (
+                  <p className="note-box--info">
+                    {`You've created ${limit} proof of concept spaces. Delete existing ones or talk to us if you need more.`}
+                  </p>
+                )}
                 {isFeatureDisabled && (
                   <p className="note-box--info">{`You can't create proof of concept spaces because they're not a part of your enterprise deal with Contentful.
                   Get in touch with us if you want to create new spaces.`}</p>

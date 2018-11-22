@@ -61,35 +61,32 @@ class SpacePlanItem extends React.Component {
               {' / month'}
             </React.Fragment>
           )}
-          {plan.isFree &&
-            freeSpacesLimit && (
-              <Fragment>
-                {` - ${freeSpacesUsage}/${freeSpacesLimit} used`}
-                <HelpIcon tooltipWidth={400}>
-                  You can have up to {freeSpacesLimit} free spaces for your organization. If you
-                  delete a free space, another one can be created.
-                </HelpIcon>
-              </Fragment>
-            )}
+          {plan.isFree && freeSpacesLimit && (
+            <Fragment>
+              {` - ${freeSpacesUsage}/${freeSpacesLimit} used`}
+              <HelpIcon tooltipWidth={400}>
+                You can have up to {freeSpacesLimit} free spaces for your organization. If you
+                delete a free space, another one can be created.
+              </HelpIcon>
+            </Fragment>
+          )}
         </div>
 
         <PlanFeatures resources={plan.includedResources} roleSet={plan.roleSet} />
 
-        {isPayingOrg &&
-          plan.disabled &&
-          !isCurrentPlan && (
-            <Tooltip
-              style={{
-                position: 'absolute',
-                right: '19px',
-                bottom: '25px',
-                color: colors.elementDarkest
-              }}
-              width={800}
-              tooltip={unavailabilityTooltip}>
-              <Icon name="question-mark" />
-            </Tooltip>
-          )}
+        {isPayingOrg && plan.disabled && !isCurrentPlan && (
+          <Tooltip
+            style={{
+              position: 'absolute',
+              right: '19px',
+              bottom: '25px',
+              color: colors.elementDarkest
+            }}
+            width={800}
+            tooltip={unavailabilityTooltip}>
+            <Icon name="question-mark" />
+          </Tooltip>
+        )}
         {(!isPayingOrg || !plan.disabled) && (
           <Icon className="space-plans-list__item__chevron" name="dd-arrow-down" />
         )}

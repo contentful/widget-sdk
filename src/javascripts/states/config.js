@@ -30,11 +30,11 @@ angular
       };
 
       /*
-   * @ngdoc method
-   * @name states/config#init
-   * @description
-   * Load all registered states into `ui.router.$stateProvider`.
-   */
+       * @ngdoc method
+       * @name states/config#init
+       * @description
+       * Load all registered states into `ui.router.$stateProvider`.
+       */
       function init() {
         _.forEach(states, s => {
           $stateProvider.state(s);

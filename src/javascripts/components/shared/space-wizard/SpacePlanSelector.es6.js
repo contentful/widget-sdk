@@ -82,76 +82,73 @@ class SpacePlanSelector extends React.Component {
             <Spinner size="large" />
           </div>
         )}
-        {!isPending &&
-          spaceRatePlans && (
-            <div>
-              {!payingOrg && (
-                <BillingInfo
-                  canSetupBilling={isOwner(organization)}
-                  goToBilling={this.goToBilling}
-                  action={action}
-                />
-              )}
-              {atHighestPlan && <NoMorePlans canSetupBilling={isOwner(organization)} />}
-              {payingOrg &&
-                recommendedPlan && (
-                  <ExplainRecommendation
-                    currentPlan={currentPlan}
-                    recommendedPlan={recommendedPlan}
-                    resources={resources}
-                  />
-                )}
-              <h2 className="create-space-wizard__heading">Choose the space type</h2>
-              {action === 'create' && (
-                <Fragment>
-                  <p className="create-space-wizard__subheading">
-                    You are creating this space for the organization <em>{organization.name}</em>.
-                    <br />
-                  </p>
-                  <div className="space-plans-list">
-                    {spaceRatePlans.map(plan => (
-                      <SpacePlanItem
-                        key={plan.sys.id}
-                        plan={plan}
-                        freeSpacesResource={freeSpacesResource}
-                        isPayingOrg={payingOrg}
-                        isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
-                        onSelect={this.selectPlan()}
-                      />
-                    ))}
-                  </div>
-                </Fragment>
-              )}
-              {action === 'change' && (
-                <Fragment>
-                  <p className="create-space-wizard__subheading">
-                    You are changing the space <em>{space.name}</em> for organization{' '}
-                    <em>{organization.name}</em>.<br />
-                  </p>
-                  <div className="space-plans-list">
-                    {spaceRatePlans.map(plan => (
-                      <SpacePlanItem
-                        key={plan.sys.id}
-                        plan={plan}
-                        freeSpacesResource={freeSpacesResource}
-                        isCurrentPlan={currentPlan === plan}
-                        isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
-                        isRecommended={get(recommendedPlan, 'sys.id') === plan.sys.id}
-                        isPayingOrg={payingOrg}
-                        onSelect={this.selectPlan(currentPlan, recommendedPlan)}
-                      />
-                    ))}
-                  </div>
-                </Fragment>
-              )}
-            </div>
-          )}
-        {!isPending &&
-          !spaceRatePlans && (
-            <div className="note-box--warning">
-              <p>Could not fetch space plans.</p>
-            </div>
-          )}
+        {!isPending && spaceRatePlans && (
+          <div>
+            {!payingOrg && (
+              <BillingInfo
+                canSetupBilling={isOwner(organization)}
+                goToBilling={this.goToBilling}
+                action={action}
+              />
+            )}
+            {atHighestPlan && <NoMorePlans canSetupBilling={isOwner(organization)} />}
+            {payingOrg && recommendedPlan && (
+              <ExplainRecommendation
+                currentPlan={currentPlan}
+                recommendedPlan={recommendedPlan}
+                resources={resources}
+              />
+            )}
+            <h2 className="create-space-wizard__heading">Choose the space type</h2>
+            {action === 'create' && (
+              <Fragment>
+                <p className="create-space-wizard__subheading">
+                  You are creating this space for the organization <em>{organization.name}</em>.
+                  <br />
+                </p>
+                <div className="space-plans-list">
+                  {spaceRatePlans.map(plan => (
+                    <SpacePlanItem
+                      key={plan.sys.id}
+                      plan={plan}
+                      freeSpacesResource={freeSpacesResource}
+                      isPayingOrg={payingOrg}
+                      isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
+                      onSelect={this.selectPlan()}
+                    />
+                  ))}
+                </div>
+              </Fragment>
+            )}
+            {action === 'change' && (
+              <Fragment>
+                <p className="create-space-wizard__subheading">
+                  You are changing the space <em>{space.name}</em> for organization{' '}
+                  <em>{organization.name}</em>.<br />
+                </p>
+                <div className="space-plans-list">
+                  {spaceRatePlans.map(plan => (
+                    <SpacePlanItem
+                      key={plan.sys.id}
+                      plan={plan}
+                      freeSpacesResource={freeSpacesResource}
+                      isCurrentPlan={currentPlan === plan}
+                      isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
+                      isRecommended={get(recommendedPlan, 'sys.id') === plan.sys.id}
+                      isPayingOrg={payingOrg}
+                      onSelect={this.selectPlan(currentPlan, recommendedPlan)}
+                    />
+                  ))}
+                </div>
+              </Fragment>
+            )}
+          </div>
+        )}
+        {!isPending && !spaceRatePlans && (
+          <div className="note-box--warning">
+            <p>Could not fetch space plans.</p>
+          </div>
+        )}
       </div>
     );
   }

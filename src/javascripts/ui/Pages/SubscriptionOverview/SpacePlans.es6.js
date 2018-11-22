@@ -36,16 +36,15 @@ function SpacePlans({
             {'. '}
           </span>
         )}
-        {!isEnterprisePlan(basePlan) &&
-          totalCost > 0 && (
-            <span>
-              The total for your spaces is{' '}
-              <b>
-                <Price value={totalCost} />
-              </b>{' '}
-              per month.{' '}
-            </span>
-          )}
+        {!isEnterprisePlan(basePlan) && totalCost > 0 && (
+          <span>
+            The total for your spaces is{' '}
+            <b>
+              <Price value={totalCost} />
+            </b>{' '}
+            per month.{' '}
+          </span>
+        )}
         <a className="text-link" onClick={onCreateSpace}>
           Add Space
         </a>

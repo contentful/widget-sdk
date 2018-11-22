@@ -12,7 +12,7 @@ const ERROR_NAMES = {
   ConnectionResetError: 'Connection reset',
   ExpiredCertificateError: 'Certificate has expired',
   HostUnreachableError: 'Host unreachable',
-  HostnameAltnameMismatchError: 'Hostname/IP doesn\'t match certificate\'s altnames',
+  HostnameAltnameMismatchError: "Hostname/IP doesn't match certificate's altnames",
   InvalidResponseError: 'The HTTP response was malformed or invalid',
   IPForbiddenError: 'Forbidden IP address',
   LeafSignatureError: 'Unable to verify the first certificate',
