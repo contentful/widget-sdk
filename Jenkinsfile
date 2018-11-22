@@ -11,7 +11,6 @@ pipeline {
   }
   parameters {
     string(name: 'ui_version', defaultValue: 'master', description: 'This will run tests only for the exact package of <a href=https://github.com/contentful/user_interface>user_interface</a> provided with git commit hash.')
-    string(name: 'e2e_version', defaultValue: 'master', description: 'E2E Tests image version')
   }
   options {
     timestamps()
@@ -27,7 +26,6 @@ pipeline {
     stage('Prepare Isolated Environment') {
       environment {
         USER_INTERFACE_VERSION = "${params.ui_version}"
-        E2E_TESTS_VERSION = "${params.e2e_version}"
         MARKETING_WEBSITE_VERSION = 'master'
         GATEKEEPER_VERSION = 'production'
         CONTENT_API_VERSION = 'production'
@@ -38,7 +36,6 @@ pipeline {
         script {
           labPrepare {
             labVersion = 'master'
-            dockerComposeVersion = '1.21.2'
           }
         }
       }
@@ -47,7 +44,8 @@ pipeline {
       steps {
         build job: 'user-interface-dependent', wait: false, parameters: [
           string(name: 'upstream', value: JOB_NAME),
-          string(name: 'ui_version', value: "${params.ui_version}")
+          string(name: 'ui_version', value: "${params.ui_version}"),
+          string(name: 'e2e_version', value: env.E2E_TESTS_VERSION)
         ]
       }
     }
