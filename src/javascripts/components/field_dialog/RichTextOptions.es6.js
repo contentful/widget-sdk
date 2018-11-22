@@ -243,7 +243,7 @@ class RichTextOptions extends Component {
           {this.renderToggles(this.options.headingOptions)}
           {this.renderToggles(this.options.formattingOptions, 'toggle-square')}
         </RichTextOptionsSection>
-        <RichTextOptionsSection heading="Links">
+        <RichTextOptionsSection heading="Hyperlinks">
           {this.renderToggles(this.options.linkOptions)}
         </RichTextOptionsSection>
         <RichTextOptionsSection heading="Embedded entries & assets">
