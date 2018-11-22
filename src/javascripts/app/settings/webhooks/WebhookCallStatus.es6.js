@@ -3,13 +3,24 @@ import PropTypes from 'prop-types';
 
 import { STATUS } from './WebhookHealth.es6';
 
+// This needs to be kept in sync with the error classes in the webhook
+// consumer:
+// https://github.com/contentful/webhook_consumer/tree/master/lib/request/base-request/errors
 const ERROR_NAMES = {
-  TimeoutError: 'Timeout',
+  AddressNotFoundError: 'The address could not be found',
+  ConnectionRefusedError: 'The connection has been refused',
   ConnectionResetError: 'Connection reset',
+  ExpiredCertificateError: 'Certificate has expired',
   HostUnreachableError: 'Host unreachable',
-  ProtocolError: 'Invalid protocol',
+  HostnameAltnameMismatchError: 'Hostname/IP doesn\'t match certificate\'s altnames',
+  InvalidResponseError: 'The HTTP response was malformed or invalid',
   IPForbiddenError: 'Forbidden IP address',
-  NameResolutionError: 'Name unresolvable'
+  LeafSignatureError: 'Unable to verify the first certificate',
+  NameResolutionError: 'Name unresolvable',
+  NetworkUnreachableError: 'The target network is unreachable',
+  ProtocolError: 'Invalid protocol',
+  SelfSignedCertificateError: 'Self signed certificate',
+  TimeoutError: 'Timeout'
 };
 
 function getStatus(code) {
