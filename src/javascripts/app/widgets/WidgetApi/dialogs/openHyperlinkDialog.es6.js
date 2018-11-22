@@ -33,7 +33,7 @@ export default async function({ value = {}, showTextInput, widgetAPI }) {
   const props = {
     labels: {
       title: isNew ? 'Insert hyperlink' : 'Edit hyperlink',
-      confirm: isNew ? 'Insert hyperlink' : 'Update hyperlink'
+      confirm: isNew ? 'Insert' : 'Update'
     },
     value,
     hideText: !showTextInput,
