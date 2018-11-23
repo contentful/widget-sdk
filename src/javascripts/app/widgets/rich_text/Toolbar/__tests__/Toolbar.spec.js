@@ -68,7 +68,7 @@ describe('Toolbar', () => {
     expect(toolbar.find('[data-test-id="list-divider"]')).toHaveLength(0);
   });
 
-  it('hides group separator if no hyperinks enabled', () => {
+  it('hides group separator if no hyperlinks enabled', () => {
     const props = fakeProps();
     props.richTextAPI.widgetAPI.field.validations = [
       {
