@@ -8,7 +8,16 @@
     right: 0
     background: $colors.element-lightest
     overflow-y: auto
-    padding: 43px 65px
+    padding: 20px 90px
+
+    &--with-gradient
+      background-image: linear-gradient(
+        to bottom,
+        $colors.contrast-mid,
+        $colors.contrast-mid 350px,
+        $colors.element-lightest 350px,
+        $colors.element-lightest
+      )
 
   &--wrapper
     margin: 15px auto
