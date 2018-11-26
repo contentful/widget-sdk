@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import notification from 'notification';
+import { Notification } from '@contentful/ui-component-library';
 import { Button } from '@contentful/ui-component-library';
 import Workbench from 'app/common/Workbench.es6';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
@@ -30,7 +30,7 @@ export const AddLocaleButton = ({ getComputeLocalesUsageForOrganization }) => (
         onClick={() => {
           const usage = getComputeLocalesUsageForOrganization();
           if (usage) {
-            notification.error(usage);
+            Notification.error(usage);
           } else {
             onClick();
           }

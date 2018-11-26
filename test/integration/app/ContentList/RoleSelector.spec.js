@@ -21,8 +21,9 @@ describe('app/RoleSelector', () => {
       name: 'Role B'
     };
 
-    const notification = this.$inject('notification');
-    this.notify = sinon.stub(notification, 'success');
+    const ComponentLibrary = this.$inject('@contentful/ui-component-library');
+    ComponentLibrary.Notification.success = sinon.stub();
+    this.Notification = ComponentLibrary.Notification;
 
     const openRoleSelector = this.$inject('app/ContentList/RoleSelector.es6').default;
 
@@ -43,7 +44,7 @@ describe('app/RoleSelector', () => {
 
     const result = yield resultPromise;
     expect(result).toEqual(['role-a']);
-    sinon.assert.calledOnce(this.notify);
+    sinon.assert.calledOnce(this.Notification.success);
   });
 
   it('selects all roles', function*() {
@@ -56,7 +57,7 @@ describe('app/RoleSelector', () => {
 
     const result = yield resultPromise;
     expect(result).toEqual(undefined);
-    sinon.assert.calledOnce(this.notify);
+    sinon.assert.calledOnce(this.Notification.success);
   });
 
   it('selects no roles', function*() {
@@ -67,6 +68,6 @@ describe('app/RoleSelector', () => {
 
     const result = yield resultPromise;
     expect(result).toEqual([]);
-    sinon.assert.calledOnce(this.notify);
+    sinon.assert.calledOnce(this.Notification.success);
   });
 });

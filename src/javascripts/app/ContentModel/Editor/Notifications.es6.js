@@ -1,6 +1,6 @@
 import { first, get } from 'lodash';
 import logger from 'logger';
-import notification from 'notification';
+import { Notification } from '@contentful/ui-component-library';
 import { truncate } from 'utils/StringUtils.es6';
 
 /**
@@ -25,11 +25,11 @@ const messages = {
 };
 
 export function deleteSuccess() {
-  notification.success('Content type deleted successfully');
+  Notification.success('Content type deleted successfully');
 }
 
 export function deleteFail(err) {
-  notification.error('Deleting content type failed: ' + getServerMessage(err));
+  Notification.error('Deleting content type failed: ' + getServerMessage(err));
   logger.logServerWarn('Error deleting Content Type', { error: err });
 }
 
@@ -52,9 +52,9 @@ export function invalidAccordingToScope(errors, fieldNames) {
   );
 
   if (errorFieldName) {
-    notification.error(saveError + 'Invalid field “' + truncate(errorFieldName, 12) + '”');
+    Notification.error(saveError + 'Invalid field “' + truncate(errorFieldName, 12) + '”');
   } else {
-    notification.error(errorWithoutFieldName || messages.save.invalid);
+    Notification.error(errorWithoutFieldName || messages.save.invalid);
   }
 }
 
@@ -75,11 +75,11 @@ export function saveFailure(errData, contentType) {
 }
 
 export function saveSuccess() {
-  notification.success(messages.save.success);
+  Notification.success(messages.save.success);
 }
 
 export function saveInvalidError(error, contentType) {
-  notification.error(messages.save.invalid);
+  Notification.error(messages.save.invalid);
   logger.logServerWarn('Error saving invalid Content Type', {
     error,
     contentType: contentType.data
@@ -87,7 +87,7 @@ export function saveInvalidError(error, contentType) {
 }
 
 export function saveOutdatedError(error, contentType) {
-  notification.error(messages.save.outdated);
+  Notification.error(messages.save.outdated);
   logger.logServerWarn('Error activating outdated Content Type', {
     error,
     contentType: contentType.data
@@ -95,21 +95,21 @@ export function saveOutdatedError(error, contentType) {
 }
 
 export function saveIdExists() {
-  notification.error(messages.create.exists);
+  Notification.error(messages.create.exists);
 }
 
 export function saveApiError(errData) {
   const message = saveError + getServerMessage(errData);
-  notification.error(message);
+  Notification.error(message);
   logger.logServerWarn('Error activating Content Type', { error: errData });
 }
 
 export function duplicateSuccess() {
-  notification.success(messages.duplicate.success);
+  Notification.success(messages.duplicate.success);
 }
 
 export function duplicateError(errData) {
-  notification.error(messages.duplicate.error + getServerMessage(errData));
+  Notification.error(messages.duplicate.error + getServerMessage(errData));
 }
 
 function getServerMessage(errData) {

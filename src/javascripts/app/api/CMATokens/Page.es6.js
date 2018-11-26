@@ -15,7 +15,7 @@ import { DocsLink, LinkOpen } from 'ui/Content.es6';
 import * as Config from 'Config.es6';
 import * as ResourceManager from './Resource.es6';
 import openCreateDialog from './CreateDialog.es6';
-import Notification from 'notification';
+import { Notification } from '@contentful/ui-component-library';
 import { track } from 'analytics/Analytics.es6';
 
 import Paginator from 'ui/Components/Paginator.es6';

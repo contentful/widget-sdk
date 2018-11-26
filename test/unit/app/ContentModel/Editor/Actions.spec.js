@@ -48,7 +48,10 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
 
     $q = this.$inject('$q');
     logger = this.$inject('logger');
-    notification = this.mockService('notification');
+    const ComponentLibrary = this.$inject('@contentful/ui-component-library');
+    notification = ComponentLibrary.Notification;
+    notification.success = sinon.stub();
+    notification.error = sinon.stub();
     accessChecker = this.$inject('access_control/AccessChecker');
     accessChecker.canPerformActionOnEntryOfType = sinon.stub().returns(true);
     ReloadNotification = this.$inject('ReloadNotification');

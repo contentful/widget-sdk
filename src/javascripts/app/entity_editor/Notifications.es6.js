@@ -32,7 +32,7 @@
  * - `reponse.data.details.errors`
  */
 import { makeSum, caseof } from 'sum-types';
-import Notifier from 'notification';
+import { Notification as Notifier } from '@contentful/ui-component-library';
 import { get as getAtPath, first, template as _makeTemplate, assign } from 'lodash';
 
 export const Notification = makeSum({

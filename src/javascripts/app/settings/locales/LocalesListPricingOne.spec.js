@@ -1,7 +1,7 @@
 import React from 'react';
 import Enzyme from 'enzyme';
 import $stateMocked from '$state';
-import notificationMocked from 'notification';
+import { Notification } from '@contentful/ui-component-library';
 import LocalesListPricingOne, { AddLocaleButton, LocalesAdvice } from './LocalesListPricingOne.es6';
 
 describe('app/settings/locales/LocalesListPricingOne', () => {
@@ -27,26 +27,26 @@ describe('app/settings/locales/LocalesListPricingOne', () => {
   });
 
   describe('AddLocaleButton', () => {
-    beforeEach(() => {
-      $stateMocked.go.mockClear();
-      notificationMocked.error.mockClear();
-    });
     it('if getComputeLocalesUsageForOrganization returns positive value than notification should be shown', () => {
+      const notificationSpy = jest.spyOn(Notification, 'error').mockImplementation(() => {});
       const wrapper = Enzyme.mount(
         <AddLocaleButton getComputeLocalesUsageForOrganization={() => true} />
       );
       wrapper.find('button').simulate('click');
-      expect(notificationMocked.error).toHaveBeenCalledWith(true);
+      expect(Notification.error).toHaveBeenCalledWith(true);
       expect($stateMocked.go).not.toHaveBeenCalled();
+      notificationSpy.mockRestore();
     });
 
     it('if getComputeLocalesUsageForOrganization returns negative value than $state.go should be called', () => {
+      const notificationSpy = jest.spyOn(Notification, 'error').mockImplementation(() => {});
       const wrapper = Enzyme.mount(
         <AddLocaleButton getComputeLocalesUsageForOrganization={() => false} />
       );
       wrapper.find('button').simulate('click');
-      expect(notificationMocked.error).not.toHaveBeenCalled();
+      expect(Notification.error).not.toHaveBeenCalled();
       expect($stateMocked.go).toHaveBeenCalledWith('^.new', undefined, undefined);
+      notificationSpy.mockRestore();
     });
   });
 

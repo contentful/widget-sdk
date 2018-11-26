@@ -9,7 +9,7 @@ import spaceContext from 'spaceContext';
 import logger from 'logger';
 import * as accessChecker from 'access_control/AccessChecker';
 import $state from '$state';
-import notification from 'notification';
+import { Notification } from '@contentful/ui-component-library';
 import { track } from 'analytics/Analytics.es6';
 import * as LD from 'utils/LaunchDarkly';
 import * as Intercom from 'intercom';
@@ -166,11 +166,11 @@ function mountKeyEditor($scope, apiKey, spaceEnvironments) {
 function makeNotifier(title) {
   return {
     saveSuccess: function() {
-      notification.success(`“${title}” saved successfully`);
+      Notification.success(`“${title}” saved successfully`);
     },
 
     saveFail: function(error) {
-      notification.error(`“${title}” could not be saved`);
+      Notification.error(`“${title}” could not be saved`);
       // HTTP 422: Unprocessable entity
       if (get(error, 'statusCode') !== 422) {
         logger.logServerWarn('ApiKey could not be saved', { error });
@@ -178,15 +178,15 @@ function makeNotifier(title) {
     },
 
     saveNoEnvironments: function() {
-      notification.error('At least one environment has to be selected.');
+      Notification.error('At least one environment has to be selected.');
     },
 
     deleteSuccess: function() {
-      notification.success(`“${title}” deleted successfully`);
+      Notification.success(`“${title}” deleted successfully`);
     },
 
     deleteFail: function(error) {
-      notification.error(`“${title}” could not be deleted`);
+      Notification.error(`“${title}” could not be deleted`);
       logger.logServerWarn('ApiKey could not be deleted', { error });
     }
   };

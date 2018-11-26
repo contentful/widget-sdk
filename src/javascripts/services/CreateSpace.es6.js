@@ -1,10 +1,10 @@
 import modalDialog from 'modalDialog';
+import { Notification } from '@contentful/ui-component-library';
 import { getOrganization } from 'services/TokenStore.es6';
 import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
 import createResourceService from 'services/ResourceService.es6';
 import { canCreateSpaceInOrganization } from 'access_control/AccessChecker';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
-import notification from 'notification';
 import {
   getSpaceRatePlans,
   isPOCEnabled,
@@ -32,7 +32,7 @@ export async function showDialog(organizationId) {
   // has no rights to do it.
   // See https://contentful.tpondemand.com/entity/18031-user-without-create-space-permission-can
   if (!organization || !canCreateSpaceInOrganization(organizationId)) {
-    notification.error(
+    Notification.error(
       'You don’t have rights to create a space, plase contact your organization’s administrator.'
     );
   }

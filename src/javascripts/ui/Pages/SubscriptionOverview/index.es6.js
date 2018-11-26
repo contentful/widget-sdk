@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { get } from 'lodash';
 
-import notification from 'notification';
+import { Notification } from '@contentful/ui-component-library';
 import * as ReloadNotification from 'ReloadNotification';
 import { getPlansWithSpaces } from 'account/pricing/PricingDataProvider.es6';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
@@ -109,7 +109,7 @@ class SubscriptionOverview extends React.Component {
       notificationMsg = `${notificationMsg} changed.`;
     }
 
-    notification.success(notificationMsg);
+    Notification.success(notificationMsg);
 
     this.setState({
       upgradedSpace: space.sys.id

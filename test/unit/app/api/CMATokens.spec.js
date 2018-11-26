@@ -170,7 +170,10 @@ describe('app/api/CMATokens', () => {
 
   describe('revoke', () => {
     beforeEach(function() {
-      this.notification = this.mockService('notification');
+      const ComponentLibrary = this.$inject('@contentful/ui-component-library');
+      ComponentLibrary.Notification.success = sinon.stub();
+      ComponentLibrary.Notification.error = sinon.stub();
+      this.Notification = ComponentLibrary.Notification;
       this.init();
     });
 
@@ -188,7 +191,7 @@ describe('app/api/CMATokens', () => {
       this.container.find('pat.revoke.TOKEN-ID.confirm').click();
       this.$flush();
       sinon.assert.calledOnceWith(this.revokeToken, 'TOKEN-ID');
-      sinon.assert.calledOnceWith(this.notification.success, sinon.match('successfully revoked'));
+      sinon.assert.calledOnceWith(this.Notification.success, sinon.match('successfully revoked'));
       this.container.assertNotHasElement('pat.tokenRow.TOKEN-ID');
     });
 
@@ -200,7 +203,7 @@ describe('app/api/CMATokens', () => {
       this.container.find('pat.revoke.TOKEN-ID.confirm').click();
       this.$flush();
       sinon.assert.calledOnceWith(this.revokeToken, 'TOKEN-ID');
-      sinon.assert.calledOnceWith(this.notification.error, sinon.match(/Revoking failed/));
+      sinon.assert.calledOnceWith(this.Notification.error, sinon.match(/Revoking failed/));
     });
   });
 });

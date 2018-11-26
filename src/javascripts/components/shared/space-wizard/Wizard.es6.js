@@ -6,7 +6,7 @@ import SpacePlanSelector from './SpacePlanSelector.es6';
 import SpaceDetails from './SpaceDetails.es6';
 import ConfirmScreen from './ConfirmScreen.es6';
 import ProgressScreen from './ProgressScreen.es6';
-import notification from 'notification';
+import { Notification } from '@contentful/ui-component-library';
 import logger from 'logger';
 
 import { connect } from 'react-redux';
@@ -124,7 +124,7 @@ class Wizard extends React.Component {
       if (action === 'create' && Object.keys(serverValidationErrors).length) {
         navigate(steps[1].id);
       } else {
-        notification.error(
+        Notification.error(
           `Could not ${action} your space. If the problem persists, get in touch with us.`
         );
         onCancel(); // close modal without tracking 'cancel' event
@@ -337,7 +337,7 @@ class Wizard extends React.Component {
         currentStepId: steps[1].id
       });
     } else {
-      notification.error(
+      Notification.error(
         `Could not ${action} your space. If the problem persists, get in touch with us.`
       );
       onCancel(); // close modal without tracking 'cancel' event

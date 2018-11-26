@@ -3,7 +3,7 @@ import $q from '$q';
 import $timeout from '$timeout';
 import * as Filestack from 'services/Filestack.es6';
 import logger from 'logger';
-import notification from 'notification';
+import { Notification } from '@contentful/ui-component-library';
 import * as stringUtils from 'utils/StringUtils.es6';
 import spaceContext from 'spaceContext';
 
@@ -23,7 +23,7 @@ export function open(localeCode) {
   }
 
   return Filestack.pickMultiple().then(createAssetsForFiles, () => {
-    notification.error(
+    Notification.error(
       'An error occurred while uploading multiple assets. ' +
         'Please contact support if this problem persists.'
     );
@@ -38,21 +38,21 @@ export function open(localeCode) {
     return $q.all(files.map(createAssetForFile)).then(
       assets => {
         assets = assets.filter(identity);
-        notification.success('Assets uploaded. Processing…');
+        Notification.success('Assets uploaded. Processing…');
         return $q
           .all(assets.map(processAssetForFile))
           .then(() => {
-            notification.success('Assets processed. Updating…');
+            Notification.success('Assets processed. Updating…');
             return assets;
           })
           .catch(error => {
-            notification.error('Some assets failed to process');
+            Notification.error('Some assets failed to process');
             return $q.reject(error);
           });
       },
       error => {
         logger.logServerWarn('Some assets failed to upload', { error });
-        notification.error('Some assets failed to upload');
+        Notification.error('Some assets failed to upload');
         return $q.reject(error);
       }
     );

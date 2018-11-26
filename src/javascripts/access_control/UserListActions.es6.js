@@ -1,6 +1,6 @@
 import modalDialog from 'modalDialog';
 import Command from 'command';
-import notification from 'notification';
+import { Notification } from '@contentful/ui-component-library';
 import ReloadNotification from 'ReloadNotification';
 import * as stringUtils from 'utils/StringUtils.es6';
 import ListQuery from 'ListQuery';
@@ -53,7 +53,7 @@ export function create(spaceContext, userListHandler, TokenStore) {
             spaceContext.memberships
               .remove(user.membership)
               .then(() => {
-                notification.success('User successfully removed from this space.');
+                Notification.success('User successfully removed from this space.');
                 if (isCurrentUser) {
                   TokenStore.refresh().then(() => go({ path: ['home'] }));
                 }
@@ -91,7 +91,7 @@ export function create(spaceContext, userListHandler, TokenStore) {
             spaceContext.memberships
               .changeRoleTo(user.membership, [scope.input.id])
               .then(() => {
-                notification.success('User role successfully changed.');
+                Notification.success('User role successfully changed.');
               })
               .catch(ReloadNotification.basicErrorHandler)
               .finally(() => {
@@ -148,7 +148,7 @@ export function create(spaceContext, userListHandler, TokenStore) {
         }
       })
       .then(() => {
-        notification.success('Invitations successfully sent.');
+        Notification.success('Invitations successfully sent.');
       });
 
     function fetchUsers(params) {

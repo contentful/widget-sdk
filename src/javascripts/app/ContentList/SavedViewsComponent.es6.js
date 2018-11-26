@@ -10,7 +10,7 @@ import { makeBlankFolder } from 'data/UiConfig/Blanks.es6';
 import openRoleSelector from './RoleSelector.es6';
 
 import { getStore } from 'TheStore';
-import notification from 'notification';
+import { Notification } from '@contentful/ui-component-library';
 import * as random from 'utils/Random.es6';
 
 const LoadView = makeCtor('LoadView');
@@ -126,10 +126,10 @@ export default function({ scopedFolders, loadView, getCurrentView, roleAssignmen
     // We display this notification w/o confirming changes were successfully
     // persisted. If it fails, consecutive notification is presented and the
     // state is reverted.
-    notification.success('View(s) updated successfully.');
+    Notification.success('View(s) updated successfully.');
 
     scopedFolders.set(updated).catch(() => {
-      notification.error('Error while updating saved views. Your changes were reverted.');
+      Notification.error('Error while updating saved views. Your changes were reverted.');
       store.dispatch(RevertFolders);
     });
 

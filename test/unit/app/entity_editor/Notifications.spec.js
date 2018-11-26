@@ -1,7 +1,9 @@
 describe('app/entityEditor/Notifications', () => {
   beforeEach(function() {
     module('contentful/test');
-    this.notification = this.mockService('notification');
+    this.ComponentLibrary = this.$inject('@contentful/ui-component-library');
+    this.ComponentLibrary.Notification.success = sinon.stub();
+    this.ComponentLibrary.Notification.error = sinon.stub();
     const N = this.$inject('app/entity_editor/Notifications.es6');
     this.Notification = N.Notification;
     this.notify = N.makeNotify('Entry', () => 'TITLE');
@@ -20,7 +22,10 @@ describe('app/entityEditor/Notifications', () => {
     it('handles success', function() {
       for (let [inf, _, present] of verbs) {
         this.notify(this.Notification.Success(inf));
-        sinon.assert.calledWith(this.notification.success, `TITLE ${present} successfully`);
+        sinon.assert.calledWith(
+          this.ComponentLibrary.Notification.success,
+          `TITLE ${present} successfully`
+        );
       }
     });
 
@@ -28,7 +33,10 @@ describe('app/entityEditor/Notifications', () => {
       for (let [inf, past, _] of verbs) {
         const error = makeErrorResponse('ERROR ID');
         this.notify(this.Notification.Error(inf, error));
-        sinon.assert.calledWith(this.notification.error, `Error ${past} TITLE (ERROR ID)`);
+        sinon.assert.calledWith(
+          this.ComponentLibrary.Notification.error,
+          `Error ${past} TITLE (ERROR ID)`
+        );
       }
     });
   });
@@ -36,45 +44,63 @@ describe('app/entityEditor/Notifications', () => {
   describe('reverting', () => {
     it('handles success', function() {
       this.notify(this.Notification.Success('revert'));
-      sinon.assert.calledWith(this.notification.success, 'Discarded changes of TITLE successfully');
+      sinon.assert.calledWith(
+        this.ComponentLibrary.Notification.success,
+        'Discarded changes of TITLE successfully'
+      );
     });
 
     it('handles error', function() {
       this.notify(this.Notification.Error('revert'));
-      sinon.assert.calledWith(this.notification.error, 'Error discarding changes of TITLE');
+      sinon.assert.calledWith(
+        this.ComponentLibrary.Notification.error,
+        'Error discarding changes of TITLE'
+      );
     });
   });
 
   describe('deleting', () => {
     it('handles success', function() {
       this.notify(this.Notification.Success('delete'));
-      sinon.assert.calledWith(this.notification.success, 'Entry deleted successfully');
+      sinon.assert.calledWith(
+        this.ComponentLibrary.Notification.success,
+        'Entry deleted successfully'
+      );
     });
 
     it('handles error', function() {
       const error = makeErrorResponse('ERROR');
       this.notify(this.Notification.Error('delete', error));
-      sinon.assert.calledWith(this.notification.error, 'Error deleting TITLE (ERROR)');
+      sinon.assert.calledWith(
+        this.ComponentLibrary.Notification.error,
+        'Error deleting TITLE (ERROR)'
+      );
     });
   });
 
   describe('duplicating', () => {
     it('handles error', function() {
       this.notify(this.Notification.Error('duplicate'));
-      sinon.assert.calledWith(this.notification.error, 'Could not duplicate entry');
+      sinon.assert.calledWith(
+        this.ComponentLibrary.Notification.error,
+        'Could not duplicate entry'
+      );
     });
   });
 
   describe('publishing', () => {
     it('handles success', function() {
       this.notify(this.Notification.Success('publish'));
-      sinon.assert.calledWith(this.notification.success, 'TITLE published successfully');
+      sinon.assert.calledWith(
+        this.ComponentLibrary.Notification.success,
+        'TITLE published successfully'
+      );
     });
 
     it('handles validation failure', function() {
       this.notify(this.Notification.ValidationError());
       sinon.assert.calledWith(
-        this.notification.error,
+        this.ComponentLibrary.Notification.error,
         sinon.match(/Error publishing TITLE: Validation failed. .*/)
       );
     });
@@ -83,7 +109,7 @@ describe('app/entityEditor/Notifications', () => {
       const error = makeErrorResponse('ValidationFailed');
       this.notify(this.Notification.Error('publish', error));
       sinon.assert.calledWith(
-        this.notification.error,
+        this.ComponentLibrary.Notification.error,
         sinon.match(/Error publishing TITLE: Validation failed. .*/)
       );
     });
@@ -92,7 +118,7 @@ describe('app/entityEditor/Notifications', () => {
       const error = makeErrorResponse('VersionMismatch');
       this.notify(this.Notification.Error('publish', error));
       sinon.assert.calledWith(
-        this.notification.error,
+        this.ComponentLibrary.Notification.error,
         'Error publishing TITLE: Can only publish most recent version'
       );
     });
@@ -101,7 +127,7 @@ describe('app/entityEditor/Notifications', () => {
       const error = makeErrorResponse('UnresolvedLinks');
       this.notify(this.Notification.Error('publish', error));
       sinon.assert.calledWith(
-        this.notification.error,
+        this.ComponentLibrary.Notification.error,
         'Error publishing TITLE: Some linked entries are missing.'
       );
     });
@@ -114,14 +140,17 @@ describe('app/entityEditor/Notifications', () => {
         }
       ]);
       this.notify(this.Notification.Error('publish', error));
-      sinon.assert.calledWith(this.notification.error, 'Error publishing TITLE: DETAIL');
+      sinon.assert.calledWith(
+        this.ComponentLibrary.Notification.error,
+        'Error publishing TITLE: DETAIL'
+      );
     });
 
     it('handles other "InvalidEntry" response', function() {
       const error = makeErrorResponse('InvalidEntry', 'Validation error');
       this.notify(this.Notification.Error('publish', error));
       sinon.assert.calledWith(
-        this.notification.error,
+        this.ComponentLibrary.Notification.error,
         sinon.match(/Error publishing TITLE: Validation failed. .*/)
       );
     });
@@ -130,7 +159,7 @@ describe('app/entityEditor/Notifications', () => {
       const error = makeErrorResponse('Other');
       this.notify(this.Notification.Error('publish', error));
       sinon.assert.calledWith(
-        this.notification.error,
+        this.ComponentLibrary.Notification.error,
         'Publishing TITLE has failed due to a server issue. We have been notified.'
       );
     });

@@ -1,5 +1,5 @@
 import { cloneDeep, get, sortBy } from 'lodash';
-import notification from 'notification';
+import { Notification } from '@contentful/ui-component-library';
 import logger from 'logger';
 import $q from '$q';
 import Store from 'data/StreamHashSet';
@@ -183,9 +183,9 @@ function removeDeleted(contentTypes) {
 function handleReloadError(err) {
   const message = get(err, 'body.message');
   if (message) {
-    notification.error(message);
+    Notification.error(message);
   } else {
-    notification.error('Could not get published content types');
+    Notification.error('Could not get published content types');
     logger.logServerError('Could not get published Content Types', { error: err });
   }
   return $q.reject(err);

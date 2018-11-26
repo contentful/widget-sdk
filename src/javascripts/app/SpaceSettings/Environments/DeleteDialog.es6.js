@@ -4,11 +4,11 @@ import { renderToString } from 'react-dom/server';
 import escape from 'utils/escape.es6';
 import { assign } from 'utils/Collections.es6';
 import { makeCtor } from 'utils/TaggedValues.es6';
+import { Notification } from '@contentful/ui-component-library';
 
 import { bindActions, createStore, makeReducer } from 'ui/Framework/Store.es6';
 
 import ModalDialog from 'modalDialog';
-import Notification from 'notification';
 
 /**
  * This module exports a function to open the confirmation dialog to
