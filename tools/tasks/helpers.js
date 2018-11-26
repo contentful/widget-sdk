@@ -10,6 +10,7 @@ const stylus = require('gulp-stylus');
 const nib = require('nib');
 const gulp = require('gulp');
 const sourceMaps = require('gulp-sourcemaps');
+const prefixer = require('autoprefixer-stylus');
 const _ = require('lodash');
 
 module.exports.assertFilesExist = assertFilesExist;
@@ -63,13 +64,18 @@ function buildStylus(sources, dest) {
   dest = gulp.dest(dest);
   return gulp
     .src(sources)
-    .pipe(sourceMaps.init())
     .pipe(
       stylus({
-        use: nib(),
+        use: [
+          nib(),
+          prefixer({
+            browsers: ['last 2 versions']
+          })
+        ],
         sourcemap: { inline: true }
       })
     )
+    .pipe(sourceMaps.init())
     .on('error', passError(dest))
     .pipe(
       mapSourceMapPaths(function(src) {
