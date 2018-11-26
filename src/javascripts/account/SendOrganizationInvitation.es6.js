@@ -95,7 +95,8 @@ function invite({ emails, orgRole, spaceMemberships, orgId }) {
 }
 
 function inviteToSpaces(email, spaceMemberships) {
-  const memberships = Object.entries(spaceMemberships);
+  const memberships = spaceMemberships ? Object.entries(spaceMemberships) : [];
+
   const invitations = memberships.map(async ([spaceId, roles]) => {
     const spaceEndpoint = createSpaceEndpoint(spaceId);
     const inviteToSpace = createSpaceRepo(spaceEndpoint).invite;
