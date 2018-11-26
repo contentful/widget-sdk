@@ -80,11 +80,8 @@ module.exports = function(fileInfo, { jscodeshift: j }) {
     ast.find(j.ArrowFunctionExpression).length === 1 || ast.find(j.FunctionExpression).length === 1;
   ast
     .find(j.CallExpression, { callee: { type: 'Identifier', name: 'h' } })
-    .replaceWith(
-      ({ node }) =>
-        functionWrapper
-          ? replaceHCall(j)(node)
-          : j.arrowFunctionExpression([], replaceHCall(j)(node))
+    .replaceWith(({ node }) =>
+      functionWrapper ? replaceHCall(j)(node) : j.arrowFunctionExpression([], replaceHCall(j)(node))
     );
   ast
     .find(j.ImportDeclaration, { specifiers: [{ imported: { name: 'h' } }] })

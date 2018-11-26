@@ -65,12 +65,11 @@ class WebhookActivityLog extends React.Component {
                 <TableCell colSpan="3">Loading logs…</TableCell>
               </TableRow>
             )}
-            {!loading &&
-              pageCalls.length < 1 && (
-                <TableRow>
-                  <TableCell colSpan="3">No webhook calls yet!</TableCell>
-                </TableRow>
-              )}
+            {!loading && pageCalls.length < 1 && (
+              <TableRow>
+                <TableCell colSpan="3">No webhook calls yet!</TableCell>
+              </TableRow>
+            )}
             {!loading &&
               pageCalls.length > 0 &&
               pageCalls.map(call => {

@@ -70,11 +70,11 @@ angular
     '$urlMatcherFactoryProvider',
     $urlMatcherFactoryProvider => {
       /*
-   * We need to define a dumb type PathSuffix here and use that to
-   * represent path suffixes for the Space Settings and Account
-   * views, because otherwise UI-Router treats them as regular
-   * URL parameters and does nasty things like escaping slashes.
-   */
+       * We need to define a dumb type PathSuffix here and use that to
+       * represent path suffixes for the Space Settings and Account
+       * views, because otherwise UI-Router treats them as regular
+       * URL parameters and does nasty things like escaping slashes.
+       */
       $urlMatcherFactoryProvider.type('PathSuffix', {
         encode: function(val) {
           return val !== null ? val.toString() : val;

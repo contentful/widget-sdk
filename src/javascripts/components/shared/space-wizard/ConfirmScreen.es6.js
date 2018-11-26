@@ -150,14 +150,13 @@ class ConfirmScreen extends React.Component {
                       )}
                     </Fragment>
                   )}
-                  {!isPartnerSpacePlan &&
-                    selectedPlan.price === 0 && (
-                      <Fragment>
-                        You are about to create a free space for the organization{' '}
-                        <em>{organization.name}</em> and it won&apos;t change your
-                        organization&apos;s subscription.{' '}
-                      </Fragment>
-                    )}
+                  {!isPartnerSpacePlan && selectedPlan.price === 0 && (
+                    <Fragment>
+                      You are about to create a free space for the organization{' '}
+                      <em>{organization.name}</em> and it won&apos;t change your organization&apos;s
+                      subscription.{' '}
+                    </Fragment>
+                  )}
                   {!isPartnerSpacePlan && (
                     <Fragment>
                       The space’s name will be <em>{name}</em>
@@ -203,34 +202,32 @@ class ConfirmScreen extends React.Component {
                       and will increase
                     </Fragment>
                   )}
-                  {currentPlan.price !== 0 &&
-                    currentPlan.price >= selectedPlan.price && (
-                      <Fragment>
-                        The price of this space will change from{' '}
-                        <strong>
-                          <Price value={currentPlan.price} />
-                        </strong>{' '}
-                        to{' '}
-                        <strong>
-                          <Price value={selectedPlan.price} />
-                        </strong>{' '}
-                        and will reduce
-                      </Fragment>
-                    )}
-                  {currentPlan.price !== 0 &&
-                    currentPlan.price < selectedPlan.price && (
-                      <Fragment>
-                        The price of this space will change from{' '}
-                        <strong>
-                          <Price value={currentPlan.price} />
-                        </strong>{' '}
-                        to{' '}
-                        <strong>
-                          <Price value={selectedPlan.price} />
-                        </strong>{' '}
-                        and will increase
-                      </Fragment>
-                    )}
+                  {currentPlan.price !== 0 && currentPlan.price >= selectedPlan.price && (
+                    <Fragment>
+                      The price of this space will change from{' '}
+                      <strong>
+                        <Price value={currentPlan.price} />
+                      </strong>{' '}
+                      to{' '}
+                      <strong>
+                        <Price value={selectedPlan.price} />
+                      </strong>{' '}
+                      and will reduce
+                    </Fragment>
+                  )}
+                  {currentPlan.price !== 0 && currentPlan.price < selectedPlan.price && (
+                    <Fragment>
+                      The price of this space will change from{' '}
+                      <strong>
+                        <Price value={currentPlan.price} />
+                      </strong>{' '}
+                      to{' '}
+                      <strong>
+                        <Price value={selectedPlan.price} />
+                      </strong>{' '}
+                      and will increase
+                    </Fragment>
+                  )}
                   <span>
                     {' '}
                     the total price of the spaces in your organization to{' '}

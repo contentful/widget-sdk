@@ -24,60 +24,58 @@ function Sidebar({ grandTotal, spacePlans, orgId, isOrgOwner, isOrgBillable, bas
 
   return (
     <div className="entity-sidebar" data-test-id="subscription-page.sidebar">
-      {isOrgBillable &&
-        !isEnterprisePlan(basePlan) && (
-          <Fragment>
-            <h2 className="entity-sidebar__heading">Grand total</h2>
-            <p data-test-id="subscription-page.sidebar.grand-total">
-              Your grand total is <Price value={grandTotal} style={{ fontWeight: 'bold' }} /> per
-              month.
+      {isOrgBillable && !isEnterprisePlan(basePlan) && (
+        <Fragment>
+          <h2 className="entity-sidebar__heading">Grand total</h2>
+          <p data-test-id="subscription-page.sidebar.grand-total">
+            Your grand total is <Price value={grandTotal} style={{ fontWeight: 'bold' }} /> per
+            month.
+          </p>
+          {isOrgOwner && (
+            <p style={{ marginBottom: '28px' }}>
+              <Icon name="invoice" style={iconStyle} />
+              <a
+                className="text-link"
+                href={href(invoices(orgId))}
+                data-test-id="subscription-page.sidebar.invoice-link">
+                View invoices
+              </a>
             </p>
-            {isOrgOwner && (
-              <p style={{ marginBottom: '28px' }}>
-                <Icon name="invoice" style={iconStyle} />
-                <a
-                  className="text-link"
-                  href={href(invoices(orgId))}
-                  data-test-id="subscription-page.sidebar.invoice-link">
-                  View invoices
-                </a>
-              </p>
-            )}
-            <div className="note-box--info">
-              <p>
-                Note that the monthly invoice amount might deviate from the total shown above. This
-                happens when you hit overages or make changes to your subscription during a billing
-                cycle.
-              </p>
-              <p>
-                <Icon name="invoice" style={iconStyle} />
-                <a
-                  className="text-link"
-                  href={href(invoices(orgId))}
-                  data-test-id="subscription-page.sidebar.invoice-link">
-                  View invoices
-                </a>
-              </p>
-            </div>
-          </Fragment>
-        )}
-      {!isOrgBillable &&
-        isOrgOwner && (
-          <Fragment>
-            <h2 className="entity-sidebar__heading">Your payment details</h2>
+          )}
+          <div className="note-box--info">
             <p>
-              You need to provide us with your billing address and credit card details before
-              creating paid spaces or adding users beyond the free limit.
+              Note that the monthly invoice amount might deviate from the total shown above. This
+              happens when you hit overages or make changes to your subscription during a billing
+              cycle.
             </p>
-            <Icon name="invoice" style={iconStyle} />
-            <a
-              className="text-link"
-              href={href(billing(orgId))}
-              data-test-id="subscription-page.sidebar.add-payment-link">
-              Enter payment details
-            </a>
-          </Fragment>
-        )}
+            <p>
+              <Icon name="invoice" style={iconStyle} />
+              <a
+                className="text-link"
+                href={href(invoices(orgId))}
+                data-test-id="subscription-page.sidebar.invoice-link">
+                View invoices
+              </a>
+            </p>
+          </div>
+        </Fragment>
+      )}
+      {!isOrgBillable && isOrgOwner && (
+        <Fragment>
+          <h2 className="entity-sidebar__heading">Your payment details</h2>
+          <p>
+            You need to provide us with your billing address and credit card details before creating
+            paid spaces or adding users beyond the free limit.
+          </p>
+          <Icon name="invoice" style={iconStyle} />
+          <a
+            className="text-link"
+            href={href(billing(orgId))}
+            data-test-id="subscription-page.sidebar.add-payment-link">
+            Enter payment details
+          </a>
+        </Fragment>
+      )}
       {anyInaccessibleSpaces && (
         <Fragment>
           <h2 className="entity-sidebar__heading">Spaces without permission</h2>

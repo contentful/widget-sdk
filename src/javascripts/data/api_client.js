@@ -64,9 +64,9 @@ angular
       };
 
       /*
-   * TODO (mudit): Switch from this deprecated end point
-   * once contentful-management.js is updated
-   */
+       * TODO (mudit): Switch from this deprecated end point
+       * once contentful-management.js is updated
+       */
       Client.prototype.getPublishedEntries = function(query) {
         return this._getResources('public/entries', query);
       };

@@ -36,23 +36,23 @@ angular.module('contentful').directive('cfSearchResultsPaginator', [
       let SET_LENGTH = scope.getNoOfPages();
 
       /*
-     * no of shown pages should be atleast 5
-     * to accomodate first, current, one before, one after
-     * and last page numbers
-     */
+       * no of shown pages should be atleast 5
+       * to accomodate first, current, one before, one after
+       * and last page numbers
+       */
       SET_LENGTH = SET_LENGTH > 5 ? SET_LENGTH : 5;
 
       /*
-     * This is the number of pages we show before and after
-     * the current page
-     * We subtract two from SET_LENGTH to compensate for
-     * the always present 1st and last pages.
-     * The remaining, we divide by 2.
-     * For example, for a SET_LENGTH of 7, we must show
-     * the first page, 2 before current page, current page,
-     * 2 after current page and last page (total 7).
-     * The 2 before and after, or the DELTA is floor(2.5) = 2
-     */
+       * This is the number of pages we show before and after
+       * the current page
+       * We subtract two from SET_LENGTH to compensate for
+       * the always present 1st and last pages.
+       * The remaining, we divide by 2.
+       * For example, for a SET_LENGTH of 7, we must show
+       * the first page, 2 before current page, current page,
+       * 2 after current page and last page (total 7).
+       * The 2 before and after, or the DELTA is floor(2.5) = 2
+       */
       const DELTA = Math.floor((SET_LENGTH - 2) / 2);
 
       // prepare options for the select
@@ -65,19 +65,19 @@ angular.module('contentful').directive('cfSearchResultsPaginator', [
       updateLabels();
 
       /*
-     * To see how this works, lets assume the following:
-     * pageCount = 10, activePage = 1, DELTA = 2, SET_LENGTH = 7, mid = 5
-     *
-     * It first builds a list [1, -1, 0, 1, 2, 3, 10]
-     * then filters and sorts it down to [1, 2, 3, 10]
-     * Since length of this set is less than SET_LENGTH it bumps the page
-     * by one (above or below based on mid), and grows the result set
-     * till it has SET_LENGTH elements
-     * So, the recursive calls look like:
-     * getRange (10, 2) => [1, 2, 3, 4, 10]
-     * getRange (10, 3) => [1, 2, 3, 4, 5, 10]
-     * getRange (10, 4) => [1, 2, 3, 4, 5, 6, 10] <- this is returned
-     */
+       * To see how this works, lets assume the following:
+       * pageCount = 10, activePage = 1, DELTA = 2, SET_LENGTH = 7, mid = 5
+       *
+       * It first builds a list [1, -1, 0, 1, 2, 3, 10]
+       * then filters and sorts it down to [1, 2, 3, 10]
+       * Since length of this set is less than SET_LENGTH it bumps the page
+       * by one (above or below based on mid), and grows the result set
+       * till it has SET_LENGTH elements
+       * So, the recursive calls look like:
+       * getRange (10, 2) => [1, 2, 3, 4, 10]
+       * getRange (10, 3) => [1, 2, 3, 4, 5, 10]
+       * getRange (10, 4) => [1, 2, 3, 4, 5, 6, 10] <- this is returned
+       */
       function getRange(pageCount, activePage) {
         if (pageCount <= SET_LENGTH) {
           return _.range(1, pageCount + 1);

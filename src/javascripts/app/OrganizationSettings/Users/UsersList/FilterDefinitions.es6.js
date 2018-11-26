@@ -1,6 +1,10 @@
 import { orgRoles } from '../UserDetail/OrgRoles.es6';
 import { without, set, cloneDeep } from 'lodash';
-import { getRoleOptions, getSpaceRoleOptions, SPACE_ROLE_FILTER_KEYS } from './UserListFiltersHelpers.es6';
+import {
+  getRoleOptions,
+  getSpaceRoleOptions,
+  SPACE_ROLE_FILTER_KEYS
+} from './UserListFiltersHelpers.es6';
 
 /**
  * This module contains the definitions of the filters available in the (org) User list page.

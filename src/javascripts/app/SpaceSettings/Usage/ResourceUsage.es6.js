@@ -27,8 +27,8 @@ export const ResourceUsage = ServicesConsumer({
       return unitOfMeasure
         ? shortenStorageUnit(value, unitOfMeasure)
         : abbreviate
-          ? shorten(value, true)
-          : value.toLocaleString('en-US');
+        ? shorten(value, true)
+        : value.toLocaleString('en-US');
     };
 
     // do not render if maximum is zero (i.e. roles in free spaces)
@@ -53,11 +53,11 @@ export const ResourceUsage = ServicesConsumer({
             {limits.maximum
               ? ` out of ${toResourceFormat(limits.maximum, abbreviateLimit)}`
               : limits.included
-                ? resourceIncludedLimitReached(resource)
-                  ? ` (${toResourceFormat(limits.included)} free +
+              ? resourceIncludedLimitReached(resource)
+                ? ` (${toResourceFormat(limits.included)} free +
                     ${toResourceFormat(usage - limits.included)} paid)`
-                  : ` out of ${toResourceFormat(limits.included, abbreviateLimit)} included`
-                : ''}
+                : ` out of ${toResourceFormat(limits.included, abbreviateLimit)} included`
+              : ''}
           </span>
         </div>
         {limits.maximum && <ProgressBar current={usage} maximum={limits.maximum} />}

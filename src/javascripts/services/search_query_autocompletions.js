@@ -369,14 +369,14 @@ angular.module('contentful').factory('searchQueryAutocompletions', [
       return op === '<='
         ? '[lte]'
         : op === '<'
-          ? '[lt]'
-          : op === '>='
-            ? '[gte]'
-            : op === '>'
-              ? '[gt]'
-              : op === '!='
-                ? '[ne]'
-                : '';
+        ? '[lt]'
+        : op === '>='
+        ? '[gte]'
+        : op === '>'
+        ? '[gt]'
+        : op === '!='
+        ? '[ne]'
+        : '';
     }
 
     function apiNameOrId(field) {

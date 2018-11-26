@@ -4,13 +4,13 @@ angular.module('contentful').factory('contentfulClient', [
   'require',
   require => {
     /*
-   * This module is a fork of https://github.com/contentful/contentful.js which allows us to use Contentful
-   * as if it were an external service. As such it might not reflect other patterns present throughout the app.
-   *
-   * It's been modified to use Angular's $http for requests and with some smaller features removed.
-   *
-   * It's also been modified to make use of the CMA instead, with the X-Contentful-Skip-Transformation header.
-  */
+     * This module is a fork of https://github.com/contentful/contentful.js which allows us to use Contentful
+     * as if it were an external service. As such it might not reflect other patterns present throughout the app.
+     *
+     * It's been modified to use Angular's $http for requests and with some smaller features removed.
+     *
+     * It's also been modified to make use of the CMA instead, with the X-Contentful-Skip-Transformation header.
+     */
 
     var $http = require('$http');
     var $q = require('$q');

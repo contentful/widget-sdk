@@ -56,22 +56,20 @@ class TemplateSelector extends React.Component {
             </div>
           </div>
         )}
-        {!isPending &&
-          !error && (
-            <div className={templatesListClassName}>
-              <TemplatesList
-                templates={templatesList}
-                selectedTemplate={selectedTemplate}
-                onSelect={template => this.selectTemplate(template)}
-              />
-            </div>
-          )}
-        {!isPending &&
-          error && (
-            <div className="note-box--warning">
-              <p>Could not fetch space templates.</p>
-            </div>
-          )}
+        {!isPending && !error && (
+          <div className={templatesListClassName}>
+            <TemplatesList
+              templates={templatesList}
+              selectedTemplate={selectedTemplate}
+              onSelect={template => this.selectTemplate(template)}
+            />
+          </div>
+        )}
+        {!isPending && error && (
+          <div className="note-box--warning">
+            <p>Could not fetch space templates.</p>
+          </div>
+        )}
       </div>
     );
   }

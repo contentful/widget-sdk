@@ -117,9 +117,7 @@ const DICTIONARY = {
   open: [...DIALOGS],
   cancel: [...DIALOGS]
 };
-const OTHER_ACTIONS = [
-  'paste'
-];
+const OTHER_ACTIONS = ['paste'];
 const ALLOWED_EVENTS = reduce(
   DICTIONARY,
   (result, names, category) => [...result, ...names.map(name => category + name)],
