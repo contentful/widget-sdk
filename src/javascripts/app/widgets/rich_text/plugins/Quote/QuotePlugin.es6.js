@@ -17,7 +17,7 @@ const newPlugin = (defaultType, tagName, hotkey) => ({
     },
     onKeyDown: (e, change) => {
       if (isHotkey(hotkey, e)) {
-        const isActive = applyChange(change, type);
+        const isActive = applyChange(change);
         const actionName = isActive ? 'insert' : 'remove';
         logAction(actionName, { origin: actionOrigin.SHORTCUT, nodeType: type });
         return false;
@@ -29,6 +29,6 @@ const newPlugin = (defaultType, tagName, hotkey) => ({
   };
 };
 
-const QuotePlugin = newPlugin(BLOCKS.QUOTE, 'blockquote', 'cmd+shift+1');
+const QuotePlugin = newPlugin(BLOCKS.QUOTE, 'blockquote', ['ctrl+shift+1', 'cmd+shift+1']);
 
 export default QuotePlugin;

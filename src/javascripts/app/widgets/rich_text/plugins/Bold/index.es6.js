@@ -8,7 +8,7 @@ export const BoldPlugin = ({ richTextAPI: { logAction } }) => {
   return markPlugin({
     type: MARKS.BOLD,
     tagName: 'b',
-    hotkey: 'cmd+b',
+    hotkey: ['cmd+b', 'ctrl+b'],
     logAction
   });
 };

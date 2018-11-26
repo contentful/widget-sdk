@@ -8,7 +8,7 @@ export const UnderlinedPlugin = ({ richTextAPI: { logAction } }) => {
   return markPlugin({
     type: MARKS.UNDERLINE,
     tagName: 'u',
-    hotkey: 'cmd+u',
+    hotkey: ['cmd+u', 'ctrl+u'],
     logAction
   });
 };

@@ -8,7 +8,7 @@ export const ItalicPlugin = ({ richTextAPI: { logAction } }) => {
   return markPlugin({
     type: MARKS.ITALIC,
     tagName: 'em',
-    hotkey: 'cmd+i',
+    hotkey: ['cmd+i', 'ctrl+i'],
     logAction
   });
 };

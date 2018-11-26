@@ -121,7 +121,9 @@ describe('Toolbar', () => {
         ...parseHotkey(keys, { byKey: true }),
         ...parseHotkey(keys)
       };
+
       event.key = upperFirst(event.key);
+
       this.editorNode.simulate('keyDown', event);
     };
     this.editorApi.pressEnter = this.editorApi.pressKeys.bind(null, 'enter');
@@ -450,46 +452,55 @@ describe('Toolbar', () => {
   });
 
   describe('Quote', () => {
-    const config = {
-      forToolbarIcon: BLOCKS.QUOTE,
-      forShortcut: 'cmd+shift+1'
-    };
+    const configs = [
+      {
+        forToolbarIcon: BLOCKS.QUOTE,
+        forShortcut: 'ctrl+shift+1'
+      },
 
-    describeAction(`insert quote`, config, ({ actionOrigin }) => {
-      beforeEach(async function() {
-        await this.setup()
-          .editor.triggerAction()
-          .typeText('a quote');
+      {
+        forToolbarIcon: BLOCKS.QUOTE,
+        forShortcut: 'cmd+shift+1'
+      }
+    ];
+
+    configs.forEach(config => {
+      describeAction(`insert quote`, config, ({ actionOrigin }) => {
+        beforeEach(async function() {
+          await this.setup()
+            .editor.triggerAction()
+            .typeText('a quote');
+        });
+
+        itUpdatesFieldValue(
+          document(
+            block(BLOCKS.QUOTE, {}, block(BLOCKS.PARAGRAPH, {}, text('a quote'))),
+            EMPTY_PARAGRAPH
+          )
+        );
+
+        itLogsAction('insert', {
+          origin: actionOrigin,
+          nodeType: BLOCKS.QUOTE
+        });
       });
 
-      itUpdatesFieldValue(
-        document(
-          block(BLOCKS.QUOTE, {}, block(BLOCKS.PARAGRAPH, {}, text('a quote'))),
-          EMPTY_PARAGRAPH
-        )
-      );
+      describeAction(`remove quote`, config, ({ actionOrigin }) => {
+        beforeEach(async function() {
+          const { editor } = this.setup();
+          await editor.triggerAction();
 
-      itLogsAction('insert', {
-        origin: actionOrigin,
-        nodeType: BLOCKS.QUOTE
-      });
-    });
+          this.props.onAction.resetHistory();
 
-    describeAction(`remove quote`, config, ({ actionOrigin }) => {
-      beforeEach(async function() {
-        const { editor } = this.setup();
-        await editor.triggerAction();
+          await editor.triggerAction();
+        });
 
-        this.props.onAction.reset();
+        itUpdatesFieldValue(document(EMPTY_PARAGRAPH, EMPTY_PARAGRAPH));
 
-        await editor.triggerAction();
-      });
-
-      itUpdatesFieldValue(document(EMPTY_PARAGRAPH, EMPTY_PARAGRAPH));
-
-      itLogsAction('remove', {
-        origin: actionOrigin,
-        nodeType: BLOCKS.QUOTE
+        itLogsAction('remove', {
+          origin: actionOrigin,
+          nodeType: BLOCKS.QUOTE
+        });
       });
     });
 
@@ -502,9 +513,13 @@ describe('Toolbar', () => {
 
   describe('Marks', () => {
     [
+      { mark: MARKS.BOLD, shortcut: 'ctrl+b' },
       { mark: MARKS.BOLD, shortcut: 'cmd+b' },
+      { mark: MARKS.CODE, shortcut: 'ctrl+/' },
       { mark: MARKS.CODE, shortcut: 'cmd+/' },
+      { mark: MARKS.ITALIC, shortcut: 'ctrl+i' },
       { mark: MARKS.ITALIC, shortcut: 'cmd+i' },
+      { mark: MARKS.UNDERLINE, shortcut: 'ctrl+u' },
       { mark: MARKS.UNDERLINE, shortcut: 'cmd+u' }
     ].forEach(testMark);
   });
@@ -535,7 +550,7 @@ describe('Toolbar', () => {
         const { editor } = this.setup();
         await editor.triggerAction();
 
-        this.props.onAction.reset();
+        this.props.onAction.resetHistory();
 
         await editor.triggerAction().typeText('a text');
       });
@@ -558,15 +573,15 @@ describe('Toolbar', () => {
 
   describe('headings', () => {
     const headings = [
-      { heading: BLOCKS.HEADING_1, shortcut: 'cmd+opt+1' },
-      { heading: BLOCKS.HEADING_2, shortcut: 'cmd+opt+2' },
-      { heading: BLOCKS.HEADING_3, shortcut: 'cmd+opt+3' },
-      { heading: BLOCKS.HEADING_4, shortcut: 'cmd+opt+4' },
-      { heading: BLOCKS.HEADING_5, shortcut: 'cmd+opt+5' },
-      { heading: BLOCKS.HEADING_6, shortcut: 'cmd+opt+6' }
+      BLOCKS.HEADING_1,
+      BLOCKS.HEADING_2,
+      BLOCKS.HEADING_3,
+      BLOCKS.HEADING_4,
+      BLOCKS.HEADING_5,
+      BLOCKS.HEADING_6
     ];
 
-    headings.forEach(function({ heading, shortcut }, index) {
+    headings.forEach(function(heading, index) {
       it(`inserts ${heading}`, async function({ editor }) {
         const dropdown = getWithId(this.wrapper, 'toolbar-heading-toggle');
         dropdown.simulate('mousedown');
@@ -579,8 +594,25 @@ describe('Toolbar', () => {
 
         expect(this.field.getValue()).toEqual(document(block(heading, {}, text('a'))));
       });
+    });
 
-      it(`inserts ${heading} with shortcut`, async function({ editor }) {
+    const headingShortcuts = [
+      { heading: BLOCKS.HEADING_1, shortcut: 'ctrl+opt+1' },
+      { heading: BLOCKS.HEADING_1, shortcut: 'cmd+opt+1' },
+      { heading: BLOCKS.HEADING_2, shortcut: 'ctrl+opt+2' },
+      { heading: BLOCKS.HEADING_2, shortcut: 'cmd+opt+2' },
+      { heading: BLOCKS.HEADING_3, shortcut: 'ctrl+opt+3' },
+      { heading: BLOCKS.HEADING_3, shortcut: 'cmd+opt+3' },
+      { heading: BLOCKS.HEADING_4, shortcut: 'ctrl+opt+4' },
+      { heading: BLOCKS.HEADING_4, shortcut: 'cmd+opt+4' },
+      { heading: BLOCKS.HEADING_5, shortcut: 'ctrl+opt+5' },
+      { heading: BLOCKS.HEADING_5, shortcut: 'cmd+opt+5' },
+      { heading: BLOCKS.HEADING_6, shortcut: 'ctrl+opt+6' },
+      { heading: BLOCKS.HEADING_6, shortcut: 'cmd+opt+6' }
+    ];
+
+    headingShortcuts.forEach(function({ heading, shortcut }) {
+      it(`inserts ${heading} with ${shortcut}`, async function({ editor }) {
         await editor.pressKeys(shortcut).typeText('a');
 
         expect(this.field.getValue()).toEqual(document(block(heading, {}, text('a'))));
@@ -627,13 +659,13 @@ function describeAction(description, { forShortcut, forToolbarIcon }, setupTests
 }
 
 function itUpdatesFieldValue(expectedValue) {
-  it('updates field value', async function() {
+  it('updates field value', function() {
     expect(this.field.getValue()).toEqual(expectedValue);
   });
 }
 
 function itLogsAction(action, data) {
-  it('invokes `props.onAction`', async function() {
+  it('invokes `props.onAction`', function() {
     sinon.assert.calledOnceWith(this.props.onAction, action, data);
   });
 }

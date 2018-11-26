@@ -26,7 +26,6 @@ export const isSelectionInQuote = change => {
  * Toggles formatting between block quote and a plain paragraph.
  *
  * @param {slate.Change} change
- * @param {stirng} type
  * @returns {boolean} New toggle state after the change.
  */
 export const applyChange = change => {
