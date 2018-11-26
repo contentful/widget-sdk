@@ -1,8 +1,7 @@
 // Width of left-hand main content.
 // We only show the field collaborators on the right
 $entity-editor__field-width--small = 100%
-$entity-editor__field-width--large = 80%
-$entity-editor__breakpoint = 1281px
+$entity-editor__field-max-width = 800px
 
 .entity-editor__field-group
   display: block
@@ -34,6 +33,7 @@ $entity-editor__breakpoint = 1281px
   line-height: 24px
   color: $colors.text-light
   width: $entity-editor__field-width--small
+  max-width: $entity-editor__field-max-width
 
   label
     display: flex
@@ -72,6 +72,7 @@ $entity-editor__breakpoint = 1281px
 
 .entity-editor__control
   width: $entity-editor__field-width--small
+  max-width: $entity-editor__field-max-width
 
 .entity-editor__control-error
   list-style-type: disc
@@ -109,7 +110,3 @@ $entity-editor__breakpoint = 1281px
     > img
       display: block
       height: $image-size
-
-@media(min-width $entity-editor__breakpoint)
-   .entity-editor__control, .entity-editor__field-heading, .entity-editor__field-hint
-     width: $entity-editor__field-width--large
