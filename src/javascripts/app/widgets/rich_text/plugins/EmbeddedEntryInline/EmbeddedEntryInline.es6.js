@@ -66,7 +66,7 @@ class EmbeddedEntryInline extends React.Component {
             </DropdownListItem>
           </React.Fragment>
         }>
-        {entityTitle}
+        {entityTitle || 'Untitled'}
       </InlineReferenceCard>
     );
   }
