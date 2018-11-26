@@ -53,6 +53,7 @@ pipeline {
             sh 'npm install && npm run build'
             withCredentials([
               string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN'),
+              string(credentialsId: 'GITHUB_WEBHOOK_TOKEN', variable: 'GITHUB_WEBHOOK_TOKEN'),
               usernamePassword(credentialsId: 'jenkins-ba', passwordVariable: 'JENKINS_PWD', usernameVariable: 'JENKINS_USERNAME')
             ]){
               sh 'node built/src/cli/index.js'
