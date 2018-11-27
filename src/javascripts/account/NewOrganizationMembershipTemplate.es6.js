@@ -1,10 +1,11 @@
+import React from 'react';
 import { includes, negate, isArray } from 'lodash';
 import { h } from 'ui/Framework';
 import { assign } from 'utils/Collections.es6';
 import { match, isTag } from 'utils/TaggedValues.es6';
 import SuccessIcon from 'svg/checkmark-alt.es6';
-import ErrorIcon from 'svg/error.es6';
 import pluralize from 'pluralize';
+import Icon from 'ui/Components/Icon.es6';
 
 const orgRoles = [
   {
@@ -305,50 +306,66 @@ export function progressMessage(emails, successfulOrgInvitations) {
   ]);
 }
 
-export function errorMessage(failedEmails, restart) {
+export function errorMessage(useLegacy, failedEmails, restart) {
   const userString = failedEmails.length > 1 ? 'users' : 'user';
+  const invitationString = failedEmails.length > 1 ? 'invitations' : 'invitation';
+  let copy;
 
-  return h('', [
-    h('.note-box--warning', [
-      h('h3', ['Whoops! something went wrong']),
-      h('p', [
-        `The process failed for the following ${userString}. Please try to `,
-        h(
-          'a',
-          {
-            onClick: () => restart(failedEmails)
-          },
-          ['invite them again']
-        ),
-        '.'
-      ])
-    ]),
-    h(
-      'ul.pill-list.u-separator--small',
-      failedEmails.map(email => {
-        return h('li.pill-item.pill-item--warning', [
-          h('span.pill-item__text', [email]),
-          h(ErrorIcon)
-        ]);
-      })
-    )
-  ]);
+  if (useLegacy) {
+    copy = (
+      <React.Fragment>
+        <h3>Whoops! something went wrong</h3>
+        <p>
+          The process failed for the following {userString}. Please try to{' '}
+          <a onClick={() => restart(failedEmails)}>invite them again</a>.
+        </p>
+      </React.Fragment>
+    );
+  } else {
+    copy = (
+      <React.Fragment>
+        <h3>
+          {failedEmails.length} {invitationString} didnʼt send
+        </h3>
+        <p>
+          These were either existing users or existing invitations.{' '}
+          <a onClick={() => restart(failedEmails)}>Go back</a>.
+        </p>
+      </React.Fragment>
+    );
+  }
+
+  return (
+    <div>
+      <div className="note-box--warning">{copy}</div>
+      <ul className="pill-list u-separator--small">
+        {failedEmails.map(email => (
+          <li key={email} className="pill-item pill-item--warning">
+            <span className="pill-item__text">{email}</span>
+            <Icon name="error" />
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
-export function successMessage(emails, successfulOrgInvitations, restart, goToList) {
-  const userString = emails.length > 1 ? 'users have' : 'user has';
+export function successMessage(successfulOrgInvitations, restart, goToList) {
+  const userString = successfulOrgInvitations.length > 1 ? 'users have' : 'user has';
 
   return h('', [
     h('.note-box--success', [
-      h('h3', [`Yay! ${emails.length} ${userString} been invited to your organization`]),
+      h('h3', [
+        `Yay! ${successfulOrgInvitations.length} ${userString} been invited to your organization`
+      ]),
       h('p', [
-        'They should have received an email to confirm the invitation in their inbox. Go ahead and ',
+        'They should receive an invitation email soon. ',
         h(
           'a',
           {
             onClick: () => restart()
           },
-          ['invite more users']
+          ['Invite more users']
         ),
         ' or ',
         h(

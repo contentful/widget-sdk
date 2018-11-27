@@ -7,6 +7,7 @@ import {
   createOrgMembership
 } from 'access_control/OrganizationMembershipRepository.es6';
 import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
+import * as featureFlags from 'featureFlags.es6';
 
 const progressBus = K.createStreamBus();
 
@@ -22,8 +23,6 @@ const progressBus = K.createStreamBus();
  */
 export const progress$ = progressBus.stream;
 
-const FEATURE_FLAG = 'feature-bv-09-2018-invitations';
-
 /**
  * @name account/InviteToOrganization#invite
  * @description
@@ -37,7 +36,7 @@ const FEATURE_FLAG = 'feature-bv-09-2018-invitations';
  * @returns {Promise}
  */
 export async function sendInvites({ emails, orgRole, supressInvitation, spaceMemberships, orgId }) {
-  const useLegacy = !(await getCurrentVariation(FEATURE_FLAG));
+  const useLegacy = !(await getCurrentVariation(featureFlags.BV_USER_INVITATIONS));
 
   if (useLegacy) {
     return createOrgMemberships({ emails, orgRole, supressInvitation, spaceMemberships, orgId });

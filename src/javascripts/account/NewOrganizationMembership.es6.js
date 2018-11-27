@@ -30,6 +30,8 @@ import {
   successMessage
 } from 'account/NewOrganizationMembershipTemplate.es6';
 import createResourceService from 'services/ResourceService.es6';
+import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
+import * as featureFlags from 'featureFlags.es6';
 
 // Start: For Next Steps for a TEA space (a space created using the example space template)
 import { track, updateUserInSegment } from 'analytics/Analytics.es6';
@@ -111,6 +113,13 @@ export default function($scope) {
     state = assign(state, {
       spaces: orgRoles,
       status: Idle()
+    });
+    rerender();
+
+    // 3rd step - get feature flag for invitations
+    const useLegacy = !(yield getCurrentVariation(featureFlags.BV_USER_INVITATIONS));
+    state = assign(state, {
+      useLegacy
     });
     rerender();
   });
@@ -422,13 +431,12 @@ function render(state, actions) {
           [
             match(state.status, {
               [Success]: () =>
-                successMessage(
-                  state.emails,
-                  state.successfulOrgInvitations,
-                  actions.restart,
-                  actions.goToList
-                ),
-              [Failure]: () => errorMessage(state.failedOrgInvitations, actions.restart),
+                successMessage(state.successfulOrgInvitations, actions.restart, actions.goToList),
+              [Failure]: () =>
+                h('', [
+                  errorMessage(state.useLegacy, state.failedOrgInvitations, actions.restart),
+                  successMessage(state.successfulOrgInvitations, actions.restart, actions.goToList)
+                ]),
               [InProgress]: () => progressMessage(state.emails, state.successfulOrgInvitations),
               _: () =>
                 h('', [
