@@ -1,8 +1,11 @@
 import makeState from 'states/Base.es6';
+import { createEndpoint } from 'data/EndpointFactory.es6';
 
 export default makeState({
   name: 'invitations',
-  url: '/invitations/:invitationToken',
+
+  // This is temporary, this will change to `/invitations/:id`
+  url: '/organizations/invitations/:invitationId',
   template:
     '<react-component name="components/shared/UserInvitation.es6" props="props"></react-component>',
   loadingText: 'Loading your invitation...',
@@ -10,23 +13,16 @@ export default makeState({
     invitationData: [
       '$stateParams',
       async $stateParams => {
-        const { invitationToken } = $stateParams;
+        const { invitationId } = $stateParams;
+        const endpoint = createEndpoint();
 
         let invitation;
         let error;
 
         try {
-          invitation = await new Promise((resolve, reject) => {
-            if (invitationToken === '1234') {
-              return resolve({
-                orgName: 'Pizza',
-                orgRole: 'member',
-                inviterName: 'John Adams',
-                ssoEnabled: true
-              });
-            } else {
-              return reject(new Error('Could not retrieve invitation'));
-            }
+          invitation = await endpoint({
+            method: 'GET',
+            path: ['organizations', 'invitations', invitationId]
           });
         } catch (e) {
           error = e;
