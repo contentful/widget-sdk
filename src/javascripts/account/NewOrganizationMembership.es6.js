@@ -11,7 +11,11 @@ import {
   getAllRoles
 } from 'access_control/OrganizationMembershipRepository.es6';
 import { makeCtor, match } from 'utils/TaggedValues.es6';
-import { sendInvites, progress$ } from 'account/SendOrganizationInvitation.es6';
+import {
+  sendInvites,
+  createOrgMemberships,
+  progress$
+} from 'account/SendOrganizationInvitation.es6';
 import { isValidEmail } from 'utils/StringUtils.es6';
 import { go } from 'states/Navigator.es6';
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
@@ -201,15 +205,26 @@ export default function($scope) {
       isInputValid = emails.length <= membershipLimit - membershipUsage;
     }
 
+    const { hasSsoEnabled } = organization;
+
     if (isInputValid) {
       runTask(function*() {
-        yield sendInvites({
+        // If the org is SSO enabled, we create the org membership directly rather than
+        // inviting the use
+        const invitationMetadata = {
           emails,
           orgRole,
           spaceMemberships,
           suppressInvitation,
           orgId
-        });
+        };
+
+        if (hasSsoEnabled) {
+          yield createOrgMemberships(invitationMetadata);
+        } else {
+          yield sendInvites(invitationMetadata);
+        }
+
         const organization = yield* getOrgInfo(orgId);
 
         // Start: For Next Steps for a TEA space (a space created using the example space template)

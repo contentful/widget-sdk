@@ -40,13 +40,19 @@ export async function sendInvites({ emails, orgRole, supressInvitation, spaceMem
   const useLegacy = !(await getCurrentVariation(FEATURE_FLAG));
 
   if (useLegacy) {
-    return inviteLegacy({ emails, orgRole, supressInvitation, spaceMemberships, orgId });
+    return createOrgMemberships({ emails, orgRole, supressInvitation, spaceMemberships, orgId });
   } else {
     return invite({ emails, orgRole, spaceMemberships, orgId });
   }
 }
 
-function inviteLegacy({ emails, orgRole, spaceMemberships, suppressInvitation, orgId }) {
+export async function createOrgMemberships({
+  emails,
+  orgRole,
+  spaceMemberships,
+  suppressInvitation,
+  orgId
+}) {
   const orgEndpoint = createOrganizationEndpoint(orgId);
 
   // If the org invitation succeeds (or if it fails with 422 [taken]),
