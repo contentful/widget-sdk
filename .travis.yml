@@ -61,6 +61,11 @@ before_deploy:
   - docker build -t $DOCKER_IMAGE -f Dockerfile-prod --build-arg CF_VERSION="${TRAVIS_COMMIT}" .
 
 deploy:
+  - provider: script
+    script: ./micro-backends/.scripts/deploy.sh
+    skip_cleanup: true
+    on:
+      all_branches: true
   - provider: s3
     access_key_id: AKIAI35UEY5UVV5IT6BQ
     secret_access_key:
