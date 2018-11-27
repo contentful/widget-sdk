@@ -84,6 +84,13 @@ angular
       require('dialogsInitController').init();
       require('navigation/DocumentTitle.es6').init();
       require('components/shared/auto_create_new_space').init();
+
+      // TODO exposed for demonstration purposes. Remove!
+      const createMicroBackendsClient = require('MicroBackendsClient.es6').default;
+      window.__micro_backends = {
+        createMicroBackendsClient,
+        appsClient: createMicroBackendsClient({ backendName: 'apps' })
+      };
     }
   ]);
 
