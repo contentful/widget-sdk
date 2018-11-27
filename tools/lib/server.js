@@ -12,6 +12,8 @@ const createWebpackConfig = require('../webpack.config');
 
 const IndexPage = require('./index-page');
 
+const MicroBackends = require('@contentful/micro-backends');
+
 const runSequenceP = denodeify(runSequence);
 
 /**
@@ -88,6 +90,14 @@ function createServer(configName, getBuild) {
   const config = createWebpackConfig({ dev: true });
   const compiler = webpack(config);
   const PORT = Number.parseInt(process.env.PORT, 10) || 3001;
+
+  app.use(
+    '/_microbackends',
+    MicroBackends.createMiddleware({
+      backendsDir: P.resolve(__dirname, '../../micro-backends'),
+      isolationType: process.env.MICRO_BACKENDS_ISOLATION_TYPE || 'subprocess'
+    })
+  );
 
   app.use(
     middleware(compiler, {
