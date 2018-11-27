@@ -17,7 +17,7 @@ export default class UserInvitation extends React.Component {
       <Fullscreen gradient>
         <div className="user-invitation--wrapper">
           <div className="user-invitation--accept">
-            <p>
+            <div className="user-invitation--info">
               <h2 className="user-invitation--title">
                 Youʼve been invited to the <em>{orgName}</em> organization in Contentful as a{' '}
                 {orgRole}
@@ -26,7 +26,7 @@ export default class UserInvitation extends React.Component {
               <Button buttonType="primary" extraClassNames="user-invitation--join-org-button">
                 Join {orgName}
               </Button>
-            </p>
+            </div>
             <div className="user-invitation--org-details">
               <p>Owners and admins of this organization will be able to see:</p>
 
