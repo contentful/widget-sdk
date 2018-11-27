@@ -32,7 +32,7 @@ const FEATURE_FLAG = 'feature-bv-09-2018-invitations';
  * @param {Array<String>} emails
  * @param {String} role an organization role name
  * @param {Object} spaceMemberships an object with space ids as keys and arrays of role ids as values
- * * @param {Boolean} supressInvitation
+ * @param {Boolean} supressInvitation
  * @param {String} orgId
  * @returns {Promise}
  */
