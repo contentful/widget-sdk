@@ -203,6 +203,8 @@ export function isAutomationTestUser(user) {
  * @returns {boolean}
  */
 export function isUserOrgCreator(user, org) {
+  if (!org || !org.sys) throw new Error('Expected org to be an object');
+  if (!user || !user.sys) throw new Error('Expected user to be an object');
   const creatorUser = org.sys.createdBy;
   return !!creatorUser && creatorUser.sys.id === user.sys.id;
 }
@@ -258,15 +260,16 @@ function updateCurrOrgSpaceAndPublishedCTs(bus) {
 
 /**
  * @description
- * Get the current organization the user is in the context of
+ * Get the current organization the user is in the context of. Returns null if
+ * the user is not currently in any organization.
  *
  * @param {Array<Object>} orgs
  * @param {string} orgId
  *
- * @return {Object} org
+ * @return {Object|null} org
  */
 export function getCurrOrg(orgs, orgId) {
-  return getOrgById(orgs, orgId) || get(spaceContext, ['organization'], null) || orgs[0];
+  return getOrgById(orgs, orgId) || get(spaceContext, ['organization'], null) || orgs[0] || null;
 }
 
 function getCurrSpace() {

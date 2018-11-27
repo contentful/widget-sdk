@@ -86,6 +86,16 @@ describe('AutoCreateNewSpace/index', () => {
       sinon.assert.notCalled(this.createSampleSpace);
     });
 
+    it('should be a noop and not fail when user has no org', function() {
+      this.tokenStore.organizations$.set([]);
+      this.tokenStore.spacesByOrganization$.set({
+        org: ['space']
+      });
+      this.tokenStore.user$.set({ sys: { id: 'user' } });
+      this.init();
+      sinon.assert.notCalled(this.createSampleSpace);
+    });
+
     describe('qualifyUser', () => {
       // specs
       [
