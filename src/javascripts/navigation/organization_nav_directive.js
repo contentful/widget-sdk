@@ -110,6 +110,14 @@ angular.module('contentful').directive('cfOrganizationNav', [
           dataViewType: 'organization-users'
         },
         {
+          title: 'Teams',
+          sref: 'account.organizations.teams({orgId: nav.orgId})',
+          rootSref: 'account.organizations.teams',
+          inheritUrlParams: false,
+          icon: 'nav-organization-users',
+          dataViewType: 'organization-teams'
+        },
+        {
           if: 'nav.pricingVersion == "pricing_version_1"',
           title: 'Spaces',
           sref: 'account.organizations.spaces({orgId: nav.orgId})',

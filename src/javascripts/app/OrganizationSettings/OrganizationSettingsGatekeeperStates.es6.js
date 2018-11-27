@@ -135,6 +135,7 @@ export default [
   subscription,
   subscriptionBilling,
   userGatekeeper
+  // teamsState
 ].map(
   // wrap every route with gatekeeper/iframe specific settings
   flow(

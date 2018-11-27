@@ -3,6 +3,7 @@ import organizationBase from './OrganizationSettingsBaseState.es6';
 
 import SubscriptionState from './Subscription/SubscriptionState.es6';
 import UsageState from './Usage/UsageState.es6';
+import teamsState from './Teams/TeamsState.es6';
 import GatekeeperStates from './OrganizationSettingsGatekeeperStates.es6';
 
 export function reactBase(definition) {
@@ -32,5 +33,5 @@ export default Base({
       template: '<cf-organization-nav class="app-top-bar__child" />'
     }
   },
-  children: [UsageState, reactBase(SubscriptionState), ...GatekeeperStates]
+  children: [UsageState, reactBase(SubscriptionState), teamsState, ...GatekeeperStates]
 });
