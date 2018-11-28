@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TextInput, ModalConfirm } from '@contentful/ui-component-library';
+import { TextInput, ModalConfirm } from '@contentful/forma-36-react-components';
 
 export default class LocaleRemovalConfirmDialog extends React.Component {
   static propTypes = {

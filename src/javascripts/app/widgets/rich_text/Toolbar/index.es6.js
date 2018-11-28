@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { EditorToolbar, EditorToolbarDivider } from '@contentful/ui-component-library';
+import { EditorToolbar, EditorToolbarDivider } from '@contentful/forma-36-react-components';
 
 import Bold from '../plugins/Bold/index.es6';
 import Italic from '../plugins/Italic/index.es6';

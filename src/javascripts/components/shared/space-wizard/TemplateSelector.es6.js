@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { get } from 'lodash';
-import { Spinner } from '@contentful/ui-component-library';
+import { Spinner } from '@contentful/forma-36-react-components';
 
 import TemplatesToggle from './TemplatesToggle.es6';
 import TemplatesList from './TemplatesList.es6';

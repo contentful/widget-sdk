@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Fullscreen from 'components/shared/Fullscreen.es6';
-import { Button } from '@contentful/ui-component-library';
+import { Button } from '@contentful/forma-36-react-components';
 
 export default class UserInvitation extends React.Component {
   static propTypes = {

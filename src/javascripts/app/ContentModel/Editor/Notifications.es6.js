@@ -1,6 +1,6 @@
 import { first, get } from 'lodash';
 import logger from 'logger';
-import { Notification } from '@contentful/ui-component-library';
+import { Notification } from '@contentful/forma-36-react-components';
 import { truncate } from 'utils/StringUtils.es6';
 
 /**

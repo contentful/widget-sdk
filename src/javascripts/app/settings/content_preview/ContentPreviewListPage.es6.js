@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Note } from '@contentful/ui-component-library';
+import { Note } from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
 import { WhatIsContentPreview } from './ContentPreviewSidebar.es6';
 import CreatePreviewButton from './CreatePreviewButton.es6';

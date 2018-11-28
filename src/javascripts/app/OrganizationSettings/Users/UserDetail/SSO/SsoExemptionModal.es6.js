@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Icon } from '@contentful/ui-component-library';
+import { Modal, Icon } from '@contentful/forma-36-react-components';
 
 import { OrganizationMembership as OrganizationMembershipPropType } from '../../PropTypes.es6';
 

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Workbench from 'app/common/Workbench.es6';
-import { Button, Select, Option, Note, CheckboxField } from '@contentful/ui-component-library';
+import { Button, Select, Option, Note, CheckboxField } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink.es6';
 import { create as createLocaleList } from './utils/LocaleList.es6';
 

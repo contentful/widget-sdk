@@ -67,7 +67,7 @@ function snapshotsList() {
         ]),
         h('td', { style: styles.cell }, [
           h('react-component', {
-            name: '@contentful/ui-component-library/Tag',
+            name: '@contentful/forma-36-react-components/Tag',
             props: '{{snapshotStatus.getProps(snapshot)}}'
           })
         ])

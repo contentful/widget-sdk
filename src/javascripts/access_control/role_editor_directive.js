@@ -22,7 +22,7 @@ angular.module('contentful').controller('RoleEditorController', [
     const PolicyBuilder = require('PolicyBuilder');
     const TheAccountView = require('TheAccountView');
     const leaveConfirmator = require('navigation/confirmLeaveEditor');
-    const { Notification } = require('@contentful/ui-component-library');
+    const { Notification } = require('@contentful/forma-36-react-components');
     const logger = require('logger');
     const createFeatureService = require('services/FeatureService.es6').default;
     const createResourceService = require('services/ResourceService.es6').default;

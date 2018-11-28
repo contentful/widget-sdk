@@ -2,7 +2,7 @@ import React from 'react';
 import Enzyme from 'enzyme';
 
 import Pagination from './Pagination.es6';
-import { Button, Select } from '@contentful/ui-component-library';
+import { Button, Select } from '@contentful/forma-36-react-components';
 
 describe('Pagination', () => {
   let onChangeFn = jest.fn();

@@ -6,7 +6,7 @@ import {
   Button,
   Icon,
   ValidationMessage
-} from '@contentful/ui-component-library';
+} from '@contentful/forma-36-react-components';
 import { values, isString } from 'lodash';
 
 export class WebhookTemplateForm extends React.Component {

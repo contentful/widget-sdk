@@ -13,7 +13,7 @@ import {
   Option,
   Button,
   Notification
-} from '@contentful/ui-component-library';
+} from '@contentful/forma-36-react-components';
 import SpaceRoleEditor from './SpaceRoleEditor.es6';
 
 const ServicesConsumer = require('../../../../../reactServiceContext').default;

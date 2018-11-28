@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { DropdownListItem, Icon, Button } from '@contentful/ui-component-library';
+import { DropdownListItem, Icon, Button } from '@contentful/forma-36-react-components';
 import { INLINES } from '@contentful/rich-text-types';
 
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';

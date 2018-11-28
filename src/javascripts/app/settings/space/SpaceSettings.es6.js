@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Workbench from 'app/common/Workbench.es6';
-import { Button, TextField } from '@contentful/ui-component-library';
+import { Button, TextField } from '@contentful/forma-36-react-components';
 
 export default class SpaceSettings extends React.Component {
   static propTypes = {

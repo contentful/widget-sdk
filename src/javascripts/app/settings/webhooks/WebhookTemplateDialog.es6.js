@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Modal } from '@contentful/ui-component-library';
+import { Modal } from '@contentful/forma-36-react-components';
 import WebhookTemplateDialogTabs, { Tab, TabPane, TabsList } from './WebhookTemplateDialogTabs.es6';
 import WebhookTemplateForm from './WebhookTemplateForm.es6';
 import Templates from './templates';

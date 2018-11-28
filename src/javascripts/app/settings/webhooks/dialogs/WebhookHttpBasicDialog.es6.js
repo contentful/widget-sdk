@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, TextField, Modal } from '@contentful/ui-component-library';
+import { Button, TextField, Modal } from '@contentful/forma-36-react-components';
 import base64safe from '../base64safe.es6';
 
 export class WebhookHttpBasicForm extends React.Component {

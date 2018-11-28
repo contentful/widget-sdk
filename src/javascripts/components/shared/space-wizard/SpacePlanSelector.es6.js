@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import { isOwner } from 'services/OrganizationRoles.es6';
 import { go } from 'states/Navigator.es6';
-import { Spinner } from '@contentful/ui-component-library';
+import { Spinner } from '@contentful/forma-36-react-components';
 import { getStoreResources } from 'utils/ResourceUtils.es6';
 import { getRecommendedPlan } from './WizardUtils.es6';
 

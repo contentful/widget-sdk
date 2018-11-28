@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import { track } from 'analytics/Analytics.es6';
-import { Notification } from '@contentful/ui-component-library';
+import { Notification } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'ReloadNotification';
 
 const INVALID_BODY_TRANSFORMATION_ERROR_MSG =

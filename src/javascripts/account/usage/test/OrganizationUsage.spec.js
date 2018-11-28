@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 import moment from 'moment';
 import { isEqual } from 'lodash';
 
-import { Spinner } from '@contentful/ui-component-library';
+import { Spinner } from '@contentful/forma-36-react-components';
 
 import { OrganizationUsage, WorkbenchContent, WorkbenchActions } from '../OrganizationUsage.es6';
 import PeriodSelector from '../committed/PeriodSelector.es6';

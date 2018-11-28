@@ -8,7 +8,7 @@ import React from 'react';
 import { h } from 'ui/Framework';
 import * as H from 'ui/Framework/Hooks';
 import { container, hspace } from 'ui/Layout.es6';
-import { Spinner } from '@contentful/ui-component-library';
+import { Spinner } from '@contentful/forma-36-react-components';
 import { byName as colors } from 'Styles/Colors.es6';
 import keycodes from 'utils/keycodes.es6';
 

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import SpaceSettings from './SpaceSettings.es6';
-import { Notification } from '@contentful/ui-component-library';
+import { Notification } from '@contentful/forma-36-react-components';
 
 const ServicesConsumer = require('../../../reactServiceContext').default;
 

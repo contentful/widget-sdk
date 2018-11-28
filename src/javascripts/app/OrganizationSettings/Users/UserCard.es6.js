@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { User as UserPropType } from './PropTypes.es6';
 
-import { Tag } from '@contentful/ui-component-library';
+import { Tag } from '@contentful/forma-36-react-components';
 
 const CardSizes = {
   SMALL: 'small',

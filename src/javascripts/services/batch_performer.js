@@ -6,7 +6,7 @@ angular.module('contentful').factory('batchPerformer', [
     var $q = require('$q');
     var spaceContext = require('spaceContext');
     var Analytics = require('analytics/Analytics.es6');
-    const { Notification } = require('@contentful/ui-component-library');
+    const { Notification } = require('@contentful/forma-36-react-components');
 
     var ACTION_NAMES = {
       publish: 'published',

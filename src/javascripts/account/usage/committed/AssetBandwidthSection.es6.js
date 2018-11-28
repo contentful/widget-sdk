@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { partialRight } from 'lodash';
-import { TextLink } from '@contentful/ui-component-library';
+import { TextLink } from '@contentful/forma-36-react-components';
 
 import { shortenStorageUnit } from 'utils/NumberUtils.es6';
 

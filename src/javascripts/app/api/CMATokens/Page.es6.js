@@ -5,7 +5,13 @@ import { byName as Colors } from 'Styles/Colors.es6';
 import { createSlot, Success, Failure } from 'utils/Concurrent.es6';
 import { truncate } from 'utils/StringUtils.es6';
 import { makeCtor, match } from 'utils/TaggedValues.es6';
-import { Table, TableHead, TableRow, TableCell, TableBody } from '@contentful/ui-component-library';
+import {
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody
+} from '@contentful/forma-36-react-components';
 import { h } from 'ui/Framework';
 import { createStore, bindActions, makeReducer } from 'ui/Framework/Store.es6';
 import escape from 'utils/escape.es6';
@@ -15,7 +21,7 @@ import { DocsLink, LinkOpen } from 'ui/Content.es6';
 import * as Config from 'Config.es6';
 import * as ResourceManager from './Resource.es6';
 import openCreateDialog from './CreateDialog.es6';
-import { Notification } from '@contentful/ui-component-library';
+import { Notification } from '@contentful/forma-36-react-components';
 import { track } from 'analytics/Analytics.es6';
 
 import Paginator from 'ui/Components/Paginator.es6';

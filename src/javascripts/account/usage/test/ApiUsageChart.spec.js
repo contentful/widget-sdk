@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import moment from 'moment';
-import { LineChart } from '@contentful/ui-component-library';
+import { LineChart } from '@contentful/forma-36-react-components';
 import { shorten } from 'utils/NumberUtils.es6';
 
 import ApiUsageChart from '../committed/ApiUsageChart.es6';

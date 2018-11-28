@@ -2,7 +2,7 @@ import { h } from 'utils/legacy-html-hyperscript';
 import { extend } from 'lodash';
 import $rootScope from '$rootScope';
 import modalDialog from 'modalDialog';
-import { Notification } from '@contentful/ui-component-library';
+import { Notification } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'ReloadNotification';
 import Command from 'command';
 import * as TokenStore from 'services/TokenStore.es6';

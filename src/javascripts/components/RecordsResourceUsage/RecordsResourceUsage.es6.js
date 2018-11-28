@@ -7,7 +7,7 @@ import { get } from 'lodash';
 import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService.es6';
 import { getStoreResource } from 'utils/ResourceUtils.es6';
 
-import { TextLink } from '@contentful/ui-component-library';
+import { TextLink } from '@contentful/forma-36-react-components';
 
 import * as actionCreators from './store/actionCreators.es6';
 

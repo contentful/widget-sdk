@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { User as UserPropType } from './PropTypes.es6';
-import { ModalConfirm } from '@contentful/ui-component-library';
+import { ModalConfirm } from '@contentful/forma-36-react-components';
 
 export default class RemoveUserDialog extends React.Component {
   static propTypes = {

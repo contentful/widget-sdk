@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { TextLink } from '@contentful/ui-component-library';
+import { TextLink } from '@contentful/forma-36-react-components';
 
 import { href } from 'states/Navigator.es6';
 import { home, usage as spaceUsage } from 'ui/NavStates/Space.es6';

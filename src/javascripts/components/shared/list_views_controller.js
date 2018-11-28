@@ -11,7 +11,7 @@ angular.module('contentful').controller('ListViewsController', [
     const { Status, statusQueryKey } = require('app/ContentList/Search/Filters.es6');
     const { Operator } = require('app/ContentList/Search/Operators.es6');
     const spaceContext = require('spaceContext');
-    const { Notification } = require('@contentful/ui-component-library');
+    const { Notification } = require('@contentful/forma-36-react-components');
 
     const viewMigrator = createViewMigrator(spaceContext.space, spaceContext.publishedCTs);
     const viewPersistor = createViewPersistor(spaceContext.getId(), viewMigrator, preserveStateAs);

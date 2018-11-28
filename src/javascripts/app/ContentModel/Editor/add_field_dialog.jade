@@ -20,7 +20,7 @@
               ng-click="selectFieldGroup(group)")
               cf-icon(name="field-{{group.icon}}")
             h2 {{group.label}}
-              <react-component ng-if="group.isBeta" name="@contentful/ui-component-library/Tag" props="{children: 'BETA'}"></react-component>
+              <react-component ng-if="group.isBeta" name="@contentful/forma-36-react-components/Tag" props="{children: 'BETA'}"></react-component>
             p.add-field-dialog__description {{group.description}}
 
     div(ng-if="viewState.is('fieldConfiguration')")

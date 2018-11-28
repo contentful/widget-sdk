@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TextLink } from '@contentful/ui-component-library';
+import { TextLink } from '@contentful/forma-36-react-components';
 
 import { shorten } from 'utils/NumberUtils.es6';
 

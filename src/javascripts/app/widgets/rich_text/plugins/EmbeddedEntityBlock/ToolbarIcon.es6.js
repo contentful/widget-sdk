@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { DropdownListItem, Button, Icon } from '@contentful/ui-component-library';
+import { DropdownListItem, Button, Icon } from '@contentful/forma-36-react-components';
 
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
 import { selectEntityAndInsert } from './Util.es6';

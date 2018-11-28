@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { renderToStaticMarkup as jsxToHtmlString } from 'react-dom/server';
-import { LineChart } from '@contentful/ui-component-library';
+import { LineChart } from '@contentful/forma-36-react-components';
 
 import Circle from 'svg/chart-symbol-circle.es6';
 import Diamond from 'svg/chart-symbol-diamond.es6';

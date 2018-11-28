@@ -332,7 +332,7 @@ describe('Entry List Controller', () => {
   describe('Api Errors', () => {
     beforeEach(function() {
       this.reloadNotificationHandler = this.$inject('ReloadNotification').apiErrorHandler;
-      this.ComponentLibrary = this.$inject('@contentful/ui-component-library');
+      this.ComponentLibrary = this.$inject('@contentful/forma-36-react-components');
       this.ComponentLibrary.Notification.error = sinon.stub();
       this.ComponentLibrary.Notification.success = sinon.stub();
     });

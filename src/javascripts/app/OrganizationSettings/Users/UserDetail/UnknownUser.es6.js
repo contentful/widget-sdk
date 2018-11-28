@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Tooltip, Tag, Icon } from '@contentful/ui-component-library';
+import { Tooltip, Tag, Icon } from '@contentful/forma-36-react-components';
 
 export default class UnknownUser extends React.Component {
   static propTypes = {

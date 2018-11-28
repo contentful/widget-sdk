@@ -16,7 +16,7 @@ const VENDOR_STYLESHEETS_SRC = assertFilesExist([
   './node_modules/codemirror/lib/codemirror.css',
   // Add angular styles since we are disabling inline-styles in ngCsp
   './node_modules/angular/angular-csp.css',
-  './node_modules/@contentful/ui-component-library/dist/styles.css'
+  './node_modules/@contentful/forma-36-react-components/dist/styles.css'
 ]);
 
 gulp.task('stylesheets', ['stylesheets/vendor', 'stylesheets/app']);

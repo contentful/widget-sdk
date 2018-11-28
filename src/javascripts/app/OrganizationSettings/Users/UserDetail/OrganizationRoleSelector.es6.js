@@ -1,6 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Dropdown, DropdownList, DropdownListItem } from '@contentful/ui-component-library';
+import {
+  Button,
+  Dropdown,
+  DropdownList,
+  DropdownListItem
+} from '@contentful/forma-36-react-components';
 import { keyBy } from 'lodash';
 
 import { orgRoles } from './OrgRoles.es6';

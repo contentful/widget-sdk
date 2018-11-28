@@ -6,7 +6,7 @@ import {
   Dropdown,
   DropdownList,
   DropdownListItem
-} from '@contentful/ui-component-library';
+} from '@contentful/forma-36-react-components';
 import { SpaceMembership } from '../../PropTypes.es6';
 
 export default class UserDropdown extends React.Component {

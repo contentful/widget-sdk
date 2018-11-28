@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { BLOCKS } from '@contentful/rich-text-types';
-import { Dropdown, DropdownList, Button } from '@contentful/ui-component-library';
+import { Dropdown, DropdownList, Button } from '@contentful/forma-36-react-components';
 import { haveBlocks } from '../shared/UtilHave.es6';
 
 export const blockTitles = {

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { Select, Option } from '@contentful/ui-component-library';
+import { Select, Option } from '@contentful/forma-36-react-components';
 import { cond, constant, stubTrue } from 'lodash';
 
 import { periodPropType } from './propTypes.es6';

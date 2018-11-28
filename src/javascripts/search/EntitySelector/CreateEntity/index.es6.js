@@ -2,7 +2,7 @@ const withServicesConsumer = require('../../../reactServiceContext').default;
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { TextLink } from '@contentful/ui-component-library';
+import { TextLink } from '@contentful/forma-36-react-components';
 
 import CreateEntryButton, { Style } from '../../../components/CreateEntryButton';
 import Visible from '../../../components/shared/Visible/index.es6';

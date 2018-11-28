@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { Notification } from '@contentful/ui-component-library';
-import { Button } from '@contentful/ui-component-library';
+import { Button, Notification } from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
 import LocalesTable from './LocalesTable.es6';

@@ -7,7 +7,7 @@ import {
   Dropdown,
   DropdownList,
   DropdownListItem
-} from '@contentful/ui-component-library';
+} from '@contentful/forma-36-react-components';
 import { without } from 'lodash';
 
 const ServicesConsumer = require('../../../../../reactServiceContext').default;

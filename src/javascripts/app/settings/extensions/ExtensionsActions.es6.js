@@ -8,7 +8,7 @@ import {
   DropdownList,
   DropdownListItem,
   Notification
-} from '@contentful/ui-component-library';
+} from '@contentful/forma-36-react-components';
 import { toInternalFieldType } from './FieldTypes.es6';
 import getExtensionParameterIds from './getExtensionParameterIds.es6';
 import { track } from 'analytics/Analytics.es6';

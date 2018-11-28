@@ -67,7 +67,7 @@ function entityCardMinimized() {
             '{{(title | truncate:255) || "Untitled"}}'
           ]),
           h('react-component', {
-            name: '@contentful/ui-component-library/Tag',
+            name: '@contentful/forma-36-react-components/Tag',
             props: 'tagProps'
           })
         ])
@@ -102,7 +102,7 @@ function entityCard() {
               '{{contentTypeName}}'
             ]),
             h('react-component', {
-              name: '@contentful/ui-component-library/Tag',
+              name: '@contentful/forma-36-react-components/Tag',
               props: 'tagProps'
             })
           ]

@@ -17,7 +17,7 @@ angular
       const ListQuery = require('ListQuery');
       const systemFields = require('systemFields');
       const Tracking = require('analytics/events/SearchAndViews.es6');
-      const { Notification } = require('@contentful/ui-component-library');
+      const { Notification } = require('@contentful/forma-36-react-components');
       const K = require('utils/kefir.es6');
       const Kefir = require('kefir');
       const createSearchInput = require('app/ContentList/Search').default;

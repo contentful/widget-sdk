@@ -30,10 +30,10 @@ div(
         legend Field options
 
         div.cfnext-form-option(ng-show="field.canBeTitle")
-          <react-component name="@contentful/ui-component-library/CheckboxField" props="buildTitleCheckboxProps()" />
+          <react-component name="@contentful/forma-36-react-components/CheckboxField" props="buildTitleCheckboxProps()" />
 
         div.cfnext-form-option(ng-show="field.canBeLocalized")
-          <react-component name="@contentful/ui-component-library/CheckboxField" props="buildLocalisationCheckboxProps()" />
+          <react-component name="@contentful/forma-36-react-components/CheckboxField" props="buildLocalisationCheckboxProps()" />
 
     div.cf-flex-grid-column(ng-show="richTextFormattingOptionsEnabled&&field.isRichTextField")
       <react-component name="components/field_dialog/RichTextOptions.es6" props="{onChange: onRichTextOptionsChange, enabledMarks: richTextOptions.enabledMarks, enabledNodeTypes: richTextOptions.enabledNodeTypes}" />

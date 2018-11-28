@@ -123,14 +123,14 @@ function getReactComponent(name, require, logger) {
 }
 
 function requireComponent(name, require) {
-  // you can just provide name "@contentful/ui-component-library/TextLink"
-  if (name.startsWith('@contentful/ui-component-library')) {
-    const UILibrary = require('@contentful/ui-component-library');
-    const element = name.split('@contentful/ui-component-library/')[1];
+  // you can just provide name "@contentful/forma-36-react-components/TextLink"
+  if (name.startsWith('@contentful/forma-36-react-components')) {
+    const UILibrary = require('@contentful/forma-36-react-components');
+    const element = name.split('@contentful/forma-36-react-components/')[1];
 
     if (!element) {
       throw new Error(
-        'You wanted to use ui-component-library, but did not provide element:::',
+        'You wanted to use forma-36-react-components, but did not provide element:::',
         name
       );
     }

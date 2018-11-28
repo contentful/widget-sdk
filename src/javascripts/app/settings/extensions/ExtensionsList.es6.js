@@ -1,7 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
-import { Button, Dropdown, DropdownList, Notification } from '@contentful/ui-component-library';
+import {
+  Button,
+  Dropdown,
+  DropdownList,
+  Notification
+} from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink.es6';
 import Workbench from 'app/common/Workbench.es6';
 import spaceContext from 'spaceContext';

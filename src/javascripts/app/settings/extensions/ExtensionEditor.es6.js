@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { get, cloneDeep, isEqual, omit } from 'lodash';
-import { Notification } from '@contentful/ui-component-library';
+import { Notification } from '@contentful/forma-36-react-components';
 import spaceContext from 'spaceContext';
 import Workbench from 'app/common/Workbench.es6';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils.es6';

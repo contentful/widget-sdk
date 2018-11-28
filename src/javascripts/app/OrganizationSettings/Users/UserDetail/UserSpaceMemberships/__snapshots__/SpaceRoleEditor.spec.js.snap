@@ -455,55 +455,70 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                         <CheckboxField
                           checked={false}
                           id="admin"
+                          inputType="checkbox"
+                          labelIsLight={false}
                           labelText="Admin"
                           light={true}
                           onChange={[Function]}
                           testId="cf-ui-checkbox-field"
                         >
-                          <div
-                            className="CheckboxField__CheckboxField___1p65B"
-                            data-test-id="cf-ui-checkbox-field"
+                          <ControlledInputField
+                            checked={false}
+                            id="admin"
+                            inputType="checkbox"
+                            labelIsLight={false}
+                            labelText="Admin"
+                            light={true}
+                            onChange={[Function]}
+                            testId="cf-ui-checkbox-field"
                           >
-                            <Checkbox
-                              checked={false}
-                              disabled={false}
-                              extraClassNames="CheckboxField__CheckboxField__checkbox___13OYI"
-                              id="admin"
-                              labelText="Admin"
-                              onChange={[Function]}
-                              required={false}
-                              testId="cf-ui-checkbox"
+                            <div
+                              className="ControlledInputField__ControlledInputField___2uIG9"
+                              data-test-id="cf-ui-checkbox-field"
+                              light={true}
                             >
-                              <input
-                                aria-label="Admin"
+                              <ControlledInput
                                 checked={false}
-                                className="Checkbox__Checkbox___1KCp1 CheckboxField__CheckboxField__checkbox___13OYI"
-                                data-test-id="cf-ui-checkbox"
                                 disabled={false}
+                                extraClassNames="ControlledInputField__ControlledInputField__input___3OMYB"
                                 id="admin"
+                                labelText="Admin"
                                 onChange={[Function]}
                                 required={false}
+                                testId="cf-ui-controlled-input"
                                 type="checkbox"
-                              />
-                            </Checkbox>
-                            <div>
-                              <FormLabel
-                                extraClassNames="CheckboxField__CheckboxField__label___2bUrb CheckboxField__CheckboxField__label--light___5EmPH"
-                                htmlFor="admin"
-                                required={false}
-                                requiredText="required"
-                                testId="cf-ui-form-label"
                               >
-                                <label
-                                  className="FormLabel__FormLabel___3d6zQ CheckboxField__CheckboxField__label___2bUrb CheckboxField__CheckboxField__label--light___5EmPH"
-                                  data-test-id="cf-ui-form-label"
+                                <input
+                                  aria-label="Admin"
+                                  checked={false}
+                                  className="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                                  data-test-id="cf-ui-controlled-input"
+                                  disabled={false}
+                                  id="admin"
+                                  onChange={[Function]}
+                                  required={false}
+                                  type="checkbox"
+                                />
+                              </ControlledInput>
+                              <div>
+                                <FormLabel
+                                  extraClassNames="ControlledInputField__ControlledInputField__label___a9J52"
                                   htmlFor="admin"
+                                  required={false}
+                                  requiredText="required"
+                                  testId="cf-ui-form-label"
                                 >
-                                  Admin
-                                </label>
-                              </FormLabel>
+                                  <label
+                                    className="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                                    data-test-id="cf-ui-form-label"
+                                    htmlFor="admin"
+                                  >
+                                    Admin
+                                  </label>
+                                </FormLabel>
+                              </div>
                             </div>
-                          </div>
+                          </ControlledInputField>
                         </CheckboxField>
                       </li>
                     </DropdownListItem>
@@ -523,57 +538,74 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                         <CheckboxField
                           checked={false}
                           id="police"
+                          inputType="checkbox"
+                          labelIsLight={false}
                           labelText="Police officer"
                           light={true}
                           onChange={[Function]}
                           testId="cf-ui-checkbox-field"
                           value="police"
                         >
-                          <div
-                            className="CheckboxField__CheckboxField___1p65B"
-                            data-test-id="cf-ui-checkbox-field"
+                          <ControlledInputField
+                            checked={false}
+                            id="police"
+                            inputType="checkbox"
+                            labelIsLight={false}
+                            labelText="Police officer"
+                            light={true}
+                            onChange={[Function]}
+                            testId="cf-ui-checkbox-field"
                             value="police"
                           >
-                            <Checkbox
-                              checked={false}
-                              disabled={false}
-                              extraClassNames="CheckboxField__CheckboxField__checkbox___13OYI"
-                              id="police"
-                              labelText="Police officer"
-                              onChange={[Function]}
-                              required={false}
-                              testId="cf-ui-checkbox"
+                            <div
+                              className="ControlledInputField__ControlledInputField___2uIG9"
+                              data-test-id="cf-ui-checkbox-field"
+                              light={true}
                             >
-                              <input
-                                aria-label="Police officer"
+                              <ControlledInput
                                 checked={false}
-                                className="Checkbox__Checkbox___1KCp1 CheckboxField__CheckboxField__checkbox___13OYI"
-                                data-test-id="cf-ui-checkbox"
                                 disabled={false}
+                                extraClassNames="ControlledInputField__ControlledInputField__input___3OMYB"
                                 id="police"
+                                labelText="Police officer"
                                 onChange={[Function]}
                                 required={false}
+                                testId="cf-ui-controlled-input"
                                 type="checkbox"
-                              />
-                            </Checkbox>
-                            <div>
-                              <FormLabel
-                                extraClassNames="CheckboxField__CheckboxField__label___2bUrb CheckboxField__CheckboxField__label--light___5EmPH"
-                                htmlFor="police"
-                                required={false}
-                                requiredText="required"
-                                testId="cf-ui-form-label"
+                                value="police"
                               >
-                                <label
-                                  className="FormLabel__FormLabel___3d6zQ CheckboxField__CheckboxField__label___2bUrb CheckboxField__CheckboxField__label--light___5EmPH"
-                                  data-test-id="cf-ui-form-label"
+                                <input
+                                  aria-label="Police officer"
+                                  checked={false}
+                                  className="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                                  data-test-id="cf-ui-controlled-input"
+                                  disabled={false}
+                                  id="police"
+                                  onChange={[Function]}
+                                  required={false}
+                                  type="checkbox"
+                                  value="police"
+                                />
+                              </ControlledInput>
+                              <div>
+                                <FormLabel
+                                  extraClassNames="ControlledInputField__ControlledInputField__label___a9J52"
                                   htmlFor="police"
+                                  required={false}
+                                  requiredText="required"
+                                  testId="cf-ui-form-label"
                                 >
-                                  Police officer
-                                </label>
-                              </FormLabel>
+                                  <label
+                                    className="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                                    data-test-id="cf-ui-form-label"
+                                    htmlFor="police"
+                                  >
+                                    Police officer
+                                  </label>
+                                </FormLabel>
+                              </div>
                             </div>
-                          </div>
+                          </ControlledInputField>
                         </CheckboxField>
                       </li>
                     </DropdownListItem>
@@ -593,57 +625,74 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                         <CheckboxField
                           checked={false}
                           id="thief"
+                          inputType="checkbox"
+                          labelIsLight={false}
                           labelText="Thief"
                           light={true}
                           onChange={[Function]}
                           testId="cf-ui-checkbox-field"
                           value="thief"
                         >
-                          <div
-                            className="CheckboxField__CheckboxField___1p65B"
-                            data-test-id="cf-ui-checkbox-field"
+                          <ControlledInputField
+                            checked={false}
+                            id="thief"
+                            inputType="checkbox"
+                            labelIsLight={false}
+                            labelText="Thief"
+                            light={true}
+                            onChange={[Function]}
+                            testId="cf-ui-checkbox-field"
                             value="thief"
                           >
-                            <Checkbox
-                              checked={false}
-                              disabled={false}
-                              extraClassNames="CheckboxField__CheckboxField__checkbox___13OYI"
-                              id="thief"
-                              labelText="Thief"
-                              onChange={[Function]}
-                              required={false}
-                              testId="cf-ui-checkbox"
+                            <div
+                              className="ControlledInputField__ControlledInputField___2uIG9"
+                              data-test-id="cf-ui-checkbox-field"
+                              light={true}
                             >
-                              <input
-                                aria-label="Thief"
+                              <ControlledInput
                                 checked={false}
-                                className="Checkbox__Checkbox___1KCp1 CheckboxField__CheckboxField__checkbox___13OYI"
-                                data-test-id="cf-ui-checkbox"
                                 disabled={false}
+                                extraClassNames="ControlledInputField__ControlledInputField__input___3OMYB"
                                 id="thief"
+                                labelText="Thief"
                                 onChange={[Function]}
                                 required={false}
+                                testId="cf-ui-controlled-input"
                                 type="checkbox"
-                              />
-                            </Checkbox>
-                            <div>
-                              <FormLabel
-                                extraClassNames="CheckboxField__CheckboxField__label___2bUrb CheckboxField__CheckboxField__label--light___5EmPH"
-                                htmlFor="thief"
-                                required={false}
-                                requiredText="required"
-                                testId="cf-ui-form-label"
+                                value="thief"
                               >
-                                <label
-                                  className="FormLabel__FormLabel___3d6zQ CheckboxField__CheckboxField__label___2bUrb CheckboxField__CheckboxField__label--light___5EmPH"
-                                  data-test-id="cf-ui-form-label"
+                                <input
+                                  aria-label="Thief"
+                                  checked={false}
+                                  className="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                                  data-test-id="cf-ui-controlled-input"
+                                  disabled={false}
+                                  id="thief"
+                                  onChange={[Function]}
+                                  required={false}
+                                  type="checkbox"
+                                  value="thief"
+                                />
+                              </ControlledInput>
+                              <div>
+                                <FormLabel
+                                  extraClassNames="ControlledInputField__ControlledInputField__label___a9J52"
                                   htmlFor="thief"
+                                  required={false}
+                                  requiredText="required"
+                                  testId="cf-ui-form-label"
                                 >
-                                  Thief
-                                </label>
-                              </FormLabel>
+                                  <label
+                                    className="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                                    data-test-id="cf-ui-form-label"
+                                    htmlFor="thief"
+                                  >
+                                    Thief
+                                  </label>
+                                </FormLabel>
+                              </div>
                             </div>
-                          </div>
+                          </ControlledInputField>
                         </CheckboxField>
                       </li>
                     </DropdownListItem>

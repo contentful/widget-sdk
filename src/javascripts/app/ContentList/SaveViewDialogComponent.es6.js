@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TextField } from '@contentful/ui-component-library';
+import { TextField } from '@contentful/forma-36-react-components';
 import { byName as colors } from 'Styles/Colors.es6';
 import keycodes from 'utils/keycodes.es6';
 

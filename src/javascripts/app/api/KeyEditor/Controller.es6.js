@@ -9,7 +9,7 @@ import spaceContext from 'spaceContext';
 import logger from 'logger';
 import * as accessChecker from 'access_control/AccessChecker';
 import $state from '$state';
-import { Notification } from '@contentful/ui-component-library';
+import { Notification } from '@contentful/forma-36-react-components';
 import { track } from 'analytics/Analytics.es6';
 import * as LD from 'utils/LaunchDarkly';
 import * as Intercom from 'intercom';

@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Dropdown, DropdownList, DropdownListItem } from '@contentful/ui-component-library';
+import {
+  Button,
+  Dropdown,
+  DropdownList,
+  DropdownListItem
+} from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink.es6';
 
 export default class SidebarContentPreview extends Component {

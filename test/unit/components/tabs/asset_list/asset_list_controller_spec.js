@@ -50,7 +50,7 @@ describe('Asset List Controller', () => {
       });
     });
 
-    ComponentLibrary = this.$inject('@contentful/ui-component-library');
+    ComponentLibrary = this.$inject('@contentful/forma-36-react-components');
     ComponentLibrary.Notification.error = stubs.error;
     ComponentLibrary.Notification.success = stubs.success;
 

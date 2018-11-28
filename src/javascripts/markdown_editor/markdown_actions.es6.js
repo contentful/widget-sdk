@@ -1,5 +1,5 @@
 import modalDialog from 'modalDialog';
-import { Notification } from '@contentful/ui-component-library';
+import { Notification } from '@contentful/forma-36-react-components';
 import assetUrl from 'assetUrlFilter';
 import specialCharacters from './markdown_special_characters.es6';
 import LinkOrganizer from 'LinkOrganizer';

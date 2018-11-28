@@ -139,7 +139,7 @@ function successTemplate() {
     ]),
     h('div', { style: { marginTop: `${vheight(3)}px` } }),
     h('react-component', {
-      name: '@contentful/ui-component-library/TextInput',
+      name: '@contentful/forma-36-react-components/TextInput',
       props: 'buildTokenInputProps()'
     }),
     h('div', { style: { marginTop: `${vheight(3)}px` } }),

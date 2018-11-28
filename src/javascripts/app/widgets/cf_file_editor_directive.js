@@ -6,7 +6,7 @@ angular.module('contentful').directive('cfFileEditor', [
     const _ = require('lodash');
     const Filestack = require('services/Filestack.es6');
     const ImageOperations = require('app/widgets/ImageOperations.es6');
-    const { Notification } = require('@contentful/ui-component-library');
+    const { Notification } = require('@contentful/forma-36-react-components');
     const stringUtils = require('utils/StringUtils.es6');
     const mimetype = require('@contentful/mimetype');
 

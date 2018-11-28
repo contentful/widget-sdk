@@ -15,7 +15,7 @@ import ContactUsButton from 'ui/Components/ContactUsButton.es6';
 import EnterpriseSpaceWizardPlan from './EnterpriseSpaceWizardPlan.es6';
 import EnterpriseSpaceWizardInfo from './EnterpriseSpaceWizardInfo.es6';
 
-import { TextField } from '@contentful/ui-component-library';
+import { TextField } from '@contentful/forma-36-react-components';
 
 class EnterpriseSpaceWizard extends React.Component {
   static propTypes = {

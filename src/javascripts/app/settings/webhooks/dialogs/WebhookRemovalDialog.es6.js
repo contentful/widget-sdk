@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ModalConfirm } from '@contentful/ui-component-library';
+import { ModalConfirm } from '@contentful/forma-36-react-components';
 
 const URL_STYLE = {
   margin: '10px 0',

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { InlineReferenceCard, DropdownListItem } from '@contentful/ui-component-library';
+import { InlineReferenceCard, DropdownListItem } from '@contentful/forma-36-react-components';
 
 import RequestStatus from '../shared/RequestStatus.es6';
 import FetchEntity from '../shared/FetchEntity/index.es6';

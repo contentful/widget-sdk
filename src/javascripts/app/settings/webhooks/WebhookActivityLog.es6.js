@@ -1,7 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { range } from 'lodash';
-import { Table, TableBody, TableHead, TableRow, TableCell } from '@contentful/ui-component-library';
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell
+} from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink.es6';
 import WebhookCallStatus from './WebhookCallStatus.es6';
 

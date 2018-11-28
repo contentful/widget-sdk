@@ -7,7 +7,7 @@ import { find } from 'lodash';
 import { filter, concat } from 'utils/Collections.es6';
 import InfoIcon from 'svg/info.es6';
 import CopyButton from 'ui/Components/CopyIconButton.es6';
-import { Tag } from '@contentful/ui-component-library';
+import { Tag } from '@contentful/forma-36-react-components';
 
 function makeLink(env) {
   return {

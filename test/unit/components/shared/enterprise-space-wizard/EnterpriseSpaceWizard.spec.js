@@ -70,7 +70,7 @@ describe('Enterprise Space Wizard', () => {
 
     this.store = this.$inject('ReduxStore/store.es6').default;
     this.PlanFeatures = this.$inject('components/shared/space-wizard/PlanFeatures.es6').default;
-    this.TextField = this.$inject('@contentful/ui-component-library').TextField;
+    this.TextField = this.$inject('@contentful/forma-36-react-components').TextField;
 
     const EnterpriseSpaceWizard = this.$inject(
       'components/shared/enterprise-space-wizard/EnterpriseSpaceWizard.es6'

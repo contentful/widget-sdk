@@ -8,7 +8,7 @@ angular
     require => {
       const $location = require('$location');
       const Authentication = require('Authentication.es6');
-      const { Notification } = require('@contentful/ui-component-library');
+      const { Notification } = require('@contentful/forma-36-react-components');
       const TokenStore = require('services/TokenStore.es6');
       const CreateSpace = require('services/CreateSpace.es6');
       const UrlSyncHelper = require('account/UrlSyncHelper.es6');

@@ -1,5 +1,5 @@
 import modalDialog from 'modalDialog';
-import { Notification } from '@contentful/ui-component-library';
+import { Notification } from '@contentful/forma-36-react-components';
 import { getOrganization } from 'services/TokenStore.es6';
 import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
 import createResourceService from 'services/ResourceService.es6';

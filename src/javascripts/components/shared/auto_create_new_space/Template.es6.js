@@ -41,7 +41,7 @@ export default function() {
                   [
                     h('div', { ngShow: 'isCreatingSpace' }, [
                       h('react-component', {
-                        name: '@contentful/ui-component-library/Spinner',
+                        name: '@contentful/forma-36-react-components/Spinner',
                         props: '{size: "large", style: {display: "block"}}'
                       })
                     ]),

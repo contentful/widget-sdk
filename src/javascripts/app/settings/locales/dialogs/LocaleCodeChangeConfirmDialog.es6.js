@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TextInput, ModalConfirm } from '@contentful/ui-component-library';
+import { TextInput, ModalConfirm } from '@contentful/forma-36-react-components';
 
 const LocaleType = PropTypes.shape({
   code: PropTypes.string.isRequired,

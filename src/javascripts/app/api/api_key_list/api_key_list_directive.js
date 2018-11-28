@@ -19,7 +19,7 @@ angular
       const Command = require('command');
       const TheAccountView = require('TheAccountView');
       const $state = require('$state');
-      const { Notification } = require('@contentful/ui-component-library');
+      const { Notification } = require('@contentful/forma-36-react-components');
       const ResourceUtils = require('utils/ResourceUtils.es6');
       const createResourceService = require('services/ResourceService.es6').default;
       const $q = require('$q');

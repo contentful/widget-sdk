@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
-import { Button, Notification } from '@contentful/ui-component-library';
+import { Button, Notification } from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
 import WebhookForm from './WebhookForm.es6';
 import WebhookSidebar from './WebhookSidebar.es6';

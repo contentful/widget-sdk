@@ -1,7 +1,7 @@
 describe('app/entityEditor/Notifications', () => {
   beforeEach(function() {
     module('contentful/test');
-    this.ComponentLibrary = this.$inject('@contentful/ui-component-library');
+    this.ComponentLibrary = this.$inject('@contentful/forma-36-react-components');
     this.ComponentLibrary.Notification.success = sinon.stub();
     this.ComponentLibrary.Notification.error = sinon.stub();
     const N = this.$inject('app/entity_editor/Notifications.es6');

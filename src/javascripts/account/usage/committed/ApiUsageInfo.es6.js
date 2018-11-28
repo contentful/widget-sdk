@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { sum } from 'lodash';
-import { Tooltip, Tag } from '@contentful/ui-component-library';
+import { Tooltip, Tag } from '@contentful/forma-36-react-components';
 
 import { shorten } from 'utils/NumberUtils.es6';
 

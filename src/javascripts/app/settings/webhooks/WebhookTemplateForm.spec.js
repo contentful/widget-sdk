@@ -1,6 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import { TextField, Button } from '@contentful/ui-component-library';
+import { TextField, Button } from '@contentful/forma-36-react-components';
 import { cloneDeep } from 'lodash';
 import { WebhookTemplateForm } from './WebhookTemplateForm.es6';
 import * as AnalyticsMocked from 'analytics/Analytics.es6';

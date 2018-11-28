@@ -6,7 +6,7 @@ import SpacePlanSelector from './SpacePlanSelector.es6';
 import SpaceDetails from './SpaceDetails.es6';
 import ConfirmScreen from './ConfirmScreen.es6';
 import ProgressScreen from './ProgressScreen.es6';
-import { Notification } from '@contentful/ui-component-library';
+import { Notification } from '@contentful/forma-36-react-components';
 import logger from 'logger';
 
 import { connect } from 'react-redux';

@@ -16,7 +16,7 @@ describe('DeleteSpace', () => {
     });
 
     this.modalDialog = this.$inject('modalDialog');
-    this.ComponentLibrary = this.$inject('@contentful/ui-component-library');
+    this.ComponentLibrary = this.$inject('@contentful/forma-36-react-components');
     this.ComponentLibrary.Notification.success = sinon.stub();
     this.modalDialog.richtextLayout = () => 'TEMPLATE';
     sinon.spy(this.modalDialog, 'open');

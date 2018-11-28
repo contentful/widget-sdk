@@ -1,6 +1,6 @@
 import modalDialog from 'modalDialog';
 import Command from 'command';
-import { Notification } from '@contentful/ui-component-library';
+import { Notification } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'ReloadNotification';
 import * as stringUtils from 'utils/StringUtils.es6';
 import ListQuery from 'ListQuery';

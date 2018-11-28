@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { ToggleButton, TextLink } from '@contentful/ui-component-library';
+import { ToggleButton, TextLink } from '@contentful/forma-36-react-components';
 import { BLOCKS, MARKS, INLINES } from '@contentful/rich-text-types';
 import ValidationType, {
   VALIDATABLE_NODE_TYPES,

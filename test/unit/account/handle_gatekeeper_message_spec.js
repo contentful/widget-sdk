@@ -35,7 +35,7 @@ describe('Gatekeeper Message Handler', () => {
     });
 
     it('shows notification', function() {
-      const { Notification } = this.$inject('@contentful/ui-component-library');
+      const { Notification } = this.$inject('@contentful/forma-36-react-components');
       Notification.success = sinon.stub();
       Notification.error = sinon.stub();
       this.handle({ type: 'flash', resource: { message: 'OK', type: 'info' } });

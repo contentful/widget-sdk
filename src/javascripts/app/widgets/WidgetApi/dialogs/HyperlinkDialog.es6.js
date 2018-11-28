@@ -7,7 +7,7 @@ import {
   SelectField,
   TextField,
   TextLink
-} from '@contentful/ui-component-library';
+} from '@contentful/forma-36-react-components';
 import FetchedEntityCard from 'app/widgets/rich_text/plugins/shared/FetchedEntityCard';
 import Dialog from 'app/entity_editor/Components/Dialog';
 import AngularComponent from 'AngularComponent';

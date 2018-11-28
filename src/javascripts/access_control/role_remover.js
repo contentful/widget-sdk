@@ -7,7 +7,7 @@ angular.module('contentful').factory('createRoleRemover', [
     const $q = require('$q');
     const $rootScope = require('$rootScope');
     const modalDialog = require('modalDialog');
-    const { Notification } = require('@contentful/ui-component-library');
+    const { Notification } = require('@contentful/forma-36-react-components');
     const Command = require('command');
     const spaceContext = require('spaceContext');
     const roleRepo = require('access_control/RoleRepository.es6').getInstance(spaceContext.space);

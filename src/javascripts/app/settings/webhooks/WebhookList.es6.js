@@ -3,7 +3,13 @@ import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import StateLink from 'app/common/StateLink.es6';
 import Workbench from 'app/common/Workbench.es6';
-import { Table, TableHead, TableCell, TableRow, TableBody } from '@contentful/ui-component-library';
+import {
+  Table,
+  TableHead,
+  TableCell,
+  TableRow,
+  TableBody
+} from '@contentful/forma-36-react-components';
 
 import WebhookHealth from './WebhookHealth.es6';
 import WebhookListSidebar from './WebhookListSidebar.es6';

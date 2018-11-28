@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tooltip, TextLink, Tag } from '@contentful/ui-component-library';
+import { Tooltip, TextLink, Tag } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
 import { truncate } from 'utils/StringUtils.es6';
 import { INLINES } from '@contentful/rich-text-types';

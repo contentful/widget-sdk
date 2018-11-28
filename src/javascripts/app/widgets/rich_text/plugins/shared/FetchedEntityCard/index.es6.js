@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Card, IconButton } from '@contentful/ui-component-library';
+import { Card, IconButton } from '@contentful/forma-36-react-components';
 
 import RequestStatus from '../RequestStatus.es6';
 import FetchEntity from '../FetchEntity/index.es6';

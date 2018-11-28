@@ -11,7 +11,7 @@ angular
     'require',
     require => {
       var config = require('states/config');
-      const { Notification } = require('@contentful/ui-component-library');
+      const { Notification } = require('@contentful/forma-36-react-components');
 
       return {
         loadAll: loadAll,

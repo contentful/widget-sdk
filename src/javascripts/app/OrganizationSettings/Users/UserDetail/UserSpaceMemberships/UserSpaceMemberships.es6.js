@@ -23,7 +23,7 @@ import {
   ModalConfirm,
   Button,
   Notification
-} from '@contentful/ui-component-library';
+} from '@contentful/forma-36-react-components';
 import { getUserName } from '../../UserUtils.es6';
 import moment from 'moment';
 

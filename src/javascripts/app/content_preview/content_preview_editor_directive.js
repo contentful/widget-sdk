@@ -22,7 +22,7 @@ angular
       const Command = require('command');
       const leaveConfirmator = require('navigation/confirmLeaveEditor');
       const contentPreview = require('contentPreview');
-      const { Notification } = require('@contentful/ui-component-library');
+      const { Notification } = require('@contentful/forma-36-react-components');
       const logger = require('logger');
       const slugUtils = require('slug');
       const Analytics = require('analytics/Analytics.es6');

@@ -10,7 +10,7 @@ import { makeBlankFolder } from 'data/UiConfig/Blanks.es6';
 import openRoleSelector from './RoleSelector.es6';
 
 import { getStore } from 'TheStore';
-import { Notification } from '@contentful/ui-component-library';
+import { Notification } from '@contentful/forma-36-react-components';
 import * as random from 'utils/Random.es6';
 
 const LoadView = makeCtor('LoadView');

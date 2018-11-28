@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import WebhookSidebarDocumentation from './WebhookSidebarDocumentation.es6';
 import WebhookSidebarTemplatesList from './WebhookSidebarTemplatesList.es6';
-import { Button } from '@contentful/ui-component-library';
+import { Button } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink.es6';
 
 function WebhookListSidebar({ webhookCount, openTemplateDialog }) {

@@ -1,5 +1,5 @@
 import { cloneDeep, get, sortBy } from 'lodash';
-import { Notification } from '@contentful/ui-component-library';
+import { Notification } from '@contentful/forma-36-react-components';
 import logger from 'logger';
 import $q from '$q';
 import Store from 'data/StreamHashSet';

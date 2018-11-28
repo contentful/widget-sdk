@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { DropdownListItem } from '@contentful/ui-component-library';
+import { DropdownListItem } from '@contentful/forma-36-react-components';
 
 export default class ToolbarDropdownListItem extends Component {
   static propTypes = {

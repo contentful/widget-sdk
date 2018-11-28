@@ -10,7 +10,7 @@ angular
       const $q = require('$q');
       const ListQuery = require('ListQuery');
       const ReloadNotification = require('ReloadNotification');
-      const { Notification } = require('@contentful/ui-component-library');
+      const { Notification } = require('@contentful/forma-36-react-components');
       const createRequestQueue = require('overridingRequestQueue');
       const spaceContext = require('spaceContext');
       const accessChecker = require('access_control/AccessChecker');

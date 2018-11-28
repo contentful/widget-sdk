@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { mapValues, flow, keyBy, get, eq, isNumber, pick } from 'lodash/fp';
 
-import { Spinner } from '@contentful/ui-component-library';
+import { Spinner } from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
 
 const ServicesConsumer = require('../../reactServiceContext').default;

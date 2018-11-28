@@ -1,5 +1,5 @@
 import React from 'react';
-import { Spinner } from '@contentful/ui-component-library';
+import { Spinner } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
 
 const EmptyPlaceholder = ({ loading }) => (

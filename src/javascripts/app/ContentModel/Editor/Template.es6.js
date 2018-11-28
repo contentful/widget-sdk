@@ -451,7 +451,7 @@ function sidebar() {
     h('h2.entity-sidebar__heading', ['Content type ID']),
     h('p', ['Use this ID to retrieve everything related to this content type via the API.']),
     h('react-component', {
-      name: '@contentful/ui-component-library/TextInput',
+      name: '@contentful/forma-36-react-components/TextInput',
       props: 'buildContentTypeIdInputProps()'
     }),
     // Documentation links

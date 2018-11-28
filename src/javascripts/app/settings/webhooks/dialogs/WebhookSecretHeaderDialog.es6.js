@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, TextField, Modal } from '@contentful/ui-component-library';
+import { Button, TextField, Modal } from '@contentful/forma-36-react-components';
 
 export class WebhookSecretHeaderForm extends Component {
   static propTypes = {

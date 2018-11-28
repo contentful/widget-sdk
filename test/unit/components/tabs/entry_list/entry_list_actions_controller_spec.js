@@ -58,7 +58,7 @@ describe('Entry List Actions Controller', () => {
     stubs.action3.returns(action3.promise);
     stubs.action4.returns(action4.promise);
 
-    ComponentLibrary = this.$inject('@contentful/ui-component-library');
+    ComponentLibrary = this.$inject('@contentful/forma-36-react-components');
     ComponentLibrary.Notification.error = stubs.error;
     ComponentLibrary.Notification.success = stubs.success;
 

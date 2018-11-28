@@ -48,7 +48,7 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
 
     $q = this.$inject('$q');
     logger = this.$inject('logger');
-    const ComponentLibrary = this.$inject('@contentful/ui-component-library');
+    const ComponentLibrary = this.$inject('@contentful/forma-36-react-components');
     notification = ComponentLibrary.Notification;
     notification.success = sinon.stub();
     notification.error = sinon.stub();

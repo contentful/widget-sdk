@@ -8,7 +8,7 @@ angular.module('contentful').controller('AssetListController', [
     const createSelection = require('classes/Selection.es6').createSelection;
     const delay = require('delay');
     const Analytics = require('analytics/Analytics.es6');
-    const { Notification } = require('@contentful/ui-component-library');
+    const { Notification } = require('@contentful/forma-36-react-components');
     const spaceContext = require('spaceContext');
     const accessChecker = require('access_control/AccessChecker');
     const entityStatus = require('app/entity_editor/EntityStatus.es6');

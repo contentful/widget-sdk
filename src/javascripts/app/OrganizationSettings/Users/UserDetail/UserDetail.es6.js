@@ -4,7 +4,7 @@ import moment from 'moment';
 import { getValue } from 'utils/kefir.es6';
 import Workbench from 'app/common/Workbench.es6';
 import { go } from 'states/Navigator.es6';
-import { Button, Notification } from '@contentful/ui-component-library';
+import { Button, Notification } from '@contentful/forma-36-react-components';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import UserCard from '../UserCard.es6';
 import { orgRoles } from './OrgRoles.es6';

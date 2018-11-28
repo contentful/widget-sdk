@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import { range } from 'lodash';
 
-import { TextField, Icon } from '@contentful/ui-component-library';
+import { TextField, Icon } from '@contentful/forma-36-react-components';
 
 export default class PartnershipForm extends React.Component {
   static propTypes = {

@@ -8,7 +8,7 @@ describe('cfContentPreviewEditor directive', () => {
     module('contentful/test', $provide => {
       $provide.value('access_control/AccessChecker', { wasForbidden: sinon.stub().returns(false) });
     });
-    ComponentLibrary = this.$inject('@contentful/ui-component-library');
+    ComponentLibrary = this.$inject('@contentful/forma-36-react-components');
     ComponentLibrary.Notification = {
       success: sinon.stub().returns(),
       error: sinon.stub().returns()

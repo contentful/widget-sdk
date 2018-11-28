@@ -8,7 +8,7 @@ import {
   TableCell,
   TableBody,
   Tag
-} from '@contentful/ui-component-library';
+} from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink.es6';
 
 function groupLocaleNamesByCode(locales) {

@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 
-import { TextLink } from '@contentful/ui-component-library';
+import { TextLink } from '@contentful/forma-36-react-components';
 import SsoExemptionDialog from './SsoExemptionModal.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import { OrganizationMembership as OrganizationMembershipPropType } from '../../PropTypes.es6';

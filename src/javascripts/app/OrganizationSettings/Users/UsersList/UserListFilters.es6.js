@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import pluralize from 'pluralize';
 import { connect } from 'react-redux';
 import { keyBy, isNil } from 'lodash';
-import { TextLink } from '@contentful/ui-component-library';
-
+import { TextLink } from '@contentful/forma-36-react-components';
 import { updateDependentFilterDefs } from './UserListFiltersHelpers.es6';
 
 import {

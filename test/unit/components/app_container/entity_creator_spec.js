@@ -19,7 +19,7 @@ describe('entityCreator', () => {
 
     const cfStub = this.$inject('cfStub');
 
-    this.ComponentLibrary = this.$inject('@contentful/ui-component-library');
+    this.ComponentLibrary = this.$inject('@contentful/forma-36-react-components');
     this.ComponentLibrary.Notification.success = stubs.success;
     this.ComponentLibrary.Notification.error = stubs.error;
 

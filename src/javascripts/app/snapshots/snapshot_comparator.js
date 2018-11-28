@@ -35,7 +35,7 @@ angular
       const Command = require('command');
       const $state = require('$state');
       const $stateParams = require('$stateParams');
-      const { Notification } = require('@contentful/ui-component-library');
+      const { Notification } = require('@contentful/forma-36-react-components');
       const trackVersioning = require('analyticsEvents/versioning');
       const Validator = require('app/entity_editor/Validator.es6');
       const Focus = require('app/entity_editor/Focus.es6');

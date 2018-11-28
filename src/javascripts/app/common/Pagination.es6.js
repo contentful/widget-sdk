@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Select, Option, Button } from '@contentful/ui-component-library';
+import { Select, Option, Button } from '@contentful/forma-36-react-components';
 
 export default class Pagination extends React.Component {
   static propTypes = {

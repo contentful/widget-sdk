@@ -9,7 +9,7 @@ import { createStore, makeReducer } from 'ui/Framework/Store.es6';
 import { container, hfill, vspace_, vspace, hspace } from 'ui/Layout.es6';
 import { byName as Colors } from 'Styles/Colors.es6';
 
-import { Notification } from '@contentful/ui-component-library';
+import { Notification } from '@contentful/forma-36-react-components';
 import { fetchAll } from 'data/CMA/FetchAll.es6';
 import { open as openDialog } from 'modalDialog';
 

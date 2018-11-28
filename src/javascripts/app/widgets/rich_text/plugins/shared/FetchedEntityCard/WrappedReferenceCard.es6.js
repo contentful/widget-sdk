@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ReferenceCard, IconButton } from '@contentful/ui-component-library';
+import { ReferenceCard, IconButton } from '@contentful/forma-36-react-components';
 import Thumbnail from './Thumbnail.es6';
 
 class WrappedReferenceCard extends React.Component {

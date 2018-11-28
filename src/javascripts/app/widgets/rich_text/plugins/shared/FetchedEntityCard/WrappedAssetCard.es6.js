@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { AssetCard, DropdownList, DropdownListItem } from '@contentful/ui-component-library';
+import { AssetCard, DropdownList, DropdownListItem } from '@contentful/forma-36-react-components';
 import { get } from 'lodash';
 import mimetype from '@contentful/mimetype';
 

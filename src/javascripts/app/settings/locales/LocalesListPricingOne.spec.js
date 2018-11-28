@@ -1,7 +1,7 @@
 import React from 'react';
 import Enzyme from 'enzyme';
 import $stateMocked from '$state';
-import { Notification } from '@contentful/ui-component-library';
+import { Notification } from '@contentful/forma-36-react-components';
 import LocalesListPricingOne, { AddLocaleButton, LocalesAdvice } from './LocalesListPricingOne.es6';
 
 describe('app/settings/locales/LocalesListPricingOne', () => {

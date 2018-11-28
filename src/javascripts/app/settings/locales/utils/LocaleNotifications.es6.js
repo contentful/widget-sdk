@@ -1,5 +1,5 @@
 import logger from 'logger';
-import { Notification } from '@contentful/ui-component-library';
+import { Notification } from '@contentful/forma-36-react-components';
 import { get } from 'lodash';
 
 const NOT_RENAMEABLE_MESSAGE =

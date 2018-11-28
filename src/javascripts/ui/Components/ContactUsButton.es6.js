@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import * as Intercom from 'intercom';
 import { supportUrl } from 'Config.es6';
 
-import { TextLink, Button } from '@contentful/ui-component-library';
+import { TextLink, Button } from '@contentful/forma-36-react-components';
 
 class ContactUsButton extends React.Component {
   static propTypes = {

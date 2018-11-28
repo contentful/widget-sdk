@@ -170,7 +170,7 @@ describe('app/api/CMATokens', () => {
 
   describe('revoke', () => {
     beforeEach(function() {
-      const ComponentLibrary = this.$inject('@contentful/ui-component-library');
+      const ComponentLibrary = this.$inject('@contentful/forma-36-react-components');
       ComponentLibrary.Notification.success = sinon.stub();
       ComponentLibrary.Notification.error = sinon.stub();
       this.Notification = ComponentLibrary.Notification;

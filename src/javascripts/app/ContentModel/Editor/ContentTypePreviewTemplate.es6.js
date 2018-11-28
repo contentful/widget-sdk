@@ -47,7 +47,7 @@ export default function() {
           },
           [
             h('react-component', {
-              name: '@contentful/ui-component-library/Spinner',
+              name: '@contentful/forma-36-react-components/Spinner',
               props: '{size: "large", style: {display: "block"}}'
             }),
             h(

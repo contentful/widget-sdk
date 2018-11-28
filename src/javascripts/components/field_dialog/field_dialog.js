@@ -62,7 +62,7 @@ angular
       const WidgetParametersUtils = require('widgets/WidgetParametersUtils.es6');
       const spaceContext = require('spaceContext');
       const $timeout = require('$timeout');
-      const { Notification } = require('@contentful/ui-component-library');
+      const { Notification } = require('@contentful/forma-36-react-components');
 
       const contentTypeData = $scope.contentType.data;
 

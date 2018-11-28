@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Dropdown, DropdownList, Button } from '@contentful/ui-component-library';
+import { Dropdown, DropdownList, Button } from '@contentful/forma-36-react-components';
 
 class EntryEmbedDropdown extends Component {
   static propTypes = {

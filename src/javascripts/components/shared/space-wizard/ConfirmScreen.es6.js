@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { get, trim } from 'lodash';
 import moment from 'moment';
-import { Spinner } from '@contentful/ui-component-library';
+import { Spinner } from '@contentful/forma-36-react-components';
 import { formatPrice } from './WizardUtils.es6';
 import Price from 'ui/Components/Price.es6';
 

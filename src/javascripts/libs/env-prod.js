@@ -37,7 +37,7 @@ window.libs = [
   // addEventListener and localStorage.
   ['global/window', window],
 
-  ['@contentful/ui-component-library', require('@contentful/ui-component-library')],
+  ['@contentful/forma-36-react-components', require('@contentful/forma-36-react-components')],
   ['@contentful/contentful-slatejs-adapter', require('@contentful/contentful-slatejs-adapter')],
   [
     '@contentful/rich-text-plain-text-renderer',

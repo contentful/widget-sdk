@@ -3,7 +3,7 @@ import $q from '$q';
 import $timeout from '$timeout';
 import * as Filestack from 'services/Filestack.es6';
 import logger from 'logger';
-import { Notification } from '@contentful/ui-component-library';
+import { Notification } from '@contentful/forma-36-react-components';
 import * as stringUtils from 'utils/StringUtils.es6';
 import spaceContext from 'spaceContext';
 

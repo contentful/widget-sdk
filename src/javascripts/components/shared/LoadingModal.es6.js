@@ -1,5 +1,5 @@
 import React from 'react';
-import { Spinner, Card } from '@contentful/ui-component-library';
+import { Spinner, Card } from '@contentful/forma-36-react-components';
 import modalDialog from 'modalDialog';
 
 export default function LoadingModal() {

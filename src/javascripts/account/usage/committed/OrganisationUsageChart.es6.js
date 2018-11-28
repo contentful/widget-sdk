@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { last } from 'lodash';
 import moment from 'moment';
 
-import { LineChart } from '@contentful/ui-component-library';
+import { LineChart } from '@contentful/forma-36-react-components';
 import { shorten } from 'utils/NumberUtils.es6';
 
 import { periodPropType } from './propTypes.es6';

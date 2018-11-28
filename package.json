@@ -17,7 +17,7 @@
     "@contentful/rich-text-plain-text-renderer": "^10.0.1",
     "@contentful/rich-text-types": "^10.0.1",
     "@contentful/sharejs": "^2.2.0",
-    "@contentful/ui-component-library": "^5.14.4",
+    "@contentful/forma-36-react-components": "^1.1.1-alpha.0",
     "@contentful/validation": "^7.10.0",
     "@contentful/widget-map": "^1.2.3",
     "@contentful/worf": "^3.13.0",

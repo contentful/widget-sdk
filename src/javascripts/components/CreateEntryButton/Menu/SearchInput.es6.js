@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { Icon } from '@contentful/ui-component-library';
+import { Icon } from '@contentful/forma-36-react-components';
 
 export default function SearchInput({ getInputProps }) {
   return (

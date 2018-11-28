@@ -1,7 +1,7 @@
 import { shallow } from 'enzyme';
 import React from 'react';
 import moment from 'moment';
-import { Select } from '@contentful/ui-component-library';
+import { Select } from '@contentful/forma-36-react-components';
 
 import PeriodSelector from '../committed/PeriodSelector.es6';
 

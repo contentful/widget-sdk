@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { get } from 'lodash';
 
-import { Notification } from '@contentful/ui-component-library';
+import { Notification } from '@contentful/forma-36-react-components';
 import * as ReloadNotification from 'ReloadNotification';
 import { getPlansWithSpaces } from 'account/pricing/PricingDataProvider.es6';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';

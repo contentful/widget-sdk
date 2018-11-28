@@ -72,7 +72,7 @@ function renderCreateSpaceForm() {
 function renderSpaceNameInput() {
   return h('div.cfnext-form__field', [
     h('react-component', {
-      name: '@contentful/ui-component-library/TextField',
+      name: '@contentful/forma-36-react-components/TextField',
       props: 'createSpace.buildSpaceNameInputProps()'
     }),
     renderErrorLabel('createSpace.newSpace.errors.fields.name')
@@ -87,7 +87,7 @@ function renderLanguageSelect() {
     },
     [
       h('react-component', {
-        name: '@contentful/ui-component-library/SelectField',
+        name: '@contentful/forma-36-react-components/SelectField',
         props: 'createSpace.buildLanguageSelectProps()'
       }),
       renderErrorLabel('createSpace.newSpace.errors.fields.default_locale')
@@ -196,7 +196,7 @@ function renderSpaceTemplates() {
           },
           [
             h('react-component', {
-              name: '@contentful/ui-component-library/Spinner',
+              name: '@contentful/forma-36-react-components/Spinner',
               props: '{size: "large", style: {display: "block"}}'
             })
           ]

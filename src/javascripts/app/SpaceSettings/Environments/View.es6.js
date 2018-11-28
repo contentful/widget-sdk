@@ -16,7 +16,7 @@ import {
   TableCell,
   TableBody,
   Tag
-} from '@contentful/ui-component-library';
+} from '@contentful/forma-36-react-components';
 import { byName as Colors } from 'Styles/Colors.es6';
 
 import QuestionMarkIcon from 'svg/QuestionMarkIcon.es6';
