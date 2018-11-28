@@ -26,7 +26,6 @@ angular
     require => {
       const K = require('utils/kefir.es6');
       const $state = require('$state');
-      const { throttle } = require('lodash');
       const spaceContext = require('spaceContext');
 
       return {
@@ -55,17 +54,13 @@ angular
               })
             };
 
-            // updating props on every quick change of model
-            // (while user is typing) isn't performant,
-            // so we throttle update by 300ms
-            // (it's hard to move focus from intput to preview button quicker)
-            const updateSidebarProps = throttle(entry => {
+            const updateSidebarProps = entry => {
               $scope.sidebarContentPreviewProps = {
                 ...$scope.sidebarContentPreviewProps,
                 entry
               };
               $scope.$applyAsync();
-            }, 300);
+            };
 
             K.onValueScope($scope, $scope.otDoc.data$, entry => {
               updateSidebarProps(entry);
