@@ -6,6 +6,7 @@ import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcher
 import StateRedirect from 'app/common/StateRedirect.es6';
 import LocaleNotifications from '../utils/LocaleNotifications.es6';
 import spaceContext from 'spaceContext';
+import TheLocaleStore from 'TheLocaleStore';
 
 const LocalesFetcher = createFetcherComponent(() => {
   return spaceContext.localeRepo.getAll();
@@ -82,6 +83,11 @@ class NewLocaleForm extends Component {
 }
 
 export default function LocalesNewRoute(props) {
+  const save = async function(locale) {
+    await spaceContext.localeRepo.save(locale);
+    TheLocaleStore.refresh();
+  };
+
   return (
     <AdminOnly>
       <LocalesFetcher>
@@ -96,7 +102,7 @@ export default function LocalesNewRoute(props) {
           return (
             <NewLocaleForm
               spaceLocales={spaceLocales}
-              saveLocale={spaceContext.localeRepo.save}
+              saveLocale={save}
               setDirty={props.setDirty}
               registerSaveAction={props.registerSaveAction}
             />
