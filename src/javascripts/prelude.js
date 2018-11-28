@@ -89,7 +89,7 @@ angular
       const createMicroBackendsClient = require('MicroBackendsClient.es6').default;
       window.__micro_backends = {
         createMicroBackendsClient,
-        appsClient: createMicroBackendsClient({ backendName: 'apps' })
+        appsClient: createMicroBackendsClient({ backendName: 'apps', withAuth: true })
       };
     }
   ]);
