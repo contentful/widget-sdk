@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Icon from 'ui/Components/Icon.es6';
+import StateLink from 'app/common/StateLink.es6';
 
 class Workbench extends React.Component {
   static propTypes = {
@@ -114,6 +115,33 @@ Workbench.Title.propTypes = {
   children: PropTypes.node
 };
 
+Workbench.Header.Back = class HeaderBack extends React.Component {
+  static propTypes = {
+    to: PropTypes.string.isRequired,
+    params: PropTypes.object,
+    testId: PropTypes.string
+  };
+  static defaultProps = {
+    testId: 'workbench-back-btn'
+  };
+  render() {
+    const { testId, ...restProps } = this.props;
+    return (
+      <StateLink {...restProps}>
+        {({ onClick }) => (
+          <div className="breadcrumbs-widget">
+            <div className="breadcrumbs-container">
+              <div className="btn btn__back" onClick={onClick} data-test-id={testId}>
+                <Icon name="back" />
+              </div>
+            </div>
+          </div>
+        )}
+      </StateLink>
+    );
+  }
+};
+
 Workbench.Header.Left = class HeaderLeft extends React.Component {
   static propTypes = {
     children: PropTypes.node
@@ -162,9 +190,9 @@ Workbench.Nav.propTypes = {
 
 Workbench.Content = class Content extends React.Component {
   static propTypes = {
-    noSidebar: PropTypes.bool,
+    centered: PropTypes.bool,
     style: PropTypes.object,
-    children: PropTypes.oneOfType([PropTypes.array, PropTypes.element])
+    children: PropTypes.oneOfType([PropTypes.array, PropTypes.node])
   };
 
   static displayName = 'Workbench.Content';
@@ -174,7 +202,7 @@ Workbench.Content = class Content extends React.Component {
       <div
         style={this.props.style}
         className={
-          this.props.noSidebar === true
+          this.props.centered === true
             ? 'workbench-main__middle-content'
             : 'workbench-main__content'
         }>

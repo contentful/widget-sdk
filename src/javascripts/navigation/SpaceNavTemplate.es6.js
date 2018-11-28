@@ -77,6 +77,12 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
       dataViewType: 'spaces-settings-usage',
       title: 'Usage',
       reload: useSpaceEnv
+    },
+    apps: {
+      if: 'nav.appsEnabled && nav.canNavigateTo("apps")',
+      sref: makeRef('settings.apps.list'),
+      dataViewType: 'spaces-settings-apps',
+      title: 'Apps'
     }
   };
 
@@ -103,7 +109,8 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
     dropdownItems.keys,
     dropdownItems.webhooks,
     dropdownItems.previews,
-    dropdownItems.usage
+    dropdownItems.usage,
+    dropdownItems.apps
   ];
 
   const spaceSettingsDropdown = [
@@ -115,7 +122,8 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
     dropdownItems.webhooks,
     dropdownItems.extensions,
     dropdownItems.previews,
-    dropdownItems.usage
+    dropdownItems.usage,
+    dropdownItems.apps
   ];
 
   return navBar([

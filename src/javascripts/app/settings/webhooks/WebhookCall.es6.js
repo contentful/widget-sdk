@@ -2,8 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Workbench from 'app/common/Workbench.es6';
 import { get } from 'lodash';
-import Icon from 'ui/Components/Icon.es6';
-import StateLink from 'app/common/StateLink.es6';
 
 import WebhookCallStatus from './WebhookCallStatus.es6';
 
@@ -35,17 +33,7 @@ export class WebhookCall extends React.Component {
     return (
       <Workbench className="webhook-call">
         <Workbench.Header>
-          <div className="breadcrumbs-widget">
-            <div className="breadcrumbs-container">
-              <StateLink to="^">
-                {({ onClick }) => (
-                  <div className="btn btn__back" onClick={onClick}>
-                    <Icon name="back" />
-                  </div>
-                )}
-              </StateLink>
-            </div>
-          </div>
+          <Workbench.Header.Back to="^" />
           <Workbench.Icon icon="page-settings" />
           <Workbench.Title>
             Call details for {webhook.name} at {call.requestAt}

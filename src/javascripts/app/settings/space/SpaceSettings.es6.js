@@ -61,7 +61,7 @@ export default class SpaceSettings extends React.Component {
             </Button>
           </Workbench.Header.Actions>
         </Workbench.Header>
-        <Workbench.Content noSidebar style={{ marginTop: 10 }}>
+        <Workbench.Content centered style={{ marginTop: 10 }}>
           <TextField
             name="space-id"
             id="space-id"

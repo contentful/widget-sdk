@@ -1,7 +1,7 @@
 import React from 'react';
 
 const NetlifyLogo = props => (
-  <svg width={32} height={32} {...props}>
+  <svg width={32} height={32} viewBox="0 0 32 32" {...props}>
     <defs>
       <radialGradient
         cy="-50%"

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Workbench from 'app/common/Workbench.es6';
 import { Button, Select, Option, Note, CheckboxField } from '@contentful/ui-component-library';
-import Icon from 'ui/Components/Icon.es6';
 import StateLink from 'app/common/StateLink.es6';
 import { create as createLocaleList } from './utils/LocaleList.es6';
 
@@ -104,17 +103,7 @@ export default class LocaleEditForm extends Component {
     return (
       <Workbench>
         <Workbench.Header>
-          <StateLink to="^.list">
-            {({ onClick }) => (
-              <div className="breadcrumbs-widget">
-                <div className="breadcrumbs-container">
-                  <div className="btn btn__back" onClick={onClick}>
-                    <Icon name="back" />
-                  </div>
-                </div>
-              </div>
-            )}
-          </StateLink>
+          <Workbench.Header.Back to="^.list" />
           <Workbench.Icon icon="page-settings" />
           <Workbench.Title>{this.state.locale.name || 'New locale'}</Workbench.Title>
           {this.state.locale.default && (
@@ -147,7 +136,7 @@ export default class LocaleEditForm extends Component {
             </Button>
           </Workbench.Header.Actions>
         </Workbench.Header>
-        <Workbench.Content noSidebar style={{ marginTop: 20 }}>
+        <Workbench.Content centered style={{ marginTop: 20 }}>
           <div className="locale-editor">
             <h1 className="locale-editor__group-title">Locale</h1>
             <div className="locale-editor__group">

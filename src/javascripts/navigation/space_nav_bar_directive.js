@@ -13,6 +13,8 @@ angular
       var spaceContext = require('spaceContext');
       var TokenStore = require('services/TokenStore.es6');
       var accessChecker = require('access_control/AccessChecker');
+      const LD = require('utils/LaunchDarkly');
+      const APPS_FLAG_NAME = 'feature-te-11-2018-apps';
 
       return (useSpaceEnv, isMaster) => ({
         template: template(useSpaceEnv, isMaster),
@@ -21,8 +23,9 @@ angular
         controllerAs: 'nav',
 
         controller: [
+          '$scope',
           '$stateParams',
-          function($stateParams) {
+          function($scope, $stateParams) {
             var controller = this;
             var orgId = spaceContext.organization.sys.id;
 
@@ -31,6 +34,10 @@ angular
 
             TokenStore.getOrganization(orgId).then(org => {
               controller.usageEnabled = org.pricingVersion === 'pricing_version_2';
+            });
+
+            LD.onFeatureFlag($scope, APPS_FLAG_NAME, value => {
+              controller.appsEnabled = value;
             });
 
             function canNavigateTo(section) {
@@ -55,7 +62,8 @@ angular
                 'apiKey',
                 'webhooks',
                 'previews',
-                'usage'
+                'usage',
+                'apps'
               ];
 
               return spaceSettingsSections.includes(section);

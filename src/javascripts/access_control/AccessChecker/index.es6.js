@@ -464,7 +464,8 @@ function collectSectionVisibility() {
     usage: !shouldHide(Action.UPDATE, 'settings'),
     previews: !shouldHide(Action.UPDATE, 'settings'),
     webhooks: !shouldHide(Action.UPDATE, 'settings'),
-    spaceHome: get(space, 'spaceMembership.admin')
+    spaceHome: get(space, 'spaceMembership.admin'),
+    apps: get(space, 'spaceMembership.admin')
   };
 }
 

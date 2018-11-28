@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
-import Icon from 'ui/Components/Icon.es6';
 import { Button, Notification } from '@contentful/ui-component-library';
 import Workbench from 'app/common/Workbench.es6';
 import WebhookForm from './WebhookForm.es6';
@@ -113,16 +112,7 @@ class WebhookEditor extends React.Component {
       <React.Fragment>
         <Workbench className="webhook-editor">
           <Workbench.Header>
-            <div className="breadcrumbs-widget">
-              <div className="breadcrumbs-container">
-                <div
-                  data-test-id="webhook-back"
-                  className="btn btn__back"
-                  onClick={() => this.navigateToList()}>
-                  <Icon name="back" />
-                </div>
-              </div>
-            </div>
+            <Workbench.Header.Back to="^.list" testId="webhook-back" />
             <Workbench.Icon icon="page-settings" />
             <Workbench.Title>
               Webhook: {webhook.name || 'Unnamed'}

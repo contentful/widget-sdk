@@ -30,7 +30,8 @@ angular
           require('app/SpaceSettings/Usage/SpaceUsageState.es6').default,
           // Note: app/api/State is in the "Settings" menu but is not a child here.
           require('app/settings/extensions/routes/index.es6').default,
-          require('app/settings/webhooks/routes/index.es6').default
+          require('app/settings/webhooks/routes/index.es6').default,
+          require('app/settings/apps/routes/index.es6').default
         ]
       });
     }

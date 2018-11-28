@@ -5,6 +5,7 @@ import $state from '$state';
 const StateLink = ({ to, params, options, children, ...rest }) => {
   if (typeof children === 'function') {
     return children({
+      getHref: () => $state.href(to, params),
       onClick: () => $state.go(to, params, options)
     });
   }
