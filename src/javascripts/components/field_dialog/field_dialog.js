@@ -62,7 +62,7 @@ angular
       const WidgetParametersUtils = require('widgets/WidgetParametersUtils.es6');
       const spaceContext = require('spaceContext');
       const $timeout = require('$timeout');
-      const notification = require('notification');
+      const { Notification } = require('@contentful/ui-component-library');
 
       const contentTypeData = $scope.contentType.data;
 
@@ -152,7 +152,7 @@ angular
       dialog.save = () => {
         $scope.$broadcast('validate');
         if (!isValid()) {
-          notification.error('Please check the form for validation errors.');
+          Notification.error('Please check the form for validation errors.');
           return;
         }
 
@@ -175,7 +175,7 @@ angular
         const hasMissingParameters = Object.keys(missing).some(key => missing[key] === true);
 
         if (hasMissingParameters) {
-          notification.error('Please provide all required parameters.');
+          Notification.error('Please provide all required parameters.');
           return;
         }
 

@@ -12,7 +12,6 @@ describe('Gatekeeper Message Handler', () => {
         return 'website/' + path;
       }
     });
-    this.mockService('notification');
   });
 
   describe('actions on message', () => {
@@ -36,12 +35,13 @@ describe('Gatekeeper Message Handler', () => {
     });
 
     it('shows notification', function() {
-      const notification = this.$inject('notification');
-
+      const { Notification } = this.$inject('@contentful/ui-component-library');
+      Notification.success = sinon.stub();
+      Notification.error = sinon.stub();
       this.handle({ type: 'flash', resource: { message: 'OK', type: 'info' } });
       this.handle({ type: 'flash', resource: { message: 'FAIL', type: 'error' } });
-      sinon.assert.calledOnce(notification.success.withArgs('OK'));
-      sinon.assert.calledOnce(notification.error.withArgs('FAIL'));
+      sinon.assert.calledOnce(Notification.success.withArgs('OK'));
+      sinon.assert.calledOnce(Notification.error.withArgs('FAIL'));
     });
 
     it('sends an analytics event', function() {

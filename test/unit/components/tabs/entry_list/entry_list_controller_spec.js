@@ -28,8 +28,6 @@ describe('Entry List Controller', () => {
 
   beforeEach(function() {
     module('contentful/test', $provide => {
-      $provide.value('notifications/bus', () => ({ error: sinon.stub() }));
-
       $provide.removeControllers('DisplayedFieldsController');
 
       $provide.value('analytics/Analytics.es6', {
@@ -334,7 +332,9 @@ describe('Entry List Controller', () => {
   describe('Api Errors', () => {
     beforeEach(function() {
       this.reloadNotificationHandler = this.$inject('ReloadNotification').apiErrorHandler;
-      this.errorNotificationHandler = this.$inject('notification').error;
+      this.ComponentLibrary = this.$inject('@contentful/ui-component-library');
+      this.ComponentLibrary.Notification.error = sinon.stub();
+      this.ComponentLibrary.Notification.success = sinon.stub();
     });
 
     it('shows reload notification on 500 err', function() {
@@ -351,7 +351,7 @@ describe('Entry List Controller', () => {
       scope.updateEntries();
       scope.$apply();
       expect(
-        this.errorNotificationHandler.calledWith(
+        this.ComponentLibrary.Notification.error.calledWith(
           'We detected an invalid search query. Please try again.'
         )
       ).toBe(true);
@@ -389,7 +389,7 @@ describe('Entry List Controller', () => {
       scope.updateEntries();
       scope.$apply();
       expect(
-        this.errorNotificationHandler.calledWith(
+        this.ComponentLibrary.Notification.error.calledWith(
           `Provided Content Type "x" does not exist. The content type filter has been reset to "Any"`
         )
       ).toBe(true);

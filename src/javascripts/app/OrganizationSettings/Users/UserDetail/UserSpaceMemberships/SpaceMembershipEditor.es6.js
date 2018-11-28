@@ -6,7 +6,14 @@ import {
   SpaceMembership as SpaceMembershipPropType
 } from '../../PropTypes.es6';
 
-import { TableRow, TableCell, Select, Option, Button } from '@contentful/ui-component-library';
+import {
+  TableRow,
+  TableCell,
+  Select,
+  Option,
+  Button,
+  Notification
+} from '@contentful/ui-component-library';
 import SpaceRoleEditor from './SpaceRoleEditor.es6';
 
 const ServicesConsumer = require('../../../../../reactServiceContext').default;
@@ -14,7 +21,6 @@ const ServicesConsumer = require('../../../../../reactServiceContext').default;
 class SpaceMembershipEditor extends React.Component {
   static propTypes = {
     $services: PropTypes.shape({
-      notification: PropTypes.object.isRequired,
       EndpointFactory: PropTypes.object.isRequired,
       SpaceMembershipRepository: PropTypes.object.isRequired
     }).isRequired,
@@ -101,7 +107,7 @@ class SpaceMembershipEditor extends React.Component {
       try {
         membership = await repo.changeRoleTo(initialMembership, selectedRoles);
       } catch (e) {
-        $services.notification.error(e.data.message);
+        Notification.error(e.data.message);
         this.setState({ busy: false });
         return;
       }
@@ -110,7 +116,7 @@ class SpaceMembershipEditor extends React.Component {
       try {
         membership = await repo.invite(user.email, selectedRoles);
       } catch (e) {
-        $services.notification.error(e.data.message);
+        Notification.error(e.data.message);
         this.setState({ busy: false });
         return;
       }
@@ -186,7 +192,6 @@ class SpaceMembershipEditor extends React.Component {
 }
 
 export default ServicesConsumer(
-  'notification',
   {
     as: 'EndpointFactory',
     from: 'data/EndpointFactory.es6'

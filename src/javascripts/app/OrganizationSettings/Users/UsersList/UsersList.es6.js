@@ -15,7 +15,8 @@ import {
   Button,
   TextInput,
   Icon,
-  Spinner
+  Spinner,
+  Notification
 } from '@contentful/ui-component-library';
 import { formatQuery } from './QueryBuilder.es6';
 import ResolveLinks from '../../LinkResolver.es6';
@@ -35,16 +36,11 @@ import EmptyPlaceholder from './EmptyPlaceholder.es6';
 import { getFilters, getSearchTerm } from 'selectors/filters.es6';
 import { getLastActivityDate } from '../UserUtils.es6';
 
-const ServicesConsumer = require('../../../../reactServiceContext').default;
-
 import { generateFilterDefinitions } from './FilterDefinitions.es6';
 import { Filter as FilterPropType } from '../PropTypes.es6';
 
 class UsersList extends React.Component {
   static propTypes = {
-    $services: PropTypes.shape({
-      notification: PropTypes.object
-    }),
     orgId: PropTypes.string.isRequired,
     spaceRoles: PropTypes.array,
     spaces: PropTypes.arrayOf(SpacePropType),
@@ -129,7 +125,6 @@ class UsersList extends React.Component {
   }
 
   handleMembershipRemove = membership => async () => {
-    const { notification } = this.props.$services;
     const { usersList } = this.state;
     const user = membership.sys.user;
     const message = user.firstName
@@ -146,10 +141,10 @@ class UsersList extends React.Component {
 
     try {
       await removeMembership(this.endpoint, membership.sys.id);
-      notification.success(message);
+      Notification.success(message);
       this.setState({ usersList: without(usersList, membership) });
     } catch (e) {
-      notification.error(e.data.message);
+      Notification.error(e.data.message);
     }
   };
 
@@ -296,6 +291,5 @@ export default flow(
       updateSearchTerm: newSearchTerm =>
         dispatch({ type: 'UPDATE_SEARCH_TERM', payload: { newSearchTerm } })
     })
-  ),
-  ServicesConsumer('notification')
+  )
 )(UsersList);

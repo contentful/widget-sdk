@@ -79,7 +79,6 @@ angular
       require('utils/LaunchDarkly').init();
       require('navigation/stateChangeHandlers').setup();
       require('ui/ContextMenuHandler.es6').default($document);
-      require('notification').setupClearMessageHooks();
       require('states').loadAll();
       require('dialogsInitController').init();
       require('navigation/DocumentTitle.es6').init();

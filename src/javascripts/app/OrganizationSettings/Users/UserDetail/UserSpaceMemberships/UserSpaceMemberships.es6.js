@@ -21,7 +21,8 @@ import {
   TableCell,
   Tooltip,
   ModalConfirm,
-  Button
+  Button,
+  Notification
 } from '@contentful/ui-component-library';
 import { getUserName } from '../../UserUtils.es6';
 import moment from 'moment';
@@ -31,8 +32,6 @@ const ServicesConsumer = require('../../../../../reactServiceContext').default;
 class UserSpaceMemberships extends React.Component {
   static propTypes = {
     $services: PropTypes.shape({
-      notification: PropTypes.object.isRequired,
-
       EndpointFactory: PropTypes.object.isRequired,
       OrganizationMembershipRepository: PropTypes.object.isRequired,
       SpaceMembershipRepository: PropTypes.object.isRequired
@@ -82,7 +81,7 @@ class UserSpaceMemberships extends React.Component {
   };
 
   handleMembershipCreated = newMembership => {
-    const { user, $services } = this.props;
+    const { user } = this.props;
     const { memberships } = this.state;
     const updatedMemberships = [newMembership, ...memberships];
 
@@ -92,14 +91,14 @@ class UserSpaceMemberships extends React.Component {
     });
     this.hideSpaceMembershipEditor();
 
-    $services.notification.success(`
+    Notification.success(`
       ${user.firstName} has been successfully added to the space ${newMembership.sys.space.name}
     `);
   };
 
   handleMembershipRemove = async membership => {
     const { memberships } = this.state;
-    const { user, $services } = this.props;
+    const { user } = this.props;
     const { space } = membership.sys;
     const repo = this.createRepoFromSpaceMembership(membership);
 
@@ -129,7 +128,7 @@ class UserSpaceMemberships extends React.Component {
     try {
       await repo.remove(membership);
     } catch (e) {
-      $services.notification.error(e.message);
+      Notification.error(e.message);
       return;
     }
 
@@ -140,7 +139,7 @@ class UserSpaceMemberships extends React.Component {
       availableSpaces: this.getAvailableSpaces(updatedMemberships)
     });
 
-    $services.notification.success(`
+    Notification.success(`
       ${user.firstName} is no longer part of the space ${space.name}
     `);
   };
@@ -288,7 +287,6 @@ class UserSpaceMemberships extends React.Component {
 }
 
 export default ServicesConsumer(
-  'notification',
   {
     as: 'EndpointFactory',
     from: 'data/EndpointFactory.es6'

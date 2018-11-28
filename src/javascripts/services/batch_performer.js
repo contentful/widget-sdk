@@ -6,7 +6,7 @@ angular.module('contentful').factory('batchPerformer', [
     var $q = require('$q');
     var spaceContext = require('spaceContext');
     var Analytics = require('analytics/Analytics.es6');
-    var notification = require('notification');
+    const { Notification } = require('@contentful/ui-component-library');
 
     var ACTION_NAMES = {
       publish: 'published',
@@ -115,12 +115,12 @@ angular.module('contentful').factory('batchPerformer', [
         var entityName = ENTITY_PLURAL_NAMES[config.entityType];
 
         if (results.succeeded.length > 0) {
-          notification.success(
+          Notification.success(
             results.succeeded.length + ' ' + entityName + ' ' + actionName + ' successfully'
           );
         }
         if (results.failed.length > 0) {
-          notification.error(
+          Notification.error(
             results.failed.length + ' ' + entityName + ' could not be ' + actionName
           );
         }

@@ -6,7 +6,7 @@ angular.module('contentful').directive('cfFileEditor', [
     const _ = require('lodash');
     const Filestack = require('services/Filestack.es6');
     const ImageOperations = require('app/widgets/ImageOperations.es6');
-    const notification = require('notification');
+    const { Notification } = require('@contentful/ui-component-library');
     const stringUtils = require('utils/StringUtils.es6');
     const mimetype = require('@contentful/mimetype');
 
@@ -49,7 +49,7 @@ angular.module('contentful').directive('cfFileEditor', [
 
         scope.selectFile = function selectFile() {
           Filestack.pick().then(setFile, () => {
-            notification.error('An error occurred while uploading your asset.');
+            Notification.error('An error occurred while uploading your asset.');
           });
         };
 
@@ -84,7 +84,7 @@ angular.module('contentful').directive('cfFileEditor', [
 
         function notifyEditError(err) {
           if (!err || !err.cancelled) {
-            notification.error('An error occurred while editing your asset.');
+            Notification.error('An error occurred while editing your asset.');
           }
         }
 
@@ -128,9 +128,9 @@ angular.module('contentful').directive('cfFileEditor', [
               const invalidContentTypeErr = _.find(errors, { name: 'invalidContentType' });
 
               if (invalidContentTypeErr) {
-                notification.error(invalidContentTypeErr.details);
+                Notification.error(invalidContentTypeErr.details);
               } else {
-                notification.error('An error occurred while processing your asset.');
+                Notification.error('An error occurred while processing your asset.');
               }
             });
         }

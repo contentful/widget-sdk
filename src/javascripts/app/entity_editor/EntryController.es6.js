@@ -7,7 +7,6 @@ import { truncate } from 'utils/StringUtils.es6';
 import { cloneDeep, find, constant } from 'lodash';
 
 import spaceContext from 'spaceContext';
-import notifications from 'notification';
 import localeStore from 'TheLocaleStore';
 import contextHistory from 'navigation/Breadcrumbs/History.es6';
 import $state from '$state';
@@ -181,7 +180,6 @@ export default async function create($scope, entryId) {
       lifeline.stream
     ).map(links => links || []);
 
-    notifications.clearSeen();
     return {
       links$,
       focusIndex: index,
@@ -197,7 +195,6 @@ export default async function create($scope, entryId) {
       close: function() {
         lifeline.end();
         $scope.referenceContext = null;
-        notifications.clearSeen();
         if (cb) {
           cb();
         }

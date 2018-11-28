@@ -19,7 +19,7 @@ angular
       const Command = require('command');
       const TheAccountView = require('TheAccountView');
       const $state = require('$state');
-      const notification = require('notification');
+      const { Notification } = require('@contentful/ui-component-library');
       const ResourceUtils = require('utils/ResourceUtils.es6');
       const createResourceService = require('services/ResourceService.es6').default;
       const $q = require('$q');
@@ -59,7 +59,7 @@ angular
         return spaceContext.apiKeyRepo.create(spaceName).then(
           apiKey => $state.go('^.detail', { apiKeyId: apiKey.sys.id }),
           err => {
-            notification.error(err.data.message);
+            Notification.error(err.data.message);
           }
         );
       }

@@ -22,7 +22,7 @@ angular
       const Command = require('command');
       const leaveConfirmator = require('navigation/confirmLeaveEditor');
       const contentPreview = require('contentPreview');
-      const notification = require('notification');
+      const { Notification } = require('@contentful/ui-component-library');
       const logger = require('logger');
       const slugUtils = require('slug');
       const Analytics = require('analytics/Analytics.es6');
@@ -116,7 +116,7 @@ angular
       }
 
       function showMissingRequiredFieldNotification() {
-        notification.error('Failed to save: please fill out all required fields.');
+        Notification.error('Failed to save: please fill out all required fields.');
       }
 
       function handleSuccessResponse(responses) {
@@ -153,7 +153,7 @@ angular
         const action = $scope.context.isNew ? 'create' : 'update';
         return contentPreview[action]($scope.previewEnvironment).then(
           env => {
-            notification.success('Content preview "' + env.name + '" saved successfully');
+            Notification.success('Content preview "' + env.name + '" saved successfully');
             $scope.previewEnvironment.version = env.sys.version;
             $scope.contentPreviewForm.$setPristine();
             $scope.context.dirty = false;
@@ -172,7 +172,7 @@ angular
           err => {
             const defaultMessage = 'Could not save Preview Environment';
             const serverMessage = _.first(_.split(_.get(err, 'body.message'), '\n'));
-            notification.error(serverMessage || defaultMessage);
+            Notification.error(serverMessage || defaultMessage);
           }
         );
       }
@@ -182,13 +182,13 @@ angular
 
         return contentPreview.remove(env).then(
           () => {
-            notification.success('Content preview was deleted successfully');
+            Notification.success('Content preview was deleted successfully');
             $scope.context.dirty = false;
             track('deleted', { name: env.name, sys: { id: env.id } });
             return $state.go('^.list');
           },
           () => {
-            notification.error('An error occurred');
+            Notification.error('An error occurred');
           }
         );
       }

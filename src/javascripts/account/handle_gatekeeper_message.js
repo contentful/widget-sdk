@@ -8,7 +8,7 @@ angular
     require => {
       const $location = require('$location');
       const Authentication = require('Authentication.es6');
-      const notification = require('notification');
+      const { Notification } = require('@contentful/ui-component-library');
       const TokenStore = require('services/TokenStore.es6');
       const CreateSpace = require('services/CreateSpace.es6');
       const UrlSyncHelper = require('account/UrlSyncHelper.es6');
@@ -90,9 +90,9 @@ angular
 
         if (message) {
           if (level.match(/error/)) {
-            notification.error(message);
+            Notification.error(message);
           } else {
-            notification.success(message);
+            Notification.success(message);
           }
         }
       }

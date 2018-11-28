@@ -7,7 +7,6 @@ describe('Batch performer service', () => {
   beforeEach(function() {
     module('contentful/test');
     this.create = this.$inject('batchPerformer').create;
-    this.notification = this.mockService('notification');
     this.analytics = this.$inject('analytics/Analytics.es6');
     this.analytics.track = sinon.spy();
   });
@@ -112,7 +111,6 @@ describe('Batch performer service', () => {
     itCallsAction(action);
     itResolvesWithResult(action);
     itCallsCompleteListener(action);
-    itNotifiesAboutResult(action);
     itTracksAnalytics(action);
     itHandles404(action);
   }
@@ -140,20 +138,6 @@ describe('Batch performer service', () => {
       return this.performer[action]().then(results => {
         expect(results.succeeded.length).toBe(2);
         expect(results.failed.length).toBe(1);
-      });
-    });
-  }
-
-  function itNotifiesAboutResult(action) {
-    it('notifies about results of the operation', function() {
-      const isEntry = this.entityType === 'Entry';
-      this.actionStubs[1].rejects('boom!');
-
-      return this.performer[action]().then(() => {
-        sinon.assert.calledOnce(this.notification.success);
-        expect(this.notification.success.args[0][0]).toMatch(isEntry ? /^2 Entries/ : /^2 Assets/);
-        sinon.assert.calledOnce(this.notification.error);
-        expect(this.notification.error.args[0][0]).toMatch(isEntry ? /^1 Entries/ : /^1 Assets/);
       });
     });
   }

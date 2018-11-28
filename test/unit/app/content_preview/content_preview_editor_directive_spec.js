@@ -2,17 +2,17 @@ import { setCheckbox } from 'helpers/DOM';
 import * as sinon from 'helpers/sinon';
 
 describe('cfContentPreviewEditor directive', () => {
-  let spaceContext, contentPreview, notification, $state;
+  let spaceContext, contentPreview, ComponentLibrary, $state;
 
   beforeEach(function() {
-    notification = {
+    module('contentful/test', $provide => {
+      $provide.value('access_control/AccessChecker', { wasForbidden: sinon.stub().returns(false) });
+    });
+    ComponentLibrary = this.$inject('@contentful/ui-component-library');
+    ComponentLibrary.Notification = {
       success: sinon.stub().returns(),
       error: sinon.stub().returns()
     };
-    module('contentful/test', $provide => {
-      $provide.value('access_control/AccessChecker', { wasForbidden: sinon.stub().returns(false) });
-      $provide.value('notification', notification);
-    });
     spaceContext = this.$inject('mocks/spaceContext').init();
     spaceContext.getId = _.constant('sid');
     contentPreview = this.$inject('contentPreview');
@@ -67,7 +67,7 @@ describe('cfContentPreviewEditor directive', () => {
   });
 
   afterEach(() => {
-    spaceContext = contentPreview = notification = $state = null;
+    spaceContext = contentPreview = ComponentLibrary = $state = null;
   });
 
   describe('Create new content preview environment', () => {
@@ -126,7 +126,10 @@ describe('cfContentPreviewEditor directive', () => {
       this.updateName('My PE');
       this.clickSave();
       sinon.assert.calledWith(contentPreview.create, this.scope.previewEnvironment);
-      sinon.assert.calledWith(notification.error, 'Could not save Preview Environment');
+      sinon.assert.calledWith(
+        ComponentLibrary.Notification.error,
+        'Could not save Preview Environment'
+      );
     });
 
     it('shows error if name is not present on save', function() {
@@ -166,7 +169,7 @@ describe('cfContentPreviewEditor directive', () => {
     it('shows notification and resets form when saved successfully', function() {
       this.updateName('name');
       this.clickSave();
-      sinon.assert.calledOnce(notification.success);
+      sinon.assert.calledOnce(ComponentLibrary.Notification.success);
       expect(this.scope.context.dirty).toBe(false);
       expect(this.elements.save.attr('aria-disabled')).toBe('true');
     });
@@ -229,7 +232,7 @@ describe('cfContentPreviewEditor directive', () => {
       this.updateName('New name');
       this.clickSave();
       sinon.assert.calledWith(
-        notification.success,
+        ComponentLibrary.Notification.success,
         'Content preview "New name" saved successfully'
       );
     });
@@ -238,7 +241,10 @@ describe('cfContentPreviewEditor directive', () => {
       contentPreview.update.rejects();
       this.updateName('New name');
       this.clickSave();
-      sinon.assert.calledWith(notification.error, 'Could not save Preview Environment');
+      sinon.assert.calledWith(
+        ComponentLibrary.Notification.error,
+        'Could not save Preview Environment'
+      );
     });
   });
 });

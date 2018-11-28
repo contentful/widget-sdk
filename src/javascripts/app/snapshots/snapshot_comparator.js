@@ -35,7 +35,7 @@ angular
       const Command = require('command');
       const $state = require('$state');
       const $stateParams = require('$stateParams');
-      const notification = require('notification');
+      const { Notification } = require('@contentful/ui-component-library');
       const trackVersioning = require('analyticsEvents/versioning');
       const Validator = require('app/entity_editor/Validator.es6');
       const Focus = require('app/entity_editor/Focus.es6');
@@ -113,7 +113,7 @@ angular
             }
           }, handleSaveError)
           .then(() => {
-            notification.success('Entry successfully restored.');
+            Notification.success('Entry successfully restored.');
           });
       }
 
@@ -136,9 +136,9 @@ angular
 
       function handleSaveError(error) {
         if (error.code === 'VersionMismatch') {
-          notification.error('Versions do not match. Please reload the version first.');
+          Notification.error('Versions do not match. Please reload the version first.');
         } else {
-          notification.error('Changes could not be reverted. Please try again.');
+          Notification.error('Changes could not be reverted. Please try again.');
         }
 
         return $q.reject(error);

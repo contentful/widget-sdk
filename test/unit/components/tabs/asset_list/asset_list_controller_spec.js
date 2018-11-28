@@ -1,10 +1,10 @@
 'use strict';
 
 describe('Asset List Controller', () => {
-  let scope, spaceContext, stubs, $q, getAssets;
+  let scope, spaceContext, stubs, $q, getAssets, ComponentLibrary;
 
   afterEach(() => {
-    scope = spaceContext = stubs = $q = getAssets = null;
+    scope = spaceContext = stubs = $q = getAssets = ComponentLibrary = null;
   });
 
   function createAssets(n) {
@@ -27,7 +27,6 @@ describe('Asset List Controller', () => {
         'pickMultiple',
         'error',
         'success',
-        'serverError',
         'process',
         'getVersion',
         'publish'
@@ -35,12 +34,6 @@ describe('Asset List Controller', () => {
 
       $provide.value('logger', {
         logError: stubs.logError
-      });
-
-      $provide.value('notification', {
-        success: stubs.success,
-        error: stubs.error,
-        serverError: stubs.serverError
       });
 
       $provide.value('services/Filestack.es6', {
@@ -56,6 +49,10 @@ describe('Asset List Controller', () => {
         isInsideMasterEnv: () => false
       });
     });
+
+    ComponentLibrary = this.$inject('@contentful/ui-component-library');
+    ComponentLibrary.Notification.error = stubs.error;
+    ComponentLibrary.Notification.success = stubs.success;
 
     $q = this.$inject('$q');
 

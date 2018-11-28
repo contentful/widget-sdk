@@ -8,7 +8,7 @@ angular.module('contentful').controller('AssetListController', [
     const createSelection = require('classes/Selection.es6').createSelection;
     const delay = require('delay');
     const Analytics = require('analytics/Analytics.es6');
-    const notification = require('notification');
+    const { Notification } = require('@contentful/ui-component-library');
     const spaceContext = require('spaceContext');
     const accessChecker = require('access_control/AccessChecker');
     const entityStatus = require('app/entity_editor/EntityStatus.es6');
@@ -168,7 +168,7 @@ angular.module('contentful').controller('AssetListController', [
         // asset's `process` endpoint doesn't give us the final `url`.
         delay(() => {
           searchController.resetAssets().then(() => {
-            notification.success('Updated asset list');
+            Notification.success('Updated asset list');
           });
         }, 5000);
       });

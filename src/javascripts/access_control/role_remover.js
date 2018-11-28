@@ -7,7 +7,7 @@ angular.module('contentful').factory('createRoleRemover', [
     const $q = require('$q');
     const $rootScope = require('$rootScope');
     const modalDialog = require('modalDialog');
-    const notification = require('notification');
+    const { Notification } = require('@contentful/ui-component-library');
     const Command = require('command');
     const spaceContext = require('spaceContext');
     const roleRepo = require('access_control/RoleRepository.es6').getInstance(spaceContext.space);
@@ -31,7 +31,7 @@ angular.module('contentful').factory('createRoleRemover', [
             .remove(role)
             .then(doneFn)
             .then(() => {
-              notification.success('Role successfully deleted.');
+              Notification.success('Role successfully deleted.');
             })
             .catch(ReloadNotification.basicErrorHandler);
         }

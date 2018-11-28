@@ -11,7 +11,7 @@ angular
     'require',
     require => {
       var config = require('states/config');
-      var notification = require('notification');
+      const { Notification } = require('@contentful/ui-component-library');
 
       return {
         loadAll: loadAll,
@@ -42,7 +42,7 @@ angular
             name: 'error',
             url: 'error',
             controller: function() {
-              notification.error(
+              Notification.error(
                 'We were unable to process your request. ' +
                   'If this problem persists, please contact support'
               );

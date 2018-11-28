@@ -1,11 +1,11 @@
 'use strict';
 
 describe('Asset List Actions Controller', () => {
-  let scope, stubs, accessChecker;
+  let scope, stubs, accessChecker, ComponentLibrary;
   let action1, action2, action3, action4;
 
   afterEach(() => {
-    scope = stubs = accessChecker = null;
+    scope = stubs = accessChecker = ComponentLibrary = null;
     action1 = action2 = action3 = action4 = null;
   });
 
@@ -30,11 +30,6 @@ describe('Asset List Actions Controller', () => {
         track: stubs.track
       });
 
-      $provide.value('notification', {
-        success: stubs.success,
-        error: stubs.error
-      });
-
       $provide.value('$timeout', stubs.timeout);
     });
 
@@ -47,6 +42,10 @@ describe('Asset List Actions Controller', () => {
     stubs.action2.returns(action2.promise);
     stubs.action3.returns(action3.promise);
     stubs.action4.returns(action4.promise);
+
+    ComponentLibrary = this.$inject('@contentful/ui-component-library');
+    ComponentLibrary.Notification.error = stubs.error;
+    ComponentLibrary.Notification.success = stubs.success;
 
     scope = this.$inject('$rootScope').$new();
     scope.selection = {

@@ -14,7 +14,6 @@ angular.module('contentful').directive('cfMarkdownEditor', [
     const MarkdownEditor = require('markdown_editor/markdown_editor.es6');
     const actions = require('markdown_editor/markdown_actions.es6');
     const makePreview = require('markdown_editor/PreviewGenerator.es6').default;
-    const notification = require('notification');
     const throttle = require('throttle');
     const LocaleStore = require('TheLocaleStore');
     const isRtlLocale = require('utils/locales.es6').isRtlLocale;
@@ -274,7 +273,6 @@ angular.module('contentful').directive('cfMarkdownEditor', [
 
           if (scope.zen) {
             // hide leftovers from the previous screen
-            notification.clear();
             editorHeader.hide();
           } else {
             // leaving Zen Mode - update main editor

@@ -22,7 +22,7 @@ angular.module('contentful').controller('RoleEditorController', [
     const PolicyBuilder = require('PolicyBuilder');
     const TheAccountView = require('TheAccountView');
     const leaveConfirmator = require('navigation/confirmLeaveEditor');
-    const notification = require('notification');
+    const { Notification } = require('@contentful/ui-component-library');
     const logger = require('logger');
     const createFeatureService = require('services/FeatureService.es6').default;
     const createResourceService = require('services/ResourceService.es6').default;
@@ -46,7 +46,7 @@ angular.module('contentful').controller('RoleEditorController', [
         $scope.hasCustomRolesFeature = false;
         $scope.canModifyRoles = false;
       } else if (isNew && !ResourceUtils.canCreate(result.resource)) {
-        notification.error('Your organization has reached the limit for custom roles.');
+        Notification.error('Your organization has reached the limit for custom roles.');
         $scope.hasCustomRolesFeature = true;
         $scope.canModifyRoles = false;
       } else {
@@ -144,7 +144,7 @@ angular.module('contentful').controller('RoleEditorController', [
 
     function save() {
       if (!_.get($scope, 'external.policies', null)) {
-        notification.error('Policies: invalid JSON.');
+        Notification.error('Policies: invalid JSON.');
         return $q.reject();
       }
 
@@ -153,7 +153,7 @@ angular.module('contentful').controller('RoleEditorController', [
     }
 
     function handleRole(role) {
-      notification.success(role.name + ' role saved successfully');
+      Notification.success(role.name + ' role saved successfully');
 
       if ($scope.context.isNew) {
         $scope.context.dirty = false;
@@ -170,12 +170,12 @@ angular.module('contentful').controller('RoleEditorController', [
       const errors = _.get(res, 'body.details.errors', []);
 
       if (_.includes([403, 404], parseInt(_.get(res, 'statusCode'), 10))) {
-        notification.error('You have exceeded your plan limits for Custom Roles.');
+        Notification.error('You have exceeded your plan limits for Custom Roles.');
         return $q.reject();
       }
 
       if (_.isObject(findError('taken'))) {
-        notification.error('This role name is already used.');
+        Notification.error('This role name is already used.');
         return $q.reject();
       }
 
@@ -183,11 +183,11 @@ angular.module('contentful').controller('RoleEditorController', [
       const nameValue = _.isObject(nameError) ? nameError.value : null;
 
       if (!nameValue) {
-        notification.error('You have to provide a role name.');
+        Notification.error('You have to provide a role name.');
       } else if (_.isString(nameValue) && nameValue.length > 0) {
-        notification.error('The provided role name is too long.');
+        Notification.error('The provided role name is too long.');
       } else {
-        notification.error('Error saving role. Please try again.');
+        Notification.error('Error saving role. Please try again.');
         logger.logServerWarn('Error saving role', { errors: errors });
       }
 

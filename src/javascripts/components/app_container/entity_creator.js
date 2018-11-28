@@ -3,7 +3,7 @@
 angular.module('contentful').factory('entityCreator', [
   'require',
   require => {
-    const notification = require('notification');
+    const { Notification } = require('@contentful/ui-component-library');
     const logger = require('logger');
     const enforcements = require('access_control/Enforcements.es6');
     const spaceContext = require('spaceContext');
@@ -41,7 +41,7 @@ angular.module('contentful').factory('entityCreator', [
         }
 
         logger.logServerWarn(message, { error: err });
-        notification.error(message);
+        Notification.error(message);
 
         return $q.reject(err);
       };

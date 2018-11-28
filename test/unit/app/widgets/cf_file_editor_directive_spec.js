@@ -100,14 +100,14 @@ describe('cfFileEditor Directive', () => {
     });
 
     it('removes value and shows error when asset processing fails', function() {
-      const notification = this.$inject('notification');
-      notification.error = sinon.stub();
+      const ComponentLibrary = this.$inject('@contentful/ui-component-library');
+      ComponentLibrary.Notification.error = sinon.stub();
       this.scope.editorData.entity.process = sinon.stub().rejects();
       this.scope.selectFile();
       this.$apply();
       // both called once in the second run
       sinon.assert.calledOnce(this.fieldApi.removeValue);
-      sinon.assert.calledOnce(notification.error);
+      sinon.assert.calledOnce(ComponentLibrary.Notification.error);
     });
   });
 

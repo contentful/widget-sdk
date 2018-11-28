@@ -9,7 +9,7 @@ describe('entityCreator', () => {
 
   beforeEach(function() {
     module('contentful/test', $provide => {
-      stubs = $provide.makeStubs(['computeUsage', 'enforcement', 'track']);
+      stubs = $provide.makeStubs(['computeUsage', 'enforcement', 'track', 'succes', 'error']);
 
       $provide.value('access_control/Enforcements.es6', {
         computeUsageForOrganization: stubs.computeUsage,
@@ -19,7 +19,10 @@ describe('entityCreator', () => {
 
     const cfStub = this.$inject('cfStub');
 
-    this.notification = this.mockService('notification');
+    this.ComponentLibrary = this.$inject('@contentful/ui-component-library');
+    this.ComponentLibrary.Notification.success = stubs.success;
+    this.ComponentLibrary.Notification.error = stubs.error;
+
     this.$q = this.$inject('$q');
 
     this.spaceContext = this.$inject('spaceContext');
@@ -68,7 +71,7 @@ describe('entityCreator', () => {
       });
 
       it('notifies of the error', function() {
-        sinon.assert.called(this.notification.error);
+        sinon.assert.called(stubs.error);
       });
     });
   });
@@ -110,7 +113,7 @@ describe('entityCreator', () => {
       });
 
       it('notifies of the error', function() {
-        sinon.assert.called(this.notification.error);
+        sinon.assert.called(stubs.error);
       });
     });
   });

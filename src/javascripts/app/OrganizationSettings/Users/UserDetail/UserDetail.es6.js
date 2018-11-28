@@ -4,7 +4,7 @@ import moment from 'moment';
 import { getValue } from 'utils/kefir.es6';
 import Workbench from 'app/common/Workbench.es6';
 import { go } from 'states/Navigator.es6';
-import { Button } from '@contentful/ui-component-library';
+import { Button, Notification } from '@contentful/ui-component-library';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import UserCard from '../UserCard.es6';
 import { orgRoles } from './OrgRoles.es6';
@@ -34,7 +34,6 @@ const ServicesConsumer = require('../../../../reactServiceContext').default;
 class UserDetail extends React.Component {
   static propTypes = {
     $services: PropTypes.shape({
-      notification: PropTypes.object,
       TokenStore: PropTypes.object,
       OrganizationRoles: PropTypes.object
     }),
@@ -85,7 +84,6 @@ class UserDetail extends React.Component {
   }
 
   changeOrgRole = async role => {
-    const { notification } = this.props.$services;
     const oldMembership = this.state.membership;
     const {
       sys: { id, version }
@@ -116,7 +114,7 @@ class UserDetail extends React.Component {
     try {
       updatedMembership = await updateMembership(this.endpoint, { id, role, version });
     } catch (e) {
-      notification.error(e.data.message);
+      Notification.error(e.data.message);
       return;
     }
 
@@ -130,13 +128,12 @@ class UserDetail extends React.Component {
         }
       }
     });
-    notification.success(`
+    Notification.success(`
       Role successfully changed to ${role}
     `);
   };
 
   async removeMembership() {
-    const { notification } = this.props.$services;
     const { id, user } = this.state.membership.sys;
 
     const confirmation = await ModalLauncher.open(({ isShown, onClose }) => (
@@ -150,7 +147,7 @@ class UserDetail extends React.Component {
     try {
       await removeMembership(this.endpoint, id);
     } catch (e) {
-      notification.error(e.data.message);
+      Notification.error(e.data.message);
       return;
     }
 
@@ -160,7 +157,7 @@ class UserDetail extends React.Component {
       ? `${user.firstName} has been successfully removed from this organization`
       : `Membership successfully removed`;
 
-    notification.success(message);
+    Notification.success(message);
   }
 
   goToUserList() {
@@ -242,7 +239,6 @@ class UserDetail extends React.Component {
 }
 
 export default ServicesConsumer(
-  'notification',
   {
     from: 'services/TokenStore.es6',
     as: 'TokenStore'

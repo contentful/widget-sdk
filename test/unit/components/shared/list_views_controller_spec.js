@@ -11,7 +11,6 @@ describe('ListViewsController', () => {
     const $controller = this.$inject('$controller');
     const ListViewPersistor = this.$inject('data/ListViewPersistor.es6');
 
-    this.mockService('notification');
     this.$inject('mocks/spaceContext').init();
 
     scope = this.$inject('$rootScope').$new();
