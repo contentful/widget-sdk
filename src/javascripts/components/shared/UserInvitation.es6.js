@@ -10,7 +10,15 @@ import { refresh as refreshToken } from 'services/TokenStore.es6';
 
 export default class UserInvitation extends React.Component {
   static propTypes = {
-    invitation: PropTypes.object
+    invitation: PropTypes.shape({
+      organizationName: PropTypes.string.isRequired,
+      role: PropTypes.string.isRequired,
+      inviterName: PropTypes.string.isRequired
+    }).isRequired
+  };
+
+  state = {
+    accepting: false
   };
 
   acceptInvitation = async () => {
@@ -21,6 +29,10 @@ export default class UserInvitation extends React.Component {
         sys: { id: invitationId }
       }
     } = this.props;
+
+    this.setState({
+      accepting: true
+    });
 
     try {
       const acceptedInvitation = await endpoint({
@@ -39,28 +51,33 @@ export default class UserInvitation extends React.Component {
         'id'
       ]);
 
+      const navMeta = {};
+
       if (firstSpaceId) {
-        go({
-          path: ['spaces', 'detail'],
-          params: { spaceId: firstSpaceId }
-        });
+        navMeta.path = ['spaces', 'detail'];
+        navMeta.params = { spaceId: firstSpaceId };
       } else {
         // Just go to home
-        go({
-          path: ['home']
-        });
+        navMeta.path = ['home'];
       }
 
-      Notification.success(`Welcome to the ${organizationName} organization!`);
+      go(navMeta).then(() => {
+        Notification.success(`Welcome to the ${organizationName} organization!`);
+      });
     } catch (e) {
+      this.setState({
+        accepting: false
+      });
+
       Notification.error('An error occurred. Contact the organization manager for more details.');
     }
   };
 
   render() {
     const {
-      invitation: { organizationName, role, inviterName, ssoEnabled }
+      invitation: { organizationName, role, inviterName }
     } = this.props;
+    const { accepting } = this.state;
 
     return (
       <Fullscreen gradient>
@@ -75,6 +92,8 @@ export default class UserInvitation extends React.Component {
               <Button
                 buttonType="primary"
                 extraClassNames="user-invitation--join-org-button"
+                disabled={accepting}
+                loading={accepting}
                 onClick={this.acceptInvitation}>
                 Join {organizationName}
               </Button>
@@ -95,17 +114,6 @@ export default class UserInvitation extends React.Component {
                   </a>{' '}
                   in spaces within the organization
                 </li>
-                {ssoEnabled && (
-                  <li>
-                    If youʼve logged in via{' '}
-                    <a
-                      href="https://www.contentful.com/faq/sso/"
-                      target="_blank"
-                      rel="noopener noreferrer">
-                      SSO
-                    </a>
-                  </li>
-                )}
               </ul>
             </div>
           </div>

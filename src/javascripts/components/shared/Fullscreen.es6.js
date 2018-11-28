@@ -7,7 +7,7 @@ export default class Fullscreen extends React.Component {
   static propTypes = {
     children: PropTypes.node,
     close: PropTypes.node,
-    gradient: PropTypes.boolean
+    gradient: PropTypes.bool
   };
 
   render() {
