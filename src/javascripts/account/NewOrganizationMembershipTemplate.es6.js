@@ -314,7 +314,7 @@ export function errorMessage(useLegacy, failedEmails, restart) {
   if (useLegacy) {
     copy = (
       <React.Fragment>
-        <h3>Whoops! something went wrong</h3>
+        <h3>Whoops! Something went wrong</h3>
         <p>
           The process failed for the following {userString}. Please try to{' '}
           <a onClick={() => restart(failedEmails)}>invite them again</a>.

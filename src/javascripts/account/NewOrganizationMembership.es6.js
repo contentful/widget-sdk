@@ -219,7 +219,7 @@ export default function($scope) {
     if (isInputValid) {
       runTask(function*() {
         // If the org is SSO enabled, we create the org membership directly rather than
-        // inviting the use
+        // inviting the user
         const invitationMetadata = {
           emails,
           orgRole,
@@ -435,7 +435,12 @@ function render(state, actions) {
               [Failure]: () =>
                 h('', [
                   errorMessage(state.useLegacy, state.failedOrgInvitations, actions.restart),
-                  successMessage(state.successfulOrgInvitations, actions.restart, actions.goToList)
+                  state.successfulOrgInvitations.length > 0 &&
+                    successMessage(
+                      state.successfulOrgInvitations,
+                      actions.restart,
+                      actions.goToList
+                    )
                 ]),
               [InProgress]: () => progressMessage(state.emails, state.successfulOrgInvitations),
               _: () =>
