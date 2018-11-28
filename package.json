@@ -91,6 +91,7 @@
     "sum-types": "^0.9.4"
   },
   "devDependencies": {
+    "@contentful/micro-backends": "^0.2.0",
     "@types/classnames": "2.2.6",
     "@types/enzyme": "3.1.14",
     "@types/jest": "23.3.3",
@@ -189,7 +190,7 @@
     "start": "gulp all serve",
     "test": "node run-tests.js",
     "test:once": "node run-tests.js --once",
-    "hint": "eslint src test tools tasks",
+    "hint": "eslint src test tools tasks micro-backends",
     "jest": "node run-tests-jest.js",
     "jest:coverage": "node run-tests-jest.js --coverage",
     "jest:debug": "node --inspect-brk run-tests-jest.js --runInBand",
