@@ -40,7 +40,10 @@ export default class UserInvitation extends React.Component {
       ]);
 
       if (firstSpaceId) {
-        go('spaces.detail', { spaceId: firstSpaceId });
+        go({
+          path: ['spaces', 'detail'],
+          params: { spaceId: firstSpaceId }
+        });
       } else {
         // Just go to home
         go({
