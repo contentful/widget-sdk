@@ -14,7 +14,8 @@ export default class UserInvitation extends React.Component {
       organizationName: PropTypes.string.isRequired,
       role: PropTypes.string.isRequired,
       inviterName: PropTypes.string.isRequired
-    }).isRequired
+    }),
+    errored: PropTypes.bool
   };
 
   state = {
@@ -37,7 +38,7 @@ export default class UserInvitation extends React.Component {
     try {
       const acceptedInvitation = await endpoint({
         method: 'POST',
-        path: ['organizations', 'invitations', invitationId, 'accept']
+        path: ['invitations', invitationId, 'accept']
       });
 
       await refreshToken();
@@ -69,53 +70,69 @@ export default class UserInvitation extends React.Component {
         accepting: false
       });
 
-      Notification.error('An error occurred. Contact the organization manager for more details.');
+      Notification.error(
+        'Your invitation didnʼt go through. Let your organization admin know about it, and they can invite you again.'
+      );
     }
   };
 
   render() {
-    const {
-      invitation: { organizationName, role, inviterName }
-    } = this.props;
+    const { invitation, errored } = this.props;
     const { accepting } = this.state;
+
+    const organizationName = get(invitation, 'organizationName');
+    const role = get(invitation, 'role');
+    const inviterName = get(invitation, 'inviterName');
 
     return (
       <Fullscreen gradient>
         <div className="user-invitation--wrapper">
-          <div className="user-invitation--accept">
-            <div className="user-invitation--info">
-              <h2 className="user-invitation--title">
-                Youʼve been invited to the <em>{organizationName}</em> organization in Contentful as
-                a {role}
-              </h2>
-              <p className="user-invitation--inviter">Invited by {inviterName}</p>
-              <Button
-                buttonType="primary"
-                extraClassNames="user-invitation--join-org-button"
-                disabled={accepting}
-                loading={accepting}
-                onClick={this.acceptInvitation}>
-                Join {organizationName}
-              </Button>
-            </div>
-            <div className="user-invitation--org-details">
-              <p>Owners and admins of this organization will be able to see:</p>
+          <div className="user-invitation--box">
+            {errored && (
+              <React.Fragment>
+                <div className="user-invitation--error">
+                  <h2 className="user-invitation--title">Oops... This invitation doesnʼt exist.</h2>
+                  <p className="user-invitation--error-details">Itʼs either deleted or expired.</p>
+                </div>
+              </React.Fragment>
+            )}
+            {!errored && (
+              <React.Fragment>
+                <div className="user-invitation--info">
+                  <h2 className="user-invitation--title">
+                    Youʼve been invited to the <em>{organizationName}</em> organization in
+                    Contentful as a {role}
+                  </h2>
+                  <p className="user-invitation--inviter">Invited by {inviterName}</p>
+                  <Button
+                    buttonType="primary"
+                    extraClassNames="user-invitation--join-org-button"
+                    disabled={accepting}
+                    loading={accepting}
+                    onClick={this.acceptInvitation}>
+                    Join {organizationName}
+                  </Button>
+                </div>
+                <div className="user-invitation--org-details">
+                  <p>Owners and admins of this organization will be able to see:</p>
 
-              <ul>
-                <li>Your name and profile picture</li>
-                <li>Last time that you were active within the organization</li>
-                <li>
-                  Your{' '}
-                  <a
-                    href="https://www.contentful.com/r/knowledgebase/spaces-and-organizations/"
-                    target="_blank"
-                    rel="noopener noreferrer">
-                    roles and permissions
-                  </a>{' '}
-                  in spaces within the organization
-                </li>
-              </ul>
-            </div>
+                  <ul>
+                    <li>Your name and profile picture</li>
+                    <li>Last time that you were active within the organization</li>
+                    <li>
+                      Your{' '}
+                      <a
+                        href="https://www.contentful.com/r/knowledgebase/spaces-and-organizations/"
+                        target="_blank"
+                        rel="noopener noreferrer">
+                        roles and permissions
+                      </a>{' '}
+                      in spaces within the organization
+                    </li>
+                  </ul>
+                </div>
+              </React.Fragment>
+            )}
           </div>
         </div>
       </Fullscreen>

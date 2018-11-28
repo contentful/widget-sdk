@@ -5,23 +5,26 @@
     flex-direction: column
     color: $colors.text-mid
 
-  &--accept
+  &--box
     padding: 20px 40px
     background-color: $colors.white
     border: 1px solid $colors.light-gray
-    box-shadow: 0 1px 3px 0 $colors.light-gray
+    box-shadow: 0 1px 3px 0 rgba(0,0,0,0.08);
     max-width: 500px
+    border-radius: 2px
 
-  &--info
+  &--info, &--error
     padding: 8px 10px
     text-align: center
     line-height: 30px
+
+  &--info
     border-bottom: 1px solid $colors.light-gray
 
   &--title
     line-height: 1.5
 
-  &--inviter
+  &--inviter, &--error-details
     margin-bottom: 30px
 
   &--join-org-button

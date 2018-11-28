@@ -1,11 +1,11 @@
 import makeState from 'states/Base.es6';
 import { createEndpoint } from 'data/EndpointFactory.es6';
+import { go } from 'states/Navigator.es6';
+import { Notification } from '@contentful/ui-component-library';
 
 export default makeState({
   name: 'invitations',
-
-  // This is temporary, this will change to `/invitations/:id`
-  url: '/organizations/invitations/:invitationId',
+  url: '/invitations/:invitationId',
   template:
     '<react-component name="components/shared/UserInvitation.es6" props="props"></react-component>',
   loadingText: 'Loading your invitation...',
@@ -17,18 +17,30 @@ export default makeState({
         const endpoint = createEndpoint();
 
         let invitation;
-        let error;
 
         try {
           invitation = await endpoint({
             method: 'GET',
-            path: ['organizations', 'invitations', invitationId]
+            path: ['invitations', invitationId]
           });
-        } catch (e) {
-          error = e;
+        } catch (error) {
+          return {
+            error
+          };
         }
 
-        return { invitation, error };
+        // Redirect to home with success message if user already accepted the invitation
+        if (invitation.status === 'accepted') {
+          go({
+            path: ['home']
+          }).then(() => {
+            Notification.success(`Youʼve already accepted this invitation!`);
+          });
+
+          return;
+        }
+
+        return { invitation };
       }
     ]
   },
@@ -42,7 +54,9 @@ export default makeState({
       const { invitation, error } = invitationData;
 
       if (error) {
-        $scope.props.error = error.message;
+        // Right now the error is being handled in a generic way, so just tell the component that
+        // an error happened.
+        $scope.props.errored = true;
       } else {
         $scope.props.invitation = invitation;
       }
