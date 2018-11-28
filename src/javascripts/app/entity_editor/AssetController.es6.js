@@ -6,6 +6,7 @@ import { truncate } from 'utils/StringUtils.es6';
 import spaceContext from 'spaceContext';
 import localeStore from 'TheLocaleStore';
 import contextHistory from 'navigation/Breadcrumbs/History.es6';
+import { user$ } from 'services/TokenStore.es6';
 
 import * as crumbFactory from 'navigation/Breadcrumbs/Factory.es6';
 
@@ -84,6 +85,8 @@ export default async function create($scope, assetId) {
   K.onValueScope($scope, $scope.otDoc.state.isDirty$, isDirty => {
     $scope.context.dirty = isDirty;
   });
+
+  $scope.user = K.getValue(user$);
 
   // Building the form
   $controller('FormWidgetsController', {
