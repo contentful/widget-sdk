@@ -3,7 +3,7 @@
  * It also displays the version in the UI and provides an easy way to clear it.
  */
 import $window from '$window';
-import Cookies from 'Cookies';
+import Cookies from 'js-cookie';
 import { omit } from 'lodash';
 import moment from 'moment';
 import React from 'react';

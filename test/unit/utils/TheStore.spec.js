@@ -4,7 +4,7 @@ import ClientStorageWrapper from 'TheStore/ClientStorageWrapper.es6';
 import { getStore } from 'TheStore';
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
-import Cookies from 'Cookies';
+import Cookies from 'js-cookie';
 
 describe('TheStore', () => {
   describe('#getStore', () => {
@@ -281,7 +281,7 @@ describe('TheStore', () => {
 
       this.system = createIsolatedSystem();
 
-      this.system.set('Cookies', {
+      this.system.set('js-cookie', {
         default: {
           set: this.stubs.set,
           get: this.stubs.get,

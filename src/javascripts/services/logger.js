@@ -56,7 +56,7 @@ angular.module('contentful').factory('logger', [
     var $window = require('$window');
     var bugsnag = require('bugsnag');
     var environment = require('environment');
-    var stringifySafe = require('stringifySafe');
+    var stringifySafe = require('json-stringify-safe');
 
     function getParams() {
       var stateName = require('$state').current.name;

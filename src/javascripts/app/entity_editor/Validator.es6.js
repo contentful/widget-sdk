@@ -18,7 +18,7 @@ import * as K from 'utils/kefir.es6';
 import * as Path from 'utils/Path.es6';
 
 import errorMessageBuilder from 'errorMessageBuilder';
-import * as Schema from 'validation';
+import * as Schema from '@contentful/validation';
 
 /**
  * @ngdoc method

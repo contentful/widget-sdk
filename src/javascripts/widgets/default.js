@@ -8,7 +8,7 @@ angular.module('contentful').factory('widgets/default', [
   'require',
   require => {
     var fieldFactory = require('fieldFactory');
-    var widgetMap = require('widgetMap');
+    var widgetMap = require('@contentful/widget-map');
 
     // We can use a dropdown widget for these field types
     var DROPDOWN_TYPES = ['Text', 'Symbol', 'Integer', 'Number', 'Boolean'];

@@ -15,7 +15,7 @@ angular
   .service('datepicker', [
     'require',
     require => {
-      var Pikaday = require('Pikaday');
+      var Pikaday = require('pikaday');
 
       var I18N = {
         previousMonth: 'Previous Month',

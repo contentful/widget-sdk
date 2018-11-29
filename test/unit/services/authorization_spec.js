@@ -10,7 +10,7 @@ describe('Authorization service', () => {
     accessChecker = { setAuthContext: sinon.stub() };
 
     module('contentful/test', $provide => {
-      $provide.constant('worf', worfStub);
+      $provide.constant('@contentful/worf', worfStub);
       $provide.value('access_control/AccessChecker', accessChecker);
     });
 

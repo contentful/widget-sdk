@@ -13,7 +13,7 @@ angular.module('contentful').directive('cfContentTypeSchema', [
   require => {
     const errorMessageBuilder = require('errorMessageBuilder');
     const SchemaController = require('SchemaController');
-    const validation = require('validation');
+    const validation = require('@contentful/validation');
 
     return {
       restrict: 'A',

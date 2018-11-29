@@ -3,7 +3,7 @@
 angular.module('contentful').factory('authorization', [
   'require',
   require => {
-    const worf = require('worf');
+    const worf = require('@contentful/worf');
     const logger = require('logger');
     const accessChecker = require('access_control/AccessChecker');
 

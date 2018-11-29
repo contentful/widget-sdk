@@ -16,7 +16,7 @@ angular.module('contentful').controller('ContentTypeEditorController', [
   function ContentTypeEditorController($scope, require) {
     const controller = this;
     const $state = require('$state');
-    const validation = require('validation');
+    const validation = require('@contentful/validation');
     const modalDialog = require('modalDialog');
     const openFieldDialog = require('openFieldDialog');
     const leaveConfirmator = require('navigation/confirmLeaveEditor');

@@ -1,4 +1,4 @@
-import Cookies from 'Cookies';
+import Cookies from 'js-cookie';
 import env from 'environment';
 
 import { extend } from 'lodash';

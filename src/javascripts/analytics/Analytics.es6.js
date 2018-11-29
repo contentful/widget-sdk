@@ -3,7 +3,7 @@ import segment from 'analytics/segment';
 import * as Snowplow from 'analytics/snowplow/Snowplow.es6';
 import { prepareUserData } from 'analytics/UserData.es6';
 import * as analyticsConsole from 'analytics/console';
-import stringifySafe from 'stringifySafe';
+import stringifySafe from 'json-stringify-safe';
 import _ from 'lodash';
 
 /**

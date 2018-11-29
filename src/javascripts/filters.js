@@ -17,7 +17,7 @@ filters.filter('isArray', () => _.isArray);
 filters.filter('fileSize', [
   'require',
   require => fileSizeInByte => {
-    const fileSize = require('fileSize');
+    const fileSize = require('file-size');
 
     return fileSize(fileSizeInByte).human('si');
   }
@@ -55,7 +55,7 @@ filters.filter('fileType', [
  * actual domain. This is used to replace the hosts.
  */
 filters.filter('assetUrl', [
-  'hostnameTransformer',
+  '@contentful/hostname-transformer',
   'services/TokenStore.es6',
   (hostnameTransformer, TokenStore) => assetOrUrl => {
     const domains = TokenStore.getDomains();

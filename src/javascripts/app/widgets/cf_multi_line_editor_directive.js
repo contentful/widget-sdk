@@ -3,7 +3,7 @@
 angular.module('cf.app').directive('cfMultiLineEditor', [
   'require',
   require => {
-    const createTextarea = require('editors').textarea;
+    const createTextarea = require('@contentful/field-editors').textarea;
 
     return {
       restrict: 'E',

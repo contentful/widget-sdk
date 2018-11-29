@@ -2,7 +2,7 @@ import { get } from 'lodash';
 import * as Filestack from 'services/Filestack.es6';
 import openInputDialog from 'app/InputDialog.es6';
 import * as TokenStore from 'services/TokenStore.es6';
-import * as HostnameTransformer from 'hostnameTransformer';
+import * as HostnameTransformer from '@contentful/hostname-transformer';
 
 const ratio = file => `${file.details.image.width}:${file.details.image.height}`;
 const ratioNumber = file => file.details.image.width / file.details.image.height;

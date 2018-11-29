@@ -50,7 +50,7 @@ angular
         }
       ]);
 
-      $provide.constant('sharejs', {
+      $provide.constant('@contentful/sharejs/lib/client', {
         Connection: sinon.stub().returns({
           socket: {},
           emit: _.noop,

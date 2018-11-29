@@ -14,7 +14,7 @@ angular
       const pluralize = require('pluralize');
       const { capitalize, joinWithAnd } = require('utils/StringUtils.es6');
       const validationViews = require('validationViews');
-      const createSchema = require('validation');
+      const createSchema = require('@contentful/validation');
       const getErrorMessage = require('validationDialogErrorMessages');
       const { BLOCKS, MARKS, INLINES } = require('@contentful/rich-text-types');
 

@@ -4,7 +4,7 @@ import { getStore } from 'TheStore';
 import { uniq, without, omit } from 'lodash';
 import { addNotification } from 'debug/DevNotifications.es6';
 import location from '$location';
-import Cookies from 'Cookies';
+import Cookies from 'js-cookie';
 
 const ENABLE_FLAGS_KEY = 'ui_enable_flags';
 const DISABLE_FLAGS_KEY = 'ui_disable_flags';

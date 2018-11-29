@@ -1,5 +1,5 @@
 import * as TokenStore from 'services/TokenStore.es6';
-import * as HostnameTransformer from 'hostnameTransformer';
+import * as HostnameTransformer from '@contentful/hostname-transformer';
 
 /*
  * Checks whether the passed content type matches one of our valid MIME types
