@@ -13,12 +13,21 @@ export default class AppListItem extends Component {
   };
 
   render() {
-    const { title, id } = this.props.app;
+    const { app } = this.props;
     return (
       <div className="apps-list-item">
         <div className="apps-list-item__icon">
-          <AppIcon appId={id} />
+          <AppIcon appId={app.id} />
         </div>
+        {app.soon ? this.renderSoon() : this.renderLink()}
+      </div>
+    );
+  }
+
+  renderLink() {
+    const { id, title } = this.props.app;
+    return (
+      <React.Fragment>
         <div className="apps-list-item__title">
           <StateLink to="^.detail" params={{ appId: id }}>
             {title}
@@ -33,7 +42,16 @@ export default class AppListItem extends Component {
             )}
           </StateLink>
         </div>
-      </div>
+      </React.Fragment>
+    );
+  }
+
+  renderSoon() {
+    return (
+      <React.Fragment>
+        <div className="apps-list-item__title">{this.props.app.title}</div>
+        <div className="apps-list-item__actions">Coming soon!</div>
+      </React.Fragment>
     );
   }
 }
