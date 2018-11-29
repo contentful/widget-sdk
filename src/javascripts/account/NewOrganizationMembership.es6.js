@@ -11,7 +11,7 @@ import {
   getAllRoles
 } from 'access_control/OrganizationMembershipRepository.es6';
 import { makeCtor, match } from 'utils/TaggedValues.es6';
-import { invite, progress$ } from 'account/SendOrganizationInvitation.es6';
+import { sendInvites, progress$ } from 'account/SendOrganizationInvitation.es6';
 import { isValidEmail } from 'utils/StringUtils.es6';
 import { go } from 'states/Navigator.es6';
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
@@ -203,7 +203,7 @@ export default function($scope) {
 
     if (isInputValid) {
       runTask(function*() {
-        yield invite({
+        yield sendInvites({
           emails,
           orgRole,
           spaceMemberships,

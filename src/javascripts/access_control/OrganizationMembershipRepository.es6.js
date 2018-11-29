@@ -116,7 +116,19 @@ export function getAllRoles(endpoint, params) {
   return fetchAll(endpoint, ['roles'], BATCH_LIMIT, params);
 }
 
-export function invite(endpoint, { role, email, suppressInvitation }) {
+export function invite(endpoint, { role, email, spaceInvitations }) {
+  return endpoint({
+    method: 'POST',
+    data: {
+      role,
+      email,
+      spaceInvitations
+    },
+    path: ['invitations']
+  });
+}
+
+export function createOrgMembership(endpoint, { role, email, suppressInvitation }) {
   return endpoint({
     method: 'POST',
     data: {

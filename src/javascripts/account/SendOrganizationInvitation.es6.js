@@ -1,9 +1,12 @@
 import * as K from 'utils/kefir.es6';
-import { get, entries } from 'lodash';
-import { runTask } from 'utils/Concurrent.es6';
-import { create as createSpaceRepo } from 'access_control/SpaceMembershipRepository.es6';
+import { get } from 'lodash';
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory.es6';
-import { invite as inviteToOrg } from 'access_control/OrganizationMembershipRepository.es6';
+import { create as createSpaceRepo } from 'access_control/SpaceMembershipRepository.es6';
+import {
+  invite as inviteToOrg,
+  createOrgMembership
+} from 'access_control/OrganizationMembershipRepository.es6';
+import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 
 const progressBus = K.createStreamBus();
 
@@ -19,6 +22,8 @@ const progressBus = K.createStreamBus();
  */
 export const progress$ = progressBus.stream;
 
+const FEATURE_FLAG = 'feature-bv-09-2018-invitations';
+
 /**
  * @name account/InviteToOrganization#invite
  * @description
@@ -31,43 +36,77 @@ export const progress$ = progressBus.stream;
  * @param {String} orgId
  * @returns {Promise}
  */
-export function invite({ emails, orgRole, spaceMemberships, suppressInvitation, orgId }) {
+export async function sendInvites({ emails, orgRole, supressInvitation, spaceMemberships, orgId }) {
+  const useLegacy = !(await getCurrentVariation(FEATURE_FLAG));
+
+  if (useLegacy) {
+    return inviteLegacy({ emails, orgRole, supressInvitation, spaceMemberships, orgId });
+  } else {
+    return invite({ emails, orgRole, spaceMemberships, orgId });
+  }
+}
+
+function inviteLegacy({ emails, orgRole, spaceMemberships, suppressInvitation, orgId }) {
   const orgEndpoint = createOrganizationEndpoint(orgId);
 
   // If the org invitation succeeds (or if it fails with 422 [taken]),
   // invite the user to all selected spaces with the respective roles.
-  const sendInvitation = email =>
-    runTask(function*() {
-      try {
-        yield inviteToOrg(orgEndpoint, { email, role: orgRole, suppressInvitation });
-        yield inviteToSpaces(email, spaceMemberships);
+  const sendInvitation = async email => {
+    try {
+      await createOrgMembership(orgEndpoint, { email, role: orgRole, suppressInvitation });
+      await inviteToSpaces(email, spaceMemberships);
+
+      progressBus.emit(email);
+    } catch (e) {
+      if (isTaken(e)) {
+        await inviteToSpaces(email, spaceMemberships);
         progressBus.emit(email);
-      } catch (e) {
-        if (isTaken(e)) {
-          yield inviteToSpaces(email, spaceMemberships);
-          progressBus.emit(email);
-        } else {
-          progressBus.error(email);
-        }
+      } else {
+        progressBus.error(email);
       }
-    });
+    }
+  };
+
+  return Promise.all(emails.map(sendInvitation));
+}
+
+function invite({ emails, orgRole, spaceMemberships, orgId }) {
+  const orgEndpoint = createOrganizationEndpoint(orgId);
+
+  // If the org invitation succeeds (or if it fails with 422 [taken]),
+  // invite the user to all selected spaces with the respective roles.
+  const spaceInvitations = spaceMemberships ? generateSpaceInvitations(spaceMemberships) : [];
+  const role = orgRole ? orgRole : 'member';
+  const sendInvitation = async email => {
+    try {
+      await inviteToOrg(orgEndpoint, {
+        email,
+        role,
+        spaceInvitations
+      });
+
+      progressBus.emit(email);
+    } catch (e) {
+      progressBus.error(email);
+    }
+  };
 
   return Promise.all(emails.map(sendInvitation));
 }
 
 function inviteToSpaces(email, spaceMemberships) {
-  const memberships = entries(spaceMemberships);
-  const invitations = memberships.map(([spaceId, roles]) =>
-    runTask(function*() {
-      const spaceEndpoint = createSpaceEndpoint(spaceId);
-      const inviteToSpace = createSpaceRepo(spaceEndpoint).invite;
-      try {
-        yield inviteToSpace(email, roles);
-      } catch (e) {
-        // ignore
-      }
-    })
-  );
+  const memberships = spaceMemberships ? Object.entries(spaceMemberships) : [];
+
+  const invitations = memberships.map(async ([spaceId, roles]) => {
+    const spaceEndpoint = createSpaceEndpoint(spaceId);
+    const inviteToSpace = createSpaceRepo(spaceEndpoint).invite;
+
+    try {
+      await inviteToSpace(email, roles);
+    } catch (e) {
+      // ignore
+    }
+  });
 
   return Promise.all(invitations);
 }
@@ -77,4 +116,24 @@ function isTaken(error) {
   const errors = get(error, 'data.details.errors', []);
 
   return status === 422 && errors.length && errors[0].name === 'taken';
+}
+
+function generateSpaceInvitations(spaceMemberships) {
+  const memberships = Object.entries(spaceMemberships);
+
+  return memberships.map(([spaceId, roles]) => {
+    const hasAdminRole = roles.find(r => r === '__cf_builtin_admin');
+
+    const membership = {
+      spaceId
+    };
+
+    if (hasAdminRole) {
+      membership.admin = true;
+    } else {
+      membership.roleIds = roles;
+    }
+
+    return membership;
+  });
 }
