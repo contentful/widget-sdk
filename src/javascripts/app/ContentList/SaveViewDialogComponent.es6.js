@@ -1,30 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TextField } from '@contentful/forma-36-react-components';
-import { byName as colors } from 'Styles/Colors.es6';
+import { TextField, RadioButtonField } from '@contentful/forma-36-react-components';
 import keycodes from 'utils/keycodes.es6';
-
-class ViewTypeOption extends React.Component {
-  static propTypes = {
-    label: PropTypes.node.isRequired,
-    description: PropTypes.string.isRequired,
-    checked: PropTypes.bool.isRequired,
-    select: PropTypes.func.isRequired
-  };
-
-  render() {
-    const { label, description, checked, select } = this.props;
-    return (
-      <li onClick={select} style={{ cursor: 'pointer', maxHeight: '50px' }}>
-        <input type="radio" checked={checked} readOnly />
-        <span style={{ marginLeft: '5px' }}>
-          <label>{label}</label>
-          <p style={{ marginLeft: '22px', color: colors.textLight }}>{description}</p>
-        </span>
-      </li>
-    );
-  }
-}
 
 const MIN_LENGTH = 1;
 const MAX_LENGTH = 32;
@@ -37,15 +14,16 @@ export default class SaveViewDialog extends React.Component {
     allowRoleAssignment: PropTypes.bool.isRequired
   };
 
-  state = { value: '', isShared: false };
+  state = { value: '', viewType: 'isPrivate' };
 
   render() {
     const { cancel, allowViewTypeSelection, allowRoleAssignment } = this.props;
-    const { value, isShared } = this.state;
+    const { value, viewType } = this.state;
 
     const trimmed = value.trim();
     const isValid = !(trimmed.length < MIN_LENGTH || trimmed.length > MAX_LENGTH);
-    const confirm = () => isValid && this.props.confirm({ title: trimmed, isShared });
+    const confirm = () =>
+      isValid && this.props.confirm({ title: trimmed, isShared: viewType === 'isShared' });
     const onKeyDown = e => e.keyCode === keycodes.ENTER && confirm();
 
     return (
@@ -72,26 +50,28 @@ export default class SaveViewDialog extends React.Component {
           />
           {allowViewTypeSelection && (
             <ul style={{ marginTop: '20px' }}>
-              <ViewTypeOption
-                label={
-                  <React.Fragment>
-                    Save under <em>My views</em>
-                  </React.Fragment>
-                }
-                description="Only you will see this view."
-                select={() => this.setState({ isShared: false })}
-                checked={!isShared}
-              />
-              <ViewTypeOption
-                label={
-                  <React.Fragment>
-                    Save under <em>Shared views</em>
-                  </React.Fragment>
-                }
-                description="You can select which roles should see this view in the next step."
-                select={() => this.setState({ isShared: true })}
-                checked={isShared}
-              />
+              <li>
+                <RadioButtonField
+                  id="option-private"
+                  labelText="Save under my views"
+                  helpText="Only you will see this view."
+                  value="isPrivate"
+                  onChange={e => this.setState({ viewType: e.target.value })}
+                  checked={viewType === 'isPrivate'}
+                  labelIsLight
+                />
+              </li>
+              <li>
+                <RadioButtonField
+                  labelText="Save under shared views"
+                  id="option-shared"
+                  value="isShared"
+                  helpText="You can select which roles should see this view in the next step."
+                  onChange={e => this.setState({ viewType: e.target.value })}
+                  checked={viewType === 'isShared'}
+                  labelIsLight
+                />
+              </li>
             </ul>
           )}
         </div>
@@ -100,7 +80,9 @@ export default class SaveViewDialog extends React.Component {
             className="btn-primary-action"
             onClick={confirm}
             disabled={trimmed.length < MIN_LENGTH}>
-            {isShared && allowRoleAssignment ? 'Proceed and select roles' : 'Save view'}
+            {viewType === 'isShared' && allowRoleAssignment
+              ? 'Proceed and select roles'
+              : 'Save view'}
           </button>
           <button className="btn-secondary-action" onClick={cancel}>
             Cancel
