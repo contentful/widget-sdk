@@ -13,17 +13,16 @@ export default class Fullscreen extends React.Component {
   render() {
     const { children, close, gradient } = this.props;
 
-    const containerClass = classnames(
-      'fullscreen--container',
-      gradient && `fullscreen--container--with-gradient`
-    );
+    const containerClass = classnames({
+      'fullscreen--container': !gradient,
+      'fullscreen--container-with-gradient': gradient
+    });
 
     return (
       <div className={containerClass}>
         <div className="fullscreen--wrapper">
           <div className="fullscreen--header">
-            {!gradient && <Icon name={'contentful-logo'} />}
-            {gradient && <Icon name="contentful-logo-light" />}
+            <Icon name={`contentful-logo${gradient ? `-light` : ''}`} />
             {close}
           </div>
           {children}

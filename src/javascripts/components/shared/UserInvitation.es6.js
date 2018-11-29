@@ -4,9 +4,10 @@ import Fullscreen from 'components/shared/Fullscreen.es6';
 import { Button } from '@contentful/forma-36-react-components';
 import { get } from 'lodash';
 import { createEndpoint } from 'data/EndpointFactory.es6';
-import { Notification } from '@contentful/ui-component-library';
+import { Notification } from '@contentful/forma-36-react-components';
 import { go } from 'states/Navigator.es6';
 import { refresh as refreshToken } from 'services/TokenStore.es6';
+import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
 
 export default class UserInvitation extends React.Component {
   static propTypes = {
@@ -63,7 +64,7 @@ export default class UserInvitation extends React.Component {
       }
 
       go(navMeta).then(() => {
-        Notification.success(`Welcome to the ${organizationName} organization!`);
+        Notification.success(`Welcome to the "${organizationName}" organization!`);
       });
     } catch (e) {
       this.setState({
@@ -71,18 +72,15 @@ export default class UserInvitation extends React.Component {
       });
 
       Notification.error(
-        'Your invitation didnʼt go through. Let your organization admin know about it, and they can invite you again.'
+        'Your invitation didn’t go through. Let your organization admin know about it, and they can invite you again.'
       );
     }
   };
 
   render() {
-    const { invitation, errored } = this.props;
+    const { invitation = {}, errored } = this.props;
+    const { organizationName, role, inviterName } = invitation;
     const { accepting } = this.state;
-
-    const organizationName = get(invitation, 'organizationName');
-    const role = get(invitation, 'role');
-    const inviterName = get(invitation, 'inviterName');
 
     return (
       <Fullscreen gradient>
@@ -91,8 +89,8 @@ export default class UserInvitation extends React.Component {
             {errored && (
               <React.Fragment>
                 <div className="user-invitation--error">
-                  <h2 className="user-invitation--title">Oops... This invitation doesnʼt exist.</h2>
-                  <p className="user-invitation--error-details">Itʼs either deleted or expired.</p>
+                  <h2 className="user-invitation--title">Oops... This invitation doesn’t exist.</h2>
+                  <p className="user-invitation--error-details">It’s either deleted or expired.</p>
                 </div>
               </React.Fragment>
             )}
@@ -100,7 +98,7 @@ export default class UserInvitation extends React.Component {
               <React.Fragment>
                 <div className="user-invitation--info">
                   <h2 className="user-invitation--title">
-                    Youʼve been invited to the <em>{organizationName}</em> organization in
+                    You’ve been invited to the <em>{organizationName}</em> organization in
                     Contentful as a {role}
                   </h2>
                   <p className="user-invitation--inviter">Invited by {inviterName}</p>
@@ -121,12 +119,11 @@ export default class UserInvitation extends React.Component {
                     <li>Last time that you were active within the organization</li>
                     <li>
                       Your{' '}
-                      <a
-                        href="https://www.contentful.com/r/knowledgebase/spaces-and-organizations/"
-                        target="_blank"
-                        rel="noopener noreferrer">
-                        roles and permissions
-                      </a>{' '}
+                      <KnowledgeBase
+                        target="spacesAndOrganizations"
+                        text="roles and permissions"
+                        icon={false}
+                      />{' '}
                       in spaces within the organization
                     </li>
                   </ul>

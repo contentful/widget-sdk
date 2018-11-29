@@ -25,7 +25,8 @@ const items = {
   contentModellingBasics: 'r/knowledgebase/content-modelling-basics/',
   createOAuthApp: 'developers/docs/references/authentication/#creating-an-oauth-20-application',
   // TODO add it once it becomes available
-  spaceEnvironments: 'developers/docs'
+  spaceEnvironments: 'developers/docs',
+  spacesAndOrganizations: 'r/knowledgebase/spaces-and-organizations'
 };
 
 function getKnowledgeBaseUrl(name) {
@@ -36,7 +37,7 @@ function getKnowledgeBaseUrl(name) {
   throw new Error('Incorrect Knowledge Base item "' + name + '".');
 }
 
-function KnowledgeBase({ target, text = '', inlineText, cssClass }) {
+function KnowledgeBase({ target, text = '', inlineText, cssClass, icon = true }) {
   const hasText = !text.length ? 'x--no-text' : '';
   const isInline = inlineText ? 'x--inline' : '';
 
@@ -47,7 +48,7 @@ function KnowledgeBase({ target, text = '', inlineText, cssClass }) {
       target="_blank"
       rel="noopener noreferrer">
       {text}
-      <i className="fa fa-question-circle" />
+      {icon && <i className="fa fa-question-circle" />}
     </a>
   );
 }
@@ -56,7 +57,8 @@ KnowledgeBase.propTypes = {
   cssClass: PropTypes.string,
   target: PropTypes.string,
   text: PropTypes.string,
-  inlineText: PropTypes.any
+  inlineText: PropTypes.any,
+  icon: PropTypes.bool
 };
 
 export default KnowledgeBase;

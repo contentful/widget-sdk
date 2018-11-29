@@ -1,7 +1,7 @@
 import makeState from 'states/Base.es6';
 import { createEndpoint } from 'data/EndpointFactory.es6';
 import { go } from 'states/Navigator.es6';
-import { Notification } from '@contentful/ui-component-library';
+import { Notification } from '@contentful/forma-36-react-components';
 
 export default makeState({
   name: 'invitations',
@@ -34,7 +34,7 @@ export default makeState({
           go({
             path: ['home']
           }).then(() => {
-            Notification.success(`Youʼve already accepted this invitation!`);
+            Notification.success(`You’ve already accepted this invitation!`);
           });
 
           return;
