@@ -4,10 +4,10 @@
       h1 Delete <em>{{ role.name }}</em> role
 
     .modal-dialog__content
-      .modal-dialog__richtext
+      .modal-dialog__richtext(ng-if="isUsed")
         p
           | Before deleting the <em>{{ role.name }}</em> role you need to move all
-          | the {{ count || 0 }} users to another role.
+          | the {{ count }} users to another role.
         .cfnext-form__field
           label(for="field-role") New role
           select#field-role.cfnext-form__input--full-size(ng-model="input.id")
@@ -15,9 +15,13 @@
               | Select the role to which you want to move users
             option(ng-repeat="option in roleOptions" value="{{ option.id }}")
               | {{ option.name }}
+      .modal-dialog__richtext(ng-if="!isUsed")
+        p Are you sure?
 
     .modal-dialog__controls
-      button.btn-caution(ui-command="moveUsersAndRemoveRole")
+      button.btn-caution(ui-command="moveUsersAndRemoveRole" ng-if="isUsed")
         | Move users and delete the role
+      button.btn-caution(ui-command="removeRole" ng-if="!isUsed")
+        | Delete the role
       button.btn-secondary-action(ng-click="dialog.cancel()")
         | Don't delete

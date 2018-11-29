@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 
-import WebhookFormSection from './WebhookFormSection.es6';
+import FormSection from 'components/forms/FormSection.es6';
 import WebhookSegmentation from './WebhookSegmentation.es6';
 import { transformTopicsToMap, transformMapToTopics } from './WebhookSegmentationState.es6';
 import WebhookFilters from './WebhookFilters.es6';
@@ -42,7 +42,7 @@ export default class WebhookForm extends React.Component {
 
     return (
       <div className="webhook-editor__settings">
-        <WebhookFormSection title="Details" collapsible={false}>
+        <FormSection title="Details">
           <div className="cfnext-form__field">
             <label htmlFor="webhook-name">
               Name <span>(required)</span>
@@ -82,9 +82,9 @@ export default class WebhookForm extends React.Component {
               />
             </div>
           </div>
-        </WebhookFormSection>
+        </FormSection>
 
-        <WebhookFormSection title="Triggers" collapsible={true}>
+        <FormSection title="Triggers" collapsible={true}>
           <WebhookSegmentation
             values={transformTopicsToMap(webhook.topics)}
             onChange={map => this.props.onChange({ topics: transformMapToTopics(map) })}
@@ -93,9 +93,9 @@ export default class WebhookForm extends React.Component {
             filters={transformFiltersToList(webhook.filters)}
             onChange={list => this.props.onChange({ filters: transformListToFilters(list) })}
           />
-        </WebhookFormSection>
+        </FormSection>
 
-        <WebhookFormSection title="Headers" collapsible={true}>
+        <FormSection title="Headers" collapsible={true}>
           <WebhookHeaders
             headers={webhook.headers}
             onChange={headers => this.props.onChange({ headers })}
@@ -151,14 +151,14 @@ export default class WebhookForm extends React.Component {
               and used as the value of the <code>Content-Length</code> header.
             </p>
           </div>
-        </WebhookFormSection>
+        </FormSection>
 
-        <WebhookFormSection title="Payload" collapsible={true}>
+        <FormSection title="Payload" collapsible={true}>
           <WebhookBodyTransformation
             body={get(webhook, ['transformation', 'body'])}
             onChange={body => this.props.onChange(this.updatedTransformation({ body }))}
           />
-        </WebhookFormSection>
+        </FormSection>
       </div>
     );
   }
