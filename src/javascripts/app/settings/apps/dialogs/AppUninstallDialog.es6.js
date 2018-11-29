@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ModalConfirm } from '@contentful/ui-component-library';
+import { ModalConfirm } from '@contentful/forma-36-react-components';
 
 export default class AppUninstallDialog extends Component {
   static propTypes = {

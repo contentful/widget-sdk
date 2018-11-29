@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { TextLink } from '@contentful/ui-component-library';
+import { TextLink } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink.es6';
 import AppIcon from '../_common/AppIcon.es6';
 
