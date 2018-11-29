@@ -5,6 +5,7 @@ import createAppsClient from '../AppsClient.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import NetlifyPage from '../netlify/index.es6';
+import AlgoliaPage from '../algolia/index.es6';
 
 const NotFound = ({ app }) => (
   <div>
@@ -16,7 +17,8 @@ NotFound.propTypes = {
 };
 
 const pages = {
-  netlify: NetlifyPage
+  netlify: NetlifyPage,
+  algolia: AlgoliaPage
 };
 
 const AppFetcher = createFetcherComponent(({ client, appId }) => {
