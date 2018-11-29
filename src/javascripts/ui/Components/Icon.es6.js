@@ -41,6 +41,7 @@ import GitBookIcon from 'svg/gitbook.es6';
 import StackOverviewIcon from 'svg/infographic.es6';
 import RelaunchOnboardingIcon from 'svg/icon-onboarding-relaunch.es6';
 import SpaceDiagram from 'svg/space-diagram.es6';
+import ErrorIcon from 'svg/error.es6';
 
 const SVGs = {
   'home-welcome': HomeWelcomeIcon,
@@ -81,7 +82,8 @@ const SVGs = {
   gitbook: GitBookIcon,
   'stack-overview': StackOverviewIcon,
   'relaunch-onboarding': RelaunchOnboardingIcon,
-  'space-diagram': SpaceDiagram
+  'space-diagram': SpaceDiagram,
+  error: ErrorIcon
 };
 
 class Icon extends React.Component {

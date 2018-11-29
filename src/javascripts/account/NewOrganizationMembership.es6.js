@@ -11,7 +11,11 @@ import {
   getAllRoles
 } from 'access_control/OrganizationMembershipRepository.es6';
 import { makeCtor, match } from 'utils/TaggedValues.es6';
-import { sendInvites, progress$ } from 'account/SendOrganizationInvitation.es6';
+import {
+  sendInvites,
+  createOrgMemberships,
+  progress$
+} from 'account/SendOrganizationInvitation.es6';
 import { isValidEmail } from 'utils/StringUtils.es6';
 import { go } from 'states/Navigator.es6';
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
@@ -26,6 +30,8 @@ import {
   successMessage
 } from 'account/NewOrganizationMembershipTemplate.es6';
 import createResourceService from 'services/ResourceService.es6';
+import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
+import * as featureFlags from 'featureFlags.es6';
 
 // Start: For Next Steps for a TEA space (a space created using the example space template)
 import { track, updateUserInSegment } from 'analytics/Analytics.es6';
@@ -107,6 +113,13 @@ export default function($scope) {
     state = assign(state, {
       spaces: orgRoles,
       status: Idle()
+    });
+    rerender();
+
+    // 3rd step - get feature flag for invitations
+    const useLegacy = !(yield getCurrentVariation(featureFlags.BV_USER_INVITATIONS));
+    state = assign(state, {
+      useLegacy
     });
     rerender();
   });
@@ -201,15 +214,26 @@ export default function($scope) {
       isInputValid = emails.length <= membershipLimit - membershipUsage;
     }
 
+    const { hasSsoEnabled } = organization;
+
     if (isInputValid) {
       runTask(function*() {
-        yield sendInvites({
+        // If the org is SSO enabled, we create the org membership directly rather than
+        // inviting the user
+        const invitationMetadata = {
           emails,
           orgRole,
           spaceMemberships,
           suppressInvitation,
           orgId
-        });
+        };
+
+        if (hasSsoEnabled) {
+          yield createOrgMemberships(invitationMetadata);
+        } else {
+          yield sendInvites(invitationMetadata);
+        }
+
         const organization = yield* getOrgInfo(orgId);
 
         // Start: For Next Steps for a TEA space (a space created using the example space template)
@@ -407,13 +431,17 @@ function render(state, actions) {
           [
             match(state.status, {
               [Success]: () =>
-                successMessage(
-                  state.emails,
-                  state.successfulOrgInvitations,
-                  actions.restart,
-                  actions.goToList
-                ),
-              [Failure]: () => errorMessage(state.failedOrgInvitations, actions.restart),
+                successMessage(state.successfulOrgInvitations, actions.restart, actions.goToList),
+              [Failure]: () =>
+                h('', [
+                  errorMessage(state.useLegacy, state.failedOrgInvitations, actions.restart),
+                  state.successfulOrgInvitations.length > 0 &&
+                    successMessage(
+                      state.successfulOrgInvitations,
+                      actions.restart,
+                      actions.goToList
+                    )
+                ]),
               [InProgress]: () => progressMessage(state.emails, state.successfulOrgInvitations),
               _: () =>
                 h('', [
