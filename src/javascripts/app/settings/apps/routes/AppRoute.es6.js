@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import AdminOnly from 'app/common/AdminOnly.es6';
-import AppsClient from '../AppsClient.es6';
+import createAppsClient from '../AppsClient.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import NetlifyPage from '../netlify/index.es6';
@@ -19,27 +19,33 @@ const pages = {
   netlify: NetlifyPage
 };
 
-const AppFetcher = createFetcherComponent(props => {
-  return AppsClient.get(props.appId);
+const AppFetcher = createFetcherComponent(({ client, appId }) => {
+  return client.get(appId);
 });
 
 export default class AppRoute extends Component {
   static propTypes = {
+    spaceId: PropTypes.string.isRequired,
     appId: PropTypes.string.isRequired
   };
 
-  onInstall = (id, callback) => {
-    AppsClient.install(id).then(() => callback());
+  constructor(props) {
+    super(props);
+    this.client = createAppsClient(props.spaceId);
+  }
+
+  onInstall = (id, config, callback) => {
+    this.client.save(id, config).then(() => callback());
   };
 
   onUninstall = (id, callback) => {
-    AppsClient.uninstall(id).then(() => callback());
+    this.client.remove(id).then(() => callback());
   };
 
   render() {
     return (
       <AdminOnly>
-        <AppFetcher appId={this.props.appId}>
+        <AppFetcher client={this.client} appId={this.props.appId}>
           {({ isLoading, isError, data, fetch }) => {
             if (isLoading) {
               return <FetcherLoading message="Loading app..." />;
@@ -51,8 +57,8 @@ export default class AppRoute extends Component {
             return (
               <Component
                 app={data}
-                onInstall={id => {
-                  this.onInstall(id, fetch);
+                onInstall={(id, config) => {
+                  this.onInstall(id, config, fetch);
                 }}
                 onUninstall={id => {
                   this.onUninstall(id, fetch);

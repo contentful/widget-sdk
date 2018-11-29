@@ -4,7 +4,6 @@ import { Button } from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import AppIcon from '../_common/AppIcon.es6';
-import StateLink from 'app/common/StateLink.es6';
 import AppUninstallDialog from '../dialogs/AppUninstallDialog.es6';
 
 export default class NetlifyPage extends Component {
@@ -12,19 +11,49 @@ export default class NetlifyPage extends Component {
     app: PropTypes.shape({
       id: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
-      installed: PropTypes.bool.isRequired
+      installed: PropTypes.bool.isRequired,
+      config: PropTypes.object.isRequired
     }).isRequired,
     onInstall: PropTypes.func.isRequired,
     onUninstall: PropTypes.func.isRequired
   };
 
-  state = {
-    isBusy: false
+  constructor(props) {
+    super(props);
+    this.state = {
+      isBusy: false,
+      config: JSON.stringify(props.app.config, null, 2)
+    };
+  }
+
+  parseConfig = () => {
+    try {
+      return JSON.parse(this.state.config);
+    } catch (err) {
+      throw new Error('Configuration could not be parsed.');
+    }
   };
 
   onInstallClick = async () => {
+    const config = this.parseConfig();
+
     this.setState({ isBusy: true });
-    await this.props.onInstall(this.props.app.id);
+
+    // DO SOME APP-SPECIFIC SETUP
+    // for example create Netlify webhooks
+
+    await this.props.onInstall(this.props.app.id, config);
+  };
+
+  onUpdateClick = async () => {
+    const config = this.parseConfig();
+
+    this.setState({ isBusy: true });
+
+    // DO SOME APP-SPECIFIC SETUP
+    // for example update Netlify webhooks
+
+    await this.props.onInstall(this.props.app.id, config);
   };
 
   onUninstallClick = async () => {
@@ -54,13 +83,19 @@ export default class NetlifyPage extends Component {
           <Workbench.Icon icon="page-settings" />
           <Workbench.Title>Apps: {this.props.app.title}</Workbench.Title>
           <Workbench.Header.Actions>
-            <StateLink to="^.list">
-              {props => (
-                <Button buttonType="muted" onClick={props.onClick}>
-                  Close
-                </Button>
-              )}
-            </StateLink>
+            {this.props.app.installed && (
+              <Button buttonType="muted" onClick={this.onUninstallClick}>
+                Uninstall
+              </Button>
+            )}
+            {this.props.app.installed && (
+              <Button
+                buttonType="positive"
+                loading={this.state.isBusy}
+                onClick={this.onUpdateClick}>
+                Update
+              </Button>
+            )}
             {!this.props.app.installed && (
               <Button
                 buttonType="positive"
@@ -69,19 +104,18 @@ export default class NetlifyPage extends Component {
                 Install
               </Button>
             )}
-            {this.props.app.installed && (
-              <Button
-                buttonType="muted"
-                loading={this.state.isBusy}
-                onClick={this.onUninstallClick}>
-                Uninstall
-              </Button>
-            )}
           </Workbench.Header.Actions>
         </Workbench.Header>
         <Workbench.Content centered>
           <h1>{this.props.app.title}</h1>
           <AppIcon appId={this.props.app.id} size="large" />
+          <textarea
+            rows={10}
+            cols={50}
+            style={{ fontFamily: 'monospace', display: 'block' }}
+            onChange={e => this.setState({ config: e.target.value })}
+            value={this.state.config}
+          />
         </Workbench.Content>
       </Workbench>
     );

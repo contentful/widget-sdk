@@ -1,115 +1,67 @@
-const APPS_KEY = 'temp-apps-storage';
+import createMicroBackendsClient from 'MicroBackendsClient.es6';
 
-const readStore = () => {
-  try {
-    return JSON.parse(localStorage.getItem(APPS_KEY));
-  } catch (e) {
-    return {};
+const KNOWN_APPS = {
+  netlify: {
+    title: 'Netlify'
+  },
+  algolia: {
+    title: 'Algolia'
+  },
+  optimizely: {
+    title: 'Optimizely',
+    soon: true
   }
 };
 
-const writeStore = data => {
-  try {
-    localStorage.setItem(APPS_KEY, JSON.stringify(data));
-  } catch (e) {
-    throw e;
+export default function createAppsClient(spaceId) {
+  const backend = createMicroBackendsClient({
+    backendName: 'apps',
+    withAuth: true,
+    baseUrl: `/spaces/${spaceId}`
+  });
+
+  return {
+    getAll,
+    get,
+    save,
+    remove
+  };
+
+  async function getAll() {
+    const res = await backend.call();
+    if (res.status > 299) {
+      throw new Error('Could not fetch apps.');
+    }
+
+    const appConfigs = await res.json();
+
+    return Object.keys(KNOWN_APPS).reduce((acc, id) => {
+      const config = appConfigs[id];
+      const app = { ...KNOWN_APPS[id], id, installed: !!config, config: config || {} };
+      return acc.concat([app]);
+    }, []);
   }
-};
 
-const updateStore = data => {
-  const existingData = readStore() || {};
-  writeStore({
-    ...existingData,
-    ...data
-  });
-};
+  async function get(appId) {
+    const apps = await getAll();
+    const app = apps.find(app => app.id === appId && !app.soon);
 
-if (!readStore()) {
-  writeStore({
-    netlify: {
-      id: 'netlify',
-      title: 'Netlify',
-      installed: true,
-      config: {}
-    },
-    algolia: {
-      id: 'algolia',
-      title: 'Algolia',
-      installed: false,
-      config: {}
-    },
-    optimizely: {
-      id: 'optimizely',
-      title: 'Optimizely',
-      installed: false,
-      config: {}
+    if (app) {
+      return app;
+    } else {
+      throw new Error(`Could not fetch "${appId}".`);
     }
-  });
+  }
+
+  function save(appId, config) {
+    return backend.call(appId, {
+      method: 'PUT',
+      body: JSON.stringify(config),
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
+  function remove(appId) {
+    return backend.call(appId, { method: 'DELETE' });
+  }
 }
-
-const delay = ms => {
-  return new Promise(resolve => setTimeout(resolve, ms));
-};
-
-function createAppsClient() {
-  const getAll = async () => {
-    await delay(300);
-    return Object.values(readStore() || {});
-  };
-
-  const get = async id => {
-    await delay(300);
-    const data = readStore() || {};
-    const item = data[id];
-    if (!item) {
-      throw new Error('app does not exist');
-    }
-    return item;
-  };
-
-  const save = async (id, config) => {
-    await delay(300);
-    const item = await get(id);
-    const updatedItem = {
-      ...item,
-      config: {
-        ...item.config,
-        ...config
-      }
-    };
-    updateStore({
-      [item.id]: updatedItem
-    });
-    return updatedItem;
-  };
-
-  const install = async id => {
-    await delay(300);
-    const item = await get(id);
-    const updatedItem = {
-      ...item,
-      installed: true
-    };
-    updateStore({
-      [item.id]: updatedItem
-    });
-    return updatedItem;
-  };
-
-  const uninstall = async id => {
-    await delay(300);
-    const item = await get(id);
-    const updatedItem = {
-      ...item,
-      installed: false
-    };
-    updateStore({
-      [item.id]: updatedItem
-    });
-    return updatedItem;
-  };
-
-  return { getAll, get, save, install, uninstall };
-}
-
-export default createAppsClient();

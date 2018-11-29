@@ -15,7 +15,7 @@ const ENV_TO_URL_PREFIX = {
 const HAS_PROTO_RE = /^https?:\/\//;
 const trimTrailingSlashes = s => (s || '').replace(/\/+$/, '');
 
-export default function createMicroBackendsClient({ backendName, withAuth }) {
+export default function createMicroBackendsClient({ backendName, withAuth, baseUrl }) {
   const { env, gitRevision, settings } = environment;
 
   return { call, url };
@@ -30,11 +30,12 @@ export default function createMicroBackendsClient({ backendName, withAuth }) {
     path = path || '/';
     path = path.startsWith('/') ? path : `/${path}`;
     const prefix = ENV_TO_URL_PREFIX[env];
+    const base = trimTrailingSlashes(baseUrl || '');
 
     if (gitRevision) {
-      return prefix + `_rev-${gitRevision}/${backendName}` + path;
+      return prefix + `_rev-${gitRevision}/${backendName}` + base + path;
     } else {
-      return prefix + backendName + path;
+      return prefix + backendName + base + path;
     }
   }
 

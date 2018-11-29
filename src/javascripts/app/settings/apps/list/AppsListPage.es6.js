@@ -3,13 +3,10 @@ import PropTypes from 'prop-types';
 import Workbench from 'app/common/Workbench.es6';
 import AppsList from './AppsList.es6';
 import AppListItem from './AppListItem.es6';
-import AppUninstallDialog from '../dialogs/AppUninstallDialog.es6';
-import ModalLauncher from 'app/common/ModalLauncher.es6';
 
 export default class AppsListPage extends Component {
   static propTypes = {
-    apps: PropTypes.array.isRequired,
-    onUninstall: PropTypes.func.isRequired
+    apps: PropTypes.array.isRequired
   };
 
   state = {
@@ -33,24 +30,6 @@ export default class AppsListPage extends Component {
     };
   }
 
-  onUninstallClick = async app => {
-    const confirmed = await ModalLauncher.open(({ isShown, onClose }) => (
-      <AppUninstallDialog
-        app={app}
-        isShown={isShown}
-        onCancel={() => {
-          onClose(false);
-        }}
-        onConfirm={() => {
-          onClose(true);
-        }}
-      />
-    ));
-    if (confirmed) {
-      this.props.onUninstall(app.id);
-    }
-  };
-
   render() {
     return (
       <Workbench>
@@ -62,14 +41,14 @@ export default class AppsListPage extends Component {
           {this.state.installed.length > 0 && (
             <AppsList title="Installed">
               {this.state.installed.map(app => (
-                <AppListItem key={app.id} app={app} onUninstallClick={this.onUninstallClick} />
+                <AppListItem key={app.id} app={app} />
               ))}
             </AppsList>
           )}
           {this.state.available.length > 0 && (
             <AppsList title="Available">
               {this.state.available.map(app => (
-                <AppListItem key={app.id} app={app} onUninstallClick={this.onUninstallClick} />
+                <AppListItem key={app.id} app={app} />
               ))}
             </AppsList>
           )}

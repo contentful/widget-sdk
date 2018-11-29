@@ -8,18 +8,12 @@ export default class AppListItem extends Component {
   static propTypes = {
     app: PropTypes.shape({
       id: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired,
-      installed: PropTypes.bool
-    }).isRequired,
-    onUninstallClick: PropTypes.func.isRequired
-  };
-
-  onUninstallClick = () => {
-    this.props.onUninstallClick(this.props.app);
+      title: PropTypes.string.isRequired
+    }).isRequired
   };
 
   render() {
-    const { title, id, installed } = this.props.app;
+    const { title, id } = this.props.app;
     return (
       <div className="apps-list-item">
         <div className="apps-list-item__icon">
@@ -38,11 +32,6 @@ export default class AppListItem extends Component {
               </TextLink>
             )}
           </StateLink>
-          {installed && (
-            <TextLink onClick={this.onUninstallClick} linkType="negative">
-              Uninstall
-            </TextLink>
-          )}
         </div>
       </div>
     );
