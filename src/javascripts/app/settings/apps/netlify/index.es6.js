@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button } from '@contentful/forma-36-react-components';
+import { Button, Select, Option, TextInput } from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import AppIcon from '../_common/AppIcon.es6';
 import AppUninstallDialog from '../dialogs/AppUninstallDialog.es6';
+import * as NetlifyClient from './NetlifyClient.es6';
+import { cloneDeep, uniqBy } from 'lodash';
+import * as Random from 'utils/Random.es6';
 
 export default class NetlifyPage extends Component {
   static propTypes = {
@@ -20,40 +23,47 @@ export default class NetlifyPage extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      isBusy: false,
-      config: JSON.stringify(props.app.config, null, 2)
-    };
+
+    const config = cloneDeep(props.app.config);
+    config.installationId = config.installationId || Random.id();
+    config.sites = config.sites || [{}];
+
+    const netlify = {};
+    netlify.sites = config.sites
+      .filter(s => s.netlifySiteName)
+      .map(s => ({ id: s.netlifySiteId, name: s.netlifySiteName }));
+    netlify.sites = uniqBy(netlify.sites, s => s.id);
+
+    this.state = { config, netlify };
   }
 
-  parseConfig = () => {
-    try {
-      return JSON.parse(this.state.config);
-    } catch (err) {
-      throw new Error('Configuration could not be parsed.');
+  async componentDidMount() {
+    const ticketId = await NetlifyClient.createTicket();
+    this.setState({ ticketId });
+  }
+
+  componentWillUnmount() {
+    if (this.cancel) {
+      this.cancel();
     }
-  };
+  }
 
   onInstallClick = async () => {
-    const config = this.parseConfig();
-
     this.setState({ isBusy: true });
 
     // DO SOME APP-SPECIFIC SETUP
     // for example create Netlify webhooks
 
-    await this.props.onInstall(this.props.app.id, config);
+    await this.props.onInstall(this.props.app.id, this.state.config);
   };
 
   onUpdateClick = async () => {
-    const config = this.parseConfig();
-
     this.setState({ isBusy: true });
 
     // DO SOME APP-SPECIFIC SETUP
     // for example update Netlify webhooks
 
-    await this.props.onInstall(this.props.app.id, config);
+    await this.props.onInstall(this.props.app.id, this.state.config);
   };
 
   onUninstallClick = async () => {
@@ -73,6 +83,19 @@ export default class NetlifyPage extends Component {
     if (confirmed) {
       this.props.onUninstall(app.id);
     }
+  };
+
+  auth = () => {
+    this.cancel = NetlifyClient.getAccessTokenWithTicket(this.state.ticketId, (err, token) => {
+      if (err) {
+        this.setState({ err });
+      } else if (token) {
+        NetlifyClient.listSites(token).then(
+          sites => this.setState(state => ({ ...state, token, netlify: { sites } })),
+          err => this.setState({ err })
+        );
+      }
+    });
   };
 
   render() {
@@ -109,15 +132,113 @@ export default class NetlifyPage extends Component {
         <Workbench.Content centered>
           <h1>{this.props.app.title}</h1>
           <AppIcon appId={this.props.app.id} size="large" />
-          <textarea
-            rows={10}
-            cols={50}
-            style={{ fontFamily: 'monospace', display: 'block' }}
-            onChange={e => this.setState({ config: e.target.value })}
-            value={this.state.config}
-          />
+          {this.renderContent()}
+          {this.renderConfiguration()}
         </Workbench.Content>
       </Workbench>
     );
   }
+
+  renderContent() {
+    const { ticketId, token } = this.state;
+
+    if (!ticketId) {
+      return this.renderPreparing();
+    }
+
+    if (ticketId && !token) {
+      return this.renderConnect();
+    }
+
+    return null;
+  }
+
+  renderPreparing() {
+    return <p>Preparing connection to Netlify...</p>;
+  }
+
+  renderConnect() {
+    return (
+      <Button buttonType="positive" onClick={this.auth}>
+        Connect Netlify
+      </Button>
+    );
+  }
+
+  renderConfiguration() {
+    return (
+      <React.Fragment>
+        {this.state.config.sites.map((siteConfig, siteIndex) => {
+          return (
+            <div key={siteIndex} style={{ marginBottom: '20px' }}>
+              <Select
+                isDisabled={!this.state.token}
+                width="medium"
+                value={siteConfig.netlifySiteId || '__pick__'}
+                onChange={e => {
+                  const siteId = e.target.value;
+                  const site = this.state.netlify.sites.find(site => site.id === siteId) || {};
+                  this.updateConfigSite(siteIndex, {
+                    netlifySiteId: site.id,
+                    netlifySiteName: site.name
+                  });
+                }}>
+                <Option value="__pick__">Pick site</Option>
+                {this.state.netlify.sites.map(netlifySite => {
+                  return (
+                    <Option key={netlifySite.id} value={netlifySite.id}>
+                      {netlifySite.name}
+                    </Option>
+                  );
+                })}
+              </Select>
+              <TextInput
+                disabled={!this.state.token}
+                width="medium"
+                value={siteConfig.name || ''}
+                maxLength={50}
+                onChange={e => this.updateConfigSite(siteIndex, { name: e.target.value })}
+              />
+              <Button
+                disabled={!this.state.token}
+                buttonType="muted"
+                onClick={() =>
+                  this.setState(state => ({
+                    ...state,
+                    config: {
+                      ...state.config,
+                      sites: state.config.sites.filter((_, i) => i !== siteIndex)
+                    }
+                  }))
+                }>
+                Remove
+              </Button>
+            </div>
+          );
+        })}
+        <Button
+          disabled={!this.state.token || this.state.config.sites.length > 2}
+          onClick={() =>
+            this.setState(state => ({
+              ...state,
+              config: { ...state.config, sites: state.config.sites.concat([{}]) }
+            }))
+          }>
+          Add site (max 3)
+        </Button>
+        <pre>{JSON.stringify(this.state.config, null, 2)}</pre>
+      </React.Fragment>
+    );
+  }
+
+  updateConfigSite = (index, patch) => {
+    this.setState(state => {
+      const updatedSites = state.config.sites.map((site, i) => {
+        return i === index ? { ...site, ...patch } : site;
+      });
+      const updatedConfig = { ...this.state.config, sites: updatedSites };
+
+      return { config: updatedConfig };
+    });
+  };
 }
