@@ -8,23 +8,26 @@ export default class AppListItem extends Component {
   static propTypes = {
     app: PropTypes.shape({
       id: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired,
-      installed: PropTypes.bool
-    }).isRequired,
-    onUninstallClick: PropTypes.func.isRequired
-  };
-
-  onUninstallClick = () => {
-    this.props.onUninstallClick(this.props.app);
+      title: PropTypes.string.isRequired
+    }).isRequired
   };
 
   render() {
-    const { title, id, installed } = this.props.app;
+    const { app } = this.props;
     return (
       <div className="apps-list-item">
         <div className="apps-list-item__icon">
-          <AppIcon appId={id} />
+          <AppIcon appId={app.id} />
         </div>
+        {app.soon ? this.renderSoon() : this.renderLink()}
+      </div>
+    );
+  }
+
+  renderLink() {
+    const { id, title } = this.props.app;
+    return (
+      <React.Fragment>
         <div className="apps-list-item__title">
           <StateLink to="^.detail" params={{ appId: id }}>
             {title}
@@ -38,13 +41,17 @@ export default class AppListItem extends Component {
               </TextLink>
             )}
           </StateLink>
-          {installed && (
-            <TextLink onClick={this.onUninstallClick} linkType="negative">
-              Uninstall
-            </TextLink>
-          )}
         </div>
-      </div>
+      </React.Fragment>
+    );
+  }
+
+  renderSoon() {
+    return (
+      <React.Fragment>
+        <div className="apps-list-item__title">{this.props.app.title}</div>
+        <div className="apps-list-item__actions">Coming soon!</div>
+      </React.Fragment>
     );
   }
 }

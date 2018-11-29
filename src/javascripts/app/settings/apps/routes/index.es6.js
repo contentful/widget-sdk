@@ -6,7 +6,17 @@ export default {
     {
       name: 'list',
       url: '',
-      template: '<react-component name="app/settings/apps/routes/AppsListRoute.es6" />'
+      template:
+        '<react-component name="app/settings/apps/routes/AppsListRoute.es6" props="props" />',
+      controller: [
+        '$scope',
+        '$stateParams',
+        ($scope, $stateParams) => {
+          $scope.props = {
+            spaceId: $stateParams.spaceId
+          };
+        }
+      ]
     },
     {
       name: 'detail',
@@ -17,7 +27,8 @@ export default {
         '$stateParams',
         ($scope, $stateParams) => {
           $scope.props = {
-            appId: $stateParams.appId
+            appId: $stateParams.appId,
+            spaceId: $stateParams.spaceId
           };
         }
       ]

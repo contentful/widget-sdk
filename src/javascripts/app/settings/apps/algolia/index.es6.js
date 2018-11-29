@@ -6,7 +6,7 @@ import ModalLauncher from 'app/common/ModalLauncher.es6';
 import AppIcon from '../_common/AppIcon.es6';
 import AppUninstallDialog from '../dialogs/AppUninstallDialog.es6';
 
-export default class NetlifyPage extends Component {
+export default class AlgoliaPage extends Component {
   static propTypes = {
     app: PropTypes.shape({
       id: PropTypes.string.isRequired,
@@ -40,7 +40,7 @@ export default class NetlifyPage extends Component {
     this.setState({ isBusy: true });
 
     // DO SOME APP-SPECIFIC SETUP
-    // for example create Netlify webhooks
+    // for example CREATE Contentful to Algolia webhooks
 
     await this.props.onInstall(this.props.app.id, config);
   };
@@ -51,7 +51,7 @@ export default class NetlifyPage extends Component {
     this.setState({ isBusy: true });
 
     // DO SOME APP-SPECIFIC SETUP
-    // for example update Netlify webhooks
+    // for example UPDATE Contentful to Algolia webhooks
 
     await this.props.onInstall(this.props.app.id, config);
   };
