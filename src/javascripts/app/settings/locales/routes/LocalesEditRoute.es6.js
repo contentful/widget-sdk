@@ -11,6 +11,7 @@ import LocaleRemovalConfirmDialog from '../dialogs/LocaleRemovalConfirmDialog.es
 import ChooseNewFallbackLocaleDialog from '../dialogs/ChooseNewFallbackLocaleDialog.es6';
 import LocaleCodeChangeConfirmation from '../dialogs/LocaleCodeChangeConfirmDialog.es6';
 import spaceContext from 'spaceContext';
+import TheLocaleStore from 'TheLocaleStore';
 
 const LocalesFetcher = createFetcherComponent(() => {
   return spaceContext.localeRepo.getAll();
@@ -176,6 +177,16 @@ class EditLocaleForm extends Component {
 }
 
 export default function LocalesEditRoute(props) {
+  const save = async function(locale) {
+    await spaceContext.localeRepo.save(locale);
+    TheLocaleStore.refresh();
+  };
+
+  const remove = async function(locale) {
+    await spaceContext.localeRepo.remove(locale);
+    TheLocaleStore.refresh();
+  };
+
   return (
     <AdminOnly>
       <LocalesFetcher>
@@ -196,8 +207,8 @@ export default function LocalesEditRoute(props) {
             <EditLocaleForm
               initialLocale={locale}
               spaceLocales={spaceLocales}
-              saveLocale={spaceContext.localeRepo.save}
-              removeLocale={spaceContext.localeRepo.remove}
+              saveLocale={save}
+              removeLocale={remove}
               setDirty={props.setDirty}
               registerSaveAction={props.registerSaveAction}
             />
