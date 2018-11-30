@@ -15,6 +15,10 @@ import NetlifyConfigEditor from './NetlifyConfigEditor.es6';
 import NetlifyConnection from './NetlifyConnection.es6';
 import AppUninstallDialog from '../dialogs/AppUninstallDialog.es6';
 
+const notifyError = (err, fallbackMessage) => {
+  Notification.error(err.useMessage ? err.message || fallbackMessage : fallbackMessage);
+};
+
 export default class NetlifyAppPage extends Component {
   static propTypes = {
     app: PropTypes.shape({
@@ -24,6 +28,7 @@ export default class NetlifyAppPage extends Component {
       config: PropTypes.object.isRequired
     }).isRequired,
     ticketId: PropTypes.string.isRequired,
+    contentTypeIds: PropTypes.arrayOf(PropTypes.string).isRequired,
     client: PropTypes.shape({
       save: PropTypes.func.isRequired,
       remove: PropTypes.func.isRequired
@@ -59,7 +64,7 @@ export default class NetlifyAppPage extends Component {
       this.props.ticketId,
       (err, token) => {
         if (err) {
-          this.setState({ err });
+          notifyError(err, 'Failed to connect with Netlify. Try again!');
         } else if (token) {
           this.initNetlifyConnection(token);
         }
@@ -73,36 +78,39 @@ export default class NetlifyAppPage extends Component {
       Notification.success('Netlify account connected successfully.');
       this.setState({ token, email, netlifySites: sites, netlifyCounts: counts });
     } catch (err) {
-      this.setState({ err });
+      notifyError(err, 'Failed to connect with Netlify. Try again!');
     }
   };
 
-  onInstallClick = async () => {
-    this.setState({ busyWith: 'install' });
-    const { config, token } = this.state;
+  getIntegrationContext = () => {
+    return {
+      config: this.state.config,
+      contentTypeIds: this.props.contentTypeIds,
+      appsClient: this.props.client,
+      accessToken: this.state.token
+    };
+  };
 
+  onInstallClick = async () => {
     try {
-      const updatedConfig = await NetlifyIntegration.install(config, this.props.client, token);
+      this.setState({ busyWith: 'install' });
+      const updatedConfig = await NetlifyIntegration.install(this.getIntegrationContext());
       Notification.success('Netlify app installed successfully.');
       this.setState({ busyWith: false, installed: true, config: updatedConfig });
     } catch (err) {
-      Notification.error(err.useMessage ? err.message : 'Failed to install Netlify app.');
+      notifyError(err, 'Failed to install Netlify app.');
       this.setState({ busyWith: false });
     }
   };
 
   onUpdateClick = async () => {
-    this.setState({ busyWith: 'update' });
-    const { config, token } = this.state;
-
     try {
-      const updatedConfig = await NetlifyIntegration.update(config, this.props.client, token);
+      this.setState({ busyWith: 'update' });
+      const updatedConfig = await NetlifyIntegration.update(this.getIntegrationContext());
       Notification.success('Netlify app configuration updated successfully.');
       this.setState({ busyWith: false, config: updatedConfig });
     } catch (err) {
-      Notification.error(
-        err.useMessage ? err.message : 'Failed to update Netlify app configuration.'
-      );
+      notifyError(err, 'Failed to update Netlify app configuration.');
       this.setState({ busyWith: false });
     }
   };
@@ -117,18 +125,16 @@ export default class NetlifyAppPage extends Component {
       />
     ));
 
-    if (!confirmed) {
-      return;
-    }
-
-    this.setState({ busyWith: 'uninstall' });
-
-    try {
-      await NetlifyIntegration.uninstall(this.props.client, this.state.token);
-      Notification.success('Netlify app uninstalled successfully.');
-      $state.go('^.list');
-    } catch (err) {
-      Notification.error(err.useMessage ? err.message : 'Failed to uninstall Netlify app.');
+    if (confirmed) {
+      try {
+        this.setState({ busyWith: 'uninstall' });
+        await NetlifyIntegration.uninstall(this.getIntegrationContext());
+        Notification.success('Netlify app uninstalled successfully.');
+        $state.go('^.list');
+      } catch (err) {
+        notifyError(err, 'Failed to uninstall Netlify app.');
+        this.setState({ busyWith: false });
+      }
     }
   };
 

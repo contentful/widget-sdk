@@ -3,11 +3,13 @@ import PropTypes from 'prop-types';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 
+import spaceContext from 'spaceContext';
+
 import NetlifyAppPage from './NetlifyAppPage.es6';
 import * as NetlifyClient from './NetlifyClient.es6';
 
 const NetlifyFetcher = createFetcherComponent(({ app }) => {
-  return Promise.all([app, NetlifyClient.createTicket()]);
+  return Promise.all([app, NetlifyClient.createTicket(), spaceContext.publishedCTs.getAllBare()]);
 });
 
 export default class NetlifyApp extends Component {
@@ -27,9 +29,16 @@ export default class NetlifyApp extends Component {
             return <StateRedirect to="^.list" />;
           }
 
-          const [app, ticketId] = data;
+          const [app, ticketId, contentTypes] = data;
 
-          return <NetlifyAppPage app={app} ticketId={ticketId} client={this.props.client} />;
+          return (
+            <NetlifyAppPage
+              app={app}
+              ticketId={ticketId}
+              contentTypeIds={contentTypes.map(ct => ct.sys.id)}
+              client={this.props.client}
+            />
+          );
         }}
       </NetlifyFetcher>
     );

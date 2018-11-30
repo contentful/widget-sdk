@@ -2,7 +2,7 @@ import { cloneDeep, get, uniqBy } from 'lodash';
 
 import * as NetlifyClient from './NetlifyClient.es6';
 
-export async function install(config, appsClient, accessToken) {
+export async function install({ config, appsClient, accessToken }) {
   config = prepareConfig(config);
 
   // Create build hooks for all sites.
@@ -24,8 +24,8 @@ export async function install(config, appsClient, accessToken) {
   return config;
 }
 
-export async function update(config, appsClient, accessToken) {
-  config = prepareConfig(config);
+export async function update(context) {
+  const config = prepareConfig(context.config);
 
   // Remove existing build hooks
   config.sites = config.sites.map(siteConfig => {
@@ -35,13 +35,13 @@ export async function update(config, appsClient, accessToken) {
     return siteConfig;
   });
 
-  await removeExistingBuildHooks(appsClient, accessToken);
+  await removeExistingBuildHooks(context.appsClient, context.accessToken);
 
   // Proceed as in the installation step.
-  return install(config, appsClient, accessToken);
+  return install(context);
 }
 
-export async function uninstall(appsClient, accessToken) {
+export async function uninstall({ appsClient, accessToken }) {
   await removeExistingBuildHooks(appsClient, accessToken);
 
   return appsClient.remove('netlify');
