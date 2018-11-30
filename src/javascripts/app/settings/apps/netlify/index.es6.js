@@ -4,12 +4,19 @@ import StateRedirect from 'app/common/StateRedirect.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 
 import spaceContext from 'spaceContext';
+import contentPreview from 'contentPreview';
 
 import NetlifyAppPage from './NetlifyAppPage.es6';
 import * as NetlifyClient from './NetlifyClient.es6';
 
 const NetlifyFetcher = createFetcherComponent(({ app }) => {
-  return Promise.all([app, NetlifyClient.createTicket(), spaceContext.publishedCTs.getAllBare()]);
+  return Promise.all([
+    app,
+    NetlifyClient.createTicket(),
+    spaceContext.publishedCTs.getAllBare(),
+    // We'll be updating content previews. Keep the content preview cache warm:
+    contentPreview.getAll()
+  ]);
 });
 
 export default class NetlifyApp extends Component {

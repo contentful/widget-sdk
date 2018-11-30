@@ -25,7 +25,12 @@ export default class NetlifyConfigEditor extends Component {
 
     const updated = siteConfigs.map((siteConfig, i) => {
       if (configIndex === i) {
-        return { ...siteConfig, netlifySiteId: site.id, netlifySiteName: site.name };
+        return {
+          ...siteConfig,
+          netlifySiteId: site.id,
+          netlifySiteName: site.name,
+          netlifySiteUrl: site.ssl_url || site.url
+        };
       } else {
         return siteConfig;
       }
