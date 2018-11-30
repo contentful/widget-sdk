@@ -173,7 +173,7 @@ class UserDetail extends React.Component {
     const isPending = userObj => !userObj.firstName;
 
     return (
-      <Workbench testId="organization-users-page">
+      <Workbench className="organization-users-page" testId="organization-users-page">
         <Workbench.Header>
           <Workbench.Title>Users</Workbench.Title>
         </Workbench.Header>
