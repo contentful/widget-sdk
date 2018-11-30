@@ -50,6 +50,13 @@ export async function uninstall(appsClient, accessToken) {
 }
 
 function validateSiteConfigs(siteConfigs) {
+  // At least one site needs to be configured.
+  if (siteConfigs.length < 1) {
+    const err = new Error('Provide at least one site configuration.');
+    err.useMessage = true;
+    throw err;
+  }
+
   // Find all site configurations with incomplete information.
   const incomplete = siteConfigs.filter(siteConfig => {
     return !siteConfig.netlifySiteId || !siteConfig.name;
