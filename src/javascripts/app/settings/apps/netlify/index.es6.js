@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Select, Option, TextInput } from '@contentful/forma-36-react-components';
+import { Button } from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import AppIcon from '../_common/AppIcon.es6';
@@ -8,6 +8,7 @@ import AppUninstallDialog from '../dialogs/AppUninstallDialog.es6';
 import * as NetlifyClient from './NetlifyClient.es6';
 import { cloneDeep, uniqBy } from 'lodash';
 import * as Random from 'utils/Random.es6';
+import NetlifyConfigEditor from './NetlifyConfigEditor.es6';
 
 export default class NetlifyPage extends Component {
   static propTypes = {
@@ -28,13 +29,14 @@ export default class NetlifyPage extends Component {
     config.installationId = config.installationId || Random.id();
     config.sites = config.sites || [{}];
 
-    const netlify = {};
-    netlify.sites = config.sites
+    const netlifySites = config.sites
       .filter(s => s.netlifySiteName)
       .map(s => ({ id: s.netlifySiteId, name: s.netlifySiteName }));
-    netlify.sites = uniqBy(netlify.sites, s => s.id);
 
-    this.state = { config, netlify };
+    this.state = {
+      config,
+      netlifySites: uniqBy(netlifySites, s => s.id)
+    };
   }
 
   async componentDidMount() {
@@ -133,7 +135,17 @@ export default class NetlifyPage extends Component {
           <h1>{this.props.app.title}</h1>
           <AppIcon appId={this.props.app.id} size="large" />
           {this.renderContent()}
-          {this.renderConfiguration()}
+          <NetlifyConfigEditor
+            disabled={!this.state.token}
+            siteConfigs={this.state.config.sites}
+            netlifySites={this.state.netlifySites}
+            onSiteConfigsChange={siteConfigs => {
+              this.setState(state => ({
+                ...state,
+                config: { ...state.config, sites: siteConfigs }
+              }));
+            }}
+          />
         </Workbench.Content>
       </Workbench>
     );
@@ -164,81 +176,4 @@ export default class NetlifyPage extends Component {
       </Button>
     );
   }
-
-  renderConfiguration() {
-    return (
-      <React.Fragment>
-        {this.state.config.sites.map((siteConfig, siteIndex) => {
-          return (
-            <div key={siteIndex} style={{ marginBottom: '20px' }}>
-              <Select
-                isDisabled={!this.state.token}
-                width="medium"
-                value={siteConfig.netlifySiteId || '__pick__'}
-                onChange={e => {
-                  const siteId = e.target.value;
-                  const site = this.state.netlify.sites.find(site => site.id === siteId) || {};
-                  this.updateConfigSite(siteIndex, {
-                    netlifySiteId: site.id,
-                    netlifySiteName: site.name
-                  });
-                }}>
-                <Option value="__pick__">Pick site</Option>
-                {this.state.netlify.sites.map(netlifySite => {
-                  return (
-                    <Option key={netlifySite.id} value={netlifySite.id}>
-                      {netlifySite.name}
-                    </Option>
-                  );
-                })}
-              </Select>
-              <TextInput
-                disabled={!this.state.token}
-                width="medium"
-                value={siteConfig.name || ''}
-                maxLength={50}
-                onChange={e => this.updateConfigSite(siteIndex, { name: e.target.value })}
-              />
-              <Button
-                disabled={!this.state.token}
-                buttonType="muted"
-                onClick={() =>
-                  this.setState(state => ({
-                    ...state,
-                    config: {
-                      ...state.config,
-                      sites: state.config.sites.filter((_, i) => i !== siteIndex)
-                    }
-                  }))
-                }>
-                Remove
-              </Button>
-            </div>
-          );
-        })}
-        <Button
-          disabled={!this.state.token || this.state.config.sites.length > 2}
-          onClick={() =>
-            this.setState(state => ({
-              ...state,
-              config: { ...state.config, sites: state.config.sites.concat([{}]) }
-            }))
-          }>
-          Add site (max 3)
-        </Button>
-        <pre>{JSON.stringify(this.state.config, null, 2)}</pre>
-      </React.Fragment>
-    );
-  }
-
-  updateConfigSite = (index, patch) => {
-    this.setState(state => {
-      const updatedSites = state.config.sites.map((site, i) => {
-        return i === index ? { ...site, ...patch } : site;
-      });
-      const updatedConfig = { ...this.state.config, sites: updatedSites };
-
-      return { config: updatedConfig };
-    });
-  };
 }
