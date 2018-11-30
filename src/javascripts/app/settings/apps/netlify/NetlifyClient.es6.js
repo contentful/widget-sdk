@@ -60,8 +60,8 @@ function waitForTicketAuthorization(ticketId, cb) {
 }
 
 async function exchangeTicketForToken(ticketId) {
-  const { access_token } = await post(`/oauth/tickets/${ticketId}/exchange`);
-  return access_token;
+  const { access_token, email } = await post(`/oauth/tickets/${ticketId}/exchange`);
+  return { token: access_token, email };
 }
 
 export async function createTicket() {
@@ -89,11 +89,20 @@ export function getAccessTokenWithTicket(ticketId, cb) {
 
 export async function listSites(accessToken) {
   const sites = await get('/sites?page=1&per_page=100', accessToken);
-  return sites.filter(site => {
-    // We can only build sites with build configuration:
+
+  // We can only build sites with build configuration:
+  const buildable = sites.filter(site => {
     const settings = site.build_settings;
     return null !== settings && typeof settings === 'object';
   });
+
+  return {
+    sites: buildable,
+    counts: {
+      buildable: buildable.length,
+      unavailable: sites.length - buildable.length
+    }
+  };
 }
 
 export function createBuildHook(siteId, accessToken) {

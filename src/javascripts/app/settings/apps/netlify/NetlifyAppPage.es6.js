@@ -12,6 +12,7 @@ import * as Random from 'utils/Random.es6';
 import * as NetlifyClient from './NetlifyClient.es6';
 import * as NetlifyIntegration from './NetlifyIntegration.es6';
 import NetlifyConfigEditor from './NetlifyConfigEditor.es6';
+import NetlifyConnection from './NetlifyConnection.es6';
 import AppUninstallDialog from '../dialogs/AppUninstallDialog.es6';
 
 export default class NetlifyAppPage extends Component {
@@ -66,11 +67,11 @@ export default class NetlifyAppPage extends Component {
     );
   };
 
-  initNetlifyConnection = async token => {
+  initNetlifyConnection = async ({ token, email }) => {
     try {
-      const netlifySites = await NetlifyClient.listSites(token);
+      const { sites, counts } = await NetlifyClient.listSites(token);
       Notification.success('Netlify account connected successfully.');
-      this.setState({ token, netlifySites });
+      this.setState({ token, email, netlifySites: sites, netlifyCounts: counts });
     } catch (err) {
       this.setState({ err });
     }
@@ -133,6 +134,7 @@ export default class NetlifyAppPage extends Component {
 
   render() {
     const { installed, busyWith, token } = this.state;
+
     return (
       <Workbench>
         <Workbench.Header>
@@ -178,19 +180,13 @@ export default class NetlifyAppPage extends Component {
             </p>
           </div>
 
-          {!token && (
-            <div className="netlify-app__section">
-              <h3>Connect Netlify</h3>
-              <p>
-                In order to {installed ? 'update' : 'install'} Netlify app you need to connect with
-                your Netlify account. Your credentials will not leave this browser window and will
-                be forgotten as soon as you navigate away from this page.
-              </p>
-              <Button buttonType="primary" onClick={this.onConnectClick}>
-                Connect Netlify account
-              </Button>
-            </div>
-          )}
+          <NetlifyConnection
+            connected={!!token}
+            installed={installed}
+            email={this.state.email}
+            netlifyCounts={this.state.netlifyCounts}
+            onConnectClick={this.onConnectClick}
+          />
 
           <div className="netlify-app__section">
             <h3>Build Netlify sites</h3>
