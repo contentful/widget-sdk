@@ -195,7 +195,7 @@ export default class NetlifyAppPage extends Component {
               {!token && ' Requires Netlify connection.'}
             </p>
             <NetlifyConfigEditor
-              disabled={!token}
+              disabled={!token || !!busyWith}
               siteConfigs={this.state.config.sites}
               netlifySites={this.state.netlifySites}
               onSiteConfigsChange={siteConfigs => {

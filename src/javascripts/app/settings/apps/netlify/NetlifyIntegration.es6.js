@@ -1,10 +1,9 @@
-import { cloneDeep, get } from 'lodash';
+import { cloneDeep, get, uniqBy } from 'lodash';
 
 import * as NetlifyClient from './NetlifyClient.es6';
 
 export async function install(config, appsClient, accessToken) {
-  config = cloneDeep(config);
-  validateSiteConfigs(config.sites);
+  config = prepareConfig(config);
 
   // Create build hooks for all sites.
   const buildHookPromises = config.sites.map(siteConfig => {
@@ -26,8 +25,7 @@ export async function install(config, appsClient, accessToken) {
 }
 
 export async function update(config, appsClient, accessToken) {
-  config = cloneDeep(config);
-  validateSiteConfigs(config.sites);
+  config = prepareConfig(config);
 
   // Remove existing build hooks
   config.sites = config.sites.map(siteConfig => {
@@ -49,24 +47,44 @@ export async function uninstall(appsClient, accessToken) {
   return appsClient.remove('netlify');
 }
 
+function prepareConfig(config) {
+  config = cloneDeep(config);
+  config.sites = config.sites.map(siteConfig => {
+    return { ...siteConfig, name: (siteConfig.name || '').trim() };
+  });
+
+  validateSiteConfigs(config.sites);
+
+  return config;
+}
+
 function validateSiteConfigs(siteConfigs) {
   // At least one site needs to be configured.
   if (siteConfigs.length < 1) {
-    const err = new Error('Provide at least one site configuration.');
-    err.useMessage = true;
-    throw err;
+    throw makeError('Provide at least one site configuration.');
   }
 
   // Find all site configurations with incomplete information.
   const incomplete = siteConfigs.filter(siteConfig => {
-    return !siteConfig.netlifySiteId || !siteConfig.name;
+    return !siteConfig.netlifySiteId || siteConfig.name.length < 1;
   });
 
   if (incomplete.length > 0) {
-    const err = new Error('Pick a Netlify site and provide a name for all configurations.');
-    err.useMessage = true;
-    throw err;
+    throw makeError('Pick a Netlify site and provide a name for all configurations.');
   }
+
+  // Display names must be unique.
+  const uniqueNames = uniqBy(siteConfigs, config => config.name);
+
+  if (uniqueNames.length !== siteConfigs.length) {
+    throw makeError('Display names must be unique.');
+  }
+}
+
+function makeError(message) {
+  const err = new Error(message);
+  err.useMessage = true;
+  return err;
 }
 
 async function removeExistingBuildHooks(appsClient, accessToken) {
