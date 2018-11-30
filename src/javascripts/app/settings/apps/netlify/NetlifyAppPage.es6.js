@@ -53,7 +53,7 @@ export default class NetlifyAppPage extends Component {
     }
   }
 
-  connect = () => {
+  onConnectClick = () => {
     this.cancelTicketPolling = NetlifyClient.getAccessTokenWithTicket(
       this.props.ticketId,
       (err, token) => {
@@ -79,17 +79,31 @@ export default class NetlifyAppPage extends Component {
   onInstallClick = async () => {
     this.setState({ busyWith: 'install' });
     const { config, token } = this.state;
-    const updatedConfig = await NetlifyIntegration.install(config, this.props.client, token);
-    Notification.success('Netlify app installed successfully.');
-    this.setState({ busyWith: false, installed: true, config: updatedConfig });
+
+    try {
+      const updatedConfig = await NetlifyIntegration.install(config, this.props.client, token);
+      Notification.success('Netlify app installed successfully.');
+      this.setState({ busyWith: false, installed: true, config: updatedConfig });
+    } catch (err) {
+      Notification.error(err.useMessage ? err.message : 'Failed to install Netlify app.');
+      this.setState({ busyWith: false });
+    }
   };
 
   onUpdateClick = async () => {
     this.setState({ busyWith: 'update' });
     const { config, token } = this.state;
-    const updatedConfig = await NetlifyIntegration.update(config, this.props.client, token);
-    Notification.success('Netlify app configuration updated successfully.');
-    this.setState({ busyWith: false, installed: true, config: updatedConfig });
+
+    try {
+      const updatedConfig = await NetlifyIntegration.update(config, this.props.client, token);
+      Notification.success('Netlify app configuration updated successfully.');
+      this.setState({ busyWith: false, config: updatedConfig });
+    } catch (err) {
+      Notification.error(
+        err.useMessage ? err.message : 'Failed to update Netlify app configuration.'
+      );
+      this.setState({ busyWith: false });
+    }
   };
 
   onUninstallClick = async () => {
@@ -102,15 +116,23 @@ export default class NetlifyAppPage extends Component {
       />
     ));
 
-    if (confirmed) {
-      this.setState({ busyWith: 'uninstall' });
+    if (!confirmed) {
+      return;
+    }
+
+    this.setState({ busyWith: 'uninstall' });
+
+    try {
       await NetlifyIntegration.uninstall(this.props.client, this.state.token);
       Notification.success('Netlify app uninstalled successfully.');
       $state.go('^.list');
+    } catch (err) {
+      Notification.error(err.useMessage ? err.message : 'Failed to uninstall Netlify app.');
     }
   };
 
   render() {
+    const { installed, busyWith, token } = this.state;
     return (
       <Workbench>
         <Workbench.Header>
@@ -118,29 +140,29 @@ export default class NetlifyAppPage extends Component {
           <Workbench.Icon icon="page-settings" />
           <Workbench.Title>App: {this.props.app.title}</Workbench.Title>
           <Workbench.Header.Actions>
-            {this.state.installed && (
+            {installed && (
               <Button
                 buttonType="muted"
-                disabled={!!this.state.busyWith}
-                loading={this.state.busyWith === 'uninstall'}
+                disabled={!!busyWith}
+                loading={busyWith === 'uninstall'}
                 onClick={this.onUninstallClick}>
                 Uninstall
               </Button>
             )}
-            {this.state.installed && (
+            {installed && (
               <Button
                 buttonType="positive"
-                disabled={!this.state.token || !!this.state.busyWith}
-                loading={this.state.busyWith === 'update'}
+                disabled={!token || !!busyWith}
+                loading={busyWith === 'update'}
                 onClick={this.onUpdateClick}>
                 Update
               </Button>
             )}
-            {!this.state.installed && (
+            {!installed && (
               <Button
                 buttonType="positive"
-                disabled={!this.state.token || !!this.state.busyWith}
-                loading={this.state.busyWith === 'install'}
+                disabled={!token || !!busyWith}
+                loading={busyWith === 'install'}
                 onClick={this.onInstallClick}>
                 Install
               </Button>
@@ -156,15 +178,15 @@ export default class NetlifyAppPage extends Component {
             </p>
           </div>
 
-          {!this.state.token && (
+          {!token && (
             <div className="netlify-app__section">
               <h3>Connect Netlify</h3>
               <p>
-                In order to {this.state.installed ? 'update' : 'install'} Netlify app you need to
-                connect with your Netlify account. Your credentials will not leave this browser
-                window and will be forgotten as soon as you navigate away from this page.
+                In order to {installed ? 'update' : 'install'} Netlify app you need to connect with
+                your Netlify account. Your credentials will not leave this browser window and will
+                be forgotten as soon as you navigate away from this page.
               </p>
-              <Button buttonType="primary" onClick={this.connect}>
+              <Button buttonType="primary" onClick={this.onConnectClick}>
                 Connect Netlify account
               </Button>
             </div>
@@ -174,10 +196,10 @@ export default class NetlifyAppPage extends Component {
             <h3>Build Netlify sites</h3>
             <p>
               Pick Netlify sites you want to enable build for.
-              {!this.state.token && ' Requires Netlify connection.'}
+              {!token && ' Requires Netlify connection.'}
             </p>
             <NetlifyConfigEditor
-              disabled={!this.state.token}
+              disabled={!token}
               siteConfigs={this.state.config.sites}
               netlifySites={this.state.netlifySites}
               onSiteConfigsChange={siteConfigs => {

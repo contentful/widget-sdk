@@ -105,7 +105,6 @@ export default class NetlifyConfigEditor extends Component {
           onClick={this.onAdd}>
           Add another site (max {MAX_CONFIGS})
         </Button>
-        <pre style={{ marginTop: '100px' }}>{JSON.stringify(this.props.siteConfigs, null, 2)}</pre>
       </React.Fragment>
     );
   }
