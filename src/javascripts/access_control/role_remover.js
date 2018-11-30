@@ -14,17 +14,13 @@ angular.module('contentful').factory('createRoleRemover', [
 
     return function createRoleRemover(listHandler, doneFn) {
       return function removeRole(role) {
-        if (getCountFor(role)) {
-          modalDialog.open({
-            template: 'role_removal_dialog',
-            noNewScope: true,
-            ignoreEsc: true,
-            backgroundClose: false,
-            scope: prepareRemovalDialogScope(role, remove)
-          });
-        } else {
-          remove();
-        }
+        modalDialog.open({
+          template: 'role_removal_dialog',
+          noNewScope: true,
+          ignoreEsc: true,
+          backgroundClose: false,
+          scope: prepareRemovalDialogScope(role, remove)
+        });
 
         function remove() {
           return roleRepo
@@ -44,12 +40,14 @@ angular.module('contentful').factory('createRoleRemover', [
           role: role,
           input: {},
           count: getCountFor(role),
+          isUsed: getCountFor(role) > 0,
           roleOptions: listHandler.getRoleOptionsBut(role.sys.id),
           moveUsersAndRemoveRole: Command.create(moveUsersAndRemoveRole, {
             disabled: function() {
               return !scope.input.id;
             }
-          })
+          }),
+          removeRole: Command.create(() => remove().finally(() => scope.dialog.confirm()))
         });
 
         function moveUsersAndRemoveRole() {

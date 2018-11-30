@@ -10,19 +10,20 @@ angular
   .factory('states/settings/roles', [
     'require',
     require => {
-      var base = require('states/Base.es6').default;
-      var contextHistory = require('navigation/Breadcrumbs/History.es6').default;
-      var crumbFactory = require('navigation/Breadcrumbs/Factory.es6');
-      var RoleRepository = require('access_control/RoleRepository.es6').default;
+      const base = require('states/Base.es6').default;
+      const contextHistory = require('navigation/Breadcrumbs/History.es6').default;
+      const crumbFactory = require('navigation/Breadcrumbs/Factory.es6');
+      const RoleRepository = require('access_control/RoleRepository.es6').default;
+      const leaveConfirmator = require('navigation/confirmLeaveEditor');
 
-      var list = base({
+      const list = base({
         name: 'list',
         url: '',
         loadingText: 'Loading roles…',
         template: '<cf-role-list class="workbench role-list" />'
       });
 
-      var newRole = {
+      const newRole = {
         name: 'new',
         url: '/new',
         params: {
@@ -40,21 +41,31 @@ angular
               $stateParams.baseRoleId ? roleRepo.get($stateParams.baseRoleId) : null
           ]
         },
-        template: '<cf-role-editor class="workbench role-editor" />',
+        template: '<react-component name="access_control/RoleEditor.es6" props="props" />',
         controller: [
           '$scope',
           'baseRole',
           ($scope, baseRole) => {
-            $scope.context.isNew = true;
-            $scope.baseRole = baseRole;
-            $scope.role = RoleRepository.getEmpty();
+            $scope.props = {
+              isNew: true,
+              role: RoleRepository.getEmpty(),
+              baseRole,
+              registerSaveAction: save => {
+                $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
+                $scope.$applyAsync();
+              },
+              setDirty: value => {
+                $scope.context.dirty = value;
+                $scope.$applyAsync();
+              }
+            };
 
             contextHistory.set([crumbFactory.RoleList(), crumbFactory.Role(null, $scope.context)]);
           }
         ]
       };
 
-      var detail = {
+      const detail = {
         name: 'detail',
         url: '/:roleId',
         resolve: {
@@ -66,16 +77,27 @@ angular
               RoleRepository.getInstance(spaceContext.space).get($stateParams.roleId)
           ]
         },
-        template: '<cf-role-editor class="workbench role-editor" />',
+        template: '<react-component name="access_control/RoleEditor.es6" props="props" />',
         controller: [
           '$scope',
           '$stateParams',
           'spaceContext',
           'role',
           ($scope, $stateParams, spaceContext, role) => {
+            $scope.props = {
+              isNew: false,
+              role,
+              registerSaveAction: save => {
+                $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
+                $scope.$applyAsync();
+              },
+              setDirty: value => {
+                $scope.context.dirty = value;
+                $scope.$applyAsync();
+              }
+            };
+
             spaceContext.publishedCTs.refresh();
-            $scope.context.isNew = false;
-            $scope.role = role;
 
             contextHistory.set([
               crumbFactory.RoleList(),

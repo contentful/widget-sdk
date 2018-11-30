@@ -1,13 +1,13 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import WebhookFormSection from './WebhookFormSection.es6';
+import FormSection from './FormSection.es6';
 
-describe('WebhookFormSection', () => {
+describe('FormSection', () => {
   const mount = (title, collapsible) =>
     Enzyme.mount(
-      <WebhookFormSection title={title} collapsible={collapsible}>
+      <FormSection title={title} collapsible={collapsible}>
         <div id="test">TEST</div>
-      </WebhookFormSection>
+      </FormSection>
     );
 
   it('renders a non-collapsible section without a toggle', () => {

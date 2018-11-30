@@ -80,6 +80,7 @@ class WebhookEditor extends React.Component {
       err => {
         Notification.error(err.message);
         this.setState({ busy: false });
+        return Promise.reject(err);
       }
     );
   };
