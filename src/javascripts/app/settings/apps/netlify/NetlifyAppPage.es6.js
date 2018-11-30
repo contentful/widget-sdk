@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button } from '@contentful/forma-36-react-components';
+import { Button, Notification } from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
-import AppIcon from '../_common/AppIcon.es6';
 import AppUninstallDialog from '../dialogs/AppUninstallDialog.es6';
 import * as NetlifyClient from './NetlifyClient.es6';
 import { cloneDeep, uniqBy } from 'lodash';
@@ -56,7 +55,10 @@ export default class NetlifyAppPage extends Component {
         this.setState({ err });
       } else if (token) {
         NetlifyClient.listSites(token).then(
-          netlifySites => this.setState({ token, netlifySites }),
+          netlifySites => {
+            Notification.success('Netlify account connected successfully.');
+            this.setState({ token, netlifySites });
+          },
           err => this.setState({ err })
         );
       }
@@ -70,6 +72,7 @@ export default class NetlifyAppPage extends Component {
     // for example create Netlify webhooks
 
     await this.props.client.save(this.props.app.id, this.state.config);
+    Notification.success('Netlify app installed successfully.');
     this.setState({ busyWith: false, installed: true });
   };
 
@@ -80,6 +83,7 @@ export default class NetlifyAppPage extends Component {
     // for example update Netlify webhooks
 
     await this.props.client.save(this.props.app.id, this.state.config);
+    Notification.success('Netlify app configuration updated successfully.');
     this.setState({ busyWith: false, installed: true });
   };
 
@@ -97,6 +101,7 @@ export default class NetlifyAppPage extends Component {
       this.setState({ busyWith: 'uninstall' });
       // DO THE CLEANUP
       await this.props.client.remove(this.props.app.id);
+      Notification.success('Netlify app uninstalled successfully.');
       $state.go('^.list');
     }
   };
@@ -107,7 +112,7 @@ export default class NetlifyAppPage extends Component {
         <Workbench.Header>
           <Workbench.Header.Back to="^.list" />
           <Workbench.Icon icon="page-settings" />
-          <Workbench.Title>Apps: {this.props.app.title}</Workbench.Title>
+          <Workbench.Title>App: {this.props.app.title}</Workbench.Title>
           <Workbench.Header.Actions>
             {this.state.installed && (
               <Button
@@ -139,26 +144,46 @@ export default class NetlifyAppPage extends Component {
           </Workbench.Header.Actions>
         </Workbench.Header>
         <Workbench.Content centered>
-          <h1>{this.props.app.title}</h1>
-          <AppIcon appId={this.props.app.id} size="large" />
+          <div className="netlify-app__section">
+            <h3>About</h3>
+            <p>
+              With this app developers will enjoy a very quick set up. Authors will control when
+              pages are created and see the current status of the build process.
+            </p>
+          </div>
 
           {!this.state.token && (
-            <Button buttonType="positive" onClick={this.auth}>
-              Connect Netlify
-            </Button>
+            <div className="netlify-app__section">
+              <h3>Connect Netlify</h3>
+              <p>
+                In order to {this.state.installed ? 'update' : 'install'} Netlify app you need to
+                connect with your Netlify account. Your credentials will not leave this browser
+                window and will be forgotten as soon as you navigate away from this page.
+              </p>
+              <Button buttonType="primary" onClick={this.auth}>
+                Connect Netlify account
+              </Button>
+            </div>
           )}
 
-          <NetlifyConfigEditor
-            disabled={!this.state.token}
-            siteConfigs={this.state.config.sites}
-            netlifySites={this.state.netlifySites}
-            onSiteConfigsChange={siteConfigs => {
-              this.setState(state => ({
-                ...state,
-                config: { ...state.config, sites: siteConfigs }
-              }));
-            }}
-          />
+          <div className="netlify-app__section">
+            <h3>Build Netlify sites</h3>
+            <p>
+              Pick Netlify sites you want to enable build for.
+              {!this.state.token && ' Requires Netlify connection.'}
+            </p>
+            <NetlifyConfigEditor
+              disabled={!this.state.token}
+              siteConfigs={this.state.config.sites}
+              netlifySites={this.state.netlifySites}
+              onSiteConfigsChange={siteConfigs => {
+                this.setState(state => ({
+                  ...state,
+                  config: { ...state.config, sites: siteConfigs }
+                }));
+              }}
+            />
+          </div>
         </Workbench.Content>
       </Workbench>
     );

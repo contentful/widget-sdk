@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Select, Option, TextInput } from '@contentful/forma-36-react-components';
+import {
+  Button,
+  SelectField,
+  Option,
+  TextField,
+  TextLink
+} from '@contentful/forma-36-react-components';
 
 const PICK_OPTION_VALUE = '__pick__';
 const MAX_CONFIGS = 3;
@@ -54,11 +60,16 @@ export default class NetlifyConfigEditor extends Component {
     return (
       <React.Fragment>
         {siteConfigs.map((siteConfig, configIndex) => {
+          const selectId = `site-select-${configIndex}`;
+          const inputId = `site-input-${configIndex}`;
           return (
-            <div key={configIndex} style={{ marginBottom: '20px' }}>
-              <Select
-                isDisabled={disabled}
-                width="medium"
+            <div key={configIndex} className="netlify-app__site-config-row">
+              <SelectField
+                extraClassNames="netlify-app__site-config-item"
+                id={selectId}
+                name={selectId}
+                labelText="Netlify site:"
+                selectProps={{ isDisabled: disabled, width: 'medium' }}
                 value={siteConfig.netlifySiteId || PICK_OPTION_VALUE}
                 onChange={e => this.onNetlifySiteChange(configIndex, e.target.value)}>
                 <Option value={PICK_OPTION_VALUE}>Pick site</Option>
@@ -69,27 +80,32 @@ export default class NetlifyConfigEditor extends Component {
                     </Option>
                   );
                 })}
-              </Select>
-              <TextInput
-                disabled={disabled}
-                width="medium"
+              </SelectField>
+              <TextField
+                extraClassNames="netlify-app__site-config-item"
+                id={inputId}
+                name={inputId}
+                labelText="Display name:"
+                textInputProps={{ disabled, width: 'medium', maxLength: 50 }}
                 value={siteConfig.name || ''}
-                maxLength={50}
                 onChange={e => this.onNameChange(configIndex, e.target.value)}
               />
-              <Button
+              <TextLink
+                extraClassNames="netlify-app__site-config-remove"
                 disabled={disabled}
-                buttonType="muted"
                 onClick={() => this.onRemove(configIndex)}>
                 Remove
-              </Button>
+              </TextLink>
             </div>
           );
         })}
-        <Button disabled={disabled || siteConfigs.length >= MAX_CONFIGS} onClick={this.onAdd}>
-          Add site (max {MAX_CONFIGS})
+        <Button
+          disabled={disabled || siteConfigs.length >= MAX_CONFIGS}
+          buttonType="muted"
+          onClick={this.onAdd}>
+          Add another site (max {MAX_CONFIGS})
         </Button>
-        <pre>{JSON.stringify(this.props.siteConfigs, null, 2)}</pre>
+        <pre style={{ marginTop: '100px' }}>{JSON.stringify(this.props.siteConfigs, null, 2)}</pre>
       </React.Fragment>
     );
   }
