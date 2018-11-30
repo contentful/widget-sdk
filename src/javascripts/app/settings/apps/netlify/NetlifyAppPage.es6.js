@@ -42,6 +42,10 @@ export default class NetlifyAppPage extends Component {
     config.installationId = config.installationId || Random.id();
     config.sites = config.sites || [{}];
 
+    // Initially we are not connected to Netlify and we don't have
+    // a full list of Netlify sites.
+    // Here we are computing a list consisting of sites we know
+    // of so we can offer Netlify site labels even before connecting.
     const netlifySites = config.sites
       .filter(s => s.netlifySiteName)
       .map(s => ({ id: s.netlifySiteId, name: s.netlifySiteName }));
@@ -54,6 +58,9 @@ export default class NetlifyAppPage extends Component {
   }
 
   componentWillUnmount() {
+    // Once authentication process is started, we poll for results.
+    // When we leave this page authentication process is aborted
+    // and the polling is cancelled.
     if (this.cancelTicketPolling) {
       this.cancelTicketPolling();
     }
@@ -115,6 +122,18 @@ export default class NetlifyAppPage extends Component {
     }
   };
 
+  uninstall = async () => {
+    try {
+      this.setState({ busyWith: 'uninstall' });
+      await NetlifyIntegration.uninstall(this.getIntegrationContext());
+      Notification.success('Netlify app uninstalled successfully.');
+      $state.go('^.list');
+    } catch (err) {
+      notifyError(err, 'Failed to uninstall Netlify app.');
+      this.setState({ busyWith: false });
+    }
+  };
+
   onUninstallClick = async () => {
     const confirmed = await ModalLauncher.open(({ isShown, onClose }) => (
       <AppUninstallDialog
@@ -126,94 +145,102 @@ export default class NetlifyAppPage extends Component {
     ));
 
     if (confirmed) {
-      try {
-        this.setState({ busyWith: 'uninstall' });
-        await NetlifyIntegration.uninstall(this.getIntegrationContext());
-        Notification.success('Netlify app uninstalled successfully.');
-        $state.go('^.list');
-      } catch (err) {
-        notifyError(err, 'Failed to uninstall Netlify app.');
-        this.setState({ busyWith: false });
-      }
+      this.uninstall();
     }
   };
 
-  render() {
-    const { installed, busyWith, token } = this.state;
+  isDisabled = () => !this.state.token || !!this.state.busyWith;
 
+  onSiteConfigsChange = siteConfigs => {
+    this.setState(state => ({
+      ...state,
+      config: { ...state.config, sites: siteConfigs }
+    }));
+  };
+
+  render() {
     return (
       <Workbench>
-        <Workbench.Header>
-          <Workbench.Header.Back to="^.list" />
-          <Workbench.Icon icon="page-settings" />
-          <Workbench.Title>App: {this.props.app.title}</Workbench.Title>
-          <Workbench.Header.Actions>
-            {installed && (
-              <Button
-                buttonType="muted"
-                disabled={!!busyWith}
-                loading={busyWith === 'uninstall'}
-                onClick={this.onUninstallClick}>
-                Uninstall
-              </Button>
-            )}
-            {installed && (
-              <Button
-                buttonType="positive"
-                disabled={!token || !!busyWith}
-                loading={busyWith === 'update'}
-                onClick={this.onUpdateClick}>
-                Update
-              </Button>
-            )}
-            {!installed && (
-              <Button
-                buttonType="positive"
-                disabled={!token || !!busyWith}
-                loading={busyWith === 'install'}
-                onClick={this.onInstallClick}>
-                Install
-              </Button>
-            )}
-          </Workbench.Header.Actions>
-        </Workbench.Header>
-        <Workbench.Content centered>
-          <div className="netlify-app__section">
-            <h3>About</h3>
-            <p>
-              With this app developers will enjoy a very quick set up. Authors will control when
-              pages are created and see the current status of the build process.
-            </p>
-          </div>
-
-          <NetlifyConnection
-            connected={!!token}
-            installed={installed}
-            email={this.state.email}
-            netlifyCounts={this.state.netlifyCounts}
-            onConnectClick={this.onConnectClick}
-          />
-
-          <div className="netlify-app__section">
-            <h3>Build Netlify sites</h3>
-            <p>
-              Pick Netlify sites you want to enable build for.
-              {!token && ' Requires Netlify connection.'}
-            </p>
-            <NetlifyConfigEditor
-              disabled={!token || !!busyWith}
-              siteConfigs={this.state.config.sites}
-              netlifySites={this.state.netlifySites}
-              onSiteConfigsChange={siteConfigs => {
-                this.setState(state => ({
-                  ...state,
-                  config: { ...state.config, sites: siteConfigs }
-                }));
-              }}
-            />
-          </div>
-        </Workbench.Content>
+        {this.renderHeader()}
+        {this.renderContent()}
       </Workbench>
+    );
+  }
+
+  renderHeader() {
+    const { installed, busyWith } = this.state;
+
+    return (
+      <Workbench.Header>
+        <Workbench.Header.Back to="^.list" />
+        <Workbench.Icon icon="page-settings" />
+        <Workbench.Title>App: {this.props.app.title}</Workbench.Title>
+        <Workbench.Header.Actions>
+          {installed && (
+            <Button
+              buttonType="muted"
+              disabled={!!busyWith} // One can uninstall without a token.
+              loading={busyWith === 'uninstall'}
+              onClick={this.onUninstallClick}>
+              Uninstall
+            </Button>
+          )}
+          {installed && (
+            <Button
+              buttonType="positive"
+              disabled={this.isDisabled()}
+              loading={busyWith === 'update'}
+              onClick={this.onUpdateClick}>
+              Update
+            </Button>
+          )}
+          {!installed && (
+            <Button
+              buttonType="positive"
+              disabled={this.isDisabled()}
+              loading={busyWith === 'install'}
+              onClick={this.onInstallClick}>
+              Install
+            </Button>
+          )}
+        </Workbench.Header.Actions>
+      </Workbench.Header>
+    );
+  }
+
+  renderContent() {
+    return (
+      <Workbench.Content centered>
+        <div className="netlify-app__section">
+          <h3>About</h3>
+          <p>
+            With this app developers will enjoy a very quick set up. Authors will control when pages
+            are created and see the current status of the build process.
+          </p>
+        </div>
+
+        <NetlifyConnection
+          connected={!!this.state.token}
+          installed={this.state.installed}
+          email={this.state.email}
+          netlifyCounts={this.state.netlifyCounts}
+          onConnectClick={this.onConnectClick}
+        />
+
+        <div className="netlify-app__section">
+          <h3>Build Netlify sites</h3>
+          <p>
+            Pick Netlify sites you want to enable build for.
+            {!this.state.token && ' Requires Netlify connection.'}
+          </p>
+          <NetlifyConfigEditor
+            disabled={this.isDisabled()}
+            siteConfigs={this.state.config.sites}
+            netlifySites={this.state.netlifySites}
+            onSiteConfigsChange={this.onSiteConfigsChange}
+          />
+        </div>
+      </Workbench.Content>
     );
   }
 }
