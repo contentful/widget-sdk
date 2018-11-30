@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import UserList from './UsersList.es6';
+import UsersList from './UsersList.es6';
 import OrgAdminOnly from 'app/common/OrgAdminOnly.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
@@ -47,7 +47,7 @@ export default class UserListRoute extends React.Component {
             const [resource, spaces, roles, org] = data;
 
             return (
-              <UserList
+              <UsersList
                 resource={resource}
                 spaces={spaces}
                 spaceRoles={roles}
