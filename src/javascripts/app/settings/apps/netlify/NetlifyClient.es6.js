@@ -15,7 +15,11 @@ async function request(method, url, accessToken, body) {
 
   const res = await fetch(API_BASE + url, { method, headers, body });
 
-  return res.ok ? res.json() : Promise.reject(new Error('Non-2xx response.'));
+  if (res.ok) {
+    return res.status === 204 ? null : res.json();
+  } else {
+    throw new new Error('Non-2xx response.')();
+  }
 }
 
 const post = request.bind(null, 'POST');
@@ -96,6 +100,10 @@ export function createBuildHook(siteId, accessToken) {
   return post(`/sites/${siteId}/build_hooks`, accessToken, {
     title: 'Contentful integration'
   });
+}
+
+export function deleteBuildHook(siteId, hookId, accessToken) {
+  return request('DELETE', `/sites/${siteId}/build_hooks/${hookId}`, accessToken);
 }
 
 export function createNotificationHook(siteId, accessToken, { event, url }) {
