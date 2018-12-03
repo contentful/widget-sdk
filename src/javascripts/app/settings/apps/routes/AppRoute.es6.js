@@ -59,6 +59,7 @@ export default class AppRoute extends Component {
             return (
               <Component
                 app={data}
+                client={this.client}
                 onInstall={(id, config) => {
                   this.onInstall(id, config, fetch);
                 }}

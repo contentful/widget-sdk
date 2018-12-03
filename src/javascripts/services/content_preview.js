@@ -267,12 +267,17 @@ angular.module('contentful').factory('contentPreview', [
         return $q.reject('No environment specified for deletion');
       }
 
-      return spaceContext.space
-        .endpoint('preview_environments', env.id)
-        .delete()
-        .then(() => {
-          previewEnvironmentsCache.clearAll();
-        });
+      return (
+        spaceContext.space
+          .endpoint('preview_environments', env.id)
+          .delete()
+          // We first clear the whole cache (there's no way to be more picky).
+          .then(() => previewEnvironmentsCache.clearAll())
+          // Then we repopulate the cache.
+          .then(() => getAll())
+          // This method, historically, resolves with nothing.
+          .then(() => {})
+      );
     }
 
     /**
