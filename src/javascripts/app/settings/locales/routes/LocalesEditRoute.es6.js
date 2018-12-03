@@ -176,47 +176,54 @@ class EditLocaleForm extends Component {
   }
 }
 
-export default function LocalesEditRoute(props) {
-  const save = async function(locale) {
-    await spaceContext.localeRepo.save(locale);
-    TheLocaleStore.refresh();
+export default class LocalesEditRoute extends React.Component {
+  save = async function(locale) {
+    const savedLocale = await spaceContext.localeRepo.save(locale);
+    await TheLocaleStore.refresh();
+    return savedLocale;
   };
 
-  const remove = async function(locale) {
+  remove = async function(locale) {
     await spaceContext.localeRepo.remove(locale);
-    TheLocaleStore.refresh();
+    await TheLocaleStore.refresh();
   };
 
-  return (
-    <AdminOnly>
-      <LocalesFetcher>
-        {({ isLoading, isError, data }) => {
-          if (isLoading) {
-            return <FetcherLoading message="Loading locale..." />;
-          }
-          if (isError) {
-            return <StateRedirect to="^.list" />;
-          }
-          const spaceLocales = data;
-          const locale = spaceLocales.find(locale => locale.sys.id === props.localeId);
-          if (!locale) {
-            return <StateRedirect to="^.list" />;
-          }
+  render() {
+    return (
+      <AdminOnly>
+        <LocalesFetcher>
+          {({ isLoading, isError, data, fetch }) => {
+            if (isLoading) {
+              return <FetcherLoading message="Loading locale..." />;
+            }
+            if (isError) {
+              return <StateRedirect to="^.list" />;
+            }
+            const spaceLocales = data;
+            const locale = spaceLocales.find(locale => locale.sys.id === this.props.localeId);
+            if (!locale) {
+              return <StateRedirect to="^.list" />;
+            }
 
-          return (
-            <EditLocaleForm
-              initialLocale={locale}
-              spaceLocales={spaceLocales}
-              saveLocale={save}
-              removeLocale={remove}
-              setDirty={props.setDirty}
-              registerSaveAction={props.registerSaveAction}
-            />
-          );
-        }}
-      </LocalesFetcher>
-    </AdminOnly>
-  );
+            return (
+              <EditLocaleForm
+                initialLocale={locale}
+                spaceLocales={spaceLocales}
+                saveLocale={locale => {
+                  this.save(locale).then(() => {
+                    fetch();
+                  });
+                }}
+                removeLocale={this.remove}
+                setDirty={this.props.setDirty}
+                registerSaveAction={this.props.registerSaveAction}
+              />
+            );
+          }}
+        </LocalesFetcher>
+      </AdminOnly>
+    );
+  }
 }
 
 LocalesEditRoute.propTypes = {

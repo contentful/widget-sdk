@@ -82,35 +82,38 @@ class NewLocaleForm extends Component {
   }
 }
 
-export default function LocalesNewRoute(props) {
-  const save = async function(locale) {
-    await spaceContext.localeRepo.save(locale);
-    TheLocaleStore.refresh();
+export default class LocalesNewRoute extends React.Component {
+  save = async function(locale) {
+    const savedLocale = await spaceContext.localeRepo.save(locale);
+    await TheLocaleStore.refresh();
+    return savedLocale;
   };
 
-  return (
-    <AdminOnly>
-      <LocalesFetcher>
-        {({ isLoading, isError, data }) => {
-          if (isLoading) {
-            return <FetcherLoading message="Loading locale..." />;
-          }
-          if (isError) {
-            return <StateRedirect to="^.list" />;
-          }
-          const spaceLocales = data;
-          return (
-            <NewLocaleForm
-              spaceLocales={spaceLocales}
-              saveLocale={save}
-              setDirty={props.setDirty}
-              registerSaveAction={props.registerSaveAction}
-            />
-          );
-        }}
-      </LocalesFetcher>
-    </AdminOnly>
-  );
+  render() {
+    return (
+      <AdminOnly>
+        <LocalesFetcher>
+          {({ isLoading, isError, data }) => {
+            if (isLoading) {
+              return <FetcherLoading message="Loading locale..." />;
+            }
+            if (isError) {
+              return <StateRedirect to="^.list" />;
+            }
+            const spaceLocales = data;
+            return (
+              <NewLocaleForm
+                spaceLocales={spaceLocales}
+                saveLocale={this.save}
+                setDirty={this.props.setDirty}
+                registerSaveAction={this.props.registerSaveAction}
+              />
+            );
+          }}
+        </LocalesFetcher>
+      </AdminOnly>
+    );
+  }
 }
 
 LocalesNewRoute.propTypes = {
