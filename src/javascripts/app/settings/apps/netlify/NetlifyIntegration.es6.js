@@ -6,7 +6,7 @@ import spaceContext from 'spaceContext';
 import { getPostPublishUrl } from 'app/entity_editor/Components/SidebarContentPreview/Netlify/PubNubClient.es6';
 import * as NetlifyClient from './NetlifyClient.es6';
 
-const ARTIFACT_KEYS = ['buildHookUrl', 'buildHookId', 'contentPreviewId', 'netlifyHookIds'];
+const ARTIFACT_KEYS = ['buildHookUrl', 'buildHookId', 'contentPreviewId'];
 const NETLIFY_HOOK_EVENTS = ['deploy_building', 'deploy_created', 'deploy_failed'];
 
 export async function install({ config, contentTypeIds, appsClient, accessToken }) {
@@ -26,30 +26,32 @@ export async function install({ config, contentTypeIds, appsClient, accessToken 
       ...siteConfig,
       buildHookUrl: hook.url,
       buildHookId: hook.id,
-      channel: `contentful-netlify-app-${hook.id}`
+      channel: `contentful-netlify-app-${config.installationId}-${siteConfig.netlifySiteId}`
     };
   });
 
   // Create Netlify notification hooks for all sites.
-  const netlifyHookPromises = config.sites.reduce((acc, siteConfig) => {
-    const url = getPostPublishUrl(siteConfig.channel);
-    const promisesForSite = NETLIFY_HOOK_EVENTS.map(event => {
-      return NetlifyClient.createNotificationHook(siteConfig.netlifySiteId, accessToken, {
-        event,
-        url
+  const netlifyHookPromises = uniqBy(config.sites, s => s.netlifySiteId).reduce(
+    (acc, siteConfig) => {
+      const url = getPostPublishUrl(siteConfig.channel);
+      const promisesForSite = NETLIFY_HOOK_EVENTS.map(event => {
+        return NetlifyClient.createNotificationHook(siteConfig.netlifySiteId, accessToken, {
+          event,
+          url
+        });
       });
-    });
 
-    return acc.concat([Promise.all(promisesForSite)]);
-  }, []);
+      return acc.concat([Promise.all(promisesForSite)]);
+    },
+    []
+  );
 
   const netlifyHooks = await Promise.all(netlifyHookPromises);
 
-  // Merge notification hook details to configurations.
-  config.sites = config.sites.map((siteConfig, i) => {
-    const hooks = netlifyHooks[i];
-    return { ...siteConfig, netlifyHookIds: hooks.map(h => h.id) };
-  });
+  // Merge flattened notification hook IDs to configuration.
+  config.netlifyHookIds = netlifyHooks.reduce((acc, hooksForSite) => {
+    return acc.concat(hooksForSite.map(h => h.id));
+  }, []);
 
   // Create content previews for all sites.
   const contentPreviewPromises = config.sites.map(siteConfig => {
@@ -92,6 +94,8 @@ export async function update(context) {
       .filter(key => !ARTIFACT_KEYS.includes(key))
       .reduce((acc, key) => ({ ...acc, [key]: siteConfig[key] }), {});
   });
+
+  delete config.netlifyHookIds;
 
   // Proceed as in the installation step.
   return install({ ...context, config });
@@ -149,6 +153,7 @@ async function removeExistingArtifacts(appsClient, accessToken) {
   // Fetch the current remote version of configuration and...
   const remote = await appsClient.get('netlify');
   const siteConfigs = get(remote, ['config', 'sites'], []);
+  const netlifyHookIds = get(remote, ['config', 'netlifyHookIds'], []);
 
   // ...remove build hooks for it and...
   const buildHookRemovalPromises = siteConfigs.map(siteConfig => {
@@ -161,18 +166,17 @@ async function removeExistingArtifacts(appsClient, accessToken) {
   });
 
   // ...remove Netlify hooks for it and...
-  const netlifyHookRemovalPromises = siteConfigs.map(siteConfig => {
-    const { netlifyHookIds } = siteConfig;
-    if (!Array.isArray(netlifyHookIds)) {
-      return Promise.resolve();
-    }
+  let netlifyHookRemovalPromises = Promise.resolve();
 
-    const removalPromisesForSite = netlifyHookIds
-      .filter(id => typeof id === 'string' && id.length > 0)
-      .map(id => NetlifyClient.deleteNotificationHook(id, accessToken));
+  if (Array.isArray(netlifyHookIds)) {
+    const validNetlifyHookIds = netlifyHookIds.filter(id => {
+      return typeof id === 'string' && id.length > 0;
+    });
 
-    return Promise.all(removalPromisesForSite);
-  });
+    netlifyHookRemovalPromises = Promise.all(
+      validNetlifyHookIds.map(id => NetlifyClient.deleteNotificationHook(id, accessToken))
+    );
+  }
 
   // ...remove content previews for it.
   const contentPreviewRemovalPromises = siteConfigs.map(siteConfig => {
