@@ -164,7 +164,9 @@ export default class LocaleEditForm extends Component {
                     <Select
                       testId="locale-fallback-code-select"
                       value={this.state.locale.fallbackCode || ''}
-                      onChange={e => this.updateLocaleState('fallbackCode', e.target.value)}>
+                      onChange={e =>
+                        this.updateLocaleState('fallbackCode', e.target.value || null)
+                      }>
                       <Option value="">None (no fallback)</Option>
                       {this.state.fallbackLocales.map(locale => (
                         <Option key={locale.code} value={locale.code}>
