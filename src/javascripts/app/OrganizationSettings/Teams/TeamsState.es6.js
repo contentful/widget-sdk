@@ -1,6 +1,11 @@
 import { reactStateWrapper } from 'app/OrganizationSettings/OrganizationSettingsRouteUtils.es6';
 
-import teamDetailState from './TeamDetail/TeamDetailState.es6';
+const teamDetailState = reactStateWrapper({
+  name: 'detail',
+  title: 'Teams',
+  url: '/:teamId',
+  componentPath: 'app/OrganizationSettings/Teams/TeamDetail/TeamDetailRoute.es6'
+});
 
 export default reactStateWrapper({
   name: 'teams',

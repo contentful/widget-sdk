@@ -1,6 +1,8 @@
-export default {
+import { reactStateWrapper } from 'app/OrganizationSettings/OrganizationSettingsRouteUtils.es6';
+
+export default reactStateWrapper({
   name: 'subscription_new',
   url: '/:orgId/subscription_overview',
   label: 'Subscription',
-  componentName: 'cf-subscription-overview'
-};
+  componentPath: 'ui/Pages/SubscriptionOverview'
+});

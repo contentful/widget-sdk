@@ -2,7 +2,6 @@ import { flow } from 'lodash/fp';
 
 import { h } from 'utils/legacy-html-hyperscript';
 import { onFeatureFlag } from 'utils/LaunchDarkly';
-import usersState, { userDetailState } from './Users/UsersState.es6';
 import userInvitationsState from './UserInvitations/UserInvitationsRoutingState.es6';
 import organizationBase from './OrganizationSettingsBaseState.es6';
 
@@ -124,8 +123,6 @@ function getIframeTemplate(title, hideHeader) {
 }
 
 export default [
-  usersState,
-  userDetailState,
   userInvitationsState,
   newOrg,
   spaces,

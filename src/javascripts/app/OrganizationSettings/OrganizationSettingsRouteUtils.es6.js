@@ -15,24 +15,7 @@ export function iframeStateWrapper(definition = {}) {
 export function reactStateWrapper(definition = {}) {
   const { componentPath } = definition;
   const defaults = {
-    controller: [
-      '$scope',
-      '$stateParams',
-      function($scope, $stateParams) {
-        $scope.properties = {
-          ...$stateParams,
-          context: $scope.context,
-          onReady: () => {
-            $scope.context.ready = true;
-            $scope.$applyAsync();
-          },
-          onForbidden: () => {
-            $scope.context.forbidden = true;
-            $scope.$applyAsync();
-          }
-        };
-      }
-    ],
+    controller: getController(definition),
     template: getReactTemplate(componentPath)
   };
 
@@ -40,17 +23,10 @@ export function reactStateWrapper(definition = {}) {
 }
 
 export function conditionalStateWrapper(definition = {}) {
-  const { featureFlag, title, componentPath } = definition;
+  const { title, componentPath } = definition;
 
   const defaults = {
-    link: [
-      'scope',
-      function($scope) {
-        onFeatureFlag($scope, featureFlag, value => {
-          $scope.useNewView = value;
-        });
-      }
-    ],
+    controller: getController(definition),
     template: `
       <div>
         <div ng-if="useNewView === false">${getIframeTemplate(title)}</div>
@@ -60,6 +36,33 @@ export function conditionalStateWrapper(definition = {}) {
   };
 
   return Object.assign(defaults, definition);
+}
+
+function getController(definitions) {
+  const { featureFlag } = definitions;
+  return [
+    '$scope',
+    '$stateParams',
+    function($scope, $stateParams) {
+      $scope.properties = {
+        ...$stateParams,
+        context: $scope.context,
+        onReady: () => {
+          $scope.context.ready = true;
+          $scope.$applyAsync();
+        },
+        onForbidden: () => {
+          $scope.context.forbidden = true;
+          $scope.$applyAsync();
+        }
+      };
+
+      featureFlag &&
+        onFeatureFlag($scope, featureFlag, value => {
+          $scope.useNewView = value;
+        });
+    }
+  ];
 }
 
 function getReactTemplate(componentPath) {

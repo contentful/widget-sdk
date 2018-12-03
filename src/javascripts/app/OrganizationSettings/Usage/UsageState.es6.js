@@ -1,22 +1,8 @@
-export default {
+import { reactStateWrapper } from 'app/OrganizationSettings/OrganizationSettingsRouteUtils.es6';
+
+export default reactStateWrapper({
   name: 'usage',
   url: '/:orgId/usage',
   label: 'Usage',
-  template: '<react-component name="account/usage/OrganizationUsage.es6" props="props" />',
-  controller: [
-    '$stateParams',
-    '$scope',
-    ($stateParams, $scope) => {
-      $scope.props = {
-        orgId: $stateParams.orgId,
-        onReady: function() {
-          $scope.context.ready = true;
-          $scope.$applyAsync();
-        },
-        onForbidden: function() {
-          $scope.context.forbidden = true;
-        }
-      };
-    }
-  ]
-};
+  componentPath: 'account/usage/OrganizationUsage.es6'
+});
