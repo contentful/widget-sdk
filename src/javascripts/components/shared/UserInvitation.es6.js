@@ -72,7 +72,7 @@ export default class UserInvitation extends React.Component {
       });
 
       Notification.error(
-        'Your invitation didn’t go through. Let your organization admin know about it, and they can invite you again.'
+        'Your invitation didn’t go through. Ask your Contentful organization admin to invite you again.'
       );
     }
   };
