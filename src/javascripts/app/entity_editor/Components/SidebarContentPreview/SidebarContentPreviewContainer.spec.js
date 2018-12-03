@@ -14,6 +14,12 @@ jest.mock(
   { virtual: true }
 );
 
+jest.mock('LazyLoader', () => ({ get: () => Promise.resolve({}) }), { virtual: true });
+
+jest.mock('app/settings/apps/AppsFeatureFlag.es6', () => ({ isEnabled: () => false }), {
+  virtual: true
+});
+
 const contentPreviews = [
   {
     url: 'https://google.com/search?q={entry.fields.slug}',
