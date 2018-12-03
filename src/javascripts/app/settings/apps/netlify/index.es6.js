@@ -9,9 +9,8 @@ import contentPreview from 'contentPreview';
 import NetlifyAppPage from './NetlifyAppPage.es6';
 import * as NetlifyClient from './NetlifyClient.es6';
 
-const NetlifyFetcher = createFetcherComponent(({ app }) => {
+const NetlifyFetcher = createFetcherComponent(() => {
   return Promise.all([
-    app,
     NetlifyClient.createTicket(),
     spaceContext.publishedCTs.getAllBare(),
     // We'll be updating content previews. Keep the content preview cache warm:
@@ -36,11 +35,11 @@ export default class NetlifyApp extends Component {
             return <StateRedirect to="^.list" />;
           }
 
-          const [app, ticketId, contentTypes] = data;
+          const [ticketId, contentTypes] = data;
 
           return (
             <NetlifyAppPage
-              app={app}
+              app={this.props.app}
               ticketId={ticketId}
               contentTypeIds={contentTypes.map(ct => ct.sys.id)}
               client={this.props.client}

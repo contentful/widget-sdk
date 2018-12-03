@@ -18,7 +18,7 @@ async function request(method, url, accessToken, body) {
   if (res.ok) {
     return res.status === 204 ? null : res.json();
   } else {
-    throw new new Error('Non-2xx response.')();
+    throw new Error('Non-2xx response.');
   }
 }
 

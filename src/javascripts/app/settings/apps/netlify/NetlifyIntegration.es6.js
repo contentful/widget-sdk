@@ -4,6 +4,8 @@ import contentPreview from 'contentPreview';
 
 import * as NetlifyClient from './NetlifyClient.es6';
 
+const ARTIFACT_KEYS = ['buildHookUrl', 'buildHookId', 'contentPreviewId'];
+
 export async function install({ config, contentTypeIds, appsClient, accessToken }) {
   config = prepareConfig(config);
 
@@ -50,18 +52,18 @@ export async function install({ config, contentTypeIds, appsClient, accessToken 
 export async function update(context) {
   const config = prepareConfig(context.config);
 
-  // Remove existing build hooks
-  config.sites = config.sites.map(siteConfig => {
-    siteConfig = { ...siteConfig };
-    delete siteConfig.buildHookUrl;
-    delete siteConfig.buildHookId;
-    return siteConfig;
-  });
-
+  // Remove existing build hooks and content previews.
   await removeExistingArtifacts(context.appsClient, context.accessToken);
 
+  // Remove references to removed artifacts from configuration.
+  config.sites = config.sites.map(siteConfig => {
+    return Object.keys(siteConfig)
+      .filter(key => !ARTIFACT_KEYS.includes(key))
+      .reduce((acc, key) => ({ ...acc, [key]: siteConfig[key] }), {});
+  });
+
   // Proceed as in the installation step.
-  return install(context);
+  return install({ ...context, config });
 }
 
 export async function uninstall({ appsClient, accessToken }) {
