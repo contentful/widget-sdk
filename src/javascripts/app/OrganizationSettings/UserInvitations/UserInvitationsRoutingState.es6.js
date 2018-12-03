@@ -1,8 +1,9 @@
+import { reactStateWrapper } from 'app/OrganizationSettings/OrganizationSettingsRouteUtils.es6';
 import { BV_USER_INVITATIONS } from 'featureFlags.es6';
 
-export default {
+export default reactStateWrapper({
   name: 'users.invitations',
   url: '/:orgId/organization_invitations',
   featureFlag: BV_USER_INVITATIONS,
-  reactComponentName: 'app/OrganizationSettings/UserInvitations/UserInvitationsListRouter.es6'
-};
+  componentPath: 'app/OrganizationSettings/UserInvitations/UserInvitationsListRouter.es6'
+});

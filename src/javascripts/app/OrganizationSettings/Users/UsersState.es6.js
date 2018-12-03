@@ -1,7 +1,5 @@
 import { conditionalStateWrapper } from 'app/OrganizationSettings/OrganizationSettingsRouteUtils.es6';
 
-export { default as userDetailState } from './UserDetail/UserDetailState.es6';
-
 const newUser = {
   label: 'Organizations & Billing',
   name: 'new',

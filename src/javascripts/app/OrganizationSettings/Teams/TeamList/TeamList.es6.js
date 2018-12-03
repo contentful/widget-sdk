@@ -7,7 +7,7 @@ import {
   TableHead,
   TableBody,
   TableCell
-} from '@contentful/ui-component-library';
+} from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
 
 export default class TeamList extends React.Component {
