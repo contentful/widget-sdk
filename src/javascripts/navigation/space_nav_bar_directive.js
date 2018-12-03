@@ -13,8 +13,7 @@ angular
       var spaceContext = require('spaceContext');
       var TokenStore = require('services/TokenStore.es6');
       var accessChecker = require('access_control/AccessChecker');
-      const LD = require('utils/LaunchDarkly');
-      const APPS_FLAG_NAME = 'feature-te-11-2018-apps';
+      const AppsFeatureFlag = require('app/settings/apps/AppsFeatureFlag.es6');
 
       return (useSpaceEnv, isMaster) => ({
         template: template(useSpaceEnv, isMaster),
@@ -36,7 +35,7 @@ angular
               controller.usageEnabled = org.pricingVersion === 'pricing_version_2';
             });
 
-            LD.onFeatureFlag($scope, APPS_FLAG_NAME, value => {
+            AppsFeatureFlag.withAngularScope($scope, value => {
               controller.appsEnabled = value;
             });
 
