@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button } from '@contentful/forma-36-react-components';
+import { Button, Spinner, Icon } from '@contentful/forma-36-react-components';
 
 import spaceContext from 'spaceContext';
 
@@ -9,6 +9,7 @@ import {
   normalizeMessage,
   isOutOfOrder,
   isDuplicate,
+  messageToState,
   EVENT_TRIGGERED,
   EVENT_TRIGGER_FAILED
 } from './MessageProcessor.es6';
@@ -43,7 +44,12 @@ export default class NetlifyBuildButton extends Component {
       const notDuplicate = !isDuplicate(msg, this.state.history);
 
       if (inOrder && notDuplicate) {
-        this.setState(({ history }) => ({ history: [msg].concat(history) }));
+        this.setState(({ history }) => {
+          return {
+            history: [msg].concat(history),
+            ...messageToState(msg)
+          };
+        });
       }
     });
 
@@ -54,7 +60,14 @@ export default class NetlifyBuildButton extends Component {
       .filter((msg, i, history) => !isOutOfOrder(msg, history.slice(i + 1)))
       .filter((msg, i, history) => !isDuplicate(msg, history.slice(i + 1)));
 
-    this.setState({ history: filteredHistory, ready: true });
+    if (filteredHistory.length > 0) {
+      this.setState({
+        history: filteredHistory,
+        ...messageToState(filteredHistory[0])
+      });
+    }
+
+    this.setState({ ready: true });
   }
 
   componentWillUnmount() {
@@ -80,13 +93,27 @@ export default class NetlifyBuildButton extends Component {
   };
 
   render() {
+    const { ready, busy, status, misconfigured, info, ok } = this.state;
+
     return (
       <React.Fragment>
-        <Button disabled={!this.state.ready} isFullWidth onClick={this.build}>
-          Build with Netlify
+        <Button disabled={!ready || busy} loading={busy} isFullWidth onClick={this.build}>
+          {busy && status ? status : 'Build with Netlify'}
         </Button>
-        {this.state.misconfigured && <p>Check Netlify App configuration!</p>}
-        <pre>{JSON.stringify(this.state.history, null, 2)}</pre>
+        {misconfigured && (
+          <div className="entity-sidebar__preview__build-info">
+            <Icon icon="Warning" size="small" color="negative" />
+            <p>Check Netlify App configuration!</p>
+          </div>
+        )}
+        {info && (
+          <div className="entity-sidebar__preview__build-info">
+            {busy && <Spinner size="small" />}
+            {!busy && ok && <Icon icon="InfoCircle" size="small" color="muted" />}
+            {!busy && !ok && <Icon icon="Warning" size="small" color="negative" />}
+            <p>{info}</p>
+          </div>
+        )}
       </React.Fragment>
     );
   }

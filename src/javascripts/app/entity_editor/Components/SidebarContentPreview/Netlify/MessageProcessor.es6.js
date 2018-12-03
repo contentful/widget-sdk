@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export const EVENT_TRIGGERED = 'triggered';
 export const EVENT_TRIGGER_FAILED = 'trigger-failed';
 
@@ -77,4 +79,56 @@ export function isDuplicate(msg, previousMessages) {
   return !!previousMessages.find(({ event, buildId }) => {
     return event === msg.event && buildId === msg.buildId;
   });
+}
+
+export function messageToState(msg) {
+  const formattedTime = moment(msg.t).format('LTS');
+
+  if (msg.event === EVENT_TRIGGERED) {
+    let info = `Triggered at ${formattedTime}.`;
+    if (msg.userName) {
+      info = `Triggered by ${msg.userName} at ${formattedTime}.`;
+    }
+
+    return {
+      status: 'Triggering...',
+      busy: true,
+      ok: true,
+      info
+    };
+  }
+
+  if (msg.event === EVENT_TRIGGER_FAILED) {
+    return {
+      busy: false,
+      ok: false,
+      info: 'Try again! If the problem persists make sure the Netlify site still exists.'
+    };
+  }
+
+  if (msg.event === EVENT_BUILD_STARTED) {
+    return {
+      status: 'Building...',
+      busy: true,
+      ok: true
+    };
+  }
+
+  if (msg.event === EVENT_BUILD_READY) {
+    return {
+      busy: false,
+      ok: true,
+      info: `Last built at ${formattedTime}.`
+    };
+  }
+
+  if (msg.event === EVENT_BUILD_FAILED) {
+    return {
+      busy: false,
+      ok: false,
+      info: msg.error || 'Unknown error. Try again!'
+    };
+  }
+
+  return {};
 }

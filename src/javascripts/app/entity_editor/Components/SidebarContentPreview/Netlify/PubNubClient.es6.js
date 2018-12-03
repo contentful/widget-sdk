@@ -108,7 +108,7 @@ export function createPubSub(channel, normalizeFn) {
     });
   }
 
-  async function stop() {
+  function stop() {
     if (state.instance) {
       state.instance.removeListener(state.mainListener);
       state.listeners = [];
