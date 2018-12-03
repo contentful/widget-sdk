@@ -1,9 +1,9 @@
 import { find } from 'lodash';
 import makeState from 'states/Base.es6';
-import $state from '$state';
 import { getSpaces } from 'services/TokenStore.es6';
 import { getStore } from 'TheStore';
 import template from 'app/home/HomeTemplate.es6';
+import { go } from 'states/Navigator.es6';
 
 const store = getStore();
 
@@ -21,14 +21,7 @@ export default makeState({
   template: template(),
   loadingText: 'Loading…',
   resolve: {
-    spaces: function() {
-      return getSpaces().then(spaces => {
-        if (spaces.length) {
-          const space = getLastUsedSpace(spaces) || getLastUsedOrgSpace(spaces) || spaces[0];
-          $state.go('spaces.detail', { spaceId: space.sys.id });
-        }
-      });
-
+    space: function() {
       function getLastUsedSpace(spaces) {
         const spaceId = store.get('lastUsedSpace');
         return spaceId && find(spaces, space => space.sys.id === spaceId);
@@ -38,12 +31,28 @@ export default makeState({
         const orgId = store.get('lastUsedOrg');
         return orgId && find(spaces, space => space.organization.sys.id === orgId);
       }
+
+      return getSpaces().then(spaces => {
+        if (spaces.length) {
+          return getLastUsedSpace(spaces) || getLastUsedOrgSpace(spaces) || spaces[0];
+        }
+      });
     }
   },
   controller: [
     '$scope',
-    $scope => {
-      $scope.context.ready = true;
+    'space',
+    ($scope, space) => {
+      if (space) {
+        // If a space is found during resolving, send the user to that space
+        go({
+          path: ['spaces', 'detail'],
+          params: { spaceId: space.sys.id }
+        });
+      } else {
+        // Show the blank homepage otherwise
+        $scope.context.ready = true;
+      }
     }
   ]
 });

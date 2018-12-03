@@ -36,6 +36,7 @@ import AndroidIcon from 'svg/android.es6';
 import PHPIcon from 'svg/php.es6';
 import JekyllIcon from 'svg/jekyll.es6';
 import ContentfulLogo from 'svg/ContentfulLogo.es6';
+import ContentfulLogoLight from 'svg/ContentfulLogoLight.es6';
 import BrunchIcon from 'svg/brunch.es6';
 import GitBookIcon from 'svg/gitbook.es6';
 import StackOverviewIcon from 'svg/infographic.es6';
@@ -78,6 +79,7 @@ const SVGs = {
   php: PHPIcon,
   jekyll: JekyllIcon,
   'contentful-logo': ContentfulLogo,
+  'contentful-logo-light': ContentfulLogoLight,
   brunch: BrunchIcon,
   gitbook: GitBookIcon,
   'stack-overview': StackOverviewIcon,
