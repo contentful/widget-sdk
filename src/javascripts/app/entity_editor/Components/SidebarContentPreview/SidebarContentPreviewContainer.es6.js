@@ -5,6 +5,7 @@ import SidebarContentPreview from './SidebarContentPreview.es6';
 import spaceContext from 'spaceContext';
 import contentPreview from 'contentPreview';
 import * as Analytics from 'analytics/Analytics.es6';
+import * as AppsFeatureFlag from 'app/settings/apps/AppsFeatureFlag.es6';
 
 const getEmptyContentPreview = () => ({
   compiledUrl: '',
@@ -28,7 +29,7 @@ export class SidebarContentPreviewContainer extends Component {
   componentDidMount = async () => {
     const [contentPreviewsState, netlifyState] = await Promise.all([
       this.initializeContentPreviews(),
-      Promise.resolve({ netlifyAppConfigs: [] })
+      this.initializeNetlify()
     ]);
 
     this.setState({
@@ -104,6 +105,17 @@ export class SidebarContentPreviewContainer extends Component {
       selectedContentPreview:
         selectedContentPreview || contentPreviews[0] || getEmptyContentPreview()
     };
+  };
+
+  initializeNetlify = async () => {
+    const state = {};
+    const enabled = await AppsFeatureFlag.isEnabled();
+
+    if (enabled) {
+      state.netlifyAppConfig = await spaceContext.netlifyAppConfig.get();
+    }
+
+    return state;
   };
 
   onTrackPreviewOpened = () => {
