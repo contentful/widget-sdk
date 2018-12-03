@@ -173,6 +173,7 @@ export class SidebarContentPreviewContainer extends Component {
         isAdmin={isAdmin}
         selectedContentPreview={this.state.selectedContentPreview}
         contentPreviews={this.state.contentPreviews}
+        netlifyAppConfig={this.state.netlifyAppConfig}
         trackPreviewOpened={this.onTrackPreviewOpened}
         onChangeContentPreview={this.onChangeContentPreview}
       />
