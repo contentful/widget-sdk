@@ -2,6 +2,7 @@ import { BLOCKS } from '@contentful/rich-text-types';
 
 export default {
   nodeType: 'document',
+  data: {},
   content: [
     {
       nodeType: BLOCKS.PARAGRAPH,
@@ -9,7 +10,8 @@ export default {
         {
           nodeType: 'text',
           value: '',
-          marks: []
+          marks: [],
+          data: {}
         }
       ],
       data: {}

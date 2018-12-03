@@ -53,6 +53,23 @@ function setValue(doc, fieldPath, fieldValue, nextFieldValue) {
     p: [...fieldPath, ...op.p]
   }));
 
+  // The initial implementation of the Rich Text contained a bug that
+  // set empty document with missing `data` property in root document and
+  // text node.
+  // @contentful/contentful-slatejs-adapter amends the document (adding `data` property)
+  // which would result in an operation that first adds the properties, then the new user
+  // input.
+  // The next block of code checks for operations that add the missing `data` property to the
+  // root node, assuming this is an operation resulting from the adapter amending the document.
+  // If that's the case, we set the whole document and not only deltas because Sharejs would
+  // reject any operations based on the buggy empty document.
+  const isAmendingRootNode = ({ p }) => p.length === 4 && p[3] === 'data';
+  const hasMissingDataFields = ops.some(isAmendingRootNode);
+  if (hasMissingDataFields) {
+    logger.logWarn('Amending RichText document');
+    return ShareJS.setDeep(doc, fieldPath, nextFieldValue);
+  }
+
   return $q.denodeify(cb => {
     try {
       doc.submitOp(ops, cb);
