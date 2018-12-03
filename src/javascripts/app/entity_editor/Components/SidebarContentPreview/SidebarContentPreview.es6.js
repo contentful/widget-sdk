@@ -120,11 +120,7 @@ export default class SidebarContentPreview extends Component {
         <h2 className="entity-sidebar__heading">Preview</h2>
         <div className="entity-sidebar__preview">
           {netlifySite && (
-            <NetlifyBuildButton
-              key={netlifySite.buildHookUrl}
-              netlifySite={netlifySite}
-              disabled={disabled}
-            />
+            <NetlifyBuildButton key={netlifySite.buildHookUrl} netlifySite={netlifySite} />
           )}
           <Button
             disabled={disabled}

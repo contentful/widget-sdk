@@ -122,3 +122,7 @@ export function createNotificationHook(siteId, accessToken, { event, url }) {
     data: { url }
   });
 }
+
+export function deleteNotificationHook(hookId, accessToken) {
+  return request('DELETE', `/hooks/${hookId}`, accessToken);
+}

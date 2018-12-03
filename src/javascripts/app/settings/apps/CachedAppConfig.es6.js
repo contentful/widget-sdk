@@ -15,7 +15,7 @@ export default function createGuarded(opts) {
   } catch (err) {
     return {
       get: opts.makeDefaultConfig,
-      update: () => {}
+      invalidate: () => {}
     };
   }
 }
@@ -23,9 +23,9 @@ export default function createGuarded(opts) {
 function create({ spaceId, appId, makeDefaultConfig }) {
   const client = createAppsClient(spaceId);
 
-  let config;
+  let config = null;
 
-  return { get: getCached, update };
+  return { get: getCached, invalidate };
 
   async function getCached() {
     if (config) {
@@ -41,7 +41,7 @@ function create({ spaceId, appId, makeDefaultConfig }) {
     }
   }
 
-  function update(updated) {
-    config = updated;
+  function invalidate() {
+    config = null;
   }
 }
