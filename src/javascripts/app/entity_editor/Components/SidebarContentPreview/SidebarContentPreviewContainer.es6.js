@@ -26,8 +26,16 @@ export class SidebarContentPreviewContainer extends Component {
   };
 
   componentDidMount = async () => {
-    const state = await this.initialize();
-    this.setState(state);
+    const [contentPreviewsState, netlifyState] = await Promise.all([
+      this.initializeContentPreviews(),
+      Promise.resolve({ netlifyAppConfigs: [] })
+    ]);
+
+    this.setState({
+      isInitialized: true,
+      ...contentPreviewsState,
+      ...netlifyState
+    });
   };
 
   componentDidUpdate = async prevProps => {
@@ -67,7 +75,7 @@ export class SidebarContentPreviewContainer extends Component {
     };
   };
 
-  initialize = async () => {
+  initializeContentPreviews = async () => {
     // getForContentType does not return API objects, but some non-standard
     // internal representation with `envId` property
     // TODO: refactor to use just API objects
@@ -91,7 +99,6 @@ export class SidebarContentPreviewContainer extends Component {
     }
 
     return {
-      isInitialized: true,
       isPreviewSetup: contentPreviews.length > 0,
       contentPreviews,
       selectedContentPreview:
