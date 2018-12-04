@@ -1,6 +1,6 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
 
-angular.module('contentful').directive('cfSpaceWizard', [
+registerDirective('cfSpaceWizard', [
   'require',
   require => {
     const $state = require('$state');

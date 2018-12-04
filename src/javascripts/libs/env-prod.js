@@ -37,6 +37,8 @@ window.libs = [
   // addEventListener and localStorage.
   ['global/window', window],
 
+  ['angular', window.angular],
+
   ['@contentful/forma-36-react-components', require('@contentful/forma-36-react-components')],
   ['@contentful/contentful-slatejs-adapter', require('@contentful/contentful-slatejs-adapter')],
   [
