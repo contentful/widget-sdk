@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 import AdminOnly from 'app/common/AdminOnly.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
-
 import createAppsClient from '../AppsClient.es6';
 import NetlifyApp from '../netlify/index.es6';
 import AlgoliaApp from '../algolia/index.es6';

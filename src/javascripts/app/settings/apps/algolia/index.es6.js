@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import StateRedirect from 'app/common/StateRedirect.es6';
-import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
-
+import createFetcherComponent from 'app/common/createFetcherComponent.es6';
+import AppPageShell from '../_common/AppPageShell.es6';
 import spaceContext from 'spaceContext';
 
 import AlgoliaAppPage from './Container.es6';
@@ -27,7 +27,7 @@ export default class AlgoliaApp extends Component {
       <AlgoliaFetcher client={this.props.client}>
         {({ isLoading, isError, data }) => {
           if (isLoading) {
-            return <FetcherLoading message="Loading Algolia app..." />;
+            return <AppPageShell />;
           }
           if (isError) {
             return <StateRedirect to="^.list" />;

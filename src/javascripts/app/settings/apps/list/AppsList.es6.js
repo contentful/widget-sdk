@@ -10,7 +10,7 @@ export default class AppsList extends Component {
   render() {
     return (
       <div className="apps-list">
-        <div className="apps-list__header">{this.props.title}</div>
+        <h3 className="section-title apps-list__title">{this.props.title}</h3>
         {this.props.children}
       </div>
     );

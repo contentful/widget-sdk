@@ -1,5 +1,5 @@
 import React from 'react';
-import AlgoliaLogo from './logos/AlgoliaLogo.es6';
+import AlgoliaLogo from 'svg/logo-algolia.es6';
 
 export default {
   id: 'algolia-index-entries',

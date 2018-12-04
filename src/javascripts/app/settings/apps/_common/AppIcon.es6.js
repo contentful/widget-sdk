@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import AppGenericIcon from 'svg/app-generic.es6';
-import NetlifyIcon from '../../webhooks/templates/logos/NetlifyLogo.es6';
-import AlgoliaIcon from '../../webhooks/templates/logos/AlgoliaLogo.es6';
+import NetlifyIcon from 'svg/logo-netlify.es6';
+import AlgoliaIcon from 'svg/logo-algolia.es6';
+import OptimizelyLogo from 'svg/logo-optimizely.es6';
 
 const Sizes = {
   default: 40,
@@ -12,7 +13,8 @@ const Sizes = {
 const Icons = {
   default: AppGenericIcon,
   netlify: NetlifyIcon,
-  algolia: AlgoliaIcon
+  algolia: AlgoliaIcon,
+  optimizely: OptimizelyLogo
 };
 
 export default class AppIcon extends Component {

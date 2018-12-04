@@ -21,6 +21,7 @@ module.exports = {
   parser: 'babel-eslint',
   rules: {
     'react/display-name': 'off',
+    'react/prop-types': ['error', { ignore: ['children'] }],
     'no-template-curly-in-string': 'off',
     'no-useless-return': 'off',
     'no-mixed-operators': 'off',
