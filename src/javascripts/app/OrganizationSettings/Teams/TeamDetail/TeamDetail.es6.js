@@ -1,6 +1,12 @@
 import React from 'react';
 
-import { Table, TableRow, TableHead, TableBody, TableCell } from '@contentful/forma-36-react-components';
+import {
+  Table,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell
+} from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
 
 export default class TeamDetail extends React.Component {
