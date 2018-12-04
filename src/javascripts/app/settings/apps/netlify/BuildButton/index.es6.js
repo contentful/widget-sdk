@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 import { get } from 'lodash';
 
@@ -10,13 +11,34 @@ import * as AppsFeatureFlag from 'app/settings/apps/AppsFeatureFlag.es6';
 
 const validId = id => typeof id === 'string' && id.length > 0;
 
+const getContentPreviewIdsFor = async contentType => {
+  const ctId = get(contentType, ['sys', 'id']);
+  const contentPreviews = await contentPreview.getForContentType(ctId);
+
+  return (Array.isArray(contentPreviews) ? contentPreviews : []).map(p => p.envId);
+};
+
 export default class NetlifyBuildButton extends Component {
+  static propTypes = {
+    contentType: PropTypes.shape({
+      sys: PropTypes.shape({
+        id: PropTypes.string.isRequired
+      }).isRequired
+    }).isRequired
+  };
+
   state = {};
 
   async componentDidMount() {
-    // We require the feature flag...
+    // We require the feature flag,...
     const enabled = await AppsFeatureFlag.isEnabled();
     if (!enabled) {
+      return;
+    }
+
+    // ...at least one content preview...
+    const contentPreviewIds = await getContentPreviewIdsFor(this.props.contentType);
+    if (contentPreviewIds.length < 1) {
       return;
     }
 
@@ -33,10 +55,19 @@ export default class NetlifyBuildButton extends Component {
     // Once content_preview.js is in a better shape a listener
     // should be used.
     this.interval = setInterval(() => {
-      const selectedPreviewId = contentPreview.getSelected();
-      const changed = selectedPreviewId !== this.state.selectedPreviewId;
+      // If selected content preview is not enabled for this
+      // content type or we cannot get selected content preview
+      // at all - just use the first one what matches behavior
+      // of the preview button.
+      let selectedPreviewId = contentPreview.getSelected();
 
-      if (changed && validId(selectedPreviewId)) {
+      if (!contentPreviewIds.includes(selectedPreviewId)) {
+        selectedPreviewId = contentPreviewIds[0];
+      }
+
+      const isChanged = selectedPreviewId !== this.state.selectedPreviewId;
+
+      if (isChanged && validId(selectedPreviewId)) {
         const site = sites.find(s => s.contentPreviewId === selectedPreviewId);
         this.setState({ site, selectedPreviewId });
       }
