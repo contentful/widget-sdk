@@ -162,6 +162,10 @@ angular
         walkMeProd: {
           url:
             'https://cdn.walkme.com/users/cf344057732941ed81018bf903986da9/walkme_cf344057732941ed81018bf903986da9_https.js'
+        },
+        PubNub: {
+          url: 'https://cdn.pubnub.com/sdk/javascript/pubnub.4.21.6.js',
+          globalObject: 'PubNub'
         }
       };
 

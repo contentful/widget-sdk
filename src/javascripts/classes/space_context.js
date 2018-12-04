@@ -48,6 +48,7 @@ angular
       const deepFreeze = require('utils/Freeze.es6').deepFreeze;
       const deepFreezeClone = require('utils/Freeze.es6').deepFreezeClone;
       const $rootScope = require('$rootScope');
+      const createCachedAppConfig = require('app/settings/apps/CachedAppConfig.es6').default;
 
       const publishedCTsBus$ = K.createPropertyBus([]);
 
@@ -146,6 +147,11 @@ angular
           self.user = K.getValue(TokenStore.user$);
 
           previewEnvironmentsCache.clearAll();
+          self.netlifyAppConfig = createCachedAppConfig({
+            spaceId: space.getId(),
+            appId: 'netlify',
+            makeDefaultConfig: () => ({ sites: [] })
+          });
 
           // This happens here, rather than in `prelude.js`, since it's scoped to a space
           // and not the user, so the spaceId is required.

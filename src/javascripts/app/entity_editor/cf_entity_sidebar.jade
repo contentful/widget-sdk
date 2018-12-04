@@ -59,7 +59,15 @@
       ui-command="state.revertToPrevious")
       | Discard changes
 
-  <react-component ng-if="data.isEntry" name="app/entity_editor/Components/SidebarContentPreview/SidebarContentPreviewContainer.es6" props="sidebarContentPreviewProps"></react-component>
+  h2.entity-sidebar__heading(ng-if="data.isEntry") Preview
+  react-component(
+    ng-if="data.isEntry"
+    name="app/settings/apps/netlify/BuildButton/index.es6"
+    props="sidebarContentPreviewProps")
+  react-component(
+    ng-if="data.isEntry"
+    name="app/entity_editor/Components/SidebarContentPreview/SidebarContentPreviewContainer.es6"
+    props="sidebarContentPreviewProps")
 
   <react-component name="app/entity_editor/Components/SidebarIncomingLinks" props="sidebarIncomingLinksProps"></react-component>
   h2.entity-sidebar__heading

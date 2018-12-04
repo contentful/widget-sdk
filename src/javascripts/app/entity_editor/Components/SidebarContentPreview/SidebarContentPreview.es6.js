@@ -98,28 +98,26 @@ export default class SidebarContentPreview extends Component {
       trackPreviewOpened,
       isInitialized
     } = this.props;
+
     return (
-      <div>
-        <h2 className="entity-sidebar__heading">Preview</h2>
-        <div className="entity-sidebar__preview">
-          <Button
-            disabled={!isInitialized || !isPreviewSetup || !selectedContentPreview.compiledUrl}
-            testId="open-preview"
-            isFullWidth
-            onClick={trackPreviewOpened}
-            buttonType="muted"
-            icon="ExternalLink"
-            href={selectedContentPreview.compiledUrl}
-            target="_blank"
-            rel="noopener noreferrer">
-            Open preview
-          </Button>
-          {isInitialized && !isPreviewSetup && this.renderNoPreviewNote()}
-          {isInitialized &&
-            isPreviewSetup &&
-            contentPreviews.length > 1 &&
-            this.renderPreviewSelector()}
-        </div>
+      <div className="entity-sidebar__preview">
+        <Button
+          disabled={!isInitialized || !isPreviewSetup || !selectedContentPreview.compiledUrl}
+          testId="open-preview"
+          isFullWidth
+          onClick={trackPreviewOpened}
+          buttonType="muted"
+          icon="ExternalLink"
+          href={selectedContentPreview.compiledUrl}
+          target="_blank"
+          rel="noopener noreferrer">
+          Open preview
+        </Button>
+        {isInitialized && !isPreviewSetup && this.renderNoPreviewNote()}
+        {isInitialized &&
+          isPreviewSetup &&
+          contentPreviews.length > 1 &&
+          this.renderPreviewSelector()}
       </div>
     );
   }

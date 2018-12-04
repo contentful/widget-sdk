@@ -14,6 +14,7 @@ import * as NetlifyIntegration from './NetlifyIntegration.es6';
 import NetlifyConfigEditor from './NetlifyConfigEditor.es6';
 import NetlifyConnection from './NetlifyConnection.es6';
 import AppUninstallDialog from '../dialogs/AppUninstallDialog.es6';
+import NoConnectionUninstallDialog from './NoConnectionUninstallDialog.es6';
 
 const notifyError = (err, fallbackMessage) => {
   Notification.error(err.useMessage ? err.message || fallbackMessage : fallbackMessage);
@@ -134,16 +135,29 @@ export default class NetlifyAppPage extends Component {
     }
   };
 
-  onUninstallClick = async () => {
-    const confirmed = await ModalLauncher.open(({ isShown, onClose }) => (
-      <AppUninstallDialog
-        app={this.props.app}
+  confirmUninstall = () => {
+    if (this.state.token) {
+      return ModalLauncher.open(({ isShown, onClose }) => (
+        <AppUninstallDialog
+          app={this.props.app}
+          isShown={isShown}
+          onCancel={() => onClose(false)}
+          onConfirm={() => onClose(true)}
+        />
+      ));
+    }
+
+    return ModalLauncher.open(({ isShown, onClose }) => (
+      <NoConnectionUninstallDialog
         isShown={isShown}
         onCancel={() => onClose(false)}
         onConfirm={() => onClose(true)}
       />
     ));
+  };
 
+  onUninstallClick = async () => {
+    const confirmed = await this.confirmUninstall();
     if (confirmed) {
       this.uninstall();
     }
