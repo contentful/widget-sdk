@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Spinner, Icon } from '@contentful/forma-36-react-components';
+import { Button, ValidationMessage } from '@contentful/forma-36-react-components';
 
 import spaceContext from 'spaceContext';
 
@@ -96,25 +96,22 @@ export default class BuildButton extends Component {
     const { ready, busy, status, misconfigured, info, ok } = this.state;
 
     return (
-      <React.Fragment>
+      <div className="netlify-app__build-button">
         <Button disabled={!ready || busy} loading={busy} isFullWidth onClick={this.build}>
           {busy && status ? status : 'Build with Netlify'}
         </Button>
         {misconfigured && (
-          <div className="entity-sidebar__preview__build-info">
-            <Icon icon="Warning" size="small" color="negative" />
-            <p>Check Netlify App configuration!</p>
+          <div className="netlify-app__build-button__info">
+            <ValidationMessage>Check Netlify App configuration!</ValidationMessage>
           </div>
         )}
         {info && (
-          <div className="entity-sidebar__preview__build-info">
-            {busy && <Spinner size="small" />}
-            {!busy && ok && <Icon icon="InfoCircle" size="small" color="muted" />}
-            {!busy && !ok && <Icon icon="Warning" size="small" color="negative" />}
-            <p>{info}</p>
+          <div className="netlify-app__build-button__info">
+            {ok && info}
+            {!ok && <ValidationMessage>{info}</ValidationMessage>}
           </div>
         )}
-      </React.Fragment>
+      </div>
     );
   }
 }
