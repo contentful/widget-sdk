@@ -2,8 +2,10 @@ import LazyLoader from 'LazyLoader';
 
 import { isObject, identity } from 'lodash';
 
-const PUBLISH_KEY = 'pub-c-15025a4e-4baf-4a76-bc45-9f56e2e3cb97';
-const SUBSCRIBE_KEY = 'sub-c-3f45ee44-9e56-11e8-84a1-9640bd3b0340';
+// These are front-end safe credentials that can be used in all environments.
+// PubNub account is "team-extensibility@contentful.com", see LastPass.
+const PUBLISH_KEY = 'pub-c-a99421b9-4f21-467b-ac0c-d0292824e8e1';
+const SUBSCRIBE_KEY = 'sub-c-3992b1ae-f7c9-11e8-adf7-5a5b31762c0f';
 
 export function getPostPublishUrl(channel) {
   return `https://ps.pndsn.com/publish/${PUBLISH_KEY}/${SUBSCRIBE_KEY}/0/${channel}/0?store=1`;
