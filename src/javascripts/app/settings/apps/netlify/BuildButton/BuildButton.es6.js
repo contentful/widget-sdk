@@ -14,7 +14,7 @@ import {
   EVENT_TRIGGER_FAILED
 } from './MessageProcessor.es6';
 
-export default class NetlifyBuildButton extends Component {
+export default class BuildButton extends Component {
   static propTypes = {
     netlifySite: PropTypes.shape({
       channel: PropTypes.string.isRequired,

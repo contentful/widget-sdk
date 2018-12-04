@@ -5,7 +5,6 @@ import SidebarContentPreview from './SidebarContentPreview.es6';
 import spaceContext from 'spaceContext';
 import contentPreview from 'contentPreview';
 import * as Analytics from 'analytics/Analytics.es6';
-import * as AppsFeatureFlag from 'app/settings/apps/AppsFeatureFlag.es6';
 
 const getEmptyContentPreview = () => ({
   compiledUrl: '',
@@ -27,16 +26,8 @@ export class SidebarContentPreviewContainer extends Component {
   };
 
   componentDidMount = async () => {
-    const [contentPreviewsState, netlifyState] = await Promise.all([
-      this.initializeContentPreviews(),
-      this.initializeNetlify()
-    ]);
-
-    this.setState({
-      isInitialized: true,
-      ...contentPreviewsState,
-      ...netlifyState
-    });
+    const state = await this.initialize();
+    this.setState(state);
   };
 
   componentDidUpdate = async prevProps => {
@@ -76,7 +67,7 @@ export class SidebarContentPreviewContainer extends Component {
     };
   };
 
-  initializeContentPreviews = async () => {
+  initialize = async () => {
     // getForContentType does not return API objects, but some non-standard
     // internal representation with `envId` property
     // TODO: refactor to use just API objects
@@ -100,22 +91,12 @@ export class SidebarContentPreviewContainer extends Component {
     }
 
     return {
+      isInitialized: true,
       isPreviewSetup: contentPreviews.length > 0,
       contentPreviews,
       selectedContentPreview:
         selectedContentPreview || contentPreviews[0] || getEmptyContentPreview()
     };
-  };
-
-  initializeNetlify = async () => {
-    const state = {};
-    const enabled = await AppsFeatureFlag.isEnabled();
-
-    if (enabled) {
-      state.netlifyAppConfig = await spaceContext.netlifyAppConfig.get();
-    }
-
-    return state;
   };
 
   onTrackPreviewOpened = () => {
@@ -173,7 +154,6 @@ export class SidebarContentPreviewContainer extends Component {
         isAdmin={isAdmin}
         selectedContentPreview={this.state.selectedContentPreview}
         contentPreviews={this.state.contentPreviews}
-        netlifyAppConfig={this.state.netlifyAppConfig}
         trackPreviewOpened={this.onTrackPreviewOpened}
         onChangeContentPreview={this.onChangeContentPreview}
       />

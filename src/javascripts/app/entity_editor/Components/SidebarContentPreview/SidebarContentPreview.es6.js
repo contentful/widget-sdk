@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { get } from 'lodash';
 import {
   Button,
   Dropdown,
@@ -8,7 +7,6 @@ import {
   DropdownListItem
 } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink.es6';
-import NetlifyBuildButton from './Netlify/BuildButton.es6';
 
 export default class SidebarContentPreview extends Component {
   static propTypes = {
@@ -24,7 +22,6 @@ export default class SidebarContentPreview extends Component {
         name: PropTypes.string.isRequired
       })
     ).isRequired,
-    netlifyAppConfig: PropTypes.object,
     onChangeContentPreview: PropTypes.func.isRequired,
     trackPreviewOpened: PropTypes.func.isRequired
   };
@@ -93,16 +90,6 @@ export default class SidebarContentPreview extends Component {
     );
   }
 
-  getNetlifySite = () => {
-    const sites = get(this.props, ['netlifyAppConfig', 'sites'], []);
-
-    if (Array.isArray(sites)) {
-      return sites
-        .filter(s => typeof s.contentPreviewId === 'string' && s.contentPreviewId.length > 0)
-        .find(s => s.contentPreviewId === get(this.props, ['selectedContentPreview', 'envId']));
-    }
-  };
-
   render() {
     const {
       isPreviewSetup,
@@ -112,34 +99,25 @@ export default class SidebarContentPreview extends Component {
       isInitialized
     } = this.props;
 
-    const netlifySite = this.getNetlifySite();
-    const disabled = !isInitialized || !isPreviewSetup || !selectedContentPreview.compiledUrl;
-
     return (
-      <div>
-        <h2 className="entity-sidebar__heading">Preview</h2>
-        <div className="entity-sidebar__preview">
-          {netlifySite && (
-            <NetlifyBuildButton key={netlifySite.buildHookUrl} netlifySite={netlifySite} />
-          )}
-          <Button
-            disabled={disabled}
-            testId="open-preview"
-            isFullWidth
-            onClick={trackPreviewOpened}
-            buttonType="muted"
-            icon="ExternalLink"
-            href={selectedContentPreview.compiledUrl}
-            target="_blank"
-            rel="noopener noreferrer">
-            Open preview
-          </Button>
-          {isInitialized && !isPreviewSetup && this.renderNoPreviewNote()}
-          {isInitialized &&
-            isPreviewSetup &&
-            contentPreviews.length > 1 &&
-            this.renderPreviewSelector()}
-        </div>
+      <div className="entity-sidebar__preview">
+        <Button
+          disabled={!isInitialized || !isPreviewSetup || !selectedContentPreview.compiledUrl}
+          testId="open-preview"
+          isFullWidth
+          onClick={trackPreviewOpened}
+          buttonType="muted"
+          icon="ExternalLink"
+          href={selectedContentPreview.compiledUrl}
+          target="_blank"
+          rel="noopener noreferrer">
+          Open preview
+        </Button>
+        {isInitialized && !isPreviewSetup && this.renderNoPreviewNote()}
+        {isInitialized &&
+          isPreviewSetup &&
+          contentPreviews.length > 1 &&
+          this.renderPreviewSelector()}
       </div>
     );
   }

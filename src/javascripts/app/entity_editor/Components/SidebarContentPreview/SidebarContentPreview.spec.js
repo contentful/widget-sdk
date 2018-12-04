@@ -2,8 +2,6 @@ import React from 'react';
 import Enzyme from 'enzyme';
 import SidebarContentPreview from './SidebarContentPreview.es6';
 
-jest.mock('LazyLoader', () => ({ get: () => Promise.resolve({}) }), { virtual: true });
-
 describe('entity_editor/Components/SidebarContentPreview.es6', () => {
   const render = props => {
     return Enzyme.mount(

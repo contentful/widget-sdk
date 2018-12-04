@@ -3,7 +3,7 @@ import { cloneDeep, get, uniqBy } from 'lodash';
 import contentPreview from 'contentPreview';
 import spaceContext from 'spaceContext';
 
-import { getPostPublishUrl } from 'app/entity_editor/Components/SidebarContentPreview/Netlify/PubNubClient.es6';
+import { getPostPublishUrl } from './BuildButton/PubNubClient.es6';
 import * as NetlifyClient from './NetlifyClient.es6';
 
 const ARTIFACT_KEYS = ['buildHookUrl', 'buildHookId', 'contentPreviewId'];
