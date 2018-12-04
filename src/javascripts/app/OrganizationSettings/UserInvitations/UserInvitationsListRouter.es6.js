@@ -1,15 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import OrgAdminOnly from 'app/common/OrgAdminOnly.es6';
-import { FetcherLoading } from '../../../common/createFetcherComponent.es6';
-import StateRedirect from '../../../common/StateRedirect.es6';
-import createFetcherComponent from '../../../common/createFetcherComponent.es6';
-import { createOrganizationEndpoint } from '../../../../data/EndpointFactory.es6';
-import { fetchAll } from '../../../../data/CMA/FetchAll.es6';
-import { getMemberships } from '../../../../access_control/OrganizationMembershipRepository.es6';
+import StateRedirect from 'app/common/StateRedirect.es6';
+import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
+import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
+import { fetchAll } from 'data/CMA/FetchAll.es6';
+import { getMemberships } from 'access_control/OrganizationMembershipRepository.es6';
 
-import ResolveLinks from '../../LinkResolver.es6';
-import InvitationsList from '../InvitationsList.es6';
+import ResolveLinks from 'app/OrganizationSettings/LinkResolver.es6';
+import UserInvitationsList from './UserInvitationsList.es6';
 
 const InvitationListFetcher = createFetcherComponent(({ orgId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
@@ -23,7 +22,7 @@ const InvitationListFetcher = createFetcherComponent(({ orgId }) => {
   ]);
 });
 
-export default class InvitationListRoute extends React.Component {
+export default class UserInvitationsListRouter extends React.Component {
   static propTypes = {
     orgId: PropTypes.string.isRequired,
     onReady: PropTypes.func.isRequired,
@@ -50,7 +49,7 @@ export default class InvitationListRoute extends React.Component {
             const [invitations, memberships] = data;
 
             return (
-              <InvitationsList
+              <UserInvitationsList
                 invitations={invitations}
                 pendingMemberships={memberships.filter(
                   ({

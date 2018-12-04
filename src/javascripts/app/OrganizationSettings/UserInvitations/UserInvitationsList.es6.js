@@ -10,7 +10,7 @@ import {
   TableBody
 } from '@contentful/forma-36-react-components';
 
-import Workbench from '../../common/Workbench.es6';
+import Workbench from 'app/common/Workbench.es6';
 
 export default class InvitationsList extends React.Component {
   static propTypes = {
