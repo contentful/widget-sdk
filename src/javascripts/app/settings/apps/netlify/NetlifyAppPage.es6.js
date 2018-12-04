@@ -59,15 +59,21 @@ export default class NetlifyAppPage extends Component {
   }
 
   componentWillUnmount() {
+    this.stopPolling();
+  }
+
+  stopPolling = () => {
     // Once authentication process is started, we poll for results.
-    // When we leave this page authentication process is aborted
-    // and the polling is cancelled.
+    // When we leave this page or start a new OAuth flow authentication
+    // process is aborted and the polling needs to be cancelled.
     if (this.cancelTicketPolling) {
       this.cancelTicketPolling();
     }
-  }
+  };
 
   onConnectClick = () => {
+    this.stopPolling();
+
     this.cancelTicketPolling = NetlifyClient.getAccessTokenWithTicket(
       this.props.ticketId,
       (err, token) => {
