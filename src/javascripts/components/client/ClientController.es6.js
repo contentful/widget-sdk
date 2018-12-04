@@ -1,4 +1,6 @@
-angular.module('contentful').controller('ClientController', [
+import { registerController } from 'NgRegistry.es6';
+
+registerController('ClientController', [
   '$scope',
   'require',
   function ClientController($scope, require) {
@@ -20,7 +22,7 @@ angular.module('contentful').controller('ClientController', [
     const EnforcementsService = require('services/EnforcementsService.es6');
     const store = require('ReduxStore/store.es6').default;
     const $rootScope = require('$rootScope');
-    const { pick } = require('lodash');
+    const { pick, isObject } = require('lodash');
 
     $rootScope.$on('$locationChangeSuccess', function() {
       store.dispatch({
@@ -80,7 +82,7 @@ angular.module('contentful').controller('ClientController', [
     }
 
     function handleUser(user) {
-      if (!_.isObject(user)) {
+      if (!isObject(user)) {
         return;
       }
 
