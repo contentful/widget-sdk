@@ -7,7 +7,6 @@ import spaceContext from 'spaceContext';
 import contentPreview from 'contentPreview';
 
 import BuildButton from './BuildButton.es6';
-import * as AppsFeatureFlag from 'app/settings/apps/AppsFeatureFlag.es6';
 
 const validId = id => typeof id === 'string' && id.length > 0;
 
@@ -30,13 +29,7 @@ export default class NetlifyBuildButton extends Component {
   state = {};
 
   async componentDidMount() {
-    // We require the feature flag,...
-    const enabled = await AppsFeatureFlag.isEnabled();
-    if (!enabled) {
-      return;
-    }
-
-    // ...at least one content preview...
+    // We require at least one content preview...
     const contentPreviewIds = await getContentPreviewIdsFor(this.props.contentType);
     if (contentPreviewIds.length < 1) {
       return;
