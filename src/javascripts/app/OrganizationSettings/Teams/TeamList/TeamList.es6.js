@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import {
   Button,
@@ -9,8 +10,20 @@ import {
   TableCell
 } from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
+import TeamFormDialog from '../TeamFormDialog.es6';
+import ModalLauncher from 'app/common/ModalLauncher.es6';
 
 export default class TeamList extends React.Component {
+  static propTypes = {
+    orgId: PropTypes.string.isRequired
+  };
+
+  addTeam = () => {
+    ModalLauncher.open(({ onClose, isShown }) => (
+      <TeamFormDialog orgId={this.props.orgId} isShown={isShown} onClose={onClose} />
+    ));
+  };
+
   render() {
     return (
       <Workbench>
@@ -20,7 +33,9 @@ export default class TeamList extends React.Component {
           </Workbench.Header.Left>
           <Workbench.Header.Actions>
             {`N teams in your organization`}
-            <Button icon="PlusCircle">Create team</Button>
+            <Button icon="PlusCircle" onClick={this.addTeam}>
+              Create team
+            </Button>
           </Workbench.Header.Actions>
         </Workbench.Header>
         <Workbench.Content>

@@ -18,7 +18,7 @@ export default class TeamListRoute extends React.Component {
     const { orgId } = this.props;
     return (
       <OrgAdminOnly orgId={orgId}>
-        <TeamList />
+        <TeamList orgId={orgId} />
       </OrgAdminOnly>
     );
   }
