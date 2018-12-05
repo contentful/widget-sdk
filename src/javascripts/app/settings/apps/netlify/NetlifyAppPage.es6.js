@@ -15,6 +15,7 @@ import NetlifyConfigEditor from './NetlifyConfigEditor.es6';
 import NetlifyConnection from './NetlifyConnection.es6';
 import AppUninstallDialog from '../dialogs/AppUninstallDialog.es6';
 import NoConnectionUninstallDialog from './NoConnectionUninstallDialog.es6';
+import IntercomFeedback from '../IntercomFeedback.es6';
 
 const notifyError = (err, fallbackMessage) => {
   Notification.error(err.useMessage ? err.message || fallbackMessage : fallbackMessage);
@@ -196,6 +197,7 @@ export default class NetlifyAppPage extends Component {
         <Workbench.Icon icon="page-settings" />
         <Workbench.Title>App: {this.props.app.title}</Workbench.Title>
         <Workbench.Header.Actions>
+          <IntercomFeedback about="Netlify App" />
           {installed && (
             <Button
               buttonType="muted"

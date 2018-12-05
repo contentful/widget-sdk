@@ -5,7 +5,8 @@ const KNOWN_APPS = {
     title: 'Netlify'
   },
   algolia: {
-    title: 'Algolia'
+    title: 'Algolia',
+    soon: true
   },
   optimizely: {
     title: 'Optimizely',

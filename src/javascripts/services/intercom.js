@@ -30,7 +30,8 @@ angular.module('contentful').factory('intercom', [
       isLoaded: isLoaded,
       isEnabled: isEnabled,
       disable: disable,
-      open: openIntercom
+      open: openIntercom,
+      trackEvent: trackEvent
     };
 
     function isLoaded() {
@@ -45,9 +46,15 @@ angular.module('contentful').factory('intercom', [
       isDisabled = true;
     }
 
-    function openIntercom() {
+    function openIntercom(initialContent) {
       if (isLoaded()) {
-        $window.Intercom('showNewMessage');
+        $window.Intercom('showNewMessage', initialContent);
+      }
+    }
+
+    function trackEvent(eventName, metadata) {
+      if (isLoaded()) {
+        $window.Intercom('trackEvent', eventName, metadata);
       }
     }
 
