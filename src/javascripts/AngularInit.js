@@ -22,6 +22,8 @@ angular
     $injector => {
       const require = $injector.get;
 
+      angular.module('contentful/init').getModule = require;
+
       require('components/client/ClientController.es6');
       require('components/shared/space-wizard/SpaceWizardDirective.es6');
     }
