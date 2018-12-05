@@ -1,4 +1,3 @@
-// in your rule
 module.exports = {
   meta: {
     messages: {

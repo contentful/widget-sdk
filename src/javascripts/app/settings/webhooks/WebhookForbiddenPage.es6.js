@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
-import ForbiddenPage from '../../../ui/Pages/Forbidden/ForbiddenPage.es6';
+import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 
 const WebhookForbiddenPage = ({ templateId }) => {
   const fullUrl = `https://app.contentful.com/deeplink?link=webhook-template&id=${templateId}`;

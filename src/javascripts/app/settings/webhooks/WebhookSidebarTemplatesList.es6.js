@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Templates from './templates';
+import Templates from './templates/index.es6';
 
 const WebhookSidebarTemplatesList = ({ openTemplateDialog }) => (
   <React.Fragment>

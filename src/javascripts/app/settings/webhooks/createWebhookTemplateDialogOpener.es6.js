@@ -1,4 +1,4 @@
-import Templates from './templates';
+import Templates from './templates/index.es6';
 import React from 'react';
 import { get } from 'lodash';
 import ModalLauncher from 'app/common/ModalLauncher.es6';

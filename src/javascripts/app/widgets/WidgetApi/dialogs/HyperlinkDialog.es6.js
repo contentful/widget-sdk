@@ -13,7 +13,7 @@ import Dialog from 'app/entity_editor/Components/Dialog';
 import AngularComponent from 'AngularComponent';
 import { noop, values, includes } from 'lodash';
 import { calculateIdealListHeight, getLabels } from 'search/EntitySelector/Config.es6';
-import Visible from '../../../../components/shared/Visible/index.es6';
+import Visible from 'components/shared/Visible/index.es6';
 
 export const LINK_TYPES = {
   URI: 'uri',

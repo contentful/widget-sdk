@@ -6,7 +6,7 @@ module.exports = {
   extends: ['eslint:recommended', 'plugin:react/recommended', 'prettier', 'prettier/react'],
   settings: {
     react: {
-      version: '16.4.2'
+      version: '16.6.3'
     }
   },
   env: {
@@ -101,6 +101,7 @@ module.exports = {
         ecmaVersion: 2017,
         sourceType: 'module'
       },
+      plugins: ['rulesdir'],
       rules: {
         'object-shorthand': ['warn', 'properties'],
         'prefer-const': 'error',
@@ -117,7 +118,8 @@ module.exports = {
           'TaggedTemplateExpression',
           'UpdateExpression',
           'WithStatement'
-        ]
+        ],
+        'rulesdir/relative-imports': 'error'
       }
     }
   ]

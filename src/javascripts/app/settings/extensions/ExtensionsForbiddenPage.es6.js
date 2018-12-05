@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ForbiddenPage from '../../../ui/Pages/Forbidden/ForbiddenPage.es6';
+import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 
 const ExtensionsForbidden = ({ extensionUrl }) => {
   const messages = ['Contact the administrator of this space to get access.'];

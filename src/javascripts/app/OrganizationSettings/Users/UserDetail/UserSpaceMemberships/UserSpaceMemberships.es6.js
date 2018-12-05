@@ -7,7 +7,7 @@ import {
   User as UserPropType,
   SpaceRole as SpaceRolePropType,
   Space as SpacePropType
-} from '../../PropTypes.es6';
+} from 'app/OrganizationSettings/Users/PropTypes.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import { joinWithAnd } from 'utils/StringUtils.es6';
 
@@ -24,7 +24,7 @@ import {
   Button,
   Notification
 } from '@contentful/forma-36-react-components';
-import { getUserName } from '../../UserUtils.es6';
+import { getUserName } from 'app/OrganizationSettings/Users/UserUtils.es6';
 import moment from 'moment';
 
 const ServicesConsumer = require('../../../../../reactServiceContext').default;

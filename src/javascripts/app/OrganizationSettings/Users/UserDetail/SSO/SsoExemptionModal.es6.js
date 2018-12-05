@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Modal, Icon } from '@contentful/forma-36-react-components';
 
-import { OrganizationMembership as OrganizationMembershipPropType } from '../../PropTypes.es6';
+import { OrganizationMembership as OrganizationMembershipPropType } from 'app/OrganizationSettings/Users/PropTypes.es6';
 
 export default class SseExemptionModal extends React.Component {
   static propTypes = {

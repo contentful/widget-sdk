@@ -19,7 +19,7 @@ import {
   Notification
 } from '@contentful/forma-36-react-components';
 import { formatQuery } from './QueryBuilder.es6';
-import ResolveLinks from '../../LinkResolver.es6';
+import ResolveLinks from 'app/OrganizationSettings/LinkResolver.es6';
 import Workbench from 'app/common/Workbench.es6';
 import UserListFilters from './UserListFilters.es6';
 import UserCard from '../UserCard.es6';

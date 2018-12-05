@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Action } from 'data/CMA/EntityActions.es6';
-import Dialog from '../Dialog';
+import Dialog from '../Dialog/index.es6';
 import { EntityType, getNumberOfLinks } from '../constants.es6';
-import FetchLinksToEntity, { RequestState } from '../FetchLinksToEntity';
+import FetchLinksToEntity, { RequestState } from '../FetchLinksToEntity/index.es6';
 import {
   onDialogOpen as trackDialogOpen,
   onDialogConfirm as trackDialogConfirm,
@@ -12,7 +12,7 @@ import {
 } from 'analytics/events/IncomingLinks.es6';
 
 import Loader from './Loader.es6';
-import IncomingLinksList from '../IncomingLinksList';
+import IncomingLinksList from '../IncomingLinksList/index.es6';
 import IncomingLinksListError from '../IncomingLinksList/Error.es6';
 import messages from './messages.es6';
 

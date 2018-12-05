@@ -456,9 +456,8 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                           checked={false}
                           id="admin"
                           inputType="checkbox"
-                          labelIsLight={false}
+                          labelIsLight={true}
                           labelText="Admin"
-                          light={true}
                           onChange={[Function]}
                           testId="cf-ui-checkbox-field"
                         >
@@ -466,16 +465,14 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                             checked={false}
                             id="admin"
                             inputType="checkbox"
-                            labelIsLight={false}
+                            labelIsLight={true}
                             labelText="Admin"
-                            light={true}
                             onChange={[Function]}
                             testId="cf-ui-checkbox-field"
                           >
                             <div
                               className="ControlledInputField__ControlledInputField___2uIG9"
                               data-test-id="cf-ui-checkbox-field"
-                              light={true}
                             >
                               <ControlledInput
                                 checked={false}
@@ -502,14 +499,14 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                               </ControlledInput>
                               <div>
                                 <FormLabel
-                                  extraClassNames="ControlledInputField__ControlledInputField__label___a9J52"
+                                  extraClassNames="ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
                                   htmlFor="admin"
                                   required={false}
                                   requiredText="required"
                                   testId="cf-ui-form-label"
                                 >
                                   <label
-                                    className="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                                    className="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
                                     data-test-id="cf-ui-form-label"
                                     htmlFor="admin"
                                   >
@@ -539,9 +536,8 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                           checked={false}
                           id="police"
                           inputType="checkbox"
-                          labelIsLight={false}
+                          labelIsLight={true}
                           labelText="Police officer"
-                          light={true}
                           onChange={[Function]}
                           testId="cf-ui-checkbox-field"
                           value="police"
@@ -550,9 +546,8 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                             checked={false}
                             id="police"
                             inputType="checkbox"
-                            labelIsLight={false}
+                            labelIsLight={true}
                             labelText="Police officer"
-                            light={true}
                             onChange={[Function]}
                             testId="cf-ui-checkbox-field"
                             value="police"
@@ -560,7 +555,6 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                             <div
                               className="ControlledInputField__ControlledInputField___2uIG9"
                               data-test-id="cf-ui-checkbox-field"
-                              light={true}
                             >
                               <ControlledInput
                                 checked={false}
@@ -589,14 +583,14 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                               </ControlledInput>
                               <div>
                                 <FormLabel
-                                  extraClassNames="ControlledInputField__ControlledInputField__label___a9J52"
+                                  extraClassNames="ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
                                   htmlFor="police"
                                   required={false}
                                   requiredText="required"
                                   testId="cf-ui-form-label"
                                 >
                                   <label
-                                    className="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                                    className="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
                                     data-test-id="cf-ui-form-label"
                                     htmlFor="police"
                                   >
@@ -626,9 +620,8 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                           checked={false}
                           id="thief"
                           inputType="checkbox"
-                          labelIsLight={false}
+                          labelIsLight={true}
                           labelText="Thief"
-                          light={true}
                           onChange={[Function]}
                           testId="cf-ui-checkbox-field"
                           value="thief"
@@ -637,9 +630,8 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                             checked={false}
                             id="thief"
                             inputType="checkbox"
-                            labelIsLight={false}
+                            labelIsLight={true}
                             labelText="Thief"
-                            light={true}
                             onChange={[Function]}
                             testId="cf-ui-checkbox-field"
                             value="thief"
@@ -647,7 +639,6 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                             <div
                               className="ControlledInputField__ControlledInputField___2uIG9"
                               data-test-id="cf-ui-checkbox-field"
-                              light={true}
                             >
                               <ControlledInput
                                 checked={false}
@@ -676,14 +667,14 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                               </ControlledInput>
                               <div>
                                 <FormLabel
-                                  extraClassNames="ControlledInputField__ControlledInputField__label___a9J52"
+                                  extraClassNames="ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
                                   htmlFor="thief"
                                   required={false}
                                   requiredText="required"
                                   testId="cf-ui-form-label"
                                 >
                                   <label
-                                    className="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                                    className="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
                                     data-test-id="cf-ui-form-label"
                                     htmlFor="thief"
                                   >

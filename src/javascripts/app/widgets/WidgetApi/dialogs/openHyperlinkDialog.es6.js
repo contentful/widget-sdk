@@ -4,7 +4,7 @@ import modalDialog from 'modalDialog';
 import HyperlinkDialog, { LINK_TYPES } from 'app/widgets/WidgetApi/dialogs/HyperlinkDialog.es6';
 import WidgetAPIContext from '../WidgetApiContext.es6';
 import { newConfigFromRichTextField } from 'search/EntitySelector/Config.es6';
-import { isNodeTypeEnabled } from '../../rich_text/validations/index.es6';
+import { isNodeTypeEnabled } from 'app/widgets/rich_text/validations/index.es6';
 
 const nodeToHyperlinkType = {
   [INLINES.ENTRY_HYPERLINK]: LINK_TYPES.ENTRY,

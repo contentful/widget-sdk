@@ -11,7 +11,7 @@ import {
   getSpaceMemberships
 } from 'access_control/OrganizationMembershipRepository.es6';
 import { getAllSpaces, getAllRoles } from 'access_control/OrganizationMembershipRepository.es6';
-import ResolveLinks from '../../LinkResolver.es6';
+import ResolveLinks from 'app/OrganizationSettings/LinkResolver.es6';
 
 const UserDetailFetcher = createFetcherComponent(async ({ orgId, userId }) => {
   const endpoint = createOrganizationEndpoint(orgId);

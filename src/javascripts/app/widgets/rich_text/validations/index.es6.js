@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 // TODO: move closer to the root level (models?)
-import ValidationType from '../../../../components/field_dialog/RichTextValidationType.es6';
+import ValidationType from 'components/field_dialog/RichTextValidationType.es6';
 
 const getRichTextValidation = (field, validationType) => {
   return _(field.validations)

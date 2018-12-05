@@ -1,11 +1,12 @@
-const withServicesConsumer = require('../../../reactServiceContext').default;
 import React from 'react';
 import PropTypes from 'prop-types';
 
 import { TextLink } from '@contentful/forma-36-react-components';
 
-import CreateEntryButton, { Style } from '../../../components/CreateEntryButton';
-import Visible from '../../../components/shared/Visible/index.es6';
+import CreateEntryButton, { Style } from 'components/CreateEntryButton/index.es6';
+import Visible from 'components/shared/Visible/index.es6';
+
+const withServicesConsumer = require('../../../reactServiceContext').default;
 
 export const entityTypes = {
   Entry: 'Entry',

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { SpaceRole as SpaceRoleProp } from '../../PropTypes.es6';
+import { SpaceRole as SpaceRoleProp } from 'app/OrganizationSettings/Users/PropTypes.es6';
 import {
   Button,
   CheckboxField,
@@ -96,7 +96,7 @@ class SpaceRoleEditor extends React.Component {
         <DropdownList maxHeight={300}>
           <DropdownListItem>
             <CheckboxField
-              light
+              labelIsLight
               labelText={ADMIN_ROLE.name}
               checked={isAdmin}
               onChange={this.setRole(ADMIN_ROLE_ID)}
@@ -106,7 +106,7 @@ class SpaceRoleEditor extends React.Component {
           {options.map(option => (
             <DropdownListItem key={option.sys.id}>
               <CheckboxField
-                light
+                labelIsLight
                 labelText={option.name}
                 checked={value.includes(option.sys.id)}
                 value={option.sys.id}

@@ -1,4 +1,4 @@
-import * as accessChecker from './AccessChecker';
+import * as accessChecker from './AccessChecker/index.es6';
 import spaceContext from 'spaceContext';
 
 /**
