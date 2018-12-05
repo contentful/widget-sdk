@@ -196,4 +196,24 @@ describe('utils/StringUtils.es6', () => {
       expect(utils.joinWithAnd(fourItems, false)).toBe('absolutely, 100%, four and items');
     });
   });
+
+  describe('#article', () => {
+    it('should return empty string if no or empty word is given', () => {
+      expect(utils.article()).toBe('');
+      expect(utils.article('')).toBe('');
+    });
+
+    it('should return "an" if word begins with a vowel', () => {
+      expect(utils.article('apple')).toBe('an');
+      expect(utils.article('indigo')).toBe('an');
+      expect(utils.article('umbrella')).toBe('an');
+      expect(utils.article('elephant')).toBe('an');
+      expect(utils.article('operator')).toBe('an');
+    });
+
+    it('should return "a" if word begins with non-vowel', () => {
+      expect(utils.article('test')).toBe('a');
+      expect(utils.article('food')).toBe('a');
+    });
+  });
 });
