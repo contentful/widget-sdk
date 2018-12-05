@@ -77,12 +77,6 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
       dataViewType: 'spaces-settings-usage',
       title: 'Usage',
       reload: useSpaceEnv
-    },
-    apps: {
-      if: 'nav.appsEnabled && nav.canNavigateTo("apps")',
-      sref: makeRef('settings.apps.list'),
-      dataViewType: 'spaces-settings-apps',
-      title: 'Apps'
     }
   };
 
@@ -109,8 +103,7 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
     dropdownItems.keys,
     dropdownItems.webhooks,
     dropdownItems.previews,
-    dropdownItems.usage,
-    dropdownItems.apps
+    dropdownItems.usage
   ];
 
   const spaceSettingsDropdown = [
@@ -122,58 +115,71 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
     dropdownItems.webhooks,
     dropdownItems.extensions,
     dropdownItems.previews,
-    dropdownItems.usage,
-    dropdownItems.apps
+    dropdownItems.usage
   ];
 
-  return navBar([
-    !useSpaceEnv || isMaster
-      ? {
-          if: 'nav.canNavigateTo("spaceHome")',
-          sref: 'spaces.detail.home',
-          dataViewType: 'space-home',
-          icon: 'nav-home',
-          title: 'Space home'
-        }
-      : {
-          disabled: true,
-          tooltip: 'The space home is only available in the master environment.',
-          if: 'nav.canNavigateTo("spaceHome")',
-          icon: 'nav-home',
-          title: 'Space home'
-        },
-    {
-      if: 'nav.canNavigateTo("contentType")',
-      sref: makeRef('content_types.list'),
-      rootSref: makeRef('content_types'),
-      dataViewType: 'content-type-list',
-      icon: 'nav-ct',
-      title: 'Content model'
-    },
-    {
-      if: 'nav.canNavigateTo("entry")',
-      sref: makeRef('entries.list'),
-      rootSref: makeRef('entries'),
-      dataViewType: 'entry-list',
-      icon: 'nav-entries',
-      title: 'Content'
-    },
-    {
-      if: 'nav.canNavigateTo("asset")',
-      sref: makeRef('assets.list'),
-      rootSref: makeRef('assets'),
-      dataViewType: 'asset-list',
-      icon: 'nav-media',
-      title: 'Media'
-    },
-    {
-      if:
-        'nav.canNavigateTo("settings") || nav.canNavigateTo("apiKey") || nav.canNavigateTo("environments")',
-      dataViewType: 'space-settings',
-      rootSref: makeRef('settings'),
-      icon: 'nav-settings',
-      title: useSpaceEnv ? 'Settings' : 'Space settings',
-      children: useSpaceEnv ? envSettingsDropdown : spaceSettingsDropdown
-    }
-  ]);
+  return navBar(
+    [
+      !useSpaceEnv || isMaster
+        ? {
+            if: 'nav.canNavigateTo("spaceHome")',
+            sref: 'spaces.detail.home',
+            dataViewType: 'space-home',
+            icon: 'nav-home',
+            title: 'Space home'
+          }
+        : {
+            disabled: true,
+            tooltip: 'The space home is only available in the master environment.',
+            if: 'nav.canNavigateTo("spaceHome")',
+            icon: 'nav-home',
+            title: 'Space home'
+          },
+      {
+        if: 'nav.canNavigateTo("contentType")',
+        sref: makeRef('content_types.list'),
+        rootSref: makeRef('content_types'),
+        dataViewType: 'content-type-list',
+        icon: 'nav-ct',
+        title: 'Content model'
+      },
+      {
+        if: 'nav.canNavigateTo("entry")',
+        sref: makeRef('entries.list'),
+        rootSref: makeRef('entries'),
+        dataViewType: 'entry-list',
+        icon: 'nav-entries',
+        title: 'Content'
+      },
+      {
+        if: 'nav.canNavigateTo("asset")',
+        sref: makeRef('assets.list'),
+        rootSref: makeRef('assets'),
+        dataViewType: 'asset-list',
+        icon: 'nav-media',
+        title: 'Media'
+      },
+      {
+        if:
+          'nav.canNavigateTo("settings") || nav.canNavigateTo("apiKey") || nav.canNavigateTo("environments")',
+        dataViewType: 'space-settings',
+        rootSref: makeRef('settings'),
+        icon: 'nav-settings',
+        title: useSpaceEnv ? 'Settings' : 'Space settings',
+        children: useSpaceEnv ? envSettingsDropdown : spaceSettingsDropdown
+      }
+    ].concat(
+      !isMaster
+        ? []
+        : [
+            {
+              if: 'nav.appsEnabled && nav.canNavigateTo("apps")',
+              dataViewType: 'apps',
+              sref: makeRef('apps.list'),
+              rootSref: makeRef('apps'),
+              title: 'Apps'
+            }
+          ]
+    )
+  );
 }

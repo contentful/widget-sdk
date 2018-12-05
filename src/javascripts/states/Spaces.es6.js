@@ -11,6 +11,7 @@ import api from 'app/api/State.es6';
 import settings from 'states/settings';
 import home from 'states/space_home';
 import stackOnboarding from 'states/stackOnboarding';
+import apps from 'app/settings/apps/routes/index.es6';
 
 const store = getStore();
 
@@ -134,7 +135,8 @@ const spaceDetail = {
     settings,
     home,
     spaceEnvironment,
-    stackOnboarding
+    stackOnboarding,
+    apps
   ]
 };
 
