@@ -7,13 +7,17 @@ import {
   TableRow,
   Table,
   TableHead,
-  TableBody
+  TableBody,
+  TextLink
 } from '@contentful/forma-36-react-components';
+import { href } from 'states/Navigator.es6';
 
 import Workbench from 'app/common/Workbench.es6';
 
 export default class InvitationsList extends React.Component {
   static propTypes = {
+    orgId: PropTypes.string.isRequired,
+    membershipsCount: PropTypes.number.isRequired,
     invitations: PropTypes.arrayOf(
       PropTypes.shape({
         sys: PropTypes.shape({
@@ -38,8 +42,15 @@ export default class InvitationsList extends React.Component {
     ).isRequired
   };
 
+  getLinkToUsersList() {
+    return href({
+      path: ['account', 'organizations', 'users'],
+      params: { orgId: this.props.orgId }
+    });
+  }
+
   render() {
-    const { invitations, pendingMemberships } = this.props;
+    const { invitations, pendingMemberships, membershipsCount } = this.props;
     const unifiedInvitationsAndMemberships = invitations
       .map(({ email, role, sys: { id, createdAt } }) => ({
         id,
@@ -60,7 +71,8 @@ export default class InvitationsList extends React.Component {
     return (
       <Workbench className="invitation-list">
         <Workbench.Header>
-          <Workbench.Title>{`Invitations (${invitations.length})`}</Workbench.Title>
+          <Workbench.Title>{`Invited users (${invitations.length})`}</Workbench.Title>
+          <TextLink href={this.getLinkToUsersList()}>View all users ({membershipsCount})</TextLink>
         </Workbench.Header>
         <Workbench.Content>
           <Table>
@@ -73,10 +85,7 @@ export default class InvitationsList extends React.Component {
             </TableHead>
             <TableBody>
               {sortedList.map(({ id, createdAt, email, role }) => (
-                <TableRow
-                  key={id}
-                  extraClassNames="invitation-list__row"
-                  onClick={() => alert('invitation details')}>
+                <TableRow key={id} extraClassNames="invitation-list__row">
                   <TableCell>{email}</TableCell>
                   <TableCell>{role}</TableCell>
                   <TableCell>{createdAt.format('MMM Do YYYY, hh:mm a')}</TableCell>

@@ -7,8 +7,8 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { fetchAll } from 'data/CMA/FetchAll.es6';
 import { getMemberships } from 'access_control/OrganizationMembershipRepository.es6';
 
-import ResolveLinks from 'app/OrganizationSettings/LinkResolver.es6';
 import UserInvitationsList from './UserInvitationsList.es6';
+import ResolveLinks from '../LinkResolver.es6';
 
 const InvitationListFetcher = createFetcherComponent(({ orgId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
@@ -16,7 +16,7 @@ const InvitationListFetcher = createFetcherComponent(({ orgId }) => {
 
   return Promise.all([
     fetchAll(endpoint, ['invitations'], 100, { 'status[eq]': 'pending' }),
-    getMemberships(endpoint, { include: includePaths }).then(({ items, includes }) =>
+    getMemberships(endpoint, { include: includePaths, limit: 250 }).then(({ items, includes }) =>
       ResolveLinks({ paths: includePaths, items, includes })
     )
   ]);
@@ -42,22 +42,22 @@ export default class UserInvitationsListRouter extends React.Component {
             if (isLoading) {
               return <FetcherLoading message="Loading invitations..." />;
             }
+
             if (isError) {
               return <StateRedirect to="spaces.detail.entries.list" />;
             }
 
-            const [invitations, memberships] = data;
+            const [invitations, allMemberships] = data;
+            const pendingMemberships = allMemberships.filter(m => m.sys.user.firstName === null);
+            const membershipsCount = allMemberships.filter(m => m.sys.user.firstName !== null)
+              .length;
 
             return (
               <UserInvitationsList
+                orgId={orgId}
                 invitations={invitations}
-                pendingMemberships={memberships.filter(
-                  ({
-                    sys: {
-                      user: { firstName, lastName }
-                    }
-                  }) => firstName === null && lastName === null
-                )}
+                pendingMemberships={pendingMemberships}
+                membershipsCount={membershipsCount}
               />
             );
           }}

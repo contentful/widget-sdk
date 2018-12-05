@@ -16,7 +16,8 @@ import {
   TextInput,
   Icon,
   Spinner,
-  Notification
+  Notification,
+  TextLink
 } from '@contentful/forma-36-react-components';
 import { formatQuery } from './QueryBuilder.es6';
 import ResolveLinks from 'app/OrganizationSettings/LinkResolver.es6';
@@ -44,15 +45,11 @@ class UsersList extends React.Component {
     orgId: PropTypes.string.isRequired,
     spaceRoles: PropTypes.array,
     spaces: PropTypes.arrayOf(SpacePropType),
-    resource: PropTypes.shape({
-      usage: PropTypes.number,
-      limits: PropTypes.shape({
-        maximum: PropTypes.number
-      })
-    }),
+    numberOrgMemberships: PropTypes.number.isRequired,
     filters: PropTypes.arrayOf(FilterPropType),
     searchTerm: PropTypes.string.isRequired,
     updateSearchTerm: PropTypes.func.isRequired,
+    userInvitationsFlag: PropTypes.bool.isRequired,
     hasSsoEnabled: PropTypes.bool
   };
 
@@ -82,7 +79,7 @@ class UsersList extends React.Component {
   }
 
   fetch = async () => {
-    const { filters, searchTerm } = this.props;
+    const { filters, searchTerm, userInvitationsFlag } = this.props;
     const { pagination } = this.state;
     const filterQuery = formatQuery(filters.map(item => item.filter));
     const includePaths = ['sys.user'];
@@ -93,6 +90,11 @@ class UsersList extends React.Component {
       skip: pagination.skip,
       limit: pagination.limit
     };
+
+    if (userInvitationsFlag) {
+      // Skip all "pending" org memberships
+      query['sys.user.firstName[ne]'] = '';
+    }
 
     this.setState({ loading: true });
 
@@ -121,6 +123,13 @@ class UsersList extends React.Component {
     return href({
       path: ['account', 'organizations', 'users', 'detail'],
       params: { userId: user.sys.id }
+    });
+  }
+
+  getLinkToInvitationsList() {
+    return href({
+      path: ['account', 'organizations', 'users', 'invitations'],
+      params: { orgId: this.props.orgId }
     });
   }
 
@@ -166,7 +175,14 @@ class UsersList extends React.Component {
 
   render() {
     const { queryTotal, usersList, pagination, loading } = this.state;
-    const { searchTerm, resource, spaces, spaceRoles, filters } = this.props;
+    const {
+      searchTerm,
+      numberOrgMemberships,
+      spaces,
+      spaceRoles,
+      filters,
+      userInvitationsFlag
+    } = this.props;
 
     return (
       <Workbench testId="organization-users-page">
@@ -184,7 +200,12 @@ class UsersList extends React.Component {
             />
           </Workbench.Header.Search>
           <Workbench.Header.Actions>
-            {`${pluralize('users', resource.usage, true)} in your organization`}
+            <div>
+              <div>{`${pluralize('users', numberOrgMemberships, true)} in your organization`}</div>
+              {userInvitationsFlag && (
+                <TextLink href={this.getLinkToInvitationsList()}>View invited users</TextLink>
+              )}
+            </div>
             <Button icon="PlusCircle" href={this.getLinkToInvitation()}>
               Invite users
             </Button>
