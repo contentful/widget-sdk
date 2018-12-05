@@ -2,6 +2,7 @@ import { registerDirective, registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
 import * as K from 'utils/kefir.es6';
 import * as Navigator from 'states/Navigator.es6';
+import { getOptimizedApiClient } from 'app/widgets/WidgetApi/BulkFetchingOptimizedApiClient.es6';
 import * as PublicContentType from 'widgets/PublicContentType.es6';
 
 /**
@@ -90,7 +91,7 @@ registerController('WidgetApiController', [
       fields: $scope.fields // comes from entry editor controller
     };
 
-    this.space = spaceContext.cma;
+    this.space = getOptimizedApiClient(spaceContext.cma);
     this.entityHelpers = EntityHelpers.newForLocale($scope.locale.code);
     this.state = {
       goToEditor: function(entity) {
