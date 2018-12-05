@@ -36,7 +36,10 @@ angular
   ])
 
   .controller('UiTabController', [
-    function() {
+    'require',
+    function(require) {
+      var _ = require('lodash');
+
       function Tab(controller, name) {
         this.name = name;
         this.activate = () => {

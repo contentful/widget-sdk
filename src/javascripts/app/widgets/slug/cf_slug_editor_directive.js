@@ -28,6 +28,7 @@ angular
   .directive('cfSlugEditor', [
     'require',
     require => {
+      const _ = require('lodash');
       const slugUtils = require('slug');
       const moment = require('moment');
       const debounce = require('debounce');

@@ -19,6 +19,7 @@ angular
   .factory('data/StreamHashSet', [
     'require',
     require => {
+      const _ = require('lodash');
       const K = require('utils/kefir.es6');
 
       return {

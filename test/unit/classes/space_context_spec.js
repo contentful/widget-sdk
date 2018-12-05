@@ -1,5 +1,5 @@
 import * as sinon from 'helpers/sinon';
-import { isObject } from 'lodash';
+import _ from 'lodash';
 import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
 
 describe('spaceContext', () => {
@@ -476,7 +476,7 @@ describe('spaceContext', () => {
   describe('#uiConfig', () => {
     it('exposes the store', function() {
       this.resetWithSpace();
-      expect(isObject(this.spaceContext.uiConfig)).toBe(true);
+      expect(_.isObject(this.spaceContext.uiConfig)).toBe(true);
     });
   });
 

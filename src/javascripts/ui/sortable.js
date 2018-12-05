@@ -31,8 +31,10 @@
  *     a(data-drag-handle)
  */
 angular.module('cf.ui').directive('cfUiSortable', [
+  'require',
   'uiSortableDirective',
-  uiSortableDirectives => {
+  (require, uiSortableDirectives) => {
+    var _ = require('lodash');
     var uiSortable = uiSortableDirectives[0];
 
     var DEFAULTS = {

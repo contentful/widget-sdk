@@ -1,5 +1,6 @@
 import * as sinon from 'helpers/sinon';
 import * as K from 'test/helpers/mocks/kefir';
+import _ from 'lodash';
 
 angular
   .module('contentful/mocks')

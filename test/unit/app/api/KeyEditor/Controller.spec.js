@@ -1,4 +1,5 @@
 import ReactTestUtils from 'react-dom/test-utils';
+import _ from 'lodash';
 
 describe('app/api/KeyEditor/Controller.es6', () => {
   beforeEach(function() {

@@ -1,5 +1,6 @@
 import * as sinon from 'helpers/sinon';
 import * as K from 'helpers/mocks/kefir';
+import _ from 'lodash';
 
 describe('data/ContentTypeRepo/Published.es6', () => {
   let $q;

@@ -8,6 +8,7 @@ angular.module('contentful').controller('ValidationAssetTypesController', [
   '$scope',
   'require',
   function($scope, require) {
+    const _ = require('lodash');
     const mimetype = require('@contentful/mimetype');
     const controller = this;
 

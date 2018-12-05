@@ -12,6 +12,7 @@ angular.module('contentful').factory('contentfulClient', [
      * It's also been modified to make use of the CMA instead, with the X-Contentful-Skip-Transformation header.
      */
 
+    var _ = require('lodash');
     var $http = require('$http');
     var $q = require('$q');
     var qs = require('qs');

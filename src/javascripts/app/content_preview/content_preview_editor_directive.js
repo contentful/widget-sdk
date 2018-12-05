@@ -15,6 +15,7 @@ angular
     '$scope',
     'require',
     ($scope, require) => {
+      const _ = require('lodash');
       const $q = require('$q');
       const $state = require('$state');
       const $stateParams = require('$stateParams');

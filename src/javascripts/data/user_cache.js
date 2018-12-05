@@ -32,6 +32,7 @@ angular
   .factory('data/userCache', [
     'require',
     require => {
+      const _ = require('lodash');
       const memoize = require('utils/memoize.es6').default;
       const fetchAll = require('data/CMA/FetchAll.es6').fetchAll;
 

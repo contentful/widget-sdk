@@ -6,6 +6,7 @@ angular.module('contentful').controller('ListViewsController', [
   'resetList',
   'preserveStateAs',
   ($scope, require, getBlankView, resetList, preserveStateAs) => {
+    const _ = require('lodash');
     const createViewMigrator = require('data/ViewMigrator.es6').default;
     const createViewPersistor = require('data/ListViewPersistor.es6').default;
     const { Status, statusQueryKey } = require('app/ContentList/Search/Filters.es6');

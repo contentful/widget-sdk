@@ -1,4 +1,5 @@
 'use strict';
+import _ from 'lodash';
 
 describe('cfSearchResultsPaginator', () => {
   beforeEach(function() {

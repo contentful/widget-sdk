@@ -4,41 +4,44 @@ angular
   .module('cf.app')
 
   .directive('cfSnapshotSelector', [
-    () => ({
-      template: JST.cf_snapshot_selector(),
-      restrict: 'E',
-      controller: 'SnapshotSelectorController',
+    () => {
+      return {
+        template: JST.cf_snapshot_selector(),
+        restrict: 'E',
+        controller: 'SnapshotSelectorController',
 
-      link: function($scope, $el) {
-        const snapshotListSel = '[aria-label="snapshot-list"]';
-        const snapshotListBtnSel = '[aria-label="show-snapshot-list-btn"]';
+        link: function($scope, $el) {
+          const snapshotListSel = '[aria-label="snapshot-list"]';
+          const snapshotListBtnSel = '[aria-label="show-snapshot-list-btn"]';
 
-        const $snapshotSelectorContainer = $el.find(':first-child');
-        const $snapshotSelectorToggleBtn = $(snapshotListBtnSel);
+          const $snapshotSelectorContainer = $el.find(':first-child');
+          const $snapshotSelectorToggleBtn = $(snapshotListBtnSel);
 
-        document.addEventListener('click', hideSnapshotList, true);
+          document.addEventListener('click', hideSnapshotList, true);
 
-        $scope.$on('$destroy', () => {
-          document.removeEventListener('click', hideSnapshotList, true);
-        });
+          $scope.$on('$destroy', () => {
+            document.removeEventListener('click', hideSnapshotList, true);
+          });
 
-        function hideSnapshotList(e) {
-          const $target = $(e.target);
-          const keepListOpen =
-            $target.parents(snapshotListBtnSel).length || $target.parents(snapshotListSel).length;
+          function hideSnapshotList(e) {
+            const $target = $(e.target);
+            const keepListOpen =
+              $target.parents(snapshotListBtnSel).length || $target.parents(snapshotListSel).length;
 
-          if ($snapshotSelectorContainer.is(':visible') && !keepListOpen) {
-            $snapshotSelectorToggleBtn.click();
+            if ($snapshotSelectorContainer.is(':visible') && !keepListOpen) {
+              $snapshotSelectorToggleBtn.click();
+            }
           }
         }
-      }
-    })
+      };
+    }
   ])
 
   .controller('SnapshotSelectorController', [
     '$scope',
     'require',
     ($scope, require) => {
+      const _ = require('lodash');
       const K = require('utils/kefir.es6');
       const spaceContext = require('spaceContext');
       const moment = require('moment');

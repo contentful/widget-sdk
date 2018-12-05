@@ -14,6 +14,7 @@ angular
   .factory('data/editingInterfaces/transformer', [
     'require',
     require => {
+      const _ = require('lodash');
       const eiHelpers = require('editingInterfaces/helpers');
       const migrateWidgetId = require('widgets/migrations');
       const getDefaultWidgetId = require('widgets/default');

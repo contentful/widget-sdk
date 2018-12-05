@@ -11,6 +11,7 @@ angular
   .factory('activationEmailResender', [
     'require',
     require => {
+      var _ = require('lodash');
       var $q = require('$q');
       var Config = require('Config.es6');
       var logger = require('logger');

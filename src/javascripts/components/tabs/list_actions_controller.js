@@ -8,6 +8,7 @@ angular
     'require',
     'entityType',
     function ListActionsController($scope, require, entityType) {
+      const _ = require('lodash');
       const accessChecker = require('access_control/AccessChecker');
       const batchPerformer = require('batchPerformer');
 

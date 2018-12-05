@@ -3,6 +3,7 @@
 angular.module('contentful').factory('batchPerformer', [
   'require',
   require => {
+    var _ = require('lodash');
     var $q = require('$q');
     var spaceContext = require('spaceContext');
     var Analytics = require('analytics/Analytics.es6');

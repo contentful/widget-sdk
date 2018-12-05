@@ -3,6 +3,7 @@
 angular.module('contentful').factory('UserListHandler', [
   'require',
   require => {
+    const _ = require('lodash');
     const $q = require('$q');
     const spaceContext = require('spaceContext');
     const RoleRepository = require('access_control/RoleRepository.es6').default;

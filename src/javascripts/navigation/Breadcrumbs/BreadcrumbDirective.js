@@ -10,6 +10,7 @@
 angular.module('contentful').directive('cfBreadcrumbs', [
   'require',
   require => {
+    const _ = require('lodash');
     const $parse = require('$parse');
     const $state = require('$state');
     const Analytics = require('analytics/Analytics.es6');

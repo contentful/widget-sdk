@@ -22,6 +22,7 @@ angular
     '$scope',
     '$attrs',
     function(require, $scope, $attrs) {
+      const _ = require('lodash');
       const spaceContext = require('spaceContext');
       const K = require('utils/kefir.es6');
       const createFieldLocaleDoc = require('app/entity_editor/FieldLocaleDocument.es6').default;

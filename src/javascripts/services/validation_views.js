@@ -7,6 +7,7 @@
 angular.module('contentful').service('validationViews', [
   'require',
   require => {
+    var _ = require('lodash');
     var urlRegex = require('utils/StringUtils.es6').urlRegex;
 
     /**

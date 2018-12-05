@@ -37,6 +37,7 @@ angular
     '$scope',
     'require',
     function($scope, require) {
+      const _ = require('lodash');
       const TheLocaleStore = require('TheLocaleStore');
       const K = require('utils/kefir.es6');
       const spaceContext = require('spaceContext');

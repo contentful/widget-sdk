@@ -1,5 +1,6 @@
 import * as K from 'helpers/mocks/kefir';
 import { create as createDocument } from 'helpers/mocks/entity_editor_document';
+import _ from 'lodash';
 
 describe('cfSnapshotSelector', () => {
   const PER_PAGE = 20; // page size

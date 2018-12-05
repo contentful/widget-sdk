@@ -14,6 +14,7 @@ angular.module('contentful').controller('ContentTypeEditorController', [
   '$scope',
   'require',
   function ContentTypeEditorController($scope, require) {
+    const _ = require('lodash');
     const controller = this;
     const $state = require('$state');
     const validation = require('@contentful/validation');

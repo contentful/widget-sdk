@@ -1,4 +1,5 @@
 import * as K from 'helpers/mocks/kefir';
+import _ from 'lodash';
 
 describe('account/IframeChannel.es6', () => {
   beforeEach(function() {

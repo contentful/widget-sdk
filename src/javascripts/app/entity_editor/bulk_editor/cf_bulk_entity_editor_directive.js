@@ -32,6 +32,7 @@ angular
   .directive('cfBulkEntityEditor', [
     'require',
     require => {
+      const _ = require('lodash');
       const $q = require('$q');
       const $controller = require('$controller');
       const $timeout = require('$timeout');
@@ -181,6 +182,7 @@ angular
     '$scope',
     'require',
     function($scope, require) {
+      const _ = require('lodash');
       const makeNotify = require('app/entity_editor/Notifications.es6').makeNotify;
       const $controller = require('$controller');
       const spaceContext = require('spaceContext');

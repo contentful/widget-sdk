@@ -1,4 +1,5 @@
 import * as K from 'helpers/mocks/kefir';
+import _ from 'lodash';
 
 describe('data/sharejs/Connection.es6', () => {
   beforeEach(function() {

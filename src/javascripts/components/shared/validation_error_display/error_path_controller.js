@@ -7,6 +7,7 @@ angular.module('contentful').controller('ErrorPathController', [
   function ErrorPathController($scope, $attrs, require) {
     const controller = this;
     const logger = require('logger');
+    const _ = require('lodash');
 
     controller.messages = [];
 

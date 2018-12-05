@@ -17,7 +17,7 @@
 angular.module('cf.ui', ['cf.utils']);
 angular.module('contentful/environment', []);
 angular.module('contentful/init', []);
-angular.module('cf.forms', []);
+angular.module('cf.forms', ['cf.utils']);
 /**
  * @ngdoc module
  * @name cf.data

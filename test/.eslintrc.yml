@@ -13,10 +13,8 @@ env:
   jasmine: false
 globals:
   angular: false
-  _: false
   JST: false
   $: false
-
 
   jasmine: false
   sinon: false

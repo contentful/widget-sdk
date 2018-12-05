@@ -1,4 +1,5 @@
 import * as sinon from 'helpers/sinon';
+import _ from 'lodash';
 
 describe('Promised loader service', () => {
   let loader, stubs, $rootScope, $q;

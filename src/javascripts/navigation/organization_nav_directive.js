@@ -7,6 +7,7 @@
 angular.module('contentful').directive('cfOrganizationNav', [
   'require',
   require => {
+    var _ = require('lodash');
     var navBar = require('navigation/templates/NavBar.es6').default;
 
     return {

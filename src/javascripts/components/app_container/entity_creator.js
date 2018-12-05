@@ -3,6 +3,7 @@
 angular.module('contentful').factory('entityCreator', [
   'require',
   require => {
+    const _ = require('lodash');
     const { Notification } = require('@contentful/forma-36-react-components');
     const logger = require('logger');
     const enforcements = require('access_control/Enforcements.es6');

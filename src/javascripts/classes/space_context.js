@@ -18,6 +18,7 @@ angular
   .factory('spaceContext', [
     'require',
     require => {
+      const _ = require('lodash');
       const $q = require('$q');
       const TheLocaleStore = require('TheLocaleStore');
       const createUserCache = require('data/userCache');

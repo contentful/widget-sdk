@@ -24,10 +24,6 @@ require('codemirror/addon/mode/overlay');
 // CodeMirror: mixed HTML mode for UI Extension editor
 require('codemirror/mode/htmlmixed/htmlmixed');
 
-// This needs to be called after everything else so we override any
-// previously imported versions of lodash
-window._ = require('lodash');
-
 // This is on window so that `src/javascripts/prelude.js` can
 // pick it up and properly register the libraries during initial
 // invocation.
@@ -72,7 +68,7 @@ window.libs = [
   ['ldclient-js', require('ldclient-js')],
   ['legacy-client', require('./legacy_client/client.js')],
   ['localesList', require('./locales_list.json')],
-  ['lodash', window._],
+  ['lodash', require('lodash')],
   ['lodash/fp', require('lodash/fp')],
   ['marked', require('marked-ast')._marked],
   ['MarkedAst', require('marked-ast')],

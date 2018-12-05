@@ -11,6 +11,7 @@ angular
   .factory('data/Entries', [
     'require',
     require => {
+      const _ = require('lodash');
       const TheLocaleStore = require('TheLocaleStore');
 
       return {

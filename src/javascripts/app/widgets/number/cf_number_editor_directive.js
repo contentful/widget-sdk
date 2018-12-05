@@ -8,6 +8,7 @@ angular
       const parseNumber = require('cfNumberEditor/parseNumber');
       const InputUpdater = require('ui/inputUpdater');
       const debounce = require('debounce');
+      const _ = require('lodash');
 
       return {
         scope: {},
@@ -81,52 +82,56 @@ angular
    * @name cfNumberEditor/parseNumber
    */
   .factory('cfNumberEditor/parseNumber', [
-    () => (value, type) => {
-      // This has saner semantics than parseFloat.
-      // For values with chars in 'em, it gives
-      // us NaN unlike parseFloat
-      const floatVal = +value;
-      const hasDot = /\./g.test(value);
-      const hasFractional = /\.\d+/g.test(value);
+    'require',
+    require => {
+      const _ = require('lodash');
+      return (value, type) => {
+        // This has saner semantics than parseFloat.
+        // For values with chars in 'em, it gives
+        // us NaN unlike parseFloat
+        const floatVal = +value;
+        const hasDot = /\./g.test(value);
+        const hasFractional = /\.\d+/g.test(value);
 
-      if (_.isEmpty(value)) {
+        if (_.isEmpty(value)) {
+          return {
+            isValid: true,
+            warning: '',
+            value: undefined
+          };
+        }
+
+        if (isNaN(floatVal)) {
+          return {
+            isValid: false,
+            warning: 'Unrecognized Number',
+            value: value
+          };
+        }
+
+        if (type === 'Integer' && hasDot) {
+          const intVal = parseInt(value, 10);
+
+          return {
+            isValid: false,
+            warning: 'Recognized value: ' + intVal,
+            value: intVal
+          };
+        }
+
+        if (hasDot && !hasFractional) {
+          return {
+            isValid: false,
+            warning: 'Recognized value: ' + floatVal,
+            value: floatVal
+          };
+        }
+
         return {
           isValid: true,
           warning: '',
-          value: undefined
-        };
-      }
-
-      if (isNaN(floatVal)) {
-        return {
-          isValid: false,
-          warning: 'Unrecognized Number',
-          value: value
-        };
-      }
-
-      if (type === 'Integer' && hasDot) {
-        const intVal = parseInt(value, 10);
-
-        return {
-          isValid: false,
-          warning: 'Recognized value: ' + intVal,
-          value: intVal
-        };
-      }
-
-      if (hasDot && !hasFractional) {
-        return {
-          isValid: false,
-          warning: 'Recognized value: ' + floatVal,
           value: floatVal
         };
-      }
-
-      return {
-        isValid: true,
-        warning: '',
-        value: floatVal
       };
     }
   ]);

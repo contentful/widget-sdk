@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 describe('UserSpaceInvitationController', () => {
   beforeEach(function() {
     module('contentful/test');

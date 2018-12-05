@@ -1,5 +1,7 @@
 'use strict';
 
+import _ from 'lodash';
+
 describe('markdown_editor/PreviewRender.es6', () => {
   let treeBuilder, buildTree;
 

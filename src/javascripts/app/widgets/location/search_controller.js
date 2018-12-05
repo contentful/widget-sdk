@@ -4,6 +4,7 @@ angular.module('cf.app').controller('LocationEditorSearchController', [
   'require',
   '$scope',
   function(require, $scope) {
+    const _ = require('lodash');
     const $q = require('$q');
     const memoize = require('utils/memoize.es6').default;
     const LazyLoader = require('LazyLoader');

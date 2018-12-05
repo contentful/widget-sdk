@@ -1,6 +1,7 @@
 /* global SystemJS */
 
 import $q from './$q';
+import _ from 'lodash';
 
 /**
  * Creates a mocked SystemJS system, that is isolated

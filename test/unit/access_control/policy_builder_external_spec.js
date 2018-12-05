@@ -1,5 +1,7 @@
 'use strict';
 
+import _ from 'lodash';
+
 describe('Policy Builder, to external representation', () => {
   let toExternal, CONFIG;
 

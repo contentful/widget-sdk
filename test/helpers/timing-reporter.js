@@ -1,6 +1,8 @@
 /* global performance */
 'use strict';
 
+import _ from 'lodash';
+
 // uncomment for gathering spec performance
 // jasmine.getEnv().addReporter(createTimingReporter());
 

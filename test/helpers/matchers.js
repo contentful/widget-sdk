@@ -1,5 +1,7 @@
 'use strict';
 
+import _ from 'lodash';
+
 // FIXME Somehow we need to add the matchers before every test case. If
 // we add them once globally they are removed later and the tests fail.
 beforeEach(() => {

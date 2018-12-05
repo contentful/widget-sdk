@@ -1,4 +1,5 @@
 'use strict';
+import _ from 'lodash';
 
 describe('markdown_editor/commands.es6', () => {
   let textarea, editor, commands, cm;

@@ -4,6 +4,7 @@ angular
   .directive('cfBulkEditor', [
     'require',
     require => {
+      const _ = require('lodash');
       const K = require('utils/kefir.es6');
       const accessChecker = require('access_control/AccessChecker');
       const spaceContext = require('spaceContext');

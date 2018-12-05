@@ -1,5 +1,6 @@
 'use strict';
 import { create as createDocument } from 'helpers/mocks/entity_editor_document';
+import _ from 'lodash';
 
 describe('EntityEditor/DataFields', () => {
   beforeEach(() => {

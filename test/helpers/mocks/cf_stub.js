@@ -1,5 +1,7 @@
 'use strict';
 
+import _ from 'lodash';
+
 angular
   .module('contentful/mocks')
 

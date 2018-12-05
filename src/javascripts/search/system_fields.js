@@ -4,7 +4,10 @@ angular
   .module('contentful')
 
   .factory('systemFields', [
-    () => {
+    'require',
+    require => {
+      var _ = require('lodash');
+
       var createdAt = {
         id: 'createdAt',
         name: 'Created',

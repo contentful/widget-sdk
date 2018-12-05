@@ -1,4 +1,5 @@
 'use strict';
+import _ from 'lodash';
 
 describe('Policy Builder, default rule', () => {
   let getDefaultRuleFor, getDefaultRuleGetterFor, CONFIG;

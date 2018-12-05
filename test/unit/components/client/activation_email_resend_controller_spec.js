@@ -1,4 +1,5 @@
 import * as K from 'helpers/mocks/kefir';
+import _ from 'lodash';
 
 describe('activationEmailResendController', () => {
   let moment;
@@ -68,11 +69,14 @@ describe('activationEmailResendController', () => {
 
   describe('with user not activated yet', () => {
     beforeEach(() => {
+      jasmine.clock().uninstall();
       jasmine.clock().install();
       jasmine.clock().mockDate(new Date(2016, 1, 1));
     });
 
-    afterEach(jasmine.clock().uninstall);
+    afterEach(() => {
+      jasmine.clock().uninstall();
+    });
 
     it('opens the resend activation email dialog', function() {
       this.setUser({ confirmed: false });

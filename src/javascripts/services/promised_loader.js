@@ -1,9 +1,12 @@
 'use strict';
 
 angular.module('contentful').factory('PromisedLoader', [
+  'require',
   '$q',
   'debounce',
-  ($q, debounce) => {
+  (require, $q, debounce) => {
+    var _ = require('lodash');
+
     function PromisedLoader() {
       this.inProgress = false;
       this._loadPromise = debounce(this._loadPromiseImmediately, 500, { leading: true });

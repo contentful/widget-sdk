@@ -25,6 +25,7 @@ angular
     'require',
     '$scope',
     (require, $scope) => {
+      const _ = require('lodash');
       const $q = require('$q');
       const K = require('utils/kefir.es6');
       const spaceContext = require('spaceContext');
@@ -150,6 +151,7 @@ angular
     'require',
     '$scope',
     function(require, $scope) {
+      const _ = require('lodash');
       const store = require('TheLocaleStore');
 
       const field = $scope.widget.field;
@@ -165,8 +167,10 @@ angular
   ])
 
   .controller('SnapshotComparisonController', [
+    'require',
     '$scope',
-    $scope => {
+    (require, $scope) => {
+      const _ = require('lodash');
       const field = $scope.field;
       const locale = $scope.locale;
       const fieldPath = ['fields', field.id, locale.internal_code];

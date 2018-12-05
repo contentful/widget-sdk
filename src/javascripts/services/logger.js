@@ -53,6 +53,7 @@
 angular.module('contentful').factory('logger', [
   'require',
   require => {
+    var _ = require('lodash');
     var $window = require('$window');
     var bugsnag = require('bugsnag');
     var environment = require('environment');

@@ -1,5 +1,7 @@
 'use strict';
 
+import _ from 'lodash';
+
 describe('data/editingInterfaces/transformer', () => {
   let getDefaultWidget;
 

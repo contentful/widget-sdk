@@ -1,5 +1,7 @@
 'use strict';
 
+import _ from 'lodash';
+
 describe('widgets/API', () => {
   beforeEach(function() {
     module('contentful/test', $provide => {

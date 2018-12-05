@@ -3,6 +3,7 @@
 angular.module('contentful').factory('activationEmailResendController', [
   'require',
   require => {
+    const _ = require('lodash');
     const $timeout = require('$timeout');
     const $q = require('$q');
     const moment = require('moment');

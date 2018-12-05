@@ -8,6 +8,7 @@ angular.module('contentful').controller('ValidationLinkTypeController', [
   'require',
   '$scope',
   (require, $scope) => {
+    const _ = require('lodash');
     const spaceContext = require('spaceContext');
     const K = require('utils/kefir.es6');
 

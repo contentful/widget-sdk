@@ -10,6 +10,7 @@ angular
   .factory('contentTypeEditor/metadataDialog', [
     'require',
     require => {
+      const _ = require('lodash');
       const $rootScope = require('$rootScope');
       const modalDialog = require('modalDialog');
       const Command = require('command');
@@ -129,6 +130,7 @@ angular
     '$scope',
     'require',
     ($scope, require) => {
+      const _ = require('lodash');
       const stringUtils = require('utils/StringUtils.es6');
       const ID_REGEXP = /^[a-zA-Z0-9-_.]*$/;
 

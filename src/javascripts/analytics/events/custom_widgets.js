@@ -6,6 +6,7 @@ angular
   .factory('analyticsEvents/customWidgets', [
     'require',
     require => {
+      const _ = require('lodash');
       const Analytics = require('analytics/Analytics.es6');
       const spaceContext = require('spaceContext');
       const getFieldLabel = require('fieldFactory').getLabel;

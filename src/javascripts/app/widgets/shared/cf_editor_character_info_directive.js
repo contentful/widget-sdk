@@ -1,5 +1,8 @@
 angular.module('contentful').directive('cfEditorCharacterInfo', [
-  () => {
+  'require',
+  require => {
+    const _ = require('lodash');
+
     // If the character count is less than this number of charachters
     // away from the constraint we set the state to 'approaching'
     const CLOSE_TO_CONSTRAINT = 10;

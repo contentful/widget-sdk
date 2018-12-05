@@ -11,6 +11,7 @@ angular
   .directive('cfContentTypePreview', [
     'require',
     require => {
+      const _ = require('lodash');
       const getContentTypePreview = require('contentTypePreview');
       const template = require('app/ContentModel/Editor/ContentTypePreviewTemplate.es6').default;
 
@@ -75,8 +76,10 @@ angular
    * response.
    */
   .factory('contentTypePreview', [
+    'require',
     '$q',
-    $q => {
+    (require, $q) => {
+      const _ = require('lodash');
       const orderedKeys = ['name', 'description', 'displayField', 'fields', 'sys'];
 
       getContentTypePreview.fromData = fromData;

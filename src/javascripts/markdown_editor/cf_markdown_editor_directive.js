@@ -9,6 +9,7 @@ angular.module('contentful').directive('cfMarkdownEditor', [
       RTL: 'rtl'
     };
 
+    const _ = require('lodash');
     const $timeout = require('$timeout');
     const LazyLoader = require('LazyLoader');
     const MarkdownEditor = require('markdown_editor/markdown_editor.es6');

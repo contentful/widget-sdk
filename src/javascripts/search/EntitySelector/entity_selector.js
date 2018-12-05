@@ -9,6 +9,7 @@
 angular.module('contentful').factory('entitySelector', [
   'require',
   require => {
+    var _ = require('lodash');
     var modalDialog = require('modalDialog');
     var $q = require('$q');
     const {

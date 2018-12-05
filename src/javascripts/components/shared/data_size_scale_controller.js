@@ -16,6 +16,7 @@ angular.module('contentful').controller('DataSizeScaleController', [
   '$attrs',
   'require',
   function($scope, $attrs, require) {
+    const _ = require('lodash');
     const $parse = require('$parse');
     const controller = this;
 

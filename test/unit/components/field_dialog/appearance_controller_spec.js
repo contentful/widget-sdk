@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 describe('FieldDialogAppearanceController', () => {
   beforeEach(function() {
     module('contentful/test');

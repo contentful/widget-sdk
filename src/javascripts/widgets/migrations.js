@@ -62,6 +62,7 @@ angular
   .factory('widgets/migrations', [
     'require',
     require => {
+      var _ = require('lodash');
       var MIGRATIONS = require('widgets/migrations/data');
 
       /**

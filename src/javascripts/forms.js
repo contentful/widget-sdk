@@ -44,22 +44,26 @@ angular
    * and `ngModel:commit` events fired by the `ngModel` controller.
    */
   .directive('cfNoForm', [
-    () => ({
-      restrict: 'A',
-      require: 'ngModel',
+    'require',
+    require => {
+      var _ = require('lodash');
+      return {
+        restrict: 'A',
+        require: 'ngModel',
 
-      link: function(scope, _elem, _attrs, modelCtrl) {
-        modelCtrl.$setDirty = _.noop;
-        scope.$on('ngModel:update', stopThisPropagation);
-        scope.$on('ngModel:commit', stopThisPropagation);
+        link: function(scope, _elem, _attrs, modelCtrl) {
+          modelCtrl.$setDirty = _.noop;
+          scope.$on('ngModel:update', stopThisPropagation);
+          scope.$on('ngModel:commit', stopThisPropagation);
 
-        function stopThisPropagation(ev, ngModel) {
-          if (ngModel === modelCtrl) {
-            ev.stopPropagation();
+          function stopThisPropagation(ev, ngModel) {
+            if (ngModel === modelCtrl) {
+              ev.stopPropagation();
+            }
           }
         }
-      }
-    })
+      };
+    }
   ])
 
   /**

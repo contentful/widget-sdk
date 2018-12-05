@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 describe('widgets/default', () => {
   let getDefault, field;
   afterEach(() => {

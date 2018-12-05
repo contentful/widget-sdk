@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 describe('Generic transformer', () => {
   beforeEach(function() {
     module('contentful/test');

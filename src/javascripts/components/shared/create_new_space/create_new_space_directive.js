@@ -21,6 +21,7 @@ angular.module('contentful').controller('createSpaceController', [
   'require',
   '$element',
   function($scope, require, $element) {
+    const _ = require('lodash');
     const controller = this;
     const $rootScope = require('$rootScope');
     const client = require('client');

@@ -1,6 +1,7 @@
 import * as sinon from 'helpers/sinon';
 import * as K from 'test/helpers/mocks/kefir';
 import $q from '$q';
+import _ from 'lodash';
 import { create as createResourceState } from 'data/document/ResourceStateManager.es6';
 
 /**

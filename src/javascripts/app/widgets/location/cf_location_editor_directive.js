@@ -3,6 +3,7 @@
 angular.module('cf.app').directive('cfLocationEditor', [
   'require',
   require => {
+    const _ = require('lodash');
     const $controller = require('$controller');
     const LocationMap = require('app/widgets/location/Map.es6');
 

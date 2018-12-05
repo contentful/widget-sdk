@@ -3,6 +3,7 @@
 angular.module('contentful').factory('createRoleRemover', [
   'require',
   require => {
+    const _ = require('lodash');
     const ReloadNotification = require('ReloadNotification');
     const $q = require('$q');
     const $rootScope = require('$rootScope');

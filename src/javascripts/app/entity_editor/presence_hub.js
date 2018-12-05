@@ -13,6 +13,7 @@ angular
   .factory('entityEditor/Document/PresenceHub', [
     'require',
     require => {
+      const _ = require('lodash');
       const $interval = require('$interval');
       const K = require('utils/kefir.es6');
       const FOCUS_THROTTLE = 10e3;

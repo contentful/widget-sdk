@@ -1,5 +1,7 @@
 'use strict';
 
+import _ from 'lodash';
+
 describe('TheLocaleStore', () => {
   const makeLocale = (code, sid = 'SID') => {
     return {

@@ -3,6 +3,7 @@
 angular.module('contentful').factory('fieldDecorator', [
   'require',
   require => {
+    const _ = require('lodash');
     const schemas = require('@contentful/validation').schemas;
     const fieldSchema = schemas.ContentType.atItems(['fields']);
 

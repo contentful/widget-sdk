@@ -26,6 +26,7 @@ angular
     'require',
     'controls',
     ($scope, require, controls) => {
+      const _ = require('lodash');
       const K = require('utils/kefir.es6');
       const trackCustomWidgets = require('analyticsEvents/customWidgets');
 

@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 describe('entitySelector', () => {
   beforeEach(function() {
     module('contentful/test');

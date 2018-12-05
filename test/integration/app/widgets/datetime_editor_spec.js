@@ -1,5 +1,7 @@
 'use strict';
 
+import _ from 'lodash';
+
 describe('Datetime Editor', () => {
   beforeEach(function() {
     module('contentful/test');

@@ -27,6 +27,7 @@ angular
   .directive('cfEntityField', [
     'require',
     require => {
+      const _ = require('lodash');
       const INLINE_REFERENCE_FEATURE_FLAG = 'feature-at-02-2018-inline-reference-field';
       const RTL_SUPPORT_FEATURE_FLAG = 'feature-at-03-2018-rtl-support';
 

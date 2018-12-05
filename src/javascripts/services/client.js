@@ -3,6 +3,7 @@
 angular.module('contentful').factory('client', [
   'require',
   require => {
+    var _ = require('lodash');
     var $q = require('$q');
     var Config = require('Config.es6');
     var Client = require('legacy-client');

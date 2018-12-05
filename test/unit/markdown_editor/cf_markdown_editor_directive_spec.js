@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 describe('cfMarkdownEditor', () => {
   beforeEach(function() {
     this.markdownEditorActions = { trackMarkdownEditorAction: sinon.stub() };

@@ -14,6 +14,7 @@ angular
   .factory('TheAccountView', [
     'require',
     require => {
+      const _ = require('lodash');
       const $q = require('$q');
       const spaceContext = require('spaceContext');
       const OrganizationRoles = require('services/OrganizationRoles.es6');

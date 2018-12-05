@@ -7,6 +7,7 @@ angular
     '$scope',
     'require',
     function($scope, require) {
+      const _ = require('lodash');
       const controller = this;
       const $q = require('$q');
       const Paginator = require('classes/Paginator.es6').default;

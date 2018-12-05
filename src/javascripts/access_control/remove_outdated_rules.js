@@ -3,6 +3,7 @@
 angular.module('contentful').factory('PolicyBuilder/removeOutdatedRules', [
   'require',
   require => {
+    const _ = require('lodash');
     const CONFIG = require('PolicyBuilder/CONFIG');
 
     const PATHS = ['entries.allowed', 'entries.denied', 'assets.allowed', 'assets.denied'];

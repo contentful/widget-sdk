@@ -9,6 +9,7 @@ angular
   .factory('EntityEditor/DataFields', [
     'require',
     require => {
+      const _ = require('lodash');
       const TheLocaleStore = require('TheLocaleStore');
       const K = require('utils/kefir.es6');
 

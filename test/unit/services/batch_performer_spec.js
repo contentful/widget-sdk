@@ -1,5 +1,7 @@
 'use strict';
 
+import _ from 'lodash';
+
 describe('Batch performer service', () => {
   const ENTITY_API = ['publish', 'unpublish', 'archive', 'unarchive', 'delete'];
   const API = ENTITY_API.concat(['duplicate']);

@@ -4,6 +4,7 @@ angular.module('contentful').controller('EntryListColumnsController', [
   '$scope',
   'require',
   ($scope, require) => {
+    const _ = require('lodash');
     const systemFields = require('systemFields');
 
     const SORTABLE_TYPES = ['Boolean', 'Date', 'Integer', 'Number', 'Symbol', 'Location'];

@@ -7,6 +7,7 @@
 angular.module('contentful').factory('widgets', [
   'require',
   require => {
+    var _ = require('lodash');
     var fieldFactory = require('fieldFactory');
     var deepFreeze = require('utils/Freeze.es6').deepFreeze;
     var applyDefaultValues = require('widgets/WidgetParametersUtils.es6').applyDefaultValues;

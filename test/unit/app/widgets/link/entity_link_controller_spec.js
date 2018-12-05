@@ -1,4 +1,5 @@
 import $q from '$q';
+import _ from 'lodash';
 
 describe('EntityLinkController', () => {
   beforeEach(function() {

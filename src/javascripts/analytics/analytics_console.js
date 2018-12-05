@@ -20,6 +20,7 @@ angular
   .factory('analytics/console', [
     'require',
     require => {
+      const _ = require('lodash');
       const $compile = require('$compile');
       const $rootScope = require('$rootScope');
       const moment = require('moment');

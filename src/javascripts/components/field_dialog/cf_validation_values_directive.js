@@ -7,6 +7,7 @@
 angular.module('contentful').directive('cfValidationValues', [
   'require',
   require => {
+    const _ = require('lodash');
     const KEYCODES = require('utils/keycodes.es6').default;
     const normalizeWhiteSpace = require('utils/StringUtils.es6').normalizeWhiteSpace;
 

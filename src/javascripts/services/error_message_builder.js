@@ -10,7 +10,9 @@ angular
    * @method {function (error:Error): string} baseErrorMessageBuilder
    */
   .factory('baseErrorMessageBuilder', [
-    () => {
+    'require',
+    require => {
+      var _ = require('lodash');
       var messages = {
         size: function(error) {
           if (_.isString(error.value)) {
@@ -148,6 +150,7 @@ angular
   .factory('errorMessageBuilder', [
     'require',
     require => {
+      var _ = require('lodash');
       var moment = require('moment');
       var joinAnd = require('utils/StringUtils.es6').joinAnd;
       var mimetypeGroupNames = require('@contentful/mimetype').getGroupNames();

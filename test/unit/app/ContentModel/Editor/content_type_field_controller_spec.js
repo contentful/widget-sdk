@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 // TODO rewrite this with new interaction test framework
 describe('Content Type Field Controller', () => {
   beforeEach(module('contentful/test'));

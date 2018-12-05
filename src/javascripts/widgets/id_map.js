@@ -19,6 +19,7 @@
 angular.module('contentful').factory('widgets/IDMap', [
   'require',
   require => {
+    var _ = require('lodash');
     var TheLocaleStore = require('TheLocaleStore');
 
     return createIDMap;

@@ -1,5 +1,6 @@
 import { create as createDocument } from 'helpers/mocks/entity_editor_document';
 import * as K from 'utils/kefir.es6';
+import _ from 'lodash';
 
 describe('Entry Editor Controller', function() {
   this.user = { firstName: 'John', lastName: 'Doe', sys: { id: '123' } };

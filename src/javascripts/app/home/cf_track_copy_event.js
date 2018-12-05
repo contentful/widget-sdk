@@ -18,6 +18,7 @@ angular
   .directive('cfTrackCopyEvent', [
     'require',
     require => {
+      const _ = require('lodash');
       const $document = require('$document');
       const $window = require('$window');
       const analyticsEvents = require('analytics/events/home.es6');

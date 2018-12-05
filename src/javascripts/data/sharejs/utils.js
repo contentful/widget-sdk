@@ -9,6 +9,7 @@
 angular.module('cf.data').factory('data/ShareJS/Utils', [
   'require',
   require => {
+    const _ = require('lodash');
     const $q = require('$q');
 
     return {

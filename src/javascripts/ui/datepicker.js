@@ -16,6 +16,7 @@ angular
     'require',
     require => {
       var Pikaday = require('pikaday');
+      var _ = require('lodash');
 
       var I18N = {
         previousMonth: 'Previous Month',

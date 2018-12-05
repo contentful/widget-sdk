@@ -17,6 +17,7 @@ angular
   .factory('analytics/segment', [
     'require',
     require => {
+      const _ = require('lodash');
       const $window = require('$window');
       const $q = require('$q');
       const CallBuffer = require('utils/CallBuffer.es6');

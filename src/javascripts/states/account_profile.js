@@ -9,6 +9,7 @@ angular
   .factory('states/account/profile', [
     'require',
     require => {
+      var _ = require('lodash');
       var base = require('states/Base.es6').default;
       var h = require('utils/legacy-html-hyperscript').h;
 

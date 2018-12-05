@@ -1,5 +1,7 @@
 'use strict';
 
+import _ from 'lodash';
+
 describe('cfContentTypePreview directive', () => {
   beforeEach(
     module('contentful/test', $provide => {

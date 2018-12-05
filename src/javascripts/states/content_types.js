@@ -10,6 +10,7 @@ angular
   .factory('states/contentTypes', [
     'require',
     require => {
+      var _ = require('lodash');
       var contextHistory = require('navigation/Breadcrumbs/History.es6').default;
       var crumbFactory = require('navigation/Breadcrumbs/Factory.es6');
 

@@ -18,6 +18,7 @@ angular
   .directive('cfSnapshotSidebarList', [
     'require',
     require => {
+      const _ = require('lodash');
       const K = require('utils/kefir.es6');
       const caseof = require('sum-types').caseof;
       const spaceContext = require('spaceContext');

@@ -13,6 +13,7 @@ angular
   .factory('widgets/API', [
     'require',
     require => {
+      var _ = require('lodash');
       var Channel = require('widgets/channel');
       var TheLocaleStore = require('TheLocaleStore');
       var createIDMap = require('widgets/IDMap');

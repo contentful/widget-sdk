@@ -1,5 +1,7 @@
 'use strict';
 
+import _ from 'lodash';
+
 describe('Tracking persistent notification', () => {
   beforeEach(function() {
     module('contentful/test');

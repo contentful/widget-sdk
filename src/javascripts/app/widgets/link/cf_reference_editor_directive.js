@@ -5,6 +5,7 @@ angular
   .directive('cfReferenceEditor', [
     'require',
     require => {
+      const _ = require('lodash');
       const createController = require('app/widgets/link/ReferenceEditorController.es6').default;
 
       return {

@@ -26,7 +26,10 @@ angular
    * client.getEntries(query).then(handleResponses);
    */
   .factory('data/ApiClient', [
-    () => {
+    'require',
+    require => {
+      const _ = require('lodash');
+
       function Client(spaceEndpoint) {
         this._endpoint = spaceEndpoint;
       }

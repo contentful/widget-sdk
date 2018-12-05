@@ -4,9 +4,11 @@ angular.module('contentful').config([
   $provide => {
     // Decorates $q instances with the `callback` method
     $provide.decorator('$q', [
+      'require',
       '$delegate',
       '$rootScope',
-      ($q, $rootScope) => {
+      (require, $q, $rootScope) => {
+        var _ = require('lodash');
         // Returns a callback method that should be passed in where a node-style callback is expected.
         // The callback method has a `promise` property that can then be passed around in a promise environment:
         //

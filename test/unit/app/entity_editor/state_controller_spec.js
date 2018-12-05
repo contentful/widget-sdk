@@ -1,5 +1,6 @@
 'use strict';
 import $q from '$q';
+import _ from 'lodash';
 import { create as createDocument } from 'helpers/mocks/entity_editor_document';
 
 describe('entityEditor/StateController', () => {

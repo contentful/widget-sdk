@@ -10,9 +10,21 @@ filters.filter('dateTime', () => unixTime => {
   }
 });
 
-filters.filter('isEmpty', () => _.isEmpty);
+filters.filter('isEmpty', [
+  'require',
+  require => {
+    const _ = require('lodash');
+    return _.isEmpty;
+  }
+]);
 
-filters.filter('isArray', () => _.isArray);
+filters.filter('isArray', [
+  'require',
+  require => {
+    const _ = require('lodash');
+    return _.isArray;
+  }
+]);
 
 filters.filter('fileSize', [
   'require',
@@ -97,9 +109,18 @@ filters.filter('decimalMarks', () => str => {
   return str.slice(0, i < 0 ? 3 + i : i) + (str.length > 3 ? markedStr : '');
 });
 
-filters.filter('displayedFieldName', () => field =>
-  _.isEmpty(field.name) ? (_.isEmpty(field.id) ? 'Untitled field' : 'ID: ' + field.id) : field.name
-);
+filters.filter('displayedFieldName', [
+  'require',
+  require => {
+    var _ = require('lodash');
+    return field =>
+      _.isEmpty(field.name)
+        ? _.isEmpty(field.id)
+          ? 'Untitled field'
+          : 'ID: ' + field.id
+        : field.name;
+  }
+]);
 
 filters.filter('isDisplayableAsTitle', () => field =>
   field.type === 'Symbol' || field.type === 'Text'

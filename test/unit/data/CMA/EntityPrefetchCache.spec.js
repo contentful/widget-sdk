@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 describe('data/CMA/EntityPrefetchCache.es6', () => {
   beforeEach(function() {
     module('contentful/test');

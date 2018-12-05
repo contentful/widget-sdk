@@ -1,4 +1,5 @@
 import * as sinon from 'helpers/sinon';
+import _ from 'lodash';
 
 describe('Modal dialog service', () => {
   let modalDialog, scope;

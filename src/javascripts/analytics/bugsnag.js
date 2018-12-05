@@ -9,6 +9,7 @@
 angular.module('contentful').factory('bugsnag', [
   'require',
   require => {
+    const _ = require('lodash');
     const CallBuffer = require('utils/CallBuffer.es6');
     const environment = require('environment');
 

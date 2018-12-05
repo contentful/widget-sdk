@@ -1,5 +1,7 @@
 'use strict';
 
+import _ from 'lodash';
+
 /**
  * @covers dialogsInitController
  * @covers subscriptionNotifier
@@ -57,9 +59,11 @@ describe('subscriptionNotifier', () => {
   });
 
   describe('paywall notifier', () => {
+    const now = new Date();
     beforeEach(() => {
+      jasmine.clock().uninstall();
       jasmine.clock().install();
-      jasmine.clock().mockDate(new Date());
+      jasmine.clock().mockDate(now);
     });
 
     afterEach(() => {

@@ -1,4 +1,5 @@
 import sinon from 'npm:sinon';
+import _ from 'lodash';
 
 describe('app/ContentModel/Editor/Actions.es6', () => {
   let controller, scope, $q, logger, notification, accessChecker, ReloadNotification, spaceContext;

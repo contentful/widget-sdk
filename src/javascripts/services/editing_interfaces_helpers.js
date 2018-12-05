@@ -10,7 +10,10 @@ angular
    * horrible.
    */
   .factory('editingInterfaces/helpers', [
-    () => {
+    'require',
+    require => {
+      var _ = require('lodash');
+
       return {
         findWidget: findWidget
       };

@@ -13,6 +13,7 @@ angular
   .factory('LazyLoader', [
     'require',
     require => {
+      var _ = require('lodash');
       var $q = require('$q');
       var loader = require('angularLoad');
       var resources = require('LazyLoader/resources');
@@ -102,6 +103,7 @@ angular
   .factory('LazyLoader/resources', [
     'require',
     require => {
+      var _ = require('lodash');
       var environment = require('environment');
       var Config = require('Config.es6');
 

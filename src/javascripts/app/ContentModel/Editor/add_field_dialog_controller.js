@@ -16,6 +16,7 @@ angular.module('contentful').controller('AddFieldDialogController', [
   '$scope',
   'require',
   function AddFieldDialogController($scope, require) {
+    const _ = require('lodash');
     const $controller = require('$controller');
     const fieldFactory = require('fieldFactory');
     const fieldDecorator = require('fieldDecorator');

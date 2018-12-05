@@ -36,6 +36,7 @@ angular
   .factory('overridingRequestQueue', [
     'require',
     require => {
+      var _ = require('lodash');
       var $q = require('$q');
       var random = require('utils/Random.es6');
 

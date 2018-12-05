@@ -6,6 +6,7 @@ angular
   .directive('cfRolesForWalkMe', [
     'require',
     require => {
+      const _ = require('lodash');
       const SpaceContext = require('spaceContext');
       const LD = require('utils/LaunchDarkly');
       const LazyLoader = require('LazyLoader');

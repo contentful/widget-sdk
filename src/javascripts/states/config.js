@@ -14,8 +14,10 @@ angular
    * [service:states]: api/contentful/app/service/states
    */
   .provider('states/config', [
+    '$injector',
     '$stateProvider',
-    $stateProvider => {
+    ($injector, $stateProvider) => {
+      var _ = $injector.get('lodash');
       // Collection of registered services
       var states = [];
 

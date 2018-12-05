@@ -12,6 +12,7 @@ angular
   .controller('entityEditor/LocalesController', [
     'require',
     function(require) {
+      const _ = require('lodash');
       const localeStore = require('TheLocaleStore');
       const modalDialog = require('modalDialog');
 

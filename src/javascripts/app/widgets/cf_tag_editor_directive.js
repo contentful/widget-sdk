@@ -10,6 +10,7 @@ angular
   .directive('cfTagEditor', [
     'require',
     require => {
+      const _ = require('lodash');
       const KEYCODES = require('utils/keycodes.es6').default;
 
       return {

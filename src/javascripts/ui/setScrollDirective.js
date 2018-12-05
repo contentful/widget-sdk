@@ -14,10 +14,12 @@ angular
    * attribute value changes.
    */
   .directive('uiSetScroll', [
-    () => ({
+    'require',
+    require => ({
       restrict: 'A',
 
       link: function($scope, $elem, $attrs) {
+        var _ = require('lodash');
         $scope.$watch($attrs.uiSetScroll, scrollTop => {
           if (_.isNumber(scrollTop)) {
             $scope.$applyAsync(() => {

@@ -1,5 +1,7 @@
 'use strict';
 
+import _ from 'lodash';
+
 describe('Asset List Controller', () => {
   let scope, spaceContext, stubs, $q, getAssets, ComponentLibrary;
 

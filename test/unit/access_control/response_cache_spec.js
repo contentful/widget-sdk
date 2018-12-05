@@ -1,5 +1,7 @@
 'use strict';
 
+import _ from 'lodash';
+
 describe('Response Cache', () => {
   let cache, canStub;
   const entry = { sys: { id: 'eid', type: 'Entry' } };

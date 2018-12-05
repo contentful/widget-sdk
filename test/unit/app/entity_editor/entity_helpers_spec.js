@@ -1,4 +1,5 @@
 'use strict';
+import _ from 'lodash';
 
 describe('EntityHelpers', () => {
   const REWRITTEN_URL = 'http://rewritten.url/file.txt';

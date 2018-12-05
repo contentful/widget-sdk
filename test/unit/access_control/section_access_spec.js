@@ -1,5 +1,7 @@
 'use strict';
 
+import _ from 'lodash';
+
 describe('Section Access', () => {
   let sectionAccess, accessChecker, spaceContext, visibilityStub;
 

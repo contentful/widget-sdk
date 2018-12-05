@@ -10,6 +10,7 @@ angular.module('contentful').controller('RoleListController', [
   '$scope',
   'require',
   ($scope, require) => {
+    const _ = require('lodash');
     const $state = require('$state');
     const $q = require('$q');
     const ReloadNotification = require('ReloadNotification');

@@ -1,4 +1,5 @@
 'use strict';
+import _ from 'lodash';
 
 describe('OrganizationRoles', () => {
   let OrganizationRoles, ORG_1, ORG_2, ORG_3;

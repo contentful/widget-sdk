@@ -13,6 +13,7 @@ angular
   .factory('entityEditor/Document/StringField', [
     'require',
     require => {
+      const _ = require('lodash');
       const $q = require('$q');
       const diff = require('utils/StringDiff.es6').diff;
       const ShareJS = require('data/ShareJS/Utils');

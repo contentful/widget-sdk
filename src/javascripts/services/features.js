@@ -4,7 +4,10 @@
  * @name features
  */
 angular.module('contentful').factory('features', [
-  () => {
+  'require',
+  require => {
+    var _ = require('lodash');
+
     return {
       allowAnalytics: allowAnalytics
     };

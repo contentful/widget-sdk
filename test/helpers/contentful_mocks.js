@@ -1,4 +1,5 @@
 import createLaunchDarklyMock from './mocks/LaunchDarkly';
+import _ from 'lodash';
 
 angular
   .module('cf.ui')

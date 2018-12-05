@@ -116,9 +116,11 @@ angular
    *   Corresponds to the form controllers `hideErrors` property.
    */
   .controller('FieldErrorController', [
+    'require',
     '$scope',
     '$injector',
-    function($scope, $injector) {
+    function(require, $scope, $injector) {
+      const _ = require('lodash');
       const fieldErrorMessage = $injector.get('fieldErrorMessage');
       const controller = this;
       let unwatchErrors, unwatchHide;
@@ -179,24 +181,28 @@ angular
    * @description
    * Build messages for `ngModel` validation errors.
    */
-  .provider('fieldErrorMessage', function fieldErrorMessageProvider() {
-    const messages = {
-      required: 'Please provide a value.'
-    };
-
-    this.add = (key, message) => {
-      messages[key] = message;
-    };
-
-    this.$get = () => {
-      const templates = _.mapValues(messages, message => _.template(message));
-
-      return function build(key, details) {
-        if (key in templates) {
-          return templates[key](details);
-        } else {
-          return 'Error: ' + key;
-        }
+  .provider('fieldErrorMessage', [
+    '$injector',
+    function fieldErrorMessageProvider($injector) {
+      const _ = $injector.get('lodash');
+      const messages = {
+        required: 'Please provide a value.'
       };
-    };
-  });
+
+      this.add = (key, message) => {
+        messages[key] = message;
+      };
+
+      this.$get = () => {
+        const templates = _.mapValues(messages, message => _.template(message));
+
+        return function build(key, details) {
+          if (key in templates) {
+            return templates[key](details);
+          } else {
+            return 'Error: ' + key;
+          }
+        };
+      };
+    }
+  ]);

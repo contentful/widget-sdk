@@ -17,6 +17,7 @@ angular
   .factory('SnapshotComparatorController/snapshotDoc', [
     'require',
     require => {
+      const _ = require('lodash');
       const K = require('utils/kefir.es6');
       const $q = require('$q');
       const Permissions = require('access_control/EntityPermissions.es6');

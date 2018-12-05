@@ -11,7 +11,10 @@ angular
    * Content Type data.
    */
   .factory('data/ContentTypes', [
-    () => {
+    'require',
+    require => {
+      const _ = require('lodash');
+
       return {
         assureDisplayField: assureDisplayField,
         assureName: assureName,

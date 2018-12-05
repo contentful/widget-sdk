@@ -3,6 +3,7 @@
 angular.module('contentful').directive('cfPersistentNotification', [
   'require',
   require => {
+    const _ = require('lodash');
     const $sce = require('$sce');
     const $timeout = require('$timeout');
     const logger = require('logger');

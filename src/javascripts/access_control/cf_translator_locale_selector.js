@@ -17,6 +17,7 @@ angular
     '$scope',
     'require',
     function($scope, require) {
+      const _ = require('lodash');
       const TheLocaleStore = require('TheLocaleStore');
       const ALL_LOCALES = require('PolicyBuilder/CONFIG').ALL_LOCALES;
 

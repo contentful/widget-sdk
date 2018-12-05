@@ -3,6 +3,7 @@
 angular.module('contentful').directive('cfEntryList', [
   'require',
   require => {
+    const _ = require('lodash');
     const $timeout = require('$timeout');
     const spaceContext = require('spaceContext');
     const K = require('utils/kefir.es6');

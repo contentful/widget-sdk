@@ -3,6 +3,7 @@ import { name as CreateModernOnboardingModule } from '../../../components/shared
 angular.module('contentful').directive('cfOnboardingSteps', [
   'require',
   function(require) {
+    const _ = require('lodash');
     const $state = require('$state');
     const Analytics = require('analytics/Analytics.es6');
     const spaceContext = require('spaceContext');

@@ -10,6 +10,7 @@ angular
   .factory('states/entries', [
     'require',
     require => {
+      var _ = require('lodash');
       var $state = require('$state');
       var trackVersioning = require('analyticsEvents/versioning');
       var contextHistory = require('navigation/Breadcrumbs/History.es6').default;

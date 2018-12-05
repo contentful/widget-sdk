@@ -21,6 +21,7 @@ angular
     'require',
     require => {
       const modalDialog = require('modalDialog');
+      const _ = require('lodash');
 
       return function openFieldDialog($scope, field, widget) {
         const scope = _.extend($scope.$new(), {
@@ -226,6 +227,7 @@ angular
     '$scope',
     'require',
     ($scope, require) => {
+      const _ = require('lodash');
       var fieldDecorator = require('fieldDecorator');
       var buildMessage = require('fieldErrorMessageBuilder');
       var TheLocaleStore = require('TheLocaleStore');
@@ -304,6 +306,7 @@ angular
       // TODO: Remove this when there are no more API references to the legacy
       // `StructuredText` field type.
       const RICH_TEXT_FIELD_TYPES = ['RichText', 'StructuredText'];
+      const _ = require('lodash');
       const validations = require('validationDecorator');
       const LD = require('utils/LaunchDarkly');
       const RICH_TEXT_FORMATTING_OPTIONS_FEATURE_FLAG =
@@ -360,6 +363,7 @@ angular
     'require',
     ($scope, require) => {
       const getDefaultWidgetId = require('widgets/default');
+      const _ = require('lodash');
 
       $scope.defaultWidgetId = getDefaultWidgetId(
         $scope.field,
@@ -387,6 +391,7 @@ angular
   .directive('cfFieldAppearanceParameters', [
     'require',
     require => {
+      const _ = require('lodash');
       const ReactDOM = require('react-dom');
       const React = require('react');
       const WidgetParametersUtils = require('widgets/WidgetParametersUtils.es6');

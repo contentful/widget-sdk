@@ -11,6 +11,7 @@
 angular.module('cf.app').factory('EntityHelpers', [
   'require',
   require => {
+    const _ = require('lodash');
     const $q = require('$q');
     const spaceContext = require('spaceContext');
     const assetUrlFilter = require('$filter')('assetUrl');

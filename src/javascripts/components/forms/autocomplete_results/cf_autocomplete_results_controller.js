@@ -1,10 +1,12 @@
 'use strict';
 
 angular.module('contentful').controller('CfAutocompleteResultsController', [
+  'require',
   '$scope',
   '$attrs',
   '$parse',
-  function($scope, $attrs, $parse) {
+  function(require, $scope, $attrs, $parse) {
+    const _ = require('lodash');
     const controller = this;
     const getAutocompleteResults = $parse($attrs.cfAutocompleteResults);
     this.selectedIndex = -1;

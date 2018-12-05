@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 // TODO merge this with directive tests
 describe('API Key List Controller', () => {
   beforeEach(function() {

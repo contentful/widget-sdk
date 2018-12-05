@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 describe('widgets/Store.es6', () => {
   beforeEach(function() {
     module('contentful/test');

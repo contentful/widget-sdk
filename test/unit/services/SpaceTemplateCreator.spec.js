@@ -1,4 +1,5 @@
 import * as sinon from 'helpers/sinon';
+import _ from 'lodash';
 
 describe('Space Template creation service', () => {
   let spaceTemplateCreator, creator, stubs, spaceContext, enrichTemplate;

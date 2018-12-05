@@ -3,6 +3,7 @@
 angular.module('contentful').directive('cfUserList', [
   'require',
   require => {
+    const _ = require('lodash');
     const popRoleId = require('UserListController/jumpToRole').popRoleId;
     const $timeout = require('$timeout');
     const getStore = require('TheStore').getStore;

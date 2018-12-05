@@ -13,6 +13,7 @@ angular
     '$scope',
     'require',
     ($scope, require) => {
+      const _ = require('lodash');
       const ReloadNotification = require('ReloadNotification');
       const spaceContext = require('spaceContext');
       const accessChecker = require('access_control/AccessChecker');

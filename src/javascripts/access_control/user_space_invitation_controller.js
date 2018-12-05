@@ -13,6 +13,7 @@ angular.module('contentful').controller('UserSpaceInvitationController', [
   'require',
   '$scope',
   function(require, $scope) {
+    const _ = require('lodash');
     const $q = require('$q');
     const $timeout = require('$timeout');
     const spaceContext = require('spaceContext');

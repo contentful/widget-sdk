@@ -1,5 +1,6 @@
 import $q from '$q';
 import * as DOM from 'helpers/DOM';
+import _ from 'lodash';
 import { create as createDocument } from 'helpers/mocks/entity_editor_document';
 
 /**

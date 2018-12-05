@@ -1,5 +1,6 @@
 'use strict';
 import * as sinon from 'helpers/sinon';
+import _ from 'lodash';
 
 describe('data/Request/Retry.es6', () => {
   beforeEach(function() {

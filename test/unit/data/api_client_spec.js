@@ -1,4 +1,5 @@
 'use strict';
+import _ from 'lodash';
 
 describe('data/ApiClient', () => {
   let $http;

@@ -3,6 +3,7 @@
 angular.module('contentful').directive('cfUrlEditor', [
   'require',
   require => {
+    const _ = require('lodash');
     const debounce = require('debounce');
     const InputUpdater = require('ui/inputUpdater');
 

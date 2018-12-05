@@ -1,6 +1,7 @@
 'use strict';
 
 import { runTask } from 'utils/Concurrent.es6';
+import _ from 'lodash';
 
 _.extend(window, createDsl(window.jasmine.getEnv()));
 

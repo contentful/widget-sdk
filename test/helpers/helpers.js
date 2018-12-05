@@ -1,4 +1,5 @@
 import * as sinon from 'helpers/sinon';
+import _ from 'lodash';
 
 // TODO This module is deprecated. We should move stuff to
 // 'test/helpers/TestCaseContext'

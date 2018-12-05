@@ -1,7 +1,10 @@
 'use strict';
 
 angular.module('contentful').factory('widgets/selectionController', [
-  () => {
+  'require',
+  require => {
+    const _ = require('lodash');
+
     return {
       create: create,
       createFromValidations: createFromValidations

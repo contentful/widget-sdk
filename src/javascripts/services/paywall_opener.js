@@ -9,6 +9,7 @@
 angular.module('contentful').factory('paywallOpener', [
   'require',
   require => {
+    var _ = require('lodash');
     var $q = require('$q');
     var $sce = require('$sce');
     var lazyLoad = require('LazyLoader').get;

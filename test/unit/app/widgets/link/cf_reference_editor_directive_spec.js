@@ -1,5 +1,6 @@
 import sinon from 'npm:sinon';
 import $q from '$q';
+import _ from 'lodash';
 import * as K from 'helpers/mocks/kefir';
 
 describe('cfReferenceEditorDirective', () => {

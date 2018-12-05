@@ -13,6 +13,7 @@ angular
   .controller('LanguageResourcesController', [
     'require',
     function(require) {
+      const _ = require('lodash');
       const controller = this;
       const resources = require('app/home/developer_resources/DeveloperResources.es6');
       const analyticsEvents = require('analytics/events/home.es6');

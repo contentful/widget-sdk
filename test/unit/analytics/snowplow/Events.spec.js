@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 describe('Snowplow events service', () => {
   beforeEach(function() {
     module('contentful/test', $provide => {

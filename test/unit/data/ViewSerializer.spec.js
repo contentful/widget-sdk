@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 describe('ViewSerializer', () => {
   beforeEach(function() {
     module('contentful/test');

@@ -4,6 +4,7 @@ angular.module('contentful').directive('cfViewCustomizer', [
   'require',
   'defer',
   (require, defer) => {
+    const _ = require('lodash');
     const $timeout = require('$timeout');
 
     return {

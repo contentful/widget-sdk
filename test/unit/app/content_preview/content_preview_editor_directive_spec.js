@@ -1,5 +1,6 @@
 import { setCheckbox } from 'helpers/DOM';
 import * as sinon from 'helpers/sinon';
+import _ from 'lodash';
 
 describe('cfContentPreviewEditor directive', () => {
   let spaceContext, contentPreview, ComponentLibrary, $state;

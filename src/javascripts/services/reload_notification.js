@@ -3,6 +3,7 @@
 angular.module('contentful').factory('ReloadNotification', [
   'require',
   require => {
+    var _ = require('lodash');
     var $location = require('$location');
     var $q = require('$q');
     var modalDialog = require('modalDialog');

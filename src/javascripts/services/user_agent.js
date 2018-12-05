@@ -12,6 +12,7 @@
 angular.module('contentful').factory('userAgent', [
   'require',
   require => {
+    var _ = require('lodash');
     var $window = require('$window');
     var userAgent = _.get($window, 'navigator.userAgent', '');
     var platform = _.get($window, 'navigator.platform', '');

@@ -1,5 +1,7 @@
 'use strict';
 
+import _ from 'lodash';
+
 describe('overridingRequestQueue', () => {
   beforeEach(function() {
     module('contentful/test');

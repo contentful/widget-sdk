@@ -27,12 +27,14 @@ angular
    * @property {string[]} formCtrl.errorMessages
    */
   .directive('cfValidateForm', [
+    'require',
     '$interpolate',
-    $interpolate => ({
+    (require, $interpolate) => ({
       restrict: 'A',
       require: ['^cfValidate', 'form'],
 
       link: function(scope, _elem, attrs, ctrls) {
+        const _ = require('lodash');
         const validator = ctrls[0];
         const form = ctrls[1];
 
@@ -84,11 +86,13 @@ angular
    * @property {[name: string]: Error} ngModelCtrl.errorDetails
    */
   .directive('cfValidateModel', [
+    'require',
     '$interpolate',
-    $interpolate => ({
+    (require, $interpolate) => ({
       require: ['ngModel', '^cfValidate'],
 
       link: function(scope, _elem, attrs, ctrls) {
+        const _ = require('lodash');
         const modelCtrl = ctrls[0];
         const validator = ctrls[1];
         let schemaErrors = [];

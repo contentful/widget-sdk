@@ -27,7 +27,10 @@ angular
     }
   ])
   .factory('TheLocaleStore/implementation', [
-    () => {
+    'require',
+    require => {
+      var _ = require('lodash');
+
       return {
         create: create
       };

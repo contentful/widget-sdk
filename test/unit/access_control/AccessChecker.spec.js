@@ -1,4 +1,5 @@
 import * as K from 'helpers/mocks/kefir';
+import _ from 'lodash';
 
 describe('Access Checker', () => {
   let enforcements, OrganizationRoles, TokenStore, policyChecker, ac;

@@ -15,6 +15,7 @@ angular
   .directive('cfSnapshotPresenter', [
     'require',
     require => {
+      const _ = require('lodash');
       const RTL_SUPPORT_FEATURE_FLAG = 'feature-at-03-2018-rtl-support';
 
       const LD = require('utils/LaunchDarkly');
@@ -132,6 +133,7 @@ angular
   .directive('cfSnapshotPresenterDate', [
     'require',
     require => {
+      const _ = require('lodash');
       const Data = require('widgets/datetime/data');
       const moment = require('moment');
 

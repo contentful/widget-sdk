@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 describe('Snowplow service', () => {
   beforeEach(function() {
     module('contentful/test');

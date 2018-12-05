@@ -19,6 +19,7 @@
 angular.module('contentful').directive('cfFocusOtInput', [
   'require',
   require => {
+    const _ = require('lodash');
     const K = require('utils/kefir.es6');
     const defer = require('defer');
 

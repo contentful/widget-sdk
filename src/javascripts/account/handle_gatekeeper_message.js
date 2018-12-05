@@ -6,6 +6,7 @@ angular
   .factory('handleGatekeeperMessage', [
     'require',
     require => {
+      const _ = require('lodash');
       const $location = require('$location');
       const Authentication = require('Authentication.es6');
       const { Notification } = require('@contentful/forma-36-react-components');

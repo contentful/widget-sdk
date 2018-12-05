@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 describe('entityEditor/LocalesController', () => {
   beforeEach(function() {
     module('contentful/test', $provide => {
