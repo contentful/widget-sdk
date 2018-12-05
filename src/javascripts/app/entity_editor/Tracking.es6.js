@@ -48,8 +48,11 @@ const isEntryReferenceField = ({ field }) =>
   field.type === 'Array' && field.items.type === 'Link' && field.items.linkType === 'Entry';
 
 const getFieldId = ctrl => ctrl.field.id;
-const getReferenceEntitiesIds = (id, locale, editorData) =>
-  editorData.entity.data.fields[id][locale].map(entity => entity.sys.id);
+const getReferenceEntitiesIds = (id, locale, editorData) => {
+  const localeField = editorData.entity.data.fields[id][locale];
+  // A field value might not be provided in all expected locales.
+  return localeField ? localeField.map(entity => entity.sys.id) : [];
+};
 
 async function getReferencesContentTypes(editorData, locale) {
   const referenceFieldsIds = editorData.fieldControls.form
