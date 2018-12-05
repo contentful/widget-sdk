@@ -3,6 +3,7 @@ const EnzymeAdapter = require('enzyme-adapter-react-16');
 require('babel-polyfill');
 // https://github.com/FormidableLabs/enzyme-matchers
 require('jest-enzyme');
+require('jest-extended');
 
 // Setup enzyme's react adapter
 Enzyme.configure({ adapter: new EnzymeAdapter() });

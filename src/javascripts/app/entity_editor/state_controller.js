@@ -12,7 +12,7 @@ angular.module('contentful').controller('entityEditor/StateController', [
     const Command = require('command');
     const closeState = require('navigation/closeState');
     const _ = require('lodash');
-    const publicationWarnings = require('entityEditor/publicationWarnings').create();
+    const publicationWarnings = require('app/entity_editor/PublicationWarnings.es6').create();
     const trackVersioning = require('analyticsEvents/versioning');
     const K = require('utils/kefir.es6');
     const N = require('app/entity_editor/Notifications.es6');

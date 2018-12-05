@@ -151,6 +151,7 @@
     "jasmine-core": "^2.5.2",
     "jest": "23.6.0",
     "jest-enzyme": "6.1.2",
+    "jest-extended": "0.11.0",
     "karma": "~1.7.0",
     "karma-babel-preprocessor": "^6.0.1",
     "karma-chrome-launcher": "^2.2.0",

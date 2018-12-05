@@ -33,7 +33,7 @@ describe('entityEditor/StateController', () => {
     this.$inject('modalDialog').open = sinon.stub().returns({ promise: dialogDefer.promise });
     dialogDefer.resolve();
 
-    const warnings = this.$inject('entityEditor/publicationWarnings');
+    const warnings = this.$inject('app/entity_editor/PublicationWarnings.es6');
     warnings.create = sinon.stub().returns({
       register: (this.registerWarningSpy = sinon.spy()),
       show: (this.showWarningsStub = sinon.stub().resolves())
