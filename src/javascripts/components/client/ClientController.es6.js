@@ -1,28 +1,42 @@
 import { registerController } from 'NgRegistry.es6';
+import { onValueScope } from 'utils/kefir.es6';
+import { pick, isObject } from 'lodash';
 
 registerController('ClientController', [
   '$scope',
-  'require',
-  function ClientController($scope, require) {
-    const $state = require('$state');
-    const K = require('utils/kefir.es6');
-    const features = require('features');
-    const logger = require('logger');
-    const spaceContext = require('spaceContext');
-    const TokenStore = require('services/TokenStore.es6');
-    const Analytics = require('analytics/Analytics.es6');
-    const authorization = require('authorization');
-    const fontsDotCom = require('fontsDotCom');
-    const CreateSpace = require('services/CreateSpace.es6');
-    const refreshNavState = require('navigation/NavState.es6').makeStateRefresher(
-      $state,
-      spaceContext
-    );
-    const Intercom = require('intercom');
-    const EnforcementsService = require('services/EnforcementsService.es6');
-    const store = require('ReduxStore/store.es6').default;
-    const $rootScope = require('$rootScope');
-    const { pick, isObject } = require('lodash');
+  '$state',
+  'features',
+  'logger',
+  'spaceContext',
+  'authorization',
+  'fontsDotCom',
+  'intercom',
+  '$rootScope',
+
+  'services/TokenStore.es6',
+  'analytics/Analytics.es6',
+  'services/CreateSpace.es6',
+  'navigation/NavState.es6',
+  'services/EnforcementsService.es6',
+  'ReduxStore/store.es6',
+  function ClientController(
+    $scope,
+    $state,
+    features,
+    logger,
+    spaceContext,
+    authorization,
+    fontsDotCom,
+    Intercom,
+    $rootScope,
+    TokenStore,
+    Analytics,
+    CreateSpace,
+    NavState,
+    EnforcementsService,
+    { default: store }
+  ) {
+    const refreshNavState = NavState.makeStateRefresher($state, spaceContext);
 
     $rootScope.$on('$locationChangeSuccess', function() {
       store.dispatch({
@@ -53,7 +67,7 @@ registerController('ClientController', [
       spaceAndTokenWatchHandler
     );
 
-    K.onValueScope($scope, TokenStore.user$, handleUser);
+    onValueScope($scope, TokenStore.user$, handleUser);
 
     $scope.showCreateSpaceDialog = CreateSpace.showDialog;
 
