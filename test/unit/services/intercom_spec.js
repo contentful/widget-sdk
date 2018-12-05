@@ -26,7 +26,7 @@ describe('Intercom service', () => {
     describe('.open()', () => {
       it('calls $window.Intercom with "showNewMessage"', () => {
         expect($windowIntercomStub.called).toBe(true);
-        expect($windowIntercomStub.calledWithExactly('showNewMessage')).toBe(true);
+        expect($windowIntercomStub.calledWith('showNewMessage')).toBe(true);
       });
     });
 

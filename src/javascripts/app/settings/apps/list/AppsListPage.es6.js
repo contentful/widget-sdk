@@ -4,6 +4,7 @@ import ContentLoader from 'react-content-loader';
 import Workbench from 'app/common/Workbench.es6';
 import AppsList from './AppsList.es6';
 import AppListItem from './AppListItem.es6';
+import IntercomFeedback from '../IntercomFeedback.es6';
 import { Note, TextLink } from '@contentful/forma-36-react-components';
 
 const AppsListShell = props => (
@@ -11,6 +12,9 @@ const AppsListShell = props => (
     <Workbench.Header>
       <Workbench.Icon icon="page-settings" />
       <Workbench.Title>Apps</Workbench.Title>
+      <Workbench.Header.Actions>
+        <IntercomFeedback about="Apps" />
+      </Workbench.Header.Actions>
     </Workbench.Header>
     <Workbench.Content centered>
       <div className="apps-list-container">
