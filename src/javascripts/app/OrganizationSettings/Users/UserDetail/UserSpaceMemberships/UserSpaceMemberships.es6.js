@@ -7,7 +7,7 @@ import {
   User as UserPropType,
   SpaceRole as SpaceRolePropType,
   Space as SpacePropType
-} from 'app/OrganizationSettings/Users/PropTypes.es6';
+} from 'app/OrganizationSettings/PropTypes.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import { joinWithAnd } from 'utils/StringUtils.es6';
 

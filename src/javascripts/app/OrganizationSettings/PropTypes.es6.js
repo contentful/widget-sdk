@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { orgRoles } from './UserDetail/OrgRoles.es6';
+import { orgRoles } from './Users/UserDetail/OrgRoles.es6';
 
 export const User = PropTypes.shape({
   firstName: PropTypes.string,
