@@ -7,6 +7,7 @@ import { createEndpoint } from 'data/EndpointFactory.es6';
 import { Notification } from '@contentful/forma-36-react-components';
 import { go } from 'states/Navigator.es6';
 import { refresh as refreshToken } from 'services/TokenStore.es6';
+import { article } from 'utils/StringUtils.es6';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
 
 export default class UserInvitation extends React.Component {
@@ -99,7 +100,7 @@ export default class UserInvitation extends React.Component {
                 <div className="user-invitation--info">
                   <h2 className="user-invitation--title">
                     You’ve been invited to the <em>{organizationName}</em> organization in
-                    Contentful as a {role}
+                    Contentful as {article(role)} {role}
                   </h2>
                   <p className="user-invitation--inviter">Invited by {inviterName}</p>
                   <Button

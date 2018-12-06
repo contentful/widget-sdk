@@ -30,7 +30,7 @@ const orgRoles = [
 
 export function header() {
   return h('.workbench-header__wrapper', [
-    h('header.workbench-header', [h('h1.workbench-header__title', ['Organization users'])])
+    h('header.workbench-header', [h('h1.workbench-header__title', ['Invite users'])])
   ]);
 }
 
@@ -308,7 +308,6 @@ export function progressMessage(emails, successfulOrgInvitations) {
 
 export function errorMessage(useLegacy, failedEmails, restart) {
   const userString = failedEmails.length > 1 ? 'users' : 'user';
-  const invitationString = failedEmails.length > 1 ? 'invitations' : 'invitation';
   let copy;
 
   if (useLegacy) {
@@ -325,11 +324,11 @@ export function errorMessage(useLegacy, failedEmails, restart) {
     copy = (
       <React.Fragment>
         <h3>
-          {failedEmails.length} {invitationString} didnʼt send
+          {failedEmails.length} {userString} couldn’t be invited
         </h3>
         <p>
-          These were either existing users or existing invitations.{' '}
-          <a onClick={() => restart(failedEmails)}>Go back</a>.
+          They were either an existing user in the organization or a user that’s already been
+          invited. <a onClick={() => restart(failedEmails)}>Go back</a>.
         </p>
       </React.Fragment>
     );

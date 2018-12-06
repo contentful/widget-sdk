@@ -13,6 +13,20 @@ export function toIdentifier(string) {
   return cleanPrefix([first].concat(rest).join(''));
 }
 
+export function article(word) {
+  if (shouldFallbackToEmptyString(word)) {
+    return '';
+  }
+
+  const vowels = ['a', 'i', 'u', 'e', 'o'];
+
+  if (vowels.includes(word[0])) {
+    return 'an';
+  } else {
+    return 'a';
+  }
+}
+
 export function capitalize(string) {
   if (shouldFallbackToEmptyString(string)) return '';
   return string[0].toUpperCase() + string.slice(1).toLowerCase();
