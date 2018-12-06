@@ -34,6 +34,37 @@ export default class LocalesTable extends React.Component {
 
   state = {};
 
+  renderRowForLocale(locale) {
+    return (
+      <StateLink to="^.detail" params={{ localeId: locale.sys.id }} key={locale.sys.id}>
+        {({ onClick }) => (
+          <TableRow onClick={onClick} style={{ cursor: 'pointer' }}>
+            <TableCell aria-label="cell-name">
+              {locale.name} ({locale.code})
+              {locale.default && (
+                <span className="entity-list-badge">
+                  <Tag tagType="muted">Default</Tag>
+                </span>
+              )}
+            </TableCell>
+            <TableCell data-test-id="locale-list-fallback-column">
+              {locale.fallbackCode ? this.state.localeNamesByCode[locale.fallbackCode] : 'None'}
+            </TableCell>
+            <TableCell data-test-id="locale-list-cda-column">
+              {locale.contentDeliveryApi ? 'Enabled' : 'Disabled'}
+            </TableCell>
+            <TableCell data-test-id="locale-list-cma-column">
+              {locale.contentManagementApi ? 'Enabled' : 'Disabled'}
+            </TableCell>
+            <TableCell data-test-id="locale-list-optional-column">
+              {locale.optional ? 'Can be published empty' : 'Content is required'}
+            </TableCell>
+          </TableRow>
+        )}
+      </StateLink>
+    );
+  }
+
   render() {
     return (
       <Table style={{ width: '100%' }}>
@@ -47,36 +78,9 @@ export default class LocalesTable extends React.Component {
           </TableRow>
         </TableHead>
         <TableBody>
-          {this.props.locales.map(locale => (
-            <StateLink to="^.detail" params={{ localeId: locale.sys.id }} key={locale.sys.id}>
-              {({ onClick }) => (
-                <TableRow onClick={onClick} style={{ cursor: 'pointer' }}>
-                  <TableCell aria-label="cell-name">
-                    {locale.name} ({locale.code})
-                    {locale.default && (
-                      <span className="entity-list-badge">
-                        <Tag tagType="muted">Default</Tag>
-                      </span>
-                    )}
-                  </TableCell>
-                  <TableCell data-test-id="locale-list-fallback-column">
-                    {locale.fallbackCode
-                      ? this.state.localeNamesByCode[locale.fallbackCode]
-                      : 'None'}
-                  </TableCell>
-                  <TableCell data-test-id="locale-list-cda-column">
-                    {locale.contentDeliveryApi ? 'Enabled' : 'Disabled'}
-                  </TableCell>
-                  <TableCell data-test-id="locale-list-cma-column">
-                    {locale.contentManagementApi ? 'Enabled' : 'Disabled'}
-                  </TableCell>
-                  <TableCell data-test-id="locale-list-optional-column">
-                    {locale.optional ? 'Can be published empty' : 'Content is required'}
-                  </TableCell>
-                </TableRow>
-              )}
-            </StateLink>
-          ))}
+          {_.orderBy(this.props.locales, ['default', 'name'], ['desc', 'asc']).map(locale =>
+            this.renderRowForLocale(locale)
+          )}
         </TableBody>
       </Table>
     );

@@ -1,113 +1,5 @@
 [
   {
-    "code": "zh",
-    "name": "Chinese"
-  },
-  {
-    "code": "en",
-    "name": "English"
-  },
-  {
-    "code": "es",
-    "name": "Spanish"
-  },
-  {
-    "code": "hi",
-    "name": "Hindi"
-  },
-  {
-    "code": "ru",
-    "name": "Russian"
-  },
-  {
-    "code": "ar",
-    "name": "Arabic"
-  },
-  {
-    "code": "pt",
-    "name": "Portuguese"
-  },
-  {
-    "code": "bn",
-    "name": "Bengali"
-  },
-  {
-    "code": "fr",
-    "name": "French"
-  },
-  {
-    "code": "ms",
-    "name": "Malay"
-  },
-  {
-    "code": "tr",
-    "name": "Turkish"
-  },
-  {
-    "code": "de",
-    "name": "German"
-  },
-  {
-    "code": "ja",
-    "name": "Japanese"
-  },
-  {
-    "code": "fa",
-    "name": "Persian"
-  },
-  {
-    "code": "ur",
-    "name": "Urdu"
-  },
-  {
-    "code": "pa",
-    "name": "Punjabi"
-  },
-  {
-    "code": "vi",
-    "name": "Vietnamese"
-  },
-  {
-    "code": "id",
-    "name": "Indonesian"
-  },
-  {
-    "code": "ko",
-    "name": "Korean"
-  },
-  {
-    "code": "te",
-    "name": "Telugu"
-  },
-  {
-    "code": "mr",
-    "name": "Marathi"
-  },
-  {
-    "code": "it",
-    "name": "Italian"
-  },
-  {
-    "code": "th",
-    "name": "Thai"
-  },
-  {
-    "code": "my",
-    "name": "Burmese"
-  },
-  {
-    "code": "kn",
-    "name": "Kannada"
-  },
-  {
-    "code": "gu",
-    "name": "Gujarati"
-  },
-  {
-    "code": "pl",
-    "name": "Polish"
-  },
-  {
     "code": "af",
     "name": "Afrikaans"
   },
@@ -150,6 +42,10 @@
   {
     "code": "am-ET",
     "name": "Amharic (Ethiopia)"
+  },
+  {
+    "code": "ar",
+    "name": "Arabic"
   },
   {
     "code": "ar-DZ",
@@ -216,12 +112,12 @@
     "name": "Arabic (United Arab Emirates)"
   },
   {
-    "code": "ar-YE",
-    "name": "Arabic (Yemen)"
-  },
-  {
     "code": "ar-001",
     "name": "Arabic (World)"
+  },
+  {
+    "code": "ar-YE",
+    "name": "Arabic (Yemen)"
   },
   {
     "code": "hy",
@@ -324,6 +220,10 @@
     "name": "Bena (Tanzania)"
   },
   {
+    "code": "bn",
+    "name": "Bengali"
+  },
+  {
     "code": "bn-BD",
     "name": "Bengali (Bangladesh)"
   },
@@ -362,6 +262,10 @@
   {
     "code": "bg-BG",
     "name": "Bulgarian (Bulgaria)"
+  },
+  {
+    "code": "my",
+    "name": "Burmese"
   },
   {
     "code": "my-MM",
@@ -408,12 +312,16 @@
     "name": "Chiga (Uganda)"
   },
   {
-    "code": "zh-CN",
-    "name": "Chinese (Simplified, China)"
+    "code": "zh",
+    "name": "Chinese"
   },
   {
     "code": "zh-Hans",
     "name": "Chinese (Simplified)"
+  },
+  {
+    "code": "zh-CN",
+    "name": "Chinese (Simplified, China)"
   },
   {
     "code": "zh-Hans-CN",
@@ -528,6 +436,10 @@
     "name": "Embu (Kenya)"
   },
   {
+    "code": "en",
+    "name": "English"
+  },
+  {
     "code": "en-AS",
     "name": "English (American Samoa)"
   },
@@ -640,8 +552,8 @@
     "name": "English (Trinidad and Tobago)"
   },
   {
-    "code": "en-US-POSIX",
-    "name": "English (U.S., Computer)"
+    "code": "en-AE",
+    "name": "English (U.A.E.)"
   },
   {
     "code": "en-UM",
@@ -652,8 +564,8 @@
     "name": "English (U.S. Virgin Islands)"
   },
   {
-    "code": "en-AE",
-    "name": "English (U.A.E.)"
+    "code": "en-US-POSIX",
+    "name": "English (U.S., Computer)"
   },
   {
     "code": "en-GB",
@@ -722,6 +634,10 @@
   {
     "code": "fi-FI",
     "name": "Finnish (Finland)"
+  },
+  {
+    "code": "fr",
+    "name": "French"
   },
   {
     "code": "fr-BE",
@@ -888,6 +804,10 @@
     "name": "Georgian (Georgia)"
   },
   {
+    "code": "de",
+    "name": "German"
+  },
+  {
     "code": "de-AT",
     "name": "German (Austria)"
   },
@@ -922,6 +842,10 @@
   {
     "code": "el-GR",
     "name": "Greek (Greece)"
+  },
+  {
+    "code": "gu",
+    "name": "Gujarati"
   },
   {
     "code": "gu-IN",
@@ -972,6 +896,10 @@
     "name": "Hebrew (Israel)"
   },
   {
+    "code": "hi",
+    "name": "Hindi"
+  },
+  {
     "code": "hi-IN",
     "name": "Hindi (India)"
   },
@@ -1000,6 +928,10 @@
     "name": "Igbo (Nigeria)"
   },
   {
+    "code": "id",
+    "name": "Indonesian"
+  },
+  {
     "code": "id-ID",
     "name": "Indonesian (Indonesia)"
   },
@@ -1012,12 +944,20 @@
     "name": "Irish (Ireland)"
   },
   {
+    "code": "it",
+    "name": "Italian"
+  },
+  {
     "code": "it-IT",
     "name": "Italian (Italy)"
   },
   {
     "code": "it-CH",
     "name": "Italian (Switzerland)"
+  },
+  {
+    "code": "ja",
+    "name": "Japanese"
   },
   {
     "code": "ja-JP",
@@ -1072,6 +1012,10 @@
     "name": "Kamba (Kenya)"
   },
   {
+    "code": "kn",
+    "name": "Kannada"
+  },
+  {
     "code": "kn-IN",
     "name": "Kannada (India)"
   },
@@ -1118,6 +1062,10 @@
   {
     "code": "kok-IN",
     "name": "Konkani (India)"
+  },
+  {
+    "code": "ko",
+    "name": "Korean"
   },
   {
     "code": "ko-KR",
@@ -1248,6 +1196,10 @@
     "name": "Malagasy (Madagascar)"
   },
   {
+    "code": "ms",
+    "name": "Malay"
+  },
+  {
     "code": "ms-BN",
     "name": "Malay (Brunei)"
   },
@@ -1278,6 +1230,10 @@
   {
     "code": "gv-GB",
     "name": "Manx (United Kingdom)"
+  },
+  {
+    "code": "mr",
+    "name": "Marathi"
   },
   {
     "code": "mr-IN",
@@ -1408,6 +1364,10 @@
     "name": "Pashto (Afghanistan)"
   },
   {
+    "code": "fa",
+    "name": "Persian"
+  },
+  {
     "code": "fa-AF",
     "name": "Persian (Afghanistan)"
   },
@@ -1416,8 +1376,16 @@
     "name": "Persian (Iran)"
   },
   {
+    "code": "pl",
+    "name": "Polish"
+  },
+  {
     "code": "pl-PL",
     "name": "Polish (Poland)"
+  },
+  {
+    "code": "pt",
+    "name": "Portuguese"
   },
   {
     "code": "pt-AO",
@@ -1442,6 +1410,10 @@
   {
     "code": "pt-ST",
     "name": "Portuguese (São Tomé and Príncipe)"
+  },
+  {
+    "code": "pa",
+    "name": "Punjabi"
   },
   {
     "code": "pa-Arab",
@@ -1494,6 +1466,10 @@
   {
     "code": "rn-BI",
     "name": "Rundi (Burundi)"
+  },
+  {
+    "code": "ru",
+    "name": "Russian"
   },
   {
     "code": "ru-MD",
@@ -1658,6 +1634,10 @@
   {
     "code": "so-SO",
     "name": "Somali (Somalia)"
+  },
+  {
+    "code": "es",
+    "name": "Spanish"
   },
   {
     "code": "es-AR",
@@ -1828,6 +1808,10 @@
     "name": "Tasawaq (Niger)"
   },
   {
+    "code": "te",
+    "name": "Telugu"
+  },
+  {
     "code": "te-IN",
     "name": "Telugu (India)"
   },
@@ -1842,6 +1826,10 @@
   {
     "code": "teo-UG",
     "name": "Teso (Uganda)"
+  },
+  {
+    "code": "th",
+    "name": "Thai"
   },
   {
     "code": "th-TH",
@@ -1880,6 +1868,10 @@
     "name": "Tongan (Tonga)"
   },
   {
+    "code": "tr",
+    "name": "Turkish"
+  },
+  {
     "code": "tr-TR",
     "name": "Turkish (Turkey)"
   },
@@ -1890,6 +1882,10 @@
   {
     "code": "uk-UA",
     "name": "Ukrainian (Ukraine)"
+  },
+  {
+    "code": "ur",
+    "name": "Urdu"
   },
   {
     "code": "ur-IN",
@@ -1946,6 +1942,10 @@
   {
     "code": "vai-Vaii-LR",
     "name": "Vai (Vai, Liberia)"
+  },
+  {
+    "code": "vi",
+    "name": "Vietnamese"
   },
   {
     "code": "vi-VN",

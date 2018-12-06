@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { orderBy } from 'lodash';
 import Workbench from 'app/common/Workbench.es6';
 import { Button, Select, Option, Note, CheckboxField } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink.es6';
@@ -146,7 +147,7 @@ export default class LocaleEditForm extends Component {
                   value={this.state.locale.code || ''}
                   onChange={e => this.updateLocaleCode(e.target.value)}>
                   <Option value="">Select a locale</Option>
-                  {this.state.locales.map(locale => (
+                  {orderBy(this.state.locales, ['name'], ['asc']).map(locale => (
                     <Option key={locale.code} value={locale.code}>
                       {locale.label}
                     </Option>
