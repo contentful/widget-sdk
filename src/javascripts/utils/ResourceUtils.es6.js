@@ -1,6 +1,6 @@
 import { getCurrentVariation } from 'utils/LaunchDarkly';
 import { assign, get } from 'lodash';
-import $q from '$q';
+import { getModule } from 'NgRegistry.es6';
 
 const flagName = 'feature-bv-2018-01-resources-api';
 
@@ -83,6 +83,8 @@ export function getResourceLimits(resource) {
   enabled, we don't use legacy, otherwise we do.
  */
 export function useLegacy(organization) {
+  const $q = getModule('$q');
+
   if (isLegacyOrganization(organization)) {
     return getCurrentVariation(flagName).then(flagValue => !flagValue);
   } else {

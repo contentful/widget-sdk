@@ -1,7 +1,4 @@
-'use strict';
-import $q from '$q';
 import _ from 'lodash';
-import { create as createDocument } from 'test/helpers/mocks/entity_editor_document';
 
 describe('entityEditor/StateController', () => {
   const SLIDE_IN_EDITOR_FEATURE_FLAG_VALUE = 2; // Enabled with multiple levels.
@@ -14,7 +11,9 @@ describe('entityEditor/StateController', () => {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
 
+    const $q = this.$inject('$q');
     const LD = this.$inject('utils/LaunchDarkly');
+    const createDocument = this.$inject('mocks/entityEditor/Document').create;
     LD.onFeatureFlag = sinon.stub().callsFake((_1, _2, cb) => {
       cb(SLIDE_IN_EDITOR_FEATURE_FLAG_VALUE);
     });

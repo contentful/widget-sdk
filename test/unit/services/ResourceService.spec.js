@@ -1,10 +1,8 @@
-import { createIsolatedSystem } from 'test/helpers/system-js';
 import createMockSpaceEndpoint from 'test/helpers/mocks/SpaceEndpoint';
-
 import { get, set, values } from 'lodash';
 
 describe('ResourceService', () => {
-  beforeEach(function*() {
+  beforeEach(function() {
     this.createResource = (type, limits, usage) => {
       const { maximum, included } = limits;
 
@@ -87,7 +85,7 @@ describe('ResourceService', () => {
       typeof object.catch === 'function' &&
       typeof object.finally === 'function';
 
-    const system = createIsolatedSystem();
+    // const system = createIsolatedSystem();
 
     const mockedEndpoint = createMockSpaceEndpoint();
     this.resourceStore = mockedEndpoint.stores.resources;
@@ -143,29 +141,44 @@ describe('ResourceService', () => {
 
     this.spies.createSpaceEndpoint = sinon.spy(createSpaceEndpoint);
     this.stubs.createOrganizationEndpoint = sinon.stub();
-    system.set('data/EndpointFactory.es6', {
-      createSpaceEndpoint: this.spies.createSpaceEndpoint,
-      createOrganizationEndpoint: this.stubs.createOrganizationEndpoint
-    });
-
-    system.set('Authentication.es6', {});
-
-    system.set('services/TokenStore.es6', {
-      getSpace: sinon.stub().resolves(this.mocks.space),
-      getOrganization: sinon.stub().resolves(this.mocks.organization)
-    });
 
     this.flags = {
       'feature-bv-2018-01-resources-api': true
     };
 
-    system.set('utils/LaunchDarkly', {
-      getCurrentVariation: flagName => {
-        return Promise.resolve(this.flags[flagName]);
-      }
+    module('contentful/test', $provide => {
+      $provide.value('data/EndpointFactory.es6', {
+        createSpaceEndpoint: this.spies.createSpaceEndpoint,
+        createOrganizationEndpoint: this.stubs.createOrganizationEndpoint
+      });
+
+      $provide.value('Authentication.es6', {});
+
+      $provide.value('services/TokenStore.es6', {
+        getSpace: sinon.stub().resolves(this.mocks.space),
+        getOrganization: sinon.stub().resolves(this.mocks.organization)
+      });
+
+      $provide.value('data/EndpointFactory.es6', {
+        createSpaceEndpoint: this.spies.createSpaceEndpoint,
+        createOrganizationEndpoint: this.stubs.createOrganizationEndpoint
+      });
+
+      $provide.value('Authentication.es6', {});
+
+      $provide.value('services/TokenStore.es6', {
+        getSpace: sinon.stub().resolves(this.mocks.space),
+        getOrganization: sinon.stub().resolves(this.mocks.organization)
+      });
+
+      $provide.value('utils/LaunchDarkly', {
+        getCurrentVariation: flagName => {
+          return Promise.resolve(this.flags[flagName]);
+        }
+      });
     });
 
-    this.createResourceService = (yield system.import('services/ResourceService.es6')).default;
+    this.createResourceService = this.$inject('services/ResourceService.es6').default;
     this.ResourceService = this.createResourceService('1234');
   });
 

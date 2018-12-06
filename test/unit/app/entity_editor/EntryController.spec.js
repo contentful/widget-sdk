@@ -1,4 +1,3 @@
-import { create as createDocument } from 'test/helpers/mocks/entity_editor_document';
 import * as K from 'utils/kefir.es6';
 import _ from 'lodash';
 
@@ -12,22 +11,6 @@ describe('Entry Editor Controller', function() {
       $provide.value('app/entity_editor/Validator.es6', {
         createForEntry: sinon.stub()
       });
-      $provide.value('app/entity_editor/DataLoader.es6', {
-        loadEntry: () => ({
-          entity: {
-            data: {},
-            getSys: () => ({})
-          },
-          entityInfo: {
-            id: 'testEntryId',
-            contentType: {
-              fields: {}
-            }
-          },
-          fieldControls: {},
-          openDoc: () => createDocument()
-        })
-      });
       $provide.removeControllers(
         'FormWidgetsController',
         'entityEditor/LocalesController',
@@ -36,6 +19,25 @@ describe('Entry Editor Controller', function() {
         'EntryActionsController'
       );
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
+    });
+
+    const createDocument = this.$inject('mocks/entityEditor/Document').create;
+
+    this.mockService('app/entity_editor/DataLoader.es6', {
+      loadEntry: () => ({
+        entity: {
+          data: {},
+          getSys: () => ({})
+        },
+        entityInfo: {
+          id: 'testEntryId',
+          contentType: {
+            fields: {}
+          }
+        },
+        fieldControls: {},
+        openDoc: () => createDocument()
+      })
     });
 
     this.mockService('services/TokenStore.es6', {

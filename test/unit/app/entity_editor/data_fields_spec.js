@@ -1,12 +1,12 @@
-'use strict';
-import { create as createDocument } from 'test/helpers/mocks/entity_editor_document';
 import _ from 'lodash';
 
 describe('EntityEditor/DataFields', () => {
-  beforeEach(() => {
+  beforeEach(function() {
     module('contentful/test', $provide => {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
+
+    this.createDocument = this.$inject('mocks/entityEditor/Document').create;
   });
 
   describe('#create()', () => {
@@ -30,7 +30,7 @@ describe('EntityEditor/DataFields', () => {
         { code: 'hi', internal_code: 'hi-internal' }
       ]);
 
-      this.otDoc = createDocument({
+      this.otDoc = this.createDocument({
         sys: {
           type: 'Entry'
         },

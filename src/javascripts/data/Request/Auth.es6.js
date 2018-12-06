@@ -1,5 +1,7 @@
-import $q from '$q';
 import { assign, clone } from 'lodash';
+import { getModule } from 'NgRegistry.es6';
+
+const $q = getModule('$q');
 
 const UNAUTHORIZED = 401;
 

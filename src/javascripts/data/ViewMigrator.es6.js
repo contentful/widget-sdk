@@ -1,8 +1,10 @@
-import $q from '$q';
 import { textQueryToUISearch } from 'search/TextQueryConverter.es6';
 import { clone, cloneDeep, extend, omit, pick } from 'lodash';
 import { assetContentType } from 'legacy-client';
 import logger from 'logger';
+import { getModule } from 'NgRegistry.es6';
+
+const $q = getModule('$q');
 
 const EMPTY_SEARCH = { searchText: '', searchFilters: [] };
 

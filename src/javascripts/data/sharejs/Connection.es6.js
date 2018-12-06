@@ -2,8 +2,10 @@ import { constant } from 'lodash';
 import ShareJS from '@contentful/sharejs/lib/client';
 import { caseof, caseofEq } from 'sum-types';
 import * as K from 'utils/kefir.es6';
-import $q from '$q';
 import * as DocLoader from 'data/sharejs/DocLoader.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const $q = getModule('$q');
 
 export const DocLoad = DocLoader.DocLoad;
 

@@ -1,8 +1,6 @@
-import $q from '$q';
 import $ from 'jquery';
 import * as DOM from 'test/helpers/DOM';
 import _ from 'lodash';
-import { create as createDocument } from 'test/helpers/mocks/entity_editor_document';
 
 /**
  * Tests the integration of the 'cfEntityField' directive with
@@ -23,6 +21,8 @@ describe('entity editor field integration', () => {
       $provide.removeDirectives('cfWidgetApi', 'cfWidgetRenderer');
     });
 
+    this.createDocument = this.$inject('mocks/entityEditor/Document').create;
+
     const TheLocaleStore = this.$inject('TheLocaleStore');
     this.setLocales = TheLocaleStore.setLocales;
     this.setLocales([{ code: 'DEF', name: 'Default' }, { code: 'EN', name: 'English' }]);
@@ -37,6 +37,7 @@ describe('entity editor field integration', () => {
       settings: {}
     };
 
+    const $q = this.$inject('$q');
     const spaceContext = this.mockService('spaceContext', {
       entryTitle(entry) {
         return `TITLE ${entry.data.sys.id}`;
@@ -62,7 +63,7 @@ describe('entity editor field integration', () => {
     this.validator = editorContext.validator;
 
     this.compile = function() {
-      this.otDoc = this.otDoc || createDocument();
+      this.otDoc = this.otDoc || this.createDocument();
       const el = this.$compile('<cf-entity-field>', {
         widget: this.widget,
         editorContext: editorContext,
@@ -118,7 +119,7 @@ describe('entity editor field integration', () => {
 
   describe('editing permissions', () => {
     it('shows message if user does not have editing permissions', function() {
-      this.otDoc = createDocument();
+      this.otDoc = this.createDocument();
       this.otDoc.permissions.canEditFieldLocale = (_field, locale) => locale === 'EN';
 
       const el = this.compile();

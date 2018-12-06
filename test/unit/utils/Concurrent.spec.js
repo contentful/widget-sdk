@@ -1,22 +1,32 @@
 import { range } from 'lodash';
 import * as sinon from 'test/helpers/sinon';
-import * as C from 'utils/Concurrent.es6';
-import $q from '$q';
 
 describe('utils/Concurrent.es6', () => {
-  beforeEach(() => {
+  let C;
+  let C$q;
+
+  beforeEach(function() {
     module('contentful/test');
+
+    C = this.$inject('utils/Concurrent.es6');
+    C$q = this.$inject('utils/Concurrent$q.es6');
+
+    this.$q = this.$inject('$q');
+  });
+
+  afterEach(() => {
+    C = undefined;
+    C$q = undefined;
   });
 
   describe('.createSlot()', () => {
     it('only resolves current promise', function*() {
-      const $q = this.$inject('$q');
       const onResult = sinon.spy();
       const put = C.createSlot(onResult);
 
-      const a = $q.defer();
+      const a = this.$q.defer();
       put(a.promise);
-      const b = $q.defer();
+      const b = this.$q.defer();
       put(b.promise);
       a.resolve('VAL A');
       b.resolve('VAL B');
@@ -26,13 +36,12 @@ describe('utils/Concurrent.es6', () => {
     });
 
     it('only rejects current promise', function*() {
-      const $q = this.$inject('$q');
       const onResult = sinon.spy();
       const put = C.createSlot(onResult);
 
-      const a = $q.defer();
+      const a = this.$q.defer();
       put(a.promise);
-      const b = $q.defer();
+      const b = this.$q.defer();
       put(b.promise);
       a.reject('ERR A');
       b.reject('ERR B');
@@ -46,12 +55,12 @@ describe('utils/Concurrent.es6', () => {
   describe('.createQueue()', () => {
     it('works', function*() {
       const calls = [];
-      const q = C.createQueue();
+      const q = C$q.createQueue();
 
       // We create a list of runner functions together with the
       // 'deferred' objects they resolve with
       const [a, b, c] = range(4).map(i => {
-        const deferred = $q.defer();
+        const deferred = this.$q.defer();
         return {
           deferred: deferred,
           run: () => {

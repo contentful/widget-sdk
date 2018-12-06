@@ -1,4 +1,3 @@
-import $q from '$q';
 import _ from 'lodash';
 
 describe('EntityLinkController', () => {
@@ -97,6 +96,8 @@ describe('EntityLinkController', () => {
   });
 
   it('exposes content type when it is loaded', function() {
+    const $q = this.$inject('$q');
+
     const contentType = $q.resolve({ data: { name: 'CTNAME' } });
     this.init({ contentType });
     this.$apply();

@@ -1,6 +1,5 @@
 import * as sinon from 'test/helpers/sinon';
 import createMockEndpoint from 'test/helpers/mocks/SpaceEndpoint';
-import { create as createDocument } from 'test/helpers/mocks/entity_editor_document';
 
 /**
  * @ngdoc service
@@ -33,6 +32,7 @@ angular.module('contentful/mocks').factory('mocks/spaceContext', [
     const createWidgetStore = require('widgets/Store.es6').create;
     const createApiKeyRepo = require('data/CMA/ApiKeyRepo.es6').default;
     const CMAClient = require('data/ApiClient');
+    const createDocument = require('mocks/entityEditor/Document').create;
 
     return {
       init: init

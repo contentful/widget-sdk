@@ -7,8 +7,10 @@
  * Used by the cfReferenceEditor and cfSnapshotPresentLink directives.
  */
 import { caseof } from 'sum-types/caseof-eq';
-import $q from '$q';
 import { chunk, uniq, flatten } from 'lodash';
+import { getModule } from 'NgRegistry.es6';
+
+const $q = getModule('$q');
 
 const MAX_IN_IDS = 50;
 

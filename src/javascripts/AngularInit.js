@@ -20,11 +20,11 @@ angular
   .run([
     '$injector',
     $injector => {
-      const require = $injector.get;
+      const ngRequire = $injector.get;
 
-      angular.module('contentful/init').getModule = require;
+      angular.module('contentful/init').getModule = ngRequire;
 
-      require('components/client/ClientController.es6');
-      require('components/shared/space-wizard/SpaceWizardDirective.es6');
+      ngRequire('components/client/ClientController.es6');
+      ngRequire('components/shared/space-wizard/SpaceWizardDirective.es6');
     }
   ]);

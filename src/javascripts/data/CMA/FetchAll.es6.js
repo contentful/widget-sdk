@@ -1,5 +1,7 @@
-import $q from '$q';
 import _ from 'lodash';
+import { getModule } from 'NgRegistry.es6';
+
+const $q = getModule('$q');
 
 /**
  * @ngdoc service

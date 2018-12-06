@@ -3,8 +3,10 @@
  * a given field and locale on a document.
  *
  */
-import $q from '$q';
 import { isEqual } from 'lodash';
+import { getModule } from 'NgRegistry.es6';
+
+const $q = getModule('$q');
 
 /**
  * @ngdoc method

@@ -1,10 +1,13 @@
-import $q from '$q';
 import * as K from 'utils/kefir.es6';
 
 import * as StringField from 'entityEditor/Document/StringField';
 import * as ShareJS from 'data/ShareJS/Utils';
 
 import * as RichTextFieldSetter from 'app/widgets/rich_text/RichTextFieldSetter.es6';
+
+import { getModule } from 'NgRegistry.es6';
+
+const $q = getModule('$q');
 
 /**
  * Create an object that exposes all methods for changing values in a
