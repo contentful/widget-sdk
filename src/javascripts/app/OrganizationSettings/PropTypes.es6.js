@@ -59,3 +59,11 @@ export const SpaceRole = PropTypes.shape({
     id: PropTypes.string.isRequired
   }).isRequired
 });
+
+export const Team = PropTypes.shape({
+  name: PropTypes.string.isRequired,
+  description: PropTypes.string,
+  sys: PropTypes.shape({
+    id: PropTypes.string.isRequired
+  }).isRequired
+});

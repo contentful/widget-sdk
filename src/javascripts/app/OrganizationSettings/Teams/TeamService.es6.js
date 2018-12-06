@@ -12,9 +12,25 @@ export default function createTeamService(orgId) {
     update
   };
 
-  function get() {}
+  function get(id) {
+    return endpoint(
+      {
+        method: 'GET',
+        path: ['teams', id]
+      },
+      ALPHA_HEADER
+    );
+  }
 
-  function getAll() {}
+  function getAll() {
+    return endpoint(
+      {
+        method: 'GET',
+        path: ['teams']
+      },
+      ALPHA_HEADER
+    );
+  }
 
   function create({ name, description }) {
     return endpoint(

@@ -12,10 +12,16 @@ import {
 import Workbench from 'app/common/Workbench.es6';
 import TeamFormDialog from '../TeamFormDialog.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
+import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
 
 export default class TeamList extends React.Component {
   static propTypes = {
-    orgId: PropTypes.string.isRequired
+    orgId: PropTypes.string.isRequired,
+    initialTeams: PropTypes.arrayOf(TeamPropType)
+  };
+
+  state = {
+    teams: this.props.initialTeams
   };
 
   addTeam = () => {
@@ -25,6 +31,7 @@ export default class TeamList extends React.Component {
   };
 
   render() {
+    const { teams } = this.state;
     return (
       <Workbench>
         <Workbench.Header>
@@ -48,10 +55,12 @@ export default class TeamList extends React.Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                <TableRow>
-                  <TableCell>Hejo</TableCell>
-                  <TableCell>The most awesome team in Contentful</TableCell>
-                </TableRow>
+                {teams.map(team => (
+                  <TableRow key={team.sys.id}>
+                    <TableCell>{team.name}</TableCell>
+                    <TableCell>{team.description}</TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </section>
