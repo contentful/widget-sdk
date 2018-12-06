@@ -1,4 +1,4 @@
-import * as sinon from 'helpers/sinon';
+import * as sinon from 'test/helpers/sinon';
 import * as K from 'test/helpers/mocks/kefir';
 import { noop } from 'lodash';
 

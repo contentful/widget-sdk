@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import sinon from 'npm:sinon';
+import sinon from 'sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
 describe('BackNav', () => {

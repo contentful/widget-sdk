@@ -1,6 +1,6 @@
-import * as K from 'helpers/mocks/kefir';
-import * as sinon from 'helpers/sinon';
-import moment from 'npm:moment';
+import * as K from 'test/helpers/mocks/kefir';
+import * as sinon from 'test/helpers/sinon';
+import moment from 'moment';
 import { update, push } from 'utils/Collections.es6';
 
 describe('LaunchDarkly', () => {

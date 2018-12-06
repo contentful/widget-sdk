@@ -5,7 +5,7 @@ describe('Welcome react component', () => {
     this.hourStub = sinon.stub();
 
     module('contentful/test', $provide => {
-      $provide.value('moment', () => {
+      $provide.constant('moment', () => {
         return {
           hour: this.hourStub,
           format: () => {}

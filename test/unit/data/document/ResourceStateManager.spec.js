@@ -1,5 +1,5 @@
-import * as K from 'helpers/mocks/kefir';
-import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
+import * as K from 'test/helpers/mocks/kefir';
+import createMockSpaceEndpoint from 'test/helpers/mocks/SpaceEndpoint';
 
 describe('data/document/ResourceStateManager.es6', () => {
   beforeEach(function() {

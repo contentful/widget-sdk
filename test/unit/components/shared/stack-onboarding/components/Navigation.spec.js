@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
-import sinon from 'npm:sinon';
-import * as K from 'helpers/mocks/kefir';
+import sinon from 'sinon';
+import * as K from 'test/helpers/mocks/kefir';
 
 import { mount } from 'enzyme';
 

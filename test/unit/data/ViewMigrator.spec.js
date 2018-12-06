@@ -1,4 +1,4 @@
-import sinon from 'npm:sinon';
+import sinon from 'sinon';
 import { cloneDeep } from 'lodash';
 
 let step = 0;

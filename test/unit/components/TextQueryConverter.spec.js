@@ -1,4 +1,4 @@
-import * as sinon from 'helpers/sinon';
+import * as sinon from 'test/helpers/sinon';
 import _ from 'lodash';
 
 describe('TextQueryConverter#textQueryToUISearch()', () => {

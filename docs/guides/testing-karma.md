@@ -34,7 +34,7 @@ Module System
 Test files are only executed when their file name ends with `.spec.js`.
 
 All files in the `test/` folder are treated as ES6 modules. Files in the
-`test/helper/` directory can by imported with `import 'helpers/my-helper'`.
+`test/helpers/` directory can by imported with `import 'test/helpers/my-helper'`.
 
 The test module system is configured in
 [`test/system-config.js`][src:test/system-config] and set up in
@@ -48,7 +48,7 @@ constant Angular modules. For example
 ~~~js
 // test/unit/utils/Kefir.spec.js
 
-import * as KM from 'helpers/mocks/kefir';
+import * as KM from 'test/helpers/mocks/kefir';
 // from src/javscripts/utils.kefir.es6.js
 import * as K from 'utils/kefir';
 ~~~
@@ -65,7 +65,7 @@ that are not defined as ES6 modules see [“Using Angular”](#using-angular) be
 NPM packages can be imported in the tests using the `npm` prefix.
 
 ~~~js
-import sinon from 'npm:sinon'
+import sinon from 'sinon'
 ~~~
 
 For performance reasons it is heavily advised to load a UMD distribution of the

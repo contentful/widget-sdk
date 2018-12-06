@@ -1,4 +1,4 @@
-import sinon from 'npm:sinon';
+import sinon from 'sinon';
 import _ from 'lodash';
 
 describe('app/ContentModel/Editor/Actions.es6', () => {

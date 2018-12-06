@@ -85,6 +85,19 @@ angular
       require('dialogsInitController').init();
       require('navigation/DocumentTitle.es6').init();
       require('components/shared/auto_create_new_space').init();
+
+      const moment = require('moment');
+
+      moment.locale('en', {
+        calendar: {
+          lastDay: '[Yesterday], LT',
+          sameDay: '[Today], LT',
+          nextDay: '[Tomorrow], LT',
+          lastWeek: 'ddd, LT',
+          nextWeek: '[Next] ddd, LT',
+          sameElse: 'll'
+        }
+      });
     }
   ]);
 

@@ -1,5 +1,5 @@
-import * as K from 'helpers/mocks/kefir';
-import { create as createDocument } from 'helpers/mocks/entity_editor_document';
+import * as K from 'test/helpers/mocks/kefir';
+import { create as createDocument } from 'test/helpers/mocks/entity_editor_document';
 import _ from 'lodash';
 
 describe('cfSnapshotSelector', () => {

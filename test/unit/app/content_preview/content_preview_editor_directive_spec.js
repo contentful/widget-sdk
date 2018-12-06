@@ -1,5 +1,5 @@
-import { setCheckbox } from 'helpers/DOM';
-import * as sinon from 'helpers/sinon';
+import { setCheckbox } from 'test/helpers/DOM';
+import * as sinon from 'test/helpers/sinon';
 import _ from 'lodash';
 
 describe('cfContentPreviewEditor directive', () => {

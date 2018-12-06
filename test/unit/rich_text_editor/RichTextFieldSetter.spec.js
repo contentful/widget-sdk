@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-import * as sinon from 'helpers/sinon';
+import * as sinon from 'test/helpers/sinon';
 
 describe('RichTextFieldSetter', () => {
   beforeEach(function() {

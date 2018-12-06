@@ -1,6 +1,6 @@
-import * as DOM from 'helpers/DOM';
-import createSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
-import * as sinon from 'helpers/sinon';
+import * as DOM from 'test/helpers/DOM';
+import createSpaceEndpoint from 'test/helpers/mocks/SpaceEndpoint';
+import * as sinon from 'test/helpers/sinon';
 import $ from 'jquery';
 
 describe('app/RoleSelector', () => {

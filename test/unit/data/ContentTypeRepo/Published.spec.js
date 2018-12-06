@@ -1,5 +1,5 @@
-import * as sinon from 'helpers/sinon';
-import * as K from 'helpers/mocks/kefir';
+import * as sinon from 'test/helpers/sinon';
+import * as K from 'test/helpers/mocks/kefir';
 import _ from 'lodash';
 
 describe('data/ContentTypeRepo/Published.es6', () => {

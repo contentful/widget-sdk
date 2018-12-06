@@ -1,4 +1,4 @@
-import * as K from 'helpers/mocks/kefir';
+import * as K from 'test/helpers/mocks/kefir';
 import _ from 'lodash';
 
 describe('Token store service', () => {

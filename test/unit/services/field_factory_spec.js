@@ -1,4 +1,4 @@
-import sinon from 'npm:sinon';
+import sinon from 'sinon';
 import { map, uniq, find, filter, every } from 'lodash';
 
 describe('field factory', () => {

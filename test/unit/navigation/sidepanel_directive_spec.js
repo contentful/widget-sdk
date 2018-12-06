@@ -1,6 +1,6 @@
-import * as sinon from 'helpers/sinon';
-import * as K from 'helpers/mocks/kefir';
-import * as DOM from 'helpers/DOM';
+import * as sinon from 'test/helpers/sinon';
+import * as K from 'test/helpers/mocks/kefir';
+import * as DOM from 'test/helpers/DOM';
 import $ from 'jquery';
 
 describe('cfNavSidepanel directive', () => {

@@ -1,4 +1,4 @@
-import sinon from 'npm:sinon';
+import sinon from 'sinon';
 
 describe('SlideInNavigator', () => {
   beforeEach(function() {

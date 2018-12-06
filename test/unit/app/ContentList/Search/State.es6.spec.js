@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { contentTypes, brand } from './helpers';
 import { createStore, bindActions } from 'ui/Framework/Store.es6';
-import * as K from 'helpers/mocks/kefir';
+import * as K from 'test/helpers/mocks/kefir';
 import * as State from 'app/ContentList/Search/State.es6';
 import { buildFilterFieldByQueryKey } from 'app/ContentList/Search/Filters.es6';
 

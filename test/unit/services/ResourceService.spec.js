@@ -1,5 +1,5 @@
 import { createIsolatedSystem } from 'test/helpers/system-js';
-import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
+import createMockSpaceEndpoint from 'test/helpers/mocks/SpaceEndpoint';
 
 import { get, set, values } from 'lodash';
 

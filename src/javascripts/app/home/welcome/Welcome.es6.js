@@ -74,6 +74,7 @@ function getGreeting(user) {
 
 function getTimeOfDay() {
   const hour = moment().hour();
+
   if (hour < 12) {
     return 'morning';
   } else if (hour < 17) {
