@@ -5,6 +5,7 @@ import Workbench from 'app/common/Workbench.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 
 import $state from '$state';
+import * as Analytics from 'analytics/Analytics.es6';
 
 import { cloneDeep, uniqBy } from 'lodash';
 import * as Random from 'utils/Random.es6';
@@ -92,6 +93,7 @@ export default class NetlifyAppPage extends Component {
       const { sites, counts } = await NetlifyClient.listSites(token);
       Notification.success('Netlify account connected successfully.');
       this.setState({ token, email, netlifySites: sites, netlifyCounts: counts });
+      Analytics.track('netlify:connected');
     } catch (err) {
       notifyError(err, 'Failed to connect with Netlify. Try again!');
     }
@@ -112,6 +114,7 @@ export default class NetlifyAppPage extends Component {
       const updatedConfig = await NetlifyIntegration.install(this.getIntegrationContext());
       Notification.success('Netlify app installed successfully.');
       this.setState({ busyWith: false, installed: true, config: updatedConfig });
+      Analytics.track('netlify:installed');
     } catch (err) {
       notifyError(err, 'Failed to install Netlify app.');
       this.setState({ busyWith: false });
@@ -124,6 +127,7 @@ export default class NetlifyAppPage extends Component {
       const updatedConfig = await NetlifyIntegration.update(this.getIntegrationContext());
       Notification.success('Netlify app configuration updated successfully.');
       this.setState({ busyWith: false, config: updatedConfig });
+      Analytics.track('netlify:updated');
     } catch (err) {
       notifyError(err, 'Failed to update Netlify app configuration.');
       this.setState({ busyWith: false });
@@ -135,6 +139,7 @@ export default class NetlifyAppPage extends Component {
       this.setState({ busyWith: 'uninstall' });
       await NetlifyIntegration.uninstall(this.getIntegrationContext());
       Notification.success('Netlify app uninstalled successfully.');
+      Analytics.track('netlify:uninstalled');
       $state.go('^.list');
     } catch (err) {
       notifyError(err, 'Failed to uninstall Netlify app.');

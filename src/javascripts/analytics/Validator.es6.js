@@ -86,7 +86,9 @@ export const validEvents = {
   entity_button: ['click'],
   ui_webhook_editor: ['save'],
   usage: ['period_selected'],
-  text_editor: ['action']
+  text_editor: ['action'],
+  apps: ['opted_in'],
+  netlify: ['connected', 'installed', 'updated', 'uninstalled', 'build_triggered', 'preview_opened']
 };
 
 export const validateEvent = eventName => {

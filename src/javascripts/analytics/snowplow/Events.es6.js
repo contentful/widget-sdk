@@ -62,6 +62,14 @@ registerGenericEvent('incoming_links:query');
 
 registerGenericEvent('usage:period_selected');
 
+registerGenericEvent('apps:opted_in');
+registerGenericEvent('netlify:connected');
+registerGenericEvent('netlify:installed');
+registerGenericEvent('netlify:updated');
+registerGenericEvent('netlify:uninstalled');
+registerGenericEvent('netlify:build_triggered');
+registerGenericEvent('netlify:preview_opened');
+
 registerBulkEditorEvent('bulk_editor:action');
 registerBulkEditorEvent('bulk_editor:add');
 registerBulkEditorEvent('bulk_editor:close');
