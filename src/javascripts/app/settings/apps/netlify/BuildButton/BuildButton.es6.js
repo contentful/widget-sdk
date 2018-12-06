@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Button, ValidationMessage } from '@contentful/forma-36-react-components';
 
 import spaceContext from 'spaceContext';
+import * as Analytics from 'analytics/Analytics.es6';
 
 import { createPubSub } from './PubNubClient.es6';
 import {
@@ -84,6 +85,9 @@ export default class BuildButton extends Component {
     });
 
     const res = await fetch(this.props.netlifySite.buildHookUrl, { method: 'POST' });
+
+    Analytics.track('netlify:build_triggered');
+
     if (!res.ok) {
       this.pubsub.publish({
         contentful: true,

@@ -7,6 +7,9 @@ import AppListItem from './AppListItem.es6';
 import IntercomFeedback from '../IntercomFeedback.es6';
 import { Note, TextLink } from '@contentful/forma-36-react-components';
 
+import * as Analytics from 'analytics/Analytics.es6';
+import intercom from 'intercom';
+
 const AppsListShell = props => (
   <Workbench>
     <Workbench.Header>
@@ -76,6 +79,15 @@ export default class AppsListPage extends Component {
     );
   }
 
+  optIn = () => {
+    this.setState({ optedIn: true });
+
+    Analytics.track('apps:opted_in');
+
+    // Track event so the user is identified in Intercom.
+    intercom.trackEvent('apps-early-access');
+  };
+
   renderOptIn() {
     return (
       <React.Fragment>
@@ -88,7 +100,7 @@ export default class AppsListPage extends Component {
             yet. We decided to make them available to interested parties but we warn you: it may be
             broken.
           </p>
-          <TextLink onClick={() => this.setState({ optedIn: true })} icon="ThumbUp">
+          <TextLink onClick={this.optIn} icon="ThumbUp">
             I want to join the Early Access Program
           </TextLink>
         </Note>

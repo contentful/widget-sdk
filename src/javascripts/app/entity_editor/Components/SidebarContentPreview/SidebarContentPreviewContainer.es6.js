@@ -99,7 +99,7 @@ export class SidebarContentPreviewContainer extends Component {
     };
   };
 
-  onTrackPreviewOpened = () => {
+  onTrackPreviewOpened = async () => {
     if (!this.state.isPreviewSetup || !this.state.selectedContentPreview.compiledUrl) {
       return;
     }
@@ -137,6 +137,14 @@ export class SidebarContentPreviewContainer extends Component {
       },
       ...eventOptions
     });
+
+    const netlifyAppConfig = await spaceContext.netlifyAppConfig.get();
+    const sites = get(netlifyAppConfig, ['sites'], []);
+    const sitesArray = Array.isArray(sites) ? sites : [];
+
+    if (sitesArray.find(s => s.contentPreviewId === selectedContentPreview.envId)) {
+      Analytics.track('netlify:preview_opened');
+    }
   };
 
   onChangeContentPreview = preview => {
