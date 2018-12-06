@@ -12,6 +12,7 @@ angular.module('contentful').directive('cfClickOutside', [
   '$parse',
   '$document',
   (require, $parse, $document) => {
+    const $ = require('jquery');
     const _ = require('lodash');
     return {
       restrict: 'A',

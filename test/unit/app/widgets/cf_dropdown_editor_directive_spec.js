@@ -1,5 +1,7 @@
 'use strict';
 
+import $ from 'jquery';
+
 describe('cfDropdownEditor Directive', () => {
   let fieldApi;
 

@@ -1,4 +1,5 @@
 import * as DOM from 'helpers/DOM';
+import $ from 'jquery';
 
 describe('app/SpaceSettings/Environments', () => {
   const ENVIRONMENTS_LIMIT = 3;

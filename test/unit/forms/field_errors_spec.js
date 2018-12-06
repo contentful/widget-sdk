@@ -1,5 +1,7 @@
 'use strict';
 
+import $ from 'jquery';
+
 describe('cfFieldErrorsFor', () => {
   beforeEach(
     module('cf.forms', fieldErrorMessageProvider => {

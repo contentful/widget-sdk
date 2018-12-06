@@ -1,5 +1,7 @@
 'use strict';
 
+import $ from 'jquery';
+
 describe('cfTagEditor directive', () => {
   beforeEach(function() {
     module('contentful/test');

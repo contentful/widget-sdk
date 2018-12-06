@@ -3,6 +3,7 @@
 angular.module('contentful').directive('cfEmbedlyPreview', [
   'require',
   require => {
+    const $ = require('jquery');
     const $timeout = require('$timeout');
     const debounce = require('debounce');
     const isValidUrl = require('utils/StringUtils.es6').isValidUrl;

@@ -3,6 +3,7 @@
 angular.module('contentful').directive('cfWhenDisabled', [
   'require',
   require => {
+    const $ = require('jquery');
     const accessChecker = require('access_control/AccessChecker');
 
     function makePropGetter(elem) {

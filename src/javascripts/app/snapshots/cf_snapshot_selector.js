@@ -4,7 +4,9 @@ angular
   .module('cf.app')
 
   .directive('cfSnapshotSelector', [
-    () => {
+    'require',
+    require => {
+      const $ = require('jquery');
       return {
         template: JST.cf_snapshot_selector(),
         restrict: 'E',

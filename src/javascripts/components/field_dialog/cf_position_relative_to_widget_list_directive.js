@@ -17,6 +17,7 @@
 angular.module('contentful').directive('cfPositionRelativeToWidgetList', [
   'require',
   require => {
+    const $ = require('jquery');
     const defer = require('defer');
     const debounce = require('debounce');
 

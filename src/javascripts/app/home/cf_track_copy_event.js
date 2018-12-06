@@ -18,6 +18,7 @@ angular
   .directive('cfTrackCopyEvent', [
     'require',
     require => {
+      const $ = require('jquery');
       const _ = require('lodash');
       const $document = require('$document');
       const $window = require('$window');

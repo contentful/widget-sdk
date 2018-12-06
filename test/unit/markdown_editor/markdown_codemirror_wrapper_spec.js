@@ -1,5 +1,7 @@
 'use strict';
 
+import $ from 'jquery';
+
 describe('CodeMirror wrapper', () => {
   let textarea, wrapper, cm, focusSpy, CodeMirror;
 

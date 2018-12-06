@@ -3,6 +3,7 @@
 angular.module('contentful').directive('cfZenmode', [
   'require',
   require => {
+    const $ = require('jquery');
     const $window = require('$window');
     const MarkdownEditor = require('markdown_editor/markdown_editor.es6');
     const actions = require('markdown_editor/markdown_actions.es6');

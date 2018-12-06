@@ -1,5 +1,6 @@
 import * as K from 'helpers/mocks/kefir';
 import _ from 'lodash';
+import $ from 'jquery';
 import { create as createDocument } from 'helpers/mocks/entity_editor_document';
 
 describe('Extension SDK', () => {

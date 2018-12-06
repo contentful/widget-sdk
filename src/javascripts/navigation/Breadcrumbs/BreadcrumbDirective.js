@@ -10,6 +10,7 @@
 angular.module('contentful').directive('cfBreadcrumbs', [
   'require',
   require => {
+    const $ = require('jquery');
     const _ = require('lodash');
     const $parse = require('$parse');
     const $state = require('$state');

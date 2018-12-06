@@ -55,8 +55,7 @@ module.exports = {
       },
       globals: {
         angular: false,
-        JST: false,
-        $: false
+        JST: false
       }
     },
     {

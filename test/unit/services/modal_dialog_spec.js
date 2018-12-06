@@ -1,5 +1,6 @@
 import * as sinon from 'helpers/sinon';
 import _ from 'lodash';
+import $ from 'jquery';
 
 describe('Modal dialog service', () => {
   let modalDialog, scope;

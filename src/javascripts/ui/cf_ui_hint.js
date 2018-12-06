@@ -51,6 +51,7 @@ angular
   .directive('cfUiHint', [
     'require',
     require => {
+      var $ = require('jquery');
       var Hints = require('hints');
       return {
         restrict: 'E',

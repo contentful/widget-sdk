@@ -24,7 +24,8 @@
 angular.module('contentful').directive('cfThumbnail', [
   'require',
   require => {
-    var _ = require('lodash');
+    const $ = require('jquery');
+    const _ = require('lodash');
     const mimetype = require('@contentful/mimetype');
     const h = require('utils/legacy-html-hyperscript').h;
     const { isValidImage, getExternalImageUrl } = require('ui/cf/thumbnailHelpers.es6');

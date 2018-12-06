@@ -1,5 +1,7 @@
 'use strict';
 
+import $ from 'jquery';
+
 describe('Space nav bar directive', () => {
   let container, scope, accessChecker, spaceContext;
   let compileElement;

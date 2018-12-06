@@ -2,6 +2,7 @@ import * as K from 'helpers/mocks/kefir';
 import React from 'react';
 import { observeResize } from 'ui/ResizeDetector.es6';
 import _ from 'lodash';
+import $ from 'jquery';
 
 describe('ui/ResizeDetector.es6', () => {
   beforeEach(function() {

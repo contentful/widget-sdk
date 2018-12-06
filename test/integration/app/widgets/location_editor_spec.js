@@ -1,5 +1,6 @@
 'use strict';
 import _ from 'lodash';
+import $ from 'jquery';
 
 describe('LocationEditor integration', () => {
   beforeEach(function() {

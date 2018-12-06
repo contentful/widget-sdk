@@ -1,6 +1,7 @@
 import * as DOM from 'helpers/DOM';
 import createSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
 import * as sinon from 'helpers/sinon';
+import $ from 'jquery';
 
 describe('app/RoleSelector', () => {
   beforeEach(function() {

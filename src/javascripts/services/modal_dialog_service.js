@@ -26,6 +26,7 @@
 angular.module('contentful').factory('modalDialog', [
   'require',
   require => {
+    var $ = require('jquery');
     var _ = require('lodash');
     var defer = require('defer');
     var $compile = require('$compile');

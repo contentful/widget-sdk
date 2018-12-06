@@ -1,5 +1,7 @@
 'use strict';
 
+import $ from 'jquery';
+
 describe('ui/inputControl', () => {
   let inputEl;
 

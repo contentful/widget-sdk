@@ -1,5 +1,7 @@
 'use strict';
 
+import $ from 'jquery';
+
 describe('cfRadioEditor Directive', () => {
   let fieldApi;
 

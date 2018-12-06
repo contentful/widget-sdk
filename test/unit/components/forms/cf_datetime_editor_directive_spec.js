@@ -1,5 +1,7 @@
 'use strict';
+
 import _ from 'lodash';
+import $ from 'jquery';
 
 describe('DateTime Editor', () => {
   let moment;

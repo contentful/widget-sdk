@@ -1,5 +1,6 @@
 import { setCheckbox } from 'helpers/DOM';
 import * as sinon from 'helpers/sinon';
+import $ from 'jquery';
 
 describe('cfCheckboxEditor directive', () => {
   beforeEach(function() {

@@ -1,6 +1,7 @@
 import * as sinon from 'helpers/sinon';
 import * as K from 'helpers/mocks/kefir';
 import * as DOM from 'helpers/DOM';
+import $ from 'jquery';
 
 describe('cfNavSidepanel directive', () => {
   let NavStates;

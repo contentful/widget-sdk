@@ -1,5 +1,7 @@
 'use strict';
 
+import $ from 'jquery';
+
 describe('subscriptionPlanRecommender', () => {
   let $httpBackend;
   let recommend;

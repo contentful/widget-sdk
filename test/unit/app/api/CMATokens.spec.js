@@ -1,5 +1,6 @@
 import * as sinon from 'helpers/sinon';
 import * as DOM from 'helpers/DOM';
+import $ from 'jquery';
 import attachContextMenuHandler from 'ui/ContextMenuHandler.es6';
 
 /**

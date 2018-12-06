@@ -1,5 +1,6 @@
 import * as K from 'utils/kefir.es6';
 import _ from 'lodash';
+import $ from 'jquery';
 
 /**
  * Tests the following controller and directives

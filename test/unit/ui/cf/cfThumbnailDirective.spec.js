@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 describe('cfThumbnailDirective', () => {
   beforeEach(function() {
     module('contentful/test');

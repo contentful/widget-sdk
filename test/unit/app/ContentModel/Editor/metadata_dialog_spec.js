@@ -1,6 +1,7 @@
 'use strict';
 
 import { dispatchOnChange } from 'test/helpers/DOM';
+import $ from 'jquery';
 
 describe('contentTypeEditor/metadataDialog', () => {
   beforeEach(function() {

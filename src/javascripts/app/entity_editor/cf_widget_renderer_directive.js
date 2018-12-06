@@ -16,6 +16,7 @@
 angular.module('cf.app').directive('cfWidgetRenderer', [
   'require',
   require => {
+    const $ = require('jquery');
     const $compile = require('$compile');
     const $state = require('$state');
 
