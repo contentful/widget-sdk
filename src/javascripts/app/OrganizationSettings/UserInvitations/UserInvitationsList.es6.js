@@ -71,7 +71,9 @@ export default class InvitationsList extends React.Component {
     return (
       <Workbench className="invitation-list">
         <Workbench.Header>
-          <Workbench.Title>{`Invited users (${invitations.length})`}</Workbench.Title>
+          <Workbench.Title>{`Invited users (${
+            unifiedInvitationsAndMemberships.length
+          })`}</Workbench.Title>
           <TextLink href={this.getLinkToUsersList()}>View all users ({membershipsCount})</TextLink>
         </Workbench.Header>
         <Workbench.Content>
