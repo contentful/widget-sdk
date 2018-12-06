@@ -215,5 +215,10 @@ describe('utils/StringUtils.es6', () => {
       expect(utils.article('test')).toBe('a');
       expect(utils.article('food')).toBe('a');
     });
+
+    it('should return the article and the word together if second argument is true', () => {
+      expect(utils.article('apple', true)).toBe('an apple');
+      expect(utils.article('test', true)).toBe('a test');
+    });
   });
 });
