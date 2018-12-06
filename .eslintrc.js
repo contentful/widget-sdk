@@ -15,8 +15,7 @@ module.exports = {
   },
   globals: {
     setTimeout: false,
-    Promise: false,
-    require: false
+    Promise: false
   },
   parser: 'babel-eslint',
   rules: {
@@ -43,7 +42,18 @@ module.exports = {
       }
     ],
     'eol-last': 'warn',
-    'require-yield': 'off'
+    'require-yield': 'off',
+    'no-restricted-syntax': [
+      'error',
+      'ContinueStatement',
+      'DebuggerStatement',
+      'EmptyStatement',
+      'LabeledStatement',
+      'MetaProperty',
+      'SequenceExpression',
+      'TaggedTemplateExpression',
+      'WithStatement'
+    ]
   },
   overrides: [
     {
@@ -94,30 +104,18 @@ module.exports = {
       }
     },
     {
-      files: ['*.es6.js'],
+      files: ['src/javascripts/**/*.es6.js'],
       parserOptions: {
         ecmaVersion: 2017,
         sourceType: 'module'
       },
       plugins: ['rulesdir'],
       rules: {
+        'rulesdir/relative-imports': 'error',
+        'no-plusplus': ['warn', { allowForLoopAfterthoughts: true }],
         'object-shorthand': ['warn', 'properties'],
         'prefer-const': 'error',
-        'no-var': 'error',
-        'no-restricted-syntax': [
-          'error',
-          'ContinueStatement',
-          'DebuggerStatement',
-          'EmptyStatement',
-          'ForStatement',
-          'LabeledStatement',
-          'MetaProperty',
-          'SequenceExpression',
-          'TaggedTemplateExpression',
-          'UpdateExpression',
-          'WithStatement'
-        ],
-        'rulesdir/relative-imports': 'error'
+        'no-var': 'error'
       }
     }
   ]

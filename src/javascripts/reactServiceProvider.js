@@ -11,11 +11,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-
-// this is `require` from webpack. `reactServiceContext` has to be
-// consumed as a JS module, without angular dependency, so we can
-// build non-angular apps
-const { Provider } = require('./reactServiceContext');
+import { Provider } from './reactServiceContext';
 
 angular.module('contentful').factory('ServicesProvider', [
   'require',

@@ -150,13 +150,8 @@ module.exports = () => {
           use: {
             loader: 'babel-loader',
             options: createBabelOptions({
-              moduleIds: false,
-              getModuleId: undefined,
-              // we don't need SystemJS plugin for regular es5 files
-              plugins: [
-                require.resolve('babel-plugin-transform-object-rest-spread'),
-                require.resolve('babel-plugin-transform-class-properties')
-              ]
+              angularModules: false,
+              moduleIds: false
             })
           }
         },

@@ -34,7 +34,12 @@ module.exports = {
       const relDepPath = path.relative(path.dirname(myPath), absDepPath);
 
       if (ImportType.default(relDepPath, context) === 'parent' && relDepPath.includes('../..')) {
-        const suggestedImport = absDepPath.split('src/javascripts/')[1].replace('.js', '');
+        let suggestedImport = '';
+        try {
+          suggestedImport = absDepPath.split('src/javascripts/')[1].replace('.js', '');
+        } catch (e) {
+          //
+        }
 
         context.report({
           node: sourceNode,
