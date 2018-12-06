@@ -11,6 +11,7 @@ export default class TeamForm extends React.Component {
     orgId: PropTypes.string.isRequired,
     onClose: PropTypes.func.isRequired,
     initialTeam: TeamPropType,
+    onTeamCreated: PropTypes.func,
     onConfirm: PropTypes.func
   };
 
@@ -38,8 +39,9 @@ export default class TeamForm extends React.Component {
           await this.service.update({ ...this.props.initialTeam, name, description });
           Notification.success(`Team updated successfully`);
         } else {
-          await this.service.create({ name, description });
+          const newTeam = await this.service.create({ name, description });
           Notification.success(`Team ${name} created successfully`);
+          this.props.onTeamCreated(newTeam);
           this.props.onClose();
         }
       } catch (e) {

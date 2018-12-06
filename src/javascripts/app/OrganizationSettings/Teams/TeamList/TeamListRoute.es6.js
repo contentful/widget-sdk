@@ -31,8 +31,8 @@ export default class TeamListRoute extends React.Component {
               return <FetcherLoading message="Loading users..." />;
             }
 
-            const { items } = data;
-            return <TeamList orgId={orgId} initialTeams={items} />;
+            const { items, total } = data;
+            return <TeamList orgId={orgId} initialTeams={items} total={total} />;
           }}
         </TeamListFetcher>
       </OrgAdminOnly>

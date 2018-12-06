@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import pluralize from 'pluralize';
 
 import {
   Button,
@@ -17,6 +18,7 @@ import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
 export default class TeamList extends React.Component {
   static propTypes = {
     orgId: PropTypes.string.isRequired,
+    total: PropTypes.number.isRequired,
     initialTeams: PropTypes.arrayOf(TeamPropType)
   };
 
@@ -26,23 +28,31 @@ export default class TeamList extends React.Component {
 
   addTeam = () => {
     ModalLauncher.open(({ onClose, isShown }) => (
-      <TeamFormDialog orgId={this.props.orgId} isShown={isShown} onClose={onClose} />
+      <TeamFormDialog
+        orgId={this.props.orgId}
+        isShown={isShown}
+        onClose={onClose}
+        onTeamCreated={this.handleTeamCreated}
+      />
     ));
   };
 
+  handleTeamCreated = team => {
+    this.setState({ teams: [team, ...this.state.teams] });
+  };
+
   render() {
+    const { total } = this.props;
     const { teams } = this.state;
     return (
       <Workbench>
         <Workbench.Header>
           <Workbench.Header.Left>
-            <Workbench.Title>Organization users</Workbench.Title>
+            <Workbench.Title>Teams</Workbench.Title>
           </Workbench.Header.Left>
           <Workbench.Header.Actions>
-            {`N teams in your organization`}
-            <Button icon="PlusCircle" onClick={this.addTeam}>
-              Create team
-            </Button>
+            {`${pluralize('teams', total, true)} in your organization`}
+            <Button onClick={this.addTeam}>New team</Button>
           </Workbench.Header.Actions>
         </Workbench.Header>
         <Workbench.Content>

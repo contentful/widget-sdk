@@ -10,7 +10,7 @@ import {
   Filter as FilterPropType,
   Space as SpacePropType,
   SpaceRole as SpaceRolePropType
-} from '../../PropTypes.es6';
+} from 'app/OrganizationSettings/PropTypes.es6';
 import SearchFilter from './SearchFilter.es6';
 
 export class UserListFilters extends React.Component {
