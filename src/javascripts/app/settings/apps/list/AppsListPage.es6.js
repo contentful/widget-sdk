@@ -6,7 +6,9 @@ import AppsList from './AppsList.es6';
 import AppListItem from './AppListItem.es6';
 import IntercomFeedback from '../IntercomFeedback.es6';
 import { Note, TextLink } from '@contentful/forma-36-react-components';
+
 import * as Analytics from 'analytics/Analytics.es6';
+import intercom from 'intercom';
 
 const AppsListShell = props => (
   <Workbench>
@@ -79,7 +81,11 @@ export default class AppsListPage extends Component {
 
   optIn = () => {
     this.setState({ optedIn: true });
+
     Analytics.track('apps:opted_in');
+
+    // Track event so the user is identified in Intercom.
+    intercom.trackEvent('apps-early-access');
   };
 
   renderOptIn() {

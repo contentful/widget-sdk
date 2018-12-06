@@ -11,8 +11,6 @@ export default class IntercomFeedback extends Component {
   };
 
   onClick = () => {
-    // Track event so the user is identified.
-    intercom.trackEvent('apps-early-access');
     // Open the Intercom messanger, with message prepopulated.
     intercom.open(`I’ve got a question/feedback about ${this.props.about}: `);
   };
