@@ -19,10 +19,11 @@ export function getLastActivityDate(membership) {
     : 'Not available';
 }
 
-export function getUserName({ firstName, lastName, sys }) {
-  if (firstName) {
-    return <span>{`${firstName} ${lastName}`}</span>;
+export function getUserName(user) {
+  if (user && user.firstName && user.lastName) {
+    return <span>{`${user.firstName} ${user.lastName}`}</span>;
   } else {
-    return <UnknownUser id={sys.id} />;
+    const id = user && user.sys ? user.sys.id : 'unknown';
+    return <UnknownUser id={id} />;
   }
 }

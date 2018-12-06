@@ -38,7 +38,7 @@ class UserDetail extends React.Component {
       OrganizationRoles: PropTypes.object
     }),
     initialMembership: OrganizationMembershipPropType.isRequired,
-    createdBy: UserPropType.isRequired,
+    createdBy: UserPropType,
     spaceMemberships: PropTypes.arrayOf(SpaceMembershipPropType).isRequired,
     spaces: PropTypes.arrayOf(SpacePropType).isRequired,
     roles: PropTypes.arrayOf(SpaceRolePropType).isRequired,
