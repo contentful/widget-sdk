@@ -13,6 +13,5 @@ window.libs = window.libs.concat([
   ['react-dom/test-utils', require('react-dom/test-utils')],
 
   ['sinon', require('sinon')],
-  ['moment', require('moment')],
   ['angular-mocks', require('angular-mocks')]
 ]);
