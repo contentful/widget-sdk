@@ -9,7 +9,8 @@ export default function createTeamService(orgId) {
     get,
     getAll,
     create,
-    update
+    update,
+    getTeamMemberships
   };
 
   function get(id) {
@@ -50,6 +51,17 @@ export default function createTeamService(orgId) {
         path: ['teams', id],
         data: { name, description },
         version: sys.version
+      },
+      ALPHA_HEADER
+    );
+  }
+
+  function getTeamMemberships(teamId, query) {
+    return endpoint(
+      {
+        method: 'GET',
+        path: ['teams', teamId, 'team_memberships'],
+        query
       },
       ALPHA_HEADER
     );
