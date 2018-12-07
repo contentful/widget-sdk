@@ -115,7 +115,8 @@ module.exports = {
         'no-plusplus': ['warn', { allowForLoopAfterthoughts: true }],
         'object-shorthand': ['warn', 'properties'],
         'prefer-const': 'error',
-        'no-var': 'error'
+        'no-var': 'error',
+        'rulesdir/restrict-angular-require': 'error'
       }
     }
   ]
