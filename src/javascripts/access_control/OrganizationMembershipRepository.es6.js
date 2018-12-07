@@ -46,6 +46,15 @@ export function removeMembership(endpoint, membershipId) {
   );
 }
 
+// TODO: This should be in its own repository, because this deals with invitations and
+// not organization_memberships
+export function removeInvitation(endpoint, invitationId) {
+  return endpoint({
+    method: 'DELETE',
+    path: ['invitations', invitationId]
+  });
+}
+
 /**
  * Get organization's users from endpoint
  * @param {function} endpoint - organization endpoint

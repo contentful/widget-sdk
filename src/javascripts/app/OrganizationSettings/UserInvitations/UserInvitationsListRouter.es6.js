@@ -4,21 +4,15 @@ import OrgAdminOnly from 'app/common/OrgAdminOnly.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
-import { fetchAll } from 'data/CMA/FetchAll.es6';
 import { getMemberships } from 'access_control/OrganizationMembershipRepository.es6';
 
 import UserInvitationsList from './UserInvitationsList.es6';
-import ResolveLinks from '../LinkResolver.es6';
 
 const InvitationListFetcher = createFetcherComponent(({ orgId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
-  const includePaths = ['sys.user'];
 
   return Promise.all([
-    fetchAll(endpoint, ['invitations'], 100, { 'status[eq]': 'pending' }),
-    getMemberships(endpoint, { include: includePaths, limit: 250 }).then(({ items, includes }) =>
-      ResolveLinks({ paths: includePaths, items, includes })
-    )
+    getMemberships(endpoint, { limit: 0, 'sys.user.firstName[ne]': '' }).then(({ total }) => total)
   ]);
 });
 
@@ -47,19 +41,9 @@ export default class UserInvitationsListRouter extends React.Component {
               return <StateRedirect to="spaces.detail.entries.list" />;
             }
 
-            const [invitations, allMemberships] = data;
-            const pendingMemberships = allMemberships.filter(m => m.sys.user.firstName === null);
-            const membershipsCount = allMemberships.filter(m => m.sys.user.firstName !== null)
-              .length;
+            const [membershipsCount] = data;
 
-            return (
-              <UserInvitationsList
-                orgId={orgId}
-                invitations={invitations}
-                pendingMemberships={pendingMemberships}
-                membershipsCount={membershipsCount}
-              />
-            );
+            return <UserInvitationsList orgId={orgId} membershipsCount={membershipsCount} />;
           }}
         </InvitationListFetcher>
       </OrgAdminOnly>

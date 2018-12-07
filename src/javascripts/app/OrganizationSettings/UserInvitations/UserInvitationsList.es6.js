@@ -1,46 +1,40 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { orderBy } from 'lodash';
+import { orderBy, without } from 'lodash';
 import {
   TableCell,
   TableRow,
   Table,
   TableHead,
   TableBody,
-  TextLink
+  TextLink,
+  Button
 } from '@contentful/forma-36-react-components';
 import { href } from 'states/Navigator.es6';
+import {
+  removeMembership,
+  removeInvitation
+} from 'access_control/OrganizationMembershipRepository.es6';
+import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
+import { getInvitedUsers } from './UserInvitationUtils.es6';
+import { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 
 import Workbench from 'app/common/Workbench.es6';
 
 export default class InvitationsList extends React.Component {
   static propTypes = {
     orgId: PropTypes.string.isRequired,
-    membershipsCount: PropTypes.number.isRequired,
-    invitations: PropTypes.arrayOf(
-      PropTypes.shape({
-        sys: PropTypes.shape({
-          id: PropTypes.string.isRequired,
-          createdAt: PropTypes.string.isRequired
-        }).isRequired,
-        email: PropTypes.string.isRequired,
-        role: PropTypes.string.isRequired
-      })
-    ).isRequired,
-    pendingMemberships: PropTypes.arrayOf(
-      PropTypes.shape({
-        sys: PropTypes.shape({
-          id: PropTypes.string.isRequired,
-          createdAt: PropTypes.string.isRequired,
-          user: PropTypes.shape({
-            email: PropTypes.string.isRequired
-          }).isRequired
-        }).isRequired,
-        role: PropTypes.string.isRequired
-      })
-    ).isRequired
+    membershipsCount: PropTypes.number.isRequired
   };
+
+  state = {
+    loading: true
+  };
+
+  componentDidMount() {
+    this.getInvitations();
+  }
 
   getLinkToUsersList() {
     return href({
@@ -49,31 +43,45 @@ export default class InvitationsList extends React.Component {
     });
   }
 
+  getInvitations = async () => {
+    const { orgId } = this.props;
+
+    this.setState({ loading: true });
+
+    const invitations = await getInvitedUsers(orgId);
+
+    this.setState({ invitations, loading: false });
+  };
+
+  removeInvitation = invitation => async () => {
+    const { orgId } = this.props;
+    const { invitations } = this.state;
+    const { type, id } = invitation;
+
+    const endpoint = createOrganizationEndpoint(orgId);
+
+    if (type === 'invitation') {
+      await removeInvitation(endpoint, id);
+    } else if (type === 'organizationMembership') {
+      await removeMembership(endpoint, id);
+    }
+
+    this.setState({ invitations: without(invitations, invitation) });
+  };
+
   render() {
-    const { invitations, pendingMemberships, membershipsCount } = this.props;
-    const unifiedInvitationsAndMemberships = invitations
-      .map(({ email, role, sys: { id, createdAt } }) => ({
-        id,
-        createdAt: moment(createdAt),
-        email,
-        role
-      }))
-      .concat(
-        pendingMemberships.map(({ role, sys: { id, createdAt, user: { email } } }) => ({
-          id,
-          createdAt: moment(createdAt),
-          email,
-          role
-        }))
-      );
-    const sortedList = orderBy(unifiedInvitationsAndMemberships, ['createdAt'], ['desc']);
+    const { membershipsCount } = this.props;
+    const { loading, invitations } = this.state;
+    const sortedList = orderBy(invitations, ['createdAt'], ['desc']);
+
+    if (loading) {
+      return <FetcherLoading message="Loading invitations..." />;
+    }
 
     return (
-      <Workbench className="invitation-list">
+      <Workbench className="user-invitations-list">
         <Workbench.Header>
-          <Workbench.Title>{`Invited users (${
-            unifiedInvitationsAndMemberships.length
-          })`}</Workbench.Title>
+          <Workbench.Title>{`Invited users (${invitations.length})`}</Workbench.Title>
           <TextLink href={this.getLinkToUsersList()}>View all users ({membershipsCount})</TextLink>
         </Workbench.Header>
         <Workbench.Content>
@@ -86,11 +94,24 @@ export default class InvitationsList extends React.Component {
               </TableRow>
             </TableHead>
             <TableBody>
-              {sortedList.map(({ id, createdAt, email, role }) => (
-                <TableRow key={id} extraClassNames="invitation-list__row">
-                  <TableCell>{email}</TableCell>
-                  <TableCell>{role}</TableCell>
-                  <TableCell>{createdAt.format('MMM Do YYYY, hh:mm a')}</TableCell>
+              {sortedList.map(invitation => (
+                <TableRow key={invitation.id} extraClassNames="user-invitations-list__row">
+                  <TableCell>{invitation.email}</TableCell>
+                  <TableCell>{invitation.role}</TableCell>
+                  <TableCell>
+                    {moment(invitation.createdAt).format('MMM Do YYYY, hh:mm a')}
+                  </TableCell>
+                  <TableCell align="right" extraClassNames="user-invitations-list__buttons">
+                    <div>
+                      <Button
+                        buttonType="negative"
+                        size="small"
+                        onClick={this.removeInvitation(invitation)}
+                        extraClassNames="user-invitations-list__button">
+                        Remove
+                      </Button>
+                    </div>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
