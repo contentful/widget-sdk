@@ -13,7 +13,7 @@ import intercom from 'intercom';
 const AppsListShell = props => (
   <Workbench>
     <Workbench.Header>
-      <Workbench.Icon icon="page-settings" />
+      <Workbench.Icon icon="page-apps" scale="1" />
       <Workbench.Title>Apps</Workbench.Title>
       <Workbench.Header.Actions>
         <IntercomFeedback about="Apps" />

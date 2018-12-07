@@ -199,7 +199,7 @@ export default class NetlifyAppPage extends Component {
     return (
       <Workbench.Header>
         <Workbench.Header.Back to="^.list" />
-        <Workbench.Icon icon="page-settings" />
+        <Workbench.Icon icon="page-apps" scale="1" />
         <Workbench.Title>App: {this.props.app.title}</Workbench.Title>
         <Workbench.Header.Actions>
           <IntercomFeedback about="Netlify App" />

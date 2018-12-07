@@ -90,7 +90,7 @@ export default class AlgoliaAppPage extends Component {
       <Workbench>
         <Workbench.Header>
           <Workbench.Header.Back to="^.list" />
-          <Workbench.Icon icon="page-settings" />
+          <Workbench.Icon icon="page-apps" scale="1" />
           <Workbench.Title>Apps: {this.props.app.title}</Workbench.Title>
           <Workbench.Header.Actions>
             {this.props.app.installed && (
