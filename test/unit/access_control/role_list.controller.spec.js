@@ -1,6 +1,14 @@
 describe('Role List Controller', () => {
   beforeEach(function() {
-    module('contentful/test');
+    this.stubs = {
+      isOwnerOrAdmin: sinon.stub().returns(false)
+    };
+
+    module('contentful/test', $provide => {
+      $provide.value('services/OrganizationRoles.es6', {
+        isOwnerOrAdmin: this.stubs.isOwnerOrAdmin
+      });
+    });
     this.scope = this.$inject('$rootScope').$new();
     this.basicErrorHandler = this.$inject('ReloadNotification').basicErrorHandler;
 
@@ -46,9 +54,6 @@ describe('Role List Controller', () => {
       reset: this.reset,
       getMembershipCounts: sinon.stub().returns({})
     });
-
-    this.OrganizationRoles = this.$inject('services/OrganizationRoles.es6');
-    this.OrganizationRoles.isOwnerOrAdmin = sinon.stub().returns(false);
 
     this.organization = {
       usage: {
@@ -141,7 +146,7 @@ describe('Role List Controller', () => {
     });
 
     it('flags if the user can upgrade the plan', function() {
-      this.OrganizationRoles.isOwnerOrAdmin.returns(true);
+      this.stubs.isOwnerOrAdmin.returns(true);
       this.createController();
       expect(this.scope.canUpgrade).toBe(true);
     });

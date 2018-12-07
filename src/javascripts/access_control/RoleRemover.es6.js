@@ -1,17 +1,17 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
+import _ from 'lodash';
+import { Notification } from '@contentful/forma-36-react-components';
+import { getInstance } from 'access_control/RoleRepository.es6';
 
-angular.module('contentful').factory('createRoleRemover', [
-  'require',
-  require => {
-    const _ = require('lodash');
-    const ReloadNotification = require('ReloadNotification');
-    const $q = require('$q');
-    const $rootScope = require('$rootScope');
-    const modalDialog = require('modalDialog');
-    const { Notification } = require('@contentful/forma-36-react-components');
-    const Command = require('command');
-    const spaceContext = require('spaceContext');
-    const roleRepo = require('access_control/RoleRepository.es6').getInstance(spaceContext.space);
+registerFactory('createRoleRemover', [
+  'ReloadNotification',
+  '$q',
+  '$rootScope',
+  'modalDialog',
+  'command',
+  'spaceContext',
+  (ReloadNotification, $q, $rootScope, modalDialog, Command, spaceContext) => {
+    const roleRepo = getInstance(spaceContext.space);
 
     return function createRoleRemover(listHandler, doneFn) {
       return function removeRole(role) {
@@ -38,7 +38,7 @@ angular.module('contentful').factory('createRoleRemover', [
         const scope = $rootScope.$new();
 
         return _.extend(scope, {
-          role: role,
+          role,
           input: {},
           count: getCountFor(role),
           isUsed: getCountFor(role) > 0,
