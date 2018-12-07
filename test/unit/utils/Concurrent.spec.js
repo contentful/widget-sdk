@@ -9,7 +9,7 @@ describe('utils/Concurrent.es6', () => {
     module('contentful/test');
 
     C = this.$inject('utils/Concurrent.es6');
-    C$q = this.$inject('utils/Concurrent$q.es6');
+    C$q = this.$inject('utils/ConcurrentQ.es6');
 
     this.$q = this.$inject('$q');
   });

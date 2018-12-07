@@ -85,8 +85,6 @@ describe('ResourceService', () => {
       typeof object.catch === 'function' &&
       typeof object.finally === 'function';
 
-    // const system = createIsolatedSystem();
-
     const mockedEndpoint = createMockSpaceEndpoint();
     this.resourceStore = mockedEndpoint.stores.resources;
 
