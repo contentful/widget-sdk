@@ -75,11 +75,8 @@
 
   .pill-list.entity-sidebar__translation-pills
     .entity-sidebar__translation-pill(
-      ng-repeat="locale in locales.active | filter:{ default: true } track by locale.sys.id"
-      class="x--default")
-        <react-component name="@contentful/forma-36-react-components/Pill" props="locales.buildPillProps(locale)"></react-component>
-    .entity-sidebar__translation-pill(
-      ng-repeat="locale in locales.active | orderBy: 'code' | filter:{ default: false } track by locale.sys.id")
+      ng-repeat="locale in locales.active | orderBy: ['-default', 'code'] track by locale.sys.id"
+      ng-class="locale.default && 'x--default'")
         <react-component name="@contentful/forma-36-react-components/Pill" props="locales.buildPillProps(locale)"></react-component>
     <react-component name="@contentful/forma-36-react-components/TextLink" props="locales.buildChangeLocaleProps()">Change</react-component>
 
