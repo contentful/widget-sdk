@@ -36,7 +36,6 @@
     "color": "^2.0.0",
     "contentful-ui-extensions-sdk": "^3.4.1",
     "detect-browser": "^3.0.1",
-    "diff-match-patch": "^1.0.1",
     "downshift": "^1.31.2",
     "element-closest": "^2.0.2",
     "element-resize-detector": "^1.1.10",

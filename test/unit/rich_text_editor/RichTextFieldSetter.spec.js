@@ -92,8 +92,9 @@ describe('RichTextFieldSetter', () => {
           nextValue: { content: [{ value: 'hello world' }] },
           ops: [
             {
-              p: ['fields', 'id', 'locale', 'content', 0, 'value', 6],
-              si: 'world'
+              p: ['fields', 'id', 'locale', 'content', 0, 'value'],
+              od: 'hello ',
+              oi: 'hello world'
             }
           ]
         },
@@ -102,8 +103,9 @@ describe('RichTextFieldSetter', () => {
           nextValue: { content: [{ value: 'hello' }] },
           ops: [
             {
-              p: ['fields', 'id', 'locale', 'content', 0, 'value', 5],
-              sd: ' world'
+              p: ['fields', 'id', 'locale', 'content', 0, 'value'],
+              od: 'hello world',
+              oi: 'hello'
             }
           ]
         },
@@ -114,8 +116,9 @@ describe('RichTextFieldSetter', () => {
           },
           ops: [
             {
-              p: ['fields', 'id', 'locale', 'content', 0, 'value', 6],
-              sd: 'world'
+              p: ['fields', 'id', 'locale', 'content', 0, 'value'],
+              od: 'hello world',
+              oi: 'hello '
             },
             {
               p: ['fields', 'id', 'locale', 'content', 1],

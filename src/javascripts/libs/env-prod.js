@@ -54,7 +54,6 @@ window.libs = [
   ['codemirror', require('codemirror')],
   ['color', require('color')],
   ['js-cookie', require('js-cookie')],
-  ['diff-match-patch', require('diff-match-patch')],
   ['downshift', require('downshift')],
   ['element-resize-detector', require('element-resize-detector')],
   ['fast-deep-equal', require('fast-deep-equal')],

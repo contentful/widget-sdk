@@ -2,7 +2,6 @@ import $q from '$q';
 import * as ShareJS from 'data/ShareJS/Utils';
 import logger from 'logger';
 import jsondiff from 'json0-ot-diff';
-import diffMatchPatch from 'diff-match-patch';
 import emptyDoc from './constants/EmptyDoc.es6';
 
 /**
@@ -48,7 +47,7 @@ export const setAt = (doc, fieldPath, nextFieldValue) => {
 };
 
 function setValue(doc, fieldPath, fieldValue, nextFieldValue) {
-  const ops = jsondiff(fieldValue, nextFieldValue, diffMatchPatch).map(op => ({
+  const ops = jsondiff(fieldValue, nextFieldValue).map(op => ({
     ...op,
     p: [...fieldPath, ...op.p]
   }));
