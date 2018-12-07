@@ -85,8 +85,9 @@ angular
 
       $provide.decorator('utils/LaunchDarkly', [
         '$delegate',
-        $delegate => {
-          const mock = createLaunchDarklyMock();
+        '$q',
+        ($delegate, $q) => {
+          const mock = createLaunchDarklyMock($q);
           return {
             ...mock,
             _noMock: $delegate

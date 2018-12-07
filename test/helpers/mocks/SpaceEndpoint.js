@@ -1,4 +1,4 @@
-import $q from '$q';
+import $q from 'test/helpers/$q';
 import { cloneDeep, mapValues, values } from 'lodash';
 import { assign, update } from 'utils/Collections.es6';
 

@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import $q from '$q';
+import $q from 'test/helpers/$q';
 
 // TODO Global 'sinon' is deprecated but still used by a lot of test
 // files.

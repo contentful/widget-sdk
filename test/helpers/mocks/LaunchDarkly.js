@@ -1,6 +1,4 @@
-import $q from '$q';
-
-export default function createLaunchDarklyMock() {
+export default function createLaunchDarklyMock($q) {
   const flags = {};
 
   return {
