@@ -67,3 +67,12 @@ export const Team = PropTypes.shape({
     id: PropTypes.string.isRequired
   }).isRequired
 });
+
+export const TeamMembership = PropTypes.shape({
+  admin: PropTypes.bool.isRequired,
+  sys: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    user: User,
+    organizationMembership: OrganizationMembership
+  }).isRequired
+});
