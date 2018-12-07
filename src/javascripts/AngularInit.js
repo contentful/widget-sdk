@@ -31,7 +31,7 @@ angular
       ngRequire('access_control/PolicyBuilder.es6');
       ngRequire('access_control/RoleListDirective.es6');
       ngRequire('access_control/RoleRemover.es6');
-      // ngRequire('access_control/UserInvitationNoteDirectives.es6');
+      ngRequire('access_control/UserInvitationNoteDirectives.es6');
       ngRequire('access_control/UserListDirective.es6');
       ngRequire('access_control/UserListHandler.es6');
       ngRequire('access_control/UserSpaceInvitationController.es6');
