@@ -5,7 +5,7 @@ import Workbench from 'app/common/Workbench.es6';
 import AppsList from './AppsList.es6';
 import AppListItem from './AppListItem.es6';
 import IntercomFeedback from '../IntercomFeedback.es6';
-import { Note, TextLink } from '@contentful/forma-36-react-components';
+import { Note, Button } from '@contentful/forma-36-react-components';
 
 import * as Analytics from 'analytics/Analytics.es6';
 import intercom from 'intercom';
@@ -15,15 +15,11 @@ const AppsListShell = props => (
     <Workbench.Header>
       <Workbench.Icon icon="page-apps" scale="1" />
       <Workbench.Title>Apps</Workbench.Title>
-      <Workbench.Header.Actions>
-        <IntercomFeedback about="Apps" />
-      </Workbench.Header.Actions>
     </Workbench.Header>
     <Workbench.Content centered>
       <div className="apps-list-container">
         <p className="apps-list__intro">
-          Adding apps helps you extend the platform and work easier with a service you are using for
-          your project.
+          Extend the platform and integrate with services you’re using by adding apps.
         </p>
         <div>{props.children}</div>
       </div>
@@ -31,26 +27,22 @@ const AppsListShell = props => (
   </Workbench>
 );
 
-const FakeListContent = () => (
-  <ContentLoader height={200} width={500} ariaLabel="Loading apps list...">
-    <rect x="0" y="0" rx="2" ry="2" width="100" height="10" />
-    <circle cx="15" cy="55" r="15" />
-    <rect x="45" y="52" rx="2" ry="2" width="200" height="6" />
-    <rect x="430" y="52" rx="2" ry="2" width="70" height="6" />
-
-    <circle cx="15" cy="95" r="15" />
-    <rect x="45" y="92" rx="2" ry="2" width="200" height="6" />
-    <rect x="430" y="92" rx="2" ry="2" width="70" height="6" />
-
-    <circle cx="15" cy="135" r="15" />
-    <rect x="45" y="132" rx="2" ry="2" width="200" height="6" />
-    <rect x="430" y="132" rx="2" ry="2" width="70" height="6" />
-  </ContentLoader>
-);
-
 export const AppsListPageLoading = () => (
   <AppsListShell>
-    <FakeListContent />
+    <ContentLoader height={200} width={500} ariaLabel="Loading apps list...">
+      <rect x="0" y="0" rx="2" ry="2" width="100" height="10" />
+      <circle cx="15" cy="55" r="15" />
+      <rect x="45" y="52" rx="2" ry="2" width="200" height="6" />
+      <rect x="430" y="52" rx="2" ry="2" width="70" height="6" />
+
+      <circle cx="15" cy="95" r="15" />
+      <rect x="45" y="92" rx="2" ry="2" width="200" height="6" />
+      <rect x="430" y="92" rx="2" ry="2" width="70" height="6" />
+
+      <circle cx="15" cy="135" r="15" />
+      <rect x="45" y="132" rx="2" ry="2" width="200" height="6" />
+      <rect x="430" y="132" rx="2" ry="2" width="70" height="6" />
+    </ContentLoader>
   </AppsListShell>
 );
 
@@ -75,7 +67,10 @@ export default class AppsListPage extends Component {
 
   render() {
     return (
-      <AppsListShell>{this.state.optedIn ? this.renderApps() : this.renderOptIn()}</AppsListShell>
+      <AppsListShell>
+        {this.renderDisclaimer()}
+        {this.renderApps()}
+      </AppsListShell>
     );
   }
 
@@ -88,41 +83,38 @@ export default class AppsListPage extends Component {
     intercom.trackEvent('apps-early-access');
   };
 
-  renderOptIn() {
+  renderDisclaimer() {
+    const { optedIn } = this.state;
+
     return (
-      <React.Fragment>
-        <Note
-          extraClassNames="netlify-app__early-access"
-          noteType="primary"
-          title="Early Access Program">
-          <p>
-            Apps are under active development right now and should not be used in production systems
-            yet. We decided to make them available to interested parties but we warn you: it may be
-            broken.
-          </p>
-          <TextLink onClick={this.optIn} icon="ThumbUp">
-            I want to join the Early Access Program
-          </TextLink>
-        </Note>
-        <FakeListContent />
-      </React.Fragment>
+      <Note extraClassNames="netlify-app__early-access" noteType="primary" title="Alpha feature">
+        <p>
+          This is not a commercial release. It may contain errors and may change how it works. Use
+          this only on things that are not business critical.
+        </p>
+        <Button disabled={optedIn} onClick={this.optIn} icon={optedIn ? 'CheckCircle' : undefined}>
+          {optedIn ? 'Apps enabled' : 'Enable alpha feature'}
+        </Button>
+        <IntercomFeedback about="Apps" type="Button" />
+      </Note>
     );
   }
 
   renderApps() {
     const { apps } = this.props;
+    const overlayed = !this.state.optedIn;
 
     return (
       <React.Fragment>
         {apps.installed.length > 0 && (
-          <AppsList title="Installed">
+          <AppsList title="Installed" overlayed={overlayed}>
             {apps.installed.map(app => (
               <AppListItem key={app.id} app={app} />
             ))}
           </AppsList>
         )}
         {apps.available.length > 0 && (
-          <AppsList title="Available">
+          <AppsList title="Available" overlayed={overlayed}>
             {apps.available.map(app => (
               <AppListItem key={app.id} app={app} />
             ))}
