@@ -13,6 +13,7 @@ import {
 import Workbench from 'app/common/Workbench.es6';
 import TeamFormDialog from '../TeamFormDialog.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
+import { href } from 'states/Navigator.es6';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
 
 export default class TeamList extends React.Component {
@@ -21,6 +22,13 @@ export default class TeamList extends React.Component {
     total: PropTypes.number.isRequired,
     initialTeams: PropTypes.arrayOf(TeamPropType)
   };
+
+  static getLinkToTeam(team) {
+    return href({
+      path: ['account', 'organizations', 'teams', 'detail'],
+      params: { teamId: team.sys.id }
+    });
+  }
 
   state = {
     teams: this.props.initialTeams
@@ -67,7 +75,9 @@ export default class TeamList extends React.Component {
               <TableBody>
                 {teams.map(team => (
                   <TableRow key={team.sys.id}>
-                    <TableCell>{team.name}</TableCell>
+                    <TableCell>
+                      <a href={TeamList.getLinkToTeam(team)}>{team.name}</a>
+                    </TableCell>
                     <TableCell>{team.description}</TableCell>
                   </TableRow>
                 ))}
