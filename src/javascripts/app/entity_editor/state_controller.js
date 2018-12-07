@@ -28,6 +28,8 @@ angular.module('contentful').controller('entityEditor/StateController', [
     const spaceContext = require('spaceContext');
     const onFeatureFlag = require('utils/LaunchDarkly').onFeatureFlag;
     const goToPreviousSlideOrExit = require('navigation/SlideInNavigator').goToPreviousSlideOrExit;
+    const showUnpublishedRefsConfirm = require('app/entity_editor/UnpublishedReferencesConfirm/UnpublishedReferences.es6')
+      .showConfirm;
 
     const permissions = otDoc.permissions;
     const reverter = otDoc.reverter;
@@ -167,7 +169,14 @@ angular.module('contentful').controller('entityEditor/StateController', [
       }
     );
 
-    controller.registerPublicationWarning = publicationWarnings.register;
+    controller.registerUnpublishedReferencesWarning = ({ getData, shouldShow }) => {
+      publicationWarnings.register({
+        group: 'unpublished_references',
+        warnFn: unpublishedReferences => showUnpublishedRefsConfirm(unpublishedReferences),
+        getData,
+        shouldShow
+      });
+    };
 
     function publishEntity() {
       return publicationWarnings

@@ -1,7 +1,5 @@
 import _ from 'lodash';
 
-const NO_GROUP = '__no_group';
-
 export function create() {
   const warnings = [];
 
@@ -27,50 +25,53 @@ export function create() {
     };
   }
 
-  function show() {
-    const processed = orderByPriority(mergeGroups());
+  async function show() {
+    const grouppedWarnings = await mergeGroups();
 
-    return _.reduce(
+    const processed = orderByPriority(grouppedWarnings);
+
+    const result = await _.reduce(
       processed,
-      (promise, warning) => (warning.shouldShow() ? promise.then(warning.warnFn) : promise),
+      async (promise, warning) => {
+        const shouldShow = await warning.shouldShow();
+
+        if (shouldShow) {
+          return await promise.then(warning.warnFn);
+        }
+        return promise;
+      },
       Promise.resolve()
     );
+
+    return result;
   }
 
-  function mergeGroups() {
-    const grouped = _.transform(
-      warnings,
-      (acc, warning) => {
-        const group = _.isString(warning.group) ? warning.group : NO_GROUP;
-        acc[group] = acc[group] || [];
-        acc[group].push(warning);
-      },
-      {}
-    );
+  async function mergeGroups() {
+    const grouped = _(warnings)
+      .chain()
+      .groupBy(warning => warning.group)
+      .toPairs()
+      .map(([, v]) => merge(v))
+      .value();
 
-    return _.transform(
-      grouped,
-      (acc, inGroup, key) => {
-        if (key === NO_GROUP) {
-          acc.push(...inGroup);
-        } else {
-          acc.push(merge(inGroup));
-        }
-      },
-      []
-    );
+    return Promise.all(grouped);
   }
 
-  function merge(warnings) {
-    const processed = _.filter(orderByPriority(warnings), _.method('shouldShow'));
+  async function merge(warnings) {
+    warnings = orderByPriority(warnings);
+
+    const prms = await Promise.all(warnings.map(wn => wn.shouldShow()));
+
+    const processed = warnings.filter((_w, i) => prms[i]);
+
     const highestPriority = _.first(processed) || { warnFn: Promise.resolve(), priority: 0 };
 
     return {
-      shouldShow: function() {
+      shouldShow: () => {
         return processed.length > 0;
       },
-      warnFn: function() {
-        const data = _.map(processed, _.method('getData'));
+      warnFn: () => {
+        const data = processed.map(w => w.getData());
         return highestPriority.warnFn(data);
       },
       priority: highestPriority.priority

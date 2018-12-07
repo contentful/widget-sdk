@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+import _ from 'lodash';
+
 import { ModalConfirm } from '@contentful/forma-36-react-components';
 
 class UnpublishedReferencesConfirm extends Component {
@@ -8,13 +10,22 @@ class UnpublishedReferencesConfirm extends Component {
     isShown: PropTypes.bool.isRequired,
     onConfirm: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
-    linkedEntityTypes: PropTypes.array.isRequired,
-    unpublishedRefs: PropTypes.array.isRequired
+    unpublishedReferences: PropTypes.array.isRequired
   };
 
   render() {
-    const { onConfirm, onCancel, isShown, linkedEntityTypes, unpublishedRefs } = this.props;
+    const { onConfirm, onCancel, isShown } = this.props;
+
+    const unpublishedReferences = _.filter(
+      this.props.unpublishedReferences,
+      ref => ref && ref.count > 0
+    );
+
+    const counts = _.countBy(unpublishedReferences, 'linked');
+    const linkedEntityTypes = [counts.Entry > 0 && 'entries', counts.Asset > 0 && 'assets'];
+
     const entityTypesMsg = linkedEntityTypes.join(' and ');
+
     return (
       <ModalConfirm
         testId="unpublished-refs-confirm"
@@ -26,7 +37,7 @@ class UnpublishedReferencesConfirm extends Component {
         onCancel={onCancel}>
         <p>It appears that you’ve linked to {entityTypesMsg} that haven’t been published yet.</p>
         <ul>
-          {unpublishedRefs.map((item, idx) => (
+          {unpublishedReferences.map((item, idx) => (
             <li key={idx}>
               <strong>{item.fieldName}</strong> — {item.count} unpublished {item.type}
             </li>

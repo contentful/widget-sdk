@@ -304,7 +304,7 @@ describe('cfReferenceEditorDirective', () => {
 
     it('registers publication warning', function() {
       sinon.assert.calledOnce(this.widgetApi.field.registerPublicationWarning);
-      expect(this.warning.group).toBe('reference_widget_unpublished_references');
+      expect(this.warning.group).toBe('unpublished_references');
       expect([
         typeof this.warning.shouldShow,
         typeof this.warning.warnFn,

@@ -1,10 +1,9 @@
-import React from 'react';
-import { countBy, filter, get, isNaN } from 'lodash';
+import { get, isNaN } from 'lodash';
 import * as K from 'utils/kefir.es6';
 import * as List from 'utils/List.es6';
 
 import entitySelector from 'entitySelector';
-import ModalLauncher from 'app/common/ModalLauncher.es6';
+
 import createEntity from 'cfReferenceEditor/createEntity';
 import spaceContext from 'spaceContext';
 import { onFeatureFlag } from 'utils/LaunchDarkly';
@@ -18,7 +17,6 @@ import $state from '$state';
 
 import * as State from './State.es6';
 
-import UnpublishedReferencesConfirm from './UnpublishedReferencesConfirm.es6';
 import {
   canPerformActionOnEntryOfType,
   canCreateAsset,
@@ -276,10 +274,8 @@ export default function create($scope, widgetApi) {
 
   maybeOpenBulkEditor();
 
-  const unregisterPublicationWarning = field.registerPublicationWarning({
-    group: 'reference_widget_unpublished_references',
+  const unregisterPublicationWarning = field.registerUnpublishedReferencesWarning({
     shouldShow: hasUnpublishedReferences,
-    warnFn: showWarning,
     getData: getWarningData
   });
 
@@ -332,27 +328,6 @@ export default function create($scope, widgetApi) {
       linked: $scope.type,
       type: (references.length > 1 ? $scope.typePlural : $scope.type).toLowerCase()
     };
-  }
-
-  async function showWarning(unpublishedRefs) {
-    unpublishedRefs = filter(unpublishedRefs, ref => ref && ref.count > 0);
-
-    const counts = countBy(unpublishedRefs, 'linked');
-    const linkedEntityTypes = [counts.Entry > 0 && 'entries', counts.Asset > 0 && 'assets'];
-
-    const confirmation = await ModalLauncher.open(({ onClose, isShown }) => (
-      <UnpublishedReferencesConfirm
-        isShown={isShown}
-        onConfirm={() => onClose(true)}
-        onCancel={() => onClose(false)}
-        unpublishedRefs={unpublishedRefs}
-        linkedEntityTypes={linkedEntityTypes}
-      />
-    ));
-
-    if (!confirmation) {
-      throw new Error('Publication was terminated');
-    }
   }
 
   // Build an object that is passed to the 'cfEntityLink' directive
