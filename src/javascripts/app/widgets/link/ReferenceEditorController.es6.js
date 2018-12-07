@@ -275,8 +275,10 @@ export default function create($scope, widgetApi) {
   maybeOpenBulkEditor();
 
   const unregisterPublicationWarning = field.registerUnpublishedReferencesWarning({
-    shouldShow: hasUnpublishedReferences,
-    getData: getWarningData
+    getData: () => ({
+      field,
+      references: getUnpublishedReferences()
+    })
   });
 
   const unlistenStateChangeSuccess = $scope.$on('$stateChangeSuccess', state.refreshEntities);
@@ -290,10 +292,6 @@ export default function create($scope, widgetApi) {
 
   function is(type, style) {
     return type === $scope.type && style === $scope.style;
-  }
-
-  function hasUnpublishedReferences() {
-    return getUnpublishedReferences().length > 0;
   }
 
   function handleInlineReferenceEditorToggle(id, locale, enableInlineEditing) {
@@ -310,24 +308,15 @@ export default function create($scope, widgetApi) {
 
   function getUnpublishedReferences() {
     const models = $scope.entityModels || [];
-    return models.filter(item => {
-      if (item.value.entity) {
-        return !item.value.entity.sys.publishedVersion;
-      } else {
-        return true;
-      }
-    });
-  }
-
-  function getWarningData() {
-    const references = getUnpublishedReferences();
-
-    return {
-      fieldName: field.name + ' (' + field.locale + ')',
-      count: references.length,
-      linked: $scope.type,
-      type: (references.length > 1 ? $scope.typePlural : $scope.type).toLowerCase()
-    };
+    return models
+      .filter(item => {
+        if (item.value.entity) {
+          return !item.value.entity.sys.publishedVersion;
+        } else {
+          return true;
+        }
+      })
+      .map(item => item.value.entity);
   }
 
   // Build an object that is passed to the 'cfEntityLink' directive

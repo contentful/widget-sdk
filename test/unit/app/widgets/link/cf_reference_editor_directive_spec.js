@@ -299,11 +299,11 @@ describe('cfReferenceEditorDirective', () => {
       this.field.setValue([link1, link2]);
       this.scope = this.init();
 
-      this.warning = this.widgetApi.field.registerPublicationWarning.firstCall.args[0];
+      this.warning = this.widgetApi.field.registerUnpublishedReferencesWarning.firstCall.args[0];
     });
 
     it('registers publication warning', function() {
-      sinon.assert.calledOnce(this.widgetApi.field.registerPublicationWarning);
+      sinon.assert.calledOnce(this.widgetApi.field.registerUnpublishedReferencesWarning);
       expect(this.warning.group).toBe('unpublished_references');
       expect([
         typeof this.warning.shouldShow,

@@ -424,7 +424,7 @@ describe('entityEditor/StateController', () => {
   describe('publication warnings', () => {
     it('allows publication warnings registration', function() {
       const warning = {};
-      this.controller.registerPublicationWarning(warning);
+      this.controller.registerUnpublishedReferencesWarning(warning);
       sinon.assert.calledOnce(this.registerWarningSpy.withArgs(warning));
     });
 

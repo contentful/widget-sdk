@@ -60,19 +60,21 @@ export function create() {
   async function merge(warnings) {
     warnings = orderByPriority(warnings);
 
-    const prms = await Promise.all(warnings.map(wn => wn.shouldShow()));
+    const warningsWithData = await Promise.all(
+      warnings.map(async warning => {
+        const data = await warning.getData();
+        return [warning, data, warning.shouldShow(data)];
+      })
+    );
 
-    const processed = warnings.filter((_w, i) => prms[i]);
+    const processed = warningsWithData.filter(([, , shouldShowValue]) => shouldShowValue);
 
-    const highestPriority = _.first(processed) || { warnFn: Promise.resolve(), priority: 0 };
+    const highestPriority = _.first(processed)[0] || { warnFn: Promise.resolve(), priority: 0 };
 
     return {
-      shouldShow: () => {
-        return processed.length > 0;
-      },
+      shouldShow: () => processed.length > 0,
       warnFn: () => {
-        const data = processed.map(w => w.getData());
-        return highestPriority.warnFn(data);
+        return highestPriority.warnFn(processed.map(([, data]) => data));
       },
       priority: highestPriority.priority
     };

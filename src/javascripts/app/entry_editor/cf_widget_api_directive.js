@@ -153,7 +153,7 @@ angular
         validations: ctField.validations || [],
         itemValidations: _.get(ctField, ['items', 'validations'], []),
 
-        registerPublicationWarning: $scope.state.registerPublicationWarning,
+        registerUnpublishedReferencesWarning: $scope.state.registerUnpublishedReferencesWarning,
 
         // Convenience properties not provided by the extensions API but
         // easily emulated.

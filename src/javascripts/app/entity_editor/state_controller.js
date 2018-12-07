@@ -169,14 +169,13 @@ angular.module('contentful').controller('entityEditor/StateController', [
       }
     );
 
-    controller.registerUnpublishedReferencesWarning = ({ getData, shouldShow }) => {
+    controller.registerUnpublishedReferencesWarning = ({ getData }) =>
       publicationWarnings.register({
         group: 'unpublished_references',
         warnFn: unpublishedReferences => showUnpublishedRefsConfirm(unpublishedReferences),
         getData,
-        shouldShow
+        shouldShow: ({ references }) => references.length > 0
       });
-    };
 
     function publishEntity() {
       return publicationWarnings

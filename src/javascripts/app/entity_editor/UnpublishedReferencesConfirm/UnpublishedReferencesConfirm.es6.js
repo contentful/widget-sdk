@@ -5,26 +5,36 @@ import _ from 'lodash';
 
 import { ModalConfirm } from '@contentful/forma-36-react-components';
 
+const humaniseEntityType = (entityType, references) => {
+  const plurals = {
+    Entry: 'entries',
+    Asset: 'assets'
+  };
+  return references.length > 1 ? plurals[entityType] : entityType;
+};
+
 class UnpublishedReferencesConfirm extends Component {
   static propTypes = {
     isShown: PropTypes.bool.isRequired,
     onConfirm: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
-    unpublishedReferences: PropTypes.array.isRequired
+    unpublishedReferencesInfos: PropTypes.array.isRequired
   };
 
   render() {
     const { onConfirm, onCancel, isShown } = this.props;
 
-    const unpublishedReferences = _.filter(
-      this.props.unpublishedReferences,
-      ref => ref && ref.count > 0
+    const unpublishedReferencesInfos = _.filter(
+      this.props.unpublishedReferencesInfos,
+      ({ references }) => references.length > 0
     );
 
-    const counts = _.countBy(unpublishedReferences, 'linked');
-    const linkedEntityTypes = [counts.Entry > 0 && 'entries', counts.Asset > 0 && 'assets'];
-
-    const entityTypesMsg = linkedEntityTypes.join(' and ');
+    const entityTypesMsg = _(unpublishedReferencesInfos)
+      .chain()
+      .map(({ field }) => (field.itemLinkType === 'Entry' ? 'entries' : 'assets'))
+      .uniq()
+      .value()
+      .join(' and ');
 
     return (
       <ModalConfirm
@@ -37,9 +47,11 @@ class UnpublishedReferencesConfirm extends Component {
         onCancel={onCancel}>
         <p>It appears that you’ve linked to {entityTypesMsg} that haven’t been published yet.</p>
         <ul>
-          {unpublishedReferences.map((item, idx) => (
+          {unpublishedReferencesInfos.map((item, idx) => (
             <li key={idx}>
-              <strong>{item.fieldName}</strong> — {item.count} unpublished {item.type}
+              <strong>{`${item.field.name} (${item.field.locale})'`}</strong> —{' '}
+              {item.references.length} unpublished{' '}
+              {humaniseEntityType(item.field.itemLinkType, item.references)}
             </li>
           ))}
         </ul>

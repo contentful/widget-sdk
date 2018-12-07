@@ -86,7 +86,7 @@ angular
             name: '',
             locale: 'en-US',
             type: '',
-            registerPublicationWarning: sinon.stub().returns(_.noop),
+            registerUnpublishedReferencesWarning: sinon.stub().returns(_.noop),
 
             value$: K.createMockProperty()
           },
