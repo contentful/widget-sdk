@@ -1,4 +1,4 @@
-import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
+import createMockSpaceEndpoint from 'test/helpers/mocks/SpaceEndpoint';
 import _ from 'lodash';
 
 describe('data/CMA/ApiKeyRepo.es6', () => {

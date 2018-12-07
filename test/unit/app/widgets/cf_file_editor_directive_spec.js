@@ -1,4 +1,4 @@
-import sinon from 'npm:sinon';
+import sinon from 'sinon';
 
 describe('cfFileEditor Directive', () => {
   beforeEach(function() {

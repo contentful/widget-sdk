@@ -10,5 +10,8 @@ window.libs = window.libs.concat([
   ['enzyme', require('enzyme')],
   ['enzyme-adapter-react-16', require('enzyme-adapter-react-16')],
 
-  ['react-dom/test-utils', require('react-dom/test-utils')]
+  ['react-dom/test-utils', require('react-dom/test-utils')],
+
+  ['sinon', require('sinon')],
+  ['angular-mocks', require('angular-mocks')]
 ]);

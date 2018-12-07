@@ -1,6 +1,6 @@
 import React from 'react';
 import { noop } from 'lodash';
-import sinon from 'npm:sinon';
+import sinon from 'sinon';
 import { default as CreateEntryButton, Style } from 'components/CreateEntryButton';
 
 import { mount } from 'enzyme';

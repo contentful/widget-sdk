@@ -1,7 +1,7 @@
 'use strict';
 import $q from '$q';
 import _ from 'lodash';
-import { create as createDocument } from 'helpers/mocks/entity_editor_document';
+import { create as createDocument } from 'test/helpers/mocks/entity_editor_document';
 
 describe('entityEditor/StateController', () => {
   const SLIDE_IN_EDITOR_FEATURE_FLAG_VALUE = 2; // Enabled with multiple levels.

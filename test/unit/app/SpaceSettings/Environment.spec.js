@@ -1,4 +1,4 @@
-import * as DOM from 'helpers/DOM';
+import * as DOM from 'test/helpers/DOM';
 import $ from 'jquery';
 
 describe('app/SpaceSettings/Environments', () => {

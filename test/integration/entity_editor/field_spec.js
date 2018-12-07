@@ -1,8 +1,8 @@
 import $q from '$q';
 import $ from 'jquery';
-import * as DOM from 'helpers/DOM';
+import * as DOM from 'test/helpers/DOM';
 import _ from 'lodash';
-import { create as createDocument } from 'helpers/mocks/entity_editor_document';
+import { create as createDocument } from 'test/helpers/mocks/entity_editor_document';
 
 /**
  * Tests the integration of the 'cfEntityField' directive with

@@ -16,7 +16,7 @@ window.addEventListener('unhandledrejection', ev => {
 // They may register Angular services, register test suite hooks or define
 // global variables
 /* eslint-disable import/first */
-import 'npm:angular-mocks';
+import 'angular-mocks';
 import { configure } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import './application';

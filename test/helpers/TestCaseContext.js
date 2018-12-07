@@ -1,5 +1,5 @@
 import { entries } from 'lodash';
-import { createUI } from 'helpers/DOM';
+import { createUI } from 'test/helpers/DOM';
 
 /**
  * This module defines the test case context. That is the methods

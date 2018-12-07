@@ -1,4 +1,4 @@
-import sinon from 'npm:sinon';
+import sinon from 'sinon';
 import _ from 'lodash';
 import keycodes from 'utils/keycodes.es6';
 import { contentTypes } from './helpers';

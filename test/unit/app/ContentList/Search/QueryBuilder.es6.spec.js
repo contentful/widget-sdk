@@ -1,4 +1,4 @@
-import moment from 'npm:moment';
+import moment from 'moment';
 import { contentTypes } from './helpers';
 
 describe('app/ContentList/Search/QueryBuilder.es6', () => {

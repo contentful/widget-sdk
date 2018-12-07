@@ -78,7 +78,7 @@ window.libs = [
   ['prop-types', require('prop-types')],
   ['qs', require('qs')],
   ['raw/htmlEncoder', require('node-html-encoder')],
-  ['raw/moment', require('moment')],
+  ['moment', require('moment')],
   ['react', require('react')],
   ['react-animate-height', require('react-animate-height')],
   ['react-click-outside', require('react-click-outside')],

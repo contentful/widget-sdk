@@ -1,7 +1,7 @@
-import sinon from 'npm:sinon';
+import sinon from 'sinon';
 import $q from '$q';
 import _ from 'lodash';
-import * as K from 'helpers/mocks/kefir';
+import * as K from 'test/helpers/mocks/kefir';
 
 describe('cfReferenceEditorDirective', () => {
   const template =

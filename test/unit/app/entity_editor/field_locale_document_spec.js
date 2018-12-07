@@ -1,6 +1,6 @@
 import createFieldLocaleDoc from 'app/entity_editor/FieldLocaleDocument.es6';
-import * as sinon from 'helpers/sinon';
-import { create as createDocument } from 'helpers/mocks/entity_editor_document';
+import * as sinon from 'test/helpers/sinon';
+import { create as createDocument } from 'test/helpers/mocks/entity_editor_document';
 
 describe('entityEditor/FieldLocaleDocument', () => {
   const path = ['fields', 'FID', 'LC'];

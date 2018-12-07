@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import sinon from 'npm:sinon';
+import sinon from 'sinon';
 
 import { shallow } from 'enzyme';
 

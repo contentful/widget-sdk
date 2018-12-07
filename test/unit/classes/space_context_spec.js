@@ -1,6 +1,6 @@
-import * as sinon from 'helpers/sinon';
+import * as sinon from 'test/helpers/sinon';
 import _ from 'lodash';
-import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
+import createMockSpaceEndpoint from 'test/helpers/mocks/SpaceEndpoint';
 
 describe('spaceContext', () => {
   beforeEach(function() {

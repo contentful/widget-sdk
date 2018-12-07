@@ -1,4 +1,4 @@
-import * as K from 'helpers/mocks/kefir';
+import * as K from 'test/helpers/mocks/kefir';
 
 describe('Account View directive', () => {
   beforeEach(function() {

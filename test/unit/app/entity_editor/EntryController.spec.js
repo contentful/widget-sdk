@@ -1,4 +1,4 @@
-import { create as createDocument } from 'helpers/mocks/entity_editor_document';
+import { create as createDocument } from 'test/helpers/mocks/entity_editor_document';
 import * as K from 'utils/kefir.es6';
 import _ from 'lodash';
 

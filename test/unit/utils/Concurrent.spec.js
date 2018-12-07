@@ -1,5 +1,5 @@
 import { range } from 'lodash';
-import * as sinon from 'helpers/sinon';
+import * as sinon from 'test/helpers/sinon';
 import * as C from 'utils/Concurrent.es6';
 import $q from '$q';
 

@@ -6,7 +6,7 @@ import { mapValues, forEach, upperFirst } from 'lodash';
 import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types';
 import { actionOrigin } from 'app/widgets/rich_text/plugins/shared/PluginApi.es6';
 
-import * as sinon from 'helpers/sinon';
+import * as sinon from 'test/helpers/sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
 import { document, block, inline, text, getWithId } from '../helpers';

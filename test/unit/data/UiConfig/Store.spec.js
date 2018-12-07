@@ -1,7 +1,7 @@
 import { cloneDeep } from 'lodash';
 
-import * as sinon from 'helpers/sinon';
-import createMockSpaceEndpoint from 'helpers/mocks/SpaceEndpoint';
+import * as sinon from 'test/helpers/sinon';
+import createMockSpaceEndpoint from 'test/helpers/mocks/SpaceEndpoint';
 
 describe('data/UiConfig/Store.es6', () => {
   beforeEach(function() {

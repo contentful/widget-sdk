@@ -1,4 +1,4 @@
-import * as K from 'helpers/mocks/kefir';
+import * as K from 'test/helpers/mocks/kefir';
 import React from 'react';
 import { observeResize } from 'ui/ResizeDetector.es6';
 import _ from 'lodash';

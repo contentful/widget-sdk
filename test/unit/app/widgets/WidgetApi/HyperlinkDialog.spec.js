@@ -1,4 +1,4 @@
-import sinon from 'npm:sinon';
+import sinon from 'sinon';
 import React from 'react';
 import { mount } from 'enzyme';
 import { createIsolatedSystem } from 'test/helpers/system-js';

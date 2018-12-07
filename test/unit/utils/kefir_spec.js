@@ -1,6 +1,6 @@
 import * as K from 'utils/kefir.es6';
-import * as KMock from 'helpers/mocks/kefir';
-import * as sinon from 'helpers/sinon';
+import * as KMock from 'test/helpers/mocks/kefir';
+import * as sinon from 'test/helpers/sinon';
 
 describe('utils/kefir.es6', () => {
   beforeEach(function() {

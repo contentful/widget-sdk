@@ -1,5 +1,5 @@
 import React from 'react';
-import * as sinon from 'helpers/sinon';
+import * as sinon from 'test/helpers/sinon';
 
 import { mount } from 'enzyme';
 

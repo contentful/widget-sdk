@@ -1,4 +1,4 @@
-import * as sinon from 'helpers/sinon';
+import * as sinon from 'test/helpers/sinon';
 import { sortBy, map, max } from 'lodash';
 
 const VERSION_MISMATCH_ERROR = { status: 409 };

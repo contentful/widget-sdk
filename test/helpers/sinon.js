@@ -1,4 +1,4 @@
-import sinon from 'npm:sinon';
+import sinon from 'sinon';
 import $q from '$q';
 
 // TODO Global 'sinon' is deprecated but still used by a lot of test

@@ -1,4 +1,4 @@
-import * as sinon from 'helpers/sinon';
+import * as sinon from 'test/helpers/sinon';
 
 describe('Segment service', () => {
   beforeEach(function() {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { mount } from 'enzyme';
 
-import * as sinon from 'helpers/sinon';
+import * as sinon from 'test/helpers/sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
 import { stubAll, setupWidgetApi, createSandbox, ENTRY } from './setup';

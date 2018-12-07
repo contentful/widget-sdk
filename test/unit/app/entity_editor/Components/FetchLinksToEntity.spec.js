@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
 import { mount } from 'enzyme';
-import sinon from 'npm:sinon';
+import sinon from 'sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
 import { EntityType } from 'app/entity_editor/Components/constants.es6';
 import flushPromises from '../../../../helpers/flushPromises';

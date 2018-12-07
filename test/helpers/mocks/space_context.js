@@ -1,6 +1,6 @@
-import * as sinon from 'helpers/sinon';
-import createMockEndpoint from 'helpers/mocks/SpaceEndpoint';
-import { create as createDocument } from 'helpers/mocks/entity_editor_document';
+import * as sinon from 'test/helpers/sinon';
+import createMockEndpoint from 'test/helpers/mocks/SpaceEndpoint';
+import { create as createDocument } from 'test/helpers/mocks/entity_editor_document';
 
 /**
  * @ngdoc service
