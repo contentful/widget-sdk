@@ -125,6 +125,14 @@ export function getAllRoles(endpoint, params) {
   return fetchAll(endpoint, ['roles'], BATCH_LIMIT, params);
 }
 
+export function getInvitations(endpoint, query) {
+  return endpoint({
+    method: 'GET',
+    path: ['invitations'],
+    query
+  });
+}
+
 export function invite(endpoint, { role, email, spaceInvitations }) {
   return endpoint({
     method: 'POST',

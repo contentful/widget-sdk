@@ -36,6 +36,7 @@ import RemoveOrgMemberDialog from '../RemoveUserDialog.es6';
 import EmptyPlaceholder from './EmptyPlaceholder.es6';
 import { getFilters, getSearchTerm } from 'selectors/filters.es6';
 import { getLastActivityDate } from '../UserUtils.es6';
+import { getInvitedUsersCount } from 'app/OrganizationSettings/UserInvitations/UserInvitationUtils.es6';
 
 import { generateFilterDefinitions } from './FilterDefinitions.es6';
 import { Filter as FilterPropType } from '../PropTypes.es6';
@@ -49,7 +50,7 @@ class UsersList extends React.Component {
     filters: PropTypes.arrayOf(FilterPropType),
     searchTerm: PropTypes.string.isRequired,
     updateSearchTerm: PropTypes.func.isRequired,
-    userInvitationsFlag: PropTypes.bool.isRequired,
+    newUserInvitationsEnabled: PropTypes.bool.isRequired,
     hasSsoEnabled: PropTypes.bool
   };
 
@@ -66,7 +67,7 @@ class UsersList extends React.Component {
   endpoint = createOrganizationEndpoint(this.props.orgId);
 
   componentDidMount() {
-    this.fetch();
+    this.loadInitialData();
   }
 
   componentDidUpdate(prevProps) {
@@ -78,8 +79,26 @@ class UsersList extends React.Component {
     }
   }
 
+  loadInitialData = async () => {
+    this.setState({ loading: true });
+
+    await this.loadInvitationsCount();
+    await this.fetch();
+
+    this.setState({ loading: false });
+  };
+
+  loadInvitationsCount = async () => {
+    const { orgId } = this.props;
+    const count = await getInvitedUsersCount(orgId);
+
+    this.setState({
+      invitedUsersCount: count
+    });
+  };
+
   fetch = async () => {
-    const { filters, searchTerm, userInvitationsFlag } = this.props;
+    const { filters, searchTerm, newUserInvitationsEnabled } = this.props;
     const { pagination } = this.state;
     const filterQuery = formatQuery(filters.map(item => item.filter));
     const includePaths = ['sys.user'];
@@ -91,7 +110,7 @@ class UsersList extends React.Component {
       limit: pagination.limit
     };
 
-    if (userInvitationsFlag) {
+    if (newUserInvitationsEnabled) {
       // Skip all "pending" org memberships
       query['sys.user.firstName[ne]'] = '';
     }
@@ -174,14 +193,14 @@ class UsersList extends React.Component {
   }, 500);
 
   render() {
-    const { queryTotal, usersList, pagination, loading } = this.state;
+    const { queryTotal, usersList, pagination, loading, invitedUsersCount } = this.state;
     const {
       searchTerm,
       numberOrgMemberships,
       spaces,
       spaceRoles,
       filters,
-      userInvitationsFlag
+      newUserInvitationsEnabled
     } = this.props;
 
     return (
@@ -202,9 +221,14 @@ class UsersList extends React.Component {
           <Workbench.Header.Actions>
             <div>
               <div>{`${pluralize('users', numberOrgMemberships, true)} in your organization`}</div>
-              {userInvitationsFlag && (
-                <TextLink href={this.getLinkToInvitationsList()}>View invited users</TextLink>
-              )}
+              {newUserInvitationsEnabled &&
+                invitedUsersCount &&
+                invitedUsersCount >
+                  0(
+                    <TextLink href={this.getLinkToInvitationsList()}>
+                      {invitedUsersCount} invited users
+                    </TextLink>
+                  )}
             </div>
             <Button icon="PlusCircle" href={this.getLinkToInvitation()}>
               Invite users

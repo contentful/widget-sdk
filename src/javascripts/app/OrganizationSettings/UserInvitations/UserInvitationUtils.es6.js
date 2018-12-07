@@ -1,5 +1,8 @@
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
-import { getMemberships } from 'access_control/OrganizationMembershipRepository.es6';
+import {
+  getMemberships,
+  getInvitations
+} from 'access_control/OrganizationMembershipRepository.es6';
 import { fetchAll } from 'data/CMA/FetchAll.es6';
 import ResolveLinks from '../LinkResolver.es6';
 
@@ -38,9 +41,7 @@ export function getInvitedUsersCount(orgId) {
   const endpoint = createOrganizationEndpoint(orgId);
 
   return Promise.all([
-    fetchAll(endpoint, ['invitations'], 100, { 'status[eq]': 'pending', limit: 0 }).then(
-      ({ total }) => total
-    ),
+    getInvitations(endpoint, { 'status[eq]': 'pending', limit: 0 }).then(({ total }) => total),
     getMemberships(endpoint, { include: includePaths, 'sys.user.firstName[eq]': '' }).then(
       ({ total }) => total
     )

@@ -15,28 +15,28 @@ import createResourceService from 'services/ResourceService.es6';
 import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 import { BV_USER_INVITATIONS } from 'featureFlags.es6';
 
-const UserListFetcher = createFetcherComponent(({ orgId }) => {
+const UserListFetcher = createFetcherComponent(async ({ orgId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
   const resources = createResourceService(orgId, 'organization');
 
-  return getCurrentVariation(BV_USER_INVITATIONS).then(userInvitationsStatus => {
-    const promises = [
-      getAllSpaces(endpoint),
-      getAllRoles(endpoint),
-      getOrganization(orgId),
-      userInvitationsStatus
-    ];
+  const newUserInvitationsEnabled = getCurrentVariation(BV_USER_INVITATIONS);
 
-    if (userInvitationsStatus) {
-      promises.push(
-        getMemberships(endpoint, { 'sys.user.firstName[ne]': '' }).then(({ total }) => total)
-      );
-    } else {
-      promises.push(resources.get('organizationMembership').then(({ usage }) => usage));
-    }
+  const promises = [
+    getAllSpaces(endpoint),
+    getAllRoles(endpoint),
+    getOrganization(orgId),
+    newUserInvitationsEnabled
+  ];
 
-    return Promise.all(promises);
-  });
+  if (newUserInvitationsEnabled) {
+    promises.push(
+      getMemberships(endpoint, { 'sys.user.firstName[ne]': '' }).then(({ total }) => total)
+    );
+  } else {
+    promises.push(resources.get('organizationMembership').then(({ usage }) => usage));
+  }
+
+  return Promise.all(promises);
 });
 
 export default class UserListRoute extends React.Component {
@@ -63,7 +63,7 @@ export default class UserListRoute extends React.Component {
               return <StateRedirect to="spaces.detail.entries.list" />;
             }
 
-            const [spaces, roles, org, userInvitationsStatus, numberOrgMemberships] = data;
+            const [spaces, roles, org, newUserInvitationsEnabled, numberOrgMemberships] = data;
 
             return (
               <UsersList
@@ -72,7 +72,7 @@ export default class UserListRoute extends React.Component {
                 spaceRoles={roles}
                 orgId={orgId}
                 hasSsoEnabled={org.hasSsoEnabled}
-                userInvitationsFlag={userInvitationsStatus}
+                newUserInvitationsEnabled={newUserInvitationsEnabled}
               />
             );
           }}
