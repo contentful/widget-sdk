@@ -1,9 +1,10 @@
+import React from 'react';
 import { countBy, filter, get, isNaN } from 'lodash';
 import * as K from 'utils/kefir.es6';
 import * as List from 'utils/List.es6';
 
 import entitySelector from 'entitySelector';
-import modalDialog from 'modalDialog';
+import ModalLauncher from 'app/common/ModalLauncher.es6';
 import createEntity from 'cfReferenceEditor/createEntity';
 import spaceContext from 'spaceContext';
 import { onFeatureFlag } from 'utils/LaunchDarkly';
@@ -16,6 +17,8 @@ import {
 import $state from '$state';
 
 import * as State from './State.es6';
+
+import UnpublishedReferencesConfirm from './UnpublishedReferencesConfirm.es6';
 import {
   canPerformActionOnEntryOfType,
   canCreateAsset,
@@ -331,19 +334,25 @@ export default function create($scope, widgetApi) {
     };
   }
 
-  function showWarning(unpublishedRefs) {
+  async function showWarning(unpublishedRefs) {
     unpublishedRefs = filter(unpublishedRefs, ref => ref && ref.count > 0);
 
     const counts = countBy(unpublishedRefs, 'linked');
     const linkedEntityTypes = [counts.Entry > 0 && 'entries', counts.Asset > 0 && 'assets'];
 
-    return modalDialog.open({
-      template: 'unpublished_references_warning',
-      scopeData: {
-        unpublishedRefs,
-        linkedEntityTypes: filter(linkedEntityTypes).join(' and ')
-      }
-    }).promise;
+    const confirmation = await ModalLauncher.open(({ onClose, isShown }) => (
+      <UnpublishedReferencesConfirm
+        isShown={isShown}
+        onConfirm={() => onClose(true)}
+        onCancel={() => onClose(false)}
+        unpublishedRefs={unpublishedRefs}
+        linkedEntityTypes={linkedEntityTypes}
+      />
+    ));
+
+    if (!confirmation) {
+      throw new Error('Publication was terminated');
+    }
   }
 
   // Build an object that is passed to the 'cfEntityLink' directive

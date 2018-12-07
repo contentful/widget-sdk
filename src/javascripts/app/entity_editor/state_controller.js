@@ -170,47 +170,50 @@ angular.module('contentful').controller('entityEditor/StateController', [
     controller.registerPublicationWarning = publicationWarnings.register;
 
     function publishEntity() {
-      return publicationWarnings.show().then(() => {
-        if (validator.run()) {
-          let contentType;
-          const entityInfo = $scope.entityInfo;
-          if (entityInfo.type === 'Entry') {
-            contentType = spaceContext.publishedCTs.get(entityInfo.contentTypeId);
-          }
-          const action = Action.Publish();
-          return applyAction(action).then(
-            entity => {
-              if (contentType) {
-                let eventOrigin = 'entry-editor';
-
-                if ($scope.bulkEditorContext) {
-                  eventOrigin = 'bulk-editor';
-                }
-
-                if ($scope.renderInline) {
-                  eventOrigin = 'inline-reference-editor';
-                }
-
-                Analytics.track('entry:publish', {
-                  eventOrigin: eventOrigin,
-                  contentType: contentType,
-                  response: { data: entity },
-                  customWidgets: ($scope.widgets || [])
-                    .filter(w => w.custom)
-                    .map(w => w.trackingData)
-                });
-              }
-              trackVersioning.publishedRestored(entity);
-            },
-            error => {
-              validator.setApiResponseErrors(error);
+      return publicationWarnings
+        .show()
+        .then(() => {
+          if (validator.run()) {
+            let contentType;
+            const entityInfo = $scope.entityInfo;
+            if (entityInfo.type === 'Entry') {
+              contentType = spaceContext.publishedCTs.get(entityInfo.contentTypeId);
             }
-          );
-        } else {
-          notify(Notification.ValidationError());
-          return $q.reject();
-        }
-      });
+            const action = Action.Publish();
+            return applyAction(action).then(
+              entity => {
+                if (contentType) {
+                  let eventOrigin = 'entry-editor';
+
+                  if ($scope.bulkEditorContext) {
+                    eventOrigin = 'bulk-editor';
+                  }
+
+                  if ($scope.renderInline) {
+                    eventOrigin = 'inline-reference-editor';
+                  }
+
+                  Analytics.track('entry:publish', {
+                    eventOrigin: eventOrigin,
+                    contentType: contentType,
+                    response: { data: entity },
+                    customWidgets: ($scope.widgets || [])
+                      .filter(w => w.custom)
+                      .map(w => w.trackingData)
+                  });
+                }
+                trackVersioning.publishedRestored(entity);
+              },
+              error => {
+                validator.setApiResponseErrors(error);
+              }
+            );
+          } else {
+            notify(Notification.ValidationError());
+            return $q.reject();
+          }
+        })
+        .catch();
     }
 
     controller.delete = Command.create(
