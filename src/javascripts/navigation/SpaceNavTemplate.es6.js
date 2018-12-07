@@ -175,6 +175,8 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
             {
               if: 'nav.appsEnabled && nav.canNavigateTo("apps")',
               dataViewType: 'apps',
+              icon: 'nav-apps',
+              label: 'alpha',
               sref: makeRef('apps.list'),
               rootSref: makeRef('apps'),
               title: 'Apps'
