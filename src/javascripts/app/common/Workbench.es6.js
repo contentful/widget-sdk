@@ -99,15 +99,15 @@ Workbench.Header.propTypes = {
   children: PropTypes.node
 };
 
-Workbench.Icon = ({ icon, scale }) => (
+Workbench.Icon = ({ icon, scale, children }) => (
   <div className="workbench-header__icon">
-    <Icon name={icon} scale={scale || '0.75'} />
+    {children ? children : <Icon name={icon} scale={scale || '0.75'} />}
   </div>
 );
 Workbench.Icon.displayName = 'Workbench.Icon';
 Workbench.Icon.propTypes = {
   scale: PropTypes.string,
-  icon: PropTypes.string.isRequired
+  icon: PropTypes.string
 };
 
 Workbench.Title = ({ children }) => <h1 className="workbench-header__title">{children}</h1>;
