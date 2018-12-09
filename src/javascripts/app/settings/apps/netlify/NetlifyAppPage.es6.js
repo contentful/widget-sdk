@@ -10,6 +10,7 @@ import * as Analytics from 'analytics/Analytics.es6';
 import { cloneDeep, uniqBy } from 'lodash';
 import * as Random from 'utils/Random.es6';
 
+import AppIcon from '../_common/AppIcon.es6';
 import * as NetlifyClient from './NetlifyClient.es6';
 import * as NetlifyIntegration from './NetlifyIntegration.es6';
 import NetlifyConfigEditor from './NetlifyConfigEditor.es6';
@@ -199,7 +200,9 @@ export default class NetlifyAppPage extends Component {
     return (
       <Workbench.Header>
         <Workbench.Header.Back to="^.list" />
-        <Workbench.Icon icon="page-settings" />
+        <Workbench.Icon>
+          <AppIcon appId="netlify" />
+        </Workbench.Icon>
         <Workbench.Title>App: {this.props.app.title}</Workbench.Title>
         <Workbench.Header.Actions>
           <IntercomFeedback about="Netlify App" />

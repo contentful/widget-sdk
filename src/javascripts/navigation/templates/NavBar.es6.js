@@ -70,7 +70,13 @@ function navbarItem(data) {
           dataViewType: data.dataViewType || '',
           tabindex: String(0)
         },
-    [h('span.nav-bar__list-label', [data.icon && h('cf-icon', { name: data.icon }), data.title])]
+    [
+      h('span.nav-bar__list-label', [
+        data.label && h('span.nav-bar__list-top-label', {}, [data.label]),
+        data.icon && h('cf-icon', { name: data.icon }),
+        data.title
+      ])
+    ]
   );
 }
 

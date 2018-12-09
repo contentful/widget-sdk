@@ -27,7 +27,7 @@ export default class AlgoliaApp extends Component {
       <AlgoliaFetcher client={this.props.client}>
         {({ isLoading, isError, data }) => {
           if (isLoading) {
-            return <AppPageShell />;
+            return <AppPageShell appId="algolia" />;
           }
           if (isError) {
             return <StateRedirect to="^.list" />;

@@ -32,7 +32,7 @@ export default class NetlifyApp extends Component {
       <NetlifyFetcher client={this.props.client}>
         {({ isLoading, isError, data }) => {
           if (isLoading) {
-            return <AppPageShell />;
+            return <AppPageShell appId="netlify" />;
           }
           if (isError) {
             return <StateRedirect to="^.list" />;

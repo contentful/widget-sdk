@@ -16,6 +16,7 @@ import UserIcon from 'svg/icon-users.es6';
 import GithubIcon from 'svg/icon-github.es6';
 import AddUserIcon from 'svg/onboarding-add-user.es6';
 import PageSettings from 'svg/page-settings.es6';
+import PageApps from 'svg/page-apps.es6';
 import PageUsage from 'svg/page-usage.es6';
 import Bubble from 'svg/bubble.es6';
 import ArrowDown from 'svg/dd-arrow-down.es6';
@@ -59,6 +60,7 @@ const SVGs = {
   'icon-github': GithubIcon,
   'onboarding-add-user': AddUserIcon,
   'page-settings': PageSettings,
+  'page-apps': PageApps,
   'page-usage': PageUsage,
   bubble: Bubble,
   'dd-arrow-down': ArrowDown,
