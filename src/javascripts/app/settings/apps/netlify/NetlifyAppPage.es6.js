@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Notification } from '@contentful/forma-36-react-components';
+import { Button, Notification, Note } from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 
@@ -205,7 +205,6 @@ export default class NetlifyAppPage extends Component {
         </Workbench.Icon>
         <Workbench.Title>App: {this.props.app.title}</Workbench.Title>
         <Workbench.Header.Actions>
-          <IntercomFeedback about="Netlify App" />
           {installed && (
             <Button
               buttonType="muted"
@@ -241,17 +240,20 @@ export default class NetlifyAppPage extends Component {
   renderContent() {
     return (
       <Workbench.Content centered>
+        <Note>
+          Let us know how we can improve the Netlify app. <IntercomFeedback about="Netlify app" />
+        </Note>
+
         <div className="netlify-app__section">
           <h3>About</h3>
           <p>
-            With this app developers will enjoy a very quick set up. Authors will control when pages
-            are created and see the current status of the build process.
+            With this app developers can do a very quick set up, authors can control when the static
+            pages are created and see the current status of the build process.
           </p>
         </div>
 
         <NetlifyConnection
           connected={!!this.state.token}
-          installed={this.state.installed}
           email={this.state.email}
           netlifyCounts={this.state.netlifyCounts}
           onConnectClick={this.onConnectClick}
@@ -260,8 +262,8 @@ export default class NetlifyAppPage extends Component {
         <div className="netlify-app__section">
           <h3>Build Netlify sites</h3>
           <p>
-            Pick Netlify sites you want to enable build for.
-            {!this.state.token && ' Requires Netlify connection.'}
+            Pick the Netlify sites you want to enable build for.
+            {!this.state.token && ' Requires Netlify account.'}
           </p>
           <NetlifyConfigEditor
             disabled={this.isDisabled()}

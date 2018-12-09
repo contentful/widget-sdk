@@ -102,7 +102,7 @@ export default class BuildButton extends Component {
     return (
       <div className="netlify-app__build-button">
         <Button disabled={!ready || busy} loading={busy} isFullWidth onClick={this.build}>
-          {busy && status ? status : 'Build with Netlify'}
+          {busy && status ? status : 'Build'}
         </Button>
         {misconfigured && (
           <div className="netlify-app__build-button__info">
