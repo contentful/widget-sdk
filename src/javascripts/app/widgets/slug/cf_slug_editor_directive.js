@@ -201,7 +201,7 @@ angular
 
             if (value) {
               req['content_type'] = entry.getSys().contentType.sys.id;
-              req['fields.' + field.id] = value;
+              req[`fields.${field.id}.${field.locale}`] = value;
               req['sys.id[ne]'] = entry.getSys().id;
               req['sys.publishedAt[exists]'] = true;
               space.getEntries(req).then(res => {

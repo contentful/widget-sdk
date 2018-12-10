@@ -7,7 +7,8 @@ describe('SlugEditor directive', () => {
 
     this.cfWidgetApi = MockApi.create({
       field: {
-        id: 'slug'
+        id: 'slug',
+        locale: 'some-LOCALE'
       },
       contentType: {
         displayField: 'title'
@@ -174,7 +175,7 @@ describe('SlugEditor directive', () => {
       this.$apply();
       sinon.assert.calledWith(getEntries, {
         content_type: 'CTID',
-        'fields.slug': 'SLUG',
+        'fields.slug.some-LOCALE': 'SLUG',
         'sys.id[ne]': 'ENTRY ID',
         'sys.publishedAt[exists]': true
       });
