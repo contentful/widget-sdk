@@ -45,9 +45,7 @@ pipeline {
     stage('Build') {
       steps {
         container('node') {
-          dir('user_interface') {
-            sh 'npm install'
-          }
+          sh 'npm install lodash @babel/parser @babel/traverse'
           dir('project-sniffer') {
             sh 'npm install'
             sh "node source/cli.js ../user_interface/ --config tools/sniffer --last ${params.last} --jump ${params.jump} --output ../project-sniffer-dashboard/src"
