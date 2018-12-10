@@ -39,6 +39,7 @@ const angular = node => {
     '$state',
     '$timeout',
     '$q',
+    'NgRegistry',
     '$interval',
     'modalDialog',
     'notification',
