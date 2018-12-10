@@ -11,7 +11,7 @@ const TARGET_MAIL = 'team-extensibility+apps@contentful.com';
 module.exports = {
   apiVersion: 1,
   dependencies: ['fetch'],
-  handle: async ({ req, dependencies }) => {
+  handle: async ({ req, kv, dependencies }) => {
     if (req.path !== '/' || req.method !== 'POST' || typeof req.body !== 'object') {
       return { statusCode: 404 };
     }
@@ -36,6 +36,15 @@ module.exports = {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
     });
+
+    try {
+      const random = require('crypto')
+        .randomBytes(4)
+        .toString('hex');
+      kv.set(`feedback-${Date.now()}-${random}`, req.body);
+    } catch (err) {
+      console.log('Failed to backup feedback to KV.');
+    }
 
     return { statusCode: res.ok ? 200 : 500 };
   }
