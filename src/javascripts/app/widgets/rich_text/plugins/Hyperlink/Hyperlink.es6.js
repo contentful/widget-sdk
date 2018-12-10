@@ -111,8 +111,7 @@ function isUrl(string) {
   return /^(?:[a-z]+:)?\/\//i.test(string) || /^mailto:/i.test(string);
 }
 
-function hasRealHyperlinkInSlateSupport () {
+function hasRealHyperlinkInSlateSupport() {
   // The <a/> element as an inline node causes buggy behavior in IE11/Edge.
   return !['ie', 'edge'].includes(detectBrowser().name);
 }
-
