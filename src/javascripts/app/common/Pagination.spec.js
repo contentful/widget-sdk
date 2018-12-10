@@ -5,7 +5,7 @@ import Pagination from './Pagination.es6';
 import { Button, Select } from '@contentful/forma-36-react-components';
 
 describe('Pagination', () => {
-  let onChangeFn = jest.fn();
+  const onChangeFn = jest.fn();
 
   const mount = (skip, limit, total, loading) => {
     return Enzyme.shallow(

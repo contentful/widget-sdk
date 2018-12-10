@@ -53,7 +53,12 @@ module.exports = {
       'SequenceExpression',
       'TaggedTemplateExpression',
       'WithStatement'
-    ]
+    ],
+    'no-var': 'error',
+    'prefer-const': 'error'
+    // todo: enable once we get rid of .es6
+    // 'no-plusplus': ['warn', { allowForLoopAfterthoughts: true }],
+    // 'object-shorthand': ['warn', 'properties']
   },
   overrides: [
     {
@@ -112,10 +117,6 @@ module.exports = {
       plugins: ['rulesdir'],
       rules: {
         'rulesdir/relative-imports': 'error',
-        'no-plusplus': ['warn', { allowForLoopAfterthoughts: true }],
-        'object-shorthand': ['warn', 'properties'],
-        'prefer-const': 'error',
-        'no-var': 'error',
         'rulesdir/restrict-angular-require': 'error'
       }
     }

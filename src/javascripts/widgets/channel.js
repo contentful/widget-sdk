@@ -17,11 +17,11 @@ angular
   .factory('widgets/channel', [
     'require',
     require => {
-      var $window = require('$window');
-      var _ = require('lodash');
-      var $q = require('$q');
-      var random = require('utils/Random.es6');
-      var $rootScope = require('$rootScope');
+      const $window = require('$window');
+      const _ = require('lodash');
+      const $q = require('$q');
+      const random = require('utils/Random.es6');
+      const $rootScope = require('$rootScope');
 
       /**
        * @ngdoc type
@@ -39,10 +39,10 @@ angular
         this.handlers = {};
         this.messageQueue = [];
 
-        var self = this;
+        const self = this;
         this.messageListener = ev => {
           $rootScope.$apply(() => {
-            var data = ev.data;
+            const data = ev.data;
             if (data.source === self.id) {
               self._dispatch(data.method, data.id, data.params);
             }
@@ -85,17 +85,17 @@ angular
           throw new Error('Widget Channel already connected');
         }
         this.connected = true;
-        var params = [_.extend({ id: this.id }, data), this.messageQueue];
+        const params = [_.extend({ id: this.id }, data), this.messageQueue];
         this._send('connect', params);
       };
 
       Channel.prototype._dispatch = function(method, callId, args) {
-        var handler = this.handlers[method];
-        var self = this;
+        const handler = this.handlers[method];
+        const self = this;
 
         if (handler) {
           // TODO catch synchronous errors
-          var result = handler(...args);
+          const result = handler(...args);
           if (typeof result !== 'undefined') {
             $q.resolve(result).then(respondResult, respondError);
           }

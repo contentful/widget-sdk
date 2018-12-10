@@ -38,7 +38,7 @@ angular
   .controller('UiTabController', [
     'require',
     function(require) {
-      var _ = require('lodash');
+      const _ = require('lodash');
 
       function Tab(controller, name) {
         this.name = name;
@@ -47,11 +47,11 @@ angular
         };
       }
 
-      var tabs = {};
-      var activeTab = null;
+      const tabs = {};
+      let activeTab = null;
 
       this.registerControl = function(name, element) {
-        var tab = this.get(name);
+        const tab = this.get(name);
         tab.control = element;
 
         if (activeTab === null) {
@@ -61,7 +61,7 @@ angular
       };
 
       this.registerPanel = function(name, element) {
-        var tab = this.get(name);
+        const tab = this.get(name);
         tab.panel = element;
         return tab;
       };
@@ -71,7 +71,7 @@ angular
           throw new TypeError('Tab name must be a string');
         }
 
-        var tab = tabs[name];
+        let tab = tabs[name];
         if (!tab) {
           tab = tabs[name] = new Tab(this, name);
         }
@@ -101,8 +101,8 @@ angular
       scope: true,
 
       link: function(scope, element, attrs) {
-        var tabName = attrs.uiTab;
-        var tab = scope.tabController.registerControl(tabName);
+        const tabName = attrs.uiTab;
+        const tab = scope.tabController.registerControl(tabName);
 
         attrs.$set('role', 'tab');
         scope.tab = tab;
@@ -123,9 +123,9 @@ angular
       scope: true,
 
       link: function(scope, element, attrs) {
-        var tabName = attrs.uiTabpanel;
-        var tabController = scope.tabController;
-        var tab = tabController.registerPanel(tabName, element);
+        const tabName = attrs.uiTabpanel;
+        const tabController = scope.tabController;
+        const tab = tabController.registerPanel(tabName, element);
         attrs.$set('role', 'tabpanel');
         scope.tab = tab;
 

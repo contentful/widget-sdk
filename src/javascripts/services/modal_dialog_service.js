@@ -26,25 +26,25 @@
 angular.module('contentful').factory('modalDialog', [
   'require',
   require => {
-    var $ = require('jquery');
-    var _ = require('lodash');
-    var defer = require('defer');
-    var $compile = require('$compile');
-    var $q = require('$q');
-    var $window = require('$window');
-    var keycodes = require('utils/keycodes.es6').default;
-    var $rootScope = require('$rootScope');
-    var debounce = require('debounce');
-    var $timeout = require('$timeout');
-    var logger = require('logger');
-    var h = require('utils/legacy-html-hyperscript').h;
+    const $ = require('jquery');
+    const _ = require('lodash');
+    const defer = require('defer');
+    const $compile = require('$compile');
+    const $q = require('$q');
+    const $window = require('$window');
+    const keycodes = require('utils/keycodes.es6').default;
+    const $rootScope = require('$rootScope');
+    const debounce = require('debounce');
+    const $timeout = require('$timeout');
+    const logger = require('logger');
+    const h = require('utils/legacy-html-hyperscript').h;
 
-    var opened = [];
+    const opened = [];
 
     function Dialog(params) {
       this._handleKeys = _.bind(this._handleKeys, this);
       opened.push(this);
-      var scope = params.scope;
+      let scope = params.scope;
 
       if (!scope) {
         scope = _.extend($rootScope.$new(), params.scopeData);
@@ -95,7 +95,7 @@ angular.module('contentful').factory('modalDialog', [
 
     Dialog.prototype = {
       attach: function() {
-        var scope = this.scope;
+        const scope = this.scope;
 
         if (this.params.messageTemplate) {
           this.params.message = getTemplate(this.params.messageTemplate);
@@ -138,22 +138,22 @@ angular.module('contentful').factory('modalDialog', [
 
       reposition: function() {
         if (this.domElement) {
-          var elem = this.domElement.find('.modal-dialog').first();
-          var topOffset = Math.max(($window.innerHeight - elem.height()) / 2, 0);
+          const elem = this.domElement.find('.modal-dialog').first();
+          const topOffset = Math.max(($window.innerHeight - elem.height()) / 2, 0);
           elem.css({ top: topOffset + 'px' });
         }
       },
 
       _centerOnBackground: function() {
-        var elem = this.domElement.children('.modal-dialog');
-        var reposition = this.reposition.bind(this);
-        var debouncedReposition = debounce(reposition, 50);
-        var destroyed = false;
+        const elem = this.domElement.children('.modal-dialog');
+        const reposition = this.reposition.bind(this);
+        const debouncedReposition = debounce(reposition, 50);
+        let destroyed = false;
 
         reposition();
         $($window).on('resize', debouncedReposition);
 
-        var repositionOff = $rootScope.$on('centerOn:reposition', () => {
+        const repositionOff = $rootScope.$on('centerOn:reposition', () => {
           if (!destroyed) {
             reposition();
           }
@@ -167,14 +167,14 @@ angular.module('contentful').factory('modalDialog', [
       },
 
       _closeOnBackground: function(ev) {
-        var target = $(ev.target);
+        const target = $(ev.target);
         if (target.hasClass('modal-background') && this.params.backgroundClose) {
           this.cancel();
         }
       },
 
       _handleKeys: function(ev) {
-        var dialog = this;
+        const dialog = this;
         dialog.scope.$apply(() => {
           if (ev.target.tagName.toLowerCase() === 'select') return;
           if (!dialog.params.ignoreEsc && ev.keyCode === keycodes.ESC) {
@@ -213,7 +213,7 @@ angular.module('contentful').factory('modalDialog', [
         }
         this._isDestroyed = true;
 
-        var self = this;
+        const self = this;
         $($window).off('keyup', this._handleKeys);
         function destroyModal() {
           if (self.domElement) {
@@ -248,7 +248,7 @@ angular.module('contentful').factory('modalDialog', [
     }
 
     function getTemplate(nameOrTemplate) {
-      var jstTemplate = JST[nameOrTemplate];
+      const jstTemplate = JST[nameOrTemplate];
       return jstTemplate ? jstTemplate() : nameOrTemplate;
     }
 
@@ -268,7 +268,7 @@ angular.module('contentful').factory('modalDialog', [
      * @param {boolean}  options.disableTopCloseButton
      */
     function openDialog(params) {
-      var dialog = new Dialog(params);
+      const dialog = new Dialog(params);
       dialog.attach();
       return dialog;
     }
@@ -321,7 +321,7 @@ angular.module('contentful').factory('modalDialog', [
     }
 
     function removeFromOpened(dialog) {
-      var index = opened.indexOf(dialog);
+      const index = opened.indexOf(dialog);
       if (index > -1) {
         opened.splice(index, 1);
       }

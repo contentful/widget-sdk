@@ -11,12 +11,12 @@
 angular.module('contentful').factory('subscriptionPlanRecommender', [
   'require',
   require => {
-    var $ = require('jquery');
-    var Config = require('Config.es6');
-    var $http = require('$http');
-    var $q = require('$q');
+    const $ = require('jquery');
+    const Config = require('Config.es6');
+    const $http = require('$http');
+    const $q = require('$q');
 
-    var ENDPOINT = Config.authUrl(
+    const ENDPOINT = Config.authUrl(
       '/account/organizations/:organization/z_subscription_plans/recommended'
     );
 
@@ -40,7 +40,7 @@ angular.module('contentful').factory('subscriptionPlanRecommender', [
     };
 
     function recommendSubscriptionPlan(organizationId) {
-      var request = {
+      const request = {
         method: 'GET',
         url: organizationEndpoint(organizationId),
         withCredentials: true
@@ -50,8 +50,8 @@ angular.module('contentful').factory('subscriptionPlanRecommender', [
     }
 
     function extractPlanHtml(response) {
-      var html = $('<div>').append($(response.data));
-      var plan = html.find('.z-subscription-plan');
+      const html = $('<div>').append($(response.data));
+      const plan = html.find('.z-subscription-plan');
 
       if (plan.length) {
         return {

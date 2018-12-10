@@ -12,8 +12,8 @@ angular
   .factory('baseErrorMessageBuilder', [
     'require',
     require => {
-      var _ = require('lodash');
-      var messages = {
+      const _ = require('lodash');
+      const messages = {
         size: function(error) {
           if (_.isString(error.value)) {
             return stringLengthMessage(error.min, error.max);
@@ -89,7 +89,7 @@ angular
       }
 
       function buildErrorMessage(error) {
-        var getMessage = messages[error.name] || defaultMessage;
+        const getMessage = messages[error.name] || defaultMessage;
         return getMessage(error);
       }
 
@@ -150,20 +150,23 @@ angular
   .factory('errorMessageBuilder', [
     'require',
     require => {
-      var _ = require('lodash');
-      var moment = require('moment');
-      var joinAnd = require('utils/StringUtils.es6').joinAnd;
-      var mimetypeGroupNames = require('@contentful/mimetype').getGroupNames();
-      var buildBaseErrorMessage = require('baseErrorMessageBuilder');
+      const _ = require('lodash');
+      const moment = require('moment');
+      const joinAnd = require('utils/StringUtils.es6').joinAnd;
+      const mimetypeGroupNames = require('@contentful/mimetype').getGroupNames();
+      const buildBaseErrorMessage = require('baseErrorMessageBuilder');
 
-      var messages = {
+      const messages = {
         linkMimetypeGroup: function(error) {
-          var labels = _.map(error.mimetypeGroupName, name => '“' + mimetypeGroupNames[name] + '”');
+          const labels = _.map(
+            error.mimetypeGroupName,
+            name => '“' + mimetypeGroupNames[name] + '”'
+          );
           return '' + joinAnd(labels) + ' are the only acceptable file types';
         },
 
         linkContentType: function(error, ctRepo) {
-          var ct = ctRepo.get(error.contentTypeId);
+          const ct = ctRepo.get(error.contentTypeId);
           if (ct) {
             return 'Linked Entry’s content type must be ' + ct.getName() + '.';
           } else {
@@ -172,9 +175,9 @@ angular
         },
 
         dateRange: function(error) {
-          var dateFormat = 'lll';
-          var min = error.min && moment(error.min).format(dateFormat);
-          var max = error.max && moment(error.max).format(dateFormat);
+          const dateFormat = 'lll';
+          const min = error.min && moment(error.min).format(dateFormat);
+          const max = error.max && moment(error.max).format(dateFormat);
 
           if (min && max) {
             return 'Please set a date between ' + min + ' and ' + max;
@@ -198,7 +201,7 @@ angular
         },
 
         notResolvable: function(error) {
-          var type = _.get(error, 'link.linkType') || 'Entity';
+          const type = _.get(error, 'link.linkType') || 'Entity';
           return 'Linked ' + type + ' does not exist';
         },
 
@@ -218,7 +221,7 @@ angular
       }
 
       function buildErrorMessage(error, ctRepo) {
-        var getMessage;
+        let getMessage;
         if (error.customMessage) {
           getMessage = customMessage;
         } else {

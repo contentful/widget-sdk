@@ -6,40 +6,40 @@ angular
   .factory('systemFields', [
     'require',
     require => {
-      var _ = require('lodash');
+      const _ = require('lodash');
 
-      var createdAt = {
+      const createdAt = {
         id: 'createdAt',
         name: 'Created',
         type: 'Date',
         canPersist: true
       };
 
-      var updatedAt = {
+      const updatedAt = {
         id: 'updatedAt',
         name: 'Updated',
         type: 'Date',
         canPersist: true
       };
 
-      var publishedAt = {
+      const publishedAt = {
         id: 'publishedAt',
         name: 'Published',
         type: 'Date',
         canPersist: true
       };
 
-      var author = {
+      const author = {
         id: 'author',
         name: 'Author',
         type: 'Symbol'
       };
 
-      var list = [createdAt, updatedAt, publishedAt, author];
-      var defaultFields = [updatedAt, author];
-      var fallbackFields = [publishedAt, createdAt, updatedAt];
+      const list = [createdAt, updatedAt, publishedAt, author];
+      const defaultFields = [updatedAt, author];
+      const fallbackFields = [publishedAt, createdAt, updatedAt];
 
-      var defaultOrder = {
+      const defaultOrder = {
         fieldId: updatedAt.id,
         direction: 'descending'
       };

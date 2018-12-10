@@ -27,20 +27,20 @@
 angular.module('contentful').factory('searchQueryAutocompletions', [
   'require',
   require => {
-    var $q = require('$q');
-    var mimetype = require('@contentful/mimetype');
-    var assetContentType = require('legacy-client').assetContentType;
-    var moment = require('moment');
-    var _ = require('lodash');
-    var caseofEq = require('sum-types').caseofEq;
-    var otherwise = require('sum-types').otherwise;
+    const $q = require('$q');
+    const mimetype = require('@contentful/mimetype');
+    const assetContentType = require('legacy-client').assetContentType;
+    const moment = require('moment');
+    const _ = require('lodash');
+    const caseofEq = require('sum-types').caseofEq;
+    const otherwise = require('sum-types').otherwise;
 
     // Require on demand to avoid circular dependency error in `spaceContext`.
-    var requireSpaceContext = _.once(() => require('spaceContext'));
+    const requireSpaceContext = _.once(() => require('spaceContext'));
 
-    var RELATIVE_DATE_REGEX = /(\d+) +days +ago/i;
+    const RELATIVE_DATE_REGEX = /(\d+) +days +ago/i;
 
-    var operatorDescriptions = {
+    const operatorDescriptions = {
       '<=': 'Less than or equal',
       '<': 'Less than',
       '>=': 'Greater than or equal',
@@ -54,7 +54,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', [
       return operatorDescriptions[op] || '';
     }
 
-    var dateOperatorDescriptions = {
+    const dateOperatorDescriptions = {
       '<=': 'Before or on that date/time',
       '<': 'Before that date/time',
       '>=': 'After or on that date/time',
@@ -86,7 +86,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', [
 
     // Factories for predefined keys. These keys are available for every kind of query
     // PAIRTOREQUEST + COMPLETIONS
-    var autocompletion = {
+    const autocompletion = {
       updatedAt: dateCompletions('sys.updatedAt', 'Date the item was modified'),
       createdAt: dateCompletions('sys.createdAt', 'Date the item was created'),
       publishedAt: dateCompletions('sys.publishedAt', 'Date the item was last published'),
@@ -159,7 +159,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', [
         description: opts.description,
         complete: function() {
           return getUserMap().then(userMap => {
-            var values = Object.keys(userMap).map(name => ({
+            const values = Object.keys(userMap).map(name => ({
               value: '"' + name + '"',
               description: name
             }));
@@ -169,7 +169,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', [
         convert: function(_op, value) {
           return getUserMap().then(userMap => {
             if (userMap[value]) {
-              var query = {};
+              const query = {};
               query[opts.path] = userMap[value];
               return query;
             }
@@ -179,7 +179,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', [
     }
 
     // Factories for assets
-    var assetCompletions = _.extend({}, autocompletion, {
+    const assetCompletions = _.extend({}, autocompletion, {
       width: imageDimensionCompletion('width', 'Width of an image in pixels'),
       height: imageDimensionCompletion('height', 'Height of an image in pixels'),
       type: {
@@ -198,7 +198,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', [
         description: 'The filesize of the item',
         operators: makeOperatorList(['<', '<=', '==', '>=', '>']),
         convert: function(operator, value) {
-          var query = {};
+          const query = {};
           value = sizeParser(value);
           query['fields.file.details.size' + queryOperator(operator)] = value;
           return query;
@@ -227,18 +227,18 @@ angular.module('contentful').factory('searchQueryAutocompletions', [
 
     // Generates a factory for completing a key that contains a date
     function dateCompletions(key, description) {
-      var DAY = /^\s*\d{2,4}-\d{2}-\d{2}\s*$/;
-      var EQUALITY = /^(==|=|:)$/;
+      const DAY = /^\s*\d{2,4}-\d{2}-\d{2}\s*$/;
+      const EQUALITY = /^(==|=|:)$/;
       return {
         description: description,
         operators: makeDateOperatorList(),
         complete: makeDateCompletion(),
         convert: function(op, exp) {
           try {
-            var match = RELATIVE_DATE_REGEX.exec(exp);
-            var date = match ? moment().subtract(match[1], 'days') : moment(exp);
+            const match = RELATIVE_DATE_REGEX.exec(exp);
+            const date = match ? moment().subtract(match[1], 'days') : moment(exp);
             if (date.isValid()) {
-              var query = {};
+              const query = {};
               if (dayEquality(op, exp)) {
                 query[key + queryOperator('>=')] = date.startOf('day').toISOString();
                 query[key + queryOperator('<=')] = date.endOf('day').toISOString();
@@ -265,7 +265,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', [
         operators: makeOperatorList(['<', '<=', '==', '>=', '>']),
         convert: function(op, exp) {
           try {
-            var query = {};
+            const query = {};
             query['fields.file.details.image.' + key + queryOperator(op)] = exp;
             return query;
           } catch (e) {
@@ -282,7 +282,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', [
       return requireSpaceContext()
         .users.getAll()
         .then(users => {
-          var transformed = users.map(user => ({
+          const transformed = users.map(user => ({
             id: user.sys.id,
 
             // remove double quotes from the name
@@ -290,10 +290,10 @@ angular.module('contentful').factory('searchQueryAutocompletions', [
             name: (user.firstName + ' ' + user.lastName).replace('"', '')
           }));
 
-          var counts = _.countBy(transformed, 'name');
+          const counts = _.countBy(transformed, 'name');
 
           return transformed.reduce((acc, u) => {
-            var key = counts[u.name] > 1 ? u.name + ' (' + u.id + ')' : u.name;
+            const key = counts[u.name] > 1 ? u.name + ' (' + u.id + ')' : u.name;
             acc[key] = u.id;
             return acc;
           }, {});
@@ -305,15 +305,15 @@ angular.module('contentful').factory('searchQueryAutocompletions', [
      * we build CDA query object for this filter triple.
      */
     function filterToQueryObject(filter, contentType, space) {
-      var key = filter[0];
-      var operator = filter[1];
-      var value = filter[2];
-      var buildCMAQuery = cmaQueryBuilderForField(key, contentType, space);
+      const key = filter[0];
+      const operator = filter[1];
+      const value = filter[2];
+      const buildCMAQuery = cmaQueryBuilderForField(key, contentType, space);
       return buildCMAQuery.build(operator, value);
     }
 
     function cmaQueryBuilderForField(key, contentType, space) {
-      var keyData = staticAutocompletions(contentType)[key];
+      const keyData = staticAutocompletions(contentType)[key];
       if (keyData) {
         return {
           context: keyData,
@@ -322,7 +322,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', [
           )
         };
       }
-      var field = findField(key, contentType);
+      const field = findField(key, contentType);
       if (field) {
         return {
           context: field,
@@ -340,11 +340,11 @@ angular.module('contentful').factory('searchQueryAutocompletions', [
     }
 
     function makeFieldQuery(field, operator, value) {
-      var q = {};
+      const q = {};
 
       // TODO Using apiNameOrId here is a temporary solution while the backend doesn't honor
       // the Skip-Transformation header for field.ids in searches
-      var queryKey = 'fields.' + apiNameOrId(field) + queryOperator(operator);
+      let queryKey = 'fields.' + apiNameOrId(field) + queryOperator(operator);
       if (field.type === 'Text') {
         queryKey = queryKey + '[match]';
       }
@@ -388,7 +388,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', [
     }
 
     function sizeParser(exp) {
-      var number = parseInt(exp, 10);
+      const number = parseInt(exp, 10);
       if (number < 1) return exp;
 
       if (exp.match(/kib/i)) {
@@ -418,7 +418,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', [
         return;
       }
 
-      var fields = contentType.data.fields;
+      const fields = contentType.data.fields;
       return _.find(fields, matchApiName) || _.find(fields, matchFieldLabel);
 
       function matchApiName(field) {
@@ -450,7 +450,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', [
     }
 
     function makeDateOperatorList() {
-      var operators = ['==', '<', '<=', '>=', '>'];
+      const operators = ['==', '<', '<=', '>=', '>'];
       return _.map(operators, op => ({
         value: op,
         description: dateOperatorDescription(op)

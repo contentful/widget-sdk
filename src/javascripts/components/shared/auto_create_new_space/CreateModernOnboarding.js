@@ -82,6 +82,7 @@ angular.module('contentful').factory(name, [
       },
       create: ({ onDefaultChoice, org, user, markOnboarding }) => {
         const scope = $rootScope.$new();
+        // eslint-disable-next-line
         let dialog;
         const closeModal = () => {
           dialog && dialog.destroy();

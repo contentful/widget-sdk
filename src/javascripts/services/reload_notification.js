@@ -3,16 +3,16 @@
 angular.module('contentful').factory('ReloadNotification', [
   'require',
   require => {
-    var _ = require('lodash');
-    var $location = require('$location');
-    var $q = require('$q');
-    var modalDialog = require('modalDialog');
+    const _ = require('lodash');
+    const $location = require('$location');
+    const $q = require('$q');
+    const modalDialog = require('modalDialog');
 
-    var open = false;
+    let open = false;
 
     function reloadWithCacheBuster() {
-      var search = $location.search();
-      var reloaded = search.reloaded;
+      const search = $location.search();
+      const reloaded = search.reloaded;
       search.cfv = Math.ceil(Math.random() * 10000000);
       if (reloaded) {
         delete search.reloaded;

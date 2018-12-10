@@ -230,8 +230,8 @@ angular
       // The solution is to separate `entryTitle()` and similar
       // functions from the space context.
       $scope.entryTitle = entry => {
-        var entryTitle = spaceContext.entryTitle(entry);
-        var length = 130;
+        let entryTitle = spaceContext.entryTitle(entry);
+        const length = 130;
         if (entryTitle.length > length) {
           entryTitle = truncate(entryTitle, length);
         }

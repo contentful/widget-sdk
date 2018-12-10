@@ -7,12 +7,12 @@
 angular.module('contentful').factory('widgets/default', [
   'require',
   require => {
-    var fieldFactory = require('fieldFactory');
-    var _ = require('lodash');
-    var widgetMap = require('@contentful/widget-map');
+    const fieldFactory = require('fieldFactory');
+    const _ = require('lodash');
+    const widgetMap = require('@contentful/widget-map');
 
     // We can use a dropdown widget for these field types
-    var DROPDOWN_TYPES = ['Text', 'Symbol', 'Integer', 'Number', 'Boolean'];
+    const DROPDOWN_TYPES = ['Text', 'Symbol', 'Integer', 'Number', 'Boolean'];
 
     /**
      * @ngdoc method
@@ -33,19 +33,19 @@ angular.module('contentful').factory('widgets/default', [
      *   in the presence of the 'in' validation
      */
     return function getDefaultWidgetId(field, displayFieldId) {
-      var fieldType = fieldFactory.getTypeName(field);
+      const fieldType = fieldFactory.getTypeName(field);
 
       // FIXME We create the editing interface, and thus the widget ids
       // before any validation can be set. So I think this is not need.
-      var shouldUseDropdown = hasInValidation(field.validations);
-      var canUseDropdown = _.includes(DROPDOWN_TYPES, fieldType);
+      const shouldUseDropdown = hasInValidation(field.validations);
+      const canUseDropdown = _.includes(DROPDOWN_TYPES, fieldType);
 
       if (shouldUseDropdown && canUseDropdown) {
         return 'dropdown';
       }
 
-      var isTextField = fieldType === 'Text';
-      var isDisplayField = field.id === displayFieldId;
+      const isTextField = fieldType === 'Text';
+      const isDisplayField = field.id === displayFieldId;
 
       if (isTextField && isDisplayField) {
         return 'singleLine';

@@ -17,23 +17,23 @@ angular
   .factory('navigation/stateChangeHandlers', [
     'require',
     require => {
-      var $rootScope = require('$rootScope');
-      var $state = require('$state');
-      var contextHistory = require('navigation/Breadcrumbs/History.es6').default;
-      var logger = require('logger');
-      var modalDialog = require('modalDialog');
-      var Analytics = require('analytics/Analytics.es6');
-      var spaceContext = require('spaceContext');
-      var $location = require('$location');
-      var updateNavState = require('navigation/NavState.es6').updateNavState;
-      var _ = require('lodash');
+      const $rootScope = require('$rootScope');
+      const $state = require('$state');
+      const contextHistory = require('navigation/Breadcrumbs/History.es6').default;
+      const logger = require('logger');
+      const modalDialog = require('modalDialog');
+      const Analytics = require('analytics/Analytics.es6');
+      const spaceContext = require('spaceContext');
+      const $location = require('$location');
+      const updateNavState = require('navigation/NavState.es6').updateNavState;
+      const _ = require('lodash');
 
       // Result of confirmation dialog
-      var navigationConfirmed = false;
+      let navigationConfirmed = false;
 
       // True when we are showing a confirmation dialog.
       // Used for detecting inconsistent state changes.
-      var confirmationInProgress = false;
+      let confirmationInProgress = false;
 
       return {
         setup: setupHandlers,
@@ -99,9 +99,10 @@ angular
         }
 
         // Decide if it is OK to do the transition (unsaved changes etc)
-        var stateData = fromState.data || {};
-        var requestLeaveConfirmation = stateData.requestLeaveConfirmation;
-        var needConfirmation = !navigationConfirmed && stateData.dirty && requestLeaveConfirmation;
+        const stateData = fromState.data || {};
+        const requestLeaveConfirmation = stateData.requestLeaveConfirmation;
+        const needConfirmation =
+          !navigationConfirmed && stateData.dirty && requestLeaveConfirmation;
         navigationConfirmed = false;
         if (needConfirmation) {
           event.preventDefault();
@@ -143,7 +144,7 @@ angular
       function stateChangeErrorHandler(event, toState, toParams, fromState, fromParams, error) {
         event.preventDefault();
 
-        var matchedSection = /spaces.detail.(entries|assets|content_types|api\.keys).detail/.exec(
+        const matchedSection = /spaces.detail.(entries|assets|content_types|api\.keys).detail/.exec(
           toState.name
         );
         if (matchedSection && error.statusCode === 404) {
@@ -167,7 +168,7 @@ angular
       }
 
       function logRoutingError(event, error, from, to) {
-        var metaData = {
+        const metaData = {
           error: error,
           event: {
             name: event.name

@@ -10,18 +10,18 @@ angular
   .factory('states/assets', [
     'require',
     require => {
-      var base = require('states/Base.es6').default;
-      var createEntityPageController = require('app/entity_editor/EntityPageController.es6')
+      const base = require('states/Base.es6').default;
+      const createEntityPageController = require('app/entity_editor/EntityPageController.es6')
         .default;
 
-      var list = base({
+      const list = base({
         name: 'list',
         url: '',
         loadingText: 'Loading media…',
         template: '<div cf-asset-list class="workbench asset-list entity-list"></div>'
       });
 
-      var detail = {
+      const detail = {
         name: 'detail',
         url: '/:assetId?previousEntries',
         params: { addToContext: true },

@@ -62,8 +62,8 @@ angular
   .factory('widgets/migrations', [
     'require',
     require => {
-      var _ = require('lodash');
-      var MIGRATIONS = require('widgets/migrations/data');
+      const _ = require('lodash');
+      const MIGRATIONS = require('widgets/migrations/data');
 
       /**
        * @ngdoc method
@@ -76,10 +76,10 @@ angular
        * @returns {Data.FieldControl}
        */
       return function migrateWidgetId(control) {
-        var widgetId = control.widgetId;
-        var field = control.field;
-        var migration = _.find(MIGRATIONS, migration => {
-          var appliesToFieldType =
+        const widgetId = control.widgetId;
+        const field = control.field;
+        const migration = _.find(MIGRATIONS, migration => {
+          const appliesToFieldType =
             !migration.fieldTypes || _.includes(migration.fieldTypes, field.type);
           return appliesToFieldType && migration.from === widgetId;
         });

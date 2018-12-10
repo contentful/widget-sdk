@@ -17,12 +17,12 @@ angular
     '$injector',
     '$stateProvider',
     ($injector, $stateProvider) => {
-      var _ = $injector.get('lodash');
+      const _ = $injector.get('lodash');
       // Collection of registered services
-      var states = [];
+      const states = [];
 
       // The actual service
-      var stateConfig = {
+      const stateConfig = {
         add: add,
         init: init
       };
@@ -60,8 +60,8 @@ angular
         children.forEach(state => {
           state = useContentView(state);
 
-          var children = state.children;
-          var name;
+          const children = state.children;
+          let name;
           if (parentName) {
             name = parentName + '.' + state.name;
           } else {
@@ -86,9 +86,9 @@ angular
       }
 
       function useContentView(state) {
-        var VIEW_PROPERTIES = ['controller', 'controllerAs', 'template'];
+        const VIEW_PROPERTIES = ['controller', 'controllerAs', 'template'];
         state.views = state.views || {};
-        var contentView = _.pick(state, VIEW_PROPERTIES);
+        const contentView = _.pick(state, VIEW_PROPERTIES);
         if (contentView.template || contentView.controller) {
           state.views['content@'] = contentView;
           return _.omit(state, VIEW_PROPERTIES);
@@ -110,12 +110,12 @@ angular
           throw new Error('controller must to be one of: undefined, function, array.');
         }
 
-        var injectables = view.controller.slice(0, view.controller.length - 1);
-        var controllerFn = view.controller[view.controller.length - 1];
+        const injectables = view.controller.slice(0, view.controller.length - 1);
+        const controllerFn = view.controller[view.controller.length - 1];
 
         view.controller = ['$scope', '$state'].concat(injectables).concat([
           function($scope, $state) {
-            var args = Array.prototype.slice.call(arguments).slice(2);
+            const args = Array.prototype.slice.call(arguments).slice(2);
             $scope.context = {};
             $state.current.data = $scope.context;
             return controllerFn.apply(this, args);

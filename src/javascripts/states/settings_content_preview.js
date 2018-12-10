@@ -10,13 +10,13 @@ angular
   .factory('states/settings/content_preview', [
     'require',
     require => {
-      var _ = require('lodash');
-      var base = require('states/Base.es6').default;
-      var contextHistory = require('navigation/Breadcrumbs/History.es6').default;
-      var crumbFactory = require('navigation/Breadcrumbs/Factory.es6');
+      const _ = require('lodash');
+      const base = require('states/Base.es6').default;
+      const contextHistory = require('navigation/Breadcrumbs/History.es6').default;
+      const crumbFactory = require('navigation/Breadcrumbs/Factory.es6');
 
       function editorBase(options, isNew) {
-        var contentPreviewEditorState = base({
+        const contentPreviewEditorState = base({
           template: '<cf-content-preview-editor class="workbench">',
           loadingText: 'Loading content preview…',
           controller: [
@@ -38,7 +38,7 @@ angular
         return _.extend(options, contentPreviewEditorState);
       }
 
-      var newContentPreview = editorBase(
+      const newContentPreview = editorBase(
         {
           name: 'new',
           url: '/new'
@@ -46,7 +46,7 @@ angular
         true
       );
 
-      var detail = editorBase(
+      const detail = editorBase(
         {
           name: 'detail',
           url: '/:contentPreviewId'

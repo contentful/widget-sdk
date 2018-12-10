@@ -12,7 +12,7 @@ angular
   .factory('editingInterfaces/helpers', [
     'require',
     require => {
-      var _ = require('lodash');
+      const _ = require('lodash');
 
       return {
         findWidget: findWidget
@@ -31,7 +31,7 @@ angular
        * @return {API.Widget?}
        */
       function findWidget(widgets, field) {
-        var fieldId = field.apiName || field.id;
+        const fieldId = field.apiName || field.id;
         return _.find(widgets, { fieldId: fieldId });
       }
     }

@@ -23,10 +23,10 @@
 angular.module('contentful').factory('intercom', [
   'require',
   require => {
-    var $window = require('$window');
-    var isDisabled = false;
+    const $window = require('$window');
+    let isDisabled = false;
 
-    var intercom = {
+    const intercom = {
       isLoaded: isLoaded,
       isEnabled: isEnabled,
       disable: disable,

@@ -103,7 +103,8 @@ filters.filter('userNameDisplay', () => (currentUser, user) => {
 filters.filter('decimalMarks', () => str => {
   str = str ? str + '' : '';
   let markedStr = '';
-  for (var i = str.length; i > 0; i -= 3) {
+  let i = str.length;
+  for (i = str.length; i > 0; i -= 3) {
     markedStr = str.slice(i - 3, i) + (i < str.length ? ',' : '') + markedStr;
   }
   return str.slice(0, i < 0 ? 3 + i : i) + (str.length > 3 ? markedStr : '');
@@ -112,7 +113,7 @@ filters.filter('decimalMarks', () => str => {
 filters.filter('displayedFieldName', [
   'require',
   require => {
-    var _ = require('lodash');
+    const _ = require('lodash');
     return field =>
       _.isEmpty(field.name)
         ? _.isEmpty(field.id)

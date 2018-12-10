@@ -3,13 +3,13 @@
 angular.module('contentful').factory('batchPerformer', [
   'require',
   require => {
-    var _ = require('lodash');
-    var $q = require('$q');
-    var spaceContext = require('spaceContext');
-    var Analytics = require('analytics/Analytics.es6');
+    const _ = require('lodash');
+    const $q = require('$q');
+    const spaceContext = require('spaceContext');
+    const Analytics = require('analytics/Analytics.es6');
     const { Notification } = require('@contentful/forma-36-react-components');
 
-    var ACTION_NAMES = {
+    const ACTION_NAMES = {
       publish: 'published',
       unpublish: 'unpublished',
       archive: 'archived',
@@ -18,7 +18,7 @@ angular.module('contentful').factory('batchPerformer', [
       duplicate: 'duplicated'
     };
 
-    var ENTITY_PLURAL_NAMES = {
+    const ENTITY_PLURAL_NAMES = {
       Entry: 'Entries',
       Asset: 'Assets'
     };
@@ -35,7 +35,7 @@ angular.module('contentful').factory('batchPerformer', [
       );
 
       function run(method) {
-        var actions = _.map(config.getSelected(), entity => performAction(entity, method));
+        const actions = _.map(config.getSelected(), entity => performAction(entity, method));
 
         return $q.all(actions).then(function handleResults(results) {
           results = groupBySuccess(results);
@@ -52,8 +52,8 @@ angular.module('contentful').factory('batchPerformer', [
       }
 
       function performAction(entity, method) {
-        var request = _.partial(call, entity, method);
-        var handleError = _.partial(handleEntityError, entity);
+        const request = _.partial(call, entity, method);
+        const handleError = _.partial(handleEntityError, entity);
 
         return request().then(handleSuccess, handleError);
       }
@@ -83,10 +83,10 @@ angular.module('contentful').factory('batchPerformer', [
       }
 
       function callDuplicate(entity) {
-        var sys = entity.getSys();
+        const sys = entity.getSys();
         if (sys.type === 'Entry') {
-          var ctId = _.get(sys, 'contentType.sys.id');
-          var data = _.omit(entity.data, 'sys');
+          const ctId = _.get(sys, 'contentType.sys.id');
+          const data = _.omit(entity.data, 'sys');
           return spaceContext.space.createEntry(ctId, data);
         } else {
           return $q.reject(new Error('Only entries can be duplicated'));
@@ -104,7 +104,7 @@ angular.module('contentful').factory('batchPerformer', [
         return _.transform(
           results,
           (acc, result) => {
-            var key = result.err ? 'failed' : 'succeeded';
+            const key = result.err ? 'failed' : 'succeeded';
             acc[key].push(result[result.err ? 'err' : 'entity']);
           },
           { failed: [], succeeded: [] }
@@ -112,8 +112,8 @@ angular.module('contentful').factory('batchPerformer', [
       }
 
       function notifyBatchResult(method, results) {
-        var actionName = ACTION_NAMES[method];
-        var entityName = ENTITY_PLURAL_NAMES[config.entityType];
+        const actionName = ACTION_NAMES[method];
+        const entityName = ENTITY_PLURAL_NAMES[config.entityType];
 
         if (results.succeeded.length > 0) {
           Notification.success(

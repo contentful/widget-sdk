@@ -76,7 +76,7 @@ function replaceHCall(j) {
 
 module.exports = function(fileInfo, { jscodeshift: j }) {
   const ast = j(fileInfo.source);
-  let functionWrapper =
+  const functionWrapper =
     ast.find(j.ArrowFunctionExpression).length === 1 || ast.find(j.FunctionExpression).length === 1;
   ast
     .find(j.CallExpression, { callee: { type: 'Identifier', name: 'h' } })

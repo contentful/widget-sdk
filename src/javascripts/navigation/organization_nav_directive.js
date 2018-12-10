@@ -7,8 +7,8 @@
 angular.module('contentful').directive('cfOrganizationNav', [
   'require',
   require => {
-    var _ = require('lodash');
-    var navBar = require('navigation/templates/NavBar.es6').default;
+    const _ = require('lodash');
+    const navBar = require('navigation/templates/NavBar.es6').default;
 
     return {
       template: template(),
@@ -18,16 +18,16 @@ angular.module('contentful').directive('cfOrganizationNav', [
       controller: [
         '$scope',
         function($scope) {
-          var $stateParams = require('$stateParams');
-          var TokenStore = require('services/TokenStore.es6');
-          var OrganizationRoles = require('services/OrganizationRoles.es6');
-          var K = require('utils/kefir.es6');
+          const $stateParams = require('$stateParams');
+          const TokenStore = require('services/TokenStore.es6');
+          const OrganizationRoles = require('services/OrganizationRoles.es6');
+          const K = require('utils/kefir.es6');
 
-          var createFeatureService = require('services/FeatureService.es6').default;
-          var nav = this;
+          const createFeatureService = require('services/FeatureService.es6').default;
+          const nav = this;
 
           // Prevent unnecesary calls from watchers
-          var onNavChange = _.debounce(updateNav, 50);
+          const onNavChange = _.debounce(updateNav, 50);
 
           // Update on state transition to another org
           $scope.$watch(() => $stateParams.orgId, onNavChange);
@@ -36,9 +36,9 @@ angular.module('contentful').directive('cfOrganizationNav', [
           K.onValueScope($scope, TokenStore.organizations$, onNavChange);
 
           function updateNav() {
-            var orgId = (nav.orgId = $stateParams.orgId);
+            const orgId = (nav.orgId = $stateParams.orgId);
             TokenStore.getOrganization(orgId).then(org => {
-              var FeatureService = createFeatureService(orgId, 'organization');
+              const FeatureService = createFeatureService(orgId, 'organization');
 
               nav.pricingVersion = org.pricingVersion;
 

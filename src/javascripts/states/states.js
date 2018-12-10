@@ -10,8 +10,8 @@ angular
   .factory('states', [
     'require',
     require => {
-      var _ = require('lodash');
-      var config = require('states/config');
+      const _ = require('lodash');
+      const config = require('states/config');
       const { Notification } = require('@contentful/forma-36-react-components');
 
       return {

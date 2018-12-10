@@ -24,12 +24,12 @@ angular
   .directive('cfComponentBridge', [
     'require',
     require => {
-      var createMountPoint = require('ui/Framework/DOMRenderer.es6').default;
+      const createMountPoint = require('ui/Framework/DOMRenderer.es6').default;
       return {
         restrict: 'E',
         scope: { component: '=' },
         link: function($scope, $element) {
-          var mountPoint = createMountPoint($element.get(0));
+          const mountPoint = createMountPoint($element.get(0));
           $scope.$watch('component', mountPoint.render);
           $scope.$on('$destroy', mountPoint.destroy);
         }
@@ -80,17 +80,17 @@ angular
   .directive('cfComponentStoreBridge', [
     'require',
     require => {
-      var K = require('utils/kefir.es6');
-      var bindActions = require('ui/Framework/Store.es6').bindActions;
-      var createMountPoint = require('ui/Framework/DOMRenderer.es6').default;
+      const K = require('utils/kefir.es6');
+      const bindActions = require('ui/Framework/Store.es6').bindActions;
+      const createMountPoint = require('ui/Framework/DOMRenderer.es6').default;
       return {
         restrict: 'E',
         scope: { component: '=' },
         link: function($scope, $element) {
-          var c = $scope.component;
-          var actions = bindActions(c.store, c.actions);
+          const c = $scope.component;
+          const actions = bindActions(c.store, c.actions);
 
-          var mountPoint = createMountPoint($element.get(0));
+          const mountPoint = createMountPoint($element.get(0));
 
           K.onValueScope($scope, c.store.state$, state => {
             mountPoint.render(c.render(state, actions));

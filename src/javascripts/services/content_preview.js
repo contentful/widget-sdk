@@ -9,19 +9,19 @@
 angular.module('contentful').factory('contentPreview', [
   'require',
   require => {
-    var $q = require('$q');
-    var _ = require('lodash');
-    var $rootScope = require('$rootScope');
-    var TheLocaleStore = require('TheLocaleStore');
-    var spaceContext = require('spaceContext');
-    var previewEnvironmentsCache = require('data/previewEnvironmentsCache');
-    var getStore = require('TheStore').getStore;
-    var store = getStore();
-    var resolveReferences = require('services/ContentPreviewHelper.es6').resolveReferences;
-    var internalToExternalFieldIds = require('data/Entries').internalToExternal;
+    const $q = require('$q');
+    const _ = require('lodash');
+    const $rootScope = require('$rootScope');
+    const TheLocaleStore = require('TheLocaleStore');
+    const spaceContext = require('spaceContext');
+    const previewEnvironmentsCache = require('data/previewEnvironmentsCache');
+    const getStore = require('TheStore').getStore;
+    const store = getStore();
+    const resolveReferences = require('services/ContentPreviewHelper.es6').resolveReferences;
+    const internalToExternalFieldIds = require('data/Entries').internalToExternal;
 
-    var ENTRY_ID_PATTERN = /\{\s*entry_id\s*\}/g;
-    var ENTRY_FIELD_PATTERN = /\{\s*entry_field\.(\w+)\s*\}/g;
+    const ENTRY_ID_PATTERN = /\{\s*entry_id\s*\}/g;
+    const ENTRY_FIELD_PATTERN = /\{\s*entry_field\.(\w+)\s*\}/g;
 
     // this pattern is used for references resolving. It means that you can get entries,
     // which link the current one, and use it in the url.
@@ -40,17 +40,17 @@ angular.module('contentful').factory('contentPreview', [
     // this number is hard coded on the UI and the limit does not exist in our backend.
     // the decision to have a limit comes from Product, and consists of having a better
     // control of overusage of our platform
-    var MAX_PREVIEW_ENVIRONMENTS = 100;
+    const MAX_PREVIEW_ENVIRONMENTS = 100;
 
     // build a bus that emits content previews object keyed by content preview id
     // every 2.5 seconds. This is ok for now since we cache content previews and hence
     // polling doesn't really cause unnecessary api calls.
     // Duplicates are skipped.
-    var K = require('utils/kefir.es6');
+    const K = require('utils/kefir.es6');
 
-    var contentPreviewsBus$ = K.withInterval(2500, emitter => {
-      var emitValue = emitter.value.bind(emitter);
-      var emitError = emitter.error.bind(emitter);
+    const contentPreviewsBus$ = K.withInterval(2500, emitter => {
+      const emitValue = emitter.value.bind(emitter);
+      const emitError = emitter.error.bind(emitter);
 
       try {
         getAll().then(emitValue, emitError);
@@ -146,7 +146,7 @@ angular.module('contentful').factory('contentPreview', [
     }
 
     function cachePreviewEnvironments(environments) {
-      var cacheVal = {};
+      const cacheVal = {};
       environments.forEach(environment => {
         cacheVal[environment.sys.id] = environment;
       });
@@ -202,7 +202,7 @@ angular.module('contentful').factory('contentPreview', [
       return _.transform(
         _.cloneDeep(environments),
         (acc, env, envId) => {
-          var config = _.find(env.configurations, _.matches({ contentType: ctId }));
+          const config = _.find(env.configurations, _.matches({ contentType: ctId }));
           if (config && config.enabled) {
             acc.push(_.extend(config, { name: env.name, envId: envId }));
           }
@@ -221,7 +221,7 @@ angular.module('contentful').factory('contentPreview', [
      * Creates the preview environment and updates the cached `previewEnvironments`
      */
     function create(env) {
-      var external = toExternal(env);
+      const external = toExternal(env);
       return spaceContext.space
         .endpoint('preview_environments')
         .payload(external)
@@ -239,8 +239,8 @@ angular.module('contentful').factory('contentPreview', [
      * Updates the preview environment and updates the cached `previewEnvironments`
      */
     function update(env) {
-      var external = toExternal(env);
-      var headers = { 'X-Contentful-Version': env.version };
+      const external = toExternal(env);
+      const headers = { 'X-Contentful-Version': env.version };
       return spaceContext.space
         .endpoint('preview_environments', env.id)
         .headers(headers)
@@ -345,7 +345,8 @@ angular.module('contentful').factory('contentPreview', [
     function toInternal(external, contentTypes) {
       function getConfigs() {
         return contentTypes.map(ct => {
-          var config = _.find(external.configurations, _.matches({ contentType: ct.sys.id })) || {};
+          const config =
+            _.find(external.configurations, _.matches({ contentType: ct.sys.id })) || {};
           return _.defaults(config, getDefaultConfig(ct));
         });
       }
@@ -370,15 +371,15 @@ angular.module('contentful').factory('contentPreview', [
      * Returns a list containing any invalid field tokens in the config's URL structure
      */
     function getInvalidFields(url, fields) {
-      var tokens = extractFieldTokensFromUrl(url);
+      const tokens = extractFieldTokensFromUrl(url);
 
-      var objectFields = _.map(
+      const objectFields = _.map(
         _.filter(fields, field => _.includes(['Array', 'Link', 'Object', 'Location'], field.type)),
         'apiName'
       );
 
-      var nonExistentFields = _.difference(tokens, _.map(fields, 'apiName'));
-      var invalidTypeFields = _.intersection(tokens, objectFields);
+      const nonExistentFields = _.difference(tokens, _.map(fields, 'apiName'));
+      const invalidTypeFields = _.intersection(tokens, objectFields);
 
       return {
         nonExistentFields: nonExistentFields,
@@ -387,8 +388,8 @@ angular.module('contentful').factory('contentPreview', [
     }
 
     function extractFieldTokensFromUrl(url) {
-      var tokens = [];
-      var match;
+      const tokens = [];
+      let match;
 
       do {
         match = ENTRY_FIELD_PATTERN.exec(url);
@@ -414,17 +415,20 @@ angular.module('contentful').factory('contentPreview', [
      * Always uses the default locale value.
      */
     function replaceVariablesInUrl(urlTemplate, entry, contentType) {
-      var defaultLocale = TheLocaleStore.getDefaultLocale().code;
-      var processedUrl = urlTemplate
+      const defaultLocale = TheLocaleStore.getDefaultLocale().code;
+      const processedUrl = urlTemplate
         .replace(ENTRY_ID_PATTERN, entry.sys.id)
         .replace(ENTRY_FIELD_PATTERN, (match, fieldId) => {
-          var internalId = _.get(_.find(contentType.fields, _.matches({ apiName: fieldId })), 'id');
+          const internalId = _.get(
+            _.find(contentType.fields, _.matches({ apiName: fieldId })),
+            'id'
+          );
 
           if (!_.has(entry, ['fields', internalId])) {
             return match;
           }
 
-          var fieldValue = _.get(entry, ['fields', internalId, defaultLocale]);
+          const fieldValue = _.get(entry, ['fields', internalId, defaultLocale]);
 
           return _.toString(fieldValue);
         });

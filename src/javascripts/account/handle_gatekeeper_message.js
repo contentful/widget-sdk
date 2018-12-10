@@ -82,7 +82,7 @@ angular
       }
 
       function showNotification(data) {
-        let level = _.get(data, 'resource.type', 'info');
+        const level = _.get(data, 'resource.type', 'info');
         const message = _.get(data, 'resource.message');
 
         if (!level) {

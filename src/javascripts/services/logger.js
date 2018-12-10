@@ -53,15 +53,15 @@
 angular.module('contentful').factory('logger', [
   'require',
   require => {
-    var _ = require('lodash');
-    var $window = require('$window');
-    var bugsnag = require('bugsnag');
-    var environment = require('environment');
-    var stringifySafe = require('json-stringify-safe');
+    const _ = require('lodash');
+    const $window = require('$window');
+    const bugsnag = require('bugsnag');
+    const environment = require('environment');
+    const stringifySafe = require('json-stringify-safe');
 
     function getParams() {
-      var stateName = require('$state').current.name;
-      var stateParams = require('$stateParams');
+      const stateName = require('$state').current.name;
+      const stateParams = require('$stateParams');
       return _.extend(
         {
           state: stateName,
@@ -102,13 +102,13 @@ angular.module('contentful').factory('logger', [
     function flattenServerErrors(metaData) {
       // Don't ever affect outside references as they travel through the whole app!
       metaData = _.cloneDeep(metaData || {});
-      var errOrResponse = metaData.error;
+      const errOrResponse = metaData.error;
 
       if (errOrResponse) {
-        var err = findActualServerError(errOrResponse);
+        const err = findActualServerError(errOrResponse);
 
         // Never send auth token.
-        var headers = _.get(errOrResponse, 'request.headers');
+        const headers = _.get(errOrResponse, 'request.headers');
         if (headers && headers.Authorization) {
           headers.Authorization = '[SECRET]';
         }
@@ -143,7 +143,7 @@ angular.module('contentful').factory('logger', [
      */
     function findActualServerError(errOrErrContainer) {
       errOrErrContainer = errOrErrContainer || {};
-      var actualErr = errOrErrContainer.body || errOrErrContainer.data || errOrErrContainer;
+      const actualErr = errOrErrContainer.body || errOrErrContainer.data || errOrErrContainer;
       return _.get(actualErr, 'sys.type') === 'Error' ? actualErr : undefined;
     }
 
@@ -191,7 +191,7 @@ angular.module('contentful').factory('logger', [
        * @param {Object} metaData.data  Additional data (other objects). Shows up on the bugsnag data tab.
        */
       logException: function(exception, metaData) {
-        var augmentedMetadata = augmentMetadata(metaData);
+        const augmentedMetadata = augmentMetadata(metaData);
         if (environment.env !== 'production' && environment.env !== 'unittest') {
           /* eslint no-console: off */
           console.error(exception, augmentedMetadata);
@@ -338,7 +338,7 @@ angular.module('contentful').factory('logger', [
       _log: function(type, severity, message, metadata) {
         metadata = metadata || {};
         metadata.groupingHash = metadata.groupingHash || message;
-        var augmentedMetadata = augmentMetadata(metadata);
+        const augmentedMetadata = augmentMetadata(metadata);
         if (environment.env !== 'production' && environment.env !== 'unittest') {
           logToConsole(type, severity, message, augmentedMetadata);
         }

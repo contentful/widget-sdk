@@ -7,19 +7,19 @@
 angular.module('contentful').service('validationViews', [
   'require',
   require => {
-    var _ = require('lodash');
-    var urlRegex = require('utils/StringUtils.es6').urlRegex;
+    const _ = require('lodash');
+    const urlRegex = require('utils/StringUtils.es6').urlRegex;
 
     /**
      * Map from validation types to input views.
      */
-    var sizeViews = [
+    const sizeViews = [
       { name: 'min-max', label: 'Between' },
       { name: 'min', label: 'At least' },
       { name: 'max', label: 'Not more than' }
     ];
 
-    var views = {
+    const views = {
       size: sizeViews,
       assetFileSize: sizeViews,
       range: [
@@ -86,8 +86,8 @@ angular.module('contentful').service('validationViews', [
      * Adapt `validation.settings` to the validation's current view.
      */
     function updateSettings(validation) {
-      var viewName = validation.currentView;
-      var type = validation.type;
+      const viewName = validation.currentView;
+      const type = validation.type;
       if (type === 'size' || type === 'range' || type === 'assetFileSize') {
         if (viewName === 'min') {
           delete validation.settings.max;
@@ -96,7 +96,7 @@ angular.module('contentful').service('validationViews', [
           delete validation.settings.min;
         }
       } else if (validation.type === 'regexp') {
-        var view = findViewByName(validation.views, viewName);
+        const view = findViewByName(validation.views, viewName);
         if (view.pattern) {
           validation.settings = { pattern: view.pattern };
         }
@@ -111,11 +111,11 @@ angular.module('contentful').service('validationViews', [
      * returns the validations current view.
      */
     function getInitialView(validation) {
-      var type = validation.type;
-      var settings = validation.settings;
+      const type = validation.type;
+      const settings = validation.settings;
       if (type === 'size' || type === 'range' || type === 'assetFileSize') {
-        var hasMin = typeof settings.min === 'number';
-        var hasMax = typeof settings.max === 'number';
+        const hasMin = typeof settings.min === 'number';
+        const hasMax = typeof settings.max === 'number';
         if (hasMin && hasMax) {
           return 'min-max';
         }
@@ -126,7 +126,7 @@ angular.module('contentful').service('validationViews', [
           return 'max';
         }
       } else if (type === 'regexp') {
-        var view = _.find(validation.views, view => view.pattern === settings.pattern);
+        const view = _.find(validation.views, view => view.pattern === settings.pattern);
         if (view) {
           return view.name;
         } else {

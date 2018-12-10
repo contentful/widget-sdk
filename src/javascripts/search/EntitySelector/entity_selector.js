@@ -9,9 +9,9 @@
 angular.module('contentful').factory('entitySelector', [
   'require',
   require => {
-    var _ = require('lodash');
-    var modalDialog = require('modalDialog');
-    var $q = require('$q');
+    const _ = require('lodash');
+    const modalDialog = require('modalDialog');
+    const $q = require('$q');
     const {
       getLabels,
       newConfigFromField,
@@ -55,7 +55,6 @@ angular.module('contentful').factory('entitySelector', [
      * Opens a modal for the provided custom config object
      */
     function open(options) {
-      let dialog;
       const config = _.omit(options, 'scope', 'labels');
       const labels = _.extend(getLabels(options), options.labels);
       const entitySelectorProps = {
@@ -70,7 +69,7 @@ angular.module('contentful').factory('entitySelector', [
         selected: [],
         showCustomEmptyMessage: false
       };
-      dialog = modalDialog.open({
+      const dialog = modalDialog.open({
         template: 'entity_selector_dialog',
         backgroundClose: true,
         ignoreEsc: true,

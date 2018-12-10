@@ -19,7 +19,7 @@ angular
       restrict: 'A',
 
       link: function($scope, $elem, $attrs) {
-        var _ = require('lodash');
+        const _ = require('lodash');
         $scope.$watch($attrs.uiSetScroll, scrollTop => {
           if (_.isNumber(scrollTop)) {
             $scope.$applyAsync(() => {

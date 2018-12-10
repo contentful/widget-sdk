@@ -9,10 +9,10 @@ angular
   .factory('makeNavBar', [
     'require',
     require => {
-      var template = require('navigation/SpaceNavTemplate.es6').default;
-      var spaceContext = require('spaceContext');
-      var TokenStore = require('services/TokenStore.es6');
-      var accessChecker = require('access_control/AccessChecker');
+      const template = require('navigation/SpaceNavTemplate.es6').default;
+      const spaceContext = require('spaceContext');
+      const TokenStore = require('services/TokenStore.es6');
+      const accessChecker = require('access_control/AccessChecker');
       const AppsFeatureFlag = require('app/settings/apps/AppsFeatureFlag.es6');
 
       return (useSpaceEnv, isMaster) => ({
@@ -25,8 +25,8 @@ angular
           '$scope',
           '$stateParams',
           function($scope, $stateParams) {
-            var controller = this;
-            var orgId = spaceContext.organization.sys.id;
+            const controller = this;
+            const orgId = spaceContext.organization.sys.id;
 
             controller.spaceId = $stateParams.spaceId;
             controller.canNavigateTo = canNavigateTo;
@@ -44,9 +44,9 @@ angular
                 return false;
               }
 
-              var sectionAvailable = accessChecker.getSectionVisibility()[section];
-              var enforcements = spaceContext.getData('enforcements') || [];
-              var isHibernated = enforcements.some(e => e.reason === 'hibernated');
+              const sectionAvailable = accessChecker.getSectionVisibility()[section];
+              const enforcements = spaceContext.getData('enforcements') || [];
+              const isHibernated = enforcements.some(e => e.reason === 'hibernated');
 
               return spaceContext.space && !isHibernated && sectionAvailable;
             }
@@ -54,7 +54,7 @@ angular
             // We don't want to display the following sections within the context of
             // a sandbox space environment.
             function isSpaceSettingsSection(section) {
-              var spaceSettingsSections = [
+              const spaceSettingsSections = [
                 'settings',
                 'users',
                 'roles',
@@ -82,9 +82,9 @@ angular
   .directive('cfSpaceNavBarWrapped', [
     'require',
     require => {
-      var LD = require('utils/LaunchDarkly');
-      var spaceContext = require('spaceContext');
-      var accessChecker = require('access_control/AccessChecker');
+      const LD = require('utils/LaunchDarkly');
+      const spaceContext = require('spaceContext');
+      const accessChecker = require('access_control/AccessChecker');
 
       return {
         scope: {},

@@ -141,7 +141,8 @@ angular.module('contentful').controller('EntitySelectorController', [
     }
 
     function getValidContentTypes(linkedContentTypeIds, contentTypes) {
-      var acceptsOnlySpecificContentType = linkedContentTypeIds && linkedContentTypeIds.length > 0;
+      const acceptsOnlySpecificContentType =
+        linkedContentTypeIds && linkedContentTypeIds.length > 0;
 
       if (acceptsOnlySpecificContentType) {
         contentTypes = contentTypes.filter(ct => linkedContentTypeIds.indexOf(ct.sys.id) > -1);
@@ -165,7 +166,7 @@ angular.module('contentful').controller('EntitySelectorController', [
     }
 
     function getParams() {
-      var params = {
+      const params = {
         order: getOrder(),
         paginator: $scope.paginator,
         ...getSearch()
@@ -185,7 +186,7 @@ angular.module('contentful').controller('EntitySelectorController', [
     }
 
     function getSearch() {
-      var view = $scope.view || {};
+      const view = $scope.view || {};
       return {
         searchText: view.searchText || '',
         searchFilters: view.searchFilters || [],
@@ -196,7 +197,7 @@ angular.module('contentful').controller('EntitySelectorController', [
     function getOrder() {
       const ct = singleContentTypeId && spaceContext.publishedCTs.get(singleContentTypeId);
       if (ct) {
-        var displayField = _.find(ct.data.fields, { id: ct.data.displayField });
+        const displayField = _.find(ct.data.fields, { id: ct.data.displayField });
         if (displayField && displayField.type === 'Symbol' && displayField.id) {
           return { fieldId: displayField.id, direction: 'ascending' };
         }
@@ -206,7 +207,7 @@ angular.module('contentful').controller('EntitySelectorController', [
     const onChange = () => $scope.onChange([...$scope.selected]);
     const toggle = {
       select: function select(entity) {
-        var index = _.findIndex($scope.selected, ['sys.id', entity.sys.id]);
+        const index = _.findIndex($scope.selected, ['sys.id', entity.sys.id]);
         $scope.selectedIds[entity.sys.id] = true;
         if (index === -1) {
           $scope.selected.push(entity);
@@ -214,7 +215,7 @@ angular.module('contentful').controller('EntitySelectorController', [
         }
       },
       deselect: function deselect(entity) {
-        var index = _.findIndex($scope.selected, ['sys.id', entity.sys.id]);
+        const index = _.findIndex($scope.selected, ['sys.id', entity.sys.id]);
         delete $scope.selectedIds[entity.sys.id];
         if (index > -1) {
           $scope.selected.splice(index, 1);
@@ -224,17 +225,17 @@ angular.module('contentful').controller('EntitySelectorController', [
     };
 
     // @TODO: Move toggle logic into a service and improve edge cases.
-    var lastToggled;
+    let lastToggled;
     function toggleSelection(entity, event) {
       if (!config.multiple) {
         $scope.onChange([entity]);
       } else {
-        var toggleMethod;
+        let toggleMethod;
         if (event && event.shiftKey && lastToggled) {
-          var from = $scope.items.indexOf(entity);
-          var to = $scope.items.indexOf(lastToggled.entity);
-          var first = Math.min(from, to);
-          var last = Math.max(from, to) + 1;
+          const from = $scope.items.indexOf(entity);
+          const to = $scope.items.indexOf(lastToggled.entity);
+          const first = Math.min(from, to);
+          const last = Math.max(from, to) + 1;
           toggleMethod = lastToggled.toggleMethod;
           $scope.items.slice(first, last).forEach(toggleMethod);
           event.preventDefault();
@@ -276,13 +277,13 @@ angular.module('contentful').controller('EntitySelectorController', [
     function getItemsToAdd(res) {
       // The api could theoretically return some of the entities returned already
       // if new entities were created in the meantime.
-      var acc = {
+      const acc = {
         items: [],
         itemsById: _.groupBy($scope.items, 'sys.id')
       };
 
       return res.items.reduce((acc, item) => {
-        var id = _.get(item, 'sys.id');
+        const id = _.get(item, 'sys.id');
         if (id && !acc.itemsById[id] && !isAssetWithoutFile(item)) {
           return {
             items: acc.items.concat(item),
@@ -318,11 +319,11 @@ angular.module('contentful').controller('EntitySelectorController', [
     }
 
     function getSearchPlaceholder() {
-      var placeholder = $scope.labels.searchPlaceholder;
+      let placeholder = $scope.labels.searchPlaceholder;
       if (!placeholder) {
         return '';
       }
-      var totalEntities = $scope.paginator.getTotal();
+      const totalEntities = $scope.paginator.getTotal();
       placeholder = placeholder.replace(/%total%\s*/, totalEntities > 1 ? totalEntities + ' ' : '');
       if ($scope.supportsAdvancedSearch) {
         placeholder += ', press down arrow key for help';

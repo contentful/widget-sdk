@@ -11,7 +11,7 @@ angular
   .directive('cfNavSidepanelTrigger', [
     'require',
     require => {
-      var sidepanelTrigger = require('navigation/Sidepanel/Trigger.es6').default;
+      const sidepanelTrigger = require('navigation/Sidepanel/Trigger.es6').default;
       return {
         restrict: 'E',
         template: '<cf-component-bridge component=sidepanelComponent>',

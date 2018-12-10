@@ -12,12 +12,12 @@ angular.module('contentful').factory('contentfulClient', [
      * It's also been modified to make use of the CMA instead, with the X-Contentful-Skip-Transformation header.
      */
 
-    var _ = require('lodash');
-    var $http = require('$http');
-    var $q = require('$q');
-    var qs = require('qs');
+    const _ = require('lodash');
+    const $http = require('$http');
+    const $q = require('$q');
+    const qs = require('qs');
 
-    var parseableResourceTypes = {
+    const parseableResourceTypes = {
       Asset: Asset,
       ContentType: ContentType,
       Entry: Entry,
@@ -63,7 +63,7 @@ angular.module('contentful').factory('contentfulClient', [
     };
 
     Client.prototype.assets = function(object) {
-      var params = Query.parse(object);
+      const params = Query.parse(object);
       return this.request('/assets', { params: params }).then(_.partial(SearchResult.parse, Asset));
     };
 
@@ -72,7 +72,7 @@ angular.module('contentful').factory('contentfulClient', [
     };
 
     Client.prototype.contentTypes = function(object) {
-      var params = Query.parse(object);
+      const params = Query.parse(object);
       return this.request('/content_types', { params: params }).then(
         _.partial(SearchResult.parse, ContentType)
       );
@@ -87,7 +87,7 @@ angular.module('contentful').factory('contentfulClient', [
     };
 
     Client.prototype.entries = function(object) {
-      var params = Query.parse(object);
+      const params = Query.parse(object);
       return this.request('/entries', { params: params }).then(
         _.partial(SearchResult.parse, Entry)
       );
@@ -133,7 +133,7 @@ angular.module('contentful').factory('contentfulClient', [
 
     SearchResult.parse = (_ItemType, object) => {
       walkMutate(object, isParseableResource, parseResource);
-      var items = resolveResponse(object);
+      const items = resolveResponse(object);
       defineProperty(items, 'limit', object.limit);
       defineProperty(items, 'skip', object.skip);
       defineProperty(items, 'total', object.total);
@@ -224,7 +224,7 @@ angular.module('contentful').factory('contentfulClient', [
     }
 
     function parseResource(resource) {
-      var Type = parseableResourceTypes[resource.sys.type];
+      const Type = parseableResourceTypes[resource.sys.type];
       return Type.parse(resource);
     }
 
@@ -264,9 +264,9 @@ angular.module('contentful').factory('contentfulClient', [
     }
 
     function getLink(response, link) {
-      var type = link.sys.linkType;
-      var id = link.sys.id;
-      var pred = resource => resource.sys.type === type && resource.sys.id === id;
+      const type = link.sys.linkType;
+      const id = link.sys.id;
+      const pred = resource => resource.sys.type === type && resource.sys.id === id;
       return (
         _.find(response.items, pred) || (response.includes && _.find(response.includes[type], pred))
       );

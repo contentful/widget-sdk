@@ -24,9 +24,9 @@ angular
   .factory('command', [
     'require',
     require => {
-      var _ = require('lodash');
-      var createSignal = require('utils/signal.es6').create;
-      var $q = require('$q');
+      const _ = require('lodash');
+      const createSignal = require('utils/signal.es6').create;
+      const $q = require('$q');
 
       /**
        * @ngdoc property
@@ -38,7 +38,7 @@ angular
        *
        * @type Signal<Command, Promise<any>>
        */
-      var executions = createSignal();
+      const executions = createSignal();
 
       /**
        * @ngdoc method
@@ -53,7 +53,7 @@ angular
        * @returns {Command}
        */
       function createCommand(run, options, extension) {
-        var command = new Command(run, options, executions);
+        const command = new Command(run, options, executions);
         return _.extend(command, extension);
       }
 
@@ -91,7 +91,7 @@ angular
           return this._inProgress;
         }
 
-        var self = this;
+        const self = this;
         this._inProgress = (this._run() || $q.reject()).finally(() => {
           self._inProgress = null;
         });
@@ -161,7 +161,7 @@ angular
   .directive('uiCommand', [
     'require',
     require => {
-      var uiCommandStateDirective = require('uiCommandStateDirective')[0];
+      const uiCommandStateDirective = require('uiCommandStateDirective')[0];
       return {
         restrict: 'A',
         scope: {

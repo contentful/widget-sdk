@@ -3,10 +3,10 @@
 angular.module('contentful').factory('slug', [
   'require',
   require => {
-    var getSlug = require('speakingurl');
+    const getSlug = require('speakingurl');
 
     // Languages supported by SpeakingURL.
-    var languages = [
+    const languages = [
       'ar',
       'az',
       'cs',
@@ -42,7 +42,7 @@ angular.module('contentful').factory('slug', [
      * and returns the supported language prefix.
      */
     function supportedLanguage(locale) {
-      var prefix = locale.slice(0, 2).toLowerCase();
+      const prefix = locale.slice(0, 2).toLowerCase();
       return languages[languages.indexOf(prefix)];
     }
 

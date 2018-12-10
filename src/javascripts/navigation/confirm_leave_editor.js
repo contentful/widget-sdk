@@ -32,6 +32,7 @@ angular
 
       return function createLeaveConfirmator(runSave, template) {
         return function confirmLeaveEditor() {
+          // eslint-disable-next-line
           let dialog;
           const save = Command.create(() =>
             runSave().then(

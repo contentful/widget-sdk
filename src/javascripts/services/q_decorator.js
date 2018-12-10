@@ -8,7 +8,7 @@ angular.module('contentful').config([
       '$delegate',
       '$rootScope',
       (require, $q, $rootScope) => {
-        var _ = require('lodash');
+        const _ = require('lodash');
         // Returns a callback method that should be passed in where a node-style callback is expected.
         // The callback method has a `promise` property that can then be passed around in a promise environment:
         //
@@ -17,9 +17,9 @@ angular.module('contentful').config([
         // cb.promise.then(...)
         //
         $q.callbackWithApply = () => {
-          var deferred = $q.defer();
-          var callbackFunction = function(err) {
-            var args = _.tail(arguments);
+          const deferred = $q.defer();
+          const callbackFunction = function(err) {
+            const args = _.tail(arguments);
             $rootScope.$apply(() => {
               if (err) {
                 deferred.reject(err);
@@ -33,9 +33,9 @@ angular.module('contentful').config([
         };
 
         $q.callback = () => {
-          var deferred = $q.defer();
-          var callbackFunction = function(err) {
-            var args = _.tail(arguments);
+          const deferred = $q.defer();
+          const callbackFunction = function(err) {
+            const args = _.tail(arguments);
             if (err) {
               deferred.reject(err);
             } else {

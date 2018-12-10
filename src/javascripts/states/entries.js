@@ -10,25 +10,25 @@ angular
   .factory('states/entries', [
     'require',
     require => {
-      var _ = require('lodash');
-      var $state = require('$state');
-      var trackVersioning = require('analyticsEvents/versioning');
-      var contextHistory = require('navigation/Breadcrumbs/History.es6').default;
-      var crumbFactory = require('navigation/Breadcrumbs/Factory.es6');
+      const _ = require('lodash');
+      const $state = require('$state');
+      const trackVersioning = require('analyticsEvents/versioning');
+      const contextHistory = require('navigation/Breadcrumbs/History.es6').default;
+      const crumbFactory = require('navigation/Breadcrumbs/Factory.es6');
 
-      var base = require('states/Base.es6').default;
-      var loadEditorData = require('app/entity_editor/DataLoader.es6').loadEntry;
-      var createEntityPageController = require('app/entity_editor/EntityPageController.es6')
+      const base = require('states/Base.es6').default;
+      const loadEditorData = require('app/entity_editor/DataLoader.es6').loadEntry;
+      const createEntityPageController = require('app/entity_editor/EntityPageController.es6')
         .default;
 
-      var list = base({
+      const list = base({
         name: 'list',
         url: '',
         loadingText: 'Loading content…',
         template: '<div cf-entry-list class="workbench entry-list entity-list"></div>'
       });
 
-      var compareWithCurrent = base({
+      const compareWithCurrent = base({
         name: 'withCurrent',
         url: '/:snapshotId',
         loadingText: 'Loading versions…',
@@ -42,10 +42,10 @@ angular
             '$stateParams',
             'editorData',
             (require, $stateParams, editorData) => {
-              var entry = editorData.entity;
-              var contentType = editorData.contentType;
-              var spaceContext = require('spaceContext');
-              var Entries = require('data/Entries');
+              const entry = editorData.entity;
+              const contentType = editorData.contentType;
+              const spaceContext = require('spaceContext');
+              const Entries = require('data/Entries');
 
               return spaceContext.cma
                 .getEntrySnapshot(entry.getId(), $stateParams.snapshotId)
@@ -64,8 +64,8 @@ angular
           'editorData',
           'snapshot',
           ($stateParams, $scope, editorData, snapshot) => {
-            var entry = editorData.entity;
-            var contentType = editorData.contentType;
+            const entry = editorData.entity;
+            const contentType = editorData.contentType;
 
             $scope.widgets = _.filter(
               editorData.fieldControls.form,
@@ -87,7 +87,7 @@ angular
         ]
       });
 
-      var compare = base({
+      const compare = base({
         name: 'compare',
         url: '/compare',
         children: [compareWithCurrent],
@@ -103,14 +103,14 @@ angular
           'require',
           'editorData',
           (require, editorData) => {
-            var spaceContext = require('spaceContext');
-            var modalDialog = require('modalDialog');
-            var trackVersioning = require('analyticsEvents/versioning');
+            const spaceContext = require('spaceContext');
+            const modalDialog = require('modalDialog');
+            const trackVersioning = require('analyticsEvents/versioning');
 
-            var entityId = editorData.entity.getId();
+            const entityId = editorData.entity.getId();
 
             spaceContext.cma.getEntrySnapshots(entityId, { limit: 2 }).then(res => {
-              var count = _.get(res, 'items.length', 0);
+              const count = _.get(res, 'items.length', 0);
               return count > 0 ? compare(_.first(res.items), count) : back();
             }, back);
 

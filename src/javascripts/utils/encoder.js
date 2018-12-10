@@ -15,7 +15,7 @@ angular
   .factory('encoder', [
     'raw/htmlEncoder',
     htmlEncoder => {
-      var encoder = htmlEncoder.Encoder();
+      const encoder = htmlEncoder.Encoder();
 
       return {
         htmlEncode: encoder.htmlEncode.bind(encoder),

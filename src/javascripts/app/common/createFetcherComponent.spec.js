@@ -10,7 +10,7 @@ describe('createFetcherComponent', () => {
       return promiseStub(param1, param2);
     });
 
-    let wrapper = Enzyme.mount(
+    const wrapper = Enzyme.mount(
       <Component param1="1" param2="2">
         {({ isLoading }) => {
           if (isLoading) {

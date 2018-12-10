@@ -10,11 +10,11 @@
 angular.module('contentful').factory('$exceptionHandler', [
   'require',
   require => {
-    var logger = require('logger');
-    var _ = require('lodash');
+    const logger = require('logger');
+    const _ = require('lodash');
     return exception => {
-      var metaData = _.extend({ promptedReload: true }, exception.metaData);
-      var ReloadNotification = require('ReloadNotification');
+      const metaData = _.extend({ promptedReload: true }, exception.metaData);
+      const ReloadNotification = require('ReloadNotification');
 
       logger.logException(exception, metaData);
       ReloadNotification.trigger();

@@ -26,7 +26,7 @@ angular
     '$attrs',
     'require',
     function ValidationController($scope, $attrs, require) {
-      var _ = require('lodash');
+      const _ = require('lodash');
       const $timeout = require('$timeout');
       const K = require('utils/kefir.es6');
       const controller = this;

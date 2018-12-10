@@ -10,7 +10,7 @@ angular
   .directive('uiAutofocus', [
     'require',
     require => {
-      var $timeout = require('$timeout');
+      const $timeout = require('$timeout');
       return {
         restrict: 'A',
         link: function(_$scope, $element) {

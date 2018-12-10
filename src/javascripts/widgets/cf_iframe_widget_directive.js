@@ -22,7 +22,7 @@ angular
   .directive('cfIframeWidget', [
     'require',
     require => {
-      var ERRORS = {
+      const ERRORS = {
         codes: {
           EBADUPDATE: 'ENTRY UPDATE FAILED'
         },
@@ -37,21 +37,21 @@ angular
         template:
           '<iframe style="width:100%" allowfullscreen msallowfullscreen sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"></iframe>',
         link: function(scope, element) {
-          var _ = require('lodash');
-          var fieldFactory = require('fieldFactory');
-          var spaceContext = require('spaceContext');
-          var $q = require('$q');
-          var WidgetAPI = require('widgets/API');
-          var K = require('utils/kefir.es6');
-          var PathUtils = require('utils/Path.es6');
+          const _ = require('lodash');
+          const fieldFactory = require('fieldFactory');
+          const spaceContext = require('spaceContext');
+          const $q = require('$q');
+          const WidgetAPI = require('widgets/API');
+          const K = require('utils/kefir.es6');
+          const PathUtils = require('utils/Path.es6');
 
-          var appDomain = 'app.' + require('Config.es6').domain;
+          const appDomain = 'app.' + require('Config.es6').domain;
 
-          var doc = scope.docImpl || scope.otDoc;
-          var entityInfo = scope.entityInfo;
+          const doc = scope.docImpl || scope.otDoc;
+          const entityInfo = scope.entityInfo;
 
-          var fields = entityInfo.contentType.fields;
-          var fieldsById = _.transform(
+          const fields = entityInfo.contentType.fields;
+          const fieldsById = _.transform(
             fields,
             (fieldsById, field) => {
               fieldsById[field.id] = field;
@@ -59,12 +59,12 @@ angular
             {}
           );
 
-          var parameters = {
+          const parameters = {
             instance: scope.widget.settings || {},
             installation: scope.widget.installationParameterValues || {}
           };
 
-          var widgetAPI = new WidgetAPI(
+          const widgetAPI = new WidgetAPI(
             spaceContext.cma,
             spaceContext.space.data.spaceMembership,
             parameters,
@@ -86,7 +86,7 @@ angular
           });
 
           widgetAPI.registerHandler('setValue', (apiName, localeCode, value) => {
-            var path = widgetAPI.buildDocPath(apiName, localeCode);
+            const path = widgetAPI.buildDocPath(apiName, localeCode);
 
             return doc
               .setValueAt(path, value)
@@ -94,7 +94,7 @@ angular
           });
 
           widgetAPI.registerHandler('removeValue', (apiName, localeCode) => {
-            var path = widgetAPI.buildDocPath(apiName, localeCode);
+            const path = widgetAPI.buildDocPath(apiName, localeCode);
 
             return doc
               .removeValueAt(path)
@@ -127,9 +127,9 @@ angular
           }
 
           function initializeIframe() {
-            var $iframe = element.find('iframe');
-            var src = scope.widget.src;
-            var srcdoc = scope.widget.srcdoc;
+            const $iframe = element.find('iframe');
+            const src = scope.widget.src;
+            const srcdoc = scope.widget.srcdoc;
 
             $iframe.one('load', () => {
               scope.$applyAsync(() => {
@@ -138,7 +138,7 @@ angular
             });
 
             if (src && !isAppDomain(src)) {
-              var sandbox = $iframe.attr('sandbox') + ' allow-same-origin';
+              const sandbox = $iframe.attr('sandbox') + ' allow-same-origin';
               $iframe.attr('sandbox', sandbox);
               $iframe.attr('src', src);
             } else if (srcdoc) {
@@ -166,7 +166,7 @@ angular
             widgetAPI.send('schemaErrorsChanged', [errors]);
           });
 
-          var fieldChanges = doc.changes.filter(path => PathUtils.isAffecting(path, ['fields']));
+          const fieldChanges = doc.changes.filter(path => PathUtils.isAffecting(path, ['fields']));
 
           K.onValueScope(scope, fieldChanges, path => {
             updateWidgetValue(path[1], path[2]);
@@ -209,7 +209,7 @@ angular
           }
 
           function updateWidgetLocales(fieldId) {
-            var field = fieldsById[fieldId];
+            const field = fieldsById[fieldId];
 
             // We might receive changes from other uses on fields that we
             // do not yet know about. We silently ignore them.
@@ -217,14 +217,14 @@ angular
               return;
             }
 
-            var locales = fieldFactory.getLocaleCodes(field);
+            const locales = fieldFactory.getLocaleCodes(field);
             _.forEach(locales, locale => {
               updateWidgetLocaleValue(fieldId, locale);
             });
           }
 
           function updateWidgetLocaleValue(fieldId, locale) {
-            var value = doc.getValueAt(['fields', fieldId, locale]);
+            const value = doc.getValueAt(['fields', fieldId, locale]);
             widgetAPI.sendFieldValueChange(fieldId, locale, value);
           }
         }

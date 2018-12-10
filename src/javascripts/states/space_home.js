@@ -9,12 +9,12 @@ angular
   .factory('states/space_home', [
     'require',
     require => {
-      var base = require('states/Base.es6').default;
-      var accessChecker = require('access_control/AccessChecker');
-      var template = require('app/home/HomeTemplate.es6').default;
-      var spaceResolver = require('states/Resolvers.es6').spaceResolver;
-      var OrganizationRoles = require('services/OrganizationRoles.es6');
-      var Config = require('Config.es6');
+      const base = require('states/Base.es6').default;
+      const accessChecker = require('access_control/AccessChecker');
+      const template = require('app/home/HomeTemplate.es6').default;
+      const spaceResolver = require('states/Resolvers.es6').spaceResolver;
+      const OrganizationRoles = require('services/OrganizationRoles.es6');
+      const Config = require('Config.es6');
 
       return base({
         name: 'home',

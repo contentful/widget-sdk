@@ -228,10 +228,10 @@ angular
     'require',
     ($scope, require) => {
       const _ = require('lodash');
-      var fieldDecorator = require('fieldDecorator');
-      var buildMessage = require('fieldErrorMessageBuilder');
-      var TheLocaleStore = require('TheLocaleStore');
-      var joinAndTruncate = require('utils/StringUtils.es6').joinAndTruncate;
+      const fieldDecorator = require('fieldDecorator');
+      const buildMessage = require('fieldErrorMessageBuilder');
+      const TheLocaleStore = require('TheLocaleStore');
+      const joinAndTruncate = require('utils/StringUtils.es6').joinAndTruncate;
       const LD = require('utils/LaunchDarkly');
 
       const RICH_TEXT_FORMATTING_OPTIONS_FEATURE_FLAG =

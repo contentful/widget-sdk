@@ -3,7 +3,7 @@
 angular.module('contentful').directive('tooltip', [
   'require',
   require => {
-    var _ = require('lodash');
+    const _ = require('lodash');
     return {
       restrict: 'A',
 

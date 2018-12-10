@@ -34,8 +34,8 @@ angular.module('contentful').directive('reactComponent', [
       replace: true,
       link: ($scope, $element, attrs) => {
         const element = $element[0];
-        var logger = require('logger');
-        var reactComponent;
+        const logger = require('logger');
+        let reactComponent;
         if (attrs.name) {
           reactComponent = getReactComponent(attrs.name, require, logger);
         } else if (attrs.component) {
@@ -50,10 +50,10 @@ angular.module('contentful').directive('reactComponent', [
           throw new Error('Expect `component` or `name`');
         }
 
-        var store = require('ReduxStore/store.es6').default;
+        const store = require('ReduxStore/store.es6').default;
 
-        var renderMyComponent = () => {
-          var scopeProps = $scope.$eval(attrs.props);
+        const renderMyComponent = () => {
+          const scopeProps = $scope.$eval(attrs.props);
 
           renderComponent(reactComponent, scopeProps, $scope, element, store, ServicesProvider);
         };
@@ -187,6 +187,6 @@ function getPropExpression(prop) {
 
 // get watch depth of prop (string or array)
 function getPropWatchDepth(defaultWatch, prop) {
-  var customWatchDepth = Array.isArray(prop) && angular.isObject(prop[1]) && prop[1].watchDepth;
+  const customWatchDepth = Array.isArray(prop) && angular.isObject(prop[1]) && prop[1].watchDepth;
   return customWatchDepth || defaultWatch;
 }

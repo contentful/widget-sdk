@@ -51,8 +51,8 @@ angular
   .directive('cfUiHint', [
     'require',
     require => {
-      var $ = require('jquery');
-      var Hints = require('hints');
+      const $ = require('jquery');
+      const Hints = require('hints');
       return {
         restrict: 'E',
         replace: true,
@@ -72,7 +72,7 @@ angular
         compile: function(_, attrs) {
           if (Hints.shouldShow(attrs.name)) {
             return (scope, elem) => {
-              var $elem = $(elem);
+              const $elem = $(elem);
 
               Hints.setAsSeen(scope.name);
 

@@ -34,10 +34,10 @@ angular.module('cf.ui').directive('cfUiSortable', [
   'require',
   'uiSortableDirective',
   (require, uiSortableDirectives) => {
-    var _ = require('lodash');
-    var uiSortable = uiSortableDirectives[0];
+    const _ = require('lodash');
+    const uiSortable = uiSortableDirectives[0];
 
-    var DEFAULTS = {
+    const DEFAULTS = {
       handle: '[data-drag-handle]',
       item: '*:not([data-no-drag])',
       items: '> *',
@@ -49,7 +49,7 @@ angular.module('cf.ui').directive('cfUiSortable', [
         // generous with the width. This prevents issues when the
         // width is a fraction of the pixel and would lead to text
         // being broken into the next line
-        var width = parseFloat(ui.helper.css('width'));
+        const width = parseFloat(ui.helper.css('width'));
         ui.helper.css({
           width: width + 1,
           height: ''

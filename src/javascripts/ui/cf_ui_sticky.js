@@ -21,22 +21,22 @@
 angular.module('cf.ui').directive('cfUiSticky', [
   'require',
   require => {
-    var $ = require('jquery');
-    var h = require('utils/legacy-html-hyperscript').h;
-    var _ = require('lodash');
+    const $ = require('jquery');
+    const h = require('utils/legacy-html-hyperscript').h;
+    const _ = require('lodash');
 
     return {
       restrict: 'A',
       scope: {},
       link: function(_scope, element) {
-        var $element = $(element);
-        var $container = $element.closest('[cf-ui-sticky-container], body');
+        const $element = $(element);
+        const $container = $element.closest('[cf-ui-sticky-container], body');
 
-        var throttledUpdatePosition = _.throttle(updatePosition, 100);
-        var insertPlaceholderElementOnce = _.memoize(insertPlaceholderElement);
-        var memoizedGetDistanceFromTop = _.memoize(getDistanceFromTop);
+        const throttledUpdatePosition = _.throttle(updatePosition, 100);
+        const insertPlaceholderElementOnce = _.memoize(insertPlaceholderElement);
+        const memoizedGetDistanceFromTop = _.memoize(getDistanceFromTop);
 
-        var isFixed = false;
+        let isFixed = false;
 
         $container.on('scroll', throttledUpdatePosition);
 
@@ -44,9 +44,9 @@ angular.module('cf.ui').directive('cfUiSticky', [
 
         function updatePosition() {
           // Ensures that the DOM is loaded before height is calculated
-          var $placeholder = insertPlaceholderElementOnce();
+          const $placeholder = insertPlaceholderElementOnce();
 
-          var shouldFix = shouldElementBeFixed($placeholder);
+          const shouldFix = shouldElementBeFixed($placeholder);
 
           if (isFixed !== shouldFix) {
             isFixed = shouldFix;
@@ -64,7 +64,7 @@ angular.module('cf.ui').directive('cfUiSticky', [
 
         // Ensures the height of the parent element stays the same
         function insertPlaceholderElement() {
-          var newEl = h('div', {
+          const newEl = h('div', {
             style: {
               height: $element.outerHeight(true) + 'px'
             }
@@ -74,7 +74,7 @@ angular.module('cf.ui').directive('cfUiSticky', [
         }
 
         function shouldElementBeFixed($el) {
-          var rect = $el[0].getBoundingClientRect();
+          const rect = $el[0].getBoundingClientRect();
           return rect.top < memoizedGetDistanceFromTop();
         }
       }

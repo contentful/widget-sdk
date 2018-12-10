@@ -10,21 +10,21 @@ angular
   .factory('states/contentTypes', [
     'require',
     require => {
-      var _ = require('lodash');
-      var contextHistory = require('navigation/Breadcrumbs/History.es6').default;
-      var crumbFactory = require('navigation/Breadcrumbs/Factory.es6');
+      const _ = require('lodash');
+      const contextHistory = require('navigation/Breadcrumbs/History.es6').default;
+      const crumbFactory = require('navigation/Breadcrumbs/Factory.es6');
 
-      var base = require('states/Base.es6').default;
-      var resolvers = require('states/resolvers');
+      const base = require('states/Base.es6').default;
+      const resolvers = require('states/resolvers');
 
-      var list = base({
+      const list = base({
         name: 'list',
         url: '',
         loadingText: 'Loading content model…',
         template: '<div cf-content-type-list class="workbench entity-list"></div>'
       });
 
-      var fields = {
+      const fields = {
         name: 'fields',
         url: '/fields',
         params: {
@@ -32,7 +32,7 @@ angular
         }
       };
 
-      var preview = {
+      const preview = {
         name: 'preview',
         url: '/preview',
         params: {
@@ -40,7 +40,7 @@ angular
         }
       };
 
-      var newState = editorBase(
+      const newState = editorBase(
         {
           name: 'new',
           url: '_new',
@@ -57,7 +57,7 @@ angular
         true
       );
 
-      var detail = editorBase(
+      const detail = editorBase(
         {
           name: 'detail',
           url: '/:contentTypeId',
@@ -67,8 +67,8 @@ angular
               '$stateParams',
               'spaceContext',
               (require, $stateParams, spaceContext) => {
-                var space = spaceContext.space;
-                var ctHelpers = require('data/ContentTypes');
+                const space = spaceContext.space;
+                const ctHelpers = require('data/ContentTypes');
                 return space.getContentType($stateParams.contentTypeId).then(ct => {
                   // Some legacy content types do not have a name. If it is
                   // missing we set it to 'Untitled' so we can display

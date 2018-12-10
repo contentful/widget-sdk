@@ -25,8 +25,8 @@ angular
   .directive('cfLoader', [
     'require',
     require => {
-      var h = require('utils/legacy-html-hyperscript').h;
-      var _ = require('lodash');
+      const h = require('utils/legacy-html-hyperscript').h;
+      const _ = require('lodash');
 
       return {
         restrict: 'E',
@@ -66,8 +66,8 @@ angular
           '$scope',
           'require',
           ($scope, require) => {
-            var $rootScope = require('$rootScope');
-            var $parse = require('$parse');
+            const $rootScope = require('$rootScope');
+            const $parse = require('$parse');
 
             $scope.watchStateChange = $parse($scope.watchStateChange)();
             $scope.loaderMsg = $scope.loaderMsg || 'Please hold on…';
@@ -89,7 +89,7 @@ angular
               // If `options.notify` gets set to `false` in another `$state...` event
               // handler then above handlers triggering `hideLoader` would never fire.
               // TODO: Use Proxy instead once we drop IE 11 support.
-              var notify = options.notify;
+              let notify = options.notify;
               Object.defineProperty(options, 'notify', {
                 configurable: true,
                 enumerable: true,
@@ -129,7 +129,7 @@ angular
   .directive('cfInlineLoader', [
     'require',
     require => {
-      var h = require('utils/legacy-html-hyperscript').h;
+      const h = require('utils/legacy-html-hyperscript').h;
 
       return {
         restrict: 'E',

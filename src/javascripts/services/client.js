@@ -3,16 +3,16 @@
 angular.module('contentful').factory('client', [
   'require',
   require => {
-    var _ = require('lodash');
-    var $q = require('$q');
-    var Config = require('Config.es6');
-    var Client = require('legacy-client');
-    var auth = require('Authentication.es6');
-    var makeRequest = require('data/Request.es6').default;
+    const _ = require('lodash');
+    const $q = require('$q');
+    const Config = require('Config.es6');
+    const Client = require('legacy-client');
+    const auth = require('Authentication.es6');
+    const makeRequest = require('data/Request.es6').default;
 
-    var baseRequest = makeRequest(auth);
-    var baseUrl = Config.apiUrl().slice(0, -1); // Remove trailing slash
-    var defaultHeaders = {
+    const baseRequest = makeRequest(auth);
+    const baseUrl = Config.apiUrl().slice(0, -1); // Remove trailing slash
+    const defaultHeaders = {
       'X-Contentful-Skip-Transformation': true,
       'Content-Type': 'application/vnd.contentful.management.v1+json'
     };
@@ -40,13 +40,13 @@ angular.module('contentful').factory('client', [
     }
 
     function buildRequest(data) {
-      var req = {
+      const req = {
         method: data.method,
         url: [baseUrl, data.path.replace(/^\/+/, '')].join('/'),
         headers: _.extend({}, defaultHeaders, data.headers)
       };
 
-      var payloadProperty = data.method === 'GET' ? 'params' : 'data';
+      const payloadProperty = data.method === 'GET' ? 'params' : 'data';
       req[payloadProperty] = data.payload;
 
       return req;

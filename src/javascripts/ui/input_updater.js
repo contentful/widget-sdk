@@ -24,14 +24,14 @@ angular
        */
       function createInputUpdater(inputEl) {
         return function updateInputValue(value) {
-          var currentValue = inputEl.value;
+          const currentValue = inputEl.value;
 
           if (currentValue !== value) {
             // Chrome has a bug where the element will receive focus after
             // calling `setSelectionRange()`. We only update the caret
             // position if the element is actually focused.
             if (document.activeElement === inputEl) {
-              var newCaretPosition = getPreservedCaretPosition(
+              const newCaretPosition = getPreservedCaretPosition(
                 inputEl.selectionStart,
                 currentValue,
                 value
@@ -46,10 +46,10 @@ angular
       }
 
       function getPreservedCaretPosition(caretPosition, oldValue, newValue) {
-        var equalUpTo = getCommonPrefixLength(oldValue, newValue);
+        const equalUpTo = getCommonPrefixLength(oldValue, newValue);
         if (equalUpTo <= caretPosition) {
           // Insert or delete before the cursor
-          var diffLength = newValue.length - oldValue.length;
+          const diffLength = newValue.length - oldValue.length;
           return Math.max(caretPosition + diffLength, 0);
         } else {
           // Insert or delete after the cursor. Nothing to do
@@ -66,7 +66,7 @@ angular
           return 0;
         }
 
-        var length = 0;
+        let length = 0;
         while (a.charAt(length) === b.charAt(length)) {
           length++;
         }

@@ -1,19 +1,19 @@
 'use strict';
 
 // Shamelessly copied from gulp-jst-concat
-var gUtil = require('gulp-util');
-var PluginError = gUtil.PluginError;
-var File = gUtil.File;
-var through = require('through2');
-var _ = require('lodash-node/modern');
+const gUtil = require('gulp-util');
+const PluginError = gUtil.PluginError;
+const File = gUtil.File;
+const through = require('through2');
+const _ = require('lodash-node/modern');
 
 function pluginError(message) {
   return new PluginError('./build-template', message);
 }
 
 function compile(file, renameKeys) {
-  var name = file.path.replace(new RegExp(renameKeys[0]), renameKeys[1]);
-  var contents = String(file.contents);
+  const name = file.path.replace(new RegExp(renameKeys[0]), renameKeys[1]);
+  const contents = String(file.contents);
 
   return {
     name: name,
@@ -25,22 +25,22 @@ function compile(file, renameKeys) {
 
 function buildJSTString(files, renameKeys) {
   function compileAndRender(file) {
-    var template = compile(file, renameKeys);
+    const template = compile(file, renameKeys);
     return '"' + template.name + '":' + template.fnSource;
   }
 
-  var templates = files.map(compileAndRender).join(',\n');
+  const templates = files.map(compileAndRender).join(',\n');
   return 'this.JST = {' + templates + '};';
 }
 
 module.exports = function jstConcat(fileName, _opts) {
   if (!fileName) throw pluginError('Missing fileName');
 
-  var defaults = { renameKeys: ['.*', '$&'] };
-  var opts = _.extend({}, defaults, _opts);
-  var files = [];
+  const defaults = { renameKeys: ['.*', '$&'] };
+  const opts = _.extend({}, defaults, _opts);
+  const files = [];
 
-  var stream = through.obj(write, end);
+  const stream = through.obj(write, end);
   return stream;
 
   function write(file, _enc, done) {
@@ -53,7 +53,7 @@ module.exports = function jstConcat(fileName, _opts) {
   }
 
   function end(done) {
-    var jstString = buildJSTString(files, opts.renameKeys);
+    const jstString = buildJSTString(files, opts.renameKeys);
 
     stream.push(
       new File({

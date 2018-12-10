@@ -15,10 +15,10 @@ angular
   .service('datepicker', [
     'require',
     require => {
-      var Pikaday = require('pikaday');
-      var _ = require('lodash');
+      const Pikaday = require('pikaday');
+      const _ = require('lodash');
 
-      var I18N = {
+      const I18N = {
         previousMonth: 'Previous Month',
         nextMonth: 'Next Month',
         months: [
@@ -39,7 +39,7 @@ angular
         weekdays: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
       };
 
-      var DEFAULTS = {
+      const DEFAULTS = {
         i18n: I18N,
         yearRange: 100
       };

@@ -13,14 +13,14 @@ angular
   .factory('widgets/API', [
     'require',
     require => {
-      var _ = require('lodash');
-      var Channel = require('widgets/channel');
-      var TheLocaleStore = require('TheLocaleStore');
-      var createIDMap = require('widgets/IDMap');
-      var $q = require('$q');
-      var entitySelector = require('entitySelector');
-      var Analytics = require('analytics/Analytics.es6');
-      var spaceContext = require('spaceContext');
+      const _ = require('lodash');
+      const Channel = require('widgets/channel');
+      const TheLocaleStore = require('TheLocaleStore');
+      const createIDMap = require('widgets/IDMap');
+      const $q = require('$q');
+      const entitySelector = require('entitySelector');
+      const Analytics = require('analytics/Analytics.es6');
+      const spaceContext = require('spaceContext');
 
       /**
        * @ngdoc method
@@ -116,8 +116,8 @@ angular
        * @param {any} value
        */
       API.prototype.sendFieldValueChange = function(fieldId, internalLocaleCode, value) {
-        var apiName = this.idMap.field.toPublic[fieldId];
-        var locale = this.idMap.locale.toPublic[internalLocaleCode];
+        const apiName = this.idMap.field.toPublic[fieldId];
+        const locale = this.idMap.locale.toPublic[internalLocaleCode];
         this.channel.send('valueChanged', [apiName, locale, value]);
       };
 
@@ -150,8 +150,8 @@ angular
        * // ['fields', 'fg3sigk', 'en_US_2']
        */
       API.prototype.buildDocPath = function(apiName, localeCode) {
-        var internalID = this.idMap.field.toInternal[apiName];
-        var internalLocaleCode = this.idMap.locale.toInternal[localeCode];
+        const internalID = this.idMap.field.toInternal[apiName];
+        const internalLocaleCode = this.idMap.locale.toInternal[localeCode];
         return ['fields', internalID, internalLocaleCode];
       };
 
@@ -202,9 +202,9 @@ angular
         spaceMembership,
         parameters
       ) {
-        var apiName = field.apiName;
-        var fieldValue = _.get(entryData, ['fields', field.id, locale.internal_code]);
-        var fieldInfo = buildFieldInfo(idMap, entryData, fields);
+        const apiName = field.apiName;
+        const fieldValue = _.get(entryData, ['fields', field.id, locale.internal_code]);
+        const fieldInfo = buildFieldInfo(idMap, entryData, fields);
         return {
           user: buildUser(spaceMembership),
           parameters: parameters,
@@ -228,10 +228,10 @@ angular
 
       function buildFieldInfo(idMap, entryData, fields) {
         return _.map(fields, field => {
-          var locales = field.localized
+          const locales = field.localized
             ? TheLocaleStore.getPrivateLocales()
             : [TheLocaleStore.getDefaultLocale()];
-          var values = entryData.fields[field.id];
+          const values = entryData.fields[field.id];
           return {
             id: field.apiName,
             localized: field.localized,
@@ -244,9 +244,9 @@ angular
       function createHandlers(apiClient, iframe) {
         return {
           callSpaceMethod: function(methodName, args) {
-            var contentType;
-            var entryAction;
-            var matchData = methodName.match(/^(create|publish)Entry$/);
+            let contentType;
+            let entryAction;
+            const matchData = methodName.match(/^(create|publish)Entry$/);
             if (matchData) {
               entryAction = matchData[1];
               contentType = getContentType(entryAction, args[0]);
@@ -299,7 +299,7 @@ angular
       }
 
       function buildUser(spaceMembership) {
-        var user = spaceMembership.user;
+        const user = spaceMembership.user;
         return {
           sys: {
             id: user.sys.id

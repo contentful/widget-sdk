@@ -13,7 +13,7 @@ angular
   .directive('cfSref', [
     'require',
     require => {
-      var Navigator = require('states/Navigator.es6');
+      const Navigator = require('states/Navigator.es6');
       return {
         restrict: 'A',
         link: function($scope, _$elem, $attrs) {

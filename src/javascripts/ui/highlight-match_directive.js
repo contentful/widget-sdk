@@ -3,7 +3,7 @@
 angular.module('cf.ui').directive('uiHighlightMatch', [
   'require',
   require => {
-    var document = require('$document').get(0);
+    const document = require('$document').get(0);
     return {
       restrict: 'A',
       scope: {
@@ -12,16 +12,16 @@ angular.module('cf.ui').directive('uiHighlightMatch', [
       },
       link: function($scope, $el) {
         $scope.$watchGroup(['baseString', 'search'], values => {
-          var base = values[0] || '';
-          var search = values[1] || '';
-          var start = base.toLowerCase().indexOf(search.toLowerCase());
+          const base = values[0] || '';
+          const search = values[1] || '';
+          const start = base.toLowerCase().indexOf(search.toLowerCase());
           if (start > -1) {
-            var end = start + search.length;
-            var prefix = base.substring(0, start);
-            var match = base.substring(start, end);
-            var suffix = base.substring(end);
+            const end = start + search.length;
+            const prefix = base.substring(0, start);
+            const match = base.substring(start, end);
+            const suffix = base.substring(end);
 
-            var strong = document.createElement('strong');
+            const strong = document.createElement('strong');
             strong.textContent = match;
 
             $el

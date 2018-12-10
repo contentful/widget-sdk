@@ -36,12 +36,12 @@ angular
   .factory('overridingRequestQueue', [
     'require',
     require => {
-      var _ = require('lodash');
-      var $q = require('$q');
-      var random = require('utils/Random.es6');
+      const _ = require('lodash');
+      const $q = require('$q');
+      const random = require('utils/Random.es6');
 
       return function createQueue(requestFn, onceFn) {
-        var deferred, requests, required, performed;
+        let deferred, requests, required, performed;
         reset();
 
         request.hasToFinish = requestRequired;
@@ -93,13 +93,13 @@ angular
             performed[id] = true;
 
             // remove from the list of required requests (if was required)
-            var requiredIndex = required.indexOf(id);
+            const requiredIndex = required.indexOf(id);
             if (requiredIndex > -1) {
               required.splice(requiredIndex, 1);
             }
 
             // resolve if all required requests and the last one were performed
-            var lastId = _.last(requests);
+            const lastId = _.last(requests);
             if (required.length < 1 && performed[lastId]) {
               deferred.resolve(response);
               reset();

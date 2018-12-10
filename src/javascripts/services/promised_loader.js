@@ -5,7 +5,7 @@ angular.module('contentful').factory('PromisedLoader', [
   '$q',
   'debounce',
   (require, $q, debounce) => {
-    var _ = require('lodash');
+    const _ = require('lodash');
 
     function PromisedLoader() {
       this.inProgress = false;
@@ -24,7 +24,7 @@ angular.module('contentful').factory('PromisedLoader', [
       },
 
       _loadPromiseImmediately: function(promiseLoader, args, deferred) {
-        var loader = this;
+        const loader = this;
         this.startLoading();
         promiseLoader(...args).then(
           res => {
@@ -41,8 +41,8 @@ angular.module('contentful').factory('PromisedLoader', [
       _loadPromise: null, // Initialized in Constructor
 
       loadPromise: function(promiseLoader /*, args[] */) {
-        var deferred = $q.defer();
-        var args = _.drop(arguments, 1);
+        const deferred = $q.defer();
+        const args = _.drop(arguments, 1);
         if (this.inProgress) {
           deferred.reject(PromisedLoader.IN_PROGRESS);
           return deferred.promise;

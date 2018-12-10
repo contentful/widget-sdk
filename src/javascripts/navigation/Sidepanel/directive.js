@@ -11,9 +11,9 @@ angular
   .directive('cfNavSidepanel', [
     'require',
     require => {
-      var $ = require('jquery');
-      var $window = require('$window');
-      var createController = require('navigation/Sidepanel/DirectiveController.es6').default;
+      const $ = require('jquery');
+      const $window = require('$window');
+      const createController = require('navigation/Sidepanel/DirectiveController.es6').default;
 
       return {
         restrict: 'E',

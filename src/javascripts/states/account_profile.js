@@ -9,48 +9,48 @@ angular
   .factory('states/account/profile', [
     'require',
     require => {
-      var _ = require('lodash');
-      var base = require('states/Base.es6').default;
-      var h = require('utils/legacy-html-hyperscript').h;
+      const _ = require('lodash');
+      const base = require('states/Base.es6').default;
+      const h = require('utils/legacy-html-hyperscript').h;
 
-      var user = userBase({
+      const user = userBase({
         name: 'user',
         title: 'User settings',
         url: '/user{pathSuffix:PathSuffix}'
       });
 
-      var spaceMemberships = userBase({
+      const spaceMemberships = userBase({
         name: 'space_memberships',
         title: 'Space memberships',
         url: '/space_memberships{pathSuffix:PathSuffix}'
       });
 
-      var organizationMemberships = userBase({
+      const organizationMemberships = userBase({
         name: 'organization_memberships',
         title: 'Organization memberships',
         url: '/organization_memberships{pathSuffix:PathSuffix}'
       });
 
-      var accessGrants = userBase({
+      const accessGrants = userBase({
         name: 'access_grants',
         title: 'OAuth tokens',
         url: '/access_grants{pathSuffix:PathSuffix}'
       });
 
-      var applications = userBase({
+      const applications = userBase({
         name: 'applications',
         title: 'Applications',
         url: '/developers/applications{pathSuffix:PathSuffix}'
       });
 
-      var userCancellation = userBase({
+      const userCancellation = userBase({
         name: 'user_cancellation',
         title: 'User cancellation',
         url: '/user_cancellation{pathSuffix:PathSuffix}'
       });
 
       function userBase(definition) {
-        var defaults = {
+        const defaults = {
           label: 'Account',
           params: {
             pathSuffix: ''

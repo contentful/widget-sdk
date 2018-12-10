@@ -12,18 +12,18 @@
 angular.module('contentful').factory('userAgent', [
   'require',
   require => {
-    var _ = require('lodash');
-    var $window = require('$window');
-    var userAgent = _.get($window, 'navigator.userAgent', '');
-    var platform = _.get($window, 'navigator.platform', '');
-    var ctrlKey = 'Ctrl';
+    const _ = require('lodash');
+    const $window = require('$window');
+    const userAgent = _.get($window, 'navigator.userAgent', '');
+    const platform = _.get($window, 'navigator.platform', '');
+    let ctrlKey = 'Ctrl';
 
     /**
      * Tests reference:
      * https://msdn.microsoft.com/en-us/library/ms537509%28v=vs.85%29.aspx
      * http://stackoverflow.com/questions/10527983/best-way-to-detect-mac-os-x-or-windows-computers-with-javascript-or-jquery
      */
-    var tests = {
+    const tests = {
       ie: /msie/i.test(userAgent),
       safari: /^((?!chrome|android).)*safari/i.test(userAgent),
       ios: /(iphone os|ipad|iphone|ipod)/i.test(userAgent) && !$window.MSStream,

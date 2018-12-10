@@ -278,7 +278,7 @@ angular.module('contentful').factory('fieldFactory', [
      * @return {Array<string>}
      */
     function getLocaleCodes(field) {
-      let locales = field.localized
+      const locales = field.localized
         ? TheLocaleStore.getPrivateLocales()
         : [TheLocaleStore.getDefaultLocale()];
       return _.map(locales, 'internal_code');

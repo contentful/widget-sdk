@@ -7,10 +7,10 @@
 angular.module('contentful').factory('widgets', [
   'require',
   require => {
-    var _ = require('lodash');
-    var fieldFactory = require('fieldFactory');
-    var deepFreeze = require('utils/Freeze.es6').deepFreeze;
-    var applyDefaultValues = require('widgets/WidgetParametersUtils.es6').applyDefaultValues;
+    const _ = require('lodash');
+    const fieldFactory = require('fieldFactory');
+    const deepFreeze = require('utils/Freeze.es6').deepFreeze;
+    const applyDefaultValues = require('widgets/WidgetParametersUtils.es6').applyDefaultValues;
 
     /**
      * @ngdoc type
@@ -66,7 +66,7 @@ angular.module('contentful').factory('widgets', [
       return controls.reduce(
         (acc, control) => {
           if (control.field) {
-            var renderable = buildOneRenderable(control, widgets);
+            const renderable = buildOneRenderable(control, widgets);
             acc[renderable.sidebar ? 'sidebar' : 'form'].push(renderable);
           }
           return acc;
@@ -76,9 +76,9 @@ angular.module('contentful').factory('widgets', [
     }
 
     function buildOneRenderable(control, widgets) {
-      var id = control.widgetId;
-      var field = _.cloneDeep(control.field);
-      var renderable = {
+      const id = control.widgetId;
+      const field = _.cloneDeep(control.field);
+      const renderable = {
         // TODO we should use `field.id` but I don’t know if we normalize
         // it so that it is always defined.
         fieldId: control.fieldId,
@@ -87,7 +87,7 @@ angular.module('contentful').factory('widgets', [
         settings: {}
       };
 
-      var descriptor = _.find(widgets, { id: id });
+      const descriptor = _.find(widgets, { id: id });
       if (!descriptor) {
         renderable.template = getWarningTemplate(id, 'missing');
         return renderable;
@@ -133,7 +133,7 @@ angular.module('contentful').factory('widgets', [
     }
 
     function getWarningTemplate(widgetId, message) {
-      var accessChecker = require('access_control/AccessChecker');
+      const accessChecker = require('access_control/AccessChecker');
       return JST.editor_control_warning({
         label: widgetId,
         message: message,
@@ -142,7 +142,7 @@ angular.module('contentful').factory('widgets', [
     }
 
     function isCompatibleWithField(widgetDescriptor, field) {
-      var fieldType = fieldFactory.getTypeName(field);
+      const fieldType = fieldFactory.getTypeName(field);
       return _.includes(widgetDescriptor.fieldTypes, fieldType);
     }
   }

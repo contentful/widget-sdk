@@ -9,19 +9,19 @@
 angular.module('contentful').factory('paywallOpener', [
   'require',
   require => {
-    var _ = require('lodash');
-    var $q = require('$q');
-    var $sce = require('$sce');
-    var lazyLoad = require('LazyLoader').get;
-    var modalDialog = require('modalDialog');
-    var recommendPlan = require('subscriptionPlanRecommender').recommend;
-    var intercom = require('intercom');
-    var Analytics = require('analytics/Analytics.es6');
-    var TheAccountView = require('TheAccountView');
-    var Config = require('Config.es6');
-    var $window = require('$window');
+    const _ = require('lodash');
+    const $q = require('$q');
+    const $sce = require('$sce');
+    const lazyLoad = require('LazyLoader').get;
+    const modalDialog = require('modalDialog');
+    const recommendPlan = require('subscriptionPlanRecommender').recommend;
+    const intercom = require('intercom');
+    const Analytics = require('analytics/Analytics.es6');
+    const TheAccountView = require('TheAccountView');
+    const Config = require('Config.es6');
+    const $window = require('$window');
 
-    var paywallIsOpen = false;
+    let paywallIsOpen = false;
 
     return {
       openPaywall: openPaywall
@@ -69,16 +69,16 @@ angular.module('contentful').factory('paywallOpener', [
       }
 
       function loadScopeData() {
-        var organizationId = _.get(organization, 'sys.id');
-        var scope = {
+        const organizationId = _.get(organization, 'sys.id');
+        const scope = {
           offerToSetUpPayment: options.offerPlanUpgrade,
           setUpPayment: newUpgradeAction(),
           openSupport: openSupport
         };
 
         if (options.offerPlanUpgrade) {
-          var loadPlanCardCss = lazyLoad('gkPlanCardStyles');
-          var loadPlanCard = recommendPlan(organizationId);
+          const loadPlanCardCss = lazyLoad('gkPlanCardStyles');
+          const loadPlanCard = recommendPlan(organizationId);
 
           return $q
             .all([loadPlanCardCss, loadPlanCard])
@@ -94,7 +94,7 @@ angular.module('contentful').factory('paywallOpener', [
 
         function returnScopeWithPlan(recommendation) {
           if (recommendation.reason) {
-            var reasonHtml = recommendation.reason.outerHTML;
+            const reasonHtml = recommendation.reason.outerHTML;
             scope.planRecommendationReasonHtml = $sce.trustAsHtml(reasonHtml);
           }
           scope.planHtml = $sce.trustAsHtml(recommendation.plan.outerHTML);

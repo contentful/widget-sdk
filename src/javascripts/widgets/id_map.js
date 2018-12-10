@@ -19,8 +19,8 @@
 angular.module('contentful').factory('widgets/IDMap', [
   'require',
   require => {
-    var _ = require('lodash');
-    var TheLocaleStore = require('TheLocaleStore');
+    const _ = require('lodash');
+    const TheLocaleStore = require('TheLocaleStore');
 
     return createIDMap;
 
@@ -32,10 +32,10 @@ angular.module('contentful').factory('widgets/IDMap', [
     }
 
     function createFieldMap(fields) {
-      var toPublic = _.transform(fields, (toPublic, field) => {
+      const toPublic = _.transform(fields, (toPublic, field) => {
         toPublic[field.id] = field.apiName;
       });
-      var toInternal = _.invert(toPublic);
+      const toInternal = _.invert(toPublic);
 
       return {
         toPublic: toPublic,
@@ -44,12 +44,12 @@ angular.module('contentful').factory('widgets/IDMap', [
     }
 
     function createLocaleMap() {
-      var locales = TheLocaleStore.getPrivateLocales();
+      const locales = TheLocaleStore.getPrivateLocales();
 
-      var toPublic = _.transform(locales, (toPublic, locale) => {
+      const toPublic = _.transform(locales, (toPublic, locale) => {
         toPublic[locale.internal_code] = locale.code;
       });
-      var toInternal = _.invert(toPublic);
+      const toInternal = _.invert(toPublic);
 
       return {
         toPublic: toPublic,

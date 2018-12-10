@@ -21,36 +21,36 @@ angular
   .factory('TheLocaleStore', [
     'require',
     require => {
-      var getStore = require('TheStore').getStore;
-      var create = require('TheLocaleStore/implementation').create;
+      const getStore = require('TheStore').getStore;
+      const create = require('TheLocaleStore/implementation').create;
       return create(getStore);
     }
   ])
   .factory('TheLocaleStore/implementation', [
     'require',
     require => {
-      var _ = require('lodash');
+      const _ = require('lodash');
 
       return {
         create: create
       };
 
       function create(getStore) {
-        var store = null;
-        var defaultLocale = null;
+        let store = null;
+        let defaultLocale = null;
 
-        var localeRepo = {
+        let localeRepo = {
           getAll: function() {
             throw new Error('Call .init(localeRepo) first');
           }
         };
 
         // All locales fetched from the CMA, including delivery-only locales
-        var locales = [];
+        let locales = [];
         // Locales that can be used for entity editing
-        var privateLocales = [];
+        let privateLocales = [];
         // List of currently active locales in entity editors
-        var activeLocales = [];
+        let activeLocales = [];
 
         /**
          * Map of current locales and their active state.
@@ -58,7 +58,7 @@ angular
          * on the entry/asset editors.
          * This map uses internal locale codes as keys.
          */
-        var codeToActiveLocaleMap = {};
+        let codeToActiveLocaleMap = {};
 
         return {
           init: init,
@@ -101,11 +101,11 @@ angular
             privateLocales = locales.filter(locale => locale.contentManagementApi);
             defaultLocale = _.find(privateLocales, { default: true }) || privateLocales[0];
 
-            var spaceId = defaultLocale.sys.space.sys.id;
+            const spaceId = defaultLocale.sys.space.sys.id;
             store = getStore().forKey('activeLocalesForSpace.' + spaceId);
 
-            var storedLocaleCodes = store.get() || [];
-            var storedLocales = _.filter(privateLocales, locale =>
+            const storedLocaleCodes = store.get() || [];
+            const storedLocales = _.filter(privateLocales, locale =>
               _.includes(storedLocaleCodes, locale.code)
             );
 
@@ -233,7 +233,7 @@ angular
          * @returns {string}
          */
         function toInternalCode(publicCode) {
-          var locale = _.find(privateLocales, { code: publicCode });
+          const locale = _.find(privateLocales, { code: publicCode });
           return locale && locale.internal_code;
         }
 
@@ -244,7 +244,7 @@ angular
          * @returns {string}
          */
         function toPublicCode(internalCode) {
-          var locale = _.find(privateLocales, { internal_code: internalCode });
+          const locale = _.find(privateLocales, { internal_code: internalCode });
           return locale && locale.code;
         }
 

@@ -17,7 +17,7 @@ angular
   .directive('uiHideOnClick', [
     'require',
     require => {
-      var $document = require('$document');
+      const $document = require('$document');
       return {
         restrict: 'A',
         link: function(_scope, element) {

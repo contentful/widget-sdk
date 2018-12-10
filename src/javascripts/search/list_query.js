@@ -8,14 +8,14 @@
 angular.module('contentful').factory('ListQuery', [
   'require',
   require => {
-    var $q = require('$q');
-    var _ = require('lodash');
-    var systemFields = require('systemFields');
-    var spaceContext = require('spaceContext');
-    var buildQueryFromUISearch = require('app/ContentList/Search/QueryBuilder.es6').buildQuery;
-    var assetContentType = require('legacy-client').assetContentType;
+    const $q = require('$q');
+    const _ = require('lodash');
+    const systemFields = require('systemFields');
+    const spaceContext = require('spaceContext');
+    const buildQueryFromUISearch = require('app/ContentList/Search/QueryBuilder.es6').buildQuery;
+    const assetContentType = require('legacy-client').assetContentType;
 
-    var DEFAULT_ORDER = systemFields.getDefaultOrder();
+    const DEFAULT_ORDER = systemFields.getDefaultOrder();
 
     return {
       /**
@@ -63,7 +63,7 @@ angular.module('contentful').factory('ListQuery', [
        * @returns {object}
        */
       getForUsers: function(opts) {
-        var userContentType = {
+        const userContentType = {
           data: {},
           getId: _.constant(undefined)
         };
@@ -72,13 +72,13 @@ angular.module('contentful').factory('ListQuery', [
     };
 
     function prepareEntityListQuery(contentType, opts) {
-      var queryObject = {
+      const queryObject = {
         order: getOrderQuery(opts.order, contentType),
         limit: opts.paginator.getPerPage(),
         skip: opts.paginator.getSkipParam(),
         'sys.archivedAt[exists]': 'false' // By default, don't get archived entries.
       };
-      var searchQuery = buildQueryFromUISearch({
+      const searchQuery = buildQueryFromUISearch({
         contentType: _.get(contentType, 'data'),
         search: opts
       });
@@ -88,7 +88,7 @@ angular.module('contentful').factory('ListQuery', [
 
     function getOrderQuery(order, contentType) {
       order = prepareOrderObject(order);
-      var prefix = order.direction === 'descending' ? '-' : '';
+      const prefix = order.direction === 'descending' ? '-' : '';
 
       return prefix + getOrderPath(order, contentType).join('.');
     }
@@ -110,7 +110,7 @@ angular.module('contentful').factory('ListQuery', [
       }
 
       // and CT fields afterwards:
-      var ctField = getCtField(order.fieldId, contentType);
+      const ctField = getCtField(order.fieldId, contentType);
       if (ctField) {
         return ['fields', ctField.apiName || ctField.id];
       }
@@ -123,7 +123,7 @@ angular.module('contentful').factory('ListQuery', [
     }
 
     function getCtField(id, ct) {
-      var ctFields = _.get(ct, 'data.fields', []);
+      const ctFields = _.get(ct, 'data.fields', []);
       return _.find(ctFields, { id: id });
     }
   }

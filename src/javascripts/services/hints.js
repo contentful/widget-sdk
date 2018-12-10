@@ -10,8 +10,8 @@
 angular.module('contentful').service('hints', [
   'require',
   require => {
-    var getStore = require('TheStore').getStore;
-    var store = getStore();
+    const getStore = require('TheStore').getStore;
+    const store = getStore();
 
     return {
       /**

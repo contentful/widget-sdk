@@ -13,13 +13,13 @@ angular
   .factory('LazyLoader', [
     'require',
     require => {
-      var _ = require('lodash');
-      var $q = require('$q');
-      var loader = require('angularLoad');
-      var resources = require('LazyLoader/resources');
+      const _ = require('lodash');
+      const $q = require('$q');
+      const loader = require('angularLoad');
+      const resources = require('LazyLoader/resources');
 
-      var store = {};
-      var cache = {};
+      const store = {};
+      const cache = {};
 
       return {
         provide: provide,
@@ -54,13 +54,13 @@ angular
        */
       function get(name) {
         // no resource definition at all
-        var resource = resources[name];
+        const resource = resources[name];
         if (!resource) {
           return $q.reject(new Error('No resource with requested name "' + name + '"'));
         }
 
         // use cached promise
-        var cached = cache[name];
+        const cached = cache[name];
         if (cached) {
           return cached;
         }
@@ -70,13 +70,13 @@ angular
         }
 
         // issue HTTP request to get service value
-        var load = getLoaderFor(resource);
-        var loadPromise = load(resource.url).then(() => {
+        const load = getLoaderFor(resource);
+        const loadPromise = load(resource.url).then(() => {
           if (resource.globalObject) {
             store[name] = _.get(window, resource.globalObject);
           }
 
-          var value = store[name];
+          let value = store[name];
 
           // Immediately run any setup scripts if available
           if (_.isFunction(resource.setup)) {
@@ -103,9 +103,9 @@ angular
   .factory('LazyLoader/resources', [
     'require',
     require => {
-      var _ = require('lodash');
-      var environment = require('environment');
-      var Config = require('Config.es6');
+      const _ = require('lodash');
+      const environment = require('environment');
+      const Config = require('Config.es6');
 
       /**
        * Options:

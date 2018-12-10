@@ -68,8 +68,8 @@ angular
   .run([
     'require',
     require => {
-      var $document = require('$document');
-      var Config = require('Config.es6');
+      const $document = require('$document');
+      const Config = require('Config.es6');
       if (Config.env === 'development') {
         Error.stackTraceLimit = 100;
       } else {
@@ -143,7 +143,7 @@ angular
   ]);
 
 (() => {
-  var registry = [];
+  const registry = [];
   window.AngularSystem = {
     register: register,
     registry: registry,
@@ -197,13 +197,13 @@ angular
     angular.module('cf.es6').factory(id, [
       'require',
       require => {
-        var mod = makeModule();
+        const mod = makeModule();
 
-        var ctx = run(mod.export);
+        const ctx = run(mod.export);
 
         deps.forEach((name, i) => {
-          var absName = resolve(name, id);
-          var depExports = coerceExports(require(absName));
+          const absName = resolve(name, id);
+          const depExports = coerceExports(require(absName));
           ctx.setters[i](depExports);
         });
         ctx.execute();
@@ -240,7 +240,7 @@ angular
   }
 
   function makeModule() {
-    var exports = {};
+    const exports = {};
 
     Object.defineProperty(exports, '__esModule', {
       value: true
@@ -255,7 +255,7 @@ angular
       if (typeof name === 'string') {
         exports[name] = value;
       } else {
-        for (var key in name) {
+        for (const key in name) {
           exports[key] = name[key];
         }
       }
@@ -267,8 +267,8 @@ angular
    * that is an alias for the index module.
    */
   function registerDirectoryAlias(moduleId) {
-    var path = moduleId.split('/');
-    var last = path.pop();
+    const path = moduleId.split('/');
+    const last = path.pop();
     if (last === 'index.es6') {
       angular.module('cf.es6').factory(path.join('/'), [moduleId, id]);
     }
@@ -281,11 +281,11 @@ angular
   function resolve(to, from) {
     // IE does not support string.startsWith()
     if (to.substr(0, 2) === './' || to.substr(0, 3) === '../') {
-      var froms = from.split('/');
+      const froms = from.split('/');
       // Last 'from' is the filename but we resolve relative to the
       // directory.
       froms.pop();
-      var tos = to.split('/');
+      const tos = to.split('/');
       return tos
         .reduce((resolved, seg) => {
           if (seg === '..') {
