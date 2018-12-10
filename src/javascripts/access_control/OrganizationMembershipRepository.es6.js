@@ -46,6 +46,15 @@ export function removeMembership(endpoint, membershipId) {
   );
 }
 
+// TODO: This should be in its own repository, because this deals with invitations and
+// not organization_memberships
+export function removeInvitation(endpoint, invitationId) {
+  return endpoint({
+    method: 'DELETE',
+    path: ['invitations', invitationId]
+  });
+}
+
 /**
  * Get organization's users from endpoint
  * @param {function} endpoint - organization endpoint
@@ -114,6 +123,14 @@ export function getRoles(endpoint, query) {
 
 export function getAllRoles(endpoint, params) {
   return fetchAll(endpoint, ['roles'], BATCH_LIMIT, params);
+}
+
+export function getInvitations(endpoint, query) {
+  return endpoint({
+    method: 'GET',
+    path: ['invitations'],
+    query
+  });
 }
 
 export function invite(endpoint, { role, email, spaceInvitations }) {

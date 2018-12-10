@@ -16,7 +16,8 @@ import {
   TextInput,
   Icon,
   Spinner,
-  Notification
+  Notification,
+  TextLink
 } from '@contentful/forma-36-react-components';
 import { formatQuery } from './QueryBuilder.es6';
 import ResolveLinks from 'app/OrganizationSettings/LinkResolver.es6';
@@ -35,6 +36,7 @@ import RemoveOrgMemberDialog from '../RemoveUserDialog.es6';
 import EmptyPlaceholder from './EmptyPlaceholder.es6';
 import { getFilters, getSearchTerm } from 'selectors/filters.es6';
 import { getLastActivityDate } from '../UserUtils.es6';
+import { getInvitedUsersCount } from 'app/OrganizationSettings/UserInvitations/UserInvitationUtils.es6';
 
 import { generateFilterDefinitions } from './FilterDefinitions.es6';
 import { Filter as FilterPropType } from '../PropTypes.es6';
@@ -44,15 +46,11 @@ class UsersList extends React.Component {
     orgId: PropTypes.string.isRequired,
     spaceRoles: PropTypes.array,
     spaces: PropTypes.arrayOf(SpacePropType),
-    resource: PropTypes.shape({
-      usage: PropTypes.number,
-      limits: PropTypes.shape({
-        maximum: PropTypes.number
-      })
-    }),
+    numberOrgMemberships: PropTypes.number.isRequired,
     filters: PropTypes.arrayOf(FilterPropType),
     searchTerm: PropTypes.string.isRequired,
     updateSearchTerm: PropTypes.func.isRequired,
+    newUserInvitationsEnabled: PropTypes.bool.isRequired,
     hasSsoEnabled: PropTypes.bool
   };
 
@@ -69,7 +67,7 @@ class UsersList extends React.Component {
   endpoint = createOrganizationEndpoint(this.props.orgId);
 
   componentDidMount() {
-    this.fetch();
+    this.loadInitialData();
   }
 
   componentDidUpdate(prevProps) {
@@ -81,8 +79,26 @@ class UsersList extends React.Component {
     }
   }
 
+  loadInitialData = async () => {
+    this.setState({ loading: true });
+
+    await this.loadInvitationsCount();
+    await this.fetch();
+
+    this.setState({ loading: false });
+  };
+
+  loadInvitationsCount = async () => {
+    const { orgId } = this.props;
+    const count = await getInvitedUsersCount(orgId);
+
+    this.setState({
+      invitedUsersCount: count
+    });
+  };
+
   fetch = async () => {
-    const { filters, searchTerm } = this.props;
+    const { filters, searchTerm, newUserInvitationsEnabled } = this.props;
     const { pagination } = this.state;
     const filterQuery = formatQuery(filters.map(item => item.filter));
     const includePaths = ['sys.user'];
@@ -93,6 +109,11 @@ class UsersList extends React.Component {
       skip: pagination.skip,
       limit: pagination.limit
     };
+
+    if (newUserInvitationsEnabled) {
+      // Skip all "pending" org memberships
+      query['sys.user.firstName[ne]'] = '';
+    }
 
     this.setState({ loading: true });
 
@@ -121,6 +142,13 @@ class UsersList extends React.Component {
     return href({
       path: ['account', 'organizations', 'users', 'detail'],
       params: { userId: user.sys.id }
+    });
+  }
+
+  getLinkToInvitationsList() {
+    return href({
+      path: ['account', 'organizations', 'users', 'invitations'],
+      params: { orgId: this.props.orgId }
     });
   }
 
@@ -165,8 +193,15 @@ class UsersList extends React.Component {
   }, 500);
 
   render() {
-    const { queryTotal, usersList, pagination, loading } = this.state;
-    const { searchTerm, resource, spaces, spaceRoles, filters } = this.props;
+    const { queryTotal, usersList, pagination, loading, invitedUsersCount } = this.state;
+    const {
+      searchTerm,
+      numberOrgMemberships,
+      spaces,
+      spaceRoles,
+      filters,
+      newUserInvitationsEnabled
+    } = this.props;
 
     return (
       <Workbench testId="organization-users-page">
@@ -184,7 +219,15 @@ class UsersList extends React.Component {
             />
           </Workbench.Header.Search>
           <Workbench.Header.Actions>
-            {`${pluralize('users', resource.usage, true)} in your organization`}
+            <div>
+              <div>{`${pluralize('users', numberOrgMemberships, true)} in your organization`}</div>
+              {newUserInvitationsEnabled &&
+                (invitedUsersCount != null && invitedUsersCount > 0) && (
+                  <TextLink href={this.getLinkToInvitationsList()}>
+                    {invitedUsersCount} invited users
+                  </TextLink>
+                )}
+            </div>
             <Button icon="PlusCircle" href={this.getLinkToInvitation()}>
               Invite users
             </Button>
