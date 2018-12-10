@@ -10,10 +10,7 @@ import * as AppsFeatureFlag from '../AppsFeatureFlag.es6';
 const AppsFetcher = createFetcherComponent(async ({ spaceId }) => {
   const apps = await createAppsClient(spaceId).getAll();
 
-  const enabled = await AppsFeatureFlag.isEnabled();
-  if (!enabled) {
-    throw new Error('Apps not enabled.');
-  }
+  await AppsFeatureFlag.assertIsEnabled();
 
   return apps.reduce(
     ({ installed, available }, app) => {

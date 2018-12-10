@@ -3,11 +3,15 @@ import PropTypes from 'prop-types';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import createFetcherComponent from 'app/common/createFetcherComponent.es6';
 import AppPageShell from '../_common/AppPageShell.es6';
+import * as AppsFeatureFlag from '../AppsFeatureFlag.es6';
+
 import spaceContext from 'spaceContext';
 
 import AlgoliaAppPage from './Container.es6';
 
-const AlgoliaFetcher = createFetcherComponent(({ client }) => {
+const AlgoliaFetcher = createFetcherComponent(async ({ client }) => {
+  await AppsFeatureFlag.assertIsEnabled();
+
   return Promise.all([
     client.get('algolia'),
     spaceContext.publishedCTs.getAllBare(),
