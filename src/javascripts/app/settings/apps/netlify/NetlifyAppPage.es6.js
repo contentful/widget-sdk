@@ -250,7 +250,14 @@ export default class NetlifyAppPage extends Component {
           <h3>About</h3>
           <p>
             With this app developers can do a very quick set up, authors can control when the static
-            pages are created and see the current status of the build process.
+            pages are created and see the current status of the build process.{' '}
+            <a
+              href="https://www.contentful.com/developers/docs/extensibility/apps/netlify/"
+              target="_blank"
+              rel="noopener noreferrer">
+              Read the docs
+            </a>
+            .
           </p>
         </div>
 

@@ -176,6 +176,20 @@ export default class AlgoliaAppPage extends Component {
           <Note>
             Let us know how we can improve the Algolia app. <AppsFeedback about="Algolia app" />
           </Note>
+          <div>
+            <h3>About</h3>
+            <p>
+              By setting up this app the selected content type will be automatically indexed in
+              Algolia.{' '}
+              <a
+                href="https://www.contentful.com/developers/docs/extensibility/apps/algolia/"
+                target="_blank"
+                rel="noopener noreferrer">
+                Read the docs
+              </a>
+              .
+            </p>
+          </div>
           <Setup
             installed={this.state.installed}
             appId={this.state.config.appId}

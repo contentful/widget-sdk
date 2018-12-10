@@ -19,7 +19,14 @@ const AppsListShell = props => (
     <Workbench.Content centered>
       <div className="apps-list-container">
         <p className="apps-list__intro">
-          Extend the platform and integrate with services you’re using by adding apps.
+          Extend the platform and integrate with services you’re using by adding apps.{' '}
+          <a
+            href="https://www.contentful.com/developers/docs/extensibility/apps/"
+            target="_blank"
+            rel="noopener noreferrer">
+            Read the docs
+          </a>
+          .
         </p>
         <div>{props.children}</div>
       </div>
