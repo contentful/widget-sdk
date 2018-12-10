@@ -5,6 +5,8 @@ import { Button, ValidationMessage } from '@contentful/forma-36-react-components
 import spaceContext from 'spaceContext';
 import * as Analytics from 'analytics/Analytics.es6';
 
+import AppsFeedback from 'app/settings/apps/AppsFeedback.es6';
+
 import { createPubSub } from './PubNubClient.es6';
 import {
   normalizeMessage,
@@ -101,6 +103,10 @@ export default class BuildButton extends Component {
 
     return (
       <div className="netlify-app__build-button">
+        <div className="netlify-app__build-button__alpha">
+          <span className="netlify-app__build-button__alpha-label">Alpha</span>
+          <AppsFeedback about="Netlify Build Button" />
+        </div>
         <Button disabled={!ready || busy} loading={busy} isFullWidth onClick={this.build}>
           {busy && status ? status : 'Build'}
         </Button>

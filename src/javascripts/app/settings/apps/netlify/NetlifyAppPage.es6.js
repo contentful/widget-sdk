@@ -17,7 +17,7 @@ import NetlifyConfigEditor from './NetlifyConfigEditor.es6';
 import NetlifyConnection from './NetlifyConnection.es6';
 import AppUninstallDialog from '../dialogs/AppUninstallDialog.es6';
 import NoConnectionUninstallDialog from './NoConnectionUninstallDialog.es6';
-import IntercomFeedback from '../IntercomFeedback.es6';
+import AppsFeedback from '../AppsFeedback.es6';
 
 const notifyError = (err, fallbackMessage) => {
   Notification.error(err.useMessage ? err.message || fallbackMessage : fallbackMessage);
@@ -241,7 +241,7 @@ export default class NetlifyAppPage extends Component {
     return (
       <Workbench.Content centered>
         <Note>
-          Let us know how we can improve the Netlify app. <IntercomFeedback about="Netlify app" />
+          Let us know how we can improve the Netlify app. <AppsFeedback about="Netlify app" />
         </Note>
 
         <div className="netlify-app__section">
