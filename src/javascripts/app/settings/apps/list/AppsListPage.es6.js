@@ -19,14 +19,7 @@ const AppsListShell = props => (
     <Workbench.Content centered>
       <div className="apps-list-container">
         <p className="apps-list__intro">
-          Extend the platform and integrate with services you’re using by adding apps.{' '}
-          <a
-            href="https://www.contentful.com/developers/docs/extensibility/apps/"
-            target="_blank"
-            rel="noopener noreferrer">
-            Read the docs
-          </a>
-          .
+          Extend the platform and integrate with services you’re using by adding apps.
         </p>
         <div>{props.children}</div>
       </div>
@@ -98,7 +91,14 @@ export default class AppsListPage extends Component {
         <p>
           This is an experimental alpha feature. We are heavily iterating on it based on your
           feedback. Apps might stop working or get removed without notice so it’s recommended to not
-          use apps in production. For more information visit our documentation.
+          use apps in production. For more information{' '}
+          <a
+            href="https://www.contentful.com/developers/docs/extensibility/apps/"
+            target="_blank"
+            rel="noopener noreferrer">
+            visit our documentation
+          </a>
+          .
         </p>
         <Button disabled={optedIn} onClick={this.optIn} icon={optedIn ? 'CheckCircle' : undefined}>
           {optedIn ? 'Apps enabled' : 'Enable alpha feature'}
