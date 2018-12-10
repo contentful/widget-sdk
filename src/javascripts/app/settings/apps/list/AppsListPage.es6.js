@@ -89,8 +89,9 @@ export default class AppsListPage extends Component {
     return (
       <Note extraClassNames="netlify-app__early-access" noteType="primary" title="Alpha feature">
         <p>
-          This is not a commercial release. It may contain errors and may change how it works. Use
-          this only on things that are not business critical.
+          This is an experimental alpha feature. We are heavily iterating on it based on your
+          feedback. Apps might stop working or get removed without notice so it’s recommended to not
+          use apps in production. For more information visit our documentation.
         </p>
         <Button disabled={optedIn} onClick={this.optIn} icon={optedIn ? 'CheckCircle' : undefined}>
           {optedIn ? 'Apps enabled' : 'Enable alpha feature'}
