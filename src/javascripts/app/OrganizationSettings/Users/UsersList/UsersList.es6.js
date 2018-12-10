@@ -222,13 +222,11 @@ class UsersList extends React.Component {
             <div>
               <div>{`${pluralize('users', numberOrgMemberships, true)} in your organization`}</div>
               {newUserInvitationsEnabled &&
-                invitedUsersCount &&
-                invitedUsersCount >
-                  0(
-                    <TextLink href={this.getLinkToInvitationsList()}>
-                      {invitedUsersCount} invited users
-                    </TextLink>
-                  )}
+                (invitedUsersCount != null && invitedUsersCount > 0) && (
+                  <TextLink href={this.getLinkToInvitationsList()}>
+                    {invitedUsersCount} invited users
+                  </TextLink>
+                )}
             </div>
             <Button icon="PlusCircle" href={this.getLinkToInvitation()}>
               Invite users

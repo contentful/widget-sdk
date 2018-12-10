@@ -15,7 +15,7 @@ import createResourceService from 'services/ResourceService.es6';
 import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 import { BV_USER_INVITATIONS } from 'featureFlags.es6';
 
-const UserListFetcher = createFetcherComponent(async ({ orgId }) => {
+const UserListFetcher = createFetcherComponent(({ orgId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
   const resources = createResourceService(orgId, 'organization');
 

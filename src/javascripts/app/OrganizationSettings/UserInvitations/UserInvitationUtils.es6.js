@@ -8,44 +8,44 @@ import ResolveLinks from '../LinkResolver.es6';
 
 const includePaths = ['sys.user'];
 
-export function getInvitedUsers(orgId) {
+export async function getInvitedUsers(orgId) {
   const endpoint = createOrganizationEndpoint(orgId);
 
-  return Promise.all([
+  const [invitations, pendingMemberships] = await Promise.all([
     fetchAll(endpoint, ['invitations'], 100, { 'status[eq]': 'pending' }),
     getMemberships(endpoint, { include: includePaths, 'sys.user.firstName[eq]': '' }).then(
       ({ items, includes }) => ResolveLinks({ paths: includePaths, items, includes })
     )
-  ]).then(([invitations, pendingMemberships]) => {
-    return invitations
-      .map(({ email, role, sys: { id, createdAt } }) => ({
+  ]);
+
+  return invitations
+    .map(({ email, role, sys: { id, createdAt } }) => ({
+      id,
+      createdAt,
+      email,
+      role,
+      type: 'invitation'
+    }))
+    .concat(
+      pendingMemberships.map(({ role, sys: { id, createdAt, user: { email } } }) => ({
         id,
         createdAt,
         email,
         role,
-        type: 'invitation'
+        type: 'organizationMembership'
       }))
-      .concat(
-        pendingMemberships.map(({ role, sys: { id, createdAt, user: { email } } }) => ({
-          id,
-          createdAt,
-          email,
-          role,
-          type: 'organizationMembership'
-        }))
-      );
-  });
+    );
 }
 
-export function getInvitedUsersCount(orgId) {
+export async function getInvitedUsersCount(orgId) {
   const endpoint = createOrganizationEndpoint(orgId);
 
-  return Promise.all([
+  const [invitationCount, pendingOrgMembershipCount] = await Promise.all([
     getInvitations(endpoint, { 'status[eq]': 'pending', limit: 0 }).then(({ total }) => total),
     getMemberships(endpoint, { include: includePaths, 'sys.user.firstName[eq]': '' }).then(
       ({ total }) => total
     )
-  ]).then(([invitationCount, pendingOrgMembershipCount]) => {
-    return invitationCount + pendingOrgMembershipCount;
-  });
+  ]);
+
+  return invitationCount + pendingOrgMembershipCount;
 }
