@@ -1,12 +1,24 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button } from '@contentful/forma-36-react-components';
+import { Button, Notification, Note } from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
-import AppIcon from '../_common/AppIcon.es6';
 import AppUninstallDialog from '../dialogs/AppUninstallDialog.es6';
+import AppsFeedback from '../AppsFeedback.es6';
+import AppIcon from '../_common/AppIcon.es6';
+
+import { cloneDeep } from 'lodash';
 
 import $state from '$state';
+
+import Setup from './Setup.es6';
+import Select from './Select.es6';
+import Configure from './Configure.es6';
+import * as Webhooks from './Webhooks.es6';
+
+const notifyError = (err, fallbackMessage) => {
+  Notification.error(err.useMessage ? err.message || fallbackMessage : fallbackMessage);
+};
 
 export default class AlgoliaAppPage extends Component {
   static propTypes = {
@@ -27,65 +39,95 @@ export default class AlgoliaAppPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isBusy: false,
-      config: JSON.stringify(props.app.config, null, 2)
+      installed: props.app.installed,
+      config: cloneDeep(props.app.config)
     };
   }
 
-  parseConfig = () => {
-    try {
-      return JSON.parse(this.state.config);
-    } catch (err) {
-      throw new Error('Configuration could not be parsed.');
+  onConfigPropertyChange = (prop, value) => {
+    this.setState(({ config }) => ({ config: { ...config, [prop]: value } }));
+  };
+
+  onCredentialsChange = ({ appId, apiKey }) => {
+    if (appId) {
+      this.onConfigPropertyChange('appId', appId);
+    }
+    if (apiKey) {
+      this.setState({ apiKey });
     }
   };
 
+  onIndexChange = value => this.onConfigPropertyChange('index', value);
+  onLocaleCodeChange = value => this.onConfigPropertyChange('localeCode', value);
+  onContentTypeIdChange = value => this.onConfigPropertyChange('contentTypeId', value);
+
+  getIntegrationContext = () => {
+    return {
+      installed: this.state.installed,
+      apiKey: this.state.apiKey,
+      config: this.state.config,
+      contentTypes: this.props.contentTypes,
+      locales: this.props.locales
+    };
+  };
+
   onInstallClick = async () => {
-    const config = this.parseConfig();
-
-    this.setState({ isBusy: true });
-
-    // DO SOME APP-SPECIFIC SETUP
-    // for example CREATE Contentful to Algolia webhooks
-
-    await this.props.client.save(this.props.app.id, config);
-    this.setState({ isBusy: false });
+    try {
+      this.setState({ busyWith: 'install' });
+      const updatedConfig = await Webhooks.create(this.getIntegrationContext());
+      await this.props.client.save(this.props.app.id, updatedConfig);
+      this.setState({ busyWith: false, installed: true, config: updatedConfig });
+      Notification.success('Algolia app installed successfully.');
+    } catch (err) {
+      this.setState({ busyWith: false });
+      notifyError(err, 'Failed to install Algolia app. Try again!');
+    }
   };
 
   onUpdateClick = async () => {
-    const config = this.parseConfig();
+    try {
+      this.setState({ busyWith: 'update' });
+      const updatedConfig = await Webhooks.update(this.getIntegrationContext());
+      await this.props.client.save(this.props.app.id, updatedConfig);
+      this.setState({ busyWith: false, config: updatedConfig });
+      Notification.success('Algolia app configuration updated successfully.');
+    } catch (err) {
+      this.setState({ busyWith: false });
+      notifyError(err, 'Failed to update Algolia app. Try again!');
+    }
+  };
 
-    this.setState({ isBusy: true });
-
-    // DO SOME APP-SPECIFIC SETUP
-    // for example UPDATE Contentful to Algolia webhooks
-
-    await this.props.client.save(this.props.app.id, config);
-    this.setState({ isBusy: false });
+  uninstall = async () => {
+    try {
+      this.setState({ busyWith: 'uninstall' });
+      await Webhooks.remove(this.getIntegrationContext());
+      await this.props.client.remove(this.props.app.id);
+      Notification.success('Algolia app uninstalled successfully.');
+      $state.go('^.list');
+    } catch (err) {
+      this.setState({ busyWith: false });
+      notifyError(err, 'Failed to uninstall Algolia app. Try again!');
+    }
   };
 
   onUninstallClick = async () => {
-    const app = this.props.app;
     const confirmed = await ModalLauncher.open(({ isShown, onClose }) => (
       <AppUninstallDialog
-        app={app}
+        app={this.props.app}
         isShown={isShown}
-        onCancel={() => {
-          onClose(false);
-        }}
-        onConfirm={() => {
-          onClose(true);
-        }}
+        onCancel={() => onClose(false)}
+        onConfirm={() => onClose(true)}
       />
     ));
 
     if (confirmed) {
-      await this.props.client.remove(app.id);
-      $state.go('^.list');
+      this.uninstall();
     }
   };
 
   render() {
+    const { installed, busyWith } = this.state;
+
     return (
       <Workbench>
         <Workbench.Header>
@@ -95,23 +137,29 @@ export default class AlgoliaAppPage extends Component {
           </Workbench.Icon>
           <Workbench.Title>Apps: {this.props.app.title}</Workbench.Title>
           <Workbench.Header.Actions>
-            {this.props.app.installed && (
-              <Button buttonType="muted" onClick={this.onUninstallClick}>
+            {installed && (
+              <Button
+                buttonType="muted"
+                disabled={!!busyWith}
+                loading={busyWith === 'uninstall'}
+                onClick={this.onUninstallClick}>
                 Uninstall
               </Button>
             )}
-            {this.props.app.installed && (
+            {installed && (
               <Button
                 buttonType="positive"
-                loading={this.state.isBusy}
+                disabled={!!busyWith}
+                loading={busyWith === 'update'}
                 onClick={this.onUpdateClick}>
                 Update
               </Button>
             )}
-            {!this.props.app.installed && (
+            {!installed && (
               <Button
                 buttonType="positive"
-                loading={this.state.isBusy}
+                disabled={!!busyWith}
+                loading={busyWith === 'install'}
                 onClick={this.onInstallClick}>
                 Install
               </Button>
@@ -119,14 +167,26 @@ export default class AlgoliaAppPage extends Component {
           </Workbench.Header.Actions>
         </Workbench.Header>
         <Workbench.Content centered>
-          <h1>{this.props.app.title}</h1>
-          <AppIcon appId={this.props.app.id} size="large" />
-          <textarea
-            rows={10}
-            cols={50}
-            style={{ fontFamily: 'monospace', display: 'block' }}
-            onChange={e => this.setState({ config: e.target.value })}
-            value={this.state.config}
+          <Note>
+            Let us know how we can improve the Algolia app. <AppsFeedback about="Algolia app" />
+          </Note>
+          <Setup
+            installed={this.state.installed}
+            appId={this.state.config.appId}
+            apiKey={this.state.apiKey}
+            onChange={this.onCredentialsChange}
+          />
+          <Select
+            selectedContentTypeId={this.state.config.contentTypeId}
+            contentTypes={this.props.contentTypes}
+            onChange={this.onContentTypeIdChange}
+          />
+          <Configure
+            index={this.state.config.index}
+            localeCode={this.state.config.localeCode}
+            locales={this.props.locales}
+            onLocaleCodeChange={this.onLocaleCodeChange}
+            onIndexChange={this.onIndexChange}
           />
         </Workbench.Content>
       </Workbench>
