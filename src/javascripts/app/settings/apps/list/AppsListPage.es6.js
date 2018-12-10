@@ -80,7 +80,7 @@ export default class AppsListPage extends Component {
     Analytics.track('apps:opted_in');
 
     // Track event so the user is identified in Intercom.
-    intercom.trackEvent('apps-early-access');
+    intercom.trackEvent('apps-alpha-opted-in');
   };
 
   renderDisclaimer() {
