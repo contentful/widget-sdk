@@ -1,6 +1,6 @@
 /* global expect, it, describe */
 
-const analyze = require('./analyzers.sniffer');
+const analyze = require('./analyzers');
 
 describe('analyze', () => {
   const node = {
