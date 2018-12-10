@@ -47,7 +47,7 @@ pipeline {
         container('node') {
           dir('project-sniffer') {
             sh 'npm install'
-            sh "node source/cli.js ../user_interface/ src/javascripts test --last ${params.last} --jump ${params.jump}"
+            sh "node source/cli.js ../user_interface/ src/javascripts test --last ${params.last} --jump ${params.jump} --output ../project-sniffer-dashboard/src --config tools/sniffer"
           }
           dir('build-stats') {
             sh 'npm install && npm run build'
