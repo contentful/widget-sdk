@@ -65,7 +65,8 @@ function resolveParams(link, params) {
     'onboarding-copy': createOnboardingScreenResolver('copy'),
     'onboarding-explore': createOnboardingScreenResolver('explore'),
     'onboarding-deploy': createOnboardingScreenResolver('deploy'),
-    'webhook-template': resolveWebhookTemplate
+    'webhook-template': resolveWebhookTemplate,
+    apps: resolveApps
   };
 
   const resolverFn = mappings[link];
@@ -253,5 +254,23 @@ function resolveWebhookTemplate({ id, referrer }) {
       path: ['spaces', 'detail', 'settings', 'webhooks', 'list'],
       params: { spaceId, templateId: id, referrer: referrer ? `deeplink-${referrer}` : 'deeplink' }
     };
+  });
+}
+
+function resolveApps({ id }) {
+  return runTask(function*() {
+    const { spaceId } = yield* getSpaceInfo();
+
+    if (id) {
+      return {
+        path: ['spaces', 'detail', 'apps', 'detail'],
+        params: { spaceId, appId: id }
+      };
+    } else {
+      return {
+        path: ['spaces', 'detail', 'apps', 'list'],
+        params: { spaceId }
+      };
+    }
   });
 }
