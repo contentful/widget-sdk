@@ -88,7 +88,15 @@ export const validEvents = {
   usage: ['period_selected'],
   text_editor: ['action'],
   apps: ['opted_in'],
-  netlify: ['connected', 'installed', 'updated', 'uninstalled', 'build_triggered', 'preview_opened']
+  netlify: [
+    'connected',
+    'installed',
+    'updated',
+    'uninstalled',
+    'build_triggered',
+    'preview_opened'
+  ],
+  algolia: ['installed', 'updated', 'uninstalled']
 };
 
 export const validateEvent = eventName => {

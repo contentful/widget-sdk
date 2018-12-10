@@ -10,6 +10,7 @@ import AppIcon from '../_common/AppIcon.es6';
 import { cloneDeep } from 'lodash';
 
 import $state from '$state';
+import * as Analytics from 'analytics/Analytics.es6';
 import intercom from 'intercom';
 
 import Setup from './Setup.es6';
@@ -79,6 +80,7 @@ export default class AlgoliaAppPage extends Component {
       await this.props.client.save(this.props.app.id, updatedConfig);
       this.setState({ busyWith: false, installed: true, config: updatedConfig });
       Notification.success('Algolia app installed successfully.');
+      Analytics.track('algolia:installed');
       intercom.trackEvent('apps-alpha-algolia-installed');
     } catch (err) {
       this.setState({ busyWith: false });
@@ -93,6 +95,7 @@ export default class AlgoliaAppPage extends Component {
       await this.props.client.save(this.props.app.id, updatedConfig);
       this.setState({ busyWith: false, config: updatedConfig });
       Notification.success('Algolia app configuration updated successfully.');
+      Analytics.track('algolia:updated');
     } catch (err) {
       this.setState({ busyWith: false });
       notifyError(err, 'Failed to update Algolia app. Try again!');
@@ -105,6 +108,7 @@ export default class AlgoliaAppPage extends Component {
       await Webhooks.remove(this.getIntegrationContext());
       await this.props.client.remove(this.props.app.id);
       Notification.success('Algolia app uninstalled successfully.');
+      Analytics.track('algolia:uninstalled');
       $state.go('^.list');
     } catch (err) {
       this.setState({ busyWith: false });
