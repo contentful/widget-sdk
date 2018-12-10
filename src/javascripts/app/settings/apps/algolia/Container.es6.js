@@ -10,6 +10,7 @@ import AppIcon from '../_common/AppIcon.es6';
 import { cloneDeep } from 'lodash';
 
 import $state from '$state';
+import intercom from 'intercom';
 
 import Setup from './Setup.es6';
 import Select from './Select.es6';
@@ -78,6 +79,7 @@ export default class AlgoliaAppPage extends Component {
       await this.props.client.save(this.props.app.id, updatedConfig);
       this.setState({ busyWith: false, installed: true, config: updatedConfig });
       Notification.success('Algolia app installed successfully.');
+      intercom.trackEvent('apps-alpha-algolia-installed');
     } catch (err) {
       this.setState({ busyWith: false });
       notifyError(err, 'Failed to install Algolia app. Try again!');
