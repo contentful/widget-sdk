@@ -4,7 +4,7 @@ import ContentLoader from 'react-content-loader';
 import Workbench from 'app/common/Workbench.es6';
 import AppsList from './AppsList.es6';
 import AppListItem from './AppListItem.es6';
-import IntercomFeedback from '../IntercomFeedback.es6';
+import AppsFeedback from '../AppsFeedback.es6';
 import { Note, Button } from '@contentful/forma-36-react-components';
 
 import * as Analytics from 'analytics/Analytics.es6';
@@ -95,7 +95,7 @@ export default class AppsListPage extends Component {
         <Button disabled={optedIn} onClick={this.optIn} icon={optedIn ? 'CheckCircle' : undefined}>
           {optedIn ? 'Apps enabled' : 'Enable alpha feature'}
         </Button>
-        <IntercomFeedback about="Apps" type="Button" />
+        <AppsFeedback about="Apps" type="Button" />
       </Note>
     );
   }
