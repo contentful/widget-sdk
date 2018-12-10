@@ -69,6 +69,9 @@ registerGenericEvent('netlify:updated');
 registerGenericEvent('netlify:uninstalled');
 registerGenericEvent('netlify:build_triggered');
 registerGenericEvent('netlify:preview_opened');
+registerGenericEvent('algolia:installed');
+registerGenericEvent('algolia:updated');
+registerGenericEvent('algolia:uninstalled');
 
 registerBulkEditorEvent('bulk_editor:action');
 registerBulkEditorEvent('bulk_editor:add');

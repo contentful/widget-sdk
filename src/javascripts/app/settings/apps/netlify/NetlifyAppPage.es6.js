@@ -6,6 +6,7 @@ import ModalLauncher from 'app/common/ModalLauncher.es6';
 
 import $state from '$state';
 import * as Analytics from 'analytics/Analytics.es6';
+import intercom from 'intercom';
 
 import { cloneDeep, uniqBy } from 'lodash';
 import * as Random from 'utils/Random.es6';
@@ -116,6 +117,7 @@ export default class NetlifyAppPage extends Component {
       Notification.success('Netlify app installed successfully.');
       this.setState({ busyWith: false, installed: true, config: updatedConfig });
       Analytics.track('netlify:installed');
+      intercom.trackEvent('apps-alpha-netlify-installed');
     } catch (err) {
       notifyError(err, 'Failed to install Netlify app.');
       this.setState({ busyWith: false });
