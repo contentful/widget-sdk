@@ -12,6 +12,7 @@ module.exports = {
   appPublic: resolveApp('public'),
   appPackageJson: resolveApp('package.json'),
   appSrc: resolveApp('src'),
+  appTools: resolveApp('tools'),
   appSrcJavascripts: resolveApp('src/javascripts'),
   appNodeModules: resolveApp('node_modules'),
   appCoverage: resolveApp('.coverage')
