@@ -69,7 +69,7 @@ export function create() {
 
     const processed = warningsWithData.filter(([, , shouldShowValue]) => shouldShowValue);
 
-    const highestPriority = _.first(processed)[0] || { warnFn: Promise.resolve(), priority: 0 };
+    const highestPriority = _.get(processed, [0, 0]) || { warnFn: Promise.resolve(), priority: 0 };
 
     return {
       shouldShow: () => processed.length > 0,
