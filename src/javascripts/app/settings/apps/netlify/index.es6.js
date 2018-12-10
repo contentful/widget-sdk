@@ -9,8 +9,11 @@ import contentPreview from 'contentPreview';
 import NetlifyAppPage from './NetlifyAppPage.es6';
 import * as NetlifyClient from './NetlifyClient.es6';
 import AppPageShell from '../_common/AppPageShell.es6';
+import * as AppsFeatureFlag from '../AppsFeatureFlag.es6';
 
-const NetlifyFetcher = createFetcherComponent(({ client }) => {
+const NetlifyFetcher = createFetcherComponent(async ({ client }) => {
+  await AppsFeatureFlag.assertIsEnabled();
+
   return Promise.all([
     client.get('netlify'),
     NetlifyClient.createTicket(),

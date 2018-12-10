@@ -9,3 +9,10 @@ export function withAngularScope($scope, cb) {
 export function isEnabled() {
   return LD.getCurrentVariation(FLAG_NAME);
 }
+
+export async function assertIsEnabled() {
+  const enabled = await isEnabled();
+  if (!enabled) {
+    throw new Error('Apps not enabled');
+  }
+}

@@ -91,7 +91,14 @@ export default class AppsListPage extends Component {
         <p>
           This is an experimental alpha feature. We are heavily iterating on it based on your
           feedback. Apps might stop working or get removed without notice so it’s recommended to not
-          use apps in production. For more information visit our documentation.
+          use apps in production. For more information{' '}
+          <a
+            href="https://www.contentful.com/developers/docs/extensibility/apps/"
+            target="_blank"
+            rel="noopener noreferrer">
+            visit our documentation
+          </a>
+          .
         </p>
         <Button disabled={optedIn} onClick={this.optIn} icon={optedIn ? 'CheckCircle' : undefined}>
           {optedIn ? 'Apps enabled' : 'Enable alpha feature'}

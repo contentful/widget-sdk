@@ -5,9 +5,12 @@ import AppsListPage, { AppsListPageLoading } from '../list/AppsListPage.es6';
 import createAppsClient from '../AppsClient.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import createFetcherComponent from 'app/common/createFetcherComponent.es6';
+import * as AppsFeatureFlag from '../AppsFeatureFlag.es6';
 
 const AppsFetcher = createFetcherComponent(async ({ spaceId }) => {
   const apps = await createAppsClient(spaceId).getAll();
+
+  await AppsFeatureFlag.assertIsEnabled();
 
   return apps.reduce(
     ({ installed, available }, app) => {

@@ -159,6 +159,15 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
         icon: 'nav-media',
         title: 'Media'
       },
+      (!useSpaceEnv || isMaster) && {
+        if: 'nav.appsEnabled && nav.canNavigateTo("apps")',
+        dataViewType: 'apps',
+        icon: 'nav-apps',
+        label: 'alpha',
+        sref: makeRef('apps.list'),
+        rootSref: makeRef('apps'),
+        title: 'Apps'
+      },
       {
         if:
           'nav.canNavigateTo("settings") || nav.canNavigateTo("apiKey") || nav.canNavigateTo("environments")',
@@ -168,20 +177,6 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
         title: useSpaceEnv ? 'Settings' : 'Space settings',
         children: useSpaceEnv ? envSettingsDropdown : spaceSettingsDropdown
       }
-    ].concat(
-      !isMaster
-        ? []
-        : [
-            {
-              if: 'nav.appsEnabled && nav.canNavigateTo("apps")',
-              dataViewType: 'apps',
-              icon: 'nav-apps',
-              label: 'alpha',
-              sref: makeRef('apps.list'),
-              rootSref: makeRef('apps'),
-              title: 'Apps'
-            }
-          ]
-    )
+    ].filter(item => typeof item === 'object')
   );
 }
