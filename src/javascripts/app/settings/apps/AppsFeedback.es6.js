@@ -1,36 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { get } from 'lodash';
-
-import spaceContext from 'spaceContext';
-import isEnterprise from 'data/isEnterprise.es6';
-
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import { TextLink, Button, Notification } from '@contentful/forma-36-react-components';
 import FeedbackDialog from './dialogs/FeedbackDialog.es6';
 import createMicroBackendsClient from 'MicroBackendsClient.es6';
-
-async function makeParams(feedback, anonymous) {
-  const params = { Feedback: feedback, Anonymous: anonymous };
-  if (anonymous) {
-    return params;
-  }
-
-  return {
-    ...params,
-    URL: window.location.href,
-    'Space ID': spaceContext.getData(['sys', 'id']),
-    'Space name': spaceContext.getData(['name']),
-    'Organization ID': spaceContext.getData(['organization', 'sys', 'id']),
-    'Organization name': spaceContext.getData(['organization', 'name']),
-    'Is enterprise': await isEnterprise(spaceContext.getData(['organization'])),
-    'User ID': get(spaceContext, ['user', 'sys', 'id']),
-    'First name': get(spaceContext, ['user', 'firstName']),
-    'Last name': get(spaceContext, ['user', 'lastName']),
-    'E-mail': get(spaceContext, ['user', 'email'])
-  };
-}
 
 export default class AppsFeedback extends Component {
   static propTypes = {
@@ -39,14 +13,13 @@ export default class AppsFeedback extends Component {
     label: PropTypes.string
   };
 
-  send = async (feedback, anonymous) => {
+  send = async feedback => {
     const client = createMicroBackendsClient({ backendName: 'feedback' });
-    const params = await makeParams(feedback, anonymous);
 
     const res = await client.call('/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(params)
+      body: JSON.stringify({ feedback, about: this.props.about })
     });
 
     if (res.ok) {
@@ -57,18 +30,18 @@ export default class AppsFeedback extends Component {
   };
 
   onClick = async () => {
-    const { confirmed, anonymous, feedback } = await ModalLauncher.open(({ isShown, onClose }) => (
+    const feedback = await ModalLauncher.open(({ isShown, onClose }) => (
       <FeedbackDialog
         key={Date.now()}
-        initialFeedback={`I’ve got a question/feedback about ${this.props.about}: `}
+        placeholder={`I’ve got a question or feedback about ${this.props.about}...`}
         isShown={isShown}
-        onCancel={onClose}
+        onCancel={() => onClose(false)}
         onConfirm={onClose}
       />
     ));
 
-    if (confirmed) {
-      this.send(feedback, anonymous);
+    if (typeof feedback === 'string') {
+      this.send(feedback);
     }
   };
 

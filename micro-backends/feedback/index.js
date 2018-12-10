@@ -22,10 +22,8 @@ module.exports = {
     const params = {
       from: `feedback@${DOMAIN}`,
       to: TARGET_MAIL,
-      subject: 'Feedback about Apps',
-      text: Object.keys(req.body)
-        .map(key => `${key}: ${req.body[key]}`)
-        .join('\n\n')
+      subject: `[Feedback] ${req.body.about || 'Apps'}`,
+      text: req.body.feedback || 'No feedback provided'
     };
 
     const res = await dependencies.fetch(url, {
