@@ -5,7 +5,7 @@ import spaceContext from 'spaceContext';
 import isEnterprise from 'data/isEnterprise.es6';
 
 import ModalLauncher from 'app/common/ModalLauncher.es6';
-import { TextLink, Button } from '@contentful/forma-36-react-components';
+import { TextLink, Button, Notification } from '@contentful/forma-36-react-components';
 import FeedbackDialog from './dialogs/FeedbackDialog.es6';
 import createMicroBackendsClient from 'MicroBackendsClient.es6';
 
@@ -37,11 +37,17 @@ export default class AppsFeedback extends Component {
     const client = createMicroBackendsClient({ backendName: 'feedback' });
     const params = await makeParams(feedback, anonymous);
 
-    client.call('/', {
+    const res = await client.call('/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(params)
     });
+
+    if (res.ok) {
+      Notification.success('Thank you for your feedback!');
+    } else {
+      Notification.error('Failed to deliver your feedback. Please try again.');
+    }
   };
 
   onClick = async () => {
