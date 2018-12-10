@@ -222,7 +222,7 @@ export default class NetlifyAppPage extends Component {
               disabled={this.isDisabled()}
               loading={busyWith === 'update'}
               onClick={this.onUpdateClick}>
-              Update
+              Save
             </Button>
           )}
           {!installed && (
@@ -231,7 +231,7 @@ export default class NetlifyAppPage extends Component {
               disabled={this.isDisabled()}
               loading={busyWith === 'install'}
               onClick={this.onInstallClick}>
-              Install
+              Save
             </Button>
           )}
         </Workbench.Header.Actions>

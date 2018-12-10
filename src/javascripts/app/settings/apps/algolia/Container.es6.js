@@ -158,7 +158,7 @@ export default class AlgoliaAppPage extends Component {
                 disabled={!!busyWith}
                 loading={busyWith === 'update'}
                 onClick={this.onUpdateClick}>
-                Update
+                Save
               </Button>
             )}
             {!installed && (
@@ -167,7 +167,7 @@ export default class AlgoliaAppPage extends Component {
                 disabled={!!busyWith}
                 loading={busyWith === 'install'}
                 onClick={this.onInstallClick}>
-                Install
+                Save
               </Button>
             )}
           </Workbench.Header.Actions>
