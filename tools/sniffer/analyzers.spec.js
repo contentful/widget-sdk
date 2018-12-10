@@ -41,6 +41,19 @@ describe('analyze', () => {
     ]);
   });
 
+  it('should find all NgRegistry import declarations', () => {
+    const modules = analyze(
+      node,
+      `
+        import { registerController } from 'NgRegistry.es6';
+
+        registerController('TestController', []);
+      `
+    );
+
+    expect(modules).toEqual(['NgRegistry']);
+  });
+
   it('should find all angular[fn]', () => {
     const modules = analyze(
       node,
