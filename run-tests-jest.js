@@ -35,8 +35,8 @@ argv.push(
   JSON.stringify(
     createJestConfig(
       relativePath => path.resolve(__dirname, relativePath),
-      path.resolve(paths.appSrcJavascripts, '..'),
-      [paths.appSrcJavascripts],
+      paths.appPath,
+      [paths.appSrcJavascripts, paths.appTools],
       paths.appCoverage
     )
   )
