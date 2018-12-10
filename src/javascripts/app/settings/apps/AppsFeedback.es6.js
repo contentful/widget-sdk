@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+import { get } from 'lodash';
+
 import spaceContext from 'spaceContext';
 import isEnterprise from 'data/isEnterprise.es6';
 
@@ -22,7 +24,11 @@ async function makeParams(feedback, anonymous) {
     'Space name': spaceContext.getData(['name']),
     'Organization ID': spaceContext.getData(['organization', 'sys', 'id']),
     'Organization name': spaceContext.getData(['organization', 'name']),
-    'Is enterprise': await isEnterprise(spaceContext.getData(['organization']))
+    'Is enterprise': await isEnterprise(spaceContext.getData(['organization'])),
+    'User ID': get(spaceContext, ['user', 'sys', 'id']),
+    'First name': get(spaceContext, ['user', 'firstName']),
+    'Last name': get(spaceContext, ['user', 'lastName']),
+    'E-mail': get(spaceContext, ['user', 'email'])
   };
 }
 
