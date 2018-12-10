@@ -1,6 +1,7 @@
-import $timeout from '$timeout';
-import $q from '$q';
 import moment from 'moment';
+import { getModules } from 'NgRegistry.es6';
+
+const [$q, $timeout] = getModules('$q', '$timeout');
 
 const CALLS_IN_PERIOD = 7;
 const PERIOD = 1000;

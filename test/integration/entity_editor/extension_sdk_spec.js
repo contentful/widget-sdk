@@ -1,7 +1,6 @@
 import * as K from 'test/helpers/mocks/kefir';
 import _ from 'lodash';
 import $ from 'jquery';
-import { create as createDocument } from 'test/helpers/mocks/entity_editor_document';
 
 describe('Extension SDK', () => {
   beforeEach(function() {
@@ -10,6 +9,7 @@ describe('Extension SDK', () => {
     });
 
     const spaceContext = this.$inject('mocks/spaceContext').init();
+    const createDocument = this.$inject('mocks/entityEditor/Document').create;
     spaceContext.space = {
       data: {
         sys: {},

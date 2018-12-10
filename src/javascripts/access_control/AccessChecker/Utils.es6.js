@@ -1,8 +1,9 @@
-import $q from '$q';
-import $rootScope from '$rootScope';
 import * as TokenStore from 'services/TokenStore.es6';
 import * as K from 'utils/kefir.es6';
 import { get, isString } from 'lodash';
+import { getModules } from 'NgRegistry.es6';
+
+const [$q, $rootScope] = getModules('$q', '$rootScope');
 
 /**
  * TODO move from access checker or get rid of it entirely

@@ -9,8 +9,7 @@ import * as accessChecker from 'access_control/AccessChecker';
 import createResourceService from 'services/ResourceService.es6';
 import { isLegacyOrganization, canCreate } from 'utils/ResourceUtils.es6';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
-import $state from '$state';
-import $q from '$q';
+import { getModule } from 'NgRegistry.es6';
 
 import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo.es6';
 import { openCreateDialog, openEditDialog } from './EditDialog.es6';
@@ -29,7 +28,9 @@ export default {
   controller: [
     '$scope',
     'spaceContext',
-    ($scope, spaceContext) => {
+    '$state',
+    '$q',
+    ($scope, spaceContext, $state, $q) => {
       const hasAccess = accessChecker.can('manage', 'Environments');
 
       if (!hasAccess) {
@@ -60,6 +61,8 @@ const OpenUpgradeSpaceDialog = makeCtor('OpenUpgradeSpaceDialog');
 
 const reduce = makeReducer({
   [Reload]: (state, _, { resourceEndpoint, resourceService, dispatch }) => {
+    const $q = getModule('$q');
+
     C.runTask(function*() {
       const result = yield C.tryP(
         $q.all([resourceEndpoint.getAll(), resourceService.get('environment')])

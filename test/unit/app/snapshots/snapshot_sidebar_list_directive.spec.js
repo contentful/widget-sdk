@@ -1,5 +1,3 @@
-'use strict';
-import { create as createDocument } from 'test/helpers/mocks/entity_editor_document';
 import _ from 'lodash';
 
 describe('cfSnapshotSidebarList', () => {
@@ -11,6 +9,8 @@ describe('cfSnapshotSidebarList', () => {
 
     const moment = this.$inject('moment');
     const spaceContext = this.$inject('mocks/spaceContext').init();
+
+    const createDocument = this.$inject('mocks/entityEditor/Document').create;
     const doc = createDocument(createEntry());
 
     spaceContext.cma = {

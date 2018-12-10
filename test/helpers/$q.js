@@ -9,7 +9,7 @@
  * as ES6 modules in tests.
  *
  * ~~~js
- * import $q from '$q'
+ * import $q from 'test/helpers/$q'
  * // Imports '$q', too
  * import * as C from `utils/Concurent`
  *

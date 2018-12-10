@@ -1,6 +1,6 @@
 /* global SystemJS */
 
-import $q from './$q';
+import $q from 'test/helpers/$q';
 import _ from 'lodash';
 
 /**

@@ -1,5 +1,4 @@
 import * as K from 'test/helpers/mocks/kefir';
-import { create as createDocument } from 'test/helpers/mocks/entity_editor_document';
 
 describe('cfIframeWidget directive', function() {
   beforeEach(function() {
@@ -18,6 +17,7 @@ describe('cfIframeWidget directive', function() {
       });
     });
 
+    const createDocument = this.$inject('mocks/entityEditor/Document').create;
     this.otDoc = createDocument();
     this.$inject('mocks/spaceContext').init();
 

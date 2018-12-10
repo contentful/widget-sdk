@@ -5,16 +5,17 @@
  * @description
  * This service is responsible for exposing data included in the user's token
  */
-import $q from '$q';
 import * as K from 'utils/kefir.es6';
 import { createMVar } from 'utils/Concurrent.es6';
 import * as auth from 'Authentication.es6';
 import makeFetchWithAuth from 'data/CMA/TokenInfo.es6';
 import ReloadNotification from 'ReloadNotification';
 import * as OrganizationRoles from 'services/OrganizationRoles.es6';
-import $window from '$window';
 import { deepFreezeClone, deepFreeze } from 'utils/Freeze.es6';
 import { isEqual, groupBy, map, get, find, cloneDeep } from 'lodash';
+import { getModules } from 'NgRegistry.es6';
+
+const [$q, $window] = getModules('$q', '$window');
 
 // Refresh token info every 5 minutes
 const TOKEN_INFO_REFRESH_INTERVAL = 5 * 60 * 1000;

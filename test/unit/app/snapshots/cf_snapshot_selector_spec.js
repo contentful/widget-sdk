@@ -1,5 +1,4 @@
 import * as K from 'test/helpers/mocks/kefir';
-import { create as createDocument } from 'test/helpers/mocks/entity_editor_document';
 import _ from 'lodash';
 
 describe('cfSnapshotSelector', () => {
@@ -18,6 +17,8 @@ describe('cfSnapshotSelector', () => {
 
     const moment = this.$inject('moment');
     const spaceContext = this.$inject('mocks/spaceContext').init();
+
+    const createDocument = this.$inject('mocks/entityEditor/Document').create;
     const doc = createDocument(mockEntry);
 
     const $compile = this.$compile.bind(this);

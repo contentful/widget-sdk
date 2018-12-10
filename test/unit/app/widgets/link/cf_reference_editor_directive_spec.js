@@ -1,5 +1,4 @@
 import sinon from 'sinon';
-import $q from '$q';
 import _ from 'lodash';
 import * as K from 'test/helpers/mocks/kefir';
 
@@ -27,6 +26,8 @@ describe('cfReferenceEditorDirective', () => {
       $provide.value('analytics/Analytics.es6', this.analytics);
       $provide.value('spaceContext', this.spaceContext);
     });
+
+    this.$q = this.$inject('$q');
 
     this.widgetApi = this.$inject('mocks/widgetApi').create();
     this.field = this.widgetApi.field;
@@ -211,7 +212,7 @@ describe('cfReferenceEditorDirective', () => {
 
         this.modalDialog.open = config => {
           expect(config.scopeData.cts).toEqual([ct1, ct2]);
-          return { promise: $q.resolve(ct1) };
+          return { promise: this.$q.resolve(ct1) };
         };
 
         const entry = await this.create('Entry', {}, this.space);
@@ -346,7 +347,7 @@ describe('cfReferenceEditorDirective', () => {
       this.modalDialog.open = config => {
         expect(config.scopeData.unpublishedRefs).toEqual([validWarning]);
         expect(config.scopeData.linkedEntityTypes).toBe('entries');
-        return { promise: $q.resolve() };
+        return { promise: this.$q.resolve() };
       };
 
       this.warning.warnFn([null, { count: 0 }, validWarning]);
@@ -362,7 +363,7 @@ describe('cfReferenceEditorDirective', () => {
           expect(config.scopeData.linkedEntityTypes).toBe('assets');
         }
 
-        return { promise: $q.resolve() };
+        return { promise: this.$q.resolve() };
       };
 
       this.warning.warnFn([validWarning, assetWarning]);

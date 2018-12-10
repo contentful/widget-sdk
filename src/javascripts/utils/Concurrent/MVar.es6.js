@@ -1,4 +1,4 @@
-import $q from '$q';
+import { getModule } from 'NgRegistry.es6';
 
 /**
  * @ngdoc method
@@ -32,6 +32,8 @@ export function createMVar(value) {
  * updated the application state.
  */
 export function createMVar$q(value) {
+  const $q = getModule('$q');
+
   return createBase($q, !arguments.length, value);
 }
 

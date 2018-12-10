@@ -1,7 +1,5 @@
-import { createIsolatedSystem } from 'test/helpers/system-js';
-
 describe('ResourceUtils', () => {
-  beforeEach(function*() {
+  beforeEach(function() {
     function createResource(type, limits, usage) {
       const { maximum, included } = limits;
 
@@ -68,14 +66,15 @@ describe('ResourceUtils', () => {
       'feature-bv-2018-01-resources-api': null
     };
 
-    const system = createIsolatedSystem();
-    system.set('utils/LaunchDarkly', {
-      getCurrentVariation: flagName => {
-        return Promise.resolve(this.flags[flagName]);
-      }
+    module('contentful/test', $provide => {
+      $provide.value('utils/LaunchDarkly', {
+        getCurrentVariation: flagName => {
+          return Promise.resolve(this.flags[flagName]);
+        }
+      });
     });
 
-    this.ResourceUtils = yield system.import('utils/ResourceUtils.es6');
+    this.ResourceUtils = this.$inject('utils/ResourceUtils.es6');
   });
 
   describe('#canCreate', () => {

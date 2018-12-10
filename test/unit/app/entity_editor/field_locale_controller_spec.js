@@ -1,15 +1,16 @@
 import * as K from 'test/helpers/mocks/kefir';
 import * as sinon from 'test/helpers/sinon';
-import { create as createDocument } from 'test/helpers/mocks/entity_editor_document';
 
 describe('FieldLocaleController', () => {
   beforeEach(function() {
     module('contentful/test');
     const $rootScope = this.$inject('$rootScope');
     const $controller = this.$inject('$controller');
+
+    this.createDocument = this.$inject('mocks/entityEditor/Document').create;
     this.sandbox = sinon.sandbox.create();
     this.init = function(patchScope) {
-      this.otDoc = this.otDoc || createDocument();
+      this.otDoc = this.otDoc || this.createDocument();
       const scope = Object.assign($rootScope.$new(), {
         widget: {
           field: { id: 'FID' }
@@ -173,7 +174,7 @@ describe('FieldLocaleController', () => {
 
   describe('#access', () => {
     beforeEach(function() {
-      this.otDoc = createDocument();
+      this.otDoc = this.createDocument();
       this.hasEditingPermission = this.otDoc.permissions.canEditFieldLocale;
     });
 

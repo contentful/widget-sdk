@@ -25,7 +25,6 @@ This is a list of patterns used in old code but deprecated.
 * Using the `$compile` service to compile directives. Use `this.$compile()`
   instead.
 * Global `sinon`. Use `import sinon from 'helpers/sinon'` instead.
-* `this.$inject('q')`. You can use `import $q from '$q'`.
 
 
 Module System
@@ -213,13 +212,6 @@ beforeEach(function () {
   const $rootScope = this.$inject('$rootScope');
 })
 ~~~
-
-You can import the `$q` service directly instead of using `this.$inject()`.
-~~~js
-import $q from '$q';
-~~~
-Note that the methods on `$q` may only be called after the Angular module has
-been instantiated.
 
 Directives can be compiled and tested with the
 [`$compile` helper][service:helpers].

@@ -1,7 +1,9 @@
-import $q from '$q';
 import resolveTokenLinks from './resolveTokenLinks.es6';
 import makeFetch from 'data/Request.es6';
 import { apiUrl } from 'Config.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const $q = getModule('$q');
 
 /**
  * @description

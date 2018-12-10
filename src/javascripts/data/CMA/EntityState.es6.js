@@ -1,7 +1,7 @@
 import { caseof } from 'sum-types/caseof-eq';
 import { constant } from 'lodash';
-import $q from '$q';
 import { Action, makePerform } from './EntityActions.es6';
+import { getModule } from 'NgRegistry.es6';
 
 /**
  * @ngdoc service
@@ -127,6 +127,7 @@ export function makeApply(spaceEndpoint) {
  * entity to the target state and returns the updated entity data.
  */
 function makeChangeTo(spaceEndpoint) {
+  const $q = getModule('$q');
   const performAction = makePerform(spaceEndpoint);
 
   return function changeTo(state, data) {
