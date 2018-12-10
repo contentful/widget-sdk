@@ -1,4 +1,6 @@
 import React from 'react';
+import { flatten } from 'lodash';
+import { getRichTextEntityLinks } from '@contentful/rich-text-links';
 
 function withPublicationWarning(WrappedComponent) {
   return class extends React.Component {
@@ -12,14 +14,36 @@ function withPublicationWarning(WrappedComponent) {
       this.unregister();
     }
 
-    hasUnpublishedReferences() {}
+    getEntities = async (getResources, ids) => {
+      if (ids.length > 0) {
+        const { items } = await getResources({
+          'sys.id[in]': ids.join(',')
+        });
 
-    getReferenceData() {
+        return items;
+      }
+      return Promise.resolve([]);
+    };
+
+    getEntries = ids =>
+      this.getEntities(query => this.props.widgetAPI.space.getEntries(query), ids);
+    getAssets = ids => this.getEntities(query => this.props.widgetAPI.space.getAssets(query), ids);
+
+    getReferenceData = async () => {
+      const referenceMap = getRichTextEntityLinks(this.props.field.getValue());
+
+      const entryIds = referenceMap.Entry.map(e => e.id);
+      const assetIds = referenceMap.Asset.map(e => e.id);
+
+      const entities = await Promise.all([this.getEntries(entryIds), this.getAssets(assetIds)]);
+
+      const unpublishedEntities = flatten(entities).filter(e => !e.sys.publishedVersion);
+
       return {
         field: this.props.field,
-        references: [1, 2, 3]
+        references: unpublishedEntities
       };
-    }
+    };
 
     render() {
       return <WrappedComponent {...this.props} />;

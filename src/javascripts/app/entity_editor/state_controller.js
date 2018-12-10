@@ -221,7 +221,7 @@ angular.module('contentful').controller('entityEditor/StateController', [
             return $q.reject();
           }
         })
-        .catch();
+        .catch(() => {});
     }
 
     controller.delete = Command.create(

@@ -42,6 +42,7 @@ window.libs = [
     require('@contentful/rich-text-plain-text-renderer')
   ],
   ['@contentful/rich-text-types', require('@contentful/rich-text-types')],
+  ['@contentful/rich-text-links', require('@contentful/rich-text-links')],
   ['@contentful/field-editors', require('@contentful/field-editors')],
   ['@contentful/hostname-transformer', require('@contentful/hostname-transformer')],
   ['@contentful/mimetype', require('@contentful/mimetype')],

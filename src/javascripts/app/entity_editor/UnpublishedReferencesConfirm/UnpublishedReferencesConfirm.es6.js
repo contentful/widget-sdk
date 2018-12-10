@@ -5,12 +5,22 @@ import _ from 'lodash';
 
 import { ModalConfirm } from '@contentful/forma-36-react-components';
 
-const humaniseEntityType = (entityType, references) => {
+const humaniseEntityType = (type, references) => {
   const plurals = {
     Entry: 'entries',
     Asset: 'assets'
   };
-  return references.length > 1 ? plurals[entityType] : entityType;
+  return references.length > 1 ? plurals[type] : type.toLowerCase();
+};
+
+const getR = references => {
+  return _(references)
+    .chain()
+    .groupBy(e => e.sys.type)
+    .toPairs()
+    .map(([type, refs]) => humaniseEntityType(type, refs))
+    .join(' and ')
+    .value();
 };
 
 class UnpublishedReferencesConfirm extends Component {
@@ -49,9 +59,8 @@ class UnpublishedReferencesConfirm extends Component {
         <ul>
           {unpublishedReferencesInfos.map((item, idx) => (
             <li key={idx}>
-              <strong>{`${item.field.name} (${item.field.locale})'`}</strong> —{' '}
-              {item.references.length} unpublished{' '}
-              {humaniseEntityType(item.field.itemLinkType, item.references)}
+              <strong>{`${item.field.name} (${item.field.locale})`}</strong> —{' '}
+              {item.references.length} unpublished {getR(item.references)}
             </li>
           ))}
         </ul>
