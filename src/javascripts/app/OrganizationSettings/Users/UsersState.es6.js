@@ -1,4 +1,4 @@
-import { conditionalStateWrapper } from 'app/OrganizationSettings/OrganizationSettingsRouteUtils.es6';
+import { conditionalIframeWrapper } from 'app/OrganizationSettings/OrganizationSettingsRouteUtils.es6';
 
 const newUser = {
   label: 'Organizations & Billing',
@@ -18,7 +18,7 @@ const newUser = {
   template: '<cf-new-organization-membership properties="properties" />'
 };
 
-const userDetail = conditionalStateWrapper({
+const userDetail = conditionalIframeWrapper({
   name: 'detail',
   params: {
     userId: ''
@@ -29,7 +29,7 @@ const userDetail = conditionalStateWrapper({
   componentPath: 'app/OrganizationSettings/Users/UserDetail/UserDetailRoute.es6'
 });
 
-export default conditionalStateWrapper({
+export default conditionalIframeWrapper({
   name: 'users',
   children: [newUser, userDetail],
   title: 'Organization users',

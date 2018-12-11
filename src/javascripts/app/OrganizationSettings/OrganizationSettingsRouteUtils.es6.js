@@ -1,4 +1,4 @@
-import { onFeatureFlag } from 'utils/LaunchDarkly';
+import { getCurrentVariation } from 'utils/LaunchDarkly';
 import Base from 'states/Base.es6';
 import { getStore } from 'TheStore';
 import * as Analytics from 'analytics/Analytics.es6';
@@ -37,7 +37,7 @@ export function iframeStateWrapper(definition = {}) {
 export function reactStateWrapper(definition = {}) {
   const { componentPath } = definition;
   const defaults = {
-    controller: getController(definition),
+    controller: getController(),
     template: getReactTemplate(componentPath)
   };
 
@@ -52,15 +52,25 @@ export function reactStateWrapper(definition = {}) {
  * @param {string} definition.featureFlag Feature flag key in LaunchDarkly
  * @param {string} definition.componentPath Absolute path to the React component
  */
-export function conditionalStateWrapper(definition = {}) {
-  const { title, componentPath } = definition;
+export function conditionalIframeWrapper(definition = {}) {
+  const { title, componentPath, featureFlag } = definition;
 
   const defaults = {
-    controller: getController(definition),
+    controller: getController(),
+    controllerAs: '$ctrl',
+    resolve: {
+      useNewView: [
+        function() {
+          if (featureFlag) {
+            return getCurrentVariation(featureFlag);
+          }
+        }
+      ]
+    },
     template: `
       <div>
-        <div ng-if="useNewView === false">${getIframeTemplate(title)}</div>
-        <div ng-if="useNewView">${getReactTemplate(componentPath)}</div>
+        <div ng-if="$ctrl.$resolve.useNewView === false">${getIframeTemplate(title)}</div>
+        <div ng-if="$ctrl.$resolve.useNewView">${getReactTemplate(componentPath)}</div>
       </div>
     `
   };
@@ -68,8 +78,7 @@ export function conditionalStateWrapper(definition = {}) {
   return organizationBase(Object.assign(defaults, definition));
 }
 
-function getController(definitions) {
-  const { featureFlag } = definitions;
+function getController() {
   return [
     '$scope',
     '$stateParams',
@@ -86,11 +95,6 @@ function getController(definitions) {
           $scope.$applyAsync();
         }
       };
-
-      featureFlag &&
-        onFeatureFlag($scope, featureFlag, value => {
-          $scope.useNewView = value;
-        });
     }
   ];
 }
