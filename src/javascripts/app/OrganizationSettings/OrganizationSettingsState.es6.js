@@ -1,27 +1,11 @@
 import Base from 'states/Base.es6';
-import organizationBase from './OrganizationSettingsBaseState.es6';
 
-import SubscriptionState from './Subscription/SubscriptionState.es6';
-import UsageState from './Usage/UsageState.es6';
-import GatekeeperStates from './OrganizationSettingsGatekeeperStates.es6';
-
-export function reactBase(definition) {
-  const defaults = {
-    controller: [
-      '$stateParams',
-      '$scope',
-      ($stateParams, $scope) => {
-        $scope.properties = {
-          orgId: $stateParams.orgId,
-          context: $scope.context
-        };
-      }
-    ],
-    template: `<${definition.componentName} properties="properties" />`
-  };
-
-  return organizationBase(Object.assign(defaults, definition));
-}
+import subscriptionState from './Subscription/SubscriptionState.es6';
+import usageState from './Usage/UsageState.es6';
+import teamsState from './Teams/TeamsState.es6';
+import usersState from './Users/UsersState.es6';
+import userInvitationsState from './UserInvitations/UserInvitationsRoutingState.es6';
+import gatekeeperStates from './OrganizationSettingsGatekeeperStates.es6';
 
 export default Base({
   name: 'organizations',
@@ -32,5 +16,12 @@ export default Base({
       template: '<cf-organization-nav class="app-top-bar__child" />'
     }
   },
-  children: [UsageState, reactBase(SubscriptionState), ...GatekeeperStates]
+  children: [
+    usageState,
+    usersState,
+    subscriptionState,
+    teamsState,
+    userInvitationsState,
+    ...gatekeeperStates
+  ]
 });

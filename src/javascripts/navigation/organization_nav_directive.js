@@ -22,6 +22,7 @@ angular.module('contentful').directive('cfOrganizationNav', [
           const TokenStore = require('services/TokenStore.es6');
           const OrganizationRoles = require('services/OrganizationRoles.es6');
           const K = require('utils/kefir.es6');
+          const LD = require('utils/LaunchDarkly');
 
           const createFeatureService = require('services/FeatureService.es6').default;
           const nav = this;
@@ -34,6 +35,11 @@ angular.module('contentful').directive('cfOrganizationNav', [
 
           // Update when token response is refreshed (e.g. billing tab should appear)
           K.onValueScope($scope, TokenStore.organizations$, onNavChange);
+
+          // Set feature flag for Teams
+          LD.getCurrentVariation('feature-bv-11-2018-teams').then(function(variation) {
+            nav.teamsEnabled = variation;
+          });
 
           function updateNav() {
             const orgId = (nav.orgId = $stateParams.orgId);
@@ -108,6 +114,15 @@ angular.module('contentful').directive('cfOrganizationNav', [
           inheritUrlParams: false,
           icon: 'nav-organization-users',
           dataViewType: 'organization-users'
+        },
+        {
+          if: 'nav.pricingVersion === "pricing_version_2" && nav.teamsEnabled',
+          title: 'Teams',
+          sref: 'account.organizations.teams({orgId: nav.orgId})',
+          rootSref: 'account.organizations.teams',
+          inheritUrlParams: false,
+          icon: 'nav-organization-users',
+          dataViewType: 'organization-teams'
         },
         {
           if: 'nav.pricingVersion == "pricing_version_1"',
