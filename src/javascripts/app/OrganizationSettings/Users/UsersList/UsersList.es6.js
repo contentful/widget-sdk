@@ -35,7 +35,10 @@ import RemoveOrgMemberDialog from '../RemoveUserDialog.es6';
 import EmptyPlaceholder from './EmptyPlaceholder.es6';
 import { getFilters, getSearchTerm } from 'selectors/filters.es6';
 import { getLastActivityDate } from '../UserUtils.es6';
-import { getInvitedUsersCount } from 'app/OrganizationSettings/UserInvitations/UserInvitationUtils.es6';
+import {
+  getInvitedUsersCount,
+  membershipExistsParam
+} from 'app/OrganizationSettings/UserInvitations/UserInvitationUtils.es6';
 
 import { generateFilterDefinitions } from './FilterDefinitions.es6';
 import {
@@ -116,7 +119,7 @@ class UsersList extends React.Component {
 
     if (newUserInvitationsEnabled) {
       // Skip all "pending" org memberships
-      query['sys.user.firstName[ne]'] = '';
+      query[membershipExistsParam] = true;
     }
 
     this.setState({ loading: true });
