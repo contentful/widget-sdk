@@ -27,29 +27,60 @@ const $q = getModule('$q');
  * @param {Object} params
  * @returns {array}
  */
-export function fetchAll(endpoint, path, batchLimit, params, headers) {
+export async function fetchAll(endpoint, path, batchLimit, params, headers) {
+  const responses = await makeRequests(endpoint, path, batchLimit, params, headers);
+  const resources = _(responses)
+    .map('items')
+    .flatten()
+    .value();
+  return _.uniqBy(resources, r => r.sys.id);
+}
+
+// TODO: Move all `fetchAll` uses in UI to `fetchAllWithIncludes` and remove `fetchAll`
+export async function fetchAllWithIncludes(endpoint, path, batchLimit, params, headers) {
+  const responses = await makeRequests(endpoint, path, batchLimit, params, headers);
+  const result = {
+    total: 0,
+    items: [],
+    includes: {}
+  };
+
+  result.items = _(responses)
+    .map('items')
+    .flatten()
+    .value();
+
+  responses.forEach(response => {
+    result.total += response.items.length;
+
+    if (response.includes) {
+      Object.entries(response.includes).forEach(([key, items]) => {
+        result.includes[key] = (result.includes[key] || []).concat(items);
+      });
+    }
+  });
+
+  return result;
+}
+
+async function makeRequests(endpoint, path, batchLimit, params, headers) {
   const requestPromises = [];
   let query = _.extend({}, params, { skip: 0, limit: batchLimit });
 
-  return makeRequest(endpoint, path, query, headers).then(response => {
-    const total = response.total;
-    let skip = batchLimit;
+  const response = await makeRequest(endpoint, path, query, headers);
 
-    while (skip < total) {
-      query = _.extend({}, params, { skip, limit: batchLimit });
-      requestPromises.push(makeRequest(endpoint, path, query));
-      skip += batchLimit;
-    }
+  requestPromises.push(response);
 
-    return $q.all(requestPromises).then(requests => {
-      const resources = _(requests)
-        .map('items')
-        .flatten()
-        .value();
-      const allResources = response.items.concat(resources);
-      return _.uniqBy(allResources, r => r.sys.id);
-    });
-  });
+  const total = response.total;
+  let skip = batchLimit;
+
+  while (skip < total) {
+    query = _.extend({}, params, { skip, limit: batchLimit });
+    requestPromises.push(makeRequest(endpoint, path, query, headers));
+    skip += batchLimit;
+  }
+
+  return $q.all(requestPromises);
 }
 
 function makeRequest(endpoint, path, query, headers) {

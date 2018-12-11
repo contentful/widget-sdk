@@ -13,9 +13,7 @@ const InvitationListFetcher = createFetcherComponent(({ orgId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
 
   return Promise.all([
-    getMemberships(endpoint, { limit: 0, [membershipExistsParam]: false }).then(
-      ({ total }) => total
-    )
+    getMemberships(endpoint, { limit: 0, [membershipExistsParam]: true }).then(({ total }) => total)
   ]);
 });
 
