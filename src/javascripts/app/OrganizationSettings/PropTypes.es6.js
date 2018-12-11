@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { orgRoles } from './UserDetail/OrgRoles.es6';
+import { orgRoles } from './Users/UserDetail/OrgRoles.es6';
 
 export const User = PropTypes.shape({
   firstName: PropTypes.string,
@@ -55,6 +55,14 @@ export const SpaceRole = PropTypes.shape({
   description: PropTypes.string,
   permissions: PropTypes.object,
   policies: PropTypes.array,
+  sys: PropTypes.shape({
+    id: PropTypes.string.isRequired
+  }).isRequired
+});
+
+export const Team = PropTypes.shape({
+  name: PropTypes.string.isRequired,
+  description: PropTypes.string,
   sys: PropTypes.shape({
     id: PropTypes.string.isRequired
   }).isRequired

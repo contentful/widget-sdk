@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { SpaceRole as SpaceRoleProp } from 'app/OrganizationSettings/Users/PropTypes.es6';
+import { SpaceRole as SpaceRoleProp } from 'app/OrganizationSettings/PropTypes.es6';
 import {
   Button,
   CheckboxField,

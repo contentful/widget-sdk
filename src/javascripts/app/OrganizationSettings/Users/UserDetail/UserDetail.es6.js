@@ -16,7 +16,7 @@ import {
   Space as SpacePropType,
   SpaceRole as SpaceRolePropType,
   User as UserPropType
-} from '../PropTypes.es6';
+} from 'app/OrganizationSettings/PropTypes.es6';
 import { OrganizationRoleSelector } from './OrganizationRoleSelector.es6';
 import {
   removeMembership,

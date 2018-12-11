@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import {
   User as UserPropType,
   SpaceMembership as SpaceMembershipPropType
-} from 'app/OrganizationSettings/Users/PropTypes.es6';
+} from 'app/OrganizationSettings/PropTypes.es6';
 
 import {
   TableRow,

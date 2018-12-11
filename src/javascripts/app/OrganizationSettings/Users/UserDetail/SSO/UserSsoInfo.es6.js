@@ -4,7 +4,7 @@ import moment from 'moment';
 import { TextLink } from '@contentful/forma-36-react-components';
 import SsoExemptionDialog from './SsoExemptionModal.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
-import { OrganizationMembership as OrganizationMembershipPropType } from 'app/OrganizationSettings/Users/PropTypes.es6';
+import { OrganizationMembership as OrganizationMembershipPropType } from 'app/OrganizationSettings/PropTypes.es6';
 
 export default class UserSsoInfo extends React.Component {
   static propTypes = {

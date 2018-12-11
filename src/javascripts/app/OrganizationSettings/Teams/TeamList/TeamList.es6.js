@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import pluralize from 'pluralize';
 
 import {
   Button,
@@ -9,18 +11,48 @@ import {
   TableCell
 } from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
+import TeamFormDialog from '../TeamFormDialog.es6';
+import ModalLauncher from 'app/common/ModalLauncher.es6';
+import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
 
 export default class TeamList extends React.Component {
+  static propTypes = {
+    orgId: PropTypes.string.isRequired,
+    total: PropTypes.number.isRequired,
+    initialTeams: PropTypes.arrayOf(TeamPropType)
+  };
+
+  state = {
+    teams: this.props.initialTeams
+  };
+
+  addTeam = () => {
+    ModalLauncher.open(({ onClose, isShown }) => (
+      <TeamFormDialog
+        orgId={this.props.orgId}
+        isShown={isShown}
+        onClose={onClose}
+        onTeamCreated={this.handleTeamCreated}
+      />
+    ));
+  };
+
+  handleTeamCreated = team => {
+    this.setState({ teams: [team, ...this.state.teams] });
+  };
+
   render() {
+    const { total } = this.props;
+    const { teams } = this.state;
     return (
       <Workbench>
         <Workbench.Header>
           <Workbench.Header.Left>
-            <Workbench.Title>Organization users</Workbench.Title>
+            <Workbench.Title>Teams</Workbench.Title>
           </Workbench.Header.Left>
           <Workbench.Header.Actions>
-            {`N teams in your organization`}
-            <Button icon="PlusCircle">Create team</Button>
+            {`${pluralize('teams', total, true)} in your organization`}
+            <Button onClick={this.addTeam}>New team</Button>
           </Workbench.Header.Actions>
         </Workbench.Header>
         <Workbench.Content>
@@ -33,10 +65,12 @@ export default class TeamList extends React.Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                <TableRow>
-                  <TableCell>Hejo</TableCell>
-                  <TableCell>The most awesome team in Contentful</TableCell>
-                </TableRow>
+                {teams.map(team => (
+                  <TableRow key={team.sys.id}>
+                    <TableCell>{team.name}</TableCell>
+                    <TableCell>{team.description}</TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </section>

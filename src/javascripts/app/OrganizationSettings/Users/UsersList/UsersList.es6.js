@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Space as SpacePropType } from '../PropTypes.es6';
 import { startCase, without, debounce, flow } from 'lodash';
 import { isEqual } from 'lodash/fp';
 import pluralize from 'pluralize';
@@ -39,7 +38,10 @@ import { getLastActivityDate } from '../UserUtils.es6';
 import { getInvitedUsersCount } from 'app/OrganizationSettings/UserInvitations/UserInvitationUtils.es6';
 
 import { generateFilterDefinitions } from './FilterDefinitions.es6';
-import { Filter as FilterPropType } from '../PropTypes.es6';
+import {
+  Filter as FilterPropType,
+  Space as SpacePropType
+} from 'app/OrganizationSettings/PropTypes.es6';
 
 class UsersList extends React.Component {
   static propTypes = {
