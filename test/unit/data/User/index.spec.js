@@ -43,6 +43,9 @@ describe('data/User', () => {
       $provide.value('spaceContext', this.spaceContext);
       $provide.value('$stateParams', this.$stateParams);
       $provide.value('contentPreview', this.contentPreview);
+      $provide.value('data/OrganizationStatus.es6', {
+        default: () => ({ then: cb => cb({}) }) // simulate promise for instant resolution
+      });
     });
 
     this.moment = this.$inject('moment');
@@ -77,7 +80,7 @@ describe('data/User', () => {
         this.$apply();
       };
     });
-    it('emits [user, org, spacesByOrg, space, contentPreviews, publishedCTs] where space, contentPreviews and publishedCTs are optional', function() {
+    it('emits [user, org, spacesByOrg, space, contentPreviews, publishedCTs, organizationStatus] where space, contentPreviews, publishedCTs and organizationStatus are optional', function() {
       const user = { email: 'a@b.c' };
       const orgs = [{ name: '1', sys: { id: 1 } }, { name: '2', sys: { id: 2 } }];
       const org = { name: 'some org', sys: { id: 'some-org-1' } };
@@ -93,7 +96,8 @@ describe('data/User', () => {
         {},
         this.spaceContext.space.data,
         {},
-        []
+        [],
+        {}
       ]);
 
       this.spy.reset();
@@ -105,7 +109,8 @@ describe('data/User', () => {
         {},
         this.spaceContext.space.data,
         {},
-        []
+        [],
+        {}
       ]);
 
       this.spy.reset();
@@ -117,7 +122,8 @@ describe('data/User', () => {
         {},
         this.spaceContext.space.data,
         {},
-        []
+        [],
+        {}
       ]);
     });
     it('emits a value only when the user is valid and the org and spacesByOrg are not falsy', function() {
@@ -139,7 +145,7 @@ describe('data/User', () => {
       // all valid valus, hence spy must be called
       this.set({ user, orgs, spacesByOrg: {}, orgId: 1 });
       sinon.assert.calledOnce(this.spy);
-      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, {}, {}, []]);
+      sinon.assert.calledWithExactly(this.spy, [user, orgs[0], {}, {}, {}, [], {}]);
     });
     it('skips duplicates', function() {
       const setter = this.set.bind(this, {
@@ -204,43 +210,6 @@ describe('data/User', () => {
           sys: { createdAt: creationDate.toISOString() }
         })
       ).toBe(creationDate.unix());
-    });
-  });
-
-  describe('#isNonPayingUser', () => {
-    beforeEach(function() {
-      this.checkIfUserIsNonpaying = function(subscriptionStatus, valToAssert) {
-        const isNonPayingUser = this.utils.isNonPayingUser({
-          organizationMemberships: [
-            {
-              organization: { subscription: { status: subscriptionStatus } }
-            }
-          ]
-        });
-
-        expect(isNonPayingUser).toBe(valToAssert);
-      };
-    });
-
-    it('returns true if any org a user belongs to is paying us and false otherwise', function() {
-      this.checkIfUserIsNonpaying('free', true);
-      this.checkIfUserIsNonpaying('trial', true);
-      this.checkIfUserIsNonpaying('paid', false);
-      this.checkIfUserIsNonpaying('free_paid', false);
-    });
-
-    it('returns false if the user has a V2 org', function() {
-      const isNonPayingUser = this.utils.isNonPayingUser({
-        organizationMemberships: [
-          {
-            organization: {
-              pricingVersion: 'pricing_version_2'
-            }
-          }
-        ]
-      });
-
-      expect(isNonPayingUser).toBe(false);
     });
   });
 

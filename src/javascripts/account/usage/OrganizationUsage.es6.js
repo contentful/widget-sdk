@@ -12,6 +12,7 @@ import OrganizationUsagePage from './committed/OrganizationUsagePage.es6';
 import { getPeriods, getOrgUsage, getApiUsage } from './UsageService.es6';
 import PeriodSelector from './committed/PeriodSelector.es6';
 import NoSpacesPlaceholder from './NoSpacesPlaceholder.es6';
+import isPOCEnabled from 'account/POCFeatureFlag.es6';
 
 export class WorkbenchContent extends React.Component {
   static propTypes = {
@@ -206,7 +207,7 @@ export class OrganizationUsage extends React.Component {
           }
         ] = await Promise.all([
           getAllSpaces(this.endpoint),
-          getPlansWithSpaces(this.endpoint),
+          getPlansWithSpaces(this.endpoint, await isPOCEnabled()),
           getPeriods(this.endpoint),
           service.get('api_request'),
           service.get('asset_bandwidth')

@@ -35,7 +35,6 @@ describe('LaunchDarkly', () => {
       role: 'owner',
       subscription: { status: 'free' },
       sys: { id: 1 },
-      subscriptionPlan: { name: 'Best Enterprise 2017' },
       pricingVersion: `pricing_version_1`
     };
 
@@ -73,7 +72,6 @@ describe('LaunchDarkly', () => {
       userDataBus$: K.createMockProperty([this.user, this.org, {}]),
       getOrgRole: sinon.stub().returns('org role'),
       getUserAgeInDays: sinon.stub().returns(7),
-      isNonPayingUser: sinon.stub().returns(true),
       hasAnOrgWithSpaces: sinon.stub().returns(false),
       ownsAtleastOneOrg: sinon.stub().returns(true),
       isAutomationTestUser: sinon.stub().returns(true),
@@ -139,7 +137,7 @@ describe('LaunchDarkly', () => {
         expect(customData).toEqual({
           currentOrgId: this.org.sys.id,
           currentOrgSubscriptionStatus: this.org.subscription.status,
-          currentOrgPlanIsEnterprise: true,
+          currentOrgPlanIsEnterprise: false,
           currentOrgHasSpace: false,
           currentOrgPricingVersion: `pricing_version_1`,
           currentUserOrgRole: 'org role',

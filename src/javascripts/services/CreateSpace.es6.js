@@ -7,11 +7,11 @@ import { canCreateSpaceInOrganization } from 'access_control/AccessChecker';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import {
   getSpaceRatePlans,
-  isPOCEnabled,
   isEnterprisePlan,
   getBasePlan
 } from 'account/pricing/PricingDataProvider.es6';
 import { openModal as showLoading } from 'components/shared/LoadingModal.es6';
+import isPOCEnabled from 'account/POCFeatureFlag.es6';
 
 /**
  * Displays the space creation dialog. The dialog type will depend on the

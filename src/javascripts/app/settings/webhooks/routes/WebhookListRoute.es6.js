@@ -10,14 +10,15 @@ import TheLocaleStore from 'TheLocaleStore';
 import spaceContext from 'spaceContext';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
-import { isEnterpriseV2 } from 'data/isEnterprise.es6';
+import getOrganizationStatus from 'data/OrganizationStatus.es6';
 
 const WebhooksFetcher = createFetcherComponent(() => {
   return Promise.all([
     spaceContext.webhookRepo.getAll(),
-    isEnterpriseV2(spaceContext.organization)
-  ]).then(([webhooks, isV2Committed]) => {
+    getOrganizationStatus(spaceContext.organization)
+  ]).then(([webhooks, status]) => {
     const isContentfulUser = (spaceContext.user.email || '').endsWith('@contentful.com');
+    const isV2Committed = status.isEnterprise && status.pricingVersion === 2;
     const hasAwsProxy = isV2Committed || isContentfulUser;
     return [webhooks, hasAwsProxy];
   });

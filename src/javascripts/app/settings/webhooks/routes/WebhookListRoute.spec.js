@@ -5,9 +5,10 @@ import $stateMocked from '$state';
 import spaceContextMocked from 'spaceContext';
 
 jest.mock(
-  'data/isEnterprise.es6',
+  'data/OrganizationStatus.es6',
   () => ({
-    isEnterpriseV2: () => Promise.resolve(false)
+    __esModule: true, // needed for `default` export.
+    default: () => Promise.resolve({ isEnterprise: false })
   }),
   { virtual: true }
 );
