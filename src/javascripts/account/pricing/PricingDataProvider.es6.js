@@ -1,6 +1,5 @@
 import { get, uniqueId } from 'lodash';
 import { getAllSpaces, getUsersByIds } from 'access_control/OrganizationMembershipRepository.es6';
-import { getCurrentVariation } from 'utils/LaunchDarkly';
 
 const alphaHeader = {
   'x-contentful-enable-alpha-feature': 'subscriptions-api'
@@ -70,14 +69,14 @@ export function getBasePlan(endpoint) {
  * spaces for space plans, free spaces, and linked user data for each space's
  * `createdBy` field.
  * @param {object} endpoint an organization endpoint
+ * @param {boolean} is POC enabled
  * @returns {Promise<object[]>} array of subscription plans w. spaces & users
  */
-export async function getPlansWithSpaces(endpoint) {
-  const [baseRatePlan, plans, spaces, usePOC] = await Promise.all([
+export async function getPlansWithSpaces(endpoint, POCenabled) {
+  const [baseRatePlan, plans, spaces] = await Promise.all([
     getBaseRatePlan(endpoint),
     getSubscriptionPlans(endpoint),
-    getAllSpaces(endpoint),
-    isPOCEnabled()
+    getAllSpaces(endpoint)
   ]);
   const findSpaceByPlan = plan =>
     plan.gatekeeperKey && spaces.find(({ sys }) => sys.id === plan.gatekeeperKey);
@@ -99,7 +98,7 @@ export async function getPlansWithSpaces(endpoint) {
       ...freeSpaces.map(space => ({
         sys: { id: uniqueId('free-space-plan-') },
         gatekeeperKey: space.sys.id,
-        name: isEnterprise && usePOC ? 'Proof of concept' : 'Free',
+        name: isEnterprise && POCenabled ? 'Proof of concept' : 'Free',
         planType: 'free_space',
         space
       }))
@@ -223,12 +222,4 @@ export function getRatePlans(endpoint) {
  */
 export function calculateTotalPrice(subscriptionPlans) {
   return subscriptionPlans.reduce((total, plan) => total + (parseInt(plan.price, 10) || 0), 0);
-}
-
-/**
- * Check feature flag for Proof of Concept spaces in Enterprise orgs
- * @returns {Promise<Boolean>}
- */
-export function isPOCEnabled() {
-  return getCurrentVariation('feature-bv-07-2018-enterprise-poc-spaces');
 }

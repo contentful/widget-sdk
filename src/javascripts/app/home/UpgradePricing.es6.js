@@ -6,7 +6,7 @@ import Icon from 'ui/Components/Icon.es6';
 import { websiteUrl } from 'Config.es6';
 import { track } from 'analytics/Analytics.es6';
 import $state from '$state';
-import isEnterprise from 'data/isEnterprise.es6';
+import getOrganizationStatus from 'data/OrganizationStatus.es6';
 
 const FLAG_NAME = 'feature-dl-09-2018-upgrade-pricing-space-home';
 
@@ -25,7 +25,8 @@ export default class UpgradePricing extends React.Component {
       return false;
     }
 
-    if (await isEnterprise(org)) {
+    const { isEnterprise } = await getOrganizationStatus(org);
+    if (isEnterprise) {
       return false;
     }
 

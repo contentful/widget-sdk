@@ -4,8 +4,9 @@ import $stateParams from '$stateParams';
 import spaceContext from 'spaceContext';
 
 import { contentPreviewsBus$ } from 'contentPreview';
-import { isEqual, find, get, includes } from 'lodash';
+import { isEqual, find, get } from 'lodash';
 import { organizations$, user$, spacesByOrganization$ } from 'services/TokenStore.es6';
+import getOrganizationStatus from 'data/OrganizationStatus.es6';
 
 import { combine, onValue, getValue, createPropertyBus } from 'utils/kefir.es6';
 
@@ -15,13 +16,14 @@ import { combine, onValue, getValue, createPropertyBus } from 'utils/kefir.es6';
  */
 export const userDataBus$ = combine(
   [user$, getCurrentOrgSpaceAndPublishedCTsBus(), spacesByOrganization$, contentPreviewsBus$],
-  (user, [org, space, publishedCTs], spacesByOrg, contentPreviews) => [
+  (user, [org, space, publishedCTs, organizationStatus], spacesByOrg, contentPreviews) => [
     user,
     org,
     spacesByOrg,
     space,
     contentPreviews,
-    publishedCTs
+    publishedCTs,
+    organizationStatus
   ]
 )
   .filter(([user, org, spacesByOrg]) => user && user.email && org && spacesByOrg) // space is a Maybe and so is contentPreviews
@@ -75,51 +77,6 @@ export function getUserAgeInDays(user) {
  */
 export function getUserCreationDateUnixTimestamp(user) {
   return moment(user.sys.createdAt).unix();
-}
-
-/**
- * @description
- * Given a user, this returns true if none of the orgs that the user
- * belongs to is a paying org.
- * Return true if the user belongs to NO paying orgs
- * A qualified user doesn't belong to a paying/converted org
- *
- * @param {Object} user
- * @returns {boolean}
- */
-export function isNonPayingUser(user) {
-  const { organizationMemberships } = user;
-  const convertedStatuses = ['paid', 'free_paid'];
-
-  // disqualify all users that don't belong to any org
-  if (!organizationMemberships) {
-    return false;
-  }
-
-  // TODO: Modify this to look at the organization payment status
-  // instead of `subscription.status` directly. See below.
-  return !organizationMemberships.reduce((acc, { organization }) => {
-    // For now, we treat all V2 orgs as "paid"
-    //
-    // This logic is not truly accurate for V2 orgs, because in
-    // the public release there will be organizations that are
-    // not paid. However, until the public release, the only orgs
-    // that will exist are V1->V2 org upgrades, which will always
-    // be paid.
-    //
-    // This logic will change in the future once the payment status
-    // of an organization can be determined on an organization level
-    // without looking directly at the subscription, which will happen
-    // before the initial public V2 release.
-    if (organization.pricingVersion === 'pricing_version_2') {
-      return true;
-    }
-
-    const orgStatus = get(organization, 'subscription.status');
-    const isOrgConverted = includes(convertedStatuses, orgStatus);
-
-    return acc || isOrgConverted;
-  }, false);
 }
 
 /**
@@ -254,7 +211,11 @@ function updateCurrOrgSpaceAndPublishedCTs(bus) {
     const space = getCurrSpace();
     const publishedCTs = getValue(spaceContext.publishedCTs.items$);
 
-    bus.set([org, space, publishedCTs]);
+    // This is async, but handled gracefully and heavily cached
+    getOrganizationStatus(org).then(
+      organizationStatus => bus.set([org, space, publishedCTs, organizationStatus]),
+      () => bus.set([org, space, publishedCTs])
+    );
   };
 }
 

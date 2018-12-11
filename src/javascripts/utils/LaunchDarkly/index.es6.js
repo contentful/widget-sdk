@@ -7,14 +7,12 @@ import getChangesObject from 'utils/ShallowObjectDiff.es6';
 import { getEnabledFlags, getDisabledFlags } from 'debug/EnforceFlags.es6';
 import { createMVar } from 'utils/Concurrent.es6';
 import logger from 'logger';
-import require from 'require';
 
 import { isExampleSpace } from 'data/ContentPreview';
 import {
   getOrgRole,
   isUserOrgCreator,
   userDataBus$,
-  isNonPayingUser,
   getUserAgeInDays,
   ownsAtleastOneOrg,
   hasAnOrgWithSpaces,
@@ -218,24 +216,21 @@ function getVariation(flagName, defaultValue) {
  *
  * @returns {Object} customData
  */
-function buildLDUser(user, currOrg, spacesByOrg, currSpace, contentPreviews, publishedCTs) {
+function buildLDUser(
+  user,
+  currOrg,
+  spacesByOrg,
+  currSpace,
+  contentPreviews,
+  publishedCTs,
+  organizationStatus
+) {
   const orgId = currOrg.sys.id;
-
-  // TODO start
-  // `isEnterprise` relies on `PricingDataProvider` which relies
-  // on `LaunchDarkly` (this service). We use `require` to prevent
-  // circular dependency.
-  const isEnterpriseV1 = require('data/isEnterprise.es6').isEnterpriseV1;
-  // Checking if pricing v2 organization is an enterprise requires
-  // an API call. For the time being we only check v1.
-  const v1 = currOrg.pricingVersion === 'pricing_version_1';
-  const currentOrgPlanIsEnterprise = v1 && isEnterpriseV1(currOrg);
-  // TODO end
 
   let customData = {
     currentOrgId: orgId,
     currentOrgSubscriptionStatus: get(currOrg, 'subscription.status'),
-    currentOrgPlanIsEnterprise,
+    currentOrgPlanIsEnterprise: get(organizationStatus, ['isEnterprise'], false),
     currentOrgHasSpace: !!get(spacesByOrg[orgId], 'length', 0),
     currentOrgPricingVersion: currOrg.pricingVersion,
 
@@ -246,7 +241,7 @@ function buildLDUser(user, currOrg, spacesByOrg, currSpace, contentPreviews, pub
     currentUserCreationDate: getUserCreationDateUnixTimestamp(user), // unix timestamp
     currentUserIsCurrentOrgCreator: isUserOrgCreator(user, currOrg),
     currentUserSignInCount: user.signInCount,
-    isNonPayingUser: isNonPayingUser(user),
+    isNonPayingUser: !get(organizationStatus, ['isPaid'], false),
     // by default, if there is no current space, we pass empty array
     currentUserSpaceRole: [],
     isAutomationTestUser: isAutomationTestUser(user),
@@ -293,8 +288,24 @@ function setCurrCtx(user) {
  * @param {Array} arr - An array containing a contentful user, current org
  * a map of spaces by org id and an optional current space
  */
-function changeUserContext([user, currOrg, spacesByOrg, currSpace, contentPreviews, publishedCTs]) {
-  const ldUser = buildLDUser(user, currOrg, spacesByOrg, currSpace, contentPreviews, publishedCTs);
+function changeUserContext([
+  user,
+  currOrg,
+  spacesByOrg,
+  currSpace,
+  contentPreviews,
+  publishedCTs,
+  organizationStatus
+]) {
+  const ldUser = buildLDUser(
+    user,
+    currOrg,
+    spacesByOrg,
+    currSpace,
+    contentPreviews,
+    publishedCTs,
+    organizationStatus
+  );
   setCurrCtx(ldUser);
   // FIXME We need to handle the case where the LD service is not
   // available. Unfortunately LD does not pass error information to the

@@ -7,11 +7,11 @@ import { canCreateSpaceInOrganization } from 'access_control/AccessChecker';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import {
   getSpaceRatePlans,
-  isPOCEnabled,
   isEnterprisePlan,
   getBasePlan
 } from 'account/pricing/PricingDataProvider.es6';
 import { openModal as showLoading } from 'components/shared/LoadingModal.es6';
+import * as LD from 'utils/LaunchDarkly';
 
 /**
  * Displays the space creation dialog. The dialog type will depend on the
@@ -49,7 +49,7 @@ export async function showDialog(organizationId) {
     const loadingModal = showLoading();
 
     // check if Proof of Concept spaces feature is on
-    const canCreatePOC = await isPOCEnabled();
+    const canCreatePOC = await LD.getCurrentVariation('feature-bv-07-2018-enterprise-poc-spaces');
     const orgEndpoint = createOrganizationEndpoint(organizationId);
 
     let shouldCreatePOC;

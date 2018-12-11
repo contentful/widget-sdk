@@ -12,6 +12,7 @@ import OrganizationUsagePage from './committed/OrganizationUsagePage.es6';
 import { getPeriods, getOrgUsage, getApiUsage } from './UsageService.es6';
 import PeriodSelector from './committed/PeriodSelector.es6';
 import NoSpacesPlaceholder from './NoSpacesPlaceholder.es6';
+import * as LD from 'utils/LaunchDarkly';
 
 export class WorkbenchContent extends React.Component {
   static propTypes = {
@@ -192,6 +193,8 @@ export class OrganizationUsage extends React.Component {
       const committed = isEnterprisePlan(basePlan);
 
       if (committed && flagActive) {
+        const POCenabled = await LD.getCurrentVariation('feature-bv-07-2018-enterprise-poc-spaces');
+
         const [
           spaces,
           plans,
@@ -206,7 +209,7 @@ export class OrganizationUsage extends React.Component {
           }
         ] = await Promise.all([
           getAllSpaces(this.endpoint),
-          getPlansWithSpaces(this.endpoint),
+          getPlansWithSpaces(this.endpoint, POCenabled),
           getPeriods(this.endpoint),
           service.get('api_request'),
           service.get('asset_bandwidth')
