@@ -7,13 +7,14 @@ import { fetchAll } from 'data/CMA/FetchAll.es6';
 import ResolveLinks from '../LinkResolver.es6';
 
 const includePaths = ['sys.user'];
+const membershipsQuery = { 'sys.user.firstName[exists]': false };
 
 export async function getInvitedUsers(orgId) {
   const endpoint = createOrganizationEndpoint(orgId);
 
   const [invitations, pendingMemberships] = await Promise.all([
     fetchAll(endpoint, ['invitations'], 100, { 'status[eq]': 'pending' }),
-    getMemberships(endpoint, { include: includePaths, 'sys.user.firstName[eq]': '' }).then(
+    getMemberships(endpoint, { include: includePaths, ...membershipsQuery }).then(
       ({ items, includes }) => ResolveLinks({ paths: includePaths, items, includes })
     )
   ]);
@@ -42,7 +43,7 @@ export async function getInvitedUsersCount(orgId) {
 
   const [invitationCount, pendingOrgMembershipCount] = await Promise.all([
     getInvitations(endpoint, { 'status[eq]': 'pending', limit: 0 }).then(({ total }) => total),
-    getMemberships(endpoint, { include: includePaths, 'sys.user.firstName[eq]': '' }).then(
+    getMemberships(endpoint, { include: includePaths, ...membershipsQuery }).then(
       ({ total }) => total
     )
   ]);
