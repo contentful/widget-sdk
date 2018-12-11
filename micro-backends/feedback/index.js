@@ -39,7 +39,7 @@ module.exports = {
       const random = require('crypto')
         .randomBytes(4)
         .toString('hex');
-      kv.set(`feedback-${Date.now()}-${random}`, req.body);
+      await kv.set(`feedback-${Date.now()}-${random}`, req.body);
     } catch (err) {
       console.log('Failed to backup feedback to KV.');
     }
