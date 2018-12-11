@@ -10,7 +10,7 @@ micro-backends deploy small pieces of backend functionality to AWS Lambda. Code 
 
 The Web App uses the standard `@contentful/micro-backends` package with no deviations.
 
-[Refer the docs for more information](https://github.com/contentful/micro-backends#%CE%BC-backends)
+[Refer to the docs for more information](https://github.com/contentful/micro-backends#%CE%BC-backends)
 
 ## Accessing micro-backends locally
 
@@ -58,7 +58,7 @@ assert(
 
 ## Deployment
 
-Deployment is configured and most likely don't need any further tweaks.
+Deployment is configured and most likely doesn't need any further tweaks.
 
 It's done with Travis' `script` deployment provider:
 
