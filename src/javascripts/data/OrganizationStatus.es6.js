@@ -1,7 +1,7 @@
-import { get, constant } from 'lodash';
+import { get } from 'lodash';
 
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
-import * as PricingV2 from 'account/pricing/PricingDataProvider.es6';
+import * as PricingDataProvider from 'account/pricing/PricingDataProvider.es6';
 
 // These don't change too often so we cache them for the whole
 // user session. V2 needs to talk to the API so we prefer to
@@ -22,15 +22,14 @@ export default async function isEnterprise(organization) {
     return cached;
   }
 
-  const unknownPricing = constant({ isEnterprise: false, isPaid: false });
+  let status = { isEnterprise: false, isPaid: false };
 
-  const getStatus =
-    {
-      pricing_version_1: getOrganizationStatusV1,
-      pricing_version_2: getOrganizationStatusV2
-    }[organization.pricingVersion] || unknownPricing;
+  if (organization.pricingVersion === 'pricing_version_1') {
+    status = getOrganizationStatusV1(organization);
+  } else if (organization.pricingVersion === 'pricing_version_2') {
+    status = await getOrganizationStatusV2(organization);
+  }
 
-  const status = await getStatus(organization);
   organizationStatusCache[id] = status;
   return status;
 }
@@ -65,10 +64,10 @@ export async function getOrganizationStatusV2(organization) {
   const endpoint = createOrganizationEndpoint(organization.sys.id);
 
   try {
-    const plan = await PricingV2.getBasePlan(endpoint);
+    const plan = await PricingDataProvider.getBasePlan(endpoint);
     return {
       pricingVersion: 2,
-      isEnterprise: PricingV2.isEnterprisePlan(plan),
+      isEnterprise: PricingDataProvider.isEnterprisePlan(plan),
       isPaid: get(plan, ['sys', 'id']) !== 'free'
     };
   } catch (err) {

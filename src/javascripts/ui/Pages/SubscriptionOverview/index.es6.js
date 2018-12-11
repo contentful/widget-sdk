@@ -15,7 +15,7 @@ import { getSpaces, getOrganization } from 'services/TokenStore.es6';
 import { isOwnerOrAdmin, isOwner } from 'services/OrganizationRoles.es6';
 import { calcUsersMeta, calculateTotalPrice } from 'utils/SubscriptionUtils.es6';
 import { openModal as openCommittedSpaceWarningDialog } from 'components/shared/space-wizard/CommittedSpaceWarningModal.es6';
-import * as LD from 'utils/LaunchDarkly';
+import isPOCEnabled from 'account/POCFeatureFlag.es6';
 
 import Workbench from 'app/common/Workbench.es6';
 
@@ -54,13 +54,11 @@ class SubscriptionOverview extends React.Component {
       return;
     }
 
-    const POCenabled = await LD.getCurrentVariation('feature-bv-07-2018-enterprise-poc-spaces');
-
     const endpoint = createOrganizationEndpoint(orgId);
     let plans;
 
     try {
-      plans = await getPlansWithSpaces(endpoint, POCenabled);
+      plans = await getPlansWithSpaces(endpoint, await isPOCEnabled());
     } catch (e) {
       return ReloadNotification.apiErrorHandler(e);
     }
