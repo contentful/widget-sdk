@@ -29,7 +29,8 @@ module.exports = function(fileInfo, { jscodeshift: j }) {
                 type: 'Identifier',
                 name: 'module'
               }
-            }
+            },
+            arguments: [{ value: 'contentful' }]
           }
         }
       }
