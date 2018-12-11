@@ -12,6 +12,5 @@ export default reactStateWrapper({
   children: [teamDetailState],
   title: 'Teams',
   url: '/:orgId/teams',
-  featureFlag: 'feature-bv-09-2018-new-org-membership-pages',
   componentPath: 'app/OrganizationSettings/Teams/TeamList/TeamListRoute.es6'
 });
