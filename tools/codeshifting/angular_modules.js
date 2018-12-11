@@ -9,6 +9,8 @@ module.exports = function(fileInfo, { jscodeshift: j }) {
   const isImportable = path => ['lodash'].includes(path) || endsWith('.es6', path);
   const toBoundName = path => last(path.replace('.es6', '').split('/'));
 
+  let hasAngularDefinitions = false;
+
   ast
     .find(j.ExpressionStatement, {
       expression: {
@@ -33,6 +35,7 @@ module.exports = function(fileInfo, { jscodeshift: j }) {
       }
     })
     .replaceWith(path => {
+      hasAngularDefinitions = true;
       const {
         expression: {
           callee: {
@@ -69,6 +72,9 @@ module.exports = function(fileInfo, { jscodeshift: j }) {
         j.callExpression(j.identifier(registerHelper), [j.literal(name), definition])
       );
     });
+  if (!hasAngularDefinitions) {
+    return fileInfo.source;
+  }
 
   ast.find(j.ExpressionStatement, { expression: { value: 'use strict' } }).remove();
   ast
