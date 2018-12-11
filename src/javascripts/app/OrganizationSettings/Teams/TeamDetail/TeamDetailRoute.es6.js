@@ -48,7 +48,7 @@ export default class TeamDetailRoute extends React.Component {
             }
 
             const [team, teamMemberships] = data;
-            return <TeamDetail team={team} teamMemberships={teamMemberships} />;
+            return <TeamDetail team={team} teamMemberships={teamMemberships.items} />;
           }}
         </TeamDetailFetcher>
       </OrgAdminOnly>
