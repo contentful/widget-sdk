@@ -27,60 +27,64 @@ const $q = getModule('$q');
  * @param {Object} params
  * @returns {array}
  */
-export async function fetchAll(endpoint, path, batchLimit, params, headers) {
-  const responses = await makeRequests(endpoint, path, batchLimit, params, headers);
-  const resources = _(responses)
-    .map('items')
-    .flatten()
-    .value();
-  return _.uniqBy(resources, r => r.sys.id);
+export function fetchAll(endpoint, path, batchLimit, params, headers) {
+  return makeRequests(endpoint, path, batchLimit, params, headers).then(responses => {
+    const resources = _(responses)
+      .map('items')
+      .flatten()
+      .value();
+    return _.uniqBy(resources, r => r.sys.id);
+  });
 }
 
 // TODO: Move all `fetchAll` uses in UI to `fetchAllWithIncludes` and remove `fetchAll`
-export async function fetchAllWithIncludes(endpoint, path, batchLimit, params, headers) {
-  const responses = await makeRequests(endpoint, path, batchLimit, params, headers);
-  const result = {
-    total: 0,
-    items: [],
-    includes: {}
-  };
+export function fetchAllWithIncludes(endpoint, path, batchLimit, params, headers) {
+  return makeRequests(endpoint, path, batchLimit, params, headers).then(responses => {
+    const result = {
+      total: 0,
+      items: [],
+      includes: {}
+    };
 
-  result.items = _(responses)
-    .map('items')
-    .flatten()
-    .value();
+    result.items = _(responses)
+      .map('items')
+      .flatten()
+      .value();
 
-  responses.forEach(response => {
-    result.total += response.items.length;
+    responses.forEach(response => {
+      result.total += response.items.length;
 
-    if (response.includes) {
-      Object.entries(response.includes).forEach(([key, items]) => {
-        result.includes[key] = (result.includes[key] || []).concat(items);
-      });
-    }
+      if (response.includes) {
+        Object.entries(response.includes).forEach(([key, items]) => {
+          result.includes[key] = (result.includes[key] || []).concat(items);
+        });
+      }
+    });
+
+    return result;
   });
-
-  return result;
 }
 
-async function makeRequests(endpoint, path, batchLimit, params, headers) {
+function makeRequests(endpoint, path, batchLimit, params, headers) {
   const requestPromises = [];
   let query = _.extend({}, params, { skip: 0, limit: batchLimit });
 
-  const response = await makeRequest(endpoint, path, query, headers);
+  const request = makeRequest(endpoint, path, query, headers);
 
-  requestPromises.push(response);
+  requestPromises.push(request);
 
-  const total = response.total;
-  let skip = batchLimit;
+  return request.then(response => {
+    const total = response.total;
+    let skip = batchLimit;
 
-  while (skip < total) {
-    query = _.extend({}, params, { skip, limit: batchLimit });
-    requestPromises.push(makeRequest(endpoint, path, query, headers));
-    skip += batchLimit;
-  }
+    while (skip < total) {
+      query = _.extend({}, params, { skip, limit: batchLimit });
+      requestPromises.push(makeRequest(endpoint, path, query, headers));
+      skip += batchLimit;
+    }
 
-  return $q.all(requestPromises);
+    return $q.all(requestPromises);
+  });
 }
 
 function makeRequest(endpoint, path, query, headers) {
