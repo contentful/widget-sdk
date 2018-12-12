@@ -12,7 +12,7 @@ import {
   getSpaceMemberships,
   getAllSpaces
 } from 'access_control/OrganizationMembershipRepository.es6';
-import { get, flatten } from 'lodash';
+import { map, flatten } from 'lodash';
 import ResolveLinks from 'app/OrganizationSettings/LinkResolver.es6';
 
 import UserInvitationDetail from './UserInvitationDetail.es6';
@@ -30,7 +30,7 @@ const InvitationDetailFetcher = createFetcherComponent(async ({ orgId, invitatio
   }
 
   if (invitation) {
-    const roleIds = flatten(invitation.spaceInvitations.map(i => get(i, 'roleIds')));
+    const roleIds = flatten(map(invitation.spaceInvitations, 'roleIds'));
     const [inviter, spaces, roles] = await Promise.all([
       getUser(endpoint, invitation.sys.inviter.sys.id),
       getAllSpaces(endpoint),
@@ -96,24 +96,40 @@ export default class UserInvitationsListRouter extends React.Component {
 
             const [invitation, membership] = data;
 
-            const componentProps = {};
+            let componentProps;
 
             if (invitation) {
-              componentProps.email = invitation.email;
-              componentProps.role = invitation.role;
-              componentProps.spaceInvitations = invitation.spaceInvitations;
-              componentProps.inviter = invitation.sys.inviter;
-              componentProps.invitedAt = invitation.sys.createdAt;
-              componentProps.id = invitation.sys.id;
-              componentProps.type = 'invitation';
+              const {
+                email,
+                role,
+                spaceInvitations,
+                sys: { inviter, createdAt, id }
+              } = invitation;
+              componentProps = {
+                email,
+                role,
+                spaceInvitations,
+                inviter,
+                invitedAt: createdAt,
+                id,
+                type: 'invitation'
+              };
             } else if (membership) {
-              componentProps.email = membership.user.email;
-              componentProps.role = membership.role;
-              componentProps.spaceInvitations = membership.spaceMemberships;
-              componentProps.inviter = membership.sys.createdBy;
-              componentProps.invitedAt = membership.sys.createdAt;
-              componentProps.id = membership.sys.id;
-              componentProps.type = 'organizationMembership';
+              const {
+                user: { email },
+                role,
+                spaceMemberships,
+                sys: { createdBy, createdAt, id }
+              } = membership;
+              componentProps = {
+                email,
+                role,
+                spaceInvitations: spaceMemberships,
+                inviter: createdBy,
+                invitedAt: createdAt,
+                id,
+                type: 'invitation'
+              };
             }
 
             return <UserInvitationDetail orgId={orgId} {...componentProps} />;

@@ -1,4 +1,4 @@
-import { orgRoles } from '../UserDetail/OrgRoles.es6';
+import { orgRoles } from 'utils/MembershipUtils.es6';
 import { without, set, cloneDeep } from 'lodash';
 import {
   getRoleOptions,

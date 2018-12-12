@@ -10,7 +10,8 @@ import {
   TableBody,
   TableCell,
   Button,
-  Notification
+  Notification,
+  Tooltip
 } from '@contentful/forma-36-react-components';
 import {
   User as UserPropType,
@@ -74,7 +75,7 @@ export default class UserInvitationDetail extends React.Component {
               <section className="user-invitation-detail__section">
                 <dl className="user-invitation-detail__definition-list">
                   <dt>Invitation sent</dt>
-                  <dd>{moment(invitedAt).fromNow()}</dd>
+                  <dd>{moment(invitedAt).format('MMMM D, YYYY')}</dd>
                   <dt>Invited by</dt>
                   <dd>{getUserName(inviter)}</dd>
                 </dl>
@@ -101,9 +102,11 @@ export default class UserInvitationDetail extends React.Component {
                     justifyContent: 'space-between'
                   }}>
                   <h3 style={{ marginBottom: 30 }}>Space memberships</h3>
-                  <Button size="small" buttonType="primary" disabled>
-                    Add to space
-                  </Button>
+                  <Tooltip content="Invitations can’t be modified" place="left">
+                    <Button size="small" buttonType="primary" disabled>
+                      Add to space
+                    </Button>
+                  </Tooltip>
                 </header>
                 {Boolean(spaceInvitations.length) && (
                   <Table extraClassNames="user-invitation-detail__table">

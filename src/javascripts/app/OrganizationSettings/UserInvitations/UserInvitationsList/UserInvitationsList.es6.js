@@ -111,17 +111,22 @@ export default class InvitationsList extends React.Component {
                     {invitation.email}
                   </TableCell>
                   <TableCell>{invitation.role}</TableCell>
-                  <TableCell>
-                    {moment(invitation.createdAt).format('MMM Do YYYY, hh:mm a')}
-                  </TableCell>
+                  <TableCell>{moment(invitation.createdAt).format('MMMM D, YYYY')}</TableCell>
                   <TableCell align="right" extraClassNames="user-invitations-list__buttons">
                     <div>
                       <Button
-                        buttonType="negative"
+                        buttonType="muted"
                         size="small"
                         onClick={this.removeInvitation(invitation)}
                         extraClassNames="user-invitations-list__button">
                         Remove
+                      </Button>
+                      <Button
+                        buttonType="muted"
+                        size="small"
+                        onClick={this.goToUserInvitationDetail(invitation.id)}
+                        extraClassNames="user-invitations-list__button">
+                        View
                       </Button>
                     </div>
                   </TableCell>
