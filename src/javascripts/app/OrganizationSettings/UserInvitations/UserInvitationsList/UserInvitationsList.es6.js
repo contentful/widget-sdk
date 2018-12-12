@@ -43,6 +43,16 @@ export default class InvitationsList extends React.Component {
     });
   }
 
+  getLinkToUserInvitationDetail(invitationId) {
+    return href({
+      path: ['account', 'organizations', 'users', 'invitation'],
+      params: {
+        orgId: this.props.orgId,
+        invitationId
+      }
+    });
+  }
+
   getInvitations = async () => {
     const { orgId } = this.props;
 
@@ -96,7 +106,11 @@ export default class InvitationsList extends React.Component {
             <TableBody>
               {sortedList.map(invitation => (
                 <TableRow key={invitation.id} extraClassNames="user-invitations-list__row">
-                  <TableCell>{invitation.email}</TableCell>
+                  <TableCell>
+                    <TextLink href={this.getLinkToUserInvitationDetail(invitation.id)}>
+                      {invitation.email}
+                    </TextLink>
+                  </TableCell>
                   <TableCell>{invitation.role}</TableCell>
                   <TableCell>
                     {moment(invitation.createdAt).format('MMM Do YYYY, hh:mm a')}

@@ -8,8 +8,9 @@ import {
   getMembership,
   getInvitation,
   getUser,
-  getRoles,
-  getSpaceMemberships
+  getAllRoles,
+  getSpaceMemberships,
+  getAllSpaces
 } from 'access_control/OrganizationMembershipRepository.es6';
 import { get, flatten } from 'lodash';
 import ResolveLinks from 'app/OrganizationSettings/LinkResolver.es6';
@@ -30,19 +31,23 @@ const InvitationDetailFetcher = createFetcherComponent(async ({ orgId, invitatio
 
   if (invitation) {
     const roleIds = flatten(invitation.spaceInvitations.map(i => get(i, 'roleIds')));
-    const includePaths = ['sys.space'];
-    const [inviter, roles] = await Promise.all([
+    const [inviter, spaces, roles] = await Promise.all([
       getUser(endpoint, invitation.sys.inviter.sys.id),
-      getRoles(endpoint, { include: includePaths.join(','), 'sys.id[in]': roleIds.join(',') }).then(
-        ({ items, includes }) => ResolveLinks({ paths: includePaths, items, includes })
-      )
+      getAllSpaces(endpoint),
+      getAllRoles(endpoint, { 'sys.id[in]': roleIds.join(',') })
     ]);
 
     invitation.sys.inviter = inviter;
-    invitation.spaceInvitations = invitation.spaceInvitations.map(space => {
-      space.roles = roles.filter(role => space.roleIds.includes(role.sys.id));
+    invitation.spaceInvitations = invitation.spaceInvitations.map(spaceInv => {
+      spaceInv.roles = roles.filter(role => spaceInv.roleIds.includes(role.sys.id));
 
-      return space;
+      const space = spaces.find(space => space.sys.id === spaceInv.sys.space.sys.id);
+
+      if (space) {
+        spaceInv.sys.space = space;
+      }
+
+      return spaceInv;
     });
   } else if (membership) {
     const includePaths = ['roles', 'sys.space'];
@@ -91,31 +96,27 @@ export default class UserInvitationsListRouter extends React.Component {
 
             const [invitation, membership] = data;
 
-            let email;
-            let role;
-            let spaceInvitations;
-            let inviter;
+            const componentProps = {};
 
             if (invitation) {
-              email = invitation.email;
-              role = invitation.role;
-              spaceInvitations = invitation.spaceInvitations;
-              inviter = invitation.sys.inviter;
+              componentProps.email = invitation.email;
+              componentProps.role = invitation.role;
+              componentProps.spaceInvitations = invitation.spaceInvitations;
+              componentProps.inviter = invitation.sys.inviter;
+              componentProps.invitedAt = invitation.sys.createdAt;
+              componentProps.id = invitation.sys.id;
+              componentProps.type = 'invitation';
             } else if (membership) {
-              email = membership.user.email;
-              role = membership.role;
-              spaceInvitations = membership.spaceInvitations;
-              inviter = membership.sys.createdBy;
+              componentProps.email = membership.user.email;
+              componentProps.role = membership.role;
+              componentProps.spaceInvitations = membership.spaceMemberships;
+              componentProps.inviter = membership.sys.createdBy;
+              componentProps.invitedAt = membership.sys.createdAt;
+              componentProps.id = membership.sys.id;
+              componentProps.type = 'organizationMembership';
             }
 
-            return (
-              <UserInvitationDetail
-                email={email}
-                role={role}
-                spaceInvitations={spaceInvitations}
-                inviter={inviter}
-              />
-            );
+            return <UserInvitationDetail orgId={orgId} {...componentProps} />;
           }}
         </InvitationDetailFetcher>
       </OrgAdminOnly>
