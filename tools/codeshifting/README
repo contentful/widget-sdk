@@ -1,0 +1,7 @@
+* Install jscodeshift globally
+
+npm i -g jscodeshift
+
+* run with desired transformation file on folder or file
+
+jscodeshift -t tools/codeshifting/angular_modules.js src/javascripts/path/to/folder/or/file
