@@ -198,6 +198,13 @@ describe('entity editor field integration', () => {
       expectShownLocales(el, ['en', 'de']);
     });
 
+    // TODO: Why is the `default: true` ignored here?
+    xit('shows default locale as the first one', function() {
+      this.setLocales([{ code: 'en-2', default: true }, { code: 'en-1' }]);
+      const el = this.compile();
+      expectShownLocalesDisplayOrder(el, ['en-2', 'en-1']);
+    });
+
     function expectShownLocalesDisplayOrder(el, locales) {
       expect(getShownLocales(el)).toEqual(clone(locales));
     }
