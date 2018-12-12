@@ -11,7 +11,7 @@ import {
   TextLink,
   Button
 } from '@contentful/forma-36-react-components';
-import { href } from 'states/Navigator.es6';
+import { href, go } from 'states/Navigator.es6';
 import {
   removeMembership,
   removeInvitation
@@ -43,15 +43,14 @@ export default class InvitationsList extends React.Component {
     });
   }
 
-  getLinkToUserInvitationDetail(invitationId) {
-    return href({
+  goToUserInvitationDetail = invitationId => () => {
+    return go({
       path: ['account', 'organizations', 'users', 'invitation'],
       params: {
-        orgId: this.props.orgId,
         invitationId
       }
     });
-  }
+  };
 
   getInvitations = async () => {
     const { orgId } = this.props;
@@ -106,10 +105,10 @@ export default class InvitationsList extends React.Component {
             <TableBody>
               {sortedList.map(invitation => (
                 <TableRow key={invitation.id} extraClassNames="user-invitations-list__row">
-                  <TableCell>
-                    <TextLink href={this.getLinkToUserInvitationDetail(invitation.id)}>
-                      {invitation.email}
-                    </TextLink>
+                  <TableCell
+                    onClick={this.goToUserInvitationDetail(invitation.id)}
+                    extraClassNames="user-invitations-list__email">
+                    {invitation.email}
                   </TableCell>
                   <TableCell>{invitation.role}</TableCell>
                   <TableCell>
