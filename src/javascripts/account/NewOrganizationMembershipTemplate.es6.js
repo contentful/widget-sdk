@@ -36,7 +36,7 @@ export function header() {
 
 export function sidebar(
   { Idle, Invalid },
-  { status, organization, suppressInvitation },
+  { status, metadata, suppressInvitation },
   { toggleInvitationEmailOption }
 ) {
   const isDisabled = match(status, {
@@ -45,23 +45,28 @@ export function sidebar(
     _: () => true
   });
 
-  const { membershipUsage, membershipLimit } = organization;
-  const usersCountMsg = membershipLimit
-    ? `Your organization is using ${membershipUsage} out of ${membershipLimit} users.`
-    : `Your organization is using ${membershipUsage} ${pluralize('users', membershipUsage)}.`;
+  const { invitationUsage, invitationLimit, hasSsoEnabled } = metadata;
+  const hasInvitationLimit = Boolean(invitationLimit);
+  const invitationsRemaining = invitationLimit - invitationUsage;
 
   return h('.workbench-main__entity-sidebar', [
     h('.entity-sidebar', [
-      h('p', [usersCountMsg]),
+      hasInvitationLimit &&
+        h('p', [
+          `You have ${invitationsRemaining > 0 ? invitationsRemaining : 0} ${pluralize(
+            'invitations',
+            invitationsRemaining
+          )} left.`
+        ]),
       h(
         'button.cfnext-btn-primary-action.x--block',
         {
           type: 'submit',
           disabled: isDisabled
         },
-        ['Send invitation']
+        ['Send invitations']
       ),
-      organization.hasSsoEnabled
+      hasSsoEnabled
         ? h('.cfnext-form-option.u-separator--small', [
             h('label', [
               h('input', {
@@ -88,11 +93,11 @@ export function sidebar(
 export function emailsInput(
   maxNumberOfEmails,
   Invalid,
-  { emails, emailsInputValue, invalidAddresses, organization, status },
+  { emails, emailsInputValue, invalidAddresses, metadata, status },
   { updateEmails, validateEmails }
 ) {
   const errors = emailInputErrors({
-    organization,
+    metadata,
     emails,
     invalidAddresses,
     maxNumberOfEmails,
@@ -101,7 +106,7 @@ export function emailsInput(
   });
 
   return h('div', [
-    h('h3.section-title', ['Select users']),
+    h('h3.section-title', ['Add users']),
     h('p', [
       'Add multiple users by filling in a comma-separated list of email addresses. You can add a maximum of 100 users at a time.'
     ]),
@@ -120,7 +125,7 @@ export function emailsInput(
 }
 
 function emailInputErrors({
-  organization,
+  metadata,
   emails,
   invalidAddresses,
   maxNumberOfEmails,
@@ -128,23 +133,24 @@ function emailInputErrors({
   Invalid
 }) {
   const errors = [];
-  if (organization.membershipLimit) {
-    const remainingInvitations = organization.membershipLimit - organization.membershipUsage;
+  if (metadata.invitationLimit) {
+    const remainingInvitations =
+      metadata.invitationLimit - metadata.invitationUsage > 0
+        ? metadata.invitationLimit - metadata.invitationUsage
+        : 0;
 
     if (emails.length > remainingInvitations) {
       errors.push(`
-        You are trying to add ${pluralize(
+        You are trying to invite ${pluralize(
           'users',
           emails.length,
           true
         )} but you only have ${remainingInvitations}
-        more available under your plan. Please remove ${pluralize(
-          'users',
-          emails.length - remainingInvitations,
-          true
-        )} to proceed.
-        You can upgrade your plan if you need to add more users.
-      `);
+        ${pluralize('invitations', remainingInvitations)} left. Please remove ${pluralize(
+        'users',
+        emails.length - remainingInvitations,
+        true
+      )} to proceed.`);
     }
   }
   if (emails.length > maxNumberOfEmails) {
