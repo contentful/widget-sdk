@@ -1,137 +1,124 @@
-'use strict';
+import { registerDirective, registerController } from 'NgRegistry.es6';
+import _ from 'lodash';
 
-angular
-  .module('cf.ui')
+/**
+ * @ngdoc directive
+ * @name cfUiTab
+ * @description
+ * Shows only one tabpanel at a time and let the user select the panel
+ * through a click.
+ *
+ * Two elements with the same `ui-tab` and `ui-tabpanel` attribute
+ * value both hold references to the same object in the `scope.tab`.
+ * This object contains at least the `active` property that is `true`
+ * only if the tab is currently displayed.
+ *
+ * The `ui-tab` and `ui-tabpanel` set the ARIA roles to `tab` and
+ * `tabpanel`, respectively.
+ *
+ * @usage[jade]
+ *   div(cf-ui-tab)
+ *     ul(role="tablist")
+ *       li(ui-tab="one")
+ *       li(ui-tab="two")
+ *     div(ui-tabpanel="one")
+ *       | content of tab one
+ *     div(ui-tabpanel="two")
+ *       | content of tab two
+ */
+registerDirective('cfUiTab', () => ({
+  controllerAs: 'tabController',
+  controller: 'UiTabController'
+}));
 
-  /**
-   * @ngdoc directive
-   * @name cfUiTab
-   * @description
-   * Shows only one tabpanel at a time and let the user select the panel
-   * through a click.
-   *
-   * Two elements with the same `ui-tab` and `ui-tabpanel` attribute
-   * value both hold references to the same object in the `scope.tab`.
-   * This object contains at least the `active` property that is `true`
-   * only if the tab is currently displayed.
-   *
-   * The `ui-tab` and `ui-tabpanel` set the ARIA roles to `tab` and
-   * `tabpanel`, respectively.
-   *
-   * @usage[jade]
-   *   div(cf-ui-tab)
-   *     ul(role="tablist")
-   *       li(ui-tab="one")
-   *       li(ui-tab="two")
-   *     div(ui-tabpanel="one")
-   *       | content of tab one
-   *     div(ui-tabpanel="two")
-   *       | content of tab two
-   */
-  .directive('cfUiTab', [
-    () => ({
-      controllerAs: 'tabController',
-      controller: 'UiTabController'
-    })
-  ])
+registerDirective('uiTab', () => ({
+  scope: true,
 
-  .controller('UiTabController', [
-    'require',
-    function(require) {
-      const _ = require('lodash');
+  link: function(scope, element, attrs) {
+    const tabName = attrs.uiTab;
+    const tab = scope.tabController.registerControl(tabName);
 
-      function Tab(controller, name) {
-        this.name = name;
-        this.activate = () => {
-          controller.activate(name);
-        };
-      }
+    attrs.$set('role', 'tab');
+    scope.tab = tab;
 
-      const tabs = {};
-      let activeTab = null;
+    element.on('click', () => {
+      scope.$apply(tab.activate);
+    });
 
-      this.registerControl = function(name, element) {
-        const tab = this.get(name);
-        tab.control = element;
+    scope.$watch('tab.active', isActive => {
+      attrs.$set('ariaSelected', isActive);
+    });
+  }
+}));
 
-        if (activeTab === null) {
-          this.activate(name);
-        }
-        return tab;
-      };
+registerDirective('uiTabpanel', () => ({
+  scope: true,
 
-      this.registerPanel = function(name, element) {
-        const tab = this.get(name);
-        tab.panel = element;
-        return tab;
-      };
+  link: function(scope, element, attrs) {
+    const tabName = attrs.uiTabpanel;
+    const tabController = scope.tabController;
+    const tab = tabController.registerPanel(tabName, element);
+    attrs.$set('role', 'tabpanel');
+    scope.tab = tab;
 
-      this.get = function(name) {
-        if (!_.isString(name)) {
-          throw new TypeError('Tab name must be a string');
-        }
+    scope.$watch('tab.active', isActive => {
+      attrs.$set('ariaHidden', !isActive);
+    });
+  }
+}));
 
-        let tab = tabs[name];
-        if (!tab) {
-          tab = tabs[name] = new Tab(this, name);
-        }
+registerController('UiTabController', function() {
+  function Tab(controller, name) {
+    this.name = name;
+    this.activate = () => {
+      controller.activate(name);
+    };
+  }
 
-        return tab;
-      };
+  const tabs = {};
+  let activeTab = null;
 
-      this.getActiveTabName = () => activeTab && activeTab.name;
+  this.registerControl = function(name, element) {
+    const tab = this.get(name);
+    tab.control = element;
 
-      this.activate = function(name) {
-        if (activeTab) {
-          activeTab.active = false;
-        }
-
-        if (name) {
-          activeTab = this.get(name);
-          activeTab.active = true;
-        } else {
-          activeTab = null;
-        }
-      };
+    if (activeTab === null) {
+      this.activate(name);
     }
-  ])
+    return tab;
+  };
 
-  .directive('uiTab', [
-    () => ({
-      scope: true,
+  this.registerPanel = function(name, element) {
+    const tab = this.get(name);
+    tab.panel = element;
+    return tab;
+  };
 
-      link: function(scope, element, attrs) {
-        const tabName = attrs.uiTab;
-        const tab = scope.tabController.registerControl(tabName);
+  this.get = function(name) {
+    if (!_.isString(name)) {
+      throw new TypeError('Tab name must be a string');
+    }
 
-        attrs.$set('role', 'tab');
-        scope.tab = tab;
+    let tab = tabs[name];
+    if (!tab) {
+      tab = tabs[name] = new Tab(this, name);
+    }
 
-        element.on('click', () => {
-          scope.$apply(tab.activate);
-        });
+    return tab;
+  };
 
-        scope.$watch('tab.active', isActive => {
-          attrs.$set('ariaSelected', isActive);
-        });
-      }
-    })
-  ])
+  this.getActiveTabName = () => activeTab && activeTab.name;
 
-  .directive('uiTabpanel', [
-    () => ({
-      scope: true,
+  this.activate = function(name) {
+    if (activeTab) {
+      activeTab.active = false;
+    }
 
-      link: function(scope, element, attrs) {
-        const tabName = attrs.uiTabpanel;
-        const tabController = scope.tabController;
-        const tab = tabController.registerPanel(tabName, element);
-        attrs.$set('role', 'tabpanel');
-        scope.tab = tab;
-
-        scope.$watch('tab.active', isActive => {
-          attrs.$set('ariaHidden', !isActive);
-        });
-      }
-    })
-  ]);
+    if (name) {
+      activeTab = this.get(name);
+      activeTab.active = true;
+    } else {
+      activeTab = null;
+    }
+  };
+});

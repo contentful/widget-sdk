@@ -2,7 +2,7 @@ import createLaunchDarklyMock from './mocks/LaunchDarkly';
 import _ from 'lodash';
 
 angular
-  .module('cf.ui')
+  .module('contentful/init')
   // We do not load the file containing the icons. Therefore we need to
   // create a dummy service.
   .constant('icons', {});
