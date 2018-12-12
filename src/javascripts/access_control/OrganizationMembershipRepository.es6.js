@@ -143,6 +143,14 @@ export function getInvitations(endpoint, query) {
   });
 }
 
+export function getInvitation(endpoint, invitationId, query) {
+  return endpoint({
+    method: 'GET',
+    path: ['invitations', invitationId],
+    query
+  });
+}
+
 export function invite(endpoint, { role, email, spaceInvitations }) {
   return endpoint({
     method: 'POST',

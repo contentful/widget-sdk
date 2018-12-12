@@ -17,7 +17,7 @@ import {
   removeInvitation
 } from 'access_control/OrganizationMembershipRepository.es6';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
-import { getInvitedUsers } from './UserInvitationUtils.es6';
+import { getInvitedUsers } from '../UserInvitationUtils.es6';
 import { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 
 import Workbench from 'app/common/Workbench.es6';
