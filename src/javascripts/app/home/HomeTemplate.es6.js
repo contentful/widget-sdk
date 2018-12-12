@@ -3,7 +3,10 @@ import { h } from 'utils/legacy-html-hyperscript/index.es6';
 export default function template() {
   return h('.home', { 'cf-ui-sticky-container': true }, [
     h('.home__container', { ngIf: '!readOnlySpace' }, [
-      h('.home__content', [
+      h('.home__content', { ngIf: 'isAuthorOrEditor && !isSpaceAdmin' }, [
+        h('.home__content-title', ['New space for Authors and Editors!'])
+      ]),
+      h('.home__content', { ngIf: 'orgOwnerOrAdmin' }, [
         h('cf-welcome'),
         h('react-component', { name: 'app/home/UpgradePricing.es6' }),
         h('cf-onboarding-steps'),

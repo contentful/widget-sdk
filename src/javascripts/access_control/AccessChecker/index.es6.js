@@ -466,7 +466,8 @@ function collectSectionVisibility() {
     usage: !shouldHide(Action.UPDATE, 'settings'),
     previews: !shouldHide(Action.UPDATE, 'settings'),
     webhooks: !shouldHide(Action.UPDATE, 'settings'),
-    spaceHome: get(space, 'spaceMembership.admin'),
+    spaceHome:
+      get(space, 'spaceMembership.admin') || isAuthorOrEditor(get(space, 'spaceMembership.roles')),
     apps: get(space, 'spaceMembership.admin')
   };
 }
@@ -549,4 +550,10 @@ function wrapGKMethod(name) {
       return gkPermissionChecker[name](...args);
     }
   };
+}
+
+export function isAuthorOrEditor(roles) {
+  return Boolean(
+    roles && roles.findIndex(role => role.name === 'Author' || role.name === 'Editor') >= 0
+  );
 }
