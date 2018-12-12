@@ -25,6 +25,7 @@ const $q = getModule('$q');
  * @param {array} path
  * @param {integer} batchLimit
  * @param {Object} params
+ * @param {Object} headers
  * @returns {array}
  */
 export function fetchAll(endpoint, path, batchLimit, params, headers) {
