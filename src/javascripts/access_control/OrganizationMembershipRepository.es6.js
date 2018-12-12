@@ -1,4 +1,4 @@
-import { fetchAll } from 'data/CMA/FetchAll.es6';
+import { fetchAll, fetchAllWithIncludes } from 'data/CMA/FetchAll.es6';
 import { uniq, identity, chunk, flatten } from 'lodash';
 
 const BATCH_LIMIT = 100;
@@ -13,6 +13,16 @@ const ALPHA_HEADER = {
  */
 export function getAllMemberships(endpoint) {
   return fetchAll(endpoint, ['organization_memberships'], BATCH_LIMIT, null, ALPHA_HEADER);
+}
+
+export function getAllMembershipsWithQuery(endpoint, query) {
+  return fetchAllWithIncludes(
+    endpoint,
+    ['organization_memberships'],
+    BATCH_LIMIT,
+    query,
+    ALPHA_HEADER
+  );
 }
 
 export function getMemberships(endpoint, query) {

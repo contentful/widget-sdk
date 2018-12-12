@@ -7,12 +7,13 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { getMemberships } from 'access_control/OrganizationMembershipRepository.es6';
 
 import UserInvitationsList from './UserInvitationsList.es6';
+import { membershipExistsParam } from './UserInvitationUtils.es6';
 
 const InvitationListFetcher = createFetcherComponent(({ orgId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
 
   return Promise.all([
-    getMemberships(endpoint, { limit: 0, 'sys.user.firstName[ne]': '' }).then(({ total }) => total)
+    getMemberships(endpoint, { limit: 0, [membershipExistsParam]: true }).then(({ total }) => total)
   ]);
 });
 

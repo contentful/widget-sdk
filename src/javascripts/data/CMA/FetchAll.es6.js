@@ -25,30 +25,66 @@ const $q = getModule('$q');
  * @param {array} path
  * @param {integer} batchLimit
  * @param {Object} params
+ * @param {Object} headers
  * @returns {array}
  */
 export function fetchAll(endpoint, path, batchLimit, params, headers) {
+  return makeRequests(endpoint, path, batchLimit, params, headers).then(responses => {
+    const resources = _(responses)
+      .map('items')
+      .flatten()
+      .value();
+    return _.uniqBy(resources, r => r.sys.id);
+  });
+}
+
+// TODO: Move all `fetchAll` uses in UI to `fetchAllWithIncludes` and remove `fetchAll`
+export function fetchAllWithIncludes(endpoint, path, batchLimit, params, headers) {
+  return makeRequests(endpoint, path, batchLimit, params, headers).then(responses => {
+    const result = {
+      total: 0,
+      items: [],
+      includes: {}
+    };
+
+    result.items = _(responses)
+      .map('items')
+      .flatten()
+      .value();
+
+    responses.forEach(response => {
+      result.total += response.items.length;
+
+      if (response.includes) {
+        Object.entries(response.includes).forEach(([key, items]) => {
+          result.includes[key] = (result.includes[key] || []).concat(items);
+        });
+      }
+    });
+
+    return result;
+  });
+}
+
+function makeRequests(endpoint, path, batchLimit, params, headers) {
   const requestPromises = [];
   let query = _.extend({}, params, { skip: 0, limit: batchLimit });
 
-  return makeRequest(endpoint, path, query, headers).then(response => {
+  const request = makeRequest(endpoint, path, query, headers);
+
+  requestPromises.push(request);
+
+  return request.then(response => {
     const total = response.total;
     let skip = batchLimit;
 
     while (skip < total) {
       query = _.extend({}, params, { skip, limit: batchLimit });
-      requestPromises.push(makeRequest(endpoint, path, query));
+      requestPromises.push(makeRequest(endpoint, path, query, headers));
       skip += batchLimit;
     }
 
-    return $q.all(requestPromises).then(requests => {
-      const resources = _(requests)
-        .map('items')
-        .flatten()
-        .value();
-      const allResources = response.items.concat(resources);
-      return _.uniqBy(allResources, r => r.sys.id);
-    });
+    return $q.all(requestPromises);
   });
 }
 

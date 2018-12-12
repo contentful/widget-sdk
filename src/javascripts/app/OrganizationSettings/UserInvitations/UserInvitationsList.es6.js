@@ -84,7 +84,7 @@ export default class InvitationsList extends React.Component {
           <Workbench.Title>{`Invited users (${invitations.length})`}</Workbench.Title>
           <TextLink href={this.getLinkToUsersList()}>View all users ({membershipsCount})</TextLink>
         </Workbench.Header>
-        <Workbench.Content>
+        <Workbench.Content style={{ padding: '2.5em 2em' }}>
           <Table>
             <TableHead>
               <TableRow>

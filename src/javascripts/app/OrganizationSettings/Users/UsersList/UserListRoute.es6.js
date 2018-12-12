@@ -14,6 +14,7 @@ import { getOrganization } from 'services/TokenStore.es6';
 import createResourceService from 'services/ResourceService.es6';
 import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 import { BV_USER_INVITATIONS } from 'featureFlags.es6';
+import { membershipExistsParam } from 'app/OrganizationSettings/UserInvitations/UserInvitationUtils.es6';
 
 const UserListFetcher = createFetcherComponent(({ orgId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
@@ -30,7 +31,7 @@ const UserListFetcher = createFetcherComponent(({ orgId }) => {
 
   if (newUserInvitationsEnabled) {
     promises.push(
-      getMemberships(endpoint, { 'sys.user.firstName[ne]': '' }).then(({ total }) => total)
+      getMemberships(endpoint, { [membershipExistsParam]: true }).then(({ total }) => total)
     );
   } else {
     promises.push(resources.get('organizationMembership').then(({ usage }) => usage));
