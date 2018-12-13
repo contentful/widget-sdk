@@ -25,6 +25,8 @@ import {
 } from 'access_control/OrganizationMembershipRepository.es6';
 import { go } from 'states/Navigator.es6';
 import { getModule } from 'NgRegistry.es6';
+import UserInvitationRemovalModal from '../UserInvitationRemovalModal.es6';
+import ModalLauncher from 'app/common/ModalLauncher.es6';
 
 const { getMembershipRoles } = getModule('access_control/SpaceMembershipRepository.es6');
 
@@ -44,10 +46,24 @@ export default class UserInvitationDetail extends React.Component {
     const { orgId, type, id, email } = this.props;
     const endpoint = createOrganizationEndpoint(orgId);
 
-    if (type === 'invitation') {
-      await removeInvitation(endpoint, id);
-    } else if (type === 'organizationMembership') {
-      await removeMembership(endpoint, id);
+    const confirmation = await ModalLauncher.open(({ isShown, onClose }) => (
+      <UserInvitationRemovalModal isShown={isShown} onClose={onClose} email={email} />
+    ));
+
+    if (!confirmation) {
+      return;
+    }
+
+    try {
+      if (type === 'invitation') {
+        await removeInvitation(endpoint, id);
+      } else if (type === 'organizationMembership') {
+        await removeMembership(endpoint, id);
+      }
+    } catch (e) {
+      Notification.error(`Oops… We couldn’t revoke the invitation for ${email}`);
+
+      return;
     }
 
     Notification.success(`Invitation for ${email} successfully revoked`);

@@ -128,7 +128,7 @@ export default class UserInvitationsListRouter extends React.Component {
                 inviter: createdBy,
                 invitedAt: createdAt,
                 id,
-                type: 'invitation'
+                type: 'organizationMembership'
               };
             }
 

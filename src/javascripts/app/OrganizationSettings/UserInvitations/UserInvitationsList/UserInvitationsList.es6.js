@@ -9,7 +9,8 @@ import {
   TableHead,
   TableBody,
   TextLink,
-  Button
+  Button,
+  Notification
 } from '@contentful/forma-36-react-components';
 import { href, go } from 'states/Navigator.es6';
 import {
@@ -19,6 +20,8 @@ import {
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { getInvitedUsers } from '../UserInvitationUtils.es6';
 import { FetcherLoading } from 'app/common/createFetcherComponent.es6';
+import UserInvitationRemovalModal from '../UserInvitationRemovalModal.es6';
+import ModalLauncher from 'app/common/ModalLauncher.es6';
 
 import Workbench from 'app/common/Workbench.es6';
 
@@ -65,15 +68,31 @@ export default class InvitationsList extends React.Component {
   removeInvitation = invitation => async () => {
     const { orgId } = this.props;
     const { invitations } = this.state;
-    const { type, id } = invitation;
+    const { type, id, email } = invitation;
 
     const endpoint = createOrganizationEndpoint(orgId);
 
-    if (type === 'invitation') {
-      await removeInvitation(endpoint, id);
-    } else if (type === 'organizationMembership') {
-      await removeMembership(endpoint, id);
+    const confirmation = await ModalLauncher.open(({ isShown, onClose }) => (
+      <UserInvitationRemovalModal isShown={isShown} onClose={onClose} email={email} />
+    ));
+
+    if (!confirmation) {
+      return;
     }
+
+    try {
+      if (type === 'invitation') {
+        await removeInvitation(endpoint, id);
+      } else if (type === 'organizationMembership') {
+        await removeMembership(endpoint, id);
+      }
+    } catch (e) {
+      Notification.error(`Oops… We couldn’t revoke the invitation for ${email}`);
+
+      return;
+    }
+
+    Notification.success(`Invitation for ${email} successfully revoked`);
 
     this.setState({ invitations: without(invitations, invitation) });
   };
@@ -119,7 +138,7 @@ export default class InvitationsList extends React.Component {
                         size="small"
                         onClick={this.removeInvitation(invitation)}
                         extraClassNames="user-invitations-list__button">
-                        Remove
+                        Revoke
                       </Button>
                       <Button
                         buttonType="muted"
