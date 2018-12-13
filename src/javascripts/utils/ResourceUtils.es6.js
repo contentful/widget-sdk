@@ -20,7 +20,8 @@ export const resourceHumanNameMap = {
   environment: 'Environments',
   record: 'Records',
   api_request: 'API Requests',
-  free_space: 'Free Spaces'
+  free_space: 'Free Spaces',
+  pending_invitation: 'Pending invitations'
 };
 
 export const canCreate = resource => !resourceMaximumLimitReached(resource);

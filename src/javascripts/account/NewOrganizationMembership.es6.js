@@ -67,7 +67,8 @@ export default function($scope) {
     failedOrgInvitations: [],
     successfulOrgInvitations: [],
     status: Loading(),
-    organization: {}
+    organization: {},
+    metadata: {}
   };
 
   const actions = {
@@ -94,8 +95,8 @@ export default function($scope) {
   });
 
   runTask(function*() {
-    const org = yield getOrganization(orgId);
-    const canAccess = isOwnerOrAdmin(org);
+    const organization = yield getOrganization(orgId);
+    const canAccess = isOwnerOrAdmin(organization);
 
     if (!canAccess) {
       denyAccess();
@@ -103,8 +104,8 @@ export default function($scope) {
     }
 
     // 1st step - get org and user info and render page without the spaces grid
-    const organization = yield* getOrgInfo();
-    state = assign(state, { organization, isOwner: isOwner(org) });
+    const metadata = yield* getOrgInfo();
+    state = assign(state, { metadata, organization, isOwner: isOwner(organization) });
 
     rerender();
 
@@ -396,20 +397,30 @@ export default function($scope) {
     const org = yield getOrganization(orgId);
 
     const resourceService = createResourceService(orgId, 'organization');
-    const resources = yield resourceService.get('organization_membership');
-    const membershipLimit = get(resources, 'limits.maximum');
+    const orgMembershipResource = yield resourceService.get('organization_membership');
+    const pendingInvitationResource = yield resourceService.get('pending_invitation');
+    const membershipLimit = get(orgMembershipResource, 'limits.maximum');
+
+    const useLegacy = !(yield getCurrentVariation(featureFlags.BV_USER_INVITATIONS));
 
     // We cannot rely on usage data from organization (token) since the cache
     // is not invalidated on user creation.
     // We should use resources API later when it's available for org memberships.
     const users = yield getUsers(orgEndpoint, { limit: 0 });
-    const membershipUsage = users.total;
+    const invitationLimit = membershipLimit;
+    let invitationUsage;
 
-    return assign(state.organization, {
-      membershipUsage,
-      membershipLimit,
+    if (useLegacy) {
+      invitationUsage = users.total;
+    } else {
+      invitationUsage = users.total + pendingInvitationResource.usage;
+    }
+
+    return {
+      invitationUsage,
+      invitationLimit,
       hasSsoEnabled: org.hasSsoEnabled
-    });
+    };
   }
 }
 
@@ -452,7 +463,7 @@ function render(state, actions) {
                       'emails',
                       'emailsInputValue',
                       'invalidAddresses',
-                      'organization',
+                      'metadata',
                       'status'
                     ]),
                     pick(actions, ['updateEmails', 'validateEmails'])
@@ -470,7 +481,7 @@ function render(state, actions) {
         ),
         sidebar(
           { Idle, Invalid },
-          pick(state, ['status', 'organization', 'suppressInvitation']),
+          pick(state, ['status', 'organization', 'metadata', 'suppressInvitation']),
           pick(actions, ['toggleInvitationEmailOption'])
         )
       ]
