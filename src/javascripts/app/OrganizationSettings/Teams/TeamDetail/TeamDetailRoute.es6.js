@@ -6,23 +6,42 @@ import OrgAdminOnly from 'app/common/OrgAdminOnly.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import createTeamService from '../TeamService.es6';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
-import { getUser } from 'access_control/OrganizationMembershipRepository.es6';
+import { getAllMembershipsWithQuery } from 'access_control/OrganizationMembershipRepository.es6';
+import resolveLinks from 'app/OrganizationSettings/LinkResolver.es6';
 
 const TeamDetailFetcher = createFetcherComponent(async ({ orgId, teamId }) => {
+  const endpoint = createOrganizationEndpoint(orgId);
   const service = createTeamService(orgId);
-  const [team, teamMemberships] = await Promise.all([
+  const userLinkPath = 'sys.user';
+  const [team, teamMemberships, orgMemberships] = await Promise.all([
     service.get(teamId),
-    service.getTeamMemberships(teamId, { include: ['sys.createdBy'] })
+    service.getTeamMemberships(teamId, { include: [userLinkPath, 'sys.createdBy'].join() }),
+    // get ALL organization memberships. used when adding new team members
+    getAllMembershipsWithQuery(endpoint, { include: [userLinkPath] })
   ]);
-  try {
-    const endpoint = createOrganizationEndpoint(orgId);
-    const createdByUser = await getUser(endpoint, team.sys.createdBy.sys.id);
-    team.sys.createdBy = createdByUser;
-  } catch (e) {
-    // user got trashed. do nothing
+
+  const resolvedTeamMemberships = resolveLinks({
+    paths: [userLinkPath, 'sys.createdBy'],
+    includes: teamMemberships.includes,
+    items: teamMemberships.items
+  });
+
+  const resolvedOrgMemberships = resolveLinks({
+    paths: [userLinkPath],
+    includes: orgMemberships.includes,
+    items: orgMemberships.items
+  });
+  const createdByMembership = resolvedOrgMemberships.find(
+    membership => membership.sys.user.sys.id === team.sys.createdBy.sys.id
+  );
+
+  if (createdByMembership) {
+    // we can't use includes in  a single resource request.
+    // manually replace the link with the actual user, if found
+    team.sys.createdBy = createdByMembership.sys.user;
   }
 
-  return [team, teamMemberships];
+  return [team, resolvedTeamMemberships, resolvedOrgMemberships];
 });
 
 export default class TeamDetailRoute extends React.Component {
@@ -47,8 +66,15 @@ export default class TeamDetailRoute extends React.Component {
               return <FetcherLoading message="Loading team..." />;
             }
 
-            const [team, teamMemberships] = data;
-            return <TeamDetail team={team} teamMemberships={teamMemberships.items} />;
+            const [team, teamMemberships, orgMemberships] = data;
+            return (
+              <TeamDetail
+                orgId={orgId}
+                team={team}
+                teamMemberships={teamMemberships}
+                orgMemberships={orgMemberships}
+              />
+            );
           }}
         </TeamDetailFetcher>
       </OrgAdminOnly>

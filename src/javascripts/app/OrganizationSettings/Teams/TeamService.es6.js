@@ -69,12 +69,12 @@ export default function createTeamService(orgId) {
     );
   }
 
-  function createTeamMembership(teamId, teamMembershipId, query) {
+  function createTeamMembership(teamId, organizationMembershipId, admin = false) {
     return endpoint(
       {
         method: 'POST',
-        path: ['teams', teamId, 'team_memberships', teamMembershipId],
-        query
+        path: ['teams', teamId, 'team_memberships'],
+        data: { organizationMembershipId, admin }
       },
       ALPHA_HEADER
     );
