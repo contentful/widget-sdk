@@ -309,7 +309,7 @@ export function progressMessage(emails, successfulOrgInvitations) {
   ]);
 }
 
-export function errorMessage(useLegacy, failedEmails, restart) {
+export function errorMessage(useLegacy, failedEmails, restart, goToInvitationsList) {
   const userString = failedEmails.length > 1 ? 'users' : 'user';
   let copy;
 
@@ -331,7 +331,7 @@ export function errorMessage(useLegacy, failedEmails, restart) {
         </h3>
         <p>
           They were either an existing user in the organization or a user that’s already been
-          invited. <a onClick={() => restart(failedEmails)}>Go back</a>.
+          invited. <a onClick={() => goToInvitationsList()}>View invitations</a>.
         </p>
       </React.Fragment>
     );
@@ -352,7 +352,7 @@ export function errorMessage(useLegacy, failedEmails, restart) {
   );
 }
 
-export function successMessage(successfulOrgInvitations, restart, goToList) {
+export function successMessage(successfulOrgInvitations, goToList) {
   const userString = successfulOrgInvitations.length > 1 ? 'users have' : 'user has';
 
   return h('', [
@@ -365,17 +365,9 @@ export function successMessage(successfulOrgInvitations, restart, goToList) {
         h(
           'a',
           {
-            onClick: () => restart()
-          },
-          ['Invite more users']
-        ),
-        ' or ',
-        h(
-          'a',
-          {
             onClick: goToList
           },
-          ['go back to the users list']
+          ['Go back to the users list']
         ),
         '.'
       ])

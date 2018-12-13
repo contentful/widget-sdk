@@ -79,6 +79,7 @@ export default function($scope) {
     toggleInvitationEmailOption,
     restart,
     goToList,
+    goToInvitationsList,
     submitInvitations
   };
 
@@ -311,6 +312,15 @@ export default function($scope) {
     rerender();
   }
 
+  /*
+    Navigate to invitations list
+   */
+  function goToInvitationsList() {
+    return go({
+      path: ['account', 'organizations', 'users', 'invitations']
+    });
+  }
+
   /**
    * Navigate to organization users list
    */
@@ -441,11 +451,15 @@ function render(state, actions) {
           },
           [
             match(state.status, {
-              [Success]: () =>
-                successMessage(state.successfulOrgInvitations, actions.restart, actions.goToList),
+              [Success]: () => successMessage(state.successfulOrgInvitations, actions.goToList),
               [Failure]: () =>
                 h('', [
-                  errorMessage(state.useLegacy, state.failedOrgInvitations, actions.restart),
+                  errorMessage(
+                    state.useLegacy,
+                    state.failedOrgInvitations,
+                    actions.restart,
+                    actions.goToInvitationsList
+                  ),
                   state.successfulOrgInvitations.length > 0 &&
                     successMessage(
                       state.successfulOrgInvitations,
