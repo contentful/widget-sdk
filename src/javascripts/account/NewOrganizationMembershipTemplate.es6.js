@@ -53,7 +53,7 @@ export function sidebar(
     h('.entity-sidebar', [
       hasInvitationLimit &&
         h('p', [
-          `You have ${invitationsRemaining > 0 ? invitationsRemaining : 0} ${pluralize(
+          `You have ${Math.max(0, invitationsRemaining)} ${pluralize(
             'invitations',
             invitationsRemaining
           )} left.`
@@ -134,10 +134,7 @@ function emailInputErrors({
 }) {
   const errors = [];
   if (metadata.invitationLimit) {
-    const remainingInvitations =
-      metadata.invitationLimit - metadata.invitationUsage > 0
-        ? metadata.invitationLimit - metadata.invitationUsage
-        : 0;
+    const remainingInvitations = Math.max(0, metadata.invitationLimit - metadata.invitationUsage);
 
     if (emails.length > remainingInvitations) {
       errors.push(`
