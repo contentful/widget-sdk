@@ -46,6 +46,13 @@ export default class InvitationsList extends React.Component {
     });
   }
 
+  getLinkToInviteUsersPage() {
+    return href({
+      path: ['account', 'organizations', 'users', 'new'],
+      params: { orgId: this.props.orgId }
+    });
+  }
+
   goToUserInvitationDetail = invitationId => () => {
     return go({
       path: ['account', 'organizations', 'users', 'invitation'],
@@ -111,6 +118,10 @@ export default class InvitationsList extends React.Component {
         <Workbench.Header>
           <Workbench.Title>{`Invited users (${invitations.length})`}</Workbench.Title>
           <TextLink href={this.getLinkToUsersList()}>View all users ({membershipsCount})</TextLink>
+
+          <Workbench.Header.Actions>
+            <Button href={this.getLinkToInviteUsersPage()}>Invite users</Button>
+          </Workbench.Header.Actions>
         </Workbench.Header>
         <Workbench.Content style={{ padding: '2.5em 2em' }}>
           <Table>
