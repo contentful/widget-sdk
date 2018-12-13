@@ -4,8 +4,9 @@ import _ from 'lodash';
 describe('entityEditor/Document/StringField', () => {
   beforeEach(function() {
     this.ShareJS = {};
+
     module('contentful/test', $provide => {
-      $provide.value('data/ShareJS/Utils', this.ShareJS);
+      $provide.constant('data/ShareJS/Utils', this.ShareJS);
     });
 
     this.StringField = this.$inject('entityEditor/Document/StringField');

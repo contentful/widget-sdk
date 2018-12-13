@@ -4,7 +4,7 @@ describe('data/userCache', () => {
   let userCache, fetchAll;
 
   beforeEach(function() {
-    module('cf.data', $provide => {
+    module('contentful/test', $provide => {
       $provide.value('data/CMA/FetchAll.es6', {
         fetchAll: (fetchAll = sinon.stub().resolves())
       });

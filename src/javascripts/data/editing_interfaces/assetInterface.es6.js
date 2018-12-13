@@ -1,38 +1,33 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
+import _ from 'lodash';
+import legacyClient from 'legacy-client';
 
-angular
-  .module('cf.data')
+registerFactory('data/editingInterfaces/asset', () => {
+  const assetFields = legacyClient.assetContentType.data.fields;
 
-  .factory('data/editingInterfaces/asset', [
-    'require',
-    require => {
-      const _ = require('lodash');
-      const assetFields = require('legacy-client').assetContentType.data.fields;
-
-      const widgets = _.forEach(
-        [
-          {
-            fieldId: 'title',
-            widgetId: 'singleLine'
-          },
-          {
-            fieldId: 'description',
-            widgetId: 'singleLine'
-          },
-          {
-            fieldId: 'file',
-            widgetId: 'fileEditor'
-          }
-        ],
-        assignField
-      );
-
-      return {
-        widgets: widgets
-      };
-
-      function assignField(widget) {
-        widget.field = _.find(assetFields, { id: widget.fieldId });
+  const widgets = _.forEach(
+    [
+      {
+        fieldId: 'title',
+        widgetId: 'singleLine'
+      },
+      {
+        fieldId: 'description',
+        widgetId: 'singleLine'
+      },
+      {
+        fieldId: 'file',
+        widgetId: 'fileEditor'
       }
-    }
-  ]);
+    ],
+    assignField
+  );
+
+  return {
+    widgets: widgets
+  };
+
+  function assignField(widget) {
+    widget.field = _.find(assetFields, { id: widget.fieldId });
+  }
+});
