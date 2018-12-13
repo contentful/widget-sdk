@@ -7,6 +7,7 @@ import { STATUS } from './WebhookHealth.es6';
 // consumer:
 // https://github.com/contentful/webhook_consumer/tree/master/lib/request/base-request/errors
 const ERROR_NAMES = {
+  AddressNotAvailableError: 'The destination address was not routable',
   AddressNotFoundError: 'The address could not be found',
   ConnectionRefusedError: 'The connection has been refused',
   ConnectionResetError: 'Connection reset',
