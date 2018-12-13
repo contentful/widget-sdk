@@ -183,7 +183,14 @@ describe('entity editor field integration', () => {
       expectShownLocales(el, ['en', 'de']);
     });
 
-    it('adds locales with error', function() {
+    it('adds locales with error on field with localization enabled', testShowsErrorLocales);
+
+    it('adds locales with error on field without localization', function() {
+      this.widget.field.localized = false;
+      testShowsErrorLocales.call(this);
+    });
+
+    function testShowsErrorLocales() {
       this.setLocales([
         { code: 'en' },
         { code: 'de', active: false },
@@ -199,7 +206,7 @@ describe('entity editor field integration', () => {
       this.$apply();
 
       expectShownLocales(el, ['en', 'de']);
-    });
+    }
 
     // TODO: Why is the `default: true` ignored here?
     xit('shows default locale as the first one', function() {
