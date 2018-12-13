@@ -67,9 +67,9 @@ export default class TeamList extends React.Component {
           <section style={{ padding: '1em 2em 2em' }}>
             <Table data-test-id="organization-teams-page">
               <TableHead>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Description</TableCell>
+                <TableRow data-test-id="team-details-row">
+                  <TableCell data-test-id="team-name">Name</TableCell>
+                  <TableCell data-test-id="team-description">Description</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>

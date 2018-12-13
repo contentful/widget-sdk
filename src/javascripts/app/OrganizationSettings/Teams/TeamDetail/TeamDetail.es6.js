@@ -5,7 +5,8 @@ import { getUserName } from 'app/OrganizationSettings/Users/UserUtils.es6';
 
 import {
   Team as TeamPropType,
-  TeamMembership as TeamMembershipsPropType
+  TeamMembership as TeamMembershipsPropType,
+  OrganizationMembership as OrganizationmembershipPropType
 } from 'app/OrganizationSettings/PropTypes.es6';
 
 import TeamMemberships from './TeamMemberships/TeamMemberships.es6';
@@ -14,11 +15,12 @@ import Workbench from 'app/common/Workbench.es6';
 export default class TeamDetail extends React.Component {
   static propTypes = {
     team: TeamPropType.isRequired,
-    teamMemberships: PropTypes.arrayOf(TeamMembershipsPropType).isRequired
+    teamMemberships: PropTypes.arrayOf(TeamMembershipsPropType).isRequired,
+    orgMemberships: PropTypes.arrayOf(OrganizationmembershipPropType).isRequired
   };
 
   render() {
-    const { team, teamMemberships } = this.props;
+    const { team, teamMemberships, orgMemberships } = this.props;
 
     return (
       <Workbench className="organization-users-page" testId="organization-team-page">
@@ -52,7 +54,11 @@ export default class TeamDetail extends React.Component {
               </section>
             </div>
             <div className="user-details__content">
-              <TeamMemberships initialTeamMemberships={teamMemberships} />
+              <TeamMemberships
+                team={team}
+                initialTeamMemberships={teamMemberships}
+                orgMemberships={orgMemberships}
+              />
             </div>
           </div>
         </Workbench.Content>

@@ -67,12 +67,19 @@ export default class TeamDetailRoute extends React.Component {
             }
 
             const [team, teamMemberships, orgMemberships] = data;
+            const nonPendingOrgMemberships = orgMemberships.filter(
+              ({
+                sys: {
+                  user: { firstName }
+                }
+              }) => firstName !== null
+            );
             return (
               <TeamDetail
                 orgId={orgId}
                 team={team}
                 teamMemberships={teamMemberships}
-                orgMemberships={orgMemberships}
+                orgMemberships={nonPendingOrgMemberships}
               />
             );
           }}

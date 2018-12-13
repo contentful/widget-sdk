@@ -72,6 +72,7 @@ window.libs = [
   ['lodash/fp', require('lodash/fp')],
   ['marked', require('marked-ast')._marked],
   ['marked-ast', require('marked-ast')],
+  ['path-parser', require('path-parser')],
   ['parse-github-url', require('parse-github-url')],
   ['pikaday', require('pikaday')],
   ['pluralize', require('pluralize')],

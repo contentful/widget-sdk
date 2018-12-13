@@ -8,3 +8,8 @@ export const getQuery = flow(
   getLocation,
   get('search')
 );
+
+export const getPath = flow(
+  getLocation,
+  get('pathname')
+);

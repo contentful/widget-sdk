@@ -61,6 +61,7 @@
     "nib": "^1.1.2",
     "node-html-encoder": "0.0.2",
     "parse-github-url": "^1.0.2",
+    "path-parser": "^4.2.0",
     "pegjs": "^0.10.0",
     "pikaday": "^1.7.0",
     "pluralize": "^7.0.0",
