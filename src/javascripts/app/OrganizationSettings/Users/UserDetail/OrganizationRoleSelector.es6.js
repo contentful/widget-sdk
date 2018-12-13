@@ -8,7 +8,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import { keyBy } from 'lodash';
 
-import { orgRoles } from './OrgRoles.es6';
+import { orgRoles } from 'utils/MembershipUtils.es6';
 
 export class OrganizationRoleSelector extends React.Component {
   static propTypes = {

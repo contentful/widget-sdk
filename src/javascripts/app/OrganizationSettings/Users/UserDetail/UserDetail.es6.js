@@ -7,7 +7,7 @@ import { go } from 'states/Navigator.es6';
 import { Button, Notification } from '@contentful/forma-36-react-components';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import UserCard from '../UserCard.es6';
-import { orgRoles } from './OrgRoles.es6';
+import { getRoleDescription } from 'utils/MembershipUtils.es6';
 import { getUserName } from '../UserUtils.es6';
 
 import {
@@ -72,11 +72,6 @@ class UserDetail extends React.Component {
     const dateString = this.state.membership.sys.lastActiveAt;
 
     return dateString ? moment(dateString, moment.ISO_8601).fromNow() : 'Not available';
-  }
-
-  getRoleDescription() {
-    const { membership } = this.state;
-    return orgRoles.find(role => role.value === membership.role).description;
   }
 
   toggleOrgRoleDropdown() {
@@ -215,7 +210,7 @@ class UserDetail extends React.Component {
                     />
                   </dd>
                 </dl>
-                <p style={{ marginTop: 10 }}>{this.getRoleDescription()}</p>
+                <p style={{ marginTop: 10 }}>{getRoleDescription(membership.role)}</p>
               </section>
               <Button buttonType="negative" size="small" onClick={() => this.removeMembership()}>
                 Remove membership

@@ -1,0 +1,41 @@
+.user-invitation-detail
+  &__section
+    border-bottom: 1px solid $colors.element-light
+    padding-bottom: 20px
+    margin-bottom: 20px
+
+  &__main
+    padding: 1em 2em 2em
+    display: flex
+
+  &__sidebar
+    margin-right: 25px
+    width: 400px
+
+  &__table
+    margin-bottom: 20
+    table-layout: fixed
+    flex: 1
+
+  &__space-invitations
+    flex: 1
+
+  &__role-description
+    margin-top: 10px
+
+  &__definition-list
+    &::after
+      content: ''
+      display: block
+      clear: both
+
+    dt
+      clear: left
+      float: left
+      font-weight: 600
+      margin-right: 10px
+    dd
+      float: left
+      margin-bottom: 10px
+      &:last-child
+        margin-bottom: 0

@@ -11,13 +11,13 @@ import {
   TextLink,
   Button
 } from '@contentful/forma-36-react-components';
-import { href } from 'states/Navigator.es6';
+import { href, go } from 'states/Navigator.es6';
 import {
   removeMembership,
   removeInvitation
 } from 'access_control/OrganizationMembershipRepository.es6';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
-import { getInvitedUsers } from './UserInvitationUtils.es6';
+import { getInvitedUsers } from '../UserInvitationUtils.es6';
 import { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 
 import Workbench from 'app/common/Workbench.es6';
@@ -42,6 +42,15 @@ export default class InvitationsList extends React.Component {
       params: { orgId: this.props.orgId }
     });
   }
+
+  goToUserInvitationDetail = invitationId => () => {
+    return go({
+      path: ['account', 'organizations', 'users', 'invitation'],
+      params: {
+        invitationId
+      }
+    });
+  };
 
   getInvitations = async () => {
     const { orgId } = this.props;
@@ -96,19 +105,28 @@ export default class InvitationsList extends React.Component {
             <TableBody>
               {sortedList.map(invitation => (
                 <TableRow key={invitation.id} extraClassNames="user-invitations-list__row">
-                  <TableCell>{invitation.email}</TableCell>
-                  <TableCell>{invitation.role}</TableCell>
-                  <TableCell>
-                    {moment(invitation.createdAt).format('MMM Do YYYY, hh:mm a')}
+                  <TableCell
+                    onClick={this.goToUserInvitationDetail(invitation.id)}
+                    extraClassNames="user-invitations-list__email">
+                    {invitation.email}
                   </TableCell>
+                  <TableCell>{invitation.role}</TableCell>
+                  <TableCell>{moment(invitation.createdAt).format('MMMM D, YYYY')}</TableCell>
                   <TableCell align="right" extraClassNames="user-invitations-list__buttons">
                     <div>
                       <Button
-                        buttonType="negative"
+                        buttonType="muted"
                         size="small"
                         onClick={this.removeInvitation(invitation)}
                         extraClassNames="user-invitations-list__button">
                         Remove
+                      </Button>
+                      <Button
+                        buttonType="muted"
+                        size="small"
+                        onClick={this.goToUserInvitationDetail(invitation.id)}
+                        extraClassNames="user-invitations-list__button">
+                        View
                       </Button>
                     </div>
                   </TableCell>

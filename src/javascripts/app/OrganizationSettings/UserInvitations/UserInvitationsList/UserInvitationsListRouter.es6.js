@@ -7,7 +7,7 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { getMemberships } from 'access_control/OrganizationMembershipRepository.es6';
 
 import UserInvitationsList from './UserInvitationsList.es6';
-import { membershipExistsParam } from './UserInvitationUtils.es6';
+import { membershipExistsParam } from '../UserInvitationUtils.es6';
 
 const InvitationListFetcher = createFetcherComponent(({ orgId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
