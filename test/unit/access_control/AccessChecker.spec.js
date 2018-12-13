@@ -2,7 +2,7 @@ import * as K from 'test/helpers/mocks/kefir';
 import _ from 'lodash';
 
 describe('Access Checker', () => {
-  let enforcements, OrganizationRoles, TokenStore, policyChecker, ac;
+  let enforcements, OrganizationRoles, TokenStore, policyChecker, ac, changeSpace;
   let getResStub,
     reasonsDeniedStub,
     broadcastStub,
@@ -91,6 +91,21 @@ describe('Access Checker', () => {
     };
 
     ac = this.$inject('access_control/AccessChecker');
+
+    changeSpace = function changeSpace({ hasFeature, isSpaceAdmin, userRoleName }) {
+      ac.setSpace({
+        sys: {
+          id: '1234'
+        },
+        organization: {
+          sys: { id: 'orgid' },
+          subscriptionPlan: { limits: { features: { customRoles: hasFeature } } }
+        },
+        spaceMembership: { admin: isSpaceAdmin, roles: [{ name: userRoleName }] }
+      });
+
+      feature.enabled = hasFeature;
+    };
   });
 
   describe('Initialization', () => {
@@ -264,6 +279,22 @@ describe('Access Checker', () => {
         test('asset', true);
         sinon.assert.calledOnce(policyChecker.canAccessEntries);
         sinon.assert.calledOnce(policyChecker.canAccessAssets);
+      });
+      it('should return "true" for spaceHome if user is admin', () => {
+        changeSpace({ hasFeature: true, isSpaceAdmin: true });
+        expect(ac.getSectionVisibility().spaceHome).toBe(true);
+      });
+      it('should return "true" for spaceHome if user is author', () => {
+        changeSpace({ hasFeature: true, isSpaceAdmin: false, userRoleName: 'Author' });
+        expect(ac.getSectionVisibility().spaceHome).toBe(true);
+      });
+      it('should return "true" for spaceHome if user is editor', () => {
+        changeSpace({ hasFeature: true, isSpaceAdmin: false, userRoleName: 'Editor' });
+        expect(ac.getSectionVisibility().spaceHome).toBe(true);
+      });
+      it('should return "false" for spaceHome if user is not an admin, editor or author', () => {
+        changeSpace({ hasFeature: true, isSpaceAdmin: false });
+        expect(ac.getSectionVisibility().spaceHome).toBe(false);
       });
     });
 
@@ -440,34 +471,19 @@ describe('Access Checker', () => {
     });
 
     describe('#canModifyRoles', () => {
-      function changeSpace(hasFeature, isSpaceAdmin) {
-        ac.setSpace({
-          sys: {
-            id: '1234'
-          },
-          organization: {
-            sys: { id: 'orgid' },
-            subscriptionPlan: { limits: { features: { customRoles: hasFeature } } }
-          },
-          spaceMembership: { admin: isSpaceAdmin }
-        });
-
-        feature.enabled = hasFeature;
-      }
-
       it('returns true when has feature and is admin of space, false otherwise', async () => {
         OrganizationRoles.setUser({ organizationMemberships: [] });
-        changeSpace(false, true);
+        changeSpace({ hasFeature: false, isSpaceAdmin: true });
         expect(await ac.canModifyRoles()).toBe(false);
-        changeSpace(true, false);
+        changeSpace({ hasFeature: true, isSpaceAdmin: false });
         expect(await ac.canModifyRoles()).toBe(false);
-        changeSpace(true, true);
+        changeSpace({ hasFeature: true, isSpaceAdmin: true });
         expect(await ac.canModifyRoles()).toBe(true);
       });
 
       it('should handle a null or undefined feature', function*() {
         OrganizationRoles.setUser({ organizationMemberships: [] });
-        changeSpace(false, true); // User is space admin
+        changeSpace({ hasFeature: false, isSpaceAdmin: true }); // User is space admin
 
         // Set the feature to null
         feature = null;
@@ -488,7 +504,7 @@ describe('Access Checker', () => {
         };
 
         OrganizationRoles.setUser(user);
-        changeSpace(true, false);
+        changeSpace({ hasFeature: true, isSpaceAdmin: false });
 
         expect(ac.canModifyUsers()).toBe(false);
         t('org1id', true);
