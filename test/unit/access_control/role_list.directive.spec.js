@@ -1,12 +1,19 @@
 describe('Role List Directive', () => {
   beforeEach(function() {
     this.getCurrentVariation = sinon.stub().resolves(false);
+    this.stubs = {
+      isOwnerOrAdmin: sinon.stub().returns(false)
+    };
 
     module('contentful/test', $provide => {
       $provide.value('utils/LaunchDarkly', {
         getCurrentVariation: this.getCurrentVariation
       });
       $provide.value('$state', { href: sinon.stub(), current: {} });
+
+      $provide.value('services/OrganizationRoles.es6', {
+        isOwnerOrAdmin: this.stubs.isOwnerOrAdmin
+      });
     });
     this.basicErrorHandler = this.$inject('ReloadNotification').basicErrorHandler;
 
@@ -58,9 +65,6 @@ describe('Role List Directive', () => {
       reset: this.reset,
       getMembershipCounts: sinon.stub().returns({})
     });
-
-    this.OrganizationRoles = this.$inject('services/OrganizationRoles.es6');
-    this.OrganizationRoles.isOwnerOrAdmin = sinon.stub().returns(false);
 
     this.organization = {
       usage: {
@@ -201,7 +205,7 @@ describe('Role List Directive', () => {
         it('should show an upgrade button if the user is an org admin/owner', function() {
           let text;
 
-          this.OrganizationRoles.isOwnerOrAdmin.returns(true);
+          this.stubs.isOwnerOrAdmin.returns(true);
 
           this.toggleLegacy(true);
           this.compileElement();
@@ -227,7 +231,7 @@ describe('Role List Directive', () => {
         it('should tell the user to contact the org admin/owner if only a member', function() {
           let text;
 
-          this.OrganizationRoles.isOwnerOrAdmin.returns(false);
+          this.stubs.isOwnerOrAdmin.returns(false);
 
           this.toggleLegacy(true);
           this.compileElement();

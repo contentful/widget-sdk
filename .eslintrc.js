@@ -118,6 +118,9 @@ module.exports = {
       rules: {
         'rulesdir/relative-imports': 'error',
         'rulesdir/restrict-angular-require': 'error'
+      },
+      globals: {
+        JST: false
       }
     }
   ]

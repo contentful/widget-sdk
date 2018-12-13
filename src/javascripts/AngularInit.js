@@ -13,7 +13,8 @@ angular
         directive: $compileProvider.directive,
         filter: $filterProvider.register,
         factory: $provide.factory,
-        service: $provide.service
+        service: $provide.service,
+        constant: $provide.constant
       };
     }
   ])
@@ -26,5 +27,13 @@ angular
 
       ngRequire('components/client/ClientController.es6');
       ngRequire('components/shared/space-wizard/SpaceWizardDirective.es6');
+
+      ngRequire('access_control/PolicyBuilder.es6');
+      ngRequire('access_control/RoleListDirective.es6');
+      ngRequire('access_control/RoleRemover.es6');
+      ngRequire('access_control/UserInvitationNoteDirectives.es6');
+      ngRequire('access_control/UserListDirective.es6');
+      ngRequire('access_control/UserListHandler.es6');
+      ngRequire('access_control/UserSpaceInvitationController.es6');
     }
   ]);

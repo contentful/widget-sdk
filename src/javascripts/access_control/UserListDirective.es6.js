@@ -1,12 +1,14 @@
-'use strict';
+import { registerDirective, registerController, registerFactory } from 'NgRegistry.es6';
+import _ from 'lodash';
+import template from 'access_control/templates/UserList.es6';
 
-angular.module('contentful').directive('cfUserList', [
-  'require',
-  require => {
-    const _ = require('lodash');
-    const popRoleId = require('UserListController/jumpToRole').popRoleId;
-    const $timeout = require('$timeout');
-    const getStore = require('TheStore').getStore;
+registerDirective('cfUserList', [
+  'UserListController/jumpToRole',
+  '$timeout',
+  'TheStore',
+  (jumpToRole, $timeout, TheStore) => {
+    const { popRoleId } = jumpToRole;
+    const { getStore } = TheStore;
     const store = getStore().forKey('userListView');
 
     const VIEW_BY_NAME = 'name';
@@ -17,9 +19,9 @@ angular.module('contentful').directive('cfUserList', [
 
     return {
       restrict: 'E',
-      template: require('access_control/templates/UserList.es6').default(),
+      template: template(),
       controller: 'UserListController',
-      link: link
+      link
     };
 
     function saveView(view) {
@@ -50,17 +52,24 @@ angular.module('contentful').directive('cfUserList', [
   }
 ]);
 
-angular.module('contentful').controller('UserListController', [
+registerController('UserListController', [
   '$scope',
-  'require',
-  ($scope, require) => {
-    const ReloadNotification = require('ReloadNotification');
-    const spaceContext = require('spaceContext');
-    const userListHandler = require('UserListHandler').create();
-    const accessChecker = require('access_control/AccessChecker');
-    const TokenStore = require('services/TokenStore.es6');
-    const UserListActions = require('access_control/UserListActions.es6');
-
+  'ReloadNotification',
+  'spaceContext',
+  'UserListHandler',
+  'access_control/AccessChecker',
+  'services/TokenStore.es6',
+  'access_control/UserListActions.es6',
+  (
+    $scope,
+    ReloadNotification,
+    spaceContext,
+    UserListHandler,
+    accessChecker,
+    TokenStore,
+    UserListActions
+  ) => {
+    const userListHandler = UserListHandler.create();
     const actions = UserListActions.create(spaceContext, userListHandler, TokenStore);
 
     $scope.userQuota = { used: 1 };
@@ -115,11 +124,10 @@ angular.module('contentful').controller('UserListController', [
   }
 ]);
 
-angular.module('contentful').factory('UserListController/jumpToRole', [
-  'require',
-  require => {
-    const $state = require('$state');
-    const spaceContext = require('spaceContext');
+registerFactory('UserListController/jumpToRole', [
+  '$state',
+  'spaceContext',
+  ($state, spaceContext) => {
     let targetRoleId = null;
 
     jump.popRoleId = popRoleId;

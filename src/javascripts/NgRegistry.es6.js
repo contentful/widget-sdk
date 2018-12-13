@@ -14,5 +14,7 @@ export const registerDirective = register('directive');
 export const registerFilter = register('filter');
 export const registerFactory = register('factory');
 export const registerService = register('service');
+export const registerConstant = register('constant');
+
 export const getModule = initModule.getModule;
 export const getModules = (...modules) => modules.map(getModule);

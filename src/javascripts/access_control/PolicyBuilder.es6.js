@@ -1,6 +1,9 @@
-'use strict';
+import { registerConstant, registerFactory } from 'NgRegistry.es6';
+import _ from 'lodash';
+import * as random from 'utils/Random.es6';
+import { capitalize } from 'utils/StringUtils.es6';
 
-angular.module('contentful').constant('PolicyBuilder/CONFIG', {
+registerConstant('PolicyBuilder/CONFIG', {
   ALL_FIELDS: '__cf_internal_all_fields__',
   ALL_LOCALES: '__cf_internal_all_locales__',
   ALL_CTS: '__cf_internal_all_cts__',
@@ -9,21 +12,23 @@ angular.module('contentful').constant('PolicyBuilder/CONFIG', {
   PATH_SEPARATOR: '.'
 });
 
-angular.module('contentful').factory('PolicyBuilder', [
-  'require',
-  require => ({
-    toInternal: require('PolicyBuilder/toInternal'),
-    toExternal: require('PolicyBuilder/toExternal'),
-    removeOutdatedRules: require('PolicyBuilder/removeOutdatedRules')
-  })
+registerFactory('PolicyBuilder', [
+  'PolicyBuilder/toInternal',
+  'PolicyBuilder/toExternal',
+  'PolicyBuilder/removeOutdatedRules',
+  (toInternal, toExternal, removeOutdatedRules) => {
+    return {
+      toInternal,
+      toExternal,
+      removeOutdatedRules
+    };
+  }
 ]);
 
-angular.module('contentful').factory('PolicyBuilder/defaultRule', [
-  'require',
-  require => {
-    const random = require('utils/Random.es6');
-    const _ = require('lodash');
-    const ALL_CTS = require('PolicyBuilder/CONFIG').ALL_CTS;
+registerFactory('PolicyBuilder/defaultRule', [
+  'PolicyBuilder/CONFIG',
+  PolicyBuilderConfig => {
+    const { ALL_CTS } = PolicyBuilderConfig;
 
     const DEFAULT_RULE = {
       action: 'all',
@@ -37,8 +42,8 @@ angular.module('contentful').factory('PolicyBuilder/defaultRule', [
     };
 
     return {
-      getDefaultRuleFor: getDefaultRuleFor,
-      getDefaultRuleGetterFor: getDefaultRuleGetterFor
+      getDefaultRuleFor,
+      getDefaultRuleGetterFor
     };
 
     function getDefaultRuleGetterFor(entity) {
@@ -47,7 +52,7 @@ angular.module('contentful').factory('PolicyBuilder/defaultRule', [
 
     function getDefaultRuleFor(entity) {
       entity = entity.toLowerCase();
-      const meta = { id: random.id(), entity: entity };
+      const meta = { id: random.id(), entity };
       const base = _.extend(meta, DEFAULT_RULE);
 
       if (entity === 'entry') {
@@ -59,12 +64,11 @@ angular.module('contentful').factory('PolicyBuilder/defaultRule', [
   }
 ]);
 
-angular.module('contentful').factory('PolicyBuilder/toInternal', [
-  'require',
-  require => {
-    const CONFIG = require('PolicyBuilder/CONFIG');
-    const getDefaultRuleFor = require('PolicyBuilder/defaultRule').getDefaultRuleFor;
-    const _ = require('lodash');
+registerFactory('PolicyBuilder/toInternal', [
+  'PolicyBuilder/CONFIG',
+  'PolicyBuilder/defaultRule',
+  (CONFIG, DefaultRule) => {
+    const { getDefaultRuleFor } = DefaultRule;
 
     return function toInternal(external) {
       return _.extend(
@@ -90,7 +94,7 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', [
       const extension = {
         entries: { allowed: [], denied: [] },
         assets: { allowed: [], denied: [] },
-        policyString: policyString,
+        policyString,
         uiCompatible: true
       };
 
@@ -122,7 +126,7 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', [
       const rule = createRule(policy);
 
       return _.extend(policy, {
-        rule: rule,
+        rule,
         entityCollection: { entry: 'entries', asset: 'assets' }[(rule || {}).entity]
       });
     }
@@ -242,7 +246,7 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', [
       );
 
       return {
-        index: index,
+        index,
         value: index > -1 ? cs[index].paths[0].doc.split(CONFIG.PATH_SEPARATOR) : null
       };
     }
@@ -253,7 +257,7 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', [
 
     function searchResult(cs, index) {
       return {
-        index: index,
+        index,
         value: index > -1 ? cs[index].equals[1] : null
       };
     }
@@ -272,13 +276,9 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', [
   }
 ]);
 
-angular.module('contentful').factory('PolicyBuilder/toExternal', [
-  'require',
-  require => {
-    const capitalize = require('utils/StringUtils.es6').capitalize;
-    const CONFIG = require('PolicyBuilder/CONFIG');
-    const _ = require('lodash');
-
+registerFactory('PolicyBuilder/toExternal', [
+  'PolicyBuilder/CONFIG',
+  CONFIG => {
     return function toExternal(internal) {
       return {
         sys: _.pick(internal, ['id', 'version']),
@@ -324,7 +324,7 @@ angular.module('contentful').factory('PolicyBuilder/toExternal', [
 
     function prepareCollection(collection, entity, effect) {
       return _.map(collection, source => ({
-        source: _.extend({ effect: effect, entity: entity }, source),
+        source: _.extend({ effect, entity }, source),
         result: {}
       }));
     }
@@ -412,5 +412,83 @@ angular.module('contentful').factory('PolicyBuilder/toExternal', [
     function paths(segments) {
       return { paths: [{ doc: segments.join(CONFIG.PATH_SEPARATOR) }] };
     }
+  }
+]);
+
+registerFactory('PolicyBuilder/removeOutdatedRules', [
+  'PolicyBuilder/CONFIG',
+  CONFIG => {
+    const PATHS = ['entries.allowed', 'entries.denied', 'assets.allowed', 'assets.denied'];
+
+    return function removeOutdatedRules(internal, contentTypes, locales) {
+      const filtered = filterPolicies(internal);
+
+      if (countPolicies(internal) !== countPolicies(filtered)) {
+        _.extend(internal, filtered);
+        return true;
+      }
+
+      return false;
+
+      function filterPolicies(internal) {
+        return _.transform(
+          PATHS,
+          (acc, path) => {
+            const collection = _.get(internal, path, []);
+            const filtered = filterPolicyCollection(collection);
+            _.set(acc, path, filtered);
+          },
+          {}
+        );
+      }
+
+      function countPolicies(wrapper) {
+        return _.reduce(PATHS, (acc, path) => acc + _.get(wrapper, path, []).length, 0);
+      }
+
+      function filterPolicyCollection(collection) {
+        return _.filter(
+          collection,
+          p => !isMissingContentType(p) && !isMissingField(p) && !isMissingLocale(p)
+        );
+      }
+
+      function isMissingContentType(p) {
+        return isSpecific(p.contentType, CONFIG.ALL_CTS) && !hasContentType(p.contentType);
+      }
+
+      function isMissingField(p) {
+        return (
+          !!p.isPath && isSpecific(p.field, CONFIG.ALL_FIELDS) && !hasField(p.contentType, p.field)
+        );
+      }
+
+      function isMissingLocale(p) {
+        return !!p.isPath && isSpecific(p.locale, CONFIG.ALL_LOCALES) && !hasLocale(p.locale);
+      }
+
+      function isSpecific(value, allValue) {
+        return _.isString(value) && value !== allValue;
+      }
+
+      function hasContentType(ctId) {
+        return _.isObject(findCt(ctId));
+      }
+
+      function hasField(ctId, fieldId) {
+        const ct = findCt(ctId);
+        const fields = _.get(ct, 'fields', []);
+        const field = _.find(fields, { apiName: fieldId }) || _.find(fields, { id: fieldId });
+        return _.isObject(field);
+      }
+
+      function hasLocale(localeCode) {
+        return _.isObject(_.find(locales, { code: localeCode }));
+      }
+
+      function findCt(ctId) {
+        return _.find(contentTypes, { sys: { id: ctId } });
+      }
+    };
   }
 ]);

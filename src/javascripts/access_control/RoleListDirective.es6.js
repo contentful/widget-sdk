@@ -1,35 +1,47 @@
-'use strict';
+import { registerDirective, registerController } from 'NgRegistry.es6';
+import _ from 'lodash';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 
-angular.module('contentful').directive('cfRoleList', () => ({
+registerDirective('cfRoleList', () => ({
   restrict: 'E',
   template: JST['role_list'](),
   controller: 'RoleListController'
 }));
 
-angular.module('contentful').controller('RoleListController', [
+registerController('RoleListController', [
   '$scope',
-  'require',
-  ($scope, require) => {
-    const _ = require('lodash');
-    const $state = require('$state');
-    const $q = require('$q');
-    const ReloadNotification = require('ReloadNotification');
-    const listHandler = require('UserListHandler').create();
-    const createRoleRemover = require('createRoleRemover');
-    const accessChecker = require('access_control/AccessChecker');
-    const jumpToRoleMembers = require('UserListController/jumpToRole');
-    const spaceContext = require('spaceContext');
-    const ADMIN_ROLE_ID = require('access_control/SpaceMembershipRepository.es6').ADMIN_ROLE_ID;
-    const ResourceUtils = require('utils/ResourceUtils.es6');
-    const TheAccountView = require('TheAccountView');
-    const isOwnerOrAdmin = require('services/OrganizationRoles.es6').isOwnerOrAdmin;
-    const AccessChecker = require('access_control/AccessChecker');
-
+  '$state',
+  '$q',
+  'ReloadNotification',
+  'UserListHandler',
+  'createRoleRemover',
+  'access_control/AccessChecker',
+  'UserListController/jumpToRole',
+  'spaceContext',
+  'TheAccountView',
+  'access_control/SpaceMembershipRepository.es6',
+  'utils/ResourceUtils.es6',
+  (
+    $scope,
+    $state,
+    $q,
+    ReloadNotification,
+    UserListHandler,
+    createRoleRemover,
+    accessChecker,
+    jumpToRoleMembers,
+    spaceContext,
+    TheAccountView,
+    SpaceMembershipRepository,
+    ResourceUtils
+  ) => {
+    const listHandler = UserListHandler.create();
+    const { ADMIN_ROLE_ID } = SpaceMembershipRepository;
     const organization = spaceContext.organization;
 
     $scope.loading = true;
     $q.all({
-      canModifyRoles: AccessChecker.canModifyRoles(),
+      canModifyRoles: accessChecker.canModifyRoles(),
       useLegacy: ResourceUtils.useLegacy(organization)
     })
       .then(result => {

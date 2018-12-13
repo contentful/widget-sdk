@@ -1,15 +1,15 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
+import _ from 'lodash';
+import RoleRepository from 'access_control/RoleRepository.es6';
 
-angular.module('contentful').factory('UserListHandler', [
-  'require',
-  require => {
-    const _ = require('lodash');
-    const $q = require('$q');
-    const spaceContext = require('spaceContext');
-    const RoleRepository = require('access_control/RoleRepository.es6').default;
-    const SpaceMembershipRepository = require('access_control/SpaceMembershipRepository.es6');
-    const fetchAll = require('data/CMA/FetchAll.es6').fetchAll;
-    const createResourceService = require('services/ResourceService.es6').default;
+registerFactory('UserListHandler', [
+  '$q',
+  'spaceContext',
+  'access_control/SpaceMembershipRepository.es6',
+  'data/CMA/FetchAll.es6',
+  'services/ResourceService.es6',
+  ($q, spaceContext, SpaceMembershipRepository, FetchAll, { default: createResourceService }) => {
+    const { fetchAll } = FetchAll;
 
     const ADMIN_ROLE_ID = SpaceMembershipRepository.ADMIN_ROLE_ID;
     const ADMIN_ROLE_NAME = 'Administrator';
@@ -19,7 +19,7 @@ angular.module('contentful').factory('UserListHandler', [
     // `GET /spaces/:id/users` endpoint returns a max of 100 items
     const PER_PAGE = 100;
 
-    return { create: create };
+    return { create };
 
     function create() {
       let membershipCounts = {};
@@ -30,7 +30,7 @@ angular.module('contentful').factory('UserListHandler', [
       let userRolesMap = {};
 
       return {
-        reset: reset,
+        reset,
         getMembershipCounts: function() {
           return membershipCounts;
         },
@@ -40,11 +40,11 @@ angular.module('contentful').factory('UserListHandler', [
         getUserIds: function() {
           return users.map(user => user.id);
         },
-        getGroupedUsers: getGroupedUsers,
-        getUsersByRole: getUsersByRole,
-        getRoleOptions: getRoleOptions,
-        getRoleOptionsBut: getRoleOptionsBut,
-        isLastAdmin: isLastAdmin
+        getGroupedUsers,
+        getUsersByRole,
+        getRoleOptions,
+        getRoleOptionsBut,
+        isLastAdmin
       };
 
       function reset() {
@@ -107,7 +107,7 @@ angular.module('contentful').factory('UserListHandler', [
             const id = user.sys.id;
 
             return {
-              id: id,
+              id,
               membership: membershipMap[id],
               isAdmin: adminMap[id],
               roles: userRolesMap[id] || [],
@@ -159,8 +159,8 @@ angular.module('contentful').factory('UserListHandler', [
       function getRoleOptions() {
         return [ADMIN_OPT].concat(
           _.map(roleNameMap, (name, id) => ({
-            id: id,
-            name: name
+            id,
+            name
           }))
         );
       }
