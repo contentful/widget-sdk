@@ -144,10 +144,15 @@ class UsersList extends React.Component {
   // as a route param.
   // This should be changed after `include` is implemented in the backend
   // so that we can get the linked membership from the user endpoint response
-  static getLinkToUser(user) {
+  getLinkToUser(user) {
+    const { orgId } = this.props;
+
     return href({
       path: ['account', 'organizations', 'users', 'detail'],
-      params: { userId: user.sys.id }
+      params: {
+        orgId,
+        userId: user.sys.id
+      }
     });
   }
 
@@ -277,7 +282,7 @@ class UsersList extends React.Component {
                         className="membership-list__item"
                         data-test-id="organization-membership-list-row">
                         <TableCell>
-                          <a href={UsersList.getLinkToUser(membership)}>
+                          <a href={this.getLinkToUser(membership)}>
                             <UserCard user={membership.sys.user} />
                           </a>
                         </TableCell>
@@ -295,7 +300,7 @@ class UsersList extends React.Component {
                             <Button
                               buttonType="muted"
                               size="small"
-                              href={UsersList.getLinkToUser(membership)}
+                              href={this.getLinkToUser(membership)}
                               extraClassNames="membership-list__item__menu__button">
                               Edit
                             </Button>
