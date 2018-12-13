@@ -14,7 +14,8 @@ angular
         filter: $filterProvider.register,
         factory: $provide.factory,
         service: $provide.service,
-        constant: $provide.constant
+        constant: $provide.constant,
+        provider: $provide.provider
       };
     }
   ])
@@ -49,5 +50,10 @@ angular
       ngRequire('ui/inputUpdater.es6');
       ngRequire('ui/loader.es6');
       ngRequire('ui/sortable.es6');
+
+      // forms (cf.forms)
+      ngRequire('forms.es6');
+      ngRequire('forms/errors.es6');
+      ngRequire('forms/validation.es6');
     }
   ]);

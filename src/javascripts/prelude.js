@@ -16,7 +16,6 @@
  */
 angular.module('contentful/environment', []);
 angular.module('contentful/init', ['cf.utils']);
-angular.module('cf.forms', ['cf.utils']);
 /**
  * @ngdoc module
  * @name cf.data
@@ -38,7 +37,6 @@ angular.module('contentful', [
   'contentful/environment',
   'cf.es6',
   'cf.app',
-  'cf.forms',
   'cf.utils',
   'cf.data',
   'angularLoad',

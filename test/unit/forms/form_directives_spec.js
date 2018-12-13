@@ -1,7 +1,7 @@
 'use strict';
 
 describe('cfOnSubmit', () => {
-  beforeEach(module('cf.forms'));
+  beforeEach(module('contentful/test'));
 
   beforeEach(function() {
     const $compile = this.$inject('$compile');
@@ -29,7 +29,7 @@ describe('cfOnSubmit', () => {
 });
 
 describe('cfFormSubmit', () => {
-  beforeEach(module('cf.forms'));
+  beforeEach(module('contentful/test'));
 
   beforeEach(function() {
     const $compile = this.$inject('$compile');

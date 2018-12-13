@@ -1,7 +1,7 @@
 'use strict';
 
 describe('ngModel directive', () => {
-  beforeEach(module('cf.forms'));
+  beforeEach(module('contentful/test'));
 
   describe('aria-invalid attribute', () => {
     it('is link to model errors', function() {

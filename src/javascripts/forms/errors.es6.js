@@ -1,208 +1,191 @@
-'use strict';
+import { registerDirective, registerController, registerProvider } from 'NgRegistry.es6';
+import _ from 'lodash';
 
-angular
-  .module('cf.forms')
+/**
+ * @ngdoc directive
+ * @module cf.forms
+ * @name cfFieldErrorFor
+ * @usage[jade]
+ * form
+ *   input(name="myfield")
+ *   span(cf-field-error-for="myfield")
+ *
+ * @description
+ * Show the first error message for the given field.
+ *
+ * Uses the `FieldErrorController` to provide the error messages. The
+ * element is hidden when there are no messages.
+ *
+ * @param {string} fieldName
+ * The name of the form field we want to show errors for
+ */
+registerDirective('cfFieldErrorFor', () => ({
+  scope: {
+    fieldName: '@cfFieldErrorFor'
+  },
 
-  /**
-   * @ngdoc directive
-   * @module cf.forms
-   * @name cfFieldErrorFor
-   * @usage[jade]
-   * form
-   *   input(name="myfield")
-   *   span(cf-field-error-for="myfield")
-   *
-   * @description
-   * Show the first error message for the given field.
-   *
-   * Uses the `FieldErrorController` to provide the error messages. The
-   * element is hidden when there are no messages.
-   *
-   * @param {string} fieldName
-   * The name of the form field we want to show errors for
-   */
-  .directive('cfFieldErrorFor', [
-    () => ({
-      scope: {
-        fieldName: '@cfFieldErrorFor'
-      },
+  require: '^form',
+  template: '{{errors.messages[0]}}',
+  controllerAs: 'errors',
+  controller: 'FieldErrorController',
 
-      require: '^form',
-      template: '{{errors.messages[0]}}',
-      controllerAs: 'errors',
-      controller: 'FieldErrorController',
+  link: function(scope, elem, _attrs, form) {
+    scope.errors.link(form, scope.fieldName);
+    scope.$watch('errors.exist && !errors.hide', hasErrors => {
+      elem.toggleClass('ng-hide', !hasErrors);
+    });
+  }
+}));
 
-      link: function(scope, elem, _attrs, form) {
-        scope.errors.link(form, scope.fieldName);
-        scope.$watch('errors.exist && !errors.hide', hasErrors => {
-          elem.toggleClass('ng-hide', !hasErrors);
-        });
+registerDirective('cfFieldInvalidClass', () => ({
+  restrict: 'A',
+  scope: true,
+  require: '^form',
+  controllerAs: 'errors',
+  controller: 'FieldErrorController',
+
+  link: function(scope, elem, attrs, form) {
+    scope.errors.link(form, attrs.cfFieldInvalidClass);
+    scope.$watch('errors.exist && !errors.hide', hasErrors => {
+      elem.toggleClass('x--invalid', hasErrors);
+    });
+  }
+}));
+
+/**
+ * @ngdoc directive
+ * @module cf.forms
+ * @name cfFieldErrorsFor
+ * @usage[jade]
+ * form
+ *   input(name="myfield")
+ *   ul(cf-field-errors-for="myfield")
+ *
+ * @description
+ * Show all the error messages for the given field in `<li>` tags.
+ *
+ * Uses the `FieldErrorController` to provide the error messages. The
+ * element is hidden when there are no messages.
+ *
+ * @param {string} fieldName
+ * The name of the form field we want to show errors for
+ */
+registerDirective('cfFieldErrorsFor', () => ({
+  scope: {
+    fieldName: '@cfFieldErrorsFor'
+  },
+
+  require: '^form',
+  template: '<li ng-repeat="m in errors.messages">{{m}}</li>',
+  controllerAs: 'errors',
+  controller: 'FieldErrorController',
+
+  link: function(scope, elem, _attrs, form) {
+    scope.errors.link(form, scope.fieldName);
+    scope.$watch('errors.exist && !errors.hide', hasErrors => {
+      elem.toggleClass('ng-hide', !hasErrors);
+    });
+  }
+}));
+
+/**
+ * @ngdoc type
+ * @module cf.forms
+ * @name FieldErrorController
+ * @usage[js]
+ * $scope.fieldErrorController.link(formCtrl, fieldName)
+ *
+ * @description
+ * Provides error messages for a given field.
+ *
+ * @property {string[]} messages
+ *   A list of error messages for the form field the controller is
+ *   attached to
+ * @property {boolean} exist
+ *   True if and only if there are errors for the form field the
+ *   controller is attached to.
+ * @property {boolean} hide
+ *   Corresponds to the form controllers `hideErrors` property.
+ */
+registerController('FieldErrorController', [
+  '$scope',
+  'fieldErrorMessage',
+  function($scope, fieldErrorMessage) {
+    const controller = this;
+    let unwatchErrors, unwatchHide;
+
+    /**
+     * @ngdoc method
+     * @name FieldErrorController#link
+     * @description
+     * Set up the controller to provide error messages for a given form
+     * control.
+     *
+     * Looks at a form controls `$error` property to determine the
+     * errors. Builds the error messages with the `fieldErrorMessage`
+     * service and from the field controller’s `errorDetails` property
+     *
+     * @param {FormController} form
+     * @param {string} formCtrlName
+     */
+    controller.link = (form, ctrlName) => {
+      if (!ctrlName) {
+        throw new TypeError('FieldErrorController#link(): argument required');
       }
-    })
-  ])
 
-  .directive('cfFieldInvalidClass', [
-    () => ({
-      restrict: 'A',
-      scope: true,
-      require: '^form',
-      controllerAs: 'errors',
-      controller: 'FieldErrorController',
+      if (unwatchErrors) unwatchErrors();
+      if (unwatchHide) unwatchHide();
 
-      link: function(scope, elem, attrs, form) {
-        scope.errors.link(form, attrs.cfFieldInvalidClass);
-        scope.$watch('errors.exist && !errors.hide', hasErrors => {
-          elem.toggleClass('x--invalid', hasErrors);
+      unwatchErrors = $scope.$watchCollection(ngModelError, errors => {
+        const errorDetails = (form[ctrlName] || {}).errorDetails || {};
+
+        controller.messages = _.map(_.keys(errors), error => {
+          const details = errorDetails[error] || {};
+          return details.message || fieldErrorMessage(error, details);
         });
-      }
-    })
-  ])
 
-  /**
-   * @ngdoc directive
-   * @module cf.forms
-   * @name cfFieldErrorsFor
-   * @usage[jade]
-   * form
-   *   input(name="myfield")
-   *   ul(cf-field-errors-for="myfield")
-   *
-   * @description
-   * Show all the error messages for the given field in `<li>` tags.
-   *
-   * Uses the `FieldErrorController` to provide the error messages. The
-   * element is hidden when there are no messages.
-   *
-   * @param {string} fieldName
-   * The name of the form field we want to show errors for
-   */
-  .directive('cfFieldErrorsFor', [
-    () => ({
-      scope: {
-        fieldName: '@cfFieldErrorsFor'
-      },
+        controller.exist = controller.messages.length > 0;
+      });
 
-      require: '^form',
-      template: '<li ng-repeat="m in errors.messages">{{m}}</li>',
-      controllerAs: 'errors',
-      controller: 'FieldErrorController',
-
-      link: function(scope, elem, _attrs, form) {
-        scope.errors.link(form, scope.fieldName);
-        scope.$watch('errors.exist && !errors.hide', hasErrors => {
-          elem.toggleClass('ng-hide', !hasErrors);
-        });
-      }
-    })
-  ])
-
-  /**
-   * @ngdoc type
-   * @module cf.forms
-   * @name FieldErrorController
-   * @usage[js]
-   * $scope.fieldErrorController.link(formCtrl, fieldName)
-   *
-   * @description
-   * Provides error messages for a given field.
-   *
-   * @property {string[]} messages
-   *   A list of error messages for the form field the controller is
-   *   attached to
-   * @property {boolean} exist
-   *   True if and only if there are errors for the form field the
-   *   controller is attached to.
-   * @property {boolean} hide
-   *   Corresponds to the form controllers `hideErrors` property.
-   */
-  .controller('FieldErrorController', [
-    'require',
-    '$scope',
-    '$injector',
-    function(require, $scope, $injector) {
-      const _ = require('lodash');
-      const fieldErrorMessage = $injector.get('fieldErrorMessage');
-      const controller = this;
-      let unwatchErrors, unwatchHide;
-
-      /**
-       * @ngdoc method
-       * @name FieldErrorController#link
-       * @description
-       * Set up the controller to provide error messages for a given form
-       * control.
-       *
-       * Looks at a form controls `$error` property to determine the
-       * errors. Builds the error messages with the `fieldErrorMessage`
-       * service and from the field controller’s `errorDetails` property
-       *
-       * @param {FormController} form
-       * @param {string} formCtrlName
-       */
-      controller.link = (form, ctrlName) => {
-        if (!ctrlName) {
-          throw new TypeError('FieldErrorController#link(): argument required');
+      unwatchHide = $scope.$watch(
+        () => form[ctrlName] && form[ctrlName].hideErrors,
+        hideErrors => {
+          controller.hide = hideErrors;
         }
+      );
 
-        if (unwatchErrors) unwatchErrors();
-        if (unwatchHide) unwatchHide();
+      function ngModelError() {
+        return form[ctrlName] && form[ctrlName].$error;
+      }
+    };
+  }
+]);
 
-        unwatchErrors = $scope.$watchCollection(ngModelError, errors => {
-          const errorDetails = (form[ctrlName] || {}).errorDetails || {};
+/**
+ * @ngdoc service
+ * @name fieldErrorMessage
+ * @usage[js]
+ * fieldErrorMessage('required') // => 'Please provide a value'
+ *
+ * @description
+ * Build messages for `ngModel` validation errors.
+ */
+registerProvider('fieldErrorMessage', function() {
+  const messages = {
+    required: 'Please provide a value.'
+  };
 
-          controller.messages = _.map(_.keys(errors), error => {
-            const details = errorDetails[error] || {};
-            return details.message || fieldErrorMessage(error, details);
-          });
+  const templates = _.mapValues(messages, message => _.template(message));
 
-          controller.exist = controller.messages.length > 0;
-        });
-
-        unwatchHide = $scope.$watch(
-          () => form[ctrlName] && form[ctrlName].hideErrors,
-          hideErrors => {
-            controller.hide = hideErrors;
-          }
-        );
-
-        function ngModelError() {
-          return form[ctrlName] && form[ctrlName].$error;
-        }
-      };
+  function build(key, details) {
+    if (key in templates) {
+      return templates[key](details);
+    } else {
+      return 'Error: ' + key;
     }
-  ])
+  }
 
-  /**
-   * @ngdoc service
-   * @name fieldErrorMessage
-   * @usage[js]
-   * fieldErrorMessage('required') // => 'Please provide a value'
-   *
-   * @description
-   * Build messages for `ngModel` validation errors.
-   */
-  .provider('fieldErrorMessage', [
-    '$injector',
-    function fieldErrorMessageProvider($injector) {
-      const _ = $injector.get('lodash');
-      const messages = {
-        required: 'Please provide a value.'
-      };
-
-      this.add = (key, message) => {
-        messages[key] = message;
-      };
-
-      this.$get = () => {
-        const templates = _.mapValues(messages, message => _.template(message));
-
-        return function build(key, details) {
-          if (key in templates) {
-            return templates[key](details);
-          } else {
-            return 'Error: ' + key;
-          }
-        };
-      };
-    }
-  ]);
+  return {
+    $get: () => build
+  };
+});

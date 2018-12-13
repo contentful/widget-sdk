@@ -1,7 +1,7 @@
 'use strict';
 
 describe('cfNoForm directive', () => {
-  beforeEach(module('cf.forms'));
+  beforeEach(module('contentful/test'));
 
   beforeEach(function() {
     const $compile = this.$inject('$compile');
