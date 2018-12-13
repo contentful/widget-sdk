@@ -62,7 +62,7 @@ div.entity-editor__field-group(
   aria-invalid="{{data.fieldHasErrors}}")
 
   div.entity-editor__field-locale(
-    ng-repeat="locale in locales track by locale.internal_code"
+    ng-repeat="locale in locales | orderBy: ['-default', 'name'] track by locale.internal_code"
     ng-controller="FieldLocaleController as fieldLocale"
     data-locale="{{locale.code}}")
 

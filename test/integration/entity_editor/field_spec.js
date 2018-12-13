@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import * as DOM from 'test/helpers/DOM';
-import _ from 'lodash';
+import { forEach, identity, clone } from 'lodash';
 
 /**
  * Tests the integration of the 'cfEntityField' directive with
@@ -17,7 +17,7 @@ import _ from 'lodash';
 describe('entity editor field integration', () => {
   beforeEach(function() {
     module('contentful/test', $provide => {
-      $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
+      $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', identity]);
       $provide.removeDirectives('cfWidgetApi', 'cfWidgetRenderer');
     });
 
@@ -25,7 +25,10 @@ describe('entity editor field integration', () => {
 
     const TheLocaleStore = this.$inject('TheLocaleStore');
     this.setLocales = TheLocaleStore.setLocales;
-    this.setLocales([{ code: 'DEF', name: 'Default' }, { code: 'EN', name: 'English' }]);
+    this.setLocales([
+      { code: 'DEF', name: 'Default' },
+      { code: 'EN', name: 'English', defaut: true }
+    ]);
 
     this.widget = {
       isVisible: true,
@@ -90,30 +93,29 @@ describe('entity editor field integration', () => {
       const el = this.compile();
       const labels = el.find('[data-test-id="field-locale-label"]');
       expect(labels.length).toEqual(2);
-      labels.each(function() {
-        expect($(this).text()).toMatch('(required)');
+      labels.each((_i, elem) => {
+        expect($(elem).text()).toMatch('(required)');
       });
     });
 
     it('does not show "required" if a locale is optional', function() {
-      this.setLocales([
-        { code: 'DEF', name: 'Default' },
-        { code: 'EN', name: 'English', optional: true }
-      ]);
+      this.setLocales([{ code: 'EN', name: 'English', optional: true }]);
       this.widget.field.required = true;
       const el = this.compile();
       const labels = el.find('[data-test-id="field-locale-label"]');
-      expect(labels.eq(0).text()).toMatch('(required)');
-      expect(labels.eq(1).text()).not.toMatch('(required)');
+      expect(labels.eq(0).text()).not.toMatch('(required)');
     });
 
     it('shows locale name for multiple locales', function() {
       this.widget.field.required = true;
       const el = this.compile();
-      const labels = el.find('[data-test-id="field-locale-label"]');
-      expect(labels.length).toEqual(2);
-      expect(labels.eq(0).text()).toMatch('Default');
-      expect(labels.eq(1).text()).toMatch('English');
+      const labelElems = el.find('[data-test-id="field-locale-label"]');
+      expect(labelElems.length).toEqual(2);
+      const labels = labelElems.map((_i, elem) => $(elem).text());
+      const expectedLabels = ['Default', 'English'];
+      forEach(labels.sort(), (labelText, i) => {
+        expect(labelText).toMatch(expectedLabels[i]);
+      });
     });
   });
 
@@ -166,16 +168,16 @@ describe('entity editor field integration', () => {
       this.setLocales([{ code: 'en', default: true }, { code: 'de' }, { code: 'fr' }]);
       this.widget.field.localized = false;
       const el = this.compile();
-      expect(getDataLocaleAttr(el)).toEqual(['en']);
+      expectShownLocales(el, ['en']);
     });
 
     it('responds to changing the active locales', function() {
       this.setLocales([{ code: 'en' }, { code: 'de', active: false }, { code: 'fr' }]);
       const el = this.compile();
-      expect(getDataLocaleAttr(el)).toEqual(['en', 'fr']);
+      expectShownLocales(el, ['fr', 'en']);
       this.setLocales([{ code: 'en' }, { code: 'de' }]);
       this.$apply();
-      expect(getDataLocaleAttr(el)).toEqual(['en', 'de']);
+      expectShownLocales(el, ['en', 'de']);
     });
 
     it('adds locales with error', function() {
@@ -186,22 +188,36 @@ describe('entity editor field integration', () => {
       ]);
 
       const el = this.compile();
-      expect(getDataLocaleAttr(el)).toEqual(['en']);
+      expectShownLocales(el, ['en']);
 
       this.validator.hasFieldLocaleError.withArgs('FID', 'de-internal').returns(true);
       // we need to force an update unfortunately
       this.validator.errors$.set([]);
       this.$apply();
 
-      expect(getDataLocaleAttr(el)).toEqual(['en', 'de']);
+      expectShownLocales(el, ['en', 'de']);
     });
 
-    function getDataLocaleAttr(el) {
+    // TODO: Why is the `default: true` ignored here?
+    xit('shows default locale as the first one', function() {
+      this.setLocales([{ code: 'en-2', default: true }, { code: 'en-1' }]);
+      const el = this.compile();
+      expectShownLocalesDisplayOrder(el, ['en-2', 'en-1']);
+    });
+
+    function expectShownLocalesDisplayOrder(el, locales) {
+      expect(getShownLocales(el)).toEqual(clone(locales));
+    }
+
+    function expectShownLocales(el, locales) {
+      // We don't care about the order in this assertion.
+      expect(getShownLocales(el).sort()).toEqual(clone(locales).sort());
+    }
+
+    function getShownLocales(el) {
       return el
         .find('[data-locale]')
-        .map(function() {
-          return $(this).data('locale');
-        })
+        .map((_i, elem) => $(elem).data('locale'))
         .get();
     }
   });

@@ -4,13 +4,7 @@
       h1 Choose translations
     .modal-dialog__content
       ul
-        li(ng-repeat="locale in locales | filter:{ default: true } track by locale.sys.id")
-          label
-            input(type="checkbox"
-              ng-model="locale.active"
-              disabled)
-            | {{locale.name}} ({{locale.code}})
-        li(ng-repeat="locale in locales | orderBy: 'name' | filter:{ default: false } track by locale.sys.id")
+        li(ng-repeat="locale in locales | orderBy: ['-default', 'name'] track by locale.sys.id")
           label
             input(type="checkbox"
               ng-model="locale.active"
