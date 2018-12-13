@@ -20,7 +20,10 @@ exports[`UnpublishedReferencesWarning UnpublishedReferencesConfirm renders confi
 >
   <p>
     It appears that you’ve linked to 
-     that haven’t been published yet.
+     that 
+    hasn't
+     
+    been published yet.
   </p>
   <ul />
 </ModalConfirm>
@@ -34,7 +37,10 @@ exports[`UnpublishedReferencesWarning UnpublishedReferencesConfirm renders list 
   <p>
     It appears that you’ve linked to 
     entries and assets
-     that haven’t been published yet.
+     that 
+    haven't
+     
+    been published yet.
   </p>
   <ul>
     <li

@@ -88,11 +88,30 @@ describe('UnpublishedReferencesWarning', () => {
     });
 
     describe.each([
-      ['This entry links to unpublished entries', createEntry()],
+      ['This entry links to unpublished entry', createEntry()],
       ['This entry links to unpublished entries', createEntry(), createEntry()],
-      ['This entry links to unpublished assets', createAsset()],
+      ['This entry links to unpublished asset', createAsset()],
       ['This entry links to unpublished assets', createAsset(), createAsset()],
-      ['This entry links to unpublished entries and assets', createEntry(), createAsset()]
+      ['This entry links to unpublished entry and asset', createEntry(), createAsset()],
+      [
+        'This entry links to unpublished entry and assets',
+        createEntry(),
+        createAsset(),
+        createAsset()
+      ],
+      [
+        'This entry links to unpublished entries and asset',
+        createEntry(),
+        createEntry(),
+        createAsset()
+      ],
+      [
+        'This entry links to unpublished entries and assets',
+        createEntry(),
+        createEntry(),
+        createAsset(),
+        createAsset()
+      ]
     ])('renders following title "%s"', (title, ...references) => {
       const wrapper = Enzyme.mount(
         <Confirm
