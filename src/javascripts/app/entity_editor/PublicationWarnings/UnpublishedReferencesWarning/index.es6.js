@@ -4,13 +4,13 @@ import ModalLauncher from 'app/common/ModalLauncher.es6';
 
 import UnpublishedReferencesConfirm from './UnpublishedReferencesConfirm.es6';
 
-export async function showConfirm(unpublishedReferencesInfos) {
+const showConfirm = async unpublishedReferencesInfo => {
   const confirmation = await ModalLauncher.open(({ onClose, isShown }) => (
     <UnpublishedReferencesConfirm
       isShown={isShown}
       onConfirm={() => onClose(true)}
       onCancel={() => onClose(false)}
-      unpublishedReferencesInfos={unpublishedReferencesInfos}
+      unpublishedReferencesInfo={unpublishedReferencesInfo}
     />
   ));
 
@@ -19,4 +19,13 @@ export async function showConfirm(unpublishedReferencesInfos) {
   }
 
   return confirmation;
-}
+};
+
+export const registerUnpublishedReferencesWarning = publicationWarnings => ({ getData }) => {
+  return publicationWarnings.register({
+    group: 'unpublished_references',
+    warnFn: unpublishedReferences => showConfirm(unpublishedReferences),
+    getData,
+    shouldShow: ({ references }) => references.length > 0
+  });
+};

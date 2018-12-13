@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { create as createWarning } from 'app/entity_editor/PublicationWarnings.es6';
+import { create as createWarning } from './index.es6';
 
 describe('Publication warnings', () => {
   let warnings;

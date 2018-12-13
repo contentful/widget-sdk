@@ -1,0 +1,122 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UnpublishedReferencesWarning UnpublishedReferencesConfirm renders confirmation dialog 1`] = `
+<ModalConfirm
+  cancelLabel="Cancel"
+  cancelTestId="cf-ui-modal-confirm-cancel-button"
+  confirmLabel="Got it, publish anyway"
+  confirmTestId="cf-ui-modal-confirm-confirm-button"
+  intent="positive"
+  isConfirmDisabled={false}
+  isConfirmLoading={false}
+  isShown={true}
+  onCancel={[MockFunction]}
+  onConfirm={[MockFunction]}
+  shouldCloseOnEscapePress={true}
+  shouldCloseOnOverlayClick={true}
+  size="medium"
+  testId="unpublished-refs-confirm"
+  title="This entry links to unpublished "
+>
+  <p>
+    It appears that you’ve linked to 
+     that haven’t been published yet.
+  </p>
+  <ul />
+</ModalConfirm>
+`;
+
+exports[`UnpublishedReferencesWarning UnpublishedReferencesConfirm renders list of fields with unpublished references 1`] = `
+<div
+  className="ModalContent__ModalContent___2mf3h"
+  data-test-id="cf-ui-modal-content"
+>
+  <p>
+    It appears that you’ve linked to 
+    entries and assets
+     that haven’t been published yet.
+  </p>
+  <ul>
+    <li
+      key="0"
+    >
+      <strong>
+        field-with-unpublished-entry (en-US)
+      </strong>
+       — 
+      1
+       unpublished 
+      entry
+       
+    </li>
+    <li
+      key="1"
+    >
+      <strong>
+        field-with-unpublished-entries (en-US)
+      </strong>
+       — 
+      2
+       unpublished 
+      entries
+       
+    </li>
+    <li
+      key="2"
+    >
+      <strong>
+        field-with-unpublished-asset (en-US)
+      </strong>
+       — 
+       
+      1
+       unpublished 
+      asset
+    </li>
+    <li
+      key="3"
+    >
+      <strong>
+        field-with-unpublished-assets (en-US)
+      </strong>
+       — 
+       
+      2
+       unpublished 
+      assets
+    </li>
+    <li
+      key="4"
+    >
+      <strong>
+        field-with-unpublished-mixed (en-US)
+      </strong>
+       — 
+      1
+       unpublished 
+      entry
+       
+       and 
+      1
+       unpublished 
+      asset
+    </li>
+    <li
+      key="5"
+    >
+      <strong>
+        field-with-unpublished-mixed (en-US)
+      </strong>
+       — 
+      2
+       unpublished 
+      entries
+       
+       and 
+      2
+       unpublished 
+      assets
+    </li>
+  </ul>
+</div>
+`;

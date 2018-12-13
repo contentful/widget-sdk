@@ -1,9 +1,17 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import { flatten } from 'lodash';
 import { getRichTextEntityLinks } from '@contentful/rich-text-links';
 
 function withPublicationWarning(WrappedComponent) {
   return class extends React.Component {
+    static propTypes = {
+      widgetAPI: PropTypes.object.isRequired,
+      field: PropTypes.shape({
+        registerUnpublishedReferencesWarning: PropTypes.func.isRequired
+      }).isRequired
+    };
     componentDidMount() {
       this.unregister = this.props.field.registerUnpublishedReferencesWarning({
         getData: () => this.getReferenceData()
@@ -36,7 +44,6 @@ function withPublicationWarning(WrappedComponent) {
       const assetIds = referenceMap.Asset.map(e => e.id);
 
       const entities = await Promise.all([this.getEntries(entryIds), this.getAssets(assetIds)]);
-
       const unpublishedEntities = flatten(entities).filter(e => !e.sys.publishedVersion);
 
       return {
