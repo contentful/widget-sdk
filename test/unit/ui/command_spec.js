@@ -2,7 +2,7 @@
 
 describe('command service', () => {
   beforeEach(function() {
-    module('cf.ui');
+    module('contentful/test');
     this.create = this.$inject('command').create;
     this.executions = this.$inject('command').executions;
   });

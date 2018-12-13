@@ -1,4 +1,5 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
+import _ from 'lodash';
 
 /**
  * @ngdoc directive
@@ -30,11 +31,9 @@
  *     | This cannot be dragged
  *     a(data-drag-handle)
  */
-angular.module('cf.ui').directive('cfUiSortable', [
-  'require',
+registerDirective('cfUiSortable', [
   'uiSortableDirective',
-  (require, uiSortableDirectives) => {
-    const _ = require('lodash');
+  uiSortableDirectives => {
     const uiSortable = uiSortableDirectives[0];
 
     const DEFAULTS = {

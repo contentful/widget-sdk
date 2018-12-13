@@ -14,9 +14,8 @@
  * @ngdoc module
  * @name cf.ui
  */
-angular.module('cf.ui', ['cf.utils']);
 angular.module('contentful/environment', []);
-angular.module('contentful/init', []);
+angular.module('contentful/init', ['cf.utils']);
 angular.module('cf.forms', ['cf.utils']);
 /**
  * @ngdoc module
@@ -29,7 +28,7 @@ angular.module('cf.es6', []);
  * @ngdoc module
  * @name cf.app
  */
-angular.module('cf.app', ['ui.router', 'cf.utils', 'cf.ui']);
+angular.module('cf.app', ['ui.router', 'cf.utils']);
 /**
  * @ngdoc module
  * @name contentful
@@ -39,7 +38,6 @@ angular.module('contentful', [
   'contentful/environment',
   'cf.es6',
   'cf.app',
-  'cf.ui',
   'cf.forms',
   'cf.utils',
   'cf.data',

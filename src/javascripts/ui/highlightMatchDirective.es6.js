@@ -1,9 +1,9 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
 
-angular.module('cf.ui').directive('uiHighlightMatch', [
-  'require',
-  require => {
-    const document = require('$document').get(0);
+registerDirective('uiHighlightMatch', [
+  '$document',
+  $document => {
+    const document = $document.get(0);
     return {
       restrict: 'A',
       scope: {
