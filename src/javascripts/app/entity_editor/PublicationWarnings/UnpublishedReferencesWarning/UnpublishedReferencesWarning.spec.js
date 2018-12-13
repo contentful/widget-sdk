@@ -88,25 +88,29 @@ describe('UnpublishedReferencesWarning', () => {
     });
 
     describe.each([
-      ['This entry links to unpublished entry', createEntry()],
-      ['This entry links to unpublished entries', createEntry(), createEntry()],
-      ['This entry links to unpublished asset', createAsset()],
-      ['This entry links to unpublished assets', createAsset(), createAsset()],
-      ['This entry links to unpublished entry and asset', createEntry(), createAsset()],
+      ['This entry links to 1 unpublished entry', createEntry()],
+      ['This entry links to 2 unpublished entries', createEntry(), createEntry()],
+      ['This entry links to 1 unpublished asset', createAsset()],
+      ['This entry links to 2 unpublished assets', createAsset(), createAsset()],
       [
-        'This entry links to unpublished entry and assets',
+        'This entry links to 1 unpublished entry and 1 unpublished asset',
+        createEntry(),
+        createAsset()
+      ],
+      [
+        'This entry links to 1 unpublished entry and 2 unpublished assets',
         createEntry(),
         createAsset(),
         createAsset()
       ],
       [
-        'This entry links to unpublished entries and asset',
+        'This entry links to 2 unpublished entries and 1 unpublished asset',
         createEntry(),
         createEntry(),
         createAsset()
       ],
       [
-        'This entry links to unpublished entries and assets',
+        'This entry links to 2 unpublished entries and 2 unpublished assets',
         createEntry(),
         createEntry(),
         createAsset(),

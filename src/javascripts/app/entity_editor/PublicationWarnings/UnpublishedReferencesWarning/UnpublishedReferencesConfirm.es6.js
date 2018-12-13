@@ -12,11 +12,16 @@ const humaniseEntityType = (type, references) => {
 };
 
 const humaniseReferencesMessage = references => {
-  const messages = _(references)
-    .groupBy(ref => ref.sys.type)
-    .mapKeys((value, key) => humaniseEntityType(key, value))
-    .keys()
-    .value();
+  const assets = references.filter(({ sys }) => sys.type === 'Asset');
+  const entries = references.filter(({ sys }) => sys.type === 'Entry');
+  const messages = [];
+
+  if (entries.length > 0) {
+    messages.push(`${entries.length} unpublished ${humaniseEntityType('Entry', entries)}`);
+  }
+  if (assets.length > 0) {
+    messages.push(`${assets.length} unpublished ${humaniseEntityType('Asset', assets)}`);
+  }
 
   const isPlural = messages.length > 1;
   return [messages.join(' and '), isPlural];
@@ -32,27 +37,10 @@ class UnpublishedReferencesConfirm extends Component {
 
   renderUnpublishedRefsInfo({ field, references }) {
     const fieldInfo = <strong>{`${field.name} (${field.locale})`}</strong>;
-    const assets = references.filter(({ sys }) => sys.type === 'Asset');
-    const entries = references.filter(({ sys }) => sys.type === 'Entry');
 
-    const refInfo = (
-      <React.Fragment>
-        {entries.length > 0 && (
-          <React.Fragment>
-            {entries.length} unpublished {humaniseEntityType('Entry', entries)}
-          </React.Fragment>
-        )}{' '}
-        {entries.length > 0 && assets.length > 0 ? ' and ' : ''}
-        {assets.length > 0 && (
-          <React.Fragment>
-            {assets.length} unpublished {humaniseEntityType('Asset', assets)}
-          </React.Fragment>
-        )}
-      </React.Fragment>
-    );
     return (
       <React.Fragment>
-        {fieldInfo} — {refInfo}
+        {fieldInfo} — {humaniseReferencesMessage(references)}
       </React.Fragment>
     );
   }
@@ -72,7 +60,7 @@ class UnpublishedReferencesConfirm extends Component {
     return (
       <ModalConfirm
         testId="unpublished-refs-confirm"
-        title={`This entry links to unpublished ${entityTypesMsg}`}
+        title={`This entry links to ${entityTypesMsg}`}
         isShown={isShown}
         confirmLabel="Got it, publish anyway"
         onConfirm={onConfirm}

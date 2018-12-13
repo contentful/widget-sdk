@@ -16,7 +16,7 @@ exports[`UnpublishedReferencesWarning UnpublishedReferencesConfirm renders confi
   shouldCloseOnOverlayClick={true}
   size="medium"
   testId="unpublished-refs-confirm"
-  title="This entry links to unpublished "
+  title="This entry links to "
 >
   <p>
     It appears that you’ve linked to 
@@ -36,7 +36,7 @@ exports[`UnpublishedReferencesWarning UnpublishedReferencesConfirm renders list 
 >
   <p>
     It appears that you’ve linked to 
-    entries and assets
+    6 unpublished entries and 6 unpublished assets
      that 
     haven't
      
@@ -50,10 +50,7 @@ exports[`UnpublishedReferencesWarning UnpublishedReferencesConfirm renders list 
         field-with-unpublished-entry (en-US)
       </strong>
        — 
-      1
-       unpublished 
-      entry
-       
+      1 unpublished entry
     </li>
     <li
       key="1"
@@ -62,10 +59,7 @@ exports[`UnpublishedReferencesWarning UnpublishedReferencesConfirm renders list 
         field-with-unpublished-entries (en-US)
       </strong>
        — 
-      2
-       unpublished 
-      entries
-       
+      2 unpublished entries
     </li>
     <li
       key="2"
@@ -74,10 +68,7 @@ exports[`UnpublishedReferencesWarning UnpublishedReferencesConfirm renders list 
         field-with-unpublished-asset (en-US)
       </strong>
        — 
-       
-      1
-       unpublished 
-      asset
+      1 unpublished asset
     </li>
     <li
       key="3"
@@ -86,10 +77,7 @@ exports[`UnpublishedReferencesWarning UnpublishedReferencesConfirm renders list 
         field-with-unpublished-assets (en-US)
       </strong>
        — 
-       
-      2
-       unpublished 
-      assets
+      2 unpublished assets
     </li>
     <li
       key="4"
@@ -98,14 +86,7 @@ exports[`UnpublishedReferencesWarning UnpublishedReferencesConfirm renders list 
         field-with-unpublished-mixed (en-US)
       </strong>
        — 
-      1
-       unpublished 
-      entry
-       
-       and 
-      1
-       unpublished 
-      asset
+      1 unpublished entry and 1 unpublished asset
     </li>
     <li
       key="5"
@@ -114,14 +95,7 @@ exports[`UnpublishedReferencesWarning UnpublishedReferencesConfirm renders list 
         field-with-unpublished-mixed (en-US)
       </strong>
        — 
-      2
-       unpublished 
-      entries
-       
-       and 
-      2
-       unpublished 
-      assets
+      2 unpublished entries and 2 unpublished assets
     </li>
   </ul>
 </div>
