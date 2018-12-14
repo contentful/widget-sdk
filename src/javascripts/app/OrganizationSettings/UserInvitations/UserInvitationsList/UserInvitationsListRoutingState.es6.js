@@ -5,5 +5,6 @@ export default reactStateWrapper({
   name: 'users.invitations',
   url: '/:orgId/organization_invitations',
   featureFlag: BV_USER_INVITATIONS,
-  componentPath: 'app/OrganizationSettings/UserInvitations/UserInvitationsList/UserInvitationsListRouter.es6'
+  componentPath:
+    'app/OrganizationSettings/UserInvitations/UserInvitationsList/UserInvitationsListRouter.es6'
 });
