@@ -18,14 +18,15 @@ exports[`UnpublishedReferencesWarning UnpublishedReferencesConfirm renders confi
   testId="unpublished-refs-confirm"
   title="This entry links to "
 >
-  <p>
-    It appears that you’ve linked to 
-     that 
-    hasn't
-     
-    been published yet.
-  </p>
-  <ul />
+  <Paragraph
+    element="p"
+    testId="cf-ui-paragraph"
+  >
+    It appears that you’ve linked to  that hasn't been published yet.
+  </Paragraph>
+  <List
+    testId="cf-ui-list"
+  />
 </ModalConfirm>
 `;
 
@@ -34,69 +35,115 @@ exports[`UnpublishedReferencesWarning UnpublishedReferencesConfirm renders list 
   className="ModalContent__ModalContent___2mf3h"
   data-test-id="cf-ui-modal-content"
 >
-  <p>
-    It appears that you’ve linked to 
-    6 unpublished entries and 6 unpublished assets
-     that 
-    haven't
-     
-    been published yet.
-  </p>
-  <ul>
-    <li
-      key="0"
+  <Paragraph
+    element="p"
+    testId="cf-ui-paragraph"
+  >
+    <p
+      className="Paragraph__Paragraph___2aO-9"
+      data-test-id="cf-ui-paragraph"
     >
-      <strong>
-        field-with-unpublished-entry (en-US)
-      </strong>
-       — 
-      1 unpublished entry
-    </li>
-    <li
-      key="1"
+      It appears that you’ve linked to 6 entries and 6 assets that haven't been published yet.
+    </p>
+  </Paragraph>
+  <List
+    testId="cf-ui-list"
+  >
+    <ul
+      className="List__List___1awv4"
+      data-test-id="cf-ui-list"
     >
-      <strong>
-        field-with-unpublished-entries (en-US)
-      </strong>
-       — 
-      2 unpublished entries
-    </li>
-    <li
-      key="2"
-    >
-      <strong>
-        field-with-unpublished-asset (en-US)
-      </strong>
-       — 
-      1 unpublished asset
-    </li>
-    <li
-      key="3"
-    >
-      <strong>
-        field-with-unpublished-assets (en-US)
-      </strong>
-       — 
-      2 unpublished assets
-    </li>
-    <li
-      key="4"
-    >
-      <strong>
-        field-with-unpublished-mixed (en-US)
-      </strong>
-       — 
-      1 unpublished entry and 1 unpublished asset
-    </li>
-    <li
-      key="5"
-    >
-      <strong>
-        field-with-unpublished-mixed (en-US)
-      </strong>
-       — 
-      2 unpublished entries and 2 unpublished assets
-    </li>
-  </ul>
+      <ListItem
+        key="0"
+        testId="cf-ui-list-item"
+      >
+        <li
+          className="ListItem__ListItem___3S9Oc"
+          data-test-id="cf-ui-list-item"
+        >
+          <strong>
+            field-with-unpublished-entry (en-US)
+          </strong>
+           — 
+          1 unpublished entry
+        </li>
+      </ListItem>
+      <ListItem
+        key="1"
+        testId="cf-ui-list-item"
+      >
+        <li
+          className="ListItem__ListItem___3S9Oc"
+          data-test-id="cf-ui-list-item"
+        >
+          <strong>
+            field-with-unpublished-entries (en-US)
+          </strong>
+           — 
+          2 unpublished entries
+        </li>
+      </ListItem>
+      <ListItem
+        key="2"
+        testId="cf-ui-list-item"
+      >
+        <li
+          className="ListItem__ListItem___3S9Oc"
+          data-test-id="cf-ui-list-item"
+        >
+          <strong>
+            field-with-unpublished-asset (en-US)
+          </strong>
+           — 
+          1 unpublished asset
+        </li>
+      </ListItem>
+      <ListItem
+        key="3"
+        testId="cf-ui-list-item"
+      >
+        <li
+          className="ListItem__ListItem___3S9Oc"
+          data-test-id="cf-ui-list-item"
+        >
+          <strong>
+            field-with-unpublished-assets (en-US)
+          </strong>
+           — 
+          2 unpublished assets
+        </li>
+      </ListItem>
+      <ListItem
+        key="4"
+        testId="cf-ui-list-item"
+      >
+        <li
+          className="ListItem__ListItem___3S9Oc"
+          data-test-id="cf-ui-list-item"
+        >
+          <strong>
+            field-with-unpublished-mixed (en-US)
+          </strong>
+           — 
+          1 unpublished entry and 1 unpublished asset
+        </li>
+      </ListItem>
+      <ListItem
+        key="5"
+        testId="cf-ui-list-item"
+      >
+        <li
+          className="ListItem__ListItem___3S9Oc"
+          data-test-id="cf-ui-list-item"
+        >
+          <strong>
+            field-with-unpublished-mixed (en-US)
+          </strong>
+           — 
+          2 unpublished entries and 2 unpublished assets
+        </li>
+      </ListItem>
+    </ul>
+  </List>
 </div>
 `;

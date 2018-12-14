@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { ModalConfirm } from '@contentful/forma-36-react-components';
+import { ModalConfirm, List, ListItem, Paragraph } from '@contentful/forma-36-react-components';
 
 const humaniseEntityType = (type, references) => {
   const plurals = {
@@ -11,19 +11,29 @@ const humaniseEntityType = (type, references) => {
   return references.length > 1 ? plurals[type] : type.toLowerCase();
 };
 
-const humaniseReferencesMessage = references => {
+const getEntitiesMessage = (entities, type, shouldExplicitlyMentionUnpublish) => {
+  return [
+    entities.length,
+    shouldExplicitlyMentionUnpublish && 'unpublished',
+    humaniseEntityType(type, entities)
+  ]
+    .filter(Boolean)
+    .join(' ');
+};
+
+const humaniseReferencesMessage = (references, shouldExplicitlyMentionUnpublish = true) => {
   const assets = references.filter(({ sys }) => sys.type === 'Asset');
   const entries = references.filter(({ sys }) => sys.type === 'Entry');
   const messages = [];
 
   if (entries.length > 0) {
-    messages.push(`${entries.length} unpublished ${humaniseEntityType('Entry', entries)}`);
+    messages.push(getEntitiesMessage(entries, 'Entry', shouldExplicitlyMentionUnpublish));
   }
   if (assets.length > 0) {
-    messages.push(`${assets.length} unpublished ${humaniseEntityType('Asset', assets)}`);
+    messages.push(getEntitiesMessage(assets, 'Asset', shouldExplicitlyMentionUnpublish));
   }
 
-  const isPlural = messages.length > 1;
+  const isPlural = references.length > 1;
   return [messages.join(' and '), isPlural];
 };
 
@@ -53,27 +63,28 @@ class UnpublishedReferencesConfirm extends Component {
       ({ references }) => references.length > 0
     );
 
-    const [entityTypesMsg, isPlural] = humaniseReferencesMessage(
-      _.flatMap(unpublishedReferencesInfo, 'references')
-    );
+    const references = _.flatMap(unpublishedReferencesInfo, 'references');
+    const [titleMsg] = humaniseReferencesMessage(references);
+
+    const [descriptionMsg, isPlural] = humaniseReferencesMessage(references, false);
+    const description = `It appears that you’ve linked to ${descriptionMsg} that ${
+      isPlural ? "haven't" : "hasn't"
+    } been published yet.`;
 
     return (
       <ModalConfirm
         testId="unpublished-refs-confirm"
-        title={`This entry links to ${entityTypesMsg}`}
+        title={`This entry links to ${titleMsg}`}
         isShown={isShown}
         confirmLabel="Got it, publish anyway"
         onConfirm={onConfirm}
         onCancel={onCancel}>
-        <p>
-          It appears that you’ve linked to {entityTypesMsg} that {isPlural ? "haven't" : "hasn't"}{' '}
-          been published yet.
-        </p>
-        <ul>
+        <Paragraph>{description}</Paragraph>
+        <List>
           {unpublishedReferencesInfo.map((item, idx) => (
-            <li key={idx}>{this.renderUnpublishedRefsInfo(item)}</li>
+            <ListItem key={idx}>{this.renderUnpublishedRefsInfo(item)}</ListItem>
           ))}
-        </ul>
+        </List>
       </ModalConfirm>
     );
   }
