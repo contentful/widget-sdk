@@ -1,7 +1,7 @@
 import React from 'react';
 import spaceContext from 'spaceContext';
 import $state from '$state';
-import modalDialog from 'modalDialog';
+import ModalLauncher from 'app/common/ModalLauncher.es6';
 import {
   Dropdown,
   Button,
@@ -9,6 +9,8 @@ import {
   DropdownListItem,
   Notification
 } from '@contentful/forma-36-react-components';
+import ExamplePickerModal from './dialogs/ExamplePickerModal.es6';
+import GitHubInstallerModal from './dialogs/GitHubInstallerModal.es6';
 import { toInternalFieldType } from './FieldTypes.es6';
 import getExtensionParameterIds from './getExtensionParameterIds.es6';
 import { track } from 'analytics/Analytics.es6';
@@ -44,52 +46,51 @@ function handleInstallError(err) {
   }
 }
 
-export function openExamplePicker() {
-  return modalDialog
-    .open({
-      template:
-        '<react-component class="modal-background" name="app/settings/extensions/ExamplePicker.es6" props="props" />',
-      controller: $scope => {
-        $scope.props = {
-          onConfirm: value => $scope.dialog.confirm(value),
-          onCancel: err => $scope.dialog.cancel(err instanceof Error ? err : { cancelled: true })
-        };
-      }
-    })
-    .promise.then(data =>
-      install({
-        ...data,
-        type: 'github-example'
-      })
-    )
-    .catch(err => {
-      handleInstallError(err);
+export const openExamplePicker = async () => {
+  const { installed, data, err } = await ModalLauncher.open(({ isShown, onClose }) => (
+    <ExamplePickerModal
+      isShown={isShown}
+      onConfirm={data => {
+        onClose({ installed: true, data });
+      }}
+      onCancel={err => {
+        onClose({ installed: false, err: err instanceof Error ? err : { cancelled: true } });
+      }}
+    />
+  ));
+  if (installed) {
+    install({
+      ...data,
+      type: 'github-example'
     });
-}
+  } else {
+    handleInstallError(err);
+  }
+};
 
-export function openGitHubInstaller(extensionUrl = null, extensionUrlReferrer = null) {
-  return modalDialog
-    .open({
-      template:
-        '<react-component class="modal-background" name="app/settings/extensions/GitHubInstaller.es6" props="props" />',
-      controller: $scope => {
-        $scope.props = {
-          extensionUrl: extensionUrl || '',
-          onConfirm: value => $scope.dialog.confirm(value),
-          onCancel: err => $scope.dialog.cancel(err instanceof Error ? err : { cancelled: true })
-        };
-      }
-    })
-    .promise.then(data =>
-      install({
-        ...data,
-        type: extensionUrlReferrer || 'github'
-      })
-    )
-    .catch(err => {
-      handleInstallError(err);
+export const openGitHubInstaller = async (extensionUrl = null, extensionUrlReferrer = null) => {
+  const { installed, data, err } = await ModalLauncher.open(({ onClose, isShown }) => (
+    <GitHubInstallerModal
+      isShown={isShown}
+      extensionUrl={extensionUrl || ''}
+      onConfirm={data => {
+        onClose({ installed: true, data });
+      }}
+      onCancel={err => {
+        onClose({ installed: false, err: err instanceof Error ? err : { cancelled: true } });
+      }}
+    />
+  ));
+
+  if (installed) {
+    install({
+      ...data,
+      type: extensionUrlReferrer || 'github'
     });
-}
+  } else {
+    handleInstallError(err);
+  }
+};
 
 export function createExtension() {
   return install({

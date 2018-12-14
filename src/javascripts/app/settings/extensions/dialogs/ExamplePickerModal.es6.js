@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Modal, Button } from '@contentful/forma-36-react-components';
 
 import * as Fetcher from './GitHubFetcher.es6';
 
@@ -52,11 +53,22 @@ const EXAMPLES = [
 
 class ExamplePicker extends React.Component {
   static propTypes = {
+    isShown: PropTypes.bool.isRequired,
     onConfirm: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired
   };
 
-  state = { fetching: false };
+  static getInitialState() {
+    return { fetching: false };
+  }
+
+  state = ExamplePicker.getInitialState();
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.isShown !== this.props.isShown) {
+      this.setState(ExamplePicker.getInitialState());
+    }
+  }
 
   renderExample(example) {
     const { onConfirm, onCancel } = this.props;
@@ -71,47 +83,53 @@ class ExamplePicker extends React.Component {
             View on GitHub
           </a>
         </div>
-        <button
-          className="btn-action"
+        <Button
+          testId="install-extension"
+          buttonType="primary"
           disabled={fetching}
           onClick={() => {
             this.setState(() => ({ fetching: true }));
-            Fetcher.fetchExtension(`${example.url}/extension.json`).then(extension => {
-              return onConfirm({
-                extension,
-                url: example.url
-              });
-            }, onCancel);
+            Fetcher.fetchExtension(`${example.url}/extension.json`).then(
+              extension => {
+                return onConfirm({
+                  extension,
+                  url: example.url
+                });
+              },
+              error => {
+                onCancel(error);
+              }
+            );
           }}>
           Install
-        </button>
+        </Button>
       </div>
     );
   }
 
   render() {
-    const { onCancel } = this.props;
-
+    const { onCancel, isShown } = this.props;
     return (
-      <div className="modal-dialog">
-        <header className="modal-dialog__header">
-          <h1>Install an example</h1>
-          <button className="modal-dialog__close" onClick={onCancel} />
-        </header>
-        <div className="modal-dialog__content">
-          <p className="modal-dialog__richtext">
-            You can install example UI Extensions we provide:
-          </p>
-          <div className="extension-examples">
-            {EXAMPLES.map(example => this.renderExample(example))}
-          </div>
-        </div>
-        <div className="modal-dialog__controls">
-          <button className="btn-secondary-action" onClick={onCancel}>
-            Close
-          </button>
-        </div>
-      </div>
+      <Modal size="large" isShown={isShown} onClose={onCancel}>
+        {() => (
+          <React.Fragment>
+            <Modal.Header title="Install an example" onClose={onCancel}>
+              Install an example
+            </Modal.Header>
+            <Modal.Content>
+              <p>You can install example UI Extensions we provide:</p>
+              <div className="extension-examples">
+                {EXAMPLES.map(example => this.renderExample(example))}
+              </div>
+            </Modal.Content>
+            <Modal.Controls>
+              <Button onClick={onCancel} buttonType="muted">
+                Close
+              </Button>
+            </Modal.Controls>
+          </React.Fragment>
+        )}
+      </Modal>
     );
   }
 }

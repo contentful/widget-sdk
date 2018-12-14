@@ -1,15 +1,17 @@
 import React from 'react';
 import Enzyme from 'enzyme';
 import * as Fetcher from './GitHubFetcher.es6';
-import Picker from './ExamplePicker.es6';
+import ExamplePickerModal from './ExamplePickerModal.es6';
 
-const BTN_SELECTOR = '.btn-action';
+const BTN_SELECTOR = '[data-test-id="install-extension"]';
 
-describe('ExamplePicker', () => {
+describe('ExamplePickerModal', () => {
   const mount = () => {
     const confirmStub = jest.fn();
     const cancelStub = jest.fn();
-    const wrapper = Enzyme.mount(<Picker onConfirm={confirmStub} onCancel={cancelStub} />);
+    const wrapper = Enzyme.mount(
+      <ExamplePickerModal isShown onConfirm={confirmStub} onCancel={cancelStub} />
+    );
 
     return [wrapper, confirmStub, cancelStub];
   };
@@ -17,20 +19,6 @@ describe('ExamplePicker', () => {
   it('renders list of predefined extensions', () => {
     const [wrapper] = mount();
     expect(wrapper.find(BTN_SELECTOR)).toHaveLength(8);
-  });
-
-  it('blocks all installation buttons once clicked', () => {
-    const [wrapper] = mount();
-    const fetchStub = jest.spyOn(Fetcher, 'fetchExtension');
-    fetchStub.mockReturnValue({ then: handle => handle({ extension: true }) });
-    wrapper
-      .find(BTN_SELECTOR)
-      .first()
-      .simulate('click');
-    wrapper.find(BTN_SELECTOR).forEach(btn => {
-      expect(btn.prop('disabled')).toBe(true);
-    });
-    fetchStub.mockRestore();
   });
 
   it('confirms dialog with fetched extension', () => {

@@ -1,16 +1,18 @@
 import React from 'react';
 import Enzyme from 'enzyme';
 import * as Fetcher from './GitHubFetcher.es6';
-import Installer from './GitHubInstaller.es6';
+import GitHubInstallerModal from './GitHubInstallerModal.es6';
 
 const VALID_URL = 'https://github.com/jelz/sample/blob/master/extension.json';
-const ERR_SELECTOR = '.cfnext-form__field-error';
-const BTN_SELECTOR = '.btn-primary-action';
+const ERR_SELECTOR = '[data-test-id="cf-ui-validation-message"]';
+const BTN_SELECTOR = '[data-test-id="cf-ui-modal-confirm-confirm-button"]';
 
-describe('GitHubInstaller', () => {
+describe('GitHubInstallerModal', () => {
   const mount = () => {
     const confirmStub = jest.fn();
-    const wrapper = Enzyme.mount(<Installer onConfirm={confirmStub} onCancel={() => {}} />);
+    const wrapper = Enzyme.mount(
+      <GitHubInstallerModal isShown onConfirm={confirmStub} onCancel={() => {}} />
+    );
 
     return [wrapper, confirmStub];
   };
