@@ -3,11 +3,7 @@
 import $ from 'jquery';
 
 describe('cfFieldErrorsFor', () => {
-  beforeEach(
-    module('cf.forms', fieldErrorMessageProvider => {
-      fieldErrorMessageProvider.add('a', 'the a error');
-    })
-  );
+  beforeEach(module('contentful/test'));
 
   beforeEach(function() {
     const $compile = this.$inject('$compile');
@@ -54,7 +50,7 @@ describe('cfFieldErrorsFor', () => {
       .find('li')
       .map((_, e) => $(e).text())
       .get();
-    expect(errorMessages).toEqual(['the a error', 'Error: b']);
+    expect(errorMessages).toEqual(['Error: a', 'Error: b']);
   });
 
   it('renders error message from error details', function() {
