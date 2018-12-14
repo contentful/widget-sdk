@@ -13,7 +13,6 @@ import {
   TableCell,
   Button,
   TextInput,
-  Icon,
   Spinner,
   Notification,
   TextLink
@@ -221,7 +220,8 @@ class UsersList extends React.Component {
       <Workbench testId="organization-users-page">
         <Workbench.Header>
           <Workbench.Header.Left>
-            <Workbench.Title>Organization users</Workbench.Title>
+            <Workbench.Icon icon="page-users" />
+            <Workbench.Title>Users</Workbench.Title>
           </Workbench.Header.Left>
           <Workbench.Header.Search>
             <TextInput
@@ -242,9 +242,7 @@ class UsersList extends React.Component {
                   </TextLink>
                 )}
             </div>
-            <Button icon="PlusCircle" href={this.getLinkToInvitation()}>
-              Invite users
-            </Button>
+            <Button href={this.getLinkToInvitation()}>Invite users</Button>
           </Workbench.Header.Actions>
         </Workbench.Header>
         <Workbench.Content>
@@ -301,10 +299,6 @@ class UsersList extends React.Component {
                               extraClassNames="membership-list__item__menu__button">
                               Edit
                             </Button>
-                            <Icon
-                              icon="MoreHorizontal"
-                              extraClassNames="membership-list__item__menu__icon"
-                            />
                           </div>
                         </TableCell>
                       </TableRow>

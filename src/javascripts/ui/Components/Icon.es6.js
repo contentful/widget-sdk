@@ -18,6 +18,7 @@ import AddUserIcon from 'svg/onboarding-add-user.es6';
 import PageSettings from 'svg/page-settings.es6';
 import PageApps from 'svg/page-apps.es6';
 import PageUsage from 'svg/page-usage.es6';
+import PageUsers from 'svg/page-users.es6';
 import Bubble from 'svg/bubble.es6';
 import ArrowDown from 'svg/dd-arrow-down.es6';
 import InvoiceIcon from 'svg/invoice.es6';
@@ -62,6 +63,7 @@ const SVGs = {
   'page-settings': PageSettings,
   'page-apps': PageApps,
   'page-usage': PageUsage,
+  'page-users': PageUsers,
   bubble: Bubble,
   'dd-arrow-down': ArrowDown,
   back: BackIcon,

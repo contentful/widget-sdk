@@ -14,27 +14,30 @@
   margin-bottom: 20px
 
 .users-search__filter-pill
-  background-color: #D3DCE0
+  background-color: $colors.element-mid
   margin: 0 10px 0 0!important
 
   &:hover
     box-shadow: none!important
   .search__select-value
     &::after
-      color: #536171!important
+      color: $colors.text-mid!important
     .users-search__select,
     .users-search__select:focus,
     .users-search__select:active
-      color: #536171
-      background-color: #D3DCE0
+      color: $colors.text-mid
+      background-color: $colors.element-mid
       border: none
       background-image: none
       &:hover
-        background-color: #c3cCd0
+        background-color: $colors.element-dark
         background-image: none
 
+  &:last-child
+    margin: 0!important
+
 .users-search__filter-pill-label
-  color: #536171!important
+  color: $colors.text-mid!important
   &:hover
     cursor: default
 
@@ -45,7 +48,7 @@
 
 .user-list__filters__column
   align-items: center
-  color: #8091A5
+  color: $colors.text-light
   display: flex
 
 .search__filter-pill--active
@@ -55,20 +58,22 @@
     .users-search__select,
     .users-search__select:focus,
     .users-search__select:active
-      background-color: #4a90e2!important
+      background-color: $colors.blue-mid!important
       color: white!important
+      &:hover
+        background-color: $colors.blue-dark!important
 
 .user-list__reset-button
-  margin-right: 20px;
+  margin-right: 20px
 
 .select-button
-  border: 1px solid #d3dce0
-  border-radius: 0;
+  border: 1px solid $colors.element-mid
+  border-radius: 0
   max-width: 100%
   &:hover
     background: white
   svg
-    fill: #8091a5
+    fill: $colors.text-light
   > span
     justify-content: space-between
 

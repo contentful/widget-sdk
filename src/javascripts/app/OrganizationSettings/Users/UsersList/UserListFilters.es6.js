@@ -52,7 +52,7 @@ export class UserListFilters extends React.Component {
       <section className="user-list__filters">
         <div className="user-list__filters__column">
           <SearchFilter key={order.id} {...order} onChange={this.updateFilters} />
-          {`${pluralize('users', queryTotal, true)} found`}
+          <span>{`${pluralize('users', queryTotal, true)} found`}</span>
         </div>
         <section className="user-list__filters__column">
           {showResetButton && (
