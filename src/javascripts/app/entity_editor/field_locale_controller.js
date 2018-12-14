@@ -22,7 +22,7 @@ angular
     '$scope',
     '$attrs',
     function(require, $scope, $attrs) {
-      const _ = require('lodash');
+      const { find, isEqual, property } = require('lodash');
       const spaceContext = require('spaceContext');
       const K = require('utils/kefir.es6');
       const createFieldLocaleDoc = require('app/entity_editor/FieldLocaleDocument.es6').default;
@@ -118,26 +118,26 @@ angular
           // If a field is required and none of field-locale pairs is provided,
           // validation library reports an error on a [fields, fid] path.
           // In this case we don't want to have a visual hint for optional locale
-          if (_.isEqual(path, fieldPath)) {
+          if (isEqual(path, fieldPath)) {
             const fieldRequired = error.name === 'required';
             const localeOptional = $scope.locale.optional;
             return !fieldRequired || !localeOptional;
           }
 
-          return _.isEqual(path.slice(0, 3), localePath);
+          return isEqual(path.slice(0, 3), localePath);
         });
       }
 
       function decorateUniquenessError(error) {
         const conflicts = error.conflicting;
-        const conflictingEntryIds = conflicts.map(_.property('sys.id')).join(',');
+        const conflictingEntryIds = conflicts.map(property('sys.id')).join(',');
         const query = { 'sys.id[in]': conflictingEntryIds };
 
         // asynchronously add conflicting entry title to the error objects
         // so that we can display the list in the UI
         spaceContext.space.getEntries(query).then(entries => {
           entries.forEach(entry => {
-            const conflict = _.find(conflicts, c => c.sys.id === entry.data.sys.id);
+            const conflict = find(conflicts, c => c.sys.id === entry.data.sys.id);
 
             conflict.data = conflict.data || {};
             conflict.data.entryTitle = spaceContext.entryTitle(entry);
@@ -240,7 +240,9 @@ angular
               return DISCONNECTED;
             }
           }
-        ).toProperty();
+        )
+          .toProperty()
+          .skipDuplicates(isEqual);
 
       K.onValueScope($scope, controller.access$, access => {
         controller.access = access;
