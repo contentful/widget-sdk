@@ -1,0 +1,149 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UnpublishedReferencesWarning UnpublishedReferencesConfirm renders confirmation dialog 1`] = `
+<ModalConfirm
+  cancelLabel="Cancel"
+  cancelTestId="cf-ui-modal-confirm-cancel-button"
+  confirmLabel="Got it, publish anyway"
+  confirmTestId="cf-ui-modal-confirm-confirm-button"
+  intent="positive"
+  isConfirmDisabled={false}
+  isConfirmLoading={false}
+  isShown={true}
+  onCancel={[MockFunction]}
+  onConfirm={[MockFunction]}
+  shouldCloseOnEscapePress={true}
+  shouldCloseOnOverlayClick={true}
+  size="medium"
+  testId="unpublished-refs-confirm"
+  title="This entry links to "
+>
+  <Paragraph
+    element="p"
+    testId="cf-ui-paragraph"
+  >
+    It appears that you’ve linked to  that hasn't been published yet.
+  </Paragraph>
+  <List
+    testId="cf-ui-list"
+  />
+</ModalConfirm>
+`;
+
+exports[`UnpublishedReferencesWarning UnpublishedReferencesConfirm renders list of fields with unpublished references 1`] = `
+<div
+  className="ModalContent__ModalContent___2mf3h"
+  data-test-id="cf-ui-modal-content"
+>
+  <Paragraph
+    element="p"
+    testId="cf-ui-paragraph"
+  >
+    <p
+      className="Paragraph__Paragraph___2aO-9"
+      data-test-id="cf-ui-paragraph"
+    >
+      It appears that you’ve linked to 6 entries and 6 assets that haven't been published yet.
+    </p>
+  </Paragraph>
+  <List
+    testId="cf-ui-list"
+  >
+    <ul
+      className="List__List___1awv4"
+      data-test-id="cf-ui-list"
+    >
+      <ListItem
+        key="0"
+        testId="cf-ui-list-item"
+      >
+        <li
+          className="ListItem__ListItem___3S9Oc"
+          data-test-id="cf-ui-list-item"
+        >
+          <strong>
+            field-with-unpublished-entry (en-US)
+          </strong>
+           — 
+          1 unpublished entry
+        </li>
+      </ListItem>
+      <ListItem
+        key="1"
+        testId="cf-ui-list-item"
+      >
+        <li
+          className="ListItem__ListItem___3S9Oc"
+          data-test-id="cf-ui-list-item"
+        >
+          <strong>
+            field-with-unpublished-entries (en-US)
+          </strong>
+           — 
+          2 unpublished entries
+        </li>
+      </ListItem>
+      <ListItem
+        key="2"
+        testId="cf-ui-list-item"
+      >
+        <li
+          className="ListItem__ListItem___3S9Oc"
+          data-test-id="cf-ui-list-item"
+        >
+          <strong>
+            field-with-unpublished-asset (en-US)
+          </strong>
+           — 
+          1 unpublished asset
+        </li>
+      </ListItem>
+      <ListItem
+        key="3"
+        testId="cf-ui-list-item"
+      >
+        <li
+          className="ListItem__ListItem___3S9Oc"
+          data-test-id="cf-ui-list-item"
+        >
+          <strong>
+            field-with-unpublished-assets (en-US)
+          </strong>
+           — 
+          2 unpublished assets
+        </li>
+      </ListItem>
+      <ListItem
+        key="4"
+        testId="cf-ui-list-item"
+      >
+        <li
+          className="ListItem__ListItem___3S9Oc"
+          data-test-id="cf-ui-list-item"
+        >
+          <strong>
+            field-with-unpublished-mixed (en-US)
+          </strong>
+           — 
+          1 unpublished entry and 1 unpublished asset
+        </li>
+      </ListItem>
+      <ListItem
+        key="5"
+        testId="cf-ui-list-item"
+      >
+        <li
+          className="ListItem__ListItem___3S9Oc"
+          data-test-id="cf-ui-list-item"
+        >
+          <strong>
+            field-with-unpublished-mixed (en-US)
+          </strong>
+           — 
+          2 unpublished entries and 2 unpublished assets
+        </li>
+      </ListItem>
+    </ul>
+  </List>
+</div>
+`;

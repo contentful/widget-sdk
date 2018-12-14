@@ -12,7 +12,7 @@ angular.module('contentful').controller('entityEditor/StateController', [
     const Command = require('command');
     const closeState = require('navigation/closeState');
     const _ = require('lodash');
-    const publicationWarnings = require('app/entity_editor/PublicationWarnings.es6').create();
+    const publicationWarnings = require('app/entity_editor/PublicationWarnings/index.es6').create();
     const trackVersioning = require('analyticsEvents/versioning');
     const K = require('utils/kefir.es6');
     const N = require('app/entity_editor/Notifications.es6');
@@ -28,6 +28,8 @@ angular.module('contentful').controller('entityEditor/StateController', [
     const spaceContext = require('spaceContext');
     const onFeatureFlag = require('utils/LaunchDarkly').onFeatureFlag;
     const goToPreviousSlideOrExit = require('navigation/SlideInNavigator').goToPreviousSlideOrExit;
+    const registerUnpublishedReferencesWarning = require('app/entity_editor/PublicationWarnings/UnpublishedReferencesWarning/index.es6')
+      .registerUnpublishedReferencesWarning;
 
     const permissions = otDoc.permissions;
     const reverter = otDoc.reverter;
@@ -167,7 +169,9 @@ angular.module('contentful').controller('entityEditor/StateController', [
       }
     );
 
-    controller.registerPublicationWarning = publicationWarnings.register;
+    controller.registerUnpublishedReferencesWarning = registerUnpublishedReferencesWarning(
+      publicationWarnings
+    );
 
     function publishEntity() {
       return publicationWarnings
@@ -213,7 +217,7 @@ angular.module('contentful').controller('entityEditor/StateController', [
             return $q.reject();
           }
         })
-        .catch();
+        .catch(() => {});
     }
 
     controller.delete = Command.create(

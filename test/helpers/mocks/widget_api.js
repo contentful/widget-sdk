@@ -15,6 +15,10 @@ angular
     'require',
     require => {
       const $q = require('$q');
+      const createPublicationWarningsManager = require('app/entity_editor/PublicationWarnings/index.es6')
+        .create;
+      const registerUnpublishedReferencesWarning = require('app/entity_editor/PublicationWarnings/UnpublishedReferencesWarning/index.es6')
+        .registerUnpublishedReferencesWarning;
 
       return {
         create: create,
@@ -86,7 +90,9 @@ angular
             name: '',
             locale: 'en-US',
             type: '',
-            registerPublicationWarning: sinon.stub().returns(_.noop),
+            registerUnpublishedReferencesWarning: sinon.spy(
+              registerUnpublishedReferencesWarning(createPublicationWarningsManager())
+            ),
 
             value$: K.createMockProperty()
           },

@@ -160,7 +160,7 @@ angular
       $scope.field = field;
       $scope.locales = _.filter(locales, store.isLocaleActive);
 
-      $scope.state = { registerPublicationWarning: _.constant(_.noop) };
+      $scope.state = { registerUnpublishedReferencesWarning: _.constant(_.noop) };
 
       this.setInvalid = _.noop;
     }

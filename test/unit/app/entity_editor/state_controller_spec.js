@@ -33,7 +33,7 @@ describe('entityEditor/StateController', () => {
     this.$inject('modalDialog').open = sinon.stub().returns({ promise: dialogDefer.promise });
     dialogDefer.resolve();
 
-    const warnings = this.$inject('app/entity_editor/PublicationWarnings.es6');
+    const warnings = this.$inject('app/entity_editor/PublicationWarnings/index.es6');
     warnings.create = sinon.stub().returns({
       register: (this.registerWarningSpy = sinon.spy()),
       show: (this.showWarningsStub = sinon.stub().resolves())
@@ -424,8 +424,9 @@ describe('entityEditor/StateController', () => {
   describe('publication warnings', () => {
     it('allows publication warnings registration', function() {
       const warning = {};
-      this.controller.registerPublicationWarning(warning);
-      sinon.assert.calledOnce(this.registerWarningSpy.withArgs(warning));
+      this.controller.registerUnpublishedReferencesWarning(warning);
+
+      sinon.assert.calledOnce(this.registerWarningSpy);
     });
 
     it('shows publication warnings before actual action', function() {

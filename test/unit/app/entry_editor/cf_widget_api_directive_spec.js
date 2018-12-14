@@ -39,7 +39,7 @@ describe('cfWidgetApi directive', () => {
         editorContext: {},
         fields: {},
         transformedContentTypeData: {},
-        state: { registerPublicationWarning: _.noop }
+        state: { registerUnpublishedReferencesWarning: _.noop }
       });
 
       return $controller('WidgetApiController', {
