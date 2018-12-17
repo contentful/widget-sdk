@@ -2,16 +2,20 @@ import { h } from 'utils/legacy-html-hyperscript/index.es6';
 
 export default function template() {
   return h('.home', { 'cf-ui-sticky-container': true }, [
-    h('.home__container', { ngIf: '!readOnlySpace' }, [
-      h('.home__content', { ngIf: 'isAuthorOrEditor && !isSpaceAdmin' }, [
-        h('.home__content-title', ['New space for Authors and Editors!'])
-      ]),
-      h('.home__content', { ngIf: 'orgOwnerOrAdmin' }, [
-        h('cf-welcome'),
-        h('react-component', { name: 'app/home/UpgradePricing.es6' }),
-        h('cf-onboarding-steps'),
-        h('cf-developer-resources'),
-        h('cf-contact-us-space-home')
+    h('div', { ngIf: '!readOnlySpace' }, [
+      h('react-component', {
+        ngIf: 'isAuthorOrEditor && !isSpaceAdmin',
+        name: 'app/home/AuthorEditorSpaceHome.es6',
+        props: 'spaceHomeProps'
+      }),
+      h('.home__container', { ngIf: 'isSpaceAdmin && !isAuthorOrEditor' }, [
+        h('.home__content', [
+          h('cf-welcome'),
+          h('react-component', { name: 'app/home/UpgradePricing.es6' }),
+          h('cf-onboarding-steps'),
+          h('cf-developer-resources'),
+          h('cf-contact-us-space-home')
+        ])
       ])
     ]),
     h('.home__container .home__container-read-only', { ngIf: 'readOnlySpace' }, [

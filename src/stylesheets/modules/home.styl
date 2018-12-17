@@ -145,7 +145,12 @@ $home-width = 820px
     a
       color: $colors.text-light
       text-decoration: underline
-
+.widget-container
+  display: flex
+  flex-wrap: wrap
+  padding: 20px
+  &__row
+    width: 100%
 .tab-list.x--home
   border: 1px solid transparent
   border-bottom: 1px solid $colors.element-mid
@@ -155,3 +160,30 @@ $home-width = 820px
   z-index: 1
   &.fixed
     background-color: white
+
+.greeting-widget
+  justify-content: center
+  display: flex
+  flex-wrap: wrap
+  margin: 55px
+  &__header
+    color: $colors.text-dark
+    font-family: "Avenir Next W01"
+    font-size: 35px
+    line-height: 44px
+    text-align: center
+    width: 100%
+    margin: 5px
+  &__copy
+    color: $colors.text-dark
+    font-family: "Avenir Next W01"
+    font-size: 16px
+    line-height: 24px
+    text-align: center
+    width: 100%
+    margin: 5px
+  &__space-name
+    font-weight: 600
+  &__org-name
+    font-style: italic
+  
