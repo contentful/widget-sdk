@@ -35,6 +35,12 @@ describe('Entry List Controller', () => {
         track: sinon.stub()
       });
 
+      $provide.value('app/common/ReloadNotification.es6', {
+        default: {
+          apiErrorHandler: sinon.stub()
+        }
+      });
+
       $provide.value('TheLocaleStore', {
         resetWithSpace: sinon.stub(),
         getDefaultLocale: sinon.stub().returns({ internal_code: 'en-US' })
@@ -332,7 +338,6 @@ describe('Entry List Controller', () => {
 
   describe('Api Errors', () => {
     beforeEach(function() {
-      this.reloadNotificationHandler = this.$inject('ReloadNotification').apiErrorHandler;
       this.ComponentLibrary = this.$inject('@contentful/forma-36-react-components');
       this.ComponentLibrary.Notification.error = sinon.stub();
       this.ComponentLibrary.Notification.success = sinon.stub();
@@ -343,7 +348,9 @@ describe('Entry List Controller', () => {
       scope.context.view = {};
       scope.updateEntries();
       scope.$apply();
-      sinon.assert.called(this.reloadNotificationHandler);
+      sinon.assert.called(
+        this.$inject('app/common/ReloadNotification.es6').default.apiErrorHandler
+      );
     });
 
     it('shows error notification on 400 err', function() {

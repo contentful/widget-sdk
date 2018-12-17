@@ -1,6 +1,7 @@
 import { registerDirective, registerController, registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
 import template from 'access_control/templates/UserList.es6';
+import ReloadNotification from 'app/common/ReloadNotification.es6';
 
 registerDirective('cfUserList', [
   'UserListController/jumpToRole',
@@ -54,21 +55,12 @@ registerDirective('cfUserList', [
 
 registerController('UserListController', [
   '$scope',
-  'ReloadNotification',
   'spaceContext',
   'UserListHandler',
   'access_control/AccessChecker',
   'services/TokenStore.es6',
   'access_control/UserListActions.es6',
-  (
-    $scope,
-    ReloadNotification,
-    spaceContext,
-    UserListHandler,
-    accessChecker,
-    TokenStore,
-    UserListActions
-  ) => {
+  ($scope, spaceContext, UserListHandler, accessChecker, TokenStore, UserListActions) => {
     const userListHandler = UserListHandler.create();
     const actions = UserListActions.create(spaceContext, userListHandler, TokenStore);
 

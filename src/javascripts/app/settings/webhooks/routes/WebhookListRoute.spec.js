@@ -5,6 +5,14 @@ import $stateMocked from '$state';
 import spaceContextMocked from 'spaceContext';
 
 jest.mock(
+  'app/common/ReloadNotification.es6',
+  () => ({
+    basicErrorHandler: () => {}
+  }),
+  { virtual: true }
+);
+
+jest.mock(
   'data/OrganizationStatus.es6',
   () => ({
     __esModule: true, // needed for `default` export.

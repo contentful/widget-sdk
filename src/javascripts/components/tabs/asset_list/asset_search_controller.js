@@ -12,7 +12,7 @@ angular
       const $q = require('$q');
       const Paginator = require('classes/Paginator.es6').default;
       const PromisedLoader = require('PromisedLoader');
-      const ReloadNotification = require('ReloadNotification');
+      const ReloadNotification = require('app/common/ReloadNotification.es6').default;
       const logger = require('logger');
       const spaceContext = require('spaceContext');
       const ListQuery = require('ListQuery');

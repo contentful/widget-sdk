@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import * as ReloadNotification from 'ReloadNotification';
+import ReloadNotification from 'app/common/ReloadNotification.es6';
 import createResourceService from 'services/ResourceService.es6';
 import { update, add, keyBy, flow, filter } from 'lodash/fp';
 import Workbench from 'app/common/Workbench.es6';

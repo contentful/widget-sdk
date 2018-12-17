@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { get } from 'lodash';
 
 import { Notification } from '@contentful/forma-36-react-components';
-import * as ReloadNotification from 'ReloadNotification';
+import ReloadNotification from 'app/common/ReloadNotification.es6';
 import { getPlansWithSpaces } from 'account/pricing/PricingDataProvider.es6';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import createResourceService from 'services/ResourceService.es6';

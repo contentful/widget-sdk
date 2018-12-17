@@ -7,10 +7,18 @@ describe('Token store service', () => {
       sys: { createdBy: this.user },
       spaces: this.spaces
     });
+
+    this.stubs = {
+      ReloadNotification: {
+        trigger: sinon.stub()
+      }
+    };
+
     module('contentful/test', $provide => {
       $provide.value('data/CMA/TokenInfo.es6', {
         default: () => this.fetchWithAuth
       });
+      $provide.value('app/common/ReloadNotification.es6', this.stubs.ReloadNotification);
     });
 
     this.spaces = _.map(['a-space', 'b-space', 'c-space'], name => ({
@@ -59,13 +67,11 @@ describe('Token store service', () => {
   });
 
   it('reloads app on =/= 401', function() {
-    const notification = this.$inject('ReloadNotification');
-    notification.trigger = sinon.spy();
     this.fetchWithAuth.rejects({ statusCode: 404 });
 
     this.tokenStore.refresh();
     this.$apply();
-    sinon.assert.calledOnce(notification.trigger);
+    sinon.assert.calledOnce(this.stubs.ReloadNotification.trigger);
   });
 
   describe('#getSpace()', () => {

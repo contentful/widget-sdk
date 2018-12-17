@@ -2,7 +2,13 @@ import _ from 'lodash';
 
 // TODO merge this with directive tests
 describe('API Key List Controller', () => {
+  let stubs = {};
+
   beforeEach(function() {
+    stubs = {
+      apiErrorHandlerStub: sinon.stub()
+    };
+
     module('contentful/test', $provide => {
       // TODO: truly mock this somewhere
       $provide.value('services/ResourceService.es6', {
@@ -10,6 +16,11 @@ describe('API Key List Controller', () => {
           return {
             get: sinon.stub().resolves(this.resource)
           };
+        }
+      });
+      $provide.value('app/common/ReloadNotification.es6', {
+        default: {
+          apiErrorHandler: stubs.apiErrorHandlerStub
         }
       });
     });
@@ -95,7 +106,7 @@ describe('API Key List Controller', () => {
     it('results in an error message', function() {
       this.getApiKeys.rejects();
       this.create();
-      sinon.assert.called(this.$inject('ReloadNotification').apiErrorHandler);
+      sinon.assert.called(stubs.apiErrorHandlerStub);
     });
   });
 });

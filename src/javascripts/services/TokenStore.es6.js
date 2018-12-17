@@ -9,7 +9,7 @@ import * as K from 'utils/kefir.es6';
 import { createMVar } from 'utils/Concurrent.es6';
 import * as auth from 'Authentication.es6';
 import makeFetchWithAuth from 'data/CMA/TokenInfo.es6';
-import ReloadNotification from 'ReloadNotification';
+import ReloadNotification from 'app/common/ReloadNotification.es6';
 import * as OrganizationRoles from 'services/OrganizationRoles.es6';
 import { deepFreezeClone, deepFreeze } from 'utils/Freeze.es6';
 import { isEqual, groupBy, map, get, find, cloneDeep } from 'lodash';

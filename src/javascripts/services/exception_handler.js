@@ -14,7 +14,7 @@ angular.module('contentful').factory('$exceptionHandler', [
     const _ = require('lodash');
     return exception => {
       const metaData = _.extend({ promptedReload: true }, exception.metaData);
-      const ReloadNotification = require('ReloadNotification');
+      const ReloadNotification = require('app/common/ReloadNotification.es6').default;
 
       logger.logException(exception, metaData);
       ReloadNotification.trigger();

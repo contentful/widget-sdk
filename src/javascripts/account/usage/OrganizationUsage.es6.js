@@ -4,6 +4,7 @@ import { mapValues, flow, keyBy, get, eq, isNumber, pick } from 'lodash/fp';
 
 import { Spinner } from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
+import ReloadNotification from 'app/common/ReloadNotification.es6';
 
 const ServicesConsumer = require('../../reactServiceContext').default;
 
@@ -123,7 +124,6 @@ export class OrganizationUsage extends React.Component {
       OrganizationRoles: PropTypes.object.isRequired,
       PricingDataProvider: PropTypes.object.isRequired,
       ResourceService: PropTypes.object.isRequired,
-      ReloadNotification: PropTypes.object.isRequired,
       OrganizationMembershipRepository: PropTypes.object.isRequired,
       EndpointFactory: PropTypes.object.isRequired,
       Analytics: PropTypes.object.isRequired,
@@ -181,8 +181,7 @@ export class OrganizationUsage extends React.Component {
       $services: {
         OrganizationMembershipRepository: { getAllSpaces },
         PricingDataProvider: { isEnterprisePlan, getBasePlan, getPlansWithSpaces },
-        ResourceService,
-        ReloadNotification
+        ResourceService
       }
     } = this.props;
     const { flagActive } = this.state;
@@ -255,8 +254,7 @@ export class OrganizationUsage extends React.Component {
     const { periods } = this.state;
     const {
       $services: {
-        Analytics: { track },
-        ReloadNotification
+        Analytics: { track }
       }
     } = this.props;
     const newPeriod = periods[newIndex];
@@ -349,7 +347,6 @@ export class OrganizationUsage extends React.Component {
 }
 
 export default ServicesConsumer(
-  'ReloadNotification',
   {
     from: 'utils/LaunchDarkly/index.es6',
     as: 'LaunchDarkly'

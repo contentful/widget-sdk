@@ -3,7 +3,7 @@ import { extend } from 'lodash';
 import $rootScope from '$rootScope';
 import modalDialog from 'modalDialog';
 import { Notification } from '@contentful/forma-36-react-components';
-import ReloadNotification from 'ReloadNotification';
+import ReloadNotification from 'app/common/ReloadNotification.es6';
 import Command from 'command';
 import * as TokenStore from 'services/TokenStore.es6';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';

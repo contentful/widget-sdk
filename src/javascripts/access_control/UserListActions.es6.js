@@ -1,7 +1,7 @@
 import modalDialog from 'modalDialog';
 import Command from 'command';
 import { Notification } from '@contentful/forma-36-react-components';
-import ReloadNotification from 'ReloadNotification';
+import ReloadNotification from 'app/common/ReloadNotification.es6';
 import * as stringUtils from 'utils/StringUtils.es6';
 import ListQuery from 'ListQuery';
 import entitySelector from 'entitySelector';

@@ -10,6 +10,15 @@ import PeriodSelector from '../committed/PeriodSelector.es6';
 import NoSpacesPlaceholder from '../NoSpacesPlaceholder.es6';
 import OrganizationUsagePage from '../committed/OrganizationUsagePage.es6';
 import OrganizationResourceUsageList from 'account/usage/non_committed/OrganizationResourceUsageList.es6';
+import ReloadNotification from 'app/common/ReloadNotification.es6';
+
+jest.mock(
+  'app/common/ReloadNotification.es6',
+  () => ({
+    trigger: jest.fn()
+  }),
+  { virtual: true }
+);
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 
@@ -113,7 +122,6 @@ describe('OrganizationUsage', () => {
           getPlansWithSpaces
         },
         ResourceService,
-        ReloadNotification: { trigger: jest.fn() },
         OrganizationMembershipRepository: { getAllSpaces },
         EndpointFactory: { createOrganizationEndpoint: () => endpoint },
         Analytics: { track: jest.fn() },
@@ -262,7 +270,7 @@ describe('OrganizationUsage', () => {
       await shallowRenderComponent(defaultProps);
 
       expect(defaultProps.onForbidden).not.toHaveBeenCalled();
-      expect(defaultProps.$services.ReloadNotification.trigger).toHaveBeenCalled();
+      expect(ReloadNotification.trigger).toHaveBeenCalled();
     });
   });
 });

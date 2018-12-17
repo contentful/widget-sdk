@@ -4,7 +4,7 @@ import modalDialog from 'modalDialog';
 import Command from 'command';
 import spaceContext from 'spaceContext';
 import * as accessChecker from 'access_control/AccessChecker';
-import ReloadNotification from 'ReloadNotification';
+import ReloadNotification from 'app/common/ReloadNotification.es6';
 import ctHelpers from 'data/ContentTypes';
 import closeState from 'navigation/closeState';
 import metadataDialog from 'contentTypeEditor/metadataDialog';

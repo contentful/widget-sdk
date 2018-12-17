@@ -1,16 +1,19 @@
 describe('Role List Controller', () => {
   beforeEach(function() {
     this.stubs = {
-      isOwnerOrAdmin: sinon.stub().returns(false)
+      isOwnerOrAdmin: sinon.stub().returns(false),
+      basicErrorHandler: sinon.stub()
     };
 
     module('contentful/test', $provide => {
       $provide.value('services/OrganizationRoles.es6', {
         isOwnerOrAdmin: this.stubs.isOwnerOrAdmin
       });
+      $provide.value('app/common/ReloadNotification.es6', {
+        basicErrorHandler: this.stubs.basicErrorHandler
+      });
     });
     this.scope = this.$inject('$rootScope').$new();
-    this.basicErrorHandler = this.$inject('ReloadNotification').basicErrorHandler;
 
     this.canModifyRoles = sinon.stub().resolves(true);
     this.$inject('access_control/AccessChecker').canModifyRoles = this.canModifyRoles;
@@ -175,7 +178,7 @@ describe('Role List Controller', () => {
     });
 
     it('results in an error message', function() {
-      sinon.assert.called(this.basicErrorHandler);
+      sinon.assert.called(this.stubs.basicErrorHandler);
     });
   });
 });

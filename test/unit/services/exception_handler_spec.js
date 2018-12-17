@@ -20,7 +20,7 @@ xdescribe('Exception handler service', () => {
       }));
 
       triggerStub = sinon.stub();
-      $provide.value('ReloadNotification', {
+      $provide.value('app/common/ReloadNotification.es6', {
         trigger: triggerStub
       });
     });

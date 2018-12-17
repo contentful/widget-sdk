@@ -31,11 +31,18 @@ describe('Asset List Controller', () => {
         'success',
         'process',
         'getVersion',
-        'publish'
+        'publish',
+        'apiErrorHandler'
       ]);
 
       $provide.value('logger', {
         logError: stubs.logError
+      });
+
+      $provide.value('app/common/ReloadNotification.es6', {
+        default: {
+          apiErrorHandler: stubs.apiErrorHandler
+        }
       });
 
       $provide.value('services/Filestack.es6', {
@@ -220,20 +227,19 @@ describe('Asset List Controller', () => {
 
   describe('Api Errors', () => {
     beforeEach(function() {
-      this.handler = this.$inject('ReloadNotification').apiErrorHandler;
       stubs.getAssets.returns($q.reject({ statusCode: 500 }));
     });
 
     it('should cause resetAssets to show an error message', function() {
       scope.searchController.resetAssets();
       scope.$apply();
-      sinon.assert.called(this.handler);
+      sinon.assert.called(stubs.apiErrorHandler);
     });
 
     it('should cause loadMore to show an error message', function() {
       scope.searchController.loadMore();
       scope.$apply();
-      sinon.assert.called(this.handler);
+      sinon.assert.called(stubs.apiErrorHandler);
     });
   });
 

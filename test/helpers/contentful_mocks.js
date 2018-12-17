@@ -39,18 +39,6 @@ angular
         throw e;
       });
 
-      $provide.decorator('ReloadNotification', [
-        '$delegate',
-        $delegate => {
-          // TODO firefox does not yet support for (const x in y)
-          /* eslint prefer-const: off */
-          for (let prop in $delegate) {
-            sinon.stub($delegate, prop);
-          }
-          return $delegate;
-        }
-      ]);
-
       $provide.constant('@contentful/sharejs/lib/client', {
         Connection: sinon.stub().returns({
           socket: {},

@@ -78,7 +78,7 @@ describe('analyze', () => {
 
         const WebhookEditor = () => {};
 
-        export default ServicesConsumer('$state', 'notification', 'modalDialog', 'ReloadNotification', {
+        export default ServicesConsumer('$state', 'notification', 'modalDialog', {
             as: 'Analytics',
             from: 'analytics/Analytics.es6'
           })(WebhookEditor);
@@ -92,7 +92,7 @@ describe('analyze', () => {
 
       const WebhookEditor = () => {};
 
-      export default SC('$state', 'notification', 'modalDialog', 'ReloadNotification', {
+      export default SC('$state', 'notification', 'modalDialog', {
           as: 'Analytics',
           from: 'analytics/Analytics.es6'
         })(WebhookEditor);
@@ -103,7 +103,6 @@ describe('analyze', () => {
       '$state.implicit',
       'notification.implicit',
       'modalDialog.implicit',
-      'ReloadNotification.implicit',
       'analytics/Analytics.implicit'
     ]);
 
@@ -111,7 +110,6 @@ describe('analyze', () => {
       '$state.implicit',
       'notification.implicit',
       'modalDialog.implicit',
-      'ReloadNotification.implicit',
       'analytics/Analytics.implicit'
     ]);
   });

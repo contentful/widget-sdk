@@ -1,16 +1,16 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
+import ReloadNotification from 'app/common/ReloadNotification.es6';
 import { getInstance } from 'access_control/RoleRepository.es6';
 
 registerFactory('createRoleRemover', [
-  'ReloadNotification',
   '$q',
   '$rootScope',
   'modalDialog',
   'command',
   'spaceContext',
-  (ReloadNotification, $q, $rootScope, modalDialog, Command, spaceContext) => {
+  ($q, $rootScope, modalDialog, Command, spaceContext) => {
     const roleRepo = getInstance(spaceContext.space);
 
     return function createRoleRemover(listHandler, doneFn) {

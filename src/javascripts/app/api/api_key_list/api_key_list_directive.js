@@ -14,7 +14,7 @@ angular
     'require',
     ($scope, require) => {
       const _ = require('lodash');
-      const ReloadNotification = require('ReloadNotification');
+      const ReloadNotification = require('app/common/ReloadNotification.es6').default;
       const spaceContext = require('spaceContext');
       const accessChecker = require('access_control/AccessChecker');
       const Command = require('command');

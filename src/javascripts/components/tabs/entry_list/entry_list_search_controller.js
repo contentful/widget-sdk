@@ -9,7 +9,7 @@ angular
     function($scope, require) {
       const $q = require('$q');
       const ListQuery = require('ListQuery');
-      const ReloadNotification = require('ReloadNotification');
+      const ReloadNotification = require('app/common/ReloadNotification.es6').default;
       const { Notification } = require('@contentful/forma-36-react-components');
       const createRequestQueue = require('overridingRequestQueue');
       const spaceContext = require('spaceContext');

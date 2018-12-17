@@ -15,7 +15,7 @@ describe('Role List Directive', () => {
         isOwnerOrAdmin: this.stubs.isOwnerOrAdmin
       });
     });
-    this.basicErrorHandler = this.$inject('ReloadNotification').basicErrorHandler;
+    this.basicErrorHandler = this.$inject('app/common/ReloadNotification.es6').basicErrorHandler;
 
     this.canModifyRoles = sinon.stub().resolves(true);
     this.$inject('access_control/AccessChecker').canModifyRoles = this.canModifyRoles;

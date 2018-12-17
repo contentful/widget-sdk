@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import SpaceSettings from './SpaceSettings.es6';
 import { Notification } from '@contentful/forma-36-react-components';
+import ReloadNotification from 'app/common/ReloadNotification.es6';
 
 const ServicesConsumer = require('../../../reactServiceContext').default;
 
@@ -14,8 +15,7 @@ export class SpaceSettingsRoute extends React.Component {
       DeleteSpace: PropTypes.object.isRequired,
       PricingDataProvider: PropTypes.object.isRequired,
       EndpointFactory: PropTypes.object.isRequired,
-      $state: PropTypes.object.isRequired,
-      ReloadNotification: PropTypes.object.isRequired
+      $state: PropTypes.object.isRequired
     })
   };
 
@@ -34,7 +34,6 @@ export class SpaceSettingsRoute extends React.Component {
   };
 
   handleSaveError = err => {
-    const { ReloadNotification } = this.props.$services;
     if (get(err, ['data', 'details', 'errors'], []).length > 0) {
       Notification.error('Please provide a valid space name.');
     } else if (get(err, ['data', 'sys', 'id']) === 'Conflict') {
@@ -91,7 +90,6 @@ export class SpaceSettingsRoute extends React.Component {
 export default ServicesConsumer(
   'spaceContext',
   '$state',
-  'ReloadNotification',
   {
     from: 'services/TokenStore.es6',
     as: 'TokenStore'

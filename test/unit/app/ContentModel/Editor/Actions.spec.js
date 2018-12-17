@@ -2,7 +2,7 @@ import sinon from 'sinon';
 import _ from 'lodash';
 
 describe('app/ContentModel/Editor/Actions.es6', () => {
-  let controller, scope, $q, logger, notification, accessChecker, ReloadNotification, spaceContext;
+  let controller, scope, $q, logger, notification, accessChecker, spaceContext, stubs;
   let space, contentType;
 
   function FormStub() {
@@ -25,6 +25,12 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
   beforeEach(function() {
     const self = this;
 
+    stubs = {
+      ReloadNotification: {
+        basicErrorHandler: sinon.stub()
+      }
+    };
+
     const flags = {
       'feature-bv-2018-08-enforcements-api': true
     };
@@ -42,6 +48,7 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
           });
         })
       });
+      $provide.value('app/common/ReloadNotification.es6', stubs.ReloadNotification);
     });
 
     this.$state = this.$inject('$state');
@@ -55,8 +62,6 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
     notification.error = sinon.stub();
     accessChecker = this.$inject('access_control/AccessChecker');
     accessChecker.canPerformActionOnEntryOfType = sinon.stub().returns(true);
-    ReloadNotification = this.$inject('ReloadNotification');
-    ReloadNotification.basicErrorHandler = sinon.spy();
 
     this.cfStub = this.$inject('cfStub');
 
@@ -151,7 +156,7 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
       function testEndpointError() {
         controller.delete.execute();
         scope.$apply();
-        sinon.assert.calledOnce(ReloadNotification.basicErrorHandler);
+        sinon.assert.calledOnce(stubs.ReloadNotification.basicErrorHandler);
       }
 
       it('notifies the user when entries endpoint cannot be read', function() {

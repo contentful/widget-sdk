@@ -12,7 +12,7 @@ describe('DeleteSpace', () => {
     module('contentful/test', $provide => {
       $provide.value('data/EndpointFactory.es6', { createSpaceEndpoint: this.createEndpoint });
       $provide.value('services/TokenStore.es6', this.TokenStore);
-      $provide.value('ReloadNotification', this.ReloadNotification);
+      $provide.value('app/common/ReloadNotification.es6', this.ReloadNotification);
     });
 
     this.modalDialog = this.$inject('modalDialog');
