@@ -14,7 +14,6 @@
  * @ngdoc module
  * @name cf.ui
  */
-angular.module('contentful/environment', []);
 angular.module('contentful/init', ['cf.es6']);
 /**
  * @ngdoc module
@@ -32,7 +31,6 @@ angular.module('cf.app', ['ui.router']);
  */
 angular.module('contentful', [
   'contentful/init',
-  'contentful/environment',
   'cf.es6',
   'cf.app',
   'angularLoad',
