@@ -41,26 +41,21 @@ export default class InvitationsList extends React.Component {
 
   getLinkToUsersList() {
     return href({
-      path: ['account', 'organizations', 'users', 'list'],
-      params: { orgId: this.props.orgId }
+      path: ['account', 'organizations', 'users', 'list']
     });
   }
 
   getLinkToInviteUsersPage() {
     return href({
-      path: ['account', 'organizations', 'users', 'new'],
-      params: { orgId: this.props.orgId }
+      path: ['account', 'organizations', 'users', 'new']
     });
   }
 
   goToUserInvitationDetail = invitationId => () => {
-    const { orgId } = this.props;
-
     return go({
       path: ['account', 'organizations', 'users', 'invitation'],
       params: {
-        invitationId,
-        orgId
+        invitationId
       }
     });
   };

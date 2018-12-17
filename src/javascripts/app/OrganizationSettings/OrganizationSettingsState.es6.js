@@ -11,6 +11,9 @@ import gatekeeperStates from './OrganizationSettingsGatekeeperStates.es6';
 const usersAndInvitationsState = Base({
   name: 'users',
   abstract: true,
+  params: {
+    orgId: ''
+  },
   children: [
     inviteUsersState,
     userDetailState,
