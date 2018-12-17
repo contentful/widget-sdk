@@ -1,16 +1,14 @@
-'use strict';
+import { registerController } from 'NgRegistry.es6';
+import _ from 'lodash';
+import memoize from 'utils/memoize.es6';
+import * as Signal from 'utils/signal.es6';
 
-angular.module('cf.app').controller('LocationEditorSearchController', [
-  'require',
+registerController('LocationEditorSearchController', [
   '$scope',
-  function(require, $scope) {
-    const _ = require('lodash');
-    const $q = require('$q');
-    const memoize = require('utils/memoize.es6').default;
-    const LazyLoader = require('LazyLoader');
-    const Signal = require('utils/signal.es6');
-    const throttle = require('throttle');
-
+  '$q',
+  'LazyLoader',
+  'throttle',
+  function($scope, $q, LazyLoader, throttle) {
     const controller = this;
     const resultsAvailable = Signal.create();
 

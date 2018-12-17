@@ -1,4 +1,5 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
+import $ from 'jquery';
 
 /**
  * @ngdoc directive
@@ -13,13 +14,10 @@
  *
  * @property {string} $scope.contentTypeHref
  */
-angular.module('cf.app').directive('cfWidgetRenderer', [
-  'require',
-  require => {
-    const $ = require('jquery');
-    const $compile = require('$compile');
-    const $state = require('$state');
-
+registerDirective('cfWidgetRenderer', [
+  '$compile',
+  '$state',
+  ($compile, $state) => {
     return {
       scope: true,
       restrict: 'E',

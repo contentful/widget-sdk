@@ -1,4 +1,5 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
+import _ from 'lodash';
 
 /**
  * TODO This module is basically an adapter for the entity helper methods on
@@ -8,13 +9,12 @@
  * We should collect all entity helper logic in one point and create that
  * object where it is needed.
  */
-angular.module('cf.app').factory('EntityHelpers', [
-  'require',
-  require => {
-    const _ = require('lodash');
-    const $q = require('$q');
-    const spaceContext = require('spaceContext');
-    const assetUrlFilter = require('$filter')('assetUrl');
+registerFactory('EntityHelpers', [
+  '$q',
+  'spaceContext',
+  '$filter',
+  ($q, spaceContext, $filter) => {
+    const assetUrlFilter = $filter('assetUrl');
 
     return {
       newForLocale: newForLocale,

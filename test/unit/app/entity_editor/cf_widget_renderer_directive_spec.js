@@ -1,5 +1,3 @@
-'use strict';
-
 describe('cfWidgetRenderer Directive', () => {
   beforeEach(function() {
     module('contentful/test', $provide => {

@@ -18,7 +18,8 @@ describe('entity editor field integration', () => {
   beforeEach(function() {
     module('contentful/test', $provide => {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', identity]);
-      $provide.removeDirectives('cfWidgetApi', 'cfWidgetRenderer');
+      $provide.constant('cfWidgetApiDirective', () => {});
+      $provide.constant('cfWidgetRendererDirective', () => {});
     });
 
     this.createDocument = this.$inject('mocks/entityEditor/Document').create;
