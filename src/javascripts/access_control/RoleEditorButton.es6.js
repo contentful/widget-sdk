@@ -33,9 +33,9 @@ export default class RoleEditorButton extends React.Component {
     const { onSave, onDuplicate, onDelete, disabled, loading, showDropdown } = this.props;
 
     return (
-      <div className="btn-action-select">
+      <div className="btn-action-select btn-action-select--react">
         <Button
-          extraClassNames="btn-action-select__action"
+          extraClassNames="btn-action-select__action btn-action-select--react__action"
           testId="save-button"
           disabled={disabled}
           loading={loading}
@@ -48,7 +48,7 @@ export default class RoleEditorButton extends React.Component {
               <IconButton
                 label="additional-actions"
                 data-test-id="additional-role-editor"
-                extraClassNames="btn-action-select__selector"
+                extraClassNames="btn-action-select__selector btn-action-select--react__selector"
                 buttonType="white"
                 iconProps={{ icon: 'ChevronDown', color: 'white' }}
                 onClick={() => this.setState(update('isOpen', negate(identity)))}
