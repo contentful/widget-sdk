@@ -1,10 +1,10 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
 
 /**
  * @ngdoc service
  * @name data/previewEnvironmentsCache
  */
-angular.module('cf.data').factory('data/previewEnvironmentsCache', () => {
+registerFactory('data/previewEnvironmentsCache', () => {
   let previewEnvironmentsCache;
 
   return {

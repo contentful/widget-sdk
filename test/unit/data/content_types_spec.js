@@ -2,7 +2,7 @@
 
 describe('data/ContentTypes', () => {
   beforeEach(() => {
-    module('cf.data');
+    module('contentful/test');
   });
 
   describe('#assureDisplayField', () => {

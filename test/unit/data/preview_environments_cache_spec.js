@@ -2,7 +2,7 @@
 
 describe('data/previewEnvironmentsCache', () => {
   beforeEach(function() {
-    module('cf.data');
+    module('contentful/test');
     this.previewEnvironmentsCache = this.$inject('data/previewEnvironmentsCache');
     this.previewEnvironmentsCache.setAll({ foo: makeEnv('foo') });
   });

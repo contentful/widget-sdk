@@ -1,4 +1,6 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
+import _ from 'lodash';
+
 /**
  * @ngdoc service
  * @name ShareJS
@@ -6,12 +8,9 @@
  * @description
  * Initializes and provides access to ShareJS
  */
-angular.module('cf.data').factory('data/ShareJS/Utils', [
-  'require',
-  require => {
-    const _ = require('lodash');
-    const $q = require('$q');
-
+registerFactory('data/ShareJS/Utils', [
+  '$q',
+  $q => {
     return {
       setDeep: setDeep,
       peek: peek,

@@ -55,5 +55,16 @@ angular
       ngRequire('forms.es6');
       ngRequire('forms/errors.es6');
       ngRequire('forms/validation.es6');
+
+      ngRequire('data/apiClient.es6');
+      ngRequire('data/contentTypes.es6');
+      ngRequire('data/editingInterfaces.es6');
+      ngRequire('data/entries.es6');
+      ngRequire('data/previewEnvironmentsCache.es6');
+      ngRequire('data/streamHasSet.es6');
+      ngRequire('data/userCache.es6');
+      ngRequire('data/editing_interfaces/assetInterface.es6');
+      ngRequire('data/editing_interfaces/transformer.es6');
+      ngRequire('data/sharejs/utils.es6');
     }
   ]);

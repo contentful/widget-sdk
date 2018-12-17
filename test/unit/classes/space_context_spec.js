@@ -9,9 +9,12 @@ describe('spaceContext', () => {
     this.mockSpaceEndpoint = createMockSpaceEndpoint();
     this.initEnforcements = sinon.stub().returns(function() {});
 
+    this.userCache = {};
+    this.createUserCache = sinon.stub().returns(this.userCache);
+
     module('contentful/test', $provide => {
       $provide.value('data/userCache', sinon.stub());
-      $provide.value('data/editingInterfaces', sinon.stub());
+      $provide.constant('data/editingInterfaces', sinon.stub());
       $provide.value('access_control/AccessChecker', this.AccessChecker);
       $provide.value('data/Endpoint.es6', {
         createSpaceEndpoint: () => this.mockSpaceEndpoint.request
@@ -28,6 +31,7 @@ describe('spaceContext', () => {
       $provide.value('services/EnforcementsService.es6', {
         init: this.initEnforcements
       });
+      $provide.constant('data/userCache', this.createUserCache);
     });
     this.widgetStoreCreate = this.$inject('widgets/Store.es6').create;
     this.spaceContext = this.$inject('spaceContext');
@@ -89,12 +93,9 @@ describe('spaceContext', () => {
     });
 
     it('creates the user cache', function() {
-      const userCache = {};
-      const createUserCache = this.$inject('data/userCache');
-      createUserCache.resetHistory().returns(userCache);
       this.resetWithSpace();
-      sinon.assert.calledWithExactly(createUserCache, this.spaceContext.endpoint);
-      expect(this.spaceContext.users).toBe(userCache);
+      sinon.assert.calledWithExactly(this.createUserCache, this.spaceContext.endpoint);
+      expect(this.spaceContext.users).toBe(this.userCache);
     });
 
     it('creates and refreshes widget store', function() {
