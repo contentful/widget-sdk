@@ -1,25 +1,21 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
+import htmlEncoder from 'node-html-encoder';
 
-angular
-  .module('cf.utils')
-  /**
-   * @ngdoc service
-   * @module cf.utils
-   * @name encoder
-   * @usage[js]
-   * var htmlEncode = require('encoder').htmlEncode;
-   * console.log(
-   *   htmlEncode('<script src="..."></script>') ==
-   *   '&lt;script src=&quot;...&quot;&gt;&lt;/script&gt;');
-   */
-  .factory('encoder', [
-    'raw/htmlEncoder',
-    htmlEncoder => {
-      const encoder = htmlEncoder.Encoder();
+/**
+ * @ngdoc service
+ * @module cf.utils
+ * @name encoder
+ * @usage[js]
+ * var htmlEncode = require('encoder').htmlEncode;
+ * console.log(
+ *   htmlEncode('<script src="..."></script>') ==
+ *   '&lt;script src=&quot;...&quot;&gt;&lt;/script&gt;');
+ */
+registerFactory('encoder', () => {
+  const encoder = htmlEncoder.Encoder();
 
-      return {
-        htmlEncode: encoder.htmlEncode.bind(encoder),
-        htmlDecode: encoder.htmlDecode.bind(encoder)
-      };
-    }
-  ]);
+  return {
+    htmlEncode: encoder.htmlEncode.bind(encoder),
+    htmlDecode: encoder.htmlDecode.bind(encoder)
+  };
+});
