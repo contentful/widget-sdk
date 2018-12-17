@@ -116,11 +116,10 @@ class EditLocaleForm extends Component {
       await this.props.saveLocale(locale);
       LocaleNotifications.saveSuccess();
       this.props.setDirty(false);
-      this.setState({ isSaving: false });
     } catch (err) {
       LocaleNotifications.saveError(err);
-      this.setState({ isSaving: false });
     }
+    this.setState({ isSaving: false });
   };
 
   onDeleteLocale = async (locale, localeList) => {
@@ -209,11 +208,11 @@ export default class LocalesEditRoute extends React.Component {
               <EditLocaleForm
                 initialLocale={locale}
                 spaceLocales={spaceLocales}
-                saveLocale={locale => {
+                saveLocale={locale =>
                   this.save(locale).then(() => {
                     fetch();
-                  });
-                }}
+                  })
+                }
                 removeLocale={this.remove}
                 setDirty={this.props.setDirty}
                 registerSaveAction={this.props.registerSaveAction}

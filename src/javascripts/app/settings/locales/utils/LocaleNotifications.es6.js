@@ -6,16 +6,12 @@ const NOT_RENAMEABLE_MESSAGE =
   'Cannot change the code of a locale which is fallback of another one';
 const ERROR_CHECKS = [
   {
-    message: 'This locale already exists',
-    check: err => {
-      checkUnprocessableEntityErrorName('taken', err);
-    }
+    message: 'This locale already exists.',
+    check: err => checkUnprocessableEntityErrorName('taken', err)
   },
   {
-    message: 'Fallback setting creates a loop',
-    check: err => {
-      checkUnprocessableEntityErrorName('fallback locale creates a loop', err);
-    }
+    message: 'Fallback setting creates a loop.',
+    check: err => checkUnprocessableEntityErrorName('fallback locale creates a loop', err)
   },
   {
     message: NOT_RENAMEABLE_MESSAGE,
@@ -63,10 +59,10 @@ function getErrorMessage(err) {
 }
 
 function checkUnprocessableEntityErrorName(name, err) {
-  const status = get(err, ['statusCode']);
-  const errors = get(err, ['body', 'details', 'errors']);
+  const status = get(err, 'statusCode');
+  const errors = get(err, 'data.details.errors', []);
 
-  return status === 422 && errors && errors.length > 0 && errors[0].name === name;
+  return status === 422 && !!errors.find(error => error.name === name);
 }
 
 export default {
