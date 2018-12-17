@@ -28,20 +28,11 @@ angular
     'require',
     require => {
       const _ = require('lodash');
-      const INLINE_REFERENCE_FEATURE_FLAG = 'feature-at-02-2018-inline-reference-field';
       const RTL_SUPPORT_FEATURE_FLAG = 'feature-at-03-2018-rtl-support';
 
       const TheLocaleStore = require('TheLocaleStore');
-      const $q = require('$q');
       const K = require('utils/kefir.es6');
-      const getStore = require('TheStore').getStore;
-      const spaceContext = require('spaceContext');
-      const EntityHelpers = require('EntityHelpers');
       const LD = require('utils/LaunchDarkly');
-      const trackInlineEditorToggle = require('analytics/events/ReferenceEditor.es6')
-        .onToggleInlineEditor;
-      const getInlineEditingStoreKey = require('app/widgets/link/utils.es6')
-        .getInlineEditingStoreKey;
       const isRtlLocale = require('utils/locales.es6').isRtlLocale;
 
       return {
@@ -57,7 +48,6 @@ angular
 
             const widget = $scope.widget;
             const field = widget.field;
-            const store = getStore();
 
             // All data that is read by the template
             const templateData = {
@@ -95,19 +85,8 @@ angular
               templateData.fieldHasFocus = focusedField === field.id;
             });
 
-            LD.onFeatureFlag($scope, INLINE_REFERENCE_FEATURE_FLAG, isEnabled => {
-              $scope.data.canRenderInline = isEnabled && canRenderInline();
-            });
-
-            $scope.data.expandedStates = $scope.locales.reduce((expandedStates, locale) => {
-              expandedStates[locale.code] = isLocaleFieldExpanded(locale.code);
-              return expandedStates;
-            }, {});
-
             $scope.methods = {
-              shouldDisplayRtl: _.constant(false),
-              isLocaleFieldExpanded: isLocaleFieldExpanded,
-              toggleLocaleFieldExpansion: toggleLocaleFieldExpansion
+              shouldDisplayRtl: _.constant(false)
             };
 
             LD.onFeatureFlag($scope, RTL_SUPPORT_FEATURE_FLAG, isEnabled => {
@@ -117,61 +96,6 @@ angular
                 $scope.methods.shouldDisplayRtl = isRtlLocale;
               }
             });
-
-            function canRenderInline() {
-              return (
-                field.type === 'Link' &&
-                field.linkType === 'Entry' &&
-                $scope.editorContext.createReferenceContext
-              ); // i.e., is not nested
-            }
-
-            function toggleLocaleFieldExpansion(locale) {
-              const localeCode = locale.code;
-              const ctExpandedStoreKey = getLocaleFieldExpandedStoreKey(localeCode);
-              const newVal = !isLocaleFieldExpanded(localeCode);
-
-              getFieldOrLinkCt(localeCode).then(linkContentType => {
-                trackInlineEditorToggle({
-                  contentType: linkContentType,
-                  toggleState: newVal,
-                  selector: field.id + '.' + localeCode
-                });
-              });
-
-              $scope.data.expandedStates[localeCode] = newVal;
-              $scope.$broadcast('ct-expand-state:toggle', [field.apiName, localeCode, newVal]);
-              store.set(ctExpandedStoreKey, newVal);
-            }
-
-            function isLocaleFieldExpanded(localeCode) {
-              const ctExpandedStoreKey = getLocaleFieldExpandedStoreKey(localeCode);
-              return $scope.data.canRenderInline && store.get(ctExpandedStoreKey);
-            }
-
-            function getLocaleFieldExpandedStoreKey(localeCode) {
-              return getInlineEditingStoreKey(
-                spaceContext.user.sys.id,
-                $scope.editorContext.entityInfo.contentTypeId,
-                field.apiName,
-                localeCode
-              );
-            }
-
-            function getFieldOrLinkCt(localeCode) {
-              const validIds = EntityHelpers.contentTypeFieldLinkCtIds(field);
-              if (validIds.length === 1) {
-                return spaceContext.publishedCTs.fetch(validIds[0]);
-              }
-              const linkedEntry = $scope.fields[field.apiName].getValue(localeCode);
-              if (linkedEntry) {
-                return spaceContext.space.getEntry(linkedEntry.sys.id).then(entry => {
-                  const contentTypeId = entry.data.sys.contentType.sys.id;
-                  return spaceContext.publishedCTs.get(contentTypeId);
-                });
-              }
-              return $q.resolve(null);
-            }
 
             function updateErrorStatus() {
               const hasSchemaErrors = $scope.editorContext.validator.hasFieldError(field.id);

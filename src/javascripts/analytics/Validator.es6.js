@@ -72,7 +72,7 @@ export const validEvents = {
   element: ['click'],
   // TODO: These should be merged with the reference_editor_action
   // schema.
-  reference_editor: ['create_entry', 'edit_entry', 'toggle_inline_editor'],
+  reference_editor: ['create_entry', 'edit_entry'],
   markdown_editor: ['action'],
   reference_editor_action: ['create', 'edit', 'delete', 'link'],
   incoming_links: [

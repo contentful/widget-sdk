@@ -26,13 +26,3 @@ function getValidContentTypesForField(field) {
 
   return contentTypes;
 }
-
-export function getInlineEditingStoreKey(userId, contentTypeId, fieldApiName, publicLocale) {
-  return [
-    'inlineRefEditing',
-    userId,
-    contentTypeId,
-    fieldApiName, // Should be .id wich is not available via widgetApi though.
-    publicLocale
-  ].join('.');
-}

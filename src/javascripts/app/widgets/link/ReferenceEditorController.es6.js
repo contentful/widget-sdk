@@ -22,8 +22,7 @@ import {
   canCreateAsset,
   Action
 } from 'access_control/AccessChecker';
-import { canLinkToContentType, getInlineEditingStoreKey } from './utils.es6';
-import { getStore } from 'TheStore';
+import { canLinkToContentType } from './utils.es6';
 
 import {
   getSlideInEntities,
@@ -32,17 +31,13 @@ import {
 
 const FEATURE_LOTS_OF_CT_ADD_ENTRY_REDESIGN =
   'feature-at-11-2017-lots-of-cts-add-entry-and-link-reference';
-const INLINE_REFERENCE_FEATURE_FLAG = 'feature-at-02-2018-inline-reference-field';
+
 const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG = 'feature-at-05-2018-sliding-entry-editor-multi-level';
 
 export default function create($scope, widgetApi) {
-  const store = getStore();
   const {
     field,
-    fieldProperties: { isDisabled$ },
-    contentType: {
-      sys: { id: contentTypeId }
-    }
+    fieldProperties: { isDisabled$ }
   } = widgetApi;
   const state = State.create(
     field,
@@ -80,28 +75,13 @@ export default function create($scope, widgetApi) {
     $scope.isNewAddAndLinkRefButtonEnabled = isEnabled;
   });
 
-  // TODO: This is for inline reference editing
-  // BETA release. Remove this once we are done with
-  // the experiment.
-  onFeatureFlag($scope, INLINE_REFERENCE_FEATURE_FLAG, isEnabled => {
-    $scope.isInlineEditingEnabled = isEnabled;
-    const featureEnabledForField = isInlineEditingEnabledForField();
-    const isAsset = $scope.isAssetCard;
-    const isOneToOne = !!$scope.single;
+  const isAsset = $scope.isAssetCard;
 
-    if (isAsset) {
-      $scope.referenceType = { asset: true };
-    } else if (
-      widgetApi._internal.createReferenceContext &&
-      isEnabled &&
-      featureEnabledForField &&
-      isOneToOne
-    ) {
-      $scope.referenceType = { inline: true };
-    } else {
-      $scope.referenceType = { link: true };
-    }
-  });
+  if (isAsset) {
+    $scope.referenceType = { asset: true };
+  } else {
+    $scope.referenceType = { link: true };
+  }
 
   onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, flagState => {
     const isEnabled = flagState === 2;
@@ -110,16 +90,6 @@ export default function create($scope, widgetApi) {
       slideInEditorEnabled = true;
     }
   });
-
-  function isInlineEditingEnabledForField() {
-    const ctExpandedStoreKey = getInlineEditingStoreKey(
-      spaceContext.user.sys.id,
-      contentTypeId,
-      field.id,
-      field.locale
-    );
-    return store.get(ctExpandedStoreKey);
-  }
 
   $scope.uiSortable.update = () => {
     // let uiSortable update the model, then sync
@@ -171,9 +141,7 @@ export default function create($scope, widgetApi) {
       .then(entry => {
         if ($scope.single) {
           trackEntryCreate({
-            contentType,
-            isInlineEditingFeatureFlagEnabled: $scope.isInlineEditingEnabled,
-            isInlineEditingEnabledForField: isInlineEditingEnabledForField()
+            contentType
           });
         }
         track('reference_editor_action:create', { ctId: contentTypeId });
@@ -200,9 +168,6 @@ export default function create($scope, widgetApi) {
 
   function makeNewEntityHandler(contentType) {
     return entity => {
-      if ($scope.referenceType.inline) {
-        $scope.isReady = true;
-      }
       const numEntities = getSlideInEntities().length;
       const shouldTrackSlideInOpen =
         slideInEditorEnabled && (!bulkEditorEnabled || numEntities > 1);
@@ -380,8 +345,7 @@ export default function create($scope, widgetApi) {
     // only track for 1:1 entry references that will open in a new entry editor.
     if (entity.sys.type === 'Entry' && !!$scope.single && !isCurrentEntry(entity)) {
       trackEntryEdit({
-        contentType: spaceContext.publishedCTs.get(entity.sys.contentType.sys.id),
-        isInlineEditingFeatureFlagEnabled: $scope.isInlineEditingEnabled
+        contentType: spaceContext.publishedCTs.get(entity.sys.contentType.sys.id)
       });
     }
   }

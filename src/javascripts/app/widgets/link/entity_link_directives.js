@@ -104,12 +104,7 @@ angular
         ]);
       }
 
-      const INLINE_REFERENCE_FEATURE_FLAG = 'feature-at-02-2018-inline-reference-field';
       const REFERENCE_CARD_REDESIGN_FEATURE_FLAG = 'feature-at-06-2018-reference-cards-redesign';
-
-      LD.onFeatureFlag($scope, INLINE_REFERENCE_FEATURE_FLAG, isEnabled => {
-        $scope.isInlineEditingEnabled = isEnabled;
-      });
 
       LD.onFeatureFlag($scope, REFERENCE_CARD_REDESIGN_FEATURE_FLAG, isEnabled => {
         $scope.useRedesignedCardTemplate = isEnabled;

@@ -48,7 +48,6 @@ registerGenericEvent('learn:step_clicked');
 
 registerGenericEvent('reference_editor:create_entry');
 registerGenericEvent('reference_editor:edit_entry');
-registerGenericEvent('reference_editor:toggle_inline_editor');
 
 registerGenericEvent('markdown_editor:action');
 

@@ -12,7 +12,7 @@ All different kind of `generic` events are documented in separate files and trea
 - [`incoming_links:query`](generic__incoming_links.md)
 - [`reference_editor:create_entry`](generic__reference_eidtor.md)
 - [`reference_editor:edit_entry`](generic__reference_eidtor.md)
-- [`reference_editor:toggle_inline_editor`](generic__reference_eidtor.md)
+- [`reference_editor:toggle_inline_editor`](generic__reference_eidtor.md) DEPRECATED
 
 ## Schema
 Snowplow schema: [generic/1.0.1.json](https://github.com/contentful/com.contentful-schema-registry/blob/master/schemas/com.contentful/generic/jsonschema/1-0-1)

@@ -4,8 +4,9 @@ _Inline a linked reference (1:1) to its parent form (prototype)_.
 
 
 ## `reference_editor:toggle_inline_editor`
+DEPRECATED
 Gets tracked whenever the user clicks on the toggle button enabling/disabling the 1:1 inline
-references editor BETA on a reference field.
+references editor BETA on a reference field. 
 
 **Only use data from events with `payload.version >= 3`** (see change-log below for details)
 
