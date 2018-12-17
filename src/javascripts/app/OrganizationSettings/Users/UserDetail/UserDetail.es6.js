@@ -157,7 +157,7 @@ class UserDetail extends React.Component {
 
   goToUserList() {
     go({
-      path: ['account', 'organizations', 'users']
+      path: ['account', 'organizations', 'users', 'list']
     });
   }
 

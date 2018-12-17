@@ -195,7 +195,7 @@ function resolveUsers() {
   return runTask(function*() {
     const { orgId } = yield* getOrg();
     return yield* applyOrgAccess(orgId, {
-      path: ['account', 'organizations', 'users'],
+      path: ['account', 'organizations', 'users', 'list'],
       params: { orgId, pathSuffix: '' }
     });
   });
