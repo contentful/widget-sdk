@@ -15,18 +15,17 @@
  * @name cf.ui
  */
 angular.module('contentful/environment', []);
-angular.module('contentful/init', ['cf.utils', 'cf.es6']);
+angular.module('contentful/init', ['cf.es6']);
 /**
  * @ngdoc module
  * @name cf.data
  */
-angular.module('cf.utils', ['cf.es6']);
 angular.module('cf.es6', []);
 /**
  * @ngdoc module
  * @name cf.app
  */
-angular.module('cf.app', ['ui.router', 'cf.utils']);
+angular.module('cf.app', ['ui.router']);
 /**
  * @ngdoc module
  * @name contentful
@@ -36,7 +35,6 @@ angular.module('contentful', [
   'contentful/environment',
   'cf.es6',
   'cf.app',
-  'cf.utils',
   'angularLoad',
   'ngAnimate',
   'ngSanitize',

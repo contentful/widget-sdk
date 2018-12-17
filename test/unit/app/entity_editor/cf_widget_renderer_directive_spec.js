@@ -2,7 +2,7 @@
 
 describe('cfWidgetRenderer Directive', () => {
   beforeEach(function() {
-    module('cf.app', $provide => {
+    module('contentful/test', $provide => {
       $provide.value('$state', {
         href: function(_state, params) {
           return '/spaceHref/' + params.contentTypeId;

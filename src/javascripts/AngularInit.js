@@ -66,5 +66,19 @@ angular
       ngRequire('data/editing_interfaces/assetInterface.es6');
       ngRequire('data/editing_interfaces/transformer.es6');
       ngRequire('data/sharejs/utils.es6');
+
+      // utils (cf.utils)
+      ngRequire('utils/encoder.es6');
+      ngRequire('utils/overridingRequestQueue.es6');
+    }
+  ])
+  .factory('require', [
+    '$injector',
+    $injector => {
+      // This factory is used by many modules and registering it using
+      // registerFactory doesn't work well. This will be removed once all
+      // modules are registered and any potential references to `require`
+      // are moved to $injector.get.
+      return $injector.get;
     }
   ]);

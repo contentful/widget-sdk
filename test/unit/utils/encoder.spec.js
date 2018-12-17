@@ -18,8 +18,8 @@ describe('encoder', () => {
   };
 
   beforeEach(function() {
-    module('cf.utils', $provide => {
-      $provide.constant('raw/htmlEncoder', {
+    module('contentful/test', $provide => {
+      $provide.constant('node-html-encoder', {
         Encoder: function() {
           return libraryMockInstance;
         }

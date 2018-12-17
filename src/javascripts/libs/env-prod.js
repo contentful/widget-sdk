@@ -77,7 +77,7 @@ window.libs = [
   ['pluralize', require('pluralize')],
   ['prop-types', require('prop-types')],
   ['qs', require('qs')],
-  ['raw/htmlEncoder', require('node-html-encoder')],
+  ['node-html-encoder', require('node-html-encoder')],
   ['moment', require('moment')],
   ['react', require('react')],
   ['react-animate-height', require('react-animate-height')],
