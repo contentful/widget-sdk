@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * @ngdoc service
  * @name environment
@@ -9,8 +7,11 @@
  * Uses content of <meta name="external-config" content="..."> element.
  *
  * TODO This service should be replaced by the 'Config' service
+ *
+ * NOTE: This needs to be either 1) explicitly exported when moved to
+ * Webpack bundle territory, or 2) added to AngularInit directly.
  */
-angular.module('contentful/environment').constant(
+angular.module('contentful/init').constant(
   'environment',
   (() => {
     const injected = extractInjectedConfig();
