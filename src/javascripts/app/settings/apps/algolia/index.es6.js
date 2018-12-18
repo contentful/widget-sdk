@@ -15,7 +15,8 @@ const AlgoliaFetcher = createFetcherComponent(async ({ client }) => {
   return Promise.all([
     client.get('algolia'),
     spaceContext.publishedCTs.getAllBare(),
-    spaceContext.localeRepo.getAll()
+    spaceContext.localeRepo.getAll(),
+    spaceContext.webhookRepo.getAll()
   ]);
 });
 
@@ -37,12 +38,13 @@ export default class AlgoliaApp extends Component {
             return <StateRedirect to="^.list" />;
           }
 
-          const [app, contentTypes, locales] = data;
+          const [app, allContentTypes, locales, allWebhooks] = data;
 
           return (
             <AlgoliaAppPage
               app={app}
-              contentTypes={contentTypes}
+              allContentTypes={allContentTypes}
+              allWebhooks={allWebhooks}
               locales={locales}
               client={this.props.client}
             />

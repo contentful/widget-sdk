@@ -1,9 +1,132 @@
 .algolia-app__config
+  max-width 800px
+  margin 0 auto
 
-  &-row
+  &-section
+    margin-top: 3rem
+
+  &-modal-form
+    margin: 2rem
+    margin-bottom 1rem
+
+  &-modal-buttons
+    &-left, &-right
+      margin 0 2rem 2rem 2rem
+
+    &-left
+      float left
+      width 50%
+
+    &-right
+      float right
+
+    &-right > *
+      float right
+      margin-left 0.5rem
+
+    &-right > *:last-child
+      margin-left 0
+
+  &-content-type-row
     display grid
-    grid-template-columns 600px 100px
+    grid-template-columns auto 50px
     grid-column-gap 10px
 
     &-button
-      margin-top 7px
+      display flex
+      align-items center
+      justify-content center
+      cursor pointer
+
+  &-searchable-content-table
+    margin-bottom 1rem
+
+    &-row
+      cursor pointer
+
+    &-row td
+      vertical-align middle
+
+    &-row.deleted
+      opacity 0.5
+
+    &-icon
+      width 40px
+      vertical-align middle
+      padding-left 1rem
+      padding-right 0rem
+
+  &-content-type-form
+    display grid
+    grid-template-columns auto 100px
+    grid-column-gap 10px
+
+  &-fields
+    &-switch-field
+      display grid
+      grid-template-columns 35px auto
+      grid-column-gap 10px
+
+    &-switch
+      width: 35px
+      height: 21px
+      background: $colors.light-gray
+      border-radius: 21px
+      cursor: pointer
+      position: relative
+      outline: none
+
+    &-switch:focus
+      background: $colors.gray
+
+    &-switch:before
+      position: absolute
+      content: ""
+      width: 17px
+      height: 17px
+      left: 2px
+      top: 2px
+      background: $colors.white
+      transition: .1s
+      border-radius: 50%
+
+    &-switch__on
+      background: $colors.blue-mid
+
+    &-switch__on:focus
+      background: $colors.blue-dark
+
+    &-switch__on:before
+      left: auto
+      right: 2px
+
+  &-tag
+    padding 5px
+    border-radius 5px
+    background #e9ebed
+    color #555
+
+  &-tag.negative
+    background #CD3F3B
+    color #fff
+
+  &-field-editor
+    margin-top: 15px
+
+  &-field-editor-row
+    display: flex
+    margin: 0 -5px 15px -5px
+    > *
+      margin: 0 5px
+    &__field-select
+      flex-grow: 1
+      min-width: 200px
+    &__helper-select
+      min-width: 200px
+    &__helper-value-input
+      min-width: 150px
+    &__add-button
+      min-width: 100px
+
+  &-api-key-modal-buttons
+    float right
