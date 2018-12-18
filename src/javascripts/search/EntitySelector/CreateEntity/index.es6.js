@@ -89,8 +89,7 @@ CreateEntry.propTypes = {
 
 function CreateAsset(props) {
   return (
-    <Visible
-      if={props.$services.accessChecker.can(props.$services.accessChecker.Action.CREATE, 'asset')}>
+    <Visible if={props.$services.accessChecker.canCreateAsset()}>
       <TextLink
         testId="create-asset"
         onClick={() => onSelectHandler(null, props.$services, props.onSelect)}

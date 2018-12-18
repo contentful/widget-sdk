@@ -11,7 +11,7 @@ const getFakeServices = args =>
   merge(
     {
       'access_control/AccessChecker': {
-        can: jest.fn(),
+        canCreateAsset: jest.fn(),
         canPerformActionOnEntryOfType: jest.fn(),
         Action: { CREATE: 'Create' }
       },
@@ -59,7 +59,7 @@ describe('CreateEntity', () => {
       onSelect: () => {}
     };
     const wrapper = mountComponent(props, {
-      'access_control/AccessChecker': { can: jest.fn().mockReturnValue(true) }
+      'access_control/AccessChecker': { canCreateAsset: jest.fn().mockReturnValue(true) }
     });
 
     expect(wrapper.find('[data-test-id="create-asset"]')).toHaveLength(1);
@@ -124,7 +124,7 @@ describe('CreateEntity', () => {
     const newAssetSpy = jest.fn().mockResolvedValue(asset);
     const goToSlideInEntity = jest.fn();
     const wrapper = mountComponent(props, {
-      'access_control/AccessChecker': { can: jest.fn().mockReturnValue(true) },
+      'access_control/AccessChecker': { canCreateAsset: jest.fn().mockReturnValue(true) },
       entityCreator: { newAsset: newAssetSpy },
       'navigation/SlideInNavigator': {
         goToSlideInEntity
