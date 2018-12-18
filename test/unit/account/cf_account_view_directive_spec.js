@@ -3,15 +3,16 @@ import * as K from 'test/helpers/mocks/kefir';
 describe('Account View directive', () => {
   beforeEach(function() {
     this.handleGatekeeperMessage = sinon.spy();
-    module('contentful/test', $provide => {
-      $provide.value('handleGatekeeperMessage', this.handleGatekeeperMessage);
-    });
-
     this.messages$ = K.createMockStream();
 
+    module('contentful/test', $provide => {
+      $provide.constant('handleGatekeeperMessage', this.handleGatekeeperMessage);
+      $provide.constant('account/IframeChannel.es6', {
+        default: sinon.stub().returns(this.messages$)
+      });
+    });
+
     this.UrlSyncHelper = this.mockService('account/UrlSyncHelper.es6');
-    const IframeChannel = this.mockService('account/IframeChannel.es6');
-    IframeChannel.default.returns(this.messages$);
 
     this.compile = () => {
       this.element = this.$compile('<cf-account-view context="context" />', { context: {} });

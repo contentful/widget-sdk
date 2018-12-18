@@ -27,7 +27,7 @@ describe('paywallOpener', () => {
       $provide.value('subscriptionPlanRecommender', subscriptionPlanRecommender);
       $provide.value('analytics/Analytics.es6', self.analytics);
       $provide.value('LazyLoader', self.LazyLoader);
-      $provide.value('TheAccountView', self.TheAccountView);
+      $provide.constant('TheAccountView', self.TheAccountView);
     });
 
     $rootScope = this.$inject('$rootScope');
