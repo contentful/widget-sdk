@@ -10,16 +10,7 @@
 // since we just concatenate them.
 'use strict';
 
-/**
- * @ngdoc module
- * @name cf.ui
- */
-angular.module('contentful/init', ['cf.es6']);
-/**
- * @ngdoc module
- * @name cf.data
- */
-angular.module('cf.es6', []);
+angular.module('contentful/init', []);
 /**
  * @ngdoc module
  * @name cf.app
@@ -31,7 +22,6 @@ angular.module('cf.app', ['ui.router']);
  */
 angular.module('contentful', [
   'contentful/init',
-  'cf.es6',
   'cf.app',
   'angularLoad',
   'ngAnimate',
@@ -151,7 +141,7 @@ angular
    * named `id` in SystemJS using a custom `run`
    * function.
    *
-   * Sets the module on the `cf.es6` Angular module.
+   * Sets the module on the `contentful/init` Angular module.
    * @param {String} id        Name of module
    * @param {Object} moduleObj Module object
    */
@@ -169,7 +159,7 @@ angular
       }
     ]);
 
-    angular.module('cf.es6').constant(id, moduleObj);
+    angular.module('contentful/init').constant(id, moduleObj);
   }
 
   /**
@@ -184,7 +174,7 @@ angular
     registry.push([id, deps, run]);
     registerDirectoryAlias(id);
 
-    angular.module('cf.es6').factory(id, [
+    angular.module('contentful/init').factory(id, [
       'require',
       require => {
         const mod = makeModule();
@@ -260,7 +250,7 @@ angular
     const path = moduleId.split('/');
     const last = path.pop();
     if (last === 'index.es6') {
-      angular.module('cf.es6').factory(path.join('/'), [moduleId, id]);
+      angular.module('contentful/init').factory(path.join('/'), [moduleId, id]);
     }
   }
 
