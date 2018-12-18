@@ -45,6 +45,15 @@ angular
       ngRequire('account/handleGatekeeperMessage.es6');
       ngRequire('account/theAccountView.es6');
 
+      // analytics
+      ngRequire('analytics/analyticsConsole.es6');
+      ngRequire('analytics/bugsnag.es6');
+      ngRequire('analytics/events/customWidgets.es6');
+      ngRequire('analytics/events/persistentNotification.es6');
+      ngRequire('analytics/events/versioning.es6');
+      ngRequire('analytics/fontsDotCom.es6');
+      ngRequire('analytics/segment.es6');
+
       // classes
       ngRequire('classes/entityListCache.es6');
       ngRequire('classes/spaceContext.es6');

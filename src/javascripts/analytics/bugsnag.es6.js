@@ -1,4 +1,7 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
+import _ from 'lodash';
+import * as CallBuffer from 'utils/CallBuffer.es6';
+
 /**
  * @ngdoc service
  * @name bugsnag
@@ -6,13 +9,10 @@
  * Bugsnag wrapper.
  * See https://bugsnag.com/docs/notifiers/js for more details
  */
-angular.module('contentful').factory('bugsnag', [
-  'require',
-  require => {
-    const _ = require('lodash');
-    const CallBuffer = require('utils/CallBuffer.es6');
-    const environment = require('environment');
-
+registerFactory('bugsnag', [
+  '$injector',
+  'environment',
+  ($injector, environment) => {
     // TODO this should be stored in the environment configuration. Need
     // to work with devops get this done.
     const API_KEY = 'b253f10d5d0184a99e1773cec7b726e8';
@@ -86,7 +86,8 @@ angular.module('contentful').factory('bugsnag', [
 
     function load(user) {
       // Prevent circular dependency
-      const LazyLoader = require('LazyLoader');
+      const LazyLoader = $injector.get('LazyLoader');
+
       return LazyLoader.get('bugsnag').then(
         _bugsnag => {
           bugsnag = _bugsnag;

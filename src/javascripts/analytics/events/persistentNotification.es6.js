@@ -1,22 +1,17 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
 
-angular
-  .module('contentful')
+registerFactory('analyticsEvents/persistentNotification', [
+  'analytics/Analytics.es6',
+  Analytics => {
+    return { action };
 
-  .factory('analyticsEvents/persistentNotification', [
-    'require',
-    require => {
-      const Analytics = require('analytics/Analytics.es6');
+    function action(name) {
+      const currentPlan = Analytics.getSessionData('organization.subscriptionPlan.name');
 
-      return { action: action };
-
-      function action(name) {
-        const currentPlan = Analytics.getSessionData('organization.subscriptionPlan.name');
-
-        Analytics.track('notification:action_performed', {
-          action: name,
-          currentPlan: currentPlan !== undefined ? currentPlan : null
-        });
-      }
+      Analytics.track('notification:action_performed', {
+        action: name,
+        currentPlan: currentPlan !== undefined ? currentPlan : null
+      });
     }
-  ]);
+  }
+]);
