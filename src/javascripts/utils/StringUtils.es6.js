@@ -13,17 +13,22 @@ export function toIdentifier(string) {
   return cleanPrefix([first].concat(rest).join(''));
 }
 
-export function article(word) {
+export function article(word, includeWord = false) {
   if (shouldFallbackToEmptyString(word)) {
     return '';
   }
 
+  let article = 'a';
   const vowels = ['a', 'i', 'u', 'e', 'o'];
 
   if (vowels.includes(word[0])) {
-    return 'an';
+    article = 'an';
+  }
+
+  if (includeWord) {
+    return `${article} ${word}`;
   } else {
-    return 'a';
+    return article;
   }
 }
 
