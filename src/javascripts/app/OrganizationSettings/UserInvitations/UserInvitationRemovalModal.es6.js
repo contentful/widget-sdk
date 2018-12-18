@@ -15,7 +15,7 @@ export default class RemoveUserDialog extends React.Component {
 
     return (
       <ModalConfirm
-        title="Revoke pending invitation"
+        title="Revoke invitation"
         intent="negative"
         size="small"
         isShown={isShown}
