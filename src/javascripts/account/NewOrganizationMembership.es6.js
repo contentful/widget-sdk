@@ -316,7 +316,7 @@ export default function($scope) {
    */
   function goToList() {
     go({
-      path: ['account', 'organizations', 'users']
+      path: ['account', 'organizations', 'users', 'list']
     });
   }
   /**
@@ -441,8 +441,7 @@ function render(state, actions) {
           },
           [
             match(state.status, {
-              [Success]: () =>
-                successMessage(state.successfulOrgInvitations, actions.restart, actions.goToList),
+              [Success]: () => successMessage(state.successfulOrgInvitations, actions.goToList),
               [Failure]: () =>
                 h('', [
                   errorMessage(state.useLegacy, state.failedOrgInvitations, actions.restart),

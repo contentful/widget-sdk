@@ -116,7 +116,7 @@ function getIframeTemplate(title) {
   `;
 }
 
-function organizationBase(definition) {
+export function organizationBase(definition) {
   const defaults = {
     label: 'Organizations & Billing',
     onEnter: [

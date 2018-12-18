@@ -224,7 +224,7 @@ describe('states/Deeplink.es6', () => {
 
       expect(
         this.navigate.calledWith({
-          path: ['account', 'organizations', 'users'],
+          path: ['account', 'organizations', 'users', 'list'],
           params: {
             orgId: 'some',
             pathSuffix: ''

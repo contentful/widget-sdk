@@ -8,7 +8,7 @@ export function usage(orgId) {
 
 export function memberships(orgId) {
   return {
-    path: ['account', 'organizations', 'users'],
+    path: ['account', 'organizations', 'users', 'list'],
     params: { orgId },
     options: { reload: true }
   };

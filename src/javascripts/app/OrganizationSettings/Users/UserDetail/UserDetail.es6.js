@@ -157,7 +157,7 @@ class UserDetail extends React.Component {
 
   goToUserList() {
     go({
-      path: ['account', 'organizations', 'users']
+      path: ['account', 'organizations', 'users', 'list']
     });
   }
 
@@ -170,7 +170,8 @@ class UserDetail extends React.Component {
     return (
       <Workbench className="organization-users-page" testId="organization-users-page">
         <Workbench.Header>
-          <Workbench.Title>Users</Workbench.Title>
+          <Workbench.Header.Back to="^.list" />
+          <Workbench.Title>User details</Workbench.Title>
         </Workbench.Header>
         <Workbench.Content>
           <div className="user-details">

@@ -1,10 +1,13 @@
-import { conditionalIframeWrapper } from 'app/OrganizationSettings/OrganizationSettingsRouteUtils.es6';
+import {
+  conditionalIframeWrapper,
+  organizationBase
+} from 'app/OrganizationSettings/OrganizationSettingsRouteUtils.es6';
 
-const newUser = {
+export const inviteUsersState = organizationBase({
   label: 'Organizations & Billing',
   name: 'new',
-  title: 'Organization users',
-  url: '/new',
+  title: 'Invite new users',
+  url: '/:orgId/invite',
   controller: [
     '$stateParams',
     '$scope',
@@ -16,22 +19,21 @@ const newUser = {
     }
   ],
   template: '<cf-new-organization-membership properties="properties" />'
-};
+});
 
-const userDetail = conditionalIframeWrapper({
+export const userDetailState = conditionalIframeWrapper({
   name: 'detail',
   params: {
     userId: ''
   },
-  title: 'Organization users',
-  url: '/:userId',
+  title: 'Organization user',
+  url: '/:orgId/organization_memberships/:userId',
   featureFlag: 'feature-bv-09-2018-new-org-membership-pages',
   componentPath: 'app/OrganizationSettings/Users/UserDetail/UserDetailRoute.es6'
 });
 
-export default conditionalIframeWrapper({
-  name: 'users',
-  children: [newUser, userDetail],
+export const usersListState = conditionalIframeWrapper({
+  name: 'list',
   title: 'Organization users',
   url: '/:orgId/organization_memberships',
   featureFlag: 'feature-bv-09-2018-new-org-membership-pages',
