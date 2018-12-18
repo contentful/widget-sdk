@@ -248,12 +248,13 @@ $close-button-small()
     cursor: pointer
     transition: all ease-in-out .1s
     $item-label($colors.text-lightest, $colors.text-light)
+
     &:hover
       z-index: 1
-    &:not(&--disabled, &--proof-of-concept):hover
       border: 1px solid $colors.element-darkest
       box-shadow: 0 3px 3px 0 rgba(0,0,0,0.08)
       transform: translateY(-2px)
+
     &--selected
       border: 1px solid $colors.blue-dark
     &:before
@@ -279,16 +280,26 @@ $close-button-small()
     &--proof-of-concept
       $item-label($colors.blue-dark, $colors.blue-darkest)
       &:hover
+        border: 1px solid $colors.element-mid
         cursor: default
         z-index: 2
+        box-shadow: 0 1px 3px 0 rgba(0,0,0,0.08)
+        transform: none
+
     &--disabled
       $opacity = 0.3
       cursor: not-allowed
-      border-color: 1px solid rgba($colors.element-mid, $opacity)
+      border: 1px solid $colors.element-mid
       &, & em, & strong
         color: rgba($colors.text-dark, $opacity)
       &:before
         opacity: $opacity
+      &:hover
+        border: 1px solid $colors.element-mid
+        box-shadow: 0 1px 3px 0 rgba(0,0,0,0.08)
+        transform: none
+
+
     &--current
       $item-tag("Current", #a9b9c0, #fff)
     &--recommended
