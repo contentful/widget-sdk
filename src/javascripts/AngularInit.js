@@ -15,7 +15,8 @@ angular
         factory: $provide.factory,
         service: $provide.service,
         constant: $provide.constant,
-        provider: $provide.provider
+        provider: $provide.provider,
+        value: $provide.value
       };
     }
   ])
@@ -56,6 +57,7 @@ angular
       ngRequire('forms/errors.es6');
       ngRequire('forms/validation.es6');
 
+      // data (cf.data)
       ngRequire('data/apiClient.es6');
       ngRequire('data/contentTypes.es6');
       ngRequire('data/editingInterfaces.es6');
@@ -66,6 +68,36 @@ angular
       ngRequire('data/editing_interfaces/assetInterface.es6');
       ngRequire('data/editing_interfaces/transformer.es6');
       ngRequire('data/sharejs/utils.es6');
+
+      // app (cf.app)
+      ngRequire('app/entity_editor/cfEntityFieldDirective.es6');
+      ngRequire('app/entity_editor/cfWidgetRendererDirective.es6');
+      ngRequire('app/entity_editor/entityHelpers.es6');
+      ngRequire('app/entity_editor/stringField.es6');
+      ngRequire('app/snapshots/cfSnapshotPresenter.es6');
+      ngRequire('app/snapshots/cfSnapshotSelector.es6');
+      ngRequire('app/snapshots/snapshotComparator.es6');
+      ngRequire('app/snapshots/snapshotDoc.es6');
+      ngRequire('app/snapshots/snapshotSidebarListDirective.es6');
+      ngRequire('app/widgets/cfBooleanEditorDirective.es6');
+      ngRequire('app/widgets/cfCheckboxEditorDirective.es6');
+      ngRequire('app/widgets/cfListInputEditorDirective.es6');
+      ngRequire('app/widgets/cfMultiLineEditorDirective.es6');
+      ngRequire('app/widgets/cfRatingEditorDirective.es6');
+      ngRequire('app/widgets/cfTagEditorDirective.es6');
+      ngRequire('app/widgets/datetime/cfEntryDatetimeEditorDirective.es6');
+      ngRequire('app/widgets/datetime/data.es6');
+      ngRequire('app/widgets/dropdown/cfDropdownEditorDirective.es6');
+      ngRequire('app/widgets/json/cfJsonEditorCodeEditorDirective.es6');
+      ngRequire('app/widgets/json/cfJsonEditorDirective.es6');
+      ngRequire('app/widgets/link/cfReferenceEditorDirective.es6');
+      ngRequire('app/widgets/link/entityLinkDirectives.es6');
+      ngRequire('app/widgets/location/cfLocationEditorDirective.es6');
+      ngRequire('app/widgets/location/searchController.es6');
+      ngRequire('app/widgets/radio/cfRadioEditorDirective.es6');
+      ngRequire('app/widgets/rich_text/cfRichTextEditorDirective.es6');
+      ngRequire('navigation/stateChangeHandlers.es6');
+      ngRequire('states/cfSrefDirective.es6');
 
       // utils (cf.utils)
       ngRequire('utils/encoder.es6');

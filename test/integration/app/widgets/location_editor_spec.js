@@ -4,9 +4,10 @@ import $ from 'jquery';
 
 describe('LocationEditor integration', () => {
   beforeEach(function() {
+    this.googleMaps = createGoogleMapsStub();
     module('contentful/test', $provide => {
       $provide.value('LazyLoader', {
-        get: sinon.stub()
+        get: sinon.stub().resolves(this.googleMaps)
       });
       $provide.value('throttle', _.identity);
     });
@@ -17,11 +18,6 @@ describe('LocationEditor integration', () => {
       removeValue: sinon.stub(),
       setValue: sinon.stub()
     };
-
-    this.googleMaps = createGoogleMapsStub();
-
-    const LazyLoader = this.$inject('LazyLoader');
-    LazyLoader.get.resolves(this.googleMaps);
 
     this.compile = function() {
       const el = this.$compile(

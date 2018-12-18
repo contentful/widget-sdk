@@ -11,18 +11,13 @@
 'use strict';
 
 angular.module('contentful/init', []);
-/**
- * @ngdoc module
- * @name cf.app
- */
-angular.module('cf.app', ['ui.router']);
+
 /**
  * @ngdoc module
  * @name contentful
  */
 angular.module('contentful', [
   'contentful/init',
-  'cf.app',
   'angularLoad',
   'ngAnimate',
   'ngSanitize',

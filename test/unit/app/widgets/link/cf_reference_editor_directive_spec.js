@@ -22,7 +22,8 @@ describe('cfReferenceEditorDirective', () => {
     };
 
     module('contentful/test', $provide => {
-      $provide.removeDirectives('cfEntityLink', 'cfAssetCard');
+      $provide.constant('cfEntityLinkDirective', () => {});
+      $provide.constant('cfAssetCardDirective', () => {});
       $provide.value('analytics/Analytics.es6', this.analytics);
       $provide.value('spaceContext', this.spaceContext);
     });

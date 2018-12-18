@@ -1,14 +1,9 @@
-'use strict';
 import _ from 'lodash';
 
 describe('cfJsonEditor directive', () => {
   let cmEditor, fieldApi, element;
 
   beforeEach(function() {
-    module('contentful/test', ($provide, createQueuedDebounce) => {
-      $provide.value('debounce', createQueuedDebounce());
-    });
-
     cmEditor = {
       on: sinon.stub(),
       doc: {
@@ -19,7 +14,12 @@ describe('cfJsonEditor directive', () => {
       historySize: sinon.stub().returns({})
     };
 
-    this.$inject('codemirror').default = sinon.stub().returns(cmEditor);
+    module('contentful/test', ($provide, createQueuedDebounce) => {
+      $provide.value('debounce', createQueuedDebounce());
+      $provide.constant('codemirror', {
+        default: sinon.stub().returns(cmEditor)
+      });
+    });
 
     this.widgetApi = this.$inject('mocks/widgetApi').create();
     fieldApi = this.widgetApi.field;

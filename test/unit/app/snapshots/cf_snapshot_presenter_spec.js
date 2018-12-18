@@ -1,10 +1,11 @@
-'use strict';
 import _ from 'lodash';
 
 describe('cfSnapshotPresenter', () => {
   beforeEach(function() {
     module('contentful/test', $provide => {
-      $provide.removeDirectives('cfIframeWidget', 'cfWidgetRenderer', 'cfWidgetApi');
+      $provide.constant('cfIframeWidgetDirective', () => {});
+      $provide.constant('cfWidgetRendererDirective', () => {});
+      $provide.constant('cfWidgetApiDirective', () => {});
     });
 
     this.prepare = (value, field = {}, template = '<some-widget />') => {

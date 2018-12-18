@@ -2,7 +2,7 @@
 
 describe('cfRatingEditor directive', () => {
   beforeEach(function() {
-    module('cf.app', $provide => {
+    module('contentful/test', $provide => {
       // Disable cfIcon directive
       $provide.value('cfIconDirective', {});
     });
