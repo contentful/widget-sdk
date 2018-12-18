@@ -19,6 +19,7 @@ import $state from '$state';
 import * as Analytics from 'analytics/Analytics.es6';
 import intercom from 'intercom';
 
+import spaceContext from 'spaceContext';
 import Setup from './Setup.es6';
 import SelectContent, { SELECT_CONTENT_TYPE } from './SelectContent.es6';
 import DraftRecordModal, { SELECT_LOCALE } from './DraftRecordModal.es6';
@@ -197,21 +198,23 @@ export default class AlgoliaAppPage extends Component {
     this.setState({ draftRecord: null, isDraftModalOpen: false });
   };
 
-  getIntegrationContext = () => {
+  getIntegrationContext = async () => {
+    const allWebhooks = await spaceContext.webhookRepo.getAll();
+
     return {
       installed: this.state.installed,
       apiKey: this.state.apiKey,
       config: this.state.config,
       allContentTypes: this.props.allContentTypes,
       allLocales: this.props.locales,
-      allWebhooks: this.props.allWebhooks
+      allWebhooks
     };
   };
 
   onInstallClick = async () => {
     try {
       this.setState({ busyWith: 'install' });
-      const updatedConfig = await Webhooks.create(this.getIntegrationContext());
+      const updatedConfig = await Webhooks.create(await this.getIntegrationContext());
       await this.props.client.save(this.props.app.id, updatedConfig);
       this.setState({ busyWith: false, installed: true, config: updatedConfig });
       Notification.success('Algolia app installed successfully.');
@@ -226,7 +229,7 @@ export default class AlgoliaAppPage extends Component {
   onUpdateClick = async () => {
     try {
       this.setState({ busyWith: 'update' });
-      const updatedConfig = await Webhooks.update(this.getIntegrationContext());
+      const updatedConfig = await Webhooks.update(await this.getIntegrationContext());
       await this.props.client.save(this.props.app.id, updatedConfig);
       this.setState({ busyWith: false, config: updatedConfig });
       Notification.success('Algolia app configuration updated successfully.');
@@ -240,7 +243,7 @@ export default class AlgoliaAppPage extends Component {
   uninstall = async () => {
     try {
       this.setState({ busyWith: 'uninstall' });
-      await Webhooks.remove(this.getIntegrationContext());
+      await Webhooks.remove(await this.getIntegrationContext());
       await this.props.client.remove(this.props.app.id);
       Notification.success('Algolia app uninstalled successfully.');
       Analytics.track('algolia:uninstalled');

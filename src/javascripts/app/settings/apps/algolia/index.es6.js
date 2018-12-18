@@ -15,8 +15,7 @@ const AlgoliaFetcher = createFetcherComponent(async ({ client }) => {
   return Promise.all([
     client.get('algolia'),
     spaceContext.publishedCTs.getAllBare(),
-    spaceContext.localeRepo.getAll(),
-    spaceContext.webhookRepo.getAll()
+    spaceContext.localeRepo.getAll()
   ]);
 });
 
