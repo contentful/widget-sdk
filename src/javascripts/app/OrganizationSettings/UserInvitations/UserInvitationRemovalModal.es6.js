@@ -3,15 +3,16 @@ import PropTypes from 'prop-types';
 
 import { ModalConfirm } from '@contentful/forma-36-react-components';
 
-export default class RemoveUserDialog extends React.Component {
+export default class UserInvitationRemovalModal extends React.Component {
   static propTypes = {
     email: PropTypes.string.isRequired,
     isShown: PropTypes.bool.isRequired,
-    onClose: PropTypes.func.isRequired
+    onConfirm: PropTypes.func.isRequired,
+    onCancel: PropTypes.func.isRequired
   };
 
   render() {
-    const { email, isShown, onClose } = this.props;
+    const { email, isShown, onConfirm, onCancel } = this.props;
 
     return (
       <ModalConfirm
@@ -20,8 +21,8 @@ export default class RemoveUserDialog extends React.Component {
         size="small"
         isShown={isShown}
         confirmLabel="Revoke"
-        onConfirm={() => onClose(true)}
-        onCancel={() => onClose(false)}>
+        onConfirm={onConfirm}
+        onCancel={onCancel}>
         <p>Are you sure you want to revoke the invitation for {email}?</p>
       </ModalConfirm>
     );

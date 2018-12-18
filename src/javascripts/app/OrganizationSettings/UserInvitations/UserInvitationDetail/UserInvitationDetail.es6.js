@@ -47,7 +47,12 @@ export default class UserInvitationDetail extends React.Component {
     const endpoint = createOrganizationEndpoint(orgId);
 
     const confirmation = await ModalLauncher.open(({ isShown, onClose }) => (
-      <UserInvitationRemovalModal isShown={isShown} onClose={onClose} email={email} />
+      <UserInvitationRemovalModal
+        isShown={isShown}
+        onConfirm={() => onClose(true)}
+        onCancel={() => onClose(false)}
+        email={email}
+      />
     ));
 
     if (!confirmation) {

@@ -6,6 +6,7 @@ import { match, isTag } from 'utils/TaggedValues.es6';
 import SuccessIcon from 'svg/checkmark-alt.es6';
 import pluralize from 'pluralize';
 import Icon from 'ui/Components/Icon.es6';
+import StateLink from 'app/common/StateLink.es6';
 
 const orgRoles = [
   {
@@ -309,7 +310,7 @@ export function progressMessage(emails, successfulOrgInvitations) {
   ]);
 }
 
-export function errorMessage(useLegacy, failedEmails, restart, goToInvitationsList) {
+export function errorMessage(useLegacy, failedEmails, restart) {
   const userString = failedEmails.length > 1 ? 'users' : 'user';
   let copy;
 
@@ -331,7 +332,8 @@ export function errorMessage(useLegacy, failedEmails, restart, goToInvitationsLi
         </h3>
         <p>
           They were either an existing user in the organization or a user that’s already been
-          invited. <a onClick={() => goToInvitationsList()}>View invitations</a>.
+          invited.{' '}
+          <StateLink to="account.organizations.users.invitations">View invitations</StateLink>.
         </p>
       </React.Fragment>
     );
@@ -352,6 +354,7 @@ export function errorMessage(useLegacy, failedEmails, restart, goToInvitationsLi
   );
 }
 
+// TODO: Use StateLink instead of `goToList` when this is transitioned to React
 export function successMessage(successfulOrgInvitations, goToList) {
   const userString = successfulOrgInvitations.length > 1 ? 'users have' : 'user has';
 
