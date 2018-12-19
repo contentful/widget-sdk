@@ -123,10 +123,6 @@ registerFactory('LazyLoader/resources', [
         globalObject: 'embedly',
         setup: setupEmbedly
       },
-      filestack: {
-        url: 'https://static.filestackapi.com/v3/filestack-0.11.1.js',
-        globalObject: 'filestack'
-      },
       googleMaps: {
         url:
           'https://maps.googleapis.com/maps/api/js?v=3&key=' +

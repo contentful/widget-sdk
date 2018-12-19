@@ -43,6 +43,7 @@
     "eslint-module-utils": "^2.2.0",
     "fast-deep-equal": "^2.0.1",
     "file-size": "^1.0.0",
+    "filestack-js": "^1.9.0",
     "flat": "^4.0.0",
     "immutable": "^3.8.2",
     "is-hotkey": "^0.1.4",
