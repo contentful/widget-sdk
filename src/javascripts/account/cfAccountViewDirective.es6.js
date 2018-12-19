@@ -1,18 +1,16 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
+import _ from 'lodash';
+import { h } from 'utils/legacy-html-hyperscript';
+import * as K from 'utils/kefir.es6';
+import createChannel from 'account/IframeChannel.es6';
 
-angular.module('contentful').directive('cfAccountView', [
-  'require',
-  require => {
-    const _ = require('lodash');
-    const h = require('utils/legacy-html-hyperscript').h;
-    const $timeout = require('$timeout');
-    const Authentication = require('Authentication.es6');
-    const modalDialog = require('modalDialog');
-    const createChannel = require('account/IframeChannel.es6').default;
-    const K = require('utils/kefir.es6');
-    const handleGK = require('handleGatekeeperMessage');
-    const UrlSyncHelper = require('account/UrlSyncHelper.es6');
-
+registerDirective('cfAccountView', [
+  '$timeout',
+  'modalDialog',
+  'handleGatekeeperMessage',
+  'Authentication.es6',
+  'account/UrlSyncHelper.es6',
+  ($timeout, modalDialog, handleGK, Authentication, UrlSyncHelper) => {
     return {
       template: template(),
       restrict: 'E',

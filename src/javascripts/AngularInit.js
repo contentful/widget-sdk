@@ -39,6 +39,12 @@ angular
       ngRequire('access_control/UserListHandler.es6');
       ngRequire('access_control/UserSpaceInvitationController.es6');
 
+      // account
+      ngRequire('account/cfAccountViewDirective.es6');
+      ngRequire('account/cfNewOrganizationMembership.es6');
+      ngRequire('account/handleGatekeeperMessage.es6');
+      ngRequire('account/theAccountView.es6');
+
       // ui (cf.ui)
       ngRequire('ui/cfIconDirective.es6');
       ngRequire('ui/cfUiHint.es6');
