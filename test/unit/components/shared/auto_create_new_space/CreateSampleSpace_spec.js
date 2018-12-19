@@ -64,7 +64,7 @@ describe('CreateSampleSpace service', () => {
         go: this.go
       });
       $provide.value('services/SpaceTemplateLoader.es6', this.spaceTemplateLoader);
-      $provide.value('spaceContext', this.spaceContext);
+      $provide.constant('spaceContext', this.spaceContext);
     });
 
     this.$rootScope = this.$inject('$rootScope');

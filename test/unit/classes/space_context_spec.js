@@ -15,7 +15,7 @@ describe('spaceContext', () => {
     module('contentful/test', $provide => {
       $provide.value('data/userCache', sinon.stub());
       $provide.constant('data/editingInterfaces', sinon.stub());
-      $provide.value('access_control/AccessChecker', this.AccessChecker);
+      $provide.value('access_control/AccessChecker/index.es6', this.AccessChecker);
       $provide.value('data/Endpoint.es6', {
         createSpaceEndpoint: () => this.mockSpaceEndpoint.request
       });

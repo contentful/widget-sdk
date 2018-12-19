@@ -5,7 +5,7 @@ describe('cfWidgetApi directive', () => {
   beforeEach(function() {
     module('contentful/test', $provide => {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
-      $provide.value('spaceContext', {
+      $provide.constant('spaceContext', {
         cma: {}
       });
     });

@@ -25,7 +25,7 @@ describe('cfReferenceEditorDirective', () => {
       $provide.constant('cfEntityLinkDirective', () => {});
       $provide.constant('cfAssetCardDirective', () => {});
       $provide.value('analytics/Analytics.es6', this.analytics);
-      $provide.value('spaceContext', this.spaceContext);
+      $provide.constant('spaceContext', this.spaceContext);
     });
 
     this.$q = this.$inject('$q');

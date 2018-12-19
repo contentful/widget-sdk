@@ -23,7 +23,7 @@ describe('navigation/stateChangeHandlers', () => {
 
     module('contentful/test', $provide => {
       $provide.value('$state', this.state);
-      $provide.value('spaceContext', this.spaceContext);
+      $provide.constant('spaceContext', this.spaceContext);
       $provide.value('services/TokenStore.es6', this.tokenStore);
       $provide.value('logger', {});
       $provide.value('modalDialog', { closeAll: modalCloseStub });

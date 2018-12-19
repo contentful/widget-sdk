@@ -19,7 +19,7 @@ describe('TheAccountView service', () => {
     };
 
     module('contentful/test', $provide => {
-      $provide.value('spaceContext', this.spaceContext);
+      $provide.constant('spaceContext', this.spaceContext);
       $provide.value('services/OrganizationRoles.es6', this.OrganizationRoles);
       $provide.value('contentPreview', {
         contentPreviewsBus$: K.createMockProperty(null)
