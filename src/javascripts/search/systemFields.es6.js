@@ -1,66 +1,59 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
+import _ from 'lodash';
 
-angular
-  .module('contentful')
+registerFactory('systemFields', () => {
+  const createdAt = {
+    id: 'createdAt',
+    name: 'Created',
+    type: 'Date',
+    canPersist: true
+  };
 
-  .factory('systemFields', [
-    'require',
-    require => {
-      const _ = require('lodash');
+  const updatedAt = {
+    id: 'updatedAt',
+    name: 'Updated',
+    type: 'Date',
+    canPersist: true
+  };
 
-      const createdAt = {
-        id: 'createdAt',
-        name: 'Created',
-        type: 'Date',
-        canPersist: true
-      };
+  const publishedAt = {
+    id: 'publishedAt',
+    name: 'Published',
+    type: 'Date',
+    canPersist: true
+  };
 
-      const updatedAt = {
-        id: 'updatedAt',
-        name: 'Updated',
-        type: 'Date',
-        canPersist: true
-      };
+  const author = {
+    id: 'author',
+    name: 'Author',
+    type: 'Symbol'
+  };
 
-      const publishedAt = {
-        id: 'publishedAt',
-        name: 'Published',
-        type: 'Date',
-        canPersist: true
-      };
+  const list = [createdAt, updatedAt, publishedAt, author];
+  const defaultFields = [updatedAt, author];
+  const fallbackFields = [publishedAt, createdAt, updatedAt];
 
-      const author = {
-        id: 'author',
-        name: 'Author',
-        type: 'Symbol'
-      };
+  const defaultOrder = {
+    fieldId: updatedAt.id,
+    direction: 'descending'
+  };
 
-      const list = [createdAt, updatedAt, publishedAt, author];
-      const defaultFields = [updatedAt, author];
-      const fallbackFields = [publishedAt, createdAt, updatedAt];
+  return {
+    getList: returnClone(list),
+    getDefaultFieldIds: returnClone(_.map(defaultFields, 'id')),
+    getDefaultOrder: returnClone(defaultOrder),
+    getFallbackOrderField: getFallbackOrderField
+  };
 
-      const defaultOrder = {
-        fieldId: updatedAt.id,
-        direction: 'descending'
-      };
+  function returnClone(obj) {
+    return () => _.cloneDeep(obj);
+  }
 
-      return {
-        getList: returnClone(list),
-        getDefaultFieldIds: returnClone(_.map(defaultFields, 'id')),
-        getDefaultOrder: returnClone(defaultOrder),
-        getFallbackOrderField: getFallbackOrderField
-      };
-
-      function returnClone(obj) {
-        return () => _.cloneDeep(obj);
+  function getFallbackOrderField(availableFieldIds) {
+    return (
+      _.find(fallbackFields, field => _.includes(availableFieldIds, field.id)) || {
+        id: undefined
       }
-
-      function getFallbackOrderField(availableFieldIds) {
-        return (
-          _.find(fallbackFields, field => _.includes(availableFieldIds, field.id)) || {
-            id: undefined
-          }
-        );
-      }
-    }
-  ]);
+    );
+  }
+});

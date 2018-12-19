@@ -1,49 +1,42 @@
-'use strict';
+import { registerDirective, registerController } from 'NgRegistry.es6';
+import accountDropdownTemplateDef from 'navigation/templates/AccountDropdown.template.es6';
 
-angular
-  .module('contentful')
+registerDirective('cfAccountDropdown', () => ({
+  template: accountDropdownTemplateDef(),
+  restrict: 'E',
+  scope: { user: '=' },
+  controller: 'cfAccountDropdownController'
+}));
 
-  .directive('cfAccountDropdown', [
-    'require',
-    require => ({
-      template: require('navigation/templates/AccountDropdown.template.es6').default(),
-      restrict: 'E',
-      scope: { user: '=' },
-      controller: 'cfAccountDropdownController'
-    })
-  ])
+registerController('cfAccountDropdownController', [
+  '$scope',
+  '$state',
+  'intercom',
+  'Authentication.es6',
+  'Config.es6',
+  'analytics/Analytics.es6',
+  ($scope, $state, intercom, Authentication, Config, Analytics) => {
+    $scope.userProfileRef = {
+      path: ['account', 'profile', 'user'],
+      options: { reload: true }
+    };
 
-  .controller('cfAccountDropdownController', [
-    '$scope',
-    'require',
-    ($scope, require) => {
-      const Authentication = require('Authentication.es6');
-      const Config = require('Config.es6');
-      const Analytics = require('analytics/Analytics.es6');
-      const intercom = require('intercom');
-      const $state = require('$state');
+    $scope.supportUrl = Config.supportUrl;
+    $scope.isIntercomLoaded = intercom.isLoaded;
+    $scope.logout = logout;
+    $scope.talkToUsClicked = () => {
+      Analytics.track('element:click', {
+        elementId: 'contact_sales_dropdown',
+        groupId: 'contact_sales',
+        fromState: $state.current.name
+      });
+      intercom.open();
+    };
 
-      $scope.userProfileRef = {
-        path: ['account', 'profile', 'user'],
-        options: { reload: true }
-      };
-
-      $scope.supportUrl = Config.supportUrl;
-      $scope.isIntercomLoaded = intercom.isLoaded;
-      $scope.logout = logout;
-      $scope.talkToUsClicked = () => {
-        Analytics.track('element:click', {
-          elementId: 'contact_sales_dropdown',
-          groupId: 'contact_sales',
-          fromState: $state.current.name
-        });
-        intercom.open();
-      };
-
-      function logout() {
-        Analytics.track('global:logout_clicked');
-        Analytics.disable();
-        Authentication.logout();
-      }
+    function logout() {
+      Analytics.track('global:logout_clicked');
+      Analytics.disable();
+      Authentication.logout();
     }
-  ]);
+  }
+]);

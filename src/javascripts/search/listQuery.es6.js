@@ -1,20 +1,20 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
+import _ from 'lodash';
+import { assetContentType } from 'legacy-client';
+
 /**
  * @ngdoc service
  * @name ListQuery
  * @description
  * Various helpers for preparing API queries.
  */
-angular.module('contentful').factory('ListQuery', [
-  'require',
-  require => {
-    const $q = require('$q');
-    const _ = require('lodash');
-    const systemFields = require('systemFields');
-    const spaceContext = require('spaceContext');
-    const buildQueryFromUISearch = require('app/ContentList/Search/QueryBuilder.es6').buildQuery;
-    const assetContentType = require('legacy-client').assetContentType;
 
+registerFactory('ListQuery', [
+  '$q',
+  'spaceContext',
+  'systemFields',
+  'app/ContentList/Search/QueryBuilder.es6',
+  ($q, spaceContext, systemFields, { buildQuery: buildQueryFromUISearch }) => {
     const DEFAULT_ORDER = systemFields.getDefaultOrder();
 
     return {

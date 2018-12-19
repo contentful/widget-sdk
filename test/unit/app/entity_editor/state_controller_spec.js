@@ -7,7 +7,7 @@ describe('entityEditor/StateController', () => {
     const closeStateSpy = (this.closeStateSpy = sinon.spy());
 
     module('contentful/test', $provide => {
-      $provide.value('navigation/closeState', closeStateSpy);
+      $provide.constant('navigation/closeState', closeStateSpy);
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
 

@@ -1,10 +1,9 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
+import _ from 'lodash';
 
-angular.module('contentful').factory('LinkOrganizer', [
-  'require',
-  require => {
-    const PROCESSORS = require('LinkOrganizer/matchProcessors');
-    const _ = require('lodash');
+registerFactory('LinkOrganizer', [
+  'LinkOrganizer/matchProcessors',
+  PROCESSORS => {
     const REGEXS = {
       inline: /\[([^\r\n[\]]+)]\(([^\r\n)]+)\)/,
       ref: /\[([^\r\n[\]]+)] ?\[([^\r\n[\]]+)]/,
@@ -166,7 +165,7 @@ angular.module('contentful').factory('LinkOrganizer', [
   }
 ]);
 
-angular.module('contentful').factory('LinkOrganizer/matchProcessors', () => {
+registerFactory('LinkOrganizer/matchProcessors', () => {
   return {
     inline: function(match) {
       return {

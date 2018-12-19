@@ -1,4 +1,5 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
+import _ from 'lodash';
 
 /**
  * @ngdoc service
@@ -6,18 +7,17 @@
  * @description
  * Opens a modal window for entity selection.
  */
-angular.module('contentful').factory('entitySelector', [
-  'require',
-  require => {
-    const _ = require('lodash');
-    const modalDialog = require('modalDialog');
-    const $q = require('$q');
+registerFactory('entitySelector', [
+  '$q',
+  'modalDialog',
+  'search/EntitySelector/Config.es6',
+  ($q, modalDialog, entitySelectorConfig) => {
     const {
       getLabels,
       newConfigFromField,
       newConfigFromExtension,
       calculateIdealListHeight
-    } = require('search/EntitySelector/Config.es6');
+    } = entitySelectorConfig;
 
     return {
       openFromField,

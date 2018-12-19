@@ -76,6 +76,32 @@ angular
       ngRequire('directives/tooltipDirective.es6');
       ngRequire('directives/watchersTogglerDirective.es6');
 
+      // markdown_editor
+      ngRequire('markdown_editor/cfMarkdownActionDirective.es6');
+      ngRequire('markdown_editor/cfMarkdownEditorDirective.es6');
+      ngRequire('markdown_editor/cfZenmodeDirective.es6');
+      ngRequire('markdown_editor/linkOrganizer.es6');
+      ngRequire('markdown_editor/markdownPreviewDirective.es6');
+
+      // navigation
+      ngRequire('navigation/Breadcrumbs/BreadcrumbDirective.es6');
+      ngRequire('navigation/Sidepanel/TriggerDirective.es6');
+      ngRequire('navigation/Sidepanel/directive.es6');
+      ngRequire('navigation/accountDropdownDirective.es6');
+      ngRequire('navigation/closeState.es6');
+      ngRequire('navigation/confirmLeaveEditor.es6');
+      ngRequire('navigation/organizationNavDirective.es6');
+      ngRequire('navigation/profileNavDirective.es6');
+      ngRequire('navigation/spaceNavBarDirective.es6');
+
+      // search
+      ngRequire('search/EntitySelector/entitySelector.es6');
+      ngRequire('search/EntitySelector/entitySelectorController.es6');
+      ngRequire('search/EntitySelector/entitySelectorDirective.es6');
+      ngRequire('search/cachedParser.es6');
+      ngRequire('search/listQuery.es6');
+      ngRequire('search/systemFields.es6');
+
       // ui (cf.ui)
       ngRequire('ui/cfIconDirective.es6');
       ngRequire('ui/cfUiHint.es6');
