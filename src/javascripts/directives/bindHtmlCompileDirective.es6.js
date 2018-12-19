@@ -1,6 +1,6 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
 
-angular.module('contentful').directive('bindHtmlCompile', [
+registerDirective('bindHtmlCompile', [
   '$compile',
   $compile => ({
     restrict: 'A',

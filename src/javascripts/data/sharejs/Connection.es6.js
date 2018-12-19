@@ -1,4 +1,5 @@
 import { constant } from 'lodash';
+import angular from 'angular';
 import ShareJS from '@contentful/sharejs/lib/client';
 import { caseof, caseofEq } from 'sum-types';
 import * as K from 'utils/kefir.es6';
@@ -198,7 +199,6 @@ function createBaseConnection(baseUrl, getToken, spaceId, environmentId) {
   // I’m not sure why we do this
   connection.socket.send = function(message) {
     try {
-      /* global angular */
       return this.sendMap({ JSON: angular.toJson(message) });
     } catch (error) {
       // Silently ignore the error as this is handled on ot_doc_for

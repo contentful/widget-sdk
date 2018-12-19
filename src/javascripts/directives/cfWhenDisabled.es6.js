@@ -1,11 +1,9 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
+import $ from 'jquery';
 
-angular.module('contentful').directive('cfWhenDisabled', [
-  'require',
-  require => {
-    const $ = require('jquery');
-    const accessChecker = require('access_control/AccessChecker');
-
+registerDirective('cfWhenDisabled', [
+  'access_control/AccessChecker/index.es6',
+  accessChecker => {
     function makePropGetter(elem) {
       return function getCssProperty(name) {
         return parseInt(elem.css(name), 10);

@@ -1,4 +1,7 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
+import _ from 'lodash';
+import * as K from 'utils/kefir.es6';
+
 /**
  * @ngdoc directive
  * @name cfFocusOtInput
@@ -16,27 +19,21 @@
  * @usage[html]
  * <div cf-focus-ot-input="optionalExpression"></div>
  */
-angular.module('contentful').directive('cfFocusOtInput', [
-  'require',
-  require => {
-    const _ = require('lodash');
-    const K = require('utils/kefir.es6');
-    const defer = require('defer');
-
-    return {
-      restrict: 'A',
-      link: function(scope, elem, attrs) {
-        if (scope.$eval(attrs.cfFocusOtInput) || _.isEmpty(attrs.cfFocusOtInput)) {
-          K.onValueScope(scope, scope.otDoc.state.loaded$, loaded => {
-            if (loaded) {
-              const input = elem.find('input').eq(0);
-              defer(() => {
-                input.focus();
-              });
-            }
-          });
-        }
+registerDirective('cfFocusOtInput', [
+  'defer',
+  defer => ({
+    restrict: 'A',
+    link: function(scope, elem, attrs) {
+      if (scope.$eval(attrs.cfFocusOtInput) || _.isEmpty(attrs.cfFocusOtInput)) {
+        K.onValueScope(scope, scope.otDoc.state.loaded$, loaded => {
+          if (loaded) {
+            const input = elem.find('input').eq(0);
+            defer(() => {
+              input.focus();
+            });
+          }
+        });
       }
-    };
-  }
+    }
+  })
 ]);

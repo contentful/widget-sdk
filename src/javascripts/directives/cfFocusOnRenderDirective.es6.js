@@ -1,4 +1,6 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
+import _ from 'lodash';
+
 /**
  * Directive to focus an input element upon rendering
  *
@@ -8,18 +10,12 @@
  * always be focused, or it can contain an expression which will be evaluated
  * on the scope and focus the field only if true.
  */
-angular.module('contentful').directive('cfFocusOnRender', [
-  'require',
-  require => {
-    const _ = require('lodash');
-    return {
-      restrict: 'A',
+registerDirective('cfFocusOnRender', () => ({
+  restrict: 'A',
 
-      link: function(scope, elem, attrs) {
-        if (scope.$eval(attrs.cfFocusOnRender) || _.isEmpty(attrs.cfFocusOnRender)) {
-          elem.focus();
-        }
-      }
-    };
+  link: function(scope, elem, attrs) {
+    if (scope.$eval(attrs.cfFocusOnRender) || _.isEmpty(attrs.cfFocusOnRender)) {
+      elem.focus();
+    }
   }
-]);
+}));
