@@ -79,6 +79,7 @@ export default class DraftRecordModal extends React.Component {
         size="800px"
         isShown={this.props.isShown}
         onClose={this.props.onClose}
+        allowHeightOverflow={true}
         shouldCloseOnEscapePress={false}
         shouldCloseOnOverlayClick={false}>
         {() => (
