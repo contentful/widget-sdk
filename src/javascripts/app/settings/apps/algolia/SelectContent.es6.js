@@ -63,7 +63,7 @@ export default class SelectContent extends Component {
     return (
       <Form extraClassNames="algolia-app__config-section" spacing="condensed">
         <div>
-          <Heading>Searchable Content</Heading>
+          <Heading>Searchable content (max. {MAX_RECORD_LIMIT})</Heading>
           <Paragraph>Choose the content types that you{"'"}d like to enable for search.</Paragraph>
         </div>
         {this.renderContentTypeForm()}
@@ -85,7 +85,7 @@ export default class SelectContent extends Component {
             this.props.draftRecord ? this.props.draftRecord.contentTypeId : SELECT_CONTENT_TYPE
           }>
           <Option key={SELECT_CONTENT_TYPE} value={SELECT_CONTENT_TYPE}>
-            Content Types
+            Select content type
           </Option>
           {this.props.allContentTypes.map(ct => (
             <Option key={ct.sys.id} value={ct.sys.id}>
@@ -96,7 +96,7 @@ export default class SelectContent extends Component {
         <Button
           extraClassNames="algolia-app__config-content-type-form-button"
           onClick={this.props.editDraft}>
-          {this.isEmpty() ? 'Next' : 'Add'}
+          Add
         </Button>
       </div>
     );

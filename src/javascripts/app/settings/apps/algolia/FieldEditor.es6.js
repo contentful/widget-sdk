@@ -82,7 +82,7 @@ export class FieldEditorRow extends React.Component {
             onChange={e => {
               this.setState({ id: e.target.value });
             }}>
-            <Option value={SELECT_FIELD}>Fields</Option>
+            <Option value={SELECT_FIELD}>Select field</Option>
             {this.props.availableFields.map(f => (
               <Option key={f.apiName || f.id} value={f.apiName || f.id}>
                 {f.name}

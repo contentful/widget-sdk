@@ -20,23 +20,12 @@
     &-right
       float right
 
-    &-right > *
-      float right
+    &-left > *
+      float left
       margin-left 0.5rem
 
-    &-right > *:last-child
+    &-left > *:first-child
       margin-left 0
-
-  &-content-type-row
-    display grid
-    grid-template-columns auto 50px
-    grid-column-gap 10px
-
-    &-button
-      display flex
-      align-items center
-      justify-content center
-      cursor pointer
 
   &-searchable-content-table
     margin-bottom 1rem
@@ -57,15 +46,17 @@
       padding-right 0rem
 
   &-content-type-form
-    display grid
-    grid-template-columns auto 100px
-    grid-column-gap 10px
+    display: flex
+    flex-direction: row
+    > :last-child
+      min-width: 80px
+      margin-left: 10px
 
   &-fields
     &-switch-field
-      display grid
-      grid-template-columns 35px auto
-      grid-column-gap 10px
+      display: flex
+      p
+        margin-left: 10px
 
     &-switch
       width: 35px

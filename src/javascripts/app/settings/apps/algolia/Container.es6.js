@@ -283,7 +283,7 @@ export default class AlgoliaAppPage extends Component {
           <Workbench.Icon>
             <AppIcon appId="algolia" />
           </Workbench.Icon>
-          <Workbench.Title>Apps: {this.props.app.title}</Workbench.Title>
+          <Workbench.Title>App: {this.props.app.title}</Workbench.Title>
           <Workbench.Header.Actions>
             {installed && (
               <Button

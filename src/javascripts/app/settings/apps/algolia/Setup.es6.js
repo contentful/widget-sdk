@@ -15,7 +15,7 @@ export default class Setup extends Component {
     return (
       <Form extraClassNames="algolia-app__config-section" spacing="condensed">
         <div>
-          <Heading>Algolia Credentials</Heading>
+          <Heading>Algolia credentials</Heading>
           {!this.props.installed && (
             <Paragraph>Contentful needs to be linked to your Algolia account.</Paragraph>
           )}
@@ -46,7 +46,7 @@ export default class Setup extends Component {
               value={this.props.apiKey || ''}
               labelText="Algolia Admin API key"
               onChange={e => this.props.onChange({ apiKey: e.target.value })}
-              helpText="It can be found in your Algolia Dashboard. Securely stored."
+              helpText="It can be found in your Algolia Dashboard."
               textInputProps={{ type: 'password' }}
             />
           </div>

@@ -85,7 +85,7 @@ export default class DraftRecordModal extends React.Component {
         {() => (
           <React.Fragment>
             <Modal.Header
-              title={`Configure "${this.props.contentType.name}" Index`}
+              title={`Configure "${this.props.contentType.name}" index`}
               onClose={this.props.onClose}
             />
             {this.renderForm()}
@@ -99,16 +99,7 @@ export default class DraftRecordModal extends React.Component {
   renderButtonSet() {
     return (
       <footer className="algolia-app__config-modal-buttons">
-        {!this.isNewRecord() ? (
-          <div className="algolia-app__config-modal-buttons-left">
-            <Button
-              buttonType="negative"
-              onClick={() => this.props.onDelete(this.props.draftRecord.configIndex)}>
-              Delete
-            </Button>
-          </div>
-        ) : null}
-        <div className="algolia-app__config-modal-buttons-right">
+        <div className="algolia-app__config-modal-buttons-left">
           <Button buttonType="primary" onClick={this.onCreate}>
             {this.isNewRecord() ? 'Create' : 'Save'}
           </Button>
@@ -116,6 +107,15 @@ export default class DraftRecordModal extends React.Component {
             Cancel
           </Button>
         </div>
+        {!this.isNewRecord() ? (
+          <div className="algolia-app__config-modal-buttons-right">
+            <Button
+              buttonType="negative"
+              onClick={() => this.props.onDelete(this.props.draftRecord.configIndex)}>
+              Delete
+            </Button>
+          </div>
+        ) : null}
         <div className="clear" />
       </footer>
     );
@@ -129,8 +129,7 @@ export default class DraftRecordModal extends React.Component {
           name="algolia-language"
           value={this.props.draftRecord.localeCode}
           labelText="Language"
-          onChange={e => this.props.onLocaleChange(e.target.value)}
-          helpText="Select the language that you want to index.">
+          onChange={e => this.props.onLocaleChange(e.target.value)}>
           <Option key={SELECT_LOCALE} value={SELECT_LOCALE}>
             Select locale
           </Option>
@@ -143,10 +142,10 @@ export default class DraftRecordModal extends React.Component {
         <TextField
           id="algolia-index-name"
           name="algolia-index-name"
-          labelText="Algolia Index Name"
+          labelText="Algolia index name"
           value={this.props.draftRecord.index}
           onChange={e => this.props.onIndexChange(e.target.value)}
-          helpText="It can be found under indices menu in Algolia."
+          helpText="Choose an existing index. A new index will be created if the specified does not exist."
         />
         {this.renderFieldPrompt()}
       </Form>
@@ -156,9 +155,9 @@ export default class DraftRecordModal extends React.Component {
   renderFieldPrompt() {
     return (
       <div className="algolia-app__config-fields">
-        <FormLabel>Searchable Fields</FormLabel>
+        <FormLabel>Searchable fields</FormLabel>
         <Switch on={!this.props.draftRecord.fields.default} onToggle={this.toggleFieldSelection}>
-          <HelpText>By default, we index all fields. You can customize it optionally.</HelpText>
+          <HelpText>Index specific fields (by default all fields are indexed)</HelpText>
         </Switch>
         {!this.props.draftRecord.fields.default ? (
           <FieldEditor
