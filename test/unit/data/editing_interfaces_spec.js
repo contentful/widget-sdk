@@ -5,7 +5,7 @@ describe('data/editingInterfaces', () => {
 
   beforeEach(function() {
     module('contentful/test', $provide => {
-      $provide.value('widgets/default', sinon.stub());
+      $provide.constant('widgets/default', sinon.stub());
     });
 
     spaceEndpoint = sinon.stub().defers();

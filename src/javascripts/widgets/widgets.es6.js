@@ -1,17 +1,16 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
+import _ from 'lodash';
+import { deepFreeze } from 'utils/Freeze.es6';
+import { applyDefaultValues } from 'widgets/WidgetParametersUtils.es6';
 
 /**
  * @ngdoc service
  * @name widgets
  */
-angular.module('contentful').factory('widgets', [
-  'require',
-  require => {
-    const _ = require('lodash');
-    const fieldFactory = require('fieldFactory');
-    const deepFreeze = require('utils/Freeze.es6').deepFreeze;
-    const applyDefaultValues = require('widgets/WidgetParametersUtils.es6').applyDefaultValues;
-
+registerFactory('widgets', [
+  '$injector',
+  'fieldFactory',
+  ($injector, fieldFactory) => {
     /**
      * @ngdoc type
      * @name Widget.Renderable
@@ -133,7 +132,8 @@ angular.module('contentful').factory('widgets', [
     }
 
     function getWarningTemplate(widgetId, message) {
-      const accessChecker = require('access_control/AccessChecker');
+      const accessChecker = $injector.get('access_control/AccessChecker/index.es6');
+
       return JST.editor_control_warning({
         label: widgetId,
         message: message,

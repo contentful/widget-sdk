@@ -285,6 +285,15 @@ angular
       ngRequire('ui/loader.es6');
       ngRequire('ui/sortable.es6');
 
+      // widgets
+      ngRequire('widgets/api.es6');
+      ngRequire('widgets/cfIframeWidgetDirective.es6');
+      ngRequire('widgets/channel.es6');
+      ngRequire('widgets/default.es6');
+      ngRequire('widgets/idMap.es6');
+      ngRequire('widgets/migrations.es6');
+      ngRequire('widgets/widgets.es6');
+
       // forms (cf.forms)
       ngRequire('forms.es6');
       ngRequire('forms/errors.es6');

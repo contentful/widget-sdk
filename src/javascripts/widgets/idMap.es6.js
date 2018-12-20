@@ -1,4 +1,5 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
+import _ from 'lodash';
 
 /**
  * @ngdoc service
@@ -16,12 +17,9 @@
  * map.locale.toPublic[aLocale.internal_code]  // => aLocale.code
  * map.locale.toInternal[aLocale.code]  // => aLocale.internal_code
  */
-angular.module('contentful').factory('widgets/IDMap', [
-  'require',
-  require => {
-    const _ = require('lodash');
-    const TheLocaleStore = require('TheLocaleStore');
-
+registerFactory('widgets/IDMap', [
+  'TheLocaleStore',
+  TheLocaleStore => {
     return createIDMap;
 
     function createIDMap(fields) {
