@@ -29,7 +29,7 @@ describe('Space Wizard', () => {
       }
     };
 
-    this.store = this.$inject('ReduxStore/store.es6').default;
+    this.store = this.$inject('redux/store.es6').default;
 
     this.Wizard = this.$inject('components/shared/space-wizard/Wizard.es6').default;
     this.create = action => {

@@ -1,5 +1,6 @@
-import * as actions from './actions.es6';
 import { get, set } from 'lodash';
+
+import * as actions from '../actions/resources/actions.es6';
 
 export default function resources(state = {}, action) {
   const { spaceId } = action;

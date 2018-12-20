@@ -1,6 +1,6 @@
 import { createUsersEndpoint, createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import * as actions from './actions.es6';
-import * as selectors from './selectors.es6';
+import * as selectors from 'redux/selectors/statePersistence.es6';
 import { update } from './update.es6';
 
 // since it is an internal API, we require alpha headers

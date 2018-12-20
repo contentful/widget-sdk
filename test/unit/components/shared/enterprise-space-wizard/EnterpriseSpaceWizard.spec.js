@@ -68,7 +68,7 @@ describe('Enterprise Space Wizard', () => {
       }
     };
 
-    this.store = this.$inject('ReduxStore/store.es6').default;
+    this.store = this.$inject('redux/store.es6').default;
     this.PlanFeatures = this.$inject('components/shared/space-wizard/PlanFeatures.es6').default;
     this.TextField = this.$inject('@contentful/forma-36-react-components').TextField;
 

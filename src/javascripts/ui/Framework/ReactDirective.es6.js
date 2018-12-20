@@ -32,8 +32,8 @@ import angular from 'angular';
 registerDirective('reactComponent', [
   '$injector',
   'logger',
-  'ReduxStore/store.es6',
-  function($injector, logger, { default: store }) {
+  'redux/store.es6',
+  function($injector, logger, ServicesProvider, { default: store }) {
     return {
       restrict: 'E',
       replace: true,

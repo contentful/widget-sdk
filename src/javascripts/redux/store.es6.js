@@ -1,18 +1,14 @@
-import { user$, organizations$, spacesByOrganization$ } from 'services/TokenStore.es6';
+import { user$, organizations$, spacesByOrganization$ } from '../services/TokenStore.es6';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
-import { onValue } from '../utils/kefir.es6';
+import { onValue } from 'utils/kefir.es6';
 
-import locationMiddleware from '../middlewares/location.es6';
-
-import combinedReducers from './reducers.es6';
+import locationMiddleware from './middlewares/location.es6';
+import reducer from './reducer/index.es6';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-const store = createStore(
-  combinedReducers,
-  composeEnhancers(applyMiddleware(thunk, locationMiddleware))
-);
+const store = createStore(reducer, composeEnhancers(applyMiddleware(thunk, locationMiddleware)));
 
 if (user$ && organizations$ && spacesByOrganization$) {
   onValue(user$, user =>

@@ -14,7 +14,7 @@ import * as Analytics from 'analytics/Analytics.es6';
 import { getCreator as getTemplateCreator } from 'services/SpaceTemplateCreator/index.es6';
 import { getTemplatesList, getTemplate } from 'services/SpaceTemplateLoader.es6';
 import { canCreate } from 'utils/ResourceUtils.es6';
-import { createTrackingData } from '../WizardUtils.es6';
+import { createTrackingData } from 'components/shared/space-wizard/WizardUtils.es6';
 import { getIncludedResources } from 'components/shared/space-wizard/WizardUtils.es6';
 import { getModule } from 'NgRegistry.es6';
 

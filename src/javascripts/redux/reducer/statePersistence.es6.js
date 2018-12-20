@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
-import { makeEnvKey } from './helpers.es6';
-import { DELETE_ENVIRONMENT_SUCCESS } from '../environments/actions.es6';
-import * as actions from './actions.es6';
+import { makeEnvKey } from '../helpers.es6';
+import { DELETE_ENVIRONMENT_SUCCESS } from '../actions/environments.es6';
+import * as actions from '../actions/statePersistence/actions.es6';
 
 /**
  * Structure:

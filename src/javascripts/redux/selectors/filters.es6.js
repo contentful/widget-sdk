@@ -1,7 +1,7 @@
 import { flow, get, defaultTo } from 'lodash/fp';
 import qs from 'qs';
 
-import { getQuery } from 'selectors/location.es6';
+import { getQuery } from './location.es6';
 
 const getQueryParameters = flow(
   getQuery,

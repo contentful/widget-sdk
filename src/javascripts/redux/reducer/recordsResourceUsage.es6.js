@@ -1,5 +1,12 @@
-import * as actions from './actions.es6';
+import { combineReducers } from 'redux';
 import { get, set } from 'lodash';
+
+import * as actions from '../actions/recordsResourceUsage/actions.es6';
+
+export default combineReducers({
+  incentivizeUpgradeEnabled,
+  resources
+});
 
 export function incentivizeUpgradeEnabled(state = false, action) {
   switch (action.type) {
