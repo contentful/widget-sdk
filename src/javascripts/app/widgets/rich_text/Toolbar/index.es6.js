@@ -62,12 +62,12 @@ export default class Toolbar extends React.Component {
 
   renderEmbeds = props => {
     const { widgetAPI } = this.props.richTextAPI;
-    const { field, features } = widgetAPI;
+    const { field } = widgetAPI;
 
     const amountOfEnabledEmbeds = [
       isNodeTypeEnabled(field, BLOCKS.EMBEDDED_ENTRY),
       isNodeTypeEnabled(field, BLOCKS.EMBEDDED_ASSET),
-      isNodeTypeEnabled(field, INLINES.EMBEDDED_ENTRY) && features.embedInlineEntry
+      isNodeTypeEnabled(field, INLINES.EMBEDDED_ENTRY)
     ].filter(feature => feature).length;
 
     return (

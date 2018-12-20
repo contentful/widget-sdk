@@ -88,8 +88,7 @@ describe('Toolbar', () => {
         })
       },
       onChange: sinon.spy(),
-      onAction: sinon.spy(),
-      features: { embedInlineEntry: true }
+      onAction: sinon.spy()
     };
     this.sandbox = createSandbox(window);
 
@@ -249,7 +248,7 @@ describe('Toolbar', () => {
 
     it('inserts the embed block button', async function() {
       this.props.field.validations = [{ enabledNodeTypes: ['embedded-entry-block'] }];
-      this.mount({ ...this.props, features: { embedInlineEntry: false } });
+      this.mount({ ...this.props });
       expect(
         getWithId(this.wrapper, `toolbar-toggle-${BLOCKS.EMBEDDED_ENTRY}`).getDOMNode()
       ).toBeDefined();

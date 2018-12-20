@@ -18,9 +18,6 @@ exports[`Toolbar renders no icons if no formatting options enabled 1`] = `
     Object {
       "logAction": [MockFunction],
       "widgetAPI": Object {
-        "features": Object {
-          "embedInlineEntry": true,
-        },
         "field": Object {
           "validations": Array [
             Object {
@@ -263,9 +260,6 @@ exports[`Toolbar renders toolbar icons 1`] = `
     Object {
       "logAction": [MockFunction],
       "widgetAPI": Object {
-        "features": Object {
-          "embedInlineEntry": true,
-        },
         "field": Object {},
       },
     }
@@ -461,9 +455,6 @@ exports[`Toolbar renders toolbar icons 1`] = `
               Object {
                 "logAction": [MockFunction],
                 "widgetAPI": Object {
-                  "features": Object {
-                    "embedInlineEntry": true,
-                  },
                   "field": Object {},
                 },
               }
@@ -677,9 +668,6 @@ exports[`Toolbar renders toolbar icons 1`] = `
               Object {
                 "logAction": [MockFunction],
                 "widgetAPI": Object {
-                  "features": Object {
-                    "embedInlineEntry": true,
-                  },
                   "field": Object {},
                 },
               }
@@ -893,9 +881,6 @@ exports[`Toolbar renders toolbar icons 1`] = `
               Object {
                 "logAction": [MockFunction],
                 "widgetAPI": Object {
-                  "features": Object {
-                    "embedInlineEntry": true,
-                  },
                   "field": Object {},
                 },
               }
@@ -1109,9 +1094,6 @@ exports[`Toolbar renders toolbar icons 1`] = `
               Object {
                 "logAction": [MockFunction],
                 "widgetAPI": Object {
-                  "features": Object {
-                    "embedInlineEntry": true,
-                  },
                   "field": Object {},
                 },
               }
@@ -1333,9 +1315,6 @@ exports[`Toolbar renders toolbar icons 1`] = `
               Object {
                 "logAction": [MockFunction],
                 "widgetAPI": Object {
-                  "features": Object {
-                    "embedInlineEntry": true,
-                  },
                   "field": Object {},
                 },
               }
@@ -1552,9 +1531,6 @@ exports[`Toolbar renders toolbar icons 1`] = `
               Object {
                 "logAction": [MockFunction],
                 "widgetAPI": Object {
-                  "features": Object {
-                    "embedInlineEntry": true,
-                  },
                   "field": Object {},
                 },
               }
@@ -1768,9 +1744,6 @@ exports[`Toolbar renders toolbar icons 1`] = `
               Object {
                 "logAction": [MockFunction],
                 "widgetAPI": Object {
-                  "features": Object {
-                    "embedInlineEntry": true,
-                  },
                   "field": Object {},
                 },
               }
@@ -1984,9 +1957,6 @@ exports[`Toolbar renders toolbar icons 1`] = `
               Object {
                 "logAction": [MockFunction],
                 "widgetAPI": Object {
-                  "features": Object {
-                    "embedInlineEntry": true,
-                  },
                   "field": Object {},
                 },
               }
@@ -2001,9 +1971,6 @@ exports[`Toolbar renders toolbar icons 1`] = `
                 Object {
                   "logAction": [MockFunction],
                   "widgetAPI": Object {
-                    "features": Object {
-                      "embedInlineEntry": true,
-                    },
                     "field": Object {},
                   },
                 }
@@ -2020,9 +1987,6 @@ exports[`Toolbar renders toolbar icons 1`] = `
                   Object {
                     "logAction": [MockFunction],
                     "widgetAPI": Object {
-                      "features": Object {
-                        "embedInlineEntry": true,
-                      },
                       "field": Object {},
                     },
                   }
@@ -2222,9 +2186,6 @@ exports[`Toolbar renders toolbar icons 1`] = `
               Object {
                 "logAction": [MockFunction],
                 "widgetAPI": Object {
-                  "features": Object {
-                    "embedInlineEntry": true,
-                  },
                   "field": Object {},
                 },
               }
