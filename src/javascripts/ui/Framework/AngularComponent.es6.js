@@ -1,15 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { registerFactory } from 'NgRegistry.es6';
+
 /**
  * This factory returns a react component, which allows you
  * to render angular directives from react components, so you don't have
  * to refactor huge chunks of angular code at once
  */
-angular.module('contentful').factory('AngularComponent', [
-  'require',
-  require => {
-    const $rootScope = require('$rootScope');
-    const $compile = require('$compile');
+registerFactory('AngularComponent', [
+  '$rootScope',
+  '$compile',
+  ($rootScope, $compile) => {
     return class AngularComponent extends React.Component {
       static displayName = 'AngularComponent';
       static propTypes = {

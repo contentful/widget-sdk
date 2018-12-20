@@ -1,36 +1,32 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-angular.module('contentful').directive('cfSubscriptionOverview', [
-  'require',
-  require => {
-    const React = require('react');
-    const ReactDOM = require('react-dom');
-    const SubscriptionOverview = require('ui/Pages/SubscriptionOverview').default;
+registerDirective('cfSubscriptionOverview', [
+  'ui/Pages/SubscriptionOverview',
+  ({ default: SubscriptionOverview }) => ({
+    link: function($scope, el) {
+      const host = el[0];
+      const context = $scope.properties.context;
 
-    return {
-      link: function($scope, el) {
-        const host = el[0];
-        const context = $scope.properties.context;
+      ReactDOM.render(
+        <SubscriptionOverview
+          orgId={$scope.properties.orgId}
+          onReady={function() {
+            context.ready = true;
+            $scope.$applyAsync();
+          }}
+          onForbidden={function() {
+            context.forbidden = true;
+            $scope.$applyAsync();
+          }}
+        />,
+        host
+      );
 
-        ReactDOM.render(
-          <SubscriptionOverview
-            orgId={$scope.properties.orgId}
-            onReady={function() {
-              context.ready = true;
-              $scope.$applyAsync();
-            }}
-            onForbidden={function() {
-              context.forbidden = true;
-              $scope.$applyAsync();
-            }}
-          />,
-          host
-        );
-
-        $scope.$on('$destroy', () => {
-          ReactDOM.unmountComponentAtNode(host);
-        });
-      }
-    };
-  }
+      $scope.$on('$destroy', () => {
+        ReactDOM.unmountComponentAtNode(host);
+      });
+    }
+  })
 ]);

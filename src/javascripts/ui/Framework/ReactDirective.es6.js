@@ -2,6 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { isFunction } from 'lodash';
+import { registerDirective } from 'NgRegistry.es6';
+import angular from 'angular';
+
+// NOTE: require below will need to be updated when moved to Webpack bundle
 
 /**
  * @description
@@ -25,19 +29,20 @@ import { isFunction } from 'lodash';
  * If you use reference, be aware that in order to update values, you need to replace
  * props object completely.
  */
-angular.module('contentful').directive('reactComponent', [
-  'require',
-  function(require) {
-    const ServicesProvider = require('ServicesProvider');
+registerDirective('reactComponent', [
+  '$injector',
+  'logger',
+  'ServicesProvider',
+  'ReduxStore/store.es6',
+  function($injector, logger, ServicesProvider, { default: store }) {
     return {
       restrict: 'E',
       replace: true,
       link: ($scope, $element, attrs) => {
         const element = $element[0];
-        const logger = require('logger');
         let reactComponent;
         if (attrs.name) {
-          reactComponent = getReactComponent(attrs.name, require, logger);
+          reactComponent = getReactComponent(attrs.name, $injector.get, logger);
         } else if (attrs.component) {
           reactComponent = $scope.$eval(attrs.component);
         } else if (attrs.jsx) {
@@ -49,8 +54,6 @@ angular.module('contentful').directive('reactComponent', [
         } else {
           throw new Error('Expect `component` or `name`');
         }
-
-        const store = require('ReduxStore/store.es6').default;
 
         const renderMyComponent = () => {
           const scopeProps = $scope.$eval(attrs.props);

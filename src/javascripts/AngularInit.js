@@ -85,30 +85,6 @@ angular
       ngRequire('directives/tooltipDirective.es6');
       ngRequire('directives/watchersTogglerDirective.es6');
 
-      // app
-      ngRequire('app/api/api_key_list/apiKeyListDirective.es6');
-      ngRequire('app/api/cfApiKeyNavDirective.es6');
-      ngRequire('app/asset_editor/cfAssetEditorDirective.es6');
-      ngRequire('app/content_preview/contentPreviewEditorDirective.es6');
-
-      // app/widgets
-      ngRequire('app/widgets/cfFileEditorDirective.es6');
-      ngRequire('app/widgets/number/cfNumberEditorDirective.es6');
-      ngRequire('app/widgets/selectionController.es6');
-      ngRequire('app/widgets/shared/cfEditorCharacterInfoDirective.es6');
-      ngRequire('app/widgets/single_line/cfSingleLineEditorDirective.es6');
-      ngRequire('app/widgets/slug/cfSlugEditorDirective.es6');
-      ngRequire('app/widgets/url/cfUrlEditorDirective.es6');
-
-      // app/home
-      ngRequire('app/home/cfPositionRelativeToLanguageDirective.es6');
-      ngRequire('app/home/cfTrackCopyEvent.es6');
-      ngRequire('app/home/cfWelcomeDirective.es6');
-      ngRequire('app/home/contactUs/contactUsSpaceHomeDirective.es6');
-      ngRequire('app/home/developer_resources/cfDeveloperResourcesDirective.es6');
-      ngRequire('app/home/onboarding_steps/cfOnboardingStepsDirective.es6');
-      ngRequire('app/home/welcome/cfOnboardingWithTeaDirective.es6');
-
       // markdown_editor
       ngRequire('markdown_editor/cfMarkdownActionDirective.es6');
       ngRequire('markdown_editor/cfMarkdownEditorDirective.es6');
@@ -174,7 +150,6 @@ angular
       ngRequire('components/field_dialog/validationAssetTypesController.es6');
       ngRequire('components/field_dialog/validationDecorator.es6');
       ngRequire('components/field_dialog/validationLinkTypeController.es6');
-
       ngRequire('components/tabs/asset_list/assetListActionsController.es6');
       ngRequire('components/tabs/asset_list/assetListController.es6');
       ngRequire('components/tabs/asset_list/assetListDirective.es6');
@@ -189,7 +164,6 @@ angular
       ngRequire('components/tabs/entry_list/entryListSearchController.es6');
       ngRequire('components/tabs/entry_list/viewCustomizerDirective.es6');
       ngRequire('components/tabs/listActionsController.es6');
-
       ngRequire('components/app_container/cfAppContainerDirective.es6');
       ngRequire('components/app_container/entityCreator.es6');
 
@@ -290,7 +264,15 @@ angular
       ngRequire('states/stackOnboarding.es6');
       ngRequire('states/states.es6');
 
-      // ui (cf.ui)
+      // ui
+      ngRequire('ui/AutoFocusDirective.es6');
+      ngRequire('ui/cf/cfThumbnailDirective.es6');
+      ngRequire('ui/Framework/AngularComponent.es6');
+      ngRequire('ui/Framework/CfComponentBridgeDirective.es6');
+      ngRequire('ui/Framework/ReactDirective.es6');
+      ngRequire('ui/onScrollDirective.es6');
+      ngRequire('ui/Pages/SubscriptionOverview/directive.es6');
+      ngRequire('ui/setScrollDirective.es6');
       ngRequire('ui/cfIconDirective.es6');
       ngRequire('ui/cfUiHint.es6');
       ngRequire('ui/cfUiSticky.es6');
