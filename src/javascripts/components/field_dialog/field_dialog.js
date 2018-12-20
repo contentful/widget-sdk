@@ -232,10 +232,6 @@ angular
       const buildMessage = require('fieldErrorMessageBuilder');
       const TheLocaleStore = require('TheLocaleStore');
       const joinAndTruncate = require('utils/StringUtils.es6').joinAndTruncate;
-      const LD = require('utils/LaunchDarkly');
-
-      const RICH_TEXT_FORMATTING_OPTIONS_FEATURE_FLAG =
-        'feature-at-09-structured-text-formatting-options';
 
       $scope.schema = {
         errors: function(decoratedField) {
@@ -285,10 +281,6 @@ angular
       });
 
       $scope.locales = _.map(TheLocaleStore.getPrivateLocales(), 'name');
-
-      LD.onFeatureFlag($scope, RICH_TEXT_FORMATTING_OPTIONS_FEATURE_FLAG, flag => {
-        $scope.richTextFormattingOptionsEnabled = flag;
-      });
     }
   ])
 
@@ -308,9 +300,6 @@ angular
       const RICH_TEXT_FIELD_TYPES = ['RichText', 'StructuredText'];
       const _ = require('lodash');
       const validations = require('validationDecorator');
-      const LD = require('utils/LaunchDarkly');
-      const RICH_TEXT_FORMATTING_OPTIONS_FEATURE_FLAG =
-        'feature-at-09-structured-text-formatting-options';
 
       $scope.$watch('fieldValidationsForm.$invalid', isInvalid => {
         $scope.tab.invalid = isInvalid;
@@ -338,11 +327,9 @@ angular
         $scope.showPredefinedValueWidgetHint = !isProper && properAvailable;
       });
 
-      LD.onFeatureFlag($scope, RICH_TEXT_FORMATTING_OPTIONS_FEATURE_FLAG, flag => {
-        if (flag && RICH_TEXT_FIELD_TYPES.includes($scope.field.type)) {
-          $scope.nodeValidationsEnabled = true;
-        }
-      });
+      if (RICH_TEXT_FIELD_TYPES.includes($scope.field.type)) {
+        $scope.nodeValidationsEnabled = true;
+      }
     }
   ])
 
