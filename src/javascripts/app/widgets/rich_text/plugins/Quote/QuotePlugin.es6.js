@@ -29,6 +29,6 @@ const newPlugin = (defaultType, tagName, hotkey) => ({
   };
 };
 
-const QuotePlugin = newPlugin(BLOCKS.QUOTE, 'blockquote', ['ctrl+shift+1', 'cmd+shift+1']);
+const QuotePlugin = newPlugin(BLOCKS.QUOTE, 'blockquote', ['mod+shift+1']);
 
 export default QuotePlugin;

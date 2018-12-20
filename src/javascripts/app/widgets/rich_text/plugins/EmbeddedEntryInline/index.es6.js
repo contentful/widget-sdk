@@ -16,7 +16,7 @@ export const EmbeddedEntryInlinePlugin = ({ richTextAPI: { widgetAPI, logAction 
     }
   },
   onKeyDown: (event, change, editor) => {
-    const hotkey = ['cmd+shift+2', 'ctrl+shift+2'];
+    const hotkey = ['mod+shift+2'];
     if (isHotkey(hotkey, event)) {
       if (canInsertInline(change)) {
         const logShortcutAction = (name, data) =>

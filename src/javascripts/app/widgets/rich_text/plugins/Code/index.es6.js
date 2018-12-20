@@ -8,7 +8,7 @@ export const CodePlugin = ({ richTextAPI: { logAction } }) => {
   return markPlugin({
     type: MARKS.CODE,
     tagName: 'code',
-    hotkey: ['cmd+/', 'ctrl+/'],
+    hotkey: ['mod+/'],
     logAction
   });
 };

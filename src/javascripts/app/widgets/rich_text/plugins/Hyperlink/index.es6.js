@@ -33,7 +33,7 @@ export const HyperlinkPlugin = ({ richTextAPI: { widgetAPI, logAction } }) => ({
     }
   },
   onKeyDown: (event, change, editor) => {
-    const hotkey = ['cmd+k', 'ctrl+k'];
+    const hotkey = ['mod+k'];
 
     if (isHotkey(hotkey, event) && hasOnlyHyperlinkInlines(change.value)) {
       const logShortcutAction = (name, data) =>

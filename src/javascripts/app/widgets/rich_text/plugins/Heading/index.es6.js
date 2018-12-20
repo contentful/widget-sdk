@@ -42,12 +42,12 @@ const newPlugin = (defaultType, tagName, hotkey) => ({ type = defaultType, richT
 });
 
 // TODO: move hotkeys to components
-export const Heading1Plugin = newPlugin(BLOCKS.HEADING_1, 'h1', ['cmd+opt+1', 'ctrl+opt+1']);
-export const Heading2Plugin = newPlugin(BLOCKS.HEADING_2, 'h2', ['cmd+opt+2', 'ctrl+opt+2']);
-export const Heading3Plugin = newPlugin(BLOCKS.HEADING_3, 'h3', ['cmd+opt+3', 'ctrl+opt+3']);
-export const Heading4Plugin = newPlugin(BLOCKS.HEADING_4, 'h4', ['cmd+opt+4', 'ctrl+opt+4']);
-export const Heading5Plugin = newPlugin(BLOCKS.HEADING_5, 'h5', ['cmd+opt+5', 'ctrl+opt+5']);
-export const Heading6Plugin = newPlugin(BLOCKS.HEADING_6, 'h6', ['cmd+opt+6', 'ctrl+opt+6']);
+export const Heading1Plugin = newPlugin(BLOCKS.HEADING_1, 'h1', ['mod+opt+1']);
+export const Heading2Plugin = newPlugin(BLOCKS.HEADING_2, 'h2', ['mod+opt+2']);
+export const Heading3Plugin = newPlugin(BLOCKS.HEADING_3, 'h3', ['mod+opt+3']);
+export const Heading4Plugin = newPlugin(BLOCKS.HEADING_4, 'h4', ['mod+opt+4']);
+export const Heading5Plugin = newPlugin(BLOCKS.HEADING_5, 'h5', ['mod+opt+5']);
+export const Heading6Plugin = newPlugin(BLOCKS.HEADING_6, 'h6', ['mod+opt+6']);
 
 export { default as Heading1 } from './Heading1.es6';
 export { default as Heading2 } from './Heading2.es6';

@@ -452,17 +452,7 @@ describe('Toolbar', () => {
   });
 
   describe('Quote', () => {
-    const configs = [
-      {
-        forToolbarIcon: BLOCKS.QUOTE,
-        forShortcut: 'ctrl+shift+1'
-      },
-
-      {
-        forToolbarIcon: BLOCKS.QUOTE,
-        forShortcut: 'cmd+shift+1'
-      }
-    ];
+    const configs = [[BLOCKS.QUOTE, 'mod+shift+1']];
 
     configs.forEach(config => {
       describeAction(`insert quote`, config, ({ actionOrigin }) => {
@@ -513,24 +503,15 @@ describe('Toolbar', () => {
 
   describe('Marks', () => {
     [
-      { mark: MARKS.BOLD, shortcut: 'ctrl+b' },
-      { mark: MARKS.BOLD, shortcut: 'cmd+b' },
-      { mark: MARKS.CODE, shortcut: 'ctrl+/' },
-      { mark: MARKS.CODE, shortcut: 'cmd+/' },
-      { mark: MARKS.ITALIC, shortcut: 'ctrl+i' },
-      { mark: MARKS.ITALIC, shortcut: 'cmd+i' },
-      { mark: MARKS.UNDERLINE, shortcut: 'ctrl+u' },
-      { mark: MARKS.UNDERLINE, shortcut: 'cmd+u' }
+      [MARKS.BOLD, 'mod+b'],
+      [MARKS.CODE, 'mod+/'],
+      [MARKS.ITALIC, 'mod+i'],
+      [MARKS.UNDERLINE, 'mod+u']
     ].forEach(testMark);
   });
 
-  function testMark({ mark, shortcut }) {
-    const config = {
-      forToolbarIcon: mark,
-      forShortcut: shortcut
-    };
-
-    describeAction(`mark as ${mark}`, config, ({ actionOrigin }) => {
+  function testMark([mark, shortcut]) {
+    describeAction(`mark as ${mark}`, [mark, shortcut], ({ actionOrigin }) => {
       beforeEach(async function() {
         await this.setup()
           .editor.triggerAction()
@@ -545,7 +526,7 @@ describe('Toolbar', () => {
       });
     });
 
-    describeAction(`unmark ${mark}`, config, ({ actionOrigin }) => {
+    describeAction(`unmark ${mark}`, [mark, shortcut], ({ actionOrigin }) => {
       beforeEach(async function() {
         const { editor } = this.setup();
         await editor.triggerAction();
@@ -597,21 +578,15 @@ describe('Toolbar', () => {
     });
 
     const headingShortcuts = [
-      { heading: BLOCKS.HEADING_1, shortcut: 'ctrl+opt+1' },
-      { heading: BLOCKS.HEADING_1, shortcut: 'cmd+opt+1' },
-      { heading: BLOCKS.HEADING_2, shortcut: 'ctrl+opt+2' },
-      { heading: BLOCKS.HEADING_2, shortcut: 'cmd+opt+2' },
-      { heading: BLOCKS.HEADING_3, shortcut: 'ctrl+opt+3' },
-      { heading: BLOCKS.HEADING_3, shortcut: 'cmd+opt+3' },
-      { heading: BLOCKS.HEADING_4, shortcut: 'ctrl+opt+4' },
-      { heading: BLOCKS.HEADING_4, shortcut: 'cmd+opt+4' },
-      { heading: BLOCKS.HEADING_5, shortcut: 'ctrl+opt+5' },
-      { heading: BLOCKS.HEADING_5, shortcut: 'cmd+opt+5' },
-      { heading: BLOCKS.HEADING_6, shortcut: 'ctrl+opt+6' },
-      { heading: BLOCKS.HEADING_6, shortcut: 'cmd+opt+6' }
+      [BLOCKS.HEADING_1, 'mod+opt+1'],
+      [BLOCKS.HEADING_2, 'mod+opt+2'],
+      [BLOCKS.HEADING_3, 'mod+opt+3'],
+      [BLOCKS.HEADING_4, 'mod+opt+4'],
+      [BLOCKS.HEADING_5, 'mod+opt+5'],
+      [BLOCKS.HEADING_6, 'mod+opt+6']
     ];
 
-    headingShortcuts.forEach(function({ heading, shortcut }) {
+    headingShortcuts.forEach(function([heading, shortcut]) {
       it(`inserts ${heading} with ${shortcut}`, async function({ editor }) {
         await editor.pressKeys(shortcut).typeText('a');
 
@@ -642,17 +617,17 @@ function newEmbeddedEntryInline(entity) {
   return inline(INLINES.EMBEDDED_ENTRY, data);
 }
 
-function describeAction(description, { forShortcut, forToolbarIcon }, setupTests) {
+function describeAction(description, [formattingOption, shortcut], setupTests) {
   describe(`${description} via toolbar icon`, () => {
     beforeEach(function() {
-      this.editorApi.triggerAction = () => this.editorApi.clickIcon(forToolbarIcon);
+      this.editorApi.triggerAction = () => this.editorApi.clickIcon(formattingOption);
     });
     setupTests({ actionOrigin: actionOrigin.TOOLBAR });
   });
 
-  describe(`${description} via shortcut ${forShortcut}`, () => {
+  describe(`${description} via shortcut ${shortcut}`, () => {
     beforeEach(function() {
-      this.editorApi.triggerAction = () => this.editorApi.pressKeys(forShortcut);
+      this.editorApi.triggerAction = () => this.editorApi.pressKeys(shortcut);
     });
     setupTests({ actionOrigin: actionOrigin.SHORTCUT });
   });

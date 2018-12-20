@@ -42,7 +42,7 @@ export const EmbeddedEntryBlockPlugin = ({ type = BLOCKS.EMBEDDED_ENTRY, richTex
   return EmbeddedEntityBlockPlugin({
     richTextAPI,
     nodeType: type,
-    hotkey: ['cmd+shift+e', 'ctrl+shift+e']
+    hotkey: ['mod+shift+e']
   });
 };
 
@@ -50,6 +50,6 @@ export const EmbeddedAssetBlockPlugin = ({ type = BLOCKS.EMBEDDED_ASSET, richTex
   return EmbeddedEntityBlockPlugin({
     richTextAPI,
     nodeType: type,
-    hotkey: ['cmd+shift+a', 'ctrl+shift+a']
+    hotkey: ['mod+shift+a']
   });
 };
