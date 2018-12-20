@@ -24,6 +24,7 @@ import CustomRolesPlanInfo from './CustomRolesPlanInfo.es6';
 import TranslatorRoleSelector from './TranslatorRoleSelector.es6';
 import RoleEditorButton from './RoleEditorButton.es6';
 import Icon from '../ui/Components/Icon.es6';
+import getLocales from './getLocales.es6';
 
 const ServicesConsumer = require('../reactServiceContext').default;
 
@@ -46,7 +47,6 @@ class RoleEditor extends React.Component {
     $services: PropTypes.shape({
       $state: PropTypes.object.isRequired,
       spaceContext: PropTypes.object.isRequired,
-      TheLocaleStore: PropTypes.object.isRequired,
       createRoleRemover: PropTypes.func.isRequired,
       PolicyBuilder: PropTypes.object.isRequired,
       TheAccountView: PropTypes.object.isRequired,
@@ -236,11 +236,11 @@ class RoleEditor extends React.Component {
 
   autofixPolicies = () => {
     const {
-      $services: { spaceContext, TheLocaleStore, PolicyBuilder }
+      $services: { spaceContext, PolicyBuilder }
     } = this.props;
 
     const cts = spaceContext.publishedCTs.getAllBare();
-    const locales = TheLocaleStore.getPrivateLocales();
+    const locales = getLocales();
     const internalCopy = cloneDeep(this.state.internal);
     const autofixed = PolicyBuilder.removeOutdatedRules(internalCopy, cts, locales);
     if (autofixed) {
@@ -633,7 +633,6 @@ class RoleEditor extends React.Component {
 export default ServicesConsumer(
   '$state',
   'spaceContext',
-  'TheLocaleStore',
   'createRoleRemover',
   'PolicyBuilder',
   'TheAccountView',

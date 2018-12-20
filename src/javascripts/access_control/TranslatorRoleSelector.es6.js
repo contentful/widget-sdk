@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
+import getLocales from './getLocales.es6';
 
-const ServicesConsumer = require('../reactServiceContext').default;
-
-class TranslatorRoleSelector extends React.Component {
+export default class TranslatorRoleSelector extends React.Component {
   static propTypes = {
     policies: PropTypes.shape().isRequired,
     hasFeatureEnabled: PropTypes.bool,
@@ -13,19 +12,9 @@ class TranslatorRoleSelector extends React.Component {
   };
 
   render() {
-    const {
-      policies,
-      hasFeatureEnabled,
-      onChange,
-      $services: { TheLocaleStore, CONFIG }
-    } = this.props;
+    const { policies, hasFeatureEnabled, onChange } = this.props;
 
-    const locales = [{ code: CONFIG.ALL_LOCALES, name: 'All locales' }].concat(
-      TheLocaleStore.getPrivateLocales().map(({ code, name }) => ({
-        code,
-        name: `${name} (${code})`
-      }))
-    );
+    const locales = getLocales();
 
     const updateEntityPolicies = policies.entries.allowed
       .concat(policies.assets.allowed)
@@ -55,8 +44,3 @@ class TranslatorRoleSelector extends React.Component {
     );
   }
 }
-
-export default ServicesConsumer('TheLocaleStore', {
-  from: 'PolicyBuilder/CONFIG',
-  as: 'CONFIG'
-})(TranslatorRoleSelector);
