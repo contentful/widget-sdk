@@ -155,7 +155,7 @@ angular
          * @ngdoc method
          * @name TheLocaleStore#getLocales
          * @description
-         * Returns a list of all locales.
+         * Returns a list of all locales, including delivery-only ones.
          *
          * @returns {Array<API.Locale>}
          */

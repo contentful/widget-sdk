@@ -28,12 +28,13 @@ angular
   .directive('cfSlugEditor', [
     'require',
     require => {
-      const _ = require('lodash');
+      const { isEmpty } = require('lodash');
       const slugUtils = require('slug');
       const moment = require('moment');
       const debounce = require('debounce');
       const InputUpdater = require('ui/inputUpdater');
       const K = require('utils/kefir.es6');
+      const TheLocaleStore = require('TheLocaleStore');
 
       return {
         restrict: 'E',
@@ -42,6 +43,20 @@ angular
         template: JST['cf_slug_editor'](),
         link: (scope, $el, _attrs, widgetApi) => {
           const { field, entry, space, locales, contentType } = widgetApi;
+
+          // TODO: widgetApi does not support this:
+          const localeObject = TheLocaleStore.getPrivateLocales().find(
+            locale => locale.code === field.locale
+          );
+          // If the field or the locale are not required (there's a locale setting that
+          // allows publishing even if the field is required) and if the locale has a
+          // fallback than there's no need for a slug unless the user manually enters
+          // one or the title field is also localized with a custom value.
+          const isOptionalFieldLocale = !field.required || localeObject.optional;
+          const isOptionalLocaleWithFallback =
+            isOptionalFieldLocale &&
+            localeObject.fallbackCode &&
+            locales.available.includes(localeObject.fallbackCode);
 
           const $inputEl = $el.find('input');
           const updateInput = InputUpdater.create($inputEl.get(0));
@@ -74,18 +89,17 @@ angular
 
           K.onValueScope(scope, titleUpdate$, ([, title]) => {
             const slug = field.getValue();
-            if (
-              !_.isEmpty(trackingTitle) &&
-              !_.isEmpty(slug) &&
-              slug !== slugUtils.slugify(trackingTitle, field.locale)
-            ) {
-              // We don't want to overwrite the slug if the user has provided
-              // a custom one.
-              return;
+            const isCustomSlug =
+              !isEmpty(trackingTitle) &&
+              !isEmpty(slug) &&
+              slug !== slugUtils.slugify(trackingTitle, field.locale);
+
+            if ((isEmpty(title) && isEmpty(slug) && isOptionalLocaleWithFallback) || isCustomSlug) {
+              return; // Do not overwrite user-defined custom slug.
             } else {
-              const val = makeSlug(title);
-              updateInput(val);
-              field.setValue(val);
+              const newSlug = makeSlug(title);
+              updateInput(newSlug);
+              field.setValue(newSlug);
             }
           });
 
@@ -110,13 +124,15 @@ angular
 
           // The content type’s display field might not exist.
           if (titleField) {
+            // Track same locale title:
             const detachLocaleTitleChangeHandler = titleField.onValueChanged(
               field.locale,
               setTitle
             );
             scope.$on('$destroy', detachLocaleTitleChangeHandler);
 
-            if (field.locale !== locales.default) {
+            if (field.locale !== locales.default && !isOptionalLocaleWithFallback) {
+              // Track default locale title:
               const detachDefaultLocaleTitleChangeHandler = titleField.onValueChanged(
                 locales.default,
                 titleValue => {
@@ -129,6 +145,9 @@ angular
             }
           }
 
+          // TODO: Replace with more decisive logic aware of default/same locale change in
+          // titleUpdate$ logic on top avoid inconsistent "untitled-" vs. fallback to default
+          // locale bugs in case of l10n active in both title and slug fields.
           function setTitle(title) {
             if (isTracking()) {
               titleBus.emit(title);
@@ -137,8 +156,8 @@ angular
           }
 
           /**
-           * Returns true if we should update the field value with a new
-           * value build from a title
+           * Returns `true` if we should update the field value with a new
+           * value built from a title
            *
            * `false` if the entry is published
            * `true` if the current value is empty
@@ -201,7 +220,7 @@ angular
 
             if (value) {
               req['content_type'] = entry.getSys().contentType.sys.id;
-              req['fields.' + field.id] = value;
+              req[`fields.${field.id}.${field.locale}`] = value;
               req['sys.id[ne]'] = entry.getSys().id;
               req['sys.publishedAt[exists]'] = true;
               space.getEntries(req).then(res => {
@@ -215,6 +234,9 @@ angular
           }
 
           function untitledSlug() {
+            if (isOptionalLocaleWithFallback) {
+              return ''; // Will result in `undefined` slug.
+            }
             const createdAt = entry.getSys().createdAt;
             const createdAtFormatted = moment.utc(createdAt).format('YYYY MM DD [at] hh mm ss');
             return slugUtils.slugify('Untitled entry ' + createdAtFormatted, 'en-US');
