@@ -29,6 +29,7 @@ angular
 
       ngRequire('components/client/ClientController.es6');
       ngRequire('components/shared/space-wizard/SpaceWizardDirective.es6');
+      ngRequire('analytics/bugsnag.es6');
 
       // access_control
       ngRequire('access_control/PolicyBuilder.es6');
@@ -47,7 +48,6 @@ angular
 
       // analytics
       ngRequire('analytics/analyticsConsole.es6');
-      ngRequire('analytics/bugsnag.es6');
       ngRequire('analytics/events/customWidgets.es6');
       ngRequire('analytics/events/persistentNotification.es6');
       ngRequire('analytics/events/versioning.es6');
