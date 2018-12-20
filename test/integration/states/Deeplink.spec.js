@@ -20,7 +20,7 @@ describe('states/Deeplink.es6', () => {
         search: this.search,
         url: () => {}
       });
-      $provide.value('spaceContext', {
+      $provide.constant('spaceContext', {
         resetWithSpace: () => Promise.resolve(),
         apiKeyRepo: {
           getAll: this.apiKeys

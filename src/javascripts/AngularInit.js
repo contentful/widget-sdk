@@ -45,6 +45,10 @@ angular
       ngRequire('account/handleGatekeeperMessage.es6');
       ngRequire('account/theAccountView.es6');
 
+      // classes
+      ngRequire('classes/entityListCache.es6');
+      ngRequire('classes/spaceContext.es6');
+
       // ui (cf.ui)
       ngRequire('ui/cfIconDirective.es6');
       ngRequire('ui/cfUiHint.es6');

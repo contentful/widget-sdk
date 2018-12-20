@@ -40,7 +40,7 @@ describe('data/User', () => {
 
     module('contentful/test', $provide => {
       $provide.value('services/TokenStore.es6', this.tokenStore);
-      $provide.value('spaceContext', this.spaceContext);
+      $provide.constant('spaceContext', this.spaceContext);
       $provide.value('$stateParams', this.$stateParams);
       $provide.value('contentPreview', this.contentPreview);
       $provide.value('data/OrganizationStatus.es6', {

@@ -8,7 +8,7 @@ describe('CreateModernOnboarding service', function() {
       this.createKey = sinon.stub();
       this.createCMAKey = sinon.stub().returns({ token: 'token' });
       this.user$ = K.createMockProperty({ sys: { id: 'someUser' } });
-      $provide.value('spaceContext', {
+      $provide.constant('spaceContext', {
         apiKeyRepo: {
           getAll: this.getAllKeys,
           create: this.createKey
