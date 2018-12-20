@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 
+import getLocales from './getLocales.es6';
+
 const ServicesConsumer = require('../reactServiceContext').default;
 
 const contentTypesToOptions = (CONFIG, contentTypes) =>
@@ -44,15 +46,9 @@ class Rule extends React.Component {
     super(props);
 
     const {
-      $services: { CONFIG, TheLocaleStore, spaceContext }
+      $services: { CONFIG, spaceContext }
     } = props;
 
-    this.locales = [{ code: CONFIG.ALL_LOCALES, name: 'All locales' }].concat(
-      TheLocaleStore.getPrivateLocales().map(({ code, name }) => ({
-        code,
-        name: `${name} (${code})`
-      }))
-    );
     this.contentTypes = contentTypesToOptions(CONFIG, spaceContext.publishedCTs.getAllBare());
   }
 
@@ -144,7 +140,7 @@ class Rule extends React.Component {
             disabled={isDisabled}
             value={rule.locale}
             onChange={onUpdateAttribute('locale')}>
-            {this.locales.map(({ code, name }) => (
+            {getLocales().map(({ code, name }) => (
               <option value={code} key={code}>
                 {name}
               </option>
@@ -161,7 +157,7 @@ class Rule extends React.Component {
   }
 }
 
-export default ServicesConsumer('TheLocaleStore', 'spaceContext', {
+export default ServicesConsumer('spaceContext', {
   from: 'PolicyBuilder/CONFIG',
   as: 'CONFIG'
 })(Rule);
