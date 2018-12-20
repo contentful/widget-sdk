@@ -275,6 +275,21 @@ angular
       ngRequire('app/home/onboarding_steps/cfOnboardingStepsDirective.es6');
       ngRequire('app/home/welcome/cfOnboardingWithTeaDirective.es6');
 
+      // states
+      ngRequire('states/account.es6');
+      ngRequire('states/accountProfile.es6');
+      ngRequire('states/assets.es6');
+      ngRequire('states/config.es6');
+      ngRequire('states/contentTypes.es6');
+      ngRequire('states/entries.es6');
+      ngRequire('states/settings.es6');
+      ngRequire('states/settingsContentPreview.es6');
+      ngRequire('states/settingsRoles.es6');
+      ngRequire('states/settingsUsers.es6');
+      ngRequire('states/spaceHome.es6');
+      ngRequire('states/stackOnboarding.es6');
+      ngRequire('states/states.es6');
+
       // ui (cf.ui)
       ngRequire('ui/cfIconDirective.es6');
       ngRequire('ui/cfUiHint.es6');

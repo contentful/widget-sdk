@@ -1,39 +1,33 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
+import base from 'states/Base.es6';
 
-angular
-  .module('contentful')
+/**
+ * @ngdoc service
+ * @name states/assets
+ */
+registerFactory('states/assets', [
+  'app/entity_editor/EntityPageController.es6',
+  ({ default: createEntityPageController }) => {
+    const list = base({
+      name: 'list',
+      url: '',
+      loadingText: 'Loading media…',
+      template: '<div cf-asset-list class="workbench asset-list entity-list"></div>'
+    });
 
-  /**
-   * @ngdoc service
-   * @name states/assets
-   */
-  .factory('states/assets', [
-    'require',
-    require => {
-      const base = require('states/Base.es6').default;
-      const createEntityPageController = require('app/entity_editor/EntityPageController.es6')
-        .default;
+    const detail = {
+      name: 'detail',
+      url: '/:assetId?previousEntries',
+      params: { addToContext: true },
+      template: JST.entity_page(),
+      controller: ['$scope', '$state', createEntityPageController]
+    };
 
-      const list = base({
-        name: 'list',
-        url: '',
-        loadingText: 'Loading media…',
-        template: '<div cf-asset-list class="workbench asset-list entity-list"></div>'
-      });
-
-      const detail = {
-        name: 'detail',
-        url: '/:assetId?previousEntries',
-        params: { addToContext: true },
-        template: JST.entity_page(),
-        controller: ['$scope', '$state', createEntityPageController]
-      };
-
-      return {
-        name: 'assets',
-        url: '/assets',
-        abstract: true,
-        children: [list, detail]
-      };
-    }
-  ]);
+    return {
+      name: 'assets',
+      url: '/assets',
+      abstract: true,
+      children: [list, detail]
+    };
+  }
+]);
