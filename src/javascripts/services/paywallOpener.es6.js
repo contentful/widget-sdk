@@ -1,4 +1,5 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
+import _ from 'lodash';
 
 /**
  * @ngdoc service
@@ -6,21 +7,29 @@
  * @description
  * Opens the paywall.
  */
-angular.module('contentful').factory('paywallOpener', [
-  'require',
-  require => {
-    const _ = require('lodash');
-    const $q = require('$q');
-    const $sce = require('$sce');
-    const lazyLoad = require('LazyLoader').get;
-    const modalDialog = require('modalDialog');
-    const recommendPlan = require('subscriptionPlanRecommender').recommend;
-    const intercom = require('intercom');
-    const Analytics = require('analytics/Analytics.es6');
-    const TheAccountView = require('TheAccountView');
-    const Config = require('Config.es6');
-    const $window = require('$window');
-
+registerFactory('paywallOpener', [
+  '$q',
+  '$sce',
+  '$window',
+  'modalDialog',
+  'intercom',
+  'TheAccountView',
+  'Config.es6',
+  'analytics/Analytics.es6',
+  'LazyLoader',
+  'subscriptionPlanRecommender',
+  (
+    $q,
+    $sce,
+    $window,
+    modalDialog,
+    intercom,
+    TheAccountView,
+    Config,
+    Analytics,
+    { get: lazyLoad },
+    { recommend: recommendPlan }
+  ) => {
     let paywallIsOpen = false;
 
     return {

@@ -1,4 +1,5 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
+import _ from 'lodash';
 
 /**
  * @ngdoc service
@@ -9,11 +10,9 @@
  * We can ask if browser is: IE, iOS or running on Apple device.
  * We also determine what key is used as keystroke action modifier ("Ctrl" or "Cmd")
  */
-angular.module('contentful').factory('userAgent', [
-  'require',
-  require => {
-    const _ = require('lodash');
-    const $window = require('$window');
+registerFactory('userAgent', [
+  '$window',
+  $window => {
     const userAgent = _.get($window, 'navigator.userAgent', '');
     const platform = _.get($window, 'navigator.platform', '');
     let ctrlKey = 'Ctrl';

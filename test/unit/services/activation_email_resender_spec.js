@@ -5,8 +5,16 @@ describe('activationEmailResender', () => {
   let resend;
 
   beforeEach(function() {
-    module('contentful/test', environment => {
+    this.stubs = {
+      logError: sinon.stub()
+    };
+
+    module('contentful/test', ($provide, environment) => {
       environment.settings.authUrl = '//be.contentful.com:443';
+
+      $provide.constant('logger', {
+        logError: this.stubs.logError
+      });
     });
 
     resend = this.$inject('activationEmailResender').resend;
@@ -81,7 +89,6 @@ describe('activationEmailResender', () => {
     });
 
     describe('error logging on rejection via `logger.logError()`', () => {
-      let logErrorSpy;
       beforeEach(function() {
         this.respond((method, url, data, headers) => {
           this.request = {
@@ -94,12 +101,11 @@ describe('activationEmailResender', () => {
         });
 
         $httpBackend.flush();
-        logErrorSpy = this.$inject('logger').logError;
       });
 
-      it('includes the right message and data', () => {
+      it('includes the right message and data', function() {
         sinon.assert.calledWithExactly(
-          logErrorSpy,
+          this.stubs.logError,
           'Failed activation email resend attempt',
           sinon.match({
             data: {

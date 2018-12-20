@@ -514,7 +514,7 @@ describe('Space Template loading service', () => {
 
   beforeEach(function() {
     module('contentful/test', $provide => {
-      $provide.value('contentfulClient', {
+      $provide.constant('contentfulClient', {
         newClient: sinon.stub()
       });
     });

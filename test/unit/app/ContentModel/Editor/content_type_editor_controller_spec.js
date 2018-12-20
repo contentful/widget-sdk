@@ -17,7 +17,7 @@ describe('ContentTypeEditor Controller', () => {
     };
 
     module('contentful/test', $provide => {
-      $provide.value('modalDialog', {
+      $provide.constant('modalDialog', {
         open: this.stubs.modalDialog_open
       });
 

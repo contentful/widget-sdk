@@ -8,7 +8,7 @@ describe('SlugEditor directive', () => {
     ];
 
     module('contentful/test', $provide => {
-      $provide.value('TheLocaleStore', {
+      $provide.constant('TheLocaleStore', {
         getPrivateLocales: () => this.locales
       });
     });

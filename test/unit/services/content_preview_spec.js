@@ -14,11 +14,11 @@ describe('contentPreview', () => {
     storeStubs.forKey = sinon.stub();
 
     module('contentful/test', $provide => {
-      $provide.value('TheLocaleStore', {
+      $provide.constant('TheLocaleStore', {
         getDefaultLocale: _.constant({ code: 'en' }),
         toPublicCode: sinon.stub()
       });
-      $provide.value('TheStore', {
+      $provide.constant('TheStore/index.es6', {
         getStore: () => {
           return storeStubs;
         }

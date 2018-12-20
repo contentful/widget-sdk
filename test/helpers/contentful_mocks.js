@@ -18,7 +18,6 @@ angular
  */
 angular
   .module('contentful/mocks', [])
-
   .decorator('TheStore/ClientStorageWrapper.es6', [
     '$delegate',
     'mocks/TheStore/ClientStorageWrapper',
@@ -30,7 +29,6 @@ angular
         mock
       )
   ])
-
   .config([
     '$provide',
     '$controllerProvider',
@@ -46,23 +44,6 @@ angular
           disconnect: _.noop
         })
       });
-
-      $provide.provider('realLogger', ['loggerProvider', _.identity]);
-
-      $provide.factory('logger', () => ({
-        enable: sinon.stub(),
-        disable: sinon.stub(),
-        findActualServerError: sinon.stub(),
-        logException: sinon.stub(),
-        logError: sinon.stub(),
-        logServerError: sinon.stub(),
-        logServerWarn: sinon.stub(),
-        logSharejsError: sinon.stub(),
-        logSharejsWarn: sinon.stub(),
-        logWarn: sinon.stub(),
-        leaveBreadcrumb: sinon.stub(),
-        log: sinon.stub()
-      }));
 
       $provide.value('services/Filestack.es6', {
         makeDropPane: sinon.stub(),

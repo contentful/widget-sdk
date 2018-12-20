@@ -20,7 +20,7 @@ describe('logger service', () => {
     this.$state.current = { name: 'some.state.name' };
     this.$stateParams.spaceId = '123456';
 
-    this.logger = this.$inject('realLogger');
+    this.logger = this.$inject('logger');
   });
 
   it('enables', function() {

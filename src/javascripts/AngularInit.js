@@ -1,5 +1,7 @@
 // https://weblogs.asp.net/dwahlin/dynamically-loading-controllers-and-views-with-angularjs-and-requirejs
 
+import _ from 'lodash';
+
 angular
   .module('contentful/init')
   .config([
@@ -18,6 +20,12 @@ angular
         provider: $provide.provider,
         value: $provide.value
       };
+
+      // Legacy values originally from lodash_timing.js
+      $provide.value('debounce', _.debounce);
+      $provide.value('throttle', _.throttle);
+      $provide.value('defer', _.defer);
+      $provide.value('delay', _.delay);
     }
   ])
   .run([
@@ -159,6 +167,33 @@ angular
 
       ngRequire('components/app_container/cfAppContainerDirective.es6');
       ngRequire('components/app_container/entityCreator.es6');
+
+      // services
+      ngRequire('services/activationEmailResender.es6');
+      ngRequire('services/authorization.es6');
+      ngRequire('services/batchPerformer.es6');
+      ngRequire('services/client.es6');
+      ngRequire('services/contentfulClient.es6');
+      ngRequire('services/contentPreview.es6');
+      ngRequire('services/editingInterfacesHelpers.es6');
+      ngRequire('services/errorMessageBuilder.es6');
+      ngRequire('services/exceptionHandler.es6');
+      ngRequire('services/features.es6');
+      ngRequire('services/fieldFactory.es6');
+      ngRequire('services/hints.es6');
+      ngRequire('services/intercom.es6');
+      ngRequire('services/lazyLoader.es6');
+      ngRequire('services/localeStore.es6');
+      ngRequire('services/logger.es6');
+      ngRequire('services/modalDialogService.es6');
+      ngRequire('services/paywallOpener.es6');
+      ngRequire('services/promisedLoader.es6');
+      ngRequire('services/searchQueryAutocompletions.es6');
+      ngRequire('services/slug.es6');
+      ngRequire('services/subscriptionPlanRecommender.es6');
+      ngRequire('services/userAgent.es6');
+      ngRequire('services/validationDialogErrorMessages.es6');
+      ngRequire('services/validationViews.es6');
 
       // ui (cf.ui)
       ngRequire('ui/cfIconDirective.es6');

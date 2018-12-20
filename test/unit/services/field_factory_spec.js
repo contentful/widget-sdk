@@ -3,7 +3,17 @@ import { map, uniq, find, filter, every } from 'lodash';
 
 describe('field factory', () => {
   beforeEach(function() {
-    module('contentful/test');
+    this.stubs = {
+      getDefaultLocale: sinon.stub(),
+      getPrivateLocales: sinon.stub()
+    };
+
+    module('contentful/test', $provide => {
+      $provide.constant('TheLocaleStore', {
+        getDefaultLocale: this.stubs.getDefaultLocale,
+        getPrivateLocales: this.stubs.getPrivateLocales
+      });
+    });
     this.fieldFactory = this.$inject('fieldFactory');
   });
 
@@ -106,15 +116,13 @@ describe('field factory', () => {
 
   describe('#getLocaleCodes()', () => {
     it('returns default locale for non-localized field', function() {
-      const LS = this.$inject('TheLocaleStore');
-      LS.getDefaultLocale = sinon.stub().returns({ internal_code: 'DEF' });
+      this.stubs.getDefaultLocale.returns({ internal_code: 'DEF' });
       const codes = this.fieldFactory.getLocaleCodes({ localized: false });
       expect(codes).toEqual(['DEF']);
     });
 
     it('returns all private locales for localized field', function() {
-      const LS = this.$inject('TheLocaleStore');
-      LS.getPrivateLocales = sinon.stub().returns([{ internal_code: 'A' }, { internal_code: 'B' }]);
+      this.stubs.getPrivateLocales.returns([{ internal_code: 'A' }, { internal_code: 'B' }]);
       const codes = this.fieldFactory.getLocaleCodes({ localized: true });
       expect(codes).toEqual(['A', 'B']);
     });

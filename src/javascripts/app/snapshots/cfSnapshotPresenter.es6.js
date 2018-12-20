@@ -2,7 +2,6 @@ import { registerDirective } from 'NgRegistry.es6';
 import _ from 'lodash';
 import moment from 'moment';
 import * as K from 'utils/kefir.es6';
-import * as EntityResolver from 'data/CMA/EntityResolver.es6';
 import { RTL_SUPPORT_FEATURE_FLAG } from 'featureFlags.es6';
 
 /**
@@ -88,7 +87,8 @@ registerDirective('cfSnapshotPresenterMarkdown', [
 registerDirective('cfSnapshotPresenterLink', [
   'spaceContext',
   'EntityHelpers',
-  (spaceContext, EntityHelpers) => ({
+  'data/CMA/EntityResolver.es6',
+  (spaceContext, EntityHelpers, EntityResolver) => ({
     restrict: 'E',
     template:
       '<cf-entity-link ' +

@@ -4,9 +4,11 @@ import _ from 'lodash';
 describe('bulk editor', () => {
   beforeEach(function() {
     module('contentful/test', $provide => {
-      $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
       $provide.removeDirectives('cfWidgetApi', 'cfWidgetRenderer');
     });
+
+    const { registerFactory } = this.$inject('NgRegistry.es6');
+    registerFactory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
 
     const TheLocaleStore = this.$inject('TheLocaleStore');
     this.setLocales = TheLocaleStore.setLocales;

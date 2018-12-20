@@ -1,4 +1,6 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
+import _ from 'lodash';
+import { capitalize } from 'utils/StringUtils.es6';
 
 /**
  * @ngdoc service
@@ -6,13 +8,9 @@
  * @description
  * Utilities for creating and handling Content Type Fields
  */
-angular.module('contentful').factory('fieldFactory', [
-  'require',
-  require => {
-    const _ = require('lodash');
-    const capitalize = require('utils/StringUtils.es6').capitalize;
-    const TheLocaleStore = require('TheLocaleStore');
-
+registerFactory('fieldFactory', [
+  'TheLocaleStore',
+  TheLocaleStore => {
     /**
      * @ngdoc property
      * @name fieldFactory#types

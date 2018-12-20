@@ -8,7 +8,7 @@ describe('cfPersistentNotification Directive', () => {
     this.logger = {};
 
     module('contentful/test', $provide => {
-      $provide.value('logger', this.logger);
+      $provide.constant('logger', this.logger);
     });
 
     $rootScope = this.$inject('$rootScope');

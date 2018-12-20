@@ -54,8 +54,8 @@ describe('CreateSampleSpace service', () => {
     };
 
     module('contentful/test', $provide => {
-      $provide.value('client', this.client);
-      $provide.value('modalDialog', this.modalDialog);
+      $provide.constant('client', this.client);
+      $provide.constant('modalDialog', this.modalDialog);
       $provide.value('services/TokenStore.es6', this.tokenStore);
       $provide.value('services/SpaceTemplateCreator', {
         getCreator: this.getCreator

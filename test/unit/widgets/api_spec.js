@@ -4,10 +4,10 @@ import _ from 'lodash';
 
 describe('widgets/API', () => {
   beforeEach(function() {
-    module('contentful/test', $provide => {
-      $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
-    });
+    module('contentful/test');
 
+    const { registerFactory } = this.$inject('NgRegistry.es6');
+    registerFactory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     const API = this.$inject('widgets/API');
 
     const TheLocaleStore = this.$inject('TheLocaleStore');

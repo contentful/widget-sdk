@@ -1,4 +1,6 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
+import _ from 'lodash';
+import stringifySafe from 'json-stringify-safe';
 
 /**
  * @ngdoc service
@@ -50,18 +52,16 @@
  * Other uncaught exceptions and unhandled promise rejections are
  * logged to the console and to Bugsnag if bugsnag is enabled.
  */
-angular.module('contentful').factory('logger', [
-  'require',
-  require => {
-    const _ = require('lodash');
-    const $window = require('$window');
-    const bugsnag = require('bugsnag');
-    const environment = require('environment');
-    const stringifySafe = require('json-stringify-safe');
-
+registerFactory('logger', [
+  '$window',
+  '$injector',
+  'bugsnag',
+  'environment',
+  ($window, $injector, bugsnag, environment) => {
     function getParams() {
-      const stateName = require('$state').current.name;
-      const stateParams = require('$stateParams');
+      const stateName = $injector.get('$state').current.name;
+      const stateParams = $injector.get('$stateParams');
+
       return _.extend(
         {
           state: stateName,

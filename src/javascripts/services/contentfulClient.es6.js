@@ -1,8 +1,11 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
+import _ from 'lodash';
+import qs from 'qs';
 
-angular.module('contentful').factory('contentfulClient', [
-  'require',
-  require => {
+registerFactory('contentfulClient', [
+  '$q',
+  '$http',
+  ($q, $http) => {
     /*
      * This module is a fork of https://github.com/contentful/contentful.js which allows us to use Contentful
      * as if it were an external service. As such it might not reflect other patterns present throughout the app.
@@ -11,11 +14,6 @@ angular.module('contentful').factory('contentfulClient', [
      *
      * It's also been modified to make use of the CMA instead, with the X-Contentful-Skip-Transformation header.
      */
-
-    const _ = require('lodash');
-    const $http = require('$http');
-    const $q = require('$q');
-    const qs = require('qs');
 
     const parseableResourceTypes = {
       Asset: Asset,

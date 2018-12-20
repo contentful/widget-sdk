@@ -17,12 +17,14 @@ import { forEach, identity, clone } from 'lodash';
 describe('entity editor field integration', () => {
   beforeEach(function() {
     module('contentful/test', $provide => {
-      $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', identity]);
       $provide.constant('cfWidgetApiDirective', () => {});
       $provide.constant('cfWidgetRendererDirective', () => {});
     });
 
     this.createDocument = this.$inject('mocks/entityEditor/Document').create;
+
+    const { registerFactory } = this.$inject('NgRegistry.es6');
+    registerFactory('TheLocaleStore', ['mocks/TheLocaleStore', identity]);
 
     const TheLocaleStore = this.$inject('TheLocaleStore');
     this.setLocales = TheLocaleStore.setLocales;

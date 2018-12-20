@@ -32,6 +32,10 @@ describe('Access Checker', () => {
   });
 
   beforeEach(function() {
+    this.stubs = {
+      logError: sinon.stub()
+    };
+
     module('contentful/test', $provide => {
       $provide.value('data/EndpointFactory.es6', {
         createOrganizationEndpoint: () => mockOrgEndpoint,
@@ -48,6 +52,9 @@ describe('Access Checker', () => {
             }
           };
         }
+      });
+      $provide.constant('logger', {
+        logError: this.stubs.logError
       });
     });
 
@@ -522,9 +529,8 @@ describe('Access Checker', () => {
         );
 
         expect(ac.canCreateSpaceInOrganization('orgid')).toBe(false);
-        const logger = this.$inject('logger');
-        sinon.assert.calledOnce(logger.logError);
-        expect(logger.logError.args[0][0].indexOf('Worf exception')).toBe(0);
+        sinon.assert.calledOnce(this.stubs.logError);
+        expect(this.stubs.logError.args[0][0].indexOf('Worf exception')).toBe(0);
       });
     });
 

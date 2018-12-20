@@ -12,13 +12,12 @@ describe('activationEmailResendController', () => {
     openDialogStub = sinon.stub();
     dialogConfirmSpy = sinon.spy();
     module('contentful/test', $provide => {
-      $provide.value('modalDialog', {
+      $provide.constant('modalDialog', {
         open: openDialogStub
       });
-    });
-
-    this.mockService('activationEmailResender', {
-      resend: sinon.stub().resolves()
+      $provide.constant('activationEmailResender', {
+        resend: sinon.stub().resolves()
+      });
     });
 
     const tokenStore = this.mockService('services/TokenStore.es6', {

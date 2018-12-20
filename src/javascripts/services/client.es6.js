@@ -1,15 +1,13 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
+import _ from 'lodash';
+import Client from 'legacy-client';
 
-angular.module('contentful').factory('client', [
-  'require',
-  require => {
-    const _ = require('lodash');
-    const $q = require('$q');
-    const Config = require('Config.es6');
-    const Client = require('legacy-client');
-    const auth = require('Authentication.es6');
-    const makeRequest = require('data/Request.es6').default;
-
+registerFactory('client', [
+  '$q',
+  'Config.es6',
+  'Authentication.es6',
+  'data/Request.es6',
+  ($q, Config, auth, { default: makeRequest }) => {
     const baseRequest = makeRequest(auth);
     const baseUrl = Config.apiUrl().slice(0, -1); // Remove trailing slash
     const defaultHeaders = {

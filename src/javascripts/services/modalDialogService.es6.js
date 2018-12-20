@@ -1,4 +1,8 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
+import _ from 'lodash';
+import $ from 'jquery';
+import { h } from 'utils/legacy-html-hyperscript';
+import keycodes from 'utils/keycodes.es6';
 
 /**
  * @ngdoc service
@@ -23,22 +27,16 @@
  *     dialog.confirm();
  *   }, 3000);
  */
-angular.module('contentful').factory('modalDialog', [
-  'require',
-  require => {
-    const $ = require('jquery');
-    const _ = require('lodash');
-    const defer = require('defer');
-    const $compile = require('$compile');
-    const $q = require('$q');
-    const $window = require('$window');
-    const keycodes = require('utils/keycodes.es6').default;
-    const $rootScope = require('$rootScope');
-    const debounce = require('debounce');
-    const $timeout = require('$timeout');
-    const logger = require('logger');
-    const h = require('utils/legacy-html-hyperscript').h;
-
+registerFactory('modalDialog', [
+  '$compile',
+  '$q',
+  '$window',
+  '$rootScope',
+  '$timeout',
+  'defer',
+  'debounce',
+  'logger',
+  ($compile, $q, $window, $rootScope, $timeout, defer, debounce, logger) => {
     const opened = [];
 
     function Dialog(params) {

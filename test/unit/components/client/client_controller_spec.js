@@ -10,6 +10,10 @@ describe('Client Controller', () => {
 
   beforeEach(function() {
     this.getEnforcements = sinon.stub();
+    this.logger = {
+      enable: sinon.stub(),
+      disable: sinon.stub()
+    };
 
     module('contentful/test', $provide => {
       $provide.value('analytics/Analytics.es6', {
@@ -24,10 +28,11 @@ describe('Client Controller', () => {
           hasSpace: sinon.stub()
         }
       };
-      $provide.value('authorization', this.authorizationStubs);
+      $provide.constant('authorization', this.authorizationStubs);
       $provide.value('services/EnforcementsService.es6', {
         getEnforcements: this.getEnforcements
       });
+      $provide.constant('logger', this.logger);
     });
     this.tokenStore = this.$inject('services/TokenStore.es6');
     this.tokenStore.refresh = sinon.stub().resolves();
@@ -134,16 +139,6 @@ describe('Client Controller', () => {
   });
 
   describe('organizations on the scope', () => {
-    let logger;
-
-    beforeEach(function() {
-      logger = this.$inject('logger');
-    });
-
-    afterEach(() => {
-      logger = null;
-    });
-
     describe('if user exists', () => {
       let user, org1, org2, org3;
       beforeEach(function() {
@@ -170,7 +165,7 @@ describe('Client Controller', () => {
       it('sets analytics user data and enables tracking', function() {
         this.prepare();
         sinon.assert.calledWithExactly(this.analytics.enable, user);
-        sinon.assert.calledWithExactly(logger.enable, user);
+        sinon.assert.calledWithExactly(this.logger.enable, user);
       });
 
       it('should not set or enable anything when analytics are disallowed', function() {
@@ -180,7 +175,7 @@ describe('Client Controller', () => {
         sinon.assert.notCalled(this.analytics.enable);
         sinon.assert.called(this.analytics.disable);
         sinon.assert.called(this.intercom.disable);
-        sinon.assert.called(logger.disable);
+        sinon.assert.called(this.logger.disable);
       });
     });
   });

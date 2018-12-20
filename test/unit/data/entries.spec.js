@@ -6,10 +6,13 @@ describe('data/Entries', () => {
     module('contentful/test');
     this.entries = this.$inject('data/Entries');
 
-    _.extend(this.$inject('TheLocaleStore'), {
+    const localeStore = _.extend(this.$inject('TheLocaleStore'), {
       toPublicCode: (this.toPublicCode = sinon.stub()),
       toInternalCode: (this.toInternalCode = sinon.stub())
     });
+
+    const { registerFactory } = this.$inject('NgRegistry.es6');
+    registerFactory('TheLocaleStore', () => localeStore);
   });
 
   describe('path transformation', () => {

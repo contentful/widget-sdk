@@ -25,8 +25,8 @@ describe('navigation/stateChangeHandlers', () => {
       $provide.value('$state', this.state);
       $provide.constant('spaceContext', this.spaceContext);
       $provide.value('services/TokenStore.es6', this.tokenStore);
-      $provide.value('logger', {});
-      $provide.value('modalDialog', { closeAll: modalCloseStub });
+      $provide.constant('logger', {});
+      $provide.constant('modalDialog', { closeAll: modalCloseStub });
       $provide.value('navigation/Breadcrumbs/History.es6', {
         default: {
           purge: sinon.stub()

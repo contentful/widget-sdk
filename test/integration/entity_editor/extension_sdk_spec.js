@@ -4,9 +4,10 @@ import $ from 'jquery';
 
 describe('Extension SDK', () => {
   beforeEach(function() {
-    module('contentful/test', $provide => {
-      $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
-    });
+    module('contentful/test');
+
+    const { registerFactory } = this.$inject('NgRegistry.es6');
+    registerFactory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
 
     const spaceContext = this.$inject('mocks/spaceContext').init();
     const createDocument = this.$inject('mocks/entityEditor/Document').create;

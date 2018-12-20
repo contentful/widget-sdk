@@ -1,12 +1,10 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
+import worf from '@contentful/worf';
 
-angular.module('contentful').factory('authorization', [
-  'require',
-  require => {
-    const worf = require('@contentful/worf');
-    const logger = require('logger');
-    const accessChecker = require('access_control/AccessChecker');
-
+registerFactory('authorization', [
+  'logger',
+  'access_control/AccessChecker/index.es6',
+  (logger, accessChecker) => {
     function Authorization() {}
 
     Authorization.prototype = {

@@ -210,6 +210,7 @@ beforeEach(function() {
       }
       service[key] = extension[key];
     }
+
     return service;
   };
 

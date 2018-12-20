@@ -5,6 +5,9 @@ describe('app/entity_editor/DataLoader.es6', () => {
   beforeEach(function() {
     module('contentful/test', $provide => {
       $provide.value('widgets', { buildRenderable: sinon.stub().returns({}) });
+      $provide.constant('TheLocaleStore', {
+        getPrivateLocales: sinon.stub().returns([])
+      });
     });
     const $q = this.$inject('$q');
 
@@ -36,7 +39,6 @@ describe('app/entity_editor/DataLoader.es6', () => {
     };
 
     this.localeStore = this.$inject('TheLocaleStore');
-    this.localeStore.getPrivateLocales = sinon.stub().returns([]);
 
     const DataLoader = this.$inject('app/entity_editor/DataLoader.es6');
     this.loadEntry = _.partial(DataLoader.loadEntry, this.spaceContext);

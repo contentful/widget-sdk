@@ -1,42 +1,44 @@
-'use strict';
-// Service to generate autocompletions for the tokenized search
-//
-// The public API for this is at the bottom of the file.
-//
-// A "completion" looks like this:
-//
-//    {
-//      type: 'List',
-//      items: [
-//        {value: '...', description: '...'}
-//      ]
-//    }
-//
-// or like this:
-//   { type: 'Date' }
-//
-// These are the only two kinds right now. They are both handled by separate components.
-// The date completion obviously doesn't need a list, it uses a calendar widget instead.
-//
-// This file is separated into five parts (search for "{{{1")
-// - First, autocompletion factories are defined
-// - Then Completion functions
-// - Then PairToRequest function
-// - A couple of helper methods
-// - The public facing API, exposing some functions to the outside
-angular.module('contentful').factory('searchQueryAutocompletions', [
-  'require',
-  require => {
-    const $q = require('$q');
-    const mimetype = require('@contentful/mimetype');
-    const assetContentType = require('legacy-client').assetContentType;
-    const moment = require('moment');
-    const _ = require('lodash');
-    const caseofEq = require('sum-types').caseofEq;
-    const otherwise = require('sum-types').otherwise;
+import { registerFactory } from 'NgRegistry.es6';
+import _ from 'lodash';
+import moment from 'moment';
+import mimetype from '@contentful/mimetype';
+import { caseofEq, otherwise } from 'sum-types';
+import { assetContentType } from 'legacy-client';
 
+/*
+  Service to generate autocompletions for the tokenized search
+
+  The public API for this is at the bottom of the file.
+
+  A "completion" looks like this:
+
+     {
+       type: 'List',
+       items: [
+         {value: '...', description: '...'}
+       ]
+     }
+
+  or like this:
+    { type: 'Date' }
+
+  These are the only two kinds right now. They are both handled by separate components.
+  The date completion obviously doesn't need a list, it uses a calendar widget instead.
+
+  This file is separated into five parts (search for "{{{1")
+  - First, autocompletion factories are defined
+  - Then Completion functions
+  - Then PairToRequest function
+  - A couple of helper methods
+  - The public facing API, exposing some functions to the outside
+*/
+
+registerFactory('searchQueryAutocompletions', [
+  '$q',
+  '$injector',
+  ($q, $injector) => {
     // Require on demand to avoid circular dependency error in `spaceContext`.
-    const requireSpaceContext = _.once(() => require('spaceContext'));
+    const requireSpaceContext = _.once(() => $injector.get('spaceContext'));
 
     const RELATIVE_DATE_REGEX = /(\d+) +days +ago/i;
 
