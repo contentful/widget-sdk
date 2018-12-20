@@ -33,7 +33,7 @@ export default function template() {
           },
           [
             h('react-component', {
-              name: 'ms-dev-next-steps',
+              name: 'components/shared/stack-onboarding/next_steps/DevNextStepsContainer.es6',
               props: 'onboarding.msDevChoiceNextStepsData'
             })
           ]
@@ -43,7 +43,7 @@ export default function template() {
           {
             ngIf: 'onboarding.shouldShowTEANextSteps()'
           },
-          [h('react-component', { name: 'ms-content-creator-next-steps' })]
+          [h('react-component', { name: 'app/home/welcome/OnboardingWithTea.es6' })]
         ),
         h(
           'div',

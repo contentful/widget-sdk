@@ -6,7 +6,7 @@ describe('CreateModernOnboarding service', function() {
     module('contentful/test', $provide => {
       this.getAllKeys = sinon.stub();
       this.createKey = sinon.stub();
-      this.createCMAKey = sinon.stub();
+      this.createCMAKey = sinon.stub().returns({ token: 'token' });
       this.user$ = K.createMockProperty({ sys: { id: 'someUser' } });
       $provide.value('spaceContext', {
         apiKeyRepo: {
@@ -22,7 +22,9 @@ describe('CreateModernOnboarding service', function() {
       });
     });
 
-    this.CreateModernOnboarding = this.$inject('createModernOnboarding');
+    this.CreateModernOnboarding = this.$inject(
+      'components/shared/auto_create_new_space/CreateModernOnboarding.es6'
+    );
   });
 
   describe('getUser', function() {
@@ -60,14 +62,7 @@ describe('CreateModernOnboarding service', function() {
 
   describe('getManagementToken', function() {
     it('should create a new token if does not exist yet', async function() {
-      const originalCreateManagementToken = this.CreateModernOnboarding.createManagementToken;
-      this.CreateModernOnboarding.createManagementToken = sinon.spy();
-
-      await this.CreateModernOnboarding.getManagementToken();
-
-      expect(this.CreateModernOnboarding.createManagementToken.calledOnce).toBe(true);
-
-      this.CreateModernOnboarding.createManagementToken = originalCreateManagementToken;
+      expect(await this.CreateModernOnboarding.getManagementToken()).toBe('token');
     });
 
     it('should get a created token', async function() {

@@ -14,7 +14,7 @@ describe('Navigation', () => {
       $provide.value('$state', {
         go: goStub
       });
-      $provide.value('createModernOnboarding', {
+      $provide.value('components/shared/auto_create_new_space/CreateModernOnboarding.es6', {
         track: () => {},
         getStoragePrefix: sinon.stub().returns('prefix'),
         isOnboardingComplete: sinon.stub().returns(false)
@@ -24,7 +24,8 @@ describe('Navigation', () => {
       });
     });
 
-    Navigation = this.$inject('stack-onboarding-navigation');
+    Navigation = this.$inject('components/shared/stack-onboarding/components/Navigation.es6')
+      .default;
   });
 
   afterEach(function() {

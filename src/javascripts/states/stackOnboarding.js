@@ -1,9 +1,3 @@
-import { name as getStartedModule } from '../components/shared/stack-onboarding/screens/GetStartedScreen';
-import { name as copyRepoModule } from '../components/shared/stack-onboarding/screens/CopyScreen';
-import { name as exploreModule } from '../components/shared/stack-onboarding/screens/ExploreScreen';
-import { name as deployModule } from '../components/shared/stack-onboarding/screens/DeployScreen';
-import { name as createModernOnboardingModule } from '../components/shared/auto_create_new_space/CreateModernOnboarding';
-
 export const name = 'states/stackOnboarding';
 
 angular.module('contentful').factory(name, [
@@ -11,25 +5,25 @@ angular.module('contentful').factory(name, [
     const getStarted = {
       name: 'getStarted',
       url: '/get-started',
-      template: `<react-component name="${getStartedModule}"></react-component>`
+      template: `<react-component name="components/shared/stack-onboarding/screens/GetStartedScreen.es6"></react-component>`
     };
 
     const copyRepo = {
       name: 'copy',
       url: '/copy',
-      template: `<react-component name="${copyRepoModule}"></react-component>`
+      template: `<react-component name="components/shared/stack-onboarding/screens/CopyScreen.es6"></react-component>`
     };
 
     const explore = {
       name: 'explore',
       url: '/explore',
-      template: `<react-component name="${exploreModule}"></react-component>`
+      template: `<react-component name="components/shared/stack-onboarding/screens/ExploreScreen.es6"></react-component>`
     };
 
     const deploy = {
       name: 'deploy',
       url: '/deploy',
-      template: `<react-component name="${deployModule}"></react-component>`
+      template: `<react-component name="components/shared/stack-onboarding/screens/DeployScreen.es6"></react-component>`
     };
 
     return {
@@ -39,7 +33,9 @@ angular.module('contentful').factory(name, [
       onEnter: [
         'require',
         function(require) {
-          const { checkSpace } = require(createModernOnboardingModule);
+          const {
+            checkSpace
+          } = require('components/shared/auto_create_new_space/CreateModernOnboarding.es6');
           const spaceContext = require('spaceContext');
           const { go } = require('$state');
 

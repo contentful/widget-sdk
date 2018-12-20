@@ -158,7 +158,10 @@ export default {
       template: h('div.app-top-bar__child.app-top-bar__main-nav.app-top-bar__with-right-part', [
         h('cf-space-nav-bar-wrapped', { class: 'app-top-bar__child' }),
         h('cf-authors-help', { class: 'app-top-bar__child' }),
-        h('react-component', { name: 'ms-relaunch', class: 'app-top-bar__child' }) // defined in modernStackOnboardingRelaunch.js
+        h('react-component', {
+          name: 'navigation/modernStackOnboardingRelaunch.es6',
+          class: 'app-top-bar__child'
+        })
       ])
     }
   },

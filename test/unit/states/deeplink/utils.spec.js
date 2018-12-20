@@ -28,7 +28,7 @@ describe('states/deeplink/utils.es6', () => {
       $provide.value('components/shared/auto_create_new_space', {
         getKey: noop
       });
-      $provide.value('createModernOnboarding', {
+      $provide.value('components/shared/auto_create_new_space/CreateModernOnboarding.es6', {
         getStoragePrefix: noop,
         MODERN_STACK_ONBOARDING_SPACE_NAME: this.modernStackName
       });

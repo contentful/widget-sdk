@@ -45,7 +45,7 @@ describe('cfOnboardingSteps Directive', () => {
         // causes things to fail
         getAll: sinon.stub().callsFake(() => Promise.resolve(this.contentPreviews))
       });
-      $provide.value('createModernOnboarding', {
+      $provide.value('components/shared/auto_create_new_space/CreateModernOnboarding.es6', {
         getStoragePrefix: 'ctfl:userSysId:modernStackOnboarding',
         getCredentials: sinon.stub().resolves({
           deliveryToken: 'deliveryToken',

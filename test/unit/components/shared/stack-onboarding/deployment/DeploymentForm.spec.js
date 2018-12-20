@@ -15,7 +15,9 @@ describe('in DeploymentForm', () => {
       });
     });
 
-    DeploymentForm = this.$inject('DeploymentFormModule');
+    DeploymentForm = this.$inject(
+      'components/shared/stack-onboarding/deployment/DeploymentForm.es6'
+    ).default;
   });
 
   afterEach(function() {

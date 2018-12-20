@@ -15,7 +15,7 @@ import {
   isUserOrgCreator
 } from 'data/User';
 
-import { create } from 'createModernOnboarding';
+import { create } from 'components/shared/auto_create_new_space/CreateModernOnboarding.es6';
 
 const store = getStore();
 

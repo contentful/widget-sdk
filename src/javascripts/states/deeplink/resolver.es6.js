@@ -9,7 +9,7 @@ import {
 } from './utils.es6';
 import logger from 'logger';
 import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
-import { getStoragePrefix } from 'createModernOnboarding';
+import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboarding.es6';
 import { getStore } from 'TheStore';
 
 const store = getStore();

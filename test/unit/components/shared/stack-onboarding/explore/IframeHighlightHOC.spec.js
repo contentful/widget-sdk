@@ -15,7 +15,9 @@ describe('IframeHighlightHOC', () => {
       });
     });
 
-    IframeHighlightHOC = this.$inject('onboarding-iframe-highlight-hoc');
+    IframeHighlightHOC = this.$inject(
+      'components/shared/stack-onboarding/explore/IframeHighlightHOC.es6'
+    ).default;
   });
 
   afterEach(function() {

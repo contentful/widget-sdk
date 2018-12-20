@@ -42,7 +42,7 @@ function boolToNumber(value) {
   return Number(Boolean(value));
 }
 
-export class OnboardingWithTea extends React.Component {
+export default class OnboardingWithTea extends React.Component {
   constructor(props, context) {
     super(props, context);
     const constants = getProgressConstants();

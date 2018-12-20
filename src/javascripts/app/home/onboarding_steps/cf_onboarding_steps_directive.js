@@ -1,5 +1,3 @@
-import { name as CreateModernOnboardingModule } from '../../../components/shared/auto_create_new_space/CreateModernOnboarding';
-
 angular.module('contentful').directive('cfOnboardingSteps', [
   'require',
   function(require) {
@@ -26,7 +24,7 @@ angular.module('contentful').directive('cfOnboardingSteps', [
       isDevOnboardingSpace,
       isContentOnboardingSpace,
       MODERN_STACK_ONBOARDING_FEATURE_FLAG
-    } = require(CreateModernOnboardingModule);
+    } = require('components/shared/auto_create_new_space/CreateModernOnboarding.es6');
 
     return {
       template: template(),
