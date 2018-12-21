@@ -21,9 +21,6 @@ const fakeProps = () => ({
   richTextAPI: {
     logAction: jest.fn(),
     widgetAPI: {
-      features: {
-        embedInlineEntry: true
-      },
       field: {}
     }
   }

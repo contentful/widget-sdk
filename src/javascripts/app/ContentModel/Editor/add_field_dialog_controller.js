@@ -24,10 +24,6 @@ angular.module('contentful').controller('AddFieldDialogController', [
     const stringUtils = require('utils/StringUtils.es6');
     const buildMessage = require('fieldErrorMessageBuilder');
     const $q = require('$q');
-    const $timeout = require('$timeout');
-    const LD = require('utils/LaunchDarkly');
-
-    const STRUCTURED_TEXT_FIELD_FEATURE_FLAG = 'feature-at-06-2018-structured-text-field';
 
     $scope.viewState = $controller('ViewStateController', {
       $scope: $scope,
@@ -39,10 +35,6 @@ angular.module('contentful').controller('AddFieldDialogController', [
     $scope.create = create;
     $scope.createAndConfigure = createAndConfigure;
     setFieldGroupRows($scope);
-
-    LD.getCurrentVariation(STRUCTURED_TEXT_FIELD_FEATURE_FLAG).then(isEnabled => {
-      $timeout(() => setFieldGroupRows($scope, isEnabled));
-    });
 
     $scope.schema = {
       errors: function(field) {
@@ -135,15 +127,11 @@ angular.module('contentful').controller('AddFieldDialogController', [
         }, _.noop);
     }
 
-    function setFieldGroupRows(scope, enableExperimentalRichText = false) {
+    function setFieldGroupRows(scope) {
       // We don't want to show the StructuredText field in the dialog but we cannot remove
       // it from the fieldFactory.groups because we still want to show it in the content type editor
       // view so users are able to delete/disable it.
-      let fieldGroups = fieldFactory.groups.filter(group => group.name !== 'structured-text');
-
-      if (!enableExperimentalRichText) {
-        fieldGroups = _.filter(fieldGroups, fieldGroup => fieldGroup.name !== 'rich-text');
-      }
+      const fieldGroups = fieldFactory.groups.filter(group => group.name !== 'structured-text');
       scope.fieldGroupRows = fieldGroupsToRows(fieldGroups);
     }
 

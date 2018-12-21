@@ -35,5 +35,5 @@ div(
         div.cfnext-form-option(ng-show="field.canBeLocalized")
           <react-component name="@contentful/forma-36-react-components/CheckboxField" props="buildLocalisationCheckboxProps()" />
 
-    div.cf-flex-grid-column(ng-show="richTextFormattingOptionsEnabled&&field.isRichTextField")
+    div.cf-flex-grid-column(ng-show="field.isRichTextField")
       <react-component name="components/field_dialog/RichTextOptions.es6" props="{onChange: onRichTextOptionsChange, enabledMarks: richTextOptions.enabledMarks, enabledNodeTypes: richTextOptions.enabledNodeTypes}" />
