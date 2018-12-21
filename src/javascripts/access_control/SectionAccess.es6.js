@@ -30,7 +30,6 @@ export function getFirstAccessibleSref() {
     spaceContext.getData('spaceMembership.roles', false)
   );
   const notActivated = !spaceContext.getData('activatedAt');
-  const shouldGoToHome = notActivated && (userIsAdmin || userIsAuthorOrEditor);
 
-  return shouldGoToHome ? '.home' : firstAccessible;
+  return (notActivated && userIsAdmin) || userIsAuthorOrEditor ? '.home' : firstAccessible;
 }

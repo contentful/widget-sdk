@@ -4,11 +4,11 @@ export default function template() {
   return h('.home', { 'cf-ui-sticky-container': true }, [
     h('div', { ngIf: '!readOnlySpace' }, [
       h('react-component', {
-        ngIf: 'isAuthorOrEditor && !isSpaceAdmin',
+        ngIf: 'isAuthorOrEditor',
         name: 'app/home/AuthorEditorSpaceHome.es6',
         props: 'spaceHomeProps'
       }),
-      h('.home__container', { ngIf: 'isSpaceAdmin && !isAuthorOrEditor' }, [
+      h('.home__container', { ngIf: 'isSpaceAdmin' }, [
         h('.home__content', [
           h('cf-welcome'),
           h('react-component', { name: 'app/home/UpgradePricing.es6' }),
