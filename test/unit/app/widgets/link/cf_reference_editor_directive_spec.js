@@ -21,11 +21,26 @@ describe('cfReferenceEditorDirective', () => {
       }
     };
 
+    const params = sinon.stub().returns({ bulkEditor: false });
+    this.stateParams = params;
+    this.search = sinon.stub();
+    this.stateGo = sinon.stub();
+
     module('contentful/test', $provide => {
       $provide.constant('cfEntityLinkDirective', () => {});
       $provide.constant('cfAssetCardDirective', () => {});
       $provide.value('analytics/Analytics.es6', this.analytics);
       $provide.constant('spaceContext', this.spaceContext);
+
+      $provide.value('$state', {
+        get params() {
+          return params();
+        },
+        go: this.stateGo
+      });
+      $provide.value('$location', {
+        search: this.search
+      });
     });
 
     this.$q = this.$inject('$q');
@@ -228,6 +243,7 @@ describe('cfReferenceEditorDirective', () => {
     const ASSET = { sys: { id: 'assetid', type: 'Asset' } };
 
     beforeEach(async function() {
+      this.stateParams.returns({ entryId: '3KinTi83FecuMeiUo0qGU4' });
       this.field.setValue([]);
       this.widgetApi.space.createAsset.withArgs({}).resolves(ASSET);
       this.scope = this.init({ type: 'Asset' });
@@ -243,8 +259,11 @@ describe('cfReferenceEditorDirective', () => {
       sinon.assert.calledOnceWith(this.widgetApi.state.goToEditor, ASSET);
     });
 
-    it('does not call analytics.track()', function() {
-      sinon.assert.notCalled(this.analytics.track);
+    it('should be tracked', function() {
+      sinon.assert.calledWithExactly(this.analytics.track, 'slide_in_editor:open_create', {
+        targetSlideLevel: 1,
+        currentSlideLevel: 0
+      });
     });
 
     itWontAddMultipleEntitiesAtOnce('assets', scope => scope.addNewAsset());
@@ -256,6 +275,7 @@ describe('cfReferenceEditorDirective', () => {
     const CLIENT_CT = { data: { sys: { id: CT_ID }, fields: [{}, { localized: true }] } };
 
     beforeEach(async function() {
+      this.stateParams.returns({ entryId: '3KinTi83FecuMeiUo0qGU4' });
       this.field.setValue([]);
       this.spaceContext.publishedCTs.get.withArgs(CT_ID).returns(CLIENT_CT);
       this.widgetApi.space.createEntry.withArgs(CT_ID, {}).resolves(ENTRY);
