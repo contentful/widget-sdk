@@ -15,7 +15,6 @@ import { makeNotify } from './Notifications.es6';
 import installTracking, { trackEntryView } from './Tracking.es6';
 
 import { loadEntry } from 'app/entity_editor/DataLoader.es6';
-import { onFeatureFlag } from 'utils/LaunchDarkly/index.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const $controller = getModule('$controller');
@@ -26,8 +25,6 @@ const $state = getModule('$state');
 const logger = getModule('logger');
 const DataFields = getModule('EntityEditor/DataFields');
 const ContentTypes = getModule('data/ContentTypes');
-
-const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG = 'feature-at-05-2018-sliding-entry-editor-multi-level';
 
 /**
  * @ngdoc type
@@ -166,12 +163,6 @@ export default async function create($scope, entryId) {
 
   editorContext.createReferenceContext = createReferenceContext;
 
-  // This will only be available if feature-at-05-2018-sliding-entry-editor-multi-level
-  // is not enabled.
-  editorContext.toggleSlideinEditor = () => {
-    $scope.inlineEditor = !$scope.inlineEditor;
-  };
-
   function createReferenceContext(fieldApiName, locale, index, cb) {
     // The links$ property should end when the editor is closed
     const field = find(entityInfo.contentType.fields, { apiName: fieldApiName });
@@ -241,8 +232,4 @@ export default async function create($scope, entryId) {
   const fields = contentTypeData.fields;
   $scope.fields = DataFields.create(fields, $scope.otDoc);
   $scope.transformedContentTypeData = ContentTypes.internalToPublic(contentTypeData);
-
-  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, flagValue => {
-    $scope.shouldShowBreadcrumbs = flagValue !== 2;
-  });
 }

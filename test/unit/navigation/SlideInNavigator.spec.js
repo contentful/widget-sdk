@@ -100,12 +100,6 @@ describe('SlideInNavigator', () => {
   });
 
   describe('goToSlideInEntity', () => {
-    const FeatureFlagValue = {
-      Off: 0,
-      OnlyOneSlideInLevel: 1,
-      InfiniteNumberOfLevels: 2
-    };
-
     function willRedirect(
       message,
       {
@@ -115,8 +109,7 @@ describe('SlideInNavigator', () => {
         search = {
           previousEntries: 'entry-id-0,entry-id-1'
         },
-        goToEntity = { id: 'entry-id', type: 'Entry' },
-        featureFlagValue
+        goToEntity = { id: 'entry-id', type: 'Entry' }
       },
       stateGoArgs
     ) {
@@ -124,73 +117,20 @@ describe('SlideInNavigator', () => {
         this.stateParams.returns(params);
         this.search.returns(search);
 
-        const result = this.slideInNavigator.goToSlideInEntity(goToEntity, featureFlagValue);
+        const result = this.slideInNavigator.goToSlideInEntity(goToEntity);
 
         sinon.assert.calledWith(this.stateGo, ...stateGoArgs);
 
-        if (featureFlagValue === FeatureFlagValue.InfiniteNumberOfLevels) {
-          const count = ids => [...ids].filter(char => char === ',').length;
-          const currentSlideLevel = search.previousEntries ? count(search.previousEntries) + 1 : 0;
-          const targetSlideLevel = count(stateGoArgs[1].previousEntries) + 1;
-          expect(result).toEqual({ currentSlideLevel, targetSlideLevel });
-        } else {
-          expect(result).toEqual({ currentSlideLevel: 0, targetSlideLevel: 0 });
-        }
+        const count = ids => [...ids].filter(char => char === ',').length;
+        const currentSlideLevel = search.previousEntries ? count(search.previousEntries) + 1 : 0;
+        const targetSlideLevel = count(stateGoArgs[1].previousEntries) + 1;
+        expect(result).toEqual({ currentSlideLevel, targetSlideLevel });
       });
     }
 
     willRedirect(
-      'redirects to entry page if the feature flag is off',
-      {
-        featureFlagValue: FeatureFlagValue.Off
-      },
-      [
-        '^.^.entries.detail',
-        {
-          entryId: 'entry-id',
-          previousEntries: ''
-        }
-      ]
-    );
-
-    willRedirect(
-      'redirects to asset page if the feature flag is off',
-      {
-        featureFlagValue: FeatureFlagValue.Off,
-        goToEntity: { id: 'asset-id', type: 'Asset' }
-      },
-      [
-        '^.^.assets.detail',
-        {
-          assetId: 'asset-id',
-          previousEntries: ''
-        }
-      ]
-    );
-
-    willRedirect(
-      'one level of slide-in behaves like 0 levels (dropped support for this)',
-      {
-        featureFlagValue: FeatureFlagValue.OnlyOneSlideInLevel,
-        params: {
-          entryId: 'entry-id-0'
-        },
-        search: {},
-        goToEntity: { id: 'asset-id', type: 'Asset' }
-      },
-      [
-        '^.^.assets.detail',
-        {
-          assetId: 'asset-id',
-          previousEntries: ''
-        }
-      ]
-    );
-
-    willRedirect(
       'adds up to 5+ entries in stack',
       {
-        featureFlagValue: FeatureFlagValue.InfiniteNumberOfLevels,
         params: {
           entryId: 'entry-id-5'
         },
@@ -211,7 +151,6 @@ describe('SlideInNavigator', () => {
     willRedirect(
       'removes all entries above given one if it is already in the stack',
       {
-        featureFlagValue: FeatureFlagValue.InfiniteNumberOfLevels,
         params: {
           entryId: 'entry-id-4'
         },

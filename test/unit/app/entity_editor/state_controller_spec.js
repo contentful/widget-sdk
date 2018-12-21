@@ -1,8 +1,6 @@
 import _ from 'lodash';
 
 describe('entityEditor/StateController', () => {
-  const SLIDE_IN_EDITOR_FEATURE_FLAG_VALUE = 2; // Enabled with multiple levels.
-
   beforeEach(function() {
     const closeStateSpy = (this.closeStateSpy = sinon.spy());
     this.stubs = {
@@ -136,8 +134,7 @@ describe('entityEditor/StateController', () => {
       this.controller.delete.execute();
       this.$apply();
       sinon.assert.calledOnceWith(
-        this.stubs.goToPreviousSlideOrExit,
-        SLIDE_IN_EDITOR_FEATURE_FLAG_VALUE,
+        this.slideInNavigator.goToPreviousSlideOrExit,
         'delete',
         this.closeStateSpy
       );

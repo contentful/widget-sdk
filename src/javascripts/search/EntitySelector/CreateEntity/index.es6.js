@@ -95,9 +95,9 @@ async function onSelectHandler(contentTypeId, cb) {
       id: entity.data.sys.id,
       type: entity.data.sys.type
     };
-    const canSlideIn = true;
+
     cb(entity.data);
-    slideInNavigator.goToSlideInEntity(slide, canSlideIn);
+    slideInNavigator.goToSlideInEntity(slide);
   } catch (error) {
     logger.logError('Failed to create new entry from entity selector', { error });
   }

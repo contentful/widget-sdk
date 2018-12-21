@@ -30,8 +30,6 @@ const { getSlideInEntities, goToSlideInEntity: goToSlideInEntityBase } = getModu
 const FEATURE_LOTS_OF_CT_ADD_ENTRY_REDESIGN =
   'feature-at-11-2017-lots-of-cts-add-entry-and-link-reference';
 
-const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG = 'feature-at-05-2018-sliding-entry-editor-multi-level';
-
 export default function create($scope, widgetApi) {
   const {
     field,
@@ -45,7 +43,6 @@ export default function create($scope, widgetApi) {
     $scope.single
   );
 
-  let slideInEditorEnabled = false;
   const canEditReferences = !!widgetApi._internal.editReferences;
   const bulkEditorEnabled = canEditReferences && widgetApi.settings.bulkEditing;
   $scope.canCreateAsset = canCreateAsset();
@@ -80,14 +77,6 @@ export default function create($scope, widgetApi) {
   } else {
     $scope.referenceType = { link: true };
   }
-
-  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, flagState => {
-    const isEnabled = flagState === 2;
-    $scope.isSlideinEntryEditorEnabled = isEnabled;
-    if (!slideInEditorEnabled && canEditReferences && isEnabled) {
-      slideInEditorEnabled = true;
-    }
-  });
 
   $scope.uiSortable.update = () => {
     // let uiSortable update the model, then sync
@@ -167,8 +156,7 @@ export default function create($scope, widgetApi) {
   function makeNewEntityHandler(contentType) {
     return entity => {
       const numEntities = getSlideInEntities().length;
-      const shouldTrackSlideInOpen =
-        slideInEditorEnabled && (!bulkEditorEnabled || numEntities > 1);
+      const shouldTrackSlideInOpen = !bulkEditorEnabled || numEntities > 1;
 
       state.addEntities([entity]);
       editEntityAction(entity, -1);
@@ -313,11 +301,7 @@ export default function create($scope, widgetApi) {
       refCtxt
     };
 
-    const shouldSlideIn =
-      $scope.isSlideinEntryEditorEnabled &&
-      !bulkEditorEnabled &&
-      refCtxt !== null &&
-      !$state.params.inlineEntryId;
+    const shouldSlideIn = !bulkEditorEnabled && refCtxt !== null && !$state.params.inlineEntryId;
 
     if (shouldSlideIn && entity) {
       entityModel.actions.slideinEdit = () => goToSlideInEntity(entity);
@@ -353,7 +337,7 @@ export default function create($scope, widgetApi) {
       return;
     } else if (bulkEditorEnabled) {
       bulkEditorAction(entity, index);
-    } else if (slideInEditorEnabled) {
+    } else if (canEditReferences) {
       goToSlideInEntity(entity);
     } else {
       widgetApi.state.goToEditor(entity);
@@ -377,7 +361,7 @@ export default function create($scope, widgetApi) {
   }
 
   function goToSlideInEntity({ sys: { id, type } }) {
-    return goToSlideInEntityBase({ id, type }, $scope.isSlideinEntryEditorEnabled);
+    return goToSlideInEntityBase({ id, type });
   }
 
   function maybeOpenBulkEditor() {

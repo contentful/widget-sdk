@@ -9,14 +9,12 @@ import initDocErrorHandler from './DocumentErrorHandler.es6';
 import { makeNotify } from './Notifications.es6';
 import installTracking from './Tracking.es6';
 import { loadAsset } from 'app/entity_editor/DataLoader.es6';
-import { onFeatureFlag } from 'utils/LaunchDarkly/index.es6';
+
 import { getModule } from 'NgRegistry.es6';
 
 const $controller = getModule('$controller');
 const spaceContext = getModule('spaceContext');
 const localeStore = getModule('TheLocaleStore');
-
-const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG = 'feature-at-05-2018-sliding-entry-editor-multi-level';
 
 export default async function create($scope, assetId) {
   $scope.context = {};
@@ -89,9 +87,5 @@ export default async function create($scope, assetId) {
   $controller('FormWidgetsController', {
     $scope,
     controls: editorData.fieldControls.form
-  });
-
-  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, flagValue => {
-    $scope.shouldShowBreadcrumbs = flagValue !== 2;
   });
 }

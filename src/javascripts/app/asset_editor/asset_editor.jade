@@ -2,8 +2,7 @@ include ../entity_editor/entity_editor.mixins.jade
 
 div.asset-editor.workbench(ng-if="context.ready")
   header.workbench-header
-    cf-breadcrumbs(ng-if="shouldShowBreadcrumbs")
-    cf-back-nav(ng-if="!shouldShowBreadcrumbs")
+    cf-back-nav()
     cf-icon.workbench-header__icon(name="page-media", scale="0.75")
     h1.workbench-header__title
       | {{ title }}

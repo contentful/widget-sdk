@@ -26,19 +26,14 @@ export function getSlideInEntities() {
  * in the given entity being shown in the stack of slided-in entities.
  *
  * @param {Slide} slide New top slide.
- * @param {Number|Boolean} featureFlagValue
  * @returns {currentSlideLevel: number, targetSlideLevel: number}
  */
-export function goToSlideInEntity(slide, featureFlagValue) {
+export function goToSlideInEntity(slide) {
   const currentSlides = getSlideInEntities();
   const slides = [...currentSlides, slide];
   // If `slide` is open already, go back to that level instead of adding one more.
   const firstTargetSlideIndex = findIndex(slides, slide);
   const reducedSlides = slides.slice(0, firstTargetSlideIndex);
-  if (currentSlides.length - 1 < reducedSlides.length && !canSlideIn(featureFlagValue)) {
-    goToEntity(slide);
-    return { currentSlideLevel: 0, targetSlideLevel: 0 };
-  }
   const slidesBelowQS = reducedSlides.map(slideHelper.toString).join(',');
   $state.go(...slideHelper.toStateGoArgs(slide, { [SLIDES_BELOW_QS]: slidesBelowQS }));
 
@@ -51,16 +46,15 @@ export function goToSlideInEntity(slide, featureFlagValue) {
 /**
  * Removes the current top level slide.
  *
- * @param {number|boolean} featureFlagValue `true` or `2` means "on"
  * @param {string} eventLabel
  * @param {Function} onExit Invoked when the last slide is closed
  */
-export function goToPreviousSlideOrExit(featureFlagValue, eventLabel, onExit) {
+export function goToPreviousSlideOrExit(eventLabel, onExit) {
   const slideInEntities = getSlideInEntities();
   const numEntities = slideInEntities.length;
   if (numEntities > 1) {
     const previousEntity = slideInEntities[numEntities - 2];
-    const eventData = goToSlideInEntity(previousEntity, featureFlagValue);
+    const eventData = goToSlideInEntity(previousEntity);
     if (eventData.currentSlideLevel > 0) {
       track(`slide_in_editor:${eventLabel}`, eventData);
     }
@@ -69,20 +63,10 @@ export function goToPreviousSlideOrExit(featureFlagValue, eventLabel, onExit) {
   }
 }
 
-function goToEntity(slide) {
-  $state.go(...slideHelper.toStateGoArgs(slide, { [SLIDES_BELOW_QS]: '' }));
-}
-
 function deserializeQS() {
   const searchObject = $location.search();
   const serializedEntities = get(searchObject, SLIDES_BELOW_QS, '')
     .split(',')
     .filter((v, i, self) => v !== '' && self.indexOf(v) === i);
   return serializedEntities.map(id => slideHelper.newFromQS(id));
-}
-
-function canSlideIn(featureFlag) {
-  // We ignore state `1` (only one level of slide-in) since we no longer want to
-  // maintain this. 0, 1: feature off, 2: feature on (inifinite levels)
-  return featureFlag === 2 || featureFlag === true;
 }

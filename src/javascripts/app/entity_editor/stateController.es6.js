@@ -232,11 +232,7 @@ registerController('entityEditor/StateController', [
     controller.delete = Command.create(
       () =>
         applyActionWithConfirmation(Action.Delete()).then(() => {
-          if ($scope.slideInFeatureFlagValue) {
-            goToPreviousSlideOrExit($scope.slideInFeatureFlagValue, 'delete', closeState);
-          } else {
-            return closeState();
-          }
+          goToPreviousSlideOrExit('delete', closeState);
         }),
       {
         disabled: function() {

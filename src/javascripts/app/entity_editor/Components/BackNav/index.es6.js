@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Icon from 'ui/Components/Icon.es6';
 import { getModule } from 'NgRegistry.es6';
 
@@ -7,12 +6,8 @@ const { goToPreviousSlideOrExit } = getModule('navigation/SlideInNavigator');
 const closeState = getModule('navigation/closeState');
 
 class BackNav extends React.Component {
-  static propTypes = {
-    slideInFeatureFlagValue: PropTypes.number.isRequired
-  };
-
   handleClick = () => {
-    goToPreviousSlideOrExit(this.props.slideInFeatureFlagValue, 'arrow_back', closeState);
+    goToPreviousSlideOrExit('arrow_back', closeState);
   };
 
   render() {
