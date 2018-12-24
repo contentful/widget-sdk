@@ -195,7 +195,7 @@ angular
       ngRequire('services/validationDialogErrorMessages.es6');
       ngRequire('services/validationViews.es6');
 
-      // ContentModel
+      // app/ContentModel
       ngRequire('app/ContentModel/Editor/addFieldDialogController.es6');
       ngRequire('app/ContentModel/Editor/apiNameController.es6');
       ngRequire('app/ContentModel/Editor/cfApiNameShadowDirective.es6');
@@ -204,6 +204,22 @@ angular
       ngRequire('app/ContentModel/Editor/contentTypeEditorDirective.es6');
       ngRequire('app/ContentModel/Editor/contentTypeFieldController.es6');
       ngRequire('app/ContentModel/Editor/metadataDialog.es6');
+
+      // app/entity_editor
+      ngRequire('app/entity_editor/bulk_editor/cfBulkEditorDirective.es6');
+      ngRequire('app/entity_editor/bulk_editor/cfBulkEntityEditorDirective.es6');
+      ngRequire('app/entity_editor/cfEntitySidebarDirective.es6');
+      ngRequire('app/entity_editor/cfTestEntryEditorDirective.es6');
+      ngRequire('app/entity_editor/Components/BackNav/cfBackNav.es6');
+      ngRequire(
+        'app/entity_editor/Components/StateChangeConfirmationDialog/cfStateChangeConfirmationDialog.es6'
+      );
+      ngRequire('app/entity_editor/dataFields.es6');
+      ngRequire('app/entity_editor/fieldLocaleController.es6');
+      ngRequire('app/entity_editor/localesController.es6');
+      ngRequire('app/entity_editor/presenceHub.es6');
+      ngRequire('app/entity_editor/sidebarWidgetsController.es6');
+      ngRequire('app/entity_editor/stateController.es6');
 
       // ui (cf.ui)
       ngRequire('ui/cfIconDirective.es6');

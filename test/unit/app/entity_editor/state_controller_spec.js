@@ -5,20 +5,27 @@ describe('entityEditor/StateController', () => {
 
   beforeEach(function() {
     const closeStateSpy = (this.closeStateSpy = sinon.spy());
+    this.stubs = {
+      goToPreviousSlideOrExit: sinon.stub()
+    };
 
     module('contentful/test', $provide => {
       $provide.constant('navigation/closeState', closeStateSpy);
+      $provide.constant('navigation/SlideInNavigator/index.es6', {
+        goToPreviousSlideOrExit: this.stubs.goToPreviousSlideOrExit
+      });
+      $provide.constant('utils/LaunchDarkly/index.es6', {
+        onFeatureFlag: sinon.stub().callsFake((_1, _2, cb) => {
+          cb(SLIDE_IN_EDITOR_FEATURE_FLAG_VALUE);
+        })
+      });
     });
 
     const { registerFactory } = this.$inject('NgRegistry.es6');
     registerFactory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
 
     const $q = this.$inject('$q');
-    const LD = this.$inject('utils/LaunchDarkly');
     const createDocument = this.$inject('mocks/entityEditor/Document').create;
-    LD.onFeatureFlag = sinon.stub().callsFake((_1, _2, cb) => {
-      cb(SLIDE_IN_EDITOR_FEATURE_FLAG_VALUE);
-    });
 
     this.rootScope = this.$inject('$rootScope');
     this.scope = this.rootScope.$new();
@@ -74,9 +81,6 @@ describe('entityEditor/StateController', () => {
     this.doc = createDocument(this.entity, this.spaceEndpoint);
     this.spaceEndpoint.resolves(this.doc.getData());
 
-    this.slideInNavigator = this.$inject('navigation/SlideInNavigator');
-    this.slideInNavigator.goToPreviousSlideOrExit = sinon.stub();
-
     this.validator = this.scope.editorContext.validator;
 
     const $controller = this.$inject('$controller');
@@ -128,12 +132,11 @@ describe('entityEditor/StateController', () => {
       this.assertErrorNotification('delete', 'ERROR');
     });
 
-    it(`navigates to the previous slide-in entity or
-        closes the current state as a fallback`, function() {
+    it('navigates to the previous slide-in entity or closes the current state as a fallback', function() {
       this.controller.delete.execute();
       this.$apply();
       sinon.assert.calledOnceWith(
-        this.slideInNavigator.goToPreviousSlideOrExit,
+        this.stubs.goToPreviousSlideOrExit,
         SLIDE_IN_EDITOR_FEATURE_FLAG_VALUE,
         'delete',
         this.closeStateSpy

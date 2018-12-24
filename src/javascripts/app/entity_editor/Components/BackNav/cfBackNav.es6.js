@@ -1,11 +1,11 @@
-angular.module('contentful').directive('cfBackNav', [
-  'require',
-  require => {
-    const React = require('react');
-    const ReactDOM = require('react-dom');
-    const BackNav = require('app/entity_editor/Components/BackNav').default;
-    const LD = require('utils/LaunchDarkly');
+import { registerDirective } from 'NgRegistry.es6';
+import React from 'react';
+import ReactDOM from 'react-dom';
 
+registerDirective('cfBackNav', [
+  'utils/LaunchDarkly/index.es6', // LD
+  'app/entity_editor/Components/BackNav', // { default: BackNav }
+  (LD, { default: BackNav }) => {
     const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG = 'feature-at-05-2018-sliding-entry-editor-multi-level';
 
     return {
