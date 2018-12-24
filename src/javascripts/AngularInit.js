@@ -251,6 +251,12 @@ angular
       ngRequire('app/entry_editor/entryActionsController.es6');
       ngRequire('app/entry_editor/formWidgetsController.es6');
 
+      // app
+      ngRequire('app/api/api_key_list/apiKeyListDirective.es6');
+      ngRequire('app/api/cfApiKeyNavDirective.es6');
+      ngRequire('app/asset_editor/cfAssetEditorDirective.es6');
+      ngRequire('app/content_preview/contentPreviewEditorDirective.es6');
+
       // app/widgets
       ngRequire('app/widgets/cfFileEditorDirective.es6');
       ngRequire('app/widgets/number/cfNumberEditorDirective.es6');
