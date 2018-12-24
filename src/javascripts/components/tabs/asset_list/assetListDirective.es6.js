@@ -1,6 +1,6 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
 
-angular.module('contentful').directive('cfAssetList', () => ({
+registerDirective('cfAssetList', () => ({
   template: JST.asset_list(),
   restrict: 'A',
   controller: 'AssetListController'

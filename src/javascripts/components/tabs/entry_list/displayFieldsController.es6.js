@@ -1,13 +1,11 @@
-'use strict';
+import { registerController } from 'NgRegistry.es6';
+import _ from 'lodash';
 
-angular.module('contentful').controller('DisplayedFieldsController', [
+registerController('DisplayedFieldsController', [
   '$scope',
-  'require',
-  ($scope, require) => {
-    const systemFields = require('systemFields');
-    const spaceContext = require('spaceContext');
-    const _ = require('lodash');
-
+  'spaceContext',
+  'systemFields',
+  ($scope, spaceContext, systemFields) => {
     function getAvailableFields(contentTypeId) {
       const filteredContentType = spaceContext.publishedCTs.get(contentTypeId);
       const contentTypeFields = filteredContentType

@@ -142,6 +142,21 @@ angular
       ngRequire('components/field_dialog/validationDecorator.es6');
       ngRequire('components/field_dialog/validationLinkTypeController.es6');
 
+      ngRequire('components/tabs/asset_list/assetListActionsController.es6');
+      ngRequire('components/tabs/asset_list/assetListController.es6');
+      ngRequire('components/tabs/asset_list/assetListDirective.es6');
+      ngRequire('components/tabs/asset_list/assetSearchController.es6');
+      ngRequire('components/tabs/content_type_list/contentTypeList.es6');
+      ngRequire('components/tabs/entry_list/cfFieldDisplayDirective.es6');
+      ngRequire('components/tabs/entry_list/displayFieldsController.es6');
+      ngRequire('components/tabs/entry_list/entryListActionsController.es6');
+      ngRequire('components/tabs/entry_list/entryListColumnsController.es6');
+      ngRequire('components/tabs/entry_list/entryListController.es6');
+      ngRequire('components/tabs/entry_list/entryListDirective.es6');
+      ngRequire('components/tabs/entry_list/entryListSearchController.es6');
+      ngRequire('components/tabs/entry_list/viewCustomizerDirective.es6');
+      ngRequire('components/tabs/listActionsController.es6');
+
       // ui (cf.ui)
       ngRequire('ui/cfIconDirective.es6');
       ngRequire('ui/cfUiHint.es6');

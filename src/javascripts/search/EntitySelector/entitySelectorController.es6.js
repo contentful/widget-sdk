@@ -1,6 +1,6 @@
 import { registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
-import Kefir from 'kefir';
+import * as Kefir from 'kefir';
 import * as K from 'utils/kefir.es6';
 import { Operator } from 'app/ContentList/Search/Operators.es6';
 import Paginator from 'classes/Paginator.es6';

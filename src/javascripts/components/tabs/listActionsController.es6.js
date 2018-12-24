@@ -1,94 +1,88 @@
-'use strict';
+import { registerController } from 'NgRegistry.es6';
+import _ from 'lodash';
 
-angular
-  .module('contentful')
+registerController('ListActionsController', [
+  '$scope',
+  'entityType',
+  'batchPerformer',
+  'access_control/AccessChecker/index.es6',
+  function ListActionsController($scope, entityType, batchPerformer, accessChecker) {
+    const collection = entityType === 'Entry' ? 'entries' : 'assets';
 
-  .controller('ListActionsController', [
-    '$scope',
-    'require',
-    'entityType',
-    function ListActionsController($scope, require, entityType) {
-      const _ = require('lodash');
-      const accessChecker = require('access_control/AccessChecker');
-      const batchPerformer = require('batchPerformer');
+    const performer = batchPerformer.create({
+      entityType: entityType,
+      getSelected: $scope.selection.getSelected,
+      onComplete: $scope.selection.clear,
+      onDelete: removeFromList
+    });
 
-      const collection = entityType === 'Entry' ? 'entries' : 'assets';
+    this.duplicate = performer.duplicate;
 
-      const performer = batchPerformer.create({
-        entityType: entityType,
-        getSelected: $scope.selection.getSelected,
-        onComplete: $scope.selection.clear,
-        onDelete: removeFromList
-      });
+    $scope.publishButtonName = publishButtonName;
 
-      this.duplicate = performer.duplicate;
+    $scope.showPublish = createShowChecker('publish', 'canPublish');
+    $scope.publishSelected = performer.publish;
 
-      $scope.publishButtonName = publishButtonName;
+    $scope.showUnpublish = createShowChecker('unpublish', 'canUnpublish');
+    $scope.unpublishSelected = performer.unpublish;
 
-      $scope.showPublish = createShowChecker('publish', 'canPublish');
-      $scope.publishSelected = performer.publish;
+    $scope.showDelete = createShowChecker('delete', 'canDelete');
+    $scope.deleteSelected = performer.delete;
 
-      $scope.showUnpublish = createShowChecker('unpublish', 'canUnpublish');
-      $scope.unpublishSelected = performer.unpublish;
+    $scope.showArchive = createShowChecker('archive', 'canArchive');
+    $scope.archiveSelected = performer.archive;
 
-      $scope.showDelete = createShowChecker('delete', 'canDelete');
-      $scope.deleteSelected = performer.delete;
+    $scope.showUnarchive = createShowChecker('unarchive', 'canUnarchive');
+    $scope.unarchiveSelected = performer.unarchive;
 
-      $scope.showArchive = createShowChecker('archive', 'canArchive');
-      $scope.archiveSelected = performer.archive;
-
-      $scope.showUnarchive = createShowChecker('unarchive', 'canUnarchive');
-      $scope.unarchiveSelected = performer.unarchive;
-
-      function createShowChecker(action, predicate) {
-        return () => {
-          const selected = $scope.selection.getSelected();
-          return (
-            _.isArray(selected) &&
-            selected.length > 0 &&
-            _.every(
-              selected,
-              entity =>
-                accessChecker.canPerformActionOnEntity(action, entity) && entity[predicate]()
-            )
-          );
-        };
-      }
-
-      function removeFromList(entity) {
-        const wasRemoved = removeFromCollection(entity);
-
-        if (wasRemoved && $scope.paginator) {
-          $scope.paginator.setTotal(total => (total > 0 ? total - 1 : 0));
-        }
-      }
-
-      function removeFromCollection(entity) {
-        const index = _.indexOf($scope[collection], entity);
-        if (index > -1) {
-          $scope[collection].splice(index, 1);
-          return true;
-        } else {
-          return false;
-        }
-      }
-
-      function publishButtonName() {
-        const counts = _.transform(
-          $scope.selection.getSelected(),
-          (acc, entity) => {
-            acc[entity.isPublished() ? 'published' : 'unpublished'] += 1;
-          },
-          { published: 0, unpublished: 0 }
+    function createShowChecker(action, predicate) {
+      return () => {
+        const selected = $scope.selection.getSelected();
+        return (
+          _.isArray(selected) &&
+          selected.length > 0 &&
+          _.every(
+            selected,
+            entity => accessChecker.canPerformActionOnEntity(action, entity) && entity[predicate]()
+          )
         );
+      };
+    }
 
-        if (counts.published === 0) {
-          return 'Publish';
-        } else if (counts.unpublished === 0) {
-          return 'Republish';
-        } else {
-          return '(Re)publish';
-        }
+    function removeFromList(entity) {
+      const wasRemoved = removeFromCollection(entity);
+
+      if (wasRemoved && $scope.paginator) {
+        $scope.paginator.setTotal(total => (total > 0 ? total - 1 : 0));
       }
     }
-  ]);
+
+    function removeFromCollection(entity) {
+      const index = _.indexOf($scope[collection], entity);
+      if (index > -1) {
+        $scope[collection].splice(index, 1);
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    function publishButtonName() {
+      const counts = _.transform(
+        $scope.selection.getSelected(),
+        (acc, entity) => {
+          acc[entity.isPublished() ? 'published' : 'unpublished'] += 1;
+        },
+        { published: 0, unpublished: 0 }
+      );
+
+      if (counts.published === 0) {
+        return 'Publish';
+      } else if (counts.unpublished === 0) {
+        return 'Republish';
+      } else {
+        return '(Re)publish';
+      }
+    }
+  }
+]);

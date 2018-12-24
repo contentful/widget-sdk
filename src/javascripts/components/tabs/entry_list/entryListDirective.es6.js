@@ -1,13 +1,11 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
+import _ from 'lodash';
+import * as K from 'utils/kefir.es6';
 
-angular.module('contentful').directive('cfEntryList', [
-  'require',
-  require => {
-    const _ = require('lodash');
-    const $timeout = require('$timeout');
-    const spaceContext = require('spaceContext');
-    const K = require('utils/kefir.es6');
-
+registerDirective('cfEntryList', [
+  '$timeout',
+  'spaceContext',
+  ($timeout, spaceContext) => {
     // Definitions for narrow/medium types in entry list controller
     const classToWidth = {
       narrow: 70,

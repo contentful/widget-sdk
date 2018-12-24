@@ -1,12 +1,10 @@
-'use strict';
+import { registerController } from 'NgRegistry.es6';
+import _ from 'lodash';
 
-angular.module('contentful').controller('EntryListColumnsController', [
+registerController('EntryListColumnsController', [
   '$scope',
-  'require',
-  ($scope, require) => {
-    const _ = require('lodash');
-    const systemFields = require('systemFields');
-
+  'systemFields',
+  ($scope, systemFields) => {
     const SORTABLE_TYPES = ['Boolean', 'Date', 'Integer', 'Number', 'Symbol', 'Location'];
 
     $scope.fieldIsSortable = field =>
