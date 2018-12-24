@@ -1,4 +1,7 @@
-'use strict';
+import { registerController } from 'NgRegistry.es6';
+import _ from 'lodash';
+import * as random from 'utils/Random.es6';
+import * as stringUtils from 'utils/StringUtils.es6';
 
 /**
  * @ngdoc type
@@ -12,19 +15,21 @@
  * @scope.provides {FieldDescriptor} selectedType
  * @scope.provides {bool}            fieldIsList
  */
-angular.module('contentful').controller('AddFieldDialogController', [
+registerController('AddFieldDialogController', [
   '$scope',
-  'require',
-  function AddFieldDialogController($scope, require) {
-    const _ = require('lodash');
-    const $controller = require('$controller');
-    const fieldFactory = require('fieldFactory');
-    const fieldDecorator = require('fieldDecorator');
-    const random = require('utils/Random.es6');
-    const stringUtils = require('utils/StringUtils.es6');
-    const buildMessage = require('fieldErrorMessageBuilder');
-    const $q = require('$q');
-
+  '$controller',
+  '$q',
+  'fieldFactory',
+  'fieldDecorator',
+  'fieldErrorMessageBuilder',
+  function AddFieldDialogController(
+    $scope,
+    $controller,
+    $q,
+    fieldFactory,
+    fieldDecorator,
+    buildMessage,
+  ) {
     $scope.viewState = $controller('ViewStateController', {
       $scope: $scope,
       defaultState: 'fieldSelection'

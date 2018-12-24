@@ -7,7 +7,7 @@ describe('cfContentTypePreview directive', () => {
     module('contentful/test', $provide => {
       const contentTypePreview = sinon.stub();
       contentTypePreview.fromData = sinon.stub();
-      $provide.value('contentTypePreview', contentTypePreview);
+      $provide.constant('contentTypePreview', contentTypePreview);
     })
   );
 

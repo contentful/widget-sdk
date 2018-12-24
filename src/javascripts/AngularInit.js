@@ -195,6 +195,16 @@ angular
       ngRequire('services/validationDialogErrorMessages.es6');
       ngRequire('services/validationViews.es6');
 
+      // ContentModel
+      ngRequire('app/ContentModel/Editor/addFieldDialogController.es6');
+      ngRequire('app/ContentModel/Editor/apiNameController.es6');
+      ngRequire('app/ContentModel/Editor/cfApiNameShadowDirective.es6');
+      ngRequire('app/ContentModel/Editor/cfContentTypePreview.es6');
+      ngRequire('app/ContentModel/Editor/contentTypeEditorController.es6');
+      ngRequire('app/ContentModel/Editor/contentTypeEditorDirective.es6');
+      ngRequire('app/ContentModel/Editor/contentTypeFieldController.es6');
+      ngRequire('app/ContentModel/Editor/metadataDialog.es6');
+
       // ui (cf.ui)
       ngRequire('ui/cfIconDirective.es6');
       ngRequire('ui/cfUiHint.es6');
