@@ -1,15 +1,14 @@
-angular.module('contentful').directive('cfAssetEditor', [
-  'require',
-  require => {
-    const createEditorController = require('app/entity_editor/AssetController.es6').default;
-    return {
-      restrict: 'E',
-      scope: {
-        assetId: '<',
-        preferences: '<'
-      },
-      template: JST.asset_editor(),
-      controller: ['$scope', $scope => createEditorController($scope, $scope.assetId)]
-    };
-  }
+import { registerDirective } from 'NgRegistry.es6';
+
+registerDirective('cfAssetEditor', [
+  'app/entity_editor/AssetController.es6',
+  ({ default: createEditorController }) => ({
+    restrict: 'E',
+    scope: {
+      assetId: '<',
+      preferences: '<'
+    },
+    template: JST.asset_editor(),
+    controller: ['$scope', $scope => createEditorController($scope, $scope.assetId)]
+  })
 ]);
