@@ -1,12 +1,3 @@
-mixin editor-field-collaborators
-  ul.entity-editor__field-collaborators
-    li(
-      cf-user
-      ng-repeat="link in fieldLocale.collaborators track by link.sys.id"
-      link="link" as="presentUser"
-      tooltip="{{presentUser| userNameDisplay:user}}")
-      img(ng-src="{{presentUser.avatarUrl}}")
-
 mixin field-permission-info
   div.entity-editor__no-permission-info(
     data-test-id="field-locale-permissions"
@@ -79,7 +70,10 @@ div.entity-editor__field-group(
         ng-class="{ 'x--dir-rtl': methods.shouldDisplayRtl(locale.code) }"
         cf-focus-ot-input="data.hasInitialFocus"
         cf-widget-api)
-      +editor-field-collaborators
+      react-component(
+        name="app/entity_editor/Collaborators/index.es6" 
+        props="{users: fieldLocale.collaborators, extraClassNames: 'entity-editor__field-collaborators'}"
+      )
     +field-locale-errors
 
   div.entity-editor__field-hint(

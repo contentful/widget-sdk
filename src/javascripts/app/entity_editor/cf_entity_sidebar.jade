@@ -92,12 +92,11 @@
     | Users
   .entity-sidebar__no-users(ng-if="!data.docCollaborators.length")
     | No other users online
-  ul.entity-sidebar__users(ng-if="data.docCollaborators.length")
-    li.avatar(ng-repeat="link in data.docCollaborators track by link.sys.id"
-      cf-user link="link" as="presenceUser"
-      tooltip-placement="bottom"
-      tooltip="{{presenceUser | userNameDisplay:user}}")
-      img(ng-src="{{presenceUser.avatarUrl}}")
+  react-component(
+    ng-if="data.docCollaborators.length"
+    name="app/entity_editor/Collaborators/index.es6" 
+    props="{users: data.docCollaborators, shape: 'rect'}"
+  )
 
   .entity-sidebar__widget(
     ng-repeat="widget in sidebarControls track by widget.field.id"
