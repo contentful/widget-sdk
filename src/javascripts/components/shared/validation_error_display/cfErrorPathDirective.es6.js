@@ -1,4 +1,4 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
 
 /**
  * Provide error messages for the selected part of a document from the
@@ -15,7 +15,7 @@
  * In addition it hides the element if there are no error messages.
  *
  */
-angular.module('contentful').directive('cfErrorPath', () => ({
+registerDirective('cfErrorPath', () => ({
   scope: true,
   controller: 'ErrorPathController',
   controllerAs: 'errors',

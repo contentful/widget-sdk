@@ -115,6 +115,26 @@ angular
       ngRequire('components/forms/field_alert/cfFieldAlertDirective.es6');
       ngRequire('components/roles/cfRolesForWalkMe.es6');
 
+      ngRequire('components/shared/cfDropdownToggleDirective.es6');
+      ngRequire('components/shared/cfImgLoadEvent.es6');
+      ngRequire('components/shared/cfSelectionDirective.es6');
+      ngRequire('components/shared/cfUserDirective.es6');
+      ngRequire('components/shared/create_new_space/createNewSpaceDirective.es6');
+
+      ngRequire('components/shared/dataSizeScaleController.es6');
+      ngRequire('components/shared/endlessContainerDirective.es6');
+      ngRequire('components/shared/entity_info_panel/entityInfoPanelDirective.es6');
+      ngRequire('components/shared/knowledge_base_icon/cfKnowledgeBaseDirective.es6');
+
+      ngRequire('components/shared/listViewsController.es6');
+      ngRequire('components/shared/persistent_notification/cfPersistentNotificationDirective.es6');
+      ngRequire('components/shared/search_results_paginator/searchResultsPaginatorDirective.es6');
+      ngRequire('components/shared/validation_error_display/cfErrorListDirective.es6');
+      ngRequire('components/shared/validation_error_display/cfErrorMessagesDirective.es6');
+      ngRequire('components/shared/validation_error_display/cfErrorPathDirective.es6');
+      ngRequire('components/shared/validation_error_display/errorPathController.es6');
+      ngRequire('components/shared/viewStateController.es6');
+
       // ui (cf.ui)
       ngRequire('ui/cfIconDirective.es6');
       ngRequire('ui/cfUiHint.es6');

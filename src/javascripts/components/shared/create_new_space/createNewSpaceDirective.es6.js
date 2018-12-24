@@ -1,45 +1,49 @@
-'use strict';
+import { registerDirective, registerController } from 'NgRegistry.es6';
+import _ from 'lodash';
+import React from 'react';
+import createNewSpaceTemplateDef from 'components/shared/create_new_space/Template.es6';
 
-angular
-  .module('contentful')
+registerDirective('cfCreateNewSpace', () => ({
+  restrict: 'E',
+  template: createNewSpaceTemplateDef(),
+  controller: 'createSpaceController',
+  controllerAs: 'createSpace'
+}));
 
-  .directive('cfCreateNewSpace', [
-    'require',
-    require => {
-      const template = require('components/shared/create_new_space/Template.es6').default;
-      return {
-        restrict: 'E',
-        template: template(),
-        controller: 'createSpaceController',
-        controllerAs: 'createSpace'
-      };
-    }
-  ]);
-
-angular.module('contentful').controller('createSpaceController', [
+registerController('createSpaceController', [
   '$scope',
-  'require',
+  '$rootScope',
+  '$state',
   '$element',
-  function($scope, require, $element) {
-    const _ = require('lodash');
+  'spaceContext',
+  'client',
+  'logger',
+  'localesList',
+  'services/TokenStore.es6',
+  'access_control/Enforcements.es6',
+  'analytics/Analytics.es6',
+  'services/SpaceTemplateCreator/index.es6',
+  'analytics/events/SpaceCreation.es6',
+  'services/SpaceTemplateLoader.es6',
+  'services/ResourceService.es6',
+  function(
+    $scope,
+    $rootScope,
+    $state,
+    $element,
+    spaceContext,
+    client,
+    logger,
+    localesList,
+    TokenStore,
+    enforcements,
+    Analytics,
+    spaceTemplateCreator,
+    spaceTemplateEvents,
+    { getTemplatesList, getTemplate },
+    { default: createResourceService }
+  ) {
     const controller = this;
-    const $rootScope = require('$rootScope');
-    const client = require('client');
-    const localesList = require('localesList');
-    const spaceTemplateLoader = require('services/SpaceTemplateLoader.es6');
-    const getTemplatesList = spaceTemplateLoader.getTemplatesList;
-    const getTemplate = spaceTemplateLoader.getTemplate;
-    const spaceTemplateCreator = require('services/SpaceTemplateCreator');
-    const TokenStore = require('services/TokenStore.es6');
-    const enforcements = require('access_control/Enforcements.es6');
-    const $state = require('$state');
-    const logger = require('logger');
-    const Analytics = require('analytics/Analytics.es6');
-    const spaceContext = require('spaceContext');
-    const spaceTemplateEvents = require('analytics/events/SpaceCreation.es6');
-    const createResourceService = require('services/ResourceService.es6').default;
-    const React = require('react');
-
     const DEFAULT_LOCALE = 'en-US';
     const DEFAULT_ERROR_MESSAGE =
       'Could not create Space. If the problem persists please get in contact with us.';

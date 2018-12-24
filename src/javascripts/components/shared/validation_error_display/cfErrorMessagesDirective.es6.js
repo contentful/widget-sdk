@@ -1,4 +1,4 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
 
 /**
  * Specify the source of error messages for the `cf-error-list`
@@ -14,7 +14,7 @@
  * This serves as a simpler alternative to the `cf-error-path`
  * directive.
  */
-angular.module('contentful').directive('cfErrorMessages', () => ({
+registerDirective('cfErrorMessages', () => ({
   restrict: 'A',
   scope: true,
 

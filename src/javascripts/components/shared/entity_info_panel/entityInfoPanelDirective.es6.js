@@ -1,35 +1,29 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
+import * as K from 'utils/kefir.es6';
 
-angular.module('contentful').directive('cfEntityInfoPanel', [
-  'require',
-  require => {
-    const K = require('utils/kefir.es6');
+registerDirective('cfEntityInfoPanel', () => ({
+  scope: {
+    // Property<API.Sys>
+    entitySysProperty: '<',
+    // API.ConentType
+    contentType: '<?',
+    // API.User
+    user: '<'
+  },
+  restrict: 'E',
+  template: JST.entity_info_panel(),
+  controller: [
+    '$scope',
+    $scope => {
+      if ($scope.contentType) {
+        $scope.contentTypeName = $scope.contentType.name || 'Untitled';
+        $scope.contentTypeDescription = $scope.contentType.description;
+        $scope.contentTypeId = $scope.contentType.sys.id;
+      }
 
-    return {
-      scope: {
-        // Property<API.Sys>
-        entitySysProperty: '<',
-        // API.ConentType
-        contentType: '<?',
-        // API.User
-        user: '<'
-      },
-      restrict: 'E',
-      template: JST.entity_info_panel(),
-      controller: [
-        '$scope',
-        $scope => {
-          if ($scope.contentType) {
-            $scope.contentTypeName = $scope.contentType.name || 'Untitled';
-            $scope.contentTypeDescription = $scope.contentType.description;
-            $scope.contentTypeId = $scope.contentType.sys.id;
-          }
-
-          K.onValueScope($scope, $scope.entitySysProperty, sys => {
-            $scope.sys = sys;
-          });
-        }
-      ]
-    };
-  }
-]);
+      K.onValueScope($scope, $scope.entitySysProperty, sys => {
+        $scope.sys = sys;
+      });
+    }
+  ]
+}));

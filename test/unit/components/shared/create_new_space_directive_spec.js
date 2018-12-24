@@ -54,7 +54,7 @@ describe('cfCreateNewSpace directive', () => {
 
     module('contentful/test', $provide => {
       $provide.value('services/SpaceTemplateLoader.es6', stubs.spaceTemplateLoader);
-      $provide.value('services/SpaceTemplateCreator', stubs.spaceTemplateCreator);
+      $provide.value('services/SpaceTemplateCreator/index.es6', stubs.spaceTemplateCreator);
       $provide.value('analytics/Analytics.es6', stubs.analytics);
       $provide.value('logger', stubs.logger);
       $provide.value('client', stubs.client);

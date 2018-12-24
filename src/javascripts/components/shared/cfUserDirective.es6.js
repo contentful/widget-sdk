@@ -1,14 +1,13 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
 
-angular.module('contentful').directive('cfUser', () => ({
+registerDirective('cfUser', () => ({
   restrict: 'A',
 
   controller: [
     '$scope',
     '$attrs',
-    'require',
-    ($scope, $attrs, require) => {
-      const spaceContext = require('spaceContext');
+    'spaceContext',
+    ($scope, $attrs, spaceContext) => {
       $scope.$watch(
         $attrs.link,
         link => {

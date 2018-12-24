@@ -1,4 +1,4 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
 
 /**
  * @ngdoc directive
@@ -13,7 +13,7 @@
  */
 // TODO this directive is deprecated and should be removed once it is
 // not used any more
-angular.module('contentful').directive('cfDropdownToggle', [
+registerDirective('cfDropdownToggle', [
   '$rootScope',
   $rootScope => ({
     restrict: 'A',

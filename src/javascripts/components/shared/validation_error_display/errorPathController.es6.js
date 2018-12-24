@@ -1,13 +1,12 @@
-'use strict';
+import { registerController } from 'NgRegistry.es6';
+import _ from 'lodash';
 
-angular.module('contentful').controller('ErrorPathController', [
+registerController('ErrorPathController', [
   '$scope',
   '$attrs',
-  'require',
-  function ErrorPathController($scope, $attrs, require) {
+  'logger',
+  function ErrorPathController($scope, $attrs, logger) {
     const controller = this;
-    const logger = require('logger');
-    const _ = require('lodash');
 
     controller.messages = [];
 
