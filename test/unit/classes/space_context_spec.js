@@ -34,11 +34,13 @@ describe('spaceContext', () => {
       $provide.constant('data/userCache', this.createUserCache);
     });
 
-    this.localeStore = this.mockService('TheLocaleStore');
-    this.localeStore.init.resolves();
-
     const { registerFactory } = this.$inject('NgRegistry.es6');
-    registerFactory('TheLocaleStore', () => this.localeStore);
+
+    const localeStoreOrig = this.mockService('TheLocaleStore');
+    localeStoreOrig.init.resolves();
+
+    // Reregister TheLocaleStore with mocked version
+    registerFactory('TheLocaleStore', () => localeStoreOrig);
 
     this.widgetStoreCreate = this.$inject('widgets/Store.es6').create;
     this.spaceContext = this.$inject('spaceContext');
