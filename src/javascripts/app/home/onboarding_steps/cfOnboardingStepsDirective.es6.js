@@ -1,21 +1,36 @@
-angular.module('contentful').directive('cfOnboardingSteps', [
-  'require',
-  function(require) {
-    const _ = require('lodash');
-    const $state = require('$state');
-    const Analytics = require('analytics/Analytics.es6');
-    const spaceContext = require('spaceContext');
-    const CreateSpace = require('services/CreateSpace.es6');
-    const caseofEq = require('sum-types').caseofEq;
-    const entityCreator = require('entityCreator');
-    const LD = require('utils/LaunchDarkly');
-    const K = require('utils/kefir.es6');
-    const store = require('TheStore').getStore();
-    const { isExampleSpace } = require('data/ContentPreview');
-    const { getAll: getAllContentPreviews } = require('contentPreview');
-    const { getOrganizations } = require('services/TokenStore.es6');
-    const { default: template } = require('app/home/onboarding_steps/OnboardingStepsTemplate.es6');
-    const { getKey: getSpaceAutoCreatedKey } = require('components/shared/auto_create_new_space');
+import { registerDirective } from 'NgRegistry.es6';
+import _ from 'lodash';
+import { caseofEq } from 'sum-types';
+import * as K from 'utils/kefir.es6';
+import onboardingStepsTemplateDef from 'app/home/onboarding_steps/OnboardingStepsTemplate.es6';
+
+registerDirective('cfOnboardingSteps', [
+  '$state',
+  'spaceContext',
+  'entityCreator',
+  'utils/LaunchDarkly/index.es6',
+  'analytics/Analytics.es6',
+  'services/CreateSpace.es6',
+  'components/shared/auto_create_new_space/CreateModernOnboarding.es6',
+  'data/ContentPreview',
+  'contentPreview',
+  'services/TokenStore.es6',
+  'TheStore/index.es6',
+  'components/shared/auto_create_new_space/index.es6',
+  function(
+    $state,
+    spaceContext,
+    entityCreator,
+    LD,
+    Analytics,
+    CreateSpace,
+    modernOnboarding,
+    { isExampleSpace },
+    { getAll: getAllContentPreviews },
+    { getOrganizations },
+    { getStore },
+    { getKey: getSpaceAutoCreatedKey }
+  ) {
     const {
       getStoragePrefix: getModernStackStoragePrefix,
       getCredentials,
@@ -24,10 +39,11 @@ angular.module('contentful').directive('cfOnboardingSteps', [
       isDevOnboardingSpace,
       isContentOnboardingSpace,
       MODERN_STACK_ONBOARDING_FEATURE_FLAG
-    } = require('components/shared/auto_create_new_space/CreateModernOnboarding.es6');
+    } = modernOnboarding;
+    const store = getStore();
 
     return {
-      template: template(),
+      template: onboardingStepsTemplateDef(),
       restrict: 'E',
       scope: {},
       controller: [

@@ -1,3 +1,7 @@
+import { registerDirective } from 'NgRegistry.es6';
+import _ from 'lodash';
+import $ from 'jquery';
+
 /**
  * @ngdoc directive
  * @module contentful
@@ -10,42 +14,31 @@
  *
  */
 
-'use strict';
+registerDirective('cfTrackCopyEvent', [
+  '$document',
+  '$window',
+  'analytics/events/home.es6',
+  ($document, $window, analyticsEvents) => ({
+    restrict: 'A',
+    scope: true,
+    link: function(scope, element) {
+      $document.on('keydown', handleKeydown);
 
-angular
-  .module('contentful')
+      scope.$on('$destroy', () => {
+        $document.off('keydown', handleKeydown);
+      });
 
-  .directive('cfTrackCopyEvent', [
-    'require',
-    require => {
-      const $ = require('jquery');
-      const _ = require('lodash');
-      const $document = require('$document');
-      const $window = require('$window');
-      const analyticsEvents = require('analytics/events/home.es6');
-
-      return {
-        restrict: 'A',
-        scope: true,
-        link: function(scope, element) {
-          $document.on('keydown', handleKeydown);
-
-          scope.$on('$destroy', () => {
-            $document.off('keydown', handleKeydown);
-          });
-
-          function handleKeydown(event) {
-            if (event.key === 'c' && event.metaKey) {
-              const selection = $window.getSelection();
-              const selectedNode = _.get(selection, 'anchorNode.parentNode');
-              // Only track event if selected text is contained in this section
-              if ($.contains(element[0], selectedNode)) {
-                const language = scope.resources.selected;
-                analyticsEvents.commandCopied(language, selection.toString());
-              }
-            }
+      function handleKeydown(event) {
+        if (event.key === 'c' && event.metaKey) {
+          const selection = $window.getSelection();
+          const selectedNode = _.get(selection, 'anchorNode.parentNode');
+          // Only track event if selected text is contained in this section
+          if ($.contains(element[0], selectedNode)) {
+            const language = scope.resources.selected;
+            analyticsEvents.commandCopied(language, selection.toString());
           }
         }
-      };
+      }
     }
-  ]);
+  })
+]);

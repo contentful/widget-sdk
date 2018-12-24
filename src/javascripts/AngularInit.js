@@ -93,6 +93,15 @@ angular
       ngRequire('app/widgets/slug/cfSlugEditorDirective.es6');
       ngRequire('app/widgets/url/cfUrlEditorDirective.es6');
 
+      // app/home
+      ngRequire('app/home/cfPositionRelativeToLanguageDirective.es6');
+      ngRequire('app/home/cfTrackCopyEvent.es6');
+      ngRequire('app/home/cfWelcomeDirective.es6');
+      ngRequire('app/home/contactUs/contactUsSpaceHomeDirective.es6');
+      ngRequire('app/home/developer_resources/cfDeveloperResourcesDirective.es6');
+      ngRequire('app/home/onboarding_steps/cfOnboardingStepsDirective.es6');
+      ngRequire('app/home/welcome/cfOnboardingWithTeaDirective.es6');
+
       // markdown_editor
       ngRequire('markdown_editor/cfMarkdownActionDirective.es6');
       ngRequire('markdown_editor/cfMarkdownEditorDirective.es6');

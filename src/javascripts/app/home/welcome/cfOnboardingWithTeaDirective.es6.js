@@ -1,25 +1,18 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-angular
-  .module('contentful')
+registerDirective('cfOnboardingWithTea', [
+  'app/home/welcome/OnboardingWithTea.es6',
+  ({ default: OnboardingWithTea }) => ({
+    link: function($scope, el) {
+      const root = el[0];
 
-  .directive('cfOnboardingWithTea', [
-    'require',
-    require => {
-      const React = require('react');
-      const ReactDOM = require('react-dom');
-      const OnboardingWithTea = require('app/home/welcome/OnboardingWithTea.es6').default;
+      $scope.$on('$destroy', () => {
+        ReactDOM.unmountComponentAtNode(root);
+      });
 
-      return {
-        link: function($scope, el) {
-          const root = el[0];
-
-          $scope.$on('$destroy', () => {
-            ReactDOM.unmountComponentAtNode(root);
-          });
-
-          ReactDOM.render(<OnboardingWithTea />, root);
-        }
-      };
+      ReactDOM.render(<OnboardingWithTea />, root);
     }
-  ]);
+  })
+]);

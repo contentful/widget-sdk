@@ -1,34 +1,31 @@
-'use strict';
+import { registerDirective, registerController } from 'NgRegistry.es6';
+import _ from 'lodash';
+import * as resources from 'app/home/developer_resources/DeveloperResources.es6';
 
-angular
-  .module('contentful')
-  .directive('cfDeveloperResources', () => ({
-    template: JST.cf_developer_resources(),
-    restrict: 'E',
-    scope: {},
-    controller: 'LanguageResourcesController',
-    controllerAs: 'resources'
-  }))
+registerDirective('cfDeveloperResources', () => ({
+  template: JST.cf_developer_resources(),
+  restrict: 'E',
+  scope: {},
+  controller: 'LanguageResourcesController',
+  controllerAs: 'resources'
+}));
 
-  .controller('LanguageResourcesController', [
-    'require',
-    function(require) {
-      const _ = require('lodash');
-      const controller = this;
-      const resources = require('app/home/developer_resources/DeveloperResources.es6');
-      const analyticsEvents = require('analytics/events/home.es6');
+registerController('LanguageResourcesController', [
+  'analytics/events/home.es6',
+  function(analyticsEvents) {
+    const controller = this;
 
-      controller.languages = _.keys(resources.developerResources);
-      controller.docsUrls = resources.apiDocsUrls;
-      controller.selectLanguage = selectLanguage;
-      controller.analytics = analyticsEvents;
+    controller.languages = _.keys(resources.developerResources);
+    controller.docsUrls = resources.apiDocsUrls;
+    controller.selectLanguage = selectLanguage;
+    controller.analytics = analyticsEvents;
 
-      selectLanguage('JavaScript');
+    selectLanguage('JavaScript');
 
-      function selectLanguage(language) {
-        controller.selected = language;
-        controller.languageResources = resources.developerResources[language];
-        controller.analytics.selectedLanguage(language);
-      }
+    function selectLanguage(language) {
+      controller.selected = language;
+      controller.languageResources = resources.developerResources[language];
+      controller.analytics.selectedLanguage(language);
     }
-  ]);
+  }
+]);
