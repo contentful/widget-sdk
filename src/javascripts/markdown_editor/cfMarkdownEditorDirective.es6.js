@@ -1,26 +1,35 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
+import { RTL_SUPPORT_FEATURE_FLAG } from 'featureFlags.es6';
+import _ from 'lodash';
+import * as K from 'utils/kefir.es6';
 
-angular.module('contentful').directive('cfMarkdownEditor', [
-  'require',
-  require => {
-    const RTL_SUPPORT_FEATURE_FLAG = 'feature-at-03-2018-rtl-support';
+registerDirective('cfMarkdownEditor', [
+  '$timeout',
+  'throttle',
+  'LazyLoader',
+  'TheLocaleStore',
+  'utils/LaunchDarkly/index.es6',
+  'markdown_editor/markdown_editor.es6',
+  'markdown_editor/markdown_actions.es6',
+  'markdown_editor/PreviewGenerator.es6',
+  'utils/locales.es6',
+  'analytics/MarkdownEditorActions.es6',
+  (
+    $timeout,
+    throttle,
+    LazyLoader,
+    LocaleStore,
+    LD,
+    MarkdownEditor,
+    actions,
+    { default: makePreview },
+    { isRtlLocale },
+    { trackMarkdownEditorAction }
+  ) => {
     const EDITOR_DIRECTIONS = {
       LTR: 'ltr',
       RTL: 'rtl'
     };
-
-    const _ = require('lodash');
-    const $timeout = require('$timeout');
-    const LazyLoader = require('LazyLoader');
-    const MarkdownEditor = require('markdown_editor/markdown_editor.es6');
-    const actions = require('markdown_editor/markdown_actions.es6');
-    const makePreview = require('markdown_editor/PreviewGenerator.es6').default;
-    const throttle = require('throttle');
-    const LocaleStore = require('TheLocaleStore');
-    const isRtlLocale = require('utils/locales.es6').isRtlLocale;
-    const K = require('utils/kefir.es6');
-    const LD = require('utils/LaunchDarkly');
-    const { trackMarkdownEditorAction } = require('analytics/MarkdownEditorActions.es6');
 
     return {
       restrict: 'E',

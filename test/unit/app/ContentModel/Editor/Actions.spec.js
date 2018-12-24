@@ -36,7 +36,7 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
     };
 
     module('contentful/test', $provide => {
-      $provide.value('navigation/closeState', (self.closeSpy = sinon.spy()));
+      $provide.constant('navigation/closeState', (self.closeSpy = sinon.spy()));
       $provide.value('utils/LaunchDarkly', {
         getCurrentVariation: sinon.stub().callsFake(function(flagName) {
           return new Promise(resolve => {

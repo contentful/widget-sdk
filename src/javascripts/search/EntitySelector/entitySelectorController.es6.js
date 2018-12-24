@@ -1,4 +1,9 @@
-'use strict';
+import { registerController } from 'NgRegistry.es6';
+import _ from 'lodash';
+import Kefir from 'kefir';
+import * as K from 'utils/kefir.es6';
+import { Operator } from 'app/ContentList/Search/Operators.es6';
+import Paginator from 'classes/Paginator.es6';
 
 /**
  * @ngdoc type
@@ -28,22 +33,23 @@
  * }
  * @scope.requires {number} listHeight
  */
-angular.module('contentful').controller('EntitySelectorController', [
-  'require',
+registerController('EntitySelectorController', [
   '$scope',
-  function EntitySelectorController(require, $scope) {
-    const $timeout = require('$timeout');
-    const spaceContext = require('spaceContext');
-    const Paginator = require('classes/Paginator.es6').default;
-    const createQueue = require('overridingRequestQueue');
-    const EntityHelpers = require('EntityHelpers');
-    const K = require('utils/kefir.es6');
-    const Kefir = require('kefir');
-    const _ = require('lodash');
-    const createSearchInput = require('app/ContentList/Search').default;
-    const getAccessibleCTs = require('data/ContentTypeRepo/accessibleCTs.es6').default;
-    const { Operator } = require('app/ContentList/Search/Operators.es6');
-
+  '$timeout',
+  'spaceContext',
+  'overridingRequestQueue',
+  'EntityHelpers',
+  'app/ContentList/Search',
+  'data/ContentTypeRepo/accessibleCTs.es6',
+  function EntitySelectorController(
+    $scope,
+    $timeout,
+    spaceContext,
+    createQueue,
+    EntityHelpers,
+    { default: createSearchInput },
+    { default: getAccessibleCTs }
+  ) {
     const MIN_SEARCH_TRIGGERING_LEN = 1;
     const MODES = { AVAILABLE: 1, SELECTED: 2 };
 

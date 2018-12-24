@@ -1,4 +1,9 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
+import $ from 'jquery';
+import _ from 'lodash';
+import * as K from 'utils/kefir.es6';
+import contextHistory from 'navigation/Breadcrumbs/History.es6';
+import { template as breakcrumbsTemplateDef } from 'navigation/Breadcrumbs/Template.es6';
 
 /**
  * @ngdoc directive
@@ -7,26 +12,18 @@
  * @property {boolean} topState  Is true if there is only one
  * breadcrumb. This breadcrumb is associated to the current page.
  */
-angular.module('contentful').directive('cfBreadcrumbs', [
-  'require',
-  require => {
-    const $ = require('jquery');
-    const _ = require('lodash');
-    const $parse = require('$parse');
-    const $state = require('$state');
-    const Analytics = require('analytics/Analytics.es6');
-    const contextHistory = require('navigation/Breadcrumbs/History.es6').default;
-    const documentTitle = require('navigation/DocumentTitle.es6');
-    const K = require('utils/kefir.es6');
-
+registerDirective('cfBreadcrumbs', [
+  '$state',
+  '$parse',
+  'analytics/Analytics.es6',
+  'navigation/DocumentTitle.es6',
+  ($state, $parse, Analytics, documentTitle) => {
     const backBtnSelector = '[aria-label="breadcrumbs-back-btn"]';
     const ancestorBtnSelector = '[aria-label="breadcrumbs-ancestor-btn"]';
     const ancestorMenuContainerSelector = '[aria-label="breadcrumbs-ancestor-menu-container"]';
     const ancestorMenuSelector = '[aria-label="breadcrumbs-ancestor-menu"]';
     const ancestorLinkSelector = ancestorMenuSelector + ' [role="link"]';
     const hintDismissBtnSelector = '[aria-label="ui-hint-dismiss-btn"]';
-
-    const template = require('navigation/Breadcrumbs/Template.es6').template;
 
     const analyticsData = {
       clickedOn: {
@@ -48,7 +45,7 @@ angular.module('contentful').directive('cfBreadcrumbs', [
     };
 
     return {
-      template: template(),
+      template: breakcrumbsTemplateDef(),
       restrict: 'E',
       replace: true,
       scope: {},

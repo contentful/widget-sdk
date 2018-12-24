@@ -1,16 +1,15 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
+import $ from 'jquery';
+import keycodes from 'utils/keycodes.es6';
 
-angular.module('contentful').directive('cfZenmode', [
-  'require',
-  require => {
-    const $ = require('jquery');
-    const $window = require('$window');
-    const MarkdownEditor = require('markdown_editor/markdown_editor.es6');
-    const actions = require('markdown_editor/markdown_actions.es6');
-    const keycodes = require('utils/keycodes.es6').default;
-    const modalDialog = require('modalDialog');
+registerDirective('cfZenmode', [
+  '$window',
+  'modalDialog',
+  'TheLocaleStore',
+  'markdown_editor/markdown_editor.es6',
+  'markdown_editor/markdown_actions.es6',
+  ($window, modalDialog, LocaleStore, MarkdownEditor, actions) => {
     const win = $($window);
-    const LocaleStore = require('TheLocaleStore');
 
     // This is persisted accross Zen Mode instances
     let initialShowPreview = true;
