@@ -251,6 +251,15 @@ angular
       ngRequire('app/entry_editor/entryActionsController.es6');
       ngRequire('app/entry_editor/formWidgetsController.es6');
 
+      // app/widgets
+      ngRequire('app/widgets/cfFileEditorDirective.es6');
+      ngRequire('app/widgets/number/cfNumberEditorDirective.es6');
+      ngRequire('app/widgets/selectionController.es6');
+      ngRequire('app/widgets/shared/cfEditorCharacterInfoDirective.es6');
+      ngRequire('app/widgets/single_line/cfSingleLineEditorDirective.es6');
+      ngRequire('app/widgets/slug/cfSlugEditorDirective.es6');
+      ngRequire('app/widgets/url/cfUrlEditorDirective.es6');
+
       // ui (cf.ui)
       ngRequire('ui/cfIconDirective.es6');
       ngRequire('ui/cfUiHint.es6');
