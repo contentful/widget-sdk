@@ -1,14 +1,13 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
+import _ from 'lodash';
+import moment from 'moment';
+import templateDef from 'components/forms/datetime_editor/cf_datetime_editor.es6';
 
-angular.module('contentful').directive('cfDatetimeEditor', [
-  'require',
-  require => {
-    const _ = require('lodash');
-    const zoneOffsets = require('zoneOffsets');
-    const moment = require('moment');
-    const Datepicker = require('datepicker');
-    const $timeout = require('$timeout');
-
+registerDirective('cfDatetimeEditor', [
+  '$timeout',
+  'datepicker',
+  'zoneOffsets',
+  ($timeout, Datepicker, zoneOffsets) => {
     const DATE_FORMAT_INTERNAL = 'YYYY-MM-DD'; // moment.js format
     const LOCAL_TIMEZONE = moment().format('Z');
 
@@ -30,7 +29,7 @@ angular.module('contentful').directive('cfDatetimeEditor', [
     // Please keep it in mind when rewriting to use widgetApi
     return {
       restrict: 'A',
-      template: require('components/forms/datetime_editor/cf_datetime_editor.es6').default(),
+      template: templateDef(),
       require: 'ngModel',
       link: function(scope, elm, _attr, ngModelCtrl) {
         const dateController = elm.find('.date').controller('ngModel');

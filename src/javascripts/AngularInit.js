@@ -102,6 +102,19 @@ angular
       ngRequire('search/listQuery.es6');
       ngRequire('search/systemFields.es6');
 
+      // components
+      ngRequire('components/CreateEntryButton/buttonDirective.es6');
+      ngRequire('components/authors_help/authorsHelpDirective.es6');
+      ngRequire('components/client/activationEmailResendController.es6');
+      ngRequire('components/client/dialogsInitController.es6');
+      ngRequire('components/client/subscriptionNotifier.es6');
+      ngRequire('components/forms/autocomplete_results/cfAutocompleteResultsController.es6');
+      ngRequire('components/forms/autocomplete_results/cfAutocompleteResultsDirective.es6');
+      ngRequire('components/forms/datetime_editor/cfDatetimeEditorDirective.es6');
+      ngRequire('components/forms/embedly_preview/cfEmbedlyPreviewDirective.es6');
+      ngRequire('components/forms/field_alert/cfFieldAlertDirective.es6');
+      ngRequire('components/roles/cfRolesForWalkMe.es6');
+
       // ui (cf.ui)
       ngRequire('ui/cfIconDirective.es6');
       ngRequire('ui/cfUiHint.es6');

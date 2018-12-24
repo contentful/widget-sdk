@@ -1,25 +1,21 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
+import { get } from 'lodash';
+import moment from 'moment';
+import { isOwner } from 'services/OrganizationRoles.es6';
 
 // TODO: it handles trials for v1 pricing. Should be removed sooner or later.
-angular.module('contentful').factory('subscriptionNotifier', [
-  'require',
-  require => {
-    const moment = require('moment');
-    const { get } = require('lodash');
-    const OrganizationRoles = require('services/OrganizationRoles.es6');
-    const { openPaywall } = require('paywallOpener');
+registerFactory('subscriptionNotifier', [
+  'paywallOpener',
+  ({ openPaywall }) => ({
+    notifyAbout: organization => {
+      const isTrial = get(organization, ['subscription', 'status']) === 'trial';
+      const trialEnd = moment(get(organization, ['trialPeriodEndsAt']));
+      const now = moment();
 
-    return {
-      notifyAbout: organization => {
-        const isTrial = get(organization, ['subscription', 'status']) === 'trial';
-        const trialEnd = moment(get(organization, ['trialPeriodEndsAt']));
-        const now = moment();
-
-        if (isTrial && !trialEnd.isAfter(now)) {
-          const offerPlanUpgrade = OrganizationRoles.isOwner(organization);
-          openPaywall(organization, { offerPlanUpgrade });
-        }
+      if (isTrial && !trialEnd.isAfter(now)) {
+        const offerPlanUpgrade = isOwner(organization);
+        openPaywall(organization, { offerPlanUpgrade });
       }
-    };
-  }
+    }
+  })
 ]);

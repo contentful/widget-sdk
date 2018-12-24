@@ -1,24 +1,19 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
+import _ from 'lodash';
 
-angular.module('contentful').directive('cfFieldAlert', [
-  'require',
-  require => {
-    const _ = require('lodash');
-    return {
-      template: '<i class="cf-field-alert fa fa-exclamation-triangle" tooltip></i>',
-      replace: true,
-      restrict: 'A',
+registerDirective('cfFieldAlert', () => ({
+  template: '<i class="cf-field-alert fa fa-exclamation-triangle" tooltip></i>',
+  replace: true,
+  restrict: 'A',
 
-      link: function(_scope, elem, attr) {
-        attr.$observe('cfFieldAlert', message => {
-          attr.$set('tooltip', message);
-          if (_.isEmpty(message)) {
-            elem.hide();
-          } else {
-            elem.show();
-          }
-        });
+  link: function(_scope, elem, attr) {
+    attr.$observe('cfFieldAlert', message => {
+      attr.$set('tooltip', message);
+      if (_.isEmpty(message)) {
+        elem.hide();
+      } else {
+        elem.show();
       }
-    };
+    });
   }
-]);
+}));

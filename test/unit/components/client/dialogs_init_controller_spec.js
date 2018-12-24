@@ -14,10 +14,10 @@ describe('dialogsInitController', () => {
       $provide.value('onboardingController', {
         init: this.initOnboardingSpy
       });
-      $provide.value('activationEmailResendController', {
+      $provide.constant('activationEmailResendController', {
         init: this.initEmailSpy
       });
-      $provide.value('subscriptionNotifier', {
+      $provide.constant('subscriptionNotifier', {
         notifyAbout: this.subscriptionNotifierNotify
       });
     });

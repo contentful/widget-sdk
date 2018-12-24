@@ -1,3 +1,8 @@
+import { registerDirective } from 'NgRegistry.es6';
+import { h, icons } from 'utils/legacy-html-hyperscript';
+import * as K from 'utils/kefir.es6';
+import { AUTHOR_ONBOARDING_HELP } from 'featureFlags.es6';
+
 /**
  * @ngdoc directive
  * @module contentful
@@ -11,22 +16,15 @@
  *
  */
 
-'use strict';
-
-angular.module('contentful').directive('cfAuthorsHelp', [
-  'require',
-  require => {
-    const { h, icons } = require('utils/legacy-html-hyperscript');
-    const helpModal = require('components/authors_help/helpModal.es6');
-    const LD = require('utils/LaunchDarkly');
-    const K = require('utils/kefir.es6');
-    const TokenStore = require('services/TokenStore.es6');
-    const getStore = require('TheStore').getStore;
+registerDirective('cfAuthorsHelp', [
+  '$state',
+  'utils/LaunchDarkly/index.es6',
+  'services/TokenStore.es6',
+  'components/authors_help/helpModal.es6',
+  'analytics/Analytics.es6',
+  'TheStore/index.es6',
+  ($state, LD, TokenStore, helpModal, Analytics, { getStore }) => {
     const store = getStore();
-    const $state = require('$state');
-    const Analytics = require('analytics/Analytics.es6');
-
-    const authorHelpFlag = 'feature-ps-12-2017-author-onboarding-help';
 
     return {
       restrict: 'E',
@@ -61,7 +59,7 @@ angular.module('contentful').directive('cfAuthorsHelp', [
 
             $scope.needFeedback = !store.get(feedbackKey);
 
-            LD.onFeatureFlag($scope, authorHelpFlag, variation => {
+            LD.onFeatureFlag($scope, AUTHOR_ONBOARDING_HELP, variation => {
               controller.needHelp = variation;
 
               // if the user has help, we'll try to show him it
