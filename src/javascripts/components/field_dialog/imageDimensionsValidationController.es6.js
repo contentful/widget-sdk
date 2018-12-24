@@ -1,4 +1,4 @@
-'use strict';
+import { registerController } from 'NgRegistry.es6';
 
 /**
  * Translate between the settings of the `assetImageDimension`
@@ -17,7 +17,7 @@
  * - `bounds.max`
  * - `bounds.exact`
  */
-angular.module('contentful').controller('ImageDimensionsValidationController', [
+registerController('ImageDimensionsValidationController', [
   '$scope',
   function($scope) {
     const controller = this;

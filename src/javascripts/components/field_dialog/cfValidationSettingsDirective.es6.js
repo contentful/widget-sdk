@@ -1,35 +1,32 @@
-'use strict';
-angular.module('contentful').directive('cfValidationSetting', [
-  'require',
-  require => {
-    const mimetype = require('@contentful/mimetype');
-    const validationViews = require('validationViews');
+import { registerDirective } from 'NgRegistry.es6';
+import mimetype from '@contentful/mimetype';
 
-    return {
-      scope: true,
-      restrict: 'E',
-      template: JST['cf_validation_settings'](),
-      controller: [
-        '$scope',
-        $scope => {
-          $scope.mimetypeGroups = mimetype.getGroupNames();
+registerDirective('cfValidationSetting', [
+  'validationViews',
+  validationViews => ({
+    scope: true,
+    restrict: 'E',
+    template: JST['cf_validation_settings'](),
+    controller: [
+      '$scope',
+      $scope => {
+        $scope.mimetypeGroups = mimetype.getGroupNames();
 
-          $scope.$watch('validation.currentView', () => {
-            validationViews.updateSettings($scope.validation);
-          });
+        $scope.$watch('validation.currentView', () => {
+          validationViews.updateSettings($scope.validation);
+        });
 
-          $scope.setMatchingView = () => {
-            $scope.validation.currentView = validationViews.getInitial($scope.validation);
-          };
-          $scope.setMatchingView();
+        $scope.setMatchingView = () => {
+          $scope.validation.currentView = validationViews.getInitial($scope.validation);
+        };
+        $scope.setMatchingView();
 
-          $scope.$watch('validation.enabled', isEnabled => {
-            if (!isEnabled) {
-              $scope.validate();
-            }
-          });
-        }
-      ]
-    };
-  }
+        $scope.$watch('validation.enabled', isEnabled => {
+          if (!isEnabled) {
+            $scope.validate();
+          }
+        });
+      }
+    ]
+  })
 ]);

@@ -1,4 +1,6 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
+import $ from 'jquery';
+
 /**
  * @ngdoc directive
  * @name cfPositionRelativeToWidgetList
@@ -14,34 +16,29 @@
  * reposition-when-scrolls=".widget-list"></cf-icon>
  *
  */
-angular.module('contentful').directive('cfPositionRelativeToWidgetList', [
-  'require',
-  require => {
-    const $ = require('jquery');
-    const defer = require('defer');
-    const debounce = require('debounce');
+registerDirective('cfPositionRelativeToWidgetList', [
+  'debounce',
+  'defer',
+  (debounce, defer) => ({
+    restrict: 'A',
+    link: function(_scope, elem, attrs) {
+      defer(reposition);
+      attrs.$observe('positionRelativeTo', reposition);
 
-    return {
-      restrict: 'A',
-      link: function(_scope, elem, attrs) {
-        defer(reposition);
-        attrs.$observe('positionRelativeTo', reposition);
+      const debouncedReposition = debounce(reposition, 50);
+      $(attrs.repositionWhenScrolls).on('scroll', debouncedReposition);
 
-        const debouncedReposition = debounce(reposition, 50);
-        $(attrs.repositionWhenScrolls).on('scroll', debouncedReposition);
+      elem.on('$destroy', () => {
+        $(attrs.repositionWhenScrolls).off('scroll', debouncedReposition);
+      });
 
-        elem.on('$destroy', () => {
-          $(attrs.repositionWhenScrolls).off('scroll', debouncedReposition);
-        });
-
-        function reposition() {
-          const relativeTo = $(attrs.positionRelativeTo);
-          if (relativeTo.get(0)) {
-            const newMargin = relativeTo.position().left + relativeTo.width() / 2;
-            elem.css('marginLeft', newMargin + 'px');
-          }
+      function reposition() {
+        const relativeTo = $(attrs.positionRelativeTo);
+        if (relativeTo.get(0)) {
+          const newMargin = relativeTo.position().left + relativeTo.width() / 2;
+          elem.css('marginLeft', newMargin + 'px');
         }
       }
-    };
-  }
+    }
+  })
 ]);
