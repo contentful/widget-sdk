@@ -1,6 +1,6 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
 
-angular.module('contentful').directive('cfSelectAllInput', () => ({
+registerDirective('cfSelectAllInput', () => ({
   restrict: 'A',
 
   link: function(_scope, el) {

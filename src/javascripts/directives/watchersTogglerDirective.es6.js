@@ -1,6 +1,9 @@
+import { registerDirective } from 'NgRegistry.es6';
+import angular from 'angular';
+
 // Based on
 // https://gist.github.com/RadoMark/fbd501b26e0c389c4135
-angular.module('contentful').directive('watchersToggler', [
+registerDirective('watchersToggler', [
   '$parse',
   '$timeout',
   ($parse, $timeout) => ({

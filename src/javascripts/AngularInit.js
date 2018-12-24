@@ -58,6 +58,24 @@ angular
       ngRequire('classes/entityListCache.es6');
       ngRequire('classes/spaceContext.es6');
 
+      // data
+      ngRequire('data/document/status.es6');
+
+      // debug
+      ngRequire('debug/XHR/cfMockXhrConsoleDirective.es6');
+
+      // directives
+      ngRequire('directives/bindHtmlCompileDirective.es6');
+      ngRequire('directives/cfFocusOnRenderDirective.es6');
+      ngRequire('directives/cfFocusOtInputDirective.es6');
+      ngRequire('directives/cfRelativeDatetime.es6');
+      ngRequire('directives/cfSchemaDirectives.es6');
+      ngRequire('directives/cfSelectAllInput.es6');
+      ngRequire('directives/cfValidateDirective.es6');
+      ngRequire('directives/cfWhenDisabled.es6');
+      ngRequire('directives/tooltipDirective.es6');
+      ngRequire('directives/watchersTogglerDirective.es6');
+
       // ui (cf.ui)
       ngRequire('ui/cfIconDirective.es6');
       ngRequire('ui/cfUiHint.es6');
