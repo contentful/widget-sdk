@@ -221,6 +221,12 @@ angular
       ngRequire('app/entity_editor/sidebarWidgetsController.es6');
       ngRequire('app/entity_editor/stateController.es6');
 
+      // app/entry_editor
+      ngRequire('app/entry_editor/cfEntryEditorDirective.es6');
+      ngRequire('app/entry_editor/cfWidgetApiDirective.es6');
+      ngRequire('app/entry_editor/entryActionsController.es6');
+      ngRequire('app/entry_editor/formWidgetsController.es6');
+
       // ui (cf.ui)
       ngRequire('ui/cfIconDirective.es6');
       ngRequire('ui/cfUiHint.es6');

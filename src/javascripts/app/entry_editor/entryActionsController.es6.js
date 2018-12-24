@@ -1,22 +1,31 @@
-'use strict';
+import { registerController } from 'NgRegistry.es6';
+import * as K from 'utils/kefir.es6';
+import { Notification } from 'app/entity_editor/Notifications.es6';
 
-angular.module('contentful').controller('EntryActionsController', [
+registerController('EntryActionsController', [
   '$scope',
-  'require',
+  '$state',
   'notify',
   'fields$',
   'entityInfo',
   'preferences',
-  function($scope, require, notify, fields$, entityInfo, preferences) {
+  'spaceContext',
+  'command', // Command
+  'analytics/Analytics.es6', // Analytics
+  'access_control/AccessChecker/index.es6', // accessChecker
+  function(
+    $scope,
+    $state,
+    notify,
+    fields$,
+    entityInfo,
+    preferences,
+    spaceContext,
+    Command,
+    Analytics,
+    accessChecker
+  ) {
     const controller = this;
-    const Command = require('command');
-    const spaceContext = require('spaceContext');
-    const $state = require('$state');
-    const Analytics = require('analytics/Analytics.es6');
-    const accessChecker = require('access_control/AccessChecker');
-    const K = require('utils/kefir.es6');
-    const Notification = require('app/entity_editor/Notifications.es6').Notification;
-
     let currentFields;
     K.onValueScope($scope, fields$, fields => {
       currentFields = fields;
