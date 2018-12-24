@@ -1,24 +1,18 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
+import * as Editors from '@contentful/field-editors';
 
-angular.module('contentful').directive('cfSingleLineEditor', [
-  'require',
-  require => {
-    const Editors = require('@contentful/field-editors');
+registerDirective('cfSingleLineEditor', () => ({
+  scope: {},
+  require: '^cfWidgetApi',
+  restrict: 'E',
+  link: function($scope, $el, _attributes, widgetApi) {
+    const editor = Editors.textInput(widgetApi);
+    $el.append(editor);
 
-    return {
-      scope: {},
-      require: '^cfWidgetApi',
-      restrict: 'E',
-      link: function($scope, $el, _attributes, widgetApi) {
-        const editor = Editors.textInput(widgetApi);
-        $el.append(editor);
-
-        // This is necessary to free the component for garbage collection.
-        // Otherwise the component is kept in a cache somewhere.
-        $scope.$on('$destroy', () => {
-          $el.empty();
-        });
-      }
-    };
+    // This is necessary to free the component for garbage collection.
+    // Otherwise the component is kept in a cache somewhere.
+    $scope.$on('$destroy', () => {
+      $el.empty();
+    });
   }
-]);
+}));

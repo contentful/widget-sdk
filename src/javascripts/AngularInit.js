@@ -84,6 +84,15 @@ angular
       ngRequire('directives/tooltipDirective.es6');
       ngRequire('directives/watchersTogglerDirective.es6');
 
+      // app/widgets
+      ngRequire('app/widgets/cfFileEditorDirective.es6');
+      ngRequire('app/widgets/number/cfNumberEditorDirective.es6');
+      ngRequire('app/widgets/selectionController.es6');
+      ngRequire('app/widgets/shared/cfEditorCharacterInfoDirective.es6');
+      ngRequire('app/widgets/single_line/cfSingleLineEditorDirective.es6');
+      ngRequire('app/widgets/slug/cfSlugEditorDirective.es6');
+      ngRequire('app/widgets/url/cfUrlEditorDirective.es6');
+
       // markdown_editor
       ngRequire('markdown_editor/cfMarkdownActionDirective.es6');
       ngRequire('markdown_editor/cfMarkdownEditorDirective.es6');
