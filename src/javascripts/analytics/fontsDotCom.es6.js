@@ -1,4 +1,4 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
 
 /**
  * @ngdoc service
@@ -16,14 +16,11 @@
  * our analytics policy. I think they don't
  * care that much :)
  */
-angular
-  .module('contentful')
-
-  .factory('fontsDotCom', [
-    'LazyLoader',
-    LazyLoader => ({
-      enable: function() {
-        LazyLoader.get('fontsDotCom');
-      }
-    })
-  ]);
+registerFactory('fontsDotCom', [
+  'LazyLoader',
+  LazyLoader => ({
+    enable: function() {
+      LazyLoader.get('fontsDotCom');
+    }
+  })
+]);

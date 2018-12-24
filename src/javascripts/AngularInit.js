@@ -29,6 +29,7 @@ angular
 
       ngRequire('components/client/ClientController.es6');
       ngRequire('components/shared/space-wizard/SpaceWizardDirective.es6');
+      ngRequire('analytics/bugsnag.es6');
 
       // access_control
       ngRequire('access_control/PolicyBuilder.es6');
@@ -44,6 +45,14 @@ angular
       ngRequire('account/cfNewOrganizationMembership.es6');
       ngRequire('account/handleGatekeeperMessage.es6');
       ngRequire('account/theAccountView.es6');
+
+      // analytics
+      ngRequire('analytics/analyticsConsole.es6');
+      ngRequire('analytics/events/customWidgets.es6');
+      ngRequire('analytics/events/persistentNotification.es6');
+      ngRequire('analytics/events/versioning.es6');
+      ngRequire('analytics/fontsDotCom.es6');
+      ngRequire('analytics/segment.es6');
 
       // classes
       ngRequire('classes/entityListCache.es6');
