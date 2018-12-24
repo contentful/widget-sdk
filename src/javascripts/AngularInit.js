@@ -78,7 +78,6 @@ angular
       ngRequire('directives/bindHtmlCompileDirective.es6');
       ngRequire('directives/cfFocusOnRenderDirective.es6');
       ngRequire('directives/cfFocusOtInputDirective.es6');
-      ngRequire('directives/cfRelativeDatetime.es6');
       ngRequire('directives/cfSchemaDirectives.es6');
       ngRequire('directives/cfSelectAllInput.es6');
       ngRequire('directives/cfValidateDirective.es6');
@@ -127,7 +126,6 @@ angular
       ngRequire('components/shared/cfDropdownToggleDirective.es6');
       ngRequire('components/shared/cfImgLoadEvent.es6');
       ngRequire('components/shared/cfSelectionDirective.es6');
-      ngRequire('components/shared/cfUserDirective.es6');
       ngRequire('components/shared/create_new_space/createNewSpaceDirective.es6');
       ngRequire('components/shared/dataSizeScaleController.es6');
       ngRequire('components/shared/endlessContainerDirective.es6');
