@@ -1,8 +1,11 @@
-'use strict';
+import { registerFilter } from 'NgRegistry.es6';
+import _ from 'lodash';
+import fileSize from 'file-size';
+import mimetype from '@contentful/mimetype';
+import hostnameTransformer from '@contentful/hostname-transformer';
+import { truncate, truncateMiddle } from 'utils/StringUtils.es6';
 
-let filters = angular.module('contentful');
-
-filters.filter('dateTime', () => unixTime => {
+registerFilter('dateTime', () => unixTime => {
   if (unixTime) {
     return new Date(unixTime).toLocaleString('de-DE');
   } else {
@@ -10,55 +13,29 @@ filters.filter('dateTime', () => unixTime => {
   }
 });
 
-filters.filter('isEmpty', [
-  'require',
-  require => {
-    const _ = require('lodash');
-    return _.isEmpty;
-  }
-]);
+registerFilter('isEmpty', () => _.isEmpty);
+registerFilter('isArray', () => _.isArray);
+registerFilter('fileSize', () => fileSizeInByte => fileSize(fileSizeInByte).human('si'));
 
-filters.filter('isArray', [
-  'require',
-  require => {
-    const _ = require('lodash');
-    return _.isArray;
+registerFilter('mimeGroup', () => file => {
+  if (file) {
+    return mimetype.getGroupName({
+      type: file.contentType,
+      fallbackFileName: file.fileName
+    });
   }
-]);
+});
 
-filters.filter('fileSize', [
-  'require',
-  require => fileSizeInByte => {
-    const fileSize = require('file-size');
-
-    return fileSize(fileSizeInByte).human('si');
+registerFilter('fileType', () => file => {
+  if (file) {
+    return mimetype.getGroupName({
+      type: file.contentType,
+      fallbackFileName: file.fileName
+    });
   }
-]);
 
-filters.filter('mimeGroup', [
-  '@contentful/mimetype',
-  mimetype => file => {
-    if (file) {
-      return mimetype.getGroupName({
-        type: file.contentType,
-        fallbackFileName: file.fileName
-      });
-    }
-  }
-]);
-
-filters.filter('fileType', [
-  '@contentful/mimetype',
-  mimetype => file => {
-    if (file) {
-      return mimetype.getGroupName({
-        type: file.contentType,
-        fallbackFileName: file.fileName
-      });
-    }
-    return '';
-  }
-]);
+  return '';
+});
 
 /**
  * Asset URLs are always hardcoded to the host `TYPE.contentful.com`.
@@ -66,10 +43,9 @@ filters.filter('fileType', [
  * `/token` endpoint. The token has a domain map mapping `TYPE` to the
  * actual domain. This is used to replace the hosts.
  */
-filters.filter('assetUrl', [
-  '@contentful/hostname-transformer',
+registerFilter('assetUrl', [
   'services/TokenStore.es6',
-  (hostnameTransformer, TokenStore) => assetOrUrl => {
+  TokenStore => assetOrUrl => {
     const domains = TokenStore.getDomains();
     if (domains) {
       return hostnameTransformer.toExternal(assetOrUrl, domains);
@@ -79,18 +55,15 @@ filters.filter('assetUrl', [
   }
 ]);
 
-filters.filter('fileExtension', [
-  '@contentful/mimetype',
-  mimetype => file => {
-    if (file) {
-      const ext = mimetype.getExtension(file.fileName);
-      return ext ? ext.slice(1) : '';
-    }
-    return '';
+registerFilter('fileExtension', () => file => {
+  if (file) {
+    const ext = mimetype.getExtension(file.fileName);
+    return ext ? ext.slice(1) : '';
   }
-]);
+  return '';
+});
 
-filters.filter('userNameDisplay', () => (currentUser, user) => {
+registerFilter('userNameDisplay', () => (currentUser, user) => {
   if (!currentUser || !user) {
     return '';
   } else if (currentUser.sys.id === user.sys.id) {
@@ -100,7 +73,7 @@ filters.filter('userNameDisplay', () => (currentUser, user) => {
   }
 });
 
-filters.filter('decimalMarks', () => str => {
+registerFilter('decimalMarks', () => str => {
   str = str ? str + '' : '';
   let markedStr = '';
   let i = str.length;
@@ -110,28 +83,18 @@ filters.filter('decimalMarks', () => str => {
   return str.slice(0, i < 0 ? 3 + i : i) + (str.length > 3 ? markedStr : '');
 });
 
-filters.filter('displayedFieldName', [
-  'require',
-  require => {
-    const _ = require('lodash');
-    return field =>
-      _.isEmpty(field.name)
-        ? _.isEmpty(field.id)
-          ? 'Untitled field'
-          : 'ID: ' + field.id
-        : field.name;
-  }
-]);
+registerFilter('displayedFieldName', () => {
+  return field =>
+    _.isEmpty(field.name)
+      ? _.isEmpty(field.id)
+        ? 'Untitled field'
+        : 'ID: ' + field.id
+      : field.name;
+});
 
-filters.filter('isDisplayableAsTitle', () => field =>
+registerFilter('isDisplayableAsTitle', () => field =>
   field.type === 'Symbol' || field.type === 'Text'
 );
 
-filters.filter('truncate', ['utils/StringUtils.es6', stringUtils => stringUtils.truncate]);
-
-filters.filter('truncateMiddle', [
-  'utils/StringUtils.es6',
-  stringUtils => stringUtils.truncateMiddle
-]);
-
-filters = null;
+registerFilter('truncate', () => truncate);
+registerFilter('truncateMiddle', () => truncateMiddle);

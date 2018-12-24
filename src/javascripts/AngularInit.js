@@ -39,6 +39,7 @@ angular
       ngRequire('components/shared/space-wizard/SpaceWizardDirective.es6');
       ngRequire('analytics/bugsnag.es6');
       ngRequire('services/lazyLoader.es6');
+      ngRequire('filters.es6');
 
       // access_control
       ngRequire('access_control/PolicyBuilder.es6');

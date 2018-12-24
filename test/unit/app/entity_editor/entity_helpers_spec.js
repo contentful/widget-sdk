@@ -1,4 +1,3 @@
-'use strict';
 import _ from 'lodash';
 
 describe('EntityHelpers', () => {
@@ -9,7 +8,7 @@ describe('EntityHelpers', () => {
 
   beforeEach(function() {
     module('contentful/test', $provide => {
-      $provide.value('assetUrlFilter', _.constant(REWRITTEN_URL));
+      $provide.constant('assetUrlFilter', _.constant(REWRITTEN_URL));
     });
 
     this.spaceContext = this.$inject('mocks/spaceContext').init();
