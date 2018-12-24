@@ -1,7 +1,7 @@
 import { uniq, flow, flatMap } from 'lodash/fp';
 import Parser from 'path-parser';
 
-import { TEAMS, ORG_MEMBERS } from './dataSets.es6';
+import { TEAMS, USERS } from './dataSets.es6';
 
 const ROUTES = {
   organization: {
@@ -9,7 +9,7 @@ const ROUTES = {
     children: {
       teams: {
         path: '/teams',
-        requiredDataSets: [ORG_MEMBERS, TEAMS],
+        requiredDataSets: [USERS, TEAMS],
         children: {
           team: { path: '/:teamId' }
         }
@@ -37,10 +37,9 @@ export function getRequiredDataSets(path, routes = ROUTES) {
   }
   return flow(
     flatMap(({ partialTest, children, requiredDataSets = [] }) => {
-        const dataSets = partialTest(path) ? requiredDataSets : [];
-        return children ? dataSets.concat(getRequiredDataSets(path, children)) : dataSets;
-      }
-    ),
+      const dataSets = partialTest(path) ? requiredDataSets : [];
+      return children ? dataSets.concat(getRequiredDataSets(path, children)) : dataSets;
+    }),
     uniq
   )(Object.values(routes));
 }

@@ -11,46 +11,26 @@ export default class TeamForm extends React.Component {
     orgId: PropTypes.string.isRequired,
     onClose: PropTypes.func.isRequired,
     initialTeam: TeamPropType,
-    onTeamCreated: PropTypes.func,
     onConfirm: PropTypes.func
+  };
+
+  static defaultProps = {
+    initialTeam: { name: '', description: '' }
   };
 
   isEditing = Boolean(this.props.initialTeam);
   service = createTeamService(this.props.orgId);
 
-  state = {
-    name: this.isEditing ? this.props.initialTeam.name : '',
-    description: this.isEditing ? this.props.initialTeam.description : ''
-  };
+  state = this.props.initialTeam;
 
   onConfirm = async () => {
+    const { onConfirm } = this.props;
     const { name, description } = this.state;
 
     if (!this.isValid()) {
       this.setState({ validationMessage: 'Please insert a name' });
     } else {
-      this.setState({
-        busy: true,
-        validationMessage: ''
-      });
-
-      try {
-        if (this.isEditing) {
-          await this.service.update({ ...this.props.initialTeam, name, description });
-          Notification.success(`Team updated successfully`);
-        } else {
-          const newTeam = await this.service.create({ name, description });
-          Notification.success(`Team ${name} created successfully`);
-          this.props.onTeamCreated(newTeam);
-          this.props.onClose();
-        }
-      } catch (e) {
-        Notification.error(e.message);
-      }
-
-      this.setState({
-        busy: false
-      });
+      onConfirm({ name, description });
     }
   };
 
@@ -72,7 +52,7 @@ export default class TeamForm extends React.Component {
 
     return (
       <React.Fragment>
-        <Modal.Header title={this.isEditing ? 'Edit team' : 'New team'} onClose={this.onClose} />
+        <Modal.Header title={this.isEditing ? 'Edit team' : 'New team'} onClose={this.onClose}/>
         <Modal.Content>
           <p>Teams make it easy to group people together.</p>
           <TextField

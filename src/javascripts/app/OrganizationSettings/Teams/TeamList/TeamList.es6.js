@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import pluralize from 'pluralize';
+import { connect } from 'react-redux';
 
 import {
   Button,
@@ -8,19 +9,26 @@ import {
   TableRow,
   TableHead,
   TableBody,
-  TableCell
+  TableCell, Modal
 } from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
-import TeamFormDialog from '../TeamFormDialog.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import { href } from 'states/Navigator.es6';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
+import { getAllTeams } from 'redux/selectors/teams.es6';
+import TeamForm from '../TeamForm.es6';
 
-export default class TeamList extends React.Component {
+export default connect(
+  state => ({
+    teams: getAllTeams(state)
+  }),
+  dispatch => ({
+    submitNewTeam: team => dispatch({ type: 'SUBMIT_NEW_TEAM', payload: { team } })
+  })
+)(class TeamList extends React.Component {
   static propTypes = {
-    orgId: PropTypes.string.isRequired,
-    total: PropTypes.number.isRequired,
-    initialTeams: PropTypes.arrayOf(TeamPropType)
+    teams: PropTypes.arrayOf(TeamPropType).isRequired,
+    submitNewTeam: PropTypes.func.isRequired
   };
 
   static getLinkToTeam(team) {
@@ -30,20 +38,15 @@ export default class TeamList extends React.Component {
     });
   }
 
-  state = {
-    teams: this.props.initialTeams
-  };
-
-  addTeam = () => {
+  addTeam = () =>
     ModalLauncher.open(({ onClose, isShown }) => (
-      <TeamFormDialog
-        orgId={this.props.orgId}
-        isShown={isShown}
-        onClose={onClose}
-        onTeamCreated={this.handleTeamCreated}
-      />
+      <Modal isShown={isShown} onClose={onClose}>
+        <TeamForm
+          onClose={onClose}
+          onConfirm={this.props.submitNewTeam}
+        />
+      </Modal>
     ));
-  };
 
   handleTeamCreated = team => {
     this.setState({ teams: [team, ...this.state.teams] });
@@ -88,4 +91,4 @@ export default class TeamList extends React.Component {
       </Workbench>
     );
   }
-}
+});

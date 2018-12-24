@@ -1,2 +1,2 @@
-export const ORG_MEMBERS = 'org_members';
+export const USERS = 'users';
 export const TEAMS = 'teams';

@@ -6,6 +6,7 @@ import resources from './resources.es6';
 import statePersistence from './statePersistence.es6';
 import token from './token.es6';
 import location from './location.es6';
+import datasets from './datasets.es6';
 
 export default combineReducers({
   location,
@@ -13,5 +14,6 @@ export default combineReducers({
   resources,
   spaceWizard,
   statePersistence,
-  token
+  token,
+  datasets
 });
