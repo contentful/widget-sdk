@@ -1,15 +1,13 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
+import _ from 'lodash';
+import { Notification } from '@contentful/forma-36-react-components';
 
-angular.module('contentful').factory('entityCreator', [
-  'require',
-  require => {
-    const _ = require('lodash');
-    const { Notification } = require('@contentful/forma-36-react-components');
-    const logger = require('logger');
-    const enforcements = require('access_control/Enforcements.es6');
-    const spaceContext = require('spaceContext');
-    const $q = require('$q');
-
+registerFactory('entityCreator', [
+  '$q',
+  'logger',
+  'spaceContext',
+  'access_control/Enforcements.es6',
+  ($q, logger, spaceContext, enforcements) => {
     return {
       newEntry: newEntry,
       newAsset: newAsset

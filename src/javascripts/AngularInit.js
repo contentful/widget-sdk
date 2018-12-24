@@ -157,6 +157,9 @@ angular
       ngRequire('components/tabs/entry_list/viewCustomizerDirective.es6');
       ngRequire('components/tabs/listActionsController.es6');
 
+      ngRequire('components/app_container/cfAppContainerDirective.es6');
+      ngRequire('components/app_container/entityCreator.es6');
+
       // ui (cf.ui)
       ngRequire('ui/cfIconDirective.es6');
       ngRequire('ui/cfUiHint.es6');
