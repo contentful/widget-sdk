@@ -5,9 +5,8 @@ import UserFetcher from 'components/shared/UserFetcher/index.es6';
 import UserNameFormatter from './index.es6';
 
 /**
- * Component renders user name or Me if the user id matches logged in user.
- * Should be used only for the string presentation, if you need more advanced formatting,
- * consider extracting <UserFetcher /> component.
+ * A wrapper around UserNameFormatter that fetches user and passes the data
+ * further to the Formatter.
  *
  * @class UserNameFormatter
  * @extends {Component}

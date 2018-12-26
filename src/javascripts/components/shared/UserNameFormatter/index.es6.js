@@ -6,11 +6,12 @@ import { connect } from 'react-redux';
  * Component renders user name or Me if the user id matches logged in user.
  * Should be used only for the string presentation, if you need more advanced formatting,
  * consider using in combination with <UserFetcher /> component.
+ * Could be converted to a selector in future.
  *
  * @class UserNameFormatter
  * @extends {Component}
  */
-class UserNameFormatter extends Component {
+export class UserNameFormatter extends Component {
   static propTypes = {
     user: PropTypes.object,
     currentUser: PropTypes.object
