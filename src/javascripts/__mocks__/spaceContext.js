@@ -2,6 +2,9 @@ export default {
   user: {
     email: 'someone-from@contenful.com'
   },
+  users: {
+    get: jest.fn().mockResolvedValue({})
+  },
   cma: {
     createExtension: jest.fn().mockResolvedValue({}),
     deleteExtension: jest.fn().mockResolvedValue({}),
