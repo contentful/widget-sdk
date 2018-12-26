@@ -2,7 +2,7 @@ const moduleVisitor = require('eslint-module-utils/moduleVisitor');
 
 const resolve = require('eslint-module-utils/resolve');
 const ImportType = require('eslint-plugin-import/lib/core/importType');
-const path = require('path');
+// const path = require('path');
 
 module.exports = {
   meta: {},
@@ -18,34 +18,21 @@ module.exports = {
         return;
       }
 
-      const absDepPath = resolve.default(depPath, context);
+      if (depPath.split('..').length > 2) {
+        const absDepPath = resolve.default(depPath, context);
+        let additionalMessage = '';
 
-      if (!absDepPath) {
-        if (depPath.includes('./') || depPath.includes('../')) {
-          context.report({
-            node: sourceNode,
-            message: `Counldn't resolve '${depPath}'`
-          });
-        }
-        // unable to resolve path
-        return;
-      }
-
-      const relDepPath = path.relative(path.dirname(myPath), absDepPath);
-
-      if (ImportType.default(relDepPath, context) === 'parent' && relDepPath.includes('../..')) {
-        let suggestedImport = '';
         try {
-          suggestedImport = absDepPath.split('src/javascripts/')[1].replace('.js', '');
+          const suggestedImport = absDepPath.split('src/javascripts/')[1].replace('.js', '');
+          additionalMessage = `Import \`${suggestedImport}\` instead of \`${depPath}\` or move file closer in the folder tree.`;
         } catch (e) {
-          //
+          additionalMessage =
+            'Make the import absolute or move the file closer in the folder tree.';
         }
 
         context.report({
           node: sourceNode,
-          message:
-            'Deep parent relative imports are not allowed. ' +
-            `Please import \`${suggestedImport}\` instead of \`${relDepPath}\` or move file closer in the folder tree.`
+          message: `Deep parent relative imports are not allowed. ${additionalMessage}`
         });
       }
     }
