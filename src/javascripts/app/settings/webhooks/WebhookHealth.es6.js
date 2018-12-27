@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import spaceContext from 'spaceContext';
+import { getModule } from 'NgRegistry.es6';
+
+const spaceContext = getModule('spaceContext');
 
 const THRESHOLD = { WARNING: 70, SUCCESS: 90 };
 

@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { h } from 'ui/Framework';
+import { h } from 'ui/Framework/index.es6';
 import { byName as Colors } from 'Styles/Colors.es6';
 import { assign } from 'utils/Collections.es6';
 import { container, vspace } from 'ui/Layout.es6';

@@ -6,11 +6,12 @@ import * as C from 'utils/Concurrent.es6';
 import { match, makeCtor } from 'utils/TaggedValues.es6';
 import * as Environment from 'data/CMA/SpaceEnvironmentsRepo.es6';
 
-import logger from 'logger';
-import { open as openDialog } from 'modalDialog';
-
 import { bindActions, createStore, makeReducer } from 'ui/Framework/Store.es6';
 import render from './EditDialogView.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const logger = getModule('logger');
+const { open: openDialog } = getModule('modalDialog');
 
 // Actions
 const SetFieldValue = makeCtor('SetFieldValue');

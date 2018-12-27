@@ -1,14 +1,15 @@
 import React from 'react';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
-import spaceContext from 'spaceContext';
 import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 import Icon from 'ui/Components/Icon.es6';
 import { websiteUrl } from 'Config.es6';
 import { track } from 'analytics/Analytics.es6';
-import $state from '$state';
 import getOrganizationStatus from 'data/OrganizationStatus.es6';
+import { UPGRADE_PRICING_FLAG } from 'featureFlags.es6';
+import { getModule } from 'NgRegistry.es6';
 
-const FLAG_NAME = 'feature-dl-09-2018-upgrade-pricing-space-home';
+const $state = getModule('$state');
+const spaceContext = getModule('spaceContext');
 
 export default class UpgradePricing extends React.Component {
   state = {};
@@ -36,7 +37,7 @@ export default class UpgradePricing extends React.Component {
     const org = spaceContext.getData('organization');
     const showUpgrade = await this.shouldShow(org);
 
-    const variation = await getCurrentVariation(FLAG_NAME);
+    const variation = await getCurrentVariation(UPGRADE_PRICING_FLAG);
     this.setState({
       flag: variation,
       show: showUpgrade

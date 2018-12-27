@@ -1,8 +1,9 @@
-import { getSlideInEntities, goToSlideInEntity } from 'navigation/SlideInNavigator';
 import { track } from 'analytics/Analytics.es6';
 import { findIndex } from 'lodash';
+import { onFeatureFlag } from 'utils/LaunchDarkly/index.es6';
+import { getModule } from 'NgRegistry.es6';
 
-import { onFeatureFlag } from 'utils/LaunchDarkly';
+const { getSlideInEntities, goToSlideInEntity } = getModule('navigation/SlideInNavigator');
 
 const { setTimeout, clearTimeout } = window;
 

@@ -1,4 +1,4 @@
-import { makeHook } from 'ui/Framework/Hooks';
+import { makeHook } from 'ui/Framework/Hooks/index.es6';
 
 export const IsOverflownY = makeHook(el => {
   if (el) {

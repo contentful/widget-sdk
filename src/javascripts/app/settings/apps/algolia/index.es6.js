@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { getModule } from 'NgRegistry.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import createFetcherComponent from 'app/common/createFetcherComponent.es6';
 import AppPageShell from '../_common/AppPageShell.es6';
 import * as AppsFeatureFlag from '../AppsFeatureFlag.es6';
 
-import spaceContext from 'spaceContext';
-
 import AlgoliaAppPage from './Container.es6';
+
+const spaceContext = getModule('spaceContext');
 
 const AlgoliaFetcher = createFetcherComponent(async ({ client }) => {
   await AppsFeatureFlag.assertIsEnabled();

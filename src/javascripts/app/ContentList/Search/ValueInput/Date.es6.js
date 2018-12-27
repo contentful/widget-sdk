@@ -1,7 +1,9 @@
 import moment from 'moment';
-import { h } from 'ui/Framework';
-import * as H from 'ui/Framework/Hooks';
-import DatePicker from 'datepicker';
+import { h } from 'ui/Framework/index.es6';
+import * as H from 'ui/Framework/Hooks/index.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const DatePicker = getModule('datepicker');
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 

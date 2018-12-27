@@ -8,12 +8,14 @@ import {
   TextField,
   TextLink
 } from '@contentful/forma-36-react-components';
-import FetchedEntityCard from 'app/widgets/rich_text/plugins/shared/FetchedEntityCard';
-import Dialog from 'app/entity_editor/Components/Dialog';
-import AngularComponent from 'AngularComponent';
+import FetchedEntityCard from 'app/widgets/rich_text/plugins/shared/FetchedEntityCard/index.es6';
+import Dialog from 'app/entity_editor/Components/Dialog/index.es6';
 import { noop, values, includes } from 'lodash';
 import { calculateIdealListHeight, getLabels } from 'search/EntitySelector/Config.es6';
 import Visible from 'components/shared/Visible/index.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const AngularComponent = getModule('AngularComponent');
 
 export const LINK_TYPES = {
   URI: 'uri',

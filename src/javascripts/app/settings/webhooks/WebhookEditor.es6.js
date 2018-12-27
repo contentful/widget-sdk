@@ -7,9 +7,11 @@ import WebhookForm from './WebhookForm.es6';
 import WebhookSidebar from './WebhookSidebar.es6';
 import * as WebhookEditorActions from './WebhookEditorActions.es6';
 import WebhookRemovalDialog from './dialogs/WebhookRemovalDialog.es6';
-import spaceContext from 'spaceContext';
-import $state from '$state';
 import WebhookActivityLog from './WebhookActivityLog.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const spaceContext = getModule('spaceContext');
+const $state = getModule('$state');
 
 const TABS = { SETTINGS: 1, LOG: 2 };
 

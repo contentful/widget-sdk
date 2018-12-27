@@ -1,5 +1,5 @@
 import { get as getAtPath } from 'lodash';
-import { h } from 'ui/Framework';
+import { h } from 'ui/Framework/index.es6';
 
 import ViewFolder from './ViewFolder.es6';
 import openInputDialog from 'app/InputDialog.es6';

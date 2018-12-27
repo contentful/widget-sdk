@@ -1,18 +1,8 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import mockedSpaceContext from 'spaceContext';
-import mockedContentPreview from 'contentPreview';
+import mockedSpaceContext from 'ng/spaceContext';
+import mockedContentPreview from 'ng/contentPreview';
 import SidebarContentPreviewContainer from './SidebarContentPreviewContainer.es6';
-
-jest.mock(
-  'contentPreview',
-  () => ({
-    replaceVariablesInUrl: jest.fn(),
-    getForContentType: jest.fn(),
-    getSelected: jest.fn()
-  }),
-  { virtual: true }
-);
 
 const contentPreviews = [
   {

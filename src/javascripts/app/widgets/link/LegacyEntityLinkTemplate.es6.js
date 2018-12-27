@@ -1,4 +1,4 @@
-import { h } from 'utils/legacy-html-hyperscript';
+import { h } from 'utils/legacy-html-hyperscript/index.es6';
 import * as Colors from 'Styles/Colors.es6';
 import { dragHandle, status, titleText, actions } from './TemplateCommons.es6';
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import Enzyme from 'enzyme';
 import StateLink from './StateLink.es6';
-import $stateMocked from '$state';
+import $stateMocked from 'ng/$state';
 
 describe('StateLink', () => {
   beforeEach(() => {

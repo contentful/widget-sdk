@@ -1,8 +1,8 @@
 import React from 'react';
 import Enzyme from 'enzyme';
 import ExtensionsListRoute from './ExtensionsListRoute.es6';
-import spaceContextMocked from 'spaceContext';
-import $stateMocked from '$state';
+import spaceContextMocked from 'ng/spaceContext';
+import $stateMocked from 'ng/$state';
 
 describe('ExtensionsListRoute', () => {
   beforeEach(() => {

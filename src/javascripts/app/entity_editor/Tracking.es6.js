@@ -2,7 +2,9 @@ import { get, flatten, uniqBy } from 'lodash';
 import { track } from 'analytics/Analytics.es6';
 import { stateName } from 'data/CMA/EntityState.es6';
 import * as K from 'utils/kefir.es6';
-import spaceContext from 'spaceContext';
+import { getModule } from 'NgRegistry.es6';
+
+const spaceContext = getModule('spaceContext');
 
 export default function install(entityInfo, document, lifeline$) {
   K.onValueWhile(lifeline$, document.resourceState.stateChange$, data => {

@@ -3,8 +3,10 @@ import PropTypes from 'prop-types';
 import WebhookEditor from '../WebhookEditor.es6';
 import AdminOnly from 'app/common/AdminOnly.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
-import spaceContext from 'spaceContext';
 import StateRedirect from 'app/common/StateRedirect.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const spaceContext = getModule('spaceContext');
 
 const WebhookFetcher = createFetcherComponent(props => {
   return spaceContext.webhookRepo.get(props.webhookId);

@@ -2,7 +2,9 @@ import { reduce, without, camelCase } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { track } from 'analytics/Analytics.es6';
-import logger from 'logger';
+import { getModule } from 'NgRegistry.es6';
+
+const logger = getModule('logger');
 
 const getCountOrNull = count => (typeof count === 'number' ? count : null);
 

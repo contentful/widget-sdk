@@ -11,7 +11,9 @@ import { byName as Colors } from 'Styles/Colors.es6';
 
 import { Notification } from '@contentful/forma-36-react-components';
 import { fetchAll } from 'data/CMA/FetchAll.es6';
-import { open as openDialog } from 'modalDialog';
+import { getModule } from 'NgRegistry.es6';
+
+const { open: openDialog } = getModule('modalDialog');
 
 /**
  * @ngdoc service

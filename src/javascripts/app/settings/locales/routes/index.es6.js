@@ -1,7 +1,9 @@
 import _ from 'lodash';
-import leaveConfirmator from 'navigation/confirmLeaveEditor';
 import * as ChangeSpaceService from 'services/ChangeSpaceService.es6';
 import * as Enforcements from 'access_control/Enforcements.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const leaveConfirmator = getModule('navigation/confirmLeaveEditor');
 
 export default {
   name: 'locales',

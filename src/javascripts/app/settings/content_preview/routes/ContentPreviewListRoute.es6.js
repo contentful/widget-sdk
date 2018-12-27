@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { values } from 'lodash';
-import * as AccessChecker from 'access_control/AccessChecker';
+import * as AccessChecker from 'access_control/AccessChecker/index.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
-import contentPreview from 'contentPreview';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import ContentPreviewListPage from '../ContentPreviewListPage.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const contentPreview = getModule('contentPreview');
 
 const ContentPreviewsFetcher = createFetcherComponent(() => {
   return contentPreview.getAll().then(previews => values(previews));

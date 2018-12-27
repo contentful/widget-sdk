@@ -3,9 +3,9 @@ import { match, makeCtor } from 'utils/TaggedValues.es6';
 import { caseofEq, otherwise } from 'sum-types';
 import * as C from 'utils/Concurrent.es6';
 import { bindActions, createStore, makeReducer } from 'ui/Framework/Store.es6';
-import * as LD from 'utils/LaunchDarkly';
+import * as LD from 'utils/LaunchDarkly/index.es6';
 
-import * as accessChecker from 'access_control/AccessChecker';
+import * as accessChecker from 'access_control/AccessChecker/index.es6';
 import createResourceService from 'services/ResourceService.es6';
 import { isLegacyOrganization, canCreate } from 'utils/ResourceUtils.es6';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';

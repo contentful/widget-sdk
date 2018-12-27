@@ -1,20 +1,11 @@
-import $controller from '$controller';
-import $rootScope from '$rootScope';
-
 import { deepFreeze } from 'utils/Freeze.es6';
 import * as K from 'utils/kefir.es6';
 import { truncate } from 'utils/StringUtils.es6';
 import { cloneDeep, find, constant } from 'lodash';
 
-import spaceContext from 'spaceContext';
-import localeStore from 'TheLocaleStore';
 import contextHistory from 'navigation/Breadcrumbs/History.es6';
-import $state from '$state';
 import { user$ } from 'services/TokenStore.es6';
-import logger from 'logger';
 
-import DataFields from 'EntityEditor/DataFields';
-import ContentTypes from 'data/ContentTypes';
 import * as crumbFactory from 'navigation/Breadcrumbs/Factory.es6';
 
 import * as Validator from './Validator.es6';
@@ -24,7 +15,17 @@ import { makeNotify } from './Notifications.es6';
 import installTracking, { trackEntryView } from './Tracking.es6';
 
 import { loadEntry } from 'app/entity_editor/DataLoader.es6';
-import { onFeatureFlag } from 'utils/LaunchDarkly';
+import { onFeatureFlag } from 'utils/LaunchDarkly/index.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const $controller = getModule('$controller');
+const $rootScope = getModule('$rootScope');
+const spaceContext = getModule('spaceContext');
+const localeStore = getModule('TheLocaleStore');
+const $state = getModule('$state');
+const logger = getModule('logger');
+const DataFields = getModule('EntityEditor/DataFields');
+const ContentTypes = getModule('data/ContentTypes');
 
 const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG = 'feature-at-05-2018-sliding-entry-editor-multi-level';
 

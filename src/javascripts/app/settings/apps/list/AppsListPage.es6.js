@@ -8,7 +8,9 @@ import AppsFeedback from '../AppsFeedback.es6';
 import { Note, Button } from '@contentful/forma-36-react-components';
 
 import * as Analytics from 'analytics/Analytics.es6';
-import intercom from 'intercom';
+import { getModule } from 'NgRegistry.es6';
+
+const intercom = getModule('intercom');
 
 const AppsListShell = props => (
   <Workbench>

@@ -1,10 +1,10 @@
 import { cloneDeep, get, uniqBy } from 'lodash';
-
-import contentPreview from 'contentPreview';
-import spaceContext from 'spaceContext';
-
 import { getPostPublishUrl } from './BuildButton/PubNubClient.es6';
 import * as NetlifyClient from './NetlifyClient.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const contentPreview = getModule('contentPreview');
+const spaceContext = getModule('spaceContext');
 
 const ARTIFACT_KEYS = ['buildHookUrl', 'buildHookId', 'contentPreviewId'];
 const NETLIFY_HOOK_EVENTS = ['deploy_building', 'deploy_created', 'deploy_failed'];

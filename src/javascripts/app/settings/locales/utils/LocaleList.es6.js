@@ -1,5 +1,7 @@
-import localesList from 'localesList';
 import _ from 'lodash';
+import { getModule } from 'NgRegistry.es6';
+
+const localesList = getModule('localesList');
 
 /**
  * Data-only operations performed on the list of locales.

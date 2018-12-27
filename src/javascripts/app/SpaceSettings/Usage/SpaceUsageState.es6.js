@@ -1,4 +1,4 @@
-import { can } from 'access_control/AccessChecker';
+import { can } from 'access_control/AccessChecker/index.es6';
 
 export default {
   name: 'usage',

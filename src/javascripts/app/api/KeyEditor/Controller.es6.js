@@ -1,24 +1,23 @@
 import { assign, get, inRange, isEqual } from 'lodash';
-import Command from 'command';
 import { truncate } from 'utils/StringUtils.es6';
 import { deepFreeze } from 'utils/Freeze.es6';
 import { concat } from 'utils/Collections.es6';
-
-import leaveConfirmator from 'navigation/confirmLeaveEditor';
-import spaceContext from 'spaceContext';
-import logger from 'logger';
-import * as accessChecker from 'access_control/AccessChecker';
-import $state from '$state';
+import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as LD from 'utils/LaunchDarkly/index.es6';
 import { Notification } from '@contentful/forma-36-react-components';
 import { track } from 'analytics/Analytics.es6';
-import * as LD from 'utils/LaunchDarkly';
-import * as Intercom from 'intercom';
+import { CONTACT_US_BOILERPLATE_FLAG, ENVIRONMENTS_FLAG } from 'featureFlags.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const $state = getModule('$state');
+const Command = getModule('command');
+const leaveConfirmator = getModule('navigation/confirmLeaveEditor');
+const spaceContext = getModule('spaceContext');
+const logger = getModule('logger');
+const Intercom = getModule('intercom');
 
 import initKeyEditor from './KeyEditor.es6';
 import { get as getBoilerplates } from './BoilerplateCode.es6';
-
-const CONTACT_US_BOILERPLATE_FLAG_NAME = 'feature-ps-10-2017-contact-us-boilerplate';
-const ENVIRONMENTS_FLAG_NAME = 'feature-dv-11-2017-environments';
 
 // Pass $scope and API Key, the editor will get rendered and the
 // following properties are exposed as `$scope.apiKeyEditor`:
@@ -44,7 +43,7 @@ function mountBoilerplates($scope, apiKey) {
 }
 
 function mountContactUs($scope) {
-  LD.onFeatureFlag($scope, CONTACT_US_BOILERPLATE_FLAG_NAME, flag => {
+  LD.onFeatureFlag($scope, CONTACT_US_BOILERPLATE_FLAG, flag => {
     if (flag && Intercom.isEnabled()) {
       $scope.contactUsProps = {
         track: () =>
@@ -115,7 +114,7 @@ function mountKeyEditor($scope, apiKey, spaceEnvironments) {
     });
 
   reinitKeyEditor();
-  LD.onFeatureFlag($scope, ENVIRONMENTS_FLAG_NAME, reinitKeyEditor);
+  LD.onFeatureFlag($scope, ENVIRONMENTS_FLAG, reinitKeyEditor);
 
   $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
   $scope.apiKeyEditor = {

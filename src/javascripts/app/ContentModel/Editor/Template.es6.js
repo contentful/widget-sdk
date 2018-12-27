@@ -1,5 +1,5 @@
 import { range } from 'lodash';
-import { h, icons } from 'utils/legacy-html-hyperscript';
+import { h, icons } from 'utils/legacy-html-hyperscript/index.es6';
 import { vheight } from 'ui/Layout.es6';
 
 /**

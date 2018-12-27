@@ -1,9 +1,10 @@
-/* global requestAnimationFrame */
 import { cloneDeep } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import keycodes from 'utils/keycodes.es6';
-import entitySelector from 'entitySelector';
+import { getModule } from 'NgRegistry.es6';
+
+const entitySelector = getModule('entitySelector');
 
 export default function FilterValueReference({
   ctField = {},

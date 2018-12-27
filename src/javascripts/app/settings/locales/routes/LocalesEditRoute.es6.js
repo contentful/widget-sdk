@@ -10,8 +10,10 @@ import LocaleNotifications from '../utils/LocaleNotifications.es6';
 import LocaleRemovalConfirmDialog from '../dialogs/LocaleRemovalConfirmDialog.es6';
 import ChooseNewFallbackLocaleDialog from '../dialogs/ChooseNewFallbackLocaleDialog.es6';
 import LocaleCodeChangeConfirmation from '../dialogs/LocaleCodeChangeConfirmDialog.es6';
-import spaceContext from 'spaceContext';
-import TheLocaleStore from 'TheLocaleStore';
+import { getModule } from 'NgRegistry.es6';
+
+const spaceContext = getModule('spaceContext');
+const TheLocaleStore = getModule('TheLocaleStore');
 
 const LocalesFetcher = createFetcherComponent(() => {
   return spaceContext.localeRepo.getAll();

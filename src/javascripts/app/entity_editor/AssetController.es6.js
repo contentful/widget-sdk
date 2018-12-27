@@ -1,23 +1,20 @@
-import $controller from '$controller';
-
 import * as K from 'utils/kefir.es6';
 import { truncate } from 'utils/StringUtils.es6';
-
-import spaceContext from 'spaceContext';
-import localeStore from 'TheLocaleStore';
 import contextHistory from 'navigation/Breadcrumbs/History.es6';
 import { user$ } from 'services/TokenStore.es6';
-
 import * as crumbFactory from 'navigation/Breadcrumbs/Factory.es6';
-
 import * as Validator from './Validator.es6';
 import * as Focus from './Focus.es6';
 import initDocErrorHandler from './DocumentErrorHandler.es6';
 import { makeNotify } from './Notifications.es6';
 import installTracking from './Tracking.es6';
-
 import { loadAsset } from 'app/entity_editor/DataLoader.es6';
-import { onFeatureFlag } from 'utils/LaunchDarkly';
+import { onFeatureFlag } from 'utils/LaunchDarkly/index.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const $controller = getModule('$controller');
+const spaceContext = getModule('spaceContext');
+const localeStore = getModule('TheLocaleStore');
 
 const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG = 'feature-at-05-2018-sliding-entry-editor-multi-level';
 

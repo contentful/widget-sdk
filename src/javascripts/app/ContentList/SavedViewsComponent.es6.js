@@ -9,7 +9,7 @@ import { makeBlankFolder } from 'data/UiConfig/Blanks.es6';
 
 import openRoleSelector from './RoleSelector.es6';
 
-import { getStore } from 'TheStore';
+import { getStore } from 'TheStore/index.es6';
 import { Notification } from '@contentful/forma-36-react-components';
 import * as random from 'utils/Random.es6';
 

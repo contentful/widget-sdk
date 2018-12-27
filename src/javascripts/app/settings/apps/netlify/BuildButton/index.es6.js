@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 
 import { get } from 'lodash';
 
-import spaceContext from 'spaceContext';
-import contentPreview from 'contentPreview';
-
 import BuildButton from './BuildButton.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const spaceContext = getModule('spaceContext');
+const contentPreview = getModule('contentPreview');
 
 const validId = id => typeof id === 'string' && id.length > 0;
 

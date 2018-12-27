@@ -1,5 +1,5 @@
 import { extend } from 'lodash';
-import { h } from 'utils/legacy-html-hyperscript';
+import { h } from 'utils/legacy-html-hyperscript/index.es6';
 
 const styles = {
   table: {

@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import spaceContext from 'spaceContext';
 import AdminOnly from 'app/common/AdminOnly.es6';
 import ExtensionEditor from '../ExtensionEditor.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const spaceContext = getModule('spaceContext');
 
 const ExtensionFetcher = createFetcherComponent(props => {
   return spaceContext.cma.getExtension(props.extensionId);

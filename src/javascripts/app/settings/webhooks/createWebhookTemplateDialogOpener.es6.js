@@ -4,7 +4,9 @@ import { get } from 'lodash';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import * as WebhookEditorActions from './WebhookEditorActions.es6';
 import WebhookTemplateDialog from './WebhookTemplateDialog.es6';
-import $state from '$state';
+import { getModule } from 'NgRegistry.es6';
+
+const $state = getModule('$state');
 
 const isNonEmptyString = s => typeof s === 'string' && s.length > 0;
 

@@ -6,11 +6,13 @@ import WebhookList from '../WebhookList.es6';
 import createWebhookTemplateDialogOpener from '../createWebhookTemplateDialogOpener.es6';
 import AdminOnly from 'app/common/AdminOnly.es6';
 import * as Config from 'Config.es6';
-import TheLocaleStore from 'TheLocaleStore';
-import spaceContext from 'spaceContext';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import getOrganizationStatus from 'data/OrganizationStatus.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const TheLocaleStore = getModule('TheLocaleStore');
+const spaceContext = getModule('spaceContext');
 
 const WebhooksFetcher = createFetcherComponent(() => {
   return Promise.all([

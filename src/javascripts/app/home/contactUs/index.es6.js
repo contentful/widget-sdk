@@ -1,7 +1,9 @@
 import React from 'react';
-import $state from '$state';
 import { track } from 'analytics/Analytics.es6';
-import Intercom from 'intercom';
+import { getModule } from 'NgRegistry.es6';
+
+const $state = getModule('$state');
+const Intercom = getModule('intercom');
 
 const prefix = 'space-home-page-contact-us';
 

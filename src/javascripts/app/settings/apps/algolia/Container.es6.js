@@ -15,16 +15,18 @@ import AppIcon from '../_common/AppIcon.es6';
 
 import { cloneDeep } from 'lodash';
 
-import $state from '$state';
 import * as Analytics from 'analytics/Analytics.es6';
-import intercom from 'intercom';
 
-import spaceContext from 'spaceContext';
 import Setup from './Setup.es6';
 import SelectContent, { SELECT_CONTENT_TYPE } from './SelectContent.es6';
 import DraftRecordModal, { SELECT_LOCALE } from './DraftRecordModal.es6';
 import APIKeyModal from './APIKeyModal.es6';
 import * as Webhooks from './Webhooks.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const $state = getModule('$state');
+const intercom = getModule('intercom');
+const spaceContext = getModule('spaceContext');
 
 const DEFAULT_NEW_RECORD = {
   isNewRecord: true,

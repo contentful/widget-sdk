@@ -12,7 +12,7 @@ import {
   TableCell,
   TableBody
 } from '@contentful/forma-36-react-components';
-import { h } from 'ui/Framework';
+import { h } from 'ui/Framework/index.es6';
 import { createStore, bindActions, makeReducer } from 'ui/Framework/Store.es6';
 import escape from 'utils/escape.es6';
 import { container, vspace } from 'ui/Layout.es6';

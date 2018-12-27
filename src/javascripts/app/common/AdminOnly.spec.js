@@ -1,8 +1,9 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import spaceContextMocked from 'spaceContext';
-import $stateMocked from '$state';
 import AdminOnly from './AdminOnly.es6';
+
+import spaceContextMocked from 'ng/spaceContext';
+import $stateMocked from 'ng/$state';
 
 describe('AdminOnly', () => {
   beforeEach(() => {

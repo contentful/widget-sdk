@@ -2,18 +2,12 @@ import { get, isNaN } from 'lodash';
 import * as K from 'utils/kefir.es6';
 import * as List from 'utils/List.es6';
 
-import entitySelector from 'entitySelector';
-
-import createEntity from 'cfReferenceEditor/createEntity';
-import spaceContext from 'spaceContext';
-import { onFeatureFlag } from 'utils/LaunchDarkly';
+import { onFeatureFlag } from 'utils/LaunchDarkly/index.es6';
 import { track } from 'analytics/Analytics.es6';
 import {
   onEntryCreate as trackEntryCreate,
   onEntryEdit as trackEntryEdit
 } from 'analytics/events/ReferenceEditor.es6';
-
-import $state from '$state';
 
 import * as State from './State.es6';
 
@@ -21,13 +15,17 @@ import {
   canPerformActionOnEntryOfType,
   canCreateAsset,
   Action
-} from 'access_control/AccessChecker';
+} from 'access_control/AccessChecker/index.es6';
 import { canLinkToContentType } from './utils.es6';
+import { getModule } from 'NgRegistry.es6';
 
-import {
-  getSlideInEntities,
-  goToSlideInEntity as goToSlideInEntityBase
-} from 'navigation/SlideInNavigator';
+const entitySelector = getModule('entitySelector');
+const createEntity = getModule('cfReferenceEditor/createEntity');
+const spaceContext = getModule('spaceContext');
+const $state = getModule('$state');
+const { getSlideInEntities, goToSlideInEntity: goToSlideInEntityBase } = getModule(
+  'navigation/SlideInNavigator'
+);
 
 const FEATURE_LOTS_OF_CT_ADD_ENTRY_REDESIGN =
   'feature-at-11-2017-lots-of-cts-add-entry-and-link-reference';

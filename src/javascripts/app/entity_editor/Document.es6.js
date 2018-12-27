@@ -15,21 +15,21 @@ import * as K from 'utils/kefir.es6';
 import { deepFreeze } from 'utils/Freeze.es6';
 import * as PathUtils from 'utils/Path.es6';
 import { caseof } from 'sum-types';
-import * as logger from 'logger';
-import * as accessChecker from 'access_control/AccessChecker';
+import * as accessChecker from 'access_control/AccessChecker/index.es6';
 import * as Permissions from 'access_control/EntityPermissions.es6';
-import * as TheLocaleStore from 'TheLocaleStore';
-
 import { Error as DocError } from 'data/document/Error.es6';
 import * as Normalizer from 'data/document/Normalize.es6';
 import * as ResourceStateManager from 'data/document/ResourceStateManager.es6';
 import * as DocSetters from 'data/document/Setters.es6';
-import * as Status from 'data/Document/Status';
 import { DocLoad } from 'data/sharejs/Connection.es6';
-import * as ShareJS from 'data/ShareJS/Utils';
-
 import * as Reverter from './document/Reverter.es6';
-import * as PresenceHub from 'entityEditor/Document/PresenceHub';
+import { getModule } from 'NgRegistry.es6';
+
+const logger = getModule('logger');
+const TheLocaleStore = getModule('TheLocaleStore');
+const Status = getModule('data/Document/Status');
+const ShareJS = getModule('data/ShareJS/Utils');
+const PresenceHub = getModule('entityEditor/Document/PresenceHub');
 
 // TODO Instead of passing an entity instance provided by the client
 // library we should only pass the entity data.

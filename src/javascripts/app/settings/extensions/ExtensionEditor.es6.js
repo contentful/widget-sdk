@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { get, cloneDeep, isEqual, omit } from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
-import spaceContext from 'spaceContext';
 import Workbench from 'app/common/Workbench.es6';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils.es6';
 import getExtensionParameterIds from './getExtensionParameterIds.es6';
@@ -10,6 +9,9 @@ import StateLink from 'app/common/StateLink.es6';
 import { track } from 'analytics/Analytics.es6';
 import { toInternalFieldType, toApiFieldType } from './FieldTypes.es6';
 import ExtensionForm from './ExtensionForm.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const spaceContext = getModule('spaceContext');
 
 class ExtensionEditor extends React.Component {
   static propTypes = {
