@@ -17,8 +17,7 @@ ng-switch(on="displayType(field)")
   react-component(ng-switch-when="Date"
     ng-if="dataForField(entry, field)"
     name="components/shared/RelativeDateTime/index.es6" 
-    props="{value: dataForField(entry, field)}"
-  )
+    props="{value: dataForField(entry, field)}")
   span(ng-switch-when="author"
     cf-user link="entry.getUpdatedBy()"
     as="updater")
