@@ -12,7 +12,8 @@ module.exports = {
       node: {
         moduleDirectory: ['src/javascripts', 'node_modules']
       }
-    }
+    },
+    'import/core-modules': ['legacy-client', 'localesList', 'marked', 'searchParser']
   },
   env: {
     browser: true,
