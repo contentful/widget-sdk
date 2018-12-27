@@ -1,6 +1,8 @@
 import { extend } from 'lodash';
-import $window from '$window';
 import * as K from 'utils/kefir.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const $window = getModule('$window');
 
 /**
  * Create a XHR debugger.
