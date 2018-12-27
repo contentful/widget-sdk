@@ -18,9 +18,10 @@ describe('Entry Editor Controller', function() {
         'entityEditor/StatusNotificationsController',
         'EntryActionsController'
       );
-      $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
 
+    const { registerFactory } = this.$inject('NgRegistry.es6');
+    registerFactory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     const createDocument = this.$inject('mocks/entityEditor/Document').create;
 
     this.mockService('app/entity_editor/DataLoader.es6', {

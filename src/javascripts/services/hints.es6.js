@@ -1,4 +1,4 @@
-'use strict';
+import { registerService } from 'NgRegistry.es6';
 
 /**
  * @ngdoc service
@@ -7,10 +7,9 @@
  * Stores and retrieves the seen state of hints shown throughout the
  * app. These hints should only be shown once for each user.
  */
-angular.module('contentful').service('hints', [
-  'require',
-  require => {
-    const getStore = require('TheStore').getStore;
+registerService('hints', [
+  'TheStore/index.es6',
+  ({ getStore }) => {
     const store = getStore();
 
     return {

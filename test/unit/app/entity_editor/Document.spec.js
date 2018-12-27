@@ -3,9 +3,7 @@ import _ from 'lodash';
 
 describe('entityEditor/Document', () => {
   beforeEach(function() {
-    module('contentful/test', $provide => {
-      $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
-    });
+    module('contentful/test');
 
     this.DocLoad = this.$inject('data/sharejs/Connection.es6').DocLoad;
     this.OtDoc = this.$inject('mocks/OtDoc');
@@ -34,6 +32,10 @@ describe('entityEditor/Document', () => {
       this.$apply();
       return doc;
     };
+
+    // TheLocaleStore has to be re-registered with the mock
+    const { registerFactory } = this.$inject('NgRegistry.es6');
+    registerFactory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
 
     this.localeStore = this.$inject('TheLocaleStore');
     this.localeStore.setLocales([{ internal_code: 'en' }]);

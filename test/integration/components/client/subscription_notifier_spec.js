@@ -12,7 +12,7 @@ describe('subscriptionNotifier', () => {
 
   beforeEach(function() {
     module('contentful/test', $provide => {
-      $provide.value('paywallOpener', {
+      $provide.constant('paywallOpener', {
         openPaywall: sinon.stub()
       });
     });

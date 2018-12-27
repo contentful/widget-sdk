@@ -42,7 +42,7 @@ describe('data/User', () => {
       $provide.value('services/TokenStore.es6', this.tokenStore);
       $provide.constant('spaceContext', this.spaceContext);
       $provide.value('$stateParams', this.$stateParams);
-      $provide.value('contentPreview', this.contentPreview);
+      $provide.constant('contentPreview', this.contentPreview);
       $provide.value('data/OrganizationStatus.es6', {
         default: () => ({ then: cb => cb({}) }) // simulate promise for instant resolution
       });

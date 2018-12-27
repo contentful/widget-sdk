@@ -185,7 +185,7 @@ describe('Space Wizard', function() {
         changeSpace: this.stubs.changeSpace
       });
 
-      $provide.value('client', {
+      $provide.constant('client', {
         createSpace: this.stubs.createSpace
       });
 

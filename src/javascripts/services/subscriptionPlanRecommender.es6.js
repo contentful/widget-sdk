@@ -1,4 +1,5 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
+import $ from 'jquery';
 
 /**
  * @ngdoc service
@@ -8,14 +9,11 @@
  * This service recommends a subscription plan for a given organization ID and
  * provides a rendered plan card.
  */
-angular.module('contentful').factory('subscriptionPlanRecommender', [
-  'require',
-  require => {
-    const $ = require('jquery');
-    const Config = require('Config.es6');
-    const $http = require('$http');
-    const $q = require('$q');
-
+registerFactory('subscriptionPlanRecommender', [
+  '$q',
+  '$http',
+  'Config.es6',
+  ($q, $http, Config) => {
     const ENDPOINT = Config.authUrl(
       '/account/organizations/:organization/z_subscription_plans/recommended'
     );

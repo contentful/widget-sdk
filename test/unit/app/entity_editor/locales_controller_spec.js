@@ -2,9 +2,10 @@ import _ from 'lodash';
 
 describe('entityEditor/LocalesController', () => {
   beforeEach(function() {
-    module('contentful/test', $provide => {
-      $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
-    });
+    module('contentful/test');
+
+    const { registerFactory } = this.$inject('NgRegistry.es6');
+    registerFactory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
 
     const $controller = this.$inject('$controller');
     this.localeStore = this.$inject('TheLocaleStore');

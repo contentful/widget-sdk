@@ -8,8 +8,10 @@ describe('entityEditor/StateController', () => {
 
     module('contentful/test', $provide => {
       $provide.constant('navigation/closeState', closeStateSpy);
-      $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
+
+    const { registerFactory } = this.$inject('NgRegistry.es6');
+    registerFactory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
 
     const $q = this.$inject('$q');
     const LD = this.$inject('utils/LaunchDarkly');

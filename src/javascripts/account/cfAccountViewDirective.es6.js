@@ -2,7 +2,6 @@ import { registerDirective } from 'NgRegistry.es6';
 import _ from 'lodash';
 import { h } from 'utils/legacy-html-hyperscript';
 import * as K from 'utils/kefir.es6';
-import createChannel from 'account/IframeChannel.es6';
 
 registerDirective('cfAccountView', [
   '$timeout',
@@ -10,7 +9,8 @@ registerDirective('cfAccountView', [
   'handleGatekeeperMessage',
   'Authentication.es6',
   'account/UrlSyncHelper.es6',
-  ($timeout, modalDialog, handleGK, Authentication, UrlSyncHelper) => {
+  'account/IframeChannel.es6',
+  ($timeout, modalDialog, handleGK, Authentication, UrlSyncHelper, { default: createChannel }) => {
     return {
       template: template(),
       restrict: 'E',

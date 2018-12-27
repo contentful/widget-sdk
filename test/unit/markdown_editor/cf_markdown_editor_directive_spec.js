@@ -4,7 +4,7 @@ describe('cfMarkdownEditor', () => {
   beforeEach(function() {
     this.markdownEditorActions = { trackMarkdownEditorAction: sinon.stub() };
     module('contentful/test', $provide => {
-      $provide.value('TheLocaleStore', {
+      $provide.constant('TheLocaleStore', {
         getDefaultLocale: () => ({ code: 'some random locale' }),
         getLocales: () => [{ code: 'en-US' }]
       });

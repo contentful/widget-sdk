@@ -6,7 +6,7 @@ describe('LocationEditor integration', () => {
   beforeEach(function() {
     this.googleMaps = createGoogleMapsStub();
     module('contentful/test', $provide => {
-      $provide.value('LazyLoader', {
+      $provide.constant('LazyLoader', {
         get: sinon.stub().resolves(this.googleMaps)
       });
       $provide.value('throttle', _.identity);

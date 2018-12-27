@@ -1,5 +1,3 @@
-'use strict';
-
 describe('Authorization service', () => {
   let authorization;
   let worfStub;
@@ -11,7 +9,7 @@ describe('Authorization service', () => {
 
     module('contentful/test', $provide => {
       $provide.constant('@contentful/worf', worfStub);
-      $provide.value('access_control/AccessChecker', accessChecker);
+      $provide.value('access_control/AccessChecker/index.es6', accessChecker);
     });
 
     authorization = this.$inject('authorization');

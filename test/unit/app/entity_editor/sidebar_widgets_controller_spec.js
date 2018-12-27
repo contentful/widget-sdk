@@ -3,11 +3,12 @@ import _ from 'lodash';
 
 describe('SidebarWidgetRender controller', function() {
   beforeEach(function() {
-    module('contentful/test', function($provide, $controllerProvider) {
-      $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
+    module('contentful/test', function($controllerProvider) {
       $controllerProvider.register('FieldLocaleController', function() {});
     });
 
+    const { registerFactory } = this.$inject('NgRegistry.es6');
+    registerFactory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     this.scope = Object.assign(this.$inject('$rootScope').$new(), {
       widget: { field: {} }
     });

@@ -23,10 +23,10 @@ describe('paywallOpener', () => {
 
     self = this;
     module('contentful/test', $provide => {
-      $provide.value('modalDialog', self.modalDialog);
-      $provide.value('subscriptionPlanRecommender', subscriptionPlanRecommender);
+      $provide.constant('modalDialog', self.modalDialog);
+      $provide.constant('subscriptionPlanRecommender', subscriptionPlanRecommender);
       $provide.value('analytics/Analytics.es6', self.analytics);
-      $provide.value('LazyLoader', self.LazyLoader);
+      $provide.constant('LazyLoader', self.LazyLoader);
       $provide.constant('TheAccountView', self.TheAccountView);
     });
 

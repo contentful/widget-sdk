@@ -22,7 +22,7 @@ describe('spaceContext', () => {
       $provide.value('data/UiConfig/Store.es6', {
         default: sinon.stub().resolves({ store: true })
       });
-      $provide.value('client', { newSpace: makeClientSpaceMock });
+      $provide.constant('client', { newSpace: makeClientSpaceMock });
       $provide.value('widgets/Store.es6', {
         create: sinon.stub().returns({
           refresh: sinon.stub().resolves([])
@@ -33,10 +33,18 @@ describe('spaceContext', () => {
       });
       $provide.constant('data/userCache', this.createUserCache);
     });
+
+    const { registerFactory } = this.$inject('NgRegistry.es6');
+
+    const localeStoreOrig = this.mockService('TheLocaleStore');
+    localeStoreOrig.init.resolves();
+
+    // Reregister TheLocaleStore with mocked version
+    registerFactory('TheLocaleStore', () => localeStoreOrig);
+
     this.widgetStoreCreate = this.$inject('widgets/Store.es6').create;
     this.spaceContext = this.$inject('spaceContext');
-    this.localeStore = this.mockService('TheLocaleStore');
-    this.localeStore.init.resolves();
+    this.localeStore = this.$inject('TheLocaleStore');
 
     this.resetWithSpace = function(spaceData) {
       spaceData = spaceData || { sys: { id: 'spaceid' }, spaceMembership: {} };

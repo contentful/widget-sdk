@@ -35,7 +35,7 @@ describe('Asset List Controller', () => {
         'apiErrorHandler'
       ]);
 
-      $provide.value('logger', {
+      $provide.constant('logger', {
         logError: stubs.logError
       });
 
@@ -49,8 +49,6 @@ describe('Asset List Controller', () => {
         pickMultiple: stubs.pickMultiple
       });
 
-      $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
-
       $provide.value('utils/ResourceUtils.es6', {
         isLegacyOrganization: () => false
       });
@@ -58,6 +56,9 @@ describe('Asset List Controller', () => {
         isInsideMasterEnv: () => false
       });
     });
+
+    const { registerFactory } = this.$inject('NgRegistry.es6');
+    registerFactory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
 
     ComponentLibrary = this.$inject('@contentful/forma-36-react-components');
     ComponentLibrary.Notification.error = stubs.error;

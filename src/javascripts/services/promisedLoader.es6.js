@@ -1,12 +1,10 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
+import _ from 'lodash';
 
-angular.module('contentful').factory('PromisedLoader', [
-  'require',
+registerFactory('PromisedLoader', [
   '$q',
   'debounce',
-  (require, $q, debounce) => {
-    const _ = require('lodash');
-
+  ($q, debounce) => {
     function PromisedLoader() {
       this.inProgress = false;
       this._loadPromise = debounce(this._loadPromiseImmediately, 500, { leading: true });

@@ -1,4 +1,6 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
+import _ from 'lodash';
+import * as K from 'utils/kefir.es6';
 
 /**
  * @ngdoc service
@@ -6,19 +8,26 @@
  * @description
  * This service fetches, caches and exposes data and helper functions relating to Content Preview
  */
-angular.module('contentful').factory('contentPreview', [
-  'require',
-  require => {
-    const $q = require('$q');
-    const _ = require('lodash');
-    const $rootScope = require('$rootScope');
-    const TheLocaleStore = require('TheLocaleStore');
-    const spaceContext = require('spaceContext');
-    const previewEnvironmentsCache = require('data/previewEnvironmentsCache');
-    const getStore = require('TheStore').getStore;
+registerFactory('contentPreview', [
+  '$q',
+  '$rootScope',
+  'spaceContext',
+  'TheLocaleStore',
+  'data/previewEnvironmentsCache',
+  'data/Entries',
+  'TheStore/index.es6',
+  'services/ContentPreviewHelper.es6',
+  (
+    $q,
+    $rootScope,
+    spaceContext,
+    TheLocaleStore,
+    previewEnvironmentsCache,
+    { internalToExternal: internalToExternalFieldIds },
+    { getStore },
+    { resolveReferences }
+  ) => {
     const store = getStore();
-    const resolveReferences = require('services/ContentPreviewHelper.es6').resolveReferences;
-    const internalToExternalFieldIds = require('data/Entries').internalToExternal;
 
     const ENTRY_ID_PATTERN = /\{\s*entry_id\s*\}/g;
     const ENTRY_FIELD_PATTERN = /\{\s*entry_field\.(\w+)\s*\}/g;
@@ -46,7 +55,6 @@ angular.module('contentful').factory('contentPreview', [
     // every 2.5 seconds. This is ok for now since we cache content previews and hence
     // polling doesn't really cause unnecessary api calls.
     // Duplicates are skipped.
-    const K = require('utils/kefir.es6');
 
     const contentPreviewsBus$ = K.withInterval(2500, emitter => {
       const emitValue = emitter.value.bind(emitter);

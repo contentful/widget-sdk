@@ -88,7 +88,7 @@ describe('Space Wizard action creators', function() {
         calculateTotalPrice: this.stubs.calculateTotalPrice
       });
 
-      $provide.value('client', {
+      $provide.constant('client', {
         default: {
           createSpace: this.stubs.createSpace
         }

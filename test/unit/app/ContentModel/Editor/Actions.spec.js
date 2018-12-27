@@ -49,6 +49,10 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
         })
       });
       $provide.value('app/common/ReloadNotification.es6', stubs.ReloadNotification);
+      $provide.constant('logger', {
+        logServerWarn: sinon.stub(),
+        findActualServerError: sinon.stub()
+      });
     });
 
     this.$state = this.$inject('$state');

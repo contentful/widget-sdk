@@ -1,4 +1,4 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
 
 /**
  * @name intercom
@@ -20,10 +20,9 @@
  * instantiated, so it might be not available if you call it immediately.
  */
 
-angular.module('contentful').factory('intercom', [
-  'require',
-  require => {
-    const $window = require('$window');
+registerFactory('intercom', [
+  '$window',
+  $window => {
     let isDisabled = false;
 
     const intercom = {

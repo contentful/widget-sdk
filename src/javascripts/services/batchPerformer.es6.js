@@ -1,14 +1,12 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
+import _ from 'lodash';
+import { Notification } from '@contentful/forma-36-react-components';
 
-angular.module('contentful').factory('batchPerformer', [
-  'require',
-  require => {
-    const _ = require('lodash');
-    const $q = require('$q');
-    const spaceContext = require('spaceContext');
-    const Analytics = require('analytics/Analytics.es6');
-    const { Notification } = require('@contentful/forma-36-react-components');
-
+registerFactory('batchPerformer', [
+  '$q',
+  'spaceContext',
+  'analytics/Analytics.es6',
+  ($q, spaceContext, Analytics) => {
     const ACTION_NAMES = {
       publish: 'published',
       unpublish: 'unpublished',

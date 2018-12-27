@@ -29,9 +29,6 @@ describe('cfOnboardingSteps Directive', () => {
         onFeatureFlag: sinon.stub(),
         getCurrentVariation: sinon.stub().resolves(false)
       });
-      $provide.value('contentPreview', {
-        contentPreviewsBus$: this.previews$
-      });
       $provide.value('services/TokenStore.es6', {
         getOrganizations: sinon.stub().resolves(this.organizations),
         user$: K.createMockProperty({ sys: { id: 1 } })
@@ -39,10 +36,11 @@ describe('cfOnboardingSteps Directive', () => {
       $provide.value('services/CreateSpace.es6', {
         showDialog: this.createSpaceDialog
       });
-      $provide.value('contentPreview', {
+      $provide.constant('contentPreview', {
         // using this instead of our added on `.resolves` since that uses
         // $q internally but this directive uses native Promises and that
         // causes things to fail
+        contentPreviewsBus$: this.previews$,
         getAll: sinon.stub().callsFake(() => Promise.resolve(this.contentPreviews))
       });
       $provide.value('components/shared/auto_create_new_space/CreateModernOnboarding.es6', {

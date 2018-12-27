@@ -22,7 +22,7 @@ describe('Space Template creation service', () => {
         'setActiveLocales'
       ]);
 
-      $provide.value('contentPreview', {
+      $provide.constant('contentPreview', {
         getAll: stubs.getContentPreview,
         create: stubs.createContentPreview
       });
@@ -33,7 +33,7 @@ describe('Space Template creation service', () => {
         enrichTemplate: (_templateInfo, template) => enrichTemplate(template)
       });
 
-      $provide.value('TheLocaleStore', {
+      $provide.constant('TheLocaleStore', {
         refresh: stubs.refreshLocaleStore,
         setActiveLocales: stubs.setActiveLocales
       });

@@ -126,7 +126,11 @@ describe('entitySelector', () => {
 
   describe('opening from an extension', () => {
     beforeEach(function() {
-      this.$inject('TheLocaleStore').getDefaultLocale = _.constant({ code: 'de-DE' });
+      const mockedLocaleStore = (this.$inject('TheLocaleStore').getDefaultLocale = _.constant({
+        code: 'de-DE'
+      }));
+      const { registerFactory } = this.$inject('NgRegistry.es6');
+      registerFactory('TheLocaleStore', () => mockedLocaleStore);
 
       this.openFromExt = opts => {
         const promise = this.entitySelector.openFromExtension(opts);

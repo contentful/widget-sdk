@@ -1,4 +1,6 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
+import _ from 'lodash';
+import ReloadNotification from 'app/common/ReloadNotification.es6';
 
 /**
  * This service defines the function that handles uncaught exceptions
@@ -7,14 +9,11 @@
  * We call logger.logExceptions which logs the exception to the console
  * and to bugsnag if it is enabled.
  */
-angular.module('contentful').factory('$exceptionHandler', [
-  'require',
-  require => {
-    const logger = require('logger');
-    const _ = require('lodash');
+registerFactory('$exceptionHandler', [
+  'logger',
+  logger => {
     return exception => {
       const metaData = _.extend({ promptedReload: true }, exception.metaData);
-      const ReloadNotification = require('app/common/ReloadNotification.es6').default;
 
       logger.logException(exception, metaData);
       ReloadNotification.trigger();
