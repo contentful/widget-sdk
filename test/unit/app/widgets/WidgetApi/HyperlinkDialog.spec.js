@@ -30,8 +30,11 @@ describe('HyperlinkDialog', () => {
       calculateIdealListHeight: () => 200
     });
 
-    system.set('AngularComponent', {
-      default: () => <div />
+    const getModuleStub = sinon.stub();
+    getModuleStub.withArgs('AngularComponent').returns(() => <div />);
+
+    system.set('NgRegistry.es6', {
+      getModule: getModuleStub
     });
 
     this.importModule = async function importModule() {

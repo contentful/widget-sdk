@@ -1,5 +1,4 @@
 import React from 'react';
-import spaceContext from 'spaceContext';
 import Tabs from 'components/react/molecules/Tabs.es6';
 import Code from 'components/react/atoms/Code.es6';
 import A from 'components/react/atoms/Anchor.es6';
@@ -8,6 +7,9 @@ import {
   isOnboardingComplete,
   getDeploymentProvider
 } from 'components/shared/auto_create_new_space/CreateModernOnboarding.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const spaceContext = getModule('spaceContext');
 
 class DeploymentStrategies extends React.Component {
   constructor(props) {

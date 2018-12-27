@@ -1,6 +1,8 @@
 import React from 'react';
 import { Spinner, Card } from '@contentful/forma-36-react-components';
-import modalDialog from 'modalDialog';
+import { getModule } from 'NgRegistry.es6';
+
+const modalDialog = getModule('modalDialog');
 
 export default function LoadingModal() {
   const spinnerStyle = {

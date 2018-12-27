@@ -35,7 +35,7 @@ export const getMockedSpaceContext = ({
   };
 };
 
-export const stubAll = async ({ isolatedSystem }) => {
+export const stubAll = async ({ isolatedSystem, angularStubs = {} }) => {
   // TODO: Instead of stubbing all kind of services, stub `buildWidgetApi.es6`!
   isolatedSystem.set('ui/cf/thumbnailHelpers.es6', {});
   isolatedSystem.set('search/EntitySelector/Config.es6', {
@@ -44,27 +44,34 @@ export const stubAll = async ({ isolatedSystem }) => {
   isolatedSystem.set('app/widgets/WidgetApi/dialogs/HyperlinkDialog.es6', {
     LINK_TYPES: {}
   });
-  isolatedSystem.set('spaceContext', { default: {} });
-  isolatedSystem.set('modalDialog', { open: sinon.stub() });
-  isolatedSystem.set('$rootScope', {
-    default: {
-      $on: sinon.spy(() => noop)
-    }
-  });
   isolatedSystem.set('utils/LaunchDarkly', {
     onFeatureFlag: sinon.stub()
   });
-  isolatedSystem.set('$location', {
-    default: {
-      absUrl: () => 'abs-url'
-    }
-  });
-  isolatedSystem.set('navigation/SlideInNavigator', {
-    goToSlideInEntity: sinon.stub()
-  });
-  isolatedSystem.set('search/config.es6', {});
   isolatedSystem.set('detect-browser', {
     detect: () => ({ name: 'chrome' })
+  });
+
+  const getModuleStub = sinon.stub();
+  getModuleStub
+    .withArgs('spaceContext')
+    .returns({})
+    .withArgs('modalDialog')
+    .returns({ open: sinon.stub() })
+    .withArgs('$rootScope')
+    .returns({ $on: sinon.spy(() => noop) })
+    .withArgs('$location')
+    .returns({ absUrl: () => 'abs-url' })
+    .withArgs('navigation/SlideInNavigator')
+    .returns({
+      goToSlideInEntity: sinon.stub()
+    });
+
+  Object.entries(angularStubs).forEach(([name, stub]) => {
+    getModuleStub.withArgs(name).returns(stub);
+  });
+
+  isolatedSystem.set('NgRegistry.es6', {
+    getModule: getModuleStub
   });
 };
 

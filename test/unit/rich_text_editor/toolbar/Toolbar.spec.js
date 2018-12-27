@@ -49,29 +49,28 @@ describe('Toolbar', () => {
     this.system = createIsolatedSystem();
     this.selectedEntity = null;
 
-    // TODO: Stub `buildWidgetApi.es6` instead.
-    this.system.set('entitySelector', {
-      default: {
-        open: () => Promise.resolve([this.selectedEntity])
-      }
-    });
     this.openHyperlinkDialog = sinon.stub();
 
-    stubAll({ isolatedSystem: this.system });
+    stubAll({
+      isolatedSystem: this.system,
+      angularStubs: {
+        entitySelector: {
+          open: () => Promise.resolve([this.selectedEntity])
+        },
+        logger: {
+          logWarn: message => {
+            // Guards us from accidentally changing analytic actions without whitelisting them:
+            throw new Error(`Unexpected logger.logWarn() call with message: ${message}`);
+          }
+        }
+      }
+    });
 
     this.system.set('app/widgets/WidgetApi/dialogs/openHyperlinkDialog.es6', {
       default: this.openHyperlinkDialog
     });
     this.system.set('analytics/Analytics.es6', {
       track: sinon.stub()
-    });
-    this.system.set('logger', {
-      default: {
-        logWarn: message => {
-          // Guards us from accidentally changing analytic actions without whitelisting them:
-          throw new Error(`Unexpected logger.logWarn() call with message: ${message}`);
-        }
-      }
     });
 
     // TODO: Test RichTextEditor without any HOCs here and test HOC separately.

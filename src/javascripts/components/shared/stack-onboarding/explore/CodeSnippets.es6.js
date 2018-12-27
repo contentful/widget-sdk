@@ -1,9 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import $stateParams from '$stateParams';
 import Code from 'components/react/atoms/Code.es6';
 import { getDeliveryToken } from 'components/shared/auto_create_new_space/CreateModernOnboarding.es6';
 import IframeHighlightHOC from 'components/shared/stack-onboarding/explore/IframeHighlightHOC.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const $stateParams = getModule('$stateParams');
 
 class CodeSnippets extends React.Component {
   static propTypes = {

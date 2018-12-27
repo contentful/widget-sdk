@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Dialog from 'app/entity_editor/Components/Dialog';
+import Dialog from 'app/entity_editor/Components/Dialog/index.es6';
 
-import modalDialog from 'modalDialog';
-import * as Intercom from 'intercom';
 import { supportUrl } from 'Config.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const modalDialog = getModule('modalDialog');
+const Intercom = getModule('intercom');
 
 export default class POCSpaceWarningModal extends React.Component {
   static propTypes = {

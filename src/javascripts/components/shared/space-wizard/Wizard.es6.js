@@ -7,13 +7,15 @@ import SpaceDetails from './SpaceDetails.es6';
 import ConfirmScreen from './ConfirmScreen.es6';
 import ProgressScreen from './ProgressScreen.es6';
 import { Notification } from '@contentful/forma-36-react-components';
-import logger from 'logger';
+import { getModule } from 'NgRegistry.es6';
 
 import { connect } from 'react-redux';
 
 import * as propTypes from './PropTypes.es6';
 import * as actionCreators from './store/actionCreators.es6';
 import * as resourceActionCreators from 'ReduxAppActions/resources/actionCreators.es6';
+
+const logger = getModule('logger');
 
 const SpaceCreateSteps = [
   {

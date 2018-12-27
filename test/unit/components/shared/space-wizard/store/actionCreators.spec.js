@@ -60,7 +60,8 @@ describe('Space Wizard action creators', function() {
       getSubscriptionPlans: sinon.stub().resolves([this.plan]),
       calculateTotalPrice: sinon.stub(),
       getTemplatesList: sinon.stub().resolves([this.template]),
-      onConfirm: sinon.stub()
+      onConfirm: sinon.stub(),
+      getModule: sinon.stub()
     };
 
     this.dispatch = (action, ...args) => {
@@ -89,9 +90,7 @@ describe('Space Wizard action creators', function() {
       });
 
       $provide.constant('client', {
-        default: {
-          createSpace: this.stubs.createSpace
-        }
+        createSpace: this.stubs.createSpace
       });
 
       $provide.value('data/CMA/ApiKeyRepo.es6', {

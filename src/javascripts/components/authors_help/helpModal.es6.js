@@ -1,5 +1,7 @@
-import { h } from 'utils/legacy-html-hyperscript';
-import { open } from 'modalDialog';
+import { h } from 'utils/legacy-html-hyperscript/index.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const { open } = getModule('modalDialog');
 
 const prefix = `authors-help`;
 

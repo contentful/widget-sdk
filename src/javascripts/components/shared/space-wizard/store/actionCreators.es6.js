@@ -1,7 +1,5 @@
-import client from 'client';
 import { get, noop } from 'lodash';
 
-import logger from 'logger';
 import createResourceService from 'services/ResourceService.es6';
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import {
@@ -13,14 +11,18 @@ import {
 import createApiKeyRepo from 'data/CMA/ApiKeyRepo.es6';
 import * as TokenStore from 'services/TokenStore.es6';
 import * as Analytics from 'analytics/Analytics.es6';
-import spaceContext from 'spaceContext';
-import { getCreator as getTemplateCreator } from 'services/SpaceTemplateCreator';
+import { getCreator as getTemplateCreator } from 'services/SpaceTemplateCreator/index.es6';
 import { getTemplatesList, getTemplate } from 'services/SpaceTemplateLoader.es6';
 import { canCreate } from 'utils/ResourceUtils.es6';
 import { createTrackingData } from '../WizardUtils.es6';
 import { getIncludedResources } from 'components/shared/space-wizard/WizardUtils.es6';
+import { getModule } from 'NgRegistry.es6';
 
 import * as actions from './actions.es6';
+
+const logger = getModule('logger');
+const client = getModule('client');
+const spaceContext = getModule('spaceContext');
 
 const DEFAULT_LOCALE = 'en-US';
 

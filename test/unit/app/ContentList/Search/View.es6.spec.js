@@ -17,16 +17,15 @@ describe('app/ContentList/Search/View.es6', () => {
   beforeEach(function*() {
     system = createIsolatedSystem();
 
-    system.set('entitySelector', {});
-
-    // TODO: remove after converting datepicker to es6 module.
-    system.set('datepicker', {});
     system.set('moment', {});
     system.set('utils/StringUtils.es6', {});
     system.set('@contentful/mimetype', {
       default: {
         getGroupNames: sinon.stub().returns([])
       }
+    });
+    system.set('NgRegistry.es6', {
+      getModule: sinon.stub()
     });
 
     const { default: searchComponent } = yield system.import('app/ContentList/Search/View.es6');

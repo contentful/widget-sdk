@@ -4,7 +4,7 @@ import { findKey, isObject, snakeCase } from 'lodash';
 import ModifyContentStep from 'components/shared/stack-onboarding/next_steps/ModifyContentStep.es6';
 import SetupWebhooksStep from 'components/shared/stack-onboarding/next_steps/SetupWebhooksStep.es6';
 import NotAJSDeveloperStep from 'components/shared/stack-onboarding/next_steps/NotAJSDeveloperStep.es6';
-import { getStore } from 'TheStore';
+import { getStore } from 'TheStore/index.es6';
 import {
   getStoragePrefix,
   getUser,

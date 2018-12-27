@@ -43,6 +43,10 @@ describe('Feature Service', () => {
       }
     });
 
+    system.set('NgRegistry.es6', {
+      getModule: sinon.stub()
+    });
+
     // Spying on both the endpoint creation and the actual endpoint
     // calls are important.
     const mockedEndpoint = createMockSpaceEndpoint();

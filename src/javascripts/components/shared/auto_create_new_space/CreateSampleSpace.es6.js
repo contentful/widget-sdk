@@ -1,19 +1,21 @@
-import client from 'client';
-import $rootScope from '$rootScope';
-import spaceContext from 'spaceContext';
-import modalDialog from 'modalDialog';
-import $state from '$state';
 import { runTask } from 'utils/Concurrent.es6';
 
-import { getCreator } from 'services/SpaceTemplateCreator';
+import { getCreator } from 'services/SpaceTemplateCreator/index.es6';
 import { track, updateUserInSegment } from 'analytics/Analytics.es6';
 import { go as gotoState } from 'states/Navigator.es6';
 import { entityActionSuccess } from 'analytics/events/SpaceCreation.es6';
 import { find, noop } from 'lodash';
 import { getTemplate, getTemplatesList } from 'services/SpaceTemplateLoader.es6';
-import logger from 'logger';
 import autoCreateSpaceTemplate from './Template.es6';
 import * as TokenStore from 'services/TokenStore.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const client = getModule('client');
+const $rootScope = getModule('$rootScope');
+const spaceContext = getModule('spaceContext');
+const modalDialog = getModule('modalDialog');
+const $state = getModule('$state');
+const logger = getModule('logger');
 
 const DEFAULT_LOCALE = 'en-US';
 

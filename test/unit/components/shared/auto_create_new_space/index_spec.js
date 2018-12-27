@@ -21,10 +21,10 @@ describe('AutoCreateNewSpace/index', () => {
         'components/shared/auto_create_new_space/CreateSampleSpace.es6',
         this.createSampleSpace
       );
-      $provide.value('TheStore', {
+      $provide.value('TheStore/index.es6', {
         getStore: sinon.stub().returns(this.store)
       });
-      $provide.value('utils/LaunchDarkly', {
+      $provide.value('utils/LaunchDarkly/index.es6', {
         getCurrentVariation: sinon.stub().returns(false)
       });
     });
