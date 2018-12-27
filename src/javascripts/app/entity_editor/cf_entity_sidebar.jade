@@ -52,7 +52,10 @@
       i.entity-sidebar__saving-spinner(ng-class="data.documentIsSaving && 'x--active'")
       span.entity-sidebar__last-saved
         | Last saved&nbsp;
-        time(datetime="{{data.documentUpdatedAt}}" cf-relative-datetime)
+        react-component(
+          name="components/shared/RelativeDateTime/index.es6" 
+          props="{value: data.documentUpdatedAt}"
+        )
     button.entity-sidebar__revert.btn-link(
       ng-if="data.isEntry && state.current === 'changes'"
       data-test-id="discard-changed-button"

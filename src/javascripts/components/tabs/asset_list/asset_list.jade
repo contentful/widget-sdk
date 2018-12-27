@@ -131,7 +131,11 @@ header.workbench-header
                 span.extension {{file|fileExtension}}
               +td(aria-label="cell-updated"
                 ui-sref="{{linkToAsset}}")
-                date(ng-if="asset.getUpdatedAt()" datetime="{{asset.getUpdatedAt()}}" cf-relative-datetime)
+                react-component(
+                  ng-if="asset.getUpdatedAt()"
+                  name="components/shared/RelativeDateTime/index.es6" 
+                  props="{value: asset.getUpdatedAt()}"
+                )
               +td.x--small-cell(aria-label="cell-author"
                 ui-sref="{{linkToAsset}}")
                 span(cf-user link="asset.getUpdatedBy()" as="updater")

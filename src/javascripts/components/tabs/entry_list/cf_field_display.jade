@@ -1,20 +1,24 @@
 ng-switch(on="displayType(field)")
-  date(ng-switch-when="updatedAt"
+  react-component(ng-switch-when="updatedAt"
     ng-if="entry.getUpdatedAt()"
-    datetime="{{entry.getUpdatedAt()}}"
-    cf-relative-datetime)
-  date(ng-switch-when="createdAt"
+    name="components/shared/RelativeDateTime/index.es6" 
+    props="{value: entry.getUpdatedAt()}"
+  )
+  react-component(ng-switch-when="createdAt"
     ng-if="entry.getCreatedAt()"
-    datetime="{{entry.getCreatedAt()}}"
-    cf-relative-datetime)
-  date(ng-switch-when="publishedAt"
+    name="components/shared/RelativeDateTime/index.es6" 
+    props="{value: entry.getCreatedAt()}"
+  )
+  react-component(ng-switch-when="publishedAt"
     ng-if="entry.getPublishedAt()"
-    datetime="{{entry.getPublishedAt()}}"
-    cf-relative-datetime)
-  date(ng-switch-when="Date"
+    name="components/shared/RelativeDateTime/index.es6" 
+    props="{value: entry.getPublishedAt()}"
+  )
+  react-component(ng-switch-when="Date"
     ng-if="dataForField(entry, field)"
-    datetime="{{dataForField(entry, field)}}"
-    cf-relative-datetime)
+    name="components/shared/RelativeDateTime/index.es6" 
+    props="{value: dataForField(entry, field)}"
+  )
   span(ng-switch-when="author"
     cf-user link="entry.getUpdatedBy()"
     as="updater")
