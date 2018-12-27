@@ -1,7 +1,9 @@
-import * as $q from '$q';
 import makeRequest from 'data/Request.es6';
 import { extend, filter, get } from 'lodash';
 import shouldUseEnvEndpoint from './shouldUseEnvEndpoint.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const $q = getModule('$q');
 
 /**
  * @module

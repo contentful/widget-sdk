@@ -1,12 +1,12 @@
 import { cloneDeep, get, sortBy } from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
-import logger from 'logger';
-import Store from 'data/StreamHashSet';
 import { deepFreeze } from 'utils/Freeze.es6';
 import * as K from 'utils/kefir.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const $q = getModule('$q');
+const logger = getModule('logger');
+const Store = getModule('data/StreamHashSet');
 
 /**
  * @ngdoc type
