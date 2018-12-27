@@ -58,12 +58,15 @@ registerFactory('contentPreview', [
 
     const contentPreviewsBus$ = K.withInterval(2500, emitter => {
       const emitValue = emitter.value.bind(emitter);
-      const emitError = emitter.error.bind(emitter);
 
       try {
-        getAll().then(emitValue, emitError);
-      } catch (e) {
-        emitError(e);
+        getAll().then(emitValue); // swallow errors, same reason as below
+      } catch (_e) {
+        // swallow as emitting an error actually
+        // causes all streams that are built on
+        // this one to stop emitting.
+        // Also, it is ok if this errors as we
+        // retry every 2500ms anyway.
       }
     })
       .skipDuplicates(_.isEqual)
