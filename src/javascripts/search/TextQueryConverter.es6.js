@@ -1,9 +1,9 @@
 import { reduce, flatten } from 'lodash';
 import { parseTextQuery } from 'search/queryBuilder.es6';
-import { cmaQueryBuilderForField, isRelativeDate } from 'searchQueryAutocompletions';
 import { getModule } from 'NgRegistry.es6';
 
 const $q = getModule('$q');
+const { cmaQueryBuilderForField, isRelativeDate } = getModule('searchQueryAutocompletions');
 
 // Matches an API key and an optional operator, e.g. `fields.title[match]`.
 // In case of a match $1 is the key and $2 will be empty or the operator.
