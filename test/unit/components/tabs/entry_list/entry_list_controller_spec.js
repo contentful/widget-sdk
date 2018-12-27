@@ -29,8 +29,6 @@ describe('Entry List Controller', () => {
 
   beforeEach(function() {
     module('contentful/test', $provide => {
-      $provide.removeControllers('DisplayedFieldsController');
-
       $provide.value('analytics/Analytics.es6', {
         track: sinon.stub()
       });
@@ -63,6 +61,9 @@ describe('Entry List Controller', () => {
         default: _.noop // TODO: Test search ui integration.
       });
     });
+
+    const { registerController } = this.$inject('NgRegistry.es6');
+    registerController('DisplayedFieldsController', function() {});
 
     scope = this.$inject('$rootScope').$new();
     scope.context = {};

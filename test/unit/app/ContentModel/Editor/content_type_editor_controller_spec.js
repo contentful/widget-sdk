@@ -11,14 +11,17 @@ describe('ContentTypeEditor Controller', () => {
   });
 
   beforeEach(function() {
-    const self = this;
+    this.stubs = {
+      openFieldDialog: sinon.stub(),
+      modalDialog_open: sinon.stub()
+    };
+
     module('contentful/test', $provide => {
-      self.modalDialogOpenStub = sinon.stub();
       $provide.value('modalDialog', {
-        open: self.modalDialogOpenStub
+        open: this.stubs.modalDialog_open
       });
 
-      $provide.factory('openFieldDialog', () => sinon.stub());
+      $provide.constant('openFieldDialog', this.stubs.openFieldDialog);
     });
 
     const cfStub = this.$inject('cfStub');
@@ -175,12 +178,12 @@ describe('ContentTypeEditor Controller', () => {
 
       createContentType();
 
-      this.modalDialogOpenStub.returns({ promise: this.when({}) });
+      this.stubs.modalDialog_open.returns({ promise: this.when({}) });
       scope.showNewFieldDialog.execute();
     });
 
     it('opens dialog', function() {
-      sinon.assert.called(this.modalDialogOpenStub);
+      sinon.assert.called(this.stubs.modalDialog_open);
     });
 
     it('adds field to content type', function() {
@@ -297,15 +300,14 @@ describe('ContentTypeEditor Controller', () => {
   });
 
   describe('#openFieldDialog', () => {
-    let openFieldDialog, controller;
+    let controller;
 
     beforeEach(function() {
-      openFieldDialog = this.$inject('openFieldDialog');
-      openFieldDialog.defers();
+      this.stubs.openFieldDialog.defers();
       controller = createContentType();
     });
 
-    it('opens the field dialog with correct arguments', () => {
+    it('opens the field dialog with correct arguments', function() {
       const field = { apiName: 'FIELD' };
       const control = { fieldId: 'FIELD' };
       scope.editingInterface = {
@@ -313,19 +315,19 @@ describe('ContentTypeEditor Controller', () => {
       };
 
       controller.openFieldDialog(field);
-      sinon.assert.calledWith(openFieldDialog, scope, field, control);
+      sinon.assert.calledWith(this.stubs.openFieldDialog, scope, field, control);
     });
 
     it('sets form to dirty when dialog is confirmed', function() {
+      this.stubs.openFieldDialog.resolves();
       controller.openFieldDialog({});
-      openFieldDialog.resolve();
       this.$apply();
       sinon.assert.calledOnce(scope.contentTypeForm.$setDirty);
     });
 
     it('does not set form to dirty when dialog is canceled', function() {
       controller.openFieldDialog({});
-      openFieldDialog.reject();
+      this.stubs.openFieldDialog.rejects();
       this.$apply();
       sinon.assert.notCalled(scope.contentTypeForm.$setDirty);
     });

@@ -1,17 +1,15 @@
-'use strict';
+import { registerController } from 'NgRegistry.es6';
+import _ from 'lodash';
+import * as K from 'utils/kefir.es6';
 
 /**
  * Render a list of published content types with checkboxes that toggle
  * whether the content type is acceptable for this link field.
  */
-angular.module('contentful').controller('ValidationLinkTypeController', [
-  'require',
+registerController('ValidationLinkTypeController', [
   '$scope',
-  (require, $scope) => {
-    const _ = require('lodash');
-    const spaceContext = require('spaceContext');
-    const K = require('utils/kefir.es6');
-
+  'spaceContext',
+  ($scope, spaceContext) => {
     K.onValueScope($scope, spaceContext.publishedCTs.items$, cts => {
       $scope.contentTypes = cts.map(decorateContentType);
     });

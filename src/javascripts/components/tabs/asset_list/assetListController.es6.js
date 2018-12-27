@@ -1,34 +1,45 @@
-'use strict';
+import { registerController } from 'NgRegistry.es6';
+import _ from 'lodash';
+import { Notification } from '@contentful/forma-36-react-components';
+import { createSelection } from 'classes/Selection.es6';
+import * as entityStatus from 'app/entity_editor/EntityStatus.es6';
+import { getBlankAssetView as getBlankView } from 'data/UiConfig/Blanks.es6';
+import * as EnvironmentUtils from 'utils/EnvironmentUtils.es6';
 
-angular.module('contentful').controller('AssetListController', [
+registerController('AssetListController', [
   '$scope',
-  'require',
-  function AssetListController($scope, require) {
-    const _ = require('lodash');
-    const $controller = require('$controller');
-    const createSelection = require('classes/Selection.es6').createSelection;
-    const delay = require('delay');
-    const Analytics = require('analytics/Analytics.es6');
-    const { Notification } = require('@contentful/forma-36-react-components');
-    const spaceContext = require('spaceContext');
-    const accessChecker = require('access_control/AccessChecker');
-    const entityStatus = require('app/entity_editor/EntityStatus.es6');
-    const debounce = require('debounce');
-    const getBlankView = require('data/UiConfig/Blanks.es6').getBlankAssetView;
-    const createSavedViewsSidebar = require('app/ContentList/SavedViewsSidebar.es6').default;
-    const BulkAssetsCreator = require('services/BulkAssetsCreator.es6');
-    const TheLocaleStore = require('TheLocaleStore');
-    const entityCreator = require('entityCreator');
-    const $state = require('$state');
-    const ResourceUtils = require('utils/ResourceUtils.es6');
-    const EnvironmentUtils = require('utils/EnvironmentUtils.es6');
-    const get = require('lodash').get;
-
+  '$controller',
+  '$state',
+  'delay',
+  'debounce',
+  'spaceContext',
+  'TheLocaleStore',
+  'entityCreator',
+  'analytics/Analytics.es6',
+  'services/BulkAssetsCreator.es6',
+  'utils/ResourceUtils.es6',
+  'access_control/AccessChecker/index.es6',
+  'app/ContentList/SavedViewsSidebar.es6',
+  function AssetListController(
+    $scope,
+    $controller,
+    $state,
+    delay,
+    debounce,
+    spaceContext,
+    TheLocaleStore,
+    entityCreator,
+    Analytics,
+    BulkAssetsCreator,
+    ResourceUtils,
+    accessChecker,
+    { default: createSavedViewsSidebar }
+  ) {
     const searchController = $controller('AssetSearchController', { $scope: $scope });
 
     $controller('ListViewsController', {
       $scope: $scope,
-      getBlankView: getBlankView,
+      getBlankView,
       preserveStateAs: 'assets',
       resetList: function() {
         searchController.resetAssets(true);
@@ -60,7 +71,7 @@ angular.module('contentful').controller('AssetListController', [
 
     const trackEnforcedButtonClick = err => {
       // If we get reason(s), that means an enforcement is present
-      const reason = get(err, 'body.details.reasons', null);
+      const reason = _.get(err, 'body.details.reasons', null);
 
       Analytics.track('entity_button:click', {
         entityType: 'asset',

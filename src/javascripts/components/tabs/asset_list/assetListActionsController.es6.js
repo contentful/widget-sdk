@@ -1,6 +1,6 @@
-'use strict';
+import { registerController } from 'NgRegistry.es6';
 
-angular.module('contentful').controller('AssetListActionsController', [
+registerController('AssetListActionsController', [
   '$scope',
   '$controller',
   function AssetListActionsController($scope, $controller) {

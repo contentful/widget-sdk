@@ -114,18 +114,15 @@ angular
       ngRequire('components/forms/embedly_preview/cfEmbedlyPreviewDirective.es6');
       ngRequire('components/forms/field_alert/cfFieldAlertDirective.es6');
       ngRequire('components/roles/cfRolesForWalkMe.es6');
-
       ngRequire('components/shared/cfDropdownToggleDirective.es6');
       ngRequire('components/shared/cfImgLoadEvent.es6');
       ngRequire('components/shared/cfSelectionDirective.es6');
       ngRequire('components/shared/cfUserDirective.es6');
       ngRequire('components/shared/create_new_space/createNewSpaceDirective.es6');
-
       ngRequire('components/shared/dataSizeScaleController.es6');
       ngRequire('components/shared/endlessContainerDirective.es6');
       ngRequire('components/shared/entity_info_panel/entityInfoPanelDirective.es6');
       ngRequire('components/shared/knowledge_base_icon/cfKnowledgeBaseDirective.es6');
-
       ngRequire('components/shared/listViewsController.es6');
       ngRequire('components/shared/persistent_notification/cfPersistentNotificationDirective.es6');
       ngRequire('components/shared/search_results_paginator/searchResultsPaginatorDirective.es6');
@@ -134,6 +131,34 @@ angular
       ngRequire('components/shared/validation_error_display/cfErrorPathDirective.es6');
       ngRequire('components/shared/validation_error_display/errorPathController.es6');
       ngRequire('components/shared/viewStateController.es6');
+      ngRequire('components/field_dialog/cfPositionRelativeToWidgetListDirective.es6');
+      ngRequire('components/field_dialog/cfValidationDateSelectDirective.es6');
+      ngRequire('components/field_dialog/cfValidationSettingsDirective.es6');
+      ngRequire('components/field_dialog/cfValidationValuesDirective.es6');
+      ngRequire('components/field_dialog/fieldDecorator.es6');
+      ngRequire('components/field_dialog/fieldDialog.es6');
+      ngRequire('components/field_dialog/imageDimensionsValidationController.es6');
+      ngRequire('components/field_dialog/validationAssetTypesController.es6');
+      ngRequire('components/field_dialog/validationDecorator.es6');
+      ngRequire('components/field_dialog/validationLinkTypeController.es6');
+
+      ngRequire('components/tabs/asset_list/assetListActionsController.es6');
+      ngRequire('components/tabs/asset_list/assetListController.es6');
+      ngRequire('components/tabs/asset_list/assetListDirective.es6');
+      ngRequire('components/tabs/asset_list/assetSearchController.es6');
+      ngRequire('components/tabs/content_type_list/contentTypeList.es6');
+      ngRequire('components/tabs/entry_list/cfFieldDisplayDirective.es6');
+      ngRequire('components/tabs/entry_list/displayFieldsController.es6');
+      ngRequire('components/tabs/entry_list/entryListActionsController.es6');
+      ngRequire('components/tabs/entry_list/entryListColumnsController.es6');
+      ngRequire('components/tabs/entry_list/entryListController.es6');
+      ngRequire('components/tabs/entry_list/entryListDirective.es6');
+      ngRequire('components/tabs/entry_list/entryListSearchController.es6');
+      ngRequire('components/tabs/entry_list/viewCustomizerDirective.es6');
+      ngRequire('components/tabs/listActionsController.es6');
+
+      ngRequire('components/app_container/cfAppContainerDirective.es6');
+      ngRequire('components/app_container/entityCreator.es6');
 
       // ui (cf.ui)
       ngRequire('ui/cfIconDirective.es6');

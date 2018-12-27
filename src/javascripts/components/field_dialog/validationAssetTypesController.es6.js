@@ -1,15 +1,14 @@
-'use strict';
+import { registerController } from 'NgRegistry.es6';
+import _ from 'lodash';
+import mimetype from '@contentful/mimetype';
 
 /**
  * Provide a list of asset types and an `update` function to set the
  * asset type validation provided by the `ValidationDialogController`.
  */
-angular.module('contentful').controller('ValidationAssetTypesController', [
+registerController('ValidationAssetTypesController', [
   '$scope',
-  'require',
-  function($scope, require) {
-    const _ = require('lodash');
-    const mimetype = require('@contentful/mimetype');
+  function($scope) {
     const controller = this;
 
     controller.types = _.map(mimetype.getGroupNames(), (label, name) => ({
