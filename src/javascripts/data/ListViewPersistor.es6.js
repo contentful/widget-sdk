@@ -1,10 +1,11 @@
 import qs from 'qs';
-import { getStore } from 'TheStore';
+import { getStore } from 'TheStore/index.es6';
 import { omit, isEmpty, isObject } from 'lodash';
 import { serialize, unserialize } from 'data/ViewSerializer.es6';
-import { getModules } from 'NgRegistry.es6';
+import { getModule } from 'NgRegistry.es6';
 
-const [$q, $location] = getModules('$q', '$location');
+const $q = getModule('$q');
+const $location = getModule('$location');
 
 /**
  * Create a persitory for entity views.

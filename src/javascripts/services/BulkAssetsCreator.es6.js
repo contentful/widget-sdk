@@ -1,12 +1,13 @@
 import { identity, isString } from 'lodash';
 import * as Filestack from 'services/Filestack.es6';
-import logger from 'logger';
 import { Notification } from '@contentful/forma-36-react-components';
 import * as stringUtils from 'utils/StringUtils.es6';
-import spaceContext from 'spaceContext';
-import { getModules } from 'NgRegistry.es6';
+import { getModule } from 'NgRegistry.es6';
 
-const [$q, $timeout] = getModules('$q', '$timeout');
+const $q = getModule('$q');
+const $timeout = getModule('$timeout');
+const logger = getModule('logger');
+const spaceContext = getModule('spaceContext');
 
 /**
  * Opens file selector to select files which will then be uploaded as assets.

@@ -13,9 +13,10 @@ import ReloadNotification from 'app/common/ReloadNotification.es6';
 import * as OrganizationRoles from 'services/OrganizationRoles.es6';
 import { deepFreezeClone, deepFreeze } from 'utils/Freeze.es6';
 import { isEqual, groupBy, map, get, find, cloneDeep } from 'lodash';
-import { getModules } from 'NgRegistry.es6';
+import { getModule } from 'NgRegistry.es6';
 
-const [$q, $window] = getModules('$q', '$window');
+const $q = getModule('$q');
+const $window = getModule('$window');
 
 // Refresh token info every 5 minutes
 const TOKEN_INFO_REFRESH_INTERVAL = 5 * 60 * 1000;

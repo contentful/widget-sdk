@@ -1,8 +1,9 @@
 import { sortBy, flow, map } from 'lodash/fp';
 
-import { getModules } from 'NgRegistry.es6';
+import { getModule } from 'NgRegistry.es6';
 
-const [CONFIG, TheLocaleStore] = getModules('PolicyBuilder/CONFIG', 'TheLocaleStore');
+const CONFIG = getModule('PolicyBuilder/CONFIG');
+const TheLocaleStore = getModule('TheLocaleStore');
 
 export default () =>
   [{ code: CONFIG.ALL_LOCALES, name: 'All locales' }].concat(

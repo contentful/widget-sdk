@@ -19,4 +19,3 @@ export const registerProvider = register('provider');
 export const registerValue = register('value');
 
 export const getModule = initModule.getModule;
-export const getModules = (...modules) => modules.map(getModule);
