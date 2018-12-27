@@ -3,11 +3,10 @@ import PropTypes from 'prop-types';
 
 import { joinAnd } from 'utils/StringUtils.es6';
 
-import { href } from 'states/Navigator.es6';
 import { getEnabledFeatures } from 'utils/SubscriptionUtils.es6';
-import { usage as orgUsage } from 'ui/NavStates/Org.es6';
+import { websiteUrl } from 'Config.es6';
 
-function BasePlan({ basePlan, orgId }) {
+function BasePlan({ basePlan }) {
   const enabledFeaturesNames = getEnabledFeatures(basePlan).map(({ name }) => name);
 
   return (
@@ -17,12 +16,12 @@ function BasePlan({ basePlan, orgId }) {
         <b>{basePlan.name}</b>
         {enabledFeaturesNames.length
           ? ` – includes ${joinAnd(enabledFeaturesNames)}. `
-          : ' – doesn’t include any additional features. '}
+          : ' – doesn’t include enterprise features. '}
         <a
           className="text-link"
-          href={href(orgUsage(orgId))}
+          href={websiteUrl('/pricing/#platform-features')}
           data-test-id="subscription-page.org-usage-link">
-          View usage
+          Platform features
         </a>
       </p>
     </div>
@@ -30,8 +29,7 @@ function BasePlan({ basePlan, orgId }) {
 }
 
 BasePlan.propTypes = {
-  basePlan: PropTypes.object.isRequired,
-  orgId: PropTypes.string.isRequired
+  basePlan: PropTypes.object.isRequired
 };
 
 export default BasePlan;

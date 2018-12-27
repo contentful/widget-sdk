@@ -46,7 +46,7 @@ function SpacePlans({
           </span>
         )}
         <a className="text-link" onClick={onCreateSpace}>
-          Add Space
+          Create Space
         </a>
       </p>
 
