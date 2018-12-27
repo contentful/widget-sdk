@@ -1,6 +1,6 @@
-'use strict';
+import { registerController } from 'NgRegistry.es6';
 
-angular.module('contentful').controller('ViewStateController', [
+registerController('ViewStateController', [
   'defaultState',
   function ViewStateController(defaultState) {
     /**

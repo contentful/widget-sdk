@@ -1,4 +1,5 @@
-'use strict';
+import { registerController } from 'NgRegistry.es6';
+import _ from 'lodash';
 
 /**
  * Manipulate a raw value by setting the unit and a scaled value.
@@ -11,13 +12,11 @@
  * The controller has a `units` object whose keys are labels for the
  * units and whose values are the unit factors.
  */
-angular.module('contentful').controller('DataSizeScaleController', [
+registerController('DataSizeScaleController', [
   '$scope',
   '$attrs',
-  'require',
-  function($scope, $attrs, require) {
-    const _ = require('lodash');
-    const $parse = require('$parse');
+  '$parse',
+  function($scope, $attrs, $parse) {
     const controller = this;
 
     const getModelValue = _.partial($parse($attrs.model), $scope.$parent);

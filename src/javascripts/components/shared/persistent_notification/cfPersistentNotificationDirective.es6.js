@@ -1,13 +1,11 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
+import _ from 'lodash';
 
-angular.module('contentful').directive('cfPersistentNotification', [
-  'require',
-  require => {
-    const _ = require('lodash');
-    const $sce = require('$sce');
-    const $timeout = require('$timeout');
-    const logger = require('logger');
-
+registerDirective('cfPersistentNotification', [
+  '$sce',
+  '$timeout',
+  'logger',
+  ($sce, $timeout, logger) => {
     return {
       restrict: 'E',
       template: JST.cf_persistent_notification(),

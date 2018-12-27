@@ -1,12 +1,11 @@
-'use strict';
+import { registerController } from 'NgRegistry.es6';
+import _ from 'lodash';
 
-angular.module('contentful').controller('CfAutocompleteResultsController', [
-  'require',
+registerController('CfAutocompleteResultsController', [
   '$scope',
   '$attrs',
   '$parse',
-  function(require, $scope, $attrs, $parse) {
-    const _ = require('lodash');
+  function($scope, $attrs, $parse) {
     const controller = this;
     const getAutocompleteResults = $parse($attrs.cfAutocompleteResults);
     this.selectedIndex = -1;

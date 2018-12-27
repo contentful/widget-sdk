@@ -1,11 +1,11 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
 
 /**
  * Shows a list of errors in `scope.errors.messages`.
  *
  * The directive hides its element if there are no error messages.
  */
-angular.module('contentful').directive('cfErrorList', () => ({
+registerDirective('cfErrorList', () => ({
   restrict: 'E',
   template: JST['cf_error_list'],
 

@@ -1,19 +1,26 @@
-'use strict';
-angular.module('contentful').controller('ListViewsController', [
+import { registerController } from 'NgRegistry.es6';
+import _ from 'lodash';
+import { Notification } from '@contentful/forma-36-react-components';
+import { Status, statusQueryKey } from 'app/ContentList/Search/Filters.es6';
+import { Operator } from 'app/ContentList/Search/Operators.es6';
+
+registerController('ListViewsController', [
   '$scope',
-  'require',
   'getBlankView',
   'resetList',
   'preserveStateAs',
-  ($scope, require, getBlankView, resetList, preserveStateAs) => {
-    const _ = require('lodash');
-    const createViewMigrator = require('data/ViewMigrator.es6').default;
-    const createViewPersistor = require('data/ListViewPersistor.es6').default;
-    const { Status, statusQueryKey } = require('app/ContentList/Search/Filters.es6');
-    const { Operator } = require('app/ContentList/Search/Operators.es6');
-    const spaceContext = require('spaceContext');
-    const { Notification } = require('@contentful/forma-36-react-components');
-
+  'spaceContext',
+  'data/ViewMigrator.es6',
+  'data/ListViewPersistor.es6',
+  (
+    $scope,
+    getBlankView,
+    resetList,
+    preserveStateAs,
+    spaceContext,
+    { default: createViewMigrator },
+    { default: createViewPersistor }
+  ) => {
     const viewMigrator = createViewMigrator(spaceContext.space, spaceContext.publishedCTs);
     const viewPersistor = createViewPersistor(spaceContext.getId(), viewMigrator, preserveStateAs);
 

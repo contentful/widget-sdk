@@ -1,17 +1,15 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
+import _ from 'lodash';
+import moment from 'moment';
 
-angular.module('contentful').factory('activationEmailResendController', [
-  'require',
-  require => {
-    const _ = require('lodash');
-    const $timeout = require('$timeout');
-    const $q = require('$q');
-    const moment = require('moment');
-    const TokenStore = require('services/TokenStore.es6');
-    const modalDialog = require('modalDialog');
-    const resendActivationEmail = require('activationEmailResender').resend;
-    const getStore = require('TheStore').getStore;
-
+registerFactory('activationEmailResendController', [
+  '$q',
+  '$timeout',
+  'modalDialog',
+  'services/TokenStore.es6', // TokenStore
+  'activationEmailResender', // { resend: resendActivationEmail }
+  'TheStore/index.es6', // { getStore }
+  ($q, $timeout, modalDialog, TokenStore, { resend: resendActivationEmail }, { getStore }) => {
     const HOUR_IN_MS = 1000 * 60 * 60;
     const HOURS_BEFORE_REOPEN_DIALOG = 24;
     const store = getStore().forKey('lastActivationEmailResendReminderTimestamp');

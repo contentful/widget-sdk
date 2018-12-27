@@ -1,4 +1,4 @@
-'use strict';
+import { registerFactory } from 'NgRegistry.es6';
 
 /**
  * @ngdoc service
@@ -9,14 +9,12 @@
  * Controlls how certain global dialogs play together to prevent them interfering
  * with eachother.
  */
-angular.module('contentful').factory('dialogsInitController', [
-  'require',
-  require => {
-    const $rootScope = require('$rootScope');
-    const spaceContext = require('spaceContext');
-    const activationEmailResendController = require('activationEmailResendController');
-    const subscriptionNotifier = require('subscriptionNotifier');
-
+registerFactory('dialogsInitController', [
+  '$rootScope',
+  'spaceContext',
+  'activationEmailResendController',
+  'subscriptionNotifier',
+  ($rootScope, spaceContext, activationEmailResendController, subscriptionNotifier) => {
     return {
       init: init
     };
