@@ -33,7 +33,7 @@ describe('CreateSpace', () => {
       });
       $provide.value('utils/LaunchDarkly', {});
       $provide.value('access_control/AccessChecker', this.accessChecker);
-      $provide.value('utils/LaunchDarkly', {
+      $provide.value('utils/LaunchDarkly/index.es6', {
         getCurrentVariation: this.isPOCEnabled
       });
       $provide.value('services/ResourceService.es6', () => ({

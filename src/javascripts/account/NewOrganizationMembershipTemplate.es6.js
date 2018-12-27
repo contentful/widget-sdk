@@ -1,6 +1,6 @@
 import React from 'react';
 import { includes, negate, isArray } from 'lodash';
-import { h } from 'ui/Framework';
+import { h } from 'ui/Framework/index.es6';
 import { assign } from 'utils/Collections.es6';
 import { match, isTag } from 'utils/TaggedValues.es6';
 import SuccessIcon from 'svg/checkmark-alt.es6';
