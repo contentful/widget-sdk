@@ -1,8 +1,10 @@
-import $timeout from '$timeout';
 import * as Wrapper from 'markdown_editor/codemirror_wrapper.es6';
 import * as Commands from 'markdown_editor/commands.es6';
 import { isFunction } from 'lodash';
 import * as CodeMirror from 'codemirror';
+import { getModule } from 'NgRegistry.es6';
+
+const $timeout = getModule('$timeout');
 
 export function create(textarea, options) {
   const editor = Wrapper.create(textarea, options, CodeMirror);
