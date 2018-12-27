@@ -1,4 +1,3 @@
-import logger from 'logger';
 import * as TokenStore from 'services/TokenStore.es6';
 import * as K from 'utils/kefir.es6';
 import * as policyChecker from './PolicyChecker.es6';
@@ -14,8 +13,11 @@ import {
 import { capitalize, capitalizeFirst } from 'utils/StringUtils.es6';
 import { chain, get, set, some, forEach, values } from 'lodash';
 import * as Enforcements from 'access_control/Enforcements.es6';
+import { getModule } from 'NgRegistry.es6';
 
 export { wasForbidden } from './Utils.es6';
+
+const logger = getModule('logger');
 
 /**
  * @name accessChecker

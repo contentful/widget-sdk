@@ -1,6 +1,8 @@
-import PolicyBuilder from 'PolicyBuilder';
-import CONFIG from 'PolicyBuilder/CONFIG';
 import { get, isString, identity } from 'lodash';
+import { getModule } from 'NgRegistry.es6';
+
+const PolicyBuilder = getModule('PolicyBuilder');
+const CONFIG = getModule('PolicyBuilder/CONFIG');
 
 const policies = {
   entry: {

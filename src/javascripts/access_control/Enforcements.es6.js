@@ -1,11 +1,13 @@
-import $window from '$window';
 import { uncapitalize } from 'utils/StringUtils.es6';
-import trackPersistentNotification from 'analyticsEvents/persistentNotification';
 import * as OrganizationRoles from 'services/OrganizationRoles.es6';
 import { go } from 'states/Navigator.es6';
 import { get, merge, findKey, forEach } from 'lodash';
-import require from 'require';
 import { supportUrl } from 'Config.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const $window = getModule('$window');
+const trackPersistentNotification = getModule('analyticsEvents/persistentNotification');
+const $injector = getModule('$injector');
 
 const USAGE_METRICS = {
   apiKey: 'API keys',
@@ -116,7 +118,7 @@ export function determineEnforcement(space, reasons, entityType) {
   function upgradeAction() {
     trackPersistentNotification.action('Quota Increase');
     // using require to avoid circular dependency :(
-    const isLegacyOrganization = require('utils/ResourceUtils').isLegacyOrganization;
+    const isLegacyOrganization = $injector.get('utils/ResourceUtils.es6').isLegacyOrganization;
     const subscriptionState = isLegacyOrganization(organization)
       ? 'subscription'
       : 'subscription_new';
