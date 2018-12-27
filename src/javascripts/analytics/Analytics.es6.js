@@ -1,10 +1,12 @@
 import { env } from 'Config.es6';
-import segment from 'analytics/segment';
 import * as Snowplow from 'analytics/snowplow/Snowplow.es6';
 import { prepareUserData } from 'analytics/UserData.es6';
-import * as analyticsConsole from 'analytics/console';
 import stringifySafe from 'json-stringify-safe';
 import _ from 'lodash';
+import { getModule } from 'NgRegistry.es6';
+
+const segment = getModule('analytics/segment');
+const analyticsConsole = getModule('analytics/console');
 
 /**
  * @ngdoc service
