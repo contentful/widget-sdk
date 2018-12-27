@@ -13,6 +13,9 @@ describe('SidebarWidgetRender controller', function() {
       widget: { field: {} }
     });
 
+    const { registerController } = this.$inject('NgRegistry.es6');
+    registerController('FieldLocaleController', function() {});
+
     this.$inject('$controller')('SidebarWidgetRenderController', {
       $scope: this.scope,
       $injector: this.$inject('$injector')

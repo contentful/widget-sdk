@@ -12,7 +12,6 @@ describe('Entry Editor Controller', function() {
         createForEntry: sinon.stub()
       });
       $provide.removeControllers(
-        'FormWidgetsController',
         'entityEditor/LocalesController',
         'entityEditor/StateController',
         'entityEditor/StatusNotificationsController',
@@ -20,8 +19,10 @@ describe('Entry Editor Controller', function() {
       );
     });
 
-    const { registerFactory } = this.$inject('NgRegistry.es6');
+    const { registerFactory, registerController } = this.$inject('NgRegistry.es6');
+    registerController('FormWidgetsController', function() {});
     registerFactory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
+
     const createDocument = this.$inject('mocks/entityEditor/Document').create;
 
     this.mockService('app/entity_editor/DataLoader.es6', {

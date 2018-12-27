@@ -1,39 +1,48 @@
-'use strict';
+import { registerController } from 'NgRegistry.es6';
+import _ from 'lodash';
+import * as K from 'utils/kefir.es6';
+import { caseofEq as caseof, otherwise } from 'sum-types';
+import { State, Action } from 'data/CMA/EntityState.es6';
+import { Notification } from 'app/entity_editor/Notifications.es6';
+import { registerUnpublishedReferencesWarning } from 'app/entity_editor/PublicationWarnings/UnpublishedReferencesWarning/index.es6';
 
-angular.module('contentful').controller('entityEditor/StateController', [
+registerController('entityEditor/StateController', [
   '$scope',
-  'require',
+  '$q',
   'notify',
   'validator',
   'otDoc',
-  function($scope, require, notify, validator, otDoc) {
-    const controller = this;
-    const $q = require('$q');
-    const Command = require('command');
-    const closeState = require('navigation/closeState');
-    const _ = require('lodash');
-    const publicationWarnings = require('app/entity_editor/PublicationWarnings/index.es6').create();
-    const trackVersioning = require('analyticsEvents/versioning');
-    const K = require('utils/kefir.es6');
-    const N = require('app/entity_editor/Notifications.es6');
-    const modalDialog = require('modalDialog');
-    const Notification = N.Notification;
-    const SumTypes = require('sum-types');
-    const caseof = SumTypes.caseofEq;
-    const otherwise = SumTypes.otherwise;
-    const EntityState = require('data/CMA/EntityState.es6');
-    const State = EntityState.State;
-    const Action = EntityState.Action;
-    const Analytics = require('analytics/Analytics.es6');
-    const spaceContext = require('spaceContext');
-    const onFeatureFlag = require('utils/LaunchDarkly').onFeatureFlag;
-    const goToPreviousSlideOrExit = require('navigation/SlideInNavigator').goToPreviousSlideOrExit;
-    const registerUnpublishedReferencesWarning = require('app/entity_editor/PublicationWarnings/UnpublishedReferencesWarning/index.es6')
-      .registerUnpublishedReferencesWarning;
+  'command',
+  'modalDialog',
+  'spaceContext',
+  'navigation/closeState',
+  'analyticsEvents/versioning',
 
+  'analytics/Analytics.es6',
+  'utils/LaunchDarkly/index.es6',
+  'navigation/SlideInNavigator/index.es6',
+  'app/entity_editor/PublicationWarnings/index.es6',
+  function(
+    $scope,
+    $q,
+    notify,
+    validator,
+    otDoc,
+    Command,
+    modalDialog,
+    spaceContext,
+    closeState,
+    trackVersioning,
+    Analytics,
+    { onFeatureFlag },
+    { goToPreviousSlideOrExit },
+    { create: createPublicationWarnings }
+  ) {
+    const controller = this;
     const permissions = otDoc.permissions;
     const reverter = otDoc.reverter;
     const docStateManager = otDoc.resourceState;
+    const publicationWarnings = createPublicationWarnings();
 
     // Is set to 'true' when the entity has been deleted by another user.
     let isDeleted = false;

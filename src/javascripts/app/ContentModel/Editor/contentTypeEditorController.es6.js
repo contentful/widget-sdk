@@ -1,4 +1,6 @@
-'use strict';
+import { registerController } from 'NgRegistry.es6';
+import _ from 'lodash';
+import validation from '@contentful/validation';
 
 /**
  * @ngdoc type
@@ -10,27 +12,37 @@
  * @scope.provides  contentType
  * @scope.provides  hasFields
  */
-angular.module('contentful').controller('ContentTypeEditorController', [
+registerController('ContentTypeEditorController', [
   '$scope',
-  'require',
-  function ContentTypeEditorController($scope, require) {
-    const _ = require('lodash');
-    const controller = this;
-    const $state = require('$state');
-    const validation = require('@contentful/validation');
-    const modalDialog = require('modalDialog');
-    const openFieldDialog = require('openFieldDialog');
-    const leaveConfirmator = require('navigation/confirmLeaveEditor');
-    const metadataDialog = require('contentTypeEditor/metadataDialog');
-    const Command = require('command');
-    const accessChecker = require('access_control/AccessChecker');
-    const ctHelpers = require('data/ContentTypes');
-    const eiHelpers = require('editingInterfaces/helpers');
-    const spaceContext = require('spaceContext');
+  '$state',
+  'modalDialog',
+  'command',
+  'spaceContext',
+  'openFieldDialog',
+  'navigation/confirmLeaveEditor',
+  'contentTypeEditor/metadataDialog',
+  'access_control/AccessChecker',
+  'data/ContentTypes',
+  'editingInterfaces/helpers',
+  'analytics/Analytics.es6',
+  'app/ContentModel/Editor/Actions.es6',
+  function ContentTypeEditorController(
+    $scope,
+    $state,
+    modalDialog,
+    Command,
+    spaceContext,
+    openFieldDialog,
+    leaveConfirmator,
+    metadataDialog,
+    accessChecker,
+    ctHelpers,
+    eiHelpers,
+    Analytics,
+    { default: createActions }
+  ) {
     const editingInterfaces = spaceContext.editingInterfaces;
-    const Analytics = require('analytics/Analytics.es6');
-    const createActions = require('app/ContentModel/Editor/Actions.es6').default;
-
+    const controller = this;
     const contentTypeIds = spaceContext.cma
       .getContentTypes()
       .then(response => response.items.map(ct => ct.sys.id));

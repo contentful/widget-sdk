@@ -1,4 +1,5 @@
-'use strict';
+import { registerController } from 'NgRegistry.es6';
+
 /**
  * @ngdoc type
  * @name ApiNameController
@@ -6,13 +7,11 @@
  * This controller deals with locking/unlocking the editing mechanism
  * for the apiName property of fields.
  */
-angular.module('contentful').controller('ApiNameController', [
+registerController('ApiNameController', [
   '$scope',
-  'require',
-  function ApiNameController($scope, require) {
-    const modalDialog = require('modalDialog');
-    const $q = require('$q');
-
+  '$q',
+  'modalDialog',
+  function ApiNameController($scope, $q, modalDialog) {
     /**
      * @ngdoc method
      * @name ApiNameController#isEditable
