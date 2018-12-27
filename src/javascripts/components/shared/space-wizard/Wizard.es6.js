@@ -6,7 +6,7 @@ import SpacePlanSelector from './SpacePlanSelector.es6';
 import SpaceDetails from './SpaceDetails.es6';
 import ConfirmScreen from './ConfirmScreen.es6';
 import ProgressScreen from './ProgressScreen.es6';
-import { Notification } from '@contentful/forma-36-react-components';
+import { Notification, IconButton } from '@contentful/forma-36-react-components';
 import { getModule } from 'NgRegistry.es6';
 
 import { connect } from 'react-redux';
@@ -192,7 +192,14 @@ class Wizard extends React.Component {
         </ul>
       );
       const closeButton = (
-        <button className="create-space-wizard__close modal-dialog__close" onClick={this.cancel} />
+        <IconButton
+          iconProps={{ icon: 'Close' }}
+          label="Close modal dialog"
+          onClick={this.cancel}
+          buttonType="muted"
+          testId="modal-dialog-close"
+          style={{ padding: '18px 20px' }}
+        />
       );
 
       const stepProps = {

@@ -98,7 +98,7 @@ describe('Space Wizard', () => {
 
     it('should track modal cancel event', function() {
       const component = this.mount('create');
-      component.find('.modal-dialog__close').simulate('click');
+      component.find('[data-test-id="modal-dialog-close"]').simulate('click');
       sinon.assert.calledOnce(this.stubs.track.withArgs('space_wizard:cancel'));
     });
 
