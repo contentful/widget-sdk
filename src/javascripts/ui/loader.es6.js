@@ -1,6 +1,6 @@
 import { registerDirective } from 'NgRegistry.es6';
 import _ from 'lodash';
-import { h } from 'utils/legacy-html-hyperscript';
+import { h } from 'utils/legacy-html-hyperscript/index.es6';
 
 /*
  * @ngdoc directive

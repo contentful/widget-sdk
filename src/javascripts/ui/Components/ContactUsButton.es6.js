@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import * as Intercom from 'intercom';
 import { supportUrl } from 'Config.es6';
+import { getModule } from 'NgRegistry.es6';
 
 import { TextLink, Button } from '@contentful/forma-36-react-components';
+
+const Intercom = getModule('intercom');
 
 class ContactUsButton extends React.Component {
   static propTypes = {

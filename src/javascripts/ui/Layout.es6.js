@@ -1,4 +1,4 @@
-import { h } from 'ui/Framework';
+import { h } from 'ui/Framework/index.es6';
 
 /**
  * @module

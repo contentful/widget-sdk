@@ -13,7 +13,13 @@ module.exports = {
         moduleDirectory: ['src/javascripts', 'node_modules']
       }
     },
-    'import/core-modules': ['legacy-client', 'localesList', 'marked', 'searchParser']
+    'import/core-modules': [
+      'legacy-client',
+      'localesList',
+      'marked',
+      'searchParser',
+      'global/window'
+    ]
   },
   env: {
     browser: true,
