@@ -1,9 +1,10 @@
-import require from 'require';
 import { isArray, get } from 'lodash';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import { getSpace } from 'services/TokenStore.es6';
+import { ENFORCEMENTS_FLAG } from 'featureFlags.es6';
+import { getModule } from 'NgRegistry.es6';
 
-const flagName = 'feature-bv-2018-08-enforcements-api';
+const $injector = getModule('$injector');
 
 // 30 seconds
 // This is the Varnish caching time for this endpoint
@@ -72,8 +73,8 @@ document.onfocusout = onBlur;
 
 async function fetchEnforcements(spaceId) {
   // To get around circular dep
-  const { getCurrentVariation } = require('utils/LaunchDarkly');
-  const useApi = await getCurrentVariation(flagName);
+  const { getCurrentVariation } = $injector.get('utils/LaunchDarkly/index.es6');
+  const useApi = await getCurrentVariation(ENFORCEMENTS_FLAG);
 
   if (active && useApi) {
     const endpoint = createSpaceEndpoint(spaceId);

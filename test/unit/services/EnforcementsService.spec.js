@@ -20,7 +20,7 @@ describe('Enforcements Service', function() {
         getSpace: this.getSpace
       });
 
-      $provide.value('utils/LaunchDarkly', {
+      $provide.value('utils/LaunchDarkly/index.es6', {
         getCurrentVariation: this.getCurrentVariation
       });
     });

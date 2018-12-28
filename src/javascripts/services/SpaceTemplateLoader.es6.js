@@ -1,9 +1,11 @@
-import { getCurrentVariation } from 'utils/LaunchDarkly';
-import contentfulClient from 'contentfulClient';
-import * as environment from 'environment';
+import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 import { runTask } from 'utils/Concurrent.es6';
-import logger from 'logger';
 import _ from 'lodash';
+import { getModule } from 'NgRegistry.es6';
+
+const contentfulClient = getModule('contentfulClient');
+const logger = getModule('logger');
+const environment = getModule('environment');
 
 const contentfulConfig = environment.settings.contentful;
 

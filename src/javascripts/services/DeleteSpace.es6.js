@@ -1,14 +1,16 @@
-import { h } from 'utils/legacy-html-hyperscript';
+import { h } from 'utils/legacy-html-hyperscript/index.es6';
 import { extend } from 'lodash';
-import $rootScope from '$rootScope';
-import modalDialog from 'modalDialog';
 import { Notification } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
-import Command from 'command';
 import * as TokenStore from 'services/TokenStore.es6';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
-import ApiClient from 'data/ApiClient';
 import { openModal as openCommittedSpaceWarningDialog } from 'components/shared/space-wizard/CommittedSpaceWarningModal.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const $rootScope = getModule('$rootScope');
+const modalDialog = getModule('modalDialog');
+const Command = getModule('command');
+const ApiClient = getModule('data/ApiClient');
 
 export function openDeleteSpaceDialog({ space, plan, onSuccess }) {
   if (plan && plan.committed) {

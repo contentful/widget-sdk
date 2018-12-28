@@ -1,17 +1,19 @@
-import $rootScope from '$rootScope';
-import contentPreview from 'contentPreview';
 import * as Analytics from 'analytics/Analytics.es6';
 import { runTask } from 'utils/Concurrent.es6';
 import * as _ from 'lodash';
 import qs from 'qs';
-import * as environment from 'environment';
 import {
   TEA_MAIN_CONTENT_PREVIEW,
   TEA_CONTENT_PREVIEWS,
   DISCOVERY_APP_BASE_URL
 } from './contentPreviewConfig.es6';
-import TheLocaleStore from 'TheLocaleStore';
 import { enrichTemplate } from './enrichTemplate.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const $rootScope = getModule('$rootScope');
+const contentPreview = getModule('contentPreview');
+const TheLocaleStore = getModule('TheLocaleStore');
+const environment = getModule('environment');
 
 const ASSET_PROCESSING_TIMEOUT = 60000;
 

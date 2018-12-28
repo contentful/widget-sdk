@@ -31,7 +31,7 @@ describe('Feature Service', () => {
 
     const system = createIsolatedSystem();
 
-    system.set('utils/LaunchDarkly', {
+    system.set('utils/LaunchDarkly/index.es6', {
       getCurrentVariation: flagName => {
         return Promise.resolve(this.flags[flagName]);
       }

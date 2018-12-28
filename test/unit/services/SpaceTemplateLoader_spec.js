@@ -513,9 +513,13 @@ describe('Space Template loading service', () => {
   };
 
   beforeEach(function() {
+    this.stubs = {
+      newClient: sinon.stub()
+    };
+
     module('contentful/test', $provide => {
       $provide.constant('contentfulClient', {
-        newClient: sinon.stub()
+        newClient: this.stubs.newClient
       });
     });
 
@@ -527,8 +531,8 @@ describe('Space Template loading service', () => {
       editingInterface: sinon.stub(),
       space: sinon.stub()
     };
-    this.contentfulClient = this.$inject('contentfulClient');
-    this.contentfulClient.newClient.returns(this.client);
+
+    this.stubs.newClient.returns(this.client);
     this.spaceTemplateLoader = this.$inject('services/SpaceTemplateLoader.es6');
   });
 
@@ -538,13 +542,11 @@ describe('Space Template loading service', () => {
 
   describe('gets template list from contentful', () => {
     beforeEach(function*() {
-      this.client.entries.returns(
-        Promise.resolve([
-          { fields: { id: 3, spaceId: 3 } },
-          { fields: { id: 2, spaceId: 2, order: 1 } },
-          { fields: { id: 1, spaceId: 1, order: 0 } }
-        ])
-      );
+      this.client.entries.resolves([
+        { fields: { id: 3, spaceId: 3 } },
+        { fields: { id: 2, spaceId: 2, order: 1 } },
+        { fields: { id: 1, spaceId: 1, order: 0 } }
+      ]);
       this.returnedEntries = yield this.spaceTemplateLoader.getTemplatesList();
       this.$rootScope.$digest();
     });

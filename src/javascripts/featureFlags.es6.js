@@ -6,3 +6,5 @@ export const CONTACT_US_SPACE_HOME = 'feature-ps-10-2017-contact-us-space-home';
 export const CONTACT_US_BOILERPLATE_FLAG = 'feature-ps-10-2017-contact-us-boilerplate';
 export const ENVIRONMENTS_FLAG = 'feature-dv-11-2017-environments';
 export const UPGRADE_PRICING_FLAG = 'feature-dl-09-2018-upgrade-pricing-space-home';
+export const ENFORCEMENTS_FLAG = 'feature-bv-2018-08-enforcements-api';
+export const FEATURE_SERVICE_FLAG = 'feature-bv-2018-01-features-api';
