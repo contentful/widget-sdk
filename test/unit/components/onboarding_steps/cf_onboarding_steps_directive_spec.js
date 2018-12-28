@@ -25,7 +25,7 @@ describe('cfOnboardingSteps Directive', () => {
       }
     };
     module('contentful/test', $provide => {
-      $provide.value('utils/LaunchDarkly', {
+      $provide.value('utils/LaunchDarkly/index.es6', {
         onFeatureFlag: sinon.stub(),
         getCurrentVariation: sinon.stub().resolves(false)
       });
@@ -51,7 +51,7 @@ describe('cfOnboardingSteps Directive', () => {
         }),
         MODERN_STACK_ONBOARDING_SPACE_NAME: 'gatsby-bruv'
       });
-      $provide.value('components/shared/auto_create_new_space', {
+      $provide.value('components/shared/auto_create_new_space/index.es6', {
         getKey: sinon.stub().returns('key')
       });
     });

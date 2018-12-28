@@ -1,15 +1,13 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
+import _ from 'lodash';
+import { Notification } from '@contentful/forma-36-react-components';
+import * as stringUtils from 'utils/StringUtils.es6';
+import mimetype from '@contentful/mimetype';
+import * as Filestack from 'services/Filestack.es6';
 
-angular.module('contentful').directive('cfFileEditor', [
-  'require',
-  require => {
-    const _ = require('lodash');
-    const Filestack = require('services/Filestack.es6');
-    const ImageOperations = require('app/widgets/ImageOperations.es6');
-    const { Notification } = require('@contentful/forma-36-react-components');
-    const stringUtils = require('utils/StringUtils.es6');
-    const mimetype = require('@contentful/mimetype');
-
+registerDirective('cfFileEditor', [
+  'app/widgets/ImageOperations.es6',
+  ImageOperations => {
     let dropPaneMountCount = 0;
 
     // TODO use isolated scope for this editor.

@@ -38,6 +38,7 @@ angular
       ngRequire('components/client/ClientController.es6');
       ngRequire('components/shared/space-wizard/SpaceWizardDirective.es6');
       ngRequire('analytics/bugsnag.es6');
+      ngRequire('services/lazyLoader.es6');
 
       // access_control
       ngRequire('access_control/PolicyBuilder.es6');
@@ -83,6 +84,30 @@ angular
       ngRequire('directives/cfWhenDisabled.es6');
       ngRequire('directives/tooltipDirective.es6');
       ngRequire('directives/watchersTogglerDirective.es6');
+
+      // app
+      ngRequire('app/api/api_key_list/apiKeyListDirective.es6');
+      ngRequire('app/api/cfApiKeyNavDirective.es6');
+      ngRequire('app/asset_editor/cfAssetEditorDirective.es6');
+      ngRequire('app/content_preview/contentPreviewEditorDirective.es6');
+
+      // app/widgets
+      ngRequire('app/widgets/cfFileEditorDirective.es6');
+      ngRequire('app/widgets/number/cfNumberEditorDirective.es6');
+      ngRequire('app/widgets/selectionController.es6');
+      ngRequire('app/widgets/shared/cfEditorCharacterInfoDirective.es6');
+      ngRequire('app/widgets/single_line/cfSingleLineEditorDirective.es6');
+      ngRequire('app/widgets/slug/cfSlugEditorDirective.es6');
+      ngRequire('app/widgets/url/cfUrlEditorDirective.es6');
+
+      // app/home
+      ngRequire('app/home/cfPositionRelativeToLanguageDirective.es6');
+      ngRequire('app/home/cfTrackCopyEvent.es6');
+      ngRequire('app/home/cfWelcomeDirective.es6');
+      ngRequire('app/home/contactUs/contactUsSpaceHomeDirective.es6');
+      ngRequire('app/home/developer_resources/cfDeveloperResourcesDirective.es6');
+      ngRequire('app/home/onboarding_steps/cfOnboardingStepsDirective.es6');
+      ngRequire('app/home/welcome/cfOnboardingWithTeaDirective.es6');
 
       // markdown_editor
       ngRequire('markdown_editor/cfMarkdownActionDirective.es6');
@@ -182,7 +207,6 @@ angular
       ngRequire('services/fieldFactory.es6');
       ngRequire('services/hints.es6');
       ngRequire('services/intercom.es6');
-      ngRequire('services/lazyLoader.es6');
       ngRequire('services/localeStore.es6');
       ngRequire('services/logger.es6');
       ngRequire('services/modalDialogService.es6');

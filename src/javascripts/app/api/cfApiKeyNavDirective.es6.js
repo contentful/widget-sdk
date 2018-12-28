@@ -1,11 +1,9 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
+import { h } from 'utils/legacy-html-hyperscript';
 
-angular.module('contentful').directive('cfApiKeyNav', [
-  'require',
-  require => {
-    const h = require('utils/legacy-html-hyperscript').h;
-    const $state = require('$state');
-
+registerDirective('cfApiKeyNav', [
+  '$state',
+  $state => {
     const template = h('header.workbench-header.x--with-nav', [
       h('cf-breadcrumbs'),
       h('.page-header', [
