@@ -32,7 +32,7 @@ describe('states/Deeplink.es6', () => {
         getOrganization: this.getOrganization,
         user$: this.user$
       });
-      $provide.value('access_control/AccessChecker', {
+      $provide.value('access_control/AccessChecker/index.es6', {
         canReadApiKeys: this.canReadApiKeys
       });
       $provide.value('services/OrganizationRoles.es6', {
@@ -41,10 +41,10 @@ describe('states/Deeplink.es6', () => {
       $provide.value('states/Navigator.es6', {
         go: this.navigate
       });
-      $provide.value('utils/LaunchDarkly', {
+      $provide.value('utils/LaunchDarkly/index.es6', {
         getCurrentVariation: () => Promise.resolve(false)
       });
-      $provide.value('components/shared/auto_create_new_space', {
+      $provide.value('components/shared/auto_create_new_space/index.es6', {
         getKey: noop
       });
       $provide.value('components/shared/auto_create_new_space/CreateModernOnboarding.es6', {

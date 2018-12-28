@@ -1,13 +1,13 @@
 import { getSpaces, getOrganizations, getOrganization, user$ } from 'services/TokenStore.es6';
-import { getStore } from 'TheStore';
-import * as accessChecker from 'access_control/AccessChecker';
+import { getStore } from 'TheStore/index.es6';
+import * as accessChecker from 'access_control/AccessChecker/index.es6';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import { getValue, onValue } from 'utils/kefir.es6';
 import {
   MODERN_STACK_ONBOARDING_SPACE_NAME,
   getStoragePrefix
 } from 'components/shared/auto_create_new_space/CreateModernOnboarding.es6';
-import { getKey as getSpaceAutoCreatedKey } from 'components/shared/auto_create_new_space';
+import { getKey as getSpaceAutoCreatedKey } from 'components/shared/auto_create_new_space/index.es6';
 
 const store = getStore();
 

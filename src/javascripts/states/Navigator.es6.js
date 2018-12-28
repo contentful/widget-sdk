@@ -20,8 +20,10 @@
  * Instead of passing them around as separate arguments (as
  * Angular UI router does) we treat them as one value.
  */
-import $state from '$state';
 import { get } from 'lodash';
+import { getModule } from 'NgRegistry.es6';
+
+const $state = getModule('$state');
 
 const ENTITY_PLURALS = {
   Entry: 'entries',
