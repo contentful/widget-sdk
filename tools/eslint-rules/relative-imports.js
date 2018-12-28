@@ -2,7 +2,6 @@ const moduleVisitor = require('eslint-module-utils/moduleVisitor');
 
 const resolve = require('eslint-module-utils/resolve');
 const ImportType = require('eslint-plugin-import/lib/core/importType');
-// const path = require('path');
 
 module.exports = {
   meta: {},

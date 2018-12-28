@@ -1,6 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import $stateMocked from 'ng/$state';
+import * as $stateMocked from 'ng/$state';
 import { Notification } from '@contentful/forma-36-react-components';
 import LocalesListPricingOne, { AddLocaleButton, LocalesAdvice } from './LocalesListPricingOne.es6';
 

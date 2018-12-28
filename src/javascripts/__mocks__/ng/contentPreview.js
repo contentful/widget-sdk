@@ -1,5 +1,3 @@
-export default {
-  replaceVariablesInUrl: jest.fn(),
-  getForContentType: jest.fn(),
-  getSelected: jest.fn()
-};
+export const replaceVariablesInUrl = jest.fn();
+export const getForContentType = jest.fn();
+export const getSelected = jest.fn();

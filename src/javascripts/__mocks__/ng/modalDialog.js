@@ -1,5 +1,3 @@
-export default {
-  open: jest.fn(),
-  getOpened: jest.fn(),
-  closeAll: jest.fn()
-};
+export const open = jest.fn();
+export const getOpened = jest.fn();
+export const closeAll = jest.fn();

@@ -1,7 +1,7 @@
 import React from 'react';
 import Enzyme from 'enzyme';
 import WebhookList from './WebhookList.es6';
-import spaceContextMocked from 'ng/spaceContext';
+import * as spaceContextMocked from 'ng/spaceContext';
 
 describe('WebhookList', () => {
   beforeEach(() => {

@@ -1,3 +1,1 @@
-export default {
-  getDefaultLocale: jest.fn().mockReturnValue({ code: 'en-US' })
-};
+export const getDefaultLocale = jest.fn().mockReturnValue({ code: 'en-US' });

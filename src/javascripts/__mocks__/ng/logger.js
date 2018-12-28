@@ -1,3 +1,1 @@
-export default {
-  logWarn: jest.fn()
-};
+export const logWarn = jest.fn();

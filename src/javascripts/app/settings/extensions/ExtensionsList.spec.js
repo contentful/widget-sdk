@@ -1,7 +1,7 @@
 import React from 'react';
 import Enzyme from 'enzyme';
 import ExtensionsList from './ExtensionsList.es6';
-import $stateMocked from 'ng/$state';
+import * as $stateMocked from 'ng/$state';
 
 describe('app/settings/extensions/Extensions', () => {
   beforeEach(() => {

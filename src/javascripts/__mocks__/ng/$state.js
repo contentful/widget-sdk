@@ -1,4 +1,2 @@
-export default {
-  go: jest.fn(),
-  href: jest.fn().mockImplementation(sref => `http://url-for-state-${sref}`)
-};
+export const go = jest.fn();
+export const href = jest.fn().mockImplementation(sref => `http://url-for-state-${sref}`);

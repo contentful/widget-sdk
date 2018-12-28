@@ -1,6 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import spaceContextMocked from 'ng/spaceContext';
+import * as spaceContextMocked from 'ng/spaceContext';
 import WebhookHealth from './WebhookHealth.es6';
 
 describe('WebhookHealth', () => {

@@ -1,7 +1,7 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import mockedSpaceContext from 'ng/spaceContext';
-import mockedContentPreview from 'ng/contentPreview';
+import * as mockedSpaceContext from 'ng/spaceContext';
+import * as mockedContentPreview from 'ng/contentPreview';
 import SidebarContentPreviewContainer from './SidebarContentPreviewContainer.es6';
 
 const contentPreviews = [
