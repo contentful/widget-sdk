@@ -1,4 +1,8 @@
-'use strict';
+import { registerDirective } from 'NgRegistry.es6';
+import _ from 'lodash';
+import $ from 'jquery';
+import mimetype from '@contentful/mimetype';
+import { h } from 'utils/legacy-html-hyperscript';
 
 /**
  * @ngdoc directive
@@ -21,15 +25,9 @@
  *
  */
 
-angular.module('contentful').directive('cfThumbnail', [
-  'require',
-  require => {
-    const $ = require('jquery');
-    const _ = require('lodash');
-    const mimetype = require('@contentful/mimetype');
-    const h = require('utils/legacy-html-hyperscript').h;
-    const { isValidImage, getExternalImageUrl } = require('ui/cf/thumbnailHelpers.es6');
-
+registerDirective('cfThumbnail', [
+  'ui/cf/thumbnailHelpers.es6',
+  ({ isValidImage, getExternalImageUrl }) => {
     const groupToIconMap = {
       image: 'image',
       video: 'video',
