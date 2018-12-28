@@ -39,6 +39,7 @@ angular
       ngRequire('components/shared/space-wizard/SpaceWizardDirective.es6');
       ngRequire('analytics/bugsnag.es6');
       ngRequire('services/lazyLoader.es6');
+      ngRequire('filters.es6');
 
       // access_control
       ngRequire('access_control/PolicyBuilder.es6');
@@ -284,6 +285,15 @@ angular
       ngRequire('ui/inputUpdater.es6');
       ngRequire('ui/loader.es6');
       ngRequire('ui/sortable.es6');
+
+      // widgets
+      ngRequire('widgets/api.es6');
+      ngRequire('widgets/cfIframeWidgetDirective.es6');
+      ngRequire('widgets/channel.es6');
+      ngRequire('widgets/default.es6');
+      ngRequire('widgets/idMap.es6');
+      ngRequire('widgets/migrations.es6');
+      ngRequire('widgets/widgets.es6');
 
       // forms (cf.forms)
       ngRequire('forms.es6');

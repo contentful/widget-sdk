@@ -1,16 +1,13 @@
-'use strict';
-
+import { registerFactory } from 'NgRegistry.es6';
+import _ from 'lodash';
+import widgetMap from '@contentful/widget-map';
 /**
  * @ngdoc service
  * @name widgets/default
  */
-angular.module('contentful').factory('widgets/default', [
-  'require',
-  require => {
-    const fieldFactory = require('fieldFactory');
-    const _ = require('lodash');
-    const widgetMap = require('@contentful/widget-map');
-
+registerFactory('widgets/default', [
+  'fieldFactory',
+  fieldFactory => {
     // We can use a dropdown widget for these field types
     const DROPDOWN_TYPES = ['Text', 'Symbol', 'Integer', 'Number', 'Boolean'];
 

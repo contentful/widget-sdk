@@ -12,7 +12,7 @@ describe('cfIframeWidget directive', function() {
     module('contentful/test', $provide => {
       // `widgets/API` is used with `new` so we need to provide a function
       const { widgetAPI } = this;
-      $provide.value('widgets/API', function() {
+      $provide.constant('widgets/API', function() {
         return widgetAPI;
       });
     });

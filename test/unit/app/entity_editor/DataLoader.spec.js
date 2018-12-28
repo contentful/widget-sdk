@@ -4,7 +4,7 @@ import _ from 'lodash';
 describe('app/entity_editor/DataLoader.es6', () => {
   beforeEach(function() {
     module('contentful/test', $provide => {
-      $provide.value('widgets', { buildRenderable: sinon.stub().returns({}) });
+      $provide.constant('widgets', { buildRenderable: sinon.stub().returns({}) });
       $provide.constant('TheLocaleStore', {
         getPrivateLocales: sinon.stub().returns([])
       });

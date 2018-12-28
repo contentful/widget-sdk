@@ -8,7 +8,7 @@ describe('data/editingInterfaces/transformer', () => {
   beforeEach(() => {
     getDefaultWidget = sinon.stub();
     module('contentful/test', $provide => {
-      $provide.value('widgets/default', getDefaultWidget);
+      $provide.constant('widgets/default', getDefaultWidget);
     });
   });
 
