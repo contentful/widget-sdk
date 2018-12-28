@@ -66,7 +66,8 @@ function handleOneUploaded({ filesUploaded }) {
 }
 
 export async function makeDropPane({ id, onSuccess }) {
-  return (await init())
+  const client = await init();
+  return client
     .picker({
       container: '.__filestack-drop-pane-mount',
       displayMode: 'dropPane',
@@ -88,7 +89,8 @@ export async function makeDropPane({ id, onSuccess }) {
 
 export function pick() {
   return new Promise(async function(resolve) {
-    (await init())
+    const client = await init();
+    client
       .picker(
         pickOptions({
           disableTransformer: true,
@@ -102,7 +104,8 @@ export function pick() {
 
 export async function pickMultiple() {
   return new Promise(async function(resolve, reject) {
-    return (await init())
+    const client = await init();
+    return client
       .picker(
         pickOptions({
           maxFiles: MAX_FILES,
@@ -136,8 +139,8 @@ export async function cropImage(mode, imageUrl) {
       transformations.crop = true;
     }
 
-    const filestack = await init();
-    const picker = filestack.picker(
+    const client = await init();
+    const picker = client.picker(
       pickOptions({
         transformations,
         onUploadDone: ({ filesUploaded }) => resolve(handleOneUploaded({ filesUploaded })),
