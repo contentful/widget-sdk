@@ -107,6 +107,32 @@ angular
   ])
 
   .config([
+    '$urlMatcherFactoryProvider',
+    $urlMatcherFactoryProvider => {
+      /*
+       * We need to define a dumb type PathSuffix here and use that to
+       * represent path suffixes for the Space Settings and Account
+       * views, because otherwise UI-Router treats them as regular
+       * URL parameters and does nasty things like escaping slashes.
+       */
+      $urlMatcherFactoryProvider.type('PathSuffix', {
+        encode: function(val) {
+          return val !== null ? val.toString() : val;
+        },
+        decode: function(val) {
+          return val !== null ? val.toString() : val;
+        },
+        is: function(val) {
+          return this.pattern.test(val);
+        },
+        pattern: /.*/
+      });
+
+      // Avoid being obsessive about matching states to trailing slashes
+      $urlMatcherFactoryProvider.strictMode(false);
+    }
+  ])
+  .config([
     '$provide',
     $provide => {
       // Decorates $q instances with the `callback` method

@@ -251,6 +251,45 @@ angular
       ngRequire('app/entry_editor/entryActionsController.es6');
       ngRequire('app/entry_editor/formWidgetsController.es6');
 
+      // app
+      ngRequire('app/api/api_key_list/apiKeyListDirective.es6');
+      ngRequire('app/api/cfApiKeyNavDirective.es6');
+      ngRequire('app/asset_editor/cfAssetEditorDirective.es6');
+      ngRequire('app/content_preview/contentPreviewEditorDirective.es6');
+
+      // app/widgets
+      ngRequire('app/widgets/cfFileEditorDirective.es6');
+      ngRequire('app/widgets/number/cfNumberEditorDirective.es6');
+      ngRequire('app/widgets/selectionController.es6');
+      ngRequire('app/widgets/shared/cfEditorCharacterInfoDirective.es6');
+      ngRequire('app/widgets/single_line/cfSingleLineEditorDirective.es6');
+      ngRequire('app/widgets/slug/cfSlugEditorDirective.es6');
+      ngRequire('app/widgets/url/cfUrlEditorDirective.es6');
+
+      // app/home
+      ngRequire('app/home/cfPositionRelativeToLanguageDirective.es6');
+      ngRequire('app/home/cfTrackCopyEvent.es6');
+      ngRequire('app/home/cfWelcomeDirective.es6');
+      ngRequire('app/home/contactUs/contactUsSpaceHomeDirective.es6');
+      ngRequire('app/home/developer_resources/cfDeveloperResourcesDirective.es6');
+      ngRequire('app/home/onboarding_steps/cfOnboardingStepsDirective.es6');
+      ngRequire('app/home/welcome/cfOnboardingWithTeaDirective.es6');
+
+      // states
+      ngRequire('states/account.es6');
+      ngRequire('states/accountProfile.es6');
+      ngRequire('states/assets.es6');
+      ngRequire('states/config.es6');
+      ngRequire('states/contentTypes.es6');
+      ngRequire('states/entries.es6');
+      ngRequire('states/settings.es6');
+      ngRequire('states/settingsContentPreview.es6');
+      ngRequire('states/settingsRoles.es6');
+      ngRequire('states/settingsUsers.es6');
+      ngRequire('states/spaceHome.es6');
+      ngRequire('states/stackOnboarding.es6');
+      ngRequire('states/states.es6');
+
       // ui (cf.ui)
       ngRequire('ui/cfIconDirective.es6');
       ngRequire('ui/cfUiHint.es6');
