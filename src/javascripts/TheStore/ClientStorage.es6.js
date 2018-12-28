@@ -6,15 +6,6 @@ export default function createClientStorage(storageType) {
   return {
     get: key => storage.getItem(key),
     set: (key, value) => storage.setItem(key, value),
-    remove: key => storage.removeItem(key),
-    isSupported: function() {
-      try {
-        this.set('test', { test: true });
-        this.remove('test');
-        return true;
-      } catch (e) {
-        return false;
-      }
-    }
+    remove: key => storage.removeItem(key)
   };
 }

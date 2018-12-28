@@ -1,4 +1,4 @@
-import CookieStorage from 'TheStore/CookieStorage.es6';
+import Cookies from 'js-cookie';
 import { pickBy, merge } from 'lodash';
 
 /**
@@ -43,7 +43,7 @@ function getFirstVisitData() {
 
 function parseCookie(cookieName, prop) {
   try {
-    const cookie = CookieStorage.get(cookieName);
+    const cookie = Cookies.get(cookieName);
     return JSON.parse(cookie)[prop];
   } catch (err) {
     return null;
