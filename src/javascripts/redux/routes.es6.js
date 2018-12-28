@@ -18,14 +18,14 @@ const ROUTES = {
   }
 };
 
-function addParser(route, parent = null) {
-  const path = (parent ? parent.path : '') + route.path;
+function addParser(route, parentPath) {
+  const path = (parentPath || '') + route.path;
   const parser = new Parser(path);
   route.test = parser.test.bind(parser);
   route.partialTest = parser.partialTest.bind(parser);
   route.build = parser.build.bind(parser);
   if (route.children) {
-    Object.values(route.children).forEach(child => addParser(child, route));
+    Object.values(route.children).forEach(child => addParser(child, path));
   }
 }
 

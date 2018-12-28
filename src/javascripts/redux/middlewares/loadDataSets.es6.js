@@ -13,7 +13,7 @@ const loaders = orgId => ({
     const teams = (await service.getAll()).items;
     return Promise.all(
       teams.map(async team =>
-        set('memberships', await service.getTeamMemberships(team.sys.id), team)
+        set('memberships', (await service.getTeamMemberships(team.sys.id)).items, team)
       )
     );
   }

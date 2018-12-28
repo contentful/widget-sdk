@@ -6,12 +6,15 @@ import loadDataSets from './loadDataSets.es6';
 export default ({ getState, dispatch }) => next => action => {
   const oldPath = getPath(getState());
   const result = next(action);
-  const newPath = getPath(getState());
+  const newState = getState();
+  const newPath = getPath(newState);
 
   if (oldPath !== newPath) {
+    const dataSetsInState = Object.keys(newState.datasets);
     const newDataSetsRequired = difference(
       getRequiredDataSets(newPath),
-      getRequiredDataSets(oldPath)
+      getRequiredDataSets(oldPath),
+      dataSetsInState
     );
     if (!isEmpty(newDataSetsRequired)) {
       const type = 'DATASET_LOADING';

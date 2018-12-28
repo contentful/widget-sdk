@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import pluralize from 'pluralize';
 import { connect } from 'react-redux';
+import { sortBy } from 'lodash';
 
 import {
   Button,
@@ -14,14 +15,16 @@ import {
 } from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
-import { href } from 'states/Navigator.es6';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
-import { getAllTeams } from 'redux/selectors/teams.es6';
+import { getTeams } from 'redux/selectors/teams.es6';
+import getOrgId from 'redux/selectors/getOrgId.es6';
+import ROUTES from 'redux/routes.es6';
 import TeamForm from '../TeamForm.es6';
 
 export default connect(
   state => ({
-    teams: getAllTeams(state)
+    teams: getTeams(state),
+    orgId: getOrgId(state)
   }),
   dispatch => ({
     submitNewTeam: team => dispatch({ type: 'SUBMIT_NEW_TEAM', payload: { team } })
@@ -29,20 +32,14 @@ export default connect(
 )(
   class TeamList extends React.Component {
     static propTypes = {
-      teams: PropTypes.arrayOf(TeamPropType).isRequired,
+      teams: PropTypes.objectOf(TeamPropType).isRequired,
       submitNewTeam: PropTypes.func.isRequired,
-      onReady: PropTypes.func.isRequired
+      onReady: PropTypes.func.isRequired,
+      orgId: PropTypes.string.isRequired
     };
 
     componentDidMount() {
       this.props.onReady();
-    }
-
-    static getLinkToTeam(team) {
-      return href({
-        path: ['account', 'organizations', 'teams', 'detail'],
-        params: { teamId: team.sys.id }
-      });
     }
 
     addTeam = () =>
@@ -52,12 +49,9 @@ export default connect(
         </Modal>
       ));
 
-    handleTeamCreated = team => {
-      this.setState({ teams: [team, ...this.state.teams] });
-    };
-
     render() {
-      const { teams } = this.props;
+      const { teams, orgId } = this.props;
+      const teamList = sortBy(Object.values(teams), 'name');
       return (
         <Workbench>
           <Workbench.Header>
@@ -65,7 +59,7 @@ export default connect(
               <Workbench.Title>Teams</Workbench.Title>
             </Workbench.Header.Left>
             <Workbench.Header.Actions>
-              {`${pluralize('teams', teams.length, true)} in your organization`}
+              {`${pluralize('teams', teamList.length, true)} in your organization`}
               <Button onClick={this.addTeam}>New team</Button>
             </Workbench.Header.Actions>
           </Workbench.Header>
@@ -76,15 +70,23 @@ export default connect(
                   <TableRow data-test-id="team-details-row">
                     <TableCell data-test-id="team-name">Name</TableCell>
                     <TableCell data-test-id="team-description">Description</TableCell>
+                    <TableCell />
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {teams.map(team => (
+                  {teamList.map(team => (
                     <TableRow key={team.sys.id}>
                       <TableCell>
-                        <a href={TeamList.getLinkToTeam(team)}>{team.name}</a>
+                        <a
+                          href={ROUTES.organization.children.teams.children.team.build({
+                            orgId,
+                            teamId: team.sys.id
+                          })}>
+                          {team.name}
+                        </a>
                       </TableCell>
                       <TableCell>{team.description}</TableCell>
+                      <TableCell>{pluralize('members', team.memberships.length, true)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
