@@ -17,7 +17,7 @@ const alphaHeaders = {
  * If you need to use this service outside of react components
  * please require the whole store:
  *
- * const store = require('ReduxStore/store').default;
+ * const store = require('redux/store').default;
  *
  * ...
  * await store.dispatch(actions.fetchUserState({ key: 'your_feature' }));

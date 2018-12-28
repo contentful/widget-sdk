@@ -103,7 +103,7 @@ const react = node => {
     'react-codemirror',
     'react-animate-height',
     'react-tippy',
-    'ReduxStore/store',
+    'redux/store',
     'downshift',
     'slate-react',
     '<react-component>'

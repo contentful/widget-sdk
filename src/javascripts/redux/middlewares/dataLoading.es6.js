@@ -1,7 +1,7 @@
 import { difference, isEmpty } from 'lodash';
 import { getPath } from '../selectors/location.es6';
 import { getRequiredDataSets } from '../routes.es6';
-import loadDataSets from './loadDataSets.es6';
+import loadDataSets from '../loadDataSets.es6';
 import getDatasets from '../selectors/getDatasets.es6';
 
 export default ({ getState, dispatch }) => next => action => {

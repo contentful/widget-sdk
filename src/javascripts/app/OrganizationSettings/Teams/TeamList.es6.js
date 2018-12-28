@@ -19,7 +19,7 @@ import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import { getTeams } from 'redux/selectors/teams.es6';
 import getOrgId from 'redux/selectors/getOrgId.es6';
 import ROUTES from 'redux/routes.es6';
-import TeamForm from '../TeamForm.es6';
+import TeamForm from './TeamForm.es6';
 
 export default connect(
   state => ({

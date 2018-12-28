@@ -4,7 +4,7 @@ const teamDetailState = reactStateWrapper({
   name: 'detail',
   title: 'Teams',
   url: '/:teamId',
-  componentPath: 'app/OrganizationSettings/Teams/TeamDetails/TeamDetails.es6'
+  componentPath: 'app/OrganizationSettings/Teams/TeamDetails.es6'
 });
 
 export default reactStateWrapper({
@@ -12,5 +12,5 @@ export default reactStateWrapper({
   children: [teamDetailState],
   title: 'Teams',
   url: '/:orgId/teams',
-  componentPath: 'app/OrganizationSettings/Teams/TeamList/TeamList.es6'
+  componentPath: 'app/OrganizationSettings/Teams/TeamList.es6'
 });

@@ -1,10 +1,10 @@
 import { zipObject, set } from 'lodash/fp';
-import { getAllUsers } from 'access_control/OrganizationMembershipRepository.es6';
-import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
-import createTeamService from 'app/OrganizationSettings/Teams/TeamService.es6';
+import { getAllUsers } from '../access_control/OrganizationMembershipRepository.es6';
+import { createOrganizationEndpoint } from '../data/EndpointFactory.es6';
+import createTeamService from '../app/OrganizationSettings/Teams/TeamService.es6';
 
-import { USERS, TEAMS } from '../dataSets.es6';
-import getOrgId from '../selectors/getOrgId.es6';
+import { USERS, TEAMS } from './dataSets.es6';
+import getOrgId from './selectors/getOrgId.es6';
 
 const loaders = orgId => ({
   [USERS]: () => getAllUsers(createOrganizationEndpoint(orgId)),
