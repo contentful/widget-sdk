@@ -1,7 +1,7 @@
-'use strict';
-
-import environment from 'environment';
 import { getToken } from './Authentication.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const environment = getModule('environment');
 
 const ENV_TO_URL_PREFIX = {
   development: '/_microbackends/backends/',
