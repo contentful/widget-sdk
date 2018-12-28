@@ -45,7 +45,7 @@ export default connect(
     addTeam = () =>
       ModalLauncher.open(({ onClose, isShown }) => (
         <Modal isShown={isShown} onClose={onClose}>
-          <TeamForm onClose={onClose} onConfirm={this.props.submitNewTeam} />
+          {() => <TeamForm onClose={onClose} onConfirm={this.props.submitNewTeam} />}
         </Modal>
       ));
 

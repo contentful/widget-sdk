@@ -1,3 +1,8 @@
-import { get } from 'lodash/fp';
+import { get, flow, keyBy } from 'lodash/fp';
+import getDatasets from './getDatasets.es6';
 
-export const getAllUsers = get('datasets.users');
+export const getUsers = flow(
+  getDatasets,
+  get('users'),
+  keyBy('sys.id')
+);
