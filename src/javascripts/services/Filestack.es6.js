@@ -1,4 +1,3 @@
-import LazyLoader from 'LazyLoader';
 import environment from 'environment';
 import _ from 'lodash';
 
@@ -26,21 +25,24 @@ const SOURCES = [
   'clouddrive'
 ];
 
-function ensureScript() {
-  return LazyLoader.get('filestack').then(filestack => {
-    const { apiKey, policy, signature } = environment.settings.filestack;
-    return filestack.init(apiKey, { policy, signature });
-  });
+function init() {
+  return new Promise(resolve =>
+    require.ensure(['filestack-js'], require => {
+      const filestack = require('filestack-js');
+      const { apiKey, policy, signature } = environment.settings.filestack;
+      resolve(filestack.init(apiKey, { security: { policy, signature } }));
+    })
+  );
 }
 
 let rootIdCounter = 0;
+
 function pickOptions(options) {
   rootIdCounter += 1;
   return Object.assign(
     {
       fromSources: SOURCES,
-      rootId: `__filestack-picker-root-${rootIdCounter}`,
-      rejectOnCancel: true
+      rootId: `__filestack-picker-root-${rootIdCounter}`
     },
     options
   );
@@ -63,10 +65,13 @@ function handleOneUploaded({ filesUploaded }) {
   }
 }
 
-export function makeDropPane({ id, onSuccess }) {
-  return ensureScript().then(filestack => {
-    return filestack.makeDropPane(
-      {
+export async function makeDropPane({ id, onSuccess }) {
+  const client = await init();
+  return client
+    .picker({
+      container: '.__filestack-drop-pane-mount',
+      displayMode: 'dropPane',
+      dropPane: {
         id,
         customText: 'Drag and drop a file to upload…',
         disableClick: true,
@@ -77,66 +82,76 @@ export function makeDropPane({ id, onSuccess }) {
             onSuccess(prepareUploadedFile(first));
           }
         }
-      },
-      pickOptions()
-    );
-  });
+      }
+    })
+    .open();
 }
 
 export function pick() {
-  return ensureScript()
-    .then(filestack =>
-      filestack.pick(
+  return new Promise(async function(resolve) {
+    const client = await init();
+    client
+      .picker(
         pickOptions({
           disableTransformer: true,
-          startUploadingWhenMaxFilesReached: true
+          startUploadingWhenMaxFilesReached: true,
+          onUploadDone: ({ filesUploaded }) => resolve(handleOneUploaded({ filesUploaded }))
         })
       )
-    )
-    .then(handleOneUploaded);
+      .open();
+  });
 }
 
-export function pickMultiple() {
-  return ensureScript()
-    .then(filestack => filestack.pick(pickOptions({ maxFiles: MAX_FILES })))
-    .catch(result => {
-      // If user closes Filestack without picking a file it rejects will an empty array.
-      if (_.isEmpty(result)) {
-        return { filesFailed: [], filesUploaded: [] };
-      }
-      throw result;
-    })
-    .then(({ filesFailed, filesUploaded }) => {
-      if (filesFailed.length < 1 || filesUploaded.length > 0) {
-        return filesUploaded.map(prepareUploadedFile);
-      } else {
-        return Promise.reject(new Error('Some files failed uploading.'));
-      }
-    });
+export async function pickMultiple() {
+  return new Promise(async function(resolve, reject) {
+    const client = await init();
+    return client
+      .picker(
+        pickOptions({
+          maxFiles: MAX_FILES,
+          onUploadDone: ({ filesFailed, filesUploaded }) => {
+            if (filesFailed.length < 1 || filesUploaded.length > 0) {
+              resolve(filesUploaded.map(prepareUploadedFile));
+            } else {
+              reject(new Error('Some files failed uploading.'));
+            }
+          }
+        })
+      )
+      .open();
+  });
 }
 
-export function store(imageUrl) {
-  return ensureScript()
-    .then(filestack => filestack.storeURL(imageUrl))
-    .then(result => result.url);
+export async function store(imageUrl) {
+  const client = await init();
+  const result = await client.storeURL(imageUrl);
+  return result.url;
 }
 
-export function cropImage(mode, imageUrl) {
-  const transformations = { crop: false, circle: false, rotate: false };
-  if (typeof mode === 'number') {
-    transformations.crop = { aspectRatio: mode };
-  } else if (mode === 'circle') {
-    transformations.circle = true;
-  } else {
-    transformations.crop = true;
-  }
+export async function cropImage(mode, imageUrl) {
+  return new Promise(async function(resolve) {
+    const transformations = { crop: false, circle: false, rotate: false };
+    if (typeof mode === 'number') {
+      transformations.crop = { aspectRatio: mode };
+    } else if (mode === 'circle') {
+      transformations.circle = true;
+    } else {
+      transformations.crop = true;
+    }
 
-  return ensureScript()
-    .then(filestack => filestack.cropFiles([imageUrl], pickOptions({ transformations })))
-    .then(handleOneUploaded);
+    const client = await init();
+    const picker = client.picker(
+      pickOptions({
+        transformations,
+        onUploadDone: ({ filesUploaded }) => resolve(handleOneUploaded({ filesUploaded })),
+        onCancel: () => resolve(null)
+      })
+    );
+    picker.crop([imageUrl]);
+  });
 }
 
-export function rotateOrMirrorImage(mode, imageUrl) {
+export async function rotateOrMirrorImage(mode, imageUrl) {
   const options = {
     '90cw': { rotate: { deg: 90 } },
     '90ccw': { rotate: { deg: 90 * 3 } },
@@ -144,7 +159,6 @@ export function rotateOrMirrorImage(mode, imageUrl) {
     flop: { flop: true }
   }[mode];
 
-  return ensureScript()
-    .then(filestack => filestack.transform(imageUrl, options))
-    .then(store);
+  const client = await init();
+  return store(client.transform(imageUrl, options));
 }

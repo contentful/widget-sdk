@@ -63,11 +63,20 @@ registerDirective('cfFileEditor', [
           ImageOperations.resize(mode, scope.file).then(setUpload, notifyEditError);
         };
 
-        scope.crop = function crop(mode) {
+        scope.crop = async function crop(mode) {
           // Cropping to a circle converts to PNG. Instead of updating only
           // the upload URL we need to update the whole file to include new
           // file name and MIME type.
-          ImageOperations.crop(mode, scope.file).then(setFile, notifyEditError);
+          scope.imageIsLoading = true;
+          try {
+            const file = await ImageOperations.crop(mode, scope.file);
+            if (file !== null) {
+              setFile(file);
+            }
+          } catch (ex) {
+            notifyEditError(ex);
+          }
+          scope.imageIsLoading = false;
         };
 
         scope.canEditFile = function canEditFile() {
