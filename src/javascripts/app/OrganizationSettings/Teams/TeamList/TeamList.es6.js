@@ -9,7 +9,8 @@ import {
   TableRow,
   TableHead,
   TableBody,
-  TableCell, Modal
+  TableCell,
+  Modal
 } from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
@@ -25,70 +26,73 @@ export default connect(
   dispatch => ({
     submitNewTeam: team => dispatch({ type: 'SUBMIT_NEW_TEAM', payload: { team } })
   })
-)(class TeamList extends React.Component {
-  static propTypes = {
-    teams: PropTypes.arrayOf(TeamPropType).isRequired,
-    submitNewTeam: PropTypes.func.isRequired
-  };
+)(
+  class TeamList extends React.Component {
+    static propTypes = {
+      teams: PropTypes.arrayOf(TeamPropType).isRequired,
+      submitNewTeam: PropTypes.func.isRequired,
+      onReady: PropTypes.func.isRequired
+    };
 
-  static getLinkToTeam(team) {
-    return href({
-      path: ['account', 'organizations', 'teams', 'detail'],
-      params: { teamId: team.sys.id }
-    });
-  }
+    componentDidMount() {
+      this.props.onReady();
+    }
 
-  addTeam = () =>
-    ModalLauncher.open(({ onClose, isShown }) => (
-      <Modal isShown={isShown} onClose={onClose}>
-        <TeamForm
-          onClose={onClose}
-          onConfirm={this.props.submitNewTeam}
-        />
-      </Modal>
-    ));
+    static getLinkToTeam(team) {
+      return href({
+        path: ['account', 'organizations', 'teams', 'detail'],
+        params: { teamId: team.sys.id }
+      });
+    }
 
-  handleTeamCreated = team => {
-    this.setState({ teams: [team, ...this.state.teams] });
-  };
+    addTeam = () =>
+      ModalLauncher.open(({ onClose, isShown }) => (
+        <Modal isShown={isShown} onClose={onClose}>
+          <TeamForm onClose={onClose} onConfirm={this.props.submitNewTeam} />
+        </Modal>
+      ));
 
-  render() {
-    const { total } = this.props;
-    const { teams } = this.state;
-    return (
-      <Workbench>
-        <Workbench.Header>
-          <Workbench.Header.Left>
-            <Workbench.Title>Teams</Workbench.Title>
-          </Workbench.Header.Left>
-          <Workbench.Header.Actions>
-            {`${pluralize('teams', total, true)} in your organization`}
-            <Button onClick={this.addTeam}>New team</Button>
-          </Workbench.Header.Actions>
-        </Workbench.Header>
-        <Workbench.Content>
-          <section style={{ padding: '1em 2em 2em' }}>
-            <Table data-test-id="organization-teams-page">
-              <TableHead>
-                <TableRow data-test-id="team-details-row">
-                  <TableCell data-test-id="team-name">Name</TableCell>
-                  <TableCell data-test-id="team-description">Description</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {teams.map(team => (
-                  <TableRow key={team.sys.id}>
-                    <TableCell>
-                      <a href={TeamList.getLinkToTeam(team)}>{team.name}</a>
-                    </TableCell>
-                    <TableCell>{team.description}</TableCell>
+    handleTeamCreated = team => {
+      this.setState({ teams: [team, ...this.state.teams] });
+    };
+
+    render() {
+      const { teams } = this.props;
+      return (
+        <Workbench>
+          <Workbench.Header>
+            <Workbench.Header.Left>
+              <Workbench.Title>Teams</Workbench.Title>
+            </Workbench.Header.Left>
+            <Workbench.Header.Actions>
+              {`${pluralize('teams', teams.length, true)} in your organization`}
+              <Button onClick={this.addTeam}>New team</Button>
+            </Workbench.Header.Actions>
+          </Workbench.Header>
+          <Workbench.Content>
+            <section style={{ padding: '1em 2em 2em' }}>
+              <Table data-test-id="organization-teams-page">
+                <TableHead>
+                  <TableRow data-test-id="team-details-row">
+                    <TableCell data-test-id="team-name">Name</TableCell>
+                    <TableCell data-test-id="team-description">Description</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </section>
-        </Workbench.Content>
-      </Workbench>
-    );
+                </TableHead>
+                <TableBody>
+                  {teams.map(team => (
+                    <TableRow key={team.sys.id}>
+                      <TableCell>
+                        <a href={TeamList.getLinkToTeam(team)}>{team.name}</a>
+                      </TableCell>
+                      <TableCell>{team.description}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </section>
+          </Workbench.Content>
+        </Workbench>
+      );
+    }
   }
-});
+);
