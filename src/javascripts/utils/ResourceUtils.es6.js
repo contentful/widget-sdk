@@ -1,4 +1,4 @@
-import { getCurrentVariation } from 'utils/LaunchDarkly';
+import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 import { assign, get } from 'lodash';
 import { getModule } from 'NgRegistry.es6';
 

@@ -169,7 +169,7 @@ describe('ResourceService', () => {
         getOrganization: sinon.stub().resolves(this.mocks.organization)
       });
 
-      $provide.value('utils/LaunchDarkly', {
+      $provide.value('utils/LaunchDarkly/index.es6', {
         getCurrentVariation: flagName => {
           return Promise.resolve(this.flags[flagName]);
         }

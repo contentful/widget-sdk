@@ -90,7 +90,7 @@ describe('LaunchDarkly', () => {
 
     module('contentful/test', $provide => {
       $provide.constant('ldclient-js', this.LD);
-      $provide.value('data/User', userModule);
+      $provide.value('data/User/index.es6', userModule);
       $provide.value('utils/ShallowObjectDiff.es6', this.shallowObjectDiff);
       $provide.value('debug/EnforceFlags.es6', this.EnforceFlags);
       $provide.constant('logger', this.logger);
