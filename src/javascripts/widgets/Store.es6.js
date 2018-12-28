@@ -1,6 +1,8 @@
 import { get } from 'lodash';
 import { create as createBuiltinWidgetsList } from 'widgets/builtin.es6';
-import fieldFactory from 'fieldFactory';
+import { getModule } from 'NgRegistry.es6';
+
+const fieldFactory = getModule('fieldFactory');
 
 export function create(cma) {
   let cache = [];
