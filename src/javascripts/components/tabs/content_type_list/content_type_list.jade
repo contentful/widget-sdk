@@ -105,7 +105,11 @@ header.workbench-header
               +td.x--small-cell(aria-label="cell-date"
                 ui-sref="{{linkToCt}}"
                 data-test-id="cell-date")
-                date(ng-if="contentType.sys.updatedAt" datetime="{{contentType.sys.updatedAt}}" cf-relative-datetime)
+                react-component(
+                  ng-if="contentType.sys.updatedAt" 
+                  name="components/shared/RelativeDateTime/index.es6" 
+                  props="{value: contentType.sys.updatedAt}"
+                )
               +td.x--small-cell(aria-label="cell-symbol"
                 ui-sref="{{linkToCt}}"
                 data-test-id="cell-created-by")

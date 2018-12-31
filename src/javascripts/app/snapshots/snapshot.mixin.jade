@@ -1,5 +1,8 @@
 mixin snapshot-dt
-  time(datetime="{{ snapshot.sys.createdAt }}" cf-relative-datetime)
+  react-component(
+    name="components/shared/RelativeDateTime/index.es6" 
+    props="{value: snapshot.sys.createdAt}"
+  )
 
 mixin snapshot-list-header(headerText, sortingFn, isCurrentSortedColumn)
   th(

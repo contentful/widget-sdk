@@ -21,7 +21,11 @@ table
     tr
       th Created
       td
-        date(ng-if="sys.createdAt" datetime="{{sys.createdAt}}" cf-relative-datetime)
+        react-component(
+          ng-if="sys.createdAt"
+          name="components/shared/RelativeDateTime/index.es6" 
+          props="{value: sys.createdAt}"
+        )
     tr
       th Created by
       td
@@ -32,7 +36,11 @@ table
     tr
       th Updated
       td
-        date(ng-if="sys.updatedAt" datetime="{{sys.updatedAt}}" cf-relative-datetime)
+        react-component(
+          ng-if="sys.updatedAt"
+          name="components/shared/RelativeDateTime/index.es6" 
+          props="{value: sys.updatedAt}"
+        )
     tr
       th Updated by
       td
@@ -43,7 +51,11 @@ table
     tr
       th Archived
       td
-        date(ng-if="sys.archivedAt" datetime="{{sys.archivedAt}}" cf-relative-datetime)
+        react-component(
+          ng-if="sys.archivedAt"
+          name="components/shared/RelativeDateTime/index.es6" 
+          props="{value: sys.archivedAt}"
+        )
     tr
       th Archived by
       td {{sys.archivedBy.sys.id}}
@@ -55,7 +67,11 @@ table
     tr
       th Published
       td
-        date(ng-if="sys.publishedAt" datetime="{{sys.publishedAt}}" cf-relative-datetime)
+        react-component(
+          ng-if="sys.publishedAt"
+          name="components/shared/RelativeDateTime/index.es6" 
+          props="{value: sys.publishedAt}"
+        )
     tr
       th Published by
       td
