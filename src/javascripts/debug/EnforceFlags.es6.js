@@ -33,12 +33,46 @@ export function init() {
 /**
  * Returns an array of ui flags enabled via query string param.
  */
-export function getEnabledFlags() {
+function getEnabledFlags() {
   return storeForEnable.get() || [];
 }
 
-export function getDisabledFlags() {
+function getDisabledFlags() {
   return storeForDisable.get() || [];
+}
+
+function getFlagStatus(flagName) {
+  const enabledFeatures = getEnabledFlags();
+  const disabledFeatures = getDisabledFlags();
+
+  const isDisabled = disabledFeatures.includes(flagName);
+  const isEnabled = enabledFeatures.includes(flagName);
+
+  return [isDisabled, isEnabled];
+}
+
+/**
+ * Return true if a feature flag has been overridden using
+ * ui_enable_flags or ui_disable_flags query param
+ */
+export function isFlagOverridden(flagName) {
+  const [isDisabled, isEnabled] = getFlagStatus(flagName);
+  return isDisabled || isEnabled;
+}
+
+/**
+ * Return the overridden value (boolean) for a feature flag
+ */
+export function getFlagOverride(flagName) {
+  const [isDisabled, isEnabled] = getFlagStatus(flagName);
+
+  if (isDisabled) {
+    return false;
+  }
+
+  if (isEnabled) {
+    return true;
+  }
 }
 
 function setFromQuery(value = '', store) {
