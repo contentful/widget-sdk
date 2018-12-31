@@ -57,6 +57,11 @@ function resolveParams(link, params) {
   const mappings = {
     home: resolveHome,
     api: resolveApi,
+    'general-settings': resolveSettings,
+    locales: resolveLocales,
+    'roles-and-permissions': resolveRoles,
+    'content-preview': resolveContentPreview,
+    'content-model': resolveContentModel,
     extensions: resolveExtensions,
     'install-extension': resolveInstallExtension,
     invite: resolveInviteUser,
@@ -150,6 +155,61 @@ function resolveApi() {
         spaceId,
         apiKeyId: apiKeys[0].sys.id
       }
+    };
+  });
+}
+
+function resolveSettings() {
+  return runTask(function*() {
+    const { space, spaceId } = yield* getSpaceInfo();
+    yield spaceContext.resetWithSpace(space);
+    return {
+      path: ['spaces', 'detail', 'settings', 'space'],
+      params: { spaceId }
+    };
+  });
+}
+
+function resolveLocales() {
+  return runTask(function*() {
+    const { space, spaceId } = yield* getSpaceInfo();
+    yield spaceContext.resetWithSpace(space);
+    return {
+      path: ['spaces', 'detail', 'settings', 'locales', 'list'],
+      params: { spaceId }
+    };
+  });
+}
+
+function resolveRoles() {
+  return runTask(function*() {
+    const { space, spaceId } = yield* getSpaceInfo();
+    yield spaceContext.resetWithSpace(space);
+    return {
+      path: ['spaces', 'detail', 'settings', 'roles', 'list'],
+      params: { spaceId }
+    };
+  });
+}
+
+function resolveContentPreview() {
+  return runTask(function*() {
+    const { space, spaceId } = yield* getSpaceInfo();
+    yield spaceContext.resetWithSpace(space);
+    return {
+      path: ['spaces', 'detail', 'settings', 'content_preview', 'list'],
+      params: { spaceId }
+    };
+  });
+}
+
+function resolveContentModel() {
+  return runTask(function*() {
+    const { space, spaceId } = yield* getSpaceInfo();
+    yield spaceContext.resetWithSpace(space);
+    return {
+      path: ['spaces', 'detail', 'content_types', 'list'],
+      params: { spaceId }
     };
   });
 }
