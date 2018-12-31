@@ -138,8 +138,9 @@ header.workbench-header
                 )
               +td.x--small-cell(aria-label="cell-author"
                 ui-sref="{{linkToAsset}}")
-                span(cf-user link="asset.getUpdatedBy()" as="updater")
-                  | {{updater | userNameDisplay:user}}
+                span
+                  react-component(name="components/shared/UserNameFormatter/FetchAndFormatUserName.es6" props="{userId: asset.getUpdatedBy().sys.id}")
+                  
               +td.x--small-cell(
                 aria-label="cell-status"
                 ui-sref="{{linkToAsset}}")

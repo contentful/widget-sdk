@@ -113,8 +113,7 @@ header.workbench-header
               +td.x--small-cell(aria-label="cell-symbol"
                 ui-sref="{{linkToCt}}"
                 data-test-id="cell-created-by")
-                span(cf-user link="contentType.sys.updatedBy" as="updater")
-                  | {{updater | userNameDisplay:user}}
+                react-component(name="components/shared/UserNameFormatter/FetchAndFormatUserName.es6" props="{userId: contentType.sys.updatedBy.sys.id}")
               +td.x--small-cell(aria-label="cell-status"
                 ui-sref="{{linkToCt}}"
                 data-test-id="cell-status")

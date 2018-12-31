@@ -63,16 +63,6 @@ registerFilter('fileExtension', () => file => {
   return '';
 });
 
-registerFilter('userNameDisplay', () => (currentUser, user) => {
-  if (!currentUser || !user) {
-    return '';
-  } else if (currentUser.sys.id === user.sys.id) {
-    return 'Me';
-  } else {
-    return currentUser.firstName + ' ' + currentUser.lastName;
-  }
-});
-
 registerFilter('decimalMarks', () => str => {
   str = str ? str + '' : '';
   let markedStr = '';

@@ -18,10 +18,11 @@ ng-switch(on="displayType(field)")
     ng-if="dataForField(entry, field)"
     name="components/shared/RelativeDateTime/index.es6" 
     props="{value: dataForField(entry, field)}")
-  span(ng-switch-when="author"
-    cf-user link="entry.getUpdatedBy()"
-    as="updater")
-    | {{updater | userNameDisplay:user}}
+  span(ng-switch-when="author")
+    react-component(
+      name="components/shared/UserNameFormatter/FetchAndFormatUserName.es6" 
+      props="{userId: entry.getUpdatedBy().sys.id}"
+    )
   span(ng-switch-when="Boolean")
     | {{displayBool(dataForField(entry, field))}}
   span(ng-switch-when="Location")

@@ -29,8 +29,8 @@ table
     tr
       th Created by
       td
-        span(cf-user link="sys.createdBy" as="creator")
-          | {{creator | userNameDisplay:user}}
+        span
+          react-component(name="components/shared/UserNameFormatter/FetchAndFormatUserName.es6" props="{userId: sys.createdBy.sys.id}")
 
   tbody(ng-if="sys.updatedAt")
     tr
@@ -44,8 +44,8 @@ table
     tr
       th Updated by
       td
-        span(cf-user link="sys.updatedBy" as="updater")
-          | {{updater | userNameDisplay:user}}
+        span
+          react-component(name="components/shared/UserNameFormatter/FetchAndFormatUserName.es6" props="{userId: sys.updatedBy.sys.id}")
 
   tbody(ng-if="sys.archivedVersion")
     tr
@@ -75,8 +75,8 @@ table
     tr
       th Published by
       td
-        span(cf-user link="sys.publishedBy" as="publisher")
-          | {{publisher | userNameDisplay:user}}
+        span
+          react-component(name="components/shared/UserNameFormatter/FetchAndFormatUserName.es6" props="{userId: sys.publishedBy.sys.id}")
     tr
       th Published version
       td {{sys.publishedVersion}}
