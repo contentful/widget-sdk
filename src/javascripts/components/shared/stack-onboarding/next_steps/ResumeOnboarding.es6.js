@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import spaceContext from 'spaceContext';
 import $state from '$state';
-import CreateSpace from 'services/CreateSpace.es6';
+import * as CreateSpace from 'services/CreateSpace.es6';
 import { getStore } from 'TheStore';
 import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboarding.es6';
 
