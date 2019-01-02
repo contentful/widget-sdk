@@ -7,6 +7,7 @@ import statePersistence from './statePersistence.es6';
 import token from './token.es6';
 import location from './location.es6';
 import datasets from './datasets.es6';
+import optimistic from './optimistic.es6';
 
 const combineReducers = reducerMap => (state = {}, action) =>
   Object.keys(reducerMap).reduce(
@@ -22,5 +23,6 @@ export default combineReducers({
   spaceWizard,
   statePersistence,
   token,
-  datasets
+  datasets,
+  optimistic
 });

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import pluralize from 'pluralize';
 import { connect } from 'react-redux';
-import { sortBy } from 'lodash';
+import { get } from 'lodash';
 
 import {
   Button,
@@ -11,19 +11,20 @@ import {
   TableHead,
   TableBody,
   TableCell,
-  Modal
+  Modal,
+  Spinner
 } from '@contentful/forma-36-react-components';
+import { getTeamListWithOptimistic } from 'redux/selectors/teams.es6';
 import Workbench from 'app/common/Workbench.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
-import { getTeams } from 'redux/selectors/teams.es6';
 import getOrgId from 'redux/selectors/getOrgId.es6';
 import ROUTES from 'redux/routes.es6';
 import TeamForm from './TeamForm.es6';
 
 export default connect(
   state => ({
-    teams: getTeams(state),
+    teams: getTeamListWithOptimistic(state),
     orgId: getOrgId(state)
   }),
   dispatch => ({
@@ -51,7 +52,6 @@ export default connect(
 
     render() {
       const { teams, orgId } = this.props;
-      const teamList = sortBy(Object.values(teams), 'name');
       return (
         <Workbench>
           <Workbench.Header>
@@ -59,7 +59,7 @@ export default connect(
               <Workbench.Title>Teams</Workbench.Title>
             </Workbench.Header.Left>
             <Workbench.Header.Actions>
-              {`${pluralize('teams', teamList.length, true)} in your organization`}
+              {`${pluralize('teams', teams.length, true)} in your organization`}
               <Button onClick={this.addTeam}>New team</Button>
             </Workbench.Header.Actions>
           </Workbench.Header>
@@ -74,19 +74,27 @@ export default connect(
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {teamList.map(team => (
-                    <TableRow key={team.sys.id}>
+                  {teams.map((team, index) => (
+                    <TableRow key={get(team, 'sys.id', index)}>
                       <TableCell>
-                        <a
-                          href={ROUTES.organization.children.teams.children.team.build({
-                            orgId,
-                            teamId: team.sys.id
-                          })}>
-                          {team.name}
-                        </a>
+                        {get(team, 'sys.id', false) ? (
+                          <a
+                            href={ROUTES.organization.children.teams.children.team.build({
+                              orgId,
+                              teamId: team.sys.id
+                            })}>
+                            {team.name}
+                          </a>
+                        ) : (
+                          <span>
+                            {team.name} <Spinner size="small" />
+                          </span>
+                        )}
                       </TableCell>
                       <TableCell>{team.description}</TableCell>
-                      <TableCell>{pluralize('members', team.memberships.length, true)}</TableCell>
+                      <TableCell>
+                        {pluralize('members', get(team, 'memberships.length', 0), true)}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
