@@ -183,7 +183,7 @@ class UserDetail extends React.Component {
                 <dl className="definition-list">
                   {!isPending(user) && (
                     <React.Fragment>
-                      <dt>Last activity</dt>
+                      <dt>Last active</dt>
                       <dd>{this.getLastActiveDate()}</dd>
                     </React.Fragment>
                   )}
