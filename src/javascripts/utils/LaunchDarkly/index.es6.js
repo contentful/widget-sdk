@@ -4,7 +4,7 @@ import { launchDarkly as config } from 'Config.es6';
 import { assign, get, isNull, omitBy } from 'lodash';
 import { onValueScope, createPropertyBus } from 'utils/kefir.es6';
 import getChangesObject from 'utils/ShallowObjectDiff.es6';
-import { getEnabledFlags, getDisabledFlags } from 'debug/EnforceFlags.es6';
+import { isFlagOverridden, getFlagOverride } from 'debug/EnforceFlags.es6';
 import { createMVar } from 'utils/Concurrent.es6';
 import logger from 'logger';
 
@@ -46,33 +46,46 @@ export function init() {
 
 /**
  * @usage[js]
- * const ld = require('utils/LaunchDarkly')
+ * import { getCurrentVariation } from 'utils/LaunchDarkly'
  *
- * let flagVariationPromise = ld.getCurrentVariation('my-test-or-feature-flag')
- * flagVariationPromise.then(doSomething)
+ * const variation  = await getCurrentVariation('my-test-or-feature-flag')
  *
  * @description
  * This function returns a promise that resolves to the variation for the
- * provided test or feature flag name for the current context.
+ * provided test or feature flag name for the current context. If the flag name
+ * is overridden, then a promise that resolves to the overridden value is returned.
+ * NOTE: a flag's value can be overridden using ui_(enable|disable)_flags query param.
  *
  * Guarantees provided:
- * 1. The promise will settle only when LD is ready for the current context
- * where context is a combination of current user, org and space data.
- * 2. The promise will resolve with the variation for the provided flag name
- * if it receives a variation from it from LD.
- * 3. The promise will resolve with `undefined` if LD does not find a flag
- * with the provided flag name. An error will be logged to bugsnag.
+ * 1. If flag is overridden
+ *   1. The promise returned will resolve to the overridden value of the flag
+ * 2. If the flag is NOT overridden
+ *   1. The promise will settle only when LD is ready for the current context
+ *      where context is a combination of current user, org and space data.
+ *   2. The promise will resolve with the variation for the provided flag name
+ *      if it receives a variation from it from LD.
+ *   3. The promise will resolve with `undefined` if LD does not find a flag
+ *      with the provided flag name. An error will be logged to bugsnag.
  *
- * Note: this can also happen in rare cases even if a flag does exist (e.g. LD
- * service is down) and you should keep it in mind if your default value is not
- * falsy.
+ *      NOTE: this can also happen in rare cases even if a flag does exist (e.g. LD
+ *      service is down) and you should keep it in mind if your default value is not
+ *      falsy.
  *
  * @param {String} flagName
  * @returns {Promise<Variation>}
  */
 export function getCurrentVariation(flagName) {
+  /**
+   * if the flag is overridden, don't wait to
+   * connect to LD before returning the overridden
+   * variation.
+   */
+  if (isFlagOverridden(flagName)) {
+    return Promise.resolve(getFlagOverride(flagName));
+  }
+
   return LDContextChangeMVar.read().then(_ => {
-    const variation = getVariation(flagName, UNINIT_VAL);
+    const variation = client.variation(flagName, UNINIT_VAL);
     if (variation === UNINIT_VAL) {
       // LD could not find a flag with given name, log error and return undefined
       logger.logError(`Invalid flag ${flagName}`);
@@ -85,9 +98,9 @@ export function getCurrentVariation(flagName) {
 
 /**
  * @usage[js]
- * const ld = require('utils/LaunchDarkly')
+ * import { onFeatureFlag } from 'utils/LaunchDarkly'
  *
- * ld.onFeatureFlag($scope, 'feature-flag', (variation, changes) => {...})
+ * onFeatureFlag($scope, 'feature-flag', (variation, changes) => {...})
  *
  * @description
  * Sets up a handler that receives the variation for the specified feature flag.
@@ -98,14 +111,18 @@ export function getCurrentVariation(flagName) {
  * received.
  *
  * Guarantees provided:
- * 1. The handler will always be called with the flag for your current context
- * where current context is a combination of the current user, org and space data.
- * 2. The handler will only be called once LD is properly initialized which means
- * the current context is updated to reflect values for the current state of the app.
- * State of the app here refers to current user, current org and current space.
- * 3. The handler will always be given changes in context as the second parameter
- * 4. The handler will be called with `undefined` as the variation if the flag does
- * not exist in LD or if LD itself is down.
+ * 1. If the flag is overridden
+ *   1. The handler will only ever be called once with the overridden value for the
+ *      provided flag. The changes object passed to the handler will be `{}`
+ * 2. If the flag is NOT overridden
+ *   1. The handler will always be called with the flag for your current context
+ *      where current context is a combination of the current user, org and space data.
+ *   2. The handler will only be called once LD is properly initialized which means
+ *      the current context is updated to reflect values for the current state of the app.
+ *      State of the app here refers to current user, current org and current space.
+ *   3. The handler will always be given changes in context as the second parameter
+ *   4. The handler will be called with `undefined` as the variation if the flag does
+ *      not exist in LD or if LD itself is down.
  *
  * @param {Scope} $scope
  * @param {String} flagName
@@ -113,32 +130,46 @@ export function getCurrentVariation(flagName) {
  * flag as the first argument and changes in LaunchDarkly context as the second
  * argument.
  */
-export function onFeatureFlag($scope, featureName, handler) {
-  // we always start property bus with some value. However, in this situation
-  // we don't want to do that - we want to emit only the first actual value
-  const INITIAL_PROPERTY_VALUE = '$$__INITIAL_PROPERTY_VALUE';
-  const obs$ = createPropertyBus(INITIAL_PROPERTY_VALUE);
-  const setVariation = getVariationSetter(featureName, obs$);
+export function onFeatureFlag($scope, flagName, handler) {
+  if (isFlagOverridden(flagName)) {
+    const variation = getFlagOverride(flagName);
+    const obs$ = createPropertyBus(variation);
 
-  LDContextChangeMVar.read().then(_ => {
-    setVariation();
-    client.on(`change:${featureName}`, setVariation);
-  });
+    onValueScope(
+      $scope,
+      obs$.property.map(v => [
+        v, // overridden value is a JS boolean so no need to parse
+        {} // no context change will be emitted as the flag value is forced
+      ]),
+      ([variation, changes]) => handler(variation, changes)
+    );
+  } else {
+    // we always start property bus with some value. However, in this situation
+    // we don't want to do that - we want to emit only the first actual value
+    const INITIAL_PROPERTY_VALUE = '$$__INITIAL_PROPERTY_VALUE';
+    const obs$ = createPropertyBus(INITIAL_PROPERTY_VALUE);
+    const setVariation = getVariationSetter(flagName, obs$);
 
-  $scope.$on('$destroy', _ => {
-    obs$.end();
-    if (client) {
-      client.off(`change:${featureName}`, setVariation);
-    }
-  });
+    LDContextChangeMVar.read().then(_ => {
+      setVariation();
+      client.on(`change:${flagName}`, setVariation);
+    });
 
-  onValueScope(
-    $scope,
-    obs$.property
-      .filter(v => v !== INITIAL_PROPERTY_VALUE)
-      .map(v => [v === undefined ? v : JSON.parse(v), getChangesObject(prevCtx, currCtx)]),
-    ([variation, changes]) => handler(variation, changes)
-  );
+    $scope.$on('$destroy', _ => {
+      obs$.end();
+      if (client) {
+        client.off(`change:${flagName}`, setVariation);
+      }
+    });
+
+    onValueScope(
+      $scope,
+      obs$.property
+        .filter(v => v !== INITIAL_PROPERTY_VALUE)
+        .map(v => [v === undefined ? v : JSON.parse(v), getChangesObject(prevCtx, currCtx)]),
+      ([variation, changes]) => handler(variation, changes)
+    );
+  }
 }
 
 export { onFeatureFlag as onABTest };
@@ -153,36 +184,7 @@ export { onFeatureFlag as onABTest };
  * @returns {Function}
  */
 function getVariationSetter(flagName, obs$) {
-  return _ => obs$.set(getVariation(flagName, UNINIT_VAL));
-}
-
-/**
- * @description
- * Wraps `client.variation()` method, overriding with `true` for feature flags
- * enabled via query params.
- *
- * @param {String} flagName - feature or test flag
- * @param {Any} defaultValue - default value to return if the flag is not found
- * @returns {Any}
- */
-function getVariation(flagName, defaultValue) {
-  const enabledFeatures = getEnabledFlags();
-  const disabledFeatures = getDisabledFlags();
-
-  const isDisabled = disabledFeatures.includes(flagName);
-  const isEnabled = enabledFeatures.includes(flagName);
-
-  if (isDisabled) {
-    // if we return undefined (UNINIT_VAL), `getCurrentVariation` will log an error
-    // also, semantically we want to return `false`, since we want to indicate
-    // that user does not need to have this feature (whatever behaviour it implies)
-    // because we check for disabled first, it means that it overrides enabled flags
-    return false;
-  } else if (isEnabled) {
-    return true;
-  } else {
-    return client.variation(flagName, defaultValue);
-  }
+  return _ => obs$.set(client.variation(flagName, UNINIT_VAL));
 }
 
 /**

@@ -82,8 +82,8 @@ describe('LaunchDarkly', () => {
     this.shallowObjectDiff = { default: sinon.stub().returns({}) };
 
     this.EnforceFlags = {
-      getEnabledFlags: sinon.stub().returns([]),
-      getDisabledFlags: sinon.stub().returns([])
+      isFlagOverridden: sinon.stub().returns(false),
+      getFlagOverride: sinon.stub()
     };
 
     this.logger = { logError: sinon.stub() };
@@ -183,6 +183,15 @@ describe('LaunchDarkly', () => {
       sinon.assert.calledOnce(this.logger.logError.withArgs('Invalid flag FLAG'));
       expect(variation).toBeUndefined();
     });
+
+    it('should return the overriden value for an overriden flag and not use client.variation', async function() {
+      this.EnforceFlags.isFlagOverridden.returns(true);
+      this.EnforceFlags.getFlagOverride.returns('SOME VALUE');
+      const variation = await this.ld.getCurrentVariation('FLAG');
+
+      expect(variation).toBe('SOME VALUE');
+      sinon.assert.notCalled(this.client.variation);
+    });
   });
 
   describe('#onFeatureFlag', () => {
@@ -243,28 +252,24 @@ describe('LaunchDarkly', () => {
       sinon.assert.callCount(this.client.on.withArgs('change:FLAG'), 1);
     });
 
-    it('overrides value with true for enforced feature flags', function*() {
-      yield this.ready();
-      this.EnforceFlags.getEnabledFlags.returns(['FLAG']);
-      this.client.variation.withArgs('FLAG').returns('false');
-      this.client._emit('change:FLAG');
-      expect(this.$scope.flagValue).toBe(true);
-    });
+    it('should return the overriden value for an overriden flag and not use client.variation', function() {
+      const spy1 = sinon.spy();
+      const spy2 = sinon.spy();
 
-    it('overrides value with false for disabled feature flags', function*() {
-      yield this.ready();
-      this.EnforceFlags.getDisabledFlags.returns(['FLAG']);
-      this.client.variation.withArgs('FLAG').returns('true');
-      this.client._emit('change:FLAG');
-      expect(this.$scope.flagValue).toBe(false);
-    });
+      this.EnforceFlags.isFlagOverridden.returns(true);
+      this.EnforceFlags.getFlagOverride.returns('SOME VALUE');
 
-    it('disabled feature flag overrides enable feature flag', function*() {
-      yield this.ready();
-      this.EnforceFlags.getDisabledFlags.returns(['FLAG']);
-      this.EnforceFlags.getEnabledFlags.returns(['FLAG']);
-      this.client._emit('change:FLAG');
-      expect(this.$scope.flagValue).toBe(false);
+      this.ld.onFeatureFlag(this.$scope, 'SOME-FLAG', spy1);
+      this.ld.onFeatureFlag(this.$scope, 'SOME-FLAG', spy2);
+
+      // no need to await before asserts as in this scenario
+      // nothing goes over the network, etc and hence it's completely
+      // synchronous
+      sinon.assert.calledOnce(spy1);
+      sinon.assert.calledOnce(spy2);
+      sinon.assert.calledWithExactly(spy1, 'SOME VALUE', {});
+      sinon.assert.calledWithExactly(spy2, 'SOME VALUE', {});
+      sinon.assert.notCalled(this.client.variation);
     });
   });
 });
