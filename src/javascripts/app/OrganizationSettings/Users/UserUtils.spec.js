@@ -28,6 +28,6 @@ describe('UserUtils', () => {
   it('handles unavailable dates', () => {
     const membership = { sys: { lastActiveAt: null } };
     const result = getLastActivityDate(membership);
-    expect(result).toBe('Not available');
+    expect(result).toBe('Never');
   });
 });

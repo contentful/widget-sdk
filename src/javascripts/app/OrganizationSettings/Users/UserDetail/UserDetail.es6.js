@@ -71,7 +71,7 @@ class UserDetail extends React.Component {
   getLastActiveDate() {
     const dateString = this.state.membership.sys.lastActiveAt;
 
-    return dateString ? moment(dateString, moment.ISO_8601).fromNow() : 'Not available';
+    return dateString ? moment(dateString, moment.ISO_8601).fromNow() : 'Never';
   }
 
   toggleOrgRoleDropdown() {
