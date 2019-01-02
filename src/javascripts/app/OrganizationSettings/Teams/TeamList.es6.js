@@ -52,6 +52,8 @@ export default connect(
 
     render() {
       const { teams, orgId } = this.props;
+
+      // TODO: make this route org admin only
       return (
         <Workbench>
           <Workbench.Header>

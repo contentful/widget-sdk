@@ -1,9 +1,12 @@
 import { zipObject, set } from 'lodash/fp';
-import { getAllUsers } from '../access_control/OrganizationMembershipRepository.es6';
+import {
+  getAllUsers,
+  getAllMemberships
+} from '../access_control/OrganizationMembershipRepository.es6';
 import { createOrganizationEndpoint } from '../data/EndpointFactory.es6';
 import createTeamService from '../app/OrganizationSettings/Teams/TeamService.es6';
 
-import { USERS, TEAMS } from './dataSets.es6';
+import { USERS, TEAMS, ORG_MEMBERSHIPS } from './dataSets.es6';
 import getOrgId from './selectors/getOrgId.es6';
 
 const loaders = orgId => ({
@@ -16,7 +19,8 @@ const loaders = orgId => ({
         set('memberships', (await service.getTeamMemberships(team.sys.id)).items, team)
       )
     );
-  }
+  },
+  [ORG_MEMBERSHIPS]: () => getAllMemberships(createOrganizationEndpoint(orgId))
 });
 
 export default async (dataSets, state) => {

@@ -1,7 +1,7 @@
 import { uniq, flow, flatMap } from 'lodash/fp';
 import Parser from 'path-parser';
 
-import { TEAMS, USERS } from './dataSets.es6';
+import { TEAMS, USERS, ORG_MEMBERSHIPS } from './dataSets.es6';
 
 const ROUTES = {
   organization: {
@@ -11,7 +11,10 @@ const ROUTES = {
         path: '/teams',
         requiredDataSets: [USERS, TEAMS],
         children: {
-          team: { path: '/:teamId' }
+          team: {
+            path: '/:teamId',
+            requiredDataSets: [ORG_MEMBERSHIPS]
+          }
         }
       }
     }
