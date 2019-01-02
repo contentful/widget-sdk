@@ -105,11 +105,25 @@ describe('analyze', () => {
     const modules = analyze(
       node,
       `
-        import { getModule, getModules } from 'NgRegistry.es6';
+        import { getModule, getModules, registerController, registerValue } from 'NgRegistry.es6';
         const $state = getModule('$state');
         const $timeout = getModule('$timeout');
         const SpaceMembershipRepository = getModule('access_control/SpaceMembershipRepository.es6');
         const [$q, $window] = getModules('$q', '$window', '$state');
+
+
+        registerController('controllerWithNoDeps', [() => {
+
+        }]);
+
+        registerController('controllerWithDeps', [
+          '$scope',
+          'spaceContext',
+          'access_control/AccessChecker',
+          'services/TokenStore.es6',
+          () => {}
+        ]);
+
     `
     );
 
@@ -119,7 +133,12 @@ describe('analyze', () => {
       '$timeout',
       'access_control/SpaceMembershipRepository',
       '$q',
-      '$window'
+      '$window',
+      'angular.controller',
+      '$scope',
+      'spaceContext',
+      'access_control/AccessChecker',
+      'services/TokenStore'
     ]);
   });
 });
