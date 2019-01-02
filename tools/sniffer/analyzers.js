@@ -5,6 +5,7 @@ const findServiceConsumer = require('./analyzers/findServiceConsumer');
 const findAngular = require('./analyzers/findAngular');
 const findOtherByRegexp = require('./analyzers/findOtherByRegexp');
 const findComponentLibrary = require('./analyzers/findComponentLibrary');
+const findGetModule = require('./analyzers/findGetModule');
 
 module.exports = function(node, src) {
   if (node.extension === '.js') {
@@ -31,7 +32,8 @@ module.exports = function(node, src) {
       findAngular,
       findServiceConsumer,
       findOtherByRegexp,
-      findComponentLibrary
+      findComponentLibrary,
+      findGetModule
     ];
 
     const modules = _.uniq(

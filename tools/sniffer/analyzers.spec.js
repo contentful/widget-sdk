@@ -41,19 +41,6 @@ describe('analyze', () => {
     ]);
   });
 
-  it('should find all NgRegistry import declarations', () => {
-    const modules = analyze(
-      node,
-      `
-        import { registerController } from 'NgRegistry.es6';
-
-        registerController('TestController', []);
-      `
-    );
-
-    expect(modules).toEqual(['NgRegistry']);
-  });
-
   it('should find all angular[fn]', () => {
     const modules = analyze(
       node,
@@ -111,6 +98,28 @@ describe('analyze', () => {
       'notification.implicit',
       'modalDialog.implicit',
       'analytics/Analytics.implicit'
+    ]);
+  });
+
+  it('should find dependencies imported via getModule', () => {
+    const modules = analyze(
+      node,
+      `
+        import { getModule, getModules } from 'NgRegistry.es6';
+        const $state = getModule('$state');
+        const $timeout = getModule('$timeout');
+        const SpaceMembershipRepository = getModule('access_control/SpaceMembershipRepository.es6');
+        const [$q, $window] = getModules('$q', '$window', '$state');
+    `
+    );
+
+    expect(modules).toEqual([
+      'NgRegistry',
+      '$state',
+      '$timeout',
+      'access_control/SpaceMembershipRepository',
+      '$q',
+      '$window'
     ]);
   });
 });
