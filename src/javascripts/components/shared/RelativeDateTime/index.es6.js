@@ -16,7 +16,8 @@ import moment from 'moment';
  */
 export default class RelativeDateTime extends Component {
   static propTypes = {
-    value: PropTypes.string.isRequired
+    value: PropTypes.string.isRequired,
+    extraClassNames: PropTypes.string
   };
   componentDidMount() {
     this.scheduleUpdate();
@@ -36,7 +37,7 @@ export default class RelativeDateTime extends Component {
     const date = moment(this.props.value);
     const dateDiffString = diffString(date, moment());
 
-    return <time>{dateDiffString}</time>;
+    return <time className={this.props.extraClassNames}>{dateDiffString}</time>;
   }
 }
 
