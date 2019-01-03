@@ -9,10 +9,8 @@ angular
    * 'app/entit_editor/DataLoader' module.
    */
   .factory('mocks/app/entity_editor/DataLoader', [
-    'require',
-    require => {
-      const createDoc = require('mocks/entityEditor/Document').create;
-
+    'mocks/entityEditor/Document',
+    ({ create: createDoc }) => {
       return {
         makeEditorData: makeEditorData
       };

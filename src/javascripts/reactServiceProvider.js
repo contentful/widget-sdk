@@ -14,15 +14,15 @@ import PropTypes from 'prop-types';
 import { Provider } from './reactServiceContext';
 
 angular.module('contentful').factory('ServicesProvider', [
-  'require',
-  function(require) {
-    // we expose `require` functionality, so all registered
+  '$injector',
+  function($injector) {
+    // we expose `$injector.get` functionality, so all registered
     // angular modules can be called. Using this approach, we
     // don't have to register all modules manually.
     const services = {
       get(name) {
         try {
-          return require(name);
+          return $injector.get(name);
         } catch (err) {
           // eslint-disable-next-line
           console.error(

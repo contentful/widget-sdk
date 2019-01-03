@@ -2,6 +2,7 @@ import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 import Base from 'states/Base.es6';
 import { getStore } from 'TheStore/index.es6';
 import * as Analytics from 'analytics/Analytics.es6';
+import { go } from 'states/Navigator.es6';
 
 const store = getStore();
 
@@ -122,13 +123,10 @@ export function organizationBase(definition) {
     onEnter: [
       '$state',
       '$stateParams',
-      'require',
-      async ($state, $stateParams, require) => {
-        const accessChecker = require('access_control/AccessChecker');
-        const useLegacy = require('utils/ResourceUtils.es6').useLegacy;
-        const TokenStore = require('services/TokenStore.es6');
-        const go = require('states/Navigator.es6').go;
-
+      'access_control/AccessChecker/index.es6',
+      'services/TokenStore.es6',
+      'utils/ResourceUtils.es6',
+      async ($state, $stateParams, accessChecker, TokenStore, { useLegacy }) => {
         const org = await TokenStore.getOrganization($stateParams.orgId);
 
         Analytics.trackContextChange(null, org);

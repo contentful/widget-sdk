@@ -7,10 +7,8 @@ export default {
   controller: [
     '$state',
     '$scope',
-    'require',
-    ($state, $scope, require) => {
-      const spaceContext = require('spaceContext');
-
+    'spaceContext',
+    ($state, $scope, spaceContext) => {
       const hasAccess = can('update', 'settings');
       if (!hasAccess) {
         $state.go('spaces.detail');

@@ -25,57 +25,65 @@ import createMockEndpoint from 'test/helpers/mocks/SpaceEndpoint';
  * spaceContext.publishedCTs.fetch.resolves(ct)
  */
 angular.module('contentful/mocks').factory('mocks/spaceContext', [
-  'require',
-  require => {
-    const cfStub = require('cfStub');
-    const createEIRepo = require('data/editingInterfaces');
-    const createWidgetStore = require('widgets/Store.es6').create;
-    const createApiKeyRepo = require('data/CMA/ApiKeyRepo.es6').default;
-    const CMAClient = require('data/ApiClient');
-    const createDocument = require('mocks/entityEditor/Document').create;
-
+  'spaceContext',
+  'cfStub',
+  'data/editingInterfaces',
+  'data/ApiClient',
+  'data/ContentTypeRepo/Published.es6',
+  'mocks/entityEditor/Document',
+  'widgets/Store.es6',
+  'data/CMA/ApiKeyRepo.es6',
+  (
+    spaceContext,
+    cfStub,
+    createEIRepo,
+    CMAClient,
+    CTRepo,
+    { create: createDocument },
+    { create: createWidgetStore },
+    { default: createApiKeyRepo }
+  ) => {
     return {
       init: init
     };
 
     function init() {
-      const spaceContext = sinon.stubAll(require('spaceContext'));
+      const spaceContextMock = sinon.stubAll(spaceContext);
 
-      const CTRepo = require('data/ContentTypeRepo/Published.es6');
-      spaceContext.publishedCTs = sinon.stubAll(CTRepo.create());
+      spaceContextMock.publishedCTs = sinon.stubAll(CTRepo.create());
 
       const space = cfStub.space('test');
-      spaceContext.space = sinon.stubAll(space);
+      spaceContextMock.space = sinon.stubAll(space);
 
       // We create a mock space endpoint that always returns a 404. This
       // makes the EI repo create an editing interface from scratch.
       const eiSpaceEndpoint = sinon.stub().rejects({ status: 404 });
-      spaceContext.editingInterfaces = createEIRepo(eiSpaceEndpoint);
+      spaceContextMock.editingInterfaces = createEIRepo(eiSpaceEndpoint);
 
-      spaceContext.docPool = {
+      spaceContextMock.docPool = {
         get: function(entity, _contentType) {
           return createDocument(entity.data);
         }
       };
 
-      spaceContext.memberships = createMembershipsMock();
-      spaceContext.users = createUsersMock();
+      spaceContextMock.memberships = createMembershipsMock();
+      spaceContextMock.users = createUsersMock();
 
-      spaceContext._mockEndpoint = createMockEndpoint();
-      spaceContext.endpoint = spaceContext._mockEndpoint.request;
-      spaceContext.cma = new CMAClient(spaceContext.endpoint);
-      spaceContext.apiKeyRepo = createApiKeyRepo(spaceContext.endpoint);
-      spaceContext.organization = {
+      spaceContextMock._mockEndpoint = createMockEndpoint();
+      spaceContextMock.endpoint = spaceContextMock._mockEndpoint.request;
+      spaceContextMock.cma = new CMAClient(spaceContextMock.endpoint);
+      spaceContextMock.apiKeyRepo = createApiKeyRepo(spaceContextMock.endpoint);
+      spaceContextMock.organization = {
         subscriptionPlan: {
           limits: {}
         },
         usage: {},
         sys: {}
       };
-      spaceContext.widgets = createWidgetStore(spaceContext.cma);
-      spaceContext.uiConfig = createUiConfigMock();
+      spaceContextMock.widgets = createWidgetStore(spaceContextMock.cma);
+      spaceContextMock.uiConfig = createUiConfigMock();
 
-      return spaceContext;
+      return spaceContextMock;
     }
 
     function createMembershipsMock() {
