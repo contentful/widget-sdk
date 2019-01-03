@@ -14,7 +14,7 @@ function OrgSpacesHeader({ canCreateSpaceInCurrOrg, showCreateSpaceModal }) {
           className="text-link"
           onClick={showCreateSpaceModal}
           data-test-id="sidepanel-add-space-link">
-          + Add space
+          + Create space
         </a>
       )}
     </div>
