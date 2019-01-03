@@ -1,6 +1,7 @@
 'use strict';
 
 import _ from 'lodash';
+import Client from 'legacy-client';
 
 angular
   .module('contentful/mocks')
@@ -50,152 +51,152 @@ angular
     return Adapter;
   })
 
-  .factory('cfStub', $injector => {
-    const $rootScope = $injector.get('$rootScope');
-    const spaceContext = $injector.get('spaceContext');
-    const Client = $injector.get('legacy-client');
-    const Adapter = $injector.get('TestingAdapter');
+  .factory('cfStub', [
+    '$rootScope',
+    'spaceContext',
+    'TestingAdapter',
+    ($rootScope, spaceContext, Adapter) => {
+      const adapter = new Adapter();
 
-    const adapter = new Adapter();
+      const cfStub = {};
+      cfStub.adapter = adapter;
 
-    const cfStub = {};
-    cfStub.adapter = adapter;
-
-    cfStub.locale = (code, extraData) =>
-      _.extend(
-        {
-          code: code,
-          internal_code: code,
-          contentDeliveryApi: true,
-          contentManagementApi: true,
-          default: true,
-          name: code
-        },
-        extraData || {}
-      );
-
-    cfStub.locales = function(...args) {
-      return _.map(args, (code, index) => cfStub.locale(code, { default: index === 0 }));
-    };
-
-    cfStub.space = (id, extraData) => {
-      id = id || 'testSpace';
-
-      return new Client(adapter).newSpace(
-        _.merge(
+      cfStub.locale = (code, extraData) =>
+        _.extend(
           {
-            sys: {
-              id: id,
-              createdBy: { sys: { id: 123 } }
-            },
-            locales: cfStub.locales('en-US', 'de-DE'),
-            organization: {
-              sys: {
-                id: '456',
-                type: 'Organization'
-              },
-              usage: {},
-              subscription: {},
-              subscriptionPlan: { limits: {} }
-            },
-            spaceMembership: {
-              isAdmin: true
-            }
+            code: code,
+            internal_code: code,
+            contentDeliveryApi: true,
+            contentManagementApi: true,
+            default: true,
+            name: code
           },
           extraData || {}
-        )
-      );
-    };
+        );
 
-    cfStub.mockSpaceContext = () => {
-      const spaceData = cfStub.space('test').data;
-      const contentTypeData = cfStub.contentTypeData('testType');
-      spaceContext.resetWithSpace(spaceData);
-      spaceContext.space.getContentTypes = sinon.stub().resolves([contentTypeData]);
-      return spaceContext;
-    };
+      cfStub.locales = function(...args) {
+        return _.map(args, (code, index) => cfStub.locale(code, { default: index === 0 }));
+      };
 
-    cfStub.contentTypeData = (id, fields, extraData) => {
-      fields = fields || [];
-      return _.merge(
-        {
-          fields: fields,
-          sys: {
-            id: id,
-            type: 'ContentType'
-          }
-        },
-        extraData || {}
-      );
-    };
+      cfStub.space = (id, extraData) => {
+        id = id || 'testSpace';
 
-    cfStub.contentType = (space, id, name, fields, extraData) => {
-      const data = cfStub.contentTypeData(id, fields, {
-        name: name,
-        sys: { version: 1 }
-      });
-      _.merge(data, extraData || {});
-      return space.newContentType(data);
-    };
+        return new Client(adapter).newSpace(
+          _.merge(
+            {
+              sys: {
+                id: id,
+                createdBy: { sys: { id: 123 } }
+              },
+              locales: cfStub.locales('en-US', 'de-DE'),
+              organization: {
+                sys: {
+                  id: '456',
+                  type: 'Organization'
+                },
+                usage: {},
+                subscription: {},
+                subscriptionPlan: { limits: {} }
+              },
+              spaceMembership: {
+                isAdmin: true
+              }
+            },
+            extraData || {}
+          )
+        );
+      };
 
-    cfStub.entry = (space, id, contentTypeId, fields, extraData) => {
-      fields = fields || {};
-      let entry;
-      space.getEntry(id).then(res => {
-        entry = res;
-      });
-      adapter.resolveLast(
-        _.merge(
+      cfStub.mockSpaceContext = () => {
+        const spaceData = cfStub.space('test').data;
+        const contentTypeData = cfStub.contentTypeData('testType');
+        spaceContext.resetWithSpace(spaceData);
+        spaceContext.space.getContentTypes = sinon.stub().resolves([contentTypeData]);
+        return spaceContext;
+      };
+
+      cfStub.contentTypeData = (id, fields, extraData) => {
+        fields = fields || [];
+        return _.merge(
           {
             fields: fields,
             sys: {
               id: id,
-              type: 'Entry',
-              version: 1,
-              contentType: {
-                sys: {
-                  type: 'Link',
-                  linkType: 'ContentType',
-                  id: contentTypeId || 'entryId'
-                }
-              }
+              type: 'ContentType'
             }
           },
           extraData || {}
-        )
-      );
-      $rootScope.$apply();
-      return entry;
-    };
+        );
+      };
 
-    cfStub.asset = (space, id, fields, extraData) => {
-      let asset;
-      space.getAsset(id).then(res => {
-        asset = res;
-      });
-      adapter.resolveLast(
-        _.merge(
-          {
-            sys: {
-              id: id,
-              type: 'Asset',
-              version: 1
+      cfStub.contentType = (space, id, name, fields, extraData) => {
+        const data = cfStub.contentTypeData(id, fields, {
+          name: name,
+          sys: { version: 1 }
+        });
+        _.merge(data, extraData || {});
+        return space.newContentType(data);
+      };
+
+      cfStub.entry = (space, id, contentTypeId, fields, extraData) => {
+        fields = fields || {};
+        let entry;
+        space.getEntry(id).then(res => {
+          entry = res;
+        });
+        adapter.resolveLast(
+          _.merge(
+            {
+              fields: fields,
+              sys: {
+                id: id,
+                type: 'Entry',
+                version: 1,
+                contentType: {
+                  sys: {
+                    type: 'Link',
+                    linkType: 'ContentType',
+                    id: contentTypeId || 'entryId'
+                  }
+                }
+              }
             },
-            fields: _.merge(
-              {
-                title: {},
-                description: {},
-                file: {}
-              },
-              fields || {}
-            )
-          },
-          extraData || {}
-        )
-      );
-      $rootScope.$apply();
-      return asset;
-    };
+            extraData || {}
+          )
+        );
+        $rootScope.$apply();
+        return entry;
+      };
 
-    return cfStub;
-  });
+      cfStub.asset = (space, id, fields, extraData) => {
+        let asset;
+        space.getAsset(id).then(res => {
+          asset = res;
+        });
+        adapter.resolveLast(
+          _.merge(
+            {
+              sys: {
+                id: id,
+                type: 'Asset',
+                version: 1
+              },
+              fields: _.merge(
+                {
+                  title: {},
+                  description: {},
+                  file: {}
+                },
+                fields || {}
+              )
+            },
+            extraData || {}
+          )
+        );
+        $rootScope.$apply();
+        return asset;
+      };
+
+      return cfStub;
+    }
+  ]);

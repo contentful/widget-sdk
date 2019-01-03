@@ -36,14 +36,13 @@ registerFactory('states/entries', [
       },
       resolve: {
         snapshot: [
-          'require',
           '$stateParams',
           'editorData',
-          (require, $stateParams, editorData) => {
+          'spaceContext',
+          'data/Entries',
+          ($stateParams, editorData, spaceContext, Entries) => {
             const entry = editorData.entity;
             const contentType = editorData.contentType;
-            const spaceContext = require('spaceContext');
-            const Entries = require('data/Entries');
 
             return spaceContext.cma
               .getEntrySnapshot(entry.getId(), $stateParams.snapshotId)
@@ -98,13 +97,11 @@ registerFactory('states/entries', [
         ]
       },
       controller: [
-        'require',
         'editorData',
-        (require, editorData) => {
-          const spaceContext = require('spaceContext');
-          const modalDialog = require('modalDialog');
-          const trackVersioning = require('analyticsEvents/versioning');
-
+        'spaceContext',
+        'modalDialog',
+        'analyticsEvents/versioning',
+        (editorData, spaceContext, modalDialog, trackVersioning) => {
           const entityId = editorData.entity.getId();
 
           spaceContext.cma.getEntrySnapshots(entityId, { limit: 2 }).then(res => {

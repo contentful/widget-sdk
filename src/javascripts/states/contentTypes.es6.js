@@ -57,12 +57,11 @@ registerFactory('states/contentTypes', [
         url: '/:contentTypeId',
         resolve: {
           contentType: [
-            'require',
             '$stateParams',
+            'data/ContentTypes',
             'spaceContext',
-            (require, $stateParams, spaceContext) => {
+            ($stateParams, ctHelpers, spaceContext) => {
               const space = spaceContext.space;
-              const ctHelpers = require('data/ContentTypes');
               return space.getContentType($stateParams.contentTypeId).then(ct => {
                 // Some legacy content types do not have a name. If it is
                 // missing we set it to 'Untitled' so we can display

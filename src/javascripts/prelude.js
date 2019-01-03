@@ -10,6 +10,9 @@
 // since we just concatenate them.
 'use strict';
 
+import moment from 'moment';
+import _ from 'lodash';
+
 angular.module('contentful/init', []);
 
 /**
@@ -41,27 +44,25 @@ angular
     }
   ])
   .run([
-    'require',
-    require => {
-      const $document = require('$document');
-      const Config = require('Config.es6');
+    '$document',
+    '$injector',
+    ($document, $injector) => {
+      const Config = $injector.get('Config.es6');
       if (Config.env === 'development') {
         Error.stackTraceLimit = 100;
       } else {
         Error.stackTraceLimit = 25;
       }
-      require('Debug.es6').init(window);
-      require('Authentication.es6').init();
-      require('services/TokenStore.es6').init();
-      require('utils/LaunchDarkly').init();
-      require('navigation/stateChangeHandlers').setup();
-      require('ui/ContextMenuHandler.es6').default($document);
-      require('states').loadAll();
-      require('dialogsInitController').init();
-      require('navigation/DocumentTitle.es6').init();
-      require('components/shared/auto_create_new_space').init();
-
-      const moment = require('moment');
+      $injector.get('Debug.es6').init(window);
+      $injector.get('Authentication.es6').init();
+      $injector.get('services/TokenStore.es6').init();
+      $injector.get('utils/LaunchDarkly').init();
+      $injector.get('navigation/stateChangeHandlers').setup();
+      $injector.get('ui/ContextMenuHandler.es6').default($document);
+      $injector.get('states').loadAll();
+      $injector.get('dialogsInitController').init();
+      $injector.get('navigation/DocumentTitle.es6').init();
+      $injector.get('components/shared/auto_create_new_space').init();
 
       moment.locale('en', {
         calendar: {
@@ -137,11 +138,9 @@ angular
     $provide => {
       // Decorates $q instances with the `callback` method
       $provide.decorator('$q', [
-        'require',
         '$delegate',
         '$rootScope',
-        (require, $q, $rootScope) => {
-          const _ = require('lodash');
+        ($q, $rootScope) => {
           // Returns a callback method that should be passed in where a node-style callback is expected.
           // The callback method has a `promise` property that can then be passed around in a promise environment:
           //
@@ -277,22 +276,22 @@ angular
     registerDirectoryAlias(id);
 
     angular.module('contentful/init').factory(id, [
-      'require',
-      require => {
+      '$injector',
+      $injector => {
         const mod = makeModule();
 
         const ctx = run(mod.export);
 
         deps.forEach((name, i) => {
           const absName = resolve(name, id);
-          const depExports = coerceExports(require(absName));
+          const depExports = coerceExports($injector.get(absName));
           ctx.setters[i](depExports);
         });
         ctx.execute();
 
         // do not freeze exports while running unit
         // test so methods can be freely stubbed
-        if (require('environment').env === 'unittest') {
+        if ($injector.get('environment').env === 'unittest') {
           return mod.exports;
         } else {
           return Object.freeze(mod.exports);

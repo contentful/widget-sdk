@@ -14,10 +14,8 @@ angular
    * The implementation is not yet complete.
    */
   .factory('mocks/entityEditor/Context', [
-    'require',
-    require => {
-      const Focus = require('app/entity_editor/Focus.es6');
-
+    'app/entity_editor/Focus.es6',
+    Focus => {
       return { create: create };
 
       function create() {

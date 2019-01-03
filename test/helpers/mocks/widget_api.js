@@ -12,14 +12,14 @@ angular
    * Use `mockWidgetApi._state` to inspect internal state modified by methods.
    */
   .factory('mocks/widgetApi', [
-    'require',
-    require => {
-      const $q = require('$q');
-      const createPublicationWarningsManager = require('app/entity_editor/PublicationWarnings/index.es6')
-        .create;
-      const registerUnpublishedReferencesWarning = require('app/entity_editor/PublicationWarnings/UnpublishedReferencesWarning/index.es6')
-        .registerUnpublishedReferencesWarning;
-
+    '$q',
+    'app/entity_editor/PublicationWarnings/UnpublishedReferencesWarning/index.es6',
+    'app/entity_editor/PublicationWarnings/index.es6',
+    (
+      $q,
+      { registerUnpublishedReferencesWarning },
+      { create: createPublicationWarningsManager }
+    ) => {
       return {
         create: create,
         createField: createField
