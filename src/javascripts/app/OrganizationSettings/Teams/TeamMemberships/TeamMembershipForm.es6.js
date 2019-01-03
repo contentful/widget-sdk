@@ -34,7 +34,7 @@ export default connect(
 )(
   class TeamMembershipForm extends React.Component {
     static propTypes = {
-      onCancel: PropTypes.func.isRequired,
+      close: PropTypes.func.isRequired,
       orgMemberships: PropTypes.arrayOf(OrganizationMembershipPropType),
       onMembershipCreate: PropTypes.func,
       onMembershipChange: PropTypes.func,
@@ -52,9 +52,8 @@ export default connect(
     };
 
     submit = async () => {
-      this.setState({ loading: true });
-      await this.props.onMembershipCreate({ orgMembershipId: this.state.selectedOrgMembershipId });
-      this.setState({ loading: false });
+      this.props.onMembershipCreate({ orgMembershipId: this.state.selectedOrgMembershipId });
+      this.props.close();
     };
 
     render() {
@@ -62,7 +61,10 @@ export default connect(
       return (
         <TableRow extraClassNames="space-membership-editor">
           <TableCell colSpan="2">
-            <Select onChange={this.setOrgMembership}>
+            <Select onChange={this.setOrgMembership} defaultValue="">
+              <Option value="" disabled>
+                Please select a user
+              </Option>
               {this.props.orgMemberships.map(orgMembership => {
                 const user = orgMembership.sys.user;
                 // TODO: handle pending invitations
@@ -87,7 +89,7 @@ export default connect(
               style={{ marginRight: '10px' }}>
               Add to team
             </Button>
-            <Button size="small" buttonType="naked" onClick={this.props.onCancel}>
+            <Button size="small" buttonType="naked" onClick={this.props.close}>
               Cancel
             </Button>
           </TableCell>

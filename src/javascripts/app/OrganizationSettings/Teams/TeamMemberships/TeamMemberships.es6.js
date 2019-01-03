@@ -58,7 +58,7 @@ export default connect(state => ({
               </TableRow>
             </TableHead>
             <TableBody>
-              {showingForm && <TeamMembershipForm onCancel={this.toggleForm} />}
+              {showingForm && <TeamMembershipForm close={this.toggleForm} />}
               {memberships.map(
                 ({
                   sys: {
