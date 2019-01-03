@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { getModule } from 'NgRegistry.es6';
 
-const ServicesConsumer = require('../../../../../../reactServiceContext').default;
+// TODO: Use widgetApi instead!
+const thumbnailHelpers = getModule('ui/cf/thumbnailHelpers.es6');
 
 const dimensions = { width: 70, height: 70 };
 
@@ -10,10 +12,7 @@ class Thumbnail extends React.Component {
     thumbnail: PropTypes.shape({
       url: PropTypes.string,
       contentType: PropTypes.string
-    }),
-    $services: PropTypes.shape({
-      thumbnailHelpers: PropTypes.object
-    }).isRequired
+    })
   };
 
   static defaultProps = {
@@ -21,10 +20,7 @@ class Thumbnail extends React.Component {
   };
 
   render() {
-    const {
-      thumbnail,
-      $services: { thumbnailHelpers }
-    } = this.props;
+    const { thumbnail } = this.props;
     const valid = thumbnail && thumbnailHelpers.isValidImage(thumbnail.contentType);
     if (!valid) {
       return null;
@@ -41,8 +37,4 @@ class Thumbnail extends React.Component {
   }
 }
 
-// TODO: Use widgetApi instead!
-export default ServicesConsumer({
-  as: 'thumbnailHelpers',
-  from: 'ui/cf/thumbnailHelpers.es6'
-})(Thumbnail);
+export default Thumbnail;

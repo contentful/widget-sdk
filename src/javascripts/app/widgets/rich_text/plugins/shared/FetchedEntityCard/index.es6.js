@@ -7,7 +7,6 @@ import FetchEntity from '../FetchEntity/index.es6';
 import WrappedReferenceCard from './WrappedReferenceCard.es6';
 import WrappedAssetCard from './WrappedAssetCard.es6';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
-const ServicesConsumer = require('../../../../../../reactServiceContext').default;
 
 class FetchedEntityCard extends React.Component {
   static propTypes = {
@@ -18,10 +17,7 @@ class FetchedEntityCard extends React.Component {
     disabled: PropTypes.bool,
     selected: PropTypes.bool,
     onEdit: PropTypes.func,
-    onRemove: PropTypes.func,
-    $services: PropTypes.shape({
-      slideInNavigator: PropTypes.object
-    }).isRequired
+    onRemove: PropTypes.func
   };
   static defaultProps = {
     extraClassNames: ''
@@ -105,7 +101,4 @@ class FetchedEntityCard extends React.Component {
   }
 }
 
-export default ServicesConsumer({
-  as: 'slideInNavigator',
-  from: 'navigation/SlideInNavigator'
-})(FetchedEntityCard);
+export default FetchedEntityCard;

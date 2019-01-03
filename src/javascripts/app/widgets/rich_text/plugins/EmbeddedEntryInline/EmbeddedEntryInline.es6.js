@@ -1,27 +1,27 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { getModule } from 'NgRegistry.es6';
 import { InlineReferenceCard, DropdownListItem } from '@contentful/forma-36-react-components';
 
 import RequestStatus from '../shared/RequestStatus.es6';
 import FetchEntity from '../shared/FetchEntity/index.es6';
 
-const ServicesConsumer = require('../../../../../reactServiceContext').default;
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
 import { INLINES } from '@contentful/rich-text-types';
+
+// TODO: Add slideIn functionality to WidgetAPI.
+const slideInNavigator = getModule('navigation/SlideInNavigator');
 
 class EmbeddedEntryInline extends React.Component {
   static propTypes = {
     isSelected: PropTypes.bool.isRequired,
     attributes: PropTypes.object.isRequired,
     editor: PropTypes.object.isRequired,
-    node: PropTypes.object.isRequired,
-    $services: PropTypes.shape({
-      slideInNavigator: PropTypes.object
-    }).isRequired
+    node: PropTypes.object.isRequired
   };
 
   handleEditClick = entry => {
-    this.props.$services.slideInNavigator.goToSlideInEntity(
+    slideInNavigator.goToSlideInEntity(
       {
         id: entry.sys.id,
         type: 'Entry'
@@ -96,7 +96,4 @@ class EmbeddedEntryInline extends React.Component {
   }
 }
 
-export default ServicesConsumer({
-  as: 'slideInNavigator',
-  from: 'navigation/SlideInNavigator'
-})(EmbeddedEntryInline);
+export default EmbeddedEntryInline;

@@ -1,40 +1,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import { getModule } from 'NgRegistry.es6';
 import { TextLink } from '@contentful/forma-36-react-components';
 
 import CreateEntryButton, { Style } from 'components/CreateEntryButton/index.es6';
 import Visible from 'components/shared/Visible/index.es6';
 
-const withServicesConsumer = require('../../../reactServiceContext').default;
+const logger = getModule('logger');
+const entityCreator = getModule('entityCreator');
+const accessChecker = getModule('access_control/AccessChecker');
+const slideInNavigator = getModule('navigation/SlideInNavigator');
 
 export const entityTypes = {
   Entry: 'Entry',
   Asset: 'Asset'
 };
 
-const servicesShape = PropTypes.shape({
-  accessChecker: PropTypes.object,
-  logger: PropTypes.object,
-  entityCreator: PropTypes.object
-});
-
 /**
  * Renders a create entry/asset button/link and triggers entity creation
  * and slidein redirection.
  */
-export default withServicesConsumer(
-  'logger',
-  'entityCreator',
-  {
-    from: 'access_control/AccessChecker',
-    as: 'accessChecker'
-  },
-  {
-    from: 'navigation/SlideInNavigator',
-    as: 'slideInNavigator'
-  }
-)(CreateEntity);
 
 function CreateEntity(props) {
   const { type, ...otherProps } = props;
@@ -43,20 +28,18 @@ function CreateEntity(props) {
   }
 
   if (type === entityTypes.Asset) {
-    return <CreateAsset onSelect={props.onSelect} $services={props.$services} />;
+    return <CreateAsset onSelect={props.onSelect} />;
   }
 }
 
 CreateEntity.propTypes = {
   type: PropTypes.oneOf([entityTypes.Entry, entityTypes.Asset]).isRequired,
-  $services: servicesShape.isRequired,
   contentTypes: PropTypes.array,
   suggestedContentTypeId: PropTypes.string,
   hasPlusIcon: PropTypes.bool
 };
 
 function CreateEntry(props) {
-  const accessChecker = props.$services.accessChecker;
   const allowedContentTypes = props.contentTypes.filter(ct =>
     accessChecker.canPerformActionOnEntryOfType(accessChecker.Action.CREATE, ct.sys.id)
   );
@@ -71,7 +54,7 @@ function CreateEntry(props) {
         style={Style.Link}
         disabled={false}
         contentTypes={allowedContentTypes}
-        onSelect={contentTypeId => onSelectHandler(contentTypeId, props.$services, props.onSelect)}
+        onSelect={contentTypeId => onSelectHandler(contentTypeId, props.onSelect)}
         text={text}
         hasPlusIcon={props.hasPlusIcon}
         suggestedContentTypeId={props.suggestedContentTypeId}
@@ -83,16 +66,15 @@ function CreateEntry(props) {
 CreateEntry.propTypes = {
   contentTypes: PropTypes.array.isRequired,
   onSelect: PropTypes.func.isRequired,
-  $services: servicesShape.isRequired,
   hasPlusIcon: PropTypes.bool
 };
 
 function CreateAsset(props) {
   return (
-    <Visible if={props.$services.accessChecker.canCreateAsset()}>
+    <Visible if={accessChecker.canCreateAsset()}>
       <TextLink
         testId="create-asset"
-        onClick={() => onSelectHandler(null, props.$services, props.onSelect)}
+        onClick={() => onSelectHandler(null, props.onSelect)}
         icon="Plus">
         Create new asset
       </TextLink>
@@ -101,15 +83,12 @@ function CreateAsset(props) {
 }
 
 CreateAsset.propTypes = {
-  onSelect: PropTypes.func.isRequired,
-  $services: servicesShape.isRequired
+  onSelect: PropTypes.func.isRequired
 };
 
-async function onSelectHandler(contentTypeId, $services, cb) {
+async function onSelectHandler(contentTypeId, cb) {
   const createEntity = () =>
-    contentTypeId !== null
-      ? $services.entityCreator.newEntry(contentTypeId)
-      : $services.entityCreator.newAsset();
+    contentTypeId !== null ? entityCreator.newEntry(contentTypeId) : entityCreator.newAsset();
   try {
     const entity = await createEntity();
     const slide = {
@@ -118,8 +97,10 @@ async function onSelectHandler(contentTypeId, $services, cb) {
     };
     const canSlideIn = true;
     cb(entity.data);
-    $services.slideInNavigator.goToSlideInEntity(slide, canSlideIn);
+    slideInNavigator.goToSlideInEntity(slide, canSlideIn);
   } catch (error) {
-    $services.logger.logError('Failed to create new entry from entity selector', { error });
+    logger.logError('Failed to create new entry from entity selector', { error });
   }
 }
+
+export default CreateEntity;

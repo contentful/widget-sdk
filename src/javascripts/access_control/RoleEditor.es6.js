@@ -17,7 +17,7 @@ import PropTypes from 'prop-types';
 import { TextField, Button, Notification } from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
 import FormSection from 'components/forms/FormSection.es6';
-
+import { getModule } from 'NgRegistry.es6';
 import RuleList from './RuleList.es6';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
 import CustomRolesPlanInfo from './CustomRolesPlanInfo.es6';
@@ -26,7 +26,19 @@ import RoleEditorButton from './RoleEditorButton.es6';
 import Icon from '../ui/Components/Icon.es6';
 import getLocales from './getLocales.es6';
 
-const ServicesConsumer = require('../reactServiceContext').default;
+const $state = getModule('$state');
+const spaceContext = getModule('spaceContext');
+const createRoleRemover = getModule('createRoleRemover');
+const PolicyBuilder = getModule('PolicyBuilder');
+const logger = getModule('logger');
+const TheAccountView = getModule('TheAccountView');
+const UserListHandler = getModule('UserListHandler');
+const RoleRepository = getModule('access_control/RoleRepository.es6');
+const createFeatureService = getModule('services/FeatureService.es6');
+const createResourceService = getModule('services/ResourceService.es6');
+const ResourceUtils = getModule('utils/ResourceUtils.es6');
+const CONFIG = getModule('PolicyBuilder/CONFIG');
+const defaultRule = getModule('PolicyBuilder/defaultRule');
 
 const PermissionPropType = PropTypes.shape({
   manage: PropTypes.bool,
@@ -44,22 +56,6 @@ class RoleEditor extends React.Component {
     }).isRequired,
     baseRole: PropTypes.shape(),
     autofixed: PropTypes.bool,
-    $services: PropTypes.shape({
-      $state: PropTypes.object.isRequired,
-      spaceContext: PropTypes.object.isRequired,
-      createRoleRemover: PropTypes.func.isRequired,
-      PolicyBuilder: PropTypes.object.isRequired,
-      TheAccountView: PropTypes.object.isRequired,
-      logger: PropTypes.object.isRequired,
-      UserListHandler: PropTypes.object.isRequired,
-      Command: PropTypes.object.isRequired,
-      RoleRepository: PropTypes.object.isRequired,
-      createFeatureService: PropTypes.object.isRequired,
-      createResourceService: PropTypes.object.isRequired,
-      ResourceUtils: PropTypes.object.isRequired,
-      CONFIG: PropTypes.object.isRequired,
-      defaultRule: PropTypes.object.isRequired
-    }).isRequired,
     isNew: PropTypes.bool.isRequired,
     setDirty: PropTypes.func.isRequired,
     registerSaveAction: PropTypes.func.isRequired
@@ -67,13 +63,7 @@ class RoleEditor extends React.Component {
 
   constructor(props) {
     super(props);
-    const {
-      $services: { TheAccountView, PolicyBuilder },
-      role,
-      baseRole,
-      registerSaveAction,
-      setDirty
-    } = props;
+    const { role, baseRole, registerSaveAction, setDirty } = props;
 
     const isDuplicate = !!baseRole;
     const internal = PolicyBuilder.toInternal(
@@ -108,10 +98,7 @@ class RoleEditor extends React.Component {
   };
 
   delete = () => {
-    const {
-      $services: { UserListHandler, createRoleRemover, $state },
-      role
-    } = this.props;
+    const { role } = this.props;
 
     const listHandler = UserListHandler.create();
     listHandler.reset().then(() => {
@@ -123,10 +110,7 @@ class RoleEditor extends React.Component {
   };
 
   duplicate = () => {
-    const {
-      $services: { $state },
-      role
-    } = this.props;
+    const { role } = this.props;
 
     if (get(role, 'sys.id')) {
       $state.go('^.new', { baseRoleId: role.sys.id });
@@ -135,11 +119,7 @@ class RoleEditor extends React.Component {
 
   save = (autofix = false) => {
     this.setState({ saving: true });
-    const {
-      $services: { RoleRepository, spaceContext, PolicyBuilder },
-      isNew,
-      baseRole
-    } = this.props;
+    const { isNew, baseRole } = this.props;
     const { internal } = this.state;
     const external = PolicyBuilder.toExternal(internal);
 
@@ -156,10 +136,7 @@ class RoleEditor extends React.Component {
   };
 
   handleSaveSuccess = autofix => role => {
-    const {
-      $services: { $state, PolicyBuilder },
-      isNew
-    } = this.props;
+    const { isNew } = this.props;
     if (autofix) {
       Notification.success('One or more rules referencing deleted data where removed');
     } else {
@@ -178,10 +155,6 @@ class RoleEditor extends React.Component {
   };
 
   handleSaveError = response => {
-    const {
-      $services: { logger }
-    } = this.props;
-
     const errors = get(response, 'body.details.errors', []);
 
     if (includes(['403', '404'], get(response, 'statusCode'))) {
@@ -210,9 +183,6 @@ class RoleEditor extends React.Component {
   };
 
   updateInternal = updater => {
-    const {
-      $services: { PolicyBuilder }
-    } = this.props;
     const newInternal = updater(this.state.internal);
     this.setState(
       {
@@ -235,10 +205,6 @@ class RoleEditor extends React.Component {
     );
 
   autofixPolicies = () => {
-    const {
-      $services: { spaceContext, PolicyBuilder }
-    } = this.props;
-
     const cts = spaceContext.publishedCTs.getAllBare();
     const locales = getLocales();
     const internalCopy = cloneDeep(this.state.internal);
@@ -251,10 +217,6 @@ class RoleEditor extends React.Component {
   };
 
   updateRuleAttribute = entities => (rulesKey, id) => attribute => ({ target: { value } }) => {
-    const {
-      $services: { CONFIG }
-    } = this.props;
-
     const DEFAULT_FIELD = CONFIG.ALL_FIELDS;
     const DEFAULT_LOCALE = CONFIG.ALL_LOCALES;
 
@@ -287,12 +249,7 @@ class RoleEditor extends React.Component {
   };
 
   addRule = (entity, entities) => rulesKey => () => {
-    const {
-      $services: {
-        defaultRule: { getDefaultRuleGetterFor }
-      }
-    } = this.props;
-    const getDefaultRule = getDefaultRuleGetterFor(entity);
+    const getDefaultRule = defaultRule.getDefaultRuleGetterFor(entity);
     this.updateInternal(update([entities, rulesKey], (rules = []) => [...rules, getDefaultRule()]));
   };
 
@@ -328,10 +285,7 @@ class RoleEditor extends React.Component {
   };
 
   async componentDidMount() {
-    const {
-      $services: { spaceContext, createFeatureService, createResourceService, ResourceUtils },
-      isNew
-    } = this.props;
+    const { isNew } = this.props;
     const organization = spaceContext.organization;
     const FeatureService = createFeatureService.default(spaceContext.getId());
 
@@ -361,9 +315,6 @@ class RoleEditor extends React.Component {
   }
 
   navigateToList() {
-    const {
-      $services: { $state }
-    } = this.props;
     return $state.go('^.list');
   }
 
@@ -630,40 +581,4 @@ class RoleEditor extends React.Component {
   }
 }
 
-export default ServicesConsumer(
-  '$state',
-  'spaceContext',
-  'createRoleRemover',
-  'PolicyBuilder',
-  'TheAccountView',
-  'logger',
-  'UserListHandler',
-  {
-    from: 'command',
-    as: 'Command'
-  },
-  {
-    from: 'access_control/RoleRepository.es6',
-    as: 'RoleRepository'
-  },
-  {
-    from: 'services/FeatureService.es6',
-    as: 'createFeatureService'
-  },
-  {
-    from: 'services/ResourceService.es6',
-    as: 'createResourceService'
-  },
-  {
-    from: 'utils/ResourceUtils.es6',
-    as: 'ResourceUtils'
-  },
-  {
-    from: 'PolicyBuilder/CONFIG',
-    as: 'CONFIG'
-  },
-  {
-    from: 'PolicyBuilder/defaultRule',
-    as: 'defaultRule'
-  }
-)(RoleEditor);
+export default RoleEditor;

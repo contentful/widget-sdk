@@ -42,8 +42,6 @@ describe('Toolbar', () => {
   beforeEach(async function() {
     module('contentful/test');
 
-    const ServicesProvider = this.$inject('ServicesProvider');
-
     const mockDocument = document(block(BLOCKS.PARAGRAPH, {}, text()));
 
     this.system = createIsolatedSystem();
@@ -54,6 +52,9 @@ describe('Toolbar', () => {
     stubAll({
       isolatedSystem: this.system,
       angularStubs: {
+        EntityHelpers: {
+          newForLocale: sinon.stub()
+        },
         entitySelector: {
           open: () => Promise.resolve([this.selectedEntity])
         },
@@ -92,12 +93,7 @@ describe('Toolbar', () => {
     this.sandbox = createSandbox(window);
 
     this.mount = (props = this.props) => {
-      this.wrapper = Enzyme.mount(
-        <ServicesProvider>
-          <RichTextEditor {...props} />
-        </ServicesProvider>,
-        { attachTo: this.sandbox }
-      );
+      this.wrapper = Enzyme.mount(<RichTextEditor {...props} />, { attachTo: this.sandbox });
     };
 
     const embedEntity = async (entity, nodeType) => {

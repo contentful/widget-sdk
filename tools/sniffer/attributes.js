@@ -74,7 +74,7 @@ const hyperscript = node => {
     'ui/Framework',
     'ui/Framework/DOMRenderer',
     'utils/legacy-html-hyperscript',
-    'utils/legacy-html-hyperscript/index.es6'
+    'utils/legacy-html-hyperscript/index'
   ];
   const intersection = _.intersectionWith(modules, attributes, _.isEqual);
   return intersection.length > 0 ? intersection : false;

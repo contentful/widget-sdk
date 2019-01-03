@@ -1,8 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
 
-import FetchEntity from 'app/widgets/rich_text/plugins/shared/FetchEntity/FetchEntity.es6';
-import RequestStatus from 'app/widgets/rich_text/plugins/shared/RequestStatus.es6';
 import sinon from 'sinon';
 import flushPromises from '../../../helpers/flushPromises';
 
@@ -24,8 +22,40 @@ const newMockWidgetAPI = (entity, contentType) => {
 };
 
 describe('FetchEntity', () => {
+  let FetchEntity;
+  let RequestStatus;
+
   beforeEach(async function() {
-    module('contentful/test');
+    module('contentful/test', $provide => {
+      $provide.constant('EntityHelpers', {
+        newForLocale: sinon
+          .stub()
+          .withArgs('lo-LOCALE')
+          .returns({
+            entityFile: sinon
+              .stub()
+              .withArgs(this.entity)
+              .returns(Promise.resolve('FILE')),
+            entityTitle: sinon
+              .stub()
+              .withArgs(this.entity)
+              .returns(Promise.resolve('TITLE')),
+            entityDescription: sinon
+              .stub()
+              .withArgs(this.entity)
+              .returns(Promise.resolve('DESCRIPTION'))
+          })
+      });
+
+      $provide.constant('data/CMA/EntityState.es6', {
+        stateName: sinon.stub().returns('draft'),
+        getState: sinon.stub()
+      });
+    });
+
+    FetchEntity = this.$inject('app/widgets/rich_text/plugins/shared/FetchEntity/FetchEntity.es6')
+      .default;
+    RequestStatus = this.$inject('app/widgets/rich_text/plugins/shared/RequestStatus.es6').default;
 
     this.entity = {
       sys: {
@@ -50,32 +80,7 @@ describe('FetchEntity', () => {
       entityType: 'Entry',
       localeCode: 'lo-LOCALE',
       render: sandbox.spy(() => null),
-      widgetAPI: newMockWidgetAPI(this.entity, this.contentType),
-      $services: {
-        EntityState: {
-          stateName: sandbox.stub().returns('draft'),
-          getState: sandbox.stub()
-        },
-        EntityHelpers: {
-          newForLocale: sandbox
-            .stub()
-            .withArgs('lo-LOCALE')
-            .returns({
-              entityFile: sandbox
-                .stub()
-                .withArgs(this.entity)
-                .returns(Promise.resolve('FILE')),
-              entityTitle: sandbox
-                .stub()
-                .withArgs(this.entity)
-                .returns(Promise.resolve('TITLE')),
-              entityDescription: sandbox
-                .stub()
-                .withArgs(this.entity)
-                .returns(Promise.resolve('DESCRIPTION'))
-            })
-        }
-      }
+      widgetAPI: newMockWidgetAPI(this.entity, this.contentType)
     };
 
     this.mount = function() {

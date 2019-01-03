@@ -1,7 +1,12 @@
 import React from 'react';
+import { getModule } from 'NgRegistry.es6';
 import PropTypes from 'prop-types';
 
 import RequestStatus from '../RequestStatus.es6';
+
+// TODO: Move this to `widgetAPI`.
+const EntityHelpers = getModule('EntityHelpers');
+const EntityState = getModule('data/CMA/EntityState.es6');
 
 export default class FetchEntity extends React.PureComponent {
   static propTypes = {
@@ -9,11 +14,7 @@ export default class FetchEntity extends React.PureComponent {
     entityId: PropTypes.string.isRequired,
     entityType: PropTypes.oneOf(['Entry', 'Asset']).isRequired,
     localeCode: PropTypes.string.isRequired,
-    render: PropTypes.func.isRequired,
-    $services: PropTypes.shape({
-      EntityHelpers: PropTypes.object, // TODO: Move this to `widgetAPI`.
-      EntityState: PropTypes.object
-    }).isRequired
+    render: PropTypes.func.isRequired
   };
   state = {
     requestStatus: RequestStatus.Pending
@@ -35,7 +36,6 @@ export default class FetchEntity extends React.PureComponent {
   }
   fetchEntity = async () => {
     const { widgetAPI, entityId, entityType, localeCode } = this.props;
-    const { EntityHelpers, EntityState } = this.props.$services;
     const entityHelpers = EntityHelpers.newForLocale(localeCode);
     const getEntity = id => widgetAPI.space[`get${entityType}`](id);
 

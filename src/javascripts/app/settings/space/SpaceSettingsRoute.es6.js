@@ -1,26 +1,19 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { get } from 'lodash';
+import { getModule } from 'NgRegistry.es6';
 import SpaceSettings from './SpaceSettings.es6';
 import { Notification } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
 
-const ServicesConsumer = require('../../../reactServiceContext').default;
+const spaceContext = getModule('spaceContext');
+const $state = getModule('$state');
+const TokenStore = getModule('services/TokenStore.es6');
+const DeleteSpace = getModule('services/DeleteSpace.es6');
+const PricingDataProvider = getModule('account/pricing/PricingDataProvider.es6');
+const EndpointFactory = getModule('data/EndpointFactory.es6');
 
 export class SpaceSettingsRoute extends React.Component {
-  static propTypes = {
-    $services: PropTypes.shape({
-      spaceContext: PropTypes.object.isRequired,
-      TokenStore: PropTypes.object.isRequired,
-      DeleteSpace: PropTypes.object.isRequired,
-      PricingDataProvider: PropTypes.object.isRequired,
-      EndpointFactory: PropTypes.object.isRequired,
-      $state: PropTypes.object.isRequired
-    })
-  };
-
   getSpacePlan = async () => {
-    const { spaceContext, PricingDataProvider, EndpointFactory } = this.props.$services;
     const orgId = spaceContext.organization.sys.id;
     const orgEndpoint = EndpointFactory.createOrganizationEndpoint(orgId);
     let plan;
@@ -46,7 +39,6 @@ export class SpaceSettingsRoute extends React.Component {
   };
 
   save = newName => {
-    const { spaceContext, TokenStore } = this.props.$services;
     const space = spaceContext.space;
     return spaceContext.cma
       .renameSpace(newName, space.data.sys.version)
@@ -64,7 +56,6 @@ export class SpaceSettingsRoute extends React.Component {
   };
 
   openRemovalDialog = () => {
-    const { DeleteSpace, $state, spaceContext } = this.props.$services;
     this.getSpacePlan().then(plan => {
       DeleteSpace.openDeleteSpaceDialog({
         space: spaceContext.space.data,
@@ -75,35 +66,15 @@ export class SpaceSettingsRoute extends React.Component {
   };
 
   render() {
-    const space = this.props.$services.spaceContext.space;
     return (
       <SpaceSettings
         save={this.save}
         onRemoveClick={this.openRemovalDialog}
-        spaceName={space.data.name}
-        spaceId={space.getId()}
+        spaceName={spaceContext.space.data.name}
+        spaceId={spaceContext.space.getId()}
       />
     );
   }
 }
 
-export default ServicesConsumer(
-  'spaceContext',
-  '$state',
-  {
-    from: 'services/TokenStore.es6',
-    as: 'TokenStore'
-  },
-  {
-    from: 'services/DeleteSpace.es6',
-    as: 'DeleteSpace'
-  },
-  {
-    from: 'account/pricing/PricingDataProvider.es6',
-    as: 'PricingDataProvider'
-  },
-  {
-    from: 'data/EndpointFactory.es6',
-    as: 'EndpointFactory'
-  }
-)(SpaceSettingsRoute);
+export default SpaceSettingsRoute;

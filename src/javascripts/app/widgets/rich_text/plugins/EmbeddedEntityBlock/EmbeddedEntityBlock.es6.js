@@ -1,18 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import { getModule } from 'NgRegistry.es6';
 import FetchedEntityCard from '../shared/FetchedEntityCard/index.es6';
-const ServicesConsumer = require('../../../../../reactServiceContext').default;
+
+// TODO: Add slideIn functionality to WidgetAPI.
+const slideInNavigator = getModule('navigation/SlideInNavigator');
 
 class LinkedEntityBlock extends React.Component {
   static propTypes = {
     isSelected: PropTypes.bool.isRequired,
     attributes: PropTypes.object.isRequired,
     editor: PropTypes.object.isRequired,
-    node: PropTypes.object.isRequired,
-    $services: PropTypes.shape({
-      slideInNavigator: PropTypes.object
-    }).isRequired
+    node: PropTypes.object.isRequired
   };
 
   getEntitySys() {
@@ -24,7 +23,7 @@ class LinkedEntityBlock extends React.Component {
   }
 
   handleEditClick() {
-    this.props.$services.slideInNavigator.goToSlideInEntity(this.getEntitySys(), 2);
+    slideInNavigator.goToSlideInEntity(this.getEntitySys(), 2);
   }
 
   handleRemoveClick() {
@@ -59,8 +58,4 @@ class LinkedEntityBlock extends React.Component {
   }
 }
 
-// TODO: Add slideIn functionality to WidgetAPI.
-export default ServicesConsumer({
-  as: 'slideInNavigator',
-  from: 'navigation/SlideInNavigator'
-})(LinkedEntityBlock);
+export default LinkedEntityBlock;

@@ -1,54 +1,49 @@
 import React from 'react';
 import { mount } from 'enzyme';
-import { merge } from 'lodash';
 
 import CreateEntity, { entityTypes } from '../index.es6';
-import { MockedProvider } from '../../../../reactServiceContext';
+import accessChecker from 'ng/access_control/AccessChecker';
+import slideInNavigator from 'ng/navigation/SlideInNavigator';
+import entityCreator from 'ng/entityCreator';
 
 import flushPromises from '../../../../../../test/helpers/flushPromises';
 
-const getFakeServices = args =>
-  merge(
-    {
-      'access_control/AccessChecker': {
-        canCreateAsset: jest.fn(),
-        canPerformActionOnEntryOfType: jest.fn(),
-        Action: { CREATE: 'Create' }
-      },
-      entityCreator: {
-        newEntry: jest.fn().mockResolvedValue({}),
-        newAsset: jest.fn().mockResolvedValue({})
-      },
-      logger: {
-        logError: jest.fn()
-      },
-      'navigation/SlideInNavigator': {
-        goToSlideInEntity: jest.fn()
-      }
-    },
-    args
-  );
-const mountComponent = (props, services = {}) => {
-  return mount(
-    <MockedProvider services={getFakeServices(services)}>
-      <CreateEntity {...props} />
-    </MockedProvider>
-  );
+jest.mock(
+  'ng/entityCreator',
+  () => ({
+    newEntry: jest.fn().mockResolvedValue({}),
+    newAsset: jest.fn().mockResolvedValue({})
+  }),
+  { virtual: true }
+);
+
+jest.mock(
+  'ng/access_control/AccessChecker',
+  () => ({
+    canCreateAsset: jest.fn(),
+    canPerformActionOnEntryOfType: jest.fn(),
+    Action: { CREATE: 'Create' }
+  }),
+  { virtual: true }
+);
+
+const mountComponent = props => {
+  return mount(<CreateEntity {...props} />);
 };
 
 describe('CreateEntity', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('renders "create entry" link if entity type is "Entry"', () => {
     const props = {
       type: entityTypes.Entry,
       contentTypes: [{ sys: {} }],
       onSelect: () => {}
     };
-    const wrapper = mountComponent(props, {
-      'access_control/AccessChecker': {
-        canPerformActionOnEntryOfType: jest.fn().mockReturnValue(true)
-      }
-    });
-
+    accessChecker.canPerformActionOnEntryOfType.mockReturnValueOnce(true);
+    const wrapper = mountComponent(props);
     expect(wrapper.find('[data-test-id="create-entry"]')).toHaveLength(1);
   });
 
@@ -58,9 +53,8 @@ describe('CreateEntity', () => {
       contentTypes: [{ sys: {} }],
       onSelect: () => {}
     };
-    const wrapper = mountComponent(props, {
-      'access_control/AccessChecker': { canCreateAsset: jest.fn().mockReturnValue(true) }
-    });
+    accessChecker.canCreateAsset.mockReturnValueOnce(true);
+    const wrapper = mountComponent(props);
 
     expect(wrapper.find('[data-test-id="create-asset"]')).toHaveLength(1);
   });
@@ -94,25 +88,22 @@ describe('CreateEntity', () => {
       onSelect: jest.fn()
     };
     const entry = { data: { sys: { id: '1', type: entityTypes.Entry } } };
-    const newEntrySpy = jest.fn().mockResolvedValue(entry);
-    const goToSlideInEntity = jest.fn();
-    const wrapper = mountComponent(props, {
-      'access_control/AccessChecker': {
-        canPerformActionOnEntryOfType: jest.fn().mockResolvedValue(true)
-      },
-      entityCreator: { newEntry: newEntrySpy },
-      'navigation/SlideInNavigator': {
-        goToSlideInEntity
-      }
-    });
+
+    accessChecker.canPerformActionOnEntryOfType.mockResolvedValueOnce(true);
+    entityCreator.newEntry.mockResolvedValueOnce(entry);
+
+    const wrapper = mountComponent(props);
 
     wrapper.find('[data-test-id="cta"]').simulate('click');
 
     await flushPromises();
-    expect(newEntrySpy).toHaveBeenCalledWith('abs');
+    expect(entityCreator.newEntry).toHaveBeenCalledWith('abs');
     expect(props.onSelect).toHaveBeenCalledTimes(1);
     expect(props.onSelect).toHaveBeenCalledWith(entry.data);
-    expect(goToSlideInEntity).toHaveBeenCalledWith({ id: '1', type: entityTypes.Entry }, true);
+    expect(slideInNavigator.goToSlideInEntity).toHaveBeenCalledWith(
+      { id: '1', type: entityTypes.Entry },
+      true
+    );
   });
 
   it('creates an asset when "create asset" link is clicked and opens slide in editor', async () => {
@@ -121,22 +112,21 @@ describe('CreateEntity', () => {
       onSelect: jest.fn()
     };
     const asset = { data: { sys: { id: '1', type: entityTypes.Asset } } };
-    const newAssetSpy = jest.fn().mockResolvedValue(asset);
-    const goToSlideInEntity = jest.fn();
-    const wrapper = mountComponent(props, {
-      'access_control/AccessChecker': { canCreateAsset: jest.fn().mockReturnValue(true) },
-      entityCreator: { newAsset: newAssetSpy },
-      'navigation/SlideInNavigator': {
-        goToSlideInEntity
-      }
-    });
+
+    accessChecker.canCreateAsset.mockReturnValueOnce(true);
+    entityCreator.newAsset.mockResolvedValueOnce(asset);
+
+    const wrapper = mountComponent(props);
 
     wrapper.find('[data-test-id="create-asset"]').simulate('click');
 
     await flushPromises();
-    expect(newAssetSpy).toHaveBeenCalledTimes(1);
+    expect(entityCreator.newAsset).toHaveBeenCalledTimes(1);
     expect(props.onSelect).toHaveBeenCalledTimes(1);
     expect(props.onSelect).toHaveBeenCalledWith(asset.data);
-    expect(goToSlideInEntity).toHaveBeenLastCalledWith({ id: '1', type: entityTypes.Asset }, true);
+    expect(slideInNavigator.goToSlideInEntity).toHaveBeenLastCalledWith(
+      { id: '1', type: entityTypes.Asset },
+      true
+    );
   });
 });

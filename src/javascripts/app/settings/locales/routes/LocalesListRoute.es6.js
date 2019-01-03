@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import { getModule } from 'NgRegistry.es6';
 import LocalesListPricingOne from '../LocalesListPricingOne.es6';
 import LocalesListPricingTwo from '../LocalesListPricingTwo.es6';
 import AdminOnly from 'app/common/AdminOnly.es6';
@@ -8,44 +9,27 @@ import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcher
 import StateRedirect from 'app/common/StateRedirect.es6';
 import * as EnvironmentUtils from 'utils/EnvironmentUtils.es6';
 
-const ServicesConsumer = require('../../../../reactServiceContext').default;
+const spaceContext = getModule('spaceContext');
+const ResourceUtils = getModule('utils/ResourceUtils.es6');
+const ResourceService = getModule('services/ResourceService.es6');
+const FeatureService = getModule('services/FeatureService.es6');
+const OrganizationRoles = getModule('services/OrganizationRoles.es6');
+const TheAccountView = getModule('TheAccountView');
 
-const LocalesFetcher = ServicesConsumer(
-  'spaceContext',
-  {
-    from: 'utils/ResourceUtils.es6',
-    as: 'ResourceUtils'
-  },
-  {
-    from: 'services/ResourceService.es6',
-    as: 'ResourceService'
-  },
-  {
-    from: 'services/FeatureService.es6',
-    as: 'FeatureService'
-  },
-  {
-    from: 'services/OrganizationRoles.es6',
-    as: 'OrganizationRoles'
-  },
-  'TheAccountView'
-)(
-  createFetcherComponent(props => {
-    const { spaceContext, ResourceUtils, OrganizationRoles, TheAccountView } = props.$services;
-    const createResourceService = props.$services.ResourceService.default;
-    const createFeatureService = props.$services.FeatureService.default;
-    return Promise.all([
-      spaceContext.localeRepo.getAll(),
-      ResourceUtils.useLegacy(spaceContext.organization),
-      createResourceService(spaceContext.getId()).get('locale'),
-      createFeatureService(spaceContext.getId()).get('multipleLocales'),
-      OrganizationRoles.isOwnerOrAdmin(spaceContext.organization),
-      EnvironmentUtils.isInsideMasterEnv(spaceContext),
-      TheAccountView.getSubscriptionState(),
-      _.get(spaceContext.organization, ['subscriptionPlan', 'name'])
-    ]);
-  })
-);
+const LocalesFetcher = createFetcherComponent(() => {
+  const createResourceService = ResourceService.default;
+  const createFeatureService = FeatureService.default;
+  return Promise.all([
+    spaceContext.localeRepo.getAll(),
+    ResourceUtils.useLegacy(spaceContext.organization),
+    createResourceService(spaceContext.getId()).get('locale'),
+    createFeatureService(spaceContext.getId()).get('multipleLocales'),
+    OrganizationRoles.isOwnerOrAdmin(spaceContext.organization),
+    EnvironmentUtils.isInsideMasterEnv(spaceContext),
+    TheAccountView.getSubscriptionState(),
+    _.get(spaceContext.organization, ['subscriptionPlan', 'name'])
+  ]);
+});
 
 class LocalesListRoute extends React.Component {
   static propTypes = {

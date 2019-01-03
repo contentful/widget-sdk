@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { getModule } from 'NgRegistry.es6';
 import { get } from 'lodash';
-
 import getLocales from './getLocales.es6';
 
-const ServicesConsumer = require('../reactServiceContext').default;
+const spaceContext = getModule('spaceContext');
+const CONFIG = getModule('PolicyBuilder/CONFIG');
 
-const contentTypesToOptions = (CONFIG, contentTypes) =>
+const contentTypesToOptions = contentTypes =>
   [
     {
       id: CONFIG.ALL_CTS,
@@ -36,7 +37,6 @@ class Rule extends React.Component {
     }),
     entity: PropTypes.string,
     onRemove: PropTypes.func.isRequired,
-    $services: PropTypes.shape(),
     onUpdateAttribute: PropTypes.func.isRequired
   };
 
@@ -44,19 +44,11 @@ class Rule extends React.Component {
 
   constructor(props) {
     super(props);
-
-    const {
-      $services: { CONFIG, spaceContext }
-    } = props;
-
-    this.contentTypes = contentTypesToOptions(CONFIG, spaceContext.publishedCTs.getAllBare());
+    this.contentTypes = contentTypesToOptions(spaceContext.publishedCTs.getAllBare());
   }
 
   static getDerivedStateFromProps(props) {
-    const {
-      rule,
-      $services: { spaceContext, CONFIG }
-    } = props;
+    const { rule } = props;
 
     const ct = spaceContext.publishedCTs.get(rule.contentType);
     return {
@@ -157,7 +149,4 @@ class Rule extends React.Component {
   }
 }
 
-export default ServicesConsumer('spaceContext', {
-  from: 'PolicyBuilder/CONFIG',
-  as: 'CONFIG'
-})(Rule);
+export default Rule;
