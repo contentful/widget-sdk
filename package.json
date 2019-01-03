@@ -184,6 +184,7 @@
     "systemjs": "^0.20.4",
     "terser": "3.10.11",
     "through2": "^2.0.3",
+    "trailduck": "^0.2.2",
     "watchify": "^3.7.0",
     "webpack": "^3.11.0",
     "webpack-bundle-analyzer": "^2.11.1",
