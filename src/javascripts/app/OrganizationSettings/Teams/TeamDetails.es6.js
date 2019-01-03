@@ -15,8 +15,8 @@ import TeamMemberships from './TeamMemberships/TeamMemberships.es6';
 export default connect(state => {
   const teams = getTeams(state);
   return {
-    loading: isEmpty(teams),
-    team: !isEmpty(teams) && teams[getTeamId(state)],
+    loading: isEmpty(teams) || isEmpty(getUsers(state)),
+    team: isEmpty(teams) ? undefined : teams[getTeamId(state)],
     users: getUsers(state)
   };
 })(
@@ -76,7 +76,7 @@ export default connect(state => {
                 </section>
               </div>
               <div className="user-details__content">
-                <TeamMemberships memberships={team.memberships} />
+                <TeamMemberships />
               </div>
             </div>
           </Workbench.Content>

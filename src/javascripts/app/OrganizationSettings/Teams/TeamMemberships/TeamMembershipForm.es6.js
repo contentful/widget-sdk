@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import getOrgMembershipsWithUsers from 'redux/selectors/getOrgMembershipsWithUsers.es6';
-import { getTeams, getTeamId } from 'redux/selectors/teams.es6';
+import getCurrentTeamMemberships from 'redux/selectors/getCurrentTeamMemberships.es6';
 import { TableCell, TableRow, Button, Select, Option } from '@contentful/forma-36-react-components';
 import {
   TeamMembership as TeamMembershipPropyType,
@@ -10,10 +10,7 @@ import {
 } from 'app/OrganizationSettings/PropTypes.es6';
 
 function getAvailableOrgMemberships(state) {
-  const teams = getTeams(state);
-  const teamId = getTeamId(state);
-  const currentTeam = teams[teamId];
-  const { memberships: teamMemberships } = currentTeam;
+  const teamMemberships = getCurrentTeamMemberships(state);
   const unavailableOrgMemberships = teamMemberships.map(
     membership => membership.sys.organizationMembership.sys.id
   );
@@ -28,8 +25,8 @@ export default connect(
     orgMemberships: getAvailableOrgMemberships(state)
   }),
   dispatch => ({
-    onMembershipCreate: membership =>
-      dispatch({ type: 'SUBMIT_NEW_TEAM_MEMBERSHIP', payload: { membership } })
+    onMembershipCreate: orgMembership =>
+      dispatch({ type: 'SUBMIT_NEW_TEAM_MEMBERSHIP', payload: { orgMembership } })
   })
 )(
   class TeamMembershipForm extends React.Component {
@@ -52,7 +49,7 @@ export default connect(
     };
 
     submit = async () => {
-      this.props.onMembershipCreate({ orgMembershipId: this.state.selectedOrgMembershipId });
+      this.props.onMembershipCreate(this.state.selectedOrgMembershipId);
       this.props.close();
     };
 

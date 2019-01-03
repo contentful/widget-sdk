@@ -1,17 +1,16 @@
-import { get, flow, keyBy, sortBy } from 'lodash/fp';
+import { get, flow, sortBy } from 'lodash/fp';
 import { getPath } from './location.es6';
 import getDatasets from './getDatasets.es6';
 import ROUTES from '../routes.es6';
 
 export const getTeams = flow(
   getDatasets,
-  get('teams'),
-  keyBy('sys.id')
+  get('teams')
 );
 
 export const getTeamListWithOptimistic = state => {
   const persistedTeams = get('teams', getDatasets(state)) || [];
-  return sortBy('name', persistedTeams.concat(get('optimistic.teams', state) || []));
+  return sortBy('name', Object.values(persistedTeams).concat(get('optimistic.teams', state) || []));
 };
 
 export const getTeamId = flow(

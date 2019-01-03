@@ -13,8 +13,8 @@ export default state => {
 
   const resolved = resolveLinks({
     paths: ['sys.user'],
-    includes: { User: users },
-    items: orgMemberships
+    includes: { User: Object.values(users) },
+    items: Object.values(orgMemberships)
   });
   const withoutInvitations = resolved.filter(membership => !!membership.sys.user.firstName);
 

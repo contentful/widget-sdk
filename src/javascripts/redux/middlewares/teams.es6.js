@@ -1,6 +1,7 @@
 import getOrgId from 'redux/selectors/getOrgId.es6';
 import { Notification } from '@contentful/forma-36-react-components';
 import createTeamService from 'app/OrganizationSettings/Teams/TeamService.es6';
+import { getTeamId } from '../selectors/teams.es6';
 
 export default ({ dispatch, getState }) => next => async action => {
   next(action);
@@ -11,6 +12,15 @@ export default ({ dispatch, getState }) => next => async action => {
       dispatch({ type: 'TEAM_PERSISTED', meta: { dataset: 'teams' }, payload: { newTeam } });
       Notification.success(`Team ${newTeam.name} created successfully`);
       break;
+    }
+    case 'SUBMIT_NEW_TEAM_MEMBERSHIP': {
+      const state = getState();
+      const service = createTeamService(await getOrgId(state));
+      const newTeam = await service.createTeamMembership(
+        getTeamId(state),
+        action.payload.orgMembership
+      );
+      console.debug('newTeam', newTeam);
     }
   }
 };

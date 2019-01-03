@@ -33,7 +33,7 @@ export default connect(
 )(
   class TeamList extends React.Component {
     static propTypes = {
-      teams: PropTypes.objectOf(TeamPropType).isRequired,
+      teams: PropTypes.arrayOf(TeamPropType).isRequired,
       submitNewTeam: PropTypes.func.isRequired,
       onReady: PropTypes.func.isRequired,
       orgId: PropTypes.string.isRequired
@@ -72,7 +72,6 @@ export default connect(
                   <TableRow data-test-id="team-details-row">
                     <TableCell data-test-id="team-name">Name</TableCell>
                     <TableCell data-test-id="team-description">Description</TableCell>
-                    <TableCell />
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -94,9 +93,6 @@ export default connect(
                         )}
                       </TableCell>
                       <TableCell>{team.description}</TableCell>
-                      <TableCell>
-                        {pluralize('members', get(team, 'memberships.length', 0), true)}
-                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

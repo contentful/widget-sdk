@@ -6,25 +6,32 @@ import {
 import { createOrganizationEndpoint } from '../data/EndpointFactory.es6';
 import createTeamService from '../app/OrganizationSettings/Teams/TeamService.es6';
 
-import { USERS, TEAMS, ORG_MEMBERSHIPS } from './dataSets.es6';
+import { USERS, TEAMS, ORG_MEMBERSHIPS, TEAM_MEMBERSHIPS } from './dataSets.es6';
 import getOrgId from './selectors/getOrgId.es6';
+import { getTeamId } from './selectors/teams.es6';
 
-const loaders = orgId => ({
-  [USERS]: () => getAllUsers(createOrganizationEndpoint(orgId)),
-  [TEAMS]: async () => {
-    const service = createTeamService(orgId);
-    const teams = (await service.getAll()).items;
-    return Promise.all(
-      teams.map(async team =>
-        set('memberships', (await service.getTeamMemberships(team.sys.id)).items, team)
-      )
-    );
-  },
-  [ORG_MEMBERSHIPS]: () => getAllMemberships(createOrganizationEndpoint(orgId))
-});
+const loaders = state => {
+  const orgId = getOrgId(state);
+  return {
+    [USERS]: () => getAllUsers(createOrganizationEndpoint(orgId)),
+    [TEAMS]: async () => {
+      const service = createTeamService(orgId);
+      return (await service.getAll()).items;
+    },
+    [ORG_MEMBERSHIPS]: () => getAllMemberships(createOrganizationEndpoint(orgId)),
+    [TEAM_MEMBERSHIPS]: async () => {
+      const service = createTeamService(orgId);
+      const teamId = getTeamId(state);
+      const memberships = (await service.getTeamMemberships(teamId)).items;
+      return memberships.map(
+        set('sys.team', { sys: { type: 'Link', linkType: 'Team', id: teamId } })
+      );
+    }
+  };
+};
 
 export default async (dataSets, state) => {
-  const boundLoaders = loaders(getOrgId(state));
+  const boundLoaders = loaders(state);
 
   return zipObject(dataSets, await Promise.all(dataSets.map(dataSet => boundLoaders[dataSet]())));
 };
