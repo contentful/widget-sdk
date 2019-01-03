@@ -599,11 +599,17 @@ class RoleEditor extends React.Component {
                     </span>
                   </div>
                 )}
-                <h2 className="entity-sidebar__heading">Need more complex roles?</h2>
+                <h2 className="entity-sidebar__heading">Learn more</h2>
                 <p>
-                  If you need define a more complex role, as translator for a specific language or
-                  person who can‘t edit meta-data, visit our{' '}
-                  <KnowledgeBase target="roles" text="knowledge base " />
+                  To create or customize a role, such as a translator for a specific language, read
+                  the documentation on{' '}
+                  <KnowledgeBase
+                    target="roles"
+                    text="custom roles and permissions"
+                    inlineText
+                    icon={false}
+                  />
+                  .
                 </p>
                 <h2 className="entity-sidebar__heading">Hint from our staff</h2>
                 <div className="staff-hint">
