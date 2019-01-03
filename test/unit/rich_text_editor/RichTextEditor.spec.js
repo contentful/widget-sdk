@@ -29,14 +29,10 @@ describe('RichTextEditor', () => {
 
     stubAll({ isolatedSystem: this.system });
 
-    this.system.set('entitySelector', {
-      default: {
-        openFromField: () => Promise.resolve([this.entity])
-      }
-    });
     this.system.set('detect-browser', {
       detect: () => ({ name: 'ie' })
     });
+
     this.system.set('app/widgets/rich_text/withTracking.es6', {
       default: component => component
     });

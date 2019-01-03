@@ -1,8 +1,8 @@
 import React from 'react';
 import Enzyme from 'enzyme';
 import WebhookListRoute from './WebhookListRoute.es6';
-import $stateMocked from '$state';
-import spaceContextMocked from 'spaceContext';
+import * as $stateMocked from 'ng/$state';
+import * as spaceContextMocked from 'ng/spaceContext';
 
 jest.mock(
   'app/common/ReloadNotification.es6',

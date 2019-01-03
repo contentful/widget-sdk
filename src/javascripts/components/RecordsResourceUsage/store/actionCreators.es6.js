@@ -1,4 +1,4 @@
-import * as LD from 'utils/LaunchDarkly';
+import * as LD from 'utils/LaunchDarkly/index.es6';
 import createResourceService from 'services/ResourceService.es6';
 
 import * as actions from './actions.es6';

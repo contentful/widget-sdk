@@ -1,15 +1,17 @@
-import modalDialog from 'modalDialog';
-import Command from 'command';
 import { Notification } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
 import * as stringUtils from 'utils/StringUtils.es6';
-import ListQuery from 'ListQuery';
-import entitySelector from 'entitySelector';
 import { go } from 'states/Navigator.es6';
 import { get, includes, extend } from 'lodash';
 import UserSpaceInvitationDialog from 'access_control/templates/UserSpaceInvitationDialog.es6';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { getAllUsers } from 'access_control/OrganizationMembershipRepository.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const modalDialog = getModule('modalDialog');
+const Command = getModule('command');
+const ListQuery = getModule('ListQuery');
+const entitySelector = getModule('entitySelector');
 
 const MODAL_OPTS_BASE = {
   noNewScope: true,

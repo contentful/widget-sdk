@@ -1,7 +1,9 @@
 import { create as createSignal } from 'utils/signal.es6';
-import debounce from 'debounce';
 import $ from 'jquery';
 import CodeMirror from 'codemirror';
+import { getModule } from 'NgRegistry.es6';
+
+const debounce = getModule('debounce');
 
 /**
  * @ngdoc service

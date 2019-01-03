@@ -1,6 +1,8 @@
 import { runTask } from 'utils/Concurrent.es6';
-import spaceContext from 'spaceContext';
 import { get, reduce } from 'lodash';
+import { getModule } from 'NgRegistry.es6';
+
+const spaceContext = getModule('spaceContext');
 
 export function resolveReferences(params) {
   return runTask(resolveReferences_, params);

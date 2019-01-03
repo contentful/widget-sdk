@@ -1,8 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Icon from 'ui/Components/Icon.es6';
-import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
-import closeState from 'navigation/closeState';
+import { getModule } from 'NgRegistry.es6';
+
+const { goToPreviousSlideOrExit } = getModule('navigation/SlideInNavigator');
+const closeState = getModule('navigation/closeState');
 
 class BackNav extends React.Component {
   static propTypes = {

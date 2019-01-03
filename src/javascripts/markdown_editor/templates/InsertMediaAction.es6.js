@@ -1,4 +1,4 @@
-import { h } from 'utils/legacy-html-hyperscript';
+import { h } from 'utils/legacy-html-hyperscript/index.es6';
 
 const TEST_ID_LINK_EXISTING = 'markdownEditor.linkExistingAssets';
 const TEST_ID_UPLOAD_AND_LINK = 'markdownEditor.uploadAssetsAndLink';

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import FullScreen from 'components/react/molecules/FullScreen.es6';
 import Button from 'components/react/atoms/Button.es6';
-import { getStore } from 'TheStore';
+import { getStore } from 'TheStore/index.es6';
 import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboarding.es6';
 import { updateUserInSegment } from 'analytics/Analytics.es6';
 

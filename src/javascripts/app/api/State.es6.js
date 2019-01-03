@@ -1,5 +1,5 @@
 import { assign } from 'lodash';
-import { h } from 'utils/legacy-html-hyperscript';
+import { h } from 'utils/legacy-html-hyperscript/index.es6';
 import baseState from 'states/Base.es6';
 import contextHistory from 'navigation/Breadcrumbs/History.es6';
 import * as crumbFactory from 'navigation/Breadcrumbs/Factory.es6';

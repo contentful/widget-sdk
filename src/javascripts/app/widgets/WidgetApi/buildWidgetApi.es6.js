@@ -1,6 +1,8 @@
-import spaceContext from 'spaceContext';
-import entitySelector from 'entitySelector';
 import openHyperlinkDialog from 'app/widgets/WidgetApi/dialogs/openHyperlinkDialog.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const spaceContext = getModule('spaceContext');
+const entitySelector = getModule('entitySelector');
 
 /**
  * Should create an object with the same interface as provided by the Contentful JS

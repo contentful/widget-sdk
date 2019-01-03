@@ -31,9 +31,9 @@ describe('CreateSpace', () => {
       $provide.value('services/TokenStore.es6', {
         getOrganization: this.getOrganization
       });
-      $provide.value('utils/LaunchDarkly', {});
-      $provide.value('access_control/AccessChecker', this.accessChecker);
-      $provide.value('utils/LaunchDarkly', {
+      $provide.value('utils/LaunchDarkly/index.es6', {});
+      $provide.value('access_control/AccessChecker/index.es6', this.accessChecker);
+      $provide.value('utils/LaunchDarkly/index.es6', {
         getCurrentVariation: this.isPOCEnabled
       });
       $provide.value('services/ResourceService.es6', () => ({

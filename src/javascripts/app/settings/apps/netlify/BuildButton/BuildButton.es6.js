@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, ValidationMessage } from '@contentful/forma-36-react-components';
 
-import spaceContext from 'spaceContext';
 import * as Analytics from 'analytics/Analytics.es6';
 
 import AppsFeedback from 'app/settings/apps/AppsFeedback.es6';
@@ -16,6 +15,9 @@ import {
   EVENT_TRIGGERED,
   EVENT_TRIGGER_FAILED
 } from './MessageProcessor.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const spaceContext = getModule('spaceContext');
 
 export default class BuildButton extends Component {
   static propTypes = {

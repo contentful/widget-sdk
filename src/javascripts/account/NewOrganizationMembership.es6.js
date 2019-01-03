@@ -1,5 +1,5 @@
 import { omit, pick, negate, trim, sortedUniq, isObject, get } from 'lodash';
-import { h } from 'ui/Framework';
+import { h } from 'ui/Framework/index.es6';
 import { assign } from 'utils/Collections.es6';
 import { getOrganization } from 'services/TokenStore.es6';
 import { runTask } from 'utils/Concurrent.es6';
@@ -32,11 +32,13 @@ import {
 import createResourceService from 'services/ResourceService.es6';
 import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 import * as featureFlags from 'featureFlags.es6';
+import { getStore } from 'TheStore/index.es6';
 
 // Start: For Next Steps for a TEA space (a space created using the example space template)
 import { track, updateUserInSegment } from 'analytics/Analytics.es6';
-import $state from '$state';
-import { getStore } from 'TheStore';
+import { getModule } from 'NgRegistry.es6';
+
+const $state = getModule('$state');
 const GROUP_ID = 'tea_onboarding_steps';
 const store = getStore('local');
 // End: For Next Steps for a TEA space (a space created using the example space template)

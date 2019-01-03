@@ -1,4 +1,4 @@
-import * as LD from 'utils/LaunchDarkly';
+import * as LD from 'utils/LaunchDarkly/index.es6';
 
 const FLAG_NAME = 'feature-te-11-2018-apps';
 

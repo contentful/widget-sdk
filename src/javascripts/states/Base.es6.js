@@ -1,4 +1,4 @@
-import { h } from 'utils/legacy-html-hyperscript';
+import { h } from 'utils/legacy-html-hyperscript/index.es6';
 
 /**
  * Take an Angular UI router state definition and wrap its template to

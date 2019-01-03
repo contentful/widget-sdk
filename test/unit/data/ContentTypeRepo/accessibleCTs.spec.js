@@ -6,7 +6,7 @@ describe('data/ContentTypeRepo/accessibleCTs.es6', () => {
 
   beforeEach(function*() {
     this.system = createIsolatedSystem();
-    this.system.set('access_control/AccessChecker', {
+    this.system.set('access_control/AccessChecker/index.es6', {
       canPerformActionOnEntryOfType: (_, id) => accessibleCTsIds.indexOf(id) > -1,
       Action: {
         READ: 'read'

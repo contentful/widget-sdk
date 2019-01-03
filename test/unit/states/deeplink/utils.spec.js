@@ -11,7 +11,7 @@ describe('states/deeplink/utils.es6', () => {
     this.user$ = K.createMockProperty(null);
     this.modernStackName = 'modern stack name';
     module('contentful/test', $provide => {
-      $provide.value('TheStore', {
+      $provide.value('TheStore/index.es6', {
         getStore: () => {
           return {
             get: this.storeGet,
@@ -25,7 +25,7 @@ describe('states/deeplink/utils.es6', () => {
         getOrganizations: this.getOrganizations,
         user$: this.user$
       });
-      $provide.value('components/shared/auto_create_new_space', {
+      $provide.value('components/shared/auto_create_new_space/index.es6', {
         getKey: noop
       });
       $provide.value('components/shared/auto_create_new_space/CreateModernOnboarding.es6', {

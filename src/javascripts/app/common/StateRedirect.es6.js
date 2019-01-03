@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import $state from '$state';
+import { getModule } from 'NgRegistry.es6';
+
+const $state = getModule('$state');
 
 class StateRedirect extends React.Component {
   static propTypes = {

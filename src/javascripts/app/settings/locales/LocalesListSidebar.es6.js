@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '@contentful/forma-36-react-components';
 import Pluralized from 'ui/Components/Pluralized.es6';
-import { getCurrentVariation } from 'utils/LaunchDarkly';
+import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 import StateLink from 'app/common/StateLink.es6';
 
 class IncentivizeUpgradeExperiment extends React.Component {

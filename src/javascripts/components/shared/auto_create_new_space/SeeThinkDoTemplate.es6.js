@@ -1,6 +1,6 @@
-import { h } from 'utils/legacy-html-hyperscript';
+import { h } from 'utils/legacy-html-hyperscript/index.es6';
 import { byName } from 'Styles/Colors.es6';
-import { genBoxShadow } from 'Styles';
+import { genBoxShadow } from 'Styles/index.es6';
 import BackgroundIcon from 'svg/header-illustration-wide.es6';
 
 export default function() {

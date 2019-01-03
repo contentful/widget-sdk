@@ -1,19 +1,21 @@
 import { noop, cloneDeep, assign, map, get } from 'lodash';
-import logger from 'logger';
-import modalDialog from 'modalDialog';
-import Command from 'command';
-import spaceContext from 'spaceContext';
-import * as accessChecker from 'access_control/AccessChecker';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
-import ctHelpers from 'data/ContentTypes';
-import closeState from 'navigation/closeState';
-import metadataDialog from 'contentTypeEditor/metadataDialog';
-import previewEnvironmentsCache from 'data/previewEnvironmentsCache';
 import * as notify from './Notifications.es6';
 import * as Analytics from 'analytics/Analytics.es6';
-import { getModules } from 'NgRegistry.es6';
+import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import { getModule } from 'NgRegistry.es6';
 
-const [$q, $state] = getModules('$q', '$state');
+const $q = getModule('$q');
+const $state = getModule('$state');
+const logger = getModule('logger');
+const modalDialog = getModule('modalDialog');
+const Command = getModule('command');
+const spaceContext = getModule('spaceContext');
+const ctHelpers = getModule('data/ContentTypes');
+const closeState = getModule('navigation/closeState');
+const metadataDialog = getModule('contentTypeEditor/metadataDialog');
+const previewEnvironmentsCache = getModule('data/previewEnvironmentsCache');
+
 /**
  * @description
  * Uses the following scope properties

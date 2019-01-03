@@ -1,5 +1,7 @@
-import environment from 'environment';
 import _ from 'lodash';
+import { getModule } from 'NgRegistry.es6';
+
+const environment = getModule('environment');
 
 const MAX_FILES = 20;
 

@@ -1,15 +1,17 @@
-import modalDialog from 'modalDialog';
 import { Notification } from '@contentful/forma-36-react-components';
-import assetUrl from 'assetUrlFilter';
 import specialCharacters from './markdown_special_characters.es6';
-import LinkOrganizer from 'LinkOrganizer';
-import entitySelector from 'entitySelector';
 import { defaults, isObject, get, mapValues } from 'lodash';
 import { fileNameToTitle, truncate } from 'utils/StringUtils.es6';
 import { trackMarkdownEditorAction } from 'analytics/MarkdownEditorActions.es6';
 import { track } from 'analytics/Analytics.es6';
-import $state from '$state';
 import * as BulkAssetsCreator from 'services/BulkAssetsCreator.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const modalDialog = getModule('modalDialog');
+const assetUrl = getModule('assetUrlFilter');
+const LinkOrganizer = getModule('LinkOrganizer');
+const entitySelector = getModule('entitySelector');
+const $state = getModule('$state');
 
 export function create(editor, locale, defaultLocaleCode, { zen }) {
   const {

@@ -1,7 +1,9 @@
-import $state from '$state';
-import $location from '$location';
 import { accountUrl } from 'Config.es6';
 import { extend, startsWith, endsWith } from 'lodash';
+import { getModule } from 'NgRegistry.es6';
+
+const $state = getModule('$state');
+const $location = getModule('$location');
 
 /**
  * @module account/UrlSyncHelper

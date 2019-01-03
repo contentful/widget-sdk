@@ -1,8 +1,10 @@
 import makeState from 'states/Base.es6';
-import { h } from 'utils/legacy-html-hyperscript';
-import $location from '$location';
+import { h } from 'utils/legacy-html-hyperscript/index.es6';
 import * as Navigator from 'states/Navigator.es6';
 import { resolveLink } from './deeplink/resolver.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const $location = getModule('$location');
 
 /**
  * @description deeplink route to point users to certain sections,

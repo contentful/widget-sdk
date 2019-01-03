@@ -3,11 +3,13 @@ import * as TokenStore from 'services/TokenStore.es6';
 import * as K from 'utils/kefir.es6';
 import { get } from 'lodash';
 
-import require from 'require';
+import { getModule } from 'NgRegistry.es6';
+
+const $injector = getModule('$injector');
 // TODO prevent circular ref
 
 export function create({ space, organization }) {
-  const createFeatureService = require('services/FeatureService.es6').default;
+  const createFeatureService = $injector.get('services/FeatureService.es6').default;
   const userQuota = {
     // TODO get from limits/usage endpoint
     limit: get(organization, 'subscriptionPlan.limits.permanent.organizationMembership', -1),

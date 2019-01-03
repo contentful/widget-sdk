@@ -2,7 +2,7 @@ import { registerDirective } from 'NgRegistry.es6';
 import _ from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Menu from 'components/CreateEntryButton';
+import Menu from 'components/CreateEntryButton/index.es6';
 
 registerDirective('cfCreateEntryButton', () => ({
   link: function($scope, elem, attr) {

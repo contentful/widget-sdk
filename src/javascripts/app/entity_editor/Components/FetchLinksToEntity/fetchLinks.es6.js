@@ -1,8 +1,10 @@
-import spaceContext from 'spaceContext';
-import EntityHelpers from 'EntityHelpers';
-import TheLocaleStore from 'TheLocaleStore';
 import { makeEntityRef, href } from 'states/Navigator.es6';
 import { EntityType } from '../constants.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const spaceContext = getModule('spaceContext');
+const EntityHelpers = getModule('EntityHelpers');
+const TheLocaleStore = getModule('TheLocaleStore');
 
 const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
 const entityHelpers = EntityHelpers.newForLocale(defaultLocaleCode);

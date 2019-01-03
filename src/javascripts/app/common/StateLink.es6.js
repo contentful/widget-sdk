@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import $state from '$state';
+import { getModule } from 'NgRegistry.es6';
+
+const $state = getModule('$state');
 
 const StateLink = ({ to, params, options, children, ...rest }) => {
   if (typeof children === 'function') {

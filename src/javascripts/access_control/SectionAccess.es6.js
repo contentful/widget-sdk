@@ -1,5 +1,7 @@
 import * as accessChecker from './AccessChecker/index.es6';
-import spaceContext from 'spaceContext';
+import { getModule } from 'NgRegistry.es6';
+
+const spaceContext = getModule('spaceContext');
 
 /**
  * This service makes use of accessChecker's section visibility data to expose

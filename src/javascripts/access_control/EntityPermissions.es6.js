@@ -1,6 +1,6 @@
 import { partial } from 'lodash';
 // TODO This module has global state :(
-import * as accessChecker from 'access_control/AccessChecker';
+import * as accessChecker from 'access_control/AccessChecker/index.es6';
 
 /**
  * @ngdoc service

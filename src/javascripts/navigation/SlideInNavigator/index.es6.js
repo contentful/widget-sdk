@@ -1,8 +1,10 @@
-import $location from '$location';
-import $state from '$state';
 import { findIndex, get, isEqual, uniqWith } from 'lodash';
 import { track } from 'analytics/Analytics.es6';
 import slideHelper from './slideHelper.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const $location = getModule('$location');
+const $state = getModule('$state');
 
 const SLIDES_BELOW_QS = 'previousEntries';
 

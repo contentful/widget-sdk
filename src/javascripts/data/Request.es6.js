@@ -1,6 +1,8 @@
-import $http from '$http';
 import wrapWithRetry from 'data/Request/Retry.es6';
 import wrapWithAuth from 'data/Request/Auth.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const $http = getModule('$http');
 
 /**
  * @description

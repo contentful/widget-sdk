@@ -1,5 +1,7 @@
-import createCachedTokenParser from 'search/cachedParser';
 import { map } from 'lodash';
+import { getModule } from 'NgRegistry.es6';
+
+const createCachedTokenParser = getModule('search/cachedParser');
 
 const parseTokens = createCachedTokenParser();
 

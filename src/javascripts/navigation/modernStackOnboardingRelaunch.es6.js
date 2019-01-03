@@ -1,11 +1,9 @@
 import React from 'react';
 import WithLink from 'components/shared/stack-onboarding/components/WithLink.es6';
 
-import $rootScope from '$rootScope';
-import spaceContext from 'spaceContext';
-import { getStore } from 'TheStore';
-import { getKey } from 'components/shared/auto_create_new_space';
-import { getCurrentVariation } from 'utils/LaunchDarkly';
+import { getStore } from 'TheStore/index.es6';
+import { getKey } from 'components/shared/auto_create_new_space/index.es6';
+import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 import {
   MODERN_STACK_ONBOARDING_COMPLETE_EVENT,
   MODERN_STACK_ONBOARDING_FEATURE_FLAG,
@@ -14,6 +12,10 @@ import {
   getUser
 } from 'components/shared/auto_create_new_space/CreateModernOnboarding.es6';
 import Icon from 'ui/Components/Icon.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const $rootScope = getModule('$rootScope');
+const spaceContext = getModule('spaceContext');
 
 const store = getStore();
 

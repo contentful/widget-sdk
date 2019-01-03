@@ -7,7 +7,19 @@ module.exports = {
   settings: {
     react: {
       version: '16.6.3'
-    }
+    },
+    'import/resolver': {
+      node: {
+        moduleDirectory: ['src/javascripts', 'node_modules']
+      }
+    },
+    'import/core-modules': [
+      'legacy-client',
+      'localesList',
+      'marked',
+      'searchParser',
+      'global/window'
+    ]
   },
   env: {
     browser: true,
@@ -114,8 +126,9 @@ module.exports = {
         ecmaVersion: 2017,
         sourceType: 'module'
       },
-      plugins: ['rulesdir'],
+      plugins: ['rulesdir', 'import'],
       rules: {
+        'import/no-unresolved': 'error',
         'rulesdir/relative-imports': 'error',
         'rulesdir/restrict-angular-require': 'error'
       },

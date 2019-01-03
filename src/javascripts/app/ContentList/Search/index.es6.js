@@ -1,9 +1,10 @@
-/* global window */
 import { assign } from 'lodash';
 import * as Kefir from 'kefir';
 import * as K from 'utils/kefir.es6';
 import { createStore, bindActions } from 'ui/Framework/Store.es6';
-import logger from 'logger';
+import { getModule } from 'NgRegistry.es6';
+
+const logger = getModule('logger');
 
 import renderSearch from './View.es6';
 

@@ -1,4 +1,6 @@
-import modalDialog from 'modalDialog';
+import { getModule } from 'NgRegistry.es6';
+
+const modalDialog = getModule('modalDialog');
 
 /**
  * @ngdoc service

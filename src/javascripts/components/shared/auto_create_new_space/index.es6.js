@@ -1,11 +1,11 @@
-import { getStore } from 'TheStore';
+import { getStore } from 'TheStore/index.es6';
 import { combine, getValue } from 'utils/kefir.es6';
-import { getCurrentVariation } from 'utils/LaunchDarkly';
+import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 import { user$, spacesByOrganization$ as spacesByOrg$ } from 'services/TokenStore.es6';
 import createSampleSpace from './CreateSampleSpace.es6';
 import seeThinkDoFeatureModalTemplate from './SeeThinkDoTemplate.es6';
-import $stateParams from '$stateParams';
 import { organizations$ } from 'services/TokenStore.es6';
+import { getModule } from 'NgRegistry.es6';
 
 import {
   getFirstOwnedOrgWithoutSpaces,
@@ -13,7 +13,9 @@ import {
   ownsAtleastOneOrg,
   getCurrOrg,
   isUserOrgCreator
-} from 'data/User';
+} from 'data/User/index.es6';
+
+const $stateParams = getModule('$stateParams');
 
 import { create } from 'components/shared/auto_create_new_space/CreateModernOnboarding.es6';
 

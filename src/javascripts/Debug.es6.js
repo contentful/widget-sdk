@@ -1,9 +1,11 @@
-import require from 'require';
 import * as Config from 'Config.es6';
 import { includes, mapValues } from 'lodash';
 import * as UIVersionSwitcher from 'debug/UIVersionSwitcher.es6';
 import * as MockApiToggle from 'debug/MockApiToggle.es6';
 import * as EnforceFlags from 'debug/EnforceFlags.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const $injector = getModule('$injector');
 
 const DEBUG_ENVS = ['development', 'preview', 'staging'];
 
@@ -46,7 +48,7 @@ function initDevNotifications() {
  */
 function create() {
   const initializers = mapValues(modules, module => {
-    return require(module).default;
+    return $injector.get(module).default;
   });
   return makeLazyObj(initializers);
 }

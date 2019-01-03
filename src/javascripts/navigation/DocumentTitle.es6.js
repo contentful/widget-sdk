@@ -1,7 +1,9 @@
-import $rootScope from '$rootScope';
-import $document from '$document';
-import $state from '$state';
 import { isString } from 'lodash';
+import { getModule } from 'NgRegistry.es6';
+
+const $rootScope = getModule('$rootScope');
+const $document = getModule('$document');
+const $state = getModule('$state');
 
 /**
  * @ngdoc service

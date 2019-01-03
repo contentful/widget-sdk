@@ -7,8 +7,9 @@ import { makeCtor } from 'utils/TaggedValues.es6';
 import { Notification } from '@contentful/forma-36-react-components';
 
 import { bindActions, createStore, makeReducer } from 'ui/Framework/Store.es6';
+import { getModule } from 'NgRegistry.es6';
 
-import ModalDialog from 'modalDialog';
+const ModalDialog = getModule('modalDialog');
 
 /**
  * This module exports a function to open the confirmation dialog to

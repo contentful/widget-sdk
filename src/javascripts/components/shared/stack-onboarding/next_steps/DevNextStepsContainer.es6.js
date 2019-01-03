@@ -1,5 +1,5 @@
 import React from 'react';
-import { getStore } from 'TheStore';
+import { getStore } from 'TheStore/index.es6';
 import DevNextSteps from 'components/shared/stack-onboarding/next_steps/DevNextSteps.es6';
 import ResumeOnboarding from 'components/shared/stack-onboarding/next_steps/ResumeOnboarding.es6';
 import {

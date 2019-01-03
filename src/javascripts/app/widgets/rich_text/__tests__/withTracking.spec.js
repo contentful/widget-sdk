@@ -3,18 +3,11 @@ import Enzyme from 'enzyme';
 import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types';
 import withTracking from '../withTracking.es6';
 import { track } from 'analytics/Analytics.es6';
-import { logWarn } from 'logger';
+import * as logger from 'ng/logger';
 
 const LOC = class extends React.Component {};
 
 jest.mock('analytics/Analytics.es6');
-jest.mock(
-  'logger',
-  () => ({
-    logWarn: jest.fn()
-  }),
-  { virtual: true }
-);
 
 describe('withTracking() returned hoc', () => {
   let setup, props, locNode, locOnAction;
@@ -65,8 +58,8 @@ describe('withTracking() returned hoc', () => {
       const data = { origin: 'SOME ORIGIN', foo: 'bar', nodeType: 'foo-bar' };
       locOnAction('someUnknownAction', data);
 
-      expect(logWarn).toHaveBeenCalledTimes(1);
-      expect(logWarn).toBeCalledWith(
+      expect(logger.logWarn).toHaveBeenCalledTimes(1);
+      expect(logger.logWarn).toBeCalledWith(
         'Unexpected rich text tracking action `someUnknownActionFooBar`',
         {
           groupingHash: 'UnexpectedRichTextTrackingAction',

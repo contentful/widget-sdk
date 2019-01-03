@@ -1,7 +1,9 @@
 import qs from 'qs';
-import { getStore } from 'TheStore';
-import { settings } from 'environment';
+import { getStore } from 'TheStore/index.es6';
 import { sample } from 'lodash';
+import { getModule } from 'NgRegistry.es6';
+
+const { settings } = getModule('environment');
 
 /**
  * @ngdoc service

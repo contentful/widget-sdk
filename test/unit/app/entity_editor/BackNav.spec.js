@@ -14,11 +14,17 @@ describe('BackNav', () => {
     this.closeState = this.sandbox.stub();
 
     this.system = createIsolatedSystem();
-    this.system.set('navigation/SlideInNavigator', {
-      goToPreviousSlideOrExit: this.goToPreviousSlideOrExitStub
-    });
-    this.system.set('navigation/closeState', { default: this.closeState });
+    const getModule = sinon.stub();
 
+    getModule
+      .withArgs('navigation/SlideInNavigator')
+      .returns({
+        goToPreviousSlideOrExit: this.goToPreviousSlideOrExitStub
+      })
+      .withArgs('navigation/closeState')
+      .returns(this.closeState);
+
+    this.system.set('NgRegistry.es6', { getModule });
     const { default: BackNav } = await this.system.import('app/entity_editor/Components/BackNav');
     const props = {
       slideInFeatureFlagValue: SLIDE_IN_EDITOR_FEATURE_FLAG_VALUE

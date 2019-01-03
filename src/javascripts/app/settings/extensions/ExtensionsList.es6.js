@@ -9,13 +9,15 @@ import {
 } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink.es6';
 import Workbench from 'app/common/Workbench.es6';
-import spaceContext from 'spaceContext';
 import ExtensionsSidebar, { DocsLink } from './ExtensionsSidebar.es6';
 
 import EmptyExtensionIcon from './icons/EmptyExtensionIcon.es6';
 import ExtensionsActions from './ExtensionsActions.es6';
 
 import { openGitHubInstaller } from './ExtensionsActions.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const spaceContext = getModule('spaceContext');
 
 function deleteExtension(id, refresh) {
   return spaceContext.cma

@@ -1,6 +1,4 @@
 import React from 'react';
-import spaceContext from 'spaceContext';
-import $state from '$state';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import {
   Dropdown,
@@ -14,6 +12,10 @@ import GitHubInstallerModal from './dialogs/GitHubInstallerModal.es6';
 import { toInternalFieldType } from './FieldTypes.es6';
 import getExtensionParameterIds from './getExtensionParameterIds.es6';
 import { track } from 'analytics/Analytics.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const spaceContext = getModule('spaceContext');
+const $state = getModule('$state');
 
 const SDK_URL = 'https://unpkg.com/contentful-ui-extensions-sdk@3';
 

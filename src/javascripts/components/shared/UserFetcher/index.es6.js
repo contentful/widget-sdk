@@ -1,7 +1,7 @@
-import { getModules } from 'NgRegistry.es6';
+import { getModule } from 'NgRegistry.es6';
 
 import createFetcherComponent from 'app/common/createFetcherComponent.es6';
-const [spaceContext] = getModules('spaceContext');
+const spaceContext = getModule('spaceContext');
 
 const UserFetcher = createFetcherComponent(props => spaceContext.users.get(props.userId));
 

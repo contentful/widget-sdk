@@ -2,13 +2,13 @@ import { get as getAtPath } from 'lodash';
 import React from 'react';
 import classNames from 'classnames';
 import { assign, filter } from 'utils/Collections.es6';
-import { htmlEncode } from 'encoder';
-
 import openRoleSelector from './RoleSelector.es6';
 import openInputDialog from 'app/InputDialog.es6';
+import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import { getModule } from 'NgRegistry.es6';
 
-import * as accessChecker from 'access_control/AccessChecker';
-import modalDialog from 'modalDialog';
+const { htmlEncode } = getModule('encoder');
+const modalDialog = getModule('modalDialog');
 
 export default function render(folder, state, actions) {
   const { canEdit, roleAssignment, tracking } = state;

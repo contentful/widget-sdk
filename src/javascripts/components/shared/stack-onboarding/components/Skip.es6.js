@@ -1,13 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import $state from '$state';
-import $stateParams from '$stateParams';
-import { getStore } from 'TheStore';
+import { getStore } from 'TheStore/index.es6';
 import { updateUserInSegment } from 'analytics/Analytics.es6';
 import {
   getStoragePrefix,
   track
 } from 'components/shared/auto_create_new_space/CreateModernOnboarding.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const $state = getModule('$state');
+const $stateParams = getModule('$stateParams');
 
 const store = getStore();
 

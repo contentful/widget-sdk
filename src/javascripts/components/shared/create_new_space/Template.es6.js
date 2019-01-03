@@ -1,4 +1,4 @@
-import { h } from 'utils/legacy-html-hyperscript';
+import { h } from 'utils/legacy-html-hyperscript/index.es6';
 
 export default function() {
   return h('div.create-new-space-dialog.modal-dialog', [

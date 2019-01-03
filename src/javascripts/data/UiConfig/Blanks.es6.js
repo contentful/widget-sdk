@@ -1,7 +1,9 @@
 import { assign } from 'utils/Collections.es6';
 
 import * as random from 'utils/Random.es6';
-import systemFields from 'systemFields';
+import { getModule } from 'NgRegistry.es6';
+
+const systemFields = getModule('systemFields');
 
 export function getBlankEntryView() {
   return {

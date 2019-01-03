@@ -1,6 +1,7 @@
 import { cloneDeep } from 'lodash';
+import { getModule } from 'NgRegistry.es6';
 
-import spaceContext from 'spaceContext';
+const spaceContext = getModule('spaceContext');
 
 export const UNINDEXABLE_FIELD_TYPES = ['Object', 'Array', 'Link', 'Location'];
 export const META_FIELDS = [

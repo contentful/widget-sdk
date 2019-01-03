@@ -1,7 +1,9 @@
 import { extend, map } from 'lodash';
 import * as random from 'utils/Random.es6';
 import mimetype from '@contentful/mimetype';
-import systemFields from 'systemFields';
+import { getModule } from 'NgRegistry.es6';
+
+const systemFields = getModule('systemFields');
 
 const STATUSES = ['Published', 'Changed', 'Draft', 'Archived'];
 

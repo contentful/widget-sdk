@@ -1,17 +1,19 @@
-import { h } from 'utils/legacy-html-hyperscript';
-import { getStore } from 'TheStore';
+import { h } from 'utils/legacy-html-hyperscript/index.es6';
+import { getStore } from 'TheStore/index.es6';
 import { getFirstAccessibleSref } from 'access_control/SectionAccess.es6';
 import * as Analytics from 'analytics/Analytics.es6';
-import * as accessChecker from 'access_control/AccessChecker';
+import * as accessChecker from 'access_control/AccessChecker/index.es6';
 
-import contentTypes from 'states/contentTypes';
-import entries from 'states/entries';
-import assets from 'states/assets';
-import api from 'app/api/State.es6';
-import settings from 'states/settings';
-import home from 'states/space_home';
-import stackOnboarding from 'states/stackOnboarding';
 import apps from 'app/settings/apps/routes/index.es6';
+import api from 'app/api/State.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const contentTypes = getModule('states/contentTypes');
+const entries = getModule('states/entries');
+const assets = getModule('states/assets');
+const settings = getModule('states/settings');
+const home = getModule('states/space_home');
+const stackOnboarding = getModule('states/stackOnboarding');
 
 const store = getStore();
 

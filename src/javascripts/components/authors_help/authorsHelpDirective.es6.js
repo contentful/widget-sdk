@@ -1,5 +1,5 @@
 import { registerDirective } from 'NgRegistry.es6';
-import { h, icons } from 'utils/legacy-html-hyperscript';
+import { h, icons } from 'utils/legacy-html-hyperscript/index.es6';
 import * as K from 'utils/kefir.es6';
 import { AUTHOR_ONBOARDING_HELP } from 'featureFlags.es6';
 

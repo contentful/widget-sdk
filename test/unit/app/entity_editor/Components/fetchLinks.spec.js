@@ -31,9 +31,19 @@ describe('fetchLinks', () => {
       })
     };
 
-    system.set('spaceContext', { default: this.spaceContext });
-    system.set('EntityHelpers', { default: EntityHelpers });
-    system.set('TheLocaleStore', { default: TheLocaleStore });
+    const getModuleStub = sinon.stub();
+    getModuleStub
+      .withArgs('spaceContext')
+      .returns(this.spaceContext)
+      .withArgs('EntityHelpers')
+      .returns(EntityHelpers)
+      .withArgs('TheLocaleStore')
+      .returns(TheLocaleStore);
+
+    system.set('NgRegistry.es6', {
+      getModule: getModuleStub
+    });
+
     system.set('states/Navigator.es6', this.navigator);
 
     const { default: fetchLinks } = yield system.import(

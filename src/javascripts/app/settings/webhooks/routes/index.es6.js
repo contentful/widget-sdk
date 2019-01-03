@@ -1,4 +1,6 @@
-import leaveConfirmator from 'navigation/confirmLeaveEditor';
+import { getModule } from 'NgRegistry.es6';
+
+const leaveConfirmator = getModule('navigation/confirmLeaveEditor');
 
 const editorContoller = [
   '$scope',

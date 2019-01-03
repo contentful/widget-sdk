@@ -1,10 +1,12 @@
-import $window from '$window';
 import React from 'react';
-import location from '$location';
-import { getStore } from 'TheStore';
+import { getStore } from 'TheStore/index.es6';
 import { omit } from 'lodash';
 import { addNotification } from 'debug/DevNotifications.es6';
-import { settings } from 'environment';
+import { getModule } from 'NgRegistry.es6';
+
+const { settings } = getModule('environment');
+const $window = getModule('$window');
+const location = getModule('$location');
 
 const store = getStore().forKey('use_mock_api');
 

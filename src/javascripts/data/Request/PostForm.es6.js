@@ -1,6 +1,8 @@
 import qs from 'qs';
-import $http from '$http';
 import { assign } from 'lodash';
+import { getModule } from 'NgRegistry.es6';
+
+const $http = getModule('$http');
 
 /**
  * @description

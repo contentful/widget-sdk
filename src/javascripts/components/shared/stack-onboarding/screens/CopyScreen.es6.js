@@ -4,13 +4,15 @@ import Navigation from 'components/shared/stack-onboarding/components/Navigation
 import WithLink from 'components/shared/stack-onboarding/components/WithLink.es6';
 import ScreenHeader from 'components/shared/stack-onboarding/screens/Header.es6';
 
-import $stateParams from '$stateParams';
 import { getCredentials } from 'components/shared/auto_create_new_space/CreateModernOnboarding.es6';
+import { getModule } from 'NgRegistry.es6';
 
 import FullScreen from 'components/react/molecules/FullScreen.es6';
 import Skip from 'components/shared/stack-onboarding/components/Skip.es6';
 import Button from 'components/react/atoms/Button.es6';
 import Code from 'components/react/atoms/Code.es6';
+
+const $stateParams = getModule('$stateParams');
 
 export default class CopyScreen extends React.Component {
   state = {

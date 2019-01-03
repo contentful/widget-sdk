@@ -1,5 +1,5 @@
 import { registerDirective, registerController } from 'NgRegistry.es6';
-import { h } from 'utils/legacy-html-hyperscript';
+import { h } from 'utils/legacy-html-hyperscript/index.es6';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 
 registerDirective('cfAddUsersToSpaceNote', () => {

@@ -1,10 +1,10 @@
-import * as ShareJS from 'data/ShareJS/Utils';
-import logger from 'logger';
 import jsondiff from 'json0-ot-diff';
 import emptyDoc from './constants/EmptyDoc.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const $q = getModule('$q');
+const ShareJS = getModule('data/ShareJS/Utils');
+const logger = getModule('logger');
 
 /**
  * @description

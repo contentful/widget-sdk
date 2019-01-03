@@ -5,8 +5,10 @@ import LocaleEditForm from '../LocaleEditForm.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import LocaleNotifications from '../utils/LocaleNotifications.es6';
-import spaceContext from 'spaceContext';
-import TheLocaleStore from 'TheLocaleStore';
+import { getModule } from 'NgRegistry.es6';
+
+const spaceContext = getModule('spaceContext');
+const TheLocaleStore = getModule('TheLocaleStore');
 
 const LocalesFetcher = createFetcherComponent(() => {
   return spaceContext.localeRepo.getAll();

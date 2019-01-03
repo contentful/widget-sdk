@@ -2,12 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { MODIFY_CONTENT } from 'components/shared/stack-onboarding/next_steps/constants.es6';
 import { href } from 'states/Navigator.es6';
-import { env } from 'environment';
 import { getUser } from 'components/shared/auto_create_new_space/CreateModernOnboarding.es6';
 
 import { Step } from 'app/home/welcome/OnboardingWithTeaSteps.es6';
 import Code from 'components/react/atoms/Code.es6';
 import A from 'components/react/atoms/Anchor.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const { env } = getModule('environment');
 
 const ModifyContentStep = props => {
   const { isDone, isExpanded, onToggle, managementToken, entry, spaceId, onCopy } = props;

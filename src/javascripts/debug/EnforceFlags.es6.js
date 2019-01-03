@@ -1,10 +1,12 @@
-import $window from '$window';
 import React from 'react';
-import { getStore } from 'TheStore';
+import { getStore } from 'TheStore/index.es6';
 import { uniq, without, omit } from 'lodash';
 import { addNotification } from 'debug/DevNotifications.es6';
-import location from '$location';
 import Cookies from 'js-cookie';
+import { getModule } from 'NgRegistry.es6';
+
+const $window = getModule('$window');
+const location = getModule('$location');
 
 const ENABLE_FLAGS_KEY = 'ui_enable_flags';
 const DISABLE_FLAGS_KEY = 'ui_disable_flags';

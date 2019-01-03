@@ -37,9 +37,9 @@ describe('cfNavSidepanel directive', () => {
     module('contentful/test', $provide => {
       $provide.value('services/CreateSpace.es6', CreateSpace);
       $provide.value('states/Navigator.es6', Navigator);
-      $provide.value('access_control/AccessChecker', accessChecker);
+      $provide.value('access_control/AccessChecker/index.es6', accessChecker);
       $provide.value('services/OrganizationRoles.es6', OrganizationRoles);
-      $provide.value('utils/LaunchDarkly', { onFeatureFlag: sinon.stub() });
+      $provide.value('utils/LaunchDarkly/index.es6', { onFeatureFlag: sinon.stub() });
       $provide.value('data/EndpointFactory.es6', { createSpaceEndpoint: sinon.stub() });
       $provide.value('data/CMA/SpaceEnvironmentsRepo.es6', { create: () => environmentsRepo });
     });
@@ -97,7 +97,7 @@ describe('cfNavSidepanel directive', () => {
       tokenStore.organizations$ = K.createMockProperty(orgs);
       tokenStore.spacesByOrganization$ = K.createMockProperty(rewrittenSpaces);
 
-      this.$inject('utils/LaunchDarkly').onFeatureFlag.callsFake((_1, _2, cb) =>
+      this.$inject('utils/LaunchDarkly/index.es6').onFeatureFlag.callsFake((_1, _2, cb) =>
         cb(testEnvironments)
       );
 

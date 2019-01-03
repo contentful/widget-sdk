@@ -1,7 +1,7 @@
 import { find } from 'lodash';
 import makeState from 'states/Base.es6';
 import { getSpaces } from 'services/TokenStore.es6';
-import { getStore } from 'TheStore';
+import { getStore } from 'TheStore/index.es6';
 import template from 'app/home/HomeTemplate.es6';
 import { go } from 'states/Navigator.es6';
 

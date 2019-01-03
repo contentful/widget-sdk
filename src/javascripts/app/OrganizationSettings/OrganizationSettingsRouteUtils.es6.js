@@ -1,6 +1,6 @@
-import { getCurrentVariation } from 'utils/LaunchDarkly';
+import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 import Base from 'states/Base.es6';
-import { getStore } from 'TheStore';
+import { getStore } from 'TheStore/index.es6';
 import * as Analytics from 'analytics/Analytics.es6';
 
 const store = getStore();

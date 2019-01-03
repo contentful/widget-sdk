@@ -1,11 +1,13 @@
 import { get } from 'lodash';
-import $location from '$location';
-import $window from '$window';
 import * as K from 'utils/kefir.es6';
 import { createMVar$q, runTask, createExclusiveTask } from 'utils/Concurrent.es6';
-import { getStore } from 'TheStore';
+import { getStore } from 'TheStore/index.es6';
 import * as Config from 'Config.es6';
 import postForm from 'data/Request/PostForm.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const $location = getModule('$location');
+const $window = getModule('$window');
 
 /**
  * @name Authentication

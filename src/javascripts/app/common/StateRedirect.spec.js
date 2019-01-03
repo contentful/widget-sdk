@@ -1,6 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import $stateMocked from '$state';
+import * as $stateMocked from 'ng/$state';
 import StateRedirect from './StateRedirect.es6';
 
 describe('StateRedirect', () => {

@@ -31,7 +31,7 @@ describe('Feature Service', () => {
 
     const system = createIsolatedSystem();
 
-    system.set('utils/LaunchDarkly', {
+    system.set('utils/LaunchDarkly/index.es6', {
       getCurrentVariation: flagName => {
         return Promise.resolve(this.flags[flagName]);
       }
@@ -41,6 +41,10 @@ describe('Feature Service', () => {
       isLegacyOrganization: () => {
         return this.mocks.legacyOrganization;
       }
+    });
+
+    system.set('NgRegistry.es6', {
+      getModule: sinon.stub()
     });
 
     // Spying on both the endpoint creation and the actual endpoint

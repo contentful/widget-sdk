@@ -1,11 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { TEASteps, STEPS_KEYS } from './OnboardingWithTeaSteps.es6';
-import { getStore } from 'TheStore';
-import spaceContext from 'spaceContext';
+import { getStore } from 'TheStore/index.es6';
 import { track, updateUserInSegment } from 'analytics/Analytics.es6';
-import $state from '$state';
 import { findKey, omit, times } from 'lodash';
+import { getModule } from 'NgRegistry.es6';
+
+const spaceContext = getModule('spaceContext');
+const $state = getModule('$state');
 
 const GROUP_ID = 'tea_onboarding_steps';
 

@@ -1,13 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import $state from '$state';
-import spaceContext from 'spaceContext';
 import {
   track,
   getStoragePrefix
 } from 'components/shared/auto_create_new_space/CreateModernOnboarding.es6';
-import { getStore } from 'TheStore';
+import { getStore } from 'TheStore/index.es6';
 import { updateUserInSegment } from 'analytics/Analytics.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const $state = getModule('$state');
+const spaceContext = getModule('spaceContext');
 
 const store = getStore();
 

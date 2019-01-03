@@ -1,8 +1,8 @@
 import React from 'react';
 import Enzyme from 'enzyme';
 import LocalesListSidebar from './LocalesListSidebar.es6';
-import $stateMocked from '$state';
-import * as LaunchDarklyMocked from 'utils/LaunchDarkly';
+import * as $stateMocked from 'ng/$state';
+import * as LaunchDarklyMocked from 'utils/LaunchDarkly/index.es6';
 
 describe('settings/locales/LocalesListSidebar', () => {
   beforeEach(() => {

@@ -1,7 +1,9 @@
-import $rootScope from '$rootScope';
-import Command from 'command';
 import * as Adapter from './code_mirror_adapter.es6';
 import { forEach, pick } from 'lodash';
+import { getModule } from 'NgRegistry.es6';
+
+const $rootScope = getModule('$rootScope');
+const Command = getModule('command');
 
 /**
  * @ngdoc service

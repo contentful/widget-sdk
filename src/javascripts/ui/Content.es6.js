@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { byName as Colors } from 'Styles/Colors.es6';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
-import { monospaceFontFamily } from 'Styles';
+import { monospaceFontFamily } from 'Styles/index.es6';
 
 /**
  * @ngdoc service

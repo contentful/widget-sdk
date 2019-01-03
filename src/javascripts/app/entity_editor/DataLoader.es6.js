@@ -1,11 +1,13 @@
 import { find, isPlainObject, cloneDeep, memoize } from 'lodash';
 import { runTask, wrapTask } from 'utils/Concurrent.es6';
-import assetEditorInterface from 'data/editingInterfaces/asset';
 import { caseof as caseofEq } from 'sum-types/caseof-eq';
 import { deepFreeze } from 'utils/Freeze.es6';
 import createPrefetchCache from 'data/CMA/EntityPrefetchCache.es6';
-import TheLocaleStore from 'TheLocaleStore';
-import Widgets from 'widgets';
+import { getModule } from 'NgRegistry.es6';
+
+const assetEditorInterface = getModule('data/editingInterfaces/asset');
+const TheLocaleStore = getModule('TheLocaleStore');
+const Widgets = getModule('widgets');
 
 /**
  * @ngdoc service

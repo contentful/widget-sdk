@@ -57,7 +57,7 @@ describe('CreateSampleSpace service', () => {
       $provide.constant('client', this.client);
       $provide.constant('modalDialog', this.modalDialog);
       $provide.value('services/TokenStore.es6', this.tokenStore);
-      $provide.value('services/SpaceTemplateCreator', {
+      $provide.value('services/SpaceTemplateCreator/index.es6', {
         getCreator: this.getCreator
       });
       $provide.value('states/Navigator.es6', {

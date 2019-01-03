@@ -1,8 +1,10 @@
-import { h } from 'utils/legacy-html-hyperscript';
+import { h } from 'utils/legacy-html-hyperscript/index.es6';
 import { vheight } from 'ui/Layout.es6';
-import * as Command from 'command';
-import { open as openDialog } from 'modalDialog';
 import { track } from 'analytics/Analytics.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const Command = getModule('command');
+const { open: openDialog } = getModule('modalDialog');
 
 /**
  * Opens a dialog that for creating a personal access token.

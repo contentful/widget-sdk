@@ -3,12 +3,14 @@ import PropTypes from 'prop-types';
 import Button from 'components/react/atoms/Button.es6';
 import Input from 'components/react/atoms/Input.es6';
 import Form from 'components/react/atoms/Form.es6';
-import { getStore } from 'TheStore';
+import { getStore } from 'TheStore/index.es6';
 import {
   getStoragePrefix,
   MODERN_STACK_ONBOARDING_COMPLETE_EVENT
 } from 'components/shared/auto_create_new_space/CreateModernOnboarding.es6';
-import $rootScope from '$rootScope';
+import { getModule } from 'NgRegistry.es6';
+
+const $rootScope = getModule('$rootScope');
 
 const DEPLOYMENT_PROVIDERS = {
   NETLIFY: 'netlify',

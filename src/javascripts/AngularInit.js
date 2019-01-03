@@ -304,7 +304,7 @@ angular
       ngRequire('data/editingInterfaces.es6');
       ngRequire('data/entries.es6');
       ngRequire('data/previewEnvironmentsCache.es6');
-      ngRequire('data/streamHasSet.es6');
+      ngRequire('data/streamHashSet.es6');
       ngRequire('data/userCache.es6');
       ngRequire('data/editing_interfaces/assetInterface.es6');
       ngRequire('data/editing_interfaces/transformer.es6');

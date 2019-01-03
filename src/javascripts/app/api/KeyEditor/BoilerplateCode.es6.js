@@ -1,6 +1,8 @@
 import { once } from 'lodash';
-import { newClient as createCfClient } from 'contentfulClient';
 import * as Config from 'Config.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const { newClient: createCfClient } = getModule('contentfulClient');
 
 /**
  * @ngdoc service

@@ -1,6 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import $stateMocked from '$state';
+import * as $stateMocked from 'ng/$state';
 import LocalesTable from './LocalesTable.es6';
 
 describe('app/settings/locales/LocalesTable', () => {

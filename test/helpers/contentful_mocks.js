@@ -52,7 +52,7 @@ angular
         store: sinon.stub()
       });
 
-      $provide.decorator('utils/LaunchDarkly', [
+      $provide.decorator('utils/LaunchDarkly/index.es6', [
         '$delegate',
         '$q',
         ($delegate, $q) => {

@@ -4,9 +4,7 @@ import { Button, Notification, Note } from '@contentful/forma-36-react-component
 import Workbench from 'app/common/Workbench.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 
-import $state from '$state';
 import * as Analytics from 'analytics/Analytics.es6';
-import intercom from 'intercom';
 
 import { cloneDeep, uniqBy } from 'lodash';
 import * as Random from 'utils/Random.es6';
@@ -19,6 +17,10 @@ import NetlifyConnection from './NetlifyConnection.es6';
 import AppUninstallDialog from '../dialogs/AppUninstallDialog.es6';
 import NoConnectionUninstallDialog from './NoConnectionUninstallDialog.es6';
 import AppsFeedback from '../AppsFeedback.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const $state = getModule('$state');
+const intercom = getModule('intercom');
 
 const notifyError = (err, fallbackMessage) => {
   Notification.error(err.useMessage ? err.message || fallbackMessage : fallbackMessage);

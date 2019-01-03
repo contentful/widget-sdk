@@ -1,14 +1,15 @@
 import moment from 'moment';
-import $rootScope from '$rootScope';
-import $stateParams from '$stateParams';
-import spaceContext from 'spaceContext';
-
-import { contentPreviewsBus$ } from 'contentPreview';
 import { isEqual, find, get } from 'lodash';
 import { organizations$, user$, spacesByOrganization$ } from 'services/TokenStore.es6';
 import getOrganizationStatus from 'data/OrganizationStatus.es6';
 
 import { combine, onValue, getValue, createPropertyBus } from 'utils/kefir.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const $rootScope = getModule('$rootScope');
+const $stateParams = getModule('$stateParams');
+const spaceContext = getModule('spaceContext');
+const { contentPreviewsBus$ } = getModule('contentPreview');
 
 /**
  * @description

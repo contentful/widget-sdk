@@ -1,5 +1,5 @@
-import { h } from 'utils/legacy-html-hyperscript';
-import { triangleDown } from 'Styles';
+import { h } from 'utils/legacy-html-hyperscript/index.es6';
+import { triangleDown } from 'Styles/index.es6';
 import { extend, omit } from 'lodash';
 
 export default function() {

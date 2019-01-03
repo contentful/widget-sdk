@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import SpaceIcon from 'svg/space.es6';
 import FolderIcon from 'svg/folder.es6';
 import SpaceWithEnvironments from './SpaceWithEnvironments.es6';
-import * as accessChecker from 'access_control/AccessChecker';
+import * as accessChecker from 'access_control/AccessChecker/index.es6';
 
 function OrgSpacesHeader({ canCreateSpaceInCurrOrg, showCreateSpaceModal }) {
   return (

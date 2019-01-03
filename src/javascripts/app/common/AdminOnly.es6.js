@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import StateRedirect from './StateRedirect.es6';
-import spaceContext from 'spaceContext';
+import { getModule } from 'NgRegistry.es6';
+
+const spaceContext = getModule('spaceContext');
 
 export class AdminOnly extends React.Component {
   static propTypes = {

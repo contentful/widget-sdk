@@ -1,5 +1,4 @@
 import * as Defaults from './Defaults.es6';
-import logger from 'logger';
 import { findIndex, get as getPath } from 'lodash';
 import { update, concat } from 'utils/Collections.es6';
 import { deepFreeze } from 'utils/Freeze.es6';
@@ -9,6 +8,9 @@ import {
   prepareUIConfigForStorage
 } from 'data/ViewMigrator.es6';
 import { searchTermsMigrated as trackSearchTermsMigrated } from 'analytics/events/SearchAndViews.es6';
+import { getModule } from 'NgRegistry.es6';
+
+const logger = getModule('logger');
 
 const SHARED_VIEWS = 'shared';
 const PRIVATE_VIEWS = 'private';

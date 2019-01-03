@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import $rootScope from '$rootScope';
 import { connect } from 'react-redux';
 import { getIncludedResources } from 'components/shared/space-wizard/WizardUtils.es6';
 import { go } from 'states/Navigator.es6';
@@ -9,13 +8,17 @@ import * as actionCreators from '../space-wizard/store/actionCreators.es6';
 
 import TemplateSelector from 'components/shared/space-wizard/TemplateSelector.es6';
 import ProgressScreen from 'components/shared/space-wizard/ProgressScreen.es6';
-import Dialog from 'app/entity_editor/Components/Dialog';
+
+import Dialog from 'app/entity_editor/Components/Dialog/index.es6';
 
 import ContactUsButton from 'ui/Components/ContactUsButton.es6';
 import EnterpriseSpaceWizardPlan from './EnterpriseSpaceWizardPlan.es6';
 import EnterpriseSpaceWizardInfo from './EnterpriseSpaceWizardInfo.es6';
 
 import { TextField } from '@contentful/forma-36-react-components';
+import { getModule } from 'NgRegistry.es6';
+
+const $rootScope = getModule('$rootScope');
 
 class EnterpriseSpaceWizard extends React.Component {
   static propTypes = {

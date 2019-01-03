@@ -1,4 +1,6 @@
-import environment from 'environment';
+import { getModule } from 'NgRegistry.es6';
+
+const environment = getModule('environment');
 
 const MARKETING_BASE_URL = environment.settings.marketingUrl;
 

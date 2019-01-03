@@ -2,14 +2,16 @@
  * Switches the UI version if a `ui_version` query string parameter is specified.
  * It also displays the version in the UI and provides an easy way to clear it.
  */
-import $window from '$window';
 import Cookies from 'js-cookie';
 import { omit } from 'lodash';
 import moment from 'moment';
 import React from 'react';
 import { addNotification } from 'debug/DevNotifications.es6';
-import location from '$location';
 import qs from 'qs';
+import { getModule } from 'NgRegistry.es6';
+
+const $window = getModule('$window');
+const location = getModule('$location');
 
 /**
  * If url param is given, sets `ui_version` cookie and reloads the app with

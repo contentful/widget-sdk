@@ -1,12 +1,11 @@
-import { getCurrentVariation } from 'utils/LaunchDarkly';
+import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
 import { getSpace, getOrganization } from 'services/TokenStore.es6';
 import { getEnabledFeatures } from 'account/pricing/PricingDataProvider.es6';
+import { FEATURE_SERVICE_FLAG } from 'featureFlags.es6';
 
 import { get, snakeCase } from 'lodash';
-
-const flagName = 'feature-bv-2018-01-features-api';
 
 export default function createFeatureService(id, type = 'space') {
   const endpoint = createEndpoint(id, type);
@@ -66,7 +65,7 @@ async function getTokenOrganization(id, type) {
 
 async function useLegacy(organization) {
   if (isLegacyOrganization(organization)) {
-    return getCurrentVariation(flagName).then(flagValue => !flagValue);
+    return getCurrentVariation(FEATURE_SERVICE_FLAG).then(flagValue => !flagValue);
   } else {
     return false;
   }

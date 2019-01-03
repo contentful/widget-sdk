@@ -1,4 +1,4 @@
-import { h } from 'utils/legacy-html-hyperscript';
+import { h } from 'utils/legacy-html-hyperscript/index.es6';
 import { isBoolean } from 'lodash';
 import { byName as Colors } from 'Styles/Colors.es6';
 
