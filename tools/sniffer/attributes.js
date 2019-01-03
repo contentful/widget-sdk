@@ -37,13 +37,20 @@ const angular = node => {
     '$http',
     '$controller',
     '$state',
+    '$stateParams',
+    '$injector',
     '$timeout',
     '$q',
     'NgRegistry',
     '$interval',
     'ReloadNotification',
     'modalDialog',
+    'logger',
     'notification',
+    'command',
+    'spaceContext',
+    'PolicyBuilder',
+    'PolicyBuilder/CONFIG',
     'states/Navigator',
     'cf-context-menu-trigger',
     'cf-context-menu',
@@ -66,7 +73,8 @@ const hyperscript = node => {
     'utils/hyperscript',
     'ui/Framework',
     'ui/Framework/DOMRenderer',
-    'utils/legacy-html-hyperscript'
+    'utils/legacy-html-hyperscript',
+    'utils/legacy-html-hyperscript/index.es6'
   ];
   const intersection = _.intersectionWith(modules, attributes, _.isEqual);
   return intersection.length > 0 ? intersection : false;
@@ -132,7 +140,7 @@ const needsRefactoring = node => {
   const isHyperscript = hyperscript(node);
   const isAngularImplicit = angularImplicit(node);
 
-  const attributes = ['create-react-class', 'app/Workbench', 'jquery', 'spaceContext'];
+  const attributes = ['create-react-class', 'jquery'];
   let intersection = _.intersectionWith(modules, attributes, _.isEqual);
 
   if (isAngular) {
