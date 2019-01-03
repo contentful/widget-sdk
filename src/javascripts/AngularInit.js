@@ -230,7 +230,6 @@ angular
       ngRequire('directives/bindHtmlCompileDirective.es6');
       ngRequire('directives/cfFocusOnRenderDirective.es6');
       ngRequire('directives/cfFocusOtInputDirective.es6');
-      ngRequire('directives/cfRelativeDatetime.es6');
       ngRequire('directives/cfSchemaDirectives.es6');
       ngRequire('directives/cfSelectAllInput.es6');
       ngRequire('directives/cfValidateDirective.es6');
