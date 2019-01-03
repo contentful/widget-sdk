@@ -2,21 +2,17 @@ import React from 'react';
 import Enzyme from 'enzyme';
 import UserFetcher from './index.es6';
 import flushPromises from '../../../../../test/helpers/flushPromises';
-
-jest.mock('NgRegistry.es6', () => {
-  return {
-    getModules: jest.fn((...moduleNames) => {
-      return moduleNames.map(name => jest.requireMock(name).default);
-    })
-  };
-});
+import * as spaceContextMock from 'ng/spaceContext';
 
 describe('UserFetcher', () => {
+  const user = {};
+
+  beforeEach(() => {
+    spaceContextMock.users.get.mockResolvedValue(user);
+  });
+
   it('passes user and fetching state to the render prop', async () => {
-    const user = {};
     const userId = '2';
-    const spaceContextMock = jest.requireMock('spaceContext').default;
-    spaceContextMock.users.get = jest.fn().mockResolvedValue(user);
     let actualArgs;
 
     Enzyme.mount(
