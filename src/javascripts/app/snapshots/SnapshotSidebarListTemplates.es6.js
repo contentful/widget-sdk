@@ -60,9 +60,9 @@ function snapshotsList() {
           })
         ]),
         h('td', { style: extend({ width: '100%' }, styles.cell) }, [
-          h('time.radio-editor__label', {
-            datetime: '{{snapshot.sys.createdAt}}',
-            cfRelativeDatetime: true
+          h('react-component', {
+            name: 'components/shared/RelativeDateTime/index.es6',
+            props: "{value: snapshot.sys.createdAt, extraClassNames: 'radio-editor__label'}"
           })
         ]),
         h('td', { style: styles.cell }, [
