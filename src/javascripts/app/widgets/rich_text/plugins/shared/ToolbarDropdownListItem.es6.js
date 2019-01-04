@@ -6,7 +6,6 @@ export default class ToolbarDropdownListItem extends Component {
   static propTypes = {
     isActive: PropTypes.bool.isRequired,
     onToggle: PropTypes.func.isRequired,
-    icon: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     type: PropTypes.string,
     children: PropTypes.node
