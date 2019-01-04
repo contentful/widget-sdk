@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import pluralize from 'pluralize';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 
 import {
   Button,
@@ -11,23 +10,21 @@ import {
   TableHead,
   TableBody,
   TableCell,
-  Modal,
-  Spinner
+  Modal
 } from '@contentful/forma-36-react-components';
 import { getTeamListWithOptimistic } from 'redux/selectors/teams.es6';
 import Workbench from 'app/common/Workbench.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
-import getOrgId from 'redux/selectors/getOrgId.es6';
-import ROUTES from 'redux/routes.es6';
 import TeamForm from './TeamForm.es6';
+import TeamListRow from './TeamListRow.es6';
 
 export default connect(
   state => ({
-    teams: getTeamListWithOptimistic(state),
-    orgId: getOrgId(state)
+    teams: getTeamListWithOptimistic(state)
   }),
   dispatch => ({
+    removeTeam: teamId => dispatch({ type: 'REMOVE_TEAM', payload: { teamId } }),
     submitNewTeam: team => dispatch({ type: 'SUBMIT_NEW_TEAM', payload: { team } })
   })
 )(
@@ -35,8 +32,7 @@ export default connect(
     static propTypes = {
       teams: PropTypes.arrayOf(TeamPropType).isRequired,
       submitNewTeam: PropTypes.func.isRequired,
-      onReady: PropTypes.func.isRequired,
-      orgId: PropTypes.string.isRequired
+      onReady: PropTypes.func.isRequired
     };
 
     componentDidMount() {
@@ -51,7 +47,7 @@ export default connect(
       ));
 
     render() {
-      const { teams, orgId } = this.props;
+      const { teams } = this.props;
 
       // TODO: make this route org admin only
       return (
@@ -70,30 +66,16 @@ export default connect(
               <Table data-test-id="organization-teams-page">
                 <TableHead>
                   <TableRow data-test-id="team-details-row">
-                    <TableCell data-test-id="team-name">Name</TableCell>
+                    <TableCell width="300" data-test-id="team-name">
+                      Name
+                    </TableCell>
                     <TableCell data-test-id="team-description">Description</TableCell>
+                    <TableCell />
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {teams.map((team, index) => (
-                    <TableRow key={get(team, 'sys.id', index)}>
-                      <TableCell>
-                        {get(team, 'sys.id', false) ? (
-                          <a
-                            href={ROUTES.organization.children.teams.children.team.build({
-                              orgId,
-                              teamId: team.sys.id
-                            })}>
-                            {team.name}
-                          </a>
-                        ) : (
-                          <span>
-                            {team.name} <Spinner size="small" />
-                          </span>
-                        )}
-                      </TableCell>
-                      <TableCell>{team.description}</TableCell>
-                    </TableRow>
+                  {teams.map(team => (
+                    <TeamListRow team={team} key={team.sys.id} />
                   ))}
                 </TableBody>
               </Table>
