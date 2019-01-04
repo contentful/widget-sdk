@@ -34,15 +34,18 @@ export default ({ dispatch, getState }) => next => async action => {
       break;
     }
     case 'REMOVE_TEAM_MEMBERSHIP': {
+      // get data from store before reducer runs and updates it
       const state = getState();
       const datasets = getDatasets(state);
       const service = createTeamService(await getOrgId(state));
+      next(action);
+
       const { teamMembershipId } = action.payload;
       const membership = datasets[TEAM_MEMBERSHIPS][teamMembershipId];
-      next(action);
       const user = datasets[USERS][membership.sys.user.sys.id];
       const teamId = getCurrentTeam(state);
       const team = datasets[TEAMS][teamId];
+
       try {
         await service.removeTeamMembership(teamId, teamMembershipId);
         Notification.success(
@@ -59,6 +62,7 @@ export default ({ dispatch, getState }) => next => async action => {
       }
       break;
     }
+    default:
+      next(action);
   }
-  next(action);
 };
