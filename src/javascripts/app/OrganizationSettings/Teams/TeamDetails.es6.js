@@ -16,8 +16,7 @@ export default connect(state => {
   const teams = getTeams(state);
   return {
     loading: isEmpty(teams) || isEmpty(getUsers(state)),
-    team: isEmpty(teams) ? undefined : teams[getCurrentTeam(state)],
-    users: getUsers(state)
+    team: isEmpty(teams) ? undefined : teams[getCurrentTeam(state)]
   };
 })(
   class TeamDetail extends React.Component {
@@ -41,8 +40,8 @@ export default connect(state => {
     }
 
     render() {
-      const { team, loading, users } = this.props;
-      const creatorId = team && team.sys.createdBy.sys.id;
+      const { team, loading } = this.props;
+      const creator = team && team.sys.createdBy;
 
       return !loading && team ? (
         <Workbench className="organization-users-page" testId="organization-team-page">
@@ -71,7 +70,7 @@ export default connect(state => {
                     <dt>Created at</dt>
                     <dd>{moment(team.sys.createdAt).format('MMMM DD, YYYY')}</dd>
                     <dt>Created by</dt>
-                    <dd>{getUserName(users[creatorId] || creatorId)}</dd>
+                    <dd>{getUserName(creator)}</dd>
                   </dl>
                 </section>
               </div>

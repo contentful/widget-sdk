@@ -2,15 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { isEmpty, trim } from 'lodash';
 import { Modal, TextField, Button } from '@contentful/forma-36-react-components';
-import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
-
-import createTeamService from 'app/OrganizationSettings/Teams/TeamService.es6';
 
 export default class TeamForm extends React.Component {
   static propTypes = {
-    orgId: PropTypes.string.isRequired,
     onClose: PropTypes.func.isRequired,
-    initialTeam: TeamPropType,
+    initialTeam: PropTypes.shape({ name: PropTypes.string, description: PropTypes.string }),
     onConfirm: PropTypes.func,
     isEditing: PropTypes.bool
   };
@@ -19,8 +15,6 @@ export default class TeamForm extends React.Component {
     isEditing: false,
     initialTeam: { name: '', description: '' }
   };
-
-  service = createTeamService(this.props.orgId);
 
   state = this.props.initialTeam;
 

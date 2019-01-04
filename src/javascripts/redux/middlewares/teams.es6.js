@@ -12,6 +12,7 @@ import RemoveMembershipConfirmation from 'app/OrganizationSettings/Teams/TeamMem
 export default ({ dispatch, getState }) => next => async action => {
   switch (action.type) {
     case 'SUBMIT_NEW_TEAM': {
+      next(action);
       const service = createTeamService(await getOrgId(getState()));
       const newTeam = await service.create(action.payload.team);
       dispatch({ type: 'ADD_TO_DATASET', payload: { item: newTeam, dataset: TEAMS } });
@@ -20,6 +21,7 @@ export default ({ dispatch, getState }) => next => async action => {
     }
     case 'SUBMIT_NEW_TEAM_MEMBERSHIP': {
       const state = getState();
+      next(action);
       const service = createTeamService(await getOrgId(state));
       const teamId = getCurrentTeam(state);
       const newTeamMembership = await service.createTeamMembership(
@@ -35,6 +37,7 @@ export default ({ dispatch, getState }) => next => async action => {
     }
     case 'REMOVE_TEAM_MEMBERSHIP': {
       const state = getState();
+      next(action);
       const datasets = getDatasets(state);
       const service = createTeamService(await getOrgId(state));
 
@@ -69,6 +72,7 @@ export default ({ dispatch, getState }) => next => async action => {
       }
       break;
     }
+    default:
+      next(action);
   }
-  next(action);
 };

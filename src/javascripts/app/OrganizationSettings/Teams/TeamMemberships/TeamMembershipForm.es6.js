@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import getOrgMembershipsWithUsers from 'redux/selectors/getOrgMembershipsWithUsers.es6';
+import getOrgMemberships from 'redux/selectors/getOrgMemberships.es6';
 import getCurrentTeamMemberships from 'redux/selectors/getCurrentTeamMemberships.es6';
 import { TableCell, TableRow, Button, Select, Option } from '@contentful/forma-36-react-components';
 import {
@@ -14,7 +14,7 @@ function getAvailableOrgMemberships(state) {
   const unavailableOrgMemberships = teamMemberships.map(
     membership => membership.sys.organizationMembership.sys.id
   );
-  const orgMemberships = getOrgMembershipsWithUsers(state);
+  const orgMemberships = getOrgMemberships(state);
   return orgMemberships.filter(
     membership => !unavailableOrgMemberships.includes(membership.sys.id)
   );

@@ -9,14 +9,12 @@ import {
   TableRow,
   Button
 } from '@contentful/forma-36-react-components';
-import { getUsers } from 'redux/selectors/users.es6';
 import getCurrentTeamMemberships from 'redux/selectors/getCurrentTeamMemberships.es6';
 import { TeamMembership as TeamMembershiPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import TeamMembershipForm from './TeamMembershipForm.es6';
 import TeamMembershipRow from './TeamMembershipRow.es6';
 
 export default connect(state => ({
-  users: getUsers(state),
   memberships: getCurrentTeamMemberships(state)
 }))(
   class TeamMemberships extends React.Component {
