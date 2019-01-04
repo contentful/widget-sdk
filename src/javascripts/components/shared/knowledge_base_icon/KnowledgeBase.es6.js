@@ -37,7 +37,7 @@ function getKnowledgeBaseUrl(name) {
   throw new Error('Incorrect Knowledge Base item "' + name + '".');
 }
 
-function KnowledgeBase({ target, text = '', inlineText, cssClass, icon = true }) {
+function KnowledgeBase({ target, text = '', inlineText, cssClass = '', icon = true }) {
   const hasText = !text.length ? 'x--no-text' : '';
   const isInline = inlineText ? 'x--inline' : '';
 
