@@ -6,7 +6,6 @@ import { getCurrentTeam } from '../selectors/teams.es6';
 import { TEAM_MEMBERSHIPS, TEAMS } from '../dataSets.es6';
 import addCurrentTeamToMembership from 'redux/utils/addCurrentTeamToMembership.es6';
 import getDatasets from 'redux/selectors/getDatasets.es6';
-import { USERS } from 'redux/dataSets.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import RemoveMembershipConfirmation from 'app/OrganizationSettings/Teams/TeamMemberships/RemoveMembershipConfirmation.es6';
 
@@ -41,9 +40,9 @@ export default ({ dispatch, getState }) => next => async action => {
 
       const { teamMembershipId } = action.payload;
       const membership = datasets[TEAM_MEMBERSHIPS][teamMembershipId];
-      const user = datasets[USERS][membership.sys.user.sys.id];
-      const teamId = getCurrentTeam(state);
-      const team = datasets[TEAMS][teamId];
+      const {
+        sys: { user, team }
+      } = membership;
 
       const confirmation = await ModalLauncher.open(({ isShown, onClose }) => (
         <RemoveMembershipConfirmation isShown={isShown} onClose={onClose} user={user} team={team} />
@@ -55,7 +54,7 @@ export default ({ dispatch, getState }) => next => async action => {
       dispatch({ type: 'REMOVE_TEAM_MEMBERSHIP_CONFIRMED', payload: { teamMembershipId } });
 
       try {
-        await service.removeTeamMembership(teamId, teamMembershipId);
+        await service.removeTeamMembership(team.sys.id, teamMembershipId);
         Notification.success(
           `User ${user.firstName} ${user.lastName} successfully removed from team ${team.name}`
         );

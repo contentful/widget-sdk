@@ -1,5 +1,4 @@
 import getDatasets from './getDatasets.es6';
-import resolveLinks from 'app/OrganizationSettings/LinkResolver.es6';
 import { ORG_MEMBERSHIPS, USERS } from 'redux/dataSets.es6';
 
 export default state => {
@@ -11,12 +10,9 @@ export default state => {
     return null;
   }
 
-  const resolved = resolveLinks({
-    paths: ['sys.user'],
-    includes: { User: Object.values(users) },
-    items: Object.values(orgMemberships)
-  });
-  const withoutInvitations = resolved.filter(membership => !!membership.sys.user.firstName);
+  const withoutInvitations = Object.values(orgMemberships).filter(
+    membership => !!membership.sys.user.firstName
+  );
 
   return withoutInvitations;
 };
