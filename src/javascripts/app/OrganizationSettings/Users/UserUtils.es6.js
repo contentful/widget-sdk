@@ -16,7 +16,7 @@ export function getLastActivityDate(membership) {
     ? now.diff(date, 'hour') > 1
       ? date.fromNow()
       : 'Less than an hour ago'
-    : 'Not available';
+    : 'Never';
 }
 
 export function getUserName(user) {
