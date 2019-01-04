@@ -10,15 +10,10 @@ import {
   Button
 } from '@contentful/forma-36-react-components';
 import { getUsers } from 'redux/selectors/users.es6';
-import UserCard from 'app/OrganizationSettings/Users/UserCard.es6';
-import { getUserName } from 'app/OrganizationSettings/Users/UserUtils.es6';
-import moment from 'moment';
 import getCurrentTeamMemberships from 'redux/selectors/getCurrentTeamMemberships.es6';
-import {
-  TeamMembership as TeamMembershiPropType,
-  User as UserPropType
-} from 'app/OrganizationSettings/PropTypes.es6';
+import { TeamMembership as TeamMembershiPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import TeamMembershipForm from './TeamMembershipForm.es6';
+import TeamMembershipRow from './TeamMembershipRow.es6';
 
 export default connect(state => ({
   users: getUsers(state),
@@ -26,8 +21,7 @@ export default connect(state => ({
 }))(
   class TeamMemberships extends React.Component {
     static propTypes = {
-      memberships: PropTypes.arrayOf(TeamMembershiPropType),
-      users: PropTypes.objectOf(UserPropType).isRequired
+      memberships: PropTypes.arrayOf(TeamMembershiPropType)
     };
 
     state = {
@@ -39,7 +33,7 @@ export default connect(state => ({
     };
 
     render() {
-      const { memberships, users } = this.props;
+      const { memberships } = this.props;
       const { showingForm } = this.state;
       return memberships !== undefined ? (
         <React.Fragment>
@@ -60,32 +54,14 @@ export default connect(state => ({
                 <TableCell>Name</TableCell>
                 <TableCell>Member since</TableCell>
                 <TableCell>Added by</TableCell>
+                <TableCell />
               </TableRow>
             </TableHead>
             <TableBody>
               {showingForm && <TeamMembershipForm close={this.toggleForm} />}
-              {memberships.map(
-                ({
-                  sys: {
-                    id,
-                    user: {
-                      sys: { id: userId }
-                    },
-                    createdAt,
-                    createdBy: {
-                      sys: { id: creatorId }
-                    }
-                  }
-                }) => (
-                  <TableRow key={id}>
-                    <TableCell>
-                      <UserCard user={users[userId]} />
-                    </TableCell>
-                    <TableCell>{moment(createdAt).format('MMMM DD, YYYY')}</TableCell>
-                    <TableCell>{getUserName(users[creatorId] || creatorId)}</TableCell>
-                  </TableRow>
-                )
-              )}
+              {memberships.map(membership => (
+                <TeamMembershipRow membership={membership} key={membership.sys.id} />
+              ))}
             </TableBody>
           </Table>
         </React.Fragment>
