@@ -11,11 +11,11 @@ import ExamplePickerModal from './dialogs/ExamplePickerModal.es6';
 import GitHubInstallerModal from './dialogs/GitHubInstallerModal.es6';
 import { toInternalFieldType } from './FieldTypes.es6';
 import getExtensionParameterIds from './getExtensionParameterIds.es6';
-import { track } from 'analytics/Analytics.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const spaceContext = getModule('spaceContext');
 const $state = getModule('$state');
+const Analytics = getModule('analytics/Analytics.es6');
 
 const SDK_URL = 'https://unpkg.com/contentful-ui-extensions-sdk@3';
 
@@ -27,7 +27,7 @@ function install({ extension, type, url }) {
       Notification.success('Your new extension was successfully created.');
 
       if (type && url) {
-        track('extension:install', {
+        Analytics.track('extension:install', {
           type,
           url,
           name: extension.name,

@@ -6,12 +6,12 @@ import Workbench from 'app/common/Workbench.es6';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils.es6';
 import getExtensionParameterIds from './getExtensionParameterIds.es6';
 import StateLink from 'app/common/StateLink.es6';
-import { track } from 'analytics/Analytics.es6';
 import { toInternalFieldType, toApiFieldType } from './FieldTypes.es6';
 import ExtensionForm from './ExtensionForm.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const spaceContext = getModule('spaceContext');
+const Analytics = getModule('analytics/Analytics.es6');
 
 class ExtensionEditor extends React.Component {
   static propTypes = {
@@ -78,7 +78,7 @@ class ExtensionEditor extends React.Component {
           () => this.entityToFreshState(newEntity),
           () => {
             const { extension } = this.state.entity;
-            track('extension:save', {
+            Analytics.track('extension:save', {
               ui_extension_id: this.state.entity.sys.id,
               name: extension.name,
               version: this.state.entity.sys.version,

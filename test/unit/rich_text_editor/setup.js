@@ -61,6 +61,10 @@ export const stubAll = async ({ isolatedSystem, angularStubs = {} }) => {
     .returns({ $on: sinon.spy(() => noop) })
     .withArgs('$location')
     .returns({ absUrl: () => 'abs-url' })
+    .withArgs('analytics/Analytics.es6')
+    .returns({
+      track: sinon.stub()
+    })
     .withArgs('navigation/SlideInNavigator')
     .returns({
       goToSlideInEntity: sinon.stub()

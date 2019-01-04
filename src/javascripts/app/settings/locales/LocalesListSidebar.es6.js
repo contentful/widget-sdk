@@ -1,9 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { getModule } from 'NgRegistry.es6';
 import { Button } from '@contentful/forma-36-react-components';
 import Pluralized from 'ui/Components/Pluralized.es6';
-import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 import StateLink from 'app/common/StateLink.es6';
+
+const LaunchDarkly = getModule('utils/LaunchDarkly/index.es6');
 
 class IncentivizeUpgradeExperiment extends React.Component {
   static propTypes = {
@@ -16,7 +18,7 @@ class IncentivizeUpgradeExperiment extends React.Component {
   };
 
   componentDidMount() {
-    getCurrentVariation('feature-bv-06-2018-incentivize-upgrade')
+    LaunchDarkly.getCurrentVariation('feature-bv-06-2018-incentivize-upgrade')
       .then(variation => {
         this.setState({ variation, isInitialized: true });
       })

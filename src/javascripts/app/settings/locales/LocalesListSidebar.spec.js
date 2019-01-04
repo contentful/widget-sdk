@@ -2,16 +2,11 @@ import React from 'react';
 import Enzyme from 'enzyme';
 import LocalesListSidebar from './LocalesListSidebar.es6';
 import * as $stateMocked from 'ng/$state';
-import * as LaunchDarklyMocked from 'utils/LaunchDarkly/index.es6';
+import * as LaunchDarklyMocked from 'ng/utils/LaunchDarkly/index.es6';
 
 describe('settings/locales/LocalesListSidebar', () => {
-  beforeEach(() => {
-    $stateMocked.go.mockClear();
-    LaunchDarklyMocked.getCurrentVariation.mockClear();
-  });
-
   const setShowChangeSpaceIncentive = value => {
-    LaunchDarklyMocked.getCurrentVariation.mockResolvedValue(value);
+    LaunchDarklyMocked.getCurrentVariation.mockResolvedValueOnce(value);
   };
 
   const selectors = {

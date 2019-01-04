@@ -57,50 +57,6 @@ describe('analyze', () => {
     expect(modules).toEqual(['angular.controller', 'angular.service']);
   });
 
-  it('should find all ServicesConsumer values', () => {
-    const modules1 = analyze(
-      node,
-      `
-        const ServicesConsumer = require('../../reactServiceContext').default;
-
-        const WebhookEditor = () => {};
-
-        export default ServicesConsumer('$state', 'notification', 'modalDialog', {
-            as: 'Analytics',
-            from: 'analytics/Analytics.es6'
-          })(WebhookEditor);
-    `
-    );
-
-    const modules2 = analyze(
-      node,
-      `
-      const SC = require('../../reactServiceContext').default;
-
-      const WebhookEditor = () => {};
-
-      export default SC('$state', 'notification', 'modalDialog', {
-          as: 'Analytics',
-          from: 'analytics/Analytics.es6'
-        })(WebhookEditor);
-    `
-    );
-
-    expect(modules1).toEqual([
-      '$state.implicit',
-      'notification.implicit',
-      'modalDialog.implicit',
-      'analytics/Analytics.implicit'
-    ]);
-
-    expect(modules2).toEqual([
-      '$state.implicit',
-      'notification.implicit',
-      'modalDialog.implicit',
-      'analytics/Analytics.implicit'
-    ]);
-  });
-
   it('should find dependencies imported via getModule', () => {
     const modules = analyze(
       node,

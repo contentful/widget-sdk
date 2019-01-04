@@ -9,6 +9,7 @@ import ModalLauncher from 'app/common/ModalLauncher.es6';
 import UserCard from '../UserCard.es6';
 import { getRoleDescription } from 'utils/MembershipUtils.es6';
 import { getUserName } from '../UserUtils.es6';
+import { getModule } from 'NgRegistry.es6';
 
 import {
   SpaceMembership as SpaceMembershipPropType,
@@ -29,14 +30,11 @@ import UserSsoInfo from './SSO/UserSsoInfo.es6';
 import RemoveOrgMemberDialog from '../RemoveUserDialog.es6';
 import ChangeOwnRoleConfirmation from './ChangeOwnRoleConfirmation.es6';
 
-const ServicesConsumer = require('../../../../reactServiceContext').default;
+const TokenStore = getModule('services/TokenStore.es6');
+const OrganizationRoles = getModule('services/OrganizationRoles.es6');
 
 class UserDetail extends React.Component {
   static propTypes = {
-    $services: PropTypes.shape({
-      TokenStore: PropTypes.object,
-      OrganizationRoles: PropTypes.object
-    }),
     initialMembership: OrganizationMembershipPropType.isRequired,
     createdBy: UserPropType,
     spaceMemberships: PropTypes.arrayOf(SpaceMembershipPropType).isRequired,
@@ -51,7 +49,7 @@ class UserDetail extends React.Component {
     disableOwnerRole: false
   };
 
-  currentUser = getValue(this.props.$services.TokenStore.user$);
+  currentUser = getValue(TokenStore.user$);
   isSelf =
     this.currentUser && this.currentUser.sys.id === this.props.initialMembership.sys.user.sys.id;
 
@@ -63,7 +61,6 @@ class UserDetail extends React.Component {
   }
 
   async shouldDisableOwnerRole() {
-    const { TokenStore, OrganizationRoles } = this.props.$services;
     const org = await TokenStore.getOrganization(this.props.orgId);
     return !OrganizationRoles.isOwner(org);
   }
@@ -234,13 +231,4 @@ class UserDetail extends React.Component {
   }
 }
 
-export default ServicesConsumer(
-  {
-    from: 'services/TokenStore.es6',
-    as: 'TokenStore'
-  },
-  {
-    as: 'OrganizationRoles',
-    from: 'services/OrganizationRoles.es6'
-  }
-)(UserDetail);
+export default UserDetail;

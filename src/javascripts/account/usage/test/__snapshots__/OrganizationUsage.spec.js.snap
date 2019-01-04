@@ -21,15 +21,15 @@ exports[`OrganizationUsage should render page without errors 1`] = `
           Array [
             Object {
               "endDate": null,
-              "startDate": "1970-01-06",
+              "startDate": "2018-12-23",
               "sys": Object {
                 "id": "0",
                 "type": "UsagePeriod",
               },
             },
             Object {
-              "endDate": "1970-01-05",
-              "startDate": "1969-12-05",
+              "endDate": "2018-12-22",
+              "startDate": "2018-11-22",
               "sys": Object {
                 "id": "1",
                 "type": "UsagePeriod",
@@ -72,15 +72,15 @@ exports[`OrganizationUsage should render page without errors 1`] = `
         Array [
           Object {
             "endDate": null,
-            "startDate": "1970-01-06",
+            "startDate": "2018-12-23",
             "sys": Object {
               "id": "0",
               "type": "UsagePeriod",
             },
           },
           Object {
-            "endDate": "1970-01-05",
-            "startDate": "1969-12-05",
+            "endDate": "2018-12-22",
+            "startDate": "2018-11-22",
             "sys": Object {
               "id": "1",
               "type": "UsagePeriod",
@@ -103,7 +103,7 @@ exports[`OrganizationUsage should render page without errors 1`] = `
 exports[`WorkbenchActions should render 1`] = `""`;
 
 exports[`WorkbenchContent should render 1`] = `
-<ServicesConsumer
+<OrganizationUsagePage
   apiRequestIncludedLimit={1000}
   assetBandwidthIncludedLimit={50}
   assetBandwidthUOM="GB"

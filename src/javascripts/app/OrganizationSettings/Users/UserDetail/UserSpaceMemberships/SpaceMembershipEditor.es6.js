@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import { getModule } from 'NgRegistry.es6';
 import {
   User as UserPropType,
   SpaceMembership as SpaceMembershipPropType
@@ -16,14 +16,11 @@ import {
 } from '@contentful/forma-36-react-components';
 import SpaceRoleEditor from './SpaceRoleEditor.es6';
 
-const ServicesConsumer = require('../../../../../reactServiceContext').default;
+const EndpointFactory = getModule('data/EndpointFactory.es6');
+const SpaceMembershipRepository = getModule('access_control/SpaceMembershipRepository.es6');
 
 class SpaceMembershipEditor extends React.Component {
   static propTypes = {
-    $services: PropTypes.shape({
-      EndpointFactory: PropTypes.object.isRequired,
-      SpaceMembershipRepository: PropTypes.object.isRequired
-    }).isRequired,
     user: UserPropType.isRequired,
     currentUser: UserPropType.isRequired,
     onSpaceSelected: PropTypes.func,
@@ -47,7 +44,7 @@ class SpaceMembershipEditor extends React.Component {
     selectedRoles: this.getInitialRoleIds()
   };
 
-  orgEndpoint = this.props.$services.EndpointFactory.createOrganizationEndpoint(this.props.orgId);
+  orgEndpoint = EndpointFactory.createOrganizationEndpoint(this.props.orgId);
 
   componentDidMount() {
     const { initialMembership } = this.props;
@@ -62,13 +59,13 @@ class SpaceMembershipEditor extends React.Component {
    * Otherwise, return an array containing a fake admin role id
    */
   getInitialRoleIds() {
-    const { initialMembership, $services } = this.props;
+    const { initialMembership } = this.props;
     if (this.isEditing) {
-      return $services.SpaceMembershipRepository.getMembershipRoles(initialMembership).map(
+      return SpaceMembershipRepository.getMembershipRoles(initialMembership).map(
         role => role.sys.id
       );
     }
-    return [$services.SpaceMembershipRepository.ADMIN_ROLE_ID];
+    return [SpaceMembershipRepository.ADMIN_ROLE_ID];
   }
 
   setSpace(spaceId) {
@@ -88,14 +85,13 @@ class SpaceMembershipEditor extends React.Component {
       currentUser,
       spaces,
       onMembershipCreated,
-      $services,
       onMembershipChanged,
       initialMembership,
       roles
     } = this.props;
     const { selectedRoles, selectedSpace } = this.state;
-    const spaceEndpoint = $services.EndpointFactory.createSpaceEndpoint(selectedSpace);
-    const repo = $services.SpaceMembershipRepository.create(spaceEndpoint);
+    const spaceEndpoint = EndpointFactory.createSpaceEndpoint(selectedSpace);
+    const repo = SpaceMembershipRepository.create(spaceEndpoint);
     const isEditing = Boolean(initialMembership);
     const createdBy = isEditing ? initialMembership.sys.createdBy : currentUser;
     let membership;
@@ -191,13 +187,4 @@ class SpaceMembershipEditor extends React.Component {
   }
 }
 
-export default ServicesConsumer(
-  {
-    as: 'EndpointFactory',
-    from: 'data/EndpointFactory.es6'
-  },
-  {
-    as: 'SpaceMembershipRepository',
-    from: 'access_control/SpaceMembershipRepository.es6'
-  }
-)(SpaceMembershipEditor);
+export default SpaceMembershipEditor;

@@ -1,7 +1,6 @@
 const parser = require('@babel/parser');
 const _ = require('lodash');
 const findImports = require('./analyzers/findImports');
-const findServiceConsumer = require('./analyzers/findServiceConsumer');
 const findAngular = require('./analyzers/findAngular');
 const findOtherByRegexp = require('./analyzers/findOtherByRegexp');
 const findComponentLibrary = require('./analyzers/findComponentLibrary');
@@ -27,14 +26,7 @@ module.exports = function(node, src) {
       ast
     };
 
-    const fns = [
-      findImports,
-      findAngular,
-      findServiceConsumer,
-      findOtherByRegexp,
-      findComponentLibrary,
-      findGetModule
-    ];
+    const fns = [findImports, findAngular, findOtherByRegexp, findComponentLibrary, findGetModule];
 
     const modules = _.uniq(
       _.flatMap(fns, fn => {

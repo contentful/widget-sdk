@@ -1,8 +1,5 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import moment from 'moment';
-import { isEqual } from 'lodash';
-
 import { Spinner } from '@contentful/forma-36-react-components';
 
 import { OrganizationUsage, WorkbenchContent, WorkbenchActions } from '../OrganizationUsage.es6';
@@ -11,48 +8,101 @@ import NoSpacesPlaceholder from '../NoSpacesPlaceholder.es6';
 import OrganizationUsagePage from '../committed/OrganizationUsagePage.es6';
 import OrganizationResourceUsageList from 'account/usage/non_committed/OrganizationResourceUsageList.es6';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
+import OrganizationRolesMocked from 'ng/services/OrganizationRoles.es6';
+import TokenStoreMocked from 'ng/services/TokenStore.es6';
+import OrganizationMembershipRepositoryMocked from 'ng/access_control/OrganizationMembershipRepository.es6';
+
+jest.mock('ng/Config.es6', () => ({}), { virtual: true });
+jest.mock('ng/intercom', () => ({}), { virtual: true });
+jest.mock('ng/utils/ResourceUtils.es6', () => ({}), { virtual: true });
+jest.mock(
+  'ng/services/OrganizationRoles.es6',
+  () => ({
+    isOwnerOrAdmin: jest.fn().mockReturnValue(true)
+  }),
+  { virtual: true }
+);
+jest.mock(
+  'ng/services/ResourceService.es6',
+  () => {
+    const resourceService = {
+      get: jest.fn(resource => {
+        switch (resource) {
+          case 'api_request':
+            return { limits: { included: 1000000 } };
+          case 'asset_bandwidth':
+            return {
+              usage: 200,
+              unitOfMeasure: 'MB',
+              limits: { included: 2000 }
+            };
+        }
+      }),
+      getAll: jest.fn()
+    };
+    return {
+      default: () => resourceService
+    };
+  },
+  { virtual: true }
+);
 
 jest.mock(
-  'app/common/ReloadNotification.es6',
+  'ng/account/pricing/PricingDataProvider.es6',
+  () => {
+    const isEnterprisePlan = jest.fn(() => true);
+
+    const getPlansWithSpaces = jest.fn(() => ({
+      items: [
+        { name: 'Test plan', space: { sys: { id: 'space1' } } },
+        { name: 'Proof of concept', space: { sys: { id: 'space2' } } }
+      ]
+    }));
+    return {
+      isEnterprisePlan,
+      getBasePlan: jest.fn(),
+      getPlansWithSpaces
+    };
+  },
+  { virtual: true }
+);
+
+jest.mock(
+  'ng/access_control/OrganizationMembershipRepository.es6',
   () => ({
-    trigger: jest.fn()
+    getAllSpaces: jest.fn(() => [
+      { name: 'Test1', sys: { id: 'test1' } },
+      { name: 'Test2', sys: { id: 'test2' } }
+    ])
   }),
   { virtual: true }
 );
 
-const DATE_FORMAT = 'YYYY-MM-DD';
+jest.mock(
+  'utils/LaunchDarkly/index.es6',
+  () => ({
+    getCurrentVariation: jest.fn(fs => fs === 'feature-bizvel-09-2018-usage')
+  }),
+  { virtual: true }
+);
 
-let defaultProps = null;
-let testOrg = null;
-let endpoint = null;
-let resourceService = null;
-const shallowRenderComponent = async props => {
-  const wrapper = shallow(<OrganizationUsage {...props} />);
-  // Need to wait for internal async logic to finish
-  // This means `componentDidMount` is called twice,
-  //  which could potentially cause problems if it's not
-  //  idempotent.
-  await wrapper.instance().componentDidMount();
-  return wrapper;
-};
+jest.mock(
+  'ng/services/TokenStore.es6',
+  () => ({
+    getOrganization: jest.fn(() => ({}))
+  }),
+  { virtual: true }
+);
 
-describe('OrganizationUsage', () => {
-  beforeAll(() => {
-    // set fixed date for stable snapshots
-    // moment('2017-12-01').unix() = 1512082800
-    jest.spyOn(Date, 'now').mockImplementation(() => 1512082800);
-  });
-
-  afterAll(() => {
-    Date.now.mockRestore();
-  });
-
-  beforeEach(() => {
-    testOrg = {};
+jest.mock(
+  'ng/data/EndpointFactory.es6',
+  () => {
+    const moment = require('moment');
+    const _ = require('lodash');
+    const DATE_FORMAT = 'YYYY-MM-DD';
     const startDate = moment().subtract(12, 'days');
-
-    endpoint = jest.fn(({ method, path }) => {
-      if (method === 'GET' && isEqual(path, ['usage_periods'])) {
+    const endpoint = jest.fn().mockImplementation(({ method, path }) => {
+      if (method === 'GET' && _.isEqual(path, ['usage_periods'])) {
         return {
           items: [
             {
@@ -75,60 +125,47 @@ describe('OrganizationUsage', () => {
       }
     });
 
-    const isEnterprisePlan = jest.fn(() => true);
-    const isOwnerOrAdmin = jest.fn(() => true);
-    const getPlansWithSpaces = jest.fn(() => ({
-      items: [
-        { name: 'Test plan', space: { sys: { id: 'space1' } } },
-        { name: 'Proof of concept', space: { sys: { id: 'space2' } } }
-      ]
-    }));
-
-    resourceService = {
-      get: jest.fn(resource => {
-        switch (resource) {
-          case 'api_request':
-            return { limits: { included: 1000000 } };
-          case 'asset_bandwidth':
-            return {
-              usage: 200,
-              unitOfMeasure: 'MB',
-              limits: { included: 2000 }
-            };
-        }
-      }),
-      getAll: jest.fn()
+    return {
+      createOrganizationEndpoint: () => endpoint
     };
-    const ResourceService = { default: () => resourceService };
+  },
+  { virtual: true }
+);
 
-    const getAllSpaces = jest.fn(() => [
-      { name: 'Test1', sys: { id: 'test1' } },
-      { name: 'Test2', sys: { id: 'test2' } }
-    ]);
+jest.mock(
+  'app/common/ReloadNotification.es6',
+  () => ({
+    trigger: jest.fn()
+  }),
+  { virtual: true }
+);
 
-    const getCurrentVariation = jest.fn(fs => fs === 'feature-bizvel-09-2018-usage');
+const shallowRenderComponent = async props => {
+  const wrapper = shallow(<OrganizationUsage {...props} />);
+  // Need to wait for internal async logic to finish
+  // This means `componentDidMount` is called twice,
+  //  which could potentially cause problems if it's not
+  //  idempotent.
+  await wrapper.instance().componentDidMount();
+  return wrapper;
+};
 
-    const getOrganization = jest.fn(() => testOrg);
+describe('OrganizationUsage', () => {
+  let defaultProps;
 
+  beforeAll(() => {
     defaultProps = {
       orgId: '23423',
       onReady: jest.fn(),
-      onForbidden: jest.fn(),
-      $services: {
-        OrganizationRoles: { isOwnerOrAdmin },
-        PricingDataProvider: {
-          isEnterprisePlan,
-          getBasePlan: jest.fn(),
-          getPlansWithSpaces
-        },
-        ResourceService,
-        OrganizationMembershipRepository: { getAllSpaces },
-        EndpointFactory: { createOrganizationEndpoint: () => endpoint },
-        Analytics: { track: jest.fn() },
-        LaunchDarkly: { getCurrentVariation },
-        TokenStore: { getOrganization }
-      }
+      onForbidden: jest.fn()
     };
+    // set fixed date for stable snapshots
+    // moment('2017-12-01').unix() = 1512082800
+    jest.spyOn(Date, 'now').mockImplementation(() => 1512082800);
+  });
+
+  afterAll(() => {
+    Date.now.mockRestore();
   });
 
   it('should render page without errors', async () => {
@@ -142,80 +179,14 @@ describe('OrganizationUsage', () => {
     expect(defaultProps.onReady).toHaveBeenCalled();
   });
 
-  it('should request data', async () => {
-    await shallowRenderComponent(defaultProps);
-
-    expect(endpoint).toHaveBeenCalledWith(
-      {
-        method: 'GET',
-        path: ['usage_periods']
-      },
-      { 'x-contentful-enable-alpha-feature': 'usage-insights' }
-    );
-    expect(endpoint).toHaveBeenCalledWith(
-      {
-        method: 'GET',
-        path: ['usages', 'organization'],
-        query: {
-          'filters[metric]': 'allApis',
-          'filters[usagePeriod]': '0'
-        }
-      },
-      { 'x-contentful-enable-alpha-feature': 'usage-insights' }
-    );
-    expect(endpoint).toHaveBeenCalledWith(
-      {
-        method: 'GET',
-        path: ['usages', 'space'],
-        query: {
-          'filters[metric]': 'cpa',
-          'filters[usagePeriod]': '0',
-          'orderBy[metricUsage]': 'desc',
-          limit: 3
-        }
-      },
-      { 'x-contentful-enable-alpha-feature': 'usage-insights' }
-    );
-    expect(endpoint).toHaveBeenCalledWith(
-      {
-        method: 'GET',
-        path: ['usages', 'space'],
-        query: {
-          'filters[metric]': 'cda',
-          'filters[usagePeriod]': '0',
-          'orderBy[metricUsage]': 'desc',
-          limit: 3
-        }
-      },
-      { 'x-contentful-enable-alpha-feature': 'usage-insights' }
-    );
-    expect(endpoint).toHaveBeenCalledWith(
-      {
-        method: 'GET',
-        path: ['usages', 'space'],
-        query: {
-          'filters[metric]': 'cma',
-          'filters[usagePeriod]': '0',
-          'orderBy[metricUsage]': 'desc',
-          limit: 3
-        }
-      },
-      { 'x-contentful-enable-alpha-feature': 'usage-insights' }
-    );
-  });
-
   describe('user is not owner or admin', () => {
-    beforeEach(() => {
-      defaultProps.$services.OrganizationRoles.isOwnerOrAdmin.mockReturnValue(false);
-    });
-
     it('should call `onForbidden`', async () => {
+      OrganizationRolesMocked.isOwnerOrAdmin.mockReturnValueOnce(false);
+
       await shallowRenderComponent(defaultProps);
 
-      expect(defaultProps.$services.TokenStore.getOrganization).toHaveBeenCalledWith(
-        defaultProps.orgId
-      );
-      expect(defaultProps.$services.OrganizationRoles.isOwnerOrAdmin).toHaveBeenCalledWith(testOrg);
+      expect(TokenStoreMocked.getOrganization).toHaveBeenCalledWith(defaultProps.orgId);
+      expect(OrganizationRolesMocked.isOwnerOrAdmin).toHaveBeenCalledWith({});
       const errArg = defaultProps.onForbidden.mock.calls[0][0];
       expect(errArg).toBeInstanceOf(Error);
       expect(errArg.message).toBe('No permission');
@@ -223,53 +194,58 @@ describe('OrganizationUsage', () => {
   });
 
   describe('fetching org data fails with 404', () => {
-    const error404 = new Error('Test error');
-    error404.status = 404;
-
-    beforeEach(() => {
-      defaultProps.$services.OrganizationMembershipRepository.getAllSpaces.mockReturnValue(
+    it('should call `onForbidden`', async () => {
+      const error404 = new Error('Test error');
+      error404.status = 404;
+      OrganizationMembershipRepositoryMocked.getAllSpaces.mockReturnValueOnce(
         Promise.reject(error404)
       );
-    });
+      const onForbiddenMock = jest.fn();
 
-    it('should call `onForbidden`', async () => {
-      await shallowRenderComponent(defaultProps);
+      await shallowRenderComponent({
+        ...defaultProps,
+        onForbidden: onForbiddenMock
+      });
 
-      expect(defaultProps.onForbidden).toHaveBeenCalledWith(error404);
+      expect(onForbiddenMock).toHaveBeenCalledWith(error404);
     });
   });
 
   describe('fetching org data fails with 403', () => {
-    const error403 = new Error('Test error');
-    error403.status = 403;
-
-    beforeEach(() => {
-      defaultProps.$services.OrganizationMembershipRepository.getAllSpaces.mockReturnValue(
+    it('should call `onForbidden`', async () => {
+      const error403 = new Error('Test error');
+      error403.status = 403;
+      OrganizationMembershipRepositoryMocked.getAllSpaces.mockReturnValueOnce(
         Promise.reject(error403)
       );
-    });
+      const onForbiddenMock = jest.fn();
 
-    it('should call `onForbidden`', async () => {
-      await shallowRenderComponent(defaultProps);
+      await shallowRenderComponent({
+        ...defaultProps,
+        onForbidden: onForbiddenMock
+      });
 
-      expect(defaultProps.onForbidden).toHaveBeenCalledWith(error403);
+      expect(onForbiddenMock).toHaveBeenCalledWith(error403);
     });
   });
 
   describe('fetching org data fails with different error code', () => {
-    const error400 = new Error('Test error');
-    error400.status = 400;
+    it('should trigger reload notification', async () => {
+      const error400 = new Error('Test error');
+      error400.status = 400;
 
-    beforeEach(() => {
-      defaultProps.$services.OrganizationMembershipRepository.getAllSpaces.mockReturnValue(
+      OrganizationMembershipRepositoryMocked.getAllSpaces.mockReturnValueOnce(
         Promise.reject(error400)
       );
-    });
 
-    it('should trigger reload notification', async () => {
-      await shallowRenderComponent(defaultProps);
+      const onForbiddenMock = jest.fn();
 
-      expect(defaultProps.onForbidden).not.toHaveBeenCalled();
+      await shallowRenderComponent({
+        ...defaultProps,
+        onForbidden: onForbiddenMock
+      });
+
+      expect(onForbiddenMock).not.toHaveBeenCalled();
       expect(ReloadNotification.trigger).toHaveBeenCalled();
     });
   });

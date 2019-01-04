@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import SidebarContentPreview from './SidebarContentPreview.es6';
-import * as Analytics from 'analytics/Analytics.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const spaceContext = getModule('spaceContext');
+const Analytics = getModule('analytics/Analytics.es6');
 const contentPreview = getModule('contentPreview');
 
 const getEmptyContentPreview = () => ({

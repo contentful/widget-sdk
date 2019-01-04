@@ -9,14 +9,12 @@ import {
   DropdownListItem
 } from '@contentful/forma-36-react-components';
 import { without } from 'lodash';
+import { getModule } from 'NgRegistry.es6';
 
-const ServicesConsumer = require('../../../../../reactServiceContext').default;
+const SpaceMembershipRepository = getModule('access_control/SpaceMembershipRepository.es6');
 
 class SpaceRoleEditor extends React.Component {
   static propTypes = {
-    $services: PropTypes.shape({
-      SpaceMembershipRepository: PropTypes.object.isRequired
-    }),
     onChange: PropTypes.func.isRequired,
     isDisabled: PropTypes.bool,
     options: PropTypes.arrayOf(SpaceRoleProp),
@@ -33,14 +31,11 @@ class SpaceRoleEditor extends React.Component {
   };
 
   setAdmin = () => {
-    const { ADMIN_ROLE_ID } = this.props.$services.SpaceMembershipRepository;
-
-    this.props.onChange([ADMIN_ROLE_ID]);
+    this.props.onChange([SpaceMembershipRepository.ADMIN_ROLE_ID]);
   };
 
   setRole = roleId => ({ target: { checked } }) => {
-    const { ADMIN_ROLE_ID } = this.props.$services.SpaceMembershipRepository;
-    const isAdmin = roleId === ADMIN_ROLE_ID;
+    const isAdmin = roleId === SpaceMembershipRepository.ADMIN_ROLE_ID;
 
     if (checked) {
       isAdmin ? this.setAdmin() : this.addRole(roleId);
@@ -50,9 +45,8 @@ class SpaceRoleEditor extends React.Component {
   };
 
   addRole(roleId) {
-    const { ADMIN_ROLE_ID } = this.props.$services.SpaceMembershipRepository;
     const { value, onChange } = this.props;
-    onChange(without(value, ADMIN_ROLE_ID).concat(roleId));
+    onChange(without(value, SpaceMembershipRepository.ADMIN_ROLE_ID).concat(roleId));
   }
 
   removeRole(roleId) {
@@ -69,8 +63,8 @@ class SpaceRoleEditor extends React.Component {
   };
 
   render() {
-    const { options, value, isDisabled, $services } = this.props;
-    const { ADMIN_ROLE_ID, ADMIN_ROLE } = $services.SpaceMembershipRepository;
+    const { options, value, isDisabled } = this.props;
+    const { ADMIN_ROLE_ID, ADMIN_ROLE } = SpaceMembershipRepository;
     const isAdmin = value.includes(ADMIN_ROLE_ID);
 
     const selectedNames = [ADMIN_ROLE, ...options]
@@ -121,7 +115,4 @@ class SpaceRoleEditor extends React.Component {
   }
 }
 
-export default ServicesConsumer({
-  as: 'SpaceMembershipRepository',
-  from: 'access_control/SpaceMembershipRepository.es6'
-})(SpaceRoleEditor);
+export default SpaceRoleEditor;

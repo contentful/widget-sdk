@@ -1,12 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { getModule } from 'NgRegistry.es6';
 import { mapValues, flow, keyBy, get, eq, isNumber, pick } from 'lodash/fp';
 
 import { Spinner } from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
-
-const ServicesConsumer = require('../../reactServiceContext').default;
 
 import OrganizationResourceUsageList from './non_committed/OrganizationResourceUsageList.es6';
 import OrganizationUsagePage from './committed/OrganizationUsagePage.es6';
@@ -14,6 +13,17 @@ import { getPeriods, getOrgUsage, getApiUsage } from './UsageService.es6';
 import PeriodSelector from './committed/PeriodSelector.es6';
 import NoSpacesPlaceholder from './NoSpacesPlaceholder.es6';
 import isPOCEnabled from 'account/POCFeatureFlag.es6';
+
+const LaunchDarkly = getModule('utils/LaunchDarkly/index.es6');
+const OrganizationRoles = getModule('services/OrganizationRoles.es6');
+const ResourceService = getModule('services/ResourceService.es6');
+const PricingDataProvider = getModule('account/pricing/PricingDataProvider.es6');
+const OrganizationMembershipRepository = getModule(
+  'access_control/OrganizationMembershipRepository.es6'
+);
+const EndpointFactory = getModule('data/EndpointFactory.es6');
+const TokenStore = getModule('services/TokenStore.es6');
+const Analytics = getModule('analytics/Analytics.es6');
 
 export class WorkbenchContent extends React.Component {
   static propTypes = {
@@ -119,17 +129,7 @@ export class OrganizationUsage extends React.Component {
   static propTypes = {
     orgId: PropTypes.string.isRequired,
     onReady: PropTypes.func.isRequired,
-    onForbidden: PropTypes.func.isRequired,
-    $services: PropTypes.shape({
-      OrganizationRoles: PropTypes.object.isRequired,
-      PricingDataProvider: PropTypes.object.isRequired,
-      ResourceService: PropTypes.object.isRequired,
-      OrganizationMembershipRepository: PropTypes.object.isRequired,
-      EndpointFactory: PropTypes.object.isRequired,
-      Analytics: PropTypes.object.isRequired,
-      LaunchDarkly: PropTypes.object.isRequired,
-      TokenStore: PropTypes.object.isRequired
-    }).isRequired
+    onForbidden: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -137,19 +137,16 @@ export class OrganizationUsage extends React.Component {
 
     this.state = { isLoading: true };
 
-    this.endpoint = this.props.$services.EndpointFactory.createOrganizationEndpoint(props.orgId);
+    this.endpoint = EndpointFactory.createOrganizationEndpoint(props.orgId);
     this.setPeriodIndex = this.setPeriodIndex.bind(this);
   }
 
   async componentDidMount() {
-    const {
-      onForbidden,
-      $services: {
-        LaunchDarkly: { getCurrentVariation }
-      }
-    } = this.props;
+    const { onForbidden } = this.props;
 
-    this.setState({ flagActive: await getCurrentVariation('feature-bizvel-09-2018-usage') });
+    this.setState({
+      flagActive: await LaunchDarkly.getCurrentVariation('feature-bizvel-09-2018-usage')
+    });
 
     try {
       await this.checkPermissions();
@@ -160,36 +157,22 @@ export class OrganizationUsage extends React.Component {
   }
 
   async checkPermissions() {
-    const {
-      orgId,
-      $services: {
-        TokenStore: { getOrganization },
-        OrganizationRoles: { isOwnerOrAdmin }
-      }
-    } = this.props;
-    const organization = await getOrganization(orgId);
+    const { orgId } = this.props;
+    const organization = await TokenStore.getOrganization(orgId);
 
-    if (!isOwnerOrAdmin(organization)) {
+    if (!OrganizationRoles.isOwnerOrAdmin(organization)) {
       throw new Error('No permission');
     }
   }
 
   async fetchOrgData() {
-    const {
-      orgId,
-      onReady,
-      $services: {
-        OrganizationMembershipRepository: { getAllSpaces },
-        PricingDataProvider: { isEnterprisePlan, getBasePlan, getPlansWithSpaces },
-        ResourceService
-      }
-    } = this.props;
+    const { orgId, onReady } = this.props;
     const { flagActive } = this.state;
 
     try {
       const service = ResourceService.default(orgId, 'organization');
-      const basePlan = await getBasePlan(this.endpoint);
-      const committed = isEnterprisePlan(basePlan);
+      const basePlan = await PricingDataProvider.getBasePlan(this.endpoint);
+      const committed = PricingDataProvider.isEnterprisePlan(basePlan);
 
       if (committed && flagActive) {
         const [
@@ -205,8 +188,8 @@ export class OrganizationUsage extends React.Component {
             limits: { included: assetBandwidthIncludedLimit }
           }
         ] = await Promise.all([
-          getAllSpaces(this.endpoint),
-          getPlansWithSpaces(this.endpoint, await isPOCEnabled()),
+          OrganizationMembershipRepository.getAllSpaces(this.endpoint),
+          PricingDataProvider.getPlansWithSpaces(this.endpoint, await isPOCEnabled()),
           getPeriods(this.endpoint),
           service.get('api_request'),
           service.get('asset_bandwidth')
@@ -252,15 +235,10 @@ export class OrganizationUsage extends React.Component {
 
   async loadPeriodData(newIndex) {
     const { periods } = this.state;
-    const {
-      $services: {
-        Analytics: { track }
-      }
-    } = this.props;
     const newPeriod = periods[newIndex];
     if (isNumber(this.state.selectedPeriodIndex)) {
       const oldPeriod = periods[this.state.selectedPeriodIndex];
-      track('usage:period_selected', {
+      Analytics.track('usage:period_selected', {
         oldPeriod: pick(['startDate', 'endDate'], oldPeriod),
         newPeriod: pick(['startDate', 'endDate'], newPeriod)
       });
@@ -346,37 +324,4 @@ export class OrganizationUsage extends React.Component {
   }
 }
 
-export default ServicesConsumer(
-  {
-    from: 'utils/LaunchDarkly/index.es6',
-    as: 'LaunchDarkly'
-  },
-  {
-    from: 'services/OrganizationRoles.es6',
-    as: 'OrganizationRoles'
-  },
-  {
-    from: 'services/ResourceService.es6',
-    as: 'ResourceService'
-  },
-  {
-    from: 'account/pricing/PricingDataProvider.es6',
-    as: 'PricingDataProvider'
-  },
-  {
-    from: 'access_control/OrganizationMembershipRepository.es6',
-    as: 'OrganizationMembershipRepository'
-  },
-  {
-    from: 'data/EndpointFactory.es6',
-    as: 'EndpointFactory'
-  },
-  {
-    from: 'services/TokenStore.es6',
-    as: 'TokenStore'
-  },
-  {
-    from: 'analytics/Analytics.es6',
-    as: 'Analytics'
-  }
-)(OrganizationUsage);
+export default OrganizationUsage;

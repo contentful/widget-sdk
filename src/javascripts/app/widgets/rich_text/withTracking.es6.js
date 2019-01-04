@@ -1,10 +1,10 @@
 import { reduce, without, camelCase } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
-import { track } from 'analytics/Analytics.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const logger = getModule('logger');
+const Analytics = getModule('analytics/Analytics.es6');
 
 const getCountOrNull = count => (typeof count === 'number' ? count : null);
 
@@ -51,7 +51,7 @@ export default function withTracking(Component) {
       const ctId = entrySys.contentType.sys.id;
       const { locale, id: fieldId } = widgetAPI.field;
 
-      track('text_editor:action', {
+      Analytics.track('text_editor:action', {
         editorName: 'RichText',
         action: actionName,
         actionOrigin: origin || null,

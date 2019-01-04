@@ -32,9 +32,8 @@ import angular from 'angular';
 registerDirective('reactComponent', [
   '$injector',
   'logger',
-  'ServicesProvider',
   'ReduxStore/store.es6',
-  function($injector, logger, ServicesProvider, { default: store }) {
+  function($injector, logger, { default: store }) {
     return {
       restrict: 'E',
       replace: true,
@@ -58,7 +57,7 @@ registerDirective('reactComponent', [
         const renderMyComponent = () => {
           const scopeProps = $scope.$eval(attrs.props);
 
-          renderComponent(reactComponent, scopeProps, $scope, element, store, ServicesProvider);
+          renderComponent(reactComponent, scopeProps, $scope, element, store);
         };
 
         // If there are props, re-render when they change
@@ -84,15 +83,13 @@ registerDirective('reactComponent', [
 ]);
 
 // TODO refactor this function (6 arguments is too much)
-function renderComponent(Component, props, scope, elem, store, ServicesProvider) {
+function renderComponent(Component, props, scope, elem, store) {
   scope.$evalAsync(() => {
     // this is the single place we mount all our components, so all
     // providers should be added here
     ReactDOM.render(
       <Provider store={store}>
-        <ServicesProvider>
-          <Component {...props} scope={scope} />
-        </ServicesProvider>
+        <Component {...props} scope={scope} />
       </Provider>,
       elem
     );

@@ -26,16 +26,16 @@ import {
 } from '@contentful/forma-36-react-components';
 import { getUserName } from 'app/OrganizationSettings/Users/UserUtils.es6';
 import moment from 'moment';
+import { getModule } from 'NgRegistry.es6';
 
-const ServicesConsumer = require('../../../../../reactServiceContext').default;
+const EndpointFactory = getModule('data/EndpointFactory.es6');
+const SpaceMembershipRepository = getModule('access_control/SpaceMembershipRepository.es6');
+const OrganizationMembershipRepository = getModule(
+  'access_control/OrganizationMembershipRepository.es6'
+);
 
 class UserSpaceMemberships extends React.Component {
   static propTypes = {
-    $services: PropTypes.shape({
-      EndpointFactory: PropTypes.object.isRequired,
-      OrganizationMembershipRepository: PropTypes.object.isRequired,
-      SpaceMembershipRepository: PropTypes.object.isRequired
-    }).isRequired,
     initialMemberships: PropTypes.arrayOf(SpaceMembershipPropType),
     user: UserPropType.isRequired,
     currentUser: UserPropType,
@@ -52,20 +52,17 @@ class UserSpaceMemberships extends React.Component {
     availableSpaces: this.getAvailableSpaces(this.props.initialMemberships)
   };
 
-  orgEndpoint = this.props.$services.EndpointFactory.createOrganizationEndpoint(this.props.orgId);
+  orgEndpoint = EndpointFactory.createOrganizationEndpoint(this.props.orgId);
 
   createRepoFromSpaceMembership(membership) {
-    const { createSpaceEndpoint } = this.props.$services.EndpointFactory;
-    const { create: createSpaceMembershipRepo } = this.props.$services.SpaceMembershipRepository;
     const { space } = membership.sys;
     const spaceId = space.sys.id;
-    const spaceEndpoint = createSpaceEndpoint(spaceId);
-    return createSpaceMembershipRepo(spaceEndpoint);
+    const spaceEndpoint = EndpointFactory.createSpaceEndpoint(spaceId);
+    return SpaceMembershipRepository.create(spaceEndpoint);
   }
 
   fetchSpaceRoles = async spaceId => {
-    const { getAllRoles } = this.props.$services.OrganizationMembershipRepository;
-    const allRoles = await getAllRoles(this.orgEndpoint);
+    const allRoles = await OrganizationMembershipRepository.getAllRoles(this.orgEndpoint);
     const roles = allRoles.filter(role => role.sys.space.sys.id === spaceId);
     this.setState({ roles });
   };
@@ -145,11 +142,12 @@ class UserSpaceMemberships extends React.Component {
   };
 
   handleMembershipChanged = async membership => {
-    const { user, $services } = this.props;
-    const { getMembershipRoles } = $services.SpaceMembershipRepository;
+    const { user } = this.props;
     const { space } = membership.sys;
     const memberships = [...this.state.memberships];
-    const roleNames = getMembershipRoles(membership).map(role => role.name);
+    const roleNames = SpaceMembershipRepository.getMembershipRoles(membership).map(
+      role => role.name
+    );
     const index = findIndex(memberships, item => item.sys.id === membership.sys.id);
     memberships[index] = membership;
 
@@ -158,7 +156,7 @@ class UserSpaceMemberships extends React.Component {
       editingMembershipId: null
     });
 
-    $services.notification.success(`
+    Notification.success(`
       ${user.firstName} is now ${joinWithAnd(roleNames)} in the the space ${space.name}
     `);
   };
@@ -188,13 +186,11 @@ class UserSpaceMemberships extends React.Component {
   }
 
   renderMembershipRow(membership) {
-    const { getMembershipRoles } = this.props.$services.SpaceMembershipRepository;
-
     return (
       <TableRow key={membership.sys.id}>
         <TableCell>{membership.sys.space.name}</TableCell>
         <TableCell>
-          {getMembershipRoles(membership)
+          {SpaceMembershipRepository.getMembershipRoles(membership)
             .map(role => role.name)
             .join(', ')}
         </TableCell>
@@ -288,17 +284,4 @@ class UserSpaceMemberships extends React.Component {
   }
 }
 
-export default ServicesConsumer(
-  {
-    as: 'EndpointFactory',
-    from: 'data/EndpointFactory.es6'
-  },
-  {
-    as: 'SpaceMembershipRepository',
-    from: 'access_control/SpaceMembershipRepository.es6'
-  },
-  {
-    as: 'OrganizationMembershipRepository',
-    from: 'access_control/OrganizationMembershipRepository.es6'
-  }
-)(UserSpaceMemberships);
+export default UserSpaceMemberships;

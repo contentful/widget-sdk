@@ -55,7 +55,8 @@ const angular = node => {
     'cf-context-menu-trigger',
     'cf-context-menu',
     'cf-ui-sticky-container',
-    'navigation/confirmLeaveEditor'
+    'navigation/confirmLeaveEditor',
+    'analytics/Analytics.es6'
   ];
   const intersection = _.intersectionWith(modules, attributes, _.isEqual);
   return intersection.length > 0 ? intersection : false;
@@ -105,7 +106,6 @@ const react = node => {
     'ReduxStore/store',
     'downshift',
     'slate-react',
-    'reactServiceContext',
     '<react-component>'
   ];
   const intersection = _.intersectionWith(modules, attributes, _.isEqual);
@@ -120,15 +120,6 @@ const react = node => {
   return false;
 };
 
-const angularImplicit = node => {
-  if (!js(node)) {
-    return false;
-  }
-
-  const result = node.modules.filter(item => item.includes('.implicit'));
-  return result.length > 0 ? result : false;
-};
-
 const needsRefactoring = node => {
   const modules = node.modules;
 
@@ -138,7 +129,6 @@ const needsRefactoring = node => {
 
   const isAngular = angular(node);
   const isHyperscript = hyperscript(node);
-  const isAngularImplicit = angularImplicit(node);
 
   const attributes = ['create-react-class', 'jquery'];
   let intersection = _.intersectionWith(modules, attributes, _.isEqual);
@@ -148,9 +138,6 @@ const needsRefactoring = node => {
   }
   if (isHyperscript) {
     intersection = intersection.concat(isHyperscript);
-  }
-  if (isAngularImplicit) {
-    intersection = intersection.concat(isAngularImplicit);
   }
 
   intersection = _.uniq(intersection);
@@ -170,7 +157,6 @@ module.exports = {
   jest: jest,
   karma: karma,
   angular: angular,
-  angularImplicit: angularImplicit,
   hyperscript: hyperscript,
   react: react,
   needsRefactoring: needsRefactoring

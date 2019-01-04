@@ -1,700 +1,600 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`SpaceRoleEditor renders the component 1`] = `
-<MockedProvider
-  services={
-    Object {
-      "access_control/SpaceMembershipRepository.es6": Object {
-        "ADMIN_ROLE": Object {
-          "name": "Admin",
-          "sys": Object {
-            "id": "admin",
-          },
+<SpaceRoleEditor
+  onChange={[MockFunction]}
+  options={
+    Array [
+      Object {
+        "name": "Police officer",
+        "sys": Object {
+          "id": "police",
         },
-        "ADMIN_ROLE_ID": "admin",
       },
-    }
+      Object {
+        "name": "Thief",
+        "sys": Object {
+          "id": "thief",
+        },
+      },
+    ]
   }
+  value={Array []}
 >
-  <ServicesConsumer
-    onChange={[MockFunction]}
-    options={
-      Array [
-        Object {
-          "name": "Police officer",
-          "sys": Object {
-            "id": "police",
-          },
-        },
-        Object {
-          "name": "Thief",
-          "sys": Object {
-            "id": "thief",
-          },
-        },
-      ]
+  <Dropdown
+    isOpen={false}
+    onClose={[Function]}
+    position="bottom-left"
+    style={
+      Object {
+        "maxWidth": "100%",
+      }
     }
-    value={Array []}
-  >
-    <SpaceRoleEditor
-      $services={
-        Object {
-          "SpaceMembershipRepository": Object {
-            "ADMIN_ROLE": Object {
-              "name": "Admin",
-              "sys": Object {
-                "id": "admin",
-              },
-            },
-            "ADMIN_ROLE_ID": "admin",
-          },
-        }
-      }
-      onChange={[MockFunction]}
-      options={
-        Array [
-          Object {
-            "name": "Police officer",
-            "sys": Object {
-              "id": "police",
-            },
-          },
-          Object {
-            "name": "Thief",
-            "sys": Object {
-              "id": "thief",
-            },
-          },
-        ]
-      }
-      value={Array []}
-    >
-      <Dropdown
-        isOpen={false}
-        onClose={[Function]}
-        position="bottom-left"
-        style={
-          Object {
-            "maxWidth": "100%",
-          }
-        }
-        testId="cf-ui-dropdown"
-        toggleElement={
-          <Button
-            buttonType="naked"
-            disabled={false}
-            extraClassNames="select-button"
-            indicateDropdown={true}
-            isFullWidth={false}
-            loading={false}
-            onClick={[Function]}
-            testId="cf-ui-button"
-          >
-            Select a role
-          </Button>
-        }
+    testId="cf-ui-dropdown"
+    toggleElement={
+      <Button
+        buttonType="naked"
+        disabled={false}
+        extraClassNames="select-button"
+        indicateDropdown={true}
+        isFullWidth={false}
+        loading={false}
+        onClick={[Function]}
+        testId="cf-ui-button"
       >
-        <div
-          className="Dropdown__Dropdown___1qyn8"
-          data-test-id="cf-ui-dropdown"
-          onClose={[Function]}
-          position="bottom-left"
-          style={
-            Object {
-              "maxWidth": "100%",
-            }
-          }
+        Select a role
+      </Button>
+    }
+  >
+    <div
+      className="Dropdown__Dropdown___1qyn8"
+      data-test-id="cf-ui-dropdown"
+      onClose={[Function]}
+      position="bottom-left"
+      style={
+        Object {
+          "maxWidth": "100%",
+        }
+      }
+    >
+      <Button
+        buttonType="naked"
+        disabled={false}
+        extraClassNames="select-button"
+        indicateDropdown={true}
+        isFullWidth={false}
+        loading={false}
+        onClick={[Function]}
+        testId="cf-ui-button"
+      >
+        <button
+          className="Button__Button___1ZfFj a11y__focus-border--default___60AXp select-button Button__Button--naked___mB6LS"
+          data-test-id="cf-ui-button"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
         >
-          <Button
-            buttonType="naked"
-            disabled={false}
-            extraClassNames="select-button"
-            indicateDropdown={true}
-            isFullWidth={false}
-            loading={false}
-            onClick={[Function]}
-            testId="cf-ui-button"
+          <TabFocusTrap
+            extraClassNames="Button__Button__inner-wrapper___3qrNC"
           >
-            <button
-              className="Button__Button___1ZfFj a11y__focus-border--default___60AXp select-button Button__Button--naked___mB6LS"
-              data-test-id="cf-ui-button"
-              disabled={false}
-              onBlur={[Function]}
-              onClick={[Function]}
+            <span
+              className="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
+              tabIndex={-1}
             >
-              <TabFocusTrap
-                extraClassNames="Button__Button__inner-wrapper___3qrNC"
+              <span
+                className="Button__Button__label___3tcOj"
               >
-                <span
-                  className="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
-                  tabIndex={-1}
+                Select a role
+              </span>
+              <Icon
+                color="secondary"
+                icon="ArrowDown"
+                size="small"
+                testId="cf-ui-icon"
+              >
+                <ArrowDown
+                  className="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
+                  data-test-id="cf-ui-icon"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  <span
-                    className="Button__Button__label___3tcOj"
+                  <svg
+                    className="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
+                    data-test-id="cf-ui-icon"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
                   >
-                    Select a role
-                  </span>
-                  <Icon
-                    color="secondary"
-                    icon="ArrowDown"
-                    size="small"
-                    testId="cf-ui-icon"
-                  >
-                    <ArrowDown
-                      className="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
-                      data-test-id="cf-ui-icon"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      width="24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <svg
-                        className="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
-                        data-test-id="cf-ui-icon"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        width="24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M7 10l5 5 5-5z"
-                        />
-                        <path
-                          d="M0 0h24v24H0z"
-                          fill="none"
-                        />
-                      </svg>
-                    </ArrowDown>
-                  </Icon>
-                  <CSSTransition
-                    classNames={
-                      Object {
-                        "enter": "Button__Button--spinner--enter___1qgg7",
-                        "enterActive": "Button__Button--spinner-active___EEKjQ",
-                        "exit": "Button__Button--spinner--exit___2RUI-",
-                        "exitActive": "Button__Button--spinner-exit-active___3HXa7",
-                      }
-                    }
-                    in={false}
-                    mountOnEnter={true}
-                    timeout={1000}
-                    unmountOnExit={true}
-                  >
-                    <Transition
-                      appear={false}
-                      enter={true}
-                      exit={true}
-                      in={false}
-                      mountOnEnter={true}
-                      onEnter={[Function]}
-                      onEntered={[Function]}
-                      onEntering={[Function]}
-                      onExit={[Function]}
-                      onExited={[Function]}
-                      onExiting={[Function]}
-                      timeout={1000}
-                      unmountOnExit={true}
+                    <path
+                      d="M7 10l5 5 5-5z"
                     />
-                  </CSSTransition>
-                </span>
-              </TabFocusTrap>
-            </button>
-          </Button>
-        </div>
-      </Dropdown>
-    </SpaceRoleEditor>
-  </ServicesConsumer>
-</MockedProvider>
+                    <path
+                      d="M0 0h24v24H0z"
+                      fill="none"
+                    />
+                  </svg>
+                </ArrowDown>
+              </Icon>
+              <CSSTransition
+                classNames={
+                  Object {
+                    "enter": "Button__Button--spinner--enter___1qgg7",
+                    "enterActive": "Button__Button--spinner-active___EEKjQ",
+                    "exit": "Button__Button--spinner--exit___2RUI-",
+                    "exitActive": "Button__Button--spinner-exit-active___3HXa7",
+                  }
+                }
+                in={false}
+                mountOnEnter={true}
+                timeout={1000}
+                unmountOnExit={true}
+              >
+                <Transition
+                  appear={false}
+                  enter={true}
+                  exit={true}
+                  in={false}
+                  mountOnEnter={true}
+                  onEnter={[Function]}
+                  onEntered={[Function]}
+                  onEntering={[Function]}
+                  onExit={[Function]}
+                  onExited={[Function]}
+                  onExiting={[Function]}
+                  timeout={1000}
+                  unmountOnExit={true}
+                />
+              </CSSTransition>
+            </span>
+          </TabFocusTrap>
+        </button>
+      </Button>
+    </div>
+  </Dropdown>
+</SpaceRoleEditor>
 `;
 
 exports[`SpaceRoleEditor shows a list of options 1`] = `
-<MockedProvider
-  services={
-    Object {
-      "access_control/SpaceMembershipRepository.es6": Object {
-        "ADMIN_ROLE": Object {
-          "name": "Admin",
-          "sys": Object {
-            "id": "admin",
-          },
+<SpaceRoleEditor
+  onChange={[MockFunction]}
+  options={
+    Array [
+      Object {
+        "name": "Police officer",
+        "sys": Object {
+          "id": "police",
         },
-        "ADMIN_ROLE_ID": "admin",
       },
-    }
+      Object {
+        "name": "Thief",
+        "sys": Object {
+          "id": "thief",
+        },
+      },
+    ]
   }
+  value={Array []}
 >
-  <ServicesConsumer
-    onChange={[MockFunction]}
-    options={
-      Array [
-        Object {
-          "name": "Police officer",
-          "sys": Object {
-            "id": "police",
-          },
-        },
-        Object {
-          "name": "Thief",
-          "sys": Object {
-            "id": "thief",
-          },
-        },
-      ]
+  <Dropdown
+    isOpen={true}
+    onClose={[Function]}
+    position="bottom-left"
+    style={
+      Object {
+        "maxWidth": "100%",
+      }
     }
-    value={Array []}
-  >
-    <SpaceRoleEditor
-      $services={
-        Object {
-          "SpaceMembershipRepository": Object {
-            "ADMIN_ROLE": Object {
-              "name": "Admin",
-              "sys": Object {
-                "id": "admin",
-              },
-            },
-            "ADMIN_ROLE_ID": "admin",
-          },
-        }
-      }
-      onChange={[MockFunction]}
-      options={
-        Array [
-          Object {
-            "name": "Police officer",
-            "sys": Object {
-              "id": "police",
-            },
-          },
-          Object {
-            "name": "Thief",
-            "sys": Object {
-              "id": "thief",
-            },
-          },
-        ]
-      }
-      value={Array []}
-    >
-      <Dropdown
-        isOpen={true}
-        onClose={[Function]}
-        position="bottom-left"
-        style={
-          Object {
-            "maxWidth": "100%",
-          }
-        }
-        testId="cf-ui-dropdown"
-        toggleElement={
-          <Button
-            buttonType="naked"
-            disabled={false}
-            extraClassNames="select-button"
-            indicateDropdown={true}
-            isFullWidth={false}
-            loading={false}
-            onClick={[Function]}
-            testId="cf-ui-button"
-          >
-            Select a role
-          </Button>
-        }
+    testId="cf-ui-dropdown"
+    toggleElement={
+      <Button
+        buttonType="naked"
+        disabled={false}
+        extraClassNames="select-button"
+        indicateDropdown={true}
+        isFullWidth={false}
+        loading={false}
+        onClick={[Function]}
+        testId="cf-ui-button"
       >
-        <div
-          className="Dropdown__Dropdown___1qyn8"
-          data-test-id="cf-ui-dropdown"
-          onClose={[Function]}
-          position="bottom-left"
-          style={
-            Object {
-              "maxWidth": "100%",
-            }
-          }
+        Select a role
+      </Button>
+    }
+  >
+    <div
+      className="Dropdown__Dropdown___1qyn8"
+      data-test-id="cf-ui-dropdown"
+      onClose={[Function]}
+      position="bottom-left"
+      style={
+        Object {
+          "maxWidth": "100%",
+        }
+      }
+    >
+      <Button
+        buttonType="naked"
+        disabled={false}
+        extraClassNames="select-button"
+        indicateDropdown={true}
+        isFullWidth={false}
+        loading={false}
+        onClick={[Function]}
+        testId="cf-ui-button"
+      >
+        <button
+          className="Button__Button___1ZfFj a11y__focus-border--default___60AXp select-button Button__Button--naked___mB6LS"
+          data-test-id="cf-ui-button"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
         >
-          <Button
-            buttonType="naked"
-            disabled={false}
-            extraClassNames="select-button"
-            indicateDropdown={true}
-            isFullWidth={false}
-            loading={false}
-            onClick={[Function]}
-            testId="cf-ui-button"
+          <TabFocusTrap
+            extraClassNames="Button__Button__inner-wrapper___3qrNC"
           >
-            <button
-              className="Button__Button___1ZfFj a11y__focus-border--default___60AXp select-button Button__Button--naked___mB6LS"
-              data-test-id="cf-ui-button"
-              disabled={false}
-              onBlur={[Function]}
-              onClick={[Function]}
+            <span
+              className="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
+              tabIndex={-1}
             >
-              <TabFocusTrap
-                extraClassNames="Button__Button__inner-wrapper___3qrNC"
+              <span
+                className="Button__Button__label___3tcOj"
               >
-                <span
-                  className="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
-                  tabIndex={-1}
+                Select a role
+              </span>
+              <Icon
+                color="secondary"
+                icon="ArrowDown"
+                size="small"
+                testId="cf-ui-icon"
+              >
+                <ArrowDown
+                  className="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
+                  data-test-id="cf-ui-icon"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  <span
-                    className="Button__Button__label___3tcOj"
+                  <svg
+                    className="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
+                    data-test-id="cf-ui-icon"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
                   >
-                    Select a role
-                  </span>
-                  <Icon
-                    color="secondary"
-                    icon="ArrowDown"
-                    size="small"
-                    testId="cf-ui-icon"
-                  >
-                    <ArrowDown
-                      className="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
-                      data-test-id="cf-ui-icon"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      width="24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <svg
-                        className="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
-                        data-test-id="cf-ui-icon"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        width="24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M7 10l5 5 5-5z"
-                        />
-                        <path
-                          d="M0 0h24v24H0z"
-                          fill="none"
-                        />
-                      </svg>
-                    </ArrowDown>
-                  </Icon>
-                  <CSSTransition
-                    classNames={
-                      Object {
-                        "enter": "Button__Button--spinner--enter___1qgg7",
-                        "enterActive": "Button__Button--spinner-active___EEKjQ",
-                        "exit": "Button__Button--spinner--exit___2RUI-",
-                        "exitActive": "Button__Button--spinner-exit-active___3HXa7",
-                      }
-                    }
-                    in={false}
-                    mountOnEnter={true}
-                    timeout={1000}
-                    unmountOnExit={true}
-                  >
-                    <Transition
-                      appear={false}
-                      enter={true}
-                      exit={true}
-                      in={false}
-                      mountOnEnter={true}
-                      onEnter={[Function]}
-                      onEntered={[Function]}
-                      onEntering={[Function]}
-                      onExit={[Function]}
-                      onExited={[Function]}
-                      onExiting={[Function]}
-                      timeout={1000}
-                      unmountOnExit={true}
+                    <path
+                      d="M7 10l5 5 5-5z"
                     />
-                  </CSSTransition>
-                </span>
-              </TabFocusTrap>
-            </button>
-          </Button>
-          <div
-            className="Dropdown__Dropdown__container___1wpIB Dropdown__Dropdown__container-position--bottom-left___jqo6Y"
-            onFocus={[Function]}
-            onMouseEnter={[Function]}
-            onMouseLeave={[Function]}
-          >
-            <InViewport
-              offset={0}
-              onOverflowBottom={[Function]}
-              onOverflowLeft={[Function]}
-              onOverflowRight={[Function]}
-              onOverflowTop={[Function]}
-              testId="cf-ui-in-viewport"
-            >
-              <div
-                className="InViewport__InViewport___2o6g4"
-                data-test-id="cf-ui-in-viewport"
-                offset={0}
+                    <path
+                      d="M0 0h24v24H0z"
+                      fill="none"
+                    />
+                  </svg>
+                </ArrowDown>
+              </Icon>
+              <CSSTransition
+                classNames={
+                  Object {
+                    "enter": "Button__Button--spinner--enter___1qgg7",
+                    "enterActive": "Button__Button--spinner-active___EEKjQ",
+                    "exit": "Button__Button--spinner--exit___2RUI-",
+                    "exitActive": "Button__Button--spinner-exit-active___3HXa7",
+                  }
+                }
+                in={false}
+                mountOnEnter={true}
+                timeout={1000}
+                unmountOnExit={true}
               >
-                <DropdownList
-                  maxHeight={300}
-                  testId="cf-ui-dropdown-list"
+                <Transition
+                  appear={false}
+                  enter={true}
+                  exit={true}
+                  in={false}
+                  mountOnEnter={true}
+                  onEnter={[Function]}
+                  onEntered={[Function]}
+                  onEntering={[Function]}
+                  onExit={[Function]}
+                  onExited={[Function]}
+                  onExiting={[Function]}
+                  timeout={1000}
+                  unmountOnExit={true}
+                />
+              </CSSTransition>
+            </span>
+          </TabFocusTrap>
+        </button>
+      </Button>
+      <div
+        className="Dropdown__Dropdown__container___1wpIB Dropdown__Dropdown__container-position--bottom-left___jqo6Y"
+        onFocus={[Function]}
+        onMouseEnter={[Function]}
+        onMouseLeave={[Function]}
+      >
+        <InViewport
+          offset={0}
+          onOverflowBottom={[Function]}
+          onOverflowLeft={[Function]}
+          onOverflowRight={[Function]}
+          onOverflowTop={[Function]}
+          testId="cf-ui-in-viewport"
+        >
+          <div
+            className="InViewport__InViewport___2o6g4"
+            data-test-id="cf-ui-in-viewport"
+            offset={0}
+          >
+            <DropdownList
+              maxHeight={300}
+              testId="cf-ui-dropdown-list"
+            >
+              <ul
+                className="DropdownList__DropdownList___2EMLM"
+                data-test-id="cf-ui-dropdown-list"
+                style={
+                  Object {
+                    "maxHeight": 300,
+                    "overflowY": "auto",
+                  }
+                }
+              >
+                <DropdownListItem
+                  isActive={false}
+                  isDisabled={false}
+                  isTitle={false}
+                  onEnter={[Function]}
+                  onLeave={[Function]}
+                  testId="cf-ui-dropdown-list-item"
                 >
-                  <ul
-                    className="DropdownList__DropdownList___2EMLM"
-                    data-test-id="cf-ui-dropdown-list"
-                    style={
-                      Object {
-                        "maxHeight": 300,
-                        "overflowY": "auto",
-                      }
-                    }
+                  <li
+                    className="DropdownListItem__DropdownListItem___LOUnP"
+                    data-test-id="cf-ui-dropdown-list-item"
                   >
-                    <DropdownListItem
-                      isActive={false}
-                      isDisabled={false}
-                      isTitle={false}
-                      onEnter={[Function]}
-                      onLeave={[Function]}
-                      testId="cf-ui-dropdown-list-item"
+                    <CheckboxField
+                      checked={false}
+                      id="admin"
+                      inputType="checkbox"
+                      labelIsLight={true}
+                      labelText="Admin"
+                      onChange={[Function]}
+                      testId="cf-ui-checkbox-field"
                     >
-                      <li
-                        className="DropdownListItem__DropdownListItem___LOUnP"
-                        data-test-id="cf-ui-dropdown-list-item"
+                      <ControlledInputField
+                        checked={false}
+                        id="admin"
+                        inputType="checkbox"
+                        labelIsLight={true}
+                        labelText="Admin"
+                        onChange={[Function]}
+                        testId="cf-ui-checkbox-field"
                       >
-                        <CheckboxField
-                          checked={false}
-                          id="admin"
-                          inputType="checkbox"
-                          labelIsLight={true}
-                          labelText="Admin"
-                          onChange={[Function]}
-                          testId="cf-ui-checkbox-field"
+                        <div
+                          className="ControlledInputField__ControlledInputField___2uIG9"
+                          data-test-id="cf-ui-checkbox-field"
                         >
-                          <ControlledInputField
+                          <ControlledInput
                             checked={false}
+                            disabled={false}
+                            extraClassNames="ControlledInputField__ControlledInputField__input___3OMYB"
                             id="admin"
-                            inputType="checkbox"
-                            labelIsLight={true}
                             labelText="Admin"
                             onChange={[Function]}
-                            testId="cf-ui-checkbox-field"
+                            required={false}
+                            testId="cf-ui-controlled-input"
+                            type="checkbox"
                           >
-                            <div
-                              className="ControlledInputField__ControlledInputField___2uIG9"
-                              data-test-id="cf-ui-checkbox-field"
+                            <input
+                              aria-label="Admin"
+                              checked={false}
+                              className="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                              data-test-id="cf-ui-controlled-input"
+                              disabled={false}
+                              id="admin"
+                              onChange={[Function]}
+                              required={false}
+                              type="checkbox"
+                            />
+                          </ControlledInput>
+                          <div>
+                            <FormLabel
+                              extraClassNames="ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
+                              htmlFor="admin"
+                              required={false}
+                              requiredText="required"
+                              testId="cf-ui-form-label"
                             >
-                              <ControlledInput
-                                checked={false}
-                                disabled={false}
-                                extraClassNames="ControlledInputField__ControlledInputField__input___3OMYB"
-                                id="admin"
-                                labelText="Admin"
-                                onChange={[Function]}
-                                required={false}
-                                testId="cf-ui-controlled-input"
-                                type="checkbox"
+                              <label
+                                className="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
+                                data-test-id="cf-ui-form-label"
+                                htmlFor="admin"
                               >
-                                <input
-                                  aria-label="Admin"
-                                  checked={false}
-                                  className="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                                  data-test-id="cf-ui-controlled-input"
-                                  disabled={false}
-                                  id="admin"
-                                  onChange={[Function]}
-                                  required={false}
-                                  type="checkbox"
-                                />
-                              </ControlledInput>
-                              <div>
-                                <FormLabel
-                                  extraClassNames="ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
-                                  htmlFor="admin"
-                                  required={false}
-                                  requiredText="required"
-                                  testId="cf-ui-form-label"
-                                >
-                                  <label
-                                    className="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
-                                    data-test-id="cf-ui-form-label"
-                                    htmlFor="admin"
-                                  >
-                                    Admin
-                                  </label>
-                                </FormLabel>
-                              </div>
-                            </div>
-                          </ControlledInputField>
-                        </CheckboxField>
-                      </li>
-                    </DropdownListItem>
-                    <DropdownListItem
-                      isActive={false}
-                      isDisabled={false}
-                      isTitle={false}
-                      key="police"
-                      onEnter={[Function]}
-                      onLeave={[Function]}
-                      testId="cf-ui-dropdown-list-item"
+                                Admin
+                              </label>
+                            </FormLabel>
+                          </div>
+                        </div>
+                      </ControlledInputField>
+                    </CheckboxField>
+                  </li>
+                </DropdownListItem>
+                <DropdownListItem
+                  isActive={false}
+                  isDisabled={false}
+                  isTitle={false}
+                  key="police"
+                  onEnter={[Function]}
+                  onLeave={[Function]}
+                  testId="cf-ui-dropdown-list-item"
+                >
+                  <li
+                    className="DropdownListItem__DropdownListItem___LOUnP"
+                    data-test-id="cf-ui-dropdown-list-item"
+                  >
+                    <CheckboxField
+                      checked={false}
+                      id="police"
+                      inputType="checkbox"
+                      labelIsLight={true}
+                      labelText="Police officer"
+                      onChange={[Function]}
+                      testId="cf-ui-checkbox-field"
+                      value="police"
                     >
-                      <li
-                        className="DropdownListItem__DropdownListItem___LOUnP"
-                        data-test-id="cf-ui-dropdown-list-item"
+                      <ControlledInputField
+                        checked={false}
+                        id="police"
+                        inputType="checkbox"
+                        labelIsLight={true}
+                        labelText="Police officer"
+                        onChange={[Function]}
+                        testId="cf-ui-checkbox-field"
+                        value="police"
                       >
-                        <CheckboxField
-                          checked={false}
-                          id="police"
-                          inputType="checkbox"
-                          labelIsLight={true}
-                          labelText="Police officer"
-                          onChange={[Function]}
-                          testId="cf-ui-checkbox-field"
-                          value="police"
+                        <div
+                          className="ControlledInputField__ControlledInputField___2uIG9"
+                          data-test-id="cf-ui-checkbox-field"
                         >
-                          <ControlledInputField
+                          <ControlledInput
                             checked={false}
+                            disabled={false}
+                            extraClassNames="ControlledInputField__ControlledInputField__input___3OMYB"
                             id="police"
-                            inputType="checkbox"
-                            labelIsLight={true}
                             labelText="Police officer"
                             onChange={[Function]}
-                            testId="cf-ui-checkbox-field"
+                            required={false}
+                            testId="cf-ui-controlled-input"
+                            type="checkbox"
                             value="police"
                           >
-                            <div
-                              className="ControlledInputField__ControlledInputField___2uIG9"
-                              data-test-id="cf-ui-checkbox-field"
+                            <input
+                              aria-label="Police officer"
+                              checked={false}
+                              className="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                              data-test-id="cf-ui-controlled-input"
+                              disabled={false}
+                              id="police"
+                              onChange={[Function]}
+                              required={false}
+                              type="checkbox"
+                              value="police"
+                            />
+                          </ControlledInput>
+                          <div>
+                            <FormLabel
+                              extraClassNames="ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
+                              htmlFor="police"
+                              required={false}
+                              requiredText="required"
+                              testId="cf-ui-form-label"
                             >
-                              <ControlledInput
-                                checked={false}
-                                disabled={false}
-                                extraClassNames="ControlledInputField__ControlledInputField__input___3OMYB"
-                                id="police"
-                                labelText="Police officer"
-                                onChange={[Function]}
-                                required={false}
-                                testId="cf-ui-controlled-input"
-                                type="checkbox"
-                                value="police"
+                              <label
+                                className="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
+                                data-test-id="cf-ui-form-label"
+                                htmlFor="police"
                               >
-                                <input
-                                  aria-label="Police officer"
-                                  checked={false}
-                                  className="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                                  data-test-id="cf-ui-controlled-input"
-                                  disabled={false}
-                                  id="police"
-                                  onChange={[Function]}
-                                  required={false}
-                                  type="checkbox"
-                                  value="police"
-                                />
-                              </ControlledInput>
-                              <div>
-                                <FormLabel
-                                  extraClassNames="ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
-                                  htmlFor="police"
-                                  required={false}
-                                  requiredText="required"
-                                  testId="cf-ui-form-label"
-                                >
-                                  <label
-                                    className="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
-                                    data-test-id="cf-ui-form-label"
-                                    htmlFor="police"
-                                  >
-                                    Police officer
-                                  </label>
-                                </FormLabel>
-                              </div>
-                            </div>
-                          </ControlledInputField>
-                        </CheckboxField>
-                      </li>
-                    </DropdownListItem>
-                    <DropdownListItem
-                      isActive={false}
-                      isDisabled={false}
-                      isTitle={false}
-                      key="thief"
-                      onEnter={[Function]}
-                      onLeave={[Function]}
-                      testId="cf-ui-dropdown-list-item"
+                                Police officer
+                              </label>
+                            </FormLabel>
+                          </div>
+                        </div>
+                      </ControlledInputField>
+                    </CheckboxField>
+                  </li>
+                </DropdownListItem>
+                <DropdownListItem
+                  isActive={false}
+                  isDisabled={false}
+                  isTitle={false}
+                  key="thief"
+                  onEnter={[Function]}
+                  onLeave={[Function]}
+                  testId="cf-ui-dropdown-list-item"
+                >
+                  <li
+                    className="DropdownListItem__DropdownListItem___LOUnP"
+                    data-test-id="cf-ui-dropdown-list-item"
+                  >
+                    <CheckboxField
+                      checked={false}
+                      id="thief"
+                      inputType="checkbox"
+                      labelIsLight={true}
+                      labelText="Thief"
+                      onChange={[Function]}
+                      testId="cf-ui-checkbox-field"
+                      value="thief"
                     >
-                      <li
-                        className="DropdownListItem__DropdownListItem___LOUnP"
-                        data-test-id="cf-ui-dropdown-list-item"
+                      <ControlledInputField
+                        checked={false}
+                        id="thief"
+                        inputType="checkbox"
+                        labelIsLight={true}
+                        labelText="Thief"
+                        onChange={[Function]}
+                        testId="cf-ui-checkbox-field"
+                        value="thief"
                       >
-                        <CheckboxField
-                          checked={false}
-                          id="thief"
-                          inputType="checkbox"
-                          labelIsLight={true}
-                          labelText="Thief"
-                          onChange={[Function]}
-                          testId="cf-ui-checkbox-field"
-                          value="thief"
+                        <div
+                          className="ControlledInputField__ControlledInputField___2uIG9"
+                          data-test-id="cf-ui-checkbox-field"
                         >
-                          <ControlledInputField
+                          <ControlledInput
                             checked={false}
+                            disabled={false}
+                            extraClassNames="ControlledInputField__ControlledInputField__input___3OMYB"
                             id="thief"
-                            inputType="checkbox"
-                            labelIsLight={true}
                             labelText="Thief"
                             onChange={[Function]}
-                            testId="cf-ui-checkbox-field"
+                            required={false}
+                            testId="cf-ui-controlled-input"
+                            type="checkbox"
                             value="thief"
                           >
-                            <div
-                              className="ControlledInputField__ControlledInputField___2uIG9"
-                              data-test-id="cf-ui-checkbox-field"
+                            <input
+                              aria-label="Thief"
+                              checked={false}
+                              className="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                              data-test-id="cf-ui-controlled-input"
+                              disabled={false}
+                              id="thief"
+                              onChange={[Function]}
+                              required={false}
+                              type="checkbox"
+                              value="thief"
+                            />
+                          </ControlledInput>
+                          <div>
+                            <FormLabel
+                              extraClassNames="ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
+                              htmlFor="thief"
+                              required={false}
+                              requiredText="required"
+                              testId="cf-ui-form-label"
                             >
-                              <ControlledInput
-                                checked={false}
-                                disabled={false}
-                                extraClassNames="ControlledInputField__ControlledInputField__input___3OMYB"
-                                id="thief"
-                                labelText="Thief"
-                                onChange={[Function]}
-                                required={false}
-                                testId="cf-ui-controlled-input"
-                                type="checkbox"
-                                value="thief"
+                              <label
+                                className="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
+                                data-test-id="cf-ui-form-label"
+                                htmlFor="thief"
                               >
-                                <input
-                                  aria-label="Thief"
-                                  checked={false}
-                                  className="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                                  data-test-id="cf-ui-controlled-input"
-                                  disabled={false}
-                                  id="thief"
-                                  onChange={[Function]}
-                                  required={false}
-                                  type="checkbox"
-                                  value="thief"
-                                />
-                              </ControlledInput>
-                              <div>
-                                <FormLabel
-                                  extraClassNames="ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
-                                  htmlFor="thief"
-                                  required={false}
-                                  requiredText="required"
-                                  testId="cf-ui-form-label"
-                                >
-                                  <label
-                                    className="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52 ControlledInputField__ControlledInputField__label--light___2G2AZ"
-                                    data-test-id="cf-ui-form-label"
-                                    htmlFor="thief"
-                                  >
-                                    Thief
-                                  </label>
-                                </FormLabel>
-                              </div>
-                            </div>
-                          </ControlledInputField>
-                        </CheckboxField>
-                      </li>
-                    </DropdownListItem>
-                  </ul>
-                </DropdownList>
-              </div>
-            </InViewport>
+                                Thief
+                              </label>
+                            </FormLabel>
+                          </div>
+                        </div>
+                      </ControlledInputField>
+                    </CheckboxField>
+                  </li>
+                </DropdownListItem>
+              </ul>
+            </DropdownList>
           </div>
-        </div>
-      </Dropdown>
-    </SpaceRoleEditor>
-  </ServicesConsumer>
-</MockedProvider>
+        </InViewport>
+      </div>
+    </div>
+  </Dropdown>
+</SpaceRoleEditor>
 `;

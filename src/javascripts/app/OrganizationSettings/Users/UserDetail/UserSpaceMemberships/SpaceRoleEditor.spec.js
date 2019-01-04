@@ -2,7 +2,17 @@ import React from 'react';
 import { mount } from 'enzyme';
 import SpaceRoleEditor from './SpaceRoleEditor.es6';
 
-const MockedProvider = require('../../../../../reactServiceContext').MockedProvider;
+jest.mock(
+  'ng/access_control/SpaceMembershipRepository.es6',
+  () => ({
+    ADMIN_ROLE: {
+      name: 'Admin',
+      sys: { id: 'admin' }
+    },
+    ADMIN_ROLE_ID: 'admin'
+  }),
+  { virtual: true }
+);
 
 describe('SpaceRoleEditor', () => {
   let changeCb;
@@ -26,20 +36,7 @@ describe('SpaceRoleEditor', () => {
       onChange: changeCb
     };
 
-    return mount(
-      <MockedProvider
-        services={{
-          'access_control/SpaceMembershipRepository.es6': {
-            ADMIN_ROLE: {
-              name: 'Admin',
-              sys: { id: 'admin' }
-            },
-            ADMIN_ROLE_ID: 'admin'
-          }
-        }}>
-        <SpaceRoleEditor {...Object.assign(defaultProps, props)} />
-      </MockedProvider>
-    );
+    return mount(<SpaceRoleEditor {...Object.assign(defaultProps, props)} />);
   };
 
   beforeEach(() => {});
