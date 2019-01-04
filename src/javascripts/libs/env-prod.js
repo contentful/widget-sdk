@@ -92,6 +92,7 @@ window.libs = [
   ['react-tippy', require('react-tippy')],
   ['redux', require('redux')],
   ['redux-thunk', require('redux-thunk')],
+  ['reselect', require('reselect')],
   ['rtl-detect', require('rtl-detect')],
   ['sanitize-html', require('sanitize-html')],
   ['scroll-into-view', require('scroll-into-view')],
