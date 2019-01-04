@@ -24,7 +24,7 @@ export default (state = {}, { type, meta, payload }, globalState) => {
       const { dataset, item } = payload;
       return set([orgId, dataset, item.sys.id], item, state);
     }
-    case 'REMOVE_TEAM_MEMBERSHIP': {
+    case 'REMOVE_TEAM_MEMBERSHIP_CONFIRMED': {
       return update([orgId, TEAM_MEMBERSHIPS], omit(payload.teamMembershipId), state);
     }
   }

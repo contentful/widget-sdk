@@ -2,14 +2,15 @@ import { get, flow, sortBy, toLower } from 'lodash/fp';
 import { getPath } from './location.es6';
 import getDatasets from './getDatasets.es6';
 import ROUTES from '../routes.es6';
+import { TEAMS } from '../dataSets.es6';
 
 export const getTeams = flow(
   getDatasets,
-  get('teams')
+  get(TEAMS)
 );
 
 export const getTeamListWithOptimistic = state => {
-  const persistedTeams = get('teams', getDatasets(state)) || [];
+  const persistedTeams = get(TEAMS, getDatasets(state)) || [];
   return sortBy(
     flow(
       get('name'),
