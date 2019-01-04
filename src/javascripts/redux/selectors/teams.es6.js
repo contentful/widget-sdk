@@ -13,7 +13,7 @@ export const getTeamListWithOptimistic = state => {
   return sortBy('name', Object.values(persistedTeams).concat(get('optimistic.teams', state) || []));
 };
 
-export const getTeamId = flow(
+export const getCurrentTeam = flow(
   getPath,
   ROUTES.organization.children.teams.children.team.test,
   get('teamId')

@@ -1,5 +1,5 @@
 import { get, mergeWith, keyBy } from 'lodash';
-import { update, concat } from 'lodash/fp';
+import { update, set } from 'lodash/fp';
 import getOrgId from 'redux/selectors/getOrgId.es6';
 
 export default (state = {}, { type, meta, payload }, globalState) => {
@@ -19,8 +19,9 @@ export default (state = {}, { type, meta, payload }, globalState) => {
       }
       break;
     }
-    case 'TEAM_PERSISTED': {
-      return update([orgId, 'teams'], concat(payload.newTeam), state);
+    case 'ADD_TO_DATASET': {
+      const { dataset, item } = payload;
+      return set([orgId, dataset, item.sys.id], item, state);
     }
   }
   return state;

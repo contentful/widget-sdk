@@ -11,14 +11,15 @@ export default class TeamForm extends React.Component {
     orgId: PropTypes.string.isRequired,
     onClose: PropTypes.func.isRequired,
     initialTeam: TeamPropType,
-    onConfirm: PropTypes.func
+    onConfirm: PropTypes.func,
+    isEditing: PropTypes.bool
   };
 
   static defaultProps = {
+    isEditing: false,
     initialTeam: { name: '', description: '' }
   };
 
-  isEditing = Boolean(this.props.initialTeam);
   service = createTeamService(this.props.orgId);
 
   state = this.props.initialTeam;
@@ -44,12 +45,12 @@ export default class TeamForm extends React.Component {
   };
 
   render() {
-    const { onClose } = this.props;
+    const { onClose, isEditing } = this.props;
     const { name, description, validationMessage, busy } = this.state;
 
     return (
       <React.Fragment>
-        <Modal.Header title={this.isEditing ? 'Edit team' : 'New team'} onClose={onClose} />
+        <Modal.Header title={isEditing ? 'Edit team' : 'New team'} onClose={onClose} />
         <Modal.Content>
           <p>Teams make it easy to group people together.</p>
           <TextField

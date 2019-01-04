@@ -6,7 +6,7 @@ import { isEmpty } from 'lodash';
 import { getUserName } from 'app/OrganizationSettings/Users/UserUtils.es6';
 
 import { Team as TeamPropType, User as UserPropType } from 'app/OrganizationSettings/PropTypes.es6';
-import { getTeams, getTeamId } from 'redux/selectors/teams.es6';
+import { getTeams, getCurrentTeam } from 'redux/selectors/teams.es6';
 import { getUsers } from 'redux/selectors/users.es6';
 import Workbench from 'app/common/Workbench.es6';
 
@@ -16,7 +16,7 @@ export default connect(state => {
   const teams = getTeams(state);
   return {
     loading: isEmpty(teams) || isEmpty(getUsers(state)),
-    team: isEmpty(teams) ? undefined : teams[getTeamId(state)],
+    team: isEmpty(teams) ? undefined : teams[getCurrentTeam(state)],
     users: getUsers(state)
   };
 })(
