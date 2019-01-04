@@ -10,6 +10,7 @@ export default function createTeamService(orgId) {
     getAll,
     create,
     update,
+    remove,
     getTeamMemberships,
     createTeamMembership,
     removeTeamMembership
@@ -53,6 +54,16 @@ export default function createTeamService(orgId) {
         path: ['teams', id],
         data: { name, description },
         version: sys.version
+      },
+      ALPHA_HEADER
+    );
+  }
+
+  function remove(teamId) {
+    return endpoint(
+      {
+        method: 'DELETE',
+        path: ['teams', teamId]
       },
       ALPHA_HEADER
     );

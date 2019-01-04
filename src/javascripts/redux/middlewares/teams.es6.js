@@ -19,6 +19,21 @@ export default ({ dispatch, getState }) => next => async action => {
       Notification.success(`Team ${newTeam.name} created successfully`);
       break;
     }
+    case 'REMOVE_TEAM': {
+      next(action);
+      const state = getState();
+      const service = createTeamService(await getOrgId(getState()));
+      const datasets = getDatasets(state);
+      const teamId = action.payload.teamId;
+      const team = datasets[TEAMS][teamId];
+      try {
+        await service.remove(teamId);
+        Notification.success(`Team ${team.name} removed successfully`);
+      } catch (e) {
+        Notification.error(`Could not remove ${team.name}. Please try again`);
+      }
+      break;
+    }
     case 'SUBMIT_NEW_TEAM_MEMBERSHIP': {
       const state = getState();
       next(action);
