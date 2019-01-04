@@ -71,7 +71,7 @@ export async function makeDropPane({ id, onSuccess }) {
   const client = await init();
   return client
     .picker({
-      container: '.__filestack-drop-pane-mount',
+      container: id,
       displayMode: 'dropPane',
       dropPane: {
         id,
