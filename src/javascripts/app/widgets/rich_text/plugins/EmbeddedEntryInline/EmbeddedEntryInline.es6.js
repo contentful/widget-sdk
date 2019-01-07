@@ -21,13 +21,10 @@ class EmbeddedEntryInline extends React.Component {
   };
 
   handleEditClick = entry => {
-    slideInNavigator.goToSlideInEntity(
-      {
-        id: entry.sys.id,
-        type: 'Entry'
-      },
-      2
-    );
+    slideInNavigator.goToSlideInEntity({
+      id: entry.sys.id,
+      type: 'Entry'
+    });
   };
 
   handleRemoveClick = event => {

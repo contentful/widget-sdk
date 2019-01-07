@@ -17,9 +17,7 @@ registerController('entityEditor/StateController', [
   'spaceContext',
   'navigation/closeState',
   'analyticsEvents/versioning',
-
   'analytics/Analytics.es6',
-  'utils/LaunchDarkly/index.es6',
   'navigation/SlideInNavigator/index.es6',
   'app/entity_editor/PublicationWarnings/index.es6',
   function(
@@ -34,7 +32,6 @@ registerController('entityEditor/StateController', [
     closeState,
     trackVersioning,
     Analytics,
-    { onFeatureFlag },
     { goToPreviousSlideOrExit },
     { create: createPublicationWarnings }
   ) {
@@ -49,11 +46,6 @@ registerController('entityEditor/StateController', [
 
     K.onValueScope($scope, docStateManager.inProgress$, inProgress => {
       controller.inProgress = inProgress;
-    });
-
-    const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG = 'feature-at-05-2018-sliding-entry-editor-multi-level';
-    onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, flagState => {
-      $scope.slideInFeatureFlagValue = flagState === 2 ? 2 : 0;
     });
 
     const noop = Command.create(() => {});
@@ -232,11 +224,7 @@ registerController('entityEditor/StateController', [
     controller.delete = Command.create(
       () =>
         applyActionWithConfirmation(Action.Delete()).then(() => {
-          if ($scope.slideInFeatureFlagValue) {
-            goToPreviousSlideOrExit($scope.slideInFeatureFlagValue, 'delete', closeState);
-          } else {
-            return closeState();
-          }
+          goToPreviousSlideOrExit('delete', closeState);
         }),
       {
         disabled: function() {

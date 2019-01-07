@@ -1,8 +1,6 @@
 import _ from 'lodash';
 
 describe('entityEditor/StateController', () => {
-  const SLIDE_IN_EDITOR_FEATURE_FLAG_VALUE = 2; // Enabled with multiple levels.
-
   beforeEach(function() {
     const closeStateSpy = (this.closeStateSpy = sinon.spy());
     this.stubs = {
@@ -13,11 +11,6 @@ describe('entityEditor/StateController', () => {
       $provide.constant('navigation/closeState', closeStateSpy);
       $provide.constant('navigation/SlideInNavigator/index.es6', {
         goToPreviousSlideOrExit: this.stubs.goToPreviousSlideOrExit
-      });
-      $provide.constant('utils/LaunchDarkly/index.es6', {
-        onFeatureFlag: sinon.stub().callsFake((_1, _2, cb) => {
-          cb(SLIDE_IN_EDITOR_FEATURE_FLAG_VALUE);
-        })
       });
     });
 
@@ -135,12 +128,7 @@ describe('entityEditor/StateController', () => {
     it('navigates to the previous slide-in entity or closes the current state as a fallback', function() {
       this.controller.delete.execute();
       this.$apply();
-      sinon.assert.calledOnceWith(
-        this.stubs.goToPreviousSlideOrExit,
-        SLIDE_IN_EDITOR_FEATURE_FLAG_VALUE,
-        'delete',
-        this.closeStateSpy
-      );
+      sinon.assert.calledOnceWith(this.stubs.goToPreviousSlideOrExit, 'delete', this.closeStateSpy);
     });
   });
 

@@ -1,13 +1,10 @@
 import { track } from 'analytics/Analytics.es6';
 import { findIndex } from 'lodash';
-import { onFeatureFlag } from 'utils/LaunchDarkly/index.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const { getSlideInEntities, goToSlideInEntity } = getModule('navigation/SlideInNavigator');
-
 const { setTimeout, clearTimeout } = window;
 
-const SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG = 'feature-at-05-2018-sliding-entry-editor-multi-level';
 const PEEK_IN_DELAY = 500;
 const PEEK_OUT_DELAY = 500;
 const PEEK_ANIMATION_DURATION = 200;
@@ -24,11 +21,6 @@ export default ($scope, $state) => {
 
   $scope.entities = [];
   $scope.context.ready = true;
-
-  onFeatureFlag($scope, SLIDEIN_ENTRY_EDITOR_FEATURE_FLAG, flagState => {
-    $scope.isSlideinEntryEditorEnabled = flagState === 2;
-    setEntities();
-  });
 
   setEntities();
 
@@ -52,7 +44,7 @@ export default ($scope, $state) => {
     hoveredLayerIndex = null;
     topPeekingLayerIndex = -1;
     peekedLayerIndexes = [];
-    goToSlideInEntity(entity, $scope.isSlideinEntryEditorEnabled);
+    goToSlideInEntity(entity);
     const peekHoverTimeMs = getTimestamp() - $scope.peekStart - PEEK_IN_DELAY;
     track('slide_in_editor:peek_click', {
       peekHoverTimeMs: Math.max(0, peekHoverTimeMs),
@@ -104,10 +96,7 @@ export default ($scope, $state) => {
   const unlistenStateChangeStart = $scope.$on(
     '$stateChangeStart',
     (_event, toState, toParams, fromState, _fromParams, options) => {
-      const preventControllerReload =
-        $scope.isSlideinEntryEditorEnabled &&
-        isRelevantState(toState) &&
-        isRelevantState(fromState);
+      const preventControllerReload = isRelevantState(toState) && isRelevantState(fromState);
       if (preventControllerReload) {
         options.notify = false;
         $state.params = { ...toParams };
@@ -125,7 +114,7 @@ export default ($scope, $state) => {
     const previousEntities = $scope.entities;
     const moreThanOneNewEntityAdded = previousEntities.length + 1 < $scope.entities.length;
 
-    $scope.entities = getSlideInEntities().slice($scope.isSlideinEntryEditorEnabled ? 0 : -1);
+    $scope.entities = getSlideInEntities();
 
     // If there was more than one new entity added to the stack, we will have to
     // trigger loading for all those new entries, not just the one on top.

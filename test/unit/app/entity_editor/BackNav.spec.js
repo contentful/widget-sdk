@@ -4,8 +4,6 @@ import sinon from 'sinon';
 import { createIsolatedSystem } from 'test/helpers/system-js';
 
 describe('BackNav', () => {
-  const SLIDE_IN_EDITOR_FEATURE_FLAG_VALUE = 'feature-flag-val';
-
   beforeEach(async function() {
     module('contentful/test');
 
@@ -26,9 +24,7 @@ describe('BackNav', () => {
 
     this.system.set('NgRegistry.es6', { getModule });
     const { default: BackNav } = await this.system.import('app/entity_editor/Components/BackNav');
-    const props = {
-      slideInFeatureFlagValue: SLIDE_IN_EDITOR_FEATURE_FLAG_VALUE
-    };
+    const props = {};
     this.wrapper = shallow(<BackNav {...props} />);
   });
 
@@ -54,12 +50,11 @@ describe('BackNav', () => {
     sinon.assert.calledOnce(this.goToPreviousSlideOrExitStub);
     sinon.assert.alwaysCalledWithMatch(
       this.goToPreviousSlideOrExitStub,
-      SLIDE_IN_EDITOR_FEATURE_FLAG_VALUE,
       'arrow_back',
       sinon.match.func
     );
     sinon.assert.notCalled(this.closeState);
-    const [[, , callback]] = this.goToPreviousSlideOrExitStub.args;
+    const [[, callback]] = this.goToPreviousSlideOrExitStub.args;
     callback();
     sinon.assert.calledOnce(this.closeState);
   });

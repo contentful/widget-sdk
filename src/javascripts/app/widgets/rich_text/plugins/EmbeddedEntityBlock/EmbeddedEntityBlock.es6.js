@@ -23,7 +23,7 @@ class LinkedEntityBlock extends React.Component {
   }
 
   handleEditClick() {
-    slideInNavigator.goToSlideInEntity(this.getEntitySys(), 2);
+    slideInNavigator.goToSlideInEntity(this.getEntitySys());
   }
 
   handleRemoveClick() {
