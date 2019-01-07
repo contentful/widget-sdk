@@ -100,7 +100,7 @@ jest.mock(
     const moment = require('moment');
     const _ = require('lodash');
     const DATE_FORMAT = 'YYYY-MM-DD';
-    const startDate = moment().subtract(12, 'days');
+    const startDate = moment('2019-01-04').subtract(12, 'days');
     const endpoint = jest.fn().mockImplementation(({ method, path }) => {
       if (method === 'GET' && _.isEqual(path, ['usage_periods'])) {
         return {
