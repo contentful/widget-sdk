@@ -2,51 +2,22 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Editor } from 'slate-react';
 import { Value } from 'slate';
+import { noop } from 'lodash';
 import cn from 'classnames';
-import TrailingBlock from 'slate-trailing-block';
+
 import deepEqual from 'fast-deep-equal';
-import Sticky from 'react-sticky-el';
-import { detect as detectBrowser } from 'detect-browser';
+import StickyToolbarWrapper from './Toolbar/StickyToolbarWrapper.es6';
 
 import { toContentfulDocument, toSlatejsDocument } from '@contentful/contentful-slatejs-adapter';
 
 import { newPluginAPI } from './plugins/shared/PluginApi.es6';
-import { BoldPlugin } from './plugins/Bold/index.es6';
-import { ItalicPlugin } from './plugins/Italic/index.es6';
-import { UnderlinedPlugin } from './plugins/Underlined/index.es6';
-import { CodePlugin } from './plugins/Code/index.es6';
-import { QuotePlugin } from './plugins/Quote/index.es6';
-import { HyperlinkPlugin } from './plugins/Hyperlink/index.es6';
-import {
-  Heading1Plugin,
-  Heading2Plugin,
-  Heading3Plugin,
-  Heading4Plugin,
-  Heading5Plugin,
-  Heading6Plugin
-} from './plugins/Heading/index.es6';
-
-import NewLinePlugin from './plugins/NewLinePlugin/index.es6';
-import { ParagraphPlugin } from './plugins/Paragraph/index.es6';
-import {
-  EmbeddedAssetBlockPlugin,
-  EmbeddedEntryBlockPlugin
-} from './plugins/EmbeddedEntityBlock/index.es6';
-import { EmbeddedEntryInlinePlugin } from './plugins/EmbeddedEntryInline/index.es6';
-
-import { ListPlugin } from './plugins/List/index.es6';
-import { HrPlugin } from './plugins/Hr/index.es6';
+import { buildPlugins } from './plugins/index.es6';
 
 import schema from './constants/Schema.es6';
 import emptyDoc from './constants/EmptyDoc.es6';
 import { BLOCKS } from '@contentful/rich-text-types';
-import { PastePlugin } from './plugins/Paste/index.es6';
-import { PasteHtmlPlugin } from './plugins/PasteHtml/index.es6';
-import { PasteTextPlugin } from './plugins/PasteText/index.es6';
 
 import Toolbar from './Toolbar/index.es6';
-
-const noop = () => {};
 
 const createValue = contentfulDocument => {
   const document = toSlatejsDocument({
@@ -63,25 +34,6 @@ const createValue = contentfulDocument => {
 
 const initialValue = createValue(emptyDoc);
 
-const StickyToolbarWrapper = ({ children, isDisabled }) =>
-  detectBrowser().name === 'ie' ? (
-    <Sticky
-      className="sticky-wrapper"
-      boundaryElement=".rich-text"
-      scrollElement=".sticky-parent"
-      stickyStyle={{ zIndex: 2 }}
-      disabled={isDisabled}>
-      {children}
-    </Sticky>
-  ) : (
-    <div className="native-sticky">{children}</div>
-  );
-
-StickyToolbarWrapper.propTypes = {
-  children: PropTypes.node,
-  isDisabled: PropTypes.bool
-};
-
 export default class RichTextEditor extends React.Component {
   static propTypes = {
     widgetAPI: PropTypes.object.isRequired,
@@ -97,18 +49,22 @@ export default class RichTextEditor extends React.Component {
     onAction: noop
   };
 
-  constructor(props) {
-    super(props);
-    const { value } = this.props;
+  state = {
+    lastOperations: [],
+    isEmbedDropdownOpen: false,
+    value:
+      this.props.value && this.props.value.nodeType === BLOCKS.DOCUMENT
+        ? createValue(this.props.value)
+        : initialValue,
+    hasFocus: false
+  };
 
-    this.state = {
-      lastOperations: [],
-      isEmbedDropdownOpen: false,
-      value: value && value.nodeType === BLOCKS.DOCUMENT ? createValue(value) : initialValue,
-      hasFocus: false
-    };
-    this.slatePlugins = buildPlugins(newPluginAPI(this.props));
-  }
+  slatePlugins = buildPlugins(
+    newPluginAPI({
+      widgetAPI: this.props.widgetAPI,
+      onAction: this.props.onAction
+    })
+  );
 
   onChange = change => {
     const { value, operations } = change;
@@ -148,7 +104,10 @@ export default class RichTextEditor extends React.Component {
             change={this.state.value.change()}
             onChange={this.onChange}
             isDisabled={this.props.isDisabled}
-            richTextAPI={newPluginAPI(this.props)}
+            richTextAPI={newPluginAPI({
+              widgetAPI: this.props.widgetAPI,
+              onAction: this.props.onAction
+            })}
           />
         </StickyToolbarWrapper>
         <Editor
@@ -200,32 +159,4 @@ function newUnhandledOpError(op) {
     .map(v => `\`${v}\``)
     .join(',');
   return new Error(`Unhandled operation \`${op.type}\` with properties ${properties}`);
-}
-
-function buildPlugins(richTextAPI) {
-  return [
-    BoldPlugin({ richTextAPI }),
-    ItalicPlugin({ richTextAPI }),
-    UnderlinedPlugin({ richTextAPI }),
-    CodePlugin({ richTextAPI }),
-    QuotePlugin({ richTextAPI }),
-    HyperlinkPlugin({ richTextAPI }),
-    Heading1Plugin({ richTextAPI }),
-    Heading2Plugin({ richTextAPI }),
-    Heading3Plugin({ richTextAPI }),
-    Heading4Plugin({ richTextAPI }),
-    Heading5Plugin({ richTextAPI }),
-    Heading6Plugin({ richTextAPI }),
-    ParagraphPlugin(),
-    HrPlugin({ richTextAPI }),
-    EmbeddedEntryInlinePlugin({ richTextAPI }),
-    EmbeddedEntryBlockPlugin({ richTextAPI }),
-    EmbeddedAssetBlockPlugin({ richTextAPI }),
-    ListPlugin({ richTextAPI }),
-    PastePlugin({ richTextAPI }),
-    PasteHtmlPlugin(),
-    PasteTextPlugin(),
-    TrailingBlock({ type: BLOCKS.PARAGRAPH }),
-    NewLinePlugin()
-  ];
 }
