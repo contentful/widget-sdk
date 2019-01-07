@@ -19,10 +19,6 @@ describe('Enforcements Service', function() {
       $provide.value('services/TokenStore.es6', {
         getSpace: this.getSpace
       });
-
-      $provide.value('utils/LaunchDarkly/index.es6', {
-        getCurrentVariation: this.getCurrentVariation
-      });
     });
     this.EnforcementsService = this.$inject('services/EnforcementsService.es6');
 
@@ -78,25 +74,6 @@ describe('Enforcements Service', function() {
 
       expect(first).toBe(enforcements);
       expect(second).toBe(newEnforcements);
-    });
-  });
-
-  describe('using token for enforcements', function() {
-    beforeEach(function() {
-      this.getCurrentVariation.resolves(false);
-    });
-
-    it('should attempt to get the space from the TokenStore', async function() {
-      await this.EnforcementsService.refresh('SPACE_ID');
-      expect(this.getSpace.callCount).toBe(1);
-    });
-
-    it('should return the enforcements from the token', async function() {
-      const enforcements = [{ sys: { id: 'enf_N' } }];
-      this.tokenSpace.enforcements = enforcements;
-      await this.EnforcementsService.refresh('SPACE_ID');
-
-      expect(this.EnforcementsService.getEnforcements('SPACE_ID')).toEqual(enforcements);
     });
   });
 
