@@ -157,7 +157,7 @@ class UserSpaceMemberships extends React.Component {
     });
 
     Notification.success(`
-      ${user.firstName} is now ${joinWithAnd(roleNames)} in the the space ${space.name}
+      ${user.firstName} is now ${joinWithAnd(roleNames)} in the space ${space.name}
     `);
   };
 
