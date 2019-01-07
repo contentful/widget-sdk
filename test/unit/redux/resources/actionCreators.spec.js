@@ -24,8 +24,8 @@ describe('App Resources action creators', function() {
     };
 
     this.spaceId = 'space_1234';
-    this.actionCreators = this.$inject('ReduxAppActions/resources/actionCreators.es6');
-    this.actions = this.$inject('ReduxAppActions/resources/actions.es6');
+    this.actionCreators = this.$inject('redux/actions/resources/actionCreators.es6');
+    this.actions = this.$inject('redux/actions/resources/actions.es6');
   });
 
   describe('getResourcesForSpace', function() {

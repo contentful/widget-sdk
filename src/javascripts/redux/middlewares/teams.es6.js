@@ -1,6 +1,6 @@
 import React from 'react';
 import getOrgId from 'redux/selectors/getOrgId.es6';
-import { Notification } from '@contentful/forma-36-react-components';
+import { Notification, ModalConfirm } from '@contentful/forma-36-react-components';
 import createTeamService from 'app/OrganizationSettings/Teams/TeamService.es6';
 import { getCurrentTeam } from '../selectors/teams.es6';
 import { TEAM_MEMBERSHIPS, TEAMS } from '../dataSets.es6';
@@ -26,12 +26,35 @@ export default ({ dispatch, getState }) => next => async action => {
       const datasets = getDatasets(state);
       const teamId = action.payload.teamId;
       const team = datasets[TEAMS][teamId];
+      const confirmation = await ModalLauncher.open(({ isShown, onClose }) => (
+        <ModalConfirm
+          title={`Remove team ${team.name}`}
+          intent="negative"
+          isShown={isShown}
+          confirmLabel="Remove"
+          onConfirm={() => onClose(true)}
+          onCancel={() => onClose(false)}>
+          <p>Are you sure you want to remove the team {team.name}?</p>
+        </ModalConfirm>
+      ));
+
+      if (!confirmation) {
+        break;
+      }
+
+      dispatch({ type: 'REMOVE_TEAM_CONFIRMED', payload: { teamId } });
+
       try {
         await service.remove(teamId);
         Notification.success(`Team ${team.name} removed successfully`);
       } catch (e) {
         Notification.error(`Could not remove ${team.name}. Please try again`);
+        dispatch({
+          type: 'ADD_TO_DATASET',
+          payload: { item: team, dataset: TEAMS }
+        });
       }
+
       break;
     }
     case 'SUBMIT_NEW_TEAM_MEMBERSHIP': {

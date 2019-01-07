@@ -33,7 +33,7 @@ registerDirective('reactComponent', [
   '$injector',
   'logger',
   'redux/store.es6',
-  function($injector, logger, ServicesProvider, { default: store }) {
+  function($injector, logger, { default: store }) {
     return {
       restrict: 'E',
       replace: true,
