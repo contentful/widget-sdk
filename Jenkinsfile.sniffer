@@ -27,7 +27,6 @@ pipeline {
   stages {
     stage('Checkout sniffer repos') {
       steps {
-        sourceCodeCheckout('project-sniffer', 'master', 'project-sniffer')
         sourceCodeCheckout('build-stats', 'master', 'build-stats')
         sourceCodeCheckout('project-sniffer-dashboard', 'master', 'project-sniffer-dashboard')
       }
@@ -48,11 +47,8 @@ pipeline {
     stage('Build') {
       steps {
         container('node') {
-          sh 'npm install lodash @babel/parser @babel/traverse'
-          dir('project-sniffer') {
-            sh 'npm install'
-            sh "node source/cli.js ../user_interface/ --config tools/sniffer --last ${params.last} --jump ${params.jump} --output ../project-sniffer-dashboard/src"
-          }
+          sh 'npm install lodash @babel/parser @babel/traverse @contentful/project-sniffer'
+          sh 'contentful-project-sniffer user_interface --config tools/sniffer --last ${params.last} --jump ${params.jump} --output project-sniffer-dashboard/src'
           dir('build-stats') {
             sh 'npm install && npm run build'
             withCredentials([
