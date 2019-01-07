@@ -8,7 +8,7 @@ describe('statePersistence redux module', () => {
         createSpaceEndpoint: this.createSpaceEndpoint
       });
     });
-    const { createStore, applyMiddleware, combineReducers } = this.$inject('redux');
+    const { createStore, applyMiddleware } = this.$inject('redux');
     const thunk = this.$inject('redux-thunk').default;
     const reducer = this.$inject('redux/reducer/index.es6').default;
     this.actions = this.$inject('redux/actions/statePersistence/actionCreators.es6');
@@ -16,12 +16,7 @@ describe('statePersistence redux module', () => {
       'redux/actions/environments.es6'
     ).deleteEnvironmentSuccess;
     this.selectors = this.$inject('redux/selectors/statePersistence.es6');
-    this.store = createStore(
-      combineReducers({
-        statePersistence: reducer
-      }),
-      applyMiddleware(thunk)
-    );
+    this.store = createStore(reducer, applyMiddleware(thunk));
   });
 
   [
