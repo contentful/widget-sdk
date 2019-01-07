@@ -49,40 +49,87 @@ export function resolveLink(link, params) {
  * so nothing is available yet, so we download everything
  */
 function resolveParams(link, params) {
-  // we map links from `link` queryParameter to resolve fn
-  // keys are quoted for consistency, you can use special symbols
-  //
-  // Please document all possible links in the wiki
-  // https://contentful.atlassian.net/wiki/spaces/PROD/pages/208765005/Deeplinking+in+the+Webapp
-  const mappings = {
-    home: resolveHome,
-    api: resolveApi,
-    'general-settings': resolveSettings,
-    locales: resolveLocales,
-    'roles-and-permissions': resolveRoles,
-    'content-preview': resolveContentPreview,
-    'content-model': resolveContentModel,
-    extensions: resolveExtensions,
-    'install-extension': resolveInstallExtension,
-    invite: resolveInviteUser,
-    users: resolveUsers,
-    subscription: resolveSubscriptions,
-    org: resolveOrganizationInfo,
-    'onboarding-get-started': createOnboardingScreenResolver('getStarted'),
-    'onboarding-copy': createOnboardingScreenResolver('copy'),
-    'onboarding-explore': createOnboardingScreenResolver('explore'),
-    'onboarding-deploy': createOnboardingScreenResolver('deploy'),
-    'webhook-template': resolveWebhookTemplate,
-    apps: resolveApps
-  };
+  try {
+    // we map links from `link` queryParameter to resolve fn
+    // keys are quoted for consistency, you can use special symbols
+    //
+    // Please document all possible links in the wiki
+    // https://contentful.atlassian.net/wiki/spaces/PROD/pages/208765005/Deeplinking+in+the+Webapp
+    const mappings = {
+      // space scoped deeplinks
+      api: resolveApi,
+      'install-extension': resolveInstallExtension,
+      'webhook-template': resolveWebhookTemplate,
+      apps: resolveApps,
+      home: makeSpaceScopedPathResolver({ spaceScopedPath: ['spaces', 'detail', 'home'] }),
+      'general-settings': makeSpaceScopedPathResolver({
+        spaceScopedPath: ['spaces', 'detail', 'settings', 'space']
+      }),
+      locales: makeSpaceScopedPathResolver({
+        spaceScopedPath: ['spaces', 'detail', 'settings', 'locales', 'list']
+      }),
+      'roles-and-permissions': makeSpaceScopedPathResolver({
+        spaceScopedPath: ['spaces', 'detail', 'settings', 'roles', 'list']
+      }),
+      'content-preview': makeSpaceScopedPathResolver({
+        spaceScopedPath: ['spaces', 'detail', 'settings', 'content_preview', 'list']
+      }),
+      'content-model': makeSpaceScopedPathResolver({
+        spaceScopedPath: ['spaces', 'detail', 'content_types', 'list']
+      }),
+      extensions: makeSpaceScopedPathResolver({
+        spaceScopedPath: ['spaces', 'detail', 'settings', 'extensions']
+      }),
+      'onboarding-get-started': createOnboardingScreenResolver('getStarted'),
+      'onboarding-copy': createOnboardingScreenResolver('copy'),
+      'onboarding-explore': createOnboardingScreenResolver('explore'),
+      'onboarding-deploy': createOnboardingScreenResolver('deploy'),
+      // org scoped deeplinks
+      invite: makeOrgScopedPathResolver({
+        orgScopedPath: ['account', 'organizations', 'users', 'new']
+      }),
+      users: makeOrgScopedPathResolver({
+        orgScopedPath: ['account', 'organizations', 'users', 'list'],
+        pathSuffix: ''
+      }),
+      org: makeOrgScopedPathResolver({
+        orgScopedPath: ['account', 'organizations', 'edit'],
+        pathSuffix: ''
+      }),
+      subscription: resolveSubscriptions
+    };
 
-  const resolverFn = mappings[link];
+    const resolverFn = mappings[link];
 
-  if (resolverFn) {
-    return resolverFn(params);
-  } else {
-    return Promise.reject(new Error('path does not exist'));
+    if (resolverFn) {
+      return resolverFn(params);
+    } else {
+      return Promise.reject(new Error('path does not exist'));
+    }
+  } catch (err) {
+    return Promise.reject(err);
   }
+}
+
+function makeSpaceScopedPathResolver({ spaceScopedPath }) {
+  if (!spaceScopedPath || !Array.isArray(spaceScopedPath)) {
+    throw new Error('A path for a deeplink to resolve to must be provided');
+  }
+
+  if (!spaceScopedPath.includes('spaces')) {
+    throw new Error('A space scoped path must be nested under "spaces"');
+  }
+
+  return () =>
+    runTask(function*() {
+      const { space, spaceId } = yield* getSpaceInfo();
+      yield spaceContext.resetWithSpace(space);
+
+      return {
+        path: spaceScopedPath,
+        params: { spaceId }
+      };
+    });
 }
 
 function createOnboardingScreenResolver(screen) {
@@ -106,22 +153,6 @@ function createOnboardingScreenResolver(screen) {
         throw new Error(ONBOARDING_ERROR);
       }
     });
-}
-
-// resolve Home page
-// always redirects directly to the home screen
-// if you just redirect to `/`, you might end up on the
-// content screen, this deeplink route solves it
-function resolveHome() {
-  return runTask(function*() {
-    const { space, spaceId } = yield* getSpaceInfo();
-    yield spaceContext.resetWithSpace(space);
-
-    return {
-      path: ['spaces', 'detail', 'home'],
-      params: { spaceId }
-    };
-  });
 }
 
 // resolve API page
@@ -159,72 +190,6 @@ function resolveApi() {
   });
 }
 
-function resolveSettings() {
-  return runTask(function*() {
-    const { space, spaceId } = yield* getSpaceInfo();
-    yield spaceContext.resetWithSpace(space);
-    return {
-      path: ['spaces', 'detail', 'settings', 'space'],
-      params: { spaceId }
-    };
-  });
-}
-
-function resolveLocales() {
-  return runTask(function*() {
-    const { space, spaceId } = yield* getSpaceInfo();
-    yield spaceContext.resetWithSpace(space);
-    return {
-      path: ['spaces', 'detail', 'settings', 'locales', 'list'],
-      params: { spaceId }
-    };
-  });
-}
-
-function resolveRoles() {
-  return runTask(function*() {
-    const { space, spaceId } = yield* getSpaceInfo();
-    yield spaceContext.resetWithSpace(space);
-    return {
-      path: ['spaces', 'detail', 'settings', 'roles', 'list'],
-      params: { spaceId }
-    };
-  });
-}
-
-function resolveContentPreview() {
-  return runTask(function*() {
-    const { space, spaceId } = yield* getSpaceInfo();
-    yield spaceContext.resetWithSpace(space);
-    return {
-      path: ['spaces', 'detail', 'settings', 'content_preview', 'list'],
-      params: { spaceId }
-    };
-  });
-}
-
-function resolveContentModel() {
-  return runTask(function*() {
-    const { space, spaceId } = yield* getSpaceInfo();
-    yield spaceContext.resetWithSpace(space);
-    return {
-      path: ['spaces', 'detail', 'content_types', 'list'],
-      params: { spaceId }
-    };
-  });
-}
-
-function resolveExtensions() {
-  return runTask(function*() {
-    const { space, spaceId } = yield* getSpaceInfo();
-    yield spaceContext.resetWithSpace(space);
-    return {
-      path: ['spaces', 'detail', 'settings', 'extensions'],
-      params: { spaceId }
-    };
-  });
-}
-
 function resolveInstallExtension({ url, referrer }) {
   return runTask(function*() {
     if (!url) {
@@ -241,69 +206,6 @@ function resolveInstallExtension({ url, referrer }) {
       }
     };
   });
-}
-
-function resolveInviteUser() {
-  return runTask(function*() {
-    const { orgId } = yield* getOrg();
-    return yield* applyOrgAccess(orgId, {
-      path: ['account', 'organizations', 'users', 'new'],
-      params: { orgId }
-    });
-  });
-}
-
-function resolveUsers() {
-  return runTask(function*() {
-    const { orgId } = yield* getOrg();
-    return yield* applyOrgAccess(orgId, {
-      path: ['account', 'organizations', 'users', 'list'],
-      params: { orgId, pathSuffix: '' }
-    });
-  });
-}
-
-function resolveSubscriptions() {
-  return runTask(function*() {
-    const { orgId, org } = yield* getOrg();
-
-    const hasNewPricing = !isLegacyOrganization(org);
-
-    return yield* applyOrgAccess(orgId, {
-      path: ['account', 'organizations', hasNewPricing ? 'subscription_new' : 'subscription'],
-      params: {
-        orgId,
-        // dummy pathsuffix since we don't want to redirect
-        // to purchase page
-        pathSuffix: ''
-      }
-    });
-  });
-}
-
-function resolveOrganizationInfo() {
-  return runTask(function*() {
-    const { orgId } = yield* getOrg();
-    return yield* applyOrgAccess(orgId, {
-      path: ['account', 'organizations', 'edit'],
-      params: {
-        orgId,
-        pathSuffix: ''
-      }
-    });
-  });
-}
-
-// return result only if user has access to organization settings
-function* applyOrgAccess(orgId, successResult) {
-  // user should be owner or admin to access this section
-  const hasAccess = yield* checkOrgAccess(orgId);
-
-  if (!hasAccess) {
-    throw new Error('user is not authorized');
-  }
-
-  return successResult;
 }
 
 function resolveWebhookTemplate({ id, referrer }) {
@@ -335,4 +237,55 @@ function resolveApps({ id }) {
       };
     }
   });
+}
+
+function makeOrgScopedPathResolver({ orgScopedPath, pathSuffix = null }) {
+  if (!orgScopedPath || !Array.isArray(orgScopedPath)) {
+    throw new Error('A path for a deeplink to resolve to must be provided');
+  }
+
+  if (!orgScopedPath.includes('organizations')) {
+    throw new Error('An org scoped path must contain "organizations"');
+  }
+
+  return () =>
+    runTask(function*() {
+      const { orgId } = yield* getOrg();
+      const params = pathSuffix === null ? { orgId } : { orgId, pathSuffix };
+
+      return yield* applyOrgAccess(orgId, {
+        path: orgScopedPath,
+        params
+      });
+    });
+}
+
+function resolveSubscriptions() {
+  return runTask(function*() {
+    const { orgId, org } = yield* getOrg();
+
+    const hasNewPricing = !isLegacyOrganization(org);
+
+    return yield* applyOrgAccess(orgId, {
+      path: ['account', 'organizations', hasNewPricing ? 'subscription_new' : 'subscription'],
+      params: {
+        orgId,
+        // dummy pathsuffix since we don't want to redirect
+        // to purchase page
+        pathSuffix: ''
+      }
+    });
+  });
+}
+
+// return result only if user has access to organization settings
+function* applyOrgAccess(orgId, successResult) {
+  // user should be owner or admin to access this section
+  const hasAccess = yield* checkOrgAccess(orgId);
+
+  if (!hasAccess) {
+    throw new Error('user is not authorized');
+  }
+
+  return successResult;
 }
