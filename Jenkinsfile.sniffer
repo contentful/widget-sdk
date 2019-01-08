@@ -64,10 +64,6 @@ pipeline {
           dir('project-sniffer-dashboard') {
             sh 'npm install && npm run build'
           }
-          withCredentials([usernamePassword(credentialsId: 'netlify-ui-sniffer', passwordVariable: 'BASIC_PWD', usernameVariable: 'BASIC_USER')]){
-            writeFile(file: '_headers', text: "/*\n  Basic-Auth: ${BASIC_USER}:${BASIC_PWD}")
-            sh 'cp _headers project-sniffer-dashboard/build/'
-          }
           writeFile(file: '_redirects', text: '/* /index.html 200')
           sh 'cp _redirects project-sniffer-dashboard/build/'
           sh 'npm --prefix ./project-sniffer-dashboard run zip ./project-sniffer-dashboard'
