@@ -1,18 +1,22 @@
-import { getQuery } from '../selectors/location.es6';
+import { getQuery, getPath } from '../selectors/location.es6';
 
-const updateQuery = (method, newQuery) =>
-  window.history[method]({}, '', `${window.location.pathname}${newQuery}`);
+const updateLocation = (method, newQuery, newPath) =>
+  window.history[method]({}, '', `${newPath}${newQuery}`);
 
 export default ({ getState }) => next => action => {
-  const oldQuery = getQuery(getState());
-  // update query in redux state
+  const oldState = getState();
+  // update location in redux state
   const result = next(action);
-  const newQuery = getQuery(getState());
-  if (oldQuery !== newQuery) {
+  const newState = getState();
+  const oldQuery = getQuery(oldState);
+  const oldPath = getPath(oldState);
+  const newQuery = getQuery(newState);
+  const newPath = getPath(newState);
+  if (oldQuery !== newQuery || oldPath !== newPath) {
     if (['RESET_FILTERS', 'CHANGE_FILTERS', 'UPDATE_SEARCH_TERM'].includes(action.type)) {
-      updateQuery('replaceState', newQuery);
+      updateLocation('replaceState', newQuery, newPath);
     } else if (action.type !== 'LOCATION_CHANGED') {
-      updateQuery('pushState', newQuery);
+      updateLocation('pushState', newQuery, newPath);
     }
   }
   return result;
