@@ -1,6 +1,7 @@
 import { get, mergeWith, keyBy } from 'lodash';
 import { update, set, omit } from 'lodash/fp';
 import getOrgId from 'redux/selectors/getOrgId.es6';
+import { TEAMS } from '../dataSets.es6';
 
 export default (state = {}, { type, meta, payload }, globalState) => {
   const orgId = getOrgId(globalState);
@@ -26,6 +27,10 @@ export default (state = {}, { type, meta, payload }, globalState) => {
     case 'REMOVE_FROM_DATASET_CONFIRMED': {
       const { dataset, id } = payload;
       return update([orgId, dataset], omit(id), state);
+    }
+    case 'EDIT_TEAM_CONFIRMED': {
+      const { id, changeSet } = payload;
+      return update([orgId, TEAMS, id], team => ({ ...team, ...changeSet }), state);
     }
   }
   return state;

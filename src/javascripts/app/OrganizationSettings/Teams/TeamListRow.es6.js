@@ -14,18 +14,20 @@ export default connect(
     orgId: getOrgId(state)
   }),
   dispatch => ({
-    removeTeam: teamId => dispatch({ type: 'REMOVE_TEAM', payload: { teamId } })
+    removeTeam: teamId => dispatch({ type: 'REMOVE_TEAM', payload: { teamId } }),
+    editTeam: teamId => dispatch({ type: 'EDIT_TEAM', payload: { teamId } })
   })
 )(
   class TeamListRow extends React.Component {
     static propTypes = {
       team: TeamPropType.isRequired,
       orgId: PropTypes.string.isRequired,
-      removeTeam: PropTypes.func.isRequired
+      removeTeam: PropTypes.func.isRequired,
+      editTeam: PropTypes.func.isRequired
     };
 
     render() {
-      const { team, orgId, removeTeam } = this.props;
+      const { team, orgId, removeTeam, editTeam } = this.props;
 
       return (
         <TableRow className="membership-list__item">
@@ -53,6 +55,13 @@ export default connect(
                 onClick={() => removeTeam(get(team, 'sys.id'))}
                 extraClassNames="membership-list__item__menu__button">
                 Remove
+              </Button>
+              <Button
+                buttonType="muted"
+                size="small"
+                onClick={() => editTeam(get(team, 'sys.id'))}
+                extraClassNames="membership-list__item__menu__button">
+                Edit
               </Button>
             </div>
           </TableCell>

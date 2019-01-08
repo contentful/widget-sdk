@@ -1,14 +1,18 @@
+import React from 'react';
 import getOrgId from 'redux/selectors/getOrgId.es6';
-import { Notification } from '@contentful/forma-36-react-components';
+import { Notification, Modal } from '@contentful/forma-36-react-components';
 import createTeamService from 'app/OrganizationSettings/Teams/TeamService.es6';
 import { getCurrentTeam } from '../selectors/teams.es6';
 import { TEAM_MEMBERSHIPS, TEAMS } from '../dataSets.es6';
 import addCurrentTeamToMembership from 'redux/utils/addCurrentTeamToMembership.es6';
 import removeFromDataset from './utils/removeFromDataset.es6';
+import getDatasets from 'redux/selectors/getDatasets.es6';
+import TeamForm from 'app/OrganizationSettings/Teams/TeamForm.es6';
+import ModalLauncher from 'app/common/ModalLauncher.es6';
 
 export default ({ dispatch, getState }) => next => async action => {
   switch (action.type) {
-    case 'SUBMIT_NEW_TEAM': {
+    case 'CREATE_NEW_TEAM': {
       next(action);
       const service = createTeamService(getOrgId(getState()));
       const newTeam = await service.create(action.payload.team);
@@ -30,6 +34,47 @@ export default ({ dispatch, getState }) => next => async action => {
         ({ name }) => `Team ${name} removed successfully`,
         ({ name }) => `Could not remove ${name}. Please try again`
       );
+      break;
+    }
+    case 'EDIT_TEAM': {
+      const { teamId } = action.payload;
+      const state = getState();
+      const datasets = getDatasets(state);
+      const team = datasets[TEAMS][teamId];
+      next(action);
+
+      ModalLauncher.open(({ onClose, isShown }) => (
+        <Modal isShown={isShown} onClose={onClose}>
+          {() => (
+            <TeamForm
+              onClose={onClose}
+              initialTeam={team}
+              onEditConfirm={(id, changeSet) =>
+                dispatch({ type: 'EDIT_TEAM_CONFIRMED', payload: { id, changeSet } })
+              }
+            />
+          )}
+        </Modal>
+      ));
+
+      break;
+    }
+    case 'EDIT_TEAM_CONFIRMED': {
+      next(action);
+      // the reducer updated the team for us
+      const state = getState();
+      const service = createTeamService(await getOrgId(getState()));
+      const datasets = getDatasets(state);
+      const { id } = action.payload;
+      const updatedTeam = datasets[TEAMS][id];
+
+      try {
+        const persistedTeam = await service.update(updatedTeam);
+        dispatch({ type: 'ADD_TO_DATASET', payload: { dataset: TEAMS, item: persistedTeam } });
+      } catch (e) {
+        /** */
+      }
+
       break;
     }
     case 'SUBMIT_NEW_TEAM_MEMBERSHIP': {

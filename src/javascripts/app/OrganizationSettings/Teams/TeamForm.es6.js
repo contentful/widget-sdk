@@ -2,32 +2,40 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { isEmpty, trim } from 'lodash';
 import { Modal, TextField, Button } from '@contentful/forma-36-react-components';
+import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
 
 export default class TeamForm extends React.Component {
   static propTypes = {
     onClose: PropTypes.func.isRequired,
-    initialTeam: PropTypes.shape({ name: PropTypes.string, description: PropTypes.string }),
-    onConfirm: PropTypes.func,
-    isEditing: PropTypes.bool
+    initialTeam: TeamPropType,
+    onCreateConfirm: PropTypes.func,
+    onEditConfirm: PropTypes.func
   };
 
-  static defaultProps = {
-    isEditing: false,
-    initialTeam: { name: '', description: '' }
+  isEditing = Boolean(this.props.initialTeam);
+
+  state = {
+    validationMessage: null,
+    name: this.isEditing ? this.props.initialTeam.name : '',
+    description: this.isEditing ? this.props.initialTeam.description : ''
   };
 
-  state = this.props.initialTeam;
-
-  onConfirm = async () => {
-    const { onConfirm, onClose } = this.props;
+  onConfirm = () => {
+    const { onEditConfirm, onCreateConfirm, onClose, initialTeam } = this.props;
     const { name, description } = this.state;
 
     if (!this.isValid()) {
       this.setState({ validationMessage: 'Please insert a name' });
-    } else {
-      onConfirm({ name, description });
-      onClose();
+      return;
     }
+
+    if (this.isEditing) {
+      onEditConfirm(initialTeam.sys.id, { name, description });
+    } else {
+      onCreateConfirm({ name, description });
+    }
+
+    onClose();
   };
 
   isValid() {
@@ -39,12 +47,12 @@ export default class TeamForm extends React.Component {
   };
 
   render() {
-    const { onClose, isEditing } = this.props;
+    const { onClose } = this.props;
     const { name, description, validationMessage, busy } = this.state;
 
     return (
       <React.Fragment>
-        <Modal.Header title={isEditing ? 'Edit team' : 'New team'} onClose={onClose} />
+        <Modal.Header title={this.isEditing ? 'Edit team' : 'New team'} onClose={onClose} />
         <Modal.Content>
           <p>Teams make it easy to group people together.</p>
           <TextField
@@ -54,7 +62,7 @@ export default class TeamForm extends React.Component {
             labelText="Team name"
             value={name}
             countCharacters
-            textInputProps={{ placeholder: 'Team Rocket', maxLength: 120 }}
+            textInputProps={{ placeholder: 'Team Rocket', maxLength: 120, autoFocus: true }}
             extraClassNames={'vertical-form-field-rythm-dense'}
             validationMessage={validationMessage}
             onChange={this.handleChange('name')}

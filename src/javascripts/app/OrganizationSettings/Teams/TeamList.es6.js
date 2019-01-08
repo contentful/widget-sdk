@@ -25,7 +25,7 @@ export default connect(
   }),
   dispatch => ({
     removeTeam: teamId => dispatch({ type: 'REMOVE_TEAM', payload: { teamId } }),
-    submitNewTeam: team => dispatch({ type: 'SUBMIT_NEW_TEAM', payload: { team } })
+    submitNewTeam: team => dispatch({ type: 'CREATE_NEW_TEAM', payload: { team } })
   })
 )(
   class TeamList extends React.Component {
@@ -42,7 +42,7 @@ export default connect(
     addTeam = () =>
       ModalLauncher.open(({ onClose, isShown }) => (
         <Modal isShown={isShown} onClose={onClose}>
-          {() => <TeamForm onClose={onClose} onConfirm={this.props.submitNewTeam} />}
+          {() => <TeamForm onClose={onClose} onCreateConfirm={this.props.submitNewTeam} />}
         </Modal>
       ));
 

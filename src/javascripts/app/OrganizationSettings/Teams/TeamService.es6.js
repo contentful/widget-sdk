@@ -47,11 +47,11 @@ export default function createTeamService(orgId) {
     );
   }
 
-  function update(id, { name, description, sys }) {
+  function update({ name, description, sys }) {
     return endpoint(
       {
         method: 'PUT',
-        path: ['teams', id],
+        path: ['teams', sys.id],
         data: { name, description },
         version: sys.version
       },
