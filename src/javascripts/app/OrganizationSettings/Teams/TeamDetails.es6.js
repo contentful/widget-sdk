@@ -9,22 +9,29 @@ import { Team as TeamPropType, User as UserPropType } from 'app/OrganizationSett
 import { getTeams, getCurrentTeam } from 'redux/selectors/teams.es6';
 import { getUsers } from 'redux/selectors/users.es6';
 import Workbench from 'app/common/Workbench.es6';
+import Icon from 'ui/Components/Icon.es6';
 
 import TeamMemberships from './TeamMemberships/TeamMemberships.es6';
 
-export default connect(state => {
-  const teams = getTeams(state);
-  return {
-    loading: isEmpty(teams) || isEmpty(getUsers(state)),
-    team: isEmpty(teams) ? undefined : teams[getCurrentTeam(state)]
-  };
-})(
+export default connect(
+  state => {
+    const teams = getTeams(state);
+    return {
+      loading: isEmpty(teams) || isEmpty(getUsers(state)),
+      team: isEmpty(teams) ? undefined : teams[getCurrentTeam(state)]
+    };
+  },
+  dispatch => ({
+    goBack: () => dispatch({ type: 'NAVIGATION_BACK' })
+  })
+)(
   class TeamDetail extends React.Component {
     static propTypes = {
       team: TeamPropType,
       loading: PropTypes.bool,
       onReady: PropTypes.func.isRequired,
-      users: PropTypes.objectOf(UserPropType)
+      users: PropTypes.objectOf(UserPropType),
+      goBack: PropTypes.func.isRequired
     };
 
     componentDidMount() {
@@ -40,15 +47,20 @@ export default connect(state => {
     }
 
     render() {
-      const { team, loading } = this.props;
+      const { team, loading, goBack } = this.props;
       const creator = team && team.sys.createdBy;
 
       return !loading && team ? (
         <Workbench className="organization-users-page" testId="organization-team-page">
           <Workbench.Header>
-            <Workbench.Header.Left>
-              <Workbench.Title>Teams</Workbench.Title>
-            </Workbench.Header.Left>
+            <div className="breadcrumbs-widget">
+              <div className="breadcrumbs-container">
+                <div data-test-id="teams-back" className="btn btn__back" onClick={goBack}>
+                  <Icon name="back" />
+                </div>
+              </div>
+            </div>
+            <Workbench.Title>Teams</Workbench.Title>
           </Workbench.Header>
           <Workbench.Content>
             <div className="user-details">

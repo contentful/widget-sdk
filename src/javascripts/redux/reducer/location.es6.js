@@ -11,6 +11,8 @@ import {
   omitAll
 } from 'lodash/fp';
 import qs from 'qs';
+import { getPath } from '../selectors/location.es6';
+import ROUTES from '../routes.es6';
 
 const viewToObject = flow(
   map('filter'),
@@ -31,7 +33,7 @@ const updateLocationQuery = updater =>
     )
   );
 
-export default (state = null, { type, payload }) => {
+export default (state = null, { type, payload }, globalState) => {
   switch (type) {
     case 'LOCATION_CHANGED':
       return payload.location;
@@ -43,6 +45,17 @@ export default (state = null, { type, payload }) => {
     }
     case 'UPDATE_SEARCH_TERM': {
       return updateLocationQuery(set('searchTerm', payload.newSearchTerm))(state);
+    }
+    case 'NAVIGATION_BACK': {
+      const match = ROUTES.organization.children.teams.children.team.test(getPath(globalState));
+      if (match !== null) {
+        return set(
+          'pathname',
+          ROUTES.organization.children.teams.build({ orgId: match.orgId }),
+          state
+        );
+      }
+      return state;
     }
     default:
       return state;
