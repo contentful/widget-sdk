@@ -66,7 +66,7 @@ export default class TeamForm extends React.Component {
             labelText="Team name"
             value={name}
             countCharacters
-            textInputProps={{ placeholder: 'Team Rocket', maxLength: 120, autoFocus: true }}
+            textInputProps={{ placeholder: 'The Mighty Ducks', maxLength: 120, autoFocus: true }}
             extraClassNames={'vertical-form-field-rythm-dense'}
             validationMessage={validationMessage}
             onChange={this.handleChange('name')}
@@ -74,10 +74,15 @@ export default class TeamForm extends React.Component {
           <TextField
             name="teamDescription"
             id="team_description"
+            textarea
             labelText="Team description"
             value={description}
             countCharacters
-            textInputProps={{ placeholder: 'Team Rocket', maxLength: 120 }}
+            textInputProps={{
+              placeholder: `The Mighty Ducks is a series of three live-action films that revolve around a Twin Cities ice hockey team, composed of young players that stick together throughout various challenges.`,
+              maxLength: 120,
+              rows: 3
+            }}
             extraClassNames={'vertical-form-field-rythm-dense'}
             onChange={this.handleChange('description')}
           />
