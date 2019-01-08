@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import * as OrganizationRoles from 'services/OrganizationRoles.es6';
-import * as accessChecker from 'access_control/AccessChecker';
+import * as accessChecker from 'access_control/AccessChecker/index.es6';
 import * as Config from 'Config.es6';
 
 export const spaceHomeController = [
