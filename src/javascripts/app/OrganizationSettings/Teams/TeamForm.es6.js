@@ -53,7 +53,8 @@ export default class TeamForm extends React.Component {
             id="team_name"
             labelText="Team name"
             value={name}
-            textInputProps={{ placeholder: 'Team Rocket' }}
+            countCharacters
+            textInputProps={{ placeholder: 'Team Rocket', maxLength: 120 }}
             extraClassNames={'vertical-form-field-rythm-dense'}
             validationMessage={validationMessage}
             onChange={this.handleChange('name')}
@@ -63,7 +64,8 @@ export default class TeamForm extends React.Component {
             id="team_description"
             labelText="Team description"
             value={description}
-            textInputProps={{ placeholder: 'Team Rocket' }}
+            countCharacters
+            textInputProps={{ placeholder: 'Team Rocket', maxLength: 120 }}
             extraClassNames={'vertical-form-field-rythm-dense'}
             onChange={this.handleChange('description')}
           />
