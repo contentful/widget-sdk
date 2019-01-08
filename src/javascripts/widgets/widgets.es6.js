@@ -117,7 +117,8 @@ registerFactory('widgets', [
           field_id: control.fieldId,
           field_type: _.get(field, ['type']),
           installation_params: Object.keys(renderable.installationParameterValues),
-          instance_params: Object.keys(renderable.settings)
+          instance_params: Object.keys(renderable.settings),
+          sidebar: renderable.sidebar
         };
 
         if (descriptor.src) {

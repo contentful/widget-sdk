@@ -98,6 +98,7 @@ export default async function create($scope, entryId) {
       locale: localeStore.getDefaultLocale().internal_code,
       editorType: $scope.$parent.entities.length > 1 ? 'slide_in_editor' : 'entry_editor',
       customWidgets: (editorData.fieldControls.form || [])
+        .concat(editorData.fieldControls.sidebar || [])
         .filter(w => w.custom)
         .map(w => w.trackingData)
     });
