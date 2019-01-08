@@ -17,12 +17,12 @@ export default async function(
   successMessage,
   errorMessage
 ) {
-  // call reducer in case it optimistically removes
-  next(action);
   const state = getState();
   const service = createService(getOrgId(state));
   const datasets = getDatasets(state);
   const item = datasets[dataset][id];
+  // call reducer in case it optimistically removes
+  next(action);
   const confirmation = await ModalLauncher.open(({ isShown, onClose }) => (
     <ModalConfirm
       title={confirmationTitle(item)}

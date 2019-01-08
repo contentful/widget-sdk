@@ -140,8 +140,14 @@ export default ({ dispatch, getState }) => next => async action => {
           `Are you sure you want to remove ${
             user.firstName ? `${user.firstName} ${user.lastName}` : user.email
           } from team ${team.name}?`,
-        ({ name }) => `Team ${name} removed successfully`,
-        ({ name }) => `Could not remove ${name}. Please try again`
+        ({ sys: { team, user } }) =>
+          `Successfully removed ${
+            user.firstName ? `${user.firstName} ${user.lastName}` : user.email
+          } from team ${team.name}`,
+        ({ sys: { team, user } }) =>
+          `Could not remove ${
+            user.firstName ? `${user.firstName} ${user.lastName}` : user.email
+          } from team ${team.name}`
       );
       break;
     }

@@ -23,11 +23,11 @@ export default connect(
     render() {
       const { removeMembership } = this.props;
       const {
-        sys: { id, user, createdAt, createdBy }
+        sys: { user, createdAt, createdBy }
       } = this.props.membership;
 
       return (
-        <TableRow key={id} className="membership-list__item">
+        <TableRow className="membership-list__item">
           <TableCell>
             <UserCard user={user} />
           </TableCell>

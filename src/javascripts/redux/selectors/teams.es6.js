@@ -3,6 +3,7 @@ import { getPath } from './location.es6';
 import getDatasets from './getDatasets.es6';
 import ROUTES from '../routes.es6';
 import { TEAMS } from '../dataSets.es6';
+import getOptimistic from './getOptimistic.es6';
 
 export const getTeams = flow(
   getDatasets,
@@ -16,7 +17,7 @@ export const getTeamListWithOptimistic = state => {
       get('name'),
       toLower
     ),
-    Object.values(persistedTeams).concat(get('optimistic.teams', state) || [])
+    Object.values(persistedTeams).concat(get(TEAMS, getOptimistic(state)) || [])
   );
 };
 

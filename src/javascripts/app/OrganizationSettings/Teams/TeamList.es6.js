@@ -24,7 +24,6 @@ export default connect(
     teams: getTeamListWithOptimistic(state)
   }),
   dispatch => ({
-    removeTeam: teamId => dispatch({ type: 'REMOVE_TEAM', payload: { teamId } }),
     submitNewTeam: team => dispatch({ type: 'CREATE_NEW_TEAM', payload: { team } })
   })
 )(

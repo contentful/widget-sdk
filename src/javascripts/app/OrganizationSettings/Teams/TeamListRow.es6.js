@@ -32,7 +32,7 @@ export default connect(
       return (
         <TableRow className="membership-list__item">
           <TableCell>
-            {get(team, 'sys.id', false) ? (
+            {get(team, 'sys.id') !== 'placeholder' ? (
               <a
                 href={ROUTES.organization.children.teams.children.team.build({
                   orgId,
