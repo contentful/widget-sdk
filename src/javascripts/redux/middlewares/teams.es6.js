@@ -15,9 +15,19 @@ export default ({ dispatch, getState }) => next => async action => {
     case 'CREATE_NEW_TEAM': {
       next(action);
       const service = createTeamService(getOrgId(getState()));
-      const newTeam = await service.create(action.payload.team);
-      dispatch({ type: 'ADD_TO_DATASET', payload: { item: newTeam, dataset: TEAMS } });
-      Notification.success(`Team ${newTeam.name} created successfully`);
+      try {
+        const newTeam = await service.create(action.payload.team);
+        dispatch({ type: 'ADD_TO_DATASET', payload: { item: newTeam, dataset: TEAMS } });
+        Notification.success(`Team ${newTeam.name} created successfully`);
+      } catch (ex) {
+        dispatch({
+          type: 'SUBMIT_NEW_TEAM_FAILED',
+          error: true,
+          payload: ex,
+          meta: { team: action.payload.team }
+        });
+        Notification.error(`Team ${action.payload.team.name} could not be created`);
+      }
       break;
     }
     case 'REMOVE_TEAM': {
