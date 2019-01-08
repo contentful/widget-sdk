@@ -2,7 +2,7 @@ import React from 'react';
 import getOrgId from 'redux/selectors/getOrgId.es6';
 import { Notification, Modal } from '@contentful/forma-36-react-components';
 import createTeamService from 'app/OrganizationSettings/Teams/TeamService.es6';
-import { getCurrentTeam } from '../selectors/teams.es6';
+import { getCurrentTeam, getTeams } from '../selectors/teams.es6';
 import { TEAM_MEMBERSHIPS, TEAMS } from '../dataSets.es6';
 import addCurrentTeamToMembership from 'redux/utils/addCurrentTeamToMembership.es6';
 import removeFromDataset from './utils/removeFromDataset.es6';
@@ -60,19 +60,22 @@ export default ({ dispatch, getState }) => next => async action => {
       break;
     }
     case 'EDIT_TEAM_CONFIRMED': {
+      const { id } = action.payload;
+      const oldTeam = getTeams(getState())[id];
+
       next(action);
       // the reducer updated the team for us
-      const state = getState();
+
       const service = createTeamService(await getOrgId(getState()));
-      const datasets = getDatasets(state);
-      const { id } = action.payload;
-      const updatedTeam = datasets[TEAMS][id];
+      const updatedTeam = getTeams(getState())[id];
 
       try {
         const persistedTeam = await service.update(updatedTeam);
         dispatch({ type: 'ADD_TO_DATASET', payload: { dataset: TEAMS, item: persistedTeam } });
+        Notification.success(`Team ${persistedTeam.name} successfully changed`);
       } catch (e) {
-        /** */
+        dispatch({ type: 'ADD_TO_DATASET', payload: { dataset: TEAMS, item: oldTeam } });
+        Notification.error('Something went wrong. Please try again');
       }
 
       break;
