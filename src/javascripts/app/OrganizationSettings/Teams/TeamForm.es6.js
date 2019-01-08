@@ -20,7 +20,8 @@ export default class TeamForm extends React.Component {
     description: this.isEditing ? this.props.initialTeam.description : ''
   };
 
-  onConfirm = () => {
+  onConfirm = e => {
+    e.preventDefault();
     const { onEditConfirm, onCreateConfirm, onClose, initialTeam } = this.props;
     const { name, description } = this.state;
 
@@ -51,7 +52,10 @@ export default class TeamForm extends React.Component {
     const { name, description, validationMessage, busy } = this.state;
 
     return (
-      <React.Fragment>
+      <form
+        noValidate
+        onSubmit={this.onConfirm}
+        style={{ display: 'flex', flexDirection: 'column' }}>
         <Modal.Header title={this.isEditing ? 'Edit team' : 'New team'} onClose={onClose} />
         <Modal.Content>
           <p>Teams make it easy to group people together.</p>
@@ -79,11 +83,7 @@ export default class TeamForm extends React.Component {
           />
         </Modal.Content>
         <Modal.Controls>
-          <Button
-            onClick={this.onConfirm}
-            loading={busy}
-            buttonType="primary"
-            testId="save-team-button">
+          <Button loading={busy} buttonType="primary" type="submit" testId="save-team-button">
             Save
           </Button>
           <Button
@@ -94,7 +94,7 @@ export default class TeamForm extends React.Component {
             Cancel
           </Button>
         </Modal.Controls>
-      </React.Fragment>
+      </form>
     );
   }
 }
