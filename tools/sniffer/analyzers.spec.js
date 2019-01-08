@@ -65,7 +65,6 @@ describe('analyze', () => {
         const $state = getModule('$state');
         const $timeout = getModule('$timeout');
         const SpaceMembershipRepository = getModule('access_control/SpaceMembershipRepository.es6');
-        const [$q, $window] = getModules('$q', '$window', '$state');
 
 
         registerController('controllerWithNoDeps', [() => {
@@ -88,8 +87,6 @@ describe('analyze', () => {
       '$state',
       '$timeout',
       'access_control/SpaceMembershipRepository',
-      '$q',
-      '$window',
       'angular.controller',
       '$scope',
       'spaceContext',

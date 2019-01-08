@@ -1,2 +1,2 @@
 export const domain = '';
-export const websiteUrl = '';
+export const websiteUrl = url => url;

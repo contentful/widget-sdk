@@ -7,23 +7,23 @@ import { registerFactory } from 'NgRegistry.es6';
 registerFactory('states/settings', [
   'states/settings/users',
   'states/settings/roles',
-  'states/settings/content_preview',
   'states/SpaceSettingsBase.es6',
   'app/settings/locales/routes/index.es6',
   'app/SpaceSettings/Environments/State.es6',
   'app/SpaceSettings/Usage/SpaceUsageState.es6',
   'app/settings/extensions/routes/index.es6',
   'app/settings/webhooks/routes/index.es6',
+  'app/settings/content_preview/routes/index.es6',
   (
     usersSettingsState,
     rolesSettingsState,
-    contentPreviewSettingsState,
     { default: SpaceSettingsBase },
     { default: localesSettingsState },
     { default: environmentsSettingsState },
     { default: spaceUsageState },
     { default: extensionsSettingsState },
-    { default: webhooksSettingsState }
+    { default: webhooksSettingsState },
+    { default: contentPreviewSettingsState }
   ) => {
     return SpaceSettingsBase({
       name: 'settings',

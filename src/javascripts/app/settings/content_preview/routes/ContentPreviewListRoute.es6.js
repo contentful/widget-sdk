@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import { values } from 'lodash';
-import * as AccessChecker from 'access_control/AccessChecker/index.es6';
-import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
-import StateRedirect from 'app/common/StateRedirect.es6';
-import ContentPreviewListPage from '../ContentPreviewListPage.es6';
 import { getModule } from 'NgRegistry.es6';
+
+import * as AccessChecker from 'access_control/AccessChecker/index.es6';
+import createFetcherComponent from 'app/common/createFetcherComponent.es6';
+import StateRedirect from 'app/common/StateRedirect.es6';
+import ContentPreviewListPage, {
+  ContentPreviewListPageSkeleton
+} from '../ContentPreviewListPage.es6';
 
 const contentPreview = getModule('contentPreview');
 
@@ -22,7 +25,7 @@ export default class ContentPreviewListRoute extends Component {
       <ContentPreviewsFetcher>
         {({ isLoading, isError, data }) => {
           if (isLoading) {
-            return <FetcherLoading message="Loading content preview.." />;
+            return <ContentPreviewListPageSkeleton />;
           }
           if (isError) {
             return <StateRedirect to="spaces.detail.entries.list" />;

@@ -20,7 +20,6 @@ export default function() {
         user: 'user'
       })
     ]),
-    h('cf-notifications'),
     h('div.app-container__content', {
       uiView: 'content'
     })

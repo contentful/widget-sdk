@@ -19,6 +19,17 @@ CreatePreviewSection.propTypes = {
   maxPreview: PropTypes.number.isRequired
 };
 
+export const ContentPreviewListPageSkeleton = () => (
+  <Workbench>
+    <Workbench.Header>
+      <Workbench.Icon icon="page-settings" />
+      <Workbench.Title>Content preview</Workbench.Title>
+    </Workbench.Header>
+    <Workbench.Content />
+    <Workbench.Sidebar />
+  </Workbench>
+);
+
 export default class ContentPreviewListPage extends Component {
   static propTypes = {
     contentPreviews: PropTypes.arrayOf(
