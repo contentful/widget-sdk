@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-import { create as createBuiltinWidgetsList } from './builtin.es6';
+import { create as createBuiltinWidgetList } from './BuiltinWidgets.es6';
 import { toInternalFieldType } from './FieldTypes.es6';
 
 export function create(cma) {
@@ -29,7 +29,7 @@ function prepareList(extensions) {
   // It's far from ideal but we retain this behavior for now.
   // TODO figure out what to do?
   const extensionIds = extensions.map(e => e.id);
-  const builtin = createBuiltinWidgetsList();
+  const builtin = createBuiltinWidgetList();
   const filteredBuiltins = builtin.filter(b => {
     return !extensionIds.includes(b.id);
   });

@@ -1,5 +1,5 @@
 import { create as createStore } from './WidgetStore.es6';
-import { create as createBuiltins } from './builtin.es6';
+import { create as createBuiltinWidgetList } from './BuiltinWidgets.es6';
 
 describe('WidgetStore', () => {
   describe('#refresh()', () => {
@@ -7,7 +7,7 @@ describe('WidgetStore', () => {
       const cma = { getExtensions: jest.fn(() => Promise.resolve({ items: [] })) };
       const store = createStore(cma);
       const widgets = await store.refresh();
-      expect(widgets.map(w => w.id)).toEqual(createBuiltins().map(b => b.id));
+      expect(widgets.map(w => w.id)).toEqual(createBuiltinWidgetList().map(b => b.id));
     });
 
     it('includes processed extensions from API', async () => {
@@ -47,7 +47,7 @@ describe('WidgetStore', () => {
       const cma = { getExtensions: jest.fn(() => Promise.reject()) };
       const store = createStore(cma);
       const widgets = await store.refresh();
-      expect(widgets.map(w => w.id)).toEqual(createBuiltins().map(b => b.id));
+      expect(widgets.map(w => w.id)).toEqual(createBuiltinWidgetList().map(b => b.id));
     });
 
     // This test describes behaviour that may not be desirable.

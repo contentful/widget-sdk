@@ -1,10 +1,6 @@
 import { range } from 'lodash';
 
-/**
- * Returns a list of all builtin widgets.
- *
- * @returns {Widget.Descriptor[]}
- */
+// Returns a list of all builtin widgets.
 export function create() {
   const widgets = [];
 
@@ -17,33 +13,14 @@ export function create() {
     }
   ];
 
-  function registerWidget(id, widgetDescriptor) {
-    widgetDescriptor.id = id;
-    widgetDescriptor.parameters = [...COMMON_PARAMETERS, ...(widgetDescriptor.parameters || [])];
-    widgets.push(widgetDescriptor);
-  }
+  const registerWidget = (id, widgetDescriptor) => {
+    Object.assign(widgetDescriptor, {
+      id,
+      parameters: [...COMMON_PARAMETERS, ...(widgetDescriptor.parameters || [])]
+    });
 
-  /**
-   * @typedef {Object} Widget.Descriptor
-   * @property {string} id
-   * @property {string} name
-   * @property {string[]} fieldTypes
-   * @property {Widget.Parameter[]} parameters
-   * @property {string} icon
-   * @property {string} template
-   * @property {string} defaulHelpText
-   * @property {boolean} notFocusable
-   * @property {boolean} rendersHelpText
-   */
-  /**
-   * @typedef {Object} Widget.Parameter
-   * @property {string} id
-   * @property {string} name
-   * @property {string} type
-   * @property {string} description
-   * @property {Object[]} options
-   * @property {*} default
-   */
+    widgets.push(widgetDescriptor);
+  };
 
   registerWidget('singleLine', {
     fieldTypes: ['Text', 'Symbol'],
