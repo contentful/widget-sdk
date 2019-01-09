@@ -1,8 +1,6 @@
 import { get } from 'lodash';
-import { create as createBuiltinWidgetsList } from 'widgets/builtin.es6';
-import { getModule } from 'NgRegistry.es6';
-
-const fieldFactory = getModule('fieldFactory');
+import { create as createBuiltinWidgetsList } from './builtin.es6';
+import { toInternalFieldType } from './FieldTypes.es6';
 
 export function create(cma) {
   let cache = [];
@@ -46,7 +44,7 @@ function buildExtensionWidget(data) {
     ...base,
     id: data.sys.id,
     name: data.extension.name,
-    fieldTypes: data.extension.fieldTypes.map(fieldFactory.getTypeName),
+    fieldTypes: data.extension.fieldTypes.map(toInternalFieldType),
     sidebar: data.extension.sidebar,
     template: '<cf-iframe-widget />',
     parameters: get(data.extension, 'parameters.instance', []),

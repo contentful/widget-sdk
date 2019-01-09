@@ -1,7 +1,8 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
 import { deepFreeze } from 'utils/Freeze.es6';
-import { applyDefaultValues } from 'widgets/WidgetParametersUtils.es6';
+import { applyDefaultValues } from './WidgetParametersUtils.es6';
+import { toInternalFieldType } from './FieldTypes.es6';
 
 /**
  * @ngdoc service
@@ -9,8 +10,7 @@ import { applyDefaultValues } from 'widgets/WidgetParametersUtils.es6';
  */
 registerFactory('widgets', [
   '$injector',
-  'fieldFactory',
-  ($injector, fieldFactory) => {
+  $injector => {
     /**
      * @ngdoc type
      * @name Widget.Renderable
@@ -91,7 +91,7 @@ registerFactory('widgets', [
         renderable.template = getWarningTemplate(id, 'missing');
         return renderable;
       }
-      if (!isCompatibleWithField(descriptor, field)) {
+      if (!descriptor.fieldTypes.includes(toInternalFieldType(field))) {
         renderable.template = getWarningTemplate(id, 'incompatible');
         return renderable;
       }
@@ -140,11 +140,6 @@ registerFactory('widgets', [
         message: message,
         canUpdateContentTypes: !accessChecker.shouldHide('update', 'contentType')
       });
-    }
-
-    function isCompatibleWithField(widgetDescriptor, field) {
-      const fieldType = fieldFactory.getTypeName(field);
-      return _.includes(widgetDescriptor.fieldTypes, fieldType);
     }
   }
 ]);

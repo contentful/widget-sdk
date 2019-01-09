@@ -93,27 +93,6 @@ describe('field factory', () => {
     });
   });
 
-  describe('#getTypeName()', () => {
-    beforeEach(function() {
-      this.getTypeName = this.fieldFactory.getTypeName;
-    });
-
-    itResolves({ type: 'Symbol' }, 'Symbol');
-
-    itResolves({ type: 'Array', items: { type: 'Symbol' } }, 'Symbols');
-
-    itResolves({ type: 'Link', linkType: 'Asset' }, 'Asset');
-
-    itResolves({ type: 'Array', items: { type: 'Link', linkType: 'Asset' } }, 'Assets');
-
-    function itResolves(type, name) {
-      it('resolves "' + name + '"', function() {
-        const name = this.getTypeName(type);
-        expect(name).toEqual(name);
-      });
-    }
-  });
-
   describe('#getLocaleCodes()', () => {
     it('returns default locale for non-localized field', function() {
       this.stubs.getDefaultLocale.returns({ internal_code: 'DEF' });

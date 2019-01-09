@@ -6,7 +6,7 @@ import Workbench from 'app/common/Workbench.es6';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils.es6';
 import getExtensionParameterIds from './getExtensionParameterIds.es6';
 import StateLink from 'app/common/StateLink.es6';
-import { toInternalFieldType, toApiFieldType } from './FieldTypes.es6';
+import { toInternalFieldType, toApiFieldType } from 'widgets/FieldTypes.es6';
 import ExtensionForm from './ExtensionForm.es6';
 import { getModule } from 'NgRegistry.es6';
 

@@ -31,7 +31,7 @@ describe('ExtensionForm', () => {
 
     expect(inputs.at(0).prop('value')).toBe('test'); // name
     expect(inputs.at(1).prop('checked')).toBe(false); // first checkbox - Symbol
-    expect(inputs.at(2).prop('checked')).toBe(true); // second checkbox - Text
+    expect(inputs.at(3).prop('checked')).toBe(true); // third checkbox - Text
 
     // second radio - Contentful hosting
     expect(

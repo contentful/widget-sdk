@@ -9,7 +9,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import ExamplePickerModal from './dialogs/ExamplePickerModal.es6';
 import GitHubInstallerModal from './dialogs/GitHubInstallerModal.es6';
-import { toInternalFieldType } from './FieldTypes.es6';
+import { toInternalFieldType } from 'widgets/FieldTypes.es6';
 import getExtensionParameterIds from './getExtensionParameterIds.es6';
 import { getModule } from 'NgRegistry.es6';
 

@@ -1,13 +1,10 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
+import { toInternalFieldType } from './FieldTypes.es6';
 import widgetMap from '@contentful/widget-map';
-/**
- * @ngdoc service
- * @name widgets/default
- */
+
 registerFactory('widgets/default', [
-  'fieldFactory',
-  fieldFactory => {
+  () => {
     // We can use a dropdown widget for these field types
     const DROPDOWN_TYPES = ['Text', 'Symbol', 'Integer', 'Number', 'Boolean'];
 
@@ -30,7 +27,7 @@ registerFactory('widgets/default', [
      *   in the presence of the 'in' validation
      */
     return function getDefaultWidgetId(field, displayFieldId) {
-      const fieldType = fieldFactory.getTypeName(field);
+      const fieldType = toInternalFieldType(field);
 
       // FIXME We create the editing interface, and thus the widget ids
       // before any validation can be set. So I think this is not need.

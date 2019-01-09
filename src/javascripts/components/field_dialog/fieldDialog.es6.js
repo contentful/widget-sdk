@@ -4,6 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { joinAndTruncate } from 'utils/StringUtils.es6';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils.es6';
+import { toInternalFieldType } from 'widgets/FieldTypes.es6';
 import WidgetParametersForm from 'widgets/WidgetParametersForm.es6';
 import { Notification } from '@contentful/forma-36-react-components';
 
@@ -147,7 +148,7 @@ registerController('FieldDialogController', [
      * @type {Widgets.Descriptor[]}
      */
     spaceContext.widgets.refresh().then(widgets => {
-      const fieldType = fieldFactory.getTypeName($scope.field);
+      const fieldType = toInternalFieldType($scope.field);
 
       $scope.availableWidgets = widgets.filter(widget => widget.fieldTypes.includes(fieldType));
     });
