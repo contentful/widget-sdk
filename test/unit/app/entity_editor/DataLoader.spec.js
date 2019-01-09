@@ -4,7 +4,7 @@ import _ from 'lodash';
 describe('app/entity_editor/DataLoader.es6', () => {
   beforeEach(function() {
     module('contentful/test', $provide => {
-      $provide.constant('widgets', { buildRenderable: sinon.stub().returns({}) });
+      $provide.constant('widgets/WidgetRenderable.es6', { default: sinon.stub().returns({}) });
       $provide.constant('TheLocaleStore', {
         getPrivateLocales: sinon.stub().returns([])
       });
@@ -71,12 +71,16 @@ describe('app/entity_editor/DataLoader.es6', () => {
       this.spaceContext.editingInterfaces.get.resolves(ei);
       this.spaceContext.widgets.getAll.returns('WIDGETS');
       yield this.loadEntry('EID');
-      sinon.assert.calledWith(this.$inject('widgets').buildRenderable, 'CONTROLS', 'WIDGETS');
+      sinon.assert.calledWith(
+        this.$inject('widgets/WidgetRenderable.es6').default,
+        'CONTROLS',
+        'WIDGETS'
+      );
     });
 
     it('adds the entry’s field controls to the context', function*() {
       const controls = {};
-      this.$inject('widgets').buildRenderable.returns(controls);
+      this.$inject('widgets/WidgetRenderable.es6').default.returns(controls);
       const editorData = yield this.loadEntry('EID');
       expect(editorData.fieldControls).toBe(controls);
     });
@@ -160,7 +164,7 @@ describe('app/entity_editor/DataLoader.es6', () => {
       const assetEditorInterface = this.$inject('data/editingInterfaces/asset');
       yield this.loadAsset('EID');
       sinon.assert.calledWith(
-        this.$inject('widgets').buildRenderable,
+        this.$inject('widgets/WidgetRenderable.es6').default,
         assetEditorInterface.widgets
       );
     });
@@ -180,7 +184,7 @@ describe('app/entity_editor/DataLoader.es6', () => {
   describe('#makePrefetchEntryLoader()', () => {
     it('returns editor data', function*() {
       const controls = {};
-      this.$inject('widgets').buildRenderable = sinon.stub().returns(controls);
+      this.$inject('widgets/WidgetRenderable.es6').default.returns(controls);
 
       const load = this.makePrefetchEntryLoader(K.constant([]));
       const editorData = yield load('EID');

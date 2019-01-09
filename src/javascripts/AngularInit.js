@@ -290,6 +290,5 @@ angular
       ngRequire('widgets/channel.es6');
       ngRequire('widgets/api.es6');
       ngRequire('widgets/cfIframeWidgetDirective.es6');
-      ngRequire('widgets/widgets.es6');
     }
   ]);
