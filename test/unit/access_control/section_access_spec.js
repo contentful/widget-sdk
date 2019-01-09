@@ -21,7 +21,7 @@ describe('Section Access', () => {
     module('contentful/test');
 
     sectionAccess = this.$inject('access_control/SectionAccess.es6');
-    accessChecker = this.$inject('access_control/AccessChecker');
+    accessChecker = this.$inject('access_control/AccessChecker/index.es6');
     spaceContext = this.$inject('spaceContext');
 
     accessChecker.getSectionVisibility = visibilityStub = sinon.stub().returns(allTrue);

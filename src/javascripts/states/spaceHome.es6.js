@@ -19,7 +19,13 @@ registerFactory('states/space_home', [
       },
       template: homeTemplateDef(),
       loadingText: 'Loading…',
-      controller: spaceHomeController
+      controller: [
+        '$scope',
+        'space',
+        'access_control/AccessChecker/index.es6',
+        'Config.es6',
+        spaceHomeController
+      ]
     });
   }
 ]);
