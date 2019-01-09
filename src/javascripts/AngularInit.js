@@ -45,7 +45,6 @@ angular
       ngRequire('data/userCache.es6');
       ngRequire('services/editingInterfacesHelpers.es6');
       ngRequire('services/fieldFactory.es6');
-      ngRequire('widgets/default.es6');
       ngRequire('data/editing_interfaces/transformer.es6');
       ngRequire('data/editingInterfaces.es6');
       ngRequire('data/apiClient.es6');

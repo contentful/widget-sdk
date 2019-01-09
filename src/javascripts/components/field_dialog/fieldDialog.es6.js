@@ -7,6 +7,7 @@ import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils.es6';
 import { toInternalFieldType } from 'widgets/FieldTypes.es6';
 import WidgetParametersForm from 'widgets/WidgetParametersForm.es6';
 import { Notification } from '@contentful/forma-36-react-components';
+import getDefaultWidgetId from 'widgets/DefaultWidget.es6';
 
 /**
  * @ngdoc service
@@ -347,8 +348,7 @@ registerController('FieldDialogValidationsController', [
  */
 registerController('FieldDialogAppearanceController', [
   '$scope',
-  'widgets/default',
-  ($scope, getDefaultWidgetId) => {
+  $scope => {
     $scope.defaultWidgetId = getDefaultWidgetId($scope.field, $scope.contentType.data.displayField);
     $scope.selectWidget = selectWidget;
 

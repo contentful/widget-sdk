@@ -6,11 +6,11 @@ describe('data/editingInterfaces/transformer', () => {
   const stubs = {};
 
   beforeEach(() => {
-    stubs.getDefaultWidget = sinon.stub();
+    stubs.getDefaultWidgetId = sinon.stub();
     stubs.migrateControl = sinon.stub().returnsArg(0);
 
     module('contentful/test', $provide => {
-      $provide.constant('widgets/default', stubs.getDefaultWidget);
+      $provide.constant('widgets/DefaultWidget.es6', { default: stubs.getDefaultWidgetId });
       $provide.constant('widgets/ControlMigrations.es6', { default: stubs.migrateControl });
     });
   });
@@ -28,7 +28,7 @@ describe('data/editingInterfaces/transformer', () => {
       const editingInterface = {
         controls: [{ fieldId: 'AAA' }]
       };
-      stubs.getDefaultWidget.withArgs({ apiName: 'MISSING' }).returns('DEF');
+      stubs.getDefaultWidgetId.withArgs({ apiName: 'MISSING' }).returns('DEF');
 
       const controls = this.fromAPI(contentType, editingInterface).controls;
       expect(controls.length).toBe(2);

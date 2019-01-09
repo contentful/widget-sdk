@@ -1,6 +1,7 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
 import migrateControl from 'widgets/ControlMigrations.es6';
+import getDefaultWidgetId from 'widgets/DefaultWidget.es6';
 
 /**
  * @ngdoc service
@@ -12,8 +13,7 @@ import migrateControl from 'widgets/ControlMigrations.es6';
  */
 registerFactory('data/editingInterfaces/transformer', [
   'editingInterfaces/helpers',
-  'widgets/default',
-  (eiHelpers, getDefaultWidgetId) => {
+  eiHelpers => {
     return {
       fromAPI: fromAPI,
       toAPI: toAPI,
