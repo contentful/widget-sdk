@@ -1,4 +1,4 @@
-import * as Utils from 'widgets/WidgetParametersUtils.es6';
+import * as Utils from './WidgetParametersUtils.es6';
 
 describe('WidgetParametersUtils', () => {
   describe('.filterDefinitions', () => {
@@ -8,27 +8,27 @@ describe('WidgetParametersUtils', () => {
     it('filters out time mode parameter if is date only', () => {
       const values = { format: 'dateonly' };
       const filtered = Utils.filterDefinitions(definitions, values, widget);
-      expect(filtered.length).toBe(1);
+      expect(filtered).toHaveLength(1);
       expect(filtered[0].id).toBe('format');
     });
 
     it('retains time mode parameter if format includes time', () => {
       const values = { format: 'time' };
       const filtered = Utils.filterDefinitions(definitions, values, widget);
-      expect(filtered.length).toBe(2);
+      expect(filtered).toHaveLength(2);
     });
 
     it('retains time mode parameter if is not builtin date picker', () => {
       const values = { format: 'dateonly' };
       const extension = { id: 'datePicker', custom: true };
       const filtered = Utils.filterDefinitions(definitions, values, extension);
-      expect(filtered.length).toBe(2);
+      expect(filtered).toHaveLength(2);
     });
 
     it('does not touch widgets different than date picker', () => {
       const values = { format: 'dateonly' };
       const filtered = Utils.filterDefinitions(definitions, values, { id: 'test' });
-      expect(filtered.length).toBe(2);
+      expect(filtered).toHaveLength(2);
     });
   });
 
@@ -89,7 +89,7 @@ describe('WidgetParametersUtils', () => {
 
     it('does not overwrite keys explicitly set to undefined', () => {
       const values = Utils.applyDefaultValues(definitions, { x: undefined });
-      expect(values.x).toBe(undefined);
+      expect(values.x).toBeUndefined();
     });
 
     it('works if there is no object for current values', () => {
