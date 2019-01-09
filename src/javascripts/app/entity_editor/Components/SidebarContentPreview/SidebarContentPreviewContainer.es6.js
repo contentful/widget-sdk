@@ -17,7 +17,11 @@ export class SidebarContentPreviewContainer extends Component {
   static propTypes = {
     entry: PropTypes.object,
     contentType: PropTypes.object.isRequired,
-    getDataForTracking: PropTypes.func.isRequired
+    dataForTracking: PropTypes.shape({
+      locales: PropTypes.arrayOf(PropTypes.object).isRequired,
+      fromState: PropTypes.string,
+      entryId: PropTypes.string
+    }).isRequired
   };
 
   state = {
@@ -107,7 +111,7 @@ export class SidebarContentPreviewContainer extends Component {
     }
 
     const { selectedContentPreview } = this.state;
-    const trackingData = this.props.getDataForTracking();
+    const dataForTracking = this.props;
 
     const contentTypeId = selectedContentPreview.contentType;
     const contentTypeName = get(this.props.contentType, 'name', '<UNPUBLISHED CONTENT TYPE>');
@@ -120,16 +124,16 @@ export class SidebarContentPreviewContainer extends Component {
         action: 'contentPreview',
         action_origin: 'entry-editor-content-preview-button',
         fields: stFields,
-        locales: trackingData.locales,
+        locales: dataForTracking.locales,
         contentTypeId,
-        entryId: trackingData.entryId
+        entryId: dataForTracking.entryId
       };
     }
 
     Analytics.track('element:click', {
       elementId: 'openContentPreviewBtn',
       groupId: 'entryEditor:contentPreview',
-      fromState: trackingData.fromState,
+      fromState: dataForTracking.fromState,
       toState,
       contentPreview: {
         previewName: selectedContentPreview.name,

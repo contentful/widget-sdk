@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EntitySidebar/TranslationWidget should match snaphot 1`] = `
+<div
+  data-test-id="sidebar-translation-widget"
+>
+  <h2
+    className="entity-sidebar__heading"
+  >
+    Translation
+  </h2>
+  <div
+    className="pill-list entity-sidebar__translation-pills"
+  >
+    <div
+      className="entity-sidebar__translation-pill x--default"
+      key="en-US"
+    >
+      <Pill
+        label="en-US"
+        status="default"
+        testId="deactivate-translation"
+      />
+    </div>
+    <div
+      className="entity-sidebar__translation-pill"
+      key="ru"
+    >
+      <Pill
+        label="ru"
+        onClose={[Function]}
+        status="default"
+        testId="deactivate-translation"
+      />
+    </div>
+    <TextLink
+      disabled={false}
+      linkType="primary"
+      onClick={[Function]}
+      testId="change-translation"
+    >
+      Change
+    </TextLink>
+  </div>
+</div>
+`;

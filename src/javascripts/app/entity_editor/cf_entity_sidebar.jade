@@ -53,7 +53,7 @@
       span.entity-sidebar__last-saved
         | Last saved&nbsp;
         react-component(
-          name="components/shared/RelativeDateTime/index.es6" 
+          name="components/shared/RelativeDateTime/index.es6"
           props="{value: data.documentUpdatedAt}"
         )
     button.entity-sidebar__revert.btn-link(
@@ -62,17 +62,18 @@
       ui-command="state.revertToPrevious")
       | Discard changes
 
-  h2.entity-sidebar__heading(ng-if="data.isEntry") Preview
-  react-component(
-    ng-if="data.isEntry"
-    name="app/settings/apps/netlify/BuildButton/index.es6"
-    props="sidebarContentPreviewProps")
-  react-component(
-    ng-if="data.isEntry"
-    name="app/entity_editor/Components/SidebarContentPreview/SidebarContentPreviewContainer.es6"
-    props="sidebarContentPreviewProps")
 
-  <react-component name="app/entity_editor/Components/SidebarIncomingLinks" props="sidebarIncomingLinksProps"></react-component>
+  react-component(
+    ng-if="data.isEntry"
+    name="app/EntitySidebar/ContentPreviewWidget/ContentPreviewWidget.es6"
+    props="{emitter: emitter}"
+  )
+
+  react-component(
+    name="app/EntitySidebar/IncomingLinksWidget/IncomingLinksWidgetContainer.es6"
+    props="{emitter: emitter}"
+  )
+
   h2.entity-sidebar__heading
     | Translation
 
@@ -88,14 +89,9 @@
     h2.entity-sidebar__heading Versions
     cf-snapshot-sidebar-list
 
-  h2.entity-sidebar__heading
-    | Users
-  .entity-sidebar__no-users(ng-if="!data.docCollaborators.length")
-    | No other users online
   react-component(
-    ng-if="data.docCollaborators.length"
-    name="app/entity_editor/Collaborators/index.es6" 
-    props="{users: data.docCollaborators, shape: 'rect'}"
+    name="app/EntitySidebar/UsersWidget/UsersWidgetContainer.es6"
+    props="{emitter: emitter}"
   )
 
   .entity-sidebar__widget(

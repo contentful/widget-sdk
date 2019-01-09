@@ -1,5 +1,9 @@
 import { registerDirective } from 'NgRegistry.es6';
+import mitt from 'mitt';
+import { once } from 'lodash';
 import * as K from 'utils/kefir.es6';
+import SidebarEventTypes from 'app/EntitySidebar/SidebarEventTypes.es6';
+import SidebarWidgetTypes from 'app/EntitySidebar/SidebarWidgetTypes.es6';
 
 /**
  * @description
@@ -31,36 +35,57 @@ registerDirective('cfEntitySidebar', [
     controller: [
       '$scope',
       $scope => {
+        $scope.emitter = mitt();
+
+        const initializeIncomingLinks = once(() => {
+          $scope.emitter.emit(SidebarEventTypes.UPDATED_INCOMING_LINKS_WIDGET, {
+            entityInfo: $scope.entityInfo
+          });
+        });
+
+        const initializeContentPreview = once(() => {
+          const updateEntry = entry => {
+            $scope.emitter.emit(SidebarEventTypes.UPDATED_CONTENT_PREVIEW_WIDGET, {
+              entry,
+              contentType: $scope.entityInfo.contentType,
+              dataForTracking: {
+                locales: $scope.locales,
+                fromState: $state.current.name,
+                entryId: $scope.entityInfo.id
+              }
+            });
+          };
+          updateEntry(null);
+          K.onValueScope($scope, $scope.otDoc.data$, entry => {
+            updateEntry(entry);
+          });
+        });
+
+        const initializeUsers = once(() => {
+          $scope.emitter.emit(SidebarEventTypes.UPDATED_USERS_WIDGET, []);
+          K.onValueScope($scope, $scope.otDoc.collaborators, collaborators => {
+            $scope.emitter.emit(SidebarEventTypes.UPDATED_USERS_WIDGET, collaborators);
+          });
+        });
+
+        $scope.emitter.on(SidebarEventTypes.WIDGET_REGISTERED, name => {
+          switch (name) {
+            case SidebarWidgetTypes.INCOMING_LINKS:
+              initializeIncomingLinks();
+              break;
+            case SidebarWidgetTypes.CONTENT_PREVIEW:
+              initializeContentPreview();
+              break;
+            case SidebarWidgetTypes.USERS:
+              initializeUsers();
+              break;
+          }
+        });
+
         $scope.data = {
           isEntry: $scope.entityInfo.type === 'Entry',
           isMasterEnvironment: spaceContext.getEnvironmentId() === 'master'
         };
-
-        $scope.sidebarIncomingLinksProps = {
-          entityInfo: $scope.entityInfo
-        };
-
-        $scope.sidebarContentPreviewProps = {
-          entry: null,
-          contentType: $scope.entityInfo.contentType,
-          getDataForTracking: () => ({
-            locales: $scope.locales,
-            fromState: $state.current.name,
-            entryId: $scope.entityInfo.id
-          })
-        };
-
-        const updateSidebarProps = entry => {
-          $scope.sidebarContentPreviewProps = {
-            ...$scope.sidebarContentPreviewProps,
-            entry
-          };
-          $scope.$applyAsync();
-        };
-
-        K.onValueScope($scope, $scope.otDoc.data$, entry => {
-          updateSidebarProps(entry);
-        });
 
         // We make sure that we do not leak entity instances from the
         // editor controller into the current scope
@@ -88,10 +113,6 @@ registerDirective('cfEntitySidebar', [
 
         K.onValueScope($scope, $scope.otDoc.sysProperty, sys => {
           $scope.data.documentUpdatedAt = sys.updatedAt;
-        });
-
-        K.onValueScope($scope, $scope.otDoc.collaborators, collaborators => {
-          $scope.data.docCollaborators = collaborators;
         });
       }
     ]

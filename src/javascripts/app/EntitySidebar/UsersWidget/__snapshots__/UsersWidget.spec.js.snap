@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EntitySidebar/TranslationWidget it should render Collaborators component if users list is not empty 1`] = `
+<div>
+  <h2
+    className="entity-sidebar__heading"
+  >
+    Users
+  </h2>
+  <Collaborators
+    shape="rect"
+    users={
+      Array [
+        Object {
+          "sys": Object {
+            "id": "1",
+          },
+        },
+        Object {
+          "sys": Object {
+            "id": "2",
+          },
+        },
+      ]
+    }
+  />
+</div>
+`;
+
+exports[`EntitySidebar/TranslationWidget it should show "No other users online" if users list is empty 1`] = `
+<div>
+  <h2
+    className="entity-sidebar__heading"
+  >
+    Users
+  </h2>
+  <div
+    className="entity-sidebar__no-users"
+  >
+    No other users online
+  </div>
+</div>
+`;

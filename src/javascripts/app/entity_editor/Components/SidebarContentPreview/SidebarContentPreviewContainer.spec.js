@@ -70,7 +70,9 @@ describe('entity_editor/Components/SidebarContentPreviewContainer.es6', () => {
     const initialProps = {
       entry: null,
       contentType,
-      getDataForTracking: () => {}
+      dataForTracking: {
+        locales: []
+      }
     };
     const wrapper = await Enzyme.shallow(<SidebarContentPreviewContainer {...initialProps} />, {
       disableLifecycleMethods: true

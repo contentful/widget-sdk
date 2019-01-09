@@ -107,5 +107,6 @@ window.libs = [
   ['sum-types', require('sum-types')],
   ['sum-types/caseof-eq', require('sum-types/caseof-eq')],
   ['react-sticky-el', require('react-sticky-el')],
-  ['detect-browser', require('detect-browser')]
+  ['detect-browser', require('detect-browser')],
+  ['mitt', require('mitt')]
 ];

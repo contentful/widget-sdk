@@ -57,6 +57,7 @@
     "ldclient-js": "^1.1.8",
     "lodash": "^4.17.10",
     "marked-ast": "git@github.com:contentful/marked-ast.git#21fabcbf99aebc1ac4626343dc9cc58b45a34628",
+    "mitt": "^1.1.3",
     "moment": "^2.19.3",
     "nib": "^1.1.2",
     "node-html-encoder": "0.0.2",
