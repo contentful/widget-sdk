@@ -67,6 +67,7 @@ exports[`Pagination disables the Next and Previous buttons there is loading 1`] 
       loading={false}
       onClick={[Function]}
       testId="cf-ui-button"
+      type="button"
     >
       Previous
     </Button>
@@ -80,6 +81,7 @@ exports[`Pagination disables the Next and Previous buttons there is loading 1`] 
       loading={false}
       onClick={[Function]}
       testId="cf-ui-button"
+      type="button"
     >
       Next
     </Button>
@@ -154,6 +156,7 @@ exports[`Pagination disables the Next and Previous buttons there is only one avi
       loading={false}
       onClick={[Function]}
       testId="cf-ui-button"
+      type="button"
     >
       Previous
     </Button>
@@ -167,6 +170,7 @@ exports[`Pagination disables the Next and Previous buttons there is only one avi
       loading={false}
       onClick={[Function]}
       testId="cf-ui-button"
+      type="button"
     >
       Next
     </Button>
@@ -241,6 +245,7 @@ exports[`Pagination disables the Next button if it is the last page 1`] = `
       loading={false}
       onClick={[Function]}
       testId="cf-ui-button"
+      type="button"
     >
       Previous
     </Button>
@@ -254,6 +259,7 @@ exports[`Pagination disables the Next button if it is the last page 1`] = `
       loading={false}
       onClick={[Function]}
       testId="cf-ui-button"
+      type="button"
     >
       Next
     </Button>
@@ -328,6 +334,7 @@ exports[`Pagination disables the Previous button if it is the first page 1`] = `
       loading={false}
       onClick={[Function]}
       testId="cf-ui-button"
+      type="button"
     >
       Previous
     </Button>
@@ -341,6 +348,7 @@ exports[`Pagination disables the Previous button if it is the first page 1`] = `
       loading={false}
       onClick={[Function]}
       testId="cf-ui-button"
+      type="button"
     >
       Next
     </Button>
@@ -415,6 +423,7 @@ exports[`Pagination enables the Previous and Next buttons if it is not the first
       loading={false}
       onClick={[Function]}
       testId="cf-ui-button"
+      type="button"
     >
       Previous
     </Button>
@@ -428,6 +437,7 @@ exports[`Pagination enables the Previous and Next buttons if it is not the first
       loading={false}
       onClick={[Function]}
       testId="cf-ui-button"
+      type="button"
     >
       Next
     </Button>

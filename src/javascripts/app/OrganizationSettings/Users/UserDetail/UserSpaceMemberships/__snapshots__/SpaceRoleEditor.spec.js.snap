@@ -41,6 +41,7 @@ exports[`SpaceRoleEditor renders the component 1`] = `
         loading={false}
         onClick={[Function]}
         testId="cf-ui-button"
+        type="button"
       >
         Select a role
       </Button>
@@ -66,6 +67,7 @@ exports[`SpaceRoleEditor renders the component 1`] = `
         loading={false}
         onClick={[Function]}
         testId="cf-ui-button"
+        type="button"
       >
         <button
           className="Button__Button___1ZfFj a11y__focus-border--default___60AXp select-button Button__Button--naked___mB6LS"
@@ -73,6 +75,7 @@ exports[`SpaceRoleEditor renders the component 1`] = `
           disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
+          type="button"
         >
           <TabFocusTrap
             extraClassNames="Button__Button__inner-wrapper___3qrNC"
@@ -198,6 +201,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
         loading={false}
         onClick={[Function]}
         testId="cf-ui-button"
+        type="button"
       >
         Select a role
       </Button>
@@ -223,6 +227,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
         loading={false}
         onClick={[Function]}
         testId="cf-ui-button"
+        type="button"
       >
         <button
           className="Button__Button___1ZfFj a11y__focus-border--default___60AXp select-button Button__Button--naked___mB6LS"
@@ -230,6 +235,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
           disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
+          type="button"
         >
           <TabFocusTrap
             extraClassNames="Button__Button__inner-wrapper___3qrNC"

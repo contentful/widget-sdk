@@ -78,6 +78,7 @@ exports[`Toolbar renders no icons if no formatting options enabled 1`] = `
                 onMouseDown={[Function]}
                 size="small"
                 testId="cf-ui-button"
+                type="button"
               >
                 Normal Text
               </Button>
@@ -100,6 +101,7 @@ exports[`Toolbar renders no icons if no formatting options enabled 1`] = `
                 onMouseDown={[Function]}
                 size="small"
                 testId="cf-ui-button"
+                type="button"
               >
                 <button
                   className="Button__Button___1ZfFj a11y__focus-border--default___60AXp toolbar-heading-toggle Button__Button--naked___mB6LS Button__Button--small___3yyrk"
@@ -108,6 +110,7 @@ exports[`Toolbar renders no icons if no formatting options enabled 1`] = `
                   onBlur={[Function]}
                   onClick={[Function]}
                   onMouseDown={[Function]}
+                  type="button"
                 >
                   <TabFocusTrap
                     extraClassNames="Button__Button__inner-wrapper___3qrNC"
@@ -311,6 +314,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                 onMouseDown={[Function]}
                 size="small"
                 testId="cf-ui-button"
+                type="button"
               >
                 Normal Text
               </Button>
@@ -333,6 +337,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                 onMouseDown={[Function]}
                 size="small"
                 testId="cf-ui-button"
+                type="button"
               >
                 <button
                   className="Button__Button___1ZfFj a11y__focus-border--default___60AXp toolbar-heading-toggle Button__Button--naked___mB6LS Button__Button--small___3yyrk"
@@ -341,6 +346,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                   onBlur={[Function]}
                   onClick={[Function]}
                   onMouseDown={[Function]}
+                  type="button"
                 >
                   <TabFocusTrap
                     extraClassNames="Button__Button__inner-wrapper___3qrNC"
@@ -2407,6 +2413,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                 onMouseDown={[Function]}
                 size="small"
                 testId="cf-ui-button"
+                type="button"
               >
                 Embed
               </Button>
@@ -2430,6 +2437,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                 onMouseDown={[Function]}
                 size="small"
                 testId="cf-ui-button"
+                type="button"
               >
                 <button
                   className="Button__Button___1ZfFj a11y__focus-border--default___60AXp toolbar-entry-dropdown-toggle Button__Button--muted___2Wair Button__Button--small___3yyrk"
@@ -2438,6 +2446,7 @@ exports[`Toolbar renders toolbar icons 1`] = `
                   onBlur={[Function]}
                   onClick={[Function]}
                   onMouseDown={[Function]}
+                  type="button"
                 >
                   <TabFocusTrap
                     extraClassNames="Button__Button__inner-wrapper___3qrNC"
