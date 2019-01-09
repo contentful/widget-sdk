@@ -9,24 +9,30 @@ import removeFromDataset from './utils/removeFromDataset.es6';
 import getDatasets from 'redux/selectors/getDatasets.es6';
 import TeamForm from 'app/OrganizationSettings/Teams/TeamForm.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
+import { isTaken } from 'utils/ServerErrorUtils.es6';
 
 export default ({ dispatch, getState }) => next => async action => {
   switch (action.type) {
     case 'CREATE_NEW_TEAM': {
       next(action);
+      const team = action.payload.team;
       const service = createTeamService(getOrgId(getState()));
       try {
         const newTeam = await service.create(action.payload.team);
         dispatch({ type: 'ADD_TO_DATASET', payload: { item: newTeam, dataset: TEAMS } });
         Notification.success(`Team ${newTeam.name} created successfully`);
-      } catch (ex) {
+      } catch (e) {
         dispatch({
           type: 'SUBMIT_NEW_TEAM_FAILED',
           error: true,
-          payload: ex,
+          payload: e,
           meta: { team: action.payload.team }
         });
-        Notification.error(`Team ${action.payload.team.name} could not be created`);
+        if (isTaken(e)) {
+          Notification.error(`${team.name} is already being used.`);
+          return;
+        }
+        Notification.error(e.message);
       }
       break;
     }

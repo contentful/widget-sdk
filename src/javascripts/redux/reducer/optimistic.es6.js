@@ -6,7 +6,9 @@ export default (state = {}, { type, payload }) => {
     case 'CREATE_NEW_TEAM': {
       return update(TEAMS, teams => concat(payload.team, teams || []), state);
     }
-    case 'SUBMIT_NEW_TEAM_FAILED':
+    case 'SUBMIT_NEW_TEAM_FAILED': {
+      return update(TEAMS, drop(1), state);
+    }
     case 'ADD_TO_DATASET': {
       return update(payload.dataset, drop(1), state);
     }
