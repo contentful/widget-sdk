@@ -7,6 +7,7 @@ describe('cfReferenceEditorDirective', () => {
     '<cf-reference-editor type="{{ type }}" variant="{{ variant }}" single="single" />';
   const link1 = { sys: { type: 'Link', linkType: 'Entry', id: 'testid1' } };
   const link2 = { sys: { type: 'Link', linkType: 'Entry', id: 'testid2' } };
+  const link3 = { sys: { type: 'Link', linkType: 'Entry', id: 'testid3' } };
 
   beforeEach(function() {
     this.analytics = { track: sinon.spy() };
@@ -307,6 +308,9 @@ describe('cfReferenceEditorDirective', () => {
   describe('publication warning - unpublished references', () => {
     beforeEach(function() {
       this.widgetApi.space.getEntries.defers();
+      this.widgetApi.field.name = 'test';
+      this.widgetApi.field.locale = 'en-US';
+
       this.field.setValue([link1, link2]);
       this.scope = this.init();
 
@@ -327,10 +331,8 @@ describe('cfReferenceEditorDirective', () => {
     }
 
     it('should prepare warning data', function() {
-      this.widgetApi.field.name = 'test';
-      this.widgetApi.field.locale = 'en-US';
       this.widgetApi.space.getEntries.resolve({
-        items: [makeEntity(link1, false), makeEntity(link2, false)]
+        items: [makeEntity(link1, false), makeEntity(link2, false), makeEntity(link3, true)]
       });
       this.$apply();
 
@@ -338,6 +340,16 @@ describe('cfReferenceEditorDirective', () => {
       expect(data.field.name).toBe('test');
       expect(data.field.locale).toBe('en-US');
       expect(data.references).toEqual([makeEntity(link1, false), makeEntity(link2, false)]);
+    });
+
+    it('should prepare warning data only for linked entries that are available', function() {
+      this.widgetApi.space.getEntries.resolve({
+        items: [makeEntity(link1, false)]
+      });
+      this.$apply();
+
+      const data = this.widgetApi.field.registerUnpublishedReferencesWarning.firstCall.args[0].getData();
+      expect(data.references).toEqual([makeEntity(link1, false)]);
     });
   });
 

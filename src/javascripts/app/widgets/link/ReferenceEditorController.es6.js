@@ -264,7 +264,7 @@ export default function create($scope, widgetApi) {
         if (item.value.entity) {
           return !item.value.entity.sys.publishedVersion;
         } else {
-          return true;
+          return false;
         }
       })
       .map(item => item.value.entity);
