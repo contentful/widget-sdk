@@ -11,13 +11,10 @@ import $ from 'jquery';
  * @scope.requires {Widget.Renderable} widget
  * @scope.requires {Client.ContentType?} contentType
  * @scope.requires {FieldLocaleController} fieldLocale
- *
- * @property {string} $scope.contentTypeHref
  */
 registerDirective('cfWidgetRenderer', [
   '$compile',
-  '$state',
-  ($compile, $state) => {
+  $compile => {
     return {
       scope: true,
       restrict: 'E',
@@ -26,8 +23,6 @@ registerDirective('cfWidgetRenderer', [
         if (!template) {
           throw new Error('Widget template is required');
         }
-
-        scope.contentTypeHref = buildContentTypeHref(scope.entityInfo.contentTypeId);
 
         const $widget = $(template);
         element.append($widget);
@@ -47,14 +42,5 @@ registerDirective('cfWidgetRenderer', [
         });
       }
     };
-
-    // TODO We should replace this with a helper method that generates a state
-    // reference. The template then should use the `ui-sref`
-    // directive.
-    function buildContentTypeHref(contentTypeId) {
-      if (contentTypeId) {
-        return $state.href('^.^.content_types.detail', { contentTypeId });
-      }
-    }
   }
 ]);

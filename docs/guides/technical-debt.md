@@ -40,5 +40,4 @@ that should be rewritten
 
 * `spaceContext`
 * `accessChecker`
-* `widgets` and `widgets/Store`
 * `data/previewEnvironmentCache`

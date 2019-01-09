@@ -5,7 +5,7 @@ describe('data/editingInterfaces', () => {
 
   beforeEach(function() {
     module('contentful/test', $provide => {
-      $provide.constant('widgets/default', sinon.stub());
+      $provide.constant('widgets/DefaultWidget.es6', { default: sinon.stub() });
     });
 
     spaceEndpoint = sinon.stub().defers();
@@ -54,8 +54,8 @@ describe('data/editingInterfaces', () => {
       });
 
       it('resolves with the default interface if a 404 is returned', function() {
-        const getDefaultWidget = this.$inject('widgets/default');
-        getDefaultWidget.returns('DEFAULT');
+        const getDefaultWidgetId = this.$inject('widgets/DefaultWidget.es6').default;
+        getDefaultWidgetId.returns('DEFAULT');
 
         spaceEndpoint.rejects({ status: 404 });
         return editingInterfaces.get(contentType).then(ei => {
@@ -84,8 +84,8 @@ describe('data/editingInterfaces', () => {
       });
 
       it('resolves with the default interface', function() {
-        const getDefaultWidget = this.$inject('widgets/default');
-        getDefaultWidget.returns('DEFAULT');
+        const getDefaultWidgetId = this.$inject('widgets/DefaultWidget.es6').default;
+        getDefaultWidgetId.returns('DEFAULT');
 
         return editingInterfaces.get(contentType).then(ei => {
           expect(ei.controls[0].widgetId).toEqual('DEFAULT');

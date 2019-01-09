@@ -3,11 +3,11 @@ import { runTask, wrapTask } from 'utils/Concurrent.es6';
 import { caseof as caseofEq } from 'sum-types/caseof-eq';
 import { deepFreeze } from 'utils/Freeze.es6';
 import createPrefetchCache from 'data/CMA/EntityPrefetchCache.es6';
+import buildRenderables from 'widgets/WidgetRenderable.es6';
 import { getModule } from 'NgRegistry.es6';
 
 const assetEditorInterface = getModule('data/editingInterfaces/asset');
 const TheLocaleStore = getModule('TheLocaleStore');
-const Widgets = getModule('widgets');
 
 /**
  * @ngdoc service
@@ -21,8 +21,7 @@ const Widgets = getModule('widgets');
  * properties.
  * - `entity`. An instance of a client library entity.
  * - `fieldControls`. An object containing the data to build the field
- *   editors. This object is created by the `buildRenderable()`
- *   function in the `widgets/widgets` service.
+ *   editors.
  *
  * When loading an entry the returned object has an additional
  * `contentType` property. Its value is an instance of a client
@@ -143,7 +142,7 @@ function makeEntryLoader(spaceContext) {
     getFieldControls: memoize(
       wrapTask(function*(contentType) {
         const ei = yield spaceContext.editingInterfaces.get(contentType.data);
-        return Widgets.buildRenderable(ei.controls, spaceContext.widgets.getAll());
+        return buildRenderables(ei.controls, spaceContext.widgets.getAll());
       })
     ),
     getOpenDoc: makeDocOpener(spaceContext)
@@ -160,7 +159,7 @@ function makeAssetLoader(spaceContext) {
       return null;
     },
     getFieldControls: function() {
-      const renderable = Widgets.buildRenderable(
+      const renderable = buildRenderables(
         assetEditorInterface.widgets,
         spaceContext.widgets.getAll()
       );

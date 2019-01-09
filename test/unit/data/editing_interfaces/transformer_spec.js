@@ -3,12 +3,15 @@
 import _ from 'lodash';
 
 describe('data/editingInterfaces/transformer', () => {
-  let getDefaultWidget;
+  const stubs = {};
 
   beforeEach(() => {
-    getDefaultWidget = sinon.stub();
+    stubs.getDefaultWidgetId = sinon.stub();
+    stubs.migrateControl = sinon.stub().returnsArg(0);
+
     module('contentful/test', $provide => {
-      $provide.constant('widgets/default', getDefaultWidget);
+      $provide.constant('widgets/DefaultWidget.es6', { default: stubs.getDefaultWidgetId });
+      $provide.constant('widgets/ControlMigrations.es6', { default: stubs.migrateControl });
     });
   });
 
@@ -25,7 +28,7 @@ describe('data/editingInterfaces/transformer', () => {
       const editingInterface = {
         controls: [{ fieldId: 'AAA' }]
       };
-      getDefaultWidget.withArgs({ apiName: 'MISSING' }).returns('DEF');
+      stubs.getDefaultWidgetId.withArgs({ apiName: 'MISSING' }).returns('DEF');
 
       const controls = this.fromAPI(contentType, editingInterface).controls;
       expect(controls.length).toBe(2);
@@ -47,21 +50,14 @@ describe('data/editingInterfaces/transformer', () => {
     });
 
     it('migrates deprecated widgets', function() {
-      const migrations = this.$inject('widgets/migrations/data');
-      migrations.push({
-        from: 'OLD',
-        to: 'NEW'
-      });
+      const contentType = { fields: [{ apiName: 'AAA' }] };
+      const control = { fieldId: 'AAA', widgetId: 'OLD' };
+      const editingInterface = { controls: [control] };
 
-      const contentType = {
-        fields: [{ apiName: 'AAA' }]
-      };
-      const editingInterface = {
-        controls: [{ fieldId: 'AAA', widgetId: 'OLD' }]
-      };
+      this.fromAPI(contentType, editingInterface);
 
-      const controls = this.fromAPI(contentType, editingInterface).controls;
-      expect(controls[0].widgetId).toEqual('NEW');
+      sinon.assert.calledOnce(stubs.migrateControl);
+      expect(stubs.migrateControl.lastCall.args[0].fieldId).toBe('AAA');
     });
 
     describe('field mapping', () => {

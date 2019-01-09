@@ -161,7 +161,6 @@ registerFactory('fieldFactory', [
       getLabel: getFieldLabel,
       getIconId,
       createTypeInfo,
-      getTypeName,
       getLocaleCodes
     };
 
@@ -212,54 +211,6 @@ registerFactory('fieldFactory', [
         info = { type: 'Array', items: info };
       }
       return info;
-    }
-
-    /**
-     * @ngdoc method
-     * @name fieldFactory#getTypeName
-     * @description
-     * Returns a string identifier for a type object.
-     *
-     * We use this string as a simplified reference to field types.
-     * Possible values are
-     *
-     * - Symbol
-     * - Symbols
-     * - Text
-     * - Integer
-     * - Number
-     * - Boolean
-     * - Date
-     * - Location
-     * - Object
-     * - Entry
-     * - Entries
-     * - Asset
-     * - Assets
-     *
-     * @param {API.ContentType.Field} field
-     * @return {string}
-     */
-    function getTypeName(field) {
-      const type = field.type;
-      if (type === 'Link') {
-        return field.linkType;
-      } else if (type === 'Array') {
-        const itemsType = _.get(field, 'items.type');
-        if (itemsType === 'Link') {
-          const linkType = _.get(field, 'items.linkType');
-          if (linkType === 'Entry') {
-            return 'Entries';
-          }
-          if (linkType === 'Asset') {
-            return 'Assets';
-          }
-        } else if (itemsType === 'Symbol') {
-          return 'Symbols';
-        }
-      } else {
-        return type;
-      }
     }
 
     /**

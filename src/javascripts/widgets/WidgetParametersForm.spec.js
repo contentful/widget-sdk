@@ -1,10 +1,11 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import Form from 'widgets/WidgetParametersForm.es6';
+
+import Form from './WidgetParametersForm.es6';
 
 describe('WidgetParametersForm', () => {
   const mount = (definitions = [], values = {}, missing = {}) => {
-    const updateStub = sinon.stub();
+    const updateStub = jest.fn();
     const wrapper = Enzyme.mount(
       <Form definitions={definitions} values={values} missing={missing} updateValue={updateStub} />
     );
@@ -17,7 +18,7 @@ describe('WidgetParametersForm', () => {
     const [wrapper, updateStub] = mount(definitions);
     const input = wrapper.find('input').first();
     input.simulate('change', { target: { value: 'test' } });
-    sinon.assert.calledOnce(updateStub.withArgs('string', 'test'));
+    expect(updateStub).toBeCalledWith('string', 'test');
   });
 
   it('updates Enum parameters', () => {
@@ -26,9 +27,10 @@ describe('WidgetParametersForm', () => {
     const [wrapper, updateStub] = mount(definitions);
     const select = wrapper.find('select').first();
     select.simulate('change', { target: { value: 'one' } });
-    sinon.assert.calledOnce(updateStub.withArgs('enum', 'one'));
+    expect(updateStub.mock.calls).toHaveLength(1);
+    expect(updateStub).toBeCalledWith('enum', 'one');
     select.simulate('change', { target: { value: '' } });
-    sinon.assert.calledOnce(updateStub.withArgs('enum', undefined));
+    expect(updateStub).toBeCalledWith('enum', undefined);
   });
 
   it('updates Number parameters', () => {
@@ -36,9 +38,10 @@ describe('WidgetParametersForm', () => {
     const [wrapper, updateStub] = mount(definitions);
     const input = wrapper.find('input').first();
     input.simulate('change', { target: { value: '123' } });
-    sinon.assert.calledOnce(updateStub.withArgs('num', 123));
+    expect(updateStub.mock.calls).toHaveLength(1);
+    expect(updateStub).toBeCalledWith('num', 123);
     input.simulate('change', { target: { value: 'wat?' } });
-    sinon.assert.calledOnce(updateStub.withArgs('num', undefined));
+    expect(updateStub).toBeCalledWith('num', undefined);
   });
 
   it('updates Boolean parameters', () => {
@@ -46,9 +49,10 @@ describe('WidgetParametersForm', () => {
     const [wrapper, updateStub] = mount(definitions);
     const checkboxes = wrapper.find('input');
     checkboxes.at(0).simulate('change', { target: { checked: true } });
-    sinon.assert.calledOnce(updateStub.withArgs('bool', true));
+    expect(updateStub.mock.calls).toHaveLength(1);
+    expect(updateStub).toBeCalledWith('bool', true);
     checkboxes.at(1).simulate('change', { target: { checked: true } });
-    sinon.assert.calledOnce(updateStub.withArgs('bool', false));
+    expect(updateStub).toBeCalledWith('bool', false);
   });
 
   it('clearing Boolean parameter', () => {
@@ -56,7 +60,8 @@ describe('WidgetParametersForm', () => {
     const [wrapper, updateStub] = mount(definitions, { bool: true });
     const checkboxes = wrapper.find('input');
     checkboxes.at(0).simulate('change', { target: { checked: false } });
-    sinon.assert.calledOnce(updateStub.withArgs('bool', undefined));
+    expect(updateStub.mock.calls).toHaveLength(1);
+    expect(updateStub).toBeCalledWith('bool', undefined);
   });
 
   it('renders multiple inputs', () => {
@@ -64,7 +69,7 @@ describe('WidgetParametersForm', () => {
       { id: 'str', type: 'Symbol', name: 'String param' },
       { id: 'bool', type: 'Boolean', name: 'Bool param' }
     ]);
-    expect(wrapper.find('input').length).toBe(3); // 1 for Symbol input + 2 for Boolean checkboxes
+    expect(wrapper.find('input')).toHaveLength(3); // 1 for Symbol input + 2 for Boolean checkboxes
   });
 
   it('renders information about parameter being required', () => {
@@ -93,7 +98,7 @@ describe('WidgetParametersForm', () => {
       { id: 'bool', type: 'Boolean', name: 'Bool param', required: true }
     ];
     const [wrapper] = mount(definitions, { str: 'test' }, { bool: true });
-    expect(wrapper.find('.cfnext-form__field-error').length).toBe(1);
+    expect(wrapper.find('.cfnext-form__field-error')).toHaveLength(1);
     const fields = wrapper.find('.cfnext-form__field');
     expect(
       fields
@@ -112,7 +117,7 @@ describe('WidgetParametersForm', () => {
     ];
     const values = { str: 'test', enum: 'two', num: 123, bool: true };
     const [wrapper] = mount(definitions, values);
-    expect(wrapper.find('.cfnext-form__field').length).toBe(4);
+    expect(wrapper.find('.cfnext-form__field')).toHaveLength(4);
     expect(wrapper.find('[name="str"]').props().value).toBe('test');
     expect(wrapper.find('[name="enum"]').props().value).toBe('two');
     expect(wrapper.find('[name="num"]').props().value).toBe('123');

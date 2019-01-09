@@ -1,6 +1,8 @@
 import * as sinon from 'test/helpers/sinon';
 import createMockEndpoint from 'test/helpers/mocks/SpaceEndpoint';
 
+import { create as createWidgetStore } from 'widgets/WidgetStore.es6';
+
 /**
  * @ngdoc service
  * @module contentful/mocks
@@ -31,7 +33,6 @@ angular.module('contentful/mocks').factory('mocks/spaceContext', [
   'data/ApiClient',
   'data/ContentTypeRepo/Published.es6',
   'mocks/entityEditor/Document',
-  'widgets/Store.es6',
   'data/CMA/ApiKeyRepo.es6',
   (
     spaceContext,
@@ -40,7 +41,6 @@ angular.module('contentful/mocks').factory('mocks/spaceContext', [
     CMAClient,
     CTRepo,
     { create: createDocument },
-    { create: createWidgetStore },
     { default: createApiKeyRepo }
   ) => {
     return {

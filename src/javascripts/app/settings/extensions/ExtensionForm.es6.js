@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { FIELD_TYPES } from './FieldTypes.es6';
+import { EXTENSION_FIELD_TYPES } from 'widgets/FieldTypes.es6';
 import { Label, Editor, ExtensionParameters } from './ExtensionFormLeaves.es6';
 
 const EXTENSION_URL_RE = /(^https:\/\/)|(^http:\/\/localhost(:[0-9]+)?(\/|$))/;
@@ -35,7 +35,7 @@ const ExtensionForm = ({ entity, selfHosted, updateEntity, setSelfHosted }) => {
       <div className="cfnext-form__field">
         <Label text="Field types" info="required" />
         <div className="extension-form__field-types">
-          {FIELD_TYPES.map(type => {
+          {EXTENSION_FIELD_TYPES.map(type => {
             return (
               <label key={type}>
                 <input

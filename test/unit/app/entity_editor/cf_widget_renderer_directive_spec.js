@@ -34,19 +34,6 @@ describe('cfWidgetRenderer Directive', () => {
     expect(el.find('.foo').length).toBe(1);
   });
 
-  it('has scope#contentTypeStateRef property', function() {
-    this.widget.template = '<p>{{contentTypeHref}}</p>';
-    const el = this.compile();
-    expect(el.find('p').text()).toEqual('/spaceHref/CTID');
-  });
-
-  it('does not have scope#contentTypeStateRef property if there is no content type', function() {
-    this.widget.template = '<p>{{contentTypeHref}}</p>';
-    this.entityInfo = {};
-    const el = this.compile();
-    expect(el.find('p').text()).toEqual('');
-  });
-
   it('activates field locale when element is focused', function() {
     this.widget.template = '<div>';
     const el = this.compile();

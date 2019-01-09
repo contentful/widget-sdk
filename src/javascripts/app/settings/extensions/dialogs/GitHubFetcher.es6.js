@@ -1,4 +1,4 @@
-import { toApiFieldType } from '../FieldTypes.es6';
+import { toApiFieldType } from 'widgets/FieldTypes.es6';
 import parseGithubUrl from 'parse-github-url';
 
 const GITHUB_URL_PROPS = ['host', 'repo', 'branch', 'filepath'];

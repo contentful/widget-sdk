@@ -1,5 +1,6 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
+import createIDMap from './IDMap.es6';
 
 /**
  * @ngdoc type
@@ -12,11 +13,10 @@ registerFactory('widgets/API', [
   '$q',
   'TheLocaleStore',
   'widgets/channel',
-  'widgets/IDMap',
   'entitySelector',
   'spaceContext',
   'analytics/Analytics.es6',
-  ($q, TheLocaleStore, Channel, createIDMap, entitySelector, spaceContext, Analytics) => {
+  ($q, TheLocaleStore, Channel, entitySelector, spaceContext, Analytics) => {
     /**
      * @ngdoc method
      * @name widgets/API#API
@@ -44,7 +44,7 @@ registerFactory('widgets/API', [
       iframe
     ) {
       this.channel = new Channel(iframe);
-      this.idMap = createIDMap(fields);
+      this.idMap = createIDMap(fields, TheLocaleStore.getPrivateLocales());
       this.current = current;
       this.fields = fields;
       this.entryData = entryData;

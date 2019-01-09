@@ -1,8 +1,6 @@
 import { get } from 'lodash';
-import { create as createBuiltinWidgetsList } from 'widgets/builtin.es6';
-import { getModule } from 'NgRegistry.es6';
-
-const fieldFactory = getModule('fieldFactory');
+import { create as createBuiltinWidgetList } from './BuiltinWidgets.es6';
+import { toInternalFieldType } from './FieldTypes.es6';
 
 export function create(cma) {
   let cache = [];
@@ -31,7 +29,7 @@ function prepareList(extensions) {
   // It's far from ideal but we retain this behavior for now.
   // TODO figure out what to do?
   const extensionIds = extensions.map(e => e.id);
-  const builtin = createBuiltinWidgetsList();
+  const builtin = createBuiltinWidgetList();
   const filteredBuiltins = builtin.filter(b => {
     return !extensionIds.includes(b.id);
   });
@@ -46,7 +44,7 @@ function buildExtensionWidget(data) {
     ...base,
     id: data.sys.id,
     name: data.extension.name,
-    fieldTypes: data.extension.fieldTypes.map(fieldFactory.getTypeName),
+    fieldTypes: data.extension.fieldTypes.map(toInternalFieldType),
     sidebar: data.extension.sidebar,
     template: '<cf-iframe-widget />',
     parameters: get(data.extension, 'parameters.instance', []),

@@ -5,6 +5,7 @@ import { deepFreeze, deepFreezeClone } from 'utils/Freeze.es6';
 import * as ShareJSConnection from 'data/sharejs/Connection.es6';
 import createApiKeyRepo from 'data/CMA/ApiKeyRepo.es6';
 import shouldUseEnvEndpoint from 'data/shouldUseEnvEndpoint.es6';
+import { create as createWidgetStore } from 'widgets/WidgetStore.es6';
 
 /**
  * @ngdoc service
@@ -37,7 +38,6 @@ registerFactory('spaceContext', [
   'access_control/AccessChecker/index.es6',
   'access_control/SpaceMembershipRepository.es6',
   'data/ContentTypeRepo/Published.es6',
-  'widgets/Store.es6',
   'data/Endpoint.es6',
   'data/UiConfig/Store.es6',
   'data/ViewMigrator.es6',
@@ -64,7 +64,6 @@ registerFactory('spaceContext', [
     accessChecker,
     MembershipRepo,
     PublishedCTRepo,
-    { create: createWidgetStore },
     { createSpaceEndpoint },
     { default: createUiConfigStore },
     { default: createViewMigrator },

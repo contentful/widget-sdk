@@ -4,8 +4,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { joinAndTruncate } from 'utils/StringUtils.es6';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils.es6';
+import { toInternalFieldType } from 'widgets/FieldTypes.es6';
 import WidgetParametersForm from 'widgets/WidgetParametersForm.es6';
 import { Notification } from '@contentful/forma-36-react-components';
+import getDefaultWidgetId from 'widgets/DefaultWidget.es6';
 
 /**
  * @ngdoc service
@@ -147,7 +149,7 @@ registerController('FieldDialogController', [
      * @type {Widgets.Descriptor[]}
      */
     spaceContext.widgets.refresh().then(widgets => {
-      const fieldType = fieldFactory.getTypeName($scope.field);
+      const fieldType = toInternalFieldType($scope.field);
 
       $scope.availableWidgets = widgets.filter(widget => widget.fieldTypes.includes(fieldType));
     });
@@ -346,8 +348,7 @@ registerController('FieldDialogValidationsController', [
  */
 registerController('FieldDialogAppearanceController', [
   '$scope',
-  'widgets/default',
-  ($scope, getDefaultWidgetId) => {
+  $scope => {
     $scope.defaultWidgetId = getDefaultWidgetId($scope.field, $scope.contentType.data.displayField);
     $scope.selectWidget = selectWidget;
 

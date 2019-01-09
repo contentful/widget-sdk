@@ -44,9 +44,7 @@ angular
       ngRequire('services/localeStore.es6');
       ngRequire('data/userCache.es6');
       ngRequire('services/editingInterfacesHelpers.es6');
-      ngRequire('widgets/migrations.es6');
       ngRequire('services/fieldFactory.es6');
-      ngRequire('widgets/default.es6');
       ngRequire('data/editing_interfaces/transformer.es6');
       ngRequire('data/editingInterfaces.es6');
       ngRequire('data/apiClient.es6');
@@ -289,9 +287,7 @@ angular
       ngRequire('ui/setScrollDirective.es6');
       ngRequire('ui/sortable.es6');
       ngRequire('widgets/channel.es6');
-      ngRequire('widgets/idMap.es6');
       ngRequire('widgets/api.es6');
       ngRequire('widgets/cfIframeWidgetDirective.es6');
-      ngRequire('widgets/widgets.es6');
     }
   ]);
