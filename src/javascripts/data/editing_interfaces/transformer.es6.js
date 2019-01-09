@@ -1,5 +1,6 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
+import migrateControl from 'widgets/ControlMigrations.es6';
 
 /**
  * @ngdoc service
@@ -11,9 +12,8 @@ import _ from 'lodash';
  */
 registerFactory('data/editingInterfaces/transformer', [
   'editingInterfaces/helpers',
-  'widgets/migrations',
   'widgets/default',
-  (eiHelpers, migrateWidgetId, getDefaultWidgetId) => {
+  (eiHelpers, getDefaultWidgetId) => {
     return {
       fromAPI: fromAPI,
       toAPI: toAPI,
@@ -116,7 +116,7 @@ registerFactory('data/editingInterfaces/transformer', [
      * @returns {Data.FieldControl[]}
      */
     function controlsFromApi(contentType, controls) {
-      return alignControls(contentType, controls).map(migrateWidgetId);
+      return alignControls(contentType, controls).map(control => migrateControl(control));
     }
 
     function defaultControl(contentType, field) {
