@@ -15,23 +15,27 @@ describe('connectToWidgetAPI', () => {
     this.system.set('navigation/SlideInNavigator', {
       goToSlideInEntity: sinon.stub()
     });
-    this.system.set('spaceContext', {
-      default: {
-        cma: {
-          getEntry: sinon.stub().resolves()
-        }
-      }
-    });
-    this.system.set('$rootScope', {
-      default: {
+    this.system = createIsolatedSystem();
+
+    const getModuleStub = sinon.stub();
+    getModuleStub
+      .withArgs('spaceContext')
+      .returns({
+        cma: {}
+      })
+      .withArgs('$rootScope')
+      .returns({
         $on: sinon.stub()
-      }
-    });
-    this.system.set('$location', {
-      default: {
+      })
+      .withArgs('$location')
+      .returns({
         absUrl: () => 'abs-url'
-      }
+      });
+
+    this.system.set('NgRegistry.es6', {
+      getModule: getModuleStub
     });
+
     this.widgetApi = this.$inject('mocks/widgetApi').create();
 
     this.props = {
