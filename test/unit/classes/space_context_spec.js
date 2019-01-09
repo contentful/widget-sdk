@@ -23,7 +23,7 @@ describe('spaceContext', () => {
         default: sinon.stub().resolves({ store: true })
       });
       $provide.constant('client', { newSpace: makeClientSpaceMock });
-      $provide.value('widgets/Store.es6', {
+      $provide.value('widgets/WidgetStore.es6', {
         create: sinon.stub().returns({
           refresh: sinon.stub().resolves([])
         })
@@ -42,7 +42,7 @@ describe('spaceContext', () => {
     // Reregister TheLocaleStore with mocked version
     registerFactory('TheLocaleStore', () => localeStoreOrig);
 
-    this.widgetStoreCreate = this.$inject('widgets/Store.es6').create;
+    this.widgetStoreCreate = this.$inject('widgets/WidgetStore.es6').create;
     this.spaceContext = this.$inject('spaceContext');
     this.localeStore = this.$inject('TheLocaleStore');
 

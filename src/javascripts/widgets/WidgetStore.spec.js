@@ -1,4 +1,4 @@
-import { create as createStore } from './Store.es6';
+import { create as createStore } from './WidgetStore.es6';
 import { create as createBuiltins } from './builtin.es6';
 
 describe('WidgetStore', () => {
