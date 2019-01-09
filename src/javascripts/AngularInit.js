@@ -286,7 +286,6 @@ angular
       ngRequire('ui/onScrollDirective.es6');
       ngRequire('ui/setScrollDirective.es6');
       ngRequire('ui/sortable.es6');
-      ngRequire('widgets/channel.es6');
       ngRequire('widgets/api.es6');
       ngRequire('widgets/cfIframeWidgetDirective.es6');
     }
