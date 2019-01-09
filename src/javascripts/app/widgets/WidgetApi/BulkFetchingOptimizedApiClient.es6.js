@@ -1,4 +1,5 @@
-import { toPlainObject, memoize, forEach, flatten, get } from 'lodash';
+import { toPlainObject, memoize, mapKeys } from 'lodash';
+import DataLoader from 'dataloader';
 
 /**
  * Takes a client instance and returns an object with identical interface.
@@ -9,115 +10,114 @@ import { toPlainObject, memoize, forEach, flatten, get } from 'lodash';
  * @param {Data.APIClient} cma
  * @returns {Object} With same interface as `cma`.
  */
-export const getOptimizedApiClient = memoize(cma => ({
-  ...toPlainObject(cma),
+export const getOptimizedApiClient = memoize(cma => {
+  const { spaceId, envId } = cma;
+  const newResourceContext = type => ({ type, spaceId, envId });
+  return {
+    ...toPlainObject(cma),
 
-  getContentType: batchEntityFetcher({
-    getResources: query => cma.getContentTypes(query),
-    maxBatchSize: 1000 // API's max. CTs are small and can be fetched all at once.
-  }),
+    getContentType: batchEntityFetcher({
+      getResources: query => cma.getContentTypes(query),
+      resourceContext: newResourceContext('ContentType'),
+      maxBatchSize: 1000 // API's max. CTs are small and can be fetched all at once.
+    }),
 
-  getAsset: batchEntityFetcher({
-    getResources: query => cma.getAssets(query),
-    maxBatchSize: 200
-  }),
+    getAsset: batchEntityFetcher({
+      getResources: query => cma.getAssets(query),
+      resourceContext: newResourceContext('Asset'),
+      maxBatchSize: 200
+    }),
 
-  getEntry: batchEntityFetcher({
-    getResources: query => cma.getEntries(query),
-    maxBatchSize: 40 // Entries can be huge, avoid 8mb response payload limit.
-  })
-}));
+    getEntry: batchEntityFetcher({
+      getResources: query => cma.getEntries(query),
+      resourceContext: newResourceContext('Entry'),
+      maxBatchSize: 40 // Entries can be huge, avoid 8mb response payload limit.
+    })
+  };
+});
 
 /**
- *
  * @param {function} options.getResources
+ * @param {string} options.resourceContext.type API resource type, e.g. 'Entry'
+ * @param {string} options.resourceContext.envId
+ * @param {string} options.resourceContext.spaceId
  * @param {number} options.maxBatchSize
  * @returns {function}
  */
-export function batchEntityFetcher({ getResources, maxBatchSize }) {
+export function batchEntityFetcher({ getResources, resourceContext, _maxBatchSize }) {
+  const batchLoaderFn = newEntityBatchLoaderFn({ getResources, newEntityNotFoundError });
+  const loader = new DataLoader(batchLoaderFn);
+  return id =>
+    loader
+      .load(id)
+      // Clear the cache after each cycle of loading data. This ensures we load a
+      // current version of the entity in subsequent calls. Currently we only try
+      // to optimize fetching entities requested "at the same time" (same tick),
+      // TODO: Lots of potential for a FE architecture where we can cache this and
+      //  do smarter, controlled cache purges on e.g. routing.
+      // TODO: Only clear cache once per cycle instead of for each load.
+      .then(clearCache, clearCache);
+
+  function clearCache(entityOrError) {
+    loader.clearAll();
+    if (entityOrError instanceof Error) {
+      throw entityOrError;
+    }
+    return entityOrError;
+  }
+
   /**
-   * Object with requested entity IDs as keys. Each one holds an array of
-   * objects with a resolve/reject function to control the promise returned
-   * by the original request.
-   * @type {Object<Array<Object{resolve, reject}>>}
+   * Builds a CMA `NotFound` error as the Data.APIClient would return it.
+   *
+   * NOTE: Alternatively, we could do a separate CMA call to the .getResource() fn
+   * to get an 'original' API error.
+   *
+   * @returns {Error}
    */
-  let deferredsByEntityId = {};
-  let currentBatchTimeout;
+  function newEntityNotFoundError(entityId) {
+    const status = 404;
+    return Object.assign(new Error('Entity not found'), {
+      status,
+      statusCode: status,
+      code: 'NotFound',
+      data: newActualApiError(entityId),
+      headers: () => ({}),
+      request: {}
+    });
+  }
 
-  return id => {
-    if (!Object.keys(deferredsByEntityId).length) {
-      currentBatchTimeout = setTimeout(fetchCurrentBatch, 0);
-    }
-    const thisRequest = fetchWithCurrentBatch(id);
-
-    if (idMapToArray(deferredsByEntityId).length >= maxBatchSize) {
-      clearTimeout(currentBatchTimeout);
-      fetchCurrentBatch();
-    }
-    return thisRequest;
-
-    async function fetchCurrentBatch() {
-      // Reset to not mix up subsequent calls.
-      const pendingDeferredsByEntityId = closeCurrentBatch();
-      const entityIds = Object.keys(pendingDeferredsByEntityId);
-
-      let response;
-      try {
-        response = await getResources({
-          'sys.id[in]': entityIds.join(',')
-        });
-      } catch (error) {
-        if (get(error, 'data.sys.type') === 'Error') {
-          rejectAllPending(error);
-          return;
-        }
-        throw error; // E.g. a code error in getResources()
-      }
-      forEach(response.items, entity => {
-        const deferreds = pendingDeferredsByEntityId[entity.sys.id];
-        while (deferreds.length) {
-          deferreds.shift().resolve(entity);
-        }
-      });
-
-      rejectAllPending(newEntityNotFoundError());
-
-      function rejectAllPending(error) {
-        const deferreds = idMapToArray(pendingDeferredsByEntityId);
-        forEach(deferreds, ({ reject }) => reject(error));
-      }
-    }
-
-    function fetchWithCurrentBatch(id) {
-      return new Promise((resolve, reject) => {
-        deferredsByEntityId[id] = deferredsByEntityId[id] || [];
-        deferredsByEntityId[id].push({ resolve, reject });
-      });
-    }
-
-    function closeCurrentBatch() {
-      const pendingDeferredsByResourceId = deferredsByEntityId;
-      deferredsByEntityId = {};
-      return pendingDeferredsByResourceId;
-    }
-
-    function idMapToArray(map) {
-      return flatten(Object.values(map));
-    }
-  };
+  function newActualApiError(entityId) {
+    return {
+      sys: {
+        type: 'Error',
+        id: 'NotFound'
+      },
+      message: 'The resource could not be found.',
+      details: {
+        type: resourceContext.type,
+        id: entityId,
+        environment: resourceContext.envId,
+        space: resourceContext.spaceId
+      },
+      requestId: 'web-app__batchEntityFetcher'
+    };
+  }
 }
 
-/**
- * TODO: This is just a naive attempt at recreating an api error. If we go with this approach
- *  we might need a more sophisticated solution. Either:
- *  - A: Do a separate CMA call to the .getResource() fn to get an "original" API error.
- *  - B: "Fake" it with all the data (should be sufficient).
- * @returns {Error}
- */
-function newEntityNotFoundError() {
-  const error = new Error('Entity not found');
-  error.status = 404;
-  error.code = 'NotFound';
-  error.statusCode = 404;
-  return error;
+export function newEntityBatchLoaderFn({ getResources, newEntityNotFoundError }) {
+  return entityIds => {
+    const query = { 'sys.id[in]': entityIds.join(',') };
+    // Can't implement as `async` to ensure a faulty `getResources` implementation
+    // immediately throws instead of rejecting.
+    return getResources(query).then(handleSuccess, handleError);
+
+    function handleSuccess(response) {
+      const entitiesByIds = mapKeys(response.items, entity => entity.sys.id);
+      return entityIds.map(id => entitiesByIds[id] || newEntityNotFoundError(id));
+    }
+
+    function handleError(error) {
+      return entityIds.map(() => error);
+    }
+  };
 }

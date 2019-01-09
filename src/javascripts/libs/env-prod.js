@@ -54,6 +54,7 @@ window.libs = [
   ['classnames', require('classnames')],
   ['codemirror', require('codemirror')],
   ['color', require('color')],
+  ['dataloader', require('dataloader')],
   ['js-cookie', require('js-cookie')],
   ['downshift', require('downshift')],
   ['element-resize-detector', require('element-resize-detector')],

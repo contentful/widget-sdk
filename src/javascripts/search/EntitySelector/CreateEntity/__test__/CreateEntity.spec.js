@@ -100,7 +100,10 @@ describe('CreateEntity', () => {
     expect(entityCreator.newEntry).toHaveBeenCalledWith('abs');
     expect(props.onSelect).toHaveBeenCalledTimes(1);
     expect(props.onSelect).toHaveBeenCalledWith(entry.data);
-    expect(slideInNavigator.goToSlideInEntity).toHaveBeenCalledWith({ id: '1', type: entityTypes.Entry });
+    expect(slideInNavigator.goToSlideInEntity).toHaveBeenCalledWith({
+      id: '1',
+      type: entityTypes.Entry
+    });
   });
 
   it('creates an asset when "create asset" link is clicked and opens slide in editor', async () => {
@@ -121,6 +124,9 @@ describe('CreateEntity', () => {
     expect(entityCreator.newAsset).toHaveBeenCalledTimes(1);
     expect(props.onSelect).toHaveBeenCalledTimes(1);
     expect(props.onSelect).toHaveBeenCalledWith(asset.data);
-    expect(slideInNavigator.goToSlideInEntity).toHaveBeenLastCalledWith({ id: '1', type: entityTypes.Asset });
+    expect(slideInNavigator.goToSlideInEntity).toHaveBeenLastCalledWith({
+      id: '1',
+      type: entityTypes.Asset
+    });
   });
 });

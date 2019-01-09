@@ -4,7 +4,7 @@ export const user = {
 
 export const users = {
   get: jest.fn().mockResolvedValue({})
-}
+};
 
 export const cma = {
   createExtension: jest.fn().mockResolvedValue({}),

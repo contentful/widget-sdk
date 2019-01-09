@@ -26,6 +26,8 @@ import _ from 'lodash';
 registerFactory('data/ApiClient', () => {
   function Client(spaceEndpoint) {
     this._endpoint = spaceEndpoint;
+    this.envId = spaceEndpoint.envId;
+    this.spaceId = spaceEndpoint.spaceId;
   }
 
   Client.prototype._get = function(path, query) {

@@ -105,7 +105,7 @@ describe('cfWidgetApi directive', () => {
   describe('#space', () => {
     it('exposes same methods as spaceContext.cma', function() {
       const spaceContext = this.$inject('spaceContext');
-      const getAllKeys = (obj) => Object.keys(_.toPlainObject(obj));
+      const getAllKeys = obj => Object.keys(_.toPlainObject(obj));
       expect(getAllKeys(this.widgetApi.space)).toEqual(getAllKeys(spaceContext.cma));
     });
   });

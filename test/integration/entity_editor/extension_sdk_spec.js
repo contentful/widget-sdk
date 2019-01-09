@@ -487,7 +487,7 @@ describe('Extension SDK', () => {
     it('has a ApiClient method for each space method', function*(api) {
       const widgetApiMethods = Object.keys(api.space);
       const ApiClient = this.$inject('data/ApiClient');
-      const cma = new ApiClient();
+      const cma = new ApiClient({});
       for (const method of widgetApiMethods) {
         expect(typeof cma[method]).toBe('function');
       }
