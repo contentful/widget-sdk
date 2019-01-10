@@ -1,8 +1,8 @@
 import { pick } from 'lodash';
 import { get } from 'utils/Collections.es6';
 import { makeCtor } from 'utils/TaggedValues.es6';
-import store from 'ReduxStore/store.es6';
-import { deleteEnvironmentSuccess } from 'ReduxAppActions/environments/actions.es6';
+import store from 'redux/store.es6';
+import { deleteEnvironmentSuccess } from 'redux/actions/environments.es6';
 
 // Hardcoded limit for v1 orgs is 100 + 1 (master).
 // It is less for all v2 space plans.

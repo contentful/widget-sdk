@@ -18,7 +18,7 @@ registerController('ClientController', [
   'services/CreateSpace.es6',
   'navigation/NavState.es6',
   'services/EnforcementsService.es6',
-  'ReduxStore/store.es6',
+  'redux/store.es6',
   function ClientController(
     $scope,
     $state,

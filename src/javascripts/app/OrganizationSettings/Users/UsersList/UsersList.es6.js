@@ -32,7 +32,7 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import RemoveOrgMemberDialog from '../RemoveUserDialog.es6';
 import EmptyPlaceholder from './EmptyPlaceholder.es6';
-import { getFilters, getSearchTerm } from 'selectors/filters.es6';
+import { getFilters, getSearchTerm } from 'redux/selectors/filters.es6';
 import { getLastActivityDate } from '../UserUtils.es6';
 import {
   getInvitedUsersCount,

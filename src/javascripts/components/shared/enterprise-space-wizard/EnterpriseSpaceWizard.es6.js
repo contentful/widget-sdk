@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { getIncludedResources } from 'components/shared/space-wizard/WizardUtils.es6';
 import { go } from 'states/Navigator.es6';
 
-import * as actionCreators from '../space-wizard/store/actionCreators.es6';
+import * as actionCreators from 'redux/actions/spaceWizard/actionCreators.es6';
 
 import TemplateSelector from 'components/shared/space-wizard/TemplateSelector.es6';
 import ProgressScreen from 'components/shared/space-wizard/ProgressScreen.es6';

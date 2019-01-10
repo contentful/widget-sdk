@@ -1,61 +1,42 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { isEmpty, trim } from 'lodash';
-import { Modal, TextField, Button, Notification } from '@contentful/forma-36-react-components';
+import { Modal, TextField, Button } from '@contentful/forma-36-react-components';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
-
-import createTeamService from 'app/OrganizationSettings/Teams/TeamService.es6';
 
 export default class TeamForm extends React.Component {
   static propTypes = {
-    orgId: PropTypes.string.isRequired,
     onClose: PropTypes.func.isRequired,
     initialTeam: TeamPropType,
-    onTeamCreated: PropTypes.func,
-    onConfirm: PropTypes.func
+    onCreateConfirm: PropTypes.func,
+    onEditConfirm: PropTypes.func
   };
 
   isEditing = Boolean(this.props.initialTeam);
-  service = createTeamService(this.props.orgId);
 
   state = {
+    validationMessage: null,
     name: this.isEditing ? this.props.initialTeam.name : '',
     description: this.isEditing ? this.props.initialTeam.description : ''
   };
 
-  onConfirm = async () => {
+  onConfirm = e => {
+    e.preventDefault();
+    const { onEditConfirm, onCreateConfirm, onClose, initialTeam } = this.props;
     const { name, description } = this.state;
 
     if (!this.isValid()) {
       this.setState({ validationMessage: 'Please insert a name' });
-    } else {
-      this.setState({
-        busy: true,
-        validationMessage: ''
-      });
-
-      try {
-        if (this.isEditing) {
-          await this.service.update({ ...this.props.initialTeam, name, description });
-          Notification.success(`Team updated successfully`);
-        } else {
-          const newTeam = await this.service.create({ name, description });
-          Notification.success(`Team ${name} created successfully`);
-          this.props.onTeamCreated(newTeam);
-          this.props.onClose();
-        }
-      } catch (e) {
-        Notification.error(e.message);
-      }
-
-      this.setState({
-        busy: false
-      });
+      return;
     }
-  };
 
-  onClose = () => {
-    this.props.onClose();
+    if (this.isEditing) {
+      onEditConfirm(initialTeam.sys.id, { name, description });
+    } else {
+      onCreateConfirm({ name, description });
+    }
+
+    onClose();
   };
 
   isValid() {
@@ -71,8 +52,11 @@ export default class TeamForm extends React.Component {
     const { name, description, validationMessage, busy } = this.state;
 
     return (
-      <React.Fragment>
-        <Modal.Header title={this.isEditing ? 'Edit team' : 'New team'} onClose={this.onClose} />
+      <form
+        noValidate
+        onSubmit={this.onConfirm}
+        style={{ display: 'flex', flexDirection: 'column' }}>
+        <Modal.Header title={this.isEditing ? 'Edit team' : 'New team'} onClose={onClose} />
         <Modal.Content>
           <p>Teams make it easy to group people together.</p>
           <TextField
@@ -81,7 +65,8 @@ export default class TeamForm extends React.Component {
             id="team_name"
             labelText="Team name"
             value={name}
-            textInputProps={{ placeholder: 'Team Rocket' }}
+            countCharacters
+            textInputProps={{ placeholder: 'The Mighty Ducks', maxLength: 120, autoFocus: true }}
             extraClassNames={'vertical-form-field-rythm-dense'}
             validationMessage={validationMessage}
             onChange={this.handleChange('name')}
@@ -89,19 +74,21 @@ export default class TeamForm extends React.Component {
           <TextField
             name="teamDescription"
             id="team_description"
+            textarea
             labelText="Team description"
             value={description}
-            textInputProps={{ placeholder: 'Team Rocket' }}
+            countCharacters
+            textInputProps={{
+              placeholder: `The Mighty Ducks is a series of three live-action films that revolve around a Twin Cities ice hockey team, composed of young players that stick together throughout various challenges.`,
+              maxLength: 120,
+              rows: 3
+            }}
             extraClassNames={'vertical-form-field-rythm-dense'}
             onChange={this.handleChange('description')}
           />
         </Modal.Content>
         <Modal.Controls>
-          <Button
-            onClick={this.onConfirm}
-            loading={busy}
-            buttonType="primary"
-            testId="save-team-button">
+          <Button loading={busy} buttonType="primary" type="submit" testId="save-team-button">
             Save
           </Button>
           <Button
@@ -112,7 +99,7 @@ export default class TeamForm extends React.Component {
             Cancel
           </Button>
         </Modal.Controls>
-      </React.Fragment>
+      </form>
     );
   }
 }

@@ -12,8 +12,8 @@ import { getModule } from 'NgRegistry.es6';
 import { connect } from 'react-redux';
 
 import * as propTypes from './PropTypes.es6';
-import * as actionCreators from './store/actionCreators.es6';
-import * as resourceActionCreators from 'ReduxAppActions/resources/actionCreators.es6';
+import * as actionCreators from 'redux/actions/spaceWizard/actionCreators.es6';
+import * as resourceActionCreators from 'redux/actions/resources/actionCreators.es6';
 
 const logger = getModule('logger');
 

@@ -110,8 +110,8 @@ describe('Space Wizard action creators', function() {
       refresh: this.stubs.TokenStore_refresh
     });
 
-    this.actionCreators = this.$inject('components/shared/space-wizard/store/actionCreators.es6');
-    this.actions = this.$inject('components/shared/space-wizard/store/actions.es6');
+    this.actionCreators = this.$inject('redux/actions/spaceWizard/actionCreators.es6');
+    this.actions = this.$inject('redux/actions/spaceWizard/actions.es6');
   });
 
   describe('fetchSpacePlans', function() {

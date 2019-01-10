@@ -9,7 +9,11 @@ export default function createTeamService(orgId) {
     get,
     getAll,
     create,
-    update
+    update,
+    remove,
+    getTeamMemberships,
+    createTeamMembership,
+    removeTeamMembership
   };
 
   function get(id) {
@@ -43,13 +47,55 @@ export default function createTeamService(orgId) {
     );
   }
 
-  function update(id, { name, description, sys }) {
+  function update({ name, description, sys }) {
     return endpoint(
       {
         method: 'PUT',
-        path: ['teams', id],
+        path: ['teams', sys.id],
         data: { name, description },
         version: sys.version
+      },
+      ALPHA_HEADER
+    );
+  }
+
+  function remove(teamId) {
+    return endpoint(
+      {
+        method: 'DELETE',
+        path: ['teams', teamId]
+      },
+      ALPHA_HEADER
+    );
+  }
+
+  function getTeamMemberships(teamId, query) {
+    return endpoint(
+      {
+        method: 'GET',
+        path: ['teams', teamId, 'team_memberships'],
+        query
+      },
+      ALPHA_HEADER
+    );
+  }
+
+  function createTeamMembership(teamId, organizationMembershipId, admin = false) {
+    return endpoint(
+      {
+        method: 'POST',
+        path: ['teams', teamId, 'team_memberships'],
+        data: { organizationMembershipId, admin }
+      },
+      ALPHA_HEADER
+    );
+  }
+
+  function removeTeamMembership(teamId, teamMembershipId) {
+    return endpoint(
+      {
+        method: 'DELETE',
+        path: ['teams', teamId, 'team_memberships', teamMembershipId]
       },
       ALPHA_HEADER
     );

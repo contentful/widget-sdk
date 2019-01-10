@@ -3,8 +3,8 @@ import { registerDirective } from 'NgRegistry.es6';
 registerDirective('cfSpaceWizard', [
   '$state',
   '$rootScope',
-  'ReduxStore/store.es6',
-  'components/shared/space-wizard/store/actionCreators.es6',
+  'redux/store.es6',
+  'redux/actions/spaceWizard/actionCreators.es6',
   ($state, $rootScope, { default: ReduxStore }, actionCreators) => {
     const { reset: resetActionCreator } = actionCreators;
     return {

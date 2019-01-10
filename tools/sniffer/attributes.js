@@ -103,7 +103,7 @@ const react = node => {
     'react-codemirror',
     'react-animate-height',
     'react-tippy',
-    'ReduxStore/store',
+    'redux/store',
     'downshift',
     'slate-react',
     '<react-component>'
@@ -114,7 +114,7 @@ const react = node => {
   }
 
   // mark all redux files as `react`
-  if (node.path.indexOf('ReduxAppActions') !== -1) {
+  if (node.path.indexOf('redux') !== -1) {
     return true;
   }
   return false;

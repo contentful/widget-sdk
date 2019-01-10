@@ -11,8 +11,8 @@ const ALPHA_HEADER = {
  * Get all organization memberships (not users) in the organization
  * @param {endpoint} endpoint organization endpoint
  */
-export function getAllMemberships(endpoint) {
-  return fetchAll(endpoint, ['organization_memberships'], BATCH_LIMIT, null, ALPHA_HEADER);
+export function getAllMemberships(endpoint, params) {
+  return fetchAll(endpoint, ['organization_memberships'], BATCH_LIMIT, params, ALPHA_HEADER);
 }
 
 export function getAllMembershipsWithQuery(endpoint, query) {
