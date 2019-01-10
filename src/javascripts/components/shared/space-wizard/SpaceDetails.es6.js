@@ -22,10 +22,8 @@ class SpaceDetails extends React.Component {
     super(props);
     const state = {
       name: '',
-      template: null,
-      touched: false
+      template: null
     };
-    state.validation = validateState(state);
     this.state = state;
   }
 
@@ -43,8 +41,8 @@ class SpaceDetails extends React.Component {
 
   render() {
     const { selectedPlan, templates, fetchTemplates } = this.props;
-    const { validation, touched } = this.state;
-    const showValidationError = touched && !!validation.name;
+    const { validation } = this.state;
+    const showValidationError = validation && !!validation.name;
 
     return (
       <div>
@@ -82,7 +80,7 @@ class SpaceDetails extends React.Component {
           <button
             className="button btn-primary-action"
             data-test-id="space-details-confirm"
-            disabled={Object.keys(validation).length > 0}
+            disabled={validation && Object.keys(validation).length > 0}
             onClick={this.submit}>
             Proceed to confirmation
           </button>
@@ -93,9 +91,11 @@ class SpaceDetails extends React.Component {
 
   setName = name => {
     const { setNewSpaceName } = this.props;
-
-    const nameState = { name, touched: true };
-    nameState.validation = validateState(nameState);
+    const nameState = { name };
+    if (name.trim()) {
+      const validation = validateState(nameState);
+      this.setState({ validation });
+    }
 
     setNewSpaceName(name.trim());
     this.setState(nameState);
@@ -105,7 +105,7 @@ class SpaceDetails extends React.Component {
     const { setNewSpaceTemplate } = this.props;
 
     setNewSpaceTemplate(template);
-    this.setState({ template, touched: true });
+    this.setState({ template });
   };
 
   submit = () => {
@@ -128,7 +128,6 @@ class SpaceDetails extends React.Component {
 
 function validateState({ name = '' }) {
   const validation = {};
-
   if (!name.trim()) {
     validation.name = 'Name is required';
   }
