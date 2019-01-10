@@ -6,7 +6,7 @@ import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext.es6';
 import { selectEntityAndInsert } from './Util.es6';
 import { actionOrigin, TOOLBAR_PLUGIN_PROP_TYPES } from '../shared/PluginApi.es6';
 
-export default class EntryLinkToolbarIcon extends Component {
+export default class EntityLinkToolbarIcon extends Component {
   static propTypes = {
     ...TOOLBAR_PLUGIN_PROP_TYPES,
     isButton: PropTypes.bool
