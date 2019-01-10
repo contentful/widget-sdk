@@ -31,22 +31,10 @@ describe('app/ContentModel/Editor/Actions.es6', () => {
       }
     };
 
-    const flags = {
-      'feature-bv-2018-08-enforcements-api': true
-    };
-
     module('contentful/test', $provide => {
       $provide.constant('navigation/closeState', (self.closeSpy = sinon.spy()));
       $provide.value('utils/LaunchDarkly/index.es6', {
-        getCurrentVariation: sinon.stub().callsFake(function(flagName) {
-          return new Promise(resolve => {
-            if (flags[flagName]) {
-              return resolve(flags[flagName]);
-            } else {
-              return resolve(false);
-            }
-          });
-        })
+        getCurrentVariation: sinon.stub().callsFake(() => Promise.resolve(false))
       });
       $provide.value('app/common/ReloadNotification.es6', stubs.ReloadNotification);
       $provide.constant('logger', {

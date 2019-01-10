@@ -1,15 +1,27 @@
 import { isArray, get } from 'lodash';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
-import { getSpace } from 'services/TokenStore.es6';
-import { ENFORCEMENTS_FLAG } from 'featureFlags.es6';
-import { getModule } from 'NgRegistry.es6';
-
-const $injector = getModule('$injector');
 
 // 30 seconds
 // This is the Varnish caching time for this endpoint
 const ENFORCEMENT_INFO_REFRESH_INTERVAL = 30 * 1000;
 const enforcements = {};
+
+let active = true;
+
+function onBlur() {
+  active = false;
+}
+
+function onFocus() {
+  active = true;
+}
+
+window.onfocus = onFocus;
+window.onblur = onBlur;
+
+// IE
+document.onfocusin = onFocus;
+document.onfocusout = onBlur;
 
 export function getEnforcements(spaceId) {
   if (!spaceId) {
@@ -46,49 +58,25 @@ export function init(spaceId) {
  * if the enforcements change.
  */
 export async function refresh(spaceId) {
-  const newEnforcements = await fetchEnforcements(spaceId);
-  const currentEnforcements = get(enforcements, spaceId);
+  if (active) {
+    const newEnforcements = await fetchEnforcements(spaceId);
+    const currentEnforcements = get(enforcements, spaceId);
 
-  if (!enforcementsEqual(currentEnforcements, newEnforcements)) {
-    enforcements[spaceId] = newEnforcements;
+    if (!enforcementsEqual(currentEnforcements, newEnforcements)) {
+      enforcements[spaceId] = newEnforcements;
+    }
   }
 }
-
-let active = true;
-
-function onBlur() {
-  active = false;
-}
-
-function onFocus() {
-  active = true;
-}
-
-window.onfocus = onFocus;
-window.onblur = onBlur;
-
-// IE
-document.onfocusin = onFocus;
-document.onfocusout = onBlur;
 
 async function fetchEnforcements(spaceId) {
-  // To get around circular dep
-  const { getCurrentVariation } = $injector.get('utils/LaunchDarkly/index.es6');
-  const useApi = await getCurrentVariation(ENFORCEMENTS_FLAG);
+  const endpoint = createSpaceEndpoint(spaceId);
 
-  if (active && useApi) {
-    const endpoint = createSpaceEndpoint(spaceId);
+  const raw = await endpoint({
+    method: 'GET',
+    path: ['enforcements']
+  });
 
-    const raw = await endpoint({
-      method: 'GET',
-      path: ['enforcements']
-    });
-
-    return raw.items;
-  } else {
-    const tokenSpace = await getSpace(spaceId);
-    return get(tokenSpace, `enforcements`, []);
-  }
+  return raw.items;
 }
 
 function enforcementsEqual(current, newEnforcements) {
