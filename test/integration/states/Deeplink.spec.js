@@ -47,11 +47,12 @@ describe('states/Deeplink.es6', () => {
       $provide.value('components/shared/auto_create_new_space/index.es6', {
         getKey: noop
       });
-      $provide.value('components/shared/auto_create_new_space/CreateModernOnboarding.es6', {
-        getStoragePrefix: noop,
-        MODERN_STACK_ONBOARDING_SPACE_NAME: 'some name'
-      });
     });
+
+    this.getOnboardingSpaceId = sinon.stub(
+      this.$inject('states/deeplink/utils.es6'),
+      'getOnboardingSpaceId'
+    );
 
     const getStore = this.$inject('TheStore').getStore;
     this.store = getStore();
@@ -66,6 +67,25 @@ describe('states/Deeplink.es6', () => {
       return { $scope, promise };
     };
   });
+
+  function testSpaceScopedPathDeeplinks(link, path) {
+    return function*() {
+      this.search.returns({ link });
+      this.store.set('lastUsedSpace', 'test');
+      this.getSpaces.resolves([{ sys: { id: 'test' } }]);
+      yield this.createController().promise;
+
+      sinon.assert.calledWith(this.navigate, {
+        path,
+        params: {
+          spaceId: 'test'
+        },
+        options: {
+          location: 'replace'
+        }
+      });
+    };
+  }
 
   it('should give generic error in case no link', function*() {
     this.search.returns({});
@@ -149,6 +169,185 @@ describe('states/Deeplink.es6', () => {
 
       expect($scope.status).toBe('not_exist');
     });
+  });
+
+  describe('#install-extension', () => {
+    beforeEach(function() {
+      this.deeplinkToInstallExt = function*({ url, referrer }) {
+        const spaceId = 'test';
+
+        this.search.returns({ link: 'install-extension', url, referrer });
+        this.getSpaces.resolves([{ sys: { id: spaceId } }]);
+        yield this.createController().promise;
+        return spaceId;
+      };
+    });
+    it('should redirect user to the install extension screen with the url in state params', function*() {
+      const url = 'https://example.org';
+      const spaceId = yield* this.deeplinkToInstallExt({ url });
+
+      sinon.assert.calledWith(this.navigate, {
+        path: ['spaces', 'detail', 'settings', 'extensions', 'list'],
+        params: {
+          spaceId,
+          extensionUrl: url,
+          referrer: 'deeplink'
+        },
+        options: {
+          location: 'replace'
+        }
+      });
+    });
+  });
+
+  describe('#home', () => {
+    it(
+      'should redirect the user to space home',
+      testSpaceScopedPathDeeplinks('home', ['spaces', 'detail', 'home'])
+    );
+  });
+
+  describe('#general-settings', () => {
+    it(
+      'should redirect the user to space general settings',
+      testSpaceScopedPathDeeplinks('general-settings', ['spaces', 'detail', 'settings', 'space'])
+    );
+  });
+
+  describe('#locales', () => {
+    it(
+      'should redirect the user to space locale settings',
+      testSpaceScopedPathDeeplinks('locales', ['spaces', 'detail', 'settings', 'locales', 'list'])
+    );
+  });
+
+  describe('#roles-and-permissions', () => {
+    it(
+      'should redirect the user to space roles settings page',
+      testSpaceScopedPathDeeplinks('roles-and-permissions', [
+        'spaces',
+        'detail',
+        'settings',
+        'roles',
+        'list'
+      ])
+    );
+  });
+
+  describe('#content-preview', () => {
+    it(
+      'should redirect the user to content previews page',
+      testSpaceScopedPathDeeplinks('content-preview', [
+        'spaces',
+        'detail',
+        'settings',
+        'content_preview',
+        'list'
+      ])
+    );
+  });
+
+  describe('#content', () => {
+    it(
+      'should redirect the user to entries list page',
+      testSpaceScopedPathDeeplinks('content', ['spaces', 'detail', 'entries', 'list'])
+    );
+  });
+
+  describe('#media', () => {
+    it(
+      'should redirect the user to the assets list page',
+      testSpaceScopedPathDeeplinks('media', ['spaces', 'detail', 'assets', 'list'])
+    );
+  });
+
+  describe('#content-model', () => {
+    it(
+      'should redirect the user to content model page',
+      testSpaceScopedPathDeeplinks('content-model', ['spaces', 'detail', 'content_types', 'list'])
+    );
+  });
+
+  describe('#extensions', () => {
+    it(
+      'should redirect the user to the extensions list page',
+      testSpaceScopedPathDeeplinks('extensions', [
+        'spaces',
+        'detail',
+        'settings',
+        'extensions',
+        'list'
+      ])
+    );
+  });
+
+  function testModernStackOnboardingDeeplinks(link, path) {
+    return function*() {
+      const spaceId = 'test';
+      this.search.returns({ link });
+      this.getOnboardingSpaceId.callsFake(function*() {
+        return spaceId;
+      });
+      yield this.createController().promise;
+
+      sinon.assert.calledWith(this.navigate, {
+        path,
+        params: {
+          spaceId
+        },
+        options: {
+          location: 'replace'
+        }
+      });
+    };
+  }
+
+  describe('#onboarding-get-started', () => {
+    it(
+      'should redirect the user to modern stack onboarding getting started page',
+      testModernStackOnboardingDeeplinks('onboarding-get-started', [
+        'spaces',
+        'detail',
+        'onboarding',
+        'getStarted'
+      ])
+    );
+  });
+
+  describe('#onboarding-copy', () => {
+    it(
+      'should redirect the user to modern stack onboarding clone repo page',
+      testModernStackOnboardingDeeplinks('onboarding-copy', [
+        'spaces',
+        'detail',
+        'onboarding',
+        'copy'
+      ])
+    );
+  });
+
+  describe('#onboarding-explore', () => {
+    it(
+      'should redirect the user to modern stack onboarding explore content model page',
+      testModernStackOnboardingDeeplinks('onboarding-explore', [
+        'spaces',
+        'detail',
+        'onboarding',
+        'explore'
+      ])
+    );
+  });
+
+  describe('#onboarding-deploy', () => {
+    it(
+      'should redirect the user to modern stack onboarding deploy app page',
+      testModernStackOnboardingDeeplinks('onboarding-deploy', [
+        'spaces',
+        'detail',
+        'onboarding',
+        'deploy'
+      ])
+    );
   });
 
   describe('#invite', () => {
