@@ -125,6 +125,7 @@ class WrappedAssetCard extends React.Component {
 
     return (
       <AssetCard
+        height={300}
         type={entityFile ? this.getFileType(entityFile) : 'archive'} // Default to archive if file doesn't exist
         title={entityTitle || 'Untitled'}
         extraClassNames={extraClassNames}

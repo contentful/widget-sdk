@@ -67,6 +67,7 @@ class WrappedReferenceCard extends React.Component {
 
     return (
       <ReferenceCard
+        height={125}
         title={entityTitle || 'Untitled'}
         contentType={contentTypeName}
         extraClassNames={extraClassNames}
