@@ -3,6 +3,7 @@ import { find, isEqual, property } from 'lodash';
 import * as K from 'utils/kefir.es6';
 import * as Navigator from 'states/Navigator.es6';
 import createFieldLocaleDoc from 'app/entity_editor/FieldLocaleDocument.es6';
+import DocumentStatusCode from 'data/document/statusCode.es6';
 
 /**
  * @ngdoc type
@@ -199,6 +200,8 @@ registerController('FieldLocaleController', [
       locale.code
     );
 
+    const documentStatus$ = $scope.docImpl.status$ || K.constant();
+
     /**
      * @ngdoc property
      * @name FieldLocaleController#access$
@@ -218,8 +221,8 @@ registerController('FieldLocaleController', [
     controller.access$ =
       // TODO move this to FieldLocaleDocument
       K.combine(
-        [$scope.docImpl.state.isConnected$, controller.doc.collaborators],
-        (isConnected, collaborators) => {
+        [documentStatus$, $scope.docImpl.state.isConnected$, controller.doc.collaborators],
+        (status, isConnected, collaborators) => {
           if (field.disabled) {
             return EDITING_DISABLED;
           } else if (!editingAllowed) {
@@ -231,14 +234,12 @@ registerController('FieldLocaleController', [
           ) {
             return OCCUPIED;
           } else if (isConnected) {
-            return EDITABLE;
+            return status === DocumentStatusCode.INTERNAL_SERVER_ERROR ? DISCONNECTED : EDITABLE;
           } else {
             return DISCONNECTED;
           }
         }
-      )
-        .toProperty()
-        .skipDuplicates(isEqual);
+      ).toProperty();
 
     K.onValueScope($scope, controller.access$, access => {
       controller.access = access;

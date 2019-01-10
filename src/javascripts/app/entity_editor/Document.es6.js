@@ -21,6 +21,7 @@ import { Error as DocError } from 'data/document/Error.es6';
 import * as Normalizer from 'data/document/Normalize.es6';
 import * as ResourceStateManager from 'data/document/ResourceStateManager.es6';
 import * as DocSetters from 'data/document/Setters.es6';
+import DocumentStatusCode from 'data/document/statusCode.es6';
 import { DocLoad } from 'data/sharejs/Connection.es6';
 import * as Reverter from './document/Reverter.es6';
 import { getModule } from 'NgRegistry.es6';
@@ -288,12 +289,22 @@ export function create(docConnection, entity, contentType, user, spaceEndpoint) 
    * Is one of
    * - 'editing-not-allowed'
    * - 'ot-connection-error'
+   * - 'internal-server-error'
    * - 'archived'
    * - 'ok'
    *
-   * This property is used by 'cfEditorStatusNotifcation' directive.
+   * This property is used by entry_editor/StatusNotification component.
    */
-  const status$ = Status.create(sysProperty, docLoadError$, accessChecker.canUpdateEntity(entity));
+  const status$ = Status.create(
+    sysProperty,
+    docLoadError$,
+    accessChecker.canUpdateEntity(entity),
+    docSetters.error$
+      // The only error we are interested in in this stream is
+      // internal server errors coming from Sharejs.
+      .filter(({ error }) => error === DocumentStatusCode.INTERNAL_SERVER_ERROR)
+      .toProperty(() => ({ error: null }))
+  );
 
   const presence = PresenceHub.create(user.sys.id, docEventsBus.stream, shout);
   cleanupTasks.push(presence.destroy);

@@ -22,7 +22,6 @@ describe('FieldLocaleController', () => {
       if (patchScope) {
         patchScope(scope);
       }
-
       scope.fieldLocale = $controller('FieldLocaleController', { $scope: scope, $attrs: {} });
       this.$apply();
       return scope;
@@ -187,6 +186,14 @@ describe('FieldLocaleController', () => {
         disconnected: true,
         disabled: true
       });
+    });
+
+    it('is "disconnected" and "disabled" when is connected with an erroneous document status', function() {
+      this.otDoc.status$ = K.createMockProperty('internal-server-error');
+      this.otDoc.state.isConnected$.set(true);
+      const scope = this.init();
+      this.$apply();
+      expect(scope.fieldLocale.access).toEqual({ disconnected: true, disabled: true });
     });
 
     it('is "disabled" and "editing_disabled" if a field is disabled', function() {

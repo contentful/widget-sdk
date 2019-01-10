@@ -86,7 +86,7 @@ export default async function create($scope, entryId) {
   initDocErrorHandler($scope, doc.state.error$);
 
   K.onValueScope($scope, doc.status$, status => {
-    $scope.props = { status, entityLabel: 'entry' };
+    $scope.statusNotificationProps = { status, entityLabel: 'entry' };
   });
 
   installTracking(entityInfo, doc, K.scopeLifeline($scope));

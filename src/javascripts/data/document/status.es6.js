@@ -1,5 +1,6 @@
 import { registerFactory } from 'NgRegistry.es6';
 import * as K from 'utils/kefir.es6';
+import DocumentStatusCode from 'data/document/statusCode.es6';
 
 /**
  * @ngdoc service
@@ -12,23 +13,14 @@ import * as K from 'utils/kefir.es6';
  */
 registerFactory('data/Document/Status', [
   'logger',
-  Logger => {
-    const Status = {
-      NOT_ALLOWED: 'editing-not-allowed',
-      CONNECTION_ERROR: 'ot-connection-error',
-      ARCHIVED: 'archived',
-      DELETED: 'deleted',
-      OK: 'ok'
-    };
-
+  logger => {
     return {
-      create: create,
-      Status: Status
+      create: create
     };
 
     /**
      * @description
-     * Returns a property that holds one of the values from the 'Status'
+     * Returns a property that holds one of the values from the 'DocumentStatusCode'
      * map.
      *
      * @param {K.Property<API.Entity.Sys>} sys$
@@ -36,30 +28,48 @@ registerFactory('data/Document/Status', [
      * @param {boolean} canUpdate
      * @returns {K.Property<string>}
      */
-    function create(sys$, docError$, canUpdate) {
+    function create(sys$, docError$, canUpdate, statusError$) {
       if (canUpdate) {
-        return K.combineProperties([sys$, docError$], (sys, docError) => {
-          if (docError === 'forbidden') {
-            return Status.NOT_ALLOWED;
-          } else if (docError === 'disconnected') {
-            return Status.CONNECTION_ERROR;
-          } else if (docError) {
-            Logger.logError('Unknown ShareJS document error', {
-              error: {
-                error: docError
-              }
-            });
-            return Status.CONNECTION_ERROR;
-          } else if (sys.archivedVersion) {
-            return Status.ARCHIVED;
-          } else if (sys.deletedVersion) {
-            return Status.DELETED;
-          } else {
-            return Status.OK;
+        return K.combineProperties(
+          [sys$, docError$, statusError$],
+          (sys, docError, statusError) => {
+            if (statusError.error === DocumentStatusCode.INTERNAL_SERVER_ERROR) {
+              logger.logSharejsError('Internal server error', {
+                error: {
+                  error: docError
+                }
+              });
+
+              return DocumentStatusCode.INTERNAL_SERVER_ERROR;
+            }
+
+            if (docError === 'forbidden') {
+              return DocumentStatusCode.NOT_ALLOWED;
+            } else if (docError === 'disconnected') {
+              logger.logSharejsError('ShareJS connection error', {
+                error: {
+                  error: docError
+                }
+              });
+              return DocumentStatusCode.CONNECTION_ERROR;
+            } else if (docError) {
+              logger.logSharejsError('Unknown ShareJS document error', {
+                error: {
+                  error: docError
+                }
+              });
+              return DocumentStatusCode.CONNECTION_ERROR;
+            } else if (sys.archivedVersion) {
+              return DocumentStatusCode.ARCHIVED;
+            } else if (sys.deletedVersion) {
+              return DocumentStatusCode.DELETED;
+            } else {
+              return DocumentStatusCode.OK;
+            }
           }
-        });
+        );
       } else {
-        return K.constant(Status.NOT_ALLOWED);
+        return K.constant(DocumentStatusCode.NOT_ALLOWED);
       }
     }
   }
