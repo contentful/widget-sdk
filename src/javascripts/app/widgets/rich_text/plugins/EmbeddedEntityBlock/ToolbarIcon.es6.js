@@ -52,7 +52,7 @@ export default class EntryLinkToolbarIcon extends Component {
               isDisabled={this.props.disabled}
               extraClassNames={`${baseClass}-list-item`}
               size="small"
-              onMouseDown={event => this.handleClick(event, widgetAPI)}
+              onClick={event => this.handleClick(event, widgetAPI)}
               testId={`toolbar-toggle-${nodeType}`}>
               <div className="cf-flex-grid">
                 <Icon
