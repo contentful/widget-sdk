@@ -72,7 +72,7 @@ describe('RichTextFieldSetter', () => {
   });
 
   describe('#setAt()', function() {
-    it('initializes new documents with default value', function() {
+    it('initializes new documents with the default "empty document" value', function() {
       const doc = {
         submitOp: sinon.spy(),
         snapshot: []
@@ -82,6 +82,19 @@ describe('RichTextFieldSetter', () => {
       this.RichTextFieldSetter.setAt(doc, fieldPath, nextValue).then(() => {
         sinon.assert.called(doc.submitOp);
         sinon.assert.calledWith(this.ShareJS.setDeep, doc, fieldPath, this.emptyDoc);
+      });
+    });
+
+    it('resets empty documents to `undefined`', function() {
+      const doc = {
+        submitOp: sinon.spy(),
+        snapshot: []
+      };
+      const fieldPath = ['fields', 'id', 'locale'];
+      const nextValue = this.emptyDoc;
+      this.RichTextFieldSetter.setAt(doc, fieldPath, nextValue).then(() => {
+        sinon.assert.called(doc.submitOp);
+        sinon.assert.calledWith(this.ShareJS.setDeep, doc, fieldPath, undefined);
       });
     });
 

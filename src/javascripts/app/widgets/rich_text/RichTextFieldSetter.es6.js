@@ -1,5 +1,6 @@
 import jsondiff from 'json0-ot-diff';
 import emptyDoc from './constants/EmptyDoc.es6';
+import deepEqual from 'fast-deep-equal';
 import { getModule } from 'NgRegistry.es6';
 
 const $q = getModule('$q');
@@ -39,7 +40,33 @@ export const is = (fieldId, contentType) => {
  */
 export const setAt = (doc, fieldPath, nextFieldValue) => {
   const fieldValue = ShareJS.peek(doc, fieldPath);
+
+  if (deepEqual(nextFieldValue, emptyDoc)) {
+    /**
+     * When the editor state displays an empty document, we need to reset the
+     * ShareJS field value to `undefined` because:
+     *
+     * 1) This ensures the field will be published as blank/absent, rather than
+     *    as empty doc markup. This is consistent with our treatment of text
+     *    fields (see [1] below), which are always reset to `undefined` rather
+     *    than `''` (empty string).
+     * 2) This triggers the 'required' validation. An empty rich text document
+     *    would otherwise bypass the validation, but this is unintuitive from
+     *    a practitioner standpoint.
+     *
+     * [1] https://github.com/contentful/user_interface/blob/master/src/javascripts/app/entity_editor/stringField.es6.js#L28-L33
+     */
+    return ShareJS.setDeep(doc, fieldPath, undefined).then(() =>
+      setValue(doc, fieldPath, fieldValue, undefined)
+    );
+  }
+
   if (fieldValue === undefined) {
+    /**
+     * We need to initialize or re-initialize the editor state from the initial
+     * `undefined` value to an empty document in order for the the subsequent
+     * `setValue` invocation to work.
+     */
     return ShareJS.setDeep(doc, fieldPath, emptyDoc).then(() =>
       setValue(doc, fieldPath, emptyDoc, nextFieldValue)
     );
