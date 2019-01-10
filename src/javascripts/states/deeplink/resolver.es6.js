@@ -74,11 +74,17 @@ function resolveParams(link, params) {
       'content-preview': makeSpaceScopedPathResolver({
         spaceScopedPath: ['spaces', 'detail', 'settings', 'content_preview', 'list']
       }),
+      content: makeSpaceScopedPathResolver({
+        spaceScopedPath: ['spaces', 'detail', 'entries', 'list']
+      }),
+      media: makeSpaceScopedPathResolver({
+        spaceScopedPath: ['spaces', 'detail', 'assets', 'list']
+      }),
       'content-model': makeSpaceScopedPathResolver({
         spaceScopedPath: ['spaces', 'detail', 'content_types', 'list']
       }),
       extensions: makeSpaceScopedPathResolver({
-        spaceScopedPath: ['spaces', 'detail', 'settings', 'extensions']
+        spaceScopedPath: ['spaces', 'detail', 'settings', 'extensions', 'list']
       }),
       'onboarding-get-started': createOnboardingScreenResolver('getStarted'),
       'onboarding-copy': createOnboardingScreenResolver('copy'),
@@ -208,6 +214,28 @@ function resolveInstallExtension({ url, referrer }) {
   });
 }
 
+/**
+ * Supported ids:
+ * -------------------
+ * netlify-deploy-site
+ * heroku-trigger-build
+ * travis-ci-trigger-build
+ * circle-ci-trigger-build
+ * gitlab-trigger-pipeline
+ * bitbucket-trigger-pipeline
+ * aws-lambda-call-function
+ * google-cloud-invoke-function
+ * webtask-run-function
+ * slack-post-message
+ * twilio-send-sms
+ * mailgun-send-mail
+ * aws-sqs-send-message
+ * pubnub-publish-msg
+ * aws-s3-store-entries
+ * algolia-index-entries
+ * elasticsearch-index-entries
+ * jira-create-task
+ */
 function resolveWebhookTemplate({ id, referrer }) {
   return runTask(function*() {
     if (!id) {
