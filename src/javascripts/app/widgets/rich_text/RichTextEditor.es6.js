@@ -39,7 +39,11 @@ const emptySlateValue = createSlateValue(emptyDoc);
 
 export default class RichTextEditor extends React.Component {
   static propTypes = {
-    widgetAPI: PropTypes.object.isRequired,
+    widgetAPI: PropTypes.shape({
+      permissions: PropTypes.shape({
+        canAccessAssets: PropTypes.bool.isRequired
+      }).isRequired
+    }).isRequired,
     value: PropTypes.object.isRequired,
     isDisabled: PropTypes.bool,
     onChange: PropTypes.func,
@@ -120,6 +124,7 @@ export default class RichTextEditor extends React.Component {
             change={this.state.value.change()}
             onChange={this.onChange}
             isDisabled={this.props.isDisabled}
+            permissions={this.props.widgetAPI.permissions}
             richTextAPI={newPluginAPI({
               widgetAPI: this.props.widgetAPI,
               onAction: this.props.onAction

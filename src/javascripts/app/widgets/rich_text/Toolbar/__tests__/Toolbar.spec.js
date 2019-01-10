@@ -28,8 +28,17 @@ const fakeProps = () => ({
     widgetAPI: {
       field: {}
     }
+  },
+  permissions: {
+    canAccessAssets: true
   }
 });
+
+const dropDownEmbedNodeTypes = [
+  BLOCKS.EMBEDDED_ASSET,
+  BLOCKS.EMBEDDED_ENTRY,
+  INLINES.EMBEDDED_ENTRY
+];
 
 describe('Toolbar', () => {
   it('renders toolbar icons', () => {
@@ -58,51 +67,82 @@ describe('Toolbar', () => {
     const props = fakeProps();
     props.richTextAPI.widgetAPI.field.validations = [
       {
-        [ValidationType.ENABLED_NODE_TYPES]: [
-          VALIDATABLE_NODE_TYPES.filter(
-            nodeType =>
-              ![BLOCKS.OL_LIST, BLOCKS.UL_LIST, BLOCKS.QUOTE, BLOCKS.HR].includes(nodeType)
-          )
-        ]
+        [ValidationType.ENABLED_NODE_TYPES]: VALIDATABLE_NODE_TYPES.filter(
+          nodeType => ![BLOCKS.OL_LIST, BLOCKS.UL_LIST, BLOCKS.QUOTE, BLOCKS.HR].includes(nodeType)
+        )
       }
     ];
     const toolbar = Enzyme.mount(<Toolbar {...props} />);
     expect(toolbar.find('[data-test-id="list-divider"]')).toHaveLength(0);
   });
 
-  it('hides group separator if no hyperlinks enabled', () => {
+  it('hides the group separator when no hyperlinks are enabled', () => {
     const props = fakeProps();
     props.richTextAPI.widgetAPI.field.validations = [
       {
-        [ValidationType.ENABLED_NODE_TYPES]: [
-          VALIDATABLE_NODE_TYPES.filter(
-            nodeType =>
-              ![INLINES.ASSET_HYPERLINK, INLINES.HYPERLINK, INLINES.ENTRY_HYPERLINK].includes(
-                nodeType
-              )
-          )
-        ]
+        [ValidationType.ENABLED_NODE_TYPES]: VALIDATABLE_NODE_TYPES.filter(
+          nodeType =>
+            ![INLINES.ASSET_HYPERLINK, INLINES.HYPERLINK, INLINES.ENTRY_HYPERLINK].includes(
+              nodeType
+            )
+        )
       }
     ];
     const toolbar = Enzyme.mount(<Toolbar {...props} />);
     expect(toolbar.find('[data-test-id="hyperlink-divider"]')).toHaveLength(0);
   });
 
-  it('hides embeds dropdown when no embeds enabled', () => {
+  it('hides the embeds dropdown when no embeds are enabled', () => {
     const props = fakeProps();
     props.richTextAPI.widgetAPI.field.validations = [
       {
-        [ValidationType.ENABLED_NODE_TYPES]: [
-          VALIDATABLE_NODE_TYPES.filter(
-            nodeType =>
-              ![BLOCKS.EMBEDDED_ASSET, BLOCKS.EMBEDDED_ENTRY, INLINES.EMBEDDED_ENTRY].includes(
-                nodeType
-              )
-          )
-        ]
+        [ValidationType.ENABLED_NODE_TYPES]: VALIDATABLE_NODE_TYPES.filter(
+          nodeType => !dropDownEmbedNodeTypes.includes(nodeType)
+        )
       }
     ];
     const toolbar = Enzyme.mount(<Toolbar {...props} />);
     expect(toolbar.find('[data-test-id="toolbar-entry-dropdown-toggle"]')).toHaveLength(0);
+  });
+
+  it('hides embed dropdown option when no relevant embed is enabled', () => {
+    for (const embedNodeType of dropDownEmbedNodeTypes) {
+      const props = fakeProps();
+      props.richTextAPI.widgetAPI.field.validations = [
+        {
+          [ValidationType.ENABLED_NODE_TYPES]: VALIDATABLE_NODE_TYPES.filter(
+            nodeType => nodeType !== embedNodeType
+          )
+        }
+      ];
+      const toolbar = Enzyme.mount(<Toolbar {...props} />);
+      toolbar.find('button[data-test-id="toolbar-entry-dropdown-toggle"]').simulate('mouseDown');
+      expect(toolbar.find(`[data-test-id="toolbar-toggle-${embedNodeType}"]`)).toHaveLength(0);
+      dropDownEmbedNodeTypes
+        .filter(nodeType => nodeType !== embedNodeType)
+        .forEach(nodeType => {
+          expect(toolbar.find(`[data-test-id="toolbar-toggle-${nodeType}"]`)).toHaveLength(1);
+        });
+    }
+  });
+
+  it(`hides the ${
+    BLOCKS.EMBEDDED_ASSET
+  } dropdown option when the user has no asset access permissions`, () => {
+    const props = fakeProps();
+    props.permissions.canAccessAssets = false;
+    props.richTextAPI.widgetAPI.field.validations = [
+      { [ValidationType.ENABLED_NODE_TYPES]: VALIDATABLE_NODE_TYPES }
+    ];
+    const toolbar = Enzyme.mount(<Toolbar {...props} />);
+    toolbar.find('button[data-test-id="toolbar-entry-dropdown-toggle"]').simulate('mouseDown');
+    expect(toolbar.find(`[data-test-id="toolbar-toggle-${BLOCKS.EMBEDDED_ASSET}"]`)).toHaveLength(
+      0
+    );
+    dropDownEmbedNodeTypes
+      .filter(nodeType => nodeType !== BLOCKS.EMBEDDED_ASSET)
+      .forEach(nodeType => {
+        expect(toolbar.find(`[data-test-id="toolbar-toggle-${nodeType}"]`)).toHaveLength(1);
+      });
   });
 });

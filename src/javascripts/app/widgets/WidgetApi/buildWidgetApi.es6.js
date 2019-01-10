@@ -4,6 +4,7 @@ import { getModule } from 'NgRegistry.es6';
 
 const spaceContext = getModule('spaceContext');
 const entitySelector = getModule('entitySelector');
+const { getSectionVisibility } = getModule('access_control/AccessChecker');
 
 /**
  * Should create an object with the same interface as provided by the Contentful JS
@@ -26,6 +27,8 @@ const entitySelector = getModule('entitySelector');
  * @returns {Object}
  */
 export default function buildWidgetApi({ field, entry, features, currentUrl }) {
+  const { entry: canAccessEntries, asset: canAccessAssets } = getSectionVisibility();
+
   const widgetAPI = {
     /**
      * @see https://github.com/contentful/ui-extensions-sdk/blob/master/docs/ui-extensions-sdk-frontend.md#extensionfield
@@ -71,7 +74,12 @@ export default function buildWidgetApi({ field, entry, features, currentUrl }) {
     /**
      * TODO: Add to ui-extensions-sdk when open sourcing the RichText widget.
      */
-    features
+    features,
+
+    permissions: {
+      canAccessEntries,
+      canAccessAssets
+    }
 
     // TODO: .locales
     // TODO: .user

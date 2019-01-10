@@ -48,6 +48,13 @@ export const stubAll = async ({ isolatedSystem, angularStubs = {} }) => {
         getAssets: sinon.stub().returns(Promise.resolve({}))
       }
     })
+    .withArgs('access_control/AccessChecker')
+    .returns({
+      getSectionVisibility: sinon.stub().returns({
+        asset: true,
+        entry: true
+      })
+    })
     .withArgs('modalDialog')
     .returns({ open: sinon.stub() })
     .withArgs('$rootScope')
