@@ -21,7 +21,7 @@ describe('WidgetIFrameChannel', () => {
       removeEventListener: stubs.removeEventListener
     };
 
-    const channel = new Channel(iframe, win, cb => cb());
+    const channel = new Channel(iframe, win);
 
     const receiveMessage = data => {
       if (!data.source) {

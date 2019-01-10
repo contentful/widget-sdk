@@ -1,14 +1,22 @@
 import * as random from 'utils/Random.es6';
 
+const callArg1 = fn => fn();
+
 /**
  * This module exposes a `Channel` class that is used to communicate
  * with extensions in IFrames through `window.postMessage`.
  *
  * The communication protocol is based on http://www.jsonrpc.org/.
+ *
+ * - `iframe` and `win` are references to DOM nodes, IFrame rendering
+ *   an extension and app's `window` respectively.
+ * - `applyChanges` is a "transaction" wrapping action execution.
+ *   We can use it to wrap message handling with `$rootScope.$apply`
+ *   if still running in Angular context. Defaults to `fn => fn()`.
+ *
+ * TODO: should be a normal class.
  */
-
-// TODO: should be a normal class.
-export default function Channel(iframe, win, applyChanges) {
+export default function Channel(iframe, win, applyChanges = callArg1) {
   this.iframe = iframe;
   this.win = win;
   this.id = random.id();
@@ -17,9 +25,6 @@ export default function Channel(iframe, win, applyChanges) {
 
   this.messageListener = ({ data }) => {
     if (data.source === this.id) {
-      // TODO: `applyChanges` is actually `$rootScope.$apply`.
-      // We need it to make Angular aware of changes.
-      // Can be removed once Angular is gone :)
       applyChanges(() => this._dispatch(data.method, data.id, data.params));
     }
   };
