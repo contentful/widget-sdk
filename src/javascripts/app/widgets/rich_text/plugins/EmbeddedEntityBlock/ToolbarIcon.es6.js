@@ -77,10 +77,10 @@ export default class EntryLinkToolbarIcon extends Component {
  */
 function getEntityTypeFromNodeType(nodeType) {
   const words = nodeType.toLowerCase().split('-');
-  if (words.indexOf('entry') !== -1) {
+  if (words.includes('entry')) {
     return 'Entry';
   }
-  if (words.indexOf('asset') !== -1) {
+  if (words.includes('asset')) {
     return 'Asset';
   }
   throw new Error(`Node type \`${nodeType}\` has no associated \`entityType\``);
