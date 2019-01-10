@@ -9,8 +9,7 @@ import { capitalize } from 'utils/StringUtils.es6';
  * Utilities for creating and handling Content Type Fields
  */
 registerFactory('fieldFactory', [
-  'TheLocaleStore',
-  TheLocaleStore => {
+  () => {
     /**
      * @ngdoc property
      * @name fieldFactory#types
@@ -160,8 +159,7 @@ registerFactory('fieldFactory', [
       groups: fieldGroups,
       getLabel: getFieldLabel,
       getIconId,
-      createTypeInfo,
-      getLocaleCodes
+      createTypeInfo
     };
 
     /**
@@ -211,26 +209,6 @@ registerFactory('fieldFactory', [
         info = { type: 'Array', items: info };
       }
       return info;
-    }
-
-    /**
-     * @ngdoc method
-     * @name fieldFactory#getLocaleCodes
-     * @description
-     * Returns a list of internal locale codes that this field stores.
-     *
-     * If the field is localized it returns the list of all CMA locales.
-     * If the field is not localized it returns a list containing only
-     * the default locale.
-     *
-     * @param {API.ContentType.Field} field
-     * @return {Array<string>}
-     */
-    function getLocaleCodes(field) {
-      const locales = field.localized
-        ? TheLocaleStore.getPrivateLocales()
-        : [TheLocaleStore.getDefaultLocale()];
-      return _.map(locales, 'internal_code');
     }
 
     /**

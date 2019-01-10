@@ -10,10 +10,18 @@ describe('cfIframeWidget directive', function() {
     };
 
     module('contentful/test', $provide => {
-      // `widgets/API` is used with `new` so we need to provide a function
       const { widgetAPI } = this;
-      $provide.constant('widgets/API', function() {
-        return widgetAPI;
+      const locale = { internal_code: 'LOCALE-internal', code: 'LOCALE', default: true };
+
+      $provide.constant('widgets/ExtensionAPI.es6', {
+        // Used with `new` so we need to provide a function
+        default: function() {
+          return widgetAPI;
+        }
+      });
+      $provide.constant('TheLocaleStore', {
+        getPrivateLocales: sinon.stub().returns([locale]),
+        getDefaultLocale: sinon.stub().returns(locale)
       });
     });
 
@@ -26,7 +34,7 @@ describe('cfIframeWidget directive', function() {
         widget,
         entityInfo: {
           contentType: {
-            fields: [{ id: 'FIELD' }]
+            fields: [{ id: 'FIELD', localized: true }]
           }
         },
         otDoc: this.otDoc,
@@ -46,10 +54,30 @@ describe('cfIframeWidget directive', function() {
     };
   });
 
+  describe('"callSpaceMethod" handler', function() {
+    it('dispatches call to spaceContext.cma', function() {
+      this.$inject('spaceContext').cma = { createEntry: sinon.stub().resolves() };
+      this.scope = this.compile().scope;
+      this.callSpaceMethodHandler = this.widgetAPI.registerHandler.args[0][1];
+      this.callSpaceMethodHandler('createEntry', [1, 2, 3]);
+      sinon.assert.calledWithExactly(this.$inject('spaceContext').cma.createEntry, 1, 2, 3);
+    });
+  });
+
+  describe('"openDialog" handler', function() {
+    it('dispatches call to entitySelector.openFromExtension', function() {
+      this.$inject('entitySelector').openFromExtension = sinon.stub().resolves();
+      this.scope = this.compile().scope;
+      this.openDialogHandler = this.widgetAPI.registerHandler.args[2][1];
+      this.openDialogHandler('entitySelector', 'opts');
+      sinon.assert.calledWithExactly(this.$inject('entitySelector').openFromExtension, 'opts');
+    });
+  });
+
   describe('"setInvalid" handler', function() {
     it('dispatches call to setInvalid on field controller', function() {
       this.scope = this.compile().scope;
-      this.setInvalidHandler = this.widgetAPI.registerHandler.args[2][1];
+      this.setInvalidHandler = this.widgetAPI.registerHandler.args[5][1];
       this.setInvalidHandler(true, 'en-public');
       sinon.assert.calledWithExactly(this.scope.fieldController.setInvalid, 'en-public', true);
     });
@@ -58,7 +86,7 @@ describe('cfIframeWidget directive', function() {
   describe('"setActive" handler', function() {
     it('dispatches call to setActive on field locale', function() {
       this.scope = this.compile().scope;
-      this.setActiveHandler = this.widgetAPI.registerHandler.args[3][1];
+      this.setActiveHandler = this.widgetAPI.registerHandler.args[6][1];
       this.setActiveHandler(true);
       sinon.assert.calledWithExactly(this.scope.fieldLocale.setActive, true);
     });
@@ -95,8 +123,11 @@ describe('cfIframeWidget directive', function() {
     });
 
     it('sends field value change for each locale', function() {
-      const fieldFactory = this.$inject('fieldFactory');
-      fieldFactory.getLocaleCodes = sinon.stub().returns(['LOC A', 'LOC B', 'LOC C']);
+      this.$inject('TheLocaleStore').getPrivateLocales.returns([
+        { internal_code: 'LOC A' },
+        { internal_code: 'LOC B' },
+        { internal_code: 'LOC C' }
+      ]);
 
       this.otDoc.setValueAt(['fields', 'FIELD'], {
         'LOC A': 'VAL A',

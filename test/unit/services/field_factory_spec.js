@@ -92,18 +92,4 @@ describe('field factory', () => {
       });
     });
   });
-
-  describe('#getLocaleCodes()', () => {
-    it('returns default locale for non-localized field', function() {
-      this.stubs.getDefaultLocale.returns({ internal_code: 'DEF' });
-      const codes = this.fieldFactory.getLocaleCodes({ localized: false });
-      expect(codes).toEqual(['DEF']);
-    });
-
-    it('returns all private locales for localized field', function() {
-      this.stubs.getPrivateLocales.returns([{ internal_code: 'A' }, { internal_code: 'B' }]);
-      const codes = this.fieldFactory.getLocaleCodes({ localized: true });
-      expect(codes).toEqual(['A', 'B']);
-    });
-  });
 });

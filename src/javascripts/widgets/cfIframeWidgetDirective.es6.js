@@ -1,7 +1,9 @@
 import { registerDirective } from 'NgRegistry.es6';
-import _ from 'lodash';
+import { get, transform } from 'lodash';
 import * as K from 'utils/kefir.es6';
 import * as PathUtils from 'utils/Path.es6';
+import Channel from './WidgetIFrameChannel.es6';
+import ExtensionAPI from './ExtensionAPI.es6';
 
 /**
  * @ngdoc directive
@@ -21,11 +23,14 @@ import * as PathUtils from 'utils/Path.es6';
  */
 registerDirective('cfIframeWidget', [
   '$q',
-  'fieldFactory',
+  '$window',
+  '$rootScope',
   'spaceContext',
-  'widgets/API',
   'Config.es6',
-  ($q, fieldFactory, spaceContext, WidgetAPI, Config) => {
+  'TheLocaleStore',
+  'entitySelector',
+  'analytics/Analytics.es6',
+  ($q, $window, $rootScope, spaceContext, Config, TheLocaleStore, entitySelector, Analytics) => {
     const ERRORS = {
       codes: {
         EBADUPDATE: 'ENTRY UPDATE FAILED'
@@ -47,7 +52,7 @@ registerDirective('cfIframeWidget', [
         const entityInfo = scope.entityInfo;
 
         const fields = entityInfo.contentType.fields;
-        const fieldsById = _.transform(
+        const fieldsById = transform(
           fields,
           (fieldsById, field) => {
             fieldsById[field.id] = field;
@@ -60,25 +65,86 @@ registerDirective('cfIframeWidget', [
           installation: scope.widget.installationParameterValues || {}
         };
 
-        const widgetAPI = new WidgetAPI(
-          spaceContext.cma,
-          spaceContext.space.data.spaceMembership,
+        // TODO the isDisabled property is only required for <v2.1 of the
+        // extension SDK. We should remove it
+        const current = {
+          field: scope.widget.field,
+          locale: scope.locale,
+          isDisabled: scope.fieldLocale.access.disabled
+        };
+
+        const locales = {
+          available: TheLocaleStore.getPrivateLocales(),
+          default: TheLocaleStore.getDefaultLocale()
+        };
+
+        const iframe = element[0].querySelector('iframe');
+        const channel = new Channel(iframe, $window, cb => $rootScope.$apply(cb));
+
+        const widgetAPI = new ExtensionAPI({
+          channel,
+          spaceMembership: spaceContext.space.data.spaceMembership,
           parameters,
           fields,
-          doc.getValueAt([]),
-          scope.transformedContentTypeData,
-          // TODO the isDisabled property is only required for <v2.1 of the
-          // extension SDK. We should remove it
-          {
-            field: scope.widget.field,
-            locale: scope.locale,
-            isDisabled: scope.fieldLocale.access.disabled
-          },
-          element[0].querySelector('iframe')
-        );
+          entryData: doc.getValueAt([]),
+          contentTypeData: scope.transformedContentTypeData,
+          current,
+          locales
+        });
 
         scope.$on('$destroy', () => {
           widgetAPI.destroy();
+        });
+
+        widgetAPI.registerHandler('callSpaceMethod', (methodName, args) => {
+          return spaceContext.cma[methodName](...args).then(
+            entity => {
+              try {
+                maybeTrackEntryAction(methodName, args, entity);
+              } catch (err) {
+                // Just catch, failing to track should not
+                // demonstrate itself outside.
+              }
+
+              return entity;
+            },
+            ({ code, body }) => {
+              const err = new Error('Request failed.');
+              Object.assign(err, { code, data: body });
+              return Promise.reject(err);
+            }
+          );
+        });
+
+        function maybeTrackEntryAction(methodName, args, entity) {
+          let contentType;
+          if (['createEntry', 'publishEntry'].includes(methodName)) {
+            if (methodName === 'createEntry') {
+              contentType = spaceContext.publishedCTs.get(args[0]);
+            } else if (methodName === 'publishEntry') {
+              contentType = spaceContext.publishedCTs.get(args[0].sys.contentType.sys.id);
+            }
+          }
+
+          if (get(entity, ['sys', 'type']) === 'Entry' && contentType) {
+            Analytics.track(`entry:${methodName}`, {
+              eventOrigin: 'ui-extension',
+              contentType,
+              response: { data: entity }
+            });
+          }
+        }
+
+        widgetAPI.registerHandler('setHeight', height => {
+          iframe.setAttribute('height', height);
+        });
+
+        widgetAPI.registerHandler('openDialog', (type, options) => {
+          if (type === 'entitySelector') {
+            return entitySelector.openFromExtension(options);
+          } else {
+            return Promise.reject(new Error('Unknown dialog type.'));
+          }
         });
 
         widgetAPI.registerHandler('setValue', (apiName, localeCode, value) => {
@@ -199,7 +265,7 @@ registerDirective('cfIframeWidget', [
         }
 
         function updateWidgetFields() {
-          _.forEach(fields, field => {
+          (fields || []).forEach(field => {
             updateWidgetLocales(field.id);
           });
         }
@@ -213,9 +279,12 @@ registerDirective('cfIframeWidget', [
             return;
           }
 
-          const locales = fieldFactory.getLocaleCodes(field);
-          _.forEach(locales, locale => {
-            updateWidgetLocaleValue(fieldId, locale);
+          const locales = field.localized
+            ? TheLocaleStore.getPrivateLocales()
+            : [TheLocaleStore.getDefaultLocale()];
+
+          locales.forEach(locale => {
+            updateWidgetLocaleValue(fieldId, locale.internal_code);
           });
         }
 

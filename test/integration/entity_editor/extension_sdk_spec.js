@@ -71,7 +71,8 @@ describe('Extension SDK', () => {
       },
       fieldController: {
         setInvalid: sinon.spy()
-      }
+      },
+      transformedContentTypeData: {}
     };
 
     this.setup = () => {
@@ -480,7 +481,7 @@ describe('Extension SDK', () => {
         expect(error).toEqual({
           code: 'CODE',
           data: 'BODY',
-          message: 'Request failed'
+          message: 'Request failed.'
         });
       }
     });
