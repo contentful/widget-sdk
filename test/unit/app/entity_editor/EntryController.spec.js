@@ -12,7 +12,6 @@ describe('Entry Editor Controller', function() {
         createForEntry: sinon.stub()
       });
       $provide.removeControllers(
-        'entityEditor/LocalesController',
         'entityEditor/StateController',
         'entityEditor/StatusNotificationsController',
         'EntryActionsController'

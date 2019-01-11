@@ -78,8 +78,6 @@ export default async function create($scope, entryId) {
 
   $scope.entityInfo = entityInfo;
 
-  $scope.locales = $controller('entityEditor/LocalesController');
-
   const doc = editorData.openDoc(K.scopeLifeline($scope));
   // TODO rename the scope property
   $scope.otDoc = doc;

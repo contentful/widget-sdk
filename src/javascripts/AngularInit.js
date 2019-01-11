@@ -107,7 +107,6 @@ angular
       ngRequire('filters.es6');
       ngRequire('app/entity_editor/entityHelpers.es6');
       ngRequire('app/entity_editor/fieldLocaleController.es6');
-      ngRequire('app/entity_editor/localesController.es6');
       ngRequire('app/entity_editor/presenceHub.es6');
       ngRequire('app/entity_editor/sidebarWidgetsController.es6');
       ngRequire('navigation/stateChangeHandlers.es6');

@@ -37,12 +37,13 @@ describe('EntitySidebar/TranslationWidgetContainer', () => {
 
   it('should remove locale from TheLocaleStore and refetch the list if deactivate locale was clicked', async () => {
     const locales = [{ code: 'en-US', default: true }, { code: 'ru', default: false }];
-    TheLocaleStoreMocked.getActiveLocales.mockReturnValueOnce(locales);
+    TheLocaleStoreMocked.getActiveLocales.mockReturnValue(locales);
     const { wrapper } = render();
     await Promise.resolve();
     expect(TheLocaleStoreMocked.getActiveLocales).toHaveBeenCalledTimes(1);
     wrapper.update();
     wrapper.find(selectors.deactivateBtn).simulate('click');
     expect(TheLocaleStoreMocked.deactivateLocale).toHaveBeenCalledWith(locales[1]);
+    expect(TheLocaleStoreMocked.getActiveLocales).toHaveBeenCalledTimes(2);
   });
 });

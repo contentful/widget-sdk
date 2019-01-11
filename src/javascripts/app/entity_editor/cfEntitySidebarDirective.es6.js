@@ -13,9 +13,6 @@ import SidebarWidgetTypes from 'app/EntitySidebar/SidebarWidgetTypes.es6';
  *
  * @scope.requires {object} preferences.showAuxPanel
  *   Determines whether we show the entity information
- * @scope.requires {object} locales
- *   An instance of 'entityEditor/LocalesController' to change active
- *   locales.
  * @scope.requires {object} state
  *   An instance of 'entityEditor/StateController'
  * @scope.requires {object} otDoc
@@ -27,8 +24,9 @@ import SidebarWidgetTypes from 'app/EntitySidebar/SidebarWidgetTypes.es6';
  */
 registerDirective('cfEntitySidebar', [
   '$state',
+  'TheLocaleStore',
   'spaceContext',
-  ($state, spaceContext) => ({
+  ($state, TheLocaleStore, spaceContext) => ({
     restrict: 'E',
     scope: true,
     template: JST.cf_entity_sidebar(),
@@ -49,7 +47,7 @@ registerDirective('cfEntitySidebar', [
               entry,
               contentType: $scope.entityInfo.contentType,
               dataForTracking: {
-                locales: $scope.locales.active,
+                locales: TheLocaleStore.getActiveLocales(),
                 fromState: $state.current.name,
                 entryId: $scope.entityInfo.id
               }

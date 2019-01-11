@@ -44,8 +44,6 @@ export default async function create($scope, assetId) {
 
   $scope.entityInfo = entityInfo;
 
-  $scope.locales = $controller('entityEditor/LocalesController');
-
   // TODO rename the scope property
   $scope.otDoc = editorData.openDoc(K.scopeLifeline($scope));
   initDocErrorHandler($scope, $scope.otDoc.state.error$);
