@@ -8,10 +8,10 @@ describe('cfSnapshotPresenter', () => {
       $provide.constant('cfWidgetApiDirective', () => {});
     });
 
-    this.prepare = (value, field = {}, template = '<some-widget />') => {
+    this.prepare = (value, field = {}, template = '<some-widget />', custom = false) => {
       const data = {
         fieldLocale: { doc: { get: _.constant(value) } },
-        widget: { field: field, template: template }
+        widget: { field, template, custom }
       };
 
       const el = this.$compile('<cf-snapshot-presenter />', data);
@@ -62,7 +62,7 @@ describe('cfSnapshotPresenter', () => {
     });
 
     it('is true for custom widget', function() {
-      const scope = this.prepare('test', {}, '<cf-iframe-widget />');
+      const scope = this.prepare('test', {}, '<cf-iframe-widget />', true);
       expect(scope.isCustom).toBe(true);
     });
   });
